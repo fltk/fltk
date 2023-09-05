@@ -73,6 +73,8 @@ public:
   const Fl_Menu_Item* picked(const Fl_Menu_Item*);
   const Fl_Menu_Item* find_item(const char *name);
   const Fl_Menu_Item* find_item(Fl_Callback*);
+  const Fl_Menu_Item* find_item_with_user_data(void*);
+  const Fl_Menu_Item* find_item_with_argument(long);
   int find_index(const char *name) const;
   int find_index(const Fl_Menu_Item *item) const;
   int find_index(Fl_Callback *cb) const;

@@ -1,7 +1,7 @@
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@
 
 static inline int isdirsep(char c) {return c == '/';}
 
-/** Makes a filename absolute from a relative filename.
+/** Makes a filename absolute from a relative filename to the current working directory.
     \code
     #include <FL/filename.H>
     [..]
@@ -45,30 +45,46 @@ static inline int isdirsep(char c) {return c == '/';}
     \return 0 if no change, non zero otherwise
  */
 int fl_filename_absolute(char *to, int tolen, const char *from) {
-  return Fl::system_driver()->filename_absolute(to, tolen, from);
+  char cwd_buf[FL_PATH_MAX];    // Current directory
+  // get the current directory and return if we can't
+  if (!fl_getcwd(cwd_buf, sizeof(cwd_buf))) {
+    strlcpy(to, from, tolen);
+    return 0;
+  }
+  return Fl::system_driver()->filename_absolute(to, tolen, from, cwd_buf);
 }
 
+/** Concatenate the absolute path `base` with `from` to form the new absolute path in `to`.
+ \code
+ #include <FL/filename.H>
+ char out[FL_PATH_MAX];
+ fl_filename_absolute(out, sizeof(out), "../foo.txt", "/var/tmp");   // out="/var/foo.txt"
+ fl_filename_absolute(out, sizeof(out), "../local/bin", "/usr/bin");  // out="/usr/local/bin"
+ \endcode
+ \param[out] to resulting absolute filename
+ \param[in]  tolen size of the absolute filename buffer
+ \param[in]  from relative filename
+ \param[in]  base `from` is relative to this absolute file path
+ \return 0 if no change, non zero otherwise
+ */
+int fl_filename_absolute(char *to, int tolen, const char *from, const char *base) {
+  return Fl::system_driver()->filename_absolute(to, tolen, from, base);
+}
 
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
  \{
  */
-
-int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
-  if (isdirsep(*from) || *from == '|') {
+int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, const char *base) {
+  if (isdirsep(*from) || *from == '|' || !base) {
     strlcpy(to, from, tolen);
     return 0;
   }
   char *a;
   char *temp = new char[tolen];
   const char *start = from;
-  a = fl_getcwd(temp, tolen);
-  if (!a) {
-    strlcpy(to, from, tolen);
-    delete[] temp;
-    return 0;
-  }
+  strlcpy(temp, base, tolen);
   a = temp+strlen(temp);
   /* remove trailing '/' in current working directory */
   if (isdirsep(*(a-1))) a--;
@@ -125,10 +141,7 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
     \param[in]  from absolute filename
     \return 0 if no change, non zero otherwise
  */
-int                                     // O - 0 if no change, 1 if changed
-fl_filename_relative(char       *to,    // O - Relative filename
-                     int        tolen,  // I - Size of "to" buffer
-                     const char *from)  // I - Absolute filename
+int fl_filename_relative(char *to, int tolen, const char *from)
 {
   char cwd_buf[FL_PATH_MAX];    // Current directory
   // get the current directory and return if we can't
@@ -144,14 +157,10 @@ fl_filename_relative(char       *to,    // O - Relative filename
  \param[out] to resulting relative filename
  \param[in]  tolen size of the relative filename buffer
  \param[in]  from absolute filename
- \param[in]  base relative to this absolute path
+ \param[in]  base generate filename relative to this absolute filename
  \return 0 if no change, non zero otherwise
  */
-int                                     // O - 0 if no change, 1 if changed
-fl_filename_relative(char       *to,    // O - Relative filename
-                     int        tolen,  // I - Size of "to" buffer
-                     const char *from,  // I - Absolute filename
-                     const char *base) { // I - Find path relative to this path
+int fl_filename_relative(char *to, int tolen, const char *from, const char *base) {
   return Fl::system_driver()->filename_relative(to, tolen, from, base);
 }
 
@@ -162,11 +171,7 @@ fl_filename_relative(char       *to,    // O - Relative filename
  \{
  */
 
-int                                             // O - 0 if no change, 1 if changed
-Fl_System_Driver::filename_relative(char *to,   // O - Relative filename
-                     int        tolen,          // I - Size of "to" buffer
-                     const char *from,          // I - Absolute filename
-                     const char *base)          // I - Find path relative to this path
+int Fl_System_Driver::filename_relative(char *to, int tolen, const char *from, const char *base)
 {
   char          *newslash;              // Directory separator
   const char    *slash;                 // Directory separator
@@ -315,6 +320,20 @@ Fl_String fl_filename_absolute(const Fl_String &from) {
 }
 
 /**
+ Append the relative filename `from` to the absolute filename `base` to form
+ the new absolute path.
+ \param[in] from relative filename
+ \param[in] base `from` is relative to this absolute file path
+ \return the new, absolute filename
+ \see fl_filename_absolute(char *to, int tolen, const char *from, const char *base)
+ */
+Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base) {
+  char buffer[FL_PATH_MAX];
+  fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
+  return Fl_String(buffer);
+}
+
+/**
  Makes a filename relative to the current working directory.
  \param[in] from file path and name
  \return the new, relative filename
@@ -323,6 +342,19 @@ Fl_String fl_filename_absolute(const Fl_String &from) {
 Fl_String fl_filename_relative(const Fl_String &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_relative(buffer, FL_PATH_MAX, from.c_str());
+  return Fl_String(buffer);
+}
+
+/**
+ Makes a filename relative to any directory.
+ \param[in] from file path and name
+ \param[in] base relative to this absolute path
+ \return the new, relative filename
+ \see fl_filename_relative(char *to, int tolen, const char *from, const char *base)
+ */
+Fl_String fl_filename_relative(const Fl_String &from, const Fl_String &base) {
+  char buffer[FL_PATH_MAX];
+  fl_filename_relative(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
   return Fl_String(buffer);
 }
 

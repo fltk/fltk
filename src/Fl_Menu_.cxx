@@ -267,6 +267,40 @@ const Fl_Menu_Item * Fl_Menu_::find_item(Fl_Callback *cb) {
 }
 
 /**
+ Find the menu item for the given user data \p v.
+
+ \param[in] v find the first item with this user data
+ \returns The item found, or NULL if not found
+ \see find_item(const char*)
+ */
+const Fl_Menu_Item* Fl_Menu_::find_item_with_user_data(void *v) {
+  for ( int t=0; t < size(); t++ ) {
+    const Fl_Menu_Item *m = menu_ + t;
+    if (m->user_data_==v) {
+      return m;
+    }
+  }
+  return (const Fl_Menu_Item *)NULL;
+}
+
+/**
+ Find the menu item for the given user argument \p v.
+
+ \param[in] v find the first item with this user argument
+ \returns The item found, or NULL if not found
+ \see find_item(const char*)
+ */
+const Fl_Menu_Item* Fl_Menu_::find_item_with_argument(long v) {
+  for ( int t=0; t < size(); t++ ) {
+    const Fl_Menu_Item *m = menu_ + t;
+    if (m->argument()==v) {
+      return m;
+    }
+  }
+  return (const Fl_Menu_Item *)NULL;
+}
+
+/**
   The value is the index into menu() of the last item chosen by
   the user.  It is zero initially.  You can set it as an integer, or set
   it with a pointer to a menu item.  The set routines return non-zero if

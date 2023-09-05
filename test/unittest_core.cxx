@@ -243,6 +243,56 @@ TEST(Fl_Preferences, Strings) {
   return true;
 }
 
+TEST(fl_filename, ext) {
+  Fl_String r = fl_filename_ext("test.txt");
+  EXPECT_STREQ(r.c_str(), ".txt");
+  r = fl_filename_ext("test");
+  EXPECT_STREQ(r.c_str(), "");
+  r = fl_filename_ext("");
+  EXPECT_STREQ(r.c_str(), "");
+  return true;
+}
+
+TEST(fl_filename, setext) {
+  Fl_String r = fl_filename_setext(Fl_String("test.txt"), ".rtf");
+  EXPECT_STREQ(r.c_str(), "test.rtf");
+  r = fl_filename_setext(Fl_String("test"), ".rtf");
+  EXPECT_STREQ(r.c_str(), "test.rtf");
+  r = fl_filename_setext(Fl_String("test.txt"), "");
+  EXPECT_STREQ(r.c_str(), "test");
+  r = fl_filename_setext(Fl_String(""), ".rtf");
+  EXPECT_STREQ(r.c_str(), ".rtf");
+  r = fl_filename_setext(Fl_String("path/test"), ".rtf");
+  EXPECT_STREQ(r.c_str(), "path/test.rtf");
+  return true;
+}
+
+TEST(fl_filename, relative) {
+  Fl_String base = "/var/tmp/somedir";
+  Fl_String r = fl_filename_relative("/var/tmp/somedir/foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "foo.txt");
+  r = fl_filename_relative("/var/tmp/foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "../foo.txt");
+  r = fl_filename_relative("./foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "./foo.txt");
+  r = fl_filename_relative("../foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "../foo.txt");
+  return true;
+  }
+
+TEST(fl_filename, absolute) {
+  Fl_String base = "/var/tmp/somedir";
+  Fl_String r = fl_filename_absolute("foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "/var/tmp/somedir/foo.txt");
+  r = fl_filename_absolute("/var/tmp/foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "/var/tmp/foo.txt");
+  r = fl_filename_absolute("./foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "/var/tmp/somedir/foo.txt");
+  r = fl_filename_absolute("../foo.txt", base);
+  EXPECT_STREQ(r.c_str(), "/var/tmp/foo.txt");
+  return true;
+}
+
 bool cb1a_ok = false, cb1b_ok = false, cb1c_ok = false;
 int cb1_alloc = 0;
 class MyString : public Fl_String {

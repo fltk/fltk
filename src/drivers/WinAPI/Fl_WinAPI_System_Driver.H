@@ -74,7 +74,7 @@ public:
                             char *errmsg=NULL, int errmsg_sz=0) FL_OVERRIDE;
   int filename_expand(char *to,int tolen, const char *from) FL_OVERRIDE;
   int filename_relative(char *to, int tolen, const char *from, const char *base) FL_OVERRIDE;
-  int filename_absolute(char *to, int tolen, const char *from) FL_OVERRIDE;
+  int filename_absolute(char *to, int tolen, const char *from, const char *base) FL_OVERRIDE;
   int filename_isdir(const char *n) FL_OVERRIDE;
   int filename_isdir_quick(const char *n) FL_OVERRIDE;
   const char *filename_ext(const char *buf) FL_OVERRIDE;

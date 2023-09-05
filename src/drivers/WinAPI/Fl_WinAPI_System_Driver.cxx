@@ -636,21 +636,17 @@ Fl_WinAPI_System_Driver::filename_relative(char *to,    // O - Relative filename
   return 1;
 }
 
-int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
-  if (isdirsep(*from) || *from == '|' || from[1]==':') {
+int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *from, const char *base) {
+  if (isdirsep(*from) || *from == '|' || from[1]==':' || !base) {
     strlcpy(to, from, tolen);
     return 0;
   }
   char *a;
   char *temp = new char[tolen];
   const char *start = from;
-  a = getcwd(temp, tolen);
-  if (!a) {
-    strlcpy(to, from, tolen);
-    delete[] temp;
-    return 0;
-  }
+  strlcpy(temp, base, tolen);
   for (a = temp; *a; a++) if (*a=='\\') *a = '/'; // ha ha
+  /* remove trailing '/' in current working directory */
   if (isdirsep(*(a-1))) a--;
   /* remove intermediate . and .. names: */
   while (*start == '.') {

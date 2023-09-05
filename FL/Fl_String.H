@@ -113,6 +113,7 @@ public:
   Fl_String &operator+=(const char *src);
   Fl_String &operator+=(const Fl_String &src);
   Fl_String &operator+=(char c);
+  int find(const Fl_String &needle, int start_pos=0) const;
   Fl_String &replace(int at, int n_del, const char *src, int n_ins=npos);
   Fl_String &replace(int at, int n_del, const Fl_String &src);
   Fl_String substr(int pos=0, int n=npos) const;

@@ -63,7 +63,9 @@ FL_EXPORT Fl_String fl_filename_ext(const Fl_String &filename);
 FL_EXPORT Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_extension);
 FL_EXPORT Fl_String fl_filename_expand(const Fl_String &from);
 FL_EXPORT Fl_String fl_filename_absolute(const Fl_String &from);
+FL_EXPORT Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base);
 FL_EXPORT Fl_String fl_filename_relative(const Fl_String &from);
+FL_EXPORT Fl_String fl_filename_relative(const Fl_String &from, const Fl_String &base);
 FL_EXPORT Fl_String fl_getcwd();
 
 #  endif
@@ -75,6 +77,7 @@ FL_EXPORT Fl_String fl_getcwd();
 
 inline char *fl_filename_setext(char *to, const char *ext) { return fl_filename_setext(to, FL_PATH_MAX, ext); }
 inline int fl_filename_expand(char *to, const char *from) { return fl_filename_expand(to, FL_PATH_MAX, from); }
+FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from, const char *cwd);
 inline int fl_filename_absolute(char *to, const char *from) { return fl_filename_absolute(to, FL_PATH_MAX, from); }
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
 inline int fl_filename_relative(char *to, const char *from) { return fl_filename_relative(to, FL_PATH_MAX, from); }
