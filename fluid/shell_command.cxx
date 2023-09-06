@@ -55,7 +55,6 @@
 //        can set their own install path.
 //        We can query the shell path, but that requires knowing the users shell.
 //        The shell should output the path of the fltk-config that it found and why it is using that one
-// TODO: import shell scripts from previous versions of FLUID from the user settings
 // TODO: add a bunch of sensible sample shell commands
 // TODO: when this new feature is used for the very first time, import two or three samples as initial user setting
 // TODO: make the settings dialog resizable
@@ -654,6 +653,29 @@ void Fd_Shell_Command_List::clear(Fd_Tool_Store storage) {
  Read shell configuration from a preferences group.
  */
 void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+  // import the old shell commands from previous user settings
+  if (&fluid_prefs == &prefs) {
+    int version;
+    prefs.get("shell_commands_version", version, 0);
+    if (version == 0) {
+      int save_fl, save_code, save_strings;
+      Fd_Shell_Command *cmd = new Fd_Shell_Command();
+      cmd->storage = FD_STORE_USER;
+      cmd->name = "Sample Shell Command";
+      cmd->label = "Sample Shell Command";
+      cmd->shortcut = FL_ALT+'g';
+      fluid_prefs.get("shell_command", cmd->command, "echo \"Sample Shell Command\"");
+      fluid_prefs.get("shell_savefl", save_fl, 1);
+      fluid_prefs.get("shell_writecode", save_code, 1);
+      fluid_prefs.get("shell_writemsgs", save_strings, 0);
+      if (save_fl) cmd->flags |= Fd_Shell_Command::SAVE_PROJECT;
+      if (save_code) cmd->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
+      if (save_strings) cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
+      add(cmd);
+    }
+    version = 1;
+    prefs.set("shell_commands_version", version);
+  }
   Fl_Preferences shell_commands(prefs, "shell_commands");
   int n = shell_commands.groups();
   for (int i=0; i<n; i++) {
@@ -806,6 +828,7 @@ void Fd_Shell_Command_List::rebuild_shell_menu() {
   }
   if (j>0) mi[j-1].flags |= FL_MENU_DIVIDER;
   mi[j].label(fl_strdup("Customize..."));
+  mi[j].shortcut(FL_ALT+'x');
   mi[j].callback(menu_shell_customize_cb);
   // replace the old menu array with the new one
   Fl_Menu_Item *mi_old = shell_menu_;
@@ -834,7 +857,7 @@ void Fd_Shell_Command_List::update_settings_dialog() {
  The default shell submenu in batch mode.
  */
 Fl_Menu_Item Fd_Shell_Command_List::default_menu[] = {
-  {   "Customize...", 0, menu_shell_customize_cb },
+  {   "Customize...", FL_ALT+'x', menu_shell_customize_cb },
   { NULL }
 };
 
