@@ -162,6 +162,9 @@ struct Fl_Menu_Item;
   \image html  tabs_uniform.png "Fl_Tabs with uniform colors"
   \image latex tabs_uniform.png "Fl_Tabs with uniform colors" width=8cm
 
+  If Fl_Tabs has no children, the widget will be drawn as a flat rectangle
+  in the background color set by \ref color().
+
   \b Close \b Button \b on \b Tabs
 
   The Fl_Tabs widget allows you to specify that a child widget should display

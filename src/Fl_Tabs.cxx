@@ -60,6 +60,8 @@ void Fl_Tabs::on_remove(int index) {
     else if (index>0)
       value(child(index-1));
   }
+  if (children()==1)
+    damage(FL_DAMAGE_ALL);
   Fl_Group::on_remove(index);
 }
 
@@ -99,8 +101,19 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
   The protected variable `tab_count` is set to the currently allocated
   size, i.e. the number of children (`nc`).
 
-  \returns Index of the selected item, counting from 1 to nc.
-  \retval 0 If the number of children is 0 (zero).
+  \returns Index of the selected item
+  \retval -1 If the number of children is 0 (zero).
+
+  \note Return values in 1.3 were not documented. Return values before Sep 2023
+        were documented as 1 based index and 0 if there were no children. This
+        was actually never the case. It always returned a 0 based index and
+        the (useless) value of also 0 if there were no children. The current
+        version return -1 if there are no children.
+
+  \note For this method to work, only on single child should be selected.
+        Calling the method \ref value() before calling \ref tab_positions()
+        will ensure that exactly one child is selected and return a pointer
+        to that child.
 
   \see clear_tab_positions()
 */
@@ -115,7 +128,7 @@ int Fl_Tabs::tab_positions() {
     }
     tab_count = nc;
   }
-  if (nc == 0) return 0;
+  if (nc == 0) return -1;
   int selected = 0;
   Fl_Widget*const* a = array();
   int i;
@@ -743,8 +756,18 @@ void Fl_Tabs::draw() {
   // MARGIN is the minimal distance to the left and right edge of Fl_Tabs for
   //  the selected tabs if the overflow mode allows scrolling
 
-  Fl_Widget *selected_child = value();
-  int selected = tab_positions();
+  if (children() == 0) {
+    fl_rectf(x(), y(), w(), h(), color());
+    if (align() & FL_ALIGN_INSIDE)
+      draw_label();
+    clear_damage();
+    return;
+  }
+
+  Fl_Widget *selected_child = value();        // return the first visible child and hide all others
+  tab_positions();
+  int selected = find(selected_child);        // find that child in the list and return 0..children()-1
+  if (selected == children()) selected = -1;  // if anything fails, selected is -1 and
   int H = tab_height();
   Fl_Color selected_tab_color = selected_child ? selected_child->color() : color();
   bool tabs_at_top = (H > 0);
@@ -793,31 +816,38 @@ void Fl_Tabs::draw() {
 
     // -- draw selection border
     fl_push_clip(x(), selection_border_y, w(), selection_border_h);
-    int stem_x = x() + tab_pos[selected] + tab_offset;
-    int stem_w = fl_min(tab_pos[selected+1] - tab_pos[selected], tab_width[selected]);
     if (colored_selection_border) {
       draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
       draw_box(box(), x(), selection_border_y, w(), selection_border_h, selection_color());
-      if (tabs_at_top)
-        fl_rectf(stem_x, selection_border_y, stem_w, selection_border_h/2, selection_color());
-      else
-        fl_rectf(stem_x, selection_border_y+selection_border_h-selection_border_h/2, stem_w, selection_border_h/2, selection_color());
     } else {
       draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
-      fl_rectf(stem_x, child_area_y-tabs_h, stem_w, child_area_h+2*tabs_h, selection_color());
+    }
+    // draw the stem, the area that reaches from the tab into the selection border
+    if (selected != -1) {
+      int stem_x = x() + tab_pos[selected] + tab_offset;
+      int stem_w = fl_min(tab_pos[selected+1] - tab_pos[selected], tab_width[selected]);
+      if (colored_selection_border) {
+        if (tabs_at_top)
+          fl_rectf(stem_x, selection_border_y, stem_w, selection_border_h/2, selection_color());
+        else
+          fl_rectf(stem_x, selection_border_y+selection_border_h-selection_border_h/2, stem_w, selection_border_h/2, selection_color());
+      } else {
+        fl_rectf(stem_x, child_area_y-tabs_h, stem_w, child_area_h+2*tabs_h, selection_color());
+      }
     }
     fl_pop_clip();
 
     // -- draw all tabs
     fl_push_clip(x(), tabs_y, w(), tabs_h);
     int i;
-    for (i=0; i<selected; i++)
+    int safe_selected = selected == -1 ? children() : selected;
+    for (i=0; i<safe_selected; i++)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, child(i), tab_flags[i], LEFT);
-    for (i=children()-1; i > selected; i--)
+    for (i=children()-1; i > safe_selected; i--)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, child(i), tab_flags[i], RIGHT);
-    if (selected_child)
+    if (selected > -1)
       draw_tab(x()+tab_pos[selected], x()+tab_pos[selected+1],
                tab_width[selected], H, selected_child, tab_flags[selected], SELECTED);
     fl_pop_clip();
