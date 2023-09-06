@@ -795,7 +795,12 @@ List:}
     o->clear();
     w_settings_shell_list_selected = 0;
     for (int i=0; i<g_shell_config->list_size; i++) {
-      o->add(g_shell_config->list[i]->name.c_str());
+      Fd_Shell_Command *cmd = g_shell_config->list[i];
+      o->add(cmd->name.c_str());
+      if (cmd->storage == FD_STORE_USER)
+        o->icon(i+1, w_settings_shell_fd_user->image());
+      else if (cmd->storage == FD_STORE_PROJECT)
+        o->icon(i+1, w_settings_shell_fd_project->image());
     }
   }
 } else {
@@ -1016,7 +1021,11 @@ if (v == LOAD) {
     Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     cmd->storage = ts;
-    w_settings_shell_list->text(selected, cmd->name.c_str()); 
+    //w_settings_shell_list->text(selected, cmd->name.c_str()); 
+    if (cmd->storage == FD_STORE_USER)
+      w_settings_shell_list->icon(selected, w_settings_shell_fd_user->image());
+    else if (cmd->storage == FD_STORE_PROJECT)
+      w_settings_shell_list->icon(selected, w_settings_shell_fd_project->image());
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }} open
@@ -1245,9 +1254,17 @@ if (v == LOAD) {
     }
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
-}} selected
+}}
             tooltip {save the internationalisation string before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
           }
+        }
+        Fl_Box w_settings_shell_fd_project {
+          image {pixmaps/fd_project.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
+          code0 {o->image()->scale(16, 16);}
+        }
+        Fl_Box w_settings_shell_fd_user {selected
+          image {pixmaps/fd_user.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
+          code0 {o->image()->scale(16, 16);}
         }
       }
       Fl_Group w_settings_i18n_tab {

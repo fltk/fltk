@@ -91,6 +91,8 @@ extern Fl_Group *w_settings_shell_cmd;
 #include <FL/Fl_Text_Editor.H>
 extern Fl_Text_Editor *w_settings_shell_command;
 extern Fl_Menu_Button *w_settings_shell_text_macros;
+extern Fl_Box *w_settings_shell_fd_project;
+extern Fl_Box *w_settings_shell_fd_user;
 extern Fl_Group *w_settings_i18n_tab;
 extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;

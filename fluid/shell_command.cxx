@@ -43,8 +43,6 @@
 //  - options to save project, code, and strings before running
 //  - test-run button
 
-// TODO: add ownership to item, as in layout ("Store")
-// TODO:   -> indicate storage location in command list widget
 // TODO: import commands and add them to the list
 // TODO: export selected commands to an external file
 // TODO: get a macro to find `fltk-config` @FLTK_CONFIG@
@@ -61,7 +59,7 @@
 // TODO: add a bunch of sensible sample shell commands
 // TODO: when this new feature is used for the very first time, import two or three samples as initial user setting
 // TODO: make the settings dialog resizable
-// TODO: make g_shell_config static, not a pointer, but don;t load anything in batch mode
+// TODO: make g_shell_config static, not a pointer, but don't load anything in batch mode
 
 // FEATURE: Fd_Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
