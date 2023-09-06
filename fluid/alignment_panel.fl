@@ -889,10 +889,14 @@ if (v==LOAD) {
           } {
             MenuItem {} {
               label {Import...}
+              callback {if (v != LOAD) 
+  Fd_Shell_Command_List::import_from_file();} selected
               xywh {90 90 100 20} labelsize 11
             }
             MenuItem {} {
               label {Export selected...}
+              callback {if (v != LOAD) 
+  Fd_Shell_Command_List::export_selected();}
               xywh {10 10 100 20} labelsize 11 divider
             }
             MenuItem {} {
@@ -1262,7 +1266,7 @@ if (v == LOAD) {
           image {pixmaps/fd_project.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
           code0 {o->image()->scale(16, 16);}
         }
-        Fl_Box w_settings_shell_fd_user {selected
+        Fl_Box w_settings_shell_fd_user {
           image {pixmaps/fd_user.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
           code0 {o->image()->scale(16, 16);}
         }

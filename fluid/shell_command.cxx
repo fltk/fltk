@@ -43,8 +43,6 @@
 //  - options to save project, code, and strings before running
 //  - test-run button
 
-// TODO: import commands and add them to the list
-// TODO: export selected commands to an external file
 // TODO: get a macro to find `fltk-config` @FLTK_CONFIG@
 // TODO:   add an input field so the user can insert their preferred file and path for fltk-config (user setting)
 //        this is actually tricky to find
@@ -536,16 +534,19 @@ void Fd_Shell_Command::read(Fl_Preferences &prefs) {
   prefs.get("label", label, "<no label>");
   prefs.get("shortcut", tmp, 0);
   shortcut = (Fl_Shortcut)tmp;
+  prefs.get("storage", tmp, -1);
+  if (tmp != -1) storage = (Fd_Tool_Store)tmp;
   prefs.get("condition", condition, ALWAYS);
   prefs.get("condition_data", condition_data, "");
   prefs.get("command", command, "");
   prefs.get("flags", flags, 0);
 }
 
-void Fd_Shell_Command::write(Fl_Preferences &prefs) {
+void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
   prefs.set("name", name);
   prefs.set("label", label);
   if (shortcut != 0) prefs.set("shortcut", (int)shortcut);
+  if (save_location) prefs.set("storage", (int)storage);
   if (condition != ALWAYS) prefs.set("condition", condition);
   if (!condition_data.empty()) prefs.set("condition_data", condition_data);
   if (!command.empty()) prefs.set("command", command);
@@ -866,6 +867,70 @@ Fl_Menu_Item Fd_Shell_Command_List::default_menu[] = {
  */
 void Fd_Shell_Command_List::menu_marker(Fl_Widget*, void*) {
   // intentionally left empty
+}
+
+/**
+ Export all selected shell commands to an external file.
+
+ Verify that g_shell_config and w_settings_shell_list are not NULL. Open a
+ file chooser and export all items that are selected in w_settings_shell_list
+ into an external file.
+ */
+void Fd_Shell_Command_List::export_selected() {
+  if (!g_shell_config || (g_shell_config->list_size == 0)) return;
+  if (!w_settings_shell_list) return;
+
+  Fl_Native_File_Chooser dialog;
+  dialog.title("Export selected shell commands:");
+  dialog.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  dialog.filter("FLUID Files\t*.flcmd\n");
+  dialog.directory(g_project.projectfile_path().c_str());
+  dialog.preset_file((g_project.basename() + ".flcmd").c_str());
+  if (dialog.show() != 0) return;
+
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL);
+  Fl_Preferences shell_commands(file, "shell_commands");
+  int i, index = 0, n = w_settings_shell_list->size();
+  for (i = 0; i < n; i++) {
+    if (w_settings_shell_list->selected(i+1)) {
+      Fl_Preferences cmd(shell_commands, Fl_Preferences::Name(index++));
+      g_shell_config->list[i]->write(cmd, true);
+    }
+  }
+}
+
+/**
+ Import shell commands from an external file and add them to the list.
+
+ Verify that g_shell_config and w_settings_shell_list are not NULL. Open a
+ file chooser and import all items.
+ */
+void Fd_Shell_Command_List::import_from_file() {
+  if (!g_shell_config || (g_shell_config->list_size == 0)) return;
+  if (!w_settings_shell_list) return;
+
+  Fl_Native_File_Chooser dialog;
+  dialog.title("Import shell commands:");
+  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  dialog.filter("FLUID Files\t*.flcmd\n");
+  dialog.directory(g_project.projectfile_path().c_str());
+  dialog.preset_file((g_project.basename() + ".flcmd").c_str());
+  if (dialog.show() != 0) return;
+
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL);
+  Fl_Preferences shell_commands(file, "shell_commands");
+  int i, n = shell_commands.groups();
+  for (i = 0; i < n; i++) {
+    Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
+    Fd_Shell_Command *cmd = new Fd_Shell_Command();
+    cmd->storage = FD_STORE_USER;
+    cmd->read(cmd_prefs);
+    g_shell_config->add(cmd);
+  }
+  w_settings_shell_list->do_callback(w_settings_shell_list, LOAD);
+  w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
+  w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
+  g_shell_config->rebuild_shell_menu();
 }
 
 /**

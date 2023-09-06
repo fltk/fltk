@@ -860,9 +860,19 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
 
 Fl_Menu_Button *w_settings_shell_menu=(Fl_Menu_Button *)0;
 
+static void cb_Import(Fl_Menu_*, void* v) {
+  if (v != LOAD) 
+    Fd_Shell_Command_List::import_from_file();
+}
+
+static void cb_Export(Fl_Menu_*, void* v) {
+  if (v != LOAD) 
+    Fd_Shell_Command_List::export_selected();
+}
+
 Fl_Menu_Item menu_w_settings_shell_menu[] = {
- {"Import...", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Export selected...", 0,  0, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Import...", 0,  (Fl_Callback*)cb_Import, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Export selected...", 0,  (Fl_Callback*)cb_Export, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"Import Example Scripts:", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
  {"Compile with fltk-config", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"Build and run", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},

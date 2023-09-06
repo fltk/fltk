@@ -97,7 +97,7 @@ public:
   Fl_Menu_Item *shell_menu_item_;
   void run();
   void read(Fl_Preferences &prefs);
-  void write(Fl_Preferences &prefs);
+  void write(Fl_Preferences &prefs, bool save_location = false);
   void read(class Fd_Project_Reader*);
   void write(class Fd_Project_Writer*);
   void update_shell_menu();
@@ -132,6 +132,8 @@ public:
 
   static Fl_Menu_Item default_menu[];
   static void menu_marker(Fl_Widget*, void*);
+  static void export_selected();
+  static void import_from_file();
 };
 
 extern Fd_Shell_Command_List *g_shell_config;
