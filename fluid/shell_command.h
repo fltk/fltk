@@ -96,8 +96,8 @@ public:
   int flags; // save_project, save_code, save_string, ...
   Fl_Menu_Item *shell_menu_item_;
   void run();
-//  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
-//  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void read(Fl_Preferences &prefs);
+  void write(Fl_Preferences &prefs);
   void read(class Fd_Project_Reader*);
   void write(class Fd_Project_Writer*);
   void update_shell_menu();
@@ -118,12 +118,13 @@ public:
   void insert(int index, Fd_Shell_Command *cmd);
   void remove(int index);
   void clear();
+  void clear(Fd_Tool_Store store);
 //  void move_up();
 //  void move_down();
 //  int load(const Fl_String &filename);
 //  int save(const Fl_String &filename);
-//  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
-//  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void read(class Fd_Project_Reader*);
   void write(class Fd_Project_Writer*);
   void rebuild_shell_menu();

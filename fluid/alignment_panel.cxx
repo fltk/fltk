@@ -777,10 +777,8 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
       if (w_settings_shell_list->selected(selected))
         w_settings_shell_list_selected = selected;
     }
-    if (w_settings_shell_list_selected != prev_selected) {
-      w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
-      w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
-    }
+    w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
+    w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   }
 }
 
@@ -798,7 +796,8 @@ static void cb_8(Fl_Button*, void* v) {
     Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
-    w_settings_shell_list->value(selected+1);  
+    w_settings_shell_list->value(selected+1);
+    w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
@@ -820,7 +819,9 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     Fd_Shell_Command *cmd = new Fd_Shell_Command(g_shell_config->list[selected-1]);
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
+    w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);  
+    w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
@@ -842,7 +843,10 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     g_shell_config->remove(selected-1);
     w_settings_shell_list->remove(selected);
     if (selected <= w_settings_shell_list->size())
-      w_settings_shell_list->value(selected);  
+      w_settings_shell_list->value(selected);
+    else
+      w_settings_shell_list->value(0);
+    w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
@@ -903,8 +907,10 @@ static void cb_Name(Fl_Input* o, void* v) {
     }
   } else {
     if (selected) {
-      g_shell_config->list[selected-1]->name = o->value();
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      cmd->name = o->value();
       w_settings_shell_list->text(selected, o->value()); 
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -919,8 +925,10 @@ static void cb_Label(Fl_Input* o, void* v) {
     }
   } else {
     if (selected) {
-      g_shell_config->list[selected-1]->label = o->value();
-      g_shell_config->list[selected-1]->update_shell_menu();
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      cmd->label = o->value();
+      cmd->update_shell_menu();
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -936,8 +944,10 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
     }
   } else {
     if (selected) {
-      g_shell_config->list[selected-1]->shortcut = o->value();
-      g_shell_config->list[selected-1]->update_shell_menu();
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      cmd->shortcut = o->value();
+      cmd->update_shell_menu();
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -953,10 +963,12 @@ static void cb_Store(Fl_Choice* o, void* v) {
     }
   } else {
     if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
-      g_shell_config->list[selected-1]->storage = ts;
-      // g_shell_config->rebuild_shell_menu(); 
-      // only if we prepend a storage location indicator
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+      cmd->storage = ts;
+      w_settings_shell_list->text(selected, cmd->name.c_str()); 
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -978,19 +990,21 @@ static void cb_Condition(Fl_Choice* o, void* v) {
     }
   } else {
     if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       int cond = (int)(o->mvalue()->argument());
-      g_shell_config->list[selected-1]->condition = cond;
+      cmd->condition = cond;
       g_shell_config->rebuild_shell_menu();
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
 
 Fl_Menu_Item menu_Condition[] = {
  {"all platforms", 0,  0, (void*)(Fd_Shell_Command::ALWAYS), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Windows only", 0,  0, (void*)(Fd_Shell_Command::WIN_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Unix only", 0,  0, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"MacOS only", 0,  0, (void*)(Fd_Shell_Command::MAC_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Unix and MacOS", 0,  0, (void*)(Fd_Shell_Command::MAC_AND_UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"MS Windows only", 0,  0, (void*)(Fd_Shell_Command::WIN_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Linux only", 0,  0, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"macOS only", 0,  0, (void*)(Fd_Shell_Command::MAC_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Linux and macOS", 0,  0, (void*)(Fd_Shell_Command::MAC_AND_UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"don\'t use", 0,  0, (void*)(Fd_Shell_Command::NEVER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
@@ -1015,7 +1029,9 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
     }
   } else {
     if (selected) {
-      g_shell_config->list[selected-1]->command = o->buffer()->text();
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      cmd->command = o->buffer()->text();
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -1066,12 +1082,14 @@ static void cb_save(Fl_Check_Button* o, void* v) {
     }
   } else {
     if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       int v = o->value();
       if (v) {
-        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_PROJECT;
+        cmd->flags |= Fd_Shell_Command::SAVE_PROJECT;
       } else {
-        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
+        cmd->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
       }
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -1086,12 +1104,14 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
     }
   } else {
     if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       int v = o->value();
       if (v) {
-        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
+        cmd->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
       } else {
-        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
+        cmd->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
       }
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -1106,12 +1126,14 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
     }
   } else {
     if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       int v = o->value();
       if (v) {
-        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_STRINGS;
+        cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
       } else {
-        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
+        cmd->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
       }
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
 }
@@ -1313,6 +1335,9 @@ static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
 }
 
 static void cb_Close(Fl_Button*, void*) {
+  if (g_shell_config)
+    g_shell_config->write(fluid_prefs, FD_STORE_USER);
+  g_layout_list.write(fluid_prefs, FD_STORE_USER);
   settings_window->hide();
 }
 

@@ -44,13 +44,9 @@
 //  - test-run button
 
 // TODO: add ownership to item, as in layout ("Store")
-// TODO:   implement storage for both types
-// TODO:   indicate storage location in command list widget
-// TODO:   update project dirty flag is item with project storage changed
-//         FLUID presets, user, project file, external file, folder
-//         ./fluid.prefs
-//         ./fluid.user.prefs
-// TODO: import export!
+// TODO:   -> indicate storage location in command list widget
+// TODO: import commands and add them to the list
+// TODO: export selected commands to an external file
 // TODO: get a macro to find `fltk-config` @FLTK_CONFIG@
 // TODO:   add an input field so the user can insert their preferred file and path for fltk-config (user setting)
 //        this is actually tricky to find
@@ -62,12 +58,15 @@
 //        We can query the shell path, but that requires knowing the users shell.
 //        The shell should output the path of the fltk-config that it found and why it is using that one
 // TODO: import shell scripts from previous versions of FLUID from the user settings
+// TODO: add a bunch of sensible sample shell commands
 // TODO: when this new feature is used for the very first time, import two or three samples as initial user setting
 // TODO: make the settings dialog resizable
 // TODO: make g_shell_config static, not a pointer, but don;t load anything in batch mode
 
 // FEATURE: Fd_Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
+// FEATURE: ad the files ./fluid.prefs and ./fluid.user.prefs as tool locations
+
 
 // if FLUID is in build/Xcode/bin/Debug/fluid.app/Contents/MacOS/fluid for example,
 // we can use build/Xcode/fltk-config
@@ -534,6 +533,28 @@ bool Fd_Shell_Command::is_active() {
   return false;
 }
 
+void Fd_Shell_Command::read(Fl_Preferences &prefs) {
+  int tmp;
+  prefs.get("name", name, "<unnamed>");
+  prefs.get("label", label, "<no label>");
+  prefs.get("shortcut", tmp, 0);
+  shortcut = (Fl_Shortcut)tmp;
+  prefs.get("condition", condition, ALWAYS);
+  prefs.get("condition_data", condition_data, "");
+  prefs.get("command", command, "");
+  prefs.get("flags", flags, 0);
+}
+
+void Fd_Shell_Command::write(Fl_Preferences &prefs) {
+  prefs.set("name", name);
+  prefs.set("label", label);
+  if (shortcut != 0) prefs.set("shortcut", (int)shortcut);
+  if (condition != ALWAYS) prefs.set("condition", condition);
+  if (!condition_data.empty()) prefs.set("condition_data", condition_data);
+  if (!command.empty()) prefs.set("command", command);
+  if (flags != 0) prefs.set("flags", flags);
+}
+
 void Fd_Shell_Command::read(class Fd_Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
@@ -621,12 +642,53 @@ void Fd_Shell_Command_List::clear() {
 }
 
 /**
+ remove all shell commands of the given storage location from the list.
+ */
+void Fd_Shell_Command_List::clear(Fd_Tool_Store storage) {
+  for (int i=list_size-1; i>=0; i--) {
+    if (list[i]->storage == storage) {
+      remove(i);
+    }
+  }
+}
+
+/**
+ Read shell configuration from a preferences group.
+ */
+void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+  Fl_Preferences shell_commands(prefs, "shell_commands");
+  int n = shell_commands.groups();
+  for (int i=0; i<n; i++) {
+    Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
+    Fd_Shell_Command *cmd = new Fd_Shell_Command();
+    cmd->storage = FD_STORE_USER;
+    cmd->read(cmd_prefs);
+    add(cmd);
+  }
+}
+
+/**
+ Write shell configuration to a preferences group.
+ */
+void Fd_Shell_Command_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+  Fl_Preferences shell_commands(prefs, "shell_commands");
+  shell_commands.delete_all_groups();
+  int index = 0;
+  for (int i=0; i<list_size; i++) {
+    if (list[i]->storage == FD_STORE_USER) {
+      Fl_Preferences cmd(shell_commands, Fl_Preferences::Name(index++));
+      list[i]->write(cmd);
+    }
+  }
+}
+
+/**
  Read shell configuration from a project file.
  */
 void Fd_Shell_Command_List::read(Fd_Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  clear();
+  clear(FD_STORE_PROJECT);
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -732,33 +794,33 @@ void Fd_Shell_Command_List::rebuild_shell_menu() {
     if (list[i]->is_active()) num_active_items++;
   }
   // allocate a menu item array
-  Fl_Menu_Item *m = (Fl_Menu_Item*)::calloc(num_active_items+2, sizeof(Fl_Menu_Item));
+  Fl_Menu_Item *mi = (Fl_Menu_Item*)::calloc(num_active_items+2, sizeof(Fl_Menu_Item));
   // set the menu item pointer for all active commands
   for (i=j=0; i<list_size; i++) {
     Fd_Shell_Command *cmd = list[i];
     if (cmd->is_active()) {
-      cmd->shell_menu_item_ = m + i;
-      m[i].callback(menu_shell_cmd_cb);
-      m[i].argument(i);
+      cmd->shell_menu_item_ = mi + j;
+      mi[j].callback(menu_shell_cmd_cb);
+      mi[j].argument(i);
       cmd->update_shell_menu();
       j++;
     }
   }
-  if (i>0) m[i-1].flags |= FL_MENU_DIVIDER;
-  m[i].label(fl_strdup("Customize..."));
-  m[i].callback(menu_shell_customize_cb);
+  if (j>0) mi[j-1].flags |= FL_MENU_DIVIDER;
+  mi[j].label(fl_strdup("Customize..."));
+  mi[j].callback(menu_shell_customize_cb);
   // replace the old menu array with the new one
-  Fl_Menu_Item *m_old = shell_menu_;
-  shell_menu_ = m;
+  Fl_Menu_Item *mi_old = shell_menu_;
+  shell_menu_ = mi;
   shell_submenu->user_data(shell_menu_);
   // free all resources from the old menu
-  if (m_old) {
+  if (mi_old && (mi_old != default_menu)) {
     for (i=0; ; i++) {
-      const char *label = m_old[i].label();
+      const char *label = mi_old[i].label();
       if (!label) break;
       ::free((void*)label);
     }
-    ::free(m_old);
+    ::free(mi_old);
   }
 }
 

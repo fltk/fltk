@@ -806,10 +806,8 @@ List:}
     if (w_settings_shell_list->selected(selected))
       w_settings_shell_list_selected = selected;
   }
-  if (w_settings_shell_list_selected != prev_selected) {
-    w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
-    w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
-  }
+  w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
+  w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
 }}
           xywh {100 90 220 110} type Multi labelfont 1 labelsize 11 align 4 textsize 13
         }
@@ -826,7 +824,8 @@ List:}
   Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
   g_shell_config->insert(selected, cmd);
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
-  w_settings_shell_list->value(selected+1);  
+  w_settings_shell_list->value(selected+1);
+  w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
@@ -847,7 +846,9 @@ if (v==LOAD) {
   Fd_Shell_Command *cmd = new Fd_Shell_Command(g_shell_config->list[selected-1]);
   g_shell_config->insert(selected, cmd);
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
+  w_settings_shell_list->deselect();
   w_settings_shell_list->value(selected+1);  
+  w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
@@ -868,7 +869,10 @@ if (v==LOAD) {
   g_shell_config->remove(selected-1);
   w_settings_shell_list->remove(selected);
   if (selected <= w_settings_shell_list->size())
-    w_settings_shell_list->value(selected);  
+    w_settings_shell_list->value(selected);
+  else
+    w_settings_shell_list->value(0);
+  w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
@@ -933,7 +937,7 @@ if (v==LOAD) {
     o->deactivate();
   }
   propagate_load(o, v);
-}} open selected
+}} open
           xywh {10 235 320 291}
         } {
           Fl_Input {} {
@@ -947,8 +951,10 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
-    g_shell_config->list[selected-1]->name = o->value();
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    cmd->name = o->value();
     w_settings_shell_list->text(selected, o->value()); 
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
             xywh {100 246 220 20} labelfont 1 labelsize 11 when 13 textfont 4 textsize 11
@@ -964,8 +970,10 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
-    g_shell_config->list[selected-1]->label = o->value();
-    g_shell_config->list[selected-1]->update_shell_menu();
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    cmd->label = o->value();
+    cmd->update_shell_menu();
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
             xywh {100 272 220 20} labelfont 1 labelsize 11 textfont 4 textsize 11
@@ -982,8 +990,10 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
-    g_shell_config->list[selected-1]->shortcut = o->value();
-    g_shell_config->list[selected-1]->update_shell_menu();
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    cmd->shortcut = o->value();
+    cmd->update_shell_menu();
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
             xywh {100 297 130 20} labelsize 11 align 16
@@ -1002,10 +1012,12 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
-    g_shell_config->list[selected-1]->storage = ts;
-    // g_shell_config->rebuild_shell_menu(); 
-    // only if we prepend a storage location indicator
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+    cmd->storage = ts;
+    w_settings_shell_list->text(selected, cmd->name.c_str()); 
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }} open
             xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
@@ -1033,9 +1045,11 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     int cond = (int)(o->mvalue()->argument());
-    g_shell_config->list[selected-1]->condition = cond;
+    cmd->condition = cond;
     g_shell_config->rebuild_shell_menu();
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }} open
             xywh {100 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
@@ -1046,22 +1060,22 @@ if (v == LOAD) {
               xywh {0 0 100 20} labelsize 11
             }
             MenuItem {} {
-              label {Windows only}
+              label {MS Windows only}
               user_data {Fd_Shell_Command::WIN_ONLY} user_data_type long
               xywh {0 0 100 20} labelsize 11
             }
             MenuItem {} {
-              label {Unix only}
+              label {Linux only}
               user_data {Fd_Shell_Command::UX_ONLY} user_data_type long
               xywh {0 0 100 20} labelsize 11
             }
             MenuItem {} {
-              label {MacOS only}
+              label {macOS only}
               user_data {Fd_Shell_Command::MAC_ONLY} user_data_type long
               xywh {0 0 100 20} labelsize 11
             }
             MenuItem {} {
-              label {Unix and MacOS}
+              label {Linux and macOS}
               user_data {Fd_Shell_Command::MAC_AND_UX_ONLY} user_data_type long
               xywh {0 0 100 20} labelsize 11
             }
@@ -1091,7 +1105,9 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
-    g_shell_config->list[selected-1]->command = o->buffer()->text();
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    cmd->command = o->buffer()->text();
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
             xywh {100 373 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
@@ -1174,12 +1190,14 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     int v = o->value();
     if (v) {
-      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_PROJECT;
+      cmd->flags |= Fd_Shell_Command::SAVE_PROJECT;
     } else {
-      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
+      cmd->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
     }
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
             tooltip {save the project to the .fl file before running the command} xywh {100 458 220 20} down_box DOWN_BOX labelsize 11
@@ -1195,12 +1213,14 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     int v = o->value();
     if (v) {
-      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
+      cmd->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
     } else {
-      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
+      cmd->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
     }
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
             tooltip {generate the source code and header file before running the command} xywh {100 478 220 19} down_box DOWN_BOX labelsize 11
@@ -1216,14 +1236,16 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     int v = o->value();
     if (v) {
-      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_STRINGS;
+      cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
     } else {
-      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
+      cmd->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
     }
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
-}}
+}} selected
             tooltip {save the internationalisation string before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
           }
         }
@@ -1354,7 +1376,10 @@ if (v == LOAD) {
     }
     Fl_Button {} {
       label Close
-      callback {settings_window->hide();}
+      callback {if (g_shell_config)
+  g_shell_config->write(fluid_prefs, FD_STORE_USER);
+g_layout_list.write(fluid_prefs, FD_STORE_USER);
+settings_window->hide();}
       tooltip {Close this dialog.} xywh {230 550 100 20} labelsize 11
     }
   }

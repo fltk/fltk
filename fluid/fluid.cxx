@@ -733,6 +733,8 @@ void exit_cb(Fl_Widget *,void *) {
   if (help_dialog)
     delete help_dialog;
 
+  if (g_shell_config)
+    g_shell_config->write(fluid_prefs, FD_STORE_USER);
   g_layout_list.write(fluid_prefs, FD_STORE_USER);
 
   undo_clear();
@@ -2043,6 +2045,8 @@ int main(int argc,char **argv) {
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_sourceview_cb(0,0);
+    if (g_shell_config)
+      g_shell_config->read(fluid_prefs, FD_STORE_USER);
     g_layout_list.read(fluid_prefs, FD_STORE_USER);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
