@@ -1084,7 +1084,7 @@ void down_box_cb(Fl_Choice* i, void *v) {
 void compact_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
     uchar n;
-    if (current_widget->is_a(Fl_Type::ID_Button)) {
+    if (current_widget->is_a(Fl_Type::ID_Button) && !current_widget->is_a(Fl_Type::ID_Menu_Item)) {
       n = ((Fl_Button*)(current_widget->o))->compact();
       i->value(n);
       i->show();
@@ -1095,7 +1095,7 @@ void compact_cb(Fl_Light_Button* i, void* v) {
     int mod = 0;
     uchar n = (uchar)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_a(Fl_Type::ID_Button)) {
+      if (o->selected && o->is_a(Fl_Type::ID_Button) && !o->is_a(Fl_Type::ID_Menu_Item)) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         uchar v = ((Fl_Button*)(q->o))->compact();
         if (n != v) {
