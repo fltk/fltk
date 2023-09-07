@@ -149,7 +149,7 @@ uninstall-linux uninstall-osx:
 
 Doxyfile: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxyfile ..."
-	$(DOXYDOC) -u -s - < $< 2>Doxyfile_error.log | \
+	./convert_doxyfile $(DOXYDOC) $< $@ Doxyfile_error.log
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
@@ -158,10 +158,11 @@ Doxyfile: Doxyfile.in generated.dox copyright.dox
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
 	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
 	    -e's,@FLTK_SOURCE_DIR@,..,' \
-	    > $@
+	    -i $@
 
 Doxybook: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxybook ..."
+	./convert_doxyfile $(DOXYDOC) $< $@ Doxybook_error.log
 	$(DOXYDOC) -u -s - < $< 2>Doxybook_error.log | \
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
@@ -171,7 +172,7 @@ Doxybook: Doxyfile.in generated.dox copyright.dox
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
 	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
 	    -e's,@FLTK_SOURCE_DIR@,..,' \
-	    > $@
+	    -i $@
 
 # The HTML files are generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target

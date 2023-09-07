@@ -68,15 +68,16 @@ if (GENERATE_DOCS)
     set (GIT_REVISION "'unkown'")
   endif()
 
-  # find doxygen version
+  # Find "short" doxygen version if it was built from Git
+  # Note: this is still needed in CMake 3.12.0 but later CMake versions
+  #       (notably 3.25) remove the Git revision in 'DOXYGEN_VERSION'.
+  # Todo: Find the "first good" CMake version and remove this redundant
+  #       code once we require this as our minimal version and replace the
+  #       variable DOXYGEN_VERSION_SHORT with DOXYGEN_VERSION below.
 
   if (DOXYGEN_FOUND)
-
     # strip trailing git revision if doxygen was built from source
     string (REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION})
-    # strip trailing newline
-    string (REPLACE "\n" "" DOXYGEN_VERSION_SHORT "${DOXYGEN_VERSION_SHORT}")
-
   endif (DOXYGEN_FOUND)
 
   # configure copyright.dox (includes current year)
@@ -118,31 +119,36 @@ if (OPTION_BUILD_HTML_DOCUMENTATION)
   set (GENERATE_HTML  YES)
   set (GENERATE_LATEX NO)
   set (LATEX_HEADER   "")
+  set (DOXYFILE       "Doxyfile")
+  set (LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
 
   # configure Doxygen input file for HTML docs (Doxyfile.in)
 
   configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}.in
     @ONLY
   )
 
-  # convert Doxyfile to current doxygen version
+  # convert Doxyfile to used doxygen version
 
-  set (LOGFILE ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_error.log)
   add_custom_command (
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxyfile.in > Doxyfile 2> ${LOGFILE}
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/convert_doxyfile
+            ${DOXYGEN_EXECUTABLE}
+            ${DOXYFILE}.in
+            ${DOXYFILE}
+            ${LOGFILE}
     BYPRODUCTS ${LOGFILE}
-    COMMENT "Converting Doxyfile to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
+    COMMENT "Converting ${DOXYFILE} to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
   # generate HTML documentation
 
   add_custom_target (html
-    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating HTML documentation" VERBATIM
   )
@@ -162,24 +168,29 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
   set (GENERATE_HTML  NO)
   set (GENERATE_LATEX YES)
   set (LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
+  set (DOXYFILE       "Doxybook")
+  set (LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
 
   # configure Doxygen input file for PDF docs (Doxybook.in)
 
   configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxybook.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}.in
     @ONLY
   )
 
   # convert Doxybook to current doxygen version
 
-  set (LOGFILE ${CMAKE_CURRENT_BINARY_DIR}/Doxybook_error.log)
   add_custom_command (
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
-    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxybook.in > Doxybook 2> ${LOGFILE}
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/convert_doxyfile
+            ${DOXYGEN_EXECUTABLE}
+            ${DOXYFILE}.in
+            ${DOXYFILE}
+            ${LOGFILE}
     BYPRODUCTS ${LOGFILE}
-    COMMENT "Converting Doxybook to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
+    COMMENT "Converting ${DOXYFILE} to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
   # generate LaTeX title fltk-title.tex
@@ -198,10 +209,10 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
             ${DOXYGEN_EXECUTABLE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex
-    COMMAND ${DOXYGEN_EXECUTABLE} Doxybook
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf
     COMMAND cp -f latex/refman.pdf fltk.pdf
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating PDF documentation" VERBATIM
