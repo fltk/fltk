@@ -149,7 +149,7 @@ uninstall-linux uninstall-osx:
 
 Doxyfile: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxyfile ..."
-	$(DOXYDOC) -u -s - < $< | \
+	$(DOXYDOC) -u -s - < $< 2>Doxyfile_error.log | \
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
@@ -162,7 +162,7 @@ Doxyfile: Doxyfile.in generated.dox copyright.dox
 
 Doxybook: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxybook ..."
-	$(DOXYDOC) -u -s - < $< | \
+	$(DOXYDOC) -u -s - < $< 2>Doxybook_error.log | \
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \

@@ -76,6 +76,7 @@ if (GENERATE_DOCS)
     string (REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION})
     # strip trailing newline
     string (REPLACE "\n" "" DOXYGEN_VERSION_SHORT "${DOXYGEN_VERSION_SHORT}")
+
   endif (DOXYGEN_FOUND)
 
   # configure copyright.dox (includes current year)
@@ -128,11 +129,13 @@ if (OPTION_BUILD_HTML_DOCUMENTATION)
 
   # convert Doxyfile to current doxygen version
 
+  set (LOGFILE ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile_error.log)
   add_custom_command (
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxyfile.in > Doxyfile
+    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxyfile.in > Doxyfile 2> ${LOGFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Converting Doxyfile to current doxygen version" VERBATIM
+    BYPRODUCTS ${LOGFILE}
+    COMMENT "Converting Doxyfile to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
   # generate HTML documentation
@@ -160,9 +163,6 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
   set (GENERATE_LATEX YES)
   set (LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
 
-  # strip potential " (Git-hash)" from the original version
-  string (REGEX REPLACE " .*$" "" DOXY_VERSION ${DOXYGEN_VERSION})
-
   # configure Doxygen input file for PDF docs (Doxybook.in)
 
   configure_file (
@@ -173,11 +173,13 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
 
   # convert Doxybook to current doxygen version
 
+  set (LOGFILE ${CMAKE_CURRENT_BINARY_DIR}/Doxybook_error.log)
   add_custom_command (
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
-    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxybook.in > Doxybook
+    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxybook.in > Doxybook 2> ${LOGFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Converting Doxybook to current doxygen version" VERBATIM
+    BYPRODUCTS ${LOGFILE}
+    COMMENT "Converting Doxybook to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
   # generate LaTeX title fltk-title.tex

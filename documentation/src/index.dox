@@ -1,7 +1,7 @@
 /**
 
 \mainpage FLTK Programming Manual
-<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
 <TR>
   <TD><CENTER>
     \image html FL200.png
@@ -17,7 +17,7 @@
   </CENTER></TD>
 </TR>
 </TABLE>
-<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
 <TR>
   <TD style="text-align: center;">
     This software and manual are provided under the terms of the GNU
@@ -27,7 +27,7 @@
   </TD>
 </TR>
 </TABLE>
-<TABLE BGCOLOR="#9f9fef" CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="100%" BORDER="0">
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="100%" BORDER="0">
 <TR>
   <TD ALIGN="LEFT" VALIGN="TOP">
 
