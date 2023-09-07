@@ -70,7 +70,7 @@
 
  \param WIDGET the widget that will call the callback
  \param FUNC a C/C++ function or a static class method
- \param TYPE0 VALUE0 TYPE1 VALUE1 TYPE2 VALUE2 a list of zero to five type/value pairs, all separated by commas
+ \param TYPE0, VALUE0, TYPE1, VALUE1, TYPE2, VALUE2 a list of zero to five type/value pairs, all separated by commas
 
  \see FL_METHOD_CALLBACK_1, FL_INLINE_CALLBACK_2
  */
@@ -115,7 +115,7 @@
  \param CLASS the class type
  \param SELF a pointer to an instance of the class
  \param METH a C++ class method that must be public and not static
- \param TYPE0 VALUE0 a list of zero to five type/value pairs, all separated by commas
+ \param TYPE0, VALUE0 a list of zero to five type/value pairs, all separated by commas
 
  \see FL_FUNCTION_CALLBACK_3, FL_INLINE_CALLBACK_2
  */
@@ -167,12 +167,12 @@
  \param TYPE0 the type of the first parameter in the function call
  \param NAME0 an arbitrary variable name that can be used as a parameter in the function body
  \param VALUE0 a constant value or a variable; the value of the variable is copied when the callback is created
- \param TYPE1 NAME1 VALUE1 as above; there are six macros that support 0 to 5 parameters
- \param LAMBDA_FUNCTION_BODY the function body within the limits of the C macro preprocessor
+ \param TYPE1, NAME1, VALUE1 as above; there are six macros that support 0 to 5 parameters
+ \param LAMBDA the function body within the limits of the C macro preprocessor
 
  \see FL_METHOD_CALLBACK_1, FL_FUNCTION_CALLBACK_3
  */
-#define FL_INLINE_CALLBACK_2(WIDGET, TYPE0, NAME0, VALUE0, TYPE1, VALUE1, NAME1, LAMBDA_FUNCTION_BODY)
+#define FL_INLINE_CALLBACK_2(WIDGET, TYPE0, NAME0, VALUE0, TYPE1, NAME1, VALUE1, LAMBDA)
 
 #else // FL_DOXYGEN
 
