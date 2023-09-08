@@ -1,7 +1,7 @@
 #
 # Test/example program Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -34,20 +34,7 @@ CPPUNITTEST = \
 	unittest_core.cxx
 
 OBJUNITTEST = \
-	unittests.o \
-	unittest_about.o \
-	unittest_points.o \
-	unittest_complex_shapes.o \
-	unittest_fast_shapes.o \
-	unittest_circles.o \
-	unittest_text.o \
-	unittest_unicode.o \
-	unittest_symbol.o \
-	unittest_images.o \
-	unittest_viewport.o \
-	unittest_scrollbarsize.o \
-	unittest_schemes.o \
-	unittest_simple_terminal.o
+	$(CPPUNITTEST:.cxx=.o)
 
 CPPFILES =\
 	adjuster.cxx \
@@ -218,7 +205,7 @@ ALL =	\
 	twowin$(EXEEXT) \
 	utf8$(EXEEXT) \
 	windowfocus$(EXEEXT)
-	
+
 ALLFLUID = \
 	checkers$(EXEEXT) \
 	fast_slow$(EXEEXT) \
