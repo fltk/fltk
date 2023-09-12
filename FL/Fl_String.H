@@ -126,8 +126,8 @@ public:
 }; // class Fl_String
 
 // ---- Non-member functions
-extern Fl_String operator+(const Fl_String &lhs, const Fl_String &rhs);
-extern Fl_String operator+(const Fl_String &lhs, const char *rhs);
-extern bool operator==(const Fl_String &lhs, const Fl_String &rhs);
+FL_EXPORT Fl_String operator+(const Fl_String& lhs, const Fl_String& rhs);
+FL_EXPORT Fl_String operator+(const Fl_String& lhs, const char* rhs);
+FL_EXPORT bool operator==(const Fl_String & lhs, const Fl_String & rhs);
 
 #endif // _FL_Fl_String_H_

@@ -85,7 +85,7 @@ if (OPTION_BUILD_SHARED_LIBS)
   FL_ADD_LIBRARY (fltk_png SHARED "${PNG_SRCS}")
 
   if (FLTK_USE_BUILTIN_ZLIB)
-    target_link_libraries (fltk_png_SHARED fltk_z_SHARED)
+    target_link_libraries (fltk_png_SHARED fltk_z)
   else()
     target_link_libraries (fltk_png_SHARED ${FLTK_ZLIB_LIBRARIES})
   endif ()

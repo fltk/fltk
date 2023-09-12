@@ -166,9 +166,12 @@ if (OPTION_BUILD_SHARED_LIBS)
   list (APPEND FLUID_TARGETS fluid-shared)
   add_executable (fluid-shared fluid.cxx fluid.h)
   if (MSVC)
-    target_link_libraries (fluid-shared fluid-lib fltk_SHARED)
+    # Todo: this should link against fltk_SHARED rather than fltk_images but for an unknown
+    # reason this would issue link errors (about 25 undefined symbols). Needs investigation.
+    # AlbrechtS: Sep. 12, 2023
+    target_link_libraries (fluid-shared PRIVATE fluid-lib fltk_images) # should be: fltk_SHARED)
   else ()
-    target_link_libraries (fluid-shared fluid-lib fltk_images_SHARED)
+    target_link_libraries (fluid-shared PRIVATE fluid-lib fltk_images_SHARED)
   endif (MSVC)
 endif ()
 
