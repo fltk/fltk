@@ -189,6 +189,7 @@ struct seat {
 
 	struct wl_seat *wl_seat;
 	struct wl_pointer *wl_pointer;
+	struct wl_touch *wl_touch;
 
 	struct wl_surface *cursor_surface;
 	struct wl_cursor *current_cursor;
@@ -201,10 +202,12 @@ struct seat {
 	struct wl_cursor *cursor_left_ptr;
 
 	struct wl_surface *pointer_focus;
+	struct wl_surface *touch_focus;
 
 	int pointer_x, pointer_y;
 
 	uint32_t pointer_button_time_stamp;
+	uint32_t touch_down_time_stamp;
 
 	uint32_t serial;
 
@@ -277,6 +280,7 @@ struct libdecor_frame_gtk {
 	enum libdecor_capabilities capabilities;
 
 	struct border_component *active;
+	struct border_component *touch_active;
 
 	struct border_component *focus;
 	struct border_component *grab;
@@ -401,6 +405,8 @@ libdecor_plugin_gtk_destroy(struct libdecor_plugin *plugin)
 
 		if (seat->wl_pointer)
 			wl_pointer_destroy(seat->wl_pointer);
+		if (seat->wl_touch)
+			wl_touch_destroy(seat->wl_touch);
 		if (seat->cursor_surface)
 			wl_surface_destroy(seat->cursor_surface);
 		wl_seat_destroy(seat->wl_seat);
@@ -2285,6 +2291,211 @@ static struct wl_pointer_listener pointer_listener = {
 };
 
 static void
+update_touch_focus(struct seat *seat,
+		   struct libdecor_frame_gtk *frame_gtk,
+		   wl_fixed_t x,
+		   wl_fixed_t y)
+{
+	/* avoid warnings after decoration has been turned off */
+	if (GTK_IS_WIDGET(frame_gtk->header) && frame_gtk->touch_active->type == HEADER) {
+		struct header_element_data new_focus = get_header_focus(
+					  GTK_HEADER_BAR(frame_gtk->header),
+					  wl_fixed_to_int(x), wl_fixed_to_int(y));
+		/* only update if widget change so that we keep the state */
+		if (frame_gtk->hdr_focus.widget != new_focus.widget) {
+			frame_gtk->hdr_focus = new_focus;
+		}
+		frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_PRELIGHT;
+		/* redraw with updated button visuals */
+		draw_title_bar(frame_gtk);
+		libdecor_frame_toplevel_commit(&frame_gtk->frame);
+	} else {
+		frame_gtk->hdr_focus.type = HEADER_NONE;
+	}
+}
+
+static void
+touch_down(void *data,
+	   struct wl_touch *wl_touch,
+	   uint32_t serial,
+	   uint32_t time,
+	   struct wl_surface *surface,
+	   int32_t id,
+	   wl_fixed_t x,
+	   wl_fixed_t y)
+{
+	struct seat *seat = data;
+	struct libdecor_frame_gtk *frame_gtk;
+
+	if (!surface || !own_surface(surface))
+		return;
+
+	frame_gtk = wl_surface_get_user_data(surface);
+	if (!frame_gtk)
+		return;
+
+	seat->touch_focus = surface;
+	frame_gtk->touch_active = get_component_for_surface(frame_gtk, surface);
+
+	if (!frame_gtk->touch_active)
+		return;
+
+	update_touch_focus(seat, frame_gtk, x, y);
+
+	/* update decorations */
+	draw_decoration(frame_gtk);
+	libdecor_frame_toplevel_commit(&frame_gtk->frame);
+
+	enum libdecor_resize_edge edge =
+		LIBDECOR_RESIZE_EDGE_NONE;
+	switch (frame_gtk->touch_active->type) {
+	case SHADOW:
+		edge = component_edge(frame_gtk->touch_active,
+						      wl_fixed_to_int(x),
+						      wl_fixed_to_int(y),
+						      SHADOW_MARGIN);
+		break;
+	case HEADER:
+		switch (frame_gtk->hdr_focus.type) {
+		case HEADER_MIN:
+		case HEADER_MAX:
+		case HEADER_CLOSE:
+			frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_ACTIVE;
+			draw_title_bar(frame_gtk);
+			libdecor_frame_toplevel_commit(&frame_gtk->frame);
+			break;
+		default:
+			if (time - seat->touch_down_time_stamp <
+				(uint32_t)frame_gtk->plugin_gtk->double_click_time_ms) {
+				toggle_maximized(&frame_gtk->frame);
+			}
+			else if (moveable(frame_gtk)) {
+				seat->touch_down_time_stamp = time;
+				libdecor_frame_move(&frame_gtk->frame,
+							seat->wl_seat,
+							serial);
+			}
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+	if (edge != LIBDECOR_RESIZE_EDGE_NONE &&
+		resizable(frame_gtk)) {
+		libdecor_frame_resize(
+			&frame_gtk->frame,
+			seat->wl_seat,
+			serial,
+			edge);
+	}
+}
+
+static void
+touch_up(void *data,
+	 struct wl_touch *wl_touch,
+	 uint32_t serial,
+	 uint32_t time,
+	 int32_t id)
+{
+	struct seat *seat = data;
+	struct libdecor_frame_gtk *frame_gtk;
+
+	if (!seat->touch_focus || !own_surface(seat->touch_focus))
+		return;
+
+	frame_gtk = wl_surface_get_user_data(seat->touch_focus);
+	if (!frame_gtk)
+		return;
+
+	if (!frame_gtk->touch_active)
+		return;
+
+	switch (frame_gtk->touch_active->type) {
+	case HEADER:
+		libdecor_frame_ref(&frame_gtk->frame);
+		switch (frame_gtk->hdr_focus.type) {
+		case HEADER_MIN:
+			if (minimizable(frame_gtk)) {
+				libdecor_frame_set_minimized(
+					&frame_gtk->frame);
+			}
+			break;
+		case HEADER_MAX:
+			toggle_maximized(&frame_gtk->frame);
+			break;
+		case HEADER_CLOSE:
+			if (closeable(frame_gtk)) {
+					libdecor_frame_close(
+						&frame_gtk->frame);
+					seat->touch_focus = NULL;
+			}
+			break;
+		default:
+			break;
+		}
+		/* unset active/clicked state once released */
+		frame_gtk->hdr_focus.state &= ~GTK_STATE_FLAG_ACTIVE;
+		if (GTK_IS_WIDGET(frame_gtk->header)) {
+			draw_title_bar(frame_gtk);
+			libdecor_frame_toplevel_commit(&frame_gtk->frame);
+		}
+		libdecor_frame_unref(&frame_gtk->frame);
+		break;
+	default:
+		break;
+	}
+
+	seat->touch_focus = NULL;
+	frame_gtk->touch_active = NULL;
+	frame_gtk->hdr_focus.widget = NULL;
+	frame_gtk->hdr_focus.type = HEADER_NONE;
+	draw_decoration(frame_gtk);
+	libdecor_frame_toplevel_commit(&frame_gtk->frame);
+}
+
+static void
+touch_motion(void *data,
+	     struct wl_touch *wl_touch,
+	     uint32_t time,
+	     int32_t id,
+	     wl_fixed_t x,
+	     wl_fixed_t y)
+{
+	struct seat *seat = data;
+	struct libdecor_frame_gtk *frame_gtk;
+
+	if (!seat->touch_focus || !own_surface(seat->touch_focus))
+		return;
+
+	frame_gtk = wl_surface_get_user_data(seat->touch_focus);
+	if (!frame_gtk)
+		return;
+
+	update_touch_focus(seat, frame_gtk, x, y);
+}
+
+static void
+touch_frame(void *data,
+	    struct wl_touch *wl_touch)
+{
+}
+
+static void
+touch_cancel(void *data,
+	     struct wl_touch *wl_touch)
+{
+}
+
+static struct wl_touch_listener touch_listener = {
+	touch_down,
+	touch_up,
+	touch_motion,
+	touch_frame,
+	touch_cancel
+};
+
+static void
 seat_capabilities(void *data,
 		  struct wl_seat *wl_seat,
 		  uint32_t capabilities)
@@ -2300,6 +2511,17 @@ seat_capabilities(void *data,
 		   seat->wl_pointer) {
 		wl_pointer_release(seat->wl_pointer);
 		seat->wl_pointer = NULL;
+	}
+
+	if ((capabilities & WL_SEAT_CAPABILITY_TOUCH) &&
+		!seat->wl_touch) {
+		seat->wl_touch = wl_seat_get_touch(wl_seat);
+		wl_touch_add_listener(seat->wl_touch,
+					&touch_listener, seat);
+	} else if (!(capabilities & WL_SEAT_CAPABILITY_TOUCH) &&
+		   seat->wl_touch) {
+		wl_touch_release(seat->wl_touch);
+		seat->wl_touch = NULL;
 	}
 }
 
