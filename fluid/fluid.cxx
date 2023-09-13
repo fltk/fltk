@@ -352,7 +352,7 @@ static void create_tmpdir() {
   // usually resolving into
   //    C:/Windows/Temp/
   //    C:\Users\<username>\AppData\Local\Temp
-  fl_snprintf(buf, sizeof(buf)-1, "fluid-%d", (long)GetCurrentProcessId());
+  fl_snprintf(buf, sizeof(buf)-1, "fluid-%d/", (long)GetCurrentProcessId());
   wchar_t tempdirW[FL_PATH_MAX+1];
   char tempdir[FL_PATH_MAX+1];
   unsigned len = GetTempPathW(FL_PATH_MAX, tempdirW);
@@ -368,7 +368,7 @@ static void create_tmpdir() {
   fl_make_path(path.c_str());
   if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
 #else
-  fl_snprintf(buf, sizeof(buf), "fluid-%d", getpid());
+  fl_snprintf(buf, sizeof(buf)-1, "fluid-%d/", getpid());
   Fl_String name = buf;
   Fl_String path = fl_getenv("TMPDIR");
   if (!path.empty()) {
