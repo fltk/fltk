@@ -33,18 +33,10 @@ snap {
 }
 shell_commands {
   command {
-    name {all: build}
-    label {Build...}
-    shortcut 4194402
-    command {fltk-config --compile @BASENAME@.cxx}
-    flags 3
-  }
-  command {
     name {all: run}
     label {Run...}
     shortcut 4194418
-    command {fltk-config --compile @BASENAME@.cxx
-./@BASENAME@}
+    command {echo @TMPDIR@}
     flags 3
   }
 }
@@ -890,7 +882,7 @@ if (v==LOAD) {
             MenuItem {} {
               label {Import...}
               callback {if (v != LOAD) 
-  Fd_Shell_Command_List::import_from_file();} selected
+  Fd_Shell_Command_List::import_from_file();}
               xywh {90 90 100 20} labelsize 11
             }
             MenuItem {} {
@@ -1184,6 +1176,10 @@ if (mi) {
               }
               MenuItem {} {
                 label {@@TEXTFILE_NAME@@}
+                xywh {70 70 100 20} labelfont 4 labelsize 11
+              }
+              MenuItem {} {
+                label {@@TMPDIR@@} selected
                 xywh {70 70 100 20} labelfont 4 labelsize 11
               }
             }

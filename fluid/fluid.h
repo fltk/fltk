@@ -146,6 +146,8 @@ extern void leave_project_dir();
 extern void set_filename(const char *c);
 extern void set_modflag(int mf, int mfc=-1);
 
+extern const Fl_String &get_tmpdir();
+
 // ---- public callback functions
 
 extern void save_cb(Fl_Widget *, void *v);

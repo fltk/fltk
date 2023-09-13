@@ -172,6 +172,9 @@ Fl_String g_code_filename_arg;
 Fl_String g_header_filename_arg;
 Fl_String g_launch_path;
 
+Fl_String tmpdir_path;
+bool tmpdir_create_called = false;
+
 /** \var int Fluid_Project::header_file_set
  If set, command line overrides header file name in .fl file.
  */
@@ -322,6 +325,112 @@ void Fluid_Project::update_settings_dialog() {
     w_settings_project_tab->do_callback(w_settings_project_tab, LOAD);
     w_settings_i18n_tab->do_callback(w_settings_i18n_tab, LOAD);
   }
+}
+
+// make sure that a path nae ends with a forward slash
+static Fl_String end_with_slash(const Fl_String &str) {
+  char last = str[str.size()-1];
+  if (last !='/' && last != '\\')
+    return str + "/";
+  else
+    return str;
+}
+
+/** Generate a path to a directory for temporary data storage.
+ The path is stored in g_tmpdir.
+ */
+static void create_tmpdir() {
+  if (tmpdir_create_called)
+    return;
+  tmpdir_create_called = true;
+
+  char buf[128];
+#if _WIN32
+  // The usual temp file locations on Windows are
+  //    %system%\Windows\Temp
+  //    %userprofiles%\AppData\Local\
+  // usually resolving into
+  //    C:/Windows/Temp/
+  //    C:\Users\<username>\AppData\Local\Temp
+  fl_snprintf(buf, sizeof(buf)-1, "fluid-%d", (long)GetCurrentProcessId());
+  wchar_t tempdirW[FL_PATH_MAX+1];
+  char tempdir[FL_PATH_MAX+1];
+  unsigned len = GetTempPathW(FL_PATH_MAX, tempdirW);
+  if (len == 0) {
+    strcpy(tempdir, "c:/windows/temp/");
+  } else {
+    unsigned wn = fl_utf8fromwc(tempdir, FL_PATH_MAX, tempdirW, len);
+    utf8[wn] = 0;
+  }
+  Fl_String path = tempdir;
+  end_with_slash(path);
+  path += name;
+  fl_make_path(path.c_str());
+  if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
+#else
+  fl_snprintf(buf, sizeof(buf), "fluid-%d", getpid());
+  Fl_String name = buf;
+  Fl_String path = fl_getenv("TMPDIR");
+  if (!path.empty()) {
+    end_with_slash(path);
+    path += name;
+    fl_make_path(path.c_str());
+    if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
+  }
+  if (tmpdir_path.empty()) {
+    path = Fl_String("/tmp/") + name;
+    fl_make_path(path.c_str());
+    if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
+  }
+#endif
+  if (tmpdir_path.empty()) {
+    char pbuf[FL_PATH_MAX+1];
+    fluid_prefs.get_userdata_path(pbuf, FL_PATH_MAX);
+    path = Fl_String(pbuf);
+    end_with_slash(path);
+    path += name;
+    fl_make_path(path.c_str());
+    if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
+  }
+  if (tmpdir_path.empty())
+    fl_alert("Can't create directory for temporary data storage.");
+}
+
+/** Delete the temporary directory that was created in set_tmpdir. */
+static void delete_tmpdir() {
+  // was a temporary directory created
+  if (!tmpdir_create_called)
+    return;
+  if (tmpdir_path.empty())
+    return;
+
+  // first delete all files that may still be left in the temp directory
+  struct dirent **de;
+  int n_de = fl_filename_list(tmpdir_path.c_str(), &de);
+  if (n_de >= 0) {
+    for (int i=0; i<n_de; i++) {
+      Fl_String path = tmpdir_path + de[i]->d_name;
+      fl_unlink(path.c_str());
+    }
+    fl_filename_free_list(&de, n_de);
+  }
+
+  // then delete the directory itself
+  if (fl_rmdir(tmpdir_path.c_str()) < 0) {
+    fl_alert("WARNING: Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
+  }
+}
+
+/**
+ Return the path to a temporary directory for this instance of FLUID.
+ Fluid will do its best to clear and delete this directory when exiting.
+ \return the path to the temporary directory, ending in a '/', or and empty
+      string is no directory could be created.
+ */
+const Fl_String &get_tmpdir() {
+  if (!tmpdir_create_called)
+    create_tmpdir();
+  return tmpdir_path;
 }
 
 /**
@@ -744,6 +853,7 @@ void exit_cb(Fl_Widget *,void *) {
   //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
   g_project.reset();
   ExternalCodeEditor::tmpdir_clear();
+  delete_tmpdir();
 
   exit(0);
 }
@@ -990,15 +1100,6 @@ void apple_open_cb(const char *c) {
   open_project_file(Fl_String(c));
 }
 #endif // __APPLE__
-
-// make sure that a path nae ends with a forward slash
-static Fl_String end_with_slash(const Fl_String &str) {
-  char last = str[str.size()-1];
-  if (last !='/' && last != '\\')
-    return str + "/";
-  else
-    return str;
-}
 
 /**
  Get the absolute path of the project file, for example `/Users/matt/dev/`.
@@ -1851,6 +1952,7 @@ void set_filename(const char *c) {
 
   set_modflag(modflag);
 }
+
 
 /**
  Set the "modified" flag and update the title of the main window.

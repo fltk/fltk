@@ -43,6 +43,7 @@
 //  - options to save project, code, and strings before running
 //  - test-run button
 
+// TODO: add @APPDIR@?
 // TODO: get a macro to find `fltk-config` @FLTK_CONFIG@
 // TODO:   add an input field so the user can insert their preferred file and path for fltk-config (user setting)
 //        this is actually tricky to find
@@ -80,23 +81,19 @@
  default shell is in $SHELL on linux and macOS
 
  #!/usr/bin/env osascript
- set x to "poop"
  say "@BASENAME@"
 
  osascript <<EOD
  say "spark"
  EOD
 
- /bin/bash -l -c 'fltk-config' does the trick for me
+  osascript <<EOD
+    tell application "Xcode"
+      build workspace document 1
+    end tell
+  EOD
 
- void shell_prefs_get()
- {
-   fluid_prefs.get("shell_command", g_shell_command, "echo \"Custom Shell Command\"");
-   fluid_prefs.get("shell_savefl", g_shell_save_fl, 1);
-   fluid_prefs.get("shell_writecode", g_shell_save_code, 1);
-   fluid_prefs.get("shell_writemsgs", g_shell_save_strings, 0);
-   fluid_prefs.get("shell_use_fl", g_shell_use_fl_settings, 1);
- }
+ /bin/bash -l -c 'fltk-config' does the trick for me
 
  */
 
@@ -336,6 +333,8 @@ static void expand_macros(Fl_String &cmd) {
   expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.headerfile_name());
   expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.stringsfile_path());
   expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.stringsfile_name());
+  if (cmd.find("@TMPDIR@") != Fl_String::npos)
+    expand_macro(cmd, "@TMPDIR@",           get_tmpdir());
 }
 
 /**
