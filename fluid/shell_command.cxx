@@ -887,7 +887,7 @@ void Fd_Shell_Command_List::export_selected() {
   dialog.preset_file((g_project.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL);
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, index = 0, n = w_settings_shell_list->size();
   for (i = 0; i < n; i++) {
@@ -916,7 +916,7 @@ void Fd_Shell_Command_List::import_from_file() {
   dialog.preset_file((g_project.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL);
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, n = shell_commands.groups();
   for (i = 0; i < n; i++) {

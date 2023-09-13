@@ -651,7 +651,7 @@ void Fd_Layout_List::update_menu_labels() {
  */
 int Fd_Layout_List::load(const Fl_String &filename) {
   remove_all(FD_STORE_FILE);
-  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
   read(prefs, FD_STORE_FILE);
   return 0;
 }
@@ -661,7 +661,7 @@ int Fd_Layout_List::load(const Fl_String &filename) {
  */
 int Fd_Layout_List::save(const Fl_String &filename) {
   assert(this);
-  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
   write(prefs, FD_STORE_FILE);
   return 0;
