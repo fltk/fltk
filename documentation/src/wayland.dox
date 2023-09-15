@@ -17,25 +17,30 @@ This chapter describes how the Wayland backend of FLTK works from a developer's 
 
 \section wayland-intro Introduction to Wayland
 
-Wayland usage involves communication via a socket between a client application and
-another process called the Wayland compositor which creates, moves, resizes and draws windows
-on the display. Diverse Wayland compositors exist. They can follow rather diverse logics.
-For example, FreeBSD offers Sway which is a tiling compositor where the display is always
-entirely filled with whatever windows are mapped at any given time. Compositors follow either the
+Wayland usage involves communication via a Unix domain socket between a client
+application and another process called the Wayland compositor which creates,
+moves, resizes and draws windows on the display.
+Diverse Wayland compositors exist. They can follow rather diverse logics.
+For example, FreeBSD offers Sway which is a tiling compositor where the display is
+always entirely filled with whatever resizable windows are mapped at any given
+time. Compositors follow either the
 client-side decoration (CSD) rule where client apps draw window titlebars, or the
 server-side decoration (SSD) rule where the compositor draws titlebars. FLTK supports both
 CSD and SSD compositors. It bundles a library called \c libdecor charged of determining whether
 a CSD or a SSD compositor is active, and of drawing titlebars in the first case.
 
 Wayland is divided in various protocols that a given compositor may or may not support,
-although they all support the \c core protocol. Each protocol adds functionality not available
-in the core protocol. The core protocol allows a client app
+although they all support the \c core protocol. Each protocol adds functionality
+not available in the core protocol.
+<a href=https://wayland.app/protocols/>Wayland Explorer</a> lists
+all protocols. The core protocol allows a client app
 to discover what protocols the connected compositor supports. Protocols can be stable,
 which means they have a defined API that will not change but can be expanded, or unstable.
 For example, mapping a window on a display is not done by the core protocol but by the
-<tt>xdg shell</tt> protocol which is stable. Unstable protocols are named beginning with
-letter 'z'. For example, the protocol FLTK uses to support CJK input methods is called
-\c zwp_text_input_v3 and is, unfortunately, unstable.
+<tt>xdg shell</tt> protocol which is stable. The names of symbols used by unstable
+protocols allways begin with letter 'z'. For example, the unstable protocol
+FLTK uses to support CJK input methods is called <tt>Text Input</tt> and uses
+names beginning with \c zwp_text_input_v3.
 
 Wayland makes intensive use of the <em>listener</em> mechanism. A listener is a small array
 of pointers to FLTK-defined callback functions associated to a Wayland-defined object;
@@ -104,7 +109,7 @@ to a mapped Fl_Window.
 
 Classes \c Fl_Wayland_Window_Driver, \c Fl_Wayland_Screen_Driver, \c Fl_Wayland_Graphics_Driver,
 \c Fl_Wayland_Copy_Surface_Driver, \c Fl_Wayland_Image_Surface_Driver and
-\c Fl_Wayland_Gl_Window_Driver and \c file fl_wayland_platform_init.cxx
+\c Fl_Wayland_Gl_Window_Driver and file \c  fl_wayland_platform_init.cxx
 contain all the Wayland-specific code of the FLTK library.
 This code is located at \c src/drivers/Wayland/ in the FLTK source tree.
 A single C++ source file generally contains all the code of a given class.
@@ -324,9 +329,11 @@ and in overridden functions \c Fl_Wayland_Screen_Driver::poll_or_select_with_del
 
 Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wayland surface
 "has a rectangular area which may be displayed on zero or more displays, present buffers,
-receive user input, and define a local coordinate system". Buffers allow the client app to
-draw to surfaces (see \ref wayland-buffer). FLTK creates a surface
-each time an Fl_Window is show()'n.
+receive user input, and define a local coordinate system". In other words,
+surface is the name Wayland uses for a window.
+Buffers allow the client app to draw to surfaces (see \ref wayland-buffer).
+FLTK creates a surface each time an Fl_Window is show()'n calling function
+\c wl_compositor_create_surface().
 Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
 gives the \c Fl_Window* corresponding to the surface given in argument.
 FLTK recognizes 4 distinct
@@ -720,13 +727,17 @@ One such record is created for each display. These records are put in a
 FLTK uses 2 distinct scaling parameters for each display:
 - <tt>int wld_scale;</tt>. This member variable of the
 \c struct \ref wayland-output "Fl_Wayland_Screen_Driver::output" record
-typically equals 1 for standard, and 2 for
-HighDPI displays. Its value is set by the Wayland compositor for each display with the effect
-that 1 Wayland graphics unit represents a block of \c nxn pixels when the value is \c n.
-Another effect is that a drawing buffer for a surface of size WxH units contains
-<tt>W * n * H * n * 4</tt> bytes. This is enough to make FLTK apps HighDPI-aware because the
-Wayland compositor automatically initializes parameter \c wld_scale to the value adequate for
-each display's DPI. Under the gnome desktop, this parameter is visible in the "Settings" app,
+typically equals 1 for standard, and 2 for HighDPI displays.
+The effect of value \c n of variable \c wld_scale is
+that 1 Wayland graphics unit represents a block of \c nxn pixels.
+Another effect is that a drawing buffer for a surface of size WxH units
+contains <tt>W * n * H * n * 4</tt> bytes.
+Member function \c output_scale() mentionned above sets this value for
+each system's display at startup time. Member function \c
+Fl_Wayland_Graphics_Driver::buffer_commit() informs the Wayland compositor
+of the value of \c wld_scale calling \c wl_surface_set_buffer_scale()
+which is enough to make FLTK apps HighDPI-aware.
+Under the gnome desktop, this parameter is visible in the "Settings" app,
 "Displays" section, "Scale" parameter which is 200% on HighDPI displays.
 - <tt>float gui_scale;</tt>. This other member variable is where FLTK's own GUI scaling mechanism
 with ctrl/+/-/0/ keystrokes and with environment variable FLTK_SCALING_FACTOR operates:
@@ -737,7 +748,8 @@ member variable of display # \c n. This variable is used by function
 that scales the graphics driver by this factor with \c cairo_scale().
 
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
-<tt>W * wld_scale * gui_scale x H * wld_scale * gui_scale</tt> pixels on the display.
+<tt>int(W * gui_scale) * wld_scale x int(H * gui_scale) * wld_scale</tt> pixels
+on the display.
 
 When an \c Fl_Window is to be show()'n, \c Fl_Wayland_Window_Driver::makeWindow() creates
 a <tt>struct wl_surface</tt> with \c wl_compositor_create_surface() and associates it
@@ -892,7 +904,7 @@ gets associated to a standard cursor or to a new custom cursor.
 
 
 
-\section wayland-text Text input
+\section wayland-text Keyboard support
 
 The "Mouse handling" section above mentionned function \c seat_capabilities() that Wayland calls when
 the app discovers its "seat". Presence of flag \c WL_SEAT_CAPABILITY_KEYBOARD in argument
