@@ -70,8 +70,9 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND macOS
         --enable-xdbe           - Enable the X double-buffer extension
         --enable-xft            - Enable the Xft library (anti-aliased fonts)
         --enable-pango          - Draw text with the pango library
-        --enable-wayland        - Use the Wayland system for handling windows
-
+        --disable-wayland       - Force building for X11 only (no Wayland support)
+        --enable-x11            - Force building for X11 (macOS and Cygwin)
+        --disable-x11           - Force building for Wayland only (Linux/Unix)
         --bindir=/path          - Set the location for executables
                                   [default = /usr/local/bin]
         --libdir=/path          - Set the location for libraries
