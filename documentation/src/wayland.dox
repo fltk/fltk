@@ -117,7 +117,8 @@ The code related to copy, paste and drag-and-drop operations, however,
 is gathered in file \c fl_wayland_clipboard_dnd.cxx and contains a few
 member functions of class \c Fl_Wayland_Screen_Driver.
 Furthermore, class \c Fl_Unix_System_Driver is used by both the Wayland and the X11
-FLTK platforms.
+FLTK platforms. File FL/fl_config.h defines preprocessor variables
+\c FLTK_USE_WAYLAND and \c FLTK_USE_CAIRO.
 
 The public C API to Wayland, xkb, EGL and libdecor libraries are obtained with
 \code
@@ -155,7 +156,9 @@ Similar operations are performed for FLTK to use protocols <tt>xdg decoration un
 The Wayland platform of FLTK is normally a two-legged hybrid able to use either Wayland or X11
 and to choose between these possibilities at run-time, without any change to the client
 application. The Wayland/X11 hybrid is essentially a version of the FLTK library containing both all
-Wayland-specific and all X11-specific code. This creates the constraint that Wayland and X11 cannot
+Wayland-specific and all X11-specific code. That's reflected in file
+FL/fl_config.h which defines both \c FLTK_USE_WAYLAND and \c FLTK_USE_X11.
+This creates the constraint that Wayland and X11 cannot
 use the same type name for different purposes or the same symbol name.
 That is why function <tt>fl_xid(const Fl_Window*)</tt> is deprecated in FLTK 1.4 and replaced by
 \c fl_wl_xid() for Wayland and \c fl_x11_xid() for X11. Also, global variable
@@ -183,7 +186,8 @@ without any other change in the source code nor to the application's environment
 In special situations, such as with embedded systems equipped with the Wayland software but lacking
 the X11 library, it's possible to build the FLTK library such as it contains only the Wayland backend.
 This is achieved building FLTK with <tt>cmake -DOPTION_WAYLAND_ONLY=on</tt> or with
-<tt>configure --disable-x11</tt>.
+<tt>configure --disable-x11</tt>. In that case, FL/fl_config.h does not define
+\c FLTK_USE_X11.
 
 The rest of this chapter describes what happens when the Wayland leg has been chosen.
 
