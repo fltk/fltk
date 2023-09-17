@@ -88,13 +88,16 @@ of all displays of the system (see \ref wayland-output "Fl_Wayland_Screen_Driver
   }
 \endcode
 
-Overall, and ignoring for now OpenGL usage, FLTK interacts with Wayland in 3 ways :
-- Calling C functions of the \c libwayland-client.so,
-\c libwayland-cursor.so and \c libxkbcommon.so shared libraries and of the bundled libdecor library.
+Overall, and ignoring for now OpenGL usage, FLTK interacts with Wayland as follows :
+- When opening the display: FLTK calls \c Fl::add_fd() in \c FL_READ mode to associate
+a  callback function to the socket connecting the client and the compositor.
+- Client to compositor: FLTK calls C functions of the \c libwayland-client.so,
+\c libwayland-cursor.so and \c libxkbcommon.so shared libraries and of the bundled
+libdecor library. These send suitable messages to the compositor writing to the socket.
 The names of these functions begin with \c wl_, \c xkb_ or \c libdecor_.
-- Being called by these libraries via the 'listener' mechanism.
-- Listening, after a call to \c Fl::add_fd(), to data sent by the compositor to the client via
-the socket.
+- Compositor to client: the callback function runs when there are data to read in the
+socket; it calls \c wl_display_dispatch() which interprets the read data and calls
+corresponding listeners.
 
 The core protocol defines also a number of mostly opaque structures whose names begin with \c wl_.
 The names of symbols and types defined by the other protocols FLTK uses begin with \c xdg_,
