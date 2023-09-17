@@ -1,7 +1,7 @@
 //
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,24 +14,26 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/** \file Fl_Graphics_Driver.cxx
+\brief Implementation of class Fl_Graphics_Driver.
+*/
+
+#include <FL/Fl_Graphics_Driver.H>
+/** Points to the driver that currently receives all graphics requests */
+FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver;
+
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
  \{
  */
 
-#include <config.h>
-#include <FL/Fl.H>
-#include <FL/Fl_Graphics_Driver.H>
 #include "Fl_Screen_Driver.H"
-#include <FL/Fl_Image.H>
-#include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
-#include <FL/math.h>
-#include <FL/platform.H>
+#include <FL/math.h> // for fabs(), sqrt()
+#include <FL/platform.H> // for fl_open_display()
 #include <stdlib.h>
 
-FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
