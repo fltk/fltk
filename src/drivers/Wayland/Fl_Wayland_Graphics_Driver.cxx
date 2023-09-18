@@ -28,8 +28,8 @@ extern "C" {
 #  include "../../../libdecor/src/os-compatibility.h" // for os_create_anonymous_file()
 }
 
-
-struct wl_shm_pool *Fl_Wayland_Graphics_Driver::pool = NULL;
+// used by create_shm_buffer and buffer_release
+static struct wl_shm_pool *pool = NULL; // the current pool
 
 
 struct Fl_Wayland_Graphics_Driver::wld_buffer *
@@ -43,17 +43,12 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
   struct wld_shm_pool_data *pool_data = pool ? // data record attached to current pool
     (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool) : NULL;
   int pool_size = pool ? pool_data->pool_size : default_pool_size; // current pool size
-  if (pool_data && !wl_list_empty(&pool_data->buffers)) {
+  if (pool) {
+    // last wld_buffer created from current pool
     struct wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
     chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->draw_buffer.data_size;
   }
   if (!pool || chunk_offset + size > pool_size) { // if true, a new pool is needed
-    if (pool_data && wl_list_empty(&pool_data->buffers)) {
-      wl_shm_pool_destroy(pool);
-      /*int err =*/ munmap(pool_data->pool_memory, pool_data->pool_size);
-      //printf("munmap(%p)->%d\n", pool_data->pool_memory, err);
-      free(pool_data);
-    }
     chunk_offset = 0;
     pool_size = default_pool_size;
     if (size > pool_size) pool_size = 2 * size; // a larger pool is needed
@@ -68,10 +63,10 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
       close(fd);
       Fl::fatal("mmap failed: %s\n", strerror(errno));
     }
-//printf("os_create_anonymous_file(%d): mmap(%p)\n", pool_size, pool_data->pool_memory);
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     pool = wl_shm_create_pool(scr_driver->wl_shm, fd, pool_size);
     close(fd); // does not prevent the mmap'ed memory from being used
+//puts("wl_shm_create_pool");
     pool_data->pool_size = pool_size;
     wl_list_init(&pool_data->buffers);
     wl_shm_pool_set_user_data(pool, pool_data);
@@ -191,12 +186,12 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
     // remove wld_buffer from list of pool's buffers
     wl_list_remove(&window->buffer->link);
 //printf("last=%p\n", wl_list_empty(&pool_data->buffers) ? NULL : pool_data->buffers.next);
-    if (wl_list_empty(&pool_data->buffers) && my_pool != pool) {
-      // all buffers from my_pool are gone
+    if (wl_list_empty(&pool_data->buffers)) { // all buffers from pool are gone
       wl_shm_pool_destroy(my_pool);
       /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
 //printf("munmap(%p)->%d\n", pool_data->pool_memory, err);
       free(pool_data);
+      if (my_pool == pool) pool = NULL;
     }
     delete[] window->buffer->draw_buffer.buffer;
     window->buffer->draw_buffer.buffer = NULL;

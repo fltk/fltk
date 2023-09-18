@@ -1252,16 +1252,6 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
 
 
 void Fl_Wayland_Screen_Driver::close_display() {
-  if (Fl_Wayland_Graphics_Driver::pool ) {
-    struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *pool_data =
-      (struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *)
-      wl_shm_pool_get_user_data(Fl_Wayland_Graphics_Driver::pool);
-    wl_shm_pool_destroy(Fl_Wayland_Graphics_Driver::pool);
-    /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
-    //printf("munmap(%p)->%d\n", pool_data->pool_memory, err);
-    free(pool_data);
-    Fl_Wayland_Graphics_Driver::pool = NULL;
-  }
   if (text_input_base) {
     disable_im();
     zwp_text_input_manager_v3_destroy(text_input_base);

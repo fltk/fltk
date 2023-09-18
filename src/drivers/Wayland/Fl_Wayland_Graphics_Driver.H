@@ -51,7 +51,6 @@ public:
     struct wl_list buffers; // to list of fl_wld_buffer's from this pool
   };
   static const uint32_t wld_format;
-  static struct wl_shm_pool *pool; // the current pool
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) FL_OVERRIDE;
   static struct wld_buffer *create_shm_buffer(int width, int height);
   static void buffer_release(struct wld_window *window);
