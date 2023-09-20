@@ -901,6 +901,7 @@ filename_absolute.o: ../FL/fl_casts.H
 filename_absolute.o: ../FL/fl_config.h
 filename_absolute.o: ../FL/Fl_Export.H
 filename_absolute.o: ../FL/Fl_Preferences.H
+filename_absolute.o: ../FL/Fl_String.H
 filename_absolute.o: ../FL/fl_string_functions.h
 filename_absolute.o: ../FL/fl_types.h
 filename_absolute.o: ../FL/fl_utf8.h
@@ -1270,6 +1271,7 @@ Fl_Button.o: ../FL/Fl_Button.H
 Fl_Button.o: ../FL/Fl_Cairo.H
 Fl_Button.o: ../FL/fl_casts.H
 Fl_Button.o: ../FL/fl_config.h
+Fl_Button.o: ../FL/fl_draw.H
 Fl_Button.o: ../FL/Fl_Export.H
 Fl_Button.o: ../FL/Fl_Group.H
 Fl_Button.o: ../FL/Fl_Image.H
@@ -2199,7 +2201,6 @@ Fl_grab.o: ../FL/Fl_Valuator.H
 Fl_grab.o: ../FL/Fl_Widget.H
 Fl_grab.o: ../FL/platform_types.h
 Fl_grab.o: Fl_Screen_Driver.H
-Fl_Graphics_Driver.o: ../config.h
 Fl_Graphics_Driver.o: ../FL/Enumerations.H
 Fl_Graphics_Driver.o: ../FL/Fl.H
 Fl_Graphics_Driver.o: ../FL/fl_attr.h

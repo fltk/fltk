@@ -2774,10 +2774,13 @@ unittest_complex_shapes.o: ../FL/Fl_Window.H
 unittest_complex_shapes.o: ../FL/platform_types.h
 unittest_complex_shapes.o: unittests.h
 unittest_core.o: ../FL/Enumerations.H
+unittest_core.o: ../FL/filename.H
 unittest_core.o: ../FL/Fl.H
 unittest_core.o: ../FL/fl_attr.h
 unittest_core.o: ../FL/Fl_Bitmap.H
+unittest_core.o: ../FL/Fl_Button.H
 unittest_core.o: ../FL/Fl_Cairo.H
+unittest_core.o: ../FL/fl_callback_macros.H
 unittest_core.o: ../FL/fl_casts.H
 unittest_core.o: ../FL/fl_config.h
 unittest_core.o: ../FL/Fl_Device.H
