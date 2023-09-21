@@ -143,7 +143,7 @@ public:
     SAVEAS_CONFIRM = 0x0001,            ///< Show native 'Save As' overwrite confirm dialog
     NEW_FOLDER     = 0x0002,            ///< Show 'New Folder' icon (if supported)
     PREVIEW        = 0x0004,            ///< enable preview mode (if supported)
-    USE_FILTER_EXT = 0x0008             ///< Chooser filter pilots the output file extension (if supported)
+    USE_FILTER_EXT = 0x0008             ///< Chooser filter presets the output file extension (if supported)
   };
   static const char *file_exists_message;
 
