@@ -58,11 +58,14 @@ void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
 }
 
 #include <FL/Fl_Bitmap.H>
+
 static const unsigned char idata_new[] =
 {0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
 128,1,128,1,128,255,255,0,0};
 static Fl_Image *image_new() {
-  static Fl_Image *image = new Fl_Bitmap(idata_new, 16, 16);
+  static Fl_Image *image = NULL;
+  if (!image)
+    image = new Fl_Bitmap(idata_new, 32, 16, 16);
   return image;
 }
 
@@ -264,8 +267,8 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       } // Fl_Group* o
       o->end();
     } // Fl_Group* o
-    if (title) window->label(title);
     window->set_modal();
+    if (title) window->label(title);
     window->end();
   } // Fl_Double_Window* window
   { favWindow = new Fl_Double_Window(355, 150, "Manage Favorites");
@@ -303,9 +306,9 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    favWindow->label(manage_favorites_label);
     favWindow->set_modal();
     favWindow->size_range(181, 150);
+    favWindow->label(manage_favorites_label);
     favWindow->end();
   } // Fl_Double_Window* favWindow
   callback_ = 0;
