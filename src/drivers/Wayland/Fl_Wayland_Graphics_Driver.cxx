@@ -32,6 +32,23 @@ extern "C" {
 static struct wl_shm_pool *pool = NULL; // the current pool
 
 
+static void do_buffer_release(struct Fl_Wayland_Graphics_Driver::wld_buffer *);
+
+
+static void buffer_release_listener(void *user_data, struct wl_buffer *wl_buffer)
+{
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer =
+    (struct Fl_Wayland_Graphics_Driver::wld_buffer*)user_data;
+  buffer->in_use = false;
+  if (buffer->released) do_buffer_release(buffer);
+}
+
+
+static const struct wl_buffer_listener buffer_listener = {
+  buffer_release_listener
+};
+
+
 struct Fl_Wayland_Graphics_Driver::wld_buffer *
   Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, int height)
 {
@@ -43,12 +60,18 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
   struct wld_shm_pool_data *pool_data = pool ? // data record attached to current pool
     (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool) : NULL;
   int pool_size = pool ? pool_data->pool_size : default_pool_size; // current pool size
-  if (pool) {
+  if (pool && !wl_list_empty(&pool_data->buffers)) {
     // last wld_buffer created from current pool
     struct wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
     chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->draw_buffer.data_size;
   }
   if (!pool || chunk_offset + size > pool_size) { // if true, a new pool is needed
+    if (pool && wl_list_empty(&pool_data->buffers)) {
+      wl_shm_pool_destroy(pool);
+      /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
+//      printf("create_shm_buffer munmap(%p)->%d\n", pool_data->pool_memory, err);
+      free(pool_data);
+    }
     chunk_offset = 0;
     pool_size = default_pool_size;
     if (size > pool_size) pool_size = 2 * size; // a larger pool is needed
@@ -66,7 +89,7 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     pool = wl_shm_create_pool(scr_driver->wl_shm, fd, pool_size);
     close(fd); // does not prevent the mmap'ed memory from being used
-//puts("wl_shm_create_pool");
+//printf("wl_shm_create_pool %p size=%d\n",pool_data->pool_memory , pool_size);
     pool_data->pool_size = pool_size;
     wl_list_init(&pool_data->buffers);
     wl_shm_pool_set_user_data(pool, pool_data);
@@ -81,6 +104,7 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
   buffer->draw_buffer_needs_commit = true;
 //fprintf(stderr, "create_shm_buffer: %dx%d = %d\n", width, height, size);
   cairo_init(&buffer->draw_buffer, width, height, stride, Fl_Cairo_Graphics_Driver::cairo_format);
+  wl_buffer_add_listener(buffer->wl_buffer, &buffer_listener, buffer);
   return buffer;
 }
 
@@ -139,6 +163,7 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
     memcpy(window->buffer->data, window->buffer->draw_buffer.buffer, window->buffer->draw_buffer.data_size);
     wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
   }
+  window->buffer->in_use = true;
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
   wl_surface_set_buffer_scale(window->wl_surface,
                               Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale());
@@ -174,29 +199,36 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct Fl_Wayland_Graphics_Driver::d
 }
 
 
+// runs when buffer->in_use is false and buffer->released is true
+static void do_buffer_release(
+            struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer) {
+  struct wl_shm_pool *my_pool = buffer->shm_pool;
+  struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *pool_data =
+    (struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data*)
+      wl_shm_pool_get_user_data(my_pool);
+  wl_buffer_destroy(buffer->wl_buffer);
+  // remove wld_buffer from list of pool's buffers
+  wl_list_remove(&buffer->link);
+  free(buffer);
+  if (wl_list_empty(&pool_data->buffers) && my_pool != pool) {
+    // all buffers from pool are gone
+    wl_shm_pool_destroy(my_pool);
+    /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
+//printf("do_buffer_release munmap(%p)->%d\n", pool_data->pool_memory, err);
+    free(pool_data);
+  }
+}
+
+
 void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 {
-  if (window->buffer) {
+  if (window->buffer && !window->buffer->released) {
+    window->buffer->released = true;
     if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
-    struct wl_shm_pool *my_pool = window->buffer->shm_pool;
-    struct wld_shm_pool_data *pool_data =
-      (struct wld_shm_pool_data*)wl_shm_pool_get_user_data(my_pool);
-    wl_buffer_destroy(window->buffer->wl_buffer);
-//printf("wl_buffer_destroy(%p)\n",window->buffer->wl_buffer);
-    // remove wld_buffer from list of pool's buffers
-    wl_list_remove(&window->buffer->link);
-//printf("last=%p\n", wl_list_empty(&pool_data->buffers) ? NULL : pool_data->buffers.next);
-    if (wl_list_empty(&pool_data->buffers)) { // all buffers from pool are gone
-      wl_shm_pool_destroy(my_pool);
-      /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
-//printf("munmap(%p)->%d\n", pool_data->pool_memory, err);
-      free(pool_data);
-      if (my_pool == pool) pool = NULL;
-    }
     delete[] window->buffer->draw_buffer.buffer;
     window->buffer->draw_buffer.buffer = NULL;
     cairo_destroy(window->buffer->draw_buffer.cairo_);
-    free(window->buffer);
+    if (!window->buffer->in_use) do_buffer_release(window->buffer);
     window->buffer = NULL;
   }
 }

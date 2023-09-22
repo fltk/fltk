@@ -30,20 +30,22 @@
 class Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
   struct draw_buffer {
+    unsigned char *buffer;
+    cairo_t *cairo_;
     size_t data_size; // of wl_buffer and buffer
     int stride;
     int width;
-    unsigned char *buffer;
-    cairo_t *cairo_;
   };
   struct wld_buffer {
     struct draw_buffer draw_buffer;
+    struct wl_list link; // links all buffers from the same wl_shm_pool
     struct wl_buffer *wl_buffer;
     void *data;
     struct wl_callback *cb;
-    bool draw_buffer_needs_commit;
     struct wl_shm_pool *shm_pool;
-    struct wl_list link; // links all buffers from the same wl_shm_pool
+    bool draw_buffer_needs_commit;
+    bool in_use; // true while being committed
+    bool released; // true after buffer_release() was called
   };
   struct wld_shm_pool_data { // one record attached to each wl_shm_pool object
     char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool

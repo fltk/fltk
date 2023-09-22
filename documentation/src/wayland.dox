@@ -632,6 +632,23 @@ a new buffer. When the compositor is not ready, the app does not block but conti
 computing and drawing in memory but not on display more lines of the desired Mandelbrot
 graph.
 
+<h3>Wayland buffer deletion</h3>
+Each \ref wld_buffer record contains boolean member \c in_use which is set to \c true
+just before the buffer gets committed, and boolean member \c released which
+is set to \c true when FLTK no longer needs the buffer and calls
+\c Fl_Wayland_Graphics_Driver::buffer_release().
+FLTK's buffer-creating function, \c Fl_Wayland_Graphics_Driver::create_shm_buffer(),
+attaches a 1-member listener to each buffer which Wayland calls after a commit
+operation to indicate the client is allowed to re-use the buffer.
+This listener's member function, \c buffer_release_listener(),
+turns to false member \c in_use of the buffer's \ref wld_buffer record.
+Since the two events 'FLTK no longer needs the buffer' and
+'the client is allowed to re-use the buffer' can arrive in
+any order, FLTK deletes the <tt>struct wl_buffer</tt> object by running
+\c do_buffer_release() only after both events happened, that is, when \c in_use is
+\c false and \c released is \c true. That's why function \c do_buffer_release()
+is called by both functions \c Fl_Wayland_Graphics_Driver::buffer_release()
+and \c buffer_release_listener().
 
 \section wayland-buffer-factory Buffer factories
 
@@ -680,18 +697,26 @@ gives the offset within the current pool's mmap'ed memory available for a new \c
 Macro \c wl_container_of() gives the address of a record belonging to a linked list of
 records of the same type.
 
-A window's \c wl_buffer is re-used each time the window gets redrawn, and is destroyed by
-function \c Fl_Wayland_Graphics_Driver::buffer_release() when \c Fl_Window::hide() runs or
-the window is resized. Function \c Fl_Wayland_Graphics_Driver::buffer_release() destroys the
-\c wl_buffer with \c wl_buffer_destroy() and removes the corresponding
+A window's \c wl_buffer is re-filled by graphics data and committed each time
+the window gets redrawn, and is set to be destroyed by function
+\c Fl_Wayland_Graphics_Driver::buffer_release() when \c Fl_Window::hide() runs or
+the window is resized. When the \c wl_buffer is no longer in use, function
+\c do_buffer_release() gets called as explained above. It destroys the
+\c wl_buffer with \c wl_buffer_destroy(), and removes the corresponding
 \c Fl_Wayland_Graphics_Driver::wld_buffer record from the linked list of buffers from the same \c wl_shm_pool.
 Since new \c Fl_Wayland_Graphics_Driver::wld_buffer records are added at the head of the linked list, and since
 the record at the head of this list is used to compute the offset within the pool's mmap'ed
 memory available for a new \c wl_buffer, destruction of the last created \c wl_buffer
 allows to re-use the destroyed buffer's pool's memory for a new \c wl_buffer.
-When the linked list results empty, the \c wl_shm_pool is destroyed by
-\c wl_shm_pool_destroy(), the pool's mmap'ed memory is munmap'ed, and the pool's associated
-<tt>struct wld_shm_pool_data</tt> is freed.
+
+When function \c do_buffer_release() finds the list of buffers from a given pool empty,
+two situations can occur. 1) This pool is the current pool. Its mmap'ed memory will be
+re-used from offset 0 to create future \c wl_buffer objects. 2) This pool is not
+current. It gets destroyed with \c wl_shm_pool_destroy(), the pool's mmap'ed memory
+is munmap'ed, and the pool's associated <tt>struct wld_shm_pool_data</tt> is freed.
+In situation 1) above, the next \c wl_buffer to be created can need more memory than
+the current pool's memory size. If so, the current pool gets destroyed and replaced
+by a new, larger pool.
 
 If the sum of \c chunk_offset plus the buffer size is larger than the current pool's size
 when function \c create_shm_buffer() is called, \c chunk_offset is reset
@@ -973,8 +998,8 @@ replacing it with the text that will stay in the document. FLTK underlines marke
 to distinguish it from regular text.
 
 Functions \c text_input_delete_surrounding_text() and \c text_input_done() have
-no effect at present, without this preventing input methods that have been tested with FLTK to work
-satisfactorily.
+no effect at present, without this preventing input methods that have been tested
+with FLTK from working satisfactorily.
 
 It's necessary to inform text input methods of the current location of the insertion point in the
 active surface. This information allows them to map their auxiliary windows next to the insertion
@@ -1188,17 +1213,17 @@ One such record is also embedded inside each
 
 <pre>
 struct Fl_Wayland_Graphics_Driver::draw_buffer {
-  size_t data_size; // of wl_buffer and buffer, in bytes
-  int stride; // bytes per line
-  int width; // in pixels
   unsigned char *buffer; // address of the beginning of the Cairo image surface's byte array
   cairo_t *cairo_; // used when drawing to the Cairo image surface
+  size_t data_size; // of buffer and wl_buffer, in bytes
+  int stride; // bytes per line
+  int width; // in pixels
 };
 </pre>
 FLTK gives offscreen buffers the platform-dependent type \c Fl_Offscreen which is
 in fact member \c cairo_ of <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer</tt>.
-Thus, a variable with type \c Fl_Offscreen needs be casted to type \c cairo_t*.
-<br>Static member function <tt>struct draw_buffer *offscreen_buffer(Fl_Offscreen)</tt>
+Thus, a variable with type \c Fl_Offscreen needs be cast to type \c cairo_t*.
+Static member function <tt>struct draw_buffer *offscreen_buffer(Fl_Offscreen)</tt>
 of class \c Fl_Wayland_Graphics_Driver returns the \c draw_buffer record corresponding
 to an \c Fl_Offscreen value.
 
@@ -1211,12 +1236,14 @@ text is dragged.
 <pre>
 struct Fl_Wayland_Graphics_Driver::wld_buffer {
   struct draw_buffer draw_buffer; // see \ref draw_buffer
+  struct wl_list link; // links all buffers from the same wl_shm_pool
   struct wl_buffer *wl_buffer; // the Wayland buffer
   void *data; // address of the beginning of the Wayland buffer's byte array
-  struct wl_callback *cb; // non-NULL while Wayland buffer is being committed
-  bool draw_buffer_needs_commit; // true when draw_buffer has been modified but not yet committed
+  struct wl_callback *cb; // non-NULL until Wayland can process new buffer commit
   struct wl_shm_pool *shm_pool; // pter to wl_shm_pool from which this wl_buffer comes
-  struct wl_list link; // links all buffers from the same wl_shm_pool
+  bool draw_buffer_needs_commit; // true when draw_buffer has been modified but not yet committed
+  bool in_use; // true while being committed
+  bool released; // true after buffer_release() was called
 };
 </pre>
 
