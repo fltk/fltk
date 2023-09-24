@@ -568,23 +568,52 @@ FLTK has computed a damaged region. If that region is not null,
 surface to the Wayland buffer and calls function \c wl_surface_damage_buffer() for these
 parts to inform the compositor of what parts of the surface need its attention.
 
+<h3>Throttling redrawing operations</h3>
 An important detail here is that FLTK uses Wayland's synchronization
-mechanism to make sure the surface's \c wl_buffer is not changed until the surface is fully
-mapped on the display. This 3-step mechanism works as follows:
+mechanism to make sure the surface's \c wl_buffer is not changed while the
+compositor is using it and to refrain from calling \c wl_surface_commit()
+more frequently than the system can process it.
+This 3-step mechanism works as follows:
 - Fl_Wayland_Graphics_Driver::buffer_commit() first calls function \c wl_surface_frame() to
-obtain a <tt>struct wl_callback</tt> object and stores it as member \c cb of the surface's
-\ref wld_buffer.
-- Then it calls \c wl_callback_add_listener() to associate this object to the FLTK-defined,
-callback function \c surface_frame_done() that Wayland calls when it's ready for another
-mapping operation.
-- Finally \c surface_frame_done() destroys the \c wl_callback object by function
-\c wl_callback_destroy() and sets member \c cb to NULL.
+obtain a pointer to a <tt>struct wl_callback</tt> object and stores it as member
+\c cb of the surface's \ref wld_buffer.
+- Then it calls \c wl_callback_add_listener() to associate this object to the
+FLTK-defined, callback function \c surface_frame_done() that Wayland will call
+later when ready for another mapping operation. It next calls
+\c wl_surface_commit() which starts the mapping of the buffer content on
+the display.
+- Later, \c surface_frame_done() runs and destroys the \c wl_callback object by
+function \c wl_callback_destroy() and sets member \c cb to NULL.
+
+Member variable \c draw_buffer_needs_commit of the \ref wld_buffer is also
+important in this mechanism : it informs FLTK that the graphics buffer has
+changed and needs being committed. This variable is turned \c true every time a
+graphics operation changes the buffer content and turned \c false when the
+buffer gets committed.
 
 This procedure ensures that FLTK never changes the surface's Wayland buffer
-while it's being used by the compositor because \c Fl_Wayland_Window_Driver::flush()
-checks that \c cb is NULL before calling \c Fl_Wayland_Graphics_Driver::buffer_commit().
-If it's not NULL, FLTK calls function \c wl_callback_destroy() which instructs the compositor
-to abort the mapping operation and to get ready for processing of a new byte buffer.
+while it's being used by the compositor and never calls \c wl_surface_commit()
+before Wayland gets ready for a new commit because
+\c Fl_Wayland_Window_Driver::flush() calls
+\c Fl_Wayland_Graphics_Driver::buffer_commit() only if \c cb is NULL.
+If it's not NULL, the exact content of function \c surface_frame_done() :
+\code
+static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
+  struct wld_window *window = (struct wld_window *)data;
+  wl_callback_destroy(cb);
+  if (window->buffer) {
+    window->buffer->cb = NULL;
+    if (window->buffer->draw_buffer_needs_commit) {
+      Fl_Wayland_Graphics_Driver::buffer_commit(window);
+    }
+  }
+}
+\endcode
+has the effect that when the mapping operation eventually completes, Wayland runs
+\c surface_frame_done(), which calls anew
+\c Fl_Wayland_Graphics_Driver::buffer_commit() because the buffer's
+\c draw_buffer_needs_commit member is true. The net result is that the screen
+shows the most recent surface content.
 
 <h3>Progressive window drawing</h3>
 FLTK supports progressive drawing when an app calls function Fl_Window::make_current()
@@ -604,26 +633,10 @@ which means that the compositor is ready to start performing a mapping operation
 This occurs when the progressive drawing operation begins. Later, \c cb is generally found
 non NULL when \c Fl_Wayland_Window_Driver::make_current() runs because the compositor
 is busy processing the previous Wayland buffer. When the compositor has completed
-this processing, the client app runs \c surface_frame_done() :
-\code
-static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
-  struct wld_window *window = (struct wld_window *)data;
-  wl_callback_destroy(cb);
-  if (window->buffer) {
-    window->buffer->cb = NULL;
-    if (window->buffer->draw_buffer_needs_commit) {
-      Fl_Wayland_Graphics_Driver::buffer_commit(window);
-    }
-  }
-}
-\endcode
+this processing, the client app runs \c surface_frame_done()
 which, provided member variable \c draw_buffer_needs_commit is true, calls
 \c Fl_Wayland_Graphics_Driver::buffer_commit(). This makes the compositor map the
-Wayland buffer in its new, more advanced, state. Here is where member variable
-\c draw_buffer_needs_commit is useful : it informs Wayland that the graphics
-buffer has changed and needs being committed. This variable is turned \c true
-every time a graphics operation changes the buffer content and turned \c false
-when the buffer gets committed.
+Wayland buffer in its new, more advanced, state.
 
 An example of progressive drawing is given by FLTK's mandelbrot test app.
 When set to fullscreen, this app can be seen to progressively fill its window from
