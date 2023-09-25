@@ -54,7 +54,8 @@ public:
   };
   static const uint32_t wld_format;
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) FL_OVERRIDE;
-  static struct wld_buffer *create_shm_buffer(int width, int height);
+  static struct wld_buffer *create_wld_buffer(int width, int height, bool with_shm = true);
+  static void create_shm_buffer(wld_buffer *buffer);
   static void buffer_release(struct wld_window *window);
   static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
   static void cairo_init(struct draw_buffer *buffer, int width, int height, int stride, cairo_format_t format);

@@ -49,12 +49,11 @@ static const struct wl_buffer_listener buffer_listener = {
 };
 
 
-struct Fl_Wayland_Graphics_Driver::wld_buffer *
-  Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, int height)
-{
-  struct wld_buffer *buffer;
-  int stride = cairo_format_stride_for_width(Fl_Cairo_Graphics_Driver::cairo_format, width);
-  int size = stride * height;
+void Fl_Wayland_Graphics_Driver::create_shm_buffer(
+        Fl_Wayland_Graphics_Driver::wld_buffer *buffer) {
+  int width = buffer->draw_buffer.width;
+  int stride = buffer->draw_buffer.stride;
+  int height = buffer->draw_buffer.data_size / stride;
   const int default_pool_size = 10000000; // larger pools are possible if needed
   int chunk_offset = 0; // offset to start of available memory in pool
   struct wld_shm_pool_data *pool_data = pool ? // data record attached to current pool
@@ -65,7 +64,8 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
     struct wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
     chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->draw_buffer.data_size;
   }
-  if (!pool || chunk_offset + size > pool_size) { // if true, a new pool is needed
+  if (!pool || chunk_offset + buffer->draw_buffer.data_size > pool_size) {
+    // if true, a new pool is needed
     if (pool && wl_list_empty(&pool_data->buffers)) {
       wl_shm_pool_destroy(pool);
       /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
@@ -74,7 +74,8 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
     }
     chunk_offset = 0;
     pool_size = default_pool_size;
-    if (size > pool_size) pool_size = 2 * size; // a larger pool is needed
+    if (buffer->draw_buffer.data_size > pool_size)
+      pool_size = 2 * buffer->draw_buffer.data_size; // a larger pool is needed
     int fd = os_create_anonymous_file(pool_size);
     if (fd < 0) {
       Fl::fatal("os_create_anonymous_file failed: %s\n", strerror(errno));
@@ -94,17 +95,24 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
     wl_list_init(&pool_data->buffers);
     wl_shm_pool_set_user_data(pool, pool_data);
   }
-  buffer = (struct wld_buffer*)calloc(1, sizeof(struct wld_buffer));
   buffer->wl_buffer = wl_shm_pool_create_buffer(pool, chunk_offset, width, height, stride, Fl_Wayland_Graphics_Driver::wld_format);
+  wl_buffer_add_listener(buffer->wl_buffer, &buffer_listener, buffer);
   // add this buffer to head of list of current pool's buffers
   wl_list_insert(&pool_data->buffers, &buffer->link);
   buffer->shm_pool = pool;
   buffer->data = (void*)(pool_data->pool_memory + chunk_offset);
 //fprintf(stderr, "last=%p chunk_offset=%d ", pool_data->buffers.next, chunk_offset);
-  buffer->draw_buffer_needs_commit = true;
 //fprintf(stderr, "create_shm_buffer: %dx%d = %d\n", width, height, size);
-  cairo_init(&buffer->draw_buffer, width, height, stride, Fl_Cairo_Graphics_Driver::cairo_format);
-  wl_buffer_add_listener(buffer->wl_buffer, &buffer_listener, buffer);
+}
+
+
+struct Fl_Wayland_Graphics_Driver::wld_buffer *
+    Fl_Wayland_Graphics_Driver::create_wld_buffer(int width, int height, bool with_shm) {
+  struct wld_buffer *buffer = (struct wld_buffer*)calloc(1, sizeof(struct wld_buffer));
+  int stride = cairo_format_stride_for_width(cairo_format, width);
+  cairo_init(&buffer->draw_buffer, width, height, stride, cairo_format);
+  buffer->draw_buffer_needs_commit = true;
+  if (with_shm) create_shm_buffer(buffer);
   return buffer;
 }
 
@@ -156,6 +164,7 @@ static void copy_region(struct wld_window *window, struct flCairoRegion *r) {
 
 void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
                                 struct flCairoRegion *r) {
+  if (!window->buffer->wl_buffer) create_shm_buffer(window->buffer);
   cairo_surface_t *surf = cairo_get_target(window->buffer->draw_buffer.cairo_);
   cairo_surface_flush(surf);
   if (r) copy_region(window, r);
@@ -267,7 +276,7 @@ Fl_Wayland_Graphics_Driver::draw_buffer *Fl_Wayland_Graphics_Driver::offscreen_b
 
 Fl_Image_Surface *Fl_Wayland_Graphics_Driver::custom_offscreen(int w, int h,
                     struct Fl_Wayland_Graphics_Driver::wld_buffer **p_off) {
-  struct wld_buffer *off = create_shm_buffer(w, h);
+  struct wld_buffer *off = create_wld_buffer(w, h);
   *p_off = off;
   cairo_set_user_data(off->draw_buffer.cairo_, &key, &off->draw_buffer, NULL);
   return new Fl_Image_Surface(w, h, 0, (Fl_Offscreen)off->draw_buffer.cairo_);

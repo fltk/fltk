@@ -532,8 +532,9 @@ CAIRO_FORMAT_ARGB32.
 
 FLTK calls function \c Fl_Wayland_Window_Driver::make_current() before drawing to any Fl_Window.
 Member \c buffer of this Fl_Window's <tt>struct wld_window</tt> (see \ref wld_window) is NULL when the
-window has just been created or resized. In that case, FLTK calls member functions
-\c create_shm_buffer() and \c cairo_init() of \c Fl_Wayland_Graphics_Driver to create
+window has just been created or resized. In that case, FLTK calls
+\c Fl_Wayland_Graphics_Driver::create_wld_buffer() which calls
+\c create_shm_buffer() and \c cairo_init() to create
 - a Wayland buffer;
 - a Cairo image surface.
 
@@ -560,7 +561,9 @@ All drawing operations to the Fl_Window then modify the content of the Cairo ima
 
 Function \c Fl_Wayland_Window_Driver::flush() is in charge of sending FLTK
 graphics data to the display. That is done by calling function \c
-Fl_Wayland_Graphics_Driver::buffer_commit() which copies the byte array of the Cairo surface to
+Fl_Wayland_Graphics_Driver::buffer_commit() which creates the <tt>struct wl_buffer</tt>
+object calling \c create_shm_buffer() if that was not done before,
+copies the byte array of the Cairo surface to
 the Wayland buffer's starting memory address, and calls functions \c wl_surface_attach()
 and \c wl_surface_commit(). Before calling Fl_Window::flush(),
 FLTK has computed a damaged region. If that region is not null,
@@ -739,8 +742,10 @@ the previous mmap'ed section.
 
 Wayland uses also \c wl_buffer objects to support cursors. FLTK uses the "buffer factory"
 described here when creating custom cursors (see \ref custom-cursor) with
-function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *,…)</tt> which calls
-\c create_shm_buffer(). In contrast, standard shaped-cursors (e.g., FL_CURSOR_INSERT)
+function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *,…)</tt> which
+calls \c create_shm_buffer() via \c set_cursor_4args(), \c custom_offscreen()
+and \c create_wld_buffer().
+In contrast, standard shaped-cursors (e.g., FL_CURSOR_INSERT)
 use their own "buffer factory" inside Wayland functions such as
 \c wl_cursor_theme_get_cursor().
 Therefore, the fact that the \c wl_buffer objects behind standard cursors are never destroyed
@@ -782,7 +787,7 @@ each system's display at startup time. Member function \c
 Fl_Wayland_Graphics_Driver::buffer_commit() informs the Wayland compositor
 of the value of \c wld_scale calling \c wl_surface_set_buffer_scale()
 which is enough to make FLTK apps HighDPI-aware.
-Under the gnome desktop, this parameter is visible in the "Settings" app,
+Under the gnome and KDE desktops, this parameter is visible in the "Settings" app,
 "Displays" section, "Scale" parameter which is 200% on HighDPI displays.
 - <tt>float gui_scale;</tt>. This other member variable is where FLTK's own GUI scaling mechanism
 with ctrl/+/-/0/ keystrokes and with environment variable FLTK_SCALING_FACTOR operates:
@@ -919,7 +924,9 @@ It also shows that a <tt>struct cursor_image</tt> object has an associated
 Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
 gives FLTK support of custom cursor shapes. It calls \c Fl_Wayland_Window_Driver::set_cursor_4args()
 that creates a \c cursor_image object, allocates the
-corresponding \c wl_buffer by a call to \c Fl_Wayland_Graphics_Driver::create_shm_buffer() and draws
+corresponding \c wl_buffer by a call to
+\c Fl_Wayland_Graphics_Driver::create_shm_buffer() via \c custom_offscreen()
+and \c create_wld_buffer() and draws
 the cursor shape into that buffer using the offscreen-drawing method of FLTK.
 
 The public type <tt>struct wl_cursor</tt> is essentially an array of \c wl_cursor_image objects
@@ -1243,7 +1250,7 @@ to an \c Fl_Offscreen value.
 \anchor wld_buffer
 <h3>struct Fl_Wayland_Graphics_Driver::wld_buffer</h3>
 Defined in file \c Fl_Wayland_Graphics_Driver.H.
-One such record is created by \c Fl_Wayland_Graphics_Driver::create_shm_buffer() when
+One such record is created by \c Fl_Wayland_Graphics_Driver::create_wld_buffer() when
 an Fl_Window is show()'n or resized, when a custom cursor shape is created, or when
 text is dragged.
 <pre>
