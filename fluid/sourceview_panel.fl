@@ -2,11 +2,6 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-snap {
-  ver 1
-  current_suite FLTK
-  current_preset 1
-}
 comment {//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +26,7 @@ decl {\#include "fluid.h"} {private local
 decl {\#include "file.h"} {private local
 }
 
-decl {\#include "../src/flstring.h"} {selected private local
+decl {\#include "../src/flstring.h"} {private local
 }
 
 decl {\#include <FL/Fl_Tabs.H>} {private local
@@ -136,8 +131,6 @@ and load those into the Code Viewer widgets.} open return_type void
     sv_strings->buffer()->loadfile(fn);
     sv_strings->scroll(top, 0);
   } else if (sv_source->visible_r() || sv_header->visible_r()) {
-    g_project.basename = fl_filename_name(sv_source_filename);
-    g_project.basename = fl_filename_setext(g_project.basename, "");
     Fl_String code_file_name_bak = g_project.code_file_name;
     g_project.code_file_name = sv_source_filename;
     Fl_String header_file_name_bak = g_project.header_file_name;
@@ -162,7 +155,8 @@ and load those into the Code Viewer widgets.} open return_type void
 
     g_project.code_file_name = code_file_name_bak;
     g_project.header_file_name = header_file_name_bak;
-  }} {}
+  }} {selected
+  }
 }
 
 Function {update_sourceview_timer(void*)} {

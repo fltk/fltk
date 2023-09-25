@@ -714,6 +714,14 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, int storage) {
  Write Suite and Layout selection and project layout data to an .fl project file.
  */
 void Fd_Layout_List::write(Fd_Project_Writer *out) {
+  // Don't write the Snap field if no custom layout was used
+  if ((current_suite()==0) && (current_preset()==0)) {
+    int nSuite = 0;
+    for (int i=0; i<list_size_; i++) {
+      if (list_[i].storage_ == FD_STORE_PROJECT) nSuite++;
+    }
+    if (nSuite == 0) return;
+  }
   out->write_string("\nsnap {\n  ver 1\n");
   out->write_string("  current_suite "); out->write_word(list_[current_suite()].name_); out->write_string("\n");
   out->write_string("  current_preset %d\n", current_preset());

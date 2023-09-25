@@ -311,6 +311,10 @@ void Fluid_Project::reset() {
   code_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
+
+  g_layout_list.remove_all(FD_STORE_PROJECT);
+  g_layout_list.current_suite(0);
+  g_layout_list.current_preset(0);
 }
 
 void Fluid_Project::update_settings_dialog() {
@@ -1127,29 +1131,31 @@ int write_code_files()
   // -- write the code and header files
   if (!batch_mode) enter_project_dir();
   int x = f.write_code(code_filename.c_str(), header_filename.c_str());
+  Fl_String code_filename_rel = fl_filename_relative(code_filename);
+  Fl_String header_filename_rel = fl_filename_relative(header_filename);
   if (!batch_mode) leave_project_dir();
 
   // -- print error message in batch mode or pop up an error or confirmation dialog box
   if (batch_mode) {
     if (!x) {
       fprintf(stderr, "%s and %s: %s\n",
-              code_filename.c_str(),
-              header_filename.c_str(),
+              code_filename_rel.c_str(),
+              header_filename_rel.c_str(),
               strerror(errno));
       exit(1);
     }
   } else {
     if (!x) {
-      fl_message("Can't write %s and %s: %s",
-                 code_filename.c_str(),
-                 header_filename.c_str(),
+      fl_message("Can't write %s or %s: %s",
+                 code_filename_rel.c_str(),
+                 header_filename_rel.c_str(),
                  strerror(errno));
     } else {
       set_modflag(-1, 0);
       if (completion_button->value()) {
         fl_message("Wrote %s and %s",
-                   g_project.codefile_name().c_str(),
-                   g_project.headerfile_name().c_str());
+                   code_filename_rel.c_str(),
+                   header_filename_rel.c_str());
       }
     }
   }
@@ -2080,7 +2086,7 @@ int main(int argc,char **argv) {
     exit(0);
   }
 
-  // don't lock up if silly command line arguments were given
+  // don't lock up if inconsistent command line arguments were given
   if (batch_mode)
     exit(0);
 

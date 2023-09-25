@@ -771,7 +771,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
     } else if (g_project.header_file_name[0] == '.' && strchr(g_project.header_file_name.c_str(), '/') == NULL) {
       write_c("#include \"%s\"\n", fl_filename_name(t));
     } else {
-      write_c("#include \"%s\"\n", t);
+      write_c("#include \"%s\"\n", g_project.header_file_name.c_str());
     }
   }
   Fl_String loc_include, loc_conditional;

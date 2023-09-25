@@ -2,11 +2,6 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-snap {
-  ver 1
-  current_suite FLTK
-  current_preset 0
-}
 comment {//
 // Checkers images for the Fast Light Tool Kit (FLTK).
 //

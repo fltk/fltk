@@ -5,7 +5,7 @@ code_name {.cxx}
 snap {
   ver 1
   current_suite FLTK
-  current_preset 1
+  current_preset 0
   suite {
     name {FLUID (based on FLTK)}
     preset { 1

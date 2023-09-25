@@ -98,7 +98,7 @@ window->hide();} open
         } {}
         Fl_Button newButton {
           callback {newdir();}
-          image {new.xbm} xywh {455 10 25 25} labelsize 8
+          image {new.xbm} compress_image 0 xywh {455 10 25 25} labelsize 8
           code0 {\#include <FL/Fl_Preferences.H>}
           code1 {o->tooltip(new_directory_tooltip);}
         }
