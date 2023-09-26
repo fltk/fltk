@@ -59,7 +59,7 @@ extern "C"
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
-/// \defgroup globals Fluid Global Variables, Functions and Calbacks
+/// \defgroup globals Fluid Global Variables, Functions and Callbacks
 /// \{
 
 //
@@ -72,15 +72,15 @@ static Fl_Help_Dialog *help_dialog = 0;
 Fl_Menu_Bar *main_menubar = NULL;
 Fl_Window *main_window;
 
-/// Fluid application preferences, allways accessible, will be flushed when app closes.
+/// Fluid application preferences, always accessible, will be flushed when app closes.
 Fl_Preferences fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
 
 /// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
 
 /// Show areas of restricted use in overlay plane.
-/// Restrited areas are widget that overlap each other, widgets that are outside
-/// of their parent's bounds (execept children of Scroll groups), and areas
+/// Restricted areas are widget that overlap each other, widgets that are outside
+/// of their parent's bounds (except children of Scroll groups), and areas
 /// within an Fl_Tile that are not covered by children.
 int show_restricted = 1;
 
@@ -118,7 +118,7 @@ char    relative_history[10][FL_PATH_MAX];
 /// Menuitem to save a .fl design file, will be deactivated if the design is unchanged.
 Fl_Menu_Item *save_item = NULL;
 
-/// First Menuitem that shows the .fl design file hisory.
+/// First Menuitem that shows the .fl design file history.
 Fl_Menu_Item *history_item = NULL;
 
 /// Menuitem to show or hide the widget bin, label will change if bin is visible.
@@ -162,22 +162,22 @@ int update_file = 0;            // fluid -u
 int compile_file = 0;           // fluid -c
 
 /// Set, if Fluid was started with the command line argument -cs
-int compile_strings = 0;        // fluic -cs
+int compile_strings = 0;        // fluid -cs
 
 /// Set, if Fluid runs in batch mode, and no user interface is activated.
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
-/// command line arguments override settings in the projectfile
+/// command line arguments override settings in the project file
 Fl_String g_code_filename_arg;
 Fl_String g_header_filename_arg;
 Fl_String g_launch_path;
 
 /** \var int Fluid_Project::header_file_set
- If set, commandline overrides header file name in .fl file.
+ If set, command line overrides header file name in .fl file.
  */
 
 /** \var int Fluid_Project::code_file_set
- If set, commandline overrides source code file name in .fl file.
+ If set, command line overrides source code file name in .fl file.
  */
 
 /** \var int Fluid_Project::header_file_name
@@ -427,7 +427,7 @@ void leave_project_dir() {
 
 /**
  Position the given window window based on entries in the app preferences.
- Customizable by user; feature can be switched off.
+ Customisable by user; feature can be switched off.
  The window is not shown or hidden by this function, but a value is returned
  to indicate the state to the caller.
  \param[in] w position this window
@@ -527,7 +527,7 @@ static void external_editor_timer(void*) {
 
 /**
  Save the current design to the file given by \c filename.
- If automatic, this overwrites an existing file. If iinteractive, if will
+ If automatic, this overwrites an existing file. If interactive, if will
  verify with the user.
  \param[in] v if v is not NULL, or no filename is set, open a filechooser.
  */
@@ -1496,7 +1496,7 @@ static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(
  This is the main Fluid menu.
 
  Design history is manipulated right inside this menu structure.
- Some menuitem change or deactivate correctly, but most items just trigger
+ Some menu items change or deactivate correctly, but most items just trigger
  various callbacks.
 
  \c New_Menu creates new widgets and is explained in detail in another location.
