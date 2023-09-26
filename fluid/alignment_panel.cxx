@@ -26,6 +26,58 @@
 void scheme_cb(Fl_Scheme_Choice *, void *);
 int w_settings_shell_list_selected;
 
+Fl_Double_Window *script_panel=(Fl_Double_Window *)0;
+
+static void cb_script_panel(Fl_Double_Window*, void*) {
+  if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
+    return; // ignore Escape
+  script_panel->hide(); // otherwise hide..;
+}
+
+Fl_Text_Editor *script_input=(Fl_Text_Editor *)0;
+
+Fl_Return_Button *script_panel_ok=(Fl_Return_Button *)0;
+
+Fl_Button *script_panel_cancel=(Fl_Button *)0;
+
+Fl_Double_Window* make_script_panel() {
+  { Fl_Double_Window* o = script_panel = new Fl_Double_Window(540, 180, "Shell Script Editor");
+    script_panel->labelsize(11);
+    script_panel->callback((Fl_Callback*)cb_script_panel);
+    { script_input = new Fl_Text_Editor(10, 10, 520, 130);
+      script_input->box(FL_DOWN_BOX);
+      script_input->labelsize(11);
+      script_input->textfont(4);
+      script_input->textsize(11);
+      script_input->when(FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
+      Fl_Group::current()->resizable(script_input);
+      script_input->buffer(new Fl_Text_Buffer);
+    } // Fl_Text_Editor* script_input
+    { Fl_Group* o = new Fl_Group(10, 150, 520, 20);
+      o->labelsize(11);
+      { script_panel_ok = new Fl_Return_Button(400, 150, 60, 20, "OK");
+        script_panel_ok->labelsize(11);
+        script_panel_ok->window()->hotspot(script_panel_ok);
+      } // Fl_Return_Button* script_panel_ok
+      { script_panel_cancel = new Fl_Button(470, 150, 60, 20, "Cancel");
+        script_panel_cancel->labelsize(11);
+      } // Fl_Button* script_panel_cancel
+      { Fl_Box* o = new Fl_Box(10, 150, 380, 20);
+        o->labelsize(11);
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      o->end();
+    } // Fl_Group* o
+    script_panel->set_modal();
+    o->size_range(200, 150);
+    script_panel->end();
+  } // Fl_Double_Window* script_panel
+  // Enable line numbers
+  script_input->linenumber_width(60);
+  script_input->linenumber_size(script_input->Fl_Text_Display::textsize());
+  return script_panel;
+}
+
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
 
 Fl_Tabs *w_settings_tabs=(Fl_Tabs *)0;
@@ -1103,6 +1155,24 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
  {"@@TMPDIR@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
+
+static void cb_square(Fl_Button*, void*) {
+  if (!script_panel) make_script_panel();
+  script_input->buffer()->text(w_settings_shell_command->buffer()->text());
+  script_panel->show();
+
+  for (;;) {
+    Fl_Widget* w = Fl::readqueue();
+    if (w == script_panel_cancel) goto BREAK2;
+    else if (w == script_panel_ok) break;
+    else if (!w) Fl::wait();
+  }
+
+  w_settings_shell_command->buffer()->text(script_input->buffer()->text());
+  w_settings_shell_command->do_callback();
+  BREAK2:
+  script_panel->hide();
+}
 
 static void cb_save(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
@@ -2540,7 +2610,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         w_settings_shell_tab->labelsize(11);
         w_settings_shell_tab->callback((Fl_Callback*)cb_w_settings_shell_tab);
         w_settings_shell_tab->hide();
-        { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell \nCommand \nList:");
+        { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell \ncommand \nlist:");
           w_settings_shell_list->type(3);
           w_settings_shell_list->labelfont(1);
           w_settings_shell_list->labelsize(11);
@@ -2647,10 +2717,9 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             } // Fl_Menu_Button* w_settings_shell_text_macros
             { Fl_Button* o = new Fl_Button(296, 395, 24, 22, "@square");
               o->tooltip("open big code editor");
-              o->color((Fl_Color)6);
               o->labelsize(11);
               o->labelcolor(FL_BACKGROUND_COLOR);
-              o->hide();
+              o->callback((Fl_Callback*)cb_square);
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
