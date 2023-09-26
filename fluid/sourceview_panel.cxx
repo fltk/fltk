@@ -92,12 +92,12 @@ void update_sourceview_cb(class Fl_Button*, void*) {
     }
     if (!sv_header_filename) {
       sv_header_filename = (char*)malloc(FL_PATH_MAX);
-      fl_strlcpy(sv_source_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+      fl_strlcpy(sv_header_filename, get_tmpdir().c_str(), FL_PATH_MAX);
       fl_strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
     }
     if (!sv_design_filename) {
       sv_design_filename = (char*)malloc(FL_PATH_MAX);
-      fl_strlcpy(sv_source_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+      fl_strlcpy(sv_design_filename, get_tmpdir().c_str(), FL_PATH_MAX);
       fl_strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
     }
 

@@ -801,7 +801,12 @@ static void cb_8(Fl_Button*, void* v) {
     Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
+    w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
+    if (cmd->storage == FD_STORE_USER)
+      w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
+    else if (cmd->storage == FD_STORE_PROJECT)
+      w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
     w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -825,7 +830,12 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
-    w_settings_shell_list->value(selected+1);  
+    w_settings_shell_list->deselect();
+    w_settings_shell_list->value(selected+1);
+    if (cmd->storage == FD_STORE_USER)
+      w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
+    else if (cmd->storage == FD_STORE_PROJECT)
+      w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
     w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -1088,7 +1098,8 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
  {"@@HEADERFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@TEXTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@TEXTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@FLTK_CONFIG@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ // Not yet implemented
+ {"@@FLTK_CONFIG@@", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@TMPDIR@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
@@ -2027,7 +2038,6 @@ Fl_Double_Window* make_settings_window() {
       { Fl_Group* o = new Fl_Group(10, 60, 320, 480, "General");
         o->image( image_general_64() );
         o->labelsize(11);
-        o->hide();
         { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
           scheme_choice->box(FL_UP_BOX);
           scheme_choice->down_box(FL_BORDER_BOX);
@@ -2529,6 +2539,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         w_settings_shell_tab->image( image_shell_64() );
         w_settings_shell_tab->labelsize(11);
         w_settings_shell_tab->callback((Fl_Callback*)cb_w_settings_shell_tab);
+        w_settings_shell_tab->hide();
         { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell \nCommand \nList:");
           w_settings_shell_list->type(3);
           w_settings_shell_list->labelfont(1);
@@ -2656,7 +2667,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->callback((Fl_Callback*)cb_save1);
           } // Fl_Check_Button* o
           { Fl_Check_Button* o = new Fl_Check_Button(100, 497, 220, 20, "save i18n strings");
-            o->tooltip("save the internationalisation string before running the command");
+            o->tooltip("save the internationalisation strings before running the command");
             o->down_box(FL_DOWN_BOX);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_save2);
@@ -2782,7 +2793,6 @@ le FLTK_GETTEXT_FOUND");
       o->labelsize(11);
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
-    settings_window->set_non_modal();
     settings_window->end();
   } // Fl_Double_Window* settings_window
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);

@@ -4,7 +4,7 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite FLTK
+  current_suite {FLUID (based on FLTK)}
   current_preset 0
   suite {
     name {FLUID (based on FLTK)}
@@ -29,15 +29,6 @@ snap {
       16 8 2 16 4 2
       0 10 0 10
     }
-  }
-}
-shell_commands {
-  command {
-    name {all: run}
-    label {Run...}
-    shortcut 4194418
-    command {@FLTK_CONFIG@}
-    flags 3
   }
 }
 comment {//
@@ -123,15 +114,15 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {FLUID Settings} open
-    xywh {392 362 340 580} type Double align 80 non_modal visible
+    xywh {392 362 340 580} type Double align 80 visible
   } {
     Fl_Tabs w_settings_tabs {
       callback {propagate_load(o, v);} open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255
     } {
       Fl_Group {} {
-        label General open
-        image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
+        label General open selected
+        image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
         code0 {o->image()->scale(36, 24);}
       } {
         Fl_Choice scheme_choice {
@@ -774,7 +765,7 @@ g_layout_list.update_dialogs();}
       Fl_Group w_settings_shell_tab {
         label Shell
         callback {propagate_load(o, v);} open
-        image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
+        image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
         Fl_Browser w_settings_shell_list {
@@ -821,7 +812,12 @@ List:}
   Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
   g_shell_config->insert(selected, cmd);
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
+  w_settings_shell_list->deselect();
   w_settings_shell_list->value(selected+1);
+  if (cmd->storage == FD_STORE_USER)
+    w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
+  else if (cmd->storage == FD_STORE_PROJECT)
+    w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
   w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -844,7 +840,12 @@ if (v==LOAD) {
   g_shell_config->insert(selected, cmd);
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
   w_settings_shell_list->deselect();
-  w_settings_shell_list->value(selected+1);  
+  w_settings_shell_list->deselect();
+  w_settings_shell_list->value(selected+1);
+  if (cmd->storage == FD_STORE_USER)
+    w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
+  else if (cmd->storage == FD_STORE_PROJECT)
+    w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
   w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -1179,8 +1180,9 @@ if (mi) {
                 xywh {70 70 100 20} labelfont 4 labelsize 11
               }
               MenuItem {} {
-                label {@@FLTK_CONFIG@@} selected
-                xywh {70 70 100 20} labelfont 4 labelsize 11
+                label {@@FLTK_CONFIG@@}
+                comment {Not yet implemented}
+                xywh {70 70 100 20} labelfont 4 labelsize 11 hide
               }
               MenuItem {} {
                 label {@@TMPDIR@@}
@@ -1259,7 +1261,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            tooltip {save the internationalisation string before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
+            tooltip {save the internationalisation strings before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
           }
         }
         Fl_Box w_settings_shell_fd_project {
