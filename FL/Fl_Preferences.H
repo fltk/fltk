@@ -22,6 +22,7 @@
 
 #  include <stdio.h>
 #  include "Fl_Export.H"
+#  include "fl_attr.h"
 
 class Fl_String;
 
@@ -131,6 +132,7 @@ public:
     ROOT_MASK     = 0x00FF,            ///< Mask for the values above
     CORE          = 0x0100,            ///< OR'd by FLTK to read and write core library preferences and options
     C_LOCALE      = 0x1000,            ///< This flag should always be set, it makes sure that floating point
+    CLEAR         = 0x2000,            ///< Don't read a possibly existing database. Instead, start with an empty set of preferences.
                                        ///< values are written correctly independently of the current locale
     SYSTEM_L      = SYSTEM | C_LOCALE, ///< Preferences are used system-wide, locale independent
     USER_L        = USER | C_LOCALE,   ///< Preferences apply only to the current user, locale independent
@@ -188,7 +190,7 @@ public:
   static Root filename( char *buffer, size_t buffer_size, Root root, const char *vendor, const char *application );
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
-  Fl_Preferences( const char *path, const char *vendor, const char *application );
+  Fl_Preferences( const char *path, const char *vendor, const char *application, Root flags );
   Fl_Preferences( Fl_Preferences &parent, const char *group );
   Fl_Preferences( Fl_Preferences *parent, const char *group );
   Fl_Preferences( Fl_Preferences &parent, int groupIndex );
@@ -196,6 +198,9 @@ public:
   Fl_Preferences(const Fl_Preferences&);
   Fl_Preferences( ID id );
   virtual ~Fl_Preferences();
+
+  FL_DEPRECATED("in 1.4.0 - use Fl_Preferences(path, vendor, application, flags) instead",
+                Fl_Preferences( const char *path, const char *vendor, const char *application ) );
 
   Root filename( char *buffer, size_t buffer_size);
 
@@ -374,7 +379,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Root root_type_;
   public:
     RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
-    RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application );
+    RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application, Root flags );
     RootNode( Fl_Preferences * );
     ~RootNode();
     int read();

@@ -17,6 +17,7 @@
 #ifndef _FLUID_FD_SNAP_ACTION_H
 #define _FLUID_FD_SNAP_ACTION_H
 
+#include "fluid.h"
 #include "Fl_Window_Type.h"
 
 #include <FL/Fl_String.H>
@@ -24,16 +25,6 @@
 struct Fl_Menu_Item;
 
 extern Fl_Menu_Item main_layout_submenu_[];
-
-/**
- Indicate the storage location for a layout suite.
- */
-enum {
-  FD_STORE_INTERNAL,  ///< stored inside FLUID app
-  FD_STORE_USER,      ///< suite is stored in the user wide FLUID settings
-  FD_STORE_PROJECT,   ///< suite is stored within the current .fl project file
-  FD_STORE_FILE       ///< store suite in external file
-};
 
 /**
  \brief Collection of layout settings.
@@ -97,13 +88,13 @@ public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
   Fd_Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
-  int storage_;                 ///< storage location (see FD_STORE_INTERNAL, etc.)
+  Fd_Tool_Store storage_;                 ///< storage location (see FD_STORE_INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
   void read(Fd_Project_Reader*);
   void update_label();
-  void storage(int s) { storage_ = s; update_label(); }
+  void storage(Fd_Tool_Store s) { storage_ = s; update_label(); }
   void name(const char *n);
   void init();
   ~Fd_Layout_Suite();
@@ -146,13 +137,13 @@ public:
 
   int load(const Fl_String &filename);
   int save(const Fl_String &filename);
-  void write(Fl_Preferences &prefs, int storage);
-  void read(Fl_Preferences &prefs, int storage);
+  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void write(Fd_Project_Writer*);
   void read(Fd_Project_Reader*);
   int add(Fd_Layout_Suite*);
   void remove(int index);
-  void remove_all(int storage);
+  void remove_all(Fd_Tool_Store storage);
   Fd_Layout_Preset *at(int);
   int size();
 };

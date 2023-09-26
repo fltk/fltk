@@ -422,7 +422,7 @@ void Fd_Layout_Suite::init() {
   name_ = NULL;
   menu_label = NULL;
   layout[0] = layout[1] = layout[2] = NULL;
-  storage_ = 0;
+  storage_ = FD_STORE_INTERNAL;
 }
 
 /**
@@ -651,7 +651,7 @@ void Fd_Layout_List::update_menu_labels() {
  */
 int Fd_Layout_List::load(const Fl_String &filename) {
   remove_all(FD_STORE_FILE);
-  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
   read(prefs, FD_STORE_FILE);
   return 0;
 }
@@ -661,7 +661,7 @@ int Fd_Layout_List::load(const Fl_String &filename) {
  */
 int Fd_Layout_List::save(const Fl_String &filename) {
   assert(this);
-  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
   write(prefs, FD_STORE_FILE);
   return 0;
@@ -670,7 +670,7 @@ int Fd_Layout_List::save(const Fl_String &filename) {
 /**
  Write Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::write(Fl_Preferences &prefs, int storage) {
+void Fd_Layout_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   prefs_list.clear();
   prefs_list.set("current_suite", list_[current_suite()].name_);
@@ -688,7 +688,7 @@ void Fd_Layout_List::write(Fl_Preferences &prefs, int storage) {
 /**
  Read Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::read(Fl_Preferences &prefs, int storage) {
+void Fd_Layout_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   Fl_String cs;
   int cp = 0;
@@ -859,7 +859,7 @@ int Fd_Layout_List::add(const char *name) {
     new_suite.layout[i] = new Fd_Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
   }
-  int new_storage = old_suite.storage_;
+  Fd_Tool_Store new_storage = old_suite.storage_;
   if (new_storage == FD_STORE_INTERNAL)
     new_storage = FD_STORE_USER;
   new_suite.storage(new_storage);
@@ -904,7 +904,7 @@ void Fd_Layout_List::remove(int ix) {
  Remove all Suites that use the given storage attribute.
  \param[in] storage storage attribute, see FD_STORE_INTERNAL, etc.
  */
-void Fd_Layout_List::remove_all(int storage) {
+void Fd_Layout_List::remove_all(Fd_Tool_Store storage) {
   for (int i=list_size_-1; i>=0; --i) {
     if (list_[i].storage_ == storage)
       remove(i);

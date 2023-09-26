@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,11 +17,13 @@
 #ifndef _FLUID_SHELL_COMMAND_H
 #define _FLUID_SHELL_COMMAND_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "fluid.h"
 
 #include <FL/Fl_String.H>
+#include <FL/Enumerations.H>
 
+#include <stdio.h>
+#include <stdlib.h>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>
@@ -33,29 +35,10 @@
 #  include <unistd.h>
 #endif
 
-void show_shell_window();
-void do_shell_command(class Fl_Return_Button*, void*);
+struct Fl_Menu_Item;
+class Fl_Widget;
 
-typedef struct {
-  char *command;
-  int flags;
-} Shell_Settings;
-
-extern Shell_Settings shell_settings_windows;
-extern Shell_Settings shell_settings_linux;
-extern Shell_Settings shell_settings_macos;
-
-extern Fl_String g_shell_command;
-extern int g_shell_save_fl;
-extern int g_shell_save_code;
-extern int g_shell_save_strings;
-extern int g_shell_use_fl_settings;
-
-void shell_prefs_get();
-void shell_prefs_set();
-void shell_settings_read();
-void shell_settings_write();
-
+void run_shell_command(const Fl_String &cmd, int flags);
 
 class Fl_Process {
 public:
@@ -87,5 +70,72 @@ private:
 protected:
   FILE * _fpt;
 };
+
+class Fd_Shell_Command {
+public:
+  enum { ALWAYS, NEVER, MAC_ONLY, UX_ONLY, WIN_ONLY, MAC_AND_UX_ONLY, USER_ONLY, HOST_ONLY, ENV_ONLY }; // conditions
+  enum { SAVE_PROJECT = 1, SAVE_SOURCECODE = 2, SAVE_STRINGS = 4, SAVE_ALL = 7 }; // flags
+  Fd_Shell_Command();
+  Fd_Shell_Command(const Fd_Shell_Command *rhs);
+  Fd_Shell_Command(const Fl_String &in_name);
+  Fd_Shell_Command(const Fl_String &in_name,
+                   const Fl_String &in_label,
+                   Fl_Shortcut in_shortcut,
+                   Fd_Tool_Store in_storage,
+                   int in_condition,
+                   const Fl_String &in_condition_data,
+                   const Fl_String &in_command,
+                   int in_flags);
+  Fl_String name;
+  Fl_String label;
+  Fl_Shortcut shortcut;
+  Fd_Tool_Store storage;
+  int condition; // always, hide, windows only, linux only, mac only, user, machine
+  Fl_String condition_data; // user name, machine name
+  Fl_String command;
+  int flags; // save_project, save_code, save_string, ...
+  Fl_Menu_Item *shell_menu_item_;
+  void run();
+  void read(Fl_Preferences &prefs);
+  void write(Fl_Preferences &prefs, bool save_location = false);
+  void read(class Fd_Project_Reader*);
+  void write(class Fd_Project_Writer*);
+  void update_shell_menu();
+  bool is_active();
+};
+
+class Fd_Shell_Command_List {
+public:
+  Fd_Shell_Command **list;
+  int list_size;
+  int list_capacity;
+  Fl_Menu_Item *shell_menu_;
+public:
+  Fd_Shell_Command_List();
+  ~Fd_Shell_Command_List();
+  Fd_Shell_Command *at(int index) const;
+  void add(Fd_Shell_Command *cmd);
+  void insert(int index, Fd_Shell_Command *cmd);
+  void remove(int index);
+  void clear();
+  void clear(Fd_Tool_Store store);
+//  void move_up();
+//  void move_down();
+//  int load(const Fl_String &filename);
+//  int save(const Fl_String &filename);
+  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void read(class Fd_Project_Reader*);
+  void write(class Fd_Project_Writer*);
+  void rebuild_shell_menu();
+  void update_settings_dialog();
+
+  static Fl_Menu_Item default_menu[];
+  static void menu_marker(Fl_Widget*, void*);
+  static void export_selected();
+  static void import_from_file();
+};
+
+extern Fd_Shell_Command_List *g_shell_config;
 
 #endif // _FLUID_SHELL_COMMAND_H

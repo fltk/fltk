@@ -278,7 +278,7 @@ TEST(fl_filename, relative) {
   r = fl_filename_relative("../foo.txt", base);
   EXPECT_STREQ(r.c_str(), "../foo.txt");
   return true;
-  }
+}
 
 TEST(fl_filename, absolute) {
   Fl_String base = "/var/tmp/somedir";
@@ -292,6 +292,7 @@ TEST(fl_filename, absolute) {
   EXPECT_STREQ(r.c_str(), "/var/tmp/foo.txt");
   return true;
 }
+
 
 bool cb1a_ok = false, cb1b_ok = false, cb1c_ok = false;
 int cb1_alloc = 0;

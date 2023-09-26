@@ -444,6 +444,10 @@ Type "Fl_Widget" <word> : C++ variable name
   "extra_code" <word> : C++ extra code lines
   ... : inherits more from Fl_Type
 
+Type "Fl_Button" <word> : C++ variable name
+
+  "compact" <word> : integer, set the flag for compact buttons, defaults to 0
+
 Type "Fl_Flex" <word> : C++ variable name
 
   "margins" <word> : this Word is written with printf as "{%d %d %d %d}",
