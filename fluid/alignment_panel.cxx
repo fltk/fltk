@@ -1088,6 +1088,7 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
  {"@@HEADERFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@TEXTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@TEXTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@FLTK_CONFIG@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@TMPDIR@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };

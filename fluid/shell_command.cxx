@@ -110,6 +110,7 @@
 
 #include <errno.h>
 
+static Fl_String fltk_config_cmd;
 static Fl_Process s_proc;
 
 
@@ -333,6 +334,11 @@ static void expand_macros(Fl_String &cmd) {
   expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.headerfile_name());
   expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.stringsfile_path());
   expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.stringsfile_name());
+  if (cmd.find("@FLTK_CONFIG@") != Fl_String::npos) {
+// FIXME: continue here    find_fltk_config();
+    expand_macro(cmd, "@FLTK_CONFIG@",      fltk_config_cmd.c_str());
+//    printf("Shell is %s\n", fl_getenv("SHELL"));
+  }
   if (cmd.find("@TMPDIR@") != Fl_String::npos)
     expand_macro(cmd, "@TMPDIR@",           get_tmpdir());
 }

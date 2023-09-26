@@ -36,7 +36,7 @@ shell_commands {
     name {all: run}
     label {Run...}
     shortcut 4194418
-    command {echo @TMPDIR@}
+    command {@FLTK_CONFIG@}
     flags 3
   }
 }
@@ -1179,7 +1179,11 @@ if (mi) {
                 xywh {70 70 100 20} labelfont 4 labelsize 11
               }
               MenuItem {} {
-                label {@@TMPDIR@@} selected
+                label {@@FLTK_CONFIG@@} selected
+                xywh {70 70 100 20} labelfont 4 labelsize 11
+              }
+              MenuItem {} {
+                label {@@TMPDIR@@}
                 xywh {70 70 100 20} labelfont 4 labelsize 11
               }
             }
