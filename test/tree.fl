@@ -392,7 +392,7 @@ tree->clear_changed();} open
       tooltip {Test tree} xywh {15 22 320 539} box DOWN_BOX color 55 selection_color 15
       class Fl_Tree
     } {}
-    Fl_Group {} {open selected
+    Fl_Group {} {open
       xywh {350 5 681 556}
       code0 {o->resizable(0);}
     } {
@@ -780,7 +780,7 @@ Fl::visible_focus(onoff);}
         }
       }
       Fl_Group {} {
-        label {Test Operations}
+        label {Test Operations} open selected
         tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {350 435 330 125} box GTK_DOWN_BOX color 47 labelsize 12
       } {
         Fl_Group showitem_box {
@@ -847,7 +847,7 @@ tree->redraw();}
           callback {const char *filename = fl_file_chooser("Select a Preferences style Database", "Preferences(*.prefs)", 0L);
 if (filename) {
   tree->clear();
-  Fl_Preferences prefs(filename, 0L, 0L);
+  Fl_Preferences prefs(filename, 0L, 0L, Fl_Preferences::C_LOCALE);
   tree->load(prefs);
   tree->redraw();
 }}
