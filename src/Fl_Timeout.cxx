@@ -81,7 +81,12 @@ Fl_Timestamp Fl::now() {
 }
 
 /** The time stamp of a time point in the distant past */
-const Fl_Timestamp Fl::distant_past() { return {LONG_MIN/10, 0}; }
+const Fl_Timestamp Fl::distant_past() {
+  Fl_Timestamp ts;
+  ts.sec = LONG_MIN/10;
+  ts.usec = 0;
+  return (const Fl_Timestamp)ts;
+}
 
 /**
  Return the time in seconds between now and a previously taken time stamp.
