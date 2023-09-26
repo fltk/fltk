@@ -348,7 +348,7 @@ static void create_tmpdir() {
 #if _WIN32
   // The usual temp file locations on Windows are
   //    %system%\Windows\Temp
-  //    %userprofiles%\AppData\Local\
+  //    %userprofiles%\AppData\Local
   // usually resolving into
   //    C:/Windows/Temp/
   //    C:\Users\<username>\AppData\Local\Temp

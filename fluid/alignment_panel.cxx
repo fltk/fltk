@@ -775,7 +775,7 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
       }
     }
   } else {
-    int prev_selected = w_settings_shell_list_selected;
+  //  int prev_selected = w_settings_shell_list_selected;
     w_settings_shell_list_selected = 0;
     int selected = w_settings_shell_list->value();
     if (selected) {

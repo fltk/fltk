@@ -309,9 +309,9 @@ void shell_pipe_cb(FL_SOCKET, void*) {
 /** Find the script `fltk-config` that most closely relates to this version of FLUID.
  This is not implemented yet.
  */
-static void find_fltk_config() {
-
-}
+//static void find_fltk_config() {
+//
+//}
 
 static void expand_macro(Fl_String &cmd, const Fl_String &macro, const Fl_String &content) {
   for (int i=0;;) {
