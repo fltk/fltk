@@ -476,6 +476,7 @@ public:
   static double seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
   static long ticks_since(Fl_Timestamp& then);
   static long ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
+  static const Fl_Timestamp distant_past();
 
   // private
   static void run_idle();

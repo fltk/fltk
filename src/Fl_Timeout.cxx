@@ -19,6 +19,7 @@
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>
+#include <limits.h> // for LONG_MIN
 
 /**
   \file Fl_Timeout.cxx
@@ -64,9 +65,10 @@ static int num_timers = 0;    // DEBUG
  \return this moment in time as an opaque time stamp
 
  \see Fl::seconds_since(Fl_Timestamp& then)
-    Fl::seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
-    Fl::ticks_since(Fl_Timestamp& then)
-    Fl::ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
+ \see Fl::seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
+ \see Fl::ticks_since(Fl_Timestamp& then)
+ \see Fl::ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
+ \see Fl::distant_past()
  */
 Fl_Timestamp Fl::now() {
   Fl_Timestamp ts;
@@ -78,6 +80,9 @@ Fl_Timestamp Fl::now() {
   return ts; // C++ will copy the result into the lvalue for us
 }
 
+/** The time stamp of a time point in the distant past */
+const Fl_Timestamp Fl::distant_past() { return {LONG_MIN/10, 0}; }
+
 /**
  Return the time in seconds between now and a previously taken time stamp.
 
@@ -85,7 +90,7 @@ Fl_Timestamp Fl::now() {
  \return elapsed seconds and fractions of a second
 
  \see Fl::seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
-    Fl::now()
+    \see Fl::now()  \see Fl::distant_past()
  */
 double Fl::seconds_since(Fl_Timestamp& then) {
   Fl_Timestamp ts_now = Fl::now();
@@ -99,7 +104,7 @@ double Fl::seconds_since(Fl_Timestamp& then) {
  \param[in] further_back an even earlier time stamp
  \return elapsed seconds and fractions of a second
 
- \see Fl::seconds_since(Fl_Timestamp& then), Fl::now()
+ \see Fl::seconds_since(Fl_Timestamp& then) \see  Fl::now()
  */
 double Fl::seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back) {
   return double((back.sec - further_back.sec) + (back.usec - further_back.usec) / 1000000.);
@@ -115,7 +120,7 @@ double Fl::seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back) {
  \param[in] then a previously taken time stamp
  \return elapsed ticks in 60th of a second
 
- \see Fl::ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back), Fl::now()
+ \see Fl::ticks_between(Fl_Timestamp& back,  Fl_Timestamp& further_back) \see  Fl::now()
  */
 long Fl::ticks_since(Fl_Timestamp& then) {
   Fl_Timestamp ts_now = Fl::now();
@@ -129,7 +134,7 @@ long Fl::ticks_since(Fl_Timestamp& then) {
  \param[in] further_back an even earlier time stamp
  \return elapsed ticks in 60th of a second
 
- \see Fl::ticks_since(Fl_Timestamp& then), Fl::now()
+ \see Fl::ticks_since(Fl_Timestamp& then) \see  Fl::now()
  */
 long Fl::ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back) {
   return (back.sec-further_back.sec)*60 + (back.usec-further_back.usec)/16666;
