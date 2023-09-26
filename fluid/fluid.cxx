@@ -314,10 +314,6 @@ void Fluid_Project::reset() {
   code_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
-
-  g_layout_list.remove_all(FD_STORE_PROJECT);
-  g_layout_list.current_suite(0);
-  g_layout_list.current_preset(0);
 }
 
 void Fluid_Project::update_settings_dialog() {
@@ -327,7 +323,7 @@ void Fluid_Project::update_settings_dialog() {
   }
 }
 
-// make sure that a path nae ends with a forward slash
+// make sure that a path name ends with a forward slash
 static Fl_String end_with_slash(const Fl_String &str) {
   char last = str[str.size()-1];
   if (last !='/' && last != '\\')

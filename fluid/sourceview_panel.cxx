@@ -110,6 +110,7 @@ void update_sourceview_cb(class Fl_Button*, void*) {
       static const char *exts[] = { ".txt", ".po", ".msg" };
       char fn[FL_PATH_MAX+1];
       fl_strlcpy(fn, get_tmpdir().c_str(), FL_PATH_MAX);
+      fl_strlcat(fn, "strings", FL_PATH_MAX);
       fl_filename_setext(fn, FL_PATH_MAX, exts[g_project.i18n_type]);
       write_strings(fn);
       int top = sv_strings->top_line();

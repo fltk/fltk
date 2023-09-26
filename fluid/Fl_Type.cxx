@@ -260,6 +260,8 @@ void delete_all(int selected_only) {
     widget_browser->hposition(0);
     widget_browser->vposition(0);
     g_layout_list.remove_all(FD_STORE_PROJECT);
+    g_layout_list.current_suite(0);
+    g_layout_list.current_preset(0);
     g_layout_list.update_dialogs();
   }
   selection_changed(0);

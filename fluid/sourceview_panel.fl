@@ -107,12 +107,12 @@ and load those into the Code Viewer widgets.} open return_type void
   }
   if (!sv_header_filename) {
     sv_header_filename = (char*)malloc(FL_PATH_MAX);
-    fl_strlcpy(sv_source_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcpy(sv_header_filename, get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
   }
   if (!sv_design_filename) {
     sv_design_filename = (char*)malloc(FL_PATH_MAX);
-    fl_strlcpy(sv_source_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcpy(sv_design_filename, get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
   }
 
@@ -125,6 +125,7 @@ and load those into the Code Viewer widgets.} open return_type void
     static const char *exts[] = { ".txt", ".po", ".msg" };
     char fn[FL_PATH_MAX+1];
     fl_strlcpy(fn, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcat(fn, "strings", FL_PATH_MAX);
     fl_filename_setext(fn, FL_PATH_MAX, exts[g_project.i18n_type]);
     write_strings(fn);
     int top = sv_strings->top_line();
