@@ -235,7 +235,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
 
  \param[in] root can be \c USER_L or \c SYSTEM_L for user specific or system
             wide preferences, add the CLEAR flag to start with a clean set of
-            preferences instead of reading them from the database
+            preferences instead of reading them from a preexisting database
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
  \param[in] application unique text describing the application, must be a valid filepath segment
 
@@ -245,6 +245,8 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
   node = new Node( "." );
   rootNode = new RootNode( this, root, vendor, application );
   node->setRoot(rootNode);
+  if (root & CLEAR)
+    clear();
 }
 
 /**
@@ -255,9 +257,9 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
  the current locale, making it impossible to exchange floating point settings
  between machines with different language settings.
 
- Use `Fl_Preferences(path, vendor, application, C_LOCALE)` in new projects and
- `Fl_Preferences(path, vendor, application, 0)` if you must keep backward
- compatibility.
+ Use `Fl_Preferences(path, vendor, application, Fl_Preferences::C_LOCALE)` in
+ new projects and `Fl_Preferences(path, vendor, application, 0)` if you must
+ keep backward compatibility.
 
  \see Fl_Preferences( const char *path, const char *vendor, const char *application, Root flags )
  */
@@ -272,18 +274,38 @@ Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char
  arbitrary position in the file system.
 
  The file name is generated in the form <tt>\$(path)/\$(application).prefs</tt>.
- If \p application is \c NULL, \p path is taken literally as the file path and name.
+ If \p application is \c NULL, \p path is taken literally as the file
+ path and name.
+
+ ```
+ // Example: read from an existing database and write modifications when flushed
+ // or destructor is called
+ Fl_Preferences database("/user/matt/test.prefs", "org.fltk.test", NULL,
+                         Fl_Preferences::C_LOCALE);
+
+ // Example: create a new preferences file with an empty data set
+ Fl_Preferences database("/user/matt/test.prefs", "org.fltk.test", NULL,
+      (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
+ ```
+
+ \note the C_LOCALE flag is is not set by default for backward compatibility,
+    but it is highly recommended to set it when opening a database.
 
  \param[in] path path to the directory that contains the preference file
- \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
- \param[in] application unique text describing the application, must be a valid filename or NULL
- \param[in] set C_LOCALE to make the preferences file independent of the current locale,
-            add the CLEAR flag to start with a clean set of preferences instead of reading from the database
+ \param[in] vendor unique text describing the company or author of this file,
+    must be a valid file path segment
+ \param[in] application unique text describing the application, must be a valid
+    filename or NULL
+ \param[in] flags C_LOCALE to make the preferences file independent of the
+    current locale, add the CLEAR flag to start with a clean set of preferences
+    instead of reading from the database
  */
 Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char *application, Root flags ) {
   node = new Node( "." );
   rootNode = new RootNode( this, path, vendor, application, flags );
   node->setRoot(rootNode);
+  if (flags & CLEAR)
+    clear();
 }
 
 /**

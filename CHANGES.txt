@@ -53,8 +53,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     graphics to SVG or EPS files, respectively.
   - Fl_Button now supports a compact flag that visually groups closely set 
     buttons into keypads.
-  - Fl_Tabs now supports close buttons for individual tabs.
-  - Fl_Tabs now support four different modes for handling an
+  - Fl_Tabs widget now supports close buttons for individual tabs.
+  - Fl_Tabs widget now supports four different modes for handling an
     overflowing number of tabs.
   - Windows platform: added support for using a manifest to set the
     application's level of DPI awareness (issue #309).
@@ -193,6 +193,9 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Fl_Roller can now be controlled via the mouse wheel (STR #3120).
   - Tooltips hide by themselves after 12 seconds (STR #2584).
   - Added widget visibility indicator to Fluid (STR #2669).
+  - Improved shell script support in FLUID
+  - Improved constructor for creating Fl_Preferences files with flags for the
+    correct locale and for overwriting existing files.
   - Added Fl_Input_::append() method (STR #2953).
   - Fix for STR#3473 (and its duplicate STR#3507) to restore configure-based
     builds on recent Linux/Unix distributions where the freetype-config
