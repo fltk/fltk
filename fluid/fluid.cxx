@@ -319,6 +319,8 @@ void Fluid_Project::reset() {
 void Fluid_Project::update_settings_dialog() {
   if (settings_window) {
     w_settings_project_tab->do_callback(w_settings_project_tab, LOAD);
+    w_settings_layout_tab->do_callback(w_settings_layout_tab, LOAD);
+    w_settings_shell_tab->do_callback(w_settings_shell_tab, LOAD);
     w_settings_i18n_tab->do_callback(w_settings_i18n_tab, LOAD);
   }
 }
@@ -1055,15 +1057,14 @@ bool merge_project_file(const Fl_String &filename_arg) {
   widget_browser->rebuild();
   if (is_a_merge) {
     // Inserting a file; restore the original filename...
-    free((void *)filename);
-    filename = oldfilename;
+    set_filename(oldfilename);
     set_modflag(1);
   } else {
     // Loaded a file; free the old filename...
     set_modflag(0, 0);
     undo_clear();
-    if (oldfilename) free((void *)oldfilename);
   }
+  if (oldfilename) free((void *)oldfilename);
   g_project.update_settings_dialog();
   return true;
 }
