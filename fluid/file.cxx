@@ -418,6 +418,8 @@ int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy st
     g_shell_config->rebuild_shell_menu();
     g_shell_config->update_settings_dialog();
   }
+  g_layout_list.update_dialogs();
+  g_project.update_settings_dialog();
   int ret = close_read();
   undo_resume();
   return ret;
