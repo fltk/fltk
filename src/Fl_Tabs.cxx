@@ -25,6 +25,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Window.H>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -805,10 +806,12 @@ void Fl_Tabs::draw() {
     if (parent()) {
       Fl_Widget *p = parent();
       fl_push_clip(x(), tabs_y, w(), tabs_h);
-      if (p->as_window())
+      if (Fl_Window *win = p->as_window()) {
         fl_draw_box(p->box(), 0, 0, p->w(), p->h(), p->color());
-      else
+        win->draw_backdrop();
+      } else {
         fl_draw_box(p->box(), p->x(), p->y(), p->w(), p->h(), p->color());
+      }
       fl_pop_clip();
     } else {
       fl_rectf(x(), tabs_y, w(), tabs_h, color());

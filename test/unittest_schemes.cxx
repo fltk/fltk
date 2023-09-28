@@ -315,16 +315,18 @@ public:
         o->labelcolor((Fl_Color)55);
         o->tooltip("Fl_Adjuster with up box");
       } // Fl_Adjuster* o
-      { Fl_Text_Editor* o = new Fl_Text_Editor(220, 53, 100, 29, "down frame");
+      { Fl_Text_Editor* o = new Fl_Text_Editor(220, 40, 100, 25);
         o->box(FL_DOWN_FRAME);
         o->color((Fl_Color)19);
         o->selection_color(FL_DARK1);
-        o->tooltip("Fl_Adjuster with down frame");
+        o->buffer(new Fl_Text_Buffer);
+        o->tooltip("Fl_Text_Editor with down frame");
       } // Fl_Text_Editor* o
-      { Fl_Text_Editor* o = new Fl_Text_Editor(220, 99, 100, 38, "up frame");
+      { Fl_Text_Editor* o = new Fl_Text_Editor(220, 70, 100, 25);
         o->box(FL_UP_FRAME);
         o->color((Fl_Color)19);
         o->selection_color(FL_DARK1);
+        o->buffer(new Fl_Text_Buffer);
         o->tooltip("Fl_Text_Editor with up frame");
       } // Fl_Text_Editor* o
     }

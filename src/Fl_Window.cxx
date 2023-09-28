@@ -507,21 +507,27 @@ void Fl_Window::draw()
 
   if (damage() & ~FL_DAMAGE_CHILD) {     // draw the entire thing
     draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
-
-    if (image() && (align() & FL_ALIGN_INSIDE)) { // draw the image only
-      Fl_Label l1;
-      memset(&l1,0,sizeof(l1));
-      l1.align_ = align();
-      l1.image = image();
-      if (!active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
-      l1.type = labeltype();
-      l1.draw(0,0,w(),h(),align());
-    }
+    draw_backdrop();
   }
   draw_children();
 
   pWindowDriver->draw_end();
   if (!to_display) current_ = save_current;
+}
+
+/**
+ Draw the background image if one is set and is aligned inside.
+ */
+void Fl_Window::draw_backdrop() {
+  if (image() && (align() & FL_ALIGN_INSIDE)) { // draw the image only
+    Fl_Label l1;
+    memset(&l1,0,sizeof(l1));
+    l1.align_ = align();
+    l1.image = image();
+    if (!active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
+    l1.type = labeltype();
+    l1.draw(0,0,w(),h(),align());
+  }
 }
 
 void Fl_Window::make_current()

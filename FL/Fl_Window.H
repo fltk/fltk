@@ -587,8 +587,9 @@ public:
   virtual class Fl_Double_Window *as_double_window() {return 0L;}
 
   void shape(const Fl_Image* img);
-  void shape(const Fl_Image& b) ;
+  void shape(const Fl_Image& b);
   const Fl_Image *shape();
+  void draw_backdrop();
   int screen_num();
   void screen_num(int screen_num);
   static bool is_a_rescale();
