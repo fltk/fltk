@@ -11,6 +11,6 @@
     across the world with a central repository on GitHub.
 
     For more information see README.txt:
-    https://github.com/fltk/fltk/blob/master/README.txt
+    [https://github.com/fltk/fltk/blob/master/README.txt](https://github.com/fltk/fltk/blob/master/README.txt)
 
 ![Build](https://github.com/fltk/fltk/actions/workflows/build.yml/badge.svg)
