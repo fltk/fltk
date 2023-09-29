@@ -308,7 +308,11 @@ const Fl_Menu_Item* Fl_Menu_::find_item_with_argument(long v) {
 */
 int Fl_Menu_::value(const Fl_Menu_Item* m) {
   clear_changed();
-  if (value_ != m) {value_ = m; return 1;}
+  if (value_ != m) {
+    prev_value_ = value_;
+    value_ = m;
+    return 1;
+  }
   return 0;
 }
 
@@ -332,6 +336,7 @@ const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
     } else if (v != value_) { // normal item
       set_changed();
     }
+    prev_value_ = value_;
     value_ = v;
     if (when()&(FL_WHEN_CHANGED|FL_WHEN_RELEASE)) {
       if (changed() || when()&FL_WHEN_NOT_CHANGED) {
@@ -422,7 +427,7 @@ Fl_Menu_::Fl_Menu_(int X,int Y,int W,int H,const char* l)
   set_flag(SHORTCUT_LABEL);
   box(FL_UP_BOX);
   when(FL_WHEN_RELEASE_ALWAYS);
-  value_ = menu_ = 0;
+  value_ = prev_value_ = menu_ = 0;
   alloc = 0;
   selection_color(FL_SELECTION_COLOR);
   textfont(FL_HELVETICA);
@@ -451,6 +456,7 @@ int Fl_Menu_::size() const {
 */
 void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   clear();
+  prev_value_ = NULL;
   value_ = menu_ = (Fl_Menu_Item*)m;
 }
 
@@ -499,7 +505,7 @@ void Fl_Menu_::clear() {
     alloc = 0;
   }
   menu_ = 0;
-  value_ = 0;
+  value_ = prev_value_ = 0;
 }
 
 /**

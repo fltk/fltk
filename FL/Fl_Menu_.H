@@ -54,6 +54,7 @@ class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 
   Fl_Menu_Item *menu_;
   const Fl_Menu_Item *value_;
+  const Fl_Menu_Item *prev_value_;
 
 protected:
 
@@ -158,6 +159,10 @@ public:
 
   /** Returns a pointer to the last menu item that was picked.  */
   const Fl_Menu_Item *mvalue() const {return value_;}
+  /** Returns a pointer to the menu item that was picked before the current one was picked.
+   This call gives devs additional details how a user changed a choice in the Fl_Choice widget.
+   */
+  const Fl_Menu_Item *prev_mvalue() const {return prev_value_;}
   /** Returns the index into menu() of the last item chosen by the user.  It is zero initially. */
   int value() const {return value_ ? (int)(value_-menu_) : -1;}
   int value(const Fl_Menu_Item*);
