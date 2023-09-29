@@ -744,8 +744,8 @@ void Fl_Tabs::draw() {
   // ++      +-----------------+   <-- tab_height() to tab_height + Fl::box_dx(box())
   // +-------------------------+   <-- tab_height + SELECTION_BORDER
   // |                         |
+  //   ↑____↑ this area within the SELECTION_BORDER is called "stem"
   //
-  //   <----> this area within the SELECTION_BORDER is called "stem" below
   // tab_height() calculates the distance from y() to the "highest" child.
   // Note that the SELECTION_BORDER bleeds into the child area!
   // Note that the clear area under the selected tab also bleeds into the child.
@@ -820,7 +820,7 @@ void Fl_Tabs::draw() {
     // -- draw selection border
     fl_push_clip(x(), selection_border_y, w(), selection_border_h);
     if (colored_selection_border) {
-      draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
+      draw_box(box(), x(), y(), w(), h(), selected_tab_color);
       draw_box(box(), x(), selection_border_y, w(), selection_border_h, selection_color());
     } else {
       draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
@@ -842,14 +842,29 @@ void Fl_Tabs::draw() {
 
     // -- draw all tabs
     fl_push_clip(x(), tabs_y, w(), tabs_h);
-    int i;
+    int i, clip_left, clip_right;
     int safe_selected = selected == -1 ? children() : selected;
-    for (i=0; i<safe_selected; i++)
+    // draw all tabs from the leftmost up to the selected one, stacking them
+    // visually as needed. The clipping assures that no tabs shine through gaps
+    // between tabs.
+    clip_left = x();
+    for (i=0; i<safe_selected; i++) {
+      clip_right = (i<tab_count-1) ? x()+(tab_pos[i+1]+tab_width[i+1]/2) : x() + w();
+      fl_push_clip(clip_left, tabs_y, clip_right-clip_left, tabs_h);
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, child(i), tab_flags[i], LEFT);
-    for (i=children()-1; i > safe_selected; i--)
+      fl_pop_clip();
+    }
+    // draw all tabs from the rightmost back to the selected one, also visually stacking them
+    clip_right = x() + w();
+    for (i=children()-1; i > safe_selected; i--) {
+      clip_left = (i>0) ? (tab_pos[i]-tab_width[i-1]/2) : x();
+      fl_push_clip(clip_left, tabs_y, clip_right-clip_left, tabs_h);
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, child(i), tab_flags[i], RIGHT);
+      fl_pop_clip();
+    }
+    // if there is a selected tab, draw it last over all other tabs
     if (selected > -1)
       draw_tab(x()+tab_pos[selected], x()+tab_pos[selected+1],
                tab_width[selected], H, selected_child, tab_flags[selected], SELECTED);
@@ -868,7 +883,10 @@ void Fl_Tabs::draw() {
     fl_push_clip(x(), clipped_child_area_y, w(), clipped_child_area_h);
     if (damage() & (FL_DAMAGE_ALL)) {
       // draw the box and background around the child
-      fl_draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
+      if (colored_selection_border)
+        draw_box(box(), x(), y(), w(), h(), selected_tab_color);
+      else
+        draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
       // force draw the selected child
       if (selected_child)
         draw_child(*selected_child);
@@ -894,7 +912,7 @@ void Fl_Tabs::draw() {
  Tabs with the FL_WHEN_CLOSE bit set will draw a cross on their left side
  only if they are not compressed/overlapping.
 
- \param[in] x1 horizontal position of the left edge of the tab
+ \param[in] x1 horizontal position of the left visible edge of the tab
  \param[in] x2 horizontal position of the following tab
  \param[in] W, H width and height of the tab
  \param[in] o the child widget that corresponds to this tab
@@ -929,9 +947,6 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
   if ((x2 < x1+W) && what == RIGHT) x1 = x2 - W;
 
   if (H >= 0) {
-    if (sel) fl_push_clip(x1, y(), x2 - x1, H + dh - dy);
-    else fl_push_clip(x1, y(), x2 - x1, H);
-
     H += dh;
 
     draw_box(bt, x1, y() + yofs, W, H + 10 - yofs, bc);
@@ -952,14 +967,8 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
     // Draw the focus box
     if (Fl::focus() == this && o->visible())
       draw_focus(bt, x1, y(), W, H, bc);
-
-    fl_pop_clip();
   } else {
     H = -H;
-
-    if (sel) fl_push_clip(x1, y() + h() - H - dy, x2 - x1, H + dy);
-    else fl_push_clip(x1, y() + h() - H, x2 - x1, H);
-
     H += dh;
 
     draw_box(bt, x1, y() + h() - H - 10, W, H + 10 - yofs, bc);
@@ -980,8 +989,6 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
     // Draw the focus box
     if (Fl::focus() == this && o->visible())
       draw_focus(bt, x1, y()+h()-H+1, W, H, bc);
-
-    fl_pop_clip();
   }
   fl_draw_shortcut = prev_draw_shortcut;
 
