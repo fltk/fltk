@@ -925,7 +925,6 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
   x2 += tab_offset;
   int sel = (what == SELECTED);
   int dh = Fl::box_dh(box());
-  int dy = Fl::box_dy(box());
   int wc = 0; // width of "close" button if drawn, or 0
   char prev_draw_shortcut = fl_draw_shortcut;
   fl_draw_shortcut = 1;
