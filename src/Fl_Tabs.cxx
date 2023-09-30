@@ -849,7 +849,7 @@ void Fl_Tabs::draw() {
     // between tabs.
     clip_left = x();
     for (i=0; i<safe_selected; i++) {
-      clip_right = (i<tab_count-1) ? x()+(tab_pos[i+1]+tab_width[i+1]/2) : x() + w();
+      clip_right = (i<tab_count-1) ? x()+(tab_offset+tab_pos[i+1]+tab_width[i+1]/2) : x() + w();
       fl_push_clip(clip_left, tabs_y, clip_right-clip_left, tabs_h);
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, child(i), tab_flags[i], LEFT);
@@ -858,7 +858,7 @@ void Fl_Tabs::draw() {
     // draw all tabs from the rightmost back to the selected one, also visually stacking them
     clip_right = x() + w();
     for (i=children()-1; i > safe_selected; i--) {
-      clip_left = (i>0) ? (tab_pos[i]-tab_width[i-1]/2) : x();
+      clip_left = (i>0) ? (tab_offset+tab_pos[i]-tab_width[i-1]/2) : x();
       fl_push_clip(clip_left, tabs_y, clip_right-clip_left, tabs_h);
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, child(i), tab_flags[i], RIGHT);
