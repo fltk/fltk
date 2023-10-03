@@ -212,20 +212,22 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct Fl_Wayland_Graphics_Driver::d
 static void do_buffer_release(
             struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer) {
   struct wl_shm_pool *my_pool = buffer->shm_pool;
-  struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *pool_data =
+  if (buffer->wl_buffer) {
+    struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *pool_data =
     (struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data*)
-      wl_shm_pool_get_user_data(my_pool);
-  wl_buffer_destroy(buffer->wl_buffer);
-  // remove wld_buffer from list of pool's buffers
-  wl_list_remove(&buffer->link);
-  free(buffer);
-  if (wl_list_empty(&pool_data->buffers) && my_pool != pool) {
-    // all buffers from pool are gone
-    wl_shm_pool_destroy(my_pool);
-    /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
-//printf("do_buffer_release munmap(%p)->%d\n", pool_data->pool_memory, err);
-    free(pool_data);
+    wl_shm_pool_get_user_data(my_pool);
+    wl_buffer_destroy(buffer->wl_buffer);
+    // remove wld_buffer from list of pool's buffers
+    wl_list_remove(&buffer->link);
+    if (wl_list_empty(&pool_data->buffers) && my_pool != pool) {
+      // all buffers from pool are gone
+      wl_shm_pool_destroy(my_pool);
+      /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
+      //printf("do_buffer_release munmap(%p)->%d\n", pool_data->pool_memory, err);
+      free(pool_data);
+    }
   }
+  free(buffer);
 }
 
 
