@@ -226,19 +226,24 @@ Documentation options: these options are only available if `doxygen' is
 OPTION_BUILD_HTML_DOCUMENTATION - default ON
 OPTION_BUILD_PDF_DOCUMENTATION  - default ON
    These options can be used to switch HTML documentation generation with
-   doxygen on. The build targets ('html', 'pdf', or 'docs') need still to
-   be executed explicitly.
+   doxygen on. If these are ON the build targets 'html', 'pdf', and 'docs'
+   are generated but must be built explicitly. Technically the build targets
+   are generated but excluded from 'ALL'. You can safely leave these two
+   options ON if you want to save build time because the docs are not
+   built automatically.
 
 OPTION_INCLUDE_DRIVER_DOCUMENTATION - default OFF
    This option adds driver documentation to HTML and PDF docs (if ON). This
    option is marked as "advanced" since it is only useful for FLTK developers
-   or advanced users.
+   and advanced users. It is only used if at least one of the documentation
+   options above is ON as well.
 
 OPTION_INSTALL_HTML_DOCUMENTATION - default OFF
 OPTION_INSTALL_PDF_DOCUMENTATION  - default OFF
-   If these options are ON then the HTML and/or PDF docs get installed
+   If these options are ON then the HTML and/or PDF docs are installed
    when the 'install' target is executed, e.g. with `make install'. You
    need to select above options OPTION_BUILD_*_DOCUMENTATION as well.
+
 
  2.3  Building under Linux with Unix Makefiles
 -----------------------------------------------
