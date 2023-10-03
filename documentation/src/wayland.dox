@@ -618,14 +618,27 @@ has the effect that when the mapping operation eventually completes, Wayland run
 \c draw_buffer_needs_commit member is true. The net result is that the screen
 shows the most recent surface content.
 
+This synchronization mechanism is also used when performing an interactive window resize
+operation. During such operation, the compositor informs the client an interactive
+resize is being performed and sends window resize commands at high rate (~60 Hz) to the
+client via the socket. Libdecor turns on flag \c LIBDECOR_WINDOW_STATE_RESIZING
+to inform the client, and runs function \c handle_configure() for each received resize
+command. Before calling Fl_Group::resize() and later Fl_Window::draw(),
+\c handle_configure() tests whether \c window->buffer->cb is NULL. When it's not
+because a previous resize operation is being performed, the current resize command is
+skipped. At the end of the interactive resize, flag \c LIBDECOR_WINDOW_STATE_RESIZING
+is off and Wayland sends a final resize command which is not skipped. Overall, this
+ensures the client program resizes its window as frequently as it can without
+falling behind resize commands sent by the compositor.
+
 <h3>Progressive window drawing</h3>
 FLTK supports progressive drawing when an app calls function Fl_Window::make_current()
 at any time and then calls the FLTK drawing API. This is made possible
 in function \c Fl_Wayland_Window_Driver::make_current() with
 \code
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb) &&
-      !wait_for_expose_value ) {
+  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb)
+      && window->buffer->draw_buffer_needs_commit && (!wait_for_expose_value) ) {
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
 \endcode
