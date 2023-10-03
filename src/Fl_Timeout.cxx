@@ -19,7 +19,6 @@
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>
-#include <limits.h> // for LONG_MIN
 
 /**
   \file Fl_Timeout.cxx
@@ -80,10 +79,21 @@ Fl_Timestamp Fl::now() {
   return ts; // C++ will copy the result into the lvalue for us
 }
 
-/** The time stamp of a time point in the distant past */
+/** The time stamp of a time point in the distant past.
+
+  This point in time is unspecified and may be changed in a later
+  FLTK version.
+
+  \internal
+  Implementation notes:
+  - Currently Fl_Timestamp is based on the "Unix Epoch", i.e. 0 (zero)
+    is equivalent to Jan 1, 1970 00:00 UTC. This may change in the future.
+  - Setting the value of Fl::distant_past() to 0 (zero) avoids integer
+    overflow if sizeof(long) == 4 (Windows), at least until 2038.
+*/
 const Fl_Timestamp Fl::distant_past() {
   Fl_Timestamp ts;
-  ts.sec = LONG_MIN/10;
+  ts.sec = 0;
   ts.usec = 0;
   return (const Fl_Timestamp)ts;
 }
