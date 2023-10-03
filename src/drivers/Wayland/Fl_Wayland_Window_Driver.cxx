@@ -339,9 +339,8 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb) &&
-      !wait_for_expose_value ) {
-    //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
+  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb)
+      && window->buffer->draw_buffer_needs_commit && (!wait_for_expose_value) ) {
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
 
@@ -873,8 +872,7 @@ static void handle_configure(struct libdecor_frame *frame,
 #ifndef LIBDECOR_MR131
   bool in_decorated_window_resizing = (window->state & LIBDECOR_WINDOW_STATE_RESIZING);
 #endif
-  //printf("resize request received from compositor to %dx%d\n",width,height);
-  if (in_decorated_window_resizing && window->buffer->cb) {
+  if (in_decorated_window_resizing && window->buffer && window->buffer->cb) {
     // Skip resizing & redrawing. The last resize request won't be skipped because
     // in_decorated_window_resizing will be false then.
     return;
