@@ -882,12 +882,6 @@ static void handle_configure(struct libdecor_frame *frame,
   window->fl_win->resize(0, 0, ceil(width / f), ceil(height / f));
   driver->in_handle_configure = false;
   if (wl_output) window->fl_win->redraw();
-
-  if (ceil(width / f) != window->configured_width || ceil(height / f) != window->configured_height) {
-    if (window->buffer) {
-      Fl_Wayland_Graphics_Driver::buffer_release(window);
-    }
-  }
   window->configured_width = ceil(width / f);
   window->configured_height = ceil(height / f);
   if (is_2nd_run) driver->wait_for_expose_value = 0;
