@@ -377,6 +377,51 @@ static struct wl_pointer_listener pointer_listener = {
   pointer_axis
 };
 
+
+static void touch_down(void *data,
+         struct wl_touch *wl_touch,
+         uint32_t serial,
+         uint32_t time,
+         wl_surface *surface,
+         int id,
+         wl_fixed_t x,
+         wl_fixed_t y)
+{
+  if (id != 0) return;
+  Fl_Window *win = event_coords_from_surface(surface, x, y);
+  if (!win) return;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
+  seat->pointer_focus = surface;
+  pointer_button(data, NULL, serial, time, BTN_LEFT, WL_POINTER_BUTTON_STATE_PRESSED);
+}
+
+
+void touch_up(void* data, wl_touch* wl_touch, uint serial, uint time, int id) {
+  if (id != 0) return;
+  pointer_button(data, NULL, serial, time, BTN_LEFT, WL_POINTER_BUTTON_STATE_RELEASED);
+}
+
+
+void touch_motion(void* data, wl_touch* wl_touch, uint time, int id,
+                  wl_fixed_t x, wl_fixed_t y) {
+  if (id != 0) return;
+  pointer_motion(data, NULL, time, x, y);
+}
+
+
+void touch_frame(void* data, wl_touch* wl_touch) { }
+void touch_cancel(void* data, wl_touch* wl_touch) { }
+
+
+static struct wl_touch_listener touch_listener = {
+  touch_down,
+  touch_up,
+  touch_motion,
+  touch_frame,
+  touch_cancel,
+};
+
+
 static const char *proxy_tag = "FLTK for Wayland";
 
 bool Fl_Wayland_Screen_Driver::own_output(struct wl_output *output)
@@ -922,6 +967,14 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
     wl_pointer_release(seat->wl_pointer);
     seat->wl_pointer = NULL;
   }
+  
+  if ((capabilities & WL_SEAT_CAPABILITY_TOUCH) && !seat->wl_touch) {
+      seat->wl_touch = wl_seat_get_touch(wl_seat);
+      wl_touch_add_listener(seat->wl_touch, &touch_listener, seat);
+    } else if (!(capabilities & WL_SEAT_CAPABILITY_TOUCH) && seat->wl_touch) {
+      wl_touch_release(seat->wl_touch);
+      seat->wl_touch = NULL;
+    }
 
   bool have_keyboard = seat->xkb_context && (capabilities & WL_SEAT_CAPABILITY_KEYBOARD);
   if (have_keyboard && seat->wl_keyboard == NULL) {

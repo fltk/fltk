@@ -43,6 +43,7 @@ public:
   struct seat {
     struct wl_seat *wl_seat;
     struct wl_pointer *wl_pointer;
+    struct wl_touch *wl_touch;
     struct wl_keyboard *wl_keyboard;
     uint32_t keyboard_enter_serial;
     struct wl_surface *keyboard_surface;
