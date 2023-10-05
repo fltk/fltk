@@ -20,12 +20,15 @@
 #include "Fl_Wayland_Image_Surface_Driver.H"
 
 
-Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
+Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, 
+      int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
   float d = 1;
   if (!off) {
     fl_open_display();
     if (Fl_Wayland_Window_Driver::wld_window) {
-      d = Fl_Wayland_Window_Driver::driver(Fl_Wayland_Window_Driver::wld_window->fl_win)->wld_scale();
+      d = Fl_Wayland_Window_Driver::driver(
+            Fl_Wayland_Window_Driver::wld_window->fl_win
+                                           )->wld_scale();
     }
     d *= fl_graphics_driver->scale();
     if (d != 1 && high_res) {
@@ -56,6 +59,7 @@ Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
   delete driver();
 }
 
+
 void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_cairo((cairo_t*)offscreen);
@@ -63,6 +67,7 @@ void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Wayland_Window_Driver::wld_window = NULL;
   fl_window = 0;
 }
+
 
 void Fl_Wayland_Image_Surface_Driver::end_current() {
   cairo_surface_t *surf = cairo_get_target((cairo_t*)offscreen);
@@ -72,17 +77,21 @@ void Fl_Wayland_Image_Surface_Driver::end_current() {
   Fl_Surface_Device::end_current();
 }
 
+
 void Fl_Wayland_Image_Surface_Driver::translate(int x, int y) {
   ((Fl_Wayland_Graphics_Driver*)driver())->ps_translate(x, y);
 }
+
 
 void Fl_Wayland_Image_Surface_Driver::untranslate() {
   ((Fl_Wayland_Graphics_Driver*)driver())->ps_untranslate();
 }
 
+
 Fl_RGB_Image* Fl_Wayland_Image_Surface_Driver::image() {
   // Convert depth-4 image in draw_buffer to a depth-3 image while exchanging R and B colors
-  struct Fl_Wayland_Graphics_Driver::draw_buffer *off_buf = Fl_Wayland_Graphics_Driver::offscreen_buffer(offscreen);
+  struct Fl_Wayland_Graphics_Driver::draw_buffer *off_buf = 
+    Fl_Wayland_Graphics_Driver::offscreen_buffer(offscreen);
   int height = off_buf->data_size / off_buf->stride;
   uchar *rgb = new uchar[off_buf->width * height * 3];
   uchar *p = rgb;

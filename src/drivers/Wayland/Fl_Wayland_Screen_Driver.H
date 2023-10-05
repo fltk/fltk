@@ -146,7 +146,8 @@ public:
   int dnd(int unused) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;
   void compose_reset() FL_OVERRIDE;
-  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
+  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, 
+        bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
   int get_mouse(int &x, int &y) FL_OVERRIDE;
   void open_display_platform() FL_OVERRIDE;
   void close_display() FL_OVERRIDE;

@@ -58,7 +58,7 @@ static bool attempt_wayland() {
   if (backend && strcmp(backend, "wayland") == 0) {
     Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
     if (!Fl_Wayland_Screen_Driver::wl_display) {
-      fprintf(stderr, "Error: no Wayland connection available, FLTK_BACKEND = '%s'\n", backend);
+      fprintf(stderr, "Error: no Wayland connection available, FLTK_BACKEND='wayland'\n");
       exit(1);
     }
     return true;
