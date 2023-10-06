@@ -3062,7 +3062,8 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
   } else { // a top-level window
-    [cw makeKeyAndOrderFront:nil];
+    if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
+    else [cw orderFront:nil];
   }
   if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() && !w->parent() && w->border() &&
       !w->modal() && !w->non_modal()) {
