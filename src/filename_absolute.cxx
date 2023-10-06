@@ -171,70 +171,77 @@ int fl_filename_relative(char *to, int tolen, const char *from, const char *base
  \{
  */
 
-int Fl_System_Driver::filename_relative(char *to, int tolen, const char *from, const char *base)
+int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_dir, const char *base_dir)
 {
-  char          *newslash;              // Directory separator
-  const char    *slash;                 // Directory separator
-  char          *cwd = 0L, *cwd_buf = 0L;
-  if (base) cwd = cwd_buf = fl_strdup(base);
+  // Find the relative path from base_dir to dest_dir.
+  // Both paths must be absolute and well formed (contain no /../ and /./ segments).
+  const char *base_i = base_dir;    // iterator through the base directory string
+  const char *base_s = base_dir;    // pointer to the last dir separator found
+  const char *dest_i = dest_dir;    // iterator through the destination directory
+  const char *dest_s = dest_dir;    // pointer to the last dir separator found
 
-  // return if "from" is not an absolute path
-  if (from[0] == '\0' || !isdirsep(*from)) {
-    strlcpy(to, from, tolen);
-    if (cwd_buf) free(cwd_buf);
+  // return if any of the pointers is NULL
+  if (!to || !dest_dir || !base_dir) {
     return 0;
   }
 
-  // return if "cwd" is not an absolute path
-  if (!cwd || cwd[0] == '\0' || !isdirsep(*cwd)) {
-    strlcpy(to, from, tolen);
-    if (cwd_buf) free(cwd_buf);
+  // return if `base_dir` or `dest_dir` is not an absolute path
+  if (!isdirsep(*base_dir) || !isdirsep(*dest_dir)) {
+    strlcpy(to, dest_dir, tolen);
     return 0;
   }
 
   // test for the exact same string and return "." if so
-  if (!strcmp(from, cwd)) {
+  int bn = (int)strlen(base_dir);
+  if ( (bn>1) && (isdirsep(base_dir[bn-1])) ) bn--;
+  int dn = (int)strlen(dest_dir);
+  if ( (dn>1) && (isdirsep(dest_dir[dn-1])) ) dn--;
+  if ( (bn==dn) && !strncmp(base_dir, dest_dir, bn)) {
     strlcpy(to, ".", tolen);
-    free(cwd_buf);
-    return (1);
+    return 1;
   }
 
   // compare both path names until we find a difference
-  for (slash = from, newslash = cwd;
-       *slash != '\0' && *newslash != '\0';
-       slash ++, newslash ++)
-    if (isdirsep(*slash) && isdirsep(*newslash)) continue;
-    else if (*slash != *newslash) break;
-
-  // skip over trailing slashes
-  if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
-      &&(newslash==cwd || !isdirsep(newslash[-1])) )
-    newslash--;
-
-  // now go back to the first character of the first differing paths segment
-  while (!isdirsep(*slash) && slash > from) slash --;
-  if (isdirsep(*slash)) slash ++;
-
-  // do the same for the current dir
-  if (isdirsep(*newslash)) newslash --;
-  if (*newslash != '\0')
-    while (!isdirsep(*newslash) && newslash > cwd) newslash --;
+  for (;;) {
+    base_i++; dest_i++;
+    char b = *base_i, d = *dest_i;
+    int b0 = (b==0) || (isdirsep(b));
+    int d0 = (d==0) || (isdirsep(d));
+    if (b0 && d0) {
+      base_s = base_i;
+      dest_s = dest_i;
+    }
+    if (b==0 || d==0) break;
+    if (b!=d) break;
+  }
+  // base_s and dest_s point at the last separator we found
+  // base_i and dest_i point at the first character that differs
 
   // prepare the destination buffer
   to[0]         = '\0';
   to[tolen - 1] = '\0';
 
-  // now add a "previous dir" sequence for every following slash in the cwd
-  while (*newslash != '\0') {
-    if (isdirsep(*newslash)) strlcat(to, "../", tolen);
-
-    newslash ++;
+  // count the directory segments remaining in `base_dir`
+  int n_up = 0;
+  for (;;) {
+    char b = *base_s++;
+    if (b==0) break;
+    if (isdirsep(b) && *base_s) n_up++;
   }
 
-  // finally add the differing path from "from"
-  strlcat(to, slash, tolen);
+  // now add a "previous dir" sequence for every following slash in the cwd
+  if (n_up>0)
+    strlcat(to, "..", tolen);
+  for (; n_up>1; --n_up)
+    strlcat(to, "/..", tolen);
 
-  free(cwd_buf);
+  // finally add the differing path from "from"
+  if (*dest_s) {
+    if (n_up)
+      strlcat(to, "/", tolen);
+    strlcat(to, dest_s+1, tolen);
+  }
+
   return 1;
 }
 
