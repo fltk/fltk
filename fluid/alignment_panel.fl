@@ -858,7 +858,7 @@ list:}
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
 }}
-            xywh {100 200 24 22} labelsize 11
+            tooltip {insert a new shell command into the list after the selected command} xywh {100 200 24 22} labelfont 1 labelsize 11
           }
           Fl_Button w_settings_shell_dup {
             label {++}
@@ -886,10 +886,10 @@ if (v==LOAD) {
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
 }}
-            xywh {124 200 24 22} labelsize 11 deactivate
+            tooltip {duplicate the selected shell command and insert it into the list} xywh {124 200 24 22} labelfont 1 labelsize 11 deactivate
           }
           Fl_Button w_settings_shell_remove {
-            label {-}
+            label DEL
             callback {int selected = w_settings_shell_list_selected;
 if (v==LOAD) {
   if (selected) {
@@ -899,6 +899,9 @@ if (v==LOAD) {
   }
 } else {
   if (!selected) return;
+  int ret = fl_choice("Delete the shell command\\n\\"%s\\"?\\n\\nThis can not be undone.",
+    "Delete", "Cancel", NULL, g_shell_config->list[selected-1]->name.c_str());
+  if (ret==1) return;
   g_shell_config->remove(selected-1);
   w_settings_shell_list->remove(selected);
   if (selected <= w_settings_shell_list->size())
@@ -910,7 +913,7 @@ if (v==LOAD) {
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
 }}
-            xywh {148 200 24 22} labelsize 11 deactivate
+            tooltip {remove the selected shell command - this can not be undone} xywh {148 200 24 22} labelsize 10 deactivate
           }
           Fl_Menu_Button w_settings_shell_menu {open
             xywh {172 200 24 22} labelsize 11 textsize 11
@@ -919,33 +922,33 @@ if (v==LOAD) {
               label {Import...}
               callback {if (v != LOAD) 
   Fd_Shell_Command_List::import_from_file();}
-              xywh {90 90 100 20} labelsize 11
+              tooltip {import shell commands from an external file} xywh {90 90 100 20} labelsize 11
             }
             MenuItem {} {
               label {Export selected...}
               callback {if (v != LOAD) 
   Fd_Shell_Command_List::export_selected();}
-              xywh {10 10 100 20} labelsize 11 divider
+              tooltip {export selected shell commands to an external file} xywh {10 10 100 20} labelsize 11 divider
             }
             MenuItem {} {
-              label {Import Example Scripts:}
-              xywh {20 20 100 20} labelfont 1 labelsize 10 deactivate
+              label {Example Scripts:}
+              xywh {20 20 100 20} labelfont 1 labelsize 10 hide deactivate
             }
             MenuItem {} {
               label {Compile with fltk-config}
-              xywh {30 30 100 20} labelsize 11
+              xywh {30 30 100 20} labelsize 11 hide
             }
             MenuItem {} {
               label {Build and run}
-              xywh {40 40 100 20} labelsize 11
+              xywh {40 40 100 20} labelsize 11 hide
             }
             MenuItem {} {
               label {Build with Xcode on macOS}
-              xywh {50 50 100 20} labelsize 11
+              xywh {50 50 100 20} labelsize 11 hide
             }
             MenuItem {} {
               label {Build with CMake}
-              xywh {60 60 100 20} labelsize 11
+              xywh {60 60 100 20} labelsize 11 hide
             }
           }
           Fl_Button w_settings_shell_play {
@@ -962,7 +965,7 @@ if (v==LOAD) {
   Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
   cmd->run();
 }}
-            xywh {270 200 50 22} labelsize 11 deactivate
+            tooltip {run the selected shell command} xywh {270 200 50 22} labelsize 11 deactivate
           }
         }
         Fl_Group w_settings_shell_cmd {
@@ -994,10 +997,10 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            xywh {100 246 220 20} labelfont 1 labelsize 11 when 13 textfont 4 textsize 11
+            tooltip {file the shell command under this name in the shell command list} xywh {100 246 220 20} labelfont 1 labelsize 11 when 13 textfont 4 textsize 11
           }
           Fl_Input {} {
-            label {Label:}
+            label {Menu Label:}
             callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
@@ -1013,7 +1016,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            xywh {100 272 220 20} labelfont 1 labelsize 11 textfont 4 textsize 11
+            tooltip {label text for the Shell menu in the main menu bar} xywh {100 272 220 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
           Fl_Button {} {
             label Shortcut
@@ -1033,7 +1036,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            xywh {100 297 130 20} labelsize 11 align 16
+            tooltip {an optional keyboard shortcut to run this shell command} xywh {100 297 130 20} labelsize 11 align 16
             code0 {\#include <FL/Fl_Shortcut_Button.H>}
             class Fl_Shortcut_Button
           }
@@ -1061,7 +1064,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }} open
-            xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+            tooltip {store this shell command as a user setting or save it with the .fl project file} xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {@fd_user User Setting}
@@ -1093,7 +1096,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }} open
-            xywh {100 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+            tooltip {add this command to the main menu bar only if this condition is true} xywh {100 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {all platforms}
@@ -1176,7 +1179,7 @@ if (mi) {
   }
   w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
 }} open
-              xywh {296 373 24 22} labelsize 11 textsize 11
+              tooltip {a list of text replacements available for the shell script} xywh {296 373 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {
                 label {@@BASENAME@@}
@@ -1241,7 +1244,7 @@ w_settings_shell_command->buffer()->text(script_input->buffer()->text());
 w_settings_shell_command->do_callback();
 BREAK2:
 script_panel->hide();}
-              tooltip {open big code editor} xywh {296 395 24 22} labelsize 11 labelcolor 49
+              tooltip {open the big code editor} xywh {296 395 24 22} labelsize 11 labelcolor 39
             }
           }
           Fl_Check_Button {} {

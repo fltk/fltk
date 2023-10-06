@@ -907,6 +907,9 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     }
   } else {
     if (!selected) return;
+    int ret = fl_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
+      "Delete", "Cancel", NULL, g_shell_config->list[selected-1]->name.c_str());
+    if (ret==1) return;
     g_shell_config->remove(selected-1);
     w_settings_shell_list->remove(selected);
     if (selected <= w_settings_shell_list->size())
@@ -935,11 +938,11 @@ static void cb_Export(Fl_Menu_*, void* v) {
 Fl_Menu_Item menu_w_settings_shell_menu[] = {
  {"Import...", 0,  (Fl_Callback*)cb_Import, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"Export selected...", 0,  (Fl_Callback*)cb_Export, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Import Example Scripts:", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
- {"Compile with fltk-config", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Build and run", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Build with Xcode on macOS", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Build with CMake", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Example Scripts:", 0,  0, 0, 17, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
+ {"Compile with fltk-config", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Build and run", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Build with Xcode on macOS", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Build with CMake", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -992,7 +995,7 @@ static void cb_Name(Fl_Input* o, void* v) {
   }
 }
 
-static void cb_Label(Fl_Input* o, void* v) {
+static void cb_Menu(Fl_Input* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1090,7 +1093,7 @@ Fl_Menu_Item menu_Condition[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-static void cb_Label1(Fl_Input* o, void* v) {
+static void cb_Label(Fl_Input* o, void* v) {
   if (v == LOAD) {
   //  o->value(g_shell_command.c_str());
   } else {
@@ -2621,16 +2624,21 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         { w_settings_shell_toolbox = new Fl_Group(100, 200, 220, 22);
           w_settings_shell_toolbox->callback((Fl_Callback*)cb_w_settings_shell_toolbox);
           { Fl_Button* o = new Fl_Button(100, 200, 24, 22, "+");
+            o->tooltip("insert a new shell command into the list after the selected command");
+            o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_8);
           } // Fl_Button* o
           { w_settings_shell_dup = new Fl_Button(124, 200, 24, 22, "++");
+            w_settings_shell_dup->tooltip("duplicate the selected shell command and insert it into the list");
+            w_settings_shell_dup->labelfont(1);
             w_settings_shell_dup->labelsize(11);
             w_settings_shell_dup->callback((Fl_Callback*)cb_w_settings_shell_dup);
             w_settings_shell_dup->deactivate();
           } // Fl_Button* w_settings_shell_dup
-          { w_settings_shell_remove = new Fl_Button(148, 200, 24, 22, "-");
-            w_settings_shell_remove->labelsize(11);
+          { w_settings_shell_remove = new Fl_Button(148, 200, 24, 22, "DEL");
+            w_settings_shell_remove->tooltip("remove the selected shell command - this can not be undone");
+            w_settings_shell_remove->labelsize(10);
             w_settings_shell_remove->callback((Fl_Callback*)cb_w_settings_shell_remove);
             w_settings_shell_remove->deactivate();
           } // Fl_Button* w_settings_shell_remove
@@ -2640,6 +2648,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             w_settings_shell_menu->menu(menu_w_settings_shell_menu);
           } // Fl_Menu_Button* w_settings_shell_menu
           { w_settings_shell_play = new Fl_Button(270, 200, 50, 22, "Run");
+            w_settings_shell_play->tooltip("run the selected shell command");
             w_settings_shell_play->labelsize(11);
             w_settings_shell_play->callback((Fl_Callback*)cb_w_settings_shell_play);
             w_settings_shell_play->deactivate();
@@ -2649,6 +2658,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         { w_settings_shell_cmd = new Fl_Group(10, 235, 320, 291);
           w_settings_shell_cmd->callback((Fl_Callback*)cb_w_settings_shell_cmd);
           { Fl_Input* o = new Fl_Input(100, 246, 220, 20, "Name:");
+            o->tooltip("file the shell command under this name in the shell command list");
             o->labelfont(1);
             o->labelsize(11);
             o->textfont(4);
@@ -2656,14 +2666,16 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->callback((Fl_Callback*)cb_Name);
             o->when(FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(100, 272, 220, 20, "Label:");
+          { Fl_Input* o = new Fl_Input(100, 272, 220, 20, "Menu Label:");
+            o->tooltip("label text for the Shell menu in the main menu bar");
             o->labelfont(1);
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Label);
+            o->callback((Fl_Callback*)cb_Menu);
           } // Fl_Input* o
           { Fl_Shortcut_Button* o = new Fl_Shortcut_Button(100, 297, 130, 20, "Shortcut");
+            o->tooltip("an optional keyboard shortcut to run this shell command");
             o->box(FL_UP_BOX);
             o->color(FL_BACKGROUND_COLOR);
             o->selection_color(FL_BACKGROUND_COLOR);
@@ -2676,6 +2688,8 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->when(FL_WHEN_RELEASE);
           } // Fl_Shortcut_Button* o
           { Fl_Choice* o = new Fl_Choice(100, 322, 130, 20, "Store:");
+            o->tooltip("store this shell command as a user setting or save it with the .fl project fi\
+le");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
@@ -2684,6 +2698,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->menu(menu_Store);
           } // Fl_Choice* o
           { Fl_Choice* o = new Fl_Choice(100, 348, 130, 20, "Condition:");
+            o->tooltip("add this command to the main menu bar only if this condition is true");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
@@ -2696,7 +2711,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Label1);
+            o->callback((Fl_Callback*)cb_Label);
             o->hide();
           } // Fl_Input* o
           { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(100, 373, 196, 80, "Shell script:");
@@ -2710,15 +2725,16 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           } // Fl_Text_Editor* w_settings_shell_command
           { Fl_Group* o = new Fl_Group(296, 373, 24, 44);
             { w_settings_shell_text_macros = new Fl_Menu_Button(296, 373, 24, 22);
+              w_settings_shell_text_macros->tooltip("a list of text replacements available for the shell script");
               w_settings_shell_text_macros->labelsize(11);
               w_settings_shell_text_macros->textsize(11);
               w_settings_shell_text_macros->callback((Fl_Callback*)cb_w_settings_shell_text_macros);
               w_settings_shell_text_macros->menu(menu_w_settings_shell_text_macros);
             } // Fl_Menu_Button* w_settings_shell_text_macros
             { Fl_Button* o = new Fl_Button(296, 395, 24, 22, "@square");
-              o->tooltip("open big code editor");
+              o->tooltip("open the big code editor");
               o->labelsize(11);
-              o->labelcolor(FL_BACKGROUND_COLOR);
+              o->labelcolor(FL_DARK3);
               o->callback((Fl_Callback*)cb_square);
             } // Fl_Button* o
             o->end();
