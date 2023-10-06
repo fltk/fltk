@@ -471,12 +471,11 @@ public:
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
 
-  static Fl_Timestamp now();
+  static Fl_Timestamp now(double delay = 0);
   static double seconds_since(Fl_Timestamp& then);
   static double seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
   static long ticks_since(Fl_Timestamp& then);
   static long ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
-  static const Fl_Timestamp distant_past();
 
   // private
   static void run_idle();

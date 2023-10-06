@@ -19,6 +19,7 @@
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>
+#include <math.h> // for trunc()
 
 /**
   \file Fl_Timeout.cxx
@@ -35,7 +36,7 @@ static int num_timers = 0;    // DEBUG
 #endif
 
 /**
- Set a time stamp at this point in time.
+ Set a time stamp at this point in time with optional signed offset in seconds.
 
  The time stamp is an opaque type and does not represent the time of day or
  some time and date in the calendar. It is used with Fl::seconds_between() and
@@ -53,6 +54,9 @@ static int num_timers = 0;    // DEBUG
  may wrap around and does not represent a real time (maybe runtime of the system).
  Function seconds_since() below uses this to subtract two timestamps which is
  always a correct delta time with milliseconds or microseconds resolution.
+ 
+ \param offset optional signed offset in seconds added to the current time
+ \return this moment in time offset by \p offset as an opaque time stamp
 
  \todo Fl::system_driver()->gettime() was implemented for the Forms library and
  has a limited resolution (on Windows: milliseconds). On POSIX platforms it uses
@@ -61,42 +65,34 @@ static int num_timers = 0;    // DEBUG
  timers which requires a new dependency: winmm.lib (dll). This could be a future
  improvement, maybe set as a build option or generally (requires Win95 or 98?).
 
- \return this moment in time as an opaque time stamp
-
  \see Fl::seconds_since(Fl_Timestamp& then)
  \see Fl::seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
  \see Fl::ticks_since(Fl_Timestamp& then)
  \see Fl::ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back)
- \see Fl::distant_past()
  */
-Fl_Timestamp Fl::now() {
+Fl_Timestamp Fl::now(double offset) {
   Fl_Timestamp ts;
   time_t sec;
   int usec;
   Fl::system_driver()->gettime(&sec, &usec);
-  ts.sec = (long)sec;
+  ts.sec = sec;
   ts.usec = usec;
+  if (offset) {
+    sec = trunc(offset);
+    usec = (offset - sec) * 1000000;
+    ts.sec += sec;
+    if (usec + ts.usec >= 1000000) {
+      ts.sec++;
+      ts.usec += (usec - 1000000);
+    } else if (usec + ts.usec < 0) {
+      ts.sec--;
+      ts.usec += (usec + 1000000);
+    } else
+      ts.usec += usec;
+  }
   return ts; // C++ will copy the result into the lvalue for us
 }
 
-/** The time stamp of a time point in the distant past.
-
-  This point in time is unspecified and may be changed in a later
-  FLTK version.
-
-  \internal
-  Implementation notes:
-  - Currently Fl_Timestamp is based on the "Unix Epoch", i.e. 0 (zero)
-    is equivalent to Jan 1, 1970 00:00 UTC. This may change in the future.
-  - Setting the value of Fl::distant_past() to 0 (zero) avoids integer
-    overflow if sizeof(long) == 4 (Windows), at least until 2038.
-*/
-const Fl_Timestamp Fl::distant_past() {
-  Fl_Timestamp ts;
-  ts.sec = 0;
-  ts.usec = 0;
-  return (const Fl_Timestamp)ts;
-}
 
 /**
  Return the time in seconds between now and a previously taken time stamp.
