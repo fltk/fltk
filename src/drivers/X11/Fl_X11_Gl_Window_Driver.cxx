@@ -388,6 +388,8 @@ int Fl_X11_Gl_Window_Driver::mode_(int m, const int *a) {
 }
 
 void Fl_X11_Gl_Window_Driver::swap_buffers() {
+  if (!fl_xid(pWindow)) // window not shown
+    return;
   glXSwapBuffers(fl_display, fl_xid(pWindow));
 }
 

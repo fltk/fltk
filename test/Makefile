@@ -75,6 +75,7 @@ CPPFILES =\
 	fullscreen.cxx \
 	gl_overlay.cxx \
 	glpuzzle.cxx \
+	glut_test.cxx \
 	hello.cxx \
 	help_dialog.cxx \
 	icon.cxx \
@@ -226,6 +227,7 @@ GLALL = \
 	fullscreen$(EXEEXT) \
 	gl_overlay$(EXEEXT) \
 	glpuzzle$(EXEEXT) \
+	glut_test$(EXEEXT) \
 	shape$(EXEEXT) \
 	unittests$(EXEEXT)
 
@@ -659,6 +661,11 @@ glpuzzle$(EXEEXT): glpuzzle.o
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+glut_test$(EXEEXT): glut_test.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ glut_test.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 unittests$(EXEEXT): $(OBJUNITTEST)

@@ -87,11 +87,17 @@ CREATE_EXAMPLE (flex_login flex_login.cxx fltk)
 CREATE_EXAMPLE (fltk-versions fltk-versions.cxx fltk)
 CREATE_EXAMPLE (fonts fonts.cxx fltk)
 CREATE_EXAMPLE (forms forms.cxx "fltk_forms;fltk")
+
+if (OPENGL_FOUND)
+  CREATE_EXAMPLE (glut_test glut_test.cxx "fltk_gl;fltk")
+endif()
+
 if (OPENGL_FOUND)
   CREATE_EXAMPLE (handle_events handle_events.cxx "fltk_gl;fltk") # opt. Fl_Gl_Window
 else()
   CREATE_EXAMPLE (handle_events handle_events.cxx fltk) # w/o Fl_Gl_Window
 endif()
+
 CREATE_EXAMPLE (hello hello.cxx fltk)
 CREATE_EXAMPLE (help_dialog help_dialog.cxx "fltk_images;fltk")
 CREATE_EXAMPLE (icon icon.cxx fltk)
