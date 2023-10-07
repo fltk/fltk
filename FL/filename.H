@@ -49,7 +49,9 @@ FL_EXPORT const char *fl_filename_ext(const char *buf);
 FL_EXPORT char *fl_filename_setext(char *to, int tolen, const char *ext);
 FL_EXPORT int fl_filename_expand(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from);
+FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from, const char *cwd);
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from);
+FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
 FL_EXPORT int fl_filename_match(const char *name, const char *pattern);
 FL_EXPORT int fl_filename_isdir(const char *name);
 
@@ -77,9 +79,7 @@ FL_EXPORT Fl_String fl_getcwd();
 
 inline char *fl_filename_setext(char *to, const char *ext) { return fl_filename_setext(to, FL_PATH_MAX, ext); }
 inline int fl_filename_expand(char *to, const char *from) { return fl_filename_expand(to, FL_PATH_MAX, from); }
-FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from, const char *cwd);
 inline int fl_filename_absolute(char *to, const char *from) { return fl_filename_absolute(to, FL_PATH_MAX, from); }
-FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
 inline int fl_filename_relative(char *to, const char *from) { return fl_filename_relative(to, FL_PATH_MAX, from); }
 #  endif /* __cplusplus */
 

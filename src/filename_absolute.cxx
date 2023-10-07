@@ -124,22 +124,49 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, c
 
 
 /** Makes a filename relative to the current working directory.
-    \code
-    #include <FL/filename.H>
-    [..]
-    fl_chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
-    [..]
-    char out[FL_PATH_MAX];
-    fl_filename_relative(out, sizeof(out), "/var/tmp/somedir/foo.txt");  // out="foo.txt",    return=1
-    fl_filename_relative(out, sizeof(out), "/var/tmp/foo.txt");          // out="../foo.txt", return=1
-    fl_filename_relative(out, sizeof(out), "foo.txt");                   // out="foo.txt",    return=0 (no change)
-    fl_filename_relative(out, sizeof(out), "./foo.txt");                 // out="./foo.txt",  return=0 (no change)
-    fl_filename_relative(out, sizeof(out), "../foo.txt");                // out="../foo.txt", return=0 (no change)
-    \endcode
-    \param[out] to resulting relative filename
-    \param[in]  tolen size of the relative filename buffer
-    \param[in]  from absolute filename
-    \return 0 if no change, non zero otherwise
+
+  Return the \a from path made relative to the working directory, similar to
+  C++17 `std::filesystem::path::lexically_relative`. This function can also be
+  called with a fourth argument for a user supplied \a base directory path
+
+  These conversions are purely lexical. They do not check that the paths exist,
+  do not follow symlinks, and do not access the filesystem at all.
+
+  Path arguments must be absolute (start at the root directory) and must not
+  contain `.` or `..` segments, or double separators. A single trailing 
+  separator is ok.
+
+  On Windows, path arguments must start with a drive name `c:\` or the
+  separator `\`. Windows network paths and other special paths starting
+  with a double separator are not supported (`\\cloud\drive\path`,
+  `\\?\`, etc.) . Separators can be `\` and `/` and will be preserved.
+  Newly created separators are alway the forward slash `/`.
+
+  On Windows and macOS, the path segment tests are case insensitive.
+
+  If the path can not be generated, \a from path is copied into the \a to 
+  buffer and 0 is returned.
+
+  \code
+  #include <FL/filename.H>
+  [..]
+  fl_chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
+  [..]
+  char out[FL_PATH_MAX];
+  fl_filename_relative(out, sizeof(out), "/var/tmp/somedir/foo.txt");  // out="foo.txt",    return=1
+  fl_filename_relative(out, sizeof(out), "/var/tmp/foo.txt");          // out="../foo.txt", return=1
+  fl_filename_relative(out, sizeof(out), "foo.txt");                   // out="foo.txt",    return=0 (no change)
+  fl_filename_relative(out, sizeof(out), "./foo.txt");                 // out="./foo.txt",  return=0 (no change)
+  fl_filename_relative(out, sizeof(out), "../foo.txt");                // out="../foo.txt", return=0 (no change)
+  \endcode
+
+  \param[out] to resulting relative filename
+  \param[in]  tolen size of the relative filename buffer
+  \param[in]  from absolute filename
+  \return 0 if no change, non zero otherwise
+  \see fl_filename_relative(char *to, int tolen, const char *from, const char *base)
+  \see fl_filename_relative(const Fl_String &from, const Fl_String &base)
+  \see fl_filename_relative(const Fl_String &from)
  */
 int fl_filename_relative(char *to, int tolen, const char *from)
 {
@@ -154,11 +181,13 @@ int fl_filename_relative(char *to, int tolen, const char *from)
 
 
 /** Makes a filename relative to any other directory.
- \param[out] to resulting relative filename
+
+ \param[out] to resulting relative filepath
  \param[in]  tolen size of the relative filename buffer
- \param[in]  from absolute filename
- \param[in]  base generate filename relative to this absolute filename
+ \param[in]  from absolute filepath
+ \param[in]  base generate filepath relative to this absolute filepath
  \return 0 if no change, non zero otherwise
+ \see fl_filename_relative(char *to, int tolen, const char *from)
  */
 int fl_filename_relative(char *to, int tolen, const char *from, const char *base) {
   return Fl::system_driver()->filename_relative(to, tolen, from, base);
