@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-static inline int isdirsep(char c) {return c == '/';}
+static inline int isdirsep(int c) {return c == '/';}
 
 /** Makes a filename absolute from a relative filename to the current working directory.
     \code
@@ -191,20 +191,18 @@ int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_di
     return 0;
   }
 
-  // test for the exact same string and return "." if so
-  int bn = (int)strlen(base_dir);
-  if ( (bn>1) && (isdirsep(base_dir[bn-1])) ) bn--;
-  int dn = (int)strlen(dest_dir);
-  if ( (dn>1) && (isdirsep(dest_dir[dn-1])) ) dn--;
-  if ( (bn==dn) && !strncmp(base_dir, dest_dir, bn)) {
-    strlcpy(to, ".", tolen);
-    return 1;
-  }
-
   // compare both path names until we find a difference
   for (;;) {
-    base_i++; dest_i++;
+#ifndef __APPLE__ // case sensitive
+    base_i++;
+    dest_i++;
     char b = *base_i, d = *dest_i;
+#else // case insensitive
+    base_i += fl_utf8len1(*base_i);
+    int b = fl_tolower(fl_utf8decode(base_i, NULL, NULL));
+    dest_i += fl_utf8len1(*dest_i);
+    int d = fl_tolower(fl_utf8decode(dest_i, NULL, NULL));
+#endif
     int b0 = (b==0) || (isdirsep(b));
     int d0 = (d==0) || (isdirsep(d));
     if (b0 && d0) {
@@ -216,6 +214,13 @@ int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_di
   }
   // base_s and dest_s point at the last separator we found
   // base_i and dest_i point at the first character that differs
+
+  // test for the exact same string and return "." if so
+  if (   (base_i[0] == 0 || (isdirsep(base_i[0]) && base_i[1] == 0))
+      && (dest_i[0] == 0 || (isdirsep(dest_i[0]) && dest_i[1] == 0))) {
+    strlcpy(to, ".", tolen);
+    return 0;
+  }
 
   // prepare the destination buffer
   to[0]         = '\0';
