@@ -136,8 +136,8 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, c
   contain `.` or `..` segments, or double separators. A single trailing 
   separator is ok.
 
-  On Windows, path arguments must start with a drive name `c:\` or the
-  separator `\`. Windows network paths and other special paths starting
+  On Windows, path arguments must start with a drive name, e.g. `c:\`.
+  Windows network paths and other special paths starting
   with a double separator are not supported (`\\cloud\drive\path`,
   `\\?\`, etc.) . Separators can be `\` and `/` and will be preserved.
   Newly created separators are alway the forward slash `/`.
