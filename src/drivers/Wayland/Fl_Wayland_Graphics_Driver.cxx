@@ -54,11 +54,11 @@ void Fl_Wayland_Graphics_Driver::create_shm_buffer(
   int width = buffer->draw_buffer.width;
   int stride = buffer->draw_buffer.stride;
   int height = buffer->draw_buffer.data_size / stride;
-  const int default_pool_size = 10000000; // larger pools are possible if needed
+  const size_t default_pool_size = 10000000; // larger pools are possible if needed
   int chunk_offset = 0; // offset to start of available memory in pool
   struct wld_shm_pool_data *pool_data = pool ? // data record attached to current pool
     (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool) : NULL;
-  int pool_size = pool ? pool_data->pool_size : default_pool_size; // current pool size
+  size_t pool_size = pool ? pool_data->pool_size : default_pool_size; // current pool size
   if (pool && !wl_list_empty(&pool_data->buffers)) {
     // last wld_buffer created from current pool
     struct wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
@@ -89,9 +89,9 @@ void Fl_Wayland_Graphics_Driver::create_shm_buffer(
       Fl::fatal("mmap failed: %s\n", strerror(errno));
     }
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    pool = wl_shm_create_pool(scr_driver->wl_shm, fd, pool_size);
+    pool = wl_shm_create_pool(scr_driver->wl_shm, fd, (int32_t)pool_size);
     close(fd); // does not prevent the mmap'ed memory from being used
-//printf("wl_shm_create_pool %p size=%d\n",pool_data->pool_memory , pool_size);
+    //printf("wl_shm_create_pool %p size=%lu\n",pool_data->pool_memory , pool_size);
     pool_data->pool_size = pool_size;
     wl_list_init(&pool_data->buffers);
     wl_shm_pool_set_user_data(pool, pool_data);

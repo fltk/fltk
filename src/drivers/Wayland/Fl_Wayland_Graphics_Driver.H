@@ -49,7 +49,7 @@ public:
   };
   struct wld_shm_pool_data { // one record attached to each wl_shm_pool object
     char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool
-    int pool_size; // size of encapsulated memory
+    size_t pool_size; // size of encapsulated memory
     struct wl_list buffers; // to list of fl_wld_buffer's from this pool
   };
   static const uint32_t wld_format;
