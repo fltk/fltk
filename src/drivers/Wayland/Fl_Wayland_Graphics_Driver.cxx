@@ -49,8 +49,8 @@ static const struct wl_buffer_listener buffer_listener = {
 };
 
 
-void Fl_Wayland_Graphics_Driver::create_shm_buffer(
-        Fl_Wayland_Graphics_Driver::wld_buffer *buffer) {
+void Fl_Wayland_Graphics_Driver::create_shm_buffer(Fl_Wayland_Graphics_Driver::wld_buffer *buffer)
+{
   int width = buffer->draw_buffer.width;
   int stride = buffer->draw_buffer.stride;
   int height = buffer->draw_buffer.data_size / stride;
@@ -161,8 +161,8 @@ static void copy_region(struct wld_window *window, struct flCairoRegion *r) {
 }
 
 
-void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
-                                struct flCairoRegion *r) {
+void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, struct flCairoRegion *r)
+{
   if (!window->buffer->wl_buffer) create_shm_buffer(window->buffer);
   cairo_surface_t *surf = cairo_get_target(window->buffer->draw_buffer.cairo_);
   cairo_surface_flush(surf);
@@ -183,7 +183,9 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
 }
 
 
-void Fl_Wayland_Graphics_Driver::cairo_init(struct Fl_Wayland_Graphics_Driver::draw_buffer *buffer, int width, int height, int stride, cairo_format_t format) {
+void Fl_Wayland_Graphics_Driver::cairo_init(struct Fl_Wayland_Graphics_Driver::draw_buffer *buffer,
+                                            int width, int height, int stride,
+                                            cairo_format_t format) {
   buffer->data_size = stride * height;
   buffer->stride = stride;
   buffer->buffer = new uchar[buffer->data_size];
@@ -208,8 +210,7 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct Fl_Wayland_Graphics_Driver::d
 
 
 // runs when buffer->in_use is false and buffer->released is true
-static void do_buffer_release(
-            struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer) {
+static void do_buffer_release(struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer) {
   struct wl_shm_pool *my_pool = buffer->shm_pool;
   if (buffer->wl_buffer) {
     struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *pool_data =
@@ -248,8 +249,9 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 const uint32_t Fl_Wayland_Graphics_Driver::wld_format = WL_SHM_FORMAT_ARGB8888;
 
 
-void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen src, int srcx, int srcy) {
-  // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of 
+void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, 
+                                                Fl_Offscreen src, int srcx, int srcy) {
+  // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of
   // the graphics driver's surface
   cairo_matrix_t matrix;
   cairo_get_matrix(cairo_, &matrix);
@@ -272,9 +274,8 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_O
 const cairo_user_data_key_t Fl_Wayland_Graphics_Driver::key = {};
 
 
-struct
-Fl_Wayland_Graphics_Driver::draw_buffer *Fl_Wayland_Graphics_Driver::offscreen_buffer(
-                                        Fl_Offscreen offscreen) {
+struct Fl_Wayland_Graphics_Driver::draw_buffer*
+Fl_Wayland_Graphics_Driver::offscreen_buffer(Fl_Offscreen offscreen) {
   return (struct draw_buffer*)cairo_get_user_data((cairo_t*)offscreen, &key);
 }
 
