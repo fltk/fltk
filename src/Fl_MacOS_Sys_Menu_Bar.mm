@@ -43,6 +43,17 @@ static void move_tab_cb(Fl_Widget *, void *data);
 static void merge_all_windows_cb(Fl_Widget *, void *data);
 #endif
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_13
+const NSInteger NSControlStateValueOn = NSOnState;
+const NSInteger NSControlStateValueOff = NSOffState;
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+const NSUInteger NSEventModifierFlagCommand = NSCommandKeyMask;
+const NSUInteger NSEventModifierFlagOption = NSAlternateKeyMask;
+const NSUInteger NSEventModifierFlagControl = NSControlKeyMask;
+const NSUInteger NSEventModifierFlagShift = NSShiftKeyMask;
+#endif
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::draw() {
   bar->deactivate(); // prevent Fl_Sys_Menu_Bar object from receiving events
@@ -114,7 +125,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   menu->picked(item);
   Fl::flush();
   if ( item->flags & FL_MENU_TOGGLE ) { // update the menu toggle symbol
-    [self setState:(item->value() ? NSOnState : NSOffState)];
+    [self setState:(item->value() ? NSControlStateValueOn : NSControlStateValueOff)];
   }
   else if ( item->flags & FL_MENU_RADIO ) {     // update the menu radio symbols
     NSMenu* this_menu = [self menu];
@@ -136,7 +147,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
     }
     for(int i =  from; i <= to; i++) {
       NSMenuItem *nsitem = [this_menu itemAtIndex:i];
-      [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
+      [nsitem setState:(nsitem != self ? NSControlStateValueOff : NSControlStateValueOn)];
     }
   }
 }
@@ -162,10 +173,10 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 - (void) setKeyEquivalentModifierMask:(int)value
 {
   NSUInteger macMod = 0;
-  if ( value & FL_META ) macMod = NSCommandKeyMask;
-  if ( value & FL_SHIFT || isupper(value) ) macMod |= NSShiftKeyMask;
-  if ( value & FL_ALT ) macMod |= NSAlternateKeyMask;
-  if ( value & FL_CTRL ) macMod |= NSControlKeyMask;
+  if ( value & FL_META ) macMod = NSEventModifierFlagCommand;
+  if ( value & FL_SHIFT || isupper(value) ) macMod |= NSEventModifierFlagShift;
+  if ( value & FL_ALT ) macMod |= NSEventModifierFlagOption;
+  if ( value & FL_CTRL ) macMod |= NSEventModifierFlagControl;
   [super setKeyEquivalentModifierMask:macMod];
 }
 - (void) setFltkShortcut:(int)key
@@ -309,11 +320,11 @@ static void setMenuFlags( NSMenu* mh, int miCnt, const Fl_Menu_Item *m )
   if ( m->flags & FL_MENU_TOGGLE )
   {
     NSMenuItem *menuItem = [mh itemAtIndex:miCnt];
-    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSOnState : NSOffState)];
+    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSControlStateValueOn : NSControlStateValueOff)];
   }
   else if ( m->flags & FL_MENU_RADIO ) {
     NSMenuItem *menuItem = [mh itemAtIndex:miCnt];
-    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSOnState : NSOffState)];
+    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSControlStateValueOn : NSControlStateValueOff)];
   }
 }
 

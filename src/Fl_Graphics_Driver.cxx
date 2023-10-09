@@ -17,7 +17,7 @@
 /** \file Fl_Graphics_Driver.cxx
 \brief Implementation of class Fl_Graphics_Driver.
 */
-
+#include <config.h> // for HAVE_GL
 #include <FL/Fl_Graphics_Driver.H>
 /** Points to the driver that currently receives all graphics requests */
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver;

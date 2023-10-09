@@ -77,6 +77,10 @@
 #include <FL/fl_utf8.h> // for fl_utf8toUtf16()
 #include <FL/fl_string_functions.h> // fl_strdup()
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+const NSUInteger kCTFontOrientationHorizontal = kCTFontHorizontalOrientation;
+#endif
+
 Fl_Fontdesc* fl_fonts = NULL;
 
 static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
@@ -418,14 +422,14 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _CoreText)(const cha
   CTFontGetGlyphsForCharacters(d->fontref, A, glyph, 2);
   CGSize advances[2];
   double w;
-  CTFontGetAdvancesForGlyphs(d->fontref, kCTFontHorizontalOrientation, glyph, advances, 2);
+  CTFontGetAdvancesForGlyphs(d->fontref, kCTFontOrientationHorizontal, glyph, advances, 2);
   w = advances[0].width;
   if ( fabs(advances[0].width - advances[1].width) < 1E-2 ) {//this is a fixed-width font
     // slightly rescale fixed-width fonts so the character width has an integral value
     CFRelease(d->fontref);
     CGFloat fsize = size / ( w/floor(w + 0.5) );
     d->fontref = CTFontCreateWithName(str, fsize, NULL);
-    w = CTFontGetAdvancesForGlyphs(d->fontref, kCTFontHorizontalOrientation, glyph, NULL, 1);
+    w = CTFontGetAdvancesForGlyphs(d->fontref, kCTFontOrientationHorizontal, glyph, NULL, 1);
   }
   CFRelease(str);
   d->ascent = (short)(CTFontGetAscent(d->fontref) + 0.5);
@@ -473,7 +477,7 @@ static CGFloat surrogate_width(const UniChar *txt, Fl_Quartz_Font_Descriptor *fl
     CFRelease(str);
     b = CTFontGetGlyphsForCharacters(font2, txt, glyphs, 2);
   }
-  if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontHorizontalOrientation, glyphs, &a, 1);
+  if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontOrientationHorizontal, glyphs, &a, 1);
   else a.width = fl_fontsize->q_width;
   if(must_release) CFRelease(font2);
   return a.width;
@@ -525,7 +529,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
         // ii spans all characters of this block
         bool b = CTFontGetGlyphsForCharacters(fl_fontsize->fontref, &ii, &glyph, 1);
         if (b)
-          CTFontGetAdvancesForGlyphs(fl_fontsize->fontref, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
+          CTFontGetAdvancesForGlyphs(fl_fontsize->fontref, kCTFontOrientationHorizontal, &glyph, &advance_size, 1);
         else
           advance_size.width = -1e9; // calculate this later
         // the width of one character of this block of characters
@@ -549,7 +553,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
         CFRelease(str);
         b = CTFontGetGlyphsForCharacters(font2, &uni, &glyph, 1);
       }
-      if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
+      if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontOrientationHorizontal, &glyph, &advance_size, 1);
       else advance_size.width = 0.;
       // the width of the 'uni' character
       wdt = fl_fontsize->width[r][uni & (block-1)] = advance_size.width;

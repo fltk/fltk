@@ -29,6 +29,14 @@
 #define MAXFILTERS      80
 #import <Cocoa/Cocoa.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_9
+const NSInteger NSModalResponseOK = NSFileHandlingPanelOKButton;
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+const NSUInteger NSControlSizeRegular = NSRegularControlSize;
+#endif
+
 class Fl_Quartz_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
 private:
   int             _btype;               // kind-of browser to show()
@@ -562,7 +570,11 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 @end
 @implementation FLHiddenFilesAction
 - (void)action {
-  [panel setShowsHiddenFiles:[button intValue]];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 100600) {
+    [panel setShowsHiddenFiles:[button intValue]]; // 10.6
+  }
+#endif
 }
 @end
 
@@ -603,7 +615,7 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
     NSString *nstitle = [[NSString alloc] initWithUTF8String:title];
     [box setTitle:nstitle];
     [nstitle release];
-    NSFont *font = [NSFont controlContentFontOfSize:NSRegularControlSize];
+    NSFont *font = [NSFont controlContentFontOfSize:NSControlSizeRegular];
     [box setTitleFont:font];
     [box sizeToFit];
     // horizontally move box to fit the locale-dependent width of its title
@@ -675,12 +687,12 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
   }
   else
 #endif
-  {
-    retval = [(id)_panel runModalForDirectory:dir file:fname];
+  { // the deprecation warning can be ignored because runs only for macOS < 10.6
+    retval = [_panel runModalForDirectory:dir file:fname];
   }
   [dir release];
   [preset release];
-  return (retval == NSFileHandlingPanelOKButton ? 1 : 0);
+  return (retval == NSModalResponseOK ? 1 : 0);
 }
 
 // POST BROWSER

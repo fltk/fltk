@@ -126,7 +126,10 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
       [main makeKeyAndOrderFront:nil];
     } else
       retval = [panel runModalWithPrintInfo:info]; //from 10.5
-    if (retval != NSOKButton) return 1;
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_9
+    const NSInteger NSModalResponseOK = NSOKButton;
+#endif
+    if (retval != NSModalResponseOK) return 1;
     printSession = (PMPrintSession)[info PMPrintSession];//from 10.5
     pageFormat = (PMPageFormat)[info PMPageFormat];//from 10.5
     printSettings = (PMPrintSettings)[info PMPrintSettings];//from 10.5
