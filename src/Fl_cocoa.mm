@@ -2624,7 +2624,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
         if (!DragData) {
           DragData = strdup(p);
         } else {
-          int l = strlen(DragData) + strlen(p) + 2;
+          int l = (int)strlen(DragData) + (int)strlen(p) + 2;
           char *drag2 = (char*)malloc(l);
           snprintf(drag2, l, "%s\n%s", DragData, p);
           free(DragData);
