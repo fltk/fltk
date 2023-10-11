@@ -100,10 +100,10 @@ static int im_enabled = -1;
 #  define NSPasteboardTypeString @"public.utf8-plain-text"
 #endif
 
-// the next 5 deprecation warnings can be ignored because deprecated symbols
-// are used only for macOS versions where they are not deprecated
+// the next 5 deprecation/availability warnings can be legitimately ignored
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wunguarded-availability"
 static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeTIFF :
                                          NSTIFFPboardType);
 static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : 
@@ -112,8 +112,12 @@ static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.app
                                          NSPICTPboardType);
 static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString : 
                                          NSStringPboardType);
-static NSString *fl_filenames_pboard_type = (fl_mac_os_version >= 101300 ? NSPasteboardTypeFileURL :
-                                             NSFilenamesPboardType);
+static NSString *fl_filenames_pboard_type =
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
+  (fl_mac_os_version >= 101300 ? NSPasteboardTypeFileURL : NSFilenamesPboardType);
+#else
+  NSFilenamesPboardType;
+#endif
 #pragma clang diagnostic pop
 
 static bool in_nsapp_run = false; // true during execution of [NSApp run]
