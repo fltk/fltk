@@ -438,9 +438,10 @@ void Fl_Tabs::draw_overflow_menu_button() {
     X = x() + w() - H;
     Y = y() + h() - H - 1;
   }
-  fl_draw_box(box(), X, Y, H, H, color());
+  draw_box(box(), X, Y, H, H, color());
   Fl_Rect r(X, Y, H, H);
-  fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_contrast(FL_BLACK, color()));
+  Fl_Color arrow_color = active_r() ? labelcolor() : fl_inactive(labelcolor());
+  fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, arrow_color);
 }
 
 /**
