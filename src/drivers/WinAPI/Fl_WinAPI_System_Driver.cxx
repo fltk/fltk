@@ -549,90 +549,101 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *fr
 
 int                                                     // O - 0 if no change, 1 if changed
 Fl_WinAPI_System_Driver::filename_relative(char *to,    // O - Relative filename
-                                    int        tolen,   // I - Size of "to" buffer
-                                    const char *from,   // I - Absolute filename
-                                    const char *base)   // I - Find path relative to this path
+                                           int        tolen,   // I - Size of "to" buffer
+                                           const char *dest_dir,   // I - Absolute filename
+                                           const char *base_dir)   // I - Find path relative to this path
 {
-  char          *newslash;              // Directory separator
-  const char    *slash;                 // Directory separator
-  char          *cwd = 0L, *cwd_buf = 0L;
-  if (base) cwd = cwd_buf = fl_strdup(base);
+  // Find the relative path from base_dir to dest_dir.
+  // Both paths must be absolute and well formed (contain no /../ and /./ segments).
 
-  // return if "from" is not an absolute path
-  if (from[0] == '\0' ||
-      (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
-       !isdirsep(from[2]))) {
-        strlcpy(to, from, tolen);
-        if (cwd_buf) free(cwd_buf);
-        return 0;
-      }
-
-  // return if "cwd" is not an absolute path
-  if (!cwd || cwd[0] == '\0' ||
-      (!isdirsep(*cwd) && !isalpha(*cwd) && cwd[1] != ':' &&
-       !isdirsep(cwd[2]))) {
-        strlcpy(to, from, tolen);
-        if (cwd_buf) free(cwd_buf);
-        return 0;
-      }
-
-  // convert all backslashes into forward slashes
-  for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
-    *newslash = '/';
-
-  // test for the exact same string and return "." if so
-  if (!strcasecmp(from, cwd)) {
-    strlcpy(to, ".", tolen);
-    free(cwd_buf);
-    return (1);
-  }
-
-  // test for the same drive. Return the absolute path if not
-  if (tolower(*from & 255) != tolower(*cwd & 255)) {
-    // Not the same drive...
-    strlcpy(to, from, tolen);
-    free(cwd_buf);
+  // return if any of the pointers is NULL
+  if (!to || !dest_dir || !base_dir) {
     return 0;
   }
 
-  // compare the path name without the drive prefix
-  from += 2; cwd += 2;
-
-  // compare both path names until we find a difference
-  for (slash = from, newslash = cwd;
-       *slash != '\0' && *newslash != '\0';
-       slash ++, newslash ++)
-    if (isdirsep(*slash) && isdirsep(*newslash)) continue;
-    else if (tolower(*slash & 255) != tolower(*newslash & 255)) break;
-
-  // skip over trailing slashes
-  if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
-      &&(newslash==cwd || !isdirsep(newslash[-1])) )
-    newslash--;
-
-  // now go back to the first character of the first differing paths segment
-  while (!isdirsep(*slash) && slash > from) slash --;
-  if (isdirsep(*slash)) slash ++;
-
-  // do the same for the current dir
-  if (isdirsep(*newslash)) newslash --;
-  if (*newslash != '\0')
-    while (!isdirsep(*newslash) && newslash > cwd) newslash --;
-
-  // prepare the destination buffer
-  to[0]         = '\0';
-  to[tolen - 1] = '\0';
-
-  // now add a "previous dir" sequence for every following slash in the cwd
-  while (*newslash != '\0') {
-    if (isdirsep(*newslash)) strlcat(to, "../", tolen);
-    newslash ++;
+  // if there is a drive letter, make sure both paths use the same drive
+  if (   base_dir[0] < 128 && isalpha(base_dir[0]) && base_dir[1] == ':'
+      && dest_dir[0] < 128 && isalpha(dest_dir[0]) && dest_dir[1] == ':') {
+    if (tolower(base_dir[0]) != tolower(dest_dir[0])) {
+      strlcpy(to, dest_dir, tolen);
+      return 0;
+    }
+    // same drive, so skip to the start of the path
+    base_dir += 2;
+    dest_dir += 2;
   }
 
-  // finally add the differing path from "from"
-  strlcat(to, slash, tolen);
+  // return if `base_dir` or `dest_dir` is not an absolute path
+  if (!isdirsep(*base_dir) || !isdirsep(*dest_dir)) {
+    strlcpy(to, dest_dir, tolen);
+    return 0;
+  }
 
-  free(cwd_buf);
+  const char *base_i = base_dir; // iterator through the base directory string
+  const char *base_s = base_dir; // pointer to the last dir separator found
+  const char *dest_i = dest_dir; // iterator through the destination directory
+  const char *dest_s = dest_dir; // pointer to the last dir separator found
+
+  // compare both path names until we find a difference
+  for (;;) {
+#if 0 // case sensitive
+    base_i++;
+    dest_i++;
+    char b = *base_i, d = *dest_i;
+#else // case insensitive
+    base_i += fl_utf8len1(*base_i);
+    int b = fl_tolower(fl_utf8decode(base_i, NULL, NULL));
+    dest_i += fl_utf8len1(*dest_i);
+    int d = fl_tolower(fl_utf8decode(dest_i, NULL, NULL));
+#endif
+    int b0 = (b == 0) || (isdirsep(b));
+    int d0 = (d == 0) || (isdirsep(d));
+    if (b0 && d0) {
+      base_s = base_i;
+      dest_s = dest_i;
+    }
+    if (b == 0 || d == 0)
+      break;
+    if (b != d)
+      break;
+  }
+  // base_s and dest_s point at the last separator we found
+  // base_i and dest_i point at the first character that differs
+
+  // test for the exact same string and return "." if so
+  if (   (base_i[0] == 0 || (isdirsep(base_i[0]) && base_i[1] == 0))
+      && (dest_i[0] == 0 || (isdirsep(dest_i[0]) && dest_i[1] == 0))) {
+    strlcpy(to, ".", tolen);
+    return 0;
+  }
+
+  // prepare the destination buffer
+  to[0] = '\0';
+  to[tolen - 1] = '\0';
+
+  // count the directory segments remaining in `base_dir`
+  int n_up = 0;
+  for (;;) {
+    char b = *base_s++;
+    if (b == 0)
+      break;
+    if (isdirsep(b) && *base_s)
+      n_up++;
+  }
+
+  // now add a "previous dir" sequence for every following slash in the cwd
+  if (n_up > 0)
+    strlcat(to, "..", tolen);
+  for (; n_up > 1; --n_up)
+    strlcat(to, "/..", tolen);
+
+  // finally add the differing path from "from"
+  if (*dest_s) {
+    if (n_up)
+      strlcat(to, "/", tolen);
+    strlcat(to, dest_s + 1, tolen);
+  }
+
   return 1;
 }
 
