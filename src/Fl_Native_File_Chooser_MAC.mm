@@ -688,7 +688,10 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
   else
 #endif
   { // the deprecation warning can be ignored because runs only for macOS < 10.6
-    retval = [_panel runModalForDirectory:dir file:fname];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    retval = [_panel runModalForDirectory:dir file:fname]; // deprecated in 10.6
+#pragma clang diagnostic pop
   }
   [dir release];
   [preset release];

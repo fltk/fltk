@@ -102,16 +102,19 @@ static int im_enabled = -1;
 
 // the next 5 deprecation warnings can be ignored because deprecated symbols
 // are used only for macOS versions where they are not deprecated
-static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeTIFF : NSTIFFPboardType);
-static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : NSPDFPboardType);
-static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.apple.pict" : NSPICTPboardType);
-static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString : NSStringPboardType);
-static NSString *fl_filenames_pboard_type =
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_13
-  NSFilenamesPboardType;
-#else
-  (fl_mac_os_version >= 101300 ? NSPasteboardTypeFileURL : NSFilenamesPboardType);
-#endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeTIFF :
+                                         NSTIFFPboardType);
+static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : 
+                                        NSPDFPboardType);
+static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.apple.pict" : 
+                                         NSPICTPboardType);
+static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString : 
+                                         NSStringPboardType);
+static NSString *fl_filenames_pboard_type = (fl_mac_os_version >= 101300 ? NSPasteboardTypeFileURL :
+                                             NSFilenamesPboardType);
+#pragma clang diagnostic pop
 
 static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
@@ -841,9 +844,12 @@ double Fl_Darwin_System_Driver::wait(double time_to_wait)
 
   time_to_wait = Fl_System_Driver::wait(time_to_wait);
   // the deprecation warnings can be ignored because they run only for macOS < 10.11
-  if (fl_mac_os_version < 101100) NSDisableScreenUpdates(); // 10.3 Makes updates to all windows appear as a single event
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  if (fl_mac_os_version < 101100) NSDisableScreenUpdates(); // deprecated 10.11
   Fl::flush();
-  if (fl_mac_os_version < 101100) NSEnableScreenUpdates(); // 10.3
+  if (fl_mac_os_version < 101100) NSEnableScreenUpdates(); // deprecated 10.11
+#pragma clang diagnostic pop
   if (Fl::idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   int retval = do_queued_events(time_to_wait);
@@ -3516,7 +3522,10 @@ static NSBitmapImageRep *pdf_to_nsbitmapimagerep(NSData *pdfdata) {
   {
     [image lockFocus];
     // the deprecation warning at 10.14 can be ignored because runs only for macOS < 10.9
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     bitmap = [bitmap initWithFocusedViewRect:dest_r];
+#pragma clang diagnostic pop
     [image unlockFocus];
   }
   [bitmap setSize:[image size]];
@@ -4167,14 +4176,19 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
     [myview beginDraggingSessionWithItems:[NSArray arrayWithObject:dragItem] event:theEvent source:myview];
   } else
 #endif
-  { // the 2 deprecation warnings can be ignored because this runs only for macOS < 10.7
+  {
     static NSSize offset={0,0};
+    // the 2 deprecation warnings can be ignored because this runs only for macOS < 10.7
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // deprecated in 10.13
     NSPasteboard *mypasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     [mypasteboard declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
     [mypasteboard setData:(NSData*)text forType:UTF8_pasteboard_type];
     [myview dragImage:image  at:pt  offset:offset // deprecated in 10.7
                 event:theEvent  pasteboard:mypasteboard
                source:myview  slideBack:YES];
+#pragma clang diagnostic pop
     if ( w ) {
       int old_event = Fl::e_number;
       w->handle(Fl::e_number = FL_RELEASE);
@@ -4352,8 +4366,11 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
         [winview performSelector:@selector(lockFocus)];
       }
       // The image depth is 3 until macOS 10.5 and 4 with 10.6 and above
-      // the deprecation warning can be ignored because runs only for macOS < 10.14
+      // the deprecation warning at 10.14 can be ignored because runs only for macOS < 10.14
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
       bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
+#pragma clang diagnostic pop
       if ( !( through_Fl_X_flush && Fl_Window::current() == win) ) {
         [winview performSelector:@selector(unlockFocus)];
   #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
