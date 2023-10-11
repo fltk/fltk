@@ -41,7 +41,7 @@ void Fl_Menu_Button::draw() {
 
   // draw the arrow (choice button)
 
-  Fl_Color arrow_color = active_r() ? FL_DARK3 : fl_inactive(FL_DARK3);
+  Fl_Color arrow_color = active_r() ? labelcolor() : fl_inactive(labelcolor());
   fl_draw_arrow(Fl_Rect(ax, ay, aw, ah), FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrow_color);
 }
 

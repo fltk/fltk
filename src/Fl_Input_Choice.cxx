@@ -136,10 +136,10 @@ Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const 
 
 void Fl_Input_Choice::InputMenuButton::draw() {
   draw_box();
-  fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
+  Fl_Color arrow_color = parent()->active_r() ? parent()->labelcolor() : fl_inactive(parent()->labelcolor());
   Fl_Rect ab(this);
   ab.inset(1);
-  fl_draw_arrow(ab, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_color());
+  fl_draw_arrow(ab, FL_ARROW_CHOICE, FL_ORIENT_NONE, arrow_color);
   if (Fl::focus() == this) draw_focus();
 }
 

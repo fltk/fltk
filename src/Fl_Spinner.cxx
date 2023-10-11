@@ -132,13 +132,14 @@ void Fl_Spinner::draw() {
   Fl_Group::draw();
 
   // draw up/down arrows over the button's empty labels
+  Fl_Color arrow_color = active_r() ? labelcolor() : fl_inactive(labelcolor());
   Fl_Rect up(up_button_);
   up.inset(up_button_.box());
-  fl_draw_arrow(up, FL_ARROW_SINGLE, FL_ORIENT_UP, labelcolor());
+  fl_draw_arrow(up, FL_ARROW_SINGLE, FL_ORIENT_UP, arrow_color);
 
   Fl_Rect down(down_button_);
   down.inset(down_button_.box());
-  fl_draw_arrow(down, FL_ARROW_SINGLE, FL_ORIENT_DOWN, labelcolor());
+  fl_draw_arrow(down, FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrow_color);
 }
 
 int Fl_Spinner::handle(int event) {

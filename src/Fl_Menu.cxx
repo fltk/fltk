@@ -561,7 +561,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
     int x1 = xx + ww - sz - 2;
     int y1 = yy + (hh-sz)/2 + 1;
 
-    // draw an arrow whose style dependends on the active scheme
+    // draw an arrow whose style depends on the active scheme
     fl_draw_arrow(Fl_Rect(x1, y1, sz, sz), FL_ARROW_SINGLE, FL_ORIENT_RIGHT, fl_color());
 
   } else if (m->shortcut_) {
