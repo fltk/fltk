@@ -1159,7 +1159,7 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-static void cb_square(Fl_Button*, void*) {
+static void cb_1fd_zoom(Fl_Button*, void*) {
   if (!script_panel) make_script_panel();
   script_input->buffer()->text(w_settings_shell_command->buffer()->text());
   script_panel->show();
@@ -2731,11 +2731,10 @@ le");
               w_settings_shell_text_macros->callback((Fl_Callback*)cb_w_settings_shell_text_macros);
               w_settings_shell_text_macros->menu(menu_w_settings_shell_text_macros);
             } // Fl_Menu_Button* w_settings_shell_text_macros
-            { Fl_Button* o = new Fl_Button(296, 395, 24, 22, "@square");
+            { Fl_Button* o = new Fl_Button(296, 395, 24, 22, "@+1fd_zoom");
               o->tooltip("open the big code editor");
               o->labelsize(11);
-              o->labelcolor(FL_DARK3);
-              o->callback((Fl_Callback*)cb_square);
+              o->callback((Fl_Callback*)cb_1fd_zoom);
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o

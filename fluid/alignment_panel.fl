@@ -1228,7 +1228,7 @@ if (mi) {
               }
             }
             Fl_Button {} {
-              label {@square}
+              label {@+1fd_zoom}
               callback {if (!script_panel) make_script_panel();
 script_input->buffer()->text(w_settings_shell_command->buffer()->text());
 script_panel->show();
@@ -1244,7 +1244,7 @@ w_settings_shell_command->buffer()->text(script_input->buffer()->text());
 w_settings_shell_command->do_callback();
 BREAK2:
 script_panel->hide();}
-              tooltip {open the big code editor} xywh {296 395 24 22} labelsize 11 labelcolor 39
+              tooltip {open the big code editor} xywh {296 395 24 22} labelsize 11
             }
           }
           Fl_Check_Button {} {

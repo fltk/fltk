@@ -91,6 +91,56 @@ Fl_Pixmap *compressed_pixmap;
 
 Fl_Pixmap *pixmap[Fl_Type::ID_Max_] = { NULL };
 
+/**
+ Draw a zoom cross pointing in all four diagonal directions
+ */
+void fd_zoom(Fl_Color c) {
+  const double al = 0.45, sl = 0.3;
+
+  fl_color(c);
+
+  fl_begin_line();
+  fl_vertex(-1.0, -al);
+  fl_vertex(-1.0, -1.0);
+  fl_vertex(-al, -1.0);
+  fl_end_line();
+  fl_begin_line();
+  fl_vertex(-1.0, -1.0);
+  fl_vertex(-sl, -sl);
+  fl_end_line();
+
+  fl_begin_line();
+  fl_vertex(1.0, -al);
+  fl_vertex(1.0, -1.0);
+  fl_vertex(al, -1.0);
+  fl_end_line();
+  fl_begin_line();
+  fl_vertex(1.0, -1.0);
+  fl_vertex(sl, -sl);
+  fl_end_line();
+
+  fl_begin_line();
+  fl_vertex(-1.0, al);
+  fl_vertex(-1.0, 1.0);
+  fl_vertex(-al, 1.0);
+  fl_end_line();
+  fl_begin_line();
+  fl_vertex(-1.0, 1.0);
+  fl_vertex(-sl, sl);
+  fl_end_line();
+
+  fl_begin_line();
+  fl_vertex(1.0, al);
+  fl_vertex(1.0, 1.0);
+  fl_vertex(al, 1.0);
+  fl_end_line();
+  fl_begin_line();
+  fl_vertex(1.0, 1.0);
+  fl_vertex(sl, sl);
+  fl_end_line();
+}
+
+
 void loadPixmaps()
 {
   Fl_Pixmap *tmp;
@@ -168,5 +218,7 @@ void loadPixmaps()
   pixmap[Fl_Type::ID_Radio_Menu_Item] = tmp = new Fl_Pixmap(flRadioMenuitem_xpm); tmp->scale(16, 16);
 
   pixmap[Fl_Type::ID_Flex] = tmp = new Fl_Pixmap(flFlex_xpm); tmp->scale(16, 16);
+
+  fl_add_symbol("fd_zoom", fd_zoom, 1);
 }
 
