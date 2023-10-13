@@ -52,7 +52,7 @@ struct pointer_output {
   struct wl_list link;
 };
 
-/* Implementation note about support of 3 Wayland compositors: Mutter, Weston, KWin.
+/* Implementation note:
 
 - About CSD and SSD :
  * Mutter and Weston use CSD (client-side decoration) which means that libdecor.so draws all window
@@ -73,54 +73,12 @@ struct pointer_output {
  is Weston. This Weston bug has been corrected in Weston version 10. Thus, this special processing
  is not performed when Weston version is ≥ 10.
 
-- Synchronization between drawing to buffer and committing buffer to screen.
- Before committing a new graphics scene for display, Wayland requires to make sure the compositor is
- ready for commit. FLTK uses frame callbacks for that.
- A frame callback is created when an app calls Fl_Wayland_Window_Driver::make_current()
- directly. This directs a callback listener function, called surface_frame_done, to be called by the
- compositor when it's ready to commit a new graphics scene. This function schedules a new frame callback
- and commits the buffer to the display.
- A frame callback is also created by Fl_Wayland_Window_Driver::flush() when a window redraw operation
- is needed. FLTK processes wayland events until the compositor is ready for commit and then commits
- the new window content.
-
- - Support of Fl_Window::border(int) :
+- Support of Fl_Window::border(int) :
  FLTK uses libdecor_frame_set_visibility() to show or hide a toplevel window's frame. This doesn't work
  with KWin which uses Server-Side Decoration. In that case, FLTK hides and re-shows the window to toggle
  between presence and absence of a window's frame.
 */
 
-
-/* Implementation note about screen-related information
-
- struct wl_output : Wayland-defined, contains info about a screen, one such record for each screen
-
- struct Fl_Wayland_Screen_Driver::output { // FLTK defined
-    uint32_t id; // screen identification
-    short width; // screen width in pixels
-    short height; // screen height in pixels
-    float dpi;
-    struct wl_output *wl_output;
-    int wld_scale; // Wayland scale
-    float gui_scale; // user-set scale
-    struct wl_list link;
- };
-
- The unique Fl_Wayland_Screen_Driver object contains a member
-   "outputs" of type struct wl_list = list of Fl_Wayland_Screen_Driver::output records
-   - this list is initialised by open-display
-   - registry_handle_global() feeds the list with 1 record for each screen
-   - registry_handle_global_remove() runs when a screen is removed. It removes
-   the output record that corresponds to that screen from the unique list of screens
-   (outputs member of the Fl_Wayland_Screen_Driver) and the list of struct output objects attached
-   to each window.
-
- Each struct wld_window object contains a member
-   "output" of type pter to Fl_Wayland_Screen_Driver::output
-   - this pointer is set by surface_enter() (when a surface is mapped)
-   - surface_leave() sets it to NULL
-   - hide() sets it to NULL
- */
 
 static Fl_Int_Vector key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
 

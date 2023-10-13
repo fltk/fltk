@@ -28,7 +28,7 @@ extern "C" {
 #  include "../../../libdecor/src/os-compatibility.h" // for os_create_anonymous_file()
 }
 
-// used by create_shm_buffer and buffer_release
+// used by create_shm_buffer and do_buffer_release
 static struct wl_shm_pool *pool = NULL; // the current pool
 
 
