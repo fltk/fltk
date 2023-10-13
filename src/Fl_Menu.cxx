@@ -386,9 +386,12 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (m) m = m->first(); // find the first item that needs to be rendered
   drawn_selected = -1;
   if (button) {
-    box(button->box());
-    // don't force a box type, but make sure that the background is redrawn
-    if (box() == FL_NO_BOX) box(FL_FLAT_BOX);
+    Fl_Boxtype b = button->menu_box();
+    if (b==FL_NO_BOX)
+      b = button->box();
+    if (b==FL_NO_BOX)
+      b = FL_FLAT_BOX;
+    box(b);
   } else {
     box(FL_UP_BOX);
   }

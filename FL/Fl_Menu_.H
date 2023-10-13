@@ -60,6 +60,7 @@ protected:
 
   uchar alloc;                  // flag indicates if menu_ is a dynamic copy (=1) or not (=0)
   uchar down_box_;
+  Fl_Boxtype menu_box_;
   Fl_Font textfont_;
   Fl_Fontsize textsize_;
   Fl_Color textcolor_;
@@ -200,6 +201,16 @@ public:
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   /** Sets the box type used to surround the currently-selected items in the menus.  */
   void down_box(Fl_Boxtype b) {down_box_ = b;}
+
+  /** Get the box type for the menu popup windows.
+   \return the box type, or FL_NO_BOX if Fl_Menu_::box() is to be used instead
+   */
+  Fl_Boxtype menu_box() const { return menu_box_; }
+  /** Set the box type for the menu popup windows.
+   If menu_box set to FL_NO_BOX, the menu window will use Fl_Menu_::box() instead.
+   \param[in] b new box type or FL_NO_BOX
+   */
+  void menu_box(Fl_Boxtype b) { menu_box_ = b; }
 
   /** For back compatibility, same as selection_color() */
   Fl_Color down_color() const {return selection_color();}

@@ -423,17 +423,21 @@ void Fl_Menu_Item::setonly(Fl_Menu_Item const* first) {
  and label string.  menu() is initialized to null.
  */
 Fl_Menu_::Fl_Menu_(int X,int Y,int W,int H,const char* l)
-: Fl_Widget(X,Y,W,H,l) {
+: Fl_Widget(X,Y,W,H,l),
+  menu_(NULL),
+  value_(NULL),
+  prev_value_(NULL),
+  alloc(0),
+  down_box_(FL_NO_BOX),
+  menu_box_(FL_NO_BOX),
+  textfont_(FL_HELVETICA),
+  textsize_(FL_NORMAL_SIZE),
+  textcolor_(FL_FOREGROUND_COLOR)
+{
   set_flag(SHORTCUT_LABEL);
   box(FL_UP_BOX);
   when(FL_WHEN_RELEASE_ALWAYS);
-  value_ = prev_value_ = menu_ = 0;
-  alloc = 0;
   selection_color(FL_SELECTION_COLOR);
-  textfont(FL_HELVETICA);
-  textsize(FL_NORMAL_SIZE);
-  textcolor(FL_FOREGROUND_COLOR);
-  down_box(FL_NO_BOX);
 }
 
 /**
