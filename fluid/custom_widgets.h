@@ -83,6 +83,8 @@ public:
     vars_ = vars;
     vars_user_data_ = user_data;
   }
+
+  int handle(int) override;
 };
 
 #endif

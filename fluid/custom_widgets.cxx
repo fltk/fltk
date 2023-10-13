@@ -292,3 +292,19 @@ void Fluid_Coord_Input::value(int v) {
   fl_snprintf(buf, sizeof(buf), "%d", v);
   text(buf);
 }
+
+/**
+ Allow vertical mouse dragging and mouse wheel to interactively change the value.
+ */
+int Fluid_Coord_Input::handle(int event) {
+  switch (event) {
+    case FL_MOUSEWHEEL:
+      if (Fl::event_dy()) {
+        value( value() - Fl::event_dy() );
+        set_changed();
+        do_callback(FL_REASON_CHANGED);
+      }
+      return 1;
+  }
+  return Fl_Input::handle(event);
+}

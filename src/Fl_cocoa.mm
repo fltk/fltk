@@ -991,8 +991,13 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
   Fl::first_window(window);
   // Under OSX, mousewheel deltas are floats, but fltk only supports ints.
   float s = Fl::screen_driver()->scale(0);
-  int dx = roundf([theEvent deltaX] / s);
-  int dy = roundf([theEvent deltaY] / s);
+  float edx = [theEvent deltaX];
+  float edy = [theEvent deltaY];
+  int dx = roundf(edx / s);
+  int dy = roundf(edy / s);
+  // make sure that even small wheel movements count at least as one unit
+  if (edx>0.0f) dx++; else if (edx<0.0f) dx--;
+  if (edy>0.0f) dy++; else if (edy<0.0f) dy--;
   // allow both horizontal and vertical movements to be processed by the widget
   if (dx) {
     Fl::e_dx = -dx;
