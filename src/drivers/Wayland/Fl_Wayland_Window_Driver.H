@@ -124,9 +124,9 @@ public:
   int set_cursor_4args(const Fl_RGB_Image*, int, int, bool);
 
   void shape(const Fl_Image* img) FL_OVERRIDE;
-  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, 
+  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,
                                     Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
-  int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, 
+  int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
              void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
   void wait_for_expose() FL_OVERRIDE;
   // menu-related stuff

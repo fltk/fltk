@@ -462,7 +462,7 @@ static void cb_2(Fl_Button*, void* v) {
   old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
   const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
   if (new_name == NULL)
-    return; 
+    return;
 
   g_layout_list.add(new_name);
   g_layout_list.update_dialogs();
@@ -492,7 +492,7 @@ static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
   Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name_;
   const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
   if (new_name == NULL)
-    return; 
+    return;
 
   g_layout_list.rename(new_name);
   g_layout_list.update_dialogs();
@@ -930,12 +930,12 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
 Fl_Menu_Button *w_settings_shell_menu=(Fl_Menu_Button *)0;
 
 static void cb_Import(Fl_Menu_*, void* v) {
-  if (v != LOAD) 
+  if (v != LOAD)
     Fd_Shell_Command_List::import_from_file();
 }
 
 static void cb_Export(Fl_Menu_*, void* v) {
-  if (v != LOAD) 
+  if (v != LOAD)
     Fd_Shell_Command_List::export_selected();
 }
 
@@ -993,7 +993,7 @@ static void cb_Name(Fl_Input* o, void* v) {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->name = o->value();
-      w_settings_shell_list->text(selected, o->value()); 
+      w_settings_shell_list->text(selected, o->value());
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
@@ -1055,7 +1055,7 @@ static void cb_Store(Fl_Choice* o, void* v) {
       Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
       cmd->storage = ts;
-      //w_settings_shell_list->text(selected, cmd->name.c_str()); 
+      //w_settings_shell_list->text(selected, cmd->name.c_str());
       if (cmd->storage == FD_STORE_USER)
         w_settings_shell_list->icon(selected, w_settings_shell_fd_user->image());
       else if (cmd->storage == FD_STORE_PROJECT)

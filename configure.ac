@@ -1054,7 +1054,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       DSOFLAGS="$LIBS $DSOFLAGS"
       enable_pango=yes
       LIBDECORDIR="libdecor/build"
-      AS_IF([$PKGCONFIG --exists dbus-1], 
+      AS_IF([$PKGCONFIG --exists dbus-1],
        [LIBDECORDBUS="-DHAS_DBUS $($PKGCONFIG --cflags dbus-1)" LIBS="$LIBS $($PKGCONFIG --libs dbus-1)"]
       )
       LDFLAGS="$LDFLAGS -rdynamic"
@@ -1774,7 +1774,7 @@ AS_IF([test x$enable_fluid != xno], [
     ],[
     echo "    Build fluid: NO"
     ])
-    
+
 dnl
 echo "Cross-compiling: $fltk_cross_compiling"
 AS_IF([test "$fltk_cross_compiling" = "yes"], [

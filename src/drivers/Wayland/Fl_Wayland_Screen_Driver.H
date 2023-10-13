@@ -146,7 +146,7 @@ public:
   int dnd(int unused) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;
   void compose_reset() FL_OVERRIDE;
-  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, 
+  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
         bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
   int get_mouse(int &x, int &y) FL_OVERRIDE;
   void open_display_platform() FL_OVERRIDE;
@@ -169,7 +169,7 @@ public:
   int get_key(int k) FL_OVERRIDE;
   void enable_im() FL_OVERRIDE;
   void disable_im() FL_OVERRIDE;
-  
+
   // overridden functions from parent class Fl_Unix_Screen_Driver
   int poll_or_select_with_delay(double time_to_wait) FL_OVERRIDE;
   int poll_or_select() FL_OVERRIDE;

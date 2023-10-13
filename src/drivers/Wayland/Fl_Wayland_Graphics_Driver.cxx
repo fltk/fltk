@@ -62,7 +62,7 @@ void Fl_Wayland_Graphics_Driver::create_shm_buffer(Fl_Wayland_Graphics_Driver::w
   if (pool && !wl_list_empty(&pool_data->buffers)) {
     // last wld_buffer created from current pool
     struct wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
-    chunk_offset = ((char*)record->data - pool_data->pool_memory) + 
+    chunk_offset = ((char*)record->data - pool_data->pool_memory) +
                    record->draw_buffer.data_size;
   }
   if (!pool || chunk_offset + buffer->draw_buffer.data_size > pool_size) {
@@ -168,7 +168,7 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, struct
   cairo_surface_flush(surf);
   if (r) copy_region(window, r);
   else {
-    memcpy(window->buffer->data, window->buffer->draw_buffer.buffer, 
+    memcpy(window->buffer->data, window->buffer->draw_buffer.buffer,
            window->buffer->draw_buffer.data_size);
     wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
   }
@@ -249,7 +249,7 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 const uint32_t Fl_Wayland_Graphics_Driver::wld_format = WL_SHM_FORMAT_ARGB8888;
 
 
-void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, 
+void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h,
                                                 Fl_Offscreen src, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of
   // the graphics driver's surface

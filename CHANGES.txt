@@ -51,7 +51,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - New Fl_ICO_Image class to read Windows .ico icon files.
   - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
     graphics to SVG or EPS files, respectively.
-  - Fl_Button now supports a compact flag that visually groups closely set 
+  - Fl_Button now supports a compact flag that visually groups closely set
     buttons into keypads.
   - Fl_Tabs widget now supports close buttons for individual tabs.
   - Fl_Tabs widget now supports four different modes for handling an

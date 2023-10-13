@@ -133,7 +133,7 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, c
   do not follow symlinks, and do not access the filesystem at all.
 
   Path arguments must be absolute (start at the root directory) and must not
-  contain `.` or `..` segments, or double separators. A single trailing 
+  contain `.` or `..` segments, or double separators. A single trailing
   separator is ok.
 
   On Windows, path arguments must start with a drive name, e.g. `c:\`.
@@ -144,7 +144,7 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, c
 
   On Windows and macOS, the path segment tests are case insensitive.
 
-  If the path can not be generated, \a from path is copied into the \a to 
+  If the path can not be generated, \a from path is copied into the \a to
   buffer and 0 is returned.
 
   \code

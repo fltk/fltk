@@ -159,7 +159,7 @@ public:
   */
     Fl_Window(int w, int h, const char *title = 0);
   /** Creates a window from the given position (x, y), size (w, h) and title.
-   
+
    On a multi-screen system, the values computed by
    Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) can be used to
    discover the coordinates of the area of screen \#n.
@@ -171,7 +171,7 @@ public:
 
     \see Fl_Window(int w, int h, const char *title)
     \see Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n)
-   
+
    \note Under Wayland, it's generally not possible for the client app to control
    the position of a window in the system. It's only possible to specify on what screen
    should the compositor place a fullscreen window.

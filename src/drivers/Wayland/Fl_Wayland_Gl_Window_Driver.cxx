@@ -68,7 +68,7 @@ static EGLConfig wld_egl_conf = NULL;
 EGLDisplay Fl_Wayland_Gl_Window_Driver::egl_display = EGL_NO_DISPLAY;
 
 
-Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : 
+Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) :
     Fl_Gl_Window_Driver(win) {
   if (egl_display == EGL_NO_DISPLAY) init();
   egl_window = NULL;
@@ -104,7 +104,7 @@ void Fl_Wayland_Gl_Window_Driver::init() {
 }
 
 
-char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, 
+char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n,
                                                          int w, int h, Fl_Fontsize fs)
 {
   // write str to a bitmap just big enough
@@ -181,7 +181,7 @@ GLContext Fl_Wayland_Gl_Window_Driver::create_gl_context(Fl_Window* window,
   if (context_list && nContext) shared_ctx = context_list[0];
 
   static const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-  GLContext ctx = (GLContext)eglCreateContext(egl_display, 
+  GLContext ctx = (GLContext)eglCreateContext(egl_display,
     ((Fl_Wayland_Gl_Choice*)g)->egl_conf,
     (shared_ctx ? (EGLContext)shared_ctx : EGL_NO_CONTEXT),
     context_attribs);
@@ -211,7 +211,7 @@ void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context
     float s = Fl::screen_scale(w->screen_num());
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     // the GL scene will be a transparent subsurface above the cairo-drawn surface
-    dr->gl_start_support_->surface = 
+    dr->gl_start_support_->surface =
           wl_compositor_create_surface(scr_driver->wl_compositor);
     dr->gl_start_support_->subsurface = wl_subcompositor_get_subsurface(
           scr_driver->wl_subcompositor, dr->gl_start_support_->surface, win->wl_surface);
@@ -225,7 +225,7 @@ void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    if (eglMakeCurrent(egl_display, target_egl_surface, target_egl_surface, 
+    if (eglMakeCurrent(egl_display, target_egl_surface, target_egl_surface,
                        (EGLContext)context)) {
 //fprintf(stderr, "EGLContext %p made current\n", context);
     } else {
@@ -369,7 +369,7 @@ public:
     }
   }
   void destroy(struct gl_start_support *gl_start_support_) FL_OVERRIDE {
-    eglDestroySurface(Fl_Wayland_Gl_Window_Driver::egl_display, 
+    eglDestroySurface(Fl_Wayland_Gl_Window_Driver::egl_display,
                       gl_start_support_->egl_surface);
     wl_egl_window_destroy(gl_start_support_->egl_window);
     wl_subsurface_destroy(gl_start_support_->subsurface);

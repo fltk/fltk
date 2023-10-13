@@ -35,7 +35,7 @@
 
 // Enable one of the following two #include's depending on the GLUT implementation
 
-// #include <GLUT/glut.h>		// GLUT and FreeGLUT version
+// #include <GLUT/glut.h>               // GLUT and FreeGLUT version
 #include <FL/glut.H>        // FLTK version
 
 #include <stdio.h>

@@ -40,7 +40,7 @@ void comment_cb(class Fl_Text_Editor* i, void *v);
 class Fl_Widget_Type : public Fl_Type
 {
   typedef Fl_Type super;
-  
+
   virtual Fl_Widget *widget(int,int,int,int) = 0;
   virtual Fl_Widget_Type *_make() = 0; // virtual constructor
   void setlabel(const char *) FL_OVERRIDE;
@@ -59,7 +59,7 @@ protected:
   /// set, so we need a second place to store this information while also
   /// disabeling the output of the "hide" property by the Widget Type.
   uchar override_visible_;
-  
+
   void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_widget_code(Fd_Code_Writer& f);

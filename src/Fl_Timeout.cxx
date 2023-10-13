@@ -54,7 +54,7 @@ static int num_timers = 0;    // DEBUG
  may wrap around and does not represent a real time (maybe runtime of the system).
  Function seconds_since() below uses this to subtract two timestamps which is
  always a correct delta time with milliseconds or microseconds resolution.
- 
+
  \param offset optional signed offset in seconds added to the current time
  \return this moment in time offset by \p offset as an opaque time stamp
 

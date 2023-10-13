@@ -72,7 +72,7 @@
  default shell is in $SHELL on linux and macOS
 
  On macOS, we can write Apple Scripts:
- 
+
  #!/usr/bin/env osascript
  say "@BASENAME@"
 

@@ -2201,6 +2201,7 @@ Fl_grab.o: ../FL/Fl_Valuator.H
 Fl_grab.o: ../FL/Fl_Widget.H
 Fl_grab.o: ../FL/platform_types.h
 Fl_grab.o: Fl_Screen_Driver.H
+Fl_Graphics_Driver.o: ../config.h
 Fl_Graphics_Driver.o: ../FL/Enumerations.H
 Fl_Graphics_Driver.o: ../FL/Fl.H
 Fl_Graphics_Driver.o: ../FL/fl_attr.h
@@ -3876,6 +3877,7 @@ Fl_Table_Row.o: ../FL/platform_types.h
 Fl_Tabs.o: ../FL/Enumerations.H
 Fl_Tabs.o: ../FL/Fl.H
 Fl_Tabs.o: ../FL/fl_attr.h
+Fl_Tabs.o: ../FL/Fl_Bitmap.H
 Fl_Tabs.o: ../FL/Fl_Cairo.H
 Fl_Tabs.o: ../FL/fl_casts.H
 Fl_Tabs.o: ../FL/fl_config.h
@@ -3889,6 +3891,7 @@ Fl_Tabs.o: ../FL/Fl_Tooltip.H
 Fl_Tabs.o: ../FL/fl_types.h
 Fl_Tabs.o: ../FL/fl_utf8.h
 Fl_Tabs.o: ../FL/Fl_Widget.H
+Fl_Tabs.o: ../FL/Fl_Window.H
 Fl_Tabs.o: ../FL/platform_types.h
 Fl_Text_Buffer.o: ../config.h
 Fl_Text_Buffer.o: ../FL/Enumerations.H

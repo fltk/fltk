@@ -106,11 +106,11 @@ static int im_enabled = -1;
 #pragma clang diagnostic ignored "-Wunguarded-availability"
 static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeTIFF :
                                          NSTIFFPboardType);
-static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : 
+static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF :
                                         NSPDFPboardType);
-static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.apple.pict" : 
+static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.apple.pict" :
                                          NSPICTPboardType);
-static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString : 
+static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString :
                                          NSStringPboardType);
 static NSString *fl_filenames_pboard_type =
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
@@ -493,9 +493,9 @@ void Fl_Darwin_System_Driver::remove_fd(int n)
 int Fl_Darwin_System_Driver::ready()
 
 {
-  NSEvent *retval = [NSApp nextEventMatchingMask:NSEventMaskAny 
+  NSEvent *retval = [NSApp nextEventMatchingMask:NSEventMaskAny
                                        untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
-                                          inMode:NSDefaultRunLoopMode 
+                                          inMode:NSDefaultRunLoopMode
                                          dequeue:NO];
   return retval != nil;
 }
@@ -528,10 +528,10 @@ static void processFLTKEvent(void) {
  */
 void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 {
-  NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined 
+  NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined
                                       location:NSMakePoint(0,0)
                                  modifierFlags:0 timestamp:0
-                                  windowNumber:0 context:NULL 
+                                  windowNumber:0 context:NULL
                                        subtype:FLTKTimerEvent
                                          data1:0
                                          data2:0];
@@ -1064,13 +1064,13 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   int sendEvent = 0;
 
   NSEventType etype = [theEvent type];
-  if (etype == NSEventTypeLeftMouseDown || etype == NSEventTypeRightMouseDown || 
+  if (etype == NSEventTypeLeftMouseDown || etype == NSEventTypeRightMouseDown ||
       etype == NSEventTypeOtherMouseDown) {
     if (btn == 1) Fl::e_state |= FL_BUTTON1;
     else if (btn == 3) Fl::e_state |= FL_BUTTON2;
     else if (btn == 2) Fl::e_state |= FL_BUTTON3;
   }
-  else if (etype == NSEventTypeLeftMouseUp || etype == NSEventTypeRightMouseUp || 
+  else if (etype == NSEventTypeLeftMouseUp || etype == NSEventTypeRightMouseUp ||
            etype == NSEventTypeOtherMouseUp) {
     if (btn == 1) Fl::e_state &= ~FL_BUTTON1;
     else if (btn == 3) Fl::e_state &= ~FL_BUTTON2;
@@ -1809,7 +1809,7 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
         [NSApp finishLaunching];
         // Unbundled app may require this so delegate receives applicationDidFinishLaunching:
         // even if doc states this is sent at the end of finishLaunching.
-        if (!is_bundled()) [NSApp nextEventMatchingMask:NSEventMaskAny 
+        if (!is_bundled()) [NSApp nextEventMatchingMask:NSEventMaskAny
                                               untilDate:nil
                                                  inMode:NSDefaultRunLoopMode
                                                 dequeue:NO];
@@ -2639,10 +2639,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     } else
 #endif
     {
-      CFArrayRef files = (CFArrayRef)[pboard 
+      CFArrayRef files = (CFArrayRef)[pboard
                                       propertyListForType:fl_filenames_pboard_type];
       CFStringRef all = CFStringCreateByCombiningStrings(NULL, files, CFSTR("\n"));
-      int l = (int)CFStringGetMaximumSizeForEncoding(CFStringGetLength(all), 
+      int l = (int)CFStringGetMaximumSizeForEncoding(CFStringGetLength(all),
                                                      kCFStringEncodingUTF8);
       DragData = (char *)malloc(l + 1);
       CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
@@ -3065,7 +3065,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   [cw setFrameOrigin:crect.origin];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
   if (fl_mac_os_version >= 101200) {
-    if (!w->parent() && (winstyle & NSWindowStyleMaskTitled) && 
+    if (!w->parent() && (winstyle & NSWindowStyleMaskTitled) &&
         (winstyle & NSWindowStyleMaskResizable) && !w->modal() && !w->non_modal() &&
         (Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() > Fl_Sys_Menu_Bar::tabbing_mode_none)) {
       if (Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() == Fl_Sys_Menu_Bar::tabbing_mode_preferred)
@@ -3132,7 +3132,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     [cw setAlphaValue:0.97];
   }
   // Install DnD handlers
-  [myview registerForDraggedTypes:[NSArray arrayWithObjects:UTF8_pasteboard_type,  
+  [myview registerForDraggedTypes:[NSArray arrayWithObjects:UTF8_pasteboard_type,
                                    fl_filenames_pboard_type, nil]];
 
   if (size_range_set()) size_range();
@@ -3241,7 +3241,7 @@ static void restore_window_title_and_icon(Fl_Window *pWindow, NSImage *icon) {
   FLWindow *nswin = fl_xid(pWindow);
   q_set_window_title(nswin, pWindow->label(), pWindow->iconlabel());
   if (!icon) icon = ((Fl_Cocoa_Screen_Driver*)Fl::screen_driver())->default_icon;
-  if (icon && ([nswin styleMask] & NSWindowStyleMaskTitled) && pWindow->label() && 
+  if (icon && ([nswin styleMask] & NSWindowStyleMaskTitled) && pWindow->label() &&
       (strlen(pWindow->label()) > 0)) {
     NSButton *icon_button = [nswin standardWindowButton:NSWindowDocumentIconButton];
     if (icon_button) {
@@ -3780,7 +3780,7 @@ static NSImage *CGBitmapContextToNSImage(CGContextRef c)
   else
 #endif
     {
-      NSBitmapImageRep *imagerep = 
+      NSBitmapImageRep *imagerep =
       [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
                                               pixelsWide:CGBitmapContextGetWidth(c)
                                               pixelsHigh:CGBitmapContextGetHeight(c)
@@ -3791,9 +3791,9 @@ static NSImage *CGBitmapContextToNSImage(CGContextRef c)
                                           colorSpaceName:NSDeviceRGBColorSpace
                                              bytesPerRow:CGBitmapContextGetBytesPerRow(c)
                                             bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
-      memcpy([imagerep bitmapData], CGBitmapContextGetData(c), 
+      memcpy([imagerep bitmapData], CGBitmapContextGetData(c),
              [imagerep bytesPerRow] * [imagerep pixelsHigh]);
-      image = [[NSImage alloc] initWithSize:NSMakeSize([imagerep pixelsWide], 
+      image = [[NSImage alloc] initWithSize:NSMakeSize([imagerep pixelsWide],
                                                        [imagerep pixelsHigh])];
       [image addRepresentation:imagerep];
       [imagerep release];
@@ -4030,7 +4030,7 @@ static void createAppleMenu(void)
     // Show All
     [appleMenu addItemWithTitle:NSLocalizedString(
                                   [NSString stringWithUTF8String:Fl_Mac_App_Menu::show], nil)
-                         action:@selector(unhideAllApplications:) 
+                         action:@selector(unhideAllApplications:)
                   keyEquivalent:@""];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     // Quit AppName
@@ -4227,7 +4227,7 @@ static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float sca
                                                                   colorSpaceName:NSDeviceRGBColorSpace
                                                                      bytesPerRow:scaled_w*4
                                                                     bitsPerPixel:32];
-  NSDictionary *dict = 
+  NSDictionary *dict =
   [NSDictionary dictionaryWithObject:scaled
                               forKey:NSGraphicsContextDestinationAttributeName];
   NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
@@ -4251,7 +4251,7 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
   const uchar *from_data = [from bitmapData];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) { // 10.4 required by the bitmapFormat message
-    if (([to bitmapFormat] & NSBitmapFormatAlphaFirst) && 
+    if (([to bitmapFormat] & NSBitmapFormatAlphaFirst) &&
         !([from bitmapFormat] & NSBitmapFormatAlphaFirst) ) {
       // "to" is ARGB and "from" is RGBA --> convert "from" to ARGB
       // it is enough to read "from" starting one byte earlier, because A is always 0xFF:
@@ -4367,7 +4367,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
         // lock focus to win's view
   #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
         if (fl_mac_os_version >= 101100) {
-          NSGraphicsContext *ctxt = [fl_xid(win) 
+          NSGraphicsContext *ctxt = [fl_xid(win)
                                      performSelector:@selector(graphicsContext)];
           [ctxt saveGraphicsState]; // necessary under 10.11
         }
@@ -4384,7 +4384,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
         [winview performSelector:@selector(unlockFocus)];
   #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
         if (fl_mac_os_version >= 101100) {
-          NSGraphicsContext *ctxt = [fl_xid(win) 
+          NSGraphicsContext *ctxt = [fl_xid(win)
                                      performSelector:@selector(graphicsContext)];
           [ctxt restoreGraphicsState];
         }
@@ -4419,7 +4419,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x,
                                                              win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height, true);
     if (childbitmap) {
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
-      if (!win->as_gl_window() && Fl_Cocoa_Window_Driver::driver(win)->mapped_to_retina() && 
+      if (!win->as_gl_window() && Fl_Cocoa_Window_Driver::driver(win)->mapped_to_retina() &&
           sub->as_gl_window() && !Fl::use_high_res_GL()) {
         childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
       }
@@ -4452,11 +4452,11 @@ CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w,
     [bitmap release];
   } else {
     CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-    CGDataProviderRef provider = 
+    CGDataProviderRef provider =
     CGDataProviderCreateWithData(bitmap, [bitmap bitmapData],
                                  [bitmap bytesPerRow] * [bitmap pixelsHigh],
                                  nsbitmapProviderReleaseData);
-    img = CGImageCreate([bitmap pixelsWide], [bitmap pixelsHigh], 8, [bitmap bitsPerPixel], 
+    img = CGImageCreate([bitmap pixelsWide], [bitmap pixelsHigh], 8, [bitmap bitsPerPixel],
                         [bitmap bytesPerRow], cspace,
                         ([bitmap bitsPerPixel] == 32 ? kCGImageAlphaPremultipliedLast :
                           kCGImageAlphaNone) ,
@@ -4622,8 +4622,8 @@ static NSImage* rgb_to_nsimage(const Fl_RGB_Image *rgb) {
   NSImage *win_icon = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 101000) {
-    NSBitmapImageRep *bitmap = 
-    [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL 
+    NSBitmapImageRep *bitmap =
+    [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
                                             pixelsWide:rgb->data_w()
                                             pixelsHigh:rgb->data_h()
                                          bitsPerSample:8

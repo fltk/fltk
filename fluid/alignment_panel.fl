@@ -423,7 +423,7 @@ Fl_String old_name = "Copy of ";
 old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
 const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
 if (new_name == NULL)
-  return; 
+  return;
 
 g_layout_list.add(new_name);
 g_layout_list.update_dialogs();}
@@ -452,7 +452,7 @@ g_layout_list.update_dialogs();}
 Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name_;
 const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
 if (new_name == NULL)
-  return; 
+  return;
 
 g_layout_list.rename(new_name);
 g_layout_list.update_dialogs();}
@@ -841,8 +841,8 @@ g_layout_list.update_dialogs();}
           xywh {10 90 320 132}
         } {
           Fl_Browser w_settings_shell_list {
-            label {Shell 
-command 
+            label {Shell
+command
 list:}
             callback {if (v == LOAD) {
   // load from g_shell_config
@@ -957,13 +957,13 @@ if (v==LOAD) {
             } {
               MenuItem {} {
                 label {Import...}
-                callback {if (v != LOAD) 
+                callback {if (v != LOAD)
   Fd_Shell_Command_List::import_from_file();}
                 tooltip {import shell commands from an external file} xywh {90 90 100 20} labelsize 11
               }
               MenuItem {} {
                 label {Export selected...}
-                callback {if (v != LOAD) 
+                callback {if (v != LOAD)
   Fd_Shell_Command_List::export_selected();}
                 tooltip {export selected shell commands to an external file} xywh {10 10 100 20} labelsize 11
               }
@@ -1034,7 +1034,7 @@ if (v == LOAD) {
   if (selected) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->name = o->value();
-    w_settings_shell_list->text(selected, o->value()); 
+    w_settings_shell_list->text(selected, o->value());
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
@@ -1101,7 +1101,7 @@ if (v == LOAD) {
     Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     cmd->storage = ts;
-    //w_settings_shell_list->text(selected, cmd->name.c_str()); 
+    //w_settings_shell_list->text(selected, cmd->name.c_str());
     if (cmd->storage == FD_STORE_USER)
       w_settings_shell_list->icon(selected, w_settings_shell_fd_user->image());
     else if (cmd->storage == FD_STORE_PROJECT)
