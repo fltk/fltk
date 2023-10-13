@@ -73,7 +73,9 @@ extern const uchar* fl_gray_ramp();
 
 void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   const uchar *g = fl_gray_ramp();
+  fl_antialias(0);  // fix for issue #792
   draw(FILL,        x,   y, w,   h, 2, Fl::box_color(bgcolor));
+  fl_antialias(1);  // fix for issue #792
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g[(int)'N']);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g[(int)'H']);
   draw(UPPER_LEFT,  x,   y, w,   h, 0, (Fl_Color)g[(int)'N']);

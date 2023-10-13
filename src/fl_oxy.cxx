@@ -217,9 +217,13 @@ static void _oxy_rounded_box_(int x, int y, int w, int h, Fl_Color bg) {
     fl_pie(x + w - h, y, h, h, 0.0, 90.0);    // top-left quarter of circle
     fl_pie(x + w - h, y, h, h, 270.0, 360.0); // bottom-left quarter of circle
   } else {
+    fl_antialias(0);  // fix for issue #792
     fl_pie(x, y, w, w, 0.0, 180.0);           // top half of circle
+    fl_antialias(1);  // fix for issue #792
     fl_rectf(x, y + w / 2, w, h - w);         // rectangle between top and bottom half-circle
+    fl_antialias(0);  // fix for issue #792
     fl_pie(x, y + h - w, w, w, 180.0, 360.0); // bottom half of circle
+    fl_antialias(1);  // fix for issue #792
   }
 }
 
