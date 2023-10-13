@@ -251,7 +251,6 @@ int main(int argc, char **argv) {
   menus[2] = &ch;
   Fl_Menu_Button mb(0,0,WIDTH,400,"&popup");
   mb.type(Fl_Menu_Button::POPUP3);
-  mb.box(FL_NO_BOX);
   mb.menu(menutable);
   mb.remove(1); // delete the "File" submenu
   mb.callback(test_cb);
