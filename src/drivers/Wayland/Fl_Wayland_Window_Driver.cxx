@@ -165,8 +165,8 @@ void Fl_Wayland_Window_Driver::take_focus()
         Fl_Wayland_Window_Driver::driver(old_first->top_window());
       xdg_toplevel_set_parent(xdg_toplevel(), top_dr->xdg_toplevel());
       // this will remove the parent-child relationship
-      old_first->wait_for_expose();
       xdg_toplevel_set_parent(xdg_toplevel(), NULL);
+      wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     }
     // this sets the first window
     fl_wl_find(w);
