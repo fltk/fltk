@@ -615,9 +615,14 @@ void fl_draw_circle(int x0, int y0, int d, Fl_Color color) {
   fl_rectf(x0, y0, d, d, FL_GREEN);
 #endif
 
+  // make circles nice on scaled display
+  // note: we should scale the value up even more for hidpi displays like Apple's Retina
+  float scale = fl_graphics_driver->scale();
+  int scaled_d = (scale>1.0) ? ((int)(d*fl_graphics_driver->scale())) : d;
+
   // draw the circle
 
-  switch (d) {
+  switch (scaled_d) {
     // Larger circles draw fine...
     default:
       fl_pie(x0, y0, d, d, 0.0, 360.0);
