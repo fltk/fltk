@@ -1,7 +1,7 @@
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -78,33 +78,11 @@ void Fl_Light_Button::draw() {
             tW --;
             fl_pie(x() + tdx - 1, y() + tdy - 1, tW + 3, tW + 3, 0.0, 360.0);
             fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
-          } else fl_color(col);
-
-          switch (tW) {
-            // Larger circles draw fine...
-            default :
-              fl_pie(x() + tdx, y() + tdy, tW, tW, 0.0, 360.0);
-              break;
-
-            // Small circles don't draw well on many systems...
-            case 6 :
-              fl_rectf(x() + tdx + 2, y() + tdy, tW - 4, tW);
-              fl_rectf(x() + tdx + 1, y() + tdy + 1, tW - 2, tW - 2);
-              fl_rectf(x() + tdx, y() + tdy + 2, tW, tW - 4);
-              break;
-
-            case 5 :
-            case 4 :
-            case 3 :
-              fl_rectf(x() + tdx + 1, y() + tdy, tW - 2, tW);
-              fl_rectf(x() + tdx, y() + tdy + 1, tW, tW - 2);
-              break;
-
-            case 2 :
-            case 1 :
-              fl_rectf(x() + tdx, y() + tdy, tW, tW);
-              break;
+          } else {
+            fl_color(col);
           }
+
+          fl_draw_circle(x() + tdx, y() + tdy, tW, fl_color());
 
           if (Fl::is_scheme("gtk+")) {
             fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
