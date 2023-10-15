@@ -980,7 +980,7 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col);
 FL_EXPORT void fl_draw_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color color);
 
 // Draw a potentially small, filled circle
-FL_EXPORT void fl_draw_circle(int x0, int y0, int d, Fl_Color color);
+FL_EXPORT void fl_draw_circle(int x, int y, int d, Fl_Color color);
 
 // images:
 
