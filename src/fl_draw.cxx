@@ -592,67 +592,27 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
 } // fl_draw_check()
 
 /**
-  Draw a potentially small, filled circle as a GUI element.
+  Draw a potentially small, filled circle using a given color.
 
-  This method draws a filled circle, using fl_pie() if the given diameter
-  \p d is larger than 6 pixels after scaling with the current screen
-  scaling factor (i.e. "physical" pixels).
+  This function draws using \p color a filled circle bounded by rectangle <tt>(x, y, d, d)</tt>.
+ 
+  This function is the same as <tt>fl_pie(x, y, d, d, 0, 360)</tt> except with some systems
+  that don't draw small circles well. In that situation, the circle diameter \p d is converted
+  from FLTK units to pixels and this function approximates a filled circle by drawing several
+  filled rectangles if the converted diameter is ≤ 6 pixels.
 
-  If the diameter is 6 or smaller after scaling it approximates a filled circle
-  by drawing several filled rectangles, depending on the size because fl_pie()
-  might not draw well on many systems for smaller sizes.
-
-  \param[in]  x0,y0   coordinates of top left of the bounding box
-  \param[in]  d       diameter == width and height of the bounding box
-  \param[in]  color   drawing color
+  \param[in]  x,y      coordinates of top left of the bounding box
+  \param[in]  d           diameter == width and height of the bounding box in FLTK units
+  \param[in]  color  drawing color
 
   \since 1.4.0
-*/
-void fl_draw_circle(int x0, int y0, int d, Fl_Color color) {
-
+ */
+void fl_draw_circle(int x, int y, int d, Fl_Color color) {
 #define DEBUG_DRAW_CIRCLE (0) // bit 1 = draw bounding box (green)
-
-  Fl_Color saved_color = fl_color();
-
 #if (DEBUG_DRAW_CIRCLE & 1)
+  Fl_Color current = fl_color();
   fl_rectf(x0, y0, d, d, FL_GREEN);
+  fl_color(current);
 #endif
-
-  // make circles nice on scaled display
-  // note: we should scale the value up even more for hidpi displays like Apple's Retina
-  float scale = fl_graphics_driver->scale();
-  int scaled_d = (scale > 1.0) ? int(d * scale) : d;
-
-  // draw the circle
-
-  fl_color(color);
-
-  switch (scaled_d) {
-    // Larger circles draw fine...
-    default:
-      fl_pie(x0, y0, d, d, 0.0, 360.0);
-      break;
-
-    // Small circles don't draw well on many systems...
-    case 6:
-      fl_rectf(x0 + 2, y0, d - 4, d);
-      fl_rectf(x0 + 1, y0 + 1, d - 2, d - 2);
-      fl_rectf(x0, y0 + 2, d, d - 4);
-      break;
-
-    case 5:
-    case 4:
-    case 3:
-      fl_rectf(x0 + 1, y0, d - 2, d);
-      fl_rectf(x0, y0 + 1, d, d - 2);
-      break;
-
-    case 2:
-    case 1:
-      fl_rectf(x0, y0, d, d);
-      break;
-  }
-
-  fl_color(saved_color);
-
-} // fl_draw_circle()
+  fl_graphics_driver->draw_circle(x, y, d, color);
+}

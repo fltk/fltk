@@ -48,10 +48,9 @@ int Fl_GDIplus_Graphics_Driver::antialias() {
   return active;
 }
 
-#endif
-
-
-#if USE_GDIPLUS
+void Fl_GDIplus_Graphics_Driver::draw_circle(int x, int y, int d, Fl_Color c) {
+  Fl_Graphics_Driver::draw_circle(x, y, d, c);
+}
 
 int Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_CLOSED;
 ULONG_PTR Fl_GDIplus_Graphics_Driver::gdiplus_token_ = 0;

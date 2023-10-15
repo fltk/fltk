@@ -600,6 +600,14 @@ void Fl_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
 /** see fl_pie() */
 void Fl_Graphics_Driver::pie(int x, int y, int w, int h, double a1, double a2) {}
 
+/** see fl_draw_circle() */
+void Fl_Graphics_Driver::draw_circle(int x, int y, int d, Fl_Color c) {
+  Fl_Color current_c = color();
+  if (c != current_c) color(c);
+  pie(x, y, d, d, 0., 360.);
+  if (c != current_c) color(current_c);
+}
+
 /** see fl_line_style() */
 void Fl_Graphics_Driver::line_style(int style, int width, char* dashes) {}
 
@@ -931,6 +939,45 @@ void Fl_Scalable_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a
   h = floor(y+h) - yy;
   pie_unscaled(xx, yy, w, h, a1, a2);
 }
+
+
+void Fl_Scalable_Graphics_Driver::draw_circle(int x0, int y0, int d, Fl_Color c) {
+  Fl_Color saved = color();
+  color(c);
+
+  // make circles nice on scaled display
+  float s = scale();
+  int scaled_d = (s > 1.0) ? (int)(d * s) : d;
+  
+  // draw the circle
+  switch (scaled_d) {
+      // Larger circles draw fine...
+    default:
+      pie(x0, y0, d, d, 0.0, 360.0);
+      break;
+      
+      // Small circles don't draw well on many systems...
+    case 6:
+      rectf(x0 + 2, y0, d - 4, d);
+      rectf(x0 + 1, y0 + 1, d - 2, d - 2);
+      rectf(x0, y0 + 2, d, d - 4);
+      break;
+      
+    case 5:
+    case 4:
+    case 3:
+      rectf(x0 + 1, y0, d - 2, d);
+      rectf(x0, y0 + 1, d, d - 2);
+      break;
+      
+    case 2:
+    case 1:
+      rectf(x0, y0, d, d);
+      break;
+  }
+  color(saved);
+}
+
 
 void Fl_Scalable_Graphics_Driver::line_style(int style, int width, char* dashes) {
   if (width == 0) line_width_ = int(scale() < 2 ? 0 : scale());
