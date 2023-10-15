@@ -1,7 +1,7 @@
 //
 // Arrow drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -220,6 +220,8 @@ static int fl_draw_arrow_choice(Fl_Rect r, Fl_Color col) {
   \param[in]  t    arrow type
   \param[in]  o    orientation
   \param[in]  col  arrow color
+
+  \since 1.4.0
 */
 
 void fl_draw_arrow(Fl_Rect r, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {

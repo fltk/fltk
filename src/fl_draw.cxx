@@ -595,15 +595,18 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
   Draw a potentially small, filled circle as a GUI element.
 
   This method draws a filled circle, using fl_pie() if the given diameter
-  \p d is larger than 6 pixels (aka FLTK units).
+  \p d is larger than 6 pixels after scaling with the current screen
+  scaling factor (i.e. "physical" pixels).
 
-  If \p d is 6 or smaller it approximates a filled circle by drawing several
-  filled rectangles, depending on the size because fl_pie() might not draw
-  well on many systems for smaller sizes.
+  If the diameter is 6 or smaller after scaling it approximates a filled circle
+  by drawing several filled rectangles, depending on the size because fl_pie()
+  might not draw well on many systems for smaller sizes.
 
   \param[in]  x0,y0   coordinates of top left of the bounding box
   \param[in]  d       diameter == width and height of the bounding box
   \param[in]  color   drawing color
+
+  \since 1.4.0
 */
 void fl_draw_circle(int x0, int y0, int d, Fl_Color color) {
 
@@ -618,9 +621,11 @@ void fl_draw_circle(int x0, int y0, int d, Fl_Color color) {
   // make circles nice on scaled display
   // note: we should scale the value up even more for hidpi displays like Apple's Retina
   float scale = fl_graphics_driver->scale();
-  int scaled_d = (scale>1.0) ? ((int)(d*fl_graphics_driver->scale())) : d;
+  int scaled_d = (scale > 1.0) ? int(d * scale) : d;
 
   // draw the circle
+
+  fl_color(color);
 
   switch (scaled_d) {
     // Larger circles draw fine...
