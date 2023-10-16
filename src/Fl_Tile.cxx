@@ -181,7 +181,7 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
 }
 
 /**
-  Set one of four cursors used for dragging etc..
+  Set one of four cursors used for dragging etc…
 
   Fl_Tile uses an array of four cursors that are set depending on user actions:
     - 0: normal cursor
