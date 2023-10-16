@@ -282,7 +282,7 @@ inline int fl_antialias() {
 // rectangles tweaked to exactly fill the pixel rectangle:
 
 /**
-  Draw a 1-pixel border \e inside the given bounding box.
+  Draw a border \e inside the given bounding box.
   This function is meant for quick drawing of simple boxes. The behavior is
   undefined for line widths that are not 1.
 */
@@ -291,7 +291,7 @@ inline void fl_rect(int x, int y, int w, int h) {
 }
 
 /**
- Draw a 1-pixel rounded border \e inside the given bounding box.
+ Draw a rounded border \e inside the given bounding box.
  The radius code is optimized for speed and works best for values between
  5 and 15 units.
  */
@@ -300,7 +300,7 @@ inline void fl_rounded_rect(int x, int y, int w, int h, int r) {
 }
 
 /**
-  Draw a 1-pixel border \e inside the given bounding box.
+  Draw a border \e inside the given bounding box.
   This is the same as fl_rect(int x, int y, int w, int h) but with
   Fl_Rect \p r as input argument.
 */
@@ -318,7 +318,9 @@ inline void fl_focus_rect(int x, int y, int w, int h) {
   fl_graphics_driver->focus_rect(x, y, w, h);
 }
 
-/** Draw with passed color a 1-pixel border \e inside the given bounding box. */
+/** Draw with passed color a border \e inside the given bounding box.
+ \warning The current color is changed to \p c upon return.
+*/
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   fl_rect(x, y, w, h);
@@ -337,7 +339,9 @@ inline void fl_rounded_rectf(int x, int y, int w, int h, int r) {
   fl_graphics_driver->rounded_rectf(x, y, w, h, r);
 }
 
-/** Color with passed color a rectangle that exactly fills the given bounding box. */
+/** Color with passed color a rectangle that exactly fills the given bounding box. 
+ \warning The current color is changed to \p c upon return.
+*/
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   fl_rectf(x, y, w, h);
@@ -348,7 +352,9 @@ inline void fl_rectf(Fl_Rect r) {
   fl_graphics_driver->rectf(r.x(), r.y(), r.w(), r.h());
 }
 
-/** Color with passed color a rectangle that exactly fills the given bounding box. */
+/** Color with passed color a rectangle that exactly fills the given bounding box.
+ \warning The current color is changed to \p c upon return.
+*/
 inline void fl_rectf(Fl_Rect r, Fl_Color c) {
   fl_color(c);
   fl_rectf(r);
@@ -358,7 +364,8 @@ inline void fl_rectf(Fl_Rect r, Fl_Color c) {
   Color a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
   On screens with less than 24 bits of color this is done by drawing a
   solid-colored block using fl_draw_image() so that the correct color
-  shade is produced.
+  shade is produced. On other screens, the current color is changed
+  to \p fl_color(r,g,b) upon return.
 */
 inline void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   fl_graphics_driver->colored_rectf(x, y, w, h, r, g, b);
