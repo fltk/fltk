@@ -76,6 +76,9 @@ CPPFILES =\
 	gl_overlay.cxx \
 	glpuzzle.cxx \
 	glut_test.cxx \
+	grid_alignment \
+	grid_buttons \
+	grid_login \
 	hello.cxx \
 	help_dialog.cxx \
 	icon.cxx \
@@ -161,6 +164,9 @@ ALL =	\
 	fltk-versions$(EXEEXT) \
 	fonts$(EXEEXT) \
 	forms$(EXEEXT) \
+	grid_alignment$(EXEEXT) \
+	grid_buttons$(EXEEXT) \
+	grid_login$(EXEEXT) \
 	hello$(EXEEXT) \
 	help_dialog$(EXEEXT) \
 	icon$(EXEEXT) \
@@ -436,6 +442,12 @@ forms$(EXEEXT): forms.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ forms.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+
+grid_alignment$(EXEEXT): grid_alignment.o
+
+grid_buttons$(EXEEXT): grid_buttons.o
+
+grid_login$(EXEEXT): grid_login.o
 
 hello$(EXEEXT): hello.o
 

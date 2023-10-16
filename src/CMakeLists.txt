@@ -41,6 +41,7 @@ set (CPPFILES
   Fl_File_Input.cxx
   Fl_Flex.cxx
   Fl_Graphics_Driver.cxx
+  Fl_Grid.cxx
   Fl_Group.cxx
   Fl_Help_View.cxx
   Fl_Image.cxx

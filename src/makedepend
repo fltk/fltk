@@ -2238,6 +2238,11 @@ Fl_Graphics_Driver.o: ../FL/platform.H
 Fl_Graphics_Driver.o: ../FL/platform_types.h
 Fl_Graphics_Driver.o: ../FL/x11.H
 Fl_Graphics_Driver.o: Fl_Screen_Driver.H
+Fl_Grid.o: ../FL/fl_draw.H
+Fl_Grid.o: ../FL/Fl_Grid.H
+Fl_Grid.o: ../FL/Fl_Group.H
+Fl_Grid.o: ../FL/Fl_Rect.H
+Fl_Grid.o: ../FL/Fl_Widget.H
 Fl_Group.o: ../FL/Enumerations.H
 Fl_Group.o: ../FL/Fl.H
 Fl_Group.o: ../FL/fl_attr.h

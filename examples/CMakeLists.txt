@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt used to build example apps by the CMake build system
 #
-# Copyright 2020-2022 by Bill Spitzak and others.
+# Copyright 2020-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -31,10 +31,11 @@ file (MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 ############################################################
 
 set (SIMPLE_SOURCES
-  chart-simple
-  callbacks
   browser-simple
+  callbacks
+  chart-simple
   draggable-group
+  grid-simple
   howto-add_fd-and-popen
   howto-browser-with-icons
   howto-drag-and-drop
@@ -45,8 +46,8 @@ set (SIMPLE_SOURCES
   howto-remap-numpad-keyboard-keys
   howto-text-over-image-button
   menubar-add
-  nativefilechooser-simple-app
   nativefilechooser-simple
+  nativefilechooser-simple-app
   progress-simple
   shapedwindow
   simple-terminal

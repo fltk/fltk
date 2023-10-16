@@ -92,6 +92,10 @@ if (OPENGL_FOUND)
   CREATE_EXAMPLE (glut_test glut_test.cxx "fltk_gl;fltk")
 endif()
 
+CREATE_EXAMPLE (grid_alignment grid_alignment.cxx fltk)
+CREATE_EXAMPLE (grid_buttons grid_buttons.cxx fltk)
+CREATE_EXAMPLE (grid_login grid_login.cxx fltk)
+
 if (OPENGL_FOUND)
   CREATE_EXAMPLE (handle_events handle_events.cxx "fltk_gl;fltk") # opt. Fl_Gl_Window
 else()

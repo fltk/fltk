@@ -2,7 +2,7 @@
 // Fl_Flex demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2020 by Karsten Pedersen
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,7 +32,10 @@ Fl_Button *create_button(const char *caption) {
 
 void buttons_panel(Fl_Flex *parent) {
   new Fl_Box(0, 0, 0, 0, "");
-  Fl_Box *w = new Fl_Box(0, 0, 0, 0, "Welcome to Flex Login");
+  Fl_Box *title = new Fl_Box(0, 0, 0, 0, "Welcome to Fl_Flex");
+  title->align(FL_ALIGN_CENTER);
+  title->labelfont(FL_BOLD + FL_ITALIC);
+  title->labelsize(16);
 
   Fl_Flex *urow = new Fl_Flex(Fl_Flex::ROW);
   {
@@ -71,7 +74,7 @@ void buttons_panel(Fl_Flex *parent) {
 
   Fl_Box *b = new Fl_Box(0, 0, 0, 0, "");
 
-  parent->fixed(w, 60);
+  parent->fixed(title, 60);
   parent->fixed(urow, 30);
   parent->fixed(prow, 30);
   parent->fixed(pad, 1);
@@ -95,7 +98,7 @@ void middle_panel(Fl_Flex *parent) {
 
   new Fl_Box(0, 0, 0, 0, "");
 
-  parent->fixed(box, 200);
+  parent->fixed(box, 150);
   parent->fixed(spacer, 10);
   parent->fixed(bp, 300);
 }
@@ -119,21 +122,21 @@ void mainPanel(Fl_Flex *parent) {
 
 int main(int argc, char **argv) {
 
-  Fl_Window *window = new Fl_Double_Window(100, 100, "Simple GUI Example");
+  Fl_Window *win = new Fl_Double_Window(100, 100, "Fl_Flex \"Login\" Layout");
 
   Fl_Flex *col = new Fl_Flex(5, 5, 90, 90, Fl_Flex::COLUMN);
   mainPanel(col);
   col->end();
 
-  window->resizable(col);
-  window->color(fl_rgb_color(250, 250, 250));
-  window->end();
+  win->resizable(col);
+  win->color(fl_rgb_color(250, 250, 250));
+  win->end();
 
-  window->resize(0, 0, 640, 480);
-  window->size_range(550, 250);
-  window->show(argc, argv);
+  win->resize(0, 0, 600, 300);   // same size as grid_login
+  win->size_range(550, 250);
+  win->show(argc, argv);
 
   int ret = Fl::run();
-  delete window; // not necessary but useful to test for memory leaks
+  delete win; // not necessary but useful to test for memory leaks
   return ret;
 }

@@ -539,6 +539,7 @@ cube.o: ../FL/fl_config.h
 cube.o: ../FL/Fl_Device.H
 cube.o: ../FL/Fl_Export.H
 cube.o: ../FL/Fl_Gl_Window.H
+cube.o: ../FL/Fl_Grid.H
 cube.o: ../FL/Fl_Group.H
 cube.o: ../FL/Fl_Image.H
 cube.o: ../FL/Fl_Light_Button.H
@@ -550,6 +551,7 @@ cube.o: ../FL/Fl_Plugin.H
 cube.o: ../FL/Fl_Preferences.H
 cube.o: ../FL/Fl_Printer.H
 cube.o: ../FL/Fl_Radio_Light_Button.H
+cube.o: ../FL/Fl_Rect.H
 cube.o: ../FL/Fl_Slider.H
 cube.o: ../FL/Fl_String.H
 cube.o: ../FL/Fl_Sys_Menu_Bar.H

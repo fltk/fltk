@@ -12,6 +12,7 @@ callbacks
 cairo-draw-x
 chart-simple
 draggable-group
+grid-simple
 howto-add_fd-and-popen
 howto-browser-with-icons
 howto-drag-and-drop
