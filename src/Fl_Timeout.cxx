@@ -78,8 +78,8 @@ Fl_Timestamp Fl::now(double offset) {
   ts.sec = sec;
   ts.usec = usec;
   if (offset) {
-    sec = trunc(offset);
-    usec = (offset - sec) * 1000000;
+    sec = (time_t)trunc(offset);
+    usec = int((offset - sec) * 1000000);
     ts.sec += sec;
     if (usec + ts.usec >= 1000000) {
       ts.sec++;
@@ -148,7 +148,7 @@ long Fl::ticks_since(Fl_Timestamp& then) {
  \see Fl::ticks_since(Fl_Timestamp& then) \see  Fl::now()
  */
 long Fl::ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back) {
-  return (back.sec-further_back.sec)*60 + (back.usec-further_back.usec)/16666;
+  return long((back.sec-further_back.sec)*60 + (back.usec-further_back.usec)/16666);
 }
 
 
