@@ -87,6 +87,13 @@
 #include <FL/Fl_Rect.H>
 #include <stdlib.h>
 
+static Fl_Cursor Fl_Tile_cursors[4] = {
+  FL_CURSOR_DEFAULT,  // 0 normal
+  FL_CURSOR_WE,       // 1 drag horizontally
+  FL_CURSOR_NS,       // 2 drag vertically
+  FL_CURSOR_MOVE      // 3 move intersection
+};
+
 /**
   Drags the intersection at (\p oldx,\p oldy) to (\p newx,\p newy).
   This redraws all the necessary children.
@@ -173,30 +180,33 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
   }
 }
 
-static void set_cursor(Fl_Tile*t, Fl_Cursor c) {
-  static Fl_Cursor cursor;
-  if (cursor == c || !t->window()) return;
-  cursor = c;
-#ifdef __sgi
-  t->window()->cursor(c,FL_RED,FL_WHITE);
-#else
-  t->window()->cursor(c);
-#endif
+/**
+  Set one of four cursors used for dragging etc..
+
+  Fl_Tile uses an array of four cursors that are set depending on user actions:
+    - 0: normal cursor
+    - 1: horizontal dragging
+    - 2: vertical dragging
+    - 3: dragging an intersection
+
+  This method sets the window cursor for the given index \p n.
+*/
+void Fl_Tile::set_cursor(int n) {
+  if (n < 0 || n > 3) n = 0;      // check array index
+  cursor_ = n;                    // always store the index
+  if (cursor_ == n || !window())
+    return;
+  window()->cursor(cursor(n));
 }
 
-static Fl_Cursor cursors[4] = {
-  FL_CURSOR_DEFAULT,
-  FL_CURSOR_WE,
-  FL_CURSOR_NS,
-  FL_CURSOR_MOVE};
+#define DRAGH 1
+#define DRAGV 2
+#define GRABAREA 4
 
 int Fl_Tile::handle(int event) {
   static int sdrag;
   static int sdx, sdy;
   static int sx, sy;
-#define DRAGH 1
-#define DRAGV 2
-#define GRABAREA 4
 
   int mx = Fl::event_x();
   int my = Fl::event_y();
@@ -239,13 +249,13 @@ int Fl_Tile::handle(int event) {
     sdrag = 0; sx = sy = 0;
     if (mindx <= GRABAREA) {sdrag = DRAGH; sx = oldx;}
     if (mindy <= GRABAREA) {sdrag |= DRAGV; sy = oldy;}
-    set_cursor(this, cursors[sdrag]);
+    set_cursor(sdrag);
     if (sdrag) return 1;
     return Fl_Group::handle(event);
   }
 
   case FL_LEAVE:
-    set_cursor(this, FL_CURSOR_DEFAULT);
+    set_cursor(0); // set default cursor
     break;
 
   case FL_DRAG:
@@ -264,10 +274,13 @@ int Fl_Tile::handle(int event) {
     int newy;
     if (sdrag&DRAGV) {
       newy = Fl::event_y()-sdy;
-      if (newy < r->y()) newy = r->y();
-      else if (newy > r->y()+r->h()) newy = r->y()+r->h();
-    } else
+      if (newy < r->y())
+        newy = r->y();
+      else if (newy > r->y()+r->h())
+        newy = r->y()+r->h();
+    } else {
       newy = sy;
+    }
     move_intersection(sx, sy, newx, newy);
     if (event == FL_DRAG) {
       set_changed();
@@ -275,9 +288,10 @@ int Fl_Tile::handle(int event) {
     } else {
       do_callback(FL_REASON_CHANGED);
     }
-    return 1;}
+    return 1;
+    } // case FL_RELEASE
 
-  }
+  } // switch()
 
   return Fl_Group::handle(event);
 }
@@ -297,6 +311,8 @@ int Fl_Tile::handle(int event) {
 */
 
 Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*L)
-: Fl_Group(X,Y,W,H,L)
+: Fl_Group(X,Y,W,H,L),
+  cursor_(0),
+  cursors_(Fl_Tile_cursors)
 {
 }
