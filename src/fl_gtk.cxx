@@ -179,7 +179,7 @@ static void draw(int which, int x,int y,int w,int h, int inset)
       f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
       f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
     }
-    } else if (which == UPPER_LEFT) {
+  } else if (which == UPPER_LEFT) {
     f(x+w-d, y, d, d, 45, w<=h ? 180 : 90);
     f(x, y+h-d, d, d, w<=h ? 180 : 90, 225);
   } else { // LOWER_RIGHT
