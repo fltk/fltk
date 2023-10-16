@@ -174,9 +174,12 @@ static void draw(int which, int x,int y,int w,int h, int inset)
   void (*f)(int,int,int,int,double,double);
   f = (which==FILL) ? fl_pie : fl_arc_i;
   if (which >= CLOSED) {
-    f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
-    f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
-  } else if (which == UPPER_LEFT) {
+    if (w == h) f(x, y, d, d, 0, 360);
+    else {
+      f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
+      f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
+    }
+    } else if (which == UPPER_LEFT) {
     f(x+w-d, y, d, d, 45, w<=h ? 180 : 90);
     f(x, y+h-d, d, d, w<=h ? 180 : 90, 225);
   } else { // LOWER_RIGHT
@@ -232,9 +235,7 @@ static void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
 
 static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_color(c);
-  fl_antialias(0);  // fix for issue #792
   draw(FILL,        x,   y, w,   h, 2);
-  fl_antialias(1);  // fix for issue #792
 
   gtk_color(fl_color_average(FL_WHITE, c, 0.1f));
   draw(LOWER_RIGHT, x+1, y, w-2, h, 2);
