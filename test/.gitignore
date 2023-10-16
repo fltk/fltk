@@ -51,6 +51,7 @@ fractals
 fullscreen
 gl_overlay
 glpuzzle
+glut_test
 handle_events
 hello
 help_dialog

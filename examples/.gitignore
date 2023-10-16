@@ -8,6 +8,7 @@ animgifimage-play
 animgifimage-resize
 animgifimage-simple
 browser-simple
+callbacks
 cairo-draw-x
 chart-simple
 draggable-group
