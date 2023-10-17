@@ -454,6 +454,8 @@ void Fl_Cairo_Graphics_Driver::begin_polygon() {
 void Fl_Cairo_Graphics_Driver::vertex(double x, double y) {
   if (what==POINTS){
     cairo_move_to(cairo_, x, y);
+    cairo_rectangle(cairo_, x-0.5, y-0.5, 1, 1);
+    cairo_fill(cairo_);
     gap_=1;
     return;
   }
