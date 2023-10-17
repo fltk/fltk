@@ -1799,7 +1799,12 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
     FLAppDelegate *delegate = (Fl_Darwin_System_Driver::calc_mac_os_version() < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
     if (need_new_nsapp) {
-      if (fl_mac_os_version >= 101300 && is_bundled() ) {
+      BOOL condition = (fl_mac_os_version >= 101300);
+      if (fl_mac_os_version >= 140000) { // hack to detect if app is started by Xcode
+        NSDictionary *environment = [[NSProcessInfo processInfo] environment];
+        condition = (environment[@"__XCODE_BUILT_PRODUCTS_DIR_PATHS"] != nil);
+      }
+      if (condition && is_bundled() ) {
         [NSApp activateIgnoringOtherApps:YES];
         in_nsapp_run = true;
         [NSApp run];
