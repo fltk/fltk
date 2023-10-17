@@ -1820,6 +1820,10 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   if (is_a_move) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
+    if (pWindow->parent()) {
+      if (W < 1) W = 1;
+      if (H < 1) H = 1;
+    }
     pWindow->Fl_Group::resize(X,Y,W,H);
 //fprintf(stderr, "resize: win=%p to %dx%d\n", pWindow, W, H);
     if (shown()) {pWindow->redraw();}

@@ -2144,6 +2144,10 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
   if (is_a_move && resize_from_program) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
+    if (pWindow->as_double_window() && pWindow->parent()) {
+      if (W < 1) W = 1;
+      if (H < 1) H = 1;
+    }
     pWindow->Fl_Group::resize(X,Y,W,H);
     if (shown()) {
 #if FLTK_USE_CAIRO
