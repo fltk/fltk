@@ -339,7 +339,7 @@ inline void fl_rounded_rectf(int x, int y, int w, int h, int r) {
   fl_graphics_driver->rounded_rectf(x, y, w, h, r);
 }
 
-/** Color with passed color a rectangle that exactly fills the given bounding box. 
+/** Color with passed color a rectangle that exactly fills the given bounding box.
  \warning The current color is changed to \p c upon return.
 */
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {

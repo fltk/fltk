@@ -595,7 +595,7 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
   Draw a potentially small, filled circle using a given color.
 
   This function draws using \p color a filled circle bounded by rectangle <tt>(x, y, d, d)</tt>.
- 
+
   This function is the same as <tt>fl_pie(x, y, d, d, 0, 360)</tt> except with some systems
   that don't draw small circles well. In that situation, the circle diameter \p d is converted
   from FLTK units to pixels and this function approximates a filled circle by drawing several

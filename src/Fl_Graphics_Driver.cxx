@@ -948,28 +948,28 @@ void Fl_Scalable_Graphics_Driver::draw_circle(int x0, int y0, int d, Fl_Color c)
   // make circles nice on scaled display
   float s = scale();
   int scaled_d = (s > 1.0) ? (int)(d * s) : d;
-  
+
   // draw the circle
   switch (scaled_d) {
       // Larger circles draw fine...
     default:
       pie(x0, y0, d, d, 0.0, 360.0);
       break;
-      
+
       // Small circles don't draw well on many systems...
     case 6:
       rectf(x0 + 2, y0, d - 4, d);
       rectf(x0 + 1, y0 + 1, d - 2, d - 2);
       rectf(x0, y0 + 2, d, d - 4);
       break;
-      
+
     case 5:
     case 4:
     case 3:
       rectf(x0 + 1, y0, d - 2, d);
       rectf(x0, y0 + 1, d, d - 2);
       break;
-      
+
     case 2:
     case 1:
       rectf(x0, y0, d, d);
