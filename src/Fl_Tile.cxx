@@ -192,11 +192,11 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
   This method sets the window cursor for the given index \p n.
 */
 void Fl_Tile::set_cursor(int n) {
-  if (n < 0 || n > 3) n = 0;      // check array index
-  cursor_ = n;                    // always store the index
-  if (cursor_ == n || !window())
-    return;
-  window()->cursor(cursor(n));
+  if (n < 0 || n > 3) n = 0; // check array index
+  if (cursor_ == n) return;  // nothing to do
+  cursor_ = n;               // store the cursor index
+  if (window())
+    window()->cursor(cursor(n));
 }
 
 #define DRAGH 1
