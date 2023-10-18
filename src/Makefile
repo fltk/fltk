@@ -84,7 +84,7 @@ CPPFILES = \
 	Fl_Scrollbar.cxx \
 	Fl_Shared_Image.cxx \
 	Fl_Shortcut_Button.cxx \
-	Fl_Terminal.cxx \
+	Fl_Simple_Terminal.cxx \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
 	Fl_Spinner.cxx \
@@ -94,6 +94,7 @@ CPPFILES = \
 	Fl_Table.cxx \
 	Fl_Table_Row.cxx \
 	Fl_Tabs.cxx \
+	Fl_Terminal.cxx \
 	Fl_Text_Buffer.cxx \
 	Fl_Text_Display.cxx \
 	Fl_Text_Editor.cxx \
