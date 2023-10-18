@@ -18,8 +18,9 @@
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include "../src/Fl_String.H"
+#include <FL/Fl_Preferences.H>
 #include <FL/fl_callback_macros.H>
 #include <FL/filename.H>
 #include <FL/fl_utf8.h>
@@ -374,7 +375,7 @@ TEST(Fl_Callback_Macros, FL_INLINE_CALLBACK) {
  */
 class Ut_Core_Test : public Fl_Group {
 
-  Fl_Simple_Terminal *tty;
+  Fl_Terminal *tty;
   bool suite_ran_;
 
 public:
@@ -390,7 +391,7 @@ public:
     tty(NULL),
     suite_ran_(false)
   {
-    tty = new Fl_Simple_Terminal(x+4, y+4, w-8, h-8, "Unittest Log");
+    tty = new Fl_Terminal(x+4, y+4, w-8, h-8, "Unittest Log");
     tty->ansi(true);
     end();
     Ut_Suite::tty = tty;

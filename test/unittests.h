@@ -22,7 +22,7 @@
 
 #include <stdarg.h>
 
-class Fl_Simple_Terminal;
+class Fl_Terminal;
 
 // WINDOW/WIDGET SIZES
 const int UT_MAINWIN_W  = 700;                                // main window w()
@@ -153,7 +153,7 @@ public:
   static const char *red;
   static const char *green;
   static const char *normal;
-  static Fl_Simple_Terminal *tty;
+  static Fl_Terminal *tty;
 };
 
 #define UT_CONCAT_(prefix, suffix) prefix##suffix

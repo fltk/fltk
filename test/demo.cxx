@@ -75,7 +75,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Menu_Button.H>      // right click popup menu
 #include <FL/Fl_Scheme_Choice.H>
-#include <FL/Fl_Simple_Terminal.H>  // tty
+#include <FL/Fl_Terminal.H>         // tty
 #include <FL/filename.H>
 #include <FL/platform.H>
 #include <FL/fl_ask.H>              // fl_alert()
@@ -102,7 +102,7 @@ void dobut(Fl_Widget *, long);
 
 Fl_Double_Window *form = 0;
 Fl_Group *demogrp = 0;
-Fl_Simple_Terminal *tty = 0;
+Fl_Terminal *tty = 0;
 Fl_Scheme_Choice *scheme_choice = 0;
 Fl_Button *but[9];
 Fl_Button *exit_button;
@@ -231,11 +231,15 @@ void create_the_forms() {
   demogrp->end();
 
   // Small debug terminal window parented to window, not demogrp
-  tty = new Fl_Simple_Terminal(10, FORM_H - 1, FORM_W - 20, 1);
+  //    To show/hide debug terminal, use demo's right-click menu
+  //
+  tty = new Fl_Terminal(10, FORM_H - 1, FORM_W - 20, 1);
   tty->history_lines(50);
+  tty->display_rows(2);       // make display at least 2 rows high, even if not seen
+  tty->display_columns(100);  // make display at least 100 cols wide, even if not seen
   tty->ansi(true);
   tty->hide();
-  tty->textsize(10);
+  tty->textsize(12);
 
   // End window
   form->end();

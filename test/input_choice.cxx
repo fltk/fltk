@@ -18,12 +18,12 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input_Choice.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 
 #define TERMINAL_HEIGHT 120
 
 // Globals
-Fl_Simple_Terminal *G_tty = 0;
+Fl_Terminal *G_tty = 0;
 
 void buttcb(Fl_Widget*,void*data) {
     Fl_Input_Choice *in=(Fl_Input_Choice *)data;
@@ -44,7 +44,7 @@ void input_choice_cb(Fl_Widget*,void*data) {
 
 int main(int argc, char **argv) {
     Fl_Double_Window win(300, 200+TERMINAL_HEIGHT);
-    G_tty = new Fl_Simple_Terminal(0,200,win.w(),TERMINAL_HEIGHT);
+    G_tty = new Fl_Terminal(0,200,win.w(),TERMINAL_HEIGHT);
 
     Fl_Input_Choice in(40,40,100,28,"Test");
     in.callback(input_choice_cb, (void*)&in);

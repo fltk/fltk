@@ -2,7 +2,7 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-decl {\#include <FL/Fl_Simple_Terminal.H>} {public global
+decl {\#include <FL/Fl_Terminal.H>} {public global
 }
 
 Function {} {open
@@ -232,9 +232,9 @@ Function {} {open
       xywh {460 385 110 115} box BORDER_FRAME color 0 selection_color 0 labelsize 11 align 128
     }
     Fl_Box tty {selected
-      xywh {10 513 560 117} color 0
+      xywh {10 513 560 117} box DOWN_BOX color 0
       code0 {o->ansi(true);}
-      class Fl_Simple_Terminal
+      class Fl_Terminal
     }
   }
 }
@@ -242,7 +242,7 @@ Function {} {open
 Function {callback(Fl_Widget* o, void*)} {open return_type void
 } {
   code {const char *name = (const char*)(o->user_data() ? o->user_data() : "???");
-tty->printf("callback(): %s value() = \\033[2m%g\\033[0m\\n",
+tty->printf("callback(): %s value() = \\033[1m%g\\033[0m\\n",
             name, ((Fl_Valuator*)o)->value());} {}
 }
 
@@ -250,6 +250,6 @@ Function {callback_spinner(Fl_Widget* o, void*)} {
   comment {Spinner doesn't derive from Fl_Valuator..} open return_type void
 } {
   code {const char *name = (const char*)(o->user_data() ? o->user_data() : "???");
-tty->printf("callback(): %s value() = \\033[2m%g\\033[0m\\n",
+tty->printf("callback(): %s value() = \\033[1m%g\\033[0m\\n",
             name, ((Fl_Spinner*)o)->value());} {}
 }

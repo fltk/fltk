@@ -31,14 +31,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_string_functions.h>
 
 #define TERMINAL_HEIGHT 120
 
 // Globals
-Fl_Simple_Terminal *G_tty = 0;
+Fl_Terminal *G_tty = 0;
 
 void window_cb(Fl_Widget* w, void*) {
   puts("window callback called");       // end of program, so stdout instead of G_tty
@@ -235,7 +235,7 @@ int main(int argc, char **argv) {
 
   Fl_Scheme_Choice scheme_choice(300, 50, 100, 25, "&scheme");
 
-  G_tty = new Fl_Simple_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);
+  G_tty = new Fl_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);
 
   window.callback(window_cb);
   Fl_Menu_Bar menubar(0,0,WIDTH,30); menubar.menu(menutable);

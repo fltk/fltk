@@ -38,7 +38,7 @@ decl {\#include <FL/Fl_Color_Chooser.H>} {public global
 decl {\#include <FL/Fl_Text_Display.H>} {public global
 }
 
-decl {\#include <FL/Fl_Simple_Terminal.H>} {public global
+decl {\#include <FL/Fl_Terminal.H>} {public global
 }
 
 decl {int G_cb_counter = 0;} {
@@ -1749,7 +1749,7 @@ helpwin->show();}
     Fl_Box tty {
       label label
       xywh {16 571 1014 149} box DOWN_BOX color 0
-      class Fl_Simple_Terminal
+      class Fl_Terminal
     }
   }
   code {// Initialize Tree
