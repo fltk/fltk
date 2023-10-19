@@ -41,6 +41,7 @@ int main(int argc, char **argv) {
   grid->widget(b4, 2, 0);
   grid->widget(b6, 2, 2);
   // grid->show_grid(1);     // enable to display grid helper lines
+  grid->end();
   win->end();
   win->resizable(grid);
   win->size_range(300, 100);
