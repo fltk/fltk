@@ -349,6 +349,14 @@ int Fl_Function_Type::is_public() const {
   return public_;
 }
 
+static bool fd_isspace(int c) {
+  return (c>0 && c<128 && isspace(c));
+}
+
+static bool fd_iskeyword(int c) {
+  return (c>0 && c<128 && (isalnum(c) || c=='_'));
+}
+
 /**
  Write the code for the source and the header file.
  This writes the code that goes \b before all children of this class.
@@ -436,11 +444,18 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
         f.write_h("%s;\n", s);
       }
       // skip all function default param. init in body:
+      // todo: code duplication, see 40 lines further down
       int skips=0,skipc=0;
       int nc=0,plevel=0;
+      bool arglist_done = false;
       for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
+        if (arglist_done && fd_isspace(nptr[0])) {
+          // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
+          if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
+          else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
+        }
         if (!skips && *nptr=='(') plevel++;
-        else if (!skips && *nptr==')') plevel--;
+        else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
         if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
           skips = skips ? 0 : 1;
         else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
@@ -453,7 +468,7 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
             else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
               skipc = skipc ? 0 : 1;
             if (!skips && !skipc && *nptr=='(') plevel++;
-            else if (!skips && *nptr==')') plevel--;
+            else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
           }
 
         if (sptr < (s + sizeof(s) - 1)) *sptr++ = *nptr;
@@ -482,9 +497,15 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
       char *nptr;
       int skips=0,skipc=0;
       int nc=0,plevel=0;
+      bool arglist_done = false;
       for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
+        if (arglist_done && fd_isspace(nptr[0])) {
+          // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
+          if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
+          else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
+        }
         if (!skips && *nptr=='(') plevel++;
-        else if (!skips && *nptr==')') plevel--;
+        else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
         if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
           skips = skips ? 0 : 1;
         else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
@@ -497,7 +518,7 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
             else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
               skipc = skipc ? 0 : 1;
             if (!skips && !skipc && *nptr=='(') plevel++;
-            else if (!skips && *nptr==')') plevel--;
+            else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
           }
 
         if (sptr < (s + sizeof(s) - 1)) *sptr++ = *nptr;

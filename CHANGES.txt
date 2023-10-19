@@ -247,6 +247,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Fixed Delete key in Fl_Input deleting entire widgets in Fluid (STR #2841).
   - Reorganized Fluid Template feature (STR #3336).
   - Updated Fluid documentation and image (STR #3328).
+  - FLUID recognizes `override` and `FL_OVERRIDE` keywords (Github #801)
   - Duplicating Widget Class in Fluid no longer crashes (STR #3445).
   - Fl_Check_Browser::add(item) now accepts NULL (STR #3498).
   - Interface to set maximum width of spinner text field (STR #3386).
