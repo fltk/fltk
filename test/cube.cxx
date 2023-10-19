@@ -53,6 +53,7 @@ public:
   double size;
   double speed;
   cube_box(int x,int y,int w,int h,const char *l=0) : Fl_Gl_Window(x,y,w,h,l) {
+    end();
     lasttime = 0.0;
     box(FL_DOWN_FRAME);
   }
@@ -138,13 +139,16 @@ void show_info_cb(Fl_Widget*, void*) {
 }
 
 // overlay a button onto an OpenGL window (cube_box)
+// but don't change the current group Fl_Group::current()
 void overlay_button(cube_box *cube) {
-  cube->begin();
+  Fl_Group *curr = Fl_Group::current();
+  Fl_Group::current(0);
   Fl_Widget *w = new Fl_Button(10, 10, 120, 30, "FLTK over GL");
   w->color(FL_FREE_COLOR);
   w->box(FL_BORDER_BOX);
   w->callback(show_info_cb);
-  cube->end();
+  cube->add(w);
+  Fl_Group::current(curr);
 }
 
 #endif // HAVE_GL

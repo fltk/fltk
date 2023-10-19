@@ -587,7 +587,7 @@ void Fl_Grid::remove_cell(int row, int col) {
 void Fl_Grid::resize(int X, int Y, int W, int H) {
   old_size = Fl_Rect(x(), y(), w(), h());
   Fl_Widget::resize(X, Y, W, H);
-  need_layout(1);
+  layout();
 }
 
 /**
