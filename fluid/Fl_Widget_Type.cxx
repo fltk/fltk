@@ -91,7 +91,7 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
   // find the parent widget:
   Fl_Widget_Type* p = q;
-  if ((force_parent || !p->is_group()) && p->parent && p->parent->is_widget())
+  if ((force_parent || !p->is_a(Fl_Type::ID_Group)) && p->parent && p->parent->is_widget())
     p = (Fl_Widget_Type*)(p->parent);
   force_parent = 0;
 
@@ -107,7 +107,7 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
 
   // Figure out a position and size for the widget
   int X,Y,W,H;
-  if (is_group()) {     // fill the parent with the widget
+  if (is_a(Fl_Type::ID_Group)) {     // fill the parent with the widget
     X = ULX+B;
     W = p->o->w()-B;
     Y = ULY+B;
@@ -2786,10 +2786,9 @@ void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
   }
   if (callback() && is_name(callback())) {
     int write_extern_declaration = 1;
-    const Fl_Class_Type *cc = is_in_class();
     char buf[1024]; snprintf(buf, 1023, "%s(*)",  callback());
-    if (cc) {
-      if (cc->has_function("static void", buf))
+    if (is_in_class()) {
+      if (has_function("static void", buf))
         write_extern_declaration = 0;
     } else {
       if (has_toplevel_function(0L, buf))
@@ -3165,7 +3164,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     f.write_c("%s%s->hide();\n", f.indent(), var);
   if (!o->active())
     f.write_c("%s%s->deactivate();\n", f.indent(), var);
-  if (!is_group() && resizable())
+  if (!is_a(Fl_Type::ID_Group) && resizable())
     f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
   if (hotspot()) {
     if (is_class())

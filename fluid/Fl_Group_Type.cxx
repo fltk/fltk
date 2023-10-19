@@ -61,7 +61,7 @@ Fl_Type *Fl_Group_Type::make(Strategy strategy) {
  \brief Enlarge the group size, so all children fit within.
  */
 void fix_group_size(Fl_Type *tt) {
-  if (!tt || !tt->is_group()) return;
+  if (!tt || !tt->is_a(Fl_Type::ID_Group)) return;
   Fl_Group_Type* t = (Fl_Group_Type*)tt;
   int X = t->o->x();
   int Y = t->o->y();

@@ -427,7 +427,7 @@ Fl_Group_Type *Fl_Type::group() {
   if (!is_widget())
     return NULL;
   for (Fl_Type *t = this; t; t=t->parent)
-    if (t->is_group())
+    if (t->is_a(Fl_Type::ID_Group))
       return (Fl_Group_Type*)t;
   return NULL;
 }
@@ -882,17 +882,16 @@ const char* Fl_Type::class_name(const int need_nest) const {
 }
 
 /**
- If this Type resides inside a class, this function returns the class type, or null.
+ Check if this is inside a Fl_Class_Type or Fl_Widget_Class_Type.
+ \return true if any of the parents is Fl_Class_Type or Fl_Widget_Class_Type
  */
-const Fl_Class_Type *Fl_Type::is_in_class() const {
+bool Fl_Type::is_in_class() const {
   Fl_Type* p = parent;
   while (p) {
-    if (p->is_class()) {
-      return (Fl_Class_Type*)p;
-    }
+    if (p->is_class()) return true;
     p = p->parent;
   }
-  return 0;
+  return false;
 }
 
 void Fl_Type::write_static(Fd_Code_Writer&) {

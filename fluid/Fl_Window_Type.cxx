@@ -530,7 +530,7 @@ void Fl_Window_Type::draw_out_of_bounds() {
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
   for (Fl_Type *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
-    if (q->is_group() && !q->is_a(ID_Scroll)) {
+    if (q->is_a(Fl_Type::ID_Group) && !q->is_a(ID_Scroll)) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
       draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
     }
@@ -699,7 +699,7 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
   Fl_Widget_Type * prev_parent = 0;
   if( !s || !s->selected || !s->is_widget()) return;
   for (Fl_Type *i=s; i && i->parent; i=i->parent) {
-    if (i->is_group() && prev_parent) {
+    if (i->is_a(Fl_Type::ID_Group) && prev_parent) {
       if (i->is_a(Fl_Type::ID_Tabs)) {
         ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
         return;
@@ -709,7 +709,7 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
         return;
       }
     }
-    if (i->is_group() && s->is_widget())
+    if (i->is_a(Fl_Type::ID_Group) && s->is_widget())
       prev_parent = (Fl_Widget_Type*)i;
   }
 }
@@ -876,7 +876,7 @@ int Fl_Window_Type::handle(int event) {
       // find the innermost item clicked on:
       selection = this;
       for (Fl_Type* i=next; i && i->level>level; i=i->next)
-        if (i->is_group()) {
+        if (i->is_a(Fl_Type::ID_Group)) {
           Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
           if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
             selection = myo;

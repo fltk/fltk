@@ -114,7 +114,6 @@ public:
   void remove_child(Fl_Type*) FL_OVERRIDE;
 
   int is_parent() const FL_OVERRIDE {return 1;}
-  int is_group() const FL_OVERRIDE {return 1;}
 
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;

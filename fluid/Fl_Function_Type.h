@@ -34,7 +34,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-extern Fl_Class_Type *current_class;
+extern class Fl_Class_Type *current_class;
 
 int has_toplevel_function(const char *rtype, const char *sig);
 
@@ -89,7 +89,6 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "code";}
   int is_code_block() const FL_OVERRIDE {return 0;}
-  int is_code() const FL_OVERRIDE {return 1;}
   ID id() const FL_OVERRIDE { return ID_Code; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Code) ? true : super::is_a(inID); }
   int is_public() const FL_OVERRIDE { return -1; }
@@ -249,7 +248,6 @@ public:
   // class prefix attribute access
   void prefix(const char* p);
   const char*  prefix() const {return class_prefix;}
-  int has_function(const char*, const char*) const;
 };
 
 #endif // _FLUID_FL_FUNCTION_TYPE_H

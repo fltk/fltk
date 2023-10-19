@@ -1979,7 +1979,7 @@ void Fl_Class_Type::write_code2(Fd_Code_Writer& f) {
 /**
  Return 1 if this class contains a function with the given signature.
  */
-int Fl_Class_Type::has_function(const char *rtype, const char *sig) const {
+int Fl_Type::has_function(const char *rtype, const char *sig) const {
   Fl_Type *child;
   for (child = next; child && child->level > level; child = child->next) {
     if (child->level == level+1 && child->is_a(Fl_Type::ID_Function)) {

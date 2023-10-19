@@ -1272,7 +1272,7 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy) {
  */
 static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_group())
+  if (Fl_Type::current && Fl_Type::current->is_a(Fl_Type::ID_Group))
     t = ((Fl_Type*)v)->make(kAddAsLastChild);
   else
     t = ((Fl_Type*)v)->make(kAddAfterCurrent);
@@ -1284,7 +1284,7 @@ static void cbf(Fl_Widget *, void *v) {
  */
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_group())
+  if (Fl_Type::current && Fl_Type::current->is_a(Fl_Type::ID_Group))
     t = add_new_widget_from_user((Fl_Type*)v, kAddAsLastChild);
   else
     t = add_new_widget_from_user((Fl_Type*)v, kAddAfterCurrent);

@@ -43,27 +43,55 @@ void select_none_cb(Fl_Widget *,void *);
 void earlier_cb(Fl_Widget*,void*);
 void later_cb(Fl_Widget*,void*);
 
+/**
+ \brief This is the base class for all elements in the project tree.
+
+ All widgets and other types in the project are derived from Fl_Types. They
+ are organized in a doubly linked list. Every Type also has depth information
+ to create a pseudo tree structure. To make walking up the tree faster, Type
+ also holds a pointer to the `parent` Type.
+
+ Types can be identified using the builtin ID system that works like RTTI. The
+ method `id()` returns the exact type, and the method `is_a(ID)` returns true
+ if this is the exact type or derived from the type, and a dynamic cast will
+ work reliably.
+
+ \todo it would be nice if we can handle multiple independent trees. To do that
+ we must remove static members like `first` and `last`.
+
+ \todo add virtual methods to handle events, draw widgets, and draw overlays.
+ It may also make sense to have a virtual method that returns a boolean if
+ a specific type can be added as a child.
+
+ \todo it may make sense to have a readable iterator class instead of relying
+ on pointer manipulation. Or use std in future releases.
+ */
 class Fl_Type {
-
-  friend class Widget_Browser;
-  friend Fl_Widget *make_type_browser(int,int,int,int,const char *);
-  friend class Fl_Window_Type;
-
+  /** Copy the label text to Widgets and Windows, does nothing in Type. */
   virtual void setlabel(const char *) { } // virtual part of label(char*)
 
 protected:
 
   Fl_Type();
 
+  /** Name of a widget, or code some non-widget Types. */
   const char *name_;
+  /** Label text of a widget. */
   const char *label_;
+  /** If it is just a word, it's the name of the callback function. Otherwise
+   it is the full callback C++ code. Can be NULL. */
   const char *callback_;
+  /** Widget user data field as C++ text. */
   const char *user_data_;
+  /** Widget user data type as C++ text, usually `void*` or `long`. */
   const char *user_data_type_;
+  /** Optional comment for every node in the graph. Visible in browser and
+   panels, and will also be copied to the source code. */
   const char *comment_;
 
 public: // things that should not be public:
 
+  /** Quick link to the parent Type instead of walking up the linked list. */
   Fl_Type *parent;
   char new_selected; // browser highlight
   char selected; // copied here by selection_changed()
@@ -149,6 +177,7 @@ public:
   void comment(const char *);
 
   virtual Fl_Type* click_test(int,int) { return NULL; }
+  
   virtual void add_child(Fl_Type*, Fl_Type* beforethis) { }
   virtual void move_child(Fl_Type*, Fl_Type* beforethis) { }
   virtual void remove_child(Fl_Type*) { }
@@ -181,27 +210,31 @@ public:
   // get message number for I18N
   int msgnum();
 
-  // fake rtti:
-  /** Return 1 if the Type chn have children. */
+  /** Return 1 if the Type can have children. */
   virtual int is_parent() const {return 0;}
   /** Return 1 if the type is a widget or menu item. */
   virtual int is_widget() const {return 0;}
   /** Return 1 if the type is a widget but not a menu item. */
   virtual int is_true_widget() const {return 0;}
-  /** Return 1 if a type behaves like a button (Fl_Button and Fl_Menu_Item and derived. */
+  /** Return 1 if a type behaves like a button (Fl_Button and Fl_Menu_Item and derived, but not Fl_Submenu_Type. */
   virtual int is_button() const {return 0;}
-  virtual int is_group() const {return 0;}
-  virtual int is_code() const {return 0;}
+  /** Return 1 if this is a Fl_Widget_Class_Type, Fl_CodeBlock_Type, or Fl_Function_Type */
   virtual int is_code_block() const {return 0;}
+  /** Return 1 if this is a Fl_Widget_Class_Type, Fl_Class_Type, or Fl_DeclBlock_Type */
   virtual int is_decl_block() const {return 0;}
+  /** Return 1 if this is a Fl_Class_Type or Fl_Widget_Class_Type. */
   virtual int is_class() const {return 0;}
+  /** Return 1 if the type browser shall draw a padlock over the icon. */
   virtual int is_public() const {return 1;}
-
+  /** Return the type ID for this Type. */
   virtual ID id() const { return ID_Base_; }
+  /** Check if this Type is of the give type ID or derived from that type ID. */
   virtual bool is_a(ID inID) const { return (inID==ID_Base_); }
 
   const char* class_name(const int need_nest) const;
-  const class Fl_Class_Type* is_in_class() const;
+  bool is_in_class() const;
+
+  int has_function(const char*, const char*) const;
 };
 
 #endif // _FLUID_FL_TYPE_H

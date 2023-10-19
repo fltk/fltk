@@ -607,7 +607,7 @@ static void external_editor_timer(void*) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
     for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
-      if ( p->is_code() ) {
+      if ( p->is_a(Fl_Type::ID_Code) ) {
         Fl_Code_Type *code = (Fl_Code_Type*)p;
         // Code changed by external editor?
         if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
@@ -1368,7 +1368,7 @@ void paste_cb(Fl_Widget*, void*) {
   undo_checkpoint();
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
-  if (Fl_Type::current && Fl_Type::current->is_group())
+  if (Fl_Type::current && Fl_Type::current->is_a(Fl_Type::ID_Group))
     strategy = kAddAsLastChild;
   if (!read_file(cutfname(), 1, strategy)) {
     widget_browser->rebuild();
