@@ -439,17 +439,20 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->user_data((void*)&transient_scale_display); // prevent this window from being rescaled later
   win->set_output();
   win->set_non_modal();
-  Fl_Window_Driver::driver(win)->screen_num(nscreen);
-  Fl_Window_Driver::driver(win)->force_position(1);
   WinAndTracker *data = new WinAndTracker;
   data->win = win;
   Fl_Widget *widget = Fl::focus();
   data->tracker = (widget ? new Fl_Widget_Tracker(widget) : NULL);
+  if (widget) { // make transient a centered child of focussed window
+    Fl_Window *top = widget->top_window();
+    win->position((top->w() - win->w()) / 2, (top->h() - win->h()) / 2);
+    top->add(win);
+  } else { // center transient on display
+    Fl_Window_Driver::driver(win)->screen_num(nscreen);
+    Fl_Window_Driver::driver(win)->force_position(1);
+  }
   win->show();
   Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, data); // delete after 1 sec
-  win->wait_for_expose();
-  Fl::flush();
-  Fl::check();
 }
 
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
@@ -499,14 +502,9 @@ int Fl_Screen_Driver::scale_handler(int event)
       f = scaling_values[i];
     }
     if (f == old_f) return 1;
-    static bool in_use = false;
-    if (!in_use) { // avoid recursive use (see issue #794)
-      in_use = true;
-      screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
-      Fl_Screen_Driver::transient_scale_display(f, screen);
-      Fl::handle(FL_ZOOM_EVENT, NULL);
-      in_use = false;
-    }
+    screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+    Fl_Screen_Driver::transient_scale_display(f, screen);
+    Fl::handle(FL_ZOOM_EVENT, NULL);
     return 1;
   }
   return 0;
