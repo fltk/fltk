@@ -447,6 +447,9 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   data->tracker = (widget ? new Fl_Widget_Tracker(widget) : NULL);
   win->show();
   Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, data); // delete after 1 sec
+  win->wait_for_expose();
+  Fl::flush();
+  Fl::check();
 }
 
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
@@ -496,9 +499,14 @@ int Fl_Screen_Driver::scale_handler(int event)
       f = scaling_values[i];
     }
     if (f == old_f) return 1;
-    screen_dr->rescale_all_windows_from_screen(screen, f*initial_scale);
-    Fl_Screen_Driver::transient_scale_display(f, screen);
-    Fl::handle(FL_ZOOM_EVENT, NULL);
+    static bool in_use = false;
+    if (!in_use) { // avoid recursive use (see issue #794)
+      in_use = true;
+      screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+      Fl_Screen_Driver::transient_scale_display(f, screen);
+      Fl::handle(FL_ZOOM_EVENT, NULL);
+      in_use = false;
+    }
     return 1;
   }
   return 0;
