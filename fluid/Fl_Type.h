@@ -34,7 +34,7 @@ typedef enum {
   kAddAfterCurrent
 } Strategy;
 
-void fixvisible(Fl_Type *p);
+void update_visibility_flag(Fl_Type *p);
 void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
 
@@ -93,7 +93,11 @@ public: // things that should not be public:
 
   /** Quick link to the parent Type instead of walking up the linked list. */
   Fl_Type *parent;
+  /** This type is rendered "selected" in the tree browser. */
   char new_selected; // browser highlight
+  /** Backup storage for selection if an error accured during some operation
+   (see `haderror`). It seems that this is often confused with new_selected
+   which seems to hold the true and visible selection state. */
   char selected; // copied here by selection_changed()
   char open_;   // state of triangle in browser
   char visible; // true if all parents are open

@@ -110,7 +110,7 @@ void reveal_in_browser(Fl_Type *t) {
       if (!p->parent) break;
       p = p->parent;
     }
-    fixvisible(p);
+    update_visibility_flag(p);
   }
   widget_browser->display(t);
   widget_browser->redraw();
