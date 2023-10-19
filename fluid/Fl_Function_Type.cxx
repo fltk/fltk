@@ -357,6 +357,42 @@ static bool fd_iskeyword(int c) {
   return (c>0 && c<128 && (isalnum(c) || c=='_'));
 }
 
+// remove all function default parameters and `override` keyword
+static void clean_function_for_implementation(char *out, const char *function_name) {
+  char *sptr = out;
+  const char *nptr = function_name;
+  int skips=0,skipc=0;
+  int nc=0,plevel=0;
+  bool arglist_done = false;
+  for (;*nptr; nc++,nptr++) {
+    if (arglist_done && fd_isspace(nptr[0])) {
+      // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
+      if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
+      else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
+    }
+    if (!skips && *nptr=='(') plevel++;
+    else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
+    if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
+      skips = skips ? 0 : 1;
+    else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
+      skipc = skipc ? 0 : 1;
+    if(!skips && !skipc && plevel==1 && *nptr =='=' && !(nc && *(nptr-1)=='\'') ) { // ignore '=' case
+      while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
+        if ( *nptr=='"' &&  *(nptr-1)!='\\' )
+          skips = skips ? 0 : 1;
+        else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
+          skipc = skipc ? 0 : 1;
+        if (!skips && !skipc && *nptr=='(') plevel++;
+        else if (!skips && *nptr==')') plevel--;
+      }
+      if (*nptr==')') if (--plevel==0) arglist_done = true;
+    }
+    if (sptr < (out + 1024 - 1)) *sptr++ = *nptr;
+  }
+  *sptr = '\0';
+}
+
+
 /**
  Write the code for the source and the header file.
  This writes the code that goes \b before all children of this class.
@@ -443,40 +479,10 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
       } else {
         f.write_h("%s;\n", s);
       }
-      // skip all function default param. init in body:
-      // todo: code duplication, see 40 lines further down
-      int skips=0,skipc=0;
-      int nc=0,plevel=0;
-      bool arglist_done = false;
-      for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-        if (arglist_done && fd_isspace(nptr[0])) {
-          // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
-          if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
-          else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
-        }
-        if (!skips && *nptr=='(') plevel++;
-        else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
-        if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
-          skips = skips ? 0 : 1;
-        else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
-          skipc = skipc ? 0 : 1;
-        if(!skips && !skipc && plevel==1 && *nptr =='=' &&
-           !(nc && *(nptr-1)=='\'') ) // ignore '=' case
-          while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
-            if ( *nptr=='"' &&  *(nptr-1)!='\\' )
-              skips = skips ? 0 : 1;
-            else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
-              skipc = skipc ? 0 : 1;
-            if (!skips && !skipc && *nptr=='(') plevel++;
-            else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
-          }
-
-        if (sptr < (s + sizeof(s) - 1)) *sptr++ = *nptr;
-      }
-      *sptr = '\0';
-
-      if (havechildren)
+      if (havechildren) {
+        clean_function_for_implementation(s, name());
         f.write_c("%s::%s {\n", k, s);
+      }
     } else {
       if (havechildren)
         write_comment_c(f);
@@ -493,40 +499,11 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
       }
 
       // write everything but the default parameters (if any)
-      char s[1024], *sptr;
-      char *nptr;
-      int skips=0,skipc=0;
-      int nc=0,plevel=0;
-      bool arglist_done = false;
-      for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-        if (arglist_done && fd_isspace(nptr[0])) {
-          // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
-          if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
-          else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
-        }
-        if (!skips && *nptr=='(') plevel++;
-        else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
-        if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
-          skips = skips ? 0 : 1;
-        else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
-          skipc = skipc ? 0 : 1;
-        if(!skips && !skipc && plevel==1 && *nptr =='=' &&
-           !(nc && *(nptr-1)=='\'') ) // ignore '=' case
-          while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
-            if ( *nptr=='"' &&  *(nptr-1)!='\\' )
-              skips = skips ? 0 : 1;
-            else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
-              skipc = skipc ? 0 : 1;
-            if (!skips && !skipc && *nptr=='(') plevel++;
-            else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
-          }
-
-        if (sptr < (s + sizeof(s) - 1)) *sptr++ = *nptr;
-      }
-      *sptr = '\0';
-
-      if (havechildren)
+      char s[1024];
+      if (havechildren) {
+        clean_function_for_implementation(s, name());
         f.write_c("%s%s %s {\n", rtype, star, s);
+      }
     }
   }
 
