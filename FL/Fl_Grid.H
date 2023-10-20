@@ -215,6 +215,9 @@ public:
   virtual void clear_layout();
   virtual void resize(int X, int Y, int W, int H) FL_OVERRIDE;
 
+  short rows() const { return rows_; }
+  short cols() const { return cols_; }
+
   /**
     Request or reset the request to calculate the layout of children.
 
@@ -249,13 +252,15 @@ protected:
 
 public:
 
-  // set individual margins
+  // get and set individual margins
 
   virtual void margin(int left, int top = -1, int right = -1, int bottom = -1);
+  int margin(int *left, int *top, int *right, int *bottom) const;
 
-  // set default row and column gaps for all rows and columns, respectively
+  // get and set default row and column gaps for all rows and columns, respectively
 
   virtual void gap(int row_gap, int col_gap = -1);   // set default row and column gap(s)
+  void gap(int *row_gap, int *col_gap) const;
 
   // find cells, get cell pointers
 

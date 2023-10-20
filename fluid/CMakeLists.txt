@@ -21,6 +21,7 @@ set (CPPFILES
   StyleParse.cxx
   Fd_Snap_Action.cxx
   Fl_Function_Type.cxx
+  Fl_Grid_Type.cxx
   Fl_Group_Type.cxx
   Fl_Menu_Type.cxx
   Fl_Type.cxx
@@ -51,6 +52,7 @@ set (HEADERFILES
   CodeEditor.h
   Fd_Snap_Action.h
   Fl_Function_Type.h
+  Fl_Grid_Type.h
   Fl_Group_Type.h
   Fl_Menu_Type.h
   Fl_Type.h

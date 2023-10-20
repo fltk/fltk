@@ -403,7 +403,7 @@ int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy st
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...
   for (o = Fl_Type::first; o; o = o->next) {
-    if (o->is_a(Fl_Type::ID_Menu_Manager_)) {
+    if (o->is_a(ID_Menu_Manager_)) {
       o->add_child(0,0);
     }
   }

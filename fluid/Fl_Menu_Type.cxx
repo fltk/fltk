@@ -293,11 +293,11 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
       Fl_Type* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
-      if (t && t->is_a(Fl_Type::ID_Input_Choice))
+      if (t && t->is_a(ID_Input_Choice))
         f.write_c("->parent()");
       for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
         f.write_c("->parent()");
-      if (!q || !q->is_a(Fl_Type::ID_Widget_Class))
+      if (!q || !q->is_a(ID_Widget_Class))
         f.write_c("->user_data()");
       f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
@@ -697,11 +697,11 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
       i->value( ((Fl_Button*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Fl_Type::ID_Input))
+    else if (current_widget->is_a(ID_Input))
       i->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Fl_Type::ID_Value_Input))
+    else if (current_widget->is_a(ID_Value_Input))
       i->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Fl_Type::ID_Text_Display))
+    else if (current_widget->is_a(ID_Text_Display))
       i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
@@ -719,16 +719,16 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-        if (o->is_a(Fl_Type::ID_Menu_Item)) ((Fl_Widget_Type*)o)->redraw();
-      } else if (o->selected && o->is_a(Fl_Type::ID_Input)) {
+        if (o->is_a(ID_Menu_Item)) ((Fl_Widget_Type*)o)->redraw();
+      } else if (o->selected && o->is_a(ID_Input)) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-      } else if (o->selected && o->is_a(Fl_Type::ID_Value_Input)) {
+      } else if (o->selected && o->is_a(ID_Value_Input)) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-      } else if (o->selected && o->is_a(Fl_Type::ID_Text_Display)) {
+      } else if (o->selected && o->is_a(ID_Text_Display)) {
         Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());

@@ -394,7 +394,8 @@ sized to fit the container.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
+        { // This group is only visible if the parent is an Fl_Flex widget
+          Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)flex_size_group_cb);
@@ -464,7 +465,8 @@ sized to fit the container.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Margins:");
+        { // This group is only visible for Fl_Flex widgets
+          Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Margins:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)flex_margin_group_cb);
@@ -508,6 +510,100 @@ sized to fit the container.");
           { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
+        { // This group is only visible for Fl_Grid widgets
+          Fl_Group* o = new Fl_Group(95, 185, 300, 55, "Grid Margins:\n\n\nLayout:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)grid_margin_group_cb);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->hide();
+          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 45, 20, "Left:");
+            o->tooltip("Left margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_left_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(144, 185, 45, 20, "Top:");
+            o->tooltip("Top margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_top_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(193, 185, 45, 20, "Right:");
+            o->tooltip("Right margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_right_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(242, 185, 45, 20, "Bottom:");
+            o->tooltip("Bottom margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_bottom_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(291, 185, 45, 20, "RowGap:");
+            o->tooltip("Gap between children.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_row_gap_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(340, 185, 45, 20, "ColGap:");
+            o->tooltip("Gap between children.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_col_gap_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(95, 220, 55, 20, "Rows:");
+            o->tooltip("Number of horizontal rows in the Grid group");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_rows_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(154, 220, 55, 20, "Columns:");
+            o->tooltip("Number of vertical columns in the Grid group");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_cols_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Size Range:");

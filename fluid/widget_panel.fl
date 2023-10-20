@@ -284,7 +284,7 @@ or compressed in the original file format} xywh {364 90 20 20} type Toggle
         }
         Fl_Group {} {
           label {Position:}
-          callback position_group_cb open
+          callback position_group_cb
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_x_input {
@@ -343,7 +343,8 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group {} {
           label {Flex Parent:}
-          callback flex_size_group_cb open
+          callback flex_size_group_cb
+          comment {This group is only visible if the parent is an Fl_Flex widget}
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input widget_flex_size {
@@ -396,7 +397,8 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group {} {
           label {Margins:}
-          callback flex_margin_group_cb open
+          callback flex_margin_group_cb
+          comment {This group is only visible for Fl_Flex widgets}
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input {} {
@@ -426,6 +428,61 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Box {} {
             xywh {395 185 0 20} resizable
+          }
+        }
+        Fl_Group {} {
+          label {Grid Margins:
+
+
+Layout:}
+          callback grid_margin_group_cb
+          comment {This group is only visible for Fl_Grid widgets} open
+          xywh {95 185 300 55} labelfont 1 labelsize 11 align 4 hide
+        } {
+          Fl_Value_Input {} {
+            label {Left:}
+            callback grid_margin_left_cb
+            tooltip {Left margin in group.} xywh {95 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Top:}
+            callback grid_margin_top_cb
+            tooltip {Top margin in group.} xywh {144 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Right:}
+            callback grid_margin_right_cb
+            tooltip {Right margin in group.} xywh {193 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Bottom:}
+            callback grid_margin_bottom_cb
+            tooltip {Bottom margin in group.} xywh {242 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {RowGap:}
+            callback grid_row_gap_cb
+            tooltip {Gap between children.} xywh {291 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {ColGap:}
+            callback grid_col_gap_cb
+            tooltip {Gap between children.} xywh {340 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {395 185 0 20} resizable
+          }
+          Fl_Input {} {
+            label {Rows:}
+            callback grid_rows_cb
+            tooltip {Number of horizontal rows in the Grid group} xywh {95 220 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Columns:}
+            callback grid_cols_cb
+            tooltip {Number of vertical columns in the Grid group} xywh {154 220 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
           }
         }
         Fl_Group {} {
@@ -467,7 +524,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group {} {
           label {Shortcut:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 210 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Button {} {
@@ -481,7 +538,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
         }
         Fl_Group {} {
           label {X Class:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 235 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {

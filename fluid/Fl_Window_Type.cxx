@@ -318,7 +318,7 @@ void Fl_Window_Type::ideal_size(int &w, int &h) {
 
 void modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
+    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->modal);
   } else {
@@ -330,7 +330,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
 
 void non_modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
+    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->non_modal);
   } else {
@@ -342,7 +342,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
 
 void border_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
+    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window*)(current_widget->o))->border());
   } else {
@@ -354,7 +354,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
 
 void xclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Fl_Type::ID_Window)) {
+    if (current_widget->is_a(ID_Window)) {
       i->show();
       i->parent()->show();
       i->value(((Fl_Window_Type *)current_widget)->xclass);
@@ -366,7 +366,7 @@ void xclass_cb(Fl_Input* i, void* v) {
     int mod = 0;
     undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_a(Fl_Type::ID_Window)) {
+      if (o->selected && o->is_a(ID_Window)) {
         mod = 1;
         Fl_Window_Type *wt = (Fl_Window_Type *)o;
         storestring(i->value(), wt->xclass);
@@ -530,7 +530,7 @@ void Fl_Window_Type::draw_out_of_bounds() {
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
   for (Fl_Type *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
-    if (q->is_a(Fl_Type::ID_Group) && !q->is_a(ID_Scroll)) {
+    if (q->is_a(ID_Group) && !q->is_a(ID_Scroll)) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
       draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
     }
@@ -699,17 +699,17 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
   Fl_Widget_Type * prev_parent = 0;
   if( !s || !s->selected || !s->is_widget()) return;
   for (Fl_Type *i=s; i && i->parent; i=i->parent) {
-    if (i->is_a(Fl_Type::ID_Group) && prev_parent) {
-      if (i->is_a(Fl_Type::ID_Tabs)) {
+    if (i->is_a(ID_Group) && prev_parent) {
+      if (i->is_a(ID_Tabs)) {
         ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
         return;
       }
-      if (i->is_a(Fl_Type::ID_Wizard)) {
+      if (i->is_a(ID_Wizard)) {
         ((Fl_Wizard*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
         return;
       }
     }
-    if (i->is_a(Fl_Type::ID_Group) && s->is_widget())
+    if (i->is_a(ID_Group) && s->is_widget())
       prev_parent = (Fl_Widget_Type*)i;
   }
 }
@@ -717,7 +717,7 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
 // do that for every window (when selected set changes):
 void redraw_overlays() {
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
-    if (o->is_a(Fl_Type::ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
+    if (o->is_a(ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
 }
 
 void toggle_overlays(Fl_Widget *,void *) {
@@ -732,7 +732,7 @@ void toggle_overlays(Fl_Widget *,void *) {
   }
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
-    if (o->is_a(Fl_Type::ID_Window)) {
+    if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -755,7 +755,7 @@ void toggle_guides(Fl_Widget *,void *) {
     guides_button->value(show_guides);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
-    if (o->is_a(Fl_Type::ID_Window)) {
+    if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -787,7 +787,7 @@ void toggle_restricted(Fl_Widget *,void *) {
     restricted_button->value(show_restricted);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
-    if (o->is_a(Fl_Type::ID_Window)) {
+    if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -876,7 +876,7 @@ int Fl_Window_Type::handle(int event) {
       // find the innermost item clicked on:
       selection = this;
       for (Fl_Type* i=next; i && i->level>level; i=i->next)
-        if (i->is_a(Fl_Type::ID_Group)) {
+        if (i->is_a(ID_Group)) {
           Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
           if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
             selection = myo;

@@ -641,6 +641,31 @@ void Fl_Grid::margin(int left, int top, int right, int bottom) {
   need_layout(1);
 }
 
+/** 
+ Returns all outside margin sizes of the grid.
+
+ All margin sizes are returned in the given arguments. If any argument
+ is \p NULL the respective value is not returned.
+
+ \param[out]  left    returns left margin if not \p NULL
+ \param[out]  top     returns top margin if not \p NULL
+ \param[out]  right   returns right margin if not \p NULL
+ \param[out]  bottom  returns bottom margin if not \p NULL
+
+ \return     whether all margins are equal
+ \retval  1  all margins have the same size
+ \retval  0  at least one margin has a different size
+ */
+int Fl_Grid::margin(int *left, int *top, int *right, int *bottom) const {
+  if (left) *left = margin_left_;
+  if (top) *top = margin_top_;
+  if (right) *right = margin_right_;
+  if (bottom) *bottom = margin_bottom_;
+  if (margin_left_ == margin_top_ && margin_top_ == margin_right_ && margin_right_ == margin_bottom_)
+    return 1;
+  return 0;
+}
+
 /**
   Set default gaps for rows and columns.
 
@@ -667,6 +692,19 @@ void Fl_Grid::gap(int row_gap, int col_gap) {
   if (col_gap >= 0)
     gap_col_ = col_gap;
   need_layout(1);
+}
+
+/**
+ Get the default gaps for rows and columns.
+
+ \param[out]  row_gap  pointer to int to receive column gap, may be NULL
+ \param[out]  col_gap  pointer to int to receive column gap, may be NULL
+ */
+void Fl_Grid::gap(int *row_gap, int *col_gap) const {
+  if (row_gap)
+    *row_gap = gap_row_;
+  if (col_gap)
+    *col_gap = gap_col_;
 }
 
 /**

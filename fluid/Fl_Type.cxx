@@ -67,6 +67,7 @@
           +-+ Fl_Group_Type
           | +-- Fl_Pack_Type
           | +-- Fl_Flex_Type
+          | +-- Fl_Grid_Type
           | +-- Fl_Table_Type
           | +-- Fl_Tabs_Type
           | +-- Fl_Scroll_Type
@@ -441,7 +442,7 @@ Fl_Group_Type *Fl_Type::group() {
   if (!is_widget())
     return NULL;
   for (Fl_Type *t = this; t; t=t->parent)
-    if (t->is_a(Fl_Type::ID_Group))
+    if (t->is_a(ID_Group))
       return (Fl_Group_Type*)t;
   return NULL;
 }
@@ -603,7 +604,7 @@ Fl_Type *Fl_Type::remove() {
 }
 
 void Fl_Type::name(const char *n) {
-  int nostrip = is_a(Fl_Type::ID_Comment);
+  int nostrip = is_a(ID_Comment);
   if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
@@ -861,7 +862,7 @@ void Fl_Type::copy_properties() {
  */
 int Fl_Type::user_defined(const char* cbname) const {
   for (Fl_Type* p = Fl_Type::first; p ; p = p->next)
-    if (p->is_a(Fl_Type::ID_Function) && p->name() != 0)
+    if (p->is_a(ID_Function) && p->name() != 0)
       if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
         if (p->name()[strlen(cbname)] == '(')
           return 1;

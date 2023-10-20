@@ -607,7 +607,7 @@ static void external_editor_timer(void*) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
     for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
-      if ( p->is_a(Fl_Type::ID_Code) ) {
+      if ( p->is_a(ID_Code) ) {
         Fl_Code_Type *code = (Fl_Code_Type*)p;
         // Code changed by external editor?
         if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
@@ -743,7 +743,7 @@ void save_template_cb(Fl_Widget *, void *) {
 
   for (t = Fl_Type::first; t; t = t->next) {
     // Find the first window...
-    if (t->is_a(Fl_Type::ID_Window)) break;
+    if (t->is_a(ID_Window)) break;
   }
 
   if (!t) return;
@@ -1368,7 +1368,7 @@ void paste_cb(Fl_Widget*, void*) {
   undo_checkpoint();
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
-  if (Fl_Type::current && Fl_Type::current->is_a(Fl_Type::ID_Group))
+  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group))
     strategy = kAddAsLastChild;
   if (!read_file(cutfname(), 1, strategy)) {
     widget_browser->rebuild();
@@ -1529,7 +1529,7 @@ void print_menu_cb(Fl_Widget *, void *) {
   Fl_Window *win;
 
   for (t = Fl_Type::first, num_windows = 0; t; t = t->next) {
-    if (t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_a(ID_Window)) {
       windows[num_windows] = (Fl_Window_Type *)t;
       if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
       num_windows ++;

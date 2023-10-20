@@ -1025,6 +1025,7 @@ extern class Fl_Widget_Class_Type Fl_Widget_Class_type;
 extern class Fl_Group_Type Fl_Group_type;
 extern class Fl_Pack_Type Fl_Pack_type;
 extern class Fl_Flex_Type Fl_Flex_type;
+extern class Fl_Grid_Type Fl_Grid_type;
 extern class Fl_Tabs_Type Fl_Tabs_type;
 extern class Fl_Scroll_Type Fl_Scroll_type;
 extern class Fl_Table_Type Fl_Table_type;
@@ -1075,6 +1076,7 @@ static Fl_Type *known_types[] = {
   (Fl_Type*)&Fl_Scroll_type,
   (Fl_Type*)&Fl_Tile_type,
   (Fl_Type*)&Fl_Wizard_type,
+  (Fl_Type*)&Fl_Grid_type,
   // buttons
   (Fl_Type*)&Fl_Button_type,
   (Fl_Type*)&Fl_Return_Button_type,
@@ -1150,7 +1152,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
   undo_suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_widget() && !t->is_a(ID_Window)) {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
       bool changed = false;
 
@@ -1176,13 +1178,13 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
         wt->textstuff(2, f, s, c);
       }
 
-      if (changed && t->is_a(Fl_Type::ID_Menu_Item)) {
+      if (changed && t->is_a(ID_Menu_Item)) {
         Fl_Type * tt = t->parent;
-        while (tt && !tt->is_a(Fl_Type::ID_Menu_Manager_)) tt = tt->parent;
+        while (tt && !tt->is_a(ID_Menu_Manager_)) tt = tt->parent;
         ((Fl_Menu_Manager_Type*)tt)->build_menu();
       }
     }
-    if (t->is_true_widget() && !t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_true_widget() && !t->is_a(ID_Window)) {
       // Resize and/or reposition new widget...
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
 
@@ -1191,11 +1193,11 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if ((t->parent && t->parent->is_a(Fl_Type::ID_Flex))) {
+      if ((t->parent && t->parent->is_a(ID_Flex))) {
         // Do not resize or layout the widget. Flex will need the widget size.
-      } else if (   wt->is_a(Fl_Type::ID_Group)
+      } else if (   wt->is_a(ID_Group)
                  && wt->parent
-                 && wt->parent->is_a(Fl_Type::ID_Tabs)
+                 && wt->parent->is_a(ID_Tabs)
                  //&& (Fl_Window_Type::popupx == 0x7FFFFFFF)
                  && (layout->top_tabs_margin > 0)) {
         // If the widget is a group and the parent is tabs and the top tabs
@@ -1204,9 +1206,9 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
         Fl_Widget *po = ((Fl_Tabs_Type*)wt->parent)->o;
         wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
                       po->w(), po->h() - layout->top_tabs_margin);
-      } else if (   wt->is_a(Fl_Type::ID_Menu_Bar)
+      } else if (   wt->is_a(ID_Menu_Bar)
                  && wt->parent
-                 && wt->parent->is_a(Fl_Type::ID_Window)
+                 && wt->parent->is_a(ID_Window)
                  && (wt->prev == wt->parent)) {
         // If this is the first child of a window, make the menu bar as wide as
         // the window and drop it at 0, 0. Otherwise just use the suggested size.
@@ -1224,7 +1226,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
         }
       }
     }
-    if (t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_a(ID_Window)) {
       int x = 0, y = 0, w = 480, h = 320;
       Fl_Window_Type *wt = (Fl_Window_Type *)t;
       wt->ideal_size(w, h);
@@ -1272,7 +1274,7 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy) {
  */
 static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_a(Fl_Type::ID_Group))
+  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group))
     t = ((Fl_Type*)v)->make(kAddAsLastChild);
   else
     t = ((Fl_Type*)v)->make(kAddAfterCurrent);
@@ -1284,7 +1286,7 @@ static void cbf(Fl_Widget *, void *v) {
  */
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_a(Fl_Type::ID_Group))
+  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group))
     t = add_new_widget_from_user((Fl_Type*)v, kAddAsLastChild);
   else
     t = add_new_widget_from_user((Fl_Type*)v, kAddAfterCurrent);
@@ -1312,6 +1314,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Scroll_type},
   {0,0,cb,(void*)&Fl_Tile_type},
   {0,0,cb,(void*)&Fl_Wizard_type},
+  {0,0,cb,(void*)&Fl_Grid_type},
 {0},
 {"Buttons",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Button_type},
