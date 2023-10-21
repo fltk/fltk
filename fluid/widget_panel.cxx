@@ -18,8 +18,11 @@
 
 #include "widget_panel.h"
 #include "Fl_Widget_Type.h"
+#include <FL/Fl_Grid.H>
 
-static void cb_(Fl_Tabs* o, void* v) {
+Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
+
+static void cb_widget_tabs(Fl_Tabs* o, void* v) {
   propagate_load((Fl_Group *)o,v);
 }
 
@@ -94,7 +97,7 @@ Fl_Menu_Item menu_3[] = {
 
 Fl_Input *v_input[4]={(Fl_Input *)0};
 
-static void cb_1(Fl_Tile*, void* v) {
+static void cb_(Fl_Tile*, void* v) {
   wComment->do_callback(wComment, v);
   wCallback->do_callback(wCallback, v);
 }
@@ -111,6 +114,27 @@ Fl_Menu_Item menu_4[] = {
 
 Fl_Box *w_when_box=(Fl_Box *)0;
 
+Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
+
+Fl_Group *widget_tab_grid=(Fl_Group *)0;
+
+Fl_Menu_Item menu_Align[] = {
+ {"GRID_CENTER", 0,  0, (void*)(FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_FILL", 0,  0, (void*)(FL_GRID_FILL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_PROPORTIONAL", 0,  0, (void*)(FL_GRID_PROPORTIONAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_HORIZONTAL", 0,  0, (void*)(FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_VERTICAL", 0,  0, (void*)(FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_LEFT", 0,  0, (void*)(FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_TOP_LEFT", 0,  0, (void*)(FL_GRID_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_TOP", 0,  0, (void*)(FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_TOP_RIGHT", 0,  0, (void*)(FL_GRID_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_RIGHT", 0,  0, (void*)(FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_BOTTOM_LEFT", 0,  0, (void*)(FL_GRID_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_BOTTOM", 0,  0, (void*)(FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_BOTTOM_RIGHT", 0,  0, (void*)(FL_GRID_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Button *wLiveMode=(Fl_Button *)0;
 
 Fl_Button *overlay_button=(Fl_Button *)0;
@@ -126,12 +150,12 @@ Fl_Double_Window* make_widget_panel() {
     o->labelsize(11);
     o->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     o->hotspot(o);
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 400, 350);
-      o->selection_color((Fl_Color)12);
-      o->labelsize(11);
-      o->labelcolor(FL_BACKGROUND2_COLOR);
-      o->callback((Fl_Callback*)cb_);
-      o->when(FL_WHEN_NEVER);
+    { Fl_Tabs* o = widget_tabs = new Fl_Tabs(10, 10, 400, 350);
+      widget_tabs->selection_color((Fl_Color)12);
+      widget_tabs->labelsize(11);
+      widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
+      widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
+      widget_tabs->when(FL_WHEN_NEVER);
       { Fl_Group* o = new Fl_Group(10, 30, 400, 330, "GUI");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
@@ -1004,7 +1028,7 @@ sized to fit the container.");
           v_input[3]->callback((Fl_Callback*)v_input_cb, (void*)(3));
         } // Fl_Input* v_input[3]
         { Fl_Tile* o = new Fl_Tile(95, 175, 310, 130);
-          o->callback((Fl_Callback*)cb_1);
+          o->callback((Fl_Callback*)cb_);
           { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
             o->box(FL_FLAT_BOX);
             { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
@@ -1100,9 +1124,240 @@ access the Widget pointer and \'v\' to access the user value.");
         } // Fl_Group* o
         o->end();
       } // Fl_Group* o
-      o->end();
-      Fl_Group::current()->resizable(o);
-    } // Fl_Tabs* o
+      o->show();
+      widget_tabs->end();
+      Fl_Group::current()->resizable(widget_tabs);
+    } // Fl_Tabs* widget_tabs
+    { Fl_Tabs* o = widget_tabs_repo = new Fl_Tabs(10, 10, 400, 350);
+      widget_tabs_repo->hide();
+      { Fl_Group* o = new Fl_Group(10, 30, 400, 330);
+        o->hide();
+        o->end();
+        Fl_Group::current()->resizable(o);
+      } // Fl_Group* o
+      { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
+        widget_tab_grid->labelsize(11);
+        widget_tab_grid->callback((Fl_Callback*)propagate_load);
+        { Fl_Group* o = new Fl_Group(96, 110, 314, 20, "Location:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)position_group_cb);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 110, 55, 20, "Row:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_set_row_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 110, 55, 20, "Column:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_set_col_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fl_Choice* o = new Fl_Choice(215, 110, 185, 20, "Align:");
+            o->down_box(FL_BORDER_BOX);
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_align_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->menu(menu_Align);
+          } // Fl_Choice* o
+          { Fl_Box* o = new Fl_Box(400, 110, 1, 20);
+            o->hide();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
+        { Fl_Box* o = new Fl_Box(96, 74, 155, 20, "-- Widget --");
+          o->labelfont(1);
+          o->labelsize(12);
+          o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+        } // Fl_Box* o
+        { Fl_Group* o = new Fl_Group(96, 145, 314, 20, "Size:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)position_group_cb);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fl_Box* o = new Fl_Box(400, 145, 1, 20);
+            o->hide();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 145, 55, 20, "Row Span:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_set_rowspan_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 145, 55, 20, "Col Span:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_set_colspan_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          o->end();
+        } // Fl_Group* o
+        { Fl_Box* o = new Fl_Box(96, 179, 155, 20, "-- Grid --");
+          o->labelfont(1);
+          o->labelsize(12);
+          o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+        } // Fl_Box* o
+        { Fl_Group* o = new Fl_Group(96, 215, 314, 20, "Row:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 215, 55, 20, "Index");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+            o->deactivate();
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 215, 55, 20, "Height:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(216, 215, 55, 20, "Weight:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(276, 215, 55, 20, "Gap:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fl_Box* o = new Fl_Box(400, 215, 1, 20);
+            o->hide();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
+        { Fl_Group* o = new Fl_Group(96, 250, 314, 20, "Column:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 250, 55, 20, "Index");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+            o->deactivate();
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 250, 55, 20, "Width:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(216, 250, 55, 20, "Weight:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(276, 250, 55, 20, "Gap:");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fl_Box* o = new Fl_Box(400, 250, 1, 20);
+            o->hide();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
+        { Fl_Box* o = new Fl_Box(25, 43, 370, 28, "The Fl_Grid implementation in FLUID is still experimental!");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->labelcolor((Fl_Color)1);
+        } // Fl_Box* o
+        widget_tab_grid->end();
+      } // Fl_Group* widget_tab_grid
+      o->hide();
+      widget_tabs_repo->end();
+    } // Fl_Tabs* widget_tabs_repo
     { Fl_Group* o = new Fl_Group(10, 370, 400, 20);
       o->labelsize(11);
       { wLiveMode = new Fl_Button(10, 370, 80, 20, "Live &Resize");

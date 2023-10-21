@@ -23,6 +23,9 @@ comment {//
 decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
+decl {\#include <FL/Fl_Grid.H>} {selected private global
+}
+
 decl {\#include "custom_widgets.h"} {public global
 }
 
@@ -34,13 +37,14 @@ Function {make_widget_panel()} {
     xywh {566 244 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
-    Fl_Tabs {} {
-      callback {propagate_load((Fl_Group *)o,v);} open
+    Fl_Tabs widget_tabs {
+      callback {propagate_load((Fl_Group *)o,v);}
       xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
+      code0 {o->show();}
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open selected
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -867,6 +871,201 @@ wCallback->do_callback(wCallback, v);} open
             label FL_WHEN_NEVER
             xywh {260 332 145 26} box FLAT_BOX selection_color 1 labelsize 8 align 209
           }
+        }
+      }
+    }
+    Fl_Tabs widget_tabs_repo {
+      xywh {10 10 400 350} hide
+      code0 {o->hide();}
+    } {
+      Fl_Group {} {open
+        xywh {10 30 400 330} hide resizable
+      } {}
+      Fl_Group widget_tab_grid {
+        label Grid
+        callback propagate_load open
+        xywh {10 30 400 330} labelsize 11
+      } {
+        Fl_Group {} {
+          label {Location:}
+          callback position_group_cb open
+          xywh {96 110 314 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input {} {
+            label {Row:}
+            callback grid_set_row_cb
+            xywh {96 110 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Column:}
+            callback grid_set_col_cb
+            xywh {156 110 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Choice {} {
+            label {Align:}
+            callback grid_align_cb
+            xywh {215 110 185 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+          } {
+            MenuItem {} {
+              label GRID_CENTER
+              user_data FL_GRID_CENTER user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_FILL
+              user_data FL_GRID_FILL user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_PROPORTIONAL
+              user_data FL_GRID_PROPORTIONAL user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_HORIZONTAL
+              user_data FL_GRID_HORIZONTAL user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_VERTICAL
+              user_data FL_GRID_VERTICAL user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_LEFT
+              user_data FL_GRID_LEFT user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_TOP_LEFT
+              user_data FL_GRID_TOP_LEFT user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_TOP
+              user_data FL_GRID_TOP user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_TOP_RIGHT
+              user_data FL_GRID_TOP_RIGHT user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_RIGHT
+              user_data FL_GRID_RIGHT user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_BOTTOM_LEFT
+              user_data FL_GRID_BOTTOM_LEFT user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_BOTTOM
+              user_data FL_GRID_BOTTOM user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_BOTTOM_RIGHT
+              user_data FL_GRID_BOTTOM_RIGHT user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+          }
+          Fl_Box {} {
+            xywh {400 110 1 20} hide resizable
+          }
+        }
+        Fl_Box {} {
+          label {-- Widget --}
+          xywh {96 74 155 20} labelfont 1 labelsize 12 align 20
+        }
+        Fl_Group {} {
+          label {Size:}
+          callback position_group_cb open
+          xywh {96 145 314 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Box {} {
+            xywh {400 145 1 20} hide resizable
+          }
+          Fl_Input {} {
+            label {Row Span:}
+            callback grid_set_rowspan_cb
+            xywh {96 145 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Col Span:}
+            callback grid_set_colspan_cb
+            xywh {156 145 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+        }
+        Fl_Box {} {
+          label {-- Grid --}
+          xywh {96 179 155 20} labelfont 1 labelsize 12 align 20
+        }
+        Fl_Group {} {
+          label {Row:} open
+          xywh {96 215 314 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input {} {
+            label Index
+            xywh {96 215 55 20} labelsize 11 align 5 textsize 11 deactivate
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Height:}
+            xywh {156 215 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Weight:}
+            xywh {216 215 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Gap:}
+            xywh {276 215 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Box {} {
+            xywh {400 215 1 20} hide resizable
+          }
+        }
+        Fl_Group {} {
+          label {Column:} open
+          xywh {96 250 314 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input {} {
+            label Index
+            xywh {96 250 55 20} labelsize 11 align 5 textsize 11 deactivate
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Width:}
+            xywh {156 250 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Weight:}
+            xywh {216 250 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Gap:}
+            xywh {276 250 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Box {} {
+            xywh {400 250 1 20} hide resizable
+          }
+        }
+        Fl_Box {} {
+          label {The Fl_Grid implementation in FLUID is still experimental!}
+          xywh {25 43 370 28} labelfont 1 labelsize 11 labelcolor 1
         }
       }
     }

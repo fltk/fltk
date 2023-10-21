@@ -322,7 +322,7 @@ void Fl_Grid::draw() {
   This is called automatically when the Fl_Grid is resized. You need to
   call it once after you added widgets or moved widgets between cells.
 
-  Calling it once after all modfications are completed is enough.
+  Calling it once after all modifications are completed is enough.
 
   \todo Document when and why to call layout() w/o args. See Fl_Flex::layout()
 

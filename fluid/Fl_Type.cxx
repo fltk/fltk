@@ -681,6 +681,7 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   f.write_word(name());
   f.write_open(level);
   write_properties(f);
+  if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
   if (!is_parent()) return;
   // now do children:
@@ -736,9 +737,97 @@ void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
     open_ = 1;
   else if (!strcmp(c,"selected"))
     select(this,1);
+  else if (!strcmp(c,"parent_properties"))
+    if (parent) {
+      const char *cc = f.read_word(1);
+      if (strcmp(cc, "{")==0) {
+        cc = f.read_word();
+        parent->read_parent_properties(f, this, cc);
+      } else {
+        f.read_error("'parent_properties' must be followed by '{'");
+      }
+    } else {
+      f.read_error("Types using 'parent_properties' must have a parent");
+      f.read_word();  // skip the entire block (this should generate a warning)
+    }
   else
     f.read_error("Unknown property \"%s\"", c);
 }
+
+/** Write parent properties into the child property list.
+
+ Some widgets store information for every child they manage. For example,
+ Fl_Grid stores the row and column position of every child. This method stores
+ this information with the child, but it is read and written by the parent.
+
+ Parent properties solve several issues. A child will keep parent properties
+ if copied from on grid into another. The parent does not have to keep lists
+ of properties that may diverge from the actual order or number of children.
+ And lastly, properties are read when they are actually needed and don't have
+ to be stored in some temporary array.
+
+ Parent properties are written as their own block at the end of the child's
+ property list. The block starts with the `parent_properties` keyword, followed
+ by a list of property/value pairs. The order of properties is significant,
+ however individual properties can be left out.
+
+ To avoid writing the `parent_properties` block unnecessarily, this method
+ should only generate it if `encapsulate` is set *and* the contained
+ properties are not at their default.
+
+ Lastly, this method should call the super class to give it a chance to append
+ its own properties.
+
+ \see Fl_Grid_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate)
+
+ \param[in] f the project file writer
+ \param[in] child write properties for this child, make sure it has the correct type
+ \param[in] encapsulate write the `parent_properties {}` block if true before writing any properties
+ */
+void Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate) {
+  (void)f; (void)child; (void)encapsulate;
+  // nothing to do here
+  // put the following code into your implementation of write_parent_properties
+  // if there are actual non-default properties to write
+  //  if (encapsulate) {
+  //    f.write_indent(level+2);
+  //    f.write_string("parent_properties {");
+  //  }
+  // now write your properties as name/value pairs
+  //  f.write_indent(level+3);
+  //  f.write_string("location {%d %d}", cell->row(), cell->col());
+  // give the super class a chance to write its properties as well
+  //  super::write_parent_properties(f, child, false);
+  // close the encapsulation
+  //  if (encapsulate) {
+  //    f.write_indent(level+2);
+  //    f.write_string("}");
+  //  }
+}
+
+/** Read parent per-child properties.
+
+ A parent widget can store properties for every child that it manages. This
+ method reads back those properties. The order of properties is significant,
+ but individual properties can be omitted.
+
+ \see Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate)
+ \see Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property)
+
+ \param[in] f the project file writer
+ \param[in] child read properties for this child
+ \param[in] property the name of a property, or "}" when we reach the end of the list
+ */
+void Fl_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
+  (void)child;
+  for (;;) {
+    if (strcmp(property, "}")==0) break;
+    f.read_error("Unknown parent property \"%s\"", property);
+    f.read_word(); // ignore property value
+    property = f.read_word(); // read next property name
+  }
+}
+
 
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 

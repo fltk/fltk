@@ -90,6 +90,49 @@ void Fl_Grid_Type::read_property(Fd_Project_Reader &f, const char *c)
   }
 }
 
+void Fl_Grid_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate) {
+  Fl_Grid *grid;
+  Fl_Widget *child_widget;
+  Fl_Grid::Cell *cell;
+  if (!child->is_true_widget()) goto err;
+  grid = (Fl_Grid*)o;
+  child_widget = ((Fl_Widget_Type*)child)->o;
+  cell = grid->cell(child_widget);
+  if (!cell) goto err;
+  if (encapsulate) {
+    f.write_indent(level+2);
+    f.write_string("parent_properties {");
+  }
+  f.write_indent(level+3);
+  f.write_string("location {%d %d}", cell->row(), cell->col());
+  super::write_parent_properties(f, child, false);
+  if (encapsulate) {
+    f.write_indent(level+2);
+    f.write_string("}");
+  }
+  return;
+err:
+  super::write_parent_properties(f, child, true);
+}
+
+void Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
+  if (!child->is_true_widget()) {
+    super::read_parent_properties(f, child, property);
+    return;
+  }
+  Fl_Grid *grid = (Fl_Grid*)o;
+  Fl_Widget *child_widget = ((Fl_Widget_Type*)child)->o;
+  int row = -1, col = -1, rowspan = 1, colspan = 1;
+  Fl_Grid_Align align = FL_GRID_FILL;
+  if (!strcmp(property, "location")) {
+    const char *value = f.read_word();
+    sscanf(value, "%d %d", &row, &col);
+    property = f.read_word();
+  }
+  if (row>=0 && col>=0) grid->widget(child_widget, row, col, rowspan, colspan, (Fl_Grid_Align)align);
+  super::read_parent_properties(f, child, property);
+}
+
 void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
@@ -106,6 +149,15 @@ void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
 }
 
 void Fl_Grid_Type::write_code2(Fd_Code_Writer& f) {
+  const char *var = name() ? name() : "o";
+  Fl_Grid* grid = (Fl_Grid*)o;
+  for (int i=0; i<grid->children(); i++) {
+    Fl_Widget *c = grid->child(i);
+    Fl_Grid::Cell *cell = grid->cell(c);
+    if (cell) {
+      f.write_c("%s%s->widget(%s->child(%d), %d, %d);\n", f.indent(), var, var, i, cell->row(), cell->col());
+    }
+  }
   super::write_code2(f);
 }
 
@@ -189,7 +241,7 @@ void grid_col_gap_cb(Fl_Value_Input* i, void* v) {
 void grid_cb(Fluid_Coord_Input* i, void* v, int what) {
   if (v == LOAD) {
     if (current_widget->is_a(ID_Grid)) {
-      int v;
+      int v = 0;
       Fl_Grid *g = ((Fl_Grid*)current_widget->o);
       switch (what) {
         case 6: v = g->rows(); break;
@@ -228,3 +280,57 @@ void grid_cols_cb(Fluid_Coord_Input* i, void* v) {
   grid_cb(i, v, 7);
 }
 
+void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
+  if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(ID_Grid))
+  {
+    return;
+  }
+  Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  if (v == LOAD) {
+    int v = -1;
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      switch (what) {
+        case 8: v = cell->row(); break;
+        case 9: v = cell->col(); break;
+      }
+    }
+    i->value(v);
+  } else {
+    int mod = 0;
+    int v2 = 0, old_v = -1, v = (int)i->value();
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      switch (what) {
+        case 8: old_v = cell->row(); v2 = cell->col(); break;
+        case 9: old_v = cell->col(); v2 = cell->row(); break;
+      }
+    }
+    if (old_v != v) {
+      switch (what) {
+        case 8: g->widget(current_widget->o, v, v2); break;
+        case 9: g->widget(current_widget->o, v2, v); break;
+      }
+      g->need_layout(true);
+      g->redraw();
+      mod = 1;
+      if (mod) set_modflag(1);
+    }
+  }
+}
+void grid_set_row_cb(Fluid_Coord_Input* i, void* v) {
+  grid_child_cb(i, v, 8);
+}
+void grid_set_col_cb(Fluid_Coord_Input* i, void* v) {
+  grid_child_cb(i, v, 9);
+}
+void grid_set_colspan_cb(Fluid_Coord_Input* i, void* v) {
+  grid_child_cb(i, v, 10);
+}
+void grid_set_rowspan_cb(Fluid_Coord_Input* i, void* v) {
+  grid_child_cb(i, v, 11);
+}
+void grid_align_cb(Fl_Choice* i, void* v) {
+}

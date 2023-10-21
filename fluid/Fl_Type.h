@@ -195,6 +195,8 @@ public:
   virtual void write(Fd_Project_Writer &f);
   virtual void write_properties(Fd_Project_Writer &f);
   virtual void read_property(Fd_Project_Reader &f, const char *);
+  virtual void write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate);
+  virtual void read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 

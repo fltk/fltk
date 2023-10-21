@@ -2658,6 +2658,14 @@ static void load_panel() {
       }
     }
   }
+  if (current_widget && current_widget->parent->is_a(ID_Grid)) {
+    if (widget_tab_grid->parent()!=widget_tabs)
+      widget_tabs->add(widget_tab_grid);
+  } else {
+    if (widget_tab_grid->parent()==widget_tabs) {
+      widget_tabs_repo->add(widget_tab_grid);
+    }
+  }
   if (numselected)
     propagate_load(the_panel, LOAD);
   else

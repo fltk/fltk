@@ -36,6 +36,8 @@ public:
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Grid) ? true : super::is_a(inID); }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate) FL_OVERRIDE;
+  void read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
