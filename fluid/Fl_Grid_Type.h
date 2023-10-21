@@ -44,6 +44,7 @@ public:
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
+  void child_resized(Fl_Widget_Type *child);
 };
 
 #endif // _FLUID_FL_GRID_TYPE_H

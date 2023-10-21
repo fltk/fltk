@@ -44,6 +44,7 @@ Fl_Grid_Type::Fl_Grid_Type() {
 Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
   Fl_Grid *g = new Fl_Grid(X,Y,W,H);
   g->layout(3, 3);
+//  g->show_grid(1, FL_RED);
   Fl_Group::current(0);
   return g;
 }
@@ -182,6 +183,23 @@ void Fl_Grid_Type::remove_child(Fl_Type* a) {
   grid->redraw();
 }
 
+/** Update the initial size of a child widget.
+ Fl_Grid keeps track of the size of children when they are first added. In
+ FLUID, users will want to resize children. So we need to trick Fl_Grid into
+ taking the new size as the initial size.
+ */
+void Fl_Grid_Type::child_resized(Fl_Widget_Type *child_type) {
+  Fl_Grid *grid = (Fl_Grid*)o;
+  Fl_Widget *child = child_type->o;
+  Fl_Grid::Cell *cell = grid->cell(child);
+  if (cell) {
+    short r = cell->row(), c = cell->col(), rs = cell->rowspan(), cs = cell->colspan();
+    Fl_Grid_Align a = cell->align();
+    grid->remove_cell(r, c);
+    grid->widget(child, r, c, rs, cs, a);
+  } // else unmanaged by Fl_Grid
+}
+
 void grid_cb(Fl_Value_Input* i, void* v, int what) {
   if (v == LOAD) {
     if (current_widget->is_a(ID_Grid)) {
@@ -295,6 +313,8 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
       switch (what) {
         case 8: v = cell->row(); break;
         case 9: v = cell->col(); break;
+        case 10: v = cell->rowspan(); break;
+        case 11: v = cell->colspan(); break;
       }
     }
     i->value(v);
@@ -306,12 +326,16 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
       switch (what) {
         case 8: old_v = cell->row(); v2 = cell->col(); break;
         case 9: old_v = cell->col(); v2 = cell->row(); break;
+        case 10: old_v = cell->rowspan(); break;
+        case 11: old_v = cell->colspan(); break;
       }
     }
     if (old_v != v) {
       switch (what) {
         case 8: g->widget(current_widget->o, v, v2); break;
         case 9: g->widget(current_widget->o, v2, v); break;
+        case 10: cell->rowspan(v); break;
+        case 11: cell->colspan(v); break;
       }
       g->need_layout(true);
       g->redraw();
@@ -326,11 +350,45 @@ void grid_set_row_cb(Fluid_Coord_Input* i, void* v) {
 void grid_set_col_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 9);
 }
-void grid_set_colspan_cb(Fluid_Coord_Input* i, void* v) {
+void grid_set_rowspan_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 10);
 }
-void grid_set_rowspan_cb(Fluid_Coord_Input* i, void* v) {
+void grid_set_colspan_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 11);
 }
 void grid_align_cb(Fl_Choice* i, void* v) {
+}
+
+void grid_row_height(Fluid_Coord_Input* i, void* v) {
+  if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(ID_Grid))
+  {
+    return;
+  }
+  Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Grid::Cell *cell = g->cell(current_widget->o);
+  if (v == LOAD) {
+    if (cell) {
+      i->value(g->row_height(cell->row()));
+      i->activate();
+    } else {
+      i->deactivate();
+    }
+  } else {
+    if (cell) {
+      g->row_height(cell->row(), i->value());
+    }
+  }
+}
+void grid_row_weight(Fluid_Coord_Input* i, void* v) {
+}
+void grid_row_gap(Fluid_Coord_Input* i, void* v) {
+}
+
+void grid_col_width(Fluid_Coord_Input* i, void* v) {
+}
+void grid_col_weight(Fluid_Coord_Input* i, void* v) {
+}
+void grid_col_gap(Fluid_Coord_Input* i, void* v) {
 }

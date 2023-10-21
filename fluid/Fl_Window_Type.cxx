@@ -21,6 +21,7 @@
 #include "Fl_Window_Type.h"
 
 #include "Fl_Group_Type.h"
+#include "Fl_Grid_Type.h"
 #include "fluid.h"
 #include "widget_browser.h"
 #include "undo.h"
@@ -836,6 +837,10 @@ void Fl_Window_Type::moveallchildren()
             f->layout();
           }
         }
+      }
+      if (myo->parent && myo->parent->is_a(ID_Grid)) {
+        Fl_Grid_Type* gt = (Fl_Grid_Type*)myo->parent;
+        gt->child_resized(myo);
       }
       // move all the children, whether selected or not:
       Fl_Type* p;

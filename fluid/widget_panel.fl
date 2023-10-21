@@ -23,7 +23,7 @@ comment {//
 decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
-decl {\#include <FL/Fl_Grid.H>} {selected private global
+decl {\#include <FL/Fl_Grid.H>} {private global
 }
 
 decl {\#include "custom_widgets.h"} {public global
@@ -874,7 +874,7 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Tabs widget_tabs_repo {
+    Fl_Tabs widget_tabs_repo {selected
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
@@ -888,7 +888,7 @@ wCallback->do_callback(wCallback, v);} open
       } {
         Fl_Group {} {
           label {Location:}
-          callback position_group_cb open
+          callback propagate_load open
           xywh {96 110 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -984,7 +984,7 @@ wCallback->do_callback(wCallback, v);} open
         }
         Fl_Group {} {
           label {Size:}
-          callback position_group_cb open
+          callback propagate_load open
           xywh {96 145 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Box {} {
@@ -1008,7 +1008,8 @@ wCallback->do_callback(wCallback, v);} open
           xywh {96 179 155 20} labelfont 1 labelsize 12 align 20
         }
         Fl_Group {} {
-          label {Row:} open
+          label {Row:}
+          callback propagate_load open
           xywh {96 215 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -1018,16 +1019,19 @@ wCallback->do_callback(wCallback, v);} open
           }
           Fl_Input {} {
             label {Height:}
+            callback grid_row_height
             xywh {156 215 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Weight:}
+            callback grid_row_weight
             xywh {216 215 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Gap:}
+            callback grid_row_gap
             xywh {276 215 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
@@ -1036,7 +1040,8 @@ wCallback->do_callback(wCallback, v);} open
           }
         }
         Fl_Group {} {
-          label {Column:} open
+          label {Column:}
+          callback propagate_load open
           xywh {96 250 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -1046,16 +1051,19 @@ wCallback->do_callback(wCallback, v);} open
           }
           Fl_Input {} {
             label {Width:}
+            callback grid_col_width
             xywh {156 250 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Weight:}
+            callback grid_col_weight
             xywh {216 250 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Gap:}
+            callback grid_col_gap
             xywh {276 250 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }

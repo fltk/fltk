@@ -141,6 +141,7 @@ const Fl_Grid_Align  FL_GRID_BOTTOM_RIGHT    =  FL_GRID_BOTTOM |  FL_GRID_RIGHT;
   \image latex Fl_Grid.png "Simple 3x3 Fl_Grid" width=7cm
 */
 class Fl_Grid : public Fl_Group {
+  friend class Fl_Grid_Type;
 
 public:
   class Cell {
@@ -172,13 +173,18 @@ public:
 
     ~Cell() {}
 
+    Fl_Widget *widget() { return widget_; }
+
     short row() const { return row_; }
     short col() const { return col_; }
 
-    Fl_Widget *widget() { return widget_; }
-    void align(Fl_Grid_Align align) {
-      align_ = align;
-    }
+    void rowspan(short v) { rowspan_ = v; }
+    void colspan(short v) { colspan_ = v; }
+    short rowspan() const { return rowspan_; }
+    short colspan() const { return colspan_; }
+
+    void align(Fl_Grid_Align align) { align_ = align; }
+    Fl_Grid_Align align() const { return align_; }
   }; // class Cell
 
 private:
@@ -289,6 +295,7 @@ public:
 
   void row_height(int row, int value);
   void row_height(const int *value, size_t size);
+  int row_height(int row) const;
 
   void row_weight(int row, int value);
   void row_weight(const int *value, size_t size);
