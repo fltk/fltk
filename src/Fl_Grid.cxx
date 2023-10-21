@@ -1031,7 +1031,9 @@ void Fl_Grid::row_height(int row, int value) {
 }
 
 int Fl_Grid::row_height(int row) const {
-  if (row >= 0 && row < rows_) return Rows_[row].minh_;
+  if (row >= 0 && row < rows_)
+    return Rows_[row].minh_;
+  return 0;
 }
 
 
