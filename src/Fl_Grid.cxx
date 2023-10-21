@@ -1045,13 +1045,6 @@ void Fl_Grid::row_height(int row, int value) {
   need_layout(1);
 }
 
-int Fl_Grid::row_height(int row) const {
-  if (row >= 0 && row < rows_)
-    return Rows_[row].minh_;
-  return 0;
-}
-
-
 /**
   Set the minimal row height of more than one row.
 
