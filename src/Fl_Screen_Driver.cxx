@@ -393,8 +393,7 @@ static void del_transient_window(WinAndTracker *data) {
   Fl::delete_widget(data->win);
   if (data->tracker) {
     if (data->tracker->exists()) {
-      Fl::focus(data->tracker->widget());
-      data->tracker->widget()->handle(FL_FOCUS);
+      data->tracker->widget()->take_focus();
     }
     delete data->tracker;
   }
@@ -439,18 +438,12 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->user_data((void*)&transient_scale_display); // prevent this window from being rescaled later
   win->set_output();
   win->set_non_modal();
+  Fl_Window_Driver::driver(win)->screen_num(nscreen);
+  Fl_Window_Driver::driver(win)->force_position(1);
   WinAndTracker *data = new WinAndTracker;
   data->win = win;
   Fl_Widget *widget = Fl::focus();
   data->tracker = (widget ? new Fl_Widget_Tracker(widget) : NULL);
-  if (widget) { // make transient a centered child of focussed window
-    Fl_Window *top = widget->top_window();
-    win->position((top->w() - win->w()) / 2, (top->h() - win->h()) / 2);
-    top->add(win);
-  } else { // center transient on display
-    Fl_Window_Driver::driver(win)->screen_num(nscreen);
-    Fl_Window_Driver::driver(win)->force_position(1);
-  }
   win->show();
   Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, data); // delete after 1 sec
 }
