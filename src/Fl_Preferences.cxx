@@ -19,15 +19,14 @@
 #include "Fl_System_Driver.H"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Plugin.H>
-#include <FL/Fl_String.H>
 #include <FL/filename.H>
+#include <FL/fl_utf8.h>
+#include <FL/fl_string_functions.h>
+#include "flstring.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <FL/fl_utf8.h>
-#include <FL/fl_string_functions.h>
-#include "flstring.h"
 
 
 char Fl_Preferences::nameBuffer[128];
@@ -845,7 +844,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
   return ( v != defaultValue );
 }
 
-///**
+// /**
 // Reads an entry from the group. A default value must be
 // supplied. The return value indicates if the value was available
 // (non-zero) or the default was used (0).
@@ -872,7 +871,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
 //  }
 //}
 
-///**
+// /**
 // Sets an entry (name/value pair). The return value indicates if there
 // was a problem storing the data in memory. However it does not
 // reflect if the value was actually stored in the preference file.
@@ -1055,20 +1054,6 @@ char Fl_Preferences::set( const char *key, const void *data, int dsize ) {
   free( buffer );
   return 1;
 }
-
-///**
-// Sets an entry (name/value pair). The return value indicates if there
-// was a problem storing the data in memory. However it does not
-// reflect if the value was actually stored in the preference file.
-//
-// \param[in] entry name of entry
-// \param[in] value set this entry to value (stops at the first nul character).
-// \return 0 if setting the value failed
-// */
-//char Fl_Preferences::set( const char *entry, const Fl_String &value ) {
-//  return set(entry, value.c_str());
-//}
-
 
 /**
  Returns the size of the value part of an entry.
