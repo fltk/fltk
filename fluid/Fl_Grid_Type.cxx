@@ -27,6 +27,7 @@
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Choice.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
@@ -44,7 +45,7 @@ Fl_Grid_Type::Fl_Grid_Type() {
 Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
   Fl_Grid *g = new Fl_Grid(X,Y,W,H);
   g->layout(3, 3);
-//  g->show_grid(1, FL_RED);
+  g->show_grid(1, FL_RED);
   Fl_Group::current(0);
   return g;
 }
@@ -59,12 +60,16 @@ void Fl_Grid_Type::copy_properties()
   int rg, cg;
   s->gap(&rg, &cg);
   d->gap(rg, cg);
+  // TODO: lots to do!
 }
 
 void Fl_Grid_Type::write_properties(Fd_Project_Writer &f)
 {
   super::write_properties(f);
   Fl_Grid* grid = (Fl_Grid*)o;
+  int i, rows = grid->rows(), cols = grid->cols();
+  f.write_indent(level+1);
+  f.write_string("dimensions {%d %d}", rows, cols);
   int lm, tm, rm, bm;
   grid->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
@@ -73,19 +78,37 @@ void Fl_Grid_Type::write_properties(Fd_Project_Writer &f)
   grid->gap(&rg, &cg);
   if (rg!=0 || cg!=0)
     f.write_string("gap {%d %d}", rg, cg);
+  for (i=0; i<rows; i++) if (grid->row_height(i)!=0) break;
+  if (i<rows) {
+    f.write_indent(level+1);
+    f.write_string("rowheights {");
+    for (i=0; i<rows; i++) f.write_string("%d", grid->row_height(i));
+    f.write_string("}");
+  }
+  // TODO: add row_weight, row_gap, col_width, col_weight, col_gap
 }
 
 void Fl_Grid_Type::read_property(Fd_Project_Reader &f, const char *c)
 {
   Fl_Grid* grid = (Fl_Grid*)o;
-  if (!strcmp(c,"margin")) {
+  if (!strcmp(c,"dimensions")) {
+    int rows = 3, cols = 3;
+    if (sscanf(f.read_word(),"%d %d", &rows, &cols) == 2)
+      grid->layout(rows, cols);
+  } else if (!strcmp(c,"margin")) {
     int lm, tm, rm, bm;
     if (sscanf(f.read_word(),"%d %d %d %d", &lm, &tm, &rm, &bm) == 4)
       grid->margin(lm, tm, rm, bm);
   } else if (!strcmp(c,"gap")) {
     int rg, cg;
-    if (sscanf(f.read_word(),"%d %d", &rg, &cg))
+    if (sscanf(f.read_word(),"%d %d", &rg, &cg) == 2)
       grid->gap(rg, cg);
+  } else if (!strcmp(c,"rowheights")) {
+    int rows = grid->rows();
+    f.read_word(1); // "{"
+    for (int i=0; i<rows; i++) grid->row_height(i, f.read_int());
+    f.read_word(1); // "}"
+    // TODO: add row_weight, row_gap, col_width, col_weight, col_gap
   } else {
     super::read_property(f, c);
   }
@@ -95,25 +118,44 @@ void Fl_Grid_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child,
   Fl_Grid *grid;
   Fl_Widget *child_widget;
   Fl_Grid::Cell *cell;
-  if (!child->is_true_widget()) goto err;
+  if (!child->is_true_widget()) return super::write_parent_properties(f, child, true);
   grid = (Fl_Grid*)o;
   child_widget = ((Fl_Widget_Type*)child)->o;
   cell = grid->cell(child_widget);
-  if (!cell) goto err;
+  if (!cell) return super::write_parent_properties(f, child, true);
   if (encapsulate) {
     f.write_indent(level+2);
     f.write_string("parent_properties {");
   }
   f.write_indent(level+3);
   f.write_string("location {%d %d}", cell->row(), cell->col());
+  int v = cell->colspan();
+  if (v>1) {
+    f.write_indent(level+3);
+    f.write_string("colspan %d", v);
+  }
+  v = cell->rowspan();
+  if (v>1) {
+    f.write_indent(level+3);
+    f.write_string("rowspan %d", v);
+  }
+  v = (int)cell->align();
+  if (v!=FL_GRID_FILL) {
+    f.write_indent(level+3);
+    f.write_string("align %d", v);
+  }
+  int min_w = 0, min_h = 0;
+  cell->minimum_size(&min_w, &min_h);
+  if (min_w!=20 || min_h!=20) {
+    f.write_indent(level+3);
+    f.write_string("minsize {%d %d}", min_w, min_h);
+  }
   super::write_parent_properties(f, child, false);
   if (encapsulate) {
     f.write_indent(level+2);
     f.write_string("}");
   }
   return;
-err:
-  super::write_parent_properties(f, child, true);
 }
 
 void Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
@@ -130,7 +172,30 @@ void Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, 
     sscanf(value, "%d %d", &row, &col);
     property = f.read_word();
   }
-  if (row>=0 && col>=0) grid->widget(child_widget, row, col, rowspan, colspan, (Fl_Grid_Align)align);
+  if (!strcmp(property, "colspan")) {
+    colspan = atoi(f.read_word());
+    property = f.read_word();
+  }
+  if (!strcmp(property, "rowspan")) {
+    rowspan = atoi(f.read_word());
+    property = f.read_word();
+  }
+  if (!strcmp(property, "align")) {
+    align = atoi(f.read_word());
+    property = f.read_word();
+  }
+  if (row>=0 && col>=0) {
+    Fl_Grid::Cell *cell = grid->widget(child_widget, row, col, rowspan, colspan, (Fl_Grid_Align)align);
+    if (cell) {
+      int min_w = 20, min_h = 20;
+      if (!strcmp(property, "minsize")) {
+        const char *value = f.read_word();
+        sscanf(value, "%d %d", &min_w, &min_h);
+        property = f.read_word();
+      }
+      cell->minimum_size(min_w, min_h);
+    }
+  }
   super::read_parent_properties(f, child, property);
 }
 
@@ -138,7 +203,8 @@ void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
   Fl_Widget_Type::write_code1(f);
-  f.write_c("%s%s->layout(%d, %d);\n", f.indent(), var, grid->rows(), grid->cols());
+  int i, rows = grid->rows(), cols = grid->cols();
+  f.write_c("%s%s->layout(%d, %d);\n", f.indent(), var, rows, cols);
   int lm, tm, rm, bm;
   grid->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
@@ -147,16 +213,34 @@ void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
   grid->gap(&rg, &cg);
   if (rg!=0 || cg!=0)
     f.write_c("%s%s->gap(%d, %d);\n", f.indent(), var, rg, cg);
+  for (i=0; i<rows; i++) if (grid->row_height(i)!=0) break;
+  if (i<rows) {
+    f.write_c("%sstatic const int rowheights[] = { %d", f.indent(), grid->row_height(0));
+    for (i=1; i<rows; i++) f.write_c(", %d", grid->row_height(i));
+    f.write_c(" };\n");
+    f.write_c("%s%s->row_height(rowheights, %d);\n", f.indent(), var, rows);
+  }
+  // TODO: add row_weight, row_gap, col_width, col_weight, col_gap
 }
 
 void Fl_Grid_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
+  bool first_cell = true;
   for (int i=0; i<grid->children(); i++) {
     Fl_Widget *c = grid->child(i);
     Fl_Grid::Cell *cell = grid->cell(c);
     if (cell) {
-      f.write_c("%s%s->widget(%s->child(%d), %d, %d);\n", f.indent(), var, var, i, cell->row(), cell->col());
+      if (first_cell) {
+        f.write_c("%sFl_Grid::Cell *cell = NULL;\n", f.indent());
+        first_cell = false;
+      }
+      f.write_c("%scell = %s->widget(%s->child(%d), %d, %d, %d, %d, %d);\n",
+                f.indent(), var, var, i, cell->row(), cell->col(),
+                cell->rowspan(), cell->colspan(), cell->align());
+      int min_w = 20, min_h = 20;
+      cell->minimum_size(&min_w, &min_h);
+      f.write_c("%sif (cell) cell->minimum_size(%d, %d);\n", f.indent(), min_w, min_h);
     }
   }
   super::write_code2(f);
@@ -192,12 +276,17 @@ void Fl_Grid_Type::child_resized(Fl_Widget_Type *child_type) {
   Fl_Grid *grid = (Fl_Grid*)o;
   Fl_Widget *child = child_type->o;
   Fl_Grid::Cell *cell = grid->cell(child);
-  if (cell) {
-    short r = cell->row(), c = cell->col(), rs = cell->rowspan(), cs = cell->colspan();
-    Fl_Grid_Align a = cell->align();
-    grid->remove_cell(r, c);
-    grid->widget(child, r, c, rs, cs, a);
-  } // else unmanaged by Fl_Grid
+  if (cell && ((cell->align()&FL_GRID_HORIZONTAL)==0)) {
+    int min_w = 0, min_h = 0;
+    cell->minimum_size(&min_w, &min_h);
+    cell->minimum_size(min_w, child->h());
+  }
+  if (cell && ((cell->align()&FL_GRID_VERTICAL)==0)) {
+    int min_w = 0, min_h = 0;
+    cell->minimum_size(&min_w, &min_h);
+    cell->minimum_size(child->w(), min_h);
+  }
+  // TODO: if the user resizes an FL_GRID_FILL widget, should we change the alignment?
 }
 
 void grid_cb(Fl_Value_Input* i, void* v, int what) {
@@ -298,6 +387,8 @@ void grid_cols_cb(Fluid_Coord_Input* i, void* v) {
   grid_cb(i, v, 7);
 }
 
+extern Fluid_Coord_Input *widget_grid_row_input, *widget_grid_col_input;
+
 void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
   if (   !current_widget
       || !current_widget->parent
@@ -315,32 +406,41 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
         case 9: v = cell->col(); break;
         case 10: v = cell->rowspan(); break;
         case 11: v = cell->colspan(); break;
+        case 12: cell->minimum_size(&v, NULL); break;
+        case 13: cell->minimum_size(NULL, &v); break;
       }
     }
     i->value(v);
   } else {
-    int mod = 0;
-    int v2 = 0, old_v = -1, v = (int)i->value();
+    int v2 = -1, old_v = -1, v = i->value();
+    if (i==widget_grid_row_input) v2 = widget_grid_col_input->value();
+    if (i==widget_grid_col_input) v2 = widget_grid_row_input->value();
     Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    Fl_Grid::Cell *new_cell = NULL;
     if (cell) {
       switch (what) {
         case 8: old_v = cell->row(); v2 = cell->col(); break;
         case 9: old_v = cell->col(); v2 = cell->row(); break;
         case 10: old_v = cell->rowspan(); break;
         case 11: old_v = cell->colspan(); break;
+        case 12: cell->minimum_size(&old_v, &v2); break;
+        case 13: cell->minimum_size(&v2, &old_v); break;
       }
     }
     if (old_v != v) {
       switch (what) {
-        case 8: g->widget(current_widget->o, v, v2); break;
-        case 9: g->widget(current_widget->o, v2, v); break;
-        case 10: cell->rowspan(v); break;
-        case 11: cell->colspan(v); break;
+        case 8: if (v>=0 && v2>=0) new_cell = g->widget(current_widget->o, v, v2); break;
+        case 9: if (v>=0 && v2>=0) new_cell = g->widget(current_widget->o, v2, v); break;
+        case 10: if (cell) cell->rowspan(v); break;
+        case 11: if (cell) cell->colspan(v); break;
+        case 12: if (cell) cell->minimum_size(v, v2); break;
+        case 13: if (cell) cell->minimum_size(v2, v); break;
       }
+      if (!cell && new_cell)
+        new_cell->minimum_size(20, 20);
       g->need_layout(true);
       g->redraw();
-      mod = 1;
-      if (mod) set_modflag(1);
+      set_modflag(1);
     }
   }
 }
@@ -356,10 +456,47 @@ void grid_set_rowspan_cb(Fluid_Coord_Input* i, void* v) {
 void grid_set_colspan_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 11);
 }
-void grid_align_cb(Fl_Choice* i, void* v) {
+void grid_set_min_wdt_cb(Fluid_Coord_Input* i, void* v) {
+  grid_child_cb(i, v, 12);
+}
+void grid_set_min_hgt_cb(Fluid_Coord_Input* i, void* v) {
+  grid_child_cb(i, v, 13);
 }
 
-void grid_row_height(Fluid_Coord_Input* i, void* v) {
+void grid_align_cb(Fl_Choice* i, void* v) {
+  if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(ID_Grid))
+  {
+    return;
+  }
+  Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  if (v == LOAD) {
+    int a = FL_GRID_FILL;
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      a = cell->align();
+    }
+    const Fl_Menu_Item *mi = i->find_item_with_argument(a);
+    if (mi) i->value(mi);
+  } else {
+    int v = FL_GRID_FILL, old_v = FL_GRID_FILL;
+    const Fl_Menu_Item *mi = i->mvalue();
+    if (mi) v = (int)mi->argument();
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      old_v = cell->align();
+    }
+    if (old_v != v) {
+      cell->align((Fl_Grid_Align)v);
+      g->need_layout(true);
+      g->redraw();
+      set_modflag(1);
+    }
+  }
+}
+
+void grid_row_col_cb(Fluid_Coord_Input* i, void* v, int what) {
   if (   !current_widget
       || !current_widget->parent
       || !current_widget->parent->is_a(ID_Grid))
@@ -370,25 +507,63 @@ void grid_row_height(Fluid_Coord_Input* i, void* v) {
   Fl_Grid::Cell *cell = g->cell(current_widget->o);
   if (v == LOAD) {
     if (cell) {
-      i->value(g->row_height(cell->row()));
+      int v = 0;
+      switch (what) {
+        case 0: v = g->row_height(cell->row()); break;
+        case 1: v = g->row_weight(cell->row()); break;
+        case 2: v = g->row_gap(cell->row()); break;
+        case 3: v = g->col_width(cell->col()); break;
+        case 4: v = g->col_weight(cell->col()); break;
+        case 5: v = g->col_gap(cell->col()); break;
+      }
+      i->value(v);
       i->activate();
     } else {
       i->deactivate();
     }
   } else {
     if (cell) {
-      g->row_height(cell->row(), i->value());
+      int v = i->value(), old_v = 0;
+      switch (what) {
+        case 0: old_v = g->row_height(cell->row()); break;
+        case 1: old_v = g->row_weight(cell->row()); break;
+        case 2: old_v = g->row_gap(cell->row()); break;
+        case 3: old_v = g->col_width(cell->col()); break;
+        case 4: old_v = g->col_weight(cell->col()); break;
+        case 5: old_v = g->col_gap(cell->col()); break;
+      }
+      if (old_v != v) {
+        switch (what) {
+          case 0: g->row_height(cell->row(), v); break;
+          case 1: g->row_weight(cell->row(), v); break;
+          case 2: g->row_gap(cell->row(), v); break;
+          case 3: g->col_width(cell->col(), v); break;
+          case 4: g->col_weight(cell->col(), v); break;
+          case 5: g->col_gap(cell->col(), v); break;
+        }
+        g->need_layout(true);
+        g->redraw();
+        set_modflag(1);
+      }
     }
   }
 }
+void grid_row_height(Fluid_Coord_Input* i, void* v) {
+  grid_row_col_cb(i, v, 0);
+}
 void grid_row_weight(Fluid_Coord_Input* i, void* v) {
+  grid_row_col_cb(i, v, 1);
 }
 void grid_row_gap(Fluid_Coord_Input* i, void* v) {
+  grid_row_col_cb(i, v, 2);
 }
 
 void grid_col_width(Fluid_Coord_Input* i, void* v) {
+  grid_row_col_cb(i, v, 3);
 }
 void grid_col_weight(Fluid_Coord_Input* i, void* v) {
+  grid_row_col_cb(i, v, 4);
 }
 void grid_col_gap(Fluid_Coord_Input* i, void* v) {
+  grid_row_col_cb(i, v, 5);
 }

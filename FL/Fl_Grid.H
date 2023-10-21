@@ -185,6 +185,9 @@ public:
 
     void align(Fl_Grid_Align align) { align_ = align; }
     Fl_Grid_Align align() const { return align_; }
+
+    void minimum_size(int w, int h) { if (w>=0) w_ = w; if (h>=0) h_ = h; }
+    void minimum_size(int *w, int *h) { if (w) *w = w_; if (h) *h = h_; }
   }; // class Cell
 
 private:
@@ -286,12 +289,15 @@ public:
 
   void col_width(int col, int value);
   void col_width(const int *value, size_t size);
+  int col_width(int col) const;
 
   void col_weight(int col, int value);
   void col_weight(const int *value, size_t size);
+  int col_weight(int col) const;
 
   void col_gap(int col, int value);
   void col_gap(const int *value, size_t size);
+  int col_gap(int col) const;
 
   void row_height(int row, int value);
   void row_height(const int *value, size_t size);
@@ -299,9 +305,11 @@ public:
 
   void row_weight(int row, int value);
   void row_weight(const int *value, size_t size);
+  int row_weight(int row) const;
 
   void row_gap(int row, int value);
   void row_gap(const int *value, size_t size);
+  int row_gap(int row) const;
 
   /**
     Enable or disable drawing of the grid helper lines for visualization.

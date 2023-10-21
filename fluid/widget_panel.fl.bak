@@ -29,6 +29,53 @@ decl {\#include <FL/Fl_Grid.H>} {private global
 decl {\#include "custom_widgets.h"} {public global
 }
 
+Function {make_window()} {open
+} {
+  Fl_Window {} {open
+    xywh {459 635 480 320} type Double visible
+  } {
+    Fl_Grid {} {open
+      xywh {25 25 336 228} box DOWN_BOX
+      dimensions {3 3} margin {4 4 4 4} gap {4 4}
+      rowheights { 0 32 0 }
+    } {
+      Fl_Button {} {
+        label Button
+        xywh {31 31 77 62}
+        parent_properties {
+          location {0 0}
+        }
+      }
+      Fl_Button {} {
+        label Button selected
+        xywh {140 124 100 20}
+        parent_properties {
+          location {1 1}
+          align 0
+          minsize {100 20}
+        }
+      }
+      Fl_Button {} {
+        label Button
+        xywh {273 176 82 71}
+        parent_properties {
+          location {2 2}
+          minsize {25 28}
+        }
+      }
+      Fl_Button {} {
+        label Button
+        xywh {112 31 243 62}
+        parent_properties {
+          location {0 1}
+          colspan 2
+          minsize {25 20}
+        }
+      }
+    }
+  }
+}
+
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
@@ -39,7 +86,7 @@ Function {make_widget_panel()} {
   } {
     Fl_Tabs widget_tabs {
       callback {propagate_load((Fl_Group *)o,v);}
-      xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
+      xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 hide resizable
       code0 {o->show();}
     } {
       Fl_Group {} {
@@ -875,7 +922,7 @@ wCallback->do_callback(wCallback, v);} open
       }
     }
     Fl_Tabs widget_tabs_repo {open
-      xywh {10 10 400 350} hide
+      xywh {10 10 400 350}
       code0 {o->hide();}
     } {
       Fl_Group {} {open
@@ -895,15 +942,15 @@ wCallback->do_callback(wCallback, v);} open
           callback propagate_load open
           xywh {96 110 314 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input widget_grid_row_input {
+          Fl_Input {} {
             label {Row:}
             callback grid_set_row_cb
             xywh {96 110 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
-          Fl_Input widget_grid_col_input {
+          Fl_Input {} {
             label {Column:}
-            callback grid_set_col_cb selected
+            callback grid_set_col_cb
             xywh {156 110 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }

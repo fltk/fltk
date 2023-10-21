@@ -922,6 +922,11 @@ void Fl_Grid::col_width(const int *value, size_t size) {
   need_layout(1);
 }
 
+int Fl_Grid::col_width(int col) const {
+  if (col >= 0 && col < cols_) return Cols_[col].minw_;
+  return 0;
+}
+
 /**
   Set the weight of a column.
 
@@ -987,6 +992,11 @@ void Fl_Grid::col_weight(const int *value, size_t size) {
   need_layout(1);
 }
 
+int Fl_Grid::col_weight(int col) const {
+  if (col >= 0 && col < cols_) return Cols_[col].weight_;
+  return 0;
+}
+
 /**
   Set the gap of column \c col.
 
@@ -1016,6 +1026,11 @@ void Fl_Grid::col_gap(const int *value, size_t size) {
       c->gap_ = *value;
   }
   need_layout(1);
+}
+
+int Fl_Grid::col_gap(int col) const {
+  if (col >= 0 && col < cols_) return Cols_[col].gap_;
+  return 0;
 }
 
 /**
@@ -1056,6 +1071,11 @@ void Fl_Grid::row_height(const int *value, size_t size) {
   need_layout(1);
 }
 
+int Fl_Grid::row_height(int row) const {
+  if (row >= 0 && row < rows_) return Rows_[row].minh_;
+  return 0;
+}
+
 /**
   Set the row weight of row \c row.
 
@@ -1077,7 +1097,6 @@ void Fl_Grid::row_weight(int row, int value) {
   \see Fl_Grid::col_weight(const int *value, size_t size) for
     handling of the \p value array and \p size.
 */
-
 void Fl_Grid::row_weight(const int *value, size_t size) {
   Row *r = Rows_;
   for (int i = 0; i < rows_; i++, value++, r++) {
@@ -1086,6 +1105,11 @@ void Fl_Grid::row_weight(const int *value, size_t size) {
       r->weight_ = *value;
   }
   need_layout(1);
+}
+
+int Fl_Grid::row_weight(int row) const {
+  if (row >= 0 && row < rows_) return Rows_[row].weight_;
+  return 0;
 }
 
 /**
@@ -1118,6 +1142,11 @@ void Fl_Grid::row_gap(const int *value, size_t size) {
       r->gap_ = *value;
   }
   need_layout(1);
+}
+
+int Fl_Grid::row_gap(int row) const {
+  if (row >= 0 && row < rows_) return Rows_[row].gap_;
+  return 0;
 }
 
 /**
