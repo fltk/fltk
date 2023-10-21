@@ -37,6 +37,10 @@
 
 struct Fl_Menu_Item;
 class Fl_Widget;
+class Fl_Preferences;
+
+char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, const Fl_String &defaultValue);
+char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value);
 
 void run_shell_command(const Fl_String &cmd, int flags);
 

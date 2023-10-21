@@ -18,6 +18,7 @@
 
 #include "Fl_Group_Type.h"
 #include "alignment_panel.h"
+#include "shell_command.h"  // get and set Fl_String preferences
 #include "file.h"
 
 #include <FL/fl_draw.H>
@@ -692,7 +693,7 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   Fl_String cs;
   int cp = 0;
-  prefs_list.get("current_suite", cs, "");
+  preferences_get(prefs_list, "current_suite", cs, "");
   prefs_list.get("current_preset", cp, 0);
   for (int i = 0; i < prefs_list.groups(); ++i) {
     Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(i));

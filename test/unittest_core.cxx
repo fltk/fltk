@@ -221,27 +221,27 @@ TEST(Fl_String, fl_filename_...) {
 }
 
 /* Test additions to Fl_Preferences. */
-TEST(Fl_Preferences, Strings) {
-  {
-    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
-    prefs.set("a", Fl_String());
-    prefs.set("b", Fl_String("Hello"));
-    prefs.set("c", Fl_String("Hel\\l\nö"));
-  }
-  {
-    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
-    Fl_String r;
-    prefs.get("a", r, "x");
-    EXPECT_STREQ(r.c_str(), "");
-    prefs.get("b", r, "x");
-    EXPECT_STREQ(r.c_str(), "Hello");
-    prefs.get("c", r, "x");
-    EXPECT_STREQ(r.c_str(), "Hel\\l\nö");
-    prefs.get("d", r, "x");
-    EXPECT_STREQ(r.c_str(), "x");
-  }
-  return true;
-}
+//TEST(Fl_Preferences, Strings) {
+//  {
+//    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
+//    prefs.set("a", Fl_String());
+//    prefs.set("b", Fl_String("Hello"));
+//    prefs.set("c", Fl_String("Hel\\l\nö"));
+//  }
+//  {
+//    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
+//    Fl_String r;
+//    prefs.get("a", r, "x");
+//    EXPECT_STREQ(r.c_str(), "");
+//    prefs.get("b", r, "x");
+//    EXPECT_STREQ(r.c_str(), "Hello");
+//    prefs.get("c", r, "x");
+//    EXPECT_STREQ(r.c_str(), "Hel\\l\nö");
+//    prefs.get("d", r, "x");
+//    EXPECT_STREQ(r.c_str(), "x");
+//  }
+//  return true;
+//}
 
 TEST(fl_filename, ext) {
   Fl_String r = fl_filename_ext("test.txt");

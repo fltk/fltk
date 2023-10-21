@@ -104,6 +104,41 @@ static Fl_String fltk_config_cmd;
 static Fl_Process s_proc;
 
 
+
+/**
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0).
+
+ \param[in] prefs preference group
+ \param[in] key name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used
+ */
+char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, const Fl_String &defaultValue) {
+  char *v = NULL;
+  char ret = prefs.get(key, v, defaultValue.c_str());
+  value = v;
+  ::free(v);
+  return ret;
+}
+
+/**
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preference file.
+
+ \param[in] prefs preference group
+ \param[in] entry name of entry
+ \param[in] value set this entry to value (stops at the first nul character).
+ \return 0 if setting the value failed
+ */
+char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value) {
+  return prefs.set(key, value.c_str());
+}
+
+
 /** \class Fl_Process
  Launch an external shell command.
  */
@@ -532,26 +567,26 @@ bool Fd_Shell_Command::is_active() {
 
 void Fd_Shell_Command::read(Fl_Preferences &prefs) {
   int tmp;
-  prefs.get("name", name, "<unnamed>");
-  prefs.get("label", label, "<no label>");
+  preferences_get(prefs, "name", name, "<unnamed>");
+  preferences_get(prefs, "label", label, "<no label>");
   prefs.get("shortcut", tmp, 0);
   shortcut = (Fl_Shortcut)tmp;
   prefs.get("storage", tmp, -1);
   if (tmp != -1) storage = (Fd_Tool_Store)tmp;
   prefs.get("condition", condition, ALWAYS);
-  prefs.get("condition_data", condition_data, "");
-  prefs.get("command", command, "");
+  preferences_get(prefs, "condition_data", condition_data, "");
+  preferences_get(prefs, "command", command, "");
   prefs.get("flags", flags, 0);
 }
 
 void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
-  prefs.set("name", name);
-  prefs.set("label", label);
+  preferences_set(prefs, "name", name);
+  preferences_set(prefs, "label", label);
   if (shortcut != 0) prefs.set("shortcut", (int)shortcut);
   if (save_location) prefs.set("storage", (int)storage);
   if (condition != ALWAYS) prefs.set("condition", condition);
-  if (!condition_data.empty()) prefs.set("condition_data", condition_data);
-  if (!command.empty()) prefs.set("command", command);
+  if (!condition_data.empty()) preferences_set(prefs, "condition_data", condition_data);
+  if (!command.empty()) preferences_set(prefs, "command", command);
   if (flags != 0) prefs.set("flags", flags);
 }
 
@@ -667,7 +702,7 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
       cmd->name = "Sample Shell Command";
       cmd->label = "Sample Shell Command";
       cmd->shortcut = FL_ALT+'g';
-      fluid_prefs.get("shell_command", cmd->command, "echo \"Sample Shell Command\"");
+      preferences_get(fluid_prefs, "shell_command", cmd->command, "echo \"Sample Shell Command\"");
       fluid_prefs.get("shell_savefl", save_fl, 1);
       fluid_prefs.get("shell_writecode", save_code, 1);
       fluid_prefs.get("shell_writemsgs", save_strings, 0);

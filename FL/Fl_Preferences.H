@@ -24,7 +24,7 @@
 #  include "Fl_Export.H"
 #  include "fl_attr.h"
 
-class Fl_String;
+//class Fl_String;
 
 /**
  \brief Fl_Preferences store user settings between application starts.
@@ -241,7 +241,7 @@ public:
   char set( const char *entry, double value, int precision );
   char set( const char *entry, const char *value );
   char set( const char *entry, const void *value, int size );
-  char set( const char *entry, const Fl_String &value );
+//  char set( const char *entry, const Fl_String &value );
 
   char get( const char *entry, int &value, int defaultValue );
   char get( const char *entry, float &value,  float defaultValue );
@@ -251,7 +251,7 @@ public:
   char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int *size );
-  char get( const char *entry, Fl_String &value, const Fl_String &defaultValue );
+//  char get( const char *entry, Fl_String &value, const Fl_String &defaultValue );
 
   int size( const char *entry );
 
