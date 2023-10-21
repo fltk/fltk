@@ -22,6 +22,7 @@ CPPFILES = \
 	Fd_Snap_Action.cxx \
 	Fl_Button_Type.cxx \
 	Fl_Function_Type.cxx \
+	Fl_Grid_Type.cxx \
 	Fl_Group_Type.cxx \
 	Fl_Menu_Type.cxx \
 	Fl_Type.cxx \
