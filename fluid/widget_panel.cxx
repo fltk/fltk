@@ -116,7 +116,7 @@ Fl_Box *w_when_box=(Fl_Box *)0;
 
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
 
-Fl_Group *widget_tab_grid=(Fl_Group *)0;
+Fl_Group *widget_tab_grid_child=(Fl_Group *)0;
 
 Fluid_Coord_Input *widget_grid_row_input=(Fluid_Coord_Input *)0;
 
@@ -137,6 +137,8 @@ Fl_Menu_Item menu_Align[] = {
  {"GRID_BOTTOM_RIGHT", 0,  0, (void*)(FL_GRID_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
+
+Fl_Group *widget_tab_grid=(Fl_Group *)0;
 
 Fl_Button *wLiveMode=(Fl_Button *)0;
 
@@ -537,100 +539,6 @@ sized to fit the container.");
           { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
-        { // This group is only visible for Fl_Grid widgets
-          Fl_Group* o = new Fl_Group(95, 185, 300, 55, "Grid Margins:\n\n\nLayout:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)grid_margin_group_cb);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
-          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 45, 20, "Left:");
-            o->tooltip("Left margin in group.");
-            o->labelsize(11);
-            o->maximum(1000);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_margin_left_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(144, 185, 45, 20, "Top:");
-            o->tooltip("Top margin in group.");
-            o->labelsize(11);
-            o->maximum(1000);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_margin_top_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(193, 185, 45, 20, "Right:");
-            o->tooltip("Right margin in group.");
-            o->labelsize(11);
-            o->maximum(1000);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_margin_right_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(242, 185, 45, 20, "Bottom:");
-            o->tooltip("Bottom margin in group.");
-            o->labelsize(11);
-            o->maximum(1000);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_margin_bottom_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(291, 185, 45, 20, "RowGap:");
-            o->tooltip("Gap between children.");
-            o->labelsize(11);
-            o->maximum(1000);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_row_gap_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(340, 185, 45, 20, "ColGap:");
-            o->tooltip("Gap between children.");
-            o->labelsize(11);
-            o->maximum(1000);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_col_gap_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(95, 220, 55, 20, "Rows:");
-            o->tooltip("Number of horizontal rows in the Grid group");
-            o->box(FL_DOWN_BOX);
-            o->color(FL_BACKGROUND2_COLOR);
-            o->selection_color(FL_SELECTION_COLOR);
-            o->labeltype(FL_NORMAL_LABEL);
-            o->labelfont(0);
-            o->labelsize(11);
-            o->labelcolor(FL_FOREGROUND_COLOR);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_rows_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(154, 220, 55, 20, "Columns:");
-            o->tooltip("Number of vertical columns in the Grid group");
-            o->box(FL_DOWN_BOX);
-            o->color(FL_BACKGROUND2_COLOR);
-            o->selection_color(FL_SELECTION_COLOR);
-            o->labeltype(FL_NORMAL_LABEL);
-            o->labelfont(0);
-            o->labelsize(11);
-            o->labelcolor(FL_FOREGROUND_COLOR);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_cols_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Size Range:");
@@ -1138,13 +1046,19 @@ access the Widget pointer and \'v\' to access the user value.");
         o->end();
         Fl_Group::current()->resizable(o);
       } // Fl_Group* o
-      { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
-        widget_tab_grid->labelsize(11);
-        widget_tab_grid->callback((Fl_Callback*)propagate_load);
+      { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
+        widget_tab_grid_child->labelsize(11);
+        widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
+        widget_tab_grid_child->hide();
         { Fl_Box* o = new Fl_Box(25, 43, 370, 28, "The Fl_Grid implementation in FLUID is still experimental!");
           o->labelfont(1);
           o->labelsize(11);
           o->labelcolor((Fl_Color)1);
+        } // Fl_Box* o
+        { Fl_Box* o = new Fl_Box(96, 74, 155, 20, "-- Widget --");
+          o->labelfont(1);
+          o->labelsize(12);
+          o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
         { Fl_Group* o = new Fl_Group(96, 110, 314, 20, "Location:");
           o->labelfont(1);
@@ -1191,11 +1105,6 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(96, 74, 155, 20, "-- Widget --");
-          o->labelfont(1);
-          o->labelsize(12);
-          o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-        } // Fl_Box* o
         { Fl_Group* o = new Fl_Group(96, 145, 314, 20, "Cell Span:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1270,17 +1179,22 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fluid_Coord_Input* o
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(96, 214, 155, 20, "-- Grid --");
+        widget_tab_grid_child->end();
+      } // Fl_Group* widget_tab_grid_child
+      { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
+        widget_tab_grid->labelsize(11);
+        widget_tab_grid->callback((Fl_Callback*)propagate_load);
+        { Fl_Box* o = new Fl_Box(25, 43, 370, 28, "The Fl_Grid implementation in FLUID is still experimental!");
           o->labelfont(1);
-          o->labelsize(12);
-          o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+          o->labelsize(11);
+          o->labelcolor((Fl_Color)1);
         } // Fl_Box* o
-        { Fl_Group* o = new Fl_Group(96, 250, 314, 20, "Row:");
+        { Fl_Group* o = new Fl_Group(96, 170, 314, 20, "Row:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 250, 55, 20, "Index");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 170, 55, 20, "Index");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1293,7 +1207,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->when(FL_WHEN_RELEASE);
             o->deactivate();
           } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 250, 55, 20, "Height:");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 170, 55, 20, "Height:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1306,7 +1220,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(216, 250, 55, 20, "Weight:");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(216, 170, 55, 20, "Weight:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1319,7 +1233,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(276, 250, 55, 20, "Gap:");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(276, 170, 55, 20, "Gap:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1332,18 +1246,18 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fl_Box* o = new Fl_Box(400, 250, 1, 20);
+          { Fl_Box* o = new Fl_Box(400, 170, 1, 20);
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(96, 285, 314, 20, "Column:");
+        { Fl_Group* o = new Fl_Group(96, 205, 314, 20, "Column:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 285, 55, 20, "Index");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 205, 55, 20, "Index");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1356,7 +1270,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->when(FL_WHEN_RELEASE);
             o->deactivate();
           } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 285, 55, 20, "Width:");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(156, 205, 55, 20, "Width:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1369,7 +1283,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(216, 285, 55, 20, "Weight:");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(216, 205, 55, 20, "Weight:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1382,7 +1296,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(276, 285, 55, 20, "Gap:");
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(276, 205, 55, 20, "Gap:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -1395,10 +1309,102 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fl_Box* o = new Fl_Box(400, 285, 1, 20);
+          { Fl_Box* o = new Fl_Box(400, 205, 1, 20);
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
+        { Fl_Group* o = new Fl_Group(96, 97, 300, 55, "Grid Margins:\n\n\nLayout:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)propagate_load);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fl_Value_Input* o = new Fl_Value_Input(96, 97, 45, 20, "Left:");
+            o->tooltip("Left margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_left_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(145, 97, 45, 20, "Top:");
+            o->tooltip("Top margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_top_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(194, 97, 45, 20, "Right:");
+            o->tooltip("Right margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_right_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(243, 97, 45, 20, "Bottom:");
+            o->tooltip("Bottom margin in group.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_margin_bottom_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(292, 97, 45, 20, "RowGap:");
+            o->tooltip("Gap between children.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_row_gap_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(341, 97, 45, 20, "ColGap:");
+            o->tooltip("Gap between children.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_col_gap_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Box* o = new Fl_Box(396, 97, 0, 20);
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(96, 132, 55, 20, "Rows:");
+            o->tooltip("Number of horizontal rows in the Grid group");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_rows_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
+          { Fluid_Coord_Input* o = new Fluid_Coord_Input(155, 132, 55, 20, "Columns:");
+            o->tooltip("Number of vertical columns in the Grid group");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color(FL_SELECTION_COLOR);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->textsize(11);
+            o->callback((Fl_Callback*)grid_cols_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* o
           o->end();
         } // Fl_Group* o
         widget_tab_grid->end();

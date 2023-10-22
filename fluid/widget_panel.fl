@@ -38,13 +38,13 @@ Function {make_widget_panel()} {
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs widget_tabs {
-      callback {propagate_load((Fl_Group *)o,v);}
+      callback {propagate_load((Fl_Group *)o,v);} open
       xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
       code0 {o->show();}
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open selected
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -435,61 +435,6 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
         }
         Fl_Group {} {
-          label {Grid Margins:
-
-
-Layout:}
-          callback grid_margin_group_cb
-          comment {This group is only visible for Fl_Grid widgets} open
-          xywh {95 185 300 55} labelfont 1 labelsize 11 align 4 hide
-        } {
-          Fl_Value_Input {} {
-            label {Left:}
-            callback grid_margin_left_cb
-            tooltip {Left margin in group.} xywh {95 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Top:}
-            callback grid_margin_top_cb
-            tooltip {Top margin in group.} xywh {144 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Right:}
-            callback grid_margin_right_cb
-            tooltip {Right margin in group.} xywh {193 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Bottom:}
-            callback grid_margin_bottom_cb
-            tooltip {Bottom margin in group.} xywh {242 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {RowGap:}
-            callback grid_row_gap_cb
-            tooltip {Gap between children.} xywh {291 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {ColGap:}
-            callback grid_col_gap_cb
-            tooltip {Gap between children.} xywh {340 185 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Box {} {
-            xywh {395 185 0 20} resizable
-          }
-          Fl_Input {} {
-            label {Rows:}
-            callback grid_rows_cb
-            tooltip {Number of horizontal rows in the Grid group} xywh {95 220 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Columns:}
-            callback grid_cols_cb
-            tooltip {Number of vertical columns in the Grid group} xywh {154 220 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-        }
-        Fl_Group {} {
           label {Size Range:}
           callback size_range_group_cb open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
@@ -874,21 +819,25 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Tabs widget_tabs_repo {
+    Fl_Tabs widget_tabs_repo {open selected
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
       Fl_Group {} {open
         xywh {10 30 400 330} hide resizable
       } {}
-      Fl_Group widget_tab_grid {
-        label Grid
+      Fl_Group widget_tab_grid_child {
+        label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11
+        xywh {10 30 400 330} labelsize 11 hide
       } {
         Fl_Box {} {
           label {The Fl_Grid implementation in FLUID is still experimental!}
           xywh {25 43 370 28} labelfont 1 labelsize 11 labelcolor 1
+        }
+        Fl_Box {} {
+          label {-- Widget --}
+          xywh {96 74 155 20} labelfont 1 labelsize 12 align 20
         }
         Fl_Group {} {
           label {Location:}
@@ -909,7 +858,7 @@ wCallback->do_callback(wCallback, v);} open
           }
           Fl_Choice {} {
             label {Align:}
-            callback grid_align_cb open
+            callback grid_align_cb
             xywh {215 110 185 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
             MenuItem {} {
@@ -977,13 +926,9 @@ wCallback->do_callback(wCallback, v);} open
             xywh {400 110 1 20} hide resizable
           }
         }
-        Fl_Box {} {
-          label {-- Widget --}
-          xywh {96 74 155 20} labelfont 1 labelsize 12 align 20
-        }
         Fl_Group {} {
           label {Cell Span:}
-          callback propagate_load open
+          callback propagate_load
           xywh {96 145 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Box {} {
@@ -1004,7 +949,7 @@ wCallback->do_callback(wCallback, v);} open
         }
         Fl_Group {} {
           label {Size:}
-          callback propagate_load open
+          callback propagate_load
           xywh {96 180 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Box {} {
@@ -1023,72 +968,132 @@ wCallback->do_callback(wCallback, v);} open
             class Fluid_Coord_Input
           }
         }
+      }
+      Fl_Group widget_tab_grid {
+        label Grid
+        callback propagate_load open
+        xywh {10 30 400 330} labelsize 11
+      } {
         Fl_Box {} {
-          label {-- Grid --}
-          xywh {96 214 155 20} labelfont 1 labelsize 12 align 20
+          label {The Fl_Grid implementation in FLUID is still experimental!}
+          xywh {25 43 370 28} labelfont 1 labelsize 11 labelcolor 1
         }
         Fl_Group {} {
           label {Row:}
           callback propagate_load open
-          xywh {96 250 314 20} labelfont 1 labelsize 11 align 4
+          xywh {96 170 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             label Index
-            xywh {96 250 55 20} labelsize 11 align 5 textsize 11 deactivate
+            xywh {96 170 55 20} labelsize 11 align 5 textsize 11 deactivate
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Height:}
             callback grid_row_height
-            xywh {156 250 55 20} labelsize 11 align 5 textsize 11
+            xywh {156 170 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Weight:}
             callback grid_row_weight
-            xywh {216 250 55 20} labelsize 11 align 5 textsize 11
+            xywh {216 170 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Gap:}
             callback grid_row_gap
-            xywh {276 250 55 20} labelsize 11 align 5 textsize 11
+            xywh {276 170 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Box {} {
-            xywh {400 250 1 20} hide resizable
+            xywh {400 170 1 20} hide resizable
           }
         }
         Fl_Group {} {
           label {Column:}
           callback propagate_load open
-          xywh {96 285 314 20} labelfont 1 labelsize 11 align 4
+          xywh {96 205 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             label Index
-            xywh {96 285 55 20} labelsize 11 align 5 textsize 11 deactivate
+            xywh {96 205 55 20} labelsize 11 align 5 textsize 11 deactivate
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Width:}
             callback grid_col_width
-            xywh {156 285 55 20} labelsize 11 align 5 textsize 11
+            xywh {156 205 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Weight:}
             callback grid_col_weight
-            xywh {216 285 55 20} labelsize 11 align 5 textsize 11
+            xywh {216 205 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Gap:}
             callback grid_col_gap
-            xywh {276 285 55 20} labelsize 11 align 5 textsize 11
+            xywh {276 205 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Box {} {
-            xywh {400 285 1 20} hide resizable
+            xywh {400 205 1 20} hide resizable
+          }
+        }
+        Fl_Group {} {
+          label {Grid Margins:
+
+
+Layout:}
+          callback propagate_load open
+          xywh {96 97 300 55} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Left:}
+            callback grid_margin_left_cb
+            tooltip {Left margin in group.} xywh {96 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Top:}
+            callback grid_margin_top_cb
+            tooltip {Top margin in group.} xywh {145 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Right:}
+            callback grid_margin_right_cb
+            tooltip {Right margin in group.} xywh {194 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Bottom:}
+            callback grid_margin_bottom_cb
+            tooltip {Bottom margin in group.} xywh {243 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {RowGap:}
+            callback grid_row_gap_cb
+            tooltip {Gap between children.} xywh {292 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {ColGap:}
+            callback grid_col_gap_cb
+            tooltip {Gap between children.} xywh {341 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {396 97 0 20} resizable
+          }
+          Fl_Input {} {
+            label {Rows:}
+            callback grid_rows_cb
+            tooltip {Number of horizontal rows in the Grid group} xywh {96 132 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Columns:}
+            callback grid_cols_cb
+            tooltip {Number of vertical columns in the Grid group} xywh {155 132 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
           }
         }
       }

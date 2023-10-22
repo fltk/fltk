@@ -85,6 +85,8 @@
       build workspace document 1
     end tell
   EOD
+
+  powershell -c "$wshell = New-Object -ComObject wscript.shell; $wshell.SendKeys('^{ESCAPE}')
  */
 
 #include "shell_command.h"

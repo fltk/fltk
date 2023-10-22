@@ -2237,17 +2237,6 @@ void flex_margin_group_cb(Fl_Group* g, void* v) {
   }
 }
 
-void grid_margin_group_cb(Fl_Group* g, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Grid)) {
-      g->show();
-    } else {
-      g->hide();
-    }
-    propagate_load(g, v);
-  }
-}
-
 void size_range_group_cb(Fl_Group* g, void* v) {
   if (v == LOAD) {
     if (current_widget->is_a(ID_Window)) {
@@ -2658,12 +2647,20 @@ static void load_panel() {
       }
     }
   }
-  if (current_widget && current_widget->parent->is_a(ID_Grid)) {
+  if (current_widget && current_widget->is_a(ID_Grid)) {
     if (widget_tab_grid->parent()!=widget_tabs)
       widget_tabs->add(widget_tab_grid);
   } else {
     if (widget_tab_grid->parent()==widget_tabs) {
       widget_tabs_repo->add(widget_tab_grid);
+    }
+  }
+  if (current_widget && current_widget->parent && current_widget->parent->is_a(ID_Grid)) {
+    if (widget_tab_grid_child->parent()!=widget_tabs)
+      widget_tabs->add(widget_tab_grid_child);
+  } else {
+    if (widget_tab_grid_child->parent()==widget_tabs) {
+      widget_tabs_repo->add(widget_tab_grid_child);
     }
   }
   if (numselected)
