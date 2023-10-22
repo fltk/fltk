@@ -1,8 +1,9 @@
 //
-// Fl_Table -- A table widget
+// Fl_Table -- A table widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002 by Greg Ercolano.
 // Copyright (c) 2004 O'ksi'D
+// Copyright 2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,9 +17,21 @@
 //
 
 #include <FL/Fl_Table.H>
-
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+
+// DEBUG - remove this when done, set to 0 to disable debug output
+#define DEBUG_ROW_COL_RESIZE 1
+
+// EXPERIMENTAL
+// We use either std::vector or the private class Fl_Int_Vector
+// depending on the build option OPTION_USE_STD or equivalent.
+// This option allows to use std::string and maybe std::vector
+// already in FLTK 1.4.x
+
+#if (!FLTK_USE_STD)
+#include "Fl_Int_Vector.H"      // Note: MUST NOT be included in Fl_Table.H
+#endif
 
 #include <sys/types.h>
 #include <string.h>             // memcpy
@@ -144,6 +157,15 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   select_col        = -1;
   _scrollbar_size   = 0;
   flags_            = 0;        // TABCELLNAV off
+
+#if (FLTK_USE_STDXX)
+  _colwidths        = new std::vector<int>;  // column widths in pixels
+  _rowheights       = new std::vector<int>;  // row heights in pixels
+#else
+  _colwidths        = new Fl_Int_Vector();  // column widths in pixels
+  _rowheights       = new Fl_Int_Vector();  // row heights in pixels
+#endif
+
   box(FL_THIN_DOWN_FRAME);
 
   vscrollbar = new Fl_Scrollbar(x()+w()-Fl::scrollbar_size(), y(),
@@ -177,6 +199,31 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
 */
 Fl_Table::~Fl_Table() {
   // The parent Fl_Group takes care of destroying scrollbars
+  delete _colwidths;
+  delete _rowheights;
+}
+
+
+/**
+  Returns the current number of columns.
+
+  This is equivalent to the size of the column widths vector.
+
+  \returns Number of columns.
+*/
+int Fl_Table::col_size() {
+  return int(_colwidths->size());
+}
+
+/**
+  Returns the current number of rows.
+
+  This is equivalent to the size of the row heights vector.
+
+  \returns Number of rows.
+*/
+int Fl_Table::row_size() {
+  return int(_rowheights->size());
 }
 
 /**
@@ -187,17 +234,21 @@ Fl_Table::~Fl_Table() {
 */
 void Fl_Table::row_height(int row, int height) {
   if ( row < 0 ) return;
-  if ( row < (int)_rowheights.size() && _rowheights[row] == height ) {
+  if ( row < row_size() && (*_rowheights)[row] == height ) {
     return;             // OPTIMIZATION: no change? avoid redraw
   }
   // Add row heights, even if none yet
-  int now_size = (int)_rowheights.size();
-  if ( row >= now_size ) {
-    _rowheights.size(row);
+  int now_size = row_size();
+  if (row >= now_size) {
+#if (FLTK_USE_STD)
+    _rowheights->resize(row, height);
+#else
+    _rowheights->size(row);
     while (now_size < row)
-      _rowheights[now_size++] = height;
+      (*_rowheights)[now_size++] = height;
+#endif // FLTK_USE_STD
   }
-  _rowheights[row] = height;
+  (*_rowheights)[row] = height;
   table_resized();
   if ( row <= botrow ) {        // OPTIMIZATION: only redraw if onscreen or above screen
     redraw();
@@ -216,18 +267,21 @@ void Fl_Table::row_height(int row, int height) {
 void Fl_Table::col_width(int col, int width)
 {
   if ( col < 0 ) return;
-  if ( col < (int)_colwidths.size() && _colwidths[col] == width ) {
+  if ( col < col_size() && (*_colwidths)[col] == width ) {
     return;                     // OPTIMIZATION: no change? avoid redraw
   }
   // Add column widths, even if none yet
-  int now_size = (int)_colwidths.size();
+  int now_size = col_size();
   if ( col >= now_size ) {
-    _colwidths.size(col+1);
-    while (now_size < col) {
-      _colwidths[now_size++] = width;
-    }
+#if (FLTK_USE_STD)
+    _colwidths->resize(col+1, width);
+#else
+    _colwidths->size(col+1);
+    while (now_size < col)
+      (*_colwidths)[now_size++] = width;
+#endif
   }
-  _colwidths[col] = width;
+  (*_colwidths)[col] = width;
   table_resized();
   if ( col <= rightcol ) {      // OPTIMIZATION: only redraw if onscreen or to the left
     redraw();
@@ -635,14 +689,30 @@ void Fl_Table::scroll_cb(Fl_Widget*w, void *data) {
 void Fl_Table::rows(int val) {
   int oldrows = _rows;
   _rows = val;
-  {
-    int default_h = ( _rowheights.size() > 0 ) ? _rowheights.back() : 25;
-    int now_size = _rowheights.size();
-    _rowheights.size(val);                      // enlarge or shrink as needed
-    while ( now_size < val ) {
-      _rowheights[now_size++] = default_h;      // fill new
-    }
-  }
+
+  int default_h = row_size() > 0 ? _rowheights->back() : 25;
+  int now_size = row_size();
+
+#if DEBUG_ROW_COL_RESIZE
+  fprintf(stderr, "Fl_Table::rows(%d) from %d, FLTK_USE_STD = %d\n", val, now_size, FLTK_USE_STD);
+  fflush(stderr);
+  Fl_Timestamp start = Fl::now();
+#endif
+
+#if (FLTK_USE_STD)
+  if (now_size != val)
+    _rowheights->resize(val, default_h);      // enlarge or shrink as needed
+#else
+  _rowheights->size(val);                     // enlarge or shrink as needed
+  while (now_size < val)
+    (*_rowheights)[now_size++] = default_h;   // fill new
+#endif
+
+#if DEBUG_ROW_COL_RESIZE
+  fprintf(stderr, "Fl_Table::rows(%d) - done in %7.3f ms\n", val, Fl::seconds_since(start)*1000);
+  fflush(stderr);
+#endif
+
   table_resized();
 
   // OPTIMIZATION: redraw only if change is visible.
@@ -658,14 +728,31 @@ void Fl_Table::rows(int val) {
 */
 void Fl_Table::cols(int val) {
   _cols = val;
-  {
-    int default_w = ( _colwidths.size() > 0 ) ? _colwidths[_colwidths.size()-1] : 80;
-    int now_size = _colwidths.size();
-    _colwidths.size(val);                       // enlarge or shrink as needed
-    while ( now_size < val ) {
-      _colwidths[now_size++] = default_w;       // fill new
-    }
-  }
+
+  int default_w = col_size() > 0 ? (*_colwidths)[col_size()-1] : 80;
+  int now_size = col_size();
+
+#if DEBUG_ROW_COL_RESIZE
+  fprintf(stderr, "Fl_Table::cols(%d) from %d, FLTK_USE_STD = %d\n", val, now_size, FLTK_USE_STD);
+  fflush(stderr);
+  Fl_Timestamp start = Fl::now();
+#endif
+
+#if (FLTK_USE_STD)
+  if (now_size != val)
+    _colwidths->resize(val, default_w);       // enlarge or shrink as needed
+#else
+  _colwidths->size(val);                      // enlarge or shrink as needed
+  while (now_size < val)
+    (*_colwidths)[now_size++] = default_w;    // fill new
+#endif
+
+#if DEBUG_ROW_COL_RESIZE
+  double delta = Fl::seconds_since(start) * 1000;
+  fprintf(stderr, "Fl_Table::cols(%d) - done in %7.3f ms\n", val, delta);
+  fflush(stderr);
+#endif
+
   table_resized();
   redraw();
 }
@@ -1367,4 +1454,18 @@ void Fl_Table::draw() {
     _redraw_leftcol = _redraw_rightcol = _redraw_toprow = _redraw_botrow = -1;
   }
   fl_pop_clip();
+}
+
+/**
+  Returns the current height of the specified row as a value in pixels.
+*/
+int Fl_Table::row_height(int row) {
+  return((row < 0 || row >= row_size()) ? 0 : (*_rowheights)[row]);
+}
+
+/**
+  Returns the current width of the specified column in pixels.
+*/
+int Fl_Table::col_width(int col) {
+  return((col < 0 || col >= col_size()) ? 0 : (*_colwidths)[col]);
 }

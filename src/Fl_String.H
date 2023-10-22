@@ -17,11 +17,11 @@
 #ifndef _FL_Fl_String_H_
 #define _FL_Fl_String_H_
 
-/** \file FL/Fl_String.H
+/** \file src/Fl_String.H
   Basic Fl_String class for FLTK.
 */
 
-#include "Fl_Export.H"
+#include <FL/Fl_Export.H>
 
 // See: https://en.cppreference.com/w/cpp/string/basic_string/basic_string
 

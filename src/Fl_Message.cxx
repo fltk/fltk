@@ -445,9 +445,18 @@ Fl_Box *Fl_Message::message_icon() {
 /**
   Does all Fl_Message window internals for messages with a text input field.
 
+  \param[in] fmt      printf style format used in the user function call
+  \param[in] ap       argument list provided by the user function call
+  \param[in] defstr   default string given by the user
+  \param[in] type     either FL_NORMAL_INPUT or FL_SECRET_INPUT (password)
+  \param[in] maxchar  max. number of allowed characters (not bytes)
+  \param[in] str      true: return type is string, false: internal buffer
+
+  \returns    pointer to string or NULL if cancel or escape were hit
+
   \see innards()
 */
-const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *defstr, uchar type, int maxchar) {
+const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *defstr, uchar type, int maxchar, bool str) {
   message_->position(60, 10);
   input_->type(type);
   input_->show();
@@ -465,7 +474,7 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
 
     int size = input_->size() + 1;
 
-    if (maxchar < 0) { // need to store the value in pre-allocated buffer
+    if (!str) { // need to store the value in pre-allocated buffer
 
       // The allocated input buffer starts with size 0 and is allocated
       // in multiples of 128 bytes >= size. If both the size and the pointer
@@ -485,7 +494,7 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
       input_buffer_[input_->size()] = '\0';
       return (input_buffer_);
 
-    } else { // new version: return value() which will be copied
+    } else { // string version: return value() which will be copied
 
       return input_->value();
     }

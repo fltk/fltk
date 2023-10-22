@@ -19,7 +19,7 @@
 
 #include "fluid.h"
 
-#include <FL/Fl_String.H>
+#include "../src/Fl_String.H"
 #include <FL/Enumerations.H>
 
 #include <stdio.h>

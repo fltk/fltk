@@ -70,7 +70,7 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 }
 
-decl {\#include <FL/filename.H>} {public local
+decl {\#include "fluid_filename.h"} {public local
 }
 
 decl {\#include <FL/fl_string_functions.h>} {public local

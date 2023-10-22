@@ -35,7 +35,8 @@
 void rename_button(Fl_Widget *o, void *v) {
   int what = fl_int(v);
   int ret = 0;
-  Fl_String input;
+#if (FLTK_USE_STD)
+  std::string input;
   if (what == 0) {
     fl_message_icon_label("§");
     input = fl_input_str(ret, 0, "Input (no size limit, use ctrl/j for newline):", o->label());
@@ -47,6 +48,22 @@ void rename_button(Fl_Widget *o, void *v) {
     o->copy_label(input.c_str());
     o->redraw();
   }
+#else
+  const char *input;
+  if (what == 0) {
+    fl_message_icon_label("§");
+    input = fl_input("Input (no size limit, use ctrl/j for newline):", o->label());
+    if (!input) ret = 1;
+  } else {
+    fl_message_icon_label("€");
+    input = fl_password(20, "Enter password (max. 20 characters):", o->label());
+    if (!input) ret = 1;
+  }
+  if (ret == 0) {
+    o->copy_label(input);
+    o->redraw();
+  }
+#endif // FLTK_USE_STD
 }
 
 void window_callback(Fl_Widget *win, void *) {

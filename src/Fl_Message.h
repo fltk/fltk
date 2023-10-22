@@ -88,10 +88,6 @@ private:
   // and fl_password() return their input text, we *need* to store
   // the text in an internal (static) buffer. :-(
 
-  // The newer functions fl_input_str() and fl_password_str() return the
-  // text in an Fl_String object that must be allocated and free()'d by
-  // the caller.
-
   static char *input_buffer_; // points to the allocated text buffer
   static int input_size_;     // size of allocated text buffer
 
@@ -169,7 +165,7 @@ public:
 
   int innards(const char *fmt, va_list ap, const char *b0, const char *b1, const char *b2);
 
-  const char *input_innards(const char *fmt, va_list ap, const char *defstr, uchar type, int maxchar = -1);
+  const char *input_innards(const char *fmt, va_list ap, const char *defstr, uchar type, int maxchar = -1, bool str = false);
 };
 
 /**

@@ -21,7 +21,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_string_functions.h>
-#include <FL/filename.H>
+#include "fluid_filename.h"
 #include "../src/flstring.h"
 #include <stdio.h>
 #include <stdlib.h>

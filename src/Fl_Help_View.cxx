@@ -50,8 +50,8 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Int_Vector.H>
-#include <FL/Fl_String.H>
+#include "Fl_Int_Vector.H"
+#include "Fl_String.H"
 
 #include <stdio.h>
 #include <stdlib.h>

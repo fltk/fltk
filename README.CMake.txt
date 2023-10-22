@@ -215,6 +215,12 @@ OPTION_USE_GDIPLUS - default ON
    Makes FLTK use GDI+ to draw oblique lines and curves resulting in
    antialiased graphics (Windows platform only).
 
+OPTION_USE_STD - default OFF
+   This option allow FLTK to use some specific features of modern C++
+   like std::string in the public API of FLTK 1.4.x. Users turning this
+   option ON can benefit from some new functions and methods that return
+   std::string or use std::string as input parameters.
+
 OPTION_USE_SYSTEM_LIBDECOR - default OFF
    This option makes FLTK use package libdecor-0 to draw window titlebars
    under Wayland. It's mainly meant for future use, when that package

@@ -15,7 +15,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl_Int_Vector.H>
+#include "Fl_Int_Vector.H"
 #include <stdlib.h>
 #include <string.h>
 

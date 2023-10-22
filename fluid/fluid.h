@@ -17,10 +17,10 @@
 #ifndef _FLUID_FLUID_H
 #define _FLUID_FLUID_H
 
-#include <FL/filename.H>
+#include "fluid_filename.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
-#include <FL/Fl_String.H>
+#include "../src/Fl_String.H"
 
 #define BROWSERWIDTH 300
 #define BROWSERHEIGHT 500

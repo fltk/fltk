@@ -26,7 +26,7 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/filename.H>
-#include <FL/Fl_Int_Vector.H>
+#include "../../Fl_Int_Vector.H"
 #include "../../print_button.h"
 #include <dlfcn.h>
 #include <linux/input.h>

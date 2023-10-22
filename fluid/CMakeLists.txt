@@ -36,6 +36,7 @@ set (CPPFILES
   custom_widgets.cxx
   factory.cxx
   file.cxx
+  fluid_filename.cxx
   function_panel.cxx
   pixmaps.cxx
   shell_command.cxx

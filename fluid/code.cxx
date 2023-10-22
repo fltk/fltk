@@ -24,7 +24,7 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_string_functions.h>
-#include <FL/filename.H>
+#include "fluid_filename.h"
 #include "../src/flstring.h"
 
 #include <stdarg.h>

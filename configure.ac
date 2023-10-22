@@ -114,6 +114,8 @@ AC_ARG_ENABLE([wayland], AS_HELP_STRING([--disable-wayland], [turn off hybrid Wa
 
 AC_ARG_ENABLE([usecairo], AS_HELP_STRING([--enable-usecairo], [all drawing to X11 windows uses Cairo]))
 
+AC_ARG_ENABLE([use_std], AS_HELP_STRING([--enable-use_std], [allow FLTK to use std::string etc.]))
+
 AC_ARG_ENABLE([print], AS_HELP_STRING([--disable-print], [turn off print support (X11)]))
 AS_IF([test x$enable_print = xno], [
     AC_DEFINE([FL_NO_PRINT_SUPPORT], [Disable X11 print support?])
@@ -911,6 +913,14 @@ UNINSTALL_DESKTOP=""
 
 AS_IF([test x$enable_fluid != xno], [FLUIDDIR="fluid"])
 
+dnl Option use_std - allow std::string and maybe more
+AS_IF([test x$enable_use_std = xyes], [
+    AC_DEFINE([FLTK_USE_STD])
+    ]
+)
+
+dnl Platform specific Processing
+
 AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     dnl Cygwin environment, using windows GDI ...
     # Recent versions of Cygwin are seriously broken and the size
@@ -1408,6 +1418,8 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     UNINSTALL_DESKTOP="uninstall-linux"
 ])
 
+dnl End of platform specific Processing
+
 AC_SUBST([GLDEMOS])
 AC_SUBST([GLLIBS])
 AC_SUBST([HLINKS])
@@ -1821,6 +1833,12 @@ AS_IF([test x$THREADS = x], [
     echo "        Threads: NO"
 ], [
     echo "        Threads: YES"
+])
+
+AS_IF([test x$enable_use_std != xyes], [
+    echo "   Allow std:: : NO"
+], [
+    echo "   Allow std:: : YES"
 ])
 
 dnl Set empty BINARY_DIR variable for fltk-config.in (CMake compatibility)

@@ -311,6 +311,16 @@ if (APPLE)
   endif (CMAKE_OSX_SYSROOT)
 endif (APPLE)
 
+#######################################################################
+option (OPTION_USE_STD "allow FLTK to use some std:: features" OFF)
+if (OPTION_USE_STD)
+  set (FLTK_USE_STD 1)
+else ()
+  set (FLTK_USE_STD 0)
+endif ()
+
+#######################################################################
+
 # find X11 libraries and headers
 set (PATH_TO_XLIBS)
 if ((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32 AND NOT OPTION_USE_WAYLAND)

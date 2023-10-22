@@ -37,6 +37,7 @@ CPPFILES = \
 	factory.cxx \
 	file.cxx \
 	fluid.cxx \
+	fluid_filename.cxx \
 	function_panel.cxx \
 	pixmaps.cxx \
 	shell_command.cxx \

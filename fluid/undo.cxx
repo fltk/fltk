@@ -26,7 +26,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/filename.H>
+#include "fluid_filename.h"
 #include "../src/flstring.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)

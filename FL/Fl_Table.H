@@ -3,6 +3,7 @@
 //
 // Copyright 2002 by Greg Ercolano.
 // Copyright (c) 2004 O'ksi'D
+// Copyright 2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,7 +21,18 @@
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scroll.H>
-#include <FL/Fl_Int_Vector.H>
+
+// EXPERIMENTAL
+// We use either std::vector or the private class Fl_Int_Vector
+// depending on the build option OPTION_USE_STD or --enable-use_std.
+// This option allows to use std::string and std::vector in FLTK 1.4.x
+
+#if (FLTK_USE_STD)
+#include <vector>
+typedef std::vector<int> Fl_Int_Vector;
+#else
+class Fl_Int_Vector; // private class declared in src/Fl_Int_Vector.H
+#endif
 
 /**
   A table of widgets or other content.
@@ -155,8 +167,12 @@ private:
   };
   unsigned int flags_;
 
-  Fl_Int_Vector _colwidths;             // column widths in pixels
-  Fl_Int_Vector _rowheights;            // row heights in pixels
+  Fl_Int_Vector *_colwidths;            // column widths in pixels
+  Fl_Int_Vector *_rowheights;           // row heights in pixels
+
+  // number of columns and rows == size of corresponding vectors
+  int col_size();                       // size of the column widths vector
+  int row_size();                       // size of the row heights vector
 
   Fl_Cursor _last_cursor;               // last mouse cursor before changed to 'resize' cursor
 
@@ -433,7 +449,7 @@ public:
     return(table->box());
   }
 
-  virtual void rows(int val);                   // set/get number of rows
+  virtual void rows(int val);                   // set number of rows
 
   /**
    Returns the number of rows in the table.
@@ -442,7 +458,7 @@ public:
     return(_rows);
   }
 
-  virtual void cols(int val);                   // set/get number of columns
+  virtual void cols(int val);                   // set number of columns
 
   /**
    Get the number of columns in the table.
@@ -656,23 +672,15 @@ public:
     return(_col_header_color);
   }
 
-  void row_height(int row, int height);         // set/get row height
+  void row_height(int row, int height);         // set row height in pixels
 
-  /**
-    Returns the current height of the specified row as a value in pixels.
-  */
-  inline int row_height(int row) {
-    return((row<0 || row>=(int)_rowheights.size()) ? 0 : _rowheights[row]);
-  }
+  // Returns the current height of the specified row as a value in pixels.
+  int row_height(int row);
 
-  void col_width(int col, int width);           // set/get a column's width
+  void col_width(int col, int width);           // set a column's width in pixels
 
-  /**
-    Returns the current width of the specified column in pixels.
-  */
-  inline int col_width(int col) {
-    return((col<0 || col>=(int)_colwidths.size()) ? 0 : _colwidths[col]);
-  }
+  // Returns the current width of the specified column in pixels.
+  int col_width(int col);
 
   /**
     Convenience method to set the height of all rows to the

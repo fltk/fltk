@@ -74,4 +74,17 @@
 
 #undef FLTK_USE_WAYLAND
 
+
+/*
+ * FLTK_USE_STD
+ *
+ * May we use std::string and std::vector for the current build?
+ *
+ * This is a build configuration option which allows FLTK to add some
+ * features based on std::string and std::vector in FLTK 1.4.x
+ *
+ */
+
+#define FLTK_USE_STD 0
+
 #endif /* _FL_fl_config_h_ */

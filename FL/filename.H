@@ -1,7 +1,7 @@
 /*
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2023 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -14,15 +14,29 @@
  *     https://www.fltk.org/bugs.php
  */
 
-/** \file
- File names and URI utility functions.
+/*
+ * Note to devs:
+ * Under Windows, we include filename.H from numericsort.c; this should probably change.
+ * This implies that we need C-style comments and '#ifdef __cplusplus ... #endif'
  */
+
+/** \file
+  File names and URI utility functions.
+*/
 
 #ifndef FL_FILENAME_H
 #  define FL_FILENAME_H
 
 #include "Fl_Export.H"
 #include <FL/platform_types.h>
+
+#ifdef __cplusplus
+
+// The following include is not (yet) used in FLTK 1.4
+// In FLTK 1.5 or 4.0 using std::string would be default.
+// #include <string>
+
+#endif /* __cplusplus */
 
 /** \addtogroup filenames File names and URI utility functions
  File names and URI functions defined in <FL/filename.H>
@@ -55,22 +69,25 @@ FL_EXPORT int fl_filename_isdir(const char *name);
 
 #  if defined(__cplusplus)
 
-class Fl_String;
-
-FL_EXPORT Fl_String fl_filename_name(const Fl_String &filename);
-FL_EXPORT Fl_String fl_filename_path(const Fl_String &filename);
-FL_EXPORT Fl_String fl_filename_ext(const Fl_String &filename);
-FL_EXPORT Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_extension);
-FL_EXPORT Fl_String fl_filename_expand(const Fl_String &from);
 FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from, const char *cwd);
-FL_EXPORT Fl_String fl_filename_absolute(const Fl_String &from);
-FL_EXPORT Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base);
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
-FL_EXPORT Fl_String fl_filename_relative(const Fl_String &from);
-FL_EXPORT Fl_String fl_filename_relative(const Fl_String &from, const Fl_String &base);
-FL_EXPORT Fl_String fl_getcwd();
 
-#  endif
+
+// FIXME: We can't do this in 1.4.x - enable this block in 1.5 or higher.
+// See fluid/fluid_filename.{h|cxx} for an implementation using Fl_String.
+
+// FL_EXPORT std::string fl_filename_name(const std::string &filename);
+// FL_EXPORT std::string fl_filename_path(const std::string &filename);
+// FL_EXPORT std::string fl_filename_ext(const std::string &filename);
+// FL_EXPORT std::string fl_filename_setext(const std::string &filename, const std::string &new_extension);
+// FL_EXPORT std::string fl_filename_expand(const std::string &from);
+// FL_EXPORT std::string fl_filename_absolute(const std::string &from);
+// FL_EXPORT std::string fl_filename_absolute(const std::string &from, const std::string &base);
+// FL_EXPORT std::string fl_filename_relative(const std::string &from);
+// FL_EXPORT std::string fl_filename_relative(const std::string &from, const std::string &base);
+// FL_EXPORT std::string fl_getcwd();
+
+#  endif /* defined(__cplusplus) */
 
 #  if defined(__cplusplus) && !defined(FL_DOXYGEN)
 /*
@@ -120,7 +137,7 @@ FL_EXPORT void fl_decode_uri(char *uri);
 #  endif /* __cplusplus */
 
 /*
- * FLTK 1.0.x compatibility definitions (FLTK_1_0_COMPAT) dropped in 1.4.0
+ * Note: FLTK 1.0.x compatibility definitions (FLTK_1_0_COMPAT) dropped in 1.4.0
  */
 
 #endif /* FL_FILENAME_H */

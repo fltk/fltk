@@ -19,7 +19,7 @@
 #define _FL_fl_config_h_
 
 /*
- * FL_ABI_VERSION (ABI version):
+ * FL_ABI_VERSION (ABI version)
  *
  * define FL_ABI_VERSION: 1xxyy for 1.x.y (xx,yy with leading zero)
 */
@@ -74,5 +74,18 @@
  */
 
 #cmakedefine FLTK_USE_WAYLAND 1
+
+
+/*
+ * FLTK_USE_STD
+ *
+ * May we use std::string and std::vector for the current build?
+ *
+ * This is a build configuration option which allows FLTK to add some
+ * features based on std::string and std::vector in FLTK 1.4.x
+ *
+ */
+
+#cmakedefine01 FLTK_USE_STD
 
 #endif /* _FL_fl_config_h_ */
