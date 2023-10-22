@@ -49,7 +49,7 @@ Function {make_window()} {open
     xywh {867 441 480 320} type Double visible
   } {
     Fl_Grid {} {open
-      xywh {25 25 240 160} labelsize 11
+      xywh {25 25 262 160} labelsize 11
       dimensions {3 3} margin {10 8 11 12}
       rowgaps { 3 -1 -1 }
       colwidths { 0 100 0 }
@@ -57,8 +57,8 @@ Function {make_window()} {open
       colgaps { 1 3 -1 }
     } {
       Fl_Button {} {
-        label Button
-        xywh {77 75 133 59} labelsize 11
+        label Button selected
+        xywh {85 75 139 59} labelsize 11
         parent_properties {
           location {1 1}
         }
@@ -82,8 +82,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load selected
-        xywh {10 30 400 330} labelsize 11 when 0 resizable
+        callback propagate_load
+        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -859,7 +859,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 hide
+        xywh {10 30 400 330} labelsize 11
       } {
         Fl_Group {} {
           label {Location:}
@@ -877,11 +877,15 @@ wCallback->do_callback(wCallback, v);} open
           } {
             Fl_Button {} {
               label {-}
-              xywh {135 60 15 20} labelsize 11 hide compact 1
+              callback grid_dec_row_cb
+              xywh {135 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
             Fl_Button {} {
               label {+}
-              xywh {150 60 15 20} labelsize 11 hide compact 1
+              callback grid_inc_row_cb
+              xywh {150 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
           }
           Fl_Input widget_grid_col_input {
@@ -895,11 +899,15 @@ wCallback->do_callback(wCallback, v);} open
           } {
             Fl_Button {} {
               label {-}
-              xywh {215 60 15 20} labelsize 11 hide compact 1
+              callback grid_dec_col_cb
+              xywh {215 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
             Fl_Button {} {
               label {+}
-              xywh {230 60 15 20} labelsize 11 hide compact 1
+              callback grid_inc_col_cb
+              xywh {230 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
           }
           Fl_Box {} {
@@ -1002,12 +1010,12 @@ wCallback->do_callback(wCallback, v);} open
           }
         }
         Fl_Group {} {
-          label {Cell Span:}
+          label {Span:}
           callback propagate_load open
           xywh {95 160 315 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
-            label {Rows:}
+          Fl_Input widget_grid_rowspan_input {
+            label {Row Span:}
             callback grid_set_rowspan_cb
             xywh {95 160 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
@@ -1017,15 +1025,19 @@ wCallback->do_callback(wCallback, v);} open
           } {
             Fl_Button {} {
               label {-}
-              xywh {135 160 15 20} labelsize 11 hide compact 1
+              callback grid_dec_rowspan_cb
+              xywh {135 160 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
             Fl_Button {} {
               label {+}
-              xywh {150 160 15 20} labelsize 11 hide compact 1
+              callback grid_inc_rowspan_cb
+              xywh {150 160 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
           }
-          Fl_Input {} {
-            label {Columns:}
+          Fl_Input widget_grid_colspan_input {
+            label {Col. Span:}
             callback grid_set_colspan_cb
             xywh {175 160 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
@@ -1035,11 +1047,15 @@ wCallback->do_callback(wCallback, v);} open
           } {
             Fl_Button {} {
               label {-}
-              xywh {215 160 15 20} labelsize 11 hide compact 1
+              callback grid_dec_colspan_cb
+              xywh {215 160 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
             Fl_Button {} {
               label {+}
-              xywh {230 160 15 20} labelsize 11 hide compact 1
+              callback grid_inc_colspan_cb
+              xywh {230 160 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
             }
           }
           Fl_Box {} {

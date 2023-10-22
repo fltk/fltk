@@ -187,7 +187,7 @@ public:
     Fl_Grid_Align align() const { return align_; }
 
     void minimum_size(int w, int h) { if (w>=0) w_ = w; if (h>=0) h_ = h; }
-    void minimum_size(int *w, int *h) { if (w) *w = w_; if (h) *h = h_; }
+    void minimum_size(int *w, int *h) const { if (w) *w = w_; if (h) *h = h_; }
   }; // class Cell
 
 private:

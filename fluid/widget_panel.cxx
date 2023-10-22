@@ -27,7 +27,7 @@ Fl_Double_Window* make_window() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = new Fl_Double_Window(480, 320);
     w = o; (void)w;
-    { Fl_Grid* o = new Fl_Grid(25, 25, 240, 160);
+    { Fl_Grid* o = new Fl_Grid(25, 25, 262, 160);
       o->labelsize(11);
       o->layout(3, 3);
       o->margin(10, 8, 11, 12);
@@ -39,7 +39,7 @@ Fl_Double_Window* make_window() {
       o->col_weight(colweights, 3);
       static const int colgaps[] = { 1, 3, -1 };
       o->col_gap(colgaps, 3);
-      { Fl_Button* o = new Fl_Button(77, 75, 133, 59, "Button");
+      { Fl_Button* o = new Fl_Button(85, 75, 139, 59, "Button");
         o->labelsize(11);
       } // Fl_Button* o
       Fl_Grid::Cell *cell = NULL;
@@ -167,6 +167,10 @@ Fl_Menu_Item menu_5[] = {
  {"GRID_BOTTOM_RIGHT", 0,  0, (void*)(FL_GRID_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
+
+Fluid_Coord_Input *widget_grid_rowspan_input=(Fluid_Coord_Input *)0;
+
+Fluid_Coord_Input *widget_grid_colspan_input=(Fluid_Coord_Input *)0;
 
 Fl_Group *widget_tab_grid=(Fl_Group *)0;
 
@@ -560,6 +564,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1433,7 +1438,6 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
         widget_tab_grid_child->labelsize(11);
         widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
-        widget_tab_grid_child->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1456,12 +1460,14 @@ access the Widget pointer and \'v\' to access the user value.");
             { Fl_Button* o = new Fl_Button(135, 60, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_dec_row_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(150, 60, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_inc_row_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
@@ -1482,12 +1488,14 @@ access the Widget pointer and \'v\' to access the user value.");
             { Fl_Button* o = new Fl_Button(215, 60, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_dec_col_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(230, 60, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_inc_col_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
@@ -1553,60 +1561,64 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 160, 315, 20, "Cell Span:");
+        { Fl_Group* o = new Fl_Group(95, 160, 315, 20, "Span:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(95, 160, 40, 20, "Rows:");
-            o->box(FL_DOWN_BOX);
-            o->color(FL_BACKGROUND2_COLOR);
-            o->selection_color(FL_SELECTION_COLOR);
-            o->labeltype(FL_NORMAL_LABEL);
-            o->labelfont(0);
-            o->labelsize(11);
-            o->labelcolor(FL_FOREGROUND_COLOR);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_set_rowspan_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* o
+          { widget_grid_rowspan_input = new Fluid_Coord_Input(95, 160, 40, 20, "Row Span:");
+            widget_grid_rowspan_input->box(FL_DOWN_BOX);
+            widget_grid_rowspan_input->color(FL_BACKGROUND2_COLOR);
+            widget_grid_rowspan_input->selection_color(FL_SELECTION_COLOR);
+            widget_grid_rowspan_input->labeltype(FL_NORMAL_LABEL);
+            widget_grid_rowspan_input->labelfont(0);
+            widget_grid_rowspan_input->labelsize(11);
+            widget_grid_rowspan_input->labelcolor(FL_FOREGROUND_COLOR);
+            widget_grid_rowspan_input->textsize(11);
+            widget_grid_rowspan_input->callback((Fl_Callback*)grid_set_rowspan_cb);
+            widget_grid_rowspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            widget_grid_rowspan_input->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* widget_grid_rowspan_input
           { Fl_Group* o = new Fl_Group(135, 160, 30, 20);
             { Fl_Button* o = new Fl_Button(135, 160, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_dec_rowspan_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(150, 160, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_inc_rowspan_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(175, 160, 40, 20, "Columns:");
-            o->box(FL_DOWN_BOX);
-            o->color(FL_BACKGROUND2_COLOR);
-            o->selection_color(FL_SELECTION_COLOR);
-            o->labeltype(FL_NORMAL_LABEL);
-            o->labelfont(0);
-            o->labelsize(11);
-            o->labelcolor(FL_FOREGROUND_COLOR);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_set_colspan_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* o
+          { widget_grid_colspan_input = new Fluid_Coord_Input(175, 160, 40, 20, "Col. Span:");
+            widget_grid_colspan_input->box(FL_DOWN_BOX);
+            widget_grid_colspan_input->color(FL_BACKGROUND2_COLOR);
+            widget_grid_colspan_input->selection_color(FL_SELECTION_COLOR);
+            widget_grid_colspan_input->labeltype(FL_NORMAL_LABEL);
+            widget_grid_colspan_input->labelfont(0);
+            widget_grid_colspan_input->labelsize(11);
+            widget_grid_colspan_input->labelcolor(FL_FOREGROUND_COLOR);
+            widget_grid_colspan_input->textsize(11);
+            widget_grid_colspan_input->callback((Fl_Callback*)grid_set_colspan_cb);
+            widget_grid_colspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            widget_grid_colspan_input->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* widget_grid_colspan_input
           { Fl_Group* o = new Fl_Group(215, 160, 30, 20);
             { Fl_Button* o = new Fl_Button(215, 160, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_dec_colspan_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(230, 160, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->hide();
+              o->callback((Fl_Callback*)grid_inc_colspan_cb);
+              o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o

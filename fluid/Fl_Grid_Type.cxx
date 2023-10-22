@@ -400,38 +400,55 @@ Fl_Grid *Fl_Grid_Type::selected() {
   return NULL;
 }
 
-extern Fluid_Coord_Input *widget_grid_row_input, *widget_grid_col_input;
+extern Fluid_Coord_Input *widget_grid_row_input, *widget_grid_col_input,
+  *widget_grid_rowspan_input, *widget_grid_colspan_input;
+extern Fl_Group *widget_tab_grid_child;
 
-// FIXME: when changing row or col or moving a cell in any other way, we need
-//        to copy all attributes from the old cell, or they will be lost
-// FIXME: changing a single row or col value should not move the cell, or we
-//        may overwrite other cells
-// FIXME: when changing the cell location, activate a button [move] to actually
-//        move the cell there. If it would replace another cell, show a
-//        [replace] button instead that my be bright red
-// TODO: update the row and col widgets when the cell changes location
+static void move_cell(Fl_Grid *grid, Fl_Widget *child, int to_row, int to_col) {
+  short rowspan = 1, colspan = 1;
+  Fl_Grid_Align align = FL_GRID_FILL;
+  int w = 20, h = 20;
+  const Fl_Grid::Cell *old_cell = grid->cell(child);
+  if (old_cell) {
+    rowspan = old_cell->rowspan();
+    colspan = old_cell->colspan();
+    align = old_cell->align();
+    old_cell->minimum_size(&w, &h);
+  }
+  if ((to_row<0) || (to_row+rowspan>grid->rows())) return;
+  if ((to_col<0) || (to_col+colspan>grid->cols())) return;
+  Fl_Grid::Cell *new_cell = grid->widget(child, to_row, to_col, rowspan, colspan, align);
+  if (new_cell) new_cell->minimum_size(w, h);
+}
+
+// FIXME: when changing the cell location, and another cell would be overridden,
+//        don't actually move the cell (hard to implement!) and activate
+//        a red button "replace". If clicked, user gets the option to delete
+//        the old widget, or just remove the cell, or cancel.
 // TODO: move cells by using the arrow keys?
 // TODO: move cells via drag'n'drop
 // TODO: insert cells when adding them from the menu or toolbar
 // TODO: better grid overlay?
-// TODO: handle illegal values in all cells
-// TODO: maybe increment, decrement buttons for cell locations as they only change in increments?
-// TODO: we could even use formulas for moving multiple cells in one go
+// TODO: grid_child_cb should move all selected cells.
 // TODO: buttons to add and delete rows and columns in the widget dialog
 // TODO: ways to resize rows and columns, add and delete them in the project window, pulldown menu?
+// TODO: alignment can be FL_GRID_LEFT|FL_GRID_VERTICAL?
 void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
+  static Fl_Widget *prev_widget = NULL;
   if (   !current_widget
       || !current_widget->parent
       || !current_widget->parent->is_a(ID_Grid))
   {
     return;
   }
+  Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
   Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Grid::Cell *cell = g->cell(child);
+  bool freeze_row_col = (!cell && prev_widget==child && ((what&0x00ff)==8 || (what&0x00ff)==9));
   if (v == LOAD) {
     int v = -1;
-    Fl_Grid::Cell *cell = g->cell(current_widget->o);
     if (cell) {
-      switch (what) {
+      switch (what & 0x00ff) {
         case 8: v = cell->row(); break;
         case 9: v = cell->col(); break;
         case 10: v = cell->rowspan(); break;
@@ -440,15 +457,17 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
         case 13: cell->minimum_size(NULL, &v); break;
       }
     }
-    i->value(v);
+    if (!cell && prev_widget!=child && what==11)
+      prev_widget = child;
+    if (!freeze_row_col)
+      i->value(v);
   } else {
     int v2 = -1, old_v = -1, v = i->value();
     if (i==widget_grid_row_input) v2 = widget_grid_col_input->value();
     if (i==widget_grid_col_input) v2 = widget_grid_row_input->value();
-    Fl_Grid::Cell *cell = g->cell(current_widget->o);
     Fl_Grid::Cell *new_cell = NULL;
     if (cell) {
-      switch (what) {
+      switch (what & 0x00ff) {
         case 8: old_v = cell->row(); v2 = cell->col(); break;
         case 9: old_v = cell->col(); v2 = cell->row(); break;
         case 10: old_v = cell->rowspan(); break;
@@ -457,34 +476,91 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
         case 13: cell->minimum_size(&v2, &old_v); break;
       }
     }
+    switch (what & 0xff00) {
+      case 0x0100: v--; break;
+      case 0x0200: v++; break;
+    }
     if (old_v != v) {
-      switch (what) {
-        case 8: if (v>=0 && v2>=0) new_cell = g->widget(current_widget->o, v, v2); break;
-        case 9: if (v>=0 && v2>=0) new_cell = g->widget(current_widget->o, v2, v); break;
-        case 10: if (cell) cell->rowspan(v); break;
-        case 11: if (cell) cell->colspan(v); break;
+      switch (what & 0x00ff) {
+        case 8: if (v>=0 && v2>=0) move_cell(g, current_widget->o, v, v2);
+          if (freeze_row_col) i->value(v); break;
+        case 9: if (v>=0 && v2>=0) move_cell(g, current_widget->o, v2, v);
+          if (freeze_row_col) i->value(v); break;
+        case 10: if (cell && cell->row()+v<=g->rows()) cell->rowspan(v); break;
+        case 11: if (cell && cell->col()+v<=g->cols()) cell->colspan(v); break;
         case 12: if (cell) cell->minimum_size(v, v2); break;
         case 13: if (cell) cell->minimum_size(v2, v); break;
       }
       if (!cell && new_cell)
         new_cell->minimum_size(20, 20);
       g->need_layout(true);
-      g->redraw();
       set_modflag(1);
     }
   }
 }
 void grid_set_row_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 8);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+}
+void grid_dec_row_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_row_input, v, 0x0100 + 8);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
+}
+void grid_inc_row_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_row_input, v, 0x0200 + 8);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
 }
 void grid_set_col_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 9);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+}
+void grid_dec_col_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_col_input, v, 0x0100 + 9);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
+}
+void grid_inc_col_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_col_input, v, 0x0200 + 9);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
 }
 void grid_set_rowspan_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 10);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+}
+void grid_dec_rowspan_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_rowspan_input, v, 0x0100 + 10);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
+}
+void grid_inc_rowspan_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_rowspan_input, v, 0x0200 + 10);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
 }
 void grid_set_colspan_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 11);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+}
+void grid_dec_colspan_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_colspan_input, v, 0x0100 + 11);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
+}
+void grid_inc_colspan_cb(Fl_Button* i, void* v) {
+  if (v!=LOAD) {
+    grid_child_cb(widget_grid_colspan_input, v, 0x0200 + 11);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }
 }
 void grid_set_min_wdt_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 12);
