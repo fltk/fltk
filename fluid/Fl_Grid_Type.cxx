@@ -78,6 +78,7 @@ void Fl_Grid_Type::write_properties(Fd_Project_Writer &f)
   grid->gap(&rg, &cg);
   if (rg!=0 || cg!=0)
     f.write_string("gap {%d %d}", rg, cg);
+  // -- write all row heights if one of them is not the default 0
   for (i=0; i<rows; i++) if (grid->row_height(i)!=0) break;
   if (i<rows) {
     f.write_indent(level+1);
@@ -85,7 +86,46 @@ void Fl_Grid_Type::write_properties(Fd_Project_Writer &f)
     for (i=0; i<rows; i++) f.write_string("%d", grid->row_height(i));
     f.write_string("}");
   }
-  // TODO: add row_weight, row_gap, col_width, col_weight, col_gap
+  // -- write all row weights if one of them is not the default 50
+  for (i=0; i<rows; i++) if (grid->row_weight(i)!=50) break;
+  if (i<rows) {
+    f.write_indent(level+1);
+    f.write_string("rowweights {");
+    for (i=0; i<rows; i++) f.write_string("%d", grid->row_weight(i));
+    f.write_string("}");
+  }
+  // -- write all row gaps if one of them is not the default -1
+  for (i=0; i<rows; i++) if (grid->row_gap(i)!=-1) break;
+  if (i<rows) {
+    f.write_indent(level+1);
+    f.write_string("rowgaps {");
+    for (i=0; i<rows; i++) f.write_string("%d", grid->row_gap(i));
+    f.write_string("}");
+  }
+  // -- write all col widths if one of them is not the default 0
+  for (i=0; i<cols; i++) if (grid->col_width(i)!=0) break;
+  if (i<cols) {
+    f.write_indent(level+1);
+    f.write_string("colwidths {");
+    for (i=0; i<cols; i++) f.write_string("%d", grid->col_width(i));
+    f.write_string("}");
+  }
+  // -- write all col weights if one of them is not the default 50
+  for (i=0; i<cols; i++) if (grid->col_weight(i)!=50) break;
+  if (i<cols) {
+    f.write_indent(level+1);
+    f.write_string("colweights {");
+    for (i=0; i<cols; i++) f.write_string("%d", grid->col_weight(i));
+    f.write_string("}");
+  }
+  // -- write all col gaps if one of them is not the default -1
+  for (i=0; i<cols; i++) if (grid->col_gap(i)!=-1) break;
+  if (i<cols) {
+    f.write_indent(level+1);
+    f.write_string("colgaps {");
+    for (i=0; i<cols; i++) f.write_string("%d", grid->col_gap(i));
+    f.write_string("}");
+  }
 }
 
 void Fl_Grid_Type::read_property(Fd_Project_Reader &f, const char *c)
@@ -108,7 +148,31 @@ void Fl_Grid_Type::read_property(Fd_Project_Reader &f, const char *c)
     f.read_word(1); // "{"
     for (int i=0; i<rows; i++) grid->row_height(i, f.read_int());
     f.read_word(1); // "}"
-    // TODO: add row_weight, row_gap, col_width, col_weight, col_gap
+  } else if (!strcmp(c,"rowweights")) {
+    int rows = grid->rows();
+    f.read_word(1); // "{"
+    for (int i=0; i<rows; i++) grid->row_weight(i, f.read_int());
+    f.read_word(1); // "}"
+  } else if (!strcmp(c,"rowgaps")) {
+    int rows = grid->rows();
+    f.read_word(1); // "{"
+    for (int i=0; i<rows; i++) grid->row_gap(i, f.read_int());
+    f.read_word(1); // "}"
+  } else if (!strcmp(c,"colwidths")) {
+    int cols = grid->cols();
+    f.read_word(1); // "{"
+    for (int i=0; i<cols; i++) grid->col_width(i, f.read_int());
+    f.read_word(1); // "}"
+  } else if (!strcmp(c,"colweights")) {
+    int cols = grid->cols();
+    f.read_word(1); // "{"
+    for (int i=0; i<cols; i++) grid->col_weight(i, f.read_int());
+    f.read_word(1); // "}"
+  } else if (!strcmp(c,"colgaps")) {
+    int cols = grid->cols();
+    f.read_word(1); // "{"
+    for (int i=0; i<cols; i++) grid->col_gap(i, f.read_int());
+    f.read_word(1); // "}"
   } else {
     super::read_property(f, c);
   }
@@ -213,6 +277,7 @@ void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
   grid->gap(&rg, &cg);
   if (rg!=0 || cg!=0)
     f.write_c("%s%s->gap(%d, %d);\n", f.indent(), var, rg, cg);
+  // -- write all row heights if one of them is not the default 0
   for (i=0; i<rows; i++) if (grid->row_height(i)!=0) break;
   if (i<rows) {
     f.write_c("%sstatic const int rowheights[] = { %d", f.indent(), grid->row_height(0));
@@ -220,7 +285,46 @@ void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
     f.write_c(" };\n");
     f.write_c("%s%s->row_height(rowheights, %d);\n", f.indent(), var, rows);
   }
-  // TODO: add row_weight, row_gap, col_width, col_weight, col_gap
+  // -- write all row weights if one of them is not the default 50
+  for (i=0; i<rows; i++) if (grid->row_weight(i)!=50) break;
+  if (i<rows) {
+    f.write_c("%sstatic const int rowweights[] = { %d", f.indent(), grid->row_weight(0));
+    for (i=1; i<rows; i++) f.write_c(", %d", grid->row_weight(i));
+    f.write_c(" };\n");
+    f.write_c("%s%s->row_weight(rowweights, %d);\n", f.indent(), var, rows);
+  }
+  // -- write all row gaps if one of them is not the default -1
+  for (i=0; i<rows; i++) if (grid->row_gap(i)!=-1) break;
+  if (i<rows) {
+    f.write_c("%sstatic const int rowgaps[] = { %d", f.indent(), grid->row_gap(0));
+    for (i=1; i<rows; i++) f.write_c(", %d", grid->row_gap(i));
+    f.write_c(" };\n");
+    f.write_c("%s%s->row_gap(rowgaps, %d);\n", f.indent(), var, rows);
+  }
+  // -- write all col widths if one of them is not the default 0
+  for (i=0; i<cols; i++) if (grid->col_width(i)!=0) break;
+  if (i<cols) {
+    f.write_c("%sstatic const int colwidths[] = { %d", f.indent(), grid->col_width(0));
+    for (i=1; i<cols; i++) f.write_c(", %d", grid->col_width(i));
+    f.write_c(" };\n");
+    f.write_c("%s%s->col_width(colwidths, %d);\n", f.indent(), var, cols);
+  }
+  // -- write all col weights if one of them is not the default 50
+  for (i=0; i<cols; i++) if (grid->col_weight(i)!=50) break;
+  if (i<cols) {
+    f.write_c("%sstatic const int colweights[] = { %d", f.indent(), grid->col_weight(0));
+    for (i=1; i<cols; i++) f.write_c(", %d", grid->col_weight(i));
+    f.write_c(" };\n");
+    f.write_c("%s%s->col_weight(colweights, %d);\n", f.indent(), var, cols);
+  }
+  // -- write all col gaps if one of them is not the default -1
+  for (i=0; i<cols; i++) if (grid->col_gap(i)!=-1) break;
+  if (i<cols) {
+    f.write_c("%sstatic const int colgaps[] = { %d", f.indent(), grid->col_gap(0));
+    for (i=1; i<cols; i++) f.write_c(", %d", grid->col_gap(i));
+    f.write_c(" };\n");
+    f.write_c("%s%s->col_gap(colgaps, %d);\n", f.indent(), var, cols);
+  }
 }
 
 void Fl_Grid_Type::write_code2(Fd_Code_Writer& f) {
@@ -389,6 +493,23 @@ void grid_cols_cb(Fluid_Coord_Input* i, void* v) {
 
 extern Fluid_Coord_Input *widget_grid_row_input, *widget_grid_col_input;
 
+// FIXME: when changing row or col or moving a cell in any other way, we need
+//        to copy all attributes from the old cell, or they will be lost
+// FIXME: changing a single row or col value should not move the cell, or we
+//        may overwrite other cells
+// FIXME: when changing the cell location, activate a button [move] to actually
+//        move the cell there. If it would replace another cell, show a
+//        [replace] button instead that my be bright red
+// TODO: update the row and col widgets when the cell changes location
+// TODO: move cells by using the arrow keys?
+// TODO: move cells via drag'n'drop
+// TODO: insert cells when adding them from the menu or toolbar
+// TODO: better grid overlay?
+// TODO: handle illegal values in all cells
+// TODO: maybe increment, decrement buttons for cell locations as they only change in increments?
+// TODO: we could even use formulas for moving multiple cells in one go
+// TODO: buttons to add and delete rows and columns in the widget dialog
+// TODO: ways to resize rows and columns, add and delete them in the project window, pulldown menu?
 void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
   if (   !current_widget
       || !current_widget->parent

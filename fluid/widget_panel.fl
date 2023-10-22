@@ -44,7 +44,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open
+        callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -874,7 +874,7 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Tabs widget_tabs_repo {open
+    Fl_Tabs widget_tabs_repo {
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
@@ -903,7 +903,7 @@ wCallback->do_callback(wCallback, v);} open
           }
           Fl_Input widget_grid_col_input {
             label {Column:}
-            callback grid_set_col_cb selected
+            callback grid_set_col_cb
             xywh {156 110 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
