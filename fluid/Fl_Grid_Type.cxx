@@ -421,18 +421,62 @@ static void move_cell(Fl_Grid *grid, Fl_Widget *child, int to_row, int to_col) {
   if (new_cell) new_cell->minimum_size(w, h);
 }
 
+void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
+  Fl_Grid *grid = (Fl_Grid*)o;
+  int row = -1, col = -1, ml, mt, grg, gcg;
+  grid->margin(&ml, &mt, NULL, NULL);
+  grid->gap(&grg, &gcg);
+  int x0 = grid->x() + Fl::box_dx(grid->box()) + ml;
+  int y0 = grid->y() + Fl::box_dy(grid->box()) + mt;
+
+  for (int r = 0; r < grid->rows(); r++) {
+    if (y>y0) row = r;
+    int gap = grid->row_gap(r)>=0 ? grid->row_gap(r) : grg;
+    y0 += grid->computed_row_height(r);
+    y0 += gap;
+  }
+
+  for (int c = 0; c < grid->cols(); c++) {
+    if (x>x0) col = c;
+    int gap = grid->col_gap(c)>=0 ? grid->col_gap(c) : gcg;
+    x0 += grid->computed_col_width(c);
+    x0 += gap;
+  }
+
+  move_cell(grid, child, row, col);
+}
+
+/** Insert a child window into the first new cell we can find .
+
+ There are many other possible strategies. How about inserting to the right
+ of the last added child. Also, what happens if the grid is full? Should
+ we add a new row at the bottom?
+ */
+void Fl_Grid_Type::insert_child(Fl_Widget *child) {
+  Fl_Grid *grid = (Fl_Grid*)o;
+  if (grid->cell(child)) return;
+  for (int r=0; r<grid->rows(); r++) {
+    for (int c=0; c<grid->cols(); c++) {
+      if (!grid->cell(r, c)) {
+        move_cell(grid, child, r, c);
+        return;
+      }
+    }
+  }
+}
+
 // FIXME: when changing the cell location, and another cell would be overridden,
 //        don't actually move the cell (hard to implement!) and activate
 //        a red button "replace". If clicked, user gets the option to delete
 //        the old widget, or just remove the cell, or cancel.
 // TODO: move cells by using the arrow keys?
 // TODO: move cells via drag'n'drop
-// TODO: insert cells when adding them from the menu or toolbar
 // TODO: better grid overlay?
-// TODO: grid_child_cb should move all selected cells.
+// TODO: grid_child_cb should move all selected cells, not just the current_selected.
 // TODO: buttons to add and delete rows and columns in the widget dialog
 // TODO: ways to resize rows and columns, add and delete them in the project window, pulldown menu?
 // TODO: alignment can be FL_GRID_LEFT|FL_GRID_VERTICAL?
+// TODO: we must set undo checkpoints in all callbacks!
 void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
   static Fl_Widget *prev_widget = NULL;
   if (   !current_widget

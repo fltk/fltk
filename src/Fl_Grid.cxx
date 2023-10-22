@@ -1142,6 +1142,14 @@ int Fl_Grid::row_gap(int row) const {
   return 0;
 }
 
+int Fl_Grid::computed_col_width(int col) const {
+  return Cols_[col].w_;
+}
+
+int Fl_Grid::computed_row_height(int row) const { 
+  return Rows_[row].h_;
+}
+
 /**
   Output layout information of this Fl_Grid to stderr.
 

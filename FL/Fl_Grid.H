@@ -311,6 +311,9 @@ public:
   void row_gap(const int *value, size_t size);
   int row_gap(int row) const;
 
+  int computed_col_width(int col) const;
+  int computed_row_height(int row) const;
+
   /**
     Enable or disable drawing of the grid helper lines for visualization.
 

@@ -26,6 +26,7 @@
 
 #include "fluid.h"
 #include "Fl_Group_Type.h"
+#include "Fl_Grid_Type.h"
 #include "Fl_Menu_Type.h"
 #include "Fd_Snap_Action.h"
 #include "pixmaps.h"
@@ -1223,6 +1224,13 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
           // If popupx is invalid, use the default position and find a good
           // size for the widget.
           wt->o->size(w, h);
+        }
+      }
+      if (t->parent && t->parent->is_a(ID_Grid)) {
+        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
+          ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+        } else {
+          ((Fl_Grid_Type*)t->parent)->insert_child(((Fl_Widget_Type*)t)->o);
         }
       }
     }
