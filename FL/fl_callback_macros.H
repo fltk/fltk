@@ -153,7 +153,7 @@
  ...
  Fl_Button *btn = new Fl_Button(10, 10, 100, 20, "Test");
  FL_INLINE_CALLBACK_1(btn,
-   Fl_String, name, btn->label(),
+   const char *, name, btn->label(),
    {
      fl_message("Greetings from the %s button", name);
    }
