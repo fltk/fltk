@@ -1681,7 +1681,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 <tr><td> `F7` </td><td> group widgets </td></tr>
 <tr><td> `F8` </td><td> ungroup widgets </td></tr>
 <tr><td> `Delete` </td><td> delete selected widgets </td></tr>
-<tr><td> `Ctrl-0..9` </td><td> load design from history </td></tr>
+<tr><td> `Ctrl-1..9` </td><td> load project from history </td></tr>
 <tr><td> `Alt-1` </td><td> label text tiny </td></tr>
 <tr><td> `Alt-2` </td><td> lLabel text small </td></tr>
 <tr><td> `Alt-3` </td><td> label text normal </td></tr>
