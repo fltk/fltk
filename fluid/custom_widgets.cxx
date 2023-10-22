@@ -142,6 +142,7 @@ vars_(0L),
 vars_user_data_(0L)
 {
   Fl_Input::callback((Fl_Callback*)callback_handler_cb);
+  text("0");
 }
 
 void Fluid_Coord_Input::callback_handler_cb(Fluid_Coord_Input *This, void *v) {

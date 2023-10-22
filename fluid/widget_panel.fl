@@ -2,6 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 comment {//
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +25,13 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include "undo.h"} {private global
+}
+
 decl {\#include "Fl_Widget_Type.h"} {private global
+}
+
+decl {\#include "Fl_Grid_Type.h"} {private global
 }
 
 decl {\#include <FL/Fl_Grid.H>} {private global
@@ -29,12 +40,39 @@ decl {\#include <FL/Fl_Grid.H>} {private global
 decl {\#include "custom_widgets.h"} {public global
 }
 
+decl {extern void set_modflag(int mf, int mfc=-1);} {private local
+}
+
+Function {make_window()} {open
+} {
+  Fl_Window {} {open
+    xywh {867 441 480 320} type Double visible
+  } {
+    Fl_Grid {} {open
+      xywh {25 25 240 160} labelsize 11
+      dimensions {3 3} margin {10 8 11 12}
+      rowgaps { 3 -1 -1 }
+      colwidths { 0 100 0 }
+      colweights { 50 40 50 }
+      colgaps { 1 3 -1 }
+    } {
+      Fl_Button {} {
+        label Button
+        xywh {77 75 133 59} labelsize 11
+        parent_properties {
+          location {1 1}
+        }
+      }
+    }
+  }
+}
+
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {566 244 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {413 247 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs widget_tabs {
@@ -44,7 +82,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open
+        callback propagate_load selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -666,7 +704,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group {} {
         label {C++}
-        callback propagate_load open
+        callback propagate_load
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
@@ -818,48 +856,64 @@ wCallback->do_callback(wCallback, v);} open
           }
         }
       }
-    }
-    Fl_Tabs widget_tabs_repo {open selected
-      xywh {10 10 400 350} hide
-      code0 {o->hide();}
-    } {
-      Fl_Group {} {open
-        xywh {10 30 400 330} hide resizable
-      } {}
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
         xywh {10 30 400 330} labelsize 11 hide
       } {
-        Fl_Box {} {
-          label {The Fl_Grid implementation in FLUID is still experimental!}
-          xywh {25 43 370 28} labelfont 1 labelsize 11 labelcolor 1
-        }
-        Fl_Box {} {
-          label {-- Widget --}
-          xywh {96 74 155 20} labelfont 1 labelsize 12 align 20
-        }
         Fl_Group {} {
           label {Location:}
           callback propagate_load open
-          xywh {96 110 314 20} labelfont 1 labelsize 11 align 4
+          xywh {95 60 315 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_grid_row_input {
             label {Row:}
             callback grid_set_row_cb
-            xywh {96 110 55 20} labelsize 11 align 5 textsize 11
+            xywh {95 60 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {135 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              xywh {135 60 15 20} labelsize 11 hide compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              xywh {150 60 15 20} labelsize 11 hide compact 1
+            }
           }
           Fl_Input widget_grid_col_input {
             label {Column:}
             callback grid_set_col_cb
-            xywh {156 110 55 20} labelsize 11 align 5 textsize 11
+            xywh {175 60 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
+          Fl_Group {} {open
+            xywh {215 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              xywh {215 60 15 20} labelsize 11 hide compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              xywh {230 60 15 20} labelsize 11 hide compact 1
+            }
+          }
+          Fl_Box {} {
+            xywh {395 60 1 20} hide resizable
+          }
+        }
+        Fl_Group {} {
+          label {Align:}
+          callback propagate_load open
+          xywh {95 90 315 20} labelfont 1 labelsize 11 align 4
+        } {
           Fl_Choice {} {
-            label {Align:}
             callback grid_align_cb
-            xywh {215 110 185 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+            xywh {95 90 160 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
             MenuItem {} {
               label GRID_CENTER
@@ -923,180 +977,565 @@ wCallback->do_callback(wCallback, v);} open
             }
           }
           Fl_Box {} {
-            xywh {400 110 1 20} hide resizable
+            xywh {395 90 1 20} hide resizable
+          }
+        }
+        Fl_Group {} {
+          label {Min. Size:}
+          callback propagate_load open
+          xywh {95 125 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input {} {
+            label {Width:}
+            callback grid_set_min_wdt_cb
+            xywh {95 125 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Height:}
+            callback grid_set_min_hgt_cb
+            xywh {155 125 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Box {} {
+            xywh {395 125 1 20} hide resizable
           }
         }
         Fl_Group {} {
           label {Cell Span:}
-          callback propagate_load
-          xywh {96 145 314 20} labelfont 1 labelsize 11 align 4
+          callback propagate_load open
+          xywh {95 160 315 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Box {} {
-            xywh {400 145 1 20} hide resizable
-          }
           Fl_Input {} {
-            label {Row Span:}
+            label {Rows:}
             callback grid_set_rowspan_cb
-            xywh {96 145 55 20} labelsize 11 align 5 textsize 11
+            xywh {95 160 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
+          Fl_Group {} {open
+            xywh {135 160 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              xywh {135 160 15 20} labelsize 11 hide compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              xywh {150 160 15 20} labelsize 11 hide compact 1
+            }
+          }
           Fl_Input {} {
-            label {Col Span:}
+            label {Columns:}
             callback grid_set_colspan_cb
-            xywh {156 145 55 20} labelsize 11 align 5 textsize 11
+            xywh {175 160 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {215 160 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              xywh {215 160 15 20} labelsize 11 hide compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              xywh {230 160 15 20} labelsize 11 hide compact 1
+            }
+          }
+          Fl_Box {} {
+            xywh {395 160 1 20} hide resizable
           }
         }
-        Fl_Group {} {
-          label {Size:}
-          callback propagate_load
-          xywh {96 180 314 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Box {} {
-            xywh {400 180 1 20} hide resizable
-          }
-          Fl_Input {} {
-            label {Min.Width:}
-            callback grid_set_min_wdt_cb
-            xywh {96 180 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Min.Height:}
-            callback grid_set_min_hgt_cb
-            xywh {156 180 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
+        Fl_Box {} {
+          xywh {95 350 300 5} labelsize 11 hide resizable
         }
       }
       Fl_Group widget_tab_grid {
         label Grid
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11
+        xywh {10 30 400 330} labelsize 11 hide
       } {
-        Fl_Box {} {
-          label {The Fl_Grid implementation in FLUID is still experimental!}
-          xywh {25 43 370 28} labelfont 1 labelsize 11 labelcolor 1
+        Fl_Group {} {
+          label {Grid Layout:}
+          callback propagate_load open
+          xywh {95 60 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input widget_grid_rows {
+            label {Rows:}
+            callback {// grid_rows_cb
+Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+if (v == LOAD) {
+  o->value(grid->rows());
+} else {
+  int m = o->value(), old_m = grid->rows();
+  if (m < 1) {
+    m = 1;
+    o->value(m);
+  }
+  if (m < old_m) {
+    // TODO: verify that this will not unlink existings cells
+    // Offer a dialog with "delete children", "unlink cells", "cancel"
+  }
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->layout(m, grid->cols());
+    grid->need_layout(true);
+    set_modflag(1);
+    widget_tab_grid->do_callback(widget_tab_grid, LOAD);
+  }
+}}
+            tooltip {Number of horizontal rows in the Grid group} xywh {95 60 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {135 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_rows->value( widget_grid_rows->value()-1 );
+  widget_grid_rows->do_callback();
+}}
+              xywh {135 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_rows->value( widget_grid_rows->value()+1 );
+  widget_grid_rows->do_callback();
+}}
+              xywh {150 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Input widget_grid_cols {
+            label {Columns:}
+            callback {// grid_rows_cb
+Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+if (v == LOAD) {
+  o->value(grid->cols());
+} else {
+  int m = o->value(), old_m = grid->cols();
+  if (m < 1) {
+    m = 1;
+    o->value(m);
+  }
+  if (m < old_m) {
+    // TODO: verify that this will not unlink existings cells
+    // Offer a dialog with "delete children", "unlink cells", "cancel"
+  }
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->layout(grid->rows(), m);
+    grid->need_layout(true);
+    set_modflag(1);
+    widget_tab_grid->do_callback(widget_tab_grid, LOAD);
+  }
+}}
+            tooltip {Number of vertical columns in the Grid group} xywh {175 60 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {215 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_cols->value( widget_grid_cols->value()-1 );
+  widget_grid_cols->do_callback();
+}}
+              xywh {215 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_cols->value( widget_grid_cols->value()+1 );
+  widget_grid_cols->do_callback();
+}}
+              xywh {230 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Box {} {
+            xywh {396 60 0 20} resizable
+          }
+        }
+        Fl_Group {} {
+          label {Margin:}
+          callback propagate_load open
+          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Left:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(&m, NULL, NULL, NULL); 
+  o->value(m);
+} else {
+  int m = o->value(), old_m;
+  grid->margin(&old_m, NULL, NULL, NULL); 
+  if (m != old_m) {
+    grid->margin(m, -1, -1, -1); 
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Left margin in group.} xywh {95 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Top:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(NULL, &m, NULL, NULL); 
+  o->value(m);
+} else {
+  int m = o->value(), old_m;
+  grid->margin(NULL, &old_m, NULL, NULL); 
+  if (m != old_m) {
+    grid->margin(-1, m, -1, -1); 
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Top margin in group.} xywh {155 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Right:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(NULL, NULL, &m, NULL); 
+  o->value(m);
+} else {
+  int m = o->value(), old_m;
+  grid->margin(NULL, NULL, &old_m, NULL); 
+  if (m != old_m) {
+    grid->margin(-1, -1, m, -1); 
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Right margin in group.} xywh {215 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Bottom:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(NULL, NULL, NULL, &m);
+  o->value(m);
+} else {
+  int m = o->value(), old_m;
+  grid->margin(NULL, NULL, NULL, &old_m);
+  if (m != old_m) {
+    grid->margin(-1, -1, -1, m);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Bottom margin in group.} xywh {275 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {396 100 0 20} resizable
+          }
+        }
+        Fl_Group {} {
+          label {Gaps:}
+          callback propagate_load open
+          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Row:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->gap(&m, NULL); 
+  o->value(m);
+} else {
+  int m = o->value(), old_m;
+  grid->gap(&old_m, NULL); 
+  if (m != old_m) {
+    grid->gap(m, -1); 
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Gap between children.} xywh {95 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Col:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->gap(NULL, &m);
+  o->value(m);
+} else {
+  int m = o->value(), old_m;
+  grid->gap(NULL, &old_m);
+  if (m != old_m) {
+    grid->gap(-1, m); 
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Gap between children.} xywh {155 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {396 135 0 20} resizable
+          }
         }
         Fl_Group {} {
           label {Row:}
-          callback propagate_load open
-          xywh {96 170 314 20} labelfont 1 labelsize 11 align 4
+          callback {if (v == LOAD) {
+  Fl_Grid *grid = Fl_Grid_Type::selected();
+  if (grid)
+    o->activate();
+  else
+    o->deactivate();
+  propagate_load(o, v);
+}} open
+          xywh {95 175 315 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input widget_grid_curr_row {
             label Index
-            xywh {96 170 55 20} labelsize 11 align 5 textsize 11 deactivate
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = o->value(), old_r = r;
+if (r < 0) r = 0;
+if (r >= grid->rows()) r = grid->rows()-1;
+if (r != old_r) o->value(r);
+if (v == LOAD) {
+  // will automatically propagate
+} else {
+  widget_grid_curr_row_attributes->do_callback(widget_grid_curr_row_attributes, LOAD);
+}}
+            xywh {95 175 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
-          Fl_Input {} {
-            label {Height:}
-            callback grid_row_height
-            xywh {156 170 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Weight:}
-            callback grid_row_weight
-            xywh {216 170 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Gap:}
-            callback grid_row_gap
-            xywh {276 170 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
+          Fl_Group {} {
+            callback propagate_load open
+            xywh {135 175 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_curr_row->value( widget_grid_curr_row->value()-1 );
+  widget_grid_curr_row->do_callback();
+}}
+              xywh {135 175 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_curr_row->value( widget_grid_curr_row->value()+1 );
+  widget_grid_curr_row->do_callback();
+}}
+              xywh {150 175 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
           }
           Fl_Box {} {
-            xywh {400 170 1 20} hide resizable
+            label {:}
+            xywh {165 175 15 20} labelsize 11
+          }
+          Fl_Group widget_grid_curr_row_attributes {
+            callback propagate_load open
+            xywh {180 175 175 20}
+          } {
+            Fl_Input {} {
+              label {Height:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = widget_grid_curr_row->value();
+if (v == LOAD) {
+  o->value(grid->row_height(r));
+} else {
+  int h = o->value(), old_h = grid->row_height(r);
+  if (h != old_h) {
+    grid->row_height(r, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {180 175 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Weight:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = widget_grid_curr_row->value();
+if (v == LOAD) {
+  o->value(grid->row_weight(r));
+} else {
+  int h = o->value(), old_h = grid->row_weight(r);
+  if (h != old_h) {
+    grid->row_weight(r, h);
+    grid->need_layout(true);
+    set_modflag(1); 
+  }
+}}
+              xywh {240 175 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Gap:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = widget_grid_curr_row->value();
+if (v == LOAD) {
+  o->value(grid->row_gap(r));
+} else {
+  int h = o->value(), old_h = grid->row_gap(r);
+  if (h != old_h) {
+    grid->row_gap(r, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {300 175 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+          }
+          Fl_Box {} {
+            xywh {400 175 1 20} hide resizable
           }
         }
         Fl_Group {} {
           label {Column:}
           callback propagate_load open
-          xywh {96 205 314 20} labelfont 1 labelsize 11 align 4
+          xywh {95 210 315 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input widget_grid_curr_col {
             label Index
-            xywh {96 205 55 20} labelsize 11 align 5 textsize 11 deactivate
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = o->value(), old_c = c;
+if (c < 0) c = 0;
+if (c >= grid->cols()) c = grid->cols()-1;
+if (c != old_c) o->value(c);
+if (v == LOAD) {
+  // will automatically propagate
+} else {
+  widget_grid_curr_col_attributes->do_callback(widget_grid_curr_col_attributes, LOAD);
+}}
+            xywh {95 210 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
-          Fl_Input {} {
-            label {Width:}
-            callback grid_col_width
-            xywh {156 205 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Weight:}
-            callback grid_col_weight
-            xywh {216 205 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Gap:}
-            callback grid_col_gap
-            xywh {276 205 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
+          Fl_Group {} {open
+            xywh {135 210 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_curr_col->value( widget_grid_curr_col->value()-1 );
+  widget_grid_curr_col->do_callback();
+}}
+              xywh {135 210 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_curr_col->value( widget_grid_curr_col->value()+1 );
+  widget_grid_curr_col->do_callback();
+}}
+              xywh {150 210 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
           }
           Fl_Box {} {
-            xywh {400 205 1 20} hide resizable
+            label {:}
+            xywh {165 210 15 20} labelsize 11
+          }
+          Fl_Group widget_grid_curr_col_attributes {
+            callback propagate_load open
+            xywh {180 210 175 20}
+          } {
+            Fl_Input {} {
+              label {Width:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = widget_grid_curr_col->value();
+if (v == LOAD) {
+  o->value(grid->col_width(c));
+} else {
+  int h = o->value(), old_h = grid->col_width(c);
+  if (h != old_h) {
+    grid->col_width(c, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {180 210 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Weight:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = widget_grid_curr_col->value();
+if (v == LOAD) {
+  o->value(grid->col_weight(c));
+} else {
+  int h = o->value(), old_h = grid->col_weight(c);
+  if (h != old_h) {
+    grid->col_weight(c, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {240 210 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Gap:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = widget_grid_curr_col->value();
+if (v == LOAD) {
+  o->value(grid->col_gap(c));
+} else {
+  int h = o->value(), old_h = grid->col_gap(c);
+  if (h != old_h) {
+    grid->col_gap(c, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {300 210 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+          }
+          Fl_Box {} {
+            xywh {400 210 1 20} hide resizable
           }
         }
-        Fl_Group {} {
-          label {Grid Margins:
-
-
-Layout:}
-          callback propagate_load open
-          xywh {96 97 300 55} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Value_Input {} {
-            label {Left:}
-            callback grid_margin_left_cb
-            tooltip {Left margin in group.} xywh {96 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Top:}
-            callback grid_margin_top_cb
-            tooltip {Top margin in group.} xywh {145 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Right:}
-            callback grid_margin_right_cb
-            tooltip {Right margin in group.} xywh {194 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Bottom:}
-            callback grid_margin_bottom_cb
-            tooltip {Bottom margin in group.} xywh {243 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {RowGap:}
-            callback grid_row_gap_cb
-            tooltip {Gap between children.} xywh {292 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {ColGap:}
-            callback grid_col_gap_cb
-            tooltip {Gap between children.} xywh {341 97 45 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Box {} {
-            xywh {396 97 0 20} resizable
-          }
-          Fl_Input {} {
-            label {Rows:}
-            callback grid_rows_cb
-            tooltip {Number of horizontal rows in the Grid group} xywh {96 132 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
-          Fl_Input {} {
-            label {Columns:}
-            callback grid_cols_cb
-            tooltip {Number of vertical columns in the Grid group} xywh {155 132 55 20} labelsize 11 align 5 textsize 11
-            class Fluid_Coord_Input
-          }
+        Fl_Box {} {
+          xywh {95 350 300 5} labelsize 11 hide resizable
         }
       }
+    }
+    Fl_Tabs widget_tabs_repo {
+      xywh {10 10 400 350} hide
+      code0 {o->hide();}
+    } {
+      Fl_Group {} {open
+        xywh {10 30 400 330} resizable
+      } {}
     }
     Fl_Group {} {
       xywh {10 370 400 20} labelsize 11
