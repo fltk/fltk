@@ -15,6 +15,11 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// TODO: horizontal scrollbar
+// TODO: double clicking text should make word selection,
+//       and drag should word-enlarge selection
+// FIXME: While dragging a selection, hitting shift stops the selection
+
 // This must appear above #include <assert.h>
 #ifndef NDEBUG
 #define NDEBUG          // comment out to enable assert()

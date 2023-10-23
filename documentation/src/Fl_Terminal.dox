@@ -28,7 +28,7 @@ Features will be added as the widget matures.
 │    ESC[#D - (CUB) Cursor Back, no wrap
 │    ESC[#E - (CNL) Cursor Next Line (crlf) xterm, !gnome
 │    ESC[#F - (CPL) Cursor Preceding Line: move to sol and up # lines
-│    ESC[#G - (CHA) Cursor Horizal Absolute positioning
+│    ESC[#G - (CHA) Cursor Horizontal Absolute positioning
 │      │
 │      ├── ESC[G   - move to column 1 (start of line, sol)
 │      └── ESC[#G  - move to column #
