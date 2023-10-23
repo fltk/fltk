@@ -1487,6 +1487,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   open_cb_f_type open_cb;
   TSMDocumentID currentDoc;
 }
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app;
 - (void)applicationDidFinishLaunching:(NSNotification *)notification;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
@@ -1499,6 +1500,14 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 @end
 
 @implementation FLAppDelegate
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app {
+  // Avoids macOS 14 warning message when app is launched from command line:
+  // "WARNING: Secure coding is automatically enabled for restorable state!
+  // However, not on all supported macOS versions of this application.
+  // Opt-in to secure coding explicitly by implementing
+  // NSApplicationDelegate.applicationSupportsSecureRestorableState:."
+  return (fl_mac_os_version >= 140000);
+}
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     if (fl_mac_os_version >= 101300 && [NSApp isRunning]) [NSApp stop:nil];
