@@ -266,8 +266,8 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
     grid->margin(&m, NULL, NULL, NULL); 
     o->value(m);
   } else {
-    int m = o->value(), old_m;
-    grid->margin(&old_m, NULL, NULL, NULL); 
+    int m = (int)o->value(), old_m;
+    grid->margin(&old_m, NULL, NULL, NULL);
     if (m != old_m) {
       grid->margin(m, -1, -1, -1); 
       grid->need_layout(true);
@@ -284,8 +284,8 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
     grid->margin(NULL, &m, NULL, NULL); 
     o->value(m);
   } else {
-    int m = o->value(), old_m;
-    grid->margin(NULL, &old_m, NULL, NULL); 
+    int m = (int)o->value(), old_m;
+    grid->margin(NULL, &old_m, NULL, NULL);
     if (m != old_m) {
       grid->margin(-1, m, -1, -1); 
       grid->need_layout(true);
@@ -302,8 +302,8 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
     grid->margin(NULL, NULL, &m, NULL); 
     o->value(m);
   } else {
-    int m = o->value(), old_m;
-    grid->margin(NULL, NULL, &old_m, NULL); 
+    int m = (int)o->value(), old_m;
+    grid->margin(NULL, NULL, &old_m, NULL);
     if (m != old_m) {
       grid->margin(-1, -1, m, -1); 
       grid->need_layout(true);
@@ -320,7 +320,7 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
     grid->margin(NULL, NULL, NULL, &m);
     o->value(m);
   } else {
-    int m = o->value(), old_m;
+    int m = (int)o->value(), old_m;
     grid->margin(NULL, NULL, NULL, &old_m);
     if (m != old_m) {
       grid->margin(-1, -1, -1, m);
@@ -338,8 +338,8 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
     grid->gap(&m, NULL); 
     o->value(m);
   } else {
-    int m = o->value(), old_m;
-    grid->gap(&old_m, NULL); 
+    int m = (int)o->value(), old_m;
+    grid->gap(&old_m, NULL);
     if (m != old_m) {
       grid->gap(m, -1); 
       grid->need_layout(true);
@@ -356,7 +356,7 @@ static void cb_Col(Fl_Value_Input* o, void* v) {
     grid->gap(NULL, &m);
     o->value(m);
   } else {
-    int m = o->value(), old_m;
+    int m = (int)o->value(), old_m;
     grid->gap(NULL, &old_m);
     if (m != old_m) {
       grid->gap(-1, m); 
