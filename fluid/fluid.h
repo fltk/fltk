@@ -155,7 +155,7 @@ extern void save_template_cb(Fl_Widget *, void *);
 extern void revert_cb(Fl_Widget *,void *);
 extern void exit_cb(Fl_Widget *,void *);
 
-extern int write_code_files();
+extern int write_code_files(bool dont_show_completion_dialog=false);
 extern void write_strings_cb(Fl_Widget *, void *);
 extern void align_widget_cb(Fl_Widget *, long);
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);

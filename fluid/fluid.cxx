@@ -1212,7 +1212,7 @@ Fl_String Fluid_Project::basename() const {
 
  \return 1 if the operation failed, 0 if it succeeded
  */
-int write_code_files()
+int write_code_files(bool dont_show_completion_dialog)
 {
   // -- handle user interface issues
   flush_text_widgets();
@@ -1250,7 +1250,7 @@ int write_code_files()
                  strerror(errno));
     } else {
       set_modflag(-1, 0);
-      if (completion_button->value()) {
+      if (dont_show_completion_dialog==false && completion_button->value()) {
         fl_message("Wrote %s and %s",
                    code_filename_rel.c_str(),
                    header_filename_rel.c_str());
@@ -1835,8 +1835,6 @@ void make_main_window() {
   if (!batch_mode) {
     load_history();
     g_shell_config = new Fd_Shell_Command_List;
-    // TODO: load example commands if this is the very first time we use this
-//    g_shell_config->restore_defaults();
     make_settings_window();
   }
 }
@@ -2139,12 +2137,15 @@ int main(int argc,char **argv) {
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
     position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
+    if (g_shell_config) {
+      g_shell_config->read(fluid_prefs, FD_STORE_USER);
+      g_shell_config->update_settings_dialog();
+      g_shell_config->rebuild_shell_menu();
+    }
+    g_layout_list.read(fluid_prefs, FD_STORE_USER);
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_sourceview_cb(0,0);
-    if (g_shell_config)
-      g_shell_config->read(fluid_prefs, FD_STORE_USER);
-    g_layout_list.read(fluid_prefs, FD_STORE_USER);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
       open_project_file(absolute_history[0]);
