@@ -18,7 +18,7 @@
 
 #include <config.h>
 #include <FL/Fl_SVG_File_Surface.H>
-#if FLTK_USE_SVG
+#ifdef FLTK_USE_SVG
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include <FL/math.h>
