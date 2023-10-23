@@ -3144,7 +3144,8 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   if (w->modal()) Fl::modal_ = w;
 
   w->set_visible();
-  if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
+  if ( w->border() || (!w->modal() && !w->tooltip_window() &&
+                       w->user_data() != &Fl_Screen_Driver::transient_scale_display) ) Fl::handle(FL_FOCUS, w);
   [cw setDelegate:[FLWindowDelegate singleInstance]];
   if (show_iconic()) {
     show_iconic(0);
