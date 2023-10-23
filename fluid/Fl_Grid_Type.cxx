@@ -470,7 +470,10 @@ void Fl_Grid_Type::insert_child(Fl_Widget *child) {
 //        a red button "replace". If clicked, user gets the option to delete
 //        the old widget, or just remove the cell, or cancel.
 // TODO: move cells by using the arrow keys?
-// TODO: move cells via drag'n'drop
+// TODO: move cells via drag'n'drop -> int Fl_Window_Type::handle(int event)
+// TODO: handling of children that are themselves Groups. As it is, the children
+//        are not moved correctly if a parent group repositions or resizes groups.
+//        The same is true for Fl_Flex.
 // TODO: better grid overlay?
 // TODO: grid_child_cb should move all selected cells, not just the current_selected.
 // TODO: buttons to add and delete rows and columns in the widget dialog
@@ -527,13 +530,19 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
     if (old_v != v) {
       switch (what & 0x00ff) {
         case 8: if (v>=0 && v2>=0) move_cell(g, current_widget->o, v, v2);
-          if (freeze_row_col) i->value(v); break;
+          if (freeze_row_col) i->value(v); 
+          break;
         case 9: if (v>=0 && v2>=0) move_cell(g, current_widget->o, v2, v);
-          if (freeze_row_col) i->value(v); break;
-        case 10: if (cell && cell->row()+v<=g->rows()) cell->rowspan(v); break;
-        case 11: if (cell && cell->col()+v<=g->cols()) cell->colspan(v); break;
-        case 12: if (cell) cell->minimum_size(v, v2); break;
-        case 13: if (cell) cell->minimum_size(v2, v); break;
+          if (freeze_row_col) i->value(v); 
+          break;
+        case 10: if (cell && cell->row()+v<=g->rows()) cell->rowspan(v); 
+          break;
+        case 11: if (cell && cell->col()+v<=g->cols()) cell->colspan(v);
+          break;
+        case 12: if (cell) cell->minimum_size(v, v2); 
+          break;
+        case 13: if (cell) cell->minimum_size(v2, v); 
+          break;
       }
       if (!cell && new_cell)
         new_cell->minimum_size(20, 20);

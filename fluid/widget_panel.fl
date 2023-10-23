@@ -50,17 +50,23 @@ Function {make_window()} {open
   } {
     Fl_Grid {} {open
       xywh {25 25 262 160} labelsize 11
-      dimensions {3 3} margin {10 8 11 12}
-      rowgaps { 3 -1 -1 }
-      colwidths { 0 100 0 }
-      colweights { 50 40 50 }
-      colgaps { 1 3 -1 }
+      dimensions {4 4} margin {10 10 16 12}
+      colwidths { 0 100 0 0 }
+      colweights { 50 40 50 50 }
     } {
       Fl_Button {} {
         label Button
-        xywh {85 75 139 59} labelsize 11
+        xywh {70 63 129 50} labelsize 11
         parent_properties {
           location {1 1}
+        }
+      }
+      Fl_Group {} {open
+        xywh {224 115 40 45} box BORDER_BOX color 11 labelsize 11
+      } {
+        Fl_Button {} {
+          label Button
+          xywh {234 120 24 20} labelsize 11
         }
       }
     }
@@ -82,8 +88,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load selected
-        xywh {10 30 400 330} labelsize 11 when 0 resizable
+        callback propagate_load
+        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -1069,7 +1075,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid {
         label Grid
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 hide
+        xywh {10 30 400 330} labelsize 11
       } {
         Fl_Group {} {
           label {Grid Layout:}
@@ -1201,7 +1207,7 @@ if (v == LOAD) {
     grid->need_layout(true);
     set_modflag(1);
   }
-}}
+}} selected
             tooltip {Left margin in group.} xywh {95 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
           }
           Fl_Value_Input {} {
@@ -1274,15 +1280,15 @@ if (v == LOAD) {
             label {Row:}
             callback {Fl_Grid *grid = Fl_Grid_Type::selected();
 if (!grid) return;
-int m = 0;
 if (v == LOAD) {
-  grid->gap(&m, NULL); 
+  int m = 0;
+  grid->gap(&m, NULL);
   o->value(m);
 } else {
-  int m = o->value(), old_m;
-  grid->gap(&old_m, NULL); 
+  int m = o->value(), old_m, m2;
+  grid->gap(&old_m, &m2);
   if (m != old_m) {
-    grid->gap(m, -1); 
+    grid->gap(m, m2);
     grid->need_layout(true);
     set_modflag(1);
   }
@@ -1293,15 +1299,15 @@ if (v == LOAD) {
             label {Col:}
             callback {Fl_Grid *grid = Fl_Grid_Type::selected();
 if (!grid) return;
-int m = 0;
 if (v == LOAD) {
+  int m = 0;
   grid->gap(NULL, &m);
   o->value(m);
 } else {
-  int m = o->value(), old_m;
-  grid->gap(NULL, &old_m);
+  int m = o->value(), old_m, m2;
+  grid->gap(&m2, &old_m);
   if (m != old_m) {
-    grid->gap(-1, m); 
+    grid->gap(m2, m);
     grid->need_layout(true);
     set_modflag(1);
   }
@@ -1380,6 +1386,7 @@ if (v == LOAD) {
   o->value(grid->row_height(r));
 } else {
   int h = o->value(), old_h = grid->row_height(r);
+  if (h < 0) h = 0;
   if (h != old_h) {
     grid->row_height(r, h);
     grid->need_layout(true);
@@ -1398,6 +1405,7 @@ if (v == LOAD) {
   o->value(grid->row_weight(r));
 } else {
   int h = o->value(), old_h = grid->row_weight(r);
+  if (h < 0) h = 0;
   if (h != old_h) {
     grid->row_weight(r, h);
     grid->need_layout(true);
@@ -1416,6 +1424,7 @@ if (v == LOAD) {
   o->value(grid->row_gap(r));
 } else {
   int h = o->value(), old_h = grid->row_gap(r);
+  if (h < -1) h = -1;
   if (h != old_h) {
     grid->row_gap(r, h);
     grid->need_layout(true);
@@ -1490,6 +1499,7 @@ if (v == LOAD) {
   o->value(grid->col_width(c));
 } else {
   int h = o->value(), old_h = grid->col_width(c);
+  if (h < 0) h = 0;
   if (h != old_h) {
     grid->col_width(c, h);
     grid->need_layout(true);
@@ -1508,6 +1518,7 @@ if (v == LOAD) {
   o->value(grid->col_weight(c));
 } else {
   int h = o->value(), old_h = grid->col_weight(c);
+  if (h < 0) h = 0;
   if (h != old_h) {
     grid->col_weight(c, h);
     grid->need_layout(true);
@@ -1526,6 +1537,7 @@ if (v == LOAD) {
   o->value(grid->col_gap(c));
 } else {
   int h = o->value(), old_h = grid->col_gap(c);
+  if (h < -1) h = -1;
   if (h != old_h) {
     grid->col_gap(c, h);
     grid->need_layout(true);

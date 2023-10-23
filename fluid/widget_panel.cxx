@@ -29,19 +29,24 @@ Fl_Double_Window* make_window() {
     w = o; (void)w;
     { Fl_Grid* o = new Fl_Grid(25, 25, 262, 160);
       o->labelsize(11);
-      o->layout(3, 3);
-      o->margin(10, 8, 11, 12);
-      static const int rowgaps[] = { 3, -1, -1 };
-      o->row_gap(rowgaps, 3);
-      static const int colwidths[] = { 0, 100, 0 };
-      o->col_width(colwidths, 3);
-      static const int colweights[] = { 50, 40, 50 };
-      o->col_weight(colweights, 3);
-      static const int colgaps[] = { 1, 3, -1 };
-      o->col_gap(colgaps, 3);
-      { Fl_Button* o = new Fl_Button(85, 75, 139, 59, "Button");
+      o->layout(4, 4);
+      o->margin(10, 10, 16, 12);
+      static const int colwidths[] = { 0, 100, 0, 0 };
+      o->col_width(colwidths, 4);
+      static const int colweights[] = { 50, 40, 50, 50 };
+      o->col_weight(colweights, 4);
+      { Fl_Button* o = new Fl_Button(70, 63, 129, 50, "Button");
         o->labelsize(11);
       } // Fl_Button* o
+      { Fl_Group* o = new Fl_Group(224, 115, 40, 45);
+        o->box(FL_BORDER_BOX);
+        o->color((Fl_Color)11);
+        o->labelsize(11);
+        { Fl_Button* o = new Fl_Button(234, 120, 24, 20, "Button");
+          o->labelsize(11);
+        } // Fl_Button* o
+        o->end();
+      } // Fl_Group* o
       Fl_Grid::Cell *cell = NULL;
       cell = o->widget(o->child(0), 1, 1, 1, 1, 48);
       if (cell) cell->minimum_size(20, 20);
@@ -333,15 +338,15 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
 static void cb_Row(Fl_Value_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
-  int m = 0;
   if (v == LOAD) {
-    grid->gap(&m, NULL); 
+    int m = 0;
+    grid->gap(&m, NULL);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
     grid->gap(&old_m, NULL);
     if (m != old_m) {
-      grid->gap(m, -1); 
+      grid->gap(m, m2);
       grid->need_layout(true);
       set_modflag(1);
     }
@@ -351,15 +356,15 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
 static void cb_Col(Fl_Value_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
-  int m = 0;
   if (v == LOAD) {
+    int m = 0;
     grid->gap(NULL, &m);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
     grid->gap(NULL, &old_m);
     if (m != old_m) {
-      grid->gap(-1, m); 
+      grid->gap(m2, m);
       grid->need_layout(true);
       set_modflag(1);
     }
@@ -417,6 +422,7 @@ static void cb_Height(Fluid_Coord_Input* o, void* v) {
     o->value(grid->row_height(r));
   } else {
     int h = o->value(), old_h = grid->row_height(r);
+    if (h < 0) h = 0;
     if (h != old_h) {
       grid->row_height(r, h);
       grid->need_layout(true);
@@ -433,6 +439,7 @@ static void cb_Weight(Fluid_Coord_Input* o, void* v) {
     o->value(grid->row_weight(r));
   } else {
     int h = o->value(), old_h = grid->row_weight(r);
+    if (h < 0) h = 0;
     if (h != old_h) {
       grid->row_weight(r, h);
       grid->need_layout(true);
@@ -449,6 +456,7 @@ static void cb_Gap(Fluid_Coord_Input* o, void* v) {
     o->value(grid->row_gap(r));
   } else {
     int h = o->value(), old_h = grid->row_gap(r);
+    if (h < -1) h = -1;
     if (h != old_h) {
       grid->row_gap(r, h);
       grid->need_layout(true);
@@ -497,6 +505,7 @@ static void cb_Width(Fluid_Coord_Input* o, void* v) {
     o->value(grid->col_width(c));
   } else {
     int h = o->value(), old_h = grid->col_width(c);
+    if (h < 0) h = 0;
     if (h != old_h) {
       grid->col_width(c, h);
       grid->need_layout(true);
@@ -513,6 +522,7 @@ static void cb_Weight1(Fluid_Coord_Input* o, void* v) {
     o->value(grid->col_weight(c));
   } else {
     int h = o->value(), old_h = grid->col_weight(c);
+    if (h < 0) h = 0;
     if (h != old_h) {
       grid->col_weight(c, h);
       grid->need_layout(true);
@@ -529,6 +539,7 @@ static void cb_Gap1(Fluid_Coord_Input* o, void* v) {
     o->value(grid->col_gap(c));
   } else {
     int h = o->value(), old_h = grid->col_gap(c);
+    if (h < -1) h = -1;
     if (h != old_h) {
       grid->col_gap(c, h);
       grid->need_layout(true);
@@ -564,6 +575,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1638,7 +1650,6 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
         widget_tab_grid->labelsize(11);
         widget_tab_grid->callback((Fl_Callback*)propagate_load);
-        widget_tab_grid->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Grid Layout:");
           o->labelfont(1);
           o->labelsize(11);

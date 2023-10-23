@@ -276,7 +276,7 @@ void Fl_Grid::draw_grid() {
 
   for (int c = 0; c < cols_ - 1; c++) {
 
-    int gap = Cols_[c].gap_ >= 0 ? Cols_[c].gap_ : gap_row_;
+    int gap = Cols_[c].gap_ >= 0 ? Cols_[c].gap_ : gap_col_;
     x0 += Cols_[c].w_;
     if (gap == 0) {
       fl_yxline(x0, y0, y1);
