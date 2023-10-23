@@ -272,7 +272,7 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(&old_m, NULL, NULL, NULL);
+    grid->margin(&old_m, NULL, NULL, NULL); 
     if (m != old_m) {
       grid->margin(m, -1, -1, -1); 
       grid->need_layout(true);
@@ -290,7 +290,7 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, &old_m, NULL, NULL);
+    grid->margin(NULL, &old_m, NULL, NULL); 
     if (m != old_m) {
       grid->margin(-1, m, -1, -1); 
       grid->need_layout(true);
@@ -308,7 +308,7 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, NULL, &old_m, NULL);
+    grid->margin(NULL, NULL, &old_m, NULL); 
     if (m != old_m) {
       grid->margin(-1, -1, m, -1); 
       grid->need_layout(true);
@@ -343,8 +343,8 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
     grid->gap(&m, NULL);
     o->value(m);
   } else {
-    int m = (int)o->value(), old_m;
-    grid->gap(&old_m, NULL);
+    int m = (int)o->value(), old_m, m2;
+    grid->gap(&old_m, &m2);
     if (m != old_m) {
       grid->gap(m, m2);
       grid->need_layout(true);
@@ -361,8 +361,8 @@ static void cb_Col(Fl_Value_Input* o, void* v) {
     grid->gap(NULL, &m);
     o->value(m);
   } else {
-    int m = (int)o->value(), old_m;
-    grid->gap(NULL, &old_m);
+    int m = (int)o->value(), old_m, m2;
+    grid->gap(&m2, &old_m);
     if (m != old_m) {
       grid->gap(m2, m);
       grid->need_layout(true);
@@ -1449,7 +1449,6 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
         widget_tab_grid_child->labelsize(11);
         widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
-        widget_tab_grid_child->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1650,6 +1649,7 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
         widget_tab_grid->labelsize(11);
         widget_tab_grid->callback((Fl_Callback*)propagate_load);
+        widget_tab_grid->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Grid Layout:");
           o->labelfont(1);
           o->labelsize(11);
