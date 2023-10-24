@@ -47,6 +47,12 @@ decl {char *sv_design_filename = NULL;} {private local
 decl {int sv_code_choice;} {public local
 }
 
+decl {extern void select_only(Fl_Type *o);} {private global
+}
+
+decl {extern void reveal_in_browser(Fl_Type *t);} {private global
+}
+
 Function {update_sourceview_position()} {
   comment {Update the header and source code highlighting depending on the
 currently selected object
@@ -272,18 +278,18 @@ Function {make_sourceview()} {open
   Fl_Window sourceview_panel {
     label {Code View}
     callback toggle_sourceview_cb open
-    xywh {400 569 520 490} type Double align 80 resizable size_range {384 120 0 0} visible
+    xywh {389 507 520 515} type Double align 80 resizable size_range {384 120 0 0} visible
   } {
     Fl_Tabs sv_tab {
-      callback update_sourceview_position_cb open selected
+      callback update_sourceview_position_cb open
       xywh {10 10 500 440} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
         label Source open
-        xywh {10 35 500 415} labelsize 13 resizable
+        xywh {10 35 500 415} labelsize 13 hide resizable
       } {
         Fl_Text_Editor sv_source {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
+          xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
@@ -295,7 +301,7 @@ Function {make_sourceview()} {open
         xywh {10 35 500 415} labelsize 13 hide
       } {
         Fl_Text_Editor sv_header {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
+          xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
@@ -307,7 +313,7 @@ Function {make_sourceview()} {open
         xywh {10 35 500 415} labelsize 13 hide
       } {
         Fl_Text_Display sv_strings {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
+          xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
           class TextViewer
@@ -315,10 +321,10 @@ Function {make_sourceview()} {open
       }
       Fl_Group {} {
         label Project open
-        xywh {10 35 500 415} labelsize 13 hide
+        xywh {10 35 500 415} labelsize 13
       } {
         Fl_Text_Display sv_project {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
+          xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
           class TextViewer
@@ -326,26 +332,68 @@ Function {make_sourceview()} {open
       }
     }
     Fl_Group {} {open
-      xywh {10 460 500 22}
+      xywh {10 460 500 20}
+    } {
+      Fl_Button {} {
+        label aA
+        xywh {244 460 25 20} labelsize 11
+      }
+      Fl_Button {} {
+        label {<<}
+        xywh {273 460 25 20} labelsize 11
+      }
+      Fl_Button {} {
+        label {>>}
+        xywh {298 460 25 20} labelsize 11
+      }
+      Fl_Button {} {
+        label Reveal
+        callback {if (sourceview_panel && sourceview_panel->visible()) {
+  Fl_Type *node = NULL;
+  if (sv_source->visible_r()) 
+    node = Fl_Type::find_in_text(0, sv_source->insert_position());
+  else if (sv_header->visible_r()) 
+    node = Fl_Type::find_in_text(1, sv_header->insert_position());
+  else if (sv_project->visible_r()) 
+    node = Fl_Type::find_in_text(2, sv_project->insert_position());
+  if (node) {
+    select_only(node);
+    reveal_in_browser(node);
+    if (Fl::event_clicks()==1) // double click
+      node->open();
+  }
+}} selected
+        xywh {327 460 61 20} labelsize 11
+      }
+      Fl_Input {} {
+        label {Find:}
+        xywh {40 460 200 20} labelsize 11 textsize 11
+      }
+      Fl_Box {} {
+        xywh {490 460 20 20} resizable
+      }
+    }
+    Fl_Group {} {open
+      xywh {10 485 500 20}
     } {
       Fl_Button {} {
         label Refresh
         callback update_sourceview_cb
-        xywh {10 460 61 20} labelsize 11
+        xywh {10 485 61 20} labelsize 11
       }
       Fl_Light_Button sv_autorefresh {
         label {Auto-Refresh}
-        xywh {77 460 91 20} labelsize 11
+        xywh {77 485 91 20} labelsize 11
         code0 {o->callback((Fl_Callback*)update_sourceview_cb);}
       }
       Fl_Light_Button sv_autoposition {
         label {Auto-Position}
-        xywh {172 460 89 20} labelsize 11
+        xywh {172 485 89 20} labelsize 11
       }
       Fl_Choice sv_code_choice_w {
         callback {sv_code_choice = (int)o->mvalue()->argument();
 update_sourceview_position();} open
-        xywh {265 460 70 20} down_box BORDER_BOX labelsize 11 textsize 11
+        xywh {265 485 70 20} down_box BORDER_BOX labelsize 11 textsize 11
       } {
         MenuItem {} {
           label prolog
@@ -374,12 +422,12 @@ update_sourceview_position();} open
         }
       }
       Fl_Box {} {
-        xywh {375 460 80 20} resizable
+        xywh {375 485 80 20} resizable
       }
       Fl_Button {} {
         label Close
         callback toggle_sourceview_b_cb
-        xywh {460 460 50 20} labelsize 11
+        xywh {460 485 50 20} labelsize 11
       }
     }
   }

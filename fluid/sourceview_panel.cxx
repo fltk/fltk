@@ -26,6 +26,8 @@ static char *sv_source_filename = NULL;
 static char *sv_header_filename = NULL;
 static char *sv_design_filename = NULL;
 int sv_code_choice;
+extern void select_only(Fl_Type *o);
+extern void reveal_in_browser(Fl_Type *t);
 
 /**
  Update the header and source code highlighting depending on the
@@ -261,6 +263,24 @@ TextViewer *sv_strings=(TextViewer *)0;
 
 TextViewer *sv_project=(TextViewer *)0;
 
+static void cb_Reveal(Fl_Button*, void*) {
+  if (sourceview_panel && sourceview_panel->visible()) {
+    Fl_Type *node = NULL;
+    if (sv_source->visible_r()) 
+      node = Fl_Type::find_in_text(0, sv_source->insert_position());
+    else if (sv_header->visible_r()) 
+      node = Fl_Type::find_in_text(1, sv_header->insert_position());
+    else if (sv_project->visible_r()) 
+      node = Fl_Type::find_in_text(2, sv_project->insert_position());
+    if (node) {
+      select_only(node);
+      reveal_in_browser(node);
+      if (Fl::event_clicks()==1) // double click
+        node->open();
+    }
+  }
+}
+
 Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
 
 Fl_Light_Button *sv_autoposition=(Fl_Light_Button *)0;
@@ -282,7 +302,7 @@ Fl_Menu_Item menu_sv_code_choice_w[] = {
 };
 
 Fl_Double_Window* make_sourceview() {
-  { sourceview_panel = new Fl_Double_Window(520, 490, "Code View");
+  { sourceview_panel = new Fl_Double_Window(520, 515, "Code View");
     sourceview_panel->callback((Fl_Callback*)toggle_sourceview_cb);
     sourceview_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { sv_tab = new Fl_Tabs(10, 10, 500, 440);
@@ -291,7 +311,8 @@ Fl_Double_Window* make_sourceview() {
       sv_tab->callback((Fl_Callback*)update_sourceview_position_cb);
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Source");
         o->labelsize(13);
-        { CodeViewer* o = sv_source = new CodeViewer(20, 50, 480, 390);
+        o->hide();
+        { CodeViewer* o = sv_source = new CodeViewer(10, 40, 500, 410);
           sv_source->box(FL_DOWN_FRAME);
           sv_source->color(FL_BACKGROUND2_COLOR);
           sv_source->selection_color(FL_SELECTION_COLOR);
@@ -313,7 +334,7 @@ Fl_Double_Window* make_sourceview() {
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Header");
         o->labelsize(13);
         o->hide();
-        { CodeViewer* o = sv_header = new CodeViewer(20, 50, 480, 390);
+        { CodeViewer* o = sv_header = new CodeViewer(10, 40, 500, 410);
           sv_header->box(FL_DOWN_FRAME);
           sv_header->color(FL_BACKGROUND2_COLOR);
           sv_header->selection_color(FL_SELECTION_COLOR);
@@ -334,7 +355,7 @@ Fl_Double_Window* make_sourceview() {
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Strings");
         o->labelsize(13);
         o->hide();
-        { TextViewer* o = sv_strings = new TextViewer(20, 50, 480, 390);
+        { TextViewer* o = sv_strings = new TextViewer(10, 40, 500, 410);
           sv_strings->box(FL_DOWN_FRAME);
           sv_strings->color(FL_BACKGROUND2_COLOR);
           sv_strings->selection_color(FL_SELECTION_COLOR);
@@ -354,8 +375,7 @@ Fl_Double_Window* make_sourceview() {
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Project");
         o->labelsize(13);
-        o->hide();
-        { TextViewer* o = sv_project = new TextViewer(20, 50, 480, 390);
+        { TextViewer* o = sv_project = new TextViewer(10, 40, 500, 410);
           sv_project->box(FL_DOWN_FRAME);
           sv_project->color(FL_BACKGROUND2_COLOR);
           sv_project->selection_color(FL_SELECTION_COLOR);
@@ -376,29 +396,52 @@ Fl_Double_Window* make_sourceview() {
       sv_tab->end();
       Fl_Group::current()->resizable(sv_tab);
     } // Fl_Tabs* sv_tab
-    { Fl_Group* o = new Fl_Group(10, 460, 500, 22);
-      { Fl_Button* o = new Fl_Button(10, 460, 61, 20, "Refresh");
+    { Fl_Group* o = new Fl_Group(10, 460, 500, 20);
+      { Fl_Button* o = new Fl_Button(244, 460, 25, 20, "aA");
+        o->labelsize(11);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(273, 460, 25, 20, "<<");
+        o->labelsize(11);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(298, 460, 25, 20, ">>");
+        o->labelsize(11);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(327, 460, 61, 20, "Reveal");
+        o->labelsize(11);
+        o->callback((Fl_Callback*)cb_Reveal);
+      } // Fl_Button* o
+      { Fl_Input* o = new Fl_Input(40, 460, 200, 20, "Find:");
+        o->labelsize(11);
+        o->textsize(11);
+      } // Fl_Input* o
+      { Fl_Box* o = new Fl_Box(490, 460, 20, 20);
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      o->end();
+    } // Fl_Group* o
+    { Fl_Group* o = new Fl_Group(10, 485, 500, 20);
+      { Fl_Button* o = new Fl_Button(10, 485, 61, 20, "Refresh");
         o->labelsize(11);
         o->callback((Fl_Callback*)update_sourceview_cb);
       } // Fl_Button* o
-      { Fl_Light_Button* o = sv_autorefresh = new Fl_Light_Button(77, 460, 91, 20, "Auto-Refresh");
+      { Fl_Light_Button* o = sv_autorefresh = new Fl_Light_Button(77, 485, 91, 20, "Auto-Refresh");
         sv_autorefresh->labelsize(11);
         o->callback((Fl_Callback*)update_sourceview_cb);
       } // Fl_Light_Button* sv_autorefresh
-      { sv_autoposition = new Fl_Light_Button(172, 460, 89, 20, "Auto-Position");
+      { sv_autoposition = new Fl_Light_Button(172, 485, 89, 20, "Auto-Position");
         sv_autoposition->labelsize(11);
       } // Fl_Light_Button* sv_autoposition
-      { sv_code_choice_w = new Fl_Choice(265, 460, 70, 20);
+      { sv_code_choice_w = new Fl_Choice(265, 485, 70, 20);
         sv_code_choice_w->down_box(FL_BORDER_BOX);
         sv_code_choice_w->labelsize(11);
         sv_code_choice_w->textsize(11);
         sv_code_choice_w->callback((Fl_Callback*)cb_sv_code_choice_w);
         sv_code_choice_w->menu(menu_sv_code_choice_w);
       } // Fl_Choice* sv_code_choice_w
-      { Fl_Box* o = new Fl_Box(375, 460, 80, 20);
+      { Fl_Box* o = new Fl_Box(375, 485, 80, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { Fl_Button* o = new Fl_Button(460, 460, 50, 20, "Close");
+      { Fl_Button* o = new Fl_Button(460, 485, 50, 20, "Close");
         o->labelsize(11);
         o->callback((Fl_Callback*)toggle_sourceview_b_cb);
       } // Fl_Button* o

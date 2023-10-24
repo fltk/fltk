@@ -348,7 +348,6 @@ void update_visibility_flag(Fl_Type *p) {
  Constructor and base for any node in the widget tree.
  */
 Fl_Type::Fl_Type() :
-code_include_start(-1), code_include_end(-1),
 code_static_start(-1), code_static_end(-1),
 code1_start(-1), code1_end(-1),
 code2_start(-1), code2_end(-1),
@@ -1022,6 +1021,33 @@ void Fl_Type::write_code1(Fd_Code_Writer& f) {
 }
 
 void Fl_Type::write_code2(Fd_Code_Writer&) {
+}
+
+/** Find a type node by using the sourceview text positions.
+
+ \param[in] text_type 0=source file, 1=header, 2=.fl project file
+ \param[in] crsr cursor position in text
+ \return the node we found or NULL
+ */
+Fl_Type *Fl_Type::find_in_text(int text_type, int crsr) {
+  for (Fl_Type *node = first; node; node = node->next) {
+    switch (text_type) {
+      case 0:
+        if (crsr >= node->code1_start && crsr < node->code1_end) return node;
+        if (crsr >= node->code2_start && crsr < node->code2_end) return node;
+        if (crsr >= node->code_static_start && crsr < node->code_static_end) return node;
+        break;
+      case 1:
+        if (crsr >= node->header_start && crsr < node->header_end) return node;
+        if (crsr >= node->header_static_start && crsr < node->header_static_end) return node;
+        break;
+      case 2:
+        if (crsr >= node->proj1_start && crsr < node->proj1_end) return node;
+        if (crsr >= node->proj2_start && crsr < node->proj2_end) return node;
+        break;
+    }
+  }
+  return 0;
 }
 
 /// \}

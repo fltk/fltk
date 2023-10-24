@@ -145,7 +145,6 @@ public: // things that should not be public:
   const char *callback_name(Fd_Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see SourceView)
-  int code_include_start, code_include_end;
   int code_static_start, code_static_end;
   int code1_start, code1_end;
   int code2_start, code2_end;
@@ -248,6 +247,8 @@ public:
   bool is_in_class() const;
 
   int has_function(const char*, const char*) const;
+
+  static Fl_Type *find_in_text(int text_type, int crsr);
 };
 
 #endif // _FLUID_FL_TYPE_H
