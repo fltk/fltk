@@ -79,8 +79,9 @@ public:
   static const int fl_YValue;
   static const int fl_XNegative;
   static const int fl_YNegative;
-  // Used when transient scale windows are implemented as popups
+  // Next 2 are used when transient scale windows are implemented as popups
   static Fl_Window *transient_scale_parent;
+  static void del_transient_window(void *);
   // key_table and key_table_size are used in fl_shortcut to translate key names
   struct Keyname {
     unsigned int key;

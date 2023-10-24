@@ -388,8 +388,8 @@ static Fl_Window *transient_scale_window = NULL;
 Fl_Window *Fl_Screen_Driver::transient_scale_parent = NULL;
 
 
-static void del_transient_window(void *) {
-  Fl_Screen_Driver::transient_scale_parent = NULL;
+void Fl_Screen_Driver::del_transient_window(void *) {
+  transient_scale_parent = NULL;
   delete (Fl_Image*)transient_scale_window->shape();
   delete transient_scale_window;
   transient_scale_window = NULL;

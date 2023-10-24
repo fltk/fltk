@@ -435,9 +435,11 @@ static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
 
 void Fl_Wayland_Window_Driver::hide() {
   if (pWindow == Fl_Screen_Driver::transient_scale_parent) {
-    // Don't hide the parent of a running transient scale window
-    // because the transient is a popup and MUST be deleted first.
-    return;
+    // Delete also the running transient scale window
+    // because the transient is a popup and MUST be deleted
+    // before its parent.
+    Fl::remove_timeout(Fl_Screen_Driver::del_transient_window);
+    Fl_Screen_Driver::del_transient_window(NULL);
   }
   Fl_X* ip = Fl_X::flx(pWindow);
   if (hide_common()) return;
