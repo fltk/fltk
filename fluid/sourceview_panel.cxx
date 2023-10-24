@@ -263,6 +263,77 @@ TextViewer *sv_strings=(TextViewer *)0;
 
 TextViewer *sv_project=(TextViewer *)0;
 
+Fl_Button *sv_find_text_case=(Fl_Button *)0;
+
+Fl_Input *sv_find_text=(Fl_Input *)0;
+
+static void cb_sv_find_text(Fl_Input* o, void*) {
+  Fl_Text_Display *e = NULL;
+  if (sv_source->visible_r()) {
+    e = sv_source;
+  } else if (sv_header->visible_r()) {
+    e = sv_header;
+  } else if (sv_project->visible_r()) {
+    e = sv_project;
+  }
+  if (e) {
+    Fl_Text_Buffer *b = e->buffer();
+    int pos = e->insert_position();
+    int found = b->search_forward(pos, o->value(), &pos, sv_find_text_case->value());
+    if (found) {
+      b->select(pos, pos + (int)strlen(o->value()));
+      e->insert_position(pos);
+      e->show_insert_position();
+    }
+  }
+}
+
+static void cb_(Fl_Button*, void*) {
+  Fl_Text_Display *e = NULL;
+  if (sv_source->visible_r()) {
+    e = sv_source;
+  } else if (sv_header->visible_r()) {
+    e = sv_header;
+  } else if (sv_project->visible_r()) {
+    e = sv_project;
+  }
+  if (e) {
+    const char *needle = sv_find_text->value();
+    Fl_Text_Buffer *b = e->buffer();
+    int pos = e->insert_position()-1;
+    if (pos < 0) pos = b->length()-1;
+    int found = b->search_backward(pos, needle, &pos, sv_find_text_case->value());
+    if (found) {
+      b->select(pos, pos + (int)strlen(needle));
+      e->insert_position(pos);
+      e->show_insert_position();
+    }
+  }
+}
+
+static void cb_1(Fl_Button*, void*) {
+  Fl_Text_Display *e = NULL;
+  if (sv_source->visible_r()) {
+    e = sv_source;
+  } else if (sv_header->visible_r()) {
+    e = sv_header;
+  } else if (sv_project->visible_r()) {
+    e = sv_project;
+  }
+  if (e) {
+    const char *needle = sv_find_text->value();
+    Fl_Text_Buffer *b = e->buffer();
+    int pos = e->insert_position() + 1;
+    if (pos+1 >= b->length()) pos = 0;
+    int found = b->search_forward(pos, needle, &pos, sv_find_text_case->value());
+    if (found) {
+      b->select(pos, pos + (int)strlen(needle));
+      e->insert_position(pos);
+      e->show_insert_position();
+    }
+  }
+}
+
 static void cb_Reveal(Fl_Button*, void*) {
   if (sourceview_panel && sourceview_panel->visible()) {
     Fl_Type *node = NULL;
@@ -311,7 +382,6 @@ Fl_Double_Window* make_sourceview() {
       sv_tab->callback((Fl_Callback*)update_sourceview_position_cb);
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Source");
         o->labelsize(13);
-        o->hide();
         { CodeViewer* o = sv_source = new CodeViewer(10, 40, 500, 410);
           sv_source->box(FL_DOWN_FRAME);
           sv_source->color(FL_BACKGROUND2_COLOR);
@@ -375,6 +445,7 @@ Fl_Double_Window* make_sourceview() {
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Project");
         o->labelsize(13);
+        o->hide();
         { TextViewer* o = sv_project = new TextViewer(10, 40, 500, 410);
           sv_project->box(FL_DOWN_FRAME);
           sv_project->color(FL_BACKGROUND2_COLOR);
@@ -397,23 +468,28 @@ Fl_Double_Window* make_sourceview() {
       Fl_Group::current()->resizable(sv_tab);
     } // Fl_Tabs* sv_tab
     { Fl_Group* o = new Fl_Group(10, 460, 500, 20);
-      { Fl_Button* o = new Fl_Button(244, 460, 25, 20, "aA");
-        o->labelsize(11);
-      } // Fl_Button* o
+      { sv_find_text_case = new Fl_Button(244, 460, 25, 20, "aA");
+        sv_find_text_case->type(1);
+        sv_find_text_case->labelsize(11);
+      } // Fl_Button* sv_find_text_case
+      { sv_find_text = new Fl_Input(40, 460, 200, 20, "Find:");
+        sv_find_text->labelsize(11);
+        sv_find_text->textsize(11);
+        sv_find_text->callback((Fl_Callback*)cb_sv_find_text);
+        sv_find_text->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
+      } // Fl_Input* sv_find_text
       { Fl_Button* o = new Fl_Button(273, 460, 25, 20, "<<");
         o->labelsize(11);
+        o->callback((Fl_Callback*)cb_);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(298, 460, 25, 20, ">>");
         o->labelsize(11);
+        o->callback((Fl_Callback*)cb_1);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(327, 460, 61, 20, "Reveal");
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_Reveal);
       } // Fl_Button* o
-      { Fl_Input* o = new Fl_Input(40, 460, 200, 20, "Find:");
-        o->labelsize(11);
-        o->textsize(11);
-      } // Fl_Input* o
       { Fl_Box* o = new Fl_Box(490, 460, 20, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o

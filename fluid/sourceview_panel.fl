@@ -286,9 +286,9 @@ Function {make_sourceview()} {open
     } {
       Fl_Group {} {
         label Source open
-        xywh {10 35 500 415} labelsize 13 hide resizable
+        xywh {10 35 500 415} labelsize 13 resizable
       } {
-        Fl_Text_Editor sv_source {
+        Fl_Text_Editor sv_source {selected
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           code1 {o->linenumber_width(60);}
@@ -321,7 +321,7 @@ Function {make_sourceview()} {open
       }
       Fl_Group {} {
         label Project open
-        xywh {10 35 500 415} labelsize 13
+        xywh {10 35 500 415} labelsize 13 hide
       } {
         Fl_Text_Display sv_project {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
@@ -334,16 +334,78 @@ Function {make_sourceview()} {open
     Fl_Group {} {open
       xywh {10 460 500 20}
     } {
-      Fl_Button {} {
+      Fl_Button sv_find_text_case {
         label aA
-        xywh {244 460 25 20} labelsize 11
+        xywh {244 460 25 20} type Toggle labelsize 11
+      }
+      Fl_Input sv_find_text {
+        label {Find:}
+        callback {Fl_Text_Display *e = NULL;
+if (sv_source->visible_r()) {
+  e = sv_source;
+} else if (sv_header->visible_r()) {
+  e = sv_header;
+} else if (sv_project->visible_r()) {
+  e = sv_project;
+}
+if (e) {
+  Fl_Text_Buffer *b = e->buffer();
+  int pos = e->insert_position();
+  int found = b->search_forward(pos, o->value(), &pos, sv_find_text_case->value());
+  if (found) {
+    b->select(pos, pos + (int)strlen(o->value()));
+    e->insert_position(pos);
+    e->show_insert_position();
+  }
+}}
+        xywh {40 460 200 20} labelsize 11 when 15 textsize 11
       }
       Fl_Button {} {
         label {<<}
+        callback {Fl_Text_Display *e = NULL;
+if (sv_source->visible_r()) {
+  e = sv_source;
+} else if (sv_header->visible_r()) {
+  e = sv_header;
+} else if (sv_project->visible_r()) {
+  e = sv_project;
+}
+if (e) {
+  const char *needle = sv_find_text->value();
+  Fl_Text_Buffer *b = e->buffer();
+  int pos = e->insert_position()-1;
+  if (pos < 0) pos = b->length()-1;
+  int found = b->search_backward(pos, needle, &pos, sv_find_text_case->value());
+  if (found) {
+    b->select(pos, pos + (int)strlen(needle));
+    e->insert_position(pos);
+    e->show_insert_position();
+  }
+}}
         xywh {273 460 25 20} labelsize 11
       }
       Fl_Button {} {
         label {>>}
+        callback {Fl_Text_Display *e = NULL;
+if (sv_source->visible_r()) {
+  e = sv_source;
+} else if (sv_header->visible_r()) {
+  e = sv_header;
+} else if (sv_project->visible_r()) {
+  e = sv_project;
+}
+if (e) {
+  const char *needle = sv_find_text->value();
+  Fl_Text_Buffer *b = e->buffer();
+  int pos = e->insert_position() + 1;
+  if (pos+1 >= b->length()) pos = 0;
+  int found = b->search_forward(pos, needle, &pos, sv_find_text_case->value());
+  if (found) {
+    b->select(pos, pos + (int)strlen(needle));
+    e->insert_position(pos);
+    e->show_insert_position();
+  }
+}}
         xywh {298 460 25 20} labelsize 11
       }
       Fl_Button {} {
@@ -362,12 +424,8 @@ Function {make_sourceview()} {open
     if (Fl::event_clicks()==1) // double click
       node->open();
   }
-}} selected
+}}
         xywh {327 460 61 20} labelsize 11
-      }
-      Fl_Input {} {
-        label {Find:}
-        xywh {40 460 200 20} labelsize 11 textsize 11
       }
       Fl_Box {} {
         xywh {490 460 20 20} resizable

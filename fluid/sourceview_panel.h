@@ -38,7 +38,9 @@ extern CodeViewer *sv_header;
 extern TextViewer *sv_strings;
 extern TextViewer *sv_project;
 #include <FL/Fl_Button.H>
+extern Fl_Button *sv_find_text_case;
 #include <FL/Fl_Input.H>
+extern Fl_Input *sv_find_text;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Light_Button.H>
 extern Fl_Light_Button *sv_autorefresh;
