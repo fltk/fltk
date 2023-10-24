@@ -434,6 +434,11 @@ static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
 
 
 void Fl_Wayland_Window_Driver::hide() {
+  if (pWindow == Fl_Screen_Driver::transient_scale_parent) {
+    // Don't hide the parent of a running transient scale window
+    // because the transient is a popup and MUST be deleted first.
+    return;
+  }
   Fl_X* ip = Fl_X::flx(pWindow);
   if (hide_common()) return;
   if (ip->region) {
@@ -1244,7 +1249,6 @@ static const char *get_prog_name() {
  item, when there's one, is visible immediately after the tall popup is mapped on display.
  */
 
-static Fl_Window *transient_parent = NULL; // used for transient scale windows
 
 bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_window) {
   // a menu window or tooltip
@@ -1266,7 +1270,9 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   }
   Fl_Widget *target = (pWindow->tooltip_window() ? Fl_Tooltip::current() : NULL);
   if (pWindow->user_data() == &Fl_Screen_Driver::transient_scale_display &&
-      transient_parent) target = transient_parent;
+      Fl_Screen_Driver::transient_scale_parent) {
+    target = Fl_Screen_Driver::transient_scale_parent;
+  }
   if (!target) target = Fl_Window_Driver::menu_parent();
   if (!target) target = Fl::belowmouse();
   if (!target) target = Fl::first_window();
@@ -1343,6 +1349,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
 
 void Fl_Wayland_Window_Driver::makeWindow()
 {
+  Fl_Group::current(0); // get rid of very common user bug: forgot end()
   struct wld_window *new_window;
   bool is_floatingtitle = false;
   wait_for_expose_value = 1;
@@ -1369,10 +1376,11 @@ void Fl_Wayland_Window_Driver::makeWindow()
   if (pWindow->user_data() == &Fl_Screen_Driver::transient_scale_display &&
       Fl::first_window()) {
   // put transient scale win at center of top window by making it a tooltip of top
-    transient_parent = Fl::first_window();
+    Fl_Screen_Driver::transient_scale_parent = Fl::first_window();
     pWindow->set_tooltip_window();
-    pWindow->position((transient_parent->w() - pWindow->w())/2 ,
-                      (transient_parent->h() - pWindow->h())/2);
+    pWindow->position(
+              (Fl_Screen_Driver::transient_scale_parent->w() - pWindow->w())/2 ,
+              (Fl_Screen_Driver::transient_scale_parent->h() - pWindow->h())/2);
   }
 
   if (pWindow->menu_window() || pWindow->tooltip_window()) { // a menu window or tooltip

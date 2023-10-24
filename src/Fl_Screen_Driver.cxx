@@ -384,9 +384,15 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
 }
 
 
-static void del_transient_window(Fl_Window **pwin) {
-  delete *pwin;
-  *pwin = NULL;
+static Fl_Window *transient_scale_window = NULL;
+Fl_Window *Fl_Screen_Driver::transient_scale_parent = NULL;
+
+
+static void del_transient_window(void *) {
+  Fl_Screen_Driver::transient_scale_parent = NULL;
+  delete (Fl_Image*)transient_scale_window->shape();
+  delete transient_scale_window;
+  transient_scale_window = NULL;
 }
 
 
@@ -430,15 +436,14 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->set_non_modal();
   Fl_Window_Driver::driver(win)->screen_num(nscreen);
   Fl_Window_Driver::driver(win)->force_position(1);
-  static Fl_Window *transient = NULL;
-  if (transient) {
-    Fl::remove_timeout((Fl_Timeout_Handler)del_transient_window);
-    delete transient;
+  if (transient_scale_window) {
+    Fl::remove_timeout(del_transient_window);
+    del_transient_window(NULL);
   }
-  transient = win;
+  transient_scale_window = win;
   win->show();
   // delete transient win after 1 sec
-  Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, &transient);
+  Fl::add_timeout(1, del_transient_window, NULL);
 }
 
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
