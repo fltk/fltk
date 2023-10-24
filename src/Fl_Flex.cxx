@@ -156,10 +156,8 @@ void Fl_Flex::on_remove(int index) {
   \see layout()
 */
 void Fl_Flex::draw() {
-  if (need_layout()) {
+  if (need_layout())
     layout();
-  }
-  need_layout(0);
   Fl_Group::draw();
 }
 
@@ -170,12 +168,9 @@ void Fl_Flex::draw() {
   \param[in]  w,h   width and height
 */
 void Fl_Flex::resize(int x, int y, int w, int h) {
-
   Fl_Widget::resize(x, y, w, h);
-  need_layout(1);
-
+  layout();
 } // resize()
-
 
 
 /**
@@ -193,7 +188,6 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
   This method also calls redraw() on the Fl_Flex widget.
 */
 void Fl_Flex::layout() {
-  resize(x(), y(), w(), h());
 
   const int nc = children();
 
@@ -280,7 +274,7 @@ void Fl_Flex::layout() {
   widget to calculate its layout depending on all children and whether
   they have been assigned fix sizes or not right before it is drawn.
 
-  \see layout()
+  \see need_layout(int)
   \see draw()
 */
 void Fl_Flex::end() {
