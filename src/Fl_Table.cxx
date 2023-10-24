@@ -20,9 +20,6 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-// DEBUG - remove this when done, set to 0 to disable debug output
-#define DEBUG_ROW_COL_RESIZE 1
-
 // EXPERIMENTAL
 // We use either std::vector or the private class Fl_Int_Vector
 // depending on the build option OPTION_USE_STD or equivalent.
@@ -693,12 +690,6 @@ void Fl_Table::rows(int val) {
   int default_h = row_size() > 0 ? _rowheights->back() : 25;
   int now_size = row_size();
 
-#if DEBUG_ROW_COL_RESIZE
-  fprintf(stderr, "Fl_Table::rows(%d) from %d, FLTK_USE_STD = %d\n", val, now_size, FLTK_USE_STD);
-  fflush(stderr);
-  Fl_Timestamp start = Fl::now();
-#endif
-
 #if (FLTK_USE_STD)
   if (now_size != val)
     _rowheights->resize(val, default_h);      // enlarge or shrink as needed
@@ -706,11 +697,6 @@ void Fl_Table::rows(int val) {
   _rowheights->size(val);                     // enlarge or shrink as needed
   while (now_size < val)
     (*_rowheights)[now_size++] = default_h;   // fill new
-#endif
-
-#if DEBUG_ROW_COL_RESIZE
-  fprintf(stderr, "Fl_Table::rows(%d) - done in %7.3f ms\n", val, Fl::seconds_since(start)*1000);
-  fflush(stderr);
 #endif
 
   table_resized();
@@ -732,12 +718,6 @@ void Fl_Table::cols(int val) {
   int default_w = col_size() > 0 ? (*_colwidths)[col_size()-1] : 80;
   int now_size = col_size();
 
-#if DEBUG_ROW_COL_RESIZE
-  fprintf(stderr, "Fl_Table::cols(%d) from %d, FLTK_USE_STD = %d\n", val, now_size, FLTK_USE_STD);
-  fflush(stderr);
-  Fl_Timestamp start = Fl::now();
-#endif
-
 #if (FLTK_USE_STD)
   if (now_size != val)
     _colwidths->resize(val, default_w);       // enlarge or shrink as needed
@@ -745,12 +725,6 @@ void Fl_Table::cols(int val) {
   _colwidths->size(val);                      // enlarge or shrink as needed
   while (now_size < val)
     (*_colwidths)[now_size++] = default_w;    // fill new
-#endif
-
-#if DEBUG_ROW_COL_RESIZE
-  double delta = Fl::seconds_since(start) * 1000;
-  fprintf(stderr, "Fl_Table::cols(%d) - done in %7.3f ms\n", val, delta);
-  fflush(stderr);
 #endif
 
   table_resized();
