@@ -194,7 +194,11 @@ void Fl_Wayland_Window_Driver::flush_overlay()
   }
   if (erase_overlay) fl_clip_region(0);
   if (other_xid) {
-    fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid->offscreen(), 0, 0);
+    struct Fl_Wayland_Graphics_Driver::draw_buffer *buffer =
+      Fl_Wayland_Graphics_Driver::offscreen_buffer(other_xid->offscreen());
+    struct wld_window *xid = fl_wl_xid(pWindow);
+    struct Fl_Wayland_Graphics_Driver::wld_buffer *wbuffer = xid->buffer;
+    memcpy(wbuffer->draw_buffer.buffer, buffer->buffer, wbuffer->draw_buffer.data_size);
   }
   if (overlay() == oWindow) oWindow->draw_overlay();
 }
