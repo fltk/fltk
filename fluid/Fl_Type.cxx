@@ -347,7 +347,16 @@ void update_visibility_flag(Fl_Type *p) {
 /**
  Constructor and base for any node in the widget tree.
  */
-Fl_Type::Fl_Type() {
+Fl_Type::Fl_Type() :
+code_include_start(-1), code_include_end(-1),
+code_static_start(-1), code_static_end(-1),
+code1_start(-1), code1_end(-1),
+code2_start(-1), code2_end(-1),
+header_start(-1), header_end(-1),
+header_static_start(-1), header_static_end(-1),
+proj1_start(-1), proj1_end(-1),
+proj2_start(-1), proj2_end(-1)
+{
   factory = 0;
   parent = 0;
   next = prev = 0;
@@ -360,8 +369,6 @@ Fl_Type::Fl_Type() {
   callback_ = 0;
   comment_ = 0;
   level = 0;
-  code_position = header_position = -1;
-  code_position_end = header_position_end = -1;
 }
 
 /**
@@ -669,6 +676,8 @@ void Fl_Type::move_before(Fl_Type* g) {
 
 // write a widget and all its children:
 void Fl_Type::write(Fd_Project_Writer &f) {
+  if (f.write_sourceview()) proj1_start = (int)ftell(f.file()) + 1;
+  if (f.write_sourceview()) proj2_start = (int)ftell(f.file()) + 1;
   f.write_indent(level);
   f.write_word(type_name());
 
@@ -683,13 +692,19 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   write_properties(f);
   if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
-  if (!is_parent()) return;
+  if (f.write_sourceview()) proj1_end = (int)ftell(f.file());
+  if (!is_parent()) {
+    if (f.write_sourceview()) proj2_end = (int)ftell(f.file());
+    return;
+  }
   // now do children:
   f.write_open(level);
   Fl_Type *child;
   for (child = next; child && child->level > level; child = child->next)
     if (child->level == level+1) child->write(f);
+  if (f.write_sourceview()) proj2_start = (int)ftell(f.file()) + 1;
   f.write_close(level);
+  if (f.write_sourceview()) proj2_end = (int)ftell(f.file());
 }
 
 void Fl_Type::write_properties(Fd_Project_Writer &f) {

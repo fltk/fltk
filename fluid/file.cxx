@@ -73,9 +73,9 @@ int read_file(const char *filename, int merge, Strategy strategy) {
     is used to implement copy and paste.
  \return 0 if the operation failed, 1 if it succeeded
  */
-int write_file(const char *filename, int selected_only) {
+int write_file(const char *filename, int selected_only, bool to_sourceview) {
   Fd_Project_Writer out;
-  return out.write_project(filename, selected_only);
+  return out.write_project(filename, selected_only, to_sourceview);
 }
 
 /**
@@ -718,7 +718,8 @@ void Fd_Project_Reader::read_fdesign() {
 /** \brief Construct local project writer. */
 Fd_Project_Writer::Fd_Project_Writer()
 : fout(NULL),
-  needspace(0)
+  needspace(0),
+  write_sourceview_(false)
 {
 }
 
@@ -763,7 +764,8 @@ int Fd_Project_Writer::close_write() {
  is used to implement copy and paste.
  \return 0 if the operation failed, 1 if it succeeded
  */
-int Fd_Project_Writer::write_project(const char *filename, int selected_only) {
+int Fd_Project_Writer::write_project(const char *filename, int selected_only, bool sv) {
+  write_sourceview_ = sv;
   undo_suspend();
   if (!open_write(filename)) {
     undo_resume();

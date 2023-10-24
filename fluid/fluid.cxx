@@ -826,6 +826,7 @@ void exit_cb(Fl_Widget *,void *) {
     svp.set("autorefresh", sv_autorefresh->value());
     svp.set("autoposition", sv_autoposition->value());
     svp.set("tab", sv_tab->find(sv_tab->value()));
+    svp.set("code_choice", sv_code_choice);
     save_position(sourceview_panel,"sourceview_pos");
     delete sourceview_panel;
     sourceview_panel = 0;

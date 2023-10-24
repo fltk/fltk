@@ -66,7 +66,7 @@ file.} open return_type void
       switch (sv_code_choice) {
         case 0: // prolog: not yet (include statements)
           pos0 = Fl_Type::current->code1_start;
-          pos1 = Fl_Type::current->code2_end;
+          pos1 = Fl_Type::current->code1_end;
           break;
         case 1: // static: callbacks, menu declarations
           pos0 = Fl_Type::current->code_static_start;
@@ -87,7 +87,7 @@ file.} open return_type void
       }
       if (pos0>=0) {
         if (pos1<pos0)
-          pos1 = sv_source->buffer()->line_end(pos0);
+          pos1 = pos0;
         sv_source->buffer()->highlight(pos0, pos1);
         int line = sv_source->buffer()->count_lines(0, pos0);
         sv_source->scroll(line, 0);
@@ -109,35 +109,10 @@ file.} open return_type void
       }
       if (pos0>=0) {
         if (pos1<pos0)
-          pos1 = sv_header->buffer()->line_end(pos0);
+          pos1 = pos0;
         sv_header->buffer()->highlight(pos0, pos1);
         int line = sv_header->buffer()->count_lines(0, pos0);
         sv_header->scroll(line, 0);
-      }
-    }
-    if (sv_project->visible_r()) {
-      switch (sv_code_choice) {
-        case 0: // prolog: not yet (include statements)
-        case 1: // static: callbacks, menu declarations
-        case 2: // code: entire implementation block including children
-          pos0 = Fl_Type::current->proj1_start;
-          pos1 = Fl_Type::current->proj2_end;
-          break;
-        case 3: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->proj1_start;
-          pos1 = Fl_Type::current->proj1_end;
-          break;
-        case 4: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->proj2_start;
-          pos1 = Fl_Type::current->proj2_end;
-          break;
-      }
-      if (pos0>=0) {
-        if (pos1<pos0)
-          pos1 = sv_project->buffer()->line_end(pos0);
-        sv_project->buffer()->highlight(pos0, pos1);
-        int line = sv_project->buffer()->count_lines(0, pos0);
-        sv_project->scroll(line, 0);
       }
     }
   }} {}
@@ -176,7 +151,7 @@ and load those into the Code Viewer widgets.} open return_type void
   }
 
   if (sv_project->visible_r()) {
-    write_file(sv_design_filename, false, true);
+    write_file(sv_design_filename);
     int top = sv_project->top_line();
     sv_project->buffer()->loadfile(sv_design_filename);
     sv_project->scroll(top, 0);
@@ -275,14 +250,14 @@ Function {make_sourceview()} {open
     xywh {400 569 520 490} type Double align 80 resizable size_range {384 120 0 0} visible
   } {
     Fl_Tabs sv_tab {
-      callback update_sourceview_position_cb open selected
+      callback update_sourceview_position_cb open
       xywh {10 10 500 440} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
         label Source open
         xywh {10 35 500 415} labelsize 13 resizable
       } {
-        Fl_Text_Editor sv_source {
+        Fl_Text_Editor sv_source {selected
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           code1 {o->linenumber_width(60);}
@@ -350,7 +325,7 @@ update_sourceview_position();} open
         MenuItem {} {
           label prolog
           user_data 0 user_data_type long
-          tooltip {Include statements in header or source code} xywh {0 0 100 20} labelsize 11 hide
+          tooltip {Include statements in header or source code} xywh {0 0 100 20} labelsize 11
         }
         MenuItem {} {
           label static

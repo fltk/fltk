@@ -66,13 +66,14 @@ protected:
   void draw() FL_OVERRIDE;
 };
 
-// ---- DesignViewer declaration
+// ---- Project File Text Viewe declaration
 
 class TextViewer : public Fl_Text_Display {
 public:
   TextViewer(int X, int Y, int W, int H, const char *L=0);
   ~TextViewer();
   int top_line() { return get_absolute_top_line_number(); }
+  void draw() FL_OVERRIDE;
 };
 
 #endif // !CodeEditor_h

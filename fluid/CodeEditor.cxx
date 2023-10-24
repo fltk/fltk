@@ -316,3 +316,16 @@ TextViewer::~TextViewer() {
   buffer(0);
   delete buf;
 }
+
+/**
+ Tricking Fl_Text_Display into using bearable colors for this specific task.
+ */
+void TextViewer::draw()
+{
+  Fl_Color c = Fl::get_color(FL_SELECTION_COLOR);
+  Fl::set_color(FL_SELECTION_COLOR, fl_color_average(FL_BACKGROUND_COLOR, FL_FOREGROUND_COLOR, 0.9f));
+  Fl_Text_Display::draw();
+  Fl::set_color(FL_SELECTION_COLOR, c);
+}
+
+
