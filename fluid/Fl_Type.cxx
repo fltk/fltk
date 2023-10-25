@@ -351,7 +351,8 @@ Fl_Type::Fl_Type() :
 code_static_start(-1), code_static_end(-1),
 code1_start(-1), code1_end(-1),
 code2_start(-1), code2_end(-1),
-header_start(-1), header_end(-1),
+header1_start(-1), header1_end(-1),
+header2_start(-1), header2_end(-1),
 header_static_start(-1), header_static_end(-1),
 proj1_start(-1), proj1_end(-1),
 proj2_start(-1), proj2_end(-1)
@@ -1038,7 +1039,8 @@ Fl_Type *Fl_Type::find_in_text(int text_type, int crsr) {
         if (crsr >= node->code_static_start && crsr < node->code_static_end) return node;
         break;
       case 1:
-        if (crsr >= node->header_start && crsr < node->header_end) return node;
+        if (crsr >= node->header1_start && crsr < node->header1_end) return node;
+        if (crsr >= node->header2_start && crsr < node->header2_end) return node;
         if (crsr >= node->header_static_start && crsr < node->header_static_end) return node;
         break;
       case 2:

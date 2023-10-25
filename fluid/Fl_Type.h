@@ -148,7 +148,8 @@ public: // things that should not be public:
   int code_static_start, code_static_end;
   int code1_start, code1_end;
   int code2_start, code2_end;
-  int header_start, header_end;
+  int header1_start, header1_end;
+  int header2_start, header2_end;
   int header_static_start, header_static_end;
   int proj1_start, proj1_end;
   int proj2_start, proj2_end;

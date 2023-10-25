@@ -78,16 +78,22 @@ void update_sourceview_position() {
       }
       if (sv_header->visible_r()) {
         switch (sv_code_choice) {
-          case 2: // code: entire implementation block including children
-          case 3: // code1: all implementation code before the children
-          case 4: // code1: all implementation code before the children
-            pos0 = Fl_Type::current->header_start;
-            pos1 = Fl_Type::current->header_end;
-            break;
           case 0: // prolog: not yet (include statements)
           case 1: // static: callbacks, menu declarations
             pos0 = Fl_Type::current->header_static_start;
             pos1 = Fl_Type::current->header_static_end;
+            break;
+          case 2: // code: entire implementation block including children
+            pos0 = Fl_Type::current->header1_start;
+            pos1 = Fl_Type::current->header2_end;
+            break;
+          case 3: // code1: all implementation code before the children
+            pos0 = Fl_Type::current->header1_start;
+            pos1 = Fl_Type::current->header1_end;
+            break;
+          case 4: // code1: all implementation code before the children
+            pos0 = Fl_Type::current->header2_start;
+            pos1 = Fl_Type::current->header2_end;
             break;
         }
         if (pos0>=0) {

@@ -101,16 +101,22 @@ file.} open return_type void
     }
     if (sv_header->visible_r()) {
       switch (sv_code_choice) {
-        case 2: // code: entire implementation block including children
-        case 3: // code1: all implementation code before the children
-        case 4: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->header_start;
-          pos1 = Fl_Type::current->header_end;
-          break;
         case 0: // prolog: not yet (include statements)
         case 1: // static: callbacks, menu declarations
           pos0 = Fl_Type::current->header_static_start;
           pos1 = Fl_Type::current->header_static_end;
+          break;
+        case 2: // code: entire implementation block including children
+          pos0 = Fl_Type::current->header1_start;
+          pos1 = Fl_Type::current->header2_end;
+          break;
+        case 3: // code1: all implementation code before the children
+          pos0 = Fl_Type::current->header1_start;
+          pos1 = Fl_Type::current->header1_end;
+          break;
+        case 4: // code1: all implementation code before the children
+          pos0 = Fl_Type::current->header2_start;
+          pos1 = Fl_Type::current->header2_end;
           break;
       }
       if (pos0>=0) {
@@ -146,7 +152,8 @@ file.} open return_type void
         sv_project->scroll(line, 0);
       }
     }
-  }} {}
+  }} {selected
+  }
 }
 
 Function {update_sourceview_position_cb(class Fl_Tabs*, void*)} {
@@ -288,7 +295,7 @@ Function {make_sourceview()} {open
         label Source open
         xywh {10 35 500 415} labelsize 13 resizable
       } {
-        Fl_Text_Editor sv_source {selected
+        Fl_Text_Editor sv_source {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           code1 {o->linenumber_width(60);}
