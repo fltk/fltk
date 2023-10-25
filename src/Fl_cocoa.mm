@@ -643,7 +643,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 @interface FLWindow : NSWindow {
   Fl_Window *w;
 }
-- (FLWindow*)initWithFl_W:(Fl_Window *)flw 
+- (FLWindow*)initWithFl_W:(Fl_Window *)flw
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle;
 - (Fl_Window *)getFl_Window;
@@ -1597,6 +1597,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   open_cb_f_type open_cb;
   TSMDocumentID currentDoc;
 }
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app;
 - (void)applicationDidFinishLaunching:(NSNotification *)notification;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
@@ -1609,6 +1610,14 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 @end
 
 @implementation FLAppDelegate
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app {
+  // Avoids macOS 14 warning message when app is launched from command line:
+  // "WARNING: Secure coding is automatically enabled for restorable state!
+  // However, not on all supported macOS versions of this application.
+  // Opt-in to secure coding explicitly by implementing
+  // NSApplicationDelegate.applicationSupportsSecureRestorableState:."
+  return (fl_mac_os_version >= 140000);
+}
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
   if (fl_mac_os_version >= 101300 && [NSApp isRunning]) [NSApp stop:nil];
@@ -1902,7 +1911,7 @@ void fl_open_display() {
     FLAppDelegate *delegate = (Fl_X::calc_mac_os_version() < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
     if (need_new_nsapp) {
-      if (fl_mac_os_version >= 101300 && is_bundled()) {
+      if (fl_mac_os_version >= 101300 && fl_mac_os_version < 140000 && is_bundled()) {
         [NSApp activateIgnoringOtherApps:YES];
         in_nsapp_run = true;
         [NSApp run];
@@ -1910,15 +1919,15 @@ void fl_open_display() {
       }
       else [NSApp finishLaunching];
     }
-
-    // empty the event queue but keep system events for drag&drop of files at launch
-    NSEvent *ign_event;
-    do ign_event = [NSApp nextEventMatchingMask:(NSAnyEventMask & ~NSSystemDefinedMask)
-					untilDate:[NSDate dateWithTimeIntervalSinceNow:0] 
-					   inMode:NSDefaultRunLoopMode 
-					  dequeue:YES];
-    while (ign_event);
-    
+    if (fl_mac_os_version < 140000) {
+      // empty the event queue but keep system events for drag&drop of files at launch
+      NSEvent *ign_event;
+      do ign_event = [NSApp nextEventMatchingMask:(NSAnyEventMask & ~NSSystemDefinedMask)
+                                        untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
+                                           inMode:NSDefaultRunLoopMode
+                                          dequeue:YES];
+      while (ign_event);
+    }
     if (![NSApp isActive]) foreground_and_activate();
     if (![NSApp servicesMenu]) createAppleMenu();
     main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
@@ -2456,7 +2465,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   CGContextRef destination = NULL;
-  if (views_use_CA) {
+  if (views_use_CA && !window->as_gl_window()) {
     destination = [[NSGraphicsContext currentContext] CGContext];
     if (!aux_bitmap && !window->as_gl_window()) [self create_aux_bitmap:destination retina:i->mapped_to_retina()];
   }
@@ -3373,7 +3382,8 @@ void Fl_X::make(Fl_Window* w)
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
   } else { // a top-level window
-    [cw makeKeyAndOrderFront:nil];
+    if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
+    else [cw orderFront:nil];
   }
   
     int old_event = Fl::e_number;

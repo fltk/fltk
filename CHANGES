@@ -22,7 +22,7 @@ Details:
     Fix for issue #452: Fl::get_font_name failure on OS-X.
     Fix for issue #454: crash in Fl::get_font_name().
     Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Escape or Tab do not work on Mac
-    Add support of macOS Ventura 13.0
+    Add support of macOS Ventura 13.0 and macOS Sonoma 14.0
     Fix "Focus is lost leaving full screen on macOS 13" (#608)
 
   YX:
