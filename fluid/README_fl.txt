@@ -155,6 +155,8 @@ an Option is missing, a default value is assumed.
 
   "i18n_type" <word> : integer 0=default=none, 1=gettext, 2=catgets
 
+--- the following list is valid until June 2023
+
   "i18n_function" <word> : function name, e.g. “gettext”
 
   "i18n_static_function" <word> : function name, e.g. “gettext_noop”
@@ -162,6 +164,18 @@ an Option is missing, a default value is assumed.
   "i18n_file" <word> : file name
 
   "i18n_set" <word> : string
+
+--- the following list is valid from June 2023
+
+  "i18n_gnu_function" <word> : function name, e.g. “gettext”
+
+  "i18n_gnu_static_function" <word> : function name, e.g. “gettext_noop”
+
+  "i18n_pos_file" <word> : file name
+
+  "i18n_pos_set" <word> : string
+
+--- end of June 2023 changes
 
   "i18n_include" <word> : file name, e.g. “<libintl.h>”
 
@@ -174,9 +188,10 @@ an Option is missing, a default value is assumed.
   "code_name" <word> : can be the full filename, or just the
       extension e.g. “.cxx”
 
-  "snap" <word> : starting in V1.4 since May 2023, the 'snap' keyword can be
+  "snap" <word> : starting in V1.4 from May 2023, the 'snap' keyword can be
       used to store the selected layout and preset and include more suites
-      of presets. The format looks like this:
+      of presets. The following block can be skipped by reading it as a
+      single word. The format looks like this:
 
       snap {                         optional snap Word since 5.2023
         ver 1                        version of following data
@@ -195,6 +210,23 @@ an Option is missing, a default value is assumed.
   "gridx" <word> : ignored
 
   "gridy" <word> : ignored
+
+  "shell_commands" <word> : starting in V1.4 from Sep 2023, the 'shell_commands'
+      keyword can be used to store user configurable shell commands in a
+      project file. The following block can be skipped by reading it as a
+      single word.
+
+      shell_commands {
+        command {
+          name <string>
+          label <string>
+          shortcut <int>            (optional if not 0)
+          condition <int>         (optional if not 0, see Fd_Shell_Command enum)
+          condition_data <string>   (optional if not "")
+          command <string>          (optional, but usually there)
+          flags <int>         (optional if not 0, see Fd_Shell_Command 2nd enum)
+        }                           ( repeat as needed)
+      }
 
 Note: There is no keyword that marks the end of the Options section. The
       Option list ends when a Word is not in the Options list and it is in
@@ -283,6 +315,7 @@ The list of known Types and their inheritance is:
    |    |    +-- Fl_Scroll
    |    |    +-- Fl_Tile
    |    |    +-- Fl_Wizard
+   |    |    +-- Fl_Grid
    |    +-- Fl_Menu_Type (note: can't be written)
    |    |    +-- Fl_Menu_Button
    |    |    +-- Fl_Choice
@@ -337,6 +370,10 @@ mutually exclusive.
 Note: It is possible that the same property by name has different arguments
       when used in a different Type.
 
+Every node can have properties that it holds for its parent. Parent properties
+are stored as "parent_properties { ...list... }". If a node encounters this
+property tag, it must ask its parent to interpret the contents of that list.
+See Fl_Grid for an example.
 
 Type Fl_Type <word>
 
@@ -472,6 +509,25 @@ Type "Fl_Window" <word> : C++ variable name
       it ensures that window is not created as a subwindow.
   ... : inherits more from Fl_Widget (not Fl_Group)
 
+Type "Fl_Grid" <word> : C++ variable name
+
+  "dimensions" <word> : {int rows, int cols}
+  "margin" <word> : {int left, int top, int right, int bottom}
+  "gap" <word> : {int row gap, int col gap}
+  "rowheights" <word> : {int h, ...*rows}
+  "rowweights" <word> : {int h, ...*rows}
+  "rowgaps" <word> : {int h, ...*rows}
+  "colwidths" <word> : {int h, ...*cols}
+  "colweights" <word> : {int h, ...*cols}
+  "colgaps" <word> : {int h, ...*cols}
+
+  Fl_Grid can also produce parent properties in their children
+
+  "location" <word> : {int row, int col}
+  "colspan" <int>"
+  "rowspan" <int>
+  "align" <int> : see Fl_Grid_Align enum
+  "min_size" <word> : {int width, int height}
 
 Please report errors and omissions to the fltk.coredev or fltk.general
 Google group. Thank you.
