@@ -198,7 +198,11 @@ void Fl_Wayland_Window_Driver::flush_overlay()
       Fl_Wayland_Graphics_Driver::offscreen_buffer(other_xid->offscreen());
     struct wld_window *xid = fl_wl_xid(pWindow);
     struct Fl_Wayland_Graphics_Driver::wld_buffer *wbuffer = xid->buffer;
-    memcpy(wbuffer->draw_buffer.buffer, buffer->buffer, wbuffer->draw_buffer.data_size);
+    if (wbuffer->draw_buffer.data_size != buffer->data_size) {
+      fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid->offscreen(), 0, 0);
+    } else {
+      memcpy(wbuffer->draw_buffer.buffer, buffer->buffer, wbuffer->draw_buffer.data_size);
+    }
   }
   if (overlay() == oWindow) oWindow->draw_overlay();
 }
@@ -1846,6 +1850,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   if (shown()) {
     float f = Fl::screen_scale(pWindow->screen_num());
     if (is_a_resize) {
+      if (pWindow->as_overlay_window() && other_xid) {
+        destroy_double_buffer();
+      }
       if (fl_win->kind == DECORATED) { // a decorated window
         if (fl_win->buffer) {
           Fl_Wayland_Graphics_Driver::buffer_release(fl_win);
