@@ -21,12 +21,9 @@
 #include <FL/Fl.H>
 #include "custom_widgets.h"
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Grid.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Group.H>
-Fl_Double_Window* make_window();
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs *widget_tabs;
+#include <FL/Fl_Group.H>
 extern void propagate_load(Fl_Group*, void*);
 #include <FL/Fl_Input.H>
 extern void label_cb(Fl_Input*, void*);
@@ -34,6 +31,7 @@ extern void label_cb(Fl_Input*, void*);
 extern Fl_Menu_Item labeltypemenu[];
 extern void labeltype_cb(Fl_Choice*, void*);
 extern void image_cb(Fl_Input*, void*);
+#include <FL/Fl_Button.H>
 extern void image_browse_cb(Fl_Button*, void*);
 #include "pixmaps.h"
 extern void compress_image_cb(Fl_Button*, void*);

@@ -333,6 +333,11 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         }
         goto CONTINUE;
       }
+
+      if (!strcmp(c, "mergeback")) {
+        g_project.write_mergeback_data = read_int();
+        goto CONTINUE;
+      }
     }
     {
       Fl_Type *t = add_new_widget_from_file(c, strategy);
@@ -808,6 +813,8 @@ int Fd_Project_Writer::write_project(const char *filename, int selected_only, bo
     g_layout_list.write(this);
     if (g_shell_config)
       g_shell_config->write(this);
+    if (g_project.write_mergeback_data)
+      write_string("\nmergeback %d", g_project.write_mergeback_data);
   }
 
   for (Fl_Type *p = Fl_Type::first; p;) {

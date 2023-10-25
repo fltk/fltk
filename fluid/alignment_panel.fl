@@ -31,6 +31,7 @@ snap {
     }
   }
 }
+mergeback 1
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -46,73 +47,73 @@ comment {//
 //
 //     https://www.fltk.org/bugs.php
 //
-} {in_source in_header
+} {uid 16807 in_source in_header
 }
 
-decl {\#include "fluid.h"} {public global
+decl {\#include "fluid.h"} {uid 15089 public global
 }
 
-decl {\#include "undo.h"} {private global
+decl {\#include "undo.h"} {uid 44249 private global
 }
 
-decl {\#include "widget_browser.h"} {public global
+decl {\#include "widget_browser.h"} {uid 3114 public global
 }
 
-decl {\#include "Fd_Snap_Action.h"} {public global
+decl {\#include "Fd_Snap_Action.h"} {uid 46978 public global
 }
 
-decl {\#include "shell_command.h"} {public global
+decl {\#include "shell_command.h"} {uid 56008 public global
 }
 
-decl {\#include <FL/Fl_Text_Buffer.H>} {public local
+decl {\#include <FL/Fl_Text_Buffer.H>} {uid 36568 public local
 }
 
-decl {\#include <FL/Fl_Text_Display.H>} {public local
+decl {\#include <FL/Fl_Text_Display.H>} {uid 2558 public local
 }
 
-decl {\#include "fluid_filename.h"} {public local
+decl {\#include "fluid_filename.h"} {uid 12099 public local
 }
 
-decl {\#include <FL/fl_string_functions.h>} {public local
+decl {\#include <FL/fl_string_functions.h>} {uid 1101 public local
 }
 
-decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
+decl {\#include <FL/Fl_Scheme_Choice.H>} {uid 39064 public local
 }
 
-decl {\#include <FL/Fl_Preferences.H>} {private global
+decl {\#include <FL/Fl_Preferences.H>} {uid 15445 private global
 }
 
-decl {\#include <FL/Fl_Tooltip.H>} {private global
+decl {\#include <FL/Fl_Tooltip.H>} {uid 4748 private global
 }
 
-decl {\#include <FL/fl_ask.H>} {private global
+decl {\#include <FL/fl_ask.H>} {uid 56290 private global
 }
 
-decl {\#include <string.h>} {private global
+decl {\#include <string.h>} {uid 54451 private global
 }
 
-decl {\#include "../src/flstring.h"} {private global
+decl {\#include "../src/flstring.h"} {uid 14151 private global
 }
 
-decl {void init_scheme(void);} {
+decl {void init_scheme(void);} {uid 14615
   comment {// initialize the scheme from preferences} public global
 }
 
-decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
+decl {extern struct Fl_Menu_Item *dbmanager_item;} {uid 16657 public local
 }
 
-decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
+decl {extern void i18n_cb(Fl_Choice *,void *);} {uid 50072 public local
 }
 
-decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
+decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {uid 18772 public local
 }
 
-decl {int w_settings_shell_list_selected;} {public local
+decl {int w_settings_shell_list_selected;} {uid 11823 public local
 }
 
-Function {make_script_panel()} {open
+Function {make_script_panel()} {uid 11025 open
 } {
-  Fl_Window script_panel {
+  Fl_Window script_panel {uid 38445
     label {Shell Script Editor}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   return; // ignore Escape
@@ -120,66 +121,67 @@ script_panel->hide(); // otherwise hide..} open
     xywh {764 319 540 180} type Double labelsize 11 resizable
     code0 {o->size_range(200, 150);} modal visible
   } {
-    Fl_Text_Editor script_input {
+    Fl_Text_Editor script_input {uid 35589
       xywh {10 10 520 130} box DOWN_BOX labelsize 11 when 13 textfont 4 textsize 11 resizable
       code0 {script_input->buffer(new Fl_Text_Buffer);}
     }
-    Fl_Group {} {open
+    Fl_Group {} {uid 12888 open
       xywh {10 150 520 20} labelsize 11
     } {
-      Fl_Return_Button script_panel_ok {
+      Fl_Return_Button script_panel_ok {uid 26357
         label OK
         xywh {400 150 60 20} labelsize 11 hotspot
       }
-      Fl_Button script_panel_cancel {
+      Fl_Button script_panel_cancel {uid 33131
         label Cancel
         xywh {470 150 60 20} labelsize 11
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 40406
         xywh {10 150 380 20} labelsize 11 resizable
       }
     }
   }
   code {// Enable line numbers
 script_input->linenumber_width(60);
-script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {}
+script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {uid 30600
+  }
 }
 
-Function {make_settings_window()} {open
+Function {make_settings_window()} {uid 40199 open
 } {
-  Fl_Window settings_window {
+  Fl_Window settings_window {uid 25753
     label {FLUID Settings} open
     xywh {392 362 340 580} type Double align 80 resizable size_range {340 580 0 0} visible
   } {
-    Fl_Tabs w_settings_tabs {
+    Fl_Tabs w_settings_tabs {uid 46226
       callback {propagate_load(o, v);} open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
-      Fl_Group {} {
-        label General open selected
+      Fl_Group {} {uid 3912
+        label General open
         image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
         code0 {o->image()->scale(36, 24);}
       } {
-        Fl_Group {} {
+        Fl_Group {} {uid 20787
           callback {propagate_load(o, v);} open
           xywh {120 78 130 25}
         } {
-          Fl_Choice scheme_choice {
+          Fl_Choice scheme_choice {uid 61026
             label {Scheme: }
             callback scheme_cb open
             xywh {120 78 120 25} down_box BORDER_BOX labelfont 1 labelsize 11
             code0 {init_scheme();}
             class Fl_Scheme_Choice
           } {}
-          Fl_Box {} {
+          Fl_Box {} {uid 37953
             xywh {240 78 10 25} hide resizable
           }
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 19699
           label {Options: }
           xywh {120 115 0 20} labelfont 1 labelsize 11 align 4
         }
-        Fl_Check_Button tooltips_button {
+        Fl_Check_Button tooltips_button {uid 3853
           label {Show Tooltips}
           callback {Fl_Tooltip::enable(tooltips_button->value());
 fluid_prefs.set("show_tooltips", tooltips_button->value());}
@@ -189,7 +191,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
           code2 {tooltips_button->value(b);}
           code3 {Fl_Tooltip::enable(b);}
         }
-        Fl_Check_Button completion_button {
+        Fl_Check_Button completion_button {uid 20515
           label {Show Completion Dialogs}
           callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
           xywh {120 135 200 20} down_box DOWN_BOX labelsize 11
@@ -197,7 +199,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
           code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
           code2 {completion_button->value(b);}
         }
-        Fl_Check_Button openlast_button {
+        Fl_Check_Button openlast_button {uid 27365
           label {Open Previous File on Startup}
           callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
           xywh {120 155 200 20} down_box DOWN_BOX labelsize 11
@@ -205,28 +207,29 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
           code1 {fluid_prefs.get("open_previous_file", b, 0);}
           code2 {openlast_button->value(b);}
         }
-        Fl_Check_Button prevpos_button {
+        Fl_Check_Button prevpos_button {uid 63583
           label {Remember Window Positions}
-          callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
+          callback {// Test!
+fluid_prefs.set("prev_window_pos", prevpos_button->value());}
           xywh {120 175 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
           code1 {fluid_prefs.get("prev_window_pos", b, 1);}
           code2 {prevpos_button->value(b);}
         }
-        Fl_Check_Button show_comments_button {
+        Fl_Check_Button show_comments_button {uid 13616
           label {Show Comments in Browser}
           callback {show_comments = show_comments_button->value();
 fluid_prefs.set("show_comments", show_comments);
-redraw_browser();}
+redraw_browser();} selected
           xywh {120 195 200 20} down_box DOWN_BOX labelsize 11
           code1 {fluid_prefs.get("show_comments", show_comments, 1);}
           code2 {show_comments_button->value(show_comments);}
         }
-        Fl_Group {} {
+        Fl_Group {} {uid 8913
           callback {propagate_load(o, v);} open
           xywh {120 225 50 20}
         } {
-          Fl_Spinner recent_spinner {
+          Fl_Spinner recent_spinner {uid 63176
             label {\# Recent Files:}
             callback {fluid_prefs.set("recent_files", recent_spinner->value());
 load_history();}
@@ -236,11 +239,11 @@ load_history();}
             code2 {recent_spinner->maximum(10);}
             code3 {recent_spinner->value(c);}
           }
-          Fl_Box {} {
+          Fl_Box {} {uid 62957
             xywh {160 225 10 20} hide resizable
           }
         }
-        Fl_Check_Button use_external_editor_button {
+        Fl_Check_Button use_external_editor_button {uid 50529
           label {Use for Code Nodes}
           callback {G_use_external_editor = use_external_editor_button->value();
 fluid_prefs.set("use_external_editor", G_use_external_editor);
@@ -249,7 +252,7 @@ redraw_browser();}
           code1 {fluid_prefs.get("use_external_editor", G_use_external_editor, 0);}
           code2 {use_external_editor_button->value(G_use_external_editor);}
         }
-        Fl_Input editor_command_input {
+        Fl_Input editor_command_input {uid 26636
           label {External Editor:}
           callback {strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
 G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
@@ -264,45 +267,45 @@ Examples:
           code1 {fluid_prefs.get("external_editor_command", G_external_editor_command, "", sizeof(G_external_editor_command)-1);}
           code2 {editor_command_input->value(G_external_editor_command);}
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 5451
           label {Overlays: }
           xywh {120 300 0 20} labelfont 1 labelsize 11 align 4
         }
-        Fl_Check_Button guides_button {
+        Fl_Check_Button guides_button {uid 10498
           label {Show Positioning Guides}
           callback toggle_guides_cb
           tooltip {show guides that help to position and resize widgets and enable snapping} xywh {120 300 200 20} down_box DOWN_BOX labelsize 11
           code0 {o->value(show_guides);}
         }
-        Fl_Check_Button restricted_button {
+        Fl_Check_Button restricted_button {uid 21557
           label {Show Restricted Areas}
           callback toggle_restricted_cb
           tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {120 320 200 20} down_box DOWN_BOX labelsize 11
           code0 {o->value(show_restricted);}
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 32825
           xywh {120 530 200 10} hide resizable
         }
       }
-      Fl_Group w_settings_project_tab {
+      Fl_Group w_settings_project_tab {uid 20609
         label Project
         callback {propagate_load(o, v);} open
         image {icons/document_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
-        Fl_Group {} {open
+        Fl_Group {} {uid 25732 open
           xywh {100 78 220 30}
         } {
-          Fl_Box {} {
+          Fl_Box {} {uid 9656
             label {Use "name.ext" to set a file name
 or just ".ext" to set extension.}
             xywh {100 78 210 30} labelsize 11 align 148
           }
-          Fl_Box {} {
+          Fl_Box {} {uid 25876
             xywh {310 78 10 30} hide resizable
           }
         }
-        Fl_Input header_file_input {
+        Fl_Input header_file_input {uid 7074
           label {Header File:}
           user_data 1 user_data_type {void*}
           callback {if (v == LOAD) {
@@ -315,7 +318,7 @@ or just ".ext" to set extension.}
 }}
           tooltip {The name of the generated header file.} xywh {100 112 220 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
         }
-        Fl_Input code_file_input {
+        Fl_Input code_file_input {uid 13212
           label {Code File:}
           user_data 1 user_data_type {void*}
           callback {if (v == LOAD) {
@@ -328,11 +331,7 @@ or just ".ext" to set extension.}
 }}
           tooltip {The name of the generated code file.} xywh {100 137 220 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
         }
-        Fl_Box {} {
-          label {Options: }
-          xywh {100 205 0 20} labelfont 1 labelsize 11 align 4
-        }
-        Fl_Check_Button include_H_from_C_button {
+        Fl_Check_Button include_H_from_C_button {uid 26292
           label {Include Header from Code}
           callback {if (v == LOAD) {
   o->value(g_project.include_H_from_C);
@@ -344,7 +343,11 @@ or just ".ext" to set extension.}
 }}
           tooltip {Include the header file from the code file.} xywh {100 162 220 20} down_box DOWN_BOX labelsize 11
         }
-        Fl_Check_Button use_FL_COMMAND_button {
+        Fl_Box {} {uid 61018
+          label {Options: }
+          xywh {100 205 0 20} labelfont 1 labelsize 11 align 4
+        }
+        Fl_Check_Button use_FL_COMMAND_button {uid 37479
           label {Menu shortcuts use FL_COMMAND}
           callback {if (v == LOAD) {
   o->value(g_project.use_FL_COMMAND);
@@ -356,7 +359,7 @@ or just ".ext" to set extension.}
 }}
           tooltip {Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts} xywh {100 205 220 20} down_box DOWN_BOX labelsize 11
         }
-        Fl_Check_Button utf8_in_src_button {
+        Fl_Check_Button utf8_in_src_button {uid 44074
           label {allow Unicode UTF-8 in source code}
           callback {if (v == LOAD) {
   o->value(g_project.utf8_in_src);
@@ -368,7 +371,7 @@ or just ".ext" to set extension.}
 }}
           tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {100 230 220 20} down_box DOWN_BOX labelsize 11
         }
-        Fl_Check_Button avoid_early_includes_button {
+        Fl_Check_Button avoid_early_includes_button {uid 13514
           label {avoid early include of Fl.H}
           callback {if (v == LOAD) {
   o->value(g_project.avoid_early_includes);
@@ -380,21 +383,37 @@ or just ".ext" to set extension.}
 }}
           tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {100 255 220 20} down_box DOWN_BOX labelsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 56037
+          label {Experimental: }
+          xywh {100 283 0 20} labelfont 1 labelsize 11 align 4
+        }
+        Fl_Check_Button w_proj_mergeback {uid 4680
+          label {generate MergeBack data}
+          callback {if (v == LOAD) {
+  o->value(g_project.write_mergeback_data);
+} else {
+  if (g_project.write_mergeback_data != o->value()) {
+    set_modflag(1);
+    g_project.write_mergeback_data = o->value();
+  }
+}}
+          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11
+        }
+        Fl_Box {} {uid 18921
           xywh {100 530 220 10} hide resizable
         }
       }
-      Fl_Group w_settings_layout_tab {
+      Fl_Group w_settings_layout_tab {uid 41157
         label Layout
         callback {propagate_load(o, v);} open
         image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
-        Fl_Box {} {
+        Fl_Box {} {uid 1521
           label {Layout:}
           xywh {25 78 60 24} labelfont 1 labelsize 11 align 24
         }
-        Fl_Choice layout_choice {
+        Fl_Choice layout_choice {uid 8880
           callback {if (v == LOAD) {
     o->value(g_layout_list.current_suite());
   } else {
@@ -404,16 +423,16 @@ or just ".ext" to set extension.}
   }}
           xywh {85 78 187 24} down_box BORDER_BOX
         } {
-          MenuItem {} {
+          MenuItem {} {uid 22212
             label FLTK
             xywh {0 0 31 20}
           }
-          MenuItem {} {
+          MenuItem {} {uid 39957
             label Grid
             xywh {0 0 31 20}
           }
         }
-        Fl_Button {} {
+        Fl_Button {} {uid 11146
           label {+}
           callback {// Clone the current layout suite
 
@@ -429,7 +448,7 @@ g_layout_list.add(new_name);
 g_layout_list.update_dialogs();}
           xywh {272 78 24 24}
         }
-        Fl_Menu_Button w_layout_menu {
+        Fl_Menu_Button w_layout_menu {uid 37349
           callback {if (v == LOAD) {
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
   if (suite.storage_ == FD_STORE_INTERNAL) {
@@ -445,7 +464,7 @@ g_layout_list.update_dialogs();}
 }} open
           xywh {296 78 24 24}
         } {
-          MenuItem w_layout_menu_rename {
+          MenuItem w_layout_menu_rename {uid 27291
             label {Rename...}
             callback {// Rename the current layout suite
 
@@ -458,35 +477,35 @@ g_layout_list.rename(new_name);
 g_layout_list.update_dialogs();}
             xywh {0 0 31 20} divider
           }
-          MenuItem {w_layout_menu_storage[0]} {
+          MenuItem {w_layout_menu_storage[0]} {uid 63565
             label {@fd_beaker  FLUID Built-In}
             callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_INTERNAL);
 g_layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio deactivate
           }
-          MenuItem {w_layout_menu_storage[1]} {
+          MenuItem {w_layout_menu_storage[1]} {uid 49977
             label {@fd_user  User Preference}
             callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_USER);
 g_layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio
           }
-          MenuItem {w_layout_menu_storage[2]} {
+          MenuItem {w_layout_menu_storage[2]} {uid 62966
             label {@fd_project  Store in .fl Project File}
             callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_PROJECT);
 g_layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio
           }
-          MenuItem {w_layout_menu_storage[3]} {
+          MenuItem {w_layout_menu_storage[3]} {uid 2039
             label {@fd_file  Store in External File}
             callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_FILE);
 g_layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio divider
           }
-          MenuItem w_layout_menu_load {
+          MenuItem w_layout_menu_load {uid 9960
             label {Load...}
             callback {// Give the user a file chooser and load that file
 Fl_Native_File_Chooser fnfc;
@@ -502,7 +521,7 @@ g_layout_list.load(new_filename);
 g_layout_list.update_dialogs();}
             xywh {0 0 31 20}
           }
-          MenuItem w_layout_menu_save {
+          MenuItem w_layout_menu_save {uid 19617
             label {Save...}
             callback {// Give the user a file chooser with a suggested name
   Fl_Native_File_Chooser fnfc;
@@ -521,7 +540,7 @@ g_layout_list.update_dialogs();}
             xywh {0 0 31 20} divider
             code0 {\#include <FL/Fl_Native_File_Chooser.H>}
           }
-          MenuItem w_layout_menu_delete {
+          MenuItem w_layout_menu_delete {uid 4101
             label Delete
             callback {// remove the current suite
 
@@ -530,42 +549,42 @@ g_layout_list.update_dialogs();}
             xywh {0 0 31 20}
           }
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 60115
           label {Preset:}
           xywh {25 107 60 20} labelfont 1 labelsize 11 align 24
         }
-        Fl_Group {} {
+        Fl_Group {} {uid 63742
           callback propagate_load open
           xywh {85 107 235 20} labelsize 11
         } {
-          Fl_Button {preset_choice[0]} {
+          Fl_Button {preset_choice[0]} {uid 62445
             label Application
             user_data 0 user_data_type long
             callback edit_layout_preset_cb
             xywh {85 107 78 20} type Radio value 1 selection_color 45 labelsize 11 compact 1
           }
-          Fl_Button {preset_choice[1]} {
+          Fl_Button {preset_choice[1]} {uid 19877
             label Dialog
             user_data 1 user_data_type long
             callback edit_layout_preset_cb
             xywh {163 107 79 20} type Radio selection_color 45 labelsize 11 compact 1
           }
-          Fl_Button {preset_choice[2]} {
+          Fl_Button {preset_choice[2]} {uid 47317
             label Toolbox
             user_data 2 user_data_type long
             callback edit_layout_preset_cb
             xywh {242 107 78 20} type Radio selection_color 45 labelsize 11 compact 1
           }
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 57587
           label {---- Window ----}
           xywh {85 132 235 20} labelfont 1 labelsize 11 align 20
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 39641
           label {Margin:}
           xywh {25 167 60 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 19684
           label {Left:}
           callback {if (v == LOAD) {
   o->value((double)layout->left_window_margin);
@@ -574,7 +593,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 167 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 15451
           label {Top:}
           callback {if (v == LOAD) {
   o->value((double)layout->top_window_margin);
@@ -583,7 +602,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 167 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 48122
           label {Right:}
           callback {if (v == LOAD) {
   o->value((double)layout->right_window_margin);
@@ -592,7 +611,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {205 167 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 21612
           label {Bottom:}
           callback {if (v == LOAD) {
   o->value((double)layout->bottom_window_margin);
@@ -601,11 +620,11 @@ g_layout_list.update_dialogs();}
 }}
           xywh {265 167 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 36291
           label {Grid:}
           xywh {32 201 53 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 4433
           label {Horizontal:}
           callback {if (v == LOAD) {
   o->value((double)layout->window_grid_x);
@@ -614,7 +633,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 201 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 62434
           label {Vertical:}
           callback {if (v == LOAD) {
   o->value((double)layout->window_grid_y);
@@ -623,15 +642,15 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 201 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 39968
           label {---- Group ----}
           xywh {85 226 235 20} labelfont 1 labelsize 11 align 20
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 8110
           label {Margin:}
           xywh {25 261 60 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 4108
           label {Left:}
           callback {if (v == LOAD) {
   o->value((double)layout->left_group_margin);
@@ -640,7 +659,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 261 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 40673
           label {Top:}
           callback {if (v == LOAD) {
   o->value((double)layout->top_group_margin);
@@ -649,7 +668,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 261 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 64774
           label {Right:}
           callback {if (v == LOAD) {
   o->value((double)layout->right_group_margin);
@@ -658,7 +677,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {205 261 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 42648
           label {Bottom:}
           callback {if (v == LOAD) {
   o->value((double)layout->bottom_group_margin);
@@ -667,11 +686,11 @@ g_layout_list.update_dialogs();}
 }}
           xywh {265 261 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 24685
           label {Grid:}
           xywh {32 295 53 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 46945
           label {Horizontal:}
           callback {if (v == LOAD) {
   o->value((double)layout->group_grid_x);
@@ -680,7 +699,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 295 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 24575
           label {Vertical:}
           callback {if (v == LOAD) {
   o->value((double)layout->group_grid_y);
@@ -689,15 +708,15 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 295 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 28980
           label {---- Tabs ----}
           xywh {85 320 235 20} labelfont 1 labelsize 11 align 20
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 6305
           label {Margin:}
           xywh {25 355 60 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 64542
           label {Top:}
           callback {if (v == LOAD) {
   o->value((double)layout->top_tabs_margin);
@@ -706,7 +725,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 355 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 15129
           label {Bottom:}
           callback {if (v == LOAD) {
   o->value((double)layout->bottom_tabs_margin);
@@ -715,15 +734,15 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 355 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 6909
           label {---- Widget ----}
           xywh {85 380 235 20} labelfont 1 labelsize 11 align 20
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 55862
           label {Horizontal:}
           xywh {25 415 60 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 12880
           label {Minimum:}
           callback {if (v == LOAD) {
   o->value((double)layout->widget_min_w);
@@ -732,7 +751,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 414 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 17129
           label {Increment:}
           callback {if (v == LOAD) {
   o->value((double)layout->widget_inc_w);
@@ -741,7 +760,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 414 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 3511
           label {Gap:}
           callback {if (v == LOAD) {
   o->value((double)layout->widget_gap_x);
@@ -750,11 +769,11 @@ g_layout_list.update_dialogs();}
 }}
           xywh {205 414 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 39553
           label {Vertical:}
           xywh {32 440 53 20} labelsize 11 align 24
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 44943
           callback {if (v == LOAD) {
   o->value((double)layout->widget_min_h);
 } else {
@@ -762,7 +781,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {85 440 55 20} labelsize 11 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 4035
           callback {if (v == LOAD) {
   o->value((double)layout->widget_inc_h);
 } else {
@@ -770,7 +789,7 @@ g_layout_list.update_dialogs();}
 }}
           xywh {145 440 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Value_Input {} {
+        Fl_Value_Input {} {uid 62522
           callback {if (v == LOAD) {
   o->value((double)layout->widget_gap_y);
 } else {
@@ -778,12 +797,12 @@ g_layout_list.update_dialogs();}
 }}
           xywh {205 440 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
         }
-        Fl_Group {} {
+        Fl_Group {} {uid 17182
           label {Label Font:}
           callback propagate_load open
           xywh {85 465 201 20} labelsize 11 align 4
         } {
-          Fl_Choice {} {
+          Fl_Choice {} {uid 28943
             callback {if (v == LOAD) {
   o->value(layout->labelfont+1);
 } else {
@@ -793,7 +812,7 @@ g_layout_list.update_dialogs();}
             code0 {extern Fl_Menu_Item fontmenu_w_default[];}
             code1 {o->menu(fontmenu_w_default);}
           } {}
-          Fl_Value_Input {} {
+          Fl_Value_Input {} {uid 40384
             callback {if (v == LOAD) {
   o->value(layout->labelsize);
 } else {
@@ -802,12 +821,12 @@ g_layout_list.update_dialogs();}
             tooltip {The size of the label text.} xywh {235 465 50 20} labelsize 11 minimum 1 maximum 1000 step 1 value 14 textsize 11
           }
         }
-        Fl_Group {} {
+        Fl_Group {} {uid 55084
           label {Text Font:}
           callback propagate_load open
           xywh {85 490 200 20} labelsize 11 align 4
         } {
-          Fl_Choice {} {
+          Fl_Choice {} {uid 37444
             callback {if (v == LOAD) {
   o->value(layout->textfont+1);
 } else {
@@ -817,7 +836,7 @@ g_layout_list.update_dialogs();}
             code0 {extern Fl_Menu_Item fontmenu_w_default[];}
             code1 {o->menu(fontmenu_w_default);}
           } {}
-          Fl_Value_Input {} {
+          Fl_Value_Input {} {uid 46165
             callback {if (v == LOAD) {
   o->value(layout->textsize);
 } else {
@@ -826,21 +845,21 @@ g_layout_list.update_dialogs();}
             tooltip {The value text size.} xywh {235 490 50 20} labelsize 11 maximum 1000 step 1 value 14 textsize 11
           }
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 19066
           xywh {325 535 5 5} hide resizable
         }
       }
-      Fl_Group w_settings_shell_tab {
+      Fl_Group w_settings_shell_tab {uid 36808
         label Shell
         callback propagate_load open
         image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
-        Fl_Group {} {
+        Fl_Group {} {uid 44715
           callback propagate_load open
           xywh {10 90 320 132}
         } {
-          Fl_Browser w_settings_shell_list {
+          Fl_Browser w_settings_shell_list {uid 24144
             label {Shell
 command
 list:}
@@ -871,13 +890,13 @@ list:}
 }}
             xywh {100 90 220 110} type Multi labelfont 1 labelsize 11 align 4 textsize 13 resizable
           }
-          Fl_Group w_settings_shell_toolbox {
+          Fl_Group w_settings_shell_toolbox {uid 1225
             callback {if (v==LOAD) {
   propagate_load(o, v);
 }} open
             xywh {100 200 220 22}
           } {
-            Fl_Button {} {
+            Fl_Button {} {uid 26034
               label {+}
               callback {if (v != LOAD) {
   int selected = w_settings_shell_list_selected;
@@ -897,7 +916,7 @@ list:}
 }}
               tooltip {insert a new shell command into the list after the selected command} xywh {100 200 24 22} labelfont 1 labelsize 11
             }
-            Fl_Button w_settings_shell_dup {
+            Fl_Button w_settings_shell_dup {uid 39134
               label {++}
               callback {int selected = w_settings_shell_list_selected;
 if (v==LOAD) {
@@ -925,7 +944,7 @@ if (v==LOAD) {
 }}
               tooltip {duplicate the selected shell command and insert it into the list} xywh {124 200 24 22} labelfont 1 labelsize 11 deactivate
             }
-            Fl_Button w_settings_shell_remove {
+            Fl_Button w_settings_shell_remove {uid 8882
               label DEL
               callback {int selected = w_settings_shell_list_selected;
 if (v==LOAD) {
@@ -952,46 +971,46 @@ if (v==LOAD) {
 }}
               tooltip {remove the selected shell command - this can not be undone} xywh {148 200 24 22} labelsize 10 deactivate
             }
-            Fl_Menu_Button w_settings_shell_menu {open
+            Fl_Menu_Button w_settings_shell_menu {uid 59638 open
               xywh {172 200 24 22} labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 43189
                 label {Import...}
                 callback {if (v != LOAD)
   Fd_Shell_Command_List::import_from_file();}
                 tooltip {import shell commands from an external file} xywh {90 90 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 11746
                 label {Export selected...}
                 callback {if (v != LOAD)
   Fd_Shell_Command_List::export_selected();}
                 tooltip {export selected shell commands to an external file} xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 23116
                 label {Example Scripts:}
                 xywh {20 20 100 20} labelfont 1 labelsize 10 hide deactivate
               }
-              MenuItem {} {
+              MenuItem {} {uid 24655
                 label {Compile with fltk-config}
                 xywh {30 30 100 20} labelsize 11 hide
               }
-              MenuItem {} {
+              MenuItem {} {uid 64477
                 label {Build and run}
                 xywh {40 40 100 20} labelsize 11 hide
               }
-              MenuItem {} {
+              MenuItem {} {uid 33695
                 label {Build with Xcode on macOS}
                 xywh {50 50 100 20} labelsize 11 hide
               }
-              MenuItem {} {
+              MenuItem {} {uid 23688
                 label {Build with CMake}
                 xywh {60 60 100 20} labelsize 11 hide
               }
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 61031
               xywh {253 200 13 22} hide resizable
             }
-            Fl_Button w_settings_shell_play {
+            Fl_Button w_settings_shell_play {uid 53949
               label Run
               callback {int selected = w_settings_shell_list_selected;
 if (v==LOAD) {
@@ -1009,7 +1028,7 @@ if (v==LOAD) {
             }
           }
         }
-        Fl_Group w_settings_shell_cmd {
+        Fl_Group w_settings_shell_cmd {uid 44494
           callback {if (v==LOAD) {
   int selected = w_settings_shell_list_selected;
   if (selected) {
@@ -1021,7 +1040,7 @@ if (v==LOAD) {
 }} open
           xywh {10 235 320 291} resizable
         } {
-          Fl_Input {} {
+          Fl_Input {} {uid 54815
             label {Name:}
             callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1040,7 +1059,7 @@ if (v == LOAD) {
 }}
             tooltip {file the shell command under this name in the shell command list} xywh {100 246 220 20} labelfont 1 labelsize 11 when 13 textfont 4 textsize 11
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 52210
             label {Menu Label:}
             callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1059,11 +1078,11 @@ if (v == LOAD) {
 }}
             tooltip {label text for the Shell menu in the main menu bar} xywh {100 272 220 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 41313
             callback {propagate_load(o, v);} open
             xywh {100 297 140 71}
           } {
-            Fl_Button {} {
+            Fl_Button {} {uid 61696
               label Shortcut
               callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1085,7 +1104,7 @@ if (v == LOAD) {
               code0 {\#include <FL/Fl_Shortcut_Button.H>}
               class Fl_Shortcut_Button
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 30606
               label {Store:}
               callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1111,18 +1130,18 @@ if (v == LOAD) {
 }} open
               tooltip {store this shell command as a user setting or save it with the .fl project file} xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 9848
                 label {@fd_user User Setting}
                 user_data FD_STORE_USER user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 39319
                 label {@fd_project Project File}
                 user_data FD_STORE_PROJECT user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 44439
               label {Condition:}
               callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1143,42 +1162,42 @@ if (v == LOAD) {
 }} open
               tooltip {add this command to the main menu bar only if this condition is true} xywh {100 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 42254
                 label {all platforms}
                 user_data {Fd_Shell_Command::ALWAYS} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 23092
                 label {MS Windows only}
                 user_data {Fd_Shell_Command::WIN_ONLY} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 10850
                 label {Linux only}
                 user_data {Fd_Shell_Command::UX_ONLY} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 50951
                 label {macOS only}
                 user_data {Fd_Shell_Command::MAC_ONLY} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 42199
                 label {Linux and macOS}
                 user_data {Fd_Shell_Command::MAC_AND_UX_ONLY} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 11358
                 label {don't use}
                 user_data {Fd_Shell_Command::NEVER} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 58439
               xywh {230 297 10 71} hide resizable
             }
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 6817
             label {Label:}
             callback {if (v == LOAD) {
 //  o->value(g_shell_command.c_str());
@@ -1187,11 +1206,11 @@ if (v == LOAD) {
 }}
             xywh {230 348 90 20} labelfont 1 labelsize 11 textfont 4 textsize 11 hide
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 18520
             callback propagate_load open
             xywh {100 373 220 80} resizable
           } {
-            Fl_Text_Editor w_settings_shell_command {
+            Fl_Text_Editor w_settings_shell_command {uid 46121
               label {Shell script:}
               callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1210,10 +1229,10 @@ if (v == LOAD) {
               xywh {100 373 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12 resizable
               code0 {o->buffer(new Fl_Text_Buffer);}
             }
-            Fl_Group {} {open
+            Fl_Group {} {uid 6286 open
               xywh {296 373 24 80}
             } {
-              Fl_Menu_Button w_settings_shell_text_macros {
+              Fl_Menu_Button w_settings_shell_text_macros {uid 18267
                 callback {const Fl_Menu_Item *mi = o->mvalue();
 if (mi) {
   char buffer[256];
@@ -1234,53 +1253,53 @@ if (mi) {
 }} open
                 tooltip {a list of text replacements available for the shell script} xywh {296 373 24 22} labelsize 11 textsize 11
               } {
-                MenuItem {} {
+                MenuItem {} {uid 47010
                   label {@@BASENAME@@}
                   xywh {80 80 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 3061
                   label {@@PROJECTFILE_PATH@@}
                   xywh {0 0 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 7010
                   label {@@PROJECTFILE_NAME@@}
                   xywh {10 10 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 52294
                   label {@@CODEFILE_PATH@@}
                   xywh {20 20 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 2438
                   label {@@CODEFILE_NAME@@}
                   xywh {30 30 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 30620
                   label {@@HEADERFILE_PATH@@}
                   xywh {40 40 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 48836
                   label {@@HEADERFILE_NAME@@}
                   xywh {50 50 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 16174
                   label {@@TEXTFILE_PATH@@}
                   xywh {60 60 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 9014
                   label {@@TEXTFILE_NAME@@}
                   xywh {70 70 100 20} labelfont 4 labelsize 11
                 }
-                MenuItem {} {
+                MenuItem {} {uid 51498
                   label {@@FLTK_CONFIG@@}
                   comment {Not yet implemented}
                   xywh {70 70 100 20} labelfont 4 labelsize 11 hide
                 }
-                MenuItem {} {
+                MenuItem {} {uid 60674
                   label {@@TMPDIR@@}
                   xywh {70 70 100 20} labelfont 4 labelsize 11
                 }
               }
-              Fl_Button {} {
+              Fl_Button {} {uid 22643
                 label {@+1fd_zoom}
                 callback {if (!script_panel) make_script_panel();
 script_input->buffer()->text(w_settings_shell_command->buffer()->text());
@@ -1299,12 +1318,12 @@ BREAK2:
 script_panel->hide();}
                 tooltip {open the big code editor} xywh {296 395 24 22} labelsize 11
               }
-              Fl_Box {} {
+              Fl_Box {} {uid 60434
                 xywh {296 417 24 10} hide resizable
               }
             }
           }
-          Fl_Check_Button {} {
+          Fl_Check_Button {} {uid 40036
             label {save .fl project file}
             callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1327,7 +1346,7 @@ if (v == LOAD) {
 }}
             tooltip {save the project to the .fl file before running the command} xywh {100 458 220 20} down_box DOWN_BOX labelsize 11
           }
-          Fl_Check_Button {} {
+          Fl_Check_Button {} {uid 28134
             label {save source code}
             callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1350,7 +1369,7 @@ if (v == LOAD) {
 }}
             tooltip {generate the source code and header file before running the command} xywh {100 478 220 19} down_box DOWN_BOX labelsize 11
           }
-          Fl_Check_Button {} {
+          Fl_Check_Button {} {uid 12038
             label {save i18n strings}
             callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
@@ -1374,52 +1393,52 @@ if (v == LOAD) {
             tooltip {save the internationalisation strings before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
           }
         }
-        Fl_Box w_settings_shell_fd_project {
+        Fl_Box w_settings_shell_fd_project {uid 17287
           image {pixmaps/fd_project.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
           code0 {o->image()->scale(16, 16);}
         }
-        Fl_Box w_settings_shell_fd_user {
+        Fl_Box w_settings_shell_fd_user {uid 23791
           image {pixmaps/fd_user.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
           code0 {o->image()->scale(16, 16);}
         }
       }
-      Fl_Group w_settings_i18n_tab {
+      Fl_Group w_settings_i18n_tab {uid 33363
         label Locale
         callback {propagate_load(o, v);} open
         image {icons/language_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
-        Fl_Group {} {
+        Fl_Group {} {uid 13577
           callback propagate_load open
           xywh {100 78 170 20}
         } {
-          Fl_Choice i18n_type_chooser {
+          Fl_Choice i18n_type_chooser {uid 63697
             label {i18n Library:}
             callback i18n_type_cb open
             tooltip {Type of internationalization to use.} xywh {100 78 160 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
           } {
-            MenuItem {} {
+            MenuItem {} {uid 32520
               label None
               xywh {0 -11 100 20} labelsize 11
             }
-            MenuItem {} {
+            MenuItem {} {uid 6995
               label {GNU gettext}
               xywh {0 -11 100 20} labelsize 11
             }
-            MenuItem {} {
+            MenuItem {} {uid 9039
               label {POSIX catgets}
               xywh {0 -11 100 20} labelsize 11
             }
           }
-          Fl_Box {} {
+          Fl_Box {} {uid 16977
             xywh {260 78 10 20} hide resizable
           }
         }
-        Fl_Group i18n_gnu_group {
+        Fl_Group i18n_gnu_group {uid 57848
           callback {propagate_load(o, v);} open
           xywh {100 103 220 95}
         } {
-          Fl_Input i18n_gnu_include_input {
+          Fl_Input i18n_gnu_include_input {uid 36197
             label {\#include:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_gnu_include.c_str());
@@ -1430,7 +1449,7 @@ if (v == LOAD) {
 }}
             tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input i18n_gnu_conditional_input {
+          Fl_Input i18n_gnu_conditional_input {uid 7567
             label {Conditional:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_gnu_conditional.c_str());
@@ -1441,7 +1460,7 @@ if (v == LOAD) {
 }}
             tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input i18n_gnu_function_input {
+          Fl_Input i18n_gnu_function_input {uid 42932
             label {Function:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_gnu_function.c_str());
@@ -1452,7 +1471,7 @@ if (v == LOAD) {
 }}
             tooltip {The function to call to translate labels and tooltips, usually "gettext" or "_"} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input i18n_gnu_static_function_input {
+          Fl_Input i18n_gnu_static_function_input {uid 21232
             label {Static Function:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_gnu_static_function.c_str());
@@ -1464,11 +1483,11 @@ if (v == LOAD) {
             tooltip {function to call to translate static text, The function to call to internationalize labels and tooltips, usually "gettext_noop" or "N_"} xywh {100 178 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
         }
-        Fl_Group i18n_posix_group {
+        Fl_Group i18n_posix_group {uid 10624
           callback {propagate_load(o, v);} open
           xywh {100 103 220 95} hide
         } {
-          Fl_Input i18n_pos_include_input {
+          Fl_Input i18n_pos_include_input {uid 46007
             label {\#include:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_pos_include.c_str());
@@ -1479,7 +1498,7 @@ if (v == LOAD) {
 }}
             tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input i18n_pos_conditional_input {
+          Fl_Input i18n_pos_conditional_input {uid 56011
             label {Conditional:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_pos_conditional.c_str());
@@ -1490,7 +1509,7 @@ if (v == LOAD) {
 }}
             tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input i18n_pos_file_input {
+          Fl_Input i18n_pos_file_input {uid 31513
             label {File:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_pos_file.c_str());
@@ -1501,11 +1520,11 @@ if (v == LOAD) {
 }}
             tooltip {The name of the message catalog.} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 55278
             callback {propagate_load(o, v);} open
             xywh {100 178 90 20}
           } {
-            Fl_Input i18n_pos_set_input {
+            Fl_Input i18n_pos_set_input {uid 26778
               label {Set:}
               callback {if (v == LOAD) {
   o->value(g_project.i18n_pos_set.c_str());
@@ -1516,20 +1535,20 @@ if (v == LOAD) {
 }}
               tooltip {The message set number.} xywh {100 178 80 20} type Int box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 38123
               xywh {180 178 10 20} hide resizable
             }
           }
         }
-        Fl_Box {} {
+        Fl_Box {} {uid 63959
           xywh {100 530 220 10} hide resizable
         }
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {uid 44824 open
       xywh {10 550 320 20}
     } {
-      Fl_Button {} {
+      Fl_Button {} {uid 34508
         label Close
         callback {if (g_shell_config)
   g_shell_config->write(fluid_prefs, FD_STORE_USER);
@@ -1537,36 +1556,37 @@ g_layout_list.write(fluid_prefs, FD_STORE_USER);
 settings_window->hide();}
         tooltip {Close this dialog.} xywh {230 550 100 20} labelsize 11
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 59471
         xywh {220 550 10 20} hide resizable
       }
     }
   }
-  code {w_settings_tabs->do_callback(w_settings_tabs, LOAD);} {}
+  code {w_settings_tabs->do_callback(w_settings_tabs, LOAD);} {uid 51362
+  }
 }
 
-Function {make_shell_window()} {open
+Function {make_shell_window()} {uid 17532 open
 } {
-  Fl_Window shell_run_window {
+  Fl_Window shell_run_window {uid 26508
     label {Shell Command Output} open
     xywh {769 585 555 430} type Double align 80 resizable visible
   } {
-    Fl_Simple_Terminal shell_run_terminal {
+    Fl_Simple_Terminal shell_run_terminal {uid 20535
       xywh {10 10 535 375} resizable
       code0 {shell_run_terminal->ansi(1);}
     }
-    Fl_Group {} {open
+    Fl_Group {} {uid 24031 open
       xywh {10 395 535 25}
     } {
-      Fl_Button {} {
+      Fl_Button {} {uid 65217
         label Clear
         callback {shell_run_terminal->clear();}
         xywh {10 395 94 25}
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 21165
         xywh {104 395 341 25} hide resizable
       }
-      Fl_Return_Button shell_run_button {
+      Fl_Return_Button shell_run_button {uid 58021
         label Close
         callback {Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
 pos.set("x", shell_run_window->x());
@@ -1580,5 +1600,5 @@ shell_run_window->hide();}
   }
 }
 
-decl {Fl_Menu_Item *w_layout_menu_storage[4];} {private global
+decl {Fl_Menu_Item *w_layout_menu_storage[4];} {uid 55761 private global
 }

@@ -23,40 +23,6 @@
 #include <FL/Fl_Grid.H>
 extern void set_modflag(int mf, int mfc=-1);
 
-Fl_Double_Window* make_window() {
-  Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(480, 320);
-    w = o; (void)w;
-    { Fl_Grid* o = new Fl_Grid(25, 25, 262, 160);
-      o->labelsize(11);
-      o->layout(4, 4);
-      o->margin(10, 10, 16, 12);
-      static const int colwidths[] = { 0, 100, 0, 0 };
-      o->col_width(colwidths, 4);
-      static const int colweights[] = { 50, 40, 50, 50 };
-      o->col_weight(colweights, 4);
-      { Fl_Button* o = new Fl_Button(70, 63, 129, 50, "Button");
-        o->labelsize(11);
-      } // Fl_Button* o
-      { Fl_Group* o = new Fl_Group(224, 115, 40, 45);
-        o->box(FL_BORDER_BOX);
-        o->color((Fl_Color)11);
-        o->labelsize(11);
-        { Fl_Button* o = new Fl_Button(234, 120, 24, 20, "Button");
-          o->labelsize(11);
-        } // Fl_Button* o
-        o->end();
-      } // Fl_Group* o
-      Fl_Grid::Cell *cell = NULL;
-      cell = o->widget(o->child(0), 1, 1, 1, 1, 48);
-      if (cell) cell->minimum_size(20, 20);
-      o->end();
-    } // Fl_Grid* o
-    o->end();
-  } // Fl_Double_Window* o
-  return w;
-}
-
 Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
 
 static void cb_widget_tabs(Fl_Tabs* o, void* v) {
@@ -575,7 +541,6 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1449,6 +1414,7 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
         widget_tab_grid_child->labelsize(11);
         widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
+        widget_tab_grid_child->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
           o->labelfont(1);
           o->labelsize(11);

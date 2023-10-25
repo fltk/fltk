@@ -348,6 +348,7 @@ void update_visibility_flag(Fl_Type *p) {
  Constructor and base for any node in the widget tree.
  */
 Fl_Type::Fl_Type() :
+uid_(0),
 code_static_start(-1), code_static_end(-1),
 code1_start(-1), code1_end(-1),
 code2_start(-1), code2_end(-1),
@@ -501,6 +502,14 @@ void Fl_Type::add(Fl_Type *p, Strategy strategy) {
     last = end;
     prev = end->next = 0;
   }
+  { // make sure that we have no duplicate uid's
+    Fl_Type *tp = this;
+    do {
+      tp->set_uid(tp->uid_);
+      tp = tp->next;
+    } while (tp!=end && tp!=NULL);
+  }
+
   // tell this that it was added, so it can update itself
   if (p) p->add_child(this,0);
   open_ = 1;
@@ -551,6 +560,13 @@ void Fl_Type::insert(Fl_Type *g) {
   end->next = g;
   g->prev = end;
   update_visibility_flag(this);
+  { // make sure that we have no duplicate uid's
+    Fl_Type *tp = this;
+    do {
+      tp->set_uid(tp->uid_);
+      tp = tp->next;
+    } while (tp!=end && tp!=NULL);
+  }
   // tell parent that it has a new child, so it can update itself
   if (parent) parent->add_child(this, g);
   widget_browser->redraw();
@@ -709,6 +725,10 @@ void Fl_Type::write(Fd_Project_Writer &f) {
 
 void Fl_Type::write_properties(Fd_Project_Writer &f) {
   // repeat this for each attribute:
+  if (g_project.write_mergeback_data && uid_) {
+    f.write_word("uid");
+    f.write_string("%d", uid_);
+  }
   if (label()) {
     f.write_indent(level+1);
     f.write_word("label");
@@ -738,7 +758,9 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
 }
 
 void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
-  if (!strcmp(c,"label"))
+  if (!strcmp(c,"uid"))
+    set_uid(f.read_int());
+  else if (!strcmp(c,"label"))
     label(f.read_word());
   else if (!strcmp(c,"user_data"))
     user_data(f.read_word());
@@ -1022,6 +1044,46 @@ void Fl_Type::write_code1(Fd_Code_Writer& f) {
 }
 
 void Fl_Type::write_code2(Fd_Code_Writer&) {
+}
+
+/** Set a uid that is unique within the project.
+
+ Try to set the given id as the unique id for this node. If the suggested id
+ is 0, or it is already taken inside this project, we try another random id
+ until we find one that is unique.
+
+ \param[in] suggested_uid the preferred uid for this node
+ \return the actualt uid that was given to the node
+ */
+unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
+  if (suggested_uid==0)
+    suggested_uid = (unsigned short)rand();
+  for (;;) {
+    Fl_Type *tp = Fl_Type::first;
+    for ( ; tp; tp = tp->next)
+      if (tp!=this && tp->uid_==suggested_uid)
+        break;
+    if (tp==NULL)
+      break;
+    suggested_uid = (unsigned short)rand();
+  }
+  uid_ = suggested_uid;
+  return suggested_uid;
+}
+
+/** Find a node by its unique id.
+
+ Every node in a type tree has an id that is unique for the current project.
+ Walk the tree and return the node with this uid.
+
+ \param[in] uid any number between 0 and 65535
+ \return the node with this uid, or NULL if not found
+ */
+Fl_Type *Fl_Type::find_by_uid(unsigned short uid) {
+  for (Fl_Type *tp = Fl_Type::first; tp; tp = tp->next) {
+    if (tp->uid_ == uid) return tp;
+  }
+  return NULL;
 }
 
 /** Find a type node by using the sourceview text positions.

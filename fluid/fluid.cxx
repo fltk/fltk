@@ -285,6 +285,7 @@ Fluid_Project::Fluid_Project() :
   avoid_early_includes(0),
   header_file_set(0),
   code_file_set(0),
+  write_mergeback_data(0),
   header_file_name(".h"),
   code_file_name(".cxx")
 { }
@@ -314,6 +315,7 @@ void Fluid_Project::reset() {
   code_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
+  write_mergeback_data = 0;
 }
 
 void Fluid_Project::update_settings_dialog() {
@@ -1269,6 +1271,30 @@ void write_cb(Fl_Widget *, void *) {
 }
 
 /**
+ Merge the possibly modified content of code files back into the project.
+ */
+int mergeback_code_files()
+{
+  flush_text_widgets();
+  if (!filename) return 1;
+
+  // -- generate the file names with absolute paths
+  Fd_Code_Writer f;
+  Fl_String code_filename = g_project.codefile_path() + g_project.codefile_name();
+
+  // -- write the code and header files
+  if (!batch_mode) enter_project_dir();
+  int c = f.merge_back(code_filename.c_str(), FD_MERGEBACK_INTERACTIVE);
+  if (!batch_mode) leave_project_dir();
+  if (c==0) fl_message("MergeBack found no external modifications\n"
+                       "in the source code.");
+}
+
+void mergeback_cb(Fl_Widget *, void *) {
+  mergeback_code_files();
+}
+
+/**
  Write the strings that are used in i18n.
  */
 void write_strings_cb(Fl_Widget *, void *) {
@@ -1619,6 +1645,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Save As &Template...", 0, save_template_cb, 0, FL_MENU_DIVIDER},
   {"&Print...", FL_COMMAND+'p', print_menu_cb},
   {"Write &Code...", FL_COMMAND+FL_SHIFT+'c', write_cb, 0},
+  {"MergeBack Code", FL_COMMAND+FL_SHIFT+'m', mergeback_cb, 0},
   {"&Write Strings...", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
   {relative_history[0], FL_COMMAND+'1', menu_file_open_history_cb, absolute_history[0]},
   {relative_history[1], FL_COMMAND+'2', menu_file_open_history_cb, absolute_history[1]},

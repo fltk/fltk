@@ -29,9 +29,11 @@ int w_settings_shell_list_selected;
 Fl_Double_Window *script_panel=(Fl_Double_Window *)0;
 
 static void cb_script_panel(Fl_Double_Window*, void*) {
+//~fl~0~0000~d63cf325~~
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
   script_panel->hide(); // otherwise hide..;
+//~fl~3~962d~653ca372~~
 }
 
 Fl_Text_Editor *script_input=(Fl_Text_Editor *)0;
@@ -72,9 +74,11 @@ Fl_Double_Window* make_script_panel() {
     o->size_range(200, 150);
     script_panel->end();
   } // Fl_Double_Window* script_panel
+//~fl~0~0000~fa5002f6~~
   // Enable line numbers
   script_input->linenumber_width(60);
   script_input->linenumber_size(script_input->Fl_Text_Display::textsize());
+//~fl~1~7788~95aed424~~
   return script_panel;
 }
 
@@ -83,7 +87,9 @@ Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
 Fl_Tabs *w_settings_tabs=(Fl_Tabs *)0;
 
 static void cb_w_settings_tabs(Fl_Tabs* o, void* v) {
+//~fl~0~0000~b2ea2cd0~~
   propagate_load(o, v);
+//~fl~3~b492~50833204~~
 }
 
 #include <FL/Fl_PNG_Image.H>
@@ -196,7 +202,9 @@ static Fl_Image *image_general_64() {
 }
 
 static void cb_(Fl_Group* o, void* v) {
+//~fl~0~0000~8b6a4f13~~
   propagate_load(o, v);
+//~fl~3~5133~50833204~~
 }
 
 Fl_Scheme_Choice *scheme_choice=(Fl_Scheme_Choice *)0;
@@ -204,62 +212,81 @@ Fl_Scheme_Choice *scheme_choice=(Fl_Scheme_Choice *)0;
 Fl_Check_Button *tooltips_button=(Fl_Check_Button *)0;
 
 static void cb_tooltips_button(Fl_Check_Button*, void*) {
+//~fl~0~0000~22407b10~~
   Fl_Tooltip::enable(tooltips_button->value());
   fluid_prefs.set("show_tooltips", tooltips_button->value());
+//~fl~3~0f0d~b60eb0d5~~
 }
 
 Fl_Check_Button *completion_button=(Fl_Check_Button *)0;
 
 static void cb_completion_button(Fl_Check_Button*, void*) {
+//~fl~0~0000~e63c99e7~~
   fluid_prefs.set("show_completion_dialogs", completion_button->value());
+//~fl~3~5023~75f43754~~
 }
 
 Fl_Check_Button *openlast_button=(Fl_Check_Button *)0;
 
 static void cb_openlast_button(Fl_Check_Button*, void*) {
+//~fl~0~0000~19e86ad0~~
   fluid_prefs.set("open_previous_file", openlast_button->value());
+//~fl~3~6ae5~eb6803cb~~
 }
 
 Fl_Check_Button *prevpos_button=(Fl_Check_Button *)0;
 
 static void cb_prevpos_button(Fl_Check_Button*, void*) {
+//~fl~0~0000~1eb02531~~
+  // Test!
   fluid_prefs.set("prev_window_pos", prevpos_button->value());
+//~fl~3~f85f~5e08b15b~~
 }
 
 Fl_Check_Button *show_comments_button=(Fl_Check_Button *)0;
 
 static void cb_show_comments_button(Fl_Check_Button*, void*) {
+//~fl~0~0000~20984206~~
   show_comments = show_comments_button->value();
   fluid_prefs.set("show_comments", show_comments);
   redraw_browser();
+//~fl~3~3530~7e12c220~~
 }
 
 static void cb_1(Fl_Group* o, void* v) {
+//~fl~0~0000~8a50c4af~~
   propagate_load(o, v);
+//~fl~3~22d1~50833204~~
 }
 
 Fl_Spinner *recent_spinner=(Fl_Spinner *)0;
 
 static void cb_recent_spinner(Fl_Spinner*, void*) {
+//~fl~0~0000~b1d67afc~~
   fluid_prefs.set("recent_files", recent_spinner->value());
   load_history();
+//~fl~3~f6c8~c11dca25~~
 }
 
 Fl_Check_Button *use_external_editor_button=(Fl_Check_Button *)0;
 
 static void cb_use_external_editor_button(Fl_Check_Button*, void*) {
+//~fl~0~0000~692aa10e~~
   G_use_external_editor = use_external_editor_button->value();
   fluid_prefs.set("use_external_editor", G_use_external_editor);
   redraw_browser();
+//~fl~3~c561~9406f8e4~~
 }
 
 Fl_Input *editor_command_input=(Fl_Input *)0;
 
 static void cb_editor_command_input(Fl_Input*, void*) {
+//~fl~0~0000~f3b84b34~~
   strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
   G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
   fluid_prefs.set("external_editor_command", G_external_editor_command);
   redraw_browser();
+//~fl~3~680c~2c28d30d~~
 }
 
 Fl_Check_Button *guides_button=(Fl_Check_Button *)0;
@@ -269,7 +296,9 @@ Fl_Check_Button *restricted_button=(Fl_Check_Button *)0;
 Fl_Group *w_settings_project_tab=(Fl_Group *)0;
 
 static void cb_w_settings_project_tab(Fl_Group* o, void* v) {
+//~fl~0~0000~a52da131~~
   propagate_load(o, v);
+//~fl~3~5081~50833204~~
 }
 
 static const unsigned char idata_document_64[] =
@@ -325,6 +354,7 @@ static Fl_Image *image_document_64() {
 Fl_Input *header_file_input=(Fl_Input *)0;
 
 static void cb_header_file_input(Fl_Input* o, void* v) {
+//~fl~0~0000~ebfa1479~~
   if (v == LOAD) {
     o->value(g_project.header_file_name.c_str());
   } else {
@@ -333,11 +363,13 @@ static void cb_header_file_input(Fl_Input* o, void* v) {
       set_modflag(1);
     }
   }
+//~fl~3~1ba2~d94de24c~~
 }
 
 Fl_Input *code_file_input=(Fl_Input *)0;
 
 static void cb_code_file_input(Fl_Input* o, void* v) {
+//~fl~0~0000~3d36c33a~~
   if (v == LOAD) {
     o->value(g_project.code_file_name.c_str());
   } else {
@@ -346,11 +378,13 @@ static void cb_code_file_input(Fl_Input* o, void* v) {
       set_modflag(1);
     }
   }
+//~fl~3~339c~9ccae002~~
 }
 
 Fl_Check_Button *include_H_from_C_button=(Fl_Check_Button *)0;
 
 static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~364552dd~~
   if (v == LOAD) {
     o->value(g_project.include_H_from_C);
   } else {
@@ -359,11 +393,13 @@ static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
       g_project.include_H_from_C = o->value();
     }
   }
+//~fl~3~66b4~a9382397~~
 }
 
 Fl_Check_Button *use_FL_COMMAND_button=(Fl_Check_Button *)0;
 
 static void cb_use_FL_COMMAND_button(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~1638bd23~~
   if (v == LOAD) {
     o->value(g_project.use_FL_COMMAND);
   } else {
@@ -372,11 +408,13 @@ static void cb_use_FL_COMMAND_button(Fl_Check_Button* o, void* v) {
       g_project.use_FL_COMMAND = o->value();
     }
   }
+//~fl~3~9267~5de48539~~
 }
 
 Fl_Check_Button *utf8_in_src_button=(Fl_Check_Button *)0;
 
 static void cb_utf8_in_src_button(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~9410c9c6~~
   if (v == LOAD) {
     o->value(g_project.utf8_in_src);
   } else {
@@ -385,11 +423,13 @@ static void cb_utf8_in_src_button(Fl_Check_Button* o, void* v) {
       g_project.utf8_in_src = o->value();
     }
   }
+//~fl~3~ac2a~3b6fa627~~
 }
 
 Fl_Check_Button *avoid_early_includes_button=(Fl_Check_Button *)0;
 
 static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~3bdf0f16~~
   if (v == LOAD) {
     o->value(g_project.avoid_early_includes);
   } else {
@@ -398,12 +438,30 @@ static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
       g_project.avoid_early_includes = o->value();
     }
   }
+//~fl~3~34ca~06858aea~~
+}
+
+Fl_Check_Button *w_proj_mergeback=(Fl_Check_Button *)0;
+
+static void cb_w_proj_mergeback(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~5d00a773~~
+  if (v == LOAD) {
+    o->value(g_project.write_mergeback_data);
+  } else {
+    if (g_project.write_mergeback_data != o->value()) {
+      set_modflag(1);
+      g_project.write_mergeback_data = o->value();
+    }
+  }
+//~fl~3~1248~145f3302~~
 }
 
 Fl_Group *w_settings_layout_tab=(Fl_Group *)0;
 
 static void cb_w_settings_layout_tab(Fl_Group* o, void* v) {
+//~fl~0~0000~e43cacfc~~
   propagate_load(o, v);
+//~fl~3~a0c5~50833204~~
 }
 
 static const unsigned char idata_layout_64[] =
@@ -438,6 +496,7 @@ static Fl_Image *image_layout_64() {
 Fl_Choice *layout_choice=(Fl_Choice *)0;
 
 static void cb_layout_choice(Fl_Choice* o, void* v) {
+//~fl~0~0000~404277fb~~
   if (v == LOAD) {
       o->value(g_layout_list.current_suite());
     } else {
@@ -445,6 +504,7 @@ static void cb_layout_choice(Fl_Choice* o, void* v) {
       g_layout_list.current_suite(index);
       g_layout_list.update_dialogs();
     }
+//~fl~3~22b0~841c3967~~
 }
 
 Fl_Menu_Item menu_layout_choice[] = {
@@ -454,6 +514,7 @@ Fl_Menu_Item menu_layout_choice[] = {
 };
 
 static void cb_2(Fl_Button*, void* v) {
+//~fl~0~0000~ef630678~~
   // Clone the current layout suite
 
   if (v == LOAD) return;
@@ -466,11 +527,13 @@ static void cb_2(Fl_Button*, void* v) {
 
   g_layout_list.add(new_name);
   g_layout_list.update_dialogs();
+//~fl~3~2b8a~28d4d389~~
 }
 
 Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
 
 static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
+//~fl~0~0000~7387a6f8~~
   if (v == LOAD) {
     Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
     if (suite.storage_ == FD_STORE_INTERNAL) {
@@ -484,9 +547,11 @@ static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
     }
     w_layout_menu_storage[suite.storage_]->setonly();
   }
+//~fl~3~91e5~27881b25~~
 }
 
 static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
+//~fl~0~0000~2667563f~~
   // Rename the current layout suite
 
   Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name_;
@@ -496,33 +561,43 @@ static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
 
   g_layout_list.rename(new_name);
   g_layout_list.update_dialogs();
+//~fl~2~6a9b~71cc7c62~~
 }
 
 static void cb_w_layout_menu_storage(Fl_Menu_*, void*) {
+//~fl~0~0000~0e7b558d~~
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
   suite.storage(FD_STORE_INTERNAL);
   g_layout_list.update_dialogs();
+//~fl~2~f84d~eea63d0a~~
 }
 
 static void cb_w_layout_menu_storage1(Fl_Menu_*, void*) {
+//~fl~0~0000~f9136a03~~
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
   suite.storage(FD_STORE_USER);
   g_layout_list.update_dialogs();
+//~fl~2~c339~daeea163~~
 }
 
 static void cb_w_layout_menu_storage2(Fl_Menu_*, void*) {
+//~fl~0~0000~c06bc743~~
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
   suite.storage(FD_STORE_PROJECT);
   g_layout_list.update_dialogs();
+//~fl~2~f5f6~f7c135cb~~
 }
 
 static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
+//~fl~0~0000~d743a383~~
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
   suite.storage(FD_STORE_FILE);
   g_layout_list.update_dialogs();
+//~fl~2~07f7~19d71da4~~
 }
 
 static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
+//~fl~0~0000~ec15d339~~
   // Give the user a file chooser and load that file
   Fl_Native_File_Chooser fnfc;
   fnfc.title("Load Layout Settings:");
@@ -535,9 +610,11 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
   g_layout_list.load(new_filename);
   //g_layout_list.current_suite(n);
   g_layout_list.update_dialogs();
+//~fl~2~26e8~3c8717b8~~
 }
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
+//~fl~0~0000~548a8f84~~
   // Give the user a file chooser with a suggested name
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Save Layout Settings:");
@@ -552,13 +629,16 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     if (!new_filename) return;
     g_layout_list.filename_ = new_filename;
     g_layout_list.save(new_filename);
+//~fl~2~4ca1~f136697d~~
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
+//~fl~0~0000~a7923711~~
   // remove the current suite
 
   g_layout_list.remove(g_layout_list.current_suite());
   g_layout_list.update_dialogs();
+//~fl~2~1005~437d0f96~~
 }
 
 Fl_Menu_Item menu_w_layout_menu[] = {
@@ -576,195 +656,243 @@ Fl_Menu_Item menu_w_layout_menu[] = {
 Fl_Button *preset_choice[3]={(Fl_Button *)0};
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~258cf08a~~
   if (v == LOAD) {
     o->value((double)layout->left_window_margin);
   } else {
     layout->left_window_margin = (int)o->value();
   }
+//~fl~3~4ce4~aa182acd~~
 }
 
 static void cb_Top(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~828bcdb2~~
   if (v == LOAD) {
     o->value((double)layout->top_window_margin);
   } else {
     layout->top_window_margin = (int)o->value();
   }
+//~fl~3~3c5b~f61c794a~~
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~f9212ca5~~
   if (v == LOAD) {
     o->value((double)layout->right_window_margin);
   } else {
     layout->right_window_margin = (int)o->value();
   }
+//~fl~3~bbfa~30018da3~~
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~a351318c~~
   if (v == LOAD) {
     o->value((double)layout->bottom_window_margin);
   } else {
     layout->bottom_window_margin = (int)o->value();
   }
+//~fl~3~546c~9d6618c2~~
 }
 
 static void cb_Horizontal(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~66fe2b77~~
   if (v == LOAD) {
     o->value((double)layout->window_grid_x);
   } else {
     layout->window_grid_x = (int)o->value();
   }
+//~fl~3~1151~73e0a613~~
 }
 
 static void cb_Vertical(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~8e022d1a~~
   if (v == LOAD) {
     o->value((double)layout->window_grid_y);
   } else {
     layout->window_grid_y = (int)o->value();
   }
+//~fl~3~f3e2~f5065f10~~
 }
 
 static void cb_Left1(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~5c8cce39~~
   if (v == LOAD) {
     o->value((double)layout->left_group_margin);
   } else {
     layout->left_group_margin = (int)o->value();
   }
+//~fl~3~100c~ac52b044~~
 }
 
 static void cb_Top1(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~136bd57e~~
   if (v == LOAD) {
     o->value((double)layout->top_group_margin);
   } else {
     layout->top_group_margin = (int)o->value();
   }
+//~fl~3~9ee1~69c82c2d~~
 }
 
 static void cb_Right1(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~90c3fa58~~
   if (v == LOAD) {
     o->value((double)layout->right_group_margin);
   } else {
     layout->right_group_margin = (int)o->value();
   }
+//~fl~3~fd06~cd20c87f~~
 }
 
 static void cb_Bottom1(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~d22b1229~~
   if (v == LOAD) {
     o->value((double)layout->bottom_group_margin);
   } else {
     layout->bottom_group_margin = (int)o->value();
   }
+//~fl~3~a698~635e9e6a~~
 }
 
 static void cb_Horizontal1(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~f88196a7~~
   if (v == LOAD) {
     o->value((double)layout->group_grid_x);
   } else {
     layout->group_grid_x = (int)o->value();
   }
+//~fl~3~b761~e47e8565~~
 }
 
 static void cb_Vertical1(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~cb6a7744~~
   if (v == LOAD) {
     o->value((double)layout->group_grid_y);
   } else {
     layout->group_grid_y = (int)o->value();
   }
+//~fl~3~5fff~5d0edca1~~
 }
 
 static void cb_Top2(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~da74ddc1~~
   if (v == LOAD) {
     o->value((double)layout->top_tabs_margin);
   } else {
     layout->top_tabs_margin = (int)o->value();
   }
+//~fl~3~fc1e~95ebcf51~~
 }
 
 static void cb_Bottom2(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~1b341a96~~
   if (v == LOAD) {
     o->value((double)layout->bottom_tabs_margin);
   } else {
     layout->bottom_tabs_margin = (int)o->value();
   }
+//~fl~3~3b19~03319093~~
 }
 
 static void cb_Minimum(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~63926d5a~~
   if (v == LOAD) {
     o->value((double)layout->widget_min_w);
   } else {
     layout->widget_min_w = (int)o->value();
   }
+//~fl~3~3250~098b8cca~~
 }
 
 static void cb_Increment(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~bdc0cef8~~
   if (v == LOAD) {
     o->value((double)layout->widget_inc_w);
   } else {
     layout->widget_inc_w = (int)o->value();
   }
+//~fl~3~42e9~2c06e402~~
 }
 
 static void cb_Gap(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~1071c4b8~~
   if (v == LOAD) {
     o->value((double)layout->widget_gap_x);
   } else {
     layout->widget_gap_x = (int)o->value();
   }
+//~fl~3~0db7~dd5cc5f2~~
 }
 
 static void cb_3(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~af0fe6f1~~
   if (v == LOAD) {
     o->value((double)layout->widget_min_h);
   } else {
     layout->widget_min_h = (int)o->value();
   }
+//~fl~3~af8f~16376d7c~~
 }
 
 static void cb_4(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~179af464~~
   if (v == LOAD) {
     o->value((double)layout->widget_inc_h);
   } else {
     layout->widget_inc_h = (int)o->value();
   }
+//~fl~3~0fc3~33ba05b4~~
 }
 
 static void cb_5(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~e640f1ce~~
   if (v == LOAD) {
     o->value((double)layout->widget_gap_y);
   } else {
     layout->widget_gap_y = (int)o->value();
   }
+//~fl~3~f43a~642c9c36~~
 }
 
 static void cb_6(Fl_Choice* o, void* v) {
+//~fl~0~0000~38c0dadb~~
   if (v == LOAD) {
     o->value(layout->labelfont+1);
   } else {
     layout->labelfont = (int)o->value()-1;
   }
+//~fl~3~710f~de8ae6fa~~
 }
 
 static void cb_7(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~de85fcdb~~
   if (v == LOAD) {
     o->value(layout->labelsize);
   } else {
     layout->labelsize = (int)o->value();
   }
+//~fl~3~9dc0~448a0cfa~~
 }
 
 static void cb_8(Fl_Choice* o, void* v) {
+//~fl~0~0000~461b5196~~
   if (v == LOAD) {
     o->value(layout->textfont+1);
   } else {
     layout->textfont = (int)o->value()-1;
   }
+//~fl~3~9244~96100d58~~
 }
 
 static void cb_9(Fl_Value_Input* o, void* v) {
+//~fl~0~0000~74dedfb0~~
   if (v == LOAD) {
     o->value(layout->textsize);
   } else {
     layout->textsize = (int)o->value();
   }
+//~fl~3~b455~435bca5e~~
 }
 
 Fl_Group *w_settings_shell_tab=(Fl_Group *)0;
@@ -816,6 +944,7 @@ static Fl_Image *image_shell_64() {
 Fl_Browser *w_settings_shell_list=(Fl_Browser *)0;
 
 static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
+//~fl~0~0000~a8ca82df~~
   if (v == LOAD) {
     // load from g_shell_config
     if (g_shell_config) {
@@ -841,17 +970,21 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   }
+//~fl~3~5e50~26359753~~
 }
 
 Fl_Group *w_settings_shell_toolbox=(Fl_Group *)0;
 
 static void cb_w_settings_shell_toolbox(Fl_Group* o, void* v) {
+//~fl~0~0000~2ef19102~~
   if (v==LOAD) {
     propagate_load(o, v);
   }
+//~fl~3~04c9~56d23597~~
 }
 
 static void cb_a(Fl_Button*, void* v) {
+//~fl~0~0000~50aa3a7d~~
   if (v != LOAD) {
     int selected = w_settings_shell_list_selected;
     Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
@@ -868,11 +1001,13 @@ static void cb_a(Fl_Button*, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
+//~fl~3~65b2~ba9c6fa6~~
 }
 
 Fl_Button *w_settings_shell_dup=(Fl_Button *)0;
 
 static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
+//~fl~0~0000~d75617a9~~
   int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
     if (selected) {
@@ -897,11 +1032,13 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
+//~fl~3~98de~675a49a6~~
 }
 
 Fl_Button *w_settings_shell_remove=(Fl_Button *)0;
 
 static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
+//~fl~0~0000~15ddc2ee~~
   int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
     if (selected) {
@@ -925,18 +1062,23 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
+//~fl~3~22b2~aa5ce24d~~
 }
 
 Fl_Menu_Button *w_settings_shell_menu=(Fl_Menu_Button *)0;
 
 static void cb_Import(Fl_Menu_*, void* v) {
+//~fl~0~0000~3835f3ea~~
   if (v != LOAD)
     Fd_Shell_Command_List::import_from_file();
+//~fl~2~a8b5~a52ce6b7~~
 }
 
 static void cb_Export(Fl_Menu_*, void* v) {
+//~fl~0~0000~b34c035b~~
   if (v != LOAD)
     Fd_Shell_Command_List::export_selected();
+//~fl~2~2de2~6437097d~~
 }
 
 Fl_Menu_Item menu_w_settings_shell_menu[] = {
@@ -953,6 +1095,7 @@ Fl_Menu_Item menu_w_settings_shell_menu[] = {
 Fl_Button *w_settings_shell_play=(Fl_Button *)0;
 
 static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
+//~fl~0~0000~01bcfc3c~~
   int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
     if (selected) {
@@ -965,11 +1108,13 @@ static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->run();
   }
+//~fl~3~d2bd~88fbdd91~~
 }
 
 Fl_Group *w_settings_shell_cmd=(Fl_Group *)0;
 
 static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
+//~fl~0~0000~bfa081d7~~
   if (v==LOAD) {
     int selected = w_settings_shell_list_selected;
     if (selected) {
@@ -979,9 +1124,11 @@ static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
     }
     propagate_load(o, v);
   }
+//~fl~3~adce~61a3273f~~
 }
 
 static void cb_Name(Fl_Input* o, void* v) {
+//~fl~0~0000~24a67cd4~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -997,9 +1144,11 @@ static void cb_Name(Fl_Input* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~d61f~774a9eda~~
 }
 
 static void cb_Menu(Fl_Input* o, void* v) {
+//~fl~0~0000~9ebf9577~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1015,13 +1164,17 @@ static void cb_Menu(Fl_Input* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~cbf2~d6faeaaf~~
 }
 
 static void cb_b(Fl_Group* o, void* v) {
+//~fl~0~0000~168f150c~~
   propagate_load(o, v);
+//~fl~3~a161~50833204~~
 }
 
 static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
+//~fl~0~0000~df23ee48~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1038,9 +1191,11 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~f100~c8f9aa5b~~
 }
 
 static void cb_Store(Fl_Choice* o, void* v) {
+//~fl~0~0000~da90793a~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1063,6 +1218,7 @@ static void cb_Store(Fl_Choice* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~778e~475d4ad4~~
 }
 
 Fl_Menu_Item menu_Store[] = {
@@ -1072,6 +1228,7 @@ Fl_Menu_Item menu_Store[] = {
 };
 
 static void cb_Condition(Fl_Choice* o, void* v) {
+//~fl~0~0000~18c4c68c~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1089,6 +1246,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~ad97~70480294~~
 }
 
 Fl_Menu_Item menu_Condition[] = {
@@ -1102,16 +1260,19 @@ Fl_Menu_Item menu_Condition[] = {
 };
 
 static void cb_Label(Fl_Input* o, void* v) {
+//~fl~0~0000~bf1e5ee6~~
   if (v == LOAD) {
   //  o->value(g_shell_command.c_str());
   } else {
   //  g_shell_command = o->value();
   }
+//~fl~3~1aa1~eb97b0e1~~
 }
 
 Fl_Text_Editor *w_settings_shell_command=(Fl_Text_Editor *)0;
 
 static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
+//~fl~0~0000~41a1eadd~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1126,11 +1287,13 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~b429~ce985002~~
 }
 
 Fl_Menu_Button *w_settings_shell_text_macros=(Fl_Menu_Button *)0;
 
 static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
+//~fl~0~0000~e24b9b56~~
   const Fl_Menu_Item *mi = o->mvalue();
   if (mi) {
     char buffer[256];
@@ -1149,6 +1312,7 @@ static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
     }
     w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
   }
+//~fl~3~475b~b6875296~~
 }
 
 Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
@@ -1168,6 +1332,7 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
 };
 
 static void cb_1fd_zoom(Fl_Button*, void*) {
+//~fl~0~0000~d5dc24f4~~
   if (!script_panel) make_script_panel();
   script_input->buffer()->text(w_settings_shell_command->buffer()->text());
   script_panel->show();
@@ -1183,9 +1348,11 @@ static void cb_1fd_zoom(Fl_Button*, void*) {
   w_settings_shell_command->do_callback();
   BREAK2:
   script_panel->hide();
+//~fl~3~5873~22f99a94~~
 }
 
 static void cb_save(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~88af01b3~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1205,9 +1372,11 @@ static void cb_save(Fl_Check_Button* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~9c64~58c14315~~
 }
 
 static void cb_save1(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~1305d9d2~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1227,9 +1396,11 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~6de6~4da652b9~~
 }
 
 static void cb_save2(Fl_Check_Button* o, void* v) {
+//~fl~0~0000~481268c7~~
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1249,6 +1420,7 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
   }
+//~fl~3~2f06~1c6d3453~~
 }
 
 Fl_Box *w_settings_shell_fd_project=(Fl_Box *)0;
@@ -1908,7 +2080,9 @@ static Fl_Image *image_fd_user() {
 Fl_Group *w_settings_i18n_tab=(Fl_Group *)0;
 
 static void cb_w_settings_i18n_tab(Fl_Group* o, void* v) {
+//~fl~0~0000~b806caa7~~
   propagate_load(o, v);
+//~fl~3~8253~50833204~~
 }
 
 static const unsigned char idata_language_64[] =
@@ -1996,12 +2170,15 @@ Fl_Menu_Item menu_i18n_type_chooser[] = {
 Fl_Group *i18n_gnu_group=(Fl_Group *)0;
 
 static void cb_i18n_gnu_group(Fl_Group* o, void* v) {
+//~fl~0~0000~4e561a5c~~
   propagate_load(o, v);
+//~fl~3~e1f8~50833204~~
 }
 
 Fl_Input *i18n_gnu_include_input=(Fl_Input *)0;
 
 static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
+//~fl~0~0000~c8ff5adf~~
   if (v == LOAD) {
     o->value(g_project.i18n_gnu_include.c_str());
   } else {
@@ -2009,11 +2186,13 @@ static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
     g_project.i18n_gnu_include = o->value();
     set_modflag(1);
   }
+//~fl~3~8d65~3001413b~~
 }
 
 Fl_Input *i18n_gnu_conditional_input=(Fl_Input *)0;
 
 static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
+//~fl~0~0000~06d8e7c1~~
   if (v == LOAD) {
     o->value(g_project.i18n_gnu_conditional.c_str());
   } else {
@@ -2021,11 +2200,13 @@ static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
     g_project.i18n_gnu_conditional = o->value();
     set_modflag(1);
   }
+//~fl~3~1d8f~47091379~~
 }
 
 Fl_Input *i18n_gnu_function_input=(Fl_Input *)0;
 
 static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
+//~fl~0~0000~6be4453c~~
   if (v == LOAD) {
     o->value(g_project.i18n_gnu_function.c_str());
   } else {
@@ -2033,11 +2214,13 @@ static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
     g_project.i18n_gnu_function = o->value();
     set_modflag(1);
   }
+//~fl~3~a7b4~782b9047~~
 }
 
 Fl_Input *i18n_gnu_static_function_input=(Fl_Input *)0;
 
 static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
+//~fl~0~0000~45ce4926~~
   if (v == LOAD) {
     o->value(g_project.i18n_gnu_static_function.c_str());
   } else {
@@ -2045,17 +2228,21 @@ static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
     g_project.i18n_gnu_static_function = o->value();
     set_modflag(1);
   }
+//~fl~3~52f0~21832541~~
 }
 
 Fl_Group *i18n_posix_group=(Fl_Group *)0;
 
 static void cb_i18n_posix_group(Fl_Group* o, void* v) {
+//~fl~0~0000~257c37c8~~
   propagate_load(o, v);
+//~fl~3~2980~50833204~~
 }
 
 Fl_Input *i18n_pos_include_input=(Fl_Input *)0;
 
 static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
+//~fl~0~0000~d4cc6b45~~
   if (v == LOAD) {
     o->value(g_project.i18n_pos_include.c_str());
   } else {
@@ -2063,11 +2250,13 @@ static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
     g_project.i18n_pos_include = o->value();
     set_modflag(1);
   }
+//~fl~3~b3b7~41fa0d1c~~
 }
 
 Fl_Input *i18n_pos_conditional_input=(Fl_Input *)0;
 
 static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
+//~fl~0~0000~fde185c1~~
   if (v == LOAD) {
     o->value(g_project.i18n_pos_conditional.c_str());
   } else {
@@ -2075,11 +2264,13 @@ static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
     g_project.i18n_pos_conditional = o->value();
     set_modflag(1);
   }
+//~fl~3~dacb~6bb5d246~~
 }
 
 Fl_Input *i18n_pos_file_input=(Fl_Input *)0;
 
 static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
+//~fl~0~0000~97538505~~
   if (v == LOAD) {
     o->value(g_project.i18n_pos_file.c_str());
   } else {
@@ -2087,15 +2278,19 @@ static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
     g_project.i18n_pos_file = o->value();
     set_modflag(1);
   }
+//~fl~3~7b19~04796294~~
 }
 
 static void cb_c(Fl_Group* o, void* v) {
+//~fl~0~0000~f192b39b~~
   propagate_load(o, v);
+//~fl~3~d7ee~50833204~~
 }
 
 Fl_Int_Input *i18n_pos_set_input=(Fl_Int_Input *)0;
 
 static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
+//~fl~0~0000~d09e0191~~
   if (v == LOAD) {
     o->value(g_project.i18n_pos_set.c_str());
   } else {
@@ -2103,13 +2298,16 @@ static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
     g_project.i18n_pos_set = o->value();
     set_modflag(1);
   }
+//~fl~3~689a~a3e1b311~~
 }
 
 static void cb_Close(Fl_Button*, void*) {
+//~fl~0~0000~eaac9f35~~
   if (g_shell_config)
     g_shell_config->write(fluid_prefs, FD_STORE_USER);
   g_layout_list.write(fluid_prefs, FD_STORE_USER);
   settings_window->hide();
+//~fl~3~86cc~3f4611d9~~
 }
 
 Fl_Double_Window* make_settings_window() {
@@ -2294,17 +2492,17 @@ ps");
           code_file_input->callback((Fl_Callback*)cb_code_file_input, (void*)(1));
           code_file_input->when(FL_WHEN_CHANGED);
         } // Fl_Input* code_file_input
-        { Fl_Box* o = new Fl_Box(100, 205, 0, 20, "Options: ");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-        } // Fl_Box* o
         { include_H_from_C_button = new Fl_Check_Button(100, 162, 220, 20, "Include Header from Code");
           include_H_from_C_button->tooltip("Include the header file from the code file.");
           include_H_from_C_button->down_box(FL_DOWN_BOX);
           include_H_from_C_button->labelsize(11);
           include_H_from_C_button->callback((Fl_Callback*)cb_include_H_from_C_button);
         } // Fl_Check_Button* include_H_from_C_button
+        { Fl_Box* o = new Fl_Box(100, 205, 0, 20, "Options: ");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+        } // Fl_Box* o
         { use_FL_COMMAND_button = new Fl_Check_Button(100, 205, 220, 20, "Menu shortcuts use FL_COMMAND");
           use_FL_COMMAND_button->tooltip("Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts");
           use_FL_COMMAND_button->down_box(FL_DOWN_BOX);
@@ -2325,6 +2523,19 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           avoid_early_includes_button->labelsize(11);
           avoid_early_includes_button->callback((Fl_Callback*)cb_avoid_early_includes_button);
         } // Fl_Check_Button* avoid_early_includes_button
+        { Fl_Box* o = new Fl_Box(100, 283, 0, 20, "Experimental: ");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+        } // Fl_Box* o
+        { w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
+          w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t\
+o be merged back into the project file. Checking this option will generate add\
+itional data in code and project files.");
+          w_proj_mergeback->down_box(FL_DOWN_BOX);
+          w_proj_mergeback->labelsize(11);
+          w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
+        } // Fl_Check_Button* w_proj_mergeback
         { Fl_Box* o = new Fl_Box(100, 530, 220, 10);
           o->hide();
           Fl_Group::current()->resizable(o);
@@ -2663,7 +2874,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         w_settings_shell_tab->hide();
         { Fl_Group* o = new Fl_Group(10, 90, 320, 132);
           o->callback((Fl_Callback*)propagate_load);
-          { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell \ncommand \nlist:");
+          { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell\ncommand\nlist:");
             w_settings_shell_list->type(3);
             w_settings_shell_list->labelfont(1);
             w_settings_shell_list->labelsize(11);
@@ -2984,7 +3195,9 @@ le FLTK_GETTEXT_FOUND");
     settings_window->size_range(340, 580);
     settings_window->end();
   } // Fl_Double_Window* settings_window
+//~fl~0~0000~d0a79484~~
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);
+//~fl~1~c8a2~102614d8~~
   return settings_window;
 }
 
@@ -2993,18 +3206,22 @@ Fl_Double_Window *shell_run_window=(Fl_Double_Window *)0;
 Fl_Simple_Terminal *shell_run_terminal=(Fl_Simple_Terminal *)0;
 
 static void cb_Clear(Fl_Button*, void*) {
+//~fl~0~0000~e5195ca2~~
   shell_run_terminal->clear();
+//~fl~3~fec1~9e598b81~~
 }
 
 Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
 
 static void cb_shell_run_button(Fl_Return_Button*, void*) {
+//~fl~0~0000~a6a701ac~~
   Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
   pos.set("x", shell_run_window->x());
   pos.set("y", shell_run_window->y());
   pos.set("w", shell_run_window->w());
   pos.set("h", shell_run_window->h());
   shell_run_window->hide();
+//~fl~3~e2a5~f206a765~~
 }
 
 Fl_Double_Window* make_shell_window() {

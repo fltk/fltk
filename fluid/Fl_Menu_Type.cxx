@@ -277,6 +277,7 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
     f.write_c(", %s", ut);
     if (use_v) f.write_c(" v");
     f.write_c(") {\n");
+    f.tag(FD_TAG_GENERIC, 0);
     f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
@@ -286,7 +287,9 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
       // statement...
       if (*p != '#' && *p) f.write_c(";");
     }
-    f.write_c("\n}\n");
+    f.write_c("\n");
+    f.tag(FD_TAG_MENU_CALLBACK, get_uid());
+    f.write_c("}\n");
     if (k) {
       f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
       f.write_c("%s((%s*)(o", f.indent(1), k);

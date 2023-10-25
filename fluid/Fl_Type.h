@@ -121,6 +121,8 @@ protected:
   /** Optional comment for every node in the graph. Visible in browser and
    panels, and will also be copied to the source code. */
   const char *comment_;
+  /** a unique ID within the project */
+  unsigned short uid_;
 
 public: // things that should not be public:
 
@@ -248,6 +250,10 @@ public:
   bool is_in_class() const;
 
   int has_function(const char*, const char*) const;
+
+  unsigned short set_uid(unsigned short suggested_uid=0);
+  unsigned short get_uid() { return uid_; }
+  static Fl_Type *find_by_uid(unsigned short uid);
 
   static Fl_Type *find_in_text(int text_type, int crsr);
 };

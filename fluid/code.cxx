@@ -21,15 +21,19 @@
 #include "Fl_Function_Type.h"
 #include "alignment_panel.h"
 #include "file.h"
+#include "undo.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_string_functions.h>
+#include <FL/fl_ask.H>
 #include "fluid_filename.h"
 #include "../src/flstring.h"
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "zlib.h"
 
 /// \defgroup cfile C Code File Operations
 /// \{
@@ -359,7 +363,7 @@ int Fd_Code_Writer::write_c_once(const char *format, ...) {
     else if (i < 0) p = &((*p)->left);
     else p  = &((*p)->right);
   }
-  fprintf(code_file,"%s\n",buf);
+  crc_printf("%s\n", buf);
   *p = new Fd_Text_Tree(buf);
   return 1;
 }
@@ -404,21 +408,21 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
   // longer than four lines, we only render a placeholder.
   if (write_sourceview && ((s==NULL) || (length>300))) {
     if (length>=0)
-      fprintf(code_file, "\" ... %d bytes of text... \"", length);
+      crc_printf("\" ... %d bytes of text... \"", length);
     else
-      fprintf(code_file, "\" ... text... \"");
+      crc_puts("\" ... text... \"");
     return;
   }
   if (length==-1 || s==0L) {
-    fprintf(code_file, "\n#error  string not found\n");
-    fprintf(code_file, "\" ... undefined size text... \"");
+    crc_puts("\n#error  string not found\n");
+    crc_puts("\" ... undefined size text... \"");
     return;
   }
 
   const char *p = s;
   const char *e = s+length;
   int linelength = 1;
-  putc('\"', code_file);
+  crc_putc('\"');
   for (; p < e;) {
     int c = *p++;
     switch (c) {
@@ -431,9 +435,9 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
     case '\'':
     case '\\':
     QUOTED:
-      if (linelength >= 77) {fputs("\\\n",code_file); linelength = 0;}
-      putc('\\', code_file);
-      putc(c, code_file);
+      if (linelength >= 77) { crc_puts("\\\n"); linelength = 0; }
+      crc_putc('\\');
+      crc_putc(c);
       linelength += 2;
       break;
     case '?': // prevent trigraphs by writing ?? as ?\?
@@ -442,8 +446,8 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
     default:
       if (c >= ' ' && c < 127) {
         // a legal ASCII character
-        if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
-        putc(c, code_file);
+        if (linelength >= 78) { crc_puts("\\\n"); linelength = 0; }
+        crc_putc(c);
         linelength++;
         break;
       }
@@ -453,25 +457,25 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
             // This is the first character in a utf-8 sequence (0b11......).
             // A line break would be ok here. Do not put linebreak in front of
             // following characters (0b10......)
-            if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
+            if (linelength >= 78) { crc_puts("\\\n"); linelength = 0; }
           }
-          putc(c, code_file);
+          crc_putc(c);
           linelength++;
           break;
         }
       // otherwise we must print it as an octal constant:
       c &= 255;
       if (c < 8) {
-        if (linelength >= 76) {fputs("\\\n",code_file); linelength = 0;}
-        fprintf(code_file, "\\%o",c);
+        if (linelength >= 76) { crc_puts("\\\n"); linelength = 0; }
+        crc_printf("\\%o", c);
         linelength += 2;
       } else if (c < 64) {
-        if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
-        fprintf(code_file, "\\%o",c);
+        if (linelength >= 75) { crc_puts("\\\n"); linelength = 0; }
+        crc_printf("\\%o", c);
         linelength += 3;
       } else {
-        if (linelength >= 74) {fputs("\\\n",code_file); linelength = 0;}
-        fprintf(code_file, "\\%o",c);
+        if (linelength >= 74) { crc_puts("\\\n"); linelength = 0; }
+        crc_printf("\\%o", c);
         linelength += 4;
       }
       // We must not put more numbers after it, because some C compilers
@@ -479,14 +483,14 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
       // pasting to avoid this:
       c = *p;
       if (p < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
-        putc('\"', code_file); linelength++;
-        if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
-        putc('\"', code_file); linelength++;
+        crc_putc('\"'); linelength++;
+        if (linelength >= 79) { crc_puts("\n"); linelength = 0; }
+        crc_putc('\"'); linelength++;
       }
       break;
     }
   }
-  putc('\"', code_file);
+  crc_putc('\"');
 }
 
 /**
@@ -510,30 +514,30 @@ void Fd_Code_Writer::write_cdata(const char *s, int length) {
   }
   if (write_sourceview) {
     if (length>=0)
-      fprintf(code_file, "{ /* ... %d bytes of binary data... */ }", length);
+      crc_printf("{ /* ... %d bytes of binary data... */ }", length);
     else
-      fprintf(code_file, "{ /* ... binary data... */ }");
+      crc_puts("{ /* ... binary data... */ }");
     return;
   }
   if (length==-1) {
-    fprintf(code_file, "\n#error  data not found\n");
-    fprintf(code_file, "{ /* ... undefined size binary data... */ }");
+    crc_puts("\n#error  data not found\n");
+    crc_puts("{ /* ... undefined size binary data... */ }");
     return;
   }
   const unsigned char *w = (const unsigned char *)s;
   const unsigned char *e = w+length;
   int linelength = 1;
-  putc('{', code_file);
+  crc_putc('{');
   for (; w < e;) {
     unsigned char c = *w++;
     if (c>99) linelength += 4;
     else if (c>9) linelength += 3;
     else linelength += 2;
-    if (linelength >= 77) {fputs("\n",code_file); linelength = 0;}
-    fprintf(code_file, "%d", c);
-    if (w<e) putc(',', code_file);
+    if (linelength >= 77) {crc_puts("\n"); linelength = 0;}
+    crc_printf("%d", c);
+    if (w<e) crc_putc(',');
   }
-  putc('}', code_file);
+  crc_putc('}');
 }
 
 /**
@@ -546,7 +550,7 @@ void Fd_Code_Writer::vwrite_c(const char* format, va_list args) {
     varused = 1;
     return;
   }
-  vfprintf(code_file, format, args);
+  crc_vprintf(format, args);
 }
 
 /**
@@ -753,7 +757,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   const char *hdr = "\
 // generated by Fast Light User Interface Designer (fluid) version %.4f\n\n";
   fprintf(header_file, hdr, FL_VERSION);
-  fprintf(code_file, hdr, FL_VERSION);
+  crc_printf(hdr, FL_VERSION);
 
   {char define_name[102];
   const char* a = fl_filename_name(t);
@@ -899,11 +903,16 @@ Fd_Code_Writer::Fd_Code_Writer()
   text_in_header(NULL),
   text_in_code(NULL),
   ptr_in_code(NULL),
+  block_crc_(0),
+  block_buffer_(NULL),
+  block_buffer_size_(0),
+  block_line_start_(true),
   indentation(0),
   write_sourceview(false),
   varused_test(0),
   varused(0)
 {
+  block_crc_ = crc32(0, NULL, 0);
 }
 
 Fd_Code_Writer::~Fd_Code_Writer()
@@ -912,6 +921,308 @@ Fd_Code_Writer::~Fd_Code_Writer()
   delete ptr_in_code;
   delete text_in_code;
   delete text_in_header;
+  if (block_buffer_) ::free(block_buffer_);
+}
+
+void Fd_Code_Writer::tag(int type, unsigned short uid) {
+  if (g_project.write_mergeback_data)
+    fprintf(code_file, "//~fl~%d~%04x~%08x~~\n", type, (int)uid, (unsigned int)block_crc_);
+  block_crc_ = crc32(0, NULL, 0);
+}
+
+void Fd_Code_Writer::crc_add(const void *data, int n) {
+  if (!data) return;
+  if (n==-1) n = (int)strlen((const char*)data);
+  const char *s = (const char*)data;
+  for (int i=n; n>0; --n, ++s) {
+    if (block_line_start_) {
+      // don't count leading spaces and tabs in a line
+      while (n>0 && *s>0 && isspace(*s)) { s++; n--; }
+      if (*s) block_line_start_ = false;
+    }
+    // don't count '\r' that may be introduces by MSWindows
+    if (n>0 && *s=='\r') { s++; n--; }
+    if (n>0 && *s=='\n') block_line_start_ = true;
+    if (n>0) {
+      block_crc_ = crc32(block_crc_, (const Bytef*)s, 1);
+    }
+  }
+}
+
+int Fd_Code_Writer::crc_printf(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+  int ret = crc_vprintf(format, args);
+  va_end(args);
+  return ret;
+}
+
+int Fd_Code_Writer::crc_vprintf(const char *format, va_list args) {
+  if (g_project.write_mergeback_data) {
+    int n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
+    if (n > block_buffer_size_) {
+      block_buffer_size_ = n + 128;
+      if (block_buffer_) ::free(block_buffer_);
+      block_buffer_ = (char*)::malloc(block_buffer_size_+1);
+      n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
+    }
+    crc_add(block_buffer_, n);
+    return fputs(block_buffer_, code_file);
+  } else {
+    return vfprintf(code_file, format, args);
+  }
+}
+
+int Fd_Code_Writer::crc_puts(const char *text) {
+  if (g_project.write_mergeback_data) {
+    crc_add(text);
+  }
+  return fputs(text, code_file);
+}
+
+int Fd_Code_Writer::crc_putc(int c) {
+  if (g_project.write_mergeback_data) {
+    uchar uc = (uchar)c;
+    crc_add(&uc, 1);
+  }
+  return fputc(c, code_file);
+}
+
+extern Fl_Window *the_panel;
+
+/** Remove the first two spaces at every line start.
+ \param[inout] s block of C code
+ */
+static void unindent(char *s) {
+  char *d = s;
+  bool line_start = true;
+  while (*s) {
+    if (line_start) {
+      if (*s>0 && isspace(*s)) s++;
+      if (*s>0 && isspace(*s)) s++;
+      line_start = false;
+    }
+    if (*s=='\r') s++;
+    if (*s=='\n') line_start = true;
+    *d++ = *s++;
+  }
+  *d = 0;
+}
+
+static Fl_String unindent_block(FILE *f, long start, long end) {
+  long bsize = end-start;
+  long here = ::ftell(f);
+  ::fseek(f, start, SEEK_SET);
+  char *block = (char*)::malloc(bsize+1);
+  fread(block, bsize, 1, f);
+  block[bsize] = 0;
+  unindent(block);
+  Fl_String str = block;
+  ::free(block);
+  ::fseek(f, here, SEEK_SET);
+  return str;
+}
+
+// TODO: add level of mergeback support to user settings
+// TODO: command line option for mergeback
+// TODO: automatic mergeback when a new project is loaded
+// TODO: automatic mergeback when FLUID becomes app in focus
+// NOTE: automatic mergeback on timer when file changes if app focus doesn't work
+// NOTE: we could also let the user edit comment blocks
+
+/**
+ Merge external changes in a source code file back into the current project.
+
+ This experimental function reads a source code file line by line. When it
+ encounters a special tag in a line, the crc32 stored in the line is compared
+ to the crc32 that was calculate from the code lines since the previous tag.
+
+ If the crc's differ, the user has modified the source file, and the given block
+ differs from the block as it was generated by FLUID. Depending on the block
+ type, the user has modified the widget code (FD_TAG_GENERIC), which can not be
+ transferred back into the project. 
+
+ Modifications to code blocks and callbacks (CODE, CALLBACK) can be merged back
+ into the project. Their corresponding Fl_Type is found using the unique
+ node id that is part of the tag.
+
+ The caller must make sure that this code file was generated by the currently
+ loaded project.
+
+ Since this is an experimental function, the user is informed in detailed
+ dialogs what the function discovered, and FLUID offers the option to merge
+ or cancel to the user. Just in case this function is destructive, "undo"
+ restores the state before a MergeBack.
+
+ Callers can set different task. FD_MERGEBACK_CHECK checks if there are any
+ modifications in the code file and returns -1 if there was an error, or a
+ bit field where bit 0 is set if internal structures were modified, bit 1 or
+ bit 2 if code blocks or callbacks were changed, and bit 3 if modified blocks
+ were found, but no Type node.
+
+ FD_MERGEBACK_INTERACTIVE checks for changes and presents a status dialog box
+ to the user if there were conflicting changes or if a mergeback is possible,
+ presenting the user a list of options. Returns 0 if nothing changed, and 1 if
+ the user merged changes back. -1 is returned if an invalid tag was found.
+
+ FD_MERGEBACK_GO merges all changes back into the project without any
+ interaction. Returns 0 if nothing changed, and 1 if it merged any changes back.
+
+ FD_MERGEBACK_GO_SAFE merges changes back only if there are no conflicts.
+ Returns 0 if nothing changed, and 1 if it merged any changes back, and -1 if
+ there were conflicts.
+
+ \note this function is currently part of Fd_Code_Writer to get easy access
+ to our crc32 code that also wrote the code file originally.
+
+ \param[in] s path and filename of the source code file
+ \param[in] task see above
+ \return see above
+ */
+int Fd_Code_Writer::merge_back(const char *s, int task) {
+  // nothing to be done if the mergeback option is disabled in the project
+  if (!g_project.write_mergeback_data) return 0;
+
+  int ret = 0;
+  bool changed = false;
+  FILE *code = fl_fopen(s, "r");
+  if (!code) return 0;
+  int iter = 0;
+
+  for (iter = 0; ; ++iter) {
+    int line_no = 0;
+    long block_start = 0;
+    long block_end = 0;
+    long here = 0;
+    int num_changed_code = 0;
+    int num_changed_callback = 0;
+    int num_changed_structure = 0;
+    int num_uid_not_found = 0;
+    int tag_error = 0;
+    if (task==FD_MERGEBACK_GO)
+      undo_checkpoint();
+    // NOTE: if we can get the CRC from the current callback, and it's the same
+    //       as the code file CRC, merging back is very safe.
+    block_crc_ = crc32(0, NULL, 0);
+    block_line_start_ = true;
+    ::fseek(code, 0, SEEK_SET);
+    changed = false;
+    for (;;) {
+      char line[1024];
+      if (fgets(line, 1023, code)==0) break;
+      line_no++;
+      const char *tag = strstr(line, "//~fl~");
+      if (!tag) {
+        crc_add(line);
+        block_end = ::ftell(code);
+      } else {
+        int type = -1;
+        int uid = 0;
+        unsigned long crc = 0;
+        int n = sscanf(tag, "//~fl~%d~%04x~%08lx~~", &type, &uid, &crc);
+        if (n!=3 || type<0 || type>FD_TAG_LAST ) { tag_error = 1; break; }
+        if (block_crc_ != crc) {
+          if (task==FD_MERGEBACK_GO) {
+            if (type==FD_TAG_MENU_CALLBACK || type==FD_TAG_WIDGET_CALLBACK) {
+              Fl_Type *tp = Fl_Type::find_by_uid(uid);
+              if (tp && tp->is_true_widget()) {
+                tp->callback(unindent_block(code, block_start, block_end).c_str());
+                changed = true;
+              }
+            } else if (type==FD_TAG_CODE) {
+              Fl_Type *tp = Fl_Type::find_by_uid(uid);
+              if (tp && tp->is_a(ID_Code)) {
+                tp->name(unindent_block(code, block_start, block_end).c_str());
+                changed = true;
+              }
+            }
+          } else {
+            bool find_node = false;
+            // TODO: if we find a modification, we must check if it was already
+            //       merged into the current project, or we will remerge over
+            //       and over, even if the current code is modified.
+            switch (type) {
+              case FD_TAG_GENERIC: num_changed_structure++; break;
+              case FD_TAG_CODE: num_changed_code++; find_node = true; break;
+              case FD_TAG_MENU_CALLBACK: num_changed_callback++; find_node = true; break;
+              case FD_TAG_WIDGET_CALLBACK: num_changed_callback++; find_node = true; break;
+            }
+            if (find_node) {
+              if (Fl_Type::find_by_uid(uid)==NULL) num_uid_not_found++;
+            }
+          }
+        }
+        // reset everything for the next block
+        block_crc_ = crc32(0, NULL, 0);
+        block_line_start_ = true;
+        block_start = ::ftell(code);
+      }
+    }
+    if (task==FD_MERGEBACK_CHECK) {
+      if (tag_error) { ret = -1; break; }
+      if (num_changed_structure) ret |= 1;
+      if (num_changed_code) ret |= 2;
+      if (num_changed_callback) ret |= 4;
+      if (num_uid_not_found) ret |= 8;
+      break;
+    } else if (task==FD_MERGEBACK_INTERACTIVE) {
+      if (tag_error) {
+        fl_message("MergeBack found an error in line %d while reading Tags\n"
+                   "from the source code. MergeBack not possible.", line_no);
+        ret = -1;
+        break;
+      }
+      if (!num_changed_code && !num_changed_callback && !num_changed_structure) {
+        ret = 0;
+        break;
+      }
+      if (num_changed_structure && (num_changed_code==0 && num_changed_callback==0)) {
+        fl_message("MergeBack found %d modifications in the project structure\n"
+                   "of the source code. These kind of changes can no be\n"
+                   "merged back and will be lost.", num_changed_structure);
+        ret = -1;
+        break;
+      }
+      Fl_String msg = "MergeBack found %1$d modifications in Code Blocks and %2$d\n"
+      "modifications in callbacks.";
+      if (num_uid_not_found)
+        msg +=    "\n\nWARNING: for %3$d of these modifications no Type node\n"
+        "can be found. The project diverged substantially from the\n"
+        "code file and these modification can't be merged back.";
+      if (num_changed_structure)
+        msg +=    "\n\nWARNING: %4$d modifications in the project structure\n"
+        "can no be merged back and will be lost.";
+      msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
+      "Click Merge to move code and callback changes back into\n"
+      "the project.";
+      int c = fl_choice(msg.c_str(), "Cancel", "Merge", NULL,
+                        num_changed_code, num_changed_callback,
+                        num_uid_not_found, num_changed_structure);
+      if (c==0) { ret = 1; break; }
+      task = FD_MERGEBACK_GO;
+      continue;
+    } else if (task==FD_MERGEBACK_GO) {
+      if (changed) ret = 1;
+      break;
+    } else if (task==FD_MERGEBACK_GO_SAFE) {
+      if (tag_error || num_changed_structure) {
+        ret = -1;
+        break;
+      }
+      if (num_changed_code==0 && num_changed_callback==0) {
+        ret = 0;
+        break;
+      }
+      task = FD_MERGEBACK_GO;
+      continue;
+    }
+  }
+  fclose(code);
+  if (changed) {
+    set_modflag(1);
+    if (the_panel) propagate_load(the_panel, LOAD);
+  }
+  return ret;
 }
 
 /// \}

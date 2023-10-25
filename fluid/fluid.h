@@ -133,6 +133,7 @@ public:
   int avoid_early_includes;
   int header_file_set;
   int code_file_set;
+  int write_mergeback_data;
   Fl_String header_file_name;
   Fl_String code_file_name;
 };

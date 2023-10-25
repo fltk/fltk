@@ -74,6 +74,7 @@ extern Fl_Check_Button *include_H_from_C_button;
 extern Fl_Check_Button *use_FL_COMMAND_button;
 extern Fl_Check_Button *utf8_in_src_button;
 extern Fl_Check_Button *avoid_early_includes_button;
+extern Fl_Check_Button *w_proj_mergeback;
 extern Fl_Group *w_settings_layout_tab;
 #include <FL/Fl_Choice.H>
 extern Fl_Choice *layout_choice;

@@ -43,36 +43,6 @@ decl {\#include "custom_widgets.h"} {public global
 decl {extern void set_modflag(int mf, int mfc=-1);} {private local
 }
 
-Function {make_window()} {open
-} {
-  Fl_Window {} {open
-    xywh {867 441 480 320} type Double visible
-  } {
-    Fl_Grid {} {open
-      xywh {25 25 262 160} labelsize 11
-      dimensions {4 4} margin {10 10 16 12}
-      colwidths { 0 100 0 0 }
-      colweights { 50 40 50 50 }
-    } {
-      Fl_Button {} {
-        label Button
-        xywh {70 63 129 50} labelsize 11
-        parent_properties {
-          location {1 1}
-        }
-      }
-      Fl_Group {} {open
-        xywh {224 115 40 45} box BORDER_BOX color 11 labelsize 11
-      } {
-        Fl_Button {} {
-          label Button
-          xywh {234 120 24 20} labelsize 11
-        }
-      }
-    }
-  }
-}
-
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
@@ -89,7 +59,7 @@ Function {make_widget_panel()} {
       Fl_Group {} {
         label GUI
         callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
+        xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -865,7 +835,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11
+        xywh {10 30 400 330} labelsize 11 hide
       } {
         Fl_Group {} {
           label {Location:}
@@ -896,7 +866,7 @@ wCallback->do_callback(wCallback, v);} open
           }
           Fl_Input widget_grid_col_input {
             label {Column:}
-            callback grid_set_col_cb selected
+            callback grid_set_col_cb
             xywh {175 60 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }

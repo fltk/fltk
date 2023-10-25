@@ -31,6 +31,17 @@ struct Fd_Pointer_Tree;
 int is_id(char c);
 int write_strings(const Fl_String &filename);
 
+const int FD_TAG_GENERIC = 0;
+const int FD_TAG_CODE = 1;
+const int FD_TAG_MENU_CALLBACK = 2;
+const int FD_TAG_WIDGET_CALLBACK = 3;
+const int FD_TAG_LAST = 3;
+
+const int FD_MERGEBACK_CHECK = 0;
+const int FD_MERGEBACK_INTERACTIVE = 1;
+const int FD_MERGEBACK_GO = 2;
+const int FD_MERGEBACK_GO_SAFE = 3;
+
 class Fd_Code_Writer
 {
 protected:
@@ -40,6 +51,16 @@ protected:
   Fd_Text_Tree *text_in_header;
   Fd_Text_Tree *text_in_code;
   Fd_Pointer_Tree *ptr_in_code;
+
+  unsigned long block_crc_;
+  char *block_buffer_;
+  int block_buffer_size_;
+  bool block_line_start_;
+  void crc_add(const void *data, int n=-1);
+  int crc_printf(const char *format, ...);
+  int crc_vprintf(const char *format, va_list args);
+  int crc_puts(const char *text);
+  int crc_putc(int c);
 
 public:
   int indentation;
@@ -74,6 +95,10 @@ public:
   Fl_Type* write_code(Fl_Type* p);
   int write_code(const char *cfile, const char *hfile, bool to_sourceview=false);
   void write_public(int state); // writes pubic:/private: as needed
+  
+  void tag(int type, unsigned short uid);
+  int merge_back(const char *s, int task);
+
 };
 
 #endif // _FLUID_CODE_H
