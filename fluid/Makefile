@@ -39,6 +39,7 @@ CPPFILES = \
 	fluid.cxx \
 	fluid_filename.cxx \
 	function_panel.cxx \
+	mergeback.cxx \
 	pixmaps.cxx \
 	shell_command.cxx \
 	sourceview_panel.cxx \

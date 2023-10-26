@@ -27,6 +27,7 @@
 #include "alignment_panel.h"
 #include "widget_panel.h"
 #include "undo.h"
+#include "mergeback.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -2631,7 +2632,7 @@ void live_mode_cb(Fl_Button*o,void *) {
 }
 
 // update the panel according to current widget set:
-static void load_panel() {
+void load_panel() {
   if (!the_panel) return;
 
   // find all the Fl_Widget subclasses currently selected:

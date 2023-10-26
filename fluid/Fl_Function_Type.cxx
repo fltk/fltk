@@ -24,6 +24,7 @@
 #include "code.h"
 #include "function_panel.h"
 #include "comments.h"
+#include "mergeback.h"
 
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>
@@ -353,6 +354,7 @@ static bool fd_isspace(int c) {
   return (c>0 && c<128 && isspace(c));
 }
 
+// code duplication: see int is_id(char c) in code.cxx
 static bool fd_iskeyword(int c) {
   return (c>0 && c<128 && (isalnum(c) || c=='_'));
 }

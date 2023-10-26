@@ -29,6 +29,7 @@
 #include "code.h"
 #include "Fluid_Image.h"
 #include "custom_widgets.h"
+#include "mergeback.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_message.H>

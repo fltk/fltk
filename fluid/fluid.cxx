@@ -27,6 +27,7 @@
 #include "undo.h"
 #include "file.h"
 #include "code.h"
+#include "mergeback.h"
 
 #include "alignment_panel.h"
 #include "function_panel.h"
@@ -1284,13 +1285,9 @@ int mergeback_code_files()
     return 0;
   }
 
-  // -- generate the file names with absolute paths
-  Fd_Code_Writer f;
   Fl_String code_filename = g_project.codefile_path() + g_project.codefile_name();
-
-  // -- write the code and header files
   if (!batch_mode) enter_project_dir();
-  int c = f.merge_back(code_filename.c_str(), FD_MERGEBACK_INTERACTIVE);
+  int c = merge_back(code_filename, FD_MERGEBACK_INTERACTIVE);
   if (!batch_mode) leave_project_dir();
   if (c==0) fl_message("MergeBack found no external modifications\n"
                        "in the source code.");
