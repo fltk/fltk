@@ -934,7 +934,7 @@ void Fd_Code_Writer::crc_add(const void *data, int n) {
   if (!data) return;
   if (n==-1) n = (int)strlen((const char*)data);
   const char *s = (const char*)data;
-  for (int i=n; n>0; --n, ++s) {
+  for ( ; n>0; --n, ++s) {
     if (block_line_start_) {
       // don't count leading spaces and tabs in a line
       while (n>0 && *s>0 && isspace(*s)) { s++; n--; }
@@ -1014,7 +1014,7 @@ static Fl_String unindent_block(FILE *f, long start, long end) {
   long here = ::ftell(f);
   ::fseek(f, start, SEEK_SET);
   char *block = (char*)::malloc(bsize+1);
-  fread(block, bsize, 1, f);
+  (void)fread(block, bsize, 1, f);
   block[bsize] = 0;
   unindent(block);
   Fl_String str = block;
@@ -1093,7 +1093,6 @@ int Fd_Code_Writer::merge_back(const char *s, int task) {
     int line_no = 0;
     long block_start = 0;
     long block_end = 0;
-    long here = 0;
     int num_changed_code = 0;
     int num_changed_callback = 0;
     int num_changed_structure = 0;

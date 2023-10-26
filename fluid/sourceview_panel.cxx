@@ -44,7 +44,7 @@ void update_sourceview_position() {
     if (sv_autoposition->value()==0)
       return;
     if (sourceview_panel && sourceview_panel->visible() && Fl_Type::current) {
-      int pos0, pos1;
+      int pos0 = 0, pos1 = 0;
       if (sv_source->visible_r()) {
         switch (sv_code_choice) {
           case 0: // prolog: not yet (include statements)
