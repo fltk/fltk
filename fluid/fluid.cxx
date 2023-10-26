@@ -1277,6 +1277,12 @@ int mergeback_code_files()
 {
   flush_text_widgets();
   if (!filename) return 1;
+  if (!g_project.write_mergeback_data) {
+    fl_message("MergeBack is not enabled for this project.\n"
+               "Please enable MergeBack in the project settings\n"
+               "dialog and re-save the project file and the code.");
+    return 0;
+  }
 
   // -- generate the file names with absolute paths
   Fd_Code_Writer f;
@@ -1288,6 +1294,7 @@ int mergeback_code_files()
   if (!batch_mode) leave_project_dir();
   if (c==0) fl_message("MergeBack found no external modifications\n"
                        "in the source code.");
+  return c;
 }
 
 void mergeback_cb(Fl_Widget *, void *) {
