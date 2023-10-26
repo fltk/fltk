@@ -209,8 +209,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         }
         Fl_Check_Button prevpos_button {uid 63583
           label {Remember Window Positions}
-          callback {// Test!
-fluid_prefs.set("prev_window_pos", prevpos_button->value());}
+          callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
           xywh {120 175 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
           code1 {fluid_prefs.get("prev_window_pos", b, 1);}

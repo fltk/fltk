@@ -238,9 +238,8 @@ Fl_Check_Button *prevpos_button=(Fl_Check_Button *)0;
 
 static void cb_prevpos_button(Fl_Check_Button*, void*) {
 //~fl~0~0000~1eb02531~~
-  // Test!
   fluid_prefs.set("prev_window_pos", prevpos_button->value());
-//~fl~3~f85f~5e08b15b~~
+//~fl~3~f85f~081cd782~~
 }
 
 Fl_Check_Button *show_comments_button=(Fl_Check_Button *)0;

@@ -99,6 +99,7 @@ public:
   void tag(int type, unsigned short uid);
   int merge_back(const char *s, int task);
 
+  static unsigned long block_crc(const void *data, int n=-1, unsigned long in_crc=0, bool *inout_line_start=NULL);
 };
 
 #endif // _FLUID_CODE_H

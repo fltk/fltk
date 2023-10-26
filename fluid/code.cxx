@@ -930,23 +930,31 @@ void Fd_Code_Writer::tag(int type, unsigned short uid) {
   block_crc_ = crc32(0, NULL, 0);
 }
 
-void Fd_Code_Writer::crc_add(const void *data, int n) {
+unsigned long Fd_Code_Writer::block_crc(const void *data, int n, unsigned long in_crc, bool *inout_line_start) {
   if (!data) return;
   if (n==-1) n = (int)strlen((const char*)data);
+  bool line_start = true;
+  if (inout_line_start) line_start = *inout_line_start;
   const char *s = (const char*)data;
   for ( ; n>0; --n, ++s) {
-    if (block_line_start_) {
+    if (line_start) {
       // don't count leading spaces and tabs in a line
       while (n>0 && *s>0 && isspace(*s)) { s++; n--; }
-      if (*s) block_line_start_ = false;
+      if (*s) line_start = false;
     }
     // don't count '\r' that may be introduces by MSWindows
     if (n>0 && *s=='\r') { s++; n--; }
-    if (n>0 && *s=='\n') block_line_start_ = true;
+    if (n>0 && *s=='\n') line_start = true;
     if (n>0) {
-      block_crc_ = crc32(block_crc_, (const Bytef*)s, 1);
+      in_crc = crc32(in_crc, (const Bytef*)s, 1);
     }
   }
+  if (inout_line_start) *inout_line_start = line_start;
+  return in_crc;
+}
+
+void Fd_Code_Writer::crc_add(const void *data, int n) {
+  block_crc_ = block_crc(data, n, block_crc_, &block_line_start_);
 }
 
 int Fd_Code_Writer::crc_printf(const char *format, ...) {
@@ -1094,9 +1102,9 @@ int Fd_Code_Writer::merge_back(const char *s, int task) {
     long block_start = 0;
     long block_end = 0;
     int num_changed_code = 0;
-    int num_changed_callback = 0;
     int num_changed_structure = 0;
     int num_uid_not_found = 0;
+    int num_possible_override = 0;
     int tag_error = 0;
     if (task==FD_MERGEBACK_GO)
       undo_checkpoint();
@@ -1125,29 +1133,60 @@ int Fd_Code_Writer::merge_back(const char *s, int task) {
             if (type==FD_TAG_MENU_CALLBACK || type==FD_TAG_WIDGET_CALLBACK) {
               Fl_Type *tp = Fl_Type::find_by_uid(uid);
               if (tp && tp->is_true_widget()) {
-                tp->callback(unindent_block(code, block_start, block_end).c_str());
+                Fl_String cb = tp->callback(); cb += "\n";
+                unsigned long proj_crc = block_crc(cb.c_str());
+                if (proj_crc!=block_crc_)
+                  tp->callback(unindent_block(code, block_start, block_end).c_str());
                 changed = true;
               }
             } else if (type==FD_TAG_CODE) {
               Fl_Type *tp = Fl_Type::find_by_uid(uid);
               if (tp && tp->is_a(ID_Code)) {
-                tp->name(unindent_block(code, block_start, block_end).c_str());
+                Fl_String cb = tp->name(); cb += "\n";
+                unsigned long proj_crc = block_crc(cb.c_str());
+                if (proj_crc!=block_crc_)
+                  tp->name(unindent_block(code, block_start, block_end).c_str());
                 changed = true;
               }
             }
           } else {
             bool find_node = false;
-            // TODO: if we find a modification, we must check if it was already
-            //       merged into the current project, or we will remerge over
-            //       and over, even if the current code is modified.
-            switch (type) {
-              case FD_TAG_GENERIC: num_changed_structure++; break;
-              case FD_TAG_CODE: num_changed_code++; find_node = true; break;
-              case FD_TAG_MENU_CALLBACK: num_changed_callback++; find_node = true; break;
-              case FD_TAG_WIDGET_CALLBACK: num_changed_callback++; find_node = true; break;
-            }
-            if (find_node) {
-              if (Fl_Type::find_by_uid(uid)==NULL) num_uid_not_found++;
+            if (type==FD_TAG_MENU_CALLBACK || type==FD_TAG_WIDGET_CALLBACK) {
+              Fl_Type *tp = Fl_Type::find_by_uid(uid);
+              if (tp && tp->is_true_widget()) {
+                Fl_String cb = tp->callback(); cb += "\n";
+                unsigned long proj_crc = block_crc(cb.c_str());
+                // check if the code and project crc are the same, so this modification was already applied
+                if (proj_crc!=block_crc_) {
+                  num_changed_code++;
+                  // check if the block change on the project side as well, so we may override changes
+                  if (proj_crc!=crc) {
+                    num_possible_override++;
+                  }
+                }
+              } else {
+                num_uid_not_found++;
+                num_changed_code++;
+              }
+            } else if (type==FD_TAG_CODE) {
+              Fl_Type *tp = Fl_Type::find_by_uid(uid);
+              if (tp && tp->is_a(ID_Code)) {
+                Fl_String code = tp->name(); code += "\n";
+                unsigned long proj_crc = block_crc(code.c_str());
+                // check if the code and project crc are the same, so this modification was already applied
+                if (proj_crc!=block_crc_) {
+                  num_changed_code++;
+                  // check if the block change on the project side as well, so we may override changes
+                  if (proj_crc!=crc) {
+                    num_possible_override++;
+                  }
+                }
+              } else {
+                num_changed_code++;
+                num_uid_not_found++;
+              }
+            } else if (type==FD_TAG_GENERIC) {
+              num_changed_structure++;
             }
           }
         }
@@ -1161,54 +1200,70 @@ int Fd_Code_Writer::merge_back(const char *s, int task) {
       if (tag_error) { ret = -1; break; }
       if (num_changed_structure) ret |= 1;
       if (num_changed_code) ret |= 2;
-      if (num_changed_callback) ret |= 4;
-      if (num_uid_not_found) ret |= 8;
+      if (num_uid_not_found) ret |= 4;
       break;
     } else if (task==FD_MERGEBACK_INTERACTIVE) {
       if (tag_error) {
-        fl_message("MergeBack found an error in line %d while reading Tags\n"
-                   "from the source code. MergeBack not possible.", line_no);
+        fl_message("MergeBack found an error in line %d while reading tags\n"
+                   "from the source code. Merging code back is not possible.", line_no);
         ret = -1;
         break;
       }
-      if (!num_changed_code && !num_changed_callback && !num_changed_structure) {
+      if (!num_changed_code && !num_changed_structure) {
         ret = 0;
         break;
       }
-      if (num_changed_structure && (num_changed_code==0 && num_changed_callback==0)) {
+      if (num_changed_structure && !num_changed_code) {
         fl_message("MergeBack found %d modifications in the project structure\n"
                    "of the source code. These kind of changes can no be\n"
-                   "merged back and will be lost.", num_changed_structure);
+                   "merged back and will be lost when the source code is\n"
+                   "generated again from the open project.", num_changed_structure);
         ret = -1;
         break;
       }
-      Fl_String msg = "MergeBack found %1$d modifications in Code Blocks and %2$d\n"
-      "modifications in callbacks.";
+      Fl_String msg = "MergeBack found %1$d modifications in the source code.";
+      if (num_possible_override)
+        msg += "\n\nWARNING: %4$d of these modified blocks appear to also have\n"
+        "changed in the project. Merging will override changes in\n"
+        "the project with changes from the source code file.";
       if (num_uid_not_found)
-        msg +=    "\n\nWARNING: for %3$d of these modifications no Type node\n"
-        "can be found. The project diverged substantially from the\n"
-        "code file and these modification can't be merged back.";
+        msg += "\n\nWARNING: for %2$d of these modifications no Type node\n"
+               "can be found and these modification can't be merged back.";
+      if (!num_possible_override && !num_uid_not_found)
+        msg += "\nMerging these changes back appears to be safe.";
+
       if (num_changed_structure)
-        msg +=    "\n\nWARNING: %4$d modifications in the project structure\n"
-        "can no be merged back and will be lost.";
-      msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
-      "Click Merge to move code and callback changes back into\n"
-      "the project.";
-      int c = fl_choice(msg.c_str(), "Cancel", "Merge", NULL,
-                        num_changed_code, num_changed_callback,
-                        num_uid_not_found, num_changed_structure);
-      if (c==0) { ret = 1; break; }
-      task = FD_MERGEBACK_GO;
-      continue;
+        msg += "\n\nWARNING: %3$d modifications were found in the project\n"
+        "structure. These kind of changes can no be merged back\n"
+        "and will be lost when the source code is generated again\n"
+        "from the open project.";
+
+      if (num_changed_code==num_uid_not_found) {
+        fl_message(msg.c_str(),
+                   num_changed_code, num_uid_not_found,
+                   num_changed_structure, num_possible_override);
+        ret = -1;
+        break;
+      } else {
+        msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
+        "Click Merge to merge all code changes back into\n"
+        "the open project.";
+        int c = fl_choice(msg.c_str(), "Cancel", "Merge", NULL,
+                          num_changed_code, num_uid_not_found,
+                          num_changed_structure, num_possible_override);
+        if (c==0) { ret = 1; break; }
+        task = FD_MERGEBACK_GO;
+        continue;
+      }
     } else if (task==FD_MERGEBACK_GO) {
       if (changed) ret = 1;
       break;
     } else if (task==FD_MERGEBACK_GO_SAFE) {
-      if (tag_error || num_changed_structure) {
+      if (tag_error || num_changed_structure || num_possible_override) {
         ret = -1;
         break;
       }
-      if (num_changed_code==0 && num_changed_callback==0) {
+      if (num_changed_code==0) {
         ret = 0;
         break;
       }
