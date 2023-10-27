@@ -245,7 +245,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
       // this is the first word in a .fd file:
       if (!strcmp(c,"Magic:")) {
         read_fdesign();
-        return;
+        return NULL;
       }
 
       if (!strcmp(c,"version")) {
