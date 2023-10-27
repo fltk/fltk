@@ -1285,12 +1285,26 @@ int mergeback_code_files()
     return 0;
   }
 
-  Fl_String code_filename = g_project.codefile_path() + g_project.codefile_name();
+  Fl_String proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
+  Fl_String code_filename;
+#if 1
+  if (!batch_mode) {
+    Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org.build", "fluid");
+    Fl_Preferences path(build_records, proj_filename.c_str());
+    preferences_get(path, "code", code_filename, "");
+  }
+#endif
+  if (code_filename.empty())
+    code_filename = g_project.codefile_path() + g_project.codefile_name();
   if (!batch_mode) enter_project_dir();
-  int c = merge_back(code_filename, FD_MERGEBACK_INTERACTIVE);
+  int c = merge_back(code_filename, proj_filename, FD_MERGEBACK_INTERACTIVE);
   if (!batch_mode) leave_project_dir();
-  if (c==0) fl_message("MergeBack found no external modifications\n"
-                       "in the source code.");
+
+  if (c==0) fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+                       "MergeBack found no external modifications\n"
+                       "in the source code.",
+                       code_filename.c_str(), proj_filename.c_str());
+  if (c==-2) fl_message("No corresponding source code file found.");
   return c;
 }
 

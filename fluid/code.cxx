@@ -762,6 +762,13 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
     if (!f) {fclose(code_file); return 0;}
     header_file = f;
   }
+  // Remember the last code file location for MergeBack
+  if (s && g_project.write_mergeback_data && !to_sourceview) {
+    Fl_String proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
+    Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org.build", "fluid");
+    Fl_Preferences path(build_records, proj_filename.c_str());
+    path.set("code", s);
+  }
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
   Fl_Type* first_type = Fl_Type::first;

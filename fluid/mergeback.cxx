@@ -94,12 +94,14 @@ extern void redraw_browser();
 
  \param[in] s path and filename of the source code file
  \param[in] task see above
+ \return -1 if an error was found in a tag
+ \return -2 if no code file was found
  \return see above
  */
-int merge_back(const Fl_String &s, int task) {
+int merge_back(const Fl_String &s, const Fl_String &p, int task) {
   if (g_project.write_mergeback_data) {
     Fd_Mergeback mergeback;
-    return mergeback.merge_back(s, task);
+    return mergeback.merge_back(s, p, task);
   } else {
     // nothing to be done if the mergeback option is disabled in the project
     return 0;
@@ -173,41 +175,47 @@ Fl_String Fd_Mergeback::read_and_unindent_block(long start, long end) {
  \return -1 if the user wants to cancel or an error occurred or an issue was presented
         (message or choice dialog was shown)
  */
-int Fd_Mergeback::ask_user_to_merge() {
+int Fd_Mergeback::ask_user_to_merge(const Fl_String &code_filename, const Fl_String &proj_filename) {
   if (tag_error) {
-    fl_message("MergeBack found an error in line %d while reading tags\n"
-               "from the source code. Merging code back is not possible.", line_no);
+    fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+               "MergeBack found an error in line %d while reading tags\n"
+               "from the source code. Merging code back is not possible.",
+               code_filename.c_str(), proj_filename.c_str(), line_no);
     return -1;
   }
   if (!num_changed_code && !num_changed_structure) {
     return 0;
   }
   if (num_changed_structure && !num_changed_code) {
-    fl_message("MergeBack found %d modifications in the project structure\n"
+    fl_message("Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
+               "MergeBack found %3$d modifications in the project structure\n"
                "of the source code. These kind of changes can no be\n"
                "merged back and will be lost when the source code is\n"
-               "generated again from the open project.", num_changed_structure);
+               "generated again from the open project.", 
+               code_filename.c_str(), proj_filename.c_str(), num_changed_structure);
     return -1;
   }
-  Fl_String msg = "MergeBack found %1$d modifications in the source code.";
+  Fl_String msg = "Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
+                  "MergeBack found %3$d modifications in the source code.";
   if (num_possible_override)
-    msg += "\n\nWARNING: %4$d of these modified blocks appear to also have\n"
+    msg += "\n\nWARNING: %6$d of these modified blocks appear to also have\n"
     "changed in the project. Merging will override changes in\n"
     "the project with changes from the source code file.";
   if (num_uid_not_found)
-    msg += "\n\nWARNING: for %2$d of these modifications no Type node\n"
+    msg += "\n\nWARNING: for %4$d of these modifications no Type node\n"
     "can be found and these modification can't be merged back.";
   if (!num_possible_override && !num_uid_not_found)
     msg += "\nMerging these changes back appears to be safe.";
 
   if (num_changed_structure)
-    msg += "\n\nWARNING: %3$d modifications were found in the project\n"
+    msg += "\n\nWARNING: %5$d modifications were found in the project\n"
     "structure. These kind of changes can no be merged back\n"
     "and will be lost when the source code is generated again\n"
     "from the open project.";
 
   if (num_changed_code==num_uid_not_found) {
     fl_message(msg.c_str(),
+               code_filename.c_str(), proj_filename.c_str(),
                num_changed_code, num_uid_not_found,
                num_changed_structure, num_possible_override);
     return -1;
@@ -216,6 +224,7 @@ int Fd_Mergeback::ask_user_to_merge() {
     "Click Merge to merge all code changes back into\n"
     "the open project.";
     int c = fl_choice(msg.c_str(), "Cancel", "Merge", NULL,
+                      code_filename.c_str(), proj_filename.c_str(),
                       num_changed_code, num_uid_not_found,
                       num_changed_structure, num_possible_override);
     if (c==0) return -1;
@@ -425,12 +434,14 @@ int Fd_Mergeback::apply() {
  \param[in] s source code filename and path
  \param[in] task one of FD_MERGEBACK_ANALYSE, FD_MERGEBACK_INTERACTIVE,
             FD_MERGEBACK_APPLY_IF_SAFE, or FD_MERGEBACK_APPLY
- \return see ::merge_back(const Fl_String &s, int task)
+ \return -1 if an error was found in a tag
+ \return -2 if no code file was found
+ \return See more at ::merge_back(const Fl_String &s, int task).
  */
-int Fd_Mergeback::merge_back(const Fl_String &s, int task) {
+int Fd_Mergeback::merge_back(const Fl_String &s, const Fl_String &p, int task) {
   int ret = 0;
   code = fl_fopen(s.c_str(), "r");
-  if (!code) return -1;
+  if (!code) return -2;
   do { // no actual loop, just make sure we close the code file
     if (task == FD_MERGEBACK_ANALYSE) {
       analyse();
@@ -443,7 +454,7 @@ int Fd_Mergeback::merge_back(const Fl_String &s, int task) {
     }
     if (task == FD_MERGEBACK_INTERACTIVE) {
       analyse();
-      ret = ask_user_to_merge();
+      ret = ask_user_to_merge(s, p);
       if (ret != 1)
         return ret;
       task = FD_MERGEBACK_APPLY; // fall through

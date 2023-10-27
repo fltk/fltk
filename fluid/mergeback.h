@@ -65,13 +65,13 @@ protected:
 public:
   Fd_Mergeback();
   ~Fd_Mergeback();
-  int merge_back(const Fl_String &s, int task);
-  int ask_user_to_merge();
+  int merge_back(const Fl_String &s, const Fl_String &p, int task);
+  int ask_user_to_merge(const Fl_String &s, const Fl_String &p);
   int analyse();
   int apply();
 };
 
-extern int merge_back(const Fl_String &s, int task);
+extern int merge_back(const Fl_String &s, const Fl_String &p, int task);
 
 
 #endif // _FLUID_MERGEBACK_H
