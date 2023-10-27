@@ -1,5 +1,5 @@
 //
-// Code output routines for the Fast Light Tool Kit (FLTK).
+// MergeBack routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2023 by Bill Spitzak and others.
 //
@@ -230,12 +230,12 @@ void Fd_Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_cr
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     Fl_String cb = tp->callback(); cb += "\n";
-    unsigned long proj_crc = Fd_Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
     // check if the code and project crc are the same, so this modification was already applied
-    if (proj_crc!=code_crc) {
+    if (project_crc!=code_crc) {
       num_changed_code++;
       // check if the block change on the project side as well, so we may override changes
-      if (proj_crc!=tag_crc) {
+      if (project_crc!=tag_crc) {
         num_possible_override++;
       }
     }
@@ -252,12 +252,12 @@ void Fd_Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, i
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
     Fl_String code = tp->name(); code += "\n";
-    unsigned long proj_crc = Fd_Code_Writer::block_crc(code.c_str());
+    unsigned long project_crc = Fd_Code_Writer::block_crc(code.c_str());
     // check if the code and project crc are the same, so this modification was already applied
-    if (proj_crc!=code_crc) {
+    if (project_crc!=code_crc) {
       num_changed_code++;
       // check if the block change on the project side as well, so we may override changes
-      if (proj_crc!=tag_crc) {
+      if (project_crc!=tag_crc) {
         num_possible_override++;
       }
     }
@@ -273,7 +273,7 @@ void Fd_Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, i
  The code file must be open for reading already.
 
  * tag_error is set if a tag was found, but could not be read
- * line_no returns the line where an error occured
+ * line_no returns the line where an error occurred
  * num_changed_code is set to the number of changed code blocks in the file.
    Code changes can be merged back to the project.
  * num_changed_structure is set to the number of structural changes.

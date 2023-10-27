@@ -704,7 +704,7 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   }
 
   f.write_word(name());
-  f.write_open(level);
+  f.write_open();
   write_properties(f);
   if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
@@ -714,7 +714,7 @@ void Fl_Type::write(Fd_Project_Writer &f) {
     return;
   }
   // now do children:
-  f.write_open(level);
+  f.write_open();
   Fl_Type *child;
   for (child = next; child && child->level > level; child = child->next)
     if (child->level == level+1) child->write(f);

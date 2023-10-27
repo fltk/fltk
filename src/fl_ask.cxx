@@ -327,6 +327,7 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
 
   \code #include <FL/fl_ask.H> \endcode
 
+  \param[in] maxchar maximum number of characters the user can input (UTF-8 aware)
   \param[in] fmt can be used as an sprintf-like format and variables for the message text
   \param[in] defstr defines the default returned string if no text is entered
 

@@ -31,14 +31,21 @@ int write_file(const char *, int selected_only = 0, bool to_sourceview = false);
 class Fd_Project_Reader
 {
 protected:
+  /// Project input file
   FILE *fin;
+  /// Number of most recently read line
   int lineno;
+  /// Pointer to the file path and name (not copied!)
   const char *fname;
+  /// Expanding buffer to store the most recently read word
   char *buffer;
+  /// Exact size of the expanding buffer in bytes
   int buflen;
+
   void expand_buffer(int length);
 
 public:
+  /// Holds the file version number after reading the "version" tag
   double read_version;
 
 public:
@@ -60,8 +67,11 @@ public:
 class Fd_Project_Writer
 {
 protected:
+  // Project output file, mode "w" for files, "wb" for SourceView
   FILE *fout;
+  /// If set, one space is written before text unless the format starts with a newline character
   int needspace;
+  /// Set if this file will be used in the SourceView dialog
   bool write_sourceview_;
 
 public:
@@ -73,7 +83,7 @@ public:
   void write_word(const char *);
   void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_indent(int n);
-  void write_open(int);
+  void write_open();
   void write_close(int n);
   FILE *file() const { return fout; }
   bool write_sourceview() const { return write_sourceview_; }

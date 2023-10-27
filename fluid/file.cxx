@@ -47,6 +47,7 @@
 
 // This file contains code to read and write .fl files.
 
+/// If set, we read an old fdesign file and widget y coordinates need to be flipped.
 int fdesign_flip = 0;
 
 /** \brief Read a .fl project file.
@@ -80,8 +81,11 @@ int write_file(const char *filename, int selected_only, bool to_sourceview) {
 
 /**
  Convert a single ASCII char, assumed to be a hex digit, into its decimal value.
+ \param[in] x ASCII character
+ \return decimal value or 20 if character is not a valid hex digit (0..9,a..f,A..F)
  */
 static int hexdigit(int x) {
+  if ((x < 0) || (x > 127)) return 20;
   if (isdigit(x)) return x-'0';
   if (isupper(x)) return x-'A'+10;
   if (islower(x)) return x-'a'+10;
@@ -93,6 +97,7 @@ static int hexdigit(int x) {
 /**
  A simple growing buffer.
  Oh how I wish sometimes we would upgrade to modern C++.
+ \param[in] length minimum length in bytes
  */
 void Fd_Project_Reader::expand_buffer(int length) {
   if (length >= buflen) {
@@ -159,14 +164,19 @@ int Fd_Project_Reader::close_read() {
   return 1;
 }
 
+/**
+ Return the name part of the current filename and path.
+ \return a pointer into a string that is not owned by this class
+ */
 const char *Fd_Project_Reader::filename_name() {
   return fl_filename_name(fname);
 }
 
 /**
- Convert an ASCII sequence form the \.fl file that starts with a \\ into a single character.
+ Convert an ASCII sequence from the \.fl file following a previously read `\\` into a single character.
  Conversion includes the common C style \\ characters like \\n, \\x## hex
  values, and \\o### octal values.
+ \return a character in the ASCII range
  */
 int Fd_Project_Reader::read_quoted() {      // read whatever character is after a \ .
   int c,d,x;
@@ -435,12 +445,17 @@ int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy st
  If the .fl file isn't opened for reading, pop up an FLTK dialog, otherwise
  print to stdout.
  \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c batch_mode?
+ \todo Not happy about this function. Output channel should depend on `batch_mode`
+       as the note above already states. I want to make all file readers and writers
+       depend on an error handling base class that outputs a useful analysis of file
+       operations.
+ \param[in] format printf style format string, followed by an argument list
  */
 void Fd_Project_Reader::read_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
-  if (!fin) { // FIXME: this line suppresses any error messages in interactve mode
-    char buffer[1024];
+  if (!fin) { // FIXME: this line suppresses any error messages in interactive mode
+    char buffer[1024]; // TODO: hides class member "buffer"
     vsnprintf(buffer, sizeof(buffer), format, args);
     fl_message("%s", buffer);
   } else {
@@ -461,6 +476,12 @@ void Fd_Project_Reader::read_error(const char *format, ...) {
  - a continuous string of non-space chars except { and } and #
  - everything between matching {...} (unless wantbrace != 0)
  - the characters '{' and '}'
+
+ \param[in] wantbrace if set, reading a `{` as the first non-space character
+    will return the string `"{"`, if clear, a `{` is seen as the start of a word
+ \return a pointer to the internal buffer, containing a copy of the word.
+    Don't free the buffer! Note that most (all?) other file operations will
+    overwrite this buffer.
  */
 const char *Fd_Project_Reader::read_word(int wantbrace) {
   int x;
@@ -529,6 +550,9 @@ const char *Fd_Project_Reader::read_word(int wantbrace) {
   }
 }
 
+/** Read a word and interpret it as an integer value.
+ \return integer value, or 0 if the word is not an integer
+ */
 int Fd_Project_Reader::read_int() {
   const char *word = read_word();
   if (word) {
@@ -538,6 +562,13 @@ int Fd_Project_Reader::read_int() {
   }
 }
 
+/** Read fdesign name/value pairs.
+ Fdesign is the file format of the XForms UI designer. It stores lists of name
+ and value pairs separated by a colon: `class: FL_LABELFRAME`.
+ \param[out] name string
+ \param[out] value string
+ \return 0 if end of file, else 1
+ */
 int Fd_Project_Reader::read_fdesign_line(const char*& name, const char*& value) {
   int length = 0;
   int x;
@@ -575,6 +606,7 @@ int Fd_Project_Reader::read_fdesign_line(const char*& name, const char*& value) 
   return 1;
 }
 
+/// Lookup table from fdesign .fd files to .fl files
 static const char *class_matcher[] = {
   "FL_CHECKBUTTON", "Fl_Check_Button",
   "FL_ROUNDBUTTON", "Fl_Round_Button",
@@ -753,6 +785,7 @@ int Fd_Project_Writer::open_write(const char *s) {
 /**
  Close the .fl design file.
  Don't close, if data was sent to stdout.
+ \return 1 if succeeded, 0 if fclose failed
  */
 int Fd_Project_Writer::close_write() {
   if (fout != stdout) {
@@ -766,7 +799,8 @@ int Fd_Project_Writer::close_write() {
 /** \brief Write an .fl design description file.
  \param[in] filename create this file, and if it exists, overwrite it
  \param[in] selected_only write only the selected nodes in the widget_tree. This
- is used to implement copy and paste.
+            is used to implement copy and paste.
+ \param[in] sv if set, this file will be used by SourceView
  \return 0 if the operation failed, 1 if it succeeded
  */
 int Fd_Project_Writer::write_project(const char *filename, int selected_only, bool sv) {
@@ -834,6 +868,7 @@ int Fd_Project_Writer::write_project(const char *filename, int selected_only, bo
 
 /**
  Write a string to the .fl file, quoting characters if necessary.
+ \param[in] w NUL terminated text
  */
 void Fd_Project_Writer::write_word(const char *w) {
   if (needspace) putc(' ', fout);
@@ -871,6 +906,7 @@ void Fd_Project_Writer::write_word(const char *w) {
  Write an arbitrary formatted word to the .fl file, or a comment, etc .
  If needspace is set, then one space is written before the string
  unless the format starts with a newline character \\n.
+ \param[in] format printf style formatting string followed by a list of arguments
  */
 void Fd_Project_Writer::write_string(const char *format, ...) {
   va_list args;
@@ -883,6 +919,7 @@ void Fd_Project_Writer::write_string(const char *format, ...) {
 
 /**
  Start a new line in the .fl file and indent it for a given nesting level.
+ \param[in] n indent level
  */
 void Fd_Project_Writer::write_indent(int n) {
   fputc('\n',fout);
@@ -893,7 +930,7 @@ void Fd_Project_Writer::write_indent(int n) {
 /**
  Write a '{' to the .fl file at the given indenting level.
  */
-void Fd_Project_Writer::write_open(int) {
+void Fd_Project_Writer::write_open() {
   if (needspace) fputc(' ',fout);
   fputc('{',fout);
   needspace = 0;
@@ -901,6 +938,7 @@ void Fd_Project_Writer::write_open(int) {
 
 /**
  Write a '}' to the .fl file at the given indenting level.
+ \param[in] n indent level
  */
 void Fd_Project_Writer::write_close(int n) {
   if (needspace) write_indent(n);
