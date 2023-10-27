@@ -190,6 +190,7 @@ void earlier_cb(Fl_Widget*,void*) {
       if (g && g->level == f->level && !g->selected) {
         if (!mod) undo_checkpoint();
         f->move_before(g);
+        if (f->parent) f->parent->layout_widget();
         mod = 1;
       }
     }
@@ -214,6 +215,7 @@ void later_cb(Fl_Widget*,void*) {
       if (g && g->level == f->level && !g->selected) {
         if (!mod) undo_checkpoint();
         g->move_before(f);
+        if (f->parent) f->parent->layout_widget();
         mod = 1;
       }
     }

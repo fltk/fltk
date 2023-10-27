@@ -49,15 +49,6 @@ void igroup::resize(int X, int Y, int W, int H) {
 }
 
 /**
- Create and add a new Group node.
- \param[in] strategy add after current or as last child
- \return new Group node
- */
-Fl_Type *Fl_Group_Type::make(Strategy strategy) {
-  return Fl_Widget_Type::make(strategy);
-}
-
-/**
  \brief Enlarge the group size, so all children fit within.
  */
 void fix_group_size(Fl_Type *tt) {
@@ -102,6 +93,7 @@ void group_cb(Fl_Widget *, void *) {
     t = nxt;
   }
   fix_group_size(n);
+  n->layout_widget();
   widget_browser->rebuild();
   undo_resume();
   set_modflag(1);
@@ -241,7 +233,6 @@ Fl_Flex_Type Fl_Flex_type;      // the "factory"
 Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
   Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(grp);
-  suspend_auto_layout = 0;
   Fl_Flex *d = grp, *s =(Fl_Flex*)o;
   int nc = s->children(), nd = d->children();
   if (nc>nd) nc = nd;
@@ -320,20 +311,20 @@ void Fl_Flex_Type::read_property(Fd_Project_Reader &f, const char *c)
 
 void Fl_Flex_Type::postprocess_read()
 {
-  if (fixedSizeTupleSize==0) return;
   Fl_Flex* flex = (Fl_Flex*)o;
-  for (int i=0; i<fixedSizeTupleSize; i++) {
-    int ix = fixedSizeTuple[2*i];
-    int size = fixedSizeTuple[2*i+1];
-    if (ix>=0 && ix<flex->children()) {
-      Fl_Widget *ci = flex->child(ix);
-      flex->fixed(ci, size);
+  if (fixedSizeTupleSize>0) {
+    for (int i=0; i<fixedSizeTupleSize; i++) {
+      int ix = fixedSizeTuple[2*i];
+      int size = fixedSizeTuple[2*i+1];
+      if (ix>=0 && ix<flex->children()) {
+        Fl_Widget *ci = flex->child(ix);
+        flex->fixed(ci, size);
+      }
     }
+    fixedSizeTupleSize = 0;
+    delete[] fixedSizeTuple;
+    fixedSizeTuple = NULL;
   }
-  fixedSizeTupleSize = 0;
-  delete[] fixedSizeTuple;
-  fixedSizeTuple = NULL;
-  flex->layout();
   suspend_auto_layout = 0;
 }
 
@@ -355,22 +346,27 @@ void Fl_Flex_Type::write_code2(Fd_Code_Writer& f) {
   Fl_Group_Type::write_code2(f);
 }
 
-void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
-  Fl_Group_Type::add_child(a, b);
-  if (!suspend_auto_layout)
-    ((Fl_Flex*)o)->layout();
-}
-
-void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
-  Fl_Group_Type::move_child(a, b);
-  if (!suspend_auto_layout)
-    ((Fl_Flex*)o)->layout();
-}
+//void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
+//  Fl_Group_Type::add_child(a, b);
+//  if (!suspend_auto_layout)
+//    ((Fl_Flex*)o)->layout();
+//}
+//
+//void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
+//  Fl_Group_Type::move_child(a, b);
+//  if (!suspend_auto_layout)
+//    ((Fl_Flex*)o)->layout();
+//}
 
 void Fl_Flex_Type::remove_child(Fl_Type* a) {
   if (a->is_widget())
     ((Fl_Flex*)o)->fixed(((Fl_Widget_Type*)a)->o, 0);
   Fl_Group_Type::remove_child(a);
+//  ((Fl_Flex*)o)->layout();
+  layout_widget();
+}
+
+void Fl_Flex_Type::layout_widget() {
   ((Fl_Flex*)o)->layout();
 }
 

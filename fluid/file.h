@@ -55,7 +55,7 @@ public:
   int close_read();
   const char *filename_name();
   int read_quoted();
-  void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options=0);
+  Fl_Type *read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options=0);
   int read_project(const char *, int merge, Strategy strategy=kAddAsLastChild);
   void read_error(const char *format, ...);
   const char *read_word(int wantbrace = 0);

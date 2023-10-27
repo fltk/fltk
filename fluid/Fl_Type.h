@@ -195,6 +195,13 @@ public:
   virtual void move_child(Fl_Type*, Fl_Type* beforethis) { }
   virtual void remove_child(Fl_Type*) { }
 
+  /** Give widgets a change to arrange their children after all children were add.
+   If adding individual children, this is called immediately, but if children
+   are read via a project file, we wait until all children are read and then
+   lay out the group.
+   */
+  virtual void layout_widget() { }
+
   static Fl_Type *current;  // most recently picked object
   static Fl_Type *current_dnd;
 

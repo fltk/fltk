@@ -217,18 +217,21 @@ int Fd_Project_Reader::read_quoted() {      // read whatever character is after 
  If this is the first call, also read the global settings for this design.
 
  \param[in] p parent node or NULL
- \param[in] paste if set, merge into existing design, else replace design
+ \param[in] merge if set, merge into existing design, else replace design
  \param[in] strategy add nodes after current or as last child
  \param[in] skip_options this is set if the options were already found in
  a previous call, and there is no need to waste time searching for them.
+ \return the last type that was created
  */
-void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options) {
+Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options) {
   Fl_Type::current = p;
+  Fl_Type *last_child_read = NULL;
   for (;;) {
     const char *c = read_word();
   REUSE_C:
     if (!c) {
-      if (p && !paste) read_error("Missing '}'");
+      if (p && !merge) 
+        read_error("Missing '}'");
       break;
     }
 
@@ -258,7 +261,7 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         Fl_Type *t = add_new_widget_from_file("class", kAddAsLastChild);
         t->name(read_word());
         Fl_Type::current = p = t;
-        paste = 1; // stops "missing }" error
+        merge = 1; // stops "missing }" error
         continue;
       }
 
@@ -355,6 +358,7 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         read_error("Unknown word \"%s\"", c);
         continue;
       }
+      last_child_read = t;
       // After reading the first widget, we no longer need to look for options
       skip_options = 1;
 
@@ -387,12 +391,18 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
       }
       read_children(t, 0, strategy, skip_options);
       t->postprocess_read();
+      t->layout_widget();
     }
 
     Fl_Type::current = p;
 
   CONTINUE:;
   }
+  if (merge && last_child_read && last_child_read->parent) {
+    last_child_read->parent->postprocess_read();
+    last_child_read->parent->layout_widget();
+  }
+  return last_child_read;
 }
 
 /** \brief Read a .fl project file.

@@ -147,7 +147,7 @@ script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {uid 
   }
 }
 
-Function {make_settings_window()} {uid 40199 open
+Function {make_settings_window()} {uid 40199 open selected
 } {
   Fl_Window settings_window {uid 25753
     label {FLUID Settings} open
@@ -219,7 +219,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
           label {Show Comments in Browser}
           callback {show_comments = show_comments_button->value();
 fluid_prefs.set("show_comments", show_comments);
-redraw_browser();} selected
+redraw_browser();}
           xywh {120 195 200 20} down_box DOWN_BOX labelsize 11
           code1 {fluid_prefs.get("show_comments", show_comments, 1);}
           code2 {show_comments_button->value(show_comments);}

@@ -46,7 +46,6 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     igroup *g = new igroup(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Group_Type();}
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
@@ -106,9 +105,10 @@ public:
   void copy_properties() FL_OVERRIDE;
   void postprocess_read() FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
-  void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
-  void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
+//  void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
+//  void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
+  void layout_widget() FL_OVERRIDE;
   void change_subtype_to(int n);
   static int parent_is_flex(Fl_Type*);
   static int size(Fl_Type*, char fixed_only=0);

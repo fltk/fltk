@@ -1195,7 +1195,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       wt->ideal_size(w, h);
 
       if ((t->parent && t->parent->is_a(ID_Flex))) {
-        // Do not resize or layout the widget. Flex will need the widget size.
+        t->parent->layout_widget();
       } else if (   wt->is_a(ID_Group)
                  && wt->parent
                  && wt->parent->is_a(ID_Tabs)

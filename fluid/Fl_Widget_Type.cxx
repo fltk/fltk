@@ -268,6 +268,7 @@ Fl_Type *sort(Fl_Type *parent) {
     }
     if (g != f) f->move_before(g);
   }
+  parent->layout_widget();
 }
 
 ////////////////////////////////////////////////////////////////
