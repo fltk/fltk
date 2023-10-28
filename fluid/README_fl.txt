@@ -377,7 +377,7 @@ See Fl_Grid for an example.
 
 Type Fl_Type <word>
 
-  "uid" <word> : since Oct 2023, optional, a unique id for this node within the project file
+  "uid" <4-digit-hex> : since Oct 2023, optional, a unique id for this node within the project file
   “label” <word> : text
   “user_data” <word> : a value or an expression
   “user_data_type” <word> : usually “void*” or “long”

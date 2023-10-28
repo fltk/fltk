@@ -729,7 +729,7 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
   // repeat this for each attribute:
   if (g_project.write_mergeback_data && uid_) {
     f.write_word("uid");
-    f.write_string("%d", uid_);
+    f.write_string("%04x", uid_);
   }
   if (label()) {
     f.write_indent(level+1);
@@ -760,9 +760,13 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
 }
 
 void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
-  if (!strcmp(c,"uid"))
-    set_uid(f.read_int());
-  else if (!strcmp(c,"label"))
+  if (!strcmp(c,"uid")) {
+    const char *hex = f.read_word();
+    int x = 0;
+    if (hex)
+      x = sscanf(hex, "%04x", &x);
+    set_uid(x);
+  } else if (!strcmp(c,"label"))
     label(f.read_word());
   else if (!strcmp(c,"user_data"))
     user_data(f.read_word());
