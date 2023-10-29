@@ -59,13 +59,13 @@ Wayland differs also from X11 in that the position of a window in the display is
 completely hidden to the client app. This prevents function \c Fl_Window::position() from having
 any effect on a top-level window. Wayland also prevents a client app from knowing whether
 a window is minimized: \c Fl_Window::show() has no effect on a minimized window.
-Subwindows can be positioned as usual relatively to their
-parent window. FLTK uses that for the small, yellow windows that display
-the new scale factor value when it's changed: these are created as short-lived subwindows
-centered above \c Fl::first_window().
+Subwindows can be positioned as usual relatively to their parent window.
 Wayland allows to create popup windows positioned relatively to a previously mapped other
-window. This allows FLTK to position adequately menu and tooltip windows, see
-\ref menu-windows.
+window. This allows FLTK to position adequately menu and tooltip windows
+(see \ref menu-windows).
+FLTK uses also popups for the small, yellow windows that display
+the new scale factor value when it's changed: these are created as short-lived popups
+centered above \c Fl::first_window().
 
 Wayland uses a trick of its own to handle lists of linked records. It defines type
 <tt>struct wl_list</tt> and a few macros (\c wl_list_init(), \c wl_list_for_each(), \c wl_list_insert(),

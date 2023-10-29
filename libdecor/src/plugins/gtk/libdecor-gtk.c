@@ -2548,15 +2548,12 @@ init_wl_seat(struct libdecor_plugin_gtk *plugin_gtk,
 	struct seat *seat;
 
 	if (version < 3) {
-		char *err_msg;
-		asprintf(&err_msg,
-			 "%s version 3 required but only version %i is available\n",
-			 wl_seat_interface.name, version);
 		libdecor_notify_plugin_error(
 				plugin_gtk->context,
 				LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
-				err_msg);
-		free(err_msg);
+				"%s version 3 required but only version %i is available\n",
+				wl_seat_interface.name,
+				version);
 	}
 
 	seat = zalloc(sizeof *seat);
@@ -2640,15 +2637,12 @@ init_wl_output(struct libdecor_plugin_gtk *plugin_gtk,
 	struct output *output;
 
 	if (version < 2) {
-		char *err_msg;
-		asprintf(&err_msg,
-			 "%s version 2 required but only version %i is available\n",
-			 wl_output_interface.name, version);
 		libdecor_notify_plugin_error(
 				plugin_gtk->context,
 				LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
-				err_msg);
-		free(err_msg);
+				"%s version 2 required but only version %i is available\n",
+				wl_output_interface.name,
+				version);
 	}
 
 	output = zalloc(sizeof *output);
@@ -2814,6 +2808,8 @@ libdecor_plugin_new(struct libdecor *context)
 
 	/* setup GTK context */
 	gdk_set_allowed_backends("wayland");
+	gtk_disable_setlocale();
+
 	if (!gtk_init_check(NULL, NULL)) {
 		libdecor_notify_plugin_error(
 				plugin_gtk->context,
