@@ -161,9 +161,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   if (!other_xid) {
     other_xid = new Fl_Image_Surface(w(), h(), 1);
 #if FLTK_USE_CAIRO
-    Fl_Surface_Device::push_current(other_xid);
-    cairo_ = ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
-    Fl_Surface_Device::pop_current();
+    cairo_ = ((Fl_Cairo_Graphics_Driver*)other_xid->driver())->cr();
 #endif
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
