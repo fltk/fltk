@@ -765,6 +765,8 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   // Remember the last code file location for MergeBack
   if (s && g_project.write_mergeback_data && !to_sourceview) {
     Fl_String proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
+    int i, n = proj_filename.size();
+    for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org.build", "fluid");
     Fl_Preferences path(build_records, proj_filename.c_str());
     path.set("code", s);
