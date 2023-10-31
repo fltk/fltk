@@ -14,6 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include "Fl_String.H"
 
 #include <stdio.h>
@@ -637,3 +643,8 @@ bool operator==(const Fl_String &lhs, const Fl_String &rhs) {
   }
   return false;
 }
+
+/**
+\}
+\endcond
+*/
