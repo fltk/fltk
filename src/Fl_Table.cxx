@@ -1305,7 +1305,7 @@ void Fl_Table::draw() {
   // Let fltk widgets draw themselves first. Do this after
   // draw_cell(CONTEXT_STARTPAGE) in case user moves widgets around.
   // Use window 'inner' clip to prevent drawing into table border.
-  // (unfortunately this clips FLTK's border, so we must draw it explicity below)
+  // (unfortunately this clips FLTK's border, so we must draw it explicitly below)
   //
   fl_push_clip(wix, wiy, wiw, wih);
   {

@@ -589,7 +589,7 @@ CMake, which doesn't work with this version of FLTK.
 
 The "WIN32 MACOSX_BUNDLE" in the add_executable tells this is a GUI app.
 It is ignored on other platforms and should always be present with FLTK
-GUI programs for better portability - unless you explicity need to build
+GUI programs for better portability - unless you explicitly need to build
 a "console program", e.g. on Windows.
 
 Once the package is found the CMake variable FLTK_INCLUDE_DIRS is defined
