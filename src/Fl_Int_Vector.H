@@ -18,6 +18,12 @@
 #ifndef Fl_Int_Vector_H
 #define Fl_Int_Vector_H
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include <FL/Fl_Export.H>
 
 /** \file src/Fl_Int_Vector.H
@@ -164,5 +170,10 @@ public:
     return (size_ == 0) ? true : false;
   }
 };
+
+/**
+\}
+\endcond
+*/
 
 #endif // Fl_Int_Vector_H

@@ -14,6 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include <config.h>
 #include "Fl_Native_File_Chooser_Zenity.H"
 #include <stdio.h>
@@ -112,3 +118,8 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
 //puts(command);
   return command;
 }
+
+/**
+\}
+\endcond
+*/

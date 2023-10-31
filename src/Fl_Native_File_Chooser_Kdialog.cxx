@@ -14,6 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "Fl_Native_File_Chooser_Kdialog.H"
@@ -291,3 +297,8 @@ void Fl_Kdialog_Native_File_Chooser_Driver::title(const char *val)
 const char *Fl_Kdialog_Native_File_Chooser_Driver::title() const {
   return _title;
 }
+
+/**
+\}
+\endcond
+*/

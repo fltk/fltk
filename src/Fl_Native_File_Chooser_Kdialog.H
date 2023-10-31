@@ -17,6 +17,12 @@
 #ifndef FL_KDIALOG_NATIVE_FILE_CHOOSER_H
 #define FL_KDIALOG_NATIVE_FILE_CHOOSER_H 1
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include <FL/Fl_Native_File_Chooser.H>
 
 class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
@@ -52,5 +58,10 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   void title(const char *val) FL_OVERRIDE;
   const char *title() const FL_OVERRIDE;
 };
+
+/**
+\}
+\endcond
+*/
 
 #endif // FL_KDIALOG_NATIVE_FILE_CHOOSER_H

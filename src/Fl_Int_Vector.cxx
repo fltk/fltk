@@ -15,6 +15,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include "Fl_Int_Vector.H"
 #include <stdlib.h>
 #include <string.h>
@@ -60,3 +66,8 @@ void Fl_Int_Vector::size(unsigned int count) {
   // count <= size_? just truncate
   size_ = count;
 }
+
+/**
+\}
+\endcond
+*/
