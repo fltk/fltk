@@ -1271,6 +1271,8 @@ void write_cb(Fl_Widget *, void *) {
     write_code_files();
 }
 
+#if 0
+// Matt: disabled
 /**
  Merge the possibly modified content of code files back into the project.
  */
@@ -1313,6 +1315,7 @@ int mergeback_code_files()
 void mergeback_cb(Fl_Widget *, void *) {
   mergeback_code_files();
 }
+#endif
 
 /**
  Write the strings that are used in i18n.
@@ -1665,7 +1668,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Save As &Template...", 0, save_template_cb, 0, FL_MENU_DIVIDER},
   {"&Print...", FL_COMMAND+'p', print_menu_cb},
   {"Write &Code...", FL_COMMAND+FL_SHIFT+'c', write_cb, 0},
-  {"MergeBack Code", FL_COMMAND+FL_SHIFT+'m', mergeback_cb, 0},
+// Matt: disabled {"MergeBack Code", FL_COMMAND+FL_SHIFT+'m', mergeback_cb, 0},
   {"&Write Strings...", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
   {relative_history[0], FL_COMMAND+'1', menu_file_open_history_cb, absolute_history[0]},
   {relative_history[1], FL_COMMAND+'2', menu_file_open_history_cb, absolute_history[1]},

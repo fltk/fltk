@@ -14,6 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#if 0
+// Matt: disabled
+
 #include "mergeback.h"
 
 #include "fluid.h"
@@ -485,3 +488,6 @@ int Fd_Mergeback::merge_back(const Fl_String &s, const Fl_String &p, int task) {
   code = NULL;
   return ret;
 }
+
+#endif
+
