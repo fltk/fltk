@@ -97,8 +97,9 @@ public:
 };
 
 /**
- A display to which the computer can draw.
- When the program begins running, an object of class Fl_Display_Device has been created and made the current drawing surface.
+ The computer's display.
+ When FLTK begins to access the computer's display, it creates an object of class Fl_Display_Device and makes
+ it the current drawing surface.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
