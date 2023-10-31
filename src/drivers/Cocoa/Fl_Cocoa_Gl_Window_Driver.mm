@@ -358,10 +358,8 @@ char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
   if (pWindow->shown()) apply_scissor();
   [(NSOpenGLContext*)pWindow->context() update];
-  [(NSOpenGLContext*)pWindow->context() flushBuffer];
   if (gl1ctxt) {
     [gl1ctxt update];
-    [gl1ctxt flushBuffer];
   }
 }
 
