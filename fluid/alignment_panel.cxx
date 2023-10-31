@@ -2136,7 +2136,6 @@ Fl_Double_Window* make_settings_window() {
       { Fl_Group* o = new Fl_Group(10, 60, 320, 480, "General");
         o->image( image_general_64() );
         o->labelsize(11);
-        o->hide();
         { Fl_Group* o = new Fl_Group(120, 78, 130, 25);
           o->callback((Fl_Callback*)cb_);
           { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
@@ -2276,6 +2275,7 @@ ps");
         w_settings_project_tab->image( image_document_64() );
         w_settings_project_tab->labelsize(11);
         w_settings_project_tab->callback((Fl_Callback*)cb_w_settings_project_tab);
+        w_settings_project_tab->hide();
         { Fl_Group* o = new Fl_Group(100, 78, 220, 30);
           { Fl_Box* o = new Fl_Box(100, 78, 210, 30, "Use \"name.ext\" to set a file name\nor just \".ext\" to set extension.");
             o->labelsize(11);

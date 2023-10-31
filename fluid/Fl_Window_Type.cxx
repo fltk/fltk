@@ -822,7 +822,13 @@ void Fl_Window_Type::moveallchildren()
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
-      myo->o->resize(x,y,r-x,t-y);
+      if (myo->is_a(ID_Flex) || myo->is_a(ID_Grid)) {
+        allow_layout++;
+        myo->o->resize(x,y,r-x,t-y);
+        allow_layout--;
+      } else {
+        myo->o->resize(x,y,r-x,t-y);
+      }
       if (Fl_Flex_Type::parent_is_flex(myo)) {
         Fl_Flex_Type* ft = (Fl_Flex_Type*)myo->parent;
         Fl_Flex* f = (Fl_Flex*)ft->o;
@@ -837,15 +843,21 @@ void Fl_Window_Type::moveallchildren()
             f->layout();
           }
         }
-      }
-      if (myo->parent && myo->parent->is_a(ID_Grid)) {
+      } else if (myo->parent && myo->parent->is_a(ID_Grid)) {
         Fl_Grid_Type* gt = (Fl_Grid_Type*)myo->parent;
-        gt->child_resized(myo);
+        if (drag & FD_DRAG) {
+          gt->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
+        } else {
+          gt->child_resized(myo);
+        }
+      } else if (myo->parent && myo->parent->is_a(ID_Group)) {
+        Fl_Group_Type* gt = (Fl_Group_Type*)myo->parent;
+        ((Fl_Group*)gt->o)->init_sizes();
       }
       // move all the children, whether selected or not:
       Fl_Type* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_true_widget() && !myo->is_a(ID_Flex)) {
+        if (p->is_true_widget() && !myo->is_a(ID_Flex) && !myo->is_a(ID_Grid)) {
           Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);

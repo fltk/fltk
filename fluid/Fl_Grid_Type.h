@@ -18,10 +18,17 @@
 #define _FLUID_FL_GRID_TYPE_H
 
 #include "Fl_Group_Type.h"
+#include <FL/Fl_Grid.H>
 
 // ---- Fl_Grid_Type --------------------------------------------------- MARK: -
 
 extern const char grid_type_name[];
+
+class Fl_Grid_Proxy : public Fl_Grid {
+public:
+  Fl_Grid_Proxy(int X,int Y,int W,int H) : Fl_Grid(X,Y,W,H) {}
+  void resize(int,int,int,int) FL_OVERRIDE;
+};
 
 class Fl_Grid_Type : public Fl_Group_Type
 {
@@ -44,6 +51,7 @@ public:
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
+  void layout_widget() FL_OVERRIDE;
   void child_resized(Fl_Widget_Type *child);
   void insert_child_at(Fl_Widget *child, int x, int y);
   void insert_child(Fl_Widget *child);

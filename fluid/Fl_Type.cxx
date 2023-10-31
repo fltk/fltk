@@ -123,8 +123,10 @@ Fl_Type *Fl_Type::first = NULL;
 Fl_Type *Fl_Type::last = NULL;
 Fl_Type *Fl_Type::current = NULL;
 Fl_Type *Fl_Type::current_dnd = NULL;
+int Fl_Type::allow_layout = 0;
 
 Fl_Type *in_this_only; // set if menu popped-up in window
+
 
 // ---- various functions
 

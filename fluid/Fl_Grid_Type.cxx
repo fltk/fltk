@@ -39,11 +39,21 @@ const char grid_type_name[] = "Fl_Grid";
 
 Fl_Grid_Type Fl_Grid_type;      // the "factory"
 
+// Override group's resize behavior to do nothing to children:
+void Fl_Grid_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Grid::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
+  redraw();
+}
+
 Fl_Grid_Type::Fl_Grid_Type() {
 }
 
 Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
-  Fl_Grid *g = new Fl_Grid(X,Y,W,H);
+  Fl_Grid *g = new Fl_Grid_Proxy(X,Y,W,H);
   g->layout(3, 3);
   g->show_grid(1, FL_RED);
   Fl_Group::current(0);
@@ -654,3 +664,10 @@ void grid_align_cb(Fl_Choice* i, void* v) {
     }
   }
 }
+
+void Fl_Grid_Type::layout_widget() {
+  allow_layout++;
+  ((Fl_Grid*)o)->need_layout(1);
+  allow_layout--;
+}
+

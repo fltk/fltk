@@ -42,9 +42,17 @@
 
 Fl_Group_Type Fl_Group_type;    // the "factory"
 
-// Override group's resize behavior to do nothing to children:
-void igroup::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
+/** 
+ Override group's resize behavior to do nothing to children by default.
+
+ \param[in] X, Y, W, H new size
+ */
+void Fl_Group_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Group::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   redraw();
 }
 
@@ -230,6 +238,20 @@ Fl_Menu_Item flex_type_menu[] = {
 
 Fl_Flex_Type Fl_Flex_type;      // the "factory"
 
+/**
+ Override flex's resize behavior to do nothing to children by default.
+
+ \param[in] X, Y, W, H new size
+ */
+void Fl_Flex_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Flex::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
+  redraw();
+}
+
 Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
   Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(grp);
@@ -367,7 +389,9 @@ void Fl_Flex_Type::remove_child(Fl_Type* a) {
 }
 
 void Fl_Flex_Type::layout_widget() {
+  allow_layout++;
   ((Fl_Flex*)o)->layout();
+  allow_layout--;
 }
 
 // Change from HORIZONTAL to VERTICAL or back.
@@ -565,8 +589,12 @@ Fl_Tabs_Type Fl_Tabs_type;      // the "factory"
 const char tabs_type_name[] = "Fl_Tabs";
 
 // Override group's resize behavior to do nothing to children:
-void itabs::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
+void Fl_Tabs_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Tabs::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   redraw();
 }
 
@@ -655,7 +683,11 @@ Fl_Wizard_Type Fl_Wizard_type;  // the "factory"
 const char wizard_type_name[] = "Fl_Wizard";
 
 // Override group's resize behavior to do nothing to children:
-void iwizard::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
+void Fl_Wizard_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Wizard::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   redraw();
 }

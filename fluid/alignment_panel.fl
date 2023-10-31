@@ -145,7 +145,7 @@ script_input->linenumber_width(60);
 script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {}
 }
 
-Function {make_settings_window()} {open
+Function {make_settings_window()} {open selected
 } {
   Fl_Window settings_window {
     label {FLUID Settings} open
@@ -157,7 +157,7 @@ Function {make_settings_window()} {open
     } {
       Fl_Group {} {
         label General open
-        image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide resizable
+        image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
         code0 {o->image()->scale(36, 24);}
       } {
         Fl_Group {} {
@@ -287,7 +287,7 @@ Examples:
       Fl_Group w_settings_project_tab {
         label Project
         callback {propagate_load(o, v);} open
-        image {icons/document_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
+        image {icons/document_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
         Fl_Group {} {open
@@ -394,7 +394,7 @@ or just ".ext" to set extension.}
     g_project.write_mergeback_data = o->value();
   }
 }}
-          comment {// Matt: disabled} selected
+          comment {// Matt: disabled}
           tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11 hide
         }
         Fl_Box {} {

@@ -263,6 +263,9 @@ public:
   static Fl_Type *find_by_uid(unsigned short uid);
 
   static Fl_Type *find_in_text(int text_type, int crsr);
+
+  /// If this is greater zero, widgets will be allowed to lay out their children.
+  static int allow_layout;
 };
 
 #endif // _FLUID_FL_TYPE_H
