@@ -171,11 +171,12 @@ OPTION_USE_CAIRO - default OFF
    Makes all drawing operations use the Cairo library (rather than Xlib)
    producing antialiased graphics (X11 platform, implies OPTION_USE_PANGO).
 
-OPTION_USE_PANGO - default OFF
+OPTION_USE_PANGO - default OFF (see note below)
    Enables use of the Pango library for drawing text. Pango supports all
    unicode-defined scripts and gives FLTK limited support of right-to-left
    scripts. This option makes sense only under X11 or Wayland, and also
    requires Xft.
+   Note: Turned ON if Wayland or OPTION_USE_CAIRO is enabled.
 
 OPTION_USE_KDIALOG - default ON
    Under the KDE desktop, allows class Fl_Native_File_Chooser to use the
@@ -674,9 +675,6 @@ project(hello)
 include(FetchContent)
 
 set(FLTK_BUILD_TEST OFF CACHE BOOL "" FORCE)
-if(UNIX AND NOT APPLE)
-    set(OPTION_USE_PANGO ON CACHE BOOL "" FORCE)
-endif()
 
 FetchContent_Declare(FLTK
     GIT_REPOSITORY https://github.com/fltk/fltk
