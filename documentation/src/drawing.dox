@@ -1089,12 +1089,15 @@ FLTK also provides several image classes based on the three
 standard image types for common file formats:
 
 \li Fl_GIF_Image
+\li Fl_Anim_GIF_Image
 \li Fl_JPEG_Image
 \li Fl_PNG_Image
 \li Fl_PNM_Image
 \li Fl_XBM_Image
 \li Fl_XPM_Image
 \li Fl_SVG_Image
+\li Fl_BMP_Image
+\li Fl_ICO_Image
 
 Each of these image classes loads a named file of the
 corresponding format. The Fl_Shared_Image class
@@ -1105,8 +1108,8 @@ Finally, FLTK provides a special image class called Fl_Tiled_Image to
 tile another image object in the specified area. This class can be
 used to tile a background image in a Fl_Group widget, for example.
 
-virtual void Fl_Image::copy() <br>
-virtual Fl_Image* Fl_Image::copy(int w, int h)
+virtual Fl_Image* Fl_Image::copy() <br>
+virtual Fl_Image* Fl_Image::copy(int W, int H) const
 
 \par
 The \p copy() method creates a copy of the image. The second form

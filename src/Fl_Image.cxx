@@ -93,14 +93,14 @@ void Fl_Image::draw_empty(int X, int Y) {
   - w() == data_w() == \p W
   - h() == data_h() == \p H
 
-  Note: the returned image can be safely cast to the same image type as that
+ \param[in] W,H  Requested width and height of the new image
+
+  \note The returned image can be safely cast to the same image type as that
   of the source image provided this type is one of Fl_RGB_Image, Fl_SVG_Image,
   Fl_Pixmap, Fl_Bitmap, Fl_Tiled_Image,  Fl_Anim_GIF_Image and Fl_Shared_Image.
   Returned objects copied from images of other, derived, image classes belong
   to the parent class appearing in this list. For example, the copy of an
   Fl_GIF_Image is an object of class Fl_Pixmap.
-
-  \param[in] W,H  Requested width and height of the new image
 
   \note Since FLTK 1.4.0 this method is 'const'. If you derive your own class
     from Fl_Image or any subclass your overridden methods of 'Fl_Image::copy() const'
