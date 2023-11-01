@@ -1032,7 +1032,12 @@ public:
   */
   static void remove_clipboard_notify(Fl_Clipboard_Notify_Handler h);
   /** Returns non 0 if the clipboard contains data matching \p type.
-   \p type can be Fl::clipboard_plain_text or Fl::clipboard_image.
+   The clipboard can contain both text and image data;  in that situation this function
+   returns non 0 to both requests.
+   This function is \e not meant to check whether the clipboard is empty.
+   This function does not allow to query the selection buffer because FLTK
+   allows to copy/paste non-textual data only from/to the clipboard.
+   \param type can be Fl::clipboard_plain_text or Fl::clipboard_image.
    */
   static int clipboard_contains(const char *type);
   /**  Denotes plain textual data
