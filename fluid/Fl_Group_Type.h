@@ -41,6 +41,7 @@ class Fl_Group_Proxy : public Fl_Group {
 public:
   Fl_Group_Proxy(int X,int Y,int W,int H) : Fl_Group(X, Y, W, H) { Fl_Group::current(0); }
   void resize(int x, int y, int w, int h) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
 };
 
 class Fl_Group_Type : public Fl_Widget_Type
@@ -94,6 +95,7 @@ class Fl_Flex_Proxy : public Fl_Flex {
 public:
   Fl_Flex_Proxy(int X,int Y,int W,int H) : Fl_Flex(X, Y, W, H) { Fl_Group::current(0); }
   void resize(int x, int y, int w, int h) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
 };
 
 class Fl_Flex_Type : public Fl_Group_Type
@@ -155,6 +157,7 @@ class Fl_Tabs_Proxy : public Fl_Tabs {
 public:
   Fl_Tabs_Proxy(int X,int Y,int W,int H) : Fl_Tabs(X,Y,W,H) {}
   void resize(int,int,int,int) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
 };
 
 class Fl_Tabs_Type : public Fl_Group_Type
@@ -215,6 +218,7 @@ class Fl_Wizard_Proxy : public Fl_Wizard {
 public:
   Fl_Wizard_Proxy(int X,int Y,int W,int H) : Fl_Wizard(X,Y,W,H) {}
   void resize(int,int,int,int) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
 };
 
 extern const char wizard_type_name[];

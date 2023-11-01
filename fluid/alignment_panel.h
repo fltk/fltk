@@ -67,6 +67,8 @@ extern void toggle_guides_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *guides_button;
 extern void toggle_restricted_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *restricted_button;
+extern void toggle_ghosted_outline_cb(Fl_Check_Button*, void*);
+extern Fl_Check_Button *ghosted_outline_button;
 extern Fl_Group *w_settings_project_tab;
 extern Fl_Input *header_file_input;
 extern Fl_Input *code_file_input;

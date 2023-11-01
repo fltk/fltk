@@ -85,6 +85,10 @@ int show_guides = 1;
 /// within an Fl_Tile that are not covered by children.
 int show_restricted = 1;
 
+/// Show a ghosted outline for groups that have very little contrast.
+/// This makes groups with NO_BOX or FLAT_BOX better editable.
+int show_ghosted_outline = 1;
+
 /// Show widget comments in the browser, saved in app preferences.
 int show_comments = 1;
 
@@ -1855,6 +1859,7 @@ void make_main_window() {
   if (!batch_mode) {
     fluid_prefs.get("show_guides", show_guides, 1);
     fluid_prefs.get("show_restricted", show_restricted, 1);
+    fluid_prefs.get("show_ghosted_outline", show_ghosted_outline, 0);
     fluid_prefs.get("show_comments", show_comments, 1);
     make_shell_window();
   }

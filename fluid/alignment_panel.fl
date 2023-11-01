@@ -145,7 +145,7 @@ script_input->linenumber_width(60);
 script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {}
 }
 
-Function {make_settings_window()} {open selected
+Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {FLUID Settings} open
@@ -279,6 +279,12 @@ Examples:
           callback toggle_restricted_cb
           tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {120 320 200 20} down_box DOWN_BOX labelsize 11
           code0 {o->value(show_restricted);}
+        }
+        Fl_Check_Button ghosted_outline_button {
+          label {Show Low Contrast Groups Ghosted}
+          callback toggle_ghosted_outline_cb selected
+          tooltip {groups with no box type or flat boxtypes without contrast will be rendered with a dim outline in the editing window only} xywh {120 340 200 20} down_box DOWN_BOX labelsize 11
+          code0 {o->value(show_ghosted_outline);}
         }
         Fl_Box {} {
           xywh {120 530 200 10} hide resizable

@@ -796,6 +796,20 @@ void toggle_restricted(Fl_Widget *,void *) {
 }
 
 /**
+ \brief User changes settings to show low contrast groups with a ghosted outline.
+ */
+void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
+  show_ghosted_outline = !show_ghosted_outline;
+  fluid_prefs.set("show_ghosted_outline", show_ghosted_outline);
+  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+    if (o->is_a(ID_Window)) {
+      Fl_Widget_Type* w = (Fl_Widget_Type*)o;
+      ((Overlay_Window*)(w->o))->redraw();
+    }
+  }
+}
+
+/**
  \brief User changes settings to show overlapping and out of bounds widgets.
  This is called from the check button in the Settings dialog.
  */

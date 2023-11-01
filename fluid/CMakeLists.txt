@@ -95,11 +95,21 @@ endif (WIN32)
 
 source_group("Header Files" FILES ${HEADERFILES})
 
+# make a group in the IDE for easy access to documentation files
+
+set ( DOC_FILES
+  Doxyfile
+  documentation/src/index.dox
+  documentation/src/code.dox
+  documentation/src/app_settings.dox
+)
+source_group("Documentation" FILES ${DOC_FILES})
+
 # Build a local object library to avoid compiling all source files
 # for all fluid targets (fluid, fluid-cmd, fluid-shared). This
 # library includes everything except the main program (fluid.cxx).
 
-add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES} ${HEADERFILES})
+add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES} ${HEADERFILES} ${DOC_FILES})
 
 # Build fluid with all its variants (fluid-cmd, fluid-shared) ...
 

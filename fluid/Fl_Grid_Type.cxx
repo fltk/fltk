@@ -49,6 +49,25 @@ void Fl_Grid_Proxy::resize(int X, int Y, int W, int H) {
   redraw();
 }
 
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Grid_Proxy::draw() {
+  if (show_ghosted_outline) {
+    if (!box()) {
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+      Fl_Grid::draw();
+    } else if (box() == FL_FLAT_BOX && parent() && parent()->color() == color()) {
+      Fl_Grid::draw();
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+    } else {
+      Fl_Grid::draw();
+    }
+  } else {
+    Fl_Grid::draw();
+  }
+}
+
 Fl_Grid_Type::Fl_Grid_Type() {
 }
 

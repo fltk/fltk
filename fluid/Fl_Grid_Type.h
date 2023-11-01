@@ -28,6 +28,7 @@ class Fl_Grid_Proxy : public Fl_Grid {
 public:
   Fl_Grid_Proxy(int X,int Y,int W,int H) : Fl_Grid(X,Y,W,H) {}
   void resize(int,int,int,int) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
 };
 
 class Fl_Grid_Type : public Fl_Group_Type

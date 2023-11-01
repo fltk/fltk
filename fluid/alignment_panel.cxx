@@ -266,6 +266,8 @@ Fl_Check_Button *guides_button=(Fl_Check_Button *)0;
 
 Fl_Check_Button *restricted_button=(Fl_Check_Button *)0;
 
+Fl_Check_Button *ghosted_outline_button=(Fl_Check_Button *)0;
+
 Fl_Group *w_settings_project_tab=(Fl_Group *)0;
 
 static void cb_w_settings_project_tab(Fl_Group* o, void* v) {
@@ -2263,6 +2265,14 @@ ps");
           restricted_button->callback((Fl_Callback*)toggle_restricted_cb);
           o->value(show_restricted);
         } // Fl_Check_Button* restricted_button
+        { Fl_Check_Button* o = ghosted_outline_button = new Fl_Check_Button(120, 340, 200, 20, "Show Low Contrast Groups Ghosted");
+          ghosted_outline_button->tooltip("groups with no box type or flat boxtypes without contrast will be rendered wi\
+th a dim outline in the editing window only");
+          ghosted_outline_button->down_box(FL_DOWN_BOX);
+          ghosted_outline_button->labelsize(11);
+          ghosted_outline_button->callback((Fl_Callback*)toggle_ghosted_outline_cb);
+          o->value(show_ghosted_outline);
+        } // Fl_Check_Button* ghosted_outline_button
         { Fl_Box* o = new Fl_Box(120, 530, 200, 10);
           o->hide();
           Fl_Group::current()->resizable(o);

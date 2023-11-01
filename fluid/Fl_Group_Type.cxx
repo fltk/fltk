@@ -44,7 +44,6 @@ Fl_Group_Type Fl_Group_type;    // the "factory"
 
 /** 
  Override group's resize behavior to do nothing to children by default.
-
  \param[in] X, Y, W, H new size
  */
 void Fl_Group_Proxy::resize(int X, int Y, int W, int H) {
@@ -55,6 +54,28 @@ void Fl_Group_Proxy::resize(int X, int Y, int W, int H) {
   }
   redraw();
 }
+
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Group_Proxy::draw() {
+  if (show_ghosted_outline) {
+    // it would be nice to check if the parent is Fl_Tabs, because the parent
+    // would then draw the outline... .
+    if (!box()) {
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+      Fl_Group::draw();
+    } else if (box() == FL_FLAT_BOX && parent() && parent()->color() == color()) {
+      Fl_Group::draw();
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+    } else {
+      Fl_Group::draw();
+    }
+  } else {
+    Fl_Group::draw();
+  }
+}
+
 
 /**
  \brief Enlarge the group size, so all children fit within.
@@ -250,6 +271,25 @@ void Fl_Flex_Proxy::resize(int X, int Y, int W, int H) {
     Fl_Widget::resize(X, Y, W, H);
   }
   redraw();
+}
+
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Flex_Proxy::draw() {
+  if (show_ghosted_outline) {
+    if (!box()) {
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+      Fl_Flex::draw();
+    } else if (box() == FL_FLAT_BOX && parent() && parent()->color() == color()) {
+      Fl_Flex::draw();
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+    } else {
+      Fl_Flex::draw();
+    }
+  } else {
+    Fl_Flex::draw();
+  }
 }
 
 Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
@@ -598,6 +638,25 @@ void Fl_Tabs_Proxy::resize(int X, int Y, int W, int H) {
   redraw();
 }
 
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Tabs_Proxy::draw() {
+  if (show_ghosted_outline) {
+    if (!box()) {
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+      Fl_Tabs::draw();
+    } else if (box() == FL_FLAT_BOX && parent() && parent()->color() == color()) {
+      Fl_Tabs::draw();
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+    } else {
+      Fl_Tabs::draw();
+    }
+  } else {
+    Fl_Tabs::draw();
+  }
+}
+
 // This is called when user clicks on a widget in the window.  See
 // if it is a tab title, and adjust visibility and return new selection:
 // If none, return o unchanged:
@@ -691,3 +750,23 @@ void Fl_Wizard_Proxy::resize(int X, int Y, int W, int H) {
   }
   redraw();
 }
+
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Wizard_Proxy::draw() {
+  if (show_ghosted_outline) {
+    if (!box()) {
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+      Fl_Wizard::draw();
+    } else if (box() == FL_FLAT_BOX && parent() && parent()->color() == color()) {
+      Fl_Wizard::draw();
+      fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+    } else {
+      Fl_Wizard::draw();
+    }
+  } else {
+    Fl_Wizard::draw();
+  }
+}
+

@@ -60,6 +60,7 @@ extern Fl_Window *main_window;
 
 extern int show_guides;
 extern int show_restricted;
+extern int show_ghosted_outline;
 extern int show_comments;
 
 extern int G_use_external_editor;

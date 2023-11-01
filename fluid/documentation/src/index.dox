@@ -2,25 +2,25 @@
 
 /**
 
- \mainpage Fluid User Manual and Developer Overview
+ \mainpage Fluid User Manual
 
- \subpage function
+ \subpage codeNodes
 
- \subpage code
+ - \ref function
+ - \ref code
+ - \ref codeblock
+ - \ref declaration
+ - \ref declarationblock
+ - \ref class
+ - \ref widgetclass
+ - \ref comment
+ - \ref inlineddata
 
- \subpage codeblock
+ \subpage appSettings
 
- \subpage declaration
-
- \subpage declarationblock
-
- \subpage class
-
- \subpage widgetclass
-
- \subpage comment
-
- \subpage inlineddata
+ - \ref schemes
+ - \ref options
+ - \ref overlays
 
  */
 
