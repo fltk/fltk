@@ -515,6 +515,25 @@ void Fl_Flex_Type::insert_child_at(Fl_Widget *child, int x, int y) {
   }
 }
 
+void Fl_Flex_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
+  Fl_Flex *flex = ((Fl_Flex*)o);
+  int ix = flex->find(child->o);
+  if (ix == flex->children()) return;
+  if (flex->horizontal()) {
+    if (key==FL_Right) {
+      flex->insert(*child->o, ix+2);
+    } else if (key==FL_Left) {
+      if (ix > 0) flex->insert(*child->o, ix-1);
+    }
+  } else {
+    if (key==FL_Down) {
+      flex->insert(*child->o, ix+2);
+    } else if (key==FL_Up) {
+      if (ix > 0) flex->insert(*child->o, ix-1);
+    }
+  }
+}
+
 int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;

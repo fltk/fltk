@@ -921,8 +921,8 @@ static void draw_right_brace(const Fl_Widget *w);
 static void draw_top_brace(const Fl_Widget *w);
 static void draw_bottom_brace(const Fl_Widget *w);
 static void draw_grid(int x, int y, int dx, int dy);
-static void draw_width(int x, int y, int r, Fl_Align a);
-static void draw_height(int x, int y, int b, Fl_Align a);
+void draw_width(int x, int y, int r, Fl_Align a);
+void draw_height(int x, int y, int b, Fl_Align a);
 
 static int nearest(int x, int left, int grid, int right=0x7fff) {
   int grid_x = ((x-left+grid/2)/grid)*grid+left;
@@ -1734,7 +1734,7 @@ static void draw_bottom_brace(const Fl_Widget *w) {
   fl_xyline(x-2, y, x+w->w()+1);
 }
 
-static void draw_height(int x, int y, int b, Fl_Align a) {
+void draw_height(int x, int y, int b, Fl_Align a) {
   char buf[16];
   int h = b - y;
   sprintf(buf, "%d", h);
@@ -1768,7 +1768,7 @@ static void draw_height(int x, int y, int b, Fl_Align a) {
   fl_xyline(x - 4, b, x + 4);
 }
 
-static void draw_width(int x, int y, int r, Fl_Align a) {
+void draw_width(int x, int y, int r, Fl_Align a) {
   char buf[16];
   int w = r-x;
   sprintf(buf, "%d", w);

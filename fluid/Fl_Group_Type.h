@@ -126,6 +126,7 @@ public:
   void layout_widget() FL_OVERRIDE;
   void change_subtype_to(int n);
   void insert_child_at(Fl_Widget *child, int x, int y);
+  void keyboard_move_child(Fl_Widget_Type*, int key);
   static int parent_is_flex(Fl_Type*);
   static int size(Fl_Type*, char fixed_only=0);
   static int is_fixed(Fl_Type*);

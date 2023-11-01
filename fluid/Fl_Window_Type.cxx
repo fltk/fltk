@@ -40,11 +40,15 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Tooltip.H>
 #include "../src/flstring.h"
 
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+extern void draw_width(int x, int y, int r, Fl_Align a);
+extern void draw_height(int x, int y, int b, Fl_Align a);
 
 extern Fl_Preferences   fluid_prefs;
 
@@ -618,23 +622,13 @@ void Fl_Window_Type::draw_overlay() {
       int x,y,r,t;
       newposition(myo,x,y,r,t);
       if (!show_guides || !drag || numselected != 1) {
-        if (Fl_Flex_Type::parent_is_flex(q) && !Fl_Flex_Type::is_fixed(q)) {
-          if (((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o)->horizontal()) {
-            int yh = y + (t-y)/2;
-            fl_begin_loop();
-            fl_vertex(x+2, yh); fl_vertex(x+12, yh+5); fl_vertex(x+12, yh-5);
-            fl_end_loop();
-            fl_begin_loop();
-            fl_vertex(r-3, yh); fl_vertex(r-13, yh+5); fl_vertex(r-13, yh-5);
-            fl_end_loop();
+        if (Fl_Flex_Type::parent_is_flex(q) && Fl_Flex_Type::is_fixed(q)) {
+          Fl_Flex *flex = ((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o);
+          Fl_Widget *wgt = myo->o;
+          if (flex->horizontal()) {
+            draw_width(wgt->x(), wgt->y()+15, wgt->x()+wgt->w(), FL_ALIGN_CENTER);
           } else {
-            int xh = x + (r-x)/2;
-            fl_begin_loop();
-            fl_vertex(xh, y+2); fl_vertex(xh+5, y+12); fl_vertex(xh-5, y+12);
-            fl_end_loop();
-            fl_begin_loop();
-            fl_vertex(xh, t-3); fl_vertex(xh+5, t-13); fl_vertex(xh-5, t-13);
-            fl_end_loop();
+            draw_height(wgt->x()+15, wgt->y(), wgt->y()+wgt->h(), FL_ALIGN_CENTER);
           }
         }
         fl_rect(x,y,r-x,t-y);
@@ -837,8 +831,11 @@ extern Fl_Menu_Item New_Menu[];
  This is not ideal for widgets that are moved or resized within a group that
  manages the layout of its children. We must create a more universal way to
  modify move events per widget type.
+
+ \param[in] key if key is not 0, it contains the code of the keypress that
+      caused this call. This must only be set when handle FL_KEYBOARD events.
  */
-void Fl_Window_Type::moveallchildren()
+void Fl_Window_Type::moveallchildren(int key)
 {
   undo_checkpoint();
   Fl_Type *i;
@@ -862,7 +859,9 @@ void Fl_Window_Type::moveallchildren()
         // so that the user request is reflected.
         Fl_Flex_Type* ft = (Fl_Flex_Type*)myo->parent;
         Fl_Flex* f = (Fl_Flex*)ft->o;
-        if (drag & FD_DRAG) {
+        if (key) {
+          ft->keyboard_move_child(myo, key);
+        } else if (drag & FD_DRAG) {
           ft->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
         } else {
           if (f->horizontal()) {
@@ -1181,7 +1180,7 @@ int Fl_Window_Type::handle(int event) {
         dx *= x_step;
         dy *= y_step;
       }
-      moveallchildren();
+      moveallchildren(Fl::event_key());
       drag = 0;
       return 1;
 
