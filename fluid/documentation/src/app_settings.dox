@@ -6,17 +6,29 @@
 
  \tableofcontents
 
- \section schemes Schemes
-
- Write me... .
-
  \section options Options
 
- Write me... .
+ ## Select scheme ##
+
+ ## Show tooltips ##
+
+ ## Show completions dialogs ##
+
+ ## Open previous file on startup ##
+
+ ## Remember window positions ##
+
+ ## Show comments in browser ##
 
  \section external_editor External Editor
 
- Write me... .
+ When you configure the External Editor text field with a shell command and
+ select the "Use for Code Nodes" option, FLUID will launch an external editor
+ for editing the C++ code within a Code Node. After making changes and saving
+ the code in the external editor, it will automatically be transferred back
+ into the Code Node. The shell command is constructed by combining the text
+ field's content with the path and name of a temporary file containing the
+ code snippet. The file name ends in `.cxx`.
 
  \section overlays Overlay
 

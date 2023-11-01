@@ -125,6 +125,7 @@ public:
   void remove_child(Fl_Type*) FL_OVERRIDE;
   void layout_widget() FL_OVERRIDE;
   void change_subtype_to(int n);
+  void insert_child_at(Fl_Widget *child, int x, int y);
   static int parent_is_flex(Fl_Type*);
   static int size(Fl_Type*, char fixed_only=0);
   static int is_fixed(Fl_Type*);

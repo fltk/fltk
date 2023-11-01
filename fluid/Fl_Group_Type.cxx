@@ -478,6 +478,43 @@ int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
           && t->parent->is_a(ID_Flex));
 }
 
+/**
+ Insert a widget in the child list so that it moves as close as possible the position.
+
+ \param[in] child any widget in the tree but this, may already be a child of
+      this and will be relocated if so
+ \param[in] x, y pixel coordinates relative to the top left of the window
+ */
+void Fl_Flex_Type::insert_child_at(Fl_Widget *child, int x, int y) {
+  Fl_Flex *flex = (Fl_Flex*)o;
+  // find the insertion point closest to x, y
+  int d = flex->w() + flex->h(), di = -1;
+  if (flex->horizontal()) {
+    int i, dx;
+    for (i=0; i<flex->children(); i++) {
+      dx = x - flex->child(i)->x();
+      if (dx < 0) dx = -dx;
+      if (dx < d) { d = dx; di = i; }
+    }
+    dx = x - (flex->x()+flex->w());
+    if (dx < 0) dx = -dx;
+    if (dx < d) { d = dx; di = i; }
+  } else {
+    int i, dy;
+    for (i=0; i<flex->children(); i++) {
+      dy = y - flex->child(i)->y();
+      if (dy < 0) dy = -dy;
+      if (dy < d) { d = dy; di = i; }
+    }
+    dy = y - (flex->y()+flex->h());
+    if (dy < 0) dy = -dy;
+    if (dy < d) { d = dy; di = i; }
+  }
+  if (di > -1) {
+    flex->insert(*child, di);
+  }
+}
+
 int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;

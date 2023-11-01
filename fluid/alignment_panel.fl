@@ -142,7 +142,8 @@ script_panel->hide(); // otherwise hide..} open
   }
   code {// Enable line numbers
 script_input->linenumber_width(60);
-script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {}
+script_input->linenumber_size(script_input->Fl_Text_Display::textsize());} {selected
+  }
 }
 
 Function {make_settings_window()} {open
@@ -282,7 +283,7 @@ Examples:
         }
         Fl_Check_Button ghosted_outline_button {
           label {Show Low Contrast Groups Ghosted}
-          callback toggle_ghosted_outline_cb selected
+          callback toggle_ghosted_outline_cb
           tooltip {groups with no box type or flat boxtypes without contrast will be rendered with a dim outline in the editing window only} xywh {120 340 200 20} down_box DOWN_BOX labelsize 11
           code0 {o->value(show_ghosted_outline);}
         }

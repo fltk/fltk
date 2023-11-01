@@ -826,7 +826,18 @@ extern void fix_group_size(Fl_Type *t);
 extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Item New_Menu[];
 
-// move the selected children according to current dx,dy,drag state:
+/** 
+ Move the selected children according to current dx, dy, drag state.
+
+ This is somewhat of a do-all function that received many additions when new
+ widget types were added. In the default case, moving a group will simply move
+ all descendants with it. When resizing, children are resized to fit within
+ the group.
+
+ This is not ideal for widgets that are moved or resized within a group that
+ manages the layout of its children. We must create a more universal way to
+ modify move events per widget type.
+ */
 void Fl_Window_Type::moveallchildren()
 {
   undo_checkpoint();
@@ -837,26 +848,39 @@ void Fl_Window_Type::moveallchildren()
       int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
       if (myo->is_a(ID_Flex) || myo->is_a(ID_Grid)) {
+        // Flex and Grid need to be able to layout their children.
         allow_layout++;
         myo->o->resize(x,y,r-x,t-y);
         allow_layout--;
       } else {
+        // Other groups are resized without affecting their children, however
+        // they move their children if the entire widget is moved.
         myo->o->resize(x,y,r-x,t-y);
       }
       if (Fl_Flex_Type::parent_is_flex(myo)) {
+        // If the border of a Flex child is move, give that child a fixed size
+        // so that the user request is reflected.
         Fl_Flex_Type* ft = (Fl_Flex_Type*)myo->parent;
         Fl_Flex* f = (Fl_Flex*)ft->o;
-        if (f->horizontal()) {
-          if (myo->o->w()!=ow) {
-            f->fixed(myo->o, myo->o->w());
-            f->layout();
-          }
+        if (drag & FD_DRAG) {
+          ft->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
         } else {
-          if (myo->o->h()!=oh) {
-            f->fixed(myo->o, myo->o->h());
-            f->layout();
+          if (f->horizontal()) {
+            if (myo->o->w()!=ow) {
+              f->fixed(myo->o, myo->o->w());
+              f->layout();
+            }
+          } else {
+            if (myo->o->h()!=oh) {
+              f->fixed(myo->o, myo->o->h());
+              f->layout();
+            }
           }
         }
+        // relayout the Flex parent
+        allow_layout++;
+        f->layout();
+        allow_layout--;
       } else if (myo->parent && myo->parent->is_a(ID_Grid)) {
         Fl_Grid_Type* gt = (Fl_Grid_Type*)myo->parent;
         if (drag & FD_DRAG) {
