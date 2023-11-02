@@ -412,12 +412,12 @@ void Fl_Grid_Type::child_resized(Fl_Widget_Type *child_type) {
   Fl_Grid *grid = (Fl_Grid*)o;
   Fl_Widget *child = child_type->o;
   Fl_Grid::Cell *cell = grid->cell(child);
-  if (cell && ((cell->align()&FL_GRID_HORIZONTAL)==0)) {
+  if (cell && ((cell->align()&FL_GRID_VERTICAL)==0)) {
     int min_w = 0, min_h = 0;
     cell->minimum_size(&min_w, &min_h);
     cell->minimum_size(min_w, child->h());
   }
-  if (cell && ((cell->align()&FL_GRID_VERTICAL)==0)) {
+  if (cell && ((cell->align()&FL_GRID_HORIZONTAL)==0)) {
     int min_w = 0, min_h = 0;
     cell->minimum_size(&min_w, &min_h);
     cell->minimum_size(child->w(), min_h);

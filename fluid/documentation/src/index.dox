@@ -2,98 +2,103 @@
 
 /**
 
- \mainpage Fluid User Manual
+ \mainpage FLUID User Manual
 
- \subpage codeNodes
+ <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+ <TR>
+ <TD><CENTER>
+ \image html fluid-128.png
+ \image latex fluid-128.png  "" width=3cm
+ 
+ <B>FLUID 1.4.0 User Manual</B>
 
- - \ref function
- - \ref code
- - \ref codeblock
- - \ref declaration
- - \ref declarationblock
- - \ref class
- - \ref widgetclass
- - \ref comment
- - \ref inlineddata
+ By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+ A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
- \subpage appSettings
+ Copyright © 1998 - 2023 by Bill Spitzak and others.
+ </CENTER></TD>
+ </TR>
+ </TABLE>
+ <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+ <TR>
+ <TD style="text-align: center;">
+ This software and manual are provided under the terms of the GNU
+ Library General Public License. Permission is granted to reproduce
+ this manual or any portion for any purpose, provided this copyright
+ and permission notice are preserved.
+ </TD>
+ </TR>
+ </TABLE>
+ <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="100%" BORDER="0">
+ <TR>
+ <TD ALIGN="LEFT" VALIGN="TOP">
 
- - \ref schemes
- - \ref options
- - \ref overlays
+ \subpage page_introduction
 
- */
+ _not yet_
 
-/*
+ \subpage page_getting_started
 
- Creating a user manual for your interactive user interface editor, "FLUID," involves several key steps to ensure it's informative and user-friendly. Here's a structured approach to help you get started:
+ _not yet_
 
- 1. **Title and Cover Page:**
- - Title: Give your manual a clear and concise title, such as "FLUID User Manual."
- - Cover Page: Include the title, a brief description, your company or project logo, and any relevant contact information.
+ \subpage page_ui_overview
 
- 2. **Table of Contents:**
- - Create a table of contents that lists all the major sections and subsections of your user manual. Ensure it's hyperlinked for easy navigation in digital formats.
+ _not yet_
 
- 3. **Introduction:**
- - Provide an introduction that explains the purpose of the user manual and any prerequisites or system requirements.
+ \subpage page_basics
 
- 4. **Getting Started:**
- - Walk users through the initial setup and installation process.
- - Explain how to launch the FLUID editor.
+ _not yet_
 
- 5. **User Interface Overview:**
- - Describe the main components of the FLUID user interface, including menus, toolbars, panels, and any unique features.
+ \subpage page_widget_types
 
- 6. **Basic Operations:**
- - Provide step-by-step instructions for common tasks, such as creating a new project, opening existing projects, and saving work.
+ _not yet_
 
- 7. **Widgets and Elements:**
- - Explain how to add, modify, and delete widgets and UI elements.
- - Detail the available widget libraries and their usage.
+ \subpage page_layout
 
- 8. **Layout and Design:**
- - Discuss how to arrange and design UI elements in the editor.
- - Cover alignment, grouping, and layout management.
+ _not yet_
 
- 9. **Code Integration:**
- - Explain how to integrate code into FLUID, including code nodes and event handling.
+ \subpage page_code_integration
 
- 10. **Advanced Features:**
- - Describe any advanced or less commonly used features of FLUID, such as custom scripting, animations, or specialized widgets.
+ _not yet_
 
- 11. **Troubleshooting:**
- - Provide solutions to common issues and error messages users may encounter.
+ \subpage page_advanced
 
- 12. **Tips and Best Practices:**
- - Offer tips and best practices to help users make the most of FLUID.
+ _not yet_
 
- 13. **Keyboard Shortcuts:**
- - List keyboard shortcuts for common actions to expedite user workflows.
+ </TD>
+ <TD ALIGN="LEFT" VALIGN="TOP">
 
- 14. **FAQs:**
- - Include a section with frequently asked questions and their answers.
+ \subpage page_shortcuts
 
- 15. **Glossary:**
- - Define any technical terms or jargon used in FLUID.
+ _not yet_
 
- 16. **Appendices:**
- - If necessary, add appendices with supplementary information, like reference tables or additional resources.
+ \subpage page_faqs
 
- 17. **Index:**
- - Include an index to help users quickly find specific topics or terms within the manual.
+ _not yet_
 
- 18. **Legal and Copyright Information:**
- - Include legal disclaimers, copyright information, and any terms of use or licensing agreements.
+ \subpage page_glossary
 
- 19. **Feedback and Contact Information:**
- - Encourage users to provide feedback and include contact information for support or inquiries.
+ _not yet_
 
- 20. **Revision History:**
- - If you plan to update the manual over time, maintain a section for revision history to track changes and updates.
+ \subpage page_appendices
 
- 21. **Conclusion:**
- - Wrap up the manual with a thank-you message, encouraging users to explore FLUID further.
+ - \ref appendix_code_nodes
+ - \ref appendix_app_settings
 
- Ensure that your user manual is well-organized, easy to read, and uses clear language. Consider including screenshots, diagrams, and examples to illustrate key points. Test the manual with actual users to gather feedback and make improvements as needed.
- */
+ \subpage page_index
+
+ _not yet_
+
+ \subpage page_legal
+
+ _not yet_
+
+ \subpage page_conclusion
+
+ _not yet_
+
+ </TD>
+ </TR>
+ </TABLE>
+
+*/
