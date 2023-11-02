@@ -265,7 +265,7 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h,
   cairo_matrix_init_scale(&matrix, s, s);
   cairo_matrix_translate(&matrix, -(x - srcx), -(y - srcy));
   cairo_pattern_set_matrix(pat, &matrix);
-  cairo_mask(cairo_, pat);
+  cairo_paint(cairo_);
   cairo_pattern_destroy(pat);
   cairo_restore(cairo_);
 }
