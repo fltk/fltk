@@ -25,6 +25,7 @@
 #include "factory.h"
 #include "Fl_Function_Type.h"
 #include "Fl_Widget_Type.h"
+#include "Fl_Grid_Type.h"
 #include "Fl_Window_Type.h"
 #include "alignment_panel.h"
 #include "widget_browser.h"
@@ -391,6 +392,17 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
       }
       read_children(t, 0, strategy, skip_options);
       t->postprocess_read();
+      // FIXME: this has no business in the file reader!
+      // TODO: this is called whenever something is pasted from the top level into a grid
+      //    It makes sense to make this more universal for other widget types too.
+      if (merge && t && t->parent && t->parent->is_a(ID_Grid)) {
+        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
+          ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+        } else {
+          ((Fl_Grid_Type*)t->parent)->insert_child(((Fl_Widget_Type*)t)->o);
+        }
+      }
+
       t->layout_widget();
     }
 
@@ -425,6 +437,7 @@ int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy st
   else
     g_project.reset();
   read_children(Fl_Type::current, merge, strategy);
+  // clear this
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...
   for (o = Fl_Type::first; o; o = o->next) {

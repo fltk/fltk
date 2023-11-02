@@ -68,13 +68,22 @@ void Fl_Grid_Proxy::draw() {
   }
 }
 
+/**
+ Draw additional markings in the overlay plane when a grid is selected.
+ */
+void Fl_Grid_Proxy::draw_overlay() {
+  fl_line_style(FL_DOT);
+  grid_color = fl_color();
+  draw_grid();
+  fl_color(grid_color);
+}
+
 Fl_Grid_Type::Fl_Grid_Type() {
 }
 
 Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
   Fl_Grid *g = new Fl_Grid_Proxy(X,Y,W,H);
   g->layout(3, 3);
-  g->show_grid(1, FL_RED);
   Fl_Group::current(0);
   return g;
 }
@@ -251,6 +260,9 @@ void Fl_Grid_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child,
   return;
 }
 
+// NOTE: we have to do this in a loop just as ::read_property() in case a new
+//    property is added. In the current setup, all the remaining properties
+//    will be skipped
 void Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
   if (!child->is_true_widget()) {
     super::read_parent_properties(f, child, property);
@@ -494,6 +506,29 @@ void Fl_Grid_Type::insert_child(Fl_Widget *child) {
   }
 }
 
+/** Move cells around using the keyboard.
+ \note this fails if we have two children selected side by side and press 'right',
+    which will move the left child first, removing the right child from the
+    cell system. When trying to move the second child, it has no longer an
+    assigned row or column.
+ \param[in] child pointer to the child type
+ \param[in] key code of the last keypress when handling a FL_KEYBOARD event.
+ */
+void Fl_Grid_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
+  Fl_Grid *grid = ((Fl_Grid*)o);
+  Fl_Grid::Cell *cell = grid->cell(child->o);
+  if (!cell) return;
+  if (key == FL_Right) {
+    move_cell(grid, child->o, cell->row(), cell->col()+1);
+  } else if (key == FL_Left) {
+    move_cell(grid, child->o, cell->row(), cell->col()-1);
+  } else if (key == FL_Up) {
+    move_cell(grid, child->o, cell->row()-1, cell->col());
+  } else if (key == FL_Down) {
+    move_cell(grid, child->o, cell->row()+1, cell->col());
+  }
+}
+
 // FIXME: when changing the cell location, and another cell would be overridden,
 //        don't actually move the cell (hard to implement!) and activate
 //        a red button "replace". If clicked, user gets the option to delete
@@ -651,32 +686,67 @@ void grid_set_min_hgt_cb(Fluid_Coord_Input* i, void* v) {
   grid_child_cb(i, v, 13);
 }
 
-void grid_align_cb(Fl_Choice* i, void* v) {
+void grid_align_horizontal_cb(Fl_Choice* i, void* v) {
   if (   !current_widget
       || !current_widget->parent
       || !current_widget->parent->is_a(ID_Grid))
   {
     return;
   }
+  int mask = (FL_GRID_LEFT | FL_GRID_RIGHT | FL_GRID_HORIZONTAL);
   Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
   if (v == LOAD) {
-    int a = FL_GRID_FILL;
+    int a = FL_GRID_FILL & mask;
     Fl_Grid::Cell *cell = g->cell(current_widget->o);
     if (cell) {
-      a = cell->align();
+      a = cell->align() & mask;
     }
     const Fl_Menu_Item *mi = i->find_item_with_argument(a);
     if (mi) i->value(mi);
   } else {
-    int v = FL_GRID_FILL, old_v = FL_GRID_FILL;
+    int v = FL_GRID_FILL & mask, old_v = FL_GRID_FILL & mask;
     const Fl_Menu_Item *mi = i->mvalue();
     if (mi) v = (int)mi->argument();
     Fl_Grid::Cell *cell = g->cell(current_widget->o);
     if (cell) {
-      old_v = cell->align();
+      old_v = cell->align() & mask;
     }
     if (old_v != v) {
-      cell->align((Fl_Grid_Align)v);
+      cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
+      g->need_layout(true);
+      g->redraw();
+      set_modflag(1);
+    }
+  }
+}
+
+void grid_align_vertical_cb(Fl_Choice* i, void* v) {
+  if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(ID_Grid))
+  {
+    return;
+  }
+  int mask = (FL_GRID_TOP | FL_GRID_BOTTOM | FL_GRID_VERTICAL);
+  Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  if (v == LOAD) {
+    int a = FL_GRID_FILL & mask;
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      a = cell->align() & mask;
+    }
+    const Fl_Menu_Item *mi = i->find_item_with_argument(a);
+    if (mi) i->value(mi);
+  } else {
+    int v = FL_GRID_FILL & mask, old_v = FL_GRID_FILL & mask;
+    const Fl_Menu_Item *mi = i->mvalue();
+    if (mi) v = (int)mi->argument();
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      old_v = cell->align() & mask;
+    }
+    if (old_v != v) {
+      cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
       g->need_layout(true);
       g->redraw();
       set_modflag(1);
@@ -686,7 +756,7 @@ void grid_align_cb(Fl_Choice* i, void* v) {
 
 void Fl_Grid_Type::layout_widget() {
   allow_layout++;
-  ((Fl_Grid*)o)->need_layout(1);
+  ((Fl_Grid*)o)->layout();
   allow_layout--;
 }
 

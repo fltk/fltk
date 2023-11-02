@@ -1205,7 +1205,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
                  && (layout->top_tabs_margin > 0)) {
         // If the widget is a group and the parent is tabs and the top tabs
         // margin is set (and the user is not requesting a specific position)
-        // then  prefit the group correctly to the Tabs container.
+        // then prefit the group correctly to the Tabs container.
         Fl_Widget *po = ((Fl_Tabs_Type*)wt->parent)->o;
         wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
                       po->w(), po->h() - layout->top_tabs_margin);

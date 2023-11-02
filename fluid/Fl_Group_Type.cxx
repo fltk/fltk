@@ -66,6 +66,8 @@ void Fl_Group_Proxy::draw() {
       fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
       Fl_Group::draw();
     } else if (box() == FL_FLAT_BOX && parent() && parent()->color() == color()) {
+      // FIXME: the rect will be drawn over the children. Instead, change the
+      //   draw function for the FL_FLAT_BOX boxtype only while the group is drawn.
       Fl_Group::draw();
       fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
     } else {
@@ -515,6 +517,10 @@ void Fl_Flex_Type::insert_child_at(Fl_Widget *child, int x, int y) {
   }
 }
 
+/** Move children around using the keyboard.
+ \param[in] child pointer to the child type
+ \param[in] key code of the last keypress when handling a FL_KEYBOARD event.
+ */
 void Fl_Flex_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
   Fl_Flex *flex = ((Fl_Flex*)o);
   int ix = flex->find(child->o);

@@ -59,7 +59,7 @@ Function {make_widget_panel()} {
       Fl_Group {} {
         label GUI
         callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 resizable
+        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -835,7 +835,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 hide
+        xywh {10 30 400 330} labelsize 11
       } {
         Fl_Group {} {
           label {Location:}
@@ -893,50 +893,21 @@ wCallback->do_callback(wCallback, v);} open
         Fl_Group {} {
           label {Align:}
           callback propagate_load open
-          xywh {95 90 315 20} labelfont 1 labelsize 11 align 4
+          xywh {95 90 315 30} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
-            callback grid_align_cb
-            xywh {95 90 160 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+            label Horizontal
+            callback grid_align_horizontal_cb open
+            xywh {95 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
-            MenuItem {} {
-              label GRID_CENTER
-              user_data FL_GRID_CENTER user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_FILL
-              user_data FL_GRID_FILL user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_HORIZONTAL
-              user_data FL_GRID_HORIZONTAL user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_VERTICAL
-              user_data FL_GRID_VERTICAL user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
             MenuItem {} {
               label GRID_LEFT
               user_data FL_GRID_LEFT user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
-              label GRID_TOP_LEFT
-              user_data FL_GRID_TOP_LEFT user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_TOP
-              user_data FL_GRID_TOP user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_TOP_RIGHT
-              user_data FL_GRID_TOP_RIGHT user_data_type long
+              label GRID_CENTER
+              user_data FL_GRID_CENTER user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
@@ -945,8 +916,24 @@ wCallback->do_callback(wCallback, v);} open
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
-              label GRID_BOTTOM_LEFT
-              user_data FL_GRID_BOTTOM_LEFT user_data_type long
+              label GRID_FILL
+              user_data FL_GRID_HORIZONTAL user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+          }
+          Fl_Choice {} {
+            label Vertical
+            callback grid_align_vertical_cb open
+            xywh {215 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+          } {
+            MenuItem {} {
+              label GRID_TOP
+              user_data FL_GRID_TOP user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_CENTER
+              user_data FL_GRID_CENTER user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
@@ -955,8 +942,8 @@ wCallback->do_callback(wCallback, v);} open
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
-              label GRID_BOTTOM_RIGHT
-              user_data FL_GRID_BOTTOM_RIGHT user_data_type long
+              label GRID_FILL
+              user_data FL_GRID_VERTICAL user_data_type long selected
               xywh {10 10 31 20} labelsize 11
             }
           }
@@ -967,18 +954,18 @@ wCallback->do_callback(wCallback, v);} open
         Fl_Group {} {
           label {Min. Size:}
           callback propagate_load open
-          xywh {95 125 315 20} labelfont 1 labelsize 11 align 4
+          xywh {95 125 315 30} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             label {Width:}
             callback grid_set_min_wdt_cb
-            xywh {95 125 55 20} labelsize 11 align 5 textsize 11
+            xywh {95 135 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input {} {
             label {Height:}
             callback grid_set_min_hgt_cb
-            xywh {155 125 55 20} labelsize 11 align 5 textsize 11
+            xywh {155 135 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Box {} {
@@ -988,49 +975,49 @@ wCallback->do_callback(wCallback, v);} open
         Fl_Group {} {
           label {Span:}
           callback propagate_load open
-          xywh {95 160 315 20} labelfont 1 labelsize 11 align 4
+          xywh {95 160 315 30} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_grid_rowspan_input {
             label {Row Span:}
             callback grid_set_rowspan_cb
-            xywh {95 160 40 20} labelsize 11 align 5 textsize 11
+            xywh {95 170 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Group {} {open
-            xywh {135 160 30 20}
+            xywh {135 170 30 20}
           } {
             Fl_Button {} {
               label {-}
               callback grid_dec_rowspan_cb
-              xywh {135 160 15 20} labelsize 11
+              xywh {135 170 15 20} labelsize 11
               code0 {o->clear_visible_focus();} compact 1
             }
             Fl_Button {} {
               label {+}
               callback grid_inc_rowspan_cb
-              xywh {150 160 15 20} labelsize 11
+              xywh {150 170 15 20} labelsize 11
               code0 {o->clear_visible_focus();} compact 1
             }
           }
           Fl_Input widget_grid_colspan_input {
             label {Col. Span:}
             callback grid_set_colspan_cb
-            xywh {175 160 40 20} labelsize 11 align 5 textsize 11
+            xywh {175 170 40 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Group {} {open
-            xywh {215 160 30 20}
+            xywh {215 170 30 20}
           } {
             Fl_Button {} {
               label {-}
               callback grid_dec_colspan_cb
-              xywh {215 160 15 20} labelsize 11
+              xywh {215 170 15 20} labelsize 11
               code0 {o->clear_visible_focus();} compact 1
             }
             Fl_Button {} {
               label {+}
               callback grid_inc_colspan_cb
-              xywh {230 160 15 20} labelsize 11
+              xywh {230 170 15 20} labelsize 11
               code0 {o->clear_visible_focus();} compact 1
             }
           }

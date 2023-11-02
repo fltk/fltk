@@ -621,6 +621,13 @@ void Fl_Window_Type::draw_overlay() {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
+      if (show_guides) {
+        // If we are in a drag operation, and the parent is a grid, show the grid overlay
+        if (drag && q->parent && q->parent->is_a(ID_Grid)) {
+          Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Fl_Grid_Type*)q->parent)->o);
+          grid->draw_overlay();
+        }
+      }
       if (!show_guides || !drag || numselected != 1) {
         if (Fl_Flex_Type::parent_is_flex(q) && Fl_Flex_Type::is_fixed(q)) {
           Fl_Flex *flex = ((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o);
@@ -630,6 +637,9 @@ void Fl_Window_Type::draw_overlay() {
           } else {
             draw_height(wgt->x()+15, wgt->y(), wgt->y()+wgt->h(), FL_ALIGN_CENTER);
           }
+        } else if (q->is_a(ID_Grid)) {
+          Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Fl_Grid_Type*)q)->o);
+          grid->draw_overlay();
         }
         fl_rect(x,y,r-x,t-y);
       }
@@ -882,11 +892,19 @@ void Fl_Window_Type::moveallchildren(int key)
         allow_layout--;
       } else if (myo->parent && myo->parent->is_a(ID_Grid)) {
         Fl_Grid_Type* gt = (Fl_Grid_Type*)myo->parent;
-        if (drag & FD_DRAG) {
-          gt->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
+        Fl_Grid* g = (Fl_Grid*)gt->o;
+        if (key) {
+          gt->keyboard_move_child(myo, key);
         } else {
-          gt->child_resized(myo);
+          if (drag & FD_DRAG) {
+            gt->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
+          } else {
+            gt->child_resized(myo);
+          }
         }
+        allow_layout++;
+        g->layout();
+        allow_layout--;
       } else if (myo->parent && myo->parent->is_a(ID_Group)) {
         Fl_Group_Type* gt = (Fl_Group_Type*)myo->parent;
         ((Fl_Group*)gt->o)->init_sizes();

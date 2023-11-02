@@ -143,7 +143,8 @@ extern void grid_set_col_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_grid_col_input;
 extern void grid_dec_col_cb(Fl_Button*, void*);
 extern void grid_inc_col_cb(Fl_Button*, void*);
-extern void grid_align_cb(Fl_Choice*, void*);
+extern void grid_align_horizontal_cb(Fl_Choice*, void*);
+extern void grid_align_vertical_cb(Fl_Choice*, void*);
 extern void grid_set_min_wdt_cb(Fluid_Coord_Input*, void*);
 extern void grid_set_min_hgt_cb(Fluid_Coord_Input*, void*);
 extern void grid_set_rowspan_cb(Fluid_Coord_Input*, void*);
@@ -175,5 +176,6 @@ extern Fl_Menu_Item menu_Children[];
 extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
 extern Fl_Menu_Item menu_4[];
-extern Fl_Menu_Item menu_5[];
+extern Fl_Menu_Item menu_Horizontal[];
+extern Fl_Menu_Item menu_Vertical[];
 #endif

@@ -29,6 +29,7 @@ public:
   Fl_Grid_Proxy(int X,int Y,int W,int H) : Fl_Grid(X,Y,W,H) {}
   void resize(int,int,int,int) FL_OVERRIDE;
   void draw() FL_OVERRIDE;
+  void draw_overlay();
 };
 
 class Fl_Grid_Type : public Fl_Group_Type
@@ -56,6 +57,7 @@ public:
   void child_resized(Fl_Widget_Type *child);
   void insert_child_at(Fl_Widget *child, int x, int y);
   void insert_child(Fl_Widget *child);
+  void keyboard_move_child(Fl_Widget_Type*, int key);
 
   static class Fl_Grid *selected();
 };
