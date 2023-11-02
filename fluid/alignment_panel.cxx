@@ -2265,7 +2265,7 @@ ps");
           restricted_button->callback((Fl_Callback*)toggle_restricted_cb);
           o->value(show_restricted);
         } // Fl_Check_Button* restricted_button
-        { Fl_Check_Button* o = ghosted_outline_button = new Fl_Check_Button(120, 340, 200, 20, "Show Low Contrast Groups Ghosted");
+        { Fl_Check_Button* o = ghosted_outline_button = new Fl_Check_Button(120, 340, 200, 20, "Show Ghosted Group Outlines");
           ghosted_outline_button->tooltip("groups with no box type or flat boxtypes without contrast will be rendered wi\
 th a dim outline in the editing window only");
           ghosted_outline_button->down_box(FL_DOWN_BOX);

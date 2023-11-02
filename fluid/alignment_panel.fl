@@ -110,7 +110,7 @@ decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 decl {int w_settings_shell_list_selected;} {public local
 }
 
-Function {make_script_panel()} {open selected
+Function {make_script_panel()} {open
 } {
   Fl_Window script_panel {
     label {Shell Script Editor}
@@ -281,8 +281,8 @@ Examples:
           code0 {o->value(show_restricted);}
         }
         Fl_Check_Button ghosted_outline_button {
-          label {Show Low Contrast Groups Ghosted}
-          callback toggle_ghosted_outline_cb
+          label {Show Ghosted Group Outlines}
+          callback toggle_ghosted_outline_cb selected
           tooltip {groups with no box type or flat boxtypes without contrast will be rendered with a dim outline in the editing window only} xywh {120 340 200 20} down_box DOWN_BOX labelsize 11
           code0 {o->value(show_ghosted_outline);}
         }

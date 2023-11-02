@@ -141,6 +141,13 @@ void Overlay_Window::close_cb(Overlay_Window *self, void*) {
   self->hide();
 }
 
+// Use this when drawing flat boxes while editing, so users can see the outline,
+// even if the group and its parent have the same color.
+static void fd_flat_box_ghosted(int x, int y, int w, int h, Fl_Color c) {
+  fl_rectf(x, y, w, h, Fl::box_color(c));
+  fl_rect(x, y, w, h, Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, c, .1f)));
+}
+
 void Overlay_Window::draw() {
   const int CHECKSIZE = 8;
   // see if box is clear or a frame or rounded:
@@ -154,7 +161,14 @@ void Overlay_Window::draw() {
         fl_rectf(X,Y,CHECKSIZE,CHECKSIZE);
       }
   }
-  Fl_Overlay_Window::draw();
+  if (show_ghosted_outline) {
+    Fl_Box_Draw_F *old_flat_box = Fl::get_boxtype(FL_FLAT_BOX);
+    Fl::set_boxtype(FL_FLAT_BOX, fd_flat_box_ghosted, 0, 0, 0, 0);
+    Fl_Overlay_Window::draw();
+    Fl::set_boxtype(FL_FLAT_BOX, old_flat_box, 0, 0, 0, 0);
+  } else {
+    Fl_Overlay_Window::draw();
+  }
 }
 
 extern Fl_Window *main_window;
@@ -684,8 +698,6 @@ void Fl_Window_Type::draw_overlay() {
     Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Fl_Widget_Type*)selection, this};
     Fd_Snap_Action::draw_all(data);
   }
-
-  // TODO: for invisible boxes (NONE, FLAT, etc.) draw a faint outline when dragging
 }
 
 extern Fl_Menu_Item Main_Menu[];
