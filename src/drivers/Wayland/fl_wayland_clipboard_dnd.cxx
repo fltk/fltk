@@ -668,16 +668,14 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
   fl_i_own_selection[clipboard] = 1;
   fl_selection_type[clipboard] = Fl::clipboard_plain_text;
   if (clipboard == 1) {
-    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    if (scr_driver->seat->data_source) wl_data_source_destroy(scr_driver->seat->data_source);
-    scr_driver->seat->data_source =
-      wl_data_device_manager_create_data_source(scr_driver->seat->data_device_manager);
+    if (seat->data_source) wl_data_source_destroy(seat->data_source);
+    seat->data_source = wl_data_device_manager_create_data_source(seat->data_device_manager);
     // we transmit the adequate value of index in fl_selection_buffer[index]
-    wl_data_source_add_listener(scr_driver->seat->data_source, &data_source_listener,
-                                (void*)1);
-    wl_data_source_offer(scr_driver->seat->data_source, wld_plain_text_clipboard);
-    wl_data_device_set_selection(scr_driver->seat->data_device, scr_driver->seat->data_source,
-                                 scr_driver->seat->keyboard_enter_serial);
+    wl_data_source_add_listener(seat->data_source, &data_source_listener, (void*)1);
+    wl_data_source_offer(seat->data_source, wld_plain_text_clipboard);
+    wl_data_device_set_selection(seat->data_device, 
+                                 seat->data_source,
+                                 seat->keyboard_enter_serial);
 //fprintf(stderr, "wl_data_device_set_selection len=%d to %d\n", len, clipboard);
   }
 }
@@ -692,6 +690,7 @@ void Fl_Wayland_Screen_Driver::copy_image(const unsigned char *data, int W, int 
   fl_selection_buffer_length[1] = fl_selection_length[1];
   fl_i_own_selection[1] = 1;
   fl_selection_type[1] = Fl::clipboard_image;
+  if (seat->data_source) wl_data_source_destroy(seat->data_source);
   seat->data_source = wl_data_device_manager_create_data_source(seat->data_device_manager);
   // we transmit the adequate value of index in fl_selection_buffer[index]
   wl_data_source_add_listener(seat->data_source, &data_source_listener, (void*)1);
