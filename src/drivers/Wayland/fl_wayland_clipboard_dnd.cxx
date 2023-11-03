@@ -103,8 +103,9 @@ static wl_cursor* save_cursor = NULL; // non null when DnD uses "dnd-copy" curso
 
 static void data_source_handle_cancelled(void *data, struct wl_data_source *source) {
   // An application has replaced the clipboard contents or DnD finished
-//fprintf(stderr, "data_source_handle_cancelled: %p\n", source);
   wl_data_source_destroy(source);
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (scr_driver->seat->data_source == source) scr_driver->seat->data_source = NULL;
   doing_dnd = false;
   if (dnd_icon) {
     struct Fl_Wayland_Graphics_Driver::wld_buffer *off =
@@ -119,7 +120,6 @@ static void data_source_handle_cancelled(void *data, struct wl_data_source *sour
   fl_i_own_selection[1] = 0;
   if (data == 0) { // at end of DnD
     if (save_cursor) {
-      Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
       scr_driver->default_cursor(save_cursor);
       scr_driver->set_cursor();
       save_cursor = NULL;
