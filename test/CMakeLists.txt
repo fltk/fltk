@@ -56,6 +56,26 @@ include_directories(
 set (extra_tests)
 
 #######################################################################
+# Define standard libraries for those OpenGL demos that can be built
+# w/o OpenGL as well. These demos show an alternate GUI or a warning
+# when built w/o OpenGL.
+#
+# Note: use "${GLDEMO_LIBS}" for their library parameter
+#        or "${GLDEMO_SHARED}" to build with shared FLTK libraries
+
+if (OPENGL_FOUND)
+  set (GLDEMO_LIBS fltk_gl fltk ${OPENGL_LIBRARIES})
+  if (MSVC)
+    set (GLDEMO_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+  else ()
+    set (GLDEMO_SHARED fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+  endif ()
+else ()
+  set (GLDEMO_LIBS fltk)
+  set (GLDEMO_SHARED fltk_SHARED)
+  endif ()
+
+#######################################################################
 
 CREATE_EXAMPLE (adjuster adjuster.cxx fltk)
 CREATE_EXAMPLE (arc arc.cxx fltk)
@@ -87,21 +107,11 @@ CREATE_EXAMPLE (flex_login flex_login.cxx fltk)
 CREATE_EXAMPLE (fltk-versions fltk-versions.cxx fltk)
 CREATE_EXAMPLE (fonts fonts.cxx fltk)
 CREATE_EXAMPLE (forms forms.cxx "fltk_forms;fltk")
-
-if (OPENGL_FOUND)
-  CREATE_EXAMPLE (glut_test glut_test.cxx "fltk_gl;fltk")
-endif()
-
+CREATE_EXAMPLE (fullscreen fullscreen.cxx "${GLDEMO_LIBS}")
 CREATE_EXAMPLE (grid_alignment grid_alignment.cxx fltk)
 CREATE_EXAMPLE (grid_buttons grid_buttons.cxx fltk)
 CREATE_EXAMPLE (grid_login grid_login.cxx fltk)
-
-if (OPENGL_FOUND)
-  CREATE_EXAMPLE (handle_events handle_events.cxx "fltk_gl;fltk") # opt. Fl_Gl_Window
-else()
-  CREATE_EXAMPLE (handle_events handle_events.cxx fltk) # w/o Fl_Gl_Window
-endif()
-
+CREATE_EXAMPLE (handle_events handle_events.cxx "${GLDEMO_LIBS}")
 CREATE_EXAMPLE (hello hello.cxx fltk)
 CREATE_EXAMPLE (help_dialog help_dialog.cxx "fltk_images;fltk")
 CREATE_EXAMPLE (icon icon.cxx fltk)
@@ -177,36 +187,26 @@ SET (UNITTEST_SRCS
   unittest_schemes.cxx
   unittest_simple_terminal.cxx
 )
-if (OPENGL_FOUND)
-  set (UNITTEST_LIBS fltk_gl fltk ${OPENGL_LIBRARIES})
-  if (MSVC)
-    set (UNITTEST_LIBS_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
-  else ()
-    set (UNITTEST_LIBS_SHARED fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
-  endif ()
-else ()
-  set (UNITTEST_LIBS fltk)
-  set (UNITTEST_LIBS_SHARED fltk_SHARED)
-endif ()
-CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "${UNITTEST_LIBS}")
+CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "${GLDEMO_LIBS}")
 
-# create additional test programs (used by developers for testing)
+# Create additional test programs (used by developers for testing)
 
 if (extra_tests)
   foreach (name ${extra_tests})
-    create_example (${name} ${name}.cxx "fltk_images;fltk_gl;fltk")
+    create_example (${name} ${name}.cxx "fltk_images;${GLDEMO_LIBS}")
   endforeach ()
 endif ()
 
-# OpenGL demos...
+# OpenGL demos. These programs can't be built w/o OpenGL
+
 if (OPENGL_FOUND)
-  CREATE_EXAMPLE (CubeView "CubeMain.cxx;CubeView.cxx;CubeViewUI.fl" "fltk_gl;fltk")
-  CREATE_EXAMPLE (cube cube.cxx "fltk_gl;fltk;${OPENGL_LIBRARIES}")
-  CREATE_EXAMPLE (fractals "fractals.cxx;fracviewer.cxx" "fltk_gl;fltk")
-  CREATE_EXAMPLE (fullscreen fullscreen.cxx "fltk_gl;fltk")
-  CREATE_EXAMPLE (glpuzzle glpuzzle.cxx "fltk_gl;fltk;${OPENGL_LIBRARIES}")
-  CREATE_EXAMPLE (gl_overlay gl_overlay.cxx "fltk_gl;fltk;${OPENGL_LIBRARIES}")
-  CREATE_EXAMPLE (shape shape.cxx "fltk_gl;fltk;${OPENGL_LIBRARIES}")
+  CREATE_EXAMPLE (CubeView "CubeMain.cxx;CubeView.cxx;CubeViewUI.fl" "${GLDEMO_LIBS}")
+  CREATE_EXAMPLE (cube cube.cxx "${GLDEMO_LIBS}")
+  CREATE_EXAMPLE (fractals "fractals.cxx;fracviewer.cxx" "${GLDEMO_LIBS}")
+  CREATE_EXAMPLE (glut_test glut_test.cxx "${GLDEMO_LIBS}")
+  CREATE_EXAMPLE (glpuzzle glpuzzle.cxx "${GLDEMO_LIBS}")
+  CREATE_EXAMPLE (gl_overlay gl_overlay.cxx "${GLDEMO_LIBS}")
+  CREATE_EXAMPLE (shape shape.cxx "${GLDEMO_LIBS}")
 endif (OPENGL_FOUND)
 
 # Cairo demo - must also be built w/o Cairo (displays a message box)
@@ -216,7 +216,10 @@ else ()
   CREATE_EXAMPLE (cairo_test cairo_test.cxx fltk)
 endif (FLTK_HAVE_CAIRO)
 
-# /EXPERIMENTAL/ Build some of the demo programs linked against the shared lib(s)
+# *** EXPERIMENTAL ***
+# Build some of the demo programs linked against the shared FLTK lib(s).
+# This is currently pretty complicated and should be improved.
+# It will be simplified significantly when we use more "modern CMake".
 
 if (OPTION_BUILD_SHARED_LIBS)
 
@@ -242,16 +245,13 @@ if (OPTION_BUILD_SHARED_LIBS)
 
     CREATE_EXAMPLE (hello-shared hello.cxx "fltk_SHARED;CALL_MAIN")
     CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_SHARED;CALL_MAIN")
-    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${UNITTEST_LIBS_SHARED};CALL_MAIN")
-
+    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED};CALL_MAIN")
     list (APPEND SHARED_TARGETS hello pixmap_browser unittests)
 
     if (OPENGL_FOUND)
       CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "fltk_SHARED;CALL_MAIN;${OPENGL_LIBRARIES}")
       CREATE_EXAMPLE (shape-shared shape.cxx "fltk_SHARED;CALL_MAIN;${OPENGL_LIBRARIES}")
-
       list (APPEND SHARED_TARGETS glpuzzle shape)
-
     endif (OPENGL_FOUND)
 
     # apply property COMPILE_DEFINITIONS "-D FL_DLL" in a loop for all necessary source files
@@ -262,16 +262,18 @@ if (OPTION_BUILD_SHARED_LIBS)
   else () # not MSVC
 
     CREATE_EXAMPLE (hello-shared hello.cxx fltk_SHARED)
-    CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_images_SHARED;fltk_SHARED")
-    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${UNITTEST_LIBS_SHARED}")
+    CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_images_SHARED")
+    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED}")
 
     if (OPENGL_FOUND)
-      CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "fltk_gl_SHARED;fltk_SHARED;${OPENGL_LIBRARIES}")
-      CREATE_EXAMPLE (shape-shared shape.cxx "fltk_gl_SHARED;fltk_SHARED;${OPENGL_LIBRARIES}")
+      CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "${GLDEMO_SHARED}")
+      CREATE_EXAMPLE (shape-shared shape.cxx "${GLDEMO_SHARED}")
     endif (OPENGL_FOUND)
 
     if (FLTK_HAVE_CAIRO)
       CREATE_EXAMPLE (cairo_test-shared cairo_test.cxx "fltk_SHARED;cairo")
+    else ()
+      CREATE_EXAMPLE (cairo_test-shared cairo_test.cxx "fltk_SHARED")
     endif ()
 
   endif (MSVC) # (not MSVC)
