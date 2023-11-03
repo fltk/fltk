@@ -669,6 +669,7 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
   fl_selection_type[clipboard] = Fl::clipboard_plain_text;
   if (clipboard == 1) {
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    if (scr_driver->seat->data_source) wl_data_source_destroy(scr_driver->seat->data_source);
     scr_driver->seat->data_source =
       wl_data_device_manager_create_data_source(scr_driver->seat->data_device_manager);
     // we transmit the adequate value of index in fl_selection_buffer[index]
