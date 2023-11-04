@@ -684,9 +684,7 @@ void Fl_Window_Type::draw_overlay() {
 
   // Draw selection box + resize handles...
   // draw box including all labels
-  fl_line_style(FL_DOT);
-  fl_rect(mybx,myby,mybr-mybx,mybt-myby);
-  fl_line_style(FL_SOLID);
+  fl_focus_rect(mybx,myby,mybr-mybx,mybt-myby); // issue #816
   // draw box excluding labels
   fl_rect(mysx,mysy,mysr-mysx,myst-mysy);
   fl_rectf(mysx,mysy,5,5);
