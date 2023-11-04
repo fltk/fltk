@@ -922,3 +922,33 @@ bool Fl_Window::is_a_rescale() {return Fl_Window_Driver::is_a_rescale_;}
  \li other platforms: 0.
  */
 fl_uintptr_t Fl_Window::os_id() { return pWindowDriver->os_id();}
+
+/**
+ Maximizes a top-level window to its current screen.
+ 
+ This function is effective only with a show()'n, resizable, top-level window.
+ Bordered and borderless windows can be used.
+ \see Fl_Window::un_maximize(), Fl_Window::maximize_active()
+ */
+void Fl_Window::maximize() {
+  if (!shown() || parent() || !resizable() || maximize_active()) return;
+  set_flag(MAXIMIZED);
+  if (border()) pWindowDriver->maximize();
+  else pWindowDriver->Fl_Window_Driver::maximize();
+}
+
+/**
+ Returns a previously maximized top-level window to its previous size.
+ \see Fl_Window::maximize()
+*/
+void Fl_Window::un_maximize() {
+  if (!shown() || parent() || !resizable() || !maximize_active()) return;
+  clear_flag(MAXIMIZED);
+  if (border()) pWindowDriver->un_maximize();
+  else pWindowDriver->Fl_Window_Driver::un_maximize();
+}
+
+void Fl_Window::is_maximized_(bool b) {
+  if (b) set_flag(MAXIMIZED);
+  else clear_flag(MAXIMIZED);
+}

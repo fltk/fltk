@@ -286,6 +286,34 @@ Fl_Window *Fl_Window_Driver::find(fl_uintptr_t xid) {
   return 0;
 }
 
+
+void Fl_Window_Driver::maximize() {
+  *no_fullscreen_x() = x();
+  *no_fullscreen_y() = y();
+  *no_fullscreen_w() = w();
+  *no_fullscreen_h() = h();
+  int X,Y,W,H;
+  Fl::screen_work_area(X, Y, W, H, screen_num());
+  int width = decorated_w();
+  int height = decorated_h();
+  int dw = (width - w());
+  int dh = (height - h() - dw);
+  bool need_hide_show = maximize_needs_hide();
+  if (need_hide_show) hide(); // pb may occur in subwindow without this
+  resize(X + dw/2, Y + dh + dw/2, W - dw, H - dh - dw);
+  if (need_hide_show) show();
+}
+
+
+void Fl_Window_Driver::un_maximize() {
+  resize(*no_fullscreen_x(), *no_fullscreen_y(),
+         *no_fullscreen_w(), *no_fullscreen_h());
+  *no_fullscreen_x() = 0;
+  *no_fullscreen_y() = 0;
+  *no_fullscreen_w() = 0;
+  *no_fullscreen_h() = 0;
+}
+
 /**
  \}
  \endcond

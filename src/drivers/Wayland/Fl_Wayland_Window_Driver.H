@@ -114,6 +114,8 @@ public:
   void unmap() FL_OVERRIDE;
   void fullscreen_on() FL_OVERRIDE;
   void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
+  void maximize() FL_OVERRIDE;
+  void un_maximize() FL_OVERRIDE;
   void use_border() FL_OVERRIDE;
   void size_range() FL_OVERRIDE;
   void iconize() FL_OVERRIDE;

@@ -1572,6 +1572,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_SIZE:
         if (!window->parent()) {
+          Fl_Window_Driver::driver(window)->is_maximized(wParam == SIZE_MAXIMIZED);
           if (wParam == SIZE_MINIMIZED || wParam == SIZE_MAXHIDE) {
             Fl::handle(FL_HIDE, window);
           } else {

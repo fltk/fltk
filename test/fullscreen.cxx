@@ -1,7 +1,6 @@
 //
-
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -124,6 +123,8 @@ class fullscreen_window : public Fl_Single_Window {
   public:
   fullscreen_window(int W, int H, const char *t=0);
   int handle (int e) FL_OVERRIDE;
+  void resize(int x, int y, int w, int h) FL_OVERRIDE;
+  Fl_Toggle_Light_Button *b3_maxi;
   Fl_Toggle_Light_Button *b3;
   Fl_Toggle_Light_Button *b4;
 };
@@ -131,6 +132,19 @@ class fullscreen_window : public Fl_Single_Window {
 fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) {
 
 }
+
+void after_resize(void *data) {
+  Fl::remove_check(after_resize, data);
+  fullscreen_window *win = (fullscreen_window*)data;
+  if (win->maximize_active()) win->b3_maxi->set();
+  else win->b3_maxi->clear();
+  win->b3_maxi->redraw();
+}
+
+void fullscreen_window::resize(int x, int y, int w, int h) {
+  Fl_Single_Window::resize(x,y,w,h);
+  Fl::add_check(after_resize, this);
+};
 
 int fullscreen_window::handle(int e) {
   if (e == FL_FULLSCREEN) {
@@ -162,6 +176,19 @@ void border_cb(Fl_Widget *o, void *p) {
   int d = ((Fl_Button *)o)->value();
   w->border(d);
 }
+
+
+void maximize_cb(Fl_Widget *o, void *p) {
+  Fl_Window *w = (Fl_Window *)p;
+  if (w->maximize_active()) {
+    w->un_maximize();
+    //((Fl_Button*)o)->set();
+  } else {
+    w->maximize();
+    //((Fl_Button*)o)->clear();
+  }
+}
+
 
 Fl_Button *border_button;
 void fullscreen_cb(Fl_Widget *o, void *p) {
@@ -250,7 +277,7 @@ void exit_cb(Fl_Widget *, void *) {
   exit(0);
 }
 
-#define NUMB 8
+#define NUMB 9
 
 int twowindow = 0;
 int initfull = 0;
@@ -314,6 +341,10 @@ int main(int argc, char **argv) {
 
   window.b3 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"FullScreen");
   window.b3->callback(fullscreen_cb,w);
+  y+=30;
+  
+  window.b3_maxi = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"Maximize");
+  window.b3_maxi->callback(maximize_cb,w);
   y+=30;
 
   window.b4 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"All Screens");

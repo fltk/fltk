@@ -92,6 +92,8 @@ private:
   Fl_Window(const Fl_Window&);
   Fl_Window& operator=(const Fl_Window&);
 
+  void is_maximized_(bool b);
+
 protected:
 
   /** Stores the last window that was made current. See current() const */
@@ -508,6 +510,12 @@ public:
     \see void Fl_Window::fullscreen()
     */
   void fullscreen_screens(int top, int bottom, int left, int right);
+  
+  void maximize();
+  void un_maximize();
+  /** Returns whether the window is currently maximized */
+  unsigned int maximize_active() const { return flags() & MAXIMIZED; }
+public:
   /**
     Iconifies the window.  If you call this when shown() is false
     it will show() it as an icon.  If the window is already
