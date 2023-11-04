@@ -200,6 +200,8 @@ static Atom fl_NET_WM_ICON_NAME;                // utf8 aware window icon name
 static Atom fl_NET_SUPPORTING_WM_CHECK;
 static Atom fl_NET_WM_STATE;
 static Atom fl_NET_WM_STATE_FULLSCREEN;
+static Atom fl_NET_WM_STATE_MAXIMIZED_VERT;
+static Atom fl_NET_WM_STATE_MAXIMIZED_HORZ;
 static Atom fl_NET_WM_FULLSCREEN_MONITORS;
 Atom fl_NET_WORKAREA;
 static Atom fl_NET_WM_ICON;
@@ -590,6 +592,8 @@ void open_display_i(Display* d) {
   fl_NET_SUPPORTING_WM_CHECK = XInternAtom(d, "_NET_SUPPORTING_WM_CHECK", 0);
   fl_NET_WM_STATE       = XInternAtom(d, "_NET_WM_STATE",       0);
   fl_NET_WM_STATE_FULLSCREEN = XInternAtom(d, "_NET_WM_STATE_FULLSCREEN", 0);
+  fl_NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(d, "_NET_WM_STATE_MAXIMIZED_VERT", 0);
+  fl_NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(d, "_NET_WM_STATE_MAXIMIZED_HORZ", 0);
   fl_NET_WM_FULLSCREEN_MONITORS = XInternAtom(d, "_NET_WM_FULLSCREEN_MONITORS", 0);
   fl_NET_WORKAREA       = XInternAtom(d, "_NET_WORKAREA",       0);
   fl_NET_WM_ICON        = XInternAtom(d, "_NET_WM_ICON",        0);
@@ -1947,6 +1951,7 @@ int fl_handle(const XEvent& thisevent)
   case PropertyNotify:
     if (xevent.xproperty.atom == fl_NET_WM_STATE) {
       int fullscreen_state = 0;
+      int maximize_state = 0;
       if (xevent.xproperty.state != PropertyDelete) {
         unsigned long nitems;
         unsigned long *words = 0;
@@ -1955,10 +1960,14 @@ int fl_handle(const XEvent& thisevent)
             if (words[item] == fl_NET_WM_STATE_FULLSCREEN) {
               fullscreen_state = 1;
             }
+            if (words[item] == fl_NET_WM_STATE_MAXIMIZED_HORZ) {
+              maximize_state = 1;
+            }
           }
         }
         if ( words ) { XFree(words); words = 0; }
       }
+      Fl_Window_Driver::driver(window)->is_maximized(maximize_state);
       if (window->fullscreen_active() && !fullscreen_state) {
         window->_clear_fullscreen();
         event = FL_FULLSCREEN;
@@ -2317,6 +2326,41 @@ void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     Fl::handle(FL_FULLSCREEN, pWindow);
   }
 }
+
+
+void Fl_X11_Window_Driver::maximize() {
+  if (Fl_X11_Screen_Driver::ewmh_supported()) {
+    send_wm_event(fl_xid(pWindow), fl_NET_WM_STATE, _NET_WM_STATE_ADD,
+                  fl_NET_WM_STATE_MAXIMIZED_VERT, fl_NET_WM_STATE_MAXIMIZED_HORZ);
+  } else {
+    *no_fullscreen_x() = x();
+    *no_fullscreen_y() = y();
+    *no_fullscreen_w() = w();
+    *no_fullscreen_h() = h();
+    int X,Y,W,H;
+    Fl::screen_work_area(X, Y, W, H, screen_num());
+    int width, height;
+    decorated_win_size(width, height);
+    int dw = (width - w());
+    int dh = (height - h() - dw);
+    resize(X + dw/2, Y + dh + dw/2, W - dw, H - dh - dw);
+  }
+}
+
+void Fl_X11_Window_Driver::un_maximize() {
+  if (Fl_X11_Screen_Driver::ewmh_supported()) {
+    send_wm_event(fl_xid(pWindow), fl_NET_WM_STATE, _NET_WM_STATE_REMOVE,
+                  fl_NET_WM_STATE_MAXIMIZED_VERT, fl_NET_WM_STATE_MAXIMIZED_HORZ);
+  } else {
+    resize(*no_fullscreen_x(), *no_fullscreen_y(),
+           *no_fullscreen_w(), *no_fullscreen_h());
+    *no_fullscreen_x() = 0;
+    *no_fullscreen_y() = 0;
+    *no_fullscreen_w() = 0;
+    *no_fullscreen_h() = 0;
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////
 

@@ -616,6 +616,15 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 }
 
 
+void Fl_WinAPI_Window_Driver::maximize() {
+  ShowWindow(fl_xid(pWindow), SW_SHOWMAXIMIZED);
+}
+
+void Fl_WinAPI_Window_Driver::un_maximize() {
+  ShowWindow(fl_xid(pWindow), SW_SHOWNORMAL);
+}
+
+
 void Fl_WinAPI_Window_Driver::iconize() {
   ShowWindow(fl_xid(pWindow), SW_SHOWMINNOACTIVE);
 }

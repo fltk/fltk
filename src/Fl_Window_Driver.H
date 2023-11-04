@@ -105,6 +105,10 @@ public:
   int fullscreen_screen_bottom();
   int fullscreen_screen_left();
   int fullscreen_screen_right();
+  int* no_fullscreen_x() { return &pWindow->no_fullscreen_x; }
+  int* no_fullscreen_y() { return &pWindow->no_fullscreen_y; }
+  int* no_fullscreen_w() { return &pWindow->no_fullscreen_w; }
+  int* no_fullscreen_h() { return &pWindow->no_fullscreen_h; }
   int force_position();
   void force_position(int c);
   void x(int X);
@@ -154,6 +158,10 @@ public:
   virtual void unmap() {}
   virtual void fullscreen_on() {}
   virtual void fullscreen_off(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
+  virtual void maximize();
+  virtual void un_maximize();
+  virtual bool maximize_needs_hide() { return false; }
+  void is_maximized(bool b) { pWindow->is_maximized_(b); }
   virtual void use_border();
   virtual void size_range();
   virtual void iconize() {}

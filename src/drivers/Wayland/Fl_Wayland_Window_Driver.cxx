@@ -941,6 +941,8 @@ static void handle_configure(struct libdecor_frame *frame,
     }
   }
 
+  if (window->fl_win->border())
+    driver->is_maximized(window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED);
   if (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) state = libdecor_state_new(width,
                                                                                  height);
   else state = libdecor_state_new(int(ceil(width/f)*f), int(ceil(height/f)*f));
@@ -2134,4 +2136,16 @@ Fl_Wayland_Plugin *Fl_Wayland_Window_Driver::gl_plugin() {
     plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
   }
   return plugin;
+}
+
+
+void Fl_Wayland_Window_Driver::maximize() {
+  struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
+  if (xid->kind == DECORATED) libdecor_frame_set_maximized(xid->frame);
+}
+
+
+void Fl_Wayland_Window_Driver::un_maximize() {
+  struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
+  if (xid->kind == DECORATED) libdecor_frame_unset_maximized(xid->frame);
 }

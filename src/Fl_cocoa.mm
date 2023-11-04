@@ -1351,6 +1351,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     window->redraw();
   }
 #endif
+  if (!window->parent()) {
+    Fl_Cocoa_Window_Driver::driver(window)->is_maximized([nsw isZoomed]);
+  }
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
@@ -3235,6 +3238,17 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
   }
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
+
+
+void Fl_Cocoa_Window_Driver::maximize() {
+  [fl_xid(pWindow) performZoom:nil];
+}
+
+
+void Fl_Cocoa_Window_Driver::un_maximize() {
+  [fl_xid(pWindow) performZoom:nil];
+}
+
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
 static NSUInteger calc_win_style(Fl_Window *win) {
