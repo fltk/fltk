@@ -11,3 +11,4 @@ pixmaps/*.bck
 # local documentation generation
 
 documentation/html/
+documentation/html-dev/

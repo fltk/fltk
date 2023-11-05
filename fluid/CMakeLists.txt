@@ -97,7 +97,7 @@ source_group("Header Files" FILES ${HEADERFILES})
 
 # make a group in the IDE for easy access to documentation files
 
-set ( DOC_FILES
+set ( USER_DOC_FILES
   Doxyfile
   documentation/src/index.dox
   documentation/src/page_introduction.dox
@@ -116,13 +116,20 @@ set ( DOC_FILES
   documentation/src/page_legal.dox
   documentation/src/page_conclusion.dox
 )
-source_group("Documentation" FILES ${DOC_FILES})
+source_group("Documentation: User" FILES ${USER_DOC_FILES})
+
+set ( DEV_DOC_FILES
+  Doxyfile-dev
+  documentation/src-dev/index.dox
+  documentation/src-dev/page_introduction.dox
+)
+source_group("Documentation: Developer" FILES ${DEV_DOC_FILES})
 
 # Build a local object library to avoid compiling all source files
 # for all fluid targets (fluid, fluid-cmd, fluid-shared). This
 # library includes everything except the main program (fluid.cxx).
 
-add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES} ${HEADERFILES} ${DOC_FILES})
+add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES} ${HEADERFILES} ${USER_DOC_FILES} ${DEV_DOC_FILES})
 
 # Build fluid with all its variants (fluid-cmd, fluid-shared) ...
 
