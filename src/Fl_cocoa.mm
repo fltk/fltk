@@ -1351,7 +1351,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     window->redraw();
   }
 #endif
-  if (!window->parent()) {
+  if (!window->parent() && window->border()) {
     Fl_Cocoa_Window_Driver::driver(window)->is_maximized([nsw isZoomed]);
   }
   fl_unlock_function();
