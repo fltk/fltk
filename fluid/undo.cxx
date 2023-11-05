@@ -26,6 +26,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
+#include <FL/fl_ask.H>
 #include "fluid_filename.h"
 #include "../src/flstring.h"
 
@@ -77,10 +78,13 @@ static char *undo_filename(int level) {
 
 // Redo menu callback
 void redo_cb(Fl_Widget *, void *) {
-  int undo_item = main_menubar->find_index(undo_cb);
-  int redo_item = main_menubar->find_index(redo_cb);
+  // int undo_item = main_menubar->find_index(undo_cb);
+  // int redo_item = main_menubar->find_index(redo_cb);
 
-  if (undo_current >= undo_last) return;
+  if (undo_current >= undo_last) {
+    fl_beep();
+    return;
+  }
 
   undo_suspend();
   if (widget_browser) widget_browser->save_scroll_position();
@@ -108,16 +112,19 @@ void redo_cb(Fl_Widget *, void *) {
   g_project.update_settings_dialog();
 
   // Update undo/redo menu items...
-  if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
-  Main_Menu[undo_item].activate();
+  // if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
+  // Main_Menu[undo_item].activate();
 }
 
 // Undo menu callback
 void undo_cb(Fl_Widget *, void *) {
-  int undo_item = main_menubar->find_index(undo_cb);
-  int redo_item = main_menubar->find_index(redo_cb);
+  // int undo_item = main_menubar->find_index(undo_cb);
+  // int redo_item = main_menubar->find_index(redo_cb);
 
-  if (undo_current <= 0) return;
+  if (undo_current <= 0) {
+    fl_beep();
+    return;
+  }
 
   if (undo_current == undo_last) {
     write_file(undo_filename(undo_current));
@@ -151,8 +158,8 @@ void undo_cb(Fl_Widget *, void *) {
   set_modflag(undo_current != undo_save);
 
   // Update undo/redo menu items...
-  if (undo_current <= 0) Main_Menu[undo_item].deactivate();
-  Main_Menu[redo_item].activate();
+  // if (undo_current <= 0) Main_Menu[undo_item].deactivate();
+  // Main_Menu[redo_item].activate();
   widget_browser->rebuild();
   g_project.update_settings_dialog();
   undo_resume();
@@ -166,8 +173,8 @@ void undo_checkpoint() {
   // Don't checkpoint if undo_suspend() has been called...
   if (undo_paused) return;
 
-  int undo_item = main_menubar->find_index(undo_cb);
-  int redo_item = main_menubar->find_index(redo_cb);
+  // int undo_item = main_menubar->find_index(undo_cb);
+  // int redo_item = main_menubar->find_index(redo_cb);
 
   // Save the current UI to a checkpoint file...
   const char *filename = undo_filename(undo_current);
@@ -187,14 +194,14 @@ void undo_checkpoint() {
   if (undo_current > undo_max) undo_max = undo_current;
 
   // Enable the Undo and disable the Redo menu items...
-  Main_Menu[undo_item].activate();
-  Main_Menu[redo_item].deactivate();
+  // Main_Menu[undo_item].activate();
+  // Main_Menu[redo_item].deactivate();
 }
 
 // Clear undo buffer
 void undo_clear() {
-  int undo_item = main_menubar->find_index(undo_cb);
-  int redo_item = main_menubar->find_index(redo_cb);
+  // int undo_item = main_menubar->find_index(undo_cb);
+  // int redo_item = main_menubar->find_index(redo_cb);
   // Remove old checkpoint files...
   for (int i = 0; i <= undo_max; i ++) {
     fl_unlink(undo_filename(i));
@@ -206,8 +213,8 @@ void undo_clear() {
   else undo_save = 0;
 
   // Disable the Undo and Redo menu items...
-  Main_Menu[undo_item].deactivate();
-  Main_Menu[redo_item].deactivate();
+  // Main_Menu[undo_item].deactivate();
+  // Main_Menu[redo_item].deactivate();
 }
 
 // Resume undo checkpoints
