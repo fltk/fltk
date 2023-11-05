@@ -1022,12 +1022,12 @@ Fl_String open_project_filechooser(const Fl_String &title) {
 
 /**
  Load a project from the give file name and path.
-
+ 
  The project file is inserted at the currently selected type.
-
+ 
  If no filename is given, FLUID will open a file chooser dialog.
-
- \param[in] new_filename path and name of the new project file
+ 
+ \param[in] filename_arg path and name of the new project file
  \return false if the operation failed
  */
 bool merge_project_file(const Fl_String &filename_arg) {
