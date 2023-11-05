@@ -786,8 +786,11 @@ void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
     if (parent) {
       const char *cc = f.read_word(1);
       if (strcmp(cc, "{")==0) {
-        cc = f.read_word();
-        parent->read_parent_properties(f, this, cc);
+        for (;;) {
+          cc = f.read_word();
+          if (!cc || cc[0]==0 || strcmp(cc, "}")==0) break;
+          parent->read_parent_property(f, this, cc);
+        }
       } else {
         f.read_error("'parent_properties' must be followed by '{'");
       }
@@ -850,27 +853,22 @@ void Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool
   //  }
 }
 
-/** Read parent per-child properties.
+/** Read one parent per-child property.
 
  A parent widget can store properties for every child that it manages. This
- method reads back those properties. The order of properties is significant,
- but individual properties can be omitted.
+ method reads back those properties. This function is virtual, so if a Type
+ does not support a property, it will propagate to its super class.
 
  \see Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate)
- \see Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property)
+ \see Fl_Grid_Type::read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property)
 
  \param[in] f the project file writer
  \param[in] child read properties for this child
  \param[in] property the name of a property, or "}" when we reach the end of the list
  */
-void Fl_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
+void Fl_Type::read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
   (void)child;
-  for (;;) {
-    if (strcmp(property, "}")==0) break;
-    f.read_error("Unknown parent property \"%s\"", property);
-    f.read_word(); // ignore property value
-    property = f.read_word(); // read next property name
-  }
+  f.read_error("Unknown parent property \"%s\"", property);
 }
 
 

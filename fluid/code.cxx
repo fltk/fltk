@@ -19,7 +19,6 @@
 #include "Fl_Group_Type.h"
 #include "Fl_Window_Type.h"
 #include "Fl_Function_Type.h"
-#include "alignment_panel.h"
 #include "file.h"
 #include "undo.h"
 

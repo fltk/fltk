@@ -504,7 +504,8 @@ void Fd_Project_Reader::read_error(const char *format, ...) {
     will return the string `"{"`, if clear, a `{` is seen as the start of a word
  \return a pointer to the internal buffer, containing a copy of the word.
     Don't free the buffer! Note that most (all?) other file operations will
-    overwrite this buffer.
+    overwrite this buffer. If wantbrace is not set, but we read a leading '{',
+    the returned string will be stripped of its leading and trailing braces.
  */
 const char *Fd_Project_Reader::read_word(int wantbrace) {
   int x;

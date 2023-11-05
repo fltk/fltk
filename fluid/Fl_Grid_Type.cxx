@@ -33,11 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// ---- Fl_Grid_Type --------------------------------------------------- MARK: -
-
-const char grid_type_name[] = "Fl_Grid";
-
-Fl_Grid_Type Fl_Grid_type;      // the "factory"
+// ---- Fl_Grid_Proxy --------------------------------------------------- MARK: -
 
 // Override group's resize behavior to do nothing to children:
 void Fl_Grid_Proxy::resize(int X, int Y, int W, int H) {
@@ -68,6 +64,12 @@ void Fl_Grid_Proxy::draw_overlay() {
   draw_grid();
   fl_color(grid_color);
 }
+
+// ---- Fl_Grid_Type --------------------------------------------------- MARK: -
+
+const char grid_type_name[] = "Fl_Grid";
+
+Fl_Grid_Type Fl_Grid_type;      // the "factory"
 
 Fl_Grid_Type::Fl_Grid_Type() {
 }
@@ -254,45 +256,43 @@ void Fl_Grid_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child,
 // NOTE: we have to do this in a loop just as ::read_property() in case a new
 //    property is added. In the current setup, all the remaining properties
 //    will be skipped
-void Fl_Grid_Type::read_parent_properties(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
+void Fl_Grid_Type::read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
   if (!child->is_true_widget()) {
-    super::read_parent_properties(f, child, property);
+    super::read_parent_property(f, child, property);
     return;
   }
   Fl_Grid *grid = (Fl_Grid*)o;
   Fl_Widget *child_widget = ((Fl_Widget_Type*)child)->o;
-  int row = -1, col = -1, rowspan = 1, colspan = 1;
-  Fl_Grid_Align align = FL_GRID_FILL;
   if (!strcmp(property, "location")) {
+    int row = -1, col = -1;
     const char *value = f.read_word();
     sscanf(value, "%d %d", &row, &col);
-    property = f.read_word();
-  }
-  if (!strcmp(property, "colspan")) {
-    colspan = atoi(f.read_word());
-    property = f.read_word();
-  }
-  if (!strcmp(property, "rowspan")) {
-    rowspan = atoi(f.read_word());
-    property = f.read_word();
-  }
-  if (!strcmp(property, "align")) {
-    align = atoi(f.read_word());
-    property = f.read_word();
-  }
-  if (row>=0 && col>=0) {
-    Fl_Grid::Cell *cell = grid->widget(child_widget, row, col, rowspan, colspan, (Fl_Grid_Align)align);
+    Fl_Grid::Cell *cell = grid->widget(child_widget, row, col);
     if (cell) {
       int min_w = 20, min_h = 20;
-      if (!strcmp(property, "minsize")) {
-        const char *value = f.read_word();
-        sscanf(value, "%d %d", &min_w, &min_h);
-        property = f.read_word();
-      }
       cell->minimum_size(min_w, min_h);
     }
+  } else if (!strcmp(property, "colspan")) {
+    int colspan = atoi(f.read_word());
+    Fl_Grid::Cell *cell = grid->cell(child_widget);
+    if (cell) cell->colspan(colspan);
+  } else if (!strcmp(property, "rowspan")) {
+    int rowspan = atoi(f.read_word());
+    Fl_Grid::Cell *cell = grid->cell(child_widget);
+    if (cell) cell->rowspan(rowspan);
+  } else if (!strcmp(property, "align")) {
+    int align = atoi(f.read_word());
+    Fl_Grid::Cell *cell = grid->cell(child_widget);
+    if (cell) cell->align((Fl_Grid_Align)align);
+  } if (!strcmp(property, "minsize")) {
+    int min_w = 20, min_h = 20;
+    const char *value = f.read_word();
+    sscanf(value, "%d %d", &min_w, &min_h);
+    Fl_Grid::Cell *cell = grid->cell(child_widget);
+    if (cell) cell->minimum_size(min_w, min_h);
+  } else {
+    super::read_parent_property(f, child, property);
   }
-  super::read_parent_properties(f, child, property);
 }
 
 void Fl_Grid_Type::write_code1(Fd_Code_Writer& f) {
@@ -520,6 +520,15 @@ void Fl_Grid_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
   }
 }
 
+void Fl_Grid_Type::layout_widget() {
+  allow_layout++;
+  ((Fl_Grid*)o)->layout();
+  allow_layout--;
+}
+
+
+// ---- Widget Panel Callbacks  ---------------------------------------- MARK: -
+
 // FIXME: when changing the cell location, and another cell would be overridden,
 //        don't actually move the cell (hard to implement!) and activate
 //        a red button "replace". If clicked, user gets the option to delete
@@ -743,11 +752,5 @@ void grid_align_vertical_cb(Fl_Choice* i, void* v) {
       set_modflag(1);
     }
   }
-}
-
-void Fl_Grid_Type::layout_widget() {
-  allow_layout++;
-  ((Fl_Grid*)o)->layout();
-  allow_layout--;
 }
 

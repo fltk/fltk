@@ -24,7 +24,6 @@
 
 #include "fluid.h"
 #include "Fl_Window_Type.h"
-#include "alignment_panel.h"
 #include "file.h"
 #include "code.h"
 #include "Fluid_Image.h"
