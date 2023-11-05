@@ -440,8 +440,14 @@ int Fl_Input::handle_key() {
       if (mods==FL_COMMAND) return kf_copy_cut();               // Ctrl-X, Mac:Meta-X             (Standard/OSX-HIG)
       break;
     case 'z':
-      if (mods==FL_COMMAND && !shift) return kf_undo();         // Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
-      if (mods==FL_COMMAND && shift)  return kf_redo();         // Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
+      if (mods==FL_COMMAND && !shift) {                         // Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
+        if (!kf_undo()) fl_beep();
+        return 1;
+      }
+      if (mods==FL_COMMAND && shift) {                          // Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
+        if (!kf_redo()) fl_beep();
+        return 1;
+      }
       break;                                                    // handle other combos elsewhere
   }
 

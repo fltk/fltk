@@ -663,7 +663,13 @@ int Fl_Text_Editor::handle_key() {
   Key_Func f;
   f = bound_key_function(key, state, global_key_bindings);
   if (!f) f = bound_key_function(key, state, key_bindings);
-  if (f) return f(key, this);
+  if (f == kf_undo || f == kf_redo) {
+    // never propagate undo and redo up to another widget
+    if (!f(key, this)) fl_beep();
+    return 1;
+  } else if (f){
+    return f(key, this);
+  }
   if (default_key_function_ && !state) return default_key_function_(c, this);
   return 0;
 }
