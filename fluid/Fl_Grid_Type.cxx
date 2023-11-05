@@ -93,30 +93,25 @@ void Fl_Grid_Proxy::draw_overlay() {
 /**
  Move a cell into the grid or within the grid.
 
+ If the target cell is already taken, \p how will determine what to do:
+
+ If \p how is 0, the existing cell at \p to_row, \p to_col will be deleted,
+ unlinking the occupant from the grid. \p in_child will the be inserted at the
+ given location.
+
+ If \p how is 1, the old cell will remain intact, however \p in_child will be
+ unlinked from the grid.
+
+ If \p how is 2, the old cell will remain intact, and \p in_child will be
+ removed from the grid, but it will be stored in the transient list and
+ resized to the target cell position and size. If \p in_child is later
+ moved to an unoccupied cell, it will be removed from the transient list and
+ relinked to the grid. Rowspan and colspan are ignored here.
+
  \param[in] in_child must already be a child of grid
  \param[in] to_row, to_col move the child into this cell
- \param[in] how 0: replace occupant, 1: don't replace, 2 = make transient
+ \param[in] how 0: replace occupant, 1: don't replace, 2: make transient
     if occupied
-
- \todo If the target cell is already taken, this function will remove the old
- child from the cell and leave it in limbo (a child of grid, but with no
- assigned cell). As this function is used to move children around with arrow
- keys, it must be possible to move a widget past a cell that is already taken
- without disturbing the existing system.
-
- One solution would be to make the widget "hover", meaning, it will be registered
- in Fl_Grid_Proxy as using the same cell as another widget. I am not sure at all
- how to implement that yet. We could return the original cell, but that may have
- different minsize, etc. . It would be better to have a temporary cell to store
- all the information.
-
- We must make sure that a hovering cell (or multiple cells) are a very temporary
- solution, because all this information will be skewed if Grid::layout is
- called, and all information is lost when we save the file for compilation.
-
- We must show a conflict grid under or around the hovering cell!
-
- Also mind the rowspan and colspan!
  */
 void Fl_Grid_Proxy::move_cell(Fl_Widget *in_child, int to_row, int to_col, int how) {
   // the child must already be a true child of grid
@@ -127,6 +122,7 @@ void Fl_Grid_Proxy::move_cell(Fl_Widget *in_child, int to_row, int to_col, int h
   int w = 20, h = 20;
   const Fl_Grid::Cell *old_cell = cell(in_child);
   if (old_cell) {
+    if (old_cell->row() == to_row && old_cell->col() == to_col) return;
     rowspan = old_cell->rowspan();
     colspan = old_cell->colspan();
     align = old_cell->align();
@@ -162,8 +158,10 @@ void Fl_Grid_Proxy::move_cell(Fl_Widget *in_child, int to_row, int to_col, int h
 
 /**
  Generate or replace a transient widget entry.
+
  If the widget is in the cell list, it will be removed there.
  If the widget is already transient, the cell will be replaced.
+
  \param[in] wi a child of this Fl_Grid_Proxy, that may be linked to a cell or transient cell
  \param[in] row, col, row_span, col_span, align cell parameters
  */
@@ -239,6 +237,15 @@ void Fl_Grid_Proxy::transient_remove_(Fl_Widget *w) {
 Fl_Grid_Proxy::Cell *Fl_Grid_Proxy::any_cell(Fl_Widget *widget) const {
   Cell *c = cell(widget);
   if (c) return c;
+  return transient_cell(widget);
+}
+
+/**
+ Find a cell in the transient cell list.
+ \param[in] widget must be a child of the grid.
+ \return the transient cell, or NULL if it was not found.
+ */
+Fl_Grid_Proxy::Cell *Fl_Grid_Proxy::transient_cell(Fl_Widget *widget) const {
   for (int i=0; i<num_transient_; i++) {
     if (transient_[i].widget == widget)
       return transient_[i].cell;
@@ -634,6 +641,11 @@ Fl_Grid *Fl_Grid_Type::selected() {
   return NULL;
 }
 
+/**
+ Insert a child widget into the cell at the x, y position inside the window.
+ /param[in] child
+ /param[in] x, y pixels from the top left of the window
+ */
 void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
   Fl_Grid_Proxy *grid = (Fl_Grid_Proxy*)o;
   int row = -1, col = -1, ml, mt, grg, gcg;
@@ -656,10 +668,11 @@ void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
     x0 += gap;
   }
 
-  grid->move_cell(child, row, col);
+  grid->move_cell(child, row, col, 2);
 }
 
-/** Insert a child widget into the first new cell we can find .
+/** 
+ Insert a child widget into the first new cell we can find .
 
  There are many other possible strategies. How about inserting to the right
  of the last added child. Also, what happens if the grid is full? Should
@@ -667,17 +680,28 @@ void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
 
  /param[in] child
  */
-void Fl_Grid_Type::insert_child(Fl_Widget *child) {
+void Fl_Grid_Type::insert_child_at_next_free_cell(Fl_Widget *child) {
   Fl_Grid_Proxy *grid = (Fl_Grid_Proxy*)o;
   if (grid->cell(child)) return;
-  for (int r=0; r<grid->rows(); r++) {
-    for (int c=0; c<grid->cols(); c++) {
+// The code below would insert the new widget after the last selected one, but
+// unfortunately the current_widget is already invalid.
+//  if (current_widget && (current_widget->parent == this)) {
+//    Fl_Grid::Cell *current_cell = grid->any_cell(current_widget->o);
+//    if (current_cell) {
+//      r = current_cell->row();
+//      c = current_cell->col();
+//    }
+//  }
+  for (int r = 0; r < grid->rows(); r++) {
+    for (int c = 0; c < grid->cols(); c++) {
       if (!grid->cell(r, c)) {
         grid->move_cell(child, r, c);
         return;
       }
     }
   }
+  grid->layout(grid->rows() + 1, grid->cols());
+  grid->move_cell(child, grid->rows() - 1, 0);
 }
 
 /** Move cells around using the keyboard.
@@ -712,29 +736,17 @@ void Fl_Grid_Type::layout_widget() {
 
 // ---- Widget Panel Callbacks  ---------------------------------------- MARK: -
 
-// FIXME: when changing the cell location, and another cell would be overridden,
-//        don't actually move the cell (hard to implement!) and activate
-//        a red button "replace". If clicked, user gets the option to delete
-//        the old widget, or just remove the cell, or cancel.
-// TODO: move cells by using the arrow keys?
-// TODO: move cells via drag'n'drop -> int Fl_Window_Type::handle(int event)
-// TODO: handling of children that are themselves Groups. As it is, the children
-//        are not moved correctly if a parent group repositions or resizes groups.
-//        The same is true for Fl_Flex.
 // TODO: better grid overlay?
 // TODO: grid_child_cb should move all selected cells, not just the current_selected.
 // TODO: buttons to add and delete rows and columns in the widget dialog
 // TODO: ways to resize rows and columns, add and delete them in the project window, pulldown menu?
 // TODO: alignment can be FL_GRID_LEFT|FL_GRID_VERTICAL?
-// TODO: we must set undo checkpoints in all callbacks!
 
 extern Fluid_Coord_Input *widget_grid_row_input, *widget_grid_col_input,
 *widget_grid_rowspan_input, *widget_grid_colspan_input;
 extern Fl_Group *widget_tab_grid_child;
 
-
 void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
-  static Fl_Widget *prev_widget = NULL;
   if (   !current_widget
       || !current_widget->parent
       || !current_widget->parent->is_a(ID_Grid))
@@ -743,8 +755,7 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
   }
   Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
   Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
-  Fl_Grid::Cell *cell = g->cell(child);
-  bool freeze_row_col = (!cell && prev_widget==child && ((what&0x00ff)==8 || (what&0x00ff)==9));
+  Fl_Grid::Cell *cell = g->any_cell(child);
   if (v == LOAD) {
     int v = -1;
     if (cell) {
@@ -757,12 +768,10 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
         case 13: cell->minimum_size(NULL, &v); break;
       }
     }
-    if (!cell && prev_widget!=child && what==11)
-      prev_widget = child;
-    if (!freeze_row_col)
-      i->value(v);
+    i->value(v);
   } else {
-    int v2 = -1, old_v = -1, v = i->value();
+    undo_checkpoint();
+    int v2 = -2, old_v = -2, v = i->value();
     if (i==widget_grid_row_input) v2 = widget_grid_col_input->value();
     if (i==widget_grid_col_input) v2 = widget_grid_row_input->value();
     Fl_Grid::Cell *new_cell = NULL;
@@ -782,19 +791,21 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
     }
     if (old_v != v) {
       switch (what & 0x00ff) {
-        case 8: if (v>=0 && v2>=0) g->move_cell(current_widget->o, v, v2);
-          if (freeze_row_col) i->value(v);
+        case 8:
+          if (v2 == -1 && v >= 0) v2 = 0;
+          g->move_cell(current_widget->o, v, v2, 2); i->value(v);
           break;
-        case 9: if (v>=0 && v2>=0) g->move_cell(current_widget->o, v2, v);
-          if (freeze_row_col) i->value(v);
+        case 9: 
+          if (v2 == -1 && v >= 0) v2 = 0;
+          g->move_cell(current_widget->o, v2, v, 2); i->value(v);
           break;
-        case 10: if (cell && cell->row()+v<=g->rows()) cell->rowspan(v); 
+        case 10: if (cell && cell->row()+v<=g->rows() && v>0) cell->rowspan(v);
           break;
-        case 11: if (cell && cell->col()+v<=g->cols()) cell->colspan(v);
+        case 11: if (cell && cell->col()+v<=g->cols() && v>0) cell->colspan(v);
           break;
-        case 12: if (cell) cell->minimum_size(v, v2); 
+        case 12: if (cell && v>=0) cell->minimum_size(v, v2);
           break;
-        case 13: if (cell) cell->minimum_size(v2, v); 
+        case 13: if (cell && v>=0) cell->minimum_size(v2, v);
           break;
       }
       if (!cell && new_cell)
@@ -893,6 +904,7 @@ void grid_align_horizontal_cb(Fl_Choice* i, void* v) {
     const Fl_Menu_Item *mi = i->find_item_with_argument(a);
     if (mi) i->value(mi);
   } else {
+    undo_checkpoint();
     int v = FL_GRID_FILL & mask, old_v = FL_GRID_FILL & mask;
     const Fl_Menu_Item *mi = i->mvalue();
     if (mi) v = (int)mi->argument();
@@ -927,6 +939,7 @@ void grid_align_vertical_cb(Fl_Choice* i, void* v) {
     const Fl_Menu_Item *mi = i->find_item_with_argument(a);
     if (mi) i->value(mi);
   } else {
+    undo_checkpoint();
     int v = FL_GRID_FILL & mask, old_v = FL_GRID_FILL & mask;
     const Fl_Menu_Item *mi = i->mvalue();
     if (mi) v = (int)mi->argument();

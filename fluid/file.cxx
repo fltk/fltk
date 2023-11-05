@@ -399,7 +399,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
           ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
         } else {
-          ((Fl_Grid_Type*)t->parent)->insert_child(((Fl_Widget_Type*)t)->o);
+          ((Fl_Grid_Type*)t->parent)->insert_child_at_next_free_cell(((Fl_Widget_Type*)t)->o);
         }
       }
 

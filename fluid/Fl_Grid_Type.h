@@ -40,6 +40,7 @@ public:
   void draw_overlay();
   void move_cell(Fl_Widget *child, int to_row, int to_col, int how = 0);
   Cell* any_cell(Fl_Widget *widget) const;
+  Cell* transient_cell(Fl_Widget *widget) const;
   Cell* transient_widget(Fl_Widget *wi, int row, int col, int row_span, int col_span, Fl_Grid_Align align = FL_GRID_FILL);
   Cell* widget(Fl_Widget *wi, int row, int col, Fl_Grid_Align align = FL_GRID_FILL);
   Cell* widget(Fl_Widget *wi, int row, int col, int rowspan, int colspan, Fl_Grid_Align align = FL_GRID_FILL);
@@ -69,7 +70,7 @@ public:
   void layout_widget() FL_OVERRIDE;
   void child_resized(Fl_Widget_Type *child);
   void insert_child_at(Fl_Widget *child, int x, int y);
-  void insert_child(Fl_Widget *child);
+  void insert_child_at_next_free_cell(Fl_Widget *child);
   void keyboard_move_child(Fl_Widget_Type*, int key);
 
   static class Fl_Grid *selected();

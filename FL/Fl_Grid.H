@@ -186,7 +186,7 @@ public:
 
     ~Cell() {}
 
-    Fl_Widget *widget() { return widget_; }
+    Fl_Widget *widget() const { return widget_; }
 
     short row() const { return row_; }
     short col() const { return col_; }

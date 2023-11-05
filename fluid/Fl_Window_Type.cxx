@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+extern Fl_Window *the_panel;
 extern void draw_width(int x, int y, int r, Fl_Align a);
 extern void draw_height(int x, int y, int b, Fl_Align a);
 
@@ -857,6 +858,7 @@ extern Fl_Menu_Item New_Menu[];
  */
 void Fl_Window_Type::moveallchildren(int key)
 {
+  bool update_widget_panel = false;
   undo_checkpoint();
   Fl_Type *i;
   for (i=next; i && i->level>level;) {
@@ -915,6 +917,7 @@ void Fl_Window_Type::moveallchildren(int key)
         allow_layout++;
         g->layout();
         allow_layout--;
+        update_widget_panel = true;
       } else if (myo->parent && myo->parent->is_a(ID_Group)) {
         Fl_Group_Type* gt = (Fl_Group_Type*)myo->parent;
         ((Fl_Group*)gt->o)->init_sizes();
@@ -942,6 +945,9 @@ void Fl_Window_Type::moveallchildren(int key)
   dx = dy = 0;
 
   update_xywh();
+  if (update_widget_panel && the_panel && the_panel->visible()) {
+    propagate_load(the_panel, LOAD);
+  }
 }
 
 int Fl_Window_Type::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)

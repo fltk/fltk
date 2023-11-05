@@ -44,7 +44,7 @@ decl {extern void set_modflag(int mf, int mfc=-1);} {private local
 }
 
 Function {make_widget_panel()} {
-  comment {Create a panel that can be used with all known widgets} open
+  comment {Create a panel that can be used with all known widgets} open selected
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
@@ -835,12 +835,12 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11
+        xywh {10 30 400 330} labelsize 11 hide
       } {
         Fl_Group {} {
           label {Location:}
           callback propagate_load open
-          xywh {95 60 315 20} labelfont 1 labelsize 11 align 4
+          xywh {95 60 315 20} box FLAT_BOX labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_grid_row_input {
             label {Row:}
@@ -888,6 +888,27 @@ wCallback->do_callback(wCallback, v);} open
           }
           Fl_Box {} {
             xywh {395 60 1 20} hide resizable
+          }
+          Fl_Box widget_grid_transient {
+            label TRANSIENT
+            callback {if (v==LOAD) {
+  Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
+  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Grid::Cell *cell = g->cell(child);
+  Fl_Grid::Cell *tcell = g->transient_cell(child);
+  widget_grid_transient->hide();
+  widget_grid_unlinked->hide();
+  if (g->transient_cell(child)) {
+    widget_grid_transient->show();
+  } else if (!g->cell(child)) {
+    widget_grid_unlinked->show();
+  }
+}}
+            xywh {250 60 80 20} labelsize 11 labelcolor 1
+          }
+          Fl_Box widget_grid_unlinked {
+            label UNLINKED
+            xywh {250 60 80 20} labelsize 11 labelcolor 1 hide
           }
         }
         Fl_Group {} {
@@ -943,7 +964,7 @@ wCallback->do_callback(wCallback, v);} open
             }
             MenuItem {} {
               label GRID_FILL
-              user_data FL_GRID_VERTICAL user_data_type long selected
+              user_data FL_GRID_VERTICAL user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
           }
@@ -1032,7 +1053,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid {
         label Grid
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 hide
+        xywh {10 30 400 330} labelsize 11
       } {
         Fl_Group {} {
           label {Grid Layout:}
@@ -1160,6 +1181,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(&old_m, NULL, NULL, NULL); 
   if (m != old_m) {
+    undo_checkpoint();
     grid->margin(m, -1, -1, -1); 
     grid->need_layout(true);
     set_modflag(1);
@@ -1179,6 +1201,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(NULL, &old_m, NULL, NULL); 
   if (m != old_m) {
+    undo_checkpoint();
     grid->margin(-1, m, -1, -1); 
     grid->need_layout(true);
     set_modflag(1);
@@ -1198,6 +1221,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(NULL, NULL, &old_m, NULL); 
   if (m != old_m) {
+    undo_checkpoint();
     grid->margin(-1, -1, m, -1); 
     grid->need_layout(true);
     set_modflag(1);
@@ -1217,6 +1241,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(NULL, NULL, NULL, &old_m);
   if (m != old_m) {
+    undo_checkpoint();
     grid->margin(-1, -1, -1, m);
     grid->need_layout(true);
     set_modflag(1);
@@ -1245,6 +1270,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m, m2;
   grid->gap(&old_m, &m2);
   if (m != old_m) {
+    undo_checkpoint();
     grid->gap(m, m2);
     grid->need_layout(true);
     set_modflag(1);
@@ -1264,6 +1290,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m, m2;
   grid->gap(&m2, &old_m);
   if (m != old_m) {
+    undo_checkpoint();
     grid->gap(m2, m);
     grid->need_layout(true);
     set_modflag(1);
@@ -1345,6 +1372,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->row_height(r);
   if (h < 0) h = 0;
   if (h != old_h) {
+    undo_checkpoint();
     grid->row_height(r, h);
     grid->need_layout(true);
     set_modflag(1);
@@ -1364,6 +1392,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->row_weight(r);
   if (h < 0) h = 0;
   if (h != old_h) {
+    undo_checkpoint();
     grid->row_weight(r, h);
     grid->need_layout(true);
     set_modflag(1); 
@@ -1383,6 +1412,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->row_gap(r);
   if (h < -1) h = -1;
   if (h != old_h) {
+    undo_checkpoint();
     grid->row_gap(r, h);
     grid->need_layout(true);
     set_modflag(1);
@@ -1458,6 +1488,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->col_width(c);
   if (h < 0) h = 0;
   if (h != old_h) {
+    undo_checkpoint();
     grid->col_width(c, h);
     grid->need_layout(true);
     set_modflag(1);
@@ -1477,6 +1508,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->col_weight(c);
   if (h < 0) h = 0;
   if (h != old_h) {
+    undo_checkpoint();
     grid->col_weight(c, h);
     grid->need_layout(true);
     set_modflag(1);
@@ -1496,6 +1528,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->col_gap(c);
   if (h < -1) h = -1;
   if (h != old_h) {
+    undo_checkpoint();
     grid->col_gap(c, h);
     grid->need_layout(true);
     set_modflag(1);

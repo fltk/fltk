@@ -123,6 +123,26 @@ Fluid_Coord_Input *widget_grid_row_input=(Fluid_Coord_Input *)0;
 
 Fluid_Coord_Input *widget_grid_col_input=(Fluid_Coord_Input *)0;
 
+Fl_Box *widget_grid_transient=(Fl_Box *)0;
+
+static void cb_widget_grid_transient(Fl_Box* o, void* v) {
+  if (v==LOAD) {
+    Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
+    Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
+    Fl_Grid::Cell *cell = g->cell(child);
+    Fl_Grid::Cell *tcell = g->transient_cell(child);
+    widget_grid_transient->hide();
+    widget_grid_unlinked->hide();
+    if (g->transient_cell(child)) {
+      widget_grid_transient->show();
+    } else if (!g->cell(child)) {
+      widget_grid_unlinked->show();
+    }
+  }
+}
+
+Fl_Box *widget_grid_unlinked=(Fl_Box *)0;
+
 Fl_Menu_Item menu_Horizontal[] = {
  {"GRID_LEFT", 0,  0, (void*)(FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"GRID_CENTER", 0,  0, (void*)(FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -240,6 +260,7 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(&old_m, NULL, NULL, NULL); 
     if (m != old_m) {
+      undo_checkpoint();
       grid->margin(m, -1, -1, -1); 
       grid->need_layout(true);
       set_modflag(1);
@@ -258,6 +279,7 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(NULL, &old_m, NULL, NULL); 
     if (m != old_m) {
+      undo_checkpoint();
       grid->margin(-1, m, -1, -1); 
       grid->need_layout(true);
       set_modflag(1);
@@ -276,6 +298,7 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(NULL, NULL, &old_m, NULL); 
     if (m != old_m) {
+      undo_checkpoint();
       grid->margin(-1, -1, m, -1); 
       grid->need_layout(true);
       set_modflag(1);
@@ -294,6 +317,7 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(NULL, NULL, NULL, &old_m);
     if (m != old_m) {
+      undo_checkpoint();
       grid->margin(-1, -1, -1, m);
       grid->need_layout(true);
       set_modflag(1);
@@ -312,6 +336,7 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m, m2;
     grid->gap(&old_m, &m2);
     if (m != old_m) {
+      undo_checkpoint();
       grid->gap(m, m2);
       grid->need_layout(true);
       set_modflag(1);
@@ -330,6 +355,7 @@ static void cb_Col(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m, m2;
     grid->gap(&m2, &old_m);
     if (m != old_m) {
+      undo_checkpoint();
       grid->gap(m2, m);
       grid->need_layout(true);
       set_modflag(1);
@@ -390,6 +416,7 @@ static void cb_Height(Fluid_Coord_Input* o, void* v) {
     int h = o->value(), old_h = grid->row_height(r);
     if (h < 0) h = 0;
     if (h != old_h) {
+      undo_checkpoint();
       grid->row_height(r, h);
       grid->need_layout(true);
       set_modflag(1);
@@ -407,6 +434,7 @@ static void cb_Weight(Fluid_Coord_Input* o, void* v) {
     int h = o->value(), old_h = grid->row_weight(r);
     if (h < 0) h = 0;
     if (h != old_h) {
+      undo_checkpoint();
       grid->row_weight(r, h);
       grid->need_layout(true);
       set_modflag(1); 
@@ -424,6 +452,7 @@ static void cb_Gap(Fluid_Coord_Input* o, void* v) {
     int h = o->value(), old_h = grid->row_gap(r);
     if (h < -1) h = -1;
     if (h != old_h) {
+      undo_checkpoint();
       grid->row_gap(r, h);
       grid->need_layout(true);
       set_modflag(1);
@@ -473,6 +502,7 @@ static void cb_Width(Fluid_Coord_Input* o, void* v) {
     int h = o->value(), old_h = grid->col_width(c);
     if (h < 0) h = 0;
     if (h != old_h) {
+      undo_checkpoint();
       grid->col_width(c, h);
       grid->need_layout(true);
       set_modflag(1);
@@ -490,6 +520,7 @@ static void cb_Weight1(Fluid_Coord_Input* o, void* v) {
     int h = o->value(), old_h = grid->col_weight(c);
     if (h < 0) h = 0;
     if (h != old_h) {
+      undo_checkpoint();
       grid->col_weight(c, h);
       grid->need_layout(true);
       set_modflag(1);
@@ -507,6 +538,7 @@ static void cb_Gap1(Fluid_Coord_Input* o, void* v) {
     int h = o->value(), old_h = grid->col_gap(c);
     if (h < -1) h = -1;
     if (h != old_h) {
+      undo_checkpoint();
       grid->col_gap(c, h);
       grid->need_layout(true);
       set_modflag(1);
@@ -1415,7 +1447,9 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
         widget_tab_grid_child->labelsize(11);
         widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
+        widget_tab_grid_child->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
+          o->box(FL_FLAT_BOX);
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
@@ -1480,6 +1514,16 @@ access the Widget pointer and \'v\' to access the user value.");
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
+          { widget_grid_transient = new Fl_Box(250, 60, 80, 20, "TRANSIENT");
+            widget_grid_transient->labelsize(11);
+            widget_grid_transient->labelcolor((Fl_Color)1);
+            widget_grid_transient->callback((Fl_Callback*)cb_widget_grid_transient);
+          } // Fl_Box* widget_grid_transient
+          { widget_grid_unlinked = new Fl_Box(250, 60, 80, 20, "UNLINKED");
+            widget_grid_unlinked->labelsize(11);
+            widget_grid_unlinked->labelcolor((Fl_Color)1);
+            widget_grid_unlinked->hide();
+          } // Fl_Box* widget_grid_unlinked
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 90, 315, 30, "Align:");
@@ -1623,7 +1667,6 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
         widget_tab_grid->labelsize(11);
         widget_tab_grid->callback((Fl_Callback*)propagate_load);
-        widget_tab_grid->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Grid Layout:");
           o->labelfont(1);
           o->labelsize(11);

@@ -423,7 +423,7 @@ int Widget_Browser::item_width(void *v) const {
 }
 
 /**
- Callback to tell the FLuid UI when the list of selected items changed.
+ Callback to tell the Fluid UI when the list of selected items changed.
  */
 void Widget_Browser::callback() {
   selection_changed((Fl_Type*)selection());
