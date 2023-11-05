@@ -16,6 +16,7 @@
 
 #include "code.h"
 
+#include "fluid.h"
 #include "Fl_Group_Type.h"
 #include "Fl_Window_Type.h"
 #include "Fl_Function_Type.h"
