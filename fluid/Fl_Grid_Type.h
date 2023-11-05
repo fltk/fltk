@@ -25,11 +25,24 @@
 extern const char grid_type_name[];
 
 class Fl_Grid_Proxy : public Fl_Grid {
+protected:
+  typedef struct { Fl_Widget *widget; Cell *cell; } Cell_Widget_Pair;
+  Cell_Widget_Pair *transient_;
+  int num_transient_;
+  int cap_transient_;
+  void transient_make_room_(int n);
+  void transient_remove_(Fl_Widget *w);
 public:
-  Fl_Grid_Proxy(int X,int Y,int W,int H) : Fl_Grid(X,Y,W,H) {}
+  Fl_Grid_Proxy(int X,int Y,int W,int H);
+  ~Fl_Grid_Proxy();
   void resize(int,int,int,int) FL_OVERRIDE;
   void draw() FL_OVERRIDE;
   void draw_overlay();
+  void move_cell(Fl_Widget *child, int to_row, int to_col, int how = 0);
+  Cell* any_cell(Fl_Widget *widget) const;
+  Cell* transient_widget(Fl_Widget *wi, int row, int col, int row_span, int col_span, Fl_Grid_Align align = FL_GRID_FILL);
+  Cell* widget(Fl_Widget *wi, int row, int col, Fl_Grid_Align align = FL_GRID_FILL);
+  Cell* widget(Fl_Widget *wi, int row, int col, int rowspan, int colspan, Fl_Grid_Align align = FL_GRID_FILL);
 };
 
 class Fl_Grid_Type : public Fl_Group_Type

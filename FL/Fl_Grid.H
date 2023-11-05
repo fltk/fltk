@@ -159,16 +159,29 @@ public:
 
   public:
 
-    Cell(int row, int col) {
+    void Cell_() {
       next_ = NULL;
-      row_ = row;
-      col_ = col;
+      row_ = 0;
+      col_ = 0;
       rowspan_ = 1;
       colspan_ = 1;
       widget_ = NULL;
       w_ = 0;
       h_ = 0;
       align_ = 0;
+    }
+
+    Cell(int row, int col) {
+      Cell_();
+      row_ = row;
+      col_ = col;
+    }
+
+    Cell(Fl_Widget *w, int row, int col) {
+      Cell_();
+      widget_ = w;
+      row_ = row;
+      col_ = col;
     }
 
     ~Cell() {}
@@ -211,7 +224,7 @@ protected:
   Fl_Color grid_color;        // color for drawing the grid lines (design helper)
   bool draw_grid_;            // draw the grid for testing / design
 
-private:
+protected:
   void init();
   Cell *add_cell(int row, int col);
   void remove_cell(int row, int col);

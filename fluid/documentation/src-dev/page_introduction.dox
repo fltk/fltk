@@ -64,4 +64,23 @@
 
  ...
 
+ ## Wish List ##
+
+ I call this a wish list because I write my wishes down as I go. There is no
+ verification yet, or alternative ideas.
+
+ - group source files into subdirectories
+    - all panels should have their own folder
+    - all custom widgets
+    - all file and stream operations
+    - all utilities and tools
+ - move to C++17 and use std::string, vector, map, ...
+ - Fl_Type::write#() could go into a single write function with an enum to
+   describe what needs to be written to make thing logical and expandable
+ - better error handling in all file classes
+ - separate FLUID generated files form the core and build a shell-only version
+ - individual event handling for types
+ - individual overlay drawing for types
+ - plug-ins for new types
+
  */

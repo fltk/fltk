@@ -282,7 +282,7 @@ Examples:
         }
         Fl_Check_Button ghosted_outline_button {
           label {Show Ghosted Group Outlines}
-          callback toggle_ghosted_outline_cb selected
+          callback toggle_ghosted_outline_cb
           tooltip {groups with no box type or flat boxtypes without contrast will be rendered with a dim outline in the editing window only} xywh {120 340 200 20} down_box DOWN_BOX labelsize 11
           code0 {o->value(show_ghosted_outline);}
         }
@@ -1562,6 +1562,36 @@ settings_window->hide();}
       }
       Fl_Box {} {
         xywh {220 550 10 20} hide resizable
+      }
+    }
+  }
+  Fl_Window {} {open
+    xywh {646 417 480 320} type Double visible
+  } {
+    Fl_Grid {} {open
+      xywh {25 25 240 160}
+      dimensions {3 3}
+    } {
+      Fl_Button {} {
+        label Button
+        xywh {25 25 80 66}
+        parent_properties {
+          location {0 0}
+        }
+      }
+      Fl_Light_Button {} {
+        label Button
+        xywh {105 25 80 66}
+        parent_properties {
+          location {0 1}
+        }
+      }
+      Fl_Button {} {
+        label Button selected
+        xywh {185 25 80 66}
+        parent_properties {
+          location {0 2}
+        }
       }
     }
   }
