@@ -34,6 +34,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     This supports desktops mixing screens with distinct resolutions.
     In addition, use environment variable FLTK_SCALING_FACTOR to further adjust
     the starting scaling factor of all FLTK apps.
+  - New Fl_Grid class to layout multiple columns and rows of widgets.
   - New Fl_Flex class to layout one row or one column of widgets.
   - New Fl::keyboard_screen_scaling(0) call stops recognition of ctrl/+/-/0/
     keystrokes as scaling all windows of a screen.
@@ -51,6 +52,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - New Fl_ICO_Image class to read Windows .ico icon files.
   - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
     graphics to SVG or EPS files, respectively.
+  - New member functions Fl_Window::maximize(), Fl_Window::un_maximize() and
+    Fl_Window::maximize_active() to programmatically manage window maximization.
   - Fl_Button now supports a compact flag that visually groups closely set
     buttons into keypads.
   - Fl_Tabs widget now supports close buttons for individual tabs.

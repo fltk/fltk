@@ -103,7 +103,7 @@ public:
   void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
   void maximize() FL_OVERRIDE;
   void un_maximize() FL_OVERRIDE;
-  virtual bool maximize_needs_hide() FL_OVERRIDE { return true; }
+  bool maximize_needs_hide() FL_OVERRIDE { return true; }
   void iconize() FL_OVERRIDE;
   void decoration_sizes(int *top, int *left,  int *right, int *bottom) FL_OVERRIDE;
   // --- window cursor stuff
