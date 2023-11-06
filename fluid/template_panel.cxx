@@ -140,9 +140,9 @@ Fl_Double_Window* make_template_panel() {
       template_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       template_browser->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
     } // Fl_Browser* template_browser
-    { template_preview = new Fl_Box(200, 28, 250, 250);
+    { template_preview = new Fl_Box(200, 28, 250, 250, "no preview...");
       template_preview->box(FL_THIN_DOWN_BOX);
-      template_preview->align(Fl_Align(69|FL_ALIGN_INSIDE));
+      template_preview->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
       Fl_Group::current()->resizable(template_preview);
     } // Fl_Box* template_preview
     { template_name = new Fl_Input(198, 288, 252, 25, "Template Name:");
@@ -221,7 +221,7 @@ void template_load() {
   int sample_templates_generated = 0;
   fluid_prefs.get("sample_templates_generated", sample_templates_generated, 0);
 
-  if (!sample_templates_generated) {
+  if (sample_templates_generated < 2) {
     strcpy(filename, path);
     strcat(filename, "/FLTK_License.fl");
     FILE *f = fopen(filename, "wb");
@@ -237,7 +237,23 @@ void template_load() {
   "er\n}\n", f);
       fclose(f);
     }
-    sample_templates_generated = 1;
+    strcpy(filename, path);
+    strcat(filename, "/1of7GUIs.fl");
+    f = fopen(filename, "wb");
+    if (f) {
+      fputs(
+  "# data file for the Fltk User Interface Designer (fluid)\n version 1.0400\n header_name {.h}\n"
+  "code_name {.cxx}\n comment {\n1 of 7GUIs\n\n7GUIs was been created as a spin-off of the master’s\n"
+  "thesis Comparison of Object-Oriented and Functional\nProgramming for GUI Development by Eugen Kiss at the\n"
+  "Human-Computer Interaction group of the Leibniz\nUniversität Hannover in 2014.\n\n"
+  "https://7guis.github.io/7guis/\n} {selected in_source not_in_header\n}\n\nFunction {} {open\n"
+  "} {\nFl_Window {} {\nlabel Counter open\nxywh {486 292 194 55} type Double resizable visible\n"
+  "} {\nFl_Output counter_widget {\nxywh {15 15 80 22}\ncode0 {counter_widget->value(0);}\n"
+  "}\nFl_Button {} {\nlabel Count\ncallback {int i = counter_widget->ivalue();\ni++;\n"
+  "counter_widget->value(i);}\nxywh {99 15 80 22}\n}\n}\n}\n", f);
+      fclose(f);
+    }  
+    sample_templates_generated = 2;
     fluid_prefs.set("sample_templates_generated", sample_templates_generated);
     fluid_prefs.flush();
   }

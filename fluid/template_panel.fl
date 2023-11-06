@@ -68,7 +68,7 @@ template_preview->image(0);
 template_browser->deselect();
 template_name->value("");
 template_instance->value("");
-template_panel->hide();}
+template_panel->hide();} open
     xywh {478 284 460 355} type Double resizable modal visible
   } {
     Fl_Browser template_browser {
@@ -120,7 +120,8 @@ if (img) {
       xywh {10 28 180 250} type Hold labelfont 1 align 5 when 3
     }
     Fl_Box template_preview {
-      xywh {200 28 250 250} box THIN_DOWN_BOX align 85 resizable
+      label {no preview...} selected
+      xywh {200 28 250 250} box THIN_DOWN_BOX align 80 resizable
     }
     Fl_Input template_name {
       label {Template Name:}
@@ -134,7 +135,7 @@ if (img) {
       label {Instance Name:}
       xywh {198 288 252 25} labelfont 1 textfont 4 hide
     }
-    Fl_Group {} {
+    Fl_Group {} {open
       xywh {10 323 440 25}
     } {
       Fl_Button template_delete {
@@ -217,7 +218,7 @@ strlcat(path, "templates", sizeof(path));
 int sample_templates_generated = 0;
 fluid_prefs.get("sample_templates_generated", sample_templates_generated, 0);
 
-if (!sample_templates_generated) {
+if (sample_templates_generated < 2) {
   strcpy(filename, path);
   strcat(filename, "/FLTK_License.fl");
   FILE *f = fopen(filename, "wb");
@@ -233,7 +234,23 @@ if (!sample_templates_generated) {
 "er\\n}\\n", f);
     fclose(f);
   }
-  sample_templates_generated = 1;
+  strcpy(filename, path);
+  strcat(filename, "/1of7GUIs.fl");
+  f = fopen(filename, "wb");
+  if (f) {
+    fputs(
+"\# data file for the Fltk User Interface Designer (fluid)\\n version 1.0400\\n header_name {.h}\\n"
+"code_name {.cxx}\\n comment {\\n1 of 7GUIs\\n\\n7GUIs was been created as a spin-off of the master’s\\n"
+"thesis Comparison of Object-Oriented and Functional\\nProgramming for GUI Development by Eugen Kiss at the\\n"
+"Human-Computer Interaction group of the Leibniz\\nUniversität Hannover in 2014.\\n\\n"
+"https://7guis.github.io/7guis/\\n} {selected in_source not_in_header\\n}\\n\\nFunction {} {open\\n"
+"} {\\nFl_Window {} {\\nlabel Counter open\\nxywh {486 292 194 55} type Double resizable visible\\n"
+"} {\\nFl_Output counter_widget {\\nxywh {15 15 80 22}\\ncode0 {counter_widget->value(0);}\\n"
+"}\\nFl_Button {} {\\nlabel Count\\ncallback {int i = counter_widget->ivalue();\\ni++;\\n"
+"counter_widget->value(i);}\\nxywh {99 15 80 22}\\n}\\n}\\n}\\n", f);
+    fclose(f);
+  }  
+  sample_templates_generated = 2;
   fluid_prefs.set("sample_templates_generated", sample_templates_generated);
   fluid_prefs.flush();
 }
@@ -259,6 +276,5 @@ for (i = 0; i < num_files; i ++) {
   free(files[i]);
 }
 
-if (num_files > 0) free(files);} {selected
-  }
+if (num_files > 0) free(files);} {}
 }

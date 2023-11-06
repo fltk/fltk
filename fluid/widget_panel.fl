@@ -44,7 +44,7 @@ decl {extern void set_modflag(int mf, int mfc=-1);} {private local
 }
 
 Function {make_widget_panel()} {
-  comment {Create a panel that can be used with all known widgets} open selected
+  comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
@@ -58,8 +58,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
+        callback propagate_load selected
+        xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -1053,7 +1053,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid {
         label Grid
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11
+        xywh {10 30 400 330} labelsize 11 hide
       } {
         Fl_Group {} {
           label {Grid Layout:}

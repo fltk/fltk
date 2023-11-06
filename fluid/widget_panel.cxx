@@ -573,7 +573,6 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1667,6 +1666,7 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid = new Fl_Group(10, 30, 400, 330, "Grid");
         widget_tab_grid->labelsize(11);
         widget_tab_grid->callback((Fl_Callback*)propagate_load);
+        widget_tab_grid->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Grid Layout:");
           o->labelfont(1);
           o->labelsize(11);

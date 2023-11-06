@@ -1463,6 +1463,54 @@ int Fl_Input_::value(const char* str) {
 }
 
 /**
+ Changes the widget text to a signed integer number.
+
+ \param [in] v the new value
+ \return non-zero if the new value is different than the current one
+ \see Fl_Input_::value(const char* str), Fl_Input_::ivalue()
+ */
+int Fl_Input_::value(int v) {
+  char buf[64];
+  snprintf(buf, sizeof(buf)-1, "%d", v);
+  return value(buf);
+}
+
+/**
+ Changes the widget text to a floating point number ("%g").
+
+ \param [in] v the new value
+ \return non-zero if the new value is different than the current one
+ \see Fl_Input_::value(const char* str), Fl_Input_::ivalue()
+ */
+int Fl_Input_::value(double v) {
+  char buf[64];
+  snprintf(buf, sizeof(buf)-1, "%g", v);
+  return value(buf);
+}
+
+/**
+ Returns the widget text interpreted as a signed integer.
+
+ \return signed integer value
+ \see Fl_Input_::dvalue()
+ \see Fl_Input_::value(int)
+ */
+int Fl_Input_::ivalue() const {
+  return atoi(value());
+}
+
+/**
+ Returns the widget text interpreted as a floating point number.
+
+ \return double precision floating point value
+ \see Fl_Input_::ivalue()
+ \see Fl_Input_::value(double)
+ */
+int Fl_Input_::dvalue() const {
+  return atof(value());
+}
+
+/**
   Changes the size of the widget.
   This call updates the text layout so that the cursor is visible.
   \param [in] X, Y, W, H new size of the widget
