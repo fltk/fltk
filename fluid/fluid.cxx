@@ -946,7 +946,7 @@ bool new_project_from_template() {
       char line[1024], *ptr, *next;
       FILE *infile, *outfile;
 
-      if ((infile = fl_fopen(tname, "r")) == NULL) {
+      if ((infile = fl_fopen(tname, "rb")) == NULL) {
         fl_alert("Error reading template file \"%s\":\n%s", tname,
                  strerror(errno));
         set_modflag(0);
@@ -954,7 +954,7 @@ bool new_project_from_template() {
         return false;
       }
 
-      if ((outfile = fl_fopen(cutfname(1), "w")) == NULL) {
+      if ((outfile = fl_fopen(cutfname(1), "wb")) == NULL) {
         fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
                  strerror(errno));
         fclose(infile);

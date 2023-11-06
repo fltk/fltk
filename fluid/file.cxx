@@ -143,7 +143,7 @@ int Fd_Project_Reader::open_read(const char *s) {
     fin = stdin;
     fname = "stdin";
   } else {
-    FILE *f = fl_fopen(s, "r");
+    FILE *f = fl_fopen(s, "rb");
     if (!f)
       return 0;
     fin = f;
@@ -181,7 +181,7 @@ const char *Fd_Project_Reader::filename_name() {
  */
 int Fd_Project_Reader::read_quoted() {      // read whatever character is after a \ .
   int c,d,x;
-  switch(c = fgetc(fin)) {
+  switch(c = nextchar()) {
     case '\n': lineno++; return -1;
     case 'a' : return('\a');
     case 'b' : return('\b');
@@ -192,7 +192,7 @@ int Fd_Project_Reader::read_quoted() {      // read whatever character is after 
     case 'v' : return('\v');
     case 'x' :    /* read hex */
       for (c=x=0; x<3; x++) {
-        int ch = fgetc(fin);
+        int ch = nextchar();
         d = hexdigit(ch);
         if (d > 15) {ungetc(ch,fin); break;}
         c = (c<<4)+d;
@@ -202,7 +202,7 @@ int Fd_Project_Reader::read_quoted() {      // read whatever character is after 
       if (c<'0' || c>'7') break;
       c -= '0';
       for (x=0; x<2; x++) {
-        int ch = fgetc(fin);
+        int ch = nextchar();
         d = hexdigit(ch);
         if (d>7) {ungetc(ch,fin); break;}
         c = (c<<3)+d;
@@ -512,11 +512,11 @@ const char *Fd_Project_Reader::read_word(int wantbrace) {
 
   // skip all the whitespace before it:
   for (;;) {
-    x = getc(fin);
+    x = nextchar();
     if (x < 0 && feof(fin)) {   // eof
       return 0;
     } else if (x == '#') {      // comment
-      do x = getc(fin); while (x >= 0 && x != '\n');
+      do x = nextchar(); while (x >= 0 && x != '\n');
       lineno++;
       continue;
     } else if (x == '\n') {
@@ -534,10 +534,10 @@ const char *Fd_Project_Reader::read_word(int wantbrace) {
     int length = 0;
     int nesting = 0;
     for (;;) {
-      x = getc(fin);
+      x = nextchar();
       if (x<0) {read_error("Missing '}'"); break;}
       else if (x == '#') { // embedded comment
-        do x = getc(fin); while (x >= 0 && x != '\n');
+        do x = nextchar(); while (x >= 0 && x != '\n');
         lineno++;
         continue;
       } else if (x == '\n') lineno++;
@@ -565,7 +565,7 @@ const char *Fd_Project_Reader::read_word(int wantbrace) {
       else if (x<0 || isspace(x & 255) || x=='{' || x=='}' || x=='#') break;
       buffer[length++] = x;
       expand_buffer(length);
-      x = getc(fin);
+      x = nextchar();
     }
     ungetc(x, fin);
     buffer[length] = 0;
@@ -598,7 +598,7 @@ int Fd_Project_Reader::read_fdesign_line(const char*& name, const char*& value) 
   int x;
   // find a colon:
   for (;;) {
-    x = getc(fin);
+    x = nextchar();
     if (x < 0 && feof(fin)) return 0;
     if (x == '\n') {length = 0; continue;} // no colon this line...
     if (!isspace(x & 255)) {
@@ -612,7 +612,7 @@ int Fd_Project_Reader::read_fdesign_line(const char*& name, const char*& value) 
 
   // skip to start of value:
   for (;;) {
-    x = getc(fin);
+    x = nextchar();
     if ((x < 0 && feof(fin)) || x == '\n' || !isspace(x & 255)) break;
   }
 
@@ -622,7 +622,7 @@ int Fd_Project_Reader::read_fdesign_line(const char*& name, const char*& value) 
     else if (x == '\n') break;
     buffer[length++] = x;
     expand_buffer(length);
-    x = getc(fin);
+    x = nextchar();
   }
   buffer[length] = 0;
   name = buffer;
@@ -799,7 +799,7 @@ int Fd_Project_Writer::open_write(const char *s) {
   if (!s) {
     fout = stdout;
   } else {
-    FILE *f = fl_fopen(s,"w");
+    FILE *f = fl_fopen(s,"wb");
     if (!f) return 0;
     fout = f;
   }

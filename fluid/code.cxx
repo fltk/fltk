@@ -61,7 +61,7 @@ int write_strings(const Fl_String &filename) {
   Fl_Widget_Type *w;
   int i;
 
-  FILE *fp = fl_fopen(filename.c_str(), "w");
+  FILE *fp = fl_fopen(filename.c_str(), "wb");
   if (!fp) return 1;
 
   switch (g_project.i18n_type) {
@@ -743,22 +743,19 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
  */
 int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview) {
   write_sourceview = to_sourceview;
-  const char *filemode = "w";
-  if (write_sourceview)
-    filemode = "wb";
   delete id_root; id_root = 0;
   indentation = 0;
   current_class = 0L;
   current_widget_class = 0L;
   if (!s) code_file = stdout;
   else {
-    FILE *f = fl_fopen(s, filemode);
+    FILE *f = fl_fopen(s, "wb");
     if (!f) return 0;
     code_file = f;
   }
   if (!t) header_file = stdout;
   else {
-    FILE *f = fl_fopen(t, filemode);
+    FILE *f = fl_fopen(t, "wb");
     if (!f) {fclose(code_file); return 0;}
     header_file = f;
   }

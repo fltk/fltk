@@ -443,7 +443,7 @@ int Fd_Mergeback::apply() {
  */
 int Fd_Mergeback::merge_back(const Fl_String &s, const Fl_String &p, int task) {
   int ret = 0;
-  code = fl_fopen(s.c_str(), "r");
+  code = fl_fopen(s.c_str(), "rb");
   if (!code) return -2;
   do { // no actual loop, just make sure we close the code file
     if (task == FD_MERGEBACK_ANALYSE) {

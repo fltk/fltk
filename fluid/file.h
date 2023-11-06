@@ -44,6 +44,8 @@ protected:
 
   void expand_buffer(int length);
 
+  int nextchar() { for (;;) { int ret = fgetc(fin); if (ret!='\r') return ret; } }
+
 public:
   /// Holds the file version number after reading the "version" tag
   double read_version;
@@ -67,7 +69,7 @@ public:
 class Fd_Project_Writer
 {
 protected:
-  // Project output file, mode "w" for files, "wb" for SourceView
+  // Project output file, always opened in "wb" mode
   FILE *fout;
   /// If set, one space is written before text unless the format starts with a newline character
   int needspace;
