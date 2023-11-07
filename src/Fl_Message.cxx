@@ -259,6 +259,14 @@ void Fl_Message::resizeform() {
   if (w > max_w)
     max_w = w;
 
+  // if the button horizontally overlap the icon, make sure that they are drawn
+  // below to icon by making the text part at least as tall as the icon.
+  if (w > message_w && text_height < icon_size) {
+    int pad_h = icon_size-text_height;
+    message_h += pad_h;
+    text_height += pad_h;
+  }
+
   message_w = max_w - 10 - icon_size;
 
   w = max_w + 20;
