@@ -300,10 +300,9 @@ void Fl_Function_Type::open() {
     // - alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     // - copy dialog data to target variables
     int mod = 0;
@@ -630,10 +629,9 @@ void Fl_Code_Type::open() {
     message = c_check(c);
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) { free(c); goto BREAK2; } // Cancel Dialog
-      //if (v==1) { }                       // Ignore Error
-      if (v==2) { free(c); continue; }    // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     name(c);
     free(c);
@@ -812,10 +810,9 @@ void Fl_CodeBlock_Type::open() {
     // alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     // write to variables
     name(code_before_input->value());
@@ -968,10 +965,9 @@ void Fl_Decl_Type::open() {
     // alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     // copy vlaues
     name(c);
@@ -1208,11 +1204,10 @@ void Fl_Data_Type::open() {
     if (n==q) {
     OOPS:
       int v = fl_choice("%s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing",
+                        "Continue Editing", "Ignore Error", NULL,
                         "Variable name must be a C identifier");
-      if (v==0) { free(s); goto BREAK2; } // Cancel Dialog
-      //if (v==1) { }                       // Ignore Error
-      if (v==2) { free(s); continue; }    // Continue Editing
+      if (v==0) { free(s); continue; }    // Continue Editing
+      //if (v==1) { }                     // Ignore Error and close dialog
     }
     name(n);
     free(s);
@@ -1468,10 +1463,9 @@ void Fl_DeclBlock_Type::open() {
       message = c_check(b&&b[0]=='#' ? b+1 : b);
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     name(a);
     storestring(b, after);

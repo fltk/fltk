@@ -2154,9 +2154,10 @@ int main(int argc,char **argv) {
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
   g_launch_path = end_with_slash(fl_getcwd()); // store the current path at launch
 
-  if (   (Fl::args(argc,argv,i,arg) == 0)   // unsupported argument found
-      || (batch_mode && (i != argc-1))      // .fl filename missing
-      || (!batch_mode && (i < argc-1)) ) {  // more than one filename found
+  if (   (Fl::args(argc,argv,i,arg) == 0)     // unsupported argument found
+      || (batch_mode && (i != argc-1))        // .fl filename missing
+      || (!batch_mode && (i < argc-1))        // more than one filename found
+      || (argv[i] && (argv[i][0] == '-'))) {  // unknown option
     static const char *msg =
       "usage: %s <switches> name.fl\n"
       " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"
