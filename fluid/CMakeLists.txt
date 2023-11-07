@@ -107,6 +107,7 @@ set ( USER_DOC_FILES
   documentation/src/page_widget_types.dox
   documentation/src/page_layout.dox
   documentation/src/page_code_integration.dox
+  documentation/src/page_build_integration.dox
   documentation/src/page_advanced.dox
   documentation/src/page_shortcuts.dox
   documentation/src/page_faqs.dox

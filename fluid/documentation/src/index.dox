@@ -35,7 +35,7 @@
 
  \subpage page_introduction
 
- _not yet_
+  - \ref introduction_workflow
 
  \subpage page_getting_started
 
@@ -58,6 +58,10 @@
  _not yet_
 
  \subpage page_code_integration
+
+ _not yet_
+
+ \subpage page_build_integration
 
  _not yet_
 
