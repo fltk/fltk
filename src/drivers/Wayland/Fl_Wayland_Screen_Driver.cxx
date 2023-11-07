@@ -1262,6 +1262,13 @@ static const struct wl_callback_listener sync_listener = {
 };
 
 
+static void do_atexit() {
+  if (Fl_Wayland_Screen_Driver::wl_display) {
+    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+  }
+}
+
+
 void Fl_Wayland_Screen_Driver::open_display_platform() {
   static bool beenHereDoneThat = false;
   if (beenHereDoneThat)
@@ -1286,10 +1293,19 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)wayland_socket_callback,
              wl_display);
   fl_create_print_window();
+  /* This is useful to avoid crash of the Wayland compositor after
+   FLTK apps terminate in certain situations:
+   - gnome-shell version < 44 (e.g. version 42.9)
+   - focus set to "follow-mouse"
+   See issue #821 for details.
+  */
+  atexit(do_atexit);
 }
 
 
 void Fl_Wayland_Screen_Driver::close_display() {
+  if (!Fl_Wayland_Screen_Driver::wl_display) return;
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   if (text_input_base) {
     disable_im();
     zwp_text_input_manager_v3_destroy(text_input_base);
