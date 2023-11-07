@@ -228,6 +228,7 @@ void Fl_Text_Display::linenumber_width(int width) {
   if (width < 0) return;
   mLineNumWidth = width;
   recalc_display();             // recalc line#s        // resize(x(), y(), w(), h());
+  if (width > 0) reset_absolute_top_line_number();
 }
 
 /**
