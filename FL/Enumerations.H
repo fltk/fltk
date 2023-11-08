@@ -1380,4 +1380,19 @@ enum Fl_Orientation {
   FL_ORIENT_SE    = 0x07  ///< GUI element pointing SE    (315°)
 };
 
+
+/**
+ Use these values in Fl_Widget::resize() to change the widget size at runtime,
+ based on the dimensions of the label or widget text.
+
+ \see Fl_Widget::resize(int x, int y, int w, int h)
+ \see Fl_Widget::parametric_resize(int &X, int &Y, int &W, int &H)
+ */
+#define FL_CURRENT_SIZE             0x01080000
+#define FL_LABEL_SIZE               0x02080000
+#define FL_TEXT_SIZE                0x03080000
+#define FL_CHILDREN_SIZE            0x04080000
+#define FL_SHRINK                   0x00100000
+#define FL_GROW                     0x00200000
+
 #endif

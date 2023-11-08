@@ -146,6 +146,9 @@ protected:
   void w(int v) {w_ = v;}
   /** Internal use only. Use position(int,int), size(int,int) or resize(int,int,int,int) instead. */
   void h(int v) {h_ = v;}
+public:
+  /* Complex resize option using hints and requests. */
+  void parametric_resize(int &X, int &Y, int &W, int &H);
   /** Gets the widget flags mask */
   unsigned int flags() const {return flags_;}
   /** Sets a flag in the flags mask */

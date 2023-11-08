@@ -133,7 +133,84 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   if (Fl_Group::current()) Fl_Group::current()->add(this);
 }
 
+/** Updates the size and position of widgets using hints and requests.
+
+ parametric_resize() handles additional information in the width and height
+ parameters of the resize request. Size request are created using predifined
+ macros and an optional delta value. For example,
+ `size(FL_CURRENT_SIZE+10, FL_LABEL_SIZE+10)` will resize the widget so that it
+ contains its label, wrapping at the current widget width, with a 10 pixel
+ margin added to the width and height. Deltas are always applied last.
+
+ Currently implemented are the following combinations:
+
+ | width | height |  |
+ |-------|--------|--|
+ | `int` or FL_CURRENT_SIZE | `int` or FL_CURRENT_SIZE | use the current size of the widget, possibly adding a delta value |
+ | `int` or FL_CURRENT_SIZE | FL_LABEL_SIZE | calculate the label height, wrapping the label at `width` |
+ | FL_LABEL_SIZE | FL_LABEL_SIZE | resize the widget, so it fits around the label text |
+
+ The size request can be or'd with the `FL_GROW` or `FL_SHRINK` hint, requesting
+ that the widget can only grow or shrink in size.
+
+ Planned requests include `FL_TEXT_SIZE` for `Fl_Input_`, `Fl_Text_Display`, and
+ derived widgets, and `FL_CHILDREN_SIZE` and `FL_CHILDREN_FIT` for widgets
+ derived from `Fl_Group`.
+
+ It may make sense to add requests for sibling coordinates, for example
+ `FL_SIBLING_BOTTOM` to generate the widget y coordinate below the previous
+ widget in the group.
+
+ For groups, it may make sense to differentiate between resizing only the group
+ widget, and resizing and changing the layout of the children. This could be
+ an additional `FL_GROW_...` hint.
+
+ This feature uses the fact that screen coordinates are not useful
+ beyond a 20 bit integer size. As the arguments for resize() are 32 bit, we can
+ use some of the remaining 12 bits to encode resizing hints and requests.
+ ```
+ 32        24        16        8         0
+ |----+----|----+----|----+----|----+----|
+ |0kkk|kkkk|rrgg|dddd|dddd|dddd|dddd|dddd|
+```
+ - bit 31 is 0 so negative coordinates don't spoil this scheme
+ - k = kind of request, 1..127, so that any positive value with any of bits
+ 24...30 set is marked as a resize request.
+ - r = reserved
+ - g = grow bits, if set for width or height, the widget and only shrink (1)
+ or grow(2) in size
+ - d = delta - 0x80000, and easy way to adjust the resulting size in a last step
+
+ \param[inout] X, Y widget position
+ \param[inout] W, H requests a widget size using tokens and returns the
+    calculated size
+ */
+void Fl_Widget::parametric_resize(int &X, int &Y, int &W, int &H) {
+  int ww = 0, hh = 0;
+  int w_type = W >> 24;
+  int w_grow = (W >> 20) & 3;
+  int w_delta = w_type ? (W & 0xfffff) - 0x80000 : 0;
+  int h_type = H >> 24;
+  int h_grow = (H >> 20) & 3;
+  int h_delta = h_type ? (H & 0xfffff) - 0x80000 : 0;
+  if (h_type == (FL_LABEL_SIZE>>24)) {  // label size
+    if (w_type == 0) ww = W;
+    else if (w_type == (FL_CURRENT_SIZE>>24)) ww = w_;
+    measure_label(ww, hh);
+    if (w_type == 0) ww = W;
+    else if (w_type == (FL_CURRENT_SIZE>>24)) ww = w_;
+  }
+  hh += h_delta;
+  if (h_grow==0 || (h_grow==1 && hh<h_) || (h_grow==2 && hh>h_)) H = hh;
+  else H = h_;
+  ww += w_delta;
+  if (w_grow==0 || (w_grow==1 && ww<w_) || (w_grow==2 && ww>w_)) W = ww;
+  else W = w_;
+}
+
 void Fl_Widget::resize(int X, int Y, int W, int H) {
+  if (((W > 0) && (W & 0x7f000000)) || ((H > 0) && (H & 0x7f000000)))
+    parametric_resize(X, Y, W, H);
   x_ = X; y_ = Y; w_ = W; h_ = H;
 }
 
@@ -156,7 +233,7 @@ int Fl_Widget::take_focus() {
 
 extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 
-/**
+/*
    Destroys the widget, taking care of throwing focus before if any.
    Destruction removes the widget from any parent group! And groups when
    destroyed destroy all their children. This is convenient and fast.
