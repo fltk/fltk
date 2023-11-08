@@ -1073,8 +1073,8 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
             id, &wl_shm_interface, 1);
 
   } else if (strcmp(interface, "wl_seat") == 0) {
-    if (version < 2) {
-      Fl::fatal("%s version 2 required but only version %i is available\n",
+    if (version < 3) {
+      Fl::fatal("%s version 3 required but only version %i is available\n",
                 interface, version);
     }
     if (!scr_driver->seat) scr_driver->seat =
@@ -1083,7 +1083,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 //fprintf(stderr, "registry_handle_global: seat=%p\n", scr_driver->seat);
     wl_list_init(&scr_driver->seat->pointer_outputs);
     scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id,
-                                                           &wl_seat_interface, 2);
+                                                           &wl_seat_interface, 3);
     scr_driver->seat->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (scr_driver->seat->xkb_context) {
       const char *locale = getenv("LC_ALL");
