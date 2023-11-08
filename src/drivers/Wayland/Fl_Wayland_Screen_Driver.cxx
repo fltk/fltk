@@ -122,7 +122,7 @@ static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *seat,
   struct wl_buffer *buffer;
   const int scale = seat->pointer_scale;
 
-  if (!seat->cursor_theme)
+  if (!seat->cursor_theme || !seat->wl_pointer)
     return;
 
   if (!wl_cursor) wl_cursor = seat->default_cursor;
