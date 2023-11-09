@@ -27,6 +27,10 @@
 #include "../src/libdecor.h"
 #include <pango/pangocairo.h>
 
+#ifndef HAVE_GTK
+#  define HAVE_GTK 0
+#endif
+
 #if USE_SYSTEM_LIBDECOR
 #include "../src/libdecor-plugin.h"
 enum zxdg_toplevel_decoration_v1_mode {
@@ -55,7 +59,7 @@ struct buffer { // identical in libdecor-cairo.c and libdecor-gtk.c
 
 const struct libdecor_plugin_description *fl_libdecor_plugin_description = NULL;
 
-#  ifdef HAVE_GTK
+#  if HAVE_GTK
 #    include <gtk/gtk.h>
 #    include "../src/plugins/gtk/libdecor-gtk.c"
 #  else
@@ -316,3 +320,112 @@ unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
   }
   return NULL;
 }
+
+
+/* === Beginning of code to add support of GTK Shell to libdecor-gtk === */
+#if HAVE_GTK && !USE_SYSTEM_LIBDECOR
+
+#  include "gtk-shell-client-protocol.h"
+
+static struct gtk_shell1 *gtk_shell = NULL;
+
+// libdecor's button member of wl_pointer_listener objects
+static void (*decor_pointer_button)(void*, struct wl_pointer *,
+                                    uint32_t ,
+                                    uint32_t ,
+                                    uint32_t ,
+                                    uint32_t);
+
+// FLTK's replacement for button member of wl_pointer_listener objects
+static void fltk_pointer_button(void *data,
+                                struct wl_pointer *wl_pointer,
+                                uint32_t serial,
+                                uint32_t time,
+                                uint32_t button,
+                                uint32_t state) {
+  struct seat *seat = data;
+  struct libdecor_frame_gtk *frame_gtk;
+  if (!seat->pointer_focus || !own_surface(seat->pointer_focus))
+    return;
+
+  frame_gtk = wl_surface_get_user_data(seat->pointer_focus);
+  if (!frame_gtk)
+    return;
+
+  if (button == BTN_MIDDLE && state == WL_POINTER_BUTTON_STATE_PRESSED) {
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell,
+                                                  frame_gtk->headerbar.wl_surface);
+    gtk_surface1_titlebar_gesture(gtk_surface, serial,
+                                  seat->wl_seat, GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
+    gtk_surface1_release(gtk_surface);
+    return;
+  } else if (button == BTN_RIGHT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell,
+                                                  frame_gtk->headerbar.wl_surface);
+    gtk_surface1_titlebar_gesture(gtk_surface, serial,
+                                  seat->wl_seat, GTK_SURFACE1_GESTURE_RIGHT_CLICK);
+    gtk_surface1_release(gtk_surface);
+    return;
+  } else if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
+    static uint32_t previous_click = 0;
+    if (previous_click && time - previous_click < 250) { // < 0.25 sec for dble clicks
+      previous_click = 0;
+      struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell,
+                                                    frame_gtk->headerbar.wl_surface);
+      gtk_surface1_titlebar_gesture(gtk_surface, serial,
+                                    seat->wl_seat, GTK_SURFACE1_GESTURE_DOUBLE_CLICK);
+      gtk_surface1_release(gtk_surface);
+      return;
+    }
+    previous_click = time;
+  }
+  decor_pointer_button(data, wl_pointer, serial, time, button, state);
+}
+
+
+struct wl_object { // copied from wayland-private.h
+  const struct wl_interface *interface;
+  const void *implementation;
+  uint32_t id;
+};
+
+#endif // HAVE_GTK && !USE_SYSTEM_LIBDECOR
+
+
+// replace libdecor's pointer_button by FLTK's
+void use_FLTK_pointer_button(struct libdecor_frame *frame) {
+#if HAVE_GTK && !USE_SYSTEM_LIBDECOR
+  static struct wl_pointer_listener *fltk_listener = NULL;
+  if (!gtk_shell || fltk_listener) return;
+  struct libdecor_frame_gtk *lfg = (struct libdecor_frame_gtk *)frame;
+  if (wl_list_empty(&lfg->plugin_gtk->seat_list)) return;
+  struct seat *seat;
+  wl_list_for_each(seat, &lfg->plugin_gtk->seat_list, link) {
+    break;
+  }
+  struct wl_object *object = (struct wl_object *)seat->wl_pointer;
+  if (!object) return;
+  struct wl_pointer_listener *decor_listener =
+      (struct wl_pointer_listener*)object->implementation;
+  fltk_listener =
+      (struct wl_pointer_listener*)malloc(sizeof(struct wl_pointer_listener));
+  // initialize FLTK's listener with libdecor's values
+  *fltk_listener = *decor_listener;
+  // memorize libdecor's button cb
+  decor_pointer_button = decor_listener->button;
+  // replace libdecor's button by FLTK's
+  fltk_listener->button = fltk_pointer_button;
+  // replace the pointer listener by a copy whose button member is FLTK's
+  object->implementation = fltk_listener;
+#endif // HAVE_GTK && !USE_SYSTEM_LIBDECOR
+}
+
+
+void bind_to_gtk_shell(struct wl_registry *wl_registry, uint32_t id) {
+#if HAVE_GTK && !USE_SYSTEM_LIBDECOR
+  gtk_shell = (struct gtk_shell1*)wl_registry_bind(wl_registry, id,
+                                              &gtk_shell1_interface, 5);
+#endif // HAVE_GTK && !USE_SYSTEM_LIBDECOR
+}
+
+/* === End of code to add support of GTK Shell to libdecor-gtk === */

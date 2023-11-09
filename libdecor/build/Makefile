@@ -18,7 +18,7 @@ include ../../makeinclude
 
 OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/xdg-decoration-protocol.o ../../src/xdg-shell-protocol.o \
-  ../../src/text-input-protocol.o cursor-settings.o os-compatibility.o
+  ../../src/text-input-protocol.o ../../src/gtk-shell-protocol.o cursor-settings.o os-compatibility.o
 
 PROTOCOLS = `pkg-config --variable=pkgdatadir wayland-protocols`
 
@@ -38,7 +38,7 @@ all : $(OBJECTS)
 depend:
 	: echo "libdecor/build: make depend..."
 
-fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c ../../src/xdg-decoration-protocol.c ../../src/text-input-protocol.c
+fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c ../../src/xdg-decoration-protocol.c ../../src/text-input-protocol.c ../../src/gtk-shell-protocol.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor.c -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"\"
 
 fl_libdecor-plugins.o : fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
@@ -75,10 +75,16 @@ cursor-settings.o : ../src/cursor-settings.c
 	    $(PROTOCOLS)/unstable/text-input/text-input-unstable-v3.xml \
 	    ../../src/text-input-client-protocol.h
 
+../../src/gtk-shell-protocol.c :
+	wayland-scanner private-code \
+	    gtk-shell.xml ../../src/gtk-shell-protocol.c
+	wayland-scanner client-header \
+	    gtk-shell.xml ../../src/gtk-shell-client-protocol.h
+
 install:
 	echo "Nothing to install"
 
 uninstall:
 
 clean:
-	$(RM) *.o ../../src/xdg-*.c ../../src/xdg-*.h ../../src/xdg-*.o ../../src/text-input-*
+	$(RM) *.o ../../src/xdg-*.c ../../src/xdg-*.h ../../src/xdg-*.o ../../src/text-input-* ../../src/gtk-shell-*

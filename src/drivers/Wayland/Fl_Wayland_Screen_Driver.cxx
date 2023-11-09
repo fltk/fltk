@@ -46,6 +46,7 @@
 #include <string.h> // for strerror()
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
+  void bind_to_gtk_shell(struct wl_registry *, uint32_t);
 }
 
 
@@ -1146,6 +1147,9 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strcmp(interface, "gtk_shell1") == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::MUTTER;
     //fprintf(stderr, "Running the Mutter compositor\n");
+    if ( version >= 5) {
+      bind_to_gtk_shell(wl_registry, id);
+    }
   } else if (strcmp(interface, "weston_desktop_shell") == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::WESTON;
     //fprintf(stderr, "Running the Weston compositor\n");

@@ -688,6 +688,17 @@ if (UNIX AND OPTION_USE_WAYLAND)
     )
     list (APPEND STATIC_FILES "xdg-decoration-protocol.c")
     list (APPEND SHARED_FILES "xdg-decoration-protocol.c")
+    if (GTK_FOUND AND OPTION_ALLOW_GTK_PLUGIN)
+      add_custom_command(
+        OUTPUT gtk-shell-protocol.c gtk-shell-client-protocol.h
+        COMMAND wayland-scanner private-code ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml gtk-shell-protocol.c
+        COMMAND wayland-scanner client-header ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml gtk-shell-client-protocol.h
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml
+        VERBATIM
+      )
+      list (APPEND STATIC_FILES "gtk-shell-protocol.c")
+      list (APPEND SHARED_FILES "gtk-shell-protocol.c")
+    endif (GTK_FOUND AND OPTION_ALLOW_GTK_PLUGIN)
   endif (NOT OPTION_USE_SYSTEM_LIBDECOR)
   add_custom_command(
     OUTPUT text-input-protocol.c text-input-client-protocol.h
