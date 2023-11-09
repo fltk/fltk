@@ -424,6 +424,7 @@ CFILES_WAYLANDX11 = $(WLCFILES)
 EXTRA_OBJECTS_WAYLAND =  ../libdecor/build/fl_libdecor.o ../libdecor/build/libdecor-cairo-blur.o \
   ../libdecor/build/fl_libdecor-plugins.o \
   xdg-decoration-protocol.o xdg-shell-protocol.o text-input-protocol.o \
+  gtk-shell-protocol.o \
   ../libdecor/build/cursor-settings.o ../libdecor/build/os-compatibility.o
 EXTRA_OBJECTS_WAYLANDX11 = $(EXTRA_OBJECTS_WAYLAND)
 EXTRA_CXXFLAGS_WAYLAND = -I.

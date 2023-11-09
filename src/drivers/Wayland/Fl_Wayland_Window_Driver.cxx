@@ -45,6 +45,7 @@ struct cursor_image { // as in wayland-cursor.c of the Wayland project source co
 extern "C" {
 # include "../../../libdecor/src/libdecor-plugin.h"
   uchar *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame, int *w, int *h, int *stride);
+  void use_FLTK_pointer_button(struct libdecor_frame *);
 }
 
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
@@ -853,7 +854,7 @@ static void handle_configure(struct libdecor_frame *frame,
 #ifdef LIBDECOR_MR131
   if (is_1st_run) use_FLTK_toplevel_configure_cb(frame);
 #endif
-
+  use_FLTK_pointer_button(frame);
   struct wl_output *wl_output = NULL;
   if (window->fl_win->fullscreen_active()) {
     if (!(window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
