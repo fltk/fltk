@@ -1328,6 +1328,17 @@ void Fl_Wayland_Screen_Driver::close_display() {
     seat->cursor_theme = NULL;
   }
   wl_compositor_destroy(wl_compositor); wl_compositor = NULL;
+  // wl_shm-related data
+  if (Fl_Wayland_Graphics_Driver::current_pool) {
+    struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *pool_data =
+    (struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data*)
+    wl_shm_pool_get_user_data(Fl_Wayland_Graphics_Driver::current_pool);
+    wl_shm_pool_destroy(Fl_Wayland_Graphics_Driver::current_pool);
+    Fl_Wayland_Graphics_Driver::current_pool = NULL;
+    /*int err = */munmap(pool_data->pool_memory, pool_data->pool_size);
+    //printf("close_display munmap(%p)->%d\n", pool_data->pool_memory, err);
+    free(pool_data);
+  }
   wl_shm_destroy(wl_shm); wl_shm = NULL;
   if (seat->wl_keyboard) {
     if (seat->xkb_state) {
@@ -1359,7 +1370,7 @@ void Fl_Wayland_Screen_Driver::close_display() {
   seat->data_device_manager = NULL;
   wl_seat_destroy(seat->wl_seat); seat->wl_seat = NULL;
   if (seat->name) free(seat->name);
-  delete seat; seat = NULL;
+  free(seat); seat = NULL;
   if (libdecor_context) {
     libdecor_unref(libdecor_context);
     libdecor_context = NULL;
@@ -1372,6 +1383,10 @@ void Fl_Wayland_Screen_Driver::close_display() {
   wl_registry_destroy(wl_registry); wl_registry = NULL;
   wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
   Fl_Wayland_Screen_Driver::wl_display = NULL;
+  delete Fl_Display_Device::display_device()->driver();
+  delete Fl_Display_Device::display_device();
+  delete Fl::system_driver();
+  delete this;
 }
 
 
