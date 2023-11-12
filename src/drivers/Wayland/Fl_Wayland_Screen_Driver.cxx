@@ -262,13 +262,6 @@ static void pointer_button(void *data,
   if (!win) return;
   win = win->top_window();
   wld_event_time = time;
-  if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED &&
-      seat->pointer_focus == NULL &&
-      (fl_wl_xid(win))->kind == Fl_Wayland_Window_Driver::DECORATED) {
-    // click on titlebar
-    libdecor_frame_move(fl_wl_xid(win)->frame, seat->wl_seat, serial);
-    return;
-  }
   int b = 0;
   // Fl::e_state &= ~FL_BUTTONS;    // DO NOT reset the mouse button state!
   if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
