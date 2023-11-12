@@ -140,7 +140,7 @@ const Fl_Grid_Align  FL_GRID_BOTTOM_RIGHT    =  FL_GRID_BOTTOM |  FL_GRID_RIGHT;
   \image html  Fl_Grid.png
   \image latex Fl_Grid.png "Simple 3x3 Fl_Grid" width=7cm
 */
-class Fl_Grid : public Fl_Group {
+class FL_EXPORT Fl_Grid : public Fl_Group {
   friend class Fl_Grid_Type;
 
 public:
