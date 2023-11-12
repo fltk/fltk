@@ -38,7 +38,7 @@
 Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL) {
   platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, high_res, off);
   platform_surface->image_surface_ = this;
-  if (platform_surface) driver(platform_surface->driver());
+  driver(platform_surface->driver());
 }
 
 
