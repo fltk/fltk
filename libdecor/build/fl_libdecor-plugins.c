@@ -328,6 +328,7 @@ unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
 #  include "gtk-shell-client-protocol.h"
 
 static struct gtk_shell1 *gtk_shell = NULL;
+static uint32_t doubleclick_time = 250;
 
 // libdecor's button member of wl_pointer_listener objects
 static void (*decor_pointer_button)(void*, struct wl_pointer *,
@@ -367,9 +368,8 @@ static void fltk_pointer_button(void *data,
     gtk_surface1_release(gtk_surface);
     return;
   } else if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
-    static uint32_t previous_click = 0;
-    if (previous_click && time - previous_click < 250) { // < 0.25 sec for dble clicks
-      previous_click = 0;
+    if (time - seat->pointer_button_time_stamp < doubleclick_time) {
+      seat->pointer_button_time_stamp = 0;
       struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell,
                                                     frame_gtk->headerbar.wl_surface);
       gtk_surface1_titlebar_gesture(gtk_surface, serial,
@@ -377,7 +377,6 @@ static void fltk_pointer_button(void *data,
       gtk_surface1_release(gtk_surface);
       return;
     }
-    previous_click = time;
   }
   decor_pointer_button(data, wl_pointer, serial, time, button, state);
 }
@@ -417,6 +416,8 @@ void use_FLTK_pointer_button(struct libdecor_frame *frame) {
   fltk_listener->button = fltk_pointer_button;
   // replace the pointer listener by a copy whose button member is FLTK's
   object->implementation = fltk_listener;
+  // get gnome's double_click_time_ms value
+  doubleclick_time = lfg->plugin_gtk->double_click_time_ms;
 #endif // HAVE_GTK && !USE_SYSTEM_LIBDECOR
 }
 
