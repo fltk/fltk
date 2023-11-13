@@ -535,15 +535,6 @@ void Fl_Terminal::Utf8Char::text_utf8_(const char *text, int len) {
   len_ = len;                                    // update new length
 }
 
-//NOTUSED // Return the Utf8Char's colors + attributes as a CharStyle \p sty
-//NOTUSED const Fl_Terminal::CharStyle Fl_Terminal::Utf8Char::style(void) const {
-//NOTUSED   CharStyle sty;
-//NOTUSED   sty.attrib(attrib_);
-//NOTUSED   sty.fgcolor(fgcolor_);
-//NOTUSED   sty.bgcolor(bgcolor_);
-//NOTUSED   return sty;
-//NOTUSED }
-
 // Set UTF-8 string for this char.
 //
 // text_ must not be NULL, and len must be in range: 1 <= len <= max_utf8().
@@ -570,14 +561,6 @@ void Fl_Terminal::Utf8Char::text_ascii(char c, const CharStyle& style) {
   if (c < 0x20 || c >= 0x7e) return;           // ASCII non-printable?
   text_utf8(&c, 1, style);
 }
-
-//NOTUSED // Assign CharStyle to this UTF-8 character
-//NOTUSED void Fl_Terminal::Utf8Char::style(const CharStyle& style) {
-//NOTUSED   attrib_  = style.attrib();
-//NOTUSED   flags_   = style.colorbits_only(flags_);
-//NOTUSED   fgcolor_ = style.fgcolor();
-//NOTUSED   bgcolor_ = style.bgcolor();
-//NOTUSED }
 
 // Set fl_font() based on specified style for this char's attribute
 void Fl_Terminal::Utf8Char::fl_font_set(const CharStyle& style) const {

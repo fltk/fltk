@@ -450,15 +450,12 @@ protected:
     inline int max_utf8() const { return max_utf8_; }
     void text_utf8(const char *text, int len, const CharStyle& style);
     void text_ascii(char c, const CharStyle& style);
-    //NOTUSED void style(const CharStyle& style);
     void fl_font_set(const CharStyle& style) const;
 
     // Return the UTF-8 text string for this character.
     //   Use length() to get number of bytes in string, which will be 1 for ASCII chars.
     //
     const char* text_utf8(void) const { return text_; }
-    //NOTUSED // Return the char's attributes/colors as a CharStyle
-    //NOTUSED const CharStyle style(void) const;
     // Return the attribute for this char
     uchar attrib(void) const { return attrib_; }
     uchar flags(void) const { return flags_; }
