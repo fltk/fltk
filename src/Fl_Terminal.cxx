@@ -2899,15 +2899,22 @@ void Fl_Terminal::redraw_timer_cb(void *udata) {
 
 /**
   The constructor for Fl_Terminal.
+
   This creates an empty terminal with defaults:
   - white on black text; see textfgcolor(Fl_Color), textbgcolor(Fl_Color)
   - rows/cols based on the \p W and \p H values, see display_rows(), display_columns()
   - scrollback history of 100 lines, see history_rows()
   - redraw_style() set to RATE_LIMITED, redraw_rate() set to 0.10 seconds
+
+  Note: While Fl_Terminal derives from Fl_Group, it's not intended for user code
+  to use it as a parent for other widgets, so end() is called.
+
+  \param[in] X,Y,W,H position and size.
+  \param[in] L label string (optional), may be NULL.
 */
 Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L) : Fl_Group(X,Y,W,H,L) {
   // scrollbar_size must be set before scrn_
-  scrollbar_size_ = 11;                // 0 will use Fl::scrollbar_size()
+  scrollbar_size_ = 0;                // 0 uses Fl::scrollbar_size()
   update_screen_xywh();
   // Tabs
   tabstops_       = 0;
