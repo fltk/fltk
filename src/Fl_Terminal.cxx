@@ -1117,7 +1117,7 @@ void Fl_Terminal::update_scrollbar(void) {
   update_screen_xywh();                            // ensure scrn_ up to date first
   int sx = scrn_.r() + margin_.right();
   int sy = scrn_.y() - margin_.top();
-  int sw = scrollbar_w();
+  int sw = scrollbar_actual_size();
   int sh = scrn_.h() + margin_.top() + margin_.bottom();
   if (vscroll_->x() != sx ||
       vscroll_->y() != sy ||
@@ -1209,7 +1209,7 @@ void Fl_Terminal::update_screen_xywh(void) {
   scrn_ = *this;                                         // start with widget's current xywh
   scrn_.inset(box());                                    // apply box offset
   scrn_.inset(m.left(), m.top(), m.right(), m.bottom()); // apply margins offset
-  scrn_.inset(0, 0, scrollbar_w(), 0);                   // apply scrollbar width
+  scrn_.inset(0, 0, scrollbar_actual_size(), 0);         // apply scrollbar width
 }
 
 // Update internals when something "global" changes
@@ -2977,8 +2977,11 @@ Fl_Terminal::~Fl_Terminal(void) {
     { Fl::remove_timeout(redraw_timer_cb, this); redraw_timer_ = false; }
 }
 
-// Returns the scrollbar's actual width.
-int Fl_Terminal::scrollbar_w(void) const {
+/**
+  Returns the scrollbar's actual size (actual width for vertical scrollbars,
+  height for horizontal scrollbars.
+*/
+int Fl_Terminal::scrollbar_actual_size(void) const {
   return scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
 }
 

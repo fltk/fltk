@@ -919,9 +919,7 @@ public:
   // API: Scrollbar
   int   scrollbar_size(void) const;
   void  scrollbar_size(int val);
-protected:
-  int   scrollbar_w(void) const;
-public:
+  int   scrollbar_actual_size(void) const;
   // API: History
   int   history_rows(void) const;
   void  history_rows(int val);
