@@ -30,7 +30,7 @@
 
 /** \class Fl_Terminal
 
-  \brief Terminal widget.
+  \brief Terminal widget supporting Unicode/utf-8, ANSI/xterm escape codes with full RGB color control.
 
   \section Fl_Terminal
 
@@ -195,8 +195,14 @@
   \par
   Will likely never implement as part of this widget:
      - pty/termio management (such features should be _subclassed_)
-     - per-character font faces + sizes (font face/size is global only)
+     - Different per-character font family + sizes (font family/size is global only)
      - variable width fonts
+  \par
+  Regarding the font family+size; the way the terminal is currently designed,
+  the font family and size must not vary within text; rows have to be consistent
+  height. Varying widths are tricky too, esp. when it comes to moving the cursor
+  up/down within a column; varying *widths* are supported (due to Unicode characters
+  sometimes being "wide", but not heights.
 
   \subsection Fl_Terminal_Margins Margins
 
