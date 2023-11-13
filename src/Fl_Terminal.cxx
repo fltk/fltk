@@ -2968,8 +2968,8 @@ Fl_Terminal::~Fl_Terminal(void) {
 }
 
 /**
-  Returns the scrollbar's actual size (actual width for vertical scrollbars,
-  height for horizontal scrollbars.
+  Returns the scrollbar's actual size; actual width for vertical scrollbars,
+  actual height for horizontal scrollbars.
 */
 int Fl_Terminal::scrollbar_actual_size(void) const {
   return scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
