@@ -603,7 +603,7 @@ int Fl_Terminal::Utf8Char::pwidth_int(void) const {
 //    influenced by the attribute bits /if/ \p col matches the \p grp widget's own color().
 //
 Fl_Color Fl_Terminal::Utf8Char::attr_color(Fl_Color col, const Fl_Widget *grp) const {
-  // Don't modify color if it's the special 'see thru' color 0x0 or widget's color()
+  // Don't modify color if it's the special 'see thru' color 0xffffffff or widget's color()
   if (grp && ((col == 0xffffffff) || (col == grp->color()))) return grp->color();
   switch (attrib_ & (Fl_Terminal::BOLD|Fl_Terminal::DIM)) {
     case 0: return col;                                   // not bold or dim? no change
@@ -1445,7 +1445,36 @@ void Fl_Terminal::textbgcolor_xterm(uchar val) {
 }
 
 /**
-  Set text foreground drawing color to fltk color \p val.
+  Set the text color for the terminal.
+
+  This is a convenience method that sets *both* textfgcolor() and textfgcolor_default(),
+  ensuring both are set to the same value.
+*/
+void Fl_Terminal::textcolor(Fl_Color val) {
+  textfgcolor(val);
+  textfgcolor_default(val);
+}
+
+/**
+  Sets the background color for the terminal's Fl_Group::box().
+
+  If the textbgcolor() and textbgcolor_default() are set to the special
+  "see through" color 0xffffffff when any text was added, changing color()
+  affects the color that shows through behind that existing text.
+
+  Otherwise, whatever specific background color was set for existing text
+  will persist after changing color().
+
+  To see the effects of a change to color(), follow up with a call to redraw().
+
+  The default value is 0x0.
+*/
+void Fl_Terminal::color(Fl_Color val) {
+  Fl_Group::color(val);
+}
+
+/**
+  Set text foreground drawing color to fltk color \p val used by any new text added.
   Use this for temporary color changes, similar to \<ESC\>[38;2;\<R\>;\<G\>;\<B\>m
 
   This setting does _not_ affect the 'default' text colors used by \<ESC\>[0m,
@@ -1465,12 +1494,11 @@ void Fl_Terminal::textfgcolor(Fl_Color val) {
 }
 
 /**
-  Set text background color to fltk color \p val.
+  Set text background color to fltk color \p val used by any new text added.
   Use this for temporary color changes, similar to \<ESC\>[48;2;\<R\>;\<G\>;\<B\>m
 
   This setting does _not_ affect the 'default' text colors used by \<ESC\>[0m,
-  \<ESC\>c, reset_terminal(), etc. To change both the current _and_
-  default bg color, also use textbgcolor_default(Fl_Color). Example:
+  \<ESC\>c, reset_terminal(), etc. To set that too, also set textbgcolor_default(Fl_Color), e.g.
   \par
   \code
      // Set both 'current' and 'default' colors
@@ -1478,6 +1506,10 @@ void Fl_Terminal::textfgcolor(Fl_Color val) {
      tty->textbgcolor(darkamber);         // set 'current' bg color
      tty->textbgcolor_default(darkamber); // set 'default' bg color used by ESC[0m reset
   \endcode
+
+  The special color value 0xffffffff (all ff's) is the "see through" color, which lets
+  the widget's own Fl_Group::color() show through behind the text. This special text background
+  color is the _default_, and is what most situations need.
 
   \see textbgcolor_default(Fl_Color)
 */
@@ -1489,8 +1521,7 @@ void Fl_Terminal::textbgcolor(Fl_Color val) {
   Set the default text foreground color used by \c \<ESC\>c, \c \<ESC\>[0m,
   and reset_terminal().
 
-  Does not affect the 'current' text fg color; use textfgcolor(Fl_Color) to
-  set that.
+  Does not affect the 'current' text foreground color; use textfgcolor(Fl_Color) to set that.
 
   \see textfgcolor(Fl_Color)
 */
@@ -1499,11 +1530,14 @@ void Fl_Terminal::textfgcolor_default(Fl_Color val) {
 }
 
 /**
-  Set the default text background color used by \c \<ESC\>c, \c \<ESC\>[0m,
-  and reset_terminal().
+  Set the default text background color used by any new text added
+  after a reset (\c \<ESC\>c, \c \<ESC\>[0m, or reset_terminal()).
 
-  Does not affect the 'current' text fg color; use textbgcolor(Fl_Color) to
-  set that.
+  Does not affect the 'current' text background color; use textbgcolor(Fl_Color) to set that.
+
+  The special color value 0xffffffff (all ff's) is the "see through" color, which lets
+  the widget's own Fl_Group::color() show through behind the text. This special text background
+  color is the _default_, and is what most situations need.
 
   \see textbgcolor(Fl_Color)
 */
@@ -2240,8 +2274,8 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
       case 0:
          // RGB mode values?
          switch (val) {
-           case 38:                       // fg RGB mode? e.g. ESC[38;2;<R>;<G>;<B>m
-           case 48:                       // bg RGB mode? e.g. ESC[48;2;<R>;<G>;<B>m
+           case 38:                  // fg RGB mode? e.g. ESC[38;2;<R>;<G>;<B>m
+           case 48:                  // bg RGB mode? e.g. ESC[48;2;<R>;<G>;<B>m
              rgbmode = 1;
              rgbcode = val;
              continue;
@@ -2943,7 +2977,7 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L) : Fl_Group(X,Y,W,
   vscroll_->callback(scrollbar_cb, (void*)this);
   resizable(0);
   Fl_Group::box(FL_DOWN_FRAME);
-  color(0x0);                 // black bg by default
+  Fl_Group::color(0x0);       // black bg by default
   update_screen(true);        // update internal vars after setting screen size/font
   clear_screen_home();        // clear screen, home cursor
   clear_history();            // clear history buffer
@@ -3030,8 +3064,8 @@ void Fl_Terminal::draw_row_bg(int grow, int X, int Y) const {
                : (u8c->attrib() & Fl_Terminal::INVERSE)   // Inverse mode?
                  ? u8c->attr_fg_color(this)               // ..use fg color for bg
                  : u8c->attr_bg_color(this);              // ..use bg color for bg
-    // Draw only if color != 0x0 ('show through' color) or widget's own color().
-    if (bg_col != 0xffffffff && bg_col != color()) {
+    // Draw only if color != 0xffffffff ('see through' color) or widget's own color().
+    if (bg_col != 0xffffffff && bg_col != Fl_Group::color()) {
       fl_color(bg_col);
       fl_rectf(X, bg_y, pwidth, bg_h);
     }
@@ -3133,7 +3167,7 @@ void Fl_Terminal::draw(void) {
     //    FL_XXX_FRAME types allow Fl_Terminal to have a /flat/ background.
     //    FL_XXX_BOX types inherit Fl::scheme() which can provide unwanted gradients.
     //
-    fl_color(color());
+    fl_color(Fl_Group::color());
     // Draw flat field (inside border drawn by Fl_Group::draw() above)
     int X = x() + Fl::box_dx(box());
     int Y = y() + Fl::box_dy(box());

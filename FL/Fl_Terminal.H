@@ -250,6 +250,10 @@
   - The printf() and vprintf() functions are limited to strings no longer than
     1024 characters (including NULL). For printing longer strings, use append()
     which has no string limits.
+    \par
+  - For background colors textbgcolor() and textbgcolor_default(), the special
+    color value 0xffffffff lets the widget's box() color() show through behind
+    the text.
 **/
 
 class Fl_Terminal : public Fl_Group {
@@ -953,6 +957,8 @@ public:
   // API: Text font/size/color
   void        textfont(Fl_Font val);
   void        textsize(Fl_Fontsize val);
+  void        textcolor(Fl_Color val);
+  void        color(Fl_Color val);
   void        textfgcolor(Fl_Color val);
   void        textbgcolor(Fl_Color val);
   void        textfgcolor_default(Fl_Color val);
@@ -961,6 +967,10 @@ public:
   Fl_Font     textfont(void)      const { return current_style_.fontface(); }
   /// Return text font size used to draw all text in the terminal.
   Fl_Fontsize textsize(void)      const { return current_style_.fontsize(); }
+  // Return base widget Fl_Group's box() color()
+  Fl_Color    color(void)         const { return Fl_Group::color(); }
+  // Return textcolor(). This is a convenience method that returns textfgcolor_default()
+  Fl_Color    textcolor(void)     const { return textfgcolor_default(); }
   /// Return text's current foreground color.
   Fl_Color    textfgcolor(void)   const { return current_style_.fgcolor(); }
   /// Return text's current background color.
