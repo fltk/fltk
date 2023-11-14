@@ -194,7 +194,7 @@ int Fd_Mergeback::ask_user_to_merge(const Fl_String &code_filename, const Fl_Str
                "MergeBack found %3$d modifications in the project structure\n"
                "of the source code. These kind of changes can no be\n"
                "merged back and will be lost when the source code is\n"
-               "generated again from the open project.", 
+               "generated again from the open project.",
                code_filename.c_str(), proj_filename.c_str(), num_changed_structure);
     return -1;
   }
@@ -294,7 +294,7 @@ void Fd_Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, i
    type or widget can not be found in the project
  * num_possible_override number of blocks that were changed in the code file,
    but also were changed in the project.
- 
+
  \return -1 if reading a tag failed, otherwise 0
  */
 int Fd_Mergeback::analyse() {
@@ -330,7 +330,7 @@ int Fd_Mergeback::analyse() {
       if (n!=3 || tag_type<0 || tag_type>FD_TAG_LAST ) { tag_error = 1; return -1; }
       if (code_crc != tag_crc) {
         switch (tag_type) {
-          case FD_TAG_GENERIC: 
+          case FD_TAG_GENERIC:
             num_changed_structure++;
             break;
           case FD_TAG_MENU_CALLBACK:

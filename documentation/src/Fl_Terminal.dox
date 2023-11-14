@@ -73,7 +73,7 @@ Features will be added as the widget matures.
 │    ESC[#e - (LPA) Line Position Relative [row]                         (NOT IMPLEMENTED)
 │    ESC[#f - (CUP) cursor position (#'s 1 based), same as ESC[H
 │
-│    ESC[#g - (TBC)Tabulation Clear 
+│    ESC[#g - (TBC)Tabulation Clear
 │      │
 │      ├── ESC[0g - Clear tabstop at cursor
 │      └── ESC[3g - Clear all tabstops
@@ -273,7 +273,7 @@ The memory layout of the Utf8Char character array is:
 So it's basically a single continuous array of Utf8Char instances
 where any character can generally be accessed by index# using the formula:
 
-	ring_chars[ (row*ring_cols)+col ]
+        ring_chars[ (row*ring_cols)+col ]
 
 ..where 'row' is the desired row, 'col' is the desired column,
 and 'ring_cols' is how many columns "wide" the buffer is.
@@ -292,7 +292,7 @@ formulas, namely:
 
 A key concept is the use of the simple 'offset' index integer
 to allow the starting point of the history and display to be
-moved around to implement 'text scrolling', such as when 
+moved around to implement 'text scrolling', such as when
 crlf at the screen bottom causes a 'scroll up'.
 
 This is simply an "index offset" integer applied to the
@@ -423,15 +423,15 @@ So to recap, the concepts here are:
 
           // Entire ring
           ring_srow()  -- start row index of the ring buffer (always 0)
-	  ring_erow()  -- end row index of the ring buffer
+          ring_erow()  -- end row index of the ring buffer
 
           // "history" part of ring
-	  hist_srow()  -- start row index of the screen history
-	  hist_erow()  -- end row index of the screen history
+          hist_srow()  -- start row index of the screen history
+          hist_erow()  -- end row index of the screen history
 
           // "display" part of ring
-	  disp_srow()  -- start row index of the display
-	  disp_erow()  -- end row index of the display
+          disp_srow()  -- start row index of the display
+          disp_erow()  -- end row index of the display
 
   The values returned by these are as described above.
   For the hist_xxx() and disp_xxx() methods the 'offset' included into

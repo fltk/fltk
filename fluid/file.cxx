@@ -231,7 +231,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
     const char *c = read_word();
   REUSE_C:
     if (!c) {
-      if (p && !merge) 
+      if (p && !merge)
         read_error("Missing '}'");
       break;
     }

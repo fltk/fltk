@@ -641,7 +641,7 @@ void Fl_Grid::margin(int left, int top, int right, int bottom) {
   need_layout(1);
 }
 
-/** 
+/**
  Returns all outside margin sizes of the grid.
 
  All margin sizes are returned in the given arguments. If any argument
@@ -1146,7 +1146,7 @@ int Fl_Grid::computed_col_width(int col) const {
   return Cols_[col].w_;
 }
 
-int Fl_Grid::computed_row_height(int row) const { 
+int Fl_Grid::computed_row_height(int row) const {
   return Rows_[row].h_;
 }
 

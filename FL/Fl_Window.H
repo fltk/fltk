@@ -510,7 +510,7 @@ public:
     \see void Fl_Window::fullscreen()
     */
   void fullscreen_screens(int top, int bottom, int left, int right);
-  
+
   void maximize();
   void un_maximize();
   /** Returns whether the window is currently maximized */

@@ -190,7 +190,7 @@ public:
   void comment(const char *);
 
   virtual Fl_Type* click_test(int,int) { return NULL; }
-  
+
   virtual void add_child(Fl_Type*, Fl_Type* beforethis) { }
   virtual void move_child(Fl_Type*, Fl_Type* beforethis) { }
   virtual void remove_child(Fl_Type*) { }

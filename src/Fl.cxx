@@ -946,7 +946,7 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
     Use this function inside the \c handle(int) member function of a widget of yours
     to give focus to the widget, for example when it receives the FL_FOCUS or the FL_PUSH event.
     Otherwise, use Fl_Widget::take_focus() to give focus to a widget;
- 
+
     If you change Fl::focus(), the previous widget and all
     parents (that don't contain the new widget) are sent FL_UNFOCUS
     events.  Changing the focus does \e not send FL_FOCUS to

@@ -925,7 +925,7 @@ fl_uintptr_t Fl_Window::os_id() { return pWindowDriver->os_id();}
 
 /**
  Maximizes a top-level window to its current screen.
- 
+
  This function is effective only with a show()'n, resizable, top-level window.
  Bordered and borderless windows can be used.
  \see Fl_Window::un_maximize(), Fl_Window::maximize_active()

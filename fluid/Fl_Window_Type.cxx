@@ -841,7 +841,7 @@ extern void fix_group_size(Fl_Type *t);
 extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Item New_Menu[];
 
-/** 
+/**
  Move the selected children according to current dx, dy, drag state.
 
  This is somewhat of a do-all function that received many additions when new

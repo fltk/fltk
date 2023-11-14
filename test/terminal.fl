@@ -198,11 +198,11 @@ debug_tty->append("\\n");
       u8c = u8c_ring_row(hist_srow() + row);
       debug_tty->printf("%3d H[", row);
       for ( int col=0; col<hist_cols(); col++,u8c++ ) {
-	// Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
-	debug_tty->textattrib(u8c->attrib());
-	debug_tty->textfgcolor(u8c->fgcolor());
-	debug_tty->textbgcolor(u8c->bgcolor());
-	debug_tty->print_char(u8c->text_utf8()); // print the char in current style
+        // Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
+        debug_tty->textattrib(u8c->attrib());
+        debug_tty->textfgcolor(u8c->fgcolor());
+        debug_tty->textbgcolor(u8c->bgcolor());
+        debug_tty->print_char(u8c->text_utf8()); // print the char in current style
       }
       debug_tty->append("\\033[0m"); // restore default fg/bg/attrib
       debug_tty->printf("]    ");
@@ -216,11 +216,11 @@ debug_tty->append("\\n");
       u8c = u8c_ring_row(disp_srow() + row);
       debug_tty->printf("%3d D[", row);
       for ( int col=0; col<disp_cols(); col++,u8c++ ) {
-	// Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
-	debug_tty->textattrib(u8c->attrib());
-	debug_tty->textfgcolor(u8c->fgcolor());
-	debug_tty->textbgcolor(u8c->bgcolor());
-	debug_tty->print_char(u8c->text_utf8()); // print the char in current style
+        // Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
+        debug_tty->textattrib(u8c->attrib());
+        debug_tty->textfgcolor(u8c->fgcolor());
+        debug_tty->textbgcolor(u8c->bgcolor());
+        debug_tty->print_char(u8c->text_utf8()); // print the char in current style
       }
       debug_tty->append("\\033[0m"); // restore default fg/bg/attrib
       debug_tty->append("]\\033[K\\n");
@@ -372,13 +372,13 @@ return 1;           // hit end of test, reset} {}
   "\\033[0m\\033[H\\033[2J\\033[3J"    // color/attr reset, home, cls, clear history
   "hello.\\nLine one\\nLine two\\n"
   "\\033[0;0;2m          Dim text:\\033[31m red\\033[32m grn\\033[33m yel"
-			      "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
   "\\033[0;0;0m       Normal text:\\033[31m red\\033[32m grn\\033[33m yel"
-			      "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
   "\\033[0;0;1m         Bold text:\\033[31m red\\033[32m grn\\033[33m yel"
-			      "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
   "\\033[0;1;3m  Bold Italic text:\\033[31m red\\033[32m grn\\033[33m yel"
-			      "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
   "\\033[0m\\n"
   //                             Language                           Language
   //                             Alignment                          Alignment
@@ -1104,7 +1104,7 @@ const char *test[] = {
   "25:456789012345678901234567890123456789012345678901234567890123456789",
   "\\033[12H",                       // to prompt row
   "---> Hit 'e' to test [1/4] DELETE LINE 3 with ESC[M: \\033[K",
-  "\\033[2K",	                     // clear prompt
+  "\\033[2K",                        // clear prompt
   "\\033[3H",                        // move to line 3
   "\\033[M",                         // delete line 3
   "\\033[12H",                       // back to line 12H for prompt
@@ -1259,7 +1259,7 @@ for (int i=0; i<50; i++ ) {
 }
 // leave test with white on black
 G_tty->textfgcolor(0xd0d0d000);
-G_tty->textbgcolor(0xffffffff);	// special see thru color
+G_tty->textbgcolor(0xffffffff); // special see thru color
 // back to rate limited
 G_tty->redraw_style(Fl_Terminal::RATE_LIMITED);
 // Show the Unicode alignment page
@@ -1964,7 +1964,7 @@ decl {////// MAIN //////} {private local
 Function {} {open
 } {
   code {G_tty = NULL;
-Application app;	// sets G_tty
+Application app;        // sets G_tty
 G_app = &app;
 app.show(argc, argv);
 // Run the "firstpage" test

@@ -254,14 +254,14 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(&m, NULL, NULL, NULL); 
+    grid->margin(&m, NULL, NULL, NULL);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(&old_m, NULL, NULL, NULL); 
+    grid->margin(&old_m, NULL, NULL, NULL);
     if (m != old_m) {
       undo_checkpoint();
-      grid->margin(m, -1, -1, -1); 
+      grid->margin(m, -1, -1, -1);
       grid->need_layout(true);
       set_modflag(1);
     }
@@ -273,14 +273,14 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(NULL, &m, NULL, NULL); 
+    grid->margin(NULL, &m, NULL, NULL);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, &old_m, NULL, NULL); 
+    grid->margin(NULL, &old_m, NULL, NULL);
     if (m != old_m) {
       undo_checkpoint();
-      grid->margin(-1, m, -1, -1); 
+      grid->margin(-1, m, -1, -1);
       grid->need_layout(true);
       set_modflag(1);
     }
@@ -292,14 +292,14 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(NULL, NULL, &m, NULL); 
+    grid->margin(NULL, NULL, &m, NULL);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, NULL, &old_m, NULL); 
+    grid->margin(NULL, NULL, &old_m, NULL);
     if (m != old_m) {
       undo_checkpoint();
-      grid->margin(-1, -1, m, -1); 
+      grid->margin(-1, -1, m, -1);
       grid->need_layout(true);
       set_modflag(1);
     }
@@ -437,7 +437,7 @@ static void cb_Weight(Fluid_Coord_Input* o, void* v) {
       undo_checkpoint();
       grid->row_weight(r, h);
       grid->need_layout(true);
-      set_modflag(1); 
+      set_modflag(1);
     }
   }
 }

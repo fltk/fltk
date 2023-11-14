@@ -342,7 +342,7 @@ int main(int argc, char **argv) {
   window.b3 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"FullScreen");
   window.b3->callback(fullscreen_cb,w);
   y+=30;
-  
+
   window.b3_maxi = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"Maximize");
   window.b3_maxi->callback(maximize_cb,w);
   y+=30;

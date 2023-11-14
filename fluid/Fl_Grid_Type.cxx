@@ -262,7 +262,7 @@ Fl_Grid::Cell *Fl_Grid_Proxy::widget(Fl_Widget *wi, int row, int col, Fl_Grid_Al
   return widget(wi, row, col, 1, 1, align);
 }
 
-/** 
+/**
  Just like the Fl_Grid original, but removes potential transient cell.
  \param[in] wi generate a cell for this widget
  \param[in] row, col, rowspan, colspan, align cell parameters
@@ -671,7 +671,7 @@ void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
   grid->move_cell(child, row, col, 2);
 }
 
-/** 
+/**
  Insert a child widget into the first new cell we can find .
 
  There are many other possible strategies. How about inserting to the right
@@ -795,7 +795,7 @@ void grid_child_cb(Fluid_Coord_Input* i, void* v, int what) {
           if (v2 == -1 && v >= 0) v2 = 0;
           g->move_cell(current_widget->o, v, v2, 2); i->value(v);
           break;
-        case 9: 
+        case 9:
           if (v2 == -1 && v >= 0) v2 = 0;
           g->move_cell(current_widget->o, v2, v, 2); i->value(v);
           break;

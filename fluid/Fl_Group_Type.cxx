@@ -43,7 +43,7 @@
 
 Fl_Group_Type Fl_Group_type;    // the "factory"
 
-/** 
+/**
  Override group's resize behavior to do nothing to children by default.
  \param[in] X, Y, W, H new size
  */

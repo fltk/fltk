@@ -30,7 +30,7 @@
 
  ## Future ##
 
- As we approach the imminent release of FLTK 1.4.0, FLUID will no longer undergo 
+ As we approach the imminent release of FLTK 1.4.0, FLUID will no longer undergo
  significant feature enhancements. Instead, the focus will shift towards
  documentation improvements, addressing bugs, and enhancing usability for
  recent FLTK additions such as Fl_Grid and Fl_Flex. Following the release of

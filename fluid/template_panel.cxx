@@ -252,7 +252,7 @@ void template_load() {
   "}\nFl_Button {} {\nlabel Count\ncallback {int i = counter_widget->ivalue();\ni++;\n"
   "counter_widget->value(i);}\nxywh {99 15 80 22}\n}\n}\n}\n", f);
       fclose(f);
-    }  
+    }
     sample_templates_generated = 2;
     fluid_prefs.set("sample_templates_generated", sample_templates_generated);
     fluid_prefs.flush();

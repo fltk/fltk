@@ -673,7 +673,7 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
     // we transmit the adequate value of index in fl_selection_buffer[index]
     wl_data_source_add_listener(seat->data_source, &data_source_listener, (void*)1);
     wl_data_source_offer(seat->data_source, wld_plain_text_clipboard);
-    wl_data_device_set_selection(seat->data_device, 
+    wl_data_device_set_selection(seat->data_device,
                                  seat->data_source,
                                  seat->keyboard_enter_serial);
 //fprintf(stderr, "wl_data_device_set_selection len=%d to %d\n", len, clipboard);

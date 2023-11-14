@@ -102,7 +102,7 @@ public:
   Fl_Type* write_code(Fl_Type* p);
   int write_code(const char *cfile, const char *hfile, bool to_sourceview=false);
   void write_public(int state); // writes pubic:/private: as needed
-  
+
   void tag(int type, unsigned short uid);
 
   static unsigned long block_crc(const void *data, int n=-1, unsigned long in_crc=0, bool *inout_line_start=NULL);

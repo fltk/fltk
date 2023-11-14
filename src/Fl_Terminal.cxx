@@ -2238,15 +2238,15 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
     int val = esc.val(i);            // each val one at a time
     switch ( rgbmode ) {
       case 0:
-	 // RGB mode values?
-	 switch (val) {
-	   case 38:                       // fg RGB mode? e.g. ESC[38;2;<R>;<G>;<B>m
-	   case 48:                       // bg RGB mode? e.g. ESC[48;2;<R>;<G>;<B>m
-	     rgbmode = 1;
-	     rgbcode = val;
-	     continue;
-	 }
-	 break;
+         // RGB mode values?
+         switch (val) {
+           case 38:                       // fg RGB mode? e.g. ESC[38;2;<R>;<G>;<B>m
+           case 48:                       // bg RGB mode? e.g. ESC[48;2;<R>;<G>;<B>m
+             rgbmode = 1;
+             rgbcode = val;
+             continue;
+         }
+         break;
       case 1: if (val == 2) { rgbmode++; continue; }    // '2'?
               rgbcode = rgbmode = 0;                    // not '2'? cancel
               handle_unknown_char();

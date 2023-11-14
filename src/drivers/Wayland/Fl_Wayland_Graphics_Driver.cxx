@@ -95,7 +95,7 @@ void Fl_Wayland_Graphics_Driver::create_shm_buffer(Fl_Wayland_Graphics_Driver::w
     wl_list_init(&pool_data->buffers);
     wl_shm_pool_set_user_data(current_pool, pool_data);
   }
-  buffer->wl_buffer = wl_shm_pool_create_buffer(current_pool, chunk_offset, 
+  buffer->wl_buffer = wl_shm_pool_create_buffer(current_pool, chunk_offset,
                                                 width, height, stride, wld_format);
   wl_buffer_add_listener(buffer->wl_buffer, &buffer_listener, buffer);
   // add this buffer to head of list of current pool's buffers
