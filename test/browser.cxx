@@ -64,7 +64,7 @@ That was a blank line above this.
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
 #include <string.h>
@@ -81,7 +81,7 @@ Fl_Button       *top,
 Fl_Choice       *btype;
 Fl_Choice       *wtype;
 Fl_Int_Input    *field;
-Fl_Simple_Terminal *tty = 0;
+Fl_Terminal     *tty = 0;
 
 typedef struct {
   const char *name;
@@ -219,7 +219,7 @@ int main(int argc, char **argv) {
   wtype->value(4);                          // FL_WHEN_RELEASE_ALWAYS is Fl_Browser's default
 
   // Small terminal window for callback messages
-  tty = new Fl_Simple_Terminal(0,400,720,120);
+  tty = new Fl_Terminal(0,400,720,120);
   tty->history_lines(50);
   tty->ansi(true);
 

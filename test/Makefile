@@ -30,7 +30,7 @@ CPPUNITTEST = \
 	unittest_viewport.cxx \
 	unittest_scrollbarsize.cxx \
 	unittest_schemes.cxx \
-	unittest_simple_terminal.cxx \
+	unittest_terminal.cxx \
 	unittest_core.cxx
 
 OBJUNITTEST = \
@@ -125,6 +125,7 @@ CPPFILES =\
 	symbols.cxx \
 	table.cxx \
 	tabs.cxx \
+	terminal.cxx \
 	threads.cxx \
 	tile.cxx \
 	tiled_image.cxx \
@@ -206,6 +207,7 @@ ALL =	\
 	sudoku$(EXEEXT) \
 	symbols$(EXEEXT) \
 	table$(EXEEXT) \
+	terminal$(EXEEXT) \
 	$(THREADS) \
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
@@ -268,6 +270,7 @@ clean:
 	$(RM) radio.cxx radio.h
 	$(RM) resize.cxx resize.h
 	$(RM) tabs.cxx tabs.h
+	$(RM) terminal.cxx terminal.h
 	$(RM) tree.cxx tree.h
 	$(RM) valuators.cxx valuators.h
 
@@ -617,6 +620,9 @@ table$(EXEEXT): table.o
 
 tabs$(EXEEXT): tabs.o
 tabs.cxx:	tabs.fl ../fluid/fluid$(EXEEXT)
+
+terminal$(EXEEXT): terminal.o
+terminal.cxx:	terminal.fl ../fluid/fluid$(EXEEXT)
 
 threads$(EXEEXT): threads.o
 # This ensures that we have this dependency even if threads are not

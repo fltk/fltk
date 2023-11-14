@@ -25,14 +25,14 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Help_View.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 
 #define TERMINAL_HEIGHT 120
 
 // GLOBALS
 Fl_Input *G_filename = NULL;
 Fl_Multiline_Input *G_filter = NULL;
-Fl_Simple_Terminal *G_tty = NULL;
+Fl_Terminal *G_tty = NULL;
 
 void PickFile_CB(Fl_Widget*, void*) {
   // Create native chooser
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
   win->size_range(win->w(), win->h(), 0, 0);
   win->begin();
   {
-    G_tty = new Fl_Simple_Terminal(0,400,win->w(),TERMINAL_HEIGHT);
+    G_tty = new Fl_Terminal(0,400,win->w(),TERMINAL_HEIGHT);
 
     int x = 80, y = 10;
     G_filename = new Fl_Input(x, y, win->w()-80-10, 25, "Filename");

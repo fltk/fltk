@@ -26,7 +26,7 @@
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Hor_Value_Slider.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/fl_draw.H>
 
 #include <math.h>
@@ -93,7 +93,7 @@ public:
 
 // global variables
 
-Fl_Simple_Terminal *term = 0;
+Fl_Terminal *term = 0;
 
 double g_lfg;                   // perceived lightness of foreground color
 double g_lbg;                   // perceived lightness of background color
@@ -428,9 +428,9 @@ int main(int argc, char **argv) {
   int ttw = window.w() - 20;
   int tth = window.h() - tty - 10;
 
-  term = new Fl_Simple_Terminal(ttx, tty, ttw, tth);
+  term = new Fl_Terminal(ttx, tty, ttw, tth);
   term->color(FL_WHITE);
-  term->textcolor(FL_BLACK);
+  term->textfgcolor(FL_BLACK);
   term->textsize(13);
 
   term->printf("FLTK fl_contrast() test program with different contrast algorithms, version %s\n", version);

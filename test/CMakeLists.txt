@@ -157,6 +157,7 @@ CREATE_EXAMPLE (sudoku "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "fltk_ima
 CREATE_EXAMPLE (symbols symbols.cxx fltk)
 CREATE_EXAMPLE (tabs tabs.fl fltk)
 CREATE_EXAMPLE (table table.cxx fltk)
+CREATE_EXAMPLE (terminal terminal.fl fltk)
 CREATE_EXAMPLE (threads threads.cxx fltk)
 CREATE_EXAMPLE (tile tile.cxx fltk)
 CREATE_EXAMPLE (tiled_image tiled_image.cxx fltk)
@@ -185,7 +186,7 @@ SET (UNITTEST_SRCS
   unittest_viewport.cxx
   unittest_scrollbarsize.cxx
   unittest_schemes.cxx
-  unittest_simple_terminal.cxx
+  unittest_terminal.cxx
 )
 CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "${GLDEMO_LIBS}")
 

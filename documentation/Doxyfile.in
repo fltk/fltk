@@ -789,6 +789,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/coordinates.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/resize.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/editor.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/Fl_Terminal.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/drawing.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/events.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/subclassing.dox \

@@ -29,7 +29,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Help_View.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>               // fl_text_extents()
@@ -181,7 +181,7 @@ int Ut_Suite::num_failed_ = 0;
 const char *Ut_Suite::red = "\033[31m";
 const char *Ut_Suite::green = "\033[32m";
 const char *Ut_Suite::normal = "\033[0m";
-Fl_Simple_Terminal *Ut_Suite::tty = NULL;
+Fl_Terminal *Ut_Suite::tty = NULL;
 
 /** Switch the user of color escape sequnces in the log text. */
 void Ut_Suite::color(int v) {

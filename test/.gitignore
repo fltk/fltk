@@ -103,6 +103,7 @@ sudoku
 symbols
 table
 tabs
+terminal
 threads
 tile
 tiled_image
@@ -141,6 +142,8 @@ resize.cxx
 resize.h
 tabs.cxx
 tabs.h
+terminal.cxx
+terminal.h
 tree.cxx
 tree.h
 valuators.cxx

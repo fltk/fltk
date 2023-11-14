@@ -94,6 +94,7 @@ CPPFILES = \
 	Fl_Table.cxx \
 	Fl_Table_Row.cxx \
 	Fl_Tabs.cxx \
+	Fl_Terminal.cxx \
 	Fl_Text_Buffer.cxx \
 	Fl_Text_Display.cxx \
 	Fl_Text_Editor.cxx \
