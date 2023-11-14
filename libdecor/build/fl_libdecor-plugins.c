@@ -382,6 +382,41 @@ static void fltk_pointer_button(void *data,
 }
 
 
+// libdecor's touch_down member of wl_touch_listener objects
+void (*decor_touch_down)(void *data, struct wl_touch *wl_touch, uint32_t serial,
+                         uint32_t time, struct wl_surface *surface, int32_t id,
+                         wl_fixed_t x, wl_fixed_t y);
+
+
+// FLTK's replacement for touch_down member of wl_touch_listener objects
+static void fltk_touch_down(void *data, struct wl_touch *wl_touch, uint32_t serial,
+     uint32_t time, struct wl_surface *surface, int32_t id, wl_fixed_t x, wl_fixed_t y)
+{
+  struct seat *seat = data;
+  struct libdecor_frame_gtk *frame_gtk;
+  if (!surface || !own_surface(surface)) return;
+  frame_gtk = wl_surface_get_user_data(surface);
+  if (!frame_gtk) return;
+  seat->touch_focus = surface;
+  frame_gtk->touch_active = get_component_for_surface(frame_gtk, surface);
+  if (!frame_gtk->touch_active) return;
+  
+  if (frame_gtk->touch_active->type == HEADER &&
+      frame_gtk->hdr_focus.type < HEADER_MIN &&
+      time - seat->touch_down_time_stamp <
+        (uint32_t)frame_gtk->plugin_gtk->double_click_time_ms
+      ) {
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(
+                                            gtk_shell, surface);
+    gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat,
+                                  GTK_SURFACE1_GESTURE_DOUBLE_CLICK);
+    gtk_surface1_release(gtk_surface);
+  } else {
+    decor_touch_down(data, wl_touch, serial, time, surface, id, x, y);
+  }
+}
+
+
 struct wl_object { // copied from wayland-private.h
   const struct wl_interface *interface;
   const void *implementation;
@@ -416,6 +451,23 @@ void use_FLTK_pointer_button(struct libdecor_frame *frame) {
   fltk_listener->button = fltk_pointer_button;
   // replace the pointer listener by a copy whose button member is FLTK's
   object->implementation = fltk_listener;
+  
+  object = (struct wl_object *)seat->wl_touch;
+  if (object) {
+    struct wl_touch_listener *decor_touch_listener =
+      (struct wl_touch_listener*)object->implementation;
+    struct wl_touch_listener *fltk_touch_listener =
+      (struct wl_touch_listener*)malloc(sizeof(struct wl_touch_listener));
+    // initialize FLTK's touch listener with libdecor's values
+    *fltk_touch_listener = *decor_touch_listener;
+    // memorize libdecor's down cb
+    decor_touch_down = decor_touch_listener->down;
+    // replace libdecor's down by FLTK's
+    fltk_touch_listener->down = fltk_touch_down;
+    // replace the touch listener by a copy whose down member is FLTK's
+    object->implementation = fltk_touch_listener;
+  }
+  
   // get gnome's double_click_time_ms value
   doubleclick_time = lfg->plugin_gtk->double_click_time_ms;
 #endif // HAVE_GTK && !USE_SYSTEM_LIBDECOR
