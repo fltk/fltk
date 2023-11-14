@@ -437,6 +437,14 @@ void use_FLTK_pointer_button(struct libdecor_frame *frame) {
   wl_list_for_each(seat, &lfg->plugin_gtk->seat_list, link) {
     break;
   }
+  
+  struct wl_surface *surface = lfg->headerbar.wl_surface;
+  if (surface && !own_surface(surface)) {
+    // occurs if libdecor-gtk.so was dynamically loaded via LIBDECOR_PLUGIN_DIR
+    gtk_shell = NULL;
+    return;
+  }
+  
   struct wl_object *object = (struct wl_object *)seat->wl_pointer;
   if (!object) return;
   struct wl_pointer_listener *decor_listener =
