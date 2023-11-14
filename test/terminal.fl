@@ -245,8 +245,8 @@ Fl::repeat_timeout(.10, ring_debug_timer_callback, (void*)this);} {}
     code {MyTerminal *o = (MyTerminal*)userdata;
 o->ring_debug_timer_callback2();} {}
   }
-  Function {handle(int e)} {
-    comment {Event handler} return_type int
+  Function {handle(int e) FL_OVERRIDE} {
+    comment {Event handler} selected return_type int
   } {
     code {switch (e) {
   case FL_KEYBOARD: {
@@ -1487,8 +1487,8 @@ switch ( G_tty->box() ) {
   } {
     Fl_Window win {
       label {Fl_Terminal Test}
-      callback {exit(0);} open selected
-      xywh {0 0 772 863} type Double visible
+      callback {exit(0);} open
+      xywh {626 129 772 863} type Double visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
