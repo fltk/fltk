@@ -1222,7 +1222,7 @@ Fl_Window* make_widgetbin() {
         o->image(pixmap[ID_File_Input]);
       } // Widget_Bin_Button* o
       { Widget_Bin_Button* o = new Widget_Bin_Button(366, 71, 24, 24);
-        o->tooltip("Simple Terminal");
+        o->tooltip("Terminal");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
         o->selection_color(FL_BACKGROUND_COLOR);
@@ -1230,10 +1230,10 @@ Fl_Window* make_widgetbin() {
         o->labelfont(0);
         o->labelsize(14);
         o->labelcolor(FL_FOREGROUND_COLOR);
-        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Simple_Terminal"));
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Terminal"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[ID_Simple_Terminal]);
+        o->image(pixmap[ID_Terminal]);
       } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o

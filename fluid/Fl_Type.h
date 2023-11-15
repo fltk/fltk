@@ -54,7 +54,7 @@ enum ID {
   ID_Dial, ID_Roller, ID_Value_Input, ID_Value_Output,
   // text
   ID_Input, ID_Output, ID_Text_Editor,
-  ID_Text_Display, ID_File_Input, ID_Simple_Terminal,
+  ID_Text_Display, ID_File_Input, ID_Terminal,
   // menus
   ID_Menu_Bar, ID_Menu_Button, ID_Choice,
   ID_Input_Choice, ID_Submenu, ID_Menu_Item,

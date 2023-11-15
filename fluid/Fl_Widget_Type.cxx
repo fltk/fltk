@@ -84,9 +84,9 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
 Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   // Find the current widget, or widget to copy:
   Fl_Type *qq = Fl_Type::current;
-  while (qq && !qq->is_true_widget()) qq = qq->parent;
+  while (qq && (!qq->is_true_widget() || !qq->is_parent())) qq = qq->parent;
   if (!qq) {
-    fl_message("Please select a widget");
+    fl_message("Please select a group widget or window");
     return 0;
   }
   Fl_Widget_Type* q = (Fl_Widget_Type*)qq;

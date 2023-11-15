@@ -670,7 +670,7 @@ else
       }
       Fl_Button {} {
         user_data {"Fl_Grid"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip Grid xywh {139 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[ID_Grid]);}
         class Widget_Bin_Button
@@ -838,10 +838,10 @@ else
         class Widget_Bin_Button
       }
       Fl_Button {} {
-        user_data {"Fl_Simple_Terminal"}
-        callback type_make_cb
-        tooltip {Simple Terminal} xywh {366 71 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[ID_Simple_Terminal]);}
+        user_data {"Fl_Terminal"}
+        callback type_make_cb selected
+        tooltip Terminal xywh {366 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Terminal]);}
         class Widget_Bin_Button
       }
     }

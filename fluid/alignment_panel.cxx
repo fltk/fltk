@@ -3029,10 +3029,10 @@ le FLTK_GETTEXT_FOUND");
 
 Fl_Double_Window *shell_run_window=(Fl_Double_Window *)0;
 
-Fl_Simple_Terminal *shell_run_terminal=(Fl_Simple_Terminal *)0;
+Fl_Terminal *shell_run_terminal=(Fl_Terminal *)0;
 
 static void cb_Clear(Fl_Button*, void*) {
-  shell_run_terminal->clear();
+  shell_run_terminal->append("\e[2J\e[H");
 }
 
 Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
@@ -3049,10 +3049,11 @@ static void cb_shell_run_button(Fl_Return_Button*, void*) {
 Fl_Double_Window* make_shell_window() {
   { shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
     shell_run_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
-    { shell_run_terminal = new Fl_Simple_Terminal(10, 10, 535, 375);
-      Fl_Group::current()->resizable(shell_run_terminal);
+    { shell_run_terminal = new Fl_Terminal(10, 10, 535, 375);
       shell_run_terminal->ansi(1);
-    } // Fl_Simple_Terminal* shell_run_terminal
+      shell_run_terminal->end();
+      Fl_Group::current()->resizable(shell_run_terminal);
+    } // Fl_Terminal* shell_run_terminal
     { Fl_Group* o = new Fl_Group(10, 395, 535, 25);
       { Fl_Button* o = new Fl_Button(10, 395, 94, 25, "Clear");
         o->callback((Fl_Callback*)cb_Clear);

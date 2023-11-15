@@ -49,7 +49,7 @@
 #include <FL/Fl_Progress.H>
 #include <FL/Fl_Roller.H>
 #include <FL/Fl_Scrollbar.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Editor.H>
@@ -848,32 +848,33 @@ static Fl_Text_Editor_Type Fl_Text_Editor_type;
 /**
  \brief Manage a simple terminal widget.
  */
-class Fl_Simple_Terminal_Type : public Fl_Text_Display_Type
+class Fl_Terminal_Type : public Fl_Group_Type
 {
-  typedef Fl_Text_Display_Type super;
+  typedef Fl_Group_Type super;
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::SimpleTerminal"; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Terminal"; }
+  const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Widget *myo = 0L;
     if (batch_mode) {
-      // The Fl_Simple_Terminal constructor attaches a buffer which in turn
+      // The Fl_Terminal constructor attaches a buffer which in turn
       // opens a connection to the display. In batch mode, we create the
       // superclass Fl_Text_Display to avoid that.
       myo = new Fl_Text_Display(x,y,w,h);
     } else {
-      Fl_Simple_Terminal *term = new Fl_Simple_Terminal(x, y, w, h);
-      term->text("> ls -als");
+      Fl_Terminal *term = new Fl_Terminal(x, y, w, h);
+      term->append("> ls -als");
       myo = term;
     }
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Simple_Terminal_Type();}
-  ID id() const FL_OVERRIDE { return ID_Simple_Terminal; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Simple_Terminal) ? true : super::is_a(inID); }
+  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Terminal_Type();}
+  int is_parent() const FL_OVERRIDE { return 0; }
+  ID id() const FL_OVERRIDE { return ID_Terminal; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Terminal) ? true : super::is_a(inID); }
 };
 
-static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
+static Fl_Terminal_Type Fl_Terminal_type;
 
 
 // ---- Other ---------------------------------------------------------- MARK: -
@@ -1102,7 +1103,7 @@ static Fl_Type *known_types[] = {
   (Fl_Type*)&Fl_Text_Editor_type,
   (Fl_Type*)&Fl_Text_Display_type,
   (Fl_Type*)&Fl_File_Input_type,
-  (Fl_Type*)&Fl_Simple_Terminal_type,
+  (Fl_Type*)&Fl_Terminal_type,
   // menus
   (Fl_Type*)&Fl_Menu_Bar_type,
   (Fl_Type*)&Fl_Menu_Button_type,
@@ -1352,7 +1353,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Text_Editor_type},
   {0,0,cb,(void*)&Fl_Text_Display_type},
   {0,0,cb,(void*)&Fl_File_Input_type},
-  {0,0,cb,(void*)&Fl_Simple_Terminal_type},
+  {0,0,cb,(void*)&Fl_Terminal_type},
 {0},
 {"Menus",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Menu_Bar_type},

@@ -130,8 +130,8 @@ extern Fl_Menu_Item menu_Condition[];
 extern Fl_Menu_Item menu_w_settings_shell_text_macros[];
 extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern Fl_Double_Window *shell_run_window;
-#include <FL/Fl_Simple_Terminal.H>
-extern Fl_Simple_Terminal *shell_run_terminal;
+#include <FL/Fl_Terminal.H>
+extern Fl_Terminal *shell_run_terminal;
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 #endif

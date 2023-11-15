@@ -213,7 +213,7 @@ void loadPixmaps()
   pixmap[ID_Tree] = tmp = new Fl_Pixmap(flTree_xpm); tmp->scale(16, 16);
   pixmap[ID_Table] = tmp = new Fl_Pixmap(flTable_xpm); tmp->scale(16, 16);
 
-  pixmap[ID_Simple_Terminal] = tmp = new Fl_Pixmap(flSimpleTerminal_xpm); tmp->scale(16, 16);
+  pixmap[ID_Terminal] = tmp = new Fl_Pixmap(flSimpleTerminal_xpm); tmp->scale(16, 16);
   pixmap[ID_Input_Choice] = tmp = new Fl_Pixmap(flInputChoice_xpm); tmp->scale(16, 16);
   pixmap[ID_Checkbox_Menu_Item] = tmp = new Fl_Pixmap(flCheckMenuitem_xpm); tmp->scale(16, 16);
   pixmap[ID_Radio_Menu_Item] = tmp = new Fl_Pixmap(flRadioMenuitem_xpm); tmp->scale(16, 16);
