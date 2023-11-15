@@ -708,10 +708,10 @@ void save_template_cb(Fl_Widget *, void *) {
   if (!c || !*c) return;
 
   // Convert template name to filename_with_underscores
-  char safename[FL_PATH_MAX], *safeptr;
-  strlcpy(safename, c, sizeof(safename));
-  for (safeptr = safename; *safeptr; safeptr ++) {
-    if (isspace(*safeptr)) *safeptr = '_';
+  char savename[FL_PATH_MAX], *saveptr;
+  strlcpy(savename, c, sizeof(savename));
+  for (saveptr = savename; *saveptr; saveptr ++) {
+    if (isspace(*saveptr)) *saveptr = '_';
   }
 
   // Find the templates directory...
@@ -719,10 +719,10 @@ void save_template_cb(Fl_Widget *, void *) {
   fluid_prefs.getUserdataPath(filename, sizeof(filename));
 
   strlcat(filename, "templates", sizeof(filename));
-  if (fl_access(filename, 0)) fl_mkdir(filename, 0777);
+  if (fl_access(filename, 0)) fl_make_path(filename);
 
   strlcat(filename, "/", sizeof(filename));
-  strlcat(filename, safename, sizeof(filename));
+  strlcat(filename, savename, sizeof(filename));
 
   char *ext = filename + strlen(filename);
   if (ext >= (filename + sizeof(filename) - 5)) {

@@ -216,12 +216,14 @@ void template_load() {
   int num_files;
 
   fluid_prefs.getUserdataPath(path, sizeof(path));
+  if (path[0] == 0) return;
   strlcat(path, "templates", sizeof(path));
+  fl_make_path(path);
 
   int sample_templates_generated = 0;
   fluid_prefs.get("sample_templates_generated", sample_templates_generated, 0);
-
   if (sample_templates_generated < 2) {
+
     strcpy(filename, path);
     strcat(filename, "/FLTK_License.fl");
     FILE *f = fopen(filename, "wb");
