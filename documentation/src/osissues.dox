@@ -52,12 +52,22 @@ can run FLTK-based apps as Wayland clients or as X11 clients.
 The choice between running an app as a Wayland or an X11 client is done as follows,
 when the app runs function \c fl_open_display() (that function can be called explicitly by the app
 or implicitly by FLTK, for example the first time an Fl_Window is show()'n) :
+- if the app contains a global boolean variable named \ref fl_disable_wayland and this
+variable is true, X11 is used;
 - if environment variable FLTK_BACKEND is not defined, Wayland is used if a Wayland compositor
   is available, otherwise X11 is used;
 - if $FLTK_BACKEND equals "wayland", the library makes the app a Wayland client, and stops
   with error if no Wayland compositor is available;
 - if $FLTK_BACKEND equals "x11", the library makes the app an X11 client even if a Wayland
   compositor is available.
+
+The first condition listed above is meant to facilitate conversion of code written for
+FLTK 1.3.x and containing X11-specific code; add this single statement anywhere in the
+app's source code:
+\code
+  FL_EXPORT bool fl_disable_wayland = true;
+\endcode
+and the app will always run as an X11 client.
 
 After function \c fl_open_display() has been called, exactly one of the functions \c fl_wl_display()
 and \c fl_x11_display() returns a non-NULL value.
