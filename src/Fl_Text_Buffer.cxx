@@ -408,7 +408,7 @@ void Fl_Text_Buffer::insert(int pos, const char *text, int insertedLength)
 
 /**
  Can be used by subclasses that need their own printf() style functionality.
- e.g. Fl_Simple_Terminal::printf() would wrap around this method.
+
  \note The expanded string is currently limited to 1024 characters.
  \param[in] fmt is a printf format string for the message text.
  \param[in] ap is a va_list created by va_start() and closed with va_end(),
