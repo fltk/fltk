@@ -1506,7 +1506,7 @@ int Fl_Input_::ivalue() const {
  \see Fl_Input_::ivalue()
  \see Fl_Input_::value(double)
  */
-int Fl_Input_::dvalue() const {
+double Fl_Input_::dvalue() const {
   return atof(value());
 }
 

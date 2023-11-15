@@ -264,7 +264,7 @@ public:
 
   int ivalue() const;
 
-  int dvalue() const;
+  double dvalue() const;
 
   /* Returns the Unicode character at index \p i. */
   unsigned int index(int i) const;
