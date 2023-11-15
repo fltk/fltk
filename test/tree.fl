@@ -38,9 +38,6 @@ decl {\#include <FL/Fl_Color_Chooser.H>} {public global
 decl {\#include <FL/Fl_Text_Display.H>} {public global
 }
 
-decl {\#include <FL/Fl_Terminal.H>} {public global
-}
-
 decl {int G_cb_counter = 0;} {
   comment {// Global callback event counter} private local
 }
@@ -780,7 +777,7 @@ Fl::visible_focus(onoff);}
         }
       }
       Fl_Group {} {
-        label {Test Operations} open selected
+        label {Test Operations} open
         tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {350 435 330 125} box GTK_DOWN_BOX color 47 labelsize 12
       } {
         Fl_Group showitem_box {
@@ -1746,10 +1743,8 @@ helpwin->show();}
     Fl_Box resizer_box {
       xywh {0 263 15 14}
     }
-    Fl_Box tty {
-      label label
-      xywh {16 571 1014 149} box DOWN_BOX color 0
-      class Fl_Terminal
+    Fl_Terminal tty {selected
+      xywh {16 571 1014 149} box DOWN_BOX
     }
   }
   code {// Initialize Tree

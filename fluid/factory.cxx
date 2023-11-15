@@ -843,10 +843,10 @@ public:
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
 
-// ---- Simple Terminal ----
+// ---- Terminal ----
 
 /**
- \brief Manage a simple terminal widget.
+ \brief Manage a terminal widget.
  */
 class Fl_Terminal_Type : public Fl_Group_Type
 {
@@ -856,19 +856,23 @@ public:
   // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
   const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    Fl_Widget *myo = 0L;
-    if (batch_mode) {
-      // The Fl_Terminal constructor attaches a buffer which in turn
-      // opens a connection to the display. In batch mode, we create the
-      // superclass Fl_Text_Display to avoid that.
-      myo = new Fl_Text_Display(x,y,w,h);
-    } else {
-      Fl_Terminal *term = new Fl_Terminal(x, y, w, h);
-      term->append("> ls -als");
-      myo = term;
+    Fl_Terminal *term = new Fl_Terminal(x, y, w, h);
+    if (!batch_mode) {
+      //term->append("> ls -als"); // TODO: text color does not show
     }
-    return myo;
+    return term;
   }
+//  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
+//    Fl_Terminal *myo = (Fl_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+//    switch (w) {
+//      case 4:
+//      case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+//      case 1: myo->textfont(f); myo->append("\033[2J\033[H> ls -als"); break;
+//      case 2: myo->textsize(s); myo->append("\033[2J\033[H> ls -als"); break;
+//      case 3: myo->textcolor(c); myo->append("\033[2J\033[H> ls -als"); break;
+//    }
+//    return 1;
+//  }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Terminal_Type();}
   int is_parent() const FL_OVERRIDE { return 0; }
   ID id() const FL_OVERRIDE { return ID_Terminal; }

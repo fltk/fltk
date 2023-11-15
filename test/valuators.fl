@@ -2,9 +2,6 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-decl {\#include <FL/Fl_Terminal.H>} {public global
-}
-
 Function {} {open
 } {
   Fl_Window {} {
@@ -231,10 +228,9 @@ Function {} {open
       label {Some widgets have color(FL_GREEN) and color2(FL_RED) to show the areas these effect.}
       xywh {460 385 110 115} box BORDER_FRAME color 0 selection_color 0 labelsize 11 align 128
     }
-    Fl_Box tty {selected
-      xywh {10 513 560 117} box DOWN_BOX color 0
+    Fl_Terminal tty {selected
+      xywh {10 513 560 117} box DOWN_BOX
       code0 {o->ansi(true);}
-      class Fl_Terminal
     }
   }
 }
