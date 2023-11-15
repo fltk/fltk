@@ -856,11 +856,15 @@ public:
   // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
   const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    Fl_Terminal *term = new Fl_Terminal(x, y, w, h);
-    if (!batch_mode) {
+    Fl_Widget *ret = NULL;
+    if (batch_mode) {
+      ret = new Fl_Group(x, y, w, h);
+    } else {
+      Fl_Terminal *term = new Fl_Terminal(x, y, w, h);
       //term->append("> ls -als"); // TODO: text color does not show
+      ret = term;
     }
-    return term;
+    return ret;
   }
 //  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
 //    Fl_Terminal *myo = (Fl_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);

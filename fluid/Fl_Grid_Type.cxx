@@ -166,7 +166,7 @@ void Fl_Grid_Proxy::move_cell(Fl_Widget *in_child, int to_row, int to_col, int h
  \param[in] row, col, row_span, col_span, align cell parameters
  */
 Fl_Grid::Cell* Fl_Grid_Proxy::transient_widget(Fl_Widget *wi, int row, int col, int row_span, int col_span, Fl_Grid_Align align) {
-  int i;
+  int i = 0;
   bool remove_old_cell = false;
   Cell *old_cell = cell(wi);
   if (old_cell) {
