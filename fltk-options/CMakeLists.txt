@@ -53,7 +53,7 @@ endif ()
 
 # we must link fltk-optons with cairo if option CAIRO is enabled
 if (FLTK_HAVE_CAIRO)
-  fl_target_link_directories (fltk-options PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
+  target_link_directories (fltk-options PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
 endif (FLTK_HAVE_CAIRO)
 
 if (USE_GDIPLUS)        # can only be true on Windows
@@ -71,7 +71,7 @@ if (WIN32)
   add_executable (fltk-options-cmd ${CPPFILES} ${HEADERFILES})
   target_link_libraries (fltk-options-cmd ${FLTK_OPTIONS_LIBS})
   if (FLTK_HAVE_CAIRO)
-    fl_target_link_directories (fltk-options-cmd PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
+    target_link_directories (fltk-options-cmd PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
   endif (FLTK_HAVE_CAIRO)
 endif ()
 

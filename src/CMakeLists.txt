@@ -644,14 +644,7 @@ if (USE_XFT)
 endif (USE_XFT)
 
 if (UNIX AND OPTION_USE_WAYLAND)
-  if (NOT (CMAKE_VERSION VERSION_LESS 3.4))
-    pkg_get_variable(PROTOCOLS wayland-protocols pkgdatadir) # requires cmake 3.4
-  else()
-    execute_process(COMMAND pkg-config --variable=pkgdatadir wayland-protocols
-      OUTPUT_VARIABLE PROTOCOLS)
-    # strip trailing newline
-    string (REPLACE "\n" "" PROTOCOLS ${PROTOCOLS})
-  endif (NOT (CMAKE_VERSION VERSION_LESS 3.4))
+  pkg_get_variable(PROTOCOLS wayland-protocols pkgdatadir)
   # replace "//" with "/"
   string (REPLACE "//" "/" PROTOCOLS ${PROTOCOLS})
   if (NOT(EXISTS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml))
@@ -737,7 +730,7 @@ FL_ADD_LIBRARY (fltk STATIC "${STATIC_FILES}")
 target_link_libraries (fltk ${OPTIONAL_LIBS})
 
 if (FLTK_HAVE_CAIRO)
-  fl_target_link_directories (fltk PUBLIC "${PKG_CAIRO_LIBRARY_DIRS}")
+  target_link_directories (fltk PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
 endif()
 
 #######################################################################
@@ -785,7 +778,7 @@ if (OPTION_BUILD_SHARED_LIBS AND NOT MSVC)
 
   FL_ADD_LIBRARY (fltk SHARED "${SHARED_FILES}")
   target_link_libraries (fltk_SHARED ${OPTIONAL_LIBS} ${PKG_CAIRO_LIBRARIES})
-  fl_target_link_directories (fltk_SHARED PUBLIC "${PKG_CAIRO_LIBRARY_DIRS}")
+  target_link_directories (fltk_SHARED PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
 
   ###################################################################
 

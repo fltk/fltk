@@ -125,7 +125,7 @@ function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   endif ()
 
   if (FLTK_HAVE_CAIRO AND PKG_CAIRO_LIBRARY_DIRS)
-    fl_target_link_directories (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+    target_link_directories (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
   endif ()
 
   if (USE_GDIPLUS)        # can only be true on Windows

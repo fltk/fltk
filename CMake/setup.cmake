@@ -82,11 +82,9 @@ include(TestBigEndian)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 if (CMAKE_GENERATOR MATCHES "Xcode")
-  if (NOT (CMAKE_VERSION VERSION_LESS 3.9)) # CMake 3.9 and up
-    # Tell Xcode to regenerate scheme information automatically whenever the
-    # CMake configuration changes without asking the user
-    set (CMAKE_XCODE_GENERATE_SCHEME 1)
-  endif()
+  # Tell Xcode to regenerate scheme information automatically whenever the
+  # CMake configuration changes without asking the user
+  set (CMAKE_XCODE_GENERATE_SCHEME 1)
 endif()
 
 if (APPLE)

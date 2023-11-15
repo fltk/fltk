@@ -25,23 +25,9 @@
 #         at least CMake 3.12.0
 # Note 2: Used in fluid since 05/2023,
 #         used for Windows (MSVC) shared lib builds much earlier
+# Note 3: More modern CMake features require 3.13...3.15 (Nov 2023)
 
-cmake_minimum_required (VERSION 3.12.0 FATAL_ERROR) # 05/2023
-
-#######################################################################
-
-# Use "legacy mode" of FindOpenGL (avoid CMake developer warning).
-# Note: we're using FindOpenGL with `OPENGL_LIBRARIES` and not (yet)
-# the `OpenGL::GL` target. This may be changed in the future.
-# See https://cmake.org/cmake/help/latest/policy/CMP0072.html
-# Update Feb 28, 2021: To avoid a warning about "OLD" policies we set
-# OpenGL_GL_PREFERENCE directly to "LEGACY" (other option: "GLVND").
-
-# if (POLICY CMP0072)
-#   cmake_policy (SET CMP0072 OLD)
-# endif ()
-
-set (OpenGL_GL_PREFERENCE LEGACY)
+cmake_minimum_required (VERSION 3.15.0 FATAL_ERROR)
 
 #######################################################################
 # define the FLTK project and version
@@ -56,7 +42,9 @@ project (FLTK VERSION 1.4.0)
 include (CMake/fl_debug_var.cmake)
 include (CMake/fl_debug_pkg.cmake)
 include (CMake/fl_add_library.cmake)
-include (CMake/compatibility.cmake)
+
+# right now we don't use compatibility functions
+# include (CMake/compatibility.cmake)
 
 if (0)
   fl_debug_var (FLTK_VERSION_MAJOR)

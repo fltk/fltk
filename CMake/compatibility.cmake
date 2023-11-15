@@ -1,7 +1,7 @@
 #
 # CMake compatibility functions and macros for the Fast Light Tool Kit (FLTK)
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 
 ################################################################################
 #
-# The functions (and macros) in this file are defined to simplify CMake
+# The functions and maybe macros in this file are defined to simplify CMake
 # code that uses features not available in all supported CMake versions.
 # Functions should be preferred (rather than macros) because functions
 # have their own variable scope.
@@ -32,6 +32,12 @@
 # Current cmake_minimum_required() version: see <fltk-root>/CMakeLists.txt
 #
 ################################################################################
+
+
+# Right now we don't need compatibility functions
+# This file is currently "empty" but left for documentation purposes
+# An example function documentation follows...
+
 
 ################################################################################
 #
@@ -62,13 +68,3 @@
 #   can be an empty list.
 #
 ################################################################################
-
-function (fl_target_link_directories TARGET SCOPE DIRS)
-
-  if (CMAKE_VERSION VERSION_LESS "3.13")
-    link_directories (${DIRS})
-  else ()
-    target_link_directories (${TARGET} ${SCOPE} ${DIRS})
-  endif ()
-
-endfunction () # fl_target_link_directories()
