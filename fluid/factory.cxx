@@ -845,6 +845,47 @@ static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
 // ---- Terminal ----
 
+/** Use this terminal instead of Fl_Terminal to capture resize actions. */
+class Fl_Terminal_Proxy : public Fl_Terminal {
+public:
+  Fl_Terminal_Proxy(int x, int y, int w, int h, const char *l=NULL)
+  : Fl_Terminal(x, y, w, h, l) { }
+  void print_sample_text() {
+    clear_screen_home(false);
+    append("> ls -als");
+  }
+  void resize(int x, int y, int w, int h) FL_OVERRIDE {
+    Fl_Terminal::resize(x, y, w, h);
+    // After a resize, the top text vanishes, so make sure we redraw it.
+    print_sample_text();
+  }
+};
+
+/** Use this terminal in batch mode to avoid opening a DISPLAY connection. */
+class Fl_Batchmode_Terminal : public Fl_Group {
+public:
+  Fl_Font tfont_;
+  int tsize_;
+  Fl_Color tcolor_;
+  Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=NULL)
+  : Fl_Group(x, y, w, h, l) 
+  { // set the defaults that Fl_Terminal would set
+    box(FL_DOWN_BOX);
+    color(FL_FOREGROUND_COLOR);
+    selection_color(FL_BACKGROUND_COLOR);
+    labeltype(FL_NORMAL_LABEL);
+    labelfont(0);
+    labelsize(14);
+    labelcolor(FL_FOREGROUND_COLOR);
+    tfont_ = 4;
+    tcolor_ = 0xd0d0d000;
+    tsize_ = 14;
+    align(Fl_Align(FL_ALIGN_TOP));
+    when(FL_WHEN_RELEASE);
+    end();
+  }
+};
+
 /**
  \brief Manage a terminal widget.
  */
@@ -858,25 +899,35 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Widget *ret = NULL;
     if (batch_mode) {
-      ret = new Fl_Group(x, y, w, h);
+      ret = new Fl_Batchmode_Terminal(x, y, w, h);
     } else {
-      Fl_Terminal *term = new Fl_Terminal(x, y, w, h);
-      //term->append("> ls -als"); // TODO: text color does not show
+      Fl_Terminal_Proxy *term = new Fl_Terminal_Proxy(x, y, w+100, h);
       ret = term;
     }
     return ret;
   }
-//  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-//    Fl_Terminal *myo = (Fl_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
-//    switch (w) {
-//      case 4:
-//      case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
-//      case 1: myo->textfont(f); myo->append("\033[2J\033[H> ls -als"); break;
-//      case 2: myo->textsize(s); myo->append("\033[2J\033[H> ls -als"); break;
-//      case 3: myo->textcolor(c); myo->append("\033[2J\033[H> ls -als"); break;
-//    }
-//    return 1;
-//  }
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
+    if (batch_mode) {
+      Fl_Batchmode_Terminal *myo = (Fl_Batchmode_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+      switch (w) {
+        case 4:
+        case 0: f = (Fl_Font)myo->tfont_; s = myo->tsize_; c = myo->tcolor_; break;
+        case 1: myo->tfont_ = f; break;
+        case 2: myo->tsize_ = s; break;
+        case 3: myo->tcolor_ = c; break;
+      }
+    } else {
+      Fl_Terminal_Proxy *myo = (Fl_Terminal_Proxy*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+      switch (w) {
+        case 4:
+        case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+        case 1: myo->textfont(f); myo->print_sample_text(); break;
+        case 2: myo->textsize(s); myo->print_sample_text(); break;
+        case 3: myo->textcolor(c); myo->print_sample_text(); break;
+      }
+    }
+    return 1;
+  }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Terminal_Type();}
   int is_parent() const FL_OVERRIDE { return 0; }
   ID id() const FL_OVERRIDE { return ID_Terminal; }
