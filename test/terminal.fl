@@ -1503,7 +1503,7 @@ switch ( G_tty->box() ) {
     Fl_Window win {
       label {Fl_Terminal Test}
       callback {exit(0);} open
-      xywh {626 129 857 838} type Double visible
+      xywh {437 156 857 838} type Double visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1948,7 +1948,7 @@ Hit ENTER to run command.
 The command's stdout will appear in terminal.} xywh {109 269 737 25} labelsize 12 when 12 textfont 4
       }
       Fl_Terminal tty {selected
-        xywh {10 302 836 524}
+        xywh {10 302 836 524} box DOWN_BOX
         class MyTerminal
       }
     }
