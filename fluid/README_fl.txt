@@ -313,6 +313,7 @@ The list of known Types and their inheritance is:
    |    |    +-- Fl_Table
    |    |    +-- Fl_Tabs
    |    |    +-- Fl_Scroll
+   |    |    +-- Fl_Terminal
    |    |    +-- Fl_Tile
    |    |    +-- Fl_Wizard
    |    |    +-- Fl_Grid
@@ -340,7 +341,6 @@ The list of known Types and their inheritance is:
    |    +-- Fl_File_Input
    |    +-- Fl_Text_Display
    |    +-- Fl_Text_Editor
-   |    |    +-- Fl_Simple_Terminal
    |    +-- Fl_Clock
    |    +-- Fl_Help_View
    |    +-- Fl_Progress

@@ -853,6 +853,7 @@ class Fl_Terminal_Type : public Fl_Group_Type
   typedef Fl_Group_Type super;
 public:
   const char *type_name() FL_OVERRIDE { return "Fl_Terminal"; }
+  // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
   const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Widget *myo = 0L;
