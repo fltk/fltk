@@ -1816,9 +1816,6 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
   }
-  // toplevel, non-popup windows must have origin at 0,0
-  if (!pWindow->parent() &&
-      !(pWindow->menu_window() || pWindow->tooltip_window())) X = Y = 0;
   int is_a_move = (X != x() || Y != y());
   bool true_rescale = Fl_Window::is_a_rescale();
   if (fl_win && fl_win->buffer) {
@@ -1836,6 +1833,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       if (W < 1) W = 1;
       if (H < 1) H = 1;
     }
+    // toplevel, non-popup windows must have origin at 0,0
+    if (!pWindow->parent() &&
+        !(pWindow->menu_window() || pWindow->tooltip_window())) X = Y = 0;
     pWindow->Fl_Group::resize(X,Y,W,H);
 //fprintf(stderr, "resize: win=%p to %dx%d\n", pWindow, W, H);
     if (shown()) {pWindow->redraw();}
@@ -1900,7 +1900,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         // Wayland doesn't seem to provide a reliable way for the app to set the
         // window position on screen. This is functional when the move is mouse-driven.
         Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-        xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
+        if (Fl::e_state == FL_BUTTON1) {
+          xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
+        }
       } else if (fl_win->kind == SUBWINDOW && fl_win->subsurface) {
         wl_subsurface_set_position(fl_win->subsurface, pWindow->x() * f, pWindow->y() * f);
       }
