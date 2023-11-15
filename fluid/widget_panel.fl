@@ -58,8 +58,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load selected
-        xywh {10 30 400 330} labelsize 11 when 0 resizable
+        callback propagate_load
+        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -835,7 +835,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 hide
+        xywh {10 30 400 330} labelsize 11
       } {
         Fl_Group {} {
           label {Location:}
@@ -894,8 +894,8 @@ wCallback->do_callback(wCallback, v);} open
             callback {if (v==LOAD) {
   Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
   Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
-  Fl_Grid::Cell *cell = g->cell(child);
-  Fl_Grid::Cell *tcell = g->transient_cell(child);
+//  Fl_Grid::Cell *cell = g->cell(child);
+//  Fl_Grid::Cell *tcell = g->transient_cell(child);
   widget_grid_transient->hide();
   widget_grid_unlinked->hide();
   if (g->transient_cell(child)) {
@@ -903,7 +903,7 @@ wCallback->do_callback(wCallback, v);} open
   } else if (!g->cell(child)) {
     widget_grid_unlinked->show();
   }
-}}
+}} selected
             xywh {250 60 80 20} labelsize 11 labelcolor 1
           }
           Fl_Box widget_grid_unlinked {

@@ -129,8 +129,8 @@ static void cb_widget_grid_transient(Fl_Box* o, void* v) {
   if (v==LOAD) {
     Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
     Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
-    Fl_Grid::Cell *cell = g->cell(child);
-    Fl_Grid::Cell *tcell = g->transient_cell(child);
+  //  Fl_Grid::Cell *cell = g->cell(child);
+  //  Fl_Grid::Cell *tcell = g->transient_cell(child);
     widget_grid_transient->hide();
     widget_grid_unlinked->hide();
     if (g->transient_cell(child)) {
@@ -573,6 +573,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1446,7 +1447,6 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
         widget_tab_grid_child->labelsize(11);
         widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
-        widget_tab_grid_child->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
           o->box(FL_FLAT_BOX);
           o->labelfont(1);
