@@ -3032,7 +3032,7 @@ Fl_Double_Window *shell_run_window=(Fl_Double_Window *)0;
 Fl_Terminal *shell_run_terminal=(Fl_Terminal *)0;
 
 static void cb_Clear(Fl_Button*, void*) {
-  shell_run_terminal->append("\e[2J\e[H");
+  shell_run_terminal->append("\033[2J\033[H");
 }
 
 Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
