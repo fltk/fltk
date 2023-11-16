@@ -1503,7 +1503,7 @@ switch ( G_tty->box() ) {
     Fl_Window win {
       label {Fl_Terminal Test}
       callback {exit(0);} open
-      xywh {437 156 857 838} type Double visible
+      xywh {0 0 897 838} type Double visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1777,7 +1777,7 @@ Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 151 77 2
       }
       Fl_Choice {} {
         label {Terminal Color}
-        xywh {364 187 145 20} down_box BORDER_BOX labelsize 12 textsize 12
+        xywh {389 187 145 20} down_box BORDER_BOX labelsize 9 textsize 9
       } {
         MenuItem {} {
           label {White on DarkAmber}
@@ -1826,41 +1826,103 @@ add_lines(50);}
         }
       }
       Fl_Group {} {
-        label {Terminal Ops}
-        xywh {608 21 115 210} box ENGRAVED_FRAME labelsize 11
+        label {Terminal Ops} open
+        xywh {608 21 152 210} box ENGRAVED_FRAME labelsize 11
       } {
         Fl_Button {} {
-          label {Clear Screen}
+          label {Reset Terminal
+API}
+          callback {G_tty->reset_terminal();
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Reset terminal using reset_terminal()
+Clears: screen, history, sets default tabstops, etc.} xywh {616 26 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Reset Terminal
+ANSI}
+          callback {G_tty->append("\\033c"); // reset terminal
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Reset terminal using ESC[c
+Clears: screen, history, sets default tabstops, etc.} xywh {686 26 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Home Cursor
+API}
+          callback {G_tty->cursor_home();
+G_tty->redraw();}
+          tooltip {Moves cursor to home position (top/left) using cursor_home()} xywh {616 54 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Home Cursor
+ANSI}
+          callback {G_tty->append("\\033[H");
+G_tty->redraw();}
+          tooltip {Moves cursor to home position (top/left) using ESC[H} xywh {686 54 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear History
+API}
+          callback {G_tty->clear_history();
+G_tty->redraw();}
+          tooltip {Clear scrollback history using clear_history()} xywh {616 82 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear History
+ANSI}
+          callback {G_tty->append("\\033[3J"); // clr history
+G_tty->redraw();}
+          tooltip {Clear scrollback history using ESC[3J} xywh {686 82 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear Screen
+API}
+          callback {G_tty->clear();
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Clear terminal screen using clear().
+Moves what was on the screen to the scroll history.} xywh {616 110 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear Screen
+ANSI}
           callback {G_tty->append("\\033[H\\033[2J"); // home, cls
 G_tty->redraw();
 // Reset the 'Add +50' line counter to 1
 G_lines = 1;}
-          tooltip {Clear terminal screen.
-Moves what was on the screen to the scroll history.} xywh {620 37 90 25} labelsize 11
+          tooltip {Clear terminal screen using ESC[H + ESC[2J
+Moves what was on the screen to the scroll history.} xywh {686 110 64 24} labelsize 8
         }
-        Fl_Button {} {
-          label {Clear History}
-          callback {G_tty->append("\\033[3J"); // clr history
-G_tty->redraw();}
-          tooltip {Clear scrollback history.} xywh {620 68 90 25} labelsize 11
-        }
-        Fl_Button {} {
-          label {Reset Terminal}
-          callback {G_tty->append("\\033c"); // reset terminal
-G_tty->redraw();}
-          tooltip {Reset terminal.
-Clears: screen, history, sets default tabstops, etc.} xywh {620 99 90 25} labelsize 11
-        }
-        Fl_Button {} {
-          label {Home Cursor}
-          callback {G_tty->append("\\033[H");}
-          tooltip {Moves cursor to home position (top/left) using ESC[H} xywh {620 130 90 25} labelsize 11
+        Fl_Group {} {open
+          xywh {616 138 134 24} box FLAT_BOX color 45
+        } {
+          Fl_Button {} {
+            label {Clear Screen
+To Color}
+            callback {Fl_Color c;
+if (parse_color(clear_color_input->value(), c) == -1 ) return;
+G_tty->clear(c);
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+            tooltip {Clear terminal screen to specific color
+Moves what was on the screen to the scroll history.} xywh {616 138 64 24} labelsize 8
+          }
+          Fl_Input clear_color_input {
+            tooltip {The color used by "Clear Screen To Color" button
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#ff000000, etc)} xywh {686 138 64 24} labelsize 9 when 28 textfont 4 textsize 9
+            code0 {clear_color_input->value("\#ff000000");}
+          }
         }
         Fl_Button {} {
           label {Speed Test}
           callback {speed_test();}
           tooltip {Runs a full screen random chars/colors
-Shortcut: S} xywh {620 161 90 25} shortcut 0x73 labelsize 11
+Shortcut: S} xywh {640 168 90 25} shortcut 0x73 labelsize 11
         }
         Fl_Button {} {
           label {Ring Debug}
@@ -1871,52 +1933,52 @@ if (scrollhistory_input->value() > 35) {
 }
 
 // Show debug window
-G_tty->show_ring_debug_window();}
+G_tty->show_ring_debug_window();} selected
           tooltip {Show the Fl_Terminal raw ring buffer contents.
-(Warning: This slows the UI and uses continuous cpu until closed)} xywh {620 193 90 25} labelsize 11
+(Warning: This slows the UI and uses continuous cpu until closed)} xywh {640 198 90 25} labelsize 11
         }
       }
       Fl_Group {} {
         label {Terminal Tests}
-        xywh {731 21 115 210} box ENGRAVED_FRAME labelsize 11
+        xywh {767 21 115 210} box ENGRAVED_FRAME labelsize 11
       } {
         Fl_Button {} {
           label {Unicode
 Alignment}
           callback {unicode_alignment();}
           tooltip {Show a Unicode screen alignment test
-Checks that troublesome Unicode chars don't cause misalignment} xywh {742 31 90 30} labelsize 9
+Checks that troublesome Unicode chars don't cause misalignment} xywh {778 31 90 30} labelsize 9
         }
         Fl_Button {} {
           label {+50 Lines}
           callback {add_lines(50);}
           tooltip {Add 50 lines of text to terminal.
-Tests screen history, scrollup} xywh {742 66 90 30} labelsize 9
+Tests screen history, scrollup} xywh {778 66 90 30} labelsize 9
         }
         Fl_Button {} {
           label {Color Bars}
           callback {show_colorbars();}
           tooltip {Show colorbar test
 Tests API for setting colors
-Does *NOT* use ESC codes} xywh {742 101 90 30} labelsize 11
+Does *NOT* use ESC codes} xywh {778 101 90 30} labelsize 11
         }
         Fl_Box {} {
           label {Self Tests}
-          xywh {746 173 90 15} labelsize 10
+          xywh {782 173 90 15} labelsize 10
         }
         Fl_Button {} {
           label {@<<}
           callback {NextEscapeTest(-1);}
           comment {Move to previous test}
           tooltip {Reverse through the ESC code self tests
-Shortcut: SHIFT+E} xywh {742 191 40 30} shortcut 0x10065 labelsize 11
+Shortcut: SHIFT+E} xywh {778 191 40 30} shortcut 0x10065 labelsize 11
         }
         Fl_Button {} {
           label {@>>}
           callback {NextEscapeTest(1);}
           comment {Move to next test}
           tooltip {Advance through the ESC code self tests
-Shortcut: 'e'} xywh {792 191 40 30} shortcut 0x65 labelsize 11
+Shortcut: 'e'} xywh {828 191 40 30} shortcut 0x65 labelsize 11
         }
       }
       Fl_Input showfile_input {
@@ -1930,7 +1992,7 @@ showfile_input->activate();
 command_input->activate();
 Fl::focus(showfile_input); // return focus
 win->redraw();}
-        tooltip {Type in the pathname of a file to cat to the screen} xywh {109 238 737 25} labelsize 12 when 10 textfont 4
+        tooltip {Type in the pathname of a file to cat to the screen} xywh {109 238 773 25} labelsize 12 when 10 textfont 4
       }
       Fl_Input command_input {
         label Command
@@ -1945,10 +2007,10 @@ Fl::focus(command_input); // return focus
 win->redraw();}
         tooltip {Command to run.
 Hit ENTER to run command.
-The command's stdout will appear in terminal.} xywh {109 269 737 25} labelsize 12 when 12 textfont 4
+The command's stdout will appear in terminal.} xywh {109 269 773 25} labelsize 12 when 12 textfont 4
       }
-      Fl_Terminal tty {selected
-        xywh {10 302 836 524} box DOWN_BOX
+      Fl_Terminal tty {
+        xywh {10 302 872 524} box DOWN_BOX
         class MyTerminal
       }
     }

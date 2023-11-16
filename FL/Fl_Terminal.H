@@ -790,8 +790,6 @@ protected:
   int  w_to_col(int W) const;
   int  h_to_row(int H) const;
   // API: Display clear operations
-  void clear_screen(bool scroll_to_hist=true);
-  void clear_screen_home(bool scroll_to_hist=true);
   void clear_sod(void);
   void clear_eod(void);
   void clear_eol(void);
@@ -819,8 +817,13 @@ protected:
   void history_use(int val, bool update=true);
 public:
  // API: Terminal operations
-  void clear_history(void);    // ESC [ 3 J
-  void reset_terminal(void);   // ESC c
+  void clear(void);
+  void clear(Fl_Color val);
+  void clear_screen(bool scroll_to_hist=true);      // ESC [ 2 J
+  void clear_screen_home(bool scroll_to_hist=true); // ESC [ H ESC [ 2 J
+  void clear_history(void);                         // ESC [ 3 J
+  void reset_terminal(void);                        // ESC c
+  void cursor_home(void);                           // ESC [ 0 H
 protected:
   // Cursor management
   int  cursor_h(void) const;
@@ -841,7 +844,6 @@ protected:
   void cursor_down(int count=1, bool do_scroll=false);
   void cursor_left(int count=1);
   void cursor_right(int count=1, bool do_scroll=false);
-  void cursor_home(void);
   void cursor_eol(void);
   void cursor_sol(void);
   void cursor_cr(void);

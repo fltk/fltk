@@ -1591,6 +1591,25 @@ int Fl_Terminal::xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol) const {
 }
 
 /**
+  Clears the screen to the current textbgcolor(), and homes the cursor.
+  \see clear_screen(), clear_screen_home(), cursor_home()
+*/
+void Fl_Terminal::clear(void) {
+  clear_screen_home();
+}
+
+/**
+  Clears the screen to a specific color \p val and homes the cursor.
+  \see clear_screen(), clear_screen_home(), cursor_home()
+*/
+void Fl_Terminal::clear(Fl_Color val) {
+  Fl_Color save = textbgcolor();
+  textbgcolor(val);
+  clear_screen_home();
+  textbgcolor(save);
+}
+
+/**
   Clear the terminal screen only; does not affect the cursor position.
 
   Also clears the current mouse selection.
