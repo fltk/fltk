@@ -152,8 +152,7 @@ file.} open return_type void
         sv_project->scroll(line, 0);
       }
     }
-  }} {selected
-  }
+  }} {}
 }
 
 Function {update_sourceview_position_cb(class Fl_Tabs*, void*)} {
@@ -383,12 +382,14 @@ if (e) {
   int pos = e->insert_position()-1;
   if (pos < 0) pos = b->length()-1;
   int found = b->search_backward(pos, needle, &pos, sv_find_text_case->value());
+  if (!found)
+    found = b->search_backward(b->length()-1, needle, &pos, sv_find_text_case->value());
   if (found) {
     b->select(pos, pos + (int)strlen(needle));
     e->insert_position(pos);
     e->show_insert_position();
   }
-}}
+}} selected
         xywh {273 460 25 20} labelsize 11
       }
       Fl_Button {} {
@@ -407,6 +408,8 @@ if (e) {
   int pos = e->insert_position() + 1;
   if (pos+1 >= b->length()) pos = 0;
   int found = b->search_forward(pos, needle, &pos, sv_find_text_case->value());
+  if (!found && (pos > 0))
+    found = b->search_forward(0, needle, &pos, sv_find_text_case->value());
   if (found) {
     b->select(pos, pos + (int)strlen(needle));
     e->insert_position(pos);
