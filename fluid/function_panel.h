@@ -74,8 +74,7 @@ extern Fl_Menu_Item menu_decl_class_choice[];
 extern Fl_Double_Window *data_panel;
 extern Fl_Choice *data_choice;
 extern Fl_Choice *data_class_choice;
-#include <FL/Fl_Check_Button.H>
-extern Fl_Check_Button *data_mode;
+extern Fl_Choice *data_mode;
 extern Fl_Input *data_input;
 extern Fl_Input *data_filename;
 extern Fl_Button *data_filebrowser;
@@ -85,6 +84,7 @@ extern Fl_Button *data_panel_cancel;
 Fl_Double_Window* make_data_panel();
 extern Fl_Menu_Item menu_data_choice[];
 extern Fl_Menu_Item menu_data_class_choice[];
+extern Fl_Menu_Item menu_data_mode[];
 extern Fl_Double_Window *class_panel;
 extern Fl_Light_Button *c_public_button;
 extern Fl_Input *c_name_input;

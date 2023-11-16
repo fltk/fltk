@@ -25,11 +25,15 @@
 #include "function_panel.h"
 #include "comments.h"
 #include "mergeback.h"
+#include "undo.h"
 
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_ask.H>
 #include "../src/flstring.h"
+
+#include <zlib.h>
+
 
 /// Set a current class, so that the code of the children is generated correctly.
 Fl_Class_Type *current_class = NULL;
@@ -1128,8 +1132,11 @@ void Fl_Data_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("filename");
     f.write_word(filename_);
   }
-  if (text_mode_) {
+  if (text_mode_ == 1) {
     f.write_string("textmode");
+  }
+  if (text_mode_ == 2) {
+    f.write_string("compressed");
   }
 }
 
@@ -1141,6 +1148,8 @@ void Fl_Data_Type::read_property(Fd_Project_Reader &f, const char *c) {
     storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
     text_mode_ = 1;
+  } else if (!strcmp(c,"compressed")) {
+    text_mode_ = 2;
   } else {
     Fl_Decl_Type::read_property(f, c);
   }
@@ -1209,6 +1218,7 @@ void Fl_Data_Type::open() {
       if (v==0) { free(s); continue; }    // Continue Editing
       //if (v==1) { }                     // Ignore Error and close dialog
     }
+    undo_checkpoint();
     name(n);
     free(s);
     // store flags
@@ -1228,6 +1238,8 @@ void Fl_Data_Type::open() {
       }
     }
     text_mode_ = data_mode->value();
+    if (text_mode_ < 0) text_mode_ = 0;
+    if (text_mode_ > 2) text_mode_ = 2;
     // store the filename
     c = data_filename->value();
     if (filename_ && strcmp(filename_, data_filename->value()))
@@ -1246,6 +1258,7 @@ void Fl_Data_Type::open() {
       comment(0);
     }
     if (c) free((void*)c);
+    set_modflag(1);
     break;
   }
 BREAK2:
@@ -1262,6 +1275,7 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
   const char *fn = filename_;
   char *data = 0;
   int nData = -1;
+  int uncompressedDataSize = 0;
   // path should be set correctly already
   if (filename_ && !f.write_sourceview) {
     enter_project_dir();
@@ -1276,6 +1290,15 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
       if (nData) {
         data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* use default */ }
+        if (text_mode_ == 2) {
+          uncompressedDataSize = nData;
+          uLong nzData = compressBound(nData);
+          Bytef *zdata = (Bytef*)::malloc(nzData);
+          if (compress(zdata, &nzData, (Bytef*)data, nData) != Z_OK) { /* error */ }
+          ::free(data);
+          data = (char*)zdata;
+          nData = (int)nzData;
+        }
       }
       fclose(f);
     }
@@ -1284,13 +1307,22 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
   }
   if (is_in_class()) {
     f.write_public(public_);
-    if (text_mode_) {
+    if (text_mode_ == 1) {
       f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
       f.write_c("\n");
       write_comment_c(f);
       f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cstring(data, nData);
+    } else if (text_mode_ == 2) {
+      f.write_h("%sstatic int %s_size;\n", f.indent(1), c);
+      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+      f.write_c("\n");
+      write_comment_c(f);
+      f.write_c("int %s::%s_size = %d;\n", class_name(1), c, uncompressedDataSize);
+      f.write_c("unsigned char %s::%s[%d] = /* data compressed and inlined from %s */\n", class_name(1), c, nData, fn);
+      if (message) f.write_c("#error %s %s\n", message, fn);
+      f.write_cdata(data, nData);
     } else {
       f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
@@ -1304,13 +1336,22 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        if (text_mode_) {
+        if (text_mode_ == 1) {
           f.write_h("extern const char *%s;\n", c);
           f.write_c("\n");
           write_comment_c(f);
           f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cstring(data, nData);
+        } else if (text_mode_ == 2) {
+          f.write_h("extern int %s_size;\n", c);
+          f.write_h("extern unsigned char %s[%d];\n", c, nData);
+          f.write_c("\n");
+          write_comment_c(f);
+          f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+          f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+          if (message) f.write_c("#error %s %s\n", message, fn);
+          f.write_cdata(data, nData);
         } else {
           f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
@@ -1323,7 +1364,7 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
       } else {
         write_comment_h(f);
         f.write_h("#error Unsupported declaration loading inline data %s\n", fn);
-        if (text_mode_)
+        if (text_mode_ == 1)
           f.write_h("const char *%s = \"abc...\";\n", c);
         else
           f.write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
@@ -1333,10 +1374,16 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
       write_comment_c(f);
       if (static_)
         f.write_c("static ");
-      if (text_mode_) {
+      if (text_mode_ == 1) {
         f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cstring(data, nData);
+      } else if (text_mode_ == 2) {
+        f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+        if (static_) f.write_c("static ");
+        f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+        if (message) f.write_c("#error %s %s\n", message, fn);
+        f.write_cdata(data, nData);
       } else {
         f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
         if (message) f.write_c("#error %s %s\n", message, fn);

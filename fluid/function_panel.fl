@@ -341,11 +341,11 @@ Function {make_decl_panel()} {open
 Function {make_data_panel()} {open
 } {
   Fl_Window data_panel {
-    label {Inline Data Properties}
-    xywh {589 362 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    label {Inline Data Properties} open
+    xywh {567 382 343 264} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open
-      xywh {10 10 320 20}
+      xywh {10 10 320 48}
     } {
       Fl_Box {} {
         xywh {288 10 42 20} resizable
@@ -386,42 +386,57 @@ Function {make_data_panel()} {open
           xywh {10 10 100 20} labelsize 11
         }
       }
-      Fl_Check_Button data_mode {
-        label {text mode}
-        tooltip {When text mode is selected, the returned type is "const char*" and a trailing NUL will be appended to the data.} xywh {200 10 78 20} down_box DOWN_BOX labelsize 11
+      Fl_Choice data_mode {open
+        tooltip {text mode generates a "const char*" and a trailing NUL, compressed mode uses zlib to generate a binary block} xywh {10 38 185 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label {binary mode}
+          user_data 0 user_data_type long
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {text mode}
+          user_data 1 user_data_type long
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {compressed binary}
+          user_data 2 user_data_type long
+          xywh {0 0 100 20} labelsize 11
+        }
       }
     }
     Fl_Input data_input {
       label {Variable Name:}
-      tooltip {Inline Data variables are declared "const unsigned char []" in binary mode and "const char*" in text mode.} xywh {10 52 320 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
+      tooltip {Inline Data variables are declared "const unsigned char []" in binary mode and "const char*" in text mode.} xywh {10 78 320 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
     }
     Fl_Input data_filename {
       label {Filename:}
-      tooltip {Name and path of file that will be inlined.} xywh {10 90 280 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
+      tooltip {Name and path of file that will be inlined.} xywh {10 116 280 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
     }
     Fl_Button data_filebrowser {
       label {@fileopen}
-      xywh {290 90 40 20} labelcolor 134
+      xywh {290 116 40 20} labelcolor 134
     }
     Fl_Text_Editor data_comment_input {
       label {Comment:}
-      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      tooltip {Declaration comment in Doxygen format} xywh {10 156 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
       code0 {data_comment_input->buffer(new Fl_Text_Buffer());}
       code1 {data_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
     }
     Fl_Group {} {open
-      xywh {10 205 320 20}
+      xywh {10 231 320 20}
     } {
       Fl_Return_Button data_panel_ok {
         label OK
-        xywh {200 205 60 20} labelsize 11 hotspot
+        xywh {200 231 60 20} labelsize 11 hotspot
       }
       Fl_Button data_panel_cancel {
         label Cancel
-        xywh {270 205 60 20} shortcut 0xff1b labelsize 11
+        xywh {270 231 60 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {10 205 185 20} resizable
+        xywh {10 231 185 20} resizable
       }
     }
   }
@@ -839,7 +854,7 @@ else
       }
       Fl_Button {} {
         user_data {"Fl_Terminal"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip Terminal xywh {366 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[ID_Terminal]);}
         class Widget_Bin_Button

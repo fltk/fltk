@@ -47,6 +47,9 @@ decl {\#include <stdlib.h>} {private local
 decl {\#include <errno.h>} {private local
 }
 
+decl {\#include <zlib.h>} {private local
+}
+
 declblock {\#if defined(_WIN32) && !defined(__CYGWIN__)} {after {\#endif // _WIN32 && !__CYGWIN__}
 } {
   decl {\#include <io.h>} {private local
@@ -120,7 +123,6 @@ if (img) {
       xywh {10 28 180 250} type Hold labelfont 1 align 5 when 3
     }
     Fl_Box template_preview {
-      label {no preview...} selected
       xywh {200 28 250 250} box THIN_DOWN_BOX align 80 resizable
     }
     Fl_Input template_name {
@@ -184,7 +186,7 @@ template_browser->deselect();
 template_browser->clear();} {}
 }
 
-Function {template_delete_cb(Fl_Button *, void *)} {return_type void
+Function {template_delete_cb(Fl_Button *, void *)} {open return_type void
 } {
   code {int item = template_browser->value();
 if (item < 1) return;
@@ -201,8 +203,36 @@ if (fl_unlink(flfile)) {
   return;
 }
 
+char pngfile[1024], *ext;
+strlcpy(pngfile, flfile, sizeof(pngfile));
+if ((ext = strrchr(pngfile, '.')) != NULL) {
+  strcpy(ext, ".png");
+  fl_unlink(pngfile);
+}
+
 template_browser->remove(item);
-template_browser->do_callback();} {}
+template_browser->do_callback();} {selected
+  }
+}
+
+data tmpl_FLTK_License_fl {private local filename {templates/FLTK_License.fl} compressed
+}
+
+data tmpl_1of7GUIs_fl {private local filename {templates/1of7GUIs.fl} compressed
+}
+
+Function {template_install(const char *path, const char *name, const uchar *inSrc, int inSrcLen, int inDstLen)} {open return_type void
+} {
+  code {char filename[FL_PATH_MAX];
+  strcpy(filename, path);
+  strcat(filename, name);
+  FILE *f = fopen(filename, "wb");
+  if (!f) return;
+  uLong dstLen = inDstLen;
+  Bytef *dst = (Bytef*)::malloc(inDstLen);
+  if (uncompress(dst, &dstLen, (Bytef*)inSrc, (uLong)inSrcLen) != Z_OK) { /* error */ }
+  if (fwrite(dst, dstLen, 1, f) <= 0) { /* error */ }
+  fclose(f);} {}
 }
 
 Function {template_load()} {open return_type void
@@ -214,6 +244,7 @@ int num_files;
 
 fluid_prefs.getUserdataPath(path, sizeof(path));
 strlcat(path, "templates", sizeof(path));
+fl_make_path(path);
 
 int sample_templates_generated = 0;
 fluid_prefs.get("sample_templates_generated", sample_templates_generated, 0);
@@ -234,22 +265,9 @@ if (sample_templates_generated < 2) {
 "er\\n}\\n", f);
     fclose(f);
   }
-  strcpy(filename, path);
-  strcat(filename, "/1of7GUIs.fl");
-  f = fopen(filename, "wb");
-  if (f) {
-    fputs(
-"\# data file for the Fltk User Interface Designer (fluid)\\n version 1.0400\\n header_name {.h}\\n"
-"code_name {.cxx}\\n comment {\\n1 of 7GUIs\\n\\n7GUIs was been created as a spin-off of the master’s\\n"
-"thesis Comparison of Object-Oriented and Functional\\nProgramming for GUI Development by Eugen Kiss at the\\n"
-"Human-Computer Interaction group of the Leibniz\\nUniversität Hannover in 2014.\\n\\n"
-"https://7guis.github.io/7guis/\\n} {selected in_source not_in_header\\n}\\n\\nFunction {} {open\\n"
-"} {\\nFl_Window {} {\\nlabel Counter open\\nxywh {486 292 194 55} type Double resizable visible\\n"
-"} {\\nFl_Output counter_widget {\\nxywh {15 15 80 22}\\ncode0 {counter_widget->value(0);}\\n"
-"}\\nFl_Button {} {\\nlabel Count\\ncallback {int i = counter_widget->ivalue();\\ni++;\\n"
-"counter_widget->value(i);}\\nxywh {99 15 80 22}\\n}\\n}\\n}\\n", f);
-    fclose(f);
-  }
+  
+  template_install(path, "/FLTK_License.fl", tmpl_FLTK_License_fl, sizeof(tmpl_FLTK_License_fl), tmpl_FLTK_License_fl_size);
+  template_install(path, "/1of7GUIs.fl", tmpl_1of7GUIs_fl, sizeof(tmpl_1of7GUIs_fl), tmpl_1of7GUIs_fl_size);
   sample_templates_generated = 2;
   fluid_prefs.set("sample_templates_generated", sample_templates_generated);
   fluid_prefs.flush();

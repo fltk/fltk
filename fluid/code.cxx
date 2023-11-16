@@ -886,15 +886,15 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   fprintf(header_file, "#endif\n");
 
   Fl_Type* last_type = Fl_Type::last;
-  if (last_type && last_type->is_a(ID_Comment)) {
+  if (last_type && (last_type != Fl_Type::first) && last_type->is_a(ID_Comment)) {
     if (write_sourceview) {
       last_type->code1_start = last_type->code2_start = (int)ftell(code_file);
-      first_type->header1_start = first_type->header2_start = (int)ftell(header_file);
+      last_type->header1_start = last_type->header2_start = (int)ftell(header_file);
     }
     last_type->write_code1(*this);
     if (write_sourceview) {
       last_type->code1_end = last_type->code2_end = (int)ftell(code_file);
-      first_type->header1_end = first_type->header2_end = (int)ftell(header_file);
+      last_type->header1_end = last_type->header2_end = (int)ftell(header_file);
     }
   }
   int x = 0, y = 0;

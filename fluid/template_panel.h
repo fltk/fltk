@@ -36,5 +36,6 @@ extern Fl_Return_Button *template_submit;
 Fl_Double_Window* make_template_panel();
 void template_clear();
 void template_delete_cb(Fl_Button *, void *);
+void template_install(const char *path, const char *name, const uchar *inSrc, int inSrcLen, int inDstLen);
 void template_load();
 #endif

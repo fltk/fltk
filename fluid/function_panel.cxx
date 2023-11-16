@@ -447,7 +447,14 @@ Fl_Menu_Item menu_data_class_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-Fl_Check_Button *data_mode=(Fl_Check_Button *)0;
+Fl_Choice *data_mode=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_data_mode[] = {
+ {"binary mode", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"text mode", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"compressed binary", 0,  0, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
 
 Fl_Input *data_input=(Fl_Input *)0;
 
@@ -462,9 +469,9 @@ Fl_Return_Button *data_panel_ok=(Fl_Return_Button *)0;
 Fl_Button *data_panel_cancel=(Fl_Button *)0;
 
 Fl_Double_Window* make_data_panel() {
-  { data_panel = new Fl_Double_Window(343, 237, "Inline Data Properties");
+  { data_panel = new Fl_Double_Window(343, 264, "Inline Data Properties");
     data_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
-    { Fl_Group* o = new Fl_Group(10, 10, 320, 20);
+    { Fl_Group* o = new Fl_Group(10, 10, 320, 48);
       { Fl_Box* o = new Fl_Box(288, 10, 42, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
@@ -480,15 +487,17 @@ Fl_Double_Window* make_data_panel() {
         data_class_choice->textsize(11);
         data_class_choice->menu(menu_data_class_choice);
       } // Fl_Choice* data_class_choice
-      { data_mode = new Fl_Check_Button(200, 10, 78, 20, "text mode");
-        data_mode->tooltip("When text mode is selected, the returned type is \"const char*\" and a traili\
-ng NUL will be appended to the data.");
-        data_mode->down_box(FL_DOWN_BOX);
+      { data_mode = new Fl_Choice(10, 38, 185, 20);
+        data_mode->tooltip("text mode generates a \"const char*\" and a trailing NUL, compressed mode use\
+s zlib to generate a binary block");
+        data_mode->down_box(FL_BORDER_BOX);
         data_mode->labelsize(11);
-      } // Fl_Check_Button* data_mode
+        data_mode->textsize(11);
+        data_mode->menu(menu_data_mode);
+      } // Fl_Choice* data_mode
       o->end();
     } // Fl_Group* o
-    { data_input = new Fl_Input(10, 52, 320, 20, "Variable Name:");
+    { data_input = new Fl_Input(10, 78, 320, 20, "Variable Name:");
       data_input->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode \
 and \"const char*\" in text mode.");
       data_input->labelfont(1);
@@ -498,7 +507,7 @@ and \"const char*\" in text mode.");
       data_input->align(Fl_Align(133));
       data_input->when(FL_WHEN_NEVER);
     } // Fl_Input* data_input
-    { data_filename = new Fl_Input(10, 90, 280, 20, "Filename:");
+    { data_filename = new Fl_Input(10, 116, 280, 20, "Filename:");
       data_filename->tooltip("Name and path of file that will be inlined.");
       data_filename->labelfont(1);
       data_filename->labelsize(11);
@@ -507,10 +516,10 @@ and \"const char*\" in text mode.");
       data_filename->align(Fl_Align(133));
       data_filename->when(FL_WHEN_NEVER);
     } // Fl_Input* data_filename
-    { data_filebrowser = new Fl_Button(290, 90, 40, 20, "@fileopen");
+    { data_filebrowser = new Fl_Button(290, 116, 40, 20, "@fileopen");
       data_filebrowser->labelcolor((Fl_Color)134);
     } // Fl_Button* data_filebrowser
-    { data_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
+    { data_comment_input = new Fl_Text_Editor(10, 156, 320, 65, "Comment:");
       data_comment_input->tooltip("Declaration comment in Doxygen format");
       data_comment_input->box(FL_DOWN_BOX);
       data_comment_input->labelfont(1);
@@ -522,16 +531,16 @@ and \"const char*\" in text mode.");
       data_comment_input->buffer(new Fl_Text_Buffer());
       data_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
     } // Fl_Text_Editor* data_comment_input
-    { Fl_Group* o = new Fl_Group(10, 205, 320, 20);
-      { data_panel_ok = new Fl_Return_Button(200, 205, 60, 20, "OK");
+    { Fl_Group* o = new Fl_Group(10, 231, 320, 20);
+      { data_panel_ok = new Fl_Return_Button(200, 231, 60, 20, "OK");
         data_panel_ok->labelsize(11);
         data_panel_ok->window()->hotspot(data_panel_ok);
       } // Fl_Return_Button* data_panel_ok
-      { data_panel_cancel = new Fl_Button(270, 205, 60, 20, "Cancel");
+      { data_panel_cancel = new Fl_Button(270, 231, 60, 20, "Cancel");
         data_panel_cancel->shortcut(0xff1b);
         data_panel_cancel->labelsize(11);
       } // Fl_Button* data_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 205, 185, 20);
+      { Fl_Box* o = new Fl_Box(10, 231, 185, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();

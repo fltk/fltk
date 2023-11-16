@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <zlib.h>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include <io.h>
 #else
@@ -140,7 +141,7 @@ Fl_Double_Window* make_template_panel() {
       template_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       template_browser->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
     } // Fl_Browser* template_browser
-    { template_preview = new Fl_Box(200, 28, 250, 250, "no preview...");
+    { template_preview = new Fl_Box(200, 28, 250, 250);
       template_preview->box(FL_THIN_DOWN_BOX);
       template_preview->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
       Fl_Group::current()->resizable(template_preview);
@@ -205,8 +206,76 @@ void template_delete_cb(Fl_Button *, void *) {
     return;
   }
 
+  char pngfile[1024], *ext;
+  strlcpy(pngfile, flfile, sizeof(pngfile));
+  if ((ext = strrchr(pngfile, '.')) != NULL) {
+    strcpy(ext, ".png");
+    fl_unlink(pngfile);
+  }
+
   template_browser->remove(item);
   template_browser->do_callback();
+}
+
+static int tmpl_FLTK_License_fl_size = 623;
+static unsigned char tmpl_FLTK_License_fl[401] = /* data compressed and inlined from templates/FLTK_License.fl */
+{120,156,133,82,77,79,220,48,16,189,231,87,60,209,11,72,109,178,208,30,10,
+39,218,165,84,43,208,22,137,237,161,39,228,196,147,120,132,99,71,246,132,176,
+93,237,127,199,14,187,234,177,62,217,227,247,53,99,127,128,86,162,208,178,37,
+180,62,64,12,225,214,202,51,126,71,10,88,57,161,208,170,134,112,67,145,59,151,
+74,167,173,29,89,159,21,47,20,34,123,135,243,114,241,101,177,40,12,41,77,225,
+201,169,158,176,43,205,190,104,188,166,227,177,121,125,205,133,190,39,39,216,85,
+85,81,85,184,94,173,31,55,223,214,203,31,215,255,124,85,20,220,115,103,4,27,
+239,45,238,88,112,122,123,191,185,59,43,139,119,210,210,15,219,48,3,206,47,47,
+191,126,186,88,92,124,70,189,197,119,182,22,143,3,203,95,245,12,229,52,124,146,
+11,241,200,218,24,142,176,92,7,21,182,72,219,54,16,33,250,86,38,21,168,196,13,
+71,9,92,143,146,219,201,236,49,18,102,151,136,4,128,31,197,178,35,13,118,89,45,
+39,157,199,117,178,252,245,240,103,181,254,121,130,201,112,99,16,141,31,173,
+134,81,47,132,154,200,37,124,99,71,157,136,19,139,73,188,108,157,136,37,176,106,
+231,99,150,155,165,210,77,207,49,178,235,144,102,161,85,175,58,210,31,17,83,206,
+108,103,185,33,151,66,41,185,58,180,148,151,17,25,226,85,85,77,211,84,182,233,
+201,74,31,186,234,144,169,28,204,112,128,62,88,82,137,123,212,106,189,181,126,
+202,78,67,50,65,106,217,248,9,226,17,104,240,65,80,143,93,156,167,144,242,140,
+20,255,107,152,241,71,183,61,118,145,44,53,50,15,235,41,250,49,164,175,147,118,
+239,191,163,216,23,111,13,176,205,39};
+
+static int tmpl_1of7GUIs_fl_size = 763;
+static unsigned char tmpl_1of7GUIs_fl[486] = /* data compressed and inlined from templates/1of7GUIs.fl */
+{120,156,109,82,203,138,219,64,16,188,207,87,52,228,178,102,177,45,25,59,
+187,142,73,14,121,56,187,36,224,92,76,142,102,36,181,164,206,142,102,196,60,252,
+88,33,216,223,200,61,127,146,63,201,151,164,37,69,176,9,97,4,163,26,122,170,
+170,171,231,5,100,210,75,200,73,33,228,198,130,47,17,182,202,63,192,222,161,133,
+123,237,209,230,50,69,120,143,142,10,205,71,87,185,10,148,77,4,28,209,58,50,26,
+226,89,180,140,34,1,37,202,12,237,65,203,10,161,153,149,173,72,77,134,35,76,207,
+231,86,64,106,170,10,181,135,70,196,96,114,184,249,184,191,119,66,244,27,156,
+164,131,4,81,67,106,81,122,204,128,177,4,87,147,158,154,60,239,202,59,107,149,
+116,236,232,215,211,119,39,24,58,114,240,206,84,181,180,228,216,9,215,236,146,
+111,152,250,233,206,18,235,116,36,58,131,109,208,169,103,167,82,137,47,214,20,
+86,86,21,233,162,239,150,149,185,179,35,42,83,247,198,146,11,124,8,5,155,248,
+68,142,229,125,167,41,238,66,37,245,180,211,9,126,204,68,246,140,80,88,19,234,
+209,219,103,164,68,211,163,216,107,234,179,241,63,127,120,184,147,90,27,134,64,
+26,22,81,188,156,9,81,122,95,187,87,243,249,77,17,200,205,10,242,101,72,102,
+100,6,60,23,45,52,14,21,119,193,246,73,31,156,9,150,243,215,198,31,24,13,33,139,
+86,136,177,43,104,248,130,169,81,119,23,197,86,29,190,146,206,204,169,63,22,74,
+38,168,56,162,208,121,134,190,234,124,57,149,208,44,111,95,194,98,189,128,120,
+189,132,213,170,5,127,169,121,198,38,36,252,12,44,231,250,40,187,191,35,57,226,
+125,100,222,5,207,17,240,20,123,186,195,137,178,2,187,97,14,148,241,10,248,187,
+141,96,177,24,102,31,65,243,119,233,244,205,81,170,128,87,209,100,211,114,11,
+204,248,54,120,255,167,133,231,94,69,42,149,74,100,250,0,13,241,84,8,94,195,191,
+76,52,80,77,54,130,174,175,55,226,255,66,212,9,13,238,214,235,103,238,134,245,
+27,226,34,7,2};
+
+void template_install(const char *path, const char *name, const uchar *inSrc, int inSrcLen, int inDstLen) {
+  char filename[FL_PATH_MAX];
+    strcpy(filename, path);
+    strcat(filename, name);
+    FILE *f = fopen(filename, "wb");
+    if (!f) return;
+    uLong dstLen = inDstLen;
+    Bytef *dst = (Bytef*)::malloc(inDstLen);
+    if (uncompress(dst, &dstLen, (Bytef*)inSrc, (uLong)inSrcLen) != Z_OK) { /* error */ }
+    if (fwrite(dst, dstLen, 1, f) <= 0) { /* error */ }
+    fclose(f);
 }
 
 void template_load() {
@@ -216,14 +285,13 @@ void template_load() {
   int num_files;
 
   fluid_prefs.getUserdataPath(path, sizeof(path));
-  if (path[0] == 0) return;
   strlcat(path, "templates", sizeof(path));
   fl_make_path(path);
 
   int sample_templates_generated = 0;
   fluid_prefs.get("sample_templates_generated", sample_templates_generated, 0);
-  if (sample_templates_generated < 2) {
 
+  if (sample_templates_generated < 2) {
     strcpy(filename, path);
     strcat(filename, "/FLTK_License.fl");
     FILE *f = fopen(filename, "wb");
@@ -239,22 +307,9 @@ void template_load() {
   "er\n}\n", f);
       fclose(f);
     }
-    strcpy(filename, path);
-    strcat(filename, "/1of7GUIs.fl");
-    f = fopen(filename, "wb");
-    if (f) {
-      fputs(
-  "# data file for the Fltk User Interface Designer (fluid)\n version 1.0400\n header_name {.h}\n"
-  "code_name {.cxx}\n comment {\n1 of 7GUIs\n\n7GUIs was been created as a spin-off of the master’s\n"
-  "thesis Comparison of Object-Oriented and Functional\nProgramming for GUI Development by Eugen Kiss at the\n"
-  "Human-Computer Interaction group of the Leibniz\nUniversität Hannover in 2014.\n\n"
-  "https://7guis.github.io/7guis/\n} {selected in_source not_in_header\n}\n\nFunction {} {open\n"
-  "} {\nFl_Window {} {\nlabel Counter open\nxywh {486 292 194 55} type Double resizable visible\n"
-  "} {\nFl_Output counter_widget {\nxywh {15 15 80 22}\ncode0 {counter_widget->value(0);}\n"
-  "}\nFl_Button {} {\nlabel Count\ncallback {int i = counter_widget->ivalue();\ni++;\n"
-  "counter_widget->value(i);}\nxywh {99 15 80 22}\n}\n}\n}\n", f);
-      fclose(f);
-    }
+    
+    template_install(path, "/FLTK_License.fl", tmpl_FLTK_License_fl, sizeof(tmpl_FLTK_License_fl), tmpl_FLTK_License_fl_size);
+    template_install(path, "/1of7GUIs.fl", tmpl_1of7GUIs_fl, sizeof(tmpl_1of7GUIs_fl), tmpl_1of7GUIs_fl_size);
     sample_templates_generated = 2;
     fluid_prefs.set("sample_templates_generated", sample_templates_generated);
     fluid_prefs.flush();
