@@ -1853,3 +1853,23 @@ AC_OUTPUT
 
 dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
+
+echo ""
+echo "-------------------------------------------------------------------------"
+echo "  IMPORTANT NOTE:"
+echo "-------------------------------------------------------------------------"
+echo ""
+echo "  FLTK 1.4.x will be the last version(s) of FLTK supporting"
+echo "  autotools (configure + provided Makefiles) to build FLTK."
+echo "  FLTK 1.5.0 and higher will only support FLTK builds using CMake."
+echo ""
+echo "  We suggest to explore and use the CMake build system generators"
+echo "  for your own FLTK builds as soon as possible. Some new FLTK build"
+echo "  options will only be supported by CMake based builds."
+echo "  Please see README.CMake.txt for details and instructions."
+echo ""
+echo "  User projects that use CMake for their own build can benefit"
+echo "  substantially if the FLTK library has been built using CMake."
+echo ""
+echo "-------------------------------------------------------------------------"
+echo ""
