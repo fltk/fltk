@@ -256,7 +256,7 @@
     the text.
 **/
 
-class Fl_Terminal : public Fl_Group {
+class FL_EXPORT Fl_Terminal : public Fl_Group {
 public:
   //////////////////////////////////////
   ////// Fl_Terminal Public Enums //////

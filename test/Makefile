@@ -134,6 +134,7 @@ CPPFILES =\
 	utf8.cxx \
 	valuators.cxx \
 	windowfocus.cxx \
+	wizard.cxx \
 	$(CPPUNITTEST)
 
 ALL =	\
@@ -213,7 +214,8 @@ ALL =	\
 	tiled_image$(EXEEXT) \
 	twowin$(EXEEXT) \
 	utf8$(EXEEXT) \
-	windowfocus$(EXEEXT)
+	windowfocus$(EXEEXT) \
+	wizard$(EXEEXT)
 
 ALLFLUID = \
 	checkers$(EXEEXT) \
