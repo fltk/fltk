@@ -2619,10 +2619,10 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     XWMHints *hints = XAllocWMHints();
     hints->input = True;
     hints->flags = InputHint;
-    if (Fl_Window::show_iconic_) {
+    if (Fl_Window::show_next_window_iconic()) {
       hints->flags |= StateHint;
       hints->initial_state = IconicState;
-      Fl_Window::show_iconic_ = 0;
+      Fl_Window::show_next_window_iconic(0);
       showit = 0;
     }
     if (Fl_X11_Window_Driver::driver(win)->icon_ &&

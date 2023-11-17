@@ -114,8 +114,8 @@ public:
   void x(int X);
   void y(int Y);
   void current(Fl_Window *c);
-  char show_iconic() { return Fl_Window::show_iconic_; }
-  void show_iconic(char c) { Fl_Window::show_iconic_ = c; }
+  char show_iconic() { return Fl_Window::show_next_window_iconic(); }
+  void show_iconic(char c) { Fl_Window::show_next_window_iconic(c); }
   void flx(Fl_X *x) { pWindow->flx_ = x; }
   Fl_Cursor cursor_default() { return pWindow->cursor_default; }
   void destroy_double_buffer();

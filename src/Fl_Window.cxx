@@ -35,7 +35,7 @@
 
 char *Fl_Window::default_xclass_ = 0L;
 
-char Fl_Window::show_iconic_ = 0;
+char Fl_Window::show_next_window_iconic_ = 0;
 
 Fl_Window *Fl_Window::current_;
 

@@ -126,7 +126,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   s++; // point after the dash
 
   if (fl_match(s, "iconic")) {
-    Fl_Window::show_iconic_ = 1;
+    Fl_Window::show_next_window_iconic(1);
     i++;
     return 1;
   } else if (fl_match(s, "kbd")) {
