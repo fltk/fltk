@@ -259,6 +259,19 @@ public:
       your overridden method so that you don't short-circuit events that you
       don't handle. In this last case you should return the callee retval.
 
+      One exception to the rule in the previous paragraph is if you really
+      want to \e override the behavior of the base class. This requires
+      knowledge of the details of the inherited class.
+
+      In rare cases you may want to return 1 from your handle() method
+      although you don't really handle the event. The effect would be to
+      \e filter event processing, for instance if you want to dismiss
+      non-numeric characters (keypresses) in a numeric input widget. You
+      may "ring the bell" or show another visual indication or drop the
+      event silently. In such a case you must not call the handle() method
+      of the base class and tell FLTK that you \e consumed the event by
+      returning 1 even if you didn't \e do anything with it.
+
       \param[in] event the kind of event received
       \retval 0 if the event was not used or understood
       \retval 1 if the event was used and can be deleted

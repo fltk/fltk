@@ -17,7 +17,8 @@ display a value of some sort.
 A composite widget holds a list of child widgets and handles moving,
 sizing, showing, or hiding them as needed. Fl_Group is the main
 composite widget class in FLTK, and all of the other composite widgets
-(Fl_Pack, Fl_Scroll, Fl_Tabs, Fl_Tile, and Fl_Window) are subclasses of it.
+(Fl_Pack, Fl_Scroll, Fl_Tabs, Fl_Tile, Fl_Window, Fl_Flex, Fl_Grid, etc.)
+are subclasses of it.
 
 You can also subclass other existing widgets to provide a different
 look or user-interface. For example, the button widgets are all
