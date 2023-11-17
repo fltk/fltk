@@ -249,6 +249,16 @@ else ()
   message (STATUS "Example programs will not be built (set FLTK_BUILD_EXAMPLES=ON to build)")
 endif ()
 
+message (STATUS "")
+
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  message (STATUS "Build configuration     : <unspecified>")
+else ()
+  message (STATUS "Build configuration     : ${CMAKE_BUILD_TYPE}")
+endif ()
+
+message (STATUS "")
+
 if (FLTK_USE_BUILTIN_JPEG)
   message (STATUS "Image Libraries         : JPEG = Builtin")
 else ()
