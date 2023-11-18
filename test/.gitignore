@@ -54,6 +54,7 @@ glpuzzle
 glut_test
 grid_alignment
 grid_buttons
+grid_dialog
 grid_login
 handle_events
 hello
