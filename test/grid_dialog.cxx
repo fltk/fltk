@@ -54,6 +54,14 @@ static const int GAP      =  8;
 static const char *labels[5] = {
   "Quit", "Copy", "Cancel", "OK", "More ..." };
 
+static const char *tooltips[5] {
+  "Quit this program",
+  "Copy the message text to the clipboard",
+  "Cancel - does nothing",
+  "OK - does nothing",
+  "More buttons could be added here"
+};
+
 // button widths (left to right) to avoid font calculations
 static const int button_w[5] = { 50, 50, 70, 40, 100};
 
@@ -63,9 +71,9 @@ static int row_weights[] = { 100, 0, 0, 0, 0, 0, 0 };
 static const char *message_text =
   "This is a long message in an Fl_Grid based dialog "
   "that may wrap over more than one line. "
-  "Resize the window to see how it (un)wraps.\n";
+  "Resize the window to see how it (un)wraps.";
 
-Fl_Box *message_box = 0;
+Fl_Box *message_box = 0; // global only to simplify the code
 
 // Common button callback
 
@@ -101,32 +109,34 @@ int main(int argc, char **argv) {
   Fl_Double_Window *win = new Fl_Double_Window(min_w, min_h, "Fl_Grid Based Dialog");
 
   Fl_Grid *grid = new Fl_Grid(0, 0, win->w(), win->h());
-  grid->layout(ROWS, COLS, 10, 6);
+  grid->layout(ROWS, COLS, MARGIN, GAP);
   grid->color(FL_WHITE);
+  grid->tooltip("Resize the window to see this dialog \"in action\"");
 
   // Child 0: Fl_Box for the "icon" or image (fixed size)
 
   Fl_Box *icon = new Fl_Box(0, 0, ICON_W, ICON_H, "ICON");
+  grid->widget(icon, 0, 0, 1, 1, FL_GRID_TOP);
   icon->box(FL_THIN_UP_BOX);
   icon->color(0xddffff00);
   icon->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
-  grid->widget(icon, 0, 0, 1, 1, FL_GRID_TOP);
+  icon->tooltip("This could also be a full Fl_Image or subclass thereof");
 
   // Child 1: the message box
 
   message_box = new Fl_Box(0, 0, 0, 0);
+  grid->widget(message_box, 0, 1, 1, BUTTONS + 1, FL_GRID_FILL);
   message_box->label(message_text);
   message_box->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
-  grid->widget(message_box, 0, 1, 1, BUTTONS + 1, FL_GRID_FILL);
+  message_box->tooltip("The text in this box can be copied to the clipboard");
 
-  // Children 2++: the buttons (left to right for tab nav. order)
+  // Children 2++: the buttons (left to right for tab navigation order)
 
   for (int i = 0; i < BUTTONS; i++) {
     Fl_Button *b = new Fl_Button(0, 0, button_w[i], BUTTON_H, labels[i]);
     grid->widget(b, 1, i + 2);
     b->callback(button_cb, fl_voidptr(i));
-    if (i == 1)
-      b->tooltip("Copy message text to clipboard.");
+    b->tooltip(tooltips[i]);
   }
 
   grid->end();
