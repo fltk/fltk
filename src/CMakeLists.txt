@@ -578,9 +578,9 @@ list (APPEND SHARED_FILES ${HEADER_FILES} ${DRIVER_HEADER_FILES})
 
 set (STATIC_FILES ${SHARED_FILES})
 
-if (WIN32)
+if (MSVC)
   list (APPEND STATIC_FILES fl_call_main.c)
-endif (WIN32)
+endif (MSVC)
 
 #######################################################################
 

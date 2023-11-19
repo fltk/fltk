@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2023 by Bill Spitzak and others.
  *
  * fl_call_main() calls main() for you Windows people.  Needs to be done in C
  * because Borland C++ won't let you call main() from C++.
@@ -35,44 +35,34 @@
  * Microsoft(r) Windows(r) that allows for it.
  */
 
-#if defined(_WIN32) && !defined(FL_DLL) && !defined (__GNUC__)
+/*
+ * This file is compiled only on Windows platforms (since FLTK 1.4.0).
+ * Therefore we don't need to test the _WIN32 macro anymore.
+ * The _MSC_VER macro is tested to compile it only for Visual Studio
+ * platforms because GNU platforms (MinGW, MSYS) don't need it.
+*/
+#if defined(_MSC_VER) && !defined(FL_DLL)
 
-#  include <windows.h>
-#  include <stdio.h>
-#  include <stdlib.h>
-#  include <FL/fl_utf8.h>
+#include <FL/fl_utf8.h>
+#include <FL/fl_string_functions.h>
+
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <shellapi.h>
 
 extern int main(int, char *[]);
 
-#  ifdef BORLAND5
-#    define __argc _argc
-#    define __argv _argv
-#  endif /* BORLAND5 */
-
-/* static int mbcs2utf(const char *s, int l, char *dst, unsigned dstlen) */
-static int mbcs2utf(const char *s, int l, char *dst)
-{
-  static wchar_t *mbwbuf;
-  unsigned dstlen = 0;
-  if (!s) return 0;
-  dstlen = (l * 6) + 6;
-  mbwbuf = (wchar_t*)malloc(dstlen * sizeof(wchar_t));
-  l = (int) mbstowcs(mbwbuf, s, l);
-/* l = fl_unicode2utf(mbwbuf, l, dst); */
-  l = fl_utf8fromwc(dst, dstlen, mbwbuf, l);
-  dst[l] = 0;
-  free(mbwbuf);
-  return l;
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                             LPSTR lpCmdLine, int nCmdShow) {
-  int rc, i;
-  char **ar;
+                   LPSTR lpCmdLine, int nCmdShow) {
+  int rc;
+  int i;
+  int argc;
+  char** argv;
+  char strbuf[2048];
 
-#  ifdef _DEBUG
  /*
-  * If we are using compiling in debug mode, open a console window so
+  * If we are compiling in debug mode, open a console window so
   * we can see any printf's, etc...
   *
   * While we can detect if the program was run from the command-line -
@@ -81,48 +71,52 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   * applications in the background anyways...
   */
 
+#ifdef _DEBUG
   AllocConsole();
   freopen("conin$", "r", stdin);
   freopen("conout$", "w", stdout);
   freopen("conout$", "w", stderr);
-#  endif /* _DEBUG */
+#endif /* _DEBUG */
 
-  ar = (char**) malloc(sizeof(char*) * (__argc + 1));
-  i = 0;
-  while (i < __argc) {
-    int l;
-    unsigned dstlen;
-    if (__wargv ) {
-      for (l = 0; __wargv[i] && __wargv[i][l]; l++) {}; /* is this just wstrlen??? */
-      dstlen = (l * 5) + 1;
-      ar[i] = (char*) malloc(dstlen);
-/*    ar[i][fl_unicode2utf(__wargv[i], l, ar[i])] = 0; */
-      dstlen = fl_utf8fromwc(ar[i], dstlen, __wargv[i], l);
-      ar[i][dstlen] = 0;
-    } else {
-      for (l = 0; __argv[i] && __argv[i][l]; l++) {};
-      dstlen = (l * 5) + 1;
-      ar[i] = (char*) malloc(dstlen);
-/*      ar[i][mbcs2utf(__argv[i], l, ar[i], dstlen)] = 0; */
-      ar[i][mbcs2utf(__argv[i], l, ar[i])] = 0;
-    }
-    i++;
+  /* Convert the command line arguments to UTF-8 */
+  LPWSTR *wideArgv = CommandLineToArgvW(GetCommandLineW(), &argc);
+  argv = malloc(argc * sizeof(void *));
+  for (i = 0; i < argc; i++) {
+    int ret = WideCharToMultiByte(CP_UTF8,        /* CodePage          */
+                                  0,              /* dwFlags           */
+                                  wideArgv[i],    /* lpWideCharStr     */
+                                  -1,             /* cchWideChar       */
+                                  strbuf,         /* lpMultiByteStr    */
+                                  sizeof(strbuf), /* cbMultiByte       */
+                                  NULL,           /* lpDefaultChar     */
+                                  NULL);          /* lpUsedDefaultChar */
+    argv[i] = fl_strdup(strbuf);
   }
-  ar[__argc] = 0;
-  /* Run the standard main entry point function... */
-  rc = main(__argc, ar);
 
-#  ifdef _DEBUG
+  /* Free the wide character string array */
+  LocalFree(wideArgv);
+
+  /* Call the program's entry point main() */
+  rc = main(argc, argv);
+
+  /* Cleanup allocated memory for argv */
+  for (int i = 0; i < argc; ++i) {
+    free((void *)argv[i]);
+  }
+  free((void *)argv);
+
+  /* Close the console in debug mode */
+
+#ifdef _DEBUG
   fclose(stdin);
   fclose(stdout);
   fclose(stderr);
-#  endif /* _DEBUG */
+#endif /* _DEBUG */
 
   return rc;
 }
 
 #else
-/* STR# 2973: solves "empty translation unit" error (Sun, HP-UX..) */
+/* STR# 2973: solves "empty translation unit" error */
 typedef int dummy;
-#endif /* _WIN32 && !FL_DLL && !__GNUC__ */
-
+#endif /* defined(_MSC_VER) && !defined(FL_DLL) */

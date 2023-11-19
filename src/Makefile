@@ -244,7 +244,8 @@ IMGCPPFILES = \
 	Fl_SVG_Image.cxx \
 	drivers/SVG/Fl_SVG_File_Surface.cxx
 
-CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
+CFILES = flstring.c numericsort.c vsnprintf.c
+CFILES_WIN = fl_call_main.c
 
 UTF8CFILES = \
 	xutf8/case.c \
@@ -431,7 +432,7 @@ EXTRA_OBJECTS_WAYLANDX11 = $(EXTRA_OBJECTS_WAYLAND)
 EXTRA_CXXFLAGS_WAYLAND = -I.
 EXTRA_CXXFLAGS_WAYLANDX11 = $(EXTRA_CXXFLAGS_WAYLAND)
 
-CFILES_WIN = $(GDICFILES)
+CFILES_WIN += $(GDICFILES)
 
 CFILES += $(CFILES_$(BUILD))
 CXXFLAGS += $(EXTRA_CXXFLAGS_$(BUILD))
