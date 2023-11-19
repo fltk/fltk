@@ -28,6 +28,8 @@
 #include <FL/Fl_Scrollbar.H>
 #include <FL/Fl_Rect.H>
 
+#include <stdarg.h>             // va_list (MinGW)
+
 /** \class Fl_Terminal
 
   \brief Terminal widget supporting Unicode/utf-8, ANSI/xterm escape codes with full RGB color control.
@@ -316,7 +318,7 @@ protected:
   //
   // Class to manage the terminal's margins
   //
-  class Margin {
+  class FL_EXPORT Margin {
     int left_, right_, top_, bottom_;
   public:
     Margin(void) { left_ = right_ = top_ = bottom_ = 3; }
@@ -336,7 +338,7 @@ protected:
   // This includes the font, color, and some cached internal
   // info for optimized drawing speed.
   //
-  class CharStyle {
+  class FL_EXPORT CharStyle {
     uchar       attrib_;           // bold, underline..
     uchar       flags_;            // CharFlags
     Fl_Color    fgcolor_;          // foreground color for text
@@ -397,7 +399,7 @@ protected:
   //
   // Class to manage the terminal's cursor position, color, etc.
   //
-  class Cursor {
+  class FL_EXPORT Cursor {
     int      col_;      // cursor's current col (x) position on display
     int      row_;      // cursor's current row (y) position on display
     int      h_;        // cursor's height (affected by font size)
@@ -435,7 +437,7 @@ protected:
   //    Class to manage the terminal's individual UTF-8 characters.
   //    Includes fg/bg color, attributes (BOLD, UNDERLINE..)
   //
-  class Utf8Char {
+  class FL_EXPORT Utf8Char {
     static const int max_utf8_ = 4; // RFC 3629 paraphrased: In UTF-8, chars are encoded with 1 to 4 octets
     char     text_[max_utf8_];      // memory for actual ASCII or UTF-8 byte contents
     uchar    len_;      // length of bytes in text_[] buffer; 1 for ASCII, >1 for UTF-8
@@ -484,7 +486,7 @@ protected:
   //
   // Manages ring with indexed row/col and "history" vs. "display" concepts.
   //
-  class RingBuffer {
+  class FL_EXPORT RingBuffer {
     Utf8Char *ring_chars_;    // the ring UTF-8 char buffer
     int ring_rows_;           // #rows in ring total
     int ring_cols_;           // #columns in ring/hist/disp
@@ -584,7 +586,7 @@ private:
   //
   // Class to manage mouse selection
   //
-  class Selection {
+  class FL_EXPORT Selection {
     int srow_, scol_, erow_, ecol_;     // selection start/end. NOTE: start *might* be > end
     int push_row_, push_col_;           // global row/col for last FL_PUSH
     Fl_Color selectionbgcolor_;
@@ -625,7 +627,7 @@ private:
   // Handling of parsed sequences is NOT handled in this class,
   // just the parsing of the sequences and managing generic integers.
   //
-  class EscapeSeq {
+  class FL_EXPORT EscapeSeq {
   public:
     // EscapeSeq Constants
     // Maximums
@@ -668,7 +670,7 @@ private:
   //
   // Class to manage buffering partial UTF-8 characters between write calls.
   //
-  class PartialUtf8Buf {
+  class FL_EXPORT PartialUtf8Buf {
     char buf_[10];      // buffer partial UTF-8 encoded char
     int  buflen_;       // length of buffered UTF-8 encoded char
     int  clen_;         // final byte length of a UTF-8 char
