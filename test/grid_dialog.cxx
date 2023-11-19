@@ -54,7 +54,7 @@ static const int GAP      =  8;
 static const char *labels[5] = {
   "Quit", "Copy", "Cancel", "OK", "More ..." };
 
-static const char *tooltips[5] {
+static const char *tooltips[5] = {
   "Quit this program",
   "Copy the message text to the clipboard",
   "Cancel - does nothing",
