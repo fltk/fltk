@@ -578,9 +578,14 @@ list (APPEND SHARED_FILES ${HEADER_FILES} ${DRIVER_HEADER_FILES})
 
 set (STATIC_FILES ${SHARED_FILES})
 
-if (MSVC)
+# Visual Studio (MSVC) is known to need WinMain() and maybe BORLAND
+# needs it as well, hence we include it on all Windows platforms.
+# The GNU compilers (MinGW, MSYS2, Cygwin) disable compilation inside
+# the source file which is what we finally want and need.
+
+if (WIN32)
   list (APPEND STATIC_FILES fl_call_main.c)
-endif (MSVC)
+endif ()
 
 #######################################################################
 

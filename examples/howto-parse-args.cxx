@@ -11,7 +11,16 @@
 // usual *nix idiom of "option=value", and provides no validation nor
 // conversion of the parameter string into ints or floats.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Example 1:
+//
+// ./howto-parse-args -ti "FLTK is great" -o "FLTK is a great GUI tool"
+//
+// Example 2: translated to Japanese and simplified Chinese, respectively,
+//            by a well known internet translation service.
+//
+// ./howto-parse-args -ti "FLTKは素晴らしいです" -o "FLTK 是一个很棒的 GUI 工具"
+//
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,13 +51,14 @@ char *optionString = 0;
  * returns 1 if argv[i] matches on its own,
  * returns 0 if argv[i] does not match.
  */
-int arg(int argc, char **argv, int &i)
-{
+int arg(int argc, char **argv, int &i) {
+
   if (strcmp("-h", argv[i]) == 0 || strcmp("--help", argv[i]) == 0) {
     helpFlag = 1;
     i += 1;
     return 1;
   }
+
   if (strcmp("-o", argv[i]) == 0 || strcmp("--option", argv[i]) == 0) {
     if (i < argc-1 && argv[i+1] != 0) {
       optionString = argv[i+1];
@@ -59,8 +69,13 @@ int arg(int argc, char **argv, int &i)
   return 0;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
+
+  // Convert commandline arguments in 'argv' to UTF-8 on Windows.
+  // This is a no-op on all other platforms (see documentation).
+
+  Fl::args_to_utf8(argc, argv);
+
   int i = 1;
   if (Fl::args(argc, argv, i, arg) < argc)
     // note the concatenated strings to give a single format string!
@@ -84,6 +99,8 @@ int main(int argc, char** argv)
     textBox->label(optionString);
   else
     textBox->label("re-run with [-o|--option] text");
+
+  mainWin->resizable(mainWin);
   mainWin->show(argc, argv);
   return Fl::run();
 }

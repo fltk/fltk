@@ -110,6 +110,10 @@ public:
   virtual int rmdir(const char*) {return -1;}
   virtual int rename(const char* /*f*/, const char * /*n*/) {return -1;}
 
+  // Windows commandline argument conversion to UTF-8.
+  // Default implementation: no-op, overridden only on Windows
+  virtual int args_to_utf8(int argc, char ** &argv) { return argc; }
+
   // the default implementation of these utf8... functions should be enough
   virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
   virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
@@ -124,9 +128,9 @@ public:
   virtual int filename_list(const char * /*d*/, dirent ***,
                             int (* /*sort*/)(struct dirent **, struct dirent **),
                             char *errmsg=NULL, int errmsg_sz=0) {
-                              (void)errmsg; (void)errmsg_sz;
-                              return -1;
-                            }
+    (void)errmsg; (void)errmsg_sz;
+    return -1;
+  }
   // the default implementation of filename_expand() may be enough
   virtual int filename_expand(char *to, int tolen, const char *from);
   // to implement

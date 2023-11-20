@@ -22,29 +22,40 @@
  * "main()".  This will allow you to build a Windows Application
  * without any special settings.
  *
- * Because of problems with the Microsoft Visual C++ header files
- * and/or compiler, you cannot have a WinMain function in a DLL.
- * I don't know why.  Thus, this nifty feature is only available
- * if you link to the static library.
+ * You cannot have this WinMain() function in a DLL because it would have
+ * to call \c main() outside the DLL.  Thus, this nifty feature is only
+ * available if you link to the static library.
  *
- * Currently the debug version of this library will create a
- * console window for your application so you can put printf()
- * statements for debugging or informational purposes.  Ultimately
- * we want to update this to always use the parent's console,
- * but at present we have not identified a function or API in
- * Microsoft(r) Windows(r) that allows for it.
+ * However, it is possible to build this module separately so you can
+ * use it in progams that link to the shared library.
+ *
+ * Currently the debug version of this library will create a console window
+ * for your application so you can put printf() statements for debugging or
+ * informational purposes.  Ultimately we want to update this to always use
+ * the parent's console, but at present we have not identified a function
+ * or API in Microsoft(r) Windows(r) that allows for it.
  */
 
 /*
- * This file is compiled only on Windows platforms (since FLTK 1.4.0).
- * Therefore we don't need to test the _WIN32 macro anymore.
- * The _MSC_VER macro is tested to compile it only for Visual Studio
- * platforms because GNU platforms (MinGW, MSYS) don't need it.
+ * Notes for FLTK developers:
+ *
+ * 1) Since FLTK 1.4.0 this file is compiled only on Windows, hence we don't
+ *    need to test the _WIN32 macro.
+ * 2) This file must not call any FLTK library functions because this would
+ *    not work with /both/ the DLL /and/ the static library (linkage stuff).
+ * 3) Converting the commandline arguments to UTF-8 is therefore implemented
+ *    here *and* in the library but this seems to be an acceptable compromise.
+ * 4) (Unless someone finds a better solution, of course. Albrecht)
+ * 5) The condition "!defined(FL_DLL)" prevents building this in the shared
+ *    library, i.e. "WinMain()" will not be defined in the shared lib (DLL).
+ * 6) The condition "!defined (__GNUC__)" prevents compilation of this
+ *    module with MinGW, MSYS, and Cygwin which don't use WinMain().
+ * 7) It is unclear if there are other build systems on Windows that need a
+ *    WinMain() entry point. Earlier comments and code seem to indicate that
+ *    Borland C++ would require it.
 */
-#if !defined(FL_DLL) && !defined (__GNUC__)
 
-#include <FL/fl_utf8.h>
-#include <FL/fl_string_functions.h>
+#if !defined(FL_DLL) && !defined (__GNUC__)
 
 #include <windows.h>
 #include <stdio.h>
@@ -78,9 +89,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   freopen("conout$", "w", stderr);
 #endif /* _DEBUG */
 
-  /* Convert the command line arguments to UTF-8 */
+  /* Get the command line arguments as Windows Wide Character strings */
   LPWSTR *wideArgv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+  /* Allocate an array of 'argc + 1' string pointers */
   argv = (char **)malloc((argc + 1) * sizeof(char *));
+
+  /* Convert the command line arguments to UTF-8 */
   for (i = 0; i < argc; i++) {
     int ret = WideCharToMultiByte(CP_UTF8,        /* CodePage          */
                                   0,              /* dwFlags           */
@@ -90,7 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                                   sizeof(strbuf), /* cbMultiByte       */
                                   NULL,           /* lpDefaultChar     */
                                   NULL);          /* lpUsedDefaultChar */
-    argv[i] = fl_strdup(strbuf);
+    argv[i] = _strdup(strbuf);
   }
   argv[argc] = NULL; // required by C standard at end of list
 
@@ -118,6 +133,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 #else
+
 /* STR# 2973: solves "empty translation unit" error */
 typedef int dummy;
+
 #endif /* !defined(FL_DLL) && !defined (__GNUC__) */

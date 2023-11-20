@@ -61,11 +61,15 @@ public:
   int mkdir(const char *fnam, int mode) FL_OVERRIDE;
   int rmdir(const char *fnam) FL_OVERRIDE;
   int rename(const char *fnam, const char *newnam) FL_OVERRIDE;
+  // Windows commandline argument conversion to UTF-8
+  int args_to_utf8(int argc, char ** &argv) FL_OVERRIDE;
+  // Windows specific UTF-8 conversions
   unsigned utf8towc(const char *src, unsigned srclen, wchar_t* dst, unsigned dstlen) FL_OVERRIDE;
   unsigned utf8fromwc(char *dst, unsigned dstlen, const wchar_t* src, unsigned srclen) FL_OVERRIDE;
   int utf8locale() FL_OVERRIDE;
   unsigned utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen) FL_OVERRIDE;
   unsigned utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen) FL_OVERRIDE;
+
   int clocale_vprintf(FILE *output, const char *format, va_list args) FL_OVERRIDE;
   int clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) FL_OVERRIDE;
   int clocale_vsscanf(const char *input, const char *format, va_list args) FL_OVERRIDE;

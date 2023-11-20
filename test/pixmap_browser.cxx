@@ -1,7 +1,7 @@
 //
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -143,7 +143,8 @@ int main(int argc, char **argv) {
   setlocale(LC_ALL, "");    // enable multilanguage errors in file chooser
   fl_register_images();
 
-  Fl::args(argc,argv,i,arg);
+  Fl::args_to_utf8(argc, argv); // enable multilanguage commandlines on Windows
+  Fl::args(argc, argv, i, arg); // parse commandline
 
   if (animate)
     Fl_GIF_Image::animate = true; // create animated shared .GIF images (e.g. file chooser)

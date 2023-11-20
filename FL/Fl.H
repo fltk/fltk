@@ -1398,6 +1398,9 @@ public:
 
   static int system(const char *command);
 
+  // Convert Windows commandline arguments to UTF-8 (documented in src/Fl.cxx)
+  static int args_to_utf8(int argc, char ** &argv);
+
 #ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo Support Functions and Classes
       @{

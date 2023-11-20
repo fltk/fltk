@@ -2281,3 +2281,76 @@ FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();
 FL_EXPORT const char* fl_local_meta  = Fl::system_driver()->meta_name();
 FL_EXPORT const char* fl_local_alt   = Fl::system_driver()->alt_name();
 FL_EXPORT const char* fl_local_ctrl  = Fl::system_driver()->control_name();
+
+/**
+  Convert Windows commandline arguments to UTF-8.
+
+  \note This function does nothing on other (non-Windows) platforms, hence
+    you may call it on all platforms or only on Windows by using platform
+    specific code like <tt>'\#ifdef _WIN32'</tt> etc. - it's your choice.
+    Calling it on other platforms returns quickly w/o wasting much CPU time.
+
+  This function <i>must be called <b>on Windows platforms</b></i> in \c main()
+  before the array \c argv is used if your program uses any commandline
+  argument strings (these should be UTF-8 encoded).
+  This applies also to standard FLTK commandline arguments like
+  "-name" (class name) and "-title" (window title in the title bar).
+
+  Unfortunately Windows \b neither provides commandline arguments in UTF-8
+  encoding \b nor as Windows "Wide Character" strings in the standard
+  \c main() and/or the Windows specific \c WinMain() function.
+
+  On Windows platforms (no matter which build system) this function calls
+  a Windows specific function to retrieve commandline arguments as Windows
+  "Wide Character" strings, converts these strings to an internally allocated
+  buffer (or multiple buffers) and returns the result in \c argv.
+  For implementation details please refer to the source code; however these
+  details may be changed in the future.
+
+  Note that \c argv is provided by reference so it can be overwritten.
+
+  In the recommended simple form the function overwrites the variable
+  \c argv and allocates a new array of strings pointed to by \c argv.
+  You may use this form on all platforms and it is as simple as adding
+  one line to old programs to make them work with international (UTF-8)
+  commandline arguments.
+
+  \code
+    int main(int argc, char **argv) {
+      Fl::args_to_utf8(argc, argv);   // add this line
+      // ... use argc and argv, e.g. for commandline parsing
+      window->show(argc, argv);
+      return Fl::run();
+    }
+  \endcode
+
+  For an example see 'examples/howto-parse-args.cxx' in the FLTK sources.
+
+  If you want to retain the original \c argc and \c argv variables the
+  following slightly longer and more complicated code works as well on
+  all platforms.
+
+  \code
+    int main(int argc, char **argv) {
+      char **argvn = argv;            // must copy argv to work on all platforms
+      int argcn = Fl::args_to_utf8(argc, argvn);
+      // ... use argcn and argvn, e.g. for commandline parsing
+      window->show(argcn, argvn);
+      return Fl::run();
+    }
+  \endcode
+
+  \param[in]    argc    used only on non-Windows platforms
+  \param[out]   argv    modified only on Windows platforms
+  \returns  argument count (always the same as argc)
+
+  \since 1.4.0
+
+  \internal This function must not open the display, otherwise
+    commandline processing (e.g. by fluid) would open the display.
+    OTOH calling it when the display is opened wouldn't work either
+    for the same reasons ('fluid -c' doesn't open the display).
+*/
+int Fl::args_to_utf8(int argc, char ** &argv) {
+  return Fl::system_driver()->args_to_utf8(argc, argv);
+}
