@@ -3147,7 +3147,7 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   vscroll_->callback(scrollbar_cb, (void*)this);
   resizable(0);
   Fl_Group::box(FL_DOWN_FRAME);
-  Fl_Group::color(0x0);       // black bg by default
+  Fl_Group::color(FL_BLACK);  // black bg by default
   update_screen(true);        // update internal vars after setting screen size/font
   clear_screen_home();        // clear screen, home cursor
   clear_history();            // clear history buffer

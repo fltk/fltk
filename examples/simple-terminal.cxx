@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 
   G_win->end();
   G_win->resizable(G_win);
-  G_win->show();
+  G_win->show(argc, argv);
   Fl::add_timeout(0.5, tick_cb);
   return Fl::run();
 }
