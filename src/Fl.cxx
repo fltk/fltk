@@ -634,9 +634,9 @@ int Fl::wait() {
 
   \code
   while (!calculation_done()) {
-  calculate();
-  Fl::check();
-  if (user_hit_abort_button()) break;
+    calculate();
+    Fl::check();
+    if (user_hit_abort_button()) break;
   }
   \endcode
 
