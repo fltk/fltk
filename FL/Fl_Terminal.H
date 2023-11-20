@@ -313,6 +313,11 @@ public:
     COLORMASK  = (FG_XTERM | BG_XTERM)
   };
 
+  ///////////////////////////////////////////////////////////////
+  //////
+  ////// Fl_Terminal Protected Classes
+  //////
+  ///////////////////////////////////////////////////////////////
 protected:
   // Margin Class ////////////////////////////////////////////
   //
@@ -715,8 +720,12 @@ private:
     bool is_complete(void) const { return (buflen_ && (buflen_ == clen_)); }
   };
 
+  ///////////////////////////////////////////////////////////////
+  //////
+  ////// Fl_Terminal members + methods
+  //////
+  ///////////////////////////////////////////////////////////////
 private:
-  // Fl_Terminal Members
   Fl_Scrollbar *vscroll_;        // vertical scrollbar (value: rows above disp_chars[])
   int           scrollbar_size_; // local preference for scrollbar size
   CharStyle     current_style_;  // current font, attrib, color..
@@ -759,9 +768,8 @@ protected:
 private:
   void create_ring(int drows, int dcols, int hrows);
 protected:
-  Utf8Char* u8c_cursor(void);
-private:
   int  vscroll_width(void) const;
+private:
   // Tabstops
   void init_tabstops(int newsize);
   void default_tabstops(void);
@@ -787,8 +795,10 @@ private:
 protected:
   const CharStyle& current_style(void) const;
   void current_style(const CharStyle& sty);
+private:
   int  x_to_glob_col(int X, int grow, int &gcol) const;
   int  xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol) const;
+protected:
   int  w_to_col(int W) const;
   int  h_to_row(int H) const;
   // API: Display clear operations
@@ -802,8 +812,10 @@ protected:
   bool get_selection(int &srow,int &scol,int &erow,int &ecol) const;
   bool is_selection(void) const;
   bool is_inside_selection(int row,int col) const;
+private:
   bool is_hist_ring_row(int grow) const;
   bool is_disp_ring_row(int grow) const;
+protected:
   int  selection_text_len(void) const;
   const char* selection_text(void) const;
   void clear_mouse_selection(void);
@@ -815,8 +827,6 @@ protected:
   void insert_char(char c, int rep);
   void delete_chars(int drow, int dcol, int rep);
   void delete_chars(int rep);
-  // History
-  void history_use(int val, bool update=true);
 public:
  // API: Terminal operations
   void clear(void);
@@ -826,9 +836,6 @@ public:
   void clear_history(void);                         // ESC [ 3 J
   void reset_terminal(void);                        // ESC c
   void cursor_home(void);                           // ESC [ 0 H
-protected:
-  // Cursor management
-  int  cursor_h(void) const;
 public:
  // API: Cursor
   void cursorfgcolor(Fl_Color val);
@@ -855,6 +862,7 @@ protected:
   void save_cursor(void);
   void restore_cursor(void);
   // Printing
+private:
   void handle_ctrl(char c);
   bool is_printable(char c);
   bool is_ctrl(char c);
@@ -887,6 +895,7 @@ protected:
   void draw_row_bg(int grow, int X, int Y) const;
   void draw_row(int grow, int Y) const;
   void draw_buff(int Y) const;
+private:
   void handle_selection_autoscroll(void);
   int  handle_selection(int e);
 public:
@@ -900,20 +909,35 @@ protected:
   //   Don't make these public, but allow internals and
   //   derived classes to maintain brevity.
   //
+  /// Return the number of rows in the ring buffer.
   inline int ring_rows(void) const { return ring_.ring_rows(); }
+  /// Return the number of columns in the ring buffer.
   inline int ring_cols(void) const { return ring_.ring_cols(); }
+  /// Return the starting row# in the ring buffer. (Always 0)
   inline int ring_srow(void) const { return ring_.ring_srow(); }
+  /// Return the ending row# in the ring buffer (Always ring_rows()-1)
   inline int ring_erow(void) const { return ring_.ring_erow(); }
+  /// Return the number of rows in the scrollback history.
   inline int hist_rows(void) const { return ring_.hist_rows(); }
+  /// Return the number of columns in the scrollback history.
   inline int hist_cols(void) const { return ring_.hist_cols(); }
+  /// Return the starting row# of the scrollback history.
   inline int hist_srow(void) const { return ring_.hist_srow(); }
+  /// Return the ending row# of the scrollback history.
   inline int hist_erow(void) const { return ring_.hist_erow(); }
+  /// Return number of rows in use by the scrollback history.
   inline int hist_use(void)  const { return ring_.hist_use();  }
+  /// Return the starting row of the "in use" scrollback history.
   inline int hist_use_srow(void) const { return ring_.hist_use_srow(); }
+  /// Return the number of rows in the display area.
   inline int disp_rows(void) const { return ring_.disp_rows(); }
+  /// Return the number of columns in the display area.
   inline int disp_cols(void) const { return ring_.disp_cols(); }
+  /// Return the starting row# in the display area.
   inline int disp_srow(void) const { return ring_.disp_srow(); }
+  /// Return the ending row# in the display area.
   inline int disp_erow(void) const { return ring_.disp_erow(); }
+  /// Returns the current offset into the ring buffer.
   inline int offset(void) const    { return ring_.offset(); }
 
   // TODO: CLEAN UP WHAT'S PUBLIC, AND WHAT SHOULD BE 'PROTECTED' AND 'PRIVATE'
@@ -959,21 +983,21 @@ public:
   void  margin_top(int val);
   void  margin_bottom(int val);
   // API: Text font/size/color
-  void        textfont(Fl_Font val);
-  void        textsize(Fl_Fontsize val);
-  void        textcolor(Fl_Color val);
-  void        color(Fl_Color val);
-  void        textfgcolor(Fl_Color val);
-  void        textbgcolor(Fl_Color val);
-  void        textfgcolor_default(Fl_Color val);
-  void        textbgcolor_default(Fl_Color val);
+  void  textfont(Fl_Font val);
+  void  textsize(Fl_Fontsize val);
+  void  textcolor(Fl_Color val);
+  void  color(Fl_Color val);
+  void  textfgcolor(Fl_Color val);
+  void  textbgcolor(Fl_Color val);
+  void  textfgcolor_default(Fl_Color val);
+  void  textbgcolor_default(Fl_Color val);
   /// Return text font used to draw all text in the terminal.
   Fl_Font     textfont(void)      const { return current_style_.fontface(); }
   /// Return text font size used to draw all text in the terminal.
   Fl_Fontsize textsize(void)      const { return current_style_.fontsize(); }
-  // Return base widget Fl_Group's box() color()
+  /// Return base widget Fl_Group's box() color()
   Fl_Color    color(void)         const { return Fl_Group::color(); }
-  // Return textcolor(). This is a convenience method that returns textfgcolor_default()
+  /// Return textcolor(). This is a convenience method that returns textfgcolor_default()
   Fl_Color    textcolor(void)     const { return textfgcolor_default(); }
   /// Return text's current foreground color.
   Fl_Color    textfgcolor(void)   const { return current_style_.fgcolor(); }
@@ -998,7 +1022,7 @@ public:
   // API: Redraw style/rate
   RedrawStyle redraw_style(void) const;
   void  redraw_style(RedrawStyle val);
-protected:
+private:
   bool  is_redraw_style(RedrawStyle val) { return redraw_style_ == val; }
 public:
   float redraw_rate(void) const;

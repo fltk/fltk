@@ -328,7 +328,7 @@ void Fl_Terminal::EscapeSeq::save_cursor(int row, int col) {
   save_col_ = col;
 }
 
-// Return saved position in row,col
+// Restore last saved cursor position into row,col
 void Fl_Terminal::EscapeSeq::restore_cursor(int &row, int &col) {
   row = save_row_;
   col = save_col_;
@@ -1023,12 +1023,7 @@ void Fl_Terminal::create_ring(int drows, int dcols, int hrows) {
   cursor_.home();
 }
 
-// Return the Utf8Char* for character under cursor.
-Fl_Terminal::Utf8Char* Fl_Terminal::u8c_cursor(void) {
-  return u8c_disp_row(cursor_.row()) + cursor_.col();
-}
-
-// Return scrollbar width if visible, or 0 if not visible
+/// Return scrollbar width if visible, or 0 if not visible.
 int Fl_Terminal::vscroll_width(void) const {
   return(vscroll_->visible() ? vscroll_->w() : 0);
 }
@@ -1555,9 +1550,12 @@ void Fl_Terminal::textattrib(uchar val) {
   current_style_.attrib(val);
 }
 
-// Convert fltk window X coord to column 'gcol' on specified global 'grow'
-//     Returns 1 if 'gcol' was found, or 0 if X not within any char in 'grow'
-//
+/**
+  Convert fltk window X coord to column 'gcol' on specified global 'grow'
+  \returns
+    - 1 if 'gcol' was found
+    - 0 if X not within any char in 'grow'
+*/
 int Fl_Terminal::x_to_glob_col(int X, int grow, int &gcol) const {
   int cx = x() + margin_.left();                    // char x position
   const Utf8Char *u8c = utf8_char_at_glob(grow, 0);
@@ -1790,11 +1788,13 @@ bool Fl_Terminal::get_selection(int &srow,  ///< starting row for selection
   return select_.get_selection(srow, scol, erow, ecol);
 }
 
-// Is global row,col (relative to ring_chars[]) inside the current mouse selection?
-// Retruns:
-//    true  -- (row,col) inside a valid selection.
-//    false -- (row,col) outside, or no valid selection.
-//
+/**
+  Is global row/column inside the current mouse selection?
+
+  \returns
+  - true  -- (\p grow, \p gcol) is inside a valid selection.
+  - false -- (\p grow, \p gcol) is outside, or no valid selection.
+*/
 bool Fl_Terminal::is_inside_selection(int grow, int gcol) const {
   if (!is_selection()) return false;
   int ncols = ring_cols();
@@ -1830,9 +1830,10 @@ bool Fl_Terminal::is_disp_ring_row(int grow) const {
   return ring_.is_disp_ring_row(grow);
 }
 
-// Return byte length of all UTF-8 chars in selection, or 0 if no selection.
-//    NOTE: Length includes trailing white on each line.
-//
+/**
+  Return byte length of all UTF-8 chars in selection, or 0 if no selection.
+  NOTE: Length includes trailing white on each line.
+*/
 int Fl_Terminal::selection_text_len(void) const {
   int row,col,len=0;
   const Utf8Char *u8c = NULL;                     // start with NULL to begin walk
@@ -1841,11 +1842,12 @@ int Fl_Terminal::selection_text_len(void) const {
   return len;
 }
 
-// Return text selection (for copy()/paste() operations)
-//     Returns allocated NULL terminated string for entire selection.
-//     Caller must free() this memory when done.
-//     Unicode safe.
-//
+/**
+  Return text selection (for copy()/paste() operations)
+  - Returns allocated NULL terminated string for entire selection.
+  - Caller must free() this memory when done.
+  - Unicode safe.
+*/
 const char* Fl_Terminal::selection_text(void) const {
   if (!is_selection()) return fl_strdup("");             // no selection? empty string
   // Allocate buff large enough for all UTF-8 chars
@@ -1875,14 +1877,15 @@ const char* Fl_Terminal::selection_text(void) const {
   return buf;
 }
 
-// Clear mouse selection
+/// Clear any current mouse selection.
 void Fl_Terminal::clear_mouse_selection(void) {
   select_.clear();
 }
 
-// Extend selection to FLTK coords X,Y.
-//    Returns true if extended, false if nothing done (X,Y offscreen)
-//
+/**
+  Extend selection to FLTK coords X,Y.
+  Returns true if extended, false if nothing done (X,Y offscreen)
+*/
 bool Fl_Terminal::selection_extend(int X,int Y) {
   if (is_selection()) {                  // selection already?
     int grow,gcol;
@@ -1897,10 +1900,12 @@ bool Fl_Terminal::selection_extend(int X,int Y) {
   return false;
 }
 
-// Scroll the display up(+) or down(-) number of rows.
-//     Negative row value scrolls "down", clearing top line, and history unaffected.
-//     Postive row value scrolls "up", clearing bottom line, rotating top line into history.
-//
+/**
+  Scroll the display up(+) or down(-) the specified \p rows.
+
+  - Negative value scrolls "down", clearing top line, and history unaffected.
+  - Postive value scrolls "up", clearing bottom line, rotating top line into history.
+*/
 void Fl_Terminal::scroll(int rows) {
   // Scroll the ring
   ring_.scroll(rows, current_style_);
@@ -1908,10 +1913,11 @@ void Fl_Terminal::scroll(int rows) {
   else          clear_mouse_selection(); // scroll dn? clear mouse select; it might wrap ring
 }
 
-// Insert (count) rows at cursor position.
-//    Causes rows below to scroll down, and empty lines created.
-//    Scrolling does not involve history at all.
-//
+/**
+  Insert (count) rows at current cursor position.
+  Causes rows below to scroll down, and empty lines created.
+  Lines deleted by scroll down are NOT moved into the scroll history.
+*/
 void Fl_Terminal::insert_rows(int count) {
   int dst_drow = disp_rows()-1;                                   // dst is bottom of display
   int src_drow = clamp((dst_drow-count), 1, (disp_rows()-1));     // src is count lines up from dst
@@ -1929,10 +1935,11 @@ void Fl_Terminal::insert_rows(int count) {
   clear_mouse_selection();
 }
 
-// Delete (count) rows at cursor position.
-//    Causes rows to scroll up, and empty lines created at bottom of screen.
-//    Scrolling does not involve history at all.
-//
+/**
+ Delete (count) rows at cursor position.
+ Causes rows to scroll up, and empty lines created at bottom of screen.
+ Lines deleted by scroll up are NOT moved into the scroll history.
+*/
 void Fl_Terminal::delete_rows(int count) {
   int dst_drow = cursor_.row();                                   // dst is cursor row
   int src_drow = clamp((dst_drow+count), 1, (disp_rows()-1));     // src is count rows below cursor
@@ -1957,7 +1964,7 @@ void Fl_Terminal::repeat_char(char c, int rep) {
   while ( rep-- > 0 && cursor_.col() < disp_cols() ) print_char(c);
 }
 
-// Insert char 'c' for 'rep' times at display (drow,dcol).
+/// Insert char 'c' for 'rep' times at display row \p 'drow' and column \p 'dcol'.
 void Fl_Terminal::insert_char_eol(char c, int drow, int dcol, int rep) {
   // Walk the row from the eol backwards to the col position
   //     In this example, rep=3:
@@ -1983,14 +1990,15 @@ void Fl_Terminal::insert_char_eol(char c, int drow, int dcol, int rep) {
   }
 }
 
-// Insert char 'c' for 'rep' times.
-//     Does not wrap; characters at end of line are lost.
-//
+/**
+  Insert char 'c' at the current cursor position for 'rep' times.
+  Does not wrap; characters at end of line are lost.
+*/
 void Fl_Terminal::insert_char(char c, int rep) {
   insert_char_eol(c, cursor_.row(), cursor_.col(), rep);
 }
 
-// Delete char(s) at (drow,dcol) for 'rep' times.
+/// Delete char(s) at (drow,dcol) for 'rep' times.
 void Fl_Terminal::delete_chars(int drow, int dcol, int rep) {
   rep = clamp(rep, 0, disp_cols());                // sanity
   if (rep == 0) return;
@@ -2001,7 +2009,7 @@ void Fl_Terminal::delete_chars(int drow, int dcol, int rep) {
     else                        u8c[col] = u8c[col+rep];          // move
 }
 
-// Delete char(s) at cursor position for 'rep' times.
+/// Delete char(s) at cursor position for 'rep' times.
 void Fl_Terminal::delete_chars(int rep) {
   delete_chars(cursor_.row(), cursor_.col(), rep);
 }
@@ -2043,12 +2051,12 @@ void Fl_Terminal::reset_terminal(void) {
 //DEBUG   ::printf("\033[05C   ring_rows_: %d\n", ring_rows_);
 //DEBUG   ::printf("\033[05C   ring_cols_: %d\n", ring_cols_);
 //DEBUG   ::printf("\033[05C      offset_: %d\n", offset_);
-//DEBUG   ::printf("\033[u"); // recall cursor
+//DEBUG   ::printf("\033[u"); // restore cursor
 //DEBUG   ::printf("\033[30C -- History Index\n");
 //DEBUG   ::printf("\033[30C   hist_rows_: %d srow=%d\n", hist_rows(), hist_srow());
 //DEBUG   ::printf("\033[30C   hist_cols_: %d erow=%d\n", hist_cols(), hist_erow());
 //DEBUG   ::printf("\033[30C    hist_use_: %d\n",         hist_use());
-//DEBUG   ::printf("\033[u"); // recall cursor
+//DEBUG   ::printf("\033[u"); // restore cursor
 //DEBUG   ::printf("\033[60C -- Display Index\n");
 //DEBUG   ::printf("\033[60C   disp_rows_: %d srow=%d\n", disp_rows(), disp_srow());
 //DEBUG   ::printf("\033[60C   disp_cols_: %d erow=%d\n", disp_cols(), disp_erow());
@@ -2206,7 +2214,7 @@ void Fl_Terminal::cursor_crlf(int count) {
   cursor_down(count, do_scroll);
 }
 
-// Tab right, do not wrap beyond right edge
+/// Tab right, do not wrap beyond right edge.
 void Fl_Terminal::cursor_tab_right(int count) {
   count = clamp(count, 1, disp_cols());           // sanity
   int X = cursor_.col();
@@ -2220,7 +2228,7 @@ void Fl_Terminal::cursor_tab_right(int count) {
   cursor_eol();
 }
 
-// Tab left, do not wrap beyond left edge
+/// Tab left, do not wrap beyond left edge.
 void Fl_Terminal::cursor_tab_left(int count) {
   count = clamp(count, 1, disp_cols());           // sanity
   int X = cursor_.col();
@@ -2231,16 +2239,16 @@ void Fl_Terminal::cursor_tab_left(int count) {
   cursor_sol();
 }
 
-// Save current cursor position
+/// Save current cursor position. Used by ESC [ s
 void Fl_Terminal::save_cursor(void) {
   escseq.save_cursor(cursor_.row(), cursor_.col());
 }
 
-// Restore previously saved cursor position, if there was one
+/// Restore previously saved cursor position, if any. Used by ESC [ u
 void Fl_Terminal::restore_cursor(void) {
   int row,col;
   escseq.restore_cursor(row, col);
-  if (row != -1 && col != 1)                      // restore only if save first
+  if (row != -1 && col != 1)         // restore only if previously saved
     { cursor_.row(row); cursor_.col(col); }
 }
 
@@ -2248,6 +2256,18 @@ void Fl_Terminal::restore_cursor(void) {
 ////// PRINTING //////
 //////////////////////
 
+/**
+  Handle the special control character 'c'.
+
+  These are control characters that involve special terminal handling, e.g.
+  \code
+  \r - carriage return - cursor_cr()
+  \n - line feed       - cursor_crlf() - default behavior for \n is CR and LF
+  \b - backspace       - cursor_left()
+  \t - tab             - cursor_tab_right()
+  \e - escape          - starts an ANSI or xterm escape sequence
+  \endcode
+*/
 void Fl_Terminal::handle_ctrl(char c) {
   switch (c) {
     case '\n': cursor_crlf();              return;  // CRLF?
@@ -2358,18 +2378,28 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
   }
 }
 
-// Handle <ESC>[<top>;<lt>;<bot>;<rt>;<att>$t
-//     This one is fun! <att> is the attrib to xor, i.e. 1(bold),4,5,7(inverse).
-//     gnome-term doesn't support this, but xterm does.
-//
+/**
+  Handle the VT100 sequence <tt>ESC [ top ; lt ; bot ; rt ; att $ t</tt>
+
+  top/lt/bot/rt is the screen area to affect, 'att' is the attrib to xor,
+  i.e. 1(bold),4,5,7(inverse).
+
+  \note
+    - gnome-term doesn't support this, but xterm does.
+    - Currently unsupported by Fl_Terminal
+*/
 void Fl_Terminal::handle_DECRARA(void) {
   // TODO: MAYBE NEVER
 }
 
-// Handle an escape sequence character
-//    If this char is the end of the sequence, do the operation
-//    if possible, and then reset() to finish parsing.
-//
+/**
+  Handle an escape sequence character.
+
+  Call this on a character only if escseq.parse_in_progress() is true.
+
+  If this char is the end of the sequence, do the operation (if possible),
+  then does an escseq.reset() to finish parsing.
+*/
 void Fl_Terminal::handle_escseq(char c) {
   // NOTE: Use xterm to test. gnome-terminal has bugs, even in 2022.
   const bool do_scroll = true;
@@ -2522,7 +2552,7 @@ cup:
         break;
       case 'm': handle_SGR();             break; // ESC[#m - set character attributes (SGR)
       case 's': save_cursor();            break; // ESC[s - save cur pos (xterm+gnome)
-      case 'u': restore_cursor();         break; // ESC[u - rest cur pos (xterm+gnome)
+      case 'u': restore_cursor();         break; // ESC[u - restore cur pos (xterm+gnome)
       case 'q':  // TODO?                        // ESC[>#q set cursor style (block/line/blink..)
       case 'r':  // TODO                         // ESC[#;#r set scroll region top;bot
                                                  // default=full window
@@ -2537,13 +2567,13 @@ cup:
   } else {
     // Not CSI? Might be C1 Control code (<ESC>D, etc)
     switch ( esc.esc_mode() ) {
-      case 'c':                                  // <ESC>c - Reset term to Initial State (RIS)
-        reset_terminal();
-        break;
+      case 'c': reset_terminal();          break;// <ESC>c - Reset term to Initial State (RIS)
       case 'D': cursor_down(1, do_scroll); break;// <ESC>D - down line, scroll at bottom
       case 'E': cursor_crlf();             break;// <ESC>E - do a crlf
       case 'H': set_tabstop();             break;// <ESC>H - set a tabstop
-      case 'M': cursor_up(1, true);        break;// <ESC>M -- (RI) Reverse Index (up w/scroll)
+      case 'M': cursor_up(1, true);        break;// <ESC>M - (RI) Reverse Index (up w/scroll)
+      case '7': handle_unknown_char();     break;// <ESC>7 - Save cursor & attrs    // TODO
+      case '8': handle_unknown_char();     break;// <ESC>8 - Restore cursor & attrs // TODO
       default:
         handle_unknown_char();                   // does an escseq.reset()
         break;
@@ -2552,11 +2582,18 @@ cup:
   esc.reset();   // done handling escseq, reset()
 }
 
+/**
+  Clears that the display has been modified; sets internal
+  redraw_modified_ to false.
+*/
 void Fl_Terminal::display_modified_clear(void) {
   redraw_modified_ = false;
 }
 
-// Display modified, trigger redraw handling..
+/**
+  Flag that the display has been modified, triggering redraws.
+  Sets the internal redraw_modified_ flag to true.
+*/
 void Fl_Terminal::display_modified(void) {
   if (is_redraw_style(RATE_LIMITED)) {
     if (!redraw_modified_) {                         // wasn't before but now is?
@@ -3060,10 +3097,16 @@ void Fl_Terminal::scrollbar_size(int val) {
 ////// SCREEN DRAWING //////
 ////////////////////////////
 
-// Draw the background for the specified ring_chars[] row starting at FLTK coords X,Y
-//    Note we may be called to draw display, or even history if we're scrolled back.
-//    If there's any change in bg color, we draw the filled rects here.
-//
+/**
+  Draw the background for the specified ring_chars[] global row \p grow
+  starting at FLTK coords \p X and \p Y.
+
+  Note we may be called to draw display, or even history if we're scrolled back.
+  If there's any change in bg color, we draw the filled rects here.
+
+  If the bg color for a character is the special "see through" color 0xffffffff,
+  no pixels are drawn.
+*/
 void Fl_Terminal::draw_row_bg(int grow, int X, int Y) const {
   int bg_h = current_style_.fontheight();
   int bg_y = Y - current_style_.fontheight() + current_style_.fontdescent();
@@ -3092,9 +3135,10 @@ void Fl_Terminal::draw_row_bg(int grow, int X, int Y) const {
   }
 }
 
-// Draw specified global row, which is the row in ring_chars[].
-//    The global row includes history + display buffers.
-//
+/**
+  Draw the specified global row, which is the row in ring_chars[].
+  The global row includes history + display buffers.
+*/
 void Fl_Terminal::draw_row(int grow, int Y) const {
   // Draw background color spans, if any
   int X = scrn_.x();
@@ -3155,13 +3199,15 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   }
 }
 
-// Draw the part of the buffer we're scrolled to at FLTK position Y.
-//
-//    This could be anywhere in the buffer, and not just the 'active diplay',
-//    depending on what the scrollbar is set to.
-//
-//    Handles attributes, colors, text selections, cursor.
-//
+/**
+  Draws the buffer position we are scrolled to onto the FLTK screen
+  starting at pixel position Y.
+
+  This can be anywhere in the ring buffer, not just the 'active diplay';
+  depends on what position the scrollbar is set to.
+
+  Handles attributes, colors, text selections, cursor.
+*/
 void Fl_Terminal::draw_buff(int Y) const {
   int srow = disp_srow() - vscroll_->value();
   int erow = srow + disp_rows();
@@ -3204,12 +3250,18 @@ void Fl_Terminal::draw(void) {
   fl_pop_clip();
 }
 
-// Given a width in pixels, return number of columns that "fits"
+/**
+  Given a width in pixels, return number of columns that "fits" into that area.
+  This is used by the constructor to size the row/cols to fit the widget size.
+*/
 int Fl_Terminal::w_to_col(int W) const {
   return int((float(W) / current_style_.charwidth()) + 0.0);    // +.5 overshoots
 }
 
-// Given a height in pixels, return number of rows that "fits"
+/**
+  Given a height in pixels, return number of rows that "fits" into that area.
+  This is used by the constructor to size the row/cols to fit the widget size.
+*/
 int Fl_Terminal::h_to_row(int H) const {
   return int((float(H) / current_style_.fontheight()) + -0.5);  // +.5 overshoots
 }
@@ -3254,9 +3306,10 @@ void Fl_Terminal::handle_selection_autoscroll(void) {
   }
 }
 
-// Handle mouse selection on LEFT-CLICK push/drag/release
-//     Returns: 1 if 'handled', 0 if not.
-//
+/**
+  Handle mouse selection on LEFT-CLICK push/drag/release.
+  Returns: 1 if 'handled', 0 if not.
+*/
 int Fl_Terminal::handle_selection(int e) {
   int grow=0,gcol=0;
   bool is_rowcol = (xy_to_glob_rowcol(Fl::event_x(), Fl::event_y(), grow, gcol) > 0)
