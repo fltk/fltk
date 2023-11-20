@@ -505,7 +505,7 @@ void copy(Fl_Widget *, void *data) {
     }
     return;
   }
-
+  
   if (strcmp(operation, "Fl_Copy_Surface") == 0) {
     Fl_Copy_Surface *copy_surf;
     if (target->as_window() && !target->parent()) {
@@ -521,8 +521,8 @@ void copy(Fl_Widget *, void *data) {
     }
     delete copy_surf;
     Fl_Surface_Device::pop_current();
-    }
-
+  }
+  
   if (strcmp(operation, "Fl_Printer") == 0 || strcmp(operation, "Fl_PostScript_File_Device") == 0) {
     Fl_Paged_Device *p;
     int err;
@@ -549,7 +549,7 @@ void copy(Fl_Widget *, void *data) {
     } else if (err > 1 && err_message) {fl_alert("%s", err_message); delete[] err_message;}
     delete p;
   }
-
+  
   if (strcmp(operation, "Fl_EPS_File_Surface") == 0) {
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Save a .eps file");
@@ -575,7 +575,7 @@ void copy(Fl_Widget *, void *data) {
       }
     }
   }
-
+  
   if (strcmp(operation, "Fl_SVG_File_Surface") == 0) {
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Save a .svg file");
@@ -602,7 +602,7 @@ void copy(Fl_Widget *, void *data) {
       }
     }
   }
-
+  
   if (strcmp(operation, "fl_capture_window()") == 0) {
     Fl_Window *win = target->as_window() ? target->as_window() : target->window();
     int X = target->as_window() ? 0 : target->x();
@@ -618,6 +618,42 @@ void copy(Fl_Widget *, void *data) {
       g2->show();
     }
   }
+  
+  if (strcmp(operation, "Fl_Image_Surface::mask()") == 0) {
+    Fl_Image_Surface *surf = new Fl_Image_Surface(target->w(), target->h(), 1);
+    Fl_Surface_Device::push_current(surf);
+    fl_color(FL_BLACK);
+    fl_rectf(0, 0, target->w(), target->h());
+    fl_color(FL_WHITE);
+    fl_pie(0, 0, target->w(), target->h(), 0, 360);
+    if (target->top_window() == target) {
+      fl_color(FL_BLACK);
+      int mini = (target->w() < target->h() ? target->w() : target->h()) * 0.66;
+      fl_pie(target->w()/2 - mini/2, target->h()/2 - mini/2, mini, mini, 0, 360);
+      fl_color(FL_WHITE);
+      fl_font(FL_TIMES_BOLD, 120);
+      int dx, dy, l, h;
+      fl_text_extents("FLTK", dx, dy, l, h);
+      fl_draw("FLTK", target->w()/2 - l/2, target->h()/2 + h/2);
+    }
+    Fl_RGB_Image *mask = surf->image();
+    fl_color(FL_YELLOW);
+    fl_rectf(0, 0, target->w(), target->h());
+    Fl_Surface_Device::pop_current();
+    surf->mask(mask);
+    delete mask;
+    Fl_Surface_Device::push_current(surf);
+    surf->draw(target, 0, 0);
+    mask = surf->image();
+    Fl_Surface_Device::pop_current();
+    delete surf;
+    Fl_Window *win = new Fl_Window(mask->w(), mask->h(), operation);
+    Fl_Box *box = new Fl_Box(0, 0, mask->w(), mask->h());
+    box->bind_image(mask);
+    win->end();
+    win->show();
+  }
+  
 }
 
 class My_Button:public Fl_Button {
@@ -650,7 +686,7 @@ void operation_cb(Fl_Widget* wid, void *data)
 
 int main(int argc, char ** argv) {
 
-  Fl::scheme("plastic");
+  //Fl::scheme("plastic");
 
   Fl_Window * w2 = new Fl_Window(500,568,"Graphics test");
 
@@ -730,6 +766,7 @@ int main(int argc, char ** argv) {
   rb = new Fl_Radio_Round_Button(5,30,150,12, "Fl_EPS_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   rb = new Fl_Radio_Round_Button(170,30,150,12, "Fl_SVG_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   rb = new Fl_Radio_Round_Button(5,43,150,12, "fl_capture_window()"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,43,150,12, "Fl_Image_Surface::mask()"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   g1->end();
 
   Fl_Group *g2 = new Fl_Group(0,0,w3->w(),w3->h());

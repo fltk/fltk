@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,8 +32,19 @@ public:
   void translate(int x, int y) FL_OVERRIDE;
   void untranslate() FL_OVERRIDE;
   Fl_RGB_Image *image() FL_OVERRIDE;
+  void mask(const Fl_RGB_Image *) FL_OVERRIDE;
 #if FLTK_USE_CAIRO
   cairo_t *cairo_;
+  struct shape_data_type {
+    double scale;
+    cairo_pattern_t *mask_pattern_;
+    cairo_t *bg_cr;
+  } *shape_data_;
+#else
+  struct shape_data_type {
+    Pixmap background;
+    Fl_RGB_Image* mask;
+  } *shape_data_;
 #endif
 };
 

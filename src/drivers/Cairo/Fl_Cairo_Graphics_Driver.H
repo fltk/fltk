@@ -68,6 +68,7 @@ public:
   cairo_t *cr() { return cairo_; }
   PangoLayout *pango_layout() {return pango_layout_;}
   void set_cairo(cairo_t *c, float f = 0);
+  static cairo_pattern_t *calc_cairo_mask(const Fl_RGB_Image *rgb);
 
   void check_status(void);
 
