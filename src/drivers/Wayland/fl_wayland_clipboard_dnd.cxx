@@ -23,7 +23,6 @@
 #  include <FL/Fl_Image_Surface.H>
 #  include "Fl_Wayland_Screen_Driver.H"
 #  include "Fl_Wayland_Window_Driver.H"
-#  include "Fl_Wayland_Image_Surface_Driver.H"
 #  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
 #  include "../../flstring.h" // includes <string.h>

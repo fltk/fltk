@@ -18,7 +18,6 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
-#include "Fl_Wayland_Image_Surface_Driver.H"
 #include <FL/filename.H>
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"

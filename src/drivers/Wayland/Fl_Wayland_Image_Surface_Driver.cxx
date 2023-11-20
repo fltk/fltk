@@ -43,6 +43,7 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h,
               cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w), CAIRO_FORMAT_RGB24);
     offscreen = (Fl_Offscreen)off_->cairo_;
     cairo_set_user_data(off_->cairo_, &Fl_Wayland_Graphics_Driver::key, off_, NULL);
+    if (d*s != 1 && high_res) cairo_scale((cairo_t*)offscreen, d*s, d*s);
   }
   driver(new Fl_Wayland_Graphics_Driver());
   if (d*s != 1 && high_res) driver()->scale(d*s);
