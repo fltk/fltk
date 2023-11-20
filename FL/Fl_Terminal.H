@@ -259,11 +259,10 @@
 **/
 
 class FL_EXPORT Fl_Terminal : public Fl_Group {
-public:
   //////////////////////////////////////
   ////// Fl_Terminal Public Enums //////
   //////////////////////////////////////
-
+public:
   /**
     \enum RedrawStyle
     Determines when Fl_Terminal calls redraw() if new text is added.
@@ -356,7 +355,7 @@ protected:
     int         fontdescent_;      // font descent (pixels below font baseline)
     int         charwidth_;        // width of a fixed width ASCII character
   public:
-    CharStyle(void);
+    CharStyle(bool fontsize_defer);
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
     Fl_Color defaultfgcolor(void) const { return defaultfgcolor_; }
@@ -382,6 +381,7 @@ protected:
     void fontface(Fl_Font val)        { fontface_ = val; update(); }
     void fontsize(Fl_Fontsize val)    { fontsize_ = val; update(); }
     void update(void);
+    void update_fake(void);
     // SGR MODES: Set Graphics Rendition
     void sgr_reset(void) {                         // e.g. ESC[0m
       attrib(Fl_Terminal::NORMAL);
@@ -571,7 +571,6 @@ private:
     const Utf8Char* u8c_hist_row(int hrow) const;
     const Utf8Char* u8c_hist_use_row(int hurow) const;
     const Utf8Char* u8c_disp_row(int drow) const;
-
     // Non-const versions of the above methods
     //   Using "Effective C++" ugly-as-hell syntax technique.
     //
@@ -726,9 +725,10 @@ private:
   //////
   ///////////////////////////////////////////////////////////////
 private:
+  bool          fontsize_defer_; // flag defers font calcs until first draw() (issue 837)
   Fl_Scrollbar *vscroll_;        // vertical scrollbar (value: rows above disp_chars[])
   int           scrollbar_size_; // local preference for scrollbar size
-  CharStyle     current_style_;  // current font, attrib, color..
+  CharStyle     *current_style_; // current font, attrib, color..
 
   // A ring buffer is used for the terminal's history (hist) and display (disp) buffer.
   //    See README-Fl_Terminal.txt, section "RING BUFFER DESCRIPTION" for diagrams/info.
@@ -758,15 +758,17 @@ protected:
   const Utf8Char* u8c_hist_row(int hrow) const;
   const Utf8Char* u8c_hist_use_row(int hrow) const;
   const Utf8Char* u8c_disp_row(int drow) const;
-  // non-const versions of the above.
+  // Non-const versions of the above.
   //     "Effective C++" says: implement non-const method to cast away const
   //
   Utf8Char* u8c_ring_row(int grow);
   Utf8Char* u8c_hist_row(int hrow);
   Utf8Char* u8c_hist_use_row(int hurow);
   Utf8Char* u8c_disp_row(int drow);
+  Utf8Char* u8c_cursor(void);
 private:
   void create_ring(int drows, int dcols, int hrows);
+  void init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer);
 protected:
   int  vscroll_width(void) const;
 private:
@@ -992,21 +994,21 @@ public:
   void  textfgcolor_default(Fl_Color val);
   void  textbgcolor_default(Fl_Color val);
   /// Return text font used to draw all text in the terminal.
-  Fl_Font     textfont(void)      const { return current_style_.fontface(); }
+  Fl_Font     textfont(void)      const { return current_style_->fontface(); }
   /// Return text font size used to draw all text in the terminal.
-  Fl_Fontsize textsize(void)      const { return current_style_.fontsize(); }
+  Fl_Fontsize textsize(void)      const { return current_style_->fontsize(); }
   /// Return base widget Fl_Group's box() color()
   Fl_Color    color(void)         const { return Fl_Group::color(); }
   /// Return textcolor(). This is a convenience method that returns textfgcolor_default()
   Fl_Color    textcolor(void)     const { return textfgcolor_default(); }
   /// Return text's current foreground color.
-  Fl_Color    textfgcolor(void)   const { return current_style_.fgcolor(); }
+  Fl_Color    textfgcolor(void)   const { return current_style_->fgcolor(); }
   /// Return text's current background color.
-  Fl_Color    textbgcolor(void)   const { return current_style_.bgcolor(); }
+  Fl_Color    textbgcolor(void)   const { return current_style_->bgcolor(); }
   /// Return text's default foreground color. \see textfgcolor()
-  Fl_Color    textfgcolor_default(void)   const { return current_style_.defaultfgcolor(); }
+  Fl_Color    textfgcolor_default(void)   const { return current_style_->defaultfgcolor(); }
   /// Return text's default background color. \see textbgcolor()
-  Fl_Color    textbgcolor_default(void)   const { return current_style_.defaultbgcolor(); }
+  Fl_Color    textbgcolor_default(void)   const { return current_style_->defaultbgcolor(); }
   void        textfgcolor_xterm(uchar val);
   void        textbgcolor_xterm(uchar val);
   /// Set mouse selection foreground color.
@@ -1040,7 +1042,8 @@ public:
   void  printf(const char *fmt, ...);
   void  vprintf(const char *fmt, va_list ap);
   // Ctor
-  Fl_Terminal(int X, int Y, int W, int H, const char*L=0);
+  Fl_Terminal(int X,int Y,int W,int H,const char*L=0);
+  Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist);
   // Dtor
   ~Fl_Terminal(void);
   // Debugging features
