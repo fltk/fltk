@@ -70,6 +70,7 @@ public:
 
   // --- bitmap stuff
   static HBITMAP create_bitmask(int w, int h, const uchar *array); // NOT virtual
+  static HBITMAP calc_HBITMAP_mask(Fl_RGB_Image *mask);
   void delete_bitmask(fl_uintptr_t bm) FL_OVERRIDE;
   HBITMAP create_alphamask(int w, int h, int d, int ld, const uchar *array);
   void draw_unscaled(const char* str, int n, int x, int y) FL_OVERRIDE;

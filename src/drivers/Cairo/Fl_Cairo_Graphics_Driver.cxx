@@ -1517,4 +1517,41 @@ void Fl_Cairo_Graphics_Driver::focus_rect(int x, int y, int w, int h)
   surface_needs_commit();
 }
 
+
+cairo_pattern_t *Fl_Cairo_Graphics_Driver::calc_cairo_mask(const Fl_RGB_Image *rgb) {
+  int i, j, d = rgb->d(), w = rgb->data_w(), h = rgb->data_h(), ld = rgb->ld();
+  int bytesperrow = cairo_format_stride_for_width(CAIRO_FORMAT_A1, w);
+  if (!ld) ld = d * w;
+  unsigned u;
+  uchar byte, onebit;
+  // build a CAIRO_FORMAT_A1 surface covering the non-black part of the image
+  uchar* bits = new uchar[h*bytesperrow]; // to store the surface data
+  for (i = 0; i < h; i++) {
+    const uchar* alpha = (const uchar*)*rgb->data() + i * ld;
+    uchar *p = (uchar*)bits + i * bytesperrow;
+    byte = 0;
+    onebit = 1;
+    for (j = 0; j < w; j++) {
+      u = *alpha;
+      u += *(alpha+1);
+      u += *(alpha+2);
+      if (u > 0) { // if the pixel is not black
+        byte |= onebit; // turn on the corresponding bit of the bitmap
+      }
+      onebit = onebit << 1; // move the single set bit one position to the left
+      if (onebit == 0 || j == w-1) {
+        onebit = 1;
+        *p++ = byte; // store in bitmap one pack of bits
+        byte = 0;
+      }
+      alpha += d; // point to next rgb pixel
+    }
+  }
+  cairo_surface_t *mask_surf = cairo_image_surface_create_for_data(bits,
+    CAIRO_FORMAT_A1, w, h, bytesperrow);
+  cairo_pattern_t *mask_pattern = cairo_pattern_create_for_surface(mask_surf);
+  cairo_surface_destroy(mask_surf);
+  return mask_pattern;
+}
+
 #endif // USE_PANGO

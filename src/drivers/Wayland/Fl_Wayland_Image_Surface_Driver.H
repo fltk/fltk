@@ -25,6 +25,12 @@ class Fl_Wayland_Image_Surface_Driver : public Fl_Image_Surface_Driver {
 public:
   Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Wayland_Image_Surface_Driver();
+  void mask(const Fl_RGB_Image *) FL_OVERRIDE;
+  struct shape_data_type {
+    double scale;
+    cairo_pattern_t *mask_pattern_;
+    cairo_t *bg_cr;
+  } *shape_data_;
   void set_current() FL_OVERRIDE;
   void translate(int x, int y) FL_OVERRIDE;
   void untranslate() FL_OVERRIDE;
