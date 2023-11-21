@@ -2339,13 +2339,51 @@ void Fl_Terminal::restore_cursor(void) {
 ////// PRINTING //////
 //////////////////////
 
+// Handle '\r' output based on output translation flags
+void Fl_Terminal::handle_cr(void) {
+  const bool do_scroll = true;
+  if (oflags_ & CR_TO_LF) cursor_down(1, do_scroll);
+  else                    cursor_cr();
+}
+
+// Handle '\n' output based on output translation flags
+void Fl_Terminal::handle_lf(void) {
+  const bool do_scroll = true;
+       if (oflags_ & LF_TO_CR  ) cursor_cr();
+  else if (oflags_ & LF_TO_CRLF) cursor_crlf();
+  else                           cursor_down(1, do_scroll);
+}
+
+/**
+  Sets the combined output translation flags to \p val.
+
+  \p val can be sensible combinations of the OutFlags bit flags.
+
+  The default is LF_TO_CRLF, so that \\n will generate both carriage-return (CR)
+  and line-feed (LF).
+
+  For \\r and \\n to be handled literally, use output_translate(Fl_Terminal::OutFlags::OFF);
+
+  To disable all output translations, use 0 or Fl_Terminal::OutFlags::OFF.
+*/
+void Fl_Terminal::output_translate(Fl_Terminal::OutFlags val) {
+  oflags_ = val;
+}
+
+/**
+  Return the current combined output translation flags.
+*/
+Fl_Terminal::OutFlags Fl_Terminal::output_translate(void) const {
+  return oflags_;
+}
+
 /**
   Handle the special control character 'c'.
 
   These are control characters that involve special terminal handling, e.g.
   \code
-  \r - carriage return - cursor_cr()
-  \n - line feed       - cursor_crlf() - default behavior for \n is CR and LF
+  \r - carriage return - default behavior for \r is CR. See output_translate()
+  \n - line feed       - default behavior for \n is CRLF. See output_translate()
   \b - backspace       - cursor_left()
   \t - tab             - cursor_tab_right()
   \e - escape          - starts an ANSI or xterm escape sequence
@@ -2353,9 +2391,9 @@ void Fl_Terminal::restore_cursor(void) {
 */
 void Fl_Terminal::handle_ctrl(char c) {
   switch (c) {
-    case '\n': cursor_crlf();              return;  // CRLF?
     case '\b': cursor_left();              return;  // BS?
-    case '\r': cursor_cr();                return;  // CR?
+    case '\r': handle_cr();                return;  // CR?
+    case '\n': handle_lf();                return;  // LF?
     case '\t': cursor_tab_right();         return;  // TAB?
     case 0x1b: if (ansi_) escseq.parse(c);          // ESC?
                else       append_utf8("␛");
@@ -3110,6 +3148,7 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,
 void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer) {
   fontsize_defer_ = fontsize_defer;     // defer font calls until draw() (issue 837)
   current_style_  = new CharStyle(fontsize_defer);
+  oflags_         = LF_TO_CRLF;         // default: "\n" handled as "\r\n"
   // scrollbar_size must be set before scrn_
   scrollbar_size_ = 0;                  // 0 uses Fl::scrollbar_size()
   update_screen_xywh();

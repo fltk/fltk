@@ -329,6 +329,17 @@ public:
     COLORMASK  = (FG_XTERM | BG_XTERM)
   };
 
+  /**
+    \enum OutFlags
+    Output translation flags for special control character translations.
+  */
+  enum OutFlags {
+    OFF        = 0x00,     ///< no output translation
+    CR_TO_LF   = 0x01,     ///< carriage return generates a vertical line-feed (\\r -> \\n)
+    LF_TO_CR   = 0x02,     ///< line-feed generates a carriage return (\\n -> \\r)
+    LF_TO_CRLF = 0x04      ///< line-feed generates a carriage return line-feed (\\n -> \\r\\n)
+  };
+
   ///////////////////////////////////////////////////////////////
   //////
   ////// Fl_Terminal Protected Classes
@@ -746,6 +757,7 @@ private:
   Fl_Scrollbar *vscroll_;        // vertical scrollbar (value: rows above disp_chars[])
   int           scrollbar_size_; // local preference for scrollbar size
   CharStyle     *current_style_; // current font, attrib, color..
+  OutFlags      oflags_;         // output translation flags (CR_TO_LF, LF_TO_CR, LF_TO_CRLF)
 
   // A ring buffer is used for the terminal's history (hist) and display (disp) buffer.
   //    See README-Fl_Terminal.txt, section "RING BUFFER DESCRIPTION" for diagrams/info.
@@ -880,6 +892,13 @@ protected:
   void cursor_tab_left(int count=1);
   void save_cursor(void);
   void restore_cursor(void);
+  // Output translation
+public:
+  void output_translate(Fl_Terminal::OutFlags val);
+  Fl_Terminal::OutFlags output_translate(void) const;
+protected:
+  void handle_lf(void);
+  void handle_cr(void);
   // Printing
 private:
   void handle_ctrl(char c);
@@ -897,7 +916,6 @@ private:
   void repeat_char(char c, int rep);
   void utf8_cache_clear(void);
   void utf8_cache_flush(void);
-
   // API: Character display output
 public:
   void putchar(const char *text, int len, int drow, int dcol);
