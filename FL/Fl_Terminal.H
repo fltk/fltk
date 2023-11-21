@@ -45,7 +45,40 @@
 
   It is recommended that accessing features such as setting text colors and cursor positioning
   is best done with ANSI/XTERM escape sequences.  But if one sets ansi(false) then this is
-  not possible. Many commonly used API functions are public, such as textfgcolor() for setting
+  not possible, so the public API can be used for common operations, e.g.
+  \par
+  Public API              | ESC code equivalent      | Description                 |
+  ------------------------|--------------------------|-----------------------------|
+  clear_screen_home()     | ESC [ H ESC [ 2 J        | Clear screen, home cursor   |
+  cursor_home()           | ESC [ H                  | Home the cursor             |
+  clear_history()         | ESC [ 3 J                | Clear scrollback history    |
+  reset_terminal()        | ESC [ c                  | Reset terminal              |
+
+  To access more advanced API calls, one can derive a class from Fl_Terminal to
+  access protected methods manipulate the terminal more directly, e.g.
+  \par
+  Protected API                | ESC code equiv.  | Description                             |
+  -----------------------------|------------------|-----------------------------------------|
+  current_style()              | ESC [ # m        | Set text attributes                     |
+  clear_eod()                  | ESC [ 0 J        | Clear from cursor to end of display     |
+  clear_sod()                  | ESC [ 1 J        | Clear from cursor to start of display   |
+  clear_eol()                  | ESC [ 0 K        | Clear from cursor to end of line        |
+  clear_sol()                  | ESC [ 1 K        | Clear from cursor to start of line      |
+  clear_line()                 | ESC [ 2 K        | Clear line cursor is on                 |
+  scroll(int) // >0 for up     | ESC [ 1 S        | Scroll up one line                      |
+  scroll(int) // <0 for down   | ESC [ 1 T        | Scroll down one line                    |
+  cursor_left()                | ESC [ 1 D        | Move cursor left (no wrap)              |
+  cursor_right()               | ESC [ 1 C        | Move cursor right (no wrap)             |
+  cursor_up()                  | ESC [ 1 B        | Move cursor up (no scroll or wrap)      |
+  cursor_down()                | ESC [ 1 A        | Move cursor down (no scroll or wrap)    |
+  cursor_row() cursor_col()    | ESC [ # ; # H    | Move cursor to row# / column#           |
+  insert_char()                | ESC [ # @        | Insert a char at cursor position        |
+  delete_chars()               | ESC [ # P        | Delete chars at cursor position         |
+  insert_rows()                | ESC [ # L        | Insert rows at cursor position          |
+  delete_rows()                | ESC [ # M        | Delete rows at cursor position          |
+  etc...                       | etc...           | etc...                                  |
+
+  Many commonly used API functions are public, such as textfgcolor() for setting
   text colors. Others, such as cursor_up() are protected to prevent common misuse, and are
   available only to subclasses.
 
@@ -867,7 +900,6 @@ public:
   void clear_history(void);                         // ESC [ 3 J
   void reset_terminal(void);                        // ESC c
   void cursor_home(void);                           // ESC [ 0 H
-public:
  // API: Cursor
   void cursorfgcolor(Fl_Color val);
   void cursorbgcolor(Fl_Color val);

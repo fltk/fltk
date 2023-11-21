@@ -2596,7 +2596,7 @@ cup:
             cursor_tab_right(1);                 //   │               default <ESC>[1I
             break;                               //   │
           case 1:                                //   └── <ESC>[#I -- tab # times
-            cursor_tab_right(clamp(val0,1,dw));        //
+            cursor_tab_right(clamp(val0,1,dw));  //
             break;
         }
         break;
