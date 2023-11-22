@@ -124,7 +124,7 @@ void Fl_Tile::request_shrink_l(int old_l, int &new_l, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_l = new_l;
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->x() == old_l) {
@@ -169,7 +169,7 @@ void Fl_Tile::request_shrink_r(int old_r, int &new_r, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_r = new_r;
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->r() == old_r) {
@@ -214,7 +214,7 @@ void Fl_Tile::request_shrink_t(int old_t, int &new_t, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_y = new_t;
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->y() == old_t) {
@@ -259,7 +259,7 @@ void Fl_Tile::request_shrink_b(int old_b, int &new_b, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_b = new_b;
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->b() == old_b) {
@@ -301,7 +301,7 @@ void Fl_Tile::request_shrink_b(int old_b, int &new_b, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_l(int old_l, int &new_l, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->x() == old_l) {
@@ -324,7 +324,7 @@ void Fl_Tile::request_grow_l(int old_l, int &new_l, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_r(int old_r, int &new_r, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->r() == old_r) {
@@ -346,7 +346,7 @@ void Fl_Tile::request_grow_r(int old_r, int &new_r, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_t(int old_t, int &new_t, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->y() == old_t) {
@@ -369,7 +369,7 @@ void Fl_Tile::request_grow_t(int old_t, int &new_t, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_b(int old_b, int &new_b, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-    Fl_Widget *ci = child(i);
+//    Fl_Widget *ci = child(i);
 //    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->b() == old_b) {
@@ -670,7 +670,7 @@ int Fl_Tile::on_insert(Fl_Widget *candidate, int index) {
   if (size_range_) {
     if (index >= size_range_capacity_) {
       size_range_capacity_ = (index+8) & ~7; // allocate in steps of 8
-      size_range_ = (Size_Range*)::reallocf(size_range_, sizeof(Size_Range)*size_range_capacity_);
+      size_range_ = (Size_Range*)::realloc(size_range_, sizeof(Size_Range)*size_range_capacity_);
     }
     if (index < size_range_size_)
       memmove(size_range_+index+1, size_range_+index, sizeof(Size_Range)*(size_range_size_-index));
@@ -759,7 +759,7 @@ void Fl_Tile::init_size_range(int default_min_w, int default_min_h) {
   if (!size_range_) {
     size_range_size_ = children();
     size_range_capacity_ = (size_range_size_+8) & ~7; // allocate in steps of 8
-    size_range_ = (Size_Range*)::reallocf(size_range_, sizeof(Size_Range)*size_range_capacity_);
+    size_range_ = (Size_Range*)::realloc(size_range_, sizeof(Size_Range)*size_range_capacity_);
     for (int i=0; i<size_range_size_; i++) {
       size_range_[i].minw = default_min_w_;
       size_range_[i].minh = default_min_h_;
