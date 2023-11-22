@@ -928,11 +928,10 @@ protected:
 public:
   void output_translate(Fl_Terminal::OutFlags val);
   Fl_Terminal::OutFlags output_translate(void) const;
-protected:
+private:
   void handle_lf(void);
   void handle_cr(void);
   // Printing
-private:
   void handle_ctrl(char c);
   bool is_printable(char c);
   bool is_ctrl(char c);
