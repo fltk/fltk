@@ -706,8 +706,9 @@ int Fl_Tile::on_move(int oldIndex, int newIndex) {
  */
 void Fl_Tile::on_remove(int index) {
   if (size_range_) {
-    if ((index >= 0) && (index < size_range_size_))
-      memmove(size_range_+index, size_range_+index+1, sizeof(Size_Range)*(size_range_size_-index-1));
+    int num_trailing = size_range_size_-index-1;
+    if ((index >= 0) && (index < size_range_size_) && (num_trailing > 0))
+      memmove(size_range_+index, size_range_+index+1, sizeof(Size_Range)*num_trailing);
     size_range_size_--;
   }
 }
