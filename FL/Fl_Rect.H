@@ -88,6 +88,9 @@ public:
   void w(int W) { w_ = W; }             ///< sets the width
   void h(int H) { h_ = H; }             ///< sets the height
 
+  void r(int R) { w_ = R - x_; }        ///< sets the width based on R and x
+  void b(int B) { h_ = B - y_; }        ///< sets the height based on B and y
+
   /** Move all edges in by \p d.
 
     Shrinks the rectangle by \p d at all sides keeping the center of the
@@ -141,6 +144,14 @@ public:
     y_ += top;
     w_ -= (left + right);
     h_ -= (top + bottom);
+  }
+
+  friend bool operator==(const Fl_Rect& lhs, const Fl_Rect& rhs) {
+    return (lhs.x_==rhs.x_) && (lhs.y_==rhs.y_) && (lhs.w_==rhs.w_) && (lhs.h_==rhs.h_);
+  }
+
+  friend bool operator!=(const Fl_Rect& lhs, const Fl_Rect& rhs) {
+    return !(lhs==rhs);
   }
 
 }; // class Fl_Rect

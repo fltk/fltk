@@ -38,6 +38,10 @@
   touching, but they are. If the edges of adjacent widgets do not
   touch, then it will be impossible to drag the corresponding edges.
 
+ \note If the size range is set for individual widgets, or a default size
+ range is set, text below related to the resizable() no longer applies. The
+ documentation for size range is under development.
+
   Fl_Tile allows objects to be resized to zero dimensions.
   To prevent this you can use the resizable() to limit where
   corners can be dragged to. For more information see note below.
@@ -94,36 +98,393 @@ static Fl_Cursor Fl_Tile_cursors[4] = {
   FL_CURSOR_MOVE      // 3 move intersection
 };
 
-/**
-  Drags the intersection at (\p oldx,\p oldy) to (\p newx,\p newy).
-  This redraws all the necessary children.
+static int fl_min(int a, int b) { return a<b ? a : b; }
+static int fl_max(int a, int b) { return a>b ? a : b; }
 
-  Pass zero as \p oldx or \p oldy to disable drag in that direction.
+/** 
+ Request for children to change their layout.
+
+ drag_intersection requests that all children with the left edge at old_l to
+ shrink to new_l towards the right side of the tile. If the child can not shrink
+ by that amount, it will ask all other children that touch its right side to
+ shrink by the remainder (recursion). new_l will return the the maximum possible
+ value while maintaining minimum width for all children involved.
+
+ request_shrink_r asks children to shrink toward the left, so that their right
+ edge is as close as possible to new_r. request_shrink_t and request_shrink_b
+ provide the same functionality for vertical resizing.
+
+ \param[in] old_l shrink all children with this current left edge
+ \param[inout] new_l try to shrink to this coordinate, return the maximum
+    possible shrinkage
+ \param[inout] final_size if not NULL, write the new position and size of
+    all affected children into this list of Fl_Rect
+ */
+void Fl_Tile::request_shrink_l(int old_l, int &new_l, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  int min_l = new_l;
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->x() == old_l) {
+      // first, try to shrink
+      int min_w = size_range_[i].minw;
+      int may_l = fl_min(new_l, ri->r()-min_w); // enforce minimum width
+      int new_l_right = ri->r();
+      // if that is not sufficient, try to move
+      if (may_l < new_l) {
+        int missing_w = new_l - may_l;
+        new_l_right = ri->r() + missing_w;
+        request_shrink_l(ri->r(), new_l_right, NULL);
+        new_l_right = fl_min(new_l_right, p->r());
+        if (final_size) {
+          request_shrink_l(ri->r(), new_l_right, final_size);
+          request_grow_r(ri->r(), new_l_right, final_size);
+        }
+        min_l = fl_min(min_l, new_l_right - min_w);
+      }
+      if (final_size) {
+        final_size[i].x(new_l);
+        final_size[i].w(new_l_right-new_l);
+      }
+    }
+  }
+  new_l = min_l;
+}
+
+/**
+ Request for children to change their layout.
+
+ \see Fl_Tile::request_shrink_l(int old_l, int &new_l, Fl_Rect *final_size)
+
+ \param[in] old_r shrink all children with this current right edge toward
+    the left edge of this tile
+ \param[inout] new_r try to shrink to this coordinate, return the maximum
+    possible shrinkage
+ \param[inout] final_size if not NULL, write the new position and size of
+    all affected children into this list of Fl_Rect
+ */
+void Fl_Tile::request_shrink_r(int old_r, int &new_r, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  int min_r = new_r;
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->r() == old_r) {
+      // first, try to shrink
+      int min_w = size_range_[i].minw;
+      int may_r = fl_max(new_r, ri->x()+min_w); // enforce minimum width
+      int new_r_left = ri->x();
+      // if that is not sufficient, try to move
+      if (may_r > new_r) {
+        int missing_w = may_r - new_r;
+        new_r_left = ri->x() - missing_w;
+        request_shrink_r(ri->x(), new_r_left, NULL);
+        new_r_left = fl_max(new_r_left, p->x());
+        if (final_size) {
+          request_shrink_r(ri->x(), new_r_left, final_size);
+          request_grow_l(ri->x(), new_r_left, final_size);
+        }
+        min_r = fl_max(min_r, new_r_left + min_w);
+      }
+      if (final_size) {
+        final_size[i].x(new_r_left);
+        final_size[i].w(new_r-new_r_left);
+      }
+    }
+  }
+  new_r = min_r;
+}
+
+/**
+ Request for children to change their layout.
+
+ \see Fl_Tile::request_shrink_l(int old_l, int &new_l, Fl_Rect *final_size)
+
+ \param[in] old_t shrink all children with this current top edge toward
+    the bottom edge of this tile
+ \param[inout] new_t try to shrink to this coordinate, return the maximum
+    possible shrinkage
+ \param[inout] final_size if not NULL, write the new position and size of
+    all affected children into this list of Fl_Rect
+ */
+void Fl_Tile::request_shrink_t(int old_t, int &new_t, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  int min_y = new_t;
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->y() == old_t) {
+      // first, try to shrink
+      int min_h = size_range_[i].minh;
+      int may_y = fl_min(new_t, ri->b()-min_h); // enforce minimum height
+      int new_y_below = ri->b();
+      // if that is not sufficient, try to move
+      if (may_y < new_t) {
+        int missing_h = new_t - may_y;
+        new_y_below = ri->b() + missing_h;
+        request_shrink_t(ri->b(), new_y_below, NULL);
+        new_y_below = fl_min(new_y_below, p->b());
+        if (final_size) {
+          request_shrink_t(ri->b(), new_y_below, final_size);
+          request_grow_b(ri->b(), new_y_below, final_size);
+        }
+        min_y = fl_min(min_y, new_y_below - min_h);
+      }
+      if (final_size) {
+        final_size[i].y(new_t);
+        final_size[i].h(new_y_below-new_t);
+      }
+    }
+  }
+  new_t = min_y;
+}
+
+/**
+ Request for children to change their layout.
+
+ \see Fl_Tile::request_shrink_l(int old_l, int &new_l, Fl_Rect *final_size)
+
+ \param[in] old_b shrink all children with this current bottoom edge toward
+    the top edge of this tile
+ \param[inout] new_b try to shrink to this coordinate, return the maximum
+    possible shrinkage
+ \param[inout] final_size if not NULL, write the new position and size of
+    all affected children into this list of Fl_Rect
+ */
+void Fl_Tile::request_shrink_b(int old_b, int &new_b, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  int min_b = new_b;
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->b() == old_b) {
+      // first, try to shrink
+      int min_h = size_range_[i].minh;
+      int may_b = fl_max(new_b, ri->y()+min_h); // enforce minimum height
+      int new_b_above = ri->y();
+      // if that is not sufficient, try to move
+      if (may_b > new_b) {
+        int missing_h = may_b - new_b;
+        new_b_above = ri->y() - missing_h;
+        request_shrink_b(ri->y(), new_b_above, NULL);
+        new_b_above = fl_max(new_b_above, p->y());
+        if (final_size) {
+          request_shrink_b(ri->y(), new_b_above, final_size);
+          request_grow_t(ri->y(), new_b_above, final_size);
+        }
+        min_b = fl_max(min_b, new_b_above + min_h);
+      }
+      if (final_size) {
+        final_size[i].y(new_b_above);
+        final_size[i].h(new_b-new_b_above);
+      }
+    }
+  }
+  new_b = min_b;
+}
+
+/**
+ Request for children to change their layout.
+
+ \param[in] old_l grow all children with this current left edge toward
+    the left edge of this tile
+ \param[inout] new_l try to grow to this coordinate, return the maximum
+    possible growth (currently maxw is ignored, so we always grow to new_l)
+ \param[inout] final_size write the new position and size of all affected
+    children into this list of Fl_Rect
+ */
+void Fl_Tile::request_grow_l(int old_l, int &new_l, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->x() == old_l) {
+      final_size[i].w(final_size[i].r() - new_l);
+      final_size[i].x(new_l);
+    }
+  }
+}
+
+/**
+ Request for children to change their layout.
+
+ \param[in] old_r grow all children with this current right edge toward
+    the right edge of this tile
+ \param[inout] new_r try to grow to this coordinate, return the maximum
+    possible growth (currently maxw is ignored, so we always grow to new_r)
+ \param[inout] final_size write the new position and size of all affected
+    children into this list of Fl_Rect
+ */
+void Fl_Tile::request_grow_r(int old_r, int &new_r, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->r() == old_r) {
+      final_size[i].r(new_r);
+    }
+  }
+}
+
+/**
+ Request for children to change their layout.
+
+ \param[in] old_t grow all children with this current top edge toward
+    the top edge of this tile
+ \param[inout] new_t try to grow to this coordinate, return the maximum
+    possible growth (currently maxh is ignored, so we always grow to new_t)
+ \param[inout] final_size write the new position and size of all affected
+    children into this list of Fl_Rect
+ */
+void Fl_Tile::request_grow_t(int old_t, int &new_t, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->y() == old_t) {
+      final_size[i].h(final_size[i].b() - new_t);
+      final_size[i].y(new_t);
+    }
+  }
+}
+
+/**
+ Request for children to change their layout.
+
+ \param[in] old_b grow all children with this current bottom edge toward
+    the bottom edge of this tile
+ \param[inout] new_b try to grow to this coordinate, return the maximum
+    possible growth (currently maxh is ignored, so we always grow to new_b)
+ \param[inout] final_size write the new position and size of all affected
+    children into this list of Fl_Rect
+ */
+void Fl_Tile::request_grow_b(int old_b, int &new_b, Fl_Rect *final_size) {
+  Fl_Rect *p = bounds();
+  for (int i=0; i<children(); i++) {
+    Fl_Widget *ci = child(i);
+//    if (ci == resizable()) continue;
+    Fl_Rect *ri = p+i+2;
+    if (ri->b() == old_b) {
+      final_size[i].b(new_b);
+    }
+  }
+}
+
+/**
+ Drags the intersection at (\p oldx,\p oldy) to (\p newx,\p newy).
+
+ This redraws all the necessary children.
+
+ If no size ranges are set, the new intersection position is limited to the
+ size of the tile group. The resizable() option is not taken into account here.
+
+ If size ranges are set, the actual new position of the intersection will
+ depend on the size range of every individual child. No child will be smaller
+ than their minw and minh. After the new position is found, move_intersection()
+ will call init_sizes(). The resizable() range is ignored.
+
+ \param[in] oldx, oldy move the intersection at this coordinate, pass zero to
+    disable drag in that direction.
+ \param[in] newx, newy move the intersection as close to this new coordinate
+    as possible
 */
 void Fl_Tile::move_intersection(int oldx, int oldy, int newx, int newy) {
-  Fl_Widget*const* a = array();
-  Fl_Rect *p = bounds();
-  p += 2; // skip group & resizable's saved size
-  for (int i=children(); i--; p++) {
-    Fl_Widget* o = *a++;
-    if (o == resizable()) continue;
-    int X = o->x();
-    int R = X+o->w();
-    if (oldx) {
-      int t = p->x();
-      if (t == oldx || (t>oldx && X<newx) || (t<oldx && X>newx) ) X = newx;
-      t = p->r();
-      if (t == oldx || (t>oldx && R<newx) || (t<oldx && R>newx) ) R = newx;
+  if (size_range_) {
+    drag_intersection(oldx, oldy, newx, newy);
+    init_sizes();
+  } else {
+    Fl_Widget*const* a = array();
+    Fl_Rect *p = bounds();
+    p += 2; // skip group & resizable's saved size
+    for (int i=children(); i--; p++) {
+      Fl_Widget* o = *a++;
+      if (o == resizable()) continue;
+      int X = o->x();
+      int R = X+o->w();
+      if (oldx) {
+        int t = p->x();
+        if (t == oldx || (t>oldx && X<newx) || (t<oldx && X>newx) ) X = newx;
+        t = p->r();
+        if (t == oldx || (t>oldx && R<newx) || (t<oldx && R>newx) ) R = newx;
+      }
+      int Y = o->y();
+      int B = Y+o->h();
+      if (oldy) {
+        int t = p->y();
+        if (t == oldy || (t>oldy && Y<newy) || (t<oldy && Y>newy) ) Y = newy;
+        t = p->b();
+        if (t == oldy || (t>oldy && B<newy) || (t<oldy && B>newy) ) B = newy;
+      }
+      o->damage_resize(X,Y,R-X,B-Y);
     }
-    int Y = o->y();
-    int B = Y+o->h();
-    if (oldy) {
-      int t = p->y();
-      if (t == oldy || (t>oldy && Y<newy) || (t<oldy && Y>newy) ) Y = newy;
-      t = p->b();
-      if (t == oldy || (t>oldy && B<newy) || (t<oldy && B>newy) ) B = newy;
+  }
+}
+
+/**
+ Drags the intersection at (\p oldx,\p oldy) to (\p newx,\p newy).
+
+ \see Fl_Tile::move_intersection(int oldx, int oldy, int newx, int newy) , but
+ this method does not call init_sizes() and is used for interactive children
+ layout using the mouse.
+
+ \param[in] oldx, oldy move the intersection at this coordinate, pass zero to
+ disable drag in that direction.
+ \param[in] newx, newy move the intersection as close to this new coordinate
+ as possible
+ */
+void Fl_Tile::drag_intersection(int oldx, int oldy, int newx, int newy) {
+  if (size_range_) {
+    int i;
+    Fl_Rect *p = bounds();
+    Fl_Rect *final_size = new Fl_Rect[children()];
+    for (i = 0; i < children(); i++) {
+      final_size[i] = p[i+2];
     }
-    o->damage_resize(X,Y,R-X,B-Y);
+    // apply changes in x and y intersection recursively to all children
+    if ((oldy != 0) && (oldy != newy)) {
+      if (newy <= oldy) { // user moves intersection up
+        int new_y = newy;
+        request_shrink_b(oldy, new_y, NULL); // updates new_y to the topmost possible
+        request_shrink_b(oldy, new_y, final_size); // now update all children touching above
+        request_grow_t(oldy, new_y, final_size); // now update all children touching below
+      }
+      if (newy > oldy) { // user moves intersection down
+        int new_y = newy;
+        request_shrink_t(oldy, new_y, NULL); // updates new_b to the bottommost possible
+        request_shrink_t(oldy, new_y, final_size); // now update all children touching below
+        request_grow_b(oldy, new_y, final_size); // now update all children touching above
+      }
+    }
+    if ((oldx != 0) && (oldx != newx)) {
+      if (newx <= oldx) { // user moves intersection left
+        int new_x = newx;
+        request_shrink_r(oldx, new_x, NULL); // updates new_x to the leftmost possible
+        request_shrink_r(oldx, new_x, final_size); // now shring all children touching to the left
+        request_grow_l(oldx, new_x, final_size); // now grow all children touching to the right
+      }
+      if (newx > oldx) { // user moves intersection right
+        int new_x = newx;
+        request_shrink_l(oldx, new_x, NULL); // updates new_x to the rightmost possible
+        request_shrink_l(oldx, new_x, final_size); // now shrink all children touching on the right
+        request_grow_r(oldx, new_x, final_size); // now grow all children touching on th eleft
+      }
+    }
+    // resize all children that have changed in size
+    for (i = 0; i < children(); i++) {
+      Fl_Rect &r = final_size[i];
+      child(i)->damage_resize(r.x(), r.y(), r.w(), r.h());
+    }
+    delete[] final_size;
+  } else {
+    move_intersection(oldx, oldy, newx, newy);
   }
 }
 
@@ -143,8 +504,12 @@ void Fl_Tile::move_intersection(int oldx, int oldy, int newx, int newy) {
 
   See the Fl_Tile class documentation about how the resizable() works.
 */
-
 void Fl_Tile::resize(int X,int Y,int W,int H) {
+
+  if (size_range_) {
+    Fl_Group::resize(X, Y, W, H);
+    init_sizes();
+  }
 
   // remember how much to move the child widgets:
   int dx = X-x();
@@ -228,7 +593,7 @@ int Fl_Tile::handle(int event) {
     Fl_Rect *p = q+2;
     for (int i=children(); i--; p++) {
       Fl_Widget* o = *a++;
-      if (o == resizable()) continue;
+      if (!size_range_ && o == resizable()) continue;
       if (p->r() < q->r() && o->y()<=my+GRABAREA && o->y()+o->h()>=my-GRABAREA) {
         int t = mx - (o->x()+o->w());
         if (abs(t) < mindx) {
@@ -263,7 +628,8 @@ int Fl_Tile::handle(int event) {
     // if (damage()) return 1; // don't fall behind
   case FL_RELEASE: {
     if (!sdrag) break;
-    Fl_Widget* r = resizable(); if (!r) r = this;
+    Fl_Widget* r = resizable(); 
+    if (size_range_ || !r) r = this;
     int newx;
     if (sdrag&DRAGH) {
       newx = Fl::event_x()-sdx;
@@ -281,11 +647,12 @@ int Fl_Tile::handle(int event) {
     } else {
       newy = sy;
     }
-    move_intersection(sx, sy, newx, newy);
     if (event == FL_DRAG) {
+      drag_intersection(sx, sy, newx, newy);
       set_changed();
       do_callback(FL_REASON_DRAGGED);
     } else {
+      move_intersection(sx, sy, newx, newy);
       do_callback(FL_REASON_CHANGED);
     }
     return 1;
@@ -294,6 +661,112 @@ int Fl_Tile::handle(int event) {
   } // switch()
 
   return Fl_Group::handle(event);
+}
+
+/**
+ Insert a new entry in the size range list.
+ */
+int Fl_Tile::on_insert(Fl_Widget *candidate, int index) {
+  if (size_range_) {
+    if (index >= size_range_capacity_) {
+      size_range_capacity_ = (index+8) & ~7; // allocate in steps of 8
+      size_range_ = (Size_Range*)::reallocf(size_range_, sizeof(Size_Range)*size_range_capacity_);
+    }
+    if (index < size_range_size_)
+      memmove(size_range_+index+1, size_range_+index, sizeof(Size_Range)*(size_range_size_-index));
+    size_range_size_++;
+    size_range_[index].minw = default_min_w_;
+    size_range_[index].minh = default_min_h_;
+    size_range_[index].maxw = 0x7FFFFFFF;
+    size_range_[index].maxh = 0x7FFFFFFF; /* INTMAX_MAX */
+  }
+  return index;
+}
+
+/**
+ Move the entry in the size range list.
+ */
+int Fl_Tile::on_move(int oldIndex, int newIndex) {
+  if (size_range_) {
+    int delta = newIndex - oldIndex;
+    if (delta) {
+      Size_Range size_bak = size_range_[oldIndex];
+      if (delta > 0)
+        memmove(size_range_+oldIndex, size_range_+oldIndex+1, sizeof(Size_Range)*delta);
+      else
+        memmove(size_range_+newIndex+1, size_range_+newIndex, sizeof(Size_Range)*-delta);
+      size_range_[newIndex] = size_bak;
+    }
+  }
+  return newIndex;
+}
+
+/**
+ Remove the entry from the size range list.
+ */
+void Fl_Tile::on_remove(int index) {
+  if (size_range_) {
+    if ((index >= 0) && (index < size_range_size_))
+      memmove(size_range_+index, size_range_+index+1, sizeof(Size_Range)*(size_range_size_-index-1));
+    size_range_size_--;
+  }
+}
+
+/**
+ Set the allowed size range for the child at the given index.
+
+ Fl_Tile currently supports only the minimal width and height setting.
+
+ \param[in] index set the range for the child at this index
+ \param[in] minw, minh minimum width and height for that child
+ \param[in] maxw, maxh maximum size, defaults to infinite, currently ignored
+ */
+void Fl_Tile::size_range(int index, int minw, int minh, int maxw, int maxh) {
+  if (!size_range_)
+    init_size_range();
+  if ((index >= 0) && (index < children())) {
+    size_range_[index].minw = minw;
+    size_range_[index].minh = minh;
+    size_range_[index].maxw = maxw;
+    size_range_[index].maxh = maxh;
+  }
+}
+
+/**
+ Set the allowed size range for the give child widget.
+
+ Fl_Tile currently supports only the minimal width and height setting.
+
+ \param[in] index set the range for the child at this index
+ \param[in] minw, minh minimum width and height for that child
+ \param[in] maxw, maxh maximum size, defaults to infinite, currently ignored
+ */
+void Fl_Tile::size_range(Fl_Widget *w , int minw, int minh, int maxw, int maxh) {
+  int index = find(w);
+  if ((index >= 0) && (index < children()))
+    size_range(index, minw, minh, maxw, maxh);
+}
+
+/**
+ Initialize the size rang mode of Fl_Tile and set the default minimum width and height.
+
+ \param[in] default_min_w, default_min_h default size range for widgets that don't
+    have an individual range assigned
+ */
+void Fl_Tile::init_size_range(int default_min_w, int default_min_h) {
+  if (default_min_w > 0) default_min_w_ = default_min_w;
+  if (default_min_h > 0) default_min_h_ = default_min_h;
+  if (!size_range_) {
+    size_range_size_ = children();
+    size_range_capacity_ = (size_range_size_+8) & ~7; // allocate in steps of 8
+    size_range_ = (Size_Range*)::reallocf(size_range_, sizeof(Size_Range)*size_range_capacity_);
+    for (int i=0; i<size_range_size_; i++) {
+      size_range_[i].minw = default_min_w_;
+      size_range_[i].minh = default_min_h_;
+      size_range_[i].maxw = 0x7FFFFFFF;
+      size_range_[i].maxh = 0x7FFFFFFF; /* INTMAX_MAX */
+    }
+  }
 }
 
 /**
@@ -309,10 +782,22 @@ int Fl_Tile::handle(int event) {
 
   \see class Fl_Group
 */
-
 Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*L)
 : Fl_Group(X,Y,W,H,L),
   cursor_(0),
-  cursors_(Fl_Tile_cursors)
+  cursors_(Fl_Tile_cursors),
+  size_range_(NULL),
+  size_range_size_(0),
+  size_range_capacity_(0),
+  default_min_w_(GRABAREA),
+  default_min_h_(GRABAREA)
 {
+}
+
+/**
+ Destructor.
+ */
+Fl_Tile::~Fl_Tile() {
+  if (size_range_)
+    ::free(size_range_);
 }

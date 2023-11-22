@@ -20,6 +20,7 @@
 #include <FL/Fl_Box.H>
 
 // #define TEST_INACTIVE
+// #define CLASSIC_MODE
 
 int main(int argc, char** argv) {
   Fl_Double_Window window(300, 300);
@@ -27,19 +28,27 @@ int main(int argc, char** argv) {
   window.resizable(window);
 
   Fl_Tile tile(0, 0, 300, 300);
+#ifndef CLASSIC_MODE
+  tile.init_size_range(30, 30); // all children's size shall be at least 30x30
+#endif
 
   // create the symmetrical resize box with dx and dy pixels distance, resp.
   // from the borders of the Fl_Tile widget before all other children
 
+#ifdef CLASSIC_MODE
   int dx = 20, dy = dx; // border width of resizable()
   Fl_Box r(tile.x()+dx,tile.y()+dy,tile.w()-2*dx,tile.h()-2*dy);
   tile.resizable(r);
+#endif
 
   Fl_Box box0(0,0,150,150,"0");
   box0.box(FL_DOWN_BOX);
   box0.color(9);
   box0.labelsize(36);
   box0.align(FL_ALIGN_CLIP);
+#ifndef CLASSIC_MODE
+  tile.resizable(&box0);
+#endif
 
   Fl_Double_Window w1(150,0,150,150,"1");
   w1.box(FL_NO_BOX);
