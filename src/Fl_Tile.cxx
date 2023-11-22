@@ -737,7 +737,7 @@ void Fl_Tile::size_range(int index, int minw, int minh, int maxw, int maxh) {
 
  Fl_Tile currently supports only the minimal width and height setting.
 
- \param[in] index set the range for the child at this index
+ \param[in] w set the range for this child widget
  \param[in] minw, minh minimum width and height for that child
  \param[in] maxw, maxh maximum size, defaults to infinite, currently ignored
  */
