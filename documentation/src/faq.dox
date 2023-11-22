@@ -131,6 +131,19 @@ void my_callback(Fl_Widget*, void*) {
 }
 \endcode
 
+The reason for calling a window callback can also be found using using the
+`Fl::callback_reason()` method:
+
+\code
+void my_callback(Fl_Widget*, void*) {
+  if (Fl::callback_reason() == FL_REASON_CANCELLED)
+    return; // ignore that the user pressed the Escape key
+  if (Fl::callback_reason() == FL_REASON_CLOSED)
+    save_and_exit(); // user clicked the Close button in the window decoration
+  exit(0); // fallback for other callback reasons
+}
+\endcode
+
 It is very common to ask for confirmation before exiting, this can be
 done with:
 
