@@ -1,7 +1,7 @@
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file. If this
@@ -23,8 +23,8 @@
   \image html Fl_Tile.png
   \image latex Fl_Tile.png "Fl_Tile" width=5cm
 
-  For the tiling to work correctly, the children of an Fl_Tile must
-  cover the entire area of the widget, but not overlap.
+  For the tiling to work correctly, the children of an Fl_Tile **must**
+  cover the entire area of the widget, but **must not** overlap.
   This means that all children must touch each other at their edges,
   and no gaps can be left inside the Fl_Tile.
 
@@ -38,9 +38,63 @@
   touching, but they are. If the edges of adjacent widgets do not
   touch, then it will be impossible to drag the corresponding edges.
 
- \note If the size range is set for individual widgets, or a default size
- range is set, text below related to the resizable() no longer applies. The
- documentation for size range is under development.
+  \note Fl_Tile works in two distinctive modes. In classic mode, the range of
+  motion for edges and intersections is controlled using an invisible child
+  that is marked as the `resizable()` widget of the tile group. Classic mode
+  is described in detail a few paragraphs down.
+
+  Fl_Tile size_range mode
+  -----------------------
+
+  By assigning a default minimum size to all children with
+  `Fl_Tile::init_size_range(int default_minimum_width, int default_minimum_height)`
+  or by assigning minimal sizes to individual
+  children with
+  `size_range(Fl_Widget *child, int minimum_width, int minimum_height, int, int)`,
+  the tile group is put into size_range operation mode.
+
+  In this mode, the child that is marked resizable() will behave as it would
+  in a regular Fl_Group widget.
+  When dragging edges or intersections with the mouse, Fl_Tile will ensure that
+  none of the children shrinks to a size that is smaller than requested. 
+  When resizing the Fl_Tile group, size ranges are not enforced by the tile.
+  Instead, the size range of the enclosing window should be limited to a
+  valid range.
+
+  Tile does not differentiate between visible and invisible children.
+  If children are created smaller than their assigned minimum size, dragging
+  intersections may cause unexpected jumps in size.
+  Zero width or height widget are not harmful, but should be avoided.
+
+  Example for a center document tile and two tool boxes on the left and right
+  \code
+  Fl_Window win(400, 300, "My App");
+
+  Fl_Tile tile(0, 0, 400, 300);
+
+  Fl_Box left_tool_box(0, 0, 100, 300, "Tools");
+  left_tool_box.box(FL_DOWN_BOX);
+  tile.size_range(&left_tool_box, 50, 50);
+
+  Fl_Box document(100, 0, 200, 300, "Document");
+  document.box(FL_DOWN_BOX);
+  tile.size_range(&document, 100, 50);
+
+  Fl_Box right_tool_box(300, 0, 100, 300, "More\nTools");
+  right_tool_box.box(FL_DOWN_BOX);
+  tile.size_range(&right_tool_box, 50, 50);
+
+  tile.end();
+  tile.resizable(document);
+
+  win.end();
+  win.resizable(tile);
+  win.show(argc,argv);
+  win.size_range(200, 50);
+  \endcode
+
+  Fl_Tile classic mode
+  --------------------
 
   Fl_Tile allows objects to be resized to zero dimensions.
   To prevent this you can use the resizable() to limit where
@@ -124,29 +178,31 @@ void Fl_Tile::request_shrink_l(int old_l, int &new_l, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_l = new_l;
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->x() == old_l) {
-      // first, try to shrink
-      int min_w = size_range_[i].minw;
-      int may_l = fl_min(new_l, ri->r()-min_w); // enforce minimum width
-      int new_l_right = ri->r();
-      // if that is not sufficient, try to move
-      if (may_l < new_l) {
-        int missing_w = new_l - may_l;
-        new_l_right = ri->r() + missing_w;
-        request_shrink_l(ri->r(), new_l_right, NULL);
-        new_l_right = fl_min(new_l_right, p->r());
-        if (final_size) {
-          request_shrink_l(ri->r(), new_l_right, final_size);
-          request_grow_r(ri->r(), new_l_right, final_size);
+      if (ri->w() == 0) {
+        if (final_size) final_size[i].x(new_l);
+      } else {
+        // first, try to shrink
+        int min_w = size_range_[i].minw;
+        int may_l = fl_min(new_l, ri->r()-min_w); // enforce minimum width
+        int new_l_right = ri->r();
+        // if that is not sufficient, try to move
+        if (may_l < new_l) {
+          int missing_w = new_l - may_l;
+          new_l_right = ri->r() + missing_w;
+          request_shrink_l(ri->r(), new_l_right, NULL);
+          new_l_right = fl_min(new_l_right, p->r());
+          if (final_size) {
+            request_shrink_l(ri->r(), new_l_right, final_size);
+            request_grow_r(ri->r(), new_l_right, final_size);
+          }
+          min_l = fl_min(min_l, new_l_right - min_w);
         }
-        min_l = fl_min(min_l, new_l_right - min_w);
-      }
-      if (final_size) {
-        final_size[i].x(new_l);
-        final_size[i].w(new_l_right-new_l);
+        if (final_size) {
+          final_size[i].x(new_l);
+          final_size[i].w(new_l_right-new_l);
+        }
       }
     }
   }
@@ -169,29 +225,31 @@ void Fl_Tile::request_shrink_r(int old_r, int &new_r, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_r = new_r;
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->r() == old_r) {
-      // first, try to shrink
-      int min_w = size_range_[i].minw;
-      int may_r = fl_max(new_r, ri->x()+min_w); // enforce minimum width
-      int new_r_left = ri->x();
-      // if that is not sufficient, try to move
-      if (may_r > new_r) {
-        int missing_w = may_r - new_r;
-        new_r_left = ri->x() - missing_w;
-        request_shrink_r(ri->x(), new_r_left, NULL);
-        new_r_left = fl_max(new_r_left, p->x());
-        if (final_size) {
-          request_shrink_r(ri->x(), new_r_left, final_size);
-          request_grow_l(ri->x(), new_r_left, final_size);
+      if (ri->w() == 0) {
+        if (final_size) final_size[i].x(new_r);
+      } else {
+        // first, try to shrink
+        int min_w = size_range_[i].minw;
+        int may_r = fl_max(new_r, ri->x()+min_w); // enforce minimum width
+        int new_r_left = ri->x();
+        // if that is not sufficient, try to move
+        if (may_r > new_r) {
+          int missing_w = may_r - new_r;
+          new_r_left = ri->x() - missing_w;
+          request_shrink_r(ri->x(), new_r_left, NULL);
+          new_r_left = fl_max(new_r_left, p->x());
+          if (final_size) {
+            request_shrink_r(ri->x(), new_r_left, final_size);
+            request_grow_l(ri->x(), new_r_left, final_size);
+          }
+          min_r = fl_max(min_r, new_r_left + min_w);
         }
-        min_r = fl_max(min_r, new_r_left + min_w);
-      }
-      if (final_size) {
-        final_size[i].x(new_r_left);
-        final_size[i].w(new_r-new_r_left);
+        if (final_size) {
+          final_size[i].x(new_r_left);
+          final_size[i].w(new_r-new_r_left);
+        }
       }
     }
   }
@@ -214,29 +272,31 @@ void Fl_Tile::request_shrink_t(int old_t, int &new_t, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_y = new_t;
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->y() == old_t) {
-      // first, try to shrink
-      int min_h = size_range_[i].minh;
-      int may_y = fl_min(new_t, ri->b()-min_h); // enforce minimum height
-      int new_y_below = ri->b();
-      // if that is not sufficient, try to move
-      if (may_y < new_t) {
-        int missing_h = new_t - may_y;
-        new_y_below = ri->b() + missing_h;
-        request_shrink_t(ri->b(), new_y_below, NULL);
-        new_y_below = fl_min(new_y_below, p->b());
-        if (final_size) {
-          request_shrink_t(ri->b(), new_y_below, final_size);
-          request_grow_b(ri->b(), new_y_below, final_size);
+      if (ri->h() == 0) {
+        if (final_size) final_size[i].y(new_t);
+      } else {
+        // first, try to shrink
+        int min_h = size_range_[i].minh;
+        int may_y = fl_min(new_t, ri->b()-min_h); // enforce minimum height
+        int new_y_below = ri->b();
+        // if that is not sufficient, try to move
+        if (may_y < new_t) {
+          int missing_h = new_t - may_y;
+          new_y_below = ri->b() + missing_h;
+          request_shrink_t(ri->b(), new_y_below, NULL);
+          new_y_below = fl_min(new_y_below, p->b());
+          if (final_size) {
+            request_shrink_t(ri->b(), new_y_below, final_size);
+            request_grow_b(ri->b(), new_y_below, final_size);
+          }
+          min_y = fl_min(min_y, new_y_below - min_h);
         }
-        min_y = fl_min(min_y, new_y_below - min_h);
-      }
-      if (final_size) {
-        final_size[i].y(new_t);
-        final_size[i].h(new_y_below-new_t);
+        if (final_size) {
+          final_size[i].y(new_t);
+          final_size[i].h(new_y_below-new_t);
+        }
       }
     }
   }
@@ -259,29 +319,31 @@ void Fl_Tile::request_shrink_b(int old_b, int &new_b, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   int min_b = new_b;
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->b() == old_b) {
-      // first, try to shrink
-      int min_h = size_range_[i].minh;
-      int may_b = fl_max(new_b, ri->y()+min_h); // enforce minimum height
-      int new_b_above = ri->y();
-      // if that is not sufficient, try to move
-      if (may_b > new_b) {
-        int missing_h = may_b - new_b;
-        new_b_above = ri->y() - missing_h;
-        request_shrink_b(ri->y(), new_b_above, NULL);
-        new_b_above = fl_max(new_b_above, p->y());
-        if (final_size) {
-          request_shrink_b(ri->y(), new_b_above, final_size);
-          request_grow_t(ri->y(), new_b_above, final_size);
+      if (ri->h() == 0) {
+        if (final_size) final_size[i].y(new_b);
+      } else {
+        // first, try to shrink
+        int min_h = size_range_[i].minh;
+        int may_b = fl_max(new_b, ri->y()+min_h); // enforce minimum height
+        int new_b_above = ri->y();
+        // if that is not sufficient, try to move
+        if (may_b > new_b) {
+          int missing_h = may_b - new_b;
+          new_b_above = ri->y() - missing_h;
+          request_shrink_b(ri->y(), new_b_above, NULL);
+          new_b_above = fl_max(new_b_above, p->y());
+          if (final_size) {
+            request_shrink_b(ri->y(), new_b_above, final_size);
+            request_grow_t(ri->y(), new_b_above, final_size);
+          }
+          min_b = fl_max(min_b, new_b_above + min_h);
         }
-        min_b = fl_max(min_b, new_b_above + min_h);
-      }
-      if (final_size) {
-        final_size[i].y(new_b_above);
-        final_size[i].h(new_b-new_b_above);
+        if (final_size) {
+          final_size[i].y(new_b_above);
+          final_size[i].h(new_b-new_b_above);
+        }
       }
     }
   }
@@ -301,8 +363,6 @@ void Fl_Tile::request_shrink_b(int old_b, int &new_b, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_l(int old_l, int &new_l, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->x() == old_l) {
       final_size[i].w(final_size[i].r() - new_l);
@@ -324,8 +384,6 @@ void Fl_Tile::request_grow_l(int old_l, int &new_l, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_r(int old_r, int &new_r, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->r() == old_r) {
       final_size[i].r(new_r);
@@ -346,8 +404,6 @@ void Fl_Tile::request_grow_r(int old_r, int &new_r, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_t(int old_t, int &new_t, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->y() == old_t) {
       final_size[i].h(final_size[i].b() - new_t);
@@ -369,8 +425,6 @@ void Fl_Tile::request_grow_t(int old_t, int &new_t, Fl_Rect *final_size) {
 void Fl_Tile::request_grow_b(int old_b, int &new_b, Fl_Rect *final_size) {
   Fl_Rect *p = bounds();
   for (int i=0; i<children(); i++) {
-//    Fl_Widget *ci = child(i);
-//    if (ci == resizable()) continue;
     Fl_Rect *ri = p+i+2;
     if (ri->b() == old_b) {
       final_size[i].b(new_b);
@@ -494,8 +548,12 @@ void Fl_Tile::drag_intersection(int oldx, int oldy, int newx, int newy) {
   Fl_Tile implements its own resize() method. It does not use
   Fl_Group::resize() to resize itself and its children.
 
-  Enlarging works by just moving the lower-right corner and resizing
-  the bottom and right border widgets accordingly.
+  In size_range mode, the child marked resizable() is resized first. Only if
+  its minimum size is reached, other widgets in the tile will resize too.
+
+  In classic mode or when no resizable child is set, enlarging works by moving
+  the lower-right corner and resizing the bottom and right border
+  widgets accordingly.
 
   Shrinking the Fl_Tile works in the opposite way by shrinking
   the bottom and right border widgets, unless they are reduced to zero
@@ -507,8 +565,17 @@ void Fl_Tile::drag_intersection(int oldx, int oldy, int newx, int newy) {
 void Fl_Tile::resize(int X,int Y,int W,int H) {
 
   if (size_range_) {
-    Fl_Group::resize(X, Y, W, H);
+    int dw = w() - W, dh = h() - H;
+    Fl_Widget *r = resizable();
+    if (r) {
+      int rr = r->x() + r->w(), rb = r->y() + r->h();
+      move_intersection(rr, rb, rr-dw, rb-dh);
+    }
+    int tr = x() + w(), tb = y() + h();
+    move_intersection(tr, tb, tr-dw, tb-dh);
+    Fl_Widget::resize(X,Y,W,H);
     init_sizes();
+    return;
   }
 
   // remember how much to move the child widgets:
@@ -749,7 +816,10 @@ void Fl_Tile::size_range(Fl_Widget *w , int minw, int minh, int maxw, int maxh) 
 }
 
 /**
- Initialize the size rang mode of Fl_Tile and set the default minimum width and height.
+ Initialize the size range mode of Fl_Tile and set the default minimum width and height.
+
+ The default minimum width and height is the size of the mouse pointer grab
+ area at about 4 pixel units.
 
  \param[in] default_min_w, default_min_h default size range for widgets that don't
     have an individual range assigned

@@ -23,6 +23,31 @@
 // #define CLASSIC_MODE
 
 int main(int argc, char** argv) {
+#if 0 // Sample code form Fl_Tile documentation
+  Fl_Window win(400, 300, "My App");
+
+  Fl_Tile tile(0, 0, 400, 300);
+
+  Fl_Box left_tool_box(0, 0, 100, 300, "Tools");
+  left_tool_box.box(FL_DOWN_BOX);
+  tile.size_range(&left_tool_box, 50, 50);
+
+  Fl_Box document(100, 0, 200, 300, "Document");
+  document.box(FL_DOWN_BOX);
+  tile.size_range(&document, 100, 50);
+
+  Fl_Box right_tool_box(300, 0, 100, 300, "More\nTools");
+  right_tool_box.box(FL_DOWN_BOX);
+  tile.size_range(&right_tool_box, 50, 50);
+
+  tile.end();
+  tile.resizable(document);
+
+  win.end();
+  win.resizable(tile);
+  win.show(argc,argv);
+  win.size_range(200, 50);
+#else
   Fl_Double_Window window(300, 300);
   window.box(FL_NO_BOX);
   window.resizable(window);
@@ -97,5 +122,6 @@ int main(int argc, char** argv) {
 
   w1.show();
   window.show(argc,argv);
+#endif
   return Fl::run();
 }
