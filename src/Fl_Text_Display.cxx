@@ -1861,7 +1861,7 @@ int Fl_Text_Display::get_absolute_top_line_number() const {
   Does nothing if the absolute top line number is not being maintained.
 */
 void Fl_Text_Display::absolute_top_line_number(int oldFirstChar) {
-  if (maintaining_absolute_top_line_number()) {
+  if (maintaining_absolute_top_line_number() && buffer()) {
     if (mFirstChar < oldFirstChar)
       mAbsTopLineNum -= buffer()->count_lines(mFirstChar, oldFirstChar);
     else
