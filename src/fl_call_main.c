@@ -41,7 +41,7 @@
  * The _MSC_VER macro is tested to compile it only for Visual Studio
  * platforms because GNU platforms (MinGW, MSYS) don't need it.
 */
-#if defined(_MSC_VER) && !defined(FL_DLL)
+#if !defined(FL_DLL) && !defined (__GNUC__)
 
 #include <FL/fl_utf8.h>
 #include <FL/fl_string_functions.h>
@@ -57,8 +57,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow) {
   int rc;
   int i;
-  int argc;
-  char** argv;
+  int argc = 0;
+  char** argv = NULL;
   char strbuf[2048];
 
  /*
@@ -80,7 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   /* Convert the command line arguments to UTF-8 */
   LPWSTR *wideArgv = CommandLineToArgvW(GetCommandLineW(), &argc);
-  argv = malloc(argc * sizeof(void *));
+  argv = (char **)malloc((argc + 1) * sizeof(char *));
   for (i = 0; i < argc; i++) {
     int ret = WideCharToMultiByte(CP_UTF8,        /* CodePage          */
                                   0,              /* dwFlags           */
@@ -92,6 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                                   NULL);          /* lpUsedDefaultChar */
     argv[i] = fl_strdup(strbuf);
   }
+  argv[argc] = NULL; // required by C standard at end of list
 
   /* Free the wide character string array */
   LocalFree(wideArgv);
@@ -119,4 +120,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #else
 /* STR# 2973: solves "empty translation unit" error */
 typedef int dummy;
-#endif /* defined(_MSC_VER) && !defined(FL_DLL) */
+#endif /* !defined(FL_DLL) && !defined (__GNUC__) */
