@@ -353,7 +353,7 @@ public:
   enum CharFlags {
     FG_XTERM   = 0x01,    ///< this char's fg color is an XTERM color; can be affected by Dim+Bold
     BG_XTERM   = 0x02,    ///< this char's bg color is an XTERM color; can be affected by Dim+Bold
-    EOL        = 0x04,    ///< this char at end of line, used for line wrap during screen resizing
+    EOL        = 0x04,    ///< TODO: char at EOL, used for line re-wrap during screen resizing
     RESV_A     = 0x08,
     RESV_B     = 0x10,
     RESV_C     = 0x20,
@@ -405,7 +405,7 @@ protected:
   //
   class FL_EXPORT CharStyle {
     uchar       attrib_;           // bold, underline..
-    uchar       flags_;            // CharFlags
+    uchar       charflags_;        // CharFlags (xterm color management)
     Fl_Color    fgcolor_;          // foreground color for text
     Fl_Color    bgcolor_;          // background color for text
     Fl_Color    defaultfgcolor_;   // default fg color used by ESC[0m
@@ -428,19 +428,19 @@ protected:
     int  fontdescent(void) const        { return fontdescent_; }
     int  charwidth(void) const          { return charwidth_; }
     uchar colorbits_only(uchar inflags) const;
-    void attrib(uchar val)            { attrib_  = val; }
-    void set_flag(uchar val)          { flags_ |= val; }
-    void clr_flag(uchar val)          { flags_ &= ~val; }
+    void attrib(uchar val)              { attrib_  = val; }
+    void set_charflag(uchar val)        { charflags_ |= val; }
+    void clr_charflag(uchar val)        { charflags_ &= ~val; }
     void fgcolor_uchar(uchar val);
     void bgcolor_uchar(uchar val);
-    void fgcolor(int r,int g,int b)   { fgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_flag(FG_XTERM); }
-    void bgcolor(int r,int g,int b)   { bgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_flag(BG_XTERM); }
-    void fgcolor(Fl_Color val)        { fgcolor_ = val;                        clr_flag(FG_XTERM); }
-    void bgcolor(Fl_Color val)        { bgcolor_ = val;                        clr_flag(BG_XTERM); }
-    void defaultfgcolor(Fl_Color val) { defaultfgcolor_ = val; }
-    void defaultbgcolor(Fl_Color val) { defaultbgcolor_ = val; }
-    void fontface(Fl_Font val)        { fontface_ = val; update(); }
-    void fontsize(Fl_Fontsize val)    { fontsize_ = val; update(); }
+    void fgcolor(int r,int g,int b)     { fgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_charflag(FG_XTERM); }
+    void bgcolor(int r,int g,int b)     { bgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_charflag(BG_XTERM); }
+    void fgcolor(Fl_Color val)          { fgcolor_ = val;                        clr_charflag(FG_XTERM); }
+    void bgcolor(Fl_Color val)          { bgcolor_ = val;                        clr_charflag(BG_XTERM); }
+    void defaultfgcolor(Fl_Color val)   { defaultfgcolor_ = val; }
+    void defaultbgcolor(Fl_Color val)   { defaultbgcolor_ = val; }
+    void fontface(Fl_Font val)          { fontface_ = val; update(); }
+    void fontsize(Fl_Fontsize val)      { fontsize_ = val; update(); }
     void update(void);
     void update_fake(void);
     // SGR MODES: Set Graphics Rendition
@@ -506,11 +506,11 @@ protected:
   class FL_EXPORT Utf8Char {
     static const int max_utf8_ = 4; // RFC 3629 paraphrased: In UTF-8, chars are encoded with 1 to 4 octets
     char     text_[max_utf8_];      // memory for actual ASCII or UTF-8 byte contents
-    uchar    len_;      // length of bytes in text_[] buffer; 1 for ASCII, >1 for UTF-8
-    uchar    attrib_;   // attribute bits for this char (bold, underline..)
-    uchar    flags_;    // CharFlags bits
-    Fl_Color fgcolor_;  // fltk fg color (supports 8color or 24bit color set w/ESC[37;<r>;<g>;<b>m)
-    Fl_Color bgcolor_;  // fltk bg color (supports 8color or 24bit color set w/ESC[47;<r>;<g>;<b>m)
+    uchar    len_;                  // length of bytes in text_[] buffer; 1 for ASCII, >1 for UTF-8
+    uchar    attrib_;               // attribute bits for this char (bold, underline..)
+    uchar    charflags_;            // CharFlags (xterm colors management)
+    Fl_Color fgcolor_;              // fltk fg color (supports 8color or 24bit color set w/ESC[37;<r>;<g>;<b>m)
+    Fl_Color bgcolor_;              // fltk bg color (supports 8color or 24bit color set w/ESC[47;<r>;<g>;<b>m)
     // Private methods
     void text_utf8_(const char *text, int len);
   public:
@@ -529,8 +529,8 @@ protected:
     //
     const char* text_utf8(void) const { return text_; }
     // Return the attribute for this char
-    uchar attrib(void) const { return attrib_; }
-    uchar flags(void) const { return flags_; }
+    uchar attrib(void)    const { return attrib_; }
+    uchar charflags(void) const { return charflags_; }
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
     // Return the length of this character in bytes (UTF-8 can be multibyte..)

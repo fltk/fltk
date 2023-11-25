@@ -424,12 +424,11 @@ pfail:
 //
 Fl_Terminal::CharStyle::CharStyle(bool fontsize_defer) {
   attrib_           = 0;
-  flags_            = 0;
+  charflags_        = (FG_XTERM | BG_XTERM);
   defaultfgcolor_   = 0xd0d0d000;   // off white
   defaultbgcolor_   = 0xffffffff;   // special color: doesn't draw, 'shows thru' to box()
   fgcolor_          = defaultfgcolor_;
   bgcolor_          = defaultbgcolor_;
-  flags_            |= (FG_XTERM | BG_XTERM);
   fontface_         = FL_COURIER;
   fontsize_         = 14;
   if (!fontsize_defer) update();       // normal behavior
@@ -469,17 +468,17 @@ Fl_Color Fl_Terminal::CharStyle::bgcolor(void) const {
 //   Only the color bits of 'inflags' are modified with our color bits.
 //
 uchar Fl_Terminal::CharStyle::colorbits_only(uchar inflags) const {
-  return (inflags & ~COLORMASK) | (flags_ & COLORMASK);   // add color bits only
+  return (inflags & ~COLORMASK) | (charflags_ & COLORMASK);   // add color bits only
 }
 
 void Fl_Terminal::CharStyle::fgcolor_uchar(uchar val) {
   fgcolor_ = fltk_fg_color(val);
-  set_flag(FG_XTERM);
+  set_charflag(FG_XTERM);
 }
 
 void Fl_Terminal::CharStyle::bgcolor_uchar(uchar val) {
   bgcolor_ = fltk_bg_color(val);
-  set_flag(BG_XTERM);
+  set_charflag(BG_XTERM);
 }
 
 ///////////////////////////////////
@@ -502,23 +501,23 @@ void Fl_Terminal::Cursor::scroll(int nrows) {
 
 // Ctor
 Fl_Terminal::Utf8Char::Utf8Char(void) {
-  text_[0] = ' ';
-  len_     = 1;
-  attrib_  = 0;
-  flags_   = 0;
-  fgcolor_ = 0xffffff00;
-  bgcolor_ = 0xffffffff;   // special color: doesn't draw, 'shows thru' to box()
+  text_[0]   = ' ';
+  len_       = 1;
+  attrib_    = 0;
+  charflags_ = 0;
+  fgcolor_   = 0xffffff00;
+  bgcolor_   = 0xffffffff;   // special color: doesn't draw, 'shows thru' to box()
 }
 
 // copy ctor
 Fl_Terminal::Utf8Char::Utf8Char(const Utf8Char& src) {
   // local instance not initialized yet; init first, then copy text
-  text_[0] = ' ';
-  len_     = 1;
-  attrib_  = src.attrib_;
-  flags_   = src.flags_;
-  fgcolor_ = src.fgcolor_;
-  bgcolor_ = src.bgcolor_;
+  text_[0]   = ' ';
+  len_       = 1;
+  attrib_    = src.attrib_;
+  charflags_ = src.charflags_;
+  fgcolor_   = src.fgcolor_;
+  bgcolor_   = src.bgcolor_;
   text_utf8_(src.text_utf8(), src.length());    // copy the src text
 }
 
@@ -526,10 +525,10 @@ Fl_Terminal::Utf8Char::Utf8Char(const Utf8Char& src) {
 Fl_Terminal::Utf8Char& Fl_Terminal::Utf8Char::operator=(const Utf8Char& src) {
   // local instance is already initialized, so just change its contents
   text_utf8_(src.text_utf8(), src.length());    // local copy src text
-  attrib_  = src.attrib_;
-  flags_   = src.flags_;
-  fgcolor_ = src.fgcolor_;
-  bgcolor_ = src.bgcolor_;
+  attrib_    = src.attrib_;
+  charflags_ = src.charflags_;
+  fgcolor_   = src.fgcolor_;
+  bgcolor_   = src.bgcolor_;
   return *this;
 }
 
@@ -560,10 +559,10 @@ void Fl_Terminal::Utf8Char::text_utf8(const char *text,
                                       const CharStyle& style) {
   text_utf8_(text, len);                       // updates text_, len_
   //issue 837 // fl_font(style.fontface(), style.fontsize()); // need font to calc UTF-8 width
-  attrib_  = style.attrib();
-  flags_   = style.colorbits_only(flags_);
-  fgcolor_ = style.fgcolor();
-  bgcolor_ = style.bgcolor();
+  attrib_    = style.attrib();
+  charflags_ = style.colorbits_only(charflags_);
+  fgcolor_   = style.fgcolor();
+  bgcolor_   = style.bgcolor();
 }
 
 // Set char to single printable ASCII character 'c'
@@ -634,7 +633,7 @@ Fl_Color Fl_Terminal::Utf8Char::attr_color(Fl_Color col, const Fl_Widget *grp) c
 Fl_Color Fl_Terminal::Utf8Char::attr_fg_color(const Fl_Widget *grp) const {
   if (grp && (fgcolor_ == 0xffffffff))           // see thru color?
     { return grp->color(); }                     // return grp's color()
-  return (flags_ & Fl_Terminal::FG_XTERM)        // fg is an xterm color?
+  return (charflags_ & Fl_Terminal::FG_XTERM)    // fg is an xterm color?
            ? attr_color(fgcolor(), grp)          // ..use attributes
            : fgcolor();                          // ..ignore attributes.
 }
@@ -642,7 +641,7 @@ Fl_Color Fl_Terminal::Utf8Char::attr_fg_color(const Fl_Widget *grp) const {
 Fl_Color Fl_Terminal::Utf8Char::attr_bg_color(const Fl_Widget *grp) const {
   if (grp && (bgcolor_ == 0xffffffff))           // see thru color?
     { return grp->color(); }                     // return grp's color()
-  return (flags_ & Fl_Terminal::BG_XTERM)        // bg is an xterm color?
+  return (charflags_ & Fl_Terminal::BG_XTERM)    // bg is an xterm color?
            ? attr_color(bgcolor(), grp)          // ..use attributes
            : bgcolor();                          // ..ignore attributes.
 }
@@ -1191,11 +1190,11 @@ void Fl_Terminal::update_scrollbar(void) {
 
 // Refit the display to match screen
 void Fl_Terminal::refit_disp_to_screen(void) {
-  int dh = h_to_row(scrn_.h());
-  int dw = MAX(w_to_col(scrn_.w()), disp_cols());  // enlarge cols only
+  int dh = h_to_row(scrn_.h());                    // height in rows for tty pixel height
+  int dw = MAX(w_to_col(scrn_.w()), disp_cols());  // width in cols for tty pixel width - enlarge only!
   int drows     = clamp(dh, 2,  dh);               // 2 rows minimum
   int dcols     = clamp(dw, 10, dw);               // 10 cols minimum
-  int drow_diff = drows - ring_.disp_rows();       // change in rows?
+  int drow_diff = drows - display_rows();          // change in rows?
   ring_.resize(drows, dcols, hist_rows(), *current_style_);
   cursor_.scroll(-drow_diff);
   clear_mouse_selection();
