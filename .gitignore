@@ -79,6 +79,8 @@ etc/FLTKConfig.cmake
 
 # Wayland build artifacts (generated files)
 
+src/gtk-shell-client-protocol.h
+src/gtk-shell-protocol.c
 src/text-input-client-protocol.h
 src/text-input-protocol.c
 src/xdg-decoration-client-protocol.h
