@@ -38,11 +38,25 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Multiline_Output.H>
 #include <FL/Fl_Secret_Input.H>
+#include <FL/Fl_Menu_Item.H>
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
 
+/** [this text may be customized at run-time] */
+const char *Fl_Input::cut_menu_text = "Cut";
+/** [this text may be customized at run-time] */
+const char *Fl_Input::copy_menu_text = "Copy";
+/** [this text may be customized at run-time] */
+const char *Fl_Input::paste_menu_text = "Paste";
+
+static Fl_Menu_Item rmb_menu[] = {
+  { Fl_Input::cut_menu_text,    0, NULL, (void*)1 },
+  { Fl_Input::copy_menu_text,   0, NULL, (void*)2 },
+  { Fl_Input::paste_menu_text,  0, NULL, (void*)3 },
+  { NULL }
+};
 
 void Fl_Input::draw() {
   if (input_type() == FL_HIDDEN_INPUT) return;
@@ -468,6 +482,14 @@ int Fl_Input::handle_key() {
   return 0;             // ignored
 }
 
+/** \internal
+ Simple function that determines if a character is a whitespace.
+ \todo This function is not UTF-8-aware.
+ */
+static int _isspace(char c) {
+  return (c&128 || isspace(c));
+}
+
 int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
   static Fl_Widget *dnd_save_focus = NULL;
@@ -532,21 +554,70 @@ int Fl_Input::handle(int event) {
         Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
                                 w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
         newpos = insert_position();
-        insert_position( oldpos, oldmark );
-        if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
-           ( (newpos >= mark() && newpos < insert_position()) ||
-             (newpos >= insert_position() && newpos < mark()) ) ) {
-          // user clicked in the selection, may be trying to drag
-          drag_start = newpos;
+        // on right mouse button, pop up a Cut/Copy/Paste menu
+        if (Fl::event_button() == FL_RIGHT_MOUSE) {
+          if (   ((oldpos < newpos) && (oldmark > newpos))
+              || ((oldmark < newpos) && (oldpos > newpos))
+              || (type() == FL_SECRET_INPUT)) {
+            // if the user clicked inside an existing selection, keep 
+            // the selection
+            insert_position(oldpos, oldmark);
+          } else {
+            if ((index(newpos) == 0) || (index(newpos) == '\n')) {
+              // if clicked to the right of the line or text end, clear the
+              // selection and set the cursor at the end of the line
+              insert_position(newpos, newpos);
+            } else if (_isspace(index(newpos))) {
+              // if clicked into a whitespace, select the entire whitespace
+              oldpos = newpos;
+              while (oldpos > 0 && _isspace(index(oldpos-1))) oldpos--;
+              oldmark = newpos+1;
+              while (oldmark < size() && _isspace(index(oldmark))) oldmark++;
+              insert_position(oldpos, oldmark);
+            } else {
+              // if clicked on a word, select the entire word
+              insert_position(word_start(newpos), word_end(newpos));
+            }
+          }
+          if (readonly()) { // give only the menu options that make sense
+            rmb_menu[0].deactivate(); // cut
+            rmb_menu[2].deactivate(); // paste
+          } else {
+            rmb_menu[0].activate(); // cut
+            rmb_menu[2].activate(); // paste
+          }
+          // pop up the menu
+          const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
+          if (mi) switch (mi->argument()) {
+            case 1:
+              if (type() != FL_SECRET_INPUT) kf_copy_cut();
+              break;
+            case 2: 
+              if (type() != FL_SECRET_INPUT) kf_copy();
+              break;
+            case 3: 
+              kf_paste();
+              break;
+          }
           return 1;
+        } else {
+          insert_position( oldpos, oldmark );
+          if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
+              ( (newpos >= mark() && newpos < insert_position()) ||
+               (newpos >= insert_position() && newpos < mark()) ) ) {
+            // user clicked in the selection, may be trying to drag
+            drag_start = newpos;
+            return 1;
+          }
+          drag_start = -1;
         }
-        drag_start = -1;
       }
 
       if (Fl::focus() != this) {
         Fl::focus(this);
         handle(FL_FOCUS);
       }
+
       break;
 
     case FL_DRAG:
@@ -566,9 +637,11 @@ int Fl_Input::handle(int event) {
       break;
 
     case FL_RELEASE:
-      if (Fl::event_button() == 2) {
+      if (Fl::event_button() == FL_MIDDLE_MOUSE) {
         Fl::event_is_click(0); // stop double click from picking a word
         Fl::paste(*this, 0);
+      } else if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        return 1;
       } else if (!Fl::event_is_click()) {
         // copy drag-selected text to the clipboard.
         copy(0);

@@ -261,6 +261,9 @@ protected:
 public:
   int handle(int) FL_OVERRIDE;
   Fl_Input(int,int,int,int,const char * = 0);
+  static const char *cut_menu_text;
+  static const char *copy_menu_text;
+  static const char *paste_menu_text;
 };
 
 #endif
