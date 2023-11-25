@@ -168,6 +168,14 @@ function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
     unset (WRAPPER)
   endif (MAC_BUNDLE)
 
+  if (MSVC AND TARGET fltk_SHARED)
+    set (DllDir "$<SHELL_PATH:$<TARGET_FILE_DIR:fltk_SHARED>>")
+    ## fl_debug_var (DllDir)
+    set_target_properties(${TARGET_NAME} PROPERTIES
+      VS_DEBUGGER_ENVIRONMENT "PATH=${DllDir};$ENV{PATH}"
+    )
+  endif()
+
   ######################################################################
   # Parse optional fourth argument, see description above.
   ######################################################################
