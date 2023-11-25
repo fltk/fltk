@@ -257,6 +257,7 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
 protected:
   void draw() FL_OVERRIDE;
   int handle_key();
+  int handle_rmb();
 
 public:
   int handle(int) FL_OVERRIDE;

@@ -490,6 +490,65 @@ static int _isspace(char c) {
   return (c&128 || isspace(c));
 }
 
+/** Handle right mouse button down events.
+ \return 1
+ */
+int Fl_Input::handle_rmb() {
+  if (Fl::event_button() == FL_RIGHT_MOUSE) {
+    // on right mouse button, pop up a Cut/Copy/Paste menu
+    int newpos, oldpos = insert_position(), oldmark = mark();
+    Fl_Boxtype b = box();
+    Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+                            w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
+    newpos = insert_position();
+    if (   ((oldpos < newpos) && (oldmark > newpos))
+        || ((oldmark < newpos) && (oldpos > newpos))
+        || (type() == FL_SECRET_INPUT)) {
+      // if the user clicked inside an existing selection, keep
+      // the selection
+      insert_position(oldpos, oldmark);
+    } else {
+      if ((index(newpos) == 0) || (index(newpos) == '\n')) {
+        // if clicked to the right of the line or text end, clear the
+        // selection and set the cursor at the end of the line
+        insert_position(newpos, newpos);
+      } else if (_isspace(index(newpos))) {
+        // if clicked into a whitespace, select the entire whitespace
+        oldpos = newpos;
+        while (oldpos > 0 && _isspace(index(oldpos-1))) oldpos--;
+        oldmark = newpos+1;
+        while (oldmark < size() && _isspace(index(oldmark))) oldmark++;
+        insert_position(oldpos, oldmark);
+      } else {
+        // if clicked on a word, select the entire word
+        insert_position(word_start(newpos), word_end(newpos));
+      }
+    }
+    if (readonly()) { // give only the menu options that make sense
+      rmb_menu[0].deactivate(); // cut
+      rmb_menu[2].deactivate(); // paste
+    } else {
+      rmb_menu[0].activate(); // cut
+      rmb_menu[2].activate(); // paste
+    }
+    // pop up the menu
+    const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
+    if (mi) switch (mi->argument()) {
+      case 1:
+        if (type() != FL_SECRET_INPUT) kf_copy_cut();
+        break;
+      case 2:
+        if (type() != FL_SECRET_INPUT) kf_copy();
+        break;
+      case 3:
+        kf_paste();
+        break;
+    }
+  }
+
+  return 1;
+}
+
 int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
   static Fl_Widget *dnd_save_focus = NULL;
@@ -548,74 +607,30 @@ int Fl_Input::handle(int event) {
       //NOTREACHED
 
     case FL_PUSH:
-      if (Fl::dnd_text_ops()) {
+      if (Fl::dnd_text_ops() && (Fl::event_button() != FL_RIGHT_MOUSE)) {
         int oldpos = insert_position(), oldmark = mark();
         Fl_Boxtype b = box();
         Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
                                 w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
         newpos = insert_position();
-        // on right mouse button, pop up a Cut/Copy/Paste menu
-        if (Fl::event_button() == FL_RIGHT_MOUSE) {
-          if (   ((oldpos < newpos) && (oldmark > newpos))
-              || ((oldmark < newpos) && (oldpos > newpos))
-              || (type() == FL_SECRET_INPUT)) {
-            // if the user clicked inside an existing selection, keep 
-            // the selection
-            insert_position(oldpos, oldmark);
-          } else {
-            if ((index(newpos) == 0) || (index(newpos) == '\n')) {
-              // if clicked to the right of the line or text end, clear the
-              // selection and set the cursor at the end of the line
-              insert_position(newpos, newpos);
-            } else if (_isspace(index(newpos))) {
-              // if clicked into a whitespace, select the entire whitespace
-              oldpos = newpos;
-              while (oldpos > 0 && _isspace(index(oldpos-1))) oldpos--;
-              oldmark = newpos+1;
-              while (oldmark < size() && _isspace(index(oldmark))) oldmark++;
-              insert_position(oldpos, oldmark);
-            } else {
-              // if clicked on a word, select the entire word
-              insert_position(word_start(newpos), word_end(newpos));
-            }
-          }
-          if (readonly()) { // give only the menu options that make sense
-            rmb_menu[0].deactivate(); // cut
-            rmb_menu[2].deactivate(); // paste
-          } else {
-            rmb_menu[0].activate(); // cut
-            rmb_menu[2].activate(); // paste
-          }
-          // pop up the menu
-          const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
-          if (mi) switch (mi->argument()) {
-            case 1:
-              if (type() != FL_SECRET_INPUT) kf_copy_cut();
-              break;
-            case 2: 
-              if (type() != FL_SECRET_INPUT) kf_copy();
-              break;
-            case 3: 
-              kf_paste();
-              break;
-          }
+        insert_position( oldpos, oldmark );
+        if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
+            ( (newpos >= mark() && newpos < insert_position()) ||
+             (newpos >= insert_position() && newpos < mark()) ) ) {
+          // user clicked in the selection, may be trying to drag
+          drag_start = newpos;
           return 1;
-        } else {
-          insert_position( oldpos, oldmark );
-          if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
-              ( (newpos >= mark() && newpos < insert_position()) ||
-               (newpos >= insert_position() && newpos < mark()) ) ) {
-            // user clicked in the selection, may be trying to drag
-            drag_start = newpos;
-            return 1;
-          }
-          drag_start = -1;
         }
+        drag_start = -1;
       }
 
       if (Fl::focus() != this) {
         Fl::focus(this);
         handle(FL_FOCUS);
+      }
+
+      if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        return handle_rmb();
       }
 
       break;
