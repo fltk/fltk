@@ -77,6 +77,24 @@ set (OPTION_ABI_VERSION ""
 )
 set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
 
+
+#######################################################################
+#  Select MSVC (Visual Studio) Runtime: DLL (/MDx) or static (/MTx)
+#  where x = 'd' for Debug builds, empty ('') for non-Debug builds.
+#  Note: this might be handled better by the 'MSVC_RUNTIME_LIBRARY'
+#  target property for each target rather than setting a global
+#  CMake variable - but this version does the latter.
+#######################################################################
+
+if (MSVC)
+  option (FLTK_MSVC_RUNTIME_DLL "use MSVC Runtime-DLL (/MDx)" ON)
+  if (FLTK_MSVC_RUNTIME_DLL)
+    set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  else ()
+    set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  endif ()
+endif (MSVC)
+
 #######################################################################
 #  Bundled Library Options
 #######################################################################

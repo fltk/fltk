@@ -133,6 +133,11 @@ FLTK_BUILD_TEST - default ON
 FLTK_BUILD_EXAMPLES - default OFF
    Builds the example programs in the 'examples' directory.
 
+FLTK_MSVC_RUNTIME_DLL - default ON (only for Visual Studio and NMake).
+   Selects whether the build uses the MS runtime DLL or not.
+   Default is ON: either /MD or /MDd for Release or Debug, respectively.
+   Select OFF for either /MT or /MTd for Release or Debug, respectively.
+
 OPTION_CAIRO - default OFF
    Enables support of class Fl_Cairo_Window (all platforms, requires the
    Cairo library) - see README.Cairo.txt.
