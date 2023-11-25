@@ -454,6 +454,7 @@ int main(int argc, char** argv) {
   browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
   browser->when(FL_WHEN_CHANGED);
   browser->callback(ui_browser_cb);
+  browser->linespacing(2);
 
   int n = UnitTest::num_tests();
   for (i=0; i<n; i++) {

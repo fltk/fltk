@@ -176,7 +176,8 @@ int Fl_Check_Browser::item_width(void *v) const {
   return int(fl_width(((cb_item *)v)->text)) + CHECK_SIZE + 8;
 }
 
-void Fl_Check_Browser::item_draw(void *v, int X, int Y, int, int) const {
+void Fl_Check_Browser::item_draw(void *v, int X, int Y, int, int H) const {
+  Y += (H - item_height(v)) / 2;
   cb_item *i = (cb_item *)v;
   char *s = i->text;
   int tsize = textsize();

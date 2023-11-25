@@ -76,7 +76,7 @@ Fl_File_Browser::full_height() const
 
 
   for (i = 0, th = 0; i < size(); i ++)
-    th += item_height(find_line(i));
+    th += item_height(find_line(i)) + linespacing();
 
   return (th);
 }
@@ -234,7 +234,7 @@ Fl_File_Browser::item_draw(void *p,     // I - List item data
                            int  X,      // I - Upper-lefthand X coordinate
                            int  Y,      // I - Upper-lefthand Y coordinate
                            int  W,      // I - Width of item
-                           int) const   // I - Height of item
+                           int  H) const// I - Height of item
 {
   int           i;                      // Looping var
   FL_BLINE      *line;                  // Pointer to line
@@ -271,25 +271,23 @@ Fl_File_Browser::item_draw(void *p,     // I - List item data
   {
     // Draw the icon if it is set...
     if (line->data)
-      ((Fl_File_Icon *)line->data)->draw(X, Y, iconsize_, iconsize_,
-                                        (line->flags & SELECTED) ? FL_YELLOW :
+      ((Fl_File_Icon *)line->data)->draw(X, Y + (H - iconsize_) / 2,
+                                         iconsize_, iconsize_,
+                                         (line->flags & SELECTED) ? FL_YELLOW :
                                                                    FL_LIGHT2,
-                                        active_r());
+                                         active_r());
 
     // Draw the text offset to the right...
     X += iconsize_ + 9;
     W -= iconsize_ - 10;
-
-    // Center the text vertically...
-    height = fl_height();
-
-    for (t = line->txt; *t != '\0'; t ++)
-      if (*t == '\n')
-        height += fl_height();
-
-    if (height < iconsize_)
-      Y += (iconsize_ - height) / 2;
   }
+  // Center the text vertically...
+  height = fl_height();
+
+  for (t = line->txt; *t != '\0'; t ++)
+    if (*t == '\n')
+      height += fl_height();
+  Y += (H - height) / 2;
 
   // Draw the text...
   line    = (FL_BLINE *)p;

@@ -252,7 +252,7 @@ int Widget_Browser::item_height(void *l) const {
  \return height in FLTK units
  */
 int Widget_Browser::incr_height() const {
-  return textsize()+5;
+  return textsize() + 5 + linespacing();
 }
 
 /**
@@ -552,15 +552,15 @@ void Widget_Browser::display(Fl_Type *inNode) {
   Fl_Type *p=Fl_Type::first;
   for ( ; p && p!=inNode; p=p->next) {
     if (p->visible)
-      nodeV += item_height(p);
+      nodeV += item_height(p) + linespacing();
   }
   if (p) {
     int xx, yy, ww, hh;
     bbox(xx, yy, ww, hh);
     int frame_top = xx-x();
     int frame_bottom = frame_top + hh;
-    int node_height = item_height(inNode);
-    int margin_height = 2 * item_quick_height(inNode);
+    int node_height = item_height(inNode) + linespacing();
+    int margin_height = 2 * (item_quick_height(inNode) + linespacing());
     if (margin_height>hh/2) margin_height = hh/2;
     // is the inNode above the current scroll position?
     if (nodeV<currentV+margin_height)

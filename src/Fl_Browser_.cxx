@@ -148,13 +148,13 @@ void Fl_Browser_::update_top() {
       offset_ = 0;
       real_position_ = 0;
     } else {
-      int hh = item_quick_height(l);
+      int hh = item_quick_height(l) + linespacing();
       // step through list until we find line containing this point:
       while (ly > yy) {
         void* l1 = item_prev(l);
         if (!l1) {ly = 0; break;} // hit the top
         l  = l1;
-        hh = item_quick_height(l);
+        hh = item_quick_height(l) + linespacing();
         ly -= hh;
       }
       while ((ly+hh) <= yy) {
@@ -162,16 +162,16 @@ void Fl_Browser_::update_top() {
         if (!l1) {yy = ly+hh-1; break;}
         l = l1;
         ly += hh;
-        hh = item_quick_height(l);
+        hh = item_quick_height(l) + linespacing();
       }
       // top item must *really* be visible, use slow height:
       for (;;) {
-        hh = item_height(l);
+        hh = item_height(l) + linespacing();
         if ((ly+hh) > yy) break; // it is big enough to see
         // go up to top of previous item:
         void* l1 = item_prev(l);
         if (!l1) {ly = yy = 0; break;} // hit the top
-        l = l1; yy = position_ = ly = ly-item_quick_height(l);
+        l = l1; yy = position_ = ly = ly-item_quick_height(l) + linespacing();
       }
       // use it:
       top_ = l;
@@ -229,7 +229,7 @@ int Fl_Browser_::displayed(void* item) const {
   int yy = H+offset_;
   for (void* l = top_; l && yy > 0; l = item_next(l)) {
     if (l == item) return 1;
-    yy -= item_height(l);
+    yy -= item_height(l) + linespacing();
   }
   return 0;
 }
@@ -257,7 +257,7 @@ void Fl_Browser_::display(void* item) {
 
   // 3rd special case - want to display item just above top of browser?
   void* lp = item_prev(l);
-  if (lp == item) { vposition(real_position_+Y-item_quick_height(lp)); return; }
+  if (lp == item) { vposition(real_position_+Y-item_quick_height(lp)-linespacing()); return; }
 
 #ifdef DISPLAY_SEARCH_BOTH_WAYS_AT_ONCE
   // search for item.  We search both up and down the list at the same time,
@@ -265,7 +265,7 @@ void Fl_Browser_::display(void* item) {
   // much slower for going up than for going down.
   while (l || lp) {
     if (l) {
-      h1 = item_quick_height(l);
+      h1 = item_quick_height(l) + linespacing();
       if (l == item) {
         if (Y <= H) { // it is visible or right at bottom
           Y = Y+h1-H; // find where bottom edge is
@@ -279,7 +279,7 @@ void Fl_Browser_::display(void* item) {
       l = item_next(l);
     }
     if (lp) {
-      h1 = item_quick_height(lp);
+      h1 = item_quick_height(lp) + linespacing();
       Yp -= h1;
       if (lp == item) {
         if ((Yp + h1) >= 0) vposition(real_position_+Yp);
@@ -294,7 +294,7 @@ void Fl_Browser_::display(void* item) {
   // search forward for it:
   l = top_;
   for (; l; l = item_next(l)) {
-    h1 = item_quick_height(l);
+    h1 = item_quick_height(l) + linespacing();
     if (l == item) {
       if (Y <= H) { // it is visible or right at bottom
         Y = Y+h1-H; // find where bottom edge is
@@ -310,7 +310,7 @@ void Fl_Browser_::display(void* item) {
   l = lp;
   Y = -offset_;
   for (; l; l = item_prev(l)) {
-    h1 = item_quick_height(l);
+    h1 = item_quick_height(l) + linespacing();
     Y -= h1;
     if (l == item) {
       if ((Y + h1) >= 0) position(real_position_+Y);
@@ -395,7 +395,7 @@ J1:
   void* l = top();
   int yy = -offset_;
   for (; l && yy < H; l = item_next(l)) {
-    int hh = item_height(l);
+    int hh = item_height(l) + linespacing();
     if (hh <= 0) continue;
     if ((damage()&(FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) || l == redraw1 || l == redraw2) {
       if (item_selected(l)) {
@@ -448,7 +448,7 @@ J1:
 
   // update the scrollbars and redraw them:
   int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
-  int dy = top_ ? item_quick_height(top_) : 0; if (dy < 10) dy = 10;
+  int dy = top_ ? item_quick_height(top_) + linespacing() : 0; if (dy < 10) dy = 10;
   if (scrollbar.visible()) {
     scrollbar.damage_resize(
         scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
@@ -585,7 +585,7 @@ void* Fl_Browser_::find_item(int ypos) {
   int yy = Y-offset_;
   for (void *l = top_; l; l = item_next(l)) {
     int hh = item_height(l); if (hh <= 0) continue;
-    yy += hh;
+    yy += hh + linespacing();
     if (ypos <= yy || yy>=(Y+H)) return l;
   }
   return 0;
@@ -954,7 +954,8 @@ J1:
 Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* L)
   : Fl_Group(X, Y, W, H, L),
     scrollbar(0, 0, 0, 0, 0), // they will be resized by draw()
-    hscrollbar(0, 0, 0, 0, 0)
+    hscrollbar(0, 0, 0, 0, 0),
+    linespacing_(0)
 {
   box(FL_NO_BOX);
   align(FL_ALIGN_BOTTOM);
@@ -1053,7 +1054,7 @@ int Fl_Browser_::item_quick_height(void* item) const {
   \returns The average height of items, in pixels.
 */
 int Fl_Browser_::incr_height() const {
-  return item_quick_height(item_first());
+  return item_quick_height(item_first()) + linespacing();
 }
 
 /**

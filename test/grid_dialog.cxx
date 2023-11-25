@@ -86,7 +86,7 @@ void button_cb(Fl_Widget *w, void *v) {
       break;
     case 1: {               // Copy
         const char *text = message_box->label();
-        const int len = strlen(text);
+        const int len = (int)strlen(text);
         Fl::copy(text, len, 1);
       }
       printf("Message copied to clipboard.\n");

@@ -644,6 +644,7 @@ Fl_Window* build_ui() {
                                            "Groups");
   g_headline_browser->align(FL_ALIGN_TOP);
   g_headline_browser->textsize(FL_NORMAL_SIZE+1);
+  g_headline_browser->linespacing(4);
   add_headlines(g_headline_browser);
   // -- scrollable area for all options inside a group
   g_option_scroll = new Fl_Scroll(FO_GAP + FO_BROWSER_W + FO_GAP, FO_GAP + FO_TITLE_H,

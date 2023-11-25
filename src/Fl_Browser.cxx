@@ -208,7 +208,7 @@ FL_BLINE* Fl_Browser::_remove(int line) {
   cacheline = line-1;
   cache = ttt->prev;
   lines--;
-  full_height_ -= item_height(ttt);
+  full_height_ -= item_height(ttt) + linespacing();
   if (ttt->prev) ttt->prev->next = ttt->next;
   else first = ttt->next;
   if (ttt->next) ttt->next->prev = ttt->prev;
@@ -264,7 +264,7 @@ void Fl_Browser::insert(int line, FL_BLINE* item) {
   cacheline = line;
   cache = item;
   lines++;
-  full_height_ += item_height(item);
+  full_height_ += item_height(item) + linespacing();
   redraw_line(item);
 }
 
@@ -489,7 +489,7 @@ int Fl_Browser::full_height() const {
        incr_height(), full_height()
 */
 int Fl_Browser::incr_height() const {
-  return textsize()+2;
+  return textsize() + 2 + linespacing();
 }
 
 /**
@@ -620,9 +620,9 @@ void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
 
   FL_BLINE* l;
   for (l=first; l && line>1; l = l->next) {
-    line--; p += item_height(l);
+    line--; p += item_height(l) + linespacing();
   }
-  if (l && (pos == BOTTOM)) p += item_height (l);
+  if (l && (pos == BOTTOM)) p += item_height(l) + linespacing();
 
   int final = p, X, Y, W, H;
   bbox(X, Y, W, H);
@@ -670,7 +670,7 @@ void Fl_Browser::textsize(Fl_Fontsize newSize) {
   full_height_ = 0;
   if (lines == 0) return;
   for (FL_BLINE* itm=(FL_BLINE *)item_first(); itm; itm=(FL_BLINE *)item_next(itm)) {
-    full_height_ += item_height(itm);
+    full_height_ += item_height(itm) + linespacing();
   }
 }
 
@@ -769,7 +769,7 @@ void Fl_Browser::show(int line) {
   FL_BLINE* t = find_line(line);
   if (t->flags & NOTDISPLAYED) {
     t->flags &= ~NOTDISPLAYED;
-    full_height_ += item_height(t);
+    full_height_ += item_height(t) + linespacing();
     if (Fl_Browser_::displayed(t)) redraw();
   }
 }
@@ -786,7 +786,7 @@ void Fl_Browser::show(int line) {
 void Fl_Browser::hide(int line) {
   FL_BLINE* t = find_line(line);
   if (!(t->flags & NOTDISPLAYED)) {
-    full_height_ -= item_height(t);
+    full_height_ -= item_height(t) + linespacing();
     t->flags |= NOTDISPLAYED;
     if (Fl_Browser_::displayed(t)) redraw();
   }
