@@ -30,6 +30,8 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Input.H>
 #include "Fl_Screen_Driver.H"
 
 #undef min
@@ -4067,6 +4069,48 @@ void Fl_Text_Display::scroll_timer_cb(void *user_data) {
   Fl::repeat_timeout(.1, scroll_timer_cb, user_data);
 }
 
+static Fl_Menu_Item rmb_menu[] = {
+  { Fl_Input::cut_menu_text,    0, NULL, (void*)1 },
+  { Fl_Input::copy_menu_text,   0, NULL, (void*)2 },
+  { Fl_Input::paste_menu_text,  0, NULL, (void*)3 },
+  { NULL }
+};
+
+/** Handle right mouse button down events.
+ \return 0 for no op, 1 to cut, 2 to copy, 3 to paste
+ */
+int Fl_Text_Display::handle_rmb(int readonly) {
+  Fl_Text_Buffer *txtbuf = buffer();
+  int newpos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
+  int oldpos = txtbuf->primary_selection()->start();
+  int oldmark = txtbuf->primary_selection()->end();
+  if (   ((oldpos < newpos) && (oldmark > newpos))
+      || ((oldmark < newpos) && (oldpos > newpos))
+      || (type() == FL_SECRET_INPUT)) {
+    // if the user clicked inside an existing selection, keep
+    // the selection
+  } else {
+    if ((txtbuf->char_at(newpos) == 0) || (txtbuf->char_at(newpos) == '\n')) {
+      // if clicked to the right of the line or text end, clear the
+      // selection and set the cursor at the end of the line
+      txtbuf->select(newpos, newpos);
+    } else {
+      // if clicked on a word, select the entire word
+      txtbuf->select(txtbuf->word_start(newpos), txtbuf->word_end(newpos));
+    }
+  }
+  if (readonly) { // give only the menu options that make sense
+    rmb_menu[0].deactivate(); // cut
+    rmb_menu[2].deactivate(); // paste
+  } else {
+    rmb_menu[0].activate(); // cut
+    rmb_menu[2].activate(); // paste
+  }
+  // pop up the menu
+  const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
+  if (mi) return (int)mi->argument();
+  return 0;
+}
 
 /**
  \brief Event handling.
@@ -4115,6 +4159,21 @@ int Fl_Text_Display::handle(int event) {
         handle(FL_FOCUS);
       }
       if (Fl_Group::handle(event)) return 1;
+
+      if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        switch (handle_rmb(1)) {
+          case 2: {
+            if (!buffer()->selected()) break;
+            const char *copy = buffer()->selection_text();
+            if (*copy) Fl::copy(copy, (int) strlen(copy), 1);
+            free((void*)copy);
+            show_insert_position();
+            break;
+          }
+        }
+        return 1;
+      }
+
       if (Fl::event_state()&FL_SHIFT) {
         if (buffer()->primary_selection()->selected()) {
           int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);

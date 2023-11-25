@@ -747,6 +747,25 @@ int Fl_Text_Editor::handle(int event) {
         if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
         return 1;
       }
+
+      if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        if (active_r() && window()) {
+          if (Fl::event_inside(text_area.x, text_area.y, text_area.w,
+                               text_area.h)) window()->cursor(FL_CURSOR_INSERT);
+          else window()->cursor(FL_CURSOR_DEFAULT);
+        }
+        if (Fl::focus() != this) {
+          Fl::focus(this);
+          handle(FL_FOCUS);
+        }
+        switch (handle_rmb(0)) {
+          case 1: kf_cut(0, this); break;
+          case 2: kf_copy(0, this); break;
+          case 3: kf_paste(0, this); break;
+        }
+        return 1;
+      }
+
       break;
 
     case FL_SHORTCUT:
