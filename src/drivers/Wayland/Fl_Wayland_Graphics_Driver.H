@@ -56,6 +56,7 @@ public:
   static struct wl_shm_pool *current_pool;
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc,
                       int srcx, int srcy) FL_OVERRIDE;
+  void cache_size(Fl_Image *img, int &width, int &height) FL_OVERRIDE;
   static struct wld_buffer *create_wld_buffer(int width, int height, bool with_shm = true);
   static void create_shm_buffer(wld_buffer *buffer);
   static void buffer_release(struct wld_window *window);

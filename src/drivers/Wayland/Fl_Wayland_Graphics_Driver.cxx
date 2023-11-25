@@ -287,3 +287,10 @@ Fl_Image_Surface *Fl_Wayland_Graphics_Driver::custom_offscreen(int w, int h,
   cairo_set_user_data(off->draw_buffer.cairo_, &key, &off->draw_buffer, NULL);
   return new Fl_Image_Surface(w, h, 0, (Fl_Offscreen)off->draw_buffer.cairo_);
 }
+
+
+void Fl_Wayland_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height) {
+  Fl_Graphics_Driver::cache_size(img, width, height);
+  width *= wld_scale;
+  height *=  wld_scale;
+}

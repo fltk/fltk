@@ -370,6 +370,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_cairo(
                       window->buffer->draw_buffer.cairo_, f * wld_s);
+  ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->wld_scale = wld_s;
   int *poffset = Fl_Window_Driver::menu_offset_y(pWindow);
   if (poffset) { // for tall menu windows under KWIN to offset drawing inside window
     cairo_translate(window->buffer->draw_buffer.cairo_, 0, *poffset);

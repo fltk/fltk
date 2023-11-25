@@ -106,6 +106,7 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   linestyle_ = FL_SOLID;
   clip_ = NULL;
   scale_x = scale_y = 1;
+  wld_scale = 1;
   angle = 0;
   left_margin = top_margin = 0;
   needs_commit_tag_ = NULL;
@@ -892,6 +893,10 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
   cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
   cairo_surface_destroy(surf);
   *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)pat;
+  int *pw, *ph;
+  cache_w_h(rgb, pw, ph);
+  *pw = rgb->data_w();
+  *ph = rgb->data_h();
 }
 
 
@@ -904,21 +909,27 @@ void Fl_Cairo_Graphics_Driver::uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_
 }
 
 
-void Fl_Cairo_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
+void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, 
+                                          int cx, int cy) {
+  cairo_pattern_t *pat = NULL;
+  float s = wld_scale * scale();
+  XP = Fl_Scalable_Graphics_Driver::floor(XP, s);
+  YP = Fl_Scalable_Graphics_Driver::floor(YP, s);
+  cache_size(bm, WP, HP);
+  cx *= s; cy *= s;
+  cairo_matrix_t matrix; // temporarily remove scaling
+  cairo_get_matrix(cairo_, &matrix);
+  cairo_translate(cairo_, -0.5, -0.5);
+  cairo_scale(cairo_, 1./s, 1/s);
+  cairo_translate(cairo_, 0.5, 0.5);
   if (!bm->array) {
     draw_empty(bm, XP, YP);
-    return;
-  }
-  if (start_image(bm, XP,YP,WP,HP,cx,cy,X,Y,W,H)) return;
-  cairo_pattern_t *pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(bm);
-  if (!pat) {
-    cache(bm);
+  } else {
     pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(bm);
+    color(color());
+    draw_cached_pattern_(bm, pat, XP, YP, WP, HP, cx, cy);
   }
-  if (pat) {
-    draw_cached_pattern_(bm, pat, X, Y, W, H, cx, cy);
-  }
+  cairo_set_matrix(cairo_, &matrix);
 }
 
 
@@ -977,25 +988,34 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_Bitmap *bm) {
   (void)cairo_surface_set_user_data(surf, &data_key_for_surface, BGRA, dealloc_surface_data);
   cairo_surface_destroy(surf);
   *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)pattern;
+  int *pw, *ph;
+  cache_w_h(bm, pw, ph);
+  *pw = bm->data_w();
+  *ph = bm->data_h();
 }
 
 
-void Fl_Cairo_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
+void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, 
+                                          int cx, int cy) {
+  cairo_pattern_t *pat = NULL;
+  float s = wld_scale * scale();
+  XP = Fl_Scalable_Graphics_Driver::floor(XP, s);
+  YP = Fl_Scalable_Graphics_Driver::floor(YP, s);
+  cache_size(pxm, WP, HP);
+  cx *= s; cy *= s;
+  cairo_matrix_t matrix; // temporarily remove scaling
+  cairo_get_matrix(cairo_, &matrix);
+  cairo_translate(cairo_, -0.5, -0.5);
+  cairo_scale(cairo_, 1/s, 1/s);
+  cairo_translate(cairo_, 0.5, 0.5);
   // Don't draw an empty image...
   if (!pxm->data() || !pxm->w()) {
     Fl_Graphics_Driver::draw_empty(pxm, XP, YP);
-    return;
-  }
-  if (start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  cairo_pattern_t *pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(pxm);
-  if (!pat) {
-    cache(pxm);
+  } else {
     pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(pxm);
+    draw_cached_pattern_(pxm, pat, XP, YP, WP, HP, cx, cy);
   }
-  draw_cached_pattern_(pxm, pat, X, Y, W, H, cx, cy);
+  cairo_set_matrix(cairo_, &matrix);
 }
 
 
@@ -1005,6 +1025,10 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_Pixmap *pxm) {
   *Fl_Graphics_Driver::id(pxm) = *Fl_Graphics_Driver::id(rgb);
   *Fl_Graphics_Driver::id(rgb) = 0;
   delete rgb;
+  int *pw, *ph;
+  cache_w_h(pxm, pw, ph);
+  *pw = pxm->data_w();
+  *ph = pxm->data_h();
 }
 
 
@@ -1435,14 +1459,6 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
       clip_->w = -1;
     }
   }
-}
-
-
-void Fl_Cairo_Graphics_Driver::cache_size(Fl_Image *unused, int &width, int &height) {
-  cairo_matrix_t matrix;
-  cairo_get_matrix(cairo_, &matrix);
-  width *= matrix.xx;
-  height *= matrix.xx;
 }
 
 

@@ -80,6 +80,7 @@ public:
 
   float scale_x;
   float scale_y;
+  int wld_scale;
   float angle;
   int left_margin;
   int top_margin;
@@ -157,13 +158,13 @@ public:
   void draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   void cache(Fl_RGB_Image *rgb) FL_OVERRIDE;
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) FL_OVERRIDE;
-  void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   static cairo_pattern_t *bitmap_to_pattern(Fl_Bitmap *bm, bool complement,
                                             cairo_surface_t **p_surface);
   void cache(Fl_Bitmap *img) FL_OVERRIDE;
   void delete_bitmask(fl_uintptr_t bm) FL_OVERRIDE;
   void cache(Fl_Pixmap *pxm) FL_OVERRIDE;
-  void draw_pixmap(Fl_Pixmap *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_fixed(Fl_Pixmap *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   void uncache_pixmap(fl_uintptr_t p) FL_OVERRIDE;
 
   void font(Fl_Font fnum, Fl_Fontsize s) FL_OVERRIDE;
@@ -189,7 +190,6 @@ public:
   Fl_Region XRectangleRegion(int x, int y, int w, int h) FL_OVERRIDE;
   void XDestroyRegion(Fl_Region r) FL_OVERRIDE;
   void add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) FL_OVERRIDE;
-  void cache_size(Fl_Image *img, int &width, int &height) FL_OVERRIDE;
   char can_do_alpha_blending() FL_OVERRIDE;
   float override_scale() FL_OVERRIDE;
   void restore_scale(float) FL_OVERRIDE;
