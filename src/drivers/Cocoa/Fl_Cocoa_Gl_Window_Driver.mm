@@ -355,6 +355,21 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
 
+void Fl_Cocoa_Gl_Window_Driver::swap_interval(int n) {
+  GLint interval = (GLint)n;
+  NSOpenGLContext* ctx = (NSOpenGLContext*)pWindow->context();
+  if (ctx)
+    [ctx setValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
+}
+
+int Fl_Cocoa_Gl_Window_Driver::swap_interval() {
+  GLint interval = (GLint)-1;
+  NSOpenGLContext* ctx = (NSOpenGLContext*)pWindow->context();
+  if (ctx)
+    [ctx getValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
+  return interval;
+}
+
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
   if (pWindow->shown()) apply_scissor();
   [(NSOpenGLContext*)pWindow->context() update];

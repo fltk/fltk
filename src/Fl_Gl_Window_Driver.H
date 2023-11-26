@@ -69,6 +69,8 @@ public:
   virtual void swap_buffers() {}
   virtual void resize(int /*is_a_resize*/, int /*w*/, int /*h*/) {}
   virtual char swap_type();
+  virtual void swap_interval(int) { }
+  virtual int swap_interval() { return -1; }
   virtual int flush_begin(char&) {return 0;}
   virtual void gl_hide_before(void *&) {} // the default implementation may be enough
   static Fl_Gl_Choice *find_begin(int m, const int *alistp);

@@ -199,6 +199,8 @@ public:
   void context(GLContext, int destroy_flag = 0);
   void make_current();
   void swap_buffers();
+  void swap_interval(int);
+  int swap_interval() const;
   void ortho();
 
   int can_do_overlay();

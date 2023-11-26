@@ -161,6 +161,21 @@ void Fl_Gl_Window::swap_buffers() {
   pGlWindowDriver->swap_buffers();
 }
 
+/**
+ Sets the rate at which the GL windows swaps buffers.
+ */
+void Fl_Gl_Window::swap_interval(int frames) {
+  pGlWindowDriver->swap_interval(frames);
+}
+
+/**
+ Gets the rate at which the GL windows swaps buffers.
+ */
+int Fl_Gl_Window::swap_interval() const {
+  return pGlWindowDriver->swap_interval();
+}
+
+
 void Fl_Gl_Window::flush() {
   if (!shown()) return;
   uchar save_valid = valid_f_ & 1;
