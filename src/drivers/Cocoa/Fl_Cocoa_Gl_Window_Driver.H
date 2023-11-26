@@ -39,7 +39,7 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   void resize(int is_a_resize, int w, int h) FL_OVERRIDE;
   char swap_type() FL_OVERRIDE;
   void swap_interval(int) FL_OVERRIDE;
-  int swap_interval() FL_OVERRIDE;
+  int swap_interval() const FL_OVERRIDE;
   Fl_Gl_Choice *find(int m, const int *alistp) FL_OVERRIDE;
   GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g) FL_OVERRIDE;
   void set_gl_context(Fl_Window* w, GLContext context) FL_OVERRIDE;

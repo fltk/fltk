@@ -362,7 +362,7 @@ void Fl_Cocoa_Gl_Window_Driver::swap_interval(int n) {
     [ctx setValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
 }
 
-int Fl_Cocoa_Gl_Window_Driver::swap_interval() {
+int Fl_Cocoa_Gl_Window_Driver::swap_interval() const {
   GLint interval = (GLint)-1;
   NSOpenGLContext* ctx = (NSOpenGLContext*)pWindow->context();
   if (ctx)

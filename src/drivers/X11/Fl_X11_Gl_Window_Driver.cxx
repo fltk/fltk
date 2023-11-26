@@ -393,13 +393,48 @@ void Fl_X11_Gl_Window_Driver::swap_buffers() {
   glXSwapBuffers(fl_display, fl_xid(pWindow));
 }
 
+char Fl_X11_Gl_Window_Driver::swap_type() {
+  return copy;
+}
 
-char Fl_X11_Gl_Window_Driver::swap_type() {return copy;}
+typedef void (*SWAPINTERVALPROC) (Display *dpy, GLXDrawable drawable, int interval);
+static SWAPINTERVALPROC glXSwapIntervalEXT = NULL;
+static bool glXSwapIntervalChecked = false;
+static void checkGlxXSwapInterval() {
+  if (!glXSwapIntervalChecked) {
+    glXSwapIntervalChecked = true;
+    glXSwapIntervalEXT = (SWAPINTERVALPROC)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+  }
+}
+
+void Fl_X11_Gl_Window_Driver::swap_interval(int interval) {
+  if (!fl_xid(pWindow))
+    return;
+  if (!glXSwapIntervalChecked) checkGlxXSwapInterval();
+  if (glXSwapIntervalEXT) {
+    glXSwapIntervalEXT(fl_display, fl_xid(pWindow), interval);
+  }
+}
+
+int Fl_X11_Gl_Window_Driver::swap_interval() const {
+  if (!fl_xid(pWindow))
+    return -1;
+  if (!glXSwapIntervalChecked) checkGlxXSwapInterval();
+  if (!glXSwapIntervalEXT) return -1;
+  static bool ext_checked = false, ext_exists = false;
+  if (!ext_checked) {
+    ext_checked = true;
+    ext_exists = (strstr(glXQueryExtensionsString(fl_display, fl_screen), "GLX_EXT_swap_control") != NULL);
+  }
+  if (!ext_exists) return -1;
+  unsigned int interval = -1;
+  glXQueryDrawable(fl_display, fl_xid(pWindow), 0x20F1 /*GLX_SWAP_INTERVAL_EXT*/, &interval);
+  return interval;
+}
 
 void Fl_X11_Gl_Window_Driver::waitGL() {
   glXWaitGL();
 }
-
 
 void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
   Fl_Gl_Window_Driver::gl_visual(c);
