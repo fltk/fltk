@@ -532,6 +532,7 @@ int Fl_Input::handle_rmb() {
       rmb_menu[2].activate(); // paste
     }
     // pop up the menu
+    fl_cursor(FL_CURSOR_DEFAULT);
     const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
     if (mi) switch (mi->argument()) {
       case 1:

@@ -3564,6 +3564,7 @@ quote_char(const char *p) {     // I - Quoted string
     { "micro;",  6, 181 },
     { "middot;", 7, 183 },
     { "nbsp;",   5, ' ' },
+    { "ndash;",  6, 0x2013 },
     { "not;",    4, 172 },
     { "Ntilde;", 7, 209 },
     { "ntilde;", 7, 241 },
