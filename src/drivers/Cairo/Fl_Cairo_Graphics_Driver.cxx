@@ -805,8 +805,9 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
   cairo_set_matrix(cairo_, &matrix);
   if (img->d() >= 1) cairo_set_source(cairo_, pat);
   if (need_extend) {
-    cairo_pattern_set_filter(pat, Fl_RGB_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR ?
-                           CAIRO_FILTER_GOOD : CAIRO_FILTER_FAST);
+    bool condition = Fl_RGB_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR &&
+      (fabs(Ws/float(cache_w) - 1) > 0.02 || fabs(Hs/float(cache_h) - 1) > 0.02);
+    cairo_pattern_set_filter(pat, condition ? CAIRO_FILTER_GOOD : CAIRO_FILTER_FAST);
     cairo_pattern_set_extend(pat, CAIRO_EXTEND_PAD);
   }
   cairo_matrix_init_scale(&matrix, double(cache_w)/Ws, double(cache_h)/Hs);
