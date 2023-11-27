@@ -369,6 +369,8 @@ public:
   void label(Fl_Widget*w) FL_OVERRIDE;
   void label(Fl_Menu_Item*m) FL_OVERRIDE;
   void uncache() FL_OVERRIDE;
+  int cache_w() {return cache_w_;}
+  int cache_h() {return cache_h_;}
   /** Sets the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
 
    The image size in bytes of an Fl_RGB_Image object is the value of the product w() * h() * d().

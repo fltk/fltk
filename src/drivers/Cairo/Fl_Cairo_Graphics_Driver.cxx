@@ -783,7 +783,7 @@ void Fl_Cairo_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
 }
 
 
-void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy) {
+void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy, int cache_w, int cache_h) {
   // compute size of output image in drawing units
   cairo_matrix_t matrix;
   cairo_get_matrix(cairo_, &matrix);
@@ -794,7 +794,7 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
   int Hs = Fl_Scalable_Graphics_Driver::floor(Y - cy + img->h(), s) - Ys;
   if (Ws == 0 || Hs == 0) return;
   cairo_save(cairo_);
-  bool need_extend = (img->data_w() != Ws || img->data_h() != Hs || (W >= 2 && H >= 2));
+  bool need_extend = (cache_w != Ws || cache_h != Hs || (W >= 2 && H >= 2));
   if (need_extend || cx || cy || W < img->w() || H < img->h()) { // clip when necessary
     cairo_rectangle(cairo_, X - 0.5, Y - 0.5, W + 0.5, H + 0.5);
     cairo_clip(cairo_);
@@ -809,7 +809,7 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
                            CAIRO_FILTER_GOOD : CAIRO_FILTER_FAST);
     cairo_pattern_set_extend(pat, CAIRO_EXTEND_PAD);
   }
-  cairo_matrix_init_scale(&matrix, double(img->data_w())/Ws, double(img->data_h())/Hs);
+  cairo_matrix_init_scale(&matrix, double(cache_w)/Ws, double(cache_h)/Hs);
   cairo_matrix_translate(&matrix, -Xs , -Ys );
   cairo_pattern_set_matrix(pat, &matrix);
   if (img->d() > 1) cairo_paint(cairo_);
@@ -834,7 +834,7 @@ void Fl_Cairo_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP
     cache(rgb);
     pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(rgb);
   }
-  draw_cached_pattern_(rgb, pat, X, Y, W, H, cx, cy);
+  draw_cached_pattern_(rgb, pat, X, Y, W, H, cx, cy, rgb->cache_w(), rgb->cache_h());
 }
 
 
@@ -927,7 +927,10 @@ void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, 
   } else {
     pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(bm);
     color(color());
-    draw_cached_pattern_(bm, pat, XP, YP, WP, HP, cx, cy);
+    int old_w = bm->w(), old_h = bm->h();
+    bm->scale(bm->cache_w(), bm->cache_h(), 0, 1); // transiently
+    draw_cached_pattern_(bm, pat, XP, YP, WP, HP, cx, cy, bm->cache_w(), bm->cache_h());
+    bm->scale(old_w, old_h, 0, 1); // back
   }
   cairo_set_matrix(cairo_, &matrix);
 }
@@ -1013,7 +1016,10 @@ void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP,
     Fl_Graphics_Driver::draw_empty(pxm, XP, YP);
   } else {
     pat = (cairo_pattern_t*)*Fl_Graphics_Driver::id(pxm);
-    draw_cached_pattern_(pxm, pat, XP, YP, WP, HP, cx, cy);
+    int old_w = pxm->w(), old_h = pxm->h();
+    pxm->scale(pxm->cache_w(), pxm->cache_h(), 0, 1); // transiently
+    draw_cached_pattern_(pxm, pat, XP, YP, WP, HP, cx, cy, pxm->cache_w(), pxm->cache_h());
+    pxm->scale(old_w, old_h, 0, 1); // back
   }
   cairo_set_matrix(cairo_, &matrix);
 }
