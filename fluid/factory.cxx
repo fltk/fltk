@@ -868,7 +868,7 @@ public:
   int tsize_;
   Fl_Color tcolor_;
   Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=NULL)
-  : Fl_Group(x, y, w, h, l) 
+  : Fl_Group(x, y, w, h, l)
   { // set the defaults that Fl_Terminal would set
     box(FL_DOWN_BOX);
     color(FL_FOREGROUND_COLOR);

@@ -498,7 +498,7 @@ protected:
                    int leftClip, int rightClip) const;
 
   int handle_rmb(int readonly);
-  
+
   void draw_line_numbers(bool clearAll);
 
   void clear_rect(int style, int x, int y, int width, int height) const;

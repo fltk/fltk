@@ -910,7 +910,7 @@ void Fl_Cairo_Graphics_Driver::uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_
 }
 
 
-void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, 
+void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP,
                                           int cx, int cy) {
   cairo_pattern_t *pat = NULL;
   float s = wld_scale * scale();
@@ -999,7 +999,7 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 
-void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, 
+void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP,
                                           int cx, int cy) {
   cairo_pattern_t *pat = NULL;
   float s = wld_scale * scale();

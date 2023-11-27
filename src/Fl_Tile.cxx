@@ -56,7 +56,7 @@
   In this mode, the child that is marked resizable() will behave as it would
   in a regular Fl_Group widget.
   When dragging edges or intersections with the mouse, Fl_Tile will ensure that
-  none of the children shrinks to a size that is smaller than requested. 
+  none of the children shrinks to a size that is smaller than requested.
   When resizing the Fl_Tile group, size ranges are not enforced by the tile.
   Instead, the size range of the enclosing window should be limited to a
   valid range.
@@ -155,7 +155,7 @@ static Fl_Cursor Fl_Tile_cursors[4] = {
 static int fl_min(int a, int b) { return a<b ? a : b; }
 static int fl_max(int a, int b) { return a>b ? a : b; }
 
-/** 
+/**
  Request for children to change their layout.
 
  drag_intersection requests that all children with the left edge at old_l to
@@ -695,7 +695,7 @@ int Fl_Tile::handle(int event) {
     // if (damage()) return 1; // don't fall behind
   case FL_RELEASE: {
     if (!sdrag) break;
-    Fl_Widget* r = resizable(); 
+    Fl_Widget* r = resizable();
     if (size_range_ || !r) r = this;
     int newx;
     if (sdrag&DRAGH) {
