@@ -63,6 +63,9 @@ struct gl_start_support { // to support use of gl_start / gl_finish
 
 
 static EGLConfig wld_egl_conf = NULL;
+static EGLint swap_interval_ = 1;
+static EGLint max_swap_interval = 1000;
+static EGLint min_swap_interval = 0;
 
 
 EGLDisplay Fl_Wayland_Gl_Window_Driver::egl_display = EGL_NO_DISPLAY;
@@ -169,6 +172,9 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
   if (n == 0) {
     Fl::fatal("failed to choose an EGL config\n");
   }
+
+  eglGetConfigAttrib(egl_display, g->egl_conf, EGL_MAX_SWAP_INTERVAL, &max_swap_interval);
+  eglGetConfigAttrib(egl_display, g->egl_conf, EGL_MIN_SWAP_INTERVAL, &min_swap_interval);
 
   first = g;
   return g;
@@ -431,6 +437,18 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void Fl_Wayland_Gl_Window_Driver::swap_interval(int interval) {
+  if (interval < min_swap_interval) interval = min_swap_interval;
+  if (interval > max_swap_interval) interval = max_swap_interval;
+  if (egl_display && eglSwapInterval(egl_display, interval))
+    swap_interval_ = interval;
+  // printf("swap_interval_=%d\n",swap_interval_);
+}
+
+
+int Fl_Wayland_Gl_Window_Driver::swap_interval() const {
+  return swap_interval_;
+}
 
 FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc) { return (EGLContext)rc; }
 

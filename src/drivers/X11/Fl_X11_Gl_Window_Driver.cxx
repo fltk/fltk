@@ -397,40 +397,89 @@ char Fl_X11_Gl_Window_Driver::swap_type() {
   return copy;
 }
 
-typedef void (*SWAPINTERVALPROC) (Display *dpy, GLXDrawable drawable, int interval);
-static SWAPINTERVALPROC glXSwapIntervalEXT = NULL;
-static bool glXSwapIntervalChecked = false;
-static void checkGlxXSwapInterval() {
-  if (!glXSwapIntervalChecked) {
-    glXSwapIntervalChecked = true;
-    glXSwapIntervalEXT = (SWAPINTERVALPROC)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+
+// Start of swap_interval implementation in the three possibel ways for X11
+
+// -1 = not yet initialized, 0 = none found, 1 = GLX, 2 = MESA, 3 = SGI
+static signed char swap_interval_type = -1;
+
+typedef void (*GLX_Set_Swap_Iterval_Proc) (Display *dpy, GLXDrawable drawable, int interval);
+typedef int (*MESA_Set_Swap_Iterval_Proc) (unsigned int interval);
+typedef int (*MESA_Get_Swap_Iterval_Proc) ();
+typedef int (*SGI_Set_Swap_Iterval_Proc) (int interval);
+
+static union {
+  GLX_Set_Swap_Iterval_Proc glXSwapIntervalEXT = NULL;
+  MESA_Set_Swap_Iterval_Proc glXSwapIntervalMESA;
+  SGI_Set_Swap_Iterval_Proc glXSwapIntervalSGI;
+};
+
+static MESA_Get_Swap_Iterval_Proc glXGetSwapIntervalMESA = NULL;
+
+static void init_swap_interval() {
+  if (swap_interval_type != -1) return;
+  int major = 1, minor = 0;
+  glXQueryVersion(fl_display, &major, &minor);
+  swap_interval_type = 0;
+  const char *extensions = glXQueryExtensionsString(fl_display, fl_screen);
+  if (strstr(extensions, "GLX_EXT_swap_control") && ((major > 1) || (minor >= 3))) {
+    glXSwapIntervalEXT = (GLX_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+    swap_interval_type = 1;
+  } else if (strstr(extensions, "GLX_MESA_swap_control")) {
+    glXSwapIntervalMESA = (MESA_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalMESA");
+    glXGetSwapIntervalMESA = (MESA_Get_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXGetSwapIntervalMESA");
+    swap_interval_type = 2;
+  } else if (strstr(extensions, "GLX_SGI_swap_control")) {
+    glXSwapIntervalSGI = (SGI_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
+    swap_interval_type = 3;
   }
 }
 
 void Fl_X11_Gl_Window_Driver::swap_interval(int interval) {
   if (!fl_xid(pWindow))
     return;
-  if (!glXSwapIntervalChecked) checkGlxXSwapInterval();
-  if (glXSwapIntervalEXT) {
-    glXSwapIntervalEXT(fl_display, fl_xid(pWindow), interval);
+  if (swap_interval_type == -1)
+    init_swap_interval();
+  switch (swap_interval_type) {
+    case 1:
+      if (glXSwapIntervalEXT)
+        glXSwapIntervalEXT(fl_display, fl_xid(pWindow), interval);
+      break;
+    case 2: 
+      if (glXSwapIntervalMESA)
+        glXSwapIntervalMESA((unsigned int)interval);
+      break;
+    case 3: 
+      if (glXSwapIntervalSGI)
+        glXSwapIntervalSGI(interval);
+      break;
   }
 }
 
 int Fl_X11_Gl_Window_Driver::swap_interval() const {
   if (!fl_xid(pWindow))
     return -1;
-  if (!glXSwapIntervalChecked) checkGlxXSwapInterval();
-  if (!glXSwapIntervalEXT) return -1;
-  static bool ext_checked = false, ext_exists = false;
-  if (!ext_checked) {
-    ext_checked = true;
-    ext_exists = (strstr(glXQueryExtensionsString(fl_display, fl_screen), "GLX_EXT_swap_control") != NULL);
+  if (swap_interval_type == -1)
+    init_swap_interval();
+  int interval = -1;
+  switch (swap_interval_type) {
+    case 1: {
+      unsigned int val = 0;
+      glXQueryDrawable(fl_display, fl_xid(pWindow), 0x20F1 /*GLX_SWAP_INTERVAL_EXT*/, &val);
+      interval = (int)val;
+      break; }
+    case 2: 
+      if (glXGetSwapIntervalMESA)
+        interval = glXGetSwapIntervalMESA();
+      break;
+    case 3:
+      // not available
+      break;
   }
-  if (!ext_exists) return -1;
-  unsigned int interval = -1;
-  glXQueryDrawable(fl_display, fl_xid(pWindow), 0x20F1 /*GLX_SWAP_INTERVAL_EXT*/, &interval);
   return interval;
 }
+
+// end of swap_interval implementation
 
 void Fl_X11_Gl_Window_Driver::waitGL() {
   glXWaitGL();
