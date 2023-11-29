@@ -23,7 +23,9 @@
 // #define CLASSIC_MODE
 
 int main(int argc, char** argv) {
-#if 0 // Sample code form Fl_Tile documentation
+
+#if 0 // Sample code from Fl_Tile documentation
+
   Fl_Window win(400, 300, "My App");
 
   Fl_Tile tile(0, 0, 400, 300);
@@ -45,9 +47,11 @@ int main(int argc, char** argv) {
 
   win.end();
   win.resizable(tile);
-  win.show(argc,argv);
   win.size_range(200, 50);
-#else
+  win.show(argc,argv);
+
+#else // new Fl_Tile test code
+
   Fl_Double_Window window(300, 300);
   window.box(FL_NO_BOX);
   window.resizable(window);
@@ -121,7 +125,10 @@ int main(int argc, char** argv) {
 #endif
 
   w1.show();
+  window.size_range(90, 90);
   window.show(argc,argv);
-#endif
+
+#endif // new Fl_Tile test code
+
   return Fl::run();
 }
