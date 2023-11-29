@@ -325,6 +325,57 @@ void Fl_WinAPI_Gl_Window_Driver::swap_buffers() {
 #  endif
 }
 
+
+// Start of swap_interval implementation in the three possibel ways for X11
+
+// -1 = not yet initialized, 0 = none found, 1 = GLX, 2 = MESA, 3 = SGI
+static signed char swap_interval_type = -1;
+
+typedef const char *(WINAPI *WGL_Get_Extension_String_Proc)();
+typedef BOOL (WINAPI *WGL_Swap_Iterval_Proc)(int interval);
+typedef int (WINAPI *WGL_Get_Swap_Iterval_Proc)();
+
+static WGL_Swap_Iterval_Proc wglSwapIntervalEXT = NULL;
+static WGL_Get_Swap_Iterval_Proc wglGetSwapIntervalEXT = NULL;
+
+static void init_swap_interval() {
+  if (swap_interval_type != -1)
+    return;
+  swap_interval_type = 0;
+  WGL_Get_Extension_String_Proc wglGetExtensionsStringEXT = NULL;
+  wglGetExtensionsStringEXT = (WGL_Get_Extension_String_Proc)wglGetProcAddress("wglGetExtensionsStringEXT");
+  if (!wglGetExtensionsStringEXT)
+    return;
+  const char *extensions = wglGetExtensionsStringEXT();
+  if (extensions && strstr(extensions, "WGL_EXT_swap_control")) {
+    wglSwapIntervalEXT = (WGL_Swap_Iterval_Proc)wglGetProcAddress("wglSwapIntervalEXT");
+    wglGetSwapIntervalEXT = (WGL_Get_Swap_Iterval_Proc)wglGetProcAddress("wglGetSwapIntervalEXT");
+    swap_interval_type = 1;
+  }
+}
+
+void Fl_WinAPI_Gl_Window_Driver::swap_interval(int interval) {
+  if (swap_interval_type == -1)
+    init_swap_interval();
+  if (swap_interval_type == 1) {
+    if (wglSwapIntervalEXT)
+      wglSwapIntervalEXT(interval);
+  }
+}
+
+int Fl_WinAPI_Gl_Window_Driver::swap_interval() const {
+  if (swap_interval_type == -1)
+    init_swap_interval();
+  int interval = -1;
+  if (swap_interval_type == 1) {
+    if (wglGetSwapIntervalEXT)
+      interval = wglGetSwapIntervalEXT();
+  }
+  return interval;
+}
+
+// end of swap_interval implementation
+
 #if HAVE_GL_OVERLAY
 #endif
 
