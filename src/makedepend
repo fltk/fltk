@@ -2439,6 +2439,7 @@ Fl_Input.o: ../FL/Fl_Image.H
 Fl_Input.o: ../FL/Fl_Input.H
 Fl_Input.o: ../FL/Fl_Input_.H
 Fl_Input.o: ../FL/Fl_Int_Input.H
+Fl_Input.o: ../FL/Fl_Menu_Item.H
 Fl_Input.o: ../FL/Fl_Multiline_Input.H
 Fl_Input.o: ../FL/Fl_Multiline_Output.H
 Fl_Input.o: ../FL/Fl_Output.H
@@ -3929,6 +3930,9 @@ Fl_Text_Display.o: ../FL/Fl_Export.H
 Fl_Text_Display.o: ../FL/Fl_Graphics_Driver.H
 Fl_Text_Display.o: ../FL/Fl_Group.H
 Fl_Text_Display.o: ../FL/Fl_Image.H
+Fl_Text_Display.o: ../FL/Fl_Input.H
+Fl_Text_Display.o: ../FL/Fl_Input_.H
+Fl_Text_Display.o: ../FL/Fl_Menu_Item.H
 Fl_Text_Display.o: ../FL/Fl_Pixmap.H
 Fl_Text_Display.o: ../FL/Fl_Plugin.H
 Fl_Text_Display.o: ../FL/Fl_Preferences.H

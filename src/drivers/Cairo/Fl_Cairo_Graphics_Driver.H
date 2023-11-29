@@ -153,7 +153,7 @@ public:
   void ps_translate(int, int);
   void ps_untranslate();
 
-  void draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy);
+  void draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy, int cache_w, int cache_h);
   void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) FL_OVERRIDE;
   void draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   void cache(Fl_RGB_Image *rgb) FL_OVERRIDE;

@@ -953,9 +953,9 @@ J1:
 */
 Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* L)
   : Fl_Group(X, Y, W, H, L),
+    linespacing_(0),
     scrollbar(0, 0, 0, 0, 0), // they will be resized by draw()
-    hscrollbar(0, 0, 0, 0, 0),
-    linespacing_(0)
+    hscrollbar(0, 0, 0, 0, 0)
 {
   box(FL_NO_BOX);
   align(FL_ALIGN_BOTTOM);

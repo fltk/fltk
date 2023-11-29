@@ -145,12 +145,11 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   //lang_level_ = 3;
   lang_level_ = 2;
   mask = 0;
-#endif
-  ps_filename_ = NULL;
-  scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
   clip_ = NULL;
-  what = NONE;
+  scale_x = scale_y = 1.;
+#endif
+  ps_filename_ = NULL;
 }
 
 /** \brief The destructor. */
@@ -1750,9 +1749,9 @@ Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Co
     if (s != 1) {
       ps->clocale_printf("GR GR GS %f %f SC GS\n", s, s);
     }
+    Fl::get_color(background, ps->bg_r, ps->bg_g, ps->bg_b);
 #endif
     ps->scale_x = ps->scale_y = s;
-    Fl::get_color(background, ps->bg_r, ps->bg_g, ps->bg_b);
   }
 }
 

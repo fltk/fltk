@@ -61,6 +61,8 @@ public:
   void label(Fl_Widget*w) FL_OVERRIDE;
   void label(Fl_Menu_Item*m) FL_OVERRIDE;
   void uncache() FL_OVERRIDE;
+  int cache_w() {return cache_w_;}
+  int cache_h() {return cache_h_;}
 };
 
 #endif
