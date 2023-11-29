@@ -1103,8 +1103,8 @@ Fl_Terminal::Utf8Char* Fl_Terminal::u8c_cursor(void) {
 }
 
 /// Return scrollbar width if visible, or 0 if not visible.
-int Fl_Terminal::vscroll_width(void) const {
-  return(vscroll_->visible() ? vscroll_->w() : 0);
+int Fl_Terminal::scrollbar_width(void) const {
+  return(scrollbar->visible() ? scrollbar->w() : 0);
 }
 
 // Initialize tabstops for terminal
@@ -1157,35 +1157,35 @@ void Fl_Terminal::clear_tabstop(void) {
 //    the scrollbar's value indicating how far back into history.
 //
 void Fl_Terminal::update_scrollbar(void) {
-  int value_before = vscroll_->value();
+  int value_before = scrollbar->value();
   // Enforce minimum tabsize of 10 or width of scrollbar
   //   The minimum vert size of tab should be scrollbar's width,
   //   but not smaller than 10 pixels, so user can grab it easily.
   {
     float tabsize = disp_rows() / float(disp_rows() + history_use());
-    float minpix  = float(MAX(10, vscroll_->w())); // scroll width preferred, 10pix minimum
-    float minfrac = minpix/vscroll_->h();          // scroll wants a fraction, so convert
-    tabsize = MAX(minfrac, tabsize);               // use the best fractional size
-    vscroll_->slider_size(tabsize);
+    float minpix  = float(MAX(10, scrollbar->w())); // scroll width preferred, 10pix minimum
+    float minfrac = minpix/scrollbar->h();          // scroll wants a fraction, so convert
+    tabsize = MAX(minfrac, tabsize);                // use the best fractional size
+    scrollbar->slider_size(tabsize);
   }
-  vscroll_->range(hist_use(), 0);                  // 'minimum' is larger than 'max'
-  if (value_before == 0) vscroll_->value(0);       // was at bottom? stay at bottom
+  scrollbar->range(hist_use(), 0);                  // 'minimum' is larger than 'max'
+  if (value_before == 0) scrollbar->value(0);       // was at bottom? stay at bottom
   // Ensure scrollbar in proper position
-  update_screen_xywh();                            // ensure scrn_ up to date first
+  update_screen_xywh();                             // ensure scrn_ up to date first
   int sx = scrn_.r() + margin_.right();
   int sy = scrn_.y() - margin_.top();
   int sw = scrollbar_actual_size();
   int sh = scrn_.h() + margin_.top() + margin_.bottom();
-  if (vscroll_->x() != sx ||
-      vscroll_->y() != sy ||
-      vscroll_->w() != sw ||
-      vscroll_->h() != sh) {
-    vscroll_->resize(sx, sy, sw, sh);
+  if (scrollbar->x() != sx ||
+      scrollbar->y() != sy ||
+      scrollbar->w() != sw ||
+      scrollbar->h() != sh) {
+    scrollbar->resize(sx, sy, sw, sh);
     init_sizes();         // tell Fl_Group child changed size..
     update_screen_xywh(); // ensure scrn_ is aware of sw change
     display_modified();   // redraw Fl_Terminal since scroller changed size
   }
-  vscroll_->redraw();     // redraw scroll always
+  scrollbar->redraw();     // redraw scroll always
 }
 
 // Refit the display to match screen
@@ -1664,7 +1664,7 @@ int Fl_Terminal::xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol) const {
   if (X<scrn_.x()) return -3;                       // lt (off left edge)
   if (X>scrn_.r()) return -4;                       // rt (off right edge)
   // Find toprow of what's currently drawn on screen
-  int toprow = disp_srow() - vscroll_->value();
+  int toprow = disp_srow() - scrollbar->value();
   // Find row the 'Y' value is in
   grow = toprow + ( (Y-scrn_.y()) / current_style_->fontheight());
   return x_to_glob_col(X, grow, gcol);
@@ -2103,7 +2103,7 @@ void Fl_Terminal::delete_chars(int rep) {
 void Fl_Terminal::clear_history(void) {
   // Adjust history use
   ring_.clear_hist();
-  vscroll_->value(0);   // zero scroll position
+  scrollbar->value(0);   // zero scroll position
   // Clear entire history buffer
   for (int hrow=0; hrow<hist_rows(); hrow++) {
     Utf8Char *u8c = u8c_hist_row(hrow);          // walk history rows..
@@ -3054,17 +3054,17 @@ void Fl_Terminal::scrollbar_cb(Fl_Widget*, void* userdata) {
 // Handle mouse selection autoscrolling
 void Fl_Terminal::autoscroll_timer_cb2(void) {
   // Move scrollbar
-  //   NOTE: vscroll is inverted; 0=tab at bot, so minimum() is really max
+  //   NOTE: scrollbar is inverted; 0=tab at bot, so minimum() is really max
   //
   int amt  = autoscroll_amt_;                      // (amt<0):above top, (amt>0):below bottom
-  int val  = vscroll_->value();
-  int max  = int(vscroll_->minimum()+.5);          // NOTE: minimum() is really max
+  int val  = scrollbar->value();
+  int max  = int(scrollbar->minimum()+.5);         // NOTE: minimum() is really max
   val = (amt<0) ? (val+clamp((-amt/10),1,5)) :     // above top edge?
         (amt>0) ? (val-clamp((+amt/10),1,5)) : 0;  // below bot edge?
   val = clamp(val,0,max);                          // limit val to scroll's range
-  int diff = ABS(val - vscroll_->value());         // how far scroll tab moved up/dn
+  int diff = ABS(val - scrollbar->value());        // how far scroll tab moved up/dn
   // Move scrollbar
-  vscroll_->value(val);
+  scrollbar->value(val);
   // Extend selection
   if (diff) {                                      // >0 if up or down
     int srow = select_.srow(), scol = select_.scol();
@@ -3176,13 +3176,13 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   // Create scrollbar
   //    Final position/size will be set by update_screen() below
   //
-  vscroll_ = new Fl_Scrollbar(x(), y(), scrollbar_size_, h());
-  vscroll_->type(FL_VERTICAL);
-  vscroll_->linesize(1);
-  vscroll_->slider_size(1);
-  vscroll_->range(0.0, 0.0);
-  vscroll_->value(0);
-  vscroll_->callback(scrollbar_cb, (void*)this);
+  scrollbar = new Fl_Scrollbar(x(), y(), scrollbar_size_, h());
+  scrollbar->type(FL_VERTICAL);
+  scrollbar->linesize(1);
+  scrollbar->slider_size(1);
+  scrollbar->range(0.0, 0.0);
+  scrollbar->value(0);
+  scrollbar->callback(scrollbar_cb, (void*)this);
   resizable(0);
   Fl_Group::box(FL_DOWN_FRAME);
   Fl_Group::color(FL_BLACK);  // black bg by default
@@ -3297,7 +3297,7 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   draw_row_bg(grow, X, Y);
 
   // Draw forground text
-  int  scrollval = vscroll_->value();
+  int  scrollval = scrollbar->value();
   int  disp_top = (disp_srow() - scrollval);              // top row we need to view
   int  drow = grow - disp_top;                            // disp row
   bool inside_display = is_disp_ring_row(grow);           // row inside 'display'?
@@ -3361,7 +3361,7 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   Handles attributes, colors, text selections, cursor.
 */
 void Fl_Terminal::draw_buff(int Y) const {
-  int srow = disp_srow() - vscroll_->value();
+  int srow = disp_srow() - scrollbar->value();
   int erow = srow + disp_rows();
   const int rowheight = current_style_->fontheight();
   for (int grow=srow; (grow<erow) && (Y<scrn_.b()); grow++) {
@@ -3396,7 +3396,7 @@ void Fl_Terminal::draw(void) {
     int Y = y() + Fl::box_dy(box());
     int W = w() - Fl::box_dw(box());
     int H = h() - Fl::box_dh(box());
-    W -= vscroll_width();
+    W -= scrollbar_width();
     fl_rectf(X,Y,W,H);
   }
 
@@ -3529,7 +3529,7 @@ int Fl_Terminal::handle_selection(int e) {
 */
 int Fl_Terminal::handle(int e) {
   int ret = Fl_Group::handle(e);
-  if (Fl::event_inside(vscroll_)) return ret;             // early exit for scrollbar
+  if (Fl::event_inside(scrollbar)) return ret;             // early exit for scrollbar
   switch (e) {
     case FL_ENTER:
     case FL_LEAVE:
@@ -3565,7 +3565,7 @@ int Fl_Terminal::handle(int e) {
           case FL_Page_Up: case FL_Page_Down:
           case FL_Up:      case FL_Down:
           case FL_Left:    case FL_Right:
-            return vscroll_->handle(e);
+            return scrollbar->handle(e);
         }
       }
       break;

@@ -785,9 +785,14 @@ private:
   ////// Fl_Terminal members + methods
   //////
   ///////////////////////////////////////////////////////////////
+public:
+  /**
+    Vertical scrollbar. Public, so that it can be accessed directly.
+    \todo Support scrollbar_left/right() - See Fl_Browser_::scrollbar docs
+   */
+  Fl_Scrollbar *scrollbar;       // vertical scrollbar (value: rows above disp_chars[])
 private:
   bool          fontsize_defer_; // flag defers font calcs until first draw() (issue 837)
-  Fl_Scrollbar *vscroll_;        // vertical scrollbar (value: rows above disp_chars[])
   int           scrollbar_size_; // local preference for scrollbar size
   CharStyle     *current_style_; // current font, attrib, color..
   OutFlags      oflags_;         // output translation flags (CR_TO_LF, LF_TO_CR, LF_TO_CRLF)
@@ -805,7 +810,7 @@ private:
   bool           ansi_;             // if true, parse ansi codes (default on)
   char          *tabstops_;         // array of tab stops (0|1)   \__ TODO: This should probably
   int            tabstops_size_;    // size of tabstops[] array   /         be a class "TabStops".
-  Fl_Rect        scrn_;             // terminal screen xywh inside box(), margins, and vscroll
+  Fl_Rect        scrn_;             // terminal screen xywh inside box(), margins, and scrollbar
   int            autoscroll_dir_;   // 0=autoscroll timer off, 3=scrolling up, 4=scrolling down
   int            autoscroll_amt_;   // #pixels above or below edge, used for autoscroll speed
   RedrawStyle    redraw_style_;     // NO_REDRAW, RATE_LIMITED, PER_WRITE
@@ -832,7 +837,7 @@ private:
   void create_ring(int drows, int dcols, int hrows);
   void init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer);
 protected:
-  int  vscroll_width(void) const;
+  int  scrollbar_width(void) const;
 private:
   // Tabstops
   void init_tabstops(int newsize);
