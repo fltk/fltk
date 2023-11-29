@@ -42,8 +42,6 @@ get_setting_sync(DBusConnection *const connection,
 	DBusMessage *message;
 	DBusMessage *reply;
 
-	dbus_error_init(&error);
-
 	message = dbus_message_new_method_call(
 		"org.freedesktop.portal.Desktop",
 		"/org/freedesktop/portal/desktop",
@@ -58,6 +56,8 @@ get_setting_sync(DBusConnection *const connection,
 	if (!success)
 		return NULL;
 
+	dbus_error_init(&error);
+
 	reply = dbus_connection_send_with_reply_and_block(
 			     connection,
 			     message,
@@ -66,9 +66,12 @@ get_setting_sync(DBusConnection *const connection,
 
 	dbus_message_unref(message);
 
-	if (dbus_error_is_set(&error))
+	if (dbus_error_is_set(&error)) {
+		dbus_error_free(&error);
 		return NULL;
+	}
 
+	dbus_error_free(&error);
 	return reply;
 }
 
