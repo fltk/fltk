@@ -1,7 +1,7 @@
 //
 // Interface with the libdecor library for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -203,6 +203,7 @@ struct libdecor_frame_gtk {
   char *title;
   enum libdecor_capabilities capabilities;
   struct border_component_gtk *active;
+  struct border_component_gtk *touch_active;
   struct border_component_gtk *focus;
   struct border_component_gtk *grab;
   bool shadow_showing;
