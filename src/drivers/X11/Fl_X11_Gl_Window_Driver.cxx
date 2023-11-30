@@ -409,10 +409,10 @@ typedef int (*MESA_Get_Swap_Iterval_Proc) ();
 typedef int (*SGI_Set_Swap_Iterval_Proc) (int interval);
 
 static union {
-  GLX_Set_Swap_Iterval_Proc glXSwapIntervalEXT = NULL;
-  MESA_Set_Swap_Iterval_Proc glXSwapIntervalMESA;
-  SGI_Set_Swap_Iterval_Proc glXSwapIntervalSGI;
-};
+  GLX_Set_Swap_Iterval_Proc EXT;
+  MESA_Set_Swap_Iterval_Proc MESA;
+  SGI_Set_Swap_Iterval_Proc SGI;
+} glXSwapInterval = { NULL };
 
 static MESA_Get_Swap_Iterval_Proc glXGetSwapIntervalMESA = NULL;
 
@@ -423,14 +423,14 @@ static void init_swap_interval() {
   swap_interval_type = 0;
   const char *extensions = glXQueryExtensionsString(fl_display, fl_screen);
   if (strstr(extensions, "GLX_EXT_swap_control") && ((major > 1) || (minor >= 3))) {
-    glXSwapIntervalEXT = (GLX_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+    glXSwapInterval.EXT = (GLX_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
     swap_interval_type = 1;
   } else if (strstr(extensions, "GLX_MESA_swap_control")) {
-    glXSwapIntervalMESA = (MESA_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalMESA");
+    glXSwapInterval.MESA = (MESA_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalMESA");
     glXGetSwapIntervalMESA = (MESA_Get_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXGetSwapIntervalMESA");
     swap_interval_type = 2;
   } else if (strstr(extensions, "GLX_SGI_swap_control")) {
-    glXSwapIntervalSGI = (SGI_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
+    glXSwapInterval.SGI = (SGI_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
     swap_interval_type = 3;
   }
 }
@@ -442,16 +442,16 @@ void Fl_X11_Gl_Window_Driver::swap_interval(int interval) {
     init_swap_interval();
   switch (swap_interval_type) {
     case 1:
-      if (glXSwapIntervalEXT)
-        glXSwapIntervalEXT(fl_display, fl_xid(pWindow), interval);
+      if (glXSwapInterval.EXT)
+        glXSwapInterval.EXT(fl_display, fl_xid(pWindow), interval);
       break;
     case 2: 
-      if (glXSwapIntervalMESA)
-        glXSwapIntervalMESA((unsigned int)interval);
+      if (glXSwapInterval.MESA)
+        glXSwapInterval.MESA((unsigned int)interval);
       break;
     case 3: 
-      if (glXSwapIntervalSGI)
-        glXSwapIntervalSGI(interval);
+      if (glXSwapInterval.SGI)
+        glXSwapInterval.SGI(interval);
       break;
   }
 }
