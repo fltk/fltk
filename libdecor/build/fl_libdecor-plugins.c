@@ -511,6 +511,9 @@ struct wl_object { // copied from wayland-private.h
 // replace libdecor's pointer_button by FLTK's
 void use_FLTK_pointer_button(struct libdecor_frame *frame) {
 #if HAVE_GTK
+  static const char *my_plugin = NULL;
+  if (!my_plugin) my_plugin = get_libdecor_plugin_description(frame);
+  if (!my_plugin || strcmp(my_plugin, "GTK3 plugin")) return;
   static struct wl_pointer_listener *fltk_listener = NULL;
   if (!gtk_shell || fltk_listener) return;
   struct libdecor_frame_gtk *lfg = (struct libdecor_frame_gtk *)frame;
