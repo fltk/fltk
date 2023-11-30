@@ -43,6 +43,7 @@ char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, c
 char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value);
 
 void run_shell_command(const Fl_String &cmd, int flags);
+bool shell_command_running(void);
 
 class Fl_Process {
 public:

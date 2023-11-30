@@ -105,7 +105,12 @@
 static Fl_String fltk_config_cmd;
 static Fl_Process s_proc;
 
-
+/**
+ See if shell command is running (public)
+ */
+bool shell_command_running() {
+  return s_proc.desc() ? true : false;
+}
 
 /**
  Reads an entry from the group. A default value must be
@@ -284,6 +289,7 @@ void Fl_Process::clean_close(HANDLE& h) {
 }
 
 #endif
+
 
 /**
  Prepare FLUID for running a shell command according to the command flags.

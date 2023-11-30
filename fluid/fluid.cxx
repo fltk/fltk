@@ -813,6 +813,11 @@ void revert_cb(Fl_Widget *,void *) {
  If the design was modified, a dialog will ask for confirmation.
  */
 void exit_cb(Fl_Widget *,void *) {
+  if (shell_command_running()) {
+    fl_alert("Previous shell command still running!");
+    return;
+  }
+
   flush_text_widgets();
 
   // verify user intention
