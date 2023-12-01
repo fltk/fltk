@@ -1055,12 +1055,18 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
        BUILD="WAYLANDX11"
        graphics="Wayland or X11 with cairo"
        ])
-#     CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
-#     CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
+      AS_IF([$PKGCONFIG --exists 'libdecor-0 >= 0.2.0'],
+      [
+        plugin_dir="$($PKGCONFIG --variable=libdir libdecor-0)/libdecor/plugins-1"
+        CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR"
+        CFLAGS="$CFLAGS -DLIBDECOR_PLUGIN_DIR=\\\"$plugin_dir\\\" "
+        LIBS="$LIBS $($PKGCONFIG --libs libdecor-0)"
+      ],
+      [CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0 -DLIBDECOR_PLUGIN_DIR=\"\" "]
+      )
       LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangocairo) "
       AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )
       LIBS="$LIBS -ldl"
-#     CXXFLAGS="$CXXFLAGS -I../libdecor/src"
       DSOFLAGS="$LIBS $DSOFLAGS"
       enable_pango=yes
       LIBDECORDIR="libdecor/build"

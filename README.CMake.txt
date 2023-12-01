@@ -232,10 +232,12 @@ OPTION_USE_STD - default OFF
    or major (maybe 4.0.0) release which will default to use std::string
    and more modern C++ features.
 
-OPTION_USE_SYSTEM_LIBDECOR - default OFF
-   This option makes FLTK use package libdecor-0 to draw window titlebars
-   under Wayland. It's mainly meant for future use, when that package
-   and its plugins will be part of major Linux distributions.
+OPTION_USE_SYSTEM_LIBDECOR - default ON
+   This option makes FLTK use package libdecor-0-dev to draw window titlebars
+   under Wayland. When OFF or when this package has a version < 0.2.0, FLTK
+   uses its bundled copy of libdecor to draw window titlebars.
+   As of november 2023, version 0.2.0 of package libdecor-0-dev is available
+   only in testing distributions.
 
 Documentation options: these options are only available if `doxygen' is
    installed and found by CMake. PDF related options require also `latex'.

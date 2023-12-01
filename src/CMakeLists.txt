@@ -521,10 +521,7 @@ if (OPTION_USE_WAYLAND)
   endif (DBUS_FOUND)
   if (OPTION_USE_SYSTEM_LIBDECOR)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUSE_SYSTEM_LIBDECOR")
-    get_filename_component(PATH_TO_SHARED_LIBS ${HAVE_LIB_PANGO} DIRECTORY)
-    set (LIBDECOR_PLUGIN_DIR "\\\"${PATH_TO_SHARED_LIBS}/libdecor/plugins-1\\\" " )
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLIBDECOR_PLUGIN_DIR=${LIBDECOR_PLUGIN_DIR} ")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_SYSTEM_LIBDECOR")
     if (GTK_FOUND)
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_GTK")
     endif (GTK_FOUND)
@@ -690,18 +687,18 @@ if (UNIX AND OPTION_USE_WAYLAND)
     )
     list (APPEND STATIC_FILES "xdg-decoration-protocol.c")
     list (APPEND SHARED_FILES "xdg-decoration-protocol.c")
-    if (GTK_FOUND AND OPTION_ALLOW_GTK_PLUGIN)
-      add_custom_command(
-        OUTPUT gtk-shell-protocol.c gtk-shell-client-protocol.h
-        COMMAND wayland-scanner private-code ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml gtk-shell-protocol.c
-        COMMAND wayland-scanner client-header ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml gtk-shell-client-protocol.h
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml
-        VERBATIM
-      )
-      list (APPEND STATIC_FILES "gtk-shell-protocol.c")
-      list (APPEND SHARED_FILES "gtk-shell-protocol.c")
-    endif (GTK_FOUND AND OPTION_ALLOW_GTK_PLUGIN)
   endif (NOT OPTION_USE_SYSTEM_LIBDECOR)
+  if (GTK_FOUND AND (OPTION_USE_SYSTEM_LIBDECOR OR OPTION_ALLOW_GTK_PLUGIN))
+    add_custom_command(
+      OUTPUT gtk-shell-protocol.c gtk-shell-client-protocol.h
+      COMMAND wayland-scanner private-code ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml gtk-shell-protocol.c
+      COMMAND wayland-scanner client-header ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml gtk-shell-client-protocol.h
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/gtk-shell.xml
+      VERBATIM
+    )
+    list (APPEND STATIC_FILES "gtk-shell-protocol.c")
+    list (APPEND SHARED_FILES "gtk-shell-protocol.c")
+  endif (GTK_FOUND AND (OPTION_USE_SYSTEM_LIBDECOR OR OPTION_ALLOW_GTK_PLUGIN))
   add_custom_command(
     OUTPUT text-input-protocol.c text-input-client-protocol.h
     COMMAND wayland-scanner private-code ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml text-input-protocol.c

@@ -1792,25 +1792,6 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
 }
 
 
-#if defined(USE_SYSTEM_LIBDECOR) && USE_SYSTEM_LIBDECOR
-// This is only to fix a bug in libdecor where what libdecor_frame_set_min_content_size()
-// does is often destroyed by libdecor-cairo.
-static void delayed_minsize(Fl_Window *win) {
-  struct wld_window *wl_win = fl_wl_xid(win);
-  Fl_Window_Driver *driver = Fl_Window_Driver::driver(win);
-  if (wl_win->kind == Fl_Wayland_Window_Driver::DECORATED) {
-    float f = Fl::screen_scale(win->screen_num());
-    libdecor_frame_set_min_content_size(wl_win->frame, driver->minw()*f, driver->minh()*f);
-  }
-  bool need_resize = false;
-  int W = win->w(), H = win->h();
-  if (W < driver->minw()) { W = driver->minw(); need_resize = true; }
-  if (H < driver->minh()) { H = driver->minh(); need_resize = true; }
-  if (need_resize) win->size(W, H);
-}
-#endif
-
-
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   struct wld_window *fl_win = fl_wl_xid(pWindow);
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
@@ -1890,11 +1871,6 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         xdg_surface_set_window_geometry(fl_win->xdg_surface, 0, 0, W, H);
         //printf("xdg_surface_set_window_geometry: %dx%d\n",W, H);
       }
-#if defined(USE_SYSTEM_LIBDECOR) && USE_SYSTEM_LIBDECOR
-      if (W < minw() || H < minh()) {
-        Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_minsize, pWindow);
-      }
-#endif
     } else {
       if (!in_handle_configure && xdg_toplevel()) {
         // Wayland doesn't seem to provide a reliable way for the app to set the
