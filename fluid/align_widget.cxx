@@ -208,7 +208,7 @@ void align_widget_cb(Fl_Widget*, long how)
     break;
   //---- space evenly
   case 20: // space evenly across
-    left = max; right = min; wdt = 0, n = 0;
+    left = max; right = min; wdt = 0; n = 0;
     for (o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget())
       {

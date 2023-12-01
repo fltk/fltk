@@ -255,7 +255,7 @@ void Fl_Widget_Type::redraw() {
 Fl_Type *sort(Fl_Type *parent) {
   Fl_Type *f,*n=0;
   for (f = parent ? parent->next : Fl_Type::first; ; f = n) {
-    if (!f || (parent && f->level <= parent->level)) return f;
+    if (!f || (parent && f->level <= parent->level)) break;
     n = sort(f);
     if (!f->selected || !f->is_true_widget()) continue;
     Fl_Widget* fw = ((Fl_Widget_Type*)f)->o;
@@ -268,7 +268,9 @@ Fl_Type *sort(Fl_Type *parent) {
     }
     if (g != f) f->move_before(g);
   }
-  parent->layout_widget();
+  if (parent)
+    parent->layout_widget();
+  return f;
 }
 
 ////////////////////////////////////////////////////////////////

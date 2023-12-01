@@ -322,7 +322,7 @@ uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
 }
 
 void Fl_Window_Type::ideal_size(int &w, int &h) {
-  w = 480, h = 320;
+  w = 480; h = 320;
   if (main_window) {
     int sx, sy, sw, sh;
     Fl_Window *win = main_window;
