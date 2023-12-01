@@ -15,6 +15,7 @@
 //
 
 /* Improvements to libdecor.c without modifying libdecor.c itself */
+#if ! USE_SYSTEM_LIBDECOR
 
 #include "xdg-shell-client-protocol.h"
 #ifdef XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION
@@ -126,3 +127,5 @@ LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, str
   wl_display_flush(wl_display);
   return context;
 }
+
+#endif //! USE_SYSTEM_LIBDECOR

@@ -26,7 +26,7 @@ always entirely filled with whatever resizable windows are mapped at any given
 time. Compositors follow either the
 client-side decoration (CSD) rule where client apps draw window titlebars, or the
 server-side decoration (SSD) rule where the compositor draws titlebars. FLTK supports both
-CSD and SSD compositors. It bundles a library called \c libdecor charged of determining whether
+CSD and SSD compositors. It uses a library called \c libdecor charged of determining whether
 a CSD or a SSD compositor is active, and of drawing titlebars in the first case.
 
 Wayland is divided in various protocols that a given compositor may or may not support,
@@ -92,7 +92,7 @@ Overall, and ignoring for now OpenGL usage, FLTK interacts with Wayland as follo
 - When opening the display: FLTK calls \c Fl::add_fd() in \c FL_READ mode to associate
 a  callback function to the socket connecting the client and the compositor.
 - Client to compositor: FLTK calls C functions of the \c libwayland-client.so,
-\c libwayland-cursor.so and \c libxkbcommon.so shared libraries and of the bundled
+\c libwayland-cursor.so and \c libxkbcommon.so shared libraries and of the
 libdecor library. These send suitable messages to the compositor writing to the socket.
 The names of these functions begin with \c wl_, \c xkb_ or \c libdecor_.
 - Compositor to client: the callback function runs when there are data to read in the
@@ -1061,14 +1061,25 @@ and also to draw window titlebars when in CSD mode (see \ref bundled-libdecor).
 \c Libdecor is conceived to be present in a shared library linked to the Wayland
 client application which itself, and if the running Wayland compositor uses CSD mode,
 loads another shared library intended to draw titlebars in a way that best matches the
-Desktop. As of early 2023, two titlebar-drawing \c libdecor plugins are available:
+Desktop. As of late 2023, libdecor is at version 0.2.0 and contains two titlebar-drawing
+plugins:
 - \c libdecor-gtk intended for the Gnome desktop;
 - \c libdecor-cairo for other situations.
 
-Because \c libdecor is not yet in Linux packages, or only in a preliminary state, FLTK bundles the
-most recent source code of \c libdecor and its plugins. This code is included in libfltk.
-FLTK uses \c libdecor-gtk when software package \c libgtk-3-dev is present in the
-build system, and \c libdecor-cairo otherwise.
+Because \c libdecor is not yet in major Linux packages, or only at version 0.1.x,
+FLTK bundles the most recent source code of \c libdecor and its plugins. This code
+is included in libfltk. FLTK uses \c libdecor-gtk when software package \c libgtk-3-dev
+is present in the build system, and \c libdecor-cairo otherwise.
+
+As of late 2023, libdecor version 0.2.0 is available in very recent Linux distributions
+in packages \c libdecor-0-dev and \c libdecor-0-plugin-1-gtk. If they are installed on the
+build system, preprocessor variable \c USE_SYSTEM_LIBDECOR is 1,
+and both \c libdecor and its plugin are loaded at run-time from shared libraries.
+When these packages are not available or are at an earlier version, FLTK uses the bundled
+copy of \c libdecor.
+When CMake \c OPTION_USE_SYSTEM_LIBDECOR is OFF, FLTK uses the bundled \c libdecor copy
+even if shared libraries \c libdecor.so and \c libdecor-gtk.so are installed.
+This option is ON by default.
 
 \c Libdecor uses the Wayland protocol
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>
@@ -1078,12 +1089,6 @@ the compositor does it. That is what happens with the \c KWin and \c Sway compos
 However, if environment variable \c LIBDECOR_FORCE_CSD is defined to value \c 1 when an
 FLTK app runs, \c libdecor instructs an SSD-able compositor to refrain from decorating its
 windows and decorates windows itself.
-
-CMake \c OPTION_USE_SYSTEM_LIBDECOR has been defined to allow FLTK in the future, when \c libdecor and
-\c libdecor-gtk will be part of Linux packages, to use these packages rather than the \c libdecor
-code bundled in FLTK. When this option is ON, preprocessor variable \c USE_SYSTEM_LIBDECOR is 1,
-and both \c libdecor and its plugin are loaded at run-time from shared libraries. This option is OFF
-by default.
 
 Whatever the value of \c OPTION_USE_SYSTEM_LIBDECOR, FLTK and \c libdecor use environment variable
 \c LIBDECOR_PLUGIN_DIR as follows: if this variable is defined and points to the name of a directory,

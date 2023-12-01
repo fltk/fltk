@@ -75,10 +75,10 @@ be used to produce a Wayland-only library which can be useful, e.g., when
 cross-compiling for systems that lack X11 headers and libraries.
 
 The FLTK Wayland platform uses a library called libdecor which handles window decorations
-(i.e., titlebars, shade). Libdecor is bundled in the FLTK source code and FLTK uses by default
-this form of libdecor. CMake OPTION_USE_SYSTEM_LIBDECOR can be turned on to have FLTK
-use the system's version of libdecor which is available on recent Linux distributions (e.g.,
-Debian Bookworm or more recent in packages libdecor-0-0 and libdecor-0-plugin-1-cairo).
+(i.e., titlebars, shade). On very recent Linux distributions (e.g., Debian trixie)
+libdecor is available as Linux packages (libdecor-0-dev and libdecor-0-plugin-1-gtk).
+FLTK requires version 0.2.0 of these packages or more.
+In other situations, FLTK uses a copy of libdecor bundled in the FLTK source code.
 FLTK equipped with libdecor supports both the client-side decoration mode (CSD) and the
 server-side decoration mode (SSD) as determined by the active Wayland compositor.
 Mutter (gnome's Wayland compositor) and Weston use CSD mode, KWin and Sway use SSD mode.
@@ -145,6 +145,9 @@ in section 2.1 of file README.Unix.txt :
 These packages allow to run FLTK apps under the Gnome-Wayland desktop:
 - gnome-core
 - libgtk-3-dev   <== highly recommended, gives windows a Gnome-style titlebar
+- libdecor-0-dev and libdecor-0-plugin-1-gtk in versions ≥ 0.2.0
+                 <== Recommended if available for the Linux version in use,
+                 <== FLTK uses a bundled copy of these packages otherwise.
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
@@ -169,6 +172,7 @@ package groups listed in section 2.2 of file README.Unix.txt :
 - mesa-libGLU-devel
 - dbus-devel   <== recommended to query current cursor theme
 - gtk3-devel   <== highly recommended, gives windows a GTK-style titlebar
+- libdecor-0.2.0 <== recommended, present in Fedora Rawhide, not in Fedora 39
 - glew-devel   <== necessary to use OpenGL version 3 or above
 - cmake        <== if you plan to build with CMake
 - cmake-gui    <== if you plan to use the GUI of CMake
