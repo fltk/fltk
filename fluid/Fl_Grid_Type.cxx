@@ -187,7 +187,11 @@ Fl_Grid::Cell* Fl_Grid_Proxy::transient_widget(Fl_Widget *wi, int row, int col, 
     int mw, mh;
     old_cell->minimum_size(&mw, &mh);
     new_cell->minimum_size(mw, mh);
-    ::free(old_cell);
+    if (remove_old_cell) {
+      remove_cell(old_cell->row(), old_cell->col());
+    } else {
+      delete old_cell;
+    }
   }
   if (i == num_transient_) {
     transient_make_room_(num_transient_ + 1);
@@ -195,9 +199,6 @@ Fl_Grid::Cell* Fl_Grid_Proxy::transient_widget(Fl_Widget *wi, int row, int col, 
     num_transient_++;
   }
   transient_[i].cell = new_cell;
-  if (remove_old_cell) {
-    remove_cell(old_cell->row(), old_cell->col());
-  }
   return new_cell;
 }
 
@@ -911,12 +912,12 @@ void grid_align_horizontal_cb(Fl_Choice* i, void* v) {
     Fl_Grid::Cell *cell = g->cell(current_widget->o);
     if (cell) {
       old_v = cell->align() & mask;
-    }
-    if (old_v != v) {
-      cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
-      g->need_layout(true);
-      g->redraw();
-      set_modflag(1);
+      if (old_v != v) {
+        cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
+        g->need_layout(true);
+        g->redraw();
+        set_modflag(1);
+      }
     }
   }
 }
@@ -946,12 +947,12 @@ void grid_align_vertical_cb(Fl_Choice* i, void* v) {
     Fl_Grid::Cell *cell = g->cell(current_widget->o);
     if (cell) {
       old_v = cell->align() & mask;
-    }
-    if (old_v != v) {
-      cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
-      g->need_layout(true);
-      g->redraw();
-      set_modflag(1);
+      if (old_v != v) {
+        cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
+        g->need_layout(true);
+        g->redraw();
+        set_modflag(1);
+      }
     }
   }
 }

@@ -1406,11 +1406,11 @@ int Fl_Text_Buffer::insert_(int pos, const char *text, int insertedLength)
 /*
  Remove a string from the buffer.
  Unicode safe. Start and end must be at a character boundary.
+ Start must be less than end.
  */
 void Fl_Text_Buffer::remove_(int start, int end)
 {
-  /* if the gap is not contiguous to the area to remove, move it there */
-
+  if (start >= end) return;
   if (mCanUndo) {
     if (mUndo->undoat == end && mUndo->undocut) {
       // continue to remove text at the same cursor position

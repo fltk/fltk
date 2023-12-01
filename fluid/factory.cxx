@@ -1243,7 +1243,8 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       if (changed && t->is_a(ID_Menu_Item)) {
         Fl_Type * tt = t->parent;
         while (tt && !tt->is_a(ID_Menu_Manager_)) tt = tt->parent;
-        ((Fl_Menu_Manager_Type*)tt)->build_menu();
+        if (tt)
+          ((Fl_Menu_Manager_Type*)tt)->build_menu();
       }
     }
     if (t->is_true_widget() && !t->is_a(ID_Window)) {

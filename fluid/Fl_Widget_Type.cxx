@@ -3659,9 +3659,9 @@ void Fl_Widget_Type::copy_properties() {
   if (!live_widget)
     return;
 
-  Fl_Font ff;
-  int fs;
-  Fl_Color fc;
+  Fl_Font ff = 0;
+  int fs = 0;
+  Fl_Color fc = 0;
   textstuff(0, ff, fs, fc);
 
   // copy all attributes common to all widget types

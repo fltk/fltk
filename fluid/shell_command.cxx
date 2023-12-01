@@ -795,7 +795,7 @@ void Fd_Shell_Command_List::write(Fd_Project_Writer *out) {
 void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
   if (list_size == list_capacity) {
     list_capacity += 16;
-    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command**));
+    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command*));
   }
   list[list_size++] = cmd;
 }
@@ -809,7 +809,7 @@ void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
 void Fd_Shell_Command_List::insert(int index, Fd_Shell_Command *cmd) {
   if (list_size == list_capacity) {
     list_capacity += 16;
-    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command**));
+    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command*));
   }
   ::memmove(list+index+1, list+index, (list_size-index)*sizeof(Fd_Shell_Command**));
   list_size++;

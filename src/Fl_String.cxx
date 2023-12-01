@@ -137,7 +137,8 @@ Fl_String &Fl_String::replace_(int at, int n_del, const char *ins, int n_ins) {
     ::memmove(buffer_+at, ins, n_ins);
   }
   size_ = new_size;
-  buffer_[size_] = 0;
+  if (buffer_)
+    buffer_[size_] = 0;
   return *this;
 }
 
