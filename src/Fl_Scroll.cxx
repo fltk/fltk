@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -96,8 +94,7 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   Derived classes can make use of this call to figure out the scrolling area
   eg. during resize() handling.
 
-  \param[in] si -- ScrollInfo structure
-  \returns Structure containing the calculated info.
+  \param[in,out] si -- ScrollInfo structure
 */
 void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
 
