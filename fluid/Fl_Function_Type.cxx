@@ -1774,7 +1774,7 @@ const char *Fl_Comment_Type::title() {
       if (n==0) break;
       if (n=='\r') { *d++ = '\\'; *d++ = 'r'; i--; }
       else if (n=='\n') { *d++ = '\\'; *d++ = 'n'; i--; }
-      else if (n<32) { *d++ = '^'; *d++ = 'A'+n; i--; }
+      else if ((n >= 0) && (n < 32)) { *d++ = '^'; *d++ = 'A'+n; i--; }
       else *d++ = n;
     }
     if (i<=0) { *d++ = '.'; *d++ = '.'; *d++ = '.'; }
