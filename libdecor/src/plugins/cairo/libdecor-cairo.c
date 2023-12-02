@@ -296,6 +296,9 @@ synthesize_pointer_leave(struct seat *seat);
 static bool
 own_proxy(struct wl_proxy *proxy)
 {
+	if (!proxy)
+		return false;
+
 	return (wl_proxy_get_tag(proxy) == &libdecor_cairo_proxy_tag);
 }
 
@@ -387,7 +390,11 @@ libdecor_plugin_cairo_destroy(struct libdecor_plugin *plugin)
 
 	wl_list_for_each_safe(output, output_tmp,
 			      &plugin_cairo->output_list, link) {
-		wl_output_destroy(output->wl_output);
+		if (wl_output_get_version (output->wl_output) >=
+		    WL_OUTPUT_RELEASE_SINCE_VERSION)
+			wl_output_release(output->wl_output);
+		else
+			wl_output_destroy(output->wl_output);
 		free(output);
 	}
 
@@ -2570,7 +2577,8 @@ init_wl_output(struct libdecor_plugin_cairo *plugin_cairo,
 	output->id = id;
 	output->wl_output =
 		wl_registry_bind(plugin_cairo->wl_registry,
-				 id, &wl_output_interface, 2);
+				 id, &wl_output_interface,
+				 MIN (version, 3));
 	wl_proxy_set_tag((struct wl_proxy *) output->wl_output,
 			 &libdecor_cairo_proxy_tag);
 	wl_output_add_listener(output->wl_output, &output_listener, output);
