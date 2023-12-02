@@ -4,13 +4,14 @@ The initial FLTK 1.3.0 is based on the final 1.1.10.
   Doxygen based documentation, and several new widgets including
   Fl_Native_File_Chooser, Fl_Table, and Fl_Tree.
 
-FLTK 1.3.8 and previous versions contain many improvements and bug fixes.
+FLTK 1.3.9 and previous versions contain many improvements and bug fixes.
 
-  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.8.
+  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.9.
 
-  FLTK 1.3.8 is a maintenance release with minor enhancements and
-  some macOS related improvements. One new function 'fl_choice_n()'
-  has been introduced (please see docs for details).
+  FLTK 1.3.9 is a maintenance release with minor enhancements and
+  some macOS related improvements.
+
+  macOS is now supported up to macOS 14 (Sonoma).
 
   Open bugs and feature requests can be viewed (offline) in KNOWN_BUGS.html
   with your browser. Links in this file direct you to the current state
@@ -19,11 +20,11 @@ FLTK 1.3.8 and previous versions contain many improvements and bug fixes.
   Note: This file is a snapshot of https://www.fltk.org/roadmap.php
   as of release 1.3.6 (May 15, 2021). Please take into account that some
   bugs and/or feature requests in this list might have been fixed without
-  notice.
+  notice. It is intentional that this is an older version.
 
-  Bugs and feature requests for FLTK 1.4.x may also apply to FLTK 1.3.8.
+  Bugs and feature requests for FLTK 1.4.x may also apply to FLTK 1.3.9.
 
-FLTK 1.3.8 is expected to be the last release in the 1.3.x series.
+FLTK 1.3.9 is expected to be the last release in the 1.3.x series.
 
   All bug reports for 1.3.x will be fixed in FLTK 1.4.x if possible.
 

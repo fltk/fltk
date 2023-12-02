@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -47,7 +47,7 @@ set (OpenGL_GL_PREFERENCE LEGACY)
 # define the FLTK project and version
 #######################################################################
 
-project (FLTK VERSION 1.3.8)
+project (FLTK VERSION 1.3.9)
 
 #######################################################################
 # include macro definitions of generally used macros

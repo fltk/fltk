@@ -1,7 +1,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -73,7 +73,7 @@
 
    FLTK remains binary compatible between patches.
  */
-#define FL_PATCH_VERSION	8
+#define FL_PATCH_VERSION	9
 
 /**
     The FLTK version number as a \em double.
@@ -135,7 +135,7 @@
     \verbatim
       FLTK Version  FL_API_VERSION  FL_ABI_VERSION  FL_VERSION (deprecated)
         1.3.0          10300           10300           1.0300
-	1.3.4          10304           10300           1.0304
+        1.3.4          10304           10300           1.0304
     \endverbatim
 
     Version 1.2.3 is actually stored as 10203 to allow for more than 9

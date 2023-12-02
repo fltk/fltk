@@ -3,7 +3,7 @@ dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2021 by Bill Spitzak and others.
+dnl Copyright 1998-2023 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -48,10 +48,10 @@ case $host_os in
 	;;
 esac
 
-dnl FLTK library versions...
+dnl FLTK library versions, currently 1.3.9
 FLTK_VERSION_MAJOR=1
 FLTK_VERSION_MINOR=3
-FLTK_VERSION_PATCH=8
+FLTK_VERSION_PATCH=9
 FL_DSO_VERSION=${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
 FL_ABI_VERSION=${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}.0
 FLTK_VERSION=${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}.${FLTK_VERSION_PATCH}
