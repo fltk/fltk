@@ -594,25 +594,76 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
 /**
   Draw a potentially small, filled circle using a given color.
 
-  This function draws using \p color a filled circle bounded by rectangle <tt>(x, y, d, d)</tt>.
+  This function draws a filled circle bounded by rectangle
+  <tt>(x, y, d, d)</tt> using color \p color
 
-  This function is the same as <tt>fl_pie(x, y, d, d, 0, 360)</tt> except with some systems
-  that don't draw small circles well. In that situation, the circle diameter \p d is converted
-  from FLTK units to pixels and this function approximates a filled circle by drawing several
-  filled rectangles if the converted diameter is ≤ 6 pixels.
+  This function is the same as <tt>fl_pie(x, y, d, d, 0, 360)</tt> except
+  with some systems that don't draw small circles well. In that situation,
+  the circle diameter \p d is converted from FLTK units to pixels and this
+  function approximates a filled circle by drawing several filled
+  rectangles if the converted diameter is ≤ 6 pixels.
 
-  \param[in]  x,y      coordinates of top left of the bounding box
-  \param[in]  d           diameter == width and height of the bounding box in FLTK units
-  \param[in]  color  drawing color
+  The current drawing color fl_color() is preserved across the call.
+
+  \param[in]  x,y     coordinates of top left of the bounding box
+  \param[in]  d       diameter == width and height of the bounding box in FLTK units
+  \param[in]  color   the color used to draw the circle
 
   \since 1.4.0
  */
 void fl_draw_circle(int x, int y, int d, Fl_Color color) {
 #define DEBUG_DRAW_CIRCLE (0) // bit 1 = draw bounding box (green)
-#if (DEBUG_DRAW_CIRCLE & 1)
+#if (DEBUG_DRAW_CIRCLE & 0)
   Fl_Color current = fl_color();
-  fl_rectf(x0, y0, d, d, FL_GREEN);
+  fl_rectf(x, y, d, d, FL_GREEN);
   fl_color(current);
 #endif
   fl_graphics_driver->draw_circle(x, y, d, color);
+}
+
+/**
+  Draw a round check mark (circle) of a radio button.
+
+  This draws only the round "radio button mark", it does not draw the
+  (also typically round) box of the radio button.
+
+  Call this only if the radio button is \c ON.
+
+  This method draws a scheme specific "circle" with a particular light effect
+  if the scheme is gtk+. For all other schemes this function draws a simple,
+  small circle.
+
+  The \c color must be chosen by the caller so it has enough contrast with
+  the background.
+
+  The bounding box of the circle is the rectangle <tt>(x, y, d, d)</tt>.
+
+  The current drawing color fl_color() is preserved across the call.
+
+  \param[in]  x,y     coordinates of top left of the bounding box
+  \param[in]  d       diameter == width and height of the bounding box in FLTK units
+  \param[in]  color   the base color used to draw the circle
+
+  \since 1.4.0
+*/
+void fl_draw_radio(int x, int y, int d, Fl_Color color) {
+
+  Fl_Color current = fl_color();
+
+#if (0) // DEBUG: draw bounding box
+  fl_color(fl_lighter(FL_RED));
+  fl_rectf(x, y, d, d);
+#endif
+
+  if (Fl::is_scheme("gtk+")) {
+    fl_color(color);
+    fl_pie(x, y, d, d, 0.0, 360.0);
+    Fl_Color icol = fl_color_average(FL_WHITE, color, 0.2f);
+    fl_draw_circle(x + 2, y + 2, d - 4, icol);
+    fl_color(fl_color_average(FL_WHITE, color, 0.5));
+    fl_arc(x + 1, y + 1, d - 1, d - 1, 60.0, 180.0);
+  } else {
+    fl_draw_circle(x + 1, y + 1, d - 2, color);
+  }
+  fl_color(current);
 }

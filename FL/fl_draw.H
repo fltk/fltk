@@ -982,6 +982,10 @@ FL_EXPORT void fl_draw_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_C
 // Draw a potentially small, filled circle
 FL_EXPORT void fl_draw_circle(int x, int y, int d, Fl_Color color);
 
+// Draw the full "radio button" of a radio menu entry or radio button
+// This requires scheme specific handling (particularly gtk+ scheme)
+FL_EXPORT void fl_draw_radio(int x, int y, int d, Fl_Color color);
+
 // images:
 
 /**

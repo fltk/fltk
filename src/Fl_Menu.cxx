@@ -290,7 +290,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   if (selected) {
     Fl_Color r = m ? m->selection_color() : FL_SELECTION_COLOR;
     Fl_Boxtype b = m && m->down_box() ? m->down_box() : FL_FLAT_BOX;
-    if (fl_contrast(r,color)!=r) { // back compatibility boxtypes
+    if (fl_contrast(r, color) != r) { // back compatibility boxtypes
       if (selected == 2) { // menu title
         r = color;
         b = m ? m->box() : FL_UP_BOX;
@@ -314,45 +314,26 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
     int d = (h - FL_NORMAL_SIZE + 1) / 2;
     int W = h - 2 * d;
 
+    Fl_Color check_color = labelcolor_;
+    if (Fl::is_scheme("gtk+"))
+      check_color = FL_SELECTION_COLOR;
+    check_color = fl_contrast(check_color, FL_BACKGROUND2_COLOR);
+
     if (flags & FL_MENU_RADIO) {
+
       fl_draw_box(FL_ROUND_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
         int tW = (W - Fl::box_dw(FL_ROUND_DOWN_BOX)) / 2 + 1;
         if ((W - tW) & 1) tW++; // Make sure difference is even to center
         int td = (W - tW) / 2;
-        if (Fl::is_scheme("gtk+")) {
-          fl_color(FL_SELECTION_COLOR);
-          tW --;
-          fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
-          fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
-        } else {
-          fl_color(labelcolor_);
-        }
+        fl_draw_radio(x + td + 1, y + d + td - 1, tW + 2, check_color);
+      } // FL_MENU_RADIO && value()
 
-        fl_draw_circle(x + td + 2, y + d + td, tW, fl_color());
+    } else { // FL_MENU_TOGGLE && ! FL_MENU_RADIO
 
-        if (Fl::is_scheme("gtk+")) {
-          fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
-          fl_arc(x + td + 2, y + d + td, tW + 1, tW + 1, 60.0, 180.0);
-        }
-      }
-    } else {
       fl_draw_box(FL_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
-        if (Fl::is_scheme("gtk+")) {
-          fl_color(FL_SELECTION_COLOR);
-        } else {
-          fl_color(labelcolor_);
-        }
-        int tx = x + 5;
-        int tw = W - 6;
-        int d1 = tw/3;
-        int d2 = tw-d1;
-        int ty = y + d + (W+d2)/2-d1-2;
-        for (int n = 0; n < 3; n++, ty++) {
-          fl_line(tx, ty, tx+d1, ty+d1);
-          fl_line(tx+d1, ty+d1, tx+tw-1, ty+d1-d2+1);
-        }
+        fl_draw_check(Fl_Rect(x+3, y+d+1, W-2, W-2), check_color);
       }
     }
     x += W + 3;
