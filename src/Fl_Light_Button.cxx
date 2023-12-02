@@ -3,7 +3,7 @@
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -51,7 +51,7 @@ void Fl_Light_Button::draw() {
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
 	  if (Fl::is_scheme("gtk+")) {
-	    fl_color(FL_SELECTION_COLOR);
+	    fl_color(fl_contrast(FL_SELECTION_COLOR, FL_BACKGROUND2_COLOR));
 	  } else {
 	    fl_color(col);
 	  }
@@ -77,7 +77,7 @@ void Fl_Light_Button::draw() {
 	  int tdy = dy + (W - tW) / 2;
 
 	  if (Fl::is_scheme("gtk+")) {
-	    fl_color(FL_SELECTION_COLOR);
+	    fl_color(fl_contrast(FL_SELECTION_COLOR, FL_BACKGROUND2_COLOR));
 	    tW --;
 	    fl_pie(x() + tdx - 1, y() + tdy - 1, tW + 3, tW + 3, 0.0, 360.0);
 	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
