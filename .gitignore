@@ -9,15 +9,13 @@
 *.o
 **/.DS_Store
 
-# CMake build artifacts if built in source - not recommended, but anyway
+# CMake build artifacts if built in source - strongly discouraged!
 
 bin/
 **/cmake_install.cmake
 **/CMakeCache.txt
 **/CMakeFiles/
-etc/UseFLTK.cmake
 cmake_uninstall.cmake
-UseFLTK.cmake
 FLTK.sln
 FLTK-Targets.cmake
 FLTKConfig.cmake

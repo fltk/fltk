@@ -77,19 +77,8 @@ install (FILES
   DESTINATION ${FLTK_CONFIG_PATH}
 )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/UseFLTK.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/etc/UseFLTK.cmake
-  @ONLY
-)
+# Generate fltk-config
 
-# Deprecated: install UseFLTK.cmake with deprecation warnings only
-install (FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/etc/UseFLTK.cmake
-  DESTINATION ${FLTK_CONFIG_PATH}
-)
-
-# generate fltk-config
 set (prefix ${CMAKE_INSTALL_PREFIX})
 set (exec_prefix "\${prefix}")
 set (includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")

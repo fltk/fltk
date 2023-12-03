@@ -608,8 +608,8 @@ The target_link_libraries() command is used to specify all necessary FLTK
 libraries. Thus, you may have to add fltk_images, fltk_gl, etc…
 
 Note: the variable FLTK_USE_FILE used to include another file in
-previous FLTK versions was deprecated since FLTK 1.3.4 and will be
-removed in FLTK 1.4.0 (this version) or later (maybe 1.4.1 or 1.4.2).
+previous FLTK versions was deprecated since FLTK 1.3.4 and has been
+removed in FLTK 1.4.0.
 
 
  3.3  Building a Program Using Fluid Files
@@ -714,7 +714,7 @@ May 15 2013 - erco: small formatting tweaks, added some examples
 Feb 23 2014 - msurette: updated to reflect changes to the CMake files
 Apr 07 2015 - AlbrechtS: update use example and more docs
 Jan 31 2016 - msurette: custom command instead of fltk_wrap_ui
-Nov 01 2016 - AlbrechtS: remove deprecated FLTK_USE_FILE, add MinGW build
+Nov 01 2016 - AlbrechtS: add MinGW build
 Jul 05 2017 - matt: added instructions for macOS and Xcode
 Dec 29 2018 - AlbrechtS: add documentation option descriptions
 Apr 29 2021 - AlbrechtS: document macOS "universal apps" build setup

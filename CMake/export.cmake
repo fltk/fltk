@@ -64,13 +64,6 @@ configure_file(
   @ONLY
 )
 
-# generate UseFLTK.cmake for build directory use
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/UseFLTK.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/UseFLTK.cmake
-  @ONLY
-)
-
 # generate fltk-config for build directory use
 set (prefix ${CMAKE_CURRENT_BINARY_DIR})
 set (exec_prefix "\${prefix}")
