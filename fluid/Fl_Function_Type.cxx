@@ -447,9 +447,9 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
 
     const char* k = class_name(0);
     if (k) {
+      f.write_public(public_);
       if (havechildren)
         write_comment_c(f);
-      f.write_public(public_);
       if (name()[0] == '~')
         constructor = 1;
       else {

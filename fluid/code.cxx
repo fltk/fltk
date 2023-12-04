@@ -662,6 +662,21 @@ void Fd_Code_Writer::write_c_indented(const char *textlines, int inIndent, char 
   }
 }
 
+/**
+ Return true if the type would be the member of a class.
+ Some types are treated differently if they are inside class. Especially within
+ a Widget Class, children that are widgets are written as part of the
+ constructor whereas functions, declarations, and inline data are seen as
+ members of the class itself.
+ */
+bool is_class_member(Fl_Type *t) {
+  return    t->is_a(ID_Function)
+         || t->is_a(ID_Decl)
+         || t->is_a(ID_Data);
+//         || t->is_a(ID_Class)         // FLUID can't handle a class inside a class
+//         || t->is_a(ID_Widget_Class)
+//         || t->is_a(ID_DeclBlock)     // Declaration blocks are generally not handled well
+}
 
 /**
  Recursively dump code, putting children between the two parts of the parent code.
@@ -683,8 +698,12 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
   if (p->is_widget() && p->is_class()) {
     // Handle widget classes specially
     for (q = p->next; q && q->level > p->level;) {
-      if (!q->is_a(ID_Function)) q = write_code(q);
-      else {
+      // note: maybe declaration blocks should be handled like comments in the context
+      // note: we don't handle comments before a comment before a member
+      bool comment_before_member = (q->is_a(ID_Comment) && q->next && q->next->level==q->level && is_class_member(q->next));
+      if (!is_class_member(q) && !comment_before_member) {
+        q = write_code(q);
+      } else {
         int level = q->level;
         do {
           q = q->next;
@@ -700,8 +719,10 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
     if (write_sourceview) p->header2_end = (int)ftell(header_file);
 
     for (q = p->next; q && q->level > p->level;) {
-      if (q->is_a(ID_Function)) q = write_code(q);
-      else {
+      bool comment_before_member = (q->is_a(ID_Comment) && q->next && q->next->level==q->level && is_class_member(q->next));
+      if (is_class_member(q) || comment_before_member) {
+        q = write_code(q);
+      } else {
         int level = q->level;
         do {
           q = q->next;
