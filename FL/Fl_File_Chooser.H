@@ -42,7 +42,18 @@
 
 class FL_EXPORT Fl_File_Chooser {
 public:
-  enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };
+  /**
+    \enum Type
+    Determines the type of file chooser presented to the user.
+  */
+  enum Type {
+    SINGLE    = 0, ///< Select a single, existing file.
+    MULTI     = 1, ///< Select one or more existing files.
+    CREATE    = 2, ///< When used alone, select a single, existing file or specify a new filename.
+                   ///< Can be combined with DIRECTORY (e.g. CREATE|DIRECTORY) to have the same
+                   ///< effect for directories.
+    DIRECTORY = 4  ///< Select a single, existing directory. Can be combined with CREATE.
+  };
 private:
   static Fl_Preferences *prefs_;
   void (*callback_)(Fl_File_Chooser*, void *);
