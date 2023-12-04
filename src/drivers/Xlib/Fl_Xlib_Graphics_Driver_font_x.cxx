@@ -452,21 +452,22 @@ int fl_correct_encoding(const char* name) {
 static const char *find_best_font(const char *fname, int size) {
   int cnt;
   static char **list = NULL;
-// locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
+  // note: namebuffer must be static: its address may be returned to caller
+  static char namebuffer[1024];           // holds scalable font name
+  // locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
   if (list) XFreeFontNames(list);
   list = XListFonts(fl_display, fname, 100, &cnt);
   if (!list) return "fixed";
 
   // search for largest <= font size:
-  char* name = list[0]; int ptsize = 0;     // best one found so far
+  char* name = list[0]; int ptsize = 0;   // best one found so far
   int matchedlength = 32767;
-  char namebuffer[1024];        // holds scalable font name
   int found_encoding = 0;
   int m = cnt; if (m<0) m = -m;
   for (int n=0; n < m; n++) {
     char* thisname = list[n];
     if (fl_correct_encoding(thisname)) {
-      if (!found_encoding) ptsize = 0; // force it to choose this
+      if (!found_encoding) ptsize = 0;    // force it to choose this
       found_encoding = 1;
     } else {
       if (found_encoding) continue;

@@ -131,8 +131,6 @@ int write_strings(const Fl_String &filename) {
           }
 
           if (w->tooltip()) {
-            const char *s;
-
             fputs("msgid \"", fp);
             write_escaped_strings(fp, w->tooltip());
             fputs("\"\n", fp);
