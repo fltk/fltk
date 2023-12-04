@@ -792,6 +792,8 @@ void Fl_Simple_Terminal::unknown_escape() {
 /**
  Handle appending string with ANSI escape sequences, and other 'special'
  character processing (such as backspaces).
+ - \p s -- the string containing ANSI codes to be appended
+ - \p len -- the length of the string to be appended, or -1 for a NULL terminated string.
 */
 void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
     int nstyles = stable_size_ / STE_SIZE;
@@ -803,7 +805,7 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
     nsp_ = nsm_;                            // new style ptr
     // Walk user's string looking for codes, modify new text/style text as needed
     const char *sp = s;
-    while ( *sp ) {
+    while ( *sp && --len >= 0 ) {           // walk string until NULL or len reached
       if (*sp == 0x1b ) {                   // start of ESC sequence?
         escseq.parse(*sp++);                // start parsing..
         continue;
@@ -891,7 +893,7 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
 }
 
 /**
- Appends new string 's' to terminal.
+ Appends new string 's' of length 'len' to terminal.
 
  The string can contain UTF-8, crlf's.
  And if ansi(bool) is set to 'true', ANSI 'ESC' sequences (such as ESC[1m)
@@ -900,7 +902,8 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
  \param s string to append.
 
  \param len optional length of string can be specified if known
-            to save the internals from having to call strlen()
+            to save the internals from having to call strlen().
+            If -1 is specified for len, strlen(s) is used to find the length.
 
  \see printf(), vprintf(), text(), clear()
 */
@@ -929,6 +932,7 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
 
  \param len optional length of string can be specified if known
             to save the internals from having to call strlen()
+            If -1 is specified for len, strlen(s) is used to find the length.
 
  \see append(), printf(), vprintf(), clear()
 
