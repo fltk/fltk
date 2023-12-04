@@ -580,12 +580,12 @@ find_package(FLTK REQUIRED CONFIG)
 
 add_executable(hello WIN32 MACOSX_BUNDLE hello.cxx)
 if (APPLE)
-  target_link_libraries(hello PRIVATE "-framework cocoa")
+  target_link_libraries (hello PRIVATE "-framework cocoa")
 endif (APPLE)
 
-target_include_directories(hello PRIVATE ${FLTK_INCLUDE_DIRS})
+target_include_directories (hello PRIVATE ${FLTK_INCLUDE_DIRS})
 
-target_link_libraries(hello PRIVATE fltk)
+target_link_libraries (hello PRIVATE fltk)
 ---
 
 The set(FLTK_DIR ...) command is a superhint to the find_package command.
@@ -644,12 +644,12 @@ add_custom_command(
 add_executable(CubeView WIN32 MACOSX_BUNDLE
     CubeMain.cxx CubeView.cxx CubeViewUI.cxx)
 
-target_include_directories(CubeView PRIVATE ${FLTK_INCLUDE_DIRS})
+target_include_directories (CubeView PRIVATE ${FLTK_INCLUDE_DIRS})
 
-target_include_directories(CubeView PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_include_directories(CubeView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (CubeView PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories (CubeView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(CubeView PRIVATE fltk fltk_gl)
+target_link_libraries (CubeView PRIVATE fltk fltk_gl)
 ---
 
 You can repeat the add_custom_command for each fluid file or if you
@@ -658,8 +658,8 @@ FLTK_RUN_FLUID for an example of how to run it in a loop.
 
 The two lines
 
-    target_include_directories(CubeView PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-    target_include_directories(CubeView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories (CubeView PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  target_include_directories (CubeView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add the current build ("binary") and source directories as include directories.
 This is necessary for the compiler to find the local header files since the

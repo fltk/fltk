@@ -1,7 +1,7 @@
 #
-# GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
+# ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,6 @@
 
 include ../makeinclude
 
-
 #
 # Object files...
 #
@@ -27,13 +26,11 @@ OBJS	=	adler32.o compress.o crc32.o uncompr.o deflate.o \
 
 LIBZ	=	../lib/libfltk_z$(LIBEXT)
 
-
 #
 # Make all targets...
 #
 
 all:	$(LIBZ)
-
 
 #
 # Clean all targets and object files...
@@ -42,7 +39,6 @@ all:	$(LIBZ)
 clean:
 	$(RM) $(OBJS)
 	$(RM) $(LIBZ)
-
 
 #
 # Install everything...
@@ -59,7 +55,6 @@ install: $(LIBZ)
 	$(INSTALL_DATA) zlib.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) zutil.h $(DESTDIR)$(includedir)/FL/images
 
-
 #
 # Uninstall everything...
 #
@@ -71,7 +66,6 @@ uninstall:
 	$(RM) $(includedir)/FL/images/zconf.h
 	$(RM) $(includedir)/FL/images/zlib.h
 	$(RM) $(includedir)/FL/images/zutil.h
-
 
 #
 # libfltk_z.a

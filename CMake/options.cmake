@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -125,12 +125,12 @@ endif ()
 # If either of them is not available, we fall back to using both local libraries
 if (OPTION_USE_SYSTEM_LIBPNG AND NOT (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND))
     set (PNG_FOUND FALSE)
-    set (OPTION_USE_SYSTEM_LIBPNG FALSE)
+    set (OPTION_USE_SYSTEM_LIBPNG OFF)
     message (STATUS "Local z lib selected: overriding png lib to local for compatibility.\n")
 endif ()
 if (OPTION_USE_SYSTEM_ZLIB AND NOT (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND))
     set (ZLIB_FOUND FALSE)
-    set (OPTION_USE_SYSTEM_ZLIB FALSE)
+    set (OPTION_USE_SYSTEM_ZLIB OFF)
     message (STATUS "Local png lib selected: overriding z lib to local for compatibility.\n")
 endif ()
 
@@ -951,6 +951,14 @@ if (DEBUG_OPTIONS_CMAKE)
   fl_debug_var (OPENGL_FOUND)
   fl_debug_var (OPENGL_INCLUDE_DIR)
   fl_debug_var (OPENGL_LIBRARIES)
+  fl_debug_var (CMAKE_MSVC_RUNTIME_LIBRARY)
+  message ("--- bundled libraries ---")
+  fl_debug_var (OPTION_USE_SYSTEM_LIBJPEG)
+  fl_debug_var (OPTION_USE_SYSTEM_LIBPNG)
+  fl_debug_var (OPTION_USE_SYSTEM_ZLIB)
+  fl_debug_var (FLTK_USE_BUILTIN_JPEG)
+  fl_debug_var (FLTK_USE_BUILTIN_PNG)
+  fl_debug_var (FLTK_USE_BUILTIN_ZLIB)
   message ("--- X11 ---")
   fl_debug_var (X11_FOUND)
   fl_debug_var (X11_INCLUDE_DIR)
