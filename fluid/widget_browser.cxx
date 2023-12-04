@@ -146,6 +146,11 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
   const char *end = str + strlen(str);  // end of input string
   if (quote) *p++ = '"';                // opening quote
   while (size < maxl) {                 // maximum <maxl> characters
+    if (*str == '\n') {
+      *p++ = '\\'; *p++ = 'n';
+      str++; size++;
+      continue;
+    }
     if (!(*str & (-32))) break;         // end of string (0 or control char)
     bs = fl_utf8len(*str);              // size of next character
     if (bs <= 0) break;                 // some error - leave

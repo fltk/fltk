@@ -679,6 +679,26 @@ bool is_class_member(Fl_Type *t) {
 }
 
 /**
+ Return true, if this is a comment, and if it is followed by a class member.
+ This must only be called if q is inside a widget class.
+ Widget classes can have widgets and members (functions/methods, declarations,
+ etc.) intermixed.
+ \param[in] q should be a comment type
+ \return true if this comment is followed by a class member
+ \return false if it is followed by a widget or code
+ \see is_class_member(Fl_Type *t)
+ */
+bool is_comment_before_class_member(Fl_Type *q) {
+  if (q->is_a(ID_Comment) && q->next && q->next->level==q->level) {
+    if (q->next->is_a(ID_Comment))
+      return is_comment_before_class_member(q->next);
+    if (is_class_member(q->next))
+      return true;
+  }
+  return false;
+}
+
+/**
  Recursively dump code, putting children between the two parts of the parent code.
  \param[in] p write this type and all its children
  \return pointer to the next sibling
@@ -699,9 +719,7 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
     // Handle widget classes specially
     for (q = p->next; q && q->level > p->level;) {
       // note: maybe declaration blocks should be handled like comments in the context
-      // note: we don't handle comments before a comment before a member
-      bool comment_before_member = (q->is_a(ID_Comment) && q->next && q->next->level==q->level && is_class_member(q->next));
-      if (!is_class_member(q) && !comment_before_member) {
+      if (!is_class_member(q) && !is_comment_before_class_member(q)) {
         q = write_code(q);
       } else {
         int level = q->level;
@@ -719,8 +737,7 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
     if (write_sourceview) p->header2_end = (int)ftell(header_file);
 
     for (q = p->next; q && q->level > p->level;) {
-      bool comment_before_member = (q->is_a(ID_Comment) && q->next && q->next->level==q->level && is_class_member(q->next));
-      if (is_class_member(q) || comment_before_member) {
+      if (is_class_member(q) || is_comment_before_class_member(q)) {
         q = write_code(q);
       } else {
         int level = q->level;
