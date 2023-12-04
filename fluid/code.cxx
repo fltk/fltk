@@ -50,6 +50,35 @@ int is_id(char c) {
 }
 
 /**
+ Write a string to a file, replacing all non-ASCII characters with octal codes.
+ \param[in] out output file
+ \param[in] text write this NUL terminated utf-8 string
+ \return EOF if any of the file access calls failed, 0 if OK
+ */
+int write_escaped_strings(FILE *out, const char *text) {
+  int ret = 0;
+  const unsigned char *utf8_text = (const unsigned char *)text;
+  for (const unsigned char *s = utf8_text; *s; ++s) {
+    unsigned char c = *s;
+    // escape control characters, delete, all utf-8, and the double quotes
+    // note: we should have an option in the project settings to allow utf-8
+    //       characters in the output text and not escape them
+    if (c < 32 || c > 126 || c == '\"') {
+      if (c == '\r') {
+        ret = fputs("\\r", out);
+      } else if (c == '\n') {
+        ret = fputs("\\n", out);
+      } else {
+        ret = fprintf(out, "\\%03o", c);
+      }
+    } else {
+      ret = putc((int)c, out);
+    }
+  }
+  return ret;
+}
+
+/**
  Write a file that contains all label and tooltip strings for internationalization.
  The user is responsible to set the right file name extension. The file format
  is determined by `g_project.i18n_type`.
@@ -73,20 +102,12 @@ int write_strings(const Fl_String &filename) {
           w = (Fl_Widget_Type *)p;
 
           if (w->label()) {
-            for (const char *s = w->label(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->label());
             putc('\n', fp);
           }
 
           if (w->tooltip()) {
-            for (const char *s = w->tooltip(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->tooltip());
             putc('\n', fp);
           }
         }
@@ -100,22 +121,12 @@ int write_strings(const Fl_String &filename) {
           w = (Fl_Widget_Type *)p;
 
           if (w->label()) {
-            const char *s;
-
             fputs("msgid \"", fp);
-            for (s = w->label(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->label());
             fputs("\"\n", fp);
 
             fputs("msgstr \"", fp);
-            for (s = w->label(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->label());
             fputs("\"\n", fp);
           }
 
@@ -123,19 +134,11 @@ int write_strings(const Fl_String &filename) {
             const char *s;
 
             fputs("msgid \"", fp);
-            for (s = w->tooltip(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->tooltip());
             fputs("\"\n", fp);
 
             fputs("msgstr \"", fp);
-            for (s = w->tooltip(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->tooltip());
             fputs("\"\n", fp);
           }
         }
@@ -153,21 +156,13 @@ int write_strings(const Fl_String &filename) {
 
           if (w->label()) {
             fprintf(fp, "%d \"", i ++);
-            for (const char *s = w->label(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->label());
             fputs("\"\n", fp);
           }
 
           if (w->tooltip()) {
             fprintf(fp, "%d \"", i ++);
-            for (const char *s = w->tooltip(); *s; s ++)
-              if (*s < 32 || *s > 126 || *s == '\"')
-                fprintf(fp, "\\%03o", *s);
-              else
-                putc(*s, fp);
+            write_escaped_strings(fp, w->tooltip());
             fputs("\"\n", fp);
           }
         }
