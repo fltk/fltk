@@ -198,7 +198,6 @@ class Fl_Comment_Type : public Fl_Type
 {
   typedef Fl_Type super;
   char in_c_, in_h_, style_;
-  char title_buf[64];
 
 public:
   Fl_Comment_Type();
@@ -207,7 +206,6 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "comment";}
-  const char *title() FL_OVERRIDE; // string for browser
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
