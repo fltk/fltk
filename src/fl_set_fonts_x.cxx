@@ -124,7 +124,9 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
       // collect all the attribute words:
       for (int n = 3; n <= 6; n++) {
 	// get the next word:
-	if (*e) e++; x = e; e = fl_font_word(x,1);
+	if (*e) e++;
+	x = e;
+	e = fl_font_word(x,1);
 	int t = attribute(n,x);
 	if (t < 0) {
 	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';

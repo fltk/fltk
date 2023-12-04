@@ -116,7 +116,8 @@ void  gl_font(int fontid, int size) {
   gl_fontsize = fl_fontsize;
 }
 
-#ifndef __APPLE__
+#if !defined(__APPLE__)
+#if !(defined(USE_X11) || USE_XFT)
 static void get_list(int r) {
   gl_fontsize->glok[r] = 1;
 #if defined(USE_X11)
@@ -141,7 +142,8 @@ static void get_list(int r) {
 #  error unsupported platform
 #endif
 } // get_list
-#endif
+#endif // !(defined(USE_X11) || USE_XFT)
+#endif // !defined(__APPLE__)
 
 void gl_remove_displaylist_fonts()
 {
@@ -191,7 +193,7 @@ static void gl_draw_textures(const char* str, int n);
  \see On the Mac OS X platform, see gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int n) {
-#ifdef __APPLE__  
+#ifdef __APPLE__
   gl_draw_textures(str, n);
 #else
   static unsigned short *buf = NULL;
@@ -203,7 +205,7 @@ void gl_draw(const char* str, int n) {
     wn = fl_utf8toUtf16(str, n, buf, l);
   }
 
-#if !( defined(USE_X11) || USE_XFT )
+#if !(defined(USE_X11) || USE_XFT)
   for (unsigned i = 0; i < wn; i++) {
     unsigned int r;
     r = (buf[i] & 0xFC00) >> 10;
@@ -215,7 +217,7 @@ void gl_draw(const char* str, int n) {
 }
 
 /**
-  Draws n characters of the string in the current font at the given position 
+  Draws n characters of the string in the current font at the given position
  \see On the Mac OS X platform, see gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int n, int x, int y) {
@@ -224,7 +226,7 @@ void gl_draw(const char* str, int n, int x, int y) {
 }
 
 /**
-  Draws n characters of the string in the current font at the given position 
+  Draws n characters of the string in the current font at the given position
  \see On the Mac OS X platform, see gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int n, float x, float y) {
@@ -241,7 +243,7 @@ void gl_draw(const char* str) {
 }
 
 /**
-  Draws a nul-terminated string in the current font at the given position 
+  Draws a nul-terminated string in the current font at the given position
  \see On the Mac OS X platform, see gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int x, int y) {
@@ -249,7 +251,7 @@ void gl_draw(const char* str, int x, int y) {
 }
 
 /**
-  Draws a nul-terminated string in the current font at the given position 
+  Draws a nul-terminated string in the current font at the given position
  \see On the Mac OS X platform, see gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, float x, float y) {
@@ -410,7 +412,7 @@ void gl_texture_fifo::display_texture(int rank)
   float winw = gl_scale * Fl_Window::current()->w();
   float winh = gl_scale * Fl_Window::current()->h();
   // GL_COLOR_BUFFER_BIT for glBlendFunc, GL_ENABLE_BIT for glEnable / glDisable
-  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT); 
+  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
   glDisable (GL_DEPTH_TEST); // ensure text is not removed by depth buffer test.
   glEnable (GL_BLEND); // for text fading
   glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // ditto
@@ -433,13 +435,13 @@ void gl_texture_fifo::display_texture(int rank)
     glBegin (GL_QUADS);
     glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
     glVertex2f (bounds.origin.x, bounds.origin.y);
-    
+
     glTexCoord2f (0.0f, height); // draw upper left in world coordinates
     glVertex2f (bounds.origin.x, bounds.origin.y + bounds.size.height);
-    
+
     glTexCoord2f (fifo[rank].width, height); // draw upper right in world coordinates
     glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
-    
+
     glTexCoord2f (fifo[rank].width, 0.0f); // draw lower right in world coordinates
     glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y);
     glEnd ();
@@ -448,13 +450,13 @@ void gl_texture_fifo::display_texture(int rank)
     glutStrokeString(GLUT_STROKE_ROMAN, (uchar*)fifo[rank].utf8);
   }
   glPopAttrib();
-  
+
   // reset original matrices
   glPopMatrix(); // GL_MODELVIEW
   glMatrixMode (GL_PROJECTION);
   glPopMatrix();
   glMatrixMode (matrixMode);
-  
+
   //set the raster position to end of string
   pos[0] += fifo[rank].width;
   GLdouble modelmat[16];
@@ -529,7 +531,7 @@ int gl_texture_fifo::already_known(const char *str, int n)
 static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class instance
 
 // draws a utf8 string using pre-computed texture if available
-static void gl_draw_textures(const char* str, int n) 
+static void gl_draw_textures(const char* str, int n)
 {
   Fl_Gl_Window *gwin = Fl_Window::current()->as_gl_window();
   gl_scale = (gwin ? gwin->pixels_per_unit() : 1);

@@ -118,15 +118,15 @@ static const char *find_best_font(const char *fname, int size) {
   if (!list) return "fixed";
 
   // search for largest <= font size:
-  char* name = list[0]; int ptsize = 0;     // best one found so far
+  char* name = list[0]; int ptsize = 0;   // best one found so far
   int matchedlength = 32767;
-  char namebuffer[1024];        // holds scalable font name
+  static char namebuffer[1024];           // holds scalable font name
   int found_encoding = 0;
   int m = cnt; if (m<0) m = -m;
   for (int n=0; n < m; n++) {
     char* thisname = list[n];
     if (fl_correct_encoding(thisname)) {
-      if (!found_encoding) ptsize = 0; // force it to choose this
+      if (!found_encoding) ptsize = 0;    // force it to choose this
       found_encoding = 1;
     } else {
       if (found_encoding) continue;

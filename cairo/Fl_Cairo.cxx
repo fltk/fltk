@@ -120,9 +120,9 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 cairo_t * Fl::cairo_make_current(void *gc) {
     int W=0,H=0;
 #if defined(USE_X11)
-    //FIXME X11 get W,H
+    // FIXME X11 get W,H
     // gc will be the window handle here
-# warning FIXME get W,H for cairo_make_current(void*)
+    // # warning FIXME get W,H for cairo_make_current(void*)
 #elif defined(__APPLE_QUARTZ__) 
     if (fl_window) {
       W = Fl_Window::current()->w();

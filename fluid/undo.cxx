@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // FLUID undo support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,8 +58,9 @@ static int undo_paused = 0;		// Undo checkpointing paused?
 
 // Return the undo filename
 static char *undo_filename(int level, char *buf, int bufsize) {
-  static char	undo_path[FL_PATH_MAX] = "";	// Undo path
-
+  // Undo path. Note: smaller than FL_PATH_MAX to silence compiler
+  // warning and to prevent potential buffer overflow
+  static char undo_path[FL_PATH_MAX-32] = "";
 
   if (!undo_path[0]) fluid_prefs.getUserdataPath(undo_path, sizeof(undo_path));
 
