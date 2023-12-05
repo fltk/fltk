@@ -1,7 +1,7 @@
 #
 # RPM spec file for FLTK.
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,7 @@
 #      https://www.fltk.org/bugs.php
 #
 
-%define version @FLTK_VERSION_MAJOR@.@FLTK_VERSION_MINOR@.@FLTK_VERSION_PATCH@
+%define version @FLTK_VERSION@
 %define release 1
 %define prefix /usr
 
@@ -24,18 +24,18 @@ Version: %{version}
 Release: %{release}
 License: LGPL
 Group: System Environment/Libraries
-Source: ftp://ftp.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
+Source: https://www.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
 URL: https://www.fltk.org/
 Packager: FLTK Developer <fltk@fltk.org>
 # use BuildRoot so as not to disturb the version already installed
 BuildRoot: /var/tmp/fltk-%{PACKAGE_VERSION}
 
 %description
-The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
-cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
-Microsoft(r) Windows(r), and MacOS(r) X.  FLTK provides modern
-GUI functionality without the bloat and supports 3D graphics via
-OpenGL(r) and its built-in GLUT emulation.
+The Fast Light Tool Kit ("FLTK") is a cross-platform C++ GUI
+toolkit for UNIX(r)/Linux(r) (X11), Microsoft(r) Windows(r),
+and macOS(r).  FLTK provides modern GUI functionality without
+bloat and supports 3D graphics via OpenGL(r) and its built-in
+GLUT emulation.
 
 %package devel
 Summary: FLTK Development Environment
