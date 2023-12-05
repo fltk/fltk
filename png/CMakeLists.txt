@@ -1,7 +1,7 @@
 #
 # PNG library CMake configuration for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -31,37 +31,72 @@ set(PNG_SRCS
   pngwrite.c
   pngwtran.c
   pngwutil.c
-
-  # build on ARM (Apple M1 systems)
-  arm/arm_init.c
-  arm/filter_neon_intrinsics.c
-  arm/palette_neon_intrinsics.c
 )
 
 #######################################################################
-FL_ADD_LIBRARY(fltk_png STATIC "${PNG_SRCS}")
-# install the png headers
-install(FILES png.h;pngconf.h;pnglibconf.h
-    DESTINATION ${FLTK_INCLUDEDIR}/FL/images
+# Note: This file is only used if we build the bundled PNG library and
+#   if we do this we MUST also build and use the bundled ZLIB, hence
+#   we MUST also link to the bundled ZLIB (see below).
+#######################################################################
+
+#######################################################################
+# Build some files on ARM (e.g. Apple M1 systems)
+#######################################################################
+
+# We can only determine the target architecture if it is set
+# in CMAKE_OSX_ARCHITECTURES, otherwise we *assume* it is true and
+# compile these files even if this results in some warnings.
+# This includes all non-macOS platforms.
+
+if (CMAKE_OSX_ARCHITECTURES)
+  string(REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
+else ()
+  set (is_arm TRUE)
+endif ()
+
+if (is_arm)
+  LIST (APPEND PNG_SRCS
+    arm/arm_init.c
+    arm/filter_neon_intrinsics.c
+    arm/palette_neon_intrinsics.c
+  )
+endif ()
+
+unset (is_arm)
+
+#######################################################################
+# Build some files on ppc64
+# We compile these files whatever the architecture resulting in void code
+# on non-ppc64 architectures.
+#######################################################################
+
+LIST (APPEND PNG_SRCS
+  powerpc/powerpc_init.c
+  powerpc/filter_vsx_intrinsics.c
 )
 
-if(OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries(fltk_png ${FLTK_ZLIB_LIBRARIES})
-else()
-    target_link_libraries(fltk_png fltk_z)
-endif(OPTION_USE_SYSTEM_ZLIB)
+#######################################################################
+# Build the static library
+#######################################################################
+
+FL_ADD_LIBRARY (fltk_png STATIC "${PNG_SRCS}")
+target_link_libraries(fltk_png PUBLIC fltk_z)
 
 #######################################################################
-if(OPTION_BUILD_SHARED_LIBS)
+# Build the shared library (optional)
 #######################################################################
-FL_ADD_LIBRARY(fltk_png SHARED "${PNG_SRCS}")
 
-if(OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries(fltk_png_SHARED ${FLTK_ZLIB_LIBRARIES})
-else()
-    target_link_libraries(fltk_png_SHARED fltk_z_SHARED)
-endif(OPTION_USE_SYSTEM_ZLIB)
+if (OPTION_BUILD_SHARED_LIBS)
+
+  FL_ADD_LIBRARY (fltk_png SHARED "${PNG_SRCS}")
+  target_link_libraries (fltk_png_SHARED fltk_z_SHARED)
+
+endif ()
 
 #######################################################################
-endif(OPTION_BUILD_SHARED_LIBS)
+# Install the library headers
 #######################################################################
+
+install (FILES png.h pngconf.h pnglibconf.h pngprefix.h
+         DESTINATION ${FLTK_INCLUDEDIR}/FL/images
+)

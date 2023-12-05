@@ -1,8 +1,8 @@
 #
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -14,6 +14,25 @@
 #
 #     https://www.fltk.org/bugs.php
 #
+
+#######################################################################
+# Important implementation note for FLTK developers
+#######################################################################
+#
+# In the current version of FLTK's CMake build files (1.3.x) we're
+# using 'include_directories()' to define directories that must be
+# used in compile commands (typically "-Idirectories").
+#
+# include_directories() is a global command that affects *all* source
+# files in the current directory and all subdirectories. This can lead
+# to conflicts and should be replaced with target_include_directories()
+# which can be applied to particular targets and source files only.
+#
+# This is a known issue and will be addressed in FLTK 1.4.0.
+#
+# Albrecht-S December 4, 2023
+#
+#######################################################################
 
 set (DEBUG_OPTIONS_CMAKE 0)
 if (DEBUG_OPTIONS_CMAKE)
@@ -45,7 +64,155 @@ set (OPTION_ABI_VERSION ""
 )
 set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
 
+
 #######################################################################
+#  Select MSVC (Visual Studio) Runtime: DLL (/MDx) or static (/MTx)
+#  where x = 'd' for Debug builds, empty ('') for non-Debug builds.
+#  Note: this might be handled better by the 'MSVC_RUNTIME_LIBRARY'
+#  target property for each target rather than setting a global
+#  CMake variable - but this version does the latter.
+#  *Note* Supported since CMake version 3.15
+#######################################################################
+
+if (MSVC AND NOT (CMAKE_VERSION VERSION_LESS 3.15))
+  option (FLTK_MSVC_RUNTIME_DLL "use MSVC Runtime-DLL (/MDx)" ON)
+  if (FLTK_MSVC_RUNTIME_DLL)
+    set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  else ()
+    set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  endif ()
+endif (MSVC AND NOT (CMAKE_VERSION VERSION_LESS 3.15))
+
+#######################################################################
+#  Bundled Library Options
+#######################################################################
+
+option (OPTION_USE_SYSTEM_ZLIB      "use system zlib"    ON)
+
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
+  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  ON)
+endif ()
+
+#######################################################################
+#  Make sure that png and zlib are either system or local for compatibility
+#######################################################################
+
+if (OPTION_USE_SYSTEM_ZLIB)
+  find_package (ZLIB)
+endif ()
+
+if (OPTION_USE_SYSTEM_LIBPNG)
+  find_package (PNG)
+endif ()
+
+# If we use the system zlib, we must also use the system png zlib and vice versa
+# If either of them is not available, we fall back to using both local libraries
+if (OPTION_USE_SYSTEM_LIBPNG AND NOT (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND))
+    set (PNG_FOUND FALSE)
+    set (OPTION_USE_SYSTEM_LIBPNG OFF)
+    message (STATUS "Local z lib selected: overriding png lib to local for compatibility.\n")
+endif ()
+if (OPTION_USE_SYSTEM_ZLIB AND NOT (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND))
+    set (ZLIB_FOUND FALSE)
+    set (OPTION_USE_SYSTEM_ZLIB OFF)
+    message (STATUS "Local png lib selected: overriding z lib to local for compatibility.\n")
+endif ()
+
+#######################################################################
+#  Bundled Compression Library : zlib
+#######################################################################
+
+if (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
+  set (FLTK_USE_BUILTIN_ZLIB FALSE)
+  set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
+  include_directories (${ZLIB_INCLUDE_DIRS})
+else()
+  if (OPTION_USE_SYSTEM_ZLIB)
+    message (STATUS "cannot find system zlib library - using built-in\n")
+  endif ()
+
+  add_subdirectory (zlib)
+  set (FLTK_USE_BUILTIN_ZLIB TRUE)
+  set (FLTK_ZLIB_LIBRARIES fltk_z)
+  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+endif ()
+
+set (HAVE_LIBZ 1)
+
+#######################################################################
+#  Bundled Image Library : libjpeg
+#######################################################################
+
+if (OPTION_USE_SYSTEM_LIBJPEG)
+  find_package (JPEG)
+endif ()
+
+if (OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
+  set (FLTK_USE_BUILTIN_JPEG FALSE)
+  set (FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
+  include_directories (${JPEG_INCLUDE_DIR})
+else ()
+  if (OPTION_USE_SYSTEM_LIBJPEG)
+    message (STATUS "cannot find system jpeg library - using built-in\n")
+  endif ()
+
+  add_subdirectory (jpeg)
+  set (FLTK_USE_BUILTIN_JPEG TRUE)
+  set (FLTK_JPEG_LIBRARIES fltk_jpeg)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
+endif ()
+
+set (HAVE_LIBJPEG 1)
+
+#######################################################################
+#  Bundled Image Library : libpng
+#######################################################################
+
+if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
+
+  set (FLTK_USE_BUILTIN_PNG FALSE)
+  set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
+  include_directories (${PNG_INCLUDE_DIRS})
+  add_definitions (${PNG_DEFINITIONS})
+
+  set (_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
+  list (APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
+
+  # Note: we do not check for <libpng/png.h> explicitly.
+  # This is assumed to exist if we have PNG_FOUND and don't find <png.h>
+
+  # FIXME - Force search by unsetting the chache variable. Maybe use
+  # FIXME - another cache variable to check for option changes?
+
+  unset (HAVE_PNG_H CACHE) # force search
+  check_include_file (png.h HAVE_PNG_H)
+  mark_as_advanced (HAVE_PNG_H)
+
+  set (CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
+  unset (_INCLUDE_SAVED)
+
+else ()
+
+  if (OPTION_USE_SYSTEM_LIBPNG)
+    message (STATUS "cannot find system png library - using built-in\n")
+  endif ()
+
+  add_subdirectory (png)
+  set (FLTK_USE_BUILTIN_PNG TRUE)
+  set (FLTK_PNG_LIBRARIES fltk_png)
+  set (HAVE_PNG_H 1)
+  set (HAVE_PNG_GET_VALID 1)
+  set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
+endif ()
+
+set (HAVE_LIBPNG 1)
+
 #######################################################################
 if (UNIX)
   option (OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
@@ -326,90 +493,6 @@ if (debug_threads)
 endif (debug_threads)
 unset (debug_threads)
 
-#######################################################################
-option (OPTION_USE_SYSTEM_ZLIB "use system zlib" ON)
-
-if (OPTION_USE_SYSTEM_ZLIB)
-  include (FindZLIB)
-endif (OPTION_USE_SYSTEM_ZLIB)
-
-if (ZLIB_FOUND)
-  set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
-  include_directories (${ZLIB_INCLUDE_DIRS})
-  set (FLTK_BUILTIN_ZLIB_FOUND FALSE)
-else()
-  if (OPTION_USE_SYSTEM_ZLIB)
-    message (STATUS "cannot find system zlib library - using built-in\n")
-  endif (OPTION_USE_SYSTEM_ZLIB)
-
-  add_subdirectory (zlib)
-  set (FLTK_ZLIB_LIBRARIES fltk_z)
-  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-  set (FLTK_BUILTIN_ZLIB_FOUND TRUE)
-endif (ZLIB_FOUND)
-
-set (HAVE_LIBZ 1)
-
-#######################################################################
-if (APPLE)
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
-else ()
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
-endif (APPLE)
-
-if (OPTION_USE_SYSTEM_LIBJPEG)
-  include (FindJPEG)
-endif (OPTION_USE_SYSTEM_LIBJPEG)
-
-if (JPEG_FOUND)
-  set (FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
-  include_directories (${JPEG_INCLUDE_DIR})
-  set (FLTK_BUILTIN_JPEG_FOUND FALSE)
-else ()
-  if (OPTION_USE_SYSTEM_LIBJPEG)
-    message (STATUS "cannot find system jpeg library - using built-in\n")
-  endif (OPTION_USE_SYSTEM_LIBJPEG)
-
-  add_subdirectory (jpeg)
-  set (FLTK_JPEG_LIBRARIES fltk_jpeg)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
-  set (FLTK_BUILTIN_JPEG_FOUND TRUE)
-endif (JPEG_FOUND)
-
-set (HAVE_LIBJPEG 1)
-
-#######################################################################
-if (APPLE)
-  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" OFF)
-else ()
-  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
-endif (APPLE)
-
-if (OPTION_USE_SYSTEM_LIBPNG)
-  include (FindPNG)
-endif (OPTION_USE_SYSTEM_LIBPNG)
-
-if (PNG_FOUND)
-  set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
-  include_directories (${PNG_INCLUDE_DIR})
-  add_definitions (${PNG_DEFINITIONS})
-  set (FLTK_BUILTIN_PNG_FOUND FALSE)
-else()
-  if (OPTION_USE_SYSTEM_LIBPNG)
-    message (STATUS "cannot find system png library - using built-in\n")
-  endif (OPTION_USE_SYSTEM_LIBPNG)
-
-  add_subdirectory (png)
-  set (FLTK_PNG_LIBRARIES fltk_png)
-  set (HAVE_PNG_H 1)
-  set (HAVE_PNG_GET_VALID 1)
-  set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
-  set (FLTK_BUILTIN_PNG_FOUND TRUE)
-endif (PNG_FOUND)
-
-set (HAVE_LIBPNG 1)
 
 #######################################################################
 if (X11_Xinerama_FOUND)
@@ -526,6 +609,14 @@ if (DEBUG_OPTIONS_CMAKE)
   fl_debug_var (OPENGL_FOUND)
   fl_debug_var (OPENGL_INCLUDE_DIR)
   fl_debug_var (OPENGL_LIBRARIES)
+  fl_debug_var (CMAKE_MSVC_RUNTIME_LIBRARY)
+  message ("--- bundled libraries ---")
+  fl_debug_var (OPTION_USE_SYSTEM_LIBJPEG)
+  fl_debug_var (OPTION_USE_SYSTEM_LIBPNG)
+  fl_debug_var (OPTION_USE_SYSTEM_ZLIB)
+  fl_debug_var (FLTK_USE_BUILTIN_JPEG)
+  fl_debug_var (FLTK_USE_BUILTIN_PNG)
+  fl_debug_var (FLTK_USE_BUILTIN_ZLIB)
   message ("--- X11 ---")
   fl_debug_var (X11_FOUND)
   fl_debug_var (X11_INCLUDE_DIR)

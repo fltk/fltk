@@ -4,7 +4,7 @@
 #
 # JPEG library makefile for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1997-2011 by Bill Spitzak and others.
+# Copyright 1997-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,6 @@
 #
 
 include ../makeinclude
-
 
 #
 # Object files...
@@ -74,13 +73,11 @@ OBJS	=	\
 
 LIBJPEG	=	../lib/libfltk_jpeg$(LIBEXT)
 
-
 #
 # Make all targets...
 #
 
 all:	$(LIBJPEG)
-
 
 #
 # Clean all targets and object files...
@@ -89,7 +86,6 @@ all:	$(LIBJPEG)
 clean:
 	$(RM) $(OBJS)
 	$(RM) $(LIBJPEG)
-
 
 #
 # Install everything...
@@ -106,7 +102,7 @@ install:	$(LIBJPEG)
 	$(INSTALL_DATA) jerror.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) jmorecfg.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) jpeglib.h $(DESTDIR)$(includedir)/FL/images
-
+	$(INSTALL_DATA) fltk_jpeg_prefix.h $(DESTDIR)$(includedir)/FL/images
 
 #
 # Uninstall everything...
@@ -120,7 +116,7 @@ uninstall:
 	$(RM) $(includedir)/FL/images/jerror.h
 	$(RM) $(includedir)/FL/images/jmorecfg.h
 	$(RM) $(includedir)/FL/images/jpeglib.h
-
+	$(RM) $(includedir)/FL/images/fltk_jpeg_prefix.h
 
 #
 # libfltk_jpeg.a
@@ -132,13 +128,16 @@ $(LIBJPEG):	$(OBJS)
 	$(LIBCOMMAND) $@ $(OBJS)
 	$(RANLIB) $@
 
-
 #
 # Make dependencies...
 #
 
-depend:	$(OBJS:.o=.c)
-	makedepend -Y -I.. -f makedepend $(OBJS:.o=.c)
+depend: $(OBJS:.o=.c)
+	makedepend -Y -I.. -f makedepend -w 20 $(OBJS:.o=.c)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
+	mv makedepend.tmp makedepend
 
 include makedepend
 
