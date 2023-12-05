@@ -58,14 +58,15 @@ DATE="`date +'%Y%m%d'`"
 
 fltk_version="`cat fltk_version.dat`"
 VS="`echo $fltk_version | cut -f 1-2 -d '.'`"
+git_rev="`git rev-parse --short=10 HEAD`"
+git_rev_full="`git rev-parse HEAD`"
 
 echo "Getting distribution..."
 
 if test $# = 0 -o "x$1" = "xsnapshot"; then
 	echo Getting snapshot revision...
-	rev="`git rev-parse --short=8 HEAD`"
-	version="${VS}-${rev}"
-	fileversion="${VS}.x-${DATE}-$rev"
+	version="${VS}-${git_rev}"
+	fileversion="${VS}.x-${DATE}-${git_rev}"
 	fileurl="$SNAPSHOT/fltk-$fileversion.tar.gz"
 else
 	if test ! -e "documentation/html/"; then
@@ -82,7 +83,6 @@ else
 		echo "  cd documentation; make dist"
 		exit
 	fi
-	rev="1"
 	version=$1
 	fileversion=$1
 	fileurl="$DOWNLOAD/$version/fltk-$fileversion-source.tar.gz"
@@ -94,10 +94,15 @@ else
 fi
 
 # Debug:
+# echo "----------------------------------------------"
+# echo "cmdline-arg1 = '$1'"
 # echo "fltk_version = $fltk_version"
 # echo "version      = $version"
 # echo "fileversion  = $fileversion"
 # echo "fileurl      = $fileurl"
+# echo "git_rev      = $git_rev"
+# echo "git_rev_full = $git_rev_full"
+# echo "----------------------------------------------"
 
 echo Exporting $fltk_version to /tmp/fltk-$version/...
 rm -rf /tmp/fltk-$version
@@ -113,14 +118,13 @@ fi
 echo Applying version number...
 cd /tmp/fltk-$version
 
-sed -e '1,$s/@VERSION@/'$version'/' \
-	-e '1,$s/@RELEASE@/'$rev'/' \
-	-e '1,$s#^Source:.*#Source: '$fileurl'#' \
-	<fltk.spec.in >fltk.spec
+sed -e '1,$s/@FLTK_VERSION@/'$version'/' \
+    < fltk.spec.in > fltk.spec
 
 echo Creating configure script...
 autoconf -f
 
+# FLTK 1.3.x only:
 echo Creating config.guess and config.sub \(ignore any other errors\)...
 automake --add-missing --copy 2>/dev/null
 
@@ -140,6 +144,11 @@ fi
 echo "Removing documentation..."
 rm -rf fltk-$version/documentation/html/
 rm -f fltk-$version/documentation/fltk.pdf
+
+echo Creating fltk_git_revision.dat in $PWD/fltk-$version/ ...
+echo "$git_rev_full" > fltk-$version/fltk_git_revision.dat
+cat $PWD/fltk-$version/fltk_git_revision.dat
+echo ""
 
 echo "Making UNIX (.tar.gz) distribution..."
 $TAR czf fltk-$fileversion-source.tar.gz fltk-$version

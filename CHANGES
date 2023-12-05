@@ -1,8 +1,13 @@
-CHANGES IN FLTK 1.3.9					RELEASED: Dec ?? 2023
+CHANGES IN FLTK 1.3.9					RELEASED: Dec 09 2023
 
 FLTK 1.3.9 is a maintenance release with some fixes and enhancements.
 
-Highlights: this release supports macOS up to macOS 14 "Sonoma".
+Highlights in this release:
+
+  - Support macOS up to macOS 14 "Sonoma".
+  - Update bundled libraries to current versions.
+  - Introduce bundled image library "prefixing" to avoid conflicts
+    with system libraries.
 
 Details:
 
@@ -18,17 +23,21 @@ Details:
     Remove unused variable, fix "type issue" (#445, part 2)
     Fix stack buffer overflow found by address sanitizer
     Fix "gtk+ rendering" (GitHub Issue #443)
+    Fix doxygen warnings
+    Bump version numbers, prepare release 1.3.9
+    Fix several compiler warnings
+    Update bundled image libraries and zlib to current versions
+    Update README, README.CMake.txt, and some support files
 
   ManoloFLTK:
-    macOS platform: fix for issue #325 Disabling IM disables Greek and Cyrillic layouts
-    Fix fullscreen window level corner cases on macOS - cont'd
-    Fix for issue #373 apparent with macOS platform and SDK ≤ 10.13
-    Fix for issue #452: Fl::get_font_name failure on OS-X.
-    Fix for issue #454: crash in Fl::get_font_name().
-    Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Escape or Tab do not work on Mac
-    Add support of macOS Ventura 13.0 and macOS Sonoma 14.0
+    macOS platform: Issue #325 "Disabling IM disables Greek and Cyrillic layouts"
+    Fix fullscreen window level corner cases on macOS
+    Fix issue #373 apparent with macOS platform and SDK ≤ 10.13
+    Issue #452: Fl::get_font_name failure on OS-X.
+    Issue #454: crash in Fl::get_font_name().
+    Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Escape or Tab don't work on Mac
     Fix "Focus is lost leaving full screen on macOS 13" (#608)
-    Add support for macOS Sonoma 14
+    Add support of macOS Ventura 13.0 and macOS Sonoma 14.0
 
   YX:
     Fix IME problem (issue #270)
