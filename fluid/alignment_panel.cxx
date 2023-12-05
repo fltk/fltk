@@ -3050,9 +3050,8 @@ Fl_Double_Window* make_shell_window() {
   { shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
     shell_run_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { shell_run_terminal = new Fl_Terminal(10, 10, 535, 375);
-      shell_run_terminal->ansi(1);
-      shell_run_terminal->end();
       Fl_Group::current()->resizable(shell_run_terminal);
+      shell_run_terminal->ansi(1);
     } // Fl_Terminal* shell_run_terminal
     { Fl_Group* o = new Fl_Group(10, 395, 535, 25);
       { Fl_Button* o = new Fl_Button(10, 395, 94, 25, "Clear");

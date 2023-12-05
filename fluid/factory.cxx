@@ -889,9 +889,9 @@ public:
 /**
  \brief Manage a terminal widget.
  */
-class Fl_Terminal_Type : public Fl_Group_Type
+class Fl_Terminal_Type : public Fl_Widget_Type
 {
-  typedef Fl_Group_Type super;
+  typedef Fl_Widget_Type super;
 public:
   const char *type_name() FL_OVERRIDE { return "Fl_Terminal"; }
   // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
@@ -929,7 +929,6 @@ public:
     return 1;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Terminal_Type();}
-  int is_parent() const FL_OVERRIDE { return 0; }
   ID id() const FL_OVERRIDE { return ID_Terminal; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Terminal) ? true : super::is_a(inID); }
 };

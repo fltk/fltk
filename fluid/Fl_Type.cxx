@@ -58,7 +58,8 @@
           +-+ Fl_Input_Type
           | +-- Fl_Output_Type
           +-+ Fl_Text_Display_Type
-          | +-- Fl_Text_Editor+Type
+          | +-- Fl_Text_Editor_Type
+          +-- Fl_Terminal_Type
           +-- Fl_Box_Type
           +-- Fl_Clock_Type
           +-- Fl_Progress_Type
@@ -70,7 +71,6 @@
           | +-- Fl_Table_Type
           | +-- Fl_Tabs_Type
           | +-- Fl_Scroll_Type
-          | +-- Fl_Terminal_Type
           | +-- Fl_Tile_Type
           | +-- Fl_Wizard_Type
           | +-+ Fl_Window_Type
