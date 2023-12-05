@@ -1574,16 +1574,17 @@ Function {make_shell_window()} {open
     label {Shell Command Output} open
     xywh {769 585 555 430} type Double align 80 resizable visible
   } {
-    Fl_Terminal shell_run_terminal {
+    Fl_Terminal shell_run_terminal {selected
       xywh {10 10 535 375} resizable
       code0 {shell_run_terminal->ansi(1);}
+      code1 {shell_run_terminal->history_lines(1000);}
     }
     Fl_Group {} {open
       xywh {10 395 535 25}
     } {
       Fl_Button {} {
         label Clear
-        callback {shell_run_terminal->append("\\033[2J\\033[H");} selected
+        callback {shell_run_terminal->append("\\033[2J\\033[H");}
         xywh {10 395 94 25}
       }
       Fl_Box {} {

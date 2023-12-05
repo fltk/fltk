@@ -3052,6 +3052,7 @@ Fl_Double_Window* make_shell_window() {
     { shell_run_terminal = new Fl_Terminal(10, 10, 535, 375);
       Fl_Group::current()->resizable(shell_run_terminal);
       shell_run_terminal->ansi(1);
+      shell_run_terminal->history_lines(1000);
     } // Fl_Terminal* shell_run_terminal
     { Fl_Group* o = new Fl_Group(10, 395, 535, 25);
       { Fl_Button* o = new Fl_Button(10, 395, 94, 25, "Clear");
