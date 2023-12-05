@@ -51,7 +51,7 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {Function/Method Properties}
-    xywh {540 418 343 232} type Double hide resizable modal
+    xywh {540 418 343 232} type Double resizable modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -264,8 +264,8 @@ Function {make_declblock_panel()} {open
 Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
-    label {Declaration Properties}
-    xywh {497 618 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    label {Declaration Properties} open selected
+    xywh {497 618 343 262} type Double align 80 resizable size_range {343 262 0 0} visible
   } {
     Fl_Group {} {
       xywh {10 10 270 20}
@@ -310,29 +310,48 @@ Function {make_decl_panel()} {open
         }
       }
     }
-    Fl_Input decl_input {
-      label {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
-      tooltip {Declaration text.} xywh {10 40 320 20} labelsize 11 align 134 when 0 textfont 4 textsize 11
-    }
-    Fl_Text_Editor decl_comment_input {
-      label {Comment:}
-      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
-      code0 {decl_comment_input->buffer(new Fl_Text_Buffer());}
-      code1 {decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    Fl_Tile {} {open
+      xywh {10 40 320 180} resizable
+      code2 {o->size_range(0, 320, 100);}
+      code3 {o->size_range(1, 320, 60);}
+    } {
+      Fl_Group {} {open
+        xywh {10 40 320 100} box FLAT_BOX resizable
+      } {
+        Fl_Text_Editor decl_input {
+          label {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
+          xywh {10 40 320 45} labelsize 11 align 134 resizable
+          code0 {\#include "CodeEditor.h"}
+          class CodeEditor
+        }
+        Fl_Box {} {
+          xywh {20 139 300 1} box BORDER_FRAME color 43
+        }
+      }
+      Fl_Group {} {open
+        xywh {10 140 320 80} box FLAT_BOX
+      } {
+        Fl_Text_Editor decl_comment_input {
+          label {Comment:}
+          tooltip {Declaration comment in Doxygen format} xywh {10 155 320 64} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+          code0 {decl_comment_input->buffer(new Fl_Text_Buffer());}
+          code1 {decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+        }
+      }
     }
     Fl_Group {} {open
-      xywh {10 205 320 20}
+      xywh {10 230 320 20}
     } {
       Fl_Return_Button decl_panel_ok {
         label OK
-        xywh {200 205 60 20} labelsize 11 hotspot
+        xywh {200 230 60 20} labelsize 11 hotspot
       }
       Fl_Button decl_panel_cancel {
         label Cancel
-        xywh {270 205 60 20} shortcut 0xff1b labelsize 11
+        xywh {270 230 60 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {10 205 185 20} resizable
+        xywh {10 230 185 20} resizable
       }
     }
   }
@@ -341,7 +360,7 @@ Function {make_decl_panel()} {open
 Function {make_data_panel()} {open
 } {
   Fl_Window data_panel {
-    label {Inline Data Properties} open
+    label {Inline Data Properties}
     xywh {567 382 343 264} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open

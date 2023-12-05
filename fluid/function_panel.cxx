@@ -354,7 +354,7 @@ Fl_Menu_Item menu_decl_class_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-Fl_Input *decl_input=(Fl_Input *)0;
+CodeEditor *decl_input=(CodeEditor *)0;
 
 Fl_Text_Editor *decl_comment_input=(Fl_Text_Editor *)0;
 
@@ -363,7 +363,7 @@ Fl_Return_Button *decl_panel_ok=(Fl_Return_Button *)0;
 Fl_Button *decl_panel_cancel=(Fl_Button *)0;
 
 Fl_Double_Window* make_decl_panel() {
-  { decl_panel = new Fl_Double_Window(343, 237, "Declaration Properties");
+  { decl_panel = new Fl_Double_Window(343, 262, "Declaration Properties");
     decl_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
       { Fl_Box* o = new Fl_Box(200, 10, 80, 20);
@@ -383,44 +383,67 @@ Fl_Double_Window* make_decl_panel() {
       } // Fl_Choice* decl_class_choice
       o->end();
     } // Fl_Group* o
-    { decl_input = new Fl_Input(10, 40, 320, 20, "This can be any declaration, like \"int x;\", an external symbol like \"exter\
+    { Fl_Tile* o = new Fl_Tile(10, 40, 320, 180);
+      { Fl_Group* o = new Fl_Group(10, 40, 320, 100);
+        o->box(FL_FLAT_BOX);
+        { decl_input = new CodeEditor(10, 40, 320, 45, "This can be any declaration, like \"int x;\", an external symbol like \"exter\
 n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\
 \" or \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list\
 ;\".");
-      decl_input->tooltip("Declaration text.");
-      decl_input->labelsize(11);
-      decl_input->textfont(4);
-      decl_input->textsize(11);
-      decl_input->align(Fl_Align(134));
-      decl_input->when(FL_WHEN_NEVER);
-    } // Fl_Input* decl_input
-    { decl_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
-      decl_comment_input->tooltip("Declaration comment in Doxygen format");
-      decl_comment_input->box(FL_DOWN_BOX);
-      decl_comment_input->labelfont(1);
-      decl_comment_input->labelsize(11);
-      decl_comment_input->textfont(4);
-      decl_comment_input->textsize(11);
-      decl_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      Fl_Group::current()->resizable(decl_comment_input);
-      decl_comment_input->buffer(new Fl_Text_Buffer());
-      decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
-    } // Fl_Text_Editor* decl_comment_input
-    { Fl_Group* o = new Fl_Group(10, 205, 320, 20);
-      { decl_panel_ok = new Fl_Return_Button(200, 205, 60, 20, "OK");
+          decl_input->box(FL_DOWN_FRAME);
+          decl_input->color(FL_BACKGROUND2_COLOR);
+          decl_input->selection_color(FL_SELECTION_COLOR);
+          decl_input->labeltype(FL_NORMAL_LABEL);
+          decl_input->labelfont(0);
+          decl_input->labelsize(11);
+          decl_input->labelcolor(FL_FOREGROUND_COLOR);
+          decl_input->align(Fl_Align(134));
+          decl_input->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(decl_input);
+        } // CodeEditor* decl_input
+        { Fl_Box* o = new Fl_Box(20, 139, 300, 1);
+          o->box(FL_BORDER_FRAME);
+          o->color((Fl_Color)43);
+        } // Fl_Box* o
+        o->end();
+        Fl_Group::current()->resizable(o);
+      } // Fl_Group* o
+      { Fl_Group* o = new Fl_Group(10, 140, 320, 80);
+        o->box(FL_FLAT_BOX);
+        { decl_comment_input = new Fl_Text_Editor(10, 155, 320, 64, "Comment:");
+          decl_comment_input->tooltip("Declaration comment in Doxygen format");
+          decl_comment_input->box(FL_DOWN_BOX);
+          decl_comment_input->labelfont(1);
+          decl_comment_input->labelsize(11);
+          decl_comment_input->textfont(4);
+          decl_comment_input->textsize(11);
+          decl_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          Fl_Group::current()->resizable(decl_comment_input);
+          decl_comment_input->buffer(new Fl_Text_Buffer());
+          decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
+        } // Fl_Text_Editor* decl_comment_input
+        o->end();
+      } // Fl_Group* o
+      o->size_range(0, 320, 100);
+      o->size_range(1, 320, 60);
+      o->end();
+      Fl_Group::current()->resizable(o);
+    } // Fl_Tile* o
+    { Fl_Group* o = new Fl_Group(10, 230, 320, 20);
+      { decl_panel_ok = new Fl_Return_Button(200, 230, 60, 20, "OK");
         decl_panel_ok->labelsize(11);
         decl_panel_ok->window()->hotspot(decl_panel_ok);
       } // Fl_Return_Button* decl_panel_ok
-      { decl_panel_cancel = new Fl_Button(270, 205, 60, 20, "Cancel");
+      { decl_panel_cancel = new Fl_Button(270, 230, 60, 20, "Cancel");
         decl_panel_cancel->shortcut(0xff1b);
         decl_panel_cancel->labelsize(11);
       } // Fl_Button* decl_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 205, 185, 20);
+      { Fl_Box* o = new Fl_Box(10, 230, 185, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    decl_panel->size_range(343, 237);
+    decl_panel->size_range(343, 262);
     decl_panel->end();
   } // Fl_Double_Window* decl_panel
   return decl_panel;

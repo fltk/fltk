@@ -940,7 +940,7 @@ void Fl_Decl_Type::read_property(Fd_Project_Reader &f, const char *c) {
  */
 void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
-  decl_input->value(name());
+  decl_input->buffer()->text(name());
   if (is_in_class()) {
     decl_class_choice->value(public_);
     decl_class_choice->show();
@@ -963,7 +963,7 @@ void Fl_Decl_Type::open() {
       else if (!w) Fl::wait();
     }
     // check values
-    const char*c = decl_input->value();
+    const char*c = decl_input->buffer()->text();
     while (isspace(*c)) c++;
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     // alert user
@@ -1018,6 +1018,7 @@ void Fl_Decl_Type::write_code1(Fd_Code_Writer& f) {
                         || (!strncmp(c,"typedef",7) && isspace(c[7]))
                         || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
                         || (!strncmp(c,"struct",6) && isspace(c[6]))
+                        || (!strncmp(c,"enum",4) && isspace(c[4]))
                         ) ) {
     f.write_public(public_);
     write_comment_h(f, f.indent(1));

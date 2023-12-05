@@ -43,8 +43,8 @@
 class FL_EXPORT Fl_File_Chooser {
 public:
   /**
-    \enum Type
-    Determines the type of file chooser presented to the user.
+   \enum Type
+   Determines the type of file chooser presented to the user.
   */
   enum Type {
     SINGLE    = 0, ///< Select a single, existing file.

@@ -64,7 +64,8 @@ extern Fl_Menu_Item menu_declblock_public_choice[];
 extern Fl_Double_Window *decl_panel;
 extern Fl_Choice *decl_choice;
 extern Fl_Choice *decl_class_choice;
-extern Fl_Input *decl_input;
+#include <FL/Fl_Tile.H>
+extern CodeEditor *decl_input;
 extern Fl_Text_Editor *decl_comment_input;
 extern Fl_Return_Button *decl_panel_ok;
 extern Fl_Button *decl_panel_cancel;
