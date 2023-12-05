@@ -514,27 +514,31 @@ endif (FLTK_USE_X11)
 
 if (OPTION_USE_WAYLAND)
   pkg_check_modules(DBUS dbus-1)
-  include_directories(${DBUS_INCLUDE_DIRS})
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${CMAKE_CURRENT_BINARY_DIR} -fPIC -D_GNU_SOURCE")
+  set (IDIRS "${CMAKE_CURRENT_BINARY_DIR}")
+  set (CDEFS "_GNU_SOURCE;HAVE_MEMFD_CREATE;HAVE_MKOSTEMP;HAVE_POSIX_FALLOCATE")
+  set (COPTS "-fPIC")
   if (DBUS_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAS_DBUS")
+    set (CDEFS "${CDEFS};HAS_DBUS")
+    set (IDIRS "${IDIRS};${DBUS_INCLUDE_DIRS}")
   endif (DBUS_FOUND)
   if (OPTION_USE_SYSTEM_LIBDECOR)
-    set (CDEFS "USE_SYSTEM_LIBDECOR;LIBDECOR_PLUGIN_DIR=${LIBDECOR_PLUGIN_DIR}")
+    set (CDEFS "${CDEFS};USE_SYSTEM_LIBDECOR;LIBDECOR_PLUGIN_DIR=${LIBDECOR_PLUGIN_DIR}")
     if (GTK_FOUND)
       set (CDEFS "${CDEFS};HAVE_GTK")
     endif (GTK_FOUND)
     set_source_files_properties(
       ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/fl_libdecor-plugins.c
-      PROPERTIES COMPILE_DEFINITIONS "${CDEFS}")
+      ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src/os-compatibility.c
+      ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src/cursor-settings.c
+      PROPERTIES COMPILE_DEFINITIONS "${CDEFS}"
+      INCLUDE_DIRECTORIES "${IDIRS}"
+      COMPILE_OPTIONS "${COPTS}"
+      )
   else()
-    set (IDEFS "${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src"
+    set (IDIRS "${IDIRS};${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src"
       "${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src/plugins")
-    set (CDEFS
-      "USE_SYSTEM_LIBDECOR=0;LIBDECOR_PLUGIN_API_VERSION=1"
-      "HAVE_MEMFD_CREATE;HAVE_MKOSTEMP;HAVE_POSIX_FALLOCATE"
-      "LIBDECOR_PLUGIN_DIR=\"\""
-    )
+    set (CDEFS "${CDEFS};USE_SYSTEM_LIBDECOR=0;LIBDECOR_PLUGIN_API_VERSION=1"
+      "LIBDECOR_PLUGIN_DIR=\"\"")
     if (GTK_FOUND AND OPTION_ALLOW_GTK_PLUGIN)
       set (CDEFS "${CDEFS};HAVE_GTK")
     endif (GTK_FOUND AND OPTION_ALLOW_GTK_PLUGIN)
@@ -542,7 +546,12 @@ if (OPTION_USE_WAYLAND)
       ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/fl_libdecor.c
       ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/fl_libdecor-plugins.c
       ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src/os-compatibility.c
-      PROPERTIES COMPILE_DEFINITIONS "${CDEFS}" INCLUDE_DIRECTORIES "${IDEFS}")
+      ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src/cursor-settings.c
+      PROPERTIES
+      COMPILE_DEFINITIONS "${CDEFS}"
+      INCLUDE_DIRECTORIES "${IDIRS}"
+      COMPILE_OPTIONS "${COPTS}"
+      )
   endif (OPTION_USE_SYSTEM_LIBDECOR)
 
   list (APPEND CFILES
