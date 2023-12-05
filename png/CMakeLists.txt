@@ -15,7 +15,7 @@
 #
 
 # source files for png
-set(PNG_SRCS
+set (PNG_SRCS
   png.c
   pngerror.c
   pngget.c
@@ -34,9 +34,10 @@ set(PNG_SRCS
 )
 
 #######################################################################
-# Note: This file is only used if we build the bundled PNG library and
-#   if we do this we MUST also build and use the bundled ZLIB, hence
-#   we MUST also link to the bundled ZLIB (see below).
+# Note: This file is used only if we build the bundled PNG library,
+#  and if we do this we MUST also build and use the *bundled* ZLIB,
+#  hence we MUST also link against the bundled ZLIB (see below).
+#  There's no need to check which ZLIB version to use in this context.
 #######################################################################
 
 #######################################################################
@@ -49,16 +50,16 @@ set(PNG_SRCS
 # This includes all non-macOS platforms.
 
 if (CMAKE_OSX_ARCHITECTURES)
-  string(REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
+  string (REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
 else ()
   set (is_arm TRUE)
 endif ()
 
 if (is_arm)
   LIST (APPEND PNG_SRCS
-    arm/arm_init.c
-    arm/filter_neon_intrinsics.c
-    arm/palette_neon_intrinsics.c
+        arm/arm_init.c
+        arm/filter_neon_intrinsics.c
+        arm/palette_neon_intrinsics.c
   )
 endif ()
 
@@ -71,8 +72,8 @@ unset (is_arm)
 #######################################################################
 
 LIST (APPEND PNG_SRCS
-  powerpc/powerpc_init.c
-  powerpc/filter_vsx_intrinsics.c
+      powerpc/powerpc_init.c
+      powerpc/filter_vsx_intrinsics.c
 )
 
 #######################################################################
@@ -80,7 +81,7 @@ LIST (APPEND PNG_SRCS
 #######################################################################
 
 FL_ADD_LIBRARY (fltk_png STATIC "${PNG_SRCS}")
-target_link_libraries(fltk_png PUBLIC fltk_z)
+target_link_libraries (fltk_png PUBLIC fltk_z)
 
 #######################################################################
 # Build the shared library (optional)
@@ -89,7 +90,7 @@ target_link_libraries(fltk_png PUBLIC fltk_z)
 if (OPTION_BUILD_SHARED_LIBS)
 
   FL_ADD_LIBRARY (fltk_png SHARED "${PNG_SRCS}")
-  target_link_libraries (fltk_png_SHARED fltk_z_SHARED)
+  target_link_libraries (fltk_png_SHARED PUBLIC fltk_z_SHARED)
 
 endif ()
 
