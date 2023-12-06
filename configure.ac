@@ -694,6 +694,14 @@ if test x$enable_localzlib != xyes; then
 	    syszlib_ok=yes
 	fi])
 fi
+case "$host_os" in
+  darwin*)
+# macOS: enforce local zlib when local libpng is active
+    if test x$syszlib_ok = xyes -a x$enable_localpng != xno; then
+      syszlib_ok=no
+    fi
+    ;;
+esac
 # Now set the Z lib and include flags according to the requested mode and availability
 if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
     ZLIBINC="-I../zlib"
