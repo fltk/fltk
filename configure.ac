@@ -70,24 +70,18 @@ dnl FLTK build options to be used in Makefiles (defined in makeinclude)
 USEMMFILES="No"
 
 dnl OS-specific pre-tests...
-dnl host_os_gui equals $host_os unless we target Cygwin or Darwin in combination with X11.
+dnl host_os_gui equals $host_os unless we target Cygwin in combination with X11.
 host_os_gui=$host_os
 case $host_os in
     cygwin*)
 	# Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [[default=no]]])
-	AC_ARG_ENABLE(x11,    [  --enable-x11            with Cygwin or Mac OS, use X11 [[default=no]]])
+	AC_ARG_ENABLE(x11,    [  --enable-x11            with Cygwin, use X11 [[default=no]]])
 	if test x$enable_cygwin = xyes; then
 	    # we target Cygwin in combination with X11
 	    if test x$enable_x11 = xyes; then
 		host_os_gui="X11$host_os"
 	    fi
-	fi
-	;;
-    darwin*)
-	if test x$enable_x11 = xyes; then
-		host_os_gui="X11"
-		OPTIM="-U__APPLE__ -mmacosx-version-min=10.9 -D_LIBCPP_HAS_THREAD_API_PTHREAD $OPTIM"
 	fi
 	;;
    *)
