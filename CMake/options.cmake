@@ -557,10 +557,6 @@ endif (OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
-option (OPTION_CREATE_ANDROID_STUDIO_IDE "create files needed to compile FLTK for Android" OFF)
-#######################################################################
-
-#######################################################################
 option (CMAKE_SUPPRESS_REGENERATION "suppress rules to re-run CMake on rebuild" OFF)
 mark_as_advanced (CMAKE_SUPPRESS_REGENERATION)
 
