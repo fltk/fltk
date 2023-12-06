@@ -345,13 +345,6 @@ if (OPTION_CAIRO OR OPTION_CAIROEXT)
 endif (OPTION_CAIRO OR OPTION_CAIROEXT)
 
 #######################################################################
-option (OPTION_USE_SVG "read/write SVG files" ON)
-
-if (OPTION_USE_SVG)
-  set (FLTK_USE_SVG 1)
-endif (OPTION_USE_SVG)
-
-#######################################################################
 set (HAVE_GL LIB_GL OR LIB_MesaGL)
 
 if (HAVE_GL)
