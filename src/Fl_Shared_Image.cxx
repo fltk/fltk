@@ -221,6 +221,14 @@ void Fl_Shared_Image::release() {
   refcount_ --;
   if (refcount_ > 0) return;
 
+  if (!original()) {
+    Fl_Shared_Image *o = find(name());
+    if (o && o->original() && o!=this) {
+      o->release(); // release as a reference to this copy of the image
+      o->release(); // release from find() operation
+    }
+  }
+
   for (i = 0; i < num_images_; i ++)
     if (images_[i] == this) {
       num_images_ --;
@@ -523,8 +531,10 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
         // search back and forth from that location for the member with the
         // original_ flag set.
         Fl_Shared_Image *img = images_[i];
-        if (img->original_ && img->name_ && (strcmp(img->name_, name) == 0))
+        if (img->original_ && img->name_ && (strcmp(img->name_, name) == 0)) {
+          img->refcount_++;
           return img;
+        }
       }
     }
   }
@@ -570,7 +580,9 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
 Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
   Fl_Shared_Image	*temp;		// Image
 
-  if ((temp = find(name, W, H)) != NULL) return temp;
+  // ::find() increments the ref count for us
+  if ((temp = find(name, W, H)) != NULL)
+    return temp;
 
   if ((temp = find(name)) == NULL) {
     temp = new Fl_Shared_Image(name);
