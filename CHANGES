@@ -38,6 +38,8 @@ Details:
     Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Escape or Tab don't work on Mac
     Fix "Focus is lost leaving full screen on macOS 13" (#608)
     Add support of macOS Ventura 13.0 and macOS Sonoma 14.0
+    macOS: remove configure option --enable-x11 and CMake OPTION_APPLE_X11;
+      this functionality remains in FLTK 1.4.
 
   YX:
     Fix IME problem (issue #270)
