@@ -163,9 +163,9 @@ mark_as_advanced (FREETYPE_PATH)
 #######################################################################
 # libraries
 find_library (LIB_dl dl)
-if ((NOT APPLE) OR OPTION_APPLE_X11)
+if (NOT APPLE)
   find_library (LIB_fontconfig fontconfig)
-endif ((NOT APPLE) OR OPTION_APPLE_X11)
+endif (NOT APPLE)
 find_library (LIB_freetype freetype)
 find_library (LIB_GL GL)
 find_library (LIB_MesaGL MesaGL)

@@ -41,7 +41,7 @@ endif (DEBUG_VARIABLES_CMAKE)
 
 if (WIN32)
   list (APPEND FLTK_LDLIBS -lole32 -luuid -lcomctl32 -lws2_32)
-elseif (APPLE AND NOT OPTION_APPLE_X11)
+elseif (APPLE)
   list (APPEND FLTK_LDLIBS "-framework Cocoa")
 else ()
   list (APPEND FLTK_LDLIBS -lm)
