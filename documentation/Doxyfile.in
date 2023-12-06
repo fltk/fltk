@@ -751,12 +751,6 @@ VERBATIM_HEADERS       = YES
 # configuration options related to the alphabetical class index
 #---------------------------------------------------------------------------
 
-# If the alphabetical index is enabled (see ALPHABETICAL_INDEX) then
-# the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns
-# in which this list will be split (can be a number in the range [1..20])
-
-COLS_IN_ALPHA_INDEX    = 5
-
 # In case all classes in a project start with a common prefix, all
 # classes will be put under the same header in the alphabetical index.
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
@@ -1315,15 +1309,6 @@ EXTERNAL_GROUPS        = YES
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
 
-# If the CLASS_DIAGRAMS tag is set to YES (the default) Doxygen will
-# generate a inheritance diagram (in HTML, RTF and LaTeX) for classes with base
-# or super classes. Setting the tag to NO turns the diagrams off. Note that
-# this option is superseded by the HAVE_DOT option below. This is only a
-# fallback. It is recommended to install and use dot, since it yields more
-# powerful graphs.
-
-CLASS_DIAGRAMS         = YES
-
 # You can define message sequence charts within doxygen comments using the \msc
 # command. Doxygen will then run the mscgen tool (see
 # http://www.mcternan.me.uk/mscgen/) to produce the chart and insert it in the
@@ -1473,14 +1458,6 @@ DOT_GRAPH_MAX_NODES    = 50
 # DOT_GRAPH_MAX_NODES. Using a depth of 0 means no depth restriction.
 
 MAX_DOT_GRAPH_DEPTH    = 0
-
-# Set the DOT_TRANSPARENT tag to YES to generate images with a transparent
-# background. This is disabled by default, because dot on Windows does not
-# seem to support this out of the box. Warning: Depending on the platform used,
-# enabling this option may lead to badly anti-aliased labels on the edges of
-# a graph (i.e. they become hard to read).
-
-DOT_TRANSPARENT        = NO
 
 # Set the DOT_MULTI_TARGETS tag to YES allow dot to generate multiple output
 # files in one run (i.e. multiple -o and -T options on the command line). This
