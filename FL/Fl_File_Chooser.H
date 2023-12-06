@@ -72,7 +72,7 @@ private:
   void update_favorites();
   void update_preview();
 public:
-  Fl_File_Chooser(const char *d, const char *p, int t, const char *title);
+  Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title);
 private:
   Fl_Double_Window *window;
   inline void cb_window_i(Fl_Double_Window*, void*);

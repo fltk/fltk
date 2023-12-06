@@ -167,7 +167,7 @@ void Fl_File_Chooser::cb_favOkButton(Fl_Return_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favOkButton_i(o,v);
 }
 
-Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
+Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title) {
   if (!prefs_) {
     prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
   }
@@ -315,11 +315,11 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
   data_ = 0;
   directory_[0] = 0;
   window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
-  type(t);
-  filter(p);
+  type(type_val);
+  filter(pattern);
   update_favorites();
-  value(d);
-  type(t);
+  value(pathname);
+  type(type_val);
   int e;
   prefs_->get("preview", e, 1);
   preview(e);

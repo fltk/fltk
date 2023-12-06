@@ -42,7 +42,7 @@ class FL_EXPORT Fl_File_Chooser {open
   };} {
     comment {\\enum Type
 Determines the type of file chooser presented to the user.
-} selected public local
+} public local
   }
   decl {static Fl_Preferences *prefs_;} {private local
   }
@@ -76,7 +76,7 @@ Determines the type of file chooser presented to the user.
   }
   decl {void update_preview();} {private local
   }
-  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
+  Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open selected
   } {
     code {if (!prefs_) {
   prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
@@ -88,7 +88,7 @@ Determines the type of file chooser presented to the user.
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();} open
-      private xywh {1171 438 490 380} type Double hide resizable
+      private xywh {0 0 490 380} type Double hide resizable
       code0 {if (title) window->label(title);} modal
     } {
       Fl_Group {} {open
@@ -194,7 +194,7 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {413 100 355 150} type Double hide resizable
+      private xywh {0 0 355 150} type Double hide resizable
       code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0}
     } {
       Fl_File_Browser favList {
@@ -245,11 +245,11 @@ window->hide();}
 data_ = 0;
 directory_[0] = 0;
 window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
-type(t);
-filter(p);
+type(type_val);
+filter(pattern);
 update_favorites();
-value(d);
-type(t);
+value(pathname);
+type(type_val);
 int e;
 prefs_->get("preview", e, 1);
 preview(e);

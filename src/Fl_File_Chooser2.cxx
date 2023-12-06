@@ -148,7 +148,7 @@
 */
 /** @} */
 
-/** \fn Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type, const char *title)
+/** \fn Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)
   The constructor creates the Fl_File_Chooser dialog shown.
 
   - The \p pathname argument can be a directory name or a
@@ -171,7 +171,7 @@
   See the FLTK documentation on fl_filename_match()
   for the kinds of pattern strings that are supported.
 
-  - The \p type argument can be one of the Fl_File_Chooser::Type values.
+  - The \p type_val argument can be one of the Fl_File_Chooser::Type values.
 
   - The \p title argument is used to set the title bar text for the
   Fl_File_Chooser window.
