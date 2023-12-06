@@ -1584,7 +1584,8 @@ Function {make_shell_window()} {open
     } {
       Fl_Button {} {
         label Clear
-        callback {shell_run_terminal->append("\\033[2J\\033[H");}
+        callback {// clear screen, clear scrollback, home cursor
+shell_run_terminal->append("\\033[2J\\033[3J\\033[H");}
         xywh {10 395 94 25}
       }
       Fl_Box {} {
