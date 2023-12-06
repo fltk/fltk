@@ -35,7 +35,6 @@ static unsigned fl_cmap[256] = {
 
 void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
   Fl_Graphics_Driver::color(i);
-  int index;
   uchar r, g, b;
   if (i & 0xFFFFFF00) {
     // translate rgb colors into color index
@@ -44,7 +43,6 @@ void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
     b = i>> 8;
   } else {
     // translate index into rgb:
-    index = i;
     unsigned c = fl_cmap[i];
     r = c>>24;
     g = c>>16;

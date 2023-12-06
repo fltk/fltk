@@ -1906,8 +1906,7 @@ void fl_open_display() {
     
     BOOL need_new_nsapp = (NSApp == nil);
     if (need_new_nsapp) [NSApplication sharedApplication];
-    NSAutoreleasePool *localPool;
-    localPool = [[NSAutoreleasePool alloc] init]; // never released
+    [[NSAutoreleasePool alloc] init]; // never released
     FLAppDelegate *delegate = (Fl_X::calc_mac_os_version() < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
     if (need_new_nsapp) {
@@ -3209,8 +3208,6 @@ void Fl_X::make(Fl_Window* w)
     }
     int xp = w->x();
     int yp = w->y();
-    int wp = w->w();
-    int hp = w->h();
     if (w->size_range_set) {
       if ( w->minh != w->maxh || w->minw != w->maxw) {
         if (w->border()) winstyle |= NSResizableWindowMask;
@@ -3242,10 +3239,6 @@ void Fl_X::make(Fl_Window* w)
       winlevel = non_modal_window_level();
     }
     
-    if (by+bt) {
-      wp += 2*bx;
-      hp += 2*by+bt;
-    }
     if (w->force_position()) {
       if (!Fl::grab()) {
         xp = xwm; yp = ywm;
