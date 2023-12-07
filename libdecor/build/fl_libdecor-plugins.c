@@ -32,10 +32,7 @@
 #endif
 
 #if USE_SYSTEM_LIBDECOR
-#include "../src/libdecor-plugin.h"
-#if HAVE_GTK
-#include <linux/input.h>
-#endif
+#  include "../src/libdecor-plugin.h"
 
 enum zxdg_toplevel_decoration_v1_mode {
   ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE = 1,
