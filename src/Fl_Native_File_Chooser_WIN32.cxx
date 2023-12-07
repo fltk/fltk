@@ -120,12 +120,11 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
     }
   }
 
-  if ( n == -1 ) n = (int) strlen(string);
-  strncpy(wp2, string, n);
+  memcpy(wp2, string, inlen); // use memcpy to avoid compiler warning
 
   // Leave string double-null terminated
-  *(wp2+n+0) = '\0';
-  *(wp2+n+1) = '\0';
+  *(wp2+inlen+0) = '\0';
+  *(wp2+inlen+1) = '\0';
   //DEBUG printf("DEBUG: dnullcat OUT: <"); dnullprint(wp); printf(">\n\n");
 }
 
@@ -691,12 +690,12 @@ void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (
   // No name? Make one..
   char name[1024];
   if ( !name_in || name_in[0] == '\0' ) {
-    sprintf(name, "%.*s Files", int(sizeof(name)-10), winfilter);
+    snprintf(name, sizeof(name), "%.*s Files", int(sizeof(name)-10), winfilter);
   } else {
     if ((strlen(name_in)+strlen(winfilter)+3) < sizeof(name)) {
-      sprintf(name, "%s (%s)", name_in, winfilter);
+      snprintf(name, sizeof(name), "%s (%s)", name_in, winfilter);
     } else {
-      sprintf(name, "%.*s", int(sizeof(name)), name_in);
+      snprintf(name, sizeof(name), "%.*s", int(sizeof(name))-1, name_in);
     }
   }
   dnullcat(_parsedfilt, name);

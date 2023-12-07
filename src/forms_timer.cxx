@@ -47,8 +47,8 @@ void fl_gettime(long* sec, long* usec) {
   *sec = now->tm_sec + 60*now->tm_min + 3600*now->tm_hour + 24*3600*now->tm_yday;
   *usec = 0;
 # else
-  struct timeb tp;
-  ftime(&tp);
+  struct _timeb tp;
+  _ftime(&tp);
   *sec = (long) tp.time;
   *usec = tp.millitm * 1000;
 # endif

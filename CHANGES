@@ -8,6 +8,8 @@ Highlights in this release:
   - Update bundled libraries to current versions.
   - Introduce bundled image library "prefixing" to avoid conflicts
     with system libraries.
+  - New CMake option FLTK_MSVC_RUNTIME_DLL selects Visual Studio
+    Runtime (DLL or static) if built with CMake 3.15 or later
 
 Details:
 
@@ -28,6 +30,7 @@ Details:
     Fix several compiler warnings
     Update bundled image libraries and zlib to current versions
     Update README, README.CMake.txt, and some support files
+    Fix compiler warnings: backported from 1.4 (git 'master')
 
   ManoloFLTK:
     macOS platform: Issue #325 "Disabling IM disables Greek and Cyrillic layouts"
@@ -35,11 +38,16 @@ Details:
     Fix issue #373 apparent with macOS platform and SDK ≤ 10.13
     Issue #452: Fl::get_font_name failure on OS-X.
     Issue #454: crash in Fl::get_font_name().
-    Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Escape or Tab don't work on Mac
+    Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Esc or Tab don't work on Mac
     Fix "Focus is lost leaving full screen on macOS 13" (#608)
     Add support of macOS Ventura 13.0 and macOS Sonoma 14.0
     macOS: remove configure option --enable-x11 and CMake OPTION_APPLE_X11;
       this functionality remains in FLTK 1.4.
+    configure.ac: make sure local-png and local-zlib always run together
+    Remove the -mwindows argument from CFLAGS and CXXFLAGS
+
+Matthias Melcher:
+    Issue #188: Fix reference counts and search for Fl_Shared_Image original
 
   YX:
     Fix IME problem (issue #270)
