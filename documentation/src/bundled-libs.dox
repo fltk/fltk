@@ -23,7 +23,7 @@ The nanosvg library is not affected.
 
 \section bundled-status Current status
 \code
-Current versions of bundled libraries (as of November 29, 2023):
+Current versions of bundled libraries (as of December 5, 2023):
   Library       Version/git commit Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9e            2022-01-16           1.4.0
@@ -36,7 +36,11 @@ Current versions of bundled libraries (as of November 29, 2023):
 Previous versions of bundled libraries (FLTK 1.3.x):
 
   Library       Version            Release date         FLTK Version
-  ------------------------------------------------------------------
+  --------------------------------------------------------------------------
+  jpeg          jpeg-9e            2022-01-16           1.3.9
+  png           libpng-1.6.40      2023-06-21           1.3.9
+  zlib          zlib-1.3           2023-08-18           1.3.9
+
   jpeg          jpeg-9d            2020-01-12           1.3.6 - 1.3.8
   png           libpng-1.6.37      2019-04-14           1.3.6 - 1.3.8
   zlib          zlib-1.2.11        2017-01-15           1.3.6 - 1.3.8
