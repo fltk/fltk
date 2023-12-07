@@ -932,8 +932,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     # but never used, see STR #2147)
     # CFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CFLAGS"
     # CXXFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CXXFLAGS"
-    CFLAGS="-mwindows $CFLAGS"
-    CXXFLAGS="-mwindows $CXXFLAGS"
     LDFLAGS="-mwindows $LDFLAGS"
     DSOFLAGS="-mwindows $DSOFLAGS"
     LIBS="$LIBS -lole32 -luuid -lcomctl32 -lws2_32"
