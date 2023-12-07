@@ -646,136 +646,153 @@ AC_SUBST(STATICIMAGELIBS)
 
 # Handle the JPEG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localjpeg parameter is not set by user
-# Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
 AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library [[default=auto]]])
+
+# Handle the ZLIB lib linking mode (use fltk local or system lib)
+# If --enable-(resp. --disable-)localzlib parameter is not set by user
+AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library [[default=auto]]])
+
+# Handle the PNG lib linking mode (use fltk local or system lib)
+# If --enable-(resp. --disable-)localpng parameter is not set by user
+AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library  [[default=auto]]])
+
+# Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
 # Check for System lib use if automatic mode or --disable-localjpeg is requested
 sysjpeglib_ok=no
 sysjpeginc_ok=no
-if test x$enable_localjpeg != xyes; then
-    AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
-	[AC_CHECK_HEADER(jpeglib.h,
-	    sysjpeginc_ok=yes)
-	    if test x$sysjpeginc_ok = xyes; then
-		sysjpeglib_ok=yes
-	    fi])
-fi
+AS_IF([test x$enable_localjpeg != xyes], [
+    AC_CHECK_LIB([jpeg], [jpeg_CreateCompress], [
+        AC_CHECK_HEADER([jpeglib.h], [sysjpeginc_ok=yes])
+        AS_IF([test x$sysjpeginc_ok = xyes], [
+            sysjpeglib_ok=yes
+        ])
+    ])
+])
+
 # Now set the jpeg lib and include flags according to the requested mode and availability
-if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
+AS_IF([test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno], [
     JPEGINC="-I../jpeg"
     JPEG="jpeg"
     IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
     STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBJPEG)
-    #ac_cv_lib_jpeg_jpeg_CreateCompress=no # from ima: should not be necessary
+    AC_DEFINE([HAVE_LIBJPEG])
     # Finally, warn user if system lib was requested but not found
-    if test x$enable_localjpeg = xno; then
-	AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
-    fi
-else
+    AS_IF([test x$enable_localjpeg = xno], [
+        AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
+    ])
+], [
     JPEGINC=""
     JPEG=""
     IMAGELIBS="-ljpeg $IMAGELIBS"
     STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBJPEG)
-fi
+    AC_DEFINE([HAVE_LIBJPEG])
+])
 
-# Handle the ZLIB lib linking mode (use fltk local or system lib)
-# If --enable-(resp. --disable-)localzlib parameter is not set by user
+
 # Then we check the ZLIB lib usability, with result in syszlib_ok variable
-AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library [[default=auto]]])
 # Check for System lib use if automatic mode or --disable-localzlib is requested
 syszlib_ok=no
 syszinc_ok=no
-if test x$enable_localzlib != xyes; then
-    AC_CHECK_LIB(z,gzgets,
-	[AC_CHECK_HEADER(zlib.h,
-		syszinc_ok=yes)
-	if test x$syszinc_ok = xyes; then
-	    syszlib_ok=yes
-	fi])
-fi
-case "$host_os" in
-  darwin*)
-# macOS: enforce local zlib when local libpng is active
-    if test x$syszlib_ok = xyes -a x$enable_localpng != xno; then
-      syszlib_ok=no
-    fi
-    ;;
-esac
+AS_IF([test x$enable_localzlib != xyes], [
+    AC_CHECK_LIB([z], [gzgets], [
+        AC_CHECK_HEADER([zlib.h], [syszinc_ok=yes])
+        AS_IF([test x$syszinc_ok = xyes], [
+            syszlib_ok=yes
+        ])
+    ])
+])
+
+
+# Then we check the png lib usability with result in syspng_lib variable
+# Now check if system lib is usable, we check Lib AND include availability with inc variant,
+# but only, if the builtin lib is not requested
+syspnglib_ok=no
+syspnginc_ok=no
+AS_IF([test x$enable_localpng != xyes], [
+    AC_CHECK_LIB([png], [png_read_info], [
+        AC_CHECK_HEADER([png.h], [
+            AC_DEFINE([HAVE_PNG_H])
+            syspnginc_ok=yes
+        ])
+        AC_CHECK_HEADER([libpng/png.h], [
+            syspnginc_ok=yes
+        ])
+        AS_IF([test x$syspnginc_ok = xyes], [
+            syspnglib_ok=yes
+        ])
+    ])
+])
+
+# If we use the system zlib, we must also use the system png lib and vice versa.
+# If either of them is not available, we fall back to using both local libraries
+AS_IF([test x$syspnglib_ok = xyes -a x$syszlib_ok != xyes], [
+    syspnglib_ok=no
+    enable_localpng=yes
+    AC_MSG_WARN([Local z lib selected: overriding png lib to local for compatibility.])
+])
+AS_IF([test x$syszlib_ok = xyes -a x$syspnglib_ok != xyes], [
+    syszlib_ok=no
+    enable_localzlib=yes
+    AC_MSG_WARN([Local png lib selected: overriding z lib to local for compatibility.])
+])
+
 # Now set the Z lib and include flags according to the requested mode and availability
-if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
+AS_IF([test x$enable_localzlib = xyes -o x$syszlib_ok = xno], [
     ZLIBINC="-I../zlib"
     ZLIB="zlib"
     LIBS="-lfltk_z $LIBS"
     IMAGELIBS="-lfltk_z $IMAGELIBS"
     STATICIMAGELIBS="\$libdir/libfltk_z.a $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBZ)
+    AC_DEFINE([HAVE_LIBZ])
     ac_cv_lib_z_gzgets=no # fc: is still necessary ?
     # Finally, warn user if system lib was requested but not found
-    if test x$enable_localzlib = xno; then
-	AC_MSG_WARN([Cannot find system z lib or header: choosing the local lib mode.])
-    fi
-else
+    AS_IF([test x$enable_localzlib = xno], [
+        AC_MSG_WARN([Cannot find system z lib or header: choosing the local lib mode.])
+    ])
+], [
     ZLIBINC=""
     ZLIB=""
     LIBS="-lz $LIBS"
     IMAGELIBS="-lz $IMAGELIBS"
     STATICIMAGELIBS="-lz $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBZ)
-fi
+    AC_DEFINE([HAVE_LIBZ])
+])
 
-# Handle the PNG lib linking mode (use fltk local or system lib)
-# If --enable-(resp. --disable-)localpng parameter is not set by user
-# Then we check the png lib usability with result in syspng_lib variable
-AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library  [[default=auto]]])
-
-# Now check if system lib is usable, we check Lib AND include availability with inc variant,
-# but only, if the builtin lib is not requested
-syspnglib_ok=no
-syspnginc_ok=no
-if test x$enable_localpng != xyes; then
-  AC_CHECK_LIB(png, png_read_info,
-    [AC_CHECK_HEADER(png.h,
-	AC_DEFINE(HAVE_PNG_H)
-	syspnginc_ok=yes)
-    AC_CHECK_HEADER(libpng/png.h,
-	AC_DEFINE(HAVE_LIBPNG_PNG_H)
-	syspnginc_ok=yes)
-    if test x$syspnginc_ok = xyes; then
-	syspnglib_ok=yes
-    fi])
-fi
-
-# The following is executed if the lib was not found usable or if local lib is required explicitly
-if test x$enable_localpng = xyes -o x$syspnglib_ok = xno ; then
+# The following is executed if the png lib was not found usable or if local lib is required explicitly
+AS_IF([test x$enable_localpng = xyes -o x$syspnglib_ok = xno], [
     PNGINC="-I../png"
     PNG="png"
     IMAGELIBS="-lfltk_png $IMAGELIBS"
     STATICIMAGELIBS="\$libdir/libfltk_png.a $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBPNG)
-    AC_DEFINE(HAVE_PNG_H)
-    AC_DEFINE(HAVE_PNG_GET_VALID)
-    AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA)
+    AC_DEFINE([HAVE_LIBPNG])
+    AC_DEFINE([HAVE_PNG_H])
+    AC_DEFINE([HAVE_PNG_GET_VALID])
+    AC_DEFINE([HAVE_PNG_SET_TRNS_TO_ALPHA])
     # Finally, warn user if system lib was requested but not found
-    if test x$enable_localpng = xno; then
-	AC_MSG_WARN([Cannot find system png lib or header: choosing the local lib mode.])
-    fi
-else
+    AS_IF([test x$enable_localpng = xno], [
+        AC_MSG_WARN([Cannot find system png lib or header: choosing the local lib mode.])
+    ])
+], [
     PNGINC=""
     PNG=""
     IMAGELIBS="-lpng $IMAGELIBS"
     STATICIMAGELIBS="-lpng $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBPNG)
-    AC_CHECK_LIB(png,png_get_valid, AC_DEFINE(HAVE_PNG_GET_VALID))
-    AC_CHECK_LIB(png,png_set_tRNS_to_alpha, AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA))
-fi
+    AC_DEFINE([HAVE_LIBPNG])
+    AC_CHECK_LIB([png], [png_get_valid], [
+        AC_DEFINE([HAVE_PNG_GET_VALID])
+    ])
+    AC_CHECK_LIB([png], [png_set_tRNS_to_alpha], [
+        AC_DEFINE([HAVE_PNG_SET_TRNS_TO_ALPHA])
+    ])
+])
 
-AC_SUBST(JPEG)
-AC_SUBST(JPEGINC)
-AC_SUBST(PNG)
-AC_SUBST(PNGINC)
-AC_SUBST(ZLIB)
-AC_SUBST(ZLIBINC)
+AC_SUBST([JPEG])
+AC_SUBST([JPEGINC])
+AC_SUBST([PNG])
+AC_SUBST([PNGINC])
+AC_SUBST([HAVE_PNG_H])
+AC_SUBST([ZLIB])
+AC_SUBST([ZLIBINC])
 
 dnl Restore original LIBS settings...
 LIBS="$SAVELIBS"
