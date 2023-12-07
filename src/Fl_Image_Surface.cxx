@@ -217,19 +217,43 @@ void Fl_Image_Surface::rescale() {
  drawing white areas on a black background there, and calling Fl_Image_Surface::image().
  \param mask A depth-3 image determining the drawable areas of the image surface.
  The \p mask object is not used after return from this member function.
- \note The image surface must not be the current drawing surface when this function
- gets called. The mask can have any size but is best when it has the size of the image surface.
- A typical procedure is to use the image surface to draw first the mask (using white over black),
- call Fl_Image_Surface::image() to obtain the mask, then draw the background, call
- Fl_Image_Surface::mask(mask), draw the foreground, and finally get the resulting
- image from Fl_Image_Surface::image().
- It's possible to use several masks in succession on the same image surface provided
+ \note 
+ - The image surface must not be the current drawing surface when this function
+ gets called.
+ - The mask can have any size but is best when it has the size of the image surface.
+ - It's possible to use several masks in succession on the same image surface provided
  member function Fl_Image_Surface::image() is called between successive calls to
- Fl_Image_Surface::mask(Fl_RGB_Image*).
+ Fl_Image_Surface::mask(const Fl_RGB_Image*).
  
- This diagram depicts operations involved in the construction of a masked image:
- \image html  masked_image.png "Construction of a masked image"
- \image latex masked_image.png "Construction of a masked image" width=8cm
+ Example of procedure to construct a masked image:
+ \code
+ int W = …, H = …; // width and height of the image under construction
+ Fl_Image_Surface *surf = new Fl_Image_Surface(W, H, 1);
+ // first, construct the mask
+ Fl_Surface_Device::push_current(surf);
+ fl_color(FL_BLACK); // draw a black background
+ fl_rectf(0, 0, W, H);
+ fl_color(FL_WHITE); // next, draw in white what the mask should not filter out
+ fl_pie(0, 0, W, H, 0, 360); // here, an ellipse with axes lengths WxH
+ Fl_RGB_Image *mask = surf->image(); // get the mask
+ // second, draw the image background
+ fl_color(FL_YELLOW); // here, draw a yellow background
+ fl_rectf(0, 0, W, H);
+ // third, apply the mask
+ Fl_Surface_Device::pop_current();
+ surf->mask(mask);
+ delete mask; // the mask image can be safely deleted at this point
+ Fl_Surface_Device::push_current(surf);
+ // fourth, draw the image foreground, part of which will be filtered out by the mask
+ surf->draw(widget, 0, 0); // here the foreground is a drawn widget
+ // fifth, get the final result, masked_image, as a depth-3 Fl_RGB_Image
+ Fl_RGB_Image *masked_image = surf->image();
+ // Only the part of the foreground, here a drawn widget, that has not been
+ // filtered out by the mask, here the white ellipse, is in masked_image;
+ // the background, here solid yellow, shows up in the remaining areas of masked_image.
+ Fl_Surface_Device::pop_current();
+ delete surf;
+ \endcode
 
  \since 1.4.0
  */
