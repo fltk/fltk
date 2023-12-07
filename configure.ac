@@ -874,8 +874,8 @@ case $host_os_gui in
 	# checks don't work because the shell puts out \r\n instead of
 	# \n.  Here we just force U32 to be defined to "unsigned"...
 	AC_DEFINE(U32,unsigned)
-	CFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CFLAGS"
-	CXXFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CXXFLAGS"
+	CFLAGS="-DWIN32 -DUSE_OPENGL32 $CFLAGS"
+	CXXFLAGS="-DWIN32 -DUSE_OPENGL32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32"
