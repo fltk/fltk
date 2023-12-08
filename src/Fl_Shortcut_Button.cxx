@@ -213,6 +213,7 @@ int Fl_Shortcut_Button::handle(int e) {
       if (hot_) {
         // Note: we can't really handle non-Latin shortcuts in the Fl_Shortcut
         //       type, so we don't handle them here either
+        // Todo: use fl_utf_tolower and fl_utf_toupper
         int v = fl_utf8decode(Fl::event_text(), 0, 0);
         if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
           if (isupper(v)) {
@@ -250,6 +251,9 @@ int Fl_Shortcut_Button::handle(int e) {
           return 1;
         }
       }
+      break;
+    case FL_SHORTCUT:
+      if (hot_) return 1;
       break;
   }
   return Fl_Button::handle(e);
