@@ -802,6 +802,21 @@ HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/src/html_footer
 
 HTML_STYLESHEET        =
 
+# The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
+# should be rendered with a dark or light theme.
+# Possible values are: LIGHT always generate light mode output, DARK always
+# generate dark mode output, AUTO_LIGHT automatically set the mode according to
+# the user preference, use light mode if no preference is set (the default),
+# AUTO_DARK automatically set the mode according to the user preference, use
+# dark mode if no preference is set and TOGGLE allow to user to switch between
+# light and dark mode via a button.
+# The default value is: AUTO_LIGHT.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+# Note: since doxygen 1.9.5, may issue warnings when using older versions
+
+HTML_COLORSTYLE        = TOGGLE
+
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes,
 # files or namespaces will be aligned in HTML using tables. If set to
 # NO a bullet list will be used.
@@ -1485,4 +1500,4 @@ DOT_CLEANUP            = YES
 # The SEARCHENGINE tag specifies whether or not a search engine should be
 # used. If set to NO the values of all tags below this one will be ignored.
 
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES
