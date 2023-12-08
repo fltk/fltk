@@ -38,9 +38,9 @@ to discover what protocols the connected compositor supports. Protocols can be s
 which means they have a defined API that will not change but can be expanded, or unstable.
 For example, mapping a window on a display is not done by the core protocol but by the
 <tt>xdg shell</tt> protocol which is stable. The names of symbols used by unstable
-protocols allways begin with letter 'z'. For example, the unstable protocol
-FLTK uses to support CJK input methods is called <tt>Text Input</tt> and uses
-names beginning with \c zwp_text_input_v3.
+protocols always begin with letter 'z'. For example, FLTK uses unstable protocol
+<a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>
+to support CJK input methods; its symbol names begin with \c zwp_text_input_v3.
 
 Wayland makes intensive use of the <em>listener</em> mechanism. A listener is a small array
 of pointers to FLTK-defined callback functions associated to a Wayland-defined object;
@@ -101,7 +101,7 @@ corresponding listeners.
 
 The core protocol defines also a number of mostly opaque structures whose names begin with \c wl_.
 The names of symbols and types defined by the other protocols FLTK uses begin with \c xdg_,
-\c zwp_text_input_v3 and \c zxdg_toplevel_decoration_.
+\c zwp_text_input_v3, \c zxdg_toplevel_decoration_, \c gtk_shell1_ and \c gtk_surface1_.
 FLTK defines a few structures holding Wayland-related data.
 The names of FLTK-defined structures don't begin with \c wl_. For example,
 <tt>struct wld_window</tt> (see \ref wld_window) is used to store all Wayland-specific data associated
@@ -142,16 +142,19 @@ as necessary.
 File \c README.Wayland.txt details what software packages are needed on Debian-based, Fedora
 and FreeBSD systems for FLTK to use Wayland. Wayland protocols are packaged as XML files
 accompanied by a utility program, \c wayland-scanner, able to generate a header file and a
-necessary glue C source file from a given XML file. For example, for FLTK to use the <tt>xdg shell</tt>
-protocol, these commands are run at build time to generate a .c file that will be compiled into libfltk
+necessary glue C source file from a given XML file. For example, for FLTK to use the
+<a href=https://wayland.app/protocols/xdg-shell>XDG shell</a> protocol, these commands are
+run at build time to generate a .c file that will be compiled into libfltk
 and a header file that FLTK code will include:
 \code
 PROTOCOLS=`pkg-config --variable=pkgdatadir wayland-protocols`
 wayland-scanner private-code $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
 wayland-scanner client-header $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
 \endcode
-Similar operations are performed for FLTK to use protocols <tt>xdg decoration unstable v1</tt> and
-<tt>text input unstable v3</tt>.
+Similar operations are performed for FLTK to use protocols
+<a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>,
+<a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>
+and <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>.
 
 
 \section wayland-x11-hybrid  The hybrid Wayland/X11 platform
@@ -877,6 +880,42 @@ static struct wl_seat_listener seat_listener = {
 installed by a call to function \c wl_seat_add_listener() made by function
 \c registry_handle_global() when it receives a \c "wl_seat" interface.
 
+<h3>Handling middle mouse button clicks on window titlebars</h3>
+The gnome desktop, via its \c gnome-tweaks application, allows to determine what
+happens when a middle mouse button click occurs on a window titlebar. To obey this
+setting, FLTK implements part of the
+<a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a> protocol as follows.
+Mutter, gnome's Wayland compositor, declares its support of the <tt>GTK Shell</tt>
+protocol calling \c registry_handle_global() with its \c interface argument equal to
+\c "gtk_shell1". FLTK initializes then a static global variable \c gtk_shell of type
+<tt>struct gtk_shell1*</tt>.
+
+Member functions of \c pointer_listener mentionned above run for all mouse events
+on all \c wl_surface objects. The table above describes what these functions do for
+mouse events on FLTK-created \c wl_surface objects. But they also run for the
+libdecor-created \c wl_surface objects corresponding to window titlebars.
+Thus, member function \c pointer_enter() runs when the mouse enters a titlebar.
+It calls \c Fl_Wayland_Screen_Driver::event_coords_from_surface() which calls
+\c Fl_Wayland_Window_Driver::surface_to_window() which, as mentionned above, can
+distinguish FLTK-created from non FLTK-created \c wl_surface objects.
+This allows \c pointer_enter() to identify the entered surface as a titlebar
+and to assign static global variable \c gtk_shell_surface
+with the titlebar's \c wl_surface when the mouse enters a titlebar.
+Similarly, member function \c pointer_leave() sets \c gtk_shell_surface to NULL
+when the mouse leaves this titlebar. When there's a click on a titlebar,
+member function \c pointer_button() runs this code
+\code
+  if (gtk_shell_surface && state == WL_POINTER_BUTTON_STATE_PRESSED && button == BTN_MIDDLE) {
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell, gtk_shell_surface);
+    gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat, GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
+    gtk_surface1_release(gtk_surface);
+    return;
+  }
+\endcode
+which ensures that what \c gnome-tweaks has assigned to middle-click events is executed.
+At this point, FLTK obeys what \c libdecor decides for right-click (display the window
+menu) and double-click (maximize the window) events on titlebars which may diverge
+from \c gnome-tweaks settings.
 
 \section wayland-cursor Wayland cursors
 
@@ -1082,8 +1121,8 @@ even if shared libraries \c libdecor.so and \c libdecor-gtk.so are installed.
 This option is ON by default.
 
 \c Libdecor uses the Wayland protocol
-<a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>
-xdg decoration unstable v1</a> to request being decorated by a supporting compositor.
+<a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>
+to request being decorated by a supporting compositor.
 If the running compositor supports SSD, \c libdecor doesn't draw window titlebars because
 the compositor does it. That is what happens with the \c KWin and \c Sway compositors.
 However, if environment variable \c LIBDECOR_FORCE_CSD is defined to value \c 1 when an
