@@ -419,9 +419,6 @@ std::string fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) 
   Like fl_input() except the input text is not shown,
   '*' or similar replacement characters are displayed instead.
 
-  \deprecated Please use
-  fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) instead.
-
   \code #include <FL/fl_ask.H> \endcode
 
   \param[in] fmt can be used as an sprintf-like format and variables for the message text
