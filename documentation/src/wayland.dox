@@ -529,20 +529,20 @@ This happens when classes \c Fl_PostScript_File_Device and \c Fl_Printer are use
 Wayland uses buffers, objects of type <tt>struct wl_buffer</tt>, to draw to surfaces. In principle,
 one or more buffers can be associated to a surface, and functions \c wl_surface_attach() and
 \c wl_surface_commit() are called to first attach one such buffer to the surface and then inform the
-compositor to map this buffer on the display. Wayland buffers can use various
+compositor to map this buffer's graphics content on the display. Wayland buffers can use various
 memory layouts. FLTK uses WL_SHM_FORMAT_ARGB8888, which is the same layout as what Cairo calls
 CAIRO_FORMAT_ARGB32.
 
 FLTK calls function \c Fl_Wayland_Window_Driver::make_current() before drawing to any Fl_Window.
 Member \c buffer of this Fl_Window's <tt>struct wld_window</tt> (see \ref wld_window) is NULL when the
 window has just been created or resized. In that case, FLTK calls
-\c Fl_Wayland_Graphics_Driver::create_wld_buffer() which calls
-\c create_shm_buffer() and \c cairo_init() to create
-- a Wayland buffer;
-- a Cairo image surface.
+\c Fl_Wayland_Graphics_Driver::create_wld_buffer() which 
+returns a pointer to a <tt>struct wld_buffer</tt> containing
+- a Wayland buffer, member \c wl_buffer;
+- a Cairo image surface, created by a call to \c Fl_Wayland_Graphics_Driver::cairo_init().
 
 Each of these two objects encapsulates a byte array of the same size and the same memory layout
-destined to contain the Fl_Window's graphics. The Cairo surface object is where FLTK draws.
+destined to contain the Fl_Window's graphics. The Cairo image surface object is where FLTK draws.
 The Wayland buffer is what Wayland maps on the display. FLTK copies the Cairo surface's byte array
 to the Wayland buffer's byte array before beginning the mapping operation.
 If \c width and \c height are a window's dimensions in pixels,
@@ -552,10 +552,11 @@ If \c width and \c height are a window's dimensions in pixels,
 \endcode
 give \c size, the common size of both byte arrays.
 
+The effective creation of the \c wl_buffer object is delayed until function
+\c Fl_Wayland_Graphics_Driver::buffer_commit() gets called.
 Section \ref wayland-buffer-factory below details how FLTK creates \c wl_buffer objects.
 
-FLTK associates to each surface a
-<tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> (see \ref wld_buffer) containing
+The <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> (see \ref wld_buffer) contains
 a pointer to the byte array of the Cairo image surface (member \c draw_buffer.buffer), information about the
 Wayland buffer (members \c wl_buffer and \c data), the common size of the Cairo surface's and
 Wayland buffer's byte arrays (member \c draw_buffer.data_size), and other information. A pointer to this
@@ -574,20 +575,21 @@ FLTK has computed a damaged region. If that region is not null,
 surface to the Wayland buffer and calls function \c wl_surface_damage_buffer() for these
 parts to inform the compositor of what parts of the surface need its attention.
 
-<h3>Throttling redrawing operations</h3>
+<h3>Throttling redraw operations</h3>
 An important detail here is that FLTK uses Wayland's synchronization
 mechanism to make sure the surface's \c wl_buffer is not changed while the
 compositor is using it and to refrain from calling \c wl_surface_commit()
 more frequently than the system can process it.
-This 3-step mechanism works as follows:
+This 2-step mechanism works as follows:
 - Fl_Wayland_Graphics_Driver::buffer_commit() first calls function \c wl_surface_frame() to
 obtain a pointer to a <tt>struct wl_callback</tt> object and stores it as member
 \c cb of the surface's \ref wld_buffer.
-- Then it calls \c wl_callback_add_listener() to associate this object to the
-FLTK-defined, callback function \c surface_frame_done() that Wayland will call
-later when ready for another mapping operation. It next calls
-\c wl_surface_commit() which starts the mapping of the buffer content on
-the display.
+Then it calls \c wl_callback_add_listener() to associate this object to the
+FLTK-defined, callback function \c surface_frame_done().
+It next calls \c wl_surface_commit().
+Together, these 3 calls instruct Wayland to start mapping the buffer content to the
+display and to call \c surface_frame_done() later, when it will have become ready
+for another mapping operation.
 - Later, \c surface_frame_done() runs and destroys the \c wl_callback object by
 function \c wl_callback_destroy() and sets member \c cb to NULL.
 
@@ -617,7 +619,7 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
 \endcode
 has the effect that when the mapping operation eventually completes, Wayland runs
 \c surface_frame_done(), which calls anew
-\c Fl_Wayland_Graphics_Driver::buffer_commit() because the buffer's
+\c Fl_Wayland_Graphics_Driver::buffer_commit() if the buffer's
 \c draw_buffer_needs_commit member is true. The net result is that the screen
 shows the most recent surface content.
 
