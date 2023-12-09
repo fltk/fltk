@@ -1,8 +1,8 @@
 #
 # A macro used by the CMake build system for the Fast Light Tool Kit (FLTK).
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -39,15 +39,14 @@
 #   all other file types are added to the target's source files.
 #
 #   macOS specific .icns and .plist files are ignored on other platforms.
-#   These files must resided in the subdirectory 'mac-resources'.
+#   These files must reside in the subdirectory 'mac-resources'.
 #
 # - LIBRARIES:
 #   List of libraries (CMake target names), separated by ';'. Needs
-#   quotes if more than one library is needed, e.g. "fltk_gl;fltk"
+#   quotes if more than one library is required, e.g. "fltk_gl;fltk"
 #
 # CREATE_EXAMPLE can have an optional fourth argument with a list of options
-# - the option ANDROID_OK is set if CREATE_EXAMPLE creates code for Android
-#   builds in addition to the native build
+# - these options are currently not used
 #
 ################################################################################
 
@@ -156,15 +155,17 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   endif (MAC_BUNDLE)
 
   ######################################################################
-  # Parse optional fourth argument "ANDROID_OK", see description above.
+  # Parse optional fourth argument, see description above.
   ######################################################################
 
-  if (${ARGC} GREATER 3)
-    foreach (OPTION ${ARGV3})
-      if (${OPTION} STREQUAL "ANDROID_OK" AND OPTION_CREATE_ANDROID_STUDIO_IDE)
-        CREATE_ANDROID_IDE_FOR_TEST (${NAME} ${SOURCES} ${LIBRARIES})
-      endif ()
-    endforeach ()
-  endif ()
+  # code left commented out as an example
 
-endmacro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
+  # *unused* #  if (${ARGC} GREATER 3)
+  # *unused* #    foreach (OPTION ${ARGV3})
+  # *unused* #      if (${OPTION} STREQUAL "xxx")
+  # *unused* #        # do something ...
+  # *unused* #      endif ()
+  # *unused* #    endforeach ()
+  # *unused* #  endif ()
+
+endmacro ()

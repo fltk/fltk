@@ -172,7 +172,6 @@ OPTION_ABI_VERSION - default EMPTY
    Please see README.abi-version.txt for more information about which
    ABI version to select.
 
-
 Documentation options: these options are only available if `doxygen' is
    installed and found by CMake. PDF related options require also `latex'.
 
@@ -296,6 +295,21 @@ in the GUI (cmake-gui).
           to include both the build tree (first) and then the FLTK source
           tree in the compiler's header search list.
 
+     2.4.2 Visual Studio 2019 / NMake
+    --------------------------------------
+     This uses cmake to generate + build FLTK in Release mode using nmake,
+     using purely the command line (never need to open the Visual Studio IDE)
+     using Multithreaded (/MT):
+
+         mkdir build-nmake
+         cd build-nmake
+         cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release -D FLTK_MSVC_RUNTIME_DLL=off ..
+         nmake
+
+     ..which results in a colorful percentage output crawl similar to what
+     we see with unix 'make'.
+                                                -erco@seriss.com
+                                                 Updated: Dec 8 2023
 
  2.5  Building under Windows with MinGW using Makefiles
 --------------------------------------------------------

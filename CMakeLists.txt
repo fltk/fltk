@@ -1,6 +1,6 @@
 #
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
 # Copyright 1998-2023 by Bill Spitzak and others.
 #
@@ -16,7 +16,7 @@
 #
 
 #######################################################################
-# set CMake minimum version (must be before `project()`
+# Set CMake minimum version first: must be before `project()`
 #######################################################################
 
 # Note: previous (1.3.5) minimum version
@@ -25,23 +25,11 @@
 # Note: minimum CMake version required by GNUInstallDirs
 # cmake_minimum_required (VERSION 2.8.4)
 
-# Minimum CMake version required by FLTK 1.4 (06/2020, work in progress)
-cmake_minimum_required (VERSION 3.2.3 FATAL_ERROR)
+# Minimum CMake version required by FLTK 1.3.7 (since 07/2021)
+# cmake_minimum_required (VERSION 3.2.3 FATAL_ERROR)
 
-#######################################################################
-
-# Use "legacy mode" of FindOpenGL (avoid CMake developer warning).
-# Note: we're using FindOpenGL with `OPENGL_LIBRARIES` and not (yet)
-# the `OpenGL::GL` target. This may be changed in the future.
-# See https://cmake.org/cmake/help/latest/policy/CMP0072.html
-# Update Feb 28, 2021: To avoid a warning about "OLD" policies we set
-# OpenGL_GL_PREFERENCE directly to "LEGACY" (other option: "GLVND").
-
-# if (POLICY CMP0072)
-#   cmake_policy (SET CMP0072 OLD)
-# endif ()
-
-set (OpenGL_GL_PREFERENCE LEGACY)
+# Minimum CMake version required by FLTK 1.3.9 (since 12/2023)
+cmake_minimum_required (VERSION 3.15.0 FATAL_ERROR)
 
 #######################################################################
 # define the FLTK project and version
@@ -50,18 +38,19 @@ set (OpenGL_GL_PREFERENCE LEGACY)
 project (FLTK VERSION 1.3.9)
 
 #######################################################################
-# include macro definitions of generally used macros
+# include macro and function definitions for general usage
 #######################################################################
 
 include (CMake/fl_debug_var.cmake)
 include (CMake/fl_add_library.cmake)
 
-if (false)
+if (0)
   fl_debug_var (FLTK_VERSION_MAJOR)
   fl_debug_var (FLTK_VERSION_MINOR)
   fl_debug_var (FLTK_VERSION_PATCH)
   fl_debug_var (FLTK_VERSION)
-endif (false)
+  fl_debug_var (CMAKE_VERSION)
+endif ()
 
 #######################################################################
 # basic setup
@@ -86,14 +75,13 @@ set (debug_build 0) # set to 1 to show debug info
 
 if (debug_build)
   message ("")
-  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set debug_build to 0 to disable the following info:")
+  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set 'debug_build' to 0 to disable the following info:")
   fl_debug_var (WIN32)
   fl_debug_var (MINGW)
   fl_debug_var (CYGWIN)
   fl_debug_var (MSVC)
   fl_debug_var (UNIX)
   fl_debug_var (APPLE)
-  fl_debug_var (ANDROID)
   fl_debug_var (CMAKE_BUILD_TYPE)
   fl_debug_var (CMAKE_SIZEOF_VOID_P)
   fl_debug_var (OPTION_OPTIM)
@@ -154,7 +142,7 @@ feature_summary (WHAT ALL DESCRIPTION "Configuration Summary for ${_descr} --\n"
 message (STATUS "Static libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
 
 if (OPTION_BUILD_SHARED_LIBS)
-  message (STATUS "Shared libraries will be built in  ${CMAKE_CURRENT_BINARY_DIR}/lib")
+  message (STATUS "Shared libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
 else ()
   message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
 endif ()
@@ -167,6 +155,42 @@ if (FLTK_BUILD_EXAMPLES)
   message (STATUS "Example programs will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/examples")
 else ()
   message (STATUS "Example programs will not be built (set FLTK_BUILD_EXAMPLES=ON to build)")
+endif ()
+
+message (STATUS "")
+
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  message (STATUS "Build configuration     : <unspecified>")
+else ()
+  message (STATUS "Build configuration     : ${CMAKE_BUILD_TYPE}")
+endif ()
+
+message (STATUS "")
+
+if (FLTK_USE_BUILTIN_JPEG)
+  message (STATUS "Image Libraries         : JPEG = Builtin")
+else ()
+  message (STATUS "Image Libraries         : JPEG = System")
+endif ()
+
+if (FLTK_USE_BUILTIN_PNG)
+  message (STATUS "                        : PNG  = Builtin")
+else ()
+  message (STATUS "                        : PNG  = System")
+endif ()
+
+if (FLTK_USE_BUILTIN_ZLIB)
+  message (STATUS "                        : ZLIB = Builtin")
+else ()
+  message (STATUS "                        : ZLIB = System")
+endif ()
+
+if (FLTK_HAVE_CAIROEXT)
+  message (STATUS "Fl_Cairo_Window support : Yes (extended)")
+elseif (FLTK_HAVE_CAIRO)
+  message (STATUS "Fl_Cairo_Window support : Yes (standard)")
+else ()
+  message (STATUS "Fl_Cairo_Window support : No")
 endif ()
 
 message ("")

@@ -71,17 +71,16 @@ set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
 #  Note: this might be handled better by the 'MSVC_RUNTIME_LIBRARY'
 #  target property for each target rather than setting a global
 #  CMake variable - but this version does the latter.
-#  *Note* Supported since CMake version 3.15
 #######################################################################
 
-if (MSVC AND NOT (CMAKE_VERSION VERSION_LESS 3.15))
+if (MSVC)
   option (FLTK_MSVC_RUNTIME_DLL "use MSVC Runtime-DLL (/MDx)" ON)
   if (FLTK_MSVC_RUNTIME_DLL)
     set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
   else ()
     set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   endif ()
-endif (MSVC AND NOT (CMAKE_VERSION VERSION_LESS 3.15))
+endif (MSVC)
 
 #######################################################################
 #  Bundled Library Options
@@ -289,7 +288,7 @@ endif (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
 # Include optional Cairo support
 #######################################################################
 
-option (OPTION_CAIRO "use lib Cairo" OFF)
+option (OPTION_CAIRO "add support for Fl_Cairo_Window" OFF)
 option (OPTION_CAIROEXT
   "use FLTK code instrumentation for Cairo extended use" OFF
 )
