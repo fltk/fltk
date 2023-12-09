@@ -372,18 +372,17 @@ in the GUI (cmake-gui).
     --------------------------------------
      This uses cmake to generate + build FLTK in Release mode using nmake,
      using purely the command line (never need to open the Visual Studio IDE)
-     using Multithreaded (/MT) and optimizer level 2 (/O2):
+     using Multithreaded (/MT):
 
          mkdir build-nmake
          cd build-nmake
-         cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="/MT /O2 /Ob2 /D NDEBUG" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /D NDEBUG" ..
-         nmake all
+         cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release -D FLTK_MSVC_RUNTIME_DLL=off ..
+         nmake
 
      ..which results in a colorful percentage output crawl similar to what
      we see with unix 'make'.
                                                 -erco@seriss.com
-                                                 fltk.coredev - Mar 12 2022
-
+                                                 Updated: Dec 8 2023
 
  2.5  Building under Windows with MinGW using Makefiles
 --------------------------------------------------------
