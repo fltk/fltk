@@ -438,8 +438,8 @@ void Fl_Group::clear() {
 
   If you add static or automatic (local) variables to an Fl_Group, then it
   is your responsibility to remove (or delete) all such static or automatic
-  child widgets \e \b before destroying the group - otherwise the child
-  widgets' destructors would be called twice!
+  child widgets \e \b before destroying the group - otherwise the group will
+  attempt to call delete operator on them leading to undefined behavior!
 */
 Fl_Group::~Fl_Group() {
   if (current_ == this)
