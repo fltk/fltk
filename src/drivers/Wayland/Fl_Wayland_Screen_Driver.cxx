@@ -1143,8 +1143,13 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       (Fl_Wayland_Screen_Driver::output*)calloc(1, sizeof *output);
     output->id = id;
     output->wld_scale = 1;
+#ifdef WL_OUTPUT_RELEASE_SINCE_VERSION
+    const int used_version = WL_OUTPUT_RELEASE_SINCE_VERSION;
+#else
+    const int used_version = 2;
+#endif
     output->wl_output = (struct wl_output*)wl_registry_bind(wl_registry,
-                 id, &wl_output_interface, 2);
+                 id, &wl_output_interface, fl_min(used_version, version));
     output->gui_scale = 1.f;
     wl_proxy_set_tag((struct wl_proxy *) output->wl_output, &proxy_tag);
     wl_output_add_listener(output->wl_output, &output_listener, output);
@@ -1327,7 +1332,14 @@ void Fl_Wayland_Screen_Driver::close_display() {
     wl_list_for_each(output, &outputs, link) {
       wl_list_remove(&output->link);
       screen_count_set( wl_list_length(&outputs) );
-      if (output->wl_output) wl_output_destroy(output->wl_output);
+      if (output->wl_output) {
+#ifdef WL_OUTPUT_RELEASE_SINCE_VERSION
+        if (wl_output_get_version(output->wl_output) >= WL_OUTPUT_RELEASE_SINCE_VERSION)
+          wl_output_release(output->wl_output);
+        else
+#endif
+          wl_output_destroy(output->wl_output);
+      }
       free(output);
       break;
     }
