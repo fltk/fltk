@@ -187,7 +187,7 @@ static NSOpenGLContext *create_GLcontext_for_window(
   if (shared_ctx && !context) context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:nil];
   if (context) {
     NSView *view = [fl_xid(window) contentView];
-    if (fl_mac_os_version >= 100700) {
+    if (view && fl_mac_os_version >= 100700) {
       //replaces  [view setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
       typedef void (*bestResolutionIMP)(id, SEL, BOOL);
       static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
