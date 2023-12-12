@@ -1816,9 +1816,8 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::walk_selection(
     int &col             ///< returned col#
     ) const {
   if (u8c==NULL) {
-    if (!is_selection()) return NULL;
-    row = select_.srow();
-    col = select_.scol();
+    int erow,ecol;      // unused
+    if (!get_selection(row,col,erow,ecol)) return NULL; // no selection
     u8c = u8c_ring_row(row);
   } else {
     // At end? done
