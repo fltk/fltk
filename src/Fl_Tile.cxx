@@ -573,8 +573,11 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
     }
     int tr = x() + w(), tb = y() + h();
     move_intersection(tr, tb, tr-dw, tb-dh);
-    Fl_Widget::resize(X,Y,W,H);
     init_sizes();
+    if (Fl_Window::is_a_rescale())
+      Fl_Group::resize(X,Y,W,H);
+    else
+      Fl_Widget::resize(X,Y,W,H);
     return;
   }
 
