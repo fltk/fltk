@@ -1279,7 +1279,8 @@ static const struct wl_callback_listener sync_listener = {
 
 
 static void do_atexit() {
-  if (Fl_Wayland_Screen_Driver::wl_display) {
+  if (Fl_Wayland_Screen_Driver::wl_display &&
+      (!Fl::first_window() || !Fl::first_window()->as_gl_window())) {
     wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   }
 }
