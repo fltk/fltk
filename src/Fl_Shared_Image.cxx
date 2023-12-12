@@ -1,7 +1,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -69,28 +69,15 @@ int Fl_Shared_Image::num_images() {
     -# Image width
     -# Image height
 
-  A special case is considered if the width of one of the images is zero
-  and the other image is marked \p original. In this case the images match,
-  i.e. the comparison returns success (0).
-
-  An image is marked \p original if it was directly loaded from a file or
-  from memory as opposed to copied and resized images.
-
-  This comparison is used in Fl_Shared_Image::find() to find an image that
-  matches the requested one or to find the position where a new image
-  should be entered into the sorted list of shared images.
-
-  It is usually used in two steps:
-
-    -# search with exact width and height
-    -# if not found, search again with width = 0 (and height = 0)
-
-  The first step will only return a match if the image exists with the
-  same width and height. The second step will match if there is an image
-  marked \p original with the same name, regardless of width and height.
-
+  Binary search in a sorted array works only if we search for the same
+  parameters that were also used for sorting. No special cases are possible
+  here.
+ 
+  Fl_Shared_Image::find() requires a search for an element with a matching name
+  and the original_ flags set. This is not implemented via binary search, but
+  by a simple run of the array inside Fl_Shared_Image::find().
+  
   \returns      Whether the images match or their relative sort order (see text).
-
   \retval       0       the images match
   \retval       <0      Image \p i0 is \e less than image \p i1
   \retval       >0      Image \p i0 is \e greater than image \p i1
@@ -99,12 +86,13 @@ int
 Fl_Shared_Image::compare(Fl_Shared_Image **i0,          // I - First image
                          Fl_Shared_Image **i1) {        // I - Second image
   int i = strcmp((*i0)->name(), (*i1)->name());
-
-  if (i) return i;
-  else if (((*i0)->data_w() == 0 && (*i1)->original_) ||
-           ((*i1)->data_w() == 0 && (*i0)->original_)) return 0;
-  else if ((*i0)->data_w() != (*i1)->data_w()) return (*i0)->data_w() - (*i1)->data_w();
-  else return (*i0)->data_h() - (*i1)->data_h();
+  if (i) {
+    return i;
+  } else if ((*i0)->data_w() != (*i1)->data_w()) {
+    return (*i0)->data_w() - (*i1)->data_w();
+  } else {
+    return (*i0)->data_h() - (*i1)->data_h();
+  }
 }
 
 
@@ -223,6 +211,14 @@ void Fl_Shared_Image::release() {
 
   refcount_ --;
   if (refcount_ > 0) return;
+
+  if (!original()) {
+    Fl_Shared_Image *o = find(name());
+    if (o && o->original() && o!=this) {
+      o->release(); // release as a reference to this copy of the image
+      o->release(); // release from find() operation
+    }
+  }
 
   for (i = 0; i < num_images_; i ++)
     if (images_[i] == this) {
@@ -394,31 +390,65 @@ void Fl_Shared_Image::uncache()
   In either case the refcount of the returned image is increased.
   The found image should be released with Fl_Shared_Image::release()
   when no longer needed.
+
+  An image is marked \p original if it was directly loaded from a file or
+  from memory as opposed to copied and resized images.
+
+  This comparison is used in Fl_Shared_Image::find() to find an image that
+  matches the requested one or to find the position where a new image
+  should be entered into the sorted list of shared images.
+
+  It is used in two steps by Fl_Shared_Image::add():
+
+  -# search with exact width and height
+  -# if not found, search again with width = 0 (and height = 0)
+
+  The first step will only return a match if the image exists with the
+  same width and height. The second step will match if there is an image
+  marked \p original with the same name, regardless of width and height.
 */
 Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
-  Fl_Shared_Image       *key,           // Image key
-                        **match;        // Matching image
-
   if (num_images_) {
-    key = new Fl_Shared_Image();
-    key->name_ = new char[strlen(name) + 1];
-    strcpy((char *)key->name_, name);
-    key->w(W);
-    key->h(H);
+    if (W) {
+      Fl_Shared_Image *key;     // Image key
+      Fl_Shared_Image **match;  // Matching image
 
-    match = (Fl_Shared_Image **)bsearch(&key, images_, num_images_,
-                                        sizeof(Fl_Shared_Image *),
-                                        (compare_func_t)compare);
+      key = new Fl_Shared_Image();
+      key->name_ = new char[strlen(name) + 1];
+      strcpy((char *)key->name_, name);
+      key->w(W);
+      key->h(H);
 
-    delete key;
+      match = (Fl_Shared_Image **)bsearch(&key, images_, num_images_,
+                                          sizeof(Fl_Shared_Image *),
+                                          (compare_func_t)compare);
 
-    if (match) {
-      (*match)->refcount_ ++;
-      return *match;
+      delete key;
+
+      if (match) {
+        (*match)->refcount_ ++;
+        return *match;
+      }
+    } else {
+      // if no width was given we need to find the original. The list is sorted
+      // by name, width, and height, but we need to find the item by name with
+      // the original_ flags set, no matter how wide, so binary search does not
+      // work here.
+      int i;
+      for (i = 0; i < num_images_; ++i) {
+        // If there are thousands of images and running the array becomes
+        // inefficient, we can hand implement a binary search by name, and then
+        // search back and forth from that location for the member with the
+        // original_ flag set.
+        Fl_Shared_Image *img = images_[i];
+        if (img->original_ && img->name_ && (strcmp(img->name_, name) == 0)) {
+          img->refcount_++;
+          return img;
+        }
+      }
     }
   }
-
-  return 0;
+  return NULL;
 }
 
 
@@ -460,7 +490,9 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
 Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
   Fl_Shared_Image       *temp;          // Image
 
-  if ((temp = find(name, W, H)) != NULL) return temp;
+  // ::find() increments the ref count for us
+  if ((temp = find(name, W, H)) != NULL)
+    return temp;
 
   if ((temp = find(name)) == NULL) {
     temp = new Fl_Shared_Image(name);
