@@ -1044,7 +1044,7 @@ cannot call any FLTK functions.
 FLTK Wayland apps automatically scale according to the Wayland-defined, integer-valued
 scale factor. On a HiDPI display, it's enough to set this factor to 2 for
 any FLTK app to be drawn using twice as many pixels and thus to be as readable
-as it is on a regular display. With the gnome desktop, that is achieved in the
+as it is on a regular display. With the gnome and KDE-plasma desktops, that is achieved in the
 "Displays" section of the "Settings" application, selecting 200 % for the "Scale" parameter.
 In addition to this, FLTK apps can also be scaled up or down typing ctrl/+/-/0/
 and with the \c FLTK_SCALING_FACTOR environment variable.

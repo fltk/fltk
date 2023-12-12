@@ -95,13 +95,16 @@ Fl_Widget(x, y, width, height, label)
 The \p x and \p y parameters determine where the
 widget or window is placed on the screen. In FLTK the top left
 corner of the window or screen is the origin
-(i.e. <tt>x = 0, y = 0</tt>)
-and the units are in pixels.
+(i.e. <tt>x = 0, y = 0</tt>).
 
 The \p width and \p height parameters determine
-the size of the widget or window in pixels. The maximum widget
+the size of the widget or window. The maximum widget
 size is typically governed by the underlying window system or
 hardware.
+
+\ref drawing_DrawingUnit describes the unit FLTK employs for
+<tt>x, y, width</tt>, and \c height, and more generally, for
+all graphical quantities.
 
 \p label is a pointer to a character string to label
 the widget with or \p NULL. If not specified the label
@@ -170,7 +173,7 @@ The \p labelfont() method sets the typeface and style
 that is used for the label, which for this example we are using
 \p FL_BOLD and \p FL_ITALIC.
 
-The \p labelsize() method sets the height of the font in pixels.
+The \p labelsize() method sets the height of the font in FLTK units.
 
 The \p labeltype()
 method sets the type of label. FLTK supports normal, embossed,

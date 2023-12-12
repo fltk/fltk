@@ -35,7 +35,7 @@ these will operate on the new current drawing surface;
 Fl_Surface_Device::pop_current().
 </ol>
 
-\section drawing_DrawingUnit What Drawing Units Do FLTK Drawing Functions Use?
+\section drawing_DrawingUnit What Units Do FLTK Functions Use?
 
 Before version 1.4 all graphical quantities used by FLTK were in pixel units:
 a window of width 500 units was 500 pixels wide, a line of length 10 units was
@@ -54,8 +54,11 @@ a twice higher DPI. If the first screen's scale factor is set to 1 and that of t
 second screen to 2, the GUI of any FLTK app appears equally sized on the two screens.
 
 FLTK uses several units to measure graphical elements:
-<ul><li>All data visible by the public API (e.g., window widths, line lengths, font sizes,
-clipping regions) are in <b>FLTK units</b> which are both system- and DPI-independent.
+<ul><li>All quantities used by the public FLTK API to measure graphical elements
+(e.g., window widths, line lengths, font sizes, clipping regions, image widths and heights)
+are in <b>FLTK units</b> except if it's explicitly documented another unit is used.
+FLTK units are both platform- and DPI-independent. An example of FLTK API using
+another unit is Fl_Gl_Window::pixel_w().
 <li>Just before drawing to a screen, the library internally multiplies all quantities
 expressed in FLTK units by the current value of the scale factor
 for the screen in use and obtains quantities in <b>drawing units</b>.
@@ -96,8 +99,9 @@ image type, the platform and some hardware features. The most common
 case for Fl_RGB_Image's is that FLTK uses a scaled drawing system feature that directly
 maps image data to screen pixels. An important feature of FLTK for image drawing
 is the Fl_Image::scale() member function, new in FLTK version 1.4. This function
-controls the image drawing size (in FLTK units) independently from the size
-of the image data. An image with large enough data size can thus be drawn at the
+controls the image drawing size (in FLTK units, given by Fl_Image::w() and Fl_Image::h())
+independently from the size of the image data (given by Fl_Image::data_w() and
+Fl_Image::data_h()). An image with large enough data size can thus be drawn at the
 full resolution of the screen even when the screen area covered by the image grows
 following the GUI scale factor.
 
