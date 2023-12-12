@@ -16,28 +16,26 @@
 
 /**
   \file fl_string_functions.h
-  \brief Public header for FLTK's own platform agnostic string handling.
+  Public header for FLTK's platform-agnostic string handling.
 */
 
 #ifndef _FL_fl_string_functions_h_
 #define _FL_fl_string_functions_h_
 
 #include "Fl_Export.H"
-#include "fl_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** \addtogroup fl_string
+/** \defgroup fl_string  String handling functions
+ String handling functions declared in <FL/fl_string_functions.h>
     @{
 */
 
 FL_EXPORT char* fl_strdup(const char *s);
 
 /** @} */
-
-/*****************************************************************************/
 
 #ifdef __cplusplus
 }
