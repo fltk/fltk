@@ -876,9 +876,9 @@ void exit_cb(Fl_Widget *,void *) {
 
  \return false if the operation was canceled
  */
-bool new_project() {
+bool new_project(bool user_must_confirm = true) {
   // verify user intention
-  if (confirm_project_clear() == false)
+  if ((user_must_confirm) &&  (confirm_project_clear() == false))
     return false;
 
   // clear the current project
@@ -1090,11 +1090,22 @@ bool merge_project_file(const Fl_String &filename_arg) {
  \param[in] filename_arg load from this file, or show file chooser if empty
  \return false if the operation was canceled or failed otherwise
  */
-bool open_project_file(const Fl_String &new_filename) {
+bool open_project_file(const Fl_String &filename_arg) {
   // verify user intention
-  if (new_project() == false)
+  if (confirm_project_clear() == false)
     return false;
 
+  // ask for a filename if none was given
+  Fl_String new_filename = filename_arg;
+  if (new_filename.empty()) {
+    new_filename = open_project_filechooser("Open Project File");
+    if (new_filename.empty()) {
+      return false;
+    }
+  }
+
+  // clear the project and merge a file by the given name
+  new_project(false);
   return merge_project_file(new_filename);
 }
 
