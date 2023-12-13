@@ -1820,8 +1820,10 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::walk_selection(
     if (!get_selection(row,col,erow,ecol)) return NULL; // no selection
     u8c = u8c_ring_row(row);
   } else {
+    int srow,scol,erow,ecol;
+    if (!get_selection(srow,scol,erow,ecol)) return NULL; // no selection
     // At end? done
-    if (row == select_.erow() && col == select_.ecol()) return NULL;
+    if (row == erow && col == ecol) return NULL;
     if (++col >= ring_cols())   // advance to next char
       { col = 0; ++row; }       // wrapped to next row?
   }
