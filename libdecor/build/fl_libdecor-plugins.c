@@ -236,13 +236,7 @@ static unsigned char *gtk_titlebar_buffer(struct libdecor_frame *frame,
                                           int *width, int *height, int *stride)
 {
   struct libdecor_frame_gtk *lfg = (struct libdecor_frame_gtk *)frame;
-#if USE_SYSTEM_LIBDECOR || !HAVE_GTK
-  struct border_component_gtk *bc;
-#else
-  struct border_component *bc;
-#endif
-  bc = &lfg->headerbar;
-  struct buffer *buffer = bc->buffer;
+  struct buffer *buffer = lfg->headerbar.buffer;
   *width = buffer->buffer_width;
   *height = buffer->buffer_height;
   *stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, buffer->buffer_width);
@@ -313,6 +307,15 @@ static const char *get_libdecor_plugin_description(struct libdecor_frame *frame)
 }
 
 
+static const char *plugin_name(struct libdecor_frame *frame) {
+  static const char *my_plugin = NULL;
+  if (!my_plugin) {
+    my_plugin = get_libdecor_plugin_description(frame);
+    if (!my_plugin) my_plugin = "unknown";
+  }
+  return my_plugin;
+}
+
 /*
  FLTK-added utility function to give access to the pixel array representing
  the titlebar of a window decorated by the cairo plugin of libdecor.
@@ -324,13 +327,22 @@ static const char *get_libdecor_plugin_description(struct libdecor_frame *frame)
 unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
                                                  int *width, int *height, int *stride)
 {
-  static const char *my_plugin = NULL;
-  if (!my_plugin) my_plugin = get_libdecor_plugin_description(frame);
-  if (my_plugin && !strcmp(my_plugin, "GTK3 plugin")) {
+  const char *name = plugin_name(frame);
+  if (!strcmp(name, "GTK3 plugin")) {
     return gtk_titlebar_buffer(frame, width, height, stride);
   }
-  else if (my_plugin && !strcmp(my_plugin, "libdecor plugin using Cairo")) {
+  else if (!strcmp(name, "libdecor plugin using Cairo")) {
     return cairo_titlebar_buffer(frame, width, height, stride);
+  }
+  return NULL;
+}
+
+
+/* returns the wl_surface of the window's headerbar for GTK */
+struct wl_surface *fl_headerbar_surface(struct libdecor_frame *frame) {
+  if (!strcmp(plugin_name(frame), "GTK3 plugin")) {
+    struct libdecor_frame_gtk *lfg = (struct libdecor_frame_gtk *)frame;
+    return lfg->headerbar.wl_surface;
   }
   return NULL;
 }

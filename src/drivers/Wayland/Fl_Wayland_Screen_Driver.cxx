@@ -47,6 +47,7 @@
 #include <string.h> // for strerror()
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
+  struct wl_surface *fl_headerbar_surface(struct libdecor_frame *frame);
 }
 
 
@@ -201,7 +202,18 @@ static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
 static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t serial,
         struct wl_surface *surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
   Fl_Window *win = event_coords_from_surface(surface, surface_x, surface_y);
-  if (!win && gtk_shell) gtk_shell_surface = surface;
+  if (!win && gtk_shell) { // check that surface is the headerbar of a GTK-decorated window
+    Fl_X *x = Fl_X::first;
+    while (x) {
+      struct wld_window *xid = (struct wld_window*)x->xid;
+      if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+          surface == fl_headerbar_surface(xid->frame)) {
+        gtk_shell_surface = surface;
+        return;
+      }
+      x = x->next;
+    }
+  }
   if (!win) return;
   // use custom cursor if present
   struct wl_cursor *cursor =
