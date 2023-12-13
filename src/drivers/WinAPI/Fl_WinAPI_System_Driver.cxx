@@ -302,24 +302,40 @@ int Fl_WinAPI_System_Driver::rename(const char *fnam, const char *newnam) {
 // See Fl::args_to_utf8()
 int Fl_WinAPI_System_Driver::args_to_utf8(int argc, char ** &argv) {
   int i;
-  char strbuf[2048]; // FIXME: allocate argv and strings dynamically
 
   // Convert the command line arguments to UTF-8
   LPWSTR *wideArgv = CommandLineToArgvW(GetCommandLineW(), &argc);
   argv = (char **)malloc((argc + 1) * sizeof(char *));
   for (i = 0; i < argc; i++) {
-    int ret = WideCharToMultiByte(CP_UTF8,        // CodePage
+    // find the required size of the buffer
+    int u8size = WideCharToMultiByte(CP_UTF8,     // CodePage
                                   0,              // dwFlags
                                   wideArgv[i],    // lpWideCharStr
                                   -1,             // cchWideChar
-                                  strbuf,         // lpMultiByteStr
-                                  sizeof(strbuf), // cbMultiByte
+                                  NULL,           // lpMultiByteStr
+                                  0,              // cbMultiByte
                                   NULL,           // lpDefaultChar
                                   NULL);          // lpUsedDefaultChar
+    if (u8size > 0) {
+      char *strbuf = (char*)::malloc(u8size);
+      int ret = WideCharToMultiByte(CP_UTF8,        // CodePage
+                                    0,              // dwFlags
+                                    wideArgv[i],    // lpWideCharStr
+                                    -1,             // cchWideChar
+                                    strbuf,         // lpMultiByteStr
+                                    u8size,         // cbMultiByte
+                                    NULL,           // lpDefaultChar
+                                    NULL);          // lpUsedDefaultChar
 
-    if (!ret)
-      strbuf[0] = '\0'; // return empty string
-    argv[i] = fl_strdup(strbuf);
+      if (ret) {
+        argv[i] = strbuf;
+      } else {
+        argv[i] = _strdup("");
+        ::free(strbuf);
+      }
+    } else {
+      argv[i] = _strdup("");
+    }
   }
   argv[argc] = NULL; // required NULL pointer at end of list
 
