@@ -2280,8 +2280,10 @@ void Fl_X11_Window_Driver::activate_window() {
     prev = x->xid;
   }
 
-  send_wm_event(w, fl_NET_ACTIVE_WINDOW, 1 /* application */,
-                0 /* timestamp */, prev /* previously active window */);
+  send_wm_event(w, fl_NET_ACTIVE_WINDOW,
+                1,              // source: 1 = application
+                fl_event_time,  // time of client's last user activity (STR 3396)
+                prev);          // previously active window
 }
 
 /* Change an existing window to fullscreen */
