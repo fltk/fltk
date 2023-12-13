@@ -242,7 +242,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
 void Fl_Cocoa_Gl_Window_Driver::make_overlay_current() {
   // this is not very useful, but unfortunately, Apple decided
   // that front buffer drawing can no longer (OS X 10.4) be supported on their platforms.
-  pWindow->make_current();
+  if (pWindow->shown()) pWindow->make_current();
 }
 
 void Fl_Cocoa_Gl_Window_Driver::redraw_overlay() {
