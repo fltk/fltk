@@ -263,6 +263,9 @@ void Fl_Wayland_Gl_Window_Driver::delete_gl_context(GLContext context) {
     cached_context = 0;
     cached_window = 0;
   }
+  if (eglGetCurrentContext() == (EGLContext)context) {
+    eglMakeCurrent(egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+  }
   eglDestroyContext(egl_display, (EGLContext)context);
   eglDestroySurface(egl_display, egl_surface);
   egl_surface = NULL;
