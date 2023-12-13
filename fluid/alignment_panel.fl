@@ -156,7 +156,7 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
       Fl_Group {} {
-        label General open
+        label General open selected
         image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
         code0 {o->image()->scale(36, 24);}
       } {
@@ -1092,7 +1092,7 @@ if (v == LOAD) {
 if (v == LOAD) {
   if (selected) {
     o->value(g_shell_config->list[selected-1]->shortcut);
-    o->default_value(o->value());
+    //o->default_value(o->value());
   } else {
     o->value(0);
   }
@@ -1574,7 +1574,7 @@ Function {make_shell_window()} {open
     label {Shell Command Output} open
     xywh {769 585 555 430} type Double align 80 resizable visible
   } {
-    Fl_Terminal shell_run_terminal {selected
+    Fl_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
       code0 {shell_run_terminal->ansi(1);}
       code1 {shell_run_terminal->history_lines(1000);}

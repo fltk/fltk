@@ -711,7 +711,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
       i->parent()->hide();
       return;
     }
-    i->default_value( i->value() ); // enable the "undo" capability of the shortcut button
+    //i->default_value( i->value() ); // enable the "undo" capability of the shortcut button
     i->show();
     i->parent()->show();
     i->redraw();

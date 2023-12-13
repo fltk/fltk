@@ -1041,7 +1041,7 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
   if (v == LOAD) {
     if (selected) {
       o->value(g_shell_config->list[selected-1]->shortcut);
-      o->default_value(o->value());
+      //o->default_value(o->value());
     } else {
       o->value(0);
     }
