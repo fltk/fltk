@@ -91,8 +91,8 @@ struct Fl_Menu_Item;
   The appearance of each "tab" is taken from the label() and color() of the
   child group corresponding to that "tab" and panel. Where the "tabs" appear
   depends on the position and size of the child groups that make up the
-  panels within the Fl_Tab, i.e. whether there is more space above or
-  below them. The height of the "tabs" depends on how much free space
+  panels within the Fl_Tabs widget, i.e. whether there is more space above
+  or below them. The height of the "tabs" depends on how much free space
   is available.
 
   \image html  tabs_default.png "Fl_Tabs Default Appearance"
