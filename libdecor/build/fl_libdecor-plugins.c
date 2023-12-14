@@ -175,15 +175,27 @@ struct libdecor_frame_cairo {
 
 /* Definitions derived from libdecor-gtk.c */
 
-typedef struct _GtkWidget GtkWidget;
-enum header_element {
-  HEADER_NONE,
-  HEADER_FULL, /* entire header bar */
-  HEADER_TITLE, /* label */
-  HEADER_MIN,
-  HEADER_MAX,
-  HEADER_CLOSE,
+struct libdecor_plugin_gtk {
+  struct libdecor_plugin plugin;
+  struct wl_callback *globals_callback;
+  struct wl_callback *globals_callback_shm;
+  struct libdecor *context;
+  struct wl_registry *wl_registry;
+  struct wl_subcompositor *wl_subcompositor;
+  struct wl_compositor *wl_compositor;
+  struct wl_shm *wl_shm;
+  struct wl_callback *shm_callback;
+  bool has_argb;
+  struct wl_list visible_frame_list;
+  struct wl_list seat_list;
+  struct wl_list output_list;
+  char *cursor_theme_name;
+  int cursor_size;
+  int double_click_time_ms;
 };
+
+typedef struct _GtkWidget GtkWidget;
+enum header_element { HEADER_NONE }; /* details are not needed */
 
 typedef enum { GTK_STATE_FLAG_NORMAL = 0 } GtkStateFlags;
 
@@ -338,11 +350,38 @@ unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
 }
 
 
-/* returns the wl_surface of the window's headerbar for GTK */
-struct wl_surface *fl_headerbar_surface(struct libdecor_frame *frame) {
-  if (!strcmp(plugin_name(frame), "GTK3 plugin")) {
-    struct libdecor_frame_gtk *lfg = (struct libdecor_frame_gtk *)frame;
-    return lfg->headerbar.wl_surface;
+struct libdecor { // copied from libdecor.c
+  int ref_count;
+  struct libdecor_interface *iface;
+  struct libdecor_plugin *plugin;
+  bool plugin_ready;
+  struct wl_display *wl_display;
+  struct wl_registry *wl_registry;
+  struct xdg_wm_base *xdg_wm_base;
+  struct zxdg_decoration_manager_v1 *decoration_manager;
+  struct wl_callback *init_callback;
+  bool init_done;
+  bool has_error;
+  struct wl_list frames;
+};
+
+
+/* Returns whether surface is a GTK-titlebar created by libdecor-gtk */
+bool fl_is_surface_gtk_titlebar(struct wl_surface *surface, struct libdecor *context) {
+  static bool checked_plugin_name = false;
+  static bool is_gtk = true;
+  if (!context || !is_gtk) return false;
+  struct libdecor_plugin_gtk *lpg = (struct libdecor_plugin_gtk *)context->plugin;
+  struct libdecor_frame_gtk *frame;
+  if (!checked_plugin_name && !wl_list_empty(&lpg->visible_frame_list)) {
+    checked_plugin_name = true;
+    frame = wl_container_of(lpg->visible_frame_list.next, frame, link);
+    is_gtk = !strcmp(plugin_name(&frame->frame), "GTK3 plugin");
+    if (!is_gtk) return false;
   }
-  return NULL;
+  // loop over all decorations created by libdecor-gtk
+  wl_list_for_each(frame, &lpg->visible_frame_list, link) {
+    if (frame->headerbar.wl_surface == surface) return true;
+  }
+  return false;
 }
