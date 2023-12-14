@@ -26,6 +26,6 @@ int main(int argc, char **argv) {
   box->labelsize(36);
   box->labeltype(FL_SHADOW_LABEL);
   window->end();
-  window->show(argc, argv);
+  window->show();//argc, argv);
   return Fl::run();
 }

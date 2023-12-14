@@ -965,6 +965,10 @@ Fl_Menu_Item menu_w_settings_shell_menu[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+static void cb_T(Fl_Button*, void* v) {
+  if (v!=LOAD) show_terminal_window();
+}
+
 Fl_Button *w_settings_shell_play=(Fl_Button *)0;
 
 static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
@@ -1260,6 +1264,72 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
         cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
+      }
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+    }
+  }
+}
+
+static void cb_show(Fl_Check_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      o->value(!(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::DONT_SHOW_TERMINAL));
+    } else {
+      o->value(0);
+    }
+  } else {
+    if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      int v = o->value();
+      if (!v) {
+        cmd->flags |= Fd_Shell_Command::DONT_SHOW_TERMINAL;
+      } else {
+        cmd->flags &= ~Fd_Shell_Command::DONT_SHOW_TERMINAL;
+      }
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+    }
+  }
+}
+
+static void cb_clear(Fl_Check_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::CLEAR_TERMINAL);
+    } else {
+      o->value(0);
+    }
+  } else {
+    if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      int v = o->value();
+      if (v) {
+        cmd->flags |= Fd_Shell_Command::CLEAR_TERMINAL;
+      } else {
+        cmd->flags &= ~Fd_Shell_Command::CLEAR_TERMINAL;
+      }
+      if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+    }
+  }
+}
+
+static void cb_clear1(Fl_Check_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::CLEAR_HISTORY);
+    } else {
+      o->value(0);
+    }
+  } else {
+    if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      int v = o->value();
+      if (v) {
+        cmd->flags |= Fd_Shell_Command::CLEAR_HISTORY;
+      } else {
+        cmd->flags &= ~Fd_Shell_Command::CLEAR_HISTORY;
       }
       if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
     }
@@ -2741,6 +2811,12 @@ itional data in code and project files.");
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
+            { Fl_Button* o = new Fl_Button(246, 200, 24, 22, "T");
+              o->tooltip("show terminal window");
+              o->labelfont(5);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_T);
+            } // Fl_Button* o
             { w_settings_shell_play = new Fl_Button(270, 200, 50, 22, "Run");
               w_settings_shell_play->tooltip("run the selected shell command");
               w_settings_shell_play->labelsize(11);
@@ -2852,23 +2928,41 @@ le");
             o->end();
             Fl_Group::current()->resizable(o);
           } // Fl_Group* o
-          { Fl_Check_Button* o = new Fl_Check_Button(100, 458, 220, 20, "save .fl project file");
+          { Fl_Check_Button* o = new Fl_Check_Button(100, 458, 110, 20, "save .fl project file");
             o->tooltip("save the project to the .fl file before running the command");
             o->down_box(FL_DOWN_BOX);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_save);
           } // Fl_Check_Button* o
-          { Fl_Check_Button* o = new Fl_Check_Button(100, 478, 220, 19, "save source code");
+          { Fl_Check_Button* o = new Fl_Check_Button(100, 478, 110, 19, "save source code");
             o->tooltip("generate the source code and header file before running the command");
             o->down_box(FL_DOWN_BOX);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_save1);
           } // Fl_Check_Button* o
-          { Fl_Check_Button* o = new Fl_Check_Button(100, 497, 220, 20, "save i18n strings");
+          { Fl_Check_Button* o = new Fl_Check_Button(100, 498, 110, 20, "save i18n strings");
             o->tooltip("save the internationalisation strings before running the command");
             o->down_box(FL_DOWN_BOX);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_save2);
+          } // Fl_Check_Button* o
+          { Fl_Check_Button* o = new Fl_Check_Button(214, 458, 106, 20, "show terminal");
+            o->tooltip("show the terminal window when launching this script");
+            o->down_box(FL_DOWN_BOX);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_show);
+          } // Fl_Check_Button* o
+          { Fl_Check_Button* o = new Fl_Check_Button(214, 478, 106, 19, "clear terminal");
+            o->tooltip("clear the teminal window before running this script");
+            o->down_box(FL_DOWN_BOX);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_clear);
+          } // Fl_Check_Button* o
+          { Fl_Check_Button* o = new Fl_Check_Button(214, 498, 106, 19, "clear term history");
+            o->tooltip("clear the teminal history in the terminal window");
+            o->down_box(FL_DOWN_BOX);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_clear1);
           } // Fl_Check_Button* o
           w_settings_shell_cmd->end();
           Fl_Group::current()->resizable(w_settings_shell_cmd);

@@ -1014,6 +1014,11 @@ if (v==LOAD) {
             Fl_Box {} {
               xywh {253 200 13 22} hide resizable
             }
+            Fl_Button {} {
+              label T
+              callback {if (v!=LOAD) show_terminal_window();}
+              tooltip {show terminal window} xywh {246 200 24 22} labelfont 5 labelsize 11
+            }
             Fl_Button w_settings_shell_play {
               label Run
               callback {int selected = w_settings_shell_list_selected;
@@ -1348,7 +1353,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            tooltip {save the project to the .fl file before running the command} xywh {100 458 220 20} down_box DOWN_BOX labelsize 11
+            tooltip {save the project to the .fl file before running the command} xywh {100 458 110 20} down_box DOWN_BOX labelsize 11
           }
           Fl_Check_Button {} {
             label {save source code}
@@ -1371,7 +1376,7 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            tooltip {generate the source code and header file before running the command} xywh {100 478 220 19} down_box DOWN_BOX labelsize 11
+            tooltip {generate the source code and header file before running the command} xywh {100 478 110 19} down_box DOWN_BOX labelsize 11
           }
           Fl_Check_Button {} {
             label {save i18n strings}
@@ -1394,7 +1399,76 @@ if (v == LOAD) {
     if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
   }
 }}
-            tooltip {save the internationalisation strings before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
+            tooltip {save the internationalisation strings before running the command} xywh {100 498 110 20} down_box DOWN_BOX labelsize 11
+          }
+          Fl_Check_Button {} {
+            label {show terminal}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    o->value(!(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::DONT_SHOW_TERMINAL));
+  } else {
+    o->value(0);
+  }
+} else {
+  if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    int v = o->value();
+    if (!v) {
+      cmd->flags |= Fd_Shell_Command::DONT_SHOW_TERMINAL;
+    } else {
+      cmd->flags &= ~Fd_Shell_Command::DONT_SHOW_TERMINAL;
+    }
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+  }
+}}
+            tooltip {show the terminal window when launching this script} xywh {214 458 106 20} down_box DOWN_BOX labelsize 11
+          }
+          Fl_Check_Button {} {
+            label {clear terminal}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::CLEAR_TERMINAL);
+  } else {
+    o->value(0);
+  }
+} else {
+  if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    int v = o->value();
+    if (v) {
+      cmd->flags |= Fd_Shell_Command::CLEAR_TERMINAL;
+    } else {
+      cmd->flags &= ~Fd_Shell_Command::CLEAR_TERMINAL;
+    }
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+  }
+}}
+            tooltip {clear the teminal window before running this script} xywh {214 478 106 19} down_box DOWN_BOX labelsize 11
+          }
+          Fl_Check_Button {} {
+            label {clear term history}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::CLEAR_HISTORY);
+  } else {
+    o->value(0);
+  }
+} else {
+  if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    int v = o->value();
+    if (v) {
+      cmd->flags |= Fd_Shell_Command::CLEAR_HISTORY;
+    } else {
+      cmd->flags &= ~Fd_Shell_Command::CLEAR_HISTORY;
+    }
+    if (cmd->storage == FD_STORE_PROJECT) set_modflag(1);
+  }
+}}
+            tooltip {clear the teminal history in the terminal window} xywh {214 498 106 19} down_box DOWN_BOX labelsize 11
           }
         }
         Fl_Box w_settings_shell_fd_project {
@@ -1607,3 +1681,6 @@ shell_run_window->hide();}
 
 decl {Fl_Menu_Item *w_layout_menu_storage[4];} {private global
 }
+
+Function {make_window()} {open
+} {}
