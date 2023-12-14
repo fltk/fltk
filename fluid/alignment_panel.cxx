@@ -2207,6 +2207,7 @@ Fl_Double_Window* make_settings_window() {
       w_settings_tabs->callback((Fl_Callback*)cb_w_settings_tabs);
       { Fl_Group* o = new Fl_Group(10, 60, 320, 480, "General");
         o->image( image_general_64() );
+        o->image()->scale(36, 24, 0, 1);
         o->labelsize(11);
         { Fl_Group* o = new Fl_Group(120, 78, 130, 25);
           o->callback((Fl_Callback*)cb_);
@@ -2347,12 +2348,12 @@ th a dim outline in the editing window only");
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        o->image()->scale(36, 24);
         o->end();
         Fl_Group::current()->resizable(o);
       } // Fl_Group* o
-      { Fl_Group* o = w_settings_project_tab = new Fl_Group(10, 60, 320, 480, "Project");
+      { w_settings_project_tab = new Fl_Group(10, 60, 320, 480, "Project");
         w_settings_project_tab->image( image_document_64() );
+        w_settings_project_tab->image()->scale(36, 24, 0, 1);
         w_settings_project_tab->labelsize(11);
         w_settings_project_tab->callback((Fl_Callback*)cb_w_settings_project_tab);
         w_settings_project_tab->hide();
@@ -2438,11 +2439,11 @@ itional data in code and project files.");
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        o->image()->scale(36, 24);
         w_settings_project_tab->end();
       } // Fl_Group* w_settings_project_tab
-      { Fl_Group* o = w_settings_layout_tab = new Fl_Group(10, 60, 320, 480, "Layout");
+      { w_settings_layout_tab = new Fl_Group(10, 60, 320, 480, "Layout");
         w_settings_layout_tab->image( image_layout_64() );
+        w_settings_layout_tab->image()->scale(36, 24, 0, 1);
         w_settings_layout_tab->labelsize(11);
         w_settings_layout_tab->callback((Fl_Callback*)cb_w_settings_layout_tab);
         w_settings_layout_tab->hide();
@@ -2762,11 +2763,11 @@ itional data in code and project files.");
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        o->image()->scale(36, 24);
         w_settings_layout_tab->end();
       } // Fl_Group* w_settings_layout_tab
-      { Fl_Group* o = w_settings_shell_tab = new Fl_Group(10, 60, 320, 480, "Shell");
+      { w_settings_shell_tab = new Fl_Group(10, 60, 320, 480, "Shell");
         w_settings_shell_tab->image( image_shell_64() );
+        w_settings_shell_tab->image()->scale(36, 24, 0, 1);
         w_settings_shell_tab->labelsize(11);
         w_settings_shell_tab->callback((Fl_Callback*)propagate_load);
         w_settings_shell_tab->hide();
@@ -2981,11 +2982,11 @@ le");
           w_settings_shell_fd_user->deactivate();
           o->image()->scale(16, 16);
         } // Fl_Box* w_settings_shell_fd_user
-        o->image()->scale(36, 24);
         w_settings_shell_tab->end();
       } // Fl_Group* w_settings_shell_tab
-      { Fl_Group* o = w_settings_i18n_tab = new Fl_Group(10, 60, 320, 480, "Locale");
+      { w_settings_i18n_tab = new Fl_Group(10, 60, 320, 480, "Locale");
         w_settings_i18n_tab->image( image_language_64() );
+        w_settings_i18n_tab->image()->scale(36, 24, 0, 1);
         w_settings_i18n_tab->labelsize(11);
         w_settings_i18n_tab->callback((Fl_Callback*)cb_w_settings_i18n_tab);
         w_settings_i18n_tab->hide();
@@ -3096,7 +3097,6 @@ le FLTK_GETTEXT_FOUND");
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        o->image()->scale(36, 24);
         w_settings_i18n_tab->end();
       } // Fl_Group* w_settings_i18n_tab
       w_settings_tabs->end();

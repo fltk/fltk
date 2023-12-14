@@ -23,11 +23,405 @@
 #include <FL/Fl_Grid.H>
 extern void set_modflag(int mf, int mfc=-1);
 
+Fl_Double_Window *image_panel_window=(Fl_Double_Window *)0;
+
+static void cb_image_panel_window(Fl_Double_Window* o, void* v) {
+  propagate_load(o, v);
+}
+
+Fl_Group *image_panel_imagegroup=(Fl_Group *)0;
+
+Fl_Box *image_panel_data=(Fl_Box *)0;
+
+static void cb_image_panel_data(Fl_Box* o, void* v) {
+  if (v == LOAD) {
+    Fl_Shared_Image *img = Fl_Shared_Image::get(widget_image_input->value());
+    o->user_data(img);
+    if (img) {
+      char buf[256];
+      snprintf(buf, 255, "%d x %d pixels, %d channels", img->data_w(), img->data_h(), img->d());
+      o->copy_label(buf);
+      image_panel_imagegroup->activate();
+    } else if (widget_image_input->value() && widget_image_input->value()[0]) {
+      o->label("Can't load image");
+      image_panel_imagegroup->activate();
+    } else {
+      o->label("... x ... pixels, ...");
+      image_panel_imagegroup->deactivate();
+    }
+  }
+}
+
+Fluid_Coord_Input *image_panel_imagew=(Fluid_Coord_Input *)0;
+
+static void cb_image_panel_imagew(Fluid_Coord_Input* o, void* v) {
+  if (v == LOAD) {
+      if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+        o->value(current_widget->scale_image_w_);
+      }
+    } else {
+      int mod = 0;
+      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+        if (t->selected && t->is_widget()) {
+          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          wt->scale_image_w_ = o->value();
+          Fl_Image *img = wt->o->image();
+          if (img) {
+            int iw = wt->scale_image_w_;
+            if (iw<=0) iw = img->data_w();
+            int ih = wt->scale_image_h_;
+            if (ih<=0) ih = img->data_w();
+            img->scale(iw, ih, 0, 1);
+            wt->o->redraw();
+            if (wt->o->parent()) wt->o->parent()->redraw();
+          }
+          mod = 1;
+        }
+      }
+      if (mod) set_modflag(1);
+    }
+}
+
+Fluid_Coord_Input *image_panel_imageh=(Fluid_Coord_Input *)0;
+
+static void cb_image_panel_imageh(Fluid_Coord_Input* o, void* v) {
+  if (v == LOAD) {
+      if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+        o->value(current_widget->scale_image_h_);
+      }
+    } else {
+      int mod = 0;
+      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+        if (t->selected && t->is_widget()) {
+          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          wt->scale_image_h_ = o->value();
+          Fl_Image *img = wt->o->image();
+          if (img) {
+            int iw = wt->scale_image_w_;
+            if (iw<=0) iw = img->data_w();
+            int ih = wt->scale_image_h_;
+            if (ih<=0) ih = img->data_w();
+            img->scale(iw, ih, 0, 1);
+            wt->o->redraw();
+            if (wt->o->parent()) wt->o->parent()->redraw();
+          }
+          mod = 1;
+        }
+      }
+      if (mod) set_modflag(1);
+    }
+}
+
+static void cb_Reset(Fl_Button*, void* v) {
+  if (v != LOAD) {
+    image_panel_imagew->value(0);
+    image_panel_imageh->value(0);
+    image_panel_imagew->do_callback();
+    image_panel_imageh->do_callback();
+  }
+}
+
+Fl_Group *image_panel_deimagegroup=(Fl_Group *)0;
+
+Fl_Box *image_panel_dedata=(Fl_Box *)0;
+
+static void cb_image_panel_dedata(Fl_Box* o, void* v) {
+  if (v == LOAD) {
+    Fl_Shared_Image *img = Fl_Shared_Image::get(widget_deimage_input->value());
+    o->user_data(img);
+    if (img) {
+      char buf[256];
+      snprintf(buf, 255, "%d x %d pixels, %d channels", img->data_w(), img->data_h(), img->d());
+      o->copy_label(buf);
+      image_panel_deimagegroup->activate();
+    } else if (widget_deimage_input->value() && widget_deimage_input->value()[0]) {
+      o->label("Can't load image");
+      image_panel_deimagegroup->activate();
+    } else {
+      o->label("... x ... pixels, ...");
+      image_panel_deimagegroup->deactivate();
+    }
+  }
+}
+
+Fluid_Coord_Input *image_panel_deimagew=(Fluid_Coord_Input *)0;
+
+static void cb_image_panel_deimagew(Fluid_Coord_Input* o, void* v) {
+  if (v == LOAD) {
+      if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+        o->value(current_widget->scale_deimage_w_);
+      }
+    } else {
+      int mod = 0;
+      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+        if (t->selected && t->is_widget()) {
+          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          wt->scale_deimage_w_ = o->value();
+          Fl_Image *img = wt->o->deimage();
+          if (img) {
+            int iw = wt->scale_deimage_w_;
+            if (iw<=0) iw = img->data_w();
+            int ih = wt->scale_deimage_h_;
+            if (ih<=0) ih = img->data_w();
+            img->scale(iw, ih, 0, 1);
+            wt->o->redraw();
+            if (wt->o->parent()) wt->o->parent()->redraw();
+          }
+          mod = 1;
+        }
+      }
+      if (mod) set_modflag(1);
+    }
+}
+
+Fluid_Coord_Input *image_panel_deimageh=(Fluid_Coord_Input *)0;
+
+static void cb_image_panel_deimageh(Fluid_Coord_Input* o, void* v) {
+  if (v == LOAD) {
+      if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+        o->value(current_widget->scale_deimage_h_);
+      }
+    } else {
+      int mod = 0;
+      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+        if (t->selected && t->is_widget()) {
+          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          wt->scale_deimage_h_ = o->value();
+          Fl_Image *img = wt->o->deimage();
+          if (img) {
+            int iw = wt->scale_deimage_w_;
+            if (iw<=0) iw = img->data_w();
+            int ih = wt->scale_deimage_h_;
+            if (ih<=0) ih = img->data_w();
+            img->scale(iw, ih, 0, 1);
+            wt->o->redraw();
+            if (wt->o->parent()) wt->o->parent()->redraw();
+          }
+          mod = 1;
+        }
+      }
+      if (mod) set_modflag(1);
+    }
+}
+
+static void cb_Reset1(Fl_Button*, void* v) {
+  if (v != LOAD) {
+    image_panel_deimagew->value(0);
+    image_panel_deimageh->value(0);
+    image_panel_deimagew->do_callback();
+    image_panel_deimageh->do_callback();
+  }
+}
+
+Fl_Button *image_panel_close=(Fl_Button *)0;
+
+static void cb_image_panel_close(Fl_Button*, void* v) {
+  if (v != LOAD)
+    image_panel_window->hide();
+}
+
+/**
+ Create a panel for editing widget image data
+*/
+Fl_Double_Window* make_image_panel() {
+  { image_panel_window = new Fl_Double_Window(260, 332, "Image Options");
+    image_panel_window->callback((Fl_Callback*)cb_image_panel_window);
+    { image_panel_imagegroup = new Fl_Group(10, 15, 235, 125);
+      image_panel_imagegroup->callback((Fl_Callback*)propagate_load);
+      { Fl_Box* o = new Fl_Box(75, 15, 170, 20, " ---- Active Image ----");
+        o->labelfont(1);
+        o->labelsize(11);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+      } // Fl_Box* o
+      { image_panel_data = new Fl_Box(75, 35, 170, 20, "... x ... pixels, ...");
+        image_panel_data->labelsize(11);
+        image_panel_data->callback((Fl_Callback*)cb_image_panel_data);
+        image_panel_data->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+      } // Fl_Box* image_panel_data
+      { Fl_Group* o = new Fl_Group(75, 75, 170, 20);
+        o->callback((Fl_Callback*)propagate_load);
+        { image_panel_imagew = new Fluid_Coord_Input(75, 75, 55, 20, "Width:");
+          image_panel_imagew->tooltip("Scale image to this width in pixel units");
+          image_panel_imagew->box(FL_DOWN_BOX);
+          image_panel_imagew->color(FL_BACKGROUND2_COLOR);
+          image_panel_imagew->selection_color(FL_SELECTION_COLOR);
+          image_panel_imagew->labeltype(FL_NORMAL_LABEL);
+          image_panel_imagew->labelfont(0);
+          image_panel_imagew->labelsize(11);
+          image_panel_imagew->labelcolor(FL_FOREGROUND_COLOR);
+          image_panel_imagew->textsize(11);
+          image_panel_imagew->callback((Fl_Callback*)cb_image_panel_imagew);
+          image_panel_imagew->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          image_panel_imagew->when(FL_WHEN_RELEASE);
+        } // Fluid_Coord_Input* image_panel_imagew
+        { image_panel_imageh = new Fluid_Coord_Input(135, 75, 55, 20, "Height:");
+          image_panel_imageh->tooltip("Scale image to this height in pixel units");
+          image_panel_imageh->box(FL_DOWN_BOX);
+          image_panel_imageh->color(FL_BACKGROUND2_COLOR);
+          image_panel_imageh->selection_color(FL_SELECTION_COLOR);
+          image_panel_imageh->labeltype(FL_NORMAL_LABEL);
+          image_panel_imageh->labelfont(0);
+          image_panel_imageh->labelsize(11);
+          image_panel_imageh->labelcolor(FL_FOREGROUND_COLOR);
+          image_panel_imageh->textsize(11);
+          image_panel_imageh->callback((Fl_Callback*)cb_image_panel_imageh);
+          image_panel_imageh->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          image_panel_imageh->when(FL_WHEN_RELEASE);
+        } // Fluid_Coord_Input* image_panel_imageh
+        { Fl_Button* o = new Fl_Button(195, 75, 50, 20, "Reset");
+          o->tooltip("Reset scale to original size");
+          o->labelsize(11);
+          o->callback((Fl_Callback*)cb_Reset);
+        } // Fl_Button* o
+        o->end();
+      } // Fl_Group* o
+      { Fl_Box* o = new Fl_Box(10, 75, 60, 20, "Scale:");
+        o->labelfont(1);
+        o->labelsize(11);
+        o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(10, 100, 60, 20, "Storage:");
+        o->labelfont(1);
+        o->labelsize(11);
+        o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+      } // Fl_Box* o
+      { Fl_Check_Button* o = new Fl_Check_Button(75, 100, 170, 20, "compressed");
+        o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
+mat");
+        o->down_box(FL_DOWN_BOX);
+        o->labelsize(11);
+        o->callback((Fl_Callback*)compress_image_cb);
+      } // Fl_Check_Button* o
+      { Fl_Check_Button* o = new Fl_Check_Button(75, 120, 170, 20, "bind to widget");
+        o->tooltip("bind the image to the widget, so it will be deleted automatically");
+        o->down_box(FL_DOWN_BOX);
+        o->labelsize(11);
+        o->callback((Fl_Callback*)bind_image_cb);
+        o->window()->hotspot(o);
+      } // Fl_Check_Button* o
+      image_panel_imagegroup->end();
+    } // Fl_Group* image_panel_imagegroup
+    { image_panel_deimagegroup = new Fl_Group(10, 155, 235, 125);
+      image_panel_deimagegroup->callback((Fl_Callback*)propagate_load);
+      { Fl_Box* o = new Fl_Box(75, 155, 170, 20, " ---- Inactive Image ----");
+        o->labelfont(1);
+        o->labelsize(11);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+      } // Fl_Box* o
+      { image_panel_dedata = new Fl_Box(75, 175, 170, 20, "... x ... pixels, ...");
+        image_panel_dedata->labelsize(11);
+        image_panel_dedata->callback((Fl_Callback*)cb_image_panel_dedata);
+        image_panel_dedata->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+      } // Fl_Box* image_panel_dedata
+      { Fl_Group* o = new Fl_Group(75, 215, 170, 20);
+        o->callback((Fl_Callback*)propagate_load);
+        { image_panel_deimagew = new Fluid_Coord_Input(75, 215, 55, 20, "Width:");
+          image_panel_deimagew->tooltip("Scale image to this width in pixel units");
+          image_panel_deimagew->box(FL_DOWN_BOX);
+          image_panel_deimagew->color(FL_BACKGROUND2_COLOR);
+          image_panel_deimagew->selection_color(FL_SELECTION_COLOR);
+          image_panel_deimagew->labeltype(FL_NORMAL_LABEL);
+          image_panel_deimagew->labelfont(0);
+          image_panel_deimagew->labelsize(11);
+          image_panel_deimagew->labelcolor(FL_FOREGROUND_COLOR);
+          image_panel_deimagew->textsize(11);
+          image_panel_deimagew->callback((Fl_Callback*)cb_image_panel_deimagew);
+          image_panel_deimagew->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          image_panel_deimagew->when(FL_WHEN_RELEASE);
+        } // Fluid_Coord_Input* image_panel_deimagew
+        { image_panel_deimageh = new Fluid_Coord_Input(135, 215, 55, 20, "Height:");
+          image_panel_deimageh->tooltip("Scale image to this height in pixel units");
+          image_panel_deimageh->box(FL_DOWN_BOX);
+          image_panel_deimageh->color(FL_BACKGROUND2_COLOR);
+          image_panel_deimageh->selection_color(FL_SELECTION_COLOR);
+          image_panel_deimageh->labeltype(FL_NORMAL_LABEL);
+          image_panel_deimageh->labelfont(0);
+          image_panel_deimageh->labelsize(11);
+          image_panel_deimageh->labelcolor(FL_FOREGROUND_COLOR);
+          image_panel_deimageh->textsize(11);
+          image_panel_deimageh->callback((Fl_Callback*)cb_image_panel_deimageh);
+          image_panel_deimageh->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          image_panel_deimageh->when(FL_WHEN_RELEASE);
+        } // Fluid_Coord_Input* image_panel_deimageh
+        { Fl_Button* o = new Fl_Button(195, 215, 50, 20, "Reset");
+          o->tooltip("Reset scale to original size");
+          o->labelsize(11);
+          o->callback((Fl_Callback*)cb_Reset1);
+        } // Fl_Button* o
+        o->end();
+      } // Fl_Group* o
+      { Fl_Box* o = new Fl_Box(10, 215, 60, 20, "Scale:");
+        o->labelfont(1);
+        o->labelsize(11);
+        o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(10, 240, 60, 20, "Storage:");
+        o->labelfont(1);
+        o->labelsize(11);
+        o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+      } // Fl_Box* o
+      { Fl_Check_Button* o = new Fl_Check_Button(75, 240, 170, 20, "compressed");
+        o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
+mat");
+        o->down_box(FL_DOWN_BOX);
+        o->labelsize(11);
+        o->callback((Fl_Callback*)compress_deimage_cb);
+      } // Fl_Check_Button* o
+      { Fl_Check_Button* o = new Fl_Check_Button(75, 260, 170, 20, "bind to widget");
+        o->tooltip("bind the image to the widget, so it will be deleted automatically");
+        o->down_box(FL_DOWN_BOX);
+        o->labelsize(11);
+        o->callback((Fl_Callback*)bind_deimage_cb);
+      } // Fl_Check_Button* o
+      image_panel_deimagegroup->end();
+    } // Fl_Group* image_panel_deimagegroup
+    { image_panel_close = new Fl_Button(165, 295, 80, 20, "Close");
+      image_panel_close->labelsize(11);
+      image_panel_close->callback((Fl_Callback*)cb_image_panel_close);
+    } // Fl_Button* image_panel_close
+    image_panel_window->set_modal();
+    image_panel_window->end();
+  } // Fl_Double_Window* image_panel_window
+  return image_panel_window;
+}
+
+void run_image_panel() {
+  if (!image_panel_window)
+    make_image_panel();
+
+  image_panel_window->do_callback(image_panel_window, LOAD);
+    
+  Fl::pushed(0);  
+  Fl_Window *g = Fl::grab();
+  if (g) Fl::grab(0);
+  image_panel_window->show();
+  while (image_panel_window->shown())
+    Fl::wait();
+  if (g)
+    Fl::grab(g);
+    
+  Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
+  if (img) {
+    img->release();
+    image_panel_data->user_data(NULL);
+  }
+}
+
 Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
 
 static void cb_widget_tabs(Fl_Tabs* o, void* v) {
   propagate_load((Fl_Group *)o,v);
 }
+
+Fl_Input *widget_image_input=(Fl_Input *)0;
+
+static void cb_(Fl_Button*, void* v) {
+  if (v != LOAD) {
+    run_image_panel();
+  }
+}
+
+Fl_Input *widget_deimage_input=(Fl_Input *)0;
 
 Fl_Menu_Item menu_[] = {
  {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
@@ -100,7 +494,7 @@ Fl_Menu_Item menu_3[] = {
 
 Fl_Input *v_input[4]={(Fl_Input *)0};
 
-static void cb_(Fl_Tile*, void* v) {
+static void cb_1(Fl_Tile*, void* v) {
   wComment->do_callback(wComment, v);
   wCallback->do_callback(wCallback, v);
 }
@@ -193,14 +587,14 @@ static void cb_widget_grid_rows(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_1(Fl_Button*, void* v) {
+static void cb_2(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_rows->value( widget_grid_rows->value()-1 );
     widget_grid_rows->do_callback();
   }
 }
 
-static void cb_2(Fl_Button*, void* v) {
+static void cb_3(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_rows->value( widget_grid_rows->value()+1 );
     widget_grid_rows->do_callback();
@@ -235,14 +629,14 @@ static void cb_widget_grid_cols(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_3(Fl_Button*, void* v) {
+static void cb_4(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_cols->value( widget_grid_cols->value()-1 );
     widget_grid_cols->do_callback();
   }
 }
 
-static void cb_4(Fl_Button*, void* v) {
+static void cb_5(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_cols->value( widget_grid_cols->value()+1 );
     widget_grid_cols->do_callback();
@@ -390,14 +784,14 @@ static void cb_widget_grid_curr_row(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_5(Fl_Button*, void* v) {
+static void cb_6(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_curr_row->value( widget_grid_curr_row->value()-1 );
     widget_grid_curr_row->do_callback();
   }
 }
 
-static void cb_6(Fl_Button*, void* v) {
+static void cb_7(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_curr_row->value( widget_grid_curr_row->value()+1 );
     widget_grid_curr_row->do_callback();
@@ -476,14 +870,14 @@ static void cb_widget_grid_curr_col(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_7(Fl_Button*, void* v) {
+static void cb_8(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_curr_col->value( widget_grid_curr_col->value()-1 );
     widget_grid_curr_col->do_callback();
   }
 }
 
-static void cb_8(Fl_Button*, void* v) {
+static void cb_9(Fl_Button*, void* v) {
   if (v != LOAD) {
     widget_grid_curr_col->value( widget_grid_curr_col->value()+1 );
     widget_grid_curr_col->do_callback();
@@ -573,7 +967,6 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -605,31 +998,23 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 65, 200, 20);
-            o->tooltip("The active image for the widget.");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)image_cb);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Input* o
-          { Fl_Button* o = new Fl_Button(295, 65, 69, 20, "Browse...");
+          { widget_image_input = new Fl_Input(95, 65, 200, 20);
+            widget_image_input->tooltip("The active image for the widget.");
+            widget_image_input->labelfont(1);
+            widget_image_input->labelsize(11);
+            widget_image_input->textsize(11);
+            widget_image_input->callback((Fl_Callback*)image_cb);
+            Fl_Group::current()->resizable(widget_image_input);
+          } // Fl_Input* widget_image_input
+          { Fl_Button* o = new Fl_Button(295, 65, 89, 20, "Browse...");
             o->tooltip("Click to choose the active image.");
             o->labelsize(11);
             o->callback((Fl_Callback*)image_browse_cb);
+            o->align(Fl_Align(256));
           } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(364, 65, 20, 20);
-            o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
-mat");
-            o->type(1);
-            o->callback((Fl_Callback*)compress_image_cb);
-            o->image(compressed_pixmap);
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(384, 65, 20, 20);
-            o->tooltip("bind the image to the widget, so it will be deleted automatically");
-            o->type(1);
-            o->callback((Fl_Callback*)bind_image_cb);
-            o->image(bind_pixmap);
+          { Fl_Button* o = new Fl_Button(384, 65, 20, 20, "...");
+            o->tooltip("more image options");
+            o->callback((Fl_Callback*)cb_);
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o
@@ -638,31 +1023,18 @@ mat");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 90, 200, 20);
-            o->tooltip("The inactive image for the widget.");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)inactive_cb);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Input* o
-          { Fl_Button* o = new Fl_Button(295, 90, 69, 20, "Browse...");
+          { widget_deimage_input = new Fl_Input(95, 90, 200, 20);
+            widget_deimage_input->tooltip("The inactive image for the widget.");
+            widget_deimage_input->labelfont(1);
+            widget_deimage_input->labelsize(11);
+            widget_deimage_input->textsize(11);
+            widget_deimage_input->callback((Fl_Callback*)inactive_cb);
+            Fl_Group::current()->resizable(widget_deimage_input);
+          } // Fl_Input* widget_deimage_input
+          { Fl_Button* o = new Fl_Button(295, 90, 89, 20, "Browse...");
             o->tooltip("Click to choose the inactive image.");
             o->labelsize(11);
             o->callback((Fl_Callback*)inactive_browse_cb);
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(364, 90, 20, 20);
-            o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
-mat");
-            o->type(1);
-            o->callback((Fl_Callback*)compress_deimage_cb);
-            o->image(compressed_pixmap);
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(384, 90, 20, 20);
-            o->tooltip("bind the image to the widget, so it will be deleted automatically");
-            o->type(1);
-            o->callback((Fl_Callback*)bind_deimage_cb);
-            o->image(bind_pixmap);
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o
@@ -1348,7 +1720,7 @@ sized to fit the container.");
           v_input[3]->callback((Fl_Callback*)v_input_cb, (void*)(3));
         } // Fl_Input* v_input[3]
         { Fl_Tile* o = new Fl_Tile(95, 175, 310, 130);
-          o->callback((Fl_Callback*)cb_);
+          o->callback((Fl_Callback*)cb_1);
           { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
             o->box(FL_FLAT_BOX);
             { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
@@ -1447,6 +1819,7 @@ access the Widget pointer and \'v\' to access the user value.");
       { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
         widget_tab_grid_child->labelsize(11);
         widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
+        widget_tab_grid_child->hide();
         { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
           o->box(FL_FLAT_BOX);
           o->labelfont(1);
@@ -1525,7 +1898,7 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Box* widget_grid_unlinked
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 90, 315, 30, "Align:");
+        { Fl_Group* o = new Fl_Group(95, 100, 315, 20, "Align:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
@@ -1546,13 +1919,13 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->menu(menu_Vertical);
           } // Fl_Choice* o
-          { Fl_Box* o = new Fl_Box(395, 90, 1, 20);
+          { Fl_Box* o = new Fl_Box(395, 100, 1, 20);
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 125, 315, 30, "Min. Size:");
+        { Fl_Group* o = new Fl_Group(95, 135, 315, 20, "Min. Size:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
@@ -1583,13 +1956,13 @@ access the Widget pointer and \'v\' to access the user value.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* o
-          { Fl_Box* o = new Fl_Box(395, 125, 1, 20);
+          { Fl_Box* o = new Fl_Box(395, 135, 1, 20);
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 160, 315, 30, "Span:");
+        { Fl_Group* o = new Fl_Group(95, 170, 315, 20, "Span:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
@@ -1650,7 +2023,7 @@ access the Widget pointer and \'v\' to access the user value.");
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { Fl_Box* o = new Fl_Box(395, 160, 1, 20);
+          { Fl_Box* o = new Fl_Box(395, 170, 1, 20);
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
@@ -1690,13 +2063,13 @@ access the Widget pointer and \'v\' to access the user value.");
             { Fl_Button* o = new Fl_Button(135, 60, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_1);
+              o->callback((Fl_Callback*)cb_2);
               o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(150, 60, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_2);
+              o->callback((Fl_Callback*)cb_3);
               o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
@@ -1719,13 +2092,13 @@ access the Widget pointer and \'v\' to access the user value.");
             { Fl_Button* o = new Fl_Button(215, 60, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_3);
+              o->callback((Fl_Callback*)cb_4);
               o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(230, 60, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_4);
+              o->callback((Fl_Callback*)cb_5);
               o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
@@ -1832,13 +2205,13 @@ access the Widget pointer and \'v\' to access the user value.");
             { Fl_Button* o = new Fl_Button(135, 175, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_5);
+              o->callback((Fl_Callback*)cb_6);
               o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(150, 175, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_6);
+              o->callback((Fl_Callback*)cb_7);
               o->clear_visible_focus();
             } // Fl_Button* o
             o->end();
@@ -1917,13 +2290,13 @@ access the Widget pointer and \'v\' to access the user value.");
             { Fl_Button* o = new Fl_Button(135, 210, 15, 20, "-");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_7);
+              o->callback((Fl_Callback*)cb_8);
               o->clear_visible_focus();
             } // Fl_Button* o
             { Fl_Button* o = new Fl_Button(150, 210, 15, 20, "+");
               o->compact(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_8);
+              o->callback((Fl_Callback*)cb_9);
               o->clear_visible_focus();
             } // Fl_Button* o
             o->end();

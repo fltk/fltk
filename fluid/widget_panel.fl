@@ -43,12 +43,299 @@ decl {\#include "custom_widgets.h"} {public global
 decl {extern void set_modflag(int mf, int mfc=-1);} {private local
 }
 
+Function {make_image_panel()} {
+  comment {Create a panel for editing widget image data} open
+} {
+  Fl_Window image_panel_window {
+    label {Image Options}
+    callback {propagate_load(o, v);} open
+    xywh {527 684 260 332} type Double modal visible
+  } {
+    Fl_Group image_panel_imagegroup {
+      callback propagate_load open
+      xywh {10 15 235 125}
+    } {
+      Fl_Box {} {
+        label { ---- Active Image ----}
+        xywh {75 15 170 20} labelfont 1 labelsize 11 align 20
+      }
+      Fl_Box image_panel_data {
+        label {... x ... pixels, ...}
+        callback {if (v == LOAD) {
+  Fl_Shared_Image *img = Fl_Shared_Image::get(widget_image_input->value());
+  o->user_data(img);
+  if (img) {
+    char buf[256];
+    snprintf(buf, 255, "%d x %d pixels, %d channels", img->data_w(), img->data_h(), img->d());
+    o->copy_label(buf);
+    image_panel_imagegroup->activate();
+  } else if (widget_image_input->value() && widget_image_input->value()[0]) {
+    o->label("Can't load image");
+    image_panel_imagegroup->activate();
+  } else {
+    o->label("... x ... pixels, ...");
+    image_panel_imagegroup->deactivate();
+  }
+}}
+        xywh {75 35 170 20} labelsize 11 align 20
+        code0 {\#include <FL/Fl_Shared_Image.H>}
+      }
+      Fl_Group {} {
+        callback propagate_load open
+        xywh {75 75 170 20}
+      } {
+        Fl_Input image_panel_imagew {
+          label {Width:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_image_w_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_image_w_ = o->value();
+        Fl_Image *img = wt->o->image();
+        if (img) {
+          int iw = wt->scale_image_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_image_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this width in pixel units} xywh {75 75 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Input image_panel_imageh {
+          label {Height:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_image_h_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_image_h_ = o->value();
+        Fl_Image *img = wt->o->image();
+        if (img) {
+          int iw = wt->scale_image_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_image_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this height in pixel units} xywh {135 75 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Button {} {
+          label Reset
+          callback {if (v != LOAD) {
+  image_panel_imagew->value(0);
+  image_panel_imageh->value(0);
+  image_panel_imagew->do_callback();
+  image_panel_imageh->do_callback();
+}}
+          tooltip {Reset scale to original size} xywh {195 75 50 20} labelsize 11
+        }
+      }
+      Fl_Box {} {
+        label {Scale:}
+        xywh {10 75 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Box {} {
+        label {Storage:}
+        xywh {10 100 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Check_Button {} {
+        label compressed
+        callback compress_image_cb
+        tooltip {store image uncompressed as RGBA data
+or compressed in the original file format} xywh {75 100 170 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Check_Button {} {
+        label {bind to widget}
+        callback bind_image_cb
+        tooltip {bind the image to the widget, so it will be deleted automatically} xywh {75 120 170 20} down_box DOWN_BOX labelsize 11 hotspot
+      }
+    }
+    Fl_Group image_panel_deimagegroup {
+      callback propagate_load open
+      xywh {10 155 235 125}
+    } {
+      Fl_Box {} {
+        label { ---- Inactive Image ----}
+        xywh {75 155 170 20} labelfont 1 labelsize 11 align 20
+      }
+      Fl_Box image_panel_dedata {
+        label {... x ... pixels, ...}
+        callback {if (v == LOAD) {
+  Fl_Shared_Image *img = Fl_Shared_Image::get(widget_deimage_input->value());
+  o->user_data(img);
+  if (img) {
+    char buf[256];
+    snprintf(buf, 255, "%d x %d pixels, %d channels", img->data_w(), img->data_h(), img->d());
+    o->copy_label(buf);
+    image_panel_deimagegroup->activate();
+  } else if (widget_deimage_input->value() && widget_deimage_input->value()[0]) {
+    o->label("Can't load image");
+    image_panel_deimagegroup->activate();
+  } else {
+    o->label("... x ... pixels, ...");
+    image_panel_deimagegroup->deactivate();
+  }
+}}
+        xywh {75 175 170 20} labelsize 11 align 20
+      }
+      Fl_Group {} {
+        callback propagate_load open
+        xywh {75 215 170 20}
+      } {
+        Fl_Input image_panel_deimagew {
+          label {Width:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_deimage_w_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_deimage_w_ = o->value();
+        Fl_Image *img = wt->o->deimage();
+        if (img) {
+          int iw = wt->scale_deimage_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_deimage_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this width in pixel units} xywh {75 215 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Input image_panel_deimageh {
+          label {Height:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_deimage_h_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_deimage_h_ = o->value();
+        Fl_Image *img = wt->o->deimage();
+        if (img) {
+          int iw = wt->scale_deimage_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_deimage_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this height in pixel units} xywh {135 215 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Button {} {
+          label Reset
+          callback {if (v != LOAD) {
+  image_panel_deimagew->value(0);
+  image_panel_deimageh->value(0);
+  image_panel_deimagew->do_callback();
+  image_panel_deimageh->do_callback();
+}}
+          tooltip {Reset scale to original size} xywh {195 215 50 20} labelsize 11
+        }
+      }
+      Fl_Box {} {
+        label {Scale:}
+        xywh {10 215 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Box {} {
+        label {Storage:}
+        xywh {10 240 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Check_Button {} {
+        label compressed
+        callback compress_deimage_cb
+        tooltip {store image uncompressed as RGBA data
+or compressed in the original file format} xywh {75 240 170 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Check_Button {} {
+        label {bind to widget}
+        callback bind_deimage_cb
+        tooltip {bind the image to the widget, so it will be deleted automatically} xywh {75 260 170 20} down_box DOWN_BOX labelsize 11
+      }
+    }
+    Fl_Button image_panel_close {
+      label Close
+      callback {if (v != LOAD)
+  image_panel_window->hide();}
+      xywh {165 295 80 20} labelsize 11
+    }
+  }
+}
+
+Function {run_image_panel()} {open return_type void
+} {
+  code {if (!image_panel_window)
+  make_image_panel();
+
+image_panel_window->do_callback(image_panel_window, LOAD);
+  
+Fl::pushed(0);  
+Fl_Window *g = Fl::grab();
+if (g) Fl::grab(0);
+image_panel_window->show();
+while (image_panel_window->shown())
+  Fl::wait();
+if (g)
+  Fl::grab(g);
+  
+Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
+if (img) {
+  img->release();
+  image_panel_data->user_data(NULL);
+}} {}
+}
+
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {430 248 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {160 297 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs widget_tabs {
@@ -58,8 +345,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
+        callback propagate_load open
+        xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -83,27 +370,21 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           callback propagate_load open
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input widget_image_input {
             callback image_cb
             tooltip {The active image for the widget.} xywh {95 65 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
-            callback image_browse_cb
-            tooltip {Click to choose the active image.} xywh {295 65 69 20} labelsize 11
+            callback image_browse_cb selected
+            tooltip {Click to choose the active image.} xywh {295 65 89 20} labelsize 11 align 256
           }
           Fl_Button {} {
-            callback compress_image_cb
-            tooltip {store image uncompressed as RGBA data
-or compressed in the original file format} xywh {364 65 20 20} type Toggle
-            code0 {o->image(compressed_pixmap);}
-            code3 {\#include "pixmaps.h"}
-          }
-          Fl_Button {} {
-            callback bind_image_cb
-            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 65 20 20} type Toggle
-            code0 {o->image(bind_pixmap);}
-            code3 {\#include "pixmaps.h"}
+            label {...}
+            callback {if (v != LOAD) {
+  run_image_panel();
+}}
+            tooltip {more image options} bind_image 1 xywh {384 65 20 20}
           }
         }
         Fl_Group {} {
@@ -111,27 +392,14 @@ or compressed in the original file format} xywh {364 65 20 20} type Toggle
           callback propagate_load open
           xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input widget_deimage_input {
             callback inactive_cb
             tooltip {The inactive image for the widget.} xywh {95 90 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
             callback inactive_browse_cb
-            tooltip {Click to choose the inactive image.} xywh {295 90 69 20} labelsize 11
-          }
-          Fl_Button {} {
-            callback compress_deimage_cb
-            tooltip {store image uncompressed as RGBA data
-or compressed in the original file format} xywh {364 90 20 20} type Toggle
-            code0 {o->image(compressed_pixmap);}
-            code3 {\#include "pixmaps.h"}
-          }
-          Fl_Button {} {
-            callback bind_deimage_cb
-            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
-            code0 {o->image(bind_pixmap);}
-            code3 {\#include "pixmaps.h"}
+            tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
           }
         }
         Fl_Group {} {
@@ -835,7 +1103,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Group widget_tab_grid_child {
         label {Grid Child}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11
+        xywh {10 30 400 330} labelsize 11 hide
       } {
         Fl_Group {} {
           label {Location:}
@@ -903,7 +1171,7 @@ wCallback->do_callback(wCallback, v);} open
   } else if (!g->cell(child)) {
     widget_grid_unlinked->show();
   }
-}} selected
+}}
             xywh {250 60 80 20} labelsize 11 labelcolor 1
           }
           Fl_Box widget_grid_unlinked {
@@ -914,7 +1182,7 @@ wCallback->do_callback(wCallback, v);} open
         Fl_Group {} {
           label {Align:}
           callback propagate_load open
-          xywh {95 90 315 30} labelfont 1 labelsize 11 align 4
+          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             label Horizontal
@@ -969,13 +1237,13 @@ wCallback->do_callback(wCallback, v);} open
             }
           }
           Fl_Box {} {
-            xywh {395 90 1 20} hide resizable
+            xywh {395 100 1 20} hide resizable
           }
         }
         Fl_Group {} {
           label {Min. Size:}
           callback propagate_load open
-          xywh {95 125 315 30} labelfont 1 labelsize 11 align 4
+          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             label {Width:}
@@ -990,13 +1258,13 @@ wCallback->do_callback(wCallback, v);} open
             class Fluid_Coord_Input
           }
           Fl_Box {} {
-            xywh {395 125 1 20} hide resizable
+            xywh {395 135 1 20} hide resizable
           }
         }
         Fl_Group {} {
           label {Span:}
           callback propagate_load open
-          xywh {95 160 315 30} labelfont 1 labelsize 11 align 4
+          xywh {95 170 315 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_grid_rowspan_input {
             label {Row Span:}
@@ -1043,7 +1311,7 @@ wCallback->do_callback(wCallback, v);} open
             }
           }
           Fl_Box {} {
-            xywh {395 160 1 20} hide resizable
+            xywh {395 170 1 20} hide resizable
           }
         }
         Fl_Box {} {

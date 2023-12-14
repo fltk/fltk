@@ -439,9 +439,11 @@ Type "Fl_Widget" <word> : C++ variable name
   none or "private" or "protected" : default is public
   "xywh" <word> : "{%d %d %d %d}" x, y, w, h
   "tooltip" <word> : tooltip text
+  "scale_image <word>: "{%d %d}" width, height, default is 0, 0
   "image" <word> : image name
   "compress_image" <word> : integer (1.4 and up, only if `image` is set)
   "bind_image" <word> : integer (1.4 and up)
+  "scale_deimage <word>: "{%d %d}" width, height, default is 0, 0
   "deimage" <word> : deactivated image name
   "compress_deimage" <word> : integer (1.4 and up, only if `deimage` is set)
   "bind_deimage" <word> : integer (1.4 and up)

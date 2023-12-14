@@ -157,8 +157,7 @@ Function {make_settings_window()} {open
     } {
       Fl_Group {} {
         label General open selected
-        image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
-        code0 {o->image()->scale(36, 24);}
+        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -293,8 +292,7 @@ Examples:
       Fl_Group w_settings_project_tab {
         label Project
         callback {propagate_load(o, v);} open
-        image {icons/document_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
-        code0 {o->image()->scale(36, 24);}
+        scale_image {36 24} image {icons/document_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Group {} {open
           xywh {100 78 220 30}
@@ -410,8 +408,7 @@ or just ".ext" to set extension.}
       Fl_Group w_settings_layout_tab {
         label Layout
         callback {propagate_load(o, v);} open
-        image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
-        code0 {o->image()->scale(36, 24);}
+        scale_image {36 24} image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Box {} {
           label {Layout:}
@@ -856,8 +853,7 @@ g_layout_list.update_dialogs();}
       Fl_Group w_settings_shell_tab {
         label Shell
         callback propagate_load open
-        image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
-        code0 {o->image()->scale(36, 24);}
+        scale_image {36 24} image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Group {} {
           callback propagate_load open
@@ -1483,8 +1479,7 @@ if (v == LOAD) {
       Fl_Group w_settings_i18n_tab {
         label Locale
         callback {propagate_load(o, v);} open
-        image {icons/language_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
-        code0 {o->image()->scale(36, 24);}
+        scale_image {36 24} image {icons/language_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Group {} {
           callback propagate_load open

@@ -76,6 +76,8 @@ public:
   int compress_image_;
   int bind_deimage_;
   int compress_deimage_;
+  int scale_image_w_, scale_image_h_;
+  int scale_deimage_w_, scale_deimage_h_;
 
   Fluid_Image *image;
   void setimage(Fluid_Image *);

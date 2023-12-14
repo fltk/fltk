@@ -21,29 +21,44 @@
 #include <FL/Fl.H>
 #include "custom_widgets.h"
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Tabs.H>
-extern Fl_Tabs *widget_tabs;
+extern Fl_Double_Window *image_panel_window;
 #include <FL/Fl_Group.H>
 extern void propagate_load(Fl_Group*, void*);
+extern Fl_Group *image_panel_imagegroup;
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Shared_Image.H>
+extern Fl_Box *image_panel_data;
+extern Fluid_Coord_Input *image_panel_imagew;
+extern Fluid_Coord_Input *image_panel_imageh;
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Check_Button.H>
+extern void compress_image_cb(Fl_Check_Button*, void*);
+extern void bind_image_cb(Fl_Check_Button*, void*);
+extern Fl_Group *image_panel_deimagegroup;
+extern Fl_Box *image_panel_dedata;
+extern Fluid_Coord_Input *image_panel_deimagew;
+extern Fluid_Coord_Input *image_panel_deimageh;
+extern void compress_deimage_cb(Fl_Check_Button*, void*);
+extern void bind_deimage_cb(Fl_Check_Button*, void*);
+extern Fl_Button *image_panel_close;
+Fl_Double_Window* make_image_panel();
+void run_image_panel();
+#include <FL/Fl_Tabs.H>
+extern Fl_Tabs *widget_tabs;
 #include <FL/Fl_Input.H>
 extern void label_cb(Fl_Input*, void*);
 #include <FL/Fl_Choice.H>
 extern Fl_Menu_Item labeltypemenu[];
 extern void labeltype_cb(Fl_Choice*, void*);
 extern void image_cb(Fl_Input*, void*);
-#include <FL/Fl_Button.H>
+extern Fl_Input *widget_image_input;
 extern void image_browse_cb(Fl_Button*, void*);
-#include "pixmaps.h"
-extern void compress_image_cb(Fl_Button*, void*);
-extern void bind_image_cb(Fl_Button*, void*);
 extern void inactive_cb(Fl_Input*, void*);
+extern Fl_Input *widget_deimage_input;
 extern void inactive_browse_cb(Fl_Button*, void*);
-extern void compress_deimage_cb(Fl_Button*, void*);
-extern void bind_deimage_cb(Fl_Button*, void*);
 extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
-#include <FL/Fl_Box.H>
 extern void position_group_cb(Fl_Group*, void*);
 extern void x_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_x_input;
@@ -58,7 +73,6 @@ extern void flex_size_group_cb(Fl_Group*, void*);
 #include <FL/Fl_Value_Input.H>
 extern void flex_size_cb(Fl_Value_Input*, void*);
 extern Fl_Value_Input *widget_flex_size;
-#include <FL/Fl_Check_Button.H>
 extern void flex_fixed_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *widget_flex_fixed;
 extern void values_group_cb(Fl_Group*, void*);
