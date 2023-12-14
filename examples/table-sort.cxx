@@ -286,7 +286,7 @@ void MyTable::event_callback2() {
 }
 
 int main() {
-    Fl_Double_Window win(900,500,"Table Sorting");
+    Fl_Double_Window win(900,500,"Table Sort");
         MyTable table(MARGIN, MARGIN, win.w()-MARGIN*2, win.h()-MARGIN*2);
         table.selection_color(FL_YELLOW);
         table.col_header(1);

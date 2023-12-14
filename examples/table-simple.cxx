@@ -106,7 +106,7 @@ public:
 };
 
 int main(int argc, char **argv) {
-  Fl_Double_Window win(900, 400, "Simple Table");
+  Fl_Double_Window win(900, 400, "Table Simple");
   MyTable table(10,10,880,380);
   win.end();
   win.resizable(table);

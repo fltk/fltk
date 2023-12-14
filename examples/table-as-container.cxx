@@ -147,7 +147,7 @@ void button_cb(Fl_Widget *w, void*) {
 }
 
 int main() {
-  Fl_Double_Window win(940, 500, "table as container");
+  Fl_Double_Window win(940, 500, "Table As Container");
   WidgetTable table(20, 20, win.w()-40, win.h()-40, "FLTK widget table");
   table.SetSize(50, 50);
   win.end();

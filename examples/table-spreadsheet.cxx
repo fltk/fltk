@@ -248,7 +248,7 @@ void Spreadsheet::event_callback2() {
 }
 
 int main() {
-  Fl_Double_Window *win = new Fl_Double_Window(862, 322, "Fl_Table Spreadsheet");
+  Fl_Double_Window *win = new Fl_Double_Window(862, 322, "Table Spreadsheet");
   Spreadsheet *table = new Spreadsheet(10, 10, win->w()-20, win->h()-20);
   table->tab_cell_nav(1);               // enable tab navigation of table cells (instead of fltk widgets)
   table->tooltip("Use keyboard to navigate cells:\n"
