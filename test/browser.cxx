@@ -160,6 +160,7 @@ void wtype_cb(Fl_Widget *, void *) {
 
 int main(int argc, char **argv) {
   int i;
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
   const char *fname = (i < argc) ? argv[i] : "browser.cxx";
   Fl_Double_Window window(720, 520, fname);

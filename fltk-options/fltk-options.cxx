@@ -676,6 +676,7 @@ int main(int argc,char **argv) {
   check_write_permissions(g_system_write_ok, g_user_write_ok);
 
   int i = 1;
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   int args_processed = Fl::args(argc, argv, i, read_command_line_args);
   if (args_processed < argc) {
     fprintf(stderr, "ERROR: Unrecognized command line option \"%s\".\n", argv[i]);

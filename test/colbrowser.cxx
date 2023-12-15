@@ -56,6 +56,7 @@ static RGBdb rgbdb[MAX_RGB];
 
 int main(int argc, char *argv[]) {
   int i;
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
   const char *dbname = (i < argc) ? argv[i] : "rgb.txt";
 

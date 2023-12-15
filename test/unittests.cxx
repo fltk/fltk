@@ -421,6 +421,7 @@ static int arg(int argc, char** argv, int& i) {
 // registered tests to the browser widget.
 int main(int argc, char** argv) {
   int i;
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   if ( Fl::args(argc,argv,i,arg) == 0 ) {   // unsupported argument found
     static const char *msg =
       "usage: %s <switches>\n"

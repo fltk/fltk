@@ -2171,6 +2171,7 @@ int main(int argc,char **argv) {
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
   g_launch_path = end_with_slash(fl_getcwd()); // store the current path at launch
 
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   if (   (Fl::args(argc,argv,i,arg) == 0)     // unsupported argument found
       || (batch_mode && (i != argc-1))        // .fl filename missing
       || (!batch_mode && (i < argc-1))        // more than one filename found
