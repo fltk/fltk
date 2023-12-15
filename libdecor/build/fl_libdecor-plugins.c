@@ -31,20 +31,13 @@
 #  define HAVE_GTK 0
 #endif
 
+enum plugin_kind { UNKNOWN, SSD, CAIRO, GTK3 };
+
 #if USE_SYSTEM_LIBDECOR
 #  include "../src/libdecor-plugin.h"
 
-enum zxdg_toplevel_decoration_v1_mode {
-  ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE = 1,
-  ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE = 2,
-};
-
-enum component {
-  NONE = 0,
-  SHADOW,
-  HEADER,
-};
-enum decoration_type {DECORATION_TYPE_NONE};
+enum component {NONE}; /* details are not necessary*/
+enum decoration_type {DECORATION_TYPE_NONE}; /* details are not necessary*/
 
 struct buffer { // identical in libdecor-cairo.c and libdecor-gtk.c
   struct wl_buffer *wl_buffer;
@@ -65,11 +58,9 @@ struct buffer { // identical in libdecor-cairo.c and libdecor-gtk.c
 const struct libdecor_plugin_description *fl_libdecor_plugin_description = NULL;
 
 #  if HAVE_GTK
-#    include <gtk/gtk.h>
 #    include "../src/plugins/gtk/libdecor-gtk.c"
 #  else
 #    include "../src/plugins/cairo/libdecor-cairo.c"
-#    undef libdecor_frame_set_min_content_size
 #  endif // HAVE_GTK
 
 #endif // USE_SYSTEM_LIBDECOR
@@ -78,36 +69,7 @@ const struct libdecor_plugin_description *fl_libdecor_plugin_description = NULL;
 #if USE_SYSTEM_LIBDECOR || HAVE_GTK
 /* these definitions derive from libdecor/src/plugins/cairo/libdecor-cairo.c */
 
-struct libdecor_plugin_cairo {
-  struct libdecor_plugin plugin;
-
-  struct wl_callback *globals_callback;
-  struct wl_callback *globals_callback_shm;
-
-  struct libdecor *context;
-
-  struct wl_registry *wl_registry;
-  struct wl_subcompositor *wl_subcompositor;
-  struct wl_compositor *wl_compositor;
-
-  struct wl_shm *wl_shm;
-  struct wl_callback *shm_callback;
-  bool has_argb;
-
-  struct wl_list visible_frame_list;
-  struct wl_list seat_list;
-  struct wl_list output_list;
-
-  char *cursor_theme_name;
-  int cursor_size;
-
-  PangoFontDescription *font;
-};
-
-enum composite_mode {
-  COMPOSITE_SERVER,
-  COMPOSITE_CLIENT,
-};
+enum composite_mode {COMPOSITE_SERVER}; /* details are not necessary*/
 
 struct border_component_cairo {
   enum component type;
@@ -168,7 +130,7 @@ struct libdecor_frame_cairo {
 
   struct wl_list link;
 };
-#endif
+#endif // USE_SYSTEM_LIBDECOR || HAVE_GTK
 
 
 #if USE_SYSTEM_LIBDECOR || !HAVE_GTK
@@ -260,12 +222,7 @@ static unsigned char *cairo_titlebar_buffer(struct libdecor_frame *frame,
                                                  int *width, int *height, int *stride)
 {
   struct libdecor_frame_cairo *lfc = (struct libdecor_frame_cairo *)frame;
-#if USE_SYSTEM_LIBDECOR || HAVE_GTK
-  struct border_component_cairo *bc = &lfc->title_bar.title;
-#else
-  struct border_component *bc = &lfc->title_bar.title;
-#endif
-  struct buffer *buffer = bc->server.buffer;
+  struct buffer *buffer = lfc->title_bar.title.server.buffer;
   *width = buffer->buffer_width;
   *height = buffer->buffer_height;
   *stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, buffer->buffer_width);
@@ -289,13 +246,8 @@ static unsigned char *cairo_titlebar_buffer(struct libdecor_frame *frame,
  A plugin is loaded also if SSD.
  KWin has its own size limit, similar to that of GDK plugin
  */
-static const char *get_libdecor_plugin_description(struct libdecor_frame *frame) {
+static const char *get_libdecor_plugin_description() {
   static const struct libdecor_plugin_description *plugin_description = NULL;
-  int X, Y = 0;
-  libdecor_frame_translate_coordinate(frame, 0, 0, &X, &Y);
-  if (Y == 0) {
-    return "Server-Side Decoration";
-  }
   if (!plugin_description) {
 #if USE_SYSTEM_LIBDECOR
      char fname[PATH_MAX];
@@ -319,13 +271,21 @@ static const char *get_libdecor_plugin_description(struct libdecor_frame *frame)
 }
 
 
-static const char *plugin_name(struct libdecor_frame *frame) {
-  static const char *my_plugin = NULL;
-  if (!my_plugin) {
-    my_plugin = get_libdecor_plugin_description(frame);
-    if (!my_plugin) my_plugin = "unknown";
+static enum plugin_kind get_plugin_kind(struct libdecor_frame *frame) {
+  static enum plugin_kind kind = UNKNOWN;
+  if (kind == UNKNOWN) {
+    if (frame) {
+      int X, Y = 0;
+      libdecor_frame_translate_coordinate(frame, 0, 0, &X, &Y);
+      if (Y == 0) {
+        return SSD;
+      }
+    }
+    const char *name = get_libdecor_plugin_description();
+    if (name && !strcmp(name, "GTK3 plugin")) kind = GTK3;
+    else if (name && !strcmp(name, "libdecor plugin using Cairo")) kind = CAIRO;
   }
-  return my_plugin;
+  return kind;
 }
 
 /*
@@ -339,11 +299,11 @@ static const char *plugin_name(struct libdecor_frame *frame) {
 unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
                                                  int *width, int *height, int *stride)
 {
-  const char *name = plugin_name(frame);
-  if (!strcmp(name, "GTK3 plugin")) {
+  enum plugin_kind kind = get_plugin_kind(frame);
+  if (kind == GTK3) {
     return gtk_titlebar_buffer(frame, width, height, stride);
   }
-  else if (!strcmp(name, "libdecor plugin using Cairo")) {
+  else if (kind == CAIRO) {
     return cairo_titlebar_buffer(frame, width, height, stride);
   }
   return NULL;
@@ -368,18 +328,15 @@ struct libdecor { // copied from libdecor.c
 
 /* Returns whether surface is a GTK-titlebar created by libdecor-gtk */
 bool fl_is_surface_gtk_titlebar(struct wl_surface *surface, struct libdecor *context) {
-  static bool checked_plugin_name = false;
-  static bool is_gtk = true;
-  if (!context || !is_gtk) return false;
+  static enum plugin_kind kind = UNKNOWN;
+  if (!context || (kind != UNKNOWN && kind != GTK3)) return false;
   struct libdecor_plugin_gtk *lpg = (struct libdecor_plugin_gtk *)context->plugin;
-  struct libdecor_frame_gtk *frame;
-  if (!checked_plugin_name && !wl_list_empty(&lpg->visible_frame_list)) {
-    checked_plugin_name = true;
-    frame = wl_container_of(lpg->visible_frame_list.next, frame, link);
-    is_gtk = !strcmp(plugin_name(&frame->frame), "GTK3 plugin");
-    if (!is_gtk) return false;
+  if (kind == UNKNOWN && !wl_list_empty(&lpg->visible_frame_list)) {
+    kind = get_plugin_kind(NULL);
+    if (kind != GTK3) return false;
   }
   // loop over all decorations created by libdecor-gtk
+  struct libdecor_frame_gtk *frame;
   wl_list_for_each(frame, &lpg->visible_frame_list, link) {
     if (frame->headerbar.wl_surface == surface) return true;
   }
