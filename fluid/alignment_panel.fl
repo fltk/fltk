@@ -110,6 +110,45 @@ decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 decl {int w_settings_shell_list_selected;} {public local
 }
 
+Function {cb_Comments(Fl_Choice* o, void* v)} {open private return_type void
+} {
+  code {Fl_Font *font = (Fl_Font*)o->user_data();
+if (v == LOAD) {
+  o->value(*font);
+} else {
+  *font = (int)o->value();
+  widget_browser->redraw(); 
+  widget_browser->save_prefs(); 
+}} {}
+}
+
+Function {cb_Color_Chip(Fl_Button* o, void* v)} {open private return_type void
+} {
+  code {Fl_Color *color = (Fl_Color*)o->user_data();
+if (v == LOAD) {
+  o->color(*color);
+  o->redraw();
+} else {
+  Fl_Color d = fl_show_colormap(*color);
+  *color = d;
+  o->color(d);
+  widget_browser->redraw();
+  widget_browser->save_prefs(); 
+}} {}
+}
+
+Function {cb_Color_Choice(Fl_Menu_Button* o, void* v)} {open private return_type void
+} {
+  code {if (v != LOAD) {
+  Fl_Color *color = (Fl_Color*)o->user_data();
+  Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+  *color = d;
+  o->parent()->do_callback(o->parent(), LOAD);
+  widget_browser->redraw();
+  widget_browser->save_prefs(); 
+}} {}
+}
+
 Function {make_script_panel()} {open
 } {
   Fl_Window script_panel {
@@ -124,7 +163,8 @@ script_panel->hide(); // otherwise hide..} open
       xywh {10 10 520 130} box DOWN_BOX labelsize 11 when 13 textfont 4 textsize 11 resizable
       code0 {script_input->buffer(new Fl_Text_Buffer);}
     }
-    Fl_Group {} {open
+    Fl_Group {} {
+      callback propagate_load open
       xywh {10 150 520 20} labelsize 11
     } {
       Fl_Return_Button script_panel_ok {
@@ -1617,6 +1657,167 @@ if (v == LOAD) {
           xywh {100 530 220 10} hide resizable
         }
       }
+      Fl_Group w_settings_user_tab {
+        label User
+        callback {propagate_load(o, v);} open
+        scale_image {36 24} image {icons/user_circle_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
+        code0 {\#include <FL/fl_show_colormap.H>}
+      } {
+        Fl_Box {} {
+          label {---- Widget Browser ----}
+          xywh {100 84 220 20} labelfont 1 labelsize 11 align 20
+        }
+        Fl_Group {} {
+          callback propagate_load open
+          xywh {100 112 220 20}
+        } {
+          Fl_Choice {} {
+            label {Label:}
+            user_data {&Widget_Browser::label_font}
+            callback cb_Comments open
+            xywh {100 112 151 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            code0 {extern Fl_Menu_Item fontmenu[];}
+            code1 {o->menu(fontmenu);}
+          } {}
+          Fl_Button {} {
+            user_data {&Widget_Browser::label_color}
+            callback cb_Color_Chip
+            xywh {251 112 51 20} labelsize 11
+          }
+          Fl_Menu_Button {} {
+            user_data {&Widget_Browser::label_color}
+            callback cb_Color_Choice open
+            xywh {302 112 18 20}
+            code0 {extern Fl_Menu_Item colormenu[];}
+            code1 {o->menu(colormenu);}
+          } {}
+        }
+        Fl_Group {} {
+          callback propagate_load open
+          xywh {100 137 220 20}
+        } {
+          Fl_Choice {} {
+            label {Class:}
+            user_data {&Widget_Browser::class_font}
+            callback cb_Comments open
+            xywh {100 137 151 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            code0 {extern Fl_Menu_Item fontmenu[];}
+            code1 {o->menu(fontmenu);}
+          } {}
+          Fl_Button {} {
+            user_data {&Widget_Browser::class_color}
+            callback cb_Color_Chip
+            xywh {251 137 51 20} labelsize 11
+          }
+          Fl_Menu_Button {} {
+            user_data {&Widget_Browser::class_color}
+            callback cb_Color_Choice open
+            xywh {302 137 18 20}
+            code0 {extern Fl_Menu_Item colormenu[];}
+            code1 {o->menu(colormenu);}
+          } {}
+        }
+        Fl_Group {} {
+          callback propagate_load open
+          xywh {100 162 220 20}
+        } {
+          Fl_Choice {} {
+            label {Function:}
+            user_data {&Widget_Browser::func_font}
+            callback cb_Comments open
+            xywh {100 162 151 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            code0 {extern Fl_Menu_Item fontmenu[];}
+            code1 {o->menu(fontmenu);}
+          } {}
+          Fl_Button {} {
+            user_data {&Widget_Browser::func_color}
+            callback cb_Color_Chip
+            xywh {251 162 51 20} labelsize 11
+          }
+          Fl_Menu_Button {} {
+            user_data {&Widget_Browser::func_color}
+            callback cb_Color_Choice open
+            xywh {302 162 18 20}
+            code0 {extern Fl_Menu_Item colormenu[];}
+            code1 {o->menu(colormenu);}
+          } {}
+        }
+        Fl_Group {} {
+          callback propagate_load open
+          xywh {100 187 220 20}
+        } {
+          Fl_Choice {} {
+            label {Name:}
+            user_data {&Widget_Browser::name_font}
+            callback cb_Comments open
+            xywh {100 187 151 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            code0 {extern Fl_Menu_Item fontmenu[];}
+            code1 {o->menu(fontmenu);}
+          } {}
+          Fl_Button {} {
+            user_data {&Widget_Browser::name_color}
+            callback cb_Color_Chip
+            xywh {251 187 51 20} labelsize 11
+          }
+          Fl_Menu_Button {} {
+            user_data {&Widget_Browser::name_color}
+            callback cb_Color_Choice open
+            xywh {302 187 18 20}
+            code0 {extern Fl_Menu_Item colormenu[];}
+            code1 {o->menu(colormenu);}
+          } {}
+        }
+        Fl_Group {} {
+          callback propagate_load open
+          xywh {100 212 220 20}
+        } {
+          Fl_Choice {} {
+            label {Code:}
+            user_data {&Widget_Browser::code_font}
+            callback cb_Comments open
+            xywh {100 212 151 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            code0 {extern Fl_Menu_Item fontmenu[];}
+            code1 {o->menu(fontmenu);}
+          } {}
+          Fl_Button {} {
+            user_data {&Widget_Browser::code_color}
+            callback cb_Color_Chip
+            xywh {251 212 51 20} labelsize 11
+          }
+          Fl_Menu_Button {} {
+            user_data {&Widget_Browser::code_color}
+            callback cb_Color_Choice open
+            xywh {302 212 18 20}
+            code0 {extern Fl_Menu_Item colormenu[];}
+            code1 {o->menu(colormenu);}
+          } {}
+        }
+        Fl_Group {} {
+          callback propagate_load open
+          xywh {100 237 220 20}
+        } {
+          Fl_Choice {} {
+            label {Comments:}
+            user_data {&Widget_Browser::comment_font}
+            callback cb_Comments open
+            xywh {100 237 151 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            code0 {extern Fl_Menu_Item fontmenu[];}
+            code1 {o->menu(fontmenu);}
+          } {}
+          Fl_Button {} {
+            user_data {&Widget_Browser::comment_color}
+            callback cb_Color_Chip
+            xywh {251 237 51 20} labelsize 11
+          }
+          Fl_Menu_Button {} {
+            user_data {&Widget_Browser::comment_color}
+            callback cb_Color_Choice open
+            xywh {302 237 18 20}
+            code0 {extern Fl_Menu_Item colormenu[];}
+            code1 {o->menu(colormenu);}
+          } {}
+        }
+      }
     }
     Fl_Group {} {open
       xywh {10 550 320 20}
@@ -1641,7 +1842,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {769 585 555 430} type Double align 80 resizable visible
+    xywh {769 584 555 430} type Double align 80 resizable visible
   } {
     Fl_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
@@ -1676,6 +1877,3 @@ shell_run_window->hide();}
 
 decl {Fl_Menu_Item *w_layout_menu_storage[4];} {private global
 }
-
-Function {make_window()} {open
-} {}

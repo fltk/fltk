@@ -1907,6 +1907,7 @@ void make_main_window() {
   if (!batch_mode) {
     load_history();
     g_shell_config = new Fd_Shell_Command_List;
+    widget_browser->load_prefs();
     make_settings_window();
   }
 }

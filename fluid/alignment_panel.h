@@ -41,6 +41,7 @@ extern Fl_Double_Window *script_panel;
 #include <FL/Fl_Text_Editor.H>
 extern Fl_Text_Editor *script_input;
 #include <FL/Fl_Group.H>
+extern void propagate_load(Fl_Group*, void*);
 #include <FL/Fl_Return_Button.H>
 extern Fl_Return_Button *script_panel_ok;
 #include <FL/Fl_Button.H>
@@ -83,7 +84,6 @@ extern Fl_Choice *layout_choice;
 #include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Button *w_layout_menu;
 #include <FL/Fl_Native_File_Chooser.H>
-extern void propagate_load(Fl_Group*, void*);
 extern void edit_layout_preset_cb(Fl_Button*, long);
 extern Fl_Button *preset_choice[3];
 #include <FL/Fl_Value_Input.H>
@@ -116,6 +116,10 @@ extern Fl_Input *i18n_pos_conditional_input;
 extern Fl_Input *i18n_pos_file_input;
 #include <FL/Fl_Int_Input.H>
 extern Fl_Int_Input *i18n_pos_set_input;
+#include <FL/fl_show_colormap.H>
+extern Fl_Group *w_settings_user_tab;
+extern Fl_Menu_Item fontmenu[];
+extern Fl_Menu_Item colormenu[];
 Fl_Double_Window* make_settings_window();
 extern Fl_Menu_Item menu_layout_choice[];
 extern Fl_Menu_Item menu_w_layout_menu[];
@@ -134,5 +138,4 @@ extern Fl_Double_Window *shell_run_window;
 extern Fl_Terminal *shell_run_terminal;
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
-void make_window();
 #endif

@@ -41,6 +41,21 @@
 /// Global access to the widget browser.
 Widget_Browser *widget_browser = NULL;
 
+// ---- static variables
+
+Fl_Color Widget_Browser::label_color    = 72;
+Fl_Font Widget_Browser::label_font      = FL_HELVETICA;
+Fl_Color Widget_Browser::class_color    = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::class_font      = FL_HELVETICA_BOLD;
+Fl_Color Widget_Browser::func_color     = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::func_font       = FL_HELVETICA;
+Fl_Color Widget_Browser::name_color     = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::name_font       = FL_HELVETICA;
+Fl_Color Widget_Browser::code_color     = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::code_font       = FL_HELVETICA;
+Fl_Color Widget_Browser::comment_color  = FL_DARK_GREEN;
+Fl_Font Widget_Browser::comment_font    = FL_HELVETICA;
+
 // ---- global functions
 
 /**
@@ -58,7 +73,7 @@ Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
 }
 
 /**
- Make sure thet the caller is visible in the widget browser.
+ Make sure that the caller is visible in the widget browser.
  \param[in] caller scroll the browser in y so that caller
  is visible (may be NULL)
  */
@@ -302,12 +317,12 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // line inside this browser line
   int comment_incr = 0;
   if (show_comments && l->comment()) {
+    // -- comment
     copy_trunc(buf, l->comment(), 80, 0);
     comment_incr = textsize()-1;
-    Fl_Color comment_color = fl_color_average(FL_DARK_GREEN, FL_BLACK, 0.9f);
     if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
-    else fl_color(fl_contrast(comment_color, color()));
-    fl_font(textfont()+FL_ITALIC, textsize()-2);
+    else fl_color(comment_color);
+    fl_font(comment_font, textsize()-2);
     fl_draw(buf, X, Y+12);
     Y += comment_incr/2;
     comment_incr -= comment_incr/2;
@@ -365,20 +380,40 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (l->is_widget() || l->is_class()) {
     const char* c = subclassname(l);
     if (!strncmp(c,"Fl_",3)) c += 3;
-    fl_font(textfont(), textsize());
+    // -- class
+    fl_font(class_font, textsize());
+    if (l->new_selected) fl_color(fl_contrast(class_color, FL_SELECTION_COLOR));
+    else fl_color(class_color);
     fl_draw(c, X, Y+13);
     X += int(fl_width(c)+fl_width('n'));
     c = l->name();
     if (c) {
-      fl_font(textfont()|FL_BOLD, textsize());
+      // -- name
+      fl_font(name_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(name_color, FL_SELECTION_COLOR));
+      else fl_color(name_color);
       fl_draw(c, X, Y+13);
     } else if ((c = l->label())) {
+      // -- label
+      fl_font(label_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(label_color, FL_SELECTION_COLOR));
+      else fl_color(label_color);
       copy_trunc(buf, c, 20, 1); // quoted string
       fl_draw(buf, X, Y+13);
     }
   } else {
+    if (l->is_code_block() && (l->level==0 || l->parent->is_class())) {
+      // -- function names
+      fl_font(func_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(func_color, FL_SELECTION_COLOR));
+      else fl_color(func_color);
+    } else {
+      // -- code
+      fl_font(code_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(code_color, FL_SELECTION_COLOR));
+      else fl_color(code_color);
+    }
     copy_trunc(buf, l->title(), 55, 0);
-    fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     fl_draw(buf, X, Y+13);
   }
 
@@ -579,3 +614,35 @@ void Widget_Browser::display(Fl_Type *inNode) {
     vposition(newV);
 }
 
+void Widget_Browser::load_prefs() {
+  int c;
+  Fl_Preferences p(fluid_prefs, "widget_browser");
+  p.get("label_color",  c, 72); label_color = c;
+  p.get("label_font",   c, FL_HELVETICA); label_font = c;
+  p.get("class_color",  c, FL_FOREGROUND_COLOR); class_color = c;
+  p.get("class_font",   c, FL_HELVETICA_BOLD); class_font = c;
+  p.get("func_color",   c, FL_FOREGROUND_COLOR); func_color = c;
+  p.get("func_font",    c, FL_HELVETICA); func_font = c;
+  p.get("name_color",   c, FL_FOREGROUND_COLOR); name_color = c;
+  p.get("name_font",    c, FL_HELVETICA); name_font = c;
+  p.get("code_color",   c, FL_FOREGROUND_COLOR); code_color = c;
+  p.get("code_font",    c, FL_HELVETICA); code_font = c;
+  p.get("comment_color",c, FL_DARK_GREEN); comment_color = c;
+  p.get("comment_font", c, FL_HELVETICA); comment_font = c;
+}
+
+void Widget_Browser::save_prefs() {
+  Fl_Preferences p(fluid_prefs, "widget_browser");
+  p.set("label_color",    (int)label_color);
+  p.set("label_font",     (int)label_font);
+  p.set("class_color",    (int)class_color);
+  p.set("class_font",     (int)class_font);
+  p.set("func_color",     (int)func_color);
+  p.set("func_font",      (int)func_font);
+  p.set("name_color",     (int)name_color);
+  p.set("name_font",      (int)name_font);
+  p.set("code_color",     (int)code_color);
+  p.set("code_font",      (int)code_font);
+  p.set("comment_color",  (int)comment_color);
+  p.set("comment_font",   (int)comment_font);
+}
