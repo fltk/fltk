@@ -96,25 +96,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   /* Convert the command line arguments to UTF-8 */
   for (i = 0; i < argc; i++) {
-    // find the required size of the buffer
-    int u8size = WideCharToMultiByte(CP_UTF8,     // CodePage
-                                     0,           // dwFlags
-                                     wideArgv[i], // lpWideCharStr
-                                     -1,          // cchWideChar
-                                     NULL,        // lpMultiByteStr
-                                     0,           // cbMultiByte
-                                     NULL,        // lpDefaultChar
-                                     NULL);       // lpUsedDefaultChar
+    /* find the required size of the buffer */
+    int u8size = WideCharToMultiByte(CP_UTF8,     /* CodePage */
+                                     0,           /* dwFlags */
+                                     wideArgv[i], /* lpWideCharStr */
+                                     -1,          /* cchWideChar */
+                                     NULL,        /* lpMultiByteStr */
+                                     0,           /* cbMultiByte */
+                                     NULL,        /* lpDefaultChar */
+                                     NULL);       /* lpUsedDefaultChar */
     if (u8size > 0) {
       char *strbuf = (char *)malloc(u8size);
-      int ret = WideCharToMultiByte(CP_UTF8,     // CodePage
-                                    0,           // dwFlags
-                                    wideArgv[i], // lpWideCharStr
-                                    -1,          // cchWideChar
-                                    strbuf,      // lpMultiByteStr
-                                    u8size,      // cbMultiByte
-                                    NULL,        // lpDefaultChar
-                                    NULL);       // lpUsedDefaultChar
+      int ret = WideCharToMultiByte(CP_UTF8,     /* CodePage */
+                                    0,           /* dwFlags */
+                                    wideArgv[i], /* lpWideCharStr */
+                                    -1,          /* cchWideChar */
+                                    strbuf,      /* lpMultiByteStr */
+                                    u8size,      /* cbMultiByte */
+                                    NULL,        /* lpDefaultChar */
+                                    NULL);       /* lpUsedDefaultChar */
       if (ret) {
         argv[i] = strbuf;
       } else {
@@ -125,7 +125,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
       argv[i] = _strdup("");
     }
   }
-  argv[argc] = NULL; // required by C standard at end of list
+  argv[argc] = NULL; /* required by C standard at end of list */
 
   /* Free the wide character string array */
   LocalFree(wideArgv);
