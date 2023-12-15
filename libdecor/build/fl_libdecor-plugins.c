@@ -328,17 +328,12 @@ struct libdecor { // copied from libdecor.c
 
 /* Returns whether surface is a GTK-titlebar created by libdecor-gtk */
 bool fl_is_surface_gtk_titlebar(struct wl_surface *surface, struct libdecor *context) {
-  static enum plugin_kind kind = UNKNOWN;
-  if (!context || (kind != UNKNOWN && kind != GTK3)) return false;
-  struct libdecor_plugin_gtk *lpg = (struct libdecor_plugin_gtk *)context->plugin;
-  if (kind == UNKNOWN && !wl_list_empty(&lpg->visible_frame_list)) {
-    kind = get_plugin_kind(NULL);
-    if (kind != GTK3) return false;
-  }
+  if (!context || get_plugin_kind(NULL) != GTK3) return false;
   // loop over all decorations created by libdecor-gtk
-  struct libdecor_frame_gtk *frame;
-  wl_list_for_each(frame, &lpg->visible_frame_list, link) {
-    if (frame->headerbar.wl_surface == surface) return true;
+  struct libdecor_frame *frame;
+  wl_list_for_each(frame, &context->frames, link) {
+    struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
+    if (frame_gtk->headerbar.wl_surface == surface) return true;
   }
   return false;
 }
