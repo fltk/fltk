@@ -146,6 +146,7 @@ void reveal_in_browser(Fl_Type *t) {
  \param[in] maxl maximum number of letter to copy until we print
     the elipsis (...)
  \param[in] quote if set, the resulting string is embedded in double quotes
+ \param[in] trunc_lf if set, truncates at first newline
  \returns pointer to end of string (before terminating null byte).
  \note the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
     or (4 * (maxl+1) + 3) bytes if quoted, e.g. "123..." because each UTF-8
@@ -154,7 +155,7 @@ void reveal_in_browser(Fl_Type *t) {
     This supports Unicode code points up to U+10FFFF (standard as of 10/2016).
     Sanity checks for illegal UTF-8 sequences are included.
  */
-static char *copy_trunc(char *p, const char *str, int maxl, int quote)
+static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc_lf)
 {
   int size = 0;                         // truncated string size in characters
   int bs;                               // size of UTF-8 character in bytes
@@ -162,6 +163,10 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
   if (quote) *p++ = '"';                // opening quote
   while (size < maxl) {                 // maximum <maxl> characters
     if (*str == '\n') {
+      if (trunc_lf) {                   // handle trunc at \n
+        *p++ = 0;
+        return p;
+      }
       *p++ = '\\'; *p++ = 'n';
       str++; size++;
       continue;
@@ -173,7 +178,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
     while (bs--) *p++ = *str++;         // copy that character into the buffer
     size++;                             // count copied characters
   }
-  if (*str) {                           // string was truncated
+  if (*str && *str!='\n') {             // string was truncated
     strcpy(p,"..."); p += 3;
   }
   if (quote) *p++ = '"';                // closing quote
@@ -318,7 +323,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   int comment_incr = 0;
   if (show_comments && l->comment()) {
     // -- comment
-    copy_trunc(buf, l->comment(), 80, 0);
+    copy_trunc(buf, l->comment(), 80, 0, 1);
     comment_incr = textsize()-1;
     if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
     else fl_color(comment_color);
@@ -398,7 +403,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
       fl_font(label_font, textsize());
       if (l->new_selected) fl_color(fl_contrast(label_color, FL_SELECTION_COLOR));
       else fl_color(label_color);
-      copy_trunc(buf, c, 20, 1); // quoted string
+      copy_trunc(buf, c, 32, 1, 0); // quoted string
       fl_draw(buf, X, Y+13);
     }
   } else {
@@ -407,13 +412,22 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
       fl_font(func_font, textsize());
       if (l->new_selected) fl_color(fl_contrast(func_color, FL_SELECTION_COLOR));
       else fl_color(func_color);
+      copy_trunc(buf, l->title(), 55, 0, 0);
     } else {
-      // -- code
-      fl_font(code_font, textsize());
-      if (l->new_selected) fl_color(fl_contrast(code_color, FL_SELECTION_COLOR));
-      else fl_color(code_color);
+      if (l->is_a(ID_Comment)) {
+        // -- comment (in main line, not above entry)
+        fl_font(comment_font, textsize());
+        if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
+        else fl_color(comment_color);
+        copy_trunc(buf, l->title(), 55, 0, 0);
+      } else {
+        // -- code
+        fl_font(code_font, textsize());
+        if (l->new_selected) fl_color(fl_contrast(code_color, FL_SELECTION_COLOR));
+        else fl_color(code_color);
+        copy_trunc(buf, l->title(), 55, 0, 1);
+      }
     }
-    copy_trunc(buf, l->title(), 55, 0);
     fl_draw(buf, X, Y+13);
   }
 
@@ -450,11 +464,11 @@ int Widget_Browser::item_width(void *v) const {
       fl_font(textfont()|FL_BOLD, textsize());
       W += int(fl_width(c));
     } else if (l->label()) {
-      copy_trunc(buf, l->label(), 20, 1); // quoted string
+      copy_trunc(buf, l->label(), 32, 1, 0); // quoted string
       W += int(fl_width(buf));
     }
   } else {
-    copy_trunc(buf, l->title(), 55, 0);
+    copy_trunc(buf, l->title(), 55, 0, 0);
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     W += int(fl_width(buf));
   }
