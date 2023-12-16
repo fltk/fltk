@@ -55,6 +55,7 @@ ALL = animgifimage$(EXEEXT) \
       table-spreadsheet-with-keyboard-nav$(EXEEXT) \
       table-with-keynav$(EXEEXT) \
       table-with-right-column-stretch-fit$(EXEEXT) \
+      table-with-right-click-menu$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \

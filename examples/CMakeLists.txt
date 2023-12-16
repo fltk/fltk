@@ -58,6 +58,7 @@ set (SIMPLE_SOURCES
   table-spreadsheet-with-keyboard-nav
   table-with-keynav
   table-with-right-column-stretch-fit
+  table-with-right-click-menu
   tabs-simple
   textdisplay-with-colors
   texteditor-simple
