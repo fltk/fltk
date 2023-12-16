@@ -115,8 +115,14 @@ public:
 
   /** Implements fl_message_position(Fl_Widget *widget). */
   static void message_position(Fl_Widget *widget) {
-    form_x_ = widget->x() + widget->w() / 2;
-    form_y_ = widget->y() + widget->h() / 2;
+    int xo, yo;
+    Fl_Window *win = widget->top_window_offset(xo, yo);
+    form_x_ = xo + widget->w() / 2;
+    form_y_ = yo + widget->h() / 2;
+    if (win) {
+      form_x_ += win->x();
+      form_y_ += win->y();
+    }
     form_position_ = 2;
   }
 
