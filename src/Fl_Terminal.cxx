@@ -3208,6 +3208,7 @@ Fl_Terminal::~Fl_Terminal(void) {
     { Fl::remove_timeout(autoscroll_timer_cb, this); autoscroll_dir_ = 0; }
   if (redraw_timer_)
     { Fl::remove_timeout(redraw_timer_cb, this); redraw_timer_ = false; }
+  delete current_style_;
 }
 
 /**
