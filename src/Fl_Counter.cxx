@@ -197,6 +197,9 @@ int Fl_Counter::handle(int event) {
       redraw();
     }
     return 1;
+  case FL_MOUSEWHEEL:
+    handle_drag(clamp(increment(value(),(Fl::event_dy() - Fl::event_dx()) / 2 )));
+    return 1;
   case FL_KEYBOARD :
     switch (Fl::event_key()) {
       case FL_Left:
