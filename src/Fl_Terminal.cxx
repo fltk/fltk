@@ -1153,8 +1153,9 @@ void Fl_Terminal::clear_tabstop(void) {
 }
 
 // Update the scrollbar based on screen, history buffer, etc
-//    Scrollbar should range from 0 (bottom) to hist_rows (top),
-//    the scrollbar's value indicating how far back into history.
+//    Scrollbar should range from 0 (bottom) to history_use() (top),
+//    the scrollbar's value being "how many lines we're scrolled back"
+//    into the screen history.
 //
 void Fl_Terminal::update_scrollbar(void) {
   int value_before = scrollbar->value();
