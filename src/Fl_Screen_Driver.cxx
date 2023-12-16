@@ -23,6 +23,7 @@
 #include "Fl_Screen_Driver.H"
 #include <FL/Fl_Image.H>
 #include <FL/Fl.H>
+#include <FL/platform.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
@@ -31,6 +32,12 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Tooltip.H>
 #include <string.h> // for memchr
+
+// these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
+extern const char *fl_fg;
+extern const char *fl_bg;
+extern const char *fl_bg2;
+// end of extern additions workaround
 
 char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
@@ -181,6 +188,29 @@ int Fl_Screen_Driver::screen_num(int x, int y, int w, int h)
   return best_screen;
 }
 
+static void getsyscolor(const char* arg, void (*func)(uchar,uchar,uchar))
+{
+  if (arg && *arg) {
+    uchar r,g,b;
+    if (!fl_parse_color(arg, r,g,b))
+      Fl::error("Unknown color: %s", arg);
+    else
+      func(r,g,b);
+  }
+}
+
+static void set_selection_color(uchar r, uchar g, uchar b)
+{
+  Fl::set_color(FL_SELECTION_COLOR,r,g,b);
+}
+
+void Fl_Screen_Driver::get_system_colors()
+{
+  if (!bg2_set) getsyscolor(fl_bg2, Fl::background2);
+  if (!fg_set)  getsyscolor(fl_fg, Fl::foreground);
+  if (!bg_set)  getsyscolor(fl_bg, Fl::background);
+  getsyscolor(0, set_selection_color);
+}
 
 const char *Fl_Screen_Driver::get_system_scheme()
 {

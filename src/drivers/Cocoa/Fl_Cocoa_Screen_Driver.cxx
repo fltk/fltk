@@ -210,6 +210,8 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 {
   open_display();
 
+  Fl_Screen_Driver::get_system_colors();
+
   if (!bg2_set) Fl::background2(0xff, 0xff, 0xff);
   if (!fg_set) Fl::foreground(0, 0, 0);
   if (!bg_set) Fl::background(0xd8, 0xd8, 0xd8);
