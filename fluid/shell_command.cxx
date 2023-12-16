@@ -427,6 +427,7 @@ void run_shell_command(const Fl_String &cmd, int flags) {
     shell_run_terminal->printf("\033[2J\033[H");
   if (flags & Fd_Shell_Command::CLEAR_HISTORY)
     shell_run_terminal->printf("\033[3J");
+  shell_run_terminal->scrollbar->value(0);
   shell_run_terminal->printf("\033[0;32m%s\033[0m\n", expanded_cmd.c_str());
   shell_run_window->label(expanded_cmd.c_str());
 
