@@ -55,6 +55,11 @@ Fl_Shortcut_Button::Fl_Shortcut_Button(int X,int Y,int W,int H, const char* l)
   box(FL_DOWN_BOX);
   selection_color(FL_SELECTION_COLOR);
   type(FL_TOGGLE_BUTTON);
+  // suppress warning on unused private members. I keep these around in case
+  // we decide to activate this API again without changing the ABI.
+  (void)default_shortcut_;
+  (void)default_set_;
+
 }
 
 /**
