@@ -628,7 +628,7 @@ void copy(Fl_Widget *, void *data) {
     fl_pie(0, 0, target->w(), target->h(), 0, 360);
     if (target->top_window() == target) {
       fl_color(FL_BLACK);
-      int mini = (target->w() < target->h() ? target->w() : target->h()) * 0.66;
+      int mini = int((target->w() < target->h() ? target->w() : target->h()) * 0.66);
       fl_pie(target->w()/2 - mini/2, target->h()/2 - mini/2, mini, mini, 0, 360);
       fl_color(FL_WHITE);
       fl_font(FL_TIMES_BOLD, 120);
