@@ -1518,7 +1518,7 @@ void Fl_Help_View::format() {
 
           if (buf.cmp("LI")) {
             block->ol = 0;
-            if (OL_num.back()>=0) {
+            if (OL_num.size() && OL_num.back()>=0) {
               block->ol = 1;
               block->ol_num = (int)OL_num.back();
               int nnum = OL_num.pop_back() + 1;
@@ -1554,7 +1554,7 @@ void Fl_Help_View::format() {
 
           if (buf.cmp("/OL") ||
               buf.cmp("/UL")) {
-            OL_num.pop_back();
+            if (OL_num.size()) OL_num.pop_back();
           }
 
           if (buf.cmp("/UL") ||
