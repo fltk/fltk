@@ -245,10 +245,16 @@ static void pointer_motion(void *data, struct wl_pointer *wl_pointer,
     (struct Fl_Wayland_Screen_Driver::seat*)data;
   Fl_Window *win = event_coords_from_surface(seat->pointer_focus, surface_x, surface_y);
   if (!win) return;
-  // If there's an active grab() and the pointer is in a window other than the grab(),
-  // make e_x_root too large to be in any window
   if (Fl::grab() && !Fl::grab()->menu_window() && Fl::grab() != win) {
+    // If there's an active, non-menu grab() and the pointer is in a window other than
+    // the grab(), make e_x_root too large to be in any window
     Fl::e_x_root = 1000000;
+  }
+  else if (Fl_Window_Driver::menu_parent(NULL) && // any kind of menu is active now, and
+      !win->menu_window() && // we enter a non-menu window
+      win != Fl_Window_Driver::menu_parent(NULL) // that's not the window below the menu
+      ) {
+    Fl::e_x_root = 1000000; // make it too large to be in any window
   }
 //fprintf(stderr, "FL_MOVE on win=%p to x:%dx%d root:%dx%d\n", win, Fl::e_x, Fl::e_y, Fl::e_x_root, Fl::e_y_root);
   wld_event_time = time;
