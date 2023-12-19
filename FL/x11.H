@@ -26,9 +26,10 @@
 
 /** Returns the X11 Display in use */
 extern Display *fl_x11_display();
-/** Have FLTK use a pre-established X11 connexion.
- This function should be called before FLTK attempts to open its own X11 connexion.
- \param d the X11 Display* value representing a valid, pre-established X11 connexion
+/** Have FLTK use a pre-established X11 connection.
+ This function must be called before FLTK attempts to open its own X11 connection,
+ that is, as long as fl_x11_display() returns NULL.
+ \param d the X11 Display* value representing a valid, pre-established X11 connection
  */
 extern void fl_x11_use_display(Display *d);
 /** Returns the Window reference for the given Fl_Window, or zero if not \c shown().  */

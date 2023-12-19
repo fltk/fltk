@@ -270,7 +270,7 @@ This may call Fl::abort() if there is an error opening the display.
 
 void fl_x11_use_display(Display *d)
 \par
-Directs FLTK to use a pre-established X11 connexion.
+Directs FLTK to use a pre-established X11 connection.
 
 void fl_close_display()
 
