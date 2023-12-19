@@ -80,6 +80,9 @@ void Fl_X11_Screen_Driver::display(const char *d)
   if (d) setenv("DISPLAY", d, 1);
 }
 
+void fl_x11_use_display(Display *d) {
+  fl_display = d;
+}
 
 int Fl_X11_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
                                          unsigned int* width, unsigned int* height) {

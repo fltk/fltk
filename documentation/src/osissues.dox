@@ -268,6 +268,10 @@ code will be called before the first \c show() of a window.
 \par
 This may call Fl::abort() if there is an error opening the display.
 
+void fl_x11_use_display(Display *d)
+\par
+Directs FLTK to use a pre-established X11 connexion.
+
 void fl_close_display()
 
 \par
