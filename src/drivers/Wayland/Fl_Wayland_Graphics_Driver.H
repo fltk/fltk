@@ -27,7 +27,7 @@
 #include <wayland-client.h> // for wl_list
 
 
-class Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+class FL_EXPORT Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
   struct draw_buffer {
     unsigned char *buffer;

@@ -46,7 +46,7 @@ typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 class Fl_Wayland_Plugin;
 
 
-class Fl_Wayland_Window_Driver : public Fl_Window_Driver
+class FL_EXPORT Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_Wayland_Gl_Window_Driver;
 private:
