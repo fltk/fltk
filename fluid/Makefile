@@ -66,8 +66,7 @@ OBJECTS = $(CPPFILES:.cxx=.o)
 
 all:	$(FLUID) fluid$(EXEEXT)
 
-fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
-			$(IMGLIBNAME)
+fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKIMG) $(LDFLAGS) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -r -f fluid.app
@@ -76,8 +75,7 @@ fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 	$(OSX_ONLY) $(INSTALL) icons/fluid.icns fluid.app/Contents/Resources
 	$(OSX_ONLY) $(INSTALL) fluid.plist fluid.app/Contents/Info.plist
 
-fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
-			../src/$(IMGDSONAME)
+fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(IMGDSONAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDFLAGS) $(LDLIBS)
 

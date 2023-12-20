@@ -19,10 +19,13 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/forms.H> // changed for FLTK
+#include <FL/Fl.H>      // FLTK: includes <FL/fl_config.h>
+#ifdef FLTK_HAVE_FORMS  // FLTK: defined in <FL/fl_config.h> since FLTK 1.4.0
 
-static int border = 1; // changed from FL_TRANSIENT for FLTK
-// (this is so the close box and Esc work to close the window)
+#include <FL/forms.H>   // changed for FLTK
+
+static int border = 1;  // changed from FL_TRANSIENT for FLTK
+                        // (this is so the close box and Esc work to close the window)
 
 typedef struct { Fl_Boxtype val; const char *name; } VN_struct;
 
@@ -173,4 +176,18 @@ int main(int argc, char *argv[]) {
     ;
 
   return 0;
+
 }
+
+#else // (!FLTK_HAVE_FORMS)
+
+#include <FL/fl_ask.H>
+
+int main(int argc, char **argv) {
+  fl_message_title("This program needs the Forms compatibility library");
+  fl_message(
+    "Please configure FLTK with Forms enabled (--enable-forms)\n"
+    "or the CMake option FLTK_BUILD_FORMS=ON.");
+  return 0;
+}
+#endif // (FLTK_HAVE_FORMS)

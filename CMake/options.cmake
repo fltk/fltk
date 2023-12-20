@@ -396,13 +396,21 @@ option (OPTION_BUILD_SHARED_LIBS
 )
 
 #######################################################################
-option (OPTION_PRINT_SUPPORT "allow print support" ON)
-option (OPTION_FILESYSTEM_SUPPORT "allow file system support" ON)
 
-option (FLTK_BUILD_FLUID        "Build FLUID"              ON)
-option (FLTK_BUILD_FLTK_OPTIONS "Build fltk-options"       ON)
-option (FLTK_BUILD_TEST         "Build test/demo programs" ON)
-option (FLTK_BUILD_EXAMPLES     "Build example programs"   OFF)
+option (OPTION_PRINT_SUPPORT      "allow print support"               ON)
+option (OPTION_FILESYSTEM_SUPPORT "allow file system support"         ON)
+
+option (FLTK_BUILD_FORMS          "Build forms compatibility library" ON)
+option (FLTK_BUILD_FLUID          "Build FLUID"                       ON)
+option (FLTK_BUILD_FLTK_OPTIONS   "Build fltk-options"                ON)
+option (FLTK_BUILD_TEST           "Build test/demo programs"          ON)
+option (FLTK_BUILD_EXAMPLES       "Build example programs"            OFF)
+
+if (FLTK_BUILD_FORMS)
+  set (FLTK_HAVE_FORMS 1)
+else ()
+  set (FLTK_HAVE_FORMS 0)
+endif ()
 
 if (DEFINED OPTION_BUILD_EXAMPLES)
   message (WARNING

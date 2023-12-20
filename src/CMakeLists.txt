@@ -406,14 +406,18 @@ set (CPPFILES
   ${DRIVER_FILES}
 )
 
-set (FORMS_FILES
-  forms_compatibility.cxx
-  forms_bitmap.cxx
-  forms_free.cxx
-  forms_fselect.cxx
-  forms_pixmap.cxx
-  forms_timer.cxx
-)
+if (FLTK_BUILD_FORMS)
+  set (FORMS_FILES
+    forms_compatibility.cxx
+    forms_bitmap.cxx
+    forms_free.cxx
+    forms_fselect.cxx
+    forms_pixmap.cxx
+    forms_timer.cxx
+  )
+else ()
+  set (FORMS_FILES "")
+endif ()
 
 set (GLCPPFILES
   Fl_Gl_Choice.cxx
@@ -759,8 +763,10 @@ endif()
 
 #######################################################################
 
-FL_ADD_LIBRARY (fltk_forms STATIC "${FORMS_FILES}")
-target_link_libraries (fltk_forms fltk)
+if (FLTK_BUILD_FORMS)
+  FL_ADD_LIBRARY (fltk_forms STATIC "${FORMS_FILES}")
+  target_link_libraries (fltk_forms fltk)
+endif ()
 
 #######################################################################
 
@@ -806,8 +812,10 @@ if (OPTION_BUILD_SHARED_LIBS AND NOT MSVC)
 
   ###################################################################
 
-  FL_ADD_LIBRARY (fltk_forms SHARED "${FORMS_FILES}")
-  target_link_libraries (fltk_forms_SHARED fltk_SHARED)
+  if (FLTK_BUILD_FORMS)
+    FL_ADD_LIBRARY (fltk_forms SHARED "${FORMS_FILES}")
+    target_link_libraries (fltk_forms_SHARED fltk_SHARED)
+  endif ()
 
   ###################################################################
 

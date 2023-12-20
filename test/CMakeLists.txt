@@ -75,6 +75,14 @@ else ()
   set (GLDEMO_SHARED fltk_SHARED)
   endif ()
 
+# Similar approach for the 'forms' demo (shared lib not supported)
+
+if (FLTK_BUILD_FORMS)
+  set (FORMS_LIBS fltk_forms) # implies 'fltk' as well
+else ()
+  set (FORMS_LIBS fltk)
+endif ()
+
 #######################################################################
 
 CREATE_EXAMPLE (adjuster adjuster.cxx fltk)
@@ -106,7 +114,7 @@ CREATE_EXAMPLE (flex_demo flex_demo.cxx fltk)
 CREATE_EXAMPLE (flex_login flex_login.cxx fltk)
 CREATE_EXAMPLE (fltk-versions fltk-versions.cxx fltk)
 CREATE_EXAMPLE (fonts fonts.cxx fltk)
-CREATE_EXAMPLE (forms forms.cxx "fltk_forms;fltk")
+CREATE_EXAMPLE (forms forms.cxx "${FORMS_LIBS}")
 CREATE_EXAMPLE (fullscreen fullscreen.cxx "${GLDEMO_LIBS}")
 CREATE_EXAMPLE (grid_alignment grid_alignment.cxx fltk)
 CREATE_EXAMPLE (grid_buttons grid_buttons.cxx fltk)

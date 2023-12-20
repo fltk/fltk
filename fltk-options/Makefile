@@ -25,7 +25,7 @@ OBJECTS = $(CPPFILES:.cxx=.o)
 
 all:	$(FLTK_OPTIONS) fltk-options$(EXEEXT)
 
-fltk-options$(EXEEXT):	$(OBJECTS) $(LIBNAME) $(FLLIBNAME)
+fltk-options$(EXEEXT):	$(OBJECTS) $(LIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKIMG) $(LDFLAGS) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -r -f fltk-options.app
@@ -34,7 +34,7 @@ fltk-options$(EXEEXT):	$(OBJECTS) $(LIBNAME) $(FLLIBNAME)
 	$(OSX_ONLY) $(INSTALL) icons/fltk-options.icns fltk-options.app/Contents/Resources
 	$(OSX_ONLY) $(INSTALL) fltk-options.plist fltk-options.app/Contents/Info.plist
 
-fltk-options-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME)
+fltk-options-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDFLAGS) $(LDLIBS)
 
