@@ -5,17 +5,21 @@ WHAT IS FLTK?
 
     The Fast Light Tool Kit is a cross-platform C++ GUI toolkit for
     UNIX(r)/Linux(r) (X11 or Wayland), Microsoft(r) Windows(r), and
-    macOS(r). FLTK provides modern GUI functionality without the bloat
+    macOS(r). FLTK provides modern GUI functionality without bloat
     and supports 3D graphics via OpenGL(r) and its built-in GLUT
     emulation. It was originally developed by Mr. Bill Spitzak and is
     currently maintained by a small group of developers across
-    the world with a central repository in the US.
+    the world with a central repository on GitHub.
+
+        https://www.fltk.org/
+        https://github.com/fltk/fltk/
 
 
 LICENSING
 
     FLTK comes with complete free source code.  FLTK is available
-    under the terms of the GNU Library General Public License.
+    under the terms of the GNU Library General Public License with
+    exceptions (e.g. for static linking).
     Contrary to popular belief, it can be used in commercial
     software! (Even Bill Gates could use it.)
 
@@ -43,6 +47,9 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND macOS
     be aware that the following information may be outdated
     because it is no longer actively maintained.
 
+    Note: autoconf + configure + make is still supported in FLTK 1.4.x
+    but will be removed in FLTK 1.5.0 or any higher version.
+
     In most cases you can just type "make".  This will run configure
     with the default (no) options and then compile everything.
 
@@ -62,8 +69,10 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND macOS
     You can run configure yourself to get the exact setup you
     need. Type "./configure <options>".  Options include:
 
-        --enable-cygwin         - Enable the Cygwin libraries (Windows)
+        --help                  - display help and exit
+        --enable-cygwin         - Enable the Cygwin DLL (Cygwin only)
         --enable-debug          - Enable debugging code & symbols
+        --disable-forms         - Disable generation of the forms library
         --disable-gl            - Disable OpenGL support
         --enable-shared         - Enable generation of shared libraries
         --enable-threads        - Enable multithreading support
@@ -81,6 +90,8 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND macOS
                                   [default = /usr/local/include]
         --prefix=/dir           - Set the directory prefix for files
                                   [default = /usr/local]
+
+    For more options please see './configure --help'.
 
     When the configure script is done you can just run the
     "make" command. This will build the library, FLUID tool, and
@@ -100,8 +111,8 @@ GIT USERS
 
     If you've just checked out a fresh copy of FLTK from GIT,
     you'll need to generate an initial version of 'configure'
-    by running 'make makeinclude' (we don't include a copy
-    of configure in git).
+    by running 'make makeinclude' or 'make clean' (we don't
+    include a copy of configure in git).
 
 
 MAKE TARGETS
@@ -116,15 +127,15 @@ MAKE TARGETS
 BUILDING FLTK UNDER MICROSOFT WINDOWS
 
     There are two ways to build FLTK under Microsoft Windows.
-    The first is to use CMake to create the Visual C++ project files
-    in your favorite development directory, then build FLTK with
-    Visual Studio.
 
-    The second method is to use a GNU-based development tool.
-    To build with the Cygwin or MinGW tools, use the supplied
-    configure script as specified in the UNIX section above:
+    The first is to use CMake to create the Visual C++ project or NMake files
+    in your favorite development directory, then build FLTK with Visual Studio.
 
-        sh configure ...options...
+    The second method is to use a GNU-based development tool. To build with
+    the Cygwin or MinGW tools, use the supplied configure script as specified
+    in the UNIX section above:
+
+        ./configure ...options...
 
     See README.Windows.txt and README.CMake.txt for more info.
 
@@ -185,14 +196,14 @@ TRADEMARKS
     Microsoft and Windows are registered trademarks of Microsoft
     Corporation. UNIX is a registered trademark of the X/Open
     Group, Inc.  OpenGL is a registered trademark of Silicon
-    Graphics, Inc.  Mac OS is a registered trademark of Apple
+    Graphics, Inc.  macOS is a registered trademark of Apple
     Computers, Inc.
 
 
 COPYRIGHT
 
     FLTK is copyright 1998-2023 by Bill Spitzak and others,
-    see the CREDITS file for more info.
+    see the CREDITS.txt file for more info.
 
     This library is free software. Distribution and use rights are
     outlined in the file "COPYING" which should have been included with
