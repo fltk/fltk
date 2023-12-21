@@ -531,8 +531,8 @@ void Fl_X11_Screen_Driver::disable_im() {
 }
 
 void Fl_X11_Screen_Driver::open_display_platform() {
-  static GC gc = NULL;
-  if (gc) return;
+  static Display *d = NULL;
+  if (d) return;
 
   setlocale(LC_CTYPE, "");
   XSetLocaleModifiers("");
@@ -540,7 +540,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   XSetIOErrorHandler(io_error_handler);
   XSetErrorHandler(xerror_handler);
 
-  Display *d = (fl_display ? fl_display : XOpenDisplay(0));
+  d = (fl_display ? fl_display : XOpenDisplay(0));
   if (!d) {
     Fl::fatal("Can't open display: %s", XDisplayName(0)); // does not return
     return; // silence static code analyzer
@@ -548,7 +548,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
 
   open_display_i(d);
   // the unique GC used by all X windows
-  gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
+  GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
   fl_create_print_window();
 }
