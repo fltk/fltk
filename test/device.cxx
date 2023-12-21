@@ -505,7 +505,7 @@ void copy(Fl_Widget *, void *data) {
     }
     return;
   }
-  
+
   if (strcmp(operation, "Fl_Copy_Surface") == 0) {
     Fl_Copy_Surface *copy_surf;
     if (target->as_window() && !target->parent()) {
@@ -522,7 +522,7 @@ void copy(Fl_Widget *, void *data) {
     delete copy_surf;
     Fl_Surface_Device::pop_current();
   }
-  
+
   if (strcmp(operation, "Fl_Printer") == 0 || strcmp(operation, "Fl_PostScript_File_Device") == 0) {
     Fl_Paged_Device *p;
     int err;
@@ -549,7 +549,7 @@ void copy(Fl_Widget *, void *data) {
     } else if (err > 1 && err_message) {fl_alert("%s", err_message); delete[] err_message;}
     delete p;
   }
-  
+
   if (strcmp(operation, "Fl_EPS_File_Surface") == 0) {
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Save a .eps file");
@@ -575,7 +575,7 @@ void copy(Fl_Widget *, void *data) {
       }
     }
   }
-  
+
   if (strcmp(operation, "Fl_SVG_File_Surface") == 0) {
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Save a .svg file");
@@ -602,7 +602,7 @@ void copy(Fl_Widget *, void *data) {
       }
     }
   }
-  
+
   if (strcmp(operation, "fl_capture_window()") == 0) {
     Fl_Window *win = target->as_window() ? target->as_window() : target->window();
     int X = target->as_window() ? 0 : target->x();
@@ -618,7 +618,7 @@ void copy(Fl_Widget *, void *data) {
       g2->show();
     }
   }
-  
+
   if (strcmp(operation, "Fl_Image_Surface::mask()") == 0) {
     Fl_Image_Surface *surf = new Fl_Image_Surface(target->w(), target->h(), 1);
     Fl_Surface_Device::push_current(surf);
@@ -653,7 +653,7 @@ void copy(Fl_Widget *, void *data) {
     win->end();
     win->show();
   }
-  
+
 }
 
 class My_Button:public Fl_Button {

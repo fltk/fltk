@@ -96,7 +96,7 @@ Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
     bmi.bmiHeader.biBitCount = 24;
     GetDIBits(gc, (HBITMAP)offscreen, 0, H,
                        dib_src, &bmi, DIB_RGB_COLORS);
-        
+
     // draw above the secondary offscreen the main offscreen masked by shape_data_->mask
     GdiFlush();
     Fl_Image_Surface_Driver::copy_with_mask(shape_data_->mask, shape_data_->vBits, dib_src, ((3*W+3)/4) * 4, true);
@@ -141,9 +141,9 @@ void Fl_GDI_Image_Surface_Driver::mask(const Fl_RGB_Image *mask) {
   GetDIBits(gc, (HBITMAP)offscreen, 0, 0, NULL, &bmi, DIB_RGB_COLORS);
   int W = bmi.bmiHeader.biWidth;
   int H = bmi.bmiHeader.biHeight;
-  
+
   shape_data_->mask = Fl_Image_Surface_Driver::RGB3_to_RGB1(mask, W, H);
-  
+
   // duplicate current offscreen content to new offscreen
   int line_size = ((3*W+3)/4) * 4;
   uchar *dib = new uchar[line_size * H];  // create temporary buffer to read DIB
@@ -151,11 +151,11 @@ void Fl_GDI_Image_Surface_Driver::mask(const Fl_RGB_Image *mask) {
   bmi.bmiHeader.biHeight = H;
   bmi.bmiHeader.biCompression = BI_RGB;
   bmi.bmiHeader.biBitCount = 24;
-  
+
   GetDIBits(gc, (HBITMAP)offscreen, 0, H, dib, &bmi, DIB_RGB_COLORS);
-  
+
   HDC background_gc = CreateCompatibleDC(gc);
-  shape_data_->background = 
+  shape_data_->background =
     CreateDIBSection(background_gc, &bmi, DIB_RGB_COLORS,
                      (void**)&shape_data_->vBits, NULL, 0);
   if (!shape_data_->background) {

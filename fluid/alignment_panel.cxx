@@ -32,8 +32,8 @@ static void cb_Comments(Fl_Choice* o, void* v) {
     o->value(*font);
   } else {
     *font = (int)o->value();
-    widget_browser->redraw(); 
-    widget_browser->save_prefs(); 
+    widget_browser->redraw();
+    widget_browser->save_prefs();
   }
 }
 
@@ -47,7 +47,7 @@ static void cb_Color_Chip(Fl_Button* o, void* v) {
     *color = d;
     o->color(d);
     widget_browser->redraw();
-    widget_browser->save_prefs(); 
+    widget_browser->save_prefs();
   }
 }
 
@@ -58,7 +58,7 @@ static void cb_Color_Choice(Fl_Menu_Button* o, void* v) {
     *color = d;
     o->parent()->do_callback(o->parent(), LOAD);
     widget_browser->redraw();
-    widget_browser->save_prefs(); 
+    widget_browser->save_prefs();
   }
 }
 

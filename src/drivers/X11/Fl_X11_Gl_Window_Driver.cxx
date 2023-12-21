@@ -445,11 +445,11 @@ void Fl_X11_Gl_Window_Driver::swap_interval(int interval) {
       if (fl_glXSwapInterval.EXT)
         fl_glXSwapInterval.EXT(fl_display, fl_xid(pWindow), interval);
       break;
-    case 2: 
+    case 2:
       if (fl_glXSwapInterval.MESA)
         fl_glXSwapInterval.MESA((unsigned int)interval);
       break;
-    case 3: 
+    case 3:
       if (fl_glXSwapInterval.SGI)
         fl_glXSwapInterval.SGI(interval);
       break;
@@ -468,7 +468,7 @@ int Fl_X11_Gl_Window_Driver::swap_interval() const {
       glXQueryDrawable(fl_display, fl_xid(pWindow), 0x20F1 /*GLX_SWAP_INTERVAL_EXT*/, &val);
       interval = (int)val;
       break; }
-    case 2: 
+    case 2:
       if (fl_glXGetSwapIntervalMESA)
         interval = fl_glXGetSwapIntervalMESA();
       break;

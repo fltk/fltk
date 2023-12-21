@@ -65,7 +65,7 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
   }
   delete driver();
 }
- 
+
 
 void Fl_Quartz_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
@@ -155,7 +155,7 @@ void Fl_Quartz_Image_Surface_Driver::mask(const Fl_RGB_Image *img) {
     img = copy;
     using_copy = true;
   }
-  
+
   int i, d = img->d(), w = img->data_w(), h = img->data_h();
   // reverse top and bottom and convert to gray scale if img->d() == 3 and complement bits
   int bytes_per_row = (img->ld() ? img->ld() : w * d);

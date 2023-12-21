@@ -390,8 +390,8 @@ void run_image_panel() {
     make_image_panel();
 
   image_panel_window->do_callback(image_panel_window, LOAD);
-    
-  Fl::pushed(0);  
+
+  Fl::pushed(0);
   Fl_Window *g = Fl::grab();
   if (g) Fl::grab(0);
   image_panel_window->show();
@@ -399,7 +399,7 @@ void run_image_panel() {
     Fl::wait();
   if (g)
     Fl::grab(g);
-    
+
   Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
   if (img) {
     img->release();

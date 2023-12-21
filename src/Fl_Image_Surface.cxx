@@ -96,7 +96,7 @@ void Fl_Image_Surface_Driver::copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst,
                                              bool bottom_to_top) {
   int w = mask->data_w(), h = mask->data_h();
   for (int i = 0; i < h; i++) {
-    const uchar* alpha = (const uchar*)mask->array + 
+    const uchar* alpha = (const uchar*)mask->array +
       (bottom_to_top ? (h-i-1) : i) * w;
     uchar *src = dib_src + i * line_size;
     uchar *dst = dib_dst + i * line_size;
@@ -145,7 +145,7 @@ Fl_RGB_Image *Fl_Image_Surface_Driver::RGB3_to_RGB1(const Fl_RGB_Image *rgb3, in
 /** Returns a depth-3 image made of all drawings sent to the Fl_Image_Surface object.
  The returned object contains its own copy of the RGB data;
  the caller is responsible for deleting it.
- 
+
  \see Fl_Image_Surface::mask(Fl_RGB_Image*)
  */
 Fl_RGB_Image *Fl_Image_Surface::image() {
@@ -212,19 +212,19 @@ void Fl_Image_Surface::rescale() {
  foreground and background pixels; mask pixels closer in color to white produce image pixels
  closer to the image surface pixel, those closer to black produce image pixels closer to what the
  image surface pixel was before the call to mask().
- 
+
  The mask is easily constructed using an Fl_Image_Surface object,
  drawing white areas on a black background there, and calling Fl_Image_Surface::image().
  \param mask A depth-3 image determining the drawable areas of the image surface.
  The \p mask object is not used after return from this member function.
- \note 
+ \note
  - The image surface must not be the current drawing surface when this function
  gets called.
  - The mask can have any size but is best when it has the size of the image surface.
  - It's possible to use several masks in succession on the same image surface provided
  member function Fl_Image_Surface::image() is called between successive calls to
  Fl_Image_Surface::mask(const Fl_RGB_Image*).
- 
+
  Example of procedure to construct a masked image:
  \code
  int W = …, H = …; // width and height of the image under construction

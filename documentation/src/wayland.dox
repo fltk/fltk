@@ -536,7 +536,7 @@ CAIRO_FORMAT_ARGB32.
 FLTK calls function \c Fl_Wayland_Window_Driver::make_current() before drawing to any Fl_Window.
 Member \c buffer of this Fl_Window's <tt>struct wld_window</tt> (see \ref wld_window) is NULL when the
 window has just been created or resized. In that case, FLTK calls
-\c Fl_Wayland_Graphics_Driver::create_wld_buffer() which 
+\c Fl_Wayland_Graphics_Driver::create_wld_buffer() which
 returns a pointer to a <tt>struct wld_buffer</tt> containing
 - a Wayland buffer, member \c wl_buffer;
 - a Cairo image surface, created by a call to \c Fl_Wayland_Graphics_Driver::cairo_init().

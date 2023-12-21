@@ -72,11 +72,11 @@ int Fl_Shared_Image::num_images() {
   Binary search in a sorted array works only if we search for the same
   parameters that were also used for sorting. No special cases are possible
   here.
- 
+
   Fl_Shared_Image::find() requires a search for an element with a matching name
   and the original_ flags set. This is not implemented via binary search, but
   by a simple run of the array inside Fl_Shared_Image::find().
-  
+
   \returns      Whether the images match or their relative sort order (see text).
   \retval       0       the images match
   \retval       <0      Image \p i0 is \e less than image \p i1

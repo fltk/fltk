@@ -117,8 +117,8 @@ if (v == LOAD) {
   o->value(*font);
 } else {
   *font = (int)o->value();
-  widget_browser->redraw(); 
-  widget_browser->save_prefs(); 
+  widget_browser->redraw();
+  widget_browser->save_prefs();
 }} {}
 }
 
@@ -133,7 +133,7 @@ if (v == LOAD) {
   *color = d;
   o->color(d);
   widget_browser->redraw();
-  widget_browser->save_prefs(); 
+  widget_browser->save_prefs();
 }} {}
 }
 
@@ -145,7 +145,7 @@ Function {cb_Color_Choice(Fl_Menu_Button* o, void* v)} {open private return_type
   *color = d;
   o->parent()->do_callback(o->parent(), LOAD);
   widget_browser->redraw();
-  widget_browser->save_prefs(); 
+  widget_browser->save_prefs();
 }} {}
 }
 

@@ -132,7 +132,7 @@ Fl_RGB_Image* Fl_Wayland_Image_Surface_Driver::image() {
     free(shape_data_);
     shape_data_ = NULL;
   }
-  
+
   // Convert depth-4 image in draw_buffer to a depth-3 image while exchanging R and B colors
   struct Fl_Wayland_Graphics_Driver::draw_buffer *off_buf =
     Fl_Wayland_Graphics_Driver::offscreen_buffer(offscreen);

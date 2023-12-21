@@ -108,7 +108,7 @@ protected:
   int external_offscreen;
   Fl_Image_Surface_Driver(int w, int h, int /*high_res*/, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
   virtual ~Fl_Image_Surface_Driver() {}
-  static void copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst, uchar *dib_src, 
+  static void copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst, uchar *dib_src,
                              int line_size, bool bottom_to_top);
   static Fl_RGB_Image *RGB3_to_RGB1(const Fl_RGB_Image *rgb3, int W, int H);
   void set_current() FL_OVERRIDE = 0;

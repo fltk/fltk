@@ -137,7 +137,7 @@ Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
     fl_window = shape_data_->background; // temporary change
     Fl_RGB_Image *img_background = Fl::screen_driver()->read_win_rectangle(0, 0, w, h, 0);
     fl_window = offscreen;
-    Fl_Image_Surface_Driver::copy_with_mask(shape_data_->mask, 
+    Fl_Image_Surface_Driver::copy_with_mask(shape_data_->mask,
                                             (uchar*)img_background->array,
                                             (uchar*)img_main->array,
                                             3 * shape_data_->mask->w(), false);
