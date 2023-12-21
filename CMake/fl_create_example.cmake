@@ -119,6 +119,11 @@ function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   set_target_properties   (${TARGET_NAME} PROPERTIES OUTPUT_NAME ${NAME})
   target_link_libraries   (${TARGET_NAME} ${LIBRARIES})
 
+  # make sure we're "exporting" global symbols like 'fl_disable_wayland',
+  # see also README.Wayland.txt and CMake policy CMP0065.
+
+  set_target_properties   (${TARGET_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
+
   # we must link all programs with cairo if option CAIROEXT is enabled
   if (FLTK_HAVE_CAIROEXT)
     target_link_libraries (${TARGET_NAME} ${PKG_CAIRO_LIBRARIES})

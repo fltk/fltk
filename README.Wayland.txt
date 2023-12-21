@@ -8,8 +8,9 @@ Contents
  1   Introduction
 
  2   Wayland Support for FLTK
-   2.1    Configuration
-   2.2    Known Limitations
+   2.1    Disabling Wayland for Backwards Compatibility
+   2.2    Configuration
+   2.3    Known Limitations
 
  3   Platform Specific Notes
    3.1    Debian and Derivatives (like Ubuntu, Mint, RaspberryPiOS)
@@ -49,17 +50,65 @@ X11 is used at run time as follows:
   compositor is available;
 - if $FLTK_BACKEND has another value, the library stops with error.
 
-Alternatively, it is possible to force a program linked to a Wayland-enabled
-FLTK library to use X11 in all situations by putting this declaration somewhere
-in the source code :
-  FL_EXPORT bool fl_disable_wayland = true;
-FLTK source code and also X11-specific source code conceived for FLTK 1.3
-should run with a Wayland-enabled, FLTK 1.4 library with that single change only.
-
 On pure Wayland systems without the X11 headers and libraries, FLTK can be built
 with its Wayland backend only (see below).
 
- 2.1 Configuration
+
+ 2.1 Disabling Wayland for Backwards Compatibility
+---------------------------------------------------
+
+Programs using X11 specific functions may need to disable the automatic
+detection of Wayland at runtime so they fall back to X11 only.
+
+It is possible to force a program linked to a Wayland-enabled FLTK library
+to use X11 in all situations by putting this declaration somewhere in the
+source code:
+
+  FL_EXPORT bool fl_disable_wayland = true;
+
+FLTK source code and also X11-specific source code conceived for FLTK 1.3
+should run with a Wayland-enabled FLTK 1.4 library with this single change.
+
+
+Caveat: when building a user project with the requirement to use CMake
+version 3.4 or higher, i.e. using
+
+  cmake_minimum_required (VERSION 3.4)
+
+or any higher (minimum) CMake version users need to use at least one of
+the following options:
+
+Option 1: Set target property 'ENABLE_EXPORTS' on all executable
+          targets that require it to disable the Wayland backend.
+          This is the preferred solution.
+
+          CMake example:
+
+          set_target_properties(prog PROPERTIES ENABLE_EXPORTS TRUE)
+
+Option 2: Set CMake policy CMP0065 to 'OLD' (to pre-3.4 behavior)
+          This is a quick solution but discouraged because setting
+          CMake policies to 'OLD' is deprecated by definition.
+
+          CMake code:
+
+          cmake_policy(SET CMP0065 OLD)
+
+Option 3: Set CMake variable 'CMAKE_ENABLE_EXPORTS' to 'TRUE'.
+          Note: use this to be compatible with CMake < 3.27.
+
+Option 4: Set CMake variable 'CMAKE_EXECUTABLE_ENABLE_EXPORTS' to 'TRUE'.
+          Note: new in CMake 3.27, ignored in older versions.
+
+Options 3 and 4 can be used as quick solutions like option 2 but these
+options affect all targets that are created while the CMake variable is
+set. As said above, option 1 should be preferred.
+
+This applies to the FLTK test and demo programs as well, hence we use
+option 1 in our build system.
+
+
+ 2.2 Configuration
 ------------------
 
 On Linux and FreeBSD systems equipped with the adequate software packages
@@ -85,7 +134,7 @@ Mutter (gnome's Wayland compositor) and Weston use CSD mode, KWin and Sway use S
 Furthermore, setting environment variable LIBDECOR_FORCE_CSD to 1 will make FLTK use CSD
 mode even if the compositor would have selected SSD mode.
 
- 2.2 Known Limitations
+ 2.3 Known Limitations
 ----------------------
 
 * A deliberate design trait of Wayland makes application windows ignorant of their exact
