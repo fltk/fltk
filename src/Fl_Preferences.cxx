@@ -1981,12 +1981,14 @@ int Fl_Plugin_Manager::load(const char *filename) {
  \brief Use this function to load a whole directory full of modules.
  */
 int Fl_Plugin_Manager::loadAll(const char *filepath, const char *pattern) {
+  if (!filepath || strlen(filepath) < 1) return -1;
+  const char *format = (filepath[strlen(filepath) - 1] == '/' ? "%s%s" : "%s/%s");
   struct dirent **dir;
   int i, n = fl_filename_list(filepath, &dir);
   for (i=0; i<n; i++) {
     struct dirent *e = dir[i];
     if (pattern==0 || fl_filename_match(e->d_name, pattern)) {
-      load(Fl_Preferences::Name("%s%s", filepath, e->d_name));
+      load(Fl_Preferences::Name(format, filepath, e->d_name));
     }
     free(e);
   }
