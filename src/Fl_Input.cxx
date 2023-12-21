@@ -52,9 +52,9 @@ const char *Fl_Input::copy_menu_text = "Copy";
 const char *Fl_Input::paste_menu_text = "Paste";
 
 static Fl_Menu_Item rmb_menu[] = {
-  { Fl_Input::cut_menu_text,    0, NULL, (void*)1 },
-  { Fl_Input::copy_menu_text,   0, NULL, (void*)2 },
-  { Fl_Input::paste_menu_text,  0, NULL, (void*)3 },
+  { NULL, 0, NULL, (void*)1 },
+  { NULL, 0, NULL, (void*)2 },
+  { NULL, 0, NULL, (void*)3 },
   { NULL }
 };
 
@@ -763,6 +763,9 @@ int Fl_Input::handle(int event) {
  */
 Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 : Fl_Input_(X, Y, W, H, l) {
+  if (!rmb_menu[0].label()) rmb_menu[0].label(Fl_Input::cut_menu_text);
+  if (!rmb_menu[1].label()) rmb_menu[1].label(Fl_Input::copy_menu_text);
+  if (!rmb_menu[2].label()) rmb_menu[2].label(Fl_Input::paste_menu_text);
 }
 
 

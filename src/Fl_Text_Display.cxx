@@ -85,6 +85,13 @@ static int scroll_amount = 0;
 static int scroll_y = 0;
 static int scroll_x = 0;
 
+static Fl_Menu_Item rmb_menu[] = {
+  { NULL, 0, NULL, (void*)1 },
+  { NULL, 0, NULL, (void*)2 },
+  { NULL, 0, NULL, (void*)3 },
+  { NULL }
+};
+
 // CET - FIXME
 #define TMPFONTWIDTH 6
 
@@ -188,6 +195,10 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   box(FL_DOWN_FRAME);
   set_flag(SHORTCUT_LABEL);
   clear_flag(NEEDS_KEYBOARD);
+
+  if (!rmb_menu[0].label()) rmb_menu[0].label(Fl_Input::cut_menu_text);
+  if (!rmb_menu[1].label()) rmb_menu[1].label(Fl_Input::copy_menu_text);
+  if (!rmb_menu[2].label()) rmb_menu[2].label(Fl_Input::paste_menu_text);
 
   end();
 }
@@ -4069,12 +4080,6 @@ void Fl_Text_Display::scroll_timer_cb(void *user_data) {
   Fl::repeat_timeout(.1, scroll_timer_cb, user_data);
 }
 
-static Fl_Menu_Item rmb_menu[] = {
-  { Fl_Input::cut_menu_text,    0, NULL, (void*)1 },
-  { Fl_Input::copy_menu_text,   0, NULL, (void*)2 },
-  { Fl_Input::paste_menu_text,  0, NULL, (void*)3 },
-  { NULL }
-};
 
 /** Handle right mouse button down events.
  \return 0 for no op, 1 to cut, 2 to copy, 3 to paste
