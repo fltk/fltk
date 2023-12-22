@@ -82,7 +82,7 @@ public:
 
   static void removePlugin(Fl_Preferences::ID id);
   static int load(const char *filename);
-  static int loadAll(const char *filepath, const char *pattern=0);
+  static int loadAll(const char *dirpath, const char *pattern=0);
 };
 
 

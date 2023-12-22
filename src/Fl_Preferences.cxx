@@ -1978,17 +1978,19 @@ int Fl_Plugin_Manager::load(const char *filename) {
 }
 
 /**
- \brief Use this function to load a whole directory full of modules.
+ Use this function to load a whole directory full of modules.
+ \param dirpath Pathname of a directory. It \b must end with the platform's directory separator character
+ (i.e., '\\' under Windows, '/' otherwise).
+ \param pattern A filename pattern to catch all modules of interest in the targeted directory
+ (e.g., "{*.so,*.dll,*.dylib}"), or NULL to catch all files in the directory.
  */
-int Fl_Plugin_Manager::loadAll(const char *filepath, const char *pattern) {
-  if (!filepath || strlen(filepath) < 1) return -1;
-  const char *format = (filepath[strlen(filepath) - 1] == '/' ? "%s%s" : "%s/%s");
+int Fl_Plugin_Manager::loadAll(const char *dirpath, const char *pattern) {
   struct dirent **dir;
-  int i, n = fl_filename_list(filepath, &dir);
+  int i, n = fl_filename_list(dirpath, &dir);
   for (i=0; i<n; i++) {
     struct dirent *e = dir[i];
     if (pattern==0 || fl_filename_match(e->d_name, pattern)) {
-      load(Fl_Preferences::Name(format, filepath, e->d_name));
+      load(Fl_Preferences::Name("%s%s", dirpath, e->d_name));
     }
     free(e);
   }
