@@ -500,8 +500,33 @@ Fl_Menu_* fl_menu_array_owner = 0;
 */
 void Fl_Menu_::clear() {
   if (alloc) {
-    if (alloc>1) for (int i = size(); i--;)
-      if (menu_[i].text) free((void*)menu_[i].text);
+
+    if (alloc > 1) {
+
+      // See GitHub issue #875: we can't release "everything"
+      // for several reasons. Maybe we can do better if we create
+      // a new menu system based on Fl_Widget in 1.5.0 or later.
+
+      // Fl_Image's and Fl_Multi_Label's and their linked objects
+      // can't be released automatically. However, we must take care
+      // not to free() images or Fl_Multi_Label's because they can
+      // either be static or are allocated by operator new.
+
+      for (int i = size(); i--;) {
+        if (!menu_[i].text)
+          continue;
+        switch(menu_[i].labeltype_) {
+          case _FL_IMAGE_LABEL:
+            break;
+          case _FL_MULTI_LABEL:
+            break;
+          default:
+            free((void*)menu_[i].text);
+            break;
+        }
+      }
+    }
+
     if (this == fl_menu_array_owner)
       fl_menu_array_owner = 0;
     else
