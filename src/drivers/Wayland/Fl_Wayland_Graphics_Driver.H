@@ -27,7 +27,7 @@
 #include <wayland-client.h> // for wl_list
 
 
-class FL_EXPORT Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+class Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
   struct draw_buffer {
     unsigned char *buffer;
@@ -63,7 +63,8 @@ public:
   static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
   static void cairo_init(struct draw_buffer *buffer, int width, int height, int stride,
                          cairo_format_t format);
-  static struct draw_buffer *offscreen_buffer(Fl_Offscreen);
+  // used by class Fl_Wayland_Gl_Window_Driver
+  static FL_EXPORT struct draw_buffer *offscreen_buffer(Fl_Offscreen);
   static const cairo_user_data_key_t key;
   static Fl_Image_Surface *custom_offscreen(int w, int h, struct wld_buffer **buffer);
 };

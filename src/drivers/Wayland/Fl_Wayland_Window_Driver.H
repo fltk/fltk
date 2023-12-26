@@ -46,7 +46,7 @@ typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 class Fl_Wayland_Plugin;
 
 
-class FL_EXPORT Fl_Wayland_Window_Driver : public Fl_Window_Driver
+class Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_Wayland_Gl_Window_Driver;
 private:
@@ -77,7 +77,7 @@ public:
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
-  int wld_scale();
+  FL_EXPORT int wld_scale(); // used by class Fl_Wayland_Gl_Window_Driver
   cairo_rectangle_int_t *subRect() { return subRect_; } // getter
   void subRect(cairo_rectangle_int_t *r); // setter
   void checkSubwindowFrame();
