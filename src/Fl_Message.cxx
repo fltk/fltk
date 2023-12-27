@@ -367,7 +367,7 @@ int Fl_Message::innards(const char *fmt, va_list ap, const char *b0, const char 
     window_->position(form_x_, form_y_);
     form_x_ = form_y_ = form_position_ = 0;
   } else if (enable_hotspot_)
-    window_->hotspot(button_[0]);
+    window_->hotspot(b0 ? button_[0] : button_[1]);
   else
     window_->free_position();
 
