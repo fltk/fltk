@@ -636,6 +636,10 @@ is off and Wayland sends a final resize command which is not skipped. Overall, t
 ensures the client program resizes its window as frequently as it can without
 falling behind resize commands sent by the compositor.
 
+To account for a bug in Mutter (issue #878), the \c window->buffer->cb object is
+not created when a toplevel window is being resized and is entirely covered by
+one subwindow.
+
 <h3>Progressive window drawing</h3>
 FLTK supports progressive drawing when an app calls function Fl_Window::make_current()
 at any time and then calls the FLTK drawing API. This is made possible
@@ -1280,6 +1284,7 @@ struct wld_window {
   int floating_width; // helps restoring size after un-maximizing
   int floating_height;
   int state; // indicates whether window is fullscreen, maximized. Used otherwise for POPUPs
+  bool covered; // specially for Mutter and issue #878
 }
 </pre>
 

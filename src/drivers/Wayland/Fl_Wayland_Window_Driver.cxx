@@ -1792,22 +1792,20 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
 
 // does win entirely cover its parent ?
 static void does_window_cover_parent(Fl_Window *win) {
-  if (win->parent()) {
-    Fl_Window *parent = win->window();
-    if (win->x() <= 0 && win->y() <= 0 && win->w() >= parent->w() &&
-        win->h() >= parent->h()) {
-      struct wld_window *xid = fl_wl_xid(parent);
-      xid->covered = true;
-    }
-  }
+  Fl_Window *parent = win->window();
+  fl_wl_xid(parent)->covered = (win->x() <= 0 && win->y() <= 0 &&
+                                win->w() >= parent->w() && win->h() >= parent->h());
 }
 
 
-// recursively explore all subwindows in a window
+// recursively explore all shown subwindows in a window and call f for each
 static void scan_subwindows(Fl_Group *g, void (*f)(Fl_Window *)) {
   for (int i = 0; i < g->children(); i++) {
     Fl_Widget *o = g->child(i);
-    if (o->as_window()) f(o->as_window());
+    if (o->as_window()) {
+      if (!o->as_window()->shown()) continue;
+      f(o->as_window());
+    }
     if (o->as_group()) scan_subwindows(o->as_group(), f);
   }
 }
@@ -1910,7 +1908,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
   
   if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
-      !pWindow->parent()) { // fix for MUTTER bug described in issue #878
+    fl_win && is_a_resize && fl_win->kind == DECORATED) { // fix for issue #878
     scan_subwindows(pWindow, does_window_cover_parent);
   }
 }
