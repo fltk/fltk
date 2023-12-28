@@ -163,6 +163,7 @@ struct wld_window {
   int floating_width;
   int floating_height;
   int state;
+  bool covered;
 };
 
 

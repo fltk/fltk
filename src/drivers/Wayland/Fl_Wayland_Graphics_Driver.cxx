@@ -176,8 +176,10 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, struct
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
   wl_surface_set_buffer_scale( window->wl_surface,
       Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale() );
-  window->buffer->cb = wl_surface_frame(window->wl_surface);
-  wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
+  if (!window->covered) { // see issue #878
+    window->buffer->cb = wl_surface_frame(window->wl_surface);
+    wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
+  }
   wl_surface_commit(window->wl_surface);
   window->buffer->draw_buffer_needs_commit = false;
 }
