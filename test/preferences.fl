@@ -66,6 +66,8 @@ for systems that don't have GNU libintl library.} open return_type {const char*}
         { "Bread:", "Brot:" },
         { "Breakfast:", "Frühstück:" },
         { "Cancel", "Abbrechen" },
+        { "Copy", "Kopieren" },
+        { "Cut", "Ausschneiden" },
         { "Drink:", "Getränk:" },
         { "English", "Englisch" },
         { "German", "Deutsch" },
@@ -75,6 +77,7 @@ for systems that don't have GNU libintl library.} open return_type {const char*}
         { "NY Times", "Der Spiegel" },
         { "Newspaper:", "Tageszeitung:" },
         { "OK", "OK" },
+        { "Paste", "Einfügen" },
         { "Please restart the app to use your new language setting.",
            "Bitte starten Sie die App erneut um Ihre Spracheinstellung zu nutzen." },
         { "Wear:", "Schuhwerk:" },
@@ -103,7 +106,7 @@ for systems that don't have GNU libintl library.} open return_type {const char*}
         { "with milk", "mit Milch" },
 };
 int lang = g_language;
-int i, n = 38;
+int i, n = 41;
 const char *found = 0L;
 
 // As this is just a minimal demo, I did not implement binary search.
@@ -132,7 +135,11 @@ Fl::delete_widget(myWindow);} {}
 
 Function {} {open return_type int
 } {
-  code {readLanguagePrefs();} {}
+  code {readLanguagePrefs();
+Fl_Input::cut_menu_text = gettext("Cut");
+Fl_Input::copy_menu_text = gettext("Copy");
+Fl_Input::paste_menu_text = gettext("Paste");} {selected
+  }
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
@@ -140,7 +147,7 @@ Function {} {open return_type int
   } {
     Fl_Button {} {
       label Cancel
-      callback closeWindowCB selected
+      callback closeWindowCB
       xywh {118 316 90 24}
     }
     Fl_Button {} {
@@ -470,6 +477,5 @@ Function {writePrefs()} {open return_type void
   // unsigned int size_of_bed = sizeof( bed ); // size of Fl_Preferences 'bed'
   // eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
   // eat.set( "SizeOfBed", (int)size_of_bed );
-  // eat.set( "Prefs_Bed", (void*)&bed, sizeof( bed ) );} {selected
-  }
+  // eat.set( "Prefs_Bed", (void*)&bed, sizeof( bed ) );} {}
 }

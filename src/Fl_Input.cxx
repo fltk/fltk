@@ -524,7 +524,12 @@ int Fl_Input::handle_rmb() {
         insert_position(word_start(newpos), word_end(newpos));
       }
     }
-    if (readonly()) { // give only the menu options that make sense
+    // keep the menu labels current
+    rmb_menu[0].label(Fl_Input::cut_menu_text);
+    rmb_menu[1].label(Fl_Input::copy_menu_text);
+    rmb_menu[2].label(Fl_Input::paste_menu_text);
+    // give only the menu options that make sense
+    if (readonly()) {
       rmb_menu[0].deactivate(); // cut
       rmb_menu[2].deactivate(); // paste
     } else {
@@ -763,9 +768,6 @@ int Fl_Input::handle(int event) {
  */
 Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 : Fl_Input_(X, Y, W, H, l) {
-  if (!rmb_menu[0].label()) rmb_menu[0].label(Fl_Input::cut_menu_text);
-  if (!rmb_menu[1].label()) rmb_menu[1].label(Fl_Input::copy_menu_text);
-  if (!rmb_menu[2].label()) rmb_menu[2].label(Fl_Input::paste_menu_text);
 }
 
 
