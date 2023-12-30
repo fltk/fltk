@@ -1311,7 +1311,7 @@ int mergeback_code_files()
   Fl_String code_filename;
 #if 1
   if (!batch_mode) {
-    Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org.build", "fluid");
+    Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
     Fl_Preferences path(build_records, proj_filename.c_str());
     int i, n = proj_filename.size();
     for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
