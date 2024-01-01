@@ -247,6 +247,8 @@ endif ()
 
 if (FLTK_BUILD_TEST)
   message (STATUS "Test programs     will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/test")
+else ()
+  message (STATUS "Test programs     will not be built (set FLTK_BUILD_TEST=ON to build)")
 endif ()
 
 if (FLTK_BUILD_EXAMPLES)
