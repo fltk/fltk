@@ -1520,8 +1520,8 @@ G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
   } {
     Fl_Window win {
       label {Fl_Terminal Test}
-      callback {exit(0);} open
-      xywh {421 64 897 838} type Double visible
+      callback {exit(0);} open selected
+      xywh {938 64 897 838} type Double size_range {897 330 0 0} visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
