@@ -608,7 +608,6 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
         int rr = r->x() + r->w(), rb = r->y() + r->h();
         move_intersection(rr, rb, rr-dw, rb-dh);
       }
-      int tr = x() + w(), tb = y() + h();
       move_intersection(bbr, bbb, bbr-dw, bbb-dh);
       init_sizes();
     }
