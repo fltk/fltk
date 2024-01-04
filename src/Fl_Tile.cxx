@@ -601,7 +601,6 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
     int b2 = Y+H;
     request_shrink_b(bbb, b2, NULL);
     dh = bbb - b2;
-    printf("%d %d %d %d  %d %d\n", X, Y, W, H, dw, dh);
     // perform the actual resize within a safe range
     if ((dw!=0) || (dh!=0)) {
       Fl_Widget *r = resizable();
