@@ -719,7 +719,20 @@ const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "releas
 fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface));*/
   xkb_state_key_get_utf8(seat->xkb_state, keycode, buf, sizeof(buf));
 //fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
-  Fl::e_keysym = for_key_vector;
+  Fl::e_keysym = Fl::e_original_keysym = for_key_vector;
+  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= 0xFF95 && sym <= 0xFF9E) {
+    // process keypad number keys when NumLock is off
+    if (sym == XKB_KEY_KP_Insert) Fl::e_keysym = FL_Insert;            // 0
+    else if (sym == XKB_KEY_KP_End) Fl::e_keysym = FL_End;             // 1
+    else if (sym == XKB_KEY_KP_Down) Fl::e_keysym = FL_Down;           // 2
+    else if (sym == XKB_KEY_KP_Page_Down) Fl::e_keysym = FL_Page_Down; // 3
+    else if (sym == XKB_KEY_KP_Left) Fl::e_keysym = FL_Left;           // 4
+    else if (sym == XKB_KEY_KP_Begin) Fl::e_keysym = 0xff0b;           // 5
+    else if (sym == XKB_KEY_KP_Right) Fl::e_keysym = FL_Right;         // 6
+    else if (sym == XKB_KEY_KP_Home) Fl::e_keysym = FL_Home;           // 7
+    else if (sym == XKB_KEY_KP_Up) Fl::e_keysym = FL_Up;               // 8
+    else if (sym == XKB_KEY_KP_Page_Up) Fl::e_keysym = FL_Page_Up;     // 9
+  }
   if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
     if (search_int_vector(key_vector, for_key_vector) < 0) {
       key_vector.push_back(for_key_vector);
