@@ -720,12 +720,12 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
   xkb_state_key_get_utf8(seat->xkb_state, keycode, buf, sizeof(buf));
 //fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
   Fl::e_keysym = Fl::e_original_keysym = for_key_vector;
-  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Insert) {
+  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Delete) {
     // process keypad number keys when NumLock is off
-    static const int table[10] = {FL_Home /* 7 */, FL_Left /* 4 */, FL_Up /* 8 */,
+    static const int table[11] = {FL_Home /* 7 */, FL_Left /* 4 */, FL_Up /* 8 */,
                             FL_Right /* 6 */, FL_Down /* 2 */, FL_Page_Up /* 9 */,
                             FL_Page_Down /* 3 */, FL_End /* 1 */, 0xff0b /* 5 */,
-                            FL_Insert /* 0 */};
+                            FL_Insert /* 0 */, FL_Delete /* ./, */};
     Fl::e_keysym = table[sym - XKB_KEY_KP_Home];
   }
   if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
