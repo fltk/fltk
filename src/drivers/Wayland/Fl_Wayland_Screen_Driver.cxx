@@ -721,13 +721,22 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
 //fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
   Fl::e_keysym = Fl::e_original_keysym = for_key_vector;
   if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Delete) {
-    // process keypad number keys when NumLock is off
+    // compute e_keysym for keypad number keys when NumLock is off
     static const int table[11] = {FL_Home /* 7 */, FL_Left /* 4 */, FL_Up /* 8 */,
                             FL_Right /* 6 */, FL_Down /* 2 */, FL_Page_Up /* 9 */,
                             FL_Page_Down /* 3 */, FL_End /* 1 */, 0xff0b /* 5 */,
                             FL_Insert /* 0 */, FL_Delete /* ./, */};
     Fl::e_keysym = table[sym - XKB_KEY_KP_Home];
   }
+  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Insert) {
+    // compute e_original_keysym for keypad number keys when NumLock is off
+    static const int table[10] = {0xffb7 /* 7 */, 0xffb4 /* 4 */, 0xffb8 /* 8 */,
+      0xffb6 /* 6 */, 0xffb2 /* 2 */, 0xffb9 /* 9 */,
+      0xffb3 /* 3 */, 0xffb1 /* 1 */, 0xffb5 /* 5 */,
+      0xffb0 /* 0 */};
+    Fl::e_original_keysym = table[sym - XKB_KEY_KP_Home];
+  }
+  //printf("e_keysym=%x e_original_keysym=%x\n", Fl::e_keysym, Fl::e_original_keysym);
   if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
     if (search_int_vector(key_vector, for_key_vector) < 0) {
       key_vector.push_back(for_key_vector);
