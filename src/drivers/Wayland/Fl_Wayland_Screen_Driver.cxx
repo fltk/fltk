@@ -1,7 +1,7 @@
 //
 // Implementation of Wayland Screen interface
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,6 +50,8 @@ extern "C" {
   bool fl_is_surface_gtk_titlebar(struct wl_surface *, struct libdecor *);
 }
 
+// set this to 1 for keyboard debug output, 0 for no debug output
+#define DEBUG_KEYBOARD 0
 
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
 #define fl_min(a,b) ((a) < (b) ? (a) : (b))
@@ -704,7 +706,6 @@ static dead_key_struct dead_keys[] = {
 
 const int dead_key_count = sizeof(dead_keys)/sizeof(struct dead_key_struct);
 
-
 static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, uint32_t time, uint32_t key, uint32_t state) {
   struct Fl_Wayland_Screen_Driver::seat *seat =
@@ -714,29 +715,37 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   uint32_t keycode;
   xkb_keysym_t sym;
   int for_key_vector = process_wld_key(seat->xkb_state, key, &keycode, &sym);
-/*xkb_keysym_get_name(sym, buf, sizeof(buf));
-const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
-fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface));*/
+#if (DEBUG_KEYBOARD)
+  xkb_keysym_get_name(sym, buf, sizeof(buf));
+  const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
+  fprintf(stderr, "wl_keyboard_key: key %s: sym: %-12s(%d) code:%u fl_win=%p, ",
+          action, buf, sym, keycode,
+          Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface));
+#endif
   xkb_state_key_get_utf8(seat->xkb_state, keycode, buf, sizeof(buf));
-//fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
+#if (DEBUG_KEYBOARD)
+  fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
+#endif
   Fl::e_keysym = Fl::e_original_keysym = for_key_vector;
   if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Delete) {
     // compute e_keysym for keypad number keys when NumLock is off
-    static const int table[11] = {FL_Home /* 7 */, FL_Left /* 4 */, FL_Up /* 8 */,
-                            FL_Right /* 6 */, FL_Down /* 2 */, FL_Page_Up /* 9 */,
-                            FL_Page_Down /* 3 */, FL_End /* 1 */, 0xff0b /* 5 */,
-                            FL_Insert /* 0 */, FL_Delete /* ./, */};
+    static const int table[11] = {FL_Home      /* 7 */, FL_Left   /* 4 */, FL_Up      /* 8 */,
+                                  FL_Right     /* 6 */, FL_Down   /* 2 */, FL_Page_Up /* 9 */,
+                                  FL_Page_Down /* 3 */, FL_End    /* 1 */, 0xff0b     /* 5 */,
+                                  FL_Insert    /* 0 */, FL_Delete /* ./, */};
     Fl::e_keysym = table[sym - XKB_KEY_KP_Home];
   }
-  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Insert) {
-    // compute e_original_keysym for keypad number keys when NumLock is off
-    static const int table[10] = {0xffb7 /* 7 */, 0xffb4 /* 4 */, 0xffb8 /* 8 */,
-      0xffb6 /* 6 */, 0xffb2 /* 2 */, 0xffb9 /* 9 */,
-      0xffb3 /* 3 */, 0xffb1 /* 1 */, 0xffb5 /* 5 */,
-      0xffb0 /* 0 */};
+  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Delete) {
+    // compute e_original_keysym for keypad keys when NumLock is off
+    static const int table[11] = {0xffb7 /* 7 */, 0xffb4 /* 4 */, 0xffb8 /* 8 */,
+                                  0xffb6 /* 6 */, 0xffb2 /* 2 */, 0xffb9 /* 9 */,
+                                  0xffb3 /* 3 */, 0xffb1 /* 1 */, 0xffb5 /* 5 */,
+                                  0xffb0 /* 0 */, 0xffac /* ./, */};
     Fl::e_original_keysym = table[sym - XKB_KEY_KP_Home];
   }
-  //printf("e_keysym=%x e_original_keysym=%x\n", Fl::e_keysym, Fl::e_original_keysym);
+#if (DEBUG_KEYBOARD)
+  fprintf(stderr, "wl_keyboard_key: e_keysym=%x e_original_keysym=%x\n", Fl::e_keysym, Fl::e_original_keysym);
+#endif
   if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
     if (search_int_vector(key_vector, for_key_vector) < 0) {
       key_vector.push_back(for_key_vector);
