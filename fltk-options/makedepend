@@ -24,6 +24,7 @@ fltk-options.o: ../FL/Fl_Hold_Browser.H
 fltk-options.o: ../FL/Fl_Image.H
 fltk-options.o: ../FL/Fl_Menu_.H
 fltk-options.o: ../FL/Fl_Menu_Item.H
+fltk-options.o: ../FL/Fl_Multi_Label.H
 fltk-options.o: ../FL/Fl_Pack.H
 fltk-options.o: ../FL/Fl_Pixmap.H
 fltk-options.o: ../FL/Fl_Plugin.H

@@ -1,7 +1,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -84,7 +84,6 @@ CPPFILES = \
 	Fl_Scrollbar.cxx \
 	Fl_Shared_Image.cxx \
 	Fl_Shortcut_Button.cxx \
-	Fl_Simple_Terminal.cxx \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
 	Fl_Spinner.cxx \
@@ -332,7 +331,7 @@ WLX11CPPFILES = \
 	fl_dnd_x.cxx \
 	Fl_get_key.cxx
 
-      
+
 #   fl_dnd_x.cxx  Fl_Native_File_Chooser_GTK.cxx
 
 # This C file is used under condition: BUILD_X11
@@ -353,7 +352,7 @@ XLIBFONTFILES = \
 XLIBXFTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
 	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-	
+
 # This C file is used under condition: BUILD_WAYLAND
 WLCFILES = \
         xutf8/keysym2Ucs.c \

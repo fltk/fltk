@@ -60,6 +60,7 @@ alignment_panel.o: ../FL/Fl_Light_Button.H
 alignment_panel.o: ../FL/Fl_Menu_.H
 alignment_panel.o: ../FL/Fl_Menu_Button.H
 alignment_panel.o: ../FL/Fl_Menu_Item.H
+alignment_panel.o: ../FL/Fl_Multi_Label.H
 alignment_panel.o: ../FL/Fl_Native_File_Chooser.H
 alignment_panel.o: ../FL/Fl_Pack.H
 alignment_panel.o: ../FL/Fl_Pixmap.H
@@ -123,6 +124,7 @@ align_widget.o: ../FL/Fl_Graphics_Driver.H
 align_widget.o: ../FL/Fl_Group.H
 align_widget.o: ../FL/Fl_Image.H
 align_widget.o: ../FL/Fl_Menu_Item.H
+align_widget.o: ../FL/Fl_Multi_Label.H
 align_widget.o: ../FL/Fl_Pack.H
 align_widget.o: ../FL/Fl_Pixmap.H
 align_widget.o: ../FL/Fl_Plugin.H
@@ -164,6 +166,7 @@ code.o: ../FL/Fl_Group.H
 code.o: ../FL/Fl_Image.H
 code.o: ../FL/Fl_Menu.H
 code.o: ../FL/Fl_Menu_Item.H
+code.o: ../FL/Fl_Multi_Label.H
 code.o: ../FL/Fl_Pack.H
 code.o: ../FL/Fl_Pixmap.H
 code.o: ../FL/Fl_Plugin.H
@@ -251,6 +254,7 @@ custom_widgets.o: ../FL/Fl_Light_Button.H
 custom_widgets.o: ../FL/Fl_Menu_.H
 custom_widgets.o: ../FL/Fl_Menu_Button.H
 custom_widgets.o: ../FL/Fl_Menu_Item.H
+custom_widgets.o: ../FL/Fl_Multi_Label.H
 custom_widgets.o: ../FL/Fl_Pack.H
 custom_widgets.o: ../FL/Fl_Pixmap.H
 custom_widgets.o: ../FL/Fl_Plugin.H
@@ -304,6 +308,7 @@ ExternalCodeEditor_UNIX.o: ../FL/fl_config.h
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Export.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Image.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Menu_Item.H
+ExternalCodeEditor_UNIX.o: ../FL/Fl_Multi_Label.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Preferences.H
 ExternalCodeEditor_UNIX.o: ../FL/fl_string_functions.h
 ExternalCodeEditor_UNIX.o: ../FL/fl_types.h
@@ -436,6 +441,7 @@ Fd_Snap_Action.o: ../FL/Fl_Menu_.H
 Fd_Snap_Action.o: ../FL/Fl_Menu_Bar.H
 Fd_Snap_Action.o: ../FL/Fl_Menu_Button.H
 Fd_Snap_Action.o: ../FL/Fl_Menu_Item.H
+Fd_Snap_Action.o: ../FL/Fl_Multi_Label.H
 Fd_Snap_Action.o: ../FL/Fl_Native_File_Chooser.H
 Fd_Snap_Action.o: ../FL/Fl_Pack.H
 Fd_Snap_Action.o: ../FL/Fl_Pixmap.H
@@ -518,6 +524,7 @@ file.o: ../FL/Fl_Menu_.H
 file.o: ../FL/Fl_Menu_Button.H
 file.o: ../FL/Fl_Menu_Item.H
 file.o: ../FL/fl_message.H
+file.o: ../FL/Fl_Multi_Label.H
 file.o: ../FL/Fl_Native_File_Chooser.H
 file.o: ../FL/Fl_Pack.H
 file.o: ../FL/Fl_Pixmap.H
@@ -609,6 +616,7 @@ fluid.o: ../FL/Fl_Menu_.H
 fluid.o: ../FL/Fl_Menu_Bar.H
 fluid.o: ../FL/Fl_Menu_Button.H
 fluid.o: ../FL/Fl_Menu_Item.H
+fluid.o: ../FL/Fl_Multi_Label.H
 fluid.o: ../FL/Fl_Native_File_Chooser.H
 fluid.o: ../FL/Fl_Pack.H
 fluid.o: ../FL/Fl_Paged_Device.H
@@ -723,6 +731,7 @@ Fluid_Image.o: ../FL/Fl_Light_Button.H
 Fluid_Image.o: ../FL/Fl_Menu_.H
 Fluid_Image.o: ../FL/Fl_Menu_Button.H
 Fluid_Image.o: ../FL/Fl_Menu_Item.H
+Fluid_Image.o: ../FL/Fl_Multi_Label.H
 Fluid_Image.o: ../FL/Fl_Pack.H
 Fluid_Image.o: ../FL/Fl_Pixmap.H
 Fluid_Image.o: ../FL/Fl_Plugin.H
@@ -771,6 +780,7 @@ Fl_Button_Type.o: ../FL/Fl_Group.H
 Fl_Button_Type.o: ../FL/Fl_Image.H
 Fl_Button_Type.o: ../FL/Fl_Light_Button.H
 Fl_Button_Type.o: ../FL/Fl_Menu_Item.H
+Fl_Button_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Button_Type.o: ../FL/Fl_Pack.H
 Fl_Button_Type.o: ../FL/Fl_Pixmap.H
 Fl_Button_Type.o: ../FL/Fl_Plugin.H
@@ -832,6 +842,7 @@ Fl_Function_Type.o: ../FL/Fl_Menu.H
 Fl_Function_Type.o: ../FL/Fl_Menu_.H
 Fl_Function_Type.o: ../FL/Fl_Menu_Button.H
 Fl_Function_Type.o: ../FL/Fl_Menu_Item.H
+Fl_Function_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Function_Type.o: ../FL/Fl_Pack.H
 Fl_Function_Type.o: ../FL/Fl_Pixmap.H
 Fl_Function_Type.o: ../FL/Fl_Plugin.H
@@ -899,6 +910,7 @@ Fl_Grid_Type.o: ../FL/Fl_Input.H
 Fl_Grid_Type.o: ../FL/Fl_Input_.H
 Fl_Grid_Type.o: ../FL/Fl_Menu_.H
 Fl_Grid_Type.o: ../FL/Fl_Menu_Item.H
+Fl_Grid_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Grid_Type.o: ../FL/Fl_Pack.H
 Fl_Grid_Type.o: ../FL/Fl_Pixmap.H
 Fl_Grid_Type.o: ../FL/Fl_Plugin.H
@@ -950,6 +962,7 @@ Fl_Group_Type.o: ../FL/Fl_Group.H
 Fl_Group_Type.o: ../FL/Fl_Image.H
 Fl_Group_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Group_Type.o: ../FL/fl_message.H
+Fl_Group_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Group_Type.o: ../FL/Fl_Pack.H
 Fl_Group_Type.o: ../FL/Fl_Pixmap.H
 Fl_Group_Type.o: ../FL/Fl_Plugin.H
@@ -1065,6 +1078,7 @@ Fl_Type.o: ../FL/Fl_Group.H
 Fl_Type.o: ../FL/Fl_Image.H
 Fl_Type.o: ../FL/Fl_Menu.H
 Fl_Type.o: ../FL/Fl_Menu_Item.H
+Fl_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Type.o: ../FL/Fl_Pack.H
 Fl_Type.o: ../FL/Fl_Pixmap.H
 Fl_Type.o: ../FL/Fl_Plugin.H
@@ -1138,6 +1152,7 @@ Fl_Widget_Type.o: ../FL/Fl_Menu_Bar.H
 Fl_Widget_Type.o: ../FL/Fl_Menu_Button.H
 Fl_Widget_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Widget_Type.o: ../FL/fl_message.H
+Fl_Widget_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Widget_Type.o: ../FL/Fl_Native_File_Chooser.H
 Fl_Widget_Type.o: ../FL/Fl_Pack.H
 Fl_Widget_Type.o: ../FL/Fl_Pixmap.H
@@ -1235,6 +1250,7 @@ Fl_Window_Type.o: ../FL/Fl_Menu_.H
 Fl_Window_Type.o: ../FL/Fl_Menu_Button.H
 Fl_Window_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Window_Type.o: ../FL/fl_message.H
+Fl_Window_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Window_Type.o: ../FL/Fl_Native_File_Chooser.H
 Fl_Window_Type.o: ../FL/Fl_Overlay_Window.H
 Fl_Window_Type.o: ../FL/Fl_Pack.H
@@ -1318,6 +1334,7 @@ function_panel.o: ../FL/Fl_Light_Button.H
 function_panel.o: ../FL/Fl_Menu_.H
 function_panel.o: ../FL/Fl_Menu_Button.H
 function_panel.o: ../FL/Fl_Menu_Item.H
+function_panel.o: ../FL/Fl_Multi_Label.H
 function_panel.o: ../FL/Fl_Pixmap.H
 function_panel.o: ../FL/Fl_Plugin.H
 function_panel.o: ../FL/Fl_Preferences.H
@@ -1469,6 +1486,7 @@ shell_command.o: ../FL/Fl_Menu_Bar.H
 shell_command.o: ../FL/Fl_Menu_Button.H
 shell_command.o: ../FL/Fl_Menu_Item.H
 shell_command.o: ../FL/fl_message.H
+shell_command.o: ../FL/Fl_Multi_Label.H
 shell_command.o: ../FL/Fl_Native_File_Chooser.H
 shell_command.o: ../FL/Fl_Pack.H
 shell_command.o: ../FL/Fl_Pixmap.H
@@ -1537,6 +1555,7 @@ sourceview_panel.o: ../FL/Fl_Input_.H
 sourceview_panel.o: ../FL/Fl_Light_Button.H
 sourceview_panel.o: ../FL/Fl_Menu_.H
 sourceview_panel.o: ../FL/Fl_Menu_Item.H
+sourceview_panel.o: ../FL/Fl_Multi_Label.H
 sourceview_panel.o: ../FL/Fl_Pixmap.H
 sourceview_panel.o: ../FL/Fl_Plugin.H
 sourceview_panel.o: ../FL/Fl_Preferences.H
@@ -1585,6 +1604,7 @@ template_panel.o: ../FL/Fl_Image.H
 template_panel.o: ../FL/Fl_Input.H
 template_panel.o: ../FL/Fl_Input_.H
 template_panel.o: ../FL/Fl_Menu_Item.H
+template_panel.o: ../FL/Fl_Multi_Label.H
 template_panel.o: ../FL/Fl_Preferences.H
 template_panel.o: ../FL/Fl_Return_Button.H
 template_panel.o: ../FL/Fl_Shared_Image.H
@@ -1618,6 +1638,7 @@ undo.o: ../FL/Fl_Image.H
 undo.o: ../FL/Fl_Menu_.H
 undo.o: ../FL/Fl_Menu_Bar.H
 undo.o: ../FL/Fl_Menu_Item.H
+undo.o: ../FL/Fl_Multi_Label.H
 undo.o: ../FL/Fl_Pixmap.H
 undo.o: ../FL/Fl_Plugin.H
 undo.o: ../FL/Fl_Preferences.H
@@ -1656,6 +1677,7 @@ widget_browser.o: ../FL/Fl_Export.H
 widget_browser.o: ../FL/Fl_Graphics_Driver.H
 widget_browser.o: ../FL/Fl_Image.H
 widget_browser.o: ../FL/Fl_Menu_Item.H
+widget_browser.o: ../FL/Fl_Multi_Label.H
 widget_browser.o: ../FL/Fl_Pixmap.H
 widget_browser.o: ../FL/Fl_Plugin.H
 widget_browser.o: ../FL/Fl_Preferences.H

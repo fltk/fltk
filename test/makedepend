@@ -179,6 +179,7 @@ boxtype.o: ../FL/Fl_Group.H
 boxtype.o: ../FL/Fl_Image.H
 boxtype.o: ../FL/Fl_Menu_.H
 boxtype.o: ../FL/Fl_Menu_Item.H
+boxtype.o: ../FL/Fl_Multi_Label.H
 boxtype.o: ../FL/Fl_Pixmap.H
 boxtype.o: ../FL/Fl_Plugin.H
 boxtype.o: ../FL/Fl_Preferences.H
@@ -212,6 +213,7 @@ browser.o: ../FL/Fl_Input_.H
 browser.o: ../FL/Fl_Int_Input.H
 browser.o: ../FL/Fl_Menu_.H
 browser.o: ../FL/Fl_Menu_Item.H
+browser.o: ../FL/Fl_Multi_Label.H
 browser.o: ../FL/Fl_Rect.H
 browser.o: ../FL/Fl_Scrollbar.H
 browser.o: ../FL/Fl_Select_Browser.H
@@ -250,6 +252,7 @@ buttons.o: ../FL/Fl_Image.H
 buttons.o: ../FL/Fl_Light_Button.H
 buttons.o: ../FL/Fl_Menu_.H
 buttons.o: ../FL/Fl_Menu_Item.H
+buttons.o: ../FL/Fl_Multi_Label.H
 buttons.o: ../FL/Fl_Repeat_Button.H
 buttons.o: ../FL/Fl_Return_Button.H
 buttons.o: ../FL/Fl_Round_Button.H
@@ -306,6 +309,7 @@ checkers.o: ../FL/Fl_Graphics_Driver.H
 checkers.o: ../FL/Fl_Group.H
 checkers.o: ../FL/Fl_Image.H
 checkers.o: ../FL/Fl_Menu_Item.H
+checkers.o: ../FL/Fl_Multi_Label.H
 checkers.o: ../FL/Fl_Pixmap.H
 checkers.o: ../FL/Fl_Plugin.H
 checkers.o: ../FL/Fl_PNG_Image.H
@@ -353,6 +357,7 @@ clipboard.o: ../FL/Fl_Light_Button.H
 clipboard.o: ../FL/Fl_Menu_.H
 clipboard.o: ../FL/Fl_Menu_Button.H
 clipboard.o: ../FL/Fl_Menu_Item.H
+clipboard.o: ../FL/Fl_Multi_Label.H
 clipboard.o: ../FL/Fl_Native_File_Chooser.H
 clipboard.o: ../FL/Fl_Pixmap.H
 clipboard.o: ../FL/Fl_Plugin.H
@@ -441,6 +446,7 @@ color_chooser.o: ../FL/Fl_Input.H
 color_chooser.o: ../FL/Fl_Input_.H
 color_chooser.o: ../FL/Fl_Menu_.H
 color_chooser.o: ../FL/Fl_Menu_Item.H
+color_chooser.o: ../FL/Fl_Multi_Label.H
 color_chooser.o: ../FL/Fl_Pixmap.H
 color_chooser.o: ../FL/Fl_Plugin.H
 color_chooser.o: ../FL/Fl_Preferences.H
@@ -482,6 +488,7 @@ contrast.o: ../FL/Fl_Input_.H
 contrast.o: ../FL/Fl_Light_Button.H
 contrast.o: ../FL/Fl_Menu_.H
 contrast.o: ../FL/Fl_Menu_Item.H
+contrast.o: ../FL/Fl_Multi_Label.H
 contrast.o: ../FL/Fl_Output.H
 contrast.o: ../FL/Fl_Pixmap.H
 contrast.o: ../FL/Fl_Plugin.H
@@ -523,6 +530,7 @@ cube.o: ../FL/Fl_Light_Button.H
 cube.o: ../FL/Fl_Menu_.H
 cube.o: ../FL/Fl_Menu_Bar.H
 cube.o: ../FL/Fl_Menu_Item.H
+cube.o: ../FL/Fl_Multi_Label.H
 cube.o: ../FL/Fl_Paged_Device.H
 cube.o: ../FL/Fl_Plugin.H
 cube.o: ../FL/Fl_Preferences.H
@@ -602,6 +610,7 @@ cursor.o: ../FL/Fl_Hor_Value_Slider.H
 cursor.o: ../FL/Fl_Image.H
 cursor.o: ../FL/Fl_Menu_.H
 cursor.o: ../FL/Fl_Menu_Item.H
+cursor.o: ../FL/Fl_Multi_Label.H
 cursor.o: ../FL/Fl_Pixmap.H
 cursor.o: ../FL/Fl_Plugin.H
 cursor.o: ../FL/Fl_Preferences.H
@@ -665,6 +674,7 @@ demo.o: ../FL/Fl_Image.H
 demo.o: ../FL/Fl_Menu_.H
 demo.o: ../FL/Fl_Menu_Button.H
 demo.o: ../FL/Fl_Menu_Item.H
+demo.o: ../FL/Fl_Multi_Label.H
 demo.o: ../FL/Fl_Rect.H
 demo.o: ../FL/Fl_Scheme.H
 demo.o: ../FL/Fl_Scheme_Choice.H
@@ -712,6 +722,7 @@ device.o: ../FL/Fl_Light_Button.H
 device.o: ../FL/Fl_Menu_.H
 device.o: ../FL/Fl_Menu_Button.H
 device.o: ../FL/Fl_Menu_Item.H
+device.o: ../FL/Fl_Multi_Label.H
 device.o: ../FL/Fl_Native_File_Chooser.H
 device.o: ../FL/Fl_Paged_Device.H
 device.o: ../FL/Fl_Pixmap.H
@@ -801,6 +812,7 @@ editor.o: ../FL/Fl_Menu_.H
 editor.o: ../FL/Fl_Menu_Bar.H
 editor.o: ../FL/Fl_Menu_Button.H
 editor.o: ../FL/Fl_Menu_Item.H
+editor.o: ../FL/Fl_Multi_Label.H
 editor.o: ../FL/Fl_Native_File_Chooser.H
 editor.o: ../FL/Fl_Pixmap.H
 editor.o: ../FL/Fl_Plugin.H
@@ -871,6 +883,7 @@ file_chooser.o: ../FL/Fl_Light_Button.H
 file_chooser.o: ../FL/Fl_Menu_.H
 file_chooser.o: ../FL/Fl_Menu_Button.H
 file_chooser.o: ../FL/Fl_Menu_Item.H
+file_chooser.o: ../FL/Fl_Multi_Label.H
 file_chooser.o: ../FL/Fl_PNM_Image.H
 file_chooser.o: ../FL/Fl_Preferences.H
 file_chooser.o: ../FL/Fl_Rect.H
@@ -974,6 +987,7 @@ fonts.o: ../FL/Fl_Light_Button.H
 fonts.o: ../FL/Fl_Menu_.H
 fonts.o: ../FL/Fl_Menu_Button.H
 fonts.o: ../FL/Fl_Menu_Item.H
+fonts.o: ../FL/Fl_Multi_Label.H
 fonts.o: ../FL/Fl_Pixmap.H
 fonts.o: ../FL/Fl_Plugin.H
 fonts.o: ../FL/Fl_Preferences.H
@@ -1028,6 +1042,7 @@ forms.o: ../FL/Fl_Light_Button.H
 forms.o: ../FL/Fl_Menu_.H
 forms.o: ../FL/Fl_Menu_Button.H
 forms.o: ../FL/Fl_Menu_Item.H
+forms.o: ../FL/Fl_Multi_Label.H
 forms.o: ../FL/Fl_Pixmap.H
 forms.o: ../FL/Fl_Plugin.H
 forms.o: ../FL/Fl_Positioner.H
@@ -1116,6 +1131,7 @@ fullscreen.o: ../FL/Fl_Light_Button.H
 fullscreen.o: ../FL/Fl_Menu_.H
 fullscreen.o: ../FL/Fl_Menu_Button.H
 fullscreen.o: ../FL/Fl_Menu_Item.H
+fullscreen.o: ../FL/Fl_Multi_Label.H
 fullscreen.o: ../FL/Fl_Scrollbar.H
 fullscreen.o: ../FL/Fl_Single_Window.H
 fullscreen.o: ../FL/Fl_Slider.H
@@ -1253,6 +1269,7 @@ icon.o: ../FL/Fl_Group.H
 icon.o: ../FL/Fl_Image.H
 icon.o: ../FL/Fl_Menu_.H
 icon.o: ../FL/Fl_Menu_Item.H
+icon.o: ../FL/Fl_Multi_Label.H
 icon.o: ../FL/Fl_RGB_Image.H
 icon.o: ../FL/fl_types.h
 icon.o: ../FL/fl_utf8.h
@@ -1316,6 +1333,7 @@ inactive.o: ../FL/Fl_Light_Button.H
 inactive.o: ../FL/Fl_Menu_.H
 inactive.o: ../FL/Fl_Menu_Button.H
 inactive.o: ../FL/Fl_Menu_Item.H
+inactive.o: ../FL/Fl_Multi_Label.H
 inactive.o: ../FL/Fl_Roller.H
 inactive.o: ../FL/Fl_Round_Button.H
 inactive.o: ../FL/Fl_Scrollbar.H
@@ -1349,6 +1367,7 @@ input.o: ../FL/Fl_Light_Button.H
 input.o: ../FL/Fl_Menu_.H
 input.o: ../FL/Fl_Menu_Item.H
 input.o: ../FL/Fl_Multiline_Input.H
+input.o: ../FL/Fl_Multi_Label.H
 input.o: ../FL/Fl_Rect.H
 input.o: ../FL/Fl_Return_Button.H
 input.o: ../FL/Fl_Scrollbar.H
@@ -1380,6 +1399,7 @@ input_choice.o: ../FL/Fl_Input_Choice.H
 input_choice.o: ../FL/Fl_Menu_.H
 input_choice.o: ../FL/Fl_Menu_Button.H
 input_choice.o: ../FL/Fl_Menu_Item.H
+input_choice.o: ../FL/Fl_Multi_Label.H
 input_choice.o: ../FL/Fl_Rect.H
 input_choice.o: ../FL/Fl_Scrollbar.H
 input_choice.o: ../FL/Fl_Terminal.H
@@ -1429,6 +1449,7 @@ label.o: ../FL/Fl_Input.H
 label.o: ../FL/Fl_Input_.H
 label.o: ../FL/Fl_Menu_.H
 label.o: ../FL/Fl_Menu_Item.H
+label.o: ../FL/Fl_Multi_Label.H
 label.o: ../FL/Fl_Pixmap.H
 label.o: ../FL/Fl_Plugin.H
 label.o: ../FL/Fl_Preferences.H
@@ -1465,6 +1486,7 @@ line_style.o: ../FL/Fl_Image.H
 line_style.o: ../FL/Fl_Light_Button.H
 line_style.o: ../FL/Fl_Menu_.H
 line_style.o: ../FL/Fl_Menu_Item.H
+line_style.o: ../FL/Fl_Multi_Label.H
 line_style.o: ../FL/Fl_Pixmap.H
 line_style.o: ../FL/Fl_Plugin.H
 line_style.o: ../FL/Fl_Preferences.H
@@ -1544,6 +1566,7 @@ menubar.o: ../FL/Fl_Menu_.H
 menubar.o: ../FL/Fl_Menu_Bar.H
 menubar.o: ../FL/Fl_Menu_Button.H
 menubar.o: ../FL/Fl_Menu_Item.H
+menubar.o: ../FL/Fl_Multi_Label.H
 menubar.o: ../FL/Fl_Pixmap.H
 menubar.o: ../FL/Fl_Plugin.H
 menubar.o: ../FL/Fl_Preferences.H
@@ -1631,6 +1654,7 @@ native-filechooser.o: ../FL/Fl_Menu_.H
 native-filechooser.o: ../FL/Fl_Menu_Button.H
 native-filechooser.o: ../FL/Fl_Menu_Item.H
 native-filechooser.o: ../FL/Fl_Multiline_Input.H
+native-filechooser.o: ../FL/Fl_Multi_Label.H
 native-filechooser.o: ../FL/Fl_Native_File_Chooser.H
 native-filechooser.o: ../FL/Fl_Pixmap.H
 native-filechooser.o: ../FL/Fl_Plugin.H
@@ -1832,6 +1856,7 @@ pixmap_browser.o: ../FL/Fl_Menu_.H
 pixmap_browser.o: ../FL/Fl_Menu_Button.H
 pixmap_browser.o: ../FL/Fl_Menu_Item.H
 pixmap_browser.o: ../FL/fl_message.H
+pixmap_browser.o: ../FL/Fl_Multi_Label.H
 pixmap_browser.o: ../FL/Fl_Native_File_Chooser.H
 pixmap_browser.o: ../FL/Fl_Paged_Device.H
 pixmap_browser.o: ../FL/Fl_Pixmap.H
@@ -1874,6 +1899,7 @@ preferences.o: ../FL/Fl_Int_Input.H
 preferences.o: ../FL/Fl_Light_Button.H
 preferences.o: ../FL/Fl_Menu_.H
 preferences.o: ../FL/Fl_Menu_Item.H
+preferences.o: ../FL/Fl_Multi_Label.H
 preferences.o: ../FL/Fl_Preferences.H
 preferences.o: ../FL/Fl_Round_Button.H
 preferences.o: ../FL/Fl_Slider.H
@@ -2163,6 +2189,7 @@ rotated_text.o: ../FL/Fl_Input.H
 rotated_text.o: ../FL/Fl_Input_.H
 rotated_text.o: ../FL/Fl_Menu_.H
 rotated_text.o: ../FL/Fl_Menu_Item.H
+rotated_text.o: ../FL/Fl_Multi_Label.H
 rotated_text.o: ../FL/Fl_Pixmap.H
 rotated_text.o: ../FL/Fl_Plugin.H
 rotated_text.o: ../FL/Fl_Preferences.H
@@ -2196,6 +2223,7 @@ scroll.o: ../FL/Fl_Image.H
 scroll.o: ../FL/Fl_Light_Button.H
 scroll.o: ../FL/Fl_Menu_.H
 scroll.o: ../FL/Fl_Menu_Item.H
+scroll.o: ../FL/Fl_Multi_Label.H
 scroll.o: ../FL/Fl_Pixmap.H
 scroll.o: ../FL/Fl_Plugin.H
 scroll.o: ../FL/Fl_Preferences.H
@@ -2248,6 +2276,7 @@ subwindow.o: ../FL/Fl_Input_.H
 subwindow.o: ../FL/Fl_Menu_.H
 subwindow.o: ../FL/Fl_Menu_Button.H
 subwindow.o: ../FL/Fl_Menu_Item.H
+subwindow.o: ../FL/Fl_Multi_Label.H
 subwindow.o: ../FL/Fl_Toggle_Button.H
 subwindow.o: ../FL/fl_types.h
 subwindow.o: ../FL/fl_utf8.h
@@ -2281,6 +2310,7 @@ sudoku.o: ../FL/Fl_Input_.H
 sudoku.o: ../FL/Fl_Menu_.H
 sudoku.o: ../FL/Fl_Menu_Bar.H
 sudoku.o: ../FL/Fl_Menu_Item.H
+sudoku.o: ../FL/Fl_Multi_Label.H
 sudoku.o: ../FL/Fl_Pixmap.H
 sudoku.o: ../FL/Fl_Plugin.H
 sudoku.o: ../FL/Fl_Preferences.H
@@ -2351,6 +2381,7 @@ table.o: ../FL/Fl_Input_.H
 table.o: ../FL/Fl_Light_Button.H
 table.o: ../FL/Fl_Menu_.H
 table.o: ../FL/Fl_Menu_Item.H
+table.o: ../FL/Fl_Multi_Label.H
 table.o: ../FL/Fl_Pixmap.H
 table.o: ../FL/Fl_Plugin.H
 table.o: ../FL/Fl_Preferences.H
@@ -2388,6 +2419,7 @@ tabs.o: ../FL/Fl_Input.H
 tabs.o: ../FL/Fl_Input_.H
 tabs.o: ../FL/Fl_Menu_.H
 tabs.o: ../FL/Fl_Menu_Item.H
+tabs.o: ../FL/Fl_Multi_Label.H
 tabs.o: ../FL/Fl_Return_Button.H
 tabs.o: ../FL/Fl_Tabs.H
 tabs.o: ../FL/fl_types.h
@@ -2418,6 +2450,7 @@ terminal.o: ../FL/Fl_Input_.H
 terminal.o: ../FL/Fl_Light_Button.H
 terminal.o: ../FL/Fl_Menu_.H
 terminal.o: ../FL/Fl_Menu_Item.H
+terminal.o: ../FL/Fl_Multi_Label.H
 terminal.o: ../FL/Fl_Rect.H
 terminal.o: ../FL/Fl_Repeat_Button.H
 terminal.o: ../FL/Fl_Scheme.H
@@ -2532,6 +2565,7 @@ tree.o: ../FL/Fl_Menu_.H
 tree.o: ../FL/Fl_Menu_Button.H
 tree.o: ../FL/Fl_Menu_Item.H
 tree.o: ../FL/fl_message.H
+tree.o: ../FL/Fl_Multi_Label.H
 tree.o: ../FL/Fl_Pixmap.H
 tree.o: ../FL/Fl_Plugin.H
 tree.o: ../FL/Fl_Preferences.H
@@ -2844,6 +2878,7 @@ unittest_schemes.o: ../FL/Fl_Input_.H
 unittest_schemes.o: ../FL/Fl_Light_Button.H
 unittest_schemes.o: ../FL/Fl_Menu_.H
 unittest_schemes.o: ../FL/Fl_Menu_Item.H
+unittest_schemes.o: ../FL/Fl_Multi_Label.H
 unittest_schemes.o: ../FL/Fl_Output.H
 unittest_schemes.o: ../FL/Fl_Pixmap.H
 unittest_schemes.o: ../FL/Fl_Plugin.H
@@ -3008,6 +3043,7 @@ unittest_unicode.o: ../FL/Fl_Input_.H
 unittest_unicode.o: ../FL/Fl_Menu_.H
 unittest_unicode.o: ../FL/Fl_Menu_Item.H
 unittest_unicode.o: ../FL/Fl_Multiline_Input.H
+unittest_unicode.o: ../FL/Fl_Multi_Label.H
 unittest_unicode.o: ../FL/Fl_Pixmap.H
 unittest_unicode.o: ../FL/Fl_Plugin.H
 unittest_unicode.o: ../FL/Fl_Preferences.H
@@ -3077,6 +3113,7 @@ utf8.o: ../FL/Fl_Input_.H
 utf8.o: ../FL/Fl_Light_Button.H
 utf8.o: ../FL/Fl_Menu_.H
 utf8.o: ../FL/Fl_Menu_Item.H
+utf8.o: ../FL/Fl_Multi_Label.H
 utf8.o: ../FL/Fl_Output.H
 utf8.o: ../FL/Fl_Pixmap.H
 utf8.o: ../FL/Fl_Plugin.H
