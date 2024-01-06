@@ -3,7 +3,7 @@
 //
 // This program is described in Chapter 4 of the FLTK Programmer's Guide.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,6 +16,294 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// Enable tutorial code for each chapter by adjusting this macro to match 
+// the chapter number.
+#define TUTORIAL_CHAPTER 5
+
+// ---- Tutorial Chapter 1 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 1
+
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl.H>
+
+Fl_Double_Window *app_window = NULL;
+
+void tut1_build_app_window() {
+  app_window = new Fl_Double_Window(640, 480, "FLTK Editor");
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 1
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 2 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 2
+
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/fl_ask.H>
+
+Fl_Menu_Bar *app_menu_bar = NULL;
+bool text_changed = false;
+
+void menu_quit_callback(Fl_Widget *, void *) {
+  if (text_changed) {
+    int c = fl_choice("Changes in your text have not been saved.\n"
+                      "Do you want to quit the editor anyway?",
+                      "Quit", "Cancel", NULL);
+    if (c == 1) return;
+  }
+  Fl::hide_all_windows();
+}
+
+void tut2_build_app_menu_bar() {
+  app_window->begin();
+  app_menu_bar = new Fl_Menu_Bar(0, 0, app_window->w(), 25);
+  app_menu_bar->add("File/Quit Editor", FL_COMMAND|'q', menu_quit_callback);
+  app_window->callback(menu_quit_callback);
+  app_window->end();
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 2
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 3 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 3
+
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Editor.H>
+#include <FL/filename.H>
+
+Fl_Text_Editor *app_editor = NULL;
+Fl_Text_Editor *app_split_editor = NULL; // for later
+Fl_Text_Buffer *app_text_buffer = NULL;
+char app_filename[FL_PATH_MAX] = "";
+
+void text_changed_callback(int, int, int, int, const char*, void*) {
+  text_changed = true;
+}
+
+void menu_new_callback(Fl_Widget*, void*) {
+  if (text_changed) {
+    int c = fl_choice("Changes in your text have not been saved.\n"
+                      "Do you want to start a new text anyway?",
+                      "New", "Cancel", NULL);
+    if (c == 1) return;
+  }
+  app_text_buffer->text("");
+  app_filename[0] = 0;
+  text_changed = false;
+}
+
+void tut3_build_main_editor() {
+  app_window->begin();
+  app_text_buffer = new Fl_Text_Buffer();
+  app_text_buffer->add_modify_callback(text_changed_callback, NULL);
+  app_editor = new Fl_Text_Editor(0, app_menu_bar->h(),
+    app_window->w(), app_window->h() - app_menu_bar->h());
+  app_editor->buffer(app_text_buffer);
+  app_window->resizable(app_editor);
+  app_window->end();
+  // find the Quit menu and insert the New menu before that one
+  int ix = app_menu_bar->find_index(menu_quit_callback);
+  app_menu_bar->insert(ix, "New", FL_COMMAND+'n', menu_new_callback);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 3
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 4 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 4
+
+#include <FL/Fl_Native_File_Chooser.H>
+#include <errno.h>
+
+void menu_save_as_callback(Fl_Widget*, void*) {
+  Fl_Native_File_Chooser file_chooser;
+  file_chooser.title("Save File As...");
+  file_chooser.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  if (app_filename[0]) {
+    char temp_filename[FL_PATH_MAX];
+    strncpy(temp_filename, app_filename, FL_PATH_MAX-1);
+    const char *name = fl_filename_name(temp_filename);
+    if (name) {
+      file_chooser.preset_file(name);
+      temp_filename[name - temp_filename] = 0;
+      file_chooser.directory(temp_filename);
+    }
+  }
+  if (file_chooser.show() == 0) {
+    if (app_text_buffer->savefile(file_chooser.filename()) == 0) {
+      strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
+      text_changed = false;
+    } else {
+      fl_alert("Failed to save file\n%s\n%s",
+               file_chooser.filename(),
+               strerror(errno));
+    }
+  }
+}
+
+void menu_save_callback(Fl_Widget*, void*) {
+  if (!app_filename[0]) {
+    menu_save_as_callback(NULL, NULL);
+  } else {
+    if (app_text_buffer->savefile(app_filename) == 0) {
+      text_changed = false;
+    } else {
+      fl_alert("Failed to save file\n%s\n%s",
+               app_filename,
+               strerror(errno));
+    }
+  }
+}
+
+void menu_open_callback(Fl_Widget*, void*) {
+  if (text_changed) {
+    int r = fl_choice("The current file has not been saved.\n"
+                      "Would you like to save it now?",
+                      "Cancel", "Save", "Don't Save");
+    if (r == 0) // cancel
+      return;
+    if (r == 1) // save
+      menu_save_callback(NULL, NULL);
+  }
+  Fl_Native_File_Chooser file_chooser;
+  file_chooser.title("Open File...");
+  file_chooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  if (app_filename[0]) {
+    char temp_filename[FL_PATH_MAX];
+    strncpy(temp_filename, app_filename, FL_PATH_MAX-1);
+    const char *name = fl_filename_name(temp_filename);
+    if (name) {
+      file_chooser.preset_file(name);
+      temp_filename[name - temp_filename] = 0;
+      file_chooser.directory(temp_filename);
+    }
+  }
+  if (file_chooser.show() == 0) {
+    if (app_text_buffer->loadfile(file_chooser.filename()) == 0) {
+      strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
+      text_changed = false;
+    } else {
+      fl_alert("Failed to load file\n%s\n%s",
+               file_chooser.filename(),
+               strerror(errno));
+    }
+  }
+}
+
+void tut4_add_file_support() {
+  int ix = app_menu_bar->find_index(menu_quit_callback);
+  app_menu_bar->insert(ix, "Open", FL_COMMAND+'o', menu_open_callback, NULL, FL_MENU_DIVIDER);
+  app_menu_bar->insert(ix+1, "Save", FL_COMMAND+'s', menu_save_callback);
+  app_menu_bar->insert(ix+2, "Save as...", FL_COMMAND+'S', menu_save_as_callback, NULL, FL_MENU_DIVIDER);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 4
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 5 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 5
+
+void menu_undo_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_undo(0, (Fl_Text_Editor*)e);
+}
+
+void menu_redo_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_redo(0, (Fl_Text_Editor*)e);
+}
+
+void menu_cut_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_cut(0, (Fl_Text_Editor*)e);
+}
+
+void menu_copy_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_copy(0, (Fl_Text_Editor*)e);
+}
+
+void menu_paste_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_paste(0, (Fl_Text_Editor*)e);
+}
+
+void menu_delete_callback(Fl_Widget*, void*) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_delete(0, (Fl_Text_Editor*)e);
+}
+
+void tut5_cut_copy_paste() {
+  app_menu_bar->add("Edit/Undo",   FL_COMMAND+'z', menu_undo_callback);
+  app_menu_bar->add("Edit/Redo",   FL_COMMAND+'Z', menu_redo_callback, NULL, FL_MENU_DIVIDER);
+  app_menu_bar->add("Edit/Cut",    FL_COMMAND+'x', menu_cut_callback);
+  app_menu_bar->add("Edit/Copy",   FL_COMMAND+'c', menu_copy_callback);
+  app_menu_bar->add("Edit/Paste",  FL_COMMAND+'v', menu_paste_callback);
+  app_menu_bar->add("Edit/Delete", 0,              menu_delete_callback);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 5
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 6 -----------------------------------------------------
+
+
+
+
+// Old "editor" code, used as a base for the remaining chapters
+#if 0
 //
 // Include necessary headers...
 //
@@ -976,3 +1264,5 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
+#endif
+
