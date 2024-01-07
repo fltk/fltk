@@ -14,31 +14,36 @@ Every chapter builds on the previous chapter. The documentation as well
 as the source code can be read sequentially, maintaining a consistent
 program structure while introducing additional features step by step.
 
+\note The tutorial uses a lot of global variables for the sake
+of brevity. Also, the order of code blocks is rather uncommon, but helps to
+keep related features within a chapter.
+
+<!-- ----------------------------------------------------- -->
 
 \section editor_goals Determining the Goals of the Text Editor
 
-Since this will be the first big project you'll be doing with FLTK,
-lets define what we want our text editor to do:
+Lets define what we want our text editor to do:
 
--# Provide a menubar/menus for all functions.
--# Edit a single text file.
+-# Edit a single text document
+-# Provide a menubar/menus for all functions
 -# Load from a file.
 -# Save to a file.
 -# Keep track of when the file has been changed.
 -# Cut/copy/delete/paste menus.
--# Search and replace functions.
+-# Search and replace functionality.
 -# Multiple views of the same text.
 -# "C" language syntax highlighting.
 
 <!-- NEED 4in -->
 
 
-\section editor_main_window Chapter 1: a minimal app
+<!-- ----------------------------------------------------- -->
+
+\section editor_main_window Chapter 1: A Minimal App
 
 Let's make sure that we can get our build process set up, so we can
-compile and verify our code while we add features. I like to do
-that by writing a minimal program that has no other purpose than
-opening a window.
+compile and verify our code while we add features. We start by writing a
+minimal program that has no other purpose than opening a window.
 
 The code for that is barely longer than a "Hello world" program
 and is marked in the source code as `TUTORIAL_CHAPTER = 1`.
@@ -49,8 +54,12 @@ and is marked in the source code as `TUTORIAL_CHAPTER = 1`.
 
 Fl_Double_Window *app_window = NULL;
 
-int main (int argc, char **argv) {
+void tut1_build_app_window() {
   app_window = new Fl_Double_Window(640, 480, "FLTK Editor");
+}
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
   app_window->show(argc, argv);
   return Fl::run();
 }
@@ -60,30 +69,31 @@ Passing `argc` and `argv` to `Fl_Double_Window::show()` allows FLTK
 to parse command line options, giving the user the ability to change
 the color or graphical scheme of the editor at launch time.
 
-`Fl::run()` will return when all windows in an app are closed,
-hidden, or deleted. Typing Escape or clicking the "close" button
-in the window frame will close the window and `Fl::run()` will return,
-effectively ending the app.
+`Fl::run()` will return when no more windows in the app are visible, i.e.
+if all windows in an app are closed, hidden, or deleted. Typing Escape or
+clicking the "Close" button in the window frame will close the window
+and `Fl::run()` will return, effectively ending the app.
 
-Both the Makefile and CMake environment include the necessary rules
-to build the editor. You can find more information on how to write
-your own Mafiles or CMake files in the README texts in the top
-FLTK directory.
+When building FLTK form source, the CMake environment includes the necessary
+rules to build the editor. You can find more information on how to write
+your own CMake files in the `README.CMake.txt` text in the top FLTK directory.
 
 For Linux and macOS, FLTK comes with the `fltk-config` script that
-generates the compiler commands for your:
+generates the compiler commands for you:
 
 \code
 fltk-config --compile editor.cxx
 \endcode
 
 If the code compiles and links correctly, running the app will
-pop up an empty application window on your desktop. You can close
+pop up an empty application window on the desktop screen. You can close
 the window and quit the app by pressing the Escape key or by clicking
 the "Close" button in the window frame.
 
 Congratulations, you've just built a minimal FLTK app.
 
+
+<!-- ----------------------------------------------------- -->
 
 \section editor_main_menu Chapter 2: Adding a Menu Bar
 
@@ -92,6 +102,16 @@ and a Quit button. This is a good time to define a flag that will
 track changes in the text later.
 
 \code
+\\ remove `main()` from chapter 1, but keep the rest of the code, then add...
+
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/fl_ask.H>
+
+Fl_Menu_Bar *app_menu_bar = NULL;
+bool text_changed = false;
+
+void menu_quit_callback(Fl_Widget *, void *) { /* TODO */ }
+
 void tut2_build_app_menu_bar() {
   app_window->begin();
   app_menu_bar = new Fl_Menu_Bar(0, 0, app_window->w(), 25);
@@ -99,10 +119,17 @@ void tut2_build_app_menu_bar() {
   app_window->callback(menu_quit_callback);
   app_window->end();
 }
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
 \endcode
 
 `begin()` tells FLTK to add all widgets that are created hereafter
-will be added to our app_window. In this particular case, it is redundant
+will be added to our `app_window`. In this particular case, it is redundant
 because creating the window in the previous chapter called `begin()`
 for us.
 
@@ -115,19 +142,23 @@ Our basic callback is simple:
 void menu_quit_callback(Fl_Widget *, void *) {
   Fl::hide_all_windows();
 }
-/endcode
-`Fl::hide_all_windows();` will tell `Fl::run()` to return and `main`
-to exit. I added a dialog box in the app that verifies if the user
-really wants to quit, even if text was changed.
+\endcode
 
-Assigning the window callback allows the `menu_quit_callback` to
-also manage the pressing of the Escape key in the app window. This callback
-is also the perfect time to remind the user if there are unsaved changes in
-our text, so let's add a flag for that and a popup dialog box in the callback.
+`Fl::hide_all_windows()` will make all windows invisible, causing `Fl::run()`
+to return and `main` to exit.
+
+The `menu_quit_callback` is actually used by two different widgets. The
+"Quit" menu item calls it, and `app_window` as well. Assigning the window
+callback remove the default "Escape" key handling and allows the
+`menu_quit_callback` to handle that keypress with a friendly dialog box
+instead of just quitting the app.
+
+One of our goals was to keep track of text changes. If we know the text changed
+and is unsaved, we should notify the user that she is about to lose her work.
+We do this by adding a dialog box in the Quit callback that queries if the
+user really wants to quit, even if text was changed:
 
 \code
-bool text_changed = false;
-...
 void menu_quit_callback(Fl_Widget *, void *) {
   if (text_changed) {
     int c = fl_choice("Changes in your text have not been saved.\n"
@@ -140,55 +171,82 @@ void menu_quit_callback(Fl_Widget *, void *) {
 \endcode
 
 
+<!-- ----------------------------------------------------- -->
+
 \section editor_text_widget Chapter 3: Adding a Text Editor widget
 
-To keep things simple our text editor will use the
-Fl_Text_Editor widget to edit the text.
-So that we can keep track of changes to the file, we also want to add
-a "modify" callback:
+FLTK comes with a pretty capable builtin text editing widget. We will use
+this `Fl_Text_Editor` widget here to allow users to edit their documents.
+
+`Fl_Text_Editor` needs an `Fl_Text_Buffer` to do anything useful. What seems
+like an unnecessary extra step is a great feature: we can assign one text
+buffer to multiple text editors. In a later chapter, we will use this
+feature to implement a split editor window.
 
 \code
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Editor.H>
+#include <FL/filename.H>
+
+Fl_Text_Editor *app_editor = NULL;
+Fl_Text_Editor *app_split_editor = NULL; // for later
+Fl_Text_Buffer *app_text_buffer = NULL;
+char app_filename[FL_PATH_MAX] = "";
+
+void tut3_build_main_editor() {
+  app_window->begin();
   app_text_buffer = new Fl_Text_Buffer();
   app_text_buffer->add_modify_callback(text_changed_callback, NULL);
   app_editor = new Fl_Text_Editor(0, app_menu_bar->h(),
     app_window->w(), app_window->h() - app_menu_bar->h());
   app_editor->buffer(app_text_buffer);
   app_window->resizable(app_editor);
-\endcode
-
-By setting the resizable, we ensure that resizing the window will
-resize the text editor as well, but restrict the menu bar to resize
-horizontally only.
-
-The text modify callback sets our `text_changed` flag:
-
-\code
-void text_changed_callback(int, int, int, int, const char*, void*) {
-  text_changed = true;
+  app_window->end();
 }
 \endcode
 
-Lastly, I added a "File/New" menu item to the main menu and gave
-it a callback that clears the text buffer, clears the current filename,
-and marks the buffer as unchanged.
+By setting the `app_editor` to be the `resizable()` of `app_window`, we make
+our application window resizable on the desktop, and we ensure that resizing
+the window will only resize the text editor vertically, but not our menu bar.
+
+To keep track of changes to the document, we add a callback to the text
+editor that will be called whenever text is added or deleted. The text modify
+callback sets our `text_changed` flag if text was added or deleted:
 
 \code
+// insert before tut3_build_main_editor()
+void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*, void*) {
+  if (n_inserted || n_deleted)
+    text_changed = true;
+}
+\endcode
+
+To wrap this chapter up, we add a "File/New" menu and link it to a callback
+clears the text buffer, clears the current filename, and marks the buffer as
+unchanged.
+
+\code
+// insert before tut3_build_main_editor()
 void menu_new_callback(Fl_Widget*, void*) {
   app_text_buffer->text("");
   text_changed = false;
 }
-...
-  // find the Quit menu and insert the New menu before that one
+
+// insert at the end of tut3_build_main_editor()
+  ...
+  // find the Quit menu and insert the New menu there
   int ix = app_menu_bar->find_index(menu_quit_callback);
   app_menu_bar->insert(ix, "New", FL_COMMAND+'n', menu_new_callback);
+  ...
 \endcode
 
 
+<!-- ----------------------------------------------------- -->
+
 \section editor_file_support Chapter 4: Reading and Writing Files
 
-In this chapter, we will add support for loading and saving text files.
-
-We need three more menu items in the File menu: Open, Save, and Save As.
+In this chapter, we will add support for loading and saving text files,
+so we need three more menu items in the File menu: Open, Save, and Save As.
 
 \code
   int ix = app_menu_bar->find_index(menu_quit_callback);
@@ -197,8 +255,15 @@ We need three more menu items in the File menu: Open, Save, and Save As.
   app_menu_bar->insert(ix+2, "Save as...", FL_COMMAND+'S', menu_save_as_callback, NULL, FL_MENU_DIVIDER);
 \endcode
 
-We implement the Save As callback first, because we may want to call that from
-the Open callback later. The basic callback is only a few lines of code:
+\note The menu shortcuts <TT>FL_COMMAND+'s'</TT> and <TT>FL_COMMAND+'S'</TT>
+look the same at a first glance, but the second shortcut is actually
+<TT>Ctrl-Shift-S</TT> due to the capital letter 'S'. Also, we use
+<TT>FL_COMMAND</TT> as our menu shortcut modifier key. <TT>FL_COMMAND</TT>
+translates to `FL_CTRL` on MSWindows and Linux, and to `FL_META` on macOS,
+better know as the cauliflower, or simply "the Apple key".
+
+We implement the Save As callback first, because we will want to call it from
+the Open callback later. The basic callback is only a few lines of code.
 
 \code
 void menu_save_as_callback(Fl_Widget*, void*) {
@@ -219,6 +284,7 @@ litte chunk of code will separate the file name from the path before we call
 `file_chooser.show()`:
 
 \code
+// insert before `if (file_chooser.show()...`
   if (app_filename[0]) {
     char temp_filename[FL_PATH_MAX];
     strncpy(temp_filename, app_filename, FL_PATH_MAX-1);
@@ -232,7 +298,8 @@ litte chunk of code will separate the file name from the path before we call
 \endcode
 
 Great. Now let's add code to save a file, and if no filename was set yet,
-it can fall back to our Save As callback:
+it can fall back to our Save As callback. `Fl_Text_Editor::savefile()` writes
+the contents of our text widget into a UTF-8 encoded text file.
 
 \code
 void menu_save_callback(Fl_Widget*, void*) {
@@ -263,9 +330,7 @@ void menu_open_callback(Fl_Widget*, void*) {
 \endcode
 
 If the user did not cancel the operation, we pop up a file chooser for
-loading the file, using similar code as in Save As. I did not clear the
-`app_filename`, so I can offer to load a file from the previously used
-directory:
+loading the file, using similar code as in Save As.
 
 \code
   Fl_Native_File_Chooser file_chooser;
@@ -291,8 +356,8 @@ directory:
 
 A well behaved app must warn the user if file operations fail. This can be
 done in three lines of code, so let's add an alert dialog after ever `loadfile`
-ans `savefile` call. This is for the `menu_save_as_callback`. I will leave
-the other two callbacks to you:
+ans `savefile` call. This is exemplary for `menu_save_as_callback`, and the
+code is very similar for the two other locations.
 
 \code
     if (app_text_buffer->savefile(file_chooser.filename()) == 0) {
@@ -305,10 +370,13 @@ the other two callbacks to you:
     }
 \endcode
 
-Phew. I think we put a pretty nice text editor app together in less than
-100 lines of code. The following chapter add some user convenience and show
-off some FLTK features including split editors and syntax highlighting.
+We were able to but a basic but functional text editor app in less than
+100 lines of code. The following chapters add some user convenience
+functions and show off some FLTK features including split editors and
+syntax highlighting.
 
+
+<!-- ----------------------------------------------------- -->
 
 \section editor_cut_copy_paste Chapter 5: Cut, Copy, and Paste
 
@@ -318,7 +386,7 @@ as menu items in the main menu.
 
 In our feature list, we noted that we want to implement a split
 text editor. This requires that the callbacks know which text editor
-has the keyboard focus. Calling `Fl::focus()` may return NULL or
+has the keyboard focus. Calling `Fl::focus()` may return `NULL` or
 other unknown widgets, so we add a little test in our callbacks:
 
 \code
@@ -327,19 +395,348 @@ void menu_cut_callback(Fl_Widget*, void* v) {
   if (e && (e == app_editor || e == app_split_editor))
     Fl_Text_Editor::kf_cut(0, (Fl_Text_Editor*)e);
 }
-...
-  app_menu_bar->add("Edit/Cut", FL_COMMAND+'x', menu_cut_callback);
+\endcode
+
+We can write very similar callbacks for undo, redo, copy, paste, and delete.
+Adding a new menu and the six menu items follows the same pattern as
+before. Using the Menu/Item notation will create an Edit menu for us:
+
+\code
+void tut5_cut_copy_paste() {
+  app_menu_bar->add("Edit/Undo",   FL_COMMAND+'z', menu_undo_callback);
+  app_menu_bar->add("Edit/Redo",   FL_COMMAND+'Z', menu_redo_callback, NULL, FL_MENU_DIVIDER);
+  app_menu_bar->add("Edit/Cut",    FL_COMMAND+'x', menu_cut_callback);
+  app_menu_bar->add("Edit/Copy",   FL_COMMAND+'c', menu_copy_callback);
+  app_menu_bar->add("Edit/Paste",  FL_COMMAND+'v', menu_paste_callback);
+  app_menu_bar->add("Edit/Delete", 0,              menu_delete_callback);
+}
 \endcode
 
 
-\section editor_find_and_replace Chapter 6: Find and Replace
+<!-- ----------------------------------------------------- -->
 
-\section editor_split_editor Chapter 7: Split Editor
+\section editor_find Chapter 6: Find and Find Next
 
-\section editor_syntax_highlighting Chapter 8: Syntax Highlighting
+Corporate called. They want a dialog box for their users that can search
+for some word in the text file easily. We can add this functionality using
+a callback and a standard FLTK dialog box.
+
+Here is some code to find a string in a text editor. The first four lines
+make sure that we start our search at the cursor position of the current
+editor window. The rest of the code searches the string and marks it
+if found.
+
+\code
+void find_next(const char *needle) {
+  Fl_Text_Editor *editor = app_editor;
+  Fl_Widget *e = Fl::focus();
+  if (e && e == app_split_editor)
+    editor = app_split_editor;
+  int pos = editor->insert_position();
+  int found = app_text_buffer->search_forward(pos, needle, &pos);
+  if (found) {
+    app_text_buffer->select(pos, pos + (int)strlen(needle));
+    editor->insert_position(pos + (int)strlen(needle));
+    editor->show_insert_position();
+  } else {
+    fl_alert("No further occurrences of \'%s\' found!", needle);
+  }
+}
+\endcode
+
+The callbacks are short, using the FLTK text field dialog box and the
+`find_next` function that we already implemented. The last searched text
+is saved in `last_find_text` to be reused by `menu_find_next_callback`.
+If no serach text was set yet, or it was set to an empty text, "Finde Next"
+will forward to `menu_find_callback` and pop up our "Find Text" dialog.
+
+\code
+char last_find_text[1024] = "";
+
+void menu_find_callback(Fl_Widget*, void* v) {
+  const char *find_text = fl_input("Find in text:", last_find_text);
+  if (find_text) {
+    strncpy(last_find_text, find_text, sizeof(last_find_text)-1);
+    find_next(find_text);
+  }
+}
+
+void menu_find_next_callback(Fl_Widget*, void* v) {
+  if (last_find_text[0]) {
+    find_next(last_find_text);
+  } else {
+    menu_find_callback(NULL, NULL);
+  }
+}
+\endcode
+
+And of course we need to add two menu items to our main application menu.
+
+\code
+  ...
+  app_menu_bar->add("Find/Find...",   FL_COMMAND+'f', menu_find_callback);
+  app_menu_bar->add("Find/Find Next", FL_COMMAND+'g', menu_find_next_callback, NULL, FL_MENU_DIVIDER);
+  ...
+\endcode
+
+
+<!-- ----------------------------------------------------- -->
+
+\section editor_replace Chapter 7: Replace and Replace Next
+
+To implement the next feature, we will need to implement our own "Find
+and Replace" dialog box. To make this dialog box useful, it needs the
+following elements:
+
+- a text input field for the text that we want to find
+- a text input field for the replacement text
+- a button to find the next occurrence
+- a button to replace the current text and find the next occurrence
+- a button to close the dialog
+
+This is rather complex functionality, so instead of adding more global
+variables, we will pack this dialog into a class, derived from `Fl_Window`.
+
+\note The tutorial uses `Fl_Double_Window` instead of `Fl_Window` throughout.
+Historically, on some platforms, `Fl_Window` renders faster, but has a
+tendency to flicker. In today's world, this has very little relevance and
+FLTK optimizes both window types. `Fl_Double_Window` is recommended unless
+there is a specific reason to use `Fl_Window`.
+
+Let's implement the text replacement code first:
+
+\code
+char last_replace_text[1024] = "";
+
+void replace_selection(const char *new_text) {
+  Fl_Text_Editor *editor = app_editor;
+  Fl_Widget *e = Fl::focus();
+  if (e && e == app_split_editor)
+    editor = app_split_editor;
+  int start, end;
+  if (app_text_buffer->selection_position(&start, &end)) {
+    app_text_buffer->remove_selection();
+    app_text_buffer->insert(start, new_text);
+    app_text_buffer->select(start, start + (int)strlen(new_text));
+    editor->insert_position(start + (int)strlen(new_text));
+    editor->show_insert_position();
+  }
+}
+\endcode
+
+As before, the first four lines anticipate a split editor and find the
+editor that has focus. The code then deletes the currently selected
+text, replace it with the new text, selects the new text, and finally
+sets the text cursor to the end of the new text.
+
+<H3>The Replace_Dialog class</H3>
+
+The Replace_Dialog class holds pointers to our active UI elements as
+well as all the callbacks for the dialog buttons.
+
+\code
+class Replace_Dialog : public Fl_Double_Window {
+  Fl_Input* find_text_input;
+  Fl_Input* replace_text_input;
+  Fl_Button* find_next_button;
+  Fl_Button* replace_and_find_button;
+  Fl_Button* close_button;
+public:
+  Replace_Dialog(const char *label);
+  void show() FL_OVERRIDE;
+private:
+  static void find_next_callback(Fl_Widget*, void*);
+  static void replace_and_find_callback(Fl_Widget*, void*);
+  static void close_callback(Fl_Widget*, void*);
+};
+
+Replace_Dialog *replace_dialog = NULL;
+\endcode
+
+The constructor creates the dialog and marks it as "non modal". This will
+make the dialog hover over the application window like a toolbox window until
+the user closes it, allowing multiple "find and replace" operations. So here
+is our constructor:
+
+\code
+Replace_Dialog::Replace_Dialog(const char *label)
+: Fl_Double_Window(430, 110, label)
+{
+  find_text_input = new Fl_Input(100, 10, 320, 25, "Find:");
+  replace_text_input = new Fl_Input(100, 40, 320, 25, "Replace:");
+  Fl_Flex* button_field = new Fl_Flex(100, 70, w()-100, 40);
+  button_field->type(Fl_Flex::HORIZONTAL);
+  button_field->margin(0, 5, 10, 10);
+  button_field->gap(10);
+  find_next_button = new Fl_Button(0, 0, 0, 0, "Next");
+  find_next_button->callback(find_next_callback, this);
+  replace_and_find_button = new Fl_Button(0, 0, 0, 0, "Replace");
+  replace_and_find_button->callback(replace_and_find_callback, this);
+  close_button = new Fl_Button(0, 0, 0, 0, "Close");
+  close_button->callback(close_callback, this);
+  button_field->end();
+  set_non_modal();
+}
+\endcode
+
+All buttons are created inside an `Fl_Flex` group. They will be arranged
+automatically by `Fl_Flex`, so there is no need to set x and y coordinates
+or width or a height. `button_field` will lay out the buttons for us.
+
+The `show()` method overrides the window's show method. It adds some code to
+preload the values of the text fields for added convenience. It then pops up
+the dialog box by calling the original `Fl_Double_Window::show()`.
+
+\code
+void Replace_Dialog::show() {
+  find_text_input->value(last_find_text);
+  replace_text_input->value(last_replace_text);
+  Fl_Double_Window::show();
+}
+\endcode
+
+The buttons in the dialog need callbacks to be useful. If callbacks are
+defined within a class, they must be defined `static`, but a pointer to the
+class can be provided through the `user_data` field. We have done that in
+the constructor by adding `this` as the last argument when setting the
+callback, for example in `close_button->callback(close_callback, this);`.
+
+The callback itself can the extract the `this` pointer with a static cast:
+
+\code
+void Replace_Dialog::close_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  dlg->hide();
+}
+\endcode
+
+The callback for the Find button uses our already implemented `find_next`
+function:
+
+\code
+void Replace_Dialog::find_next_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  strncpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text)-1);
+  strncpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text)-1);
+  if (last_find_text[0])
+    find_next(last_find_text);
+}
+\endcode
+
+The Replace button callback calls our newly implemented `replace_selection`
+function and then continues on to the `find_next_callback`:
+
+\code
+void Replace_Dialog::replace_and_find_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  replace_selection(dlg->replace_text_input->value());
+  find_next_callback(NULL, my_dialog);
+}
+\endcode
+
+This long chapter comes close to its end. We are missing menu items that pop
+up our dialog and that allow a quick "Replace and Find Next" functionality
+without popping up a dialog. The code is quite similar to the "Find" and
+"Find Next" code in the previous chapter:
+
+\code
+void menu_replace_callback(Fl_Widget*, void*) {
+  if (!replace_dialog)
+    replace_dialog = new Replace_Dialog("Find and Replace");
+  replace_dialog->show();
+}
+
+void menu_replace_next_callback(Fl_Widget*, void*) {
+  if (!last_find_text[0]) {
+    menu_replace_callback(NULL, NULL);
+  } else {
+    replace_selection(last_replace_text);
+    find_next(last_find_text);
+  }
+}
+
+void tut7_implement_replace() {
+  app_menu_bar->add("Find/Replace...",   FL_COMMAND+'r', menu_replace_callback);
+  app_menu_bar->add("Find/Replace Next", FL_COMMAND+'t', menu_replace_next_callback);
+}
+\endcode
 
 
 
+<!-- ----------------------------------------------------- -->
+
+\section editor_editor_features Chapter 8: Editor Features
+
+Chapter 7 was long an intense. Let's relax and implement something simple here.
+We want menus with check boxes that can toggle some text editor features on
+and off:
+
+\code
+void tut8_editor_features() {
+  app_menu_bar->add("Window/Line Numbers", FL_COMMAND+'l', menu_linenumbers_callback, NULL, FL_MENU_TOGGLE);
+  app_menu_bar->add("Window/Word Wrap", 0, menu_wordwrap_callback, NULL, FL_MENU_TOGGLE);
+}
+\endcode
+
+The `Fl_Widget` parameter in callbacks always points to the widget that causes
+the callback. Menu items are not derived from widgets, so to find out which
+menu item caused a callback, we can do this:
+
+\code
+void menu_linenumbers_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* linenumber_item = menu->mvalue();
+  if (linenumber_item->value()) {
+    app_editor->linenumber_width(40);
+  } else {
+    app_editor->linenumber_width(0);
+  }
+  app_editor->redraw();
+}
+\endcode
+
+Setting the width enables the line numbers, setting it to 0 disables the
+line number display. When changing the value of a widget, FLTK will make sure
+that the widget is redrawn to reflect the new value. When changing other
+attributes such as colors or fonts, FLTK assumes that many attributes are
+changed at the same time and leaves it to the user to call
+`Fl_Widget::redraw()` when done. Here we call `app_editor->redraw()` to make
+sure that the change in the line number setting is also drawn on screen.
+
+Let's not forget to update the line number display
+for a potential split editor widget es well:
+
+\code
+  // add before the end of menu_linenumbers_callback
+  if (app_split_editor) {
+    if (linenumber_item->value()) {
+      app_split_editor->linenumber_width(40);
+    } else {
+      app_split_editor->linenumber_width(0);
+    }
+    app_split_editor->redraw();
+  }
+\endcode
+
+The word wrap feature is activated by calling `Fl_Text_Editor::wrap_mode()`
+with the parameters `Fl_Text_Display::WRAP_AT_BOUNDS` and `0`. It's
+deactivated with `Fl_Text_Display::WRAP_NONE`. The implementation of
+the callback is the same as `menu_linenumbers_callback`.
+
+
+<!-- ----------------------------------------------------- -->
+
+\section editor_split_editor Chapter 9: Split Editor
+
+
+<!-- ----------------------------------------------------- -->
+
+\section editor_syntax_highlighting Chapter 9: Syntax Highlighting
+
+
+
+<!-- ----------------------------------------------------- -->
+<!-- ----------------------------------------------------- -->
 
 <!--
 \section editor_main_window Designing the Main Window

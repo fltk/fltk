@@ -18,7 +18,7 @@
 
 // Enable tutorial code for each chapter by adjusting this macro to match 
 // the chapter number.
-#define TUTORIAL_CHAPTER 5
+#define TUTORIAL_CHAPTER 8
 
 // ---- Tutorial Chapter 1 -----------------------------------------------------
 #if TUTORIAL_CHAPTER >= 1
@@ -92,8 +92,9 @@ Fl_Text_Editor *app_split_editor = NULL; // for later
 Fl_Text_Buffer *app_text_buffer = NULL;
 char app_filename[FL_PATH_MAX] = "";
 
-void text_changed_callback(int, int, int, int, const char*, void*) {
-  text_changed = true;
+void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*, void*) {
+  if (n_inserted || n_deleted)
+    text_changed = true;
 }
 
 void menu_new_callback(Fl_Widget*, void*) {
@@ -117,7 +118,7 @@ void tut3_build_main_editor() {
   app_editor->buffer(app_text_buffer);
   app_window->resizable(app_editor);
   app_window->end();
-  // find the Quit menu and insert the New menu before that one
+  // find the Quit menu and insert the New menu there
   int ix = app_menu_bar->find_index(menu_quit_callback);
   app_menu_bar->insert(ix, "New", FL_COMMAND+'n', menu_new_callback);
 }
@@ -298,6 +299,248 @@ int main (int argc, char **argv) {
 
 #endif
 // ---- Tutorial Chapter 6 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 6
+
+char last_find_text[1024] = "";
+
+bool find_next(const char *needle) {
+  Fl_Text_Editor *editor = app_editor;
+  Fl_Widget *e = Fl::focus();
+  if (e && e == app_split_editor)
+    editor = app_split_editor;
+  int pos = editor->insert_position();
+  int found = app_text_buffer->search_forward(pos, needle, &pos);
+  if (found) {
+    app_text_buffer->select(pos, pos + (int)strlen(needle));
+    editor->insert_position(pos + (int)strlen(needle));
+    editor->show_insert_position();
+    return true;
+  } else {
+    fl_alert("No further occurrences of \'%s\' found!", needle);
+    return false;
+  }
+}
+
+void menu_find_callback(Fl_Widget*, void* v) {
+  const char *find_text = fl_input("Find in text:", last_find_text);
+  if (find_text) {
+    strncpy(last_find_text, find_text, sizeof(last_find_text)-1);
+    find_next(find_text);
+  }
+}
+
+void menu_find_next_callback(Fl_Widget*, void* v) {
+  if (last_find_text[0]) {
+    find_next(last_find_text);
+  } else {
+    menu_find_callback(NULL, NULL);
+  }
+}
+
+void tut6_implement_find() {
+  app_menu_bar->add("Find/Find...",   FL_COMMAND+'f', menu_find_callback);
+  app_menu_bar->add("Find/Find Next", FL_COMMAND+'g', menu_find_next_callback, NULL, FL_MENU_DIVIDER);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 6
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 7 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 7
+
+#include <FL/Fl_Flex.H>
+
+char last_replace_text[1024] = "";
+
+void replace_selection(const char *new_text) {
+  Fl_Text_Editor *editor = app_editor;
+  Fl_Widget *e = Fl::focus();
+  if (e && e == app_split_editor)
+    editor = app_split_editor;
+  int start, end;
+  if (app_text_buffer->selection_position(&start, &end)) {
+    app_text_buffer->remove_selection();
+    app_text_buffer->insert(start, new_text);
+    app_text_buffer->select(start, start + (int)strlen(new_text));
+    editor->insert_position(start + (int)strlen(new_text));
+    editor->show_insert_position();
+  }
+}
+
+class Replace_Dialog : public Fl_Double_Window {
+  Fl_Input* find_text_input;
+  Fl_Input* replace_text_input;
+  Fl_Button* find_next_button;
+  Fl_Button* replace_and_find_button;
+  Fl_Button* close_button;
+public:
+  Replace_Dialog(const char *label);
+  void show() FL_OVERRIDE;
+private:
+  static void find_next_callback(Fl_Widget*, void*);
+  static void replace_and_find_callback(Fl_Widget*, void*);
+  static void close_callback(Fl_Widget*, void*);
+};
+
+Replace_Dialog *replace_dialog = NULL;
+
+Replace_Dialog::Replace_Dialog(const char *label)
+: Fl_Double_Window(430, 110, label)
+{
+  find_text_input = new Fl_Input(100, 10, 320, 25, "Find:");
+  replace_text_input = new Fl_Input(100, 40, 320, 25, "Replace:");
+  Fl_Flex* button_field = new Fl_Flex(100, 70, w()-100, 40);
+  button_field->type(Fl_Flex::HORIZONTAL);
+  button_field->margin(0, 5, 10, 10);
+  button_field->gap(10);
+  find_next_button = new Fl_Button(0, 0, 0, 0, "Next");
+  find_next_button->callback(find_next_callback, this);
+  replace_and_find_button = new Fl_Button(0, 0, 0, 0, "Replace");
+  replace_and_find_button->callback(replace_and_find_callback, this);
+  close_button = new Fl_Button(0, 0, 0, 0, "Close");
+  close_button->callback(close_callback, this);
+  button_field->end();
+  set_non_modal();
+}
+
+void Replace_Dialog::show() {
+  find_text_input->value(last_find_text);
+  replace_text_input->value(last_replace_text);
+  Fl_Double_Window::show();
+}
+
+void Replace_Dialog::find_next_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  strncpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text)-1);
+  strncpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text)-1);
+  if (last_find_text[0])
+    find_next(last_find_text);
+}
+
+void Replace_Dialog::replace_and_find_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  replace_selection(dlg->replace_text_input->value());
+  find_next_callback(NULL, my_dialog);
+}
+
+void Replace_Dialog::close_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  dlg->hide();
+}
+
+void menu_replace_callback(Fl_Widget*, void*) {
+  if (!replace_dialog)
+    replace_dialog = new Replace_Dialog("Find and Replace");
+  replace_dialog->show();
+}
+
+void menu_replace_next_callback(Fl_Widget*, void*) {
+  if (!last_find_text[0]) {
+    menu_replace_callback(NULL, NULL);
+  } else {
+    replace_selection(last_replace_text);
+    find_next(last_find_text);
+  }
+}
+
+void tut7_implement_replace() {
+  app_menu_bar->add("Find/Replace...",   FL_COMMAND+'r', menu_replace_callback);
+  app_menu_bar->add("Find/Replace Next", FL_COMMAND+'t', menu_replace_next_callback);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 7
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  tut7_implement_replace();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 8 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 8
+
+#include <FL/Fl_Menu_Item.H>
+
+void menu_linenumbers_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* linenumber_item = menu->mvalue();
+  if (linenumber_item->value()) {
+    app_editor->linenumber_width(40);
+  } else {
+    app_editor->linenumber_width(0);
+  }
+  app_editor->redraw();
+  if (app_split_editor) {
+    if (linenumber_item->value()) {
+      app_split_editor->linenumber_width(40);
+    } else {
+      app_split_editor->linenumber_width(0);
+    }
+    app_split_editor->redraw();
+  }
+}
+
+void menu_wordwrap_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* wordwrap_item = menu->mvalue();
+  if (wordwrap_item->value()) {
+    app_editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+  } else {
+    app_editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+  }
+  app_editor->redraw();
+  if (app_split_editor) {
+    if (wordwrap_item->value()) {
+      app_split_editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+    } else {
+      app_split_editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+    }
+    app_split_editor->redraw();
+  }
+}
+
+void tut8_editor_features() {
+  app_menu_bar->add("Window/Line Numbers", FL_COMMAND+'l', menu_linenumbers_callback, NULL, FL_MENU_TOGGLE);
+  app_menu_bar->add("Window/Word Wrap", 0, menu_wordwrap_callback, NULL, FL_MENU_TOGGLE);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 8
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  tut7_implement_replace();
+  tut8_editor_features();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
 
 
 
