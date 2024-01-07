@@ -728,594 +728,97 @@ the callback is the same as `menu_linenumbers_callback`.
 
 \section editor_split_editor Chapter 9: Split Editor
 
+When editing long source code files, it can be really helpful to split
+the editor and change include statements at the top of the text while
+adding features at the bottom of the text in a split text view.
+
+FLTK can link multiple text editors to a single text buffer. Let's implement
+this now. This chapter will show you how to rearrange widgets in an existing
+widget tree.
+
+Our initializer removes the main text editor from the widget three, and
+replaces it with an `Fl_Tile`. A tile can hold multiple widgets that can
+then be resized interactively by the user by clicking and dragging the divider
+between those widgets.
+
+We start by replacing the editor widget with a tile group of the same size.
+
+\code
+#include <FL/Fl_Tile.H>
+
+Fl_Tile *app_tile = NULL;
+
+void tut9_split_editor() {
+  app_window->begin();
+  app_tile = new Fl_Tile(app_editor->x(), app_editor->y(),
+                          app_editor->w(), app_editor->h());
+  app_window->remove(app_editor);
+\endcode
+
+Next we add the editor as the first child of the tile and create another
+text editor `app_split_editor` as the second child of the tile, but it's
+hidden for now with a height of zero pixels.
+
+\note Creating the new `Fl_Tile` also calls `Fl_Tile::begin()`.
+<BR><BR>Adding `app_editor` to the tile would have also removed if from
+`app_window`, so `app_window->remove(app_editor)` in the code above is not
+really needed, but illustrates what we are doing.
+
+\code
+  app_tile->add(app_editor);
+  app_split_editor = new Fl_Text_Editor(app_tile->x(), app_tile->y()+app_tile->h(),
+                                        app_tile->w(), app_tile->h());
+  app_split_editor->buffer(app_text_buffer);
+  app_split_editor->hide();
+\endcode
+
+Now we clean up after ourseleves and make sure that the resizables are all
+set correctly. Lastly, we add a menu item with a callback.
+
+\code
+  app_tile->end();
+  app_tile->size_range(0, 25, 25);
+  app_tile->size_range(1, 25, 25);
+  app_window->end();
+  app_window->resizable(app_tile);
+  app_tile->resizable(app_editor);
+  app_menu_bar->add("Window/Split", FL_COMMAND+'-', menu_split_callback, NULL, FL_MENU_TOGGLE);
+}
+\endcode
+
+Now with all widgets in place, the callback's job is to show and resize, or
+hide and resize the split editor. We can implement that like here:
+
+\code
+void menu_split_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* splitview_item = menu->mvalue();
+  if (splitview_item->value()) {
+    int h_split = app_tile->h()/2;
+    app_editor->size(app_tile->w(), h_split);
+    app_split_editor->resize(app_tile->x(), app_tile->y() + h_split,
+                             app_tile->w(), app_tile->h() - h_split);
+    app_split_editor->show();
+  } else {
+    app_editor->size(app_tile->w(), app_tile->h());
+    app_split_editor->resize(app_tile->x(), app_tile->y()+app_tile->h(),
+                             app_tile->w(), 0);
+    app_split_editor->hide();
+  }
+  app_tile->resizable(app_editor);
+  app_tile->init_sizes();
+  app_tile->redraw();
+}
+\endcode
+
 
 <!-- ----------------------------------------------------- -->
 
-\section editor_syntax_highlighting Chapter 9: Syntax Highlighting
-
-
-
-<!-- ----------------------------------------------------- -->
-<!-- ----------------------------------------------------- -->
-
-<!--
-\section editor_main_window Designing the Main Window
-
-Now that we've outlined the goals for our editor, we can begin with
-the design of our GUI. Obviously the first thing that we need is a
-window, which we'll place inside a class called \p EditorWindow:
-
-\code
-class EditorWindow : public Fl_Double_Window {
-  public:
-    EditorWindow(int w, int h, const char* t);
-    ~EditorWindow();
-
-    Fl_Window          *replace_dlg;
-    Fl_Input           *replace_find;
-    Fl_Input           *replace_with;
-    Fl_Button          *replace_all;
-    Fl_Return_Button   *replace_next;
-    Fl_Button          *replace_cancel;
-
-    Fl_Text_Editor     *editor;
-    char               search[256];
-};
-\endcode
-
-\section editor_variables Variables
-
-Our text editor will need some global variables to keep track of things:
-
-\code
-int            changed = 0;
-char           filename[FL_PATH_MAX] = "";
-char           title[FL_PATH_MAX];
-Fl_Text_Buffer *textbuf = 0;
-\endcode
-
-The \p textbuf variable is the text editor buffer for
-our window class described previously. We'll cover the other
-variables as we build the application.
-
-\section editor_menubars Menubars and Menus
-
-The first goal requires us to use a menubar and menus that
-define each function the editor needs to perform. The Fl_Menu_Item
-structure is used to define the menus and items in a menubar:
-
-\code
-Fl_Menu_Item menuitems[] = {
-  { "&File",              0, 0, 0, FL_SUBMENU },
-    { "&New File",        0, (Fl_Callback *)new_cb },
-    { "&Open File...",    FL_COMMAND + 'o', (Fl_Callback *)open_cb },
-    { "&Insert File...",  FL_COMMAND + 'i', (Fl_Callback *)insert_cb, 0, FL_MENU_DIVIDER },
-    { "&Save File",       FL_COMMAND + 's', (Fl_Callback *)save_cb },
-    { "Save File &As...", FL_COMMAND + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
-    { "New &View", FL_ALT + 'v', (Fl_Callback *)view_cb, 0 },
-    { "&Close View", FL_COMMAND + 'w', (Fl_Callback *)close_cb, 0, FL_MENU_DIVIDER },
-    { "E&xit", FL_COMMAND + 'q', (Fl_Callback *)quit_cb, 0 },
-    { 0 },
-
-  { "&Edit", 0, 0, 0, FL_SUBMENU },
-    { "&Undo",       FL_COMMAND + 'z', (Fl_Callback *)undo_cb, 0, FL_MENU_DIVIDER },
-    { "Cu&t",        FL_COMMAND + 'x', (Fl_Callback *)cut_cb },
-    { "&Copy",       FL_COMMAND + 'c', (Fl_Callback *)copy_cb },
-    { "&Paste",      FL_COMMAND + 'v', (Fl_Callback *)paste_cb },
-    { "&Delete",     0, (Fl_Callback *)delete_cb },
-    { 0 },
-
-  { "&Search", 0, 0, 0, FL_SUBMENU },
-    { "&Find...",       FL_COMMAND + 'f', (Fl_Callback *)find_cb },
-    { "F&ind Again",    FL_COMMAND + 'g', find2_cb },
-    { "&Replace...",    FL_COMMAND + 'r', replace_cb },
-    { "Re&place Again", FL_COMMAND + 't', replace2_cb },
-    { 0 },
-
-  { 0 }
-};
-\endcode
-
-Once we have the menus defined we can create the
-Fl_Menu_Bar widget and assign the menus to it with:
-
-\code
-Fl_Menu_Bar *m = new Fl_Menu_Bar(0, 0, 640, 30);
-m->copy(menuitems);
-\endcode
-
-We'll define the callback functions later.
-
-\section editor_editing Editing the Text
-
-...To keep things simple our text editor will use the
-Fl_Text_Editor widget to edit the text:
-
-\code
-w->editor = new Fl_Text_Editor(0, 30, 640, 370);
-w->editor->buffer(textbuf);
-\endcode
-
-So that we can keep track of changes to the file, we also want to add
-a "modify" callback:
-
-\code
-textbuf->add_modify_callback(changed_cb, w);
-textbuf->call_modify_callbacks();
-\endcode
-...
-
-Finally, we want to use a mono-spaced font like \p FL_COURIER:
-
-\code
-w->editor->textfont(FL_COURIER);
-\endcode
-
-\section editor_replace_dialog The Replace Dialog
-
-We can use the FLTK convenience functions for many of the
-editor's dialogs, however the replace dialog needs its own
-custom window.  To keep things simple we will have a
-"find" string, a "replace" string, and
-"replace all", "replace next", and
-"cancel" buttons.  The strings are just
-Fl_Input widgets, the "replace all" and
-"cancel" buttons are Fl_Button widgets, and
-the "replace next " button is a
-Fl_Return_Button widget:
-
-\image html editor-replace.png "The search and replace dialog"
-\image latex editor-replace.png "The search and replace dialog" width=10cm
-
-\code
-Fl_Window *replace_dlg = new Fl_Window(300, 105, "Replace");
-Fl_Input *replace_find = new Fl_Input(70, 10, 200, 25, "Find:");
-Fl_Input *replace_with = new Fl_Input(70, 40, 200, 25, "Replace:");
-Fl_Button *replace_all = new Fl_Button(10, 70, 90, 25, "Replace All");
-Fl_Button *replace_next = new Fl_Button(105, 70, 120, 25, "Replace Next");
-Fl_Button *replace_cancel = new Fl_Button(230, 70, 60, 25, "Cancel");
-\endcode
-
-\section editor_callbacks Callbacks
-
-Now that we've defined the GUI components of our editor, we
-need to define our callback functions.
-
-\subsection editor_changed_cb changed_cb()
-
-This function will be called whenever the user changes any text in the
-\p editor widget:
-
-\code
-void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
-  if ((nInserted || nDeleted) && !loading) changed = 1;
-  EditorWindow *w = (EditorWindow *)v;
-  set_title(w);
-  if (loading) w->editor->show_insert_position();
-}
-\endcode
-
-The \p set_title() function is one that we will write to set
-the changed status on the current file.  We're doing it this way
-because we want to show the changed status in the window's
-title bar.
-
-\subsection editor_copy_cb copy_cb()
-
-This callback function will call Fl_Text_Editor::kf_copy()
-to copy the currently selected text to the clipboard:
-
-\code
-void copy_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_copy(0, e->editor);
-}
-\endcode
-
-\subsection editor_cut_cb cut_cb()
-
-This callback function will call Fl_Text_Editor::kf_cut()
-to cut the currently selected text to the clipboard:
-
-\code
-void cut_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_cut(0, e->editor);
-}
-\endcode
-
-\subsection editor_delete_cb delete_cb()
-
-This callback function will call Fl_Text_Buffer::remove_selection()
-to delete the currently selected text to the clipboard:
-
-\code
-void delete_cb(Fl_Widget*, void* v) {
-  textbuf->remove_selection();
-}
-\endcode
-
-\subsection editor_find_cb find_cb()
-
-This callback function asks for a search string using the
-fl_input() convenience function and then calls the \p find2_cb()
-function to find the string:
-
-\code
-void find_cb(Fl_Widget* w, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  const char *val;
-
-  val = fl_input("Search String:", e->search);
-  if (val != NULL) {
-    // User entered a string - go find it!
-    strcpy(e->search, val);
-    find2_cb(w, v);
-  }
-\endcode
-
-\subsection editor_find2_cb find2_cb()
-
-This function will find the next occurrence of the search
-string. If the search string is blank then we want to pop up the
-search dialog:
-
-\code
-void find2_cb(Fl_Widget* w, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  if (e->search[0] == '\0') {
-    // Search string is blank; get a new one...
-    find_cb(w, v);
-    return;
-  }
-
-  int pos = e->editor->insert_position();
-  int found = textbuf->search_forward(pos, e->search, &pos);
-  if (found) {
-    // Found a match; select and update the position...
-    textbuf->select(pos, pos+strlen(e->search));
-    e->editor->insert_position(pos+strlen(e->search));
-    e->editor->show_insert_position();
-  }
-  else fl_alert("No occurrences of \'%s\' found!", e->search);
-}
-\endcode
-
-If the search string cannot be found we use the fl_alert()
-convenience function to display a message to that effect.
-
-\subsection editor_new_cb new_cb()
-
-This callback function will clear the editor widget and current
-filename. It also calls the \p check_save() function to give the
-user the opportunity to save the current file first as needed:
-
-\code
-void new_cb(Fl_Widget*, void*) {
-  if (!check_save()) return;
-
-  filename[0] = '\0';
-  textbuf->select(0, textbuf->length());
-  textbuf->remove_selection();
-  changed = 0;
-  textbuf->call_modify_callbacks();
-}
-\endcode
-
-\subsection editor_open_cb open_cb()
-
-This callback function will ask the user for a filename and then load
-the specified file into the input widget and current filename. It also
-calls the \p check_save() function to give the user the
-opportunity to save the current file first as needed:
-
-\code
-void open_cb(Fl_Widget*, void*) {
-  if (!check_save()) return;
-
-  char *newfile = fl_file_chooser("Open File?", "*", filename);
-  if (newfile != NULL) load_file(newfile, -1);
-}
-\endcode
-
-We call the \p load_file() function to actually load the file.
-
-\subsection editor_paste_cb paste_cb()
-
-This callback function will call Fl_Text_Editor::kf_paste()
-to paste the clipboard at the current position:
-
-\code
-void paste_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_paste(0, e->editor);
-}
-\endcode
-
-\subsection editor_quit_cb quit_cb()
-
-The quit callback will first see if the current file has been
-modified, and if so give the user a chance to save it. It then exits
-from the program:
-
-\code
-void quit_cb(Fl_Widget*, void*) {
-  if (changed && !check_save())
-    return;
-
-  exit(0);
-}
-\endcode
-
-\subsection editor_replace_cb replace_cb()
-
-The replace callback just shows the replace dialog:
-
-\code
-void replace_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  e->replace_dlg->show();
-}
-\endcode
-
-\subsection editor_replace2_cb replace2_cb()
-
-This callback will replace the next occurrence of the replacement
-string. If nothing has been entered for the replacement string, then
-the replace dialog is displayed instead:
-
-\code
-void replace2_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  const char *find = e->replace_find->value();
-  const char *replace = e->replace_with->value();
-
-  if (find[0] == '\0') {
-    // Search string is blank; get a new one...
-    e->replace_dlg->show();
-    return;
-  }
-
-  e->replace_dlg->hide();
-
-  int pos = e->editor->insert_position();
-  int found = textbuf->search_forward(pos, find, &pos);
-
-  if (found) {
-    // Found a match; update the position and replace text...
-    textbuf->select(pos, pos+strlen(find));
-    textbuf->remove_selection();
-    textbuf->insert(pos, replace);
-    textbuf->select(pos, pos+strlen(replace));
-    e->editor->insert_position(pos+strlen(replace));
-    e->editor->show_insert_position();
-  }
-  else fl_alert("No occurrences of \'%s\' found!", find);
-}
-\endcode
-
-\subsection editor_replall_cb replall_cb()
-
-This callback will replace all occurrences of the search
-string in the file:
-
-\code
-void replall_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  const char *find = e->replace_find->value();
-  const char *replace = e->replace_with->value();
-
-  find = e->replace_find->value();
-  if (find[0] == '\0') {
-    // Search string is blank; get a new one...
-    e->replace_dlg->show();
-    return;
-  }
-
-  e->replace_dlg->hide();
-
-  e->editor->insert_position(0);
-  int times = 0;
-
-  // Loop through the whole string
-  for (int found = 1; found;) {
-    int pos = e->editor->insert_position();
-    found = textbuf->search_forward(pos, find, &pos);
-
-    if (found) {
-      // Found a match; update the position and replace text...
-      textbuf->select(pos, pos+strlen(find));
-      textbuf->remove_selection();
-      textbuf->insert(pos, replace);
-      e->editor->insert_position(pos+strlen(replace));
-      e->editor->show_insert_position();
-      times++;
-    }
-  }
-
-  if (times) fl_message("Replaced %d occurrences.", times);
-  else fl_alert("No occurrences of \'%s\' found!", find);
-}
-\endcode
-
-\subsection editor_replcan_cb replcan_cb()
-
-This callback just hides the replace dialog:
-
-\code
-void replcan_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  e->replace_dlg->hide();
-}
-\endcode
-
-\subsection editor_save_cb save_cb()
-
-This callback saves the current file.  If the current filename is
-blank it calls the "save as" callback:
-
-\code
-void save_cb(void) {
-  if (filename[0] == '\0') {
-    // No filename - get one!
-    saveas_cb();
-    return;
-  }
-  else save_file(filename);
-}
-\endcode
-
-The \p save_file() function saves the current file to the
-specified filename.
-
-\subsection editor_saveas_cb saveas_cb()
-
-This callback asks the user for a filename and saves the current file:
-
-\code
-void saveas_cb(void) {
-  char *newfile;
-
-  newfile = fl_file_chooser("Save File As?", "*", filename);
-  if (newfile != NULL) save_file(newfile);
-}
-\endcode
-
-The \p save_file() function saves the current file to the
-specified filename.
-
-\section editor_other_functions Other Functions
-
-Now that we've defined the callback functions, we need our support
-functions to make it all work:
-
-\subsection editor_check_save check_save()
-
-This function checks to see if the current file needs to be saved.  If
-so, it asks the user if they want to save it:
-
-\code
-int check_save(void) {
-  if (!changed) return 1;
-
-  int r = fl_choice("The current file has not been saved.\n"
-                    "Would you like to save it now?",
-                    "Cancel", "Save", "Discard");
-
-  if (r == 1) {
-    save_cb(); // Save the file...
-    return !changed;
-  }
-
-  return (r == 2) ? 1 : 0;
-}
-\endcode
-
-\subsection editor_load_file load_file()
-
-This function loads the specified file into the \p textbuf variable:
-
-\code
-int loading = 0;
-void load_file(char *newfile, int ipos) {
-  loading = 1;
-  int insert = (ipos != -1);
-  changed = insert;
-  if (!insert) strcpy(filename, "");
-  int r;
-  if (!insert) r = textbuf->loadfile(newfile);
-  else r = textbuf->insertfile(newfile, ipos);
-  if (r)
-    fl_alert("Error reading from file \'%s\':\n%s.", newfile, strerror(errno));
-  else
-    if (!insert) strcpy(filename, newfile);
-  loading = 0;
-  textbuf->call_modify_callbacks();
-}
-\endcode
-
-When loading the file we use the Fl_Text_Buffer::loadfile()
-method to "replace" the text in the buffer, or the
-Fl_Text_Buffer::insertfile()
-method to insert text in the buffer from the named file.
-
-\subsection editor_save_file save_file()
-
-This function saves the current buffer to the specified file:
-
-\code
-void save_file(char *newfile) {
-  if (textbuf->savefile(newfile))
-    fl_alert("Error writing to file \'%s\':\n%s.", newfile, strerror(errno));
-  else
-    strcpy(filename, newfile);
-  changed = 0;
-  textbuf->call_modify_callbacks();
-}
-\endcode
-
-\subsection editor_set_title set_title()
-
-This function checks the \p changed variable and updates the
-window label accordingly:
-\code
-void set_title(Fl_Window* w) {
-  if (filename[0] == '\0') strcpy(title, "Untitled");
-  else {
-    char *slash;
-    slash = strrchr(filename, '/');
-#ifdef _WIN32
-    if (slash == NULL) slash = strrchr(filename, '\\');
-#endif
-    if (slash != NULL) strcpy(title, slash + 1);
-    else strcpy(title, filename);
-  }
-
-  if (changed) strcat(title, " (modified)");
-
-  w->label(title);
-}
-\endcode
-
-\section editor_main_function The main() Function
-
-Once we've created all of the support functions, the only thing left
-is to tie them all together with the \p main() function.
-The \p main() function creates a new text buffer, creates a
-new view (window) for the text, shows the window, loads the file on
-the command-line (if any), and then enters the FLTK event loop:
-
-\code
-int main(int argc, char **argv) {
-  textbuf = new Fl_Text_Buffer;
-
-  Fl_Window* window = new_view();
-
-  window->show(1, argv);
-
-  if (argc > 1) load_file(argv[1], -1);
-
-  return Fl::run();
-}
-\endcode
-
-\section editor_compiling Compiling the Editor
-
-...
-\section editor_final_product The Final Product
-
-The final editor window should look like this:
-
-\image html editor.png "The completed editor window"
-\image latex editor.png "The completed editor window" width=12cm
-
-\section editor_advanced_features Advanced Features
-
-Now that we've implemented the basic functionality, it is
-time to show off some of the advanced features of the
-Fl_Text_Editor widget.
-
-\subsection editor_syntax Syntax Highlighting
+\section editor_syntax_highlighting Chapter 10: Syntax Highlighting
+
+Chapter 10 adds a lot of code to implement "C" language syntax highlighting.
+Not all code is duplicated here in the documentation. Please check out
+`test/editor.cxx` for all the details.
 
 The Fl_Text_Editor widget supports highlighting
 of text with different fonts, colors, and sizes. The
@@ -1366,9 +869,9 @@ You call the \p highlight_data() method to associate the
 style data and buffer with the text editor widget:
 
 \code
-Fl_Text_Buffer *stylebuf;
+Fl_Text_Buffer *app_style_buffer;
 
-w->editor->highlight_data(stylebuf, styletable,
+app_editor->highlight_data(app_style_buffer, styletable,
                           sizeof(styletable) / sizeof(styletable[0]),
                           'A', style_unfinished_cb, 0);
 \endcode
@@ -1377,7 +880,7 @@ Finally, you need to add a callback to the main text buffer so
 that changes to the text buffer are mirrored in the style buffer:
 
 \code
-textbuf->add_modify_callback(style_update, w->editor);
+app_text_buffer->add_modify_callback(style_update, app_editor);
 \endcode
 
 The \p style_update() function, like the \p change_cb()
@@ -1406,7 +909,7 @@ style_update(int        pos,          // I - Position of update
 
   // If this is just a selection change, just unselect the style buffer...
   if (nInserted == 0 && nDeleted == 0) {
-    stylebuf->unselect();
+    app_style_buffer->unselect();
     return;
   }
 
@@ -1417,31 +920,31 @@ style_update(int        pos,          // I - Position of update
     memset(style, 'A', nInserted);
     style[nInserted] = '\0';
 
-    stylebuf->replace(pos, pos + nDeleted, style);
+    app_style_buffer->replace(pos, pos + nDeleted, style);
     delete[] style;
   } else {
     // Just delete characters in the style buffer...
-    stylebuf->remove(pos, pos + nDeleted);
+    app_style_buffer->remove(pos, pos + nDeleted);
   }
 
   // Select the area that was just updated to avoid unnecessary
   // callbacks...
-  stylebuf->select(pos, pos + nInserted - nDeleted);
+  app_style_buffer->select(pos, pos + nInserted - nDeleted);
 
   // Re-parse the changed region; we do this by parsing from the
   // beginning of the line of the changed region to the end of
   // the line of the changed region...  Then we check the last
   // style character and keep updating if we have a multi-line
   // comment character...
-  start = textbuf->line_start(pos);
-  end   = textbuf->line_end(pos + nInserted - nDeleted);
-  text  = textbuf->text_range(start, end);
-  style = stylebuf->text_range(start, end);
+  start = app_text_buffer->line_start(pos);
+  end   = app_text_buffer->line_end(pos + nInserted - nDeleted);
+  text  = app_text_buffer->text_range(start, end);
+  style = app_style_buffer->text_range(start, end);
   last  = style[end - start - 1];
 
   style_parse(text, style, end - start);
 
-  stylebuf->replace(start, end, style);
+  app_style_buffer->replace(start, end, style);
   ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
 
   if (last != style[end - start - 1]) {
@@ -1450,13 +953,13 @@ style_update(int        pos,          // I - Position of update
     free(text);
     free(style);
 
-    end   = textbuf->length();
-    text  = textbuf->text_range(start, end);
-    style = stylebuf->text_range(start, end);
+    end   = app_text_buffer->length();
+    text  = app_text_buffer->text_range(start, end);
+    style = app_style_buffer->text_range(start, end);
 
     style_parse(text, style, end - start);
 
-    stylebuf->replace(start, end, style);
+    app_style_buffer->replace(start, end, style);
     ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
   }
 
