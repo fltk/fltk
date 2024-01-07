@@ -728,20 +728,17 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
 #endif
   Fl::e_keysym = Fl::e_original_keysym = for_key_vector;
   if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Delete) {
-    // compute e_keysym for keypad number keys when NumLock is off
+    // compute e_keysym and e_original_keysym for keypad number keys and '.|,' when NumLock is off
     static const int table[11] = {FL_Home      /* 7 */, FL_Left   /* 4 */, FL_Up      /* 8 */,
                                   FL_Right     /* 6 */, FL_Down   /* 2 */, FL_Page_Up /* 9 */,
                                   FL_Page_Down /* 3 */, FL_End    /* 1 */, 0xff0b     /* 5 */,
-                                  FL_Insert    /* 0 */, FL_Delete /* ./, */};
-    Fl::e_keysym = table[sym - XKB_KEY_KP_Home];
-  }
-  if (!(Fl::e_state & FL_NUM_LOCK) && sym >= XKB_KEY_KP_Home && sym <= XKB_KEY_KP_Delete) {
-    // compute e_original_keysym for keypad keys when NumLock is off
-    static const int table[11] = {0xffb7 /* 7 */, 0xffb4 /* 4 */, 0xffb8 /* 8 */,
-                                  0xffb6 /* 6 */, 0xffb2 /* 2 */, 0xffb9 /* 9 */,
-                                  0xffb3 /* 3 */, 0xffb1 /* 1 */, 0xffb5 /* 5 */,
-                                  0xffb0 /* 0 */, 0xffac /* ./, */};
-    Fl::e_original_keysym = table[sym - XKB_KEY_KP_Home];
+                                  FL_Insert    /* 0 */, FL_Delete /* .|, */};
+    static const int table_original[11] = {0xffb7 /* 7 */, 0xffb4 /* 4 */, 0xffb8 /* 8 */,
+                                           0xffb6 /* 6 */, 0xffb2 /* 2 */, 0xffb9 /* 9 */,
+                                           0xffb3 /* 3 */, 0xffb1 /* 1 */, 0xffb5 /* 5 */,
+                                           0xffb0 /* 0 */, 0xffac /* .|, */};
+    Fl::e_keysym          =          table[sym - XKB_KEY_KP_Home];
+    Fl::e_original_keysym = table_original[sym - XKB_KEY_KP_Home];
   }
 #if (DEBUG_KEYBOARD)
   fprintf(stderr, "wl_keyboard_key: e_keysym=%x e_original_keysym=%x\n", Fl::e_keysym, Fl::e_original_keysym);
