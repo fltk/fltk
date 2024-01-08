@@ -1000,9 +1000,7 @@ void menu_syntaxhighlight_callback(Fl_Widget* w, void*) {
       app_split_editor->highlight_data(app_style_buffer, styletable,
                                  sizeof(styletable) / sizeof(styletable[0]),
                                  'A', style_unfinished_cb, 0);
-      app_text_buffer->add_modify_callback(style_update, app_split_editor);
     } else {
-      app_text_buffer->remove_modify_callback(style_update, app_split_editor);
       app_split_editor->highlight_data(NULL, NULL, 0, 'A', NULL, 0);
     }
     app_split_editor->redraw();
