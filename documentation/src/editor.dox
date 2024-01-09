@@ -4,7 +4,7 @@
 
 This chapter takes you through the design of a simple
 FLTK-based text editor. The complete source for our
-text editor can be found in the \p test/editor.cxx source file.
+text editor can be found in `test/editor.cxx`.
 
 The tutorial comprises multiple chapters, and you can enable
 the relevant code by adjusting the `TUTORIAL_CHAPTER` macro at
@@ -22,7 +22,7 @@ keep related features within a chapter.
 
 \section editor_goals Determining the Goals of the Text Editor
 
-Lets define what we want our text editor to do:
+As our first step, we define what we want our text editor to do:
 
 -# Edit a single text document
 -# Provide a menubar/menus for all functions
@@ -71,8 +71,8 @@ the color or graphical scheme of the editor at launch time.
 
 `Fl::run()` will return when no more windows in the app are visible, i.e.
 if all windows in an app are closed, hidden, or deleted. Typing Escape or
-clicking the "Close" button in the window frame will close the window
-and `Fl::run()` will return, effectively ending the app.
+clicking the "Close" button in the window frame will close our only window,
+so `Fl::run()` will return, effectively ending the app.
 
 When building FLTK form source, the CMake environment includes the necessary
 rules to build the editor. You can find more information on how to write
@@ -102,7 +102,7 @@ and a Quit button. This is a good time to define a flag that will
 track changes in the text later.
 
 \code
-\\ remove `main()` from chapter 1, but keep the rest of the code, then add...
+// remove `main()` from chapter 1, but keep the rest of the code, then add...
 
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_ask.H>
@@ -131,7 +131,7 @@ int main (int argc, char **argv) {
 `begin()` tells FLTK to add all widgets that are created hereafter
 will be added to our `app_window`. In this particular case, it is redundant
 because creating the window in the previous chapter called `begin()`
-for us.
+for us. We will keep it here for good style.
 
 In the next line, we create the menu bar and add our first menu item
 to it. Menus can be built like file paths with forward slashes '/'
@@ -147,16 +147,20 @@ void menu_quit_callback(Fl_Widget *, void *) {
 `Fl::hide_all_windows()` will make all windows invisible, causing `Fl::run()`
 to return and `main` to exit.
 
-The `menu_quit_callback` is actually used by two different widgets. The
-"Quit" menu item calls it, and `app_window` as well. Assigning the window
-callback remove the default "Escape" key handling and allows the
+The next line, `app_window->callback(menu_quit_callback)` links the same
+`menu_quit_callback` to the `app_window` as well. Assigning the window
+callback removes the default "Escape" key handling and allows the
 `menu_quit_callback` to handle that keypress with a friendly dialog box
 instead of just quitting the app.
 
-One of our goals was to keep track of text changes. If we know the text changed
-and is unsaved, we should notify the user that she is about to lose her work.
-We do this by adding a dialog box in the Quit callback that queries if the
-user really wants to quit, even if text was changed:
+The `Fl_Widget*` parameter in the callback will either be `app_window` if
+called through the window callback, or `app_menu_bar` if called by one of
+the menu items.
+
+One of our goals was to keep track of text changes. If we know that the
+text changed and is unsaved, we should notify the user that she is about
+to lose her work. We do this by adding a dialog box in the Quit callback
+that queries the user if she really wants to quit, even if text was changed:
 
 \code
 void menu_quit_callback(Fl_Widget *, void *) {
@@ -193,6 +197,8 @@ Fl_Text_Editor *app_split_editor = NULL; // for later
 Fl_Text_Buffer *app_text_buffer = NULL;
 char app_filename[FL_PATH_MAX] = "";
 
+// ... callbacks go here
+
 void tut3_build_main_editor() {
   app_window->begin();
   app_text_buffer = new Fl_Text_Buffer();
@@ -207,11 +213,11 @@ void tut3_build_main_editor() {
 
 By setting the `app_editor` to be the `resizable()` of `app_window`, we make
 our application window resizable on the desktop, and we ensure that resizing
-the window will only resize the text editor vertically, but not our menu bar.
+the window will only resize the text editor, but not our menu bar.
 
 To keep track of changes to the document, we add a callback to the text
 editor that will be called whenever text is added or deleted. The text modify
-callback sets our `text_changed` flag if text was added or deleted:
+callback sets our `text_changed` flag if text was changed:
 
 \code
 // insert before tut3_build_main_editor()
@@ -222,8 +228,8 @@ void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*,
 \endcode
 
 To wrap this chapter up, we add a "File/New" menu and link it to a callback
-clears the text buffer, clears the current filename, and marks the buffer as
-unchanged.
+that clears the text buffer, clears the current filename, and marks the buffer
+as unchanged.
 
 \code
 // insert before tut3_build_main_editor()
@@ -249,10 +255,18 @@ In this chapter, we will add support for loading and saving text files,
 so we need three more menu items in the File menu: Open, Save, and Save As.
 
 \code
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/platform.H>
+#include <errno.h>
+
+// ... add callbacks here
+
+void tut4_add_file_support() {
   int ix = app_menu_bar->find_index(menu_quit_callback);
   app_menu_bar->insert(ix, "Open", FL_COMMAND+'o', menu_open_callback, NULL, FL_MENU_DIVIDER);
   app_menu_bar->insert(ix+1, "Save", FL_COMMAND+'s', menu_save_callback);
   app_menu_bar->insert(ix+2, "Save as...", FL_COMMAND+'S', menu_save_as_callback, NULL, FL_MENU_DIVIDER);
+}
 \endcode
 
 \note The menu shortcuts <TT>FL_COMMAND+'s'</TT> and <TT>FL_COMMAND+'S'</TT>
@@ -297,8 +311,8 @@ litte chunk of code will separate the file name from the path before we call
   }
 \endcode
 
-Great. Now let's add code to save a file, and if no filename was set yet,
-it can fall back to our Save As callback. `Fl_Text_Editor::savefile()` writes
+Great. Now let's add code for our File/Save menu. If no filename was set yet,
+it falls back to our Save As callback. `Fl_Text_Editor::savefile()` writes
 the contents of our text widget into a UTF-8 encoded text file.
 
 \code
@@ -312,8 +326,39 @@ void menu_save_callback(Fl_Widget*, void*) {
 }
 \endcode
 
-On to loading a new file. We start with a dialog box that offers to save the
-current text if it was changed before loading a new text file:
+On to loading a new file. Let's write the function to load a file
+from a given file name:
+
+\code
+void load(const char *filename) {
+  if (app_text_buffer->loadfile(filename) == 0) {
+    strncpy(app_filename, filename, FL_PATH_MAX-1);
+    text_changed = false;
+  }
+}
+\endcode
+
+A friendly app should warn the user if file operations fail. This can be
+done in three lines of code, so let's add an alert dialog after every `loadfile`
+and `savefile` call. This is exemplary for `load()`, and the
+code is very similar for the two other locations.
+
+\code
+void load(const char *filename) {
+  if (app_text_buffer->loadfile(filename) == 0) {
+    strncpy(app_filename, filename, FL_PATH_MAX-1);
+    text_changed = false;
+  } else {
+    fl_alert("Failed to load file\n%s\n%s",
+             filename,
+             strerror(errno));
+  }
+}
+\endcode
+
+If the user selects our pulldown "Load" menu, we first check if the current
+text was modified and provide a dialog box that offers to save the changes
+before loading a new text file:
 
 \code
 void menu_open_callback(Fl_Widget*, void*) {
@@ -333,9 +378,18 @@ If the user did not cancel the operation, we pop up a file chooser for
 loading the file, using similar code as in Save As.
 
 \code
+...
   Fl_Native_File_Chooser file_chooser;
   file_chooser.title("Open File...");
   file_chooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+...
+\endcode
+
+Again, we preload the file chooser with the last used path and file
+name:
+
+\code
+...
   if (app_filename[0]) {
     char temp_filename[FL_PATH_MAX];
     strncpy(temp_filename, app_filename, FL_PATH_MAX-1);
@@ -346,31 +400,82 @@ loading the file, using similar code as in Save As.
       file_chooser.directory(temp_filename);
     }
   }
-  if (file_chooser.show() == 0) {
-    app_text_buffer->loadfile(file_chooser.filename());
-    strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
-    text_changed = false;
-  }
+...
+\endcode
+
+And finally, we pop up the file chooser. If the user cancels the file
+dialog, we do nothing and keep the current file. Otherwise, we call
+the `load()` function that we already wrote:
+
+\code
+  if (file_chooser.show() == 0)
+    load(file_chooser.filename());
 }
 \endcode
 
-A well behaved app must warn the user if file operations fail. This can be
-done in three lines of code, so let's add an alert dialog after ever `loadfile`
-ans `savefile` call. This is exemplary for `menu_save_as_callback`, and the
-code is very similar for the two other locations.
+We really should support two more ways to load documents from a file.
+Let's modify the the "show and run" part of `main()` to handle command
+line parameters and desktop drag'n'drop operations. For that, we refactor
+the last two lines of `main()` into a new function:
 
 \code
-    if (app_text_buffer->savefile(file_chooser.filename()) == 0) {
-      strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
-      text_changed = false;
-    } else {
-      fl_alert("Failed to save file\n%s\n%s",
-               file_chooser.filename(),
-               strerror(errno));
-    }
+// ... new function here
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  // ... refactor thos into the new function
+  // app_window->show(argc, argv);
+  // return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
 \endcode
 
-We were able to but a basic but functional text editor app in less than
+Our function to show the window and run the app has a few lines of boilerplate
+code. `Fl::args_to_utf8()` converts the command line argument from whatever
+the host system provides into Unicode. `Fl::args()` goes through the
+list of arguments and gives `args_handler()` a chance to handle each argument.
+It also makes sure that FLTK specific args are still forwarded to FLTK,
+so `"-scheme plastic"` and `"-background #AAAAFF"` will draw beautiful blue
+buttons in a plastic look.
+
+`fl_open_callback()` let's FLTK know what to do if a user drops a text
+file onto our editor icon (Apple macOS). Here, we ask it to call the `load()`
+function that we wrote earlier.
+
+\code
+// ... args_handler here
+
+int tut4_handle_commandline_and_run(int &argc, char **argv) {
+  int i = 0;
+  Fl::args_to_utf8(argc, argv);
+  Fl::args(argc, argv, i, args_handler);
+  fl_open_callback(load);
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+\endcode
+
+Last work item for this long chapter: what should our `args_handler`
+do? We could handle additional command line options here, but for now,
+all we want to handle is file names and paths. Let's make this easy: if the
+current arg does not start with a '-', we assume it is a file name, and
+we call `load()`:
+
+\code
+int args_handler(int argc, char **argv, int &i) {
+  if (argv && argv[i] && argv[i][0]!='-') {
+    load(argv[i]);
+    i++;
+    return 1;
+  }
+  return 0;
+}
+\endcode
+
+So this is our basic but quite functional text editor app in about
 100 lines of code. The following chapters add some user convenience
 functions and show off some FLTK features including split editors and
 syntax highlighting.
@@ -418,7 +523,7 @@ void tut5_cut_copy_paste() {
 \section editor_find Chapter 6: Find and Find Next
 
 Corporate called. They want a dialog box for their users that can search
-for some word in the text file easily. We can add this functionality using
+for some word in the text file. We can add this functionality using
 a callback and a standard FLTK dialog box.
 
 Here is some code to find a string in a text editor. The first four lines
@@ -447,7 +552,7 @@ void find_next(const char *needle) {
 The callbacks are short, using the FLTK text field dialog box and the
 `find_next` function that we already implemented. The last searched text
 is saved in `last_find_text` to be reused by `menu_find_next_callback`.
-If no serach text was set yet, or it was set to an empty text, "Finde Next"
+If no search text was set yet, or it was set to an empty text, "Find Next"
 will forward to `menu_find_callback` and pop up our "Find Text" dialog.
 
 \code
@@ -581,7 +686,11 @@ Replace_Dialog::Replace_Dialog(const char *label)
 
 All buttons are created inside an `Fl_Flex` group. They will be arranged
 automatically by `Fl_Flex`, so there is no need to set x and y coordinates
-or width or a height. `button_field` will lay out the buttons for us.
+or a width or height. `button_field` will lay out the buttons for us.
+
+\note There is no need to write a destructor or delete individual widgets.
+When we delete an instance of `Replace_Dialog`, all children are deleted
+for us.
 
 The `show()` method overrides the window's show method. It adds some code to
 preload the values of the text fields for added convenience. It then pops up
@@ -636,7 +745,7 @@ void Replace_Dialog::replace_and_find_callback(Fl_Widget*, void* my_dialog) {
 
 This long chapter comes close to its end. We are missing menu items that pop
 up our dialog and that allow a quick "Replace and Find Next" functionality
-without popping up a dialog. The code is quite similar to the "Find" and
+without popping up the dialog. The code is quite similar to the "Find" and
 "Find Next" code in the previous chapter:
 
 \code
@@ -729,7 +838,7 @@ the callback is the same as `menu_linenumbers_callback`.
 \section editor_split_editor Chapter 9: Split Editor
 
 When editing long source code files, it can be really helpful to split
-the editor and change include statements at the top of the text while
+the editor to view statments statements at the top of the text while
 adding features at the bottom of the text in a split text view.
 
 FLTK can link multiple text editors to a single text buffer. Let's implement
@@ -755,9 +864,9 @@ void tut9_split_editor() {
   app_window->remove(app_editor);
 \endcode
 
-Next we add the editor as the first child of the tile and create another
-text editor `app_split_editor` as the second child of the tile, but it's
-hidden for now with a height of zero pixels.
+Next we add our existing editor as the first child of the tile and create
+another text editor `app_split_editor` as the second child of the tile, but
+it's hidden for now with a height of zero pixels.
 
 \note Creating the new `Fl_Tile` also calls `Fl_Tile::begin()`.
 <BR><BR>Adding `app_editor` to the tile would have also removed if from
@@ -767,12 +876,12 @@ really needed, but illustrates what we are doing.
 \code
   app_tile->add(app_editor);
   app_split_editor = new Fl_Text_Editor(app_tile->x(), app_tile->y()+app_tile->h(),
-                                        app_tile->w(), app_tile->h());
+                                        app_tile->w(), 0);
   app_split_editor->buffer(app_text_buffer);
   app_split_editor->hide();
 \endcode
 
-Now we clean up after ourseleves and make sure that the resizables are all
+Now we clean up after ourselves and make sure that the resizables are all
 set correctly. Lastly, we add a menu item with a callback.
 
 \code

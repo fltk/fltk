@@ -139,6 +139,7 @@ int main (int argc, char **argv) {
 #if TUTORIAL_CHAPTER >= 4
 
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/platform.H>
 #include <errno.h>
 
 void menu_save_as_callback(Fl_Widget*, void*) {
@@ -181,6 +182,17 @@ void menu_save_callback(Fl_Widget*, void*) {
   }
 }
 
+void load(const char *filename) {
+  if (app_text_buffer->loadfile(filename) == 0) {
+    strncpy(app_filename, filename, FL_PATH_MAX-1);
+    text_changed = false;
+  } else {
+    fl_alert("Failed to load file\n%s\n%s",
+             filename,
+             strerror(errno));
+  }
+}
+
 void menu_open_callback(Fl_Widget*, void*) {
   if (text_changed) {
     int r = fl_choice("The current file has not been saved.\n"
@@ -204,16 +216,8 @@ void menu_open_callback(Fl_Widget*, void*) {
       file_chooser.directory(temp_filename);
     }
   }
-  if (file_chooser.show() == 0) {
-    if (app_text_buffer->loadfile(file_chooser.filename()) == 0) {
-      strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
-      text_changed = false;
-    } else {
-      fl_alert("Failed to load file\n%s\n%s",
-               file_chooser.filename(),
-               strerror(errno));
-    }
-  }
+  if (file_chooser.show() == 0)
+    load(file_chooser.filename());
 }
 
 void tut4_add_file_support() {
@@ -221,6 +225,24 @@ void tut4_add_file_support() {
   app_menu_bar->insert(ix, "Open", FL_COMMAND+'o', menu_open_callback, NULL, FL_MENU_DIVIDER);
   app_menu_bar->insert(ix+1, "Save", FL_COMMAND+'s', menu_save_callback);
   app_menu_bar->insert(ix+2, "Save as...", FL_COMMAND+'S', menu_save_as_callback, NULL, FL_MENU_DIVIDER);
+}
+
+int args_handler(int argc, char **argv, int &i) {
+  if (argv && argv[i] && argv[i][0]!='-') {
+    load(argv[i]);
+    i++;
+    return 1;
+  }
+  return 0;
+}
+
+int tut4_handle_commandline_and_run(int &argc, char **argv) {
+  int i = 0;
+  Fl::args_to_utf8(argc, argv);
+  Fl::args(argc, argv, i, args_handler);
+  fl_open_callback(load);
+  app_window->show(argc, argv);
+  return Fl::run();
 }
 
 #endif
@@ -231,8 +253,7 @@ int main (int argc, char **argv) {
   tut2_build_app_menu_bar();
   tut3_build_main_editor();
   tut4_add_file_support();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
@@ -293,8 +314,7 @@ int main (int argc, char **argv) {
   tut3_build_main_editor();
   tut4_add_file_support();
   tut5_cut_copy_paste();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
@@ -352,8 +372,7 @@ int main (int argc, char **argv) {
   tut4_add_file_support();
   tut5_cut_copy_paste();
   tut6_implement_find();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
@@ -471,8 +490,7 @@ int main (int argc, char **argv) {
   tut5_cut_copy_paste();
   tut6_implement_find();
   tut7_implement_replace();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
@@ -536,8 +554,7 @@ int main (int argc, char **argv) {
   tut6_implement_find();
   tut7_implement_replace();
   tut8_editor_features();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
@@ -601,8 +618,7 @@ int main (int argc, char **argv) {
   tut7_implement_replace();
   tut8_editor_features();
   tut9_split_editor();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
@@ -1025,8 +1041,7 @@ int main (int argc, char **argv) {
   tut8_editor_features();
   tut9_split_editor();
   tut10_syntax_highlighting();
-  app_window->show(argc, argv);
-  return Fl::run();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
 #endif
