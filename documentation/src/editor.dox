@@ -294,7 +294,7 @@ void menu_save_as_callback(Fl_Widget*, void*) {
 
 However if the user has already set a file name including path information,
 it is the polite thing to preload the file chooser with that information. This
-litte chunk of code will separate the file name from the path before we call
+little chunk of code will separate the file name from the path before we call
 `file_chooser.show()`:
 
 \code
@@ -486,7 +486,7 @@ syntax highlighting.
 \section editor_cut_copy_paste Chapter 5: Cut, Copy, and Paste
 
 The FLTK Text Editor widget comes with builtin cut, copy, and
-paste functionality, but as a curtesy, we should also offer these
+paste functionality, but as a courtesy, we should also offer these
 as menu items in the main menu.
 
 In our feature list, we noted that we want to implement a split
