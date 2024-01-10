@@ -48,7 +48,7 @@ fi
 # with our PDF document title page (LaTeX code) and write the
 # result to $DOXY_HEAD.
 
-$DOXY_CMD -w latex $DOXY_TEMP /dev/null /dev/null
+"$DOXY_CMD" -w latex $DOXY_TEMP /dev/null /dev/null
 
 # combine three parts of these files to the output file
 # using '( ... ) > $DOXY_HEAD' to write (concatenate)

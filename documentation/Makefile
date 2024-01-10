@@ -1,7 +1,7 @@
 #
 # Makefile for the Fast Light Tool Kit (FLTK) documentation.
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -150,7 +150,7 @@ uninstall-linux uninstall-osx:
 
 Doxyfile: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxyfile ..."
-	./convert_doxyfile $(DOXYDOC) $< $@ Doxyfile_error.log
+	./convert_doxyfile "$(DOXYDOC)" $< $@ Doxyfile_error.log
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
@@ -163,8 +163,7 @@ Doxyfile: Doxyfile.in generated.dox copyright.dox
 
 Doxybook: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxybook ..."
-	./convert_doxyfile $(DOXYDOC) $< $@ Doxybook_error.log
-	$(DOXYDOC) -u -s - < $< 2>Doxybook_error.log | \
+	./convert_doxyfile "$(DOXYDOC)" $< $@ Doxybook_error.log
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \
@@ -184,7 +183,7 @@ html:	$(HTMLFILES) Doxyfile
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
-	-$(DOXYDOC)
+	-"$(DOXYDOC)"
 	if test "x$(DOXYDOC)" = "x" ; then \
 	  echo "Sorry - doxygen not found. Please install doxygen and run configure."; \
 	fi
@@ -200,7 +199,7 @@ pdf:	refman.pdf
 refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 	-$(RMDIR) latex
 	echo "Generating PDF documentation ..."
-	$(DOXYDOC) Doxybook
+	"$(DOXYDOC)" Doxybook
 	./make_pdf
 
 src/fltk-title.tex: src/fltk-title.tex.in
@@ -211,11 +210,11 @@ src/fltk-title.tex: src/fltk-title.tex.in
 
 src/fltk-book.tex.in: src/fltk-title.tex
 	echo "Generating $@ ..."
-	./make_header $(DOXYDOC) $< $@
+	./make_header "$(DOXYDOC)" $< $@
 
 src/fltk-book.tex: src/fltk-book.tex.in
 	echo "Generating $@ ..."
-	DOXY_VERSION=`$(DOXYDOC) --version|cut -f1 -d' '`; \
+	DOXY_VERSION=`"$(DOXYDOC)" --version|cut -f1 -d' '`; \
 	YEAR=`date +%Y`; \
 	sed -e"s/@YEAR@/$$YEAR/g" \
 	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
@@ -226,7 +225,7 @@ generated.dox: generated.dox.in
 	echo "Generating $@ ..."
 	CURRENT_DATE=`date "+%b %d, %Y"`; \
 	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
-	DOXYGEN_VERSION_SHORT=`$(DOXYDOC) --version|cut -f1 -d' '`; \
+	DOXYGEN_VERSION_SHORT=`"$(DOXYDOC)" --version|cut -f1 -d' '`; \
 	sed -e"s/@CURRENT_DATE@/$$CURRENT_DATE/g" \
 	    -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
 	    -e"s/@DOXYGEN_VERSION_SHORT@/$$DOXYGEN_VERSION_SHORT/g" \

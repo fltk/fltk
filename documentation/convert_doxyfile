@@ -31,7 +31,7 @@ LOGFILE="$4"
 
 # get doxygen version
 
-VERSION=$($DOXYGEN --version)
+VERSION=$("$DOXYGEN" --version)
 
 # write info header to LOGFILE
 
@@ -41,4 +41,4 @@ echo "" >> $LOGFILE
 
 # convert doxygen file and append errors and warnings to LOGFILE
 
-${DOXYGEN} -u -s - < $INFILE > $OUTFILE 2>> $LOGFILE
+"${DOXYGEN}" -u -s - < $INFILE > $OUTFILE 2>> $LOGFILE
