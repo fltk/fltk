@@ -417,18 +417,20 @@ protected:
     int         charwidth_;        // width of a fixed width ASCII character
   public:
     CharStyle(bool fontsize_defer);
+    uchar attrib(void) const            { return attrib_; }
+    uchar charflags(void) const         { return charflags_; }
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
     Fl_Color defaultfgcolor(void) const { return defaultfgcolor_; }
     Fl_Color defaultbgcolor(void) const { return defaultbgcolor_; }
-    uchar attrib(void) const            { return attrib_; }
     Fl_Font fontface(void) const        { return fontface_; }
     Fl_Fontsize fontsize(void) const    { return fontsize_; }
     int  fontheight(void) const         { return fontheight_; }
     int  fontdescent(void) const        { return fontdescent_; }
     int  charwidth(void) const          { return charwidth_; }
     uchar colorbits_only(uchar inflags) const;
-    void attrib(uchar val)              { attrib_  = val; }
+    void attrib(uchar val)              { attrib_    = val; }
+    void charflags(uchar val)           { charflags_ = val; }
     void set_charflag(uchar val)        { charflags_ |= val; }
     void clr_charflag(uchar val)        { charflags_ &= ~val; }
     void fgcolor_uchar(uchar val);
@@ -1092,6 +1094,7 @@ public:
   Fl_Color selectionbgcolor(void) const { return select_.selectionbgcolor(); }
   // API: Text attrib
   void textattrib(uchar val);
+  uchar textattrib() const;
   // API: Redraw style/rate
   RedrawStyle redraw_style(void) const;
   void  redraw_style(RedrawStyle val);

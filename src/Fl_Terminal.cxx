@@ -1634,6 +1634,16 @@ void Fl_Terminal::textattrib(uchar val) {
 }
 
 /**
+  Get text attribute bits (underline, inverse, etc).
+  This is the default attribute used for all newly printed text.
+
+ \see textattrib(uchar), Fl_Terminal::Attrib
+*/
+uchar Fl_Terminal::textattrib() const {
+  return current_style_->attrib();
+}
+
+/**
   Convert fltk window X coord to column 'gcol' on specified global 'grow'
   \returns
     - 1 if 'gcol' was found
