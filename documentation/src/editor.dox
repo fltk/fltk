@@ -1,22 +1,23 @@
 /**
 
- \page  editor Designing a Simple Text Editor
 
-This chapter takes you through the design of a simple
-FLTK-based text editor. The complete source for our
-text editor can be found in `test/editor.cxx`.
+\page  editor  Designing a Simple Text Editor
 
-The tutorial comprises multiple chapters, and you can enable
-the relevant code by adjusting the `TUTORIAL_CHAPTER` macro at
-the top of the source file to match the chapter number.
+This chapter guides you through the design of a simple FLTK-based text editor.
+The complete source code for our text editor can be found in
+the test/editor.cxx file.
 
-Every chapter builds on the previous chapter. The documentation as well
-as the source code can be read sequentially, maintaining a consistent
-program structure while introducing additional features step by step.
+The tutorial comprises multiple chapters, and you can activate the relevant
+code by adjusting the TUTORIAL_CHAPTER macro at the top of the source file
+to match the chapter number.
 
-\note The tutorial uses a lot of global variables for the sake
-of brevity. Also, the order of code blocks is rather uncommon, but helps to
-keep related features within a chapter.
+Each chapter builds on the previous one. The documentation, as well as the
+source code, can be read sequentially, maintaining a consistent program
+structure while introducing additional features step by step.
+
+\note The tutorial uses several global variables for brevity. Additionally,
+the order of code blocks is rather uncommon but helps to keep related
+features within a chapter.
 
 <!-- ----------------------------------------------------- -->
 
@@ -24,8 +25,8 @@ keep related features within a chapter.
 
 As our first step, we define what we want our text editor to do:
 
--# Edit a single text document
--# Provide a menubar/menus for all functions
+-# Edit a single text document.
+-# Provide a menubar/menus for all functions.
 -# Load from a file.
 -# Save to a file.
 -# Keep track of when the file has been changed.
@@ -41,12 +42,12 @@ As our first step, we define what we want our text editor to do:
 
 \section editor_main_window Chapter 1: A Minimal App
 
-Let's make sure that we can get our build process set up, so we can
-compile and verify our code while we add features. We start by writing a
-minimal program that has no other purpose than opening a window.
+Let's ensure that we can set up our build process to compile and verify our
+code as we add features. We begin by writing a minimal program with no
+other purpose than opening a window.
 
-The code for that is barely longer than a "Hello world" program
-and is marked in the source code as `TUTORIAL_CHAPTER = 1`.
+The code for that is barely longer than a "Hello, world" program and is
+marked in the source code as `TUTORIAL_CHAPTER = 1`.
 
 \code
 #include <FL/Fl_Double_Window.H>
@@ -65,30 +66,32 @@ int main (int argc, char **argv) {
 }
 \endcode
 
-Passing `argc` and `argv` to `Fl_Double_Window::show()` allows FLTK
-to parse command line options, giving the user the ability to change
-the color or graphical scheme of the editor at launch time.
+Passing `argc` and `argv` to `Fl_Double_Window::show()` allows FLTK to parse
+command line options, providing the user with the ability to change the
+color or graphical scheme of the editor at launch time.
 
-`Fl::run()` will return when no more windows in the app are visible, i.e.
-if all windows in an app are closed, hidden, or deleted. Typing Escape or
-clicking the "Close" button in the window frame will close our only window,
-so `Fl::run()` will return, effectively ending the app.
+`Fl::run()` will return when no more windows in the app are visible.
+In other words, if all windows in an app are closed, hidden, or deleted.
+Pressing "Escape" or clicking the "Close" button in the window frame will
+close our only window, prompting `Fl::run()` to return, effectively
+ending the app.
 
-When building FLTK form source, the CMake environment includes the necessary
-rules to build the editor. You can find more information on how to write
-your own CMake files in the `README.CMake.txt` text in the top FLTK directory.
+When building FLTK from source, the `CMake` environment includes the
+necessary rules to build the editor. You can find more information on
+how to write your own `CMake` files in the `README.CMake.txt` text in the
+top FLTK directory.
 
-For Linux and macOS, FLTK comes with the `fltk-config` script that
-generates the compiler commands for you:
+For Linux and macOS, FLTK comes with the `fltk-config` script that generates
+the compiler commands for you:
 
 \code
 fltk-config --compile editor.cxx
 \endcode
 
-If the code compiles and links correctly, running the app will
-pop up an empty application window on the desktop screen. You can close
-the window and quit the app by pressing the Escape key or by clicking
-the "Close" button in the window frame.
+If the code compiles and links correctly, running the app will pop up an
+empty application window on the desktop screen. You can close the window
+and quit the app by pressing the 'Escape' key or by clicking the "Close"
+button in the window frame.
 
 Congratulations, you've just built a minimal FLTK app.
 
@@ -97,9 +100,9 @@ Congratulations, you've just built a minimal FLTK app.
 
 \section editor_main_menu Chapter 2: Adding a Menu Bar
 
-In this chapter we will add the main menu bar with a File menu
-and a Quit button. This is a good time to define a flag that will
-track changes in the text later.
+In this chapter, we will add the main menu bar with a File menu and a
+Quit button. This is a good time to define a flag that will track
+changes in the text later.
 
 \code
 // remove `main()` from chapter 1, but keep the rest of the code, then add...
@@ -128,16 +131,16 @@ int main (int argc, char **argv) {
 }
 \endcode
 
-`begin()` tells FLTK to add all widgets that are created hereafter
-will be added to our `app_window`. In this particular case, it is redundant
-because creating the window in the previous chapter called `begin()`
-for us. We will keep it here for good style.
+`begin()` tells FLTK to add all widgets created hereafter to our
+`app_window`. In this particular case, it is redundant because creating
+the window in the previous chapter already called `begin()` for us.
 
 In the next line, we create the menu bar and add our first menu item
-to it. Menus can be built like file paths with forward slashes '/'
-separating the sub menus from menu items.
+to it. Menus can be constructed like file paths, with forward slashes
+'/' separating submenus from menu items.
 
 Our basic callback is simple:
+
 \code
 void menu_quit_callback(Fl_Widget *, void *) {
   Fl::hide_all_windows();
@@ -157,10 +160,11 @@ The `Fl_Widget*` parameter in the callback will either be `app_window` if
 called through the window callback, or `app_menu_bar` if called by one of
 the menu items.
 
-One of our goals was to keep track of text changes. If we know that the
-text changed and is unsaved, we should notify the user that she is about
-to lose her work. We do this by adding a dialog box in the Quit callback
-that queries the user if she really wants to quit, even if text was changed:
+One of our goals was to keep track of text changes. If we know the
+text changed and is unsaved, we should notify the user that she is
+about to lose her work. We achieve this by adding a dialog box in
+the Quit callback that queries if the user really wants to quit,
+even if text was changed:
 
 \code
 void menu_quit_callback(Fl_Widget *, void *) {
@@ -182,10 +186,10 @@ void menu_quit_callback(Fl_Widget *, void *) {
 FLTK comes with a pretty capable builtin text editing widget. We will use
 this `Fl_Text_Editor` widget here to allow users to edit their documents.
 
-`Fl_Text_Editor` needs an `Fl_Text_Buffer` to do anything useful. What seems
-like an unnecessary extra step is a great feature: we can assign one text
-buffer to multiple text editors. In a later chapter, we will use this
-feature to implement a split editor window.
+`Fl_Text_Editor` needs an `Fl_Text_Buffer` to do anything useful. What
+might seem like an unnecessary extra step is a great feature: we can
+assign one text buffer to multiple text editors. In a later chapter,
+we will use this feature to implement a split editor window.
 
 \code
 #include <FL/Fl_Text_Buffer.H>
@@ -211,9 +215,10 @@ void tut3_build_main_editor() {
 }
 \endcode
 
-By setting the `app_editor` to be the `resizable()` of `app_window`, we make
-our application window resizable on the desktop, and we ensure that resizing
-the window will only resize the text editor, but not our menu bar.
+By setting the `app_editor` to be the `resizable()` property of
+`app_window`, we make our application window resizable on the desktop,
+and we ensure that resizing the window will only resize the text editor
+vertically, but not our menu bar.
 
 To keep track of changes to the document, we add a callback to the text
 editor that will be called whenever text is added or deleted. The text modify
