@@ -30,7 +30,8 @@ class Fl_Zenity_Native_File_Chooser_Driver : public Fl_Kdialog_Native_File_Choos
   static bool did_find_zenity;
   static bool have_looked_for_zenity;
   Fl_Zenity_Native_File_Chooser_Driver(int val);
-  char *build_command() FL_OVERRIDE;
+  void append_filter(Fl_String& command);
+  void build_command(Fl_String& command) FL_OVERRIDE;
 };
 
 /**
