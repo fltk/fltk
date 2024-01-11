@@ -1129,6 +1129,7 @@ void Fl_Terminal::init_tabstops(int newsize) {
 
 // Reset all tabstops to default 8th char
 void Fl_Terminal::default_tabstops(void) {
+  init_tabstops(ring_cols());                // issue #882
   for (int t=1; t<tabstops_size_; t++)       // t=1: skip 0
     tabstops_[t] = ((t % 8) == 0) ? 1 : 0;   // every 8th char is a tabstop
 }
