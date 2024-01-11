@@ -143,7 +143,7 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
 
   Fl_String command;
   build_command(command);
-  fprintf(stderr, "DEBUG: POPEN: %s\n", command.c_str());
+  //fprintf(stderr, "DEBUG: POPEN: %s\n", command.c_str());
   FILE *pipe = popen(command.c_str(), "r");
   fnfc_pipe_struct data;
   data.all_files = NULL;
