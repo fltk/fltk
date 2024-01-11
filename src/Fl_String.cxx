@@ -646,6 +646,19 @@ bool operator==(const Fl_String &lhs, const Fl_String &rhs) {
 }
 
 /**
+ Compare two strings for inequality.
+ \param[in] lhs first string
+ \param[in] rhs second string
+ \return true if strings differ in size or content
+ */
+bool operator!=(const Fl_String &lhs, const Fl_String &rhs) {
+  if (lhs.size() != rhs.size()) return true;
+  int sz = lhs.size();  // same size for both
+  if (memcmp(lhs.data(), rhs.data(), sz) != 0) return true;
+  return false;
+}
+
+/**
 \}
 \endcond
 */

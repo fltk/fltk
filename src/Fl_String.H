@@ -135,6 +135,7 @@ public:
 FL_EXPORT Fl_String operator+(const Fl_String& lhs, const Fl_String& rhs);
 FL_EXPORT Fl_String operator+(const Fl_String& lhs, const char* rhs);
 FL_EXPORT bool operator==(const Fl_String & lhs, const Fl_String & rhs);
+FL_EXPORT bool operator!=(const Fl_String & lhs, const Fl_String & rhs);
 
 /**
 \}

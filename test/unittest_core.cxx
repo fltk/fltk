@@ -193,6 +193,8 @@ TEST(Fl_String, Non-Member Functions) {
   EXPECT_STREQ(result.c_str(), "x");
   EXPECT_TRUE(!(a == b));
   EXPECT_TRUE(a == a);
+  EXPECT_FALSE((a != a));              // neq -erco
+  EXPECT_TRUE((a != b));               // neq -erco
   EXPECT_TRUE(empty == empty);
   EXPECT_TRUE(a+b == "ab");
   EXPECT_TRUE(a+"b" == "a" + b);
