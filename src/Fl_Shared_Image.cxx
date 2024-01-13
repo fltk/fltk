@@ -259,7 +259,7 @@ void Fl_Shared_Image::release() {
     delete[] images_;
 
     images_       = 0;
-    alloc_images_ = NULL;
+    alloc_images_ = 0;
   }
 #ifdef SHIM_DEBUG
   printf("<---- Fl_Shared_Image::release() %016x\n", this);
