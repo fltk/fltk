@@ -169,7 +169,7 @@ int Fl_Button::handle(int event) {
     /* NOTREACHED */
   case FL_KEYUP:
     s_key_repeat = false;
-    break;
+    return 0;
   case FL_KEYBOARD :
     if (Fl::focus() == this && Fl::event_key() == ' ' &&
         !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
@@ -208,6 +208,7 @@ int Fl_Button::handle(int event) {
   default:
     return 0;
   }
+  return 0;
 }
 
 void Fl_Button::simulate_key_action()
