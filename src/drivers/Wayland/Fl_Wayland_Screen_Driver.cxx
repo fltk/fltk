@@ -739,6 +739,7 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                                            0xffb0 /* 0 */, 0xffac /* .|, */};
     Fl::e_keysym          =          table[sym - XKB_KEY_KP_Home];
     Fl::e_original_keysym = table_original[sym - XKB_KEY_KP_Home];
+    for_key_vector = Fl::e_original_keysym;
   }
 #if (DEBUG_KEYBOARD)
   fprintf(stderr, "wl_keyboard_key: e_keysym=%x e_original_keysym=%x\n", Fl::e_keysym, Fl::e_original_keysym);
