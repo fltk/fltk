@@ -405,7 +405,7 @@ Fl_Image *Fl_Shared_Image::copy() const {
  necessarily apply the color changes if this image is resized later.
 
  \param[in] c blend with this color
- \param[in] bland fraction
+ \param[in] i blend fraction
  \see Fl_Image::color_average(Fl_Color c, float i)
  */
 void
