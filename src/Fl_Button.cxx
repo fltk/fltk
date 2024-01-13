@@ -102,6 +102,7 @@ void Fl_Button::draw() {
 }
 
 int Fl_Button::handle(int event) {
+  static bool s_key_repeat = false;
   int newval;
   switch (event) {
   case FL_ENTER: /* FALLTHROUGH */
@@ -123,27 +124,29 @@ int Fl_Button::handle(int event) {
       value_ = newval;
       set_changed();
       redraw();
-      if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+      if ((type() == 0) && (when() & FL_WHEN_CHANGED)) do_callback(FL_REASON_CHANGED);
     }
     return 1;
   case FL_RELEASE:
     if (value_ == oldval) {
-      if (when() & FL_WHEN_NOT_CHANGED) do_callback(FL_REASON_SELECTED);
-      return 1;
-    }
-    set_changed();
-    if (type() == FL_RADIO_BUTTON) setonly();
-    else if (type() == FL_TOGGLE_BUTTON) oldval = value_;
-    else {
-      value(oldval);
-      set_changed();
-      if (when() & FL_WHEN_CHANGED) {
-        Fl_Widget_Tracker wp(this);
-        do_callback(FL_REASON_CHANGED);
-        if (wp.deleted()) return 1;
+      clear_changed();
+    } else {
+      Fl_Widget_Tracker wp(this);
+      if (type() == FL_RADIO_BUTTON) {
+        setonly();
+      } else if (type() == FL_TOGGLE_BUTTON) {
+        oldval = value_;
+      } else {
+        value(oldval);
       }
+      set_changed();
     }
-    if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
+    if (changed() && (when() & FL_WHEN_CHANGED))
+      do_callback(FL_REASON_CHANGED);
+    else if (!changed() && (when() & FL_WHEN_NOT_CHANGED))
+      do_callback(FL_REASON_SELECTED);
+    else if (when() & FL_WHEN_RELEASE)
+      do_callback(FL_REASON_RELEASED);
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
@@ -164,25 +167,41 @@ int Fl_Button::handle(int event) {
       return 1;
     } else return 0;
     /* NOTREACHED */
+  case FL_KEYUP:
+    s_key_repeat = false;
+    break;
   case FL_KEYBOARD :
     if (Fl::focus() == this && Fl::event_key() == ' ' &&
         !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
-      set_changed();
     triggered_by_keyboard:
+      if (s_key_repeat) return 1;
       Fl_Widget_Tracker wp(this);
-      if (type() == FL_RADIO_BUTTON) {
+       if (type() == FL_RADIO_BUTTON) {
         if (!value_) {
           setonly();
-          if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+          set_changed();
+        } else {
+          clear_changed();
         }
       } else if (type() == FL_TOGGLE_BUTTON) {
         value(!value());
-        if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+        set_changed();
       } else {
-        simulate_key_action();
+        set_changed();
       }
-      if (wp.deleted()) return 1;
-      if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
+
+      if (changed() && (when() & FL_WHEN_CHANGED))
+        do_callback(FL_REASON_CHANGED);
+      else if (!changed() && (when() & FL_WHEN_NOT_CHANGED)) 
+        do_callback(FL_REASON_SELECTED);
+      else if (when() & FL_WHEN_RELEASE) 
+        do_callback(FL_REASON_RELEASED);
+      s_key_repeat = true;
+      if (wp.deleted()) return 1; // leave if the widget was deleted in the callback
+
+      if ((type() != FL_RADIO_BUTTON) && (type() != FL_TOGGLE_BUTTON)) {
+        simulate_key_action(); // for visual feedback only
+      }
       return 1;
     }
     /* FALLTHROUGH */
@@ -229,10 +248,32 @@ void Fl_Button::key_release_timeout(void *d)
 
   Derived classes may handle this differently.
 
-  A button may reequest callbacks with \p whne() \p FL_WHEN_CHANGED,
-  \p FL_WHEN_NOT_CHANGED, and \p FL_WHEN_RELEASE, triggering the callback
-  reasons \p FL_REASON_CHANGED, \p FL_REASON_SELECTED,
-  and \p FL_REASON_DESELECTED.
+  A button may request callbacks by setting bits in the \p when() bitfield.
+  Only one callback is called for any one event. If multiple bits are set,
+  only the first callback in the list below will be called.
+
+  If the `FL_WHEN_CHANGED` bit is set, the callback is called when the mouse
+  button is released, the shortcut key was pressed, or the button has focus
+  and the space bar was pressed, and the value of the button changed. A regular
+  button (not a radio or toggle button) callback is also triggered by key
+  repeat events. The callback reason is set to `FL_REASON_CHANGED`.
+  `Fl_Button::changed()` is !=0, and `Fl_Button::value()` is set to the new
+  value for radio and check buttons.
+
+  If `FL_WHEN_NOT_CHANGED` is set, the callback is called for the same events
+  as above, but only if the value did *not* change. The callback reason is
+  `FL_REASON_SELECTED`. This bit is usually combined with other bits in `when()`.
+
+  The default setting is `FL_WHEN_RELEASE`. If this flag is set, the callback is
+  called when the mouse button or the shortcut key is released. Toggle and radio
+  button callbacks are called, even if the value did not change, however the
+ `Fl_Button::changed()` flag is set accordingly. The callback reason is given
+  as `FL_REASON_RELEASED`.
+
+  When a radio button changes other radio buttons in the same group, only the
+  user activated button will trigger its callback according to the flags above.
+  The other widgets in the group will change their value, but not call their
+  corresponding callbacks.
 
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label

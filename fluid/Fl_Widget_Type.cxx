@@ -3228,8 +3228,6 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     f.write_c("));\n");
   }
   Fl_When ww = o->when();
-  if (ww==FL_WHEN_NOT_CHANGED)
-    ww = FL_WHEN_NEVER;
   if (ww != tplate->when() || subclass())
     f.write_c("%s%s->when(%s);\n", f.indent(), var, when_symbol_name(ww));
   if (!o->visible() && o->parent())
