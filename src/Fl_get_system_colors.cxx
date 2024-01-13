@@ -83,7 +83,30 @@ const char *fl_fg = NULL;
 const char *fl_bg = NULL;
 const char *fl_bg2 = NULL;
 
+/**
+ Parse a string containing a description of a color and write r, g, and b.
 
+ This call is used by the Pixmap file format interpreter and by the command
+ line arguments parser to set UI colors.
+
+ RGB color triplets usually start with a '#' character, but it can be omitted
+ if it does not conflict with the later rules. Color components are defined
+ in hexadecimal notation with 1, 2, 3, or four hex digits per component, making
+ color triplets 3, 6, 9, or 12 characters long. The interpreter is case
+ insensitive. Valid codes examples include "FF0000" for red, "#0F0" for green,
+ and "000000004444" for a dark blue.
+
+ On X11 platforms, color values can also be given a color name like "red".
+ the list of available colors names is provided of the X11 server.
+
+ If non of the color interpretations work, `fl_parse_color` color returns 0.
+ The Pixmap reader interprets those a transparent, and are usually written as
+ "None", "#transparent", or "bg".
+
+ \param[in] p a C-string describing the color
+ \param[out] r, g, b the color components in a range from 0...255
+ \return 0 if the color can not be interpreted, 1 otherwise
+ */
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   return Fl::screen_driver()->parse_color(p, r, g, b);
 }

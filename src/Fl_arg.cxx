@@ -106,10 +106,27 @@ extern const char *fl_bg2;
   <br>
   Enables or disables tooltips using Fl_Tooltip::enable().
 
+  Color values are commonly given as three digit or six digit hex numbers.
+
+  * the order of fg, bg, and bg2 in the command line does not matter
+  * there is no way at the moment to set the selection color
+  * setting the bg2 color also changes the fg color to have sufficient contrast
+  * explicitly setting fg color overrides the bg2/contrast constraint
+  * setting the bg color will update the color lookup table for the gray ramp,
+    so color index values  can stay the same for all apps, it's just mapped to
+    different RGB values
+  * the calculation of the gray ramp is only based on the bg color, so there is
+    no way at the moment to create an inverted (dark mode) ramp
+  * consequently, setting bg to black creates a an all-black ramp, setting a
+    somewhat dark bg color creates a extremely dark ramp
+  * setting the bg has no influence on bg2 or fg
 
   If your program requires other switches in addition to the standard
   FLTK options, you will need to pass your own argument handler to
   Fl::args(int,char**,int&,Fl_Args_Handler) explicitly.
+
+  \see fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) to see how
+  color values can be defined
 */
 int Fl::arg(int argc, char **argv, int &i) {
   arg_called = 1;
