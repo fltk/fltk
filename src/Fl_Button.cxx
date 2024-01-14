@@ -131,7 +131,6 @@ int Fl_Button::handle(int event) {
     if (value_ == oldval) {
       clear_changed();
     } else {
-      Fl_Widget_Tracker wp(this);
       if (type() == FL_RADIO_BUTTON) {
         setonly();
       } else if (type() == FL_TOGGLE_BUTTON) {
@@ -176,7 +175,7 @@ int Fl_Button::handle(int event) {
     triggered_by_keyboard:
       if (s_key_repeat) return 1;
       Fl_Widget_Tracker wp(this);
-       if (type() == FL_RADIO_BUTTON) {
+      if (type() == FL_RADIO_BUTTON) {
         if (!value_) {
           setonly();
           set_changed();
