@@ -1,7 +1,7 @@
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,8 +29,7 @@
 void Fl_File_Chooser::cb_window_i(Fl_Double_Window*, void*) {
   fileName->value("");
   fileList->deselect();
-  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-  window->hide();
+  hide();
 }
 void Fl_File_Chooser::cb_window(Fl_Double_Window* o, void* v) {
   ((Fl_File_Chooser*)(o->user_data()))->cb_window_i(o,v);
@@ -105,7 +104,7 @@ void Fl_File_Chooser::cb_fileName(Fl_File_Input* o, void* v) {
 }
 
 void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
-  window->hide();
+  hide();
 
   // Do any callback that is registered...
   if (callback_)
@@ -118,8 +117,7 @@ void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
 void Fl_File_Chooser::cb_cancelButton_i(Fl_Button*, void*) {
   fileName->value("");
   fileList->deselect();
-  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-  window->hide();
+  hide();
 }
 void Fl_File_Chooser::cb_cancelButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_cancelButton_i(o,v);
@@ -222,19 +220,19 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
     } // Fl_Tile* o
     { Fl_Group* o = new Fl_Group(10, 275, 470, 95);
       { Fl_Group* o = new Fl_Group(10, 275, 470, 20);
-        { previewButton = new Fl_Check_Button(10, 275, 73, 20, "Preview");
+        { previewButton = new Fl_Check_Button(10, 275, 105, 20, "Preview");
           previewButton->shortcut(0x80070);
           previewButton->down_box(FL_DOWN_BOX);
           previewButton->value(1);
           previewButton->callback((Fl_Callback*)cb_previewButton);
           previewButton->label(preview_label);
         } // Fl_Check_Button* previewButton
-        { showHiddenButton = new Fl_Check_Button(115, 275, 165, 20, "Show hidden files");
+        { showHiddenButton = new Fl_Check_Button(115, 275, 140, 20, "Show hidden files");
           showHiddenButton->down_box(FL_DOWN_BOX);
           showHiddenButton->callback((Fl_Callback*)cb_showHiddenButton);
           showHiddenButton->label(hidden_label);
         } // Fl_Check_Button* showHiddenButton
-        { Fl_Box* o = new Fl_Box(115, 275, 365, 20);
+        { Fl_Box* o = new Fl_Box(255, 275, 225, 20);
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         o->end();
@@ -362,10 +360,6 @@ int Fl_File_Chooser::filter_value() {
 void Fl_File_Chooser::filter_value(int f) {
   showChoice->value(f);
   showChoiceCB();
-}
-
-void Fl_File_Chooser::hide() {
-  window->hide();
 }
 
 void Fl_File_Chooser::iconsize(uchar s) {

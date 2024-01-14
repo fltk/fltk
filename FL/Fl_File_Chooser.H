@@ -1,7 +1,7 @@
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -145,7 +145,6 @@ public:
   const char * filter();
   int filter_value();
   void filter_value(int f);
-  void hide();
   void iconsize(uchar s);
   uchar iconsize();
   void label(const char *l);
@@ -161,6 +160,7 @@ public:
   void rescan();
   void rescan_keep_filename();
   void show();
+  void hide();
   int shown();
   void textcolor(Fl_Color c);
   Fl_Color textcolor();

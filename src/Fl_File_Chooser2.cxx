@@ -1551,6 +1551,14 @@ void Fl_File_Chooser::show()
   if (!Fl::system_driver()->dot_file_hidden()) showHiddenButton->hide();
 }
 
+void Fl_File_Chooser::hide() {
+  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+  Fl_Shared_Image *oldimage = (Fl_Shared_Image*)previewBox->image();
+  if (oldimage) oldimage->release();
+  previewBox->image(NULL);
+  window->hide();
+}
+
 void Fl_File_Chooser::showHidden(int value)
 {
   if (value) {
