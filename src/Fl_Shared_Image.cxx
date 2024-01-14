@@ -222,7 +222,7 @@ void Fl_Shared_Image::release() {
   Fl_Shared_Image *the_original = NULL;
 
 #ifdef SHIM_DEBUG
-  printf("----> Fl_Shared_Image::release() %016x\n", this);
+  printf("----> Fl_Shared_Image::release() %d %s %d %d\n", original_, name_, w(), h());
   print_pool();
 #endif
 
@@ -230,12 +230,13 @@ void Fl_Shared_Image::release() {
   refcount_ --;
   if (refcount_ > 0) return;
 
+  // If this image is not the original, find the original image and make sure
+  // to delete its reference counter as well at the end of this method.
   if (!original()) {
     Fl_Shared_Image *o = find(name());
-    if (o && o->original() && o!=this) {
-      the_original = o;
-    }
     if (o) {
+      if (o->original() && o!=this && o->refcount_>1)
+        the_original = o; // mark to release later
       o->release(); // release from find() operation
     }
   }
@@ -262,12 +263,14 @@ void Fl_Shared_Image::release() {
     alloc_images_ = 0;
   }
 #ifdef SHIM_DEBUG
-  printf("<---- Fl_Shared_Image::release() %016x\n", this);
+  printf("<---- Fl_Shared_Image::release() %d %s %d %d\n", original_, name_, w(), h());
   print_pool();
   printf("\n");
 #endif
+
+  // Release one reference count in the original image as well.
   if (the_original)
-    the_original->release(); // release as a reference to this copy of the image
+    the_original->release();
 }
 
 /** Reloads the shared image from disk. */
