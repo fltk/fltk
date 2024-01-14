@@ -1,7 +1,7 @@
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -13,6 +13,10 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+/** \file Fl_get_system_colors.cxx
+ \brief System color support
+*/
 
 #include <FL/Fl.H>
 #include "Fl_Screen_Driver.H"
@@ -93,19 +97,19 @@ const char *fl_bg2 = NULL;
  if it does not conflict with the later rules. Color components are defined
  in hexadecimal notation with 1, 2, 3, or four hex digits per component, making
  color triplets 3, 6, 9, or 12 characters long. The interpreter is case
- insensitive. Valid codes examples include "FF0000" for red, "#0F0" for green,
+ insensitive. Valid code examples include "FF0000" for red, "#0F0" for green,
  and "000000004444" for a dark blue.
 
- On X11 platforms, color values can also be given a color name like "red".
- the list of available colors names is provided of the X11 server.
+ On the X11 platform, color values can also be given a color name like "red".
+ The list of accepted color names is provided by the X11 server.
 
- If non of the color interpretations work, `fl_parse_color` color returns 0.
- The Pixmap reader interprets those a transparent, and are usually written as
+ If none of the color interpretations work, \ref fl_parse_color returns 0.
+ The Pixmap reader interprets those as transparent, and are usually written as
  "None", "#transparent", or "bg".
 
  \param[in] p a C-string describing the color
- \param[out] r, g, b the color components in a range from 0...255
- \return 0 if the color can not be interpreted, 1 otherwise
+ \param[out] r, g, b the color components in the 0...255 range
+ \return 0 if the color cannot be interpreted, 1 otherwise
  */
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   return Fl::screen_driver()->parse_color(p, r, g, b);
