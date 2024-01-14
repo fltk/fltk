@@ -24,6 +24,7 @@
 
 #  include "Fl_Image.H"
 
+#undef SHIM_DEBUG
 
 // Test function for adding new formats
 typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
@@ -82,6 +83,10 @@ protected:
   void update();
 
 public:
+#ifdef SHIM_DEBUG
+  static void print_pool();
+#endif
+
   /** Returns the filename of the shared image */
   const char	*name() { return name_; }
 

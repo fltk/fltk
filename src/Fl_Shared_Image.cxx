@@ -3,7 +3,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -217,14 +217,24 @@ Fl_Shared_Image::~Fl_Shared_Image() {
 */
 void Fl_Shared_Image::release() {
   int	i;	// Looping var...
+  Fl_Shared_Image *the_original = NULL;
 
+#ifdef SHIM_DEBUG
+  printf("----> Fl_Shared_Image::release() %d %s %d %d\n", original_, name_, w(), h());
+  print_pool();
+#endif
+
+  if (refcount_ <= 0) return; // assert(refcount_>0);
   refcount_ --;
   if (refcount_ > 0) return;
 
+  // If this image is not the original, find the original image and make sure
+  // to delete its reference counter as well at the end of this method.
   if (!original()) {
     Fl_Shared_Image *o = find(name());
-    if (o && o->original() && o!=this) {
-      o->release(); // release as a reference to this copy of the image
+    if (o) {
+      if (o->original() && o!=this && o->refcount_>1)
+        the_original = o; // mark to release later
       o->release(); // release from find() operation
     }
   }
@@ -249,6 +259,15 @@ void Fl_Shared_Image::release() {
     images_       = 0;
     alloc_images_ = 0;
   }
+#ifdef SHIM_DEBUG
+  printf("<---- Fl_Shared_Image::release() %d %s %d %d\n", original_, name_, w(), h());
+  print_pool();
+  printf("\n");
+#endif
+
+  // Release one reference count in the original image as well.
+  if (the_original)
+    the_original->release();
 }
 
 
@@ -579,25 +598,41 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
 */
 Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
   Fl_Shared_Image	*temp;		// Image
+  bool temp_referenced = false;
 
+  // Find an image by the requested size
   // ::find() increments the ref count for us
   if ((temp = find(name, W, H)) != NULL)
     return temp;
 
-  if ((temp = find(name)) == NULL) {
+  // Find the original image, size does not matter
+  temp = find(name);
+  if (temp) {
+    temp_referenced = true;
+  } else {
+    // No original found, so we generate it by loading the file
     temp = new Fl_Shared_Image(name);
-
+    // We can't load the file or create the image, so return fail
     if (!temp->image_) {
       delete temp;
       return NULL;
     }
-
+    // Add the new image to the pool, refcount is already at 1
     temp->add();
   }
 
+  // At this point, temp is an original image
+  // But if the size is wrong, generate a resized copy
   if ((temp->w() != W || temp->h() != H) && W && H) {
-    temp = (Fl_Shared_Image *)temp->copy(W, H);
-    temp->add();
+    // Generate a copy with the new size, the copy gets refcount 1
+    Fl_Shared_Image *new_temp = (Fl_Shared_Image *)temp->copy(W, H);
+    if (!new_temp) return NULL;
+    // Also increment the refcount of the original image
+    if (!temp_referenced)
+      temp->refcount_++;
+    // add the newly created image to the pool and return it
+    new_temp->add();
+    return new_temp;
   }
 
   return temp;
@@ -672,6 +707,24 @@ void Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
   }
 }
 
+#ifdef SHIM_DEBUG
+/**
+ Print the contents of the shared image pool.
+ */
+void Fl_Shared_Image::print_pool() {
+  printf("Fl_Shared_Image: %d images stored in a pool of %d\n", num_images_, alloc_images_);
+  for (int i=0; i<num_images_; i++) {
+    Fl_Shared_Image *img = images_[i];
+    printf("%3d: %3d(%c) %4dx%4d: %s\n",
+           i,
+           img->refcount_,
+           img->original_ ? 'O' : '_',
+           img->w(), img->h(),
+           img->name()
+           );
+  }
+}
+#endif
 
 //
 // End of "$Id$".
