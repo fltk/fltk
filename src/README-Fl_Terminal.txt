@@ -303,7 +303,51 @@ Some terminal operations necessarily call redraw() directly, such as interactive
 selection, or during user scrolling the terminal's scrollbar, where it's important there's
 no delay in what the user sees while interacting directly with the widget.
 
+TERMINAL RESIZING
+=================
+Resizing currently follows xterm(1) style behavior:
 
+    CASE 1: ENLARGE, USING HISTORY:
+           -2  Line 1   ┐_ scrollback
+           -1  Line 2   ┘  history
+             ┌──────────────────┐              ┌──────────────────┐
+            1│ Hello!           │             1│ Line 1           │
+            2│ ▒                │   enlarge   2│ Line 2           │
+             └──────────────────┘ ──┐         3│ Hello!           │
+                                    │         4│ ▒                │
+                                    └──────>   └──────────────────┘
+    ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄
+    CASE 2: ENLARGE, ADDING LINES BELOW CURSOR
+             ┌──────────────────┐              ┌──────────────────┐
+            1│ Line 1           │             1│ Line 1           │
+            2│ Line 2           │   enlarge   2│ Line 2           │
+            3│ Hello!           │             3│ Hello!           │
+            4│ ▒                │             4│ ▒                │
+             └──────────────────┘ ──┐         5│                  │
+                                    │         6│                  │
+                                    └──────>   └──────────────────┘
+    ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄
+    CASE 3: SHRINK, TRIMMING LINES BELOW CURSOR
+             ┌──────────────────┐            ┌──────────────────┐
+            1│ Line 1           │           1│ Line 1           │
+            2│ Line 2           │           2│ Line 2           │
+            3│ Hello!           │   resize  3│ Hello!           │
+            4│ ▒                │           4│ ▒                │
+            5│                  │   ╭────>   └──────────────────┘
+            6│                  │   │       5    ┐ Lines below cursor erased
+             └──────────────────┘ ──╯       6    ┘ (regardless of contents)
+    ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄ ┄
+    CASE 4: SHRINK, PUSH TO HISTORY:       -2  Line 1   ┐_ moved into
+                                           -1  Line 2   ┘  scrollback history
+             ┌──────────────────┐            ┌──────────────────┐
+            1│ Line 1           │           1│ Hello!           │
+            2│ Line 2           │   resize  2│ ▒                │
+            3│ Hello!           │   ╭────>   └──────────────────┘
+            4│ ▒                │   │
+             └──────────────────┘ ──╯
+
+These case numbers (CASE 1 tru 4) are referenced in the source code for
+Fl_Terminal::refit_disp_to_screen(void).
 
 
 OLD     OLD     OLD     OLD     OLD     OLD     OLD     OLD     OLD     OLD     OLD

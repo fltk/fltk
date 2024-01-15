@@ -1210,15 +1210,48 @@ void Fl_Terminal::update_scrollbar(void) {
   scrollbar->redraw();     // redraw scroll always
 }
 
-// Refit the display to match screen
+// Refit the display - (display_rows()/cols()) to match screen (scrn_.h()/w())
+//   This implements an xterm-like resizing behavior. Refer to README-Fl_Terminal.txt,
+//   section "TERMINAL RESIZING" for a diagram of cases showing how this is implemented.
+//   See also issue #879.
+//
 void Fl_Terminal::refit_disp_to_screen(void) {
-  int dh = h_to_row(scrn_.h());                    // height in rows for tty pixel height
-  int dw = MAX(w_to_col(scrn_.w()), disp_cols());  // width in cols for tty pixel width - enlarge only!
-  int drows     = clamp(dh, 2,  dh);               // 2 rows minimum
-  int dcols     = clamp(dw, 10, dw);               // 10 cols minimum
-  int drow_diff = drows - display_rows();          // change in rows?
-  ring_.resize(drows, dcols, hist_rows(), *current_style_);
-  cursor_.scroll(-drow_diff);
+  int dh         = h_to_row(scrn_.h());         // disp height: in rows for tty pixel height
+  int dw         = MAX(w_to_col(scrn_.w()), disp_cols()); // disp width: in cols from pixel width - enlarge only!
+  int drows      = clamp(dh, 2,  dh);           // disp rows: 2 rows minimum
+  int dcols      = clamp(dw, 10, dw);           // disp cols: 10 cols minimum
+  int drow_diff  = drows - display_rows();      // disp row diff: change in rows?
+  int is_enlarge = drows >= display_rows();     // enlarging display size?
+
+  // NOTE: Zeroing scrollbar can be avoided if we took the scroll position
+  //       into account for the below calculations. But for now..
+  scrollbar->value(0);                          // force scrollbar to bottom before refit
+
+  if (drow_diff) {                              // change in display rows means shrink|enlarge
+    if (is_enlarge) {                           // enlarging widget?
+      for (int i=0; i<drow_diff; i++) {         // carefully loop thru each change
+        if (history_use() > 0) {                // CASE 1: Drag lines down from history
+          cursor_.scroll(-1);                   // cursor chases ring_.resize()
+        } else {                                // CASE 2: add blank lines below cursor
+          scroll(1);                            // scroll up to create blank lines at bottom
+        }
+        // Handle enlarging ring's display
+        ring_.resize(display_rows()+1, dcols, hist_rows(), *current_style_);
+      }
+    } else {                                    // shrinking widget?
+      for (int i=0; i<(-drow_diff); i++) {      // carefully loop thru each row change
+        int cur_row   = cursor_.row();          // cursor row
+        int below_cur = (drows > cur_row);      // shrink is below cursor row?
+        if (below_cur) {                        // CASE 3: shrinking below cursor? drop lines below
+          ring_.disp_rows(display_rows() - 1);  // effectively "deletes" lines below cursor
+        } else {                                // CASE 4: need to move cursor + lines up into hist
+          cursor_up(-1, false);                 // move cursor down to follow ring_.resize()
+          // Handle shrinking ring's display up into history
+          ring_.resize(display_rows()-1, dcols, hist_rows(), *current_style_);
+        }
+      }
+    }
+  }
   clear_mouse_selection();
   update_screen(false);
 }
