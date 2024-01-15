@@ -1213,7 +1213,7 @@ void Fl_Terminal::update_scrollbar(void) {
 // Refit the display - (display_rows()/cols()) to match screen (scrn_.h()/w())
 //   This implements an xterm-like resizing behavior. Refer to README-Fl_Terminal.txt,
 //   section "TERMINAL RESIZING" for a diagram of cases showing how this is implemented.
-//   See also issue #879.
+//   See also issue #844.
 //
 void Fl_Terminal::refit_disp_to_screen(void) {
   int dh         = h_to_row(scrn_.h());         // disp height: in rows for tty pixel height
