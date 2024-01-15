@@ -374,8 +374,8 @@ int Fl_Terminal::EscapeSeq::parse(char c) {
       valbuffp_ = 0;                        // valbuffp NULL (no vals yet)
       if (append_buff(c) < 0) goto pfail;   // save '[' in buf
       return success;                       // success
-    } else if ( (c >= '@' && c <= 'Z') ||   // C1 control code (e.g. <ESC>D, <ESC>c, etc)
-                (c >= 'a' && c <= 'z') ) {
+    } else if ((c >= '@' && c <= 'Z') ||    // C1 control code (e.g. <ESC>D, <ESC>c, etc)
+               (c >= 'a' && c <= 'z')) {
       esc_mode(c);                          // save op in esc_mode() for caller to see
       csi_      = false;                    // NOT a CSI sequence
       vali_     = 0;
@@ -401,8 +401,8 @@ int Fl_Terminal::EscapeSeq::parse(char c) {
   } else {                                  // all other esc_mode() chars are fail/unknown
     goto pfail;
   }
-  if ( ( c >= '@' && c<= 'Z') ||            // ESC#X or ESC[...X, where X is [A-Z,a-z]?
-       ( c >= 'a' && c<= 'z') ) {
+  if (( c >= '@' && c<= 'Z') ||             // ESC#X or ESC[...X, where X is [A-Z,a-z]?
+      ( c >= 'a' && c<= 'z')) {
     if (append_val() < 0 ) goto pfail;      // append any trailing vals just before letter
     if (append_buff(c) < 0 ) goto pfail;    // save letter in buffer
     esc_mode(c);                            // change mode to the mode setting char
@@ -490,7 +490,7 @@ bool Fl_Terminal::Cursor::is_rowcol(int drow,int dcol) const {
   return(drow == row_ && dcol == col_);
 }
 
-// Scroll the cursor row up(+)/down(-) number of rows
+// Scroll (move) the cursor row up(+)/down(-) number of rows
 void Fl_Terminal::Cursor::scroll(int nrows) {
   row_ = MAX(row_ - nrows, 0);   // don't let (row_<0)
 }
@@ -651,6 +651,21 @@ Fl_Color Fl_Terminal::Utf8Char::attr_bg_color(const Fl_Widget *grp) const {
 ///// RingBuffer Class Methods /////
 ////////////////////////////////////
 
+// Handle adjusting 'offset_' specified number of rows to do "scrolling".
+//    rows can be +/-: positive effectively scrolls "up", negative scrolls "down".
+//    rows will be clamped
+//
+void Fl_Terminal::RingBuffer::offset_adjust(int rows) {
+  if (!rows) return;                            // early exit if nothing to do
+  if (rows>0) {                                 // advance?
+    offset_ = (offset_ + rows) % ring_rows_;    // apply, and keep offset_ within ring_rows
+  } else {
+    rows = clamp(-rows, 1, ring_rows_);         // make positive, limit to ring size
+    offset_ -= rows;                            // apply offset
+    if (offset_<0) offset_ += ring_rows_;       // wrap underflows
+  }
+}
+
 // Create a new copy of the buffer with different row/col sizes
 //   Preserves old contents of display and history in use.
 //
@@ -677,12 +692,13 @@ Fl_Color Fl_Terminal::Utf8Char::attr_bg_color(const Fl_Widget *grp) const {
 //                                     |_____________|  _v_
 //
 void Fl_Terminal::RingBuffer::new_copy(int drows, int dcols, int hrows, const CharStyle& style) {
+  (void)style;                                              // currently unused - need parameterized ctor (†)
   // Create new buffer
   int addhist       = disp_rows() - drows;                  // adjust history use
   int new_ring_rows = (drows+hrows);
   int new_hist_use  = clamp(hist_use_ + addhist, 0, hrows); // clamp incase new_hist_rows smaller than old
   int new_nchars    = (new_ring_rows * dcols);
-  Utf8Char *new_ring_chars = new Utf8Char[new_nchars];      // Create new ring buffer (all blanks)
+  Utf8Char *new_ring_chars = new Utf8Char[new_nchars];      // Create new ring buffer (†)
   // Preserve old contents in new buffer
   int dst_cols      = dcols;
   int src_stop_row  = hist_use_srow();
@@ -779,11 +795,13 @@ void Fl_Terminal::RingBuffer::move_disp_row(int src_row, int dst_row) {
   for (int col=0; col<disp_cols(); col++) *dst++ = *src++;
 }
 
-// Clear the display row 'drow' using specified CharStyle 'style'
-void Fl_Terminal::RingBuffer::clear_disp_row(int drow, const CharStyle& style) {
-  int row = hist_rows_ + drow + offset_;
-  Utf8Char *u8c = u8c_ring_row(row);
-  for (int col=0; col<disp_cols(); col++) u8c++->clear(style);
+// Clear the display rows 'sdrow' thru 'edrow' inclusive using specified CharStyle 'style'
+void Fl_Terminal::RingBuffer::clear_disp_rows(int sdrow, int edrow, const CharStyle& style) {
+  for (int drow=sdrow; drow<=edrow; drow++) {
+    int row = hist_rows_ + drow + offset_;
+    Utf8Char *u8c = u8c_ring_row(row);
+    for (int col=0; col<disp_cols(); col++) u8c++->clear(style);
+  }
 }
 
 // Scroll the ring buffer up or down #rows, using 'style' for empty rows
@@ -817,16 +835,16 @@ void Fl_Terminal::RingBuffer::scroll(int rows, const CharStyle& style) {
     //                                   Offset
     rows = clamp(rows, 1, disp_rows());                        // sanity
     // Scroll up into history
-    offset_ = (offset_ + rows) % ring_rows_;
+    offset_adjust(rows);
     // Adjust hist_use, clamp to max
     hist_use_ = clamp(hist_use_ + rows, 0, hist_rows_);
     // Clear exposed lines at bottom
     int srow = (disp_rows() - rows) % disp_rows();
-    int erow = disp_rows();
-    for (int row=srow; row<erow; row++) clear_disp_row(row, style);
+    int erow = disp_rows() - 1;
+    clear_disp_rows(srow, erow, style);
   } else {
     // Scroll down w/out affecting history
-    //   To leave history unaffect, we must move memory.
+    //   To leave history unaffected, we must move memory.
     //   Start at bottom row [A] and work up to top row [B].
     //
     //   Example: scroll(-2):
@@ -844,11 +862,11 @@ void Fl_Terminal::RingBuffer::scroll(int rows, const CharStyle& style) {
     //                              Memory
     //                               move
     rows = clamp(-rows, 1, disp_rows());                  // make rows positive + sane
-    for (int row=disp_rows()-1; row>=0; row--) {
-      int src_row = (row - rows);
-      int dst_row = row;
-      if (src_row >= 0) move_disp_row(row-rows, dst_row); // move rows
-      else              clear_disp_row(dst_row, style);   // hit top? blank the rest
+    for (int row=disp_rows()-1; row>=0; row--) {          // start at end of disp and work up
+      int src_row = (row - rows);                         // src is offset #rows being scrolled
+      int dst_row = row;                                  // dst is display
+      if (src_row >= 0) move_disp_row(src_row, dst_row);  // ok to move row? move row down
+      else clear_disp_rows(dst_row, dst_row, style);      // hit top? blank rest of rows
     }
   }
 }
@@ -968,17 +986,19 @@ void Fl_Terminal::RingBuffer::create(int drows, int dcols, int hrows) {
 
 // Resize the buffer, preserve previous contents as much as possible
 void Fl_Terminal::RingBuffer::resize(int drows, int dcols, int hrows, const CharStyle& style) {
-  // If dcols or (drows+hrows) changed, make a NEW buffer and copy old contents.
-  //   New copy will have xxxx_rows/cols and nchars adjusted.
-  //
-  if (dcols != disp_cols() ||                           // cols changed size?
-      (drows+hrows) != (disp_rows()+hist_rows()) ) {    // total #rows changed?
-    new_copy(drows, dcols, hrows, style);
+  int  new_rows     = drows + hrows;              // old display + history rows
+  int  old_rows     = disp_rows() + hist_rows();  // new display + history rows
+  bool cols_changed = (dcols != disp_cols());     // was there a change in total #columns?
+  bool rows_changed = (new_rows != old_rows);     // was there a change in total #rows?
+  // If rows or cols changed, make a NEW buffer and copy old contents.
+  // New copy will have disp/hist_rows/cols and nchars adjusted.
+  if (cols_changed || rows_changed) {             // rows or cols changed?
+    new_copy(drows, dcols, hrows, style);         // rebuild ring buffer, preserving contents
   } else {
     // Cols and total rows the same, probably just changed disp/hist ratio
-    int addhist = disp_rows() - drows;                  // adj hist_use smaller if disp enlarged
-    hist_rows_  = hrows;                                // adj hist rows for new value
-    disp_rows_  = drows;                                // adj disp rows for new value
+    int addhist = disp_rows() - drows;            // adj hist_use smaller if disp enlarged
+    hist_rows_  = hrows;                          // adj hist rows for new value
+    disp_rows_  = drows;                          // adj disp rows for new value
     hist_use_   = clamp(hist_use_ + addhist, 0, hrows);
   }
 }
@@ -2016,13 +2036,13 @@ void Fl_Terminal::scroll(int rows) {
 void Fl_Terminal::insert_rows(int count) {
   int dst_drow = disp_rows()-1;                                   // dst is bottom of display
   int src_drow = clamp((dst_drow-count), 1, (disp_rows()-1));     // src is count lines up from dst
-  while ( src_drow >= cursor_.row() ) {                           // walk srcrow upwards to cursor row
+  while (src_drow >= cursor_.row()) {                             // walk srcrow upwards to cursor row
     Utf8Char *src = u8c_disp_row(src_drow--);
     Utf8Char *dst = u8c_disp_row(dst_drow--);
     for (int dcol=0; dcol<disp_cols(); dcol++) *dst++ = *src++;   // move
   }
   // Blank remaining rows upwards to and including cursor line
-  while ( dst_drow >= cursor_.row() ) {                           // walk srcrow to curs line
+  while (dst_drow >= cursor_.row()) {                            // walk srcrow to curs line
     Utf8Char *dst = u8c_disp_row(dst_drow--);
     for (int dcol=0; dcol<disp_cols(); dcol++)
       dst++->clear(*current_style_);
@@ -2038,14 +2058,14 @@ void Fl_Terminal::insert_rows(int count) {
 void Fl_Terminal::delete_rows(int count) {
   int dst_drow = cursor_.row();                                   // dst is cursor row
   int src_drow = clamp((dst_drow+count), 1, (disp_rows()-1));     // src is count rows below cursor
-  while ( src_drow < disp_rows() ) {                              // walk srcrow to EOD
+  while (src_drow < disp_rows()) {                                // walk srcrow to EOD
     Utf8Char *src = u8c_disp_row(src_drow++);
     Utf8Char *dst = u8c_disp_row(dst_drow++);
     for (int dcol=0; dcol<disp_cols(); dcol++)
       *dst++ = *src++;                                            // move
   }
   // Blank remaining rows downwards to End Of Display
-  while ( dst_drow < disp_rows() ) {                              // walk srcrow to EOD
+  while (dst_drow < disp_rows()) {                                // walk srcrow to EOD
     Utf8Char *dst = u8c_disp_row(dst_drow++);
     for (int dcol=0; dcol<disp_cols(); dcol++)
       dst++->clear(*current_style_);
@@ -2081,7 +2101,7 @@ void Fl_Terminal::insert_char_eol(char c, int drow, int dcol, int rep) {
   Utf8Char *dst = u8c_disp_row(drow)+disp_cols()-1;     // start dst at 'j'
   for (int col=(disp_cols()-1); col>=dcol; col--) {     // loop col in reverse: eol -> dcol
     if (col >= (dcol+rep)) *dst-- = *src--;             // let assignment do move
-    else                   (dst--)->clear(style);       // clear chars displaced
+    else                   (dst--)->text_ascii(c,style);// assign chars displaced
   }
 }
 
@@ -2161,7 +2181,7 @@ void Fl_Terminal::reset_terminal(void) {
 //DEBUG // Save specified row from ring buffer 'ring' to FILE*
 //DEBUG void Fl_Terminal::write_row(FILE *fp, Utf8Char *u8c, int cols) const {
 //DEBUG   cols = (cols != 0) ? cols : ring_cols();
-//DEBUG   for ( int col=0; col<cols; col++, u8c++ ) {
+//DEBUG   for (int col=0; col<cols; col++, u8c++) {
 //DEBUG     ::fprintf(fp, "%.*s", u8c->length(), u8c->text_utf8());
 //DEBUG   }
 //DEBUG }
@@ -2279,7 +2299,7 @@ void Fl_Terminal::cursor_left(int count) {
   scrolls up one line if \p do_scroll is true.
 */
 void Fl_Terminal::cursor_right(int count, bool do_scroll) {
-  while (count-- > 0 ) {
+  while (count-- > 0) {
     if (cursor_.right() >= disp_cols()) {      // hit right edge?
       if (!do_scroll)                          // no scroll?
         { cursor_eol(); return; }              // stop at EOL, done
@@ -2313,9 +2333,9 @@ void Fl_Terminal::cursor_crlf(int count) {
 void Fl_Terminal::cursor_tab_right(int count) {
   count = clamp(count, 1, disp_cols());           // sanity
   int X = cursor_.col();
-  while ( count-- > 0 ) {
+  while (count-- > 0) {
     // Find next tabstop
-    while ( ++X < disp_cols() ) {
+    while (++X < disp_cols()) {
       if ( (X<tabstops_size_) && tabstops_[X] )   // found?
         { cursor_.col(X); return; }               // move cur, done
     }
@@ -2442,7 +2462,7 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
   int r=0,g=0,b=0;
   for (int i=0; i<tot; i++) {        // expect possibly many values
     int val = esc.val(i);            // each val one at a time
-    switch ( rgbmode ) {
+    switch (rgbmode) {
       case 0:
          // RGB mode values?
          switch (val) {
@@ -2470,7 +2490,7 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
         continue;                                       // continue loop to parse more vals
     }
     if (val < 10) {                                     // Set attribute? (bold,underline..)
-      switch ( val ) {
+      switch (val) {
         case 0: current_style_->sgr_reset();     break; // ESC[0m - reset
         case 1: current_style_->sgr_bold(1);     break; // ESC[1m - bold
         case 2: current_style_->sgr_dim(1);      break; // ESC[2m - dim
@@ -2483,7 +2503,7 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
         case 9: current_style_->sgr_strike(1);   break; // ESC[9m - strikeout
       }
     } else if (val >= 21 && val <= 29) {                // attribute extras
-      switch ( val ) {
+      switch (val) {
         case 21: current_style_->sgr_dbl_under(1);break; // ESC[21m - doubly underline
         case 22: current_style_->sgr_dim(0);             // ESC[22m - disable bold/dim
                  current_style_->sgr_bold(0);     break; //
@@ -2553,7 +2573,7 @@ void Fl_Terminal::handle_escseq(char c) {
   const int& dw = disp_cols();
   const int& dh = disp_rows();
   if (esc.is_csi()) {                            // Was this a CSI (ESC[..) sequence?
-    switch ( mode ) {
+    switch (mode) {
       case '@':                                  // <ESC>[#@ - (ICH) Insert blank Chars (default=1)
         insert_char(' ', esc.defvalmax(1,dw));
         break;
@@ -2613,10 +2633,10 @@ cup:
         }
         break;
       case 'J':                                  // <ESC>[#J - (ED) erase in display
-        switch ( clamp(tot,0,1) ) {              //   │
+        switch (clamp(tot,0,1)) {                //   │
           case 0: clear_eol(); break;            //   ├── <ESC>[J  -- no vals: default <ESC>[0J
           case 1:                                //   │
-            switch ( clamp(val0,0,3) ) {         //   │
+            switch (clamp(val0,0,3)) {           //   │
               case 0: clear_eod();     break;    //   ├── <ESC>[0J -- clear to end of display
               case 1: clear_sod();     break;    //   ├── <ESC>[1J -- clear to start of display
               case 2: clear_screen();  break;    //   ├── <ESC>[2J -- clear all lines
@@ -2626,9 +2646,9 @@ cup:
         }
         break;
       case 'K':
-        switch ( clamp(tot,0,1) ) {              // <ESC>[#K - (EL) Erase in Line
+        switch (clamp(tot,0,1)) {                // <ESC>[#K - (EL) Erase in Line
           case 0: clear_eol(); break;            //   ├── <ESC>[K  -- no vals
-          case 1: switch ( clamp(val0,0,2) ) {   //   │
+          case 1: switch (clamp(val0,0,2)) {     //   │
               case 0: clear_eol();  break;       //   ├── <ESC>[0K -- clear to end of line
               case 1: clear_sol();  break;       //   ├── <ESC>[1K -- clear to start of line
               case 2: clear_line(); break;       //   └── <ESC>[2K -- clear current line
@@ -2699,7 +2719,7 @@ cup:
     }
   } else {
     // Not CSI? Might be C1 Control code (<ESC>D, etc)
-    switch ( esc.esc_mode() ) {
+    switch (esc.esc_mode()) {
       case 'c': reset_terminal();          break;// <ESC>c - Reset term to Initial State (RIS)
       case 'D': cursor_down(1, do_scroll); break;// <ESC>D - down line, scroll at bottom
       case 'E': cursor_crlf();             break;// <ESC>E - do a crlf
@@ -3156,8 +3176,10 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,
   init_(X,Y,W,H,L,rows,cols,hist,fontsize_defer);
 }
 
-// Private contructor method
+// Private constructor method
 void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer) {
+  // currently unused params
+  (void)X; (void)Y; (void)W; (void)H; (void)L;
   fontsize_defer_ = fontsize_defer;     // defer font calls until draw() (issue 837)
   current_style_  = new CharStyle(fontsize_defer);
   oflags_         = LF_TO_CRLF;         // default: "\n" handled as "\r\n"
@@ -3168,7 +3190,7 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   tabstops_       = 0;
   tabstops_size_  = 0;
   // Init ringbuffer. Also creates default tabstops
-  if ( rows == -1 || cols == -1 ) {
+  if (rows == -1 || cols == -1) {
     int newrows = h_to_row(scrn_.h());  // rows based on height
     int newcols = w_to_col(scrn_.w());  // cols based on width
     // Sanity check

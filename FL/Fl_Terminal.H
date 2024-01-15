@@ -616,6 +616,10 @@ private:
     inline int disp_srow(void) const { return((offset_ + hist_rows_) % ring_rows_); }
     inline int disp_erow(void) const { return((offset_ + hist_rows_ + disp_rows_ - 1) % ring_rows_); }
     inline int offset(void)    const { return offset_; }
+    void offset_adjust(int rows);
+    void hist_rows(int val) { hist_rows_ = val; }
+    void disp_rows(int val) { disp_rows_ = val; }
+
     // History use
     inline int  hist_use(void)  const       { return hist_use_; }
     inline void hist_use(int val)           { hist_use_ = val; }
@@ -627,7 +631,7 @@ private:
     bool is_disp_ring_row(int grow) const;
     //DEBUG void show_ring_info(void) const;
     void move_disp_row(int src_row, int dst_row);
-    void clear_disp_row(int drow, const CharStyle& style);
+    void clear_disp_rows(int sdrow, int edrow, const CharStyle& style);
     void scroll(int rows, const CharStyle& style);
 
     const Utf8Char* u8c_ring_row(int row) const;
