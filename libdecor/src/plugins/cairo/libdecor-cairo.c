@@ -2074,10 +2074,10 @@ component_edge(const struct border_component *cmpnt,
 	       const int pointer_y,
 	       const int margin)
 {
-	const bool top = pointer_y < margin;
-	const bool bottom = pointer_y > (cmpnt->server.buffer->height - margin);
-	const bool left = pointer_x < margin;
-	const bool right = pointer_x > (cmpnt->server.buffer->width - margin);
+	const bool top = pointer_y < margin * 2;
+	const bool bottom = pointer_y > (cmpnt->server.buffer->height - margin * 2);
+	const bool left = pointer_x < margin * 2;
+	const bool right = pointer_x > (cmpnt->server.buffer->width - margin * 2);
 
 	if (top)
 		if (left)

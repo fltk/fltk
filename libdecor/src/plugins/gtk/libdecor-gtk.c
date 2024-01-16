@@ -421,6 +421,7 @@ libdecor_plugin_gtk_destroy(struct libdecor_plugin *plugin)
 			free(cursor_output);
 		}
 
+		free(seat->name);
 		free(seat);
 	}
 
@@ -449,7 +450,7 @@ libdecor_plugin_gtk_destroy(struct libdecor_plugin *plugin)
 	if (plugin_gtk->wl_subcompositor)
 		wl_subcompositor_destroy(plugin_gtk->wl_subcompositor);
 
-
+	libdecor_plugin_release(&plugin_gtk->plugin);
 	free(plugin_gtk);
 }
 
@@ -673,24 +674,16 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 	struct libdecor_frame_gtk *frame_gtk =
 		(struct libdecor_frame_gtk *) frame;
 
-	/* when in SSD mode, frame_gtk->header is not a proper GTK widget */
-	if (!GTK_IS_WIDGET(frame_gtk->header)) return;
-	gtk_widget_destroy(frame_gtk->header);
-	frame_gtk->header = NULL;
-	if (!GTK_IS_WIDGET(frame_gtk->window)) return;
-	gtk_widget_destroy(frame_gtk->window);
-	frame_gtk->window = NULL;
+	g_clear_pointer (&frame_gtk->header, gtk_widget_destroy);
+	g_clear_pointer (&frame_gtk->window, gtk_widget_destroy);
 
 	free_border_component(&frame_gtk->headerbar);
 	free_border_component(&frame_gtk->shadow);
 	frame_gtk->shadow_showing = false;
-	if (frame_gtk->shadow_blur != NULL) {
-		cairo_surface_destroy(frame_gtk->shadow_blur);
-		frame_gtk->shadow_blur = NULL;
-	}
 
-	free(frame_gtk->title);
-	frame_gtk->title = NULL;
+	g_clear_pointer (&frame_gtk->shadow_blur, cairo_surface_destroy);
+
+	g_clear_pointer (&frame_gtk->title, free);
 
 	frame_gtk->decoration_type = DECORATION_TYPE_NONE;
 
@@ -1966,10 +1959,10 @@ component_edge(const struct border_component *cmpnt,
 	       const int pointer_y,
 	       const int margin)
 {
-	const bool top = pointer_y < margin;
-	const bool bottom = pointer_y > (cmpnt->buffer->height - margin);
-	const bool left = pointer_x < margin;
-	const bool right = pointer_x > (cmpnt->buffer->width - margin);
+	const bool top = pointer_y < margin * 2;
+	const bool bottom = pointer_y > (cmpnt->buffer->height - margin * 2);
+	const bool left = pointer_x < margin * 2;
+	const bool right = pointer_x > (cmpnt->buffer->width - margin * 2);
 
 	if (top) {
 		if (left)

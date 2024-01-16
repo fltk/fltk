@@ -29,6 +29,23 @@
 #include <stdbool.h>
 #include "config.h"
 
+static bool
+get_cursor_settings_from_env(char **theme, int *size)
+{
+	char *env_xtheme;
+	char *env_xsize;
+
+	env_xtheme = getenv("XCURSOR_THEME");
+	if (env_xtheme != NULL)
+		*theme = strdup(env_xtheme);
+
+	env_xsize = getenv("XCURSOR_SIZE");
+	if (env_xsize != NULL)
+		*size = atoi(env_xsize);
+
+	return env_xtheme != NULL && env_xsize != NULL;
+}
+
 #ifdef HAS_DBUS
 #include <dbus/dbus.h>
 
@@ -116,15 +133,15 @@ libdecor_get_cursor_settings(char **theme, int *size)
 	connection = dbus_bus_get(DBUS_BUS_SESSION, &error);
 
 	if (dbus_error_is_set(&error))
-		return false;
+		goto fallback;
 
 	reply = get_setting_sync(connection, name, key_theme);
 	if (!reply)
-		return false;
+		goto fallback;
 
 	if (!parse_type(reply, DBUS_TYPE_STRING, &value_theme)) {
 		dbus_message_unref(reply);
-		return false;
+		goto fallback;
 	}
 
 	*theme = strdup(value_theme);
@@ -133,32 +150,24 @@ libdecor_get_cursor_settings(char **theme, int *size)
 
 	reply = get_setting_sync(connection, name, key_size);
 	if (!reply)
-		return false;
+		goto fallback;
 
 	if (!parse_type(reply, DBUS_TYPE_INT32, size)) {
 		dbus_message_unref(reply);
-		return false;
+		goto fallback;
 	}
 
 	dbus_message_unref(reply);
 
 	return true;
+
+fallback:
+	return get_cursor_settings_from_env(theme, size);
 }
 #else
 bool
 libdecor_get_cursor_settings(char **theme, int *size)
 {
-	char *env_xtheme;
-	char *env_xsize;
-
-	env_xtheme = getenv("XCURSOR_THEME");
-	if (env_xtheme != NULL)
-		*theme = strdup(env_xtheme);
-
-	env_xsize = getenv("XCURSOR_SIZE");
-	if (env_xsize != NULL)
-		*size = atoi(env_xsize);
-
-	return env_xtheme != NULL && env_xsize != NULL;
+	return get_cursor_settings_from_env(theme, size);
 }
 #endif
