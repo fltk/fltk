@@ -167,22 +167,43 @@ int Fl_Button::handle(int event) {
     case FL_KEYBOARD :
       if (Fl::focus() == this && Fl::event_key() == ' ' &&
           !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
-        set_changed();
-      triggered_by_keyboard:
-        Fl_Widget_Tracker wp(this);
+      triggered_by_keyboard: // from FL_SHORTCUT
         if (type() == FL_RADIO_BUTTON) {
           if (!value_) {
             setonly();
-            if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+            set_changed();
+            if (when() & FL_WHEN_CHANGED)
+              do_callback(FL_REASON_CHANGED);
+            else if (when() & FL_WHEN_RELEASE) 
+              do_callback(FL_REASON_RELEASED);
+          } else {
+            if (when() & FL_WHEN_NOT_CHANGED) 
+              do_callback(FL_REASON_SELECTED);
           }
         } else if (type() == FL_TOGGLE_BUTTON) {
           value(!value());
-          if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+          set_changed();
+          if (when() & FL_WHEN_CHANGED)
+            do_callback(FL_REASON_CHANGED);
+          else if (when() & FL_WHEN_RELEASE)
+            do_callback(FL_REASON_RELEASED);
         } else {
           simulate_key_action();
+          value(1);
+          if (when() & FL_WHEN_CHANGED) {
+            set_changed();
+            Fl_Widget_Tracker wp(this);
+            do_callback(FL_REASON_CHANGED);
+            if (wp.deleted()) return 1;
+            value(0);
+            set_changed();
+            do_callback(FL_REASON_RELEASED);
+          } else if (when() & FL_WHEN_RELEASE) {
+            value(0);
+            set_changed();
+            do_callback(FL_REASON_RELEASED);
+          }
         }
-        if (wp.deleted()) return 1;
-        if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
         return 1;
       }
       /* FALLTHROUGH */

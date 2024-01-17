@@ -6,15 +6,17 @@ Function {button_cb(Fl_Button *b, void *)} {
   comment {Buttons test callback} open private return_type void
 } {
   code {char msg[256];
-sprintf(msg, "Label: '%s'\\nValue: %d", b->label(),b->value());
+sprintf(msg, "Label: '%s'\\nValue: %d\\nChanged: %d", 
+        b->label(), b->value(), b->changed());
 cb_info->value(msg);
 cb_info->redraw();
-printf("%s\\n",msg);} {}
+printf("%s\\n",msg);} {selected
+  }
 }
 
 Function {} {open
 } {
-  Fl_Window {} {open selected
+  Fl_Window {} {open
     xywh {470 366 369 214} type Double visible
   } {
     Fl_Button {} {
