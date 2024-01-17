@@ -909,9 +909,13 @@ static void handle_configure(struct libdecor_frame *frame,
 #ifndef LIBDECOR_MR131
   bool in_decorated_window_resizing = (window->state & LIBDECOR_WINDOW_STATE_RESIZING);
 #endif
-  if (in_decorated_window_resizing && window->buffer && window->buffer->cb) {
+  bool condition = in_decorated_window_resizing && window->buffer;
+  if (condition) { // see issue #878
+    condition = (window->covered ? window->buffer->in_use : (window->buffer->cb != NULL));
+  }
+  if (condition) {
     // Skip resizing & redrawing. The last resize request won't be skipped because
-    // in_decorated_window_resizing will be false then.
+    // in_decorated_window_resizing will be false or cb will be NULL then.
     return;
   }
 
