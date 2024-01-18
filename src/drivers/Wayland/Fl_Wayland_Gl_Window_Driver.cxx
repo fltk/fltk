@@ -397,18 +397,6 @@ static void delayed_scissor(Fl_Wayland_Gl_Window_Driver *dr) {
 }*/
 
 
-static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
-  struct wld_window *xid = (struct wld_window *)data;
-  wl_callback_destroy(cb);
-  xid->frame_cb = NULL;
-}
-
-
-static const struct wl_callback_listener surface_frame_listener = {
-  .done = surface_frame_done,
-};
-
-
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
   float f = Fl::screen_scale(pWindow->screen_num());
@@ -421,7 +409,8 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
     struct wld_window *xid = fl_wl_xid(pWindow);
     if (xid->kind == Fl_Wayland_Window_Driver::DECORATED && !xid->frame_cb) {
       xid->frame_cb = wl_surface_frame(xid->wl_surface);
-      wl_callback_add_listener(xid->frame_cb, &surface_frame_listener, xid);
+      wl_callback_add_listener(xid->frame_cb, 
+                               Fl_Wayland_Graphics_Driver::p_surface_frame_listener, xid);
     }
     wl_egl_window_resize(egl_window, W, H, 0, 0);
   }
