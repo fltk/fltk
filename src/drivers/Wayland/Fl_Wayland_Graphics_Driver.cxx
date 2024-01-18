@@ -123,7 +123,7 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
   struct wld_window *window = (struct wld_window *)data;
   wl_callback_destroy(cb);
   if (window->buffer) { // fix for issue #712
-    window->buffer->cb = NULL;
+    window->frame_cb = NULL;
     if (window->buffer->draw_buffer_needs_commit) {
       Fl_Wayland_Graphics_Driver::buffer_commit(window);
     }
@@ -177,8 +177,8 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, struct
   wl_surface_set_buffer_scale( window->wl_surface,
       Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale() );
   if (!window->covered) { // see issue #878
-    window->buffer->cb = wl_surface_frame(window->wl_surface);
-    wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
+    window->frame_cb = wl_surface_frame(window->wl_surface);
+    wl_callback_add_listener(window->frame_cb, &surface_frame_listener, window);
   }
   wl_surface_commit(window->wl_surface);
   window->buffer->draw_buffer_needs_commit = false;
@@ -237,7 +237,7 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 {
   if (window->buffer && !window->buffer->released) {
     window->buffer->released = true;
-    if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
+    if (window->frame_cb) { wl_callback_destroy(window->frame_cb); window->frame_cb = NULL; }
     delete[] window->buffer->draw_buffer.buffer;
     window->buffer->draw_buffer.buffer = NULL;
     cairo_destroy(window->buffer->draw_buffer.cairo_);

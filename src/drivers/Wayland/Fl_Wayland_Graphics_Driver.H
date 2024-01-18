@@ -41,7 +41,6 @@ public:
     struct wl_list link; // links all buffers from the same wl_shm_pool
     struct wl_buffer *wl_buffer;
     void *data;
-    struct wl_callback *cb;
     struct wl_shm_pool *shm_pool;
     bool draw_buffer_needs_commit;
     bool in_use; // true while being committed

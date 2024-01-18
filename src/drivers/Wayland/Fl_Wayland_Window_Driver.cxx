@@ -352,7 +352,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb)
+  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->frame_cb)
       && window->buffer->draw_buffer_needs_commit && (!wait_for_expose_value) ) {
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
@@ -415,7 +415,7 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Wayland_Window_Driver::in_flush_ = true;
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush_ = false;
-  if (!window->buffer->cb) Fl_Wayland_Graphics_Driver::buffer_commit(window, r);
+  if (!window->frame_cb) Fl_Wayland_Graphics_Driver::buffer_commit(window, r);
 }
 
 
@@ -909,9 +909,9 @@ static void handle_configure(struct libdecor_frame *frame,
 #ifndef LIBDECOR_MR131
   bool in_decorated_window_resizing = (window->state & LIBDECOR_WINDOW_STATE_RESIZING);
 #endif
-  bool condition = in_decorated_window_resizing && window->buffer;
+  bool condition = in_decorated_window_resizing;
   if (condition) { // see issue #878
-    condition = (window->covered ? window->buffer->in_use : (window->buffer->cb != NULL));
+    condition = (window->covered ? (window->buffer && window->buffer->in_use) : (window->frame_cb != NULL));
   }
   if (condition) {
     // Skip resizing & redrawing. The last resize request won't be skipped because

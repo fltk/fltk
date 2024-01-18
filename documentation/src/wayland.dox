@@ -583,7 +583,7 @@ more frequently than the system can process it.
 This 2-step mechanism works as follows:
 - Fl_Wayland_Graphics_Driver::buffer_commit() first calls function \c wl_surface_frame() to
 obtain a pointer to a <tt>struct wl_callback</tt> object and stores it as member
-\c cb of the surface's \ref wld_buffer.
+\c frame_cb of the surface's \ref wld_window.
 Then it calls \c wl_callback_add_listener() to associate this object to the
 FLTK-defined, callback function \c surface_frame_done().
 It next calls \c wl_surface_commit().
@@ -591,7 +591,7 @@ Together, these 3 calls instruct Wayland to start mapping the buffer content to 
 display and to call \c surface_frame_done() later, when it will have become ready
 for another mapping operation.
 - Later, \c surface_frame_done() runs and destroys the \c wl_callback object by
-function \c wl_callback_destroy() and sets member \c cb to NULL.
+function \c wl_callback_destroy() and sets member \c frame_cb to NULL.
 
 Member variable \c draw_buffer_needs_commit of the \ref wld_buffer is also
 important in this mechanism : it informs FLTK that the graphics buffer has
@@ -603,14 +603,14 @@ This procedure ensures that FLTK never changes the surface's Wayland buffer
 while it's being used by the compositor and never calls \c wl_surface_commit()
 before Wayland gets ready for a new commit because
 \c Fl_Wayland_Window_Driver::flush() calls
-\c Fl_Wayland_Graphics_Driver::buffer_commit() only if \c cb is NULL.
+\c Fl_Wayland_Graphics_Driver::buffer_commit() only if \c frame_cb is NULL.
 If it's not NULL, the exact content of function \c surface_frame_done() :
 \code
 static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
   struct wld_window *window = (struct wld_window *)data;
   wl_callback_destroy(cb);
   if (window->buffer) {
-    window->buffer->cb = NULL;
+    window->frame_cb = NULL;
     if (window->buffer->draw_buffer_needs_commit) {
       Fl_Wayland_Graphics_Driver::buffer_commit(window);
     }
@@ -629,14 +629,14 @@ resize is being performed and sends window resize commands at high rate (~60 Hz)
 client via the socket. Libdecor turns on flag \c LIBDECOR_WINDOW_STATE_RESIZING
 to inform the client, and runs function \c handle_configure() for each received resize
 command. Before calling Fl_Group::resize() and later Fl_Window::draw(),
-\c handle_configure() tests whether \c window->buffer->cb is NULL. When it's not
+\c handle_configure() tests whether \c window->frame_cb is NULL. When it's not
 because a previous resize operation is being performed, the current resize command is
 skipped. At the end of the interactive resize, flag \c LIBDECOR_WINDOW_STATE_RESIZING
 is off and Wayland sends a final resize command which is not skipped. Overall, this
 ensures the client program resizes its window as frequently as it can without
 falling behind resize commands sent by the compositor.
 
-To account for a bug in Mutter (issue #878), the \c window->buffer->cb object is
+To account for a bug in Mutter (issue #878), the \c window->frame_cb object is
 not created when a toplevel window is being resized and is entirely covered by
 one subwindow.
 
@@ -646,16 +646,16 @@ at any time and then calls the FLTK drawing API. This is made possible
 in function \c Fl_Wayland_Window_Driver::make_current() with
 \code
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb)
+  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->frame_cb)
       && window->buffer->draw_buffer_needs_commit && (!wait_for_expose_value) ) {
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
 \endcode
-Thus, \c buffer_commit() runs only when \c cb is NULL. If an app rapidly performs calls
+Thus, \c buffer_commit() runs only when \c frame_cb is NULL. If an app rapidly performs calls
 to \c Fl_Window::make_current() and to drawing functions, FLTK will copy \c draw_buffer to
-the Wayland buffer and instruct Wayland to map it to the display when \c cb is NULL
+the Wayland buffer and instruct Wayland to map it to the display when \c frame_cb is NULL
 which means that the compositor is ready to start performing a mapping operation.
-This occurs when the progressive drawing operation begins. Later, \c cb is generally found
+This occurs when the progressive drawing operation begins. Later, \c frame_cb is generally found
 non NULL when \c Fl_Wayland_Window_Driver::make_current() runs because the compositor
 is busy processing the previous Wayland buffer. When the compositor has completed
 this processing, the client app runs \c surface_frame_done()
@@ -1265,6 +1265,7 @@ struct wld_window {
   Fl_Window *fl_win;
   struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface; // the window's surface
+  struct wl_callback *frame_cb; // non-NULL until Wayland can process new surface commit
   struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer; // see \ref wld_buffer
   struct xdg_surface *xdg_surface;
   enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
@@ -1323,7 +1324,6 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer {
   struct wl_list link; // links all buffers from the same wl_shm_pool
   struct wl_buffer *wl_buffer; // the Wayland buffer
   void *data; // address of the beginning of the Wayland buffer's byte array
-  struct wl_callback *cb; // non-NULL until Wayland can process new buffer commit
   struct wl_shm_pool *shm_pool; // pter to wl_shm_pool from which this wl_buffer comes
   bool draw_buffer_needs_commit; // true when draw_buffer has been modified but not yet committed
   bool in_use; // true while being committed

@@ -144,6 +144,7 @@ struct wld_window {
   Fl_Window *fl_win;
   struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface;
+  struct wl_callback *frame_cb;
   struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer;
   struct xdg_surface *xdg_surface;
   enum Fl_Wayland_Window_Driver::kind kind;
