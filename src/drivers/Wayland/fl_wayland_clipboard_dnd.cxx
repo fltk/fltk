@@ -111,6 +111,7 @@ static void data_source_handle_cancelled(void *data, struct wl_data_source *sour
       (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
       wl_surface_get_user_data(dnd_icon);
     struct wld_window fake_window;
+    memset(&fake_window, 0, sizeof(fake_window));
     fake_window.buffer = off;
     Fl_Wayland_Graphics_Driver::buffer_release(&fake_window);
     wl_surface_destroy(dnd_icon);

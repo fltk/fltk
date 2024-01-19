@@ -80,6 +80,7 @@ void Fl_Wayland_Window_Driver::delete_cursor_(struct wld_window *xid, bool delet
     (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
     wl_buffer_get_user_data(new_image->buffer);
     struct wld_window fake_xid;
+    memset(&fake_xid, 0, sizeof(fake_xid));
     fake_xid.buffer = offscreen;
     Fl_Wayland_Graphics_Driver::buffer_release(&fake_xid);
     free(new_image);
