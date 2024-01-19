@@ -3,7 +3,7 @@
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2002-2010 by Matthias Melcher.
+// Copyright 2002-2024 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1130,18 +1130,18 @@ int Fl_Preferences::RootNode::read() {
     if ( buf[0]=='[' ) {			// read a new group
       size_t end = strcspn( buf+1, "]\n\r" );
       buf[ end+1 ] = 0;
-      nd = prefs_->node->find( buf+1 );
+      nd = prefs_->node->find( buf+1 ); // may return NULL for a deformed file
     } else if ( buf[0]=='+' ) {			// value of previous name/value pair spans multiple lines
       size_t end = strcspn( buf+1, "\n\r" );
       if ( end != 0 ) {				// if entry is not empty
-	buf[ end+1 ] = 0;
-	nd->add( buf+1 );
+        buf[ end+1 ] = 0;
+        if (nd) nd->add( buf+1 );
       }
     } else {					 // read a name/value pair
       size_t end = strcspn( buf, "\n\r" );
       if ( end != 0 ) {				// if entry is not empty
-	buf[ end ] = 0;
-	nd->set( buf );
+        buf[ end ] = 0;
+        if (nd) nd->set( buf );
       }
     }
   }
