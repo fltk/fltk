@@ -184,7 +184,7 @@ Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
 }
 
 static menuwindow *to_menuwindow(Fl_Window *win) {
-  if (!Fl_Window_Driver::driver(win)->fltk_menu_window) return false;
+  if (!Fl_Window_Driver::driver(win)->fltk_menu_window) return NULL;
   return ((window_with_items*)win)->as_menuwindow();
 }
 
