@@ -1394,12 +1394,13 @@ void Fl_Wayland_Window_Driver::makeWindow()
   // put transient scale win at center of top window by making it a tooltip of top
     Fl_Screen_Driver::transient_scale_parent = Fl::first_window();
     pWindow->set_tooltip_window();
+    fltk_tooltip_window = true;
     pWindow->position(
               (Fl_Screen_Driver::transient_scale_parent->w() - pWindow->w())/2 ,
               (Fl_Screen_Driver::transient_scale_parent->h() - pWindow->h())/2);
   }
 
-  if (pWindow->menu_window() || pWindow->tooltip_window()) { // a menu window or tooltip
+  if (fltk_menu_window || fltk_tooltip_window) { // a menu window or tooltip
     is_floatingtitle = process_menu_or_tooltip(new_window);
 
   } else if (pWindow->border() && !pWindow->parent() ) { // a decorated window

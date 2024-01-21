@@ -20,6 +20,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_string_functions.h>
 #include "Fl_System_Driver.H"
+#include "Fl_Window_Driver.H"
 
 #include <stdio.h>
 
@@ -50,6 +51,7 @@ public:
   Fl_TooltipBox() : Fl_Menu_Window(0, 0) {
     set_override();
     set_tooltip_window();
+    Fl_Window_Driver::driver(this)->fltk_tooltip_window = true;
     end();
   }
   void draw() FL_OVERRIDE;

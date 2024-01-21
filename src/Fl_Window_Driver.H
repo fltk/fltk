@@ -65,6 +65,8 @@ public:
   static fl_uintptr_t xid(const Fl_Window *win);
   static Fl_Window *find(fl_uintptr_t xid);
   int wait_for_expose_value;
+  bool fltk_menu_window; // true for FLTK menu window
+  bool fltk_tooltip_window; // true for FLTK tooltip window
   Fl_Image_Surface *other_xid; // offscreen bitmap (overlay and double-buffered windows)
   int screen_num();
   void screen_num(int n) { screen_num_ = n; }
