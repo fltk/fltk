@@ -1293,7 +1293,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   if (!target) target = Fl::belowmouse();
   if (!target) target = Fl::first_window();
   Fl_Window *parent_win = target->top_window();
-  while (parent_win && parent_win->menu_window()) parent_win = Fl::next_window(parent_win);
+  while (parent_win && Fl_Window_Driver::driver(parent_win)->fltk_menu_window) parent_win = Fl::next_window(parent_win);
   Fl_Window *origin_win = (menu_origin ? menu_origin : parent_win);
   struct wld_window * parent_xid = fl_wl_xid(origin_win);
   struct xdg_surface *parent_xdg = parent_xid->xdg_surface;
