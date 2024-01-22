@@ -43,8 +43,6 @@ Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
   wait_for_expose_value = 0;
   other_xid = 0;
   screen_num_ = 0;
-  fltk_menu_window = false;
-  fltk_tooltip_window = false;
 }
 
 

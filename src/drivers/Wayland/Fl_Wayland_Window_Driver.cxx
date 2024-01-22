@@ -68,6 +68,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   screen_num_ = -1;
   gl_start_support_ = NULL;
   subRect_ = NULL;
+  is_popup_window_ = false;
 }
 
 
@@ -1279,12 +1280,12 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   xdg_surface_add_listener(new_window->xdg_surface, &xdg_surface_listener, new_window);
   Fl_Wayland_Window_Driver::new_popup = true;
   Fl_Window *menu_origin = NULL;
-  if (fltk_menu_window) {
+  if (pWindow->menu_window()) {
     menu_origin = Fl_Window_Driver::menu_leftorigin(pWindow);
     if (!menu_origin && !previous_floatingtitle) menu_origin =
       Fl_Window_Driver::menu_title(pWindow);
   }
-  Fl_Widget *target = (fltk_tooltip_window ? Fl_Tooltip::current() : NULL);
+  Fl_Widget *target = (pWindow->tooltip_window() ? Fl_Tooltip::current() : NULL);
   if (pWindow->user_data() == &Fl_Screen_Driver::transient_scale_display &&
       Fl_Screen_Driver::transient_scale_parent) {
     target = Fl_Screen_Driver::transient_scale_parent;
@@ -1293,7 +1294,9 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   if (!target) target = Fl::belowmouse();
   if (!target) target = Fl::first_window();
   Fl_Window *parent_win = target->top_window();
-  while (parent_win && Fl_Window_Driver::driver(parent_win)->fltk_menu_window) parent_win = Fl::next_window(parent_win);
+  while (parent_win && parent_win->menu_window() && driver(parent_win)->popup_window()) {
+    parent_win = Fl::next_window(parent_win);
+  }
   Fl_Window *origin_win = (menu_origin ? menu_origin : parent_win);
   struct wld_window * parent_xid = fl_wl_xid(origin_win);
   struct xdg_surface *parent_xdg = parent_xid->xdg_surface;
@@ -1394,13 +1397,13 @@ void Fl_Wayland_Window_Driver::makeWindow()
   // put transient scale win at center of top window by making it a tooltip of top
     Fl_Screen_Driver::transient_scale_parent = Fl::first_window();
     pWindow->set_tooltip_window();
-    fltk_tooltip_window = true;
+    popup_window(true);
     pWindow->position(
               (Fl_Screen_Driver::transient_scale_parent->w() - pWindow->w())/2 ,
               (Fl_Screen_Driver::transient_scale_parent->h() - pWindow->h())/2);
   }
 
-  if (fltk_menu_window || fltk_tooltip_window) { // a menu window or tooltip
+  if (popup_window()) { // a menu window or tooltip
     is_floatingtitle = process_menu_or_tooltip(new_window);
 
   } else if (pWindow->border() && !pWindow->parent() ) { // a decorated window
@@ -1494,7 +1497,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   pWindow->redraw();
   pWindow->handle(Fl::e_number = FL_SHOW); // get child windows to appear
   Fl::e_number = old_event;
-  if (fltk_menu_window && !is_floatingtitle) {
+  if (pWindow->menu_window() && popup_window() && !is_floatingtitle) {
     // make sure each menu window is mapped with its constraints before mapping next popup
     pWindow->wait_for_expose();
     if (previous_floatingtitle) { // a menuwindow with a menutitle
@@ -1840,13 +1843,12 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       if (H < 1) H = 1;
     }
     // toplevel, non-popup windows must have origin at 0,0
-    if (!pWindow->parent() &&
-        !(fltk_menu_window || fltk_tooltip_window)) X = Y = 0;
+    if (!pWindow->parent() && !popup_window()) X = Y = 0;
     pWindow->Fl_Group::resize(X,Y,W,H);
 //fprintf(stderr, "resize: win=%p to %dx%d\n", pWindow, W, H);
     if (shown()) {pWindow->redraw();}
   } else {
-    if (pWindow->parent() || fltk_menu_window || fltk_tooltip_window) {
+    if (pWindow->parent() || popup_window()) {
       x(X); y(Y);
 //fprintf(stderr, "move menuwin=%p x()=%d\n", pWindow, X);
     } else {
@@ -2022,7 +2024,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   struct wld_window * parent_xid = fl_wl_xid(menu_origin);
   float f = Fl::screen_scale(Fl_Window_Driver::menu_parent()->screen_num());
   int popup_x = x * f, popup_y = y * f + xid_menu->state;
-  if (Fl_Window_Driver::driver(menu_origin)->fltk_menu_window) {
+  if (menu_origin->menu_window() && driver(menu_origin)->popup_window()) {
     popup_x -= menu_origin->x() * f;
     popup_y -= menu_origin->y() * f;
   }
@@ -2064,7 +2066,7 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
   int HH;
   Fl_Window *parent = Fl_Window_Driver::menu_parent(&HH);
   if (parent) {
-    if (fltk_menu_window && pWindow->h() > HH) {
+    if (pWindow->menu_window() && popup_window() && pWindow->h() > HH) {
       // tall menu: set top (Y) and bottom (Y+H) bounds relatively to reference window
       int ih = Fl_Window_Driver::menu_itemheight(pWindow);
       X = -50000;
@@ -2157,4 +2159,14 @@ void Fl_Wayland_Window_Driver::maximize() {
 void Fl_Wayland_Window_Driver::un_maximize() {
   struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
   if (xid->kind == DECORATED) libdecor_frame_unset_maximized(xid->frame);
+}
+
+
+void Fl_Wayland_Window_Driver::popup_window(bool v) {
+  is_popup_window_ = v;
+}
+
+
+bool Fl_Wayland_Window_Driver::popup_window() {
+  return is_popup_window_;
 }

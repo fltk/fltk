@@ -51,7 +51,7 @@ public:
   Fl_TooltipBox() : Fl_Menu_Window(0, 0) {
     set_override();
     set_tooltip_window();
-    Fl_Window_Driver::driver(this)->fltk_tooltip_window = true;
+    Fl_Window_Driver::driver(this)->popup_window(true);
     end();
   }
   void draw() FL_OVERRIDE;

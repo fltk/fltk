@@ -115,7 +115,7 @@ protected:
     Fl_Menu_Window(X, Y, W, H, 0) {
       menu = m;
       set_menu_window();
-      Fl_Window_Driver::driver(this)->fltk_menu_window = true;
+      Fl_Window_Driver::driver(this)->popup_window(true);
       end();
       set_modal();
       clear_border();
@@ -184,14 +184,8 @@ Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
 }
 
 static menuwindow *to_menuwindow(Fl_Window *win) {
-  if (!Fl_Window_Driver::driver(win)->fltk_menu_window) return NULL;
+  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return NULL;
   return ((window_with_items*)win)->as_menuwindow();
-}
-
-/** Returns whether win is a menutitle window */
-bool Fl_Window_Driver::is_menutitle(Fl_Window *win) {
-  if (!Fl_Window_Driver::driver(win)->fltk_menu_window) return false;
-  return (((window_with_items*)win)->as_menuwindow() == NULL);
 }
 
 /** Accessor to the "origin" member variable of class menuwindow.
@@ -234,7 +228,7 @@ int *Fl_Window_Driver::menu_offset_y(Fl_Window *win) {
 
 /** Returns whether win is a non-menubar menutitle */
 bool Fl_Window_Driver::is_floating_title(Fl_Window *win) {
-  if (!Fl_Window_Driver::driver(win)->fltk_menu_window) return false;
+  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return false;
   Fl_Window *mwin = ((window_with_items*)win)->as_menuwindow();
   return !mwin && !((menutitle*)win)->in_menubar;
 }

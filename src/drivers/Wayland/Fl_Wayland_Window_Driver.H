@@ -61,6 +61,7 @@ private:
   Fl_Cursor standard_cursor_; // window's standard custom kind
   void delete_cursor_(struct wld_window *, bool delete_rgb = true);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
+  bool is_popup_window_;
 public:
   inline Fl_Cursor standard_cursor() { return standard_cursor_; };
   bool in_handle_configure; // distinguish OS and user window resize
@@ -131,6 +132,8 @@ public:
   int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
              void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
   void wait_for_expose() FL_OVERRIDE;
+  void popup_window(bool v) FL_OVERRIDE;
+  bool popup_window() FL_OVERRIDE;
   // menu-related stuff
   void reposition_menu_window(int x, int y) FL_OVERRIDE;
   void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) FL_OVERRIDE;
