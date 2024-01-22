@@ -969,10 +969,14 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     Y += Fl::event_y_root()-Fl::event_y();
     menuwindow::parent_ = Fl::first_window();
   }
+
   int XX, YY, WW;
   Fl::screen_xywh(XX, YY, WW, menuwindow::display_height_, menuwindow::parent_->screen_num());
   menuwindow mw(this, X, Y, W, H, initial_item, title, menubar);
   Fl::grab(mw);
+  // If we grab the mouse pointer, we should also make sure that it is visible.
+  if (menuwindow::parent_)
+    menuwindow::parent_->cursor(FL_CURSOR_DEFAULT);
   menustate pp; p = &pp;
   pp.p[0] = &mw;
   pp.nummenus = 1;
