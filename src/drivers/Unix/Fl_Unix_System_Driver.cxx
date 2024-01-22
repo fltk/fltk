@@ -453,7 +453,7 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
                                                  const char *vendor,
                                                  const char *application)
 {
-  // Create a static buffer fo our filename
+  // Create a static buffer for our filename
   static char *buffer = 0L;
   if (!buffer) buffer = (char*)::calloc(1, FL_PATH_MAX);
   buffer[0] = '\0';
@@ -485,7 +485,7 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
 
 /*
  Memory based preferences are never saved to any file, so the path is
- just and empty string.
+ just an empty string.
  */
 char *Fl_Unix_System_Driver::preference_memory_rootnode(
     const char * /*vendor*/, 
@@ -558,7 +558,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
   // 2: If this base path does not exist, try the 1.3 path
   if (::access(prefs_path_14.c_str(), F_OK) == -1) {
     Fl_String prefs_path_13 = home_path + ".fltk/" + vendor;
-    if (::access(prefs_path_14.c_str(), F_OK) == 0) {
+    if (::access(prefs_path_13.c_str(), F_OK) == 0) {
       prefs_path_13.append('/');
       prefs_path_13.append(application);
       prefs_path_13.append(".prefs");
