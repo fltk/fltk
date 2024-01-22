@@ -21,6 +21,7 @@
 #include <FL/fl_string_functions.h>  // fl_strdup
 #include <FL/platform.H>
 #include "../../flstring.h"
+#include "../../Fl_String.H"
 #include "../../Fl_Timeout.h"
 
 #include <locale.h>
@@ -443,6 +444,8 @@ void Fl_Unix_System_Driver::newUUID(char *uuidBuffer)
 }
 
 /*
+ Create a buffer that holds the absolute file path and name of the preferences
+ file for the given root, vendor, and application name.
  Note: `prefs` can be NULL!
  */
 char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
@@ -450,33 +453,10 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
                                                  const char *vendor,
                                                  const char *application)
 {
-  static char *filename = 0L;
-  if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
-  const char *home = "";
-  int pref_type = root & Fl_Preferences::ROOT_MASK;
-  switch (pref_type) {
-    case Fl_Preferences::USER:
-      home = getenv("HOME");
-      // make sure that $HOME is set to an existing directory
-      if ((home == NULL) || (home[0] == 0) || (::access(home, F_OK) == -1)) {
-        struct passwd *pw = getpwuid(getuid());
-        if (pw)
-          home = pw->pw_dir;
-      }
-      if ((home == 0L) || (home[0] == 0) || (::access(home, F_OK) == -1))
-        return NULL;
-      strlcpy(filename, home, FL_PATH_MAX);
-      if (filename[strlen(filename) - 1] != '/')
-        strlcat(filename, "/", FL_PATH_MAX);
-      strlcat(filename, ".fltk/", FL_PATH_MAX);
-      break;
-    case Fl_Preferences::SYSTEM:
-      strcpy(filename, "/etc/fltk/");
-      break;
-    default:              // MEMORY
-      filename[0] = '\0'; // empty string
-      break;
-  }
+  // Create a static buffer fo our filename
+  static char *buffer = 0L;
+  if (!buffer) buffer = (char*)::calloc(1, FL_PATH_MAX);
+  buffer[0] = '\0';
 
   // Make sure that the parameters are not NULL
   if ( (vendor==NULL) || (vendor[0]==0) )
@@ -484,46 +464,115 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
   if ( (application==NULL) || (application[0]==0) )
     application = "unknown";
 
-  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
-           "%s/%s.prefs", vendor, application);
-
-  // If this is not the USER path (i.e. SYSTEM or MEMORY), we are done
-  if ((pref_type) != Fl_Preferences::USER)
-    return filename;
-
-  // If the legacy file exists, we are also done
-  if (::access(filename, F_OK)==0)
-    return filename;
-
-  // This is USER mode, and there is no legacy file. Create an XDG conforming path.
-  // Check $XDG_CONFIG_HOME, and if it isn't set, default to $HOME/.config
-  const char *xdg = getenv("XDG_CONFIG_HOME");
-  if (xdg==NULL) {
-    xdg = "~/.config";
+  // Dispatch to the various path creators for the requested root.
+  char *prefs_path = NULL;
+  int pref_type = root & Fl_Preferences::ROOT_MASK;
+  switch (pref_type) {
+    case Fl_Preferences::USER:
+      prefs_path = preference_user_rootnode(vendor, application, buffer);
+      break;
+    case Fl_Preferences::SYSTEM:
+      prefs_path = preference_system_rootnode(vendor, application, buffer);
+      break;
+    case Fl_Preferences::MEMORY:
+    default:
+      prefs_path = preference_memory_rootnode(vendor, application, buffer);
+      break;
   }
-  filename[0] = 0;
-  if (strncmp(xdg, "~/", 2)==0) {
-    strlcpy(filename, home, FL_PATH_MAX);
-    strlcat(filename, "/", FL_PATH_MAX);
-    strlcat(filename, xdg+2, FL_PATH_MAX);
-  } else if (strncmp(xdg, "$HOME/", 6)==0) {
-    strlcpy(filename, home, FL_PATH_MAX);
-    strlcat(filename, "/", FL_PATH_MAX);
-    strlcat(filename, xdg+6, FL_PATH_MAX);
-  } else if (strncmp(xdg, "${HOME}/", 8)==0) {
-    strlcpy(filename, home, FL_PATH_MAX);
-    strlcat(filename, "/", FL_PATH_MAX);
-    strlcat(filename, xdg+8, FL_PATH_MAX);
+
+  return prefs_path;
+}
+
+/*
+ Memory based preferences are never saved to any file, so the path is
+ just and empty string.
+ */
+char *Fl_Unix_System_Driver::preference_memory_rootnode(
+    const char * /*vendor*/, 
+    const char * /*application*/, 
+    char *buffer)
+{
+  buffer[0] = 0;
+  return buffer;
+}
+
+/*
+ The path and file name for system preferences on Unix type 
+ systems is `/etc/fltk/{vendor}/{application}.prefs`.
+ */
+char *Fl_Unix_System_Driver::preference_system_rootnode(
+    const char *vendor, 
+    const char *application, 
+    char *buffer) 
+{
+  snprintf(buffer, FL_PATH_MAX, "/etc/fltk/%s/%s.prefs", vendor, application);
+  return buffer;
+}
+
+/*
+ The user path changed between FLTK 1.3 and 1.4. It is now calculated
+ using XDG guidelines. It is `$XDG_CONFIG_HOME/{vendor}/{application}.prefs`
+ if `$XDG_CONFIG_HOME` is set, and `$HOME/.config/{vendor}/{application}.prefs`
+ if `$XDG_CONFIG_HOME` is not set or empty.
+
+ For compatibility with 1.3 preferences, this function checks
+
+ 1. Does the XDG based top level folder '{vendor}' exist? If yes, use it.
+ 2. If not: does the old location $HOME/.fltk/{vendor} exist? If yes, use it.
+ 3. If neither: fall back to (1.) and use the XDG based folder (create it and 
+    the prefs file below it).
+ */
+char *Fl_Unix_System_Driver::preference_user_rootnode(
+    const char *vendor, 
+    const char *application, 
+    char *buffer) 
+{
+  // Find the path to the user's home directory.
+  Fl_String home_path = getenv("HOME");
+  if (home_path.empty()) {
+    struct passwd *pw = getpwuid(getuid());
+    if (pw)
+      home_path = pw->pw_dir;
+  }
+
+  // 1: Generate the 1.4 path for this vendor and application.
+  Fl_String prefs_path_14 = getenv("XDG_CONFIG_HOME");
+  if (prefs_path_14.empty()) {
+    prefs_path_14 = home_path + "/.config";
   } else {
-    strlcpy(filename, xdg, FL_PATH_MAX);
+    if (prefs_path_14[prefs_path_14.size()-1]!='/')
+      prefs_path_14.append('/');
+    if (prefs_path_14.find("~/")==0) // starts with "~" 
+      prefs_path_14.replace(0, 1, home_path);
+    size_t h_env = prefs_path_14.find("${HOME}");
+    if (h_env!=prefs_path_14.npos)
+      prefs_path_14.replace(h_env, 7, home_path);
+    h_env = prefs_path_14.find("$HOME/");
+    if (h_env!=prefs_path_14.npos)
+      prefs_path_14.replace(h_env, 5, home_path);
   }
-  strlcat(filename, "/", FL_PATH_MAX);
-  strlcat(filename, vendor, FL_PATH_MAX);
-  strlcat(filename, "/", FL_PATH_MAX);
-  strlcat(filename, application, FL_PATH_MAX);
-  strlcat(filename, ".prefs", FL_PATH_MAX);
+  if (prefs_path_14[prefs_path_14.size()-1]!='/')
+    prefs_path_14.append('/');
+  prefs_path_14.append(vendor);
 
-  return filename;
+  // 2: If this base path does not exist, try the 1.3 path
+  if (::access(prefs_path_14.c_str(), F_OK) == -1) {
+    Fl_String prefs_path_13 = home_path + ".fltk/" + vendor;
+    if (::access(prefs_path_14.c_str(), F_OK) == 0) {
+      prefs_path_13.append('/');
+      prefs_path_13.append(application);
+      prefs_path_13.append(".prefs");
+      strlcpy(buffer, prefs_path_13.c_str(), FL_PATH_MAX);
+      return buffer;
+    }
+  }
+
+  // 3: neither path exists, return the 1.4 file path and name
+  prefs_path_14.append('/');
+  prefs_path_14.append(application);
+  prefs_path_14.append(".prefs");
+  strlcpy(buffer, prefs_path_14.c_str(), FL_PATH_MAX);
+  return buffer;
 }
 
 //

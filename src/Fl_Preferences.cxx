@@ -236,7 +236,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  which would silently fail to create a preference file.
 
  \param[in] root can be \c USER_L or \c SYSTEM_L for user specific or system
-            wide preferences, add the CLEAR flag to start with a clean set of
+            wide preferences, add the \c CLEAR flag to start with a clean set of
             preferences instead of reading them from a preexisting database
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
  \param[in] application unique text describing the application, must be a valid filepath segment
@@ -1292,7 +1292,11 @@ Fl_Preferences::RootNode::~RootNode() {
 
 // read a preference file and construct the group tree and all entry leaves
 int Fl_Preferences::RootNode::read() {
-  if (!filename_)   // RUNTIME preferences, or filename could not be created
+  if ( (root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::MEMORY ) {
+    prefs_->node->clearDirtyFlags();
+    return 0;
+  }
+  if (!filename_ || !filename_[0])   // filename could not be created
     return -1;
   if ( (root_type_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_READ_OK) ) {
     prefs_->node->clearDirtyFlags();
@@ -1341,7 +1345,11 @@ int Fl_Preferences::RootNode::read() {
 
 // write the group tree and all entry leaves
 int Fl_Preferences::RootNode::write() {
-  if (!filename_)   // RUNTIME preferences, or filename could not be created
+  if ( (root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::MEMORY ) {
+    prefs_->node->clearDirtyFlags();
+    return 0;
+  }
+  if (!filename_ || !filename_[0])   // filename could not be created
     return -1;
   if ( (root_type_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_WRITE_OK) )
     return -1;
