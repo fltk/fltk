@@ -96,20 +96,20 @@ void Fl_TooltipBox::layout() {
   for (Fl_Widget* p = Fl_Tooltip::current(); p; p = p->window()) {
     oy += p->y();
   }
+  int scr_x = -100000, scr_y = -100000, scr_w = 1000000, scr_h = 1000000;
   if (!Fl_Window_Driver::driver(this)->popup_window()) {
-    int scr_x, scr_y, scr_w, scr_h;
-     Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
-     if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
-     if (ox < scr_x) ox = scr_x;
-     if (currentTooltipH > 30) {
-     oy = Fl::event_y_root()+13;
-     if (oy+hh > scr_y+scr_h) oy -= 23+hh;
-     } else {
-     if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
-     }
-     if (oy < scr_y) oy = scr_y;
+    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
   }
-
+  if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
+  if (ox < scr_x) ox = scr_x;
+  if (currentTooltipH > 30) {
+    oy = Fl::event_y_root()+13;
+    if (oy+hh > scr_y+scr_h) oy -= 23+hh;
+  } else {
+    if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
+  }
+  if (oy < scr_y) oy = scr_y;
+  
   resize(ox, oy, ww, hh);
 }
 
