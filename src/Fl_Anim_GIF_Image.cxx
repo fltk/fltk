@@ -506,7 +506,7 @@ bool Fl_Anim_GIF_Image::loop = true;
 
 /** Load an animated GIF image from a file.
 
- This constructor creates an animated image form a GIF-formatted file.
+ This constructor creates an animated image from a GIF-formatted file.
  Optionally it applies the \ref canvas() method after successful load.
  If \ref DONT_START is not specified in the \p flags parameter it calls
  \ref start() after successful load.
@@ -550,7 +550,7 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *filename,
 
 /** Load an animated GIF image from memory.
 
- This constructor creates an animated image form a GIF-formatted block in
+ This constructor creates an animated image from a GIF-formatted block in
  memory. Optionally it applies the \ref canvas() method after successful load.
  If \ref DONT_START is not specified in the \p flags parameter it calls
  \ref start() after successful load.
