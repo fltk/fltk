@@ -4128,7 +4128,7 @@ int Fl_Text_Display::handle(int event) {
   if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h) &&
       !dragging && event != FL_LEAVE && event != FL_ENTER &&
       event != FL_MOVE && event != FL_FOCUS && event != FL_UNFOCUS &&
-      event != FL_KEYBOARD && event != FL_KEYUP) {
+      event != FL_KEYBOARD && event != FL_KEYUP && event != FL_MOUSEWHEEL) {
     return Fl_Group::handle(event);
   }
 
@@ -4303,8 +4303,20 @@ int Fl_Text_Display::handle(int event) {
     }
 
     case FL_MOUSEWHEEL:
-      if (Fl::event_dy()) return mVScrollBar->handle(event);
-      else return mHScrollBar->handle(event);
+      if (Fl::e_dy && mVScrollBar->visible()) {
+        // Issue #879
+        Fl_Scrollbar *vs = mVScrollBar;
+        if ((Fl::e_dy < 0) && (vs->value() == int(vs->minimum()))) return 0;  // hit top? ignore
+        if ((Fl::e_dy > 0) && (vs->value() == int(vs->maximum()))) return 0;  // hit bot? ignore
+        return vs->handle(event);
+      } else if (Fl::e_dx && mHScrollBar->visible()) {
+        // Issue #879
+        Fl_Scrollbar *hs = mHScrollBar;
+        if ((Fl::e_dx < 0) && (hs->value() == int(hs->minimum()))) return 0;  // hit left? ignore
+        if ((Fl::e_dx > 0) && (hs->value() == int(hs->maximum()))) return 0;  // hit right? ignore
+        return hs->handle(event);
+      }
+      return 0;
 
     case FL_UNFOCUS:
       if (active_r() && window()) window()->cursor(FL_CURSOR_DEFAULT);
