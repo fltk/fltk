@@ -58,7 +58,9 @@ int Fl::box_shadow_width_ = 3;
 */
 int Fl::draw_box_active() { return draw_it_active; }
 
-const uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
+// Note: the pointer that is returned by this function works only with indexes
+//       between 65 ('A') and including 88 ('X').
+const uchar *fl_gray_ramp() {return (static_cast<const uchar*>(draw_it_active?active_ramp:inactive_ramp))-'A';}
 
 /**
   Gets the drawing color to be used for the background of a box.
