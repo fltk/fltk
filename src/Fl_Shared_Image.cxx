@@ -239,18 +239,19 @@ void Fl_Shared_Image::release() {
     }
   }
 
-  for (i = 0; i < num_images_; i ++)
+  for (i = 0; i < num_images_; i ++) {
     if (images_[i] == this) {
       num_images_ --;
 
       if (i < num_images_) {
         memmove(images_ + i, images_ + i + 1,
-               (num_images_ - i) * sizeof(Fl_Shared_Image *));
+                (num_images_ - i) * sizeof(Fl_Shared_Image *));
       }
 
       break;
     }
-
+  }
+  
   delete this;
 
   if (num_images_ == 0 && images_) {

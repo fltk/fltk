@@ -1350,7 +1350,7 @@ Fl_File_Chooser::update_preview()
 
   oldimage = (Fl_Shared_Image *)previewBox->image();
 
-  if (oldimage) oldimage->release();
+  if (oldimage) ((Fl_Shared_Image *)oldimage)->release();
 
   previewBox->image(0);
 
@@ -1444,14 +1444,14 @@ Fl_File_Chooser::update_preview()
       h   = w * image->h() / image->w();
 
       if (h > pbh) {
-	h = pbh;
-	w = h * image->w() / image->h();
+        h = pbh;
+        w = h * image->w() / image->h();
       }
 
-      oldimage = (Fl_Shared_Image *)image->copy(w, h);
+      oldimage = Fl_Shared_Image::get(filename, w, h);
       previewBox->image((Fl_Image *)oldimage);
 
-      image->release();
+      ((Fl_Shared_Image *)image)->release();
     } else {
       previewBox->image((Fl_Image *)image);
     }

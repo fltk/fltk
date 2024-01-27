@@ -32,6 +32,9 @@ comment {//
 decl {\#include <FL/fl_draw.H>} {private local
 }
 
+decl {\#include <FL/Fl_Shared_Image.H>} {selected private local
+}
+
 class FL_EXPORT Fl_File_Chooser {open
 } {
   decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public local
@@ -68,7 +71,8 @@ class FL_EXPORT Fl_File_Chooser {open
   }
   decl {void update_preview();} {private local
   }
-  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
+  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
+  } {
     code {if (!prefs_) {
   prefs_ = new Fl_Preferences(Fl_Preferences::USER, "fltk.org", "filechooser");
 }} {}
@@ -78,12 +82,12 @@ class FL_EXPORT Fl_File_Chooser {open
       callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();} open
-      private xywh {507 327 490 380} type Double hide resizable
+hide();} open
+      private xywh {412 246 490 380} type Double resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
-      code3 {\#include <string.h>} modal
+      code3 {\#include <string.h>} modal visible
     } {
       Fl_Group {} {open
         private xywh {10 10 470 25}
@@ -158,7 +162,7 @@ window->hide();} open
         } {
           Fl_Return_Button okButton {
             label OK
-            callback {window->hide();
+            callback {hide();
 
 // Do any callback that is registered...
 if (callback_)
@@ -172,7 +176,7 @@ if (callback_)
             callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();}
+hide();}
             private xywh {408 345 72 25}
             code0 {o->label(fl_cancel);}
           }
@@ -288,9 +292,12 @@ data_     = d;} {}
     code {showChoice->value(f);
 showChoiceCB();} {}
   }
-  Function {hide()} {return_type void
+  Function {hide()} {open return_type void
   } {
-    code {window->hide();} {}
+    code {window->hide();
+Fl_Shared_Image *oldimage = (Fl_Shared_Image *)previewBox->image();
+if (oldimage) oldimage->release();
+previewBox->image(NULL);} {}
   }
   Function {iconsize(uchar s)} {return_type void
   } {
@@ -351,7 +358,7 @@ okButton->parent()->init_sizes();} {}
   } {
     code {fileList->textfont(f);} {}
   }
-  Function {textfont()} {selected return_type Fl_Font
+  Function {textfont()} {return_type Fl_Font
   } {
     code {return (fileList->textfont());} {}
   }
