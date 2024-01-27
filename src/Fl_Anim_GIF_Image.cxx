@@ -1040,8 +1040,16 @@ bool Fl_GIF_Image::is_animated(const char *name) {
 bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =NULL */, size_t imglength /* =0 */) {
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
-  free(name_);
-  name_ = name ? fl_strdup(name) : 0;
+  if (name_ != name) {
+    if (name_) {
+      ::free(name_);
+    }
+    if (name) {
+      name_ = fl_strdup(name);
+    } else {
+      name_  = NULL;
+    }
+  }
 
   // as load() can be called multiple times
   // we have to replicate the actions of the pixmap destructor here
@@ -1054,7 +1062,7 @@ bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =
   w(0);
   h(0);
 
-  if (name_) {
+  if (name_ || imgdata) {
     fi_->load(name, imgdata, imglength);
   }
 
