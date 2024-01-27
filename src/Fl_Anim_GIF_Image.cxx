@@ -266,6 +266,7 @@ void Fl_Anim_GIF_Image::FrameInfo::dispose(int frame) {
 bool Fl_Anim_GIF_Image::FrameInfo::load(const char *name, const unsigned char *data, size_t length) {
   // decode using FLTK
   valid = false;
+  anim->ld(0);
   if (data) {
     anim->Fl_GIF_Image::load(name, data, length, true); // calls on_frame_data() for each frame
   } else {
