@@ -280,7 +280,7 @@ look the same at a first glance, but the second shortcut is actually
 <TT>Ctrl-Shift-S</TT> due to the capital letter 'S'. Also, we use
 <TT>FL_COMMAND</TT> as our menu shortcut modifier key. <TT>FL_COMMAND</TT>
 translates to `FL_CTRL` on Windows and Linux, and to `FL_META` on macOS,
-better know as the cauliflower, or simply "the Apple key".
+better known as the cloverleaf, or simply "the Apple key".
 
 We implement the Save As callback first, because we will want to call it from
 the Open callback later. The basic callback is only a few lines of code.
