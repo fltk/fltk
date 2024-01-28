@@ -1,7 +1,8 @@
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
-// This program is described in Chapter 4 of the FLTK Programmer's Guide.
+// This program is described in chapter "Designing a Simple Text Editor"
+// of the FLTK Programmer's Guide.
 //
 // Copyright 1998-2024 by Bill Spitzak and others.
 //
@@ -16,7 +17,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// Enable tutorial code for each chapter by adjusting this macro to match 
+// Enable tutorial code for each chapter by adjusting this macro to match
 // the chapter number.
 #define TUTORIAL_CHAPTER 10
 
@@ -116,6 +117,7 @@ void tut3_build_main_editor() {
   app_editor = new Fl_Text_Editor(0, app_menu_bar->h(),
     app_window->w(), app_window->h() - app_menu_bar->h());
   app_editor->buffer(app_text_buffer);
+  app_editor->textfont(FL_COURIER);
   app_window->resizable(app_editor);
   app_window->end();
   // find the Quit menu and insert the New menu there
@@ -336,7 +338,7 @@ bool find_next(const char *needle) {
     editor->show_insert_position();
     return true;
   } else {
-    fl_alert("No further occurrences of \'%s\' found!", needle);
+    fl_alert("No further occurrences of '%s' found!", needle);
     return false;
   }
 }
@@ -399,11 +401,11 @@ void replace_selection(const char *new_text) {
 }
 
 class Replace_Dialog : public Fl_Double_Window {
-  Fl_Input* find_text_input;
-  Fl_Input* replace_text_input;
-  Fl_Button* find_next_button;
-  Fl_Button* replace_and_find_button;
-  Fl_Button* close_button;
+  Fl_Input *find_text_input;
+  Fl_Input *replace_text_input;
+  Fl_Button *find_next_button;
+  Fl_Button *replace_and_find_button;
+  Fl_Button *close_button;
 public:
   Replace_Dialog(const char *label);
   void show() FL_OVERRIDE;
@@ -588,12 +590,13 @@ void menu_split_callback(Fl_Widget* w, void*) {
 void tut9_split_editor() {
   app_window->begin();
   app_tile = new Fl_Tile(app_editor->x(), app_editor->y(),
-                          app_editor->w(), app_editor->h());
+                         app_editor->w(), app_editor->h());
   app_window->remove(app_editor);
   app_tile->add(app_editor);
   app_split_editor = new Fl_Text_Editor(app_tile->x(), app_tile->y()+app_tile->h(),
                                         app_tile->w(), 0);
   app_split_editor->buffer(app_text_buffer);
+  app_split_editor->textfont(FL_COURIER);
   app_split_editor->hide();
   app_tile->end();
   app_tile->size_range(0, 25, 25);
@@ -1003,8 +1006,8 @@ void menu_syntaxhighlight_callback(Fl_Widget* w, void*) {
   if (syntaxt_item->value()) {
     style_init();
     app_editor->highlight_data(app_style_buffer, styletable,
-                              sizeof(styletable) / sizeof(styletable[0]),
-                              'A', style_unfinished_cb, 0);
+                               sizeof(styletable) / sizeof(styletable[0]),
+                               'A', style_unfinished_cb, 0);
     app_text_buffer->add_modify_callback(style_update, app_editor);
   } else {
     app_text_buffer->remove_modify_callback(style_update, app_editor);

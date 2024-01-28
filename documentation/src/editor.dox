@@ -210,6 +210,7 @@ void tut3_build_main_editor() {
   app_editor = new Fl_Text_Editor(0, app_menu_bar->h(),
     app_window->w(), app_window->h() - app_menu_bar->h());
   app_editor->buffer(app_text_buffer);
+  app_editor->textfont(FL_COURIER);
   app_window->resizable(app_editor);
   app_window->end();
 }
@@ -278,7 +279,7 @@ void tut4_add_file_support() {
 look the same at a first glance, but the second shortcut is actually
 <TT>Ctrl-Shift-S</TT> due to the capital letter 'S'. Also, we use
 <TT>FL_COMMAND</TT> as our menu shortcut modifier key. <TT>FL_COMMAND</TT>
-translates to `FL_CTRL` on MSWindows and Linux, and to `FL_META` on macOS,
+translates to `FL_CTRL` on Windows and Linux, and to `FL_META` on macOS,
 better know as the cauliflower, or simply "the Apple key".
 
 We implement the Save As callback first, because we will want to call it from
@@ -419,7 +420,7 @@ the `load()` function that we already wrote:
 \endcode
 
 We really should support two more ways to load documents from a file.
-Let's modify the the "show and run" part of `main()` to handle command
+Let's modify the "show and run" part of `main()` to handle command
 line parameters and desktop drag'n'drop operations. For that, we refactor
 the last two lines of `main()` into a new function:
 
@@ -431,7 +432,7 @@ int main (int argc, char **argv) {
   tut2_build_app_menu_bar();
   tut3_build_main_editor();
   tut4_add_file_support();
-  // ... refactor thos into the new function
+  // ... refactor those into the new function
   // app_window->show(argc, argv);
   // return Fl::run();
   return tut4_handle_commandline_and_run(argc, argv);
@@ -443,10 +444,10 @@ code. `Fl::args_to_utf8()` converts the command line argument from whatever
 the host system provides into Unicode. `Fl::args()` goes through the
 list of arguments and gives `args_handler()` a chance to handle each argument.
 It also makes sure that FLTK specific args are still forwarded to FLTK,
-so `"-scheme plastic"` and `"-background #AAAAFF"` will draw beautiful blue
+so `"-scheme plastic"` and `"-background #aaccff"` will draw beautiful blue
 buttons in a plastic look.
 
-`fl_open_callback()` let's FLTK know what to do if a user drops a text
+`fl_open_callback()` lets FLTK know what to do if a user drops a text
 file onto our editor icon (Apple macOS). Here, we ask it to call the `load()`
 function that we wrote earlier.
 
@@ -549,7 +550,7 @@ void find_next(const char *needle) {
     editor->insert_position(pos + (int)strlen(needle));
     editor->show_insert_position();
   } else {
-    fl_alert("No further occurrences of \'%s\' found!", needle);
+    fl_alert("No further occurrences of '%s' found!", needle);
   }
 }
 \endcode
@@ -636,7 +637,7 @@ void replace_selection(const char *new_text) {
 
 As before, the first four lines anticipate a split editor and find the
 editor that has focus. The code then deletes the currently selected
-text, replace it with the new text, selects the new text, and finally
+text, replaces it with the new text, selects the new text, and finally
 sets the text cursor to the end of the new text.
 
 <H3>The Replace_Dialog class</H3>
@@ -646,11 +647,11 @@ well as all the callbacks for the dialog buttons.
 
 \code
 class Replace_Dialog : public Fl_Double_Window {
-  Fl_Input* find_text_input;
-  Fl_Input* replace_text_input;
-  Fl_Button* find_next_button;
-  Fl_Button* replace_and_find_button;
-  Fl_Button* close_button;
+  Fl_Input *find_text_input;
+  Fl_Input *replace_text_input;
+  Fl_Button *find_next_button;
+  Fl_Button *replace_and_find_button;
+  Fl_Button *close_button;
 public:
   Replace_Dialog(const char *label);
   void show() FL_OVERRIDE;
@@ -715,7 +716,7 @@ class can be provided through the `user_data` field. We have done that in
 the constructor by adding `this` as the last argument when setting the
 callback, for example in `close_button->callback(close_callback, this);`.
 
-The callback itself can the extract the `this` pointer with a static cast:
+The callback itself can then extract the `this` pointer with a static cast:
 
 \code
 void Replace_Dialog::close_callback(Fl_Widget*, void* my_dialog) {
@@ -843,14 +844,14 @@ the callback is the same as `menu_linenumbers_callback`.
 \section editor_split_editor Chapter 9: Split Editor
 
 When editing long source code files, it can be really helpful to split
-the editor to view statments statements at the top of the text while
+the editor to view statements at the top of the text while
 adding features at the bottom of the text in a split text view.
 
 FLTK can link multiple text editors to a single text buffer. Let's implement
 this now. This chapter will show you how to rearrange widgets in an existing
 widget tree.
 
-Our initializer removes the main text editor from the widget three, and
+Our initializer removes the main text editor from the widget tree and
 replaces it with an `Fl_Tile`. A tile can hold multiple widgets that can
 then be resized interactively by the user by clicking and dragging the divider
 between those widgets.
@@ -865,7 +866,7 @@ Fl_Tile *app_tile = NULL;
 void tut9_split_editor() {
   app_window->begin();
   app_tile = new Fl_Tile(app_editor->x(), app_editor->y(),
-                          app_editor->w(), app_editor->h());
+                         app_editor->w(), app_editor->h());
   app_window->remove(app_editor);
 \endcode
 
@@ -874,7 +875,7 @@ another text editor `app_split_editor` as the second child of the tile, but
 it's hidden for now with a height of zero pixels.
 
 \note Creating the new `Fl_Tile` also calls `Fl_Tile::begin()`.
-<BR><BR>Adding `app_editor` to the tile would have also removed if from
+<BR><BR>Adding `app_editor` to the tile would have also removed it from
 `app_window`, so `app_window->remove(app_editor)` in the code above is not
 really needed, but illustrates what we are doing.
 
@@ -883,6 +884,7 @@ really needed, but illustrates what we are doing.
   app_split_editor = new Fl_Text_Editor(app_tile->x(), app_tile->y()+app_tile->h(),
                                         app_tile->w(), 0);
   app_split_editor->buffer(app_text_buffer);
+  app_split_editor->textfont(FL_COURIER);
   app_split_editor->hide();
 \endcode
 
@@ -986,8 +988,8 @@ style data and buffer with the text editor widget:
 Fl_Text_Buffer *app_style_buffer;
 
 app_editor->highlight_data(app_style_buffer, styletable,
-                          sizeof(styletable) / sizeof(styletable[0]),
-                          'A', style_unfinished_cb, 0);
+                           sizeof(styletable) / sizeof(styletable[0]),
+                           'A', style_unfinished_cb, 0);
 \endcode
 
 Finally, you need to add a callback to the main text buffer so
@@ -1095,10 +1097,10 @@ void
 style_parse(const char *text,
             char       *style,
             int        length) {
-  char             current;
-  int             col;
-  int             last;
-  char             buf[255],
+  char       current;
+  int        col;
+  int        last;
+  char       buf[255],
              *bufptr;
   const char *temp;
 
@@ -1231,6 +1233,5 @@ style_parse(const char *text,
 </tr>
 </table>
 \endhtmlonly
--->
 
 */
