@@ -547,11 +547,12 @@ void Fl_Screen_Driver::use_startup_scale_factor()
 {
   char *p;
   int s_count = screen_count();
-  desktop_scale_factor();
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
     float factor = 1;
     sscanf(p, "%f", &factor);
-    for (int i = 0; i < s_count; i++)  scale(i, factor * scale(i));
+    for (int i = 0; i < s_count; i++)  scale(i, factor);
+  } else {
+    desktop_scale_factor();
   }
 }
 
