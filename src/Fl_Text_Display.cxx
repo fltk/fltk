@@ -448,7 +448,8 @@ void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
   mHighlightCBArg = cbArg;
   mColumnScale = 0;
 
-  mStyleBuffer->canUndo(0);
+  if (mStyleBuffer)
+    mStyleBuffer->canUndo(0);
   damage(FL_DAMAGE_EXPOSE);
 }
 
