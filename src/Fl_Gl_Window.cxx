@@ -536,7 +536,6 @@ float Fl_Gl_Window::pixels_per_unit() {
  */
 
 int Fl_Gl_Window_Driver::copy = COPY;
-GLContext Fl_Gl_Window_Driver::cached_context = NULL;
 Fl_Window* Fl_Gl_Window_Driver::cached_window = NULL;
 float Fl_Gl_Window_Driver::gl_scale = 1; // scaling factor between FLTK and GL drawing units: GL = FLTK * gl_scale
 

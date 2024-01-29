@@ -217,18 +217,18 @@ GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const 
 }
 
 void Fl_Cocoa_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
-  if (context != cached_context || w != cached_window) {
-    cached_context = context;
+  NSOpenGLContext *current_context = [NSOpenGLContext currentContext];
+  if (context != current_context || w != cached_window) {
     cached_window = w;
     [(NSOpenGLContext*)context makeCurrentContext];
   }
 }
 
 void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
-  if (cached_context == context) {
-    cached_context = 0;
+  NSOpenGLContext *current_context = [NSOpenGLContext currentContext];
+  if (current_context == context) {
     cached_window = 0;
-    [[NSOpenGLContext currentContext] clearDrawable];
+    [current_context clearDrawable];
   }
   [(NSOpenGLContext*)context release];
   del_context(context);
