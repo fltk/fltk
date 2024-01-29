@@ -163,16 +163,16 @@ GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const
 }
 
 void Fl_WinAPI_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
-  if (context != cached_context || w != cached_window) {
-    cached_context = context;
+  GLContext current_context = wglGetCurrentContext();
+  if (context != current_context || w != cached_window) {
     cached_window = w;
     wglMakeCurrent(Fl_WinAPI_Window_Driver::driver(w)->private_dc, (HGLRC)context);
   }
 }
 
 void Fl_WinAPI_Gl_Window_Driver::delete_gl_context(GLContext context) {
-  if (cached_context == context) {
-    cached_context = 0;
+  GLContext current_context = wglGetCurrentContext();
+  if (current_context == context) {
     cached_window = 0;
     wglMakeCurrent(0, 0);
   }

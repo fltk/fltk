@@ -228,8 +228,8 @@ void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context
     target_egl_surface = dr->gl_start_support_->egl_surface = eglCreateWindowSurface(
         egl_display, wld_egl_conf, dr->gl_start_support_->egl_window, NULL);
   }
-  if (context != cached_context || w != cached_window) {
-    cached_context = context;
+  GLContext current_context = eglGetCurrentContext();
+  if (context != current_context || w != cached_window) {
     cached_window = w;
     if (eglMakeCurrent(egl_display, target_egl_surface, target_egl_surface,
                        (EGLContext)context)) {
@@ -259,11 +259,11 @@ void Fl_Wayland_Gl_Window_Driver::apply_scissor() {
 
 
 void Fl_Wayland_Gl_Window_Driver::delete_gl_context(GLContext context) {
-  if (cached_context == context) {
-    cached_context = 0;
+  GLContext current_context = eglGetCurrentContext();
+  if (current_context == context) {
     cached_window = 0;
   }
-  if (eglGetCurrentContext() == (EGLContext)context) {
+  if (current_context == (EGLContext)context) {
     eglMakeCurrent(egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
   }
   eglDestroyContext(egl_display, (EGLContext)context);

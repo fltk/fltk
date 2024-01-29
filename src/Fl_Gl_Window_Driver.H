@@ -38,7 +38,6 @@ protected:
   GLint current_prog;
   Fl_Gl_Window *pWindow;
 public:
-  static GLContext cached_context;
   static Fl_Window* cached_window;
   static int nContext;
   static GLContext *context_list;

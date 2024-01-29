@@ -321,16 +321,16 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(XVisualInfo *vis) {
 }*/
 
 void Fl_X11_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
-  if (context != cached_context || w != cached_window) {
-    cached_context = context;
+  GLContext current_context = glXGetCurrentContext();
+  if (context != current_context || w != cached_window) {
     cached_window = w;
     glXMakeCurrent(fl_display, fl_xid(w), (GLXContext)context);
   }
 }
 
 void Fl_X11_Gl_Window_Driver::delete_gl_context(GLContext context) {
-  if (cached_context == context) {
-    cached_context = 0;
+  GLContext current_context = glXGetCurrentContext();
+  if (current_context == context) {
     cached_window = 0;
     glXMakeCurrent(fl_display, 0, 0);
   }
