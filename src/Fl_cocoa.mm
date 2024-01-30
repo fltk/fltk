@@ -3094,6 +3094,11 @@ void Fl_X::GLcontext_makecurrent(NSOpenGLContext* ctxt)
   [ctxt makeCurrentContext];
 }
 
+NSOpenGLContext* Fl_X::GLcontext_getcurrent()
+{
+  return [NSOpenGLContext currentContext];
+}
+
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
   if (fl_mac_os_version < 101000) {

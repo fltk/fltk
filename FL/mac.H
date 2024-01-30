@@ -214,6 +214,7 @@ public:
   static void GLcontext_flushbuffer(NSOpenGLContext*);
   static void GLcontext_release(NSOpenGLContext*);
   static void GLcontext_makecurrent(NSOpenGLContext*);
+  static NSOpenGLContext* GLcontext_getcurrent();
   static void GL_cleardrawable(void);
   static void gl_start(NSOpenGLContext*);
   void destroy(void);

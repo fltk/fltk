@@ -409,6 +409,11 @@ static GLContext cached_context;
 static Fl_Window* cached_window;
 
 void fl_set_gl_context(Fl_Window* w, GLContext context) {
+#ifdef __APPLE_QUARTZ__
+  // macOS may switch buffers during swapping, so we override the
+  // cached context with the actual current context (#737)
+  cached_context = Fl_X::GLcontext_getcurrent();
+#endif
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
@@ -439,6 +444,11 @@ void fl_no_gl_context() {
 }
 
 void fl_delete_gl_context(GLContext context) {
+#ifdef __APPLE_QUARTZ__
+  // macOS may switch buffers during swapping, so we override the
+  // cached context with the actual current context (#737)
+  cached_context = Fl_X::GLcontext_getcurrent();
+#endif
   if (cached_context == context) fl_no_gl_context();
 #  if defined(USE_X11)
   glXDestroyContext(fl_display, context);
