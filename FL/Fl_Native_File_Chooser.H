@@ -103,7 +103,7 @@ class Fl_Native_File_Chooser_Driver;
 
  <B>Platform Specific Caveats</B>
 
- - Under X11/Wayland,  what dialog opens is determined as follows:
+ - Under X11/Wayland the dialog is chosen as follows:
  -# If command \p zenity is available at run-time and if \p Fl::option(OPTION_FNFC_USES_ZENITY) is
  not turned off, the \p zenity -based dialog opens. This is expected to be more appropriate
  than other dialog forms for sandboxed apps.
@@ -118,6 +118,8 @@ class Fl_Native_File_Chooser_Driver;
  It's best if you also call Fl_File_Icon::load_system_icons()
  at the start of main(), to enable the nicer looking file browser widgets.
  Use the static public attributes of class Fl_File_Chooser to localize the browser.
+
+ \todo Improve documentation about selection of native file choosers on X11/Wayland.\n
 
  - Some operating systems support certain OS specific options; see
  Fl_Native_File_Chooser::options() for a list.

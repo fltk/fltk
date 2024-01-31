@@ -1,8 +1,8 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -184,20 +184,47 @@ int Fl_Native_File_Chooser::filters() const {
 }
 
 /**
- Sets which filter will be initially selected.
+  Sets which filter will be initially selected.
 
- The first filter is indexed as 0.
- If filter_value()==filters(), then "All Files" was chosen.
- If filter_value() > filters(), then a custom filter was set.
- */
+  The first filter is indexed as 0.
+  If filter_value() == filters(), then "All Files" was chosen.
+  If filter_value()  > filters(), then a custom filter was set.
+
+  Some "native" file choosers don't support this way to set the initial
+  filter type, particularly the system dialog based browsers:
+
+    - kdialog (KDE system dialog)
+    - zenity (another system dialog based chooser).
+
+  Note: this list may not be complete.
+
+  As far as we know these dialogs use the \b first item in the list of
+  filter values as the initial filter presented to the user.
+
+  \see filter(const char *f)
+*/
 void Fl_Native_File_Chooser::filter_value(int i) {
   platform_fnfc->filter_value(i);
 }
 
 /**
- Returns which filter value was last selected by the user.
- This is only valid if the chooser returns success.
- */
+  Returns which filter value was last selected by the user.
+
+  This is only valid if the chooser returns success and if the particular
+  file chooser supports it. Otherwise the value is not changed.
+
+  Some "native" file choosers don't support returning the filter selection
+  by the user, particularly the system dialog based browsers:
+
+    - kdialog (KDE system dialog)
+    - zenity (another system dialog based chooser).
+
+  Note: this list may not be complete.
+
+  These system file chooser dialogs don't return the filter value chosen by the user.
+
+  \see filter(const char *f)
+*/
 int Fl_Native_File_Chooser::filter_value() const {
   return platform_fnfc->filter_value();
 }
