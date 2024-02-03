@@ -122,8 +122,8 @@ extern const char *fl_bg2;
 // end of extern additions workaround
 
 
-static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *seat,
-                          struct wl_cursor *wl_cursor = NULL) {
+void Fl_Wayland_Screen_Driver::do_set_cursor(
+    struct Fl_Wayland_Screen_Driver::seat *seat, struct wl_cursor *wl_cursor) {
   struct wl_cursor_image *image;
   struct wl_buffer *buffer;
   const int scale = seat->pointer_scale;
@@ -216,7 +216,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
   struct Fl_Wayland_Screen_Driver::seat *seat =
     (struct Fl_Wayland_Screen_Driver::seat*)data;
-  do_set_cursor(seat, cursor);
+  Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor);
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
   set_event_xy(win);
@@ -382,7 +382,7 @@ static void try_update_cursor(struct Fl_Wayland_Screen_Driver::seat *seat) {
   if (scale != seat->pointer_scale) {
     seat->pointer_scale = scale;
     init_cursors(seat);
-    do_set_cursor(seat);
+    Fl_Wayland_Screen_Driver::do_set_cursor(seat);
   }
 }
 
@@ -414,7 +414,7 @@ static void cursor_surface_enter(void *data,
   if (win) {
     Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
     struct wld_window *xid = fl_wl_xid(win);
-    if (xid->custom_cursor) do_set_cursor(seat, xid->custom_cursor->wl_cursor);
+    if (xid->custom_cursor) Fl_Wayland_Screen_Driver::do_set_cursor(seat, xid->custom_cursor->wl_cursor);
     else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
     else win->cursor(driver->standard_cursor());
   }
@@ -437,7 +437,7 @@ static void cursor_surface_leave(void *data, struct wl_surface *wl_surface,
   Fl_Window *win = Fl::first_window();
   if (win) {
     struct wld_window *xid = fl_wl_xid(win);
-    if (xid->custom_cursor) do_set_cursor(seat, xid->custom_cursor->wl_cursor);
+    if (xid->custom_cursor) Fl_Wayland_Screen_Driver::do_set_cursor(seat, xid->custom_cursor->wl_cursor);
   }
 }
 

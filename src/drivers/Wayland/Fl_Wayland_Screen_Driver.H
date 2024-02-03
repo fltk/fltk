@@ -88,7 +88,8 @@ public:
   static void insertion_point_location(int x, int y, int height);
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
   static bool own_output(struct wl_output *output);
-
+  static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *,
+                            struct wl_cursor *wl_cursor = NULL);
 // member variables
   struct wl_cursor *xc_arrow;
   struct wl_cursor *xc_ns;

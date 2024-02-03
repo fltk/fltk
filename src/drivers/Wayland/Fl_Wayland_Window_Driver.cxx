@@ -1741,7 +1741,13 @@ void Fl_Wayland_Window_Driver::label(const char *name, const char *iname) {
 
 
 int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty) {
-  return set_cursor_4args(rgb, hotx, hoty, true);
+  int retval = set_cursor_4args(rgb, hotx, hoty, true);
+  if (retval) {
+    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
+    Fl_Wayland_Screen_Driver::do_set_cursor(scr_driver->seat, xid->custom_cursor->wl_cursor);
+  }
+  return retval;
 }
 
 
