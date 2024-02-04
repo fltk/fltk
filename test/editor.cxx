@@ -52,6 +52,7 @@ int main (int argc, char **argv) {
 Fl_Menu_Bar *app_menu_bar = NULL;
 bool text_changed = false;
 
+#if TUTORIAL_CHAPTER < 4
 void menu_quit_callback(Fl_Widget *, void *) {
   if (text_changed) {
     int c = fl_choice("Changes in your text have not been saved.\n"
@@ -61,6 +62,9 @@ void menu_quit_callback(Fl_Widget *, void *) {
   }
   Fl::hide_all_windows();
 }
+#else
+void menu_quit_callback(Fl_Widget *, void *);
+#endif
 
 void tut2_build_app_menu_bar() {
   app_window->begin();
@@ -182,6 +186,21 @@ void menu_save_callback(Fl_Widget*, void*) {
                strerror(errno));
     }
   }
+}
+
+void menu_quit_callback(Fl_Widget *, void *) {
+  if (text_changed) {
+      int r = fl_choice("The current file has not been saved.\n"
+                        "Would you like to save it now?",
+                        "Cancel", "Save", "Don't Save");
+      if (r == 0)   // cancel
+        return;
+      if (r == 1) { // save
+        menu_save_callback(NULL, NULL);
+        return;
+      }
+  }
+  Fl::hide_all_windows();
 }
 
 void load(const char *filename) {
