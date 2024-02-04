@@ -59,7 +59,7 @@ private:
   cairo_rectangle_int_t *subRect_;   // makes sure subwindow remains inside its parent window
   static bool in_flush_; // useful for progressive window drawing
   Fl_Cursor standard_cursor_; // window's standard custom kind
-  void delete_cursor_(struct wld_window *, bool delete_rgb = true);
+  void delete_cursor_(bool delete_rgb = true);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
   bool is_popup_window_;
 public:

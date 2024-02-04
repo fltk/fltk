@@ -72,7 +72,8 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
 }
 
 
-void Fl_Wayland_Window_Driver::delete_cursor_(struct wld_window *xid, bool delete_rgb) {
+void Fl_Wayland_Window_Driver::delete_cursor_(bool delete_rgb) {
+  struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
   struct wld_window::custom_cursor_ *custom = xid->custom_cursor;
   if (custom) {
     struct wl_cursor *wl_cursor = custom->wl_cursor;
@@ -488,7 +489,7 @@ void Fl_Wayland_Window_Driver::hide() {
       destroy_surface_caution_pointer_focus(wld_win->wl_surface, scr_driver->seat);
       wld_win->wl_surface = NULL;
     }
-    if (wld_win->custom_cursor) delete_cursor_(wld_win);
+    if (wld_win->custom_cursor) delete_cursor_();
     while (!wl_list_empty(&wld_win->outputs)) { // remove from screens where it belongs
       struct surface_output *s_output;
       s_output = wl_container_of(wld_win->outputs.next, s_output, link);
@@ -1674,7 +1675,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
     default:
       return 0;
   }
-  if (xid->custom_cursor) delete_cursor_(xid);
+  if (xid->custom_cursor) delete_cursor_();
   standard_cursor_ = c;
   scr_driver->set_cursor();
   return 1;
@@ -1794,7 +1795,7 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   memcpy(offscreen->data, offscreen->draw_buffer.buffer, offscreen->draw_buffer.data_size);
   // delete the previous custom cursor, if there was one,
   // and keep its Fl_RGB_Image if appropriate
-  delete_cursor_(xid, keep_copy);
+  delete_cursor_(keep_copy);
   //have this new cursor used
   xid->custom_cursor = new wld_window::custom_cursor_;
   xid->custom_cursor->wl_cursor = new_cursor;
