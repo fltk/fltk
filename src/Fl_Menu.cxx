@@ -1,7 +1,7 @@
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -115,7 +115,7 @@ protected:
     Fl_Menu_Window(X, Y, W, H, 0) {
       menu = m;
       set_menu_window();
-      Fl_Window_Driver::driver(this)->popup_window(true);
+      Fl_Window_Driver::driver(this)->set_popup_window();
       end();
       set_modal();
       clear_border();

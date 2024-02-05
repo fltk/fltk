@@ -2,7 +2,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2023 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -129,6 +129,8 @@ public:
   }
 
   void resize_after_scale_change(int ns, float old_f, float new_f);
+  void set_popup_window() { pWindow->set_flag(Fl_Window::POPUP); }
+  bool popup_window() const {return pWindow->flags() & Fl_Window::POPUP;}
 
   // --- window data
   virtual int decorated_w() { return w(); } // default, should be overidden by driver
@@ -213,8 +215,6 @@ public:
   static void scroll_to_selected_item(Fl_Window *);
 
   virtual fl_uintptr_t os_id() { return 0; }
-  virtual void popup_window(bool v) {}
-  virtual bool popup_window() { return false; }
 };
 
 #endif // FL_WINDOW_DRIVER_H

@@ -1,7 +1,7 @@
 //
 // Implementation of the Wayland window driver.
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1377,6 +1377,9 @@ void Fl_Wayland_Window_Driver::makeWindow()
   if (pWindow->parent() && !pWindow->window()) return;
   if (pWindow->parent() && !pWindow->window()->shown()) return;
 
+  if (!pWindow->parent() && !popup_window()) {
+    x(0); y(0); // toplevel, non-popup windows must have origin at 0,0
+  }
   new_window = (struct wld_window *)calloc(1, sizeof *new_window);
   new_window->fl_win = pWindow;
   wl_list_init(&new_window->outputs);
@@ -1398,7 +1401,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   // put transient scale win at center of top window by making it a tooltip of top
     Fl_Screen_Driver::transient_scale_parent = Fl::first_window();
     pWindow->set_tooltip_window();
-    popup_window(true);
+    set_popup_window();
     pWindow->position(
               (Fl_Screen_Driver::transient_scale_parent->w() - pWindow->w())/2 ,
               (Fl_Screen_Driver::transient_scale_parent->h() - pWindow->h())/2);
@@ -1849,20 +1852,12 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       if (W < 1) W = 1;
       if (H < 1) H = 1;
     }
-    // toplevel, non-popup windows must have origin at 0,0
-    if (!pWindow->parent() && !popup_window()) X = Y = 0;
     pWindow->Fl_Group::resize(X,Y,W,H);
 //fprintf(stderr, "resize: win=%p to %dx%d\n", pWindow, W, H);
     if (shown()) {pWindow->redraw();}
   } else {
-    if (pWindow->parent() || popup_window()) {
-      x(X); y(Y);
+    x(X); y(Y);
 //fprintf(stderr, "move menuwin=%p x()=%d\n", pWindow, X);
-    } else {
-      //"a deliberate design trait of Wayland makes application windows ignorant of
-      // their exact placement on screen"
-      x(0); y(0);
-    }
   }
 
   if (shown()) {
@@ -2166,14 +2161,4 @@ void Fl_Wayland_Window_Driver::maximize() {
 void Fl_Wayland_Window_Driver::un_maximize() {
   struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
   if (xid->kind == DECORATED) libdecor_frame_unset_maximized(xid->frame);
-}
-
-
-void Fl_Wayland_Window_Driver::popup_window(bool v) {
-  is_popup_window_ = v;
-}
-
-
-bool Fl_Wayland_Window_Driver::popup_window() {
-  return is_popup_window_;
 }

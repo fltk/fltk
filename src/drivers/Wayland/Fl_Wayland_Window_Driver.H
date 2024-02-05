@@ -1,7 +1,7 @@
 //
 // Definition of Wayland window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2023 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -132,8 +132,6 @@ public:
   int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
              void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
   void wait_for_expose() FL_OVERRIDE;
-  void popup_window(bool v) FL_OVERRIDE;
-  bool popup_window() FL_OVERRIDE;
   // menu-related stuff
   void reposition_menu_window(int x, int y) FL_OVERRIDE;
   void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) FL_OVERRIDE;

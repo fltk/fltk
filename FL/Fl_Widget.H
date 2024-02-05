@@ -1,7 +1,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -181,6 +181,7 @@ protected:
         DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it is no longer needed
         AUTO_DELETE_USER_DATA = 1<<23, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
         MAXIMIZED       = 1<<24,  ///< a maximized Fl_Window
+        POPUP           = 1<<25,  ///< popup window (i.e., positioned relatively to another mapped window)
         // Note to devs: add new FLTK core flags above this line (up to 1<<28).
 
         // Three more flags, reserved for user code

@@ -1,7 +1,7 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -123,6 +123,7 @@ public:
     H = 600;
   }
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
+  virtual bool screen_boundaries_known() { return true; }
   virtual int screen_num(int x, int y);
   virtual int screen_num(int x, int y, int w, int h);
   virtual void screen_dpi(float &h, float &v, int n = 0) { // FL_OVERRIDE in driver!
