@@ -80,7 +80,7 @@ void set_changed(bool v) {
 
 void set_filename(const char *new_filename) {
   if (new_filename) {
-    strlcpy(app_filename, new_filename, FL_PATH_MAX);
+    strncpy(app_filename, new_filename, FL_PATH_MAX);
   } else {
     app_filename[0] = 0;
   }
