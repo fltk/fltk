@@ -48,9 +48,44 @@ int main (int argc, char **argv) {
 
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_ask.H>
+#include <FL/filename.H>
 
 Fl_Menu_Bar *app_menu_bar = NULL;
 bool text_changed = false;
+char app_filename[FL_PATH_MAX] = "";
+
+void update_title() {
+  const char *fname = NULL;
+  if (app_filename[0])
+    fname = fl_filename_name(app_filename);
+  if (fname) {
+    char buf[FL_PATH_MAX + 3];
+    if (text_changed) {
+      snprintf(buf, FL_PATH_MAX+2, "%s *", fname);
+    } else {
+      snprintf(buf, FL_PATH_MAX+2, "%s", fname);
+    }
+    app_window->copy_label(buf);
+  } else {
+    app_window->label("FLTK Editor");
+  }
+}
+
+void set_changed(bool v) {
+  if (v != text_changed) {
+    text_changed = v;
+    update_title();
+  }
+}
+
+void set_filename(const char *new_filename) {
+  if (new_filename) {
+    strlcpy(app_filename, new_filename, FL_PATH_MAX);
+  } else {
+    app_filename[0] = 0;
+  }
+  update_title();
+}
 
 #if TUTORIAL_CHAPTER < 4
 void menu_quit_callback(Fl_Widget *, void *) {
@@ -90,16 +125,14 @@ int main (int argc, char **argv) {
 
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Editor.H>
-#include <FL/filename.H>
 
 Fl_Text_Editor *app_editor = NULL;
 Fl_Text_Editor *app_split_editor = NULL; // for later
 Fl_Text_Buffer *app_text_buffer = NULL;
-char app_filename[FL_PATH_MAX] = "";
 
 void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*, void*) {
   if (n_inserted || n_deleted)
-    text_changed = true;
+    set_changed(true);
 }
 
 void menu_new_callback(Fl_Widget*, void*) {
@@ -110,8 +143,8 @@ void menu_new_callback(Fl_Widget*, void*) {
     if (c == 1) return;
   }
   app_text_buffer->text("");
-  app_filename[0] = 0;
-  text_changed = false;
+  set_filename(NULL);
+  set_changed(false);
 }
 
 void tut3_build_main_editor() {
@@ -164,8 +197,8 @@ void menu_save_as_callback(Fl_Widget*, void*) {
   }
   if (file_chooser.show() == 0) {
     if (app_text_buffer->savefile(file_chooser.filename()) == 0) {
-      strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
-      text_changed = false;
+      set_filename(file_chooser.filename());
+      set_changed(false);
     } else {
       fl_alert("Failed to save file\n%s\n%s",
                file_chooser.filename(),
@@ -179,7 +212,7 @@ void menu_save_callback(Fl_Widget*, void*) {
     menu_save_as_callback(NULL, NULL);
   } else {
     if (app_text_buffer->savefile(app_filename) == 0) {
-      text_changed = false;
+      set_changed(false);
     } else {
       fl_alert("Failed to save file\n%s\n%s",
                app_filename,
@@ -205,8 +238,8 @@ void menu_quit_callback(Fl_Widget *, void *) {
 
 void load(const char *filename) {
   if (app_text_buffer->loadfile(filename) == 0) {
-    strncpy(app_filename, filename, FL_PATH_MAX-1);
-    text_changed = false;
+    set_filename(filename);
+    set_changed(false);
   } else {
     fl_alert("Failed to load file\n%s\n%s",
              filename,
@@ -624,7 +657,7 @@ void tut9_split_editor() {
   app_window->end();
   app_window->resizable(app_tile);
   app_tile->resizable(app_editor);
-  app_menu_bar->add("Window/Split", FL_COMMAND+'-', menu_split_callback, NULL, FL_MENU_TOGGLE);
+  app_menu_bar->add("Window/Split", FL_COMMAND+'2', menu_split_callback, NULL, FL_MENU_TOGGLE);
 }
 
 #endif

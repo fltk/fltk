@@ -100,19 +100,79 @@ Congratulations, you've just built a minimal FLTK app.
 
 \section editor_main_menu Chapter 2: Adding a Menu Bar
 
-In this chapter, we will add the main menu bar with a File menu and a
-Quit button. This is a good time to define a flag that will track
-changes in the text later.
+In this chapter, we will handle the window title and add the main menu
+bar with a File menu and a Quit button.
+
+We need to declare a variable to track track changes in the text, and
+a buffer for the current filename.
 
 \code
 // remove `main()` from chapter 1, but keep the rest of the code, then add...
 
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_ask.H>
+#include <FL/filename.H>
 
 Fl_Menu_Bar *app_menu_bar = NULL;
 bool text_changed = false;
+char app_filename[FL_PATH_MAX] = "";
+\endcode
 
+The window title is either "FLTK Editor" if the text is not saved in any
+file, or the filename, followed by an `*` if the text changed. Note that
+we have two ways to set the label of a widget. `label()` will link a static
+text, and `copy_label()` which will copy and manage the label text.
+
+\code
+void update_title() {
+  const char *fname = NULL;
+  if (app_filename[0])
+    fname = fl_filename_name(app_filename);
+  if (fname) {
+    char buf[FL_PATH_MAX + 3];
+    if (text_changed) {
+      snprintf(buf, FL_PATH_MAX+2, "%s *", fname);
+    } else {
+      snprintf(buf, FL_PATH_MAX+2, "%s", fname);
+    }
+    app_window->copy_label(buf);
+  } else {
+    app_window->label("FLTK Editor");
+  }
+}
+\endcode
+
+Now instead of writing directly to `text_changed`, we write a function that
+can set and clear the flag, and update the title accordingly.
+
+\code
+void set_changed(bool v) {
+  if (v != text_changed) {
+    text_changed = v;
+    update_title();
+  }
+}
+\endcode
+
+Let's do the same for changing the filename. If the new filename is
+NULL, the window title will revert to "FLTK Editor".
+
+\code
+void set_filename(const char *new_filename) {
+  if (new_filename) {
+    strlcpy(app_filename, new_filename, FL_PATH_MAX);
+  } else {
+    app_filename[0] = 0;
+  }
+  update_title();
+}
+\endcode
+
+But enough of managing window titles. The following code will add the first
+widget to our window. A menubar is created at the top and all across the
+main window.
+
+\code
 void menu_quit_callback(Fl_Widget *, void *) { /* TODO */ }
 
 void tut2_build_app_menu_bar() {
@@ -194,12 +254,10 @@ we will use this feature to implement a split editor window.
 \code
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Editor.H>
-#include <FL/filename.H>
 
 Fl_Text_Editor *app_editor = NULL;
 Fl_Text_Editor *app_split_editor = NULL; // for later
 Fl_Text_Buffer *app_text_buffer = NULL;
-char app_filename[FL_PATH_MAX] = "";
 
 // ... callbacks go here
 
@@ -229,7 +287,7 @@ callback sets our `text_changed` flag if text was changed:
 // insert before tut3_build_main_editor()
 void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*, void*) {
   if (n_inserted || n_deleted)
-    text_changed = true;
+    set_changed(true);
 }
 \endcode
 
@@ -241,7 +299,7 @@ as unchanged.
 // insert before tut3_build_main_editor()
 void menu_new_callback(Fl_Widget*, void*) {
   app_text_buffer->text("");
-  text_changed = false;
+  set_changed(false);
 }
 
 // insert at the end of tut3_build_main_editor()
@@ -292,8 +350,8 @@ void menu_save_as_callback(Fl_Widget*, void*) {
   file_chooser.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   if (file_chooser.show() == 0) {
     app_text_buffer->savefile(file_chooser.filename());
-    strncpy(app_filename, file_chooser.filename(), FL_PATH_MAX-1);
-    text_changed = false;
+    set_filename(file_chooser.filename());
+    set_changed(false);
   }
 }
 \endcode
@@ -327,8 +385,30 @@ void menu_save_callback(Fl_Widget*, void*) {
     menu_save_as_callback(NULL, NULL);
   } else {
     app_text_buffer->savefile(file_chooser.filename());
-    text_changed = false;
+    set_changed(false);
   }
+}
+\endcode
+
+Now that we have a save method available, we can improve the
+`menu_quit_callback` and offer the option to save the current
+modified text before quitting the app. Here is the new quit callback
+code that replaces the old callback:
+
+\code
+void menu_quit_callback(Fl_Widget *, void *) {
+  if (text_changed) {
+      int r = fl_choice("The current file has not been saved.\n"
+                        "Would you like to save it now?",
+                        "Cancel", "Save", "Don't Save");
+      if (r == 0)   // cancel
+        return;
+      if (r == 1) { // save
+        menu_save_callback(NULL, NULL);
+        return;
+      }
+  }
+  Fl::hide_all_windows();
 }
 \endcode
 
@@ -338,8 +418,8 @@ from a given file name:
 \code
 void load(const char *filename) {
   if (app_text_buffer->loadfile(filename) == 0) {
-    strncpy(app_filename, filename, FL_PATH_MAX-1);
-    text_changed = false;
+    set_filename(filename);
+    set_changed(false);
   }
 }
 \endcode
@@ -352,8 +432,8 @@ code is very similar for the two other locations.
 \code
 void load(const char *filename) {
   if (app_text_buffer->loadfile(filename) == 0) {
-    strncpy(app_filename, filename, FL_PATH_MAX-1);
-    text_changed = false;
+    set_filename(filename);
+    set_changed(false);
   } else {
     fl_alert("Failed to load file\n%s\n%s",
              filename,
@@ -898,7 +978,7 @@ set correctly. Lastly, we add a menu item with a callback.
   app_window->end();
   app_window->resizable(app_tile);
   app_tile->resizable(app_editor);
-  app_menu_bar->add("Window/Split", FL_COMMAND+'-', menu_split_callback, NULL, FL_MENU_TOGGLE);
+  app_menu_bar->add("Window/Split", FL_COMMAND+'2', menu_split_callback, NULL, FL_MENU_TOGGLE);
 }
 \endcode
 
