@@ -1847,6 +1847,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   int is_a_resize = (W != w() || H != h() || true_rescale);
   if (is_a_move) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
+  if (shown() && !(parent() || popup_window())) {
+    X = Y = 0;
+  }
   if (is_a_resize) {
     if (pWindow->parent()) {
       if (W < 1) W = 1;
@@ -1857,7 +1860,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     if (shown()) {pWindow->redraw();}
   } else {
     x(X); y(Y);
-//fprintf(stderr, "move menuwin=%p x()=%d\n", pWindow, X);
+//fprintf(stderr, "move win=%p to %dx%d\n", pWindow, X, Y);
   }
 
   if (shown()) {
