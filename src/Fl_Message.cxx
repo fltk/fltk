@@ -40,7 +40,7 @@
   backwards compatibility with FLTK 1.3.x and earlier.
 
   \note The documentation is only visible if the CMake option
-    \c 'OPTION_INCLUDE_DRIVER_DOCUMENTATION' is enabled.
+    \c 'FLTK_INCLUDE_DRIVER_DOCS' is enabled.
 */
 
 #include <FL/Fl.H>

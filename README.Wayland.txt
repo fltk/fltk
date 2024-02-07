@@ -116,10 +116,10 @@ On Linux and FreeBSD systems equipped with the adequate software packages
 hybrid library. On systems lacking all or part of Wayland-required packages,
 the default building procedure produces a X11-based library.
 
-Use -DOPTION_USE_WAYLAND=OFF with CMake or "configure --disable-wayland" to build
-FLTK for the X11 library when the default would build for Wayland.
+Use "-D FLTK_OPTION_USE_WAYLAND=OFF" with CMake or "configure --disable-wayland"
+to build FLTK for the X11 library when the default would build for Wayland.
 
-CMake OPTION_WAYLAND_ONLY or "--disable-x11" configure argument can
+CMake option FLTK_BACKEND_X11=OFF or configure argument "--disable-x11" can
 be used to produce a Wayland-only library which can be useful, e.g., when
 cross-compiling for systems that lack X11 headers and libraries.
 

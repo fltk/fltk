@@ -62,7 +62,7 @@
 #
 # Example:
 #
-#   fl_target_link_directories (fluid PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
+#   fl_target_link_directories(fluid PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
 #
 #   In this example 'PKG_CAIRO_LIBRARY_DIRS' is platform dependent and
 #   can be an empty list.

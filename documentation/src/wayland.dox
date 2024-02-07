@@ -191,7 +191,7 @@ without any other change in the source code nor to the application's environment
 
 In special situations, such as with embedded systems equipped with the Wayland software but lacking
 the X11 library, it's possible to build the FLTK library such as it contains only the Wayland backend.
-This is achieved building FLTK with <tt>cmake -DOPTION_WAYLAND_ONLY=on</tt> or with
+This is achieved building FLTK with <tt>cmake -DFLTK_BACKEND_X11=OFF</tt> or with
 <tt>configure --disable-x11</tt>. In that case, FL/fl_config.h does not define
 \c FLTK_USE_X11.
 
@@ -1120,7 +1120,7 @@ build system, preprocessor variable \c USE_SYSTEM_LIBDECOR is 1,
 and both \c libdecor and its plugin are loaded at run-time from shared libraries.
 When these packages are not available or are at an earlier version, FLTK uses the bundled
 copy of \c libdecor.
-When CMake \c OPTION_USE_SYSTEM_LIBDECOR is OFF, FLTK uses the bundled \c libdecor copy
+When CMake \c FLTK_USE_SYSTEM_LIBDECOR is OFF, FLTK uses the bundled \c libdecor copy
 even if shared libraries \c libdecor.so and \c libdecor-gtk.so are installed.
 This option is ON by default.
 
@@ -1133,7 +1133,7 @@ However, if environment variable \c LIBDECOR_FORCE_CSD is defined to value \c 1 
 FLTK app runs, \c libdecor instructs an SSD-able compositor to refrain from decorating its
 windows and decorates windows itself.
 
-Whatever the value of \c OPTION_USE_SYSTEM_LIBDECOR, FLTK and \c libdecor use environment variable
+Whatever the value of \c FLTK_USE_SYSTEM_LIBDECOR, FLTK and \c libdecor use environment variable
 \c LIBDECOR_PLUGIN_DIR as follows: if this variable is defined and points to the name of a directory,
 this directory is searched for a potential \c libdecor plugin in the form of a shared library;
 if one is found, FLTK and \c libdecor load it and use it.

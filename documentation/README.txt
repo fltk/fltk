@@ -106,15 +106,15 @@ required software packages (doxygen, LaTeX) installed. You can
 always leave them ON because the documentation is not built
 automatically (it is excluded from the default target "ALL").
 
-  - OPTION_BUILD_HTML_DOCUMENTATION:BOOL=ON     target: html
-  - OPTION_BUILD_PDF_DOCUMENTATION:BOOL=ON      target: pdf
+  - FLTK_BUILD_HTML_DOCS:BOOL=ON     target: html
+  - FLTK_BUILD_PDF_DOCS:BOOL=ON      target: pdf
 
 The following two options default to OFF and can be switched ON.
 They are only used when installing the software ('make install')
 and the corresponding build options are ON.
 
-  - OPTION_INSTALL_HTML_DOCUMENTATION:BOOL=OFF
-  - OPTION_INSTALL_PDF_DOCUMENTATION:BOOL=OFF
+  - FLTK_INSTALL_HTML_DOCS:BOOL=OFF
+  - FLTK_INSTALL_PDF_DOCS:BOOL=OFF
 
 If you switch one or both of the first two options ON, then the build
 targets 'html' and/or 'pdf' are generated, respectively. Target 'docs'

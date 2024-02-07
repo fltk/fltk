@@ -140,7 +140,7 @@ uninstall-linux uninstall-osx:
 # Note that Doxyfile.in is shared with CMake to configure these files.
 
 # Note: There's no way to enable the "Driver Documentation" via configure+make,
-#       please use CMake 'OPTION_INCLUDE_DRIVER_DOCUMENTATION' instead.
+#       please use CMake 'FLTK_INCLUDE_DRIVER_DOCS' instead.
 #       Alternatively (if you really need it) edit this Makefile and
 #       replace the two lines below containing "@DRIVER_DOCS@" to read:
 #	    -e's, @DRIVER_DOCS@, DriverDev,' \

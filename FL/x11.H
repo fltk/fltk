@@ -38,7 +38,7 @@ extern Window fl_x11_xid(const Fl_Window *win);
 extern Fl_Window *fl_x11_find(Window xid);
 /** Returns the X11-specific currently active graphics context.  */
 extern GC fl_x11_gc();
-/** Returns the Cairo-specific currently active graphics context (OPTION_USE_CAIRO=On) */
+/** Returns the Cairo-specific currently active graphics context (FLTK_GRAPHICS_CAIRO=On) */
 extern cairo_t* fl_cairo_gc();
 #else // ! FL_DOXYGEN
 

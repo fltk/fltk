@@ -72,13 +72,13 @@ the version number.
     ABI version, use ccmake, cmake-gui, or run cmake with the following
     command:
 
-        cmake -D OPTION_ABI_VERSION:STRING=10401 /path/to/fltk
+        cmake -D FLTK_ABI_VERSION:STRING=10401 /path/to/fltk
 
     Then execute
 
         make
 
-    You can define OPTION_ABI_VERSION to the required version number using
+    You can define FLTK_ABI_VERSION to the required version number using
     one of the graphical CMake tools.
 
     For more information on how to use CMake with FLTK see README.CMake.txt.
@@ -100,8 +100,8 @@ the version number.
     ... *FIXME* [Add documentation how to use CMake with FLTK].
 
 
-    Use CMake option OPTION_ABI_VERSION:STRING=10401 with the command line
-    or set OPTION_ABI_VERSION with one of the CMake GUI programs.
+    Use CMake option FLTK_ABI_VERSION:STRING=10401 with the command line
+    or set FLTK_ABI_VERSION with one of the CMake GUI programs.
 
     Then start the build process in the IDE solution of your choice. This
     will run the build with the defined ABI version.

@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt used to build test and demo apps by the CMake build system
 #
-# Copyright 2004-2021 by Bill Spitzak and others.
+# Copyright 2004-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -15,45 +15,39 @@
 #
 #######################################################################
 
-include (../CMake/FLTK-Functions.cmake)
-include (../CMake/fl_create_example.cmake)
+include(../CMake/FLTK-Functions.cmake)
+include(../CMake/fl_create_example.cmake)
 
-set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin/test)
-set (TESTFILE_PATH ${CMAKE_CURRENT_BINARY_DIR}/../data)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin/test)
+set(TESTFILE_PATH ${CMAKE_CURRENT_BINARY_DIR}/../data)
 
 # create data and binary directory to copy scripts and data files
 
-file (MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-file (MAKE_DIRECTORY ${TESTFILE_PATH})
-
-#######################################################################
-# audio libs for test apps
-if (WIN32)
-  set (AUDIOLIBS winmm)
-elseif (APPLE)
-  set (AUDIOLIBS "-framework CoreAudio")
-elseif (HAVE_ALSA_ASOUNDLIB_H)
-  find_library(LIB_asound asound)
-  if (LIB_asound)
-    set (AUDIOLIBS ${LIB_asound})
-  endif (LIB_asound)
-  mark_as_advanced (LIB_asound)
-endif (WIN32)
-
-#######################################################################
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
+file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+file(MAKE_DIRECTORY ${TESTFILE_PATH})
 
 #######################################################################
 # Define additional example programs for testing, for instance:
-#   set (extra_tests issue-276 str-1895)
+#   set(extra_tests issue-276 str-1895)
 # Use the source file test/'name'.cxx for each additional program.
 # These test programs will be built with image and GL libraries.
 # Leave the variable 'extra_tests' empty to disable extra test programs.
 
-set (extra_tests)
+set(extra_tests)
+
+#######################################################################
+# audio libs for test apps
+if(WIN32)
+  set(AUDIOLIBS winmm)
+elseif(APPLE)
+  set(AUDIOLIBS "-framework CoreAudio")
+elseif(HAVE_ALSA_ASOUNDLIB_H)
+  find_library(LIB_asound asound)
+  if(LIB_asound)
+    set(AUDIOLIBS ${LIB_asound})
+  endif(LIB_asound)
+  mark_as_advanced (LIB_asound)
+endif(WIN32)
 
 #######################################################################
 # Define standard libraries for those OpenGL demos that can be built
@@ -63,119 +57,119 @@ set (extra_tests)
 # Note: use "${GLDEMO_LIBS}" for their library parameter
 #        or "${GLDEMO_SHARED}" to build with shared FLTK libraries
 
-if (OPENGL_FOUND)
-  set (GLDEMO_LIBS fltk_gl fltk ${OPENGL_LIBRARIES})
-  if (MSVC)
-    set (GLDEMO_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
-  else ()
-    set (GLDEMO_SHARED fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
-  endif ()
-else ()
-  set (GLDEMO_LIBS fltk)
-  set (GLDEMO_SHARED fltk_SHARED)
-  endif ()
+if(OPENGL_FOUND)
+  set(GLDEMO_LIBS fltk::gl)
+  if(MSVC)
+    set(GLDEMO_SHARED fltk::fltk-shared)
+  else()
+    set(GLDEMO_SHARED fltk::gl-shared)
+  endif()
+else()
+  set(GLDEMO_LIBS fltk::fltk)
+  set(GLDEMO_SHARED fltk::fltk-shared)
+endif()
 
 # Similar approach for the 'forms' demo (shared lib not supported)
 
-if (FLTK_BUILD_FORMS)
-  set (FORMS_LIBS fltk_forms) # implies 'fltk' as well
-else ()
-  set (FORMS_LIBS fltk)
-endif ()
+if(FLTK_BUILD_FORMS)
+  set(FORMS_LIBS fltk::forms)
+else()
+  set(FORMS_LIBS fltk::fltk)
+endif()
 
 #######################################################################
 
-CREATE_EXAMPLE (adjuster adjuster.cxx fltk)
-CREATE_EXAMPLE (arc arc.cxx fltk)
-CREATE_EXAMPLE (animated animated.cxx fltk)
-CREATE_EXAMPLE (ask ask.cxx fltk)
-CREATE_EXAMPLE (bitmap bitmap.cxx fltk)
-CREATE_EXAMPLE (blocks "blocks.cxx;blocks.plist;blocks.icns" "fltk;${AUDIOLIBS}")
-CREATE_EXAMPLE (boxtype boxtype.cxx fltk)
-CREATE_EXAMPLE (browser browser.cxx fltk)
-CREATE_EXAMPLE (button button.cxx fltk)
-CREATE_EXAMPLE (buttons buttons.cxx fltk)
-CREATE_EXAMPLE (checkers "checkers.cxx;checkers_pieces.fl;checkers.icns" "fltk_images;fltk")
-CREATE_EXAMPLE (clipboard clipboard.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (clock clock.cxx fltk)
-CREATE_EXAMPLE (colbrowser colbrowser.cxx fltk)
-CREATE_EXAMPLE (color_chooser color_chooser.cxx fltk)
-CREATE_EXAMPLE (contrast contrast.cxx fltk)
-CREATE_EXAMPLE (coordinates coordinates.cxx fltk)
-CREATE_EXAMPLE (cursor cursor.cxx fltk)
-CREATE_EXAMPLE (curve curve.cxx fltk)
-CREATE_EXAMPLE (demo demo.cxx fltk)
-CREATE_EXAMPLE (device device.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (doublebuffer doublebuffer.cxx fltk)
-CREATE_EXAMPLE (editor "editor.cxx;editor.plist" fltk)
-CREATE_EXAMPLE (fast_slow fast_slow.fl fltk)
-CREATE_EXAMPLE (file_chooser file_chooser.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (flex_demo flex_demo.cxx fltk)
-CREATE_EXAMPLE (flex_login flex_login.cxx fltk)
-CREATE_EXAMPLE (fltk-versions fltk-versions.cxx fltk)
-CREATE_EXAMPLE (fonts fonts.cxx fltk)
-CREATE_EXAMPLE (forms forms.cxx "${FORMS_LIBS}")
-CREATE_EXAMPLE (fullscreen fullscreen.cxx "${GLDEMO_LIBS}")
-CREATE_EXAMPLE (grid_alignment grid_alignment.cxx fltk)
-CREATE_EXAMPLE (grid_buttons grid_buttons.cxx fltk)
-CREATE_EXAMPLE (grid_dialog grid_dialog.cxx fltk)
-CREATE_EXAMPLE (grid_login grid_login.cxx fltk)
-CREATE_EXAMPLE (handle_events handle_events.cxx "${GLDEMO_LIBS}")
-CREATE_EXAMPLE (hello hello.cxx fltk)
-CREATE_EXAMPLE (help_dialog help_dialog.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (icon icon.cxx fltk)
-CREATE_EXAMPLE (iconize iconize.cxx fltk)
-CREATE_EXAMPLE (image image.cxx fltk)
-CREATE_EXAMPLE (inactive inactive.fl fltk)
-CREATE_EXAMPLE (input input.cxx fltk)
-CREATE_EXAMPLE (input_choice input_choice.cxx fltk)
-CREATE_EXAMPLE (keyboard "keyboard.cxx;keyboard_ui.fl" fltk)
-CREATE_EXAMPLE (label label.cxx fltk)
-CREATE_EXAMPLE (line_style line_style.cxx fltk)
-CREATE_EXAMPLE (list_visuals list_visuals.cxx fltk)
-CREATE_EXAMPLE (mandelbrot "mandelbrot_ui.fl;mandelbrot.cxx" fltk)
-CREATE_EXAMPLE (menubar menubar.cxx fltk)
-CREATE_EXAMPLE (message message.cxx fltk)
-CREATE_EXAMPLE (minimum minimum.cxx fltk)
-CREATE_EXAMPLE (native-filechooser native-filechooser.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (navigation navigation.cxx fltk)
-CREATE_EXAMPLE (output output.cxx fltk)
-CREATE_EXAMPLE (overlay overlay.cxx fltk)
-CREATE_EXAMPLE (pack pack.cxx fltk)
-CREATE_EXAMPLE (pixmap pixmap.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (pixmap_browser pixmap_browser.cxx "fltk_images;fltk")
-CREATE_EXAMPLE (preferences preferences.fl fltk)
-CREATE_EXAMPLE (offscreen offscreen.cxx fltk)
-CREATE_EXAMPLE (radio radio.fl fltk)
-CREATE_EXAMPLE (resize resize.fl fltk)
-CREATE_EXAMPLE (resizebox resizebox.cxx fltk)
-CREATE_EXAMPLE (resize-example1 "resize-example1.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example2 "resize-example2.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example3a "resize-example3a.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example3b "resize-example3b.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example3c "resize-example3c.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example4a "resize-example4a.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example4b "resize-example4b.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example5a "resize-example5a.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example5b "resize-example5b.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (resize-example5c "resize-example5c.cxx;resize-arrows.cxx" fltk)
-CREATE_EXAMPLE (rotated_text rotated_text.cxx fltk)
-CREATE_EXAMPLE (scroll scroll.cxx fltk)
-CREATE_EXAMPLE (subwindow subwindow.cxx fltk)
-CREATE_EXAMPLE (sudoku "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "fltk_images;fltk;${AUDIOLIBS}")
-CREATE_EXAMPLE (symbols symbols.cxx fltk)
-CREATE_EXAMPLE (tabs tabs.fl fltk)
-CREATE_EXAMPLE (table table.cxx fltk)
-CREATE_EXAMPLE (terminal terminal.fl fltk)
-CREATE_EXAMPLE (threads threads.cxx fltk)
-CREATE_EXAMPLE (tile tile.cxx fltk)
-CREATE_EXAMPLE (tiled_image tiled_image.cxx fltk)
-CREATE_EXAMPLE (tree tree.fl fltk)
-CREATE_EXAMPLE (twowin twowin.cxx fltk)
-CREATE_EXAMPLE (utf8 utf8.cxx fltk)
-CREATE_EXAMPLE (valuators valuators.fl fltk)
-CREATE_EXAMPLE (windowfocus windowfocus.cxx fltk)
-CREATE_EXAMPLE (wizard wizard.cxx fltk)
+fl_create_example(adjuster adjuster.cxx fltk::fltk)
+fl_create_example(arc arc.cxx fltk::fltk)
+fl_create_example(animated animated.cxx fltk::fltk)
+fl_create_example(ask ask.cxx fltk::fltk)
+fl_create_example(bitmap bitmap.cxx fltk::fltk)
+fl_create_example(blocks "blocks.cxx;blocks.plist;blocks.icns" "fltk::fltk;${AUDIOLIBS}")
+fl_create_example(boxtype boxtype.cxx fltk::fltk)
+fl_create_example(browser browser.cxx fltk::fltk)
+fl_create_example(button button.cxx fltk::fltk)
+fl_create_example(buttons buttons.cxx fltk::fltk)
+fl_create_example(checkers "checkers.cxx;checkers_pieces.fl;checkers.icns" fltk::images)
+fl_create_example(clipboard clipboard.cxx fltk::images)
+fl_create_example(clock clock.cxx fltk::fltk)
+fl_create_example(colbrowser colbrowser.cxx fltk::fltk)
+fl_create_example(color_chooser color_chooser.cxx fltk::fltk)
+fl_create_example(contrast contrast.cxx fltk::fltk)
+fl_create_example(coordinates coordinates.cxx fltk::fltk)
+fl_create_example(cursor cursor.cxx fltk::fltk)
+fl_create_example(curve curve.cxx fltk::fltk)
+fl_create_example(demo demo.cxx fltk::fltk)
+fl_create_example(device device.cxx fltk::images)
+fl_create_example(doublebuffer doublebuffer.cxx fltk::fltk)
+fl_create_example(editor "editor.cxx;editor.plist" fltk::fltk)
+fl_create_example(fast_slow fast_slow.fl fltk::fltk)
+fl_create_example(file_chooser file_chooser.cxx fltk::images)
+fl_create_example(flex_demo flex_demo.cxx fltk::fltk)
+fl_create_example(flex_login flex_login.cxx fltk::fltk)
+fl_create_example(fltk-versions fltk-versions.cxx fltk::fltk)
+fl_create_example(fonts fonts.cxx fltk::fltk)
+fl_create_example(forms forms.cxx "${FORMS_LIBS}")
+fl_create_example(fullscreen fullscreen.cxx "${GLDEMO_LIBS}")
+fl_create_example(grid_alignment grid_alignment.cxx fltk::fltk)
+fl_create_example(grid_buttons grid_buttons.cxx fltk::fltk)
+fl_create_example(grid_dialog grid_dialog.cxx fltk::fltk)
+fl_create_example(grid_login grid_login.cxx fltk::fltk)
+fl_create_example(handle_events handle_events.cxx "${GLDEMO_LIBS}")
+fl_create_example(hello hello.cxx fltk::fltk)
+fl_create_example(help_dialog help_dialog.cxx fltk::images)
+fl_create_example(icon icon.cxx fltk::fltk)
+fl_create_example(iconize iconize.cxx fltk::fltk)
+fl_create_example(image image.cxx fltk::fltk)
+fl_create_example(inactive inactive.fl fltk::fltk)
+fl_create_example(input input.cxx fltk::fltk)
+fl_create_example(input_choice input_choice.cxx fltk::fltk)
+fl_create_example(keyboard "keyboard.cxx;keyboard_ui.fl" fltk::fltk)
+fl_create_example(label label.cxx fltk::fltk)
+fl_create_example(line_style line_style.cxx fltk::fltk)
+fl_create_example(list_visuals list_visuals.cxx fltk::fltk)
+fl_create_example(mandelbrot "mandelbrot_ui.fl;mandelbrot.cxx" fltk::fltk)
+fl_create_example(menubar menubar.cxx fltk::fltk)
+fl_create_example(message message.cxx fltk::fltk)
+fl_create_example(minimum minimum.cxx fltk::fltk)
+fl_create_example(native-filechooser native-filechooser.cxx fltk::images)
+fl_create_example(navigation navigation.cxx fltk::fltk)
+fl_create_example(output output.cxx fltk::fltk)
+fl_create_example(overlay overlay.cxx fltk::fltk)
+fl_create_example(pack pack.cxx fltk::fltk)
+fl_create_example(pixmap pixmap.cxx fltk::images)
+fl_create_example(pixmap_browser pixmap_browser.cxx fltk::images)
+fl_create_example(preferences preferences.fl fltk::fltk)
+fl_create_example(offscreen offscreen.cxx fltk::fltk)
+fl_create_example(radio radio.fl fltk::fltk)
+fl_create_example(resize resize.fl fltk::fltk)
+fl_create_example(resizebox resizebox.cxx fltk::fltk)
+fl_create_example(resize-example1 "resize-example1.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example2 "resize-example2.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example3a "resize-example3a.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example3b "resize-example3b.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example3c "resize-example3c.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example4a "resize-example4a.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example4b "resize-example4b.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example5a "resize-example5a.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example5b "resize-example5b.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(resize-example5c "resize-example5c.cxx;resize-arrows.cxx" fltk::fltk)
+fl_create_example(rotated_text rotated_text.cxx fltk::fltk)
+fl_create_example(scroll scroll.cxx fltk::fltk)
+fl_create_example(subwindow subwindow.cxx fltk::fltk)
+fl_create_example(sudoku "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "fltk::images;${AUDIOLIBS}")
+fl_create_example(symbols symbols.cxx fltk::fltk)
+fl_create_example(tabs tabs.fl fltk::fltk)
+fl_create_example(table table.cxx fltk::fltk)
+fl_create_example(terminal terminal.fl fltk::fltk)
+fl_create_example(threads threads.cxx fltk::fltk)
+fl_create_example(tile tile.cxx fltk::fltk)
+fl_create_example(tiled_image tiled_image.cxx fltk::fltk)
+fl_create_example(tree tree.fl fltk::fltk)
+fl_create_example(twowin twowin.cxx fltk::fltk)
+fl_create_example(utf8 utf8.cxx fltk::fltk)
+fl_create_example(valuators valuators.fl fltk::fltk)
+fl_create_example(windowfocus windowfocus.cxx fltk::fltk)
+fl_create_example(wizard wizard.cxx fltk::fltk)
 
 # unittests uses multiple source files and can be built with or w/o OpenGL and "shared"
 
@@ -197,43 +191,43 @@ SET (UNITTEST_SRCS
   unittest_schemes.cxx
   unittest_terminal.cxx
 )
-CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "${GLDEMO_LIBS}")
+fl_create_example(unittests "${UNITTEST_SRCS}" "${GLDEMO_LIBS}")
 
 # Create additional test programs (used by developers for testing)
 
-if (extra_tests)
-  foreach (name ${extra_tests})
-    create_example (${name} ${name}.cxx "fltk_images;${GLDEMO_LIBS}")
-  endforeach ()
-endif ()
+if(extra_tests)
+  foreach(name ${extra_tests})
+    fl_create_example(${name} ${name}.cxx "fltk::images;${GLDEMO_LIBS}")
+  endforeach()
+endif()
 
 # OpenGL demos. These programs can't be built w/o OpenGL
 
-if (OPENGL_FOUND)
-  CREATE_EXAMPLE (CubeView "CubeMain.cxx;CubeView.cxx;CubeViewUI.fl" "${GLDEMO_LIBS}")
-  CREATE_EXAMPLE (cube cube.cxx "${GLDEMO_LIBS}")
-  CREATE_EXAMPLE (fractals "fractals.cxx;fracviewer.cxx" "${GLDEMO_LIBS}")
-  CREATE_EXAMPLE (glut_test glut_test.cxx "${GLDEMO_LIBS}")
-  CREATE_EXAMPLE (glpuzzle glpuzzle.cxx "${GLDEMO_LIBS}")
-  CREATE_EXAMPLE (gl_overlay gl_overlay.cxx "${GLDEMO_LIBS}")
-  CREATE_EXAMPLE (shape shape.cxx "${GLDEMO_LIBS}")
-endif (OPENGL_FOUND)
+if(OPENGL_FOUND)
+  fl_create_example(CubeView "CubeMain.cxx;CubeView.cxx;CubeViewUI.fl" "${GLDEMO_LIBS}")
+  fl_create_example(cube cube.cxx "${GLDEMO_LIBS}")
+  fl_create_example(fractals "fractals.cxx;fracviewer.cxx" "${GLDEMO_LIBS}")
+  fl_create_example(glut_test glut_test.cxx "${GLDEMO_LIBS}")
+  fl_create_example(glpuzzle glpuzzle.cxx "${GLDEMO_LIBS}")
+  fl_create_example(gl_overlay gl_overlay.cxx "${GLDEMO_LIBS}")
+  fl_create_example(shape shape.cxx "${GLDEMO_LIBS}")
+endif(OPENGL_FOUND)
 
 # Cairo demo - must also be built w/o Cairo (displays a message box)
-if (FLTK_HAVE_CAIRO)
-  CREATE_EXAMPLE (cairo_test cairo_test.cxx "fltk;cairo")
-else ()
-  CREATE_EXAMPLE (cairo_test cairo_test.cxx fltk)
-endif (FLTK_HAVE_CAIRO)
+# ### if(FLTK_HAVE_CAIRO)
+# ###   fl_create_example(cairo_test cairo_test.cxx "fltk;cairo")
+# ### else()
+  fl_create_example(cairo_test cairo_test.cxx fltk::fltk)
+# ### endif(FLTK_HAVE_CAIRO)
 
 # *** EXPERIMENTAL ***
 # Build some of the demo programs linked against the shared FLTK lib(s).
 # This is currently pretty complicated and should be improved.
 # It will be simplified significantly when we use more "modern CMake".
 
-if (OPTION_BUILD_SHARED_LIBS)
+if(FLTK_BUILD_SHARED_LIBS)
 
-  if (MSVC) # MS Visual C++ aka. Visual Studio
+  if(MSVC) # MS Visual C++ aka. Visual Studio
 
     # We need to link with fl_call_main.c, but this must not be compiled with
     # macro FL_DLL, whereas the other source file(s) must be compiled with FL_DLL
@@ -251,44 +245,41 @@ if (OPTION_BUILD_SHARED_LIBS)
     add_library (CALL_MAIN OBJECT EXCLUDE_FROM_ALL ../src/fl_call_main.c)
 
     # define a list of shared targets so we can set COMPILE_DEFINITIONS in a loop
-    set (SHARED_TARGETS "")
+    set(SHARED_TARGETS "")
 
-    CREATE_EXAMPLE (hello-shared hello.cxx "fltk_SHARED;CALL_MAIN")
-    CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_SHARED;CALL_MAIN")
-    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED};CALL_MAIN")
-    list (APPEND SHARED_TARGETS hello pixmap_browser unittests)
+    fl_create_example(hello-shared hello.cxx "CALL_MAIN;fltk::fltk-shared")
+    fl_create_example(pixmap_browser-shared pixmap_browser.cxx "CALL_MAIN;fltk::fltk-shared")
+    fl_create_example(unittests-shared "${UNITTEST_SRCS}" "CALL_MAIN;${GLDEMO_SHARED}")
 
-    if (OPENGL_FOUND)
-      CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "fltk_SHARED;CALL_MAIN;${OPENGL_LIBRARIES}")
-      CREATE_EXAMPLE (shape-shared shape.cxx "fltk_SHARED;CALL_MAIN;${OPENGL_LIBRARIES}")
-      list (APPEND SHARED_TARGETS glpuzzle shape)
-    endif (OPENGL_FOUND)
+    list(APPEND SHARED_TARGETS hello pixmap_browser unittests)
+
+    if(OPENGL_FOUND)
+      fl_create_example(glpuzzle-shared glpuzzle.cxx "CALL_MAIN;${GLDEMO_SHARED}")
+      fl_create_example(shape-shared shape.cxx "CALL_MAIN;${GLDEMO_SHARED}")
+      list(APPEND SHARED_TARGETS glpuzzle shape)
+    endif(OPENGL_FOUND)
 
     # apply property COMPILE_DEFINITIONS "-D FL_DLL" in a loop for all necessary source files
-    foreach (tgt ${SHARED_TARGETS})
+    foreach(tgt ${SHARED_TARGETS})
       target_compile_definitions (${tgt}-shared PRIVATE "FL_DLL")
-    endforeach ()
+    endforeach()
 
-  else () # not MSVC
+  else() # not MSVC
 
-    CREATE_EXAMPLE (hello-shared hello.cxx fltk_SHARED)
-    CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_images_SHARED")
-    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED}")
+    fl_create_example(hello-shared hello.cxx fltk::fltk-shared)
+    fl_create_example(pixmap_browser-shared pixmap_browser.cxx "fltk::images-shared")
+    fl_create_example(unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED}")
 
-    if (OPENGL_FOUND)
-      CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "${GLDEMO_SHARED}")
-      CREATE_EXAMPLE (shape-shared shape.cxx "${GLDEMO_SHARED}")
-    endif (OPENGL_FOUND)
+    if(OPENGL_FOUND)
+      fl_create_example(glpuzzle-shared glpuzzle.cxx "${GLDEMO_SHARED}")
+      fl_create_example(shape-shared shape.cxx "${GLDEMO_SHARED}")
+    endif(OPENGL_FOUND)
 
-    if (FLTK_HAVE_CAIRO)
-      CREATE_EXAMPLE (cairo_test-shared cairo_test.cxx "fltk_SHARED;cairo")
-    else ()
-      CREATE_EXAMPLE (cairo_test-shared cairo_test.cxx "fltk_SHARED")
-    endif ()
+    fl_create_example(cairo_test-shared cairo_test.cxx "fltk::fltk-shared")
 
-  endif (MSVC) # (not MSVC)
+  endif(MSVC) # (not MSVC)
 
-endif (OPTION_BUILD_SHARED_LIBS)
+endif(FLTK_BUILD_SHARED_LIBS)
 
 #####################################################
 # We need some support files for the demo programs
@@ -296,7 +287,7 @@ endif (OPTION_BUILD_SHARED_LIBS)
 
 # copy the required test files
 
-file (COPY
+file(COPY
   demo.menu rgb.txt browser.cxx editor.cxx valuators.fl
   help_dialog.html
   DESTINATION ${TESTFILE_PATH}
@@ -304,7 +295,7 @@ file (COPY
 
 # copy the image directory for help_dialog.html
 
-file (COPY
+file(COPY
   ${CMAKE_CURRENT_SOURCE_DIR}/images
   DESTINATION ${TESTFILE_PATH}
 )

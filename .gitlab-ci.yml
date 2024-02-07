@@ -63,7 +63,7 @@ build-cmake:
     - date
     - gcc --version
     - mkdir build && cd build
-    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DFLTK_BUILD_EXAMPLES=ON -DOPTION_USE_PANGO=ON -DOPTION_CAIRO=ON ..
+    - cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D FLTK_BUILD_EXAMPLES=ON -D FLTK_USE_PANGO=ON -D FLTK_OPTION_CAIRO_WINDOW=ON ..
     - date
     - time ninja
     - date

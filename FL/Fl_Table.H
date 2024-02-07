@@ -24,7 +24,7 @@
 
 // EXPERIMENTAL
 // We use either std::vector or the private class Fl_Int_Vector
-// depending on the build option OPTION_USE_STD or --enable-use_std.
+// depending on the build option FLTK_OPTION_STD or --enable-use_std.
 // This option allows to use std::string and std::vector in FLTK 1.4.x
 
 #if (FLTK_USE_STD)

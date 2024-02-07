@@ -180,6 +180,129 @@ Code example in header file:
 Note the \p 'const' attribute \b and the \p FL_OVERRIDE macro.
 
 
+\section migration_1_4_modern_cmake Modern CMake
+
+FLTK 1.4.0 supports "modern" CMake rather than old or "classic" CMake
+which was used in FLTK 1.3.x. Modern CMake was introduced in CMake 3.0
+(~ 2014) and further developed in later CMake versions. FLTK 1.4.0 requires
+at least CMake 3.15 (~ 2019) as of Febrary 2024.
+
+There are a lot of advantages that motivated this transition (mentioning
+only some):
+
+  - easier to use for projects using FLTK
+  - better structure
+  - uses CMake targets rather than variables
+  - embeddable in user projects via FetchContent() etc.
+  - embeddable in user projects via add_subdirectory()
+  - better coexistence with main projects if built as a subproject
+
+Note that CMake targets can provide all required build flags and build
+dependencies which is the main advantage for user projects. For instance,
+instead of linking both fltk and fltk_images you need only fltk_images
+and fltk is linked in automatically.
+
+Unfortunately there is one drawback you may encounter: Several CMake build
+option names have been changed, compared to FLTK 1.3.x. This is due to the
+fact that CMake cache variables are shared between the main (aka superbuild)
+project and all subprojects. Therefore all FLTK options are now prefixed
+with FLTK_.
+
+This feature is now CMake standard and very common in newer projects. The
+CMake developers recommend strongly to use modern CMake.
+
+We took the opportunity to redesign all CMake related options and target
+names for FLTK 1.4.0 to avoid changing these names later. Note that CMake
+support in 1.3.x was only experimental and the one in FLTK 1.4 (Git) up to
+the official release was beta state by definition. We apologize for all
+inconveniencies, hope that this is one of the rare exceptions in FLTK
+development, and that the new names are now stable as usual.
+
+
+Changes in Detail:
+
+Since FLTK 1.4.0 CMake target names are "namespaced", i.e. they are created
+with the prefix 'fltk::' and the old prefix 'fltk_' has been stripped off
+as far as the CMakeLists.txt file of user projects is concerned. The known
+filenames on disk did not change though.
+
+The shared library target names use the common suffix "-shared" rather
+than "_SHARED".
+
+The library 'fltk_cairo' is no longer used. Its functionality has been included
+in libfltk. FLTK 1.4.0 creates a dummy (empty) libfltk_cairo for backwards
+compatibility only. Please remove fltk_cairo from your projects and use only
+'fltk::fltk' and/or the other libraries instead.
+
+For more information and documentation of all options please refer to the
+file README.CMake.txt in the FLTK root directory.
+
+
+Old and New Library Targets:
+
+Library         | Old Target   | New Target      | Shared Library Target
+----------------|--------------|-----------------|-----------------------
+fltk            | fltk         | fltk::fltk      | fltk::fltk-shared
+fltk_forms      | fltk_forms   | fltk::forms     | fltk::forms-shared
+fltk_gl         | fltk_gl      | fltk::gl        | fltk::gl-shared
+fltk_images     | fltk_images  | fltk::images    | fltk::images-shared
+fltk_jpeg       | fltk_jpeg    | fltk::jpeg      | fltk::jpeg-shared
+fltk_png        | fltk_png     | fltk::png       | fltk::png-shared
+fltk_z          | fltk_z       | fltk::z         | fltk::z-shared
+fluid           | fluid        | fltk::fluid     | n/a
+
+For project developers used to the old (1.3.x) names the following table can
+assist to find the new option names. This table is ordered alphabetically
+by the old option name. Note that some option names did not change and
+some of the "old" names have been introduced in early 1.4.0 development.
+
+Old Option Name (FLTK 1.3.x)         | New Option Name (FLTK 1.4.x)
+-------------------------------------|------------------------------------
+FLTK_BUILD_EXAMPLES                  | FLTK_BUILD_EXAMPLES
+FLTK_BUILD_FLTK_OPTIONS              | FLTK_BUILD_FLTK_OPTIONS
+FLTK_BUILD_FLUID                     | FLTK_BUILD_FLUID
+FLTK_BUILD_FORMS                     | FLTK_BUILD_FORMS
+FLTK_BUILD_TEST                      | FLTK_BUILD_TEST
+FLTK_MSVC_RUNTIME_DLL                | FLTK_MSVC_RUNTIME_DLL
+OPTION_ABI_VERSION                   | FLTK_ABI_VERSION
+OPTION_ALLOW_GTK_PLUGIN              | FLTK_USE_LIBDECOR_GTK
+OPTION_APPLE_X11                     | FLTK_BACKEND_X11
+OPTION_ARCHFLAGS                     | FLTK_ARCHFLAGS
+OPTION_BUILD_HTML_DOCUMENTATION      | FLTK_BUILD_HTML_DOCS
+OPTION_BUILD_PDF_DOCUMENTATION       | FLTK_BUILD_PDF_DOCS
+OPTION_BUILD_SHARED_LIBS             | FLTK_BUILD_SHARED_LIBS
+OPTION_CAIRO                         | FLTK_OPTION_CAIRO_WINDOW
+OPTION_CAIROEXT                      | FLTK_OPTION_CAIRO_EXT
+OPTION_CREATE_LINKS                  | FLTK_INSTALL_LINKS
+OPTION_FILESYSTEM_SUPPORT            | FLTK_OPTION_FILESYSTEM_SUPPORT
+OPTION_INCLUDE_DRIVER_DOCUMENTATION  | FLTK_INCLUDE_DRIVER_DOCS
+OPTION_INSTALL_HTML_DOCUMENTATION    | FLTK_INSTALL_HTML_DOCS
+OPTION_INSTALL_PDF_DOCUMENTATION     | FLTK_INSTALL_PDF_DOCS
+OPTION_LARGE_FILE                    | FLTK_OPTION_LARGE_FILE
+OPTION_OPTIM                         | FLTK_OPTION_OPTIM
+OPTION_PRINT_SUPPORT                 | FLTK_OPTION_PRINT_SUPPORT
+OPTION_USE_CAIRO                     | FLTK_GRAPHICS_CAIRO
+OPTION_USE_GDIPLUS                   | FLTK_GRAPHICS_GDIPLUS
+OPTION_USE_GL                        | FLTK_BUILD_GL
+OPTION_USE_KDIALOG                   | FLTK_USE_KDIALOG
+OPTION_USE_PANGO                     | FLTK_USE_PANGO
+OPTION_USE_POLL                      | FLTK_USE_POLL
+OPTION_USE_STD                       | FLTK_OPTION_STD
+OPTION_USE_SVG                       | FLTK_OPTION_SVG
+OPTION_USE_SYSTEM_LIBDECOR           | FLTK_USE_SYSTEM_LIBDECOR
+OPTION_USE_SYSTEM_LIBJPEG            | FLTK_USE_SYSTEM_LIBJPEG
+OPTION_USE_SYSTEM_LIBPNG             | FLTK_USE_SYSTEM_LIBPNG
+OPTION_USE_SYSTEM_ZLIB               | FLTK_USE_SYSTEM_ZLIB
+OPTION_USE_THREADS                   | FLTK_USE_PTHREADS
+OPTION_USE_WAYLAND                   | FLTK_BACKEND_WAYLAND
+OPTION_USE_XCURSOR                   | FLTK_USE_XCURSOR
+OPTION_USE_XFIXES                    | FLTK_USE_XFIXES
+OPTION_USE_XFT                       | FLTK_USE_XFT
+OPTION_USE_XINERAMA                  | FLTK_USE_XINERAMA
+OPTION_USE_XRENDER                   | FLTK_USE_XRENDER
+OPTION_WAYLAND_ONLY                  | FLTK_BACKEND_X11=OFF
+
+
 \htmlonly
 <hr>
 <table summary="navigation bar" width="100%" border="0">

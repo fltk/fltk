@@ -1,4 +1,4 @@
-README.Cairo.txt - Cairo rendering support for FLTK
+README.Cairo.txt - Cairo Window Support for FLTK
 ----------------------------------------------------
 
 
@@ -8,9 +8,7 @@ README.Cairo.txt - Cairo rendering support for FLTK
  1   INTRODUCTION
 
  2   CAIRO SUPPORT FOR FLTK
-   2.1    Configuration
-   2.2    Currently supported features
-   2.3    Future considerations
+   2.1    Supported Features (Fl_Cairo_Window)
 
  3   PLATFORM SPECIFIC NOTES
    3.1    Linux
@@ -22,11 +20,9 @@ README.Cairo.txt - Cairo rendering support for FLTK
    3.3.2  Install Homebrew for Cairo and other Library Support
    3.3.3  Install CMake and Build with CMake
 
- 4   DOCUMENT HISTORY
 
-
- INTRODUCTION
-==============
+ 1 INTRODUCTION
+================
 
 Cairo is a software library used to provide a vector graphics-based,
 device-independent API for software developers. It is designed to provide
@@ -34,25 +30,45 @@ primitives for 2-dimensional drawing across a number of different
 backends. Cairo is designed to use hardware acceleration when available.
 
 
- CAIRO SUPPORT FOR FLTK
-========================
+ 2 CAIRO SUPPORT FOR FLTK
+==========================
 
-It is now possible to integrate Cairo rendering in your FLTK application
-more easily and transparently.
-Since FLTK 1.3 we provide minimum support for Cairo; no "total" Cairo
-rendering layer support is achieved.
+Since FLTK 1.3 we provide minimum support for Cairo. User programs can
+use the class Fl_Cairo_Window which sets up a Cairo context so the user
+progam can call Cairo drawing calls in their own drawing callback.
+
+    CMake option name: FLTK_OPTION_CAIRO_WINDOW
+    Configure option : --enable-cairo
+
+Since FLTK 1.3 the library can also be configured to provide a Cairo context
+in all subclasses of Fl_Window. This is called "extended" Cairo support.
+
+    CMake option name: FLTK_OPTION_CAIRO_EXT
+    Configure option : --enable-cairoext
+
+These two options provide users with an interface to use Cairo to draw
+into FLTK windows. FLTK does not use Cairo for rendering its own graphics
+with these two options. Both options must be enabled explicitly.
 
 
- Configuration
----------------
+Since FLTK 1.4 the new Wayland platform uses Cairo for all drawings.
+Under X11 drawing with Cairo rather than Xlib is a build option.
+The old "Fl_Cairo_Window support" is still available on all platforms.
 
-All the changes are *inactive* as long as the new configuration
-option --enable-cairo is not added to the configure command or the CMake
-variable OPTION_CAIRO:BOOL=ON is set.
+    CMake option name: FLTK_GRAPHICS_CAIRO
+    Configure option : --enable-usecairo
+
+Full Cairo drawing is provided on Unix/Linux platforms. It is always used if
+Wayland (FLTK_BACKEND_WAYLAND) is enabled during the build. It is optional
+(default: OFF) if Wayland is disabled (FLTK_BACKEND_WAYLAND=OFF).
+
+Fl_Cairo_Window support is *inactive* as long as it is not explicitly enabled
+with one of the first two options mentioned above, even if FLTK uses Cairo
+drawing by itself (FLTK_GRAPHICS_CAIRO).
 
 
- Currently supported features
-------------------------------
+ 2.1 Supported Features (Fl_Cairo_Window)
+------------------------------------------
 
 (1) Adding a new Fl_Cairo_Window class permitting transparent and easy
     integration of a Cairo draw callback without the need to subclass Fl_Window.
@@ -61,7 +77,7 @@ variable OPTION_CAIRO:BOOL=ON is set.
     transparently a Cairo context to your custom Fl_Window derived class.
     This function is intended to be used in your overloaded draw() method.
 
-(3) FLTK instrumentation for cairo extended use :
+(3) FLTK instrumentation for cairo extended use:
     Adding an optional Cairo autolink context mode support which permits
     complete and automatic synchronization of OS dependent graphical context
     and Cairo contexts, thus furthering a valid Cairo context anytime,
@@ -82,17 +98,16 @@ variable OPTION_CAIRO:BOOL=ON is set.
       in any FLTK window.
 
     This feature must be enabled with 'configure --enable-cairoext' or the
-    CMake variable OPTION_CAIROEXT:BOOL=ON (Default: OFF).
+    CMake option FLTK_OPTION_CAIRO_EXT:BOOL=ON (Default: OFF).
 
-(4) A new Cairo demo that is available in the test subdirectory and has
-    been used as a testcase during the multiplatform tests.
+(4) A new Cairo demo that is available in the test subdirectory.
 
 For more details, please have a look to the doxygen documentation,
 in the Modules section.
 
 
- PLATFORM SPECIFIC NOTES
-=========================
+ 3 PLATFORM SPECIFIC NOTES
+===========================
 
 The following are notes about building FLTK with Cairo support
 on the various supported operating systems.
@@ -107,7 +122,7 @@ on the various supported operating systems.
         sudo apt install libcairo2-dev
 
     Then build fltk using the Cairo support option using:
-      cmake -G"Unix Makefiles" -DOPTION_CAIRO:BOOL=ON -S <fltk_dir> -B <your_build_dir>
+      cmake -G "Unix Makefiles" -D FLTK_OPTION_CAIRO_WINDOW:BOOL=ON -S <fltk_dir> -B <your_build_dir>
       cd <your_build_dir>
       make
 
@@ -156,9 +171,7 @@ on the various supported operating systems.
     Note 1: CMake builds *require* the use of pkg-config.
 
     Note 2: As of Feb 2021 autoconf/configure/make builds require pkg-config
-    as well but there are plans to implement a fallback mechanism so you can
-    build FLTK w/o having to install and use pkg-config. This will be done if
-    possible (but not guaranteed).
+    as well.
 
 
     3.2 Windows
@@ -241,17 +254,7 @@ on the various supported operating systems.
     e.g. 'build' or another folder anywhere else) and click "configure".
     Follow the instructions and select either "native compilers" or Xcode or
     whatever you like to build your FLTK library. In the CMake GUI you need
-    to select OPTION_CAIRO (ON) to build with basic Cairo support. Finally
-    click "generate" to create the build files.
+    to select FLTK_OPTION_CAIRO_WINDOW (ON) to build with basic Cairo support.
+    Finally click "generate" to create the build files.
 
     For more information on using CMake to build FLTK see README.CMake.txt.
-
-
- DOCUMENT HISTORY
-==================
-
-Dec 20 2010 - matt: restructured document
-Dec 09 2011 - greg: Updates for Centos 5.5 builds
-Dec 10 2011 - Albrecht: Updates for Ubuntu and Debian, fixed typos.
-Jul 05 2017 - Albrecht: Added CMake config info, fixed typos.
-Feb 28 2021 - Albrecht: Update for FLTK 1.4, add macOS instructions.

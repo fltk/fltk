@@ -1473,8 +1473,8 @@ public:
     \endcode
 
     If you configure FLTK with \c '--enable-cairo' or CMake option
-    \c 'OPTION_CAIRO' (i.e. without \c '--enable-cairoext' or CMake option
-    \c 'OPTION_CAIROEXT') or if you don't enable the \c 'autolink' Cairo
+    \c 'FLTK_OPTION_CAIRO_WINDOW' (i.e. without \c '--enable-cairoext' or CMake option
+    \c 'FLTK_OPTION_CAIRO_EXT') or if you don't enable the \c 'autolink' Cairo
     context you may do the equivalent to use Cairo drawings in an
     overridden draw() method of derived classes by using
     \code

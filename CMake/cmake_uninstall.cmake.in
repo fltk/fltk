@@ -1,8 +1,9 @@
 #
 # Support file to uninstall the FLTK project using CMake
+#
 # Originally written by Michael Surette
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -15,13 +16,13 @@
 #     https://www.fltk.org/bugs.php
 #
 
-if (NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+if(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
   message(FATAL_ERROR
           "Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"")
-endif ()
+endif()
 
-file (READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
-string (REGEX REPLACE "\n" ";" files "${files}")
+file(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
 
 # Note 1: 'cmake -E remove [-f]' is deprecated since CMake 3.17 and the docs
 # state: "The implementation was buggy and always returned 0. It cannot be
@@ -30,13 +31,13 @@ string (REGEX REPLACE "\n" ";" files "${files}")
 # Note 3:
 # Remove this distinction if: cmake_minimum_required(VERSION 3.17) or higher.
 
-if (CMAKE_VERSION VERSION_LESS 3.17)
-  set (rm_cmd remove)
-else ()
-  set (rm_cmd rm)
-endif ()
+if(CMAKE_VERSION VERSION_LESS 3.17)
+  set(rm_cmd remove)
+else()
+  set(rm_cmd rm)
+endif()
 
-foreach (file ${files})
+foreach(file ${files})
   message(STATUS "Uninstalling \"$ENV{DESTDIR}${file}\"")
   execute_process(
     COMMAND "${CMAKE_COMMAND}" -E ${rm_cmd} -f "$ENV{DESTDIR}${file}"
@@ -45,12 +46,12 @@ foreach (file ${files})
     RESULT_VARIABLE rm_retval
   )
 
-  if (NOT "${rm_retval}" STREQUAL 0)
-    message (STATUS "Error removing \"$ENV{DESTDIR}${file}\"")
-    message (STATUS "    Status = '${rm_retval}'")
-    message (STATUS "    Output = '${rm_out}'")
-    message (STATUS "    Error  = '${rm_err}'")
-    message (FATAL_ERROR "Exiting with fatal error.")
-  endif ()
+  if(NOT "${rm_retval}" STREQUAL 0)
+    message(STATUS "Error removing \"$ENV{DESTDIR}${file}\"")
+    message(STATUS "    Status = '${rm_retval}'")
+    message(STATUS "    Output = '${rm_out}'")
+    message(STATUS "    Error  = '${rm_err}'")
+    message(FATAL_ERROR "Exiting - uninstall may be incomplete.")
+  endif()
 
-endforeach (file)
+endforeach(file)

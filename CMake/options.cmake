@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -37,7 +37,7 @@
 # bundled libraries (png, jpeg, zlib) *must* appear before any other
 # include_directories() statements that might introduce conflicts.
 # Currently 'resources.cmake' is included before this file and thus
-# 'include_directories (${FREETYPE_PATH})' is executed before this
+# 'include_directories(${FREETYPE_PATH})' is executed before this
 # file but this doesn't matter.
 #
 # This *MUST* be fixed using target_include_directories() as
@@ -47,36 +47,37 @@
 #
 #######################################################################
 
-set (DEBUG_OPTIONS_CMAKE 0)
-if (DEBUG_OPTIONS_CMAKE)
-  message (STATUS "[** options.cmake **]")
-  fl_debug_var (WIN32)
-  fl_debug_var (FLTK_LDLIBS)
-endif (DEBUG_OPTIONS_CMAKE)
+set(DEBUG_OPTIONS_CMAKE 0)
+if(DEBUG_OPTIONS_CMAKE)
+  message(STATUS "[** options.cmake **]")
+  fl_debug_var(WIN32)
+  fl_debug_var(FLTK_LDLIBS)
+endif(DEBUG_OPTIONS_CMAKE)
 
 #######################################################################
 # options
 #######################################################################
-set (OPTION_OPTIM ""
+set(FLTK_OPTION_OPTIM ""
   CACHE STRING
   "custom optimization flags"
 )
-add_definitions (${OPTION_OPTIM})
+# *FIXME* add_definitions()
+add_definitions(${FLTK_OPTION_OPTIM})
 
 #######################################################################
-set (OPTION_ARCHFLAGS ""
+set(FLTK_ARCHFLAGS ""
   CACHE STRING
   "custom architecture flags"
 )
-add_definitions (${OPTION_ARCHFLAGS})
+# *FIXME* add_definitions()
+add_definitions(${FLTK_ARCHFLAGS})
 
 #######################################################################
-set (OPTION_ABI_VERSION ""
+set(FLTK_ABI_VERSION ""
   CACHE STRING
   "FLTK ABI Version FL_ABI_VERSION: 1xxyy for 1.x.y (xx,yy with leading zero)"
 )
-set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
-
+set(FL_ABI_VERSION ${FLTK_ABI_VERSION})
 
 #######################################################################
 #  Select MSVC (Visual Studio) Runtime: DLL (/MDx) or static (/MTx)
@@ -86,508 +87,549 @@ set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
 #  CMake variable - but this version does the latter.
 #######################################################################
 
-if (MSVC)
-  option (FLTK_MSVC_RUNTIME_DLL "use MSVC Runtime-DLL (/MDx)" ON)
-  if (FLTK_MSVC_RUNTIME_DLL)
-    set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-  else ()
-    set (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  endif ()
-endif (MSVC)
+if(MSVC)
+  option(FLTK_MSVC_RUNTIME_DLL "use MSVC Runtime-DLL (/MDx)" ON)
+  if(FLTK_MSVC_RUNTIME_DLL)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  endif()
+endif(MSVC)
+
+#######################################################################
+
+if(APPLE)
+  option(FLTK_BACKEND_X11 "use X11" OFF)
+  if(CMAKE_OSX_SYSROOT)
+    list(APPEND FLTK_CFLAGS "-isysroot ${CMAKE_OSX_SYSROOT}")
+  endif(CMAKE_OSX_SYSROOT)
+elseif(UNIX)
+  option(FLTK_BACKEND_X11 "use X11" ON)
+endif(APPLE)
 
 #######################################################################
 #  Bundled Library Options
 #######################################################################
 
-option (OPTION_USE_SYSTEM_ZLIB      "use system zlib"    ON)
+if(WIN32 OR (APPLE AND NOT FLTK_BACKEND_X11))
+  option(FLTK_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
+  option(FLTK_USE_SYSTEM_LIBPNG  "use system libpng"  OFF)
+  option(FLTK_USE_SYSTEM_ZLIB    "use system zlib"    OFF)
+else()
+  option(FLTK_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+  option(FLTK_USE_SYSTEM_LIBPNG  "use system libpng"  ON)
+  option(FLTK_USE_SYSTEM_ZLIB    "use system zlib"    ON)
+endif()
 
-if (APPLE)
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
-  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  OFF)
-else ()
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
-  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  ON)
-endif ()
+# Set default values of internal build options
+
+set(FLTK_USE_BUNDLED_JPEG FALSE)
+set(FLTK_USE_BUNDLED_PNG  FALSE)
+set(FLTK_USE_BUNDLED_ZLIB FALSE)
+
+# Collect libraries to build fltk_images (starting empty)
+
+set(FLTK_IMAGE_LIBRARIES "")
 
 #######################################################################
-#  Make sure that png and zlib are either system or local for compatibility
+#  Ensure that png and zlib are both system or both local for compatibility
 #######################################################################
 
-if (OPTION_USE_SYSTEM_ZLIB)
-  find_package (ZLIB)
-endif ()
+if(FLTK_USE_SYSTEM_ZLIB)
+  find_package(ZLIB)
+  if(NOT ZLIB_FOUND)
+    set(FLTK_USE_BUNDLED_ZLIB TRUE)
+  endif()
+else()
+  set(FLTK_USE_BUNDLED_ZLIB TRUE)
+endif()
 
-if (OPTION_USE_SYSTEM_LIBPNG)
-  find_package (PNG)
-endif ()
+if(FLTK_USE_SYSTEM_LIBPNG AND NOT FLTK_USE_BUNDLED_ZLIB)
+  find_package(PNG)
+  if(NOT PNG_FOUND)
+    set(FLTK_USE_BUNDLED_PNG  TRUE)
+    set(FLTK_USE_BUNDLED_ZLIB TRUE)
+  endif()
+else()
+  set(FLTK_USE_BUNDLED_PNG  TRUE)
+  set(FLTK_USE_BUNDLED_ZLIB TRUE)
+endif()
 
-# If we use the system zlib, we must also use the system png zlib and vice versa
-# If either of them is not available, we fall back to using both local libraries
-if (OPTION_USE_SYSTEM_LIBPNG AND NOT (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND))
-    set (PNG_FOUND FALSE)
-    set (OPTION_USE_SYSTEM_LIBPNG OFF)
-    message (STATUS "Local z lib selected: overriding png lib to local for compatibility.\n")
-endif ()
-if (OPTION_USE_SYSTEM_ZLIB AND NOT (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND))
-    set (ZLIB_FOUND FALSE)
-    set (OPTION_USE_SYSTEM_ZLIB OFF)
-    message (STATUS "Local png lib selected: overriding z lib to local for compatibility.\n")
-endif ()
+# Issue warnings if we deviate from the user's choice
+
+if(FLTK_USE_SYSTEM_LIBPNG AND FLTK_USE_BUNDLED_PNG)
+  message(STATUS "System PNG or ZLIB not usable, falling back to local PNG for compatibility.")
+endif()
+
+if(FLTK_USE_SYSTEM_ZLIB AND FLTK_USE_BUNDLED_ZLIB)
+  message(STATUS "System PNG or ZLIB not usable, falling back to local ZLIB for compatibility.")
+endif()
 
 #######################################################################
 #  Bundled Compression Library : zlib
 #######################################################################
 
-if (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
-  set (FLTK_USE_BUILTIN_ZLIB FALSE)
-  set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
-  include_directories (${ZLIB_INCLUDE_DIRS})
-else()
-  if (OPTION_USE_SYSTEM_ZLIB)
-    message (STATUS "cannot find system zlib library - using built-in\n")
-  endif ()
+if(FLTK_USE_BUNDLED_ZLIB)
 
-  add_subdirectory (zlib)
-  set (FLTK_USE_BUILTIN_ZLIB TRUE)
-  set (FLTK_ZLIB_LIBRARIES fltk_z)
-  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-endif ()
+  add_subdirectory(zlib)
 
-set (HAVE_LIBZ 1)
+  set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
 
-#######################################################################
-#  Bundled Image Library : libjpeg
-#######################################################################
+  # FIXME - include_directories()
+  include_directories(${ZLIB_INCLUDE_DIR})
 
-if (OPTION_USE_SYSTEM_LIBJPEG)
-  find_package (JPEG)
-endif ()
+endif()
 
-if (OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
-  set (FLTK_USE_BUILTIN_JPEG FALSE)
-  set (FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
-  include_directories (${JPEG_INCLUDE_DIR})
-else ()
-  if (OPTION_USE_SYSTEM_LIBJPEG)
-    message (STATUS "cannot find system jpeg library - using built-in\n")
-  endif ()
-
-  add_subdirectory (jpeg)
-  set (FLTK_USE_BUILTIN_JPEG TRUE)
-  set (FLTK_JPEG_LIBRARIES fltk_jpeg)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
-endif ()
-
-set (HAVE_LIBJPEG 1)
+set(HAVE_LIBZ 1)
 
 #######################################################################
 #  Bundled Image Library : libpng
 #######################################################################
 
-if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
+if(FLTK_USE_BUNDLED_PNG)
 
-  set (FLTK_USE_BUILTIN_PNG FALSE)
-  set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
-  include_directories (${PNG_INCLUDE_DIRS})
-  add_definitions (${PNG_DEFINITIONS})
+  add_subdirectory(png)
+  set(FLTK_PNG_LIBRARIES fltk::png)
+  list(APPEND FLTK_IMAGE_LIBRARIES fltk::png)
 
-  set (_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
-  list (APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
+  # Definitions for 'config.h' - do we still need this?
+  # See also png/CMakeLists.txt (target_compile_definitions).
+  # Note: config.h is generated by either configure or CMake,
+  # hence we should support it in 1.4.0 (may be changed in 1.5.0)
+
+  set(HAVE_PNG_H 1)
+  set(HAVE_PNG_GET_VALID 1)
+  set(HAVE_PNG_SET_TRNS_TO_ALPHA 1)
+
+  # *FIXME* include_directories()
+  include_directories(${FLTK_SOURCE_DIR}/png)
+
+else() # use system libpng and zlib
+
+  set(FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
+  list(APPEND FLTK_IMAGE_LIBRARIES ${PNG_LIBRARIES})
+
+  # *FIXME* include_directories()
+  include_directories(${PNG_INCLUDE_DIRS})
+
+  set(_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
+  list(APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
 
   # Note: we do not check for <libpng/png.h> explicitly.
   # This is assumed to exist if we have PNG_FOUND and don't find <png.h>
 
   # FIXME - Force search by unsetting the chache variable. Maybe use
   # FIXME - another cache variable to check for option changes?
+  # unset(HAVE_PNG_H CACHE) # force search
 
-  unset (HAVE_PNG_H CACHE) # force search
-  check_include_file (png.h HAVE_PNG_H)
-  mark_as_advanced (HAVE_PNG_H)
+  check_include_file(png.h HAVE_PNG_H)
+  mark_as_advanced(HAVE_PNG_H)
 
-  set (CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
-  unset (_INCLUDE_SAVED)
+  set(CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
+  unset(_INCLUDE_SAVED)
 
-else ()
+endif()
 
-  if (OPTION_USE_SYSTEM_LIBPNG)
-    message (STATUS "cannot find system png library - using built-in\n")
-  endif ()
-
-  add_subdirectory (png)
-  set (FLTK_USE_BUILTIN_PNG TRUE)
-  set (FLTK_PNG_LIBRARIES fltk_png)
-  set (HAVE_PNG_H 1)
-  set (HAVE_PNG_GET_VALID 1)
-  set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
-endif ()
-
-set (HAVE_LIBPNG 1)
+set(HAVE_LIBPNG 1)
 
 #######################################################################
-if (UNIX)
-  option (OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
-  list (APPEND FLTK_LDLIBS -lm)
-  if (NOT APPLE)
-    option (OPTION_USE_WAYLAND "support both Wayland and X11 backends" ON)
-  endif (NOT APPLE)
-  if (OPTION_USE_WAYLAND)
+#  Bundled Image Library : libjpeg
+#######################################################################
+
+if(FLTK_USE_SYSTEM_LIBJPEG)
+  find_package(JPEG)
+  if(NOT JPEG_FOUND)
+    set(FLTK_USE_BUNDLED_JPEG TRUE)
+    message(STATUS "cannot find system jpeg library - using built-in")
+  endif()
+else()
+  set(FLTK_USE_BUNDLED_JPEG TRUE)
+endif()
+
+if(FLTK_USE_BUNDLED_JPEG)
+
+  add_subdirectory(jpeg)
+  set(FLTK_JPEG_LIBRARIES fltk::jpeg)
+  # list(APPEND FLTK_IMAGE_LIBRARIES fltk::jpeg)
+
+  # *FIXME* include_directories
+  include_directories(${FLTK_SOURCE_DIR}/jpeg)
+
+else()
+
+  set(FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
+  list(APPEND FLTK_IMAGE_LIBRARIES ${JPEG_LIBRARIES})
+
+endif()
+
+set(HAVE_LIBJPEG 1)
+
+#######################################################################
+
+if(UNIX)
+  option(FLTK_INSTALL_LINKS "create backwards compatibility links" OFF)
+  list(APPEND FLTK_LDLIBS -lm)
+  if(NOT APPLE)
+    option(FLTK_BACKEND_WAYLAND "support the Wayland backend" ON)
+  endif(NOT APPLE)
+  if(FLTK_BACKEND_WAYLAND)
     pkg_check_modules(WLDCLIENT wayland-client>=1.18)
     pkg_check_modules(WLDCURSOR wayland-cursor)
     pkg_check_modules(WLDPROTO wayland-protocols>=1.15)
     pkg_check_modules(XKBCOMMON xkbcommon)
-    if (NOT(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND))
-      message (STATUS "Not all software modules 'wayland-client>=1.18 wayland-cursor wayland-protocols>=1.15 xkbcommon' are present")
-      message (STATUS "Consequently, OPTION_USE_WAYLAND is set to OFF.")
-      unset (OPTION_USE_WAYLAND CACHE)
-      set (OPTION_USE_WAYLAND 0)
-    endif (NOT(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND))
-  endif (OPTION_USE_WAYLAND)
+    if(NOT(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND))
+      message(STATUS "Not all software modules 'wayland-client>=1.18 wayland-cursor wayland-protocols>=1.15 xkbcommon' are present")
+      message(STATUS "Consequently, FLTK_BACKEND_WAYLAND is set to OFF.")
+      unset(FLTK_BACKEND_WAYLAND CACHE)
+      set(FLTK_BACKEND_WAYLAND 0)
+    endif(NOT(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND))
+  endif(FLTK_BACKEND_WAYLAND)
 
-  if (OPTION_USE_WAYLAND)
-    option (OPTION_WAYLAND_ONLY "support Wayland backend only" OFF)
-    set (FLTK_USE_WAYLAND 1)
-    if (NOT OPTION_WAYLAND_ONLY)
-      include (FindX11)
-    endif (NOT OPTION_WAYLAND_ONLY)
-    if (X11_FOUND)
-      set (FLTK_USE_X11 1) # to build a hybrid Wayland/X11 library
-    else ()
-      set (FLTK_USE_X11 0) # to build a Wayland-only library
-    endif (X11_FOUND)
-    unset (OPTION_USE_CAIRO CACHE)
-    set (OPTION_USE_CAIRO TRUE CACHE BOOL "all drawing to X11 windows uses Cairo")
-    option (OPTION_USE_SYSTEM_LIBDECOR "use libdecor from the system" ON)
-    unset (OPTION_USE_XRENDER CACHE)
-    unset (OPTION_USE_XINERAMA CACHE)
-    unset (OPTION_USE_XFT CACHE)
-    unset (OPTION_USE_XCURSOR CACHE)
-    unset (OPTION_USE_XFIXES CACHE)
-    if (X11_FOUND)
-      if (NOT X11_Xfixes_FOUND)
+  if(FLTK_BACKEND_WAYLAND)
+    set(FLTK_USE_WAYLAND 1)
+    if(FLTK_BACKEND_X11)
+      include(FindX11)
+    endif()
+    if(X11_FOUND)
+      set(FLTK_USE_X11 1) # to build a hybrid Wayland/X11 library
+    else()
+      set(FLTK_USE_X11 0) # to build a Wayland-only library
+    endif(X11_FOUND)
+    unset(FLTK_GRAPHICS_CAIRO CACHE)
+    set(FLTK_GRAPHICS_CAIRO TRUE CACHE BOOL "all drawing to X11 windows uses Cairo")
+    option(FLTK_USE_SYSTEM_LIBDECOR "use libdecor from the system" ON)
+    set(USE_SYSTEM_LIBDECOR 1)
+    unset(FLTK_USE_XRENDER CACHE)
+    unset(FLTK_USE_XINERAMA CACHE)
+    unset(FLTK_USE_XFT CACHE)
+    unset(FLTK_USE_XCURSOR CACHE)
+    unset(FLTK_USE_XFIXES CACHE)
+    if(X11_FOUND)
+      if(NOT X11_Xfixes_FOUND)
         message(WARNING "Install development headers for libXfixes (e.g., libxfixes-dev)")
       endif()
-      set (HAVE_XFIXES 1)
-      if (NOT X11_Xrender_FOUND)
+      set(HAVE_XFIXES 1)
+      if(NOT X11_Xrender_FOUND)
         message(WARNING "Install development headers for libXrender (e.g., libxrender-dev)")
       endif()
-      set (HAVE_XRENDER 1)
-      if (NOT X11_Xft_FOUND)
+      set(HAVE_XRENDER 1)
+      if(NOT X11_Xft_FOUND)
         message(WARNING "Install development headers for libXft (e.g., libxft-dev)")
       endif()
-      set (USE_XFT 1)
-      if (NOT X11_Xcursor_FOUND)
+      set(USE_XFT 1)
+      if(NOT X11_Xcursor_FOUND)
         message(WARNING "Install development headers for libXcursor (e.g., libxcursor-dev)")
       endif()
-      set (HAVE_XCURSOR 1)
-      if (NOT X11_Xinerama_FOUND)
+      set(HAVE_XCURSOR 1)
+      if(NOT X11_Xinerama_FOUND)
         message(WARNING "Install development headers for libXinerama (e.g., libxinerama-dev)")
       endif()
-      set (HAVE_XINERAMA 1)
-      if (NOT (X11_Xfixes_FOUND AND X11_Xrender_FOUND AND X11_Xft_FOUND AND X11_Xcursor_FOUND
+      set(HAVE_XINERAMA 1)
+      if(NOT (X11_Xfixes_FOUND AND X11_Xrender_FOUND AND X11_Xft_FOUND AND X11_Xcursor_FOUND
           AND X11_Xinerama_FOUND))
-        message (FATAL_ERROR "*** Terminating: one or more required software package(s) missing.")
-      endif ()
-    endif (X11_FOUND)
-    unset (OPTION_USE_PANGO CACHE)
-    set (OPTION_USE_PANGO TRUE CACHE BOOL "use lib Pango")
-    if (OPTION_USE_SYSTEM_LIBDECOR)
-      pkg_check_modules(SYSTEM_LIBDECOR libdecor-0>=0.2.0)
-      if (NOT SYSTEM_LIBDECOR_FOUND)
-        set (OPTION_USE_SYSTEM_LIBDECOR OFF)
-      else ()
+        message(FATAL_ERROR "*** Terminating: one or more required software package(s) missing.")
+      endif()
+    endif(X11_FOUND)
+    unset(FLTK_USE_PANGO CACHE)
+    set(FLTK_USE_PANGO TRUE CACHE BOOL "use lib Pango")
+    if(FLTK_USE_SYSTEM_LIBDECOR)
+      pkg_check_modules(SYSTEM_LIBDECOR libdecor-0>=0.2.0 QUIET)
+      if(NOT SYSTEM_LIBDECOR_FOUND)
+      message(STATUS "Warning: system libdecor doesn't satisfy version >= 0.2.0,")
+      message(STATUS "         using bundled libdecor library instead.")
+      set(USE_SYSTEM_LIBDECOR 0)
+      else()
         pkg_get_variable(LIBDECOR_LIBDIR libdecor-0 libdir)
-        set (LIBDECOR_PLUGIN_DIR ${LIBDECOR_LIBDIR}/libdecor/plugins-1)
-        if (EXISTS ${LIBDECOR_PLUGIN_DIR} AND IS_DIRECTORY ${LIBDECOR_PLUGIN_DIR})
-          set (LIBDECOR_PLUGIN_DIR "\"${LIBDECOR_PLUGIN_DIR}\"" )
-        else ()
-          set (OPTION_USE_SYSTEM_LIBDECOR OFF)
-        endif ()
-      endif (NOT SYSTEM_LIBDECOR_FOUND)
-    endif (OPTION_USE_SYSTEM_LIBDECOR)
+        set(LIBDECOR_PLUGIN_DIR ${LIBDECOR_LIBDIR}/libdecor/plugins-1)
+        if(EXISTS ${LIBDECOR_PLUGIN_DIR} AND IS_DIRECTORY ${LIBDECOR_PLUGIN_DIR})
+          set(LIBDECOR_PLUGIN_DIR "\"${LIBDECOR_PLUGIN_DIR}\"" )
+        else()
+          set(USE_SYSTEM_LIBDECOR 0)
+        endif()
+      endif(NOT SYSTEM_LIBDECOR_FOUND)
+    endif(FLTK_USE_SYSTEM_LIBDECOR)
 
-    if (OPTION_USE_SYSTEM_LIBDECOR)
-        set (OPTION_ALLOW_GTK_PLUGIN ON)
-    else ()
-      option (OPTION_ALLOW_GTK_PLUGIN "Allow to use libdecor's GTK plugin" ON)
-    endif (OPTION_USE_SYSTEM_LIBDECOR)
+    if(USE_SYSTEM_LIBDECOR)
+      set(FLTK_USE_LIBDECOR_GTK ON)
+    else()
+      option(FLTK_USE_LIBDECOR_GTK "Allow to use libdecor's GTK plugin" ON)
+    endif(USE_SYSTEM_LIBDECOR)
 
-    if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
-      CHECK_INCLUDE_FILE (linux/input.h LINUX_INPUT_H)
-      if (NOT LINUX_INPUT_H)
-        message (FATAL_ERROR "Required include file 'linux/input.h' is missing. Please install package 'evdev-proto'")
-      endif (NOT LINUX_INPUT_H)
-    endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+    if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+      check_include_file(linux/input.h LINUX_INPUT_H)
+      if(NOT LINUX_INPUT_H)
+        message(FATAL_ERROR "Required include file 'linux/input.h' is missing. Please install package 'evdev-proto'")
+      endif(NOT LINUX_INPUT_H)
+    endif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
 
-  endif (OPTION_USE_WAYLAND)
-endif (UNIX)
+  endif(FLTK_BACKEND_WAYLAND)
+endif(UNIX)
 
-if (WIN32)
-  option (OPTION_USE_GDIPLUS "use GDI+ when possible for antialiased graphics" ON)
-  if (OPTION_USE_GDIPLUS)
-    set (USE_GDIPLUS TRUE)
-    if (NOT MSVC)
-      list (APPEND FLTK_LDLIBS "-lgdiplus")
-    endif (NOT MSVC)
-  endif (OPTION_USE_GDIPLUS)
-endif (WIN32)
-
-#######################################################################
-if (APPLE)
-  option (OPTION_APPLE_X11 "use X11" OFF)
-  if (CMAKE_OSX_SYSROOT)
-    list (APPEND FLTK_CFLAGS "-isysroot ${CMAKE_OSX_SYSROOT}")
-  endif (CMAKE_OSX_SYSROOT)
-endif (APPLE)
+if(WIN32)
+  option(FLTK_GRAPHICS_GDIPLUS "use GDI+ when possible for antialiased graphics" ON)
+  if(FLTK_GRAPHICS_GDIPLUS)
+    set(USE_GDIPLUS TRUE)
+    if(NOT MSVC)
+      list(APPEND FLTK_LDLIBS "-lgdiplus")
+    endif(NOT MSVC)
+  endif(FLTK_GRAPHICS_GDIPLUS)
+endif(WIN32)
 
 #######################################################################
-option (OPTION_USE_STD "allow FLTK to use some std:: features" OFF)
-if (OPTION_USE_STD)
-  set (FLTK_USE_STD 1)
-else ()
-  set (FLTK_USE_STD 0)
-endif ()
+option(FLTK_OPTION_STD "allow FLTK to use some std:: features" OFF)
+if(FLTK_OPTION_STD)
+  set(FLTK_USE_STD 1)
+else()
+  set(FLTK_USE_STD 0)
+endif()
 
 #######################################################################
 
 # find X11 libraries and headers
-set (PATH_TO_XLIBS)
-if ((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32 AND NOT OPTION_USE_WAYLAND)
-  include (FindX11)
-  if (X11_FOUND)
-    set (FLTK_USE_X11 1)
-    list (APPEND FLTK_LDLIBS -lX11)
-    if (X11_Xext_FOUND)
-      list (APPEND FLTK_LDLIBS -lXext)
-    endif (X11_Xext_FOUND)
-    get_filename_component (PATH_TO_XLIBS ${X11_X11_LIB} PATH)
-  endif (X11_FOUND)
-endif ((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32 AND NOT OPTION_USE_WAYLAND)
+set(PATH_TO_XLIBS)
+if((NOT APPLE OR FLTK_BACKEND_X11) AND NOT WIN32 AND NOT FLTK_BACKEND_WAYLAND)
+  include(FindX11)
+  if(X11_FOUND)
+    set(FLTK_USE_X11 1)
+    list(APPEND FLTK_LDLIBS -lX11)
+    if(X11_Xext_FOUND)
+      list(APPEND FLTK_LDLIBS -lXext)
+    endif(X11_Xext_FOUND)
+    get_filename_component(PATH_TO_XLIBS ${X11_X11_LIB} PATH)
+  endif(X11_FOUND)
+endif()
 
-if (OPTION_APPLE_X11)
-  if (NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
-    list (APPEND FLTK_CFLAGS "-D_LIBCPP_HAS_THREAD_API_PTHREAD")
-  endif (NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0))
-  include_directories (AFTER SYSTEM /opt/X11/include/freetype2)
-  include_directories (AFTER SYSTEM /opt/X11/include) # for Xft.h
-  if (PATH_TO_XLIBS)
-    set (LDFLAGS "-L${PATH_TO_XLIBS} ${LDFLAGS}")
-  endif (PATH_TO_XLIBS)
-  if (X11_INCLUDE_DIR)
-    set (TEMP_INCLUDE_DIR ${X11_INCLUDE_DIR})
-    list (TRANSFORM TEMP_INCLUDE_DIR PREPEND "-I")
-    list (APPEND FLTK_CFLAGS "${TEMP_INCLUDE_DIR}")
-  endif (X11_INCLUDE_DIR)
-endif (OPTION_APPLE_X11)
+if(FLTK_BACKEND_X11)
+  if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
+    list(APPEND FLTK_CFLAGS "-D_LIBCPP_HAS_THREAD_API_PTHREAD")
+  endif(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0))
+  # FIXME: include_directories(!)
+  # FIXME: how can we implement "AFTER SYSTEM" ?
+  include_directories(AFTER SYSTEM /opt/X11/include/freetype2)
+  include_directories(AFTER SYSTEM /opt/X11/include) # for Xft.h
+  if(PATH_TO_XLIBS)
+    set(LDFLAGS "-L${PATH_TO_XLIBS} ${LDFLAGS}")
+  endif(PATH_TO_XLIBS)
+  if(X11_INCLUDE_DIR)
+    set(TEMP_INCLUDE_DIR ${X11_INCLUDE_DIR})
+    list(TRANSFORM TEMP_INCLUDE_DIR PREPEND "-I")
+    list(APPEND FLTK_CFLAGS "${TEMP_INCLUDE_DIR}")
+  endif(X11_INCLUDE_DIR)
+endif(FLTK_BACKEND_X11)
 
 #######################################################################
-option (OPTION_USE_POLL "use poll if available" OFF)
-mark_as_advanced (OPTION_USE_POLL)
+option(FLTK_USE_POLL "use poll if available" OFF)
+mark_as_advanced(FLTK_USE_POLL)
 
-if (OPTION_USE_POLL)
+if(FLTK_USE_POLL)
   CHECK_FUNCTION_EXISTS(poll USE_POLL)
-endif (OPTION_USE_POLL)
+endif(FLTK_USE_POLL)
 
 #######################################################################
-option (OPTION_BUILD_SHARED_LIBS
-  "Build shared libraries (in addition to static libraries)"
+option(FLTK_BUILD_SHARED_LIBS
+  "Build shared libraries in addition to static libraries"
   OFF
 )
 
 #######################################################################
 
-option (OPTION_PRINT_SUPPORT      "allow print support"               ON)
-option (OPTION_FILESYSTEM_SUPPORT "allow file system support"         ON)
+option(FLTK_OPTION_PRINT_SUPPORT      "allow print support"        ON)
+option(FLTK_OPTION_FILESYSTEM_SUPPORT "allow file system support"  ON)
 
-option (FLTK_BUILD_FORMS          "Build forms compatibility library" ON)
-option (FLTK_BUILD_FLUID          "Build FLUID"                       ON)
-option (FLTK_BUILD_FLTK_OPTIONS   "Build fltk-options"                ON)
-option (FLTK_BUILD_TEST           "Build test/demo programs"          ON)
-option (FLTK_BUILD_EXAMPLES       "Build example programs"            OFF)
+option(FLTK_BUILD_FORMS        "Build forms compatibility library" ON)
+option(FLTK_BUILD_FLUID        "Build FLUID"                       ON)
+option(FLTK_BUILD_FLTK_OPTIONS "Build fltk-options"                ON)
+option(FLTK_BUILD_EXAMPLES     "Build example programs"            OFF)
 
-if (FLTK_BUILD_FORMS)
-  set (FLTK_HAVE_FORMS 1)
-else ()
-  set (FLTK_HAVE_FORMS 0)
-endif ()
+if(FLTK_IS_TOPLEVEL)
+  option(FLTK_BUILD_TEST       "Build test/demo programs"          ON)
+else()
+  option(FLTK_BUILD_TEST       "Build test/demo programs"          OFF)
+endif()
 
-if (DEFINED OPTION_BUILD_EXAMPLES)
-  message (WARNING
-    "'OPTION_BUILD_EXAMPLES' is obsolete, please use 'FLTK_BUILD_TEST' instead.")
-  message (STATUS
-    "To remove this warning, please delete 'OPTION_BUILD_EXAMPLES' from the CMake cache")
-endif (DEFINED OPTION_BUILD_EXAMPLES)
+if(FLTK_BUILD_FORMS)
+  set(FLTK_HAVE_FORMS 1)
+else()
+  set(FLTK_HAVE_FORMS 0)
+endif()
 
 #######################################################################
-if (DOXYGEN_FOUND)
-  option (OPTION_BUILD_HTML_DOCUMENTATION "build html docs" ON)
-  option (OPTION_INSTALL_HTML_DOCUMENTATION "install html docs" OFF)
+if(DOXYGEN_FOUND)
+  option(FLTK_BUILD_HTML_DOCS "build html docs" ON)
+  option(FLTK_INSTALL_HTML_DOCS "install html docs" OFF)
 
-  option (OPTION_INCLUDE_DRIVER_DOCUMENTATION "include driver (developer) docs" OFF)
-  mark_as_advanced (OPTION_INCLUDE_DRIVER_DOCUMENTATION)
+  option(FLTK_INCLUDE_DRIVER_DOCS "include driver (developer) docs" OFF)
+  mark_as_advanced(FLTK_INCLUDE_DRIVER_DOCS)
 
-  if (LATEX_FOUND)
-    option (OPTION_BUILD_PDF_DOCUMENTATION "build pdf docs" ON)
-    option (OPTION_INSTALL_PDF_DOCUMENTATION "install pdf docs" OFF)
-  endif (LATEX_FOUND)
-endif (DOXYGEN_FOUND)
+  if(LATEX_FOUND)
+    option(FLTK_BUILD_PDF_DOCS "build pdf docs" ON)
+    option(FLTK_INSTALL_PDF_DOCS "install pdf docs" OFF)
+  endif(LATEX_FOUND)
+endif(DOXYGEN_FOUND)
 
-if (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
-  add_subdirectory (documentation)
-endif (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
+if(FLTK_BUILD_HTML_DOCS OR FLTK_BUILD_PDF_DOCS)
+  add_subdirectory(documentation)
+endif(FLTK_BUILD_HTML_DOCS OR FLTK_BUILD_PDF_DOCS)
 
 #######################################################################
 # Include optional Cairo support
 #######################################################################
 
-option (OPTION_CAIRO "add support for Fl_Cairo_Window" OFF)
-option (OPTION_CAIROEXT
+option(FLTK_OPTION_CAIRO_WINDOW "add support for Fl_Cairo_Window" OFF)
+option(FLTK_OPTION_CAIRO_EXT
   "use FLTK code instrumentation for Cairo extended use" OFF
 )
 
-set (FLTK_HAVE_CAIRO 0)
-set (FLTK_HAVE_CAIROEXT 0)
+set(FLTK_HAVE_CAIRO 0)
+set(FLTK_HAVE_CAIROEXT 0)
 
-if (OPTION_CAIRO OR OPTION_CAIROEXT)
-  pkg_search_module (PKG_CAIRO cairo)
+if(FLTK_OPTION_CAIRO_WINDOW OR FLTK_OPTION_CAIRO_EXT)
+  pkg_search_module(PKG_CAIRO cairo)
 
-  # fl_debug_var (PKG_CAIRO_FOUND)
+  if(PKG_CAIRO_FOUND)
+    set(FLTK_HAVE_CAIRO 1)
+    if(FLTK_OPTION_CAIRO_EXT)
+      set(FLTK_HAVE_CAIROEXT 1)
+    endif(FLTK_OPTION_CAIRO_EXT)
 
-  if (PKG_CAIRO_FOUND)
-    set (FLTK_HAVE_CAIRO 1)
-    if (OPTION_CAIROEXT)
-      set (FLTK_HAVE_CAIROEXT 1)
-    endif (OPTION_CAIROEXT)
-
-    ### FIXME ###
-    include_directories (${PKG_CAIRO_INCLUDE_DIRS})
+    list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${PKG_CAIRO_INCLUDE_DIRS})
 
     # Cairo libs and flags for fltk-config
 
     # Hint: use either PKG_CAIRO_* or PKG_CAIRO_STATIC_* variables to
-    # create the list of libraries used to link programs with cairo
+    # create the list of libraries used to link programs with Cairo
     # by running fltk-config --use-cairo --compile ...
-    # Currently we're using the non-STATIC variables to link cairo shared.
+    # Currently we're using the non-STATIC variables to link Cairo shared.
 
-    set (CAIROLIBS)
-    foreach (lib ${PKG_CAIRO_LIBRARIES})
-      list (APPEND CAIROLIBS "-l${lib}")
+    set(CAIROLIBS)
+    foreach(lib ${PKG_CAIRO_LIBRARIES})
+      list(APPEND CAIROLIBS "-l${lib}")
     endforeach()
 
-    string (REPLACE ";" " " CAIROLIBS  "${CAIROLIBS}")
-    string (REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
+    string(REPLACE ";" " " CAIROLIBS  "${CAIROLIBS}")
+    string(REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
 
-  else (PKG_CAIRO_FOUND)
+  else(PKG_CAIRO_FOUND)
 
-    if (NOT MSVC)
-      message (STATUS "*** Cairo was requested but not found - please check your cairo installation")
-      message (STATUS "***   or disable options OPTION_CAIRO and OPTION_CAIRO_EXT.")
-      message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
-    endif ()
+    if(NOT MSVC)
+      message(STATUS "*** Cairo was requested but not found - please check your Cairo installation")
+      message(STATUS "***   or disable options FLTK_OPTION_CAIRO_WINDOW and FLTK_OPTION_CAIRO_EXT.")
+      message(FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
+    endif()
 
     # Tweak Cairo includes / libs / paths for Visual Studio (TEMPORARY solution).
     # Todo: find a better way to set the required variables and flags!
     # AlbrechtS 03/2023
 
-    message (STATUS "--- Cairo not found: trying to find Cairo for MSVC ...")
+    message(STATUS "--- Cairo not found: trying to find Cairo for MSVC ...")
 
-    if (NOT FLTK_CAIRO_DIR)
-      message (STATUS "--- Please set FLTK_CAIRO_DIR to point at the Cairo installation folder ...")
-      message (STATUS "    ... with files 'include/cairo.h' and 'lib/x64/cairo.lib'")
-      message (STATUS "--- Example: cmake -DFLTK_CAIRO_DIR=\"C:/cairo-windows\" ...")
-      message (STATUS "--- Note: this will be changed in the future; currently only 64-bit supported")
-      message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
-    endif ()
+    if(NOT FLTK_CAIRO_DIR)
+      message(STATUS "--- Please set FLTK_CAIRO_DIR to point at the Cairo installation folder ...")
+      message(STATUS "    ... with files 'include/cairo.h' and 'lib/x64/cairo.lib'")
+      message(STATUS "--- Example: cmake -DFLTK_CAIRO_DIR=\"C:/cairo-windows\" ...")
+      message(STATUS "--- Note: this will be changed in the future; currently only 64-bit supported")
+      message(FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
+    endif()
 
-    set (CAIROLIBS "-lcairo")                             # should be correct: needs cairo.lib
+    set(CAIROLIBS "-lcairo")                             # should be correct: needs cairo.lib
 
     # simulate results of 'pkg_search_module (PKG_CAIRO cairo)' and more (above)
     # these variables will be used later
 
-    set (PKG_CAIRO_LIBRARIES "cairo")
-    set (PKG_CAIRO_INCLUDE_DIRS "${FLTK_CAIRO_DIR}/include")
-    set (PKG_CAIRO_LIBRARY_DIRS "${FLTK_CAIRO_DIR}/lib/x64/")
+    set(PKG_CAIRO_LIBRARIES "cairo")
+    set(PKG_CAIRO_INCLUDE_DIRS "${FLTK_CAIRO_DIR}/include")
+    set(PKG_CAIRO_LIBRARY_DIRS "${FLTK_CAIRO_DIR}/lib/x64/")
 
     ### FIXME ###
-    include_directories (${PKG_CAIRO_INCLUDE_DIRS})
+    include_directories(${PKG_CAIRO_INCLUDE_DIRS})
 
-    set (FLTK_HAVE_CAIRO 1)
-    if (OPTION_CAIROEXT)
-      set (FLTK_HAVE_CAIROEXT 1)
-    endif (OPTION_CAIROEXT)
+    set(FLTK_HAVE_CAIRO 1)
+    if(FLTK_OPTION_CAIRO_EXT)
+      set(FLTK_HAVE_CAIROEXT 1)
+    endif(FLTK_OPTION_CAIRO_EXT)
 
-  endif (PKG_CAIRO_FOUND)
+  endif(PKG_CAIRO_FOUND)
 
-  if (0) # 1 = DEBUG, 0 = no output
-    message (STATUS "--- options.cmake: Cairo related variables ---")
-    if (MSVC)
-      fl_debug_var (FLTK_CAIRO_DIR)
-    endif (MSVC)
-    fl_debug_var (PKG_CAIRO_INCLUDE_DIRS)
-    fl_debug_var (PKG_CAIRO_CFLAGS)
-    fl_debug_var (PKG_CAIRO_LIBRARIES)
-    fl_debug_var (PKG_CAIRO_LIBRARY_DIRS)
-    fl_debug_var (PKG_CAIRO_STATIC_INCLUDE_DIRS)
-    fl_debug_var (PKG_CAIRO_STATIC_CFLAGS)
-    fl_debug_var (PKG_CAIRO_STATIC_LIBRARIES)
-    fl_debug_var (PKG_CAIRO_STATIC_LIBRARY_DIRS)
-    message (STATUS "--- fltk-config/Cairo variables ---")
-    fl_debug_var (FLTK_LDLIBS)
-    fl_debug_var (CAIROFLAGS)
-    fl_debug_var (CAIROLIBS)
-    message (STATUS "--- End of Cairo related variables ---")
+  if(0) # 1 = DEBUG, 0 = no output
+    message(STATUS "--- options.cmake: Cairo related variables ---")
+    if(MSVC)
+      fl_debug_var(FLTK_CAIRO_DIR)
+    endif(MSVC)
+    # fl_debug_pkg(PKG_CAIRO cairo)
+    fl_debug_var(PKG_CAIRO_INCLUDE_DIRS)
+    fl_debug_var(PKG_CAIRO_CFLAGS)
+    fl_debug_var(PKG_CAIRO_LIBRARIES)
+    fl_debug_var(PKG_CAIRO_LIBRARY_DIRS)
+    fl_debug_var(PKG_CAIRO_STATIC_INCLUDE_DIRS)
+    fl_debug_var(PKG_CAIRO_STATIC_CFLAGS)
+    fl_debug_var(PKG_CAIRO_STATIC_LIBRARIES)
+    fl_debug_var(PKG_CAIRO_STATIC_LIBRARY_DIRS)
+    message(STATUS "--- fltk-config/Cairo variables ---")
+    fl_debug_var(FLTK_LDLIBS)
+    fl_debug_var(CAIROFLAGS)
+    fl_debug_var(CAIROLIBS)
+    message(STATUS "--- End of Cairo related variables ---")
   endif() # 1 = DEBUG, ...
 
-endif (OPTION_CAIRO OR OPTION_CAIROEXT)
+endif(FLTK_OPTION_CAIRO_WINDOW OR FLTK_OPTION_CAIRO_EXT)
 
 #######################################################################
-option (OPTION_USE_SVG "read/write SVG files" ON)
 
-if (OPTION_USE_SVG)
-  set (FLTK_USE_SVG 1)
-endif (OPTION_USE_SVG)
+option(FLTK_OPTION_SVG "read/write SVG image files" ON)
+
+if(FLTK_OPTION_SVG)
+  set(FLTK_USE_SVG 1)
+else()
+  set(FLTK_USE_SVG 0)
+endif(FLTK_OPTION_SVG)
 
 #######################################################################
-set (HAVE_GL LIB_GL OR LIB_MesaGL)
 
-if (HAVE_GL)
-   option (OPTION_USE_GL "use OpenGL" ON)
-endif (HAVE_GL)
+# FIXME: GL libs have already been searched in resources.cmake
 
-if (OPTION_USE_GL)
-  if (OPTION_USE_WAYLAND)
+set(HAVE_GL LIB_GL OR LIB_MesaGL)
+set(FLTK_USE_GL FALSE)
+
+if(HAVE_GL)
+  option(FLTK_BUILD_GL "use OpenGL and build fltk_gl library" ON)
+  if (FLTK_BUILD_GL)
+    set(FLTK_USE_GL TRUE)
+  endif()
+endif()
+
+if(FLTK_BUILD_GL)
+  if(FLTK_BACKEND_WAYLAND)
     pkg_check_modules(WLD_EGL wayland-egl)
     pkg_check_modules(PKG_EGL egl)
     pkg_check_modules(PKG_GL gl)
-    if (NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND))
-      message (STATUS "Modules 'wayland-egl, egl, and gl' are required to build for the Wayland backend.")
-      message (FATAL_ERROR "*** Aborting ***")
-    endif (NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND))
-  endif (OPTION_USE_WAYLAND)
-  if (OPTION_APPLE_X11)
-    set (OPENGL_FOUND TRUE)
+    if(NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND))
+      message(STATUS "Modules 'wayland-egl, egl, and gl' are required to build for the Wayland backend.")
+      message(FATAL_ERROR "*** Aborting ***")
+    endif(NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND))
+  endif(FLTK_BACKEND_WAYLAND)
+  if(FLTK_BACKEND_X11)
+    set(OPENGL_FOUND TRUE)
     find_library(OPENGL_LIB GL)
-    get_filename_component (PATH_TO_GLLIB ${OPENGL_LIB} DIRECTORY)
+    get_filename_component(PATH_TO_GLLIB ${OPENGL_LIB} DIRECTORY)
     # with GL, must use XQuartz libX11 else "Insufficient GL support"
-    set (OPENGL_LIBRARIES -L${PATH_TO_GLLIB} -lX11 -lGLU -lGL)
+    set(OPENGL_LIBRARIES -L${PATH_TO_GLLIB} -lX11 -lGLU -lGL)
     unset(HAVE_GL_GLU_H CACHE)
-    find_file (HAVE_GL_GLU_H GL/glu.h PATHS ${X11_INCLUDE_DIR})
+    find_file(HAVE_GL_GLU_H GL/glu.h PATHS ${X11_INCLUDE_DIR})
   else()
     find_package(OpenGL)
-    if (APPLE)
-      set (HAVE_GL_GLU_H ${HAVE_OPENGL_GLU_H})
-    endif (APPLE)
-  endif (OPTION_APPLE_X11)
-else ()
-  set (OPENGL_FOUND FALSE)
-  set (HAVE_GL FALSE)
-  set (HAVE_GL_GLU_H FALSE)
-  set (HAVE_GLXGETPROCADDRESSARB FALSE)
-endif (OPTION_USE_GL)
+    if(APPLE)
+      set(HAVE_GL_GLU_H ${HAVE_OPENGL_GLU_H})
+    endif(APPLE)
+  endif(FLTK_BACKEND_X11)
+else()
+  set(OPENGL_FOUND FALSE)
+  set(HAVE_GL FALSE)
+  set(HAVE_GL_GLU_H FALSE)
+  set(HAVE_GLXGETPROCADDRESSARB FALSE)
+endif(FLTK_BUILD_GL)
 
-if (OPENGL_FOUND)
-  set (CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
+if(OPENGL_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
 
   # Set GLLIBS (used in fltk-config).
   # We should probably deduct this from OPENGL_LIBRARIES but it turned
@@ -595,38 +637,38 @@ if (OPENGL_FOUND)
   # syntax depending on the platform (and maybe also CMake version).
   # Hence we use the following code...
 
-  if (WIN32)
-    set (GLLIBS "-lglu32 -lopengl32")
-  elseif (APPLE AND NOT OPTION_APPLE_X11)
-    set (GLLIBS "-framework OpenGL")
-  elseif (OPTION_USE_WAYLAND)
-    set (GLLIBS "-lwayland-egl -lEGL -lGLU -lGL")
-  else ()
-    set (GLLIBS "-lGLU -lGL")
-  endif (WIN32)
+  if(WIN32)
+    set(GLLIBS "-lglu32 -lopengl32")
+  elseif(APPLE AND NOT FLTK_BACKEND_X11)
+    set(GLLIBS "-framework OpenGL")
+  elseif(FLTK_BACKEND_WAYLAND)
+    set(GLLIBS "-lwayland-egl -lEGL -lGLU -lGL")
+  else()
+    set(GLLIBS "-lGLU -lGL")
+  endif(WIN32)
 
   # check if function glXGetProcAddressARB exists
-  set (TEMP_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-  set (CMAKE_REQUIRED_LIBRARIES ${OPENGL_LIBRARIES})
-  CHECK_FUNCTION_EXISTS (glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
-  set (CMAKE_REQUIRED_LIBRARIES ${TEMP_REQUIRED_LIBRARIES})
-  unset (TEMP_REQUIRED_LIBRARIES)
+  set(TEMP_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+  set(CMAKE_REQUIRED_LIBRARIES ${OPENGL_LIBRARIES})
+  check_function_exists(glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
+  set(CMAKE_REQUIRED_LIBRARIES ${TEMP_REQUIRED_LIBRARIES})
+  unset(TEMP_REQUIRED_LIBRARIES)
 
-  set (FLTK_GL_FOUND TRUE)
-else ()
-  set (FLTK_GL_FOUND FALSE)
-  set (GLLIBS)
-endif (OPENGL_FOUND)
+  set(FLTK_GL_FOUND TRUE)
+else()
+  set(FLTK_GL_FOUND FALSE)
+  set(GLLIBS)
+endif(OPENGL_FOUND)
 
 #######################################################################
-option (OPTION_LARGE_FILE "enable large file support" ON)
+option(FLTK_OPTION_LARGE_FILE "enable large file support" ON)
 
-if (OPTION_LARGE_FILE)
-  if (NOT MSVC)
-    add_definitions (-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64)
-    list (APPEND FLTK_CFLAGS -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64)
-  endif (NOT MSVC)
-endif (OPTION_LARGE_FILE)
+if(FLTK_OPTION_LARGE_FILE)
+  if(NOT MSVC)
+    add_definitions(-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64)
+    list(APPEND FLTK_CFLAGS -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64)
+  endif(NOT MSVC)
+endif(FLTK_OPTION_LARGE_FILE)
 
 #######################################################################
 # Create an option whether we want to check for pthreads.
@@ -636,221 +678,222 @@ endif (OPTION_LARGE_FILE)
 # Note: HAVE_PTHREAD_H has already been determined in resources.cmake
 # before this file is included (or set to 0 for WIN32).
 
-if (WIN32 AND NOT CYGWIN)
-  # set (HAVE_PTHREAD_H 0) # (see resources.cmake)
-  set (OPTION_USE_THREADS FALSE)
-else ()
-  option (OPTION_USE_THREADS "use multi-threading with pthreads" ON)
-endif (WIN32 AND NOT CYGWIN)
+if(WIN32 AND NOT CYGWIN)
+  # set(HAVE_PTHREAD_H 0) # (see resources.cmake)
+  set(FLTK_USE_PTHREADS FALSE)
+else()
+  option(FLTK_USE_PTHREADS "use multi-threading with pthreads" ON)
+endif(WIN32 AND NOT CYGWIN)
 
 # initialize more variables
-set (USE_THREADS 0)
-set (HAVE_PTHREAD 0)
-set (FLTK_PTHREADS_FOUND FALSE)
+set(USE_THREADS 0)
+set(HAVE_PTHREAD 0)
+set(FLTK_PTHREADS_FOUND FALSE)
 
-if (OPTION_USE_THREADS)
+if(FLTK_USE_PTHREADS)
 
-  include (FindThreads)
+  include(FindThreads)
 
-  if (CMAKE_HAVE_THREADS_LIBRARY)
-    add_definitions ("-D_THREAD_SAFE -D_REENTRANT")
-    set (USE_THREADS 1)
-    set (FLTK_THREADS_FOUND TRUE)
-  endif (CMAKE_HAVE_THREADS_LIBRARY)
+  if(CMAKE_HAVE_THREADS_LIBRARY)
+    add_definitions("-D_THREAD_SAFE -D_REENTRANT")
+    set(USE_THREADS 1)
+    set(FLTK_THREADS_FOUND TRUE)
+  endif(CMAKE_HAVE_THREADS_LIBRARY)
 
-  if (CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
-    set (HAVE_PTHREAD 1)
-    if (NOT APPLE)
-      set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
-    endif (NOT APPLE)
-    list (APPEND FLTK_LDLIBS -lpthread)
-    list (APPEND FLTK_CFLAGS -D_THREAD_SAFE -D_REENTRANT)
-    set (FLTK_PTHREADS_FOUND TRUE)
+  if(CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
+    set(HAVE_PTHREAD 1)
+    if(NOT APPLE)
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+    endif(NOT APPLE)
+    list(APPEND FLTK_LDLIBS -lpthread)
+    list(APPEND FLTK_CFLAGS -D_THREAD_SAFE -D_REENTRANT)
+    set(FLTK_PTHREADS_FOUND TRUE)
   else()
-    set (HAVE_PTHREAD 0)
-    set (HAVE_PTHREAD_H 0)
-    set (FLTK_PTHREADS_FOUND FALSE)
-  endif (CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
+    set(HAVE_PTHREAD 0)
+    set(HAVE_PTHREAD_H 0)
+    set(FLTK_PTHREADS_FOUND FALSE)
+  endif(CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
 
-else (OPTION_USE_THREADS)
+else(FLTK_USE_PTHREADS)
 
-  set (HAVE_PTHREAD_H 0)
+  set(HAVE_PTHREAD_H 0)
 
-endif (OPTION_USE_THREADS)
+endif(FLTK_USE_PTHREADS)
 
-set (debug_threads 0) # set to 1 to show debug info
-if (debug_threads)
-  message ("")
-  message (STATUS "options.cmake: set debug_threads to 0 to disable the following info:")
-  fl_debug_var(OPTION_USE_THREADS)
+set(debug_threads 0) # set to 1 to show debug info
+if(debug_threads)
+  message("")
+  message(STATUS "options.cmake: set debug_threads to 0 to disable the following info:")
+  fl_debug_var(FLTK_USE_PTHREADS)
   fl_debug_var(HAVE_PTHREAD)
   fl_debug_var(HAVE_PTHREAD_H)
   fl_debug_var(FLTK_THREADS_FOUND)
   fl_debug_var(CMAKE_EXE_LINKER_FLAGS)
-  message (STATUS "options.cmake: end of debug_threads info.")
-endif (debug_threads)
-unset (debug_threads)
+  message(STATUS "options.cmake: end of debug_threads info.")
+endif(debug_threads)
+unset(debug_threads)
 
 
 #######################################################################
-if (X11_Xinerama_FOUND)
-  option (OPTION_USE_XINERAMA "use lib Xinerama" ON)
-endif (X11_Xinerama_FOUND)
+if(X11_Xinerama_FOUND)
+  option(FLTK_USE_XINERAMA "use lib Xinerama" ON)
+endif(X11_Xinerama_FOUND)
 
-if (OPTION_USE_XINERAMA)
-  set (HAVE_XINERAMA ${X11_Xinerama_FOUND})
-  include_directories (${X11_Xinerama_INCLUDE_PATH})
-  list (APPEND FLTK_LDLIBS -lXinerama)
-  set (FLTK_XINERAMA_FOUND TRUE)
+if(FLTK_USE_XINERAMA)
+  set(HAVE_XINERAMA ${X11_Xinerama_FOUND})
+  list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${X11_Xinerama_INCLUDE_PATH})
+  list(APPEND FLTK_LDLIBS -lXinerama)
+  set(FLTK_XINERAMA_FOUND TRUE)
 else()
-  set (FLTK_XINERAMA_FOUND FALSE)
-endif (OPTION_USE_XINERAMA)
+  set(FLTK_XINERAMA_FOUND FALSE)
+endif(FLTK_USE_XINERAMA)
 
 #######################################################################
-if (X11_Xfixes_FOUND)
-  option (OPTION_USE_XFIXES "use lib Xfixes" ON)
-endif (X11_Xfixes_FOUND)
+if(X11_Xfixes_FOUND)
+  option(FLTK_USE_XFIXES "use lib Xfixes" ON)
+endif(X11_Xfixes_FOUND)
 
-if (OPTION_USE_XFIXES)
-  set (HAVE_XFIXES ${X11_Xfixes_FOUND})
-  include_directories (${X11_Xfixes_INCLUDE_PATH})
-  list (APPEND FLTK_LDLIBS -lXfixes)
-  set (FLTK_XFIXES_FOUND TRUE)
+if(FLTK_USE_XFIXES)
+  set(HAVE_XFIXES ${X11_Xfixes_FOUND})
+  list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${X11_Xfixes_INCLUDE_PATH})
+  list(APPEND FLTK_LDLIBS -lXfixes)
+  set(FLTK_XFIXES_FOUND TRUE)
 else()
-  set (FLTK_XFIXES_FOUND FALSE)
-endif (OPTION_USE_XFIXES)
+  set(FLTK_XFIXES_FOUND FALSE)
+endif(FLTK_USE_XFIXES)
 
 #######################################################################
-if (X11_Xcursor_FOUND)
-  option (OPTION_USE_XCURSOR "use lib Xcursor" ON)
-endif (X11_Xcursor_FOUND)
+if(X11_Xcursor_FOUND)
+  option(FLTK_USE_XCURSOR "use lib Xcursor" ON)
+endif(X11_Xcursor_FOUND)
 
-if (OPTION_USE_XCURSOR)
-  set (HAVE_XCURSOR ${X11_Xcursor_FOUND})
-  include_directories (${X11_Xcursor_INCLUDE_PATH})
-  list (APPEND FLTK_LDLIBS -lXcursor)
-  set (FLTK_XCURSOR_FOUND TRUE)
+if(FLTK_USE_XCURSOR)
+  set(HAVE_XCURSOR ${X11_Xcursor_FOUND})
+  list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${X11_Xcursor_INCLUDE_PATH})
+  list(APPEND FLTK_LDLIBS -lXcursor)
+  set(FLTK_XCURSOR_FOUND TRUE)
 else()
-  set (FLTK_XCURSOR_FOUND FALSE)
-endif (OPTION_USE_XCURSOR)
+  set(FLTK_XCURSOR_FOUND FALSE)
+endif(FLTK_USE_XCURSOR)
 
 #######################################################################
-if (X11_Xft_FOUND)
-  option (OPTION_USE_XFT "use lib Xft" ON)
-  option (OPTION_USE_PANGO "use lib Pango" OFF)
-  if (NOT OPTION_USE_WAYLAND)
-    option (OPTION_USE_CAIRO "all drawing to X11 windows uses Cairo" OFF)
-  endif (NOT OPTION_USE_WAYLAND)
-endif (X11_Xft_FOUND)
+if(X11_Xft_FOUND)
+  option(FLTK_USE_XFT "use lib Xft" ON)
+  option(FLTK_USE_PANGO "use lib Pango" OFF)
+  if(NOT FLTK_BACKEND_WAYLAND)
+    option(FLTK_GRAPHICS_CAIRO "all drawing to X11 windows uses Cairo" OFF)
+  endif(NOT FLTK_BACKEND_WAYLAND)
+endif(X11_Xft_FOUND)
 
 # test option compatibility: Cairo for Xlib requires Pango
-if (OPTION_USE_CAIRO)
-    unset (OPTION_USE_PANGO CACHE)
-    set (OPTION_USE_PANGO TRUE CACHE BOOL "use lib Pango")
-endif (OPTION_USE_CAIRO)
+if(FLTK_GRAPHICS_CAIRO)
+    unset(FLTK_USE_PANGO CACHE)
+    set(FLTK_USE_PANGO TRUE CACHE BOOL "use lib Pango")
+endif(FLTK_GRAPHICS_CAIRO)
 
-if (OPTION_USE_PANGO OR OPTION_USE_CAIRO)
-  if (OPTION_USE_WAYLAND OR OPTION_APPLE_X11)
-    set (USE_PANGOXFT false)
-  else ()
-    set (USE_PANGOXFT true)
-  endif (OPTION_USE_WAYLAND OR OPTION_APPLE_X11)
-endif (OPTION_USE_PANGO OR OPTION_USE_CAIRO)
+if(FLTK_USE_PANGO OR FLTK_GRAPHICS_CAIRO)
+  if(FLTK_BACKEND_WAYLAND OR FLTK_BACKEND_X11)
+    set(USE_PANGOXFT false)
+  else()
+    set(USE_PANGOXFT true)
+  endif()
+endif()
 
 # test option compatibility: Pango requires Xft
-if (USE_PANGOXFT)
-  if (NOT X11_Xft_FOUND)
-    message (STATUS "Pango requires Xft but Xft library or headers could not be found.")
-    message (STATUS "Please install Xft development files and try again or disable OPTION_USE_PANGO.")
-    message (FATAL_ERROR "*** Aborting ***")
-  else ()
-    if (NOT OPTION_USE_XFT)
-      message (STATUS "Pango requires Xft but usage of Xft was disabled.")
-      message (STATUS "Please enable OPTION_USE_XFT and try again or disable OPTION_USE_PANGO.")
-      message (FATAL_ERROR "*** Aborting ***")
-    endif (NOT OPTION_USE_XFT)
-  endif (NOT X11_Xft_FOUND)
-endif (USE_PANGOXFT)
+if(USE_PANGOXFT)
+  if(NOT X11_Xft_FOUND)
+    message(STATUS "Pango requires Xft but Xft library or headers could not be found.")
+    message(STATUS "Please install Xft development files and try again or disable FLTK_USE_PANGO.")
+    message(FATAL_ERROR "*** Aborting ***")
+  else()
+    if(NOT FLTK_USE_XFT)
+      message(STATUS "Pango requires Xft but usage of Xft was disabled.")
+      message(STATUS "Please enable FLTK_USE_XFT and try again or disable FLTK_USE_PANGO.")
+      message(FATAL_ERROR "*** Aborting ***")
+    endif(NOT FLTK_USE_XFT)
+  endif(NOT X11_Xft_FOUND)
+endif(USE_PANGOXFT)
 
 #######################################################################
-if ((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND OPTION_USE_PANGO)
+if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
   pkg_check_modules(CAIRO cairo)
-  if (USE_PANGOXFT)
+  if(USE_PANGOXFT)
     pkg_check_modules(PANGOXFT pangoxft)
-  endif (USE_PANGOXFT)
+  endif(USE_PANGOXFT)
   pkg_check_modules(PANGOCAIRO pangocairo)
 
-  if ((PANGOXFT_FOUND OR NOT USE_PANGOXFT) AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
-    if (USE_PANGOXFT)
-      include_directories (${PANGOXFT_INCLUDE_DIRS})
-    else ()
-      include_directories (${PANGOCAIRO_INCLUDE_DIRS})
-    endif (USE_PANGOXFT)
-    include_directories (${CAIRO_INCLUDE_DIRS})
+  if((PANGOXFT_FOUND OR NOT USE_PANGOXFT) AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
+    if(USE_PANGOXFT)
+      list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${PANGOXFT_INCLUDE_DIRS})
+    else()
+      list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${PANGOCAIRO_INCLUDE_DIRS})
+    endif(USE_PANGOXFT)
+    list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${CAIRO_INCLUDE_DIRS})
 
-    find_library (HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
-    if (USE_PANGOXFT)
-      find_library (HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
-    endif (USE_PANGOXFT)
-    find_library (HAVE_LIB_PANGOCAIRO pangocairo-1.0 ${CMAKE_LIBRARY_PATH})
-    find_library (HAVE_LIB_CAIRO cairo ${CMAKE_LIBRARY_PATH})
-    find_library (HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
+    find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
+    mark_as_advanced(HAVE_LIB_PANGO)
 
-    mark_as_advanced (HAVE_LIB_PANGO)
-    if (USE_PANGOXFT)
-      mark_as_advanced (HAVE_LIB_PANGOXFT)
-    endif (USE_PANGOXFT)
-    mark_as_advanced (HAVE_LIB_PANGOCAIRO)
-    mark_as_advanced (HAVE_LIB_CAIRO)
-    mark_as_advanced (HAVE_LIB_GOBJECT)
+    if(USE_PANGOXFT)
+      find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
+      mark_as_advanced(HAVE_LIB_PANGOXFT)
+    endif(USE_PANGOXFT)
 
-    set (USE_PANGO TRUE)
+    find_library(HAVE_LIB_PANGOCAIRO pangocairo-1.0 ${CMAKE_LIBRARY_PATH})
+    mark_as_advanced(HAVE_LIB_PANGOCAIRO)
+
+    find_library(HAVE_LIB_CAIRO cairo ${CMAKE_LIBRARY_PATH})
+    mark_as_advanced(HAVE_LIB_CAIRO)
+
+    find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
+    mark_as_advanced(HAVE_LIB_GOBJECT)
+
+    set(USE_PANGO TRUE)
 
     # add required libraries to fltk-config ...
-    if (USE_PANGOXFT)
-      list (APPEND FLTK_LDLIBS ${PANGOXFT_LDFLAGS})
-    endif (USE_PANGOXFT)
-    list (APPEND FLTK_LDLIBS ${PANGOCAIRO_LDFLAGS})
-    list (APPEND FLTK_LDLIBS ${CAIRO_LDFLAGS})
+    if(USE_PANGOXFT)
+      list(APPEND FLTK_LDLIBS ${PANGOXFT_LDFLAGS})
+    endif(USE_PANGOXFT)
+    list(APPEND FLTK_LDLIBS ${PANGOCAIRO_LDFLAGS})
+    list(APPEND FLTK_LDLIBS ${CAIRO_LDFLAGS})
 
     # *FIXME* Libraries should not be added explicitly if possible
-    if (OPTION_USE_WAYLAND)
-      list (APPEND FLTK_LDLIBS -lgtk-3 -lgdk-3 -lgio-2.0)
-      if (NOT OPTION_WAYLAND_ONLY)
-        list (APPEND FLTK_LDLIBS -lX11)
-      endif (NOT OPTION_WAYLAND_ONLY)
-    endif (OPTION_USE_WAYLAND)
+    if(FLTK_BACKEND_WAYLAND)
+      list(APPEND FLTK_LDLIBS -lgtk-3 -lgdk-3 -lgio-2.0)
+      if(FLTK_BACKEND_X11)
+        list(APPEND FLTK_LDLIBS -lX11)
+      endif()
+    endif()
 
-    if (APPLE)
+    if(APPLE)
       get_filename_component(PANGO_L_PATH ${HAVE_LIB_PANGO} PATH)
-      set (LDFLAGS "${LDFLAGS} -L${PANGO_L_PATH}")
-    endif (APPLE)
+      set(LDFLAGS "${LDFLAGS} -L${PANGO_L_PATH}")
+    endif(APPLE)
 
-  else ()
+  else()
 
     # this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
-    if (APPLE AND OPTION_APPLE_X11)
+    if(APPLE AND FLTK_BACKEND_X11)
       find_file(FINK_PREFIX NAMES /opt/sw /sw)
-      list (APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
-      include_directories (${FINK_PREFIX}/include/cairo)
-      list (APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
-    endif (APPLE AND OPTION_APPLE_X11)
+      list(APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
+      list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${FINK_PREFIX}/include/cairo)
+      list(APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
+    endif(APPLE AND FLTK_BACKEND_X11)
 
     find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})
     find_file(HAVE_PANGOXFT_H pango-1.0/pango/pangoxft.h ${CMAKE_INCLUDE_PATH})
 
-    if (HAVE_PANGO_H AND HAVE_PANGOXFT_H)
+    if(HAVE_PANGO_H AND HAVE_PANGOXFT_H)
       find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
       find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
-      if (APPLE)
-        set (HAVE_LIB_GOBJECT TRUE)
+      if(APPLE)
+        set(HAVE_LIB_GOBJECT TRUE)
       else()
         find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
-      endif (APPLE)
-    endif (HAVE_PANGO_H AND HAVE_PANGOXFT_H)
+      endif(APPLE)
+    endif(HAVE_PANGO_H AND HAVE_PANGOXFT_H)
 
-    if (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
-      set (USE_PANGO TRUE)
+    if(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+      set(USE_PANGO TRUE)
       # remove last 3 components of HAVE_PANGO_H and put in PANGO_H_PREFIX
       get_filename_component(PANGO_H_PREFIX ${HAVE_PANGO_H} PATH)
       get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
@@ -861,122 +904,136 @@ if ((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND OPTION_USE_PANGO)
       find_path(GLIB_H_PATH glib.h
                 PATHS ${PANGO_H_PREFIX}/glib-2.0
                       ${PANGO_H_PREFIX}/glib/glib-2.0)
-      include_directories (${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
+      list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
 
       # *FIXME* Libraries should not be added explicitly if possible
-      list (APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
+      list(APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
 
-    endif (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
-  endif ((PANGOXFT_FOUND OR NOT USE_PANGOXFT) AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
+    endif(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+  endif((PANGOXFT_FOUND OR NOT USE_PANGOXFT) AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
 
-  if (USE_PANGO AND (OPTION_USE_CAIRO OR OPTION_USE_WAYLAND))
-    set (FLTK_USE_CAIRO 1)
-    # fl_debug_var (FLTK_USE_CAIRO)
-  endif (USE_PANGO AND (OPTION_USE_CAIRO OR OPTION_USE_WAYLAND))
+  if(USE_PANGO AND (FLTK_GRAPHICS_CAIRO OR FLTK_BACKEND_WAYLAND))
+    set(FLTK_USE_CAIRO 1)
+    # fl_debug_var(FLTK_USE_CAIRO)
+  endif()
 
-endif ((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND OPTION_USE_PANGO)
+endif((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 
-if (OPTION_USE_WAYLAND)
+if(FLTK_BACKEND_WAYLAND)
 
-  # Note: Disable OPTION_ALLOW_GTK_PLUGIN to get cairo titlebars rather than GTK
-  if (OPTION_ALLOW_GTK_PLUGIN)
+  # Note: Disable FLTK_USE_LIBDECOR_GTK to get cairo titlebars rather than GTK
+  if(FLTK_USE_LIBDECOR_GTK)
     pkg_check_modules(GTK gtk+-3.0)
-    if (GTK_FOUND)
-      include_directories (${GTK_INCLUDE_DIRS})
-    else ()
+    if(GTK_FOUND)
+    list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${GTK_INCLUDE_DIRS})
+    else()
       message(WARNING "Installation of the development files for the GTK library "
       "(e.g., libgtk-3-dev) is recommended when using the gnome desktop.")
-    endif (GTK_FOUND)
-  endif (OPTION_ALLOW_GTK_PLUGIN)
+    endif(GTK_FOUND)
+  endif(FLTK_USE_LIBDECOR_GTK)
 
-endif (OPTION_USE_WAYLAND)
+endif()
 
-if (OPTION_USE_XFT)
-  set (USE_XFT X11_Xft_FOUND)
-  list (APPEND FLTK_LDLIBS -lXft)
-  set (FLTK_XFT_FOUND TRUE)
-  if (APPLE AND OPTION_APPLE_X11)
+if(FLTK_USE_XFT)
+  set(USE_XFT X11_Xft_FOUND)
+  list(APPEND FLTK_LDLIBS -lXft)
+  set(FLTK_XFT_FOUND TRUE)
+  if(APPLE AND FLTK_BACKEND_X11)
     find_library(LIB_fontconfig fontconfig "/opt/X11/lib")
-  endif (APPLE AND OPTION_APPLE_X11)
+  endif()
 else()
-  set (FLTK_XFT_FOUND FALSE)
-endif (OPTION_USE_XFT)
+  set(FLTK_XFT_FOUND FALSE)
+endif(FLTK_USE_XFT)
 
 #######################################################################
-if (X11_Xrender_FOUND)
-  option (OPTION_USE_XRENDER "use lib Xrender" ON)
-endif (X11_Xrender_FOUND)
+if(X11_Xrender_FOUND)
+  option(FLTK_USE_XRENDER "use lib Xrender" ON)
+endif(X11_Xrender_FOUND)
 
-if (OPTION_USE_XRENDER)
-  set (HAVE_XRENDER ${X11_Xrender_FOUND})
-  if (HAVE_XRENDER)
-    include_directories (${X11_Xrender_INCLUDE_PATH})
-    list (APPEND FLTK_LDLIBS -lXrender)
-    set (FLTK_XRENDER_FOUND TRUE)
+if(FLTK_USE_XRENDER)
+  set(HAVE_XRENDER ${X11_Xrender_FOUND})
+  if(HAVE_XRENDER)
+    list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${X11_Xrender_INCLUDE_PATH})
+    list(APPEND FLTK_LDLIBS -lXrender)
+    set(FLTK_XRENDER_FOUND TRUE)
   else(HAVE_XRENDER)
-    set (FLTK_XRENDER_FOUND FALSE)
-  endif (HAVE_XRENDER)
-else(OPTION_USE_XRENDER)
-  set (FLTK_XRENDER_FOUND FALSE)
-endif (OPTION_USE_XRENDER)
+    set(FLTK_XRENDER_FOUND FALSE)
+  endif(HAVE_XRENDER)
+else(FLTK_USE_XRENDER)
+  set(FLTK_XRENDER_FOUND FALSE)
+endif(FLTK_USE_XRENDER)
 
 #######################################################################
-set (FL_NO_PRINT_SUPPORT FALSE)
-if (X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
-  set (FL_NO_PRINT_SUPPORT TRUE)
-endif (X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
-#######################################################################
-
-#######################################################################
-set (FL_CFG_NO_FILESYSTEM_SUPPORT TRUE)
-if (OPTION_FILESYSTEM_SUPPORT)
-  set (FL_CFG_NO_FILESYSTEM_SUPPORT FALSE)
-endif (OPTION_FILESYSTEM_SUPPORT)
+set(FL_NO_PRINT_SUPPORT FALSE)
+if(X11_FOUND AND NOT FLTK_OPTION_PRINT_SUPPORT)
+  set(FL_NO_PRINT_SUPPORT TRUE)
+endif(X11_FOUND AND NOT FLTK_OPTION_PRINT_SUPPORT)
 #######################################################################
 
 #######################################################################
-option (OPTION_USE_KDIALOG "Fl_Native_File_Chooser may run kdialog" ON)
-if (OPTION_USE_KDIALOG)
-  set (USE_KDIALOG 1)
-else ()
-  set (USE_KDIALOG 0)
-endif (OPTION_USE_KDIALOG)
+set(FL_CFG_NO_FILESYSTEM_SUPPORT TRUE)
+if(FLTK_OPTION_FILESYSTEM_SUPPORT)
+  set(FL_CFG_NO_FILESYSTEM_SUPPORT FALSE)
+endif(FLTK_OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
-option (CMAKE_SUPPRESS_REGENERATION "suppress rules to re-run CMake on rebuild" OFF)
-mark_as_advanced (CMAKE_SUPPRESS_REGENERATION)
+option(FLTK_USE_KDIALOG "Fl_Native_File_Chooser may run kdialog" ON)
+if(FLTK_USE_KDIALOG)
+  set(USE_KDIALOG 1)
+else()
+  set(USE_KDIALOG 0)
+endif()
+#######################################################################
+
+#######################################################################
+option(CMAKE_SUPPRESS_REGENERATION "suppress rules to re-run CMake on rebuild" OFF)
+mark_as_advanced(CMAKE_SUPPRESS_REGENERATION)
+
+#######################################################################
+# Clean up ...
+
+# *** FIXME *** Do we need all these variables ?
+
+list(REMOVE_DUPLICATES FLTK_BUILD_INCLUDE_DIRECTORIES)
+list(REMOVE_DUPLICATES FLTK_IMAGE_INCLUDE_DIRECTORIES)
+list(REMOVE_DUPLICATES FLTK_IMAGE_LIBRARIES)
 
 #######################################################################
 # Debugging ...
 
-if (DEBUG_OPTIONS_CMAKE)
-  message (STATUS "") # empty line
-  fl_debug_var (WIN32)
-  fl_debug_var (LIBS)
-  fl_debug_var (GLLIBS)
-  fl_debug_var (FLTK_LDLIBS)
-  fl_debug_var (OPENGL_FOUND)
-  fl_debug_var (OPENGL_INCLUDE_DIR)
-  fl_debug_var (OPENGL_LIBRARIES)
-  fl_debug_var (CMAKE_MSVC_RUNTIME_LIBRARY)
-  message ("--- bundled libraries ---")
-  fl_debug_var (OPTION_USE_SYSTEM_LIBJPEG)
-  fl_debug_var (OPTION_USE_SYSTEM_LIBPNG)
-  fl_debug_var (OPTION_USE_SYSTEM_ZLIB)
-  fl_debug_var (FLTK_USE_BUILTIN_JPEG)
-  fl_debug_var (FLTK_USE_BUILTIN_PNG)
-  fl_debug_var (FLTK_USE_BUILTIN_ZLIB)
-  message ("--- X11 ---")
-  fl_debug_var (X11_FOUND)
-  fl_debug_var (X11_INCLUDE_DIR)
-  fl_debug_var (X11_LIBRARIES)
-  fl_debug_var (X11_X11_LIB)
-  fl_debug_var (X11_X11_INCLUDE_PATH)
-  fl_debug_var (X11_Xft_INCLUDE_PATH)
-  fl_debug_var (X11_Xft_LIB)
-  fl_debug_var (X11_Xft_FOUND)
-  fl_debug_var (PATH_TO_XLIBS)
-  message (STATUS "[** end of options.cmake **]")
-endif (DEBUG_OPTIONS_CMAKE)
-unset (DEBUG_OPTIONS_CMAKE)
+if(DEBUG_OPTIONS_CMAKE)
+  message(STATUS "") # empty line
+  fl_debug_var(WIN32)
+  fl_debug_var(LIBS)
+  fl_debug_var(GLLIBS)
+  fl_debug_var(FLTK_LDLIBS)
+  fl_debug_var(OPENGL_FOUND)
+  fl_debug_var(OPENGL_INCLUDE_DIR)
+  fl_debug_var(OPENGL_LIBRARIES)
+  fl_debug_var(CMAKE_MSVC_RUNTIME_LIBRARY)
+  message("--- bundled libraries ---")
+  fl_debug_var(FLTK_USE_SYSTEM_LIBJPEG)
+  fl_debug_var(FLTK_USE_SYSTEM_LIBPNG)
+  fl_debug_var(FLTK_USE_SYSTEM_ZLIB)
+  fl_debug_var(FLTK_USE_BUNDLED_JPEG)
+  fl_debug_var(FLTK_USE_BUNDLED_PNG)
+  fl_debug_var(FLTK_USE_BUNDLED_ZLIB)
+
+  message(STATUS "--- *FIXME* include directories ---")
+  fl_debug_var(FLTK_BUILD_INCLUDE_DIRECTORIES)
+  fl_debug_var(FLTK_IMAGE_INCLUDE_DIRECTORIES)
+
+  message("--- X11 ---")
+  fl_debug_var(X11_FOUND)
+  fl_debug_var(X11_INCLUDE_DIR)
+  fl_debug_var(X11_LIBRARIES)
+  fl_debug_var(X11_X11_LIB)
+  fl_debug_var(X11_X11_INCLUDE_PATH)
+  fl_debug_var(X11_Xft_INCLUDE_PATH)
+  fl_debug_var(X11_Xft_LIB)
+  fl_debug_var(X11_Xft_FOUND)
+  fl_debug_var(PATH_TO_XLIBS)
+  message(STATUS "[** end of options.cmake **]")
+endif(DEBUG_OPTIONS_CMAKE)
+unset(DEBUG_OPTIONS_CMAKE)
