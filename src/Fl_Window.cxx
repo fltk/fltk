@@ -773,7 +773,7 @@ void Fl_Window::default_size_range() {
 
   // Clip the resizable() widget to the window
 
-  int L = r->x();
+  int L = (r == this ? 0 : r->x());
   int R = L + r->w();
   if (R < 0 || L > w()) R = L; // outside the window
   else {
@@ -782,7 +782,7 @@ void Fl_Window::default_size_range() {
   }
   int rw = R - L;
 
-  int T = r->y();
+  int T = (r == this ? 0 : r->y());
   int B = T + r->h();
   if (B < 0 || T > h()) B = T; // outside the window
   else {
