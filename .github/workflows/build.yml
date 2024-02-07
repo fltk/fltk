@@ -36,7 +36,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D FLTK_OPTION_USE_WAYLAND=OFF -D CMAKE_CXX_STANDARD=98 -D CMAKE_CXX_EXTENSIONS=OFF -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
+      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D FLTK_BACKEND_WAYLAND=OFF -D CMAKE_CXX_STANDARD=98 -D CMAKE_CXX_EXTENSIONS=OFF -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
 
     - name: Build
       working-directory: ${{github.workspace}}/build

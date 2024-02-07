@@ -39,7 +39,7 @@
 #
 #######################################################################
 
-function (fl_add_library LIBNAME LIBTYPE SOURCES)
+function(fl_add_library LIBNAME LIBTYPE SOURCES)
 
   # message(STATUS "Building library  **************** ${LIBNAME} ${LIBTYPE}")
 
@@ -82,7 +82,7 @@ function (fl_add_library LIBNAME LIBTYPE SOURCES)
   endif()
   set(alias_name "fltk::${alias_name}${suffix}")
 
-  add_library (${alias_name} ALIAS ${TARGET_NAME})
+  add_library(${alias_name} ALIAS ${TARGET_NAME})
 
   if(0)
     fl_debug_var(TARGET_NAME)
@@ -96,7 +96,7 @@ function (fl_add_library LIBNAME LIBTYPE SOURCES)
   # Set 'PRIVATE' target compile definitions for the library
   # so they are not inherited by consumers
 
-  target_compile_definitions (${TARGET_NAME} PRIVATE "FL_LIBRARY")
+  target_compile_definitions(${TARGET_NAME} PRIVATE "FL_LIBRARY")
 
   # Set PUBLIC include and linker directories
 
@@ -195,7 +195,7 @@ function (fl_add_library LIBNAME LIBTYPE SOURCES)
         OUTPUT_NAME_DEBUG   ${LIBNAME}_dlld
         OUTPUT_NAME_RELEASE ${LIBNAME}_dll
       )
-      target_compile_definitions (${TARGET_NAME} PRIVATE FL_DLL)
+      target_compile_definitions(${TARGET_NAME} PRIVATE FL_DLL)
     endif(MSVC)
   endif(LIBTYPE STREQUAL "SHARED")
 
@@ -203,11 +203,11 @@ function (fl_add_library LIBNAME LIBTYPE SOURCES)
   set(DEBUG_ONAME 0)
 
   if(DEBUG_ONAME)
-    get_target_property (XX_NAME          ${TARGET_NAME} NAME)
-    get_target_property (XX_ONAME         ${TARGET_NAME} OUTPUT_NAME)
-    get_target_property (XX_ONAME_DEBUG   ${TARGET_NAME} OUTPUT_NAME_DEBUG)
-    get_target_property (XX_ONAME_RELEASE ${TARGET_NAME} OUTPUT_NAME_RELEASE)
-    get_target_property (XX_EXPORT_NAME   ${TARGET_NAME} EXPORT_NAME)
+    get_target_property(XX_NAME          ${TARGET_NAME} NAME)
+    get_target_property(XX_ONAME         ${TARGET_NAME} OUTPUT_NAME)
+    get_target_property(XX_ONAME_DEBUG   ${TARGET_NAME} OUTPUT_NAME_DEBUG)
+    get_target_property(XX_ONAME_RELEASE ${TARGET_NAME} OUTPUT_NAME_RELEASE)
+    get_target_property(XX_EXPORT_NAME   ${TARGET_NAME} EXPORT_NAME)
 
     message(STATUS "--- DEBUG_ONAME ---")
     fl_debug_var(TARGET_NAME)
@@ -221,8 +221,8 @@ function (fl_add_library LIBNAME LIBTYPE SOURCES)
 
   if(MSVC)
     if(FLTK_OPTION_LARGE_FILE)
-      fl_debug_var(FLTK_OPTION_LARGE_FILE)
-      fl_debug_var(TARGET_NAME)
+      # fl_debug_var(FLTK_OPTION_LARGE_FILE)
+      # fl_debug_var(TARGET_NAME)
       set_target_properties(${TARGET_NAME} PROPERTIES
         LINK_FLAGS /LARGEADDRESSAWARE
       )
@@ -251,4 +251,4 @@ function (fl_add_library LIBNAME LIBTYPE SOURCES)
     message("")
   endif()
 
-endfunction (fl_add_library LIBNAME LIBTYPE SOURCES)
+endfunction(fl_add_library LIBNAME LIBTYPE SOURCES)
