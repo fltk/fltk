@@ -611,6 +611,7 @@ if(FLTK_BUILD_GL)
     set(OPENGL_FOUND TRUE)
     find_library(OPENGL_LIB GL)
     get_filename_component(PATH_TO_GLLIB ${OPENGL_LIB} DIRECTORY)
+    # FIXME: we should find a better way to resolve this issue:
     # with GL, must use XQuartz libX11 else "Insufficient GL support"
     set(OPENGL_LIBRARIES -L${PATH_TO_GLLIB} -lX11 -lGLU -lGL)
     unset(HAVE_GL_GLU_H CACHE)
@@ -627,6 +628,12 @@ else()
   set(HAVE_GL_GLU_H FALSE)
   set(HAVE_GLXGETPROCADDRESSARB FALSE)
 endif(FLTK_BUILD_GL)
+
+mark_as_advanced(OPENGL_LIB) # internal cache variable, not relevant for users
+
+# FIXME: the following is necessary because this variable may have been removed
+# from the cache above. It has been marked "advanced" before in resources.cmake.
+mark_as_advanced(HAVE_GL_GLU_H)
 
 if(OPENGL_FOUND)
   set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
