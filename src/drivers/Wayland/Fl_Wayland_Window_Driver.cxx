@@ -453,13 +453,15 @@ void Fl_Wayland_Window_Driver::hide() {
     Fl_Screen_Driver::del_transient_window(NULL);
   }
   Fl_X* ip = Fl_X::flx(pWindow);
+  if (!ip) return;
+  struct wld_window *wld_win = (struct wld_window*)ip->xid;
+  if (wld_win->custom_cursor) delete_cursor_();
   if (hide_common()) return;
   if (ip->region) {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
     ip->region = 0;
   }
   screen_num_ = -1;
-  struct wld_window *wld_win = (struct wld_window*)ip->xid;
   if (wld_win) { // this test makes sure ip->xid has not been destroyed already
     Fl_Wayland_Graphics_Driver::buffer_release(wld_win);
     if (wld_win->kind == SUBWINDOW && wld_win->subsurface) {
@@ -489,7 +491,6 @@ void Fl_Wayland_Window_Driver::hide() {
       destroy_surface_caution_pointer_focus(wld_win->wl_surface, scr_driver->seat);
       wld_win->wl_surface = NULL;
     }
-    if (wld_win->custom_cursor) delete_cursor_();
     while (!wl_list_empty(&wld_win->outputs)) { // remove from screens where it belongs
       struct surface_output *s_output;
       s_output = wl_container_of(wld_win->outputs.next, s_output, link);
