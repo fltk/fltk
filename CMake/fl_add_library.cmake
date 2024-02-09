@@ -161,6 +161,7 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
     if(FLTK_HAVE_CAIRO OR FLTK_USE_CAIRO)
       target_include_directories(${TARGET_NAME} PUBLIC ${PKG_CAIRO_INCLUDE_DIRS})
       target_link_directories(${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+      target_link_libraries(${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARIES})
     endif()
 
   endif(LIBNAME STREQUAL "fltk")

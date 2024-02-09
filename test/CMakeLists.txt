@@ -275,7 +275,11 @@ if(FLTK_BUILD_SHARED_LIBS)
       fl_create_example(shape-shared shape.cxx "${GLDEMO_SHARED}")
     endif(OPENGL_FOUND)
 
-    fl_create_example(cairo_test-shared cairo_test.cxx "fltk::fltk-shared;cairo")
+    if(FLTK_HAVE_CAIRO)
+      fl_create_example(cairo_test-shared cairo_test.cxx "fltk::fltk-shared;cairo")
+    else()
+      fl_create_example(cairo_test-shared cairo_test.cxx "fltk::fltk-shared")
+    endif()
 
   endif(MSVC) # (not MSVC)
 
