@@ -59,7 +59,6 @@ private:
   cairo_rectangle_int_t *subRect_;   // makes sure subwindow remains inside its parent window
   static bool in_flush_; // useful for progressive window drawing
   Fl_Cursor standard_cursor_; // window's standard custom kind
-  void delete_cursor_(bool delete_rgb = true);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
   bool is_popup_window_;
 public:
@@ -74,6 +73,12 @@ public:
     struct Fl_Wayland_Screen_Driver::output *output;
     struct wl_list link;
   };
+  struct custom_cursor {
+    struct wl_cursor *wl_cursor;
+    const Fl_RGB_Image *rgb;
+    int hotx, hoty;
+  };
+  static void delete_cursor(struct custom_cursor *custom, bool delete_rgb = true);
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
@@ -155,11 +160,8 @@ struct wld_window {
     struct xdg_popup *xdg_popup;
     struct xdg_toplevel *xdg_toplevel;
   };
-  struct custom_cursor_ {
-    struct wl_cursor *wl_cursor;
-    const Fl_RGB_Image *rgb;
-    int hotx, hoty;
-  } *custom_cursor; // non-null when using custom cursor
+  // non-null when using custom cursor
+  struct Fl_Wayland_Window_Driver::custom_cursor *custom_cursor;
   int configured_width;
   int configured_height;
   int floating_width;

@@ -72,31 +72,27 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
 }
 
 
-void Fl_Wayland_Window_Driver::delete_cursor_(bool delete_rgb) {
-  struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
-  struct wld_window::custom_cursor_ *custom = xid->custom_cursor;
-  if (custom) {
-    struct wl_cursor *wl_cursor = custom->wl_cursor;
-    struct cursor_image *new_image = (struct cursor_image*)wl_cursor->images[0];
-    struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen =
-    (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
-    wl_buffer_get_user_data(new_image->buffer);
-    struct wld_window fake_xid;
-    memset(&fake_xid, 0, sizeof(fake_xid));
-    fake_xid.buffer = offscreen;
-    Fl_Wayland_Graphics_Driver::buffer_release(&fake_xid);
-    free(new_image);
-    free(wl_cursor->images);
-    free(wl_cursor->name);
-    free(wl_cursor);
-    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    if (scr_driver->default_cursor() == wl_cursor) {
-      scr_driver->default_cursor(scr_driver->xc_arrow);
-    }
-    if (delete_rgb) delete custom->rgb;
-    delete custom;
-    xid->custom_cursor = NULL;
+void Fl_Wayland_Window_Driver::delete_cursor(
+      struct Fl_Wayland_Window_Driver::custom_cursor *custom, bool delete_rgb) {
+  struct wl_cursor *wl_cursor = custom->wl_cursor;
+  struct cursor_image *new_image = (struct cursor_image*)wl_cursor->images[0];
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen =
+  (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
+  wl_buffer_get_user_data(new_image->buffer);
+  struct wld_window fake_xid;
+  memset(&fake_xid, 0, sizeof(fake_xid));
+  fake_xid.buffer = offscreen;
+  Fl_Wayland_Graphics_Driver::buffer_release(&fake_xid);
+  free(new_image);
+  free(wl_cursor->images);
+  free(wl_cursor->name);
+  free(wl_cursor);
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (scr_driver->default_cursor() == wl_cursor) {
+    scr_driver->default_cursor(scr_driver->xc_arrow);
   }
+  if (delete_rgb) delete custom->rgb;
+  delete custom;
 }
 
 
@@ -453,15 +449,13 @@ void Fl_Wayland_Window_Driver::hide() {
     Fl_Screen_Driver::del_transient_window(NULL);
   }
   Fl_X* ip = Fl_X::flx(pWindow);
-  if (!ip) return;
-  struct wld_window *wld_win = (struct wld_window*)ip->xid;
-  if (wld_win->custom_cursor) delete_cursor_();
   if (hide_common()) return;
   if (ip->region) {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
     ip->region = 0;
   }
   screen_num_ = -1;
+  struct wld_window *wld_win = (struct wld_window*)ip->xid;
   if (wld_win) { // this test makes sure ip->xid has not been destroyed already
     Fl_Wayland_Graphics_Driver::buffer_release(wld_win);
     if (wld_win->kind == SUBWINDOW && wld_win->subsurface) {
@@ -486,6 +480,7 @@ void Fl_Wayland_Window_Driver::hide() {
         wld_win->xdg_surface = NULL;
       }
     }
+    if (wld_win->custom_cursor) delete_cursor(wld_win->custom_cursor);
     if (wld_win->wl_surface) {
       Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
       destroy_surface_caution_pointer_focus(wld_win->wl_surface, scr_driver->seat);
@@ -1679,7 +1674,10 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
     default:
       return 0;
   }
-  if (xid->custom_cursor) delete_cursor_();
+  if (xid->custom_cursor) {
+    delete_cursor(xid->custom_cursor);
+    xid->custom_cursor = NULL;
+  }
   standard_cursor_ = c;
   scr_driver->set_cursor();
   return 1;
@@ -1799,9 +1797,9 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   memcpy(offscreen->data, offscreen->draw_buffer.buffer, offscreen->draw_buffer.data_size);
   // delete the previous custom cursor, if there was one,
   // and keep its Fl_RGB_Image if appropriate
-  delete_cursor_(keep_copy);
+  if (xid->custom_cursor) delete_cursor(xid->custom_cursor, keep_copy);
   //have this new cursor used
-  xid->custom_cursor = new wld_window::custom_cursor_;
+  xid->custom_cursor = new custom_cursor;
   xid->custom_cursor->wl_cursor = new_cursor;
   xid->custom_cursor->rgb = rgb;
   xid->custom_cursor->hotx = hotx;
