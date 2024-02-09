@@ -1,7 +1,7 @@
 //
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
+#include <FL/platform.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
@@ -91,10 +91,7 @@ void button_cb(Fl_Widget *,void *) {
   fl_file_chooser_callback(file_cb);
   const char *fname = fl_file_chooser("Image file?","*.{bm,bmp,gif,ico,jpg,pbm,pgm,png,ppm,xbm,xpm"
 #ifdef FLTK_USE_SVG
-                                      ",svg"
-#ifdef HAVE_LIBZ
-                                      ",svgz"
-#endif // HAVE_LIBZ
+                                      ",svg,svgz"
 #endif // FLTK_USE_SVG
                                       "}", name);
   puts(fname ? fname : "(null)"); fflush(stdout);
