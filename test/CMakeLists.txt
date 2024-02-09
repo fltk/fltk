@@ -214,11 +214,11 @@ if(OPENGL_FOUND)
 endif(OPENGL_FOUND)
 
 # Cairo demo - must also be built w/o Cairo (displays a message box)
-# ### if(FLTK_HAVE_CAIRO)
-# ###   fl_create_example(cairo_test cairo_test.cxx "fltk;cairo")
-# ### else()
+if(FLTK_HAVE_CAIRO)
+  fl_create_example(cairo_test cairo_test.cxx "fltk::fltk;cairo")
+else()
   fl_create_example(cairo_test cairo_test.cxx fltk::fltk)
-# ### endif(FLTK_HAVE_CAIRO)
+endif(FLTK_HAVE_CAIRO)
 
 # *** EXPERIMENTAL ***
 # Build some of the demo programs linked against the shared FLTK lib(s).
