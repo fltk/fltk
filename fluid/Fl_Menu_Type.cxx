@@ -398,8 +398,8 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
     int s = ((Fl_Button*)o)->shortcut();
     f.write_c(", ");
     if (g_project.use_FL_COMMAND) {
-      if (s & FL_COMMAND) { f.write_c("FL_COMMAND|"); s &= ~FL_COMMAND; }
-      if (s & FL_CONTROL) { f.write_c("FL_CONTROL|"); s &= ~FL_CONTROL; }
+      if (s & FL_CTRL) { f.write_c("FL_CONTROL|"); s &= ~FL_CTRL; }
+      if (s & FL_META) { f.write_c("FL_COMMAND|"); s &= ~FL_META; }
     } else {
       if (s & FL_CTRL) { f.write_c("FL_CTRL|"); s &= ~FL_CTRL; }
       if (s & FL_META) { f.write_c("FL_META|"); s &= ~FL_META; }
