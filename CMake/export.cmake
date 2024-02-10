@@ -59,9 +59,22 @@ if(0) # Debug
   message(STATUS "##############################################################")
 endif()
 
+# set fltk-options export names (built or not, Windows)
+if(FLTK_BUILD_FLTK_OPTIONS)
+  set(FLTK_OPTIONS_EXPORT fltk-options)
+  if(WIN32)
+    list(APPEND FLTK_OPTIONS_EXPORT fltk-options-cmd)
+  endif()
+else()
+  set(FLTK_OPTIONS_EXPORT)
+endif()
+
 # generate FLTK-Targets.cmake for build directory use
 export(TARGETS
-          ${FLUID_EXPORT} ${FLTK_LIBRARIES}
+          ${FLTK_LIBRARIES}
+          ${FLTK_LIBRARIES_SHARED}
+          ${FLUID_EXPORT}
+          ${FLTK_OPTIONS_EXPORT}
        FILE
           ${CMAKE_CURRENT_BINARY_DIR}/FLTK-Targets.cmake
        NAMESPACE

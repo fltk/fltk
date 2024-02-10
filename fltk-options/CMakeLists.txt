@@ -45,6 +45,7 @@ else()
 endif()
 
 target_link_libraries(fltk-options PRIVATE fltk::fltk)
+set_target_properties(fltk-options PROPERTIES EXPORT_NAME options)
 
 # Add the console app (Windows only)
 # This is done for all Windows targets, even if cross-compiling.
@@ -53,6 +54,7 @@ if(WIN32)
   list(APPEND TARGETS fltk-options-cmd)
   add_executable(fltk-options-cmd fltk-options.cxx)
   target_link_libraries(fltk-options-cmd PRIVATE fltk::fltk)
+  set_target_properties(fltk-options-cmd PROPERTIES EXPORT_NAME options-cmd)
 endif()
 
 # Create aliases for all executables,
