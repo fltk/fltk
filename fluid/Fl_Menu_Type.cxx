@@ -396,14 +396,20 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
     f.write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
     int s = ((Fl_Button*)o)->shortcut();
-    if (g_project.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-      f.write_c(", ");
-      if (s & FL_COMMAND) f.write_c("FL_COMMAND|");
-      if (s & FL_CONTROL) f.write_c("FL_CONTROL|");
-      f.write_c("0x%x, ", s & ~(FL_CTRL|FL_META));
+    f.write_c(", ");
+    if (g_project.use_FL_COMMAND) {
+      if (s & FL_COMMAND) { f.write_c("FL_COMMAND|"); s &= ~FL_COMMAND; }
+      if (s & FL_CONTROL) { f.write_c("FL_CONTROL|"); s &= ~FL_CONTROL; }
     } else {
-      f.write_c(", 0x%x, ", s);
+      if (s & FL_CTRL) { f.write_c("FL_CTRL|"); s &= ~FL_CTRL; }
+      if (s & FL_META) { f.write_c("FL_META|"); s &= ~FL_META; }
     }
+    if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
+    if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
+    if ((s < 127) && isprint(s))
+      f.write_c("'%c', ", s);
+    else
+      f.write_c("0x%x, ", s);
   } else {
     f.write_c(", 0, ");
   }

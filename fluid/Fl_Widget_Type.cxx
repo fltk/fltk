@@ -3102,14 +3102,21 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
   else if (is_a(ID_Value_Input)) shortcut = ((Fl_Value_Input*)o)->shortcut();
   else if (is_a(ID_Text_Display)) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
-    if (g_project.use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
-      f.write_c("%s%s->shortcut(", f.indent(), var);
-      if (shortcut & FL_COMMAND) f.write_c("FL_COMMAND|");
-      if (shortcut & FL_CONTROL) f.write_c("FL_CONTROL|");
-      f.write_c("0x%x);\n", shortcut & ~(FL_CTRL|FL_META));
+    int s = shortcut;
+    f.write_c("%s%s->shortcut(", f.indent(), var);
+    if (g_project.use_FL_COMMAND) {
+      if (s & FL_COMMAND) { f.write_c("FL_COMMAND|"); s &= ~FL_COMMAND; }
+      if (s & FL_CONTROL) { f.write_c("FL_CONTROL|"); s &= ~FL_CONTROL; }
     } else {
-      f.write_c("%s%s->shortcut(0x%x);\n", f.indent(), var, shortcut);
+      if (s & FL_CTRL) { f.write_c("FL_CTRL|"); s &= ~FL_CTRL; }
+      if (s & FL_META) { f.write_c("FL_META|"); s &= ~FL_META; }
     }
+    if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
+    if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
+    if ((s < 127) && isprint(s))
+      f.write_c("'%c');\n", s);
+    else
+      f.write_c("0x%x);\n", s);
   }
 
   if (is_a(ID_Button)) {
