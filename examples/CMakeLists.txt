@@ -113,7 +113,7 @@ set(OPENGL_SOURCES
 ############################################################
 
 foreach(src ${SIMPLE_SOURCES})
-  fl_create_example(${src} ${src}.cxx fltk)
+  fl_create_example(${src} ${src}.cxx fltk::fltk)
 endforeach(src)
 
 ############################################################
@@ -121,7 +121,7 @@ endforeach(src)
 ############################################################
 
 foreach(src ${FLUID_SOURCES})
-  fl_create_example(${src} ${src}.fl fltk)
+  fl_create_example(${src} ${src}.fl fltk::fltk)
 endforeach(src)
 
 ############################################################
@@ -129,7 +129,7 @@ endforeach(src)
 ############################################################
 
 foreach(src ${IMAGE_SOURCES})
-  fl_create_example(${src} ${src}.cxx "fltk_images;fltk")
+  fl_create_example(${src} ${src}.cxx "fltk::images")
 endforeach(src)
 
 ############################################################
@@ -137,12 +137,9 @@ endforeach(src)
 ############################################################
 
 if(FLTK_HAVE_CAIRO)
-  set(cairo_libs "fltk;cairo")
-  if(TARGET fltk_cairo)
-    set(cairo_libs fltk_cairo ${cairo_libs})
-  endif()
+  set(cairo_libs "fltk::fltk;cairo")
 else()
-  set(cairo_libs "fltk")
+  set(cairo_libs "fltk::fltk")
 endif()
 
 foreach(src ${CAIRO_SOURCES})
@@ -159,15 +156,18 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   if(NOT LIB_GLEW)
     set(LIB_GLEW TRUE)
   endif()
-  set(REQUIRED_LIBS fltk_gl fltk ${OPENGL_LIBRARIES})
+  set(REQUIRED_LIBS fltk::gl)
 else()
-  set(REQUIRED_LIBS fltk_gl fltk ${LIB_GLEW} ${OPENGL_LIBRARIES})
+  set(REQUIRED_LIBS fltk::gl ${LIB_GLEW})
 endif()
 
 if(OPENGL_FOUND AND LIB_GLEW)
-  foreach(src ${OPENGL_SOURCES})
-    fl_create_example(${src} ${src}.cxx "${REQUIRED_LIBS}")
-  endforeach(src)
+  foreach(tgt ${OPENGL_SOURCES})
+    fl_create_example(${tgt} ${tgt}.cxx "${REQUIRED_LIBS}")
+    set_property(TARGET ${tgt} PROPERTY CXX_STANDARD 11)
+    set_property(TARGET ${tgt} PROPERTY CXX_STANDARD_REQUIRED TRUE)
+  endforeach(tgt)
+
 else()
   message(STATUS
     "OpenGL or libGLEW not present: OpenGL example programs will not be built.")
