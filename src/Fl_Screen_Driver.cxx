@@ -480,9 +480,18 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
 int Fl_Screen_Driver::scale_handler(int event)
 {
   if (!keyboard_screen_scaling) return 0;
-  if ( event != FL_SHORTCUT || (!Fl::event_command()) ) return 0;
-  int key = Fl::event_key() & ~(FL_SHIFT+FL_COMMAND);
-  if (key == '=' || key == '-' || key == '+' || key == '0' || key == 0xE0/* for '0' on Fr keyboard */) {
+  if ( event != FL_SHORTCUT || !Fl::event_command() ) return 0;
+  const char *key = Fl::event_text();
+  if (!key || !*key) {
+    static char ek;
+    ek = Fl::event_key() & ~(FL_SHIFT+FL_COMMAND);
+    key = &ek;
+  }
+  enum {none, zoom_in, zoom_out, zoom_reset} zoom = none;
+  if (key[0] == '0' || (strcmp(key, "à") == 0 /* for Fr keyboards*/)) zoom = zoom_reset;
+  else if (key[0] == '+' || key[0] == '=') zoom = zoom_in;
+  else if (key[0] == '-' || (key[0] == '6' /* for Fr keyboards*/)) zoom = zoom_out;
+  if (zoom != none) {
     int i, count;
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
     Fl_Widget *wid = Fl::focus();
@@ -509,7 +518,7 @@ int Fl_Screen_Driver::scale_handler(int event)
       2.0f, 2.4f, 3.0f};
 #endif
     float f, old_f = screen_dr->scale(screen)/initial_scale;
-    if (key == '0' || key == 0xE0) f = 1;
+    if (zoom == zoom_reset) f = 1;
     else {
       count = sizeof(scaling_values)/sizeof(float);
       for (i = 0; i < count; i++) {
@@ -517,7 +526,7 @@ int Fl_Screen_Driver::scale_handler(int event)
           break;
         }
       }
-      if (key == '-') i--; else i++;
+      if (zoom == zoom_out) i--; else i++;
       if (i < 0) i = 0;
       else if (i >= count) i = count - 1;
       f = scaling_values[i];
