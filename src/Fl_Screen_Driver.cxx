@@ -482,10 +482,11 @@ int Fl_Screen_Driver::scale_handler(int event)
   if (!keyboard_screen_scaling) return 0;
   if ( event != FL_SHORTCUT || !Fl::event_command() ) return 0;
   const char *key = Fl::event_text();
+  char ek[2] = "";
   if (!key || !*key) {
-    static char ek;
-    ek = Fl::event_key() & ~(FL_SHIFT+FL_COMMAND);
-    key = &ek;
+    ek[0] = (char)(Fl::event_key() & 0xff);
+    ek[1] = '\0';
+    key = (const char *)ek;
   }
   enum {none, zoom_in, zoom_out, zoom_reset} zoom = none;
   if (key[0] == '0' || (strcmp(key, "à") == 0 /* for Fr keyboards*/)) zoom = zoom_reset;
