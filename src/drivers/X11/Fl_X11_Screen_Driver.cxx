@@ -428,6 +428,9 @@ extern void fl_fix_focus(); // in Fl.cxx
 
 void Fl_X11_Screen_Driver::grab(Fl_Window* win)
 {
+  const char *p;
+  static bool using_kde = 
+    ( p = getenv("XDG_CURRENT_DESKTOP") , (p && (strcmp(p, "KDE") == 0)) );
   Fl_Window *fullscreen_win = NULL;
   for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
     if (W->fullscreen_active()) {
@@ -448,12 +451,14 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
                    None,
                    0,
                    fl_event_time);
-      XGrabKeyboard(fl_display,
-                    xid,
-                    1,
-                    GrabModeAsync,
-                    GrabModeAsync,
-                    fl_event_time);
+      if (!using_kde) { // grabbing tends to stick with KDE (#904)
+        XGrabKeyboard(fl_display,
+                      xid,
+                      1,
+                      GrabModeAsync,
+                      GrabModeAsync,
+                      fl_event_time);
+      }
     }
     Fl::grab_ = win;    // FIXME: Fl::grab_ "should be private", but we need
                         // a way to *set* the variable from the driver!
