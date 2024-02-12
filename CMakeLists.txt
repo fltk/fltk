@@ -57,6 +57,11 @@ if(0)
   fl_debug_var(CMAKE_VERSION)
 endif()
 
+# Set FLTK_VERSION in the cache so user projects can access it,
+# for instance if FLTK is built as a subproject (FetchContent)
+
+set(FLTK_VERSION ${FLTK_VERSION} CACHE STRING "FLTK version" FORCE)
+
 #######################################################################
 # basic setup
 #######################################################################
@@ -115,12 +120,21 @@ endif()
 add_subdirectory(src)
 
 #######################################################################
-# build fluid
+# build fluid (optional)
 #######################################################################
+
+set(FLTK_FLUID_EXECUTABLE "")
 
 if(FLTK_BUILD_FLUID)
   add_subdirectory(fluid)
 endif(FLTK_BUILD_FLUID)
+
+# Set FLTK_FLUID_EXECUTABLE in the cache for user projects.
+# This can be used if FLTK has been built as a subproject.
+
+set(FLTK_FLUID_EXECUTABLE
+    "${FLTK_FLUID_EXECUTABLE}" CACHE STRING
+    "FLTK's 'fluid' executable")
 
 #######################################################################
 # build fltk-options

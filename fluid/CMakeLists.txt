@@ -177,7 +177,12 @@ if(WIN32)
   list(APPEND TARGETS fluid-cmd)
   add_executable(fluid-cmd fluid.cxx)
   target_link_libraries(fluid-cmd PRIVATE fluid-lib)
+  set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
+else()
+  set(FLTK_FLUID_EXECUTABLE fltk::fluid)
 endif()
+
+set(FLTK_FLUID_EXECUTABLE "${FLTK_FLUID_EXECUTABLE}" PARENT_SCOPE)
 
 # Create aliases for all targets
 
