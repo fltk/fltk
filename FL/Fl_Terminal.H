@@ -658,30 +658,34 @@ private:
   // Class to manage mouse selection
   //
   class FL_EXPORT Selection {
+    Fl_Terminal *terminal_;
     int srow_, scol_, erow_, ecol_;     // selection start/end. NOTE: start *might* be > end
     int push_row_, push_col_;           // global row/col for last FL_PUSH
+    bool push_char_right_;
     Fl_Color selectionbgcolor_;
     Fl_Color selectionfgcolor_;
     int state_ ;                        // 0=none, 1=started, 2=extended, 3=done
     bool is_selection_;                 // false: no selection
   public:
-    Selection(void);
+    Selection(Fl_Terminal *terminal);
     int srow(void) const { return srow_; }
     int scol(void) const { return scol_; }
     int erow(void) const { return erow_; }
     int ecol(void) const { return ecol_; }
-    void push_clear() { push_row_ = push_col_ = -1; }
-    void push_rowcol(int row,int col) { push_row_ = row; push_col_ = col; }
-    void start_push() { start(push_row_, push_col_); }
-    bool dragged_off(int row,int col) { return (push_row_ != row) || (push_col_ != col); }
+    void push_clear() { push_row_ = push_col_ = -1; push_char_right_ = false; }
+    void push_rowcol(int row,int col,bool char_right) {
+      push_row_ = row; push_col_ = col; push_char_right_ = char_right; }
+    void start_push() { start(push_row_, push_col_, push_char_right_); }
+    bool dragged_off(int row,int col,bool char_right) {
+      return (push_row_ != row) || (push_col_+push_char_right_ != col+char_right); }
     void selectionfgcolor(Fl_Color val) { selectionfgcolor_ = val; }
     void selectionbgcolor(Fl_Color val) { selectionbgcolor_ = val; }
     Fl_Color selectionfgcolor(void) const { return selectionfgcolor_; }
     Fl_Color selectionbgcolor(void) const { return selectionbgcolor_; }
     bool is_selection(void) const { return is_selection_; }
     bool get_selection(int &srow,int &scol,int &erow,int &ecol) const; // guarantees return (start < end)
-    bool start(int row, int col);
-    bool extend(int row, int col);
+    bool start(int row, int col, bool char_right);
+    bool extend(int row, int col, bool char_right);
     void end(void);
     void select(int srow, int scol, int erow, int ecol);
     bool clear(void);
@@ -871,8 +875,8 @@ protected:
   const CharStyle& current_style(void) const;
   void current_style(const CharStyle& sty);
 private:
-  int  x_to_glob_col(int X, int grow, int &gcol) const;
-  int  xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol) const;
+  int  x_to_glob_col(int X, int grow, int &gcol, bool &gcr) const;
+  int  xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol, bool &gcr) const;
 protected:
   int  w_to_col(int W) const;
   int  h_to_row(int H) const;

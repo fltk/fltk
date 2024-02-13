@@ -133,7 +133,9 @@ static bool is_frame(Fl_Boxtype b) {
 ///////////////////////////////////////
 
 // Ctor
-Fl_Terminal::Selection::Selection(void) {
+Fl_Terminal::Selection::Selection(Fl_Terminal *terminal) 
+  : terminal_(terminal)
+{
   // These are used to set/get the mouse selection
   srow_ = scol_ = erow_ = ecol_ = 0;
   // FL_PUSH event row/col
@@ -168,7 +170,7 @@ bool Fl_Terminal::Selection::get_selection(int &srow,int &scol,
 // Start new selection at specified row,col
 //    Always returns true.
 //
-bool Fl_Terminal::Selection::start(int row, int col) {
+bool Fl_Terminal::Selection::start(int row, int col, bool char_right) {
   srow_ = erow_ = row;
   scol_ = ecol_ = col;
   state_ = 1;                                      // state: "started selection"
@@ -179,14 +181,42 @@ bool Fl_Terminal::Selection::start(int row, int col) {
 // Extend existing selection to row,col
 //     Returns true if anything changed, false if not.
 //
-bool Fl_Terminal::Selection::extend(int row, int col) {
+bool Fl_Terminal::Selection::extend(int row, int col, bool char_right) {
   // no selection started yet? start and return true
-  if (!is_selection()) return start(row, col);
+  int osrow = srow_, oerow = erow_, oscol = scol_, oecol = ecol_;
+  int oselection = is_selection_;
+  if (state_ == 0) return start(row, col, char_right);
   state_ = 2;                                      // state: "extending selection"
-  if (erow_ == row && ecol_ == col) return false;  // no change
+
+  if ((row==push_row_) && (col+char_right==push_col_+push_char_right_)) {
+    // we are in the box of the original push event
+    srow_ = erow_ = row;
+    scol_ = ecol_ = col;
+    is_selection_ = false;
+  } else if ((row>push_row_) || ((row==push_row_) && (col+char_right>push_col_+push_char_right_))) {
+    // extend to the right and down
+    scol_ = push_col_ + push_char_right_;
+    ecol_ = col - 1 + char_right;
+    is_selection_ = true;
+  } else {
+    // extend to the left and up
+    scol_ = push_col_ - 1 + push_char_right_;
+    ecol_ = col + char_right;
+    is_selection_ = true;
+  }
+
+  if (scol_<0) scol_ = 0;
+  if (ecol_<0) ecol_ = 0;
+  int maxCol = terminal_->ring_cols()-1;
+  if (scol_>maxCol) scol_ = maxCol;
+  if (ecol_>maxCol) ecol_ = maxCol;
+  srow_ = push_row_;
   erow_ = row;
-  ecol_ = col;
-  return true;
+
+  bool changed = (   (osrow != srow_) || (oerow != erow_)
+                  || (oscol != scol_) || (oecol != ecol_)
+                  || (oselection != is_selection_) );
+  return !changed;
 }
 
 // End selection (turn dragging() off)
@@ -1703,13 +1733,16 @@ uchar Fl_Terminal::textattrib() const {
     - 1 if 'gcol' was found
     - 0 if X not within any char in 'grow'
 */
-int Fl_Terminal::x_to_glob_col(int X, int grow, int &gcol) const {
-  int cx = x() + margin_.left();                    // char x position
+int Fl_Terminal::x_to_glob_col(int X, int grow, int &gcol, bool &gcr) const {
+  int cx = scrn_.x();                               // leftmost char x position
   const Utf8Char *u8c = utf8_char_at_glob(grow, 0);
   for (gcol=0; gcol<ring_cols(); gcol++,u8c++) {    // walk the cols looking for X
     u8c->fl_font_set(*current_style_);              // pwidth_int() needs fl_font set
     int cx2 = cx + u8c->pwidth_int();               // char x2 (right edge of char)
-    if (X >= cx && X < cx2) return 1;               // found? return with gcol set
+    if (X >= cx && X < cx2) {
+      gcr = (X > ((cx+cx2)/2));                     // X is in right half of character
+      return 1;                                     // found? return with gcol and gcr set
+    }
     cx += u8c->pwidth_int();                        // move cx to start x of next char
   }
   gcol = ring_cols()-1;                             // don't leave larger than #cols
@@ -1722,7 +1755,7 @@ int Fl_Terminal::x_to_glob_col(int X, int grow, int &gcol) const {
 //              0 -- not found, outside display's character area
 //    -1/-2/-3/-4 -- not found, off top/bot/lt/rt edge respectively
 //
-int Fl_Terminal::xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol) const {
+int Fl_Terminal::xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol, bool &gcr) const {
   // X,Y outside terminal area? early exit
   if (Y<scrn_.y()) return -1;                       // up (off top edge)
   if (Y>scrn_.b()) return -2;                       // dn (off bot edge)
@@ -1732,7 +1765,7 @@ int Fl_Terminal::xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol) const {
   int toprow = disp_srow() - scrollbar->value();
   // Find row the 'Y' value is in
   grow = toprow + ( (Y-scrn_.y()) / current_style_->fontheight());
-  return x_to_glob_col(X, grow, gcol);
+  return x_to_glob_col(X, grow, gcol, gcr);
 }
 
 /**
@@ -2036,9 +2069,10 @@ void Fl_Terminal::clear_mouse_selection(void) {
 */
 bool Fl_Terminal::selection_extend(int X,int Y) {
   if (is_selection()) {                  // selection already?
-    int grow,gcol;
-    if (xy_to_glob_rowcol(X, Y, grow, gcol) > 0) {
-      select_.extend(grow, gcol);        // extend it
+    int grow, gcol;
+    bool gcr;
+    if (xy_to_glob_rowcol(X, Y, grow, gcol, gcr) > 0) {
+      select_.extend(grow, gcol, gcr);        // extend it
       return true;
     } else {
       // TODO: If X,Y outside row/col area and SHIFT down,
@@ -3188,7 +3222,10 @@ void Fl_Terminal::redraw_timer_cb(void *udata) {
   \param[in] X,Y,W,H position and size.
   \param[in] L label string (optional), may be NULL.
 */
-Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L) : Fl_Group(X,Y,W,H,L) {
+Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L) 
+  : Fl_Group(X,Y,W,H,L),
+    select_(this)
+{
   bool fontsize_defer = false;
   init_(X,Y,W,H,L,-1,-1,100,fontsize_defer);
 }
@@ -3204,7 +3241,10 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L) : Fl_Group(X,Y,W,
   \note fluid uses this constructor internally to avoid font calculations that opens
   the display, useful for when running in a headless context. (issue 837)
 */
-Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist) : Fl_Group(X,Y,W,H,L) {
+Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist) 
+  : Fl_Group(X,Y,W,H,L),
+    select_(this)
+{
   bool fontsize_defer = true;
   init_(X,Y,W,H,L,rows,cols,hist,fontsize_defer);
 }
@@ -3538,12 +3578,13 @@ void Fl_Terminal::handle_selection_autoscroll(void) {
   Returns: 1 if 'handled', 0 if not.
 */
 int Fl_Terminal::handle_selection(int e) {
-  int grow=0,gcol=0;
-  bool is_rowcol = (xy_to_glob_rowcol(Fl::event_x(), Fl::event_y(), grow, gcol) > 0)
+  int grow=0, gcol=0;
+  bool gcr = false;
+  bool is_rowcol = (xy_to_glob_rowcol(Fl::event_x(), Fl::event_y(), grow, gcol, gcr) > 0)
                    ? true : false;
   switch (e) {
     case FL_PUSH: {
-      select_.push_rowcol(grow, gcol);
+      select_.push_rowcol(grow, gcol, gcr);
       // SHIFT-LEFT-CLICK? Extend or start new
       if (Fl::event_state(FL_SHIFT)) {
         if (is_selection()) {                           // extend if select in progress
@@ -3565,11 +3606,11 @@ int Fl_Terminal::handle_selection(int e) {
     case FL_DRAG: {
       if (is_rowcol) {
         if (!is_selection()) {                          // no selection yet?
-          if (select_.dragged_off(grow, gcol)) {        // dragged off FL_PUSH? enough to start
+          if (select_.dragged_off(grow, gcol, gcr)) {   // dragged off FL_PUSH? enough to start
             select_.start_push();                       // ..start drag with FL_PUSH position
           }
         } else {
-          if (select_.extend(grow, gcol)) redraw();     // redraw if selection changed
+          if (select_.extend(grow, gcol, gcr)) redraw(); // redraw if selection changed
         }
       }
       // If we leave scrn area, start timer to auto-scroll+select
