@@ -53,9 +53,6 @@ if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
   list(APPEND CMAKE_REQUIRED_INCLUDES /usr/local/include)
 endif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
 
-# fl_debug_var(CMAKE_HOST_SYSTEM_NAME)
-# fl_debug_var(CMAKE_REQUIRED_INCLUDES)
-
 fl_find_header(HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
 fl_find_header(HAVE_DLFCN_H dlfcn.h)
 fl_find_header(HAVE_GL_GLU_H GL/glu.h)
@@ -130,16 +127,6 @@ if(NOT HAVE_DIRENT_H)
     endif(NOT HAVE_SYS_DIR_H)
   endif(NOT HAVE_SYS_NDIR_H)
 endif(NOT HAVE_DIRENT_H)
-
-mark_as_advanced(HAVE_ALSA_ASOUNDLIB_H HAVE_DIRENT_H HAVE_DLFCN_H)
-mark_as_advanced(HAVE_GL_GLU_H)
-mark_as_advanced(HAVE_OPENGL_GLU_H)
-mark_as_advanced(HAVE_LOCALE_H HAVE_NDIR_H)
-mark_as_advanced(HAVE_PTHREAD_H HAVE_PTHREAD_MUTEX_RECURSIVE)
-mark_as_advanced(HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
-mark_as_advanced(HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
-mark_as_advanced(HAVE_SYS_STDTYPES_H)
-mark_as_advanced(HAVE_X11_XREGION_H)
 
 #----------------------------------------------------------------------
 # The following code is used to find the include path for freetype
