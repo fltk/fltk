@@ -3584,16 +3584,17 @@ int Fl_Terminal::handle_selection(int e) {
                    ? true : false;
   switch (e) {
     case FL_PUSH: {
-      select_.push_rowcol(grow, gcol, gcr);
       // SHIFT-LEFT-CLICK? Extend or start new
       if (Fl::event_state(FL_SHIFT)) {
         if (is_selection()) {                           // extend if select in progress
           selection_extend(Fl::event_x(), Fl::event_y());
+          redraw();
           return 1;                                     // express interest in FL_DRAG
         }
       } else {                                          // Start a new selection
+        select_.push_rowcol(grow, gcol, gcr);
         if (select_.clear()) redraw();                  // clear prev selection
-        if (is_rowcol) return 1;                        // express interest in FL_DRAG
+        if (is_rowcol > 0) return 1;                    // express interest in FL_DRAG
       }
       // Left-Click outside terminal area?
       if (!Fl::event_state(FL_SHIFT)) {
@@ -3618,7 +3619,6 @@ int Fl_Terminal::handle_selection(int e) {
       return 1;
     }
     case FL_RELEASE: {
-      select_.push_clear();
       select_.end();
       // middlemouse gets immediate copy of selection
       if (is_selection()) {
