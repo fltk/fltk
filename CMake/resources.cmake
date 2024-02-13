@@ -28,12 +28,12 @@ set(CMAKE_REQUIRED_QUIET 1)
 
 include(CheckIncludeFiles)
 
-macro (fl_find_header VAR HEADER)
+macro(fl_find_header VAR HEADER)
   check_include_files("${HEADER}" ${VAR})
   if(NOT CMAKE_REQUIRED_QUIET)
     fl_debug_var(${VAR})
   endif(NOT CMAKE_REQUIRED_QUIET)
-endmacro (fl_find_header)
+endmacro(fl_find_header)
 
 #######################################################################
 # Include FindPkgConfig for later use of pkg-config
@@ -56,23 +56,23 @@ endif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
 # fl_debug_var(CMAKE_HOST_SYSTEM_NAME)
 # fl_debug_var(CMAKE_REQUIRED_INCLUDES)
 
-fl_find_header (HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
-fl_find_header (HAVE_DLFCN_H dlfcn.h)
-fl_find_header (HAVE_GL_GLU_H GL/glu.h)
-fl_find_header (HAVE_LOCALE_H locale.h)
-fl_find_header (HAVE_OPENGL_GLU_H OpenGL/glu.h)
-fl_find_header (HAVE_STDIO_H stdio.h)
-fl_find_header (HAVE_STRINGS_H strings.h)
-fl_find_header (HAVE_SYS_SELECT_H sys/select.h)
-fl_find_header (HAVE_SYS_STDTYPES_H sys/stdtypes.h)
+fl_find_header(HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
+fl_find_header(HAVE_DLFCN_H dlfcn.h)
+fl_find_header(HAVE_GL_GLU_H GL/glu.h)
+fl_find_header(HAVE_LOCALE_H locale.h)
+fl_find_header(HAVE_OPENGL_GLU_H OpenGL/glu.h)
+fl_find_header(HAVE_STDIO_H stdio.h)
+fl_find_header(HAVE_STRINGS_H strings.h)
+fl_find_header(HAVE_SYS_SELECT_H sys/select.h)
+fl_find_header(HAVE_SYS_STDTYPES_H sys/stdtypes.h)
 
-fl_find_header (HAVE_X11_XREGION_H "X11/Xlib.h;X11/Xregion.h")
+fl_find_header(HAVE_X11_XREGION_H "X11/Xlib.h;X11/Xregion.h")
 
 if(WIN32 AND NOT CYGWIN)
   # we don't use pthreads on Windows (except for Cygwin, see options.cmake)
   set(HAVE_PTHREAD_H 0)
 else()
-  fl_find_header (HAVE_PTHREAD_H pthread.h)
+  fl_find_header(HAVE_PTHREAD_H pthread.h)
 endif(WIN32 AND NOT CYGWIN)
 
 # Do we have PTHREAD_MUTEX_RECURSIVE ?
@@ -119,27 +119,27 @@ endif(MSVC)
 # Note: we don't check if it really defines 'DIR', but we stop processing
 # once we found the first suitable header file.
 
-fl_find_header (HAVE_DIRENT_H dirent.h)
+fl_find_header(HAVE_DIRENT_H dirent.h)
 
 if(NOT HAVE_DIRENT_H)
-  fl_find_header (HAVE_SYS_NDIR_H sys/ndir.h)
+  fl_find_header(HAVE_SYS_NDIR_H sys/ndir.h)
   if(NOT HAVE_SYS_NDIR_H)
-    fl_find_header (HAVE_SYS_DIR_H sys/dir.h)
+    fl_find_header(HAVE_SYS_DIR_H sys/dir.h)
     if(NOT HAVE_SYS_DIR_H)
-      fl_find_header (HAVE_NDIR_H ndir.h)
+      fl_find_header(HAVE_NDIR_H ndir.h)
     endif(NOT HAVE_SYS_DIR_H)
   endif(NOT HAVE_SYS_NDIR_H)
 endif(NOT HAVE_DIRENT_H)
 
-mark_as_advanced (HAVE_ALSA_ASOUNDLIB_H HAVE_DIRENT_H HAVE_DLFCN_H)
-mark_as_advanced (HAVE_GL_GLU_H)
-mark_as_advanced (HAVE_OPENGL_GLU_H)
-mark_as_advanced (HAVE_LOCALE_H HAVE_NDIR_H)
-mark_as_advanced (HAVE_PTHREAD_H HAVE_PTHREAD_MUTEX_RECURSIVE)
-mark_as_advanced (HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
-mark_as_advanced (HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
-mark_as_advanced (HAVE_SYS_STDTYPES_H)
-mark_as_advanced (HAVE_X11_XREGION_H)
+mark_as_advanced(HAVE_ALSA_ASOUNDLIB_H HAVE_DIRENT_H HAVE_DLFCN_H)
+mark_as_advanced(HAVE_GL_GLU_H)
+mark_as_advanced(HAVE_OPENGL_GLU_H)
+mark_as_advanced(HAVE_LOCALE_H HAVE_NDIR_H)
+mark_as_advanced(HAVE_PTHREAD_H HAVE_PTHREAD_MUTEX_RECURSIVE)
+mark_as_advanced(HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
+mark_as_advanced(HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
+mark_as_advanced(HAVE_SYS_STDTYPES_H)
+mark_as_advanced(HAVE_X11_XREGION_H)
 
 #----------------------------------------------------------------------
 # The following code is used to find the include path for freetype
@@ -147,32 +147,32 @@ mark_as_advanced (HAVE_X11_XREGION_H)
 
 # where to find freetype headers
 
-find_path (FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
-find_path (FREETYPE_PATH freetype/freetype.h PATH_SUFFIXES freetype2)
+find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
+find_path(FREETYPE_PATH freetype/freetype.h PATH_SUFFIXES freetype2)
 
 if(FREETYPE_PATH)
   list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${FREETYPE_PATH})
 endif(FREETYPE_PATH)
 
-mark_as_advanced (FREETYPE_PATH)
+mark_as_advanced(FREETYPE_PATH)
 
 #######################################################################
 # libraries
-find_library (LIB_dl dl)
+find_library(LIB_dl dl)
 if((NOT APPLE) OR FLTK_BACKEND_X11)
-  find_library (LIB_fontconfig fontconfig)
+  find_library(LIB_fontconfig fontconfig)
 endif((NOT APPLE) OR FLTK_BACKEND_X11)
-find_library (LIB_freetype freetype)
-find_library (LIB_GL GL)
-find_library (LIB_MesaGL MesaGL)
-find_library (LIB_GLEW NAMES GLEW glew32)
-find_library (LIB_jpeg jpeg)
-find_library (LIB_png png)
-find_library (LIB_zlib z)
+find_library(LIB_freetype freetype)
+find_library(LIB_GL GL)
+find_library(LIB_MesaGL MesaGL)
+find_library(LIB_GLEW NAMES GLEW glew32)
+find_library(LIB_jpeg jpeg)
+find_library(LIB_png png)
+find_library(LIB_zlib z)
 
-mark_as_advanced (LIB_dl LIB_fontconfig LIB_freetype)
-mark_as_advanced (LIB_GL LIB_MesaGL LIB_GLEW)
-mark_as_advanced (LIB_jpeg LIB_png LIB_zlib)
+mark_as_advanced(LIB_dl LIB_fontconfig LIB_freetype)
+mark_as_advanced(LIB_GL LIB_MesaGL LIB_GLEW)
+mark_as_advanced(LIB_jpeg LIB_png LIB_zlib)
 
 #######################################################################
 # functions
@@ -232,7 +232,7 @@ if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
       set(HAVE_SCANDIR_POSIX HAVE_SCANDIR_POSIX-NOTFOUND)
    endif(V)
 endif(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
-mark_as_advanced (HAVE_SCANDIR_POSIX)
+mark_as_advanced(HAVE_SCANDIR_POSIX)
 
 # restore CMAKE_REQUIRED_LIBRARIES (is this really necessary ?)
 if(DEFINED SAVED_REQUIRED_LIBRARIES)

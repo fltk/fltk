@@ -144,7 +144,6 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
       target_include_directories(${TARGET_NAME} PRIVATE
         $<BUILD_INTERFACE:${FLTK_BUILD_INCLUDE_DIRECTORIES}>
       )
-      fl_debug_target(${TARGET_NAME})
 
     endif()
 
@@ -160,8 +159,8 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
     # we must link fltk with cairo if Cairo or Wayland is enabled (or both)
     if(FLTK_HAVE_CAIRO OR FLTK_USE_CAIRO)
       target_include_directories(${TARGET_NAME} PUBLIC ${PKG_CAIRO_INCLUDE_DIRS})
-      target_link_directories(${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
-      target_link_libraries(${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARIES})
+      target_link_directories   (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+      target_link_libraries     (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARIES})
     endif()
 
   endif(LIBNAME STREQUAL "fltk")
@@ -222,8 +221,6 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
 
   if(MSVC)
     if(FLTK_OPTION_LARGE_FILE)
-      # fl_debug_var(FLTK_OPTION_LARGE_FILE)
-      # fl_debug_var(TARGET_NAME)
       set_target_properties(${TARGET_NAME} PROPERTIES
         LINK_FLAGS /LARGEADDRESSAWARE
       )

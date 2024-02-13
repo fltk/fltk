@@ -35,7 +35,7 @@
 #
 #######################################################################
 
-function (fl_expand_name out in min_len)
+function(fl_expand_name out in min_len)
   string(LENGTH "${in}" len)
   if(len LESS min_len)
     set(spaces "                         ")
@@ -44,7 +44,7 @@ function (fl_expand_name out in min_len)
     string(SUBSTRING "${temp}" 0 ${min_len} temp)
     set(${out} "${temp}" PARENT_SCOPE)
   endif()
-endfunction (fl_expand_name)
+endfunction(fl_expand_name)
 
 #######################################################################
 # fl_debug_var - a function to output debugging info
@@ -64,11 +64,11 @@ endfunction (fl_expand_name)
 #
 #######################################################################
 
-function (fl_debug_var name)
+function(fl_debug_var name)
   set(var "${name}")
   fl_expand_name(var "${name}" 40)
   message(STATUS "${var} = '${${name}}'")
-endfunction (fl_debug_var)
+endfunction(fl_debug_var)
 
 
 #######################################################################
@@ -90,8 +90,8 @@ endfunction (fl_debug_var)
 #
 #######################################################################
 
-function (fl_debug_target name)
-  message(STATUS "+++ fl_debug_target (${name})")
+function(fl_debug_target name)
+  message(STATUS "+++ fl_debug_target(${name})")
   set(var "${name}")
   fl_expand_name(var "${name}" 40)
   if(TARGET ${name})
@@ -101,7 +101,7 @@ function (fl_debug_target name)
               INTERFACE_INCLUDE_DIRECTORIES
               INTERFACE_LINK_DIRECTORIES
               INTERFACE_LINK_LIBRARIES)
-      get_target_property (${prop} ${name} ${prop})
+      get_target_property(${prop} ${name} ${prop})
       if(NOT ${prop})
         set(${prop} "")
       endif()
@@ -112,4 +112,4 @@ function (fl_debug_target name)
   endif()
   message(STATUS "")
 
-endfunction (fl_debug_target)
+endfunction(fl_debug_target)

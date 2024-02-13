@@ -28,7 +28,7 @@
 # Example for package "cairo":
 #
 #  pkg_check_modules (CAIRO cairo)
-#  fl_debug_pkg (CAIRO cairo)
+#  fl_debug_pkg(CAIRO cairo)
 #
 # The first command searches for pkg 'cairo' and stores the results
 # in CMake variables with prefix 'CAIRO_'.
@@ -38,7 +38,7 @@
 #
 #######################################################################
 
-macro (fl_debug_pkg PREFIX NAME)
+macro(fl_debug_pkg PREFIX NAME)
   message("")
   message(STATUS "Results of pkg_check_modules(${PREFIX}, ${NAME}):")
   fl_debug_var(${PREFIX}_FOUND)
@@ -66,4 +66,4 @@ macro (fl_debug_pkg PREFIX NAME)
 
   endif()
   message("")
-endmacro (fl_debug_pkg)
+endmacro(fl_debug_pkg)

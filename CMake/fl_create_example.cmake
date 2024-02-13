@@ -47,7 +47,7 @@
 #
 ################################################################################
 
-function (fl_create_example NAME SOURCES LIBRARIES)
+function(fl_create_example NAME SOURCES LIBRARIES)
 
   set(srcs)                    # source files
   set(flsrcs)                  # fluid source (.fl) files
@@ -184,4 +184,4 @@ function (fl_create_example NAME SOURCES LIBRARIES)
     )
   endif()
 
-endfunction ()
+endfunction()

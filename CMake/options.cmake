@@ -590,7 +590,7 @@ set(FLTK_USE_GL FALSE)
 
 if(HAVE_GL)
   option(FLTK_BUILD_GL "use OpenGL and build fltk_gl library" ON)
-  if (FLTK_BUILD_GL)
+  if(FLTK_BUILD_GL)
     set(FLTK_USE_GL TRUE)
   endif()
 endif()
