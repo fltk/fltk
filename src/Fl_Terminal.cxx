@@ -3397,10 +3397,13 @@ void Fl_Terminal::scrollbar_size(int val) {
 
   If the bg color for a character is the special "see through" color 0xffffffff,
   no pixels are drawn.
+
+ \param[in] grow row number
+ \param[in] X, Y top left corner of the row in FLTK coordinates
 */
 void Fl_Terminal::draw_row_bg(int grow, int X, int Y) const {
   int bg_h = current_style_->fontheight();
-  int bg_y = Y - current_style_->fontheight() + current_style_->fontdescent();
+  int bg_y = Y;
   Fl_Color bg_col;
   int pwidth          = 9;
   const Utf8Char *u8c = u8c_ring_row(grow);               // start of spec'd row
@@ -3429,6 +3432,9 @@ void Fl_Terminal::draw_row_bg(int grow, int X, int Y) const {
 /**
   Draw the specified global row, which is the row in ring_chars[].
   The global row includes history + display buffers.
+
+ \param[in] grow row number
+ \param[in] Y top position of characters in the row in FLTK coordinates
 */
 void Fl_Terminal::draw_row(int grow, int Y) const {
   // Draw background color spans, if any
@@ -3436,12 +3442,13 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   draw_row_bg(grow, X, Y);
 
   // Draw forground text
+  int  baseline = Y + current_style_->fontheight() - current_style_->fontdescent();
   int  scrollval = scrollbar->value();
   int  disp_top = (disp_srow() - scrollval);              // top row we need to view
   int  drow = grow - disp_top;                            // disp row
   bool inside_display = is_disp_ring_row(grow);           // row inside 'display'?
-  int  strikeout_y = Y - (current_style_->fontheight() / 3);
-  int  underline_y = Y;
+  int  strikeout_y = baseline - (current_style_->fontheight() / 4);
+  int  underline_y = baseline + (current_style_->fontheight() / 5);
   const Utf8Char *u8c = u8c_ring_row(grow);
   uchar lastattr = -1;
   bool  is_cursor;
@@ -3459,7 +3466,7 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
     // DRAW CURSOR BLOCK - TODO: support other cursor types?
     if (is_cursor) {
       int cx = X;
-      int cy = Y - cursor_.h() + current_style_->fontdescent();
+      int cy = Y + current_style_->fontheight() - cursor_.h();
       int cw = pwidth;
       int ch = cursor_.h();
       fl_color(cursorbgcolor());
@@ -3481,7 +3488,7 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
       lastattr = -1;                              // (ensure font reset on next iter)
     }
     // 3) Draw text for UTF-8 char. No need to draw spaces
-    if (!u8c->is_char(' ')) fl_draw(u8c->text_utf8(), u8c->length(), X, Y);
+    if (!u8c->is_char(' ')) fl_draw(u8c->text_utf8(), u8c->length(), X, baseline);
     // 4) Strike or underline?
     if (u8c->attrib() & Fl_Terminal::UNDERLINE) fl_line(X, underline_y, X+pwidth, underline_y);
     if (u8c->attrib() & Fl_Terminal::STRIKEOUT) fl_line(X, strikeout_y, X+pwidth, strikeout_y);
@@ -3498,14 +3505,16 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   depends on what position the scrollbar is set to.
 
   Handles attributes, colors, text selections, cursor.
+
+ \param[in] Y top position of top left character in the window in FLTK coordinates
 */
 void Fl_Terminal::draw_buff(int Y) const {
   int srow = disp_srow() - scrollbar->value();
   int erow = srow + disp_rows();
   const int rowheight = current_style_->fontheight();
   for (int grow=srow; (grow<erow) && (Y<scrn_.b()); grow++) {
-    Y += rowheight;             // advance Y to bottom left corner of row
     draw_row(grow, Y);          // draw global row at Y
+    Y += rowheight;             // advance Y to bottom left corner of row
   }
 }
 
@@ -3552,7 +3561,11 @@ void Fl_Terminal::draw(void) {
   This is used by the constructor to size the row/cols to fit the widget size.
 */
 int Fl_Terminal::w_to_col(int W) const {
+#if 0
   return int((float(W) / current_style_->charwidth()) + 0.0);    // +.5 overshoots
+#else
+  return W / current_style_->charwidth();
+#endif
 }
 
 /**
@@ -3560,7 +3573,11 @@ int Fl_Terminal::w_to_col(int W) const {
   This is used by the constructor to size the row/cols to fit the widget size.
 */
 int Fl_Terminal::h_to_row(int H) const {
-  return int((float(H) / current_style_->fontheight()) + -0.5);  // +.5 overshoots
+#if 0
+  return int((float(H) / current_style_->fontheight()) + -0.0);  // +.5 overshoots
+#else
+  return H / current_style_->fontheight();
+#endif
 }
 
 /**
