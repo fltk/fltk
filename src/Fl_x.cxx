@@ -1254,10 +1254,10 @@ int fl_handle(const XEvent& thisevent)
     d->init_workarea();
 #if USE_XFT
     float old_scales[Fl::screen_count()];
-    for (auto i = 0; i < Fl::screen_count(); i++) old_scales[i] = d->scale(i);
+    for (int i = 0; i < Fl::screen_count(); i++) old_scales[i] = d->scale(i);
     d->use_startup_scale_factor();
-    for (auto i = 0; i < Fl::screen_count(); i++) {
-      auto new_scale = d->scale(i);
+    for (int i = 0; i < Fl::screen_count(); i++) {
+      float new_scale = d->scale(i);
       if (old_scales[i] - new_scale < 0.01) continue;
       d->scale(i, old_scales[i]);
       d->rescale_all_windows_from_screen(i, new_scale);
