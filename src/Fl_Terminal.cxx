@@ -3564,11 +3564,7 @@ void Fl_Terminal::draw(void) {
   This is used by the constructor to size the row/cols to fit the widget size.
 */
 int Fl_Terminal::w_to_col(int W) const {
-#if 0
-  return int((float(W) / current_style_->charwidth()) + 0.0);    // +.5 overshoots
-#else
   return W / current_style_->charwidth();
-#endif
 }
 
 /**
@@ -3576,11 +3572,7 @@ int Fl_Terminal::w_to_col(int W) const {
   This is used by the constructor to size the row/cols to fit the widget size.
 */
 int Fl_Terminal::h_to_row(int H) const {
-#if 0
-  return int((float(H) / current_style_->fontheight()) + -0.0);  // +.5 overshoots
-#else
   return H / current_style_->fontheight();
-#endif
 }
 
 /**
