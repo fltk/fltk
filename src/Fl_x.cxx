@@ -38,6 +38,7 @@
 #  include <FL/filename.H>
 #  include <stdio.h>
 #  include <stdlib.h>
+#  include <cmath>
 #  include "flstring.h"
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
@@ -1258,7 +1259,7 @@ int fl_handle(const XEvent& thisevent)
     d->use_startup_scale_factor();
     for (int i = 0; i < Fl::screen_count(); i++) {
       float new_scale = d->scale(i);
-      if (old_scales[i] - new_scale < 0.01) continue;
+      if (fabs(old_scales[i] - new_scale) < 0.01) continue;
       d->scale(i, old_scales[i]);
       d->rescale_all_windows_from_screen(i, new_scale);
     }
