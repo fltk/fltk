@@ -899,6 +899,8 @@ protected:
   const char* selection_text(void) const;
   void clear_mouse_selection(void);
   bool selection_extend(int X,int Y);
+  void select_word(int grow, int gcol);
+  void select_line(int grow);
   void scroll(int rows);
   void insert_rows(int count);
   void delete_rows(int count);

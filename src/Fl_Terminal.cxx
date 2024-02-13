@@ -2083,6 +2083,36 @@ bool Fl_Terminal::selection_extend(int X,int Y) {
 }
 
 /**
+ Select the word around the given row and colum.
+ */
+void Fl_Terminal::select_word(int grow, int gcol) {
+  int i, c0, c1;
+  int r = grow, c = gcol;
+  Utf8Char *row = u8c_ring_row(r);
+  int n = ring_cols();
+  if (c >= n) return;
+  if (row[c].text_utf8()[0]==' ') {
+    for (i=c; i>0; i--) if (row[i-1].text_utf8()[0]!=' ') break;
+    c0 = i;
+    for (i=c; i<n-2; i++) if (row[i+1].text_utf8()[0]!=' ') break;
+    c1 = i;
+  } else {
+    for (i=c; i>0; i--) if (row[i-1].text_utf8()[0]==' ') break;
+    c0 = i;
+    for (i=c; i<n-2; i++) if (row[i+1].text_utf8()[0]==' ') break;
+    c1 = i;
+  }
+  select_.select(r, c0, r, c1);
+}
+
+/**
+ Select the entire row.
+ */
+void Fl_Terminal::select_line(int grow) {
+  select_.select(grow, 0, grow, ring_cols()-1);
+}
+
+/**
   Scroll the display up(+) or down(-) the specified \p rows.
 
   - Negative value scrolls "down", clearing top line, and history unaffected.
@@ -3594,7 +3624,13 @@ int Fl_Terminal::handle_selection(int e) {
       } else {                                          // Start a new selection
         select_.push_rowcol(grow, gcol, gcr);
         if (select_.clear()) redraw();                  // clear prev selection
-        if (is_rowcol > 0) return 1;                    // express interest in FL_DRAG
+        if (is_rowcol > 0) {
+          switch (Fl::event_clicks()) {
+            case 1: select_word(grow, gcol); break;
+            case 2: select_line(grow); break;
+          }
+          return 1;                    // express interest in FL_DRAG
+        }
       }
       // Left-Click outside terminal area?
       if (!Fl::event_state(FL_SHIFT)) {
