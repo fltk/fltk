@@ -3447,8 +3447,11 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   int  disp_top = (disp_srow() - scrollval);              // top row we need to view
   int  drow = grow - disp_top;                            // disp row
   bool inside_display = is_disp_ring_row(grow);           // row inside 'display'?
-  int  strikeout_y = baseline - (current_style_->fontheight() / 4);
-  int  underline_y = baseline + (current_style_->fontheight() / 5);
+// This looks better on macOS, but too low for X. Maybe we can get better results using fl_text_extents()?
+//  int  strikeout_y = baseline - (current_style_->fontheight() / 4);
+//  int  underline_y = baseline + (current_style_->fontheight() / 5);
+  int  strikeout_y = baseline - (current_style_->fontheight() / 3);
+  int  underline_y = baseline;
   const Utf8Char *u8c = u8c_ring_row(grow);
   uchar lastattr = -1;
   bool  is_cursor;
