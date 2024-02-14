@@ -76,8 +76,6 @@ set(export_targets
     ${FLUID_EXPORT}
     ${FLTK_OPTIONS_EXPORT}
 )
-message(STATUS "export.cmake: exporting targets...")
-fl_debug_var(export_targets)
 export(TARGETS
           ${export_targets}
        FILE
