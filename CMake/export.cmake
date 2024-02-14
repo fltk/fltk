@@ -70,11 +70,16 @@ else()
 endif()
 
 # generate FLTK-Targets.cmake for build directory use
+set(export_targets
+    ${FLTK_LIBRARIES}
+    ${FLTK_LIBRARIES_SHARED}
+    ${FLUID_EXPORT}
+    ${FLTK_OPTIONS_EXPORT}
+)
+message(STATUS "export.cmake: exporting targets...")
+fl_debug_var(export_targets)
 export(TARGETS
-          ${FLTK_LIBRARIES}
-          ${FLTK_LIBRARIES_SHARED}
-          ${FLUID_EXPORT}
-          ${FLTK_OPTIONS_EXPORT}
+          ${export_targets}
        FILE
           ${CMAKE_CURRENT_BINARY_DIR}/FLTK-Targets.cmake
        NAMESPACE

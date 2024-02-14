@@ -194,40 +194,34 @@ endforeach()
 
 if(APPLE AND NOT FLTK_BACKEND_X11)
 
-  # On macOS, Fluid must be installed twice. The bundled version of Fluid needs
-  # to go into the /Applications folder to make it visible as a user App with
-  # full GUI. The binary without bundle should go into ${FLTK_BINDIR}, usually
-  # /usr/local/bin, so it will be picked up as a command line tool by
-  # the build process of other apps.
-  # On macOS the command line tool is the same target ('fluid') as the one
-  # included in the bundle.
+  # On macOS, fluid will be installed twice:
+  # - The bundled version of Fluid goes into the destination folder ${FLTK_BINDIR}.
+  # - The binary without bundle goes into ${FLTK_BINDIR} as well.
+  # The command line tool is the same executable as the one included in the bundle.
+  # Note:
+  #   Both the bundle and the commandline tool are currently installed side by side.
+  #   This may be changed in the future.
 
-  # create bundle
+  # Set bundle properties
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fluid.plist")
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fluid PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.fluid")
 
-  # The line below would wrongly install /Applications/fluid.icns
-  # ## set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
-
-  # install fluid GUI and commandline tools
-  # install(TARGETS fluid DESTINATION "/Applications")
-
-  # install command line tool
-  install(PROGRAMS $<TARGET_FILE:fluid> DESTINATION ${FLTK_BINDIR})
-
-else()
-
-  # install Fluid GUI and optional commandline tool 'fluid-cmd' (only on Windows)
-
-  install(TARGETS ${TARGETS}
-    EXPORT FLTK-Targets
-    RUNTIME DESTINATION ${FLTK_BINDIR}
-    LIBRARY DESTINATION ${FLTK_LIBDIR}
-    ARCHIVE DESTINATION ${FLTK_LIBDIR}
-  )
+  # Install command line tool
+  install(PROGRAMS $<TARGET_FILE:fluid>
+          DESTINATION ${FLTK_BINDIR})
 
 endif(APPLE AND NOT FLTK_BACKEND_X11)
+
+# Install the GUI and (on Windows only) the commandline tool 'fluid-cmd'
+
+install(TARGETS ${TARGETS}
+        EXPORT  FLTK-Targets
+        RUNTIME DESTINATION ${FLTK_BINDIR}
+        LIBRARY DESTINATION ${FLTK_LIBDIR}
+        ARCHIVE DESTINATION ${FLTK_LIBDIR}
+        BUNDLE  DESTINATION ${FLTK_BINDIR} # macOS: bundles
+)
 
 # Install desktop files
 

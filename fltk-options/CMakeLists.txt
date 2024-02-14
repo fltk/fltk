@@ -70,42 +70,35 @@ endforeach()
 
 if(APPLE AND NOT FLTK_BACKEND_X11)
 
-  # On macOS, fltk-options must be installed twice. The bundled version of
-  # fltk-options needs to go into the /Applications folder to make it visible
-  # as a user App with full GUI.
-  # The binary without bundle should go into ${FLTK_BINDIR}, usually
-  # /usr/local/bin, so it will be picked up as a command line tool by
-  # the build process of other apps.
-  # On macOS the command line tool is the same target ('fltk-options') as the
-  # one included in the bundle.
+  # On macOS, fltk-options will be installed twice:
+  # - The bundled version goes into the destination folder ${FLTK_BINDIR}.
+  # - The binary without bundle goes into ${FLTK_BINDIR} as well.
+  # These folders are relative to the install prefix, usually 'bin'.
+  # The command line tool is the same executable as the one included in the bundle.
+  # Note:
+  #   Both the bundle and the commandline tool are currently installed side by side.
+  #   This may be changed in the future.
 
-  # create bundle
+  # set bundle properties
   set_target_properties(fltk-options PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fltk-options.plist")
   set_target_properties(fltk-options PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fltk-options PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.fltk-options")
 
-  # The line below would wrongly install /Applications/fltk-options.icns
-  # ## set_target_properties(fltk-options PROPERTIES RESOURCE ${ICON_PATH})
-
-  # install fltk-options GUI and commandline tools
-  # install(TARGETS fltk-options DESTINATION "/Applications")
-
   # install command line tool
-  install(PROGRAMS $<TARGET_FILE:fltk-options> DESTINATION ${FLTK_BINDIR})
-
-else()
-
-  # install fltk-options GUI and optional commandline tool 'fltk-options-cmd'
-  # (only on Windows)
-
-  install(TARGETS ${TARGETS}
-    EXPORT FLTK-Targets
-    RUNTIME DESTINATION ${FLTK_BINDIR}
-    LIBRARY DESTINATION ${FLTK_LIBDIR}
-    ARCHIVE DESTINATION ${FLTK_LIBDIR}
-  )
+  install(PROGRAMS $<TARGET_FILE:fltk-options>
+          DESTINATION ${FLTK_BINDIR})
 
 endif(APPLE AND NOT FLTK_BACKEND_X11)
+
+# Install the GUI and (on Windows only) the commandline tool 'fltk-options-cmd'
+
+install(TARGETS ${TARGETS}
+        EXPORT  FLTK-Targets
+        RUNTIME DESTINATION ${FLTK_BINDIR}
+        LIBRARY DESTINATION ${FLTK_LIBDIR}
+        ARCHIVE DESTINATION ${FLTK_LIBDIR}
+        BUNDLE  DESTINATION ${FLTK_BINDIR} # macOS: bundles
+)
 
 # Install desktop files
 
