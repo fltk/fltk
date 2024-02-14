@@ -345,6 +345,8 @@ if(UNIX)
           set(USE_SYSTEM_LIBDECOR 0)
         endif()
       endif(NOT SYSTEM_LIBDECOR_FOUND)
+    else()
+      set(USE_SYSTEM_LIBDECOR 0)
     endif(FLTK_USE_SYSTEM_LIBDECOR)
 
     if(USE_SYSTEM_LIBDECOR)
