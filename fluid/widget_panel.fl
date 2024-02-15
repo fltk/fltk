@@ -376,7 +376,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           }
           Fl_Button {} {
             label {Browse...}
-            callback image_browse_cb selected
+            callback image_browse_cb
             tooltip {Click to choose the active image.} xywh {295 65 89 20} labelsize 11 align 256
           }
           Fl_Button {} {
@@ -445,124 +445,124 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           }
           Fl_Choice {} {
             callback align_text_image_cb open
-            xywh {172 115 110 20} down_box BORDER_BOX labelsize 11 textsize 11
+            xywh {172 115 116 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Image Alignment   }
               user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {145 145 100 20} labelfont 2 labelsize 11 deactivate
+              xywh {145 145 100 20} labelfont 2 labelsize 10 deactivate
             }
             MenuItem {} {
               label {image over text}
               user_data {(fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT}
-              xywh {25 25 100 20} labelsize 11
+              xywh {25 25 100 20} labelsize 9
             }
             MenuItem {} {
               label {text over image}
               user_data {(fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE}
-              xywh {15 15 100 20} labelsize 11
+              xywh {15 15 100 20} labelsize 9
             }
             MenuItem {} {
               label {text next to image}
               user_data {(fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE}
-              xywh {35 35 100 20} labelsize 11
+              xywh {35 35 100 20} labelsize 9
             }
             MenuItem {} {
               label {image next to text}
               user_data {(fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT}
-              xywh {45 45 100 20} labelsize 11
+              xywh {45 45 100 20} labelsize 9
             }
             MenuItem {} {
               label {image is backdrop}
               user_data {(fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP}
-              xywh {55 55 100 20} labelsize 11
+              xywh {55 55 100 20} labelsize 9
             }
           }
           Fl_Choice {} {
             callback align_position_cb open
-            xywh {288 115 85 20} down_box BORDER_BOX labelsize 11 textsize 11
+            xywh {293 115 86 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Inside && Outside   }
               user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {135 135 100 20} labelfont 2 labelsize 11 deactivate
+              xywh {135 135 100 20} labelfont 2 labelsize 10 deactivate
             }
             MenuItem {} {
               label {top left}
               user_data {(fl_intptr_t)FL_ALIGN_TOP_LEFT}
-              xywh {45 45 100 20} labelsize 11
+              xywh {45 45 100 20} labelsize 9
             }
             MenuItem {} {
               label top
               user_data {(fl_intptr_t)FL_ALIGN_TOP}
-              xywh {55 55 100 20} labelsize 11
+              xywh {55 55 100 20} labelsize 9
             }
             MenuItem {} {
               label {top right}
               user_data {(fl_intptr_t)FL_ALIGN_TOP_RIGHT}
-              xywh {65 65 100 20} labelsize 11
+              xywh {65 65 100 20} labelsize 9
             }
             MenuItem {} {
               label left
               user_data {(fl_intptr_t)FL_ALIGN_LEFT}
-              xywh {75 75 100 20} labelsize 11
+              xywh {75 75 100 20} labelsize 9
             }
             MenuItem {} {
               label center
               user_data {(fl_intptr_t)FL_ALIGN_CENTER}
-              xywh {35 35 100 20} labelsize 11
+              xywh {35 35 100 20} labelsize 9
             }
             MenuItem {} {
               label right
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT}
-              xywh {85 85 100 20} labelsize 11
+              xywh {85 85 100 20} labelsize 9
             }
             MenuItem {} {
               label {bottom left}
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_LEFT}
-              xywh {95 95 100 20} labelsize 11
+              xywh {95 95 100 20} labelsize 9
             }
             MenuItem {} {
               label bottom
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM}
-              xywh {105 105 100 20} labelsize 11
+              xywh {105 105 100 20} labelsize 9
             }
             MenuItem {} {
               label {bottom right}
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT}
-              xywh {115 115 100 20} labelsize 11
+              xywh {115 115 100 20} labelsize 9
             }
             MenuItem {} {
               label {   Outside Alignment   }
               user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {125 125 100 20} labelfont 2 labelsize 11 deactivate
+              xywh {125 125 100 20} labelfont 2 labelsize 10 deactivate
             }
             MenuItem {} {
               label {left top}
               user_data {(fl_intptr_t)FL_ALIGN_LEFT_TOP}
-              xywh {135 135 100 20} labelsize 11
+              xywh {135 135 100 20} labelsize 9
             }
             MenuItem {} {
               label {right top}
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT_TOP}
-              xywh {145 145 100 20} labelsize 11
+              xywh {145 145 100 20} labelsize 9
             }
             MenuItem {} {
               label {left bottom}
               user_data {(fl_intptr_t)FL_ALIGN_LEFT_BOTTOM}
-              xywh {155 155 100 20} labelsize 11
+              xywh {155 155 100 20} labelsize 9
             }
             MenuItem {} {
               label {right bottom}
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM}
-              xywh {45 45 100 20} labelsize 11
+              xywh {45 45 100 20} labelsize 9
             }
           }
           Fl_Button {} {
             label {@-3square}
             user_data {(fl_intptr_t)FL_ALIGN_INSIDE}
-            callback align_cb
-            tooltip {Show the label inside the widget.} xywh {378 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
+            callback align_cb selected
+            tooltip {Show the label inside the widget.} xywh {384 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
           }
           Fl_Box {} {
             xywh {404 115 0 20} labelsize 11 resizable
@@ -1829,12 +1829,12 @@ if (v == LOAD) {
       Fl_Button wLiveMode {
         label {Live &Resize}
         callback live_mode_cb
-        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 11
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
       Fl_Button overlay_button {
         label {Hide &Overlays}
         callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 11
+        tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
       Fl_Box {} {
         comment {Hidden resizable box}

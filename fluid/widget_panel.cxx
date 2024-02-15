@@ -424,31 +424,31 @@ static void cb_(Fl_Button*, void* v) {
 Fl_Input *widget_deimage_input=(Fl_Input *)0;
 
 Fl_Menu_Item menu_[] = {
- {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
- {"image over text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"text over image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"text next to image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"image next to text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"image is backdrop", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+ {"image over text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"text over image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"text next to image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"image next to text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"image is backdrop", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
 Fl_Menu_Item menu_1[] = {
- {"   Inside && Outside   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
- {"top left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"top right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"center", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
- {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"left bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"right bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"   Inside && Outside   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+ {"top left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"top right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"center", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+ {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"left bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+ {"right bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -1094,21 +1094,21 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM));
             o->hide();
           } // Fl_Button* o
-          { Fl_Choice* o = new Fl_Choice(172, 115, 110, 20);
+          { Fl_Choice* o = new Fl_Choice(172, 115, 116, 20);
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->textsize(11);
             o->callback((Fl_Callback*)align_text_image_cb);
             o->menu(menu_);
           } // Fl_Choice* o
-          { Fl_Choice* o = new Fl_Choice(288, 115, 85, 20);
+          { Fl_Choice* o = new Fl_Choice(293, 115, 86, 20);
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->textsize(11);
             o->callback((Fl_Callback*)align_position_cb);
             o->menu(menu_1);
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(378, 115, 20, 20, "@-3square");
+          { Fl_Button* o = new Fl_Button(384, 115, 20, 20, "@-3square");
             o->tooltip("Show the label inside the widget.");
             o->type(1);
             o->selection_color(FL_INACTIVE_COLOR);
@@ -2379,12 +2379,12 @@ access the Widget pointer and \'v\' to access the user value.");
         wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh\
 avior.");
         wLiveMode->type(1);
-        wLiveMode->labelsize(11);
+        wLiveMode->labelsize(10);
         wLiveMode->callback((Fl_Callback*)live_mode_cb);
       } // Fl_Button* wLiveMode
       { overlay_button = new Fl_Button(94, 370, 80, 20, "Hide &Overlays");
         overlay_button->tooltip("Hide the widget overlay box.");
-        overlay_button->labelsize(11);
+        overlay_button->labelsize(10);
         overlay_button->callback((Fl_Callback*)overlay_cb);
       } // Fl_Button* overlay_button
       { // Hidden resizable box
