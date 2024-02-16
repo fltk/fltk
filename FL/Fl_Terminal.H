@@ -439,6 +439,8 @@ protected:
     void bgcolor(int r,int g,int b)     { bgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_charflag(BG_XTERM); }
     void fgcolor(Fl_Color val)          { fgcolor_ = val;                        clr_charflag(FG_XTERM); }
     void bgcolor(Fl_Color val)          { bgcolor_ = val;                        clr_charflag(BG_XTERM); }
+    void fgcolor_xterm(Fl_Color val)    { fgcolor_ = val;                        set_charflag(FG_XTERM); }
+    void bgcolor_xterm(Fl_Color val)    { bgcolor_ = val;                        set_charflag(BG_XTERM); }
     void defaultfgcolor(Fl_Color val)   { defaultfgcolor_ = val; }
     void defaultbgcolor(Fl_Color val)   { defaultbgcolor_ = val; }
     void fontface(Fl_Font val)          { fontface_ = val; update(); }
@@ -448,8 +450,10 @@ protected:
     // SGR MODES: Set Graphics Rendition
     void sgr_reset(void) {                         // e.g. ESC[0m
       attrib(Fl_Terminal::NORMAL);
-      fgcolor(defaultfgcolor_);
-      bgcolor(defaultbgcolor_);
+      if (charflags() & FG_XTERM) fgcolor_xterm(defaultfgcolor_);
+      else                        fgcolor(defaultfgcolor_);
+      if (charflags() & BG_XTERM) bgcolor_xterm(defaultbgcolor_);
+      else                        bgcolor(defaultbgcolor_);
     }
     int  onoff(bool flag, Attrib a) { return (flag ? (attrib_ | a) : (attrib_ & ~a)); }
     void sgr_bold(bool val)      { attrib_ = onoff(val, Fl_Terminal::BOLD);      } // e.g. ESC[1m
@@ -868,7 +872,7 @@ private:
 
   // Screen management
 protected:
-  const CharStyle& current_style(void) const;
+  CharStyle& current_style(void) const;
   void current_style(const CharStyle& sty);
 private:
   int  x_to_glob_col(int X, int grow, int &gcol) const;

@@ -1430,8 +1430,8 @@ void Fl_Terminal::display_columns(int dcols) {
   update_screen(false);                       // false: no font change ?NEED?
 }
 
-/** Return current style for rendering text. */
-const Fl_Terminal::CharStyle& Fl_Terminal::current_style(void) const {
+/** Return reference to internal current style for rendering text. */
+Fl_Terminal::CharStyle& Fl_Terminal::current_style(void) const {
   return *current_style_;
 }
 
@@ -1542,6 +1542,7 @@ void Fl_Terminal::textsize(Fl_Fontsize val) {
 */
 void Fl_Terminal::textfgcolor_xterm(uchar val) {
   current_style_->fgcolor(fltk_fg_color(val));
+  current_style_->set_charflag(FG_XTERM);
 }
 
 /**
@@ -1574,6 +1575,7 @@ void Fl_Terminal::textfgcolor_xterm(uchar val) {
 */
 void Fl_Terminal::textbgcolor_xterm(uchar val) {
   current_style_->bgcolor(fltk_bg_color(val));
+  current_style_->set_charflag(BG_XTERM);
 }
 
 /**
@@ -1581,6 +1583,11 @@ void Fl_Terminal::textbgcolor_xterm(uchar val) {
 
   This is a convenience method that sets *both* textfgcolor() and textfgcolor_default(),
   ensuring both are set to the same value.
+
+  Colors set this way will NOT be influenced by the xterm Dim/Bold color intensity attributes.
+  For that, use textcolor_xterm() instead.
+
+  \see textfgcolor(Fl_Color), textfgcolor_default(Fl_Color), textbgcolor_xterm(uchar)
 */
 void Fl_Terminal::textcolor(Fl_Color val) {
   textfgcolor(val);
@@ -1609,6 +1616,9 @@ void Fl_Terminal::color(Fl_Color val) {
   Set text foreground drawing color to fltk color \p val used by any new text added.
   Use this for temporary color changes, similar to \<ESC\>[38;2;\<R\>;\<G\>;\<B\>m
 
+  Colors set this way will NOT be influenced by the xterm Dim/Bold color intensity
+  attributes.  For that, use textfgcolor_xterm(uchar) instead.
+
   This setting does _not_ affect the 'default' text colors used by \<ESC\>[0m,
   \<ESC\>c, reset_terminal(), etc. To change both the current _and_
   default fg color, also use textfgcolor_default(Fl_Color). Example:
@@ -1619,15 +1629,19 @@ void Fl_Terminal::color(Fl_Color val) {
      tty->textfgcolor(amber);         // set 'current' fg color
      tty->textfgcolor_default(amber); // set 'default' fg color used by ESC[0m reset
   \endcode
-  \see textfgcolor_default(Fl_Color)
+  \see textfgcolor_default(Fl_Color), textfgcolor_xterm(uchar)
 */
 void Fl_Terminal::textfgcolor(Fl_Color val) {
   current_style_->fgcolor(val);
+  current_style_->clr_charflag(FG_XTERM);
 }
 
 /**
   Set text background color to fltk color \p val used by any new text added.
   Use this for temporary color changes, similar to \<ESC\>[48;2;\<R\>;\<G\>;\<B\>m
+
+  Colors set this way will NOT be influenced by the xterm Dim/Bold color intensity
+  attributes.  For that, use textbgcolor_xterm(uchar) instead.
 
   This setting does _not_ affect the 'default' text colors used by \<ESC\>[0m,
   \<ESC\>c, reset_terminal(), etc. To set that too, also set textbgcolor_default(Fl_Color), e.g.
@@ -1643,10 +1657,11 @@ void Fl_Terminal::textfgcolor(Fl_Color val) {
   the widget's own Fl_Group::color() show through behind the text. This special text background
   color is the _default_, and is what most situations need.
 
-  \see textbgcolor_default(Fl_Color)
+  \see textbgcolor_default(Fl_Color), textbgcolor_xterm(uchar)
 */
 void Fl_Terminal::textbgcolor(Fl_Color val) {
   current_style_->bgcolor(val);
+  current_style_->clr_charflag(BG_XTERM);
 }
 
 /**
