@@ -97,13 +97,13 @@ class MyTerminal {
   decl {bool interactivecursor;} {private local
   }
   Function {MyTerminal(int X,int Y,int W,int H, const char *L=0):Fl_Terminal(X,Y,W,H,L)} {
-    comment CTOR open
+    comment CTOR
   } {
     code {ring_debug_win = 0;
 debug_tty = 0;
 interactivecursor = false;} {}
   }
-  Function {show_ring_debug_window()} {open return_type void
+  Function {show_ring_debug_window()} {return_type void
   } {
     code {// Show the internal ring debug window
 if (!ring_debug_win) {
@@ -121,7 +121,7 @@ ring_debug_win->show();
 Fl::add_timeout(.5, ring_debug_timer_callback, (void*)this);} {}
   }
   Function {interactive_cursor(bool val)} {
-    comment {Enable/disable interactive cursor movement in test app} open return_type void
+    comment {Enable/disable interactive cursor movement in test app} return_type void
   } {
     code {interactivecursor = val;} {}
   }
@@ -156,7 +156,7 @@ debug_tty->append("\\033[s"); // save cursor
 debug_tty->printf("\\033[%dC \\033[7m   Ring Index   \\033[0m\\n", x);
 debug_tty->printf("\\033[%dC   ring_rows(): %-3d  Mouse Selection (srow,scol,erow,ecol)\\n", x, ring_rows());
 debug_tty->printf("\\033[%dC   ring_cols(): %-3d            \\033[7m(%d,%d,%d,%d)\\033[0m\\n", x, ring_cols(), m1,m2,m3,m4);
-debug_tty->printf("\\033[%dC      offset(): %-3d\\n", x, offset());
+debug_tty->printf("\\033[%dC      offset(): %-3d  currentstyle->charflags=%02x\\n", x, offset(), (unsigned int)current_style().charflags()); // charflags(): show XTERM flags if any
 debug_tty->printf("\\033[%dC ", x);
 horiz_bracket(disp_cols());
 debug_tty->printf("\\033[u"); // recall cursor
@@ -403,22 +403,53 @@ return 1;           // hit end of test, reset} {}
 return 1;  // tell parent to move to next test} {}
   }
   Function {test_esc_attr(bool reset)} {
-    comment {--- 0010: Test attributes} return_type {static int}
+    comment {--- 0010: Test attributes} open return_type {static int}
   } {
     code {static int index = 0;
 const char *test[] = {
   // Screen 10
   "\\033[H\\033[2J" "ESC TEST 0010: Attributes\\n",
-  "  \\033[0;2m Some Dim text    \\033[0m   \\033[0m Normal text        \\033[0m  \\033[0;1m Some Bold text   \\033[0m\\n"
-  "  \\033[2;3m Dim italic text  \\033[0m   \\033[3m Normal italic      \\033[0m  \\033[1;3m Bold italic text \\033[0m\\n"
-  "  \\033[2;4m Dim underline    \\033[0m   \\033[4m Normal underline   \\033[0m  \\033[1;4m Bold underline   \\033[0m\\n"
-  "  \\033[2;5m Dim blinking     \\033[0m   \\033[5m Normal blinking    \\033[0m  \\033[1;5m Bold blinking    \\033[0m\\n"
-  "  \\033[2;7m Dim inverse  [█] \\033[0m   \\033[7m Normal inverse [█] \\033[0m  \\033[1;7m Bold inverse [█] \\033[0m\\n"
-  "  \\033[2;9m Dim strikeout    \\033[0m   \\033[9m Normal strikeout   \\033[0m  \\033[1;9m Bold strikeout   \\033[0m\\n"
+  "  \\033[0;2m Some Dim text [█]\\033[0m   \\033[0m Normal text      [█]\\033[0m  \\033[0;1m Some Bold text [█]\\033[0m\\n"
+  "  \\033[2;3m Dim italic    [█]\\033[0m   \\033[3m Normal italic    [█]\\033[0m  \\033[1;3m Bold italic    [█]\\033[0m\\n"
+  "  \\033[2;4m Dim underline [█]\\033[0m   \\033[4m Normal underline [█]\\033[0m  \\033[1;4m Bold underline [█]\\033[0m\\n"
+  "  \\033[2;5m Dim blinking  [█]\\033[0m   \\033[5m Normal blinking  [█]\\033[0m  \\033[1;5m Bold blinking  [█]\\033[0m\\n"
+  "  \\033[2;7m Dim inverse   [█]\\033[0m   \\033[7m Normal inverse   [█]\\033[0m  \\033[1;7m Bold inverse   [█]\\033[0m\\n"
+  "  \\033[2;9m Dim strikeout [█]\\033[0m   \\033[9m Normal strikeout [█]\\033[0m  \\033[1;9m Bold strikeout [█]\\033[0m\\n"
+  "\\n"
+  "Xterm Colors With Attributes\\n"
+  "  \\033[2;3m(Dim+Bold attributes should affect brightness of all xterm colors)\033[0m\\n"
+  "  \\033[2;30m Dim Blk(30)   [█]\\033[0m   \\033[30m Normal Blk(30)   [█]\\033[0m  \\033[1;30m Bold Blk(30)   [█]\\033[0m\\n"
+  "  \\033[2;31m Dim Red(31)   [█]\\033[0m   \\033[31m Normal Red(31)   [█]\\033[0m  \\033[1;31m Bold Red(31)   [█]\\033[0m\\n"
+  "  \\033[2;32m Dim Grn(32)   [█]\\033[0m   \\033[32m Normal Grn(32)   [█]\\033[0m  \\033[1;32m Bold Grn(32)   [█]\\033[0m\\n"
+  "  \\033[2;33m Dim Yel(33)   [█]\\033[0m   \\033[33m Normal Yel(33)   [█]\\033[0m  \\033[1;33m Bold Yel(33)   [█]\\033[0m\\n"
+  "  \\033[2;34m Dim Blu(34)   [█]\\033[0m   \\033[34m Normal Blu(34)   [█]\\033[0m  \\033[1;34m Bold Blu(34)   [█]\\033[0m\\n"
+  "  \\033[2;35m Dim Mag(35)   [█]\\033[0m   \\033[35m Normal Mag(35)   [█]\\033[0m  \\033[1;35m Bold Mag(35)   [█]\\033[0m\\n"
+  "  \\033[2;36m Dim Cyn(36)   [█]\\033[0m   \\033[36m Normal Cyn(36)   [█]\\033[0m  \\033[1;36m Bold Cyn(36)   [█]\\033[0m\\n"
+  "  \\033[2;37m Dim ---(37)   [█]\\033[0m   \\033[37m Normal ---(37)   [█]\\033[0m  \\033[1;37m Bold ---(37)   [█]\\033[0m\\n"
+  "  \\033[2;38m Dim ---(38)   [█]\\033[0m   \\033[38m Normal ---(38)   [█]\\033[0m  \\033[1;38m Bold ---(38)   [█]\\033[0m\\n"
+  "  \\033[2;39m Dim Def(39)   [█]\\033[0m   \\033[39m Normal Def(39)   [█]\\033[0m  \\033[1;39m Bold Def(39)   [█]\\033[0m\\n"
+  "\\n"
+  "Xterm Fg/Bg Colors With Attributes\\n"
+  // walk fg colors 30..36, bg reset (49+0)
+  "  Fg Bold:\\033[1;49;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m "
+           " \\033[00;1;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m\\n"
+  "  Fg Norm:\\033[0;49;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m "
+           " \\033[00;0;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m\\n"
+  "  Fg  Dim:\\033[2;49;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m "
+           " \\033[00;2;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m\\n"
+  "\\n"
+  // walk bg colors 40..46, fg reset (39+0)
+  "  Bg Bold:\\033[1;39;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m "
+           " \\033[00;1;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m\\n"
+  "  Bg Norm:\\033[0;39;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m "
+           " \\033[00;0;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m\\n"
+  "  Bg  Dim:\\033[2;39;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m "
+           " \\033[00;2;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m\\n"
   "\\n",
   "---> Hit 'e' for next test: ",
   NULL
 };
+
 if (reset) { index = 0; return 0; }
 return show_test(test, index);} {}
   }
@@ -1258,8 +1289,7 @@ for (int i=0; i<50; i++ ) {
   Fl::wait(0.005);
 }
 // leave test with white on black
-G_tty->textfgcolor(0xd0d0d000);
-G_tty->textbgcolor(0xffffffff); // special see thru color
+G_tty->append("\\033[c");                           // reset terminal
 // back to rate limited
 G_tty->redraw_style(Fl_Terminal::RATE_LIMITED);
 // Show the Unicode alignment page
@@ -1274,6 +1304,7 @@ if (G_tty->cursor_col()!=0) G_tty->append("\\n");
 
 Fl_Color fgsave = G_tty->textfgcolor();
 Fl_Color bgsave = G_tty->textbgcolor();
+
 // ECR-1-1978
 //                      grey       yellow      cyan         green      magenta      red         blue
 Fl_Color bars1[] = { 0xc0c0c000, 0xbfc03700, 0x2ac0bf00, 0x25c03300, 0xbe00bb00, 0xbd051800, 0x1600ba00 };
@@ -1322,7 +1353,8 @@ G_tty->append("\\033[2J\\033[H");
 }
 // Restore fg/bg colors
 G_tty->textfgcolor(fgsave);
-G_tty->textbgcolor(bgsave);} {}
+G_tty->textbgcolor(bgsave);
+} {}
   }
   Function {unicode_alignment()} {
     comment {Show unicode alignment test
@@ -1473,6 +1505,8 @@ switch ( G_tty->box() ) {
   sprintf(s, "\#%08x", G_tty->textbgcolor_default());  textbgcolor_default_input->value(s);
 }
 
+// TODO: current_style().charflags()
+
 // cursorfg/bg color
 {
   char s[80];
@@ -1520,8 +1554,8 @@ G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
   } {
     Fl_Window win {
       label {Fl_Terminal Test}
-      callback {exit(0);} open selected
-      xywh {938 64 897 838} type Double size_range {897 330 0 0} visible
+      callback {exit(0);} open
+      xywh {1022 64 897 838} type Double size_range {897 330 0 0} visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1660,17 +1694,17 @@ G_tty->redraw();}
       }
       Fl_Check_Button outflags_lf_to_crlf {
         label LF_TO_CRLF
-        callback {handle_output_translate();} selected
+        callback {handle_output_translate();}
         tooltip {Line-feed (\\n) performs carriage-return and line-feed (CRLF)} xywh {333 7 77 24} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button outflags_lf_to_cr {
         label LF_TO_CR
-        callback {handle_output_translate();} selected
+        callback {handle_output_translate();}
         tooltip {Line-feed (\\n) performs carriage-return (\\r)} xywh {432 7 70 24} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button outflags_cr_to_lf {
         label CR_TO_LF
-        callback {handle_output_translate();} selected
+        callback {handle_output_translate();}
         tooltip {Carriage-return (\\r) performs line-feed (\\n)} xywh {528 7 70 24} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button showunknown_radio {
@@ -1809,52 +1843,73 @@ G_tty->redraw();}
 Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 175 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Choice {} {
-        label {Terminal Color}
-        xywh {389 211 145 20} down_box BORDER_BOX labelsize 9 textsize 9
+        label {Terminal Color} open
+        tooltip {The (XTERM) colors can be influenced by Dim/Bold, whereas the (RGB) colors are not.} xywh {379 206 180 20} down_box BORDER_BOX labelsize 9 textsize 9
       } {
         MenuItem {} {
-          label {White on DarkAmber}
-          callback {G_tty->color(0x30200000);
+          label {White on DarkAmber (XTERM)}
+          callback {G_tty->color(0x30200000);        // amber widget bg color
+G_tty->textfgcolor_xterm(7);	 // XTERM_WHITE (influenced by Dim/Bold)
+G_tty->textbgcolor(0xffffffff);  // "see through" color
+
+update_inputs();
+add_lines(5);
+
+}
+          tooltip {Sets text fg to XTERM White, text bg to "see through", and widget's color() to amber. Text fg can be influenced by Dim/Bold.} xywh {10 10 100 20} labelsize 9
+        }
+        MenuItem {} {
+          label {White on Black (XTERM)}
+          callback {G_tty->textfgcolor_xterm(7);	// XTERM WHITE (influenced by Dim/Bold)
+G_tty->textbgcolor(0xffffffff);
+G_tty->color(0x00000000);
+update_inputs();
+add_lines(5);}
+          tooltip {Sets text fg to XTERM White, text bg to "see through", and widget's color() to black. Text fg can be influenced by Dim/Bold.} xywh {20 20 100 20} labelsize 9 divider
+        }
+        MenuItem {} {
+          label {White on DarkAmber (RGB)}
+          callback {G_tty->color(0x30200000);        // amber widget bg color
 G_tty->textfgcolor(0xd0d0d000);
 G_tty->textbgcolor(0xffffffff);  // "see through" color
 update_inputs();
-add_lines(50);}
-          xywh {10 10 100 20} labelsize 9
+add_lines(5);}
+          xywh {20 20 100 20} labelsize 9
         }
         MenuItem {} {
-          label {White on Black}
+          label {White on Black (RGB)}
           callback {G_tty->textfgcolor(0xd0d0d000);
 G_tty->textbgcolor(0xffffffff);
 G_tty->color(0x00000000);
 update_inputs();
-add_lines(50);}
-          xywh {20 20 100 20} labelsize 9
+add_lines(5);}
+          xywh {30 30 100 20} labelsize 9
         }
         MenuItem {} {
-          label {Black on White}
+          label {Black on White (RGB)}
           callback {G_tty->textfgcolor(0x00000000);
 G_tty->textbgcolor(0xd0d0d000);
 G_tty->color(0xd0d0d000);
 update_inputs();
-add_lines(50);}
+add_lines(5);}
           xywh {20 20 100 20} labelsize 9
         }
         MenuItem {} {
-          label {Green on Dark Green}
+          label {Green on Dark Green (RGB)}
           callback {G_tty->textfgcolor(0x00d04000);
 G_tty->textbgcolor(0x00200800);
 G_tty->color(0x00200800);
 update_inputs();
-add_lines(50);}
+add_lines(5);}
           xywh {30 30 100 20} labelsize 9
         }
         MenuItem {} {
-          label {Orange on Dark Orange}
+          label {Orange on Dark Orange (RGB)}
           callback {G_tty->textfgcolor(0xd0704000);
 G_tty->textbgcolor(0x20100000);
 G_tty->color(0x20100000);
 update_inputs();
-add_lines(50);}
+add_lines(5);}
           xywh {40 40 100 20} labelsize 9
         }
       }
