@@ -429,7 +429,7 @@ extern void fl_fix_focus(); // in Fl.cxx
 void Fl_X11_Screen_Driver::grab(Fl_Window* win)
 {
   const char *p;
-  static bool using_kde = 
+  static bool using_kde =
     ( p = getenv("XDG_CURRENT_DESKTOP") , (p && (strcmp(p, "KDE") == 0)) );
   Fl_Window *fullscreen_win = NULL;
   for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
@@ -1369,7 +1369,9 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
 void Fl_X11_Screen_Driver::desktop_scale_factor()
 {
   if (this->current_xft_dpi == 0.) { // Try getting the Xft.dpi resource value
-    char *s = XGetDefault(fl_display, "Xft", "dpi");
+    // Always get the up to date value
+    Display *new_dpy = XOpenDisplay(0);
+    char *s = XGetDefault(new_dpy, "Xft", "dpi");
     if (s && sscanf(s, "%f", &(this->current_xft_dpi)) == 1) {
       float factor = this->current_xft_dpi / 96.;
       // checks to prevent potential crash (factor <= 0) or very large factors
@@ -1377,6 +1379,7 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
       else if (factor > 10.0) factor = 10.0;
       for (int i = 0; i < screen_count(); i++)  scale(i, factor);
     }
+    XCloseDisplay(new_dpy);
   }
 }
 
