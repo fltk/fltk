@@ -419,6 +419,11 @@ protected:
     CharStyle(bool fontsize_defer);
     uchar attrib(void) const            { return attrib_; }
     uchar charflags(void) const         { return charflags_; }
+    // Colors - All access to colors are by Fl_Color only.
+    //          There are three ways to SET colors: Fl_Color, rgb, xterm(uchar)
+    //
+    Fl_Color fltk_fg_color(uchar ci);
+    Fl_Color fltk_bg_color(uchar ci);
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
     Fl_Color defaultfgcolor(void) const { return defaultfgcolor_; }
@@ -433,14 +438,17 @@ protected:
     void charflags(uchar val)           { charflags_ = val; }
     void set_charflag(uchar val)        { charflags_ |= val; }
     void clr_charflag(uchar val)        { charflags_ &= ~val; }
-    void fgcolor_uchar(uchar val);
-    void bgcolor_uchar(uchar val);
+    // Non-xterm colors
     void fgcolor(int r,int g,int b)     { fgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_charflag(FG_XTERM); }
     void bgcolor(int r,int g,int b)     { bgcolor_ = (r<<24) | (g<<16) | (b<<8); clr_charflag(BG_XTERM); }
     void fgcolor(Fl_Color val)          { fgcolor_ = val;                        clr_charflag(FG_XTERM); }
     void bgcolor(Fl_Color val)          { bgcolor_ = val;                        clr_charflag(BG_XTERM); }
+    // Xterm colors
     void fgcolor_xterm(Fl_Color val)    { fgcolor_ = val;                        set_charflag(FG_XTERM); }
     void bgcolor_xterm(Fl_Color val)    { bgcolor_ = val;                        set_charflag(BG_XTERM); }
+    void fgcolor_xterm(uchar val);
+    void bgcolor_xterm(uchar val);
+    //
     void defaultfgcolor(Fl_Color val)   { defaultfgcolor_ = val; }
     void defaultbgcolor(Fl_Color val)   { defaultbgcolor_ = val; }
     void fontface(Fl_Font val)          { fontface_ = val; update(); }
@@ -519,6 +527,7 @@ protected:
     Fl_Color bgcolor_;              // fltk bg color (supports 8color or 24bit color set w/ESC[47;<r>;<g>;<b>m)
     // Private methods
     void text_utf8_(const char *text, int len);
+    Fl_Color attr_color_(Fl_Color col, const Fl_Widget *grp) const;
   public:
     // Public methods
     Utf8Char(void);                             // ctor
@@ -548,8 +557,6 @@ protected:
     bool is_char(char c) const { return *text_ == c; }
     void show_char(void) const { ::printf("%.*s", len_, text_); }
     void show_char_info(void) const { ::fprintf(stderr, "UTF-8('%.*s', len=%d)\n", len_, text_, len_); }
-
-    Fl_Color attr_color(Fl_Color col, const Fl_Widget *grp) const;
     Fl_Color attr_fg_color(const Fl_Widget *grp) const;
     Fl_Color attr_bg_color(const Fl_Widget *grp) const;
   };

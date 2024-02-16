@@ -83,8 +83,8 @@ static Fl_Color bold_color(Fl_Color val) {
   return rgb(r,g,b);
 }
 
-// Return an FLTK color for given foreground color index (0..7)
-static Fl_Color fltk_fg_color(uchar ci) {
+// Return an FLTK color for given XTERM foreground color index (0..7)
+Fl_Color Fl_Terminal::CharStyle::fltk_fg_color(uchar ci) {
   static const Fl_Color xterm_fg_colors_[] = {
     0x00000000,       // 0
     0xd0000000,       // 1 - red
@@ -95,6 +95,8 @@ static Fl_Color fltk_fg_color(uchar ci) {
     0x00d0d000,       // 6 - cyn
     0xd0d0d000        // 7 - white
   };
+  if (ci==39) return defaultfgcolor_;   // special case for 'reset' color
+  if (ci==49) return defaultbgcolor_;   // special case for 'reset' color
   ci &= 0x07;         // clamp to array size
   return xterm_fg_colors_[ci];
 }
@@ -104,7 +106,7 @@ static Fl_Color fltk_fg_color(uchar ci) {
 //    the fg colors to prevent too much brightness clashing
 //    for 'normal' bg vs fg colors.
 //
-static Fl_Color fltk_bg_color(uchar ci) {
+Fl_Color Fl_Terminal::CharStyle::fltk_bg_color(uchar ci) {
   static const Fl_Color xterm_bg_colors_[] = {
     0x00000000,       // 0
     0xc0000000,       // 1 - red
@@ -115,6 +117,8 @@ static Fl_Color fltk_bg_color(uchar ci) {
     0x00c0c000,       // 6 - cyn
     0xc0c0c000        // 7 - white
   };
+  if (ci==39) return defaultfgcolor_;   // special case for 'reset' color
+  if (ci==49) return defaultbgcolor_;   // special case for 'reset' color
   ci &= 0x07;         // clamp to array size
   return xterm_bg_colors_[ci];
 }
@@ -471,12 +475,12 @@ uchar Fl_Terminal::CharStyle::colorbits_only(uchar inflags) const {
   return (inflags & ~COLORMASK) | (charflags_ & COLORMASK);   // add color bits only
 }
 
-void Fl_Terminal::CharStyle::fgcolor_uchar(uchar val) {
+void Fl_Terminal::CharStyle::fgcolor_xterm(uchar val) {
   fgcolor_ = fltk_fg_color(val);
   set_charflag(FG_XTERM);
 }
 
-void Fl_Terminal::CharStyle::bgcolor_uchar(uchar val) {
+void Fl_Terminal::CharStyle::bgcolor_xterm(uchar val) {
   bgcolor_ = fltk_bg_color(val);
   set_charflag(BG_XTERM);
 }
@@ -615,7 +619,7 @@ int Fl_Terminal::Utf8Char::pwidth_int(void) const {
 //    If a \p grp widget is specified (i.e. not NULL), don't let the color \p col be
 //    influenced by the attribute bits /if/ \p col matches the \p grp widget's own color().
 //
-Fl_Color Fl_Terminal::Utf8Char::attr_color(Fl_Color col, const Fl_Widget *grp) const {
+Fl_Color Fl_Terminal::Utf8Char::attr_color_(Fl_Color col, const Fl_Widget *grp) const {
   // Don't modify color if it's the special 'see thru' color 0xffffffff or widget's color()
   if (grp && ((col == 0xffffffff) || (col == grp->color()))) return grp->color();
   switch (attrib_ & (Fl_Terminal::BOLD|Fl_Terminal::DIM)) {
@@ -634,7 +638,7 @@ Fl_Color Fl_Terminal::Utf8Char::attr_fg_color(const Fl_Widget *grp) const {
   if (grp && (fgcolor_ == 0xffffffff))           // see thru color?
     { return grp->color(); }                     // return grp's color()
   return (charflags_ & Fl_Terminal::FG_XTERM)    // fg is an xterm color?
-           ? attr_color(fgcolor(), grp)          // ..use attributes
+           ? attr_color_(fgcolor(), grp)         // ..use attributes
            : fgcolor();                          // ..ignore attributes.
 }
 
@@ -642,7 +646,7 @@ Fl_Color Fl_Terminal::Utf8Char::attr_bg_color(const Fl_Widget *grp) const {
   if (grp && (bgcolor_ == 0xffffffff))           // see thru color?
     { return grp->color(); }                     // return grp's color()
   return (charflags_ & Fl_Terminal::BG_XTERM)    // bg is an xterm color?
-           ? attr_color(bgcolor(), grp)          // ..use attributes
+           ? attr_color_(bgcolor(), grp)         // ..use attributes
            : bgcolor();                          // ..ignore attributes.
 }
 
@@ -1541,8 +1545,7 @@ void Fl_Terminal::textsize(Fl_Fontsize val) {
   \see textfgcolor_default(Fl_Color)
 */
 void Fl_Terminal::textfgcolor_xterm(uchar val) {
-  current_style_->fgcolor(fltk_fg_color(val));
-  current_style_->set_charflag(FG_XTERM);
+  current_style_->fgcolor_xterm(val);
 }
 
 /**
@@ -1574,8 +1577,7 @@ void Fl_Terminal::textfgcolor_xterm(uchar val) {
   \see textbgcolor_default(Fl_Color)
 */
 void Fl_Terminal::textbgcolor_xterm(uchar val) {
-  current_style_->bgcolor(fltk_bg_color(val));
-  current_style_->set_charflag(BG_XTERM);
+  current_style_->bgcolor_xterm(val);
 }
 
 /**
@@ -1632,8 +1634,7 @@ void Fl_Terminal::color(Fl_Color val) {
   \see textfgcolor_default(Fl_Color), textfgcolor_xterm(uchar)
 */
 void Fl_Terminal::textfgcolor(Fl_Color val) {
-  current_style_->fgcolor(val);
-  current_style_->clr_charflag(FG_XTERM);
+  current_style_->fgcolor(val);         // also clears FG_XTERM charflag
 }
 
 /**
@@ -1660,8 +1661,7 @@ void Fl_Terminal::textfgcolor(Fl_Color val) {
   \see textbgcolor_default(Fl_Color), textbgcolor_xterm(uchar)
 */
 void Fl_Terminal::textbgcolor(Fl_Color val) {
-  current_style_->bgcolor(val);
-  current_style_->clr_charflag(BG_XTERM);
+  current_style_->bgcolor(val);         // also clears BG_XTERM charflag
 }
 
 /**
@@ -2564,15 +2564,17 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
         case 29: current_style_->sgr_strike(0);   break; // ESC[29m - disable strikeout
       }
     } else if (val >= 30 && val <= 37) {                 // Set fg color?
-      current_style_->fgcolor_uchar(val - 30);
+      uchar uval = (val - 30);
+      current_style_->fgcolor_xterm(uval);
     } else if (val == 39) {                              // ESC[39m -- "normal" fg color:
       Fl_Color fg = current_style_->defaultfgcolor();    // ..get default color
-      current_style_->fgcolor(fg);                       // ..set current color
+      current_style_->fgcolor_xterm(fg);                 // ..set current color
     } else if (val >= 40 && val <= 47) {                 // Set bg color?
-      current_style_->bgcolor_uchar(val - 40);
+      uchar uval = (val - 40);
+      current_style_->bgcolor_xterm(uval);
     } else if (val == 49) {                              // ESC[49m -- "normal" bg color:
       Fl_Color bg = current_style_->defaultbgcolor();    // ..get default bg color
-      current_style_->bgcolor(bg);                       // ..set current bg color
+      current_style_->bgcolor_xterm(bg);                 // ..set current bg color
     } else {
       handle_unknown_char();  // does an escseq.reset()  // unimplemented SGR codes
     }
