@@ -1370,7 +1370,7 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
 {
   if (this->current_xft_dpi == 0.) { // Try getting the Xft.dpi resource value
     // Always get the up to date value
-    Display *new_dpy = XOpenDisplay(0);
+    Display *new_dpy = XOpenDisplay(XDisplayString(fl_display));
     char *s = XGetDefault(new_dpy, "Xft", "dpi");
     if (s && sscanf(s, "%f", &(this->current_xft_dpi)) == 1) {
       float factor = this->current_xft_dpi / 96.;
