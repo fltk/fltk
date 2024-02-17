@@ -2083,7 +2083,7 @@ bool Fl_Terminal::selection_extend(int X,int Y) {
 }
 
 /**
- Select the word around the given row and colum.
+ Select the word around the given row and column.
  */
 void Fl_Terminal::select_word(int grow, int gcol) {
   int i, c0, c1;
@@ -3636,7 +3636,7 @@ int Fl_Terminal::handle_selection(int e) {
       } else {                                          // Start a new selection
         select_.push_rowcol(grow, gcol, gcr);
         if (select_.clear()) redraw();                  // clear prev selection
-        if (is_rowcol > 0) {
+        if (is_rowcol) {
           switch (Fl::event_clicks()) {
             case 1: select_word(grow, gcol); break;
             case 2: select_line(grow); break;
