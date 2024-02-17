@@ -1,7 +1,3 @@
-/*
- * FLTK symbol prefixes for libpng
- * This is a generated file: see README.bundled-libs.txt
-*/
 #define png_sRGB_table fltk_png_sRGB_table
 #define png_sRGB_base fltk_png_sRGB_base
 #define png_sRGB_delta fltk_png_sRGB_delta
