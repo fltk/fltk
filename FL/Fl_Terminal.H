@@ -553,7 +553,7 @@ protected:
     double pwidth(void) const;
     int pwidth_int(void) const;
     // Clear the character to a 'space'
-    void clear(const CharStyle& style) { text_ascii(' ', style); }
+    void clear(const CharStyle& style) { text_utf8(" ", 1, style); charflags_ = 0; attrib_ = 0; }
     bool is_char(char c) const { return *text_ == c; }
     void show_char(void) const { ::printf("%.*s", len_, text_); }
     void show_char_info(void) const { ::fprintf(stderr, "UTF-8('%.*s', len=%d)\n", len_, text_, len_); }
