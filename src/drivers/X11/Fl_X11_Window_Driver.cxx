@@ -450,6 +450,12 @@ void Fl_X11_Window_Driver::hide() {
   delete ip;
 }
 
+void Fl_X11_Window_Driver::flush() {
+  Fl_Window_Driver::flush();
+  if (cairo_)
+    cairo_surface_flush(cairo_get_target(cairo_));
+}
+
 
 void Fl_X11_Window_Driver::map() {
   XMapWindow(fl_display, fl_xid(pWindow)); // extra map calls are harmless

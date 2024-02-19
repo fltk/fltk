@@ -101,6 +101,7 @@ public:
   // --- window management
   void makeWindow() FL_OVERRIDE;
   void take_focus() FL_OVERRIDE;
+  void flush() FL_OVERRIDE;
   void flush_double() FL_OVERRIDE;
   void flush_overlay() FL_OVERRIDE;
   void draw_begin() FL_OVERRIDE;
