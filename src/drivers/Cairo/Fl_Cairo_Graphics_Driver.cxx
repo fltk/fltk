@@ -127,6 +127,7 @@ void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
     dummy_cairo_ = NULL;
  }
   cairo_ = cr;
+  if (cr == NULL) return;
   cairo_restore(cairo_);
   line_style(0);
   cairo_save(cairo_);

@@ -399,21 +399,19 @@ void Fl_X11_Window_Driver::make_current() {
     Fl::fatal("Fl_Window::make_current(), but window is not shown().");
   }
   fl_window = fl_xid(pWindow);
-  fl_graphics_driver->clip_region(0);
 
 #if FLTK_USE_CAIRO
   float scale = Fl::screen_scale(screen_num()); // get the screen scaling factor
+  fl_graphics_driver->scale(scale);
   if (!pWindow->as_double_window()) {
     if (!cairo_) {
       int W = pWindow->w() * scale, H = pWindow->h() * scale;
       cairo_surface_t *s = cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
       cairo_ = cairo_create(s);
-      cairo_surface_destroy(s);
       cairo_save(cairo_);
     }
     ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
   }
-  fl_graphics_driver->scale(scale);
 #elif USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 #endif
@@ -422,8 +420,10 @@ void Fl_X11_Window_Driver::make_current() {
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 #endif
-}
 
+  // Clip region after we update the cairo context.
+  fl_graphics_driver->clip_region(0);
+}
 
 void Fl_X11_Window_Driver::hide() {
   Fl_X* ip = Fl_X::flx(pWindow);
@@ -435,12 +435,18 @@ void Fl_X11_Window_Driver::hide() {
 # endif
 # if FLTK_USE_CAIRO
   if (cairo_ && !pWindow->as_double_window()) {
+    cairo_surface_destroy(cairo_get_target(cairo_));
     cairo_destroy(cairo_);
     cairo_ = NULL;
+
+    // GraphicDriver's cairo context is no longer valid. Set it to NULL to avoid
+    // use-after-free.
+    ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(NULL);
   }
 # endif
-  // this test makes sure ip->xid has not been destroyed already
-  if (ip->xid) XDestroyWindow(fl_display, ip->xid);
+  // This is the only place we call XDestroyWindow. No need to check if ip->xid
+  // is valid.
+  XDestroyWindow(fl_display, ip->xid);
   delete ip;
 }
 
