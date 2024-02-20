@@ -558,18 +558,22 @@ void Fl_Screen_Driver::use_startup_scale_factor()
 
 void Fl_Screen_Driver::open_display()
 {
-  open_display_platform();
   static bool been_here = false;
+  // Add scale_handler first so it has least priority of all handlers
+  if (!been_here) Fl::add_handler(Fl_Screen_Driver::scale_handler);
+  open_display_platform();
   if (!been_here) {
     been_here = true;
+    bool keep_scale_handler = false;
     if (rescalable()) {
       use_startup_scale_factor();
       if (keyboard_screen_scaling && rescalable())
-        Fl::add_handler(Fl_Screen_Driver::scale_handler);
+        keep_scale_handler = true;
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));
     }
+    if (!keep_scale_handler) Fl::remove_handler(Fl_Screen_Driver::scale_handler);
   }
 }
 
