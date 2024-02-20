@@ -34,6 +34,10 @@ Fl_Sys_Menu_Bar::Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l)
     if (fl_sys_menu_bar) delete fl_sys_menu_bar;
     fl_sys_menu_bar = this;
     driver()->bar = this;
+    // Remove macOS menubar from its parent Fl_Group so it's activated
+    // by system menu shortcuts
+    Fl_Group *p = parent();
+    if (p) p->remove(this);
   }
 }
 
