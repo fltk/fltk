@@ -64,9 +64,9 @@ if(GENERATE_DOCS)
     ERROR_QUIET
   )
 
-  # set to "'unkown'" if git is not available
+  # set to "'unknown'" if git is not available
   if(GIT_REVISION STREQUAL "")
-    set(GIT_REVISION "'unkown'")
+    set(GIT_REVISION "'unknown'")
   endif()
 
   # Find "short" doxygen version if it was built from Git
