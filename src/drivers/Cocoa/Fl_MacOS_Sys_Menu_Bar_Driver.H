@@ -21,6 +21,7 @@
 
 class Fl_MacOS_Sys_Menu_Bar_Driver : public Fl_Sys_Menu_Bar_Driver {
 public:
+  Fl_Menu_Item *window_menu_items;
   Fl_MacOS_Sys_Menu_Bar_Driver();
   virtual ~Fl_MacOS_Sys_Menu_Bar_Driver();
   void update() FL_OVERRIDE;

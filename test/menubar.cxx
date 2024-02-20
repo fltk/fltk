@@ -202,8 +202,7 @@ void menu_location_cb(Fl_Widget* w, void* data)
     smenubar->callback(test_cb);
     }
   else { // switch to window menu bar
-    menubar->menu(smenubar->menu());
-    smenubar->clear();
+    menubar->copy(smenubar->menu());
     delete smenubar;
     menubar->show();
     }

@@ -1395,10 +1395,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     // select the corresponding Window menu item
     int index = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->find_first_window() + 1;
     while (index > 0) {
-      Fl_Menu_Item *item = (Fl_Menu_Item*)fl_sys_menu_bar->menu() + index;
+      Fl_Menu_Item *item = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->window_menu_items + index;
       if (!item->label()) break;
       if (item->user_data() == window) {
-        if (!item->value()) fl_sys_menu_bar->setonly(item);
+        if (!item->value()) item->setonly();
         break;
       }
       index++;
