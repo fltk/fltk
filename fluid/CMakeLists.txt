@@ -101,37 +101,6 @@ endif(WIN32)
 
 source_group("Header Files" FILES ${HEADERFILES})
 
-# make a group in the IDE for easy access to documentation files
-
-set(USER_DOC_FILES
-  Doxyfile
-  documentation/src/index.dox
-  documentation/src/page_introduction.dox
-  documentation/src/page_getting_started.dox
-  documentation/src/page_ui_overview.dox
-  documentation/src/page_basics.dox
-  documentation/src/page_widget_types.dox
-  documentation/src/page_layout.dox
-  documentation/src/page_code_integration.dox
-  documentation/src/page_build_integration.dox
-  documentation/src/page_advanced.dox
-  documentation/src/page_shortcuts.dox
-  documentation/src/page_faqs.dox
-  documentation/src/page_glossary.dox
-  documentation/src/page_appendices.dox
-  documentation/src/page_index.dox
-  documentation/src/page_legal.dox
-  documentation/src/page_conclusion.dox
-)
-source_group("Documentation: User" FILES ${USER_DOC_FILES})
-
-set(DEV_DOC_FILES
-  Doxyfile-dev
-  documentation/src-dev/index.dox
-  documentation/src-dev/page_introduction.dox
-)
-source_group("Documentation: Developer" FILES ${DEV_DOC_FILES})
-
 # Build a local object library to avoid compiling all source files
 # multiple times for all fluid targets on Windows (fluid + fluid-cmd).
 
