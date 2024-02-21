@@ -745,6 +745,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 
 Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver() {
   line_width_ = 0;
+  fontsize_ = -1;
 }
 
 void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
@@ -862,6 +863,7 @@ void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
 void Fl_Scalable_Graphics_Driver::font(Fl_Font face, Fl_Fontsize size) {
   if (!font_descriptor()) fl_open_display(); // to catch the correct initial value of scale_
   font_unscaled(face, Fl_Fontsize(size * scale()));
+  fontsize_ = size;
 }
 
 Fl_Font Fl_Scalable_Graphics_Driver::font() {
@@ -878,7 +880,7 @@ double Fl_Scalable_Graphics_Driver::width(unsigned int c) {
 
 Fl_Fontsize Fl_Scalable_Graphics_Driver::size() {
   if (!font_descriptor() ) return -1;
-  return Fl_Fontsize(size_unscaled()/scale());
+  return fontsize_;
 }
 
 void Fl_Scalable_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h) {

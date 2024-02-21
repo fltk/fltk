@@ -410,6 +410,7 @@ struct Fl_Fontdesc {
  In the future, it may also be used by other platforms.
  */
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
+  Fl_Fontsize fontsize_; // scale-independent font size value
 public:
   Fl_Scalable_Graphics_Driver();
   // This function aims to compute accurately int(x * s) in
