@@ -1,7 +1,7 @@
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -831,17 +831,31 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   Fl_Widget::resize(X, Y, W, H); // make new xywh values visible for children
 
-  if ((!resizable() || (dw==0 && dh==0 )) && !Fl_Window::is_a_rescale()) {
+  // Part 1: no resizable() or both width and height didn't change,
+  // just move the children.
+  // This case covers also window rescaling where dw == dh == 0.
 
-    if (!as_window()) {
+  if (!resizable() || (dw==0 && dh==0)) {
+
+    if (as_window() && !parent()) // top window
+      dx = dy = 0;
+
+    // Check if there's anything to do, otherwise don't call resize().
+    // Note that subwindows require resize() even if their relative position
+    // didn't change, at least on macOS, if it's a rescale.
+
+    if (Fl_Window::is_a_rescale() || dx || dy) {
       Fl_Widget*const* a = array();
-      for (int i=children_; i--;) {
+      for (int i = children_; i--;) {
         Fl_Widget* o = *a++;
         o->resize(o->x() + dx, o->y() + dy, o->w(), o->h());
       }
     }
+  } // End of part 1
 
-  } else if (children_) {
+  // Part 2: here we definitely have a resizable() widget, resize children
+
+  else if (children_) {
 
     // get changes in size/position from the initial size:
     dx = X - p->x();
@@ -890,7 +904,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
       o->resize(L+dx, T+dy, R-L, B-T);
     }
-  }
+  } // End of part 2: we have a resizable() widget
 }
 
 /**
