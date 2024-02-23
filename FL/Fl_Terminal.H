@@ -382,6 +382,16 @@ public:
     LF_TO_CRLF = 0x04      ///< line-feed generates a carriage return line-feed (\\n -> \\r\\n)
   };
 
+  /**
+    \enum HScrollbarStyle
+    Behavior of horizontal scrollbar
+  */
+  enum HScrollbarStyle {
+    HS_OFF        = 0x00,     ///< scrollbar is always invisible
+    HS_AUTO       = 0x01,     ///< scrollbar is visible when widget has been resized so that some columns are hidden
+    HS_ON         = 0x02      ///< scrollbar is always visible
+  };
+
   ///////////////////////////////////////////////////////////////
   //////
   ////// Fl_Terminal Protected Classes
@@ -821,10 +831,15 @@ public:
     \todo Support scrollbar_left/right() - See Fl_Browser_::scrollbar docs
    */
   Fl_Scrollbar *scrollbar;       // vertical scrollbar (value: rows above disp_chars[])
+  Fl_Scrollbar *hscrollbar;      // horizontal scrollbar
+  const int HSCROLLBAR_RANGE = 20; // hscrollbar has 20 steps
+
 private:
   bool          fontsize_defer_; // flag defers font calcs until first draw() (issue 837)
   int           scrollbar_size_; // local preference for scrollbar size
-  CharStyle     *current_style_; // current font, attrib, color..
+  int           hscrollbar_size_; // local preference for horizontal scrollbar size
+  HScrollbarStyle hscrollbar_style_;
+  CharStyle     *current_style_; // current font, attrib, color.
   OutFlags      oflags_;         // output translation flags (CR_TO_LF, LF_TO_CR, LF_TO_CRLF)
 
   // A ring buffer is used for the terminal's history (hist) and display (disp) buffer.
@@ -1055,6 +1070,14 @@ public:
   int   scrollbar_size(void) const;
   void  scrollbar_size(int val);
   int   scrollbar_actual_size(void) const;
+  int   hscrollbar_size(void) const;
+  void  hscrollbar_size(int val);
+  int   hscrollbar_actual_size(void) const;
+  void  hscrollbar_style(HScrollbarStyle val);
+  HScrollbarStyle hscrollbar_style(void) const;
+  int   hscrollbar_col(void) const;
+  void  hscrollbar_col(int col);
+
   // API: History
   int   history_rows(void) const;
   void  history_rows(int val);
