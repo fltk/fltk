@@ -1,5 +1,5 @@
 //
-// Fl_Terminal.H - A terminal widget for Fast Light Tool Kit (FLTK).
+// Fl_Terminal - A terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022 by Greg Ercolano.
 // Copyright 2023 by Bill Spitzak and others.
@@ -1207,12 +1207,13 @@ void Fl_Terminal::clear_tabstop(void) {
   tabstops_[index] = 0;                                    // clear tabstop
 }
 
-// Update the scrollbar based on screen, history buffer, etc
-//    Scrollbar should range from 0 (bottom) to history_use() (top),
+// Update both scrollbars based on screen, history buffer, etc
+//    Vertical scrollbar should range from 0 (bottom) to history_use() (top),
 //    the scrollbar's value being "how many lines we're scrolled back"
 //    into the screen history.
 //
 void Fl_Terminal::update_scrollbar(void) {
+    // Vertical scrollbar
   int value_before = scrollbar->value();
   // Enforce minimum tabsize of 10 or width of scrollbar
   //   The minimum vert size of tab should be scrollbar's width,
@@ -1227,21 +1228,65 @@ void Fl_Terminal::update_scrollbar(void) {
   scrollbar->range(hist_use(), 0);                  // 'minimum' is larger than 'max'
   if (value_before == 0) scrollbar->value(0);       // was at bottom? stay at bottom
   // Ensure scrollbar in proper position
-  update_screen_xywh();                             // ensure scrn_ up to date first
+  // update_screen_xywh();                             // ensure scrn_ up to date first
   int sx = scrn_.r() + margin_.right();
   int sy = scrn_.y() - margin_.top();
   int sw = scrollbar_actual_size();
   int sh = scrn_.h() + margin_.top() + margin_.bottom();
-  if (scrollbar->x() != sx ||
-      scrollbar->y() != sy ||
-      scrollbar->w() != sw ||
-      scrollbar->h() != sh) {
+  bool vchanged = scrollbar->x() != sx ||
+                  scrollbar->y() != sy ||
+                  scrollbar->w() != sw ||
+                  scrollbar->h() != sh;
+  if (vchanged)
     scrollbar->resize(sx, sy, sw, sh);
+
+  // Horizontal scrollbar
+  // bool hchanged;
+  int hh;
+  int hx = 0;
+  int hy = y() +  h() - scrollbar_actual_size();
+  int hw = w() - scrollbar_actual_size();
+  int hv = hscrollbar->visible();
+
+  float visible_fraction = ((float) w_to_col(scrn_.w())) / ring_cols(); 
+  ::printf("vp: %g  %d %d  %d\n", visible_fraction,  ring_cols(), w_to_col(scrn_.w()), hscrollbar->visible());
+
+  if (hscrollbar_style_ == HScrollbarStyle::HS_OFF) {
+    // hchanged = false;
+    hscrollbar->clear_visible();
+    visible_fraction = 1.0;
+    hh = 0;   // Scrollbar height is zero
+  }
+  else if (visible_fraction < 1.0 || hscrollbar_style_ == HScrollbarStyle::HS_ON) {
+    hscrollbar->set_visible();
+    hscrollbar->slider_size(visible_fraction);
+    hh = scrollbar_actual_size();
+    hscrollbar->resize(hx, hy, hw, hh);
+
+  } else {    // state is HScrollbarStyle::HS_AUTO with all columns visible
+    // hchanged = false;
+    hscrollbar->clear_visible();
+    hh = 0;   // Scrollbar height is zero
+    visible_fraction = 1.0;
+  }
+
+  // update system as necessary
+    bool hchanged = hscrollbar->x() != hx ||
+                    hscrollbar->y() != hy ||
+                    hscrollbar->w() != hw ||
+                    hscrollbar->h() != hh ||
+                    hscrollbar->visible() != hv;
+    if (hchanged)
+      hscrollbar->resize(hx, hy, hw, hh);
+  ::printf("vhc: %d %d  %d %d\n", vchanged, hchanged, hscrollbar_style_, hscrollbar->visible());
+
+  if (vchanged || hchanged) {
     init_sizes();         // tell Fl_Group child changed size..
     update_screen_xywh(); // ensure scrn_ is aware of sw change
     display_modified();   // redraw Fl_Terminal since scroller changed size
   }
   scrollbar->redraw();     // redraw scroll always
+  ::printf("u_s: %d %d  %d %d\n", scrn_.w(), scrn_.h(), hscrollbar->w(), hscrollbar->h());
 }
 
 // Refit the display - (display_rows()/cols()) to match screen (scrn_.h()/w())
@@ -1356,6 +1401,8 @@ void Fl_Terminal::update_screen_xywh(void) {
   scrn_.inset(box());                                    // apply box offset
   scrn_.inset(m.left(), m.top(), m.right(), m.bottom()); // apply margins offset
   scrn_.inset(0, 0, scrollbar_actual_size(), 0);         // apply scrollbar width
+  if (hscrollbar && hscrollbar->visible())
+    scrn_.inset(0, 0, 0, hscrollbar_actual_size());       // apply hscrollbar height
 }
 
 // Update internals when something "global" changes
@@ -3193,10 +3240,17 @@ int Fl_Terminal::handle_unknown_char(void) {
 }
 
 // Handle user interactive scrolling
+// Note: this callback is shared between vertical and horizontal scrollbars
 void Fl_Terminal::scrollbar_cb(Fl_Widget*, void* userdata) {
   Fl_Terminal *o = (Fl_Terminal*)userdata;
+  ::printf("sb %p  %d %d\n", o, o->scrollbar->value(), o->hscrollbar->value());
   o->redraw();
 }
+
+// void Fl_Terminal::hscrollbar_cb(Fl_Widget*, void* userdata) {
+//   Fl_Terminal *o = (Fl_Terminal*)userdata;
+//   o->redraw();
+// }
 
 // Handle mouse selection autoscrolling
 void Fl_Terminal::autoscroll_timer_cb2(void) {
@@ -3305,6 +3359,7 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   oflags_         = LF_TO_CRLF;         // default: "\n" handled as "\r\n"
   // scrollbar_size must be set before scrn_
   scrollbar_size_ = 0;                  // 0 uses Fl::scrollbar_size()
+  hscrollbar_size_ = 0;                  // 0 uses Fl::scrollbar_size()
   update_screen_xywh();
   // Tabs
   tabstops_       = 0;
@@ -3331,13 +3386,34 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   // Create scrollbar
   //    Final position/size will be set by update_screen() below
   //
+  ::printf("?-- x:%d, y:%d, w:%d, h:%d, ss:%d, sas:%d\n", x(), y(), w(), h(), scrollbar_size(),
+           scrollbar_actual_size());
   scrollbar = new Fl_Scrollbar(x(), y(), scrollbar_size_, h());
   scrollbar->type(FL_VERTICAL);
   scrollbar->linesize(1);
   scrollbar->slider_size(1);
   scrollbar->range(0.0, 0.0);
   scrollbar->value(0);
-  scrollbar->callback(scrollbar_cb, (void*)this);
+  scrollbar->callback(scrollbar_cb, (void *)this);
+
+  hscrollbar = new Fl_Scrollbar(margin_.left(), y() - margin_.top() +  h() - scrollbar_actual_size(),
+                                w() - scrollbar_actual_size(), scrollbar_actual_size());
+  hscrollbar->type(FL_HORIZONTAL);
+  hscrollbar->linesize(1);
+  hscrollbar->slider_size(0.05);
+  hscrollbar->range(0, HSCROLLBAR_RANGE);
+  hscrollbar->value(0);
+  hscrollbar->callback(scrollbar_cb, (void*)this);
+
+  hscrollbar_style_ = HScrollbarStyle::HS_AUTO;
+
+  ::printf("scrn_  x:%d, y:%d, w:%d, h:%d\n", scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
+  ::printf("term  x:%d, y:%d, w:%d, h:%d\n", x(), y(), w(), h());
+  ::printf("vs  x:%d, y:%d, w:%d, h:%d\n", scrollbar->x(), scrollbar->y(), scrollbar->w(), scrollbar->h());
+  ::printf("hs  x:%d, y:%d, w:%d, h:%d\n", hscrollbar->x(), hscrollbar->y(), hscrollbar->w(), hscrollbar->h());
+  
+  // hscrollbar->set_visible();
+  // hscrollbar->clear_visible();
   resizable(0);
   Fl_Group::box(FL_DOWN_FRAME);
   Fl_Group::color(FL_BLACK);  // black bg by default
@@ -3366,15 +3442,14 @@ Fl_Terminal::~Fl_Terminal(void) {
 }
 
 /**
-  Returns the scrollbar's actual size; actual width for vertical scrollbars,
-  actual height for horizontal scrollbars.
+  Returns the vertical scrollbar's actual width,
 */
 int Fl_Terminal::scrollbar_actual_size(void) const {
   return scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
 }
 
 /**
-  Get the current size of the scrollbar's trough, in pixels.
+  Get the current size of the vertical scrollbar's trough, in pixels.
 
   If this value is zero (default), this widget will use the
   Fl::scrollbar_size() value as the scrollbar's width.
@@ -3387,7 +3462,7 @@ int Fl_Terminal::scrollbar_size(void) const {
 }
 
 /**
-  Set the width of the scrollbar's trough to \p val, in pixels.
+  Set the width of the vertical scrollbar's trough to \p val, in pixels.
 
   Only use this method if you need to override the global scrollbar size.
 
@@ -3399,6 +3474,78 @@ int Fl_Terminal::scrollbar_size(void) const {
 void Fl_Terminal::scrollbar_size(int val) {
   scrollbar_size_ = val;
   update_scrollbar();
+}
+
+/**
+  Returns the horizontal scrollbar's actual height.
+*/
+int Fl_Terminal::hscrollbar_actual_size(void) const {
+  return hscrollbar_size_ ? hscrollbar_size_ : Fl::scrollbar_size();
+}
+
+/**
+  Get the current size of the horizontal scrollbar's trough, in pixels.
+
+  If this value is zero (default), this widget will use the
+  Fl::scrollbar_size() value as the scrollbar's height.
+
+  \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
+  \see Fl::scrollbar_size(int)
+*/
+int Fl_Terminal::hscrollbar_size(void) const {
+  return hscrollbar_size_;
+}
+
+/**
+  Set the height of the horizontal scrollbar's trough to \p val, in pixels.
+
+  Only use this method if you need to override the global scrollbar size.
+
+  Setting \p val to the special value 0 causes the widget to
+  track the global Fl::scrollbar_size().
+
+  \see Fl::hscrollbar_size()
+*/
+void Fl_Terminal::hscrollbar_size(int val) {
+  hscrollbar_size_ = val;
+  update_scrollbar();
+}
+
+/**
+  Get the horizontal scrollbar behavior style.
+
+  This determines when the scrollbar is visible.
+
+  Value will be one of the Fl_Terminal::HScrollbarStyle enum values.
+
+  \see redraw_style(Fl_Terminal::HScrollbarStyle)
+*/
+Fl_Terminal::HScrollbarStyle Fl_Terminal::hscrollbar_style() const {
+  return hscrollbar_style_;
+}
+
+/**
+  Set the horizontal scrollbar behavior style.
+
+  This determines when the scrollbar is visible.
+
+  \par
+    |   HScrollbarStyle enum    | Description
+    | :-----------------------: | :-----------------------------------------------------------
+    |   \ref HS_ON              | Horizontal scrollbar is always displayed.
+    |   \ref HS_OFF             | Horizontal scrollbar is never displayed. 
+    |   \ref HS_AUTO            | Horizontal scrollbar is displayed whenever the widget width has been resized so that some of the columns are hidden.
+
+  The default style is HS_AUTO.
+
+  \see HScrollbarStyle
+*/
+void  Fl_Terminal::hscrollbar_style(HScrollbarStyle val) {
+  hscrollbar_style_ = val;
+  ::printf("shs1: %d %d %d\n", val, hscrollbar->visible(), scrn_.h());
+  update_scrollbar();
+  refit_disp_to_screen();
+  ::printf("shs2: %d %d %d\n", val, hscrollbar->visible(), scrn_.h());
 }
 
 ////////////////////////////
@@ -3469,11 +3616,25 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
 //  int  underline_y = baseline + (current_style_->fontheight() / 5);
   int  strikeout_y = baseline - (current_style_->fontheight() / 3);
   int  underline_y = baseline;
-  const Utf8Char *u8c = u8c_ring_row(grow);
   uchar lastattr = -1;
   bool  is_cursor;
   Fl_Color fg;
-  for (int gcol=0; gcol<disp_cols(); gcol++,u8c++) {      // walk the columns
+  int start_col, end_col;
+  if (hscrollbar->visible()) {
+    // Handle horizontal scrolling  (Note: this is invariant across rows so could be optimized by moving it outside of draw_row)
+    int n_cols = w_to_col(scrn_.w());   // Number of columns actualy displayed
+    start_col = (hscrollbar->value() * (disp_cols() - n_cols)) / HSCROLLBAR_RANGE;
+    end_col = start_col + n_cols;
+    if (end_col > disp_cols()) end_col = disp_cols();   // Widget is resized wider than the ringbuff
+  } else {
+    start_col = 0;
+    end_col = disp_cols();
+  }
+
+  const Utf8Char *u8c = u8c_ring_row(grow)+start_col;
+  if (grow == disp_srow())
+    ::printf("dr: %d %d  %d\n", start_col, end_col, hscrollbar->value());
+  for (int gcol=start_col; gcol<end_col; gcol++,u8c++) {  // walk the columns
     const int &dcol = gcol;                               // dcol and gcol are the same
     // Are we drawing the cursor? Only if inside display
     is_cursor = inside_display ? cursor_.is_rowcol(drow-scrollval, dcol) : 0;
@@ -3540,7 +3701,7 @@ void Fl_Terminal::draw_buff(int Y) const {
 
 /**
   Draws the entire Fl_Terminal.
-  Lets the group draw itself first (scrollbar should be only member),
+  Lets the group draw itself first (scrollbars should be only members),
   followed by the terminal's screen contents.
 */
 void Fl_Terminal::draw(void) {
@@ -3565,6 +3726,8 @@ void Fl_Terminal::draw(void) {
     int W = w() - Fl::box_dw(box());
     int H = h() - Fl::box_dh(box());
     W -= scrollbar_width();
+    if (hscrollbar->visible())
+      H -= scrollbar_actual_size();
     fl_rectf(X,Y,W,H);
   }
 
@@ -3705,7 +3868,8 @@ int Fl_Terminal::handle_selection(int e) {
 int Fl_Terminal::handle(int e) {
   int ret = Fl_Group::handle(e);
   if (Fl::event_inside(scrollbar)) return ret;             // early exit for scrollbar
-  switch (e) {
+  if (Fl::event_inside(hscrollbar)) return ret;             // early exit for hscrollbar
+  switch (e) { 
     case FL_ENTER:
     case FL_LEAVE:
       return 1;
