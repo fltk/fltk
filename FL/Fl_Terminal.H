@@ -379,7 +379,7 @@ public:
   */
   enum HScrollbarStyle {
     HS_OFF        = 0x00,     ///< scrollbar is always invisible
-    HS_AUTO       = 0x01,     ///< scrollbar is visible when widget has been resized so that some columns are hidden
+    HS_AUTO       = 0x01,     ///< scrollbar is visible if widget has been resized in a way that hides some columns (default)
     HS_ON         = 0x02      ///< scrollbar is always visible
   };
 
@@ -1065,8 +1065,8 @@ public:
   int   hscrollbar_actual_size(void) const;
   void  hscrollbar_style(HScrollbarStyle val);
   HScrollbarStyle hscrollbar_style(void) const;
-  int   hscrollbar_col(void) const;
-  void  hscrollbar_col(int col);
+  int   hscroll_col(void) const;
+  void  hscroll_col(int col);
 
   // API: History
   int   history_rows(void) const;

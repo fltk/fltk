@@ -1228,7 +1228,7 @@ void Fl_Terminal::update_scrollbar(void) {
   scrollbar->range(hist_use(), 0);                  // 'minimum' is larger than 'max'
   if (value_before == 0) scrollbar->value(0);       // was at bottom? stay at bottom
   // Ensure scrollbar in proper position
-  // update_screen_xywh();                             // ensure scrn_ up to date first
+  update_screen_xywh();                             // ensure scrn_ up to date first
   int sx = scrn_.r() + margin_.right();
   int sy = scrn_.y() - margin_.top();
   int sw = scrollbar_actual_size();
@@ -1249,8 +1249,6 @@ void Fl_Terminal::update_scrollbar(void) {
   int hv = hscrollbar->visible();
 
   float visible_fraction = ((float) w_to_col(scrn_.w())) / ring_cols(); 
-  ::printf("vp: %g  %d %d  %d\n", visible_fraction,  ring_cols(), w_to_col(scrn_.w()), hscrollbar->visible());
-
   if (hscrollbar_style_ == HScrollbarStyle::HS_OFF) {
     // hchanged = false;
     hscrollbar->clear_visible();
@@ -1278,7 +1276,6 @@ void Fl_Terminal::update_scrollbar(void) {
                     hscrollbar->visible() != hv;
     if (hchanged)
       hscrollbar->resize(hx, hy, hw, hh);
-  ::printf("vhc: %d %d  %d %d\n", vchanged, hchanged, hscrollbar_style_, hscrollbar->visible());
 
   if (vchanged || hchanged) {
     init_sizes();         // tell Fl_Group child changed size..
@@ -1286,7 +1283,6 @@ void Fl_Terminal::update_scrollbar(void) {
     display_modified();   // redraw Fl_Terminal since scroller changed size
   }
   scrollbar->redraw();     // redraw scroll always
-  ::printf("u_s: %d %d  %d %d\n", scrn_.w(), scrn_.h(), hscrollbar->w(), hscrollbar->h());
 }
 
 // Refit the display - (display_rows()/cols()) to match screen (scrn_.h()/w())
@@ -3243,14 +3239,8 @@ int Fl_Terminal::handle_unknown_char(void) {
 // Note: this callback is shared between vertical and horizontal scrollbars
 void Fl_Terminal::scrollbar_cb(Fl_Widget*, void* userdata) {
   Fl_Terminal *o = (Fl_Terminal*)userdata;
-  ::printf("sb %p  %d %d\n", o, o->scrollbar->value(), o->hscrollbar->value());
   o->redraw();
 }
-
-// void Fl_Terminal::hscrollbar_cb(Fl_Widget*, void* userdata) {
-//   Fl_Terminal *o = (Fl_Terminal*)userdata;
-//   o->redraw();
-// }
 
 // Handle mouse selection autoscrolling
 void Fl_Terminal::autoscroll_timer_cb2(void) {
@@ -3386,8 +3376,6 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   // Create scrollbar
   //    Final position/size will be set by update_screen() below
   //
-  ::printf("?-- x:%d, y:%d, w:%d, h:%d, ss:%d, sas:%d\n", x(), y(), w(), h(), scrollbar_size(),
-           scrollbar_actual_size());
   scrollbar = new Fl_Scrollbar(x(), y(), scrollbar_size_, h());
   scrollbar->type(FL_VERTICAL);
   scrollbar->linesize(1);
@@ -3403,17 +3391,10 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   hscrollbar->slider_size(0.05);
   hscrollbar->range(0, HSCROLLBAR_RANGE);
   hscrollbar->value(0);
-  hscrollbar->callback(scrollbar_cb, (void*)this);
+  hscrollbar->callback(scrollbar_cb, (void *)this);
 
   hscrollbar_style_ = HScrollbarStyle::HS_AUTO;
 
-  ::printf("scrn_  x:%d, y:%d, w:%d, h:%d\n", scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
-  ::printf("term  x:%d, y:%d, w:%d, h:%d\n", x(), y(), w(), h());
-  ::printf("vs  x:%d, y:%d, w:%d, h:%d\n", scrollbar->x(), scrollbar->y(), scrollbar->w(), scrollbar->h());
-  ::printf("hs  x:%d, y:%d, w:%d, h:%d\n", hscrollbar->x(), hscrollbar->y(), hscrollbar->w(), hscrollbar->h());
-  
-  // hscrollbar->set_visible();
-  // hscrollbar->clear_visible();
   resizable(0);
   Fl_Group::box(FL_DOWN_FRAME);
   Fl_Group::color(FL_BLACK);  // black bg by default
@@ -3542,10 +3523,36 @@ Fl_Terminal::HScrollbarStyle Fl_Terminal::hscrollbar_style() const {
 */
 void  Fl_Terminal::hscrollbar_style(HScrollbarStyle val) {
   hscrollbar_style_ = val;
-  ::printf("shs1: %d %d %d\n", val, hscrollbar->visible(), scrn_.h());
   update_scrollbar();
   refit_disp_to_screen();
-  ::printf("shs2: %d %d %d\n", val, hscrollbar->visible(), scrn_.h());
+}
+
+/**
+  Returns the horizontal scroll position in columns. 
+  The return value will usually be approximately the left side of the display,
+  but horizontal scroll works in discrete steps so this will be imprecise.
+  This will return a value that is near but not necessarily equal to the
+  value set by \p hscrollbar_col(col)
+*/
+int Fl_Terminal::hscroll_col(void) const {
+  // return (hscrollbar->value() * ring_cols()) / HSCROLLBAR_RANGE;
+  return ((Fl_Slider *) hscrollbar)->value() * w_to_col(w()) / HSCROLLBAR_RANGE;
+}
+
+/**
+  Set the horizontal scroll position, where \p col is the display column 
+  that must be on the display.
+
+  \p col will not be guaranteed to be at the left edge of the display. The
+  horizontal scroll works in discrete steps, so the column position is approxmate
+  but the specified column will be on the screen. 
+  This function also will not scroll beyond the right edge of the display.
+*/
+void Fl_Terminal::hscroll_col(int col) {
+  float val = ((float) col * HSCROLLBAR_RANGE) / w_to_col(w());
+  if (val < 0.0) val = 0.0;
+  else if (val > HSCROLLBAR_RANGE) val = HSCROLLBAR_RANGE;
+  ((Fl_Slider *) hscrollbar)->value(val);
 }
 
 ////////////////////////////
@@ -3632,8 +3639,6 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   }
 
   const Utf8Char *u8c = u8c_ring_row(grow)+start_col;
-  if (grow == disp_srow())
-    ::printf("dr: %d %d  %d\n", start_col, end_col, hscrollbar->value());
   for (int gcol=start_col; gcol<end_col; gcol++,u8c++) {  // walk the columns
     const int &dcol = gcol;                               // dcol and gcol are the same
     // Are we drawing the cursor? Only if inside display
