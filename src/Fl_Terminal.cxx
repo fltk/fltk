@@ -1245,7 +1245,7 @@ void Fl_Terminal::update_scrollbar(void) {
   // bool hchanged;
   int hh;
   int hx = 0;
-  int hy = y() +  h() - scrollbar_actual_size();
+  int hy = y() +  h() - hscrollbar_actual_size();
   int hw = w() - scrollbar_actual_size();
   int hv = hscrollbar->visible();
 
@@ -1259,7 +1259,7 @@ void Fl_Terminal::update_scrollbar(void) {
   else if (visible_fraction < 1.0 || hscrollbar_style_ == HScrollbarStyle::HS_ON) {
     hscrollbar->set_visible();
     hscrollbar->slider_size(visible_fraction);
-    hh = scrollbar_actual_size();
+    hh = hscrollbar_actual_size();
     hscrollbar->resize(hx, hy, hw, hh);
 
   } else {    // state is HScrollbarStyle::HS_AUTO with all columns visible
@@ -3385,8 +3385,8 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   scrollbar->value(0);
   scrollbar->callback(scrollbar_cb, (void *)this);
 
-  hscrollbar = new Fl_Scrollbar(margin_.left(), y() - margin_.top() +  h() - scrollbar_actual_size(),
-                                w() - scrollbar_actual_size(), scrollbar_actual_size());
+  hscrollbar = new Fl_Scrollbar(margin_.left(), y() - margin_.top() +  h() - hscrollbar_actual_size(),
+                                w() - scrollbar_actual_size(), hscrollbar_actual_size());
   hscrollbar->type(FL_HORIZONTAL);
   hscrollbar->linesize(1);
   hscrollbar->slider_size(0.05);
@@ -3456,6 +3456,7 @@ int Fl_Terminal::scrollbar_size(void) const {
 void Fl_Terminal::scrollbar_size(int val) {
   scrollbar_size_ = val;
   update_scrollbar();
+  refit_disp_to_screen();
 }
 
 /**
@@ -3491,6 +3492,7 @@ int Fl_Terminal::hscrollbar_size(void) const {
 void Fl_Terminal::hscrollbar_size(int val) {
   hscrollbar_size_ = val;
   update_scrollbar();
+  refit_disp_to_screen();
 }
 
 /**
@@ -3733,7 +3735,7 @@ void Fl_Terminal::draw(void) {
     int H = h() - Fl::box_dh(box());
     W -= scrollbar_width();
     if (hscrollbar->visible())
-      H -= scrollbar_actual_size();
+      H -= hscrollbar_actual_size();
     fl_rectf(X,Y,W,H);
   }
 
