@@ -139,6 +139,9 @@ void after_resize(void *data) {
   if (win->maximize_active()) win->b3_maxi->set();
   else win->b3_maxi->clear();
   win->b3_maxi->redraw();
+  if (win->fullscreen_active()) win->b3->set();
+  else win->b3->clear();
+  win->b3->redraw();
 }
 
 void fullscreen_window::resize(int x, int y, int w, int h) {
