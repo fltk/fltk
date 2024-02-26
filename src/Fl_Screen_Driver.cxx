@@ -497,7 +497,10 @@ int Fl_Screen_Driver::scale_handler(int event)
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
     Fl_Widget *wid = Fl::focus();
     if (!wid) return 0;
-    int screen = Fl_Window_Driver::driver(wid->top_window())->screen_num();
+    Fl_Window *top = wid->top_window();
+    // don't rescale when top window is fullscreen or maximized
+    if (top->fullscreen_active() || top->maximize_active()) return 0;
+    int screen = Fl_Window_Driver::driver(top)->screen_num();
     Fl_Screen_Driver *screen_dr = Fl::screen_driver();
     static float initial_scale = screen_dr->scale(screen);
 #if defined(TEST_SCALING)
