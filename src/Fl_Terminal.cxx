@@ -188,7 +188,7 @@ bool Fl_Terminal::Selection::start(int row, int col, bool char_right) {
 bool Fl_Terminal::Selection::extend(int row, int col, bool char_right) {
   // no selection started yet? start and return true
   int osrow = srow_, oerow = erow_, oscol = scol_, oecol = ecol_;
-  int oselection = is_selection_;
+  bool oselection = is_selection_;
   if (state_ == 0) return start(row, col, char_right);
   state_ = 2;                                      // state: "extending selection"
 

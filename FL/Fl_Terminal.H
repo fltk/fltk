@@ -821,8 +821,8 @@ public:
     Vertical scrollbar. Public, so that it can be accessed directly.
     \todo Support scrollbar_left/right() - See Fl_Browser_::scrollbar docs
    */
-  Fl_Scrollbar *scrollbar;       // vertical scrollbar (value: rows above disp_chars[])
-  Fl_Scrollbar *hscrollbar;      // horizontal scrollbar
+  Fl_Scrollbar *scrollbar;         // vertical scrollbar (value: rows above disp_chars[])
+  Fl_Scrollbar *hscrollbar = NULL; // horizontal scrollbar
   const int HSCROLLBAR_RANGE = 20; // hscrollbar has 20 steps
 
 private:
