@@ -212,19 +212,8 @@ routine is triggered when \c Ctrl+ (or \c Cmd+) is pressed .
 If any window of the display is fullscreen or maximized,
 scaling shortcuts have no effect.
 
-It's possible to deactivate FLTK's default scaling shortcuts adding
-this global event handler
-\code
-int no_zoom_handler(int event) {
-  if (event != FL_SHORTCUT) return 0;
-  if (Fl::test_shortcut(FL_COMMAND+'+')) return 1;
-  if (Fl::test_shortcut(FL_COMMAND+'-')) return 1;
-  if (Fl::test_shortcut(FL_COMMAND+'0')) return 1;
-  return 0;
-}
-\endcode
-with statement \c Fl::add_handler(no_zoom_handler); after FLTK has opened the
-display.
+It's possible to deactivate FLTK's default scaling shortcuts with function
+Fl::keyboard_screen_scaling();
 
 \section events_widget Widget Events
 
