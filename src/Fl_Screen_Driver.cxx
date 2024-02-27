@@ -507,7 +507,7 @@ int Fl_Screen_Driver::scale_handler(int event)
       if (!top->parent() &&
           (Fl_Window_Driver::driver(top)->screen_num() == screen ||
            screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING)) {
-        if (top->fullscreen_active() || top->maximize_active()) return 0;
+        if (top->resizable() && (top->fullscreen_active() || top->maximize_active())) return 0;
       }
       top = Fl::next_window(top);
     }
