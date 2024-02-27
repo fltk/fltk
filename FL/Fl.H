@@ -851,7 +851,9 @@ public:
   /** Gets the current Fl::focus() widget. \sa Fl::focus(Fl_Widget*) */
   static Fl_Widget* focus()     {return focus_;}
   static void focus(Fl_Widget*);
-  static void add_handler(Fl_Event_Handler h);
+  static void add_handler(Fl_Event_Handler ha);
+  static void add_handler(Fl_Event_Handler ha, Fl_Event_Handler before);
+  static Fl_Event_Handler last_handler();
   static void remove_handler(Fl_Event_Handler h);
   static void add_system_handler(Fl_System_Handler h, void *data);
   static void remove_system_handler(Fl_System_Handler h);

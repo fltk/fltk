@@ -827,6 +827,34 @@ void Fl::add_handler(Fl_Event_Handler ha) {
 }
 
 
+/** Returns the last function installed by a call to Fl::add_handler() */
+Fl_Event_Handler Fl::last_handler() {
+  return handlers ? handlers->handle : NULL;
+}
+
+
+/** Install a function to parse unrecognized events with less priority than another function.
+ Install function \p ha to handle unrecognized events
+ giving it the priority just lower than that of function \p before
+ which was previously installed.
+ \see Fl::add_handler(Fl_Event_Handler)
+ \see Fl::last_handler()
+ */
+void Fl::add_handler(Fl_Event_Handler ha, Fl_Event_Handler before) {
+  if (!before) return Fl::add_handler(ha);
+  handler_link *l = handlers;
+  while (l) {
+    if (l->handle == before) {
+      handler_link *p = l->next, *q = new handler_link;
+      q->handle = ha;
+      q->next = p;
+      l->next = q;
+      return;
+    }
+    l = l->next;
+  }
+}
+
 /**
  Removes a previously added event handler.
  \see Fl::handle(int, Fl_Window*)
