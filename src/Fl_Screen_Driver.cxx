@@ -498,10 +498,19 @@ int Fl_Screen_Driver::scale_handler(int event)
     Fl_Widget *wid = Fl::focus();
     if (!wid) return 0;
     Fl_Window *top = wid->top_window();
-    // don't rescale when top window is fullscreen or maximized
-    if (top->fullscreen_active() || top->maximize_active()) return 0;
     int screen = Fl_Window_Driver::driver(top)->screen_num();
     Fl_Screen_Driver *screen_dr = Fl::screen_driver();
+    // don't rescale when any top window on same screen as
+    // focus window is fullscreen or maximized
+    top = Fl::first_window();
+    while (top) {
+      if (!top->parent() &&
+          (Fl_Window_Driver::driver(top)->screen_num() == screen ||
+           screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING)) {
+        if (top->fullscreen_active() || top->maximize_active()) return 0;
+      }
+      top = Fl::next_window(top);
+    }
     static float initial_scale = screen_dr->scale(screen);
 #if defined(TEST_SCALING)
     // test scaling factors: lots of values from 0.3 to 8.0
