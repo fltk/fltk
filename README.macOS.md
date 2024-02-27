@@ -358,7 +358,7 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 After a few minutes, we can now build and install all other tools from one simple command:
 
 ```bash
-brew install autoconf automake
+brew install autoconf
 ```
 
 Alternatively, _autoconf_ can be installed without _brew_ as follows :

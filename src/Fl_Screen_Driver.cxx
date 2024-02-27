@@ -497,8 +497,20 @@ int Fl_Screen_Driver::scale_handler(int event)
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
     Fl_Widget *wid = Fl::focus();
     if (!wid) return 0;
-    int screen = Fl_Window_Driver::driver(wid->top_window())->screen_num();
+    Fl_Window *top = wid->top_window();
+    int screen = Fl_Window_Driver::driver(top)->screen_num();
     Fl_Screen_Driver *screen_dr = Fl::screen_driver();
+    // don't rescale when any top window on same screen as
+    // focus window is fullscreen or maximized
+    top = Fl::first_window();
+    while (top) {
+      if (!top->parent() &&
+          (Fl_Window_Driver::driver(top)->screen_num() == screen ||
+           screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING)) {
+        if (top->fullscreen_active() || top->maximize_active()) return 0;
+      }
+      top = Fl::next_window(top);
+    }
     static float initial_scale = screen_dr->scale(screen);
 #if defined(TEST_SCALING)
     // test scaling factors: lots of values from 0.3 to 8.0
@@ -559,21 +571,23 @@ void Fl_Screen_Driver::use_startup_scale_factor()
 void Fl_Screen_Driver::open_display()
 {
   static bool been_here = false;
-  // Add scale_handler first so it has least priority of all handlers
-  if (!been_here) Fl::add_handler(Fl_Screen_Driver::scale_handler);
-  open_display_platform();
   if (!been_here) {
     been_here = true;
-    bool keep_scale_handler = false;
+    open_display_platform();
+    // Memorize the most recently added handler. It may have been
+    // added by open_display_platform()
+    Fl_Event_Handler last_added = Fl::last_handler();
     if (rescalable()) {
       use_startup_scale_factor();
-      if (keyboard_screen_scaling && rescalable())
-        keep_scale_handler = true;
+      if (keyboard_screen_scaling && rescalable()) {
+        // Add scale_handler after memorized one in linked list
+        // so it has less priority
+        Fl::add_handler(Fl_Screen_Driver::scale_handler, last_added);
+      }
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));
     }
-    if (!keep_scale_handler) Fl::remove_handler(Fl_Screen_Driver::scale_handler);
   }
 }
 

@@ -1192,6 +1192,8 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)fl_windowMiniaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
+- (void)windowWillEnterFullScreen:(NSNotification *)notif;
+- (void)windowWillExitFullScreen:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
 - (void)doNothing:(id)unused;
@@ -1393,12 +1395,15 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   update_e_xy_and_e_xy_root(nsw);
   if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style()) {
     // select the corresponding Window menu item
-    int index = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->find_first_window() + 1;
+    int index = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->first_window_menu_item;
     while (index > 0) {
       Fl_Menu_Item *item = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->window_menu_items + index;
       if (!item->label()) break;
       if (item->user_data() == window) {
-        if (!item->value()) item->setonly();
+        if (!item->value()) {
+          item->setonly();
+          fl_sys_menu_bar->update();
+        }
         break;
       }
       index++;
@@ -1446,6 +1451,18 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_HIDE, window);
   fl_unlock_function();
+}
+- (void)windowWillEnterFullScreen:(NSNotification *)notif;
+{
+  FLWindow *nsw = (FLWindow*)[notif object];
+  Fl_Window *window = [nsw getFl_Window];
+  window->_set_fullscreen();
+}
+- (void)windowWillExitFullScreen:(NSNotification *)notif;
+{
+  FLWindow *nsw = (FLWindow*)[notif object];
+  Fl_Window *window = [nsw getFl_Window];
+  window->_clear_fullscreen();
 }
 - (BOOL)windowShouldClose:(id)fl
 {
@@ -3198,7 +3215,12 @@ void Fl_Cocoa_Window_Driver::makeWindow()
 void Fl_Cocoa_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100600) {
+  if (fl_mac_os_version >= 100700) {
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    FLWindow *nswin = fl_xid(pWindow);
+    [nswin toggleFullScreen:nil];
+#  endif
+  } else if (fl_mac_os_version >= 100600) {
     FLWindow *nswin = fl_xid(pWindow);
     [nswin setStyleMask:NSWindowStyleMaskBorderless]; // 10.6
     if ([nswin isKeyWindow]) {
@@ -3279,7 +3301,12 @@ static void restore_window_title_and_icon(Fl_Window *pWindow, NSImage *icon) {
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100600) {
+  if (fl_mac_os_version >= 100700) {
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    FLWindow *nswin = fl_xid(pWindow);
+    [nswin toggleFullScreen:nil];
+#  endif
+  } else if (fl_mac_os_version >= 100600) {
     FLWindow *nswin = fl_xid(pWindow);
     NSInteger level = NSNormalWindowLevel;
     if (pWindow->modal()) level = modal_window_level();
