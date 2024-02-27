@@ -1400,7 +1400,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       Fl_Menu_Item *item = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->window_menu_items + index;
       if (!item->label()) break;
       if (item->user_data() == window) {
-        if (!item->value()) item->setonly();
+        if (!item->value()) {
+          item->setonly();
+          fl_sys_menu_bar->update();
+        }
         break;
       }
       index++;
