@@ -447,6 +447,7 @@ static int process_sys_menu_shortcuts(int event)
 Fl_MacOS_Sys_Menu_Bar_Driver::Fl_MacOS_Sys_Menu_Bar_Driver() : Fl_Sys_Menu_Bar_Driver()
 {
   window_menu_items = NULL;
+  first_window_menu_item = 0;
   Fl::add_handler(process_sys_menu_shortcuts);
 }
 
@@ -625,50 +626,35 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
   }
   if (!window_menu_items_count) {
     window_menu_items_count = 6;
-    window_menu_items = (Fl_Menu_Item*)malloc(window_menu_items_count * sizeof(Fl_Menu_Item));
+    window_menu_items = (Fl_Menu_Item*)calloc(window_menu_items_count, sizeof(Fl_Menu_Item));
   }
   rank = fl_sys_menu_bar->Fl_Menu_::insert(rank, "Window", 0, NULL, window_menu_items, FL_SUBMENU_POINTER);
   localized_Window = NSLocalizedString(@"Window", nil);
-  memset(window_menu_items, 0, sizeof(Fl_Menu_Item));
   window_menu_items[0].label("Minimize");
   window_menu_items[0].callback(minimize_win_cb);
   window_menu_items[0].shortcut(FL_COMMAND+'m');
   window_menu_items[0].flags = FL_MENU_DIVIDER;
-  rank = 1;
+  first_window_menu_item = 1;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
   if (fl_mac_os_version >= 101200 && window_menu_style() != Fl_Sys_Menu_Bar::tabbing_mode_none) {
-    memset(window_menu_items + 1, 0, sizeof(Fl_Menu_Item));
     window_menu_items[1].label("Show Previous Tab");
     window_menu_items[1].callback(previous_tab_cb);
     window_menu_items[1].shortcut(FL_SHIFT+FL_CTRL+0x9);
-    memset(window_menu_items+2, 0, sizeof(Fl_Menu_Item));
     window_menu_items[2].label("Show Next Tab");
     window_menu_items[2].callback(next_tab_cb);
     window_menu_items[2].shortcut(FL_CTRL+0x9);
-    memset(window_menu_items+3, 0, sizeof(Fl_Menu_Item));
     window_menu_items[3].label("Move Tab To New Window");
     window_menu_items[3].callback(move_tab_cb);
-    memset(window_menu_items+4, 0, sizeof(Fl_Menu_Item));
     window_menu_items[4].label("Merge All Windows");
     window_menu_items[4].callback(merge_all_windows_cb);
     window_menu_items[4].flags = FL_MENU_DIVIDER;
-    rank = 5;
+    first_window_menu_item = 5;
   }
 #endif
-  memset(window_menu_items+rank, 0, sizeof(Fl_Menu_Item));
-  window_menu_items[rank-1].user_data(&window_menu_style_);
   fl_sys_menu_bar->menu_end();
   fl_sys_menu_bar->update();
 }
 
-int Fl_MacOS_Sys_Menu_Bar_Driver::find_first_window()
-{
-  int count = window_menu_items->size(), i;
-  for (i = 0; i < count; i++) {
-    if (window_menu_items[i].user_data() == &window_menu_style_) break;
-  }
-  return i < count ? i : -1;
-}
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
 {
@@ -694,7 +680,7 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
 void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
 {
   if (!window_menu_style()) return;
-  int index = find_first_window() + 1;
+  int index = first_window_menu_item;
   if (index < 1) return;
   while (true) {
     Fl_Menu_Item *item = window_menu_items + index;
@@ -705,7 +691,7 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
       if (count - index - 1 > 0) memmove(item, item + 1, (count - index - 1)*sizeof(Fl_Menu_Item));
       memset(window_menu_items + count - 2, 0, sizeof(Fl_Menu_Item));
       if (doit) { // select Fl::first_window() in Window menu
-        item = window_menu_items + find_first_window() + 1;
+        item = window_menu_items + first_window_menu_item;
         while (item->label() && item->user_data() != Fl::first_window()) item++;
         if (item->label()) {
           ((Fl_Window*)item->user_data())->show();
@@ -722,7 +708,7 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
 void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
 {
   if (!window_menu_style()) return;
-  int index = find_first_window() + 1;
+  int index = first_window_menu_item;
   if (index < 1) return;
   while (true) {
     Fl_Menu_Item *item = window_menu_items + index;

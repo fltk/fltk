@@ -22,6 +22,7 @@
 class Fl_MacOS_Sys_Menu_Bar_Driver : public Fl_Sys_Menu_Bar_Driver {
 public:
   Fl_Menu_Item *window_menu_items;
+  int first_window_menu_item;
   Fl_MacOS_Sys_Menu_Bar_Driver();
   virtual ~Fl_MacOS_Sys_Menu_Bar_Driver();
   void update() FL_OVERRIDE;
@@ -39,7 +40,6 @@ public:
   void replace(int index, const char *name) FL_OVERRIDE;
   void mode(int i, int fl) FL_OVERRIDE;
   void create_window_menu() FL_OVERRIDE;
-  int find_first_window();
   void new_window(Fl_Window *win);
   void remove_window(Fl_Window *win);
   void rename_window(Fl_Window *win);
