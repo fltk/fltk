@@ -190,6 +190,42 @@ You can also make "global" shortcuts by using Fl::add_handler().
 A global shortcut will work no matter what windows are displayed
 or which one has the focus.
 
+Since version 1.4, FLTK has 3 default global shortcuts (\c Ctrl/+/-/0/
+or \c Cmd/+/-/0/ under macOS) that change the value of the GUI scaling
+factor. \c Ctrl+ zooms-in all app windows of the focussed display
+(all displays under macOS);
+\c Ctrl- zooms-out these windows; \c Ctrl 0 restores the initial value of the
+scaling factor. Although characters '+' and '0' are located in
+the shifted position of their keyboard key in some
+keyboard layouts, these shortcuts are to be used without pressing
+the shift key, for user convenience. In other words, press only
+\c Ctrl (or \c Cmd) and the key labelled '+' or '0' independently of
+whether '+' or '0' is in shifted or unshifted position on the keyboard.
+
+These scaling shortcuts are installed when the FLTK
+library opens the display. They have a lower priority than any shortcut
+defined in any menu and than any user-provided event handler
+(see Fl::add_handler()) installed after FLTK opened the display.
+Therefore, if a menu item of an FLTK app is given FL_COMMAND+'+'
+as shortcut, that item's callback rather than FLTK's default zooming-in
+routine is triggered when \c Ctrl+ (or \c Cmd+) is pressed .
+If any window of the display is fullscreen or maximized,
+scaling shortcuts have no effect.
+
+It's possible to deactivate FLTK's default scaling shortcuts adding
+this global event handler
+\code
+int no_zoom_handler(int event) {
+  if (event != FL_SHORTCUT) return 0;
+  if (Fl::test_shortcut(FL_COMMAND+'+')) return 1;
+  if (Fl::test_shortcut(FL_COMMAND+'-')) return 1;
+  if (Fl::test_shortcut(FL_COMMAND+'0')) return 1;
+  return 0;
+}
+\endcode
+with statement \c Fl::add_handler(no_zoom_handler); after FLTK has opened the
+display.
+
 \section events_widget Widget Events
 
 \subsection events_fl_deactivate FL_DEACTIVATE
