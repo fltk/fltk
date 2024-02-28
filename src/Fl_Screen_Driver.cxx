@@ -481,17 +481,10 @@ int Fl_Screen_Driver::scale_handler(int event)
 {
   if (!keyboard_screen_scaling) return 0;
   if ( event != FL_SHORTCUT || !Fl::event_command() ) return 0;
-  const char *key = Fl::event_text();
-  char ek[2] = "";
-  if (!key || !*key) {
-    ek[0] = (char)(Fl::event_key() & 0xff);
-    ek[1] = '\0';
-    key = (const char *)ek;
-  }
   enum {none, zoom_in, zoom_out, zoom_reset} zoom = none;
-  if (key[0] == '0' || (strcmp(key, "à") == 0 /* for Fr keyboards*/)) zoom = zoom_reset;
-  else if (key[0] == '+' || key[0] == '=') zoom = zoom_in;
-  else if (key[0] == '-' || (key[0] == '6' /* for Fr keyboards*/)) zoom = zoom_out;
+  if (Fl::test_shortcut(FL_COMMAND+'+')) zoom = zoom_in;
+  else if (Fl::test_shortcut(FL_COMMAND+'-')) zoom = zoom_out;
+  else if (Fl::test_shortcut(FL_COMMAND+'0')) zoom = zoom_reset;
   if (zoom != none) {
     int i, count;
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
