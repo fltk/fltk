@@ -485,6 +485,9 @@ int Fl_Screen_Driver::scale_handler(int event)
   if (Fl::test_shortcut(FL_COMMAND+'+')) zoom = zoom_in;
   else if (Fl::test_shortcut(FL_COMMAND+'-')) zoom = zoom_out;
   else if (Fl::test_shortcut(FL_COMMAND+'0')) zoom = zoom_reset;
+  // kludge to recognize shortcut FL_COMMAND+'+' without pressing SHIFT
+  else if ((Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) == FL_COMMAND &&
+           Fl::event_key() == '=') zoom = zoom_in;
   if (zoom != none) {
     int i, count;
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
