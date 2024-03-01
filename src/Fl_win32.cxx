@@ -1209,16 +1209,30 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_DPICHANGED: { // 0x02E0, after display re-scaling and followed by WM_DISPLAYCHANGE
         if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
-          RECT r;
+          RECT r, *lParam_rect = (RECT*)lParam;
           Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-          int ns = Fl_Window_Driver::driver(window)->screen_num();
-          sd->dpi[ns][0] = sd->dpi[ns][1] = HIWORD(wParam);
-          float f = HIWORD(wParam) / 96.f;
-          GetClientRect(hWnd, &r);
-          float old_f = float(r.right) / window->w();
-          Fl::screen_driver()->scale(ns, f);
-          Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
-          sd->update_scaling_capability();
+          int centerX = (lParam_rect->left + lParam_rect->right)/2;
+          int centerY = (lParam_rect->top + lParam_rect->bottom)/2;
+          int ns = sd->screen_num_unscaled(centerX, centerY);
+          int old_ns = Fl_Window_Driver::driver(window)->screen_num();
+          if (sd->dpi[ns][0] != HIWORD(wParam) && ns == old_ns) { // change DPI of a screen
+            sd->dpi[ns][0] = sd->dpi[ns][1] = HIWORD(wParam);
+            float f = HIWORD(wParam) / 96.f;
+            GetClientRect(hWnd, &r);
+            float old_f = float(r.right) / window->w();
+            Fl::screen_driver()->scale(ns, f);
+            Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
+            sd->update_scaling_capability();
+          } else if (ns != old_ns) {
+            // jump window with Windows+Shift+L|R-arrow to other screen with other DPI
+            float scale = Fl::screen_driver()->scale(ns);
+            int bt, bx, by;
+            Fl_WinAPI_Window_Driver *wdr = (Fl_WinAPI_Window_Driver*)Fl_Window_Driver::driver(window);
+            wdr->border_width_title_bar_height(bx, by, bt);
+            window->position(int(round(lParam_rect->left/scale)),
+                                        int(round((lParam_rect->top + bt)/scale)));
+            wdr->resize_after_scale_change(ns, scale, scale);
+          }
         }
         return 0;
       }
