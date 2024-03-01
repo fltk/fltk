@@ -1620,16 +1620,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         //             sd->scale(olds),news, s,
         //             Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);
         // fflush(LOG);
-        if (olds != news && !window->parent()) {
-          if (s != sd->scale(olds) &&
-              !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
-              window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
-            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
-            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
-            Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+        if (!window->parent()) {
+          if (olds != news) {
+            if (s != sd->scale(olds) &&
+                !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
+                window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
+              Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
+              Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
+              Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+            }
+            else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
+              wd->screen_num(news);
+          } else if (Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+            Fl::remove_timeout(Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = false;
           }
-          else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
-            wd->screen_num(news);
         }
         window->position(int(round(nx/scale)), int(round(ny/scale)));
         break;
