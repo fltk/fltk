@@ -483,3 +483,8 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
   }
   return screen;
 }
+
+
+float Fl_WinAPI_Screen_Driver::base_scale(int numscreen) {
+  return dpi[numscreen][0] / 96.;
+}

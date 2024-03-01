@@ -97,6 +97,7 @@ public:
   // these two are implemented in Fl_get_key_win32.cxx
   int event_key(int) FL_OVERRIDE;
   int get_key(int) FL_OVERRIDE;
+  float base_scale(int numscreen) FL_OVERRIDE;
 };
 
 

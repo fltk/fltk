@@ -505,7 +505,7 @@ int Fl_Screen_Driver::scale_handler(int event)
       }
       top = Fl::next_window(top);
     }
-    static float initial_scale = screen_dr->scale(screen);
+    float initial_scale = screen_dr->base_scale(screen);
 #if defined(TEST_SCALING)
     // test scaling factors: lots of values from 0.3 to 8.0
     static float scaling_values[] = {
@@ -790,6 +790,13 @@ size_t Fl_Screen_Driver::convert_crlf(char *s, size_t len) {
   }
   return len;
 }
+
+
+float Fl_Screen_Driver::base_scale(int numscreen) {
+  static float base = scale(numscreen);
+  return base;
+}
+
 
 /**
  \}
