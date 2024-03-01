@@ -521,6 +521,16 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 }
 
 
+void Fl_WinAPI_Screen_Driver::update_scaling_capability() {
+  scaling_capability = SYSTEMWIDE_APP_SCALING;
+  for (int ns = 1; ns < screen_count(); ns++) {
+    if (scale(ns) != scale(0)) {
+      scaling_capability = PER_SCREEN_APP_SCALING;
+      break;
+    }
+  }
+}
+
 void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
   typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
   typedef HMONITOR(WINAPI * MonitorFromRect_type)(LPCRECT, DWORD);
@@ -544,6 +554,7 @@ void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
     scale(ns, dpiX / 96.f);
     // fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
   }
+  update_scaling_capability();
 }
 
 
@@ -1207,6 +1218,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           float old_f = float(r.right) / window->w();
           Fl::screen_driver()->scale(ns, f);
           Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
+          sd->update_scaling_capability();
         }
         return 0;
       }

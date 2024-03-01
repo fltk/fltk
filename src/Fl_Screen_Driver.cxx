@@ -386,8 +386,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   int i = 0, count = 0; // count top-level windows, except transient scale-displaying window
   Fl_Window *win = Fl::first_window();
   while (win) {
-    if (!win->parent() &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen) &&
         win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       count++;
     }
@@ -398,8 +397,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   Fl_Window **win_array = new Fl_Window*[count];
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
-    if (!win->parent() &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen) &&
         win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
@@ -541,7 +539,13 @@ int Fl_Screen_Driver::scale_handler(int event)
       f = scaling_values[i];
     }
     if (f == old_f) return 1;
-    screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+    if (screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING) {
+      for (int i = 0; i < Fl::screen_count(); i++) {
+        screen_dr->rescale_all_windows_from_screen(i, f * initial_scale);
+      }
+    } else {
+      screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+    }
     Fl_Screen_Driver::transient_scale_display(f, screen);
     Fl::handle(FL_ZOOM_EVENT, NULL);
     return 1;

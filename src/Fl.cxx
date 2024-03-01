@@ -2266,8 +2266,13 @@ float Fl::screen_scale(int n) {
  Also sets the scale factor value of all windows mapped to screen number \p n, if any.
  */
 void Fl::screen_scale(int n, float factor) {
-  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return;
-  Fl::screen_driver()->rescale_all_windows_from_screen(n, factor);
+  Fl_Screen_Driver::APP_SCALING_CAPABILITY capability = Fl::screen_driver()->rescalable();
+  if (!capability || n < 0 || n >= Fl::screen_count()) return;
+  if (capability == Fl_Screen_Driver::SYSTEMWIDE_APP_SCALING) {
+    for (int s = 0; s < Fl::screen_count(); s++) {
+      Fl::screen_driver()->rescale_all_windows_from_screen(s, factor);
+    }
+  } else Fl::screen_driver()->rescale_all_windows_from_screen(n, factor);
 }
 
 /**
