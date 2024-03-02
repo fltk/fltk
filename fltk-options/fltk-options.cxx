@@ -156,6 +156,13 @@ Fo_Option_Descr g_option_list[] = {
     "If 'Transiently show scaling factor' is enabled, the library shows in a "
     "transient popup window the display scaling factor value when it is "
     "changed. If disabled, no such transient window is used." },
+  { FO_OPTION_BOOL, "Allow simple zoom-in shortcut:",
+    Fl::OPTION_SIMPLE_ZOOM_SHORTCUT, "OPTION_SIMPLE_ZOOM_SHORTCUT", "SimpleZoomShortcut", false,
+    "Fine tune the shortcut that triggers the zoom-in operation.",
+    "When the keyboard in use has '+' in the shifted position of its key, "
+    "pressing that key and ctrl triggers the zoom-in operation. "
+    "If disabled, the zoom-in operation requires the shift key to be pressed also "
+    "with such a keyboard." },
   // -- When adding new options here, please make sure that you also update
   // --   documentation.src/fltk-options.dox
   // -- and

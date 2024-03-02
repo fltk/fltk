@@ -2010,6 +2010,8 @@ bool Fl::option(Fl_Option opt)
       options_[OPTION_SHOW_SCALING] = tmp;
       opt_prefs.get("UseZenity", tmp, 1);                      // default: on
       options_[OPTION_FNFC_USES_ZENITY] = tmp;
+      opt_prefs.get("SimpleZoomShortcut", tmp, 0);              // default: off
+      options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
@@ -2036,6 +2038,8 @@ bool Fl::option(Fl_Option opt)
       if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
       opt_prefs.get("UseZenity", tmp, -1);
       if (tmp >= 0) options_[OPTION_FNFC_USES_ZENITY] = tmp;
+      opt_prefs.get("SimpleZoomShortcut", tmp, -1);
+      if (tmp >= 0) options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
     }
     { // now, if the developer has registered this app, we could ask for per-application preferences
     }

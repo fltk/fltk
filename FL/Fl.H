@@ -277,6 +277,12 @@ public:
     /// Meaningful for the Wayland/X11 platform only. When switched on (default), the library uses a Zenity-based file dialog.
     /// When switched off, the GTK file dialog is used instead.
     OPTION_FNFC_USES_ZENITY,
+    /// When switched on and when the keyboard in use has '+' in the shifted position of its key,
+    /// pressing that key and ctrl triggers the zoom-in operation.
+    /// When switched off (default), the zoom-in operation requires that also the shift key is pressed.
+    /// Under macOS, this option has no effect because the OS itself generates ⌘= followed
+    /// by ⌘+ when pressing ⌘ and the '=|+' key without pressing shift.
+    OPTION_SIMPLE_ZOOM_SHORTCUT,
       // don't change this, leave it always as the last element
       /// For internal use only.
     OPTION_LAST
@@ -1085,6 +1091,7 @@ public:
  callback can be associated with Fl::add_handler().
  By default, FLTK displays the new scaling factor value in a yellow, transient window.
  This can be changed with option Fl::OPTION_SHOW_SCALING.
+ See also Fl::OPTION_SIMPLE_ZOOM_SHORTCUT.
      @{ */
   static int x(); // via screen driver
   static int y(); // via screen driver
