@@ -52,7 +52,6 @@ marked in the source code as `TUTORIAL_CHAPTER = 1`.
 \code
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl.H>
-#include <string.h>
 
 Fl_Double_Window *app_window = NULL;
 
@@ -113,6 +112,7 @@ a buffer for the current filename.
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_ask.H>
 #include <FL/filename.H>
+#include <FL/fl_string_functions.h>
 
 Fl_Menu_Bar *app_menu_bar = NULL;
 bool text_changed = false;
@@ -161,7 +161,7 @@ NULL, the window title will revert to "FLTK Editor".
 \code
 void set_filename(const char *new_filename) {
   if (new_filename) {
-    strlcpy(app_filename, new_filename, FL_PATH_MAX);
+    fl_strlcpy(app_filename, new_filename, FL_PATH_MAX);
   } else {
     app_filename[0] = 0;
   }
@@ -366,7 +366,7 @@ little chunk of code will separate the file name from the path before we call
 // insert before `if (file_chooser.show()...`
   if (app_filename[0]) {
     char temp_filename[FL_PATH_MAX];
-    strlcpy(temp_filename, app_filename, FL_PATH_MAX);
+    fl_strlcpy(temp_filename, app_filename, FL_PATH_MAX);
     const char *name = fl_filename_name(temp_filename);
     if (name) {
       file_chooser.preset_file(name);
@@ -479,7 +479,7 @@ name:
 ...
   if (app_filename[0]) {
     char temp_filename[FL_PATH_MAX];
-    strlcpy(temp_filename, app_filename, FL_PATH_MAX);
+    fl_strlcpy(temp_filename, app_filename, FL_PATH_MAX);
     const char *name = fl_filename_name(temp_filename);
     if (name) {
       file_chooser.preset_file(name);
@@ -648,7 +648,7 @@ char last_find_text[1024] = "";
 void menu_find_callback(Fl_Widget*, void* v) {
   const char *find_text = fl_input("Find in text:", last_find_text);
   if (find_text) {
-    strlcpy(last_find_text, find_text, sizeof(last_find_text));
+    fl_strlcpy(last_find_text, find_text, sizeof(last_find_text));
     find_next(find_text);
   }
 }
@@ -812,8 +812,8 @@ function:
 \code
 void Replace_Dialog::find_next_callback(Fl_Widget*, void* my_dialog) {
   Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
-  strlcpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text));
-  strlcpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text));
+  fl_strlcpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text));
+  fl_strlcpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text));
   if (last_find_text[0])
     find_next(last_find_text);
 }
