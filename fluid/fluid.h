@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -100,6 +100,18 @@ extern Fl_String g_launch_path;
 
 // ---- project class declaration
 
+/**
+ Enumeration of available internationalization types.
+ */
+typedef enum {
+  FD_I18N_NONE = 0, ///< No i18n, all strings are litearals
+  FD_I18N_GNU,      ///< GNU gettext internationalization
+  FD_I18N_POSIX     ///< Posix catgets internationalization
+} Fd_I18n_Type;
+
+/**
+ Data and settings for a FLUID project file.
+ */
 class Fluid_Project {
 public:
   Fluid_Project();
@@ -117,25 +129,46 @@ public:
   Fl_String stringsfile_name() const;
   Fl_String basename() const;
 
-  int i18n_type;
+  /// One of the available internationalization types.
+  Fd_I18n_Type i18n_type;
+  /// Include file for GNU i18n, writes an #include statement into the source
+  /// file. This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
   Fl_String i18n_gnu_include;
+  // Optional name of a macro for conditional i18n compilation.
   Fl_String i18n_gnu_conditional;
+  /// For the gettext/intl.h options, this is the function that translates text
+  /// at runtime. This is usually "gettext" or "_".
   Fl_String i18n_gnu_function;
+  /// For the gettext/intl.h options, this is the function that marks the translation
+  /// of text at initialisation time. This is usually "gettext_noop" or "N_".
   Fl_String i18n_gnu_static_function;
 
+  /// Include file for Posix i18n, write a #include statement into the source
+  /// file. This is usually `<nl_types.h>` for Posix catgets.
   Fl_String i18n_pos_include;
+  // Optional name of a macro for conditional i18n compilation.
   Fl_String i18n_pos_conditional;
+  /// Name of the nl_catd database
   Fl_String i18n_pos_file;
+  /// Message set ID for the catalog.
   Fl_String i18n_pos_set;
 
+  /// If set, generate code to include the header file form the c++ file
   int include_H_from_C;
+  /// If set, handle keyboard shortcut Ctrl on macOS using Cmd instead
   int use_FL_COMMAND;
+  /// Clear if UTF-8 characters in statics texts are written as escape sequences
   int utf8_in_src;
+  /// If set, <FL/Fl.H> will not be included from the header code before anything else
   int avoid_early_includes;
+  /// If set, command line overrides header file name in .fl file.
   int header_file_set;
+  ///  If set, command line overrides source code file name in .fl file.
   int code_file_set;
   int write_mergeback_data;
+  /// Hold the default extension for header files, or the entire filename if set via command line.
   Fl_String header_file_name;
+  /// Hold the default extension for source code  files, or the entire filename if set via command line.
   Fl_String code_file_name;
 };
 

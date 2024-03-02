@@ -2,7 +2,7 @@
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 // Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,13 +27,6 @@
 #include <ctype.h>
 
 // ---- CodeEditor implementation
-
-/** \class CodeEditor
- A widget derived from Fl_Text_Editor that implements C++ code highlighting.
-
- CodeEditor is used in Fluid whenever the user can edit C++ source
- code or header text.
- */
 
 /**
  Lookup table for all supported styles.
@@ -262,14 +255,6 @@ void CodeEditor::textsize(Fl_Fontsize s) {
 } // textsize
 
 // ---- CodeViewer implementation
-
-/** \class CodeViewer
- A widget derived from CodeEditor with highlighting for code blocks.
-
- This widget is used by the SourceView system to show the design's
- source and header code. The secondary highlighting show the text
- part that corresponds to the selected widget(s).
- */
 
 /**
  Create a CodeViewer widget.

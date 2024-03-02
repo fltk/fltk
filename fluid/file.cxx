@@ -283,7 +283,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
-        g_project.i18n_type = atoi(read_word());
+        g_project.i18n_type = static_cast<Fd_I18n_Type>(atoi(read_word()));
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_function")) {
@@ -303,16 +303,16 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        if (g_project.i18n_type == 1)
+        if (g_project.i18n_type == FD_I18N_GNU)
           g_project.i18n_gnu_include = read_word();
-        else if (g_project.i18n_type == 2)
+        else if (g_project.i18n_type == FD_I18N_POSIX)
           g_project.i18n_pos_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        if (g_project.i18n_type == 1)
+        if (g_project.i18n_type == FD_I18N_GNU)
           g_project.i18n_gnu_conditional = read_word();
-        else if (g_project.i18n_type == 2)
+        else if (g_project.i18n_type == FD_I18N_POSIX)
           g_project.i18n_pos_conditional = read_word();
         goto CONTINUE;
       }
@@ -847,13 +847,15 @@ int Fd_Project_Writer::write_project(const char *filename, int selected_only, bo
   if (g_project.i18n_type) {
     write_string("\ni18n_type %d", g_project.i18n_type);
     switch (g_project.i18n_type) {
-      case 1 : /* GNU gettext */
+      case FD_I18N_NONE:
+        break;
+      case FD_I18N_GNU : /* GNU gettext */
         write_string("\ni18n_include"); write_word(g_project.i18n_gnu_include.c_str());
         write_string("\ni18n_conditional"); write_word(g_project.i18n_gnu_conditional.c_str());
         write_string("\ni18n_gnu_function"); write_word(g_project.i18n_gnu_function.c_str());
         write_string("\ni18n_gnu_static_function"); write_word(g_project.i18n_gnu_static_function.c_str());
         break;
-      case 2 : /* POSIX catgets */
+      case FD_I18N_POSIX : /* POSIX catgets */
         write_string("\ni18n_include"); write_word(g_project.i18n_pos_include.c_str());
         write_string("\ni18n_conditional"); write_word(g_project.i18n_pos_conditional.c_str());
         if (!g_project.i18n_pos_file.empty()) {

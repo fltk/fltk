@@ -2,7 +2,7 @@
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 // Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,6 +35,12 @@
 
 // ---- CodeEditor declaration
 
+/**
+ A widget derived from Fl_Text_Editor that implements C++ code highlighting.
+
+ CodeEditor is used in Fluid whenever the user can edit C++ source
+ code or header text.
+ */
 class CodeEditor : public Fl_Text_Editor {
   friend class StyleParse;
 
@@ -49,31 +55,51 @@ class CodeEditor : public Fl_Text_Editor {
 public:
   CodeEditor(int X, int Y, int W, int H, const char *L=0);
   ~CodeEditor();
-  int top_line() { return get_absolute_top_line_number(); }
   void textsize(Fl_Fontsize s);
+
+  /// access to protected member get_absolute_top_line_number()
+  int top_line() { return get_absolute_top_line_number(); }
+
+  /// access to protected member mTopLineNum
   int scroll_row() { return mTopLineNum; }
+
+  /// access to protected member mHorizOffset
   int scroll_col() { return mHorizOffset; }
 };
 
 // ---- CodeViewer declaration
 
+/**
+ A widget derived from CodeEditor with highlighting for code blocks.
+
+ This widget is used by the SourceView system to show the design's
+ source and header code. The secondary highlighting show the text
+ part that corresponds to the selected widget(s).
+ */
 class CodeViewer : public CodeEditor {
 public:
   CodeViewer(int X, int Y, int W, int H, const char *L=0);
 
 protected:
-  int handle(int ev)  FL_OVERRIDE{ return Fl_Text_Display::handle(ev); }
   void draw() FL_OVERRIDE;
+
+  /// Limit event handling to viewing, not editing
+  int handle(int ev) FL_OVERRIDE { return Fl_Text_Display::handle(ev); }
 };
 
-// ---- Project File Text Viewe declaration
+// ---- Project File Text Viewer declaration
 
+/**
+ A text viewer with an additional highlighting color scheme.
+ */
 class TextViewer : public Fl_Text_Display {
 public:
   TextViewer(int X, int Y, int W, int H, const char *L=0);
   ~TextViewer();
-  int top_line() { return get_absolute_top_line_number(); }
   void draw() FL_OVERRIDE;
+
+  /// access to protected member get_absolute_top_line_number()
+  int top_line() { return get_absolute_top_line_number(); }
 };
 
 #endif // !CodeEditor_h

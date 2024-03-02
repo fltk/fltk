@@ -30,7 +30,7 @@
 
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
-// INFO: how about a small tool box for quick preset selection and disabeling of individual snaps?
+// INFO: how about a small tool box for quick preset selection and disabling of individual snaps?
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 

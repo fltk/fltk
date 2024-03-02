@@ -73,19 +73,19 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
     c->value(g_project.i18n_type);
   } else {
     undo_checkpoint();
-    g_project.i18n_type = c->value();
+    g_project.i18n_type = static_cast<Fd_I18n_Type>(c->value());
     set_modflag(1);
   }
   switch (g_project.i18n_type) {
-  case 0 : /* None */
+  case FD_I18N_NONE : /* None */
       i18n_gnu_group->hide();
       i18n_posix_group->hide();
       break;
-  case 1 : /* GNU gettext */
+  case FD_I18N_GNU : /* GNU gettext */
       i18n_gnu_group->show();
       i18n_posix_group->hide();
       break;
-  case 2 : /* POSIX cat */
+  case FD_I18N_POSIX : /* POSIX cat */
       i18n_gnu_group->hide();
       i18n_posix_group->show();
       break;

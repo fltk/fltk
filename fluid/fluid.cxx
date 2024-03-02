@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -67,10 +67,13 @@ extern "C"
 // Globals..
 //
 
-/// Fluid-wide help dialog.
-static Fl_Help_Dialog *help_dialog = 0;
+/// FLUID-wide help dialog.
+static Fl_Help_Dialog *help_dialog = NULL;
 
+/// Main app window menu bar.
 Fl_Menu_Bar *main_menubar = NULL;
+
+/// Main app window.
 Fl_Window *main_window;
 
 /// Fluid application preferences, always accessible, will be flushed when app closes.
@@ -115,10 +118,10 @@ int reading_file = 0;
 // File history info...
 
 /// Stores the absolute filename of the last 10 design files, saved in app preferences.
-char    absolute_history[10][FL_PATH_MAX];
+char absolute_history[10][FL_PATH_MAX];
 
 /// This list of filenames is computed from \c absolute_history and displayed in the main menu.
-char    relative_history[10][FL_PATH_MAX];
+char relative_history[10][FL_PATH_MAX];
 
 /// Menuitem to save a .fl design file, will be deactivated if the design is unchanged.
 Fl_Menu_Item *save_item = NULL;
@@ -143,7 +146,7 @@ Fl_Menu_Item *restricted_item = NULL;
 
 ////////////////////////////////////////////////////////////////
 
-/// Filename of the current .fl design file
+/// Filename of the current .fl project file
 static const char *filename = NULL;
 
 /// Set if the current design has been modified compared to the associated .fl design file.
@@ -172,105 +175,23 @@ int compile_strings = 0;        // fluid -cs
 /// Set, if Fluid runs in batch mode, and no user interface is activated.
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
-/// command line arguments override settings in the project file
+/// command line arguments that overrides the generate code file extension or name
 Fl_String g_code_filename_arg;
+
+/// command line arguments that overrides the generate header file extension or name
 Fl_String g_header_filename_arg;
+
+/// current directory path at application launch
 Fl_String g_launch_path;
 
+/// path to store temporary files during app run
+/// \see tmpdir_create_called
 Fl_String tmpdir_path;
+
+/// true if the temporary file path was already created
+/// \see tmpdir_path
 bool tmpdir_create_called = false;
 
-/** \var int Fluid_Project::header_file_set
- If set, command line overrides header file name in .fl file.
- */
-
-/** \var int Fluid_Project::code_file_set
- If set, command line overrides source code file name in .fl file.
- */
-
-/** \var int Fluid_Project::header_file_name
- Hold the default extension for header files, or the entire filename if set via command line.
- */
-
-/** \var int Fluid_Project::code_file_name
- Hold the default extension for source code  files, or the entire filename if set via command line.
- */
-
-/** \var int Fluid_Project::i18n_type
- Saved in the .fl design file.
- \todo document me
- */
-
-/** \var int Fluid_Project::i18n_gnu_include
- Include file for GNU i18n, writes an #include statement into the
- source file.
-
- This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
-
- Fluid accepts filenames in quotes or in \< and \>. If neither is found,
- double quotes are added.
- If this value is empty, no include statement will be generated.
-
- Saved in the .fl design file if GNU i18n is selected.
- */
-
-/** \var int Fluid_Project::i18n_pos_include
- Include file for Posix i18n, write a #include statement into the
- source file.
-
- This is usually `<nl_types.h>` for Posix catgets.
-
- Fluid accepts filenames in quotes or in \< and \>. If neither is found,
- double quotes are added.
- If this value is empty, no include statement will be generated.
-
- Saved in the .fl design file.
- */
-
-/** \var int Fluid_Project::i18n_gnu_conditional
- Saved in the .fl design file.
- \todo document me
- */
-
-/** \var int Fluid_Project::i18n_pos_conditional
- Saved in the .fl design file.
- \todo document me
- */
-
-/** \var int Fluid_Project::i18n_gnu_function
- For the gettext/intl.h options, this is the function that translates text
- at runtime.
-
- This is usually "gettext" or "_".
- This should not be empty.
- Saved in the .fl design file.
- */
-
-/** \var int Fluid_Project::i18n_gnu_static_function
- For the gettext/intl.h options, this is the function that marks the
- translation of text at initialisation time.
-
- This is usually "gettext_noop" or "N_".
- This should not be empty.
- Fluid will translate static text (usually in menu items) later when used
- for the first time.
-
- Saved in the .fl design file.
- */
-
-/** \var int Fluid_Project::i18n_pos_file
- Saved in the .fl design file.
- \todo document me
- */
-
-/** \var int Fluid_Project::i18n_pos_set
- Saved in the .fl design file.
- \todo document me
- */
-
-/** \var int Fluid_Project::basename
- \todo document me
- */
 
 /// Offset in pixels when adding widgets from an .fl file.
 int pasteoffset = 0;
@@ -280,10 +201,14 @@ static int ipasteoffset = 0;
 
 // ---- project settings
 
+/// The current project, possibly a new, empty roject
 Fluid_Project g_project;
 
+/**
+ Initialize a new project.
+ */
 Fluid_Project::Fluid_Project() :
-  i18n_type(0),
+  i18n_type(FD_I18N_NONE),
   include_H_from_C(1),
   use_FL_COMMAND(0),
   utf8_in_src(0),
@@ -295,12 +220,19 @@ Fluid_Project::Fluid_Project() :
   code_file_name(".cxx")
 { }
 
+/**
+ Clear all project resources.
+ Not implemented.
+ */
 Fluid_Project::~Fluid_Project() {
 }
 
+/**
+ Reset all project setting to create a new empty project.
+ */
 void Fluid_Project::reset() {
   ::delete_all();
-  i18n_type = 0;
+  i18n_type = FD_I18N_NONE;
 
   i18n_gnu_include = "<libintl.h>";
   i18n_gnu_conditional = "";
@@ -323,6 +255,9 @@ void Fluid_Project::reset() {
   write_mergeback_data = 0;
 }
 
+/**
+ Tell the project and i18n tab of the settings dialog to refresh themselves.
+ */
 void Fluid_Project::update_settings_dialog() {
   if (settings_window) {
     w_settings_project_tab->do_callback(w_settings_project_tab, LOAD);
@@ -330,7 +265,11 @@ void Fluid_Project::update_settings_dialog() {
   }
 }
 
-// make sure that a path name ends with a forward slash
+/**
+ Make sure that a path name ends with a forward slash.
+ \param[in] str directory or path name
+ \return a new string, ending with a '/'
+ */
 static Fl_String end_with_slash(const Fl_String &str) {
   char last = str[str.size()-1];
   if (last !='/' && last != '\\')
@@ -339,7 +278,8 @@ static Fl_String end_with_slash(const Fl_String &str) {
     return str;
 }
 
-/** Generate a path to a directory for temporary data storage.
+/** 
+ Generate a path to a directory for temporary data storage.
  The path is stored in g_tmpdir.
  */
 static void create_tmpdir() {
@@ -396,11 +336,18 @@ static void create_tmpdir() {
     fl_make_path(path.c_str());
     if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
   }
-  if (tmpdir_path.empty())
-    fl_alert("Can't create directory for temporary data storage.");
+  if (tmpdir_path.empty()) {
+    if (batch_mode) {
+      fprintf(stderr, "ERROR: Can't create directory for temporary data storage.\n");
+    } else {
+      fl_alert("Can't create directory for temporary data storage.");
+    }
+  }
 }
 
-/** Delete the temporary directory that was created in set_tmpdir. */
+/** 
+ Delete the temporary directory that was created in set_tmpdir.
+ */
 static void delete_tmpdir() {
   // was a temporary directory created
   if (!tmpdir_create_called)
@@ -421,7 +368,11 @@ static void delete_tmpdir() {
 
   // then delete the directory itself
   if (fl_rmdir(tmpdir_path.c_str()) < 0) {
-    fl_alert("WARNING: Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
+    if (batch_mode) {
+      fprintf(stderr, "WARNING: Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
+    } else {
+      fl_alert("WARNING: Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
+    }
   }
 }
 
@@ -429,7 +380,7 @@ static void delete_tmpdir() {
  Return the path to a temporary directory for this instance of FLUID.
  Fluid will do its best to clear and delete this directory when exiting.
  \return the path to the temporary directory, ending in a '/', or and empty
-      string is no directory could be created.
+      string if no directory could be created.
  */
 const Fl_String &get_tmpdir() {
   if (!tmpdir_create_called)
@@ -468,7 +419,13 @@ bool confirm_project_clear() {
 // ----
 
 extern Fl_Window *the_panel;
-// make sure that a currently changed text widgets propagates its contents
+
+/**
+ Ensure that text widgets in the widget panel propagates apply current changes.
+ By temporarily clearing the text focus, all text widgets with changed text
+ will unfocus and call their respective callbacks, propagating those changes to
+ their data set.
+ */
 void flush_text_widgets() {
   if (Fl::focus() && (Fl::focus()->top_window() == the_panel)) {
     Fl_Widget *old_focus = Fl::focus();
@@ -476,6 +433,7 @@ void flush_text_widgets() {
     Fl::focus(old_focus);
   }
 }
+
 // ----
 
 /**
@@ -814,8 +772,13 @@ void revert_cb(Fl_Widget *,void *) {
  */
 void exit_cb(Fl_Widget *,void *) {
   if (shell_command_running()) {
-    fl_alert("Previous shell command still running!");
-    return;
+    int choice = fl_choice("Previous shell command still running!",
+                           "Cancel",
+                           "Exit",
+                           NULL);
+    if (choice == 0) { // user chose to cancel the exit operation
+      return;
+    }
   }
 
   flush_text_widgets();
@@ -874,6 +837,8 @@ void exit_cb(Fl_Widget *,void *) {
  If the current project was modified, FLUID will give the user the opportunity
  to save the old project first.
 
+ \param[in] user_must_confirm if set, a confimation dialog is presented to the
+    user before resetting the project.
  \return false if the operation was canceled
  */
 bool new_project(bool user_must_confirm = true) {
@@ -1122,6 +1087,7 @@ void apple_open_cb(const char *c) {
 
 /**
  Get the absolute path of the project file, for example `/Users/matt/dev/`.
+ \return the path ending in '/'
  */
 Fl_String Fluid_Project::projectfile_path() const {
   return end_with_slash(fl_filename_absolute(fl_filename_path(filename), g_launch_path));
@@ -1129,6 +1095,7 @@ Fl_String Fluid_Project::projectfile_path() const {
 
 /**
  Get the project file name including extension, for example `test.fl`.
+ \return the file name without path
  */
 Fl_String Fluid_Project::projectfile_name() const {
   return fl_filename_name(filename);
@@ -1136,6 +1103,7 @@ Fl_String Fluid_Project::projectfile_name() const {
 
 /**
  Get the absolute path of the generated C++ code file, for example `/Users/matt/dev/src/`.
+ \return the path ending in '/'
  */
 Fl_String Fluid_Project::codefile_path() const {
   Fl_String path = fl_filename_path(code_file_name);
@@ -1147,6 +1115,7 @@ Fl_String Fluid_Project::codefile_path() const {
 
 /**
  Get the generated C++ code file name including extension, for example `test.cxx`.
+ \return the file name without path
  */
 Fl_String Fluid_Project::codefile_name() const {
   Fl_String name = fl_filename_name(code_file_name);
@@ -1161,6 +1130,7 @@ Fl_String Fluid_Project::codefile_name() const {
 
 /**
  Get the absolute path of the generated C++ header file, for example `/Users/matt/dev/src/`.
+ \return the path ending in '/'
  */
 Fl_String Fluid_Project::headerfile_path() const {
   Fl_String path = fl_filename_path(header_file_name);
@@ -1172,6 +1142,7 @@ Fl_String Fluid_Project::headerfile_path() const {
 
 /**
  Get the generated C++ header file name including extension, for example `test.cxx`.
+ \return the file name without path
  */
 Fl_String Fluid_Project::headerfile_name() const {
   Fl_String name = fl_filename_name(header_file_name);
@@ -1190,32 +1161,34 @@ Fl_String Fluid_Project::headerfile_name() const {
  with the source and header file, historically, the text is always saved with
  the project file in interactive mode, and in the FLUID launch directory in
  batch mode.
+ \return the path ending in '/'
  */
 Fl_String Fluid_Project::stringsfile_path() const {
   if (batch_mode)
-    return end_with_slash(g_launch_path);
+    return g_launch_path;
   else
     return projectfile_path();
 }
 
 /**
  Get the generated i18n text file name including extension, for example `test.po`.
+ \return the file name without path
  */
 Fl_String Fluid_Project::stringsfile_name() const {
   switch (i18n_type) {
     default: return fl_filename_setext(fl_filename_name(filename), ".txt");
-    case 1: return fl_filename_setext(fl_filename_name(filename), ".po");
-    case 2: return fl_filename_setext(fl_filename_name(filename), ".msg");
+    case FD_I18N_GNU: return fl_filename_setext(fl_filename_name(filename), ".po");
+    case FD_I18N_POSIX: return fl_filename_setext(fl_filename_name(filename), ".msg");
   }
 }
 
 /**
  Get the name of the project file without the filename extension.
+ \return the file name without path or extension
  */
 Fl_String Fluid_Project::basename() const {
   return fl_filename_setext(fl_filename_name(filename), "");
 }
-
 
 /**
  Generate the C++ source and header filenames and write those files.
@@ -1234,6 +1207,7 @@ Fl_String Fluid_Project::basename() const {
  In interactive mode, it will pop up an error message, or, if the user
  hasn't disabled that, pop up a confirmation message.
 
+ \param[in] dont_show_completion_dialog don't show the completion dialog
  \return 1 if the operation failed, 0 if it succeeded
  */
 int write_code_files(bool dont_show_completion_dialog)
@@ -1670,7 +1644,7 @@ static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(
  \c New_Menu creates new widgets and is explained in detail in another location.
 
  \see New_Menu
- \todo This menu need some major modernisation. Menus are too long and their
+ \todo This menu needs some major modernization. Menus are too long and their
     sorting is not always obvious.
  \todo Shortcuts are all over the place (Alt, Ctrl, Command, Shift-Ctrl,
     function keys), and there should be a help page listing all shortcuts.
@@ -1772,6 +1746,8 @@ Fl_Menu_Item Main_Menu[] = {
  This callback is triggered by changing the scheme in the
  Fl_Scheme_Choice widget (\p Edit/GUI Settings).
 
+ \param[in] choice the calling widget
+
  \see init_scheme() for choice values and backwards compatibility
  */
 void scheme_cb(Fl_Scheme_Choice *choice, void *) {
@@ -1860,10 +1836,16 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
   }
 }
 
+/**
+ Show or hide the code preview window.
+ */
 void toggle_sourceview_cb(Fl_Double_Window *, void *) {
   sourceview_toggle_visibility();
 }
 
+/**
+ Show or hide the code preview window, button callback.
+ */
 void toggle_sourceview_b_cb(Fl_Button*, void *) {
   sourceview_toggle_visibility();
 }

@@ -88,7 +88,7 @@ public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
   Fd_Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
-  Fd_Tool_Store storage_;                 ///< storage location (see FD_STORE_INTERNAL, etc.)
+  Fd_Tool_Store storage_;       ///< storage location (see FD_STORE_INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);

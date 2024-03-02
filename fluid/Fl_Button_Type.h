@@ -38,7 +38,6 @@ public:
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
-
 };
 
 extern Fl_Button_Type Fl_Button_type;

@@ -1,5 +1,5 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Window type header file for the Fast Light Tool Kit (FLTK).
 //
 // Type for creating all subclasses of Fl_Widget
 // This should have the widget pointer in it, but it is still in the

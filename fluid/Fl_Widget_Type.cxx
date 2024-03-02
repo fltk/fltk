@@ -2997,17 +2997,18 @@ void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
   if (label() && *label()) {
     f.write_c(", ");
     switch (g_project.i18n_type) {
-    case 0 : /* None */
+    case FD_I18N_NONE : /* None */
         f.write_cstring(label());
         break;
-    case 1 : /* GNU gettext */
+    case FD_I18N_GNU : /* GNU gettext */
         f.write_c("%s(", g_project.i18n_gnu_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
-    case 2 : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,", g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
-                g_project.i18n_pos_set.c_str(), msgnum());
+    case FD_I18N_POSIX : /* POSIX catgets */
+        f.write_c("catgets(%s,%s,%d,", 
+                  g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
+                  g_project.i18n_pos_set.c_str(), msgnum());
         f.write_cstring(label());
         f.write_c(")");
         break;
@@ -3070,17 +3071,19 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
   if (tooltip() && *tooltip()) {
     f.write_c("%s%s->tooltip(",f.indent(), var);
     switch (g_project.i18n_type) {
-    case 0 : /* None */
+    case FD_I18N_NONE : /* None */
         f.write_cstring(tooltip());
         break;
-    case 1 : /* GNU gettext */
+    case FD_I18N_GNU : /* GNU gettext */
         f.write_c("%s(", g_project.i18n_gnu_function.c_str());
         f.write_cstring(tooltip());
         f.write_c(")");
         break;
-    case 2 : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,", g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
-                g_project.i18n_pos_set.c_str(), msgnum() + 1);
+    case FD_I18N_POSIX : /* POSIX catgets */
+        f.write_c("catgets(%s,%s,%d,",
+                  g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
+                  g_project.i18n_pos_set.c_str(), 
+                  msgnum() + 1);
         f.write_cstring(tooltip());
         f.write_c(")");
         break;
