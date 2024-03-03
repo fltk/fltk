@@ -2182,7 +2182,7 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
   if (resize_from_program && shown()) {
     float s = Fl::screen_driver()->scale(screen_num());
     if (is_a_resize) {
-      if (!pWindow->resizable()) pWindow->size_range(w(),h(),w(),h());
+      if (!is_resizable()) pWindow->size_range(w(),h(),w(),h());
       if (is_a_move) {
         XMoveResizeWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s), W>0 ? W*s : 1, H>0 ? H*s : 1);
       } else {
