@@ -1086,12 +1086,8 @@ public:
  can be set to a value FLTK will multiply to the OS-given value.
  The 2 variants of functions Fl::screen_scale() allow to programmatically get and set
  scaling factor values. The scaling factor value can be further changed at runtime
- by typing ctrl-/+/-/0/ (cmd-/+/-/0/ under macOS). FLTK sends the
- \ref FL_ZOOM_EVENT when the factor value is changed, to which a
- callback can be associated with Fl::add_handler().
- By default, FLTK displays the new scaling factor value in a yellow, transient window.
- This can be changed with option Fl::OPTION_SHOW_SCALING.
- See also Fl::OPTION_SIMPLE_ZOOM_SHORTCUT.
+ by typing \c Ctrl/+/-/0/ (\c Cmd/+/-/0/ under macOS).
+ See \ref events_fl_shortcut for more details about these shortcuts.
      @{ */
   static int x(); // via screen driver
   static int y(); // via screen driver
