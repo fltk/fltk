@@ -1,7 +1,7 @@
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -105,7 +105,7 @@ FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.
 // With Xlib / X11 fonts, fl_xfont will return the current selected font.
 // With XFT / X11 fonts, fl_xfont will attempt to return the bitmap "core" font most
 // similar to (usually the same as) the current XFT font.
-class Fl_XFont_On_Demand
+class FL_EXPORT Fl_XFont_On_Demand
 {
 public:
   Fl_XFont_On_Demand(XFontStruct* p = NULL) : ptr(p) { }
