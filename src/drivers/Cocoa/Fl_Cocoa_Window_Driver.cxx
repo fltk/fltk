@@ -89,7 +89,7 @@ void Fl_Cocoa_Window_Driver::draw_end()
 {
   // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
   // corner. This code draws a little ribbed triangle for dragging.
-  if (fl_mac_os_version < 100700 && !parent() && pWindow->resizable() &&
+  if (fl_mac_os_version < 100700 && !parent() && is_resizable() &&
       (!size_range_set() || minh() != maxh() || minw() != maxw())) {
     int dx = Fl::box_dw(pWindow->box())-Fl::box_dx(pWindow->box());
     int dy = Fl::box_dh(pWindow->box())-Fl::box_dy(pWindow->box());

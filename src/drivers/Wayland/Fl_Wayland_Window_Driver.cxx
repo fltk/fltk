@@ -885,7 +885,7 @@ static void handle_configure(struct libdecor_frame *frame,
     if (is_2nd_run) {
       width = libdecor_frame_get_content_width(frame);
       height = libdecor_frame_get_content_height(frame);
-      if (!window->fl_win->resizable()) {
+      if (!driver->is_resizable()) {
         libdecor_frame_set_min_content_size(frame, width, height);
         libdecor_frame_set_max_content_size(frame, width, height);
       }
@@ -1416,7 +1416,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
     // appears in the Gnome desktop menu bar
     libdecor_frame_set_app_id(new_window->frame, get_prog_name());
     libdecor_frame_set_title(new_window->frame, pWindow->label()?pWindow->label():"");
-    if (!pWindow->resizable()) {
+    if (!is_resizable()) {
       libdecor_frame_unset_capabilities(new_window->frame, LIBDECOR_ACTION_RESIZE);
       libdecor_frame_unset_capabilities(new_window->frame, LIBDECOR_ACTION_FULLSCREEN);
     }
