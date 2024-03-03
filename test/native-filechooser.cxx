@@ -26,6 +26,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Terminal.H>
+#include <FL/Fl_Shared_Image.H>
 
 #define TERMINAL_HEIGHT 120
 
@@ -80,13 +81,18 @@ void PickDir_CB(Fl_Widget*, void*) {
 }
 
 int main(int argc, char **argv) {
-  //// For a nicer looking browser under linux, call Fl_File_Icon::load_system_icons();
-  //// (If you do this, you'll need to link with fltk_images)
-  //// NOTE: If you do not load the system icons, the file chooser will still work, but
-  ////       no icons will be shown. However, this means you do not need to link in the
-  ////       fltk_images library, potentially reducing the size of your executable.
-  //// Loading the system icons is not required by the OSX or Windows native file choosers.
+  /* For a nicer looking browser under linux/unix, call fl_register_images()
+    (If you do this, you'll need to link with fltk_images).
+    That's required for the preview option of the GTK filechooser.
+    In the unlikely situation where no native filechooser is found on
+    the active Linux system, FLTK reverts to using its own file chooser
+    (Fl_File_Chooser) which looks best if you also call
+    Fl_File_Icon::load_system_icons().
+
+    None of that is useful for the native file chooser under macOS or Windows.
+   */
 #if !defined(_WIN32) && !defined(__APPLE__)
+  fl_register_images();
   Fl_File_Icon::load_system_icons();
 #endif
 
