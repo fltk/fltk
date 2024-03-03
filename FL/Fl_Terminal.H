@@ -82,6 +82,15 @@
   text colors. Others, such as cursor_up() are protected to prevent common misuse, and are
   available only to subclasses.
 
+  Some common operations:
+  - Set the terminal's background color, see color(Fl_Color)
+  - Set the terminal's default text color, see textfgcolor_default(Fl_Color)
+  - Printing text to the terminal, see Fl_Terminal::printf() and Fl_Terminal::append()
+  - Clearing the screen, see clear()
+  - Getting the terminal's buffer contents, see text()
+  - Getting single utf8 characters by row/col from the terminal display, see utf8_char_at_disp()
+  - Getting the text from a text selection, see get_selection()
+
   For applications that need input support, the widget can be subclassed to provide
   keyboard input, and advanced features like pseudo ttys, termio, serial port I/O, etc.,
   as such features are beyond the scope of FLTK.
@@ -279,16 +288,16 @@
                              ░░░░░░:::::::::::::░░░░░◉
                              ░░░░░░::##:::::##:◉░░░░░░╲
                              ░░░░░░::###:::###::╲░░░░░ ╲
-                             ░░░░░░::####:####::░╲░░░░  color()
+                             ░░░░░░::####:####::░╲░░░░  Fl_Terminal::color()
                              ░░░░░░::##:###:##::░░╲░░░
                              ░░░░░░::##::#::##::░░░╲░░
                              ░░░░░░::##:.:::##::░░░░╲░
                              ░░░░░░::##:::::#◉::░░░░░╲
                              ░░░░░░:::::::::::╲:░░░░░░╲
-                             ░░░░░░░░░░░░░░░░░░╲░░░░░░ textbgcolor()
+                             ░░░░░░░░░░░░░░░░░░╲░░░░░░ Fl_Terminal::textbgcolor()
                              ░░░░░░░░░░░░░░░░░░░╲░░░░░
                                                  ╲
-                                                  textfgcolor()
+                                                  Fl_Terminal::textfgcolor()
 ·
   \endcode
 
@@ -999,6 +1008,7 @@ public:
   void draw(void) FL_OVERRIDE;
   void resize(int X,int Y,int W,int H) FL_OVERRIDE;
   int  handle(int e) FL_OVERRIDE;
+  const char* text(bool lines_below_cursor=false) const;
 
 protected:
   // Internal short names

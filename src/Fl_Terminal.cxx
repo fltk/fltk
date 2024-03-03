@@ -36,6 +36,7 @@
 #include <FL/fl_utf8.h> // fl_utf8len1
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
+#include "Fl_String.H"
 
 /////////////////////////////////
 ////// Static Functions /////////
@@ -3765,6 +3766,53 @@ int Fl_Terminal::handle(int e) {
       break;
   } // switch
   return ret;
+}
+
+/**
+  Return a string copy of all lines in the terminal (including history).
+  The returned string is allocated with strdup(3), which the caller must free.
+
+  If \p 'lines_below_cursor' is false (default), lines below the cursor on down
+  to the bottom of the display are ignored, and not included in the returned string.
+
+  If \p 'lines_below_cursor' is true, then all lines in the display are returned
+  including any below the cursor, even if all are blank.
+
+  Example use:
+  \par
+  \code
+      Fl_Terminal *tty = new Fl_Terminal(..);
+      :
+      const char *s = tty->text();   // get a copy of the terminal's contents
+      printf("Terminal's contents is:\n%s\n", s);
+      free((void*)s);                // free() the copy when done!
+  \endcode
+
+  \return A string allocated with strdup(3) which must be free'd, text is UTF-8.
+*/
+const char* Fl_Terminal::text(bool lines_below_cursor) const {
+  Fl_String lines;          // lines of text we'll return
+  // See how many display rows we need to include
+  int disprows = lines_below_cursor ? disp_rows() - 1    // all display lines
+                                    : cursor_row();      // only lines up to cursor
+  // Start at top of 'in use' history, and walk to end of display
+  int srow = hist_use_srow();                            // start row of text to return
+  int erow = srow + hist_use() + disprows;               // end row of text to return
+  for (int row=srow; row<=erow; row++) {                 // walk rows
+    const Utf8Char *u8c = u8c_ring_row(row);             // start of row
+    int trim = 0;
+    for (int col=0; col<ring_cols(); col++,u8c++) {      // walk cols in row
+      const char *s = u8c->text_utf8();                  // first byte of char
+      for (int i=0; i<u8c->length(); i++) lines += *s++; // append all bytes in multibyte char
+      // Count any trailing whitespace to trim
+      if (u8c->length()==1 && *s==' ') trim++;           // trailing whitespace? trim
+      else                             trim = 0;         // non-whitespace? don't trim
+    }
+    // trim trailing whitespace from each line, if any
+    if (trim) lines.resize(lines.size() - trim);
+    lines += "\n";
+  }
+  return strdup(lines.c_str());
 }
 
 /**
