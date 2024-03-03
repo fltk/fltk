@@ -57,7 +57,7 @@ protected:
   /// This variable is set for visible windows in batch mode.
   /// We can't open a window in batch mode, even if we want the "visible" flags
   /// set, so we need a second place to store this information while also
-  /// disabeling the output of the "hide" property by the Widget Type.
+  /// disabling the output of the "hide" property by the Widget Type.
   uchar override_visible_;
 
   void write_static(Fd_Code_Writer& f) FL_OVERRIDE;

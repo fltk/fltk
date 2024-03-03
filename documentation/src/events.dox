@@ -190,6 +190,34 @@ You can also make "global" shortcuts by using Fl::add_handler().
 A global shortcut will work no matter what windows are displayed
 or which one has the focus.
 
+Since version 1.4, FLTK has 3 default global shortcuts (\c Ctrl/+/-/0/
+ [\c Cmd/+/-/0/ under macOS]) that change the value of the GUI scaling
+factor. \c Ctrl+ zooms-in all app windows of the focussed display
+(all displays under macOS);
+\c Ctrl- zooms-out these windows; \c Ctrl 0 restores the initial value of the
+scaling factor. If any window of the display is fullscreen or maximized,
+scaling shortcuts have no effect. It's possible to deactivate FLTK's default
+scaling shortcuts with function Fl::keyboard_screen_scaling().
+
+Option Fl::OPTION_SIMPLE_ZOOM_SHORTCUT can
+facilitate the typing necessary to trigger the zoom-in operation
+with those keyboard layouts where character '+' is located in
+the shifted position of its key: when this option is On
+it's not necessary to press also the Shift key to zoom-in.
+
+These scaling shortcuts are installed when the FLTK
+library opens the display. They have a lower priority than any shortcut
+defined in any menu and than any user-provided event handler
+(see Fl::add_handler()) installed after FLTK opened the display.
+Therefore, if a menu item of an FLTK app is given FL_COMMAND+'+'
+as shortcut, that item's callback rather than FLTK's default zooming-in
+routine is triggered when \c Ctrl+ (\c Cmd+ under macOS) is pressed.
+
+FLTK sends the \ref FL_ZOOM_EVENT when the scaling factor value changes, to which a
+callback can be associated with Fl::add_handler().
+By default, FLTK displays the new scaling factor value in a yellow, transient window.
+This can be changed with option Fl::OPTION_SHOW_SCALING.
+
 \section events_widget Widget Events
 
 \subsection events_fl_deactivate FL_DEACTIVATE

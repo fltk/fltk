@@ -41,6 +41,8 @@ protected:
 
 public:
   float dpi[MAX_SCREENS][2];
+  enum APP_SCALING_CAPABILITY scaling_capability;
+  void update_scaling_capability();
   Fl_WinAPI_Screen_Driver();
   // --- display management
   int visual(int flags) FL_OVERRIDE;
@@ -72,7 +74,7 @@ public:
   void open_display_platform() FL_OVERRIDE;
   void offscreen_size(Fl_Offscreen off, int &width, int &height) FL_OVERRIDE;
   APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE {
-    return PER_SCREEN_APP_SCALING;
+    return scaling_capability;
   }
   float scale(int n) FL_OVERRIDE {
     return scale_of_screen[n];
@@ -95,6 +97,7 @@ public:
   // these two are implemented in Fl_get_key_win32.cxx
   int event_key(int) FL_OVERRIDE;
   int get_key(int) FL_OVERRIDE;
+  float base_scale(int numscreen) FL_OVERRIDE;
 };
 
 

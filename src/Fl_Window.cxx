@@ -931,7 +931,7 @@ fl_uintptr_t Fl_Window::os_id() { return pWindowDriver->os_id();}
  \see Fl_Window::un_maximize(), Fl_Window::maximize_active()
  */
 void Fl_Window::maximize() {
-  if (!shown() || parent() || !resizable() || maximize_active()) return;
+  if (!shown() || parent() || !is_resizable() || maximize_active()) return;
   set_flag(MAXIMIZED);
   if (border()) pWindowDriver->maximize();
   else pWindowDriver->Fl_Window_Driver::maximize();
@@ -942,7 +942,7 @@ void Fl_Window::maximize() {
  \see Fl_Window::maximize()
 */
 void Fl_Window::un_maximize() {
-  if (!shown() || parent() || !resizable() || !maximize_active()) return;
+  if (!shown() || parent() || !is_resizable() || !maximize_active()) return;
   clear_flag(MAXIMIZED);
   if (border()) pWindowDriver->un_maximize();
   else pWindowDriver->Fl_Window_Driver::un_maximize();

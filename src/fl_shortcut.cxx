@@ -78,12 +78,6 @@ int Fl::test_shortcut(unsigned int shortcut) {
   if ((shift&FL_CTRL) && key >= 0x3f && key <= 0x5F
       && firstChar==(key^0x40)) return 1; // firstChar should be within a-z
   
-  // kludge to recognize shortcut FL_COMMAND+'+'
-  if (shift == FL_COMMAND && Fl::event_key() == '=' &&
-      shortcut == FL_COMMAND + '+') return 1;
-  // kludge to recognize shortcut FL_CTRL+'0' with Fr keyboard
-  if (shift == FL_CTRL && !strcmp(Fl::event_text(), "à") &&
-      shortcut == FL_CTRL + '0') return 1;
   return 0;
 }
 

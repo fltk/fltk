@@ -162,7 +162,7 @@ const char *_c_check(const char * & c, int type) {
  \note This function checks every conceivable line of code, which is not
     always wanted. It can't differentiate characters in comments, and the
     user may well intend to leave a curly bracket open
-    (i.e. namesapece { ... } ). We should make this option user selectable.
+    (i.e. namespace { ... } ). We should make this option user selectable.
  */
 const char *c_check(const char *c, int type) {
   return _c_check(c,type);
@@ -779,7 +779,7 @@ void Fl_CodeBlock_Type::write_properties(Fd_Project_Writer &f) {
 }
 
 /**
- Read the node specifc properties.
+ Read the node specific properties.
  */
 void Fl_CodeBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"after")) {
@@ -1441,7 +1441,7 @@ int Fl_DeclBlock_Type::is_public() const {return public_;}
 /**
  Create a new declaration block.
  \param[in] strategy add after current or as last child
- \return new Declaration Blocknode
+ \return new Declaration Block node
  */
 Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;

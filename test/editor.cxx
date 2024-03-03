@@ -49,6 +49,7 @@ int main (int argc, char **argv) {
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_ask.H>
 #include <FL/filename.H>
+#include <FL/fl_string_functions.h>
 
 Fl_Menu_Bar *app_menu_bar = NULL;
 bool text_changed = false;
@@ -80,7 +81,7 @@ void set_changed(bool v) {
 
 void set_filename(const char *new_filename) {
   if (new_filename) {
-    strncpy(app_filename, new_filename, FL_PATH_MAX);
+    fl_strlcpy(app_filename, new_filename, FL_PATH_MAX);
   } else {
     app_filename[0] = 0;
   }
@@ -187,7 +188,7 @@ void menu_save_as_callback(Fl_Widget*, void*) {
   file_chooser.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   if (app_filename[0]) {
     char temp_filename[FL_PATH_MAX];
-    strncpy(temp_filename, app_filename, FL_PATH_MAX-1);
+    fl_strlcpy(temp_filename, app_filename, FL_PATH_MAX);
     const char *name = fl_filename_name(temp_filename);
     if (name) {
       file_chooser.preset_file(name);
@@ -262,7 +263,7 @@ void menu_open_callback(Fl_Widget*, void*) {
   file_chooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
   if (app_filename[0]) {
     char temp_filename[FL_PATH_MAX];
-    strncpy(temp_filename, app_filename, FL_PATH_MAX-1);
+    fl_strlcpy(temp_filename, app_filename, FL_PATH_MAX);
     const char *name = fl_filename_name(temp_filename);
     if (name) {
       file_chooser.preset_file(name);
@@ -398,7 +399,7 @@ bool find_next(const char *needle) {
 void menu_find_callback(Fl_Widget*, void* v) {
   const char *find_text = fl_input("Find in text:", last_find_text);
   if (find_text) {
-    strncpy(last_find_text, find_text, sizeof(last_find_text)-1);
+    fl_strlcpy(last_find_text, find_text, sizeof(last_find_text));
     find_next(find_text);
   }
 }
@@ -496,8 +497,8 @@ void Replace_Dialog::show() {
 
 void Replace_Dialog::find_next_callback(Fl_Widget*, void* my_dialog) {
   Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
-  strncpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text)-1);
-  strncpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text)-1);
+  fl_strlcpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text));
+  fl_strlcpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text));
   if (last_find_text[0])
     find_next(last_find_text);
 }

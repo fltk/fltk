@@ -1353,7 +1353,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     window->redraw();
   }
 #endif
-  if (!window->parent() && window->border()) {
+  if (!window->parent() && window->border() && Fl_Window_Driver::driver(window)->is_resizable()) {
     Fl_Cocoa_Window_Driver::driver(window)->is_maximized([nsw isZoomed]);
   }
   fl_unlock_function();
@@ -3215,7 +3215,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
 void Fl_Cocoa_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700) {
+  if (fl_mac_os_version >= 100700 && pWindow->border()) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     FLWindow *nswin = fl_xid(pWindow);
     [nswin toggleFullScreen:nil];
@@ -3277,7 +3277,7 @@ static NSUInteger calc_win_style(Fl_Window *win) {
   NSUInteger winstyle;
   if (win->border() && !win->fullscreen_active()) {
     winstyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
-    if (win->resizable()) winstyle |= NSWindowStyleMaskResizable;
+    if (Fl_Window_Driver::driver(win)->is_resizable()) winstyle |= NSWindowStyleMaskResizable;
     if (!win->modal()) winstyle |= NSWindowStyleMaskMiniaturizable;
   } else winstyle = NSWindowStyleMaskBorderless;
   return winstyle;
@@ -3301,10 +3301,12 @@ static void restore_window_title_and_icon(Fl_Window *pWindow, NSImage *icon) {
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700) {
+  if (fl_mac_os_version >= 100700 && pWindow->border()) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     FLWindow *nswin = fl_xid(pWindow);
     [nswin toggleFullScreen:nil];
+    [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
+    pWindow->resize(*no_fullscreen_x(), *no_fullscreen_y(), *no_fullscreen_w(), *no_fullscreen_h());
 #  endif
   } else if (fl_mac_os_version >= 100600) {
     FLWindow *nswin = fl_xid(pWindow);

@@ -386,8 +386,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   int i = 0, count = 0; // count top-level windows, except transient scale-displaying window
   Fl_Window *win = Fl::first_window();
   while (win) {
-    if (!win->parent() &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen) &&
         win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       count++;
     }
@@ -398,8 +397,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   Fl_Window **win_array = new Fl_Window*[count];
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
-    if (!win->parent() &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen) &&
         win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
@@ -481,17 +479,15 @@ int Fl_Screen_Driver::scale_handler(int event)
 {
   if (!keyboard_screen_scaling) return 0;
   if ( event != FL_SHORTCUT || !Fl::event_command() ) return 0;
-  const char *key = Fl::event_text();
-  char ek[2] = "";
-  if (!key || !*key) {
-    ek[0] = (char)(Fl::event_key() & 0xff);
-    ek[1] = '\0';
-    key = (const char *)ek;
-  }
   enum {none, zoom_in, zoom_out, zoom_reset} zoom = none;
-  if (key[0] == '0' || (strcmp(key, "à") == 0 /* for Fr keyboards*/)) zoom = zoom_reset;
-  else if (key[0] == '+' || key[0] == '=') zoom = zoom_in;
-  else if (key[0] == '-' || (key[0] == '6' /* for Fr keyboards*/)) zoom = zoom_out;
+  if (Fl::test_shortcut(FL_COMMAND+'+')) zoom = zoom_in;
+  else if (Fl::test_shortcut(FL_COMMAND+'-')) zoom = zoom_out;
+  else if (Fl::test_shortcut(FL_COMMAND+'0')) zoom = zoom_reset;
+  if (Fl::option(Fl::OPTION_SIMPLE_ZOOM_SHORTCUT)) {
+    // kludge to recognize shortcut FL_COMMAND+'+' without pressing SHIFT
+    if ((Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) == FL_COMMAND &&
+           Fl::event_key() == '=') zoom = zoom_in;
+  }
   if (zoom != none) {
     int i, count;
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
@@ -511,7 +507,7 @@ int Fl_Screen_Driver::scale_handler(int event)
       }
       top = Fl::next_window(top);
     }
-    static float initial_scale = screen_dr->scale(screen);
+    float initial_scale = screen_dr->base_scale(screen);
 #if defined(TEST_SCALING)
     // test scaling factors: lots of values from 0.3 to 8.0
     static float scaling_values[] = {
@@ -545,7 +541,13 @@ int Fl_Screen_Driver::scale_handler(int event)
       f = scaling_values[i];
     }
     if (f == old_f) return 1;
-    screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+    if (screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING) {
+      for (int i = 0; i < Fl::screen_count(); i++) {
+        screen_dr->rescale_all_windows_from_screen(i, f * initial_scale);
+      }
+    } else {
+      screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+    }
     Fl_Screen_Driver::transient_scale_display(f, screen);
     Fl::handle(FL_ZOOM_EVENT, NULL);
     return 1;
@@ -790,6 +792,13 @@ size_t Fl_Screen_Driver::convert_crlf(char *s, size_t len) {
   }
   return len;
 }
+
+
+float Fl_Screen_Driver::base_scale(int numscreen) {
+  static float base = scale(numscreen);
+  return base;
+}
+
 
 /**
  \}

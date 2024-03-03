@@ -17,7 +17,8 @@
 # Targets that will be built: fluid and fluid-cmd (Windows)
 set(TARGETS fluid)
 
-# Source files for 'fluid-lib' = all source files except the main file (fluid.cxx)
+# Source files for 'fluid-lib' = all source files except the main files
+# (fluid.cxx and fluid.h)
 # Note: macOS (Xcode) needs at least one source file (fluid.cxx) to link the main
 # program fluid properly
 
@@ -116,7 +117,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 
   set(ICON_NAME fluid.icns)
   set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable(fluid MACOSX_BUNDLE fluid.cxx ${ICON_PATH})
+  add_executable(fluid MACOSX_BUNDLE fluid.cxx fluid.h ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -133,7 +134,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 else()
 
   # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
-  add_executable(fluid WIN32 fluid.cxx)
+  add_executable(fluid WIN32 fluid.cxx fluid.h)
 
 endif()
 
@@ -144,7 +145,7 @@ target_link_libraries(fluid PRIVATE fluid-lib)
 
 if(WIN32)
   list(APPEND TARGETS fluid-cmd)
-  add_executable(fluid-cmd fluid.cxx)
+  add_executable(fluid-cmd fluid.cxx fluid.h)
   target_link_libraries(fluid-cmd PRIVATE fluid-lib)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()

@@ -28,12 +28,16 @@
 extern "C" {
 #endif
 
+#include <stddef.h>  // size_t
+
 /** \defgroup fl_string  String handling functions
  String handling functions declared in <FL/fl_string_functions.h>
     @{
 */
 
 FL_EXPORT char* fl_strdup(const char *s);
+
+FL_EXPORT size_t fl_strlcpy(char *, const char *, size_t);
 
 /** @} */
 

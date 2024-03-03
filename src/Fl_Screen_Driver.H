@@ -247,6 +247,7 @@ public:
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
   virtual void set_status(int X, int Y, int W, int H);
+  virtual float base_scale(int numscreen);
 };
 
 #endif // !FL_SCREEN_DRIVER_H

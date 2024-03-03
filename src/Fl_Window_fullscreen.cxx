@@ -36,6 +36,7 @@ void Fl_Window::border(int b) {
    borders should not be *visible*.
 */
 void Fl_Window::fullscreen() {
+  if (!is_resizable()) return;
   no_fullscreen_x = x();
   no_fullscreen_y = y();
   no_fullscreen_w = w();

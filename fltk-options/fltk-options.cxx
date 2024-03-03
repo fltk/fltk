@@ -37,7 +37,7 @@ const int FO_GAP = 10;
 const int FO_BROWSER_W = 200;
 const int FO_SCROLL_W = 16 + 4; //Fl::scrollbar_size() + Fl::box_dw(FL_DOWN_BOX);
 const int FO_CHOICE_W = 75;
-const int FO_OPTIONS_W = 380;
+const int FO_OPTIONS_W = 420;
 const int FO_BUTTON_W = 75;
 const int FO_WINDOW_W = FO_GAP + FO_BROWSER_W + FO_GAP + FO_SCROLL_W + FO_OPTIONS_W + FO_SCROLL_W + FO_GAP;
 const int FO_SYSTEM_X = FO_OPTIONS_W - 2*FO_GAP - 2*FO_CHOICE_W;
@@ -156,6 +156,13 @@ Fo_Option_Descr g_option_list[] = {
     "If 'Transiently show scaling factor' is enabled, the library shows in a "
     "transient popup window the display scaling factor value when it is "
     "changed. If disabled, no such transient window is used." },
+  { FO_OPTION_BOOL, "Allow simple zoom-in shortcut:",
+    Fl::OPTION_SIMPLE_ZOOM_SHORTCUT, "OPTION_SIMPLE_ZOOM_SHORTCUT", "SimpleZoomShortcut", false,
+    "Fine tune the shortcut that triggers the zoom-in operation.",
+    "When the keyboard in use has '+' in the shifted position of its key, "
+    "pressing that key and ctrl triggers the zoom-in operation. "
+    "If disabled, the zoom-in operation requires the shift key to be pressed also "
+    "with such a keyboard." },
   // -- When adding new options here, please make sure that you also update
   // --   documentation.src/fltk-options.dox
   // -- and

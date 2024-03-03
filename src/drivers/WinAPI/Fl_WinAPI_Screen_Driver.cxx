@@ -48,6 +48,7 @@ static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
 Fl_WinAPI_Screen_Driver::Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
   text_editor_extra_key_bindings =  extra_bindings;
   for (int i = 0; i < MAX_SCREENS; i++) scale_of_screen[i] = 1;
+  scaling_capability = SYSTEMWIDE_APP_SCALING;
 }
 
 int Fl_WinAPI_Screen_Driver::visual(int flags)
@@ -481,4 +482,9 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
     }
   }
   return screen;
+}
+
+
+float Fl_WinAPI_Screen_Driver::base_scale(int numscreen) {
+  return float(dpi[numscreen][0] / 96.);
 }

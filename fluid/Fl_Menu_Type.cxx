@@ -381,14 +381,14 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
   f.write_c(" {");
   if (label() && label()[0])
     switch (g_project.i18n_type) {
-      case 1:
+      case FD_I18N_GNU:
         // we will call i18n when the menu is instantiated for the first time
         f.write_c("%s(", g_project.i18n_gnu_static_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
-      case 2:
-        // fall through: strings can't be translated before a catalog is choosen
+      case FD_I18N_POSIX:
+        // fall through: strings can't be translated before a catalog is chosen
       default:
         f.write_cstring(label());
     }
@@ -486,15 +486,16 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
       f.write_c("%sml->labela = (char*)", f.indent());
       image->write_inline(f);
       f.write_c(";\n");
-      if (g_project.i18n_type==0) {
+      if (g_project.i18n_type==FD_I18N_NONE) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
-      } else if (g_project.i18n_type==1) {
+      } else if (g_project.i18n_type==FD_I18N_GNU) {
         f.write_c("%sml->labelb = %s(o->label());\n",
                 f.indent(), g_project.i18n_gnu_function.c_str());
-      } else if (g_project.i18n_type==2) {
+      } else if (g_project.i18n_type==FD_I18N_POSIX) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                f.indent(), g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
-                g_project.i18n_pos_set.c_str(), msgnum());
+                  f.indent(), 
+                  g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
+                  g_project.i18n_pos_set.c_str(), msgnum());
       }
       f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
       f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
@@ -510,13 +511,14 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
-      if (g_project.i18n_type==1) {
+      if (g_project.i18n_type==FD_I18N_GNU) {
         f.write_c("%so->label(%s(o->label()));\n",
                 f.indent(), g_project.i18n_gnu_function.c_str());
-      } else if (g_project.i18n_type==2) {
+      } else if (g_project.i18n_type==FD_I18N_POSIX) {
         f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                f.indent(), g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
-                g_project.i18n_pos_set.c_str(), msgnum());
+                  f.indent(),
+                  g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
+                  g_project.i18n_pos_set.c_str(), msgnum());
       }
     }
   }
