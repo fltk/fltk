@@ -1877,6 +1877,11 @@ int Fl_Wayland_Screen_Driver::get_key(int k) {
 }
 
 
+float Fl_Wayland_Screen_Driver::base_scale(int numscreen) {
+  return 1.f;
+}
+
+
 struct wl_display *fl_wl_display() {
   return Fl_Wayland_Screen_Driver::wl_display;
 }
