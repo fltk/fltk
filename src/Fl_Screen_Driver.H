@@ -219,7 +219,7 @@ public:
   // compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen, int &/*width*/, int &/*height*/) {}
 
-  void rescale_all_windows_from_screen(int screen, float f);
+  void rescale_all_windows_from_screen(int screen, float f, float old_f);
   static void transient_scale_display(float f, int nscreen);
   // need export to fltk_gl.so because used in glut_compatibility.cxx
   static FL_EXPORT int scale_handler(int event);

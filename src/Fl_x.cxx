@@ -1205,7 +1205,7 @@ static void react_to_screen_reconfiguration() {
     float new_scale = Fl::screen_driver()->scale(0);
     for (int screen = 0; screen < Fl::screen_count(); screen++) {
       Fl::screen_driver()->scale(screen, 1);
-      Fl::screen_driver()->rescale_all_windows_from_screen(screen, new_scale);
+      Fl::screen_driver()->rescale_all_windows_from_screen(screen, new_scale, 1);
     }
   }
   delete[] scales;
@@ -1227,7 +1227,7 @@ static void after_display_rescale(float *p_current_xft_dpi) {
         *p_current_xft_dpi = dpi;
         float f = dpi/96.;
         for (int i = 0; i < Fl::screen_count(); i++)
-          Fl::screen_driver()->rescale_all_windows_from_screen(i, f);
+          Fl::screen_driver()->rescale_all_windows_from_screen(i, f, f);
       }
     }
     break;

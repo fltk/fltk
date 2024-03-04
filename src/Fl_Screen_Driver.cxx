@@ -376,10 +376,8 @@ int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned s
 }
 
 
-void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
+void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f, float old_f)
 {
-  float old_f = this->scale(screen);
-  //if (f == old_f) return;
   this->scale(screen, f);
   Fl_Graphics_Driver *d = Fl_Display_Device::display_device()->driver();
   d->scale(f);
@@ -542,11 +540,12 @@ int Fl_Screen_Driver::scale_handler(int event)
     }
     if (f == old_f) return 1;
     if (screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING) {
+      float old_f = screen_dr->scale(0);
       for (int i = 0; i < Fl::screen_count(); i++) {
-        screen_dr->rescale_all_windows_from_screen(i, f * initial_scale);
+        screen_dr->rescale_all_windows_from_screen(i, f * initial_scale, old_f);
       }
     } else {
-      screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale);
+      screen_dr->rescale_all_windows_from_screen(screen, f * initial_scale, screen_dr->scale(screen));
     }
     Fl_Screen_Driver::transient_scale_display(f, screen);
     Fl::handle(FL_ZOOM_EVENT, NULL);
