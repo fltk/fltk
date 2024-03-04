@@ -2069,8 +2069,11 @@ int fl_handle(const XEvent& thisevent)
         // resize_after_screen_change() works also if called here, but calling it
         // a second later gives a more pleasant user experience when moving windows between distinct screens
         Fl::add_timeout(1, Fl_X11_Window_Driver::resize_after_screen_change, window);
-      }
-      wd->screen_num(num);
+      } else if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy)
+        wd->screen_num(num);
+    } else if (Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy) {
+      Fl::remove_timeout(Fl_X11_Window_Driver::resize_after_screen_change, window);
+      Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy = false;
     }
 #else // ! USE_XFT
     Fl_Window_Driver::driver(window)->screen_num( Fl::screen_num(X, Y, W, H) );
