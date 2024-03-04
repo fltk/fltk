@@ -36,6 +36,7 @@
 #include <FL/fl_utf8.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "flstring.h"
 #if defined(HAVE_LIBZ)
 #include <zlib.h>
@@ -125,7 +126,7 @@ fl_check_images(const char *name,               // I - Filename
   // SVG or SVGZ (gzip'ed SVG)
 
 #ifdef FLTK_USE_SVG
-  uchar header2[64];      // buffer for decompression
+  uchar header2[300];      // buffer for decompression
   uchar *buf = header;    // original header data
   int count = headerlen;  // original header data size
 
@@ -158,11 +159,18 @@ fl_check_images(const char *name,               // I - Filename
   }
 
   // Check svg or xml signature
-
-  if ((count >= 5 &&
-       (memcmp(buf, "<?xml", 5) == 0 ||
-        memcmp(buf, "<svg", 4) == 0)))
-    return new Fl_SVG_Image(name);
+  bool found_svg = false;
+  if (memcmp(buf, "<svg", 4) == 0) found_svg = true;
+  else if (memcmp(buf, "<?xml", 5) == 0) {
+    uchar *p = buf;
+    do {
+      if (memcmp(p, "<svg", 4) == 0) {
+        found_svg = true;
+        break;
+      }
+    } while (++p < buf + count - 4);
+  }
+  if (found_svg) return new Fl_SVG_Image(name);
 #endif // FLTK_USE_SVG
 
   // unknown image format

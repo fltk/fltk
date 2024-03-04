@@ -14,6 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include <config.h>
 #include <FL/platform.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
