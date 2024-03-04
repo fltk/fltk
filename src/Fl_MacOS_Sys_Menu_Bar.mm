@@ -569,6 +569,8 @@ static void minimize_win_cb(Fl_Widget *, void *data)
 
 static void window_menu_cb(Fl_Widget *, void *data)
 {
+  Fl_Window *top = Fl::first_window();
+  if (top && top->fullscreen_active()) return;
   if (data) ((Fl_Window*)data)->show();
 }
 

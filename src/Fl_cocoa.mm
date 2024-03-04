@@ -3305,7 +3305,6 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     FLWindow *nswin = fl_xid(pWindow);
     [nswin toggleFullScreen:nil];
-    [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
     pWindow->resize(*no_fullscreen_x(), *no_fullscreen_y(), *no_fullscreen_w(), *no_fullscreen_h());
 #  endif
   } else if (fl_mac_os_version >= 100600) {
@@ -3997,6 +3996,8 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
 }
 - (void)showPanel
 {
+  Fl_Window *top = Fl::first_window();
+  if (top && top->fullscreen_active()) return;
     NSDictionary *options;
     options = [NSDictionary dictionaryWithObjectsAndKeys:
                [[[NSAttributedString alloc]
@@ -4007,6 +4008,8 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
 }
 - (void)printPanel
 {
+  Fl_Window *top = Fl::first_window();
+  if (top && top->fullscreen_active()) return;
   bool grab_decoration = ([print_with_titlebar_item state] == NSControlStateValueOn);
   fl_lock_function();
   fl_print_or_copy_window(Fl::first_window(), grab_decoration, 1);
