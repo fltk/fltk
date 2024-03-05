@@ -126,12 +126,22 @@ fl_check_images(const char *name,               // I - Filename
   // SVG or SVGZ (gzip'ed SVG)
 
 #ifdef FLTK_USE_SVG
-  uchar header2[300];      // buffer for decompression
+  uchar header2[300];     // buffer for decompression
   uchar *buf = header;    // original header data
   int count = headerlen;  // original header data size
 
   // Note: variables 'buf' and 'count' may be overwritten subsequently
-  // if the image data is gzip'ed *and* we can decompress the data
+  // if the image data is xml or gzip'ed *and* we can decompress the data
+  
+  if (count >= 5 && memcmp(header, "<?xml", 5) == 0) {
+    FILE *in = fl_fopen(name, "r");
+    if (in) {
+      buf = header2;
+      count = sizeof(header2);
+      count = fread(header2, 1, count, in);
+      fclose(in);
+    }
+  }
 
 # if defined(HAVE_LIBZ)
   if (header[0] == 0x1f && header[1] == 0x8b) { // gzip'ed data
@@ -160,8 +170,8 @@ fl_check_images(const char *name,               // I - Filename
 
   // Check svg or xml signature
   bool found_svg = false;
-  if (memcmp(buf, "<svg", 4) == 0) found_svg = true;
-  else if (memcmp(buf, "<?xml", 5) == 0) {
+  if (count >= 4 && memcmp(buf, "<svg", 4) == 0) found_svg = true;
+  else if (count >= 5 && memcmp(buf, "<?xml", 5) == 0) {
     uchar *p = buf;
     do {
       if (memcmp(p, "<svg", 4) == 0) {
