@@ -1,7 +1,7 @@
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,9 +38,12 @@ void key_cb(Fl_Button*, void*) {}
 void shift_cb(Fl_Button*, void*) {}
 void wheel_cb(Fl_Dial*, void*) {}
 
-// this is used to stop Esc from exiting the program:
+// This is used to stop Esc from exiting the program.
+// Other keystrokes like zoom keys (ctrl/+/-/0) must pass though.
 int handle(int e) {
-  return (e == FL_SHORTCUT); // eat all keystrokes
+  if (e == FL_SHORTCUT && Fl::event_key() == FL_Escape)
+    return 1;
+  return 0;
 }
 
 int MyWindow::handle(int msg) {
