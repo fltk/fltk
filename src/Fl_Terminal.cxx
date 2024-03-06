@@ -2,7 +2,7 @@
 // Fl_Terminal - A terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022 by Greg Ercolano.
-// Copyright 2023 by Bill Spitzak and others.
+// Copyright 2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -137,7 +137,7 @@ static bool is_frame(Fl_Boxtype b) {
 ///////////////////////////////////////
 
 // Ctor
-Fl_Terminal::Selection::Selection(Fl_Terminal *terminal) 
+Fl_Terminal::Selection::Selection(Fl_Terminal *terminal)
   : terminal_(terminal)
 {
   // These are used to set/get the mouse selection
@@ -3322,7 +3322,7 @@ void Fl_Terminal::redraw_timer_cb(void *udata) {
   \param[in] X,Y,W,H position and size.
   \param[in] L label string (optional), may be NULL.
 */
-Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L) 
+Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L)
   : Fl_Group(X,Y,W,H,L),
     select_(this)
 {
@@ -3341,7 +3341,7 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L)
   \note fluid uses this constructor internally to avoid font calculations that opens
   the display, useful for when running in a headless context. (issue 837)
 */
-Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist) 
+Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist)
   : Fl_Group(X,Y,W,H,L),
     select_(this)
 {
@@ -3425,7 +3425,7 @@ Fl_Terminal::~Fl_Terminal(void) {
 }
 
 /**
-  Returns the scrollbar's actual "trough size", which is the width of FL_VERTICAL 
+  Returns the scrollbar's actual "trough size", which is the width of FL_VERTICAL
   scrollbars, or height of FL_HORIZONTAL scrollbars.
 
   If scrollbar_size() is zero (default), then the value of the global Fl::scrollbar_size()
@@ -3488,7 +3488,7 @@ Fl_Terminal::ScrollbarStyle Fl_Terminal::hscrollbar_style() const {
     |   ScrollbarStyle enum     | Description
     | :-----------------------: | :-----------------------------------------------------------
     |   \ref SCROLLBAR_ON       | Horizontal scrollbar always displayed.
-    |   \ref SCROLLBAR_OFF      | Horizontal scrollbar never displayed. 
+    |   \ref SCROLLBAR_OFF      | Horizontal scrollbar never displayed.
     |   \ref SCROLLBAR_AUTO     | Horizontal scrollbar displayed whenever widget width hides columns.
 
   The default style is SCROLLBAR_AUTO.
@@ -3816,7 +3816,7 @@ int Fl_Terminal::handle(int e) {
   int ret = Fl_Group::handle(e);
   if (Fl::event_inside(scrollbar)) return ret;             // early exit for scrollbar
   if (Fl::event_inside(hscrollbar)) return ret;             // early exit for hscrollbar
-  switch (e) { 
+  switch (e) {
     case FL_ENTER:
     case FL_LEAVE:
       return 1;
