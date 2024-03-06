@@ -1,5 +1,5 @@
 //
-// Fl_Terminal.cxx - A terminal widget for Fast Light Tool Kit (FLTK).
+// Fl_Terminal - A terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022 by Greg Ercolano.
 // Copyright 2023 by Bill Spitzak and others.
@@ -383,13 +383,13 @@ public:
   };
 
   /**
-    \enum HScrollbarStyle
-    Behavior of horizontal scrollbar
+    \enum ScrollbarStyle
+    Behavior of scrollbars
   */
-  enum HScrollbarStyle {
-    HS_OFF        = 0x00,     ///< scrollbar is always invisible
-    HS_AUTO       = 0x01,     ///< scrollbar is visible if widget has been resized in a way that hides some columns (default)
-    HS_ON         = 0x02      ///< scrollbar is always visible
+  enum ScrollbarStyle {
+    SCROLLBAR_OFF  = 0x00, ///< scrollbar always invisible
+    SCROLLBAR_AUTO = 0x01, ///< scrollbar visible if widget resized in a way that hides columns (default)
+    SCROLLBAR_ON   = 0x02  ///< scrollbar always visible
   };
 
   ///////////////////////////////////////////////////////////////
@@ -827,20 +827,36 @@ private:
   ///////////////////////////////////////////////////////////////
 public:
   /**
-    Vertical scrollbar. Public, so that it can be accessed directly.
-    \todo Support scrollbar_left/right() - See Fl_Browser_::scrollbar docs
-   */
-  Fl_Scrollbar *scrollbar;         // vertical scrollbar (value: rows above disp_chars[])
-  Fl_Scrollbar *hscrollbar = NULL; // horizontal scrollbar
-  const int HSCROLLBAR_RANGE = 20; // hscrollbar has 20 steps
+    Vertical scrollbar. This is public so it can be accessed directly, e.g.
 
+    - \ref Fl_Scrollbar::value(void) "scrollbar->value(void)" returns the row offset 
+      from the bottom of the display, 0 being the bottom (default).
+    - \ref Fl_Scrollbar::value(int) "scrollbar->value(int)" similarly sets the row offset,
+      which should be in the range [0 .. Fl_Scrollbar::maximum()].
+    - \ref Fl_Scrollbar::step(double) "scrollbar->step(double)" sets the smoothness
+      of scrolling, default is 0.25 for 4 steps of motion per column.
+
+    \todo Support scrollbar_left/right() - See Fl_Browser_::scrollbar docs
+    \todo Support new ScrollbarStyle
+   */
+  Fl_Scrollbar  *scrollbar;         // vertical scrollbar (value: rows above disp_chars[])
+  /**
+    Horizontal scrollbar. This is public so it can be accessed directly, e.g.
+
+    - \ref Fl_Scrollbar::value(void) "hscrollbar->value(void)" returns the column offset 
+      position from the left edge of the display; 0 being the left edge (default).
+    - \ref Fl_Scrollbar::value(int) "hscrollbar->value(int)" similarly sets the column offset,
+      which should be in the range [0 .. Fl_Scrollbar::maximum()].
+    - \ref Fl_Scrollbar::step(double) "hscrollbar->step(double)" sets the smoothness
+      of scrolling, default is 0.25 for 4 steps of motion per column.
+   */
+  Fl_Scrollbar  *hscrollbar;        // horizontal scrollbar
 private:
-  bool          fontsize_defer_; // flag defers font calcs until first draw() (issue 837)
-  int           scrollbar_size_; // local preference for scrollbar size
-  int           hscrollbar_size_; // local preference for horizontal scrollbar size
-  HScrollbarStyle hscrollbar_style_;
-  CharStyle     *current_style_; // current font, attrib, color.
-  OutFlags      oflags_;         // output translation flags (CR_TO_LF, LF_TO_CR, LF_TO_CRLF)
+  bool           fontsize_defer_;   // flag defers font calcs until first draw() (issue 837)
+  int            scrollbar_size_;   // local preference for scrollbar size
+  ScrollbarStyle hscrollbar_style_;
+  CharStyle     *current_style_;    // current font, attrib, color..
+  OutFlags       oflags_;           // output translation flags (CR_TO_LF, LF_TO_CR, LF_TO_CRLF)
 
   // A ring buffer is used for the terminal's history (hist) and display (disp) buffer.
   //    See README-Fl_Terminal.txt, section "RING BUFFER DESCRIPTION" for diagrams/info.
@@ -881,8 +897,6 @@ protected:
 private:
   void create_ring(int drows, int dcols, int hrows);
   void init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer);
-protected:
-  int  scrollbar_width(void) const;
 private:
   // Tabstops
   void init_tabstops(int newsize);
@@ -893,6 +907,7 @@ private:
   // Updates
   void update_screen_xywh(void);
   void update_screen(bool font_changed);
+  void set_scrollbar_params(Fl_Scrollbar* scroll, int min, int max);
   void update_scrollbar(void);
   // Resize
   void resize_display_rows(int drows);
@@ -1070,14 +1085,8 @@ public:
   int   scrollbar_size(void) const;
   void  scrollbar_size(int val);
   int   scrollbar_actual_size(void) const;
-  int   hscrollbar_size(void) const;
-  void  hscrollbar_size(int val);
-  int   hscrollbar_actual_size(void) const;
-  void  hscrollbar_style(HScrollbarStyle val);
-  HScrollbarStyle hscrollbar_style(void) const;
-  int   hscroll_col(void) const;
-  void  hscroll_col(int col);
-
+  void  hscrollbar_style(ScrollbarStyle val);
+  ScrollbarStyle hscrollbar_style(void) const;
   // API: History
   int   history_rows(void) const;
   void  history_rows(int val);
