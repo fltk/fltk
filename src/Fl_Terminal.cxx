@@ -1271,7 +1271,7 @@ void Fl_Terminal::update_scrollbar(void) {
   if (hscrollbar_style_ == SCROLLBAR_OFF) {
     hscrollbar->hide();
     hh = 0;
-  } else if (vcols < tcols || hscrollbar_style_ == SCROLLBAR_OFF) {
+  } else if (vcols < tcols || hscrollbar_style_ == SCROLLBAR_ON) {
     hscrollbar->show();
     hh = scrollbar_actual_size();
   } else {
@@ -3385,12 +3385,12 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   // Create scrollbars
   //    Final position/size/parameters are set by update_screen() **
   //
-  scrollbar = new Fl_Scrollbar(x(), y(), scrollbar_size_, h());  // tmp xywh (changed later) **
+  scrollbar = new Fl_Scrollbar(x(), y(), scrollbar_actual_size(), h());  // tmp xywh (changed later) **
   scrollbar->type(FL_VERTICAL);
   scrollbar->value(0);
   scrollbar->callback(scrollbar_cb, (void*)this);
 
-  hscrollbar = new Fl_Scrollbar(x(), y(), w(), scrollbar_size_);  // tmp xywh (changed later) **
+  hscrollbar = new Fl_Scrollbar(x(), y(), w(), scrollbar_actual_size());  // tmp xywh (changed later) **
   hscrollbar->type(FL_HORIZONTAL);
   hscrollbar->value(0);
   hscrollbar->callback(scrollbar_cb, (void *)this);
@@ -3659,9 +3659,8 @@ void Fl_Terminal::draw(void) {
   // Draw that little square between the scrollbars:
   if (scrollbar->visible() && hscrollbar->visible()) {
     fl_color(parent()->color());
-    fl_rectf(scrollbar->x(), hscrollbar->y(), scrollbar_size_, scrollbar_size_);
+    fl_rectf(scrollbar->x(), hscrollbar->y(), scrollbar_actual_size(), scrollbar_actual_size());
   }
-
   if (is_frame(box())) {
     // Is box() a frame? Fill area inside frame with rectf().
     //    FL_XXX_FRAME types allow Fl_Terminal to have a /flat/ background.
@@ -3677,7 +3676,6 @@ void Fl_Terminal::draw(void) {
     if (hscrollbar->visible()) H -= scrollbar_actual_size();
     fl_rectf(X,Y,W,H);
   }
-
   //DEBUG  fl_color(0x80000000);     // dark red box inside margins
   //DEBUG  fl_rect(scrn_);
   fl_push_clip(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
