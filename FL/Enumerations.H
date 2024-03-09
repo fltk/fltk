@@ -514,6 +514,7 @@ enum Fl_Callback_Reason {
 #define FL_Alt_L        0xffe9  ///< The left alt key.
 #define FL_Alt_R        0xffea  ///< The right alt key.
 #define FL_Delete       0xffff  ///< The delete key.
+#define FL_Alt_Gr       0xfe03  ///< The AltGr key on some international keyboards.
 
 // These use the Private Use Area (PUA) of the Basic Multilingual Plane
 // of Unicode. Guaranteed not to conflict with a proper Unicode character.
