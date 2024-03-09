@@ -195,6 +195,7 @@ int main(int argc, char **argv) {
   display = new Fl_Text_Display(5, 30, 490, 460, Fl::clipboard_plain_text); // will display the text form
   display->buffer(buffer);
   display->selection_color(TAB_COLOR);
+  display->textfont(FL_COURIER);          // use fixed font for text display
   tabs->end();
   tabs->resizable(display);
 
