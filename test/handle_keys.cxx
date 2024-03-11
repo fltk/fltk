@@ -20,15 +20,16 @@
 #include <FL/Fl_Terminal.H>
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Check_Button.H>
 #include <FL/names.h>
 #include <stdio.h>
 
 // Global variables to simplify the code
 
-Fl_Light_Button *keydown  = NULL;
-Fl_Light_Button *keyup    = NULL;
-Fl_Light_Button *shortcut = NULL;
+Fl_Check_Button *keydown  = NULL;
+Fl_Check_Button *keyup    = NULL;
+Fl_Check_Button *shortcut = NULL;
+Fl_Check_Button *scaling  = NULL;
 
 // Text in the headline and after clearing the terminal buffer. For alignment ...
 //          1         2         3         4         5         6         7         8
@@ -135,6 +136,21 @@ const char *get_keyname(int k, int &lg) {
   return buffer;
 }
 
+class Terminal : public Fl_Terminal {
+public:
+  int handle(int ev) FL_OVERRIDE {
+    switch(ev) {
+    case FL_KEYBOARD:
+    case FL_KEYUP:
+    case FL_SHORTCUT:
+      return 0;
+    }
+  return Fl_Terminal::handle(ev);
+  }
+  Terminal(int X, int Y, int W, int H)
+  : Fl_Terminal(X, Y, W, H) {}
+};
+
 // Class to handle events
 class app : public Fl_Double_Window {
 protected:
@@ -143,7 +159,7 @@ public:
   // storage for the last event
   int eventnum;
   const char *eventname;
-  Fl_Terminal *tty;
+  Terminal *tty;
   Fl_Box *headline;
   app(int X, int Y, int W, int H, const char *L = 0)
     : Fl_Double_Window(X, Y, W, H, L) {
@@ -157,7 +173,7 @@ public:
     headline->labelsize(12);
     headline->label(headline_text);
     headline->tooltip(tt);
-    tty = new Fl_Terminal(0, 25, W, H - 125);
+    tty = new Terminal(0, 25, W, H - 100);
     tty->color(FL_WHITE);
     tty->textfgcolor(fl_darker(FL_BLUE));
     tty->selectionbgcolor(FL_BLUE);
@@ -245,9 +261,9 @@ void quit_cb(Fl_Widget *w, void *) {
   w->window()->hide();
 }
 
-// Clear button callback: clears the terminal display
+// Clear button callback: clears the terminal widget
 void clear_cb(Fl_Button *b, void *) {
-  Fl_Terminal *tty = ((app *)b->window())->tty;
+  Terminal *tty = ((app *)b->window())->tty;
   tty->clear_screen_home();
   tty->clear_history();
   tty->printf("%s\n", headline_text); // test, helpful for copy to clipboard
@@ -257,8 +273,15 @@ void clear_cb(Fl_Button *b, void *) {
 
 // Callback for all (light) buttons
 void toggle_cb(Fl_Widget *w, void *) {
-  Fl_Terminal *tty = ((app *)w->window())->tty;
+  Terminal *tty = ((app *)w->window())->tty;
   tty->take_focus();
+}
+
+// Toggle recognition of GUI scaling shortcuts
+void toggle_scaling(Fl_Widget *w, void *v) {
+  int toggle = ((Fl_Button*)w)->value() ? 1 : 0;
+  Fl::keyboard_screen_scaling(toggle);
+  toggle_cb(w, v); // give focus to 'app'
 }
 
 // Window close callback (Esc does not close the window)
@@ -288,22 +311,28 @@ int main(int argc, char **argv) {
   win->tty->box(FL_DOWN_BOX);
   win->tty->printf("Please press any key ...\n");
 
-  Fl_Grid *grid = new Fl_Grid(0, WH - 100, WW, 100);
+  Fl_Grid *grid = new Fl_Grid(0, WH - 75, WW, 75);
   grid->layout(2, 5, 5, 5);
 
-  keydown = new Fl_Light_Button(0, 0, 80, 30, "Keydown");
+  keydown = new Fl_Check_Button(0, 0, 80, 30, "Keydown");
   grid->widget(keydown, 0, 1);
   keydown->value(1);
   keydown->callback(toggle_cb);
   keydown->tooltip("Show FL_KEYDOWN aka FL_KEYBOARD events");
 
-  keyup = new Fl_Light_Button(0, 0, 80, 30, "Keyup");
+  keyup = new Fl_Check_Button(0, 0, 80, 30, "Keyup");
   grid->widget(keyup, 0, 2);
   keyup->value(0);
   keyup->callback(toggle_cb);
   keyup->tooltip("Show FL_KEYUP events");
 
-  shortcut = new Fl_Light_Button(0, 0, 80, 30, "Shortcut");
+  scaling = new Fl_Check_Button(0, 0, 80, 30, "GUI scaling");
+  grid->widget(scaling, 1, 2);
+  scaling->value(1);
+  scaling->callback(toggle_scaling);
+  scaling->tooltip("Use GUI scaling shortcuts");
+
+  shortcut = new Fl_Check_Button(0, 0, 80, 30, "Shortcut");
   grid->widget(shortcut, 0, 3);
   shortcut->value(0);
   shortcut->callback(toggle_cb);
