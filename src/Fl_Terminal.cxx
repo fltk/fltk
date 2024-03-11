@@ -1299,6 +1299,7 @@ void Fl_Terminal::update_scrollbar(void) {
 //   See also issue #844.
 //
 void Fl_Terminal::refit_disp_to_screen(void) {
+  // TODO: Needs to account for change in width too - implement dcol_diff
   int dh         = h_to_row(scrn_.h());         // disp height: in rows for tty pixel height
   int dw         = MAX(w_to_col(scrn_.w()), disp_cols()); // disp width: in cols from pixel width - enlarge only!
   int drows      = clamp(dh, 2,  dh);           // disp rows: 2 rows minimum
@@ -3359,6 +3360,7 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   oflags_         = LF_TO_CRLF;         // default: "\n" handled as "\r\n"
   // scrollbar_size must be set before scrn_
   scrollbar_size_ = 0;                  // 0 uses Fl::scrollbar_size()
+  Fl_Group::box(FL_DOWN_FRAME);         // set before update_screen_xywh()
   update_screen_xywh();
   // Tabs
   tabstops_       = 0;
@@ -3398,7 +3400,6 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   hscrollbar_style_ = SCROLLBAR_AUTO;
 
   resizable(0);
-  Fl_Group::box(FL_DOWN_FRAME);
   Fl_Group::color(FL_BLACK);  // black bg by default
   update_screen(true);        // update internal vars after setting screen size/font
   clear_screen_home();        // clear screen, home cursor
@@ -3653,6 +3654,13 @@ void Fl_Terminal::draw(void) {
     fontsize_defer_ = false;    // clear flag
     current_style_->update();   // do deferred update here
     update_screen(true);        // update fonts
+  }
+  // See if global scrollbar changed size, if so recalc
+  if (scrollbar_size_ == 0 &&
+      (  scrollbar->w() != Fl::scrollbar_size() ||
+        hscrollbar->h() != Fl::scrollbar_size())) {
+    update_scrollbar();
+    refit_disp_to_screen();
   }
   // Draw group first, terminal last
   Fl_Group::draw();
