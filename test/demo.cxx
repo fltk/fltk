@@ -91,7 +91,7 @@
 
 #define FORM_W 350
 #define FORM_H 440
-#define TTY_W  700
+#define TTY_W  780
 #define TTY_H  200
 
 /* The form description */

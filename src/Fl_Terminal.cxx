@@ -3657,6 +3657,12 @@ void Fl_Terminal::draw(void) {
     current_style_->update();   // do deferred update here
     update_screen(true);        // update fonts
   }
+  // Detect if Fl::scrollbar_size() was changed in size, recalc if so
+  if (scrollbar_size_ == 0 &&
+      (  scrollbar->visible() &&  scrollbar->w() != Fl::scrollbar_size() ||
+        hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size())) {
+    update_scrollbar();
+  }
   // Draw group first, terminal last
   Fl_Group::draw();
   // Draw that little square between the scrollbars:

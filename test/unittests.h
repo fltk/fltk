@@ -26,7 +26,7 @@ class Fl_Terminal;
 
 // WINDOW/WIDGET SIZES
 const int UT_MAINWIN_W  = 700;                                // main window w()
-const int UT_MAINWIN_H  = 400;                                // main window h()
+const int UT_MAINWIN_H  = 600;                                // main window h()
 const int UT_BROWSER_X  = 10;                                 // browser x()
 const int UT_BROWSER_Y  = 25;                                 // browser y()
 const int UT_BROWSER_W  = 150;                                // browser w()
