@@ -1483,6 +1483,7 @@ void Fl_Terminal::display_rows(int drows) {
   if (drows == disp_rows()) return;           // no change? early exit
   ring_.resize(drows, disp_cols(), hist_rows(), *current_style_);
   update_screen(false);                       // false: no font change ?NEED?
+  refit_disp_to_screen();
 }
 
 /**
@@ -1514,6 +1515,7 @@ void Fl_Terminal::display_columns(int dcols) {
   // Change cols, preserves previous content if possible
   ring_.resize(disp_rows(), dcols, hist_rows(), *current_style_);
   update_screen(false);                       // false: no font change ?NEED?
+  refit_disp_to_screen();
 }
 
 /** Return reference to internal current style for rendering text. */
@@ -3654,13 +3656,6 @@ void Fl_Terminal::draw(void) {
     fontsize_defer_ = false;    // clear flag
     current_style_->update();   // do deferred update here
     update_screen(true);        // update fonts
-  }
-  // See if global scrollbar changed size, if so recalc
-  if (scrollbar_size_ == 0 &&
-      (  scrollbar->w() != Fl::scrollbar_size() ||
-        hscrollbar->h() != Fl::scrollbar_size())) {
-    update_scrollbar();
-    refit_disp_to_screen();
   }
   // Draw group first, terminal last
   Fl_Group::draw();
