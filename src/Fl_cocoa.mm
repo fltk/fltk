@@ -1378,7 +1378,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
   /* Restore previous fullscreen level */
-  if (w->fullscreen_active()) {
+  if (w->fullscreen_active() && fl_mac_os_version < 100700) {
     [nsw setLevel:NSStatusWindowLevel];
     fixup_window_levels();
   }
@@ -3053,7 +3053,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   changed_resolution(false);
 
   NSRect crect;
-  if (w->fullscreen_active()) {
+  if (w->fullscreen_active() && fl_mac_os_version < 100700) {
     int top, bottom, left, right;
     int sx, sy, sw, sh, X, Y, W, H;
 
@@ -3198,6 +3198,9 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   } else { // a top-level window
     if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
     else [cw orderFront:nil];
+    if (w->fullscreen_active() && fl_mac_os_version >= 100700) {
+      [cw toggleFullScreen:nil];
+    }
   }
   if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() && !w->parent() && w->border() &&
       !w->modal() && !w->non_modal()) {
@@ -3996,8 +3999,6 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
 }
 - (void)showPanel
 {
-  Fl_Window *top = Fl::first_window();
-  if (top && top->fullscreen_active()) return;
     NSDictionary *options;
     options = [NSDictionary dictionaryWithObjectsAndKeys:
                [[[NSAttributedString alloc]
@@ -4008,8 +4009,6 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
 }
 - (void)printPanel
 {
-  Fl_Window *top = Fl::first_window();
-  if (top && top->fullscreen_active()) return;
   bool grab_decoration = ([print_with_titlebar_item state] == NSControlStateValueOn);
   fl_lock_function();
   fl_print_or_copy_window(Fl::first_window(), grab_decoration, 1);
