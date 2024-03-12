@@ -230,7 +230,7 @@ int app::handle(int ev) {
   char capslk = (Fl::event_state() & FL_CAPS_LOCK) ? 'L' : '.';
 
   tty->printf("%06x  ", ekey); // event key number (hex)
-  int lg;
+  int lg = 0;
   tty->printf("%s", get_keyname(ekey, lg));
   for (int i = lg; i < 14; i++) {
     tty->printf(" ");

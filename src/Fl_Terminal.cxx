@@ -3659,8 +3659,8 @@ void Fl_Terminal::draw(void) {
   }
   // Detect if Fl::scrollbar_size() was changed in size, recalc if so
   if (scrollbar_size_ == 0 &&
-      (  scrollbar->visible() &&  scrollbar->w() != Fl::scrollbar_size() ||
-        hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size())) {
+      ((scrollbar->visible() && scrollbar->w() != Fl::scrollbar_size()) ||
+       (hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size()))) {
     update_scrollbar();
   }
   // Draw group first, terminal last
