@@ -21,8 +21,10 @@
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Button.H>
+#include <FL/fl_ask.H>
 #include <FL/names.h>
 #include <stdio.h>
+#include <stdlib.h> // free()
 
 // Global variables to simplify the code
 
@@ -266,8 +268,27 @@ void clear_cb(Fl_Button *b, void *) {
   Terminal *tty = ((app *)b->window())->tty;
   tty->clear_screen_home();
   tty->clear_history();
-  tty->printf("%s\n", headline_text); // test, helpful for copy to clipboard
+  tty->printf("%s\n", headline_text); // helpful if copied to the clipboard
   tty->redraw();
+  tty->take_focus();
+}
+
+// Copy button callback: copies the selected text to the clipboard
+void copy_cb(Fl_Widget *b, void *) {
+  Terminal *tty = ((app *)b->window())->tty;
+  const char *what = "Full";
+  const char *text;
+  int tlen = tty->selection_text_len();
+  if (tlen > 0) {
+    text = tty->selection_text();
+    what = "Selected";
+  } else {
+    text = tty->text();
+  }
+  tlen = (int)strlen(text);
+  Fl::copy(text, tlen, 1, Fl::clipboard_plain_text);
+  fl_message("%s text has been copied to the clipboard, length = %d.", what, tlen);
+  free((void *)text);
   tty->take_focus();
 }
 
@@ -309,39 +330,46 @@ int main(int argc, char **argv) {
   const int WW = 700, WH = 400;
   app *win = new app(0, 0, WW, WH);
   win->tty->box(FL_DOWN_BOX);
+  win->tty->show_unknown(true);
   win->tty->printf("Please press any key ...\n");
 
   Fl_Grid *grid = new Fl_Grid(0, WH - 75, WW, 75);
   grid->layout(2, 5, 5, 5);
 
   keydown = new Fl_Check_Button(0, 0, 80, 30, "Keydown");
-  grid->widget(keydown, 0, 1);
+  grid->widget(keydown, 0, 0);
   keydown->value(1);
   keydown->callback(toggle_cb);
   keydown->tooltip("Show FL_KEYDOWN aka FL_KEYBOARD events");
 
   keyup = new Fl_Check_Button(0, 0, 80, 30, "Keyup");
-  grid->widget(keyup, 0, 2);
+  grid->widget(keyup, 0, 1);
   keyup->value(0);
   keyup->callback(toggle_cb);
   keyup->tooltip("Show FL_KEYUP events");
 
-  scaling = new Fl_Check_Button(0, 0, 80, 30, "GUI scaling");
-  grid->widget(scaling, 1, 2);
-  scaling->value(1);
-  scaling->callback(toggle_scaling);
-  scaling->tooltip("Use GUI scaling shortcuts");
-
   shortcut = new Fl_Check_Button(0, 0, 80, 30, "Shortcut");
-  grid->widget(shortcut, 0, 3);
+  grid->widget(shortcut, 0, 2);
   shortcut->value(0);
   shortcut->callback(toggle_cb);
   shortcut->tooltip("Show FL_SHORTCUT events");
+
+  scaling = new Fl_Check_Button(0, 0, 80, 30, "GUI scaling");
+  grid->widget(scaling, 0, 3);
+  scaling->value(0);
+  scaling->callback(toggle_scaling);
+  scaling->tooltip("Use GUI scaling shortcuts");
+  toggle_scaling(scaling, 0);
 
   Fl_Button *clear = new Fl_Button(0, 0, 80, 30, "Clear");
   grid->widget(clear, 1, 0);
   clear->callback((Fl_Callback *)clear_cb);
   clear->tooltip("Clear the display");
+
+  Fl_Button *copy = new Fl_Button(0, 0, 80, 30, "Copy");
+  grid->widget(copy, 1, 1);
+  copy->callback(copy_cb);
+  copy->tooltip("Copy terminal contents to clipboard");
 
   Fl_Button *quit = new Fl_Button(WW - 70, WH - 50, 80, 30, "Quit");
   grid->widget(quit, 1, 4);
