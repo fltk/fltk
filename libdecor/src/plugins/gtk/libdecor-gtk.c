@@ -70,6 +70,13 @@ enum header_element {
 	HEADER_CLOSE,
 };
 
+enum titlebar_gesture_state {
+	TITLEBAR_GESTURE_STATE_INIT,
+	TITLEBAR_GESTURE_STATE_BUTTON_PRESSED,
+	TITLEBAR_GESTURE_STATE_CONSUMED,
+	TITLEBAR_GESTURE_STATE_DISCARDED,
+};
+
 struct header_element_data {
 	const char *name;
 	enum header_element type;
@@ -206,7 +213,6 @@ struct seat {
 
 	int pointer_x, pointer_y;
 
-	uint32_t pointer_button_time_stamp;
 	uint32_t touch_down_time_stamp;
 
 	uint32_t serial;
@@ -297,6 +303,16 @@ struct libdecor_frame_gtk {
 	cairo_surface_t *shadow_blur;
 
 	struct wl_list link;
+
+	struct {
+		enum titlebar_gesture_state state;
+		int button_pressed_count;
+		uint32_t first_pressed_button;
+		uint32_t first_pressed_time;
+		double pressed_x;
+		double pressed_y;
+		uint32_t pressed_serial;
+	} titlebar_gesture;
 };
 
 struct libdecor_plugin_gtk {
@@ -323,6 +339,7 @@ struct libdecor_plugin_gtk {
 	int cursor_size;
 
 	int double_click_time_ms;
+	int drag_threshold;
 };
 
 static const char *libdecor_gtk_proxy_tag = "libdecor-gtk";
@@ -912,7 +929,10 @@ ensure_title_bar_surfaces(struct libdecor_frame_gtk *frame_gtk)
 
 	g_object_get(gtk_widget_get_settings(frame_gtk->window),
 		     "gtk-double-click-time",
-		     &frame_gtk->plugin_gtk->double_click_time_ms, NULL);
+		     &frame_gtk->plugin_gtk->double_click_time_ms,
+		     "gtk-dnd-drag-threshold",
+		     &frame_gtk->plugin_gtk->drag_threshold,
+		     NULL);
 	/* set as "default" decoration */
 	g_object_set(frame_gtk->header,
 		     "title", libdecor_frame_get_title(&frame_gtk->frame),
@@ -2114,6 +2134,10 @@ pointer_leave(void *data,
 
 	seat->pointer_focus = NULL;
 	if (frame_gtk) {
+		frame_gtk->titlebar_gesture.state =
+			TITLEBAR_GESTURE_STATE_INIT;
+		frame_gtk->titlebar_gesture.first_pressed_button = 0;
+
 		frame_gtk->active = NULL;
 		frame_gtk->hdr_focus.widget = NULL;
 		frame_gtk->hdr_focus.type = HEADER_NONE;
@@ -2132,6 +2156,7 @@ pointer_motion(void *data,
 {
 	struct seat *seat = data;
 	struct libdecor_frame_gtk *frame_gtk;
+	struct header_element_data new_focus;
 
 	if (!seat->pointer_focus || !own_surface(seat->pointer_focus))
 		return;
@@ -2143,20 +2168,218 @@ pointer_motion(void *data,
 
 	frame_gtk = wl_surface_get_user_data(seat->pointer_focus);
 	/* avoid warnings after decoration has been turned off */
-	if (GTK_IS_WIDGET(frame_gtk->header) && frame_gtk->active->type == HEADER) {
-		struct header_element_data new_focus =  get_header_focus(
-					  GTK_HEADER_BAR(frame_gtk->header),
-					  seat->pointer_x, seat->pointer_y);
-		/* only update if widget change so that we keep the state */
-		if (frame_gtk->hdr_focus.widget != new_focus.widget) {
-			frame_gtk->hdr_focus = new_focus;
-		}
-		frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_PRELIGHT;
-		/* redraw with updated button visuals */
-		draw_title_bar(frame_gtk);
-		libdecor_frame_toplevel_commit(&frame_gtk->frame);
-	} else {
+	if (!GTK_IS_WIDGET(frame_gtk->header) || frame_gtk->active->type != HEADER) {
 		frame_gtk->hdr_focus.type = HEADER_NONE;
+	}
+
+	new_focus =  get_header_focus(GTK_HEADER_BAR(frame_gtk->header),
+				      seat->pointer_x, seat->pointer_y);
+
+	/* only update if widget change so that we keep the state */
+	if (frame_gtk->hdr_focus.widget != new_focus.widget) {
+		frame_gtk->hdr_focus = new_focus;
+	}
+	frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_PRELIGHT;
+	/* redraw with updated button visuals */
+	draw_title_bar(frame_gtk);
+	libdecor_frame_toplevel_commit(&frame_gtk->frame);
+
+	switch (frame_gtk->titlebar_gesture.state) {
+	case TITLEBAR_GESTURE_STATE_BUTTON_PRESSED:
+		if (frame_gtk->titlebar_gesture.first_pressed_button == BTN_LEFT) {
+			if (ABS ((double) seat->pointer_x -
+				 (double) frame_gtk->titlebar_gesture.pressed_x) >
+			    frame_gtk->plugin_gtk->drag_threshold ||
+			    ABS ((double) seat->pointer_y -
+				 (double) frame_gtk->titlebar_gesture.pressed_y) >
+			    frame_gtk->plugin_gtk->drag_threshold) {
+				libdecor_frame_move(&frame_gtk->frame,
+						    seat->wl_seat,
+						    frame_gtk->titlebar_gesture.pressed_serial);
+			}
+		}
+	case TITLEBAR_GESTURE_STATE_INIT:
+	case TITLEBAR_GESTURE_STATE_CONSUMED:
+	case TITLEBAR_GESTURE_STATE_DISCARDED:
+		break;
+	}
+}
+
+static void
+handle_button_on_shadow(struct libdecor_frame_gtk *frame_gtk,
+			struct seat *seat,
+			uint32_t serial,
+			uint32_t time,
+			uint32_t button,
+			uint32_t state)
+{
+	enum libdecor_resize_edge edge = LIBDECOR_RESIZE_EDGE_NONE;
+
+	edge = component_edge(frame_gtk->active,
+			      seat->pointer_x,
+			      seat->pointer_y,
+			      SHADOW_MARGIN);
+
+	if (edge != LIBDECOR_RESIZE_EDGE_NONE && resizable(frame_gtk)) {
+		libdecor_frame_resize(&frame_gtk->frame,
+				      seat->wl_seat,
+				      serial,
+				      edge);
+	}
+}
+
+enum titlebar_gesture {
+	TITLEBAR_GESTURE_DOUBLE_CLICK,
+	TITLEBAR_GESTURE_MIDDLE_CLICK,
+	TITLEBAR_GESTURE_RIGHT_CLICK,
+};
+
+static void
+handle_titlebar_gesture(struct libdecor_frame_gtk *frame_gtk,
+			struct seat *seat,
+			uint32_t serial,
+			enum titlebar_gesture gesture)
+{
+	switch (gesture) {
+	case TITLEBAR_GESTURE_DOUBLE_CLICK:
+		toggle_maximized(&frame_gtk->frame);
+		break;
+	case TITLEBAR_GESTURE_MIDDLE_CLICK:
+		break;
+	case TITLEBAR_GESTURE_RIGHT_CLICK:
+		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
+
+		libdecor_frame_show_window_menu(&frame_gtk->frame,
+						seat->wl_seat,
+						serial,
+						seat->pointer_x,
+						seat->pointer_y
+						-title_height);
+		break;
+	}
+}
+
+static void
+handle_button_on_header(struct libdecor_frame_gtk *frame_gtk,
+			struct seat *seat,
+			uint32_t serial,
+			uint32_t time,
+			uint32_t button,
+			uint32_t state)
+{
+	switch (frame_gtk->titlebar_gesture.state) {
+	case TITLEBAR_GESTURE_STATE_INIT:
+		if (state != WL_POINTER_BUTTON_STATE_PRESSED)
+			return;
+
+		if (button == BTN_RIGHT) {
+			handle_titlebar_gesture(frame_gtk,
+						seat,
+						serial,
+						TITLEBAR_GESTURE_RIGHT_CLICK);
+			frame_gtk->titlebar_gesture.state =
+				TITLEBAR_GESTURE_STATE_CONSUMED;
+		} else {
+			if (button == BTN_LEFT &&
+			    frame_gtk->titlebar_gesture.first_pressed_button == BTN_LEFT &&
+			    time - frame_gtk->titlebar_gesture.first_pressed_time <
+			    (uint32_t) frame_gtk->plugin_gtk->double_click_time_ms) {
+				handle_titlebar_gesture(frame_gtk,
+							seat,
+							serial,
+							TITLEBAR_GESTURE_DOUBLE_CLICK);
+				frame_gtk->titlebar_gesture.state =
+					TITLEBAR_GESTURE_STATE_CONSUMED;
+			} else {
+				frame_gtk->titlebar_gesture.first_pressed_button = button;
+				frame_gtk->titlebar_gesture.first_pressed_time = time;
+				frame_gtk->titlebar_gesture.pressed_x = seat->pointer_x;
+				frame_gtk->titlebar_gesture.pressed_y = seat->pointer_y;
+				frame_gtk->titlebar_gesture.pressed_serial = serial;
+				frame_gtk->titlebar_gesture.state =
+					TITLEBAR_GESTURE_STATE_BUTTON_PRESSED;
+			}
+		}
+
+		frame_gtk->titlebar_gesture.button_pressed_count = 1;
+
+		switch (frame_gtk->hdr_focus.type) {
+		case HEADER_MIN:
+		case HEADER_MAX:
+		case HEADER_CLOSE:
+			frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_ACTIVE;
+			draw_title_bar(frame_gtk);
+			libdecor_frame_toplevel_commit(&frame_gtk->frame);
+			break;
+		default:
+			break;
+		}
+
+		break;
+	case TITLEBAR_GESTURE_STATE_BUTTON_PRESSED:
+		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+			frame_gtk->titlebar_gesture.state =
+				TITLEBAR_GESTURE_STATE_DISCARDED;
+			frame_gtk->titlebar_gesture.button_pressed_count++;
+		} else {
+			frame_gtk->titlebar_gesture.button_pressed_count--;
+
+			if (frame_gtk->titlebar_gesture.button_pressed_count == 0) {
+				frame_gtk->titlebar_gesture.state =
+					TITLEBAR_GESTURE_STATE_INIT;
+				if (frame_gtk->titlebar_gesture.first_pressed_button == button &&
+				    button == BTN_LEFT) {
+					libdecor_frame_ref(&frame_gtk->frame);
+					switch (frame_gtk->hdr_focus.type) {
+					case HEADER_MIN:
+						if (minimizable(frame_gtk))
+							libdecor_frame_set_minimized(
+								&frame_gtk->frame);
+						break;
+					case HEADER_MAX:
+						toggle_maximized(&frame_gtk->frame);
+						break;
+					case HEADER_CLOSE:
+						if (closeable(frame_gtk)) {
+							libdecor_frame_close(
+								&frame_gtk->frame);
+							seat->pointer_focus = NULL;
+						}
+						break;
+					default:
+						break;
+					}
+
+					frame_gtk->hdr_focus.state &= ~GTK_STATE_FLAG_ACTIVE;
+					if (GTK_IS_WIDGET(frame_gtk->header)) {
+						draw_title_bar(frame_gtk);
+						libdecor_frame_toplevel_commit(&frame_gtk->frame);
+					}
+					libdecor_frame_unref(&frame_gtk->frame);
+				}
+			} else {
+				frame_gtk->hdr_focus.state &= ~GTK_STATE_FLAG_ACTIVE;
+				if (GTK_IS_WIDGET(frame_gtk->header)) {
+					draw_title_bar(frame_gtk);
+					libdecor_frame_toplevel_commit(&frame_gtk->frame);
+				}
+			}
+
+		}
+		break;
+	case TITLEBAR_GESTURE_STATE_CONSUMED:
+	case TITLEBAR_GESTURE_STATE_DISCARDED:
+		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+			frame_gtk->titlebar_gesture.button_pressed_count++;
+		} else {
+			frame_gtk->titlebar_gesture.button_pressed_count--;
+			if (frame_gtk->titlebar_gesture.button_pressed_count == 0) {
+				frame_gtk->titlebar_gesture.state =
+					TITLEBAR_GESTURE_STATE_INIT;
+				frame_gtk->titlebar_gesture.first_pressed_button = 0;
+			}
+		}
+		break;
 	}
 }
 
@@ -2178,98 +2401,14 @@ pointer_button(void *data,
 	if (!frame_gtk)
 		return;
 
-	if (button == BTN_LEFT) {
-		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-			enum libdecor_resize_edge edge =
-					LIBDECOR_RESIZE_EDGE_NONE;
-			switch (frame_gtk->active->type) {
-			case SHADOW:
-				edge = component_edge(frame_gtk->active,
-						      seat->pointer_x,
-						      seat->pointer_y,
-						      SHADOW_MARGIN);
-				break;
-			case HEADER:
-				switch (frame_gtk->hdr_focus.type) {
-				case HEADER_MIN:
-				case HEADER_MAX:
-				case HEADER_CLOSE:
-					frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_ACTIVE;
-					draw_title_bar(frame_gtk);
-					libdecor_frame_toplevel_commit(&frame_gtk->frame);
-					break;
-				default:
-					if (time-seat->pointer_button_time_stamp <
-					    (uint32_t)frame_gtk->plugin_gtk->double_click_time_ms) {
-						toggle_maximized(&frame_gtk->frame);
-					}
-					else if (moveable(frame_gtk)) {
-						seat->pointer_button_time_stamp = time;
-						libdecor_frame_move(&frame_gtk->frame,
-								    seat->wl_seat,
-								    serial);
-					}
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-
-			if (edge != LIBDECOR_RESIZE_EDGE_NONE &&
-			    resizable(frame_gtk)) {
-				libdecor_frame_resize(
-					&frame_gtk->frame,
-					seat->wl_seat,
-					serial,
-					edge);
-			}
-		}
-		else if (state == WL_POINTER_BUTTON_STATE_RELEASED) {
-			switch (frame_gtk->active->type) {
-			case HEADER:
-				libdecor_frame_ref(&frame_gtk->frame);
-				switch (frame_gtk->hdr_focus.type) {
-				case HEADER_MIN:
-					if (minimizable(frame_gtk))
-						libdecor_frame_set_minimized(
-							&frame_gtk->frame);
-					break;
-				case HEADER_MAX:
-					toggle_maximized(&frame_gtk->frame);
-					break;
-				case HEADER_CLOSE:
-					if (closeable(frame_gtk)) {
-					       libdecor_frame_close(
-						       &frame_gtk->frame);
-					       seat->pointer_focus = NULL;
-					}
-					break;
-				default:
-					break;
-				}
-				/* unset active/clicked state once released */
-				frame_gtk->hdr_focus.state &= ~GTK_STATE_FLAG_ACTIVE;
-				if (GTK_IS_WIDGET(frame_gtk->header)) {
-					draw_title_bar(frame_gtk);
-					libdecor_frame_toplevel_commit(&frame_gtk->frame);
-				}
-				libdecor_frame_unref(&frame_gtk->frame);
-				break;
-			default:
-				break;
-			}
-		}
-	} else if (button == BTN_RIGHT &&
-		 state == WL_POINTER_BUTTON_STATE_PRESSED &&
-		 seat->pointer_focus == frame_gtk->headerbar.wl_surface) {
-		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
-				libdecor_frame_show_window_menu(&frame_gtk->frame,
-								seat->wl_seat,
-								serial,
-								seat->pointer_x,
-								seat->pointer_y
-								-title_height);
+	switch (frame_gtk->active->type) {
+	case SHADOW:
+		handle_button_on_shadow (frame_gtk, seat, serial, time, button, state);
+		break;
+	case HEADER:
+		handle_button_on_header (frame_gtk, seat, serial, time, button, state);
+		break;
+	default:
 	}
 }
 

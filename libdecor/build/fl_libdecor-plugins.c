@@ -1,7 +1,7 @@
 //
 // Interface with the libdecor library for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,6 +26,7 @@
 #include <string.h>
 #include "../src/libdecor.h"
 #include <pango/pangocairo.h>
+#include <dlfcn.h>
 
 #ifndef HAVE_GTK
 #  define HAVE_GTK 0
@@ -137,25 +138,6 @@ struct libdecor_frame_cairo {
 
 /* Definitions derived from libdecor-gtk.c */
 
-struct libdecor_plugin_gtk {
-  struct libdecor_plugin plugin;
-  struct wl_callback *globals_callback;
-  struct wl_callback *globals_callback_shm;
-  struct libdecor *context;
-  struct wl_registry *wl_registry;
-  struct wl_subcompositor *wl_subcompositor;
-  struct wl_compositor *wl_compositor;
-  struct wl_shm *wl_shm;
-  struct wl_callback *shm_callback;
-  bool has_argb;
-  struct wl_list visible_frame_list;
-  struct wl_list seat_list;
-  struct wl_list output_list;
-  char *cursor_theme_name;
-  int cursor_size;
-  int double_click_time_ms;
-};
-
 typedef struct _GtkWidget GtkWidget;
 enum header_element { HEADER_NONE }; /* details are not needed */
 
@@ -201,6 +183,15 @@ struct libdecor_frame_gtk {
   struct header_element_data hdr_focus;
   cairo_surface_t *shadow_blur;
   struct wl_list link;
+  struct {
+    enum titlebar_gesture_state {TITLEBAR_GESTURE_STATE_INIT} state;
+    int button_pressed_count;
+    uint32_t first_pressed_button;
+    uint32_t first_pressed_time;
+    double pressed_x;
+    double pressed_y;
+    uint32_t pressed_serial;
+  } titlebar_gesture;
 };
 
 #endif // USE_SYSTEM_LIBDECOR || !HAVE_GTK
@@ -310,9 +301,27 @@ unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
 }
 
 
-struct libdecor { // copied from libdecor.c
+// When the libdecor version after 0.2.2 will be released, support of older versions
+// will be removed from FLTK. LIBDECOR_MR131 stuff also will be removed.
+struct libdecor_022 { // for libdecor versions ≤ 0.2.2
   int ref_count;
-  struct libdecor_interface *iface;
+  const struct libdecor_interface *iface;
+  struct libdecor_plugin *plugin;
+  bool plugin_ready;
+  struct wl_display *wl_display;
+  struct wl_registry *wl_registry;
+  struct xdg_wm_base *xdg_wm_base;
+  struct zxdg_decoration_manager_v1 *decoration_manager;
+  struct wl_callback *init_callback;
+  bool init_done;
+  bool has_error;
+  struct wl_list frames;
+};
+
+struct libdecor { // copied from libdecor.c, for libdecor versions > 0.2.2
+  int ref_count;
+  const struct libdecor_interface *iface;
+  void *user_data; // added after libdecor version 0.2.2
   struct libdecor_plugin *plugin;
   bool plugin_ready;
   struct wl_display *wl_display;
@@ -329,9 +338,18 @@ struct libdecor { // copied from libdecor.c
 /* Returns whether surface is a GTK-titlebar created by libdecor-gtk */
 bool fl_is_surface_gtk_titlebar(struct wl_surface *surface, struct libdecor *context) {
   if (!context || get_plugin_kind(NULL) != GTK3) return false;
+  static void *new_symbol = NULL;
+  static bool first = true;
+  if (first) {
+    first = false;
+    // new_symbol is NULL for libdecor versions ≤ 0.2.2
+    new_symbol = dlsym(RTLD_DEFAULT, "libdecor_frame_get_user_data");
+  }
+  struct wl_list *frames_addr = (new_symbol ? &context->frames :
+                                 &(((struct libdecor_022*)context)->frames) );
   // loop over all decorations created by libdecor-gtk
   struct libdecor_frame *frame;
-  wl_list_for_each(frame, &context->frames, link) {
+  wl_list_for_each(frame, frames_addr, link) {
     struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
     if (frame_gtk->headerbar.wl_surface == surface) return true;
   }

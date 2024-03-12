@@ -104,7 +104,7 @@ LIBDECOR_EXPORT void libdecor_frame_set_minimized(struct libdecor_frame *frame)
  so a plugin may be loaded that way only if FLTK was built with FLTK_USE_SYSTEM_LIBDECOR turned ON.
  
  */
-LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, struct libdecor_interface *iface)
+LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, const struct libdecor_interface *iface)
 {
   struct libdecor *context;
   context = zalloc(sizeof *context);
