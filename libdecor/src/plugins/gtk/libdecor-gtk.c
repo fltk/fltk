@@ -2246,15 +2246,16 @@ handle_titlebar_gesture(struct libdecor_frame_gtk *frame_gtk,
 		break;
 	case TITLEBAR_GESTURE_MIDDLE_CLICK:
 		break;
-	case TITLEBAR_GESTURE_RIGHT_CLICK:
-		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
-
-		libdecor_frame_show_window_menu(&frame_gtk->frame,
-						seat->wl_seat,
-						serial,
-						seat->pointer_x,
-						seat->pointer_y
-						-title_height);
+        case TITLEBAR_GESTURE_RIGHT_CLICK: { /* FLTK */
+            const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
+            
+            libdecor_frame_show_window_menu(&frame_gtk->frame,
+                                            seat->wl_seat,
+                                            serial,
+                                            seat->pointer_x,
+                                            seat->pointer_y
+                                            -title_height);
+          } /* FLTK */
 		break;
 	}
 }
@@ -2408,7 +2409,7 @@ pointer_button(void *data,
 	case HEADER:
 		handle_button_on_header (frame_gtk, seat, serial, time, button, state);
 		break;
-	default:
+	//default: /* FLTK */
 	}
 }
 
