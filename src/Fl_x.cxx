@@ -1215,24 +1215,20 @@ static void react_to_screen_reconfiguration() {
 
 #if USE_XFT
 static void after_display_rescale(float *p_current_xft_dpi) {
-  FILE *pipe = popen("xrdb -query", "r");
-  if (!pipe) return;
-  char line[100];
-  while (fgets(line, sizeof(line), pipe) != NULL) {
-    if (memcmp(line, "Xft.dpi:", 8)) continue;
-    float dpi;
-    if (sscanf(line+8, "%f", &dpi) == 1) {
-      //fprintf(stderr," previous=%g dpi=%g \n", *p_current_xft_dpi, dpi);
-      if (fabs(dpi - *p_current_xft_dpi) > 0.01) {
-        *p_current_xft_dpi = dpi;
-        float f = dpi/96.;
-        for (int i = 0; i < Fl::screen_count(); i++)
-          Fl::screen_driver()->rescale_all_windows_from_screen(i, f, f);
-      }
+  Display *new_dpy = XOpenDisplay(XDisplayString(fl_display));
+  if (!new_dpy) return;
+  char *s = XGetDefault(new_dpy, "Xft", "dpi");
+  float dpi;
+  if (s && sscanf(s, "%f", &dpi) == 1) {
+    //printf("%s previous=%g dpi=%g \n", s, *p_current_xft_dpi, dpi);
+    if (fabs(dpi - *p_current_xft_dpi) > 0.1) {
+      *p_current_xft_dpi = dpi;
+      float f = dpi / 96.;
+      for (int i = 0; i < Fl::screen_count(); i++)
+        Fl::screen_driver()->rescale_all_windows_from_screen(i, f, f);
     }
-    break;
   }
-  pclose(pipe);
+  XCloseDisplay(new_dpy);
 }
 #endif // USE_XFT
 
