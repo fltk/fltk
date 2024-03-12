@@ -564,7 +564,12 @@ void Fl_Screen_Driver::use_startup_scale_factor()
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
     float factor = 1;
     sscanf(p, "%f", &factor);
-    for (int i = 0; i < s_count; i++)  scale(i, factor * scale(i));
+    if (rescalable() == SYSTEMWIDE_APP_SCALING) {
+      float new_val = factor * scale(0);
+      for (int i = 0; i < s_count; i++)  scale(i, new_val);
+    } else {
+      for (int i = 0; i < s_count; i++)  scale(i, factor * scale(i));
+    }
   }
 }
 
