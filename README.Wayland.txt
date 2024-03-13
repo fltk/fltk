@@ -116,7 +116,7 @@ On Linux and FreeBSD systems equipped with the adequate software packages
 hybrid library. On systems lacking all or part of Wayland-required packages,
 the default building procedure produces a X11-based library.
 
-Use "-D FLTK_OPTION_USE_WAYLAND=OFF" with CMake or "configure --disable-wayland"
+Use "-D FLTK_BACKEND_WAYLAND=OFF" with CMake or "configure --disable-wayland"
 to build FLTK for the X11 library when the default would build for Wayland.
 
 CMake option FLTK_BACKEND_X11=OFF or configure argument "--disable-x11" can
@@ -185,7 +185,7 @@ in section 2.1 of file README.Unix.txt :
 - libwayland-dev
 - wayland-protocols
 - libxkbcommon-dev
-- libxinerama-dev
+- libxinerama-dev <== except if option FLTK_BACKEND_X11=off is used
 - libdbus-1-dev  <== recommended to query current cursor theme
 - libglew-dev    <== necessary to use OpenGL version 3 or above
 - cmake          <== if you plan to build with CMake
