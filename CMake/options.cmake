@@ -355,6 +355,10 @@ if(UNIX)
       set(FLTK_USE_LIBDECOR_GTK ON)
     else()
       option(FLTK_USE_LIBDECOR_GTK "Allow to use libdecor's GTK plugin" ON)
+      # Temporarily, while built-in and system struct libdecor differ.
+      # Later, the version of the system libdecor will be required to have same
+      # struct libdecor as the built-in libdecor.
+      set(CMAKE_ENABLE_EXPORTS 1)
     endif(USE_SYSTEM_LIBDECOR)
 
     if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
