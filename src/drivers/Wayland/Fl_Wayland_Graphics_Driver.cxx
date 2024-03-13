@@ -25,7 +25,7 @@
 
 
 extern "C" {
-#  include "../../../libdecor/src/os-compatibility.h" // for os_create_anonymous_file()
+#  include "../../../libdecor/src/os-compatibility.h" // for libdecor_os_create_anonymous_file()
 }
 
 // used by create_shm_buffer and do_buffer_release
@@ -76,9 +76,9 @@ void Fl_Wayland_Graphics_Driver::create_shm_buffer(Fl_Wayland_Graphics_Driver::w
     pool_size = default_pool_size;
     if (buffer->draw_buffer.data_size > pool_size)
       pool_size = 2 * buffer->draw_buffer.data_size; // a larger pool is needed
-    int fd = os_create_anonymous_file(pool_size);
+    int fd = libdecor_os_create_anonymous_file(pool_size);
     if (fd < 0) {
-      Fl::fatal("os_create_anonymous_file failed: %s\n", strerror(errno));
+      Fl::fatal("libdecor_os_create_anonymous_file failed: %s\n", strerror(errno));
     }
     pool_data = (struct wld_shm_pool_data*)calloc(1, sizeof(struct wld_shm_pool_data));
     pool_data->pool_memory = (char*)mmap(NULL, pool_size, PROT_READ | PROT_WRITE,

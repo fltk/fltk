@@ -694,7 +694,7 @@ FLTK creates a \c wl_buffer object each time an Fl_Window is mapped on a display
 That's done by member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer()
 which follows this 3-step procedure to create a "buffer factory" for FLTK and to construct
 Wayland buffers from it:
-- Libdecor function <tt>os_create_anonymous_file(off_t size)</tt> creates an adequate file
+- Libdecor function <tt>libdecor_os_create_anonymous_file(off_t size)</tt> creates an adequate file
 and mmap's it. This file lives in RAM because it is created by function \c memfd_create().
 FLTK sets this file size to 10 MB unless the size of the buffer to be created
 is larger; in that case the anonymous file is sized to twice the buffer size.
