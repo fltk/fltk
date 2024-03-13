@@ -1878,7 +1878,12 @@ int Fl_Wayland_Screen_Driver::get_key(int k) {
 
 
 float Fl_Wayland_Screen_Driver::base_scale(int numscreen) {
-  return 1.f;
+  const char *p;
+  float factor = 1;
+  if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
+    sscanf(p, "%f", &factor);
+  }
+  return factor;
 }
 
 
