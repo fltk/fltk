@@ -2409,7 +2409,8 @@ pointer_button(void *data,
 	case HEADER:
 		handle_button_on_header (frame_gtk, seat, serial, time, button, state);
 		break;
-	//default: /* FLTK */
+	default:
+                break;  /* FLTK */
 	}
 }
 
