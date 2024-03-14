@@ -38,6 +38,7 @@ set(CPPFILES
   about_panel.cxx
   align_widget.cxx
   alignment_panel.cxx
+  autodoc.cxx
   code.cxx
   custom_widgets.cxx
   factory.cxx
@@ -72,12 +73,12 @@ set(HEADERFILES
   about_panel.h
   align_widget.h
   alignment_panel.h
+  autodoc.h
   code.h
   comments.h
   custom_widgets.h
   factory.h
   file.h
-  fluid.h
   function_panel.h
   mergeback.h
   print_panel.h
