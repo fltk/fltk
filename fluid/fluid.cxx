@@ -34,6 +34,7 @@
 #include "sourceview_panel.h"
 #include "template_panel.h"
 #include "about_panel.h"
+#include "autodoc.h"
 
 #include <FL/Fl.H>
 #ifdef __APPLE__
@@ -183,6 +184,9 @@ Fl_String g_header_filename_arg;
 
 /// current directory path at application launch
 Fl_String g_launch_path;
+
+/// if set, generate images for automatic documentation in this directory
+Fl_String g_autodoc_path;
 
 /// path to store temporary files during app run
 /// \see tmpdir_create_called
@@ -2091,6 +2095,12 @@ static int arg(int argc, char** argv, int& i) {
     batch_mode++;
     i += 2; return 2;
   }
+#ifndef NDEBUG
+  if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
+    g_autodoc_path = argv[i+1];
+    i += 2; return 2;
+  }
+#endif
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
       g_header_filename_arg = argv[i+1];
@@ -2256,6 +2266,14 @@ int main(int argc,char **argv) {
 
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
+
+#ifndef NDEBUG
+  // check if the user wants FLUID to generate image for the user documentation
+  if (!g_autodoc_path.empty()) {
+    run_autodoc(g_autodoc_path);
+    return 0;
+  }
+#endif
 
 #ifdef _WIN32
   Fl::run();

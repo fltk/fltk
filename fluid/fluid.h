@@ -98,6 +98,8 @@ extern Fl_String g_code_filename_arg;
 extern Fl_String g_header_filename_arg;
 extern Fl_String g_launch_path;
 
+extern Fl_String g_autodoc_path;
+
 // ---- project class declaration
 
 /**
