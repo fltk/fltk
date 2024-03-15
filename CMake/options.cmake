@@ -459,6 +459,8 @@ endif()
 if(DOXYGEN_FOUND)
   option(FLTK_BUILD_HTML_DOCS "build html docs" ON)
   option(FLTK_INSTALL_HTML_DOCS "install html docs" OFF)
+  option(FLTK_BUILD_FLUID_DOCS "build FLUID docs" OFF)
+  option(FLTK_INSTALL_FLUID_DOCS "install FLUID docs" OFF)
 
   option(FLTK_INCLUDE_DRIVER_DOCS "include driver (developer) docs" OFF)
   mark_as_advanced(FLTK_INCLUDE_DRIVER_DOCS)
@@ -472,6 +474,10 @@ endif(DOXYGEN_FOUND)
 if(FLTK_BUILD_HTML_DOCS OR FLTK_BUILD_PDF_DOCS)
   add_subdirectory(documentation)
 endif(FLTK_BUILD_HTML_DOCS OR FLTK_BUILD_PDF_DOCS)
+
+if(FLTK_BUILD_FLUID_DOCS)
+  add_subdirectory(fluid/documentation)
+endif(FLTK_BUILD_FLUID_DOCS)
 
 #######################################################################
 # Include optional Cairo support

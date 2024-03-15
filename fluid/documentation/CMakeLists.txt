@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build docs for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -15,26 +15,15 @@
 #
 
 set(DOCS)
-set(GENERATE_DOCS FALSE)
 set(GIT_REVISION "")
 set(YEAR "")
 set(CURRENT_DATE "")
-
-if(FLTK_BUILD_HTML_DOCS OR FLTK_BUILD_PDF_DOCS)
-  set(GENERATE_DOCS TRUE)
-endif()
-
-if(FLTK_INCLUDE_DRIVER_DOCS)
-  set(DRIVER_DOCS "DriverDev")
-else()
-  set(DRIVER_DOCS "")
-endif()
 
 #------------------------------------------------
 # generate files used for both HTML and PDF docs
 #------------------------------------------------
 
-if(GENERATE_DOCS)
+if(FLTK_BUILD_FLUID_DOCS)
 
   # create required variables
 
@@ -95,29 +84,19 @@ if(GENERATE_DOCS)
     @ONLY
   )
 
-  if(0) # debug
-    fl_debug_var(YEAR)
-    fl_debug_var(CURRENT_DATE)
-    fl_debug_var(GIT_REVISION)
-    fl_debug_var(DOXYGEN_FOUND)
-    fl_debug_var(DOXYGEN_EXECUTABLE)
-    fl_debug_var(DOXYGEN_VERSION)
-    fl_debug_var(DOXYGEN_VERSION_SHORT)
-  endif()
+endif(FLTK_BUILD_FLUID_DOCS)
 
-endif(GENERATE_DOCS)
+#-------------------------------
+# build FLUID html documentation
+#-------------------------------
 
-#--------------------------
-# build html documentation
-#--------------------------
+if(FLTK_BUILD_FLUID_DOCS)
 
-if(FLTK_BUILD_HTML_DOCS)
-
-  list(APPEND DOCS html)
+  #list(APPEND DOCS html)
 
   # generate Doxygen file "Doxyfile"
 
-  set(GENERATE_HTML  YES)
+  set(GENERATE_FLUID_HTML YES)
   set(GENERATE_LATEX NO)
   set(LATEX_HEADER   "")
   set(DOXYFILE       "Doxyfile")
@@ -145,28 +124,32 @@ if(FLTK_BUILD_HTML_DOCS)
     COMMENT "Converting ${DOXYFILE} to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
+  # generate screen shot using FLUID --autodoc target_dir
   # generate HTML documentation
 
-  add_custom_target(html
+  add_custom_target(fluid_docs
+    COMMAND ${FLTK_FLUID_EXECUTABLE} --autodoc ${CMAKE_CURRENT_BINARY_DIR}/src/
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating HTML documentation" VERBATIM
   )
+  add_dependencies(fluid_docs fltk::fluid)
 
-endif(FLTK_BUILD_HTML_DOCS)
+endif(FLTK_BUILD_FLUID_DOCS)
 
 #--------------------------
 # build pdf documentation
 #--------------------------
 
+if(0) # later
 if(FLTK_BUILD_PDF_DOCS)
 
   list(APPEND DOCS pdf)
 
   # generate Doxygen input file "Doxybook"
 
-  set(GENERATE_HTML  NO)
+  set(GENERATE_FLUID_HTML  NO)
   set(GENERATE_LATEX YES)
   set(LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
   set(DOXYFILE       "Doxybook")
@@ -226,11 +209,13 @@ if(FLTK_BUILD_PDF_DOCS)
   )
 
 endif(FLTK_BUILD_PDF_DOCS)
+endif(0)
 
 #----------------------------------
 # add target 'docs' for all docs
 #----------------------------------
 
+if(0)
 if(DOCS)
 
   add_custom_target(docs
@@ -238,11 +223,13 @@ if(DOCS)
   )
 
 endif(DOCS)
+endif(0)
 
 #----------------------------------
 # install html + pdf documentation
 #----------------------------------
 
+if(0)
 if(FLTK_INSTALL_HTML_DOCS AND FLTK_BUILD_HTML_DOCS)
 
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
@@ -258,3 +245,4 @@ if(FLTK_INSTALL_PDF_DOCS AND FLTK_BUILD_PDF_DOCS)
   )
 
 endif(FLTK_INSTALL_PDF_DOCS AND FLTK_BUILD_PDF_DOCS)
+endif(0)
