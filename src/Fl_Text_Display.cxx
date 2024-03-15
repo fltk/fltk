@@ -95,7 +95,8 @@ static int scroll_x = 0;
  */
 Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
 : Fl_Group(X, Y, W, H, l) {
-  int i;
+
+#define VISIBLE_LINES_INIT 1 // allow compiler to remove unused code (PR #582)
 
   mMaxsize = 0;
   damage_range1_start = damage_range1_end = -1;
@@ -148,11 +149,14 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mStyleBuffer = 0;
   mStyleTable = 0;
   mNStyles = 0;
-  mNVisibleLines = 1;
+  mNVisibleLines = VISIBLE_LINES_INIT;
   mLineStarts = new int[mNVisibleLines];
   mLineStarts[0] = 0;
-  for (i=1; i<mNVisibleLines; i++)
-    mLineStarts[i] = -1;
+#if VISIBLE_LINES_INIT > 1
+  { // Note: this code is unused unless mNVisibleLines is ever initialized > 1
+    for (int i=1; i<mNVisibleLines; i++) mLineStarts[i] = -1;
+  }
+#endif
   mSuppressResync = 0;
   mNLinesDeleted = 0;
   mModifyingTabDistance = 0;

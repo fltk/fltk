@@ -88,7 +88,7 @@ private:
       return(_size);
     }
     void size(int count) {
-      if ( count != _size ) {
+      if ( count > 0 && count != _size ) {
         arr = (char*)realloc(arr, count * sizeof(char));
         _size = count;
       }
