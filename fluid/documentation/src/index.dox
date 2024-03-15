@@ -1,0 +1,127 @@
+/**
+
+\mainpage FLTK Programming Manual
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TR>
+  <TD><CENTER>
+    \image html FL200.png
+    \image latex FL200.png "" width=5cm
+  </CENTER></TD>
+  <TD><CENTER>
+    <B>FLTK 1.4.0 Programming Manual</B>
+
+    By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+    A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
+
+    \include{doc} copyright.dox
+  </CENTER></TD>
+</TR>
+</TABLE>
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TR>
+  <TD style="text-align: center;">
+    This software and manual are provided under the terms of the GNU
+    Library General Public License. Permission is granted to reproduce
+    this manual or any portion for any purpose, provided this copyright
+    and permission notice are preserved.
+  </TD>
+</TR>
+</TABLE>
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="100%" BORDER="0">
+<TR>
+  <TD ALIGN="LEFT" VALIGN="TOP">
+
+    \subpage preface
+
+    \subpage intro
+
+    \subpage basics
+
+    \subpage common
+        - \ref common_colors
+        - \ref common_boxtypes
+        - \ref common_labels
+        - \ref drawing_images
+
+    \subpage coordinates
+
+    \subpage resize
+
+    \subpage editor
+
+    \subpage drawing
+        - \ref drawing_WhenCanYouDraw
+        - \ref drawing_DrawingUnit
+        - \ref drawing_DrawingFunctions
+        - \ref drawing_images
+        - \ref drawing_offscreen
+
+    \subpage events
+        - \ref events_event_xxx
+        - \ref events_propagation
+
+  </TD>
+  <TD ALIGN="LEFT" VALIGN="TOP">
+
+    \subpage subclassing
+
+    \subpage opengl
+
+    \subpage fluid
+        - \ref fluid_widget_attributes
+        - \ref fluid_selecting_moving
+        - \ref fluid_images
+
+    \subpage fltk-options
+
+    \subpage advanced
+
+    \subpage unicode
+
+    &nbsp;
+
+    <b>Appendices:</b>
+        - \subpage enumerations
+
+        -  \subpage glut
+                - \ref glut_Fl_Glut_Window
+                <!-- - Fl_Glut_Window (not yet commented ?) -->
+
+        - \subpage forms
+
+        - \subpage osissues
+
+        - \subpage migration_1_4
+
+        - \subpage license
+
+        - \subpage examples
+
+        - \subpage FAQ
+
+  </TD>
+</TR>
+</TABLE>
+
+\htmlinclude{doc} generated.dox
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    &nbsp;
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="preface.html">
+    Preface
+    [Next]</a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/
