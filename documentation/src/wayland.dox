@@ -1104,8 +1104,7 @@ and also to draw window titlebars when in CSD mode (see \ref bundled-libdecor).
 \c Libdecor is conceived to be present in a shared library linked to the Wayland
 client application which itself, and if the running Wayland compositor uses CSD mode,
 loads another shared library intended to draw titlebars in a way that best matches the
-Desktop. As of late 2023, libdecor is at version 0.2.0 and contains two titlebar-drawing
-plugins:
+Desktop. As of late 2023, libdecor contains two titlebar-drawing plugins:
 - \c libdecor-gtk intended for the Gnome desktop;
 - \c libdecor-cairo for other situations.
 
@@ -1114,15 +1113,10 @@ FLTK bundles the most recent source code of \c libdecor and its plugins. This co
 is included in libfltk. FLTK uses \c libdecor-gtk when software package \c libgtk-3-dev
 is present in the build system, and \c libdecor-cairo otherwise.
 
-As of late 2023, libdecor version 0.2.0 is available in very recent Linux distributions
-in packages \c libdecor-0-dev and \c libdecor-0-plugin-1-gtk. If they are installed on the
-build system, preprocessor variable \c USE_SYSTEM_LIBDECOR is 1,
-and both \c libdecor and its plugin are loaded at run-time from shared libraries.
-When these packages are not available or are at an earlier version, FLTK uses the bundled
-copy of \c libdecor.
-When CMake \c FLTK_USE_SYSTEM_LIBDECOR is OFF, FLTK uses the bundled \c libdecor copy
-even if shared libraries \c libdecor.so and \c libdecor-gtk.so are installed.
-This option is ON by default.
+As of early 2024, libdecor version 0.2.2 is available in very recent Linux distributions.
+This version is not binary compatible with the libdecor version bundled by FLTK.
+For this reason, CMake option \c FLTK_USE_SYSTEM_LIBDECOR is OFF by default, and
+FLTK uses the bundled \c libdecor copy to draw titlebars.
 
 \c Libdecor uses the Wayland protocol
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>
