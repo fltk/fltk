@@ -282,12 +282,12 @@ FLTK_USE_PTHREADS - default ON except on Windows.
     This option is ignored (switched OFF internally) on Windows except
     when using Cygwin.
 
-FLTK_USE_SYSTEM_LIBDECOR - default ON (Wayland only)
+FLTK_USE_SYSTEM_LIBDECOR - default OFF (Wayland only)
     This option makes FLTK use package libdecor-0-dev to draw window titlebars
-    under Wayland. When OFF or when this package has a version < 0.2.0, FLTK
+    under Wayland. When OFF or when this package has a version ≤ 0.2.2, FLTK
     uses its bundled copy of libdecor to draw window titlebars.
-    As of november 2023, version 0.2.0 of package libdecor-0-dev is available
-    only in testing distributions.
+    As of early 2024, no version > 0.2.2 of package libdecor-0-dev is available
+    yet.
 
 FLTK_USE_SYSTEM_LIBJPEG - default ON (macOS and Windows: OFF)
 FLTK_USE_SYSTEM_LIBPNG  - default ON (macOS and Windows: OFF)
