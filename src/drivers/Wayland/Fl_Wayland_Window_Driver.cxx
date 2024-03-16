@@ -89,7 +89,7 @@ void Fl_Wayland_Window_Driver::delete_cursor(
   free(wl_cursor);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (scr_driver->default_cursor() == wl_cursor) {
-    scr_driver->default_cursor(scr_driver->xc_arrow);
+    scr_driver->default_cursor(scr_driver->xc_cursor[Fl_Wayland_Screen_Driver::arrow]);
   }
   if (delete_rgb) delete custom->rgb;
   delete custom;
@@ -1497,114 +1497,46 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
   if (!scr_driver->seat->cursor_theme) return 1;
   // Cursor names are the files of directory /usr/share/icons/XXXX/cursors/
   // where XXXX is the name of the current 'cursor theme'.
-  switch (c) {
-    case FL_CURSOR_ARROW:
-      if (!scr_driver->xc_arrow) scr_driver->xc_arrow = scr_driver->cache_cursor("left_ptr");
-      scr_driver->default_cursor(scr_driver->xc_arrow);
+  static struct cursor_file_struct {
+    Fl_Cursor c; 
+    const char *fname;
+    Fl_Wayland_Screen_Driver::cursor_shapes wld_c;
+  } cursor_file_array[] = {
+    {FL_CURSOR_ARROW,  "left_ptr",            Fl_Wayland_Screen_Driver::arrow },
+    {FL_CURSOR_CROSS,  "cross",               Fl_Wayland_Screen_Driver::cross },
+    {FL_CURSOR_WAIT,   "watch",               Fl_Wayland_Screen_Driver::wait },
+    {FL_CURSOR_INSERT, "xterm",               Fl_Wayland_Screen_Driver::insert },
+    {FL_CURSOR_HAND,   "hand1",               Fl_Wayland_Screen_Driver::hand },
+    {FL_CURSOR_HELP,   "help",                Fl_Wayland_Screen_Driver::help },
+    {FL_CURSOR_MOVE,   "move",                Fl_Wayland_Screen_Driver::move },
+    {FL_CURSOR_N,      "top_side",            Fl_Wayland_Screen_Driver::north },
+    {FL_CURSOR_E,      "right_side",          Fl_Wayland_Screen_Driver::east },
+    {FL_CURSOR_W,      "left_side",           Fl_Wayland_Screen_Driver::west },
+    {FL_CURSOR_S,      "bottom_side",         Fl_Wayland_Screen_Driver::south },
+    {FL_CURSOR_NS,     "sb_v_double_arrow",   Fl_Wayland_Screen_Driver::north_south },
+    {FL_CURSOR_WE,     "sb_h_double_arrow",   Fl_Wayland_Screen_Driver::west_east },
+    {FL_CURSOR_SW,     "bottom_left_corner",  Fl_Wayland_Screen_Driver::south_west },
+    {FL_CURSOR_SE,     "bottom_right_corner", Fl_Wayland_Screen_Driver::south_east },
+    {FL_CURSOR_NE,     "top_right_corner",    Fl_Wayland_Screen_Driver::north_east },
+    {FL_CURSOR_NW,     "top_left_corner",     Fl_Wayland_Screen_Driver::north_west },
+    {FL_CURSOR_NESW,   "fd_double_arrow",     Fl_Wayland_Screen_Driver::nesw },
+    {FL_CURSOR_NWSE,   "bd_double_arrow",     Fl_Wayland_Screen_Driver::nwse }
+  };
+  
+  int found = -1;
+  for (unsigned i = 0; i < sizeof(cursor_file_array) / sizeof(struct cursor_file_struct); i++) {
+    if (cursor_file_array[i].c == c) {
+      found = cursor_file_array[i].wld_c;
+      if (!scr_driver->xc_cursor[found]) scr_driver->xc_cursor[found] =
+        scr_driver->cache_cursor(cursor_file_array[i].fname);
+      if (scr_driver->xc_cursor[found]) {
+        scr_driver->default_cursor(scr_driver->xc_cursor[found]);
+      }
       break;
-    case FL_CURSOR_NS:
-      if (!scr_driver->xc_ns) scr_driver->xc_ns =
-        scr_driver->cache_cursor("sb_v_double_arrow");
-      if (!scr_driver->xc_ns) return 0;
-      scr_driver->default_cursor(scr_driver->xc_ns);
-      break;
-    case FL_CURSOR_CROSS:
-      if (!scr_driver->xc_cross) scr_driver->xc_cross = scr_driver->cache_cursor("cross");
-      if (!scr_driver->xc_cross) return 0;
-      scr_driver->default_cursor(scr_driver->xc_cross);
-      break;
-    case FL_CURSOR_WAIT:
-      if (!scr_driver->xc_wait) scr_driver->xc_wait = scr_driver->cache_cursor("wait");
-      if (!scr_driver->xc_wait) scr_driver->xc_wait = scr_driver->cache_cursor("watch");
-      if (!scr_driver->xc_wait) return 0;
-      scr_driver->default_cursor(scr_driver->xc_wait);
-      break;
-    case FL_CURSOR_INSERT:
-      if (!scr_driver->xc_insert) scr_driver->xc_insert = scr_driver->cache_cursor("xterm");
-      if (!scr_driver->xc_insert) return 0;
-      scr_driver->default_cursor(scr_driver->xc_insert);
-      break;
-    case FL_CURSOR_HAND:
-      if (!scr_driver->xc_hand) scr_driver->xc_hand = scr_driver->cache_cursor("hand");
-      if (!scr_driver->xc_hand) scr_driver->xc_hand = scr_driver->cache_cursor("hand1");
-      if (!scr_driver->xc_hand) return 0;
-      scr_driver->default_cursor(scr_driver->xc_hand);
-      break;
-    case FL_CURSOR_HELP:
-      if (!scr_driver->xc_help) scr_driver->xc_help = scr_driver->cache_cursor("help");
-      if (!scr_driver->xc_help) return 0;
-      scr_driver->default_cursor(scr_driver->xc_help);
-      break;
-    case FL_CURSOR_MOVE:
-      if (!scr_driver->xc_move) scr_driver->xc_move = scr_driver->cache_cursor("move");
-      if (!scr_driver->xc_move) return 0;
-      scr_driver->default_cursor(scr_driver->xc_move);
-      break;
-    case FL_CURSOR_WE:
-      if (!scr_driver->xc_we) scr_driver->xc_we =
-        scr_driver->cache_cursor("sb_h_double_arrow");
-      if (!scr_driver->xc_we) return 0;
-      scr_driver->default_cursor(scr_driver->xc_we);
-      break;
-    case FL_CURSOR_N:
-      if (!scr_driver->xc_north) scr_driver->xc_north = scr_driver->cache_cursor("top_side");
-      if (!scr_driver->xc_north) return 0;
-      scr_driver->default_cursor(scr_driver->xc_north);
-      break;
-    case FL_CURSOR_E:
-      if (!scr_driver->xc_east) scr_driver->xc_east = scr_driver->cache_cursor("right_side");
-      if (!scr_driver->xc_east) return 0;
-      scr_driver->default_cursor(scr_driver->xc_east);
-      break;
-    case FL_CURSOR_W:
-      if (!scr_driver->xc_west) scr_driver->xc_west = scr_driver->cache_cursor("left_side");
-      if (!scr_driver->xc_west) return 0;
-      scr_driver->default_cursor(scr_driver->xc_west);
-      break;
-    case FL_CURSOR_S:
-      if (!scr_driver->xc_south) scr_driver->xc_south =
-        scr_driver->cache_cursor("bottom_side");
-      if (!scr_driver->xc_south) return 0;
-      scr_driver->default_cursor(scr_driver->xc_south);
-      break;
-    case FL_CURSOR_NESW:
-      if (!scr_driver->xc_nesw) scr_driver->xc_nesw =
-        scr_driver->cache_cursor("fd_double_arrow");
-      if (!scr_driver->xc_nesw) return 0;
-      scr_driver->default_cursor(scr_driver->xc_nesw);
-      break;
-    case FL_CURSOR_NWSE:
-      if (!scr_driver->xc_nwse) scr_driver->xc_nwse =
-        scr_driver->cache_cursor("bd_double_arrow");
-      if (!scr_driver->xc_nwse) return 0;
-      scr_driver->default_cursor(scr_driver->xc_nwse);
-      break;
-    case FL_CURSOR_SW:
-      if (!scr_driver->xc_sw) scr_driver->xc_sw =
-        scr_driver->cache_cursor("bottom_left_corner");
-      if (!scr_driver->xc_sw) return 0;
-      scr_driver->default_cursor(scr_driver->xc_sw);
-      break;
-    case FL_CURSOR_SE:
-      if (!scr_driver->xc_se) scr_driver->xc_se =
-        scr_driver->cache_cursor("bottom_right_corner");
-      if (!scr_driver->xc_se) return 0;
-      scr_driver->default_cursor(scr_driver->xc_se);
-      break;
-    case FL_CURSOR_NE:
-      if (!scr_driver->xc_ne) scr_driver->xc_ne = scr_driver->cache_cursor("top_right_corner");
-      if (!scr_driver->xc_ne) return 0;
-      scr_driver->default_cursor(scr_driver->xc_ne);
-      break;
-    case FL_CURSOR_NW:
-      if (!scr_driver->xc_nw) scr_driver->xc_nw = scr_driver->cache_cursor("top_left_corner");
-      if (!scr_driver->xc_nw) return 0;
-      scr_driver->default_cursor(scr_driver->xc_nw);
-      break;
-
-    default:
-      return 0;
+    }
   }
+  if (found < 0 || !scr_driver->xc_cursor[found]) return 0;
+  
   if (xid->custom_cursor) {
     delete_cursor(xid->custom_cursor);
     xid->custom_cursor = NULL;
