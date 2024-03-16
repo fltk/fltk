@@ -130,7 +130,7 @@ if(FLTK_BUILD_FLUID_DOCS)
   add_custom_target(fluid_docs
     COMMAND ${FLTK_FLUID_EXECUTABLE} --autodoc ${CMAKE_CURRENT_BINARY_DIR}/src/
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE} ${CMAKE_CURRENT_BINARY_DIR}/src/function_panel.png
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating HTML documentation" VERBATIM
   )
@@ -142,16 +142,13 @@ endif(FLTK_BUILD_FLUID_DOCS)
 # build pdf documentation
 #--------------------------
 
-if(0) # later
-if(FLTK_BUILD_PDF_DOCS)
-
-  list(APPEND DOCS pdf)
+if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
 
   # generate Doxygen input file "Doxybook"
 
   set(GENERATE_FLUID_HTML  NO)
   set(GENERATE_LATEX YES)
-  set(LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
+  set(LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fluid-book.tex")
   set(DOXYFILE       "Doxybook")
   set(LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
 
@@ -180,69 +177,52 @@ if(FLTK_BUILD_PDF_DOCS)
   # generate LaTeX title fltk-title.tex
 
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/fltk-title.tex.in
-    ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/fluid-title.tex.in
+    ${CMAKE_CURRENT_BINARY_DIR}/fluid-title.tex
     @ONLY
   )
 
-  # generate fltk.pdf
+  # generate fluid.pdf
 
   add_custom_command(
-    OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
+    OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/fluid.pdf
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_header
             ${DOXYGEN_EXECUTABLE}
-            ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
-            ${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex
+            ${CMAKE_CURRENT_BINARY_DIR}/fluid-title.tex
+            ${CMAKE_CURRENT_BINARY_DIR}/fluid-book.tex
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf
-    COMMAND cp -f latex/refman.pdf fltk.pdf
+    COMMAND cp -f latex/refman.pdf fluid.pdf
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
-            ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
+            ${CMAKE_CURRENT_BINARY_DIR}/fluid-title.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating PDF documentation" VERBATIM
+    COMMENT "Generating FLUID PDF documentation" VERBATIM
   )
 
   # add target 'pdf'
 
-  add_custom_target(pdf
+  add_custom_target(fluid_pdf
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
   )
 
-endif(FLTK_BUILD_PDF_DOCS)
-endif(0)
+endif(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
 
-#----------------------------------
-# add target 'docs' for all docs
-#----------------------------------
+#---------------------------------------
+# install FLUID html + pdf documentation
+#---------------------------------------
 
-if(0)
-if(DOCS)
-
-  add_custom_target(docs
-    DEPENDS ${DOCS}
-  )
-
-endif(DOCS)
-endif(0)
-
-#----------------------------------
-# install html + pdf documentation
-#----------------------------------
-
-if(0)
-if(FLTK_INSTALL_HTML_DOCS AND FLTK_BUILD_HTML_DOCS)
+if(FLTK_INSTALL_FLUID_DOCS AND FLTK_BUILD_FLUID_DOCS)
 
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-    DESTINATION ${FLTK_DATADIR}/doc/fltk
+    DESTINATION ${FLTK_DATADIR}/doc/fltk/fluid
   )
 
-endif(FLTK_INSTALL_HTML_DOCS AND FLTK_BUILD_HTML_DOCS)
+endif(FLTK_INSTALL_FLUID_DOCS AND FLTK_BUILD_FLUID_DOCS)
 
-if(FLTK_INSTALL_PDF_DOCS AND FLTK_BUILD_PDF_DOCS)
+if(FLTK_INSTALL_PDF_DOCS AND FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fluid.pdf
     DESTINATION ${FLTK_DATADIR}/doc/fltk/
   )
 
-endif(FLTK_INSTALL_PDF_DOCS AND FLTK_BUILD_PDF_DOCS)
-endif(0)
+endif(FLTK_INSTALL_PDF_DOCS AND FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
