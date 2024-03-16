@@ -1,0 +1,35 @@
+/**
+
+ \page page_introduction Introduction
+
+ \tableofcontents
+
+ The Fast Light User Interface Designer, or FLUID, is a graphical editor that
+ can produce ready to compile C++ source code and header files.
+
+ This user manual will introduce FLUID, starting with the installation process,
+ an overview of the main application window, and how to compile and run a
+ simple program. I will explain how to generate a more complex user interface
+ with three short tutorial, followed by some advanced subject like creating
+ integrated reusable widget classes. The appendices will sum up node types
+ and code generation in more detail.
+
+ \section introduction_workflow Workflow
+
+ FLUID has two modes of operation. When started from the shell without command
+ line arguments, or when launched from the desktop, FLUID will open in
+ interactive mode.
+
+ If FLUID is started from the command line with `-u`, `-c`, or `cs`, it will
+ not open any user interface, but instead behave like any shell-only tool that
+ can be easily integrated into Makefiles and build systems like CMake.
+
+ \image html fluid_flow_chart_800.png
+ \image latex fluid_flow_chart.png "" width=10cm
+
+ FLUID organization
+
+ More details on the command line arguments of FLUID can be found
+ in the chapter \ref page_build_integration .
+
+ */

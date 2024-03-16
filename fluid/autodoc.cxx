@@ -385,10 +385,12 @@ void run_autodoc(const Fl_String &target_dir) {
   // list and show all non-widget types and their respective dialog boxes
   // - ID_Function
   Fl_Window *adoc_function_panel = make_function_panel();
+  f_name_input->value("count_trees(const char *forest_name)");
+  f_return_type_input->value("unsigned int");
   fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
   // - ID_Code
   Fl_Window *adoc_code_panel = make_code_panel();
-  code_input->buffer()->text("// increment use count\nif (new_user) {\n  user_count++;\n}\n");
+  code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
   // - ID_CodeBlock
   Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
