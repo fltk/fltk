@@ -343,7 +343,7 @@ Function {make_widget_panel()} {
       xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
       code0 {o->show();}
     } {
-      Fl_Group {} {
+      Fl_Group wp_gui_tab {
         label GUI
         callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
