@@ -351,7 +351,11 @@ void run_autodoc(const Fl_String &target_dir) {
   Fl_Margin win_margin(0, 0, 0, 0);
   Fl_Margin win_blend(10, 10, 10, 10);
 
-  printf("Writing documentation snapshots to %s\n", target_dir.c_str());
+  the_panel = make_widget_panel();
+  // fl_snapshot(target_dir + "data_panel.png", widget_x_input, widget_h_input,
+  //              Fl_Margin(FL_SNAP_TO_WINDOW, 4, FL_SNAP_TO_WINDOW, 4),
+  //              Fl_Margin(0, 10, 0, 10));
+  // fl_open_uri(("file://" + target_dir + "data_panel.png").c_str());
 
   // TODO: take a snapshot of FLUID in a desktop situation
   // (main, toolbar, document, widget editor, source view)
@@ -432,30 +436,6 @@ void run_autodoc(const Fl_String &target_dir) {
 
   // TODO: settings dialog
   // show and explain all tabs
-
-
-  the_panel = make_widget_panel();
-//  fl_snapshot("/Users/matt/test1.png", widget_browser, Fl_Rect(10, 20, 30, 40), Fl_Rect(40, 30, 20, 10));
-//  fl_snapshot("/Users/matt/test2.png", the_panel, Fl_Rect(10, 10, 10, 10), Fl_Rect(20, 0, 0, 0));
-//  fl_snapshot("/Users/matt/test.png", widget_x_input, widget_h_input, 70, 12, 10, 10, 20, 2.0);
-//  fl_snapshot("/Users/matt/test.png", Main_Menu+1, Main_Menu+1, Main_Menu+4, 10, 10, 20, 2.0);
-//  Fl_Menu_Item *mi1 = (Fl_Menu_Item*)main_menubar->find_item("&Layout/&Align");
-//  Fl_Menu_Item *mi2 = (Fl_Menu_Item*)main_menubar->find_item("&Layout/Presets");
-//  fl_snapshot("/Users/matt/test.png", mi1, mi1, mi2, 10, 10, 20, 2.0);
-//  fl_snapshot("/Users/matt/test.png", New_Menu+1, New_Menu+1, New_Menu+4, 10, 10, 20, 2.0);
-
-
-//  widget_tabs->value(widget_tab_grid_child);
-//  fl_snapshot("/Users/matt/test1.png", the_panel, Fl_Rect(-1, -1, -1, -1), Fl_Rect(40, 40, 40, 40), 1.0f);
-//  fl_snapshot("/Users/matt/test1.png", 
-//              widget_x_input, widget_h_input,
-//              Fl_Margin(0, 0, 0, 0),
-//              Fl_Margin(10, 10, 10, 10));
-
-//  fl_open_uri("file:///Users/matt/test1.png");
-//  fl_open_uri("file:///Users/matt/test2.png");
-  fl_open_uri(("file://" + target_dir + "data_panel.png").c_str());
-
 }
 
 

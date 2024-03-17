@@ -1534,9 +1534,11 @@ BREAK2:
  */
 void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
-  if (public_)
-    f.write_h("%s\n", c);
-  f.write_c("%s\n", c);
+  if (c && *c) {
+    if (public_)
+      f.write_h("%s\n", c);
+    f.write_c("%s\n", c);
+  }
 }
 
 /**
@@ -1544,9 +1546,11 @@ void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
  */
 void Fl_DeclBlock_Type::write_code2(Fd_Code_Writer& f) {
   const char* c = after;
-  if (public_)
-    f.write_h("%s\n", c);
-  f.write_c("%s\n", c);
+  if (c && *c) {
+    if (public_)
+      f.write_h("%s\n", c);
+    f.write_c("%s\n", c);
+  }
 }
 
 // ---- Fl_Comment_Type declaration
