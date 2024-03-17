@@ -570,7 +570,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
         }
         Fl_Group {} {
           label {Position:}
-          callback position_group_cb
+          callback position_group_cb open
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_x_input {
@@ -627,7 +627,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {399 150 1 20} hide resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_flexp {
           label {Flex Parent:}
           callback flex_size_group_cb
           comment {This group is only visible if the parent is an Fl_Flex widget}
@@ -681,7 +681,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {395 185 0 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_margins {
           label {Margins:}
           callback flex_margin_group_cb
           comment {This group is only visible for Fl_Flex widgets}
@@ -1179,7 +1179,7 @@ wCallback->do_callback(wCallback, v);} open
             xywh {250 60 80 20} labelsize 11 labelcolor 1 hide
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gridc_align {
           label {Align:}
           callback propagate_load open
           xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
@@ -1240,7 +1240,7 @@ wCallback->do_callback(wCallback, v);} open
             xywh {395 100 1 20} hide resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gridc_size {
           label {Min. Size:}
           callback propagate_load open
           xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
@@ -1432,7 +1432,7 @@ if (v == LOAD) {
             xywh {396 60 0 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_grid_margin {
           label {Margin:}
           callback propagate_load open
           xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
@@ -1521,7 +1521,7 @@ if (v == LOAD) {
             xywh {396 100 0 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_grid_gaps {
           label {Gaps:}
           callback propagate_load open
           xywh {95 135 315 20} labelfont 1 labelsize 11 align 4

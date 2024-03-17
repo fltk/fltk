@@ -366,6 +366,12 @@ void run_autodoc(const Fl_String &target_dir) {
   ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
   Fl_Type *t_sldr = add_new_widget_from_user("Fl_Slider", kAddAsLastChild, false);
   Fl_Type *t_inp = add_new_widget_from_user("Fl_Input", kAddAsLastChild, false);
+  Fl_Type *t_flx = add_new_widget_from_user("Fl_Flex", kAddAsLastChild, false);
+  Fl_Type *t_flxc = add_new_widget_from_user("Fl_Button", kAddAsLastChild, false);
+  select_only(t_grp);
+  Fl_Type *t_grd = add_new_widget_from_user("Fl_Grid", kAddAsLastChild, false);
+  Fl_Type *t_grdc = add_new_widget_from_user("Fl_Button", kAddAsLastChild, false);
+
   widget_browser->rebuild();
   g_project.update_settings_dialog();
 
@@ -465,6 +471,10 @@ void run_autodoc(const Fl_String &target_dir) {
   fl_snapshot((target_dir + "wp_gui_size.png").c_str(), widget_x_input, xrow_margin, row_blend);
   select_only(t_sldr);
   fl_snapshot((target_dir + "wp_gui_values.png").c_str(), wp_gui_values, xrow_margin, row_blend);
+  select_only(t_flxc);
+  fl_snapshot((target_dir + "wp_gui_flexp.png").c_str(), wp_gui_flexp, xrow_margin, row_blend);
+  select_only(t_flx);
+  fl_snapshot((target_dir + "wp_gui_margins.png").c_str(), wp_gui_margins, xrow_margin, row_blend);
   select_only(t_win);
   fl_snapshot((target_dir + "wp_gui_sizerange.png").c_str(), wp_gui_sizerange, xrow_margin, row_blend);
   select_only(t_btn);
@@ -495,9 +505,17 @@ void run_autodoc(const Fl_String &target_dir) {
   fl_snapshot((target_dir + "wComment.png").c_str(), wComment, row_margin, row_blend);
   fl_snapshot((target_dir + "wp_cpp_callback.png").c_str(), wCallback, w_when_box, row_margin, row_blend);
 
-  //  fl_open_uri(("file://" + target_dir + "test.png").c_str());
+  // snapshot of the Grid tab
+  select_only(t_grd);
+  widget_tabs->value(widget_tab_grid);
+  fl_snapshot((target_dir + "wp_grid_tab.png").c_str(), widget_tab_grid, tab_margin, row_blend);
 
-  // overview, multiple selection, instand feedback
+  // snapshot of the Grid Child tab
+  select_only(t_grdc);
+  widget_tabs->value(widget_tab_grid_child);
+  fl_snapshot((target_dir + "wp_gridc_tab.png").c_str(), widget_tab_grid_child, tab_margin, row_blend);
+
+  // overview, multiple selection, instant feedback
   // individual standard tabs
   // list of special tabs for Grid
 
