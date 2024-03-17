@@ -15,7 +15,8 @@
  By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
  A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
- Copyright © 1998 - 2023 by Bill Spitzak and others.
+ Copyright © 1998 - 2024 by Bill Spitzak and others.
+
  </CENTER></TD>
  </TR>
  </TABLE>
@@ -84,9 +85,34 @@
 
  _not yet_
 
+ \subpage page_widget_panel
+ - \ref widget_panel_gui
+ - \ref widget_panel_style
+ - \ref widget_panel_cpp
+ - \ref widget_panel_grid
+ - \ref widget_panel_gridc
+
+ \subpage page_functional_nodes
+ - \ref functional_function
+ - \ref functional_code
+ - \ref functional_codeblock
+ - \ref functional_decl
+ - \ref functional_declblock
+ - \ref functional_class
+ - \ref functional_widgetclass
+ - \ref functional_comment
+ - \ref functional_data
+
+ \subpage page_setting_dialog
+ - \ref setting_general
+ - \ref setting_project
+ - \ref setting_layout
+ - \ref setting_shell
+ - \ref setting_i18n
+ - \ref setting_user
+
  \subpage page_appendices
 
- - \ref appendix_code_nodes
  - \ref appendix_app_settings
 
  \subpage page_index

@@ -195,7 +195,7 @@ Function {make_settings_window()} {open
       callback {propagate_load(o, v);} open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
-      Fl_Group {} {
+      Fl_Group w_settings_general_tab {
         label General open selected
         scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
       } {
@@ -1623,7 +1623,7 @@ if (v == LOAD) {
             tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
           Fl_Input i18n_pos_file_input {
-            label {File:}
+            label {Catalog:}
             callback {if (v == LOAD) {
   o->value(g_project.i18n_pos_file.c_str());
 } else {
@@ -1796,7 +1796,7 @@ if (v == LOAD) {
           callback propagate_load open
           xywh {100 237 220 20}
         } {
-          Fl_Choice {} {
+          Fl_Choice w_settings_user_commenttext {
             label {Comments:}
             user_data {&Widget_Browser::comment_font}
             callback cb_Comments open
