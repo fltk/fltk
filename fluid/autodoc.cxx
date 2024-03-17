@@ -24,11 +24,14 @@
 #include "Fl_Widget_Type.h"
 #include "Fl_Window_Type.h"
 #include "function_panel.h"
+#include "alignment_panel.h"
 
 #include <FL/Enumerations.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_PNG_Image.H>
+
+extern Fl_Double_Window *settings_window;
 
 /** \file autodoc.cxx
 
@@ -354,8 +357,9 @@ void run_autodoc(const Fl_String &target_dir) {
   Fl_Margin win_margin(0, 0, 0, 0);
   Fl_Margin win_blend(10, 10, 10, 10);
   Fl_Margin tab_margin(FL_SNAP_TO_WINDOW, 32, FL_SNAP_TO_WINDOW, 4);
-  Fl_Margin xrow_margin(FL_SNAP_TO_WINDOW, 14, FL_SNAP_TO_WINDOW, 4);
+  Fl_Margin xtab_margin(FL_SNAP_TO_WINDOW, 50, FL_SNAP_TO_WINDOW, 4);
   Fl_Margin row_margin(FL_SNAP_TO_WINDOW, 4, FL_SNAP_TO_WINDOW, 4);
+  Fl_Margin xrow_margin(FL_SNAP_TO_WINDOW, 14, FL_SNAP_TO_WINDOW, 4);
   Fl_Margin row_blend(0, 10, 0, 10);
 
   // Create a silly project that contains all widgets that we want to document
@@ -408,7 +412,25 @@ void run_autodoc(const Fl_String &target_dir) {
 
   // TODO: settings dialog
   // show and explain all tabs
-
+  fl_snapshot((target_dir + "w_settings.png").c_str(), settings_window, win_margin, win_blend, 0.5);
+  fl_snapshot((target_dir + "w_settings_general_tab.png").c_str(), w_settings_general_tab, xtab_margin, row_blend);
+  w_settings_tabs->value(w_settings_project_tab);
+  fl_snapshot((target_dir + "w_settings_project_tab.png").c_str(), w_settings_project_tab, xtab_margin, row_blend);
+  w_settings_tabs->value(w_settings_layout_tab);
+  fl_snapshot((target_dir + "w_settings_layout_tab.png").c_str(), w_settings_layout_tab, xtab_margin, row_blend);
+  w_settings_tabs->value(w_settings_shell_tab);
+  w_settings_shell_list->value(1);
+  w_settings_shell_list->do_callback();
+  fl_snapshot((target_dir + "w_settings_shell_tab.png").c_str(), w_settings_shell_tab, xtab_margin, row_blend);
+  w_settings_tabs->value(w_settings_i18n_tab);
+  i18n_type_chooser->value(1);
+  i18n_type_chooser->do_callback();
+  fl_snapshot((target_dir + "w_settings_i18n_gnu.png").c_str(), i18n_type_chooser, i18n_gnu_static_function_input, row_margin, row_blend);
+  i18n_type_chooser->value(2);
+  i18n_type_chooser->do_callback();
+  fl_snapshot((target_dir + "w_settings_i18n_psx.png").c_str(), i18n_type_chooser, i18n_pos_set_input, row_margin, row_blend);
+  w_settings_tabs->value(w_settings_user_tab);
+  fl_snapshot((target_dir + "w_settings_user_tab.png").c_str(), w_settings_user_tab, xtab_margin, row_blend);
 
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
@@ -463,7 +485,6 @@ void run_autodoc(const Fl_String &target_dir) {
   adoc_data_panel->hide();
 
   // widget dialog
-  // TODO: overview, multiple selection, instant feedback
   t_win->open(); // open the window
   t_win->open(); // open the panel
   select_only(t_win);

@@ -123,6 +123,8 @@ static void cb_w_settings_tabs(Fl_Tabs* o, void* v) {
   propagate_load(o, v);
 }
 
+Fl_Group *w_settings_general_tab=(Fl_Group *)0;
+
 #include <FL/Fl_PNG_Image.H>
 
 static const unsigned char idata_general_64[] =
@@ -2419,6 +2421,8 @@ static Fl_Image *image_user_circle_64() {
   return image;
 }
 
+Fl_Choice *w_settings_user_commenttext=(Fl_Choice *)0;
+
 static void cb_Close(Fl_Button*, void*) {
   if (g_shell_config)
     g_shell_config->write(fluid_prefs, FD_STORE_USER);
@@ -2434,10 +2438,10 @@ Fl_Double_Window* make_settings_window() {
       w_settings_tabs->labelsize(11);
       w_settings_tabs->labelcolor(FL_WHITE);
       w_settings_tabs->callback((Fl_Callback*)cb_w_settings_tabs);
-      { Fl_Group* o = new Fl_Group(10, 60, 320, 480, "General");
-        o->image( image_general_64() );
-        o->image()->scale(36, 24, 0, 1);
-        o->labelsize(11);
+      { w_settings_general_tab = new Fl_Group(10, 60, 320, 480, "General");
+        w_settings_general_tab->image( image_general_64() );
+        w_settings_general_tab->image()->scale(36, 24, 0, 1);
+        w_settings_general_tab->labelsize(11);
         { Fl_Group* o = new Fl_Group(120, 78, 130, 25);
           o->callback((Fl_Callback*)cb_);
           { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
@@ -2577,9 +2581,9 @@ th a dim outline in the editing window only");
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        o->end();
-        Fl_Group::current()->resizable(o);
-      } // Fl_Group* o
+        w_settings_general_tab->end();
+        Fl_Group::current()->resizable(w_settings_general_tab);
+      } // Fl_Group* w_settings_general_tab
       { w_settings_project_tab = new Fl_Group(10, 60, 320, 480, "Project");
         w_settings_project_tab->image( image_document_64() );
         w_settings_project_tab->image()->scale(36, 24, 0, 1);
@@ -3295,7 +3299,7 @@ le FLTK_GETTEXT_FOUND");
             i18n_pos_conditional_input->textsize(11);
             i18n_pos_conditional_input->callback((Fl_Callback*)cb_i18n_pos_conditional_input);
           } // Fl_Input* i18n_pos_conditional_input
-          { i18n_pos_file_input = new Fl_Input(100, 153, 220, 20, "File:");
+          { i18n_pos_file_input = new Fl_Input(100, 153, 220, 20, "Catalog:");
             i18n_pos_file_input->tooltip("The name of the message catalog.");
             i18n_pos_file_input->box(FL_THIN_DOWN_BOX);
             i18n_pos_file_input->labelsize(11);
@@ -3451,16 +3455,16 @@ le FLTK_GETTEXT_FOUND");
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(100, 237, 220, 20);
           o->callback((Fl_Callback*)propagate_load);
-          { Fl_Choice* o = new Fl_Choice(100, 237, 151, 20, "Comments:");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::comment_font));
-            Fl_Group::current()->resizable(o);
+          { Fl_Choice* o = w_settings_user_commenttext = new Fl_Choice(100, 237, 151, 20, "Comments:");
+            w_settings_user_commenttext->box(FL_THIN_UP_BOX);
+            w_settings_user_commenttext->down_box(FL_BORDER_BOX);
+            w_settings_user_commenttext->labelfont(1);
+            w_settings_user_commenttext->labelsize(11);
+            w_settings_user_commenttext->textsize(11);
+            w_settings_user_commenttext->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::comment_font));
+            Fl_Group::current()->resizable(w_settings_user_commenttext);
             o->menu(fontmenu);
-          } // Fl_Choice* o
+          } // Fl_Choice* w_settings_user_commenttext
           { Fl_Button* o = new Fl_Button(251, 237, 51, 20);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::comment_color));

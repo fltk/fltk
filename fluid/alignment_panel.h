@@ -51,6 +51,7 @@ Fl_Double_Window* make_script_panel();
 extern Fl_Double_Window *settings_window;
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs *w_settings_tabs;
+extern Fl_Group *w_settings_general_tab;
 extern void scheme_cb(Fl_Scheme_Choice*, void*);
 extern Fl_Scheme_Choice *scheme_choice;
 #include <FL/Fl_Check_Button.H>
@@ -120,6 +121,7 @@ extern Fl_Int_Input *i18n_pos_set_input;
 extern Fl_Group *w_settings_user_tab;
 extern Fl_Menu_Item fontmenu[];
 extern Fl_Menu_Item colormenu[];
+extern Fl_Choice *w_settings_user_commenttext;
 Fl_Double_Window* make_settings_window();
 extern Fl_Menu_Item menu_layout_choice[];
 extern Fl_Menu_Item menu_w_layout_menu[];
