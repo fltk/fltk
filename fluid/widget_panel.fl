@@ -335,7 +335,7 @@ Function {make_widget_panel()} {
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {160 297 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {430 217 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs widget_tabs {
@@ -345,7 +345,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open
+        callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -353,7 +353,7 @@ Function {make_widget_panel()} {
           callback propagate_load open
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input wp_gui_label {
             callback label_cb
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
@@ -402,7 +402,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
             tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_alignment {
           label {Alignment:}
           callback propagate_load
           xywh {95 115 310 20} labelfont 1 labelsize 11 align 4
@@ -561,7 +561,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           Fl_Button {} {
             label {@-3square}
             user_data {(fl_intptr_t)FL_ALIGN_INSIDE}
-            callback align_cb selected
+            callback align_cb
             tooltip {Show the label inside the widget.} xywh {384 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
           }
           Fl_Box {} {
@@ -647,7 +647,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {398 150 1 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_values {
           label {Values:}
           callback values_group_cb open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
@@ -716,7 +716,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {395 185 0 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_sizerange {
           label {Size Range:}
           callback size_range_group_cb open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
@@ -755,10 +755,10 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group {} {
           label {Shortcut:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 210 310 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Button {} {
+          Fl_Button wp_gui_shortcut {
             callback shortcut_in_cb
             comment {This is a special button that grabs keystrokes directly}
             tooltip {The shortcut key for the widget.
@@ -767,7 +767,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             class Fl_Shortcut_Button
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_xclass {
           label {X Class:}
           callback propagate_load
           xywh {95 235 300 20} labelfont 1 labelsize 11 align 4
@@ -793,7 +793,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             tooltip {Make the window non-modal.} xywh {320 235 75 20} selection_color 1 labelsize 11 align 148
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_attributes {
           label {Attributes:}
           callback propagate_load
           xywh {95 260 305 20} labelfont 1 labelsize 11 align 4
@@ -822,7 +822,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             xywh {395 260 0 20} labelsize 11 resizable
           }
         }
-        Fl_Input {} {
+        Fl_Input wp_gui_tooltip {
           label {Tooltip:}
           callback tooltip_cb
           tooltip {The tooltip text for the widget.
@@ -832,12 +832,12 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {95 305 300 5} hide resizable
         }
       }
-      Fl_Group {} {
+      Fl_Group wp_style_tab {
         label Style
         callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
-        Fl_Group {} {
+        Fl_Group wp_style_label {
           label {Label Font:}
           callback propagate_load open
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
@@ -864,7 +864,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_style_box {
           label {Box:}
           callback propagate_load open
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
@@ -887,14 +887,14 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_style_downbox {
           label {Down Box:}
           callback propagate_load open
           xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback down_box_cb open
-            tooltip {The "down" box of the widget.} xywh {95 90 201 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 labelcolor 45 textsize 11 resizable
+            tooltip {The "down" box of the widget.} xywh {95 90 201 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
@@ -910,7 +910,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_style_text {
           label {Text Font:}
           callback propagate_load open
           xywh {95 115 309 20} labelfont 1 labelsize 11 align 4
@@ -946,12 +946,12 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           tooltip {use compact box types for closely set buttons} xywh {95 140 90 20} selection_color 1 labelsize 11
         }
       }
-      Fl_Group {} {
+      Fl_Group wp_cpp_tab {
         label {C++}
-        callback propagate_load
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
-        Fl_Group {} {
+        Fl_Group wp_cpp_class {
           label {Class:}
           callback propagate_load open
           xywh {95 40 310 20} labelfont 1 labelsize 11 align 4
@@ -966,9 +966,9 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             tooltip {The widget subtype.} xywh {267 40 138 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_cpp_name {
           label {Name:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 65 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -1059,7 +1059,7 @@ wCallback->do_callback(wCallback, v);} open
             }
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_cpp_callback {
           label {User Data:}
           callback propagate_load open
           xywh {95 310 310 20} labelfont 1 labelsize 11 align 4

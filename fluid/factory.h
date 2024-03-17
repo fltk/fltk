@@ -27,8 +27,8 @@ void fill_in_New_Menu();
 Fl_Type *typename_to_prototype(const char *inName);
 
 Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy);
-Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy);
-Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy);
+Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open=true);
+Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open=true);
 
 
 #endif // _FLUID_FACTORY_H

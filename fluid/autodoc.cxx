@@ -18,9 +18,11 @@
 
 #include "autodoc.h"
 #include "fluid.h"
+#include "factory.h"
 #include "widget_browser.h"
 #include "widget_panel.h"
 #include "Fl_Widget_Type.h"
+#include "Fl_Window_Type.h"
 #include "function_panel.h"
 
 #include <FL/Enumerations.H>
@@ -350,12 +352,22 @@ int fl_snapshot(const char *filename, Fl_Widget *w,
 void run_autodoc(const Fl_String &target_dir) {
   Fl_Margin win_margin(0, 0, 0, 0);
   Fl_Margin win_blend(10, 10, 10, 10);
+  Fl_Margin tab_margin(FL_SNAP_TO_WINDOW, 32, FL_SNAP_TO_WINDOW, 4);
+  Fl_Margin xrow_margin(FL_SNAP_TO_WINDOW, 14, FL_SNAP_TO_WINDOW, 4);
+  Fl_Margin row_margin(FL_SNAP_TO_WINDOW, 4, FL_SNAP_TO_WINDOW, 4);
+  Fl_Margin row_blend(0, 10, 0, 10);
 
-  the_panel = make_widget_panel();
-  // fl_snapshot(target_dir + "data_panel.png", widget_x_input, widget_h_input,
-  //              Fl_Margin(FL_SNAP_TO_WINDOW, 4, FL_SNAP_TO_WINDOW, 4),
-  //              Fl_Margin(0, 10, 0, 10));
-  // fl_open_uri(("file://" + target_dir + "data_panel.png").c_str());
+  new_project(false);
+  Fl_Type *t_func = add_new_widget_from_user("Function", kAddAsLastChild, false);
+  Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", kAddAsLastChild, false);
+  t_win->label("My Main Window");
+  Fl_Type *t_grp = add_new_widget_from_user("Fl_Group", kAddAsLastChild, false);
+  Fl_Widget_Type *t_btn = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Button", kAddAsLastChild, false);
+  ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
+  Fl_Type *t_sldr = add_new_widget_from_user("Fl_Slider", kAddAsLastChild, false);
+  Fl_Type *t_inp = add_new_widget_from_user("Fl_Input", kAddAsLastChild, false);
+  widget_browser->rebuild();
+  g_project.update_settings_dialog();
 
   // TODO: take a snapshot of FLUID in a desktop situation
   // (main, toolbar, document, widget editor, source view)
@@ -392,44 +404,99 @@ void run_autodoc(const Fl_String &target_dir) {
   f_name_input->value("count_trees(const char *forest_name)");
   f_return_type_input->value("unsigned int");
   fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
+  adoc_function_panel->hide();
   // - ID_Code
   Fl_Window *adoc_code_panel = make_code_panel();
   code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
+  adoc_code_panel->hide();
   // - ID_CodeBlock
   Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
   code_before_input->value("if (test())");
   code_after_input->value("// test widgets added...");
   fl_snapshot((target_dir + "codeblock_panel.png").c_str(), adoc_codeblock_panel, win_margin, win_blend);
+  adoc_codeblock_panel->hide();
   // - ID_Decl
   Fl_Window *adoc_decl_panel = make_decl_panel();
   decl_class_choice->hide();
   decl_input->buffer()->text("const char *damage = \"'tis but a scratch\";");
   fl_snapshot((target_dir + "decl_panel.png").c_str(), adoc_decl_panel, win_margin, win_blend);
+  adoc_decl_panel->hide();
   // - ID_DeclBlock
   Fl_Window *adoc_declblock_panel = make_declblock_panel();
   decl_before_input->value("#ifdef NDEBUG");
   decl_after_input->value("#endif // NDEBUG");
   fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
+  adoc_declblock_panel->hide();
   // - ID_Class
   Fl_Window *adoc_class_panel = make_class_panel();
   decl_class_choice->hide();
   c_name_input->value("Zoo_Giraffe");
   c_subclass_input->value("Zoo_Animal");
   fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
+  adoc_class_panel->hide();
   // - ID_Widget_Class is handled like Fl_Window_Type
   // - ID_Comment
   Fl_Window *adoc_comment_panel = make_comment_panel();
   comment_input->buffer()->text("Make sure that the giraffe gets enough hay,\nbut the monkey can't reach it.");
   fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
+  adoc_comment_panel->hide();
   // - ID_Data
   Fl_Window *adoc_data_panel = make_data_panel();
   data_class_choice->hide();
   data_input->value("emulated_ROM");
   data_filename->value("./ROM.bin");
   fl_snapshot((target_dir + "data_panel.png").c_str(), adoc_data_panel, win_margin, win_blend);
+  adoc_data_panel->hide();
 
   // TODO: widget dialog
+  t_win->open(); // open the window
+  t_win->open(); // open the panel
+  select_only(t_win);
+
+  // snapshot of the widget properties panel
+  fl_snapshot((target_dir + "widget_panel.png").c_str(), the_panel, win_margin, win_blend);
+
+  // snapshot of the GUI tab
+  fl_snapshot((target_dir + "wp_gui_label.png").c_str(), wp_gui_label, tab_margin, row_blend);
+  select_only(t_btn);
+  fl_snapshot((target_dir + "wp_gui_image.png").c_str(), widget_image_input, widget_deimage_input, row_margin, row_blend);
+  fl_snapshot((target_dir + "wp_gui_alignment.png").c_str(), wp_gui_alignment, row_margin, row_blend);
+  fl_snapshot((target_dir + "wp_gui_size.png").c_str(), widget_x_input, xrow_margin, row_blend);
+  select_only(t_sldr);
+  fl_snapshot((target_dir + "wp_gui_values.png").c_str(), wp_gui_values, xrow_margin, row_blend);
+  select_only(t_win);
+  fl_snapshot((target_dir + "wp_gui_sizerange.png").c_str(), wp_gui_sizerange, xrow_margin, row_blend);
+  select_only(t_btn);
+  fl_snapshot((target_dir + "wp_gui_shortcut.png").c_str(), wp_gui_shortcut, row_margin, row_blend);
+  select_only(t_win);
+  fl_snapshot((target_dir + "wp_gui_xclass.png").c_str(), wp_gui_xclass, row_margin, row_blend);
+  select_only(t_btn);
+  fl_snapshot((target_dir + "wp_gui_attributes.png").c_str(), wp_gui_attributes, row_margin, row_blend);
+  fl_snapshot((target_dir + "wp_gui_tooltip.png").c_str(), wp_gui_tooltip, row_margin, row_blend);
+
+  // snapshot of the style tab
+  widget_tabs->value(wp_style_tab);
+  select_only(t_inp);
+  fl_snapshot((target_dir + "wp_style_tab.png").c_str(), wp_style_tab, tab_margin, row_blend);
+  fl_snapshot((target_dir + "wp_style_label.png").c_str(), wp_style_label, row_margin, row_blend);
+  select_only(t_btn);
+  fl_snapshot((target_dir + "wp_style_box.png").c_str(), wp_style_box, wp_style_downbox, row_margin, row_blend);
+  select_only(t_inp);
+  fl_snapshot((target_dir + "wp_style_text.png").c_str(), wp_style_text, row_margin, row_blend);
+
+  // snapshot of the C++ tab
+  widget_tabs->value(wp_cpp_tab);
+  select_only(t_btn);
+  fl_snapshot((target_dir + "wp_cpp_tab.png").c_str(), wp_cpp_tab, tab_margin, row_blend);
+  fl_snapshot((target_dir + "wp_cpp_class.png").c_str(), wp_cpp_class, row_margin, row_blend);
+  fl_snapshot((target_dir + "wp_cpp_name.png").c_str(), wp_cpp_name, row_margin, row_blend);
+  fl_snapshot((target_dir + "v_input.png").c_str(), v_input[0], v_input[3], row_margin, row_blend);
+  fl_snapshot((target_dir + "wComment.png").c_str(), wComment, row_margin, row_blend);
+  fl_snapshot((target_dir + "wp_cpp_callback.png").c_str(), wCallback, w_when_box, row_margin, row_blend);
+
+  //  fl_open_uri(("file://" + target_dir + "test.png").c_str());
+
   // overview, multiple selection, instand feedback
   // individual standard tabs
   // list of special tabs for Grid

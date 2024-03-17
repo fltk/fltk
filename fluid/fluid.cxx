@@ -842,10 +842,10 @@ void exit_cb(Fl_Widget *,void *) {
  to save the old project first.
 
  \param[in] user_must_confirm if set, a confimation dialog is presented to the
-    user before resetting the project.
+    user before resetting the project. Default is `true`.
  \return false if the operation was canceled
  */
-bool new_project(bool user_must_confirm = true) {
+bool new_project(bool user_must_confirm) {
   // verify user intention
   if ((user_must_confirm) &&  (confirm_project_clear() == false))
     return false;
@@ -2271,7 +2271,7 @@ int main(int argc,char **argv) {
   // check if the user wants FLUID to generate image for the user documentation
   if (!g_autodoc_path.empty()) {
     run_autodoc(g_autodoc_path);
-    return 0;
+//    return 0;
   }
 #endif
 
