@@ -413,6 +413,8 @@ static void cb_widget_tabs(Fl_Tabs* o, void* v) {
   propagate_load((Fl_Group *)o,v);
 }
 
+Fl_Group *wp_gui_tab=(Fl_Group *)0;
+
 Fl_Input *wp_gui_label=(Fl_Input *)0;
 
 Fl_Input *widget_image_input=(Fl_Input *)0;
@@ -1009,10 +1011,10 @@ Fl_Double_Window* make_widget_panel() {
       widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
       widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
       widget_tabs->when(FL_WHEN_NEVER);
-      { Fl_Group* o = new Fl_Group(10, 30, 400, 330, "GUI");
-        o->labelsize(11);
-        o->callback((Fl_Callback*)propagate_load);
-        o->when(FL_WHEN_NEVER);
+      { wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
+        wp_gui_tab->labelsize(11);
+        wp_gui_tab->callback((Fl_Callback*)propagate_load);
+        wp_gui_tab->when(FL_WHEN_NEVER);
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -1526,9 +1528,9 @@ sized to fit the container.");
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        o->end();
-        Fl_Group::current()->resizable(o);
-      } // Fl_Group* o
+        wp_gui_tab->end();
+        Fl_Group::current()->resizable(wp_gui_tab);
+      } // Fl_Group* wp_gui_tab
       { wp_style_tab = new Fl_Group(10, 30, 400, 330, "Style");
         wp_style_tab->labelsize(11);
         wp_style_tab->callback((Fl_Callback*)propagate_load);

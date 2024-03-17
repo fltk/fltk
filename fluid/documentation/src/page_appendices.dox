@@ -11,18 +11,41 @@
  \image html widget_panel.png "Widget Properties"
  \image latex widget_panel.png "Widget Properties"
 
- This panel is used to edit the properties of one or more selected widgets in
- the widget tree. Depending on the widget selection, some properties may
- be grayed out or may be invisible.
+ This panel is used to edit the properties of the currently selected widgets.
+ One or more widgets can be selected at the same time, and most attributes
+ changes will be applied to the entire selection.
+ Depending on the selected widget types, some properties may
+ be grayed out or may not be visible.
 
- The panel has three standard tabs that apply to all widgets. Some widget
- type, `Fl_Grid` and children of `Fl_Grid` for example, will create additional
- tabs with more options.
+ All changes in the widget panel are immediately applied to all selected
+ widgets and their effect can be seen in the project window. It can be very
+ useful to keep the *Source View* window open at all times. All code changes
+ appear instantly for all generated files if *Auto-Refresh* is active.
+
+ FLUID generates only code for properties that differ from their default
+ setting. If a widget class is derived from another class, FLUID can't know
+ the defaults and will generate code for all attribute instead.
+
+ \image html wLiveMode.png
+ \image latex wLiveMode.png
+
+ Correctly resizing a window can be a complex task. It is easier to check
+ resizing behavior on a more local level first.
+ To use *Live Resize*, select any group or window in your project. FLUID creates
+ a resizable clone of that part of your design to try out resizing behavior
+ of that group only.
 
  <!-- ---------------------------------------------------------------------- -->
  ## The GUI Tab ##
 
- This tab controls basic GUI settings, including label text and widget size.
+ \image html wp_gui_tab.png
+ \image latex wp_gui_tab.png
+
+ The widget panel has three standard tabs that apply to all widgets. Some widget
+ types, `Fl_Grid` and children of `Fl_Grid`, will create additional
+ tabs with more options.
+
+ The GUI tab controls basic GUI settings, including label text and widget size.
 
  \image html wp_gui_label.png
  \image latex wp_gui_label.png
@@ -32,7 +55,7 @@
  added. Labels can span multiple lines by pressing `Ctrl-J` to insert a new-line
  character.
 
- The `@` character adds a symbol to the label. See *"Labels and Label Types"*
+ The `@` character adds a symbol to the label. See *Labels and Label Types*
  in the FLTK documentation.
 
  The pulldown menu offers some additional rendering styles for the label.
@@ -75,10 +98,8 @@
  counter through all selected widgets.
 
  The formula `x+10` in the *x* field moves all selected widgets 10 pixels to
- the right. `100+25*i` arranges all widgets vertically starting at 100 with
- 25 pixels distance.
-
- \todo Fl_Flex parent
+ the right. `100+25*i` in the *y* field arranges all widgets vertically
+ starting at 100 with 25 pixels distance.
 
  \image html wp_gui_values.png
  \image latex wp_gui_values.png

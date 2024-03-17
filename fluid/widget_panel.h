@@ -45,6 +45,7 @@ Fl_Double_Window* make_image_panel();
 void run_image_panel();
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs *widget_tabs;
+extern Fl_Group *wp_gui_tab;
 #include <FL/Fl_Input.H>
 extern void label_cb(Fl_Input*, void*);
 extern Fl_Input *wp_gui_label;

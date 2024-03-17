@@ -350,6 +350,7 @@ int fl_snapshot(const char *filename, Fl_Widget *w,
 
 
 void run_autodoc(const Fl_String &target_dir) {
+  // A list of all the margins we will use later
   Fl_Margin win_margin(0, 0, 0, 0);
   Fl_Margin win_blend(10, 10, 10, 10);
   Fl_Margin tab_margin(FL_SNAP_TO_WINDOW, 32, FL_SNAP_TO_WINDOW, 4);
@@ -357,7 +358,9 @@ void run_autodoc(const Fl_String &target_dir) {
   Fl_Margin row_margin(FL_SNAP_TO_WINDOW, 4, FL_SNAP_TO_WINDOW, 4);
   Fl_Margin row_blend(0, 10, 0, 10);
 
+  // Create a silly project that contains all widgets that we want to document
   new_project(false);
+
   Fl_Type *t_func = add_new_widget_from_user("Function", kAddAsLastChild, false);
   Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", kAddAsLastChild, false);
   t_win->label("My Main Window");
@@ -402,6 +405,10 @@ void run_autodoc(const Fl_String &target_dir) {
   // explain live update and choices
   // show various tabs
   // explain find and locate
+
+  // TODO: settings dialog
+  // show and explain all tabs
+
 
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
@@ -455,16 +462,20 @@ void run_autodoc(const Fl_String &target_dir) {
   fl_snapshot((target_dir + "data_panel.png").c_str(), adoc_data_panel, win_margin, win_blend);
   adoc_data_panel->hide();
 
-  // TODO: widget dialog
+  // widget dialog
+  // TODO: overview, multiple selection, instant feedback
   t_win->open(); // open the window
   t_win->open(); // open the panel
   select_only(t_win);
 
   // snapshot of the widget properties panel
   fl_snapshot((target_dir + "widget_panel.png").c_str(), the_panel, win_margin, win_blend);
+  fl_snapshot((target_dir + "wLiveMode.png").c_str(), wLiveMode, row_margin, row_blend);
 
   // snapshot of the GUI tab
-  fl_snapshot((target_dir + "wp_gui_label.png").c_str(), wp_gui_label, tab_margin, row_blend);
+  widget_tabs->value(wp_gui_tab);
+  fl_snapshot((target_dir + "wp_gui_tab.png").c_str(), wp_gui_tab, tab_margin, row_blend);
+  fl_snapshot((target_dir + "wp_gui_label.png").c_str(), wp_gui_label, row_margin, row_blend);
   select_only(t_btn);
   fl_snapshot((target_dir + "wp_gui_image.png").c_str(), widget_image_input, widget_deimage_input, row_margin, row_blend);
   fl_snapshot((target_dir + "wp_gui_alignment.png").c_str(), wp_gui_alignment, row_margin, row_blend);
@@ -514,13 +525,6 @@ void run_autodoc(const Fl_String &target_dir) {
   select_only(t_grdc);
   widget_tabs->value(widget_tab_grid_child);
   fl_snapshot((target_dir + "wp_gridc_tab.png").c_str(), widget_tab_grid_child, tab_margin, row_blend);
-
-  // overview, multiple selection, instant feedback
-  // individual standard tabs
-  // list of special tabs for Grid
-
-  // TODO: settings dialog
-  // show and explain all tabs
 }
 
 
