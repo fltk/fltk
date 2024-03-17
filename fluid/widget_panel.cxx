@@ -471,11 +471,15 @@ Fl_Menu_Item menu_Children[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+Fl_Group *wp_gui_flexp=(Fl_Group *)0;
+
 Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
 
 Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
 
 Fl_Group *wp_gui_values=(Fl_Group *)0;
+
+Fl_Group *wp_gui_margins=(Fl_Group *)0;
 
 Fl_Group *wp_gui_sizerange=(Fl_Group *)0;
 
@@ -571,6 +575,8 @@ static void cb_widget_grid_transient(Fl_Box* o, void* v) {
 
 Fl_Box *widget_grid_unlinked=(Fl_Box *)0;
 
+Fl_Group *wp_gridc_align=(Fl_Group *)0;
+
 Fl_Menu_Item menu_Horizontal[] = {
  {"GRID_LEFT", 0,  0, (void*)(FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"GRID_CENTER", 0,  0, (void*)(FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -586,6 +592,8 @@ Fl_Menu_Item menu_Vertical[] = {
  {"GRID_FILL", 0,  0, (void*)(FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
+
+Fl_Group *wp_gridc_size=(Fl_Group *)0;
 
 Fluid_Coord_Input *widget_grid_rowspan_input=(Fluid_Coord_Input *)0;
 
@@ -677,6 +685,8 @@ static void cb_5(Fl_Button*, void* v) {
   }
 }
 
+Fl_Group *wp_grid_margin=(Fl_Group *)0;
+
 static void cb_Left(Fl_Value_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
@@ -752,6 +762,8 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
     }
   }
 }
+
+Fl_Group *wp_grid_gaps=(Fl_Group *)0;
 
 static void cb_Row(Fl_Value_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -1239,12 +1251,12 @@ sized to fit the container.");
           o->end();
         } // Fl_Group* o
         { // This group is only visible if the parent is an Fl_Flex widget
-          Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)flex_size_group_cb);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
+          wp_gui_flexp = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
+          wp_gui_flexp->labelfont(1);
+          wp_gui_flexp->labelsize(11);
+          wp_gui_flexp->callback((Fl_Callback*)flex_size_group_cb);
+          wp_gui_flexp->align(Fl_Align(FL_ALIGN_LEFT));
+          wp_gui_flexp->hide();
           { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
             widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
             widget_flex_size->labelsize(11);
@@ -1261,8 +1273,8 @@ sized to fit the container.");
           { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
+          wp_gui_flexp->end();
+        } // Fl_Group* wp_gui_flexp
         { wp_gui_values = new Fl_Group(95, 185, 300, 20, "Values:");
           wp_gui_values->labelfont(1);
           wp_gui_values->labelsize(11);
@@ -1310,12 +1322,12 @@ sized to fit the container.");
           wp_gui_values->end();
         } // Fl_Group* wp_gui_values
         { // This group is only visible for Fl_Flex widgets
-          Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Margins:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)flex_margin_group_cb);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
+          wp_gui_margins = new Fl_Group(95, 185, 300, 20, "Margins:");
+          wp_gui_margins->labelfont(1);
+          wp_gui_margins->labelsize(11);
+          wp_gui_margins->callback((Fl_Callback*)flex_margin_group_cb);
+          wp_gui_margins->align(Fl_Align(FL_ALIGN_LEFT));
+          wp_gui_margins->hide();
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
             o->tooltip("Left margin in group.");
             o->labelsize(11);
@@ -1354,8 +1366,8 @@ sized to fit the container.");
           { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
+          wp_gui_margins->end();
+        } // Fl_Group* wp_gui_margins
         { wp_gui_sizerange = new Fl_Group(95, 185, 300, 20, "Size Range:");
           wp_gui_sizerange->labelfont(1);
           wp_gui_sizerange->labelsize(11);
@@ -1931,11 +1943,11 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Box* widget_grid_unlinked
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 100, 315, 20, "Align:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
+        { wp_gridc_align = new Fl_Group(95, 100, 315, 20, "Align:");
+          wp_gridc_align->labelfont(1);
+          wp_gridc_align->labelsize(11);
+          wp_gridc_align->callback((Fl_Callback*)propagate_load);
+          wp_gridc_align->align(Fl_Align(FL_ALIGN_LEFT));
           { Fl_Choice* o = new Fl_Choice(95, 100, 115, 20, "Horizontal");
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
@@ -1956,13 +1968,13 @@ access the Widget pointer and \'v\' to access the user value.");
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 135, 315, 20, "Min. Size:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
+          wp_gridc_align->end();
+        } // Fl_Group* wp_gridc_align
+        { wp_gridc_size = new Fl_Group(95, 135, 315, 20, "Min. Size:");
+          wp_gridc_size->labelfont(1);
+          wp_gridc_size->labelsize(11);
+          wp_gridc_size->callback((Fl_Callback*)propagate_load);
+          wp_gridc_size->align(Fl_Align(FL_ALIGN_LEFT));
           { Fluid_Coord_Input* o = new Fluid_Coord_Input(95, 135, 55, 20, "Width:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
@@ -1993,8 +2005,8 @@ access the Widget pointer and \'v\' to access the user value.");
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
+          wp_gridc_size->end();
+        } // Fl_Group* wp_gridc_size
         { Fl_Group* o = new Fl_Group(95, 170, 315, 20, "Span:");
           o->labelfont(1);
           o->labelsize(11);
@@ -2141,11 +2153,11 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 100, 315, 20, "Margin:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
+        { wp_grid_margin = new Fl_Group(95, 100, 315, 20, "Margin:");
+          wp_grid_margin->labelfont(1);
+          wp_grid_margin->labelsize(11);
+          wp_grid_margin->callback((Fl_Callback*)propagate_load);
+          wp_grid_margin->align(Fl_Align(FL_ALIGN_LEFT));
           { Fl_Value_Input* o = new Fl_Value_Input(95, 100, 55, 20, "Left:");
             o->tooltip("Left margin in group.");
             o->labelsize(11);
@@ -2185,13 +2197,13 @@ access the Widget pointer and \'v\' to access the user value.");
           { Fl_Box* o = new Fl_Box(396, 100, 0, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 135, 315, 20, "Gaps:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
+          wp_grid_margin->end();
+        } // Fl_Group* wp_grid_margin
+        { wp_grid_gaps = new Fl_Group(95, 135, 315, 20, "Gaps:");
+          wp_grid_gaps->labelfont(1);
+          wp_grid_gaps->labelsize(11);
+          wp_grid_gaps->callback((Fl_Callback*)propagate_load);
+          wp_grid_gaps->align(Fl_Align(FL_ALIGN_LEFT));
           { Fl_Value_Input* o = new Fl_Value_Input(95, 135, 55, 20, "Row:");
             o->tooltip("Gap between children.");
             o->labelsize(11);
@@ -2213,8 +2225,8 @@ access the Widget pointer and \'v\' to access the user value.");
           { Fl_Box* o = new Fl_Box(396, 135, 0, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
+          wp_grid_gaps->end();
+        } // Fl_Group* wp_grid_gaps
         { Fl_Group* o = new Fl_Group(95, 175, 315, 20, "Row:");
           o->labelfont(1);
           o->labelsize(11);

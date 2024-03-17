@@ -87,14 +87,25 @@
  floating point numbers. The generate lines like `o->minimum(2);` only if the
  corresponding value differs from the default value for this property.
 
+ \image html wp_gui_flexp.png
+ \image latex wp_gui_flexp.png
+
+ This row is only visible for children of `Fl_Flex` widgets. It sets the
+ width or height of a widget in horizontal or vertical Flex widget. If *fixed*
+ is unchecked, this value is instead calculated by the Flex.
+
+ \image html wp_gui_margins.png
+ \image latex wp_gui_margins.png
+
+ This row is only visible for `Fl_Flex` widgets. It sets the various margins
+ and the gap value for this widget.
+
  \image html wp_gui_sizerange.png
  \image latex wp_gui_sizerange.png
 
- This group is only visible for top level windows. The field sets the minimum
+ This row is only visible for top level windows. The field sets the minimum
  and maximum size range for windows. Use the *set* button to copy the current
  size. Set width and height to `0` to disable that aspect of the size range.
-
- \todo Fl_Flex margins
 
  \image html wp_gui_shortcut.png
  \image latex wp_gui_shortcut.png
@@ -109,7 +120,7 @@
  \image html wp_gui_xclass.png
  \image latex wp_gui_xclass.png
 
- This group is only visible for top level windows. Note that selecting *modal*
+ This row is only visible for top level windows. Note that selecting *modal*
  and *non modal* together is undefined.
 
  \image html wp_gui_attributes.png
@@ -235,9 +246,59 @@
  }
  ```
 
- *User Data* can be any valid C++ code and is copied as the callback argument.
- *Type* is currently limited to `void*` and `long`. The *When* pulldown gives
- access to the `Fl_When` flags, including some commonly used combinations.
+ The *User Data* field can contain any valid C++ code and is copied as the
+ callback argument. *Type* is currently limited to `void*` and `long`.
+ The *When* pulldown gives access to the `Fl_When` flags, including some
+ commonly used combinations.
+
+ <!-- ---------------------------------------------------------------------- -->
+ ## The Grid Tab ##
+
+ \image html wp_grid_tab.png
+ \image latex wp_grid_tab.png
+
+This tab is only available if the selected widget is an `Fl_Grid`. When editing
+a Grid widget, no other widgets should be selected.
+
+The *Grid Layout* field adjust the number of rows and columns in the grid.
+
+The *Margin* fields describe the size of the margin around all children of
+the grid.
+
+The *Gaps* fields set the gaps between individual children in the grid.
+
+The *Row* and *Column* groups can be used to set the size of individual rows
+and columns within the grid.
+
+ <!-- ---------------------------------------------------------------------- -->
+ ## The Grid Child Tab ##
+
+ \image html wp_gridc_tab.png
+ \image latex wp_gridc_tab.png
+
+This tab is only available if the selected widget is a child of an `Fl_Grid`.
+When editing a child of a Grid widget, no other widgets should be selected.
+
+Use the *Location* group to move a child around with in the grid. Note that
+every cell in a grid can only manage one single widget. When moving widgets
+over occupied cells, they become "transient". Just continue and move them into
+an available cell. If a layout is saved with a transient widget, all grid
+attributes for that widget are lost, and it will remain unassigned in the
+project file and in the source code.
+
+The *Align* fields provide a way to align a widget within its cell.
+
+The *Min. Size* fields define a minimum width and height for the widget
+in the cell.
+
+The *Span* field change the number of cells that a widget can span in x and y.
+
+\note Most attributes in this tab will also change the size of the widget. If
+the child of the Grid is itself a group, the children of that group do not
+follow changes in position or size. It is recommended to either lay out the
+grid contents first and leave it unchanged, or to use widgets generated with
+Widget Class that automatically adjust themselves to the size constraints
+of the grid.
 
  <!-- ---------------------------------------------------------------------- -->
  <!-- ---------------------------------------------------------------------- -->
