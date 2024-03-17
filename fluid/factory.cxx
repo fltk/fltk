@@ -1208,7 +1208,7 @@ static Fl_Type *known_types[] = {
  add_new_widget_from_user(Fl_Type*, int)
  add_new_widget_from_user(const char*, int)
  */
-Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
+Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open) {
   undo_checkpoint();
   undo_suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
@@ -1314,7 +1314,8 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
     // make the new widget visible
     select_only(t);
     set_modflag(1);
-    t->open();
+    if (and_open)
+      t->open();
   } else {
     undo_current --;
     undo_last --;
@@ -1332,10 +1333,10 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
  add_new_widget_from_user(Fl_Type*, int)
  add_new_widget_from_user(const char*, int)
  */
-Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy) {
+Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open) {
   Fl_Type *prototype = typename_to_prototype(inName);
   if (prototype)
-    return add_new_widget_from_user(prototype, strategy);
+    return add_new_widget_from_user(prototype, strategy, and_open);
   else
     return NULL;
 }

@@ -178,6 +178,7 @@ extern Fluid_Project g_project;
 
 // ---- public functions
 
+extern bool new_project(bool user_must_confirm = true);
 extern void enter_project_dir();
 extern void leave_project_dir();
 extern void set_filename(const char *c);
