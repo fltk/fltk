@@ -138,7 +138,7 @@ extern FL_EXPORT int fl_control_modifier();
 
 #endif /* FL_PLATFORM_TYPES_H */
 
-// This is currently the same for all platforms, but may change in the future
+/* This is currently the same for all platforms but may change in the future */
 struct Fl_Timestamp_t {
   time_t sec;
   int usec;

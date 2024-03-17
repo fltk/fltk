@@ -89,6 +89,8 @@ fl_create_example(boxtype boxtype.cxx fltk::fltk)
 fl_create_example(browser browser.cxx fltk::fltk)
 fl_create_example(button button.cxx fltk::fltk)
 fl_create_example(buttons buttons.cxx fltk::fltk)
+# Cairo demo, built with and w/o Cairo (libcairo is linked implicitly - or not at all)
+fl_create_example(cairo_test cairo_test.cxx fltk::fltk)
 fl_create_example(checkers "checkers.cxx;checkers_pieces.fl;checkers.icns" fltk::images)
 fl_create_example(clipboard clipboard.cxx fltk::images)
 fl_create_example(clock clock.cxx fltk::fltk)
@@ -214,13 +216,6 @@ if(OPENGL_FOUND)
   fl_create_example(shape shape.cxx "${GLDEMO_LIBS}")
 endif(OPENGL_FOUND)
 
-# Cairo demo - must also be built w/o Cairo (displays a message box)
-if(FLTK_HAVE_CAIRO)
-  fl_create_example(cairo_test cairo_test.cxx "fltk::fltk;cairo")
-else()
-  fl_create_example(cairo_test cairo_test.cxx fltk::fltk)
-endif(FLTK_HAVE_CAIRO)
-
 # *** EXPERIMENTAL ***
 # Build some of the demo programs linked against the shared FLTK lib(s).
 # This is currently pretty complicated and should be improved.
@@ -267,8 +262,9 @@ if(FLTK_BUILD_SHARED_LIBS)
 
   else() # not MSVC
 
+    fl_create_example(cairo_test-shared cairo_test.cxx fltk::fltk-shared)
     fl_create_example(hello-shared hello.cxx fltk::fltk-shared)
-    fl_create_example(pixmap_browser-shared pixmap_browser.cxx "fltk::images-shared")
+    fl_create_example(pixmap_browser-shared pixmap_browser.cxx fltk::images-shared)
     fl_create_example(unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED}")
 
     if(OPENGL_FOUND)
@@ -276,11 +272,6 @@ if(FLTK_BUILD_SHARED_LIBS)
       fl_create_example(shape-shared shape.cxx "${GLDEMO_SHARED}")
     endif(OPENGL_FOUND)
 
-    if(FLTK_HAVE_CAIRO)
-      fl_create_example(cairo_test-shared cairo_test.cxx "fltk::fltk-shared;cairo")
-    else()
-      fl_create_example(cairo_test-shared cairo_test.cxx "fltk::fltk-shared")
-    endif()
 
   endif(MSVC) # (not MSVC)
 

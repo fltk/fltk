@@ -20,7 +20,7 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
   3   How to Build FLTK Using GCC
     3.1   Downloading and Unpacking
     3.2   Configuration and Build Systems
-    3.3   Configuring FLTK with autoconf and configure
+    3.3   Configuring FLTK with autoconf and configure (deprecated)
     3.4   Building FLTK
     3.5   Testing FLTK
     3.6   Installing FLTK
@@ -31,6 +31,13 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
 
 [*] TODO: we still need to write these chapters
 
+
+-------------------------------------------------------------------
+  Note: usage of autotools, configure, and the included Makefiles
+  to build the FLTK library is deprecated since FLTK 1.4 and will
+  be removed in the next minor version (1.5).
+  Please consider using CMake instead.
+-------------------------------------------------------------------
 
 
  1  Introduction
@@ -298,23 +305,38 @@ The following paragraphs describe the "classic" build system with autoconf,
 configure, and make that has been used to build FLTK up to version 1.3.x
 and can still be used with FLTK 1.4.x.
 
-However, the FLTK team recommend using CMake which is the preferred build
-system since FLTK 1.4.0 used for all platforms (including Windows). CMake
-is used instead of autoconf and configure to create the build system of your
-choice, for instance Makefiles, Ninja build files, Visual Studio projects, etc.
+However, the FLTK team recommend to use CMake which is the preferred build
+system generator since FLTK 1.4 used for all platforms (including Windows).
+CMake can be used to create the build system of your choice, for instance
+Makefiles, Ninja build files, Xcode or Visual Studio IDE projects etc..
+
+-------------------------------------------------------------------
+  Note: usage of autotools, configure, and the included Makefiles
+  to build the FLTK library is deprecated since FLTK 1.4 and will
+  be removed in the next minor version (1.5).
+  Please consider using CMake instead.
+-------------------------------------------------------------------
 
 Please see README.CMake.txt for how to build FLTK and your application
 programs using CMake. You can stop reading here if you do this.
 
-You can, of course, build FLTK with CMake and your own application(s) with
-your existing and well-known build system.
+You can, of course, build FLTK with CMake and your own application(s)
+with your existing and well-known build system.
 
-If you like the "classic" build system more, continue reading the following
-chapters ...
+If you like the "classic" build system more, continue reading the
+following chapters but please be aware that configure support will
+be removed in FLTK 1.5.
 
 
- 3.3  Configuring FLTK with autoconf and configure
----------------------------------------------------
+ 3.3  Configuring FLTK with autoconf and configure (deprecated)
+----------------------------------------------------------------
+
+-------------------------------------------------------------------
+  Note: usage of autotools, configure, and the included Makefiles
+  to build the FLTK library is deprecated since FLTK 1.4 and will
+  be removed in the next minor version (1.5).
+  Please consider using CMake instead.
+-------------------------------------------------------------------
 
 If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type:

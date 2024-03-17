@@ -37,7 +37,7 @@
  */
 
 /* The ARM header files have a bug by not taking into account that ARM cpu
- * likes packing to 4 bytes. This little trick defines our own version of
+ * likes padding to 4 bytes. This little trick defines our own version of
  * XChar2b which does not have this problem
  */
 

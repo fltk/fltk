@@ -73,7 +73,6 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
       }
 
       if (a >= end_a) break;
-      //a++; b++;
     }
   }
   if (!ret) return 0;

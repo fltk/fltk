@@ -2,7 +2,7 @@
 // Fl_Grid demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2021 by Albrecht Schlosser
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -61,7 +61,7 @@ void remove_cb(void *v) {
 int main(int argc, char **argv) {
   Fl_Grid::Cell *c;
   Fl_Box *b;
-  Fl_Double_Window *win = new Fl_Double_Window(440, 350, "FLTK 1.4.0 - Fl_Grid Alignment Test");
+  Fl_Double_Window *win = new Fl_Double_Window(440, 350, "Fl_Grid Alignment Test");
   Fl_Grid *grid = new Fl_Grid(10, 10, 420, 330);
   grid->layout(7, 7, 8, 4);       // cols, rows, margin, gap
   grid->box(FL_FLAT_BOX);

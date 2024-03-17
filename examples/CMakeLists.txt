@@ -136,14 +136,8 @@ endforeach(src)
 # create example programs requiring cairo
 ############################################################
 
-if(FLTK_HAVE_CAIRO)
-  set(cairo_libs "fltk::fltk;cairo")
-else()
-  set(cairo_libs "fltk::fltk")
-endif()
-
 foreach(src ${CAIRO_SOURCES})
-  fl_create_example(${src} ${src}.cxx "${cairo_libs}")
+  fl_create_example(${src} ${src}.cxx fltk::fltk)
 endforeach(src)
 
 ############################################################

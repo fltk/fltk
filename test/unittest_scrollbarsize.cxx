@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -204,7 +204,7 @@ public:
         int texty = tabley + tableh + ysep;
         int texth = browh;
         int termy = texty + texth + ysep;
-        int termh = texth;
+        // int termh = texth; // unused but left because it's documented above
         brow_a = makebrowser(X+ 10,browy,100,browh,"Browser A");
         brow_b = makebrowser(X+120,browy,100,browh,"Browser B");
         brow_c = makebrowser(X+230,browy,100,browh,"Browser C");

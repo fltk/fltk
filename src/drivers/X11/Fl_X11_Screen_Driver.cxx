@@ -1,7 +1,7 @@
 //
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -429,7 +429,7 @@ extern void fl_fix_focus(); // in Fl.cxx
 void Fl_X11_Screen_Driver::grab(Fl_Window* win)
 {
   const char *p;
-  static bool using_kde = 
+  static bool using_kde =
     ( p = getenv("XDG_CURRENT_DESKTOP") , (p && (strcmp(p, "KDE") == 0)) );
   Fl_Window *fullscreen_win = NULL;
   for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
@@ -1080,11 +1080,11 @@ void Fl_X11_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int
   int change = 0;
   XVaNestedList preedit_attr;
   static XFontSet fs = NULL;
-  char **missing_list;
-  int missing_count;
-  char *def_string;
+  char **missing_list = NULL;
+  int missing_count = 0;
+  char *def_string = NULL;
   char *fnt = NULL;
-  bool must_free_fnt =true;
+  bool must_free_fnt = true;
 
   static XIC ic = NULL;
 
@@ -1096,7 +1096,7 @@ void Fl_X11_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int
       focuswin = focuswin->window();
     }
   }
-  //XSetICFocus(xim_ic);
+  // XSetICFocus(xim_ic);
   if (X != fl_spot.x || Y != fl_spot.y) {
     fl_spot.x = X;
     fl_spot.y = Y;
@@ -1112,21 +1112,17 @@ void Fl_X11_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int
       XFreeFontSet(fl_display, fs);
     }
 #if USE_XFT
-
-#if defined(__GNUC__)
-    // FIXME: warning XFT support here
-#endif /*__GNUC__*/
-
-    fnt = NULL; // fl_get_font_xfld(font, size);
-    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
-    fs = XCreateFontSet(fl_display, fnt, &missing_list,
-                        &missing_count, &def_string);
+    fnt = NULL; // FIXME: missing XFT support here
 #else
     fnt = fl_get_font_xfld(font, size);
-    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
-    fs = XCreateFontSet(fl_display, fnt, &missing_list,
-                        &missing_count, &def_string);
 #endif
+    if (!fnt) {
+      fnt = (char*)"-misc-fixed-*";
+      must_free_fnt = false;
+    }
+    fs = XCreateFontSet(fl_display, fnt, &missing_list, &missing_count, &def_string);
+    if (missing_list)
+      XFreeStringList(missing_list);
   }
   if (xim_ic != ic) {
     ic = xim_ic;

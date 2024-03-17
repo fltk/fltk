@@ -944,9 +944,10 @@ protected:
 private:
   bool is_hist_ring_row(int grow) const;
   bool is_disp_ring_row(int grow) const;
-protected:
+public:
   int  selection_text_len(void) const;
   const char* selection_text(void) const;
+protected:
   void clear_mouse_selection(void);
   bool selection_extend(int X,int Y);
   void select_word(int grow, int gcol);

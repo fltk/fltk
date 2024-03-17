@@ -1,7 +1,7 @@
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -640,7 +640,6 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int
   XSetFillStyle(fl_display, gc_, FillSolid);
 }
 
-
 // Composite an image with alpha on systems that don't have accelerated
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
@@ -671,8 +670,9 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
   int srcskip = ld - img->d() * W;
   uchar *dstptr = dst;
 
-  uchar srcr, srcg, srcb, srca;
-  uchar dstr, dstg, dstb, dsta;
+  uchar srcr, srcg, srcb;  // source color components
+  uchar dstr, dstg, dstb;  // destination color components
+  unsigned int srca, dsta; // source alpha and inverse source alpha
 
   if (img->d() == 2) {
     // Composite grayscale + alpha over RGB...
@@ -680,15 +680,23 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
       for (int x = W; x > 0; x--) {
         srcg = *srcptr++;
         srca = *srcptr++;
-
-        dstr = dstptr[0];
-        dstg = dstptr[1];
-        dstb = dstptr[2];
-        dsta = 255 - srca;
-
-        *dstptr++ = (srcg * srca + dstr * dsta) >> 8;
-        *dstptr++ = (srcg * srca + dstg * dsta) >> 8;
-        *dstptr++ = (srcg * srca + dstb * dsta) >> 8;
+        if (srca == 255) { // special case "copy"
+          *dstptr++ = srcg;
+          *dstptr++ = srcg;
+          *dstptr++ = srcg;
+        } else if (srca == 0) { // special case "ignore"
+          dstptr += 3;
+        } else { // common case "blend"
+          srca += srca>>7; // multiply by 1.004 to compensate integer rounding error
+          dstr = dstptr[0];
+          dstg = dstptr[1];
+          dstb = dstptr[2];
+          dsta = 256 - srca;
+          unsigned int srcg_pm = srcg * srca; // premultiply once
+          *dstptr++ = (srcg_pm + dstr * dsta) >> 8;
+          *dstptr++ = (srcg_pm + dstg * dsta) >> 8;
+          *dstptr++ = (srcg_pm + dstb * dsta) >> 8;
+        }
       }
   } else {
     // Composite RGBA over RGB...
@@ -698,18 +706,24 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
         srcg = *srcptr++;
         srcb = *srcptr++;
         srca = *srcptr++;
-
-        dstr = dstptr[0];
-        dstg = dstptr[1];
-        dstb = dstptr[2];
-        dsta = 255 - srca;
-
-        *dstptr++ = (srcr * srca + dstr * dsta) >> 8;
-        *dstptr++ = (srcg * srca + dstg * dsta) >> 8;
-        *dstptr++ = (srcb * srca + dstb * dsta) >> 8;
+        if (srca == 255) { // special case "copy"
+          *dstptr++ = srcr;
+          *dstptr++ = srcg;
+          *dstptr++ = srcb;
+        } else if (srca == 0) { // special case "ignore"
+          dstptr += 3;
+        } else { // common case "blend"
+          srca += srca>>7; // multiply by 1.004 to compensate integer rounding error
+          dstr = dstptr[0];
+          dstg = dstptr[1];
+          dstb = dstptr[2];
+          dsta = 256 - srca;
+          *dstptr++ = (srcr * srca + dstr * dsta) >> 8;
+          *dstptr++ = (srcg * srca + dstg * dsta) >> 8;
+          *dstptr++ = (srcb * srca + dstb * dsta) >> 8;
+        }
       }
   }
-
   fl_draw_image(dst, X, Y, W, H, 3, 0);
 
   delete[] dst;

@@ -3659,8 +3659,8 @@ void Fl_Terminal::draw(void) {
   }
   // Detect if Fl::scrollbar_size() was changed in size, recalc if so
   if (scrollbar_size_ == 0 &&
-      (  scrollbar->visible() &&  scrollbar->w() != Fl::scrollbar_size() ||
-        hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size())) {
+      ((scrollbar->visible() && scrollbar->w() != Fl::scrollbar_size()) ||
+       (hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size()))) {
     update_scrollbar();
   }
   // Draw group first, terminal last
@@ -3905,6 +3905,8 @@ int Fl_Terminal::handle(int e) {
       free((void*)s);                // free() the copy when done!
   \endcode
 
+  \param[in]  lines_below_cursor  include lines below cursor, default: false
+
   \return A string allocated with strdup(3) which must be free'd, text is UTF-8.
 */
 const char* Fl_Terminal::text(bool lines_below_cursor) const {
@@ -3922,8 +3924,8 @@ const char* Fl_Terminal::text(bool lines_below_cursor) const {
       const char *s = u8c->text_utf8();                  // first byte of char
       for (int i=0; i<u8c->length(); i++) lines += *s++; // append all bytes in multibyte char
       // Count any trailing whitespace to trim
-      if (u8c->length()==1 && *s==' ') trim++;           // trailing whitespace? trim
-      else                             trim = 0;         // non-whitespace? don't trim
+      if (u8c->length()==1 && s[-1]==' ') trim++;        // trailing whitespace? trim
+      else                                trim = 0;      // non-whitespace? don't trim
     }
     // trim trailing whitespace from each line, if any
     if (trim) lines.resize(lines.size() - trim);

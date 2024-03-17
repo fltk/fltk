@@ -5,7 +5,7 @@
 // demonstrate how to add FLTK controls to a GLUT program.   The GLUT
 // code is unchanged except for the end (search for FLTK to find changes).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -77,6 +77,7 @@ typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF,
                MOUNTAIN_MAT, WATER_MAT, LEAF_MAT, TREE_MAT, STEMANDLEAVES,
                AXES } DisplayLists;
 
+// Note: MAXLEVEL is the highest level, range is 0..MAXLEVEL
 #define MAXLEVEL 8
 
 int Rebuild = 1,        /* Rebuild display list in next display? */
@@ -146,11 +147,11 @@ float xzslope(float v1[3], float v2[3])
 /************************ MOUNTAIN STUFF ***********************/
 /***************************************************************/
 
-GLfloat DispFactor[MAXLEVEL];  /* Array of what to multiply random number
-                                  by for a given level to get midpoint
-                                  displacement  */
-GLfloat DispBias[MAXLEVEL];  /* Array of what to add to random number
-                                before multiplying it by DispFactor */
+GLfloat DispFactor[MAXLEVEL + 1]; /* Array of what to multiply random number
+                                     by for a given level to get midpoint
+                                     displacement  */
+GLfloat DispBias[MAXLEVEL + 1];   /* Array of what to add to random number
+                                     before multiplying it by DispFactor */
 
 #define NUMRANDS 191
 float RandTable[NUMRANDS];  /* hash table of random numbers so we can
@@ -233,9 +234,9 @@ void FMR(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3], int level)
 void FractalMountain(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3],
                      int pegged[3])
 {
-  GLfloat lengths[MAXLEVEL];
-  GLfloat fraction[8] = { 0.3f, 0.3f, 0.4f, 0.2f, 0.3f, 0.2f, 0.4f, 0.4f  };
-  GLfloat bias[8]     = { 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f  };
+  GLfloat lengths[MAXLEVEL + 1];
+  GLfloat fraction[8] = { 0.3f, 0.3f, 0.4f, 0.2f, 0.3f, 0.2f, 0.4f, 0.4f };
+  GLfloat bias[8]     = { 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f };
   int i;
   float avglen = (xzlength(v1, v2) +
                   xzlength(v2, v3) +

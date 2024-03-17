@@ -146,7 +146,7 @@
 
 // -- nothing yet --
 
-#endif // __clang__
+#endif /* __clang__ */
 
 
 /*
@@ -162,19 +162,19 @@
 #define __fl_attr(x) __attribute__ (x)
 #endif
 
-#if FL_GCC_VERSION > 40500 // gcc 4.5.0
+#if FL_GCC_VERSION > 40500 /* gcc 4.5.0 */
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated(msg)))
 #endif
-#endif // gcc 4.5.0
+#endif /* gcc 4.5.0 */
 
-#if FL_GCC_VERSION > 30100 // gcc 3.1.0
+#if FL_GCC_VERSION > 30100 /* gcc 3.1.0 */
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated))
 #endif
-#endif // gcc 3.1.0
+#endif /* gcc 3.1.0 */
 
-#endif // __GNUC__
+#endif /* __GNUC__ */
 
 
 /*
