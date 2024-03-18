@@ -2,7 +2,7 @@
 // Definition of Unix/Linux system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -117,7 +117,13 @@ int Fl_Unix_System_Driver::clocale_vsscanf(const char *input, const char *format
 #else
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
+#if defined(__hpux)
+  // HP-UX 11.11 provides:
+  //   int vsscanf(char *s, const char *format, va_list ap);
+  int retval = vsscanf((char*)input, format, args);
+#else  // defined(__hpux)
   int retval = vsscanf(input, format, args);
+#endif  // defined(__hpux)
   setlocale(LC_NUMERIC, saved_locale);
 #endif
   return retval;
@@ -488,8 +494,8 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
  just an empty string.
  */
 char *Fl_Unix_System_Driver::preference_memory_rootnode(
-    const char * /*vendor*/, 
-    const char * /*application*/, 
+    const char * /*vendor*/,
+    const char * /*application*/,
     char *buffer)
 {
   buffer[0] = 0;
@@ -497,13 +503,13 @@ char *Fl_Unix_System_Driver::preference_memory_rootnode(
 }
 
 /*
- The path and file name for system preferences on Unix type 
+ The path and file name for system preferences on Unix type
  systems is `/etc/fltk/{vendor}/{application}.prefs`.
  */
 char *Fl_Unix_System_Driver::preference_system_rootnode(
-    const char *vendor, 
-    const char *application, 
-    char *buffer) 
+    const char *vendor,
+    const char *application,
+    char *buffer)
 {
   snprintf(buffer, FL_PATH_MAX, "/etc/fltk/%s/%s.prefs", vendor, application);
   return buffer;
@@ -519,13 +525,13 @@ char *Fl_Unix_System_Driver::preference_system_rootnode(
 
  1. Does the XDG based top level folder '{vendor}' exist? If yes, use it.
  2. If not: does the old location $HOME/.fltk/{vendor} exist? If yes, use it.
- 3. If neither: fall back to (1.) and use the XDG based folder (create it and 
+ 3. If neither: fall back to (1.) and use the XDG based folder (create it and
     the prefs file below it).
  */
 char *Fl_Unix_System_Driver::preference_user_rootnode(
-    const char *vendor, 
-    const char *application, 
-    char *buffer) 
+    const char *vendor,
+    const char *application,
+    char *buffer)
 {
   // Find the path to the user's home directory.
   Fl_String home_path = getenv("HOME");
@@ -542,7 +548,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
   } else {
     if (prefs_path_14[prefs_path_14.size()-1]!='/')
       prefs_path_14.append('/');
-    if (prefs_path_14.find("~/")==0) // starts with "~" 
+    if (prefs_path_14.find("~/")==0) // starts with "~"
       prefs_path_14.replace(0, 1, home_path);
     int h_env = prefs_path_14.find("${HOME}");
     if (h_env!=prefs_path_14.npos)
