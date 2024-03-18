@@ -241,6 +241,14 @@
 #cmakedefine01 USE_POLL
 
 /*
+ * HAVE_SETENV:
+ *
+ * Whether or not POSIX setenv() is available from stdlib.h.
+ */
+
+#cmakedefine01 HAVE_SETENV
+
+/*
  * Do we have various image libraries?
  */
 

@@ -240,6 +240,14 @@
 #define USE_POLL 0
 
 /*
+ * HAVE_SETENV:
+ *
+ * Whether or not POSIX setenv() is available from stdlib.h.
+ */
+
+#define HAVE_SETENV 0
+
+/*
  * Do we have various image libraries?
  */
 

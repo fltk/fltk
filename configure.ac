@@ -620,6 +620,9 @@ AC_CHECK_FUNCS([strcasecmp strlcat strlcpy])
 AC_CHECK_HEADERS([locale.h])
 AC_CHECK_FUNCS([localeconv])
 
+dnl HP-UX 11.11 does not provide setenv()
+AC_CHECK_FUNCS([setenv])
+
 
 dnl FLTK library uses math library functions...
 AC_SEARCH_LIBS([pow], [m])

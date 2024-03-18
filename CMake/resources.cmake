@@ -204,6 +204,8 @@ CHECK_FUNCTION_EXISTS (strlcat                  HAVE_STRLCAT)
 CHECK_FUNCTION_EXISTS (strlcpy                  HAVE_STRLCPY)
 CHECK_FUNCTION_EXISTS (vsnprintf                HAVE_VSNPRINTF)
 
+check_function_exists(setenv                    HAVE_SETENV)
+
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
    message(STATUS "Looking for ${MSG}")

@@ -75,9 +75,26 @@ Fl_X11_Screen_Driver::Fl_X11_Screen_Driver() : Fl_Unix_Screen_Driver() {
   key_table_size = 0;
 }
 
-void Fl_X11_Screen_Driver::display(const char *d)
-{
-  if (d) setenv("DISPLAY", d, 1);
+void Fl_X11_Screen_Driver::display(const char *d) {
+  if (!d) return;
+  // Issue #937:
+  // setenv() is available since POSIX.1-2001
+  // https://pubs.opengroup.org/onlinepubs/009604499/functions/setenv.html
+#if HAVE_SETENV
+  setenv("DISPLAY", d, 1);
+#else  // HAVE_SETENV
+  // Use putenv() for old systems (similar to FLTK 1.3)
+  static char e[1024];
+  strcpy(e, "DISPLAY=");
+  strlcat(e, d, sizeof(e));
+  for (char *c = e + 8; *c != ':'; c++) {
+    if (!*c) {
+      strlcat(e,":0.0",sizeof(e));
+      break;
+    }
+  }
+  putenv(e);
+#endif  // HAVE_SETENV
 }
 
 void fl_x11_use_display(Display *d) {
