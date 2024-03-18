@@ -130,7 +130,7 @@ const char *get_keyname(int k, int &lg) {
     lg = snprintf(buffer, sizeof(buffer), "0x%04x", k);
     for (int i = 0; i < int(sizeof(key_table)/sizeof(*key_table)); i++) {
       if (key_table[i].n == k) {
-        lg = strlen(key_table[i].text);
+        lg = (int)strlen(key_table[i].text);
         return key_table[i].text;
       }
     }
@@ -287,7 +287,7 @@ void copy_cb(Fl_Widget *b, void *) {
   }
   tlen = (int)strlen(text);
   Fl::copy(text, tlen, 1, Fl::clipboard_plain_text);
-  fl_message("%s text has been copied to the clipboard, length = %d.", what, tlen);
+  tty->printf("[%s text copied to clipboard, length = %d]\n", what, tlen);
   free((void *)text);
   tty->take_focus();
 }
