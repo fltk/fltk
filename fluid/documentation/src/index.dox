@@ -85,6 +85,8 @@
 
  _not yet_
 
+ \subpage page_widgetbin_panel
+
  \subpage page_widget_panel
  - \ref widget_panel_gui
  - \ref widget_panel_style
