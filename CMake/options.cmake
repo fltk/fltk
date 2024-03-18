@@ -424,7 +424,7 @@ option(FLTK_USE_POLL "use poll if available" OFF)
 mark_as_advanced(FLTK_USE_POLL)
 
 if(FLTK_USE_POLL)
-  CHECK_FUNCTION_EXISTS(poll USE_POLL)
+  check_function_exists(poll USE_POLL)
 endif(FLTK_USE_POLL)
 
 #######################################################################

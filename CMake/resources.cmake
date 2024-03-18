@@ -178,31 +178,31 @@ if(HAVE_DLFCN_H)
 endif(HAVE_DLFCN_H)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_DL_LIBS})
-CHECK_FUNCTION_EXISTS (dlsym                    HAVE_DLSYM)
+check_function_exists(dlsym                     HAVE_DLSYM)
 set(CMAKE_REQUIRED_LIBRARIES)
 
-CHECK_FUNCTION_EXISTS (localeconv               HAVE_LOCALECONV)
+check_function_exists(localeconv                HAVE_LOCALECONV)
 
 if(LIB_png)
   set(CMAKE_REQUIRED_LIBRARIES ${LIB_png})
-  CHECK_FUNCTION_EXISTS (png_get_valid          HAVE_PNG_GET_VALID)
-  CHECK_FUNCTION_EXISTS (png_set_tRNS_to_alpha  HAVE_PNG_SET_TRNS_TO_ALPHA)
+  check_function_exists(png_get_valid           HAVE_PNG_GET_VALID)
+  check_function_exists(png_set_tRNS_to_alpha   HAVE_PNG_SET_TRNS_TO_ALPHA)
   set(CMAKE_REQUIRED_LIBRARIES)
 endif(LIB_png)
 
-CHECK_FUNCTION_EXISTS (scandir                  HAVE_SCANDIR)
-CHECK_FUNCTION_EXISTS (snprintf                 HAVE_SNPRINTF)
+check_function_exists(scandir                   HAVE_SCANDIR)
+check_function_exists(snprintf                  HAVE_SNPRINTF)
 
 # not really true but we convert strcasecmp calls to _stricmp calls in flstring.h
 if(MSVC)
    set(HAVE_STRCASECMP 1)
 endif(MSVC)
 
-CHECK_FUNCTION_EXISTS (strcasecmp               HAVE_STRCASECMP)
+check_function_exists(strcasecmp                HAVE_STRCASECMP)
 
-CHECK_FUNCTION_EXISTS (strlcat                  HAVE_STRLCAT)
-CHECK_FUNCTION_EXISTS (strlcpy                  HAVE_STRLCPY)
-CHECK_FUNCTION_EXISTS (vsnprintf                HAVE_VSNPRINTF)
+check_function_exists(strlcat                   HAVE_STRLCAT)
+check_function_exists(strlcpy                   HAVE_STRLCPY)
+check_function_exists(vsnprintf                 HAVE_VSNPRINTF)
 
 check_function_exists(setenv                    HAVE_SETENV)
 
