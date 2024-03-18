@@ -341,6 +341,7 @@ XLIBCFILES = \
 
 # These C files are used under condition: BUILD_X11 AND NOT BUILD_XFT
 XLIBXCFILES = \
+        xutf8/utf8Input.c \
         xutf8/utf8Utils.c \
         xutf8/utf8Wrap.c
 

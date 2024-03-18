@@ -528,7 +528,7 @@ if(FLTK_USE_X11)
     list(APPEND CFILES
       xutf8/utf8Utils.c
       xutf8/utf8Wrap.c
-      # xutf8/utf8Input.c  # not used
+      xutf8/utf8Input.c
     )
   endif(NOT USE_XFT)
 endif(FLTK_USE_X11)
