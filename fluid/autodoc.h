@@ -49,8 +49,9 @@ int fl_snapshot(const char *filename, Fl_Widget *w,
                 const Fl_Rect &blend = Fl_Margin(4, 4, 4, 4),
                 double scale=1.0);
 
-const int FL_SNAP_TO_WINDOW = 0x7f000000;
-const int FL_SNAP_TO_GROUP  = 0x7f010000;
+extern const int FL_SNAP_TO_WINDOW;
+
+extern Fl_Widget *FL_SNAP_AREA_CLEAR;
 
 extern void run_autodoc(const Fl_String &target_dir);
 

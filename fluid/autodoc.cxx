@@ -31,6 +31,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_Menu_Bar.H>
 
 extern Fl_Double_Window *settings_window;
 
@@ -42,7 +43,7 @@ extern Fl_Double_Window *settings_window;
     - see: void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
     - see: void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 
- \todo Implement a version that snaps multipel windows in a desktop style situation.
+ \todo Implement a version that snaps multiple windows in a desktop style situation.
 
  \todo a version that takes snapshots of a range of menu items
 
@@ -52,6 +53,11 @@ extern Fl_Double_Window *settings_window;
 /** \addtogroup fl_drawings
  @{
  */
+
+const int FL_SNAP_TO_WINDOW = 0x7f000000;
+
+static Fl_Box snap_clear_(0, 0, 0, 0);
+Fl_Widget *FL_SNAP_AREA_CLEAR = &snap_clear_;
 
 static inline int fl_min(int a, int b) { return a < b ? a : b; }
 static inline uchar fl_min(uchar a, uchar b) { return a < b ? a : b; }
@@ -234,19 +240,24 @@ int fl_snapshot(const char *filename, Fl_Widget **w,
                 const Fl_Rect &blend,
                 double scale)
 {
-  int i, min_x, min_y, max_x, max_y, bb_w, bb_h, img_w, img_h;
+  int i, min_x = 0, min_y = 0, max_x = 0, max_y = 0, bb_w, bb_h, img_w, img_h;
 
   // Get the bounding box for all widgets and make sure that all widgets are shown
   for (i=0; w[i]; i++) {
     int x, y;
     Fl_Widget *ww = w[i];
-    ww->top_window_offset(x, y);
-    if (i==0) {
-      min_x = x; max_x = x + ww->w();
-      min_y = y; max_y = y + ww->h();
+    if (ww == FL_SNAP_AREA_CLEAR) {
+      min_x = max_x = 0;
+      min_y = max_y = 0;
     } else {
-      min_x = fl_min(min_x, x); max_x = fl_max(max_x, x + ww->w());
-      min_y = fl_min(min_y, y); max_y = fl_max(max_y, y + ww->h());
+      ww->top_window_offset(x, y);
+      if (i==0) {
+        min_x = x; max_x = x + ww->w();
+        min_y = y; max_y = y + ww->h();
+      } else {
+        min_x = fl_min(min_x, x); max_x = fl_max(max_x, x + ww->w());
+        min_y = fl_min(min_y, y); max_y = fl_max(max_y, y + ww->h());
+      }
     }
 
     // this does not help us with Fl_Tab groups
@@ -371,8 +382,11 @@ void run_autodoc(const Fl_String &target_dir) {
   Fl_Type *t_func = add_new_widget_from_user("Function", kAddAsLastChild, false);
   Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", kAddAsLastChild, false);
   t_win->label("My Main Window");
-  Fl_Type *t_grp = add_new_widget_from_user("Fl_Group", kAddAsLastChild, false);
+  Fl_Widget_Type *t_grp = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Group", kAddAsLastChild, false);
+  t_grp->public_ = 0;
   Fl_Widget_Type *t_btn = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Button", kAddAsLastChild, false);
+  t_btn->comment("Don't press this button!");
+  t_btn->name("emergency_btn");
   ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
   Fl_Type *t_sldr = add_new_widget_from_user("Fl_Slider", kAddAsLastChild, false);
   Fl_Type *t_inp = add_new_widget_from_user("Fl_Input", kAddAsLastChild, false);
@@ -385,16 +399,30 @@ void run_autodoc(const Fl_String &target_dir) {
   widget_browser->rebuild();
   g_project.update_settings_dialog();
 
+  // TODO: FLUID overview
+
   // TODO: explain FLUID command line usage
 
   // TODO: take a snapshot of FLUID in a desktop situation
   // (main, toolbar, document, widget editor, source view)
 
-  // TODO: main window
+  // ---- main window
   // explain titlebar
   // explain menubar?
   // explain widget browser
   // explain widget browser entry
+  main_window->size(350, 320);
+  fl_snapshot((target_dir + "main_window.png").c_str(), main_window, win_margin, win_blend);
+  fl_snapshot((target_dir + "main_menubar.png").c_str(), main_menubar, row_margin, row_blend);
+  fl_snapshot((target_dir + "main_browser.png").c_str(), widget_browser, FL_SNAP_AREA_CLEAR, 
+              Fl_Rect(0, 30, FL_SNAP_TO_WINDOW, 100), row_blend, 2.0);
+
+
+  // TODO: document view
+  // explain dnd
+  // explain selection, multiple selection, keyboard shortcuts
+  // explain mouse functionality and alignment
+  // explain live resize
 
   // ---- widget bin
   // show grouping
@@ -404,13 +432,6 @@ void run_autodoc(const Fl_String &target_dir) {
   // list exceptions (subwindow, scroll)
   if (!widgetbin_panel) make_widgetbin();
   fl_snapshot((target_dir + "widgetbin_panel.png").c_str(), widgetbin_panel, win_margin, win_blend);
-
-
-  // TODO: document view
-  // explain dnd
-  // explain selection, multiple selection, keyboard shortcuts
-  // explain mouse functionality and alignment
-  // explain live resize
 
   // ---- source view
   // explain functionality

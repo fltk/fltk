@@ -1,0 +1,100 @@
+/**
+
+ \page page_main_window Main Application Window
+
+ \tableofcontents
+
+ \image html main_window.png "Main Application Window"
+ \image latex main_window.png "Main Application Window"
+
+ The FLUID Main Window is split into three parts. The title bar shows the
+ status of the source and project files. The menu bar provides a wealth of
+ menu items for all major action in FLUID. The biggest part of the
+ app window is the widget browser, a tree structure that lists every code
+ node and widget in the project.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_titlebar Title Bar
+
+ \image html main_titlebar.jpg
+ \image latex main_titlebar.jpg
+
+ The title bar show the status of the project file, *function_panel.fl* in this
+ case, followed by an asterisk if the project was changed after it was saved.
+ If the asterisk shows, FLUID will ask the user to save changes before closing
+ the project, loading another project, or starting a new one. Pressing `Ctrl-S`
+ will save the project and make the asterisk disappear.
+
+ The *.cxx* in the title bar reflects the status of header and source files
+ in relation to the project. An asterisk indicates that the project and code
+ files differ. Pressing `Ctrl-Shift-C` to write the code files will make this
+ asterisk go away.
+
+ \note FLUID currently supports only one open project at a time.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_menubar Application Menu Bar
+
+ \image html main_menubar.png
+ \image latex main_menubar.png
+
+ The menu bar is the true control center of FLUID. All actions start here.
+
+ The *File* menu offers the common file operation for FLUID projects. Projects
+ can be loaded, merged, and saved. *Print* will print a snapshot of all open
+ project windows.
+ The *New From Template* item opens a dialog that provides access to small
+ number of sample projects. More projects can be added using *Save as Template*.
+ Use *Write Code* to write the header and source code files, and *Write Strings*
+ to write the translation file if one of the internationalization options
+ is active.
+
+ The *Edit* menu is mainly used to manipulate widgets within the widget tree.
+ The bottom entries toggle various dialogs and pop up the settings panel.
+
+ The *New* menu holds a list of all widgets that can be used in FLUID. They
+ are grouped by functionality, very similarly to the widget bin. New widgets are
+ added inside or right after the selected widget. If the parent widget is not
+ compatible, FLUID tries to find another location for the widget. If that also
+ fails, FLUID will pop up a dialog, describing the required parent type.
+
+ The *Layout* menu is used to adjust the position and size of widgets in
+ relation to each other.
+
+ The *Shell* menu gives quick access to user definable shell scripts. Note that
+ scripts can be stored inside `.fl` project files.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_widget_browser Widget Tree View
+
+ \image html main_browser.png
+ \image latex main_browser.png
+
+ All nodes appear at some place within the widget tree. FLUID projects are
+ very much hierarchical, and the widget browser helps to keep the overview.
+
+ Users can select one or more nodes. Nodes are moved within their group using
+ `F2` and `F3`. They can be grouped and ungrouped with `F7` and `F8`, and
+ relocated by selecting them and using cut, copy, and paste.
+
+ Every line in the browser has the same basic format. The level of indentation
+ reflects the depth of a node within the tree.
+
+ The triangle appears only in front of nodes that can have children. If it is
+ white, the group has no children. If it is black, there is at least one child.
+ If the triangle points the right, the children are hidden in the tree view.
+ Click the triangle to reveal all children.
+
+ The icon to the right is a small representation the base type of the node.
+ Widgets are gray, windows have a blue title bar, and functional nodes are
+ green. If the widget is static or private, a padlock icon will appear in the
+ bottom right corner of the type icon.
+
+ The content of text field depends on the node type. If a comment is set, it
+ appears in green over the text. Widgets combine their type (bold black) and
+ label text (red), or their C++ name in black (not bold).
+
+ All colors and font styles can be customized in the User tab of the
+ Settings panel.
+
+*/
