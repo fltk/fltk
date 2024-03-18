@@ -385,6 +385,8 @@ void run_autodoc(const Fl_String &target_dir) {
   widget_browser->rebuild();
   g_project.update_settings_dialog();
 
+  // TODO: explain FLUID command line usage
+
   // TODO: take a snapshot of FLUID in a desktop situation
   // (main, toolbar, document, widget editor, source view)
 
@@ -394,12 +396,15 @@ void run_autodoc(const Fl_String &target_dir) {
   // explain widget browser
   // explain widget browser entry
 
-  // TODO: toolbar
+  // ---- widget bin
   // show grouping
   // explain non-widget types and where they will be located
   // explain widgets types an their dnd option
   // explain menu arrays
   // list exceptions (subwindow, scroll)
+  if (!widgetbin_panel) make_widgetbin();
+  fl_snapshot((target_dir + "widgetbin_panel.png").c_str(), widgetbin_panel, win_margin, win_blend);
+
 
   // TODO: document view
   // explain dnd
@@ -415,11 +420,8 @@ void run_autodoc(const Fl_String &target_dir) {
   if (!sourceview_panel) make_sourceview();
   update_sourceview_cb(NULL, NULL);
   sv_tab->value(sv_source_tab);
-  //: sourceview_panel
   fl_snapshot((target_dir + "sourceview_panel.png").c_str(), sourceview_panel, win_margin, win_blend);
-  //: cv_find_row
   fl_snapshot((target_dir + "cv_find_row.png").c_str(), cv_find_row, row_margin, row_blend);
-  //: cv_settings_row
   fl_snapshot((target_dir + "cv_settings_row.png").c_str(), cv_settings_row, row_margin, row_blend);
 
   // ---- settings dialog
