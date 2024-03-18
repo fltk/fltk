@@ -10,7 +10,11 @@
  \image html fluid-128.png
  \image latex fluid-128.png  "" width=3cm
 
+ <br>
+
  <B>FLUID 1.4.0 User Manual</B>
+
+ <br>
 
  By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
  A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
@@ -20,6 +24,7 @@
  </CENTER></TD>
  </TR>
  </TABLE>
+
  <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
  <TR>
  <TD style="text-align: center;">
@@ -34,6 +39,7 @@
  <TR>
  <TD ALIGN="LEFT" VALIGN="TOP">
 
+<!--
  \subpage page_introduction
 
   - \ref introduction_workflow
@@ -70,9 +76,6 @@
 
  _not yet_
 
- </TD>
- <TD ALIGN="LEFT" VALIGN="TOP">
-
  \subpage page_shortcuts
 
  _not yet_
@@ -84,6 +87,12 @@
  \subpage page_glossary
 
  _not yet_
+-->
+
+ \subpage page_main_window
+ - \ref main_titlebar
+ - \ref main_menubar
+ - \ref main_widget_browser
 
  \subpage page_widgetbin_panel
 
@@ -105,6 +114,9 @@
  - \ref functional_comment
  - \ref functional_data
 
+ </TD>
+ <TD ALIGN="LEFT" VALIGN="TOP">
+
  \subpage page_sourceview_panel
  - \ref codeview_find
  - \ref codeview_settings
@@ -117,6 +129,7 @@
  - \ref setting_i18n
  - \ref setting_user
 
+<!--
  \subpage page_appendices
 
  - \ref appendix_app_settings
@@ -132,9 +145,9 @@
  \subpage page_conclusion
 
  _not yet_
+-->
 
  </TD>
  </TR>
  </TABLE>
-
 */
