@@ -241,6 +241,7 @@ IMGCPPFILES = \
 	Fl_PNM_Image.cxx \
 	Fl_Image_Reader.cxx \
 	Fl_SVG_Image.cxx \
+	nanosvg.cxx \
 	drivers/SVG/Fl_SVG_File_Surface.cxx
 
 CFILES = flstring.c numericsort.c vsnprintf.c
