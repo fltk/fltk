@@ -1487,26 +1487,58 @@ static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
 #pragma clang diagnostic pop
 #endif
 
+static Window *xid_vector = NULL; // list of FLTK-created xid's (see issue #935)
+static int xid_vector_size = 0;
+static int xid_vector_count = 0;
+
+static void add_xid_vector(Window xid) {
+  if (xid_vector_count >= xid_vector_size) {
+    xid_vector_size += 10;
+    xid_vector = (Window*)realloc(xid_vector, xid_vector_size * sizeof(Window));
+  }
+  xid_vector[xid_vector_count++] = xid;
+}
+
+static bool remove_xid_vector(Window xid) {
+  for (int pos = xid_vector_count - 1; pos >= 0; pos--) {
+    if (xid_vector[pos] == xid) {
+      if (pos != --xid_vector_count) xid_vector[pos] = xid_vector[xid_vector_count];
+      return true;
+    }
+  }
+  return false;
+}
+
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
   fl_xevent = &thisevent;
   Window xid = xevent.xany.window;
-
-  if (fl_xim_ic && xevent.type == DestroyNotify &&
-        xid != fl_xim_win && !fl_find(xid))
-  {
-    XIM xim_im;
-    xim_im = XOpenIM(fl_display, NULL, NULL, NULL);
-    if (!xim_im) {
-      /*  XIM server has crashed */
-      XSetLocaleModifiers("");
-      fl_xim_im = NULL;
-      fl_init_xim();
-    } else {
-      XCloseIM(xim_im);	// see STR 2185 for comment
+  
+  if (xevent.type == DestroyNotify) {
+    // For each DestroyNotify event, determine whether an FLTK-created window
+    // is being destroyed (see issue #935).
+    bool xid_is_from_fltk_win = remove_xid_vector(xid);
+    // The following if statement is limited to cases when event DestroyNotify
+    // concerns a non-FLTK window. Thus, the possibly slow call to XOpenIM()
+    // is not performed when an FLTK-created window is closed. This fixes issue #935.
+    if (fl_xim_ic && xid != fl_xim_win && !fl_find(xid) && !xid_is_from_fltk_win) {
+      // When using menus or tooltips: xid is a just hidden top-level FLTK win, xim_win is non-FLTK;
+      // after XIM crash: xid is non-FLTK.
+      // Trigger XIM crash under Debian: kill process containing "ibus-daemon"
+      // Restart XIM after triggered crash: "ibus-daemon --panel disable --xim &"
+      XIM xim_im;
+      xim_im = XOpenIM(fl_display, NULL, NULL, NULL);
+      if (!xim_im) {
+        /*  XIM server has crashed */
+        XSetLocaleModifiers("");
+        fl_xim_im = NULL;
+        fl_init_xim();
+      } else {
+        XCloseIM(xim_im);	// see STR 2185 for comment
+      }
+      return 0;
     }
-    return 0;
   }
 
   if (fl_xim_ic && (xevent.type == FocusIn))
@@ -2490,6 +2522,7 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
 void fl_fix_focus(); // in Fl.cxx
 
 Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
+  if (!win->parent()) add_xid_vector(winxid); // store xid's of top-level FLTK windows
   Fl_X* xp = new Fl_X;
   xp->xid = winxid;
   xp->other_xid = 0;
