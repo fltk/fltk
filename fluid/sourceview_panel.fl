@@ -290,11 +290,11 @@ Function {make_sourceview()} {open
       callback update_sourceview_position_cb open
       xywh {10 10 500 440} selection_color 4 labelcolor 7 resizable
     } {
-      Fl_Group {} {
+      Fl_Group sv_source_tab {
         label Source open
         xywh {10 35 500 415} labelsize 13 resizable
       } {
-        Fl_Text_Editor sv_source {
+        Fl_Text_Editor sv_source {selected
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           code1 {o->linenumber_width(60);}
@@ -337,7 +337,7 @@ Function {make_sourceview()} {open
         }
       }
     }
-    Fl_Group {} {open
+    Fl_Group cv_find_row {open
       xywh {10 460 500 20}
     } {
       Fl_Button sv_find_text_case {
@@ -389,7 +389,7 @@ if (e) {
     e->insert_position(pos);
     e->show_insert_position();
   }
-}} selected
+}}
         xywh {273 460 25 20} labelsize 11
       }
       Fl_Button {} {
@@ -441,7 +441,7 @@ if (e) {
         xywh {490 460 20 20} resizable
       }
     }
-    Fl_Group {} {open
+    Fl_Group cv_settings_row {open
       xywh {10 485 500 20}
     } {
       Fl_Button {} {

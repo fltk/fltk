@@ -25,6 +25,7 @@
 #include "Fl_Window_Type.h"
 #include "function_panel.h"
 #include "alignment_panel.h"
+#include "sourceview_panel.h"
 
 #include <FL/Enumerations.H>
 #include <FL/fl_draw.H>
@@ -362,6 +363,8 @@ void run_autodoc(const Fl_String &target_dir) {
   Fl_Margin xrow_margin(FL_SNAP_TO_WINDOW, 14, FL_SNAP_TO_WINDOW, 4);
   Fl_Margin row_blend(0, 10, 0, 10);
 
+//  Fl::scheme("gtk+");
+
   // Create a silly project that contains all widgets that we want to document
   new_project(false);
 
@@ -404,13 +407,22 @@ void run_autodoc(const Fl_String &target_dir) {
   // explain mouse functionality and alignment
   // explain live resize
 
-  // TODO: source view
+  // ---- source view
   // explain functionality
   // explain live update and choices
   // show various tabs
   // explain find and locate
+  if (!sourceview_panel) make_sourceview();
+  update_sourceview_cb(NULL, NULL);
+  sv_tab->value(sv_source_tab);
+  //: sourceview_panel
+  fl_snapshot((target_dir + "sourceview_panel.png").c_str(), sourceview_panel, win_margin, win_blend);
+  //: cv_find_row
+  fl_snapshot((target_dir + "cv_find_row.png").c_str(), cv_find_row, row_margin, row_blend);
+  //: cv_settings_row
+  fl_snapshot((target_dir + "cv_settings_row.png").c_str(), cv_settings_row, row_margin, row_blend);
 
-  // TODO: settings dialog
+  // ---- settings dialog
   // show and explain all tabs
   fl_snapshot((target_dir + "w_settings.png").c_str(), settings_window, win_margin, win_blend, 0.5);
   fl_snapshot((target_dir + "w_settings_general_tab.png").c_str(), w_settings_general_tab, xtab_margin, row_blend);
@@ -432,51 +444,61 @@ void run_autodoc(const Fl_String &target_dir) {
   w_settings_tabs->value(w_settings_user_tab);
   fl_snapshot((target_dir + "w_settings_user_tab.png").c_str(), w_settings_user_tab, xtab_margin, row_blend);
 
+
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
-  // - ID_Function
+
+  // -- ID_Function
   Fl_Window *adoc_function_panel = make_function_panel();
   f_name_input->value("count_trees(const char *forest_name)");
   f_return_type_input->value("unsigned int");
   fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
   adoc_function_panel->hide();
-  // - ID_Code
+
+  // -- ID_Code
   Fl_Window *adoc_code_panel = make_code_panel();
   code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
   adoc_code_panel->hide();
-  // - ID_CodeBlock
+
+  // -- ID_CodeBlock
   Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
   code_before_input->value("if (test())");
   code_after_input->value("// test widgets added...");
   fl_snapshot((target_dir + "codeblock_panel.png").c_str(), adoc_codeblock_panel, win_margin, win_blend);
   adoc_codeblock_panel->hide();
-  // - ID_Decl
+
+  // -- ID_Decl
   Fl_Window *adoc_decl_panel = make_decl_panel();
   decl_class_choice->hide();
   decl_input->buffer()->text("const char *damage = \"'tis but a scratch\";");
   fl_snapshot((target_dir + "decl_panel.png").c_str(), adoc_decl_panel, win_margin, win_blend);
   adoc_decl_panel->hide();
-  // - ID_DeclBlock
+
+  // -- ID_DeclBlock
   Fl_Window *adoc_declblock_panel = make_declblock_panel();
   decl_before_input->value("#ifdef NDEBUG");
   decl_after_input->value("#endif // NDEBUG");
   fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
   adoc_declblock_panel->hide();
-  // - ID_Class
+
+  // -- ID_Class
   Fl_Window *adoc_class_panel = make_class_panel();
   decl_class_choice->hide();
   c_name_input->value("Zoo_Giraffe");
   c_subclass_input->value("Zoo_Animal");
   fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
   adoc_class_panel->hide();
-  // - ID_Widget_Class is handled like Fl_Window_Type
-  // - ID_Comment
+
+  // -- ID_Widget_Class is handled like Fl_Window_Type
+
+  // -- ID_Comment
   Fl_Window *adoc_comment_panel = make_comment_panel();
   comment_input->buffer()->text("Make sure that the giraffe gets enough hay,\nbut the monkey can't reach it.");
   fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
   adoc_comment_panel->hide();
-  // - ID_Data
+
+  // -- ID_Data
   Fl_Window *adoc_data_panel = make_data_panel();
   data_class_choice->hide();
   data_input->value("emulated_ROM");
@@ -484,16 +506,17 @@ void run_autodoc(const Fl_String &target_dir) {
   fl_snapshot((target_dir + "data_panel.png").c_str(), adoc_data_panel, win_margin, win_blend);
   adoc_data_panel->hide();
 
-  // widget dialog
+
+  // ---- widget dialog
   t_win->open(); // open the window
   t_win->open(); // open the panel
   select_only(t_win);
 
-  // snapshot of the widget properties panel
+  // -- snapshot of the widget properties panel
   fl_snapshot((target_dir + "widget_panel.png").c_str(), the_panel, win_margin, win_blend);
   fl_snapshot((target_dir + "wLiveMode.png").c_str(), wLiveMode, row_margin, row_blend);
 
-  // snapshot of the GUI tab
+  // -- snapshot of the GUI tab
   widget_tabs->value(wp_gui_tab);
   fl_snapshot((target_dir + "wp_gui_tab.png").c_str(), wp_gui_tab, tab_margin, row_blend);
   fl_snapshot((target_dir + "wp_gui_label.png").c_str(), wp_gui_label, row_margin, row_blend);
@@ -517,7 +540,7 @@ void run_autodoc(const Fl_String &target_dir) {
   fl_snapshot((target_dir + "wp_gui_attributes.png").c_str(), wp_gui_attributes, row_margin, row_blend);
   fl_snapshot((target_dir + "wp_gui_tooltip.png").c_str(), wp_gui_tooltip, row_margin, row_blend);
 
-  // snapshot of the style tab
+  // -- snapshot of the style tab
   widget_tabs->value(wp_style_tab);
   select_only(t_inp);
   fl_snapshot((target_dir + "wp_style_tab.png").c_str(), wp_style_tab, tab_margin, row_blend);
@@ -527,7 +550,7 @@ void run_autodoc(const Fl_String &target_dir) {
   select_only(t_inp);
   fl_snapshot((target_dir + "wp_style_text.png").c_str(), wp_style_text, row_margin, row_blend);
 
-  // snapshot of the C++ tab
+  // -- snapshot of the C++ tab
   widget_tabs->value(wp_cpp_tab);
   select_only(t_btn);
   fl_snapshot((target_dir + "wp_cpp_tab.png").c_str(), wp_cpp_tab, tab_margin, row_blend);
@@ -537,12 +560,12 @@ void run_autodoc(const Fl_String &target_dir) {
   fl_snapshot((target_dir + "wComment.png").c_str(), wComment, row_margin, row_blend);
   fl_snapshot((target_dir + "wp_cpp_callback.png").c_str(), wCallback, w_when_box, row_margin, row_blend);
 
-  // snapshot of the Grid tab
+  // -- snapshot of the Grid tab
   select_only(t_grd);
   widget_tabs->value(widget_tab_grid);
   fl_snapshot((target_dir + "wp_grid_tab.png").c_str(), widget_tab_grid, tab_margin, row_blend);
 
-  // snapshot of the Grid Child tab
+  // -- snapshot of the Grid Child tab
   select_only(t_grdc);
   widget_tabs->value(widget_tab_grid_child);
   fl_snapshot((target_dir + "wp_gridc_tab.png").c_str(), widget_tab_grid_child, tab_margin, row_blend);
