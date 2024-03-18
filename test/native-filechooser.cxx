@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 
     None of that is useful for the native file chooser under macOS or Windows.
    */
-#if !defined(_WIN32) && !defined(__APPLE__)
+#if defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
   fl_register_images();
   Fl_File_Icon::load_system_icons();
 #endif
