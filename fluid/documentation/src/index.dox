@@ -103,6 +103,10 @@
  - \ref functional_comment
  - \ref functional_data
 
+ \subpage page_sourceview_panel
+ - \ref codeview_find
+ - \ref codeview_settings
+
  \subpage page_setting_dialog
  - \ref setting_general
  - \ref setting_project

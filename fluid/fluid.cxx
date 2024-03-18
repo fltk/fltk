@@ -1817,7 +1817,11 @@ void init_scheme() {
     scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
     fluid_prefs.set("scheme_name", scheme_name);
   }
-  Fl::scheme(scheme_name);
+  // Set the new scheme only if it was not overridden by the -scheme
+  // command line option
+  if (Fl::scheme() == NULL) {
+    Fl::scheme(scheme_name);
+  }
   free(scheme_name);
 }
 

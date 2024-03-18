@@ -32,16 +32,19 @@ extern Fl_Double_Window *sourceview_panel;
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs *sv_tab;
 #include <FL/Fl_Group.H>
+extern Fl_Group *sv_source_tab;
 #include "CodeEditor.h"
 extern CodeViewer *sv_source;
 extern CodeViewer *sv_header;
 extern TextViewer *sv_strings;
 extern TextViewer *sv_project;
+extern Fl_Group *cv_find_row;
 #include <FL/Fl_Button.H>
 extern Fl_Button *sv_find_text_case;
 #include <FL/Fl_Input.H>
 extern Fl_Input *sv_find_text;
 #include <FL/Fl_Box.H>
+extern Fl_Group *cv_settings_row;
 #include <FL/Fl_Light_Button.H>
 extern Fl_Light_Button *sv_autorefresh;
 extern Fl_Light_Button *sv_autoposition;

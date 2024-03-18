@@ -786,6 +786,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_functional_nodes.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_widget_panel.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_setting_dialog.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_sourceview_panel.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_appendices.dox
 
 #                         @CMAKE_CURRENT_SOURCE_DIR@/src/preface.dox \
