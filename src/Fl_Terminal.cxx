@@ -1214,7 +1214,7 @@ void Fl_Terminal::set_scrollbar_params(Fl_Scrollbar* scroll, // scrollbar to set
   int   diff    = max - min;
   int   length  = is_hor ? scroll->w() : scroll->h();        // long side of scrollbar in pixels
   float tabsize = min / float(max);                          // fractional size of tab
-  float minpix  = (float)MAX(10, scrollbar_actual_size());   // scrollbar_size preferred, 10pix min (**)
+  float minpix  = float(MAX(10, scrollbar_actual_size()));   // scrollbar_size preferred, 10pix min (**)
   float minfrac = minpix / length;                           // slide_size wants a fraction
   tabsize       = MAX(minfrac, tabsize);                     // use best fractional size
   scroll->slider_size(tabsize);                              // size of slider's tab
