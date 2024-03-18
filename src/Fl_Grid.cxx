@@ -2,7 +2,7 @@
 // Fl_Grid widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2021-2022 by Albrecht Schlosser.
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,23 +70,23 @@ class Fl_Grid::Row {
   void free_cells() {
     Cell *cel = cells_;
     while (cel) {
-      Cell *next = cel->next_;
+      Cell *next = cel->next();
       delete cel;
       cel = next;
     } // free_cells()
     cells_ = 0;
   }
 
-  // Fl_Grid::Row::remove_cell() - remove all cells of column col from list of cells
+  // Fl_Grid::Row::remove_cell() - remove all cells of column col from the list of cells
 
   void remove_cell(int col) { //
     Cell *cel = cells_;
     Cell *prev = 0;
     while (cel) {
-      Cell *next = cel->next_;
-      if (cel->col_ == col) {
+      Cell *next = cel->next();
+      if (cel->col() == col) {
         if (prev) {
-          prev->next_ = next;
+          prev->next(next);
         } else {
           cells_ = next;
         }
