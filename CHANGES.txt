@@ -40,6 +40,8 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
     the starting scaling factor of all FLTK apps.
   - New Fl_Grid class to layout multiple columns and rows of widgets.
   - New Fl_Flex class to layout one row or one column of widgets.
+  - New Fl_Terminal widget supporting Unicode/utf-8, ANSI/xterm escape codes
+    with full RGB color control.
   - New Fl::keyboard_screen_scaling(0) call stops recognition of ctrl/+/-/0/
     keystrokes as scaling all windows of a screen.
   - New member function Fl_Image::scale(int width, int height) to set
@@ -175,7 +177,7 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
   Other Improvements
 
   - (add new items here)
-  - Reported support of macOS 14.0 "Sonoma".
+  - Added support of macOS 14.0 "Sonoma".
   - Added support for macOS 13.0 "Ventura".
   - Added support for macOS 12.0 "Monterey".
   - Added support for macOS 11.0 "Big Sur" and for building for
