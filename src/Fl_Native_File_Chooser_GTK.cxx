@@ -576,7 +576,7 @@ static void update_preview_cb(GtkFileChooser *file_chooser, GtkImage* gtkimg)
       img->scale(width, height);
       width = img->w(), height = img->h();
     }
-    Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
+    Fl_Image_Surface *surf = new Fl_Image_Surface(width, height);
     Fl_Surface_Device::push_current(surf);
     fl_color(FL_WHITE);
     fl_rectf(0, 0, width, height);
