@@ -423,6 +423,10 @@ void run_autodoc(const Fl_String &target_dir) {
   // explain selection, multiple selection, keyboard shortcuts
   // explain mouse functionality and alignment
   // explain live resize
+  // arrow: move by 1
+  // shift: resize by one
+  // Meta: move by Widget Gap
+  // Shift Meta: resize by Widget Increment
 
   // ---- widget bin
   // show grouping

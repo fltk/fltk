@@ -785,6 +785,7 @@ WARN_LOGFILE           =
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_main_window.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_widgetbin_panel.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_edit_window.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_functional_nodes.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_widget_panel.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_setting_dialog.dox \

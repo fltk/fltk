@@ -96,12 +96,21 @@
 
  \subpage page_widgetbin_panel
 
+ \subpage page_edit_window
+ - \ref edit_selection
+ - \ref edit_layout
+ - \ref edit_snap
+ - \ref edit_resize
+
  \subpage page_widget_panel
  - \ref widget_panel_gui
  - \ref widget_panel_style
  - \ref widget_panel_cpp
  - \ref widget_panel_grid
  - \ref widget_panel_gridc
+
+ </TD>
+ <TD ALIGN="LEFT" VALIGN="TOP">
 
  \subpage page_functional_nodes
  - \ref functional_function
@@ -113,9 +122,6 @@
  - \ref functional_widgetclass
  - \ref functional_comment
  - \ref functional_data
-
- </TD>
- <TD ALIGN="LEFT" VALIGN="TOP">
 
  \subpage page_sourceview_panel
  - \ref codeview_find

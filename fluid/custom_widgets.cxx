@@ -55,7 +55,7 @@ int Widget_Bin_Button::handle(int inEvent)
         // fake a drag outside of the widget
         Fl::e_x = x()-1;
         Fl_Button::handle(inEvent);
-        // fake a buttton release
+        // fake a button release
         Fl_Button::handle(FL_RELEASE);
         // make it into a dnd event
         const char *type_name = (const char*)user_data();
