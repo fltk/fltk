@@ -2198,12 +2198,19 @@ void Fl::disable_im()
  Opens the display.
  Automatically called by the library when the first window is show()'n.
  Does nothing if the display is already open.
+ \note Requires ##include <FL/platform.H>
  */
 void fl_open_display()
 {
   Fl::screen_driver()->open_display();
 }
 
+/** Closes the connection to the windowing system when that's possible.
+You do \e not need to call this to exit, and in fact it is faster to not do so. It may be
+useful to call this if you want your program to continue without
+a GUI. You cannot open the display again, and cannot call any FLTK functions.
+ \note Requires ##include <FL/platform.H>
+*/
 void fl_close_display()
 {
   Fl::screen_driver()->close_display();
