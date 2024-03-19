@@ -22,6 +22,9 @@
  The Window and Widget Class icons can be dragged onto the desktop,
  creating a new window at the drop position.
 
+ \image html widgetbin_action.jpg
+ \image latex widgetbin_action.jpg
+
  All other widget types can be dragged from the bin into a window, or a group
  inside a window. When dropped, they will be positioned close to the drop point
  and inserted into the widget tree as the last child of the chosen group.
