@@ -409,7 +409,7 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
     struct wld_window *xid = fl_wl_xid(pWindow);
     if (xid->kind == Fl_Wayland_Window_Driver::DECORATED && !xid->frame_cb) {
       xid->frame_cb = wl_surface_frame(xid->wl_surface);
-      wl_callback_add_listener(xid->frame_cb, 
+      wl_callback_add_listener(xid->frame_cb,
                                Fl_Wayland_Graphics_Driver::p_surface_frame_listener, xid);
     }
     wl_egl_window_resize(egl_window, W, H, 0, 0);

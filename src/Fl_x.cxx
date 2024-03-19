@@ -1260,7 +1260,7 @@ int fl_handle(const XEvent& thisevent)
   XEvent xevent = thisevent;
   fl_xevent = &thisevent;
   Window xid = xevent.xany.window;
-  
+
   // For each DestroyNotify event, determine whether an FLTK-created window
   // is being destroyed (see issue #935).
   bool xid_is_from_fltk_win = false;

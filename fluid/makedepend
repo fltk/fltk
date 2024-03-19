@@ -18,6 +18,7 @@ about_panel.o: ../FL/Fl_Group.H
 about_panel.o: ../FL/Fl_Image.H
 about_panel.o: ../FL/Fl_Pixmap.H
 about_panel.o: ../FL/Fl_Return_Button.H
+about_panel.o: ../FL/fl_string_functions.h
 about_panel.o: ../FL/fl_types.h
 about_panel.o: ../FL/fl_utf8.h
 about_panel.o: ../FL/Fl_Widget.H
@@ -371,6 +372,7 @@ factory.o: ../FL/Fl_Roller.H
 factory.o: ../FL/Fl_Scrollbar.H
 factory.o: ../FL/Fl_Slider.H
 factory.o: ../FL/Fl_Spinner.H
+factory.o: ../FL/fl_string_functions.h
 factory.o: ../FL/Fl_Tabs.H
 factory.o: ../FL/Fl_Terminal.H
 factory.o: ../FL/Fl_Text_Buffer.H
@@ -919,6 +921,7 @@ Fl_Grid_Type.o: ../FL/Fl_Rect.H
 Fl_Grid_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Grid_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Grid_Type.o: ../FL/Fl_Slider.H
+Fl_Grid_Type.o: ../FL/fl_string_functions.h
 Fl_Grid_Type.o: ../FL/Fl_Tabs.H
 Fl_Grid_Type.o: ../FL/fl_types.h
 Fl_Grid_Type.o: ../FL/fl_utf8.h
@@ -972,6 +975,7 @@ Fl_Group_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Group_Type.o: ../FL/Fl_Scroll.H
 Fl_Group_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Group_Type.o: ../FL/Fl_Slider.H
+Fl_Group_Type.o: ../FL/fl_string_functions.h
 Fl_Group_Type.o: ../FL/Fl_Table.H
 Fl_Group_Type.o: ../FL/Fl_Tabs.H
 Fl_Group_Type.o: ../FL/fl_types.h
@@ -1032,6 +1036,7 @@ Fl_Menu_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Menu_Type.o: ../FL/Fl_Shared_Image.H
 Fl_Menu_Type.o: ../FL/Fl_Shortcut_Button.H
 Fl_Menu_Type.o: ../FL/Fl_Slider.H
+Fl_Menu_Type.o: ../FL/fl_string_functions.h
 Fl_Menu_Type.o: ../FL/Fl_Tabs.H
 Fl_Menu_Type.o: ../FL/Fl_Text_Buffer.H
 Fl_Menu_Type.o: ../FL/Fl_Text_Display.H
@@ -1088,6 +1093,7 @@ Fl_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Type.o: ../FL/Fl_Shared_Image.H
 Fl_Type.o: ../FL/Fl_Slider.H
+Fl_Type.o: ../FL/fl_string_functions.h
 Fl_Type.o: ../FL/Fl_Tabs.H
 Fl_Type.o: ../FL/fl_types.h
 Fl_Type.o: ../FL/fl_utf8.h
@@ -1563,6 +1569,7 @@ sourceview_panel.o: ../FL/Fl_Rect.H
 sourceview_panel.o: ../FL/Fl_RGB_Image.H
 sourceview_panel.o: ../FL/Fl_Scrollbar.H
 sourceview_panel.o: ../FL/Fl_Slider.H
+sourceview_panel.o: ../FL/fl_string_functions.h
 sourceview_panel.o: ../FL/Fl_Tabs.H
 sourceview_panel.o: ../FL/Fl_Text_Buffer.H
 sourceview_panel.o: ../FL/Fl_Text_Display.H
@@ -1646,6 +1653,7 @@ undo.o: ../FL/Fl_Rect.H
 undo.o: ../FL/Fl_RGB_Image.H
 undo.o: ../FL/Fl_Scrollbar.H
 undo.o: ../FL/Fl_Slider.H
+undo.o: ../FL/fl_string_functions.h
 undo.o: ../FL/fl_types.h
 undo.o: ../FL/fl_utf8.h
 undo.o: ../FL/Fl_Valuator.H

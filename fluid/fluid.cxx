@@ -278,7 +278,7 @@ static Fl_String end_with_slash(const Fl_String &str) {
     return str;
 }
 
-/** 
+/**
  Generate a path to a directory for temporary data storage.
  The path is stored in g_tmpdir.
  */
@@ -345,7 +345,7 @@ static void create_tmpdir() {
   }
 }
 
-/** 
+/**
  Delete the temporary directory that was created in set_tmpdir.
  */
 static void delete_tmpdir() {

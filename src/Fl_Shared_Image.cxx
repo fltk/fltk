@@ -48,7 +48,7 @@ extern "C" {
 }
 
 
-/** 
+/**
  Returns the Fl_Shared_Image* array.
 
  \return a pointer to an array of shared image pointers, sorted by name and size
@@ -402,7 +402,7 @@ Fl_Image *Fl_Shared_Image::copy() const {
 /**
  Averages the colors in the image with the provided FLTK color value.
 
- This method changes the pixel data of this specific image. 
+ This method changes the pixel data of this specific image.
 
  \note It does not change any of the resized copies of this image, nor does it
  necessarily apply the color changes if this image is resized later.

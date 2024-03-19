@@ -221,7 +221,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
     { Fl_Group* o = new Fl_Group(10, 275, 470, 95);
       { Fl_Group* o = new Fl_Group(10, 275, 470, 20);
         { previewButton = new Fl_Check_Button(10, 275, 105, 20, "Preview");
-          previewButton->shortcut(0x80070);
+          previewButton->shortcut(FL_ALT|'p');
           previewButton->down_box(FL_DOWN_BOX);
           previewButton->value(1);
           previewButton->callback((Fl_Callback*)cb_previewButton);

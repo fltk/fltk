@@ -1498,7 +1498,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
   // Cursor names are the files of directory /usr/share/icons/XXXX/cursors/
   // where XXXX is the name of the current 'cursor theme'.
   static struct cursor_file_struct {
-    Fl_Cursor c; 
+    Fl_Cursor c;
     const char *fname;
     Fl_Wayland_Screen_Driver::cursor_shapes wld_c;
   } cursor_file_array[] = {
@@ -1522,7 +1522,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
     {FL_CURSOR_NESW,   "fd_double_arrow",     Fl_Wayland_Screen_Driver::nesw },
     {FL_CURSOR_NWSE,   "bd_double_arrow",     Fl_Wayland_Screen_Driver::nwse }
   };
-  
+
   int found = -1;
   for (unsigned i = 0; i < sizeof(cursor_file_array) / sizeof(struct cursor_file_struct); i++) {
     if (cursor_file_array[i].c == c) {
@@ -1536,7 +1536,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
     }
   }
   if (found < 0 || !scr_driver->xc_cursor[found]) return 0;
-  
+
   if (xid->custom_cursor) {
     delete_cursor(xid->custom_cursor);
     xid->custom_cursor = NULL;
@@ -1781,7 +1781,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
 
   if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface)
       checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
-  
+
   if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
     fl_win && is_a_resize && fl_win->kind == DECORATED) { // fix for issue #878
     scan_subwindows(pWindow, does_window_cover_parent);

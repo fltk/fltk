@@ -127,7 +127,7 @@ public:
 #ifdef SHIM_DEBUG
   static void print_pool();
 #endif
-  
+
   /** Returns the filename of the shared image */
   const char    *name() { return name_; }
 

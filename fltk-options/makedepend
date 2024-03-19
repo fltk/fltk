@@ -34,6 +34,7 @@ fltk-options.o: ../FL/Fl_RGB_Image.H
 fltk-options.o: ../FL/Fl_Scroll.H
 fltk-options.o: ../FL/Fl_Scrollbar.H
 fltk-options.o: ../FL/Fl_Slider.H
+fltk-options.o: ../FL/fl_string_functions.h
 fltk-options.o: ../FL/Fl_Tooltip.H
 fltk-options.o: ../FL/fl_types.h
 fltk-options.o: ../FL/fl_utf8.h

@@ -174,10 +174,10 @@ int Fl_Button::handle(int event) {
             set_changed();
             if (when() & FL_WHEN_CHANGED)
               do_callback(FL_REASON_CHANGED);
-            else if (when() & FL_WHEN_RELEASE) 
+            else if (when() & FL_WHEN_RELEASE)
               do_callback(FL_REASON_RELEASED);
           } else {
-            if (when() & FL_WHEN_NOT_CHANGED) 
+            if (when() & FL_WHEN_NOT_CHANGED)
               do_callback(FL_REASON_SELECTED);
           }
         } else if (type() == FL_TOGGLE_BUTTON) {

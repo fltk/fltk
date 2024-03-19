@@ -1849,7 +1849,7 @@ Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 175 77 2
         MenuItem {} {
           label {White on DarkAmber (XTERM)}
           callback {G_tty->color(0x30200000);        // amber widget bg color
-G_tty->textfgcolor_xterm(7);	 // XTERM_WHITE (influenced by Dim/Bold)
+G_tty->textfgcolor_xterm(7);     // XTERM_WHITE (influenced by Dim/Bold)
 G_tty->textbgcolor(0xffffffff);  // "see through" color
 
 update_inputs();
@@ -1860,7 +1860,7 @@ add_lines(5);
         }
         MenuItem {} {
           label {White on Black (XTERM)}
-          callback {G_tty->textfgcolor_xterm(7);	// XTERM WHITE (influenced by Dim/Bold)
+          callback {G_tty->textfgcolor_xterm(7);        // XTERM WHITE (influenced by Dim/Bold)
 G_tty->textbgcolor(0xffffffff);
 G_tty->color(0x00000000);
 update_inputs();

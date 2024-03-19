@@ -3006,7 +3006,7 @@ void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
         f.write_c(")");
         break;
     case FD_I18N_POSIX : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,", 
+        f.write_c("catgets(%s,%s,%d,",
                   g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
                   g_project.i18n_pos_set.c_str(), msgnum());
         f.write_cstring(label());
@@ -3082,7 +3082,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     case FD_I18N_POSIX : /* POSIX catgets */
         f.write_c("catgets(%s,%s,%d,",
                   g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
-                  g_project.i18n_pos_set.c_str(), 
+                  g_project.i18n_pos_set.c_str(),
                   msgnum() + 1);
         f.write_cstring(tooltip());
         f.write_c(")");

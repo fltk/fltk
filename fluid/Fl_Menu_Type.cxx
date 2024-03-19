@@ -493,7 +493,7 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
                 f.indent(), g_project.i18n_gnu_function.c_str());
       } else if (g_project.i18n_type==FD_I18N_POSIX) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                  f.indent(), 
+                  f.indent(),
                   g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
                   g_project.i18n_pos_set.c_str(), msgnum());
       }

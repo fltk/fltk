@@ -662,7 +662,7 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
   int index = window_menu_items->size() - 1;
   if (index >= window_menu_items_count - 1) {
     window_menu_items_count += 5;
-    window_menu_items = (Fl_Menu_Item*)realloc(window_menu_items, 
+    window_menu_items = (Fl_Menu_Item*)realloc(window_menu_items,
                                     window_menu_items_count * sizeof(Fl_Menu_Item));
     Fl_Menu_Item *item = (Fl_Menu_Item*)fl_sys_menu_bar->find_item("Window");
     item->user_data(window_menu_items);
