@@ -1396,41 +1396,19 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
 //
 
 Fl_Region Fl_Cairo_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
-  struct flCairoRegion *R = (struct flCairoRegion*)malloc(sizeof(*R));
-  R->count = 1;
-  R->rects = (cairo_rectangle_t *)malloc(sizeof(cairo_rectangle_t));
-  R->rects->x=x, R->rects->y=y, R->rects->width=w; R->rects->height=h;
-  return (Fl_Region)R;
-}
-
-
-// r1 ⊂ r2
-static bool CairoRectContainsRect(cairo_rectangle_t *r1, cairo_rectangle_t *r2) {
-  return r1->x >= r2->x && r1->y >= r2->y && r1->x+r1->width <= r2->x+r2->width &&
-    r1->y+r1->height <= r2->y+r2->height;
+  cairo_rectangle_int_t rect = {x, y, w, h};
+  return cairo_region_create_rectangle(&rect);
 }
 
 
 void Fl_Cairo_Graphics_Driver::add_rectangle_to_region(Fl_Region r_, int X, int Y, int W, int H) {
-  struct flCairoRegion *r = (struct flCairoRegion*)r_;
-  cairo_rectangle_t arg = {double(X), double(Y), double(W), double(H)};
-  int j; // don't add a rectangle totally inside the Fl_Region
-  for (j = 0; j < r->count; j++) {
-    if (CairoRectContainsRect(&arg, &(r->rects[j]))) break;
-  }
-  if (j >= r->count) {
-    r->rects = (cairo_rectangle_t*)realloc(r->rects, (++(r->count)) * sizeof(cairo_rectangle_t));
-    r->rects[r->count - 1] = arg;
-  }
+  cairo_rectangle_int_t rect = {X, Y, W, H};
+  cairo_region_union_rectangle((cairo_region_t*)r_, &rect);
 }
 
 
 void Fl_Cairo_Graphics_Driver::XDestroyRegion(Fl_Region r_) {
-  if (r_) {
-    struct flCairoRegion *r = (struct flCairoRegion*)r_;
-    free(r->rects);
-    free(r);
-  }
+  cairo_region_destroy((cairo_region_t*)r_);
 }
 
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
@@ -1440,27 +1418,24 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
   if (cairo_) {
     cairo_reset_clip(cairo_);
     // apply what's in rstack
-    struct flCairoRegion *r = (struct flCairoRegion*)rstack[rstackptr];
+    cairo_region_t *r = (cairo_region_t*)rstack[rstackptr];
     if (r) {
       if (!clip_) {
         clip_ = new Clip();
         clip_->prev = NULL;
       }
-      for (int i = 0; i < r->count; i++) {
-        cairo_rectangle(cairo_, r->rects[i].x - 0.5, r->rects[i].y - 0.5, r->rects[i].width, r->rects[i].height);
-        // put in clip_ the bounding rect of region r
-        if (i == 0) {
-          clip_->x = r->rects[0].x; clip_->y = r->rects[0].y;
-          clip_->w = r->rects[0].width; clip_->h = r->rects[0].height;
-        } else {
-          int R = fl_max(r->rects[i].x + r->rects[i].width, clip_->x + clip_->w);
-          int B = fl_max(r->rects[i].y + r->rects[i].height, clip_->y + clip_->h);
-          clip_->x = fl_min(r->rects[i].x, clip_->x) ;
-          clip_->y = fl_min(r->rects[i].y, clip_->y);
-          clip_->w = R - clip_->x;
-          clip_->h = B - clip_->y;
-        }
+      int count = cairo_region_num_rectangles(r);
+      cairo_rectangle_int_t rect;
+      for (int i = 0; i < count; i++) {
+        cairo_region_get_rectangle(r, i, &rect);
+        cairo_rectangle(cairo_, rect.x - 0.5, rect.y - 0.5, rect.width, rect.height);
       }
+      // put in clip_ the bounding rect of region r
+      cairo_region_get_extents(r, &rect);
+      clip_->x = rect.x;
+      clip_->y = rect.y;
+      clip_->w = rect.width;
+      clip_->h = rect.height;
       cairo_clip(cairo_);
     } else if (clip_) {
       clip_->w = -1;

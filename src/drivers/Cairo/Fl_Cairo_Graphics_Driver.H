@@ -28,10 +28,6 @@ typedef struct _PangoLayout  PangoLayout;
 typedef struct _PangoContext PangoContext;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-struct flCairoRegion {
-  int count;
-  struct _cairo_rectangle *rects;
-}; // a region is the union of a series of rectangles
 
 class Fl_Cairo_Font_Descriptor : public Fl_Font_Descriptor {
 public:

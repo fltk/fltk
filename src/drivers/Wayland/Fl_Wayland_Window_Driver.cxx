@@ -408,7 +408,7 @@ void Fl_Wayland_Window_Driver::flush() {
   if (!window || !window->configured_width) return;
 
   Fl_X *ip = Fl_X::flx(pWindow);
-  struct flCairoRegion* r = (struct flCairoRegion*)ip->region;
+  cairo_region_t* r = (cairo_region_t*)ip->region;
   if (!window->buffer || pWindow->as_overlay_window()) r = NULL;
 
   Fl_Wayland_Window_Driver::in_flush_ = true;
