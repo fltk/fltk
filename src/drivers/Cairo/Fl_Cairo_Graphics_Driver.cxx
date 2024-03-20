@@ -1,7 +1,7 @@
 //
 // Support for Cairo graphics for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1414,8 +1414,6 @@ void Fl_Cairo_Graphics_Driver::XDestroyRegion(Fl_Region r_) {
   cairo_region_destroy((cairo_region_t*)r_);
 }
 
-#define fl_max(a,b) ((a) > (b) ? (a) : (b))
-#define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
 void Fl_Cairo_Graphics_Driver::restore_clip() {
   if (cairo_) {
