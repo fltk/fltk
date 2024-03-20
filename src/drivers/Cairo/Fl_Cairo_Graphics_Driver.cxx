@@ -31,6 +31,9 @@
 #if ! PANGO_VERSION_CHECK(1,16,0)
 #  error "Requires Pango 1.16 or higher"
 #endif
+#if CAIRO_VERSION < CAIRO_VERSION_ENCODE(1,10,0)
+#  error "Requires Cairo 1.10 or higher"
+#endif
 #include <math.h>
 #include <stdlib.h>  // abs(int)
 #include <string.h>  // memcpy()
@@ -1393,7 +1396,7 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
 // Region-handling member functions.
 // They are used ONLY if the cairo graphics driver is the display graphics driver.
 // They are not used if the cairo graphics driver is used to draw PostScript.
-//
+// Type cairo_region_t and associated functions require cairo ≥ 1.10
 
 Fl_Region Fl_Cairo_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   cairo_rectangle_int_t rect = {x, y, w, h};
