@@ -1,7 +1,7 @@
 #
 # Top-level Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 
 include makeinclude
 
-DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) $(FLUIDDIR) fltk-options test \
+DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) $(FLUIDDIR) fltk-options $(TESTDIR) \
        documentation
 
 all: makeinclude fltk-config
@@ -24,6 +24,11 @@ all: makeinclude fltk-config
 		echo "=== making $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
 	done
+
+# Build test programs (and 'all') if FLTK was configured with '--disable-test'
+test: all
+	echo "=== making test ===";\
+	(cd test; $(MAKE) $(MFLAGS)) || exit 1
 
 install: makeinclude
 	-mkdir -p $(DESTDIR)$(bindir)

@@ -3,7 +3,7 @@ dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2023 by Bill Spitzak and others.
+dnl Copyright 1998-2024 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -101,6 +101,14 @@ AS_IF([test x$enable_debug = xyes], [
 ], [
     DEBUGFLAG=""
 ])
+
+AC_ARG_ENABLE([test], AS_HELP_STRING([--disable-test], [build test programs (default=yes)]))
+AS_IF([test x$enable_test = xno], [
+    TESTDIR=""
+], [
+    TESTDIR="test"
+])
+AC_SUBST(TESTDIR)
 
 AC_ARG_ENABLE([forms], AS_HELP_STRING([--disable-forms], [build Forms compatibility library (default=yes)]))
 
@@ -1813,6 +1821,12 @@ AS_IF([test x$enable_fluid != xno], [
     echo "    Build fluid: YES"
     ],[
     echo "    Build fluid: NO"
+    ])
+
+AS_IF([test x$enable_test != xno], [
+    echo "    Build tests: YES"
+    ],[
+    echo "    Build tests: NO"
     ])
 
 AS_IF([test "$fltk_cross_compiling" = "yes"], [
