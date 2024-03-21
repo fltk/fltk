@@ -1104,11 +1104,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
        [LIBDECORDBUS="-DHAS_DBUS $($PKGCONFIG --cflags dbus-1)" LIBS="$LIBS $($PKGCONFIG --libs dbus-1)"]
       )
       LDFLAGS="$LDFLAGS -rdynamic"
-      AC_SUBST([UNAME])
-      UNAME="$(uname -s)"
-      AS_CASE([$UNAME],
-         [Linux], [LDFLAGS="$LDFLAGS -no-pie"]
-      )
 
       AC_SEARCH_LIBS([dlopen], [dl])
 
