@@ -1,7 +1,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 2022-2023 by Bill Spitzak and others.
+# Copyright 2022-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -28,10 +28,6 @@ EXTRA_DECOR =  ${${UNAME}_CFLAGS}
 
 CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src -I../src/plugins $(EXTRA_DECOR) -fPIC -D_GNU_SOURCE \
    -DHAVE_MEMFD_CREATE -DHAVE_MKOSTEMP -DHAVE_POSIX_FALLOCATE
-
-Linux_NOPIE = -no-pie
-FreeBSD_NOPIE =
-NOPIE = ${${UNAME}_NOPIE}
 
 all : $(OBJECTS)
 
