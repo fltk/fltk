@@ -275,10 +275,9 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
   // http://publib.boulder.ibm.com/infocenter/pseries/v5r3/topic/com.ibm.aix.basetechref/doc/basetrf1/mntctl.htm
   int res = -1, len;
   char *list = NULL, *name;
-  struct vmount *vp;
 
   // We always have the root filesystem
-  add("/", icon);
+  browser->add("/", icon);
   // Get the required buffer size for the vmount structures
   res = mntctl(MCTL_QUERY, sizeof(len), (char *) &len);
   if (!res) {
@@ -292,7 +291,8 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
       if (0 >= res) {
         res = -1;
       } else {
-        for (int i = 0, vp = (struct vmount *) list; i < res; ++i) {
+        struct vmount *vp = (struct vmount *) list;
+        for (int i = 0; i < res; ++i) {
           name = (char *) vp + vp->vmt_data[VMT_STUB].vmt_off;
           strlcpy(filename, name, lname);
           // Skip the already added root filesystem
