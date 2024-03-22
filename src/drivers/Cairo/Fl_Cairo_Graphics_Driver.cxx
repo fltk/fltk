@@ -503,7 +503,7 @@ void Fl_Cairo_Graphics_Driver::circle(double x, double y, double r){
 
 void Fl_Cairo_Graphics_Driver::arc(double x, double y, double r, double start, double a){
   if (what == NONE) return;
-  if (gap_ == 1) cairo_new_sub_path(cairo_);
+  if (gap_ == 1) cairo_new_sub_path(cairo_); // 1.2
   gap_ = 0;
   if (start > a)
     cairo_arc(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
@@ -850,7 +850,8 @@ static void dealloc_surface_data(void *data) {
 
 
 void Fl_Cairo_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
-  int stride = cairo_format_stride_for_width(Fl_Cairo_Graphics_Driver::cairo_format, rgb->data_w());
+  int stride = cairo_format_stride_for_width(Fl_Cairo_Graphics_Driver::cairo_format,
+                                             rgb->data_w()); // 1.6
   uchar *BGRA = new uchar[stride * rgb->data_h()];
   memset(BGRA, 0, stride * rgb->data_h());
   int lrgb = rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d();
@@ -942,7 +943,7 @@ void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, 
 
 cairo_pattern_t *Fl_Cairo_Graphics_Driver::bitmap_to_pattern(Fl_Bitmap *bm,
                                     bool complement, cairo_surface_t **p_surface) {
-  int stride = cairo_format_stride_for_width(CAIRO_FORMAT_A1, bm->data_w());
+  int stride = cairo_format_stride_for_width(CAIRO_FORMAT_A1, bm->data_w()); // 1.6
   int w_bitmap = ((bm->data_w() + 7) / 8);
   uchar *BGRA = new uchar[stride * bm->data_h()];
   memset(BGRA, 0, stride * bm->data_h());
@@ -991,7 +992,7 @@ cairo_pattern_t *Fl_Cairo_Graphics_Driver::bitmap_to_pattern(Fl_Bitmap *bm,
 void Fl_Cairo_Graphics_Driver::cache(Fl_Bitmap *bm) {
   cairo_surface_t *surf;
   cairo_pattern_t *pattern = Fl_Cairo_Graphics_Driver::bitmap_to_pattern(bm, false, &surf);
-  uchar *BGRA = cairo_image_surface_get_data(surf);
+  uchar *BGRA = cairo_image_surface_get_data(surf); // 1.2
   (void)cairo_surface_set_user_data(surf, &data_key_for_surface, BGRA, dealloc_surface_data);
   cairo_surface_destroy(surf);
   *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)pattern;
@@ -1400,18 +1401,18 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
 
 Fl_Region Fl_Cairo_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   cairo_rectangle_int_t rect = {x, y, w, h};
-  return cairo_region_create_rectangle(&rect);
+  return cairo_region_create_rectangle(&rect); // 1.10
 }
 
 
 void Fl_Cairo_Graphics_Driver::add_rectangle_to_region(Fl_Region r_, int X, int Y, int W, int H) {
   cairo_rectangle_int_t rect = {X, Y, W, H};
-  cairo_region_union_rectangle((cairo_region_t*)r_, &rect);
+  cairo_region_union_rectangle((cairo_region_t*)r_, &rect); // 1.10
 }
 
 
 void Fl_Cairo_Graphics_Driver::XDestroyRegion(Fl_Region r_) {
-  cairo_region_destroy((cairo_region_t*)r_);
+  cairo_region_destroy((cairo_region_t*)r_); // 1.10
 }
 
 
@@ -1425,14 +1426,14 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
         clip_ = new Clip();
         clip_->prev = NULL;
       }
-      int count = cairo_region_num_rectangles(r);
+      int count = cairo_region_num_rectangles(r); // 1.10
       cairo_rectangle_int_t rect;
       for (int i = 0; i < count; i++) {
-        cairo_region_get_rectangle(r, i, &rect);
+        cairo_region_get_rectangle(r, i, &rect); // 1.10
         cairo_rectangle(cairo_, rect.x - 0.5, rect.y - 0.5, rect.width, rect.height);
       }
       // put in clip_ the bounding rect of region r
-      cairo_region_get_extents(r, &rect);
+      cairo_region_get_extents(r, &rect); // 1.10
       clip_->x = rect.x;
       clip_->y = rect.y;
       clip_->w = rect.width;
@@ -1496,7 +1497,7 @@ void Fl_Cairo_Graphics_Driver::focus_rect(int x, int y, int w, int h)
 
 cairo_pattern_t *Fl_Cairo_Graphics_Driver::calc_cairo_mask(const Fl_RGB_Image *rgb) {
   int i, j, d = rgb->d(), w = rgb->data_w(), h = rgb->data_h(), ld = rgb->ld();
-  int bytesperrow = cairo_format_stride_for_width(CAIRO_FORMAT_A1, w);
+  int bytesperrow = cairo_format_stride_for_width(CAIRO_FORMAT_A1, w); // 1.6
   if (!ld) ld = d * w;
   unsigned u;
   uchar byte, onebit;
