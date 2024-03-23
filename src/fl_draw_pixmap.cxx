@@ -30,6 +30,7 @@
 // The above comments were checked in as r2, and much has changed since then;
 // transparency added, color cube not required, etc.      -erco Oct 20 2013
 
+#include <config.h>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
 #include <FL/platform.H>
