@@ -89,6 +89,10 @@
  _not yet_
 -->
 
+ \subpage page_fluid_commandline
+
+ \subpage page_fluid_gui
+
  \subpage page_main_window
  - \ref main_titlebar
  - \ref main_menubar
@@ -135,6 +139,13 @@
  - \ref setting_i18n
  - \ref setting_user
 
+ \subpage page_appendices
+ - \ref appendix_keyboard_shortcuts
+ - \ref appendix_licenses
+
+
+
+ 
 <!--
  \subpage page_appendices
 

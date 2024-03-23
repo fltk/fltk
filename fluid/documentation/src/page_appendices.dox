@@ -6,61 +6,81 @@
 
  \section appendix_app_settings Fluid Application Settings
 
- ## Options ##
+<!-- ---------------------------------------------------------------------- -->
+\section appendix_keyboard_shortcuts Keyboard Shortcuts
 
- __Select scheme__ : select a scheme for Fluid. Changes in the scheme will be
- visible instantly in all windows.
+On Apple computers, use the Apple Command key instead of Ctrl.
 
- __Show tooltips__ : if checked, show tooltips for most UI elements in Fluid dialogs.
+| Key Combo | Function |
+| :-------: | :------- |
+| `F1` | open widget dialog |
+| `F2` | move widget earlier in tree |
+| `F3` | move widget later in tree |
+| `F7` | move widgets into group |
+| `F8` | ungroup widgets |
+| `Delete` | delete selected widgets |
+| `Ctrl-1..9` | load project from history |
+| `Alt-1..6` | label text tiny to huge |
+| `Ctrl-A` | select all |
+| `Shift-Ctrl-A` | select none |
+| `Alt-B` | dhow or hide widget bin |
+| `Ctrl-C` | copy widgets |
+| `Shift-Ctrl-C` | generate C++ code files |
+| `Ctrl-G` | grid setting dialog |
+| `Ctrl-I` | merge project file into current project |
+| `Ctrl-N` | start a new project, close the current project |
+| `Shift-Ctrl-N` | new project from template |
+| `Ctrl-O` | open project file |
+| `Shift-Ctrl-O` | toggle overlays |
+| `Ctrl-P` | print all visible project windows |
+| `Alt-P` | open FLUID settings dialog |
+| `Ctrl-Q` | quit FLUID |
+| `Ctrl-S` | save project |
+| `Shift-Ctrl-S` | save project with new name |
+| `Shift-Alt-S` | show or hide source view window |
+| `Ctrl-U` | duplicate selected widgets |
+| `Ctrl-V` | paste last copied widgets |
+| `Shift-Ctrl-W` | write i18n translation file |
+| `Ctrl-X` | cut selected widgets |
+| `Alt-X` | show shell command settings |
+| `Ctrl-Z` | undo |
+| `Shift-Ctrl-Z` | redo |
 
- __Show completions dialogs__ : if checked, Fluid will pop up a dialog box
- after generating code, header, and strings files.
+<!-- | `Alt-G` | rund last shell command again | -->
 
- __Open previous file on startup__ : when launching Fluid in its interactive
- mode, it will load the file that was last open when Fluid was closed.
 
- __Remember window positions__ : reopen windows and dialogs where they were
- left when Fluid was last closed.
+| Action | Function in Layout Editor |
+| :----: | :------------------------ |
+| `LMB` | select one widget |
+| `LMB-drag` | select multiple widgets with selection box |
+| `Shift-LMB` | extend widget selection |
+| `Shift-LMB-Drag` | toggle selection in selection box |
+| `Shift-LMB-Drag` | resize window proportionally |
+| `Tab` | select next widget |
+| `Shift-Tab` | select previous widget |
+| `Arrow` | move selected widgets by one unit |
+| `Shift-Arrow` | resize by one unit |
+| `Ctrl-Arrow` | move by grid units |
+| `Shift-Ctrl-Arrow` | resize by grid units |
 
- __Show comments in browser__ : if a comment has been specified for a type, show
- the initial line of the comment within the widget tree browser.
 
- ## External Editor ##
+<!-- ---------------------------------------------------------------------- -->
 
- When you configure the External Editor text field with a shell command and
- select the "Use for Code Nodes" option, FLUID will launch an external editor
- for editing the C++ code within a Code Node. After making changes and saving
- the code in the external editor, it will automatically be transferred back
- into the Code Node. The shell command is constructed by combining the text
- field's content with the path and name of a temporary file containing the
- code snippet. The file name ends in `.cxx`.
+\section appendix_licenses External Licenses
 
- ## Overlays ##
+FLUID uses graphical images based on the Zendesk Garden Stroke icon set:
 
- __Show positioning guides__ :
+[https://github.com/zendeskgarden](https://github.com/zendeskgarden)
+Garden Stroke is licensed under the
+[Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
- When enabled, FLUID will use the existing Layout settings to propose widget
- positions and dimensions that align with other widgets within the project.
- It displays red indicator guides on the scene to illustrate the widget's
- relationship with its neighboring elements. If you drag the widgets with the
- mouse, they will automatically align with these preferred positions.
+FLUID includes templates based on 7GUIs:
 
- __Show restricted areas__ :
+[7GUIs](https://7guis.github.io/7guis/) was created as a spin-off
+of the master’s thesis Comparison of Object-Oriented and Functional
+Programming for GUI Development by Eugen Kiss at the Human-Computer
+Interaction group of the Leibniz Universität Hannover in 2014.
 
- When selected, FLUID will display a hash pattern when widgets overlap with
- other widgets within the same group or extend beyond the boundaries of their
- parent group. Widgets that are invisible will not trigger this effect.
-
- __Ghosting low contrast groups__ :
-
- Occasionally, newly created groups can be inconspicuous during the editing
- process when their background matches that of the parent and no visible
- box is drawn. However, if you enable the "Show Low Contrast Groups Ghosted"
- option, groups that lack a box type or have a flat box type with the same
- color as the parent will be displayed with a faint outline
- in the editing window.
-
- During live resizing and after project compilation, all groups will be
- rendered as originally designed, without the ghosted outline.
+With kind permission by Prof. Dr. Michael Rohs.
 
  */
