@@ -126,6 +126,12 @@ if(APPLE)
   else()
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
+    if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 20.0.0)) # a.k.a. macOS version ≥ 11.0
+      if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework UniformTypeIdentifiers")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework UniformTypeIdentifiers")
+      endif()
+    endif()
   endif(FLTK_BACKEND_X11)
 endif(APPLE)
 

@@ -1005,6 +1005,10 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 
     # MacOS X uses Cocoa for graphics.
     LIBS="$LIBS -framework Cocoa"
+    macosversion_maj=$(sw_vers -productVersion | cut -d. -f1)
+    AS_IF([test $macosversion_maj -ge 11], [
+      LIBS="$LIBS -framework UniformTypeIdentifiers"
+    ])
 
     AS_IF([test x$have_pthread = xyes], [
         AC_DEFINE([HAVE_PTHREAD])
