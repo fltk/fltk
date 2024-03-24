@@ -66,6 +66,15 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 
 <!-- ---------------------------------------------------------------------- -->
 
+\section appendix_fileformat .fl File Format
+
+FLUID edits and saves its state in `.fl` project files. These files are text,
+and you can (with care) edit them in a text editor, perhaps to get some special
+effects. The `.fl` file format is described in detail in the file
+`fluid/README_fl.txt` which is part of the FLTK source code repository.
+
+<!-- ---------------------------------------------------------------------- -->
+
 \section appendix_licenses External Licenses
 
 FLUID uses graphical images based on the Zendesk Garden Stroke icon set:

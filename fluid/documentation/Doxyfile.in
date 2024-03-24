@@ -783,6 +783,8 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_introduction.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_commandline.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_main_window.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_widgetbin_panel.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_edit_window.dox \
@@ -790,6 +792,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_widget_panel.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_setting_dialog.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_sourceview_panel.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_tutorial.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_appendices.dox
                          
 #                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_appendices.dox
