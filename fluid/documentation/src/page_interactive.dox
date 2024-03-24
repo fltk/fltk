@@ -1,0 +1,17 @@
+/**
+
+ \page page_interactive Interactive Mode
+
+ \tableofcontents
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section interactive_gui The GUI Tab
+
+ \image html fluid_gui_overview_800.jpg
+ \image latex fluid_gui_overview_800.jpg
+
+ This panel is used to edit the properties of the currently selected widgets.
+ \subpage page_edit_window
+ such as
+
+*/
