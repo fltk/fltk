@@ -97,7 +97,7 @@
  - \ref commandline_passive
  - \ref commandline_windows
 
- \subpage page_fluid_gui
+ \subpage page_interactive
 
  \subpage page_main_window
  - \ref main_titlebar
