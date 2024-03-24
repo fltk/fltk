@@ -379,7 +379,7 @@ void run_autodoc(const Fl_String &target_dir) {
   // Create a silly project that contains all widgets that we want to document
   new_project(false);
 
-  Fl_Type *t_func = add_new_widget_from_user("Function", kAddAsLastChild, false);
+  /*Fl_Type *t_func = */ add_new_widget_from_user("Function", kAddAsLastChild, false);
   Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", kAddAsLastChild, false);
   t_win->label("My Main Window");
   Fl_Widget_Type *t_grp = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Group", kAddAsLastChild, false);
