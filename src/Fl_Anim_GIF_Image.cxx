@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <math.h> // lround()
+#include <math.h> // round()
 
 #include <FL/Fl_Anim_GIF_Image.H>
 
@@ -199,10 +199,10 @@ void Fl_Anim_GIF_Image::FrameInfo::copy(const FrameInfo& fi) {
     double scale_factor_x = (double)canvas_w / (double)fi.canvas_w;
     double scale_factor_y = (double)canvas_h / (double)fi.canvas_h;
     if (fi.optimize_mem) {
-      frames[i].x = (unsigned short)lround(fi.frames[i].x * scale_factor_x);
-      frames[i].y = (unsigned short)lround(fi.frames[i].y * scale_factor_y);
-      int new_w = (int)lround(fi.frames[i].w * scale_factor_x);
-      int new_h = (int)lround(fi.frames[i].h * scale_factor_y);
+      frames[i].x = (unsigned short)round(fi.frames[i].x * scale_factor_x);
+      frames[i].y = (unsigned short)round(fi.frames[i].y * scale_factor_y);
+      int new_w = (int)round(fi.frames[i].w * scale_factor_x);
+      int new_h = (int)round(fi.frames[i].h * scale_factor_y);
       frames[i].w = new_w;
       frames[i].h = new_h;
     }
@@ -404,10 +404,10 @@ void Fl_Anim_GIF_Image::FrameInfo::resize(int W, int H) {
   double scale_factor_y = (double)H / (double)canvas_h;
   for (int i=0; i < frames_size; i++) {
     if (optimize_mem) {
-      frames[i].x = (unsigned short)lround(frames[i].x * scale_factor_x);
-      frames[i].y = (unsigned short)lround(frames[i].y * scale_factor_y);
-      int new_w = (int)lround(frames[i].w * scale_factor_x);
-      int new_h = (int)lround(frames[i].h * scale_factor_y);
+      frames[i].x = (unsigned short)round(frames[i].x * scale_factor_x);
+      frames[i].y = (unsigned short)round(frames[i].y * scale_factor_y);
+      int new_w = (int)round(frames[i].w * scale_factor_x);
+      int new_h = (int)round(frames[i].h * scale_factor_y);
       frames[i].w = new_w;
       frames[i].h = new_h;
     }
@@ -1163,7 +1163,7 @@ Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(int w, int h) {
  \param[in] scale rescale factor in relation to current size
  */
 Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(double scale) {
-  return resize((int)lround((double)w() * scale), (int)lround((double)h() * scale));
+  return resize((int)round((double)w() * scale), (int)round((double)h() * scale));
 }
 
 
