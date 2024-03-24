@@ -34,7 +34,6 @@
 //       Once this is available we can remove this comment block and
 //       the following 3-line "fix":
 
-#include <config.h>
 #include <math.h>                       // must be before #define below !
 static float nsvg__roundf(float x);     // prototype (see nanosvgrast.h)
 #define roundf nsvg__roundf             // redefinition (#937)
