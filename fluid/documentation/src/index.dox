@@ -39,56 +39,6 @@
  <TR>
  <TD ALIGN="LEFT" VALIGN="TOP">
 
-<!--
- \subpage page_introduction
-
-  - \ref introduction_workflow
-
- \subpage page_getting_started
-
- _not yet_
-
- \subpage page_ui_overview
-
- _not yet_
-
- \subpage page_basics
-
- _not yet_
-
- \subpage page_widget_types
-
- _not yet_
-
- \subpage page_layout
-
- _not yet_
-
- \subpage page_code_integration
-
- _not yet_
-
- \subpage page_build_integration
-
- _not yet_
-
- \subpage page_advanced
-
- _not yet_
-
- \subpage page_shortcuts
-
- _not yet_
-
- \subpage page_faqs
-
- _not yet_
-
- \subpage page_glossary
-
- _not yet_
--->
-
  \subpage page_introduction
  - \ref introduction_workflow
 
@@ -155,27 +105,6 @@
  - \ref appendix_keyboard_shortcuts
  - \ref appendix_fileformat
  - \ref appendix_licenses
-
-
-
- 
-<!--
- \subpage page_appendices
-
- - \ref appendix_app_settings
-
- \subpage page_index
-
- _not yet_
-
- \subpage page_legal
-
- _not yet_
-
- \subpage page_conclusion
-
- _not yet_
--->
 
  </TD>
  </TR>
