@@ -89,7 +89,13 @@
  _not yet_
 -->
 
- \subpage page_fluid_commandline
+ \subpage page_introduction
+ - \ref introduction_workflow
+
+ \subpage page_commandline
+ - \ref commandline_options
+ - \ref commandline_passive
+ - \ref commandline_windows
 
  \subpage page_fluid_gui
 
@@ -113,9 +119,6 @@
  - \ref widget_panel_grid
  - \ref widget_panel_gridc
 
- </TD>
- <TD ALIGN="LEFT" VALIGN="TOP">
-
  \subpage page_functional_nodes
  - \ref functional_function
  - \ref functional_code
@@ -126,6 +129,9 @@
  - \ref functional_widgetclass
  - \ref functional_comment
  - \ref functional_data
+
+ </TD>
+ <TD ALIGN="LEFT" VALIGN="TOP">
 
  \subpage page_sourceview_panel
  - \ref codeview_find
@@ -139,8 +145,15 @@
  - \ref setting_i18n
  - \ref setting_user
 
+ \subpage page_tutorial
+ - \ref fluid_cubeview
+ - \ref fluid_cubeview_ui
+ - \ref fluid_addconst
+ - \ref fluid_gencode
+
  \subpage page_appendices
  - \ref appendix_keyboard_shortcuts
+ - \ref appendix_fileformat
  - \ref appendix_licenses
 
 

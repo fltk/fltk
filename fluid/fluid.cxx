@@ -2193,7 +2193,9 @@ int main(int argc,char **argv) {
     return 1;
   }
 
-  const char *c = argv[i];
+  const char *c = NULL;
+  if (g_autodoc_path.empty())
+    c = argv[i];
 
   fl_register_images();
 
@@ -2217,7 +2219,7 @@ int main(int argc,char **argv) {
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_sourceview_cb(0,0);
-    if (!c && openlast_button->value() && absolute_history[0][0]) {
+    if (!c && openlast_button->value() && absolute_history[0][0] && g_autodoc_path.empty()) {
       // Open previous file when no file specified...
       open_project_file(absolute_history[0]);
     }
