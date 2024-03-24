@@ -153,12 +153,9 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
     )
 
     if(APPLE AND NOT FLTK_BACKEND_X11)
-      target_link_libraries(${TARGET_NAME} PUBLIC "-framework Cocoa")
-      if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 20.0.0)) # a.k.a. macOS version ≥ 11.0
-        if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
-          target_link_libraries(${TARGET_NAME} PUBLIC "-framework UniformTypeIdentifiers")
-        endif()
-      endif()
+      foreach(item ${FLTK_COCOA_FRAMEWORKS})
+        target_link_libraries(${TARGET_NAME} PUBLIC "${item}")
+      endforeach()
     endif()
 
     # we must link fltk with cairo if Cairo or Wayland is enabled (or both)
