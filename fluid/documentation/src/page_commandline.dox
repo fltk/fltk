@@ -1,6 +1,6 @@
 /**
 
- \page page_commandline Command Line Tool
+ \page page_commandline Command Line
 
  \tableofcontents
 
@@ -66,21 +66,21 @@ exit with a non-zero code. You can use the following lines in a
 makefile to automate the creation of the source and header
 files:
 
-<!-- continue here -->
-
-\code
+```
 my_panels.h my_panels.cxx: my_panels.fl
         fluid -c my_panels.fl
-\endcode
+```
 
-Most versions of make support rules that cause <tt>.fl</tt>
-files to be compiled:
+Most versions of "make" support rules that cause `.fl` files to be compiled:
 
-\code
+```
 .SUFFIXES: .fl .cxx .h
 .fl.h .fl.cxx:
         fluid -c $<
-\endcode
+```
+
+Check `README.CMake.txt` for examples on how to integrate FLUID into the
+`CMake` build process.
 
 If you use
 
@@ -88,27 +88,25 @@ If you use
 fluid -cs filename.fl
 \endcode
 
-FLUID will also write the "strings" for internationalization in file
-'filename.txt' (menu: 'File/Write Strings...').
+FLUID will also write the "strings" for internationalization into the file
+'filename.txt', 'filename.po', or 'filename.msg', depending on the chosen type
+of i18n (menu: 'File/Write Strings...').
 
 Finally there is another option which is useful for program developers
-who have many .fl files and want to upgrade them to the current FLUID
-version. FLUID will read the \p filename.fl file, save it, and exit
+who have many `.fl` files and want to upgrade them to the current FLUID
+version. FLUID will read the `filename.fl` file, save it, and exit
 immediately. This writes the file with current syntax and options and
 the current FLTK version in the header of the file. Use
 
-\code
+```
 fluid -u filename.fl
-\endcode
+```
 
-to 'upgrade' \p filename.fl . You may combine this with '-c' or '-cs'.
+to 'upgrade' `filename.fl` . You may combine this with `-c` or `-cs`.
 
 \note All these commands overwrite existing files w/o warning. You should
-particularly take care when running 'fluid -u' since this overwrites the
-original .fl source file.
-
-
-
+particularly take care when running `fluid -u` since this overwrites the
+original `.fl` project file.
 
  <!-- ---------------------------------------------------------------------- -->
  \section commandline_windows MS Windows specifics
