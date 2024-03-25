@@ -278,6 +278,7 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
 
   // We always have the root filesystem
   browser->add("/", icon);
+  num_files++;
   // Get the required buffer size for the vmount structures
   res = mntctl(MCTL_QUERY, sizeof(len), (char *) &len);
   if (!res) {
@@ -299,6 +300,7 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
           if (strcmp("/", filename) != 0) {
             strlcat(filename, "/", lname);
             browser->add(filename, icon);
+            num_files++;
           }
           vp = (struct vmount *) ((char *) vp + vp->vmt_length);
         }
@@ -317,6 +319,7 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
 
   // We always have the root filesystem
   browser->add("/", icon);
+  num_files++;
 #  ifdef HAVE_PTHREAD
   // Lock mutex for thread safety
   if (!pthread_mutex_lock(&getvfsstat_mutex)) {
@@ -330,6 +333,7 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
         if (strcmp("/", filename) != 0) {
           strlcat(filename, "/", lname);
           browser->add(filename, icon);
+          num_files++;
         }
       }
     } else {
