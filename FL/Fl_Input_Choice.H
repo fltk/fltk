@@ -153,12 +153,6 @@ public:
   /// Sets the Fl_Input text field's font size to \p s.
   void textsize(Fl_Fontsize s) { inp_->textsize(s); }
 
-  /// Sets the Fl_Input *when* field.
-  void when(uchar i) { Fl_Widget::when(i); inp_->when(i); }
-
-  /// Returns the *when* flags.
-  Fl_When when() const { return Fl_Widget::when(); }
-
   /// Returns the Fl_Input text field's current contents.
   const char* value() const { return (inp_->value()); }
 
