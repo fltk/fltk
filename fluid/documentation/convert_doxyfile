@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# Convert 'Doxyfile.in' to 'Doxyfile' or 'Doxybook' for doxygen docs
+#
+# Usage:
+#
+#   $ sh convert_doxyfile doxygen_path input output logfile
+#
+# where
+# - 'doxygen_path' is the full path to the doxygen executable or just
+#   'doxygen' if this is in the user's PATH. If the full path is used
+#   an arbitrary doxygen executable and thus doxygen version can be used.
+# - 'input' is the file 'Doxyfile.in' stored in Git or any other file.
+# - 'output' is the generated doxygen file, usually either 'Doxyfile'
+#   or 'Doxybook' which will be used subsequently to generate the
+#   HTML or PDF docs, respectively.
+#
+# Doxygen warnings and errors are stored in 'logfile' for review.
+#
+#=======================================================================
+# This script requires a posix shell and uses the following commands:
+#   'echo', 'date', and (obviously) doxygen.
+#=======================================================================
+
+# doxygen command, input and output file names
+
+DOXYGEN="$1"
+ INFILE="$2"
+OUTFILE="$3"
+LOGFILE="$4"
+
+# get doxygen version
+
+VERSION=$("$DOXYGEN" --version)
+
+# write info header to LOGFILE
+
+echo "$OUTFILE created by doxygen version $VERSION" > $LOGFILE
+echo "  at `date`" >> $LOGFILE
+echo "" >> $LOGFILE
+
+# convert doxygen file and append errors and warnings to LOGFILE
+
+"${DOXYGEN}" -u -s - < $INFILE > $OUTFILE 2>> $LOGFILE

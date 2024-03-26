@@ -34,6 +34,7 @@
 #include "sourceview_panel.h"
 #include "template_panel.h"
 #include "about_panel.h"
+#include "autodoc.h"
 
 #include <FL/Fl.H>
 #ifdef __APPLE__
@@ -183,6 +184,9 @@ Fl_String g_header_filename_arg;
 
 /// current directory path at application launch
 Fl_String g_launch_path;
+
+/// if set, generate images for automatic documentation in this directory
+Fl_String g_autodoc_path;
 
 /// path to store temporary files during app run
 /// \see tmpdir_create_called
@@ -838,10 +842,10 @@ void exit_cb(Fl_Widget *,void *) {
  to save the old project first.
 
  \param[in] user_must_confirm if set, a confimation dialog is presented to the
-    user before resetting the project.
+    user before resetting the project. Default is `true`.
  \return false if the operation was canceled
  */
-bool new_project(bool user_must_confirm = true) {
+bool new_project(bool user_must_confirm) {
   // verify user intention
   if ((user_must_confirm) &&  (confirm_project_clear() == false))
     return false;
@@ -1696,7 +1700,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-  {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
+  {"Show Source View",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
@@ -1813,7 +1817,11 @@ void init_scheme() {
     scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
     fluid_prefs.set("scheme_name", scheme_name);
   }
-  Fl::scheme(scheme_name);
+  // Set the new scheme only if it was not overridden by the -scheme
+  // command line option
+  if (Fl::scheme() == NULL) {
+    Fl::scheme(scheme_name);
+  }
   free(scheme_name);
 }
 
@@ -2091,6 +2099,12 @@ static int arg(int argc, char** argv, int& i) {
     batch_mode++;
     i += 2; return 2;
   }
+#ifndef NDEBUG
+  if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
+    g_autodoc_path = argv[i+1];
+    i += 2; return 2;
+  }
+#endif
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
       g_header_filename_arg = argv[i+1];
@@ -2179,7 +2193,9 @@ int main(int argc,char **argv) {
     return 1;
   }
 
-  const char *c = argv[i];
+  const char *c = NULL;
+  if (g_autodoc_path.empty())
+    c = argv[i];
 
   fl_register_images();
 
@@ -2203,7 +2219,7 @@ int main(int argc,char **argv) {
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_sourceview_cb(0,0);
-    if (!c && openlast_button->value() && absolute_history[0][0]) {
+    if (!c && openlast_button->value() && absolute_history[0][0] && g_autodoc_path.empty()) {
       // Open previous file when no file specified...
       open_project_file(absolute_history[0]);
     }
@@ -2256,6 +2272,14 @@ int main(int argc,char **argv) {
 
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
+
+#ifndef NDEBUG
+  // check if the user wants FLUID to generate image for the user documentation
+  if (!g_autodoc_path.empty()) {
+    run_autodoc(g_autodoc_path);
+    return 0;
+  }
+#endif
 
 #ifdef _WIN32
   Fl::run();
