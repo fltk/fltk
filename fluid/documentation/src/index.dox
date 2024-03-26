@@ -53,6 +53,7 @@
  - \ref main_titlebar
  - \ref main_menubar
  - \ref main_widget_browser
+ - \ref main_menu_items
 
  \subpage page_widgetbin_panel
 

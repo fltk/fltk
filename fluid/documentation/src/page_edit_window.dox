@@ -53,6 +53,12 @@
  the widget from grid cell to grid cell instead. Resizing a child of `Fl_Flex`
  will also mark the child size as `fixed`.
 
+ The tab and shift+tab keys "navigate" the selection. Tab or shift+tab move to
+ the next or previous widgets in the hierarchy. If the navigation does not seem
+ to work you probably need to "Sort" the widgets. This is important if you have
+ input fields, as FLTK uses the same rules when using tab keys
+ to move between input fields.
+
  <!-- ---------------------------------------------------------------------- -->
  \section edit_layout Layout Helpers
 
