@@ -1700,7 +1700,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-  {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
+  {"Show Source View",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},

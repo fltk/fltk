@@ -216,10 +216,25 @@
  The *Locale* tab can be used to configure optional internationalization.
  FLUID support GNU `gettext` and Posix `catgets`.
 
+ FLUID supports internationalization (I18N for short) of label
+ strings and tooltips used by widgets. The GNU gettext option also
+ supports deferred translation of statically initialized menu item
+ labels. The setting panel (`Alt+p`) provides access
+ to the I18N options.
+
  \image html w_settings_i18n_gnu.png
  \image latex w_settings_i18n_gnu.png
 
- The GNU gettext option adds some preprocessor code to the source file
+ FLUID supports three methods of I18N: none, GNU
+ gettext, and POSIX catgets. The "none" method is the
+ default and just passes the label strings as-is to the widget
+ constructors.
+
+ The "GNU gettext" method uses GNU gettext (or a similar
+ text-based I18N library) to retrieve a localized string before
+ calling the widget constructor.
+
+ The GNU gettext option adds some preprocessor code to the source file:
  ```
  #include <libintl.h>
  #ifndef gettext_noop
@@ -233,22 +248,46 @@
  new Fl_Button(50, 50, 54, 40, gettext("Button"));
  ```
 
- __Include__: include this header file
+ FLUID's code support for GNU gettext is limited to calling a
+ function or macro to retrieve the localized label; you still
+ need to call \p setlocale() and \p textdomain() or
+ \p bindtextdomain() to select the appropriate language and
+ message file.
 
- __Conditional__: include the header file only if this preprocessor macro is
- defined.
+ __Include__: controls the header file to include for
+I18N; by default this is \b <libintl.h>, the
+standard I18N file for GNU gettext.
 
- __Function__: use this function to change text from one language to another.
+ __Conditional__: If this field contains a macro name, i18n will only be
+ compiled into the product if this macro is defined. The build system should
+ define the macro only if all required headers and libraries are available. If
+ the macro is not defined, no headers are included and `gettext` passes text
+ through untranslated.
 
- __Static Function__: some texts, the labels in `Fl_Menu_Item` for example, are
- assigned before the gettext database is loaded. These are marked with
- `gettext_noop` and will be updated when the menu is assigned to an `Fl_Menu_`
- derived widget.
+ __Function__: controls the function (or macro) that will retrieve the localized
+ message; by default the \p gettext function will be called.
+
+ __Static Function__: names a macro that will mark static text fields for
+ extraction with the `xgettext` tool. The default macro name is
+ \p gettext_noop and will be defined as `#define gettext_noop(text) text`
+ right after the `#include` statement. FLUID will call `gettext` on static
+ texts later, after the textdomain was set by the user.
+
+ \see [GNU gettext special cases](https://www.gnu.org/software/gettext/manual/html_node/Special-cases.html)
 
  \image html w_settings_i18n_psx.png
  \image latex w_settings_i18n_psx.png
 
- The  Posix catgets option adds some preprocessor code to the source file
+ The "POSIX catgets" method uses the POSIX catgets function to
+ retrieve a numbered message from a message catalog before
+ calling the widget constructor.
+
+ FLUID's code support for POSIX catgets allows you to use a
+ global message file for all interfaces or a file specific to
+ each <tt>.fl</tt> file; you still need to call
+ \p setlocale() to select the appropriate language.
+
+ This option adds some preprocessor code to the source file:
  ```
  #include <nl_types.h>
  // Initialize I18N stuff now for menus...
@@ -263,14 +302,21 @@
  new Fl_Button(50, 50, 54, 40, catgets(_catalog,1,6,"Button"));
  ```
 
- __Include__: include this header file
+ __Include__:  controls the header file to include for
+ I18N; by default this is \b <nl_types.h>, the
+ standard I18N file for POSIX catgets.
 
  __Conditional__: include the header file only if this preprocessor macro is
  defined.
 
- __Catalog__: the name of the external `nl_catd` catalog.
+ __Catalog__: controls the name of the catalog file
+variable to use when retrieving localized messages; by default
+the file field is empty which forces a local (static) catalog
+file to be used for all of the windows defined in your
+<tt>.fl</tt> file.
 
- __Set__: the number of the set within the catalog
+ __Set__: controls the set number in the catalog file.
+The default set is 1 and rarely needs to be changed.
 
  <!-- ---------------------------------------------------------------------- -->
  \section setting_user User Interface Preferences

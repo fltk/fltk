@@ -249,10 +249,10 @@ void sourceview_toggle_visibility() {
 
     if (sourceview_panel->visible()) {
       sourceview_panel->hide();
-      sourceview_item->label("Show Source Code...");
+      sourceview_item->label("Show Source View");
     } else {
       sourceview_panel->show();
-      sourceview_item->label("Hide Source Code...");
+      sourceview_item->label("Hide Source View");
       update_sourceview_cb(0,0);
     }
 }
