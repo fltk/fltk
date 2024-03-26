@@ -70,6 +70,9 @@
  - \ref widget_panel_grid
  - \ref widget_panel_gridc
 
+ </TD>
+ <TD ALIGN="LEFT" VALIGN="TOP">
+
  \subpage page_functional_nodes
  - \ref functional_function
  - \ref functional_code
@@ -80,9 +83,6 @@
  - \ref functional_widgetclass
  - \ref functional_comment
  - \ref functional_data
-
- </TD>
- <TD ALIGN="LEFT" VALIGN="TOP">
 
  \subpage page_sourceview_panel
  - \ref codeview_find
