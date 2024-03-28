@@ -26,6 +26,7 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/filename.H>
+#include <math.h>
 #include <sys/time.h>
 
 #include "../../Fl_Timeout.h"
@@ -270,6 +271,22 @@ int Fl_X11_Screen_Driver::h() {
   / screens[0].scale
 #endif
   ;
+}
+
+// Returns a real (unscaled) X coordinate calculated relative to the right of
+// of the screen.  Used when positioning window with "east" gravity.
+
+int Fl_X11_Screen_Driver::x_from_right(int x) {
+	int dx = w() - x;
+	return (fl_workarea_xywh[0] + fl_workarea_xywh[2]) - rint(dx * screens[0].scale);
+}
+
+// Returns a real (unscaled) Y coordinate calculated relative to the bottom of
+// the screen.  Used when positioning window with "south" gravity.
+
+int Fl_X11_Screen_Driver::y_from_bottom(int y) {
+	int dy = h() - y;
+	return (fl_workarea_xywh[1] + fl_workarea_xywh[3]) - rint(dy * screens[0].scale);
 }
 
 #define USE_XRANDR (HAVE_DLSYM && HAVE_DLFCN_H) // means attempt to dynamically load libXrandr.so
