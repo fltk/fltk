@@ -4544,7 +4544,7 @@ int Fl_Cocoa_Window_Driver::decorated_h()
 void Fl_Cocoa_Window_Driver::draw_titlebar_to_context(CGContextRef gc, int w, int h)
 {
   FLWindow *nswin = fl_xid(pWindow);
-  [nswin makeMainWindow];
+  if ([nswin canBecomeMainWindow]) [nswin makeMainWindow];
   [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
   CGImageRef img;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
