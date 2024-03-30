@@ -1645,6 +1645,7 @@ int Fl_PostScript_File_Device::begin_page (void)
   char feature[200];
   snprintf(feature, 200, "%%%%PageOrientation: %s", ps->pw_ > ps->ph_ ? "Landscape" : "Portrait");
   cairo_ps_surface_dsc_comment(cairo_get_target(ps->cr()), feature);
+  cairo_save(ps->cr());
   if (ps->pw_ > ps->ph_) {
     cairo_translate(ps->cr(), 0, ps->pw_);
     cairo_rotate(ps->cr(), -M_PI/2);
@@ -1652,7 +1653,6 @@ int Fl_PostScript_File_Device::begin_page (void)
   cairo_translate(ps->cr(), ps->left_margin, ps->top_margin);
   cairo_set_line_width(ps->cr(), 1);
   cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
-  cairo_save(ps->cr());
   cairo_save(ps->cr());
   cairo_save(ps->cr());
   ps->check_status();
