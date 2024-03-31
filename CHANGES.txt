@@ -56,8 +56,8 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
   - New Fl_SVG_Image class: gives support of scalable vector graphics images
     to FLTK using the nanosvg software.
   - New Fl_ICO_Image class to read Windows .ico icon files.
-  - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
-    graphics to SVG or EPS files, respectively.
+  - New classes Fl_PDF_File_Surface, Fl_SVG_File_Surface and Fl_EPS_File_Surface
+    to save any FLTK graphics to PDF, SVG or EPS files, respectively.
   - New member functions Fl_Window::maximize(), Fl_Window::un_maximize() and
     Fl_Window::maximize_active() to programmatically manage window maximization.
   - Fl_Button now supports a compact flag that visually groups closely set
