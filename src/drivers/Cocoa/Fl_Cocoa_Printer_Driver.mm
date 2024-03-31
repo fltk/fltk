@@ -1,7 +1,7 @@
 //
 // Mac OS X-specific printing support (objective-c++) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,6 +20,7 @@
 #include "../../Fl_Screen_Driver.H"
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
+#include <FL/Fl_PDF_File_Surface.H>
 #include "Fl_Cocoa_Window_Driver.H"
 
 #include <FL/Fl.H>
@@ -48,7 +49,7 @@ typedef OSStatus
 /** Support for printing on the Apple OS X platform */
 class Fl_Cocoa_Printer_Driver : public Fl_Paged_Device {
   friend class Fl_Printer;
-private:
+protected:
   float scale_x;
   float scale_y;
   float angle; // rotation angle in radians
@@ -390,4 +391,139 @@ void Fl_Cocoa_Printer_Driver::end_job (void)
 void Fl_Cocoa_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
+}
+
+
+class Fl_PDF_Cocoa_File_Surface : public Fl_Cocoa_Printer_Driver
+{
+public:
+  char *doc_fname;
+  Fl_PDF_Cocoa_File_Surface();
+  ~Fl_PDF_Cocoa_File_Surface() { if (doc_fname) free(doc_fname); }
+  int begin_job(const char *defaultname,
+                char **perr_message = NULL);
+  int begin_job(int, int*, int *, char **) FL_OVERRIDE {return 1;} // don't use
+  int begin_document(const char* outname,
+                     enum Fl_Paged_Device::Page_Format format,
+                     enum Fl_Paged_Device::Page_Layout layout,
+                     char **perr_message);
+};
+
+
+Fl_PDF_Cocoa_File_Surface::Fl_PDF_Cocoa_File_Surface() {
+  driver(new Fl_Quartz_Graphics_Driver());
+  doc_fname = NULL;
+}
+
+
+int Fl_PDF_Cocoa_File_Surface::begin_job(const char* defaultfilename,
+                                      char **perr_message) {
+  OSStatus status = 0;
+  if (fl_mac_os_version < 100900) return 1;
+  Fl_Window *top = Fl::first_window();
+  NSWindow *main = (top ? (NSWindow*)fl_xid(top->top_window()) : nil);
+  if (!main) return 1;
+  Fl_Cocoa_Window_Driver::q_release_context();
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9 && defined(__BLOCKS__)
+  NSPDFInfo *pdf_info = [[NSPDFInfo alloc] init]; // 10.9
+  NSPDFPanel *pdf_panel = [NSPDFPanel panel]; // 10.9
+  char buf[FL_PATH_MAX];
+  strcpy(buf, defaultfilename);
+  fl_filename_setext(buf, sizeof(buf), NULL);
+  [pdf_panel setDefaultFileName:[NSString stringWithUTF8String:buf]];
+  [pdf_panel setOptions: NSPrintPanelShowsOrientation | NSPrintPanelShowsPaperSize];
+  NSInteger retval = -1;
+  __block NSInteger complete = -1;
+  [pdf_panel beginSheetWithPDFInfo:pdf_info
+                    modalForWindow:main
+                 completionHandler:^(NSInteger returnCode) {
+    // this block runs after OK or Cancel was triggered in file dialog
+    complete = returnCode;
+  }
+  ];
+  while (complete == -1) Fl::wait(100); // loop until end of file dialog
+  retval = complete;
+  [main makeKeyAndOrderFront:nil];
+  if (retval != NSModalResponseOK) return 1;
+  NSURL *url = [pdf_info URL];
+  doc_fname = fl_strdup([url fileSystemRepresentation]);
+  NSPrintInfo *pr_info = [NSPrintInfo sharedPrintInfo];
+  [pr_info takeSettingsFromPDFInfo:pdf_info];
+  [pdf_info release];
+  printSession = (PMPrintSession)[pr_info PMPrintSession];
+  printSettings = (PMPrintSettings)[pr_info PMPrintSettings];
+  pageFormat = (PMPageFormat)[pr_info PMPageFormat];
+  status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
+#endif
+  if (status != noErr) {
+    if (perr_message) {
+      NSError *nserr = [NSError errorWithDomain:NSCocoaErrorDomain code:status userInfo:nil];
+      NSString *s = [nserr localizedDescription];
+      if (s) *perr_message = fl_strdup([s UTF8String]);
+    }
+    free(doc_fname);
+    doc_fname = NULL;
+    return 2;
+  }
+  y_offset = x_offset = 0;
+  return 0;
+}
+
+
+int Fl_PDF_Cocoa_File_Surface::begin_document(const char* outfname,
+                                      enum Fl_Paged_Device::Page_Format format,
+                                      enum Fl_Paged_Device::Page_Layout layout,
+                                      char **perr_message) {
+  OSStatus status = 0;
+  fl_open_display();
+  if (fl_mac_os_version < 100900) return 1;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+  NSPDFInfo *pdf_info = [[NSPDFInfo alloc] init]; // 10.9
+  doc_fname = fl_strdup(outfname);
+  NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:doc_fname]];
+  [pdf_info setURL:url];
+  NSSize psize = {(CGFloat)Fl_Paged_Device::page_formats[format].width, (CGFloat)Fl_Paged_Device::page_formats[format].height};
+  [pdf_info setPaperSize:psize];
+  [pdf_info setOrientation:(layout == PORTRAIT ? NSPaperOrientationPortrait : NSPaperOrientationLandscape)];
+  NSPrintInfo *pr_info = [NSPrintInfo sharedPrintInfo];
+  [pr_info takeSettingsFromPDFInfo:pdf_info];
+  [pdf_info release];
+  printSession = (PMPrintSession)[pr_info PMPrintSession];
+  printSettings = (PMPrintSettings)[pr_info PMPrintSettings];
+  pageFormat = (PMPageFormat)[pr_info PMPageFormat];
+  status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
+#endif
+  if (status != noErr) {
+    if (perr_message) {
+      NSError *nserr = [NSError errorWithDomain:NSCocoaErrorDomain code:status userInfo:nil];
+      NSString *s = [nserr localizedDescription];
+      if (s) *perr_message = fl_strdup([s UTF8String]);
+    }
+    free(doc_fname);
+    doc_fname = NULL;
+    return 2;
+  }
+  y_offset = x_offset = 0;
+  return 0;
+}
+
+
+Fl_Paged_Device *Fl_PDF_File_Surface::new_platform_pdf_surface_(const char ***pfname) {
+  Fl_PDF_Cocoa_File_Surface *surf = new Fl_PDF_Cocoa_File_Surface();
+  *pfname = (const char**)&surf->doc_fname;
+  return surf;
+}
+
+
+int Fl_PDF_File_Surface::begin_job(const char* defaultfilename,
+                                char **perr_message) {
+  return ((Fl_PDF_Cocoa_File_Surface*)platform_surface_)->begin_job(defaultfilename, perr_message);
+}
+
+
+int Fl_PDF_File_Surface::begin_document(const char* defaultfilename,
+                                     enum Fl_Paged_Device::Page_Format format,
+                                     enum Fl_Paged_Device::Page_Layout layout,
+                                     char **perr_message) {
+  return ((Fl_PDF_Cocoa_File_Surface*)platform_surface_)->begin_document(defaultfilename, format, layout, perr_message);
 }

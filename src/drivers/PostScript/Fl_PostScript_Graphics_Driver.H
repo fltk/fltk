@@ -54,6 +54,7 @@ public:
   ~Fl_PostScript_Graphics_Driver();
   void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;}
   FILE * file() {return output;}
+  inline void set_cairo(cairo_t *cr) { cairo_ = cr; }
   void page(double pw, double ph, int media = 0);
   void page(int format);
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
@@ -79,13 +80,11 @@ public:
   int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
   virtual int has_feature(driver_feature feature_mask) FL_OVERRIDE { return feature_mask & PRINTER; }
-#if !FLTK_USE_CAIRO
   // draw image classes without caching them
     void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
     void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
     void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
     void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
-#endif // !FLTK_USE_CAIRO
 };
 
 #else // ! USE_PANGO

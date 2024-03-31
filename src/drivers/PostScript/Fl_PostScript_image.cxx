@@ -70,7 +70,6 @@ void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy
 
 #if USE_PANGO
 
-#if !FLTK_USE_CAIRO
 
 static void destroy_BGRA(void *data) {
   delete[] (uchar*)data;
@@ -182,7 +181,6 @@ void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int Y
   }
 }
 
-#endif // !FLTK_USE_CAIRO
 
 #else // ! USE_PANGO
 
