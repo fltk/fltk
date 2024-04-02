@@ -635,6 +635,9 @@ AC_CHECK_FUNCS([setenv])
 dnl FLTK library uses math library functions...
 AC_SEARCH_LIBS([pow], [m])
 
+AC_CHECK_HEADERS([math.h])
+AC_CHECK_FUNCS([trunc])
+
 
 dnl Check for largefile support...
 AC_SYS_LARGEFILE

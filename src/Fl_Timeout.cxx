@@ -2,7 +2,7 @@
 // Timeout support functions for the Fast Light Tool Kit (FLTK).
 //
 // Author: Albrecht Schlosser
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,11 +15,17 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include <config.h>
+
 #include "Fl_Timeout.h"
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>
 #include <math.h> // for trunc()
+
+#if !HAVE_TRUNC
+static inline double trunc(double x) { x >= 0 ? floor(x) : ceil(x); }
+#endif // !HAVE_TRUNC
 
 /**
   \file Fl_Timeout.cxx

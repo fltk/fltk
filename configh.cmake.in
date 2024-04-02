@@ -249,6 +249,14 @@
 #cmakedefine01 HAVE_SETENV
 
 /*
+ * HAVE_TRUNC:
+ *
+ * Whether or not POSIX trunc() is available from math.h.
+ */
+
+#cmakedefine01 HAVE_TRUNC
+
+/*
  * Do we have various image libraries?
  */
 

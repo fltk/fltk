@@ -248,6 +248,14 @@
 #define HAVE_SETENV 0
 
 /*
+ * HAVE_TRUNC:
+ *
+ * Whether or not POSIX trunc() is available from math.h.
+ */
+
+#define HAVE_TRUNC 0
+
+/*
  * Do we have various image libraries?
  */
 

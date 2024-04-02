@@ -156,10 +156,12 @@ find_library(LIB_GLEW NAMES GLEW glew32)
 find_library(LIB_jpeg jpeg)
 find_library(LIB_png png)
 find_library(LIB_zlib z)
+find_library(LIB_m m)
 
 mark_as_advanced(LIB_dl LIB_fontconfig LIB_freetype)
 mark_as_advanced(LIB_GL LIB_MesaGL LIB_GLEW)
 mark_as_advanced(LIB_jpeg LIB_png LIB_zlib)
+mark_as_advanced(LIB_m)
 
 #######################################################################
 # functions
@@ -205,6 +207,12 @@ check_function_exists(strlcpy                   HAVE_STRLCPY)
 check_function_exists(vsnprintf                 HAVE_VSNPRINTF)
 
 check_function_exists(setenv                    HAVE_SETENV)
+
+if(LIB_m)
+  set(CMAKE_REQUIRED_LIBRARIES ${LIB_m})
+  check_function_exists(trunc                   HAVE_TRUNC)
+  set(CMAKE_REQUIRED_LIBRARIES)
+endif(LIB_m)
 
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
