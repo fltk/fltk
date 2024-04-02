@@ -2,7 +2,7 @@
 // Definition of the part of the screen driver shared by X11 and Wayland platforms
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,9 +30,6 @@ static pollfd *pollfds = 0;
 #    if HAVE_SYS_SELECT_H
 #      include <sys/select.h>
 #    endif /* HAVE_SYS_SELECT_H */
-
-// The following #define is only needed for HP-UX 9.x and earlier:
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
 
 #    define POLLIN 1
 #    define POLLOUT 4
