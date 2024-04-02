@@ -31,6 +31,18 @@ static pollfd *pollfds = 0;
 #      include <sys/select.h>
 #    endif /* HAVE_SYS_SELECT_H */
 
+// NetBSD before version 3.0 declares select() in "unistd.h" (#944):
+// https://man.netbsd.org/NetBSD-2.1/select.2
+
+#    if defined(__NetBSD__)
+#      include <sys/param.h>  // For '__NetBSD_Version__' definition
+#      if defined(__NetBSD_Version__) && (__NetBSD_Version__ < 300000000)
+#        include <sys/types.h>
+#        include <sys/time.h>
+#        include <unistd.h>
+#      endif  // __NetBSD_Version__
+#    endif  // __NetBSD__
+
 #    define POLLIN 1
 #    define POLLOUT 4
 #    define POLLERR 8

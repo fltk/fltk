@@ -1,7 +1,7 @@
 /*
  * Function attribute declarations for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2023 by Bill Spitzak and others.
+ * Copyright 1998-2024 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -168,11 +168,11 @@
 #endif
 #endif /* gcc 4.5.0 */
 
-#if FL_GCC_VERSION > 30100 /* gcc 3.1.0 */
+#if FL_GCC_VERSION >= 30400 /* gcc 3.4.0 */
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated))
 #endif
-#endif /* gcc 3.1.0 */
+#endif /* gcc 3.4.0 */
 
 #endif /* __GNUC__ */
 
