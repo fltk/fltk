@@ -544,8 +544,10 @@ int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
   return -1;               // any other return unexpected
 }
 
-// [Public] Open external editor using 'editor_cmd' to edit 'code'
+// [Public] Open external editor using 'editor_cmd' to edit 'code'.
+//
 // 'code' contains multiline code to be edited as a temp file.
+// 'code' can be NULL -- edits an empty file if so.
 //
 // Returns:
 //   0 if succeeds
