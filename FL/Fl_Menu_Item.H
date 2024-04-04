@@ -1,7 +1,7 @@
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -318,7 +318,9 @@ struct FL_EXPORT Fl_Menu_Item {
     This method does not set the userdata() argument.
     \see Fl_Callback_p Fl_MenuItem::callback() const
    */
-  void callback(Fl_Callback0*c) {callback_=(Fl_Callback*)c;}
+  void callback(Fl_Callback0 *c) {
+    callback_ = (Fl_Callback *)(void *)c;
+  }
 
   /**
     Sets the menu item's callback function and userdata() argument.
@@ -326,7 +328,10 @@ struct FL_EXPORT Fl_Menu_Item {
     for the menu item's callback function.
     \see Fl_Callback_p Fl_MenuItem::callback() const
    */
-  void callback(Fl_Callback1*c, long p=0) {callback_=(Fl_Callback*)c; user_data_=(void*)(fl_intptr_t)p;}
+  void callback(Fl_Callback1 *c, long p = 0) {
+    callback_ = (Fl_Callback *)(void *)c;
+    user_data_ = (void *)(fl_intptr_t)p;
+  }
 
   /**
     Gets the user_data() argument that is sent to the callback function.
