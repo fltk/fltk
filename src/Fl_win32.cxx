@@ -474,6 +474,10 @@ int Fl_WinAPI_System_Driver::ready() {
   return select(0, &fdt[0], &fdt[1], &fdt[2], &t);
 }
 
+static void delayed_create_print_window(void *) {
+  Fl::remove_check(delayed_create_print_window);
+  fl_create_print_window();
+}
 
 void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
@@ -517,7 +521,7 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
   }
   OleInitialize(0L);
   get_imm_module();
-  fl_create_print_window();
+  Fl::add_check(delayed_create_print_window);
 }
 
 
