@@ -530,6 +530,11 @@ void Fl_X11_Screen_Driver::disable_im() {
   xim_deactivate();
 }
 
+static void delayed_create_print_window(void *) {
+  Fl::remove_check(delayed_create_print_window);
+  fl_create_print_window();
+}
+
 void Fl_X11_Screen_Driver::open_display_platform() {
   static Display *d = NULL;
   if (d) return;
@@ -550,7 +555,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   // the unique GC used by all X windows
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
-  fl_create_print_window();
+  Fl::add_check(delayed_create_print_window);
 }
 
 
