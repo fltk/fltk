@@ -611,6 +611,7 @@ void Fl_Code_Type::open() {
   if ( G_use_external_editor && G_external_editor_command[0] ) {
     const char *cmd = G_external_editor_command;
     const char *code = name();
+    if (!code) code = "";
     if ( editor_.open_editor(cmd, code) == 0 )
       return;   // return if editor opened ok, fall thru to built-in if not
   }
