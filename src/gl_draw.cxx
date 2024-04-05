@@ -365,6 +365,7 @@ private:
     int width; // its width
     float ratio; // used without rectangle texture
     int scale; // 1 or 2 for low/high resolution
+    Fl_Color color;
   } data;
   data *fifo; // array of pile elements
   int size_; // pile height
@@ -415,7 +416,7 @@ void gl_texture_fifo::display_texture(int rank)
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
   glDisable (GL_DEPTH_TEST); // ensure text is not removed by depth buffer test.
   glEnable (GL_BLEND); // for text fading
-  glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // ditto
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // ditto
   glDisable(GL_LIGHTING);
   GLfloat pos[4];
   glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);
@@ -426,6 +427,10 @@ void gl_texture_fifo::display_texture(int rank)
   glScalef (R/winw, R/winh, 1.0f);
   glTranslatef (-winw/R, -winh/R, 0.0f);
   if (has_texture_rectangle) {
+    // The texture map is already colored, but we still need to apply alpha.
+    GLfloat colors[4];
+    glGetFloatv(GL_CURRENT_COLOR, colors);
+    glColor4f(1.0f, 1.0f, 1.0f, colors[3]);
     glEnable (GL_TEXTURE_RECTANGLE_ARB);
     glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[rank].texName);
     GLint height;
@@ -444,6 +449,8 @@ void gl_texture_fifo::display_texture(int rank)
 
     glTexCoord2f (fifo[rank].width, 0.0f); // draw lower right in world coordinates
     glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y);
+    // Restore the current color value.
+    glColor4fv(colors);
     glEnd ();
   } else {
     glTranslatef(pos[0]*2/R, pos[1]*2/R, 0.0);
@@ -492,12 +499,19 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
     void *base = NULL;
     if (fl_mac_os_version < 100600) base = calloc(4*fifo[current].width, h);
     CGContextRef save_gc = fl_gc;
-    fl_gc = CGBitmapContextCreate(base, fifo[current].width, h, 8, fifo[current].width*4, lut,
-                                  (CGBitmapInfo)(kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    // Create our bitmap in RGBA order (no matter what the host byte order is)
+    fl_gc = CGBitmapContextCreate(base, fifo[current].width, h, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(lut);
+    // Note that glyphs in macOS can be colorful (Emojis, for example). So
+    // instead of caching a mask, we store the text in RGB plus A for
+    // antialiasing. Draw the text in the requested color, but don't apply user
+    // alpha yet. It is applied later at render time so it's mixed correctly
+    // with the background.
     GLfloat colors[4];
     glGetFloatv(GL_CURRENT_COLOR, colors);
-    fl_color((uchar)(colors[0]*255), (uchar)(colors[1]*255), (uchar)(colors[2]*255));
+    Fl_Color color = ((uchar)(colors[0]*255)<<24) | ((uchar)(colors[1]*255)<<16) | ((uchar)(colors[2]*255)<<8);
+    fifo[current].color = color;
+    fl_color(color);
     CGContextTranslateCTM(fl_gc, 0, h - gl_scale*fl_descent());
     CGContextScaleCTM(fl_gc, gl_scale, gl_scale);
     fl_draw(str, n, 0, 0);
@@ -506,7 +520,8 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
     glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[current].texName);
     glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, fifo[current].width);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, fifo[current].width, h, 0,  GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(fl_gc));
+    // Convert the created text bitmap into an RGBA OpenGL texture map.
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, fifo[current].width, h, 0,  GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(fl_gc));
     glPopAttrib();
     CGContextRelease(fl_gc);
     fl_gc = save_gc;
@@ -521,9 +536,20 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
 int gl_texture_fifo::already_known(const char *str, int n)
 {
   int rank;
+  GLfloat colors[4];
+  glGetFloatv(GL_CURRENT_COLOR, colors);
+  Fl_Color color = ((uchar)(colors[0]*255)<<24) | ((uchar)(colors[1]*255)<<16) | ((uchar)(colors[2]*255)<<8);
   for ( rank = 0; rank <= last; rank++) {
-    if ( memcmp(str, fifo[rank].utf8, n) == 0 && fifo[rank].utf8[n] == 0 &&
-      fifo[rank].fdesc == gl_fontsize && fifo[rank].scale == gl_scale) return rank;
+    const data &ff = fifo[rank];
+    if (   (ff.fdesc == gl_fontsize)
+        && (ff.scale == gl_scale)
+        && (ff.color == color)
+        && (ff.utf8 != NULL)
+        && (memcmp(str, ff.utf8, n) == 0)
+        && (ff.utf8[n] == 0))
+    {
+      return rank;
+    }
   }
   return -1;
 }
