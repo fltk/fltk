@@ -167,12 +167,16 @@ mark_as_advanced(LIB_m)
 # functions
 include(CheckFunctionExists)
 
-# save CMAKE_REQUIRED_LIBRARIES (is this really necessary ?)
+# Save CMAKE_REQUIRED_LIBRARIES
+# Note: CMAKE_REQUIRED_LIBRARIES must be set for each search and
+#   reset after the search to avoid to influence subsequent searches.
+#   The original value is restored after all searches.
+
 if(DEFINED CMAKE_REQUIRED_LIBRARIES)
   set(SAVED_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-else(DEFINED CMAKE_REQUIRED_LIBRARIES)
+else()
   unset(SAVED_REQUIRED_LIBRARIES)
-endif(DEFINED CMAKE_REQUIRED_LIBRARIES)
+endif()
 set(CMAKE_REQUIRED_LIBRARIES)
 
 if(HAVE_DLFCN_H)
@@ -208,11 +212,12 @@ check_function_exists(vsnprintf                 HAVE_VSNPRINTF)
 
 check_function_exists(setenv                    HAVE_SETENV)
 
-if(LIB_m)
+# Windows doesn't require '-lm' for trunc(), other platforms do
+if(LIB_m AND NOT WIN32)
   set(CMAKE_REQUIRED_LIBRARIES ${LIB_m})
-  check_function_exists(trunc                   HAVE_TRUNC)
-  set(CMAKE_REQUIRED_LIBRARIES)
-endif(LIB_m)
+endif()
+check_function_exists(trunc                     HAVE_TRUNC)
+set(CMAKE_REQUIRED_LIBRARIES)
 
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
@@ -231,19 +236,19 @@ if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
 endif(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
 mark_as_advanced(HAVE_SCANDIR_POSIX)
 
-# restore CMAKE_REQUIRED_LIBRARIES (is this really necessary ?)
+# restore CMAKE_REQUIRED_LIBRARIES
 if(DEFINED SAVED_REQUIRED_LIBRARIES)
   set(CMAKE_REQUIRED_LIBRARIES ${SAVED_REQUIRED_LIBRARIES})
   unset(SAVED_REQUIRED_LIBRARIES)
-else(DEFINED SAVED_REQUIRED_LIBRARIES)
+else()
   unset(CMAKE_REQUIRED_LIBRARIES)
-endif(DEFINED SAVED_REQUIRED_LIBRARIES)
+endif()
 
 #######################################################################
 # packages
 
 # Doxygen: necessary for HTML and PDF docs
-find_package (Doxygen)
+find_package(Doxygen)
 
 # LaTex: necessary for PDF docs (note: FindLATEX doesn't return LATEX_FOUND)
 
@@ -252,7 +257,7 @@ find_package (Doxygen)
 
 set(LATEX_FOUND)
 if(DOXYGEN_FOUND)
-  find_package (LATEX)
+  find_package(LATEX)
   if(LATEX_COMPILER AND NOT LATEX_FOUND)
     set(LATEX_FOUND YES)
   endif(LATEX_COMPILER AND NOT LATEX_FOUND)
