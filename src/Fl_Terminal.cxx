@@ -38,6 +38,12 @@
 #include "Fl_String.H"
 
 /////////////////////////////////
+////// Static Class Data ////////
+/////////////////////////////////
+
+const char *Fl_Terminal::unknown_char = "¿";
+
+/////////////////////////////////
 ////// Static Functions /////////
 /////////////////////////////////
 
@@ -2995,8 +3001,10 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::utf8_char_at_glob(int grow, int gcol) 
 void Fl_Terminal::plot_char(const char *text, int len, int drow, int dcol) {
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
   // text_utf8() warns we must do invalid checks first
-  if (!text || len<1 || len>u8c->max_utf8() || len!=fl_utf8len(*text))
-    { handle_unknown_char(); return; }
+  if (!text || len<1 || len>u8c->max_utf8() || len!=fl_utf8len(*text)) {
+    handle_unknown_char(drow, dcol);
+    return;
+  }
   u8c->text_utf8(text, len, *current_style_);
 }
 
@@ -3019,7 +3027,10 @@ void Fl_Terminal::plot_char(const char *text, int len, int drow, int dcol) {
   \see show_unknown(bool), handle_unknown_char(), is_printable()
 */
 void Fl_Terminal::plot_char(char c, int drow, int dcol) {
-  if (!is_printable(c)) { handle_unknown_char(); return; }
+  if (!is_printable(c)) {
+    handle_unknown_char(drow, dcol);
+    return;
+  }
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
   u8c->text_ascii(c, *current_style_);
 }
@@ -3233,17 +3244,36 @@ void Fl_Terminal::append(const char *s, int len/*=-1*/) {
 /**
   Handle an unknown char by either emitting an error symbol to the tty, or do nothing,
   depending on the user configurable value of show_unknown().
+
+  This writes the "unknown" character to the output stream
+  if show_unknown() is true.
+
   Returns 1 if tty modified, 0 if not.
   \see show_unknown()
 */
 int Fl_Terminal::handle_unknown_char(void) {
-  const char *unknown = "¿";
-  if (show_unknown_) {
-    escseq.reset();              // disable any pending esc seq to prevent eating unknown char
-    print_char(unknown);
-    return 1;
-  }
-  return 0;
+  if (!show_unknown_) return 0;
+  escseq.reset();               // disable any pending esc seq to prevent eating unknown char
+  print_char(unknown_char);
+  return 1;
+}
+
+/**
+  Handle an unknown char by either emitting an error symbol to the tty, or do nothing,
+  depending on the user configurable value of show_unknown().
+
+  This writes the "unknown" character to the display position \p (drow,dcol)
+  if show_unknown() is true.
+
+  Returns 1 if tty modified, 0 if not.
+  \see show_unknown()
+*/
+int Fl_Terminal::handle_unknown_char(int drow, int dcol) {
+  if (!show_unknown_) return 0;
+  int len = (int)strlen(unknown_char);
+  Utf8Char *u8c = u8c_disp_row(drow) + dcol;
+  u8c->text_utf8(unknown_char, len, *current_style_);
+  return 1;
 }
 
 // Handle user interactive scrolling
