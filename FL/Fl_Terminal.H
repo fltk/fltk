@@ -1027,6 +1027,7 @@ public:
   void append(const char *s, int len=-1);
 protected:
   int handle_unknown_char(void);
+  int handle_unknown_char(int drow, int dcol);
   // Drawing
   void draw_row_bg(int grow, int X, int Y) const;
   void draw_row(int grow, int Y) const;
@@ -1170,6 +1171,9 @@ public:
   // API: Show unknown/unprintable chars
   bool  show_unknown(void) const;
   void  show_unknown(bool val);
+protected:
+  static const char *unknown_char; ///< "unknown" replacement character
+public:
   // API: ANSI sequences
   bool  ansi(void) const;
   void  ansi(bool val);
