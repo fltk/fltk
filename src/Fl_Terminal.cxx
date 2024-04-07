@@ -1902,10 +1902,10 @@ void Fl_Terminal::clear_sod(void) {
   for (int drow=0; drow <= cursor_.row(); drow++)
     if (drow == cursor_.row())
       for (int dcol=0; dcol<=cursor_.col(); dcol++)
-        putchar(' ', drow, dcol);
+        plot_char(' ', drow, dcol);
     else
       for (int dcol=0; dcol<disp_cols(); dcol++)
-        putchar(' ', drow, dcol);
+        plot_char(' ', drow, dcol);
   //TODO: Clear mouse selection?
 }
 
@@ -1914,10 +1914,10 @@ void Fl_Terminal::clear_eod(void) {
   for (int drow=cursor_.row(); drow<disp_rows(); drow++)
     if (drow == cursor_.row())
       for (int dcol=cursor_.col(); dcol<disp_cols(); dcol++)
-        putchar(' ', drow, dcol);
+        plot_char(' ', drow, dcol);
     else
       for (int dcol=0; dcol<disp_cols(); dcol++)
-        putchar(' ', drow, dcol);
+        plot_char(' ', drow, dcol);
   //TODO: Clear mouse selection?
 }
 
@@ -2977,7 +2977,7 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::utf8_char_at_glob(int grow, int gcol) 
 }
 
 /**
-  Print UTF-8 character \p text of length \p len at display position \p (drow,dcol).
+  Plot the UTF-8 character \p text of length \p len at display position \p (drow,dcol).
   The character is displayed using the current text color/attributes.
 
   This is a very low level method.
@@ -2987,12 +2987,12 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::utf8_char_at_glob(int grow, int gcol) 
   - \p dcol must be in range 0..(display_columns()-1)
 
   - Does not trigger redraws
-  - Does not handle ANSI or XTERM escape sequences
+  - Does not handle control codes, ANSI or XTERM escape sequences.
   - Invalid UTF-8 chars show the error character (¿) depending on show_unknown(bool).
 
   \see handle_unknown_char()
 */
-void Fl_Terminal::putchar(const char *text, int len, int drow, int dcol) {
+void Fl_Terminal::plot_char(const char *text, int len, int drow, int dcol) {
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
   // text_utf8() warns we must do invalid checks first
   if (!text || len<1 || len>u8c->max_utf8() || len!=fl_utf8len(*text))
@@ -3001,7 +3001,7 @@ void Fl_Terminal::putchar(const char *text, int len, int drow, int dcol) {
 }
 
 /**
-  Print the ASCII character \p c at the terminal's display position \p (drow,dcol).
+  Plot the ASCII character \p c at the terminal's display position \p (drow,dcol).
 
   The character MUST be printable (in range 0x20 - 0x7e), and is displayed
   using the current text color/attributes. Characters outside that range are either
@@ -3018,7 +3018,7 @@ void Fl_Terminal::putchar(const char *text, int len, int drow, int dcol) {
 
   \see show_unknown(bool), handle_unknown_char(), is_printable()
 */
-void Fl_Terminal::putchar(char c, int drow, int dcol) {
+void Fl_Terminal::plot_char(char c, int drow, int dcol) {
   if (!is_printable(c)) { handle_unknown_char(); return; }
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
   u8c->text_ascii(c, *current_style_);
@@ -3053,7 +3053,7 @@ void Fl_Terminal::print_char(const char *text, int len/*=-1*/) {
   } else if (escseq.parse_in_progress()) {     // ESC sequence in progress?
     handle_escseq(*text);
   } else {                                     // Handle printable char..
-    putchar(text, len, cursor_row(), cursor_col());
+    plot_char(text, len, cursor_row(), cursor_col());
     cursor_right(1, do_scroll);
   }
 }
@@ -3074,7 +3074,7 @@ void Fl_Terminal::print_char(char c) {
   } else if (escseq.parse_in_progress()) {     // ESC sequence in progress?
     handle_escseq(c);
   } else {                                     // Handle printable char..
-    putchar(c, cursor_row(), cursor_col());
+    plot_char(c, cursor_row(), cursor_col());
     cursor_right(1, do_scroll);
     return;
   }

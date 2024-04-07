@@ -144,7 +144,7 @@
   Single character output can be done with:
   \par
      - print_char() to print a single ASCII/UTF-8 char at the cursor
-     - putchar() to put single ASCII/UTF-8 char at an x,y position
+     - plot_char() to put single ASCII/UTF-8 char at an x,y position
   \par
 
   \subsection Fl_Terminal_Attributes Text Attributes
@@ -1017,8 +1017,8 @@ private:
   void utf8_cache_flush(void);
   // API: Character display output
 public:
-  void putchar(const char *text, int len, int drow, int dcol);
-  void putchar(char c, int drow, int dcol);
+  void plot_char(const char *text, int len, int drow, int dcol);
+  void plot_char(char c, int drow, int dcol);
   void print_char(const char *text, int len=-1);
   void print_char(char c);
   // API: String display output
