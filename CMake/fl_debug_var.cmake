@@ -43,6 +43,8 @@ function(fl_expand_name out in min_len)
     set(temp "${in}${spaces}${spaces}")
     string(SUBSTRING "${temp}" 0 ${min_len} temp)
     set(${out} "${temp}" PARENT_SCOPE)
+  else()
+    set(${out} "${in}" PARENT_SCOPE)
   endif()
 endfunction(fl_expand_name)
 
