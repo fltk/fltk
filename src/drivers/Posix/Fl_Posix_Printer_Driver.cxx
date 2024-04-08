@@ -40,6 +40,9 @@ class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
 #define GTK_PAPER_NAME_LEGAL "na_legal"
 #define GTK_PAPER_NAME_A3 "iso_a3"
 #define GTK_PAPER_NAME_A5 "iso_a5"
+#define GTK_PAPER_NAME_JB5 "jis_b5"
+#define GTK_PAPER_NAME_TABLOID "na_ledger"
+#define GTK_PAPER_NAME_DLE "iso_dl"
 #define GTK_RESPONSE_NONE 0
 #define GTK_RESPONSE_OK -5
 #define GTK_PRINT_PAGES_RANGES 2
@@ -156,6 +159,9 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
     else if (strcmp(pname, GTK_PAPER_NAME_LEGAL) == 0) format = Fl_Paged_Device::LEGAL;
     else if (strcmp(pname, GTK_PAPER_NAME_A3) == 0) format = Fl_Paged_Device::A3;
     else if (strcmp(pname, GTK_PAPER_NAME_A5) == 0) format = Fl_Paged_Device::A5;
+    else if (strcmp(pname, GTK_PAPER_NAME_JB5) == 0) format = Fl_Paged_Device::B5;
+    else if (strcmp(pname, GTK_PAPER_NAME_TABLOID) == 0) format = Fl_Paged_Device::TABLOID;
+    else if (strcmp(pname, GTK_PAPER_NAME_DLE) == 0) format = Fl_Paged_Device::DLE;
     GtkPrinter *gprinter = CALL_GTK(gtk_print_unix_dialog_get_selected_printer)(pdialog); //2.10
     psettings = CALL_GTK(gtk_print_unix_dialog_get_settings)(pdialog); //2.10
     const char* p = CALL_GTK(gtk_print_settings_get)(psettings, "output-uri"); //2.10
