@@ -37,6 +37,9 @@ class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
 #include <FL/filename.H>
 #include "Fl_Posix_System_Driver.H"
 #define GTK_PAPER_NAME_LETTER "na_letter"
+#define GTK_PAPER_NAME_LEGAL "na_legal"
+#define GTK_PAPER_NAME_A3 "iso_a3"
+#define GTK_PAPER_NAME_A5 "iso_a5"
 #define GTK_RESPONSE_NONE 0
 #define GTK_RESPONSE_OK -5
 #define GTK_PRINT_PAGES_RANGES 2
@@ -85,7 +88,12 @@ public:
   struct GtkPageRange { int start, end; };
   typedef GtkPageRange* (*gtk_print_settings_get_page_ranges_t)(GtkPrintSettings*, int*);
   typedef void (*g_object_unref_t)(void* object);
+  typedef struct _GClosure GClosure;
+  typedef void  (*GClosureNotify)(void* data, GClosure *closure);
+  typedef void  (*GCallback)(void);
+  typedef void (*g_signal_connect_data_t)(void *,const char *, GCallback, void*, GClosureNotify, int);
   typedef void (*gtk_print_unix_dialog_set_embed_page_setup_t)(GtkPrintUnixDialog *dialog, gboolean embed);
+  typedef void (*gtk_widget_show_now_t)(GtkPrintUnixDialog *dialog);
   typedef const char * (*gtk_check_version_t)(unsigned, unsigned, unsigned);
 };
 
@@ -99,6 +107,16 @@ void *Fl_GTK_Printer_Driver::ptr_gtk = NULL;
 // test wether GTK is available at run-time
 bool Fl_GTK_Printer_Driver::probe_for_GTK() {
   return Fl_Posix_System_Driver::probe_for_GTK(2, 10, &ptr_gtk);
+}
+
+static void run_response_handler(void *dialog, int response_id, void* data)
+{
+  int *ri = (int *)data;
+  *ri = response_id;
+}
+
+static int no_dispatch(int /*event*/, Fl_Window* /*win*/) {
+  return 0;
 }
 
 
@@ -116,7 +134,18 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
   CALL_GTK(gtk_print_settings_set)(psettings, "output-uri", line); //2.10
   CALL_GTK(gtk_print_unix_dialog_set_settings)(pdialog, psettings); //2.10
   CALL_GTK(g_object_unref)(psettings);
-  int response_id = CALL_GTK(gtk_dialog_run)((GtkDialog*)pdialog);
+  int response_id = GTK_RESPONSE_NONE;
+  CALL_GTK(g_signal_connect_data)(pdialog, "response", GCallback(run_response_handler), &response_id, NULL,  0);
+  gtk_events_pending_t fl_gtk_events_pending = CALL_GTK(gtk_events_pending);
+  gtk_main_iteration_t fl_gtk_main_iteration = CALL_GTK(gtk_main_iteration);
+  CALL_GTK(gtk_widget_show_now)(pdialog); // map the GTK window on screen
+  Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
+  // prevent FLTK from processing any event
+  Fl::event_dispatch(no_dispatch);
+  while (response_id == GTK_RESPONSE_NONE) { // loop that shows the GTK dialog window
+    fl_gtk_main_iteration(); // one iteration of the GTK event loop
+    while (Fl::ready()) Fl::check(); // queued iterations of the FLTK event loop
+  }
   if (response_id == GTK_RESPONSE_OK) {
     GtkPageSetup *psetup = CALL_GTK(gtk_print_unix_dialog_get_page_setup)(pdialog); //2.10
     GtkPageOrientation orient = CALL_GTK(gtk_page_setup_get_orientation)(psetup); //2.10
@@ -124,6 +153,9 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
     GtkPaperSize* psize = CALL_GTK(gtk_page_setup_get_paper_size)(psetup); //2.10
     const char *pname = CALL_GTK(gtk_paper_size_get_name)(psize); //2.10
     if (strcmp(pname, GTK_PAPER_NAME_LETTER) == 0) format = Fl_Paged_Device::LETTER;
+    else if (strcmp(pname, GTK_PAPER_NAME_LEGAL) == 0) format = Fl_Paged_Device::LEGAL;
+    else if (strcmp(pname, GTK_PAPER_NAME_A3) == 0) format = Fl_Paged_Device::A3;
+    else if (strcmp(pname, GTK_PAPER_NAME_A5) == 0) format = Fl_Paged_Device::A5;
     GtkPrinter *gprinter = CALL_GTK(gtk_print_unix_dialog_get_selected_printer)(pdialog); //2.10
     psettings = CALL_GTK(gtk_print_unix_dialog_get_settings)(pdialog); //2.10
     const char* p = CALL_GTK(gtk_print_settings_get)(psettings, "output-uri"); //2.10
@@ -183,10 +215,9 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
     CALL_GTK(g_object_unref)(psettings);
   }
   CALL_GTK(gtk_widget_hide)((GtkWidget*)pdialog);
-  gtk_events_pending_t fl_gtk_events_pending = CALL_GTK(gtk_events_pending);
-  gtk_main_iteration_t fl_gtk_main_iteration = CALL_GTK(gtk_main_iteration);
   while (fl_gtk_events_pending()) fl_gtk_main_iteration();
   CALL_GTK(gtk_widget_destroy)((GtkWidget*)pdialog);
+  Fl::event_dispatch(old_dispatch);
   Fl_Window *first = Fl::first_window();
   if (first) {
     Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
