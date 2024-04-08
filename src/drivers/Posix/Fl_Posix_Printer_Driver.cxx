@@ -277,6 +277,9 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
     case 8:
       format = Fl_Paged_Device::DLE;
       break;
+    case 9:
+      format = Fl_Paged_Device::TABLOID;
+      break;
     default:
       format = Fl_Paged_Device::A4;
   }
