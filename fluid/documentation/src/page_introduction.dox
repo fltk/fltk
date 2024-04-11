@@ -8,12 +8,15 @@
 
  FLUID, short for Fast Light User Interface Designer, is a graphical editor
  capable of generating C++ source code and header files ready for compilation.
- These files ultimately create the graphical user interface for an application.
- 
+ These files ultimately create an FLTK based graphical user interface
+ for an application.
+
  This manual provides instructions on launching FLUID as a command line tool
  and integrating `.fl` project files into the application build process.
  FLTK utilizes `cmake`, but other build systems and IDEs capable of running
  external tools can also build applications based on FLUID.
+
+ The FLTK programming manual is available at https://www.fltk.org/documentation.php .
 
  The majority of the manual focuses on using FLUID as an interactive GUI
  design tool. It covers an overview of windows, menu items, and dialog boxes,

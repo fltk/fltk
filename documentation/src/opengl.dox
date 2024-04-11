@@ -164,9 +164,7 @@ loading functions by doing:
 Your main program can now create one of your windows by doing
 <tt>new MyWindow(...)</tt>.
 
-You can also use your new window class in
-\ref fluid "FLUID"
-by:
+You can also use your new window class in FLUID by:
 
 -# Putting your class definition in a \p MyWindow.H file.
 -# Creating a Fl_Box widget in FLUID.
@@ -670,8 +668,8 @@ Link with libGLEW.so (with X11 or Wayland), libglew32.a (with MinGW) or glew32.l
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="fluid.html">
-    Programming with FLUID
+    <a class="el" href="fltk-options.html">
+    FLTK Runtime Options
     [Next]
     </a>
   </td>

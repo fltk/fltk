@@ -142,6 +142,17 @@ the toolkit, which was already in use by several people, Bill
 came up with "FLTK", including a bogus excuse that it
 stands for "The Fast Light Toolkit".
 
+\section intro_fluid FLUID
+
+FLTK comes bundled with FLUID. FLUID, short for Fast Light User Interface
+Designer, is a graphical editor capable of generating C++ source code and
+header files ready for compilation. These files ultimately create the graphical
+user interface for an application.
+
+The FLUID User Handbook is available at https://www.fltk.org/documentation.php .
+It can also be compiled from the FLTK source repository using the `fluid_docs`
+target in the CMake build environment.
+
 \section intro_cmake Building and Installing FLTK with CMake
 
 Starting with version 1.4, the recommended FLTK building system

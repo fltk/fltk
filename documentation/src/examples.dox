@@ -252,7 +252,7 @@ and shows OpenGL text.
 \subsection examples_CubeView CubeView
 
 \par
-\c CubeView shows how to create a UI containing OpenGL with Fluid.
+\c CubeView shows how to create a UI containing OpenGL with FLUID.
 
 
 \subsection examples_cursor cursor
@@ -577,7 +577,7 @@ come in handy. They remember any kind of data between program launches.
 \subsection examples_radio radio
 
 \par
-The \c radio tool was created entirely with <i>fluid</i>. It
+The \c radio tool was created entirely with <i>FLUID</i>. It
 shows some of the available button types and tests radio
 button behavior.
 
@@ -658,7 +658,7 @@ The \c table demo shows the features of the Fl_Table widget.
 \subsection examples_tabs tabs
 
 \par
-The \c tabs tool was created with <i>fluid</i>. It tests
+The \c tabs tool was created with <i>FLUID</i>. It tests
 correct hiding and redisplaying of tabs, navigation across tabs,
 resize behavior, and no unneeded redrawing of invisible widgets.
 
@@ -733,13 +733,13 @@ font draws each of the Unicode code points ranging between U+0020 and U+FFFF.
 while the focus stays in the original window.
 
 
-\subsection examples_fluid fluid
+\subsection examples_fluid FLUID
 
 \par
-\c fluid is not only a big test program, but also a very
-useful visual UI designer. Many parts of \c fluid were
-created using \c fluid. See the \link fluid Fluid Tutorial \endlink
-for more details.
+\c FLUID is not only a big test program, but also a very
+useful visual UI designer. Many parts of \c FLUID were
+created using \c FLUID. Check out the FLUID User Manual and
+the tutorials that come with it at https://www.fltk.org/documentation.php .
 
 
 
