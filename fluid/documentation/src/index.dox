@@ -97,10 +97,12 @@
  - \ref setting_user
 
  \subpage page_tutorial
- - \ref fluid_cubeview
- - \ref fluid_cubeview_ui
- - \ref fluid_addconst
- - \ref fluid_gencode
+ - \ref fluid_hello_world_tutorial
+ - \ref fluid_1of7guis_tutorial
+ - \ref fluid_cubeview_tutorial
+   - \ref fluid_cubeview_ui
+   - \ref fluid_addconst
+   - \ref fluid_gencode
 
  \subpage page_appendices
  - \ref appendix_keyboard_shortcuts
