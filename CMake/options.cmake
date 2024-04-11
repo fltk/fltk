@@ -618,6 +618,7 @@ if(FLTK_BUILD_GL)
     # FIXME: we should find a better way to resolve this issue:
     # with GL, must use XQuartz libX11 else "Insufficient GL support"
     set(OPENGL_LIBRARIES -L${PATH_TO_GLULIB} -L${PATH_TO_GLLIB} -lX11 -lGLU -lGL)
+    find_path(OPENGL_INCLUDE_DIR NAMES GL/gl.h OpenGL/gl.h HINTS ${X11_INCLUDE_DIR})
     unset(HAVE_GL_GLU_H CACHE)
     find_file(HAVE_GL_GLU_H GL/glu.h PATHS ${X11_INCLUDE_DIR})
   else()
