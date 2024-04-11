@@ -137,6 +137,13 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
   - New macros for easy function and method callbacks with multiple
     type safe arguments (see FL_METHOD_CALLBACK_1 etc.) .
 
+  Removed Features
+
+  - X11 platform: Support of XDBE, the configure option '--enable-xdbe'
+    and the CMake option 'OPTION_USE_XDBE' have been removed because XDBE
+    was unreliable and rarely supported by X servers. Double buffering
+    support in Fl_Double_Window is not affected.
+
   New Configuration Options (ABI Version)
 
   - X11 platform: Added support for drawing text with the pango library
@@ -177,11 +184,9 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
   Other Improvements
 
   - (add new items here)
-  - Added support of macOS 14.0 "Sonoma".
-  - Added support for macOS 13.0 "Ventura".
-  - Added support for macOS 12.0 "Monterey".
-  - Added support for macOS 11.0 "Big Sur" and for building for
-    the arm64 architecture.
+  - Added support of macOS 14.0 "Sonoma", 13.0 "Ventura", 12.0 "Monterey",
+    and 11.0 "Big Sur".
+  - Added macOS support for the arm64 architecture since 11.0 (Big Sur).
   - Added support for macOS 10.15 "Catalina"
   - Added support for macOS 10.14 "Mojave": all drawing to windows is done
     through "layer-backed views" when the app is linked to SDK 10.14.
