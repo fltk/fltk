@@ -149,7 +149,7 @@
  enables the designer to thoroughly test the behavior and limitations,
  making adjustments until they are satisfied. This streamlined process makes
  it significantly easier to address resizing behavior at a higher level,
- particularly once the lower levels are behaving as anticipated.
+ particularly once the lower levels are behaving as intended.
 
  In the example above, the radio buttons are not fixed to the left side of
  the group and the text snippet "of the bed" does not stay aligned
