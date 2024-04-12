@@ -613,9 +613,12 @@ if(FLTK_BUILD_GL)
     set(OPENGL_FOUND TRUE)
     find_library(OPENGL_LIB GL)
     get_filename_component(PATH_TO_GLLIB ${OPENGL_LIB} DIRECTORY)
+    find_library(GLU_LIB GLU)
+    get_filename_component(PATH_TO_GLULIB ${GLU_LIB} DIRECTORY)
     # FIXME: we should find a better way to resolve this issue:
     # with GL, must use XQuartz libX11 else "Insufficient GL support"
-    set(OPENGL_LIBRARIES -L${PATH_TO_GLLIB} -lX11 -lGLU -lGL)
+    set(OPENGL_LIBRARIES -L${PATH_TO_GLULIB} -L${PATH_TO_GLLIB} -lX11 -lGLU -lGL)
+    find_path(OPENGL_INCLUDE_DIR NAMES GL/gl.h OpenGL/gl.h HINTS ${X11_INCLUDE_DIR})
     unset(HAVE_GL_GLU_H CACHE)
     find_file(HAVE_GL_GLU_H GL/glu.h PATHS ${X11_INCLUDE_DIR})
   else()
@@ -638,7 +641,8 @@ mark_as_advanced(OPENGL_LIB) # internal cache variable, not relevant for users
 mark_as_advanced(HAVE_GL_GLU_H)
 
 if(OPENGL_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
+  find_path(OPENGL_GLU_INCLUDE_DIR NAMES GL/glu.h OpenGL/glu.h HINTS ${OPENGL_INCLUDE_DIR} ${X11_INCLUDE_DIR})
+  set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL ${OPENGL_GLU_INCLUDE_DIR})
 
   # Set GLLIBS (used in fltk-config).
   # We should probably deduct this from OPENGL_LIBRARIES but it turned
