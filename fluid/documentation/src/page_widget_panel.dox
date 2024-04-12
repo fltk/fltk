@@ -25,7 +25,7 @@
 
  All changes in the widget panel are immediately applied to all selected
  widgets and their effect can be seen in the project window. It can be very
- useful to keep the *Source View* window open at all times. All code changes
+ useful to keep the *Code View* window open at all times. All code changes
  appear instantly for all generated files if *Auto-Refresh* is active.
 
  FLUID generates only code for properties that differ from their default

@@ -383,7 +383,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
 /* Treating UNDO for text widget.
 
  Goal: we want to continuously update the UI while the user is typing text
- (changing the label, in this case). Source View does deferred updates, and
+ (changing the label, in this case). Code View does deferred updates, and
  the widget browser and widget panel update on every keystroke. At the same
  time, we want to limit undo actions to few and logical units.
 
@@ -2761,7 +2761,7 @@ void selection_changed(Fl_Type *p) {
   redraw_overlays();
   // load the panel with the new settings:
   load_panel();
-  // update the source viewer to show the code for the selected object
+  // update the code viewer to show the code for the selected object
   update_sourceview_position();
 }
 

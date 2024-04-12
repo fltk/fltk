@@ -133,7 +133,7 @@ Fl_Menu_Item *history_item = NULL;
 /// Menuitem to show or hide the widget bin, label will change if bin is visible.
 Fl_Menu_Item *widgetbin_item = NULL;
 
-/// Menuitem to show or hide the source view, label will change if view is visible.
+/// Menuitem to show or hide the code view, label will change if view is visible.
 Fl_Menu_Item *sourceview_item = NULL;
 
 /// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
@@ -1700,7 +1700,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-  {"Show Source View",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
+  {"Show Code View",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
@@ -2057,7 +2057,7 @@ void set_modflag(int mf, int mfc) {
     if (!old_title || strcmp(old_title, new_title))
       main_window->copy_label(new_title);
   }
-  // if the UI was modified in any way, update the Source View panel
+  // if the UI was modified in any way, update the Code View panel
   if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
     sourceview_defer_update();
 }

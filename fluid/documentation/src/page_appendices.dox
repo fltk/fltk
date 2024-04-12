@@ -37,7 +37,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 | `Ctrl-Q` | quit FLUID |
 | `Ctrl-S` | save project |
 | `Shift-Ctrl-S` | save project with new name |
-| `Shift-Alt-S` | show or hide source view window |
+| `Shift-Alt-S` | show or hide code view window |
 | `Ctrl-U` | duplicate selected widgets |
 | `Ctrl-V` | paste last copied widgets |
 | `Shift-Ctrl-W` | write i18n translation file |

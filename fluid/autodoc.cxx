@@ -404,7 +404,7 @@ void run_autodoc(const Fl_String &target_dir) {
   // TODO: explain FLUID command line usage
 
   // TODO: take a snapshot of FLUID in a desktop situation
-  // (main, toolbar, document, widget editor, source view)
+  // (main, toolbar, document, widget editor, code view)
 
   // ---- main window
   // explain titlebar
@@ -437,7 +437,7 @@ void run_autodoc(const Fl_String &target_dir) {
   if (!widgetbin_panel) make_widgetbin();
   fl_snapshot((target_dir + "widgetbin_panel.png").c_str(), widgetbin_panel, win_margin, win_blend);
 
-  // ---- source view
+  // ---- code view
   // explain functionality
   // explain live update and choices
   // show various tabs
