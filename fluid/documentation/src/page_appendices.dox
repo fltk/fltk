@@ -20,10 +20,9 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 | `F8` | ungroup widgets |
 | `Delete` | delete selected widgets |
 | `Ctrl-1..9` | load project from history |
-| `Alt-1..6` | label text tiny to huge |
 | `Ctrl-A` | select all |
 | `Shift-Ctrl-A` | select none |
-| `Alt-B` | dhow or hide widget bin |
+| `Alt-B` | show or hide Widget Bin |
 | `Ctrl-C` | copy widgets |
 | `Shift-Ctrl-C` | generate C++ code files |
 | `Ctrl-G` | grid setting dialog |
@@ -37,7 +36,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 | `Ctrl-Q` | quit FLUID |
 | `Ctrl-S` | save project |
 | `Shift-Ctrl-S` | save project with new name |
-| `Shift-Alt-S` | show or hide code view window |
+| `Shift-Alt-S` | show or hide Code View window |
 | `Ctrl-U` | duplicate selected widgets |
 | `Ctrl-V` | paste last copied widgets |
 | `Shift-Ctrl-W` | write i18n translation file |
@@ -66,7 +65,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 
 <!-- ---------------------------------------------------------------------- -->
 
-\section appendix_fileformat .fl File Format
+\section appendix_fileformat `.fl` File Format
 
 FLUID edits and saves its state in `.fl` project files. These files are text,
 and you can (with care) edit them in a text editor, perhaps to get some special

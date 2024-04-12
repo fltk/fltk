@@ -5,22 +5,21 @@
  \tableofcontents
 
  FLUID can be used in interactive and in command line mode. If launched with
- `-c`, followed by a project filename, it will convert the project file
+ `-c`, followed by a project filename, FLUID will convert the project file
  into C++ source files without ever opening a window (or opening an X11 server
  connection under Linux/X11). This makes FLUID a great command line tool
  for build processes with complex project files that reference
- external resources.
-
- For example, a graphical image referenced by a `.fl` file can be modified
- and recompiled into the application binary without the need to reload it into
- an interactive FLUID session.
+ external resources. For example, an image referenced by a `.fl` file can be
+ modified and recompiled into the application binary without the need to reload
+ it in an interactive FLUID session.
 
  <!-- ---------------------------------------------------------------------- -->
  \section commandline_options Command Line Options
 
- To launch FLUID from the command line, you can give it an optional name
- of a project file. If no name is given, it will launch with an empty project,
- or with the last open project, if so selected in the application setting dialog.
+ To launch FLUID in interactive mode from the command line, you can give it an
+ optional name of a project file. If no name is given, it will launch with an
+ empty project, or with the last open project, if so selected in the
+ application setting dialog.
 
  The ampersand `&` is optional on Linux machines and lets FLUID run in its
  own new process, giving the shell back to the caller.
@@ -49,14 +48,14 @@ FLUID understands all of the standard FLTK switches before the filename:
  <!-- ---------------------------------------------------------------------- -->
  \section commandline_passive Compile Tool Options
 
-FLUID can also be called as a command-line tool to create the `.cxx` and `.h`
-file from a `.fl` file. To do this type:
+FLUID can also be called as a command-line only tool to create
+the `.cxx` and `.h` file from a `.fl` file directly. To do this type:
 
 ```
 fluid -c filename.fl
 ```
 
-This is the same as the menu 'File/Write Code...'.
+This is the same as the menu __File > Write Code...__ .
 It will read the `filename.fl` file and write
 `filename.cxx` and `filename.h`. Any leading
 directory on `filename.fl` will be stripped, so they are

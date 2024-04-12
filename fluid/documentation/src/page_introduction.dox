@@ -11,12 +11,12 @@
  These files ultimately create an FLTK based graphical user interface
  for an application.
 
+ The FLTK programming manual is available at https://www.fltk.org/documentation.php .
+
  This manual provides instructions on launching FLUID as a command line tool
  and integrating `.fl` project files into the application build process.
  FLTK utilizes `cmake`, but other build systems and IDEs capable of running
  external tools can also build applications based on FLUID.
-
- The FLTK programming manual is available at https://www.fltk.org/documentation.php .
 
  The majority of the manual focuses on using FLUID as an interactive GUI
  design tool. It covers an overview of windows, menu items, and dialog boxes,
@@ -26,13 +26,9 @@
  a new project, creating an alignment template, and incorporating
  internationalization.
 
- In a few tutorials, we will explain how to generate small apps in FLUID alone,
+ Several tutorials will explain how to generate small apps in FLUID alone,
  and how to create more complex user interfaces, followed by some advanced
  subject like creating integrated reusable widget classes.
-
- Several tutorials demonstrate creating simple applications using FLUID
- exclusively, as well as developing more intricate user interfaces. Advanced
- topics such as creating reusable widget classes are also discussed.
 
  The appendices contain additional technical information for reference.
 
@@ -46,15 +42,16 @@
  Subsequently, these files are compiled into object files, which are then
  linked with other object files to form an executable binary.
  FLUID-generated header files give access to UI elements from other C++ modules
- within the project. Conversely, FLUID can also generate references to
- variables and callback functions in other C++ modules.
+ within the project. FLUID can also generate forward declarations to
+ variables and callback functions that are defined and implemented in other
+ C++ modules.
 
  \image html fluid_flow_chart_800.png "FLUID Workflow"
  \image latex fluid_flow_chart.png "FLUID Workflow"
 
- Small applications can be fully designed and developed within FLUID. Users
- have the option to include shell scripts in FLUID projects, enabling them to
- directly call compilers and linkers to produce the binaries.
+ Small applications can be fully designed and developed with FLUID alone.
+ Users have the option to include shell scripts in FLUID projects, enabling
+ them to directly call compilers and linkers to produce the binaries.
 
  For medium-sized projects, a build systems such as `cmake` or IDEs
  with integrated build setups is recommended. FLUID in interactive mode
@@ -62,9 +59,9 @@
 
  In larger projects, FLUID projects frequently reference external resources
  such as graphics, binary data, and internationalized text.
- In such scenarios,it is very useful to distribute the `.fl` project files
+ In such scenarios, it is very useful to distribute the `.fl` project files
  instead of prebuilt source files. FLUID in command-line mode can then be
  called as an external tool, dynamically generating C++ source code from all
- external resources during compile time.
+ external resources at compile time.
 
  */

@@ -9,7 +9,7 @@
 
  A FLUID project is a hierarchy of nodes. Each node holds information to
  generates C++ source code which in turn generates the user interface that
- is created in the layout editor windows. Project usually define one or more
+ is created in the layout editor windows. Projects usually define one or more
  functions, or methods in a classes. These functions can generate one or more
  FLTK windows and all the widgets that go inside those windows.
 
@@ -70,7 +70,7 @@
  The *Shell* menu gives quick access to user definable shell scripts. Note that
  scripts can be stored inside `.fl` project files.
 
- \see main_menu_items
+ \see \ref main_menu_items
 
  <!-- ---------------------------------------------------------------------- -->
  \section main_widget_browser Widget Tree View
