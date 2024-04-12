@@ -24,7 +24,7 @@
 #include <math.h> // for trunc()
 
 #if !HAVE_TRUNC
-static inline double trunc(double x) { x >= 0 ? floor(x) : ceil(x); }
+static inline double trunc(double x) { return x >= 0 ? floor(x) : ceil(x); }
 #endif // !HAVE_TRUNC
 
 /**
