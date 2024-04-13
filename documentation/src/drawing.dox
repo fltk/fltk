@@ -386,9 +386,8 @@ responsibility to set it back to the default with
 
 \par
 \b Note:
-Because of how line styles are implemented on MS Windows systems, you
-\e must set the line style \e after setting the drawing color.
-If you set the
+Because of how line styles are implemented on Windows systems, you \e must
+set the line style \e after setting the drawing color. If you set the
 color after the line style you will lose the line style settings!
 
 \par
@@ -511,7 +510,7 @@ void fl_pie(int x, int y, int w, int h, double a1, double a2)
 \par
 Draw ellipse sections using integer coordinates. These
 functions match the rather limited circle drawing code provided
-by X and MS Windows. The advantage over using
+by X and Windows. The advantage over using
 \ref drawing_fl_arc "fl_arc()"
 with floating point
 coordinates is that they are faster because they often use the
@@ -555,11 +554,10 @@ with 2-D linear transformations. The functionality matches that
 found in the Adobe&reg; PostScript&tm; language. The
 exact pixels that are filled are less defined than for the fast
 drawing functions so that FLTK can take advantage of drawing
-hardware. On both X and MS Windows the transformed vertices are
-rounded to integers before drawing the line segments: this
-severely limits the accuracy of these functions for complex
-graphics, so use OpenGL when greater accuracy and/or performance
-is required.
+hardware. On both X and Windows the transformed vertices are
+rounded to integers before drawing the line segments: this severely
+limits the accuracy of these functions for complex graphics, so use
+OpenGL when greater accuracy and/or performance is required.
 
 void fl_load_matrix(double a,double b,double c,double d,double x,double y)
 void fl_load_identity()

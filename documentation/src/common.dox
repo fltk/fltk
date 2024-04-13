@@ -168,17 +168,12 @@ widget's parent.
 
 \section common_colors Colors
 
-FLTK stores the colors of widgets as an 32-bit unsigned
-number that is either an index into a color palette of 256
-colors or a 24-bit RGB color. The color palette is \e not
-the X or MS Windows colormap, but instead is an internal table with
-fixed contents.
+FLTK stores the colors of widgets as a 32-bit unsigned number that is
+either an index into a color palette of 256 colors (0 \<= color \<= 255)
+or a 24-bit RGB color (color > 255). The color palette is \e not the
+X or Windows colormap, but instead is an internal table with fixed contents.
 
-See the
-\ref drawing_colors
-section of
-\ref drawing
-for implementation details.
+See the \ref drawing_colors section of \ref drawing for implementation details.
 
 There are symbols for naming some of the more common colors:
 

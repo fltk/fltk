@@ -1213,7 +1213,7 @@ if (v == LOAD) {
                 xywh {0 0 100 20} labelsize 11
               }
               MenuItem {} {
-                label {MS Windows only}
+                label {Windows only}
                 user_data {Fd_Shell_Command::WIN_ONLY} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }

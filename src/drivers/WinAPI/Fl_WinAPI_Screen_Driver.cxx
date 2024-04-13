@@ -39,7 +39,7 @@ extern const char *fl_bg2;
 #endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
-  // Define MS Windows specific accelerators...
+  // Define Windows specific accelerators...
   { 'y',          FL_CTRL,                  Fl_Text_Editor::kf_redo       ,0},
   { 0,            0,                        0                             ,0}
 };
