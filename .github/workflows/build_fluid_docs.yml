@@ -41,6 +41,8 @@ jobs:
 ## Use the following line when 1.10.0 becomes available on Ubuntu. On 4/14/24 it's 1.9.2
 #        sudo apt-get install -y doxygen=1.10.0
 
+## xvfb creates a headless X server for us, so we can render snapshot with FLUID
+
 ## We need at least Doxygen on macOS. BasicTeX is not enough though.
 #        brew install doxygen
 #        brew install --cask basictex
@@ -73,6 +75,13 @@ jobs:
         export DISPLAY=:19
         cmake --build . --config Debug --target fluid_docs
         cmake --build . --config Debug --target fluid_pdf
-        ls $GITHUB_WORKSPACE/fluid/documentation
-        ls $GITHUB_WORKSPACE/fluid/documentation/html
+    - name: Store pdf as an Artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluid-pdf
+          path: build/fluid/documentation/fluid.pdf
+          retention-days: 3
+          overwrite: true
+
+#          path: ${{github.workspace}}/build/fluid/documentation/fluid.pdf
 
