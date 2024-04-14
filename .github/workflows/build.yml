@@ -1,6 +1,6 @@
 name: Build and Test
 
-# on: [push]
+on: [none]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
