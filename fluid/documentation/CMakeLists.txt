@@ -128,8 +128,8 @@ if(FLTK_BUILD_FLUID_DOCS)
   # generate HTML documentation
 
   add_custom_target(fluid_docs
-    COMMAND echo fluid::fluid -scheme gtk+ --autodoc ${CMAKE_CURRENT_BINARY_DIR}/src/
-    COMMAND fluid::fluid -scheme gtk+ --autodoc ${CMAKE_CURRENT_BINARY_DIR}/src/
+    COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/src/
+    COMMAND ${FLTK_FLUID_EXECUTABLE} -scheme gtk+ --autodoc ${CMAKE_CURRENT_BINARY_DIR}/src/
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/src/function_panel.png
