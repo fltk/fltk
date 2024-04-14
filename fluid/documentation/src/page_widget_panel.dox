@@ -7,7 +7,7 @@
  # The Widget Properties Panel #
 
  \image html widget_panel.png "Widget Properties"
- \image latex widget_panel.png "Widget Properties"
+ \image latex widget_panel.png "Widget Properties" width=12cm
 
  This panel is used to edit the properties of the currently selected widgets.
  It can be opened by double-clicking on a widget or by pressing `F1`.
@@ -33,7 +33,7 @@
  the defaults and will generate code for all attribute instead.
 
  \image html wLiveMode.png
- \image latex wLiveMode.png
+ \image latex wLiveMode.png "" width=12cm
 
  Correctly resizing a window can be a complex task. It is easier to check
  resizing behavior on a more local level first.
@@ -48,7 +48,7 @@
  \section widget_panel_gui The GUI Tab
 
  \image html wp_gui_tab.png
- \image latex wp_gui_tab.png
+ \image latex wp_gui_tab.png "" width=12cm
 
  The widget panel has three standard tabs that apply to all widgets. Some widget
  types, `Fl_Grid` and children of `Fl_Grid`, will create additional
@@ -57,7 +57,7 @@
  The GUI tab controls basic GUI settings, including label text and widget size.
 
  \image html wp_gui_label.png
- \image latex wp_gui_label.png
+ \image latex wp_gui_label.png "" width=10cm
 
  The *Label* field can be any Unicode string and is stored as a static text.
  If internationalization is enabled, the corresponding modifiers are
@@ -70,7 +70,7 @@
  The pulldown menu offers some additional rendering styles for the label.
 
  \image html wp_gui_image.png
- \image latex wp_gui_image.png
+ \image latex wp_gui_image.png "" width=10cm
 
  Add an image to the widget label here. The second row takes an optional image
  for rendering a deactivated widget.
@@ -98,14 +98,14 @@
  fall back to the full size image for high-dpi screens.
 
  \image html wp_gui_alignment.png
- \image latex wp_gui_alignment.png
+ \image latex wp_gui_alignment.png "" width=10cm
 
  Control alignment of the label in relation to the widget position and size as
  well as the relation between the image and the label. The box on the right
  toggles between inside and outside label alignment.
 
  \image html wp_gui_size.png
- \image latex wp_gui_size.png
+ \image latex wp_gui_size.png "" width=10cm
 
  Control the size and position of a widget here. The input fields react to
  vertical scroll wheel input for interactive positioning.
@@ -130,34 +130,34 @@
 | `cx`, `cy`, `cw`, `ch` | bounding box of all children |
 
  \image html wp_gui_values.png
- \image latex wp_gui_values.png
+ \image latex wp_gui_values.png "" width=10cm
 
  Activate for widgets that can take numerical values, these input fields take
  floating point numbers. The generate lines like `o->minimum(2);` only if the
  corresponding value differs from the default value for this property.
 
  \image html wp_gui_flexp.png
- \image latex wp_gui_flexp.png
+ \image latex wp_gui_flexp.png "" width=10cm
 
  This row is only visible for children of `Fl_Flex` widgets. It sets the
  width or height of a widget in horizontal or vertical Flex widget. If *fixed*
  is unchecked, this value is instead calculated by the Flex.
 
  \image html wp_gui_margins.png
- \image latex wp_gui_margins.png
+ \image latex wp_gui_margins.png "" width=10cm
 
  This row is only visible for `Fl_Flex` widgets. It sets the various margins
  and the gap value for this widget.
 
  \image html wp_gui_sizerange.png
- \image latex wp_gui_sizerange.png
+ \image latex wp_gui_sizerange.png "" width=10cm
 
  This row is only visible for top level windows. The field sets the minimum
  and maximum size range for windows. Use the *set* button to copy the current
  size. Set width and height to `0` to disable that aspect of the size range.
 
  \image html wp_gui_shortcut.png
- \image latex wp_gui_shortcut.png
+ \image latex wp_gui_shortcut.png "" width=10cm
 
  This option is only visible for buttons and other widgets that can react to a
  shortcut key combination. FLUID does not check if a shortcut was already used
@@ -167,7 +167,7 @@
  created in a more compatible way across platforms.
 
  \image html wp_gui_xclass.png
- \image latex wp_gui_xclass.png
+ \image latex wp_gui_xclass.png "" width=10cm
 
  This row is only visible for top level windows. Note that selecting *modal*
  and *non modal* together is undefined.
@@ -178,7 +178,7 @@
  see the effect.
 
  \image html wp_gui_attributes.png
- \image latex wp_gui_attributes.png
+ \image latex wp_gui_attributes.png "" width=10cm
 
  Some additional attributes for all widget types.
 
@@ -208,7 +208,7 @@
  `show()`.
 
  \image html wp_gui_tooltip.png
- \image latex wp_gui_tooltip.png
+ \image latex wp_gui_tooltip.png "" width=10cm
 
  The *Tooltip* field can be any Unicode string and is stored as a static text.
  If internationalization is enabled, the corresponding modifiers are
@@ -218,16 +218,16 @@
  \section widget_panel_style The Style Tab
 
  \image html wp_style_tab.png
- \image latex wp_style_tab.png
+ \image latex wp_style_tab.png "Style Tab" width=12cm
 
  The Style tab is used to edit font styles and size, and the color of elements
  of the widget.
 
  \image html wp_style_label.png
- \image latex wp_style_label.png
+ \image latex wp_style_label.png "" width=10cm
 
  \image html wp_style_text.png
- \image latex wp_style_text.png
+ \image latex wp_style_text.png "" width=10cm
 
  The font pulldown menu provides a list of standard fonts. To enter the index
  of a user loaded font, an *extra code* field must be used. The *label color*
@@ -239,7 +239,7 @@
  text area.
 
  \image html wp_style_box.png
- \image latex wp_style_box.png
+ \image latex wp_style_box.png "" width=10cm
 
  Select the up and down box for the give widget. The first six entries in the
  box and frame style list are influenced by the FLTK Scheme setting. Other
@@ -270,13 +270,13 @@
  \section widget_panel_cpp The C++ Tab
 
  \image html wp_cpp_tab.png
- \image latex wp_cpp_tab.png
+ \image latex wp_cpp_tab.png "C++ Tab" width=12cm
 
  The C++ tab has various input field for adding C++ code at various places
  in the source and header file.
 
  \image html wp_cpp_class.png
- \image latex wp_cpp_class.png
+ \image latex wp_cpp_class.png "" width=10cm
 
  If the class property is set, FLUID assumes that the user wants to instantiate
  a widget that is derived from the selected widget. For a derived widget, the
@@ -294,7 +294,7 @@
  be an `Fl_Toggle_Button` of an `Fl_Radio_Button`.
 
  \image html wp_cpp_name.png
- \image latex wp_cpp_name.png
+ \image latex wp_cpp_name.png "" width=10cm
 
  The name field can be any valid C++ variable name. If the widget is inside
  a class, the pulldown menu lets the user select between *private*, *protected*,
@@ -317,7 +317,7 @@
  in the array must be the same type.
 
  \image html v_input.png
- \image latex v_input.png
+ \image latex v_input.png "" width=10cm
 
  These four input fields can be used to add arbitrary code to different parts
  of the header and source file. A line can be divided into multiple lines
@@ -342,14 +342,14 @@
  code.
 
  \image html wComment.png
- \image latex wComment.png
+ \image latex wComment.png "" width=10cm
 
  Comments are added to the source code before the widget constructor by adding
  `// ` in front of every line of the comment. The first few characters of a
  comment are also visible in the widget browser in the main window.
 
  \image html wp_cpp_callback.png
- \image latex wp_cpp_callback.png
+ \image latex wp_cpp_callback.png "" width=10cm
 
  The callback field can be interpreted in two ways. If the callback text is only
  a single word, FLUID assumes that this is the name of an external callback
@@ -381,7 +381,7 @@
  \section widget_panel_grid The Grid Tab
 
  \image html wp_grid_tab.png
- \image latex wp_grid_tab.png
+ \image latex wp_grid_tab.png "Grid Tab" width=12cm
 
  This tab is only available if the selected widget is an `Fl_Grid`. When editing
  a Grid widget, no other widgets should be selected.
@@ -400,7 +400,7 @@
  \section widget_panel_gridc The Grid Child Tab
 
  \image html wp_gridc_tab.png
- \image latex wp_gridc_tab.png
+ \image latex wp_gridc_tab.png "Grid Child Tab" width=12cm
 
  This tab is only available if the selected widget is a child of an `Fl_Grid`.
  When editing a child of a Grid widget, no other widgets should be selected.

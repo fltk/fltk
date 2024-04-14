@@ -41,7 +41,7 @@
  is left empty, FLUID will generate a `main(argc, argv)` function for us.
 
  \image html fluid4.png "the Function/Method Properties dialog"
- \image latex fluid4.png "the Function/Method Properties dialog"
+ \image latex fluid4.png "the Function/Method Properties dialog" width=10cm
 
  Click OK to apply the changes you made in the Function Properties dialog.
  You can get this dialog back at any time by selecting the function in the
@@ -98,7 +98,7 @@
  close button in the window border is clicked.
 
  \image html 1of7GUIs.png "Task 1 of 7GUIs"
- \image latex 1of7GUIs.png "Task 1 of 7GUIs" width=5cm
+ \image latex 1of7GUIs.png "Task 1 of 7GUIs" width=8cm
 
  The second tutorial will introduce callbacks by implementing task 1, "Counter",
  of 7GUIs. 7GUIs has been created as a spin-off of my master’s thesis

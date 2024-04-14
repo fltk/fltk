@@ -2,6 +2,8 @@
 
 /**
 
+ \if HTML_INDEX
+
  \mainpage FLUID User Manual
 
  <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
@@ -112,4 +114,7 @@
  </TD>
  </TR>
  </TABLE>
+
+ \endif
+
 */
