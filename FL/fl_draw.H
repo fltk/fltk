@@ -623,11 +623,17 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
 }
 /**
   Add a series of points to the current path on the arc of a circle.
+ 
+  The arc is drawn counter-clockwise from 3 o'clock. If \p end is less than
+  \p start then it draws the arc in a clockwise direction. To draw an arc across
+  the 3 o'clock line, \p start and \p end can be greater than 360 or less than 0.
+  For example, to draw a counter-clockwise arc from 6 to 12 o'clock, \p start
+  would be -90 deg, and \p end would be at +90 deg.
+
   You can get elliptical paths by using scale and rotate before calling fl_arc().
-  \param[in] x,y,r center and radius of circular arc
-  \param[in] start,end angles of start and end of arc measured in degrees
-    counter-clockwise from 3 o'clock. If \p end is less than \p start
-    then it draws the arc in a clockwise direction.
+
+  \param[in] x, y, r center and radius of circular arc
+  \param[in] start, end angles of start and end of arc measured in degrees
 
   \image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
   \image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
