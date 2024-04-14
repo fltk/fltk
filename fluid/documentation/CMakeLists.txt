@@ -176,7 +176,7 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
     COMMENT "Converting ${DOXYFILE} to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
-  # generate LaTeX title fltk-title.tex
+  # generate LaTeX title fluid-title.tex
 
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/fluid-title.tex.in
@@ -204,7 +204,7 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
   # add target 'pdf'
 
   add_custom_target(fluid_pdf
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/fluid.pdf
   )
 
 endif(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)

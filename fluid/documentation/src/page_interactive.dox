@@ -5,7 +5,6 @@
  \tableofcontents
 
  <!-- ---------------------------------------------------------------------- -->
- \section interactive_gui The GUI Tab
 
  In interactive mode, FLUID allows users to construct and modify their GUI
  design by organizing widgets hierarchically through drag-and-drop actions.
