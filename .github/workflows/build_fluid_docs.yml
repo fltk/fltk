@@ -75,13 +75,13 @@ jobs:
         export DISPLAY=:19
         cmake --build . --config Debug --target fluid_docs
         cmake --build . --config Debug --target fluid_pdf
-    - name: Store pdf as an Artefact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fluid-pdf
-          path: build/fluid/documentation/fluid.pdf
-          retention-days: 3
-          overwrite: true
+    - name: Store pdf as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fluid-pdf
+        path: build/fluid/documentation/fluid.pdf
+        retention-days: 3
+        overwrite: true
 
 #          path: ${{github.workspace}}/build/fluid/documentation/fluid.pdf
 
