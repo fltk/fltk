@@ -6,13 +6,15 @@
 name: 'Build FLUID User Handbook'
 
 # This job must be called explicitly form the 'Actions' tab in GitHub
-on:
-  workflow_dispatch:
-    inputs:
-      build-pdf:
-        type: boolean
-        description: Build pdf file as well
-        default: 'true'
+on: push
+
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      build-pdf:
+#        type: boolean
+#        description: Build pdf file as well
+#        default: 'true'
 
 permissions:
   contents: read
