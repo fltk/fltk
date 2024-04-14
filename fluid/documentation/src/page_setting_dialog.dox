@@ -5,7 +5,7 @@
  \tableofcontents
 
  <img src="w_settings.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings.png "Setting Dialog" width=10cm
+ \image latex w_settings.png "Setting Dialog" width=7cm
 
  The settings dialog combines application preferences
  and project setting in a compact set of six tabs.
@@ -36,7 +36,7 @@
  \section setting_general Application Settings
 
  <img src="w_settings_general_tab.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings_general_tab.png "" width=10cm
+ \image latex w_settings_general_tab.png "" width=7cm
 
  __Scheme__:
 
@@ -71,7 +71,7 @@
  \section setting_project Project Settings
 
  <img src="w_settings_project_tab.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings_project_tab.png "" width=10cm
+ \image latex w_settings_project_tab.png "" width=7cm
 
  __Header File__, __Code File__:
 
@@ -112,7 +112,7 @@
  \section setting_layout Layout Preferences
 
  <img src="w_settings_layout_tab.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings_layout_tab.png "" width=10cm
+ \image latex w_settings_layout_tab.png "" width=7cm
 
  Layouts are a collection of hints that help when interactively positioning and
  resizing widgets in the project window. Layouts come in a set of three for
@@ -161,7 +161,7 @@
  \section setting_shell Shell Commands
 
  <img src="w_settings_shell_tab.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings_shell_tab.png "" width=10cm
+ \image latex w_settings_shell_tab.png "" width=7cm
 
  __Shell Command List__:
 
@@ -227,7 +227,7 @@
  to the I18N options.
 
  \image html w_settings_i18n_gnu.png
- \image latex w_settings_i18n_gnu.png "" width=10cm
+ \image latex w_settings_i18n_gnu.png "" width=7cm
 
  FLUID supports three methods of I18N: none, GNU
  gettext, and POSIX catgets. The "none" method is the
@@ -280,7 +280,7 @@ standard I18N file for GNU gettext.
  \see [GNU gettext special cases](https://www.gnu.org/software/gettext/manual/html_node/Special-cases.html)
 
  \image html w_settings_i18n_psx.png
- \image latex w_settings_i18n_psx.png "" width=10cm
+ \image latex w_settings_i18n_psx.png "" width=7cm
 
  The "POSIX catgets" method uses the POSIX catgets function to
  retrieve a numbered message from a message catalog before
@@ -326,7 +326,7 @@ The default set is 1 and rarely needs to be changed.
  \section setting_user User Interface Preferences
 
  <img src="w_settings_user_tab.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings_user_tab.png "" width=10cm
+ \image latex w_settings_user_tab.png "" width=7cm
 
  This tab lets users change the font and color of text in the widget browser.
  The settings are stored in the user preferences.

@@ -7,7 +7,7 @@
  # The Widget Bin Panel #
 
  \image html widgetbin_panel.png "Widget Bin"
- \image latex widgetbin_panel.png "Widget Bin"  width=12cm
+ \image latex widgetbin_panel.png "Widget Bin"  width=9cm
 
  The Widget Bin can be activated via the main
  menu: *Edit* > *Show Widget Bin* . FLUID will remember its

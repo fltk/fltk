@@ -5,7 +5,7 @@
  \tableofcontents
 
  \image html main_window.png "Main Application Window"
- \image latex main_window.png "Main Application Window" width=8cm
+ \image latex main_window.png "Main Application Window" width=5cm
 
  A FLUID project is a hierarchy of nodes. Each node holds information to
  generate C++ source code which in turn generates the user interface that
@@ -23,7 +23,7 @@
  \section main_titlebar Title Bar
 
  \image html main_titlebar.jpg
- \image latex main_titlebar.jpg "" width=8cm
+ \image latex main_titlebar.jpg "" width=5cm
 
  The title bar shows the status of the project file, _function_panel.fl_ in this
  case, followed by an asterisk if the project was changed after it was saved.
@@ -42,7 +42,7 @@
  \section main_menubar Application Menu Bar
 
  \image html main_menubar.png
- \image latex main_menubar.png "" width=8cm
+ \image latex main_menubar.png "" width=5cm
 
  The menu bar is the true control center of FLUID. All actions start here.
 
@@ -77,7 +77,7 @@
  \section main_widget_browser Widget Tree View
 
  \image html main_browser.png
- \image latex main_browser.png "" width=8cm
+ \image latex main_browser.png "" width=5cm
 
  Widgets are stored in a hierarchy. You can open and close a level by clicking
  the "triangle" at the left of a widget. The leftmost widgets are the

@@ -451,7 +451,7 @@ void run_autodoc(const Fl_String &target_dir) {
 
   // ---- settings dialog
   // show and explain all tabs
-  fl_snapshot((target_dir + "w_settings.png").c_str(), settings_window, win_margin, win_blend, 0.5);
+  fl_snapshot((target_dir + "w_settings.png").c_str(), settings_window, win_margin, win_blend);
   fl_snapshot((target_dir + "w_settings_general_tab.png").c_str(), w_settings_general_tab, xtab_margin, row_blend);
   w_settings_tabs->value(w_settings_project_tab);
   fl_snapshot((target_dir + "w_settings_project_tab.png").c_str(), w_settings_project_tab, xtab_margin, row_blend);
