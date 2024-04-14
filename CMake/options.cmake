@@ -603,13 +603,16 @@ if(FLTK_BUILD_GL)
   if(FLTK_BACKEND_WAYLAND)
     pkg_check_modules(WLD_EGL IMPORTED_TARGET wayland-egl)
     pkg_check_modules(PKG_EGL IMPORTED_TARGET egl)
-    pkg_check_modules(PKG_GL IMPORTED_TARGET gl)
+    pkg_check_modules(PKG_GL  IMPORTED_TARGET gl)
     pkg_check_modules(PKG_GLU IMPORTED_TARGET glu)
+
     if(NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND AND PKG_GLU_FOUND))
       message(STATUS "Modules 'wayland-egl, egl, gl, and glu' are required to build for the Wayland backend.")
       message(FATAL_ERROR "*** Aborting ***")
-    endif(NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND AND PKG_GLU_FOUND))
+    endif()
+
   endif(FLTK_BACKEND_WAYLAND)
+
   if(FLTK_BACKEND_X11)
     set(OPENGL_FOUND TRUE)
     find_library(OPENGL_LIB GL)
@@ -628,7 +631,7 @@ if(FLTK_BUILD_GL)
       set(HAVE_GL_GLU_H ${HAVE_OPENGL_GLU_H})
     endif(APPLE)
   endif(FLTK_BACKEND_X11)
-else()
+else(FLTK_BUILD_GL)
   set(OPENGL_FOUND FALSE)
   set(HAVE_GL FALSE)
   set(HAVE_GL_GLU_H FALSE)
@@ -641,24 +644,32 @@ mark_as_advanced(OPENGL_LIB) # internal cache variable, not relevant for users
 # from the cache above. It has been marked "advanced" before in resources.cmake.
 mark_as_advanced(HAVE_GL_GLU_H)
 
+# Note: GLLIBS is a CMake 'list' and is used exclusively to generate fltk-config !
+
+# FIXME, this should be improved!
+# We should probably deduct this from OPENGL_LIBRARIES but it turned
+# out to be difficult since FindOpenGL seems to return different
+# syntax depending on the platform (and maybe also CMake version).
+# Hence we use the following code...
+
+set(GLLIBS)
+set(FLTK_GL_FOUND FALSE)
+
 if(OPENGL_FOUND)
+  set(FLTK_GL_FOUND TRUE)
   find_path(OPENGL_GLU_INCLUDE_DIR NAMES GL/glu.h OpenGL/glu.h HINTS ${OPENGL_INCLUDE_DIR} ${X11_INCLUDE_DIR})
   set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL ${OPENGL_GLU_INCLUDE_DIR})
 
-  # Set GLLIBS (used in fltk-config).
-  # We should probably deduct this from OPENGL_LIBRARIES but it turned
-  # out to be difficult since FindOpenGL seems to return different
-  # syntax depending on the platform (and maybe also CMake version).
-  # Hence we use the following code...
-
   if(WIN32)
-    set(GLLIBS "-lglu32 -lopengl32")
+    list(APPEND GLLIBS -lglu32 -lopengl32)
   elseif(APPLE AND NOT FLTK_BACKEND_X11)
-    set(GLLIBS "-framework OpenGL")
+    list(APPEND GLLIBS "-framework OpenGL")
   elseif(FLTK_BACKEND_WAYLAND)
-    set(GLLIBS PkgConfig::WLD_EGL PkgConfig::PKG_EGL PkgConfig::PKG_GLU PkgConfig::PKG_GL)
+    foreach(_lib WLD_EGL PKG_EGL PKG_GLU PKG_GL)
+      list(APPEND GLLIBS ${${_lib}_LDFLAGS})
+    endforeach(_lib )
   else()
-    set(GLLIBS "-lGLU -lGL")
+    list(APPEND GLLIBS -lGLU -lGL)
   endif(WIN32)
 
   # check if function glXGetProcAddressARB exists
@@ -667,11 +678,6 @@ if(OPENGL_FOUND)
   check_function_exists(glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
   set(CMAKE_REQUIRED_LIBRARIES ${TEMP_REQUIRED_LIBRARIES})
   unset(TEMP_REQUIRED_LIBRARIES)
-
-  set(FLTK_GL_FOUND TRUE)
-else()
-  set(FLTK_GL_FOUND FALSE)
-  set(GLLIBS)
 endif(OPENGL_FOUND)
 
 #######################################################################
@@ -861,10 +867,9 @@ if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 
     # add required libraries to fltk-config ...
     if(USE_PANGOXFT)
-      list(APPEND FLTK_LDLIBS PkgConfig::PANGOXFT)
+      list(APPEND FLTK_LDLIBS ${PANGOXFT_LDFLAGS})
     endif(USE_PANGOXFT)
-    list(APPEND FLTK_LDLIBS PkgConfig::PANGOCAIRO)
-    list(REMOVE_DUPLICATES FLTK_LDLIBS)
+    list(APPEND FLTK_LDLIBS ${PANGOCAIRO_LDFLAGS})
 
     # *FIXME* Libraries should not be added explicitly if possible
     if(FLTK_BACKEND_WAYLAND AND FLTK_USE_LIBDECOR_GTK AND NOT USE_SYSTEM_LIBDECOR)
@@ -873,8 +878,6 @@ if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
     if(FLTK_BACKEND_X11)
       list(APPEND FLTK_LDLIBS -lX11)
     endif()
-
-    list(REMOVE_DUPLICATES FLTK_LDLIBS)
 
     if(APPLE)
       get_filename_component(PANGO_L_PATH ${HAVE_LIB_PANGO} PATH)

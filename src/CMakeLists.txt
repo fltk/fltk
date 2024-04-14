@@ -631,9 +631,12 @@ endif()
 
 #######################################################################
 
-# prepare optional libs for shared and static FLTK libraries
+# Prepare optional libs for shared and static FLTK libraries.
+# Note: OPTIONAL_LIBS is a CMake 'list' and may contain CMake targets,
+# i.e. it is only used for CMake stuff: target_link_libraries().
+# FIXME: make this all more consistent (targets rather than libs).
 
-set(OPTIONAL_LIBS)
+set(OPTIONAL_LIBS) # init
 
 if(LIB_dl)
   list(APPEND OPTIONAL_LIBS ${LIB_dl})
@@ -669,10 +672,6 @@ endif(HAVE_XCURSOR)
 if(HAVE_XRENDER)
   list(APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
 endif(HAVE_XRENDER)
-
-### if(FLTK_HAVE_CAIRO) # FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT or Wayland
-###   list(APPEND OPTIONAL_LIBS ${PKG_CAIRO_LIBRARIES})
-### endif()
 
 if(USE_PANGO)
   ### FIXME ###  This needs to use the PKG_* variables directly
@@ -772,10 +771,6 @@ endif(UNIX AND FLTK_BACKEND_WAYLAND)
 fl_add_library(fltk STATIC "${STATIC_FILES}")
 target_link_libraries(fltk PUBLIC ${OPTIONAL_LIBS})
 
-### if(FLTK_HAVE_CAIRO OR FLTK_USE_CAIRO)
-###   target_link_directories(fltk PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
-### endif()
-
 #######################################################################
 
 if(FLTK_BUILD_FORMS)
@@ -797,10 +792,6 @@ endif()
 fl_add_library(fltk_images STATIC "${IMGCPPFILES}")
 target_link_libraries(fltk_images PUBLIC  fltk::fltk)
 target_link_libraries(fltk_images PRIVATE ${FLTK_IMAGE_LIBRARIES})
-
-### target_link_libraries(fltk_images PUBLIC ${FLTK_JPEG_LIBRARIES})
-### target_link_libraries(fltk_images PUBLIC ${FLTK_PNG_LIBRARIES})
-### target_link_libraries(fltk_images PUBLIC ${FLTK_IMAGE_LIBRARIES})
 
 if(FLTK_USE_BUNDLED_JPEG)
   target_include_directories(fltk_images PUBLIC
@@ -825,16 +816,10 @@ endif(FLTK_USE_GL)
 # Shared libraries, part 1: everything except Visual Studio (MSVC)
 #######################################################################
 
-### fl_debug_var(OPTIONAL_LIBS)
-
 if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
 
   fl_add_library(fltk SHARED "${SHARED_FILES}")
   target_link_libraries(fltk-shared PUBLIC ${OPTIONAL_LIBS})
-
-  ### if(FLTK_HAVE_CAIRO OR FLTK_USE_CAIRO)
-  ###   target_link_directories(fltk-shared PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
-  ### endif()
 
   ###################################################################
 
@@ -845,12 +830,6 @@ if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
 
   ###################################################################
 
-  ### fl_debug_var(fltk_images)
-  ### fl_debug_var(FLTK_JPEG_LIBRARIES)
-  ### fl_debug_var(FLTK_PNG_LIBRARIES)
-  ### fl_debug_var(FLTK_ZLIB_LIBRARIES)
-  ### fl_debug_var(FLTK_IMAGE_LIBRARIES)
-
   fl_add_library(fltk_images SHARED "${IMGCPPFILES}")
   target_link_libraries(fltk_images-shared PUBLIC fltk::fltk-shared)
 
@@ -859,7 +838,6 @@ if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
   target_link_libraries(fltk_images PUBLIC ${FLTK_IMAGE_LIBRARIES})
 
   if(FLTK_USE_BUNDLED_JPEG)
-    ## include_directories(${CMAKE_CURRENT_SOURCE_DIR})
     target_include_directories(fltk_images-shared PUBLIC
       $<BUILD_INTERFACE:${FLTK_SOURCE_DIR}/jpeg>
       # $<INSTALL_INTERFACE:include>

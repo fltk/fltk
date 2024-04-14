@@ -83,10 +83,8 @@ set(FLTK_BUILD_INCLUDE_DIRECTORIES)
 
 set(FLTK_LDLIBS "")
 set(FLTK_LIBRARIES "")
-set(GLLIBS "")
 set(IMAGELIBS "")
 set(LDFLAGS "")
-set(LIBS "")
 set(LINK_LIBS "")
 set(STATICIMAGELIBS "")
 
