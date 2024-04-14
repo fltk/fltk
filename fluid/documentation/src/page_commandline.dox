@@ -62,7 +62,7 @@ directory on `filename.fl` will be stripped, so they are
 always written to the current directory. If there are any errors
 reading or writing the files, FLUID will print the error and
 exit with a non-zero code. You can use the following lines in a
-makefile to automate the creation of the source and header
+Makefile to automate the creation of the source and header
 files:
 
 ```
@@ -108,7 +108,7 @@ particularly take care when running `fluid -u` since this overwrites the
 original `.fl` project file.
 
  <!-- ---------------------------------------------------------------------- -->
- \section commandline_windows MS Windows specifics
+ \section commandline_windows Windows Specifics
 
  FLTK uses Linux-style forward slashes to separate path segments in file names.
  When running on Windows, FLUID will understand Microsoft drive names and

@@ -15,20 +15,20 @@
 
  This manual provides instructions on launching FLUID as a command line tool
  and integrating `.fl` project files into the application build process.
- FLTK utilizes `cmake`, but other build systems and IDEs capable of running
+ FLTK utilizes _CMake_, but other build systems and IDEs capable of running
  external tools can also build applications based on FLUID.
 
  The majority of the manual focuses on using FLUID as an interactive GUI
  design tool. It covers an overview of windows, menu items, and dialog boxes,
  detailing how to create visually appealing and consistent user experiences
  through drag and drop functionality, a "what you see is what you get" editor,
- and alignment tools. The Setting section will detail the process of initiating
+ and alignment tools. The \ref page_setting_dialog will detail the process of initiating
  a new project, creating an alignment template, and incorporating
  internationalization.
 
  Several tutorials will explain how to generate small apps in FLUID alone,
  and how to create more complex user interfaces, followed by some advanced
- subject like creating integrated reusable widget classes.
+ subjects like creating integrated reusable widget classes.
 
  The appendices contain additional technical information for reference.
 
@@ -53,7 +53,7 @@
  Users have the option to include shell scripts in FLUID projects, enabling
  them to directly call compilers and linkers to produce the binaries.
 
- For medium-sized projects, a build systems such as `cmake` or IDEs
+ For medium-sized projects, a build systems such as _CMake_ or IDEs
  with integrated build setups is recommended. FLUID in interactive mode
  can pre-generate C++ code files for direct compilation by the IDE.
 
@@ -62,6 +62,6 @@
  In such scenarios, it is very useful to distribute the `.fl` project files
  instead of prebuilt source files. FLUID in command-line mode can then be
  called as an external tool, dynamically generating C++ source code from all
- external resources at compile time.
+ external resources at build time.
 
  */

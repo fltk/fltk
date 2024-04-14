@@ -9,8 +9,8 @@
  In interactive mode, FLUID allows users to construct and modify their GUI
  design by organizing widgets hierarchically through drag-and-drop actions.
  The project windows provide a live preview of the final UI layout.
- Most widget attributes can be adjusted in detail using the Widget Properties
- panel.
+ Most widget attributes can be adjusted in detail using the
+ \ref page_widget_panel.
 
  Users can also incorporate C++ coding elements such as functions, code blocks,
  and classes. FLUID supports the integration of external sources, for
@@ -44,7 +44,7 @@
  The Widget Bin at the top is an optional tool bar (__Edit > Show Widget Bin__,
  Alt-B). It gives quick access to all widget and code types. Widgets can
  be added by clicking onto the tool, or by dragging them out of the tool box
- into layout editor.
+ into the layout editor.
 
  \see \ref page_widgetbin_panel
 
