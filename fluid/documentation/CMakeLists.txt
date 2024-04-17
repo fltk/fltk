@@ -23,7 +23,7 @@ set(CURRENT_DATE "")
 # generate files used for both HTML and PDF docs
 #------------------------------------------------
 
-if(FLTK_BUILD_FLUID_DOCS)
+if(FLTK_BUILD_FLUID_DOCS OR FLTK_BUILD_PDF_DOCS)
 
   # create required variables
 
@@ -84,7 +84,7 @@ if(FLTK_BUILD_FLUID_DOCS)
     @ONLY
   )
 
-endif(FLTK_BUILD_FLUID_DOCS)
+endif(FLTK_BUILD_FLUID_DOCS OR FLTK_BUILD_PDF_DOCS)
 
 #-------------------------------
 # build FLUID html documentation
