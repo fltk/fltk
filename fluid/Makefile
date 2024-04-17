@@ -31,7 +31,8 @@ CPPFILES = \
 	Fluid_Image.cxx \
 	about_panel.cxx \
 	align_widget.cxx \
-	alignment_panel.cxx \
+	settings_panel.cxx \
+	autodoc.cxx \
 	code.cxx \
 	custom_widgets.cxx \
 	factory.cxx \
@@ -42,7 +43,7 @@ CPPFILES = \
 	mergeback.cxx \
 	pixmaps.cxx \
 	shell_command.cxx \
-	sourceview_panel.cxx \
+	codeview_panel.cxx \
 	template_panel.cxx \
 	undo.cxx \
 	widget_browser.cxx \
@@ -141,9 +142,9 @@ uninstall-osx:
 rebuild: fluid$(EXEEXT)
 	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
 	./fluid$(EXEEXT) -u -c about_panel.fl
-	./fluid$(EXEEXT) -u -c alignment_panel.fl
+	./fluid$(EXEEXT) -u -c settings_panel.fl
 	./fluid$(EXEEXT) -u -c function_panel.fl
 	./fluid$(EXEEXT) -u -c print_panel.fl
-	./fluid$(EXEEXT) -u -c sourceview_panel.fl
+	./fluid$(EXEEXT) -u -c codeview_panel.fl
 	./fluid$(EXEEXT) -u -c template_panel.fl
 	./fluid$(EXEEXT) -u -c widget_panel.fl

@@ -696,8 +696,8 @@ void Fl_Type::move_before(Fl_Type* g) {
 
 // write a widget and all its children:
 void Fl_Type::write(Fd_Project_Writer &f) {
-  if (f.write_sourceview()) proj1_start = (int)ftell(f.file()) + 1;
-  if (f.write_sourceview()) proj2_start = (int)ftell(f.file()) + 1;
+  if (f.write_codeview()) proj1_start = (int)ftell(f.file()) + 1;
+  if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
   f.write_indent(level);
   f.write_word(type_name());
 
@@ -712,9 +712,9 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   write_properties(f);
   if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
-  if (f.write_sourceview()) proj1_end = (int)ftell(f.file());
+  if (f.write_codeview()) proj1_end = (int)ftell(f.file());
   if (!is_parent()) {
-    if (f.write_sourceview()) proj2_end = (int)ftell(f.file());
+    if (f.write_codeview()) proj2_end = (int)ftell(f.file());
     return;
   }
   // now do children:
@@ -722,9 +722,9 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   Fl_Type *child;
   for (child = next; child && child->level > level; child = child->next)
     if (child->level == level+1) child->write(f);
-  if (f.write_sourceview()) proj2_start = (int)ftell(f.file()) + 1;
+  if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
   f.write_close(level);
-  if (f.write_sourceview()) proj2_end = (int)ftell(f.file());
+  if (f.write_codeview()) proj2_end = (int)ftell(f.file());
 }
 
 void Fl_Type::write_properties(Fd_Project_Writer &f) {
@@ -1092,7 +1092,7 @@ Fl_Type *Fl_Type::find_by_uid(unsigned short uid) {
   return NULL;
 }
 
-/** Find a type node by using the sourceview text positions.
+/** Find a type node by using the codeview text positions.
 
  \param[in] text_type 0=source file, 1=header, 2=.fl project file
  \param[in] crsr cursor position in text

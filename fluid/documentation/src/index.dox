@@ -81,7 +81,7 @@
  - \ref functional_comment
  - \ref functional_data
 
- \subpage page_sourceview_panel
+ \subpage page_codeview_panel
  - \ref codeview_find
  - \ref codeview_settings
 

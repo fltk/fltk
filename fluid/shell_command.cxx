@@ -93,7 +93,7 @@
 
 #include "fluid.h"
 #include "file.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>

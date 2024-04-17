@@ -29,9 +29,9 @@
 #include "code.h"
 #include "mergeback.h"
 
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "function_panel.h"
-#include "sourceview_panel.h"
+#include "codeview_panel.h"
 #include "template_panel.h"
 #include "about_panel.h"
 #include "autodoc.h"
@@ -134,7 +134,7 @@ Fl_Menu_Item *history_item = NULL;
 Fl_Menu_Item *widgetbin_item = NULL;
 
 /// Menuitem to show or hide the code view, label will change if view is visible.
-Fl_Menu_Item *sourceview_item = NULL;
+Fl_Menu_Item *codeview_item = NULL;
 
 /// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
 Fl_Menu_Item *overlay_item = NULL;
@@ -800,15 +800,15 @@ void exit_cb(Fl_Widget *,void *) {
     save_position(widgetbin_panel,"widgetbin_pos");
     delete widgetbin_panel;
   }
-  if (sourceview_panel) {
-    Fl_Preferences svp(fluid_prefs, "sourceview");
-    svp.set("autorefresh", sv_autorefresh->value());
-    svp.set("autoposition", sv_autoposition->value());
-    svp.set("tab", sv_tab->find(sv_tab->value()));
-    svp.set("code_choice", sv_code_choice);
-    save_position(sourceview_panel,"sourceview_pos");
-    delete sourceview_panel;
-    sourceview_panel = 0;
+  if (codeview_panel) {
+    Fl_Preferences svp(fluid_prefs, "codeview");
+    svp.set("autorefresh", cv_autorefresh->value());
+    svp.set("autoposition", cv_autoposition->value());
+    svp.set("tab", cv_tab->find(cv_tab->value()));
+    svp.set("code_choice", cv_code_choice);
+    save_position(codeview_panel,"codeview_pos");
+    delete codeview_panel;
+    codeview_panel = 0;
   }
   if (shell_run_window) {
     save_position(shell_run_window,"shell_run_Window_pos");
@@ -1700,7 +1700,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-  {"Show Code View",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
+  {"Show Code View",FL_ALT+'c', (Fl_Callback*)toggle_codeview_cb, 0, FL_MENU_DIVIDER},
   {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
@@ -1847,15 +1847,15 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 /**
  Show or hide the code preview window.
  */
-void toggle_sourceview_cb(Fl_Double_Window *, void *) {
-  sourceview_toggle_visibility();
+void toggle_codeview_cb(Fl_Double_Window *, void *) {
+  codeview_toggle_visibility();
 }
 
 /**
  Show or hide the code preview window, button callback.
  */
-void toggle_sourceview_b_cb(Fl_Button*, void *) {
-  sourceview_toggle_visibility();
+void toggle_codeview_b_cb(Fl_Button*, void *) {
+  codeview_toggle_visibility();
 }
 
 /**
@@ -1885,7 +1885,7 @@ void make_main_window() {
     save_item = (Fl_Menu_Item*)main_menubar->find_item(save_cb);
     history_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_open_history_cb);
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
-    sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
+    codeview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_codeview_cb);
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
     guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
     restricted_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_restricted);
@@ -2058,8 +2058,8 @@ void set_modflag(int mf, int mfc) {
       main_window->copy_label(new_title);
   }
   // if the UI was modified in any way, update the Code View panel
-  if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
-    sourceview_defer_update();
+  if (codeview_panel && codeview_panel->visible() && cv_autorefresh->value())
+    codeview_defer_update();
 }
 
 // ---- Main program entry point
@@ -2218,7 +2218,7 @@ int main(int argc,char **argv) {
     g_layout_list.read(fluid_prefs, FD_STORE_USER);
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
-    toggle_sourceview_cb(0,0);
+    toggle_codeview_cb(0,0);
     if (!c && openlast_button->value() && absolute_history[0][0] && g_autodoc_path.empty()) {
       // Open previous file when no file specified...
       open_project_file(absolute_history[0]);

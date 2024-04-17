@@ -146,7 +146,7 @@ public: // things that should not be public:
   Fl_Type *factory;
   const char *callback_name(Fd_Code_Writer& f);
 
-  // text positions of this type in code, header, and project file (see SourceView)
+  // text positions of this type in code, header, and project file (see codeview)
   int code_static_start, code_static_end;
   int code1_start, code1_end;
   int code2_start, code2_end;

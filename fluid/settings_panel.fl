@@ -82,7 +82,7 @@ decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
 decl {\#include <FL/Fl_Preferences.H>} {private global
 }
 
-decl {\#include <FL/Fl_Tooltip.H>} {private global
+decl {\#include <FL/Fl_Tooltip.H>} {selected private global
 }
 
 decl {\#include <FL/fl_ask.H>} {private global
@@ -197,7 +197,7 @@ Function {make_settings_window()} {open
     } {
       Fl_Group w_settings_general_tab {
         label General open
-        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide resizable
+        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -448,7 +448,7 @@ or just ".ext" to set extension.}
       Fl_Group w_settings_layout_tab {
         label Layout
         callback {propagate_load(o, v);} open
-        scale_image {36 24} image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
+        scale_image {36 24} image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Box {} {
           label {Layout:}
@@ -754,7 +754,7 @@ g_layout_list.update_dialogs();}
           xywh {85 320 235 20} labelfont 1 labelsize 11 align 20
         }
         Fl_Box {} {
-          label {Margins:} selected
+          label {Margins:}
           xywh {25 355 60 20} labelsize 11 align 24
         }
         Fl_Value_Input {} {

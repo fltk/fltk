@@ -1279,7 +1279,7 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
   int nData = -1;
   int uncompressedDataSize = 0;
   // path should be set correctly already
-  if (filename_ && !f.write_sourceview) {
+  if (filename_ && !f.write_codeview) {
     enter_project_dir();
     FILE *f = fl_fopen(filename_, "rb");
     leave_project_dir();
@@ -1395,8 +1395,8 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
     }
   }
   // if we are in interactive mode, we pop up a warning dialog
-  // giving the error: (batch_mode && !write_sourceview) ???
-  if (message && !f.write_sourceview) {
+  // giving the error: (batch_mode && !write_codeview) ???
+  if (message && !f.write_codeview) {
     if (batch_mode)
       fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn);
     else

@@ -78,7 +78,7 @@ extern void update_history(const char *);
 extern Fl_Menu_Item *save_item;
 extern Fl_Menu_Item *history_item;
 extern Fl_Menu_Item *widgetbin_item;
-extern Fl_Menu_Item *sourceview_item;
+extern Fl_Menu_Item *codeview_item;
 extern Fl_Menu_Item *overlay_item;
 extern Fl_Button *overlay_button;
 extern Fl_Menu_Item *guides_item;

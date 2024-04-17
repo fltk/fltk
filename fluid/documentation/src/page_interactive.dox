@@ -50,8 +50,8 @@
 
  The optional panel on the right shows a live source code preview. This is
  very helpful for verifying how changes in the GUI will be reflected in the
- generated C++ code (__Edit > Show Code View__, Shift-Alt-S).
+ generated C++ code (__Edit > Show Code View__, Alt-C).
 
- \see \ref page_sourceview_panel
+ \see \ref page_codeview_panel
 
 */

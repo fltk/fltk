@@ -24,8 +24,8 @@
 #include "Fl_Widget_Type.h"
 #include "Fl_Window_Type.h"
 #include "function_panel.h"
-#include "alignment_panel.h"
-#include "sourceview_panel.h"
+#include "settings_panel.h"
+#include "codeview_panel.h"
 
 #include <FL/Enumerations.H>
 #include <FL/fl_draw.H>
@@ -442,10 +442,10 @@ void run_autodoc(const Fl_String &target_dir) {
   // explain live update and choices
   // show various tabs
   // explain find and locate
-  if (!sourceview_panel) make_sourceview();
-  update_sourceview_cb(NULL, NULL);
-  sv_tab->value(sv_source_tab);
-  fl_snapshot((target_dir + "sourceview_panel.png").c_str(), sourceview_panel, win_margin, win_blend);
+  if (!codeview_panel) make_codeview();
+  update_codeview_cb(NULL, NULL);
+  cv_tab->value(cv_source_tab);
+  fl_snapshot((target_dir + "codeview_panel.png").c_str(), codeview_panel, win_margin, win_blend);
   fl_snapshot((target_dir + "cv_find_row.png").c_str(), cv_find_row, row_margin, row_blend);
   fl_snapshot((target_dir + "cv_settings_row.png").c_str(), cv_settings_row, row_margin, row_blend);
 

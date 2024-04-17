@@ -27,7 +27,7 @@
 #include "Fl_Widget_Type.h"
 #include "Fl_Grid_Type.h"
 #include "Fl_Window_Type.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "widget_browser.h"
 #include "shell_command.h"
 #include "code.h"
@@ -75,9 +75,9 @@ int read_file(const char *filename, int merge, Strategy strategy) {
     is used to implement copy and paste.
  \return 0 if the operation failed, 1 if it succeeded
  */
-int write_file(const char *filename, int selected_only, bool to_sourceview) {
+int write_file(const char *filename, int selected_only, bool to_codeview) {
   Fd_Project_Writer out;
-  return out.write_project(filename, selected_only, to_sourceview);
+  return out.write_project(filename, selected_only, to_codeview);
 }
 
 /**
@@ -780,7 +780,7 @@ void Fd_Project_Reader::read_fdesign() {
 Fd_Project_Writer::Fd_Project_Writer()
 : fout(NULL),
   needspace(0),
-  write_sourceview_(false)
+  write_codeview_(false)
 {
 }
 
@@ -824,11 +824,11 @@ int Fd_Project_Writer::close_write() {
  \param[in] filename create this file, and if it exists, overwrite it
  \param[in] selected_only write only the selected nodes in the widget_tree. This
             is used to implement copy and paste.
- \param[in] sv if set, this file will be used by SourceView
+ \param[in] sv if set, this file will be used by codeview
  \return 0 if the operation failed, 1 if it succeeded
  */
 int Fd_Project_Writer::write_project(const char *filename, int selected_only, bool sv) {
-  write_sourceview_ = sv;
+  write_codeview_ = sv;
   undo_suspend();
   if (!open_write(filename)) {
     undo_resume();

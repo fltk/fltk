@@ -25,7 +25,7 @@
 #include "fluid.h"
 #include "widget_browser.h"
 #include "undo.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "file.h"
 #include "code.h"
 #include "widget_panel.h"

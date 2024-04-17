@@ -24,7 +24,7 @@
 #include "file.h"
 #include "code.h"
 #include "Fluid_Image.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "widget_panel.h"
 #include "undo.h"
 #include "mergeback.h"
@@ -2727,7 +2727,7 @@ void Fl_Widget_Type::open() {
 extern void redraw_overlays();
 extern void check_redraw_corresponding_parent(Fl_Type*);
 extern void redraw_browser();
-extern void update_sourceview_position();
+extern void update_codeview_position();
 
 // Called when ui changes what objects are selected:
 // p is selected object, null for all deletions (we must throw away
@@ -2762,7 +2762,7 @@ void selection_changed(Fl_Type *p) {
   // load the panel with the new settings:
   load_panel();
   // update the code viewer to show the code for the selected object
-  update_sourceview_position();
+  update_codeview_position();
 }
 
 ////////////////////////////////////////////////////////////////

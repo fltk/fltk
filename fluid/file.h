@@ -26,7 +26,7 @@ class Fl_Type;
 extern int fdesign_flip;
 
 int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
-int write_file(const char *, int selected_only = 0, bool to_sourceview = false);
+int write_file(const char *, int selected_only = 0, bool to_codeview = false);
 
 class Fd_Project_Reader
 {
@@ -73,22 +73,22 @@ protected:
   FILE *fout;
   /// If set, one space is written before text unless the format starts with a newline character
   int needspace;
-  /// Set if this file will be used in the SourceView dialog
-  bool write_sourceview_;
+  /// Set if this file will be used in the codeview dialog
+  bool write_codeview_;
 
 public:
   Fd_Project_Writer();
   ~Fd_Project_Writer();
   int open_write(const char *s);
   int close_write();
-  int write_project(const char *filename, int selected_only, bool sourceview);
+  int write_project(const char *filename, int selected_only, bool codeview);
   void write_word(const char *);
   void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_indent(int n);
   void write_open();
   void write_close(int n);
   FILE *file() const { return fout; }
-  bool write_sourceview() const { return write_sourceview_; }
+  bool write_codeview() const { return write_codeview_; }
 };
 
 #endif // _FLUID_FILE_H

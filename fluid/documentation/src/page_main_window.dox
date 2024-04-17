@@ -284,7 +284,7 @@ access to all widget types supported by FLUID. Layouts can be created by
 clicking on elements in the widget bin, or by dragging them from the bin to
 their position within the layout. This button shows or hides the widget bin.
 
-__Edit > Show or Hide Source Code (Shift+Alt+S)__: Shows or hide
+__Edit > Show or Hide Code View (Alt+C)__: Shows or hide
 the source code preview window. Any changes to the layout or code in the layout
 editor can be previewed and verified immediately in the Code View window.
 

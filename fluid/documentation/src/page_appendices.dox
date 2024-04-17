@@ -22,6 +22,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 | `Shift-Ctrl-A` | select none |
 | `Alt-B` | show or hide Widget Bin |
 | `Ctrl-C` | copy widgets |
+| `Alt-C` | show or hide Code View window |
 | `Shift-Ctrl-C` | generate C++ code files |
 | `Ctrl-G` | grid setting dialog |
 | `Ctrl-I` | merge project file into current project |
@@ -34,7 +35,6 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 | `Ctrl-Q` | quit FLUID |
 | `Ctrl-S` | save project |
 | `Shift-Ctrl-S` | save project with new name |
-| `Shift-Alt-S` | show or hide Code View window |
 | `Ctrl-U` | duplicate selected widgets |
 | `Ctrl-V` | paste last copied widgets |
 | `Shift-Ctrl-W` | write i18n translation file |
