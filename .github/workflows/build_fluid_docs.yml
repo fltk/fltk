@@ -6,15 +6,7 @@
 name: 'Build FLUID User Handbook'
 
 # This job must be called explicitly form the 'Actions' tab in GitHub
-on: push
-
-#on:
-#  workflow_dispatch:
-#    inputs:
-#      build-pdf:
-#        type: boolean
-#        description: Build pdf file as well
-#        default: 'true'
+on: [workflow_dispatch]
 
 permissions:
   contents: read
@@ -75,13 +67,18 @@ jobs:
         export DISPLAY=:19
         cmake --build . --config Debug --target fluid_docs
         cmake --build . --config Debug --target fluid_pdf
-    - name: Store pdf as an artifact
+    - name: Store html docs as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fluid-html
+        path: build/fluid/documentation/html
+        retention-days: 3
+        overwrite: true
+    - name: Store pdf docs as an artifact
       uses: actions/upload-artifact@v4
       with:
         name: fluid-pdf
         path: build/fluid/documentation/fluid.pdf
         retention-days: 3
         overwrite: true
-
-#          path: ${{github.workspace}}/build/fluid/documentation/fluid.pdf
 
