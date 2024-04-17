@@ -33,7 +33,7 @@
  \section codeview_find Code View Find
 
  \image html cv_find_row.png
- \image latex cv_find_row.png "" width=9cm
+ \image latex cv_find_row.png "Find in Code" width=9cm
 
  This group of buttons makes it easy to find any text in the Source, Header, or
  Project file. Press *Reveal* to select the widget that generated the indicated
@@ -52,7 +52,7 @@
  \section codeview_settings Code View Settings
 
  \image html cv_settings_row.png
- \image latex cv_settings_row.png "" width=9cm
+ \image latex cv_settings_row.png "Code View Settings" width=9cm
 
  __Refresh__: preview the code in the selected tab as it would be generated
  for the project in its current state

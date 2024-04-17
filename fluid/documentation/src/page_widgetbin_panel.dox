@@ -20,7 +20,7 @@
  a dialog box will pop up, explaining what type of parent node is required.
 
  The Window and Widget Class icons can be dragged onto the desktop,
- creating a new window or widgetat the drop position.
+ creating a new window or widget at the drop position.
 
  \image html widgetbin_action.png
  \image latex widgetbin_action.png

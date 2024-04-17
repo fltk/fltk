@@ -40,8 +40,8 @@
  program, delete all text in the top "Name(args)" text field. If this field
  is left empty, FLUID will generate a `main(argc, argv)` function for us.
 
- \image html fluid4.png "the Function/Method Properties dialog"
- \image latex fluid4.png "the Function/Method Properties dialog" width=7cm
+ \image html fluid4.png "Function/Method Properties Dialog"
+ \image latex fluid4.png "Function/Method Properties Dialog" width=7cm
 
  Click OK to apply the changes you made in the Function Properties dialog.
  You can get this dialog back at any time by selecting the function in the

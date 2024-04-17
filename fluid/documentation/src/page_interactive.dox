@@ -18,7 +18,7 @@
  generated source code.
 
  \image html fluid_gui_overview_800.png
- \image latex fluid_gui_overview_800.png
+ \image latex fluid_gui_overview_800.png "FLUID Overview"
 
  A typical FLUID session manages the widget hierarchy in the main application
  window on the left. The project file name is shown in the title bar. In the
