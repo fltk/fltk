@@ -794,7 +794,6 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/events.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/subclassing.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/opengl.dox \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/fluid.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/fltk-options.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox \
