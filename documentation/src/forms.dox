@@ -18,8 +18,7 @@ since FLTK 1.3.0 and is likely to be removed completely in FLTK 1.4 or 1.5
 
 \section forms_importing Importing Forms Layout Files
 
-\ref fluid "FLUID"
-can read the <tt>.fd</tt> files put out by
+FLUID can read the <tt>.fd</tt> files put out by
 all versions of Forms and XForms fdesign.  However, it will mangle them
 a bit, but it prints a warning message about anything it does not
 understand.  FLUID cannot write fdesign files, so you should save to a
