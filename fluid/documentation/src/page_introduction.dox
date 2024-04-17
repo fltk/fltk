@@ -53,8 +53,8 @@
  Users have the option to include shell scripts in FLUID projects, enabling
  them to directly call compilers and linkers to produce the binaries.
 
- For medium-sized projects, a build systems such as _CMake_ or IDEs
- with integrated build setups is recommended. FLUID in interactive mode
+ For medium-sized projects, a build system such as _CMake_ or an IDE
+ with integrated build setup is recommended. FLUID in interactive mode
  can pre-generate C++ code files for direct compilation by the IDE.
 
  In larger projects, FLUID projects frequently reference external resources

@@ -5,13 +5,13 @@
  \tableofcontents
 
  <img src="w_settings.png" align="left" hspace="10" vspace="10" />
- \image latex w_settings.png "Setting Dialog" width=7cm
+ \image latex w_settings.png "Settings Dialog" width=7cm
 
- The settings dialog combines application preferences
- and project setting in a compact set of six tabs.
+ The *Settings* dialog combines application preferences
+ and project settings in a compact set of six tabs.
 
- The *General* tab contains a collection of application wide setting. They are
- stored as a user preferences.
+ The *General* tab contains a collection of application wide settings. They are
+ stored as user preferences.
 
  The *Project* tab holds settings for the current project. They are saved with
  the `.fl` file.
@@ -20,7 +20,7 @@
  preferences can be saved per user, or as part of the project, or exported for
  use in other projects.
 
- The *Shell* tabs manages a database of quick access shell commands and scripts.
+ The *Shell* tab manages a database of quick access shell commands and scripts.
  Shell commands can be saved as a user preference and also as part of the
  `.fl` project file.
 
@@ -28,7 +28,7 @@
  commonly used for labels and tooltips.
 
  The *User* tab manages customization of fonts and colors in the widget browser.
- Setting are stored as user preferences.
+ These settings are stored as user preferences.
 
  <div style="clear:both;"></div>
 
@@ -82,7 +82,7 @@
  the extension of the `.fl` project file name.
 
  \todo Document the exact way the source and header file paths are calculated
- for interactive FLUID, and for FLUID launched form the command line.
+ for interactive FLUID, and for FLUID launched from the command line.
 
  __Include Header from Code__:
 
@@ -97,7 +97,7 @@
 
  __allow Unicode__:
 
- If unchecked, Unicode characters in string are escaped, If checked, the Unicode
+ If unchecked, Unicode characters in strings are escaped. If checked, the Unicode
  character is stored in the source code in UTF-8 encoding.
 
  __avoid early include__:
@@ -147,9 +147,9 @@
 
  __Widget Minimum, Increment, and Gap__:
 
- _Minimum_ set the minimal width of a widget. _Increment_ is the size multiplier
+ _Minimum_ sets the minimal width of a widget. _Increment_ is the size multiplier
  added to the _Minimum_ value. _Gap_ is the preferred distance to other widgets
- in the same group
+ in the same group.
 
   __Label Font__, __Text Font__:
 
@@ -183,8 +183,8 @@
  __Menu Label__:
 
  Shell scripts that match the *Condition* flag are also available for quick
- access in the *Shell* menu in the main window and via shortcut keys
- combination. This is the text that is used for the menu entry.
+ access in the *Shell* menu in the main window and via shortcut key
+ combinations. This is the text that is used for the menu entry.
 
  __Shortcut__:
 
@@ -218,7 +218,7 @@
  \section setting_i18n Internationalization
 
  The *Locale* tab can be used to configure optional internationalization.
- FLUID support GNU `gettext` and Posix `catgets`.
+ FLUID supports GNU `gettext` and POSIX `catgets`.
 
  FLUID supports internationalization (I18N for short) of label
  strings and tooltips used by widgets. The GNU gettext option also

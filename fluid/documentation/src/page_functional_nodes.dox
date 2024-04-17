@@ -22,8 +22,9 @@
 
  ### Children ###
 
- Function nodes can contain code nodes and widget trees. The topmost node of a
- widget tree must be a window.
+ Function nodes can contain code nodes and widgets. The topmost node of a
+ widget tree must be a window or a group or a widget derived from those
+ types.
  If the function node has no children, only a forward declaration will be
  created in the header, but no source code will be generated.
 
@@ -64,9 +65,9 @@
  }
  ```
 
- If the function contains a widget, a pointer to the first widget
- will be created. The default return type will match the type of the
- first widget, and a pointer to the widget will be returned.
+ If the function contains widgets, a pointer to the first widget
+ will be return. The default return type will match the type of the
+ first widget.
  ```
  // .h
  Fl_Window* make_window();
@@ -84,19 +85,37 @@
 
  #### Options for Functions ####
 
- Choosing *static* in the pulldown menu will declare the function `static` in the
- source file. No prototype will be generated in the header.
+ Choosing *static* in the pulldown menu will generate the function `static` in
+ the source file. No forward declaration will be generated in the header file.
  ```
  // .cxx
  static Fl_Window* make_window() { ... }
  ```
 
- If the *C* option is checked, the function will be declared as a plain C
+ Choosing *global* will generate a forward declaration of the function in the
+ header file and no `static` attribute in the source file.
+ ```
+ // .h
+ void make_window();
+ // .cxx
+ Fl_Window* make_window() { ... }
+ ```
+
+ Additionally,
+ if the *C* option is checked, the function will be declared as a plain C
  function in the header file.
- The options *local* and *C* together are not supported.
  ```
  // .h
  extern "C" { void my_plain_c_function(); }
+ // .cxx
+ void my_plain_c_function() { ... }
+ ```
+
+ The *local* option will generate a function in the source file with no `static`
+ attribute. No forward declaration will be generated in the header file.
+ ```
+ // .cxx
+ Fl_Window* make_window() { ... }
  ```
 
  ### Declaring a Method ###
@@ -122,7 +141,7 @@
  }
  ```
 
- If the method contains at least on widget, a pointer to the topmost widget
+ If the method contains at least one widget, a pointer to the topmost widget
  will be returned and the return type will be generated accordingly.
  ```
  // .h
@@ -165,7 +184,7 @@
  Fl_Window* make_window() {
  ```
 
- Fluid recognizes default values in the argument list and geneartes them in the
+ FLUID recognizes default values in the argument list and generates them in the
  declaration, but omits them in the implementation.
 
  A short function body can be appended in the *Name* field. With no child, this
@@ -177,7 +196,7 @@
 
  ![](flCode.png) Code
 
- Code nodes holds arbitrary C++ code that is copied verbatim into the
+ Code nodes hold arbitrary C++ code that is copied verbatim into the
  source code file. They are commonly used inside Function nodes.
 
  ### Parents ###
@@ -214,7 +233,7 @@
  \image html codeblock_panel.png "Code Block Properties"
  \image latex codeblock_panel.png "Code Block Properties" width=7cm
 
- The two field expect the code before and after the `{ ... }` statements. The
+ The two fields expect the code before and after the `{ ... }` statements. The
  second field can be empty.
 
  Two consecutive Code Blocks can be used to generate `else`/`else if`
@@ -312,7 +331,7 @@
 
  ![](flWidgetClass.png) Widget Class
 
- Widget Class node creates a new widget type by deriving a class from another
+ The Widget Class node creates a new widget type by deriving a class from another
  widget class. These are often compound widgets derived from `Fl_Group`. A less
  automated but more flexible way to implement compound widgets is the Class node.
 

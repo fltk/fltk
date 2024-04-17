@@ -1433,7 +1433,7 @@ if (v == LOAD) {
           }
         }
         Fl_Group wp_grid_margin {
-          label {Margin:}
+          label {Margins:}
           callback propagate_load open
           xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
         } {

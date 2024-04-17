@@ -2442,6 +2442,7 @@ Fl_Double_Window* make_settings_window() {
         w_settings_general_tab->image( image_general_64() );
         w_settings_general_tab->image()->scale(36, 24, 0, 1);
         w_settings_general_tab->labelsize(11);
+        w_settings_general_tab->hide();
         { Fl_Group* o = new Fl_Group(120, 78, 130, 25);
           o->callback((Fl_Callback*)cb_);
           { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
@@ -2679,7 +2680,6 @@ itional data in code and project files.");
         w_settings_layout_tab->image()->scale(36, 24, 0, 1);
         w_settings_layout_tab->labelsize(11);
         w_settings_layout_tab->callback((Fl_Callback*)cb_w_settings_layout_tab);
-        w_settings_layout_tab->hide();
         { Fl_Box* o = new Fl_Box(25, 78, 60, 24, "Layout:");
           o->labelfont(1);
           o->labelsize(11);
@@ -2738,7 +2738,7 @@ itional data in code and project files.");
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(25, 167, 60, 20, "Margin:");
+        { Fl_Box* o = new Fl_Box(25, 167, 60, 20, "Margins:");
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -2799,7 +2799,7 @@ itional data in code and project files.");
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(25, 261, 60, 20, "Margin:");
+        { Fl_Box* o = new Fl_Box(25, 261, 60, 20, "Margins:");
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -2860,7 +2860,7 @@ itional data in code and project files.");
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(25, 355, 60, 20, "Margin:");
+        { Fl_Box* o = new Fl_Box(25, 355, 60, 20, "Margins:");
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o

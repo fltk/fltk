@@ -196,8 +196,8 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {
-        label General open selected
-        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
+        label General open
+        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -448,7 +448,7 @@ or just ".ext" to set extension.}
       Fl_Group w_settings_layout_tab {
         label Layout
         callback {propagate_load(o, v);} open
-        scale_image {36 24} image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
+        scale_image {36 24} image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
       } {
         Fl_Box {} {
           label {Layout:}
@@ -622,7 +622,7 @@ g_layout_list.update_dialogs();}
           xywh {85 132 235 20} labelfont 1 labelsize 11 align 20
         }
         Fl_Box {} {
-          label {Margin:}
+          label {Margins:}
           xywh {25 167 60 20} labelsize 11 align 24
         }
         Fl_Value_Input {} {
@@ -688,7 +688,7 @@ g_layout_list.update_dialogs();}
           xywh {85 226 235 20} labelfont 1 labelsize 11 align 20
         }
         Fl_Box {} {
-          label {Margin:}
+          label {Margins:}
           xywh {25 261 60 20} labelsize 11 align 24
         }
         Fl_Value_Input {} {
@@ -754,7 +754,7 @@ g_layout_list.update_dialogs();}
           xywh {85 320 235 20} labelfont 1 labelsize 11 align 20
         }
         Fl_Box {} {
-          label {Margin:}
+          label {Margins:} selected
           xywh {25 355 60 20} labelsize 11 align 24
         }
         Fl_Value_Input {} {

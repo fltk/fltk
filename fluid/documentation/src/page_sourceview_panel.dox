@@ -25,7 +25,7 @@
  is not calculated and shown as `-1`.
 
  The third tab shows the list of labels and tooltips as they would be written
- to a translation file, using the select project internationalization method.
+ to a translation file, using the selected project internationalization method.
 
  The fourth tab previews the contents of the `.fl` project file.
 
@@ -43,7 +43,7 @@
 
  __aA__: press this button to activate case sensitive search
 
- __&lt;&lt;__, __&gt;&gt;__: find the previous or next occurence
+ __&lt;&lt;__, __&gt;&gt;__: find the previous or next occurrence
 
  __Reveal__: clicking this button reveals the widget that generated the
  selected code in the widget browser
@@ -59,7 +59,7 @@
 
  __Auto-Refresh__: Automatically refresh the code view when the project changes.
  The Auto Refresh is designed to use relatively little resources, even when
- continuously updating the select code tab.
+ continuously updating the selected code tab.
  The Code View window can usually stay open and auto refresh during the entire
  design process, even for relatively complex GUIs.
 

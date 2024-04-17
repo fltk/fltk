@@ -4,8 +4,6 @@
 
  \tableofcontents
 
- \section appendix_app_settings Fluid Application Settings
-
 <!-- ---------------------------------------------------------------------- -->
 \section appendix_keyboard_shortcuts Keyboard Shortcuts
 
@@ -50,7 +48,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 
 | Action | Function in Layout Editor |
 | :----: | :------------------------ |
-| `LMB` | select one widget |
+| `left mouse button (LMB)` | select one widget |
 | `LMB-drag` | select multiple widgets with selection box |
 | `Shift-LMB` | extend widget selection |
 | `Shift-LMB-Drag` | toggle selection in selection box |

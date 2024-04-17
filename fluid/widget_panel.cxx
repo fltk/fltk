@@ -2155,7 +2155,7 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { wp_grid_margin = new Fl_Group(95, 100, 315, 20, "Margin:");
+        { wp_grid_margin = new Fl_Group(95, 100, 315, 20, "Margins:");
           wp_grid_margin->labelfont(1);
           wp_grid_margin->labelsize(11);
           wp_grid_margin->callback((Fl_Callback*)propagate_load);
