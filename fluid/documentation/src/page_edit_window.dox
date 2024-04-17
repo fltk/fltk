@@ -4,8 +4,8 @@
 
  \tableofcontents
 
- \image html edit_window.jpg "Layout Editor Window"
- \image latex edit_window.jpg "Layout Editor Window" width=7cm
+ \image html edit_window.png "Layout Editor Window"
+ \image latex edit_window.png "Layout Editor Window" width=7cm
 
  The Layout Editor window is used to interactively add groups and widgets, and
  resize and align them. The editor window already looks very much like the
@@ -31,8 +31,8 @@
  selected in the widget browser the main window. Shift-click will select a
  range of widgets, Ctrl-click will add widgets to the selection.
 
- \image html edit_select_multiple.jpg
- \image latex edit_select_multiple.jpg "" width=5cm
+ \image html edit_select_multiple.png
+ \image latex edit_select_multiple.png "" width=5cm
 
  Menu items are selected by clicking on the menu button and selecting it from
  the popup menu. Multiple menu items can only be selected in the widget browser
@@ -65,15 +65,15 @@
  <!-- ---------------------------------------------------------------------- -->
  \section edit_layout Layout Helpers
 
- \image html edit_overlap.jpg
- \image latex edit_overlap.jpg "" width=5cm
+ \image html edit_overlap.png
+ \image latex edit_overlap.png "" width=5cm
 
  In FLTK, the behavior of overlapping children of a group is undefined. If
  enabled in the settings, FLUID will show overlapping widgets in a group
  with a green hash pattern.
 
- \image html edit_outside.jpg
- \image latex edit_outside.jpg "" width=5cm
+ \image html edit_outside.png
+ \image latex edit_outside.png "" width=5cm
 
  The behavior of widgets that reach outside the bounds of their parent group
  is also undefined. They may be visible, but confuse the user when they don't
@@ -93,8 +93,8 @@
  applied. Guides and snaps can be disabled with `Ctrl-Shift-G` or via the
  *Edit* > *Hide Guides* menu.
 
- \image html edit_snap_group.jpg
- \image latex edit_snap_group.jpg "" width=5cm
+ \image html edit_snap_group.png
+ \image latex edit_snap_group.png "" width=5cm
 
  If a horizontal or vertical outline snaps to the group, the
  border of that group will highlight. If the outline snaps to the margin
@@ -104,8 +104,8 @@
  section. If all children use this rule, the margin height will also be the
  height of all tabs.
 
- \image html edit_snap_sibling.jpg
- \image latex edit_snap_sibling.jpg "" width=5cm
+ \image html edit_snap_sibling.png
+ \image latex edit_snap_sibling.png "" width=5cm
 
  The selection can also snap to the outline of other widgets in the same group,
  or to the outline plus the Widget Gap. The outline that triggers the snap
@@ -114,16 +114,16 @@
  Note that only the first snap guide found is drawn for horizontal and vertical
  movement. Multiple rules may apply, but are not highlighted.
 
- \image html edit_snap_size.jpg
- \image latex edit_snap_size.jpg "" width=7cm
+ \image html edit_snap_size.png
+ \image latex edit_snap_size.png "" width=7cm
 
  Widget size rules define a minimum size and an increment value that may
  be applied multiple times to the size. For example, with a minimum width of 25
  and an increment of 10, the widget will snap horizontally to 25, 35, 45,
  55, etc. .
 
- \image html edit_snap_grid.jpg
- \image latex edit_snap_grid.jpg "" width=5cm
+ \image html edit_snap_grid.png
+ \image latex edit_snap_grid.png "" width=5cm
 
  The grid rule is the easiest to explain. All corners of a selection snap to
  a fixed grid. If the selected widgets are children of a window, they will snap
@@ -132,8 +132,8 @@
  <!-- ---------------------------------------------------------------------- -->
  \section edit_resize Live Resize
 
- \image html edit_select_group.jpg
- \image latex edit_select_group.jpg "" width=9cm
+ \image html edit_select_group.png
+ \image latex edit_select_group.png "" width=9cm
 
  The Resizable system within FLTK is smart, but not always obvious. When
  constructing a sophisticated GUI, it is helpful to organize widgets into
@@ -144,8 +144,8 @@
 
  To test the resizing behavior of a group, begin by selecting it:
 
- \image html edit_live_resize.jpg
- \image latex edit_live_resize.jpg "" width=7cm
+ \image html edit_live_resize.png
+ \image latex edit_live_resize.png "" width=7cm
 
  Click on *Live Resize* in the widget panel. FLUID will generate a new window
  with all the resizing attributes inherited from the original design. This

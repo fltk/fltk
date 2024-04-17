@@ -22,8 +22,8 @@
  <!-- ---------------------------------------------------------------------- -->
  \section main_titlebar Title Bar
 
- \image html main_titlebar.jpg
- \image latex main_titlebar.jpg "" width=5cm
+ \image html main_titlebar.png
+ \image latex main_titlebar.png "" width=5cm
 
  The title bar shows the status of the project file, _function_panel.fl_ in this
  case, followed by an asterisk if the project was changed after it was saved.
