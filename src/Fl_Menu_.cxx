@@ -1,7 +1,7 @@
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -301,10 +301,34 @@ const Fl_Menu_Item* Fl_Menu_::find_item_with_argument(long v) {
 }
 
 /**
-  The value is the index into menu() of the last item chosen by
-  the user.  It is zero initially.  You can set it as an integer, or set
-  it with a pointer to a menu item.  The set routines return non-zero if
-  the new value is different than the old one.
+  Set the value of a menu to the menu item \c m.
+
+  The \e value of the menu is the index into the menu() of the last
+  item chosen by the user or -1.
+
+  It is \c -1 initially (if no item has been chosen) or if the chosen
+  menu item is part of a submenu addressed by an FL_SUBMENU_POINTER.
+
+  \note All menu items are located in a contiguous array of Fl_Menu_Item's
+    unless an item has the FL_SUBMENU_POINTER flag which redirects the
+    submenu to an independent submenu array. This submenu array is not
+    counted in the size() of the menu, and menu items in this submenu can't
+    return a valid index into the \b main menu. Therefore menu items that
+    are located in such a submenu return -1 when value() is called.
+    This may be changed in a future version.
+
+  The menu item can be any menu item, even one in a detached submenu
+  (see note about FL_SUBMENU_POINTER above).
+
+  \param[in]  m   Pointer to any menu item.
+
+  \return     Whether the new value is different than the old one.
+  \retval  0  The value didn't change.
+  \retval  1  The value was changed.
+
+  \see int value(int)
+  \see int value()
+  \see const Fl_Menu_Item *mvalue()
 */
 int Fl_Menu_::value(const Fl_Menu_Item* m) {
   clear_changed();
@@ -316,10 +340,47 @@ int Fl_Menu_::value(const Fl_Menu_Item* m) {
   return 0;
 }
 
+/** Return the index into the menu() of the last item chosen by the user.
+
+  The \e value of the menu is the index into the menu() of the last
+  item chosen by the user or -1.
+
+  It is \c -1 initially (if no item has been chosen) or if the chosen
+  menu item is part of a submenu addressed by an FL_SUBMENU_POINTER.
+
+  \note All menu items are located in a contiguous array of Fl_Menu_Item's
+    unless an item has the FL_SUBMENU_POINTER flag which redirects the
+    submenu to an independent submenu array. This submenu array is not
+    counted in the size() of the menu, and menu items in this submenu can't
+    return a valid index into the \b main menu. Therefore menu items that
+    are located in such a submenu return -1 when value() is called.
+    This may be changed in a future version.
+
+  You can use mvalue() instead to retrieve the last picked menu item directly.
+
+  \returns  Index of the last chosen menu item or -1 (see description).
+
+  \see const Fl_Menu_Item *mvalue()
+*/
+int Fl_Menu_::value() const {
+  if (!value_)
+    return -1;
+  if (menu() && value_ >= menu() && value_ < menu() + size())
+    return (int)(value_ - menu_);
+  return -1;
+}
+
 /**
- When user picks a menu item, call this.  It will do the callback.
- Unfortunately this also casts away const for the checkboxes, but this
- was necessary so non-checkbox menus can really be declared const...
+  When user picks a menu item, call this.
+
+  It will do the callback.
+
+  Unfortunately this also casts away const for the checkboxes, but this
+  was necessary so non-checkbox menus can really be declared 'const'.
+
+  \param[in]  v   The menu item that was picked by the user.
+
+  \returns    The same Fl_Menu_Item* that was set (\c v).
 */
 const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
   if (v) {
