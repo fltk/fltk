@@ -22,9 +22,7 @@
 
  ### Children ###
 
- Function nodes can contain code nodes and widgets. The topmost node of a
- widget tree must be a window or a group or a widget derived from those
- types.
+ Function nodes can contain code nodes and windows that in turn contain widgets.
  If the function node has no children, only a forward declaration will be
  created in the header, but no source code will be generated.
 
@@ -65,9 +63,8 @@
  }
  ```
 
- If the function contains widgets, a pointer to the first widget
- will be return. The default return type will match the type of the
- first widget.
+ If the function contains one or more windows, a pointer to the first window
+ will be returned. The default return type will match the window class.
  ```
  // .h
  Fl_Window* make_window();
