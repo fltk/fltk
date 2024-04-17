@@ -186,10 +186,11 @@ static Fl_Pixmap        tile(tile_xpm);
 
   \param[in]  s   Scheme name of NULL
 
-  \returns    Current scheme name or NULL
-  \retval     NULL if the scheme has not been set or is the default scheme
+  \retval     0 if the scheme has not been set or is the default scheme
+  \retval     1 if a scheme other than "none"/"base" was set
 
-  \see Fl::is_scheme()
+  \see Fl::scheme() to get the name of the current scheme
+  \see Fl::is_scheme(const char*) to test if the specified scheme is set
 */
 int Fl::scheme(const char *s) {
   if (!s) {
@@ -197,12 +198,12 @@ int Fl::scheme(const char *s) {
   }
 
   if (s) {
-    if (!fl_ascii_strcasecmp(s, "none") || !fl_ascii_strcasecmp(s, "base") || !*s) s = 0;
+    if (!fl_ascii_strcasecmp(s, "none") || !fl_ascii_strcasecmp(s, "base") || !*s) s = NULL;
     else if (!fl_ascii_strcasecmp(s, "gtk+")) s = fl_strdup("gtk+");
     else if (!fl_ascii_strcasecmp(s, "plastic")) s = fl_strdup("plastic");
     else if (!fl_ascii_strcasecmp(s, "gleam")) s = fl_strdup("gleam");
     else if (!fl_ascii_strcasecmp(s, "oxy")) s = fl_strdup("oxy");
-    else s = 0;
+    else s = NULL;
   }
   if (scheme_) free((void*)scheme_);
   scheme_ = s;
@@ -210,12 +211,13 @@ int Fl::scheme(const char *s) {
   // Save the new scheme in the FLTK_SCHEME env var so that child processes
   // inherit it...
   static char e[1024];
-  strcpy(e,"FLTK_SCHEME=");
-  if (s) strlcat(e,s,sizeof(e));
+  strcpy(e, "FLTK_SCHEME=");
+  if (s) strlcat(e, s, sizeof(e));
   Fl::system_driver()->putenv(e);
 
   // Load the scheme...
-  return reload_scheme();
+  reload_scheme();
+  return (s != NULL);
 }
 
 /**

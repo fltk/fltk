@@ -127,5 +127,6 @@ public:
   void redraw();
 };
 
+extern Fl_Window *the_panel;
 
 #endif // _FLUID_FL_WIDGET_TYPE_H

@@ -40,9 +40,7 @@ The constructor should have the following arguments:
 MyClass(int x, int y, int w, int h, const char *label = 0);
 \endcode
 
-This will allow the class to be used in
-\ref fluid "FLUID"
-without problems.
+This will allow the class to be used in FLUID without problems.
 
 The constructor must call the constructor for the base class and
 pass the same arguments:

@@ -1,0 +1,118 @@
+
+
+/**
+
+ \cond FL_HTML_INDEX
+
+ \mainpage FLUID User Manual
+
+
+ <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+ <TR>
+   <TD><CENTER>
+     \image html fluid-128.png
+     \image latex fluid-128.png  "" width=3cm
+   </CENTER></TD>
+   <TD><CENTER>
+     <B>FLUID 1.4.0 User Manual</B>
+
+     By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
+
+     Copyright © 1998 - 2024 by Bill Spitzak and others.
+   </CENTER></TD>
+ </TR>
+ </TABLE>
+
+ <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+ <TR>
+   <TD style="text-align: center;">
+     This software and manual are provided under the terms of the GNU
+     Library General Public License. Permission is granted to reproduce
+     this manual or any portion for any purpose, provided this copyright
+     and permission notice are preserved.
+   </TD>
+ </TR>
+ </TABLE>
+
+ <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="100%" BORDER="0">
+ <TR>
+ <TD ALIGN="LEFT" VALIGN="TOP">
+
+ \subpage page_introduction
+ - \ref introduction_workflow
+
+ \subpage page_commandline
+ - \ref commandline_options
+ - \ref commandline_passive
+ - \ref commandline_windows
+
+ \subpage page_interactive
+
+ \subpage page_main_window
+ - \ref main_titlebar
+ - \ref main_menubar
+ - \ref main_widget_browser
+ - \ref main_menu_items
+
+ \subpage page_widgetbin_panel
+
+ \subpage page_edit_window
+ - \ref edit_selection
+ - \ref edit_layout
+ - \ref edit_snap
+ - \ref edit_resize
+
+ \subpage page_widget_panel
+ - \ref widget_panel_gui
+ - \ref widget_panel_style
+ - \ref widget_panel_cpp
+ - \ref widget_panel_grid
+ - \ref widget_panel_gridc
+
+ </TD>
+ <TD ALIGN="LEFT" VALIGN="TOP">
+
+ \subpage page_functional_nodes
+ - \ref functional_function
+ - \ref functional_code
+ - \ref functional_codeblock
+ - \ref functional_decl
+ - \ref functional_declblock
+ - \ref functional_class
+ - \ref functional_widgetclass
+ - \ref functional_comment
+ - \ref functional_data
+
+ \subpage page_codeview_panel
+ - \ref codeview_find
+ - \ref codeview_settings
+
+ \subpage page_setting_dialog
+ - \ref setting_general
+ - \ref setting_project
+ - \ref setting_layout
+ - \ref setting_shell
+ - \ref setting_i18n
+ - \ref setting_user
+
+ \subpage page_tutorial
+ - \ref fluid_hello_world_tutorial
+ - \ref fluid_1of7guis_tutorial
+ - \ref fluid_cubeview_tutorial
+   - \ref fluid_cubeview_ui
+   - \ref fluid_addconst
+   - \ref fluid_gencode
+
+ \subpage page_appendices
+ - \ref appendix_keyboard_shortcuts
+ - \ref appendix_fileformat
+ - \ref appendix_licenses
+
+ </TD>
+ </TR>
+ </TABLE>
+
+ \endcond
+
+*/

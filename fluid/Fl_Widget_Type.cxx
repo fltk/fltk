@@ -24,7 +24,7 @@
 #include "file.h"
 #include "code.h"
 #include "Fluid_Image.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "widget_panel.h"
 #include "undo.h"
 #include "mergeback.h"
@@ -383,7 +383,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
 /* Treating UNDO for text widget.
 
  Goal: we want to continuously update the UI while the user is typing text
- (changing the label, in this case). Source View does deferred updates, and
+ (changing the label, in this case). Code View does deferred updates, and
  the widget browser and widget panel update on every keystroke. At the same
  time, we want to limit undo actions to few and logical units.
 
@@ -2727,7 +2727,7 @@ void Fl_Widget_Type::open() {
 extern void redraw_overlays();
 extern void check_redraw_corresponding_parent(Fl_Type*);
 extern void redraw_browser();
-extern void update_sourceview_position();
+extern void update_codeview_position();
 
 // Called when ui changes what objects are selected:
 // p is selected object, null for all deletions (we must throw away
@@ -2761,8 +2761,8 @@ void selection_changed(Fl_Type *p) {
   redraw_overlays();
   // load the panel with the new settings:
   load_panel();
-  // update the source viewer to show the code for the selected object
-  update_sourceview_position();
+  // update the code viewer to show the code for the selected object
+  update_codeview_position();
 }
 
 ////////////////////////////////////////////////////////////////

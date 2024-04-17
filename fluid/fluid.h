@@ -78,7 +78,7 @@ extern void update_history(const char *);
 extern Fl_Menu_Item *save_item;
 extern Fl_Menu_Item *history_item;
 extern Fl_Menu_Item *widgetbin_item;
-extern Fl_Menu_Item *sourceview_item;
+extern Fl_Menu_Item *codeview_item;
 extern Fl_Menu_Item *overlay_item;
 extern Fl_Button *overlay_button;
 extern Fl_Menu_Item *guides_item;
@@ -97,6 +97,8 @@ extern int pasteoffset;
 extern Fl_String g_code_filename_arg;
 extern Fl_String g_header_filename_arg;
 extern Fl_String g_launch_path;
+
+extern Fl_String g_autodoc_path;
 
 // ---- project class declaration
 
@@ -176,6 +178,7 @@ extern Fluid_Project g_project;
 
 // ---- public functions
 
+extern bool new_project(bool user_must_confirm = true);
 extern void enter_project_dir();
 extern void leave_project_dir();
 extern void set_filename(const char *c);

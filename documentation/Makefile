@@ -36,7 +36,6 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/events.dox \
                          $(SRC_DOCDIR)/subclassing.dox \
                          $(SRC_DOCDIR)/opengl.dox \
-                         $(SRC_DOCDIR)/fluid.dox \
                          $(SRC_DOCDIR)/fltk-options.dox \
                          $(SRC_DOCDIR)/advanced.dox \
                          $(SRC_DOCDIR)/unicode.dox \

@@ -52,7 +52,7 @@ if(GENERATE_DOCS)
   # find git revision
 
   # FIXME: This must also work with tarballs where git is not available.
-  #        For now we just ignore errors and set GIT_REVISION = "unkown".
+  #        For now we just ignore errors and set GIT_REVISION = "unknown".
   #        In the future tarball/zip generation should create a file
   #        that contains the git revision.
 

@@ -37,7 +37,8 @@ set(CPPFILES
   Fluid_Image.cxx
   about_panel.cxx
   align_widget.cxx
-  alignment_panel.cxx
+  settings_panel.cxx
+  autodoc.cxx
   code.cxx
   custom_widgets.cxx
   factory.cxx
@@ -47,7 +48,7 @@ set(CPPFILES
   mergeback.cxx
   pixmaps.cxx
   shell_command.cxx
-  sourceview_panel.cxx
+  codeview_panel.cxx
   template_panel.cxx
   undo.cxx
   widget_browser.cxx
@@ -71,19 +72,19 @@ set(HEADERFILES
   StyleParse.h
   about_panel.h
   align_widget.h
-  alignment_panel.h
+  settings_panel.h
+  autodoc.h
   code.h
   comments.h
   custom_widgets.h
   factory.h
   file.h
-  fluid.h
   function_panel.h
   mergeback.h
   print_panel.h
   pixmaps.h
   shell_command.h
-  sourceview_panel.h
+  codeview_panel.h
   template_panel.h
   undo.h
   widget_browser.h

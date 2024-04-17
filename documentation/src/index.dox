@@ -67,11 +67,6 @@
 
     \subpage opengl
 
-    \subpage fluid
-        - \ref fluid_widget_attributes
-        - \ref fluid_selecting_moving
-        - \ref fluid_images
-
     \subpage fltk-options
 
     \subpage advanced

@@ -325,6 +325,12 @@ FLTK_BUILD_PDF_DOCS  - default ON
     You can safely leave these two options ON if you want to save build time
     because the docs are not built automatically.
 
+FLTK_BUILD_FLUID_DOCS - default OFF
+    If this option is ON, the FLUID user documentation will be built. If 
+    FLTK_BUILD_PDF_DOCS is ON, the FLUID documentation will be generated
+    in PDF forma. To generate the screen shots used in the handbook,
+    the CMake build mode must be set to "Debug".
+
 FLTK_INCLUDE_DRIVER_DOCS - default OFF
     This option adds driver documentation to HTML and PDF docs (if ON). This
     option is marked as "advanced" since it is only useful for FLTK developers
@@ -332,9 +338,10 @@ FLTK_INCLUDE_DRIVER_DOCS - default OFF
     options above is ON as well.
 
 FLTK_INSTALL_HTML_DOCS - default OFF
+FLTK_INSTALL_FLUID_DOCS - default OFF
 FLTK_INSTALL_PDF_DOCS  - default OFF
-    If these options are ON then the HTML and/or PDF docs are installed
-    when the 'install' target is executed, e.g. with `make install'. You
+    If these options are ON then the HTML, FLUID, and/or PDF docs are installed
+    when the 'install' target is executed, e.g. with `make install'. You 
     need to select above options FLTK_BUILD_*_DOCS as well.
 
 

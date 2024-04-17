@@ -414,7 +414,7 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
   }
   // if we are rendering to the source code preview window, and the text is
   // longer than four lines, we only render a placeholder.
-  if (write_sourceview && ((s==NULL) || (length>300))) {
+  if (write_codeview && ((s==NULL) || (length>300))) {
     if (length>=0)
       crc_printf("\" ... %d bytes of text... \"", length);
     else
@@ -523,7 +523,7 @@ void Fd_Code_Writer::write_cdata(const char *s, int length) {
     varused = 1;
     return;
   }
-  if (write_sourceview) {
+  if (write_codeview) {
     if (length>=0)
       crc_printf("{ /* ... %d bytes of binary data... */ }", length);
     else
@@ -707,11 +707,11 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
   if (!(p==Fl_Type::last && p->is_a(ID_Comment))) {
-    if (write_sourceview) p->code1_start = (int)ftell(code_file);
-    if (write_sourceview) p->header1_start = (int)ftell(header_file);
+    if (write_codeview) p->code1_start = (int)ftell(code_file);
+    if (write_codeview) p->header1_start = (int)ftell(header_file);
     p->write_code1(*this);
-    if (write_sourceview) p->code1_end = (int)ftell(code_file);
-    if (write_sourceview) p->header1_end = (int)ftell(header_file);
+    if (write_codeview) p->code1_end = (int)ftell(code_file);
+    if (write_codeview) p->header1_end = (int)ftell(header_file);
   }
   // recursively write the code of all children
   Fl_Type* q;
@@ -730,11 +730,11 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
     }
 
     // write all code that come after the children
-    if (write_sourceview) p->code2_start = (int)ftell(code_file);
-    if (write_sourceview) p->header2_start = (int)ftell(header_file);
+    if (write_codeview) p->code2_start = (int)ftell(code_file);
+    if (write_codeview) p->header2_start = (int)ftell(header_file);
     p->write_code2(*this);
-    if (write_sourceview) p->code2_end = (int)ftell(code_file);
-    if (write_sourceview) p->header2_end = (int)ftell(header_file);
+    if (write_codeview) p->code2_end = (int)ftell(code_file);
+    if (write_codeview) p->header2_end = (int)ftell(header_file);
 
     for (q = p->next; q && q->level > p->level;) {
       if (is_class_member(q) || is_comment_before_class_member(q)) {
@@ -752,11 +752,11 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children
-    if (write_sourceview) p->code2_start = (int)ftell(code_file);
-    if (write_sourceview) p->header2_start = (int)ftell(header_file);
+    if (write_codeview) p->code2_start = (int)ftell(code_file);
+    if (write_codeview) p->header2_start = (int)ftell(header_file);
     p->write_code2(*this);
-    if (write_sourceview) p->code2_end = (int)ftell(code_file);
-    if (write_sourceview) p->header2_end = (int)ftell(header_file);
+    if (write_codeview) p->code2_end = (int)ftell(code_file);
+    if (write_codeview) p->header2_end = (int)ftell(header_file);
   }
   return q;
 }
@@ -772,8 +772,8 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
  \param[in] t filename of the header file
  \return 0 if the operation failed, 1 if it was successful
  */
-int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview) {
-  write_sourceview = to_sourceview;
+int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
+  write_codeview = to_codeview;
   delete id_root; id_root = 0;
   indentation = 0;
   current_class = 0L;
@@ -791,7 +791,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
     header_file = f;
   }
   // Remember the last code file location for MergeBack
-  if (s && g_project.write_mergeback_data && !to_sourceview) {
+  if (s && g_project.write_mergeback_data && !to_codeview) {
     Fl_String proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
     int i, n = proj_filename.size();
     for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
@@ -803,13 +803,13 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   // a copyright notice. We print that before anything else in the file!
   Fl_Type* first_type = Fl_Type::first;
   if (first_type && first_type->is_a(ID_Comment)) {
-    if (write_sourceview) {
+    if (write_codeview) {
       first_type->code1_start = first_type->code2_start = (int)ftell(code_file);
       first_type->header1_start = first_type->header2_start = (int)ftell(header_file);
     }
     // it is ok to write non-recursive code here, because comments have no children or code2 blocks
     first_type->write_code1(*this);
-    if (write_sourceview) {
+    if (write_codeview) {
       first_type->code1_end = first_type->code2_end = (int)ftell(code_file);
       first_type->header1_end = first_type->header2_end = (int)ftell(header_file);
     }
@@ -835,7 +835,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
     write_h_once("#include <FL/Fl.H>");
   }
   if (t && g_project.include_H_from_C) {
-    if (to_sourceview) {
+    if (to_codeview) {
       write_c("#include \"CodeView.h\"\n");
     } else if (g_project.header_file_name[0] == '.' && strchr(g_project.header_file_name.c_str(), '/') == NULL) {
       write_c("#include \"%s\"\n", fl_filename_name(t));
@@ -896,17 +896,17 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   }
   for (Fl_Type* p = first_type; p;) {
     // write all static data for this & all children first
-    if (write_sourceview) p->header_static_start = (int)ftell(header_file);
-    if (write_sourceview) p->code_static_start = (int)ftell(code_file);
+    if (write_codeview) p->header_static_start = (int)ftell(header_file);
+    if (write_codeview) p->code_static_start = (int)ftell(code_file);
     p->write_static(*this);
-    if (write_sourceview) p->code_static_end = (int)ftell(code_file);
-    if (write_sourceview) p->header_static_end = (int)ftell(header_file);
+    if (write_codeview) p->code_static_end = (int)ftell(code_file);
+    if (write_codeview) p->header_static_end = (int)ftell(header_file);
     for (Fl_Type* q = p->next; q && q->level > p->level; q = q->next) {
-      if (write_sourceview) q->header_static_start = (int)ftell(header_file);
-      if (write_sourceview) q->code_static_start = (int)ftell(code_file);
+      if (write_codeview) q->header_static_start = (int)ftell(header_file);
+      if (write_codeview) q->code_static_start = (int)ftell(code_file);
       q->write_static(*this);
-      if (write_sourceview) q->code_static_end = (int)ftell(code_file);
-      if (write_sourceview) q->header_static_end = (int)ftell(header_file);
+      if (write_codeview) q->code_static_end = (int)ftell(code_file);
+      if (write_codeview) q->header_static_end = (int)ftell(header_file);
     }
     // then write the nested code:
     p = write_code(p);
@@ -918,12 +918,12 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
 
   Fl_Type* last_type = Fl_Type::last;
   if (last_type && (last_type != Fl_Type::first) && last_type->is_a(ID_Comment)) {
-    if (write_sourceview) {
+    if (write_codeview) {
       last_type->code1_start = last_type->code2_start = (int)ftell(code_file);
       last_type->header1_start = last_type->header2_start = (int)ftell(header_file);
     }
     last_type->write_code1(*this);
-    if (write_sourceview) {
+    if (write_codeview) {
       last_type->code1_end = last_type->code2_end = (int)ftell(code_file);
       last_type->header1_end = last_type->header2_end = (int)ftell(header_file);
     }
@@ -973,7 +973,7 @@ Fd_Code_Writer::Fd_Code_Writer()
   block_buffer_(NULL),
   block_buffer_size_(0),
   indentation(0),
-  write_sourceview(false),
+  write_codeview(false),
   varused_test(0),
   varused(0)
 {

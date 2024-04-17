@@ -968,7 +968,7 @@ internally in the same way.
 
 \subsection osissues_mac_files Mac File System Specifics
 
-\par Resource Forks
+\par Resource Forks (OS X pre 10.6)
 
 FLTK does not access the resource fork of an application.
 However, a minimal resource fork must be created for OS X

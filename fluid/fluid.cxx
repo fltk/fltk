@@ -29,11 +29,12 @@
 #include "code.h"
 #include "mergeback.h"
 
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "function_panel.h"
-#include "sourceview_panel.h"
+#include "codeview_panel.h"
 #include "template_panel.h"
 #include "about_panel.h"
+#include "autodoc.h"
 
 #include <FL/Fl.H>
 #ifdef __APPLE__
@@ -132,8 +133,8 @@ Fl_Menu_Item *history_item = NULL;
 /// Menuitem to show or hide the widget bin, label will change if bin is visible.
 Fl_Menu_Item *widgetbin_item = NULL;
 
-/// Menuitem to show or hide the source view, label will change if view is visible.
-Fl_Menu_Item *sourceview_item = NULL;
+/// Menuitem to show or hide the code view, label will change if view is visible.
+Fl_Menu_Item *codeview_item = NULL;
 
 /// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
 Fl_Menu_Item *overlay_item = NULL;
@@ -183,6 +184,9 @@ Fl_String g_header_filename_arg;
 
 /// current directory path at application launch
 Fl_String g_launch_path;
+
+/// if set, generate images for automatic documentation in this directory
+Fl_String g_autodoc_path;
 
 /// path to store temporary files during app run
 /// \see tmpdir_create_called
@@ -796,15 +800,15 @@ void exit_cb(Fl_Widget *,void *) {
     save_position(widgetbin_panel,"widgetbin_pos");
     delete widgetbin_panel;
   }
-  if (sourceview_panel) {
-    Fl_Preferences svp(fluid_prefs, "sourceview");
-    svp.set("autorefresh", sv_autorefresh->value());
-    svp.set("autoposition", sv_autoposition->value());
-    svp.set("tab", sv_tab->find(sv_tab->value()));
-    svp.set("code_choice", sv_code_choice);
-    save_position(sourceview_panel,"sourceview_pos");
-    delete sourceview_panel;
-    sourceview_panel = 0;
+  if (codeview_panel) {
+    Fl_Preferences svp(fluid_prefs, "codeview");
+    svp.set("autorefresh", cv_autorefresh->value());
+    svp.set("autoposition", cv_autoposition->value());
+    svp.set("tab", cv_tab->find(cv_tab->value()));
+    svp.set("code_choice", cv_code_choice);
+    save_position(codeview_panel,"codeview_pos");
+    delete codeview_panel;
+    codeview_panel = 0;
   }
   if (shell_run_window) {
     save_position(shell_run_window,"shell_run_Window_pos");
@@ -838,10 +842,10 @@ void exit_cb(Fl_Widget *,void *) {
  to save the old project first.
 
  \param[in] user_must_confirm if set, a confimation dialog is presented to the
-    user before resetting the project.
+    user before resetting the project. Default is `true`.
  \return false if the operation was canceled
  */
-bool new_project(bool user_must_confirm = true) {
+bool new_project(bool user_must_confirm) {
   // verify user intention
   if ((user_must_confirm) &&  (confirm_project_clear() == false))
     return false;
@@ -1696,7 +1700,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-  {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
+  {"Show Code View",FL_ALT+'c', (Fl_Callback*)toggle_codeview_cb, 0, FL_MENU_DIVIDER},
   {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
@@ -1813,7 +1817,11 @@ void init_scheme() {
     scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
     fluid_prefs.set("scheme_name", scheme_name);
   }
-  Fl::scheme(scheme_name);
+  // Set the new scheme only if it was not overridden by the -scheme
+  // command line option
+  if (Fl::scheme() == NULL) {
+    Fl::scheme(scheme_name);
+  }
   free(scheme_name);
 }
 
@@ -1839,15 +1847,15 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 /**
  Show or hide the code preview window.
  */
-void toggle_sourceview_cb(Fl_Double_Window *, void *) {
-  sourceview_toggle_visibility();
+void toggle_codeview_cb(Fl_Double_Window *, void *) {
+  codeview_toggle_visibility();
 }
 
 /**
  Show or hide the code preview window, button callback.
  */
-void toggle_sourceview_b_cb(Fl_Button*, void *) {
-  sourceview_toggle_visibility();
+void toggle_codeview_b_cb(Fl_Button*, void *) {
+  codeview_toggle_visibility();
 }
 
 /**
@@ -1877,7 +1885,7 @@ void make_main_window() {
     save_item = (Fl_Menu_Item*)main_menubar->find_item(save_cb);
     history_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_open_history_cb);
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
-    sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
+    codeview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_codeview_cb);
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
     guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
     restricted_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_restricted);
@@ -2049,9 +2057,9 @@ void set_modflag(int mf, int mfc) {
     if (!old_title || strcmp(old_title, new_title))
       main_window->copy_label(new_title);
   }
-  // if the UI was modified in any way, update the Source View panel
-  if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
-    sourceview_defer_update();
+  // if the UI was modified in any way, update the Code View panel
+  if (codeview_panel && codeview_panel->visible() && cv_autorefresh->value())
+    codeview_defer_update();
 }
 
 // ---- Main program entry point
@@ -2091,6 +2099,12 @@ static int arg(int argc, char** argv, int& i) {
     batch_mode++;
     i += 2; return 2;
   }
+#ifndef NDEBUG
+  if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
+    g_autodoc_path = argv[i+1];
+    i += 2; return 2;
+  }
+#endif
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
       g_header_filename_arg = argv[i+1];
@@ -2179,7 +2193,9 @@ int main(int argc,char **argv) {
     return 1;
   }
 
-  const char *c = argv[i];
+  const char *c = NULL;
+  if (g_autodoc_path.empty())
+    c = argv[i];
 
   fl_register_images();
 
@@ -2202,8 +2218,8 @@ int main(int argc,char **argv) {
     g_layout_list.read(fluid_prefs, FD_STORE_USER);
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
-    toggle_sourceview_cb(0,0);
-    if (!c && openlast_button->value() && absolute_history[0][0]) {
+    toggle_codeview_cb(0,0);
+    if (!c && openlast_button->value() && absolute_history[0][0] && g_autodoc_path.empty()) {
       // Open previous file when no file specified...
       open_project_file(absolute_history[0]);
     }
@@ -2256,6 +2272,14 @@ int main(int argc,char **argv) {
 
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
+
+#ifndef NDEBUG
+  // check if the user wants FLUID to generate image for the user documentation
+  if (!g_autodoc_path.empty()) {
+    run_autodoc(g_autodoc_path);
+    return 0;
+  }
+#endif
 
 #ifdef _WIN32
   Fl::run();

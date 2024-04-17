@@ -1,0 +1,84 @@
+#
+# This script builds the FLUID User Handbook as html directory and pdf
+# document on a Linux machine.
+#
+
+name: 'Build FLUID User Handbook'
+
+# This job must be called explicitly form the 'Actions' tab in GitHub
+on: [workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  build-html:
+    runs-on: ubuntu-latest
+
+## This can also run on macOS, but BasicTeX will not generate the pdf document
+#    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install prerequisites
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libpango1.0-dev libgtk-3-dev
+        sudo apt-get install -y doxygen
+        sudo apt-get install -y doxygen-latex
+        sudo apt-get install -y xvfb
+        sudo apt-get install -y x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps
+
+## Use the following line when 1.10.0 becomes available on Ubuntu. On 4/14/24 it's 1.9.2
+#        sudo apt-get install -y doxygen=1.10.0
+
+## xvfb creates a headless X server for us, so we can render snapshot with FLUID
+
+## We need at least Doxygen on macOS. BasicTeX is not enough though.
+#        brew install doxygen
+#        brew install --cask basictex
+#        eval "$(/usr/libexec/path_helper)"
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cmake $GITHUB_WORKSPACE \
+          -D CMAKE_BUILD_TYPE=Debug \
+          -D CMAKE_CXX_STANDARD=11 \
+          -D CMAKE_CXX_EXTENSIONS=OFF \
+          -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" \
+          -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override" \
+          -D FLTK_BUILD_FLTK_OPTIONS=OFF \
+          -D FLTK_BUILD_FLUID=ON \
+          -D FLTK_BUILD_GL=OFF \
+          -D FLTK_BUILD_TEST=OFF \
+          -D FLTK_BUILD_FLUID_DOCS=ON
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: |
+        Xvfb :19 -screen 0 1024x768x16 &
+        export DISPLAY=:19
+        cmake --build . --config Debug --target fluid_docs
+        cmake --build . --config Debug --target fluid_pdf
+    - name: Store html docs as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fluid-html
+        path: build/fluid/documentation/html
+        retention-days: 3
+        overwrite: true
+    - name: Store pdf docs as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fluid-pdf
+        path: build/fluid/documentation/fluid.pdf
+        retention-days: 3
+        overwrite: true
+

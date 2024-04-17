@@ -1,0 +1,34 @@
+/**
+
+ \page page_widgetbin_panel Widget Bin Panel
+
+ \tableofcontents
+
+ # The Widget Bin Panel #
+
+ \image html widgetbin_panel.png "Widget Bin"
+ \image latex widgetbin_panel.png "Widget Bin"  width=9cm
+
+ The Widget Bin can be activated via the main
+ menu: *Edit* > *Show Widget Bin* . FLUID will remember its
+ state and dimensions.
+
+ The Widget Bin is a great way to quickly create a GUI project. Clicking
+ an icon in the bin will create the corresponding code or widget node inside
+ or right after the selected widget. If the parent widget is not supported
+ for this widget type, FLUID tries to find a better position. If that fails,
+ a dialog box will pop up, explaining what type of parent node is required.
+
+ The Window and Widget Class icons can be dragged onto the desktop,
+ creating a new window or widget at the drop position.
+
+ \image html widgetbin_action.png
+ \image latex widgetbin_action.png
+
+ All other widget types can be dragged from the bin into a window, or a group
+ inside a window. When dropped, they will be positioned close to the drop point
+ and inserted into the widget tree as the last child of the chosen group.
+ The order of widgets within their group can be changed with
+ the `F2` and `F3` keys.
+
+*/

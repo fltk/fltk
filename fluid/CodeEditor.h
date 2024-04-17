@@ -72,7 +72,7 @@ public:
 /**
  A widget derived from CodeEditor with highlighting for code blocks.
 
- This widget is used by the SourceView system to show the design's
+ This widget is used by the codeview system to show the design's
  source and header code. The secondary highlighting show the text
  part that corresponds to the selected widget(s).
  */
