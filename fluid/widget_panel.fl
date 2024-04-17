@@ -1189,24 +1189,24 @@ wCallback->do_callback(wCallback, v);} open
             callback grid_align_horizontal_cb open
             xywh {95 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
-            MenuItem {} {
+            MenuItem GRID_LEFT {
               label GRID_LEFT
-              user_data FL_GRID_LEFT user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_LEFT} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
               label GRID_CENTER
-              user_data FL_GRID_CENTER user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
               label GRID_RIGHT
-              user_data FL_GRID_RIGHT user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_RIGHT} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
               label GRID_FILL
-              user_data FL_GRID_HORIZONTAL user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_HORIZONTAL} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
           }
@@ -1217,22 +1217,22 @@ wCallback->do_callback(wCallback, v);} open
           } {
             MenuItem {} {
               label GRID_TOP
-              user_data FL_GRID_TOP user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_TOP} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
               label GRID_CENTER
-              user_data FL_GRID_CENTER user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
               label GRID_BOTTOM
-              user_data FL_GRID_BOTTOM user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_BOTTOM} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
             MenuItem {} {
               label GRID_FILL
-              user_data FL_GRID_VERTICAL user_data_type long
+              user_data {(fl_intptr_t)FL_GRID_VERTICAL} user_data_type long
               xywh {10 10 31 20} labelsize 11
             }
           }

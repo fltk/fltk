@@ -217,5 +217,6 @@ extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
 extern Fl_Menu_Item menu_4[];
 extern Fl_Menu_Item menu_Horizontal[];
+#define GRID_LEFT (menu_Horizontal+0)
 extern Fl_Menu_Item menu_Vertical[];
 #endif

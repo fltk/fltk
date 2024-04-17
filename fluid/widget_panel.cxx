@@ -580,18 +580,18 @@ Fl_Box *widget_grid_unlinked=(Fl_Box *)0;
 Fl_Group *wp_gridc_align=(Fl_Group *)0;
 
 Fl_Menu_Item menu_Horizontal[] = {
- {"GRID_LEFT", 0,  0, (void*)(FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)(FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_RIGHT", 0,  0, (void*)(FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)(FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_LEFT", 0,  0, (void*)((fl_intptr_t)FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_RIGHT", 0,  0, (void*)((fl_intptr_t)FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
 Fl_Menu_Item menu_Vertical[] = {
- {"GRID_TOP", 0,  0, (void*)(FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)(FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_BOTTOM", 0,  0, (void*)(FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)(FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_TOP", 0,  0, (void*)((fl_intptr_t)FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_BOTTOM", 0,  0, (void*)((fl_intptr_t)FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
