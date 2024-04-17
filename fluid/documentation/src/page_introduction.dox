@@ -6,6 +6,8 @@
 
 <!-- ---------------------------------------------------------------------- -->
 
+ \image latex fluid-128.png "FLUID" width=3cm
+
  FLUID, short for Fast Light User Interface Designer, is a graphical editor
  capable of generating C++ source code and header files ready for compilation.
  These files ultimately create an FLTK based graphical user interface

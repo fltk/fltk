@@ -2,12 +2,12 @@
 % FLUID PDF documentation title page (LaTeX)
 %
 \begin{titlepage}
-\vspace*{5cm}
+\vspace*{4cm}
 \begin{center}%
 {\Huge FLUID for FLTK @FLTK_VERSION@ User Manual}\\
 \vspace*{2cm}
 \begin{DoxyImageNoCaption}
- \mbox{\includegraphics[width=6cm]{fluid-128.png}}
+ \mbox{\includegraphics[width=4cm]{fluid-128.png}}
 \end{DoxyImageNoCaption}\\
 \vspace*{2cm}
 {\Large

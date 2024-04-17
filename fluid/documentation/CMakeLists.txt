@@ -99,7 +99,7 @@ if(FLTK_BUILD_FLUID_DOCS)
   set(GENERATE_FLUID_HTML YES)
   set(GENERATE_LATEX NO)
   set(LATEX_HEADER   "")
-  set(HTML_INDEX     "HTML_INDEX")
+  set(FL_HTML_INDEX  "FL_HTML_INDEX")
   set(DOXYFILE       "Doxyfile")
   set(LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
 
@@ -133,7 +133,6 @@ if(FLTK_BUILD_FLUID_DOCS)
     COMMAND fltk::fluid -scheme gtk+ --autodoc ${CMAKE_CURRENT_BINARY_DIR}/src/
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
-    BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/src/function_panel.png
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating HTML documentation" VERBATIM
   )
@@ -152,7 +151,7 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
   set(GENERATE_FLUID_HTML  NO)
   set(GENERATE_LATEX YES)
   set(LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fluid-book.tex")
-  set(HTML_INDEX     "")
+  set(FL_HTML_INDEX  "FL_NO_HTML_INDEX")
   set(DOXYFILE       "Doxybook")
   set(LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
 
@@ -208,6 +207,7 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
   add_custom_target(fluid_pdf
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/fluid.pdf
   )
+  add_dependencies(fluid_pdf fluid_docs)
 
 endif(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
 

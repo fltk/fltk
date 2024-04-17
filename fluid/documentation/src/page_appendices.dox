@@ -63,7 +63,7 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 
 <!-- ---------------------------------------------------------------------- -->
 
-\section appendix_fileformat `.fl` File Format
+\section appendix_fileformat .fl File Format
 
 FLUID edits and saves its state in `.fl` project files. These files are text,
 and you can (with care) edit them in a text editor, perhaps to get some special
