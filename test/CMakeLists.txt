@@ -243,7 +243,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
   foreach(hd ${all_headers})
     get_filename_component(hd "${hd}" NAME)
     # skip headers that must not be included directly and fl_config.h if it exists
-    string(REGEX MATCH "^(mac|win32|wayland|fl_config)\.[hH]$" skip "${hd}")
+    string(REGEX MATCH "^(mac|win32|x11|wayland|fl_config)\.[hH]$" skip "${hd}")
     if(skip STREQUAL "")
       file(APPEND ${include_all} "#include <FL/${hd}>\n")
     endif()
