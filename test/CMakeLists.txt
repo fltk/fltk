@@ -216,6 +216,48 @@ if(OPENGL_FOUND)
   fl_create_example(shape shape.cxx "${GLDEMO_LIBS}")
 endif(OPENGL_FOUND)
 
+# Test FLTK headers for variable shadowing [-Wshadow] (STR 2728)
+#
+# The following test program is added only for GNU or Clang compilers which
+# are known to support the '-Wshadow' compiler flag. We could also implement
+# a compile test but using GNU and Clang appears to be sufficient.
+#
+# Note 1: usage of `file(GLOB ...)` is discouraged by CMake documentation because
+#   it doesn't trigger rebuilding when new header files are added. However, this
+#   is better than nothing.
+#
+# Note 2: a better way to generate the header file might be with a custom command
+#   to be able to generate proper dependencies but this is left for later...
+#
+# Note 3: this test program is only included in CMake builds and was inspired
+#   by STR 2728: "Add test program to test for shadowed variables (-Wshadow)".
+#   Its sole purpose is to issue compilation warnings during build time if
+#   variables are shadowed in public headers.
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
+  set(include_all "${CMAKE_CURRENT_BINARY_DIR}/include_all.h")
+  file(WRITE ${include_all} "/* DO NOT EDIT - this file is created by CMake */\n")
+
+  file(GLOB all_headers "${FLTK_SOURCE_DIR}/FL/*.[hH]")
+  foreach(hd ${all_headers})
+    get_filename_component(hd "${hd}" NAME)
+    # skip headers that must not be included directly and fl_config.h if it exists
+    string(REGEX MATCH "^(mac|win32|wayland|fl_config)\.[hH]$" skip "${hd}")
+    if(skip STREQUAL "")
+      file(APPEND ${include_all} "#include <FL/${hd}>\n")
+    endif()
+  endforeach()
+  file(APPEND ${include_all} "/* End of generated file */\n")
+
+  # now add the 'shadow_variables' target and set the compiler flag
+
+  fl_create_example(shadow_variables shadow_variables.cxx fltk::fltk)
+  set_target_properties(shadow_variables PROPERTIES COMPILE_FLAGS -Wshadow)
+
+endif() # GNU or Clang (-Wshadow test)
+
+
 # *** EXPERIMENTAL ***
 # Build some of the demo programs linked against the shared FLTK lib(s).
 # This is currently pretty complicated and should be improved.
