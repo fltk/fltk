@@ -1,7 +1,7 @@
 //
 // GIF image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -69,7 +69,7 @@ protected:
     GIF_FRAME(int frame, uchar *data) : ifrm(frame), bptr(data) {}
     GIF_FRAME(int frame, int W, int H, int fx, int fy, int fw, int fh, uchar *data) :
       ifrm(frame), width(W), height(H), x(fx), y(fy), w(fw), h(fh), bptr(data) {}
-    void disposal(int mode, int delay) { dispose = mode; this->delay = delay; }
+    void disposal(int mode, int time) { dispose = mode; this->delay = time; }
     void colors(int nclrs, int bg, int tp) { clrs = nclrs; bkgd = bg; trans = tp; }
   };
 

@@ -1,7 +1,7 @@
 //
 // Printing support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -116,12 +116,11 @@ public:
   /** Synonym of draw(Fl_Widget*, int, int) */
   void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0) {draw(widget, delta_x, delta_y);}
   /** Synonym of draw_decorated_window(Fl_Window*, int, int) */
-  void print_window(Fl_Window *win, int x_offset = 0, int y_offset = 0) {
-    draw_decorated_window(win, x_offset, y_offset);
+  void print_window(Fl_Window *win, int x_off = 0, int y_off = 0) {
+    draw_decorated_window(win, x_off, y_off);
   }
   virtual int end_page (void);
   virtual void end_job (void);
 };
 
 #endif // Fl_Paged_Device_H
-
