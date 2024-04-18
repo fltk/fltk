@@ -769,6 +769,69 @@ static struct Fl_Wayland_Screen_Driver::output *screen_num_to_output(int num_scr
 }
 
 
+#define LIBDECOR_MR131 1 // this means libdecor does not include MR!131 yet
+
+#ifdef LIBDECOR_MR131
+/* === Beginning of hack that would become un-needed if libdecor accepted MR!131 === */
+
+// true while the GUI is interactively resizing a decorated window
+static bool in_decorated_window_resizing = false;
+
+
+// libdecor's configure cb function for xdg_toplevel objects
+static void (*decor_xdg_toplevel_configure)(void*, struct xdg_toplevel *, int32_t,
+                                            int32_t, struct wl_array *);
+
+
+static void fltk_xdg_toplevel_configure(void *user_data, struct xdg_toplevel *xdg_toplevel,
+                                        int32_t width, int32_t height,
+                                        struct wl_array *states) {
+  uint32_t *p;
+  in_decorated_window_resizing = false;
+  // Replace wl_array_for_each(p, states) rejected by C++
+  for (p = (uint32_t *)(states)->data;
+      (const char *) p < ((const char *) (states)->data + (states)->size);
+      (p)++) {
+    if (*p == XDG_TOPLEVEL_STATE_RESIZING) {
+      in_decorated_window_resizing = true;
+      break;
+    }
+  }
+  decor_xdg_toplevel_configure(user_data, xdg_toplevel, width, height, states);
+}
+
+
+struct wl_object { // copied from wayland-private.h
+  const struct wl_interface *interface;
+  const void *implementation;
+  uint32_t id;
+};
+
+
+// replace libdecor's toplevel configure cb by FLTK's
+static void use_FLTK_toplevel_configure_cb(struct libdecor_frame *frame) {
+  struct wl_object *object = (struct wl_object *)libdecor_frame_get_xdg_toplevel(frame);
+  static struct xdg_toplevel_listener *fltk_listener = NULL;
+  if (!fltk_listener) {
+    struct xdg_toplevel_listener *decor_listener = (struct xdg_toplevel_listener*)
+        object->implementation;
+    fltk_listener = (struct xdg_toplevel_listener*)
+        malloc(sizeof(struct xdg_toplevel_listener));
+    // initialize FLTK's listener with libdecor's values
+    *fltk_listener = *decor_listener;
+    // memorize libdecor's toplevel configure cb
+    decor_xdg_toplevel_configure = decor_listener->configure;
+    // replace libdecor's toplevel configure cb by FLTK's
+    fltk_listener->configure = fltk_xdg_toplevel_configure;
+  }
+  // replace the toplevel listener by a copy whose configure member is FLTK's
+  object->implementation = fltk_listener;
+}
+
+/* === End of hack that would become un-needed if libdecor accepted MR!131 === */
+#endif // LIBDECOR_MR131
+
+
 static void handle_configure(struct libdecor_frame *frame,
      struct libdecor_configuration *configuration, void *user_data)
 {
@@ -786,6 +849,9 @@ static void handle_configure(struct libdecor_frame *frame,
 
   if (!window->xdg_surface) window->xdg_surface = libdecor_frame_get_xdg_surface(frame);
 
+#ifdef LIBDECOR_MR131
+  if (is_1st_run) use_FLTK_toplevel_configure_cb(frame);
+#endif
   struct wl_output *wl_output = NULL;
   if (window->fl_win->fullscreen_active()) {
     if (!(window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
@@ -839,7 +905,10 @@ static void handle_configure(struct libdecor_frame *frame,
     //fprintf(stderr,"handle_configure: using floating %dx%d\n",width,height);
   }
 
-  bool condition = (window->state & LIBDECOR_WINDOW_STATE_RESIZING);
+#ifndef LIBDECOR_MR131
+  bool in_decorated_window_resizing = (window->state & LIBDECOR_WINDOW_STATE_RESIZING);
+#endif
+  bool condition = in_decorated_window_resizing;
   if (condition) { // see issue #878
     condition = (window->covered ? (window->buffer && window->buffer->in_use) : (window->frame_cb != NULL));
   }

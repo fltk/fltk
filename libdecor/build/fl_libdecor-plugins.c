@@ -317,13 +317,34 @@ struct libdecor { // copied from libdecor.c, for libdecor versions > 0.2.2
   struct wl_list frames;
 };
 
+struct libdecor_022 { // for libdecor versions ≤ 0.2.2
+  int ref_count;
+  const struct libdecor_interface *iface;
+  struct libdecor_plugin *plugin;
+  bool plugin_ready;
+  struct wl_display *wl_display;
+  struct wl_registry *wl_registry;
+  struct xdg_wm_base *xdg_wm_base;
+  struct zxdg_decoration_manager_v1 *decoration_manager;
+  struct wl_callback *init_callback;
+  bool init_done;
+  bool has_error;
+  struct wl_list frames;
+};
+
 
 /* Returns whether surface is a GTK-titlebar created by libdecor-gtk */
-bool fl_is_surface_gtk_titlebar(struct wl_surface *surface, struct libdecor *context) {
+bool fl_is_surface_gtk_titlebar(struct wl_surface *surface, struct libdecor *context,
+                                struct wl_display *wl_display) {
   if (!context || get_plugin_kind(NULL) != GTK3) return false;
   // loop over all decorations created by libdecor-gtk
   struct libdecor_frame *frame;
-  wl_list_for_each(frame, &context->frames, link) {
+  struct wl_list *frames;
+  if (context->wl_display == wl_display) frames = &context->frames;
+  else if (((struct libdecor_022*)context)->wl_display == wl_display)
+    frames = &(((struct libdecor_022*)context)->frames);
+  else return false;
+  wl_list_for_each(frame, frames, link) {
     struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
     if (frame_gtk->headerbar.wl_surface == surface) return true;
   }

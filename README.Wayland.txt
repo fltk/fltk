@@ -126,8 +126,9 @@ cross-compiling for systems that lack X11 headers and libraries.
 The FLTK Wayland platform uses a library called libdecor which handles window decorations
 (i.e., titlebars, shade). On very recent Linux distributions (e.g., Debian trixie)
 libdecor is available as Linux packages (libdecor-0-dev and libdecor-0-plugin-1-gtk).
-FLTK requires a version > 0.2.2 of these packages that's not yet available.
-Therefore, FLTK uses a copy of libdecor bundled in the FLTK source code.
+FLTK requires version 0.2.0 or more recent of these packages.
+When libdecor is not available or not recent enough, FLTK uses a copy of libdecor
+bundled in the FLTK source code.
 FLTK equipped with libdecor supports both the client-side decoration mode (CSD) and the
 server-side decoration mode (SSD) as determined by the active Wayland compositor.
 Mutter (gnome's Wayland compositor) and Weston use CSD mode, KWin and Sway use SSD mode.

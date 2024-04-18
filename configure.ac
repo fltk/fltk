@@ -1092,7 +1092,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
        BUILD="WAYLANDX11"
        graphics="Wayland or X11 with cairo"
        ])
-      AS_IF([$PKGCONFIG --exists 'libdecor-0 > 0.2.2'],
+      AS_IF([$PKGCONFIG --exists 'libdecor-0 >= 0.2.0'],
       [
         plugin_dir="$($PKGCONFIG --variable=libdir libdecor-0)/libdecor/plugins-1"
         CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR"

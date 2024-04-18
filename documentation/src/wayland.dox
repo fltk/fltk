@@ -1108,15 +1108,12 @@ Desktop. As of late 2023, libdecor contains two titlebar-drawing plugins:
 - \c libdecor-gtk intended for the Gnome desktop;
 - \c libdecor-cairo for other situations.
 
-Because \c libdecor is not yet in major Linux packages, or only at version 0.1.x,
-FLTK bundles the most recent source code of \c libdecor and its plugins. This code
+On recent Linux distributions, FLTK uses the system \c libdecor shared library
+available via packages \c libdecor-0-dev and \c libdecor-0-plugin-1-gtk.
+On earlier Linux versions, or if CMake option \c FLTK_USE_SYSTEM_LIBDECOR is set
+to OFF, FLTK bundles the most recent source code of \c libdecor and its plugins. This code
 is included in libfltk. FLTK uses \c libdecor-gtk when software package \c libgtk-3-dev
 is present in the build system, and \c libdecor-cairo otherwise.
-
-As of early 2024, libdecor version 0.2.2 is available in very recent Linux distributions.
-This version is not binary compatible with the libdecor version bundled by FLTK.
-For this reason, CMake option \c FLTK_USE_SYSTEM_LIBDECOR is OFF by default, and
-FLTK uses the bundled \c libdecor copy to draw titlebars.
 
 \c Libdecor uses the Wayland protocol
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>
