@@ -130,7 +130,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake -D FLTK_USE_SYSTEM_LIBJPEG:BOOL=OFF -D FLTK_USE_SYSTEM_LIBPNG:BOOL=OFF -D FLTK_USE_SYSTEM_ZLIB:BOOL=OFF ..
+      run: cmake -D FLTK_USE_SYSTEM_LIBJPEG:BOOL=OFF -D FLTK_USE_SYSTEM_LIBPNG:BOOL=OFF -D FLTK_USE_SYSTEM_ZLIB:BOOL=OFF -DFLTK_BUILD_SHARED_LIBS:BOOL=ON ..
 
     - name: Build
       working-directory: ${{github.workspace}}/build

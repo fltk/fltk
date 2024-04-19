@@ -930,7 +930,7 @@ if(FLTK_BUILD_SHARED_LIBS AND MSVC)
 
   if(OPENGL_FOUND)
     target_link_libraries(fltk-shared PUBLIC ${OPENGL_LIBRARIES})
-    target_include_directories(fltk_gl-shared PUBLIC ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
+    target_include_directories(fltk-shared PUBLIC ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
     if(OPENGL_GLU_INCLUDE_DIR)
       target_include_directories(fltk-shared PUBLIC ${OPENGL_GLU_INCLUDE_DIR})
     endif()
