@@ -630,13 +630,33 @@ if(WIN32)
 endif()
 
 #######################################################################
-
+#
 # Prepare optional libs for shared and static FLTK libraries.
-# Note: OPTIONAL_LIBS is a CMake 'list' and may contain CMake targets,
-# i.e. it is only used for CMake stuff: target_link_libraries().
-# FIXME: make this all more consistent (targets rather than libs).
+#
+# Note: 'OPTIONAL_LIBS' is a CMake 'list' but must not contain arbitrary
+#     CMake targets because these targets would be propagated to
+#     consumer projects. The macro below simplifies adding link
+#     libraries of such targets to 'OPTIONAL_LIBS'.
+#
+# This macro appends interface targets to 'OPTIONAL_LIBS'.
+# Input:
+# 'targets' may be a CMake list of targets or a single target.
+#     It must be quoted if multiple targets are to be added in
+#     one call (see examples below).
+#
+#######################################################################
 
-set(OPTIONAL_LIBS) # init
+macro(append_optional_libs targets)
+  foreach(_target ${targets})
+    get_target_property(_link_libraries ${_target} INTERFACE_LINK_LIBRARIES)
+    list(APPEND OPTIONAL_LIBS ${_link_libraries})
+    list(APPEND OPTIONAL_LIBS )
+  endforeach()
+  unset(_target)
+  unset(_link_libraries)
+endmacro()
+
+set(OPTIONAL_LIBS)
 
 if(LIB_dl)
   list(APPEND OPTIONAL_LIBS ${LIB_dl})
@@ -674,11 +694,11 @@ if(HAVE_XRENDER)
 endif(HAVE_XRENDER)
 
 if(USE_PANGO)
-  ### FIXME ###  This needs to use the PKG_* variables directly
-  list(APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} PkgConfig::PANGOCAIRO)
-  list(APPEND OPTIONAL_LIBS PkgConfig::CAIRO ${HAVE_LIB_GOBJECT})
+  list(APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO})
+  append_optional_libs(PkgConfig::PANGOCAIRO)
+  list(APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT})
   if(USE_PANGOXFT)
-    list(APPEND OPTIONAL_LIBS PkgConfig::PANGOXFT)
+    append_optional_libs(PkgConfig::PANGOXFT)
   endif(USE_PANGOXFT)
 endif(USE_PANGO)
 
@@ -753,23 +773,29 @@ if(UNIX AND FLTK_BACKEND_WAYLAND)
   endif()
 
   if(FLTK_USE_GL)
-    list(APPEND OPTIONAL_LIBS PkgConfig::WLD_EGL PkgConfig::PKG_EGL)
+    append_optional_libs("PkgConfig::WLD_EGL;PkgConfig::PKG_EGL")
   endif(FLTK_USE_GL)
+
   if(USE_SYSTEM_LIBDECOR)
-    list(APPEND OPTIONAL_LIBS PkgConfig::SYSTEM_LIBDECOR)
+    append_optional_libs(PkgConfig::SYSTEM_LIBDECOR)
   elseif(GTK_FOUND AND FLTK_USE_LIBDECOR_GTK)
-      list(APPEND OPTIONAL_LIBS PkgConfig::GTK)
-  endif(USE_SYSTEM_LIBDECOR)
-  list(APPEND OPTIONAL_LIBS PkgConfig::WLDCURSOR PkgConfig::WLDCLIENT PkgConfig::XKBCOMMON -ldl)
+    append_optional_libs(PkgConfig::GTK)
+  endif()
+
+  append_optional_libs("PkgConfig::WLDCURSOR;PkgConfig::WLDCLIENT;PkgConfig::XKBCOMMON")
+
   if(DBUS_FOUND)
-    list(APPEND OPTIONAL_LIBS PkgConfig::DBUS)
-  endif(DBUS_FOUND)
+    append_optional_libs(PkgConfig::DBUS)
+  endif()
+
 endif(UNIX AND FLTK_BACKEND_WAYLAND)
+
+list(REMOVE_DUPLICATES OPTIONAL_LIBS)
 
 #######################################################################
 
 fl_add_library(fltk STATIC "${STATIC_FILES}")
-target_link_libraries(fltk PUBLIC ${OPTIONAL_LIBS})
+target_link_libraries(fltk PRIVATE ${OPTIONAL_LIBS})
 
 #######################################################################
 
@@ -819,7 +845,7 @@ endif(FLTK_USE_GL)
 if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
 
   fl_add_library(fltk SHARED "${SHARED_FILES}")
-  target_link_libraries(fltk-shared PUBLIC ${OPTIONAL_LIBS})
+  target_link_libraries(fltk-shared PRIVATE ${OPTIONAL_LIBS})
 
   ###################################################################
 
@@ -888,7 +914,7 @@ if(FLTK_BUILD_SHARED_LIBS AND MSVC)
   endif(OPENGL_FOUND)
 
   fl_add_library(fltk SHARED "${SOURCES}")
-  target_link_libraries(fltk-shared PUBLIC ${OPTIONAL_LIBS})
+  target_link_libraries(fltk-shared PRIVATE ${OPTIONAL_LIBS})
 
   if(FLTK_USE_BUNDLED_JPEG)
     target_link_libraries(fltk-shared PUBLIC fltk::jpeg-shared)
