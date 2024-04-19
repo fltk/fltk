@@ -503,7 +503,7 @@ void compress_image_cb(Fl_Check_Button* b, void *v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
       b->activate();
-      b->value(current_widget->compress_image_);
+      b->value(!current_widget->compress_image_);
     } else {
       b->deactivate();
     }
@@ -511,7 +511,7 @@ void compress_image_cb(Fl_Check_Button* b, void *v) {
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
-        ((Fl_Widget_Type*)o)->compress_image_ = b->value();
+        ((Fl_Widget_Type*)o)->compress_image_ = !b->value();
         mod = 1;
       }
     }
@@ -585,7 +585,7 @@ void compress_deimage_cb(Fl_Check_Button* b, void *v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
       b->activate();
-      b->value(current_widget->compress_deimage_);
+      b->value(!current_widget->compress_deimage_);
     } else {
       b->deactivate();
     }
@@ -593,7 +593,7 @@ void compress_deimage_cb(Fl_Check_Button* b, void *v) {
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
-        ((Fl_Widget_Type*)o)->compress_deimage_ = b->value();
+        ((Fl_Widget_Type*)o)->compress_deimage_ = !b->value();
         mod = 1;
       }
     }
@@ -3432,6 +3432,7 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
     // the code below is for compatibility with older .fl files
     const char *ext = fl_filename_ext(image_name_);
     if (   strcmp(ext, ".jpg")
+        && strcmp(ext, ".png")
         && strcmp(ext, ".svg")
         && strcmp(ext, ".svgz"))
       compress_image_ = 0; // if it is neither of those, default to uncompressed
@@ -3450,6 +3451,7 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
     // the code below is for compatibility with older .fl files
     const char *ext = fl_filename_ext(inactive_name_);
     if (   strcmp(ext, ".jpg")
+        && strcmp(ext, ".png")
         && strcmp(ext, ".svg")
         && strcmp(ext, ".svgz"))
       compress_deimage_ = 0; // if it is neither of those, default to uncompressed

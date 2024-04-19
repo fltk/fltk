@@ -386,10 +386,10 @@ Fl_Double_Window* make_decl_panel() {
     { Fl_Tile* o = new Fl_Tile(10, 40, 320, 180);
       { Fl_Group* o = new Fl_Group(10, 40, 320, 100);
         o->box(FL_FLAT_BOX);
-        { decl_input = new CodeEditor(10, 40, 320, 45, "This can be any declaration, like \"int x;\", an external symbol like \"exter\
-n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\
-\" or \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list\
-;\".");
+        { decl_input = new CodeEditor(10, 40, 320, 45, "This can be any declaration, like \"int x;\", an external symbol like \"exter"
+"n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo"
+"\" or \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list"
+";\".");
           decl_input->box(FL_DOWN_FRAME);
           decl_input->color(FL_BACKGROUND2_COLOR);
           decl_input->selection_color(FL_SELECTION_COLOR);
@@ -511,8 +511,8 @@ Fl_Double_Window* make_data_panel() {
         data_class_choice->menu(menu_data_class_choice);
       } // Fl_Choice* data_class_choice
       { data_mode = new Fl_Choice(10, 38, 185, 20);
-        data_mode->tooltip("text mode generates a \"const char*\" and a trailing NUL, compressed mode use\
-s zlib to generate a binary block");
+        data_mode->tooltip("text mode generates a \"const char*\" and a trailing NUL, compressed mode use"
+"s zlib to generate a binary block");
         data_mode->down_box(FL_BORDER_BOX);
         data_mode->labelsize(11);
         data_mode->textsize(11);
@@ -521,8 +521,8 @@ s zlib to generate a binary block");
       o->end();
     } // Fl_Group* o
     { data_input = new Fl_Input(10, 78, 320, 20, "Variable Name:");
-      data_input->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode \
-and \"const char*\" in text mode.");
+      data_input->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode "
+"and \"const char*\" in text mode.");
       data_input->labelfont(1);
       data_input->labelsize(11);
       data_input->textfont(4);

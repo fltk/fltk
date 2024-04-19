@@ -86,12 +86,25 @@
  file name, so you will need the image files as well to read a project file.
 
  FLUID can read XBM bitmap files, XPM pixmaps with a transparency channel, and
- all other types supported by the FLTK image extension. FLUID stores images
- as bitmaps or RGB data by default. If *compressed* is selected in the image
- properties field, the image is stored in its original format, and
- the FLTK-images library must be linked to decompress the image at runtime.
+ all other types supported by the FLTK image extension. Images can be stored
+ in their original file format, or converted into their uncompressed rgb or
+ grayscale pixel data, with or without alpha channel. By default, image
+ files ending in .jpg, .png, .svg, and .svgz are stored as they are. All other
+ formats are converted to pixel data. The storage format can be manually
+ selected in the "convert to raw pixel data" checkbox in the image properties
+ dialog.
 
- Images are stored at their original resolution. The image properties dialog
+ Images stored in their original format are usually compressed well and take a
+ lot less space, but they also require that the fltk-image library and all its
+ dependencies are linked to the application. Storing uncompressed pixel data
+ increases the size of the application, but has less dependencies and
+ saves time when launching because images don;t need to be decompressed.
+ As a good rule of thumb, keeping the original format is good for images larger
+ than 24x24 pixels and when the application links to the fltk-image anyway.
+ An app that has only a hand full of small icons may be better off storing raw
+ pixel data and not link with fltk-image.
+
+ The image properties dialog
  provides *Scale* settings to scale the image before rendering to screen.
  To make full use of high-dpi screen support, images should be stored at double
  resolution and then scaled to FLTK coordinates. This gives FLTK the chance to

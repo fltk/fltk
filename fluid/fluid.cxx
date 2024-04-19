@@ -1504,8 +1504,8 @@ void show_help(const char *name) {
     // if we can not read the file, we display the canned version instead
     // or ask the native browser to open the page on www.fltk.org
     if (strcmp(name, "fluid.html")==0) {
-      if (!Fl_Shared_Image::find("embedded:/fluid-org.png"))
-        new Fl_PNG_Image("embedded:/fluid-org.png", fluid_org_png, sizeof(fluid_org_png));
+      if (!Fl_Shared_Image::find("embedded:/fluid_flow_chart_800.png"))
+        new Fl_PNG_Image("embedded:/fluid_flow_chart_800.png", fluid_flow_chart_800_png, sizeof(fluid_flow_chart_800_png));
       help_dialog->value
       (
        "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n"
@@ -1528,7 +1528,7 @@ void show_help(const char *name) {
        "call the FLUID functions. These <code>.cxx</code> files must <code>"
        "#include</code> the <code>.h</code> file or they can <code>#include</code> "
        "the <code>.cxx</code> file so it still appears to be a single source file.<p>"
-       "<img src=\"embedded:/fluid-org.png\"></p>"
+       "<img src=\"embedded:/fluid_flow_chart_800.png\"></p>"
        "<p>More information is available online at <a href="
        "\"https://www.fltk.org/doc-1.4/fluid.html\">https://www.fltk.org/</a>"
        "</body></html>"

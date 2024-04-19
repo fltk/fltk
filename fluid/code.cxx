@@ -394,7 +394,8 @@ bool Fd_Code_Writer::c_contains(void *pp) {
 /**
  Write a C string to the code file, escaping non-ASCII characters.
 
- Adds " before and after the text.
+ Text is broken into lines of 78 character.
+ FLUID " before and after every line text.
 
  A list of control characters and ", ', and \\ are escaped by adding a \\ in
  front of them. Escape ?? by writing ?\\?. All other characters that are not
@@ -408,6 +409,7 @@ bool Fd_Code_Writer::c_contains(void *pp) {
  \see f.write_cstring(const char*)
  */
 void Fd_Code_Writer::write_cstring(const char *s, int length) {
+  const char *next_line = "\"\n\"";
   if (varused_test) {
     varused = 1;
     return;
@@ -443,7 +445,7 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
     case '\'':
     case '\\':
     QUOTED:
-      if (linelength >= 77) { crc_puts("\\\n"); linelength = 0; }
+      if (linelength >= 77) { crc_puts(next_line); linelength = 0; }
       crc_putc('\\');
       crc_putc(c);
       linelength += 2;
@@ -454,47 +456,28 @@ void Fd_Code_Writer::write_cstring(const char *s, int length) {
     default:
       if (c >= ' ' && c < 127) {
         // a legal ASCII character
-        if (linelength >= 78) { crc_puts("\\\n"); linelength = 0; }
+        if (linelength >= 78) { crc_puts(next_line); linelength = 0; }
         crc_putc(c);
         linelength++;
         break;
       }
       // if the UTF-8 option is checked, write unicode characters verbatim
-        if (g_project.utf8_in_src && (c&0x80)) {
-          if ((c&0x40)) {
-            // This is the first character in a utf-8 sequence (0b11......).
-            // A line break would be ok here. Do not put linebreak in front of
-            // following characters (0b10......)
-            if (linelength >= 78) { crc_puts("\\\n"); linelength = 0; }
-          }
-          crc_putc(c);
-          linelength++;
-          break;
+      if (g_project.utf8_in_src && (c&0x80)) {
+        if ((c&0x40)) {
+          // This is the first character in a utf-8 sequence (0b11......).
+          // A line break would be ok here. Do not put linebreak in front of
+          // following characters (0b10......)
+          if (linelength >= 78) { crc_puts(next_line); linelength = 0; }
         }
+        crc_putc(c);
+        linelength++;
+        break;
+      }
       // otherwise we must print it as an octal constant:
       c &= 255;
-      if (c < 8) {
-        if (linelength >= 76) { crc_puts("\\\n"); linelength = 0; }
-        crc_printf("\\%o", c);
-        linelength += 2;
-      } else if (c < 64) {
-        if (linelength >= 75) { crc_puts("\\\n"); linelength = 0; }
-        crc_printf("\\%o", c);
-        linelength += 3;
-      } else {
-        if (linelength >= 74) { crc_puts("\\\n"); linelength = 0; }
-        crc_printf("\\%o", c);
-        linelength += 4;
-      }
-      // We must not put more numbers after it, because some C compilers
-      // consume them as part of the quoted sequence.  Use string constant
-      // pasting to avoid this:
-      c = *p;
-      if (p < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
-        crc_putc('\"'); linelength++;
-        if (linelength >= 79) { crc_puts("\n"); linelength = 0; }
-        crc_putc('\"'); linelength++;
-      }
+      if (linelength >= 74) { crc_puts(next_line); linelength = 0; }
+      crc_printf("\\%03o", c);
+      linelength += 4;
       break;
     }
   }

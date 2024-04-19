@@ -2537,9 +2537,9 @@ Fl_Double_Window* make_settings_window() {
           use_external_editor_button->value(G_use_external_editor);
         } // Fl_Check_Button* use_external_editor_button
         { editor_command_input = new Fl_Input(120, 255, 200, 20, "External Editor:");
-          editor_command_input->tooltip("The editor command to open your external text editor.\nInclude any necessary \
-flags to ensure your editor does not background itself.\nExamples:\n    gvim -\
-f\n    gedit\n emacs");
+          editor_command_input->tooltip("The editor command to open your external text editor.\nInclude any necessary "
+"flags to ensure your editor does not background itself.\nExamples:\n    gvim -"
+"f\n    gedit\n emacs");
           editor_command_input->labelfont(1);
           editor_command_input->labelsize(11);
           editor_command_input->textfont(4);
@@ -2562,16 +2562,16 @@ f\n    gedit\n emacs");
           o->value(show_guides);
         } // Fl_Check_Button* guides_button
         { Fl_Check_Button* o = restricted_button = new Fl_Check_Button(120, 320, 200, 20, "Show Restricted Areas");
-          restricted_button->tooltip("show overlapping and out of bounds areas, show unfilled areas in Fl_Pack grou\
-ps");
+          restricted_button->tooltip("show overlapping and out of bounds areas, show unfilled areas in Fl_Pack grou"
+"ps");
           restricted_button->down_box(FL_DOWN_BOX);
           restricted_button->labelsize(11);
           restricted_button->callback((Fl_Callback*)toggle_restricted_cb);
           o->value(show_restricted);
         } // Fl_Check_Button* restricted_button
         { Fl_Check_Button* o = ghosted_outline_button = new Fl_Check_Button(120, 340, 200, 20, "Show Ghosted Group Outlines");
-          ghosted_outline_button->tooltip("groups with no box type or flat boxtypes without contrast will be rendered wi\
-th a dim outline in the editing window only");
+          ghosted_outline_button->tooltip("groups with no box type or flat boxtypes without contrast will be rendered wi"
+"th a dim outline in the editing window only");
           ghosted_outline_button->down_box(FL_DOWN_BOX);
           ghosted_outline_button->labelsize(11);
           ghosted_outline_button->callback((Fl_Callback*)toggle_ghosted_outline_cb);
@@ -2639,9 +2639,9 @@ th a dim outline in the editing window only");
           use_FL_COMMAND_button->callback((Fl_Callback*)cb_use_FL_COMMAND_button);
         } // Fl_Check_Button* use_FL_COMMAND_button
         { utf8_in_src_button = new Fl_Check_Button(100, 230, 220, 20, "allow Unicode UTF-8 in source code");
-          utf8_in_src_button->tooltip("For older compilers, characters outside of the printable ASCII range are esca\
-ped using octal notation `\\0123`. If this option is checked, Fluid will write\
- UTF-8 characters unchanged.");
+          utf8_in_src_button->tooltip("For older compilers, characters outside of the printable ASCII range are esca"
+"ped using octal notation `\\0123`. If this option is checked, Fluid will write"
+" UTF-8 characters unchanged.");
           utf8_in_src_button->down_box(FL_DOWN_BOX);
           utf8_in_src_button->labelsize(11);
           utf8_in_src_button->callback((Fl_Callback*)cb_utf8_in_src_button);
@@ -2660,9 +2660,9 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         } // Fl_Box* o
         { // // Matt: disabled
           w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
-          w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t\
-o be merged back into the project file. Checking this option will generate add\
-itional data in code and project files.");
+          w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
+"o be merged back into the project file. Checking this option will generate add"
+"itional data in code and project files.");
           w_proj_mergeback->down_box(FL_DOWN_BOX);
           w_proj_mergeback->labelsize(11);
           w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
@@ -3096,8 +3096,8 @@ itional data in code and project files.");
               o->when(FL_WHEN_RELEASE);
             } // Fl_Shortcut_Button* o
             { Fl_Choice* o = new Fl_Choice(100, 322, 130, 20, "Store:");
-              o->tooltip("store this shell command as a user setting or save it with the .fl project fi\
-le");
+              o->tooltip("store this shell command as a user setting or save it with the .fl project fi"
+"le");
               o->down_box(FL_BORDER_BOX);
               o->labelfont(1);
               o->labelsize(11);
@@ -3251,8 +3251,8 @@ le");
             i18n_gnu_include_input->callback((Fl_Callback*)cb_i18n_gnu_include_input);
           } // Fl_Input* i18n_gnu_include_input
           { i18n_gnu_conditional_input = new Fl_Input(100, 128, 220, 20, "Conditional:");
-            i18n_gnu_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp\
-le FLTK_GETTEXT_FOUND");
+            i18n_gnu_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp"
+"le FLTK_GETTEXT_FOUND");
             i18n_gnu_conditional_input->box(FL_THIN_DOWN_BOX);
             i18n_gnu_conditional_input->labelsize(11);
             i18n_gnu_conditional_input->textfont(4);
@@ -3260,8 +3260,8 @@ le FLTK_GETTEXT_FOUND");
             i18n_gnu_conditional_input->callback((Fl_Callback*)cb_i18n_gnu_conditional_input);
           } // Fl_Input* i18n_gnu_conditional_input
           { i18n_gnu_function_input = new Fl_Input(100, 153, 220, 20, "Function:");
-            i18n_gnu_function_input->tooltip("The function to call to translate labels and tooltips, usually \"gettext\" or\
- \"_\"");
+            i18n_gnu_function_input->tooltip("The function to call to translate labels and tooltips, usually \"gettext\" or"
+" \"_\"");
             i18n_gnu_function_input->box(FL_THIN_DOWN_BOX);
             i18n_gnu_function_input->labelsize(11);
             i18n_gnu_function_input->textfont(4);
@@ -3269,8 +3269,8 @@ le FLTK_GETTEXT_FOUND");
             i18n_gnu_function_input->callback((Fl_Callback*)cb_i18n_gnu_function_input);
           } // Fl_Input* i18n_gnu_function_input
           { i18n_gnu_static_function_input = new Fl_Input(100, 178, 220, 20, "Static Function:");
-            i18n_gnu_static_function_input->tooltip("function to call to translate static text, The function to call to internatio\
-nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
+            i18n_gnu_static_function_input->tooltip("function to call to translate static text, The function to call to internatio"
+"nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
             i18n_gnu_static_function_input->box(FL_THIN_DOWN_BOX);
             i18n_gnu_static_function_input->labelsize(11);
             i18n_gnu_static_function_input->textfont(4);
@@ -3291,8 +3291,8 @@ nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
             i18n_pos_include_input->callback((Fl_Callback*)cb_i18n_pos_include_input);
           } // Fl_Input* i18n_pos_include_input
           { i18n_pos_conditional_input = new Fl_Input(100, 128, 220, 20, "Conditional:");
-            i18n_pos_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp\
-le FLTK_GETTEXT_FOUND");
+            i18n_pos_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp"
+"le FLTK_GETTEXT_FOUND");
             i18n_pos_conditional_input->box(FL_THIN_DOWN_BOX);
             i18n_pos_conditional_input->labelsize(11);
             i18n_pos_conditional_input->textfont(4);

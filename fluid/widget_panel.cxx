@@ -285,9 +285,10 @@ Fl_Double_Window* make_image_panel() {
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { Fl_Check_Button* o = new Fl_Check_Button(75, 100, 170, 20, "compressed");
-        o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
-mat");
+      { Fl_Check_Button* o = new Fl_Check_Button(75, 100, 170, 20, "convert to raw pixel data");
+        o->tooltip("if unchecked, keep the image in its original format and store the data as is;"
+" if checked, convert the image and store it as uncompressed RGB or grayscale p"
+"ixel data");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
         o->callback((Fl_Callback*)compress_image_cb);
@@ -360,9 +361,10 @@ mat");
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { Fl_Check_Button* o = new Fl_Check_Button(75, 240, 170, 20, "compressed");
-        o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
-mat");
+      { Fl_Check_Button* o = new Fl_Check_Button(75, 240, 170, 20, "convert to raw pixel data");
+        o->tooltip("if unchecked, keep the image in its original format and store the data as is;"
+" if checked, convert the image and store it as uncompressed RGB or grayscale p"
+"ixel data");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
         o->callback((Fl_Callback*)compress_deimage_cb);
@@ -1176,8 +1178,8 @@ Fl_Double_Window* make_widget_panel() {
           o->callback((Fl_Callback*)position_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
           { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
-            widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple \
-math, including the variables\nx, px, sx, cx, and i");
+            widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple "
+"math, including the variables\nx, px, sx, cx, and i");
             widget_x_input->box(FL_DOWN_BOX);
             widget_x_input->color(FL_BACKGROUND2_COLOR);
             widget_x_input->selection_color(FL_SELECTION_COLOR);
@@ -1191,8 +1193,8 @@ math, including the variables\nx, px, sx, cx, and i");
             widget_x_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_x_input
           { widget_y_input = new Fluid_Coord_Input(155, 150, 55, 20, "Y:");
-            widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple \
-math, including the variables\ny, py, sy, cy, and i");
+            widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple "
+"math, including the variables\ny, py, sy, cy, and i");
             widget_y_input->box(FL_DOWN_BOX);
             widget_y_input->color(FL_BACKGROUND2_COLOR);
             widget_y_input->selection_color(FL_SELECTION_COLOR);
@@ -1206,8 +1208,8 @@ math, including the variables\ny, py, sy, cy, and i");
             widget_y_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_y_input
           { widget_w_input = new Fluid_Coord_Input(215, 150, 55, 20, "Width:");
-            widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,\
- including the variables\nw, pw, sw, cw, and i");
+            widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,"
+" including the variables\nw, pw, sw, cw, and i");
             widget_w_input->box(FL_DOWN_BOX);
             widget_w_input->color(FL_BACKGROUND2_COLOR);
             widget_w_input->selection_color(FL_SELECTION_COLOR);
@@ -1221,8 +1223,8 @@ math, including the variables\ny, py, sy, cy, and i");
             widget_w_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_w_input
           { widget_h_input = new Fluid_Coord_Input(275, 150, 55, 20, "Height:");
-            widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math\
-, including the variables\nh, ph, sh, ch, and i");
+            widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math"
+", including the variables\nh, ph, sh, ch, and i");
             widget_h_input->box(FL_DOWN_BOX);
             widget_h_input->color(FL_BACKGROUND2_COLOR);
             widget_h_input->selection_color(FL_SELECTION_COLOR);
@@ -1236,9 +1238,9 @@ math, including the variables\ny, py, sy, cy, and i");
             widget_h_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_h_input
           { Fl_Choice* o = new Fl_Choice(335, 150, 64, 20, "Children:");
-            o->tooltip("When instantiating a widget class, the children can either be fixed in their \
-original position, automatically be repositioned, or both repsositioned and re\
-sized to fit the container.");
+            o->tooltip("When instantiating a widget class, the children can either be fixed in their "
+"original position, automatically be repositioned, or both repsositioned and re"
+"sized to fit the container.");
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->textsize(11);
@@ -1771,8 +1773,8 @@ sized to fit the container.");
           { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
             o->box(FL_FLAT_BOX);
             { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
-              wComment->tooltip("Write a comment that will appear in the source code and in the widget tree ov\
-erview.");
+              wComment->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
+"erview.");
               wComment->box(FL_DOWN_BOX);
               wComment->labelfont(1);
               wComment->labelsize(11);
@@ -1790,8 +1792,8 @@ erview.");
           { Fl_Group* o = new Fl_Group(95, 223, 310, 82);
             o->box(FL_FLAT_BOX);
             { wCallback = new CodeEditor(95, 225, 310, 80, "Callback:");
-              wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to \
-access the Widget pointer and \'v\' to access the user value.");
+              wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
+"access the Widget pointer and \'v\' to access the user value.");
               wCallback->box(FL_DOWN_BOX);
               wCallback->color(FL_BACKGROUND2_COLOR);
               wCallback->selection_color(FL_SELECTION_COLOR);
@@ -2423,8 +2425,8 @@ access the Widget pointer and \'v\' to access the user value.");
     { Fl_Group* o = new Fl_Group(10, 370, 400, 20);
       o->labelsize(11);
       { wLiveMode = new Fl_Button(10, 370, 80, 20, "Live &Resize");
-        wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh\
-avior.");
+        wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh"
+"avior.");
         wLiveMode->type(1);
         wLiveMode->labelsize(10);
         wLiveMode->callback((Fl_Callback*)live_mode_cb);

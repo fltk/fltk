@@ -35,7 +35,7 @@ if (!cbuf[0]) {
   sprintf(cbuf, "Copyright © 1998 - %d\\nby Bill Spitzak and others", lt->tm_year+1900);
 }} {}
   Fl_Window about_panel {
-    label {About FLUID} open selected
+    label {About FLUID} open
     xywh {449 217 345 180} type Double color 50 selection_color 47 hotspot
     code0 {\#include "../src/flstring.h"} non_modal visible
   } {
@@ -71,6 +71,6 @@ Version x.x.x}
   }
 }
 
-data fluid_org_png {
-  comment {Embedded image for internal fluid.html web page.} public local filename {../documentation/src/fluid-org.png}
+data fluid_flow_chart_800_png {
+  comment {Embedded image for internal fluid.html web page.} selected public local filename {documentation/src/fluid_flow_chart_800.png}
 }
