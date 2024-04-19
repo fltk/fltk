@@ -260,6 +260,8 @@ else()
   fl_summary("Build configuration" "${CMAKE_BUILD_TYPE}")
 endif()
 
+fl_summary("Installation prefix" "${CMAKE_INSTALL_PREFIX}")
+
 message("")
 #                "title"           name  system library if used
 fl_summary_image("Image Libraries" JPEG  LIB_jpeg)
