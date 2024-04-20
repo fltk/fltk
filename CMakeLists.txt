@@ -264,9 +264,17 @@ fl_summary("Installation prefix" "${CMAKE_INSTALL_PREFIX}")
 
 message("")
 #                "title"           name  system library if used
-fl_summary_image("Image Libraries" JPEG  LIB_jpeg)
-fl_summary_image(""                PNG   LIB_png)
-fl_summary_image(""                ZLIB  LIB_zlib)
+fl_summary_image("Bundled Libraries" JPEG  LIB_jpeg)
+fl_summary_image(""                  PNG   LIB_png)
+fl_summary_image(""                  ZLIB  LIB_zlib)
+
+if(FLTK_BACKEND_WAYLAND)
+  if(USE_SYSTEM_LIBDECOR)
+    fl_summary("" "Libdecor = System: ${SYSTEM_LIBDECOR_LINK_LIBRARIES}")
+  else()
+    fl_summary("" "Libdecor = Bundled")
+  endif()
+endif(FLTK_BACKEND_WAYLAND)
 
 message("")
 
@@ -278,7 +286,6 @@ if(UNIX AND NOT (APPLE AND NOT FLTK_BACKEND_X11))
     else()
       fl_summary("Use Wayland" "Yes (cannot run as X11 client)")
     endif(FLTK_BACKEND_X11)
-    fl_summary_yn("Use system libdecor" USE_SYSTEM_LIBDECOR)
   else()
     fl_summary("Use Wayland" "No (X11 is used)")
   endif(FLTK_BACKEND_WAYLAND)

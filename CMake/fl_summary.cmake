@@ -79,7 +79,7 @@ endmacro(fl_summary_yn title var)
 ########################################################################
 
 macro(fl_summary_image title name lib)
-  fl_expand_name(name4 "${name}" 4)
+  fl_expand_name(name4 "${name}" 8)
   if(FLTK_USE_BUNDLED_${name})
     set(value "${name4} = Bundled")
   else()
