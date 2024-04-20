@@ -20,7 +20,7 @@
 #include "Fl_Wayland_Graphics_Driver.H"
 #include <FL/filename.H>
 #include <wayland-cursor.h>
-#include "../../../libdecor/src/libdecor.h"
+#include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"
 #include <pango/pangocairo.h>
 #include <FL/Fl_Overlay_Window.H>

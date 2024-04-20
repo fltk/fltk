@@ -1096,10 +1096,14 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       [
         plugin_dir="$($PKGCONFIG --variable=libdir libdecor-0)/libdecor/plugins-1"
         CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR"
+        CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR"
         CFLAGS="$CFLAGS -DLIBDECOR_PLUGIN_DIR=\\\"$plugin_dir\\\" "
         LIBS="$LIBS $($PKGCONFIG --libs libdecor-0)"
       ],
-      [CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0 -DLIBDECOR_PLUGIN_DIR=\\\"\\\" "]
+      [
+        CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0 -DLIBDECOR_PLUGIN_DIR=\\\"\\\" "
+        CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
+      ]
       )
       LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangocairo) "
       AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )

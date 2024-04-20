@@ -1,0 +1,92 @@
+//
+// Interface with the libdecor library for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 2024 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
+//
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
+//
+
+#ifndef FL_LIBDECOR_H
+#define FL_LIBDECOR_H
+
+#if ! USE_SYSTEM_LIBDECOR
+
+// add "fl_" prefix to libdecor.h symbols
+#define libdecor_unref fl_libdecor_unref
+#define libdecor_new fl_libdecor_new
+#define libdecor_new_with_user_data fl_libdecor_new_with_user_data
+#define libdecor_get_user_data fl_libdecor_get_user_data
+#define libdecor_set_user_data fl_libdecor_set_user_data
+#define libdecor_get_fd fl_libdecor_get_fd
+#define libdecor_dispatch fl_libdecor_dispatch
+#define libdecor_decorate fl_libdecor_decorate
+#define libdecor_frame_ref fl_libdecor_frame_ref
+#define libdecor_frame_unref fl_libdecor_frame_unref
+#define libdecor_frame_get_user_data fl_libdecor_frame_get_user_data
+#define libdecor_frame_set_user_data fl_libdecor_frame_set_user_data
+#define libdecor_frame_set_visibility fl_libdecor_frame_set_visibility
+#define libdecor_frame_is_visible fl_libdecor_frame_is_visible
+#define libdecor_frame_set_parent fl_libdecor_frame_set_parent
+#define libdecor_frame_set_title fl_libdecor_frame_set_title
+#define libdecor_frame_get_title fl_libdecor_frame_get_title
+#define libdecor_frame_set_app_id fl_libdecor_frame_set_app_id
+#define libdecor_frame_set_capabilities fl_libdecor_frame_set_capabilities
+#define libdecor_frame_unset_capabilities fl_libdecor_frame_unset_capabilitiesf
+#define libdecor_frame_has_capability fl_libdecor_frame_has_capability
+#define libdecor_frame_show_window_menu fl_libdecor_frame_show_window_menu
+#define libdecor_frame_popup_grab fl_libdecor_frame_popup_grab
+#define libdecor_frame_popup_ungrab fl_libdecor_frame_popup_ungrab
+#define libdecor_frame_translate_coordinate fl_libdecor_frame_translate_coordinate
+#define libdecor_frame_set_min_content_size fl_libdecor_frame_set_min_content_size
+#define libdecor_frame_set_max_content_size fl_libdecor_frame_set_max_content_size
+#define libdecor_frame_get_min_content_size fl_libdecor_frame_get_min_content_size
+#define libdecor_frame_get_max_content_size fl_libdecor_frame_get_max_content_size
+#define libdecor_frame_resize fl_libdecor_frame_resize
+#define libdecor_frame_move fl_libdecor_frame_move
+#define libdecor_frame_commit fl_libdecor_frame_commit
+#define libdecor_frame_set_minimized fl_libdecor_frame_set_minimized
+#define libdecor_frame_set_maximized fl_libdecor_frame_set_maximized
+#define libdecor_frame_unset_maximized fl_libdecor_frame_unset_maximized
+#define libdecor_frame_set_fullscreen fl_libdecor_frame_set_fullscreen
+#define libdecor_frame_unset_fullscreen fl_libdecor_frame_unset_fullscreen
+#define libdecor_frame_is_floating fl_libdecor_frame_is_floating
+#define libdecor_frame_close fl_libdecor_frame_close
+#define libdecor_frame_map fl_libdecor_frame_map
+#define libdecor_frame_get_xdg_surface fl_libdecor_frame_get_xdg_surface
+#define libdecor_frame_get_xdg_toplevel fl_libdecor_frame_get_xdg_toplevel
+#define libdecor_frame_get_wm_capabilities fl_libdecor_frame_get_wm_capabilities
+#define libdecor_state_new fl_libdecor_state_new
+#define libdecor_state_free fl_libdecor_state_free
+#define libdecor_configuration_get_content_size fl_libdecor_configuration_get_content_size
+#define libdecor_configuration_get_window_state fl_libdecor_configuration_get_window_state
+
+// add "fl_" prefix to libdecor-plugin.h symbols
+#define libdecor_frame_get_wl_surface fl_libdecor_frame_get_wl_surface
+#define libdecor_frame_get_content_width fl_libdecor_frame_get_content_width
+#define libdecor_frame_get_content_height fl_libdecor_frame_get_content_height
+#define libdecor_frame_get_window_state fl_libdecor_frame_get_window_state
+#define libdecor_frame_get_capabilities fl_libdecor_frame_get_capabilities
+#define libdecor_frame_dismiss_popup fl_libdecor_frame_dismiss_popup
+#define libdecor_frame_toplevel_commit fl_libdecor_frame_toplevel_commit
+#define libdecor_get_wl_display fl_libdecor_get_wl_display
+#define libdecor_notify_plugin_ready fl_libdecor_notify_plugin_ready
+#define libdecor_notify_plugin_error fl_libdecor_notify_plugin_error
+#define libdecor_state_get_content_width fl_libdecor_state_get_content_width
+#define libdecor_state_get_content_height fl_libdecor_state_get_content_height
+#define libdecor_state_get_window_state fl_libdecor_state_get_window_state
+#define libdecor_plugin_init fl_libdecor_plugin_init
+#define libdecor_plugin_release fl_libdecor_plugin_release
+
+#endif // ! USE_SYSTEM_LIBDECOR
+
+#include "../src/libdecor.h"
+
+#endif // ! FL_LIBDECOR_H

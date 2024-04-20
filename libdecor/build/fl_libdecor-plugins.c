@@ -24,7 +24,7 @@
 
 #include <dlfcn.h>
 #include <string.h>
-#include "../src/libdecor.h"
+#include "fl_libdecor.h"
 #include <pango/pangocairo.h>
 #include <dlfcn.h>
 

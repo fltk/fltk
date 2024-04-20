@@ -1,7 +1,7 @@
 //
 // Interface with the libdecor library for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,15 +22,20 @@
 #  define HAVE_XDG_SHELL_V6 1
 #endif
 
-#define libdecor_frame_set_minimized libdecor_frame_set_minimized_orig
-#define libdecor_new libdecor_new_orig
 #include <dlfcn.h>
 static void *dlopen_corrected(const char *, int);
 #define dlopen(A, B) dlopen_corrected(A, B)
+#include "fl_libdecor.h"
+#undef libdecor_new
+#define libdecor_new libdecor_new_orig
+#undef libdecor_frame_set_minimized
+#define libdecor_frame_set_minimized libdecor_frame_set_minimized_orig
 #include "../src/libdecor.c"
 #undef dlopen
 #undef libdecor_frame_set_minimized
 #undef libdecor_new
+#define libdecor_new fl_libdecor_new
+#define libdecor_frame_set_minimized fl_libdecor_frame_set_minimized
 
 extern bool fl_libdecor_using_weston(void);
 extern const struct libdecor_plugin_description *fl_libdecor_plugin_description;
@@ -57,7 +62,7 @@ static void *dlopen_corrected(const char *filename, int flags) {
 }
 
 
-LIBDECOR_EXPORT void libdecor_frame_set_minimized(struct libdecor_frame *frame)
+void fl_libdecor_frame_set_minimized(struct libdecor_frame *frame)
 {
   static bool done = false;
   static bool using_weston = false;
@@ -104,7 +109,7 @@ LIBDECOR_EXPORT void libdecor_frame_set_minimized(struct libdecor_frame *frame)
  so a plugin may be loaded that way only if FLTK was built with FLTK_USE_SYSTEM_LIBDECOR turned ON.
  
  */
-LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, const struct libdecor_interface *iface)
+struct libdecor *fl_libdecor_new(struct wl_display *wl_display, const struct libdecor_interface *iface)
 {
   struct libdecor *context;
   context = zalloc(sizeof *context);
