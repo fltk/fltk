@@ -638,12 +638,17 @@ endif()
 #
 # Prepare optional libs for shared and static FLTK libraries.
 #
-# Note: 'OPTIONAL_LIBS' is a CMake 'list' but must not contain arbitrary
+# Notes:
+#  -  'OPTIONAL_LIBS' is a CMake 'list' but must not contain arbitrary
 #     CMake targets because these targets would be propagated to
 #     consumer projects. The macro below simplifies adding link
 #     libraries of such targets to 'OPTIONAL_LIBS'.
+#  -  'OPTIONAL_INCLUDES' is a similar CMake list that defines additional
+#     include directories.
 #
-# This macro appends interface targets to 'OPTIONAL_LIBS'.
+# This macro appends link libraries to 'OPTIONAL_LIBS' and include
+# directories to 'OPTIONAL_INCLUDES'.
+#
 # Input:
 # 'targets' may be a CMake list of targets or a single target.
 #     It must be quoted if multiple targets are to be added in
@@ -654,14 +659,19 @@ endif()
 macro(append_optional_libs targets)
   foreach(_target ${targets})
     get_target_property(_link_libraries ${_target} INTERFACE_LINK_LIBRARIES)
+    get_target_property(_include_dirs ${_target} INTERFACE_INCLUDE_DIRECTORIES)
     list(APPEND OPTIONAL_LIBS ${_link_libraries})
-    list(APPEND OPTIONAL_LIBS )
+    if(_include_dirs)
+      list(APPEND OPTIONAL_INCLUDES ${_include_dirs})
+    endif()
   endforeach()
   unset(_target)
   unset(_link_libraries)
+  unset(_include_dirs)
 endmacro()
 
 set(OPTIONAL_LIBS)
+set(OPTIONAL_INCLUDES)
 
 if(LIB_dl)
   list(APPEND OPTIONAL_LIBS ${LIB_dl})
@@ -796,11 +806,13 @@ if(UNIX AND FLTK_BACKEND_WAYLAND)
 endif(UNIX AND FLTK_BACKEND_WAYLAND)
 
 list(REMOVE_DUPLICATES OPTIONAL_LIBS)
+list(REMOVE_DUPLICATES OPTIONAL_INCLUDES)
 
 #######################################################################
 
 fl_add_library(fltk STATIC "${STATIC_FILES}")
 target_link_libraries(fltk PRIVATE ${OPTIONAL_LIBS})
+target_include_directories(fltk PRIVATE ${OPTIONAL_INCLUDES})
 
 #######################################################################
 
@@ -851,6 +863,7 @@ if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
 
   fl_add_library(fltk SHARED "${SHARED_FILES}")
   target_link_libraries(fltk-shared PRIVATE ${OPTIONAL_LIBS})
+  target_include_directories(fltk-shared PRIVATE ${OPTIONAL_INCLUDES})
 
   ###################################################################
 
@@ -920,6 +933,7 @@ if(FLTK_BUILD_SHARED_LIBS AND MSVC)
 
   fl_add_library(fltk SHARED "${SOURCES}")
   target_link_libraries(fltk-shared PRIVATE ${OPTIONAL_LIBS})
+  target_include_directories(fltk-shared PRIVATE ${OPTIONAL_INCLUDES})
 
   if(FLTK_USE_BUNDLED_JPEG)
     target_link_libraries(fltk-shared PUBLIC fltk::jpeg-shared)
