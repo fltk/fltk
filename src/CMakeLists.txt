@@ -848,6 +848,11 @@ if(FLTK_USE_GL)
   fl_add_library(fltk_gl STATIC "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
   target_link_libraries(fltk_gl PUBLIC ${OPENGL_LIBRARIES} fltk::fltk)
   target_include_directories(fltk_gl PUBLIC ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
+
+  # Add "optional libs" (FIXME: this can be optimized, we don't need *all* these libs here)
+  target_link_libraries(fltk_gl PRIVATE ${OPTIONAL_LIBS})
+  target_include_directories(fltk_gl PRIVATE ${OPTIONAL_INCLUDES})
+
   if(OPENGL_GLU_INCLUDE_DIR)
     target_include_directories(fltk_gl PUBLIC ${OPENGL_GLU_INCLUDE_DIR})
   endif()
@@ -906,6 +911,11 @@ if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
     fl_add_library(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
     target_link_libraries(fltk_gl-shared PUBLIC ${OPENGL_LIBRARIES} fltk::fltk-shared)
     target_include_directories(fltk_gl-shared PUBLIC ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
+
+    # Add "optional libs" (FIXME: this can be optimized, we don't need *all* these libs here)
+    target_link_libraries(fltk_gl-shared PRIVATE ${OPTIONAL_LIBS})
+    target_include_directories(fltk_gl-shared PRIVATE ${OPTIONAL_INCLUDES})
+
     if(OPENGL_GLU_INCLUDE_DIR)
       target_include_directories(fltk_gl-shared PUBLIC ${OPENGL_GLU_INCLUDE_DIR})
     endif()
