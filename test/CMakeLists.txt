@@ -234,7 +234,10 @@ endif(OPENGL_FOUND)
 #   Its sole purpose is to issue compilation warnings during build time if
 #   variables are shadowed in public headers.
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+fl_debug_var(CMAKE_CXX_COMPILER_ID)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
+   CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+   CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 
   set(include_all "${CMAKE_CURRENT_BINARY_DIR}/include_all.h")
   file(WRITE ${include_all} "/* DO NOT EDIT - this file is created by CMake */\n")
