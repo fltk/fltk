@@ -255,12 +255,6 @@ FLTK_OPTION_SVG - default ON
     FLTK has a built-in SVG library and can create (write) SVG image files.
     Turning this option off disables SVG (read and write) support.
 
-FLTK_USE_KDIALOG - default ON
-    Under the KDE desktop, allows class Fl_Native_File_Chooser to use the
-    kdialog utility program to construct its file dialog windows, when that
-    utility is available at run time on the system. This option makes sense
-    only under X11 or Wayland.
-
 FLTK_USE_LIBDECOR_GTK - default ON (Wayland only).
     Allow to use libdecor's GTK plugin to draw window titlebars. Otherwise
     FLTK does not use GTK and apps will not need linking to GTK. This feature

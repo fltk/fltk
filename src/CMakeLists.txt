@@ -237,11 +237,9 @@ if(FLTK_USE_X11 AND NOT FLTK_BACKEND_WAYLAND)
     Fl_get_key.cxx
   )
 
-  if(FLTK_USE_KDIALOG)
     list(APPEND DRIVER_FILES
       Fl_Native_File_Chooser_Kdialog.cxx
       Fl_Native_File_Chooser_Zenity.cxx)
-  endif(FLTK_USE_KDIALOG)
 
   if(FLTK_USE_CAIRO)
     list(APPEND DRIVER_FILES
@@ -312,11 +310,9 @@ elseif(FLTK_BACKEND_WAYLAND)
     Fl_Native_File_Chooser_GTK.cxx
   )
 
-  if(FLTK_USE_KDIALOG)
     list(APPEND DRIVER_FILES
       Fl_Native_File_Chooser_Kdialog.cxx
       Fl_Native_File_Chooser_Zenity.cxx)
-  endif(FLTK_USE_KDIALOG)
 
   if(FLTK_USE_X11)
     list(APPEND DRIVER_FILES

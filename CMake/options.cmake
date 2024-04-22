@@ -1001,15 +1001,6 @@ endif(FLTK_OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
-option(FLTK_USE_KDIALOG "Fl_Native_File_Chooser may run kdialog" ON)
-if(FLTK_USE_KDIALOG)
-  set(USE_KDIALOG 1)
-else()
-  set(USE_KDIALOG 0)
-endif()
-#######################################################################
-
-#######################################################################
 option(CMAKE_SUPPRESS_REGENERATION "suppress rules to re-run CMake on rebuild" OFF)
 mark_as_advanced(CMAKE_SUPPRESS_REGENERATION)
 

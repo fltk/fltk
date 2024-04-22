@@ -1961,9 +1961,6 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
 
  There should be a command line option interface.
 
- There should be an application that manages options system wide, per user, and
- per application.
-
  Example:
  \code
      if ( Fl::option(Fl::OPTION_ARROW_FOCUS) )
@@ -1972,8 +1969,7 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
          { ..off..  }
  \endcode
 
- \note As of FLTK 1.3.0, options can be managed within fluid, using the menu
- <i>Edit/Global FLTK Settings</i>.
+ \note Options can be managed with the \c fltk-options program, new in FLTK 1.4.0.
 
  \param opt which option
  \return true or false
@@ -2008,8 +2004,10 @@ bool Fl::option(Fl_Option opt)
 
       opt_prefs.get("ShowZoomFactor", tmp, 1);                  // default: on
       options_[OPTION_SHOW_SCALING] = tmp;
-      opt_prefs.get("UseZenity", tmp, 1);                      // default: on
+      opt_prefs.get("UseZenity", tmp, 0);                       // default: off
       options_[OPTION_FNFC_USES_ZENITY] = tmp;
+      opt_prefs.get("UseKdialog", tmp, 0);                      // default: off
+      options_[OPTION_FNFC_USES_KDIALOG] = tmp;
       opt_prefs.get("SimpleZoomShortcut", tmp, 0);              // default: off
       options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
     }
@@ -2038,6 +2036,8 @@ bool Fl::option(Fl_Option opt)
       if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
       opt_prefs.get("UseZenity", tmp, -1);
       if (tmp >= 0) options_[OPTION_FNFC_USES_ZENITY] = tmp;
+      opt_prefs.get("UseKdialog", tmp, -1);
+      if (tmp >= 0) options_[OPTION_FNFC_USES_KDIALOG] = tmp;
       opt_prefs.get("SimpleZoomShortcut", tmp, -1);
       if (tmp >= 0) options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
     }

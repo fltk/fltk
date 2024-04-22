@@ -136,11 +136,17 @@ Fo_Option_Descr g_option_list[] = {
     "platfom. If disabled, the Fl_Native_File_Chooser class always uses FLTK's "
     "own file dialog (i.e., Fl_File_Chooser) even if GTK is available." },
   { FO_OPTION_BOOL, "Native File Chooser uses Zenity:",
-    Fl::OPTION_FNFC_USES_ZENITY, "OPTION_FNFC_USES_ZENITY", "UseZenity", true,
-    "Use Zenity file chooser instead of FLTK if available.",
-    "Meaningful for the Wayland/X11 platform only. When switched on (default),"
-    "the library uses a Zenity-based file dialog. When switched off, the GTK"
-    "file dialog is used instead." },
+    Fl::OPTION_FNFC_USES_ZENITY, "OPTION_FNFC_USES_ZENITY", "UseZenity", false,
+    "Fl_Native_File_Chooser uses the 'zenity' command if possible.",
+    "Meaningful for the Wayland/X11 platform only. When switched on, "
+    "the library uses a Zenity-based file dialog if command 'zenity' is available. "
+    "When switched off (default), command 'zenity' is not used."},
+  { FO_OPTION_BOOL, "Native File Chooser uses Kdialog:",
+    Fl::OPTION_FNFC_USES_KDIALOG, "OPTION_FNFC_USES_KDIALOG", "UseKdialog", false,
+    "Fl_Native_File_Chooser uses the 'kdialog' command if possible.",
+    "Meaningful for the Wayland/X11 platform and the KDE-Plasma desktop only. "
+    "When switched on, the library uses a kdialog-based file dialog if command 'kdialog' is "
+    "available. When switched off (default), command 'kdialog' is not used." },
   { FO_HEADLINE, "Print dialog Options" },
   { FO_OPTION_BOOL, "Print dialog uses GTK:",
     Fl::OPTION_PRINTER_USES_GTK, "OPTION_PRINTER_USES_GTK", "PrintUsesGTK", true,

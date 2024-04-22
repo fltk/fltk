@@ -266,6 +266,13 @@ public:
      /// if the GTK library is available on the platform (linux/unix only).
      /// When switched off, GTK file dialogs aren't used even if the GTK library is available.
     OPTION_FNFC_USES_GTK,
+    /// Meaningful for the Wayland/X11 platform only. When switched on, the library uses a Zenity-based file dialog.
+    /// When switched off (default), no zenity-based file dialog is used.
+    OPTION_FNFC_USES_ZENITY,
+    /// Meaningful for the Wayland/X11 platform only and for the KDE-Plasma desktop only.
+    /// When switched on, the library uses a kdialog-based file dialog if command 'kdialog' is available on the running system.
+    /// When switched off (default), no kdialog-based file dialog is used.
+    OPTION_FNFC_USES_KDIALOG,
     /// When switched on (default), Fl_Printer runs the GTK printer dialog
     /// if the GTK library is available on the platform (linux/unix only).
     /// When switched off, the GTK printer dialog isn't used even if the GTK library is available.
@@ -274,9 +281,6 @@ public:
     /// value.
     /// When switched off, no such window gets displayed.
     OPTION_SHOW_SCALING,
-    /// Meaningful for the Wayland/X11 platform only. When switched on (default), the library uses a Zenity-based file dialog.
-    /// When switched off, the GTK file dialog is used instead.
-    OPTION_FNFC_USES_ZENITY,
     /// When switched on and when the keyboard in use has '+' in the shifted position of its key,
     /// pressing that key and ctrl triggers the zoom-in operation.
     /// When switched off (default), the zoom-in operation requires that also the shift key is pressed.
