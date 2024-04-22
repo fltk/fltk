@@ -299,6 +299,7 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     Fl_Wayland_Gl_Choice *g = (Fl_Wayland_Gl_Choice*)this->g();
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
     wl_surface_set_buffer_scale(surface, scale);
+    if (mode() & FL_ALPHA) wl_surface_set_opaque_region(surface, NULL);
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
