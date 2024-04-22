@@ -144,7 +144,7 @@ Fo_Option_Descr g_option_list[] = {
   { FO_OPTION_BOOL, "Native File Chooser uses Kdialog:",
     Fl::OPTION_FNFC_USES_KDIALOG, "OPTION_FNFC_USES_KDIALOG", "UseKdialog", false,
     "Fl_Native_File_Chooser uses the 'kdialog' command if possible.",
-    "Meaningful for the Wayland/X11 platform and the KDE-Plasma desktop only. "
+    "Meaningful for the Wayland/X11 platform. "
     "When switched on, the library uses a kdialog-based file dialog if command 'kdialog' is "
     "available. When switched off (default), command 'kdialog' is not used." },
   { FO_HEADLINE, "Print dialog Options" },

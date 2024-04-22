@@ -269,7 +269,7 @@ public:
     /// Meaningful for the Wayland/X11 platform only. When switched on, the library uses a Zenity-based file dialog.
     /// When switched off (default), no zenity-based file dialog is used.
     OPTION_FNFC_USES_ZENITY,
-    /// Meaningful for the Wayland/X11 platform only and for the KDE-Plasma desktop only.
+    /// Meaningful for the Wayland/X11 platform only.
     /// When switched on, the library uses a kdialog-based file dialog if command 'kdialog' is available on the running system.
     /// When switched off (default), no kdialog-based file dialog is used.
     OPTION_FNFC_USES_KDIALOG,
