@@ -1318,6 +1318,35 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   fl_unlock_function();
 }
+
+/*
+ This method is called whenever the view of an Fl_Window changes size.
+
+ This can happen for various reasons:
+
+ - the user resizes a desktop window (NSViewFrameDidChangeNotification)
+      Fl_Cocoa_Window_Driver::driver(window)->through_resize() == 0 for the top level window
+      Fl_Window::is_a_rescale() == 0
+ - the app scale is changed (the Cocoa size changes, but the FLTK size remains)
+      Fl_Cocoa_Window_Driver::driver(window)->through_resize() == 1
+      Fl_Window::is_a_rescale() == 1
+ - a window is resized by application code: Fl_Window:resize()
+      Fl_Cocoa_Window_Driver::driver(window)->through_resize() == 1
+      Fl_Window::is_a_rescale() == 0
+
+ Note that a top level window must be treated differently than a subwindow
+ (an Fl_Window that is the child of another window).
+
+ Also note, it's important to keep the logical FLTK coordinate system intact.
+ Converting Cocoa coordinates into FLTK coordinates is not reliable because
+ it loses precision if the screen scale is set to anything but 1:1.
+
+ See also:
+ Fl_Cocoa_Window_Driver::driver(window)->view_resized() avoid recursion
+ Fl_Cocoa_Window_Driver::driver(window)->through_resize(); avoid recursion
+ Fl_Cocoa_Window_Driver::driver(window)->changed_resolution(); untested due
+    to lack of hardware
+ */
 - (void)view_did_resize:(NSNotification *)notif
 {
   if (![[notif object] isKindOfClass:[FLView class]]) return;
@@ -1326,10 +1355,32 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (!nsw || ![nsw getFl_Window]) return;
   fl_lock_function();
   Fl_Window *window = [nsw getFl_Window];
-  int X, Y;
-  CocoatoFLTK(window, X, Y);
+
+  int X, Y, W, H;
   float s = Fl::screen_driver()->scale(window->screen_num());
-  NSRect r = [view frame];
+  if (Fl_Window::is_a_rescale()) {
+    if (window->parent()) {
+      X = window->x();
+      Y = window->y();
+    } else {
+      // Recalculate the FLTK position from the current Cocoa position applying
+      // the new scale, so the window stays at its current position after scaling.
+      CocoatoFLTK(window, X, Y);
+    }
+    W = window->w();
+    H = window->h();
+  } else if (Fl_Cocoa_Window_Driver::driver(window)->through_resize()) {
+    X = window->x();
+    Y = window->y();
+    W = window->w();
+    H = window->h();
+  } else {
+    CocoatoFLTK(window, X, Y);
+    NSRect r = [view frame];
+    W = (int)lround(r.size.width/s);
+    H = (int)lround(r.size.height/s);
+  }
+
   Fl_Cocoa_Window_Driver::driver(window)->view_resized(1);
   if (Fl_Cocoa_Window_Driver::driver(window)->through_resize()) {
     if (window->as_gl_window()) {
@@ -1339,12 +1390,12 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
         plugin = (Fl_Cocoa_Plugin*)pm.plugin("gl.cocoa.fltk.org");
       }
       // calls Fl_Gl_Window::resize() without including Fl_Gl_Window.H
-      plugin->resize(window->as_gl_window(), X, Y, (int)lround(r.size.width/s), (int)lround(r.size.height/s));
+      plugin->resize(window->as_gl_window(), X, Y, W, H);
     } else {
-      Fl_Cocoa_Window_Driver::driver(window)->resize(X, Y, (int)lround(r.size.width/s), (int)lround(r.size.height/s));
+      Fl_Cocoa_Window_Driver::driver(window)->resize(X, Y, W, H);
     }
   } else
-    window->resize(X, Y, (int)lround(r.size.width/s), (int)lround(r.size.height/s));
+    window->resize(X, Y, W, H);
   Fl_Cocoa_Window_Driver::driver(window)->view_resized(0);
   update_e_xy_and_e_xy_root(nsw);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
@@ -3433,8 +3484,15 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
         pWindow->Fl_Group::resize(X, Y, W, H); // runs rarely, e.g. with scaled down test/tabs
         pWindow->redraw();
       } else {
+        // First resize the logical FLTK coordinates for this and all children
+        if (!Fl_Window::is_a_rescale())
+          pWindow->Fl_Group::resize(X, Y, W, H);
+        // Next update the physical Cocoa view
         [xid setFrame:r display:YES];
         [[xid contentView] displayIfNeededIgnoringOpacity];
+        // Finally tell the the group to render its contents if the code above
+        // didn't already
+        pWindow->redraw();
       }
     }
     else {
