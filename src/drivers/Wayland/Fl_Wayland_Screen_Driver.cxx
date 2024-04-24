@@ -911,9 +911,9 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
   Fl_Window *win =  Fl_Wayland_Window_Driver::surface_to_window(surface);
   set_event_xy(win);
   Fl::e_is_click = 0;
+  Fl_Wayland_Screen_Driver::next_marked_length = 0;
   Fl::handle(FL_KEYDOWN, win);
   zwp_text_input_v3_commit(zwp_text_input_v3);
-  Fl_Wayland_Screen_Driver::next_marked_length = 0;
   Fl::compose_state = 0;
 }
 
