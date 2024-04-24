@@ -976,6 +976,7 @@ FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h, Fl_Align ali
 FL_EXPORT void fl_frame(const char *s, int x, int y, int w, int h);
 FL_EXPORT void fl_frame2(const char *s, int x, int y, int w, int h);
 FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
+FL_EXPORT void fl_draw_box_focus(Fl_Boxtype, int x, int y, int w, int h, Fl_Color, Fl_Color);
 
 // basic GUI objects (check marks, arrows, more to come ...):
 

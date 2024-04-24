@@ -284,12 +284,84 @@ void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
 
 ////////////////////////////////////////////////////////////////
 
+// implemented in fl_shadow_box.cxx
+extern void fl_shadow_box(int, int, int, int, Fl_Color);
+extern void fl_shadow_frame(int, int, int, int, Fl_Color);
+
+// implemented in fl_rounded_box.cxx
+extern void fl_rounded_box(int, int, int, int, Fl_Color);
+extern void fl_rshadow_box(int, int, int, int, Fl_Color);
+extern void fl_rounded_frame(int, int, int, int, Fl_Color);
+extern void fl_rflat_box(int, int, int, int, Fl_Color);
+extern void fl_rounded_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
+
+// implemented in fl_round_box.cxx
+extern void fl_round_up_box(int, int, int, int, Fl_Color);
+extern void fl_round_down_box(int, int, int, int, Fl_Color);
+extern void fl_round_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
+
+// implemented in fl_diamond_box.cxx
+extern void fl_diamond_up_box(int, int, int, int, Fl_Color);
+extern void fl_diamond_down_box(int, int, int, int, Fl_Color);
+extern void fl_diamond_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
+
+// implemented in fl_oval_box.cxx
+extern void fl_oval_box(int, int, int, int, Fl_Color);
+extern void fl_oval_shadow_box(int, int, int, int, Fl_Color);
+extern void fl_oval_frame(int, int, int, int, Fl_Color);
+extern void fl_oval_flat_box(int, int, int, int, Fl_Color);
+extern void fl_oval_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
+
+// implemented in fl_plastic.cxx
+extern void fl_plastic_up_frame(int, int, int, int, Fl_Color);
+extern void fl_plastic_thin_up_box(int, int, int, int, Fl_Color);
+extern void fl_plastic_up_box(int, int, int, int, Fl_Color);
+extern void fl_plastic_up_round(int, int, int, int, Fl_Color);
+extern void fl_plastic_down_frame(int, int, int, int, Fl_Color);
+extern void fl_plastic_down_box(int, int, int, int, Fl_Color);
+extern void fl_plastic_down_round(int, int, int, int, Fl_Color);
+
+// implemented in fl_gtk.cxx
+extern void fl_gtk_up_box(int, int, int, int, Fl_Color);
+extern void fl_gtk_down_box(int, int, int, int, Fl_Color);
+extern void fl_gtk_up_frame(int, int, int, int, Fl_Color);
+extern void fl_gtk_down_frame(int, int, int, int, Fl_Color);
+extern void fl_gtk_thin_up_box(int, int, int, int, Fl_Color);
+extern void fl_gtk_thin_down_box(int, int, int, int, Fl_Color);
+extern void fl_gtk_thin_up_frame(int, int, int, int, Fl_Color);
+extern void fl_gtk_thin_down_frame(int, int, int, int, Fl_Color);
+extern void fl_gtk_round_up_box(int, int, int, int, Fl_Color);
+extern void fl_gtk_round_down_box(int, int, int, int, Fl_Color);
+
+// implemented in fl_gleam.cxx
+extern void fl_gleam_up_box(int, int, int, int, Fl_Color);
+extern void fl_gleam_down_box(int, int, int, int, Fl_Color);
+extern void fl_gleam_up_frame(int, int, int, int, Fl_Color);
+extern void fl_gleam_down_frame(int, int, int, int, Fl_Color);
+extern void fl_gleam_thin_up_box(int, int, int, int, Fl_Color);
+extern void fl_gleam_thin_down_box(int, int, int, int, Fl_Color);
+
+// implemented in fl_oxy.cxx
+extern void fl_oxy_up_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_down_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_up_frame(int, int, int, int, Fl_Color);
+extern void fl_oxy_down_frame(int, int, int, int, Fl_Color);
+extern void fl_oxy_thin_up_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_thin_down_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_thin_up_frame(int, int, int, int, Fl_Color);
+extern void fl_oxy_thin_down_frame(int, int, int, int, Fl_Color);
+extern void fl_oxy_round_up_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_round_down_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_button_up_box(int, int, int, int, Fl_Color);
+extern void fl_oxy_button_down_box(int, int, int, int, Fl_Color);
+
 static struct {
   Fl_Box_Draw_F *f;
   uchar dx, dy, dw, dh;
   int set;
-} fl_box_table[256] = {
-// must match list in Enumerations.H!!!
+  Fl_Box_Draw_Focus_F *ff;
+} fl_box_table[FL_MAX_BOXTYPE+1] = {
+  // must match list in Enumerations.H!!!
   {fl_no_box,           0,0,0,0,1},
   {fl_flat_box,         0,0,0,0,1}, // FL_FLAT_BOX
   {fl_up_box,           D1,D1,D2,D2,1},
@@ -305,59 +377,64 @@ static struct {
   {fl_engraved_frame,   2,2,4,4,1},
   {fl_embossed_frame,   2,2,4,4,1},
   {fl_border_box,       1,1,2,2,1},
-  {fl_border_box,       1,1,5,5,0}, // _FL_SHADOW_BOX
+  {fl_shadow_box,       1,1,5,5,0}, // FL_SHADOW_BOX
   {fl_border_frame,     1,1,2,2,1},
-  {fl_border_frame,     1,1,5,5,0}, // _FL_SHADOW_FRAME
-  {fl_border_box,       1,1,2,2,0}, // _FL_ROUNDED_BOX
-  {fl_border_box,       1,1,2,2,0}, // _FL_RSHADOW_BOX
-  {fl_border_frame,     1,1,2,2,0}, // _FL_ROUNDED_FRAME
-  {fl_flat_box,         0,0,0,0,0}, // _FL_RFLAT_BOX
-  {fl_up_box,           3,3,6,6,0}, // _FL_ROUND_UP_BOX
-  {fl_down_box,         3,3,6,6,0}, // _FL_ROUND_DOWN_BOX
-  {fl_up_box,           0,0,0,0,0}, // _FL_DIAMOND_UP_BOX
-  {fl_down_box,         0,0,0,0,0}, // _FL_DIAMOND_DOWN_BOX
-  {fl_border_box,       1,1,2,2,0}, // _FL_OVAL_BOX
-  {fl_border_box,       1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX
-  {fl_border_frame,     1,1,2,2,0}, // _FL_OVAL_FRAME
-  {fl_flat_box,         0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_PLASTIC_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX
-  {fl_up_frame,         2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME
-  {fl_down_frame,       2,2,4,4,0}, // _FL_PLASTIC_DOWN_FRAME
-  {fl_up_box,           2,2,4,4,0}, // _FL_PLASTIC_THIN_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_THIN_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_PLASTIC_ROUND_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_GTK_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_GTK_DOWN_BOX
-  {fl_up_frame,         2,2,4,4,0}, // _FL_GTK_UP_FRAME
-  {fl_down_frame,       2,2,4,4,0}, // _FL_GTK_DOWN_FRAME
-  {fl_up_frame,         1,1,2,2,0}, // _FL_GTK_THIN_UP_FRAME
-  {fl_down_frame,       1,1,2,2,0}, // _FL_GTK_THIN_DOWN_FRAME
-  {fl_up_box,           1,1,2,2,0}, // _FL_GTK_THIN_ROUND_UP_BOX
-  {fl_down_box,         1,1,2,2,0}, // _FL_GTK_THIN_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_GTK_ROUND_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_GTK_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_GLEAM_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_GLEAM_DOWN_BOX
-  {fl_up_frame,         2,2,4,4,0}, // _FL_GLEAM_UP_FRAME
-  {fl_down_frame,       2,2,4,4,0}, // _FL_GLEAM_DOWN_FRAME
-  {fl_up_box,           2,2,4,4,0}, // _FL_GLEAM_THIN_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_GLEAM_THIN_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_GLEAM_ROUND_UP_BOX
-  {fl_down_box,         2,2,4,4,0}, // _FL_GLEAM_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0}, // _FL_OXY_UP_BOX,
-  {fl_down_box,         2,2,4,4,0}, // _FL_OXY_DOWN_BOX,
-  {fl_up_frame,         2,2,4,4,0}, // _FL_OXY_UP_FRAME,
-  {fl_down_frame,       2,2,4,4,0}, // _FL_OXY_DOWN_FRAME,
-  {fl_thin_up_box,      1,1,2,2,0}, // _FL_OXY_THIN_UP_BOX,
-  {fl_thin_down_box,    1,1,2,2,0}, // _FL_OXY_THIN_DOWN_BOX,
-  {fl_thin_up_frame,    1,1,2,2,0}, // _FL_OXY_THIN_UP_FRAME,
-  {fl_thin_down_frame,  1,1,2,2,0}, // _FL_OXY_THIN_DOWN_FRAME,
-  {fl_up_box,           2,2,4,4,0}, // _FL_OXY_ROUND_UP_BOX,
-  {fl_down_box,         2,2,4,4,0}, // _FL_OXY_ROUND_DOWN_BOX,
-  {fl_up_box,           2,2,4,4,0}, // _FL_OXY_BUTTON_UP_BOX,
-  {fl_down_box,         2,2,4,4,0}, // _FL_OXY_BUTTON_DOWN_BOX,
+  {fl_shadow_frame,     1,1,5,5,0}, // FL_SHADOW_FRAME
+  {fl_rounded_box,      1,1,2,2,0, fl_rounded_focus}, // FL_ROUNDED_BOX
+  {fl_rshadow_box,      1,1,2,2,0, fl_rounded_focus}, // FL_RSHADOW_BOX
+  {fl_rounded_frame,    1,1,2,2,0, fl_rounded_focus}, // FL_ROUNDED_FRAME
+  {fl_rflat_box,        0,0,0,0,0, fl_rounded_focus}, // FL_RFLAT_BOX
+  {fl_round_up_box,     3,3,6,6,0, fl_round_focus}, // FL_ROUND_UP_BOX
+  {fl_round_down_box,   3,3,6,6,0, fl_round_focus}, // FL_ROUND_DOWN_BOX
+  {fl_diamond_up_box,   0,0,0,0,0, fl_diamond_focus}, // FL_DIAMOND_UP_BOX
+  {fl_diamond_down_box, 0,0,0,0,0, fl_diamond_focus}, // FL_DIAMOND_DOWN_BOX
+  {fl_oval_box,         1,1,2,2,0, fl_oval_focus}, // FL_OVAL_BOX
+  {fl_oval_shadow_box,  1,1,2,2,0, fl_oval_focus}, // FL_OVAL_SHADOW_BOX
+  {fl_oval_frame,       1,1,2,2,0, fl_oval_focus}, // FL_OVAL_FRAME
+  {fl_oval_flat_box,    0,0,0,0,0, fl_oval_focus}, // FL_OVAL_FLAT_BOX
+
+  {fl_plastic_up_box,       2,2,4,4,0}, // FL_PLASTIC_UP_BOX
+  {fl_plastic_down_box,     2,2,4,4,0}, // FL_PLASTIC_DOWN_BOX
+  {fl_plastic_up_frame,     2,2,4,4,0}, // FL_PLASTIC_UP_FRAME
+  {fl_plastic_down_frame,   2,2,4,4,0}, // FL_PLASTIC_DOWN_FRAME
+  {fl_plastic_thin_up_box,  2,2,4,4,0}, // FL_PLASTIC_THIN_UP_BOX
+  {fl_plastic_down_box,     2,2,4,4,0}, // FL_PLASTIC_THIN_DOWN_BOX
+  {fl_plastic_up_round,     2,2,4,4,0, fl_rounded_focus}, // FL_PLASTIC_ROUND_UP_BOX
+  {fl_plastic_down_round,   2,2,4,4,0, fl_rounded_focus}, // FL_PLASTIC_ROUND_DOWN_BOX
+
+  {fl_gtk_up_box,           2,2,4,4,0}, // FL_GTK_UP_BOX
+  {fl_gtk_down_box,         2,2,4,4,0}, // FL_GTK_DOWN_BOX
+  {fl_gtk_up_frame,         2,2,4,4,0}, // FL_GTK_UP_FRAME
+  {fl_gtk_down_frame,       2,2,4,4,0}, // FL_GTK_DOWN_FRAME
+  {fl_gtk_thin_up_box,      1,1,2,2,0}, // FL_GTK_THIN_UP_BOX
+  {fl_gtk_thin_down_box,    1,1,2,2,0}, // FL_GTK_THIN_DOWN_BOX
+  {fl_gtk_thin_up_frame,    1,1,2,2,0}, // FL_GTK_THIN_UP_FRAME
+  {fl_gtk_thin_down_frame,  1,1,2,2,0}, // FL_GTK_THIN_DOWN_FRAME
+  {fl_gtk_round_up_box,     2,2,4,4,0, fl_rounded_focus}, // FL_GTK_ROUND_UP_BOX
+  {fl_gtk_round_down_box,   2,2,4,4,0, fl_rounded_focus}, // FL_GTK_ROUND_DOWN_BOX
+
+  {fl_gleam_up_box,         2,2,4,4,0}, // FL_GLEAM_UP_BOX
+  {fl_gleam_down_box,       2,2,4,4,0}, // FL_GLEAM_DOWN_BOX
+  {fl_gleam_up_frame,       2,2,4,4,0}, // FL_GLEAM_UP_FRAME
+  {fl_gleam_down_frame,     2,2,4,4,0}, // FL_GLEAM_DOWN_FRAME
+  {fl_gleam_thin_up_box,    2,2,4,4,0}, // FL_GLEAM_THIN_UP_BOX
+  {fl_gleam_thin_down_box,  2,2,4,4,0}, // FL_GLEAM_THIN_DOWN_BOX
+  {fl_gleam_up_box,         2,2,4,4,0}, // FL_GLEAM_ROUND_UP_BOX
+  {fl_gleam_down_box,       2,2,4,4,0}, // FL_GLEAM_ROUND_DOWN_BOX
+
+  {fl_oxy_up_box,           2,2,4,4,0}, // FL_OXY_UP_BOX,
+  {fl_oxy_down_box,         2,2,4,4,0}, // FL_OXY_DOWN_BOX,
+  {fl_oxy_up_frame,         2,2,4,4,0}, // FL_OXY_UP_FRAME,
+  {fl_oxy_down_frame,       2,2,4,4,0}, // FL_OXY_DOWN_FRAME,
+  {fl_oxy_thin_up_box,      1,1,2,2,0}, // FL_OXY_THIN_UP_BOX,
+  {fl_oxy_thin_down_box,    1,1,2,2,0}, // FL_OXY_THIN_DOWN_BOX,
+  {fl_oxy_thin_up_frame,    1,1,2,2,0}, // FL_OXY_THIN_UP_FRAME,
+  {fl_oxy_thin_down_frame,  1,1,2,2,0}, // FL_OXY_THIN_DOWN_FRAME,
+  {fl_oxy_round_up_box,     2,2,4,4,0, fl_rounded_focus}, // FL_OXY_ROUND_UP_BOX,
+  {fl_oxy_round_down_box,   2,2,4,4,0, fl_rounded_focus}, // FL_OXY_ROUND_DOWN_BOX,
+  {fl_oxy_button_up_box,    2,2,4,4,0}, // FL_OXY_BUTTON_UP_BOX,
+  {fl_oxy_button_down_box,  2,2,4,4,0}, // FL_OXY_BUTTON_DOWN_BOX,
+
   {fl_up_box,           3,3,6,6,0}, // FL_FREE_BOX+0
   {fl_down_box,         3,3,6,6,0}, // FL_FREE_BOX+1
   {fl_up_box,           3,3,6,6,0}, // FL_FREE_BOX+2
@@ -415,10 +492,12 @@ int Fl::box_dh(Fl_Boxtype t) {return fl_box_table[t].dh;}
   Sets the drawing function for a given box type.
   \param[in] t box type
   \param[in] f box drawing function
+  \param[in] ff optional box focus rectangle drawing function
 */
-void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
+void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f, Fl_Box_Draw_Focus_F* ff) {
   if (!fl_box_table[t].set) {
     fl_box_table[t].f   = f;
+    fl_box_table[t].ff  = ff;
     fl_box_table[t].set = 1;
   }
 }
@@ -427,15 +506,28 @@ void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
 Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
   return fl_box_table[t].f;
 }
-/** Sets the function to call to draw a specific boxtype. */
+
+/** 
+ Sets the function to call to draw a specific box type.
+
+ \param[in] t  index of the box type between 0 (FL_NO_BOX) and up to and
+               including FL_MAX_BOXTYPE
+ \param[in] f  callback function that draws the box
+ \param[in] dx, dy top left frame width, distance in pixels to box contents
+ \param[in] dw, dh left plus right frame width, top plus bottom frame width
+ \param[in] ff optional callback that draws the box focus, defaults
+               to a rectangle, inset by dx, dy, dw, dh
+ */
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
-                     uchar a, uchar b, uchar c, uchar d) {
+                     uchar dx, uchar dy, uchar dw, uchar dh,
+                     Fl_Box_Draw_Focus_F* ff) {
   fl_box_table[t].f   = f;
   fl_box_table[t].set = 1;
-  fl_box_table[t].dx  = a;
-  fl_box_table[t].dy  = b;
-  fl_box_table[t].dw  = c;
-  fl_box_table[t].dh  = d;
+  fl_box_table[t].dx  = dx;
+  fl_box_table[t].dy  = dy;
+  fl_box_table[t].dw  = dw;
+  fl_box_table[t].dh  = dh;
+  fl_box_table[t].ff  = ff;
 }
 /** Copies the from boxtype. */
 void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
@@ -450,6 +542,41 @@ void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
 */
 void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
   if (t && fl_box_table[t].f) fl_box_table[t].f(x,y,w,h,c);
+}
+
+/**
+ Draws the focus rectangle inside a box using given type, position, size and color.
+ Boxes can set their own focus drawing callback. The focus frame does not
+ need to be a rectangle at all, but should fit inside the shape of the box.
+ \param[in] bt box type
+ \param[in] x, y, w, h position and size
+ \param[in] fg, bg foreground and background color
+ */
+void fl_draw_box_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg) {
+  if (!Fl::visible_focus()) return;
+  if ((bt >= 0) && (bt <= FL_MAX_BOXTYPE) && (fl_box_table[bt].ff)) {
+    fl_box_table[bt].ff(bt, x, y, w, h, fg, bg);
+    return;
+  }
+  switch (bt) {
+    case FL_DOWN_BOX:
+    case FL_DOWN_FRAME:
+    case FL_THIN_DOWN_BOX:
+    case FL_THIN_DOWN_FRAME:
+      x++;
+      y++;
+    default:
+      break;
+  }
+  x += Fl::box_dx(bt);
+  y += Fl::box_dy(bt);
+  w -= Fl::box_dw(bt)+1;
+  h -= Fl::box_dh(bt)+1;
+
+  Fl_Color savecolor = fl_color();
+  fl_color(fl_contrast(fg, bg));
+  fl_focus_rect(x, y, w, h);
+  fl_color(savecolor);
 }
 
 /** Draws the widget box according its box style */

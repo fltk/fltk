@@ -88,6 +88,9 @@ typedef void (Fl_Label_Measure_F)(const Fl_Label *label, int &width, int &height
 /** Signature of some box drawing functions passed as parameters */
 typedef void (Fl_Box_Draw_F)(int x, int y, int w, int h, Fl_Color color);
 
+/** Signature of some box drawing functions passed as parameters */
+typedef void (Fl_Box_Draw_Focus_F)(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+
 /** Signature of timeout callback functions passed as parameters.
   Please see Fl::add_timeout() for details.
 */
@@ -1215,7 +1218,8 @@ public:
 
   // boxtypes:
   static Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);
-  static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar);
+  static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,
+                          uchar, uchar, uchar, uchar, Fl_Box_Draw_Focus_F* =NULL);
   static void set_boxtype(Fl_Boxtype, Fl_Boxtype from);
   static int box_dx(Fl_Boxtype);
   static int box_dy(Fl_Boxtype);

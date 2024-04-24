@@ -25,31 +25,35 @@
 //  BW = box shadow width
 #define BW (Fl::box_shadow_width())
 
-static void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
   fl_pie(x, y, w, h, 0, 360);
 }
 
-static void fl_oval_frame(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_frame(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
   fl_arc(x, y, w, h, 0, 360);
 }
 
-static void fl_oval_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_box(int x, int y, int w, int h, Fl_Color c) {
   fl_oval_flat_box(x,y,w,h,c);
   fl_oval_frame(x,y,w,h,FL_BLACK);
 }
 
-static void fl_oval_shadow_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_shadow_box(int x, int y, int w, int h, Fl_Color c) {
   fl_oval_flat_box(x+BW,y+BW,w,h,FL_DARK3);
   fl_oval_box(x,y,w,h,c);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
-Fl_Boxtype fl_define_FL_OVAL_BOX() {
-  fl_internal_boxtype(_FL_OSHADOW_BOX,fl_oval_shadow_box);
-  fl_internal_boxtype(_FL_OVAL_FRAME,fl_oval_frame);
-  fl_internal_boxtype(_FL_OFLAT_BOX,fl_oval_flat_box);
-  fl_internal_boxtype(_FL_OVAL_BOX,fl_oval_box);
-  return _FL_OVAL_BOX;
+void fl_oval_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg) {
+  x += Fl::box_dx(bt)+1;
+  y += Fl::box_dy(bt)+1;
+  w -= Fl::box_dw(bt)+2;
+  h -= Fl::box_dh(bt)+2;
+  Fl_Color savecolor = fl_color();
+  fl_color(fl_contrast(fg, bg));
+  fl_line_style(FL_DOT);
+  fl_arc(x, y, w, h, 0, 360);
+  fl_line_style(FL_SOLID);
+  fl_color(savecolor);
 }

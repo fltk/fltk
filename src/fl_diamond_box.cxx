@@ -25,7 +25,7 @@
 
 extern const uchar* fl_gray_ramp();
 
-static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
+void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   w &= -2;
   h &= -2;
   int x1 = x+w/2;
@@ -42,7 +42,7 @@ static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   fl_color(g[(int)'A']); fl_loop(x, y1, x1, y, x+w, y1, x1, y+h);
 }
 
-static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
+void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   w &= -2;
   h &= -2;
   int x1 = x+w/2;
@@ -59,9 +59,19 @@ static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   fl_color(g[(int)'A']); fl_loop(x+3, y1, x1, y+3, x+w-3, y1, x1, y+h-3);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
-Fl_Boxtype fl_define_FL_DIAMOND_BOX() {
-  fl_internal_boxtype(_FL_DIAMOND_DOWN_BOX, fl_diamond_down_box);
-  fl_internal_boxtype(_FL_DIAMOND_UP_BOX,fl_diamond_up_box);
-  return _FL_DIAMOND_UP_BOX;
+void fl_diamond_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg) {
+  w &= -2;
+  h &= -2;
+  x += Fl::box_dx(bt)+4;
+  y += Fl::box_dy(bt)+4;
+  w -= Fl::box_dw(bt)+8;
+  h -= Fl::box_dh(bt)+8;
+  int x1 = x+w/2;
+  int y1 = y+h/2;
+  Fl_Color savecolor = fl_color();
+  fl_color(fl_contrast(fg, bg));
+  fl_line_style(FL_DOT);
+  fl_loop(x,y1, x1,y, x+w,y1, x1,y+h);
+  fl_line_style(FL_SOLID);
+  fl_color(savecolor);
 }
