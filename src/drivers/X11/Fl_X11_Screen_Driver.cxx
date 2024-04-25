@@ -703,8 +703,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       hs = (h+1) * s;
      }
 #endif
-    if (win && Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
-    if (win && Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
+    if (!allow_outside && win && Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
+    if (!allow_outside && win && Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
     if (!win || (dx >= sx && dy >= sy && dx + ws <= sx+sw && dy + hs <= sy+sh) ) {
