@@ -279,15 +279,39 @@
  \image html declblock_panel.png "Declaration Block Properties"
  \image latex declblock_panel.png "Declaration Block Properties" width=7cm
 
- Users can select if the block is generated in the source file only, or in the
- header file as well. The two input fields are used to enter the line of code
- before and after the child nodes. Two consecutive Declaration Blocks can be
- used to generate `#else`/`#elif` style code by leaving the second field of
- the first node empty.
+ The C++ code in the "Start" field is output before the code of
+ all children of this node is written to the source file. The text in the "End"
+ field is written after code for all children was generated.
 
- \note Declaration Blocks are not smart, and child nodes may still generate
- unexpected code outside the scope of this block. This may change in future
- versions of FLUID.
+ The following check boxes enable code generation for different locations in
+ header and source code files. The first two boxes modify the C++ source code
+ file.
+ If the first check box, "implementations", is ticked, all C++ code that
+ implements the children of this declaration block will be enclosed with the
+ code from the "Start" and "End" fields. This check box is marked by default.
+
+ The second check box, "static initializations and callbacks", will enclose
+ callbacks that may be created by child widgets, menu item arrays, and code
+ as well as data for images. This box should be ticked in most cases, but
+ may be harmful if one image is used more than once and outside of this
+ declaration block.
+
+ The next two boxes modify the C++ code in the header file. Ticking "forward
+ declarations" will wrap the code that declares functions, methods, and menus.
+ The last box ensure that code declaring widgets is wrapped with yet another
+ copy of from the "Start" and "End" fields. This will also wrap
+ `#include` statements and declarations from widget "Code" fields.
+
+ FLUID optimizes header files by removing duplicate include statements and
+ certain declarations. Declaration blocks are commonly used for conditional
+ compilation and may effectively "optimize away" include statements that are
+ still needed elsewhere. This can be litigated by explicitly creating
+ Declaration nodes outside of the declaration block.
+
+ The "Start" and "End" code may appear multiple times per file if more than
+ one of the check boxes above is ticked. The code should not have any side
+ effects or cause conflicts when compiled more than once. It's not safe to rely
+ on a specific order of the generated blocks.
 
  <!-- ---------------------------------------------------------------------- -->
 

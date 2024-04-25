@@ -331,10 +331,10 @@ void Fl_Function_Type::open() {
     }
     c = f_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -993,10 +993,10 @@ void Fl_Decl_Type::open() {
     }
     c = decl_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -1253,10 +1253,10 @@ void Fl_Data_Type::open() {
     // store the comment
     c = data_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -1423,7 +1423,8 @@ Fl_DeclBlock_Type Fl_DeclBlock_type;
  */
 Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
   Fl_Type(),
-  after(NULL)
+  after(NULL),
+  write_map_(CODE_IN_SOURCE)
 { }
 
 /**
@@ -1431,13 +1432,15 @@ Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
  */
 Fl_DeclBlock_Type::~Fl_DeclBlock_Type() {
   if (after)
-    free((void*)after);
+    ::free((void*)after);
 }
 
 /**
  Return 1 if this block is public.
  */
-int Fl_DeclBlock_Type::is_public() const {return public_;}
+int Fl_DeclBlock_Type::is_public() const {
+  return ((write_map_&CODE_IN_HEADER) != 0);
+}
 
 /**
  Create a new declaration block.
@@ -1449,7 +1452,7 @@ Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
   o->name("#if 1");
-  o->public_ = 0;
+  o->write_map_ = CODE_IN_SOURCE;
   o->after = fl_strdup("#endif");
   o->add(p, strategy);
   o->factory = this;
@@ -1463,10 +1466,11 @@ Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
  */
 void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
   Fl_Type::write_properties(f);
-  switch (public_) {
-    case 1: f.write_string("public"); break;
-    case 2: f.write_string("protected"); break;
-  }
+  // deprecated
+  if (is_public()) f.write_string("public");
+  // new way to map declaration block to various parts of the generated code
+  if (write_map_ != CODE_IN_SOURCE)
+    f.write_string("map %d", write_map_);
   f.write_string("after");
   f.write_word(after);
 }
@@ -1476,9 +1480,11 @@ void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
  */
 void Fl_DeclBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if(!strcmp(c,"public")) {
-    public_ = 1;
+    write_map_ |= CODE_IN_HEADER;
   } else if(!strcmp(c,"protected")) {
-    public_ = 2;
+    //
+  } else if(!strcmp(c,"map")) {
+    write_map_ = (int)atol(f.read_word());
   } else  if (!strcmp(c,"after")) {
     storestring(f.read_word(),after);
   } else {
@@ -1490,10 +1496,18 @@ void Fl_DeclBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
  Open the declblock_panel to edit this node.
  */
 void Fl_DeclBlock_Type::open() {
+  // build dialog box
   if (!declblock_panel) make_declblock_panel();
-  decl_before_input->value(name());
-  declblock_public_choice->value((public_>0));
-  decl_after_input->value(after);
+  // preset all values
+  declblock_before_input->value(name());
+  declblock_after_input->value(after);
+  declblock_static_header->value(write_map_ & STATIC_IN_HEADER);
+  declblock_static_source->value(write_map_ & STATIC_IN_SOURCE);
+  declblock_code_header->value(write_map_ & CODE_IN_HEADER);
+  declblock_code_source->value(write_map_ & CODE_IN_SOURCE);
+  const char *c = comment();
+  declblock_comment_input->buffer()->text(c?c:"");
+  // show modal dialog and loop until satisfied
   declblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -1503,9 +1517,10 @@ void Fl_DeclBlock_Type::open() {
       else if (w == declblock_panel_ok) break;
       else if (!w) Fl::wait();
     }
-    const char* a = decl_before_input->value();
+    // verify user input
+    const char* a = declblock_before_input->value();
     while (isspace(*a)) a++;
-    const char* b = decl_after_input->value();
+    const char* b = declblock_after_input->value();
     while (isspace(*b)) b++;
     message = c_check(a&&a[0]=='#' ? a+1 : a);
     if (!message)
@@ -1516,17 +1531,93 @@ void Fl_DeclBlock_Type::open() {
       if (v==0) continue;     // Continue Editing
       //if (v==1) { }         // Ignore Error and close dialog
     }
+    // store user choices in data structure
     name(a);
     storestring(b, after);
-    if (public_ != declblock_public_choice->value()) {
-      set_modflag(1);
-      public_ = declblock_public_choice->value();
-      redraw_browser();
+    if (write_map_ & STATIC_IN_HEADER) {
+      if (declblock_static_header->value()==0) {
+        write_map_ &= ~STATIC_IN_HEADER;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_static_header->value()) {
+        write_map_ |= STATIC_IN_HEADER;
+        set_modflag(1);
+      }
     }
+    if (write_map_ & STATIC_IN_SOURCE) {
+      if (declblock_static_source->value()==0) {
+        write_map_ &= ~STATIC_IN_SOURCE;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_static_source->value()) {
+        write_map_ |= STATIC_IN_SOURCE;
+        set_modflag(1);
+      }
+    }
+    if (write_map_ & CODE_IN_HEADER) {
+      if (declblock_code_header->value()==0) {
+        write_map_ &= ~CODE_IN_HEADER;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_code_header->value()) {
+        write_map_ |= CODE_IN_HEADER;
+        set_modflag(1);
+      }
+    }
+    if (write_map_ & CODE_IN_SOURCE) {
+      if (declblock_code_source->value()==0) {
+        write_map_ &= ~CODE_IN_SOURCE;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_code_source->value()) {
+        write_map_ |= CODE_IN_SOURCE;
+        set_modflag(1);
+      }
+    }
+    c = declblock_comment_input->buffer()->text();
+    if (c && *c) {
+      if (!comment() || strcmp(c, comment())) { set_modflag(1); redraw_browser(); }
+      comment(c);
+    } else {
+      if (comment()) { set_modflag(1); redraw_browser(); }
+      comment(0);
+    }
+    if (c) free((void*)c);
     break;
   }
 BREAK2:
   declblock_panel->hide();
+}
+
+/**
+ Write the \b before static code to the source file, and to the header file if declared public.
+ The before code is stored in the name() field.
+ */
+void Fl_DeclBlock_Type::write_static(Fd_Code_Writer& f) {
+  const char* c = name();
+  if (c && *c) {
+    if (write_map_ & STATIC_IN_HEADER)
+      f.write_h("%s\n", c);
+    if (write_map_ & STATIC_IN_SOURCE)
+      f.write_c("%s\n", c);
+  }
+}
+
+/**
+ Write the \b after static code to the source file, and to the header file if declared public.
+ */
+void Fl_DeclBlock_Type::write_static_after(Fd_Code_Writer& f) {
+  const char* c = after;
+  if (c && *c) {
+    if (write_map_ & STATIC_IN_HEADER)
+      f.write_h("%s\n", c);
+    if (write_map_ & STATIC_IN_SOURCE)
+      f.write_c("%s\n", c);
+  }
 }
 
 /**
@@ -1536,9 +1627,10 @@ BREAK2:
 void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
   if (c && *c) {
-    if (public_)
+    if (write_map_ & CODE_IN_HEADER)
       f.write_h("%s\n", c);
-    f.write_c("%s\n", c);
+    if (write_map_ & CODE_IN_SOURCE)
+      f.write_c("%s\n", c);
   }
 }
 
@@ -1548,9 +1640,10 @@ void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
 void Fl_DeclBlock_Type::write_code2(Fd_Code_Writer& f) {
   const char* c = after;
   if (c && *c) {
-    if (public_)
+    if (write_map_ & CODE_IN_HEADER)
       f.write_h("%s\n", c);
-    f.write_c("%s\n", c);
+    if (write_map_ & CODE_IN_SOURCE)
+      f.write_c("%s\n", c);
   }
 }
 
@@ -1962,10 +2055,10 @@ void Fl_Class_Type::open() {
     }
     c = c_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);

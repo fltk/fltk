@@ -504,8 +504,8 @@ void run_autodoc(const Fl_String &target_dir) {
 
   // -- ID_DeclBlock
   Fl_Window *adoc_declblock_panel = make_declblock_panel();
-  decl_before_input->value("#ifdef NDEBUG");
-  decl_after_input->value("#endif // NDEBUG");
+  declblock_before_input->value("#ifdef NDEBUG");
+  declblock_after_input->value("#endif // NDEBUG");
   fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
   adoc_declblock_panel->hide();
 

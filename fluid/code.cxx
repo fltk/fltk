@@ -682,7 +682,29 @@ bool is_comment_before_class_member(Fl_Type *q) {
 }
 
 /**
- Recursively dump code, putting children between the two parts of the parent code.
+ Recursively write static code and declarations
+ \param[in] p write this type and all its children
+ \return pointer to the next sibling
+ */
+Fl_Type* Fd_Code_Writer::write_static(Fl_Type* p) {
+  if (write_codeview) p->header_static_start = (int)ftell(header_file);
+  if (write_codeview) p->code_static_start = (int)ftell(code_file);
+  p->write_static(*this);
+  if (write_codeview) p->code_static_end = (int)ftell(code_file);
+  if (write_codeview) p->header_static_end = (int)ftell(header_file);
+
+  Fl_Type* q;
+  for (q = p->next; q && q->level > p->level;) {
+    q = write_static(q);
+  }
+
+  p->write_static_after(*this);
+
+  return q;
+}
+
+/**
+ Recursively write code, putting children between the two parts of the parent code.
  \param[in] p write this type and all its children
  \return pointer to the next sibling
  */
@@ -879,18 +901,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   }
   for (Fl_Type* p = first_type; p;) {
     // write all static data for this & all children first
-    if (write_codeview) p->header_static_start = (int)ftell(header_file);
-    if (write_codeview) p->code_static_start = (int)ftell(code_file);
-    p->write_static(*this);
-    if (write_codeview) p->code_static_end = (int)ftell(code_file);
-    if (write_codeview) p->header_static_end = (int)ftell(header_file);
-    for (Fl_Type* q = p->next; q && q->level > p->level; q = q->next) {
-      if (write_codeview) q->header_static_start = (int)ftell(header_file);
-      if (write_codeview) q->code_static_start = (int)ftell(code_file);
-      q->write_static(*this);
-      if (write_codeview) q->code_static_end = (int)ftell(code_file);
-      if (write_codeview) q->header_static_end = (int)ftell(header_file);
-    }
+    write_static(p);
     // then write the nested code:
     p = write_code(p);
   }

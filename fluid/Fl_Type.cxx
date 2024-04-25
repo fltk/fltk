@@ -1044,6 +1044,9 @@ bool Fl_Type::is_in_class() const {
 void Fl_Type::write_static(Fd_Code_Writer&) {
 }
 
+void Fl_Type::write_static_after(Fd_Code_Writer&) {
+}
+
 void Fl_Type::write_code1(Fd_Code_Writer& f) {
   f.write_h("// Header for %s\n", title());
   f.write_c("// Code for %s\n", title());

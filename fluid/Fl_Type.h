@@ -218,6 +218,7 @@ public:
 
   // write code, these are called in order:
   virtual void write_static(Fd_Code_Writer& f); // write static stuff to .c file
+  virtual void write_static_after(Fd_Code_Writer& f); // write static stuff after children
   virtual void write_code1(Fd_Code_Writer& f); // code and .h before children
   virtual void write_code2(Fd_Code_Writer& f); // code and .h after children
   void write_comment_h(Fd_Code_Writer& f, const char *ind=""); // write the commentary text into the header file
