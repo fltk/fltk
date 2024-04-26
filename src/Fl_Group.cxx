@@ -837,7 +837,8 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   if (!resizable() || (dw==0 && dh==0)) {
 
-    if (as_window() && !parent()) // top window
+    // top window and subwindows must not change the position of their children
+    if (as_window())
       dx = dy = 0;
 
     // Check if there's anything to do, otherwise don't call resize().
