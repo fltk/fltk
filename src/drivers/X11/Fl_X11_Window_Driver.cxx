@@ -1,7 +1,7 @@
 //
 // Definition of X11 window driver.
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -68,34 +68,37 @@ Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
 
 // --- private
 
-void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
+bool Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
 {
   Fl_Window *win = pWindow;
   w = win->w();
   h = win->h();
-  if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) return false;
   Window root, parent, *children;
   unsigned n = 0;
   Status status = XQueryTree(fl_display, Fl_X::flx(win)->xid, &root, &parent, &children, &n);
   if (status != 0 && n) XFree(children);
   // when compiz is used, root and parent are the same window
   // and I don't know where to find the window decoration
-  if (status == 0 || root == parent) return;
+  if (status == 0 || root == parent) return false;
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
   // sometimes, very wide window borders are reported
   // ignore them all:
   XWindowAttributes w_attributes;
   XGetWindowAttributes(fl_display, Fl_X::flx(win)->xid, &w_attributes);
+  bool true_sides = true;
   if (attributes.width - w_attributes.width >= 20) {
     attributes.height -= (attributes.width - w_attributes.width);
     attributes.width = w_attributes.width;
+    true_sides = false;
   }
 
   int nscreen = screen_num();
   float s = Fl::screen_driver()->scale(nscreen);
   w = attributes.width / s;
   h = attributes.height / s;
+  return true_sides;
 }
 
 
@@ -111,9 +114,8 @@ int Fl_X11_Window_Driver::decorated_h()
 int Fl_X11_Window_Driver::decorated_w()
 {
   int w, h;
-
-  decorated_win_size(w, h);
-  return w;
+  bool true_sides = decorated_win_size(w, h);
+  return true_sides ? w : this->w();
 }
 
 
@@ -360,34 +362,48 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
   Window root, parent, *children, child_win, xid = fl_xid(pWindow);
   unsigned n = 0;
   int do_it;
-  int wsides, htop;
+  int wsides, htop, ww, hh;
   do_it = (XQueryTree(fl_display, xid, &root, &parent, &children, &n) != 0 &&
            XTranslateCoordinates(fl_display, xid, parent, 0, 0, &wsides, &htop, &child_win) == True);
   if (n) XFree(children);
-  if (!do_it) wsides = htop = 0;
-  //int hbottom = wsides;
+  if (!do_it) return;
+  bool true_sides = Fl_X11_Window_Driver::decorated_win_size(ww, hh);
   float s = Fl::screen_driver()->scale(screen_num());
-  htop -= wsides;
-  htop /= s; wsides /= s;
+  if (true_sides) {
+    XWindowAttributes attributes;
+    XGetWindowAttributes(fl_display, parent, &attributes);
+    ww = attributes.width;
+    hh = attributes.height;
+  } else {
+    ww *= s;
+    hh *= s;
+  }
+  if (!true_sides) htop -= wsides;
   fl_window = parent;
   if (htop) {
-    top = Fl::screen_driver()->read_win_rectangle(wsides, wsides, -w(), htop, pWindow);
-    if (top) top->scale(w(), htop, 0, 1);
+    if (true_sides) {
+      top = Fl::screen_driver()->read_win_rectangle(1, 1, -(ww-1), htop, pWindow);
+      if (top) top->scale(decorated_w()+1, (htop / s)+1, 0, 1);
+    } else {
+      top = Fl::screen_driver()->read_win_rectangle(wsides, wsides, -(ww-1), htop, pWindow);
+      if (top) top->scale(w(), htop / s, 0, 1);
+    }
   }
-  /*if (wsides) {
-    left = Fl::screen_driver()->read_win_rectangle(0, htop, -wsides, h(), pWindow);
+  if (true_sides && wsides) {
+    left = Fl::screen_driver()->read_win_rectangle(1, htop, -wsides, hh - htop - wsides, pWindow);
     if (left) {
-      left->scale(wsides, h(), 0, 1);
+      left->scale(wsides/s, h(), 0, 1);
     }
-    right = Fl::screen_driver()->read_win_rectangle(w() + wsides, htop, -wsides, h(), pWindow);
-    if (right) {
-      right->scale(wsides, h(), 0, 1);
-    }
-    bottom = Fl::screen_driver()->read_win_rectangle(0, htop + h(), -(w() + 2*wsides), hbottom, pWindow);
+    if (left) {
+      right = (Fl_RGB_Image*)left->copy(left->data_w(), left->data_h());
+      right->scale(left->w(), left->h(), 0, 1);
+    } else right = NULL;
+    
+    bottom = Fl::screen_driver()->read_win_rectangle(1, hh-wsides, -(ww-1), wsides, pWindow);
     if (bottom) {
-      bottom->scale(w() + 2*wsides, wsides, 0, 1);
+      bottom->scale(decorated_w(), wsides / s, 0, 1);
     }
-  }*/
+  }
   fl_window = from;
 }
 

@@ -665,10 +665,10 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   //
   int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window frame
   if (w < 0) w = - w;
-
+// when capturing window decoration, X,Y,w and h are in pixels (not in FLTK units).
   Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
 
-  float s = allow_outside ? Fl::screen_driver()->scale(win->screen_num()) : Fl_Surface_Device::surface()->driver()->scale();
+  float s = allow_outside ? 1 : Fl_Surface_Device::surface()->driver()->scale();
   int Xs = Fl_Scalable_Graphics_Driver::floor(X, s);
   int Ys = Fl_Scalable_Graphics_Driver::floor(Y, s);
   int ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Xs;
