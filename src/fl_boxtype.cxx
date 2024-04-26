@@ -288,8 +288,9 @@ static struct {
   Fl_Box_Draw_F *f;
   uchar dx, dy, dw, dh;
   int set;
-} fl_box_table[256] = {
-// must match list in Enumerations.H!!!
+  Fl_Box_Draw_Focus_F *ff;
+} fl_box_table[FL_MAX_BOXTYPE+1] = {
+  // must match list in Enumerations.H!!!
   {fl_no_box,           0,0,0,0,1},
   {fl_flat_box,         0,0,0,0,1}, // FL_FLAT_BOX
   {fl_up_box,           D1,D1,D2,D2,1},
@@ -412,13 +413,15 @@ int Fl::box_dw(Fl_Boxtype t) {return fl_box_table[t].dw;}
 int Fl::box_dh(Fl_Boxtype t) {return fl_box_table[t].dh;}
 
 /**
-  Sets the drawing function for a given box type.
-  \param[in] t box type
-  \param[in] f box drawing function
-*/
-void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
+ Sets the drawing function for a given box type.
+ \param[in] t box type
+ \param[in] f box drawing function
+ \param[in] ff optional box focus rectangle drawing function
+ */
+void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f, Fl_Box_Draw_Focus_F* ff) {
   if (!fl_box_table[t].set) {
     fl_box_table[t].f   = f;
+    fl_box_table[t].ff  = ff;
     fl_box_table[t].set = 1;
   }
 }
@@ -427,16 +430,30 @@ void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
 Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
   return fl_box_table[t].f;
 }
-/** Sets the function to call to draw a specific boxtype. */
+
+/**
+ Sets the function to call to draw a specific box type.
+
+ \param[in] t  index of the box type between 0 (FL_NO_BOX) and up to and
+ including FL_MAX_BOXTYPE
+ \param[in] f  callback function that draws the box
+ \param[in] dx, dy top left frame width, distance in pixels to box contents
+ \param[in] dw, dh left plus right frame width, top plus bottom frame width
+ \param[in] ff optional callback that draws the box focus, defaults
+ to a rectangle, inset by dx, dy, dw, dh
+ */
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
-                     uchar a, uchar b, uchar c, uchar d) {
+                     uchar dx, uchar dy, uchar dw, uchar dh,
+                     Fl_Box_Draw_Focus_F* ff) {
   fl_box_table[t].f   = f;
   fl_box_table[t].set = 1;
-  fl_box_table[t].dx  = a;
-  fl_box_table[t].dy  = b;
-  fl_box_table[t].dw  = c;
-  fl_box_table[t].dh  = d;
+  fl_box_table[t].dx  = dx;
+  fl_box_table[t].dy  = dy;
+  fl_box_table[t].dw  = dw;
+  fl_box_table[t].dh  = dh;
+  fl_box_table[t].ff  = ff;
 }
+
 /** Copies the from boxtype. */
 void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
   fl_box_table[to] = fl_box_table[from];
@@ -450,6 +467,41 @@ void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
 */
 void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
   if (t && fl_box_table[t].f) fl_box_table[t].f(x,y,w,h,c);
+}
+
+/**
+ Draws the focus rectangle inside a box using given type, position, size and color.
+ Boxes can set their own focus drawing callback. The focus frame does not
+ need to be a rectangle at all, but should fit inside the shape of the box.
+ \param[in] bt box type
+ \param[in] x, y, w, h position and size
+ \param[in] fg, bg foreground and background color
+ */
+void fl_draw_box_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg) {
+  if (!Fl::visible_focus()) return;
+  if ((bt >= 0) && (bt <= FL_MAX_BOXTYPE) && (fl_box_table[bt].ff)) {
+    fl_box_table[bt].ff(bt, x, y, w, h, fg, bg);
+    return;
+  }
+  switch (bt) {
+    case FL_DOWN_BOX:
+    case FL_DOWN_FRAME:
+    case FL_THIN_DOWN_BOX:
+    case FL_THIN_DOWN_FRAME:
+      x++;
+      y++;
+    default:
+      break;
+  }
+  x += Fl::box_dx(bt);
+  y += Fl::box_dy(bt);
+  w -= Fl::box_dw(bt)+1;
+  h -= Fl::box_dh(bt)+1;
+
+  Fl_Color savecolor = fl_color();
+  fl_color(fl_contrast(fg, bg));
+  fl_focus_rect(x, y, w, h);
+  fl_color(savecolor);
 }
 
 /** Draws the widget box according its box style */

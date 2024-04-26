@@ -504,7 +504,8 @@ void round_down_box(int x, int y, int w, int h, Fl_Color col) {
 }
 
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F *);
+extern void fl_rounded_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 
 Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
 
@@ -516,8 +517,8 @@ Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
   fl_internal_boxtype(_FL_OXY_THIN_DOWN_BOX, thin_down_box);
   fl_internal_boxtype(_FL_OXY_THIN_UP_FRAME, thin_up_frame);
   fl_internal_boxtype(_FL_OXY_THIN_DOWN_FRAME, thin_down_frame);
-  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box);
-  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box);
+  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box, fl_rounded_focus);
+  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box, fl_rounded_focus);
   fl_internal_boxtype(_FL_OXY_BUTTON_UP_BOX, button_up_box);
   fl_internal_boxtype(_FL_OXY_BUTTON_DOWN_BOX, button_down_box);
 

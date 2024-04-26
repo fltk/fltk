@@ -800,27 +800,6 @@ Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) 
          static_cast<const Fl_Tree_Item &>(*this).find_clicked(prefs, yonly)));
 }
 
-static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y, int W, int H) {
-  // Pasted from Fl_Widget::draw_focus(); we don't have access to this method
-  if (!Fl::visible_focus()) return;
-  switch (B) {
-    case FL_DOWN_BOX:
-    case FL_DOWN_FRAME:
-    case FL_THIN_DOWN_BOX:
-    case FL_THIN_DOWN_FRAME:
-      X ++;
-      Y ++;
-    default:
-      break;
-  }
-  X += Fl::box_dx(B);
-  Y += Fl::box_dy(B);
-  W -= Fl::box_dw(B)+1;
-  H -= Fl::box_dh(B)+1;
-  fl_color(fl_contrast(fg, bg));
-  fl_focus_rect(X, Y, W, H);
-}
-
 /// Return the item's 'visible' height. Takes into account the item's:
 ///    - visibility (if !is_visible(), returns 0)
 ///    - labelfont() height: if label() != NULL
@@ -1137,7 +1116,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
            Fl::visible_focus() &&
            Fl::focus() == tree() &&
            prefs.selectmode() != FL_TREE_SELECT_NONE ) {
-        draw_item_focus(FL_NO_BOX,fg,bg,label_x()+1,label_y()+1,label_w()-1,label_h()-1);
+        fl_draw_box_focus(FL_NO_BOX, label_x()+1, label_y()+1, label_w()-1, label_h()-1, fg, bg);
       }
     }                   // end drawthis
   }                     // end clipped

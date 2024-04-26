@@ -108,9 +108,20 @@ void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   draw(CLOSED,      x,   y, w,   h, 0, (Fl_Color)g[(int)'A']);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
+void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg) {
+  x += Fl::box_dx(bt);
+  y += Fl::box_dy(bt);
+  w -= Fl::box_dw(bt);
+  h -= Fl::box_dh(bt);
+  Fl_Color savecolor = fl_color();
+  fl_line_style(FL_DOT);
+  draw(CLOSED, x, y, w, h, 0, fl_contrast(fg, bg));
+  fl_line_style(FL_SOLID);
+}
+
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 Fl_Boxtype fl_define_FL_ROUND_UP_BOX() {
-  fl_internal_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box);
-  fl_internal_boxtype(_FL_ROUND_UP_BOX, fl_round_up_box);
+  fl_internal_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, fl_round_focus);
+  fl_internal_boxtype(_FL_ROUND_UP_BOX, fl_round_up_box, fl_round_focus);
   return _FL_ROUND_UP_BOX;
 }

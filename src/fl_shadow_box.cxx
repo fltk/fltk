@@ -36,7 +36,7 @@ static void fl_shadow_box(int x, int y, int w, int h, Fl_Color c) {
   fl_shadow_frame(x,y,w,h,FL_GRAY0);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 Fl_Boxtype fl_define_FL_SHADOW_BOX() {
   fl_internal_boxtype(_FL_SHADOW_FRAME, fl_shadow_frame);
   fl_internal_boxtype(_FL_SHADOW_BOX, fl_shadow_box);

@@ -694,7 +694,8 @@ enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxty
   _FL_OXY_ROUND_DOWN_BOX,       ///< oxy version of FL_ROUND_DOWN_BOX, use FL_OXY_ROUND_DOWN_BOX
   _FL_OXY_BUTTON_UP_BOX,        ///< FL_OXY_BUTTON_UP_BOX (new boxtype ?), use FL_OXY_BUTTON_UP_BOX
   _FL_OXY_BUTTON_DOWN_BOX,      ///< FL_OXY_BUTTON_DOWN_BOX (new boxtype ?), use FL_OXY_BUTTON_DOWN_BOX
-  FL_FREE_BOXTYPE               ///< the first free box type for creation of new box types
+  FL_FREE_BOXTYPE,              ///< the first free box type for creation of new box types
+  FL_MAX_BOXTYPE = 255          ///< highest legal index for a box type
 };
 
 #ifndef FL_DOXYGEN

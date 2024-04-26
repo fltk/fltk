@@ -164,7 +164,7 @@ static void thin_down_box(int x, int y, int w, int h, Fl_Color c) {
   frame_rect_down(x, y, w, h, c, fl_color_average(c, FL_BLACK, .45f), .35f, 0.85f);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 
 Fl_Boxtype fl_define_FL_GLEAM_UP_BOX() {
   fl_internal_boxtype(_FL_GLEAM_UP_BOX, up_box);

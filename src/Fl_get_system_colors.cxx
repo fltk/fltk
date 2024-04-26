@@ -144,6 +144,7 @@ extern void     fl_thin_up_box(int, int, int, int, Fl_Color);
 extern void     fl_thin_down_box(int, int, int, int, Fl_Color);
 extern void     fl_round_up_box(int, int, int, int, Fl_Color);
 extern void     fl_round_down_box(int, int, int, int, Fl_Color);
+extern void     fl_round_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
 
 extern void     fl_up_frame(int, int, int, int, Fl_Color);
 extern void     fl_down_frame(int, int, int, int, Fl_Color);
@@ -359,8 +360,8 @@ int Fl::reload_scheme() {
     set_boxtype(FL_DOWN_BOX,        fl_down_box, D1, D1, D2, D2);
     set_boxtype(FL_THIN_UP_BOX,     fl_thin_up_box, 1, 1, 2, 2);
     set_boxtype(FL_THIN_DOWN_BOX,   fl_thin_down_box, 1, 1, 2, 2);
-    set_boxtype(_FL_ROUND_UP_BOX,   fl_round_up_box, 3, 3, 6, 6);
-    set_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, 3, 3, 6, 6);
+    set_boxtype(_FL_ROUND_UP_BOX,   fl_round_up_box, 3, 3, 6, 6, fl_round_focus);
+    set_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, 3, 3, 6, 6, fl_round_focus);
 
     // Use standard size scrollbars...
     Fl::scrollbar_size(16);
