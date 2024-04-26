@@ -117,6 +117,7 @@ void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_C
   fl_line_style(FL_DOT);
   draw(CLOSED, x, y, w, h, 0, fl_contrast(fg, bg));
   fl_line_style(FL_SOLID);
+  fl_color(savecolor);
 }
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
