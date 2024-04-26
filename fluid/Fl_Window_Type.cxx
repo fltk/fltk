@@ -1519,7 +1519,7 @@ void Fl_Widget_Class_Type::write_code2(Fd_Code_Writer& f) {
 // live mode support
 
 Fl_Widget *Fl_Window_Type::enter_live_mode(int) {
-  Fl_Window *win = new Fl_Window(o->x(), o->y(), o->w(), o->h());
+  Fl_Window *win = new Fl_Window(10, 10, o->w(), o->h());
   return propagate_live_mode(win);
 }
 

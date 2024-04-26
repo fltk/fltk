@@ -720,10 +720,13 @@ void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
 }
 
 Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
-  Fl_Tabs *grp = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
-  propagate_live_mode(grp);
-  grp->value(((Fl_Tabs*)o)->value());
-  return grp;
+  Fl_Tabs *original = static_cast<Fl_Tabs*>(o);
+  Fl_Tabs *clone = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
+  propagate_live_mode(clone);
+  int tab_index = original->find(original->value());
+  if ((tab_index>=0) && (tab_index<clone->children()))
+    clone->value(clone->child(tab_index));
+  return clone;
 }
 
 // ---- Fl_Scroll_Type ------------------------------------------------- MARK: -
