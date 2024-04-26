@@ -618,12 +618,9 @@ static char *pending_pre_edit = NULL;
 static char *pending_commit = NULL;
 
 
-static void send_commit() {
-  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    if (scr_driver->seat->text_input) {
-        zwp_text_input_v3_commit(scr_driver->seat->text_input);
-        commit_serial++;
-    }
+static void send_commit(struct zwp_text_input_v3 *zwp_text_input_v3) {
+  zwp_text_input_v3_commit(zwp_text_input_v3);
+  commit_serial++;
 }
 
 
@@ -653,7 +650,7 @@ void Fl_Wayland_Screen_Driver::insertion_point_location(int x, int y, int height
       zwp_text_input_v3_set_cursor_rectangle(scr_driver->seat->text_input,
                                              insertion_point_x, insertion_point_y,
                                              insertion_point_width, insertion_point_height);
-      send_commit();
+      send_commit(scr_driver->seat->text_input);
     }
   }
 }
@@ -895,7 +892,7 @@ void text_input_enter(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
   if (Fl_Wayland_Screen_Driver::insertion_point_location(&x, &y, &width, &height)) {
     zwp_text_input_v3_set_cursor_rectangle(zwp_text_input_v3,  x,  y,  width, height);
   }
-  send_commit();
+  send_commit(zwp_text_input_v3);
 }
 
 
@@ -904,7 +901,7 @@ void text_input_leave(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
 //puts("text_input_leave");
   zwp_text_input_v3_disable(zwp_text_input_v3);
   zwp_text_input_v3_set_user_data(zwp_text_input_v3, NULL);
-  send_commit();
+  send_commit(zwp_text_input_v3);
   free(pending_pre_edit); pending_pre_edit = NULL;
   free(current_pre_edit); current_pre_edit = NULL;
   free(pending_commit); pending_commit = NULL;
@@ -920,6 +917,7 @@ static void send_text_to_fltk(const char *text, bool is_marked, struct wl_surfac
   set_event_xy(win);
   Fl::e_is_click = 0;
   if (is_marked) { // goes to widget as marked text
+    Fl_Wayland_Screen_Driver::next_marked_length = Fl::e_length;
     Fl::handle(FL_KEYDOWN, win);
   } else if (text) {
     Fl_Wayland_Screen_Driver::next_marked_length = 0;
@@ -937,7 +935,6 @@ void text_input_preedit_string(void *data, struct zwp_text_input_v3 *zwp_text_in
 //printf("text_input_preedit_string %s cursor_begin=%d cursor_end=%d\n",text, cursor_begin, cursor_end);
   free(pending_pre_edit);
   pending_pre_edit = text ? strdup(text) : NULL;
-  Fl_Wayland_Screen_Driver::next_marked_length = text ? (int)strlen(text) : 0;
 }
 
 
@@ -946,7 +943,6 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
 //printf("text_input_commit_string %s\n",text);
   free(pending_commit);
   pending_commit = text ? strdup(text) : NULL;
-  Fl_Wayland_Screen_Driver::next_marked_length = 0;
 }
 
 
