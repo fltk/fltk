@@ -283,7 +283,7 @@ static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
 
 #endif
 
-extern void fl_rounded_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
 
 Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
   fl_internal_boxtype(_FL_GTK_UP_BOX, gtk_up_box);
@@ -294,8 +294,8 @@ Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
   fl_internal_boxtype(_FL_GTK_THIN_DOWN_BOX, gtk_thin_down_box);
   fl_internal_boxtype(_FL_GTK_THIN_UP_FRAME, gtk_thin_up_frame);
   fl_internal_boxtype(_FL_GTK_THIN_DOWN_FRAME, gtk_thin_down_frame);
-  fl_internal_boxtype(_FL_GTK_ROUND_UP_BOX, gtk_round_up_box, fl_rounded_focus);
-  fl_internal_boxtype(_FL_GTK_ROUND_DOWN_BOX, gtk_round_down_box, fl_rounded_focus);
+  fl_internal_boxtype(_FL_GTK_ROUND_UP_BOX, gtk_round_up_box, fl_round_focus);
+  fl_internal_boxtype(_FL_GTK_ROUND_DOWN_BOX, gtk_round_down_box, fl_round_focus);
 
   return _FL_GTK_UP_BOX;
 }

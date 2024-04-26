@@ -213,14 +213,14 @@ static void _oxy_rounded_box_(int x, int y, int w, int h, Fl_Color bg) {
   fl_color(bg);
   if (w > h) {
     fl_pie(x, y, h, h, 90.0, 270.0);          // right half of circle
-    fl_rectf(x + h / 2, y, w - h, h);         // rectangle between left and right half-circle
+    fl_rectf(x + h / 2, y, w - h + 1, h);     // rectangle between left and right half-circle
     fl_pie(x + w - h, y, h, h, 0.0, 90.0);    // top-left quarter of circle
     fl_pie(x + w - h, y, h, h, 270.0, 360.0); // bottom-left quarter of circle
   } else if (w == h) {
     fl_pie(x, y, w, w, 0.0, 360.0);
   } else {
     fl_pie(x, y, w, w, 0.0, 180.0);           // top half of circle
-    fl_rectf(x, y + w / 2, w, h - w);         // rectangle between top and bottom half-circle
+    fl_rectf(x, y + w / 2, w, h - w + 1);     // rectangle between top and bottom half-circle
     fl_pie(x, y + h - w, w, w, 180.0, 360.0); // bottom half of circle
   }
 }
@@ -504,7 +504,7 @@ void round_down_box(int x, int y, int w, int h, Fl_Color col) {
 }
 
 
-extern void fl_rounded_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 
 Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
@@ -517,8 +517,8 @@ Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
   fl_internal_boxtype(_FL_OXY_THIN_DOWN_BOX, thin_down_box);
   fl_internal_boxtype(_FL_OXY_THIN_UP_FRAME, thin_up_frame);
   fl_internal_boxtype(_FL_OXY_THIN_DOWN_FRAME, thin_down_frame);
-  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box, fl_rounded_focus);
-  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box, fl_rounded_focus);
+  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box, fl_round_focus);
+  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box, fl_round_focus);
   fl_internal_boxtype(_FL_OXY_BUTTON_UP_BOX, button_up_box);
   fl_internal_boxtype(_FL_OXY_BUTTON_DOWN_BOX, button_down_box);
 
