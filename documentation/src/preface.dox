@@ -15,7 +15,7 @@ using FLTK, while the appendices provide a convenient reference
 for all FLTK widgets, functions, and operating system interfaces.
 
 <B>This manual may be printed, modified, and/or used under
-the terms of the FLTK license provided in \ref license.</B>
+the terms of the FLTK license provided in: \ref license.</B>
 
 \section preface_organisation Organization
 
@@ -75,7 +75,7 @@ and 64 bit Windows API.
 \par macOS (aka Mac OS X), <tt>__APPLE__</tt>
 The Apple desktop operating sytem macOS 10.0 and later. MacOS 8 and 9 support
 was dropped after FLTK 1.0.10. FLTK uses the preprocessor definition
-<tt>__APPLE__</tt> for macOS.
+<tt>\__APPLE__</tt> for macOS.
 
 \section preface_copyrights Copyrights and Trademarks
 
