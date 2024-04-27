@@ -160,8 +160,8 @@ the app had the focus.
 * Narrow windows with a titlebar are silently forced to be wide enough
 for the titlebar to display window buttons and a few letters of the title.
 
-* Text input methods have been tested without any understanding of the writing systems,
-so feedback on this subject would be helpful.
+* Text input methods are known to work well for Chinese and Japanese.
+Feedback for other writing systems would be helpful.
 
 * Using OpenGL inside Wayland windows doesn't seem to work on RaspberryPi hardware,
 although it works inside X11 windows on the same hardware.
