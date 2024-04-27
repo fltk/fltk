@@ -382,26 +382,11 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
   fl_window = parent;
   if (htop) {
     if (true_sides) {
-      top = Fl::screen_driver()->read_win_rectangle(1, 1, -(ww-1), htop, pWindow);
-      if (top) top->scale(decorated_w()+1, (htop / s)+1, 0, 1);
+      top = Fl::screen_driver()->read_win_rectangle(1, 1, -(ww-2), hh-2, pWindow);
+      if (top) top->scale(decorated_w(), decorated_h(), 0, 1);
     } else {
       top = Fl::screen_driver()->read_win_rectangle(wsides, wsides, -(ww-1), htop, pWindow);
       if (top) top->scale(w(), htop / s, 0, 1);
-    }
-  }
-  if (true_sides && wsides) {
-    left = Fl::screen_driver()->read_win_rectangle(1, htop, -wsides, hh - htop - wsides, pWindow);
-    if (left) {
-      left->scale(wsides/s, h(), 0, 1);
-    }
-    if (left) {
-      right = (Fl_RGB_Image*)left->copy(left->data_w(), left->data_h());
-      right->scale(left->w(), left->h(), 0, 1);
-    } else right = NULL;
-    
-    bottom = Fl::screen_driver()->read_win_rectangle(1, hh-wsides, -(ww-1), wsides, pWindow);
-    if (bottom) {
-      bottom->scale(decorated_w(), wsides / s, 0, 1);
     }
   }
   fl_window = from;

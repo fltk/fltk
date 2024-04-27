@@ -640,6 +640,10 @@ extern "C" {
   }
 }
 
+
+// When capturing window decoration, w is negative and X,Y,w and h are in pixels;
+// otherwise X,Y,w and h are in FLTK units.
+//
 Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins)
 {
   XImage        *image;         // Captured image
@@ -665,7 +669,6 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   //
   int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window frame
   if (w < 0) w = - w;
-// when capturing window decoration, X,Y,w and h are in pixels (not in FLTK units).
   Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
 
   float s = allow_outside ? 1 : Fl_Surface_Device::surface()->driver()->scale();
