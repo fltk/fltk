@@ -197,7 +197,7 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
         OUTPUT_NAME_DEBUG   ${LIBNAME}_dlld
         OUTPUT_NAME_RELEASE ${LIBNAME}_dll
       )
-      target_compile_definitions(${TARGET_NAME} PRIVATE FL_DLL)
+      target_compile_definitions(${TARGET_NAME} PUBLIC FL_DLL)
     endif(MSVC)
   endif(LIBTYPE STREQUAL "SHARED")
 
