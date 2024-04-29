@@ -592,8 +592,9 @@ int Fl_Window::handle(int ev)
           // unmap because when the parent window is remapped we don't
           // want to reappear.
           if (visible()) {
-            Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
-            if (p->type() >= FL_WINDOW) break; // don't do the unmap
+            Fl_Widget* p = parent();
+            for (; p && p->visible(); p = p->parent()) { /* empty*/ }
+            if (p && p->as_window()) break; // don't do the unmap
           }
           pWindowDriver->unmap();
         }
