@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget : KDE version
 //
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,6 +24,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include "Fl_Native_File_Chooser_Kdialog.H"
 #include "Fl_Window_Driver.H"
+#include "Fl_System_Driver.H"
 #include "drivers/Unix/Fl_Unix_Screen_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,9 +94,13 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
   }
 
   // Build preset
-  const char *preset = ".";
-  if (_preset_file)    preset = _preset_file;
-  else if (_directory) preset = _directory;
+  char preset[FL_PATH_MAX] = "";
+  if (_preset_file) {
+    if (_directory) strcpy(preset, _directory);
+    else Fl::system_driver()->getcwd(preset, FL_PATH_MAX);
+    strcat(preset, "/");
+    strcat(preset, _preset_file);
+  }
 
   // Build command
   command = "kdialog";
@@ -114,7 +119,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
     command += quoted_filt;
   }
   command += " 2> /dev/null";   // get rid of stderr
-  //printf("command = %s\n", command.c_str());
+  printf("command = %s\n", command.c_str());
 }
 
 
