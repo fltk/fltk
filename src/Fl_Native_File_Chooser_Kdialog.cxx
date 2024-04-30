@@ -119,7 +119,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
     command += quoted_filt;
   }
   command += " 2> /dev/null";   // get rid of stderr
-  printf("command = %s\n", command.c_str());
+  // printf("command = %s\n", command.c_str());
 }
 
 
