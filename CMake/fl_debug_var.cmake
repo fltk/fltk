@@ -96,13 +96,27 @@ function(fl_debug_target name)
   message(STATUS "+++ fl_debug_target(${name})")
   set(var "${name}")
   fl_expand_name(var "${name}" 40)
+
+  # these properties are always supported:
+  set(_props ALIASED_TARGET TYPE)
+
+  # these properties are not supported before 3.20 for *some* target types
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.20)
+    list(APPEND _props
+          LOCATION
+          IMPORTED_LOCATION
+          INTERFACE_LOCATION)
+  endif()
+
+  # these properties are always supported:
+  list(APPEND _props
+          INTERFACE_INCLUDE_DIRECTORIES
+          INTERFACE_LINK_DIRECTORIES
+          INTERFACE_LINK_LIBRARIES)
+
   if(TARGET ${name})
     message(STATUS "${var} = <target>")
-    foreach(prop
-              ALIASED_TARGET
-              INTERFACE_INCLUDE_DIRECTORIES
-              INTERFACE_LINK_DIRECTORIES
-              INTERFACE_LINK_LIBRARIES)
+    foreach(prop ${_props})
       get_target_property(${prop} ${name} ${prop})
       if(NOT ${prop})
         set(${prop} "")
