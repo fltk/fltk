@@ -19,11 +19,10 @@
 #  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED 1
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
-#  if defined(_WIN32)
-#    define GLEW_STATIC 1
-#  endif
+// Note: GLEW_STATIC is defined by CMake if the static lib is linked
 #  include <GL/glew.h>
 #endif
+
 #include <FL/glut.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>

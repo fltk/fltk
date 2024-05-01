@@ -25,9 +25,7 @@
 #if defined(__APPLE__)
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
-#  if defined(_WIN32)
-#    define GLEW_STATIC 1
-#  endif
+// Note: GLEW_STATIC is defined by CMake if the static lib is linked
 #  include <GL/glew.h>
 #endif
 #include <FL/gl.h> // for gl_texture_reset()

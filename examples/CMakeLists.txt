@@ -80,7 +80,7 @@ set(FLUID_SOURCES
 )
 
 ############################################################
-# examples requiring fltk_images
+# examples requiring fltk::images
 ############################################################
 
 set(IMAGE_SOURCES
@@ -100,7 +100,7 @@ set(CAIRO_SOURCES
 )
 
 ############################################################
-# examples requiring OpenGL + libGLEW
+# examples requiring OpenGL3 + GLEW
 ############################################################
 
 set(OPENGL_SOURCES
@@ -141,33 +141,79 @@ foreach(src ${CAIRO_SOURCES})
 endforeach(src)
 
 ############################################################
-# create example programs with OpenGL + libGLEW
+# create example programs with OpenGL3 + GLEW
 ############################################################
+#
+# Note 1: macOS (Quartz) does not need GLEW, it's included in OpenGL
+# Note 2: find_package(GLEW) finds either shared or static libs or both.
+# Note 3: on Windows we set the variable GLEW_USE_STATIC_LIBS=TRUE because
+#         we *want* to find static libs but we *can* also use shared libs.
+# Note 4: FindGLEW.cmake changed the library suffixes for MinGW in CMake 3.28.0,
+#         obviously "assuming" that ".lib" is Visual Studio only. There have been
+#         discussions about finding the "wrong" libraries since CMake 3.25 or so.
+#         Therefore the static lib "glew32s.lib" is not found if CMake 3.28 or
+#         higher is used (current version, as of this writing: 3.29.3). However,
+#         this assumption is probably not true for a pure C library (glew32s).
+#         This library *is* found and works well with CMake 3.15.0 - 3.27.9.
+#         Users may need to copy or rename "glew32s.lib" to "glew32s.a"
+#         if CMake 3.28 or higher is used.
+#         Albrecht-S, May 13, 2024
 
-# Note: macOS does not need libGLEW
-
-if(APPLE AND NOT FLTK_BACKEND_X11)
-  if(NOT LIB_GLEW)
-    set(LIB_GLEW TRUE)
+if(OPENGL_FOUND)
+  if(WIN32)
+    set(GLEW_USE_STATIC_LIBS TRUE)
   endif()
-  set(REQUIRED_LIBS fltk::gl)
-else()
-  set(REQUIRED_LIBS fltk::gl ${LIB_GLEW})
-endif()
+  set(_glew_lib GLEW::glew)
+  set(_glew_static FALSE)
+  if(APPLE AND NOT FLTK_BACKEND_X11) # macOS Quartz
+    set(_glew_lib)
+    set(GLEW_FOUND TRUE)
+  else()
+    # set(GLEW_VERBOSE TRUE) # make `find_package(GLEW)` verbose
+    set(_CMAKE_PREFIX_PATH_SAVED ${CMAKE_PREFIX_PATH})
+    set(CMAKE_PREFIX_PATH ${FLTK_GLEW_DIR} ${CMAKE_PREFIX_PATH})
+    find_package(GLEW MODULE)
+    set(CMAKE_PREFIX_PATH ${_CMAKE_PREFIX_PATH_SAVED})
+    unset(_CMAKE_PREFIX_PATH_SAVED)
+    # Did we find the static lib? If yes, use it
+    if(TARGET GLEW::glew_s)
+      set(_glew_lib GLEW::glew_s)
+      set(_glew_static TRUE)
+    endif()
+  endif()
 
-if(OPENGL_FOUND AND LIB_GLEW)
+  if(0) # Debug
+    fl_debug_var(OPENGL_FOUND)
+    fl_debug_var(GLEW_FOUND)
+    fl_debug_var(GLEW_DIR)
+    fl_debug_var(_glew_lib)
+    fl_debug_target(GLEW::glew)
+    fl_debug_target(GLEW::glew_s)
+    fl_debug_target(GLEW::GLEW)
+  endif() # /Debug
+
+endif(OPENGL_FOUND)
+
+if(OPENGL_FOUND AND (TARGET "${_glew_lib}" OR APPLE))
+
+  # GLEW was found, create the OpenGL3 targets:
+
   foreach(tgt ${OPENGL_SOURCES})
-    fl_create_example(${tgt} ${tgt}.cxx "${REQUIRED_LIBS}")
+    fl_create_example(${tgt} ${tgt}.cxx "fltk::gl;${_glew_lib}")
     set_property(TARGET ${tgt} PROPERTY CXX_STANDARD 11)
     set_property(TARGET ${tgt} PROPERTY CXX_STANDARD_REQUIRED TRUE)
+    # define preprocessor macro GLEW_STATIC only if we link to the static lib
+    if(_glew_static)
+      target_compile_definitions(${tgt} PRIVATE "GLEW_STATIC")
+    endif()
   endforeach(tgt)
 
 else()
-  message(STATUS
-    "OpenGL or libGLEW not present: OpenGL example programs will not be built.")
-  fl_debug_var(OPENGL_FOUND)
-  fl_debug_var(LIB_GLEW)
-  message("")
-endif(OPENGL_FOUND AND LIB_GLEW)
 
-unset(REQUIRED_LIBS)
+  message(STATUS
+    "OpenGL or GLEW not present: OpenGL3 example programs will not be built.")
+  fl_debug_var(OPENGL_FOUND)
+  fl_debug_var(GLEW_FOUND)
+  message("")
+
+endif() # (OPENGL_FOUND AND TARGET "${_glew_lib}")
