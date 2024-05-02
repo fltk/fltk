@@ -165,7 +165,7 @@ Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 }
 
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_VERSION_12_0
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #  define NSOpenGLContextParameterSurfaceOpacity NSOpenGLCPSurfaceOpacity
 #endif
 
@@ -270,7 +270,7 @@ void Fl_Cocoa_Gl_Window_Driver::after_show() {
       [shared_gl1_ctxt retain];
     }
     [view addSubview:gl1view];
-  #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
+  #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
       [gl1view setWantsBestResolutionOpenGLSurface:YES];
     }
@@ -354,6 +354,10 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 }
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#  define NSOpenGLContextParameterSwapInterval NSOpenGLCPSwapInterval
+#endif
 
 void Fl_Cocoa_Gl_Window_Driver::swap_interval(int n) {
   GLint interval = (GLint)n;
