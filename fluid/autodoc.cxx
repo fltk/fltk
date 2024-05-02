@@ -120,7 +120,7 @@ void blend_alpha_left(const Fl_RGB_Image *img, int dx) {
   if (dx > 0) {
     int max_x = dx, max_y = img->h();
     int ld = img->ld(); if (ld == 0) ld = img->w() * img->d();
-    float a = 255/max_x;
+    float a = 255.0f/static_cast<float>(max_x);
     for (int i = 0; i < max_x; i++) {
       uchar *rgba = (uchar*)img->data()[0] + i * img->d();
       uchar alpha = static_cast<uchar>(i * a);
@@ -145,7 +145,7 @@ void blend_alpha_top(const Fl_RGB_Image *img, int dy) {
   if (dy > 0) {
     int max_x = img->w(), max_y = dy;
     int ld = img->ld(); if (ld == 0) ld = img->w() * img->d();
-    float a = 255/max_y;
+    float a = 255.0f/static_cast<float>(max_y);
     for (int i = 0; i < max_y; i++) {
       uchar *rgba = (uchar*)img->data()[0] + i * ld;
       uchar alpha = static_cast<uchar>(i * a);
@@ -170,7 +170,7 @@ void blend_alpha_right(const Fl_RGB_Image *img, int dx) {
   if (dx > 0) {
     int max_x = dx, max_y = img->h();
     int ld = img->ld(); if (ld == 0) ld = img->w() * img->d();
-    float a = 255/max_x;
+    float a = 255.0f/static_cast<float>(max_x);
     for (int i = 0; i < max_x; i++) {
       uchar *rgba = (uchar*)img->data()[0] + (img->w()-i-1) * img->d();
       uchar alpha = static_cast<uchar>(i * a);
@@ -195,7 +195,7 @@ void blend_alpha_bottom(const Fl_RGB_Image *img, int dy) {
   if (dy > 0) {
     int max_x = img->w(), max_y = dy;
     int ld = img->ld(); if (ld == 0) ld = img->w() * img->d();
-    float a = 255/max_y;
+    float a = 255.0f/static_cast<float>(max_y);
     for (int i = 0; i < max_y; i++) {
       uchar *rgba = (uchar*)img->data()[0] + (img->h()-i-1) * ld;
       uchar alpha = static_cast<uchar>(i * a);
@@ -305,7 +305,10 @@ int fl_snapshot(const char *filename, Fl_Widget **w,
   // If scale is set, scale the image
   if (scale != 1.0) {
     Fl_Image::scaling_algorithm(FL_RGB_SCALING_BILINEAR);
-    Fl_RGB_Image *scaled_img = (Fl_RGB_Image*)img->copy(img->w()*scale, img->h()*scale);
+    int scaled_img_w = static_cast<int>(img->w()*scale);
+    int scaled_img_h = static_cast<int>(img->h()*scale);
+    Fl_RGB_Image *scaled_img =
+      static_cast<Fl_RGB_Image*>(img->copy(scaled_img_w, scaled_img_h));
     delete img;
     img = scaled_img;
   }
