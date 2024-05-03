@@ -532,7 +532,8 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 - (void)control_allowed_types:(const char *)p
 {
   NSString *ext = [NSString stringWithUTF8String:p];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_11_0
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_11_0 && \
+    MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_VERSION_11_0
   if (fl_mac_os_version >= 110000) {
     UTType *type = [UTType typeWithFilenameExtension:ext]; // 11.0 + framework UniformTypeIdentifiers
     [dialog setAllowedContentTypes:[NSArray arrayWithObject:type]]; // 11.0
