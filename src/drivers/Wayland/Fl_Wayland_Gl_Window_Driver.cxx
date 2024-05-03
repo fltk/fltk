@@ -357,6 +357,13 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   }
 
   if (egl_surface) {
+    if (pWindow->parent()) {
+      struct wld_window *xid = fl_wl_xid(pWindow);
+      if (xid->frame_cb) return;
+      xid->frame_cb = wl_surface_frame(xid->wl_surface);
+      wl_callback_add_listener(xid->frame_cb, Fl_Wayland_Graphics_Driver::p_surface_frame_listener,
+                               xid);
+    }
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
   }
 }
