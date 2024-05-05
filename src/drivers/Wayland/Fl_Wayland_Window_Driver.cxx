@@ -495,6 +495,7 @@ void Fl_Wayland_Window_Driver::hide() {
     if (Fl_Wayland_Window_Driver::wld_window == wld_win) {
       Fl_Wayland_Window_Driver::wld_window = NULL;
     }
+    if (wld_win->frame_cb) wl_callback_destroy(wld_win->frame_cb); // useful for GL subwins
     free(wld_win);
   }
   delete ip;
