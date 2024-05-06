@@ -47,7 +47,8 @@
 #include <string.h> // for strerror()
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
-  bool fl_is_surface_gtk_titlebar(struct wl_surface *, struct libdecor *, struct wl_display *);
+  bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
+                                        bool *using_GTK);
 }
 
 // set this to 1 for keyboard debug output, 0 for no debug output
@@ -204,11 +205,21 @@ static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
 static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t serial,
         struct wl_surface *surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
   Fl_Window *win = event_coords_from_surface(surface, surface_x, surface_y);
-  if (!win && gtk_shell) { // check that surface is the headerbar of a GTK-decorated window
-    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    if (fl_is_surface_gtk_titlebar(surface, scr_driver->libdecor_context,
-                                   Fl_Wayland_Screen_Driver::wl_display)) {
-      gtk_shell_surface = surface;
+  if (!win && gtk_shell) { // check whether surface is the headerbar of a GTK-decorated window
+    Fl_X *xp = Fl_X::first;
+    bool using_GTK = true;
+    while (xp && using_GTK) { // all mapped windows
+      struct wld_window *xid = (struct wld_window*)xp->xid;
+      if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+          fl_is_surface_from_GTK_titlebar(surface, xid->frame, &using_GTK)) {
+        gtk_shell_surface = surface;
+        break;
+      }
+      xp = xp->next;
+    }
+    if (!using_GTK) {
+      gtk_shell1_destroy(gtk_shell);
+      gtk_shell = NULL;
     }
   }
   if (!win) return;
