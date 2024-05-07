@@ -537,6 +537,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
 
     // calculate the bounding box of the submenu pointer (arrow)
     int sz = (hh-2) & -2;
+    if (sz > 12) sz = 12; // limit arrow size => max(d) = (sz-2)/2 = 5
     int x1 = xx + ww - sz - 2;
     int y1 = yy + (hh-sz)/2 + 1;
 
