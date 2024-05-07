@@ -90,14 +90,15 @@ of all displays of the system (see \ref wayland-output "Fl_Wayland_Screen_Driver
 
 Overall, and ignoring for now OpenGL usage, FLTK interacts with Wayland as follows :
 - When opening the display: FLTK calls \c Fl::add_fd() in \c FL_READ mode to associate
-a  callback function to the socket connecting the client and the compositor.
+a  callback function called \c wayland_socket_callback to the socket connecting the client
+and the compositor.
 - Client to compositor: FLTK calls C functions of the \c libwayland-client.so,
 \c libwayland-cursor.so and \c libxkbcommon.so shared libraries and of the
 libdecor library. These send suitable messages to the compositor writing to the socket.
 The names of these functions begin with \c wl_, \c xkb_ or \c libdecor_.
-- Compositor to client: the callback function runs when there are data to read in the
-socket; it calls \c wl_display_dispatch() which interprets the read data and calls
-corresponding listeners.
+- Compositor to client: the callback function \c wayland_socket_callback runs when there are
+data to read in the socket; it calls \c wl_display_dispatch() which interprets the read data
+and calls corresponding listeners.
 
 The core protocol defines also a number of mostly opaque structures whose names begin with \c wl_.
 The names of symbols and types defined by the other protocols FLTK uses begin with \c xdg_,
@@ -144,8 +145,8 @@ and FreeBSD systems for FLTK to use Wayland. Wayland protocols are packaged as X
 accompanied by a utility program, \c wayland-scanner, able to generate a header file and a
 necessary glue C source file from a given XML file. For example, for FLTK to use the
 <a href=https://wayland.app/protocols/xdg-shell>XDG shell</a> protocol, these commands are
-run at build time to generate a .c file that will be compiled into libfltk
-and a header file that FLTK code will include:
+run at build time to generate a .c file (\c xdg-shell-protocol.c) that will be compiled into
+\c libfltk and a header file (\c xdg-shell-client-protocol.h) that the FLTK code will include:
 \code
 PROTOCOLS=`pkg-config --variable=pkgdatadir wayland-protocols`
 wayland-scanner private-code $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
@@ -162,7 +163,7 @@ and <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>.
 The Wayland platform of FLTK is normally a two-legged hybrid able to use either Wayland or X11
 and to choose between these possibilities at run-time, without any change to the client
 application. The Wayland/X11 hybrid is essentially a version of the FLTK library containing both all
-Wayland-specific and all X11-specific code. That's reflected in file
+Wayland-specific <u>and</u> all X11-specific code. That's reflected in file
 FL/fl_config.h which defines both \c FLTK_USE_WAYLAND and \c FLTK_USE_X11.
 This creates the constraint that Wayland and X11 cannot
 use the same type name for different purposes or the same symbol name.
@@ -201,11 +202,12 @@ The rest of this chapter describes what happens when the Wayland leg has been ch
 \section wayland-listeners Listeners
 
 A Wayland 'listener' is a small array of pointers to FLTK-defined callback functions
-associated to a Wayland-defined object;
-Wayland calls these functions when defined events occur, and transmits relevant information
-to the client app as parameters of these calls. Each listener is associated to its
-corresponding Wayland object, usually right after the object's creation, by a call to a
-specific Wayland function named following the form \c wl_XXX_add_listener().
+associated to a Wayland-defined object, usually right after creation of this object,
+by a call to a specific Wayland function named following the form \c wl_XXX_add_listener().
+After defined events have occurred, the Wayland compositor sends appropriate commands
+to the client through the socket; the event loop detects the availability of data in the
+socket and calls function \c wayland_socket_callback() which itself calls the appropriate
+member of the listener, and transmits relevant information to the client app as parameters of this call.
 For example, this code:
 \code
 static void surface_enter(……) { …… } // called when a surface enters a display
@@ -221,7 +223,7 @@ struct wl_surface *my_wl_surface;
 my_wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
 wl_surface_add_listener(my_wl_surface, &surface_listener, pter_to_data);
 \endcode
-creates a Wayland object of type <tt>struct wl_surface</tt>, and associates it with
+creates a Wayland object of type <tt>struct wl_surface</tt> (roughly, a window), and associates it with
 a 2-member listener called \c surface_listener. After this, Wayland is expected to call
 the 2 listener members, \c surface_enter or \c surface_leave, each time \c my_wl_surface will
 enter or leave, respectively, a display. The arguments of these calls, not detailed here,
@@ -245,14 +247,15 @@ example above, this call returns a pointer to FLTK's \c surface_listener static 
 Establishing a Wayland connection requires environment variable \c XDG_RUNTIME_DIR to be
 defined and to point to a directory containing a socket connected to a Wayland
 compositor. This variable is usually set by the login procedure of Wayland-friendly desktops.
-The name of the Wayland socket is determined as follows:
+Which socket-file to use within that directory is determined as follows:
 - the client may call <tt>Fl::display(const char *display_name)</tt> before
 \c fl_open_display() runs or use the \c -display command line argument and transmit there the
 socket name;
 - environment variable \c WAYLAND_DISPLAY can be defined to the socket name;
 - otherwise, \c "wayland-0" is used.
 
-What socket is selected determines what compositor will be used by the client application.
+Which socket is selected determines the compositor used by the client application: that at the other
+end of the socket.
 
 Function \c Fl_Wayland_Screen_Driver::open_display_platform() establishes the connection to the
 Wayland socket identified above calling \c wl_display_connect(NULL) which returns a
@@ -341,7 +344,7 @@ Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wa
 "has a rectangular area which may be displayed on zero or more displays, present buffers,
 receive user input, and define a local coordinate system". In other words,
 surface is the name Wayland uses for a window.
-Buffers allow the client app to draw to surfaces (see \ref wayland-buffer).
+Buffers allow the client app to define the graphical content of surfaces (see \ref wayland-buffer).
 FLTK creates a surface each time an Fl_Window is show()'n calling function
 \c wl_compositor_create_surface().
 Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
@@ -520,8 +523,9 @@ by the X11 leg of the hybrid Wayland-X11 platform because this leg draws to the 
 an \c Fl_X11_Cairo_Graphics_Driver object which derives from class
 \c Fl_Cairo_Graphics_Driver. Finally, \c Fl_Cairo_Graphics_Driver is also used, in the form of
 an object from its derived class \c Fl_PostScript_Graphics_Driver, when the hybrid Wayland-X11
-platform draws PostScript, or when the classic X11 platform uses Pango and draws PostScript.
-This happens when classes \c Fl_PostScript_File_Device and \c Fl_Printer are used.
+platform draws PDF or PostScript, or when the classic X11 platform uses Pango and draws
+PDF or PostScript. This happens when classes \c Fl_PDF_File_Surface, \c Fl_PostScript_File_Device
+and \c Fl_Printer are used.
 
 
 \section wayland-buffer Wayland buffers
@@ -1133,7 +1137,8 @@ this directory is searched for a potential \c libdecor plugin in the form of a s
 if one is found, FLTK and \c libdecor load it and use it.
 
 The \c libdecor source code bundled in FLTK is identical to that of the \c libdecor repository.
-Nevertheless, FLTK uses this code with some minor changes. For example, except if \c USE_SYSTEM_LIBDECOR
+Nevertheless, FLTK uses this code with some minor changes. For example, except if
+\c FLTK_USE_SYSTEM_LIBDECOR
 is 1, FLTK needs to modify function \c libdecor_new() charged of loading the plugin, to make it use
 the plugin code that is included in libfltk if none is found as a dynamic library. This is done as
 follows in file \c libdecor/build/fl_libdecor.c:
