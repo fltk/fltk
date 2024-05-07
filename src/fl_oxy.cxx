@@ -53,14 +53,22 @@ static void single_arrow(Fl_Rect bb, Fl_Orientation o, Fl_Color col) {
 
   const int lw = 2;       // arrow line width: n means n+1 pixels
 
-  if (o & 1)              // up or down arrow
-    fl_translate(tx, ty - (lw+1)/2);
+  // define translation adjustments for easier maintenance
+
+  static int tr_x =  0;
+  static int tr_y = -1;
+
+  if (o == FL_ORIENT_LEFT)
+    tr_x = 2;
+
+  if (o & 2)              // up or down arrow
+    fl_translate(tx, ty - (lw+1)/2 + tr_y);
   else                    // left or right arrow
-    fl_translate(tx - lw/2 + 1, ty);
+    fl_translate(tx - lw/2 + tr_x, ty);
 
   fl_rotate(angle);
 
-  int x0 = -(dx)/2;
+  int x0 = (-dx)/2;
 
   fl_begin_complex_polygon();
 
@@ -104,7 +112,7 @@ void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
           single_arrow(bb, o, col);
           break;
         default:
-          bb.x(bb.x() - 2);           // shift left
+          bb.x(bb.x() - 1);           // shift left
           bb.w(bb.w() - 4);           // reduce size
           single_arrow(bb, o, col);
           bb.x(bb.x() + 4);           // shift right
@@ -115,7 +123,7 @@ void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
 
     case FL_ARROW_CHOICE:
 
-      bb.y(bb.y() - 2);               // shift upwards
+      // bb.y(bb.y() - 0);            // don't shift upwards (was: -2)
       bb.h(bb.h() - 4);               // reduce size
       single_arrow(bb, FL_ORIENT_UP, col);
       bb.y(bb.y() + 4);               // shift down
