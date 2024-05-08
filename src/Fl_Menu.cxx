@@ -285,17 +285,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   if (selected) {
     Fl_Color r = m ? m->selection_color() : FL_SELECTION_COLOR;
     Fl_Boxtype b = m && m->down_box() ? m->down_box() : FL_FLAT_BOX;
-    if (fl_contrast(r, color) != r) { // back compatibility boxtypes
-      if (selected == 2) { // menu title
-        r = color;
-        b = m ? m->box() : FL_UP_BOX;
-      } else {
-        r = (Fl_Color)(FL_COLOR_CUBE-1); // white
-        l.color = fl_contrast((Fl_Color)labelcolor_, r);
-      }
-    } else {
-      l.color = fl_contrast((Fl_Color)labelcolor_, r);
-    }
+    l.color = fl_contrast((Fl_Color)labelcolor_, r);
     if (selected == 2) { // menu title
       fl_draw_box(b, x, y, w, h, r);
       x += 3;

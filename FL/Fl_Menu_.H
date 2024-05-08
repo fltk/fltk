@@ -228,9 +228,7 @@ public:
 
   /**
     This box type is used to surround the currently-selected items in the
-    menus.  If this is FL_NO_BOX then it acts like
-    FL_THIN_UP_BOX and selection_color() acts like
-    FL_WHITE, for back compatibility.
+    menus. 
   */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   /** Sets the box type used to surround the currently-selected items in the menus.  */
