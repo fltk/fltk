@@ -383,6 +383,7 @@ int Fl_Tree::handle(int e) {
     case FL_PUSH: {             // clicked on tree
       last_my = Fl::event_y();  // save for dragging direction..
       if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
+      if ( ! _root ) return(ret); // issue #971
       Fl_Tree_Item *item = _root->find_clicked(_prefs, 0);
       // Tell FL_DRAG what was pushed
       _lastpushed = item ? item->event_on_collapse_icon(_prefs) ? PUSHED_OPEN_CLOSE  // open/close icon clicked
