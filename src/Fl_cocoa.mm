@@ -1370,8 +1370,13 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     W = window->w();
     H = window->h();
   } else if (Fl_Cocoa_Window_Driver::driver(window)->through_resize()) {
-    X = window->x();
-    Y = window->y();
+    if (window->parent()) {
+      X = window->x();
+      Y = window->y();
+    } else {
+      // Recalculate the FLTK position from the current Cocoa position
+      CocoatoFLTK(window, X, Y);
+    }
     W = window->w();
     H = window->h();
   } else {
