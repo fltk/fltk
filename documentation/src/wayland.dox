@@ -264,10 +264,10 @@ that allows the FLTK display opening procedure of the Wayland/X11 hybrid to reco
 access is not possible and to fallback to X11.
 
 Then, function \c wl_registry_add_listener() associates a 2-member listener, whose 1st member,
-\c registry_handle_global(), will be called by Wayland a number of times to indicate each time a protocol
-supported by the compositor or a system feature such as displays and keyboards.
-This code allows to run the client until all calls to \c registry_handle_global() have
-occurred:
+\c registry_handle_global(), will be called by Wayland a number of times to indicate each time
+a protocol supported by the compositor or a system feature such as displays and keyboards.
+
+FLTK runs this code to receive calls to \c registry_handle_global():
 \code
 static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
   *(struct wl_callback **)data = NULL;
@@ -289,8 +289,8 @@ member function, \c sync_done(), after all calls to \c registry_handle_global() 
 occurred. Function \c sync_done() sets to null variable \c registry_cb and destroys
 the \c wl_callback.
 Finally, function \c wl_display_dispatch() is called as long as variable \c registry_cb is
-not null. This makes Wayland process all its pending requests until \c sync_done() runs.
-
+not null. Thus, when \c sync_done() runs, FLTK has received all due calls to
+\c registry_handle_global().
 
 The prototype of function \c registry_handle_global is:
 \code
@@ -298,12 +298,32 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
            uint32_t id, const char *interface, uint32_t version)
 \endcode
 Each time Wayland calls \c registry_handle_global(), \c interface and \c version give the name
-and version of a component or feature of the Wayland system. It's necessary to call each time function
+and version of a component or feature of the Wayland system.
+Here is the list of the \c interface value for all protocols and system features FLTK uses:
+<table>
+ <tr><th>interface  </th><th> use</th> </tr>
+ <tr><td>wl_compositor </td><td> create wl_surface objects </td> </tr>
+ <tr><td>wl_subcompositor </td><td>create subwindows </td> </tr>
+ <tr><td>wl_shm </td><td> create buffers and buffer factories</td> </tr>
+ <tr><td>wl_seat </td><td> create the unique "seat"</td> </tr>
+ <tr><td>wl_data_device </td><td> support of copy/paste/drag-n-drop</td> </tr>
+ <tr><td>wl_output </td><td>received once for each display </td> </tr>
+ <tr><td>xdg_wm_base </td><td>create mapped windows </td> </tr>
+ <tr><td>gtk_shell1 </td><td>signals Mutter is in use + titlebar gestures</td> </tr>
+ <tr><td>weston_desktop_shell </td><td> signals Weston is in use</td></tr>
+ <tr><td>org_kde_plasma_shell </td><td> signals KDE/Plasma is in use</td></tr>
+ <tr><td>zwp_text_input_manager_v3 </td><td>interface with Text Input Methods </td></tr>
+ <tr><td>zxdg_decoration_manager_v1 </td><td>select between CSD and SSD modes </td></tr>
+</table>
+Wayland compositors typically support several other protocols (e.g., \c zxdg_output_manager_v1)
+that FLTK does not use.
+
+Each time \c registry_handle_global runs with an \c interface from the table above, FLTK calls
 \c wl_registry_bind() which returns a pointer to a Wayland structure that will be the client's access
 point to the corresponding Wayland protocol or system feature. This pointer is stored in a dedicated
 member variable of the unique \c Fl_Wayland_Screen_Driver object of an FLTK app, or of another object
 accessible from this object.
-For example, when \c interface equals "wl_compositor", the value returned by
+For example, when \c interface equals \c "wl_compositor", the value returned by
 \c wl_registry_bind() is stored as member \c wl_compositor of the
 \c Fl_Wayland_Screen_Driver object.
 \c registry_handle_global() also identifies whether the Mutter, Weston, or KWin compositor is connected
@@ -342,19 +362,22 @@ and in overridden functions \c Fl_Wayland_Screen_Driver::poll_or_select_with_del
 
 Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wayland surface
 "has a rectangular area which may be displayed on zero or more displays, present buffers,
-receive user input, and define a local coordinate system". In other words,
+receive user input, and define a local coordinate system". In short,
 surface is the name Wayland uses for a window.
 Buffers allow the client app to define the graphical content of surfaces (see \ref wayland-buffer).
 FLTK creates a surface each time an Fl_Window is show()'n calling function
 \c wl_compositor_create_surface().
 Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
 gives the \c Fl_Window* corresponding to the surface given in argument.
-FLTK recognizes 4 distinct
-kinds of surfaces named DECORATED, UNFRAMED, POPUP and SUBWINDOW.
-DECORATED are toplevel windows with a titlebar. UNFRAMED have no titlebar. POPUP correspond to menus
-and tooltips, SUBWINDOW to an Fl_Window embedded in another Fl_Window. Function
-\c Fl_Wayland_Window_Driver::makeWindow() creates all these surfaces, creates for each a record of
-type <tt>struct wld_window</tt> (see \ref wld_window), and stores the window kind in
+
+FLTK recognizes 4 mutually exclusive kinds of surfaces :
+- DECORATED are toplevel windows with a titlebar;
+- UNFRAMED are toplevel windows without titlebar;
+- POPUP correspond to menus and tooltips;
+- SUBWINDOW correspond to an Fl_Window embedded in another Fl_Window.
+
+Function \c Fl_Wayland_Window_Driver::makeWindow() creates all these surfaces, creates for each
+a record of type <tt>struct wld_window</tt> (see \ref wld_window), and stores the window kind in
 member variable \c kind of this record. Member variable \c xid of the window's \c Fl_X record stores
 the adress of this record.
 
@@ -713,7 +736,7 @@ stores the access point to the linked list of \c wl_buffer objects that will be 
 the \c wl_shm_pool.
 - A variable named \c chunk_offset represents the offset within the pool's shared
 memory available for the buffer being constructed. It equals 0 when the pool has just been
-created and is updated as detailed below when one or more buffers have been previously created
+created and is updated as detailed below each time a buffer is created
 from the pool. A record of type  <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> is created. This record will
 contain (member \c wl_buffer) the address of a \c wl_buffer object that's created by function
 \c wl_shm_pool_create_buffer(). This \c wl_buffer object encapsulates a section of a given
