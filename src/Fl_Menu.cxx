@@ -526,10 +526,10 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   if (m->submenu()) {
 
     // calculate the bounding box of the submenu pointer (arrow)
-    int sz = (hh-2) & -2;
-    if (sz > 12) sz = 12; // limit arrow size => max(d) = (sz-2)/2 = 5
-    int x1 = xx + ww - sz - 2;
-    int y1 = yy + (hh-sz)/2 + 1;
+    int sz = ((hh-2) & (-2)) + 1 ;  // must be odd for better centering
+    if (sz > 13) sz = 13;           // limit arrow size
+    int x1 = xx + ww - sz - 2;      // left border
+    int y1 = yy + (hh-sz)/2 + 1;    // top border
 
     // draw an arrow whose style depends on the active scheme
     fl_draw_arrow(Fl_Rect(x1, y1, sz, sz), FL_ARROW_SINGLE, FL_ORIENT_RIGHT, fl_color());

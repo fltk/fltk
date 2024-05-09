@@ -62,7 +62,7 @@ void Fl_Counter::arrow_widths(int &w1, int &w2) {
     w2 = w() * 17/100;
   }
   // limit arrow box sizes to reserve more space for the text box
-  if (w1 > 18) w1 = 18;
+  if (w1 > 13) w1 = 13;
   if (w2 > 24) w2 = 24;
 }
 
