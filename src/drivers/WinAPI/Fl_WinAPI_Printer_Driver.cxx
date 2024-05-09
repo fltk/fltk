@@ -135,7 +135,7 @@ int Fl_PDF_File_Surface::begin_document(const char* defaultfilename,
 int Fl_PDF_GDI_File_Surface::begin_job(const char *defaultfname, char **perr_message) {
   int err = 0;
   abortPrint = FALSE;
-  
+
   HANDLE hPr2;
   err = OpenPrinterA(pdf_printer_name_, &hPr2, NULL);
   if (err == 0) {
@@ -333,7 +333,7 @@ void Fl_PDF_GDI_File_Surface::end_job(void)
       if (EndDoc (hPr) <= 0) {
         fl_message ("Error in EndDoc() call");
       }
-      int err = DeleteDC (hPr);
+      DeleteDC (hPr);
     }
     hPr = NULL;
   }
