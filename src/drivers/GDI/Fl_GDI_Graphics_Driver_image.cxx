@@ -735,7 +735,7 @@ void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int
  this color value in need_pixmap_bg_color. As a result, the transparent areas of the image
  are correcty handled by the printing operation. Variable need_pixmap_bg_color is ultimately
  reset to 0.
- Fl_GDI_Graphics_Driver::make_unused_color_() which does the color computation mentionned
+ Fl_GDI_Graphics_Driver::make_unused_color_() which does the color computation mentioned
  above is implemented in file src/fl_draw_pixmap.cxx
  */
 void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {

@@ -206,8 +206,8 @@ associated to a Wayland-defined object, usually right after creation of this obj
 by a call to a specific Wayland function named following the form \c wl_XXX_add_listener().
 After defined events have occurred, the Wayland compositor sends appropriate commands
 to the client through the socket; the event loop detects the availability of data in the
-socket and calls function \c wayland_socket_callback() which itself calls the appropriate
-member of the listener, and transmits relevant information to the client app as parameters of this call.
+socket and calls function \c wayland_socket_callback(); this function calls the appropriate
+member of the listener and transmits relevant information to the client app as parameters of this call.
 For example, this code:
 \code
 static void surface_enter(……) { …… } // called when a surface enters a display
@@ -829,7 +829,7 @@ The effect of value \c n of variable \c wld_scale is
 that 1 Wayland graphics unit represents a block of \c nxn pixels.
 Another effect is that a drawing buffer for a surface of size WxH units
 contains <tt>W * n * H * n * 4</tt> bytes.
-Member function \c output_scale() mentionned above sets this value for
+Member function \c output_scale() mentioned above sets this value for
 each system's display at startup time. Member function \c
 Fl_Wayland_Graphics_Driver::buffer_commit() informs the Wayland compositor
 of the value of \c wld_scale calling \c wl_surface_set_buffer_scale()
@@ -870,13 +870,15 @@ is unmapped by function \c Fl_Wayland_Window_Driver::hide(), the surface's list 
 is emptied.
 
 <h3>Fractional scaling</h3>
-The KWin compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
-that can take intermediate values between 100% and 200%. Wayland implements this rendering all
-<tt>wl_surface</tt>'s as if the scaling was at 200%, and downsizing them
+The KWin and gnome compositors allow to use <em>fractional scaling</em>
+that can take values between 100% and 400% that are not a multiple of 100%.
+Wayland implements this rendering all <tt>wl_surface</tt>'s as if the scaling had
+the next value above that is a multiple of 100% (e.g., 175% --> 200%), and downsizing them
 to the desired fractional scale value at the compositing stage.
-Seen from FLTK, everything runs as when <tt>wld_scale = 2</tt>.
+Seen from FLTK, everything runs with <tt>wld_scale</tt> having an integer value (1, 2, 3 or 4).
 
-These commands make gnome accept fractional scaling, and turn that off:
+Some gnome versions may natively support fractional scaling. Others require to use these commands
+to make them accept/refuse fractional scaling:
 \code
 gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 gsettings reset org.gnome.mutter experimental-features
@@ -921,13 +923,13 @@ protocol calling \c registry_handle_global() with its \c interface argument equa
 \c "gtk_shell1". FLTK initializes then a static global variable \c gtk_shell of type
 <tt>struct gtk_shell1*</tt>.
 
-Member functions of \c pointer_listener mentionned above run for all mouse events
+Member functions of \c pointer_listener mentioned above run for all mouse events
 on all \c wl_surface objects. The table above describes what these functions do for
 mouse events on FLTK-created \c wl_surface objects. But they also run for the
 libdecor-created \c wl_surface objects corresponding to window titlebars.
 Thus, member function \c pointer_enter() runs when the mouse enters a titlebar.
 It calls \c Fl_Wayland_Screen_Driver::event_coords_from_surface() which calls
-\c Fl_Wayland_Window_Driver::surface_to_window() which, as mentionned above, can
+\c Fl_Wayland_Window_Driver::surface_to_window() which, as mentioned above, can
 distinguish FLTK-created from non FLTK-created \c wl_surface objects.
 This allows \c pointer_enter() to identify the entered surface as a titlebar
 and to assign static global variable \c gtk_shell_surface
@@ -1041,7 +1043,7 @@ gets associated to a standard cursor or to a new custom cursor.
 
 \section wayland-text Keyboard support
 
-The "Mouse handling" section above mentionned function \c seat_capabilities() that Wayland calls when
+The "Mouse handling" section above mentioned function \c seat_capabilities() that Wayland calls when
 the app discovers its "seat". Presence of flag \c WL_SEAT_CAPABILITY_KEYBOARD in argument
 \c capabilities of this function indicates that a keyboard is available. In that case, a call
 to \c wl_seat_get_keyboard() returns a pointer stored in member \c wl_keyboard of the
@@ -1049,16 +1051,16 @@ to \c wl_seat_get_keyboard() returns a pointer stored in member \c wl_keyboard o
 and a call to \c wl_keyboard_add_listener() installs a 6-member listener of type
 <tt>struct wl_keyboard_listener</tt>. These 6 FLTK-defined, callback functions are used as follows.
 
-Function \c wl_keyboard_keymap() runs when the app starts and also if the keyboard layout
+1) Function \c wl_keyboard_keymap() runs when the app starts and also if the keyboard layout
 is changed during run-time. It allows initialization of access to this keyboard.
 Noticeably, member \c xkb_state of type <tt>struct xkb_state*</tt> of the current
 \ref wayland-seat "Fl_Wayland_Screen_Driver::seat" record is adequately initialized.
 
-Functions \c wl_keyboard_enter() and \c wl_keyboard_leave(), called when focus enters and
+2-3) Functions \c wl_keyboard_enter() and \c wl_keyboard_leave(), called when focus enters and
 leaves a surface, send \c FL_FOCUS and \c FL_UNFOCUS events to the \c Fl_Window object corresponding
 to this surface.
 
-Function \c wl_keyboard_key() runs each time a keyboard key is pressed or released. Its argument \c key,
+4) Function \c wl_keyboard_key() runs each time a keyboard key is pressed or released. Its argument \c key,
 to which 8 must be added, provides the keycode via function \c xkb_state_key_get_one_sym() and then the
 corresponding text via function \c xkb_state_key_get_utf8() which is put in \c Fl::e_text.
 Then, a few calls to functions whose name begin with \c xkb_compose_ are necessary to support
@@ -1067,11 +1069,11 @@ the appropriate \c Fl_Window. Also, function \c wl_keyboard_key() uses global va
 <tt>Fl_Int_Vector key_vector</tt> to record all currently pressed keys. This is the base of the
 implementation of \c Fl_Wayland_Screen_Driver::event_key(int).
 
-Function \c wl_keyboard_modifiers() runs when a modifier key (e.g., shift, control) is pressed or
+5) Function \c wl_keyboard_modifiers() runs when a modifier key (e.g., shift, control) is pressed or
 released. Calls to functions \c xkb_state_update_mask() and \c xkb_state_mod_name_is_active() allow FLTK
 to set \c Fl::e_state adequately.
 
-Function \c wl_keyboard_repeat_info() does not run, for now, because this would require version 4 of
+6) Function \c wl_keyboard_repeat_info() does not run, for now, because this would require version 4 of
 the <tt>wl_keyboard</tt> object which is at version 2 in all tested Wayland compositors.
 
 
@@ -1091,22 +1093,25 @@ Next, a call to \c zwp_text_input_v3_add_listener() associates this \c text_inpu
 listener of type <tt>struct zwp_text_input_v3_listener</tt>. These 6 FLTK-defined, callback functions
 are used as follows.
 
-Functions \c text_input_enter() and \c text_input_leave() are called when text input enters or leaves a
-surface (which corresponds to an \c Fl_Window).
+1-2) Functions \c text_input_enter() and \c text_input_leave() run when text input enters or leaves a
+surface.
 
-Functions \c text_input_preedit_string() and \c text_input_commit_string() are called when the text
-input method asks the client app to insert 'marked' text or regular text, respectively.
+3-4) Functions \c text_input_preedit_string() and \c text_input_commit_string() are called when the
+text input method prepares the client app to later insert 'marked' text or regular text, respectively.
 Complex text input often begins by inserting temporary text which is said to be 'marked' before
 replacing it with the text that will stay in the document. FLTK underlines marked text
 to distinguish it from regular text.
 
-Functions \c text_input_delete_surrounding_text() and \c text_input_done() have
-no effect at present, without this preventing input methods that have been tested
-with FLTK from working satisfactorily.
+5) Function \c text_input_done() runs when it's time to send either regular or marked text
+to the client app. This is done by function \c send_text_to_fltk() which uses static variables
+\c current_pre_edit, \c pending_pre_edit and \c pending_commit to determine the sent text.
 
-It's necessary to inform text input methods of the current location of the insertion point in the
-active surface. This information allows them to map their auxiliary windows next to the insertion
-point, where they are expected to appear. The flow of information on this topic is as follows:
+6) Function \c text_input_delete_surrounding_text() has no effect at present, without this preventing
+input methods that have been tested with FLTK from working satisfactorily.
+
+It's necessary to inform the running text input method of the current location of the insertion
+point in the active surface. This information allows the input method to map its auxiliary window
+close to the insertion point. The flow of information on this topic is as follows:
 - The two FLTK widgets supporting text input, Fl_Input_ and Fl_Text_Display, transmit to FLTK the window
 coordinates of the bottom of the current insertion point and the line height each time they change
 calling function \c fl_set_spot().
