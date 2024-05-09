@@ -187,14 +187,16 @@ in section 2.1 of file README.Unix.txt :
 - wayland-protocols
 - libxkbcommon-dev
 - libxinerama-dev <== except if option FLTK_BACKEND_X11=off is used
-- libdbus-1-dev  <== recommended to query current cursor theme
-- libglew-dev    <== necessary to use OpenGL version 3 or above
-- cmake          <== if you plan to build with CMake
-- cmake-qt-gui   <== if you plan to use the GUI of CMake
+- libdbus-1-dev   <== recommended to query current cursor theme
+- libglew-dev     <== necessary to use OpenGL version 3 or above
+- cmake           <== if you plan to build with CMake
+- cmake-qt-gui    <== if you plan to use the GUI of CMake
+- libdecor-0-dev  <== recommended if available and if in version ≥ 0.2.0
+- libgtk-3-dev    <== highly recommended if libdecor-0-dev is not installed
 
 These packages allow to run FLTK apps under the Gnome-Wayland desktop:
 - gnome-core
-- libgtk-3-dev   <== highly recommended, gives windows a Gnome-style titlebar
+- libdecor-0-plugin-1-gtk <== install if libdecor-0-dev is installed
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
@@ -217,11 +219,12 @@ package groups listed in section 2.2 of file README.Unix.txt :
 - libxkbcommon-devel
 - pango-devel
 - mesa-libGLU-devel
-- dbus-devel   <== recommended to query current cursor theme
-- gtk3-devel   <== highly recommended, gives windows a GTK-style titlebar
-- glew-devel   <== necessary to use OpenGL version 3 or above
-- cmake        <== if you plan to build with CMake
-- cmake-gui    <== if you plan to use the GUI of CMake
+- dbus-devel     <== recommended to query current cursor theme
+- libdecor-devel <== recommended, draws window titlebars
+- gtk3-devel     <== highly recommended if libdecor-devel is not installed
+- glew-devel     <== necessary to use OpenGL version 3 or above
+- cmake          <== if you plan to build with CMake
+- cmake-gui      <== if you plan to use the GUI of CMake
 
 Package installation command: sudo yum install <package-name ...>
 
