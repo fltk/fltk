@@ -833,6 +833,27 @@ static void use_FLTK_toplevel_configure_cb(struct libdecor_frame *frame) {
 #endif // LIBDECOR_MR131
 
 
+// does win entirely cover its parent ?
+static void does_window_cover_parent(Fl_Window *win) {
+  Fl_Window *parent = win->window();
+  fl_wl_xid(parent)->covered = (win->x() <= 0 && win->y() <= 0 &&
+                                win->w() >= parent->w() && win->h() >= parent->h());
+}
+
+
+// recursively explore all shown subwindows in a window and call f for each
+static void scan_subwindows(Fl_Group *g, void (*f)(Fl_Window *)) {
+  for (int i = 0; i < g->children(); i++) {
+    Fl_Widget *o = g->child(i);
+    if (o->as_window()) {
+      if (!o->as_window()->shown()) continue;
+      f(o->as_window());
+    }
+    if (o->as_group()) scan_subwindows(o->as_group(), f);
+  }
+}
+
+
 static void handle_configure(struct libdecor_frame *frame,
      struct libdecor_configuration *configuration, void *user_data)
 {
@@ -891,6 +912,9 @@ static void handle_configure(struct libdecor_frame *frame,
         libdecor_frame_set_max_content_size(frame, width, height);
       }
     } else { width = height = 0; }
+  }
+  if (is_2nd_run && Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER) {
+    scan_subwindows(window->fl_win, does_window_cover_parent); // issue #878
   }
 
   if (window->fl_win->fullscreen_active() &&
@@ -1741,27 +1765,6 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
 }
 
 
-// does win entirely cover its parent ?
-static void does_window_cover_parent(Fl_Window *win) {
-  Fl_Window *parent = win->window();
-  fl_wl_xid(parent)->covered = (win->x() <= 0 && win->y() <= 0 &&
-                                win->w() >= parent->w() && win->h() >= parent->h());
-}
-
-
-// recursively explore all shown subwindows in a window and call f for each
-static void scan_subwindows(Fl_Group *g, void (*f)(Fl_Window *)) {
-  for (int i = 0; i < g->children(); i++) {
-    Fl_Widget *o = g->child(i);
-    if (o->as_window()) {
-      if (!o->as_window()->shown()) continue;
-      f(o->as_window());
-    }
-    if (o->as_group()) scan_subwindows(o->as_group(), f);
-  }
-}
-
-
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   struct wld_window *fl_win = fl_wl_xid(pWindow);
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
@@ -1851,11 +1854,6 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
 
   if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface)
       checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
-
-  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
-    fl_win && is_a_resize && fl_win->kind == DECORATED) { // fix for issue #878
-    scan_subwindows(pWindow, does_window_cover_parent);
-  }
 }
 
 
