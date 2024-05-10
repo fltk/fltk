@@ -969,7 +969,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     # CXXFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CXXFLAGS"
     LDFLAGS="-mwindows $LDFLAGS"
     DSOFLAGS="-mwindows $DSOFLAGS"
-    LIBS="$LIBS -lole32 -luuid -lcomctl32 -lws2_32"
+    LIBS="$LIBS -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool"
 
     BUILD="WIN"
     AS_IF([test "x$with_optim" = x], [
