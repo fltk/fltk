@@ -1285,7 +1285,7 @@ For example, \c Fl_Wayland_Window_Driver::flush() needs to call
 Defined in \c Fl_Wayland_Window_Driver.H. One such record is created
 for each shown()'n Fl_Window by \c Fl_Wayland_Window_Driver::makeWindow().
 Function \c fl_wl_xid(Fl_Window*) returns a pointer to the <tt>struct wld_window</tt> of its argument.
-<pre>
+\code
 struct wld_window {
   Fl_Window *fl_win;
   struct wl_list outputs; // linked list of displays where part or whole of window maps
@@ -1312,7 +1312,7 @@ struct wld_window {
   int state; // indicates whether window is fullscreen, maximized. Used otherwise for POPUPs
   bool covered; // specially for Mutter and issue #878
 }
-</pre>
+\endcode
 
 \anchor draw_buffer
 <h3>struct Fl_Wayland_Graphics_Driver::draw_buffer</h3>
@@ -1321,7 +1321,7 @@ One such record is created when an Fl_Image_Surface object is created.
 One such record is also embedded inside each
 <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record (see \ref wld_buffer).
 
-<pre>
+\code
 struct Fl_Wayland_Graphics_Driver::draw_buffer {
   unsigned char *buffer; // address of the beginning of the Cairo image surface's byte array
   cairo_t *cairo_; // used when drawing to the Cairo image surface
@@ -1329,7 +1329,7 @@ struct Fl_Wayland_Graphics_Driver::draw_buffer {
   int stride; // bytes per line
   int width; // in pixels
 };
-</pre>
+\endcode
 FLTK gives offscreen buffers the platform-dependent type \c Fl_Offscreen which is
 in fact member \c cairo_ of <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer</tt>.
 Thus, a variable with type \c Fl_Offscreen needs be cast to type \c cairo_t*.
@@ -1343,9 +1343,9 @@ Defined in file \c Fl_Wayland_Graphics_Driver.H.
 One such record is created by \c Fl_Wayland_Graphics_Driver::create_wld_buffer() when
 an Fl_Window is show()'n or resized, when a custom cursor shape is created, or when
 text is dragged.
-<pre>
+\code
 struct Fl_Wayland_Graphics_Driver::wld_buffer {
-  struct draw_buffer draw_buffer; // see \ref draw_buffer
+  struct draw_buffer draw_buffer; // see draw_buffer
   struct wl_list link; // links all buffers from the same wl_shm_pool
   struct wl_buffer *wl_buffer; // the Wayland buffer
   void *data; // address of the beginning of the Wayland buffer's byte array
@@ -1354,7 +1354,7 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer {
   bool in_use; // true while being committed
   bool released; // true after buffer_release() was called
 };
-</pre>
+\endcode
 
 \anchor wayland-output
 <h3>struct Fl_Wayland_Screen_Driver::output</h3>
@@ -1368,7 +1368,7 @@ an identifier of this linked list is stored in member \c outputs of the unique
   struct wl_list list_of_all_displays = scr_driver->outputs;
 \endcode
 gives access, the Wayland way, to the linked list of displays in the system.
-<pre>
+\code
 struct Fl_Wayland_Screen_Driver::output { // one record for each display
   uint32_t id; // an identifier of the display
   int x, y; // logical position of the top-left of display
@@ -1381,7 +1381,7 @@ struct Fl_Wayland_Screen_Driver::output { // one record for each display
   bool done; // true means record members have been initialized
   struct wl_list link; // links these records together
 };
-</pre>
+\endcode
 It's possible to get the FLTK-defined record associated to a display from the
 Wayland-associated object for the same display, say <tt>struct wl_output *wl_output</tt>,
 by this call:
@@ -1393,7 +1393,7 @@ Defined in file \c Fl_Wayland_Screen_Driver.H. One record is created by
 function \c registry_handle_global() when it receives a \c "wl_seat" or
 \c wl_data_device_manager_interface.name interface. A pointer to this struct is stored in member
 \c seat of the client's unique \c Fl_Wayland_Screen_Driver object.
-<pre>
+\code
 struct Fl_Wayland_Screen_Driver::seat {
   struct wl_seat *wl_seat;
   struct wl_pointer *wl_pointer;
@@ -1418,7 +1418,7 @@ struct Fl_Wayland_Screen_Driver::seat {
   char *name;
   struct zwp_text_input_v3 *text_input;
 };
-</pre>
+\endcode
 
 
 \section wayland-doc Documentation resources
