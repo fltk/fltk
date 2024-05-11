@@ -1586,6 +1586,35 @@ int fl_handle(const XEvent& thisevent)
     if ((Atom)(data[0]) == WM_DELETE_WINDOW) {
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
+      /*
+       Excerpt from the XDND protocol at https://www.freedesktop.org/wiki/Specifications/XDND/ :
+       - data.l[0] contains the XID of the source window.
+       - data.l[1]:
+           Bit 0 is set if the source supports more than three data types.
+           The high byte contains the protocol version to use (minimum of the source's and 
+           target's highest supported versions). The rest of the bits are reserved for future use.
+       - data.l[2,3,4] contain the first three types that the source supports. Unused slots are set
+           to None. The ordering is arbitrary.
+       
+       If the Source supports more than three data types, bit 0 of data.l[1] is set. This tells the
+         Target to check the property XdndTypeList on the Source window for the list of available
+         types. This property should contain all the available types.
+       
+       BUT wayland gnome apps (e.g., gnome-text-editor) set bit 0 of data.l[1]
+       even though their source supports 2 data types (UTF8 text + a gnome-specific type)
+       and put None (==0) in each of data.l[2,3,4].
+       The same gnome apps run in X11 mode (GDK_BACKEND=x11) clear bit 0 of data.l[1]
+       and support only UTF8 text announced in data.l[2].
+       FLTK wayland apps set bit 0 of data.l[1] and support only UTF8 text.
+       
+       Overall, the correct procedure is
+       if (bit 0 of data.l[1] is set) {
+         get the XdndTypeList property
+         use all the data types it returns which can be in any number ≥ 1
+       } else {
+         the source supports 1, 2 or 3 data types available at data.l[2,3,4]
+       }
+       */
 #if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
 #endif // FLTK_CONSOLIDATE_MOTION
