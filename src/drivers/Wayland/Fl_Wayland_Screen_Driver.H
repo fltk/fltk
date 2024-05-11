@@ -63,6 +63,7 @@ public:
     struct xkb_compose_state *xkb_compose_state;
     char *name;
     struct zwp_text_input_v3 *text_input;
+    struct gtk_shell1 *gtk_shell;
   };
   struct output { // one record for each screen
     uint32_t id;

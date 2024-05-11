@@ -920,7 +920,7 @@ setting, FLTK implements part of the
 <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a> protocol as follows.
 Mutter, gnome's Wayland compositor, declares its support of the <tt>GTK Shell</tt>
 protocol calling \c registry_handle_global() with its \c interface argument equal to
-\c "gtk_shell1". FLTK initializes then a static global variable \c gtk_shell of type
+\c "gtk_shell1". FLTK initializes then member variable \c seat->gtk_shell of type
 <tt>struct gtk_shell1*</tt>.
 
 Member functions of \c pointer_listener mentioned above run for all mouse events
@@ -939,7 +939,7 @@ when the mouse leaves this titlebar. When there's a click on a titlebar,
 member function \c pointer_button() runs this code
 \code
   if (gtk_shell_surface && state == WL_POINTER_BUTTON_STATE_PRESSED && button == BTN_MIDDLE) {
-    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell, gtk_shell_surface);
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(seat->gtk_shell, gtk_shell_surface);
     gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat, GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
     gtk_surface1_release(gtk_surface);
     return;

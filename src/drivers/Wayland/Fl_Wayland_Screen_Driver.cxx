@@ -91,7 +91,6 @@ struct pointer_output {
 
 
 static Fl_Int_Vector key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
-static struct gtk_shell1 *gtk_shell = NULL;
 static struct wl_surface *gtk_shell_surface = NULL;
 
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
@@ -204,10 +203,11 @@ static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
 
 static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t serial,
         struct wl_surface *surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   Fl_Window *win = event_coords_from_surface(surface, surface_x, surface_y);
-  if (!win && gtk_shell) { // check whether surface is the headerbar of a GTK-decorated window
+  static bool using_GTK = true;
+  if (!win && seat->gtk_shell && using_GTK) { // check whether surface is the headerbar of a GTK-decorated window
     Fl_X *xp = Fl_X::first;
-    bool using_GTK = true;
     while (xp && using_GTK) { // all mapped windows
       struct wld_window *xid = (struct wld_window*)xp->xid;
       if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
@@ -217,17 +217,11 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
       }
       xp = xp->next;
     }
-    if (!using_GTK) {
-      gtk_shell1_destroy(gtk_shell);
-      gtk_shell = NULL;
-    }
   }
   if (!win) return;
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
-  struct Fl_Wayland_Screen_Driver::seat *seat =
-    (struct Fl_Wayland_Screen_Driver::seat*)data;
   Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor);
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
@@ -289,7 +283,7 @@ static void pointer_button(void *data,
     (struct Fl_Wayland_Screen_Driver::seat*)data;
   if (gtk_shell_surface && state == WL_POINTER_BUTTON_STATE_PRESSED &&
       button == BTN_MIDDLE) {
-    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(gtk_shell,
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(seat->gtk_shell,
                                                                   gtk_shell_surface);
     gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat,
                                   GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
@@ -1264,7 +1258,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::MUTTER;
     //fprintf(stderr, "Running the Mutter compositor\n");
     if ( version >= 5) {
-      gtk_shell = (struct gtk_shell1*)wl_registry_bind(wl_registry, id,
+      scr_driver->seat->gtk_shell = (struct gtk_shell1*)wl_registry_bind(wl_registry, id,
                                                   &gtk_shell1_interface, 5);
     }
   } else if (strcmp(interface, "weston_desktop_shell") == 0) {

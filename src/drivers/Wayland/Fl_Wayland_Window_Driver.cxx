@@ -22,6 +22,7 @@
 #include <wayland-cursor.h>
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"
+#include "gtk-shell-client-protocol.h"
 #include <pango/pangocairo.h>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Tooltip.H>
@@ -1513,6 +1514,12 @@ void Fl_Wayland_Window_Driver::makeWindow()
       Fl_Wayland_Window_Driver *top_dr = Fl_Wayland_Window_Driver::driver(first_xid->fl_win);
       if (top_dr->xdg_toplevel()) xdg_toplevel_set_parent(new_window->xdg_toplevel,
                                                           top_dr->xdg_toplevel());
+    }
+    if (scr_driver->seat->gtk_shell && pWindow->modal()) {
+      struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(scr_driver->seat->gtk_shell,
+                                                                    new_window->wl_surface);
+      gtk_surface1_set_modal(gtk_surface);
+      gtk_surface1_release(gtk_surface);
     }
   }
 
