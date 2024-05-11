@@ -61,6 +61,19 @@
 
 #else /* FL_DOXYGEN */
 
+// If FL_NO_DEPRECATED is defined FLTK 1.4 can compile 1.3.x code without
+// issuing several "deprecated" warnings (1.3 "compatibility" mode).
+// FL_DEPRECATED will be defined as a no-op.
+
+// If FL_NO_DEPRECATED is not defined (default) FLTK 1.4 will issue several
+// "deprecated" warnings depending on the compiler in use: FL_DEPRECATED
+// will be defined according to the capabilities of the compiler (below).
+// The definition below this comment must match the one at the end of this file.
+
+#if defined(FL_NO_DEPRECATED)
+#define FL_DEPRECATED(msg, func) func
+#endif
+
 #ifdef __cplusplus
 
 /*
