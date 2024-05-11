@@ -70,25 +70,30 @@ FLTK source code and also X11-specific source code conceived for FLTK 1.3
 should run with a Wayland-enabled FLTK 1.4 library with this single change.
 
 
-Caveat: when building a user project with the requirement to use CMake
-version 3.4 or higher, i.e. using
+Note 1: this may require some linker flags to enable exporting symbols
+from *executable* programs which FLTK uses to "read" the global symbol
+'fl_disable_wayland'. For for GNU `ld` or any GNU compiler this would
+be "-rdynamic".
+
+
+Note 2: When building a user project with CMake 3.4 or higher, i.e. using
 
   cmake_minimum_required (VERSION 3.4)
 
 or any higher (minimum) CMake version users need to use at least one of
-the following options:
+the following techniques:
 
 Option 1: Set target property 'ENABLE_EXPORTS' on all executable
-          targets that require it to disable the Wayland backend.
+          targets that require to disable the Wayland backend.
           This is the preferred solution.
 
           CMake example:
 
-          set_target_properties(prog PROPERTIES ENABLE_EXPORTS TRUE)
+          set_target_properties(myprog PROPERTIES ENABLE_EXPORTS TRUE)
 
 Option 2: Set CMake policy CMP0065 to 'OLD' (to pre-3.4 behavior)
           This is a quick solution but discouraged because setting
-          CMake policies to 'OLD' is deprecated by definition.
+          CMake policies to 'OLD' is "deprecated by definition".
 
           CMake code:
 
