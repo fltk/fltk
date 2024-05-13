@@ -89,6 +89,12 @@ else(CMAKE_CROSSCOMPILING)
     function(_fltk_make_alias target from)
       if(TARGET ${from} AND NOT TARGET ${target})
         # message(STATUS "FLTKConfig.cmake - create alias: ${target} from ${from}")
+
+        # promote imported target to global visibility (CMake < 3.18 only)
+        if(CMAKE_VERSION VERSION_LESS "3.18")
+          set_target_properties(${from} PROPERTIES IMPORTED_GLOBAL TRUE)
+        endif()
+
         get_target_property(ttype ${from} TYPE)
         if(ttype STREQUAL "EXECUTABLE")
           add_executable(${target} ALIAS ${from})
