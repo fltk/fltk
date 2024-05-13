@@ -108,7 +108,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND macOS
 
 GIT USERS
 
-    If you've just checked out a fresh copy of FLTK from GIT,
+    If you've just checked out a fresh copy of FLTK from  Git (GitHub),
     you'll need to generate an initial version of 'configure'
     by running 'make makeinclude' or 'make clean' (we don't
     include a copy of configure in git).
