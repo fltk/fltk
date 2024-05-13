@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,7 @@ cmake_minimum_required (VERSION 3.15.0 FATAL_ERROR)
 # define the FLTK project and version
 #######################################################################
 
-project (FLTK VERSION 1.3.9)
+project (FLTK VERSION 1.3.10)
 
 #######################################################################
 # include macro and function definitions for general usage

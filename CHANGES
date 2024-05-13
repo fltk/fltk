@@ -1,3 +1,34 @@
+CHANGES IN FLTK 1.3.10					RELEASED: xxx xx 2024
+
+FLTK 1.3.10 is a maintenance release with some fixes and enhancements.
+
+Highlights in this release:
+
+  This release includes some new inline methods that were added in 1.4.0
+  to prepare user code for the migration to 1.4.0. These are mainly
+  methods with new names that replace methods which are deprecated in
+  FLTK 1.4 and would issue compiler warnings if used in 1.4.0. Using the
+  new method names in user code makes it possible to write code that is
+  compatible with both 1.3.10 and 1.4.x.
+
+
+Details:
+
+  Albrecht Schlosser:
+    Add missing FL_EXPORT of class Fl_XFont_On_Demand (#922)
+    Fix a bunch of compiler warnings (backported from 'master')
+
+  ManoloFLTK:
+    Fix "FLTK on NetBSD very slow on X11 with Unicode locale" (#935)
+
+  Matthias Melcher:
+    Fix Fl_Shared_Image refcount (#877)
+    Fix crash in Fl_Preferences for deformed group name (#891)
+    Fix shared image handling in file chooser (#887)
+    Fix OpenGL context caching on macOS (#737)
+    macOS: Fix color component mixup in gl_draw text rendering (#947)
+
+
 CHANGES IN FLTK 1.3.9					RELEASED: Dec 09 2023
 
 FLTK 1.3.9 is a maintenance release with some fixes and enhancements.
