@@ -102,7 +102,6 @@ public:
    This is useful when the menu bar can be an Fl_Sys_Menu_Bar object.
    */
   virtual void update() {}
-  virtual void play_menu(const char *menu_name);
 };
 
 #endif
