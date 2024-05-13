@@ -1515,7 +1515,8 @@ void Fl_Wayland_Window_Driver::makeWindow()
       if (top_dr->xdg_toplevel()) xdg_toplevel_set_parent(new_window->xdg_toplevel,
                                                           top_dr->xdg_toplevel());
     }
-    if (scr_driver->seat->gtk_shell && pWindow->modal()) {
+    if (scr_driver->seat->gtk_shell && pWindow->modal() && 
+        (new_window->kind == DECORATED || new_window->kind == UNFRAMED)) {
       struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(scr_driver->seat->gtk_shell,
                                                                     new_window->wl_surface);
       gtk_surface1_set_modal(gtk_surface);
