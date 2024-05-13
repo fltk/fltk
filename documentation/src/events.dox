@@ -342,8 +342,14 @@ The mouse has moved out of the widget.
 \subsection events_fl_dnd_release FL_DND_RELEASE
 
 The user has released the mouse button dropping data into
-the widget. If the widget returns 1, it will receive the data in
-the immediately following \p FL_PASTE event.
+the widget. When the receiving widget's handle() method gets the FL_DND_RELEASE
+event, it should return 1 to accept the dragged data. Processing of this event must not
+use code that would make unrelated events be sent to the application
+(opening a dialog window for example) or that
+would communicate with the dragging process. The next
+event received by the handle() method will then be an FL_PASTE event.
+The handle() method should process this FL_PASTE event rapidly to prevent the dragging
+process from failing with a timeout error.
 
 \section events_fl_misc Other events
 
