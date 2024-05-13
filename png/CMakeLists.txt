@@ -1,7 +1,7 @@
 #
 # PNG library CMake configuration for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -15,7 +15,7 @@
 #
 
 # source files for png
-set (PNG_SRCS
+set(PNG_SRCS
   png.c
   pngerror.c
   pngget.c
@@ -36,8 +36,8 @@ set (PNG_SRCS
 #######################################################################
 # Note: This file is used only if we build the bundled PNG library,
 #  and if we do this we MUST also build and use the *bundled* ZLIB,
-#  hence we MUST also link against the bundled ZLIB (see below).
-#  There's no need to check which ZLIB version to use in this context.
+#  hence we also link against the bundled ZLIB. Therefore there's
+#  no need to check which ZLIB version to use in this context.
 #######################################################################
 
 #######################################################################
@@ -49,31 +49,31 @@ set (PNG_SRCS
 # compile these files even if this results in some warnings.
 # This includes all non-macOS platforms.
 
-if (CMAKE_OSX_ARCHITECTURES)
-  string (REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
-else ()
-  set (is_arm TRUE)
-endif ()
+if(CMAKE_OSX_ARCHITECTURES)
+  string(REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
+else()
+  set(is_arm TRUE)
+endif()
 
-if (is_arm)
-  LIST (APPEND PNG_SRCS
-        arm/arm_init.c
-        arm/filter_neon_intrinsics.c
-        arm/palette_neon_intrinsics.c
+if(is_arm)
+  list(APPEND PNG_SRCS
+       arm/arm_init.c
+       arm/filter_neon_intrinsics.c
+       arm/palette_neon_intrinsics.c
   )
-endif ()
+endif()
 
-unset (is_arm)
+unset(is_arm)
 
 #######################################################################
-# Build some files on ppc64
-# We compile these files whatever the architecture resulting in void code
-# on non-ppc64 architectures.
+# Build some files on ppc64.
+# We compile these files whatever the architecture resulting in
+# void code on non-ppc64 architectures.
 #######################################################################
 
-LIST (APPEND PNG_SRCS
-      powerpc/powerpc_init.c
-      powerpc/filter_vsx_intrinsics.c
+list(APPEND PNG_SRCS
+     powerpc/powerpc_init.c
+     powerpc/filter_vsx_intrinsics.c
 )
 
 #######################################################################

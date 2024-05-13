@@ -13,22 +13,22 @@ to avoid runtime errors.
 User code compiled correctly with the header files provided by the
 bundled image libraries need not be changed.
 
-Current versions of bundled libraries (as of December 5, 2023):
+Current versions of bundled libraries (as of May 13, 2024):
+
+  Library       Version            Release date         FLTK Version
+  --------------------------------------------------------------------------
+  jpeg          jpeg-9f            2024-01-14           1.3.10
+  png           libpng-1.6.43      2024-02-23           1.3.10
+  zlib          zlib-1.3.1         2024-01-22           1.3.10
+  --------------------------------------------------------------------------
+
+Previous versions of bundled libraries:
 
   Library       Version            Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9e            2022-01-16           1.3.9
   png           libpng-1.6.40      2023-06-21           1.3.9
   zlib          zlib-1.3           2023-08-18           1.3.9
-  --------------------------------------------------------------------------
-
-Previous versions of bundled libraries:
-
-  Library       Version            Release date         FLTK Version
-  ------------------------------------------------------------------
-  jpeg          jpeg-9d            2020-01-12           1.3.6 - 1.3.8
-  png           libpng-1.6.37      2019-04-14           1.3.6 - 1.3.8
-  zlib          zlib-1.2.11        2017-01-15           1.3.6 - 1.3.8
   --------------------------------------------------------------------------
 
 
@@ -177,8 +177,6 @@ png:
     - pnglibconf.h: Generate on a Linux system and merge (see above).
     - pngprefix.h:  Generate on a Linux system and merge (see above).
     - makedepend: Keep this file.
-    - png.c: Keep a change labelled with "FLTK"
-    - pngerror.c: Keep two changes labelled with "FLTK"
 
 Run `make depend' in the png folder on a Linux system after
       the upgrade to update this file.

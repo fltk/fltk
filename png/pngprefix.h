@@ -1,7 +1,3 @@
-/*
- * FLTK symbol prefixes for libpng
- * This is a generated file: see README.bundled-libs.txt
-*/
 #define png_sRGB_table fltk_png_sRGB_table
 #define png_sRGB_base fltk_png_sRGB_base
 #define png_sRGB_delta fltk_png_sRGB_delta
@@ -60,13 +56,6 @@
 #define png_do_read_interlace fltk_png_do_read_interlace
 #define png_do_write_interlace fltk_png_do_write_interlace
 #define png_read_filter_row fltk_png_read_filter_row
-#define png_read_filter_row_up_neon fltk_png_read_filter_row_up_neon
-#define png_read_filter_row_sub3_neon fltk_png_read_filter_row_sub3_neon
-#define png_read_filter_row_sub4_neon fltk_png_read_filter_row_sub4_neon
-#define png_read_filter_row_avg3_neon fltk_png_read_filter_row_avg3_neon
-#define png_read_filter_row_avg4_neon fltk_png_read_filter_row_avg4_neon
-#define png_read_filter_row_paeth3_neon fltk_png_read_filter_row_paeth3_neon
-#define png_read_filter_row_paeth4_neon fltk_png_read_filter_row_paeth4_neon
 #define png_write_find_filter fltk_png_write_find_filter
 #define png_read_IDAT_data fltk_png_read_IDAT_data
 #define png_read_finish_IDAT fltk_png_read_finish_IDAT
@@ -170,8 +159,4 @@
 #define png_safe_warning fltk_png_safe_warning
 #define png_safe_execute fltk_png_safe_execute
 #define png_image_error fltk_png_image_error
-#define png_init_filter_functions_neon fltk_png_init_filter_functions_neon
 #define png_check_keyword fltk_png_check_keyword
-#define png_riffle_palette_neon fltk_png_riffle_palette_neon
-#define png_do_expand_palette_rgba8_neon fltk_png_do_expand_palette_rgba8_neon
-#define png_do_expand_palette_rgb8_neon fltk_png_do_expand_palette_rgb8_neon
