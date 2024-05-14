@@ -3,7 +3,7 @@
 //
 // Modified to have 2 cubes to test multiple OpenGL contexts
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -162,7 +162,6 @@ int done = 0; // set to 1 in exit button callback
 // exit button callback
 void exit_cb(Fl_Widget *w, void *) {
   done = 1;
-  w->window()->hide(); // necessary if built w/o GL
 }
 
 // print screen demo
@@ -206,6 +205,7 @@ void makeform(const char *name) {
 
   // main window
   form = new Fl_Window(form_w, form_h, name);
+  form->callback(exit_cb);
   // menu bar
   Fl_Sys_Menu_Bar *menubar = new Fl_Sys_Menu_Bar(0, 0, form_w, MENUBAR_H);
   menubar->add("File/Print window", FL_COMMAND+'p', print_cb);
@@ -300,6 +300,6 @@ int main(int argc, char **argv) {
   }
   return 0;
 #else
-  return Fl::run();
+  while (!done) Fl::wait();
 #endif
 }
