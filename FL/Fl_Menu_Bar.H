@@ -61,18 +61,7 @@
 
   Typing the shortcut() of any of the menu items will cause
   callbacks exactly the same as when you pick the item with the mouse.
- 
-  This code can be used to programmatically open a menu ("Edit" in the example) of a menubar :
-  \code
-  Fl_Menu_Bar *bar = ……;
-  const Fl_Menu_Item *v = bar->find_item("Edit");
-  if (v) {
-    v = bar->menu()->pulldown(bar->x(), bar->y(), bar->w(), bar->h(), v, bar, 0, 1);
-    bar->picked(v);
-  }
- \endcode
-  This code currently should be avoided with an Fl_Sys_Menu_Bar object on the macOS platform.
-*/
+ */
 class FL_EXPORT Fl_Menu_Bar : public Fl_Menu_ {
   friend class Fl_Sys_Menu_Bar_Driver;
 protected:
@@ -102,6 +91,10 @@ public:
    This is useful when the menu bar can be an Fl_Sys_Menu_Bar object.
    */
   virtual void update() {}
+  /**
+   Opens the menu named \c title of the menubar.
+   */
+  virtual void play_menu(const char *title);
 };
 
 #endif

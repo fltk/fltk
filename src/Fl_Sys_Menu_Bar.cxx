@@ -242,6 +242,11 @@ void Fl_Sys_Menu_Bar::create_window_menu() {
   }
 }
 
+void Fl_Sys_Menu_Bar::play_menu(const char *title) {
+  if (driver()) fl_sys_menu_bar->driver()->play_menu(title);
+  else Fl_Menu_Bar::play_menu(title);
+}
+
 #if !defined(FL_DOXYGEN)
 Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {
   return Fl::system_driver()->sys_menu_bar_driver();

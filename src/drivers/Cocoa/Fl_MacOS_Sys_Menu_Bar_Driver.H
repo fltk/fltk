@@ -44,6 +44,7 @@ public:
   void remove_window(Fl_Window *win);
   void rename_window(Fl_Window *win);
   static Fl_MacOS_Sys_Menu_Bar_Driver* driver();
+  void play_menu(const char *menu_name) FL_OVERRIDE;
 };
 
 

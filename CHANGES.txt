@@ -105,6 +105,8 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
     hardware support is present (a backup mechanism is available in absence
     of this support). Thus, all text drawable in Fl_Window's can be drawn
     in Fl_Gl_Window's (STR#3450).
+  - New member function Fl_Menu_Bar::play_menu(const char *title) to
+    programmatically open a menu of a menubar.
   - New member functions Fl::program_should_quit(void),
     and Fl::program_should_quit(int) to support detection by the library
     of a request to terminate cleanly the program.

@@ -67,3 +67,12 @@ Fl_Menu_Bar::Fl_Menu_Bar(int X, int Y, int W, int H,const char *l)
 : Fl_Menu_(X,Y,W,H,l)
 {
 }
+
+
+void Fl_Menu_Bar::play_menu(const char *title) {
+  const Fl_Menu_Item *v = find_item(title);
+  if (v) {
+    v = menu()->pulldown(x(), y(), w(), h(), v, this, 0, 1);
+    picked(v);
+  }
+}

@@ -726,4 +726,36 @@ void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut) {
   Fl_Sys_Menu_Bar::about(cb, user_data);
 }
 
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::play_menu(const char *menu_name) {
+  // Use the accessibility interface to programmatically open a menu of the system menubar
+  char *ts = remove_ampersand(menu_name);
+  NSString *mac_name = [NSString stringWithUTF8String:ts];
+  free(ts);
+  AXUIElementRef appElement = AXUIElementCreateApplication(getpid());
+  AXUIElementRef menuBar;
+  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute, (CFTypeRef *)&menuBar);
+  if (error) return;
+  CFIndex count = -1;
+  error = AXUIElementGetAttributeValueCount(menuBar, kAXChildrenAttribute, &count);
+  if (error) { CFRelease(menuBar); return; }
+  NSArray *children = nil;
+  error = AXUIElementCopyAttributeValues(menuBar, kAXChildrenAttribute, 0, count, (CFArrayRef *)&children);
+  if (error) { CFRelease(menuBar); return; }
+  for (id child in children) {
+    AXUIElementRef element = (AXUIElementRef)child;
+    id title;
+    AXError error = AXUIElementCopyAttributeValue(element, kAXTitleAttribute, (CFTypeRef *)&title);
+    if (!error && [title isEqualToString:mac_name]) {
+      AXUIElementPerformAction(element, kAXPressAction);
+      CFRelease(title);
+      break;
+    }
+    CFRelease(title);
+  }
+  CFRelease(menuBar);
+  [children release];
+  CFRelease(appElement);
+}
+
 #endif /* __APPLE__ */
