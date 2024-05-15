@@ -727,34 +727,40 @@ void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut) {
 }
 
 
-void Fl_MacOS_Sys_Menu_Bar_Driver::play_menu(const char *menu_name) {
+void Fl_MacOS_Sys_Menu_Bar_Driver::play_menu(const Fl_Menu_Item *item) {
   // Use the accessibility interface to programmatically open a menu of the system menubar
-  char *ts = remove_ampersand(menu_name);
-  NSString *mac_name = [NSString stringWithUTF8String:ts];
-  free(ts);
-  AXUIElementRef appElement = AXUIElementCreateApplication(getpid());
-  AXUIElementRef menuBar;
-  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute, (CFTypeRef *)&menuBar);
-  if (error) return;
-  CFIndex count = -1;
-  error = AXUIElementGetAttributeValueCount(menuBar, kAXChildrenAttribute, &count);
-  if (error) { CFRelease(menuBar); return; }
   NSArray *children = nil;
-  error = AXUIElementCopyAttributeValues(menuBar, kAXChildrenAttribute, 0, count, (CFArrayRef *)&children);
-  if (error) { CFRelease(menuBar); return; }
-  for (id child in children) {
-    AXUIElementRef element = (AXUIElementRef)child;
+  CFIndex count = -1;
+  AXUIElementRef element;
+  NSEnumerator *enumerator = nil;
+  char *label = remove_ampersand(item->label());
+  NSString *mac_name = NSLocalizedString([NSString stringWithUTF8String:label], nil);
+  free(label);
+  AXUIElementRef appElement = AXUIElementCreateApplication(getpid());
+  AXUIElementRef menu_bar = NULL;
+  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute, (CFTypeRef *)&menu_bar);
+  if (error) goto way_out;
+  error = AXUIElementGetAttributeValueCount(menu_bar, kAXChildrenAttribute, &count);
+  if (error) goto way_out;
+  error = AXUIElementCopyAttributeValues(menu_bar, kAXChildrenAttribute, 0, count, (CFArrayRef *)&children);
+  if (error) goto way_out;
+  enumerator = [children objectEnumerator];
+  [enumerator nextObject]; // skip Apple menu
+  [enumerator nextObject]; // skip application menu
+  while ((element = (AXUIElementRef)[enumerator nextObject]) != nil) {
     id title;
     AXError error = AXUIElementCopyAttributeValue(element, kAXTitleAttribute, (CFTypeRef *)&title);
-    if (!error && [title isEqualToString:mac_name]) {
+    if (error) goto way_out;
+    if ([title isEqualToString:mac_name]) {
       AXUIElementPerformAction(element, kAXPressAction);
       CFRelease(title);
       break;
     }
     CFRelease(title);
   }
-  CFRelease(menuBar);
-  [children release];
+way_out:
+  if (menu_bar) CFRelease(menu_bar);
+  if (children) [children release];
   CFRelease(appElement);
 }
 

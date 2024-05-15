@@ -92,9 +92,10 @@ public:
    */
   virtual void update() {}
   /**
-   Opens the menu named \c title of the menubar.
+   Opens the 1st level submenu of the menubar corresponding to \c item.
+   \since 1.4.0
    */
-  virtual void play_menu(const char *title);
+  virtual void play_menu(const Fl_Menu_Item *item);
 };
 
 #endif
