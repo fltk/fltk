@@ -233,7 +233,7 @@ static void kill_selection(Fl_Text_Editor* e) {
 */
 int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   // FIXME: this function is a mess! Fix this!
-  if (!c || (!isprint(c) && c != '\t')) return 0;
+  if (!c || (!(c > 0 && c < 127 && isprint(c)) && c != '\t')) return 0;
   char s[2] = "\0";
   s[0] = (char)c;
   kill_selection(e);

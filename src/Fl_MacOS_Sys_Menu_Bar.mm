@@ -174,7 +174,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 {
   NSUInteger macMod = 0;
   if ( value & FL_META ) macMod = NSEventModifierFlagCommand;
-  if ( value & FL_SHIFT || isupper(value) ) macMod |= NSEventModifierFlagShift;
+  if ( value & FL_SHIFT || (value > 0 && value < 127 && isupper(value)) ) macMod |= NSEventModifierFlagShift;
   if ( value & FL_ALT ) macMod |= NSEventModifierFlagOption;
   if ( value & FL_CTRL ) macMod |= NSEventModifierFlagControl;
   [super setKeyEquivalentModifierMask:macMod];
