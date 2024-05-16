@@ -1,7 +1,7 @@
 //
 // Contrast function test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,7 @@
 
 // program version
 
-const char *version = "0.9.0";
+const char *version = "0.9.1";
 
 // prototypes and forward declarations
 
@@ -103,8 +103,8 @@ int g_selected = -1;            // selected button: -1 = none, 0 - 255 = valid b
 Fl_Fontsize g_fs = 15;          // fontsize for button labels
 int g_level = 0;                // *init* fl_contrast_level (sensitivity)
 
-int g_algo = FL_CONTRAST_LEGACY;// contrast algorithm: 0 = none, 1 = legacy (1.3.x), 2 = CIELAB, 3 = custom
-const char *alch = "";          // algorithm as char: "LEGACY", "CIELAB" , or "CUSTOM"
+int g_algo = FL_CONTRAST_CIELAB;  // contrast algorithm: 0 = none, 1 = legacy (1.3.x), 2 = CIELAB, 3 = custom
+const char *alch = "";            // algorithm as char: "LEGACY", "CIELAB" , or "CUSTOM"
 
 Fl_Color lcolor = FL_BLACK;     // label color, set by slider callback
 Button *buttons[256];           // array of color buttons
@@ -224,6 +224,38 @@ void slider_cb(Fl_Widget *w, void *v) {
   w->window()->redraw();
 }
 
+
+// callback for the "random color" button
+
+void rc_cb(Fl_Widget *w, void *v) {
+  static bool first = true;
+  unsigned int r, g, b;
+
+  if (first) {
+    // Seed the random number generator...
+    srand((unsigned int)time(NULL));
+    first = false;
+    r = g = b = 0;  // initialize with black
+  } else {
+    r = rand() % 256;
+    g = rand() % 256;
+    b = rand() % 256;
+  }
+
+  sliders[1] -> value(r);
+  sliders[2] -> value(g);
+  sliders[3] -> value(b);
+
+  // update button label colors
+  lcolor = fl_rgb_color(r, g, b);         // set color value
+  update_labels();
+  // output label color
+  char color_buf[10];
+  sprintf(color_buf, "%02X %02X %02X", r, g, b);
+  color_out->value(color_buf);
+  w->window()->redraw();
+}
+
 // callback for contrast algorithm (radio buttons)
 
 void algo_cb(Fl_Widget *w, void *v) {
@@ -275,7 +307,7 @@ int main(int argc, char **argv) {
   int cw = 16 * bw + 10;
   int ch = 16 * bh + 10;
   int ww = cw + 10;
-  int wh = 16 * bh + 135 + 10 + 150 /* terminal */ + 10;
+  int wh = 16 * bh + 135 + 10 + 170 /* terminal */ + 10;
   Fl_Double_Window window(ww, wh, "fl_contrast test");
 
   int n = 0;
@@ -358,7 +390,7 @@ int main(int argc, char **argv) {
   Fl_Radio_Round_Button *aleg = new Fl_Radio_Round_Button(cgx, cgy + 25, cgw, abh, "LEGACY");
   Fl_Radio_Round_Button *acie = new Fl_Radio_Round_Button(cgx, cgy + 50, cgw, abh, "CIELAB");
   Fl_Radio_Round_Button *aapc = new Fl_Radio_Round_Button(cgx, cgy + 75, cgw, abh, "CUSTOM");
-  aleg->value(1);
+  acie->value(1);
   anon->callback(algo_cb, (void *)0);
   aleg->callback(algo_cb, (void *)1);
   acie->callback(algo_cb, (void *)2);
@@ -407,6 +439,12 @@ int main(int argc, char **argv) {
   lf->tooltip("Click to output a linefeed to the log.");
   lf->callback(lf_cb);
 
+  // random color (R) button
+
+  Fl_Button *rc = new Fl_Button(10 + 8 * bw + lf->w() + 2, blue->y(), bw*3/4, sh, "&RC");
+  rc->tooltip("Click to select a random text color.");
+  rc->callback(rc_cb);
+
   // color chooser for field #255
 
   int ccx = 10 + 12 * bw;
@@ -421,7 +459,13 @@ int main(int argc, char **argv) {
   color_chooser->mode(1); // byte mode
   color_chooser->align(FL_ALIGN_LEFT_BOTTOM);
 
-  // simple terminal for output (FLTK 1.4 only)
+  // set contrast mode and level, update button label colors
+
+  fl_contrast_mode(g_algo);
+  fl_contrast_function(custom_contrast);  // dummy contrast function
+  algo_cb(acie, fl_voidptr(2));
+
+  // Fl_Terminal for output
 
   int ttx = 10;
   int tty = color_chooser->y() + cch + 10;
@@ -433,22 +477,18 @@ int main(int argc, char **argv) {
   term->textfgcolor(FL_BLACK);
   term->textsize(13);
 
-  term->printf("FLTK fl_contrast() test program with different contrast algorithms, version %s\n", version);
-  term->printf("FLTK version %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+  term->printf("FLTK %d.%d.%d fl_contrast() test program with different contrast algorithms, version %s\n",
+               FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION, version);
   term->printf(" - Select a foreground (text) color with the gray or red/green/blue sliders (displayed inside each field).\n");
   term->printf(" - Select an arbitrary background color for field #255 with the color chooser.\n");
   term->printf(" - Select a colored field (by clicking on it) to display its attributes.\n");
   term->printf(" - Select the contrast algorithm by clicking on the radio buttons.\n");
-  term->printf(" - Tune the contrast algorithm with the light blue \"level\" slider (default: 50).\n");
+  term->printf(" - Tune the contrast algorithm with the light blue \"level\" slider (default: %d).\n", fl_contrast_level());
+  term->printf(" - Select a random foreground (text) color by clicking the RC button\n");
 
-  // set contrast mode and level, update button label colors
-
-  fl_contrast_mode(g_algo);
-  fl_contrast_function(custom_contrast);  // dummy function
-  algo_cb(NULL, fl_voidptr(g_algo));      // updates button labels
-
-  window.resizable(window);
+  window.resizable(term);
   window.end();
   window.show(argc, argv);
+  rc_cb(rc, 0); // update button labels - must be called after show()
   return Fl::run();
 }

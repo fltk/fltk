@@ -24,6 +24,10 @@
 #include <FL/Fl.H>
 #include <math.h>
 
+#ifndef DEBUG_CONTRAST_LEGACY
+#define DEBUG_CONTRAST_LEGACY 0
+#endif // DEBUG_CONTRAST_LEGACY
+
 // Initial values of global/static variables defined by fl_contrast_* functions.
 
 // This defines the default contrast mode since FLTK 1.4.0
@@ -31,7 +35,11 @@ static int fl_contrast_mode_ = FL_CONTRAST_CIELAB;
 
 // This defines the default contrast level per contrast mode
 static int fl_contrast_level_[10] = {
-  0, 50, 55, 0, 0, 0, 0, 0, 0, 0
+         0,                     // 0 = FL_CONTRAST_NONE
+        50,                     // 1 = FL_CONTRAST_LEGACY
+        39,                     // 2 = FL_CONTRAST_CIELAB
+         0,                     // 3 = FL_CONTRAST_CUSTOM
+         0                      // 4-9 = not yet defined
 };
 
 // There is no default custom contrast function
@@ -338,6 +346,18 @@ static Fl_Color fl_contrast_legacy(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
 
   int lc = lfg - lbg;                   // calculated contrast (-255 .. 255)
 
+#if DEBUG_CONTRAST_LEGACY
+
+  const char *rv = "?";                 // return value as text (init)
+  if (lc > tc || lc < -tc) rv = "fg";   // sufficient contrast
+  else if (lbg > tbw) rv = "BLACK";     // light background
+  else rv = "WHITE";                    // dark background
+
+  printf("fl_contrast_legacy: lfg %4d (%7.2f)  lbg %4d (%7.2f)  lc %4d (%7.2f)  => %s\n",
+        lfg, lfg/255.*100, lbg, lbg/255.*100, lc, lc/255.*100, rv);
+
+#endif // DEBUG_CONTRAST_LEGACY
+
   // Compare and return the contrasting color...
 
   if (lc > tc || lc < -tc) return fg;   // sufficient contrast
@@ -364,7 +384,7 @@ static Fl_Color fl_contrast_cielab(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
   (void) context;         // currently ignored
 
   double tc  = (double)fl_contrast_level(); // sufficient contrast threshold
-  double tbw = 55.;                         // black/white threshold
+  double tbw = 50.;                         // black/white threshold
 
   // Compute the perceived lightness L* (Lstar) and the contrast
 
