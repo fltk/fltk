@@ -1344,8 +1344,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
  See also:
  Fl_Cocoa_Window_Driver::driver(window)->view_resized() avoid recursion
  Fl_Cocoa_Window_Driver::driver(window)->through_resize(); avoid recursion
- Fl_Cocoa_Window_Driver::driver(window)->changed_resolution(); untested due
-    to lack of hardware
+ Fl_Cocoa_Window_Driver::driver(window)->changed_resolution(); tested OK
  */
 - (void)view_did_resize:(NSNotification *)notif
 {
