@@ -1161,19 +1161,22 @@ FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
   with fl_contrast_mode(FL_CONTRAST_CUSTOM).
   Example:
   \code
-    Fl_Color my_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context) {
+    Fl_Color my_contrast(Fl_Color fg, Fl_Color bg, int context, int size) {
       // calculate contrast and ...
       return color;
     }
     // call this early in your main() program:
     fl_contrast_function(my_contrast);
     fl_contrast_mode(FL_CONTRAST_CUSTOM);
+    fl_contrast_level(50); // optional, must be called after fl_contrast_mode()
   \endcode
 
-  \see fl_contrast(Fl_Color, Fl_Color, Fl_Fontsize, int)
+  For parameters and types see fl_contrast(Fl_Color, Fl_Color, int, int).
+
+  \see fl_contrast(Fl_Color, Fl_Color, int, int)
   \see fl_contrast_mode(int)
 */
-typedef Fl_Color (Fl_Contrast_Function)(Fl_Color, Fl_Color, Fl_Fontsize, int);
+typedef Fl_Color (Fl_Contrast_Function)(Fl_Color, Fl_Color, int, int);
 
 FL_EXPORT void fl_contrast_function(Fl_Contrast_Function *f);
 
@@ -1195,7 +1198,7 @@ FL_EXPORT int fl_contrast_level();
 FL_EXPORT void fl_contrast_mode(int mode);
 FL_EXPORT int fl_contrast_mode();
 
-FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs = 0, int context = 0);
+FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, int context = 0, int size = 0);
 
 FL_EXPORT double fl_lightness(Fl_Color color);
 FL_EXPORT double fl_luminance(Fl_Color color);
