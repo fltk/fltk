@@ -243,7 +243,8 @@ void Fl_Sys_Menu_Bar::create_window_menu() {
 }
 
 void Fl_Sys_Menu_Bar::play_menu(const Fl_Menu_Item *item) {
-  if (driver()) fl_sys_menu_bar->driver()->play_menu(item);
+  Fl_Sys_Menu_Bar_Driver *dr = driver();
+  if (dr) dr->play_menu(item);
   else Fl_Menu_Bar::play_menu(item);
 }
 

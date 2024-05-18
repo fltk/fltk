@@ -729,38 +729,36 @@ void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut) {
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::play_menu(const Fl_Menu_Item *item) {
   // Use the accessibility interface to programmatically open a menu of the system menubar
-  NSArray *children = nil;
-  CFIndex count = -1;
+  CFArrayRef children = NULL;
+  CFIndex count = 0;
   AXUIElementRef element;
-  NSEnumerator *enumerator = nil;
   char *label = remove_ampersand(item->label());
   NSString *mac_name = NSLocalizedString([NSString stringWithUTF8String:label], nil);
   free(label);
   AXUIElementRef appElement = AXUIElementCreateApplication(getpid());
   AXUIElementRef menu_bar = NULL;
-  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute, (CFTypeRef *)&menu_bar);
-  if (error) goto way_out;
-  error = AXUIElementGetAttributeValueCount(menu_bar, kAXChildrenAttribute, &count);
-  if (error) goto way_out;
-  error = AXUIElementCopyAttributeValues(menu_bar, kAXChildrenAttribute, 0, count, (CFArrayRef *)&children);
-  if (error) goto way_out;
-  enumerator = [children objectEnumerator];
-  [enumerator nextObject]; // skip Apple menu
-  [enumerator nextObject]; // skip application menu
-  while ((element = (AXUIElementRef)[enumerator nextObject]) != nil) {
-    id title;
-    AXError error = AXUIElementCopyAttributeValue(element, kAXTitleAttribute, (CFTypeRef *)&title);
-    if (error) goto way_out;
-    if ([title isEqualToString:mac_name]) {
-      AXUIElementPerformAction(element, kAXPressAction);
-      CFRelease(title);
-      break;
+  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute, 
+                                                (CFTypeRef *)&menu_bar);
+  if (!error) error = AXUIElementGetAttributeValueCount(menu_bar, kAXChildrenAttribute, &count);
+  if (!error) error = AXUIElementCopyAttributeValues(menu_bar, kAXChildrenAttribute, 0, count, 
+                                                     &children);
+  if (!error) {
+    NSEnumerator *enumerator = [(NSArray*)children objectEnumerator];
+    [enumerator nextObject]; // skip Apple menu
+    [enumerator nextObject]; // skip application menu
+    bool need_more = true;
+    while (need_more && (element = (AXUIElementRef)[enumerator nextObject]) != nil) {
+      CFTypeRef title = NULL;
+      need_more = ( AXUIElementCopyAttributeValue(element, kAXTitleAttribute, &title) == 0 );
+      if (need_more && [(NSString*)title isEqualToString:mac_name]) {
+        AXUIElementPerformAction(element, kAXPressAction);
+        need_more = false;
+      }
+      if (title) CFRelease(title);
     }
-    CFRelease(title);
   }
-way_out:
   if (menu_bar) CFRelease(menu_bar);
-  if (children) [children release];
+  if (children) CFRelease(children);
   CFRelease(appElement);
 }
 
