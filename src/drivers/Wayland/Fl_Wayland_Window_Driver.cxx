@@ -1517,10 +1517,10 @@ void Fl_Wayland_Window_Driver::makeWindow()
     }
     if (scr_driver->seat->gtk_shell && pWindow->modal() && 
         (new_window->kind == DECORATED || new_window->kind == UNFRAMED)) {
+      // useful with gnome-shell --version < 45, useless but no harm with version ≥ 46, ? with 45
       struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(scr_driver->seat->gtk_shell,
                                                                     new_window->wl_surface);
       gtk_surface1_set_modal(gtk_surface);
-      gtk_surface1_release(gtk_surface);
     }
   }
 

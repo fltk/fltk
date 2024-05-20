@@ -289,7 +289,6 @@ static void pointer_button(void *data,
                                                                   gtk_shell_surface);
     gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat,
                                   GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
-    gtk_surface1_release(gtk_surface);
     return;
   }
   seat->serial = serial;
