@@ -602,13 +602,37 @@ FLTK has computed a damaged region. If that region is not null,
 surface to the Wayland buffer and calls function \c wl_surface_damage_buffer() for these
 parts to inform the compositor of what parts of the surface need its attention.
 
-<h3>Throttling redraw operations</h3>
-An important detail here is that FLTK uses Wayland's synchronization
-mechanism to make sure the surface's \c wl_buffer is not changed while the
+<h3>Wayland buffer deletion</h3>
+Each \ref wld_buffer record contains boolean member \c in_use which is set to \c true
+just before the buffer gets committed, and boolean member \c released which
+is set to \c true when FLTK no longer needs the buffer and calls
+\c Fl_Wayland_Graphics_Driver::buffer_release().
+FLTK's buffer-creating function, \c Fl_Wayland_Graphics_Driver::create_shm_buffer(),
+attaches a 1-member listener to each buffer which Wayland calls after a commit
+operation to indicate the client is allowed to re-use the buffer.
+This listener's member function, \c buffer_release_listener(),
+turns to false member \c in_use of the buffer's \ref wld_buffer record.
+Since the two events 'FLTK no longer needs the buffer' and
+'the client is allowed to re-use the buffer' can arrive in
+any order, FLTK deletes the <tt>struct wl_buffer</tt> object by running
+\c do_buffer_release() only after both events happened, that is, when \c in_use is
+\c false and \c released is \c true. That's why function \c do_buffer_release()
+is called by both functions \c Fl_Wayland_Graphics_Driver::buffer_release()
+and \c buffer_release_listener().
+
+
+\section throttling Throttling window redraws
+
+FLTK uses Wayland's synchronization
+mechanism to make sure any committed \c wl_buffer is not changed while the
 compositor is using it and to refrain from calling \c wl_surface_commit()
 more frequently than the system can process it.
-This 2-step mechanism works as follows:
-- Fl_Wayland_Graphics_Driver::buffer_commit() first calls function \c wl_surface_frame() to
+Firstly, as seen above, Wayland calls function \c buffer_release_listener() when the client is
+free to reuse or destroy a given \c wl_buffer. FLTK won't change or destroy a committed
+\c wl_buffer before that call.
+Second, this 2-step mechanism prevents Wayland clients from committing new buffer states
+too frequently:
+- \c Fl_Wayland_Graphics_Driver::buffer_commit() first calls function \c wl_surface_frame() to
 obtain a pointer to a <tt>struct wl_callback</tt> object and stores it as member
 \c frame_cb of the surface's \ref wld_window.
 Then it calls \c wl_callback_add_listener() to associate this object to the
@@ -695,23 +719,6 @@ a new buffer. When the compositor is not ready, the app does not block but conti
 computing and drawing in memory but not on display more lines of the desired Mandelbrot
 graph.
 
-<h3>Wayland buffer deletion</h3>
-Each \ref wld_buffer record contains boolean member \c in_use which is set to \c true
-just before the buffer gets committed, and boolean member \c released which
-is set to \c true when FLTK no longer needs the buffer and calls
-\c Fl_Wayland_Graphics_Driver::buffer_release().
-FLTK's buffer-creating function, \c Fl_Wayland_Graphics_Driver::create_shm_buffer(),
-attaches a 1-member listener to each buffer which Wayland calls after a commit
-operation to indicate the client is allowed to re-use the buffer.
-This listener's member function, \c buffer_release_listener(),
-turns to false member \c in_use of the buffer's \ref wld_buffer record.
-Since the two events 'FLTK no longer needs the buffer' and
-'the client is allowed to re-use the buffer' can arrive in
-any order, FLTK deletes the <tt>struct wl_buffer</tt> object by running
-\c do_buffer_release() only after both events happened, that is, when \c in_use is
-\c false and \c released is \c true. That's why function \c do_buffer_release()
-is called by both functions \c Fl_Wayland_Graphics_Driver::buffer_release()
-and \c buffer_release_listener().
 
 \section wayland-buffer-factory Buffer factories
 
@@ -1277,6 +1284,21 @@ Class \c Fl_Wayland_Gl_Plugin exists to allow \c libfltk to call functions from
 force linking any FLTK app with these GL-related libraries.
 For example, \c Fl_Wayland_Window_Driver::flush() needs to call
 \c Fl_Gl_Window::valid(0).
+
+<h3>Throttling GL window redraws</h3>
+Although no documentation covering this subject was found, the EGL library internally
+uses \c wl_callback objects to throttle GL window redraws, and FLTK needs not interfere with
+these operations. Nevertheless FLTK uses \c wl_callback objects for GL windows in 2 cases:
+- when a top-level GL window is being interactively resized, with the
+code described above;
+- when a GL subwindow is being refreshed by \c Fl_Wayland_Gl_Window_Driver::swap_buffers().
+FLTK checks that \c xid->frame_cb is NULL and if so creates a \c wl_callback calling
+\c wl_surface_frame() before calling \c eglSwapBuffers(). This is useful if the GL subwindow
+becomes entirely out from the screen area. In that case, the Mutter compositor stops signaling
+that the subwindow is ready for new commits which FLTK detects because \c xid->frame_cb remains
+non-NULL. If the subwindow eventually re-appears partially on-screen, \c xid->frame_cb
+becomes NULL and FLTK calls \c eglSwapBuffers() to redraw the GL scene.
+
 
 \section wayland-type FLTK-defined, Wayland-specific types
 
