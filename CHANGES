@@ -20,6 +20,7 @@ Details:
 
   ManoloFLTK:
     Fix "FLTK on NetBSD very slow on X11 with Unicode locale" (#935)
+    macOS: let fullscreen windows have access to the system menubar
 
   Matthias Melcher:
     Fix Fl_Shared_Image refcount (#877)

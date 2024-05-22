@@ -126,6 +126,7 @@ class fullscreen_window : public Fl_Single_Window {
   public:
   fullscreen_window(int W, int H, const char *t=0);
   int handle (int e);
+  void resize(int x, int y, int w, int h);
   Fl_Toggle_Light_Button *b3;
   Fl_Toggle_Light_Button *b4;
 };
@@ -133,6 +134,20 @@ class fullscreen_window : public Fl_Single_Window {
 fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) { 
 
 }
+
+void after_resize(void *data) {
+  Fl::remove_check(after_resize, data);
+  fullscreen_window *win = (fullscreen_window*)data;
+  if (win->fullscreen_active()) win->b3->set();
+  else win->b3->clear();
+  win->b3->redraw();
+}
+
+void fullscreen_window::resize(int x, int y, int w, int h) {
+  Fl_Single_Window::resize(x,y,w,h);
+  Fl::add_check(after_resize, this);
+};
+
 
 int fullscreen_window::handle(int e) {
   if (e == FL_FULLSCREEN) {

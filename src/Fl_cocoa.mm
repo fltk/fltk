@@ -1272,6 +1272,8 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)fl_windowMiniaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
+- (void)windowWillEnterFullScreen:(NSNotification *)notif;
+- (void)windowWillExitFullScreen:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
 - (void)doNothing:(id)unused;
@@ -1496,7 +1498,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
   /* Restore previous fullscreen level */
-  if (w->fullscreen_active()) {
+  if (w->fullscreen_active() && fl_mac_os_version < 100700) {
     [nsw setLevel:NSStatusWindowLevel];
     fixup_window_levels();
   }
@@ -1553,6 +1555,18 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_HIDE, window);
   fl_unlock_function();
+}
+- (void)windowWillEnterFullScreen:(NSNotification *)notif;
+{
+  FLWindow *nsw = (FLWindow*)[notif object];
+  Fl_Window *window = [nsw getFl_Window];
+  window->_set_fullscreen();
+}
+- (void)windowWillExitFullScreen:(NSNotification *)notif;
+{
+  FLWindow *nsw = (FLWindow*)[notif object];
+  Fl_Window *window = [nsw getFl_Window];
+  window->_clear_fullscreen();
 }
 - (BOOL)windowShouldClose:(id)fl
 {
@@ -3101,15 +3115,13 @@ NSOpenGLContext* Fl_X::GLcontext_getcurrent()
 
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
-  if (fl_mac_os_version < 101000) {
-    // On OS X < 10.6, it is necessary to recreate the window. This is done with hide+show.
-    // The alternative procedure isn't stable until MacOS 10.10
-    hide();
-    show();
-  } else {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-    [i->xid setStyleMask:NSBorderlessWindowMask]; //10.6
-#endif
+  if (fl_mac_os_version >= 100700 && border()) {
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    [i->xid toggleFullScreen:nil];
+#  endif
+  } else if (fl_mac_os_version >= 100600) {
+    [i->xid setStyleMask:NSBorderlessWindowMask]; // 10.6
     if ([i->xid isKeyWindow]) {
        if ([i->xid level] != NSStatusWindowLevel) {
          [i->xid setLevel:NSStatusWindowLevel];
@@ -3139,6 +3151,11 @@ void Fl_Window::fullscreen_x() {
     Fl::screen_xywh(sx, sy, sw, sh, right);
     W = sx + sw - X;
     resize(X, Y, W, H);
+  } else
+#endif
+  { // On OS X < 10.6, it is necessary to recreate the window. This is done with hide+show.
+    hide();
+    show();
   }
   Fl::handle(FL_FULLSCREEN, this);
 }
@@ -3146,7 +3163,11 @@ void Fl_Window::fullscreen_x() {
 void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   _clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100600) {
+  if (fl_mac_os_version >= 100700) {
+  #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+      [i->xid toggleFullScreen:nil];
+  #  endif
+  } else if (fl_mac_os_version >= 100600) {
     NSInteger level = NSNormalWindowLevel;
     if (modal()) level = modal_window_level();
     else if (non_modal()) level = non_modal_window_level();
@@ -3264,7 +3285,7 @@ void Fl_X::make(Fl_Window* w)
     x->in_windowDidResize(false);
   
     NSRect crect;
-    if (w->fullscreen_active()) {
+    if (w->fullscreen_active() && fl_mac_os_version < 100700) {
       int top, bottom, left, right;
       int sx, sy, sw, sh, X, Y, W, H;
 
@@ -3382,6 +3403,9 @@ void Fl_X::make(Fl_Window* w)
   } else { // a top-level window
     if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
     else [cw orderFront:nil];
+    if (w->fullscreen_active() && fl_mac_os_version >= 100700) {
+      [cw toggleFullScreen:nil];
+    }
   }
   
     int old_event = Fl::e_number;
