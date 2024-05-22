@@ -650,9 +650,8 @@ changed and needs being committed. This variable is turned \c true every time a
 graphics operation changes the buffer content and turned \c false when the
 buffer gets committed.
 
-This procedure ensures that FLTK never changes the surface's Wayland buffer
-while it's being used by the compositor and never calls \c wl_surface_commit()
-before Wayland gets ready for a new commit because
+This procedure ensures that FLTK never calls \c wl_surface_commit()
+before the compositor becomes ready for a new commit because
 \c Fl_Wayland_Window_Driver::flush() calls
 \c Fl_Wayland_Graphics_Driver::buffer_commit() only if \c frame_cb is NULL.
 If it's not NULL, the exact content of function \c surface_frame_done() :
@@ -667,9 +666,8 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
 }
 \endcode
 has the effect that when the mapping operation eventually completes, Wayland runs
-\c surface_frame_done(), which calls anew
-\c Fl_Wayland_Graphics_Driver::buffer_commit() if the buffer's
-\c draw_buffer_needs_commit member is true. The net result is that the screen
+\c surface_frame_done(), which, if the buffer's \c draw_buffer_needs_commit member is true,
+calls \c Fl_Wayland_Graphics_Driver::buffer_commit() anew. The net result is that the screen
 shows the most recent surface content.
 
 This synchronization mechanism is also used when performing an interactive window resize
@@ -1241,6 +1239,11 @@ Files dropped are received one pathname per line, with no \c '\\n' after the las
 Wayland uses <a href=https://www.khronos.org/api/egl>EGL™</a> to interface OpenGL with the underlying
 native platform window system. OpenGL-using FLTK apps are therefore linked to \c libwayland-egl.so and
 \c libEGL.so in addition to \c libGL.so and \c libGLU.so.
+
+EGL completely hides the \c wl_buffer objects it uses to draw to GL windows.
+The \ref wld_buffer structure and the 'buffer factory' described previously are not used for
+\c Fl_Gl_Window's : the \c buffer member of an \c Fl_Gl_Window's \ref wld_window structure is
+always NULL.
 
 EGL is initialized calling member function \c Fl_Wayland_Gl_Window_Driver::init()
 once, the first time the \c Fl_Wayland_Gl_Window_Driver c'tor runs. That is done
