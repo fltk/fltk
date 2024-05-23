@@ -344,8 +344,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   menubartitle = menubar_title;
   origin = NULL;
   offset_y = 0;
-
-  Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h);
+  int n = (Wp > 0 ? Fl::screen_num(X, Y, Wp, Hp) : -1);
+  Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h, n);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
 
   if (m) m = m->first(); // find the first item that needs to be rendered
