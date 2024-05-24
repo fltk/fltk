@@ -396,7 +396,7 @@ int Fl_Browser::item_height(void *item) const {
       char* ptr = str;
       if (ptr && *i++) str = strchr(str, column_char());
       else str = NULL;
-      if((!str && *ptr) || (str && ptr < str)) {
+      if((!str && *ptr) || (str && ptr < str) || hmax == 2) {
         fl_font(font, tsize); int hh = fl_height();
         if (hh > hmax) hmax = hh;
       }
