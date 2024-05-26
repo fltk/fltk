@@ -347,6 +347,8 @@ public:
 
   void size_range(int minw, int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0);
 
+  uchar get_size_range(int *minw, int *minh, int *maxw=NULL, int *maxh=NULL, int *dw=NULL, int *dh=NULL, int *aspect=NULL);
+
   /** See void Fl_Window::label(const char*)   */
   const char* label() const     {return Fl_Widget::label();}
   /**  See void Fl_Window::iconlabel(const char*)   */
