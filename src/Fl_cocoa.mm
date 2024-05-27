@@ -2083,7 +2083,9 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
   if (w->border() && !w->parent()) {
-    if (Fl_Window_Driver::driver(w)->maxw() != Fl_Window_Driver::driver(w)->minw() || Fl_Window_Driver::driver(w)->maxh() != Fl_Window_Driver::driver(w)->minh()) {
+    int minw, minh, maxw, maxh;
+    w->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
+    if (maxw != minw || maxh != minh) {
       ret = 2;
     } else {
       ret = 1;
@@ -3219,7 +3221,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   [myview registerForDraggedTypes:[NSArray arrayWithObjects:UTF8_pasteboard_type,
                                    fl_filenames_pboard_type, nil]];
 
-  if (size_range_set()) size_range();
+  if (pWindow->get_size_range(NULL, NULL, NULL, NULL, NULL, NULL, NULL)) size_range();
 
   if ( w->border() || (!w->modal() && !w->tooltip_window()) ) {
     Fl_Tooltip::enter(0);
@@ -3414,8 +3416,10 @@ void Fl_Cocoa_Window_Driver::size_range() {
   if (i && i->xid) {
     float s = Fl::screen_driver()->scale(0);
     int bt = get_window_frame_sizes(pWindow);
-    NSSize minSize = NSMakeSize(int(minw() * s +.5) , int(minh() * s +.5) + bt);
-    NSSize maxSize = NSMakeSize(maxw() ? int(maxw() * s + .5):32000, maxh() ? int(maxh() * s +.5) + bt:32000);
+    int minw, minh, maxw, maxh;
+    pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
+    NSSize minSize = NSMakeSize(int(minw * s +.5) , int(minh * s +.5) + bt);
+    NSSize maxSize = NSMakeSize(maxw ? int(maxw * s + .5):32000, maxh ? int(maxh * s +.5) + bt:32000);
     [(FLWindow*)i->xid setMinSize:minSize];
     [(FLWindow*)i->xid setMaxSize:maxSize];
   }

@@ -1873,11 +1873,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
             LIBDECOR_WINDOW_STATE_MAXIMIZED) ) {
         win_dims *dim = new win_dims;
         dim->tracker = new Fl_Widget_Tracker(win);
-        Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);
-        dim->minw = dr->minw();
-        dim->minh = dr->minh();
-        dim->maxw = dr->maxw();
-        dim->maxh = dr->maxh();
+        win->get_size_range(&dim->minw, &dim->minh, &dim->maxw, &dim->maxh, NULL, NULL, NULL);
         //make win un-resizable
         win->size_range(win->w(), win->h(), win->w(), win->h());
         dim->next = first_dim;

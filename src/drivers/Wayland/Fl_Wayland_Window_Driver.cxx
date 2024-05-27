@@ -542,30 +542,32 @@ void Fl_Wayland_Window_Driver::size_range() {
     Fl_X* ip = Fl_X::flx(pWindow);
     struct wld_window *wl_win = (struct wld_window*)ip->xid;
     float f = Fl::screen_scale(pWindow->screen_num());
+    int minw, minh, maxw, maxh;
+    pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
     if (wl_win->kind == DECORATED && wl_win->frame) {
       int X,Y,W,H;
       Fl::screen_work_area(X,Y,W,H, Fl::screen_num(x(),y(),w(),h()));
-      if (maxw() && maxw() < W && maxh() && maxh() < H) {
+      if (maxw && maxw < W && maxh && maxh < H) {
         libdecor_frame_unset_capabilities(wl_win->frame, LIBDECOR_ACTION_FULLSCREEN);
       } else {
         libdecor_frame_set_capabilities(wl_win->frame, LIBDECOR_ACTION_FULLSCREEN);
       }
-      if (maxw() && maxh() && (minw() >= maxw() || minh() >= maxh())) {
+      if (maxw && maxh && (minw >= maxw || minh >= maxh)) {
         libdecor_frame_unset_capabilities(wl_win->frame, LIBDECOR_ACTION_RESIZE);
       } else {
         libdecor_frame_set_capabilities(wl_win->frame, LIBDECOR_ACTION_RESIZE);
       }
-      libdecor_frame_set_min_content_size(wl_win->frame, minw()*f, minh()*f);
-      libdecor_frame_set_max_content_size(wl_win->frame, maxw()*f, maxh()*f);
+      libdecor_frame_set_min_content_size(wl_win->frame, minw*f, minh*f);
+      libdecor_frame_set_max_content_size(wl_win->frame, maxw*f, maxh*f);
       if (xdg_toplevel()) {
         struct libdecor_state *state = libdecor_state_new(int(w() * f), int(h() * f));
         libdecor_frame_commit(wl_win->frame, state, NULL);
         libdecor_state_free(state);
       }
     } else if (wl_win->kind == UNFRAMED && wl_win->xdg_toplevel) {
-      xdg_toplevel_set_min_size(wl_win->xdg_toplevel, minw()*f, minh()*f);
-      if (maxw() && maxh())
-          xdg_toplevel_set_max_size(wl_win->xdg_toplevel, maxw()*f, maxh()*f);
+      xdg_toplevel_set_min_size(wl_win->xdg_toplevel, minw*f, minh*f);
+      if (maxw && maxh)
+          xdg_toplevel_set_max_size(wl_win->xdg_toplevel, maxw*f, maxh*f);
     }
   }
 }

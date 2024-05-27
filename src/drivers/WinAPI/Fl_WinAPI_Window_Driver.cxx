@@ -631,7 +631,9 @@ void Fl_WinAPI_Window_Driver::iconize() {
 
 
 void Fl_WinAPI_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
-  if (size_range_set() && (maxw() != minw() || maxh() != minh())) {
+  int minw, minh, maxw, maxh, set;
+  set = pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
+  if (set && (maxw != minw || maxh != minh)) {
     *left = *right = GetSystemMetrics(SM_CXSIZEFRAME);
     *top = *bottom = GetSystemMetrics(SM_CYSIZEFRAME);
   } else {

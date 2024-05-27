@@ -91,14 +91,6 @@ public:
   Fl_Group *parent() const { return pWindow->parent(); }
 
   // --- accessors to private window data
-  int minw();
-  int minh();
-  int maxw();
-  int maxh();
-  int dw();
-  int dh();
-  int aspect();
-  unsigned char size_range_set();
   int is_resizable() { return pWindow->is_resizable(); }
   void is_a_rescale(bool b) { is_a_rescale_ = b;}
   int fullscreen_screen_top();

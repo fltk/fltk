@@ -1761,6 +1761,8 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
 
   int fallback = 1;
   float s = Fl::screen_driver()->scale(screen_num());
+  int minw, minh, maxw, maxh;
+  pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
   if (!w->parent()) {
     if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
@@ -1805,7 +1807,7 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
         yoff = by + bt;
         dx = W - int(w->w() * s);
         dy = H - int(w->h() * s);
-        if (maxw() != minw() || maxh() != minh())
+        if (maxw != minw || maxh != minh)
           ret = 2;
         else
           ret = 1;
@@ -1816,7 +1818,7 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
   // This is the original (pre 1.1.7) routine to calculate window border sizes.
   if (fallback) {
     if (w->border() && !w->parent()) {
-      if (maxw() != minw() || maxh() != minh()) {
+      if (maxw != minw || maxh != minh) {
         ret = 2;
         bx = GetSystemMetrics(SM_CXSIZEFRAME);
         by = GetSystemMetrics(SM_CYSIZEFRAME);
@@ -2256,16 +2258,18 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax) {
   hd *= 2;
   hd += td;
 
+  int minw, minh, maxw, maxh;
+  pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
   float s = Fl::screen_driver()->scale(screen_num());
-  minmax->ptMinTrackSize.x = LONG(s * minw()) + wd;
-  minmax->ptMinTrackSize.y = LONG(s * minh()) + hd;
-  if (maxw()) {
-    minmax->ptMaxTrackSize.x = LONG(s * maxw()) + wd;
-    minmax->ptMaxSize.x = LONG(s * maxw()) + wd;
+  minmax->ptMinTrackSize.x = LONG(s * minw) + wd;
+  minmax->ptMinTrackSize.y = LONG(s * minh) + hd;
+  if (maxw) {
+    minmax->ptMaxTrackSize.x = LONG(s * maxw) + wd;
+    minmax->ptMaxSize.x = LONG(s * maxw) + wd;
   }
-  if (maxh()) {
-    minmax->ptMaxTrackSize.y = LONG(s * maxh()) + hd;
-    minmax->ptMaxSize.y = LONG(s * maxh()) + hd;
+  if (maxh) {
+    minmax->ptMaxTrackSize.y = LONG(s * maxh) + hd;
+    minmax->ptMaxSize.y = LONG(s * maxh) + hd;
   }
 }
 

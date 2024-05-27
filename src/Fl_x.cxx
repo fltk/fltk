@@ -2757,13 +2757,15 @@ void Fl_X11_Window_Driver::sendxjunk() {
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
   float s = Fl::screen_driver()->scale(screen_num());
 
-  hints->min_width  = s * minw();
-  hints->min_height = s * minh();
-  hints->max_width  = s * maxw();
-  hints->max_height = s * maxh();
+  int minw, minh, maxw, maxh, dw, dh, aspect;
+  pWindow->get_size_range(&minw, &minh, &maxw, &maxh, &dw, &dh, &aspect);
+  hints->min_width  = s * minw;
+  hints->min_height = s * minh;
+  hints->max_width  = s * maxw;
+  hints->max_height = s * maxh;
   if (int(s) == s) { // use win size increment value only if scale is an integer. Is it possible to do better?
-    hints->width_inc  = s * dw();
-    hints->height_inc = s * dh();
+    hints->width_inc  = s * dw;
+    hints->height_inc = s * dh;
   } else {
     hints->width_inc  = 0;
     hints->height_inc = 0;
@@ -2789,7 +2791,7 @@ void Fl_X11_Window_Driver::sendxjunk() {
       if (hints->max_height < hints->min_height) hints->max_height = Fl::h()*s;
     }
     if (hints->width_inc && hints->height_inc) hints->flags |= PResizeInc;
-    if (aspect()) {
+    if (aspect) {
       // stupid X!  It could insist that the corner go on the
       // straight line between min and max...
       hints->min_aspect.x = hints->max_aspect.x = hints->min_width;
