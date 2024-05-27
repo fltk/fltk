@@ -190,6 +190,13 @@ FL_EXPORT bool fl_disable_wayland = true;
 anywhere in the source code, for the app to run with 1.4, using the x11 leg of the hybrid platform,
 without any other change in the source code nor to the application's environment.
 
+Function \c attempt_wayland() must be called before the very first platform-dependent operation FLTK
+performs so that operation is done the Wayland or the X11 way, as appropriate. That's why
+4 locations of the FLTK source code call \c attempt_wayland():
+<tt>Fl_Graphics_Driver::newMainGraphicsDriver(), Fl_Screen_Driver::newScreenDriver(),
+Fl_Window_Driver::newWindowDriver(Fl_Window*), and
+Fl_Image_Surface_Driver::newImageSurfaceDriver().</tt>
+
 In special situations, such as with embedded systems equipped with the Wayland software but lacking
 the X11 library, it's possible to build the FLTK library such as it contains only the Wayland backend.
 This is achieved building FLTK with <tt>cmake -DFLTK_BACKEND_X11=OFF</tt> or with
@@ -257,13 +264,16 @@ socket name;
 Which socket is selected determines the compositor used by the client application: that at the other
 end of the socket.
 
-Function \c Fl_Wayland_Screen_Driver::open_display_platform() establishes the connection to the
-Wayland socket identified above calling \c wl_display_connect(NULL) which returns a
+Establishing the connection begins with a call to <tt>wl_display_connect(const char *display_name)
+</tt>. That call is done inside function \c attempt_wayland() mentioned before with a NULL argument,
+or when a non default Wayland display name is specified as explained above. That call returns a
 <tt>struct wl_display</tt> pointer or NULL in case of failure. Such NULL return is the hint
 that allows the FLTK display opening procedure of the Wayland/X11 hybrid to recognize when Wayland
-access is not possible and to fallback to X11.
+access is not possible and to fallback to X11. If the call is successful, its non-NULL return
+is assigned to class variable \c Fl_Wayland_Screen_Driver::wl_display.
 
-Then, function \c wl_registry_add_listener() associates a 2-member listener, whose 1st member,
+The rest of the work is done in function \c Fl_Wayland_Screen_Driver::open_display_platform().
+A call to \c wl_registry_add_listener() associates a 2-member listener, whose 1st member,
 \c registry_handle_global(), will be called by Wayland a number of times to indicate each time
 a protocol supported by the compositor or a system feature such as displays and keyboards.
 
@@ -1291,9 +1301,12 @@ For example, \c Fl_Wayland_Window_Driver::flush() needs to call
 <h3>Throttling GL window redraws</h3>
 Although no documentation covering this subject was found, the EGL library internally
 uses \c wl_callback objects to throttle GL window redraws, and FLTK needs not interfere with
-these operations. Nevertheless FLTK uses \c wl_callback objects for GL windows in 2 cases:
-- when a top-level GL window is being interactively resized, with the
-code described above;
+these operations. Nevertheless FLTK creates and uses \c wl_callback objects for GL windows in 2 cases:
+- when a decorated GL window is being interactively resized.
+Function \c Fl_Wayland_Gl_Window_Driver::resize() creates a \c wl_callback object,
+assigns it to xid->frame_cb and calls \c wl_callback_add_listener() before calling
+\c wl_egl_window_resize(). This allows the mechanism described above that prevents surfaces from
+being resized too frequently to operate with decorated \c Fl_GL_Window's too.
 - when a GL subwindow is being refreshed by \c Fl_Wayland_Gl_Window_Driver::swap_buffers().
 FLTK checks that \c xid->frame_cb is NULL and if so creates a \c wl_callback calling
 \c wl_surface_frame() before calling \c eglSwapBuffers(). This is useful if the GL subwindow
