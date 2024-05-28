@@ -87,7 +87,6 @@ public:
   // next length of marked text after current marked text will have been replaced
   static int next_marked_length;
   static compositor_name compositor; // identifies the used Wayland compositor
-  static bool in_xdg_toplevel_move; // true when performing interactive window move
 
 // static member functions
   static void insertion_point_location(int x, int y, int height);

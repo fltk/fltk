@@ -96,7 +96,6 @@ static struct wl_surface *gtk_shell_surface = NULL;
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
   Fl_Wayland_Screen_Driver::unspecified;
 
-bool Fl_Wayland_Screen_Driver::in_xdg_toplevel_move = false;
 
 extern "C" {
   bool fl_libdecor_using_weston(void) {
@@ -231,11 +230,6 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   set_event_xy(win);
   Fl::handle(FL_ENTER, win);
   //fprintf(stderr, "pointer_enter window=%p\n", win);
-  if (Fl_Wayland_Screen_Driver::in_xdg_toplevel_move) {
-    Fl::pushed(NULL);
-    Fl::e_state = 0;
-    Fl_Wayland_Screen_Driver::in_xdg_toplevel_move = false;
-  }
   seat->pointer_focus = surface;
 }
 
