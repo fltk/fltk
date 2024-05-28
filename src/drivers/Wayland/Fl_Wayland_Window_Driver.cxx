@@ -1856,6 +1856,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
         if (Fl::e_state == FL_BUTTON1) {
           xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
+          Fl_Wayland_Screen_Driver::in_xdg_toplevel_move = true;
         }
       } else if (fl_win->kind == SUBWINDOW && fl_win->subsurface) {
         wl_subsurface_set_position(fl_win->subsurface, pWindow->x() * f, pWindow->y() * f);
