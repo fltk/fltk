@@ -30,9 +30,6 @@
 class FL_EXPORT Fl_Double_Window : public Fl_Window
 {
 public:
-  /**
-    Return non-null if this is an Fl_Overlay_Window object.
-  */
   Fl_Double_Window *as_double_window() FL_OVERRIDE {return this; }
   void show() FL_OVERRIDE;
   /** Same as Fl_Window::show(int a, char **b) */
