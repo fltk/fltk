@@ -547,7 +547,7 @@ if(FLTK_BACKEND_WAYLAND)
     set_source_files_properties(
       ${FLTK_SOURCE_DIR}/libdecor/build/fl_libdecor-plugins.c
       ${FLTK_SOURCE_DIR}/libdecor/src/os-compatibility.c
-      ${FLTK_SOURCE_DIR}/libdecor/src/cursor-settings.c
+      ${FLTK_SOURCE_DIR}/libdecor/src/desktop-settings.c
       PROPERTIES COMPILE_DEFINITIONS "${CDEFS}"
       INCLUDE_DIRECTORIES "${IDIRS}"
       COMPILE_OPTIONS "${COPTS}"
@@ -564,7 +564,7 @@ if(FLTK_BACKEND_WAYLAND)
       ${FLTK_SOURCE_DIR}/libdecor/build/fl_libdecor.c
       ${FLTK_SOURCE_DIR}/libdecor/build/fl_libdecor-plugins.c
       ${FLTK_SOURCE_DIR}/libdecor/src/os-compatibility.c
-      ${FLTK_SOURCE_DIR}/libdecor/src/cursor-settings.c
+      ${FLTK_SOURCE_DIR}/libdecor/src/desktop-settings.c
       PROPERTIES
       COMPILE_DEFINITIONS "${CDEFS}"
       INCLUDE_DIRECTORIES "${IDIRS}"
@@ -579,7 +579,7 @@ if(FLTK_BACKEND_WAYLAND)
 
   list(APPEND CFILES
     scandir_posix.c
-    ../libdecor/src/cursor-settings.c
+    ../libdecor/src/desktop-settings.c
     ../libdecor/src/os-compatibility.c
     ../libdecor/build/fl_libdecor-plugins.c
   )

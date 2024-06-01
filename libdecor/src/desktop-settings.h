@@ -1,5 +1,6 @@
 /*
  * Copyright © 2019 Christian Rauch
+ * Copyright © 2024 Colin Kinloch
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -27,5 +28,14 @@
 
 #include <stdbool.h>
 
+enum libdecor_color_scheme {
+	LIBDECOR_COLOR_SCHEME_DEFAULT,
+	LIBDECOR_COLOR_SCHEME_PREFER_DARK,
+	LIBDECOR_COLOR_SCHEME_PREFER_LIGHT,
+};
+
 bool
 libdecor_get_cursor_settings(char **theme, int *size);
+
+enum libdecor_color_scheme
+libdecor_get_color_scheme();

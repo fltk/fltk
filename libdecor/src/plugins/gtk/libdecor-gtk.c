@@ -38,7 +38,7 @@
 
 #include "libdecor-plugin.h"
 #include "utils.h"
-#include "cursor-settings.h"
+#include "desktop-settings.h"
 #include "os-compatibility.h"
 
 #include <cairo/cairo.h>
@@ -337,6 +337,8 @@ struct libdecor_plugin_gtk {
 
 	char *cursor_theme_name;
 	int cursor_size;
+
+	uint32_t color_scheme_setting;
 
 	int double_click_time_ms;
 	int drag_threshold;
@@ -2246,16 +2248,16 @@ handle_titlebar_gesture(struct libdecor_frame_gtk *frame_gtk,
 		break;
 	case TITLEBAR_GESTURE_MIDDLE_CLICK:
 		break;
-        case TITLEBAR_GESTURE_RIGHT_CLICK: { /* FLTK */
-            const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
-            
-            libdecor_frame_show_window_menu(&frame_gtk->frame,
-                                            seat->wl_seat,
-                                            serial,
-                                            seat->pointer_x,
-                                            seat->pointer_y
-                                            -title_height);
-          } /* FLTK */
+	case TITLEBAR_GESTURE_RIGHT_CLICK:
+		{
+		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
+		libdecor_frame_show_window_menu(&frame_gtk->frame,
+						seat->wl_seat,
+						serial,
+						seat->pointer_x,
+						seat->pointer_y
+						-title_height);
+		}
 		break;
 	}
 }
@@ -2410,7 +2412,7 @@ pointer_button(void *data,
 		handle_button_on_header (frame_gtk, seat, serial, time, button, state);
 		break;
 	default:
-                break;  /* FLTK */
+		break;
 	}
 }
 
@@ -2930,6 +2932,8 @@ libdecor_plugin_new(struct libdecor *context)
 		plugin_gtk->cursor_size = 24;
 	}
 
+	plugin_gtk->color_scheme_setting = libdecor_get_color_scheme();
+
 	wl_display = libdecor_get_wl_display(context);
 	plugin_gtk->wl_registry = wl_display_get_registry(wl_display);
 	wl_registry_add_listener(plugin_gtk->wl_registry,
@@ -2957,6 +2961,11 @@ libdecor_plugin_new(struct libdecor *context)
 		libdecor_plugin_gtk_destroy(&plugin_gtk->plugin);
 		return NULL;
 	}
+
+	g_object_set(gtk_settings_get_default(),
+		     "gtk-application-prefer-dark-theme",
+		     plugin_gtk->color_scheme_setting == LIBDECOR_COLOR_SCHEME_PREFER_DARK,
+		     NULL);
 
 	return &plugin_gtk->plugin;
 }

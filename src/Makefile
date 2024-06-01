@@ -428,7 +428,7 @@ EXTRA_OBJECTS_WAYLAND =  ../libdecor/build/fl_libdecor.o ../libdecor/build/libde
   ../libdecor/build/fl_libdecor-plugins.o \
   xdg-decoration-protocol.o xdg-shell-protocol.o text-input-protocol.o \
   gtk-shell-protocol.o \
-  ../libdecor/build/cursor-settings.o ../libdecor/build/os-compatibility.o
+  ../libdecor/build/desktop-settings.o ../libdecor/build/os-compatibility.o
 EXTRA_OBJECTS_WAYLANDX11 = $(EXTRA_OBJECTS_WAYLAND)
 EXTRA_CXXFLAGS_WAYLAND = -I.
 EXTRA_CXXFLAGS_WAYLANDX11 = $(EXTRA_CXXFLAGS_WAYLAND)

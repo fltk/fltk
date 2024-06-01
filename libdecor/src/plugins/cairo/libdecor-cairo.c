@@ -39,7 +39,7 @@
 
 #include "libdecor-plugin.h"
 #include "utils.h"
-#include "cursor-settings.h"
+#include "desktop-settings.h"
 #include "os-compatibility.h"
 
 #include <cairo/cairo.h>

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2019 Christian Rauch
+ * Copyright © 2024 Colin Kinloch
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,10 +24,11 @@
  * SOFTWARE.
  */
 
-#include "cursor-settings.h"
+#include "desktop-settings.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "config.h"
 
 static bool
@@ -164,10 +166,48 @@ libdecor_get_cursor_settings(char **theme, int *size)
 fallback:
 	return get_cursor_settings_from_env(theme, size);
 }
+
+enum libdecor_color_scheme
+libdecor_get_color_scheme()
+{
+	static const char name[] = "org.freedesktop.appearance";
+	static const char key_color_scheme[] = "color-scheme";
+	uint32_t color = 0;
+
+	DBusError error;
+	DBusConnection *connection;
+	DBusMessage *reply;
+
+	dbus_error_init(&error);
+
+	connection = dbus_bus_get(DBUS_BUS_SESSION, &error);
+
+	if (dbus_error_is_set(&error))
+		return 0;
+
+	reply = get_setting_sync(connection, name, key_color_scheme);
+	if (!reply)
+		return 0;
+
+	if (!parse_type(reply, DBUS_TYPE_UINT32, &color)) {
+		dbus_message_unref(reply);
+		return 0;
+	}
+
+	dbus_message_unref(reply);
+
+	return color;
+}
 #else
 bool
 libdecor_get_cursor_settings(char **theme, int *size)
 {
 	return get_cursor_settings_from_env(theme, size);
+}
+
+uint32_t
+libdecor_get_color_scheme()
+{
+	return LIBDECOR_COLOR_SCHEME_DEFAULT;
 }
 #endif

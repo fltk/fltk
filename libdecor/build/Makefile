@@ -18,7 +18,7 @@ include ../../makeinclude
 
 OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/xdg-decoration-protocol.o ../../src/xdg-shell-protocol.o \
-  ../../src/text-input-protocol.o ../../src/gtk-shell-protocol.o cursor-settings.o os-compatibility.o
+  ../../src/text-input-protocol.o ../../src/gtk-shell-protocol.o desktop-settings.o os-compatibility.o
 
 PROTOCOLS = `pkg-config --variable=pkgdatadir wayland-protocols`
 
@@ -46,8 +46,8 @@ libdecor-cairo-blur.o : ../src/plugins/common/libdecor-cairo-blur.c
 os-compatibility.o : ../src/os-compatibility.c
 	$(CC) $(CFLAGS_DECOR) -c  ../src/os-compatibility.c
 
-cursor-settings.o : ../src/cursor-settings.c
-	$(CC) $(CFLAGS_DECOR)  -c ../src/cursor-settings.c $(LIBDECORDBUS)
+desktop-settings.o : ../src/desktop-settings.c
+	$(CC) $(CFLAGS_DECOR)  -c ../src/desktop-settings.c $(LIBDECORDBUS)
 
 ../../src/xdg-shell-protocol.c :
 	wayland-scanner private-code $(PROTOCOLS)/stable/xdg-shell/xdg-shell.xml \
