@@ -2211,7 +2211,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   if (!fl_clipboard_notify_empty() && clipboard_wnd == NULL)
     fl_clipboard_notify_target((HWND)x->xid);
 
-  wait_for_expose_value = 1;
+  wait_for_expose_value = ((wp == 0 || hp == 0) && !w->border() && !w->parent() ? 0 : 1); // issue #985
   if (show_iconic()) {
     showit = 0;
     show_iconic(0);
