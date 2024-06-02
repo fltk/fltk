@@ -977,3 +977,11 @@ void Fl_Window::is_maximized_(bool b) {
   if (b) set_flag(MAXIMIZED);
   else clear_flag(MAXIMIZED);
 }
+
+/** Allow this subwindow to expand outside the area of its parent window.
+ This is presently implemented only for the Wayland platform to help support window docking.
+ \since 1.4.0
+*/
+void Fl_Window::allow_expand_outside_parent() {
+  if (parent()) pWindowDriver->allow_expand_outside_parent();
+}

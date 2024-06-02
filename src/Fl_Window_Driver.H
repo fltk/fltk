@@ -207,6 +207,7 @@ public:
   static void scroll_to_selected_item(Fl_Window *);
 
   virtual fl_uintptr_t os_id() { return 0; }
+  virtual void allow_expand_outside_parent() {}
 };
 
 #endif // FL_WINDOW_DRIVER_H

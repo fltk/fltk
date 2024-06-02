@@ -56,6 +56,7 @@ private:
     Fl_Image* shape_; ///<  shape image
     cairo_pattern_t *mask_pattern_;
   } *shape_data_;
+  bool can_expand_outside_parent_; // specially to allow window docking (#987)
   cairo_rectangle_int_t *subRect_;   // makes sure subwindow remains inside its parent window
   static bool in_flush_; // useful for progressive window drawing
   Fl_Cursor standard_cursor_; // window's standard custom kind
@@ -143,6 +144,7 @@ public:
   static bool new_popup; // to support tall menu buttons
   bool process_menu_or_tooltip(struct wld_window *);
   static Fl_Window *previous_floatingtitle; // to support floating menuwindow w/ title
+  void allow_expand_outside_parent() FL_OVERRIDE { can_expand_outside_parent_ = true; }
 };
 
 

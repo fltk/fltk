@@ -70,6 +70,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   gl_start_support_ = NULL;
   subRect_ = NULL;
   is_popup_window_ = false;
+  can_expand_outside_parent_ = false;
 }
 
 
@@ -1889,7 +1890,7 @@ static bool crect_equal(cairo_rectangle_int_t *to, cairo_rectangle_int_t *with) 
 
 
 void Fl_Wayland_Window_Driver::checkSubwindowFrame() {
-  if (!pWindow->parent()) return;
+  if (!pWindow->parent() || can_expand_outside_parent_) return;
   // make sure this subwindow doesn't leak out of its parent window
   Fl_Window *from = pWindow, *parent;
   cairo_rectangle_int_t full = {0, 0, pWindow->w(), pWindow->h()}; // full subwindow area
