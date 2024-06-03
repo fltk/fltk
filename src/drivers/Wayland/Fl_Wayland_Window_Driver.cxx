@@ -1867,6 +1867,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
 
   if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface) {
+    // Interactive move or resize of a subwindow requires to commit the parent surface (#987)
     Fl_Window *parent = pWindow->window();
     struct wld_window *xid = fl_wl_xid(parent);
     if (xid) wl_surface_commit(xid->wl_surface);
