@@ -1784,11 +1784,12 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
   int is_a_move = (X != x() || Y != y());
   bool true_rescale = Fl_Window::is_a_rescale();
+  float f = Fl::screen_scale(pWindow->screen_num());
   if (fl_win && fl_win->buffer) {
-    float scale = Fl::screen_scale(pWindow->screen_num()) * wld_scale();
+    int scale = wld_scale();
     int stride = cairo_format_stride_for_width(
-                 Fl_Cairo_Graphics_Driver::cairo_format, int(W * scale) );
-    size_t bsize = stride * int(H * scale);
+                 Fl_Cairo_Graphics_Driver::cairo_format, int(W * f) * scale );
+    size_t bsize = stride * int(H * f) * scale;
     true_rescale = (bsize != fl_win->buffer->draw_buffer.data_size);
   }
   int is_a_resize = (W != w() || H != h() || true_rescale);
@@ -1811,7 +1812,6 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
 
   if (shown()) {
-    float f = Fl::screen_scale(pWindow->screen_num());
     if (is_a_resize) {
       if (pWindow->as_overlay_window() && other_xid) {
         destroy_double_buffer();
@@ -1861,13 +1861,17 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
           Fl::e_state = 0;
         }
       } else if (fl_win->kind == SUBWINDOW && fl_win->subsurface) {
-        wl_subsurface_set_position(fl_win->subsurface, pWindow->x() * f, pWindow->y() * f);
+        wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
       }
     }
   }
 
-  if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface)
-      checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
+  if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface) {
+    Fl_Window *parent = pWindow->window();
+    struct wld_window *xid = fl_wl_xid(parent);
+    if (xid) wl_surface_commit(xid->wl_surface);
+    checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
+  }
 }
 
 
