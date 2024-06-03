@@ -631,18 +631,18 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
     popup = [[[NSPopUpButton alloc ] initWithFrame:rectpop pullsDown:NO] autorelease];
     [view addSubview:box];
     [view addSubview:popup];
-    [box setBorderType:NSNoBorder];
     NSString *nstitle = [[NSString alloc] initWithUTF8String:title];
     [box setTitle:nstitle];
+    [box setTitlePosition:NSBelowTop];
     [nstitle release];
-    NSFont *font = [NSFont controlContentFontOfSize:NSControlSizeRegular];
+    NSFont *font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
     [box setTitleFont:font];
     [box sizeToFit];
     // horizontally move box to fit the locale-dependent width of its title
     NSRect r=[box frame];
-    NSPoint o = r.origin;
-    o.x = rectpop.origin.x - r.size.width + 15;
-    [box setFrameOrigin:o];
+    r.origin.x = rectpop.origin.x - r.size.width;
+    r.origin.y = rectpop.origin.y + (rectpop.size.height - r.size.height) / 2;
+    [box setFrame:r];
     CFStringRef tab = CFSTR("\n");
     CFStringRef tmp_cfs;
     tmp_cfs = CFStringCreateWithCString(NULL, filter, kCFStringEncodingUTF8);
