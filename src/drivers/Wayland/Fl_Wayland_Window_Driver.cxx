@@ -1525,6 +1525,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
       struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(scr_driver->seat->gtk_shell,
                                                                     new_window->wl_surface);
       gtk_surface1_set_modal(gtk_surface);
+      gtk_surface1_release(gtk_surface); // very necessary
     }
   }
 

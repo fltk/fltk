@@ -285,10 +285,10 @@ static void pointer_button(void *data,
     (struct Fl_Wayland_Screen_Driver::seat*)data;
   if (gtk_shell_surface && state == WL_POINTER_BUTTON_STATE_PRESSED &&
       button == BTN_MIDDLE) {
-    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(seat->gtk_shell,
-                                                                  gtk_shell_surface);
+    struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(seat->gtk_shell,gtk_shell_surface);
     gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat,
                                   GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
+    gtk_surface1_release(gtk_surface); // very necessary
     return;
   }
   seat->serial = serial;
