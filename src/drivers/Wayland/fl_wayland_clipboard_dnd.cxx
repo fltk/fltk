@@ -300,6 +300,9 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer,
   } else if (strcmp(mime_type, "text/plain") == 0 && !fl_selection_type[1]) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
     fl_selection_offer_type = "text/plain";
+  } else if (strcmp(mime_type, "UTF8_STRING") == 0 && !fl_selection_type[1]) {
+    fl_selection_type[1] = Fl::clipboard_plain_text;
+    fl_selection_offer_type = "text/plain";
   }
 }
 
