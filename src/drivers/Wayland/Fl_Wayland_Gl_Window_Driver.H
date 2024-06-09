@@ -56,8 +56,6 @@ private:
   void redraw_overlay() FL_OVERRIDE;
   void gl_start() FL_OVERRIDE;
   void gl_visual(Fl_Gl_Choice *c) FL_OVERRIDE;
-  char *alpha_mask_for_string(
-      const char *str, int n, int w, int h, Fl_Fontsize fs) FL_OVERRIDE;
   void init();
 public:
   //virtual bool need_scissor() { return true; } // CONTROL_LEAKING_SUB_GL_WINDOWS
