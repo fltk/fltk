@@ -1784,6 +1784,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     pWindow->wait_for_expose();
   }
   int is_a_move = (X != x() || Y != y());
+  int oldX = x(), oldY = y(), oldW = w(), oldH = h();
   bool true_rescale = Fl_Window::is_a_rescale();
   float f = Fl::screen_scale(pWindow->screen_num());
   if (fl_win && fl_win->buffer) {
@@ -1869,9 +1870,16 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
 
   if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface) {
     // Interactive move or resize of a subwindow requires to commit the parent surface (#987)
-    Fl_Window *parent = pWindow->window();
-    struct wld_window *xid = fl_wl_xid(parent);
-    if (xid) wl_surface_commit(xid->wl_surface);
+    struct wld_window *xid = fl_wl_xid(pWindow->window());
+    if (xid) {
+      if (!xid->frame_cb) {
+        xid->frame_cb = wl_surface_frame(xid->wl_surface);
+        wl_callback_add_listener(xid->frame_cb, Fl_Wayland_Graphics_Driver::p_surface_frame_listener, xid);
+        wl_surface_commit(xid->wl_surface);
+      } else {
+        pWindow->Fl_Widget::resize(oldX, oldY, oldW, oldH);
+      }
+    }
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
   }
 }
