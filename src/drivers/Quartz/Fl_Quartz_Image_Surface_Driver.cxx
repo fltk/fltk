@@ -31,7 +31,8 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
   if (high_res) {
     s = Fl_Graphics_Driver::default_driver().scale();
     Fl_Window *cw = Fl_Window::current();
-    if (cw && Fl_Cocoa_Window_Driver::driver(cw)->mapped_to_retina()) s *= 2;
+    Fl_Cocoa_Window_Driver *dr = cw ? Fl_Cocoa_Window_Driver::driver(cw) : NULL;
+    if (dr && dr->mapped_to_retina()) s *= 2;
     W *= s; H *= s;
   }
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
