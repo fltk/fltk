@@ -1,7 +1,7 @@
 //
 // macOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,6 +49,9 @@ extern "C" {
 #include <pwd.h>
 
 #import <Cocoa/Cocoa.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_VERSION_15_0
+# import <ScreenCaptureKit/ScreenCaptureKit.h>
+#endif
 
 // #define DEBUG_SELECT         // UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT
@@ -4607,20 +4610,85 @@ int Fl_Cocoa_Window_Driver::decorated_h()
   return h() + bt/s;
 }
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_VERSION_15_0
+
+// Requires -framework ScreenCaptureKit and used by FLTK for macOS ≥ 15.0
+static CGImageRef capture_titlebar_macOS15(NSWindow *nswin) {
+  __block CGImageRef capture = NULL;
+  __block BOOL capture_err = NO;
+  void (^block_to_stop_main_loop)(void) = ^{ CFRunLoopStop(CFRunLoopGetMain()); };
+  CGWindowID target_id = [nswin windowNumber];
+  NSRect r = [nswin frame];
+  int W = r.size.width, H = r.size.height;
+  [SCShareableContent getCurrentProcessShareableContentWithCompletionHandler: // macOS 14.4
+                      ^(SCShareableContent *shareableContent, NSError *error) {
+    SCWindow *scwin = nil;
+    if (!error) {
+      NSEnumerator *enumerator = [[shareableContent windows] objectEnumerator];
+      while ((scwin = (SCWindow*)[enumerator nextObject]) != nil) {
+        if ([scwin windowID] == target_id) {
+          break;
+        }
+      }
+    }
+    if (!scwin) {
+      capture_err = YES;
+      dispatch_async(dispatch_get_main_queue(), block_to_stop_main_loop);
+      return;
+    }
+    SCContentFilter *filter = [[[SCContentFilter alloc] initWithDesktopIndependentWindow:scwin] autorelease];
+    int s = (int)[filter pointPixelScale];
+    SCStreamConfiguration *config = [[[SCStreamConfiguration alloc] init] autorelease];
+    [config setIgnoreShadowsSingleWindow:YES];
+    [config setWidth:W*s];
+    [config setHeight:H*s];
+    [config setIncludeChildWindows:NO]; // macOS 14.2
+    [SCScreenshotManager captureImageWithFilter:filter
+                                  configuration:config
+                              completionHandler:^(CGImageRef sampleBuffer, NSError *error) {
+      if (error) capture_err = YES;
+      else {
+        capture = sampleBuffer;
+        CGImageRetain(capture);
+      }
+      dispatch_async(dispatch_get_main_queue(), block_to_stop_main_loop);
+    }
+    ];
+  }
+  ];
+  // run the main loop until the 1 or 2 blocks above have finished and have stopped the loop
+  while (!capture_err && !capture) CFRunLoopRun();
+  if (capture_err) return NULL;
+  int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
+  int s = CGImageGetWidth(capture) / W;
+  CGRect cgr = CGRectMake(0, 0, W * s, bt * s);
+  CGImageRef title_bar = CGImageCreateWithImageInRect(capture, cgr);
+  CGImageRelease(capture);
+  return title_bar;
+}
+#endif // MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_VERSION_15_0
+
+
 void Fl_Cocoa_Window_Driver::draw_titlebar_to_context(CGContextRef gc, int w, int h)
 {
   FLWindow *nswin = fl_xid(pWindow);
   if ([nswin canBecomeMainWindow]) [nswin makeMainWindow];
   [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
-  CGImageRef img;
+  CGImageRef img = NULL;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 100600) { // verified OK from 10.6
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_VERSION_15_0
+  if (fl_mac_os_version >= 150000) img = capture_titlebar_macOS15(nswin);
+  else
+#  endif
+    if (fl_mac_os_version >= 100600) { // verified OK from 10.6
     NSInteger win_id = [nswin windowNumber];
     CFArrayRef array = CFArrayCreate(NULL, (const void**)&win_id, 1, NULL);
     CGRect rr = NSRectToCGRect([nswin frame]);
     rr.origin.y = CGDisplayBounds(CGMainDisplayID()).size.height - (rr.origin.y + rr.size.height);
     rr.size.height = h;
+#  if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_VERSION_15_0
     img = CGWindowListCreateImageFromArray(rr, array, kCGWindowImageBoundsIgnoreFraming); // 10.5
+#  endif
     CFRelease(array);
   } else
 #endif
