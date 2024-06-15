@@ -1954,12 +1954,22 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
 /**
  \brief FLTK library options management.
 
- This function needs to be documented in more detail. It can be used for more
- optional settings, such as using a native file chooser instead of the FLTK one
+ Options provide a way for the user to modify the behavior of an FLTK
+ application. For example, clearing the `OPTION_SHOW_TOOLTIPS` will disable
+ tooltips for all FLTK applications.
+
+ Options are set by the user or the administrator on user or machine level.
+ In 1.3, FLUID has an Options dialog for that. In 1.4, there is an app named
+ `fltk-options` that can be used from the command line or as a GUI tool.
+ The machine level setting is read first, and the user setting can override
+ the machine setting.
+
+ This function is used throughout FLTK to quickly query the user's wishes.
+ There are options for using a native file chooser instead of the FLTK one
  wherever possible, disabling tooltips, disabling visible focus, disabling
  FLTK file chooser preview, etc. .
 
- There should be a command line option interface.
+ See `Fl::Fl_Option` for a list of available options.
 
  Example:
  \code
@@ -1969,12 +1979,14 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
          { ..off..  }
  \endcode
 
- \note Options can be managed with the \c fltk-options program, new in FLTK 1.4.0.
+ \note Options can be managed with the \c fltk-options program, new in 
+ FLTK 1.4.0. In 1.3.x, options can be set in FLUID.
 
  \param opt which option
  \return true or false
  \see enum Fl::Fl_Option
  \see Fl::option(Fl_Option, bool)
+ \see fltk-options application in command line and GUI mode
 
  \since FLTK 1.3.0
  */
@@ -2053,7 +2065,12 @@ bool Fl::option(Fl_Option opt)
 /**
  \brief Override an option while the application is running.
 
- This function does not change any system or user settings.
+ Apps can override the machine settings and the user settings by calling
+ `Fl::option(option, bool)`. The override takes effect immediately for this
+ option for all widgets in the app for the life time of the app.
+
+ The override is not saved anywhere, and relaunching the app will restore the
+ old settings.
 
  Example:
  \code
@@ -2063,6 +2080,7 @@ bool Fl::option(Fl_Option opt)
 
  \param opt which option
  \param val set to true or false
+
  \see enum Fl::Fl_Option
  \see bool Fl::option(Fl_Option)
  */
@@ -2071,7 +2089,7 @@ void Fl::option(Fl_Option opt, bool val)
   if (opt<0 || opt>=OPTION_LAST)
     return;
   if (!options_read_) {
-    // first read this option, so we don't override our setting later
+    // make sure that the options_ array is filled in
     option(opt);
   }
   options_[opt] = val;
