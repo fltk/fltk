@@ -1010,10 +1010,10 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     LIBS="$LIBS -framework Cocoa"
     macosversion_maj=$(sw_vers -productVersion | cut -d. -f1)
     AS_IF([test $macosversion_maj -ge 11], [
-      LIBS="$LIBS -framework UniformTypeIdentifiers"
+      LIBS="$LIBS -weak_framework UniformTypeIdentifiers"
     ])
     AS_IF([test $macosversion_maj -ge 15], [
-      LIBS="$LIBS -framework ScreenCaptureKit"
+      LIBS="$LIBS -weak_framework ScreenCaptureKit"
     ])
 
     AS_IF([test x$have_pthread = xyes], [

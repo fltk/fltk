@@ -123,31 +123,14 @@ if(APPLE)
     endif(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0))
   else()
     set(FLTK_COCOA_FRAMEWORKS "-framework Cocoa")
-    set(UTI_CONDITION FALSE) # TRUE when framework UniformTypeIdentifiers is used
-    set(SCK_CONDITION FALSE) # TRUE when framework ScreenCaptureKit is used
-    string(LENGTH "${CMAKE_OSX_DEPLOYMENT_TARGET}" TARGET_LEN)
-    string(LENGTH "${CMAKE_SYSTEM_VERSION}" SDK_LEN)
-    if(TARGET_LEN GREATER 0)
-      if( ${CMAKE_OSX_DEPLOYMENT_TARGET} VERSION_GREATER_EQUAL 11.0)
-        set(UTI_CONDITION TRUE)
+    if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
+      if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 20.0) # a.k.a. macOS version ≥ 11.0
+        list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
       endif()
-      if( ${CMAKE_OSX_DEPLOYMENT_TARGET} VERSION_GREATER_EQUAL 15.0)
-        set(SCK_CONDITION TRUE)
-      endif()
-    elseif(SDK_LEN GREATER 0)
-      if( ${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 20.0 )
-        set(UTI_CONDITION TRUE)
-      endif()
-      if( ${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 24.0 )
-        set(SCK_CONDITION TRUE)
+      if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 24.0) # a.k.a. macOS version ≥ 15.0
+        list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework ScreenCaptureKit")
       endif()
     endif()
-    if(UTI_CONDITION) # a.k.a. macOS version ≥ 11.0
-      list(APPEND FLTK_COCOA_FRAMEWORKS "-framework UniformTypeIdentifiers")
-      if(SCK_CONDITION) # a.k.a. macOS version ≥ 15.0
-        list(APPEND FLTK_COCOA_FRAMEWORKS "-framework ScreenCaptureKit")
-      endif(SCK_CONDITION)
-    endif(UTI_CONDITION)
   endif(FLTK_BACKEND_X11)
 endif(APPLE)
 
