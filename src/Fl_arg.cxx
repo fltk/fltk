@@ -316,7 +316,7 @@ void Fl_Window::show(int argc, char **argv) {
 
   // set the class, which is used by X version of get_system_colors:
   if (name) {xclass(name); name = 0;}
-  else if (!xclass()) xclass(fl_filename_name(argv[0]));
+  else if (!xclass() || !strcmp(xclass(),"FLTK")) xclass(fl_filename_name(argv[0]));
 
   if (title) {label(title); title = 0;}
   else if (!label()) label(xclass());
