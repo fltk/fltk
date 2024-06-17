@@ -321,7 +321,7 @@ void Fl_Wayland_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top,
   int width, height, stride;
   uchar *cairo_data = fl_libdecor_titlebar_buffer(wwin->frame, &width, &height, &stride);
   if (!cairo_data) return;
-  uchar *data = new uchar[width * height * 3];
+  uchar *data = new uchar[width * height * 4];
   uchar *p = data;
   for (int j = 0; j < height; j++) {
     uchar *q = cairo_data + j * stride;
@@ -329,10 +329,11 @@ void Fl_Wayland_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top,
       *p++ = *(q+2); // R
       *p++ = *(q+1); // G
       *p++ = *q;     // B
+      *p++ = *(q+3); // A
       q += 4;
     }
   }
-  top = new Fl_RGB_Image(data, width, height, 3);
+  top = new Fl_RGB_Image(data, width, height, 4);
   top->alloc_array = 1;
   top->scale(pWindow->w(), htop);
 }
