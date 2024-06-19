@@ -4618,6 +4618,23 @@ static CGImageRef capture_titlebar_macOS15(NSWindow *nswin) {
     __block CGImageRef capture = NULL;
     __block BOOL capture_err = NO;
     void (^block_to_stop_main_loop)(void) = ^{ CFRunLoopStop(CFRunLoopGetMain()); };
+    // Fix for bug in ScreenCaptureKit that modifies a window's styleMask the first time
+    // it captures a non-resizable window. We memorize each non-resizable window's styleMask,
+    // and we restore modified styleMasks later, after the screen capture.
+    NSMutableArray *xid_array = [NSMutableArray arrayWithCapacity:2];
+    NSMutableArray *mask_array = [NSMutableArray arrayWithCapacity:2];
+    Fl_Window *win = Fl::first_window();
+    while (win) {
+      if (!win->parent() && win->border()) {
+        FLWindow *xid = fl_mac_xid(win);
+        if (xid && !([xid styleMask] & NSWindowStyleMaskResizable)) {
+          [xid_array addObject:xid];
+          NSUInteger mask = [xid styleMask];
+          [mask_array addObject:[NSData dataWithBytes:&mask length:sizeof(NSUInteger)]];
+        }
+      }
+      win = Fl::next_window(win);
+    }
     CGWindowID target_id = [nswin windowNumber];
     NSRect r = [nswin frame];
     int W = r.size.width, H = r.size.height;
@@ -4657,9 +4674,16 @@ static CGImageRef capture_titlebar_macOS15(NSWindow *nswin) {
       ];
     }
     ];
-    // run the main loop until the 1 or 2 blocks above have finished and have stopped the loop
+    // run the main loop until the 1 or 2 blocks above have completed and have stopped the loop
     while (!capture_err && !capture) CFRunLoopRun();
     if (capture_err) return NULL;
+    // ScreenCaptureKit bug cont'd: restore modified styleMasks.
+    for (int i = 0, count = [xid_array count]; i < count; i++) {
+      NSUInteger mask;
+      [(NSData*)[mask_array objectAtIndex:i] getBytes:&mask length:sizeof(NSUInteger)];
+      NSWindow *xid = (NSWindow*)[xid_array objectAtIndex:i];
+      if (mask != [xid styleMask]) [xid setStyleMask:mask];
+    }
     int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
     int s = CGImageGetWidth(capture) / W;
     CGRect cgr = CGRectMake(0, 0, W * s, bt * s);
