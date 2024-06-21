@@ -1,7 +1,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -344,23 +344,68 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void *data) {
 }
 
 /**
-  Removes a timeout callback from the timer queue.
+  Remove one or more matching timeout callbacks from the timer queue.
 
-  This method removes all matching timeouts, not just the first one.
-  This may change in the future.
+  This method removes \b all matching timeouts, not just the first one.
 
   If the \p data argument is \p NULL (the default!) only the callback
   \p cb must match, i.e. all timer entries with this callback are removed.
 
   It is harmless to remove a timeout callback that no longer exists.
 
+  If you want to remove only the next matching timeout you can use
+  Fl::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **data_return)
+  (available since FLTK 1.4.0).
+
   \param[in]  cb    Timer callback to be removed (must match)
   \param[in]  data  Wildcard if NULL (default), must match otherwise
+
+  \see Fl::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **data_return)
 */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *data) {
   Fl_Timeout::remove_timeout(cb, data);
 }
 
+
+/**
+  Remove the next matching timeout callback and return its \p data pointer.
+
+  This method removes only the next matching timeout and returns in
+  \p data_return (if non-NULL) the \p data member given when the timeout
+  was scheduled.
+
+  This method is useful if you remove a timeout before it is scheduled
+  and you need to get and use its data value, for instance to free() or
+  delete the data associated with the timeout.
+
+  This method returns non-zero if a matching timeout was found and zero
+  if no timeout matched the request.
+
+  If the return value is \c N \> 1 then there are N - 1 more matching
+  timeouts pending.
+
+  If you need to remove all timeouts with a particular callback \p cb
+  you must repeat this call until it returns 1 (all timeouts removed)
+  or zero (no matching timeout), whichever occurs first.
+
+
+  \param[in]    cb    Timer callback to be removed (must match)
+  \param[in]    data  Wildcard if NULL, must match otherwise
+  \param[inout] data_return  Pointer to (void *) to receive the data value
+
+  \return       non-zero if a timer was found and removed
+  \retval   0   no matching timer was found
+  \retval   1   the last matching timeout was found and removed
+  \retval  N>1  a matching timeout was removed and there are \n
+                (N - 1) matching timeouts pending
+
+  \see Fl::remove_timeout(Fl_Timeout_Handler cb, void *data)
+
+  \since 1.4.0
+*/
+int Fl::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **data_return) {
+  return Fl_Timeout::remove_next_timeout(cb, data, data_return);
+}
 
 
 ////////////////////////////////////////////////////////////////
@@ -1979,7 +2024,7 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
          { ..off..  }
  \endcode
 
- \note Options can be managed with the \c fltk-options program, new in 
+ \note Options can be managed with the \c fltk-options program, new in
  FLTK 1.4.0. In 1.3.x, options can be set in FLUID.
 
  \param opt which option

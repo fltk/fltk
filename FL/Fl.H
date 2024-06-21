@@ -479,6 +479,7 @@ public:
   static void repeat_timeout(double t, Fl_Timeout_Handler cb, void *data = 0);
   static int  has_timeout(Fl_Timeout_Handler cb, void *data = 0);
   static void remove_timeout(Fl_Timeout_Handler cb, void *data = 0);
+  static int remove_next_timeout(Fl_Timeout_Handler cb, void *data = 0, void **data_return = 0);
 
   static void add_check(Fl_Timeout_Handler, void* = 0);
   static int  has_check(Fl_Timeout_Handler, void* = 0);
