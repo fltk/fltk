@@ -1056,7 +1056,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     fl_unlock_function();
     return;
   }
-  Fl_Window *first = Fl::first_window();
   NSPoint pos = [theEvent locationInWindow];
   float s = Fl::screen_driver()->scale(0);
   pos.x /= s; pos.y /= s;
