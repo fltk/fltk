@@ -51,7 +51,7 @@
  project windows.
  The *New From Template* item opens a dialog that provides access to a small
  number of sample projects. More projects can be added using *Save as Template*.
- 
+
  Use *Write Code* to write the header and source code files, and *Write Strings*
  to write the translation file if one of the internationalization options
  is active.

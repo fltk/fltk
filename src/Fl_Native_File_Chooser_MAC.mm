@@ -540,7 +540,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   else
 #endif
   if (fl_mac_os_version >= 100900) {
-    [dialog performSelector:@selector(setAllowedFileTypes:) 
+    [dialog performSelector:@selector(setAllowedFileTypes:)
                  withObject:[NSArray arrayWithObject:ext]];
   }
 }

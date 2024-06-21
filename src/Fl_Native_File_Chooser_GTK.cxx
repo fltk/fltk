@@ -972,6 +972,6 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
     }
   }
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
-  
+
   if (!platform_fnfc) platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
 }

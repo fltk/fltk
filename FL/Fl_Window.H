@@ -629,9 +629,9 @@ public:
   static char show_next_window_iconic() {
     return show_next_window_iconic_;
   }
-  
+
   void allow_expand_outside_parent();
-  
+
 };
 
 #endif

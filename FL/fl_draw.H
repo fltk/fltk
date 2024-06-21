@@ -623,7 +623,7 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
 }
 /**
   Add a series of points to the current path on the arc of a circle.
- 
+
   The arc is drawn counter-clockwise from 3 o'clock. If \p end is less than
   \p start then it draws the arc in a clockwise direction. To draw an arc across
   the 3 o'clock line, \p start and \p end can be greater than 360 or less than 0.

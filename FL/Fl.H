@@ -1220,7 +1220,7 @@ public:
   // boxtypes:
   static Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);
   static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,
-                          uchar, uchar, uchar, uchar, 
+                          uchar, uchar, uchar, uchar,
                           Fl_Box_Draw_Focus_F* =NULL);
   static void set_boxtype(Fl_Boxtype, Fl_Boxtype from);
   static int box_dx(Fl_Boxtype);

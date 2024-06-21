@@ -228,7 +228,7 @@ public:
 
   /**
     This box type is used to surround the currently-selected items in the
-    menus. 
+    menus.
   */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   /** Sets the box type used to surround the currently-selected items in the menus.  */

@@ -1645,7 +1645,7 @@ static int update_format_layout(int rank, Fl_Paged_Device::Page_Layout layout,
                        });
   FL_INLINE_CALLBACK_2( modal, Fl_Window*, win, modal,
                        Fl_Check_Button*, check_but, default_size,
-                       { 
+                       {
                         *((bool*)check_but->user_data()) = check_but->value();
                         win->hide();
                        } );
@@ -1676,7 +1676,7 @@ static int update_format_layout(int rank, Fl_Paged_Device::Page_Layout layout,
 
 int Fl_PDF_Pango_File_Surface::begin_job(const char *defaultname, char **perr_message) {
   static Page_Layout layout = PORTRAIT;
-  
+
   Fl_Preferences print_prefs(Fl_Preferences::CORE_USER, "fltk.org", "printers");
   char *pref_format;
   print_prefs.get("PDF/page_size", pref_format, "A4");

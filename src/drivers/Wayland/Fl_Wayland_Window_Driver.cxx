@@ -1519,7 +1519,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
       if (top_dr->xdg_toplevel()) xdg_toplevel_set_parent(new_window->xdg_toplevel,
                                                           top_dr->xdg_toplevel());
     }
-    if (scr_driver->seat->gtk_shell && pWindow->modal() && 
+    if (scr_driver->seat->gtk_shell && pWindow->modal() &&
         (new_window->kind == DECORATED || new_window->kind == UNFRAMED)) {
       // Useful to position modal windows above their parent with "gnome-shell --version" ≤ 45.2,
       // useless but harmless with "gnome-shell --version" ≥ 46.0.

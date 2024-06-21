@@ -737,10 +737,10 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::play_menu(const Fl_Menu_Item *item) {
   free(label);
   AXUIElementRef appElement = AXUIElementCreateApplication(getpid());
   AXUIElementRef menu_bar = NULL;
-  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute, 
+  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute,
                                                 (CFTypeRef *)&menu_bar);
   if (!error) error = AXUIElementGetAttributeValueCount(menu_bar, kAXChildrenAttribute, &count);
-  if (!error) error = AXUIElementCopyAttributeValues(menu_bar, kAXChildrenAttribute, 0, count, 
+  if (!error) error = AXUIElementCopyAttributeValues(menu_bar, kAXChildrenAttribute, 0, count,
                                                      &children);
   if (!error) {
     NSEnumerator *enumerator = [(NSArray*)children objectEnumerator];
