@@ -1057,7 +1057,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     return;
   }
   Fl_Window *first = Fl::first_window();
-  if (first != window && !(first->modal() || first->non_modal())) Fl::first_window(window);
   NSPoint pos = [theEvent locationInWindow];
   float s = Fl::screen_driver()->scale(0);
   pos.x /= s; pos.y /= s;
