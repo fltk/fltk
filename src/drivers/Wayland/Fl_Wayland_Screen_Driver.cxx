@@ -774,8 +774,12 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   } else {
     remove_int_vector(key_vector, for_key_vector);
     // Under KDE, the time value received doesn't change at each keystroke as it should,
-    // so we remove any key repeat timer at each FL_KEYUP event.
-    Fl::remove_timeout((Fl_Timeout_Handler)key_repeat_timer_cb);
+    // so we remove any (i.e. the next) key repeat timer at each FL_KEYUP event.
+    void *key_repeat_data = NULL;
+    int removed = Fl::remove_next_timeout((Fl_Timeout_Handler)key_repeat_timer_cb,
+                                          NULL, &key_repeat_data);
+    if (removed)
+      delete (key_repeat_data_t *)key_repeat_data;
   }
   Fl::e_text = buf;
   Fl::e_length = (int)strlen(buf);
