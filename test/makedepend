@@ -725,6 +725,7 @@ device.o: ../FL/Fl_Menu_Item.H
 device.o: ../FL/Fl_Multi_Label.H
 device.o: ../FL/Fl_Native_File_Chooser.H
 device.o: ../FL/Fl_Paged_Device.H
+device.o: ../FL/Fl_PDF_File_Surface.H
 device.o: ../FL/Fl_Pixmap.H
 device.o: ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_PostScript.H

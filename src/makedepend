@@ -248,6 +248,7 @@ drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Box.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Browser.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Button.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Cairo.H
+drivers/PostScript/Fl_PostScript.o: ../FL/fl_callback_macros.H
 drivers/PostScript/Fl_PostScript.o: ../FL/fl_casts.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Check_Button.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Choice.H
@@ -272,6 +273,7 @@ drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Menu_Item.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Multi_Label.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Native_File_Chooser.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Paged_Device.H
+drivers/PostScript/Fl_PostScript.o: ../FL/Fl_PDF_File_Surface.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Plugin.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_PostScript.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Preferences.H
@@ -1557,7 +1559,10 @@ Fl_Device.o: ../FL/fl_config.h
 Fl_Device.o: ../FL/Fl_Device.H
 Fl_Device.o: ../FL/Fl_Export.H
 Fl_Device.o: ../FL/Fl_Graphics_Driver.H
+Fl_Device.o: ../FL/Fl_Group.H
 Fl_Device.o: ../FL/Fl_Image.H
+Fl_Device.o: ../FL/Fl_Paged_Device.H
+Fl_Device.o: ../FL/Fl_PDF_File_Surface.H
 Fl_Device.o: ../FL/Fl_Pixmap.H
 Fl_Device.o: ../FL/Fl_Plugin.H
 Fl_Device.o: ../FL/Fl_Preferences.H
@@ -1565,6 +1570,8 @@ Fl_Device.o: ../FL/Fl_RGB_Image.H
 Fl_Device.o: ../FL/fl_types.h
 Fl_Device.o: ../FL/fl_utf8.h
 Fl_Device.o: ../FL/Fl_Widget.H
+Fl_Device.o: ../FL/Fl_Widget_Surface.H
+Fl_Device.o: ../FL/Fl_Window.H
 Fl_Device.o: ../FL/platform_types.h
 Fl_Dial.o: ../FL/Enumerations.H
 Fl_Dial.o: ../FL/Fl.H
@@ -3002,6 +3009,7 @@ Fl_Native_File_Chooser_Kdialog.o: drivers/Unix/Fl_Unix_Screen_Driver.H
 Fl_Native_File_Chooser_Kdialog.o: Fl_Native_File_Chooser_Kdialog.H
 Fl_Native_File_Chooser_Kdialog.o: Fl_Screen_Driver.H
 Fl_Native_File_Chooser_Kdialog.o: Fl_String.H
+Fl_Native_File_Chooser_Kdialog.o: Fl_System_Driver.H
 Fl_Native_File_Chooser_Kdialog.o: Fl_Window_Driver.H
 Fl_Native_File_Chooser_Zenity.o: ../config.h
 Fl_Native_File_Chooser_Zenity.o: ../FL/Enumerations.H
@@ -4068,6 +4076,7 @@ Fl_Tiled_Image.o: ../FL/fl_utf8.h
 Fl_Tiled_Image.o: ../FL/Fl_Widget.H
 Fl_Tiled_Image.o: ../FL/Fl_Window.H
 Fl_Tiled_Image.o: ../FL/platform_types.h
+Fl_Timeout.o: ../config.h
 Fl_Timeout.o: ../FL/Enumerations.H
 Fl_Timeout.o: ../FL/filename.H
 Fl_Timeout.o: ../FL/Fl.H
