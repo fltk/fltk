@@ -583,21 +583,19 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
 
 
 struct key_repeat_data_t {
-  uint32_t time;
+  uint32_t serial;
   Fl_Window *window;
 };
-
+static uint32_t last_keydown_serial = 0; // serial of last keydown event
 
 #define KEY_REPEAT_DELAY 0.5 // sec
 #define KEY_REPEAT_INTERVAL 0.05 // sec
 
 
 static void key_repeat_timer_cb(key_repeat_data_t *key_repeat_data) {
-  if ((Fl::event() == FL_KEYDOWN || (Fl_Window_Driver::menu_parent() &&
-          Fl::event() == FL_ENTER)) && wld_event_time == key_repeat_data->time) {
+  if (last_keydown_serial == key_repeat_data->serial) {
     Fl::handle(FL_KEYDOWN, key_repeat_data->window);
-    Fl::add_timeout(KEY_REPEAT_INTERVAL, (Fl_Timeout_Handler)key_repeat_timer_cb,
-                    key_repeat_data);
+    Fl::add_timeout(KEY_REPEAT_INTERVAL, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
   }
   else delete key_repeat_data;
 }
@@ -772,14 +770,8 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
       key_vector.push_back(for_key_vector);
     }
   } else {
+    last_keydown_serial = 0;
     remove_int_vector(key_vector, for_key_vector);
-    // Under KDE, the time value received doesn't change at each keystroke as it should,
-    // so we remove any (i.e. the next) key repeat timer at each FL_KEYUP event.
-    void *key_repeat_data = NULL;
-    int removed = Fl::remove_next_timeout((Fl_Timeout_Handler)key_repeat_timer_cb,
-                                          NULL, &key_repeat_data);
-    if (removed)
-      delete (key_repeat_data_t *)key_repeat_data;
   }
   Fl::e_text = buf;
   Fl::e_length = (int)strlen(buf);
@@ -828,9 +820,19 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   }
   if (event == FL_KEYDOWN && status == XKB_COMPOSE_NOTHING &&
       !(sym >= FL_Shift_L && sym <= FL_Alt_R)) {
+    // Handling of key repeats :
+    // Use serial argument rather than time to detect repeated keys because
+    // serial value changes at each key up or down in all tested OS and compositors,
+    // whereas time value changes in Ubuntu24.04 KDE/Plasma 5.27.11 and Ubuntu22.04 KDE/Plasma 5.24.7
+    // but not in Debian-testing KDE/Plasma 5.27.10.
+    // Unexplained difference in behaviors of KDE/Plasma compositor:
+    // Consider KDE settings -> input -> keyboard -> when a key is held: repeat/do nothing.
+    // This setting (repeat) has key-down wayland events repeated when key is held under Debian/KDE
+    // but not under Ubuntu/KDE !
     key_repeat_data_t *key_repeat_data = new key_repeat_data_t;
-    key_repeat_data->time = time;
+    key_repeat_data->serial = serial;
     key_repeat_data->window = win;
+    last_keydown_serial = serial;
     Fl::add_timeout(KEY_REPEAT_DELAY, (Fl_Timeout_Handler)key_repeat_timer_cb,
                     key_repeat_data);
   }
