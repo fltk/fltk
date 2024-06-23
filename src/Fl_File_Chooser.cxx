@@ -312,7 +312,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
   callback_ = 0;
   data_ = 0;
   directory_[0] = 0;
-  window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
+  window->size_range(window->w(), window->h());
   type(type_val);
   filter(pattern);
   update_favorites();
