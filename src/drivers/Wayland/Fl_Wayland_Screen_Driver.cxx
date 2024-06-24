@@ -288,8 +288,7 @@ static void pointer_button(void *data,
     struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(seat->gtk_shell,gtk_shell_surface);
     gtk_surface1_titlebar_gesture(gtk_surface, serial, seat->wl_seat,
                                   GTK_SURFACE1_GESTURE_MIDDLE_CLICK);
-    if (gtk_surface1_get_version(gtk_surface) >= GTK_SURFACE1_RELEASE_SINCE_VERSION)
-      gtk_surface1_release(gtk_surface); // very necessary
+    gtk_surface1_release(gtk_surface); // very necessary
     return;
   }
   seat->serial = serial;

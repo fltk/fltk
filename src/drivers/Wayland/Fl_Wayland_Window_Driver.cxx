@@ -1528,6 +1528,8 @@ void Fl_Wayland_Window_Driver::makeWindow()
       gtk_surface1_set_modal(gtk_surface);
       if (gtk_surface1_get_version(gtk_surface) >= GTK_SURFACE1_RELEASE_SINCE_VERSION)
         gtk_surface1_release(gtk_surface); // very necessary
+      else
+        gtk_surface1_destroy(gtk_surface);
     }
   }
 
