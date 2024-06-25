@@ -235,7 +235,8 @@ FLTK_OPTION_LARGE_FILE - default ON
 
 FLTK_OPTION_OPTIM - default EMPTY
     Extra optimization flags for the C and C++ compilers, for instance
-    "-Wall -Wno-deprecated-declarations".
+    "-Wall -Wno-deprecated-declarations". Example:
+    cmake -D FLTK_BUILD_EXAMPLES=on -D FLTK_OPTION_OPTIM="-Wall -Wextra -pedantic" ..
 
 FLTK_OPTION_PRINT_SUPPORT - default ON
     When turned off, the Fl_Printer class does nothing and the
