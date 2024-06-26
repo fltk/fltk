@@ -18,6 +18,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input_Choice.H>
+#include <FL/Fl_Scheme_Choice.H>
 #include <FL/Fl_Terminal.H>
 
 #define TERMINAL_HEIGHT 120
@@ -52,6 +53,9 @@ int main(int argc, char **argv) {
     in.add("two");
     in.add("three");
     in.value(1);
+
+    // Interactive control of scheme
+    Fl_Scheme_Choice sch(100, 120, 140, 25, "Scheme");
 
     Fl_Button onoff(40,150,200,28,"Activate/Deactivate");
     onoff.callback(buttcb, (void*)&in);

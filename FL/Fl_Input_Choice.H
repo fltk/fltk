@@ -72,7 +72,7 @@ protected:
   /** See inp_x() for info. */
   virtual int inp_y() const { return(y() + Fl::box_dy(box())); }
   /** See inp_x() for info. */
-  virtual int inp_w() const { return(w() - Fl::box_dw(box()) - 20); }
+  virtual int inp_w() const { return(w() - Fl::box_dw(box()) - menu_w()); }
   /** See inp_x() for info. */
   virtual int inp_h() const { return(h() - Fl::box_dh(box())); }
 
@@ -81,13 +81,15 @@ protected:
       These can be overridden by a subclass to redefine positioning.
       See code example in the Description for subclassing details.
   */
-  virtual int menu_x() const { return(x() + w() - 20 - Fl::box_dx(box())); }
+  virtual int menu_x() const { return x() + w() - menu_w() - Fl::box_dx(box()); }
   /** See menu_x() for info. */
-  virtual int menu_y() const { return(y() + Fl::box_dy(box())); }
+  virtual int menu_y() const { return y() + Fl::box_dy(box()); }
   /** See menu_x() for info. */
-  virtual int menu_w() const { return(20); }
+  virtual int menu_w() const { return 20; }
   /** See menu_x() for info. */
-  virtual int menu_h() const { return(h() - Fl::box_dh(box())); }
+  virtual int menu_h() const { return h() - Fl::box_dh(box()); }
+
+  void draw() FL_OVERRIDE;
 
 public:
 
