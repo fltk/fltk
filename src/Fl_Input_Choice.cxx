@@ -5,7 +5,7 @@
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
