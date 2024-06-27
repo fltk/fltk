@@ -1783,12 +1783,12 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
 
 
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
+  static int depth = 0;
   struct wld_window *fl_win = fl_wl_xid(pWindow);
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
   }
   int is_a_move = (X != x() || Y != y());
-  int oldX = x(), oldY = y(), oldW = w(), oldH = h();
   bool true_rescale = Fl_Window::is_a_rescale();
   float f = Fl::screen_scale(pWindow->screen_num());
   if (fl_win && fl_win->buffer) {
@@ -1801,20 +1801,26 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   int is_a_resize = (W != w() || H != h() || true_rescale);
   if (is_a_move) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
+  depth++;
   if (shown() && !(parent() || popup_window())) {
     X = Y = 0;
   }
-  if (is_a_resize) {
-    if (pWindow->parent()) {
-      if (W < 1) W = 1;
-      if (H < 1) H = 1;
+  struct wld_window *parent_xid = parent() ? fl_wl_xid(pWindow->window()) : NULL;
+  // This condition excludes moving or resizing a subwindow while not changing its parent
+  // and delays application of new X,Y,W,H values if the parent is being committed.
+  if (!parent_xid || depth > 1 || !parent_xid->frame_cb) {
+    if (is_a_resize) {
+      if (pWindow->parent()) {
+        if (W < 1) W = 1;
+        if (H < 1) H = 1;
+      }
+      pWindow->Fl_Group::resize(X,Y,W,H);
+      //fprintf(stderr, "resize: win=%p to %dx%d\n", pWindow, W, H);
+      if (shown()) {pWindow->redraw();}
+    } else {
+      x(X); y(Y);
+      //fprintf(stderr, "move win=%p to %dx%d\n", pWindow, X, Y);
     }
-    pWindow->Fl_Group::resize(X,Y,W,H);
-//fprintf(stderr, "resize: win=%p to %dx%d\n", pWindow, W, H);
-    if (shown()) {pWindow->redraw();}
-  } else {
-    x(X); y(Y);
-//fprintf(stderr, "move win=%p to %dx%d\n", pWindow, X, Y);
   }
 
   if (shown()) {
@@ -1872,20 +1878,19 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     }
   }
 
-  if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface) {
-    // Interactive move or resize of a subwindow requires to commit the parent surface (#987)
-    struct wld_window *xid = fl_wl_xid(pWindow->window());
-    if (xid) {
-      if (!xid->frame_cb) {
-        xid->frame_cb = wl_surface_frame(xid->wl_surface);
-        wl_callback_add_listener(xid->frame_cb, Fl_Wayland_Graphics_Driver::p_surface_frame_listener, xid);
-        wl_surface_commit(xid->wl_surface);
-      } else {
-        pWindow->Fl_Widget::resize(oldX, oldY, oldW, oldH);
+  if (fl_win && parent_xid) {
+    if (depth == 1) {
+      // Interactive move or resize of a subwindow requires to commit the parent surface
+      // and requires to make sure the parent surface is ready to accept a new commit (#987).
+      if (!parent_xid->frame_cb) {
+        parent_xid->frame_cb = wl_surface_frame(parent_xid->wl_surface);
+        wl_callback_add_listener(parent_xid->frame_cb, Fl_Wayland_Graphics_Driver::p_surface_frame_listener, parent_xid);
+        wl_surface_commit(parent_xid->wl_surface);
       }
     }
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
   }
+  depth--;
 }
 
 
