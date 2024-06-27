@@ -200,12 +200,8 @@ public:
   // the implementations of local_to_mac_roman() and mac_roman_to_local() are in fl_encoding_mac_roman.cxx
   virtual const char *local_to_mac_roman(const char *t, int n);
   virtual const char *mac_roman_to_local(const char *t, int n);
-  // the default implementations of tree_openpixmap() and tree_closepixmap() are
-  // in Fl_Tree_Prefs.cxx and can be enough
-  virtual Fl_Pixmap *tree_openpixmap();
-  virtual Fl_Pixmap *tree_closepixmap();
-  static const char *const tree_open_xpm[]; // used by tree_openpixmap()
-  static const char * const tree_close_xpm[]; // used by tree_closepixmap()
+  // draw default tree view expando button
+  virtual void tree_draw_expando_button(int x, int y, bool state, bool active);
   // the default implementation of tree_connector_style() is in Fl_Tree_Prefs.cxx and can be enough
   virtual int tree_connector_style();
   virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);

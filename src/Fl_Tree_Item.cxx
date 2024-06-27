@@ -9,6 +9,7 @@
 #include <FL/Fl_Tree_Prefs.H>
 #include <FL/Fl_Tree.H>
 #include <FL/fl_string_functions.h>
+#include "Fl_System_Driver.H"
 
 //////////////////////
 // Fl_Tree_Item.cxx
@@ -990,13 +991,13 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
   //   We don't care about items clipped off the viewport; they won't get mouse events.
   //
   int item_y_center = Y+(H/2);
-  _collapse_xywh[2] = prefs.openicon()->w();
+  _collapse_xywh[2] = prefs.openicon() ? prefs.openicon()->w() : 11;
   int &icon_w = _collapse_xywh[2];
   _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
   int &icon_x = _collapse_xywh[0];
-  _collapse_xywh[1] = item_y_center - (prefs.openicon()->h()/2);
+  _collapse_xywh[1] = item_y_center - (prefs.openicon() ? prefs.openicon()->h()/2 : 5);
   int &icon_y = _collapse_xywh[1];
-  _collapse_xywh[3] = prefs.openicon()->h();
+  _collapse_xywh[3] = prefs.openicon() ? prefs.openicon()->h() : 11;
 
   // Horizontal connector values
   //   Must calculate these even if(clipped) because 'draw children' code (below)
@@ -1080,11 +1081,23 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
         if ( render && has_children() && prefs.showcollapse() ) {
           // Draw icon image
           if ( is_open() ) {
-            if ( active ) prefs.closeicon()->draw(icon_x,icon_y);
-            else          prefs.closedeicon()->draw(icon_x,icon_y);
+            if(prefs.closeicon() != 0){
+              if (active)
+                prefs.closeicon()->draw(icon_x, icon_y);
+              else
+                prefs.closedeicon()->draw(icon_x, icon_y);
+            } else {
+              Fl::system_driver()->tree_draw_expando_button(icon_x, icon_y, false, active);
+            }
           } else {
-            if ( active ) prefs.openicon()->draw(icon_x,icon_y);
-            else          prefs.opendeicon()->draw(icon_x,icon_y);
+            if(prefs.openicon() != 0){
+              if (active)
+                prefs.openicon()->draw(icon_x, icon_y);
+              else
+                prefs.opendeicon()->draw(icon_x, icon_y);
+            } else {
+              Fl::system_driver()->tree_draw_expando_button(icon_x, icon_y, true, active);
+            }
           }
         }
         // Draw user icon (if any)
