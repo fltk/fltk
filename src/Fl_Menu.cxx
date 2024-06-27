@@ -706,7 +706,7 @@ static int forward(int menu) { // go to next item in menu menu if possible
     }
     item = -1;
   }
-  while (pp.menubar && pp.menu_number <= 0 && (!m.menu || m.menu->submenu()));
+  while (pp.menubar && Fl::event_key() == FL_Right);
   return 0;
 }
 
@@ -724,7 +724,7 @@ static int backward(int menu) { // previous item in menu menu if possible
     }
     item = m.numitems;
   }
-  while (pp.menubar && (!m.menu || m.menu->submenu()));
+  while (pp.menubar && Fl::event_key() == FL_Left);
   return 0;
 }
 
@@ -819,7 +819,7 @@ int menuwindow::handle_part1(int e) {
       }
       return 1;
     case FL_Right:
-      if (pp.menubar && (pp.menu_number<=0 || (pp.menu_number==1 && pp.nummenus==2)))
+      if (pp.menubar && (pp.menu_number<=0 || (pp.menu_number == pp.nummenus-1)))
         forward(0);
       else if (pp.menu_number < pp.nummenus-1) forward(pp.menu_number+1);
       return 1;

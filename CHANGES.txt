@@ -248,6 +248,8 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
     keyboard focus (STR #2989).
   - Renamed test/help.cxx demo program to test/help_dialog.cxx to avoid
     name conflict with CMake's auto-generated target 'help'.
+  - Fl_Menu_Bar: left and right arrow keys now wrap to the menu at the
+    other end of the menubar when pressed in the first (resp. last) menu.
   - Many documentation fixes, clarifications, and enhancements.
 
 
