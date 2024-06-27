@@ -125,6 +125,7 @@ header file. FLTK provides the following types of drawing functions:
 \li \ref drawing_boxes
 \li \ref drawing_clipping
 \li \ref drawing_colors
+\li \ref drawing_contrast
 \li \ref drawing_lines
 \li \ref drawing_fast
 \li \ref drawing_complex
@@ -369,6 +370,66 @@ button->color(0xffffff00);                  // RGB: white
 \note
 If TrueColor is not available, any RGB colors will be set to
 the nearest entry in the colormap.
+
+
+\subsection drawing_contrast Color Contrast
+
+Although these are not real "drawing" functions, creating readable contrast is
+essential in a good GUI design. FLTK tries to help with this by providing
+fl_contrast() and related functions.
+
+The basic function is Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, int context, int size);
+
+The parameters \c context and \c size are optional and reserved for future use
+(since FLTK 1.4.0).
+
+The return value can be used to substitute the foreground color \c fg used for drawing
+(usually the "text" or "label" color) on a particular background color \c bg with
+either black (FL_BLACK) or white (FL_WHITE). This is useful if the background color
+is not known or can be changed by the user or a system "theme".
+
+FLTK calculates the contrast between \c fg and \c bg and returns the same color
+(\c fg) if the contrast is considered sufficient or one of FL_BLACK or FL_WHITE
+if the contrast of the given foreground color would be insufficient. Then
+either FL_BLACK or FL_WHITE is chosen, whichever has the higher contrast with
+the background color.
+
+Example, may be used in a widget's draw() method:
+
+  \code
+    Fl_Color bg = color();          // background color of the widget
+    Fl_Color fg = FL_BLUE;          // the chosen foreground (drawing) color
+    fl_color(fl_contrast(fg, bg));  // set the drawing color
+    fl_rect(..);                    // draw a rectangle with sufficient contrast
+  \endcode
+
+FLTK 1.4.0 introduced a new contrast algorithm which is superior to the one
+used up to FLTK 1.3.x. You can use
+
+  fl_contrast_mode(FL_CONTRAST_LEGACY);
+
+early in your program to select the old behavior if you really need strict backwards
+compatibility but this is discouraged because the new algorithm is much better with
+regard to human contrast perception. The default mode since FLTK 1.4.0 is
+
+  fl_contrast_mode(FL_CONTRAST_CIELAB);
+
+For more info please see the linked documentation of these functions.
+
+Additionally the old and new contrast calculations can be fine tuned with the new
+function (since 1.4.0)
+
+  fl_contrast_level(int level);
+
+This is not recommended but can be useful for some border cases. Please refer to
+the documentation of fl_contrast_level().
+
+Finally, developers can define their own contrast calculation function with
+
+  void fl_contrast_function(Fl_Contrast_Function *f);
+
+Please see the documentation for details.
+
 
 \subsection drawing_lines Line Dashes and Thickness
 
