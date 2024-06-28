@@ -5,16 +5,25 @@
 
 This appendix describes the Forms compatibility included with FLTK.
 
-<center>
-<table border="1" width="90%" bgcolor="#cccccc">
-<tr>
-<th align="center">
-Warning: The Forms compatibility is deprecated and no longer maintained
-since FLTK 1.3.0 and is likely to be removed completely in FLTK 1.4 or 1.5
-</th>
-</tr>
-</table>
-</center>
+\note The Forms compatibility library is deprecated, no longer actively
+  maintained since FLTK 1.3.0, and likely to be removed completely
+  in FLTK 1.5.
+
+Since FLTK 1.4 building the Forms compatibility library \c fltk_forms
+(configure/Makefiles) or \c fltk::forms (CMake) can be disabled with
+one of these commands:
+  \code
+    - ./configure --disable-forms ...
+    - cmake -D FLTK_BUILD_FORMS:BOOL=OFF ...
+    - cmake-gui ...
+  \endcode
+
+Fluid can still import Forms and XForms designer (.fd) files but w/o
+any guarantees for working results. Manual fixes may be necessary.
+
+In the next minor or major release (1.5 or higher) the Forms compatibility
+library will not be built by default or will be removed entirely.
+
 
 \section forms_importing Importing Forms Layout Files
 

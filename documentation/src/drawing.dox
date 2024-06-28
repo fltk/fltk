@@ -409,7 +409,7 @@ used up to FLTK 1.3.x. You can use
   fl_contrast_mode(FL_CONTRAST_LEGACY);
 
 early in your program to select the old behavior if you really need strict backwards
-compatibility but this is discouraged because the new algorithm is much better with
+compatibility. This is discouraged because the new algorithm is much better with
 regard to human contrast perception. The default mode since FLTK 1.4.0 is
 
   fl_contrast_mode(FL_CONTRAST_CIELAB);
