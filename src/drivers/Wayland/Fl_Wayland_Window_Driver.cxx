@@ -1770,7 +1770,6 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
 
 
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
-  static int depth = 0;
   struct wld_window *fl_win = fl_wl_xid(pWindow);
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
@@ -1788,14 +1787,13 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   int is_a_resize = (W != w() || H != h() || true_rescale);
   if (is_a_move) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
-  depth++;
   if (shown() && !(parent() || popup_window())) {
     X = Y = 0;
   }
   struct wld_window *parent_xid = parent() ? fl_wl_xid(pWindow->window()) : NULL;
   // This condition excludes moving or resizing a subwindow while not changing its parent
   // and delays application of new X,Y,W,H values if the parent is being committed.
-  if (!parent_xid || depth > 1 || !parent_xid->frame_cb) {
+  if (true_rescale || !parent_xid || group_resize_depth() >= 1 || !parent_xid->frame_cb) {
     if (is_a_resize) {
       if (pWindow->parent()) {
         if (W < 1) W = 1;
@@ -1866,18 +1864,16 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
 
   if (fl_win && parent_xid) {
-    if (depth == 1) {
+    if (group_resize_depth() < 1 && !parent_xid->frame_cb) {
       // Interactive move or resize of a subwindow requires to commit the parent surface
       // and requires to make sure the parent surface is ready to accept a new commit (#987).
-      if (!parent_xid->frame_cb) {
-        parent_xid->frame_cb = wl_surface_frame(parent_xid->wl_surface);
-        wl_callback_add_listener(parent_xid->frame_cb, Fl_Wayland_Graphics_Driver::p_surface_frame_listener, parent_xid);
-        wl_surface_commit(parent_xid->wl_surface);
-      }
+      parent_xid->frame_cb = wl_surface_frame(parent_xid->wl_surface);
+      wl_callback_add_listener(parent_xid->frame_cb,
+                                Fl_Wayland_Graphics_Driver::p_surface_frame_listener, parent_xid);
+      wl_surface_commit(parent_xid->wl_surface);
     }
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
   }
-  depth--;
 }
 
 

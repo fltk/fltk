@@ -54,7 +54,7 @@ class Fl_Rect;
   reason \p FL_REASON_CLOSED.
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
-
+  friend class Fl_Window_Driver;
   union {
     Fl_Widget** array_; // used if group has two or more children or NULL
     Fl_Widget* child1_; // used if group has one child or NULL
@@ -67,6 +67,7 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 
   int navigation(int);
   static Fl_Group *current_;
+  static int group_resize_depth_;
 
   // unimplemented copy ctor and assignment operator
   Fl_Group(const Fl_Group&);

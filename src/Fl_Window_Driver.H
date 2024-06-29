@@ -58,6 +58,7 @@ private:
 protected:
   Fl_Window *pWindow;
   int screen_num_; // number of screen where window is mapped
+  static int group_resize_depth() { return Fl_Group::group_resize_depth_; }
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
