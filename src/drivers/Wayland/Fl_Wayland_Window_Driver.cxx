@@ -990,17 +990,6 @@ static void handle_configure(struct libdecor_frame *frame,
   if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::WESTON || !is_1st_run) {
     window->fl_win->clear_damage();
   }
-
-  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::OWL) {
-    Fl_Window *sub = Fl::first_window();
-    while (sub) { // search still un-exposed sub-windows
-      if (sub->window() == window->fl_win) {
-        Fl_Window_Driver::driver(sub)->wait_for_expose_value = 0;
-        break;
-      }
-      sub = Fl::next_window(sub);
-    }
-  }
 }
 
 
@@ -1465,16 +1454,14 @@ void Fl_Wayland_Window_Driver::makeWindow()
     float f = Fl::screen_scale(pWindow->top_window()->screen_num());
     wl_subsurface_set_position(new_window->subsurface, pWindow->x() * f, pWindow->y() * f);
     wl_subsurface_set_desync(new_window->subsurface); // important
-    // next 3 statements ensure the subsurface will be mapped because:
-    // "A sub-surface becomes mapped, when a non-NULL wl_buffer is applied
-    // and the parent surface is mapped."
+    // Next 5 statements ensure the subsurface will be mapped because:
+    // "The effect of adding a sub-surface becomes visible on the next time
+    // the state of the parent surface is applied."
     new_window->configured_width = pWindow->w();
     new_window->configured_height = pWindow->h();
-    if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL) {
-      // With OWL, delay zeroing of subwindow's wait_for_expose_value until
-      // after their parent is configured, see handle_configure().
-      wait_for_expose_value = 0;
-    }
+    parent->fl_win->wait_for_expose();
+    wl_surface_commit(parent->wl_surface);
+    wait_for_expose_value = 0;
     pWindow->border(0);
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 
@@ -2070,8 +2057,9 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
 
 
 int Fl_Wayland_Window_Driver::wld_scale() {
-  struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
-  if (wl_list_empty(&xid->outputs)) {
+  Fl_X *flx = Fl_X::flx(pWindow);
+  struct wld_window *xid = (flx ? (struct wld_window *)flx->xid : NULL);
+  if (!xid || wl_list_empty(&xid->outputs)) {
     int scale = 1;
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     Fl_Wayland_Screen_Driver::output *output;
