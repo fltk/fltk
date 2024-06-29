@@ -358,7 +358,7 @@ Fl_Sys_Menu_Bar_Driver *Fl_Darwin_System_Driver::sys_menu_bar_driver()
 }
 
 void Fl_System_Driver::tree_draw_expando_button(int x, int y, bool state, bool active) {
-  fl_color(active ? Fl_Color(0) : Fl_Color(8));
+  fl_color(active ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR);
   if(state) {
     fl_polygon(x + 3, y, x + 3, y + 11, x + 8, y + 5);
   } else {

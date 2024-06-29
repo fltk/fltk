@@ -35,7 +35,7 @@
 
 void Fl_System_Driver::tree_draw_expando_button(int x, int y, bool state, bool active) {
   fl_rectf(x, y, 11, 11, active ? FL_BACKGROUND2_COLOR : fl_inactive(FL_BACKGROUND2_COLOR));
-  fl_rect(x, y, 11, 11, Fl_Color(8));
+  fl_rect(x, y, 11, 11, FL_INACTIVE_COLOR);
   fl_color(active ? FL_FOREGROUND_COLOR : fl_inactive(FL_FOREGROUND_COLOR));
   fl_line(x + 2, y + 5, x + 8, y + 5);
   if (state) {
@@ -102,7 +102,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _linespacing            = 0;
   _labelfgcolor           = FL_FOREGROUND_COLOR;
   _labelbgcolor           = 0xffffffff;         // we use this as 'transparent'
-  _connectorcolor         = Fl_Color(8);
+  _connectorcolor         = FL_INACTIVE_COLOR;
   _connectorstyle         = (Fl_Tree_Connector)Fl::system_driver()->tree_connector_style();
   _openimage              = 0;
   _closeimage             = 0;
