@@ -37,7 +37,7 @@
 //    │ + │   │ - │
 //    └───┘   └───┘
 void Fl_System_Driver::tree_draw_expando_button(int x, int y, bool state, bool active) {
-  fl_rectf(x, y, 11, 11, FL_BACKGROUND2_COLOR);         // fill
+  fl_rectf(x, y, 11, 11, active ? FL_BACKGROUND2_COLOR : fl_inactive(FL_BACKGROUND2_COLOR)); // fill
   fl_rect(x, y, 11, 11, FL_INACTIVE_COLOR);             // outline
   fl_color(active ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR);
   fl_line(x + 3, y + 5, x + 7, y + 5);                  // horiz line
