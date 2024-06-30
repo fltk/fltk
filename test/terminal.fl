@@ -368,7 +368,9 @@ return 1;           // hit end of test, reset} {}
   Function {test_firstpage(bool reset)} {
     comment {--- 0000: Test unicode alignment} return_type {static int}
   } {
-    code {G_app->AppendTty(
+    code {
+(void) reset;  // unused arg: quiets compiler warnings
+G_app->AppendTty(
   "\\033[0m\\033[H\\033[2J\\033[3J"    // color/attr reset, home, cls, clear history
   "hello.\\nLine one\\nLine two\\n"
   "\\033[0;0;2m          Dim text:\\033[31m red\\033[32m grn\\033[33m yel"
@@ -1434,7 +1436,7 @@ G_tty->redraw();} {}
   } {
     code {unsigned long ival;
 if (sscanf(val_str, "\#%lx", &ival) == 1 ) { col = Fl_Color(ival); return 0; }
-if (sscanf(val_str, "%ld",  &ival) == 1 ) { col = Fl_Color(ival); return 0; }
+if (sscanf(val_str, "%lu",  &ival) == 1 ) { col = Fl_Color(ival); return 0; }
 
 fl_alert("Illegal color value '%s'\\n(can be e.g. '12' or '\#0c', etc)", val_str);
 return -1;} {}
