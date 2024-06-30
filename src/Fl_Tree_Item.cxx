@@ -805,7 +805,7 @@ Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) 
 ///    - visibility (if !is_visible(), returns 0)
 ///    - labelfont() height: if label() != NULL
 ///    - widget() height: if widget() != NULL
-///    - openicon() height (if not NULL)
+///    - openicon() height (if has children)
 ///    - usericon() height (if not NULL)
 /// Does NOT include Fl_Tree::linespacing();
 /// \returns maximum pixel height
@@ -822,8 +822,8 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
        H < widget()->h()) {
     H = widget()->h();
   }
-  if ( has_children() && prefs.openicon() && H<prefs.openicon()->h() )
-    H = prefs.openicon()->h();
+  if ( has_children() && H < prefs.openicon_h() )
+    H = prefs.openicon_h();
   if ( usericon() && H<usericon()->h() )
     H = usericon()->h();
   return(H);
@@ -991,13 +991,13 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
   //   We don't care about items clipped off the viewport; they won't get mouse events.
   //
   int item_y_center = Y+(H/2);
-  _collapse_xywh[2] = prefs.openicon() ? prefs.openicon()->w() : 11;
+  _collapse_xywh[2] = prefs.openicon_w();
   int &icon_w = _collapse_xywh[2];
   _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
   int &icon_x = _collapse_xywh[0];
-  _collapse_xywh[1] = item_y_center - (prefs.openicon() ? prefs.openicon()->h()/2 : 5);
+  _collapse_xywh[1] = item_y_center - prefs.openicon_h()/2;
   int &icon_y = _collapse_xywh[1];
-  _collapse_xywh[3] = prefs.openicon() ? prefs.openicon()->h() : 11;
+  _collapse_xywh[3] = prefs.openicon_h();
 
   // Horizontal connector values
   //   Must calculate these even if(clipped) because 'draw children' code (below)
@@ -1081,20 +1081,16 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
         if ( render && has_children() && prefs.showcollapse() ) {
           // Draw icon image
           if ( is_open() ) {
-            if(prefs.closeicon() != 0){
-              if (active)
-                prefs.closeicon()->draw(icon_x, icon_y);
-              else
-                prefs.closedeicon()->draw(icon_x, icon_y);
+            if ( prefs.closeicon() ) {
+              if ( active ) prefs.closeicon()->draw(icon_x, icon_y);
+              else          prefs.closedeicon()->draw(icon_x, icon_y);
             } else {
               Fl::system_driver()->tree_draw_expando_button(icon_x, icon_y, false, active);
             }
           } else {
-            if(prefs.openicon() != 0){
-              if (active)
-                prefs.openicon()->draw(icon_x, icon_y);
-              else
-                prefs.opendeicon()->draw(icon_x, icon_y);
+            if ( prefs.openicon() ) {
+              if ( active ) prefs.openicon()->draw(icon_x, icon_y);
+              else          prefs.opendeicon()->draw(icon_x, icon_y);
             } else {
               Fl::system_driver()->tree_draw_expando_button(icon_x, icon_y, true, active);
             }

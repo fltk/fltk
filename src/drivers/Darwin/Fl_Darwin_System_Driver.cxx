@@ -21,6 +21,7 @@
 #include <FL/Fl_Tree_Prefs.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/platform.H>
+#include <FL/fl_draw.H>
 #include "../../flstring.h"
 #include <string.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -357,13 +358,11 @@ Fl_Sys_Menu_Bar_Driver *Fl_Darwin_System_Driver::sys_menu_bar_driver()
   return Fl_MacOS_Sys_Menu_Bar_Driver::driver();
 }
 
-void Fl_System_Driver::tree_draw_expando_button(int x, int y, bool state, bool active) {
+// Draw Mac-specific Fl_Tree open/close icons
+void Fl_Darwin_System_Driver::tree_draw_expando_button(int x, int y, bool state, bool active) {
   fl_color(active ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR);
-  if(state) {
-    fl_polygon(x + 3, y, x + 3, y + 11, x + 8, y + 5);
-  } else {
-    fl_polygon(x, y + 3, x + 11, y + 3, x + 5, y + 8);
-  }
+  if(state) fl_polygon(x + 3, y, x + 3, y + 11, x + 8, y + 5);   // right arrow: ▶
+  else      fl_polygon(x, y + 3, x + 11, y + 3, x + 5, y + 8);   // down arrow: ▼
 }
 int Fl_Darwin_System_Driver::tree_connector_style() {
   return FL_TREE_CONNECTOR_NONE;

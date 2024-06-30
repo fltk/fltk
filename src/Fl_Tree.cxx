@@ -676,8 +676,8 @@ void Fl_Tree::calc_tree() {
   int W = _tiw;
   // Adjust root's X/W if connectors off
   if (_prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE) {
-    X -= _prefs.openicon() != 0 ? _prefs.openicon()->w() : 11;
-    W += _prefs.openicon() != 0 ? _prefs.openicon()->w() : 11;
+    X -= _prefs.openicon_w();
+    W += _prefs.openicon_w();
   }
   int xmax = 0, render = 0, ytop = Y;
   fl_font(_prefs.labelfont(), _prefs.labelsize());
@@ -718,8 +718,8 @@ void Fl_Tree::draw() {
     int W = _tiw - X + _tix;
     // Adjust root's X/W if connectors off
     if (_prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE) {
-      X -= _prefs.openicon() != 0 ? _prefs.openicon()->w() : 11;
-      W += _prefs.openicon() != 0 ? _prefs.openicon()->w() : 11;
+      X -= _prefs.openicon_w();
+      W += _prefs.openicon_w();
     }
     // Draw entire tree, starting with root
     fl_push_clip(_tix,_tiy,_tiw,_tih);
