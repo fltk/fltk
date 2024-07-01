@@ -411,7 +411,7 @@ inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3
 
 // filled polygons
 /**
-  Fill a 3-sided polygon. The polygon must be convex.
+  Fill a 3-sided polygon.
 */
 inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
   fl_graphics_driver->polygon(x, y, x1, y1, x2, y2);
