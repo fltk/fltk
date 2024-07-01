@@ -1459,8 +1459,10 @@ void Fl_Wayland_Window_Driver::makeWindow()
     // the state of the parent surface is applied."
     new_window->configured_width = pWindow->w();
     new_window->configured_height = pWindow->h();
-    parent->fl_win->wait_for_expose();
-    wl_surface_commit(parent->wl_surface);
+    if (!pWindow->as_gl_window())  {
+      parent->fl_win->wait_for_expose();
+      wl_surface_commit(parent->wl_surface);
+    }
     wait_for_expose_value = 0;
     pWindow->border(0);
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
@@ -1791,9 +1793,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     X = Y = 0;
   }
   struct wld_window *parent_xid = parent() ? fl_wl_xid(pWindow->window()) : NULL;
-  // This condition excludes moving or resizing a subwindow while not changing its parent
-  // and delays application of new X,Y,W,H values if the parent is being committed.
-  if (true_rescale || !parent_xid || group_resize_depth() >= 1 || !parent_xid->frame_cb) {
+  // This condition delays application of new X,Y,W,H values if
+  // a non-GL subwindow is being committed.
+  if (!parent_xid || !parent_xid->frame_cb || pWindow->as_gl_window()) {
     if (is_a_resize) {
       if (pWindow->parent()) {
         if (W < 1) W = 1;
@@ -1864,7 +1866,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
 
   if (fl_win && parent_xid) {
-    if (group_resize_depth() < 1 && !parent_xid->frame_cb) {
+    if (!parent_xid->frame_cb && !pWindow->as_gl_window()) {
       // Interactive move or resize of a subwindow requires to commit the parent surface
       // and requires to make sure the parent surface is ready to accept a new commit (#987).
       parent_xid->frame_cb = wl_surface_frame(parent_xid->wl_surface);

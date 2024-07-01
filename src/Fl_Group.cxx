@@ -809,8 +809,6 @@ int* Fl_Group::sizes()
   return sizes_;
 }
 
-int Fl_Group::group_resize_depth_ = 0;
-
 /**
   Resizes the Fl_Group widget and all of its children.
 
@@ -859,7 +857,6 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
   // Part 2: here we definitely have a resizable() widget, resize children
 
   else if (children_) {
-    group_resize_depth_++;
 
     // get changes in size/position from the initial size:
     dx = X - p->x();
@@ -908,7 +905,6 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
       o->resize(L+dx, T+dy, R-L, B-T);
     }
-    group_resize_depth_--;
   } // End of part 2: we have a resizable() widget
 }
 
