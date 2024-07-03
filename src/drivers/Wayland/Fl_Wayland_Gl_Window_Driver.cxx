@@ -328,7 +328,7 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   }
 
   if (egl_surface) {
-    if (pWindow->parent()) {
+    if (pWindow->parent()) { // issue #976
       struct wld_window *xid = fl_wl_xid(pWindow);
       if (xid->frame_cb) return;
       xid->frame_cb = wl_surface_frame(xid->wl_surface);
