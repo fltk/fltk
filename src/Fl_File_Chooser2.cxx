@@ -2,7 +2,7 @@
 // More Fl_File_Chooser routines.
 //
 // Copyright 1999-2007 by Michael Sweet.
-// Copyright 2008-2020 by Bill Spitzak and others.
+// Copyright 2008-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -794,7 +794,8 @@ Fl_File_Chooser::fileNameCB()
   if (dirIsRelative) {
     fl_filename_absolute(pathname, sizeof(pathname), filename);
     value(pathname);
-    fileName->mark(fileName->insert_position()); // no selection after expansion
+    int flen = (int)strlen(pathname);
+    fileName->insert_position(flen, flen); // no selection after expansion
   } else if (filename != pathname) {
     // Finally, make sure that we have a writable copy...
     strlcpy(pathname, filename, sizeof(pathname));
@@ -1466,6 +1467,21 @@ Fl_File_Chooser::value(int f)   // I - File number
 
 
 /** Sets the current value of the selected file.
+
+  If a relative path is provided in \c filename it is converted to
+  an absolute path.
+
+  If \c NULL or an empty string is provided, the working directory is
+  changed to the user's current directory and the filename is set to "".
+
+  After assigning the filename the entire string (if any) is selected, i.e.
+  - insert_position() is 0 (zero)
+  - mark() is strlen(\<expanded filename>).
+
+  \note The selection of the entire string may not always be desired but
+    it is kept for backwards compatibility.
+
+  \param[in] filename   relative or absolute filename, may be NULL or ""
  */
 void
 Fl_File_Chooser::value(const char *filename)
