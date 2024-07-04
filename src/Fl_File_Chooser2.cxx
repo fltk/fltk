@@ -838,7 +838,9 @@ Fl_File_Chooser::fileNameCB()
 #endif /* WIN32 || __EMX__ */
     fl_filename_absolute(pathname, sizeof(pathname), filename);
     value(pathname);
-    fileName->mark(fileName->position()); // no selection after expansion
+    int flen = (int)strlen(pathname);	// issue #1004
+    fileName->position(flen);		// issue #1004
+    fileName->mark(flen);		// no selection after expansion
   } else if (filename != pathname) {
     // Finally, make sure that we have a writable copy...
     strlcpy(pathname, filename, sizeof(pathname));

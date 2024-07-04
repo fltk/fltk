@@ -17,6 +17,10 @@ Details:
   Albrecht Schlosser:
     Add missing FL_EXPORT of class Fl_XFont_On_Demand (#922)
     Fix a bunch of compiler warnings (backported from 'master')
+    Bump version numbers from 1.3.9 to 1.3.10
+    Update bundled libraries
+    Fl_File_Chooser: set insert position to end of string (#1004)
+    ... after filename "expansion" with current directory.
 
   ManoloFLTK:
     Fix "FLTK on NetBSD very slow on X11 with Unicode locale" (#935)
