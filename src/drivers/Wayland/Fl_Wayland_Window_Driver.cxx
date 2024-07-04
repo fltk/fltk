@@ -2090,6 +2090,11 @@ struct wl_compositor *fl_wl_compositor() {
 }
 
 
+int fl_wl_buffer_scale(Fl_Window *window) {
+  return Fl_Wayland_Window_Driver::driver(window)->wld_scale();
+}
+
+
 Fl_Wayland_Plugin *Fl_Wayland_Window_Driver::gl_plugin() {
   static Fl_Wayland_Plugin *plugin = NULL;
   if (!plugin) {

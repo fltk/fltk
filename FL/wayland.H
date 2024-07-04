@@ -43,6 +43,8 @@ extern FL_EXPORT cairo_t *fl_wl_gc();
  \endcode
  */
 extern FL_EXPORT struct wl_compositor *fl_wl_compositor();
+/** Returns the current buffer scaling factor for \p window. */
+extern FL_EXPORT int fl_wl_buffer_scale(Fl_Window *window);
 typedef void *EGLContext;
 /** Returns the EGLContext corresponding to the given GLContext */
 extern FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc);
