@@ -2067,8 +2067,9 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
     set_event_xy(window);
     Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
-    if (xevent.xbutton.button == Button4 ||
-        xevent.xbutton.button == Button5) return 0;
+    if (xevent.xbutton.button > Button3) { // "buttons" 4-7 = mousewheel events: don't send FL_RELEASE
+      return 0;
+    }
     event = FL_RELEASE;
 
 #if FLTK_CONSOLIDATE_MOTION
