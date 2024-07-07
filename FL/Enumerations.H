@@ -562,8 +562,8 @@ enum Fl_Callback_Reason {
 
 /**@{*/          // group: Event States
 
-// FIXME: it would be nice to have the modifiers in the upper 8 bit so that
-//        a unicode key (24bit) can be sent as an unsigned with the modifiers.
+// FIXME: it would be nice to have the modifiers in the upper 8 bits so that
+//        a unicode key (21 bits) can be sent as an unsigned with the modifiers.
 
 #define FL_SHIFT        0x00010000      ///< One of the shift keys is down
 #define FL_CAPS_LOCK    0x00020000      ///< The caps lock is on
@@ -575,14 +575,14 @@ enum Fl_Callback_Reason {
                                         // correct for XFree86
 #define FL_SCROLL_LOCK  0x00800000      ///< The scroll lock is on
                                         // correct for XFree86
-#define FL_BUTTON1      0x01000000      ///< Mouse button 1 is pushed
-#define FL_BUTTON2      0x02000000      ///< Mouse button 2 is pushed
-#define FL_BUTTON3      0x04000000      ///< Mouse button 3 is pushed
-#define FL_BUTTONS      0x7f000000      ///< Any mouse button is pushed
-#define FL_BUTTON(n)    (0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
+#define FL_BUTTON1      0x01000000      ///< Mouse button 1 is pushed (L)
+#define FL_BUTTON2      0x02000000      ///< Mouse button 2 is pushed (M)
+#define FL_BUTTON3      0x04000000      ///< Mouse button 3 is pushed (R)
+#define FL_BUTTONS      0x07000000      ///< Any mouse button (1-3) is pushed
+#define FL_BUTTON(n)   (0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
 
-#define FL_KEY_MASK 0x0000ffff          ///< All keys are 16 bit for now
-                                        //   FIXME: Unicode needs 24 bits!
+#define FL_KEY_MASK     0x0000ffff      ///< All keys are 16 bit for now
+                                        //   FIXME: Unicode needs 21 bits!
 
 /**@}*/          // group: Event States
 

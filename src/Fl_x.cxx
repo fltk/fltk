@@ -972,6 +972,28 @@ char fl_key_vector[32]; // used by Fl::get_key()
 static int px, py;
 static ulong ptime;
 
+// Citation from XButtonEvent and XKeyEvent docs:
+//  "The state member is set to indicate the logical state of the pointer buttons
+//   and modifier keys just prior to the event, which is the bitwise inclusive OR
+//   of one or more of the button or modifier key masks:
+//   Button1Mask, Button2Mask, Button3Mask, Button4Mask, Button5Mask,
+//   ShiftMask, LockMask, ControlMask,
+//   Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, and Mod5Mask."
+//
+// Actual values in Debian Bookworm as of July 2024 (pseudo code):
+//   static int states[] = {
+//     ShiftMask, LockMask, ControlMask,                                 // 1<<0 .. 1<<2
+//     Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, Mod5Mask,                 // 1<<3 .. 1<<7
+//     Button1Mask, Button2Mask, Button3Mask, Button4Mask, Button5Mask   // 1<<8 .. 1<<12
+//   };
+//
+// Note: some more (undefined?) state bits *can* be set if the user uses a keyboard
+// other than the primary one (the top-most in keyboard settings). Therefore we must
+// take care not to use these undefined bits. These undefined bits will be set in
+// Fl::event_state() though: for backwards compatibility and transparency.
+// See definition of FL_BUTTONS in FL/Enumerations.H: only three "sticky" mouse
+// buttons as of July 2024.
+
 static void set_event_xy(Fl_Window *win) {
 #  if FLTK_CONSOLIDATE_MOTION
   send_motion = 0;

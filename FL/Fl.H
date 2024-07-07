@@ -1263,22 +1263,22 @@ public:
     caused an FL_RELEASE event, you can use Fl::event_button() instead.
     \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | [FL_BUTTON3] }
   */
-  static int event_buttons() {return e_state&0x7f000000;}
+  static int event_buttons() {return e_state & FL_BUTTONS;}
   /**
     Returns non-zero if mouse button 1 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button1() {return e_state&FL_BUTTON1;}
+  static int event_button1() {return e_state & FL_BUTTON1;}
   /**
     Returns non-zero if button 2 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button2() {return e_state&FL_BUTTON2;}
+  static int event_button2() {return e_state & FL_BUTTON2;}
   /**
     Returns non-zero if button 3 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button3() {return e_state&FL_BUTTON3;}
+  static int event_button3() {return e_state & FL_BUTTON3;}
   /**   @} */
 
   /**
