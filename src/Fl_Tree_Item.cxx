@@ -714,13 +714,11 @@ void Fl_Tree_Item::draw_horizontal_connector(int x1, int x2, int y, const Fl_Tre
   fl_color(prefs.connectorcolor());
   switch ( prefs.connectorstyle() ) {
     case FL_TREE_CONNECTOR_SOLID:
-      y |= 1;                           // force alignment w/dot pattern
       fl_line(x1,y,x2,y);
       return;
     case FL_TREE_CONNECTOR_DOTTED:
     {
-      y  |= 1;                          // force alignment w/dot pattern
-      x1 |= 1;
+      x1 |= 1;                          // force alignment w/dot pattern
       for ( int xx=x1; xx<=x2; xx+=2 ) {
         fl_point(xx, y);
       }
@@ -990,7 +988,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
   //   Note: calculate collapse icon's xywh for possible mouse click detection.
   //   We don't care about items clipped off the viewport; they won't get mouse events.
   //
-  int item_y_center = Y+(H/2);
+  int item_y_center = Y+(H/2)|1;        // |1: force alignment w/dot pattern
   _collapse_xywh[2] = prefs.openicon_w();
   int &icon_w = _collapse_xywh[2];
   _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
@@ -1064,10 +1062,8 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
       if ( (tree()->damage() & ~FL_DAMAGE_CHILD) || !render ) { // non-child damage?
         // Draw connectors
         if ( render && prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
-          // Horiz connector between center of icon and text
-          // if this is root, the connector should not dangle in thin air on the left
-          if (is_root()) draw_horizontal_connector(hconn_x_center, hconn_x2, item_y_center, prefs);
-          else           draw_horizontal_connector(hconn_x, hconn_x2, item_y_center, prefs);
+          // Horiz connector to center of icon
+          draw_horizontal_connector(hconn_x, hconn_x_center, item_y_center, prefs);
           // Small vertical line down to children
           if ( has_children() && is_open() )
             draw_vertical_connector(hconn_x_center, item_y_center, Y+H2, prefs);
