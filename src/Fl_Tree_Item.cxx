@@ -988,7 +988,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
   //   Note: calculate collapse icon's xywh for possible mouse click detection.
   //   We don't care about items clipped off the viewport; they won't get mouse events.
   //
-  int item_y_center = Y+(H/2)|1;        // |1: force alignment w/dot pattern
+  int item_y_center = (Y+(H/2))|1;      // |1: force alignment w/dot pattern
   _collapse_xywh[2] = prefs.openicon_w();
   int &icon_w = _collapse_xywh[2];
   _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
