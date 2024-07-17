@@ -1,7 +1,7 @@
 //
 // Class Fl_X11_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,10 +20,7 @@
 #include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Screen_Driver.H"
 #include "Fl_X11_Gl_Window_Driver.H"
-#  include <GL/glx.h>
-#  if ! defined(GLX_VERSION_1_3)
-#    typedef void *GLXFBConfig;
-#  endif
+#include <GL/glx.h>
 #if ! USE_XFT
 #  include "../Xlib/Fl_Font.H"
 #endif
@@ -35,12 +32,10 @@ class Fl_X11_Gl_Choice : public Fl_Gl_Choice {
 private:
   XVisualInfo *vis; /* the visual to use */
   Colormap colormap; /* a colormap for that visual */
-  GLXFBConfig best_fb;
 public:
   Fl_X11_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : Fl_Gl_Choice(m, alistp, n) {
     vis = NULL;
     colormap = 0;
-    best_fb = NULL;
   }
 };
 
@@ -120,53 +115,6 @@ Fl_Font_Descriptor** Fl_X11_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum
 #endif
 
 
-static XVisualInfo *gl3_getvisual(const int *blist, GLXFBConfig *pbestFB)
-{
-  int glx_major, glx_minor;
-
-  // FBConfigs were added in GLX version 1.3.
-  if ( !glXQueryVersion(fl_display, &glx_major, &glx_minor) ||
-      ( ( glx_major == 1 ) && ( glx_minor < 3 ) ) || ( glx_major < 1 ) ) {
-    return NULL;
-  }
-
-  //printf( "Getting matching framebuffer configs\n" );
-  int fbcount;
-  GLXFBConfig* fbc = glXChooseFBConfig(fl_display, DefaultScreen(fl_display), blist, &fbcount);
-  if (!fbc) {
-    //printf( "Failed to retrieve a framebuffer config\n" );
-    return NULL;
-  }
-  //printf( "Found %d matching FB configs.\n", fbcount );
-
-  // Pick the FB config/visual with the most samples per pixel
-  int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
-  for (int i = 0; i < fbcount; ++i)
-  {
-    XVisualInfo *vi = glXGetVisualFromFBConfig( fl_display, fbc[i] );
-    if (vi) {
-      int samp_buf, samples;
-      glXGetFBConfigAttrib(fl_display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
-      glXGetFBConfigAttrib(fl_display, fbc[i], GLX_SAMPLES       , &samples );
-      /*printf( "  Matching fbconfig %d, visual ID 0x%2lx: SAMPLE_BUFFERS = %d, SAMPLES = %d\n",
-             i, vi -> visualid, samp_buf, samples );*/
-      if ( best_fbc < 0 || (samp_buf && samples > best_num_samp) )
-        best_fbc = i, best_num_samp = samples;
-      if ( worst_fbc < 0 || !samp_buf || samples < worst_num_samp )
-        worst_fbc = i, worst_num_samp = samples;
-    }
-    XFree(vi);
-  }
-
-  GLXFBConfig bestFbc = fbc[ best_fbc ];
-  // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
-  XFree(fbc);
-  // Get a visual
-  XVisualInfo *vi = glXGetVisualFromFBConfig(fl_display, bestFbc);
-  *pbestFB = bestFbc;
-  return vi;
-}
-
 Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_X11_Gl_Choice *g = (Fl_X11_Gl_Choice*)Fl_Gl_Window_Driver::find_begin(m, alistp);
@@ -222,26 +170,18 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
   }
 
   fl_open_display();
-  XVisualInfo *visp = NULL;
-  GLXFBConfig best_fb = NULL;
-  if (m & FL_OPENGL3) {
-    visp = gl3_getvisual((const int *)blist, &best_fb);
-  }
+  XVisualInfo *visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
   if (!visp) {
-    visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
-    if (!visp) {
-#     if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
-        if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE, 0);
-#     endif
+#   if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
+      if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE, 0);
+#   endif
       return 0;
-    }
   }
 
   g = new Fl_X11_Gl_Choice(m, alistp, first);
   first = g;
 
   g->vis = visp;
-  g->best_fb = best_fb;
 
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
       visp->visualid == fl_visual->visualid &&
@@ -265,60 +205,14 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window,
   (void)window;
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
-
-  typedef GLContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLContext, Bool, const int*);
-  // It is not necessary to create or make current to a context before calling glXGetProcAddressARB
-  static glXCreateContextAttribsARBProc glXCreateContextAttribsARB =
-#if defined(HAVE_GLXGETPROCADDRESSARB)
-    (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
-#else
-  NULL;
-#endif
-
-  GLContext ctx = 0;
-  // Check for the GLX_ARB_create_context extension string and the function.
-  // If either is not present, use GLX 1.3 context creation method.
-  const char *glxExts = glXQueryExtensionsString(fl_display, fl_screen);
-  if (((Fl_X11_Gl_Choice*)g)->best_fb && strstr(glxExts, "GLX_ARB_create_context") && glXCreateContextAttribsARB ) {
-    int context_attribs[] =
-    {
-      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-      GLX_CONTEXT_MINOR_VERSION_ARB, 2,
-      //GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-      GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
-      None
-    };
-    ctxErrorOccurred = false;
-    XErrorHandler oldHandler = XSetErrorHandler(&ctxErrorHandler);
-    ctx = glXCreateContextAttribsARB(fl_display, ((Fl_X11_Gl_Choice*)g)->best_fb, shared_ctx, true, context_attribs);
-    XSync(fl_display, false); // Sync to ensure any errors generated are processed.
-    if (ctxErrorOccurred) ctx = 0;
-    if (!ctx) { // if did not work, try again asking for core profile
-      ctxErrorOccurred = false;
-      context_attribs[5] = GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
-      ctx = glXCreateContextAttribsARB(fl_display, ((Fl_X11_Gl_Choice*)g)->best_fb, shared_ctx, true, context_attribs);
-      if (ctxErrorOccurred) ctx = 0;
-    }
-    XSetErrorHandler(oldHandler);
-  }
-  if (!ctx) { // use OpenGL 1-style context creation
-    ctx = glXCreateContext(fl_display, ((Fl_X11_Gl_Choice*)g)->vis, (GLXContext)shared_ctx, true);
-  }
+  // use OpenGL 1-style context creation
+  GLContext ctx = glXCreateContext(fl_display, ((Fl_X11_Gl_Choice*)g)->vis, (GLXContext)shared_ctx, true);
   if (ctx)
     add_context(ctx);
 //glXMakeCurrent(fl_display, fl_xid(window), ctx);printf("%s\n", glGetString(GL_VERSION));
   return ctx;
 }
 
-/* This is no longer used
-GLContext Fl_X11_Gl_Window_Driver::create_gl_context(XVisualInfo *vis) {
-  GLContext shared_ctx = 0;
-  if (context_list && nContext) shared_ctx = context_list[0];
-  GLContext context = glXCreateContext(fl_display, vis, (GLXContext)shared_ctx, 1);
-  if (context)
-    add_context(context);
-  return context;
-}*/
 
 void Fl_X11_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
   GLContext current_context = glXGetCurrentContext();
