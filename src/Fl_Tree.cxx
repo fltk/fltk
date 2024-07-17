@@ -1228,7 +1228,7 @@ Fl_Tree_Item* Fl_Tree::last_visible() {
 Fl_Tree_Item* Fl_Tree::last_visible_item() {
   Fl_Tree_Item *item = last();
   while ( item ) {
-    if ( item->visible() ) {
+    if ( item->visible_r() ) {
       if ( item == _root && !showroot() ) {
         return(0);
       } else {
