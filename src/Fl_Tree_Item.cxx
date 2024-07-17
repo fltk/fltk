@@ -138,8 +138,8 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
 void Fl_Tree_Item::show_self(const char *indent) const {
   const char *thelabel = label() ? label() : "(NULL)";
   printf("%s-%s (%d children, this=%p, parent=%p, prev=%p, next=%p, depth=%d)\n",
-         indent,thelabel,children(),(void*)this, (void*)_parent,
-         _prev_sibling, _next_sibling, depth());
+         indent, thelabel, children(), (void*)this, (void*)_parent,
+         (void*)_prev_sibling, (void*)_next_sibling, depth());
   if ( children() ) {
     char *i2 = new char [strlen(indent)+3]; // 2 + nul byte
     strcpy(i2, indent);
@@ -400,6 +400,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs,
   \see Fl_Tree::insert()
 */
 Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos) {
+  (void) prefs;                 // quiet warnings unused params
   Fl_Tree_Item *item = new Fl_Tree_Item(_tree);
   item->label(new_label);
   item->_parent = this;
@@ -1190,11 +1191,13 @@ int Fl_Tree_Item::event_on_user_icon(const Fl_Tree_Prefs &prefs) const {
 
 /// Was event anywhere on the item?
 int Fl_Tree_Item::event_on_item(const Fl_Tree_Prefs &prefs) const {
-    return(event_inside(_xywh) ? 1 : 0);
+  (void) prefs;       // quiet warnings unused params
+  return(event_inside(_xywh) ? 1 : 0);
 }
 
 /// Was event on the label() of this item?
 int Fl_Tree_Item::event_on_label(const Fl_Tree_Prefs &prefs) const {
+  (void) prefs;       // quiet warnings unused params
   if ( is_visible() && is_active() ) {
     return(event_inside(_label_xywh) ? 1 : 0);
   } else {
