@@ -64,9 +64,6 @@ typedef NSOpenGLContext* FLOpenGLContextPtr;
 #else
 #  include <GL/glx.h>
 #  define GLContext GLXContext
-#  if ! defined(GLX_VERSION_1_3)
-#    typedef void *GLXFBConfig;
-#  endif
 #endif
 
 // Describes crap needed to create a GLContext.
@@ -83,7 +80,6 @@ public:
 #else
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
-  GLXFBConfig best_fb;
 #endif
   // Return one of these structures for a given gl mode.
   // The second argument is a glX attribute list, and is used if mode is
