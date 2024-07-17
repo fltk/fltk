@@ -392,7 +392,16 @@ public:
   int is_visible() const {
     return(is_flag(VISIBLE));
   }
-  int visible_r() const;
+  /// See if item and all its parents are open() and visible().
+  /// Alias for is_visible_r().
+  /// \returns
+  ///    1 -- item and its parents are open() and visible()
+  ///    0 -- item (or one of its parents) are not visible or close()ed.
+  ///
+  int visible_r() const {
+    return(is_visible_r());
+  }
+  int is_visible_r() const;
 
   /// Set the item's user icon to an Fl_Image. Use '0' to disable.
   /// No internal copy is made, caller must manage icon's memory.

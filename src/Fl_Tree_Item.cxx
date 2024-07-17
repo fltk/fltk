@@ -1433,9 +1433,9 @@ Fl_Tree_Item *Fl_Tree_Item::prev_displayed(Fl_Tree_Prefs &prefs) {
 /// See if item and all its parents are open() and visible().
 /// \returns
 ///    1 -- item and its parents are open() and visible()
-///    0 -- item (or one of its parents) are invisible or close()ed.
+///    0 -- item or one of its parents are either not visible() or close()ed.
 ///
-int Fl_Tree_Item::visible_r() const {
+int Fl_Tree_Item::is_visible_r() const {
   if ( !visible() ) return(0);
   for (const Fl_Tree_Item *p=parent(); p; p=p->parent())// move up through parents
     if (!p->visible() || p->is_close()) return(0);      // any parent not visible or closed?
