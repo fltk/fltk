@@ -24,13 +24,6 @@
 #include <EGL/egl.h>
 #include <FL/gl.h>
 
-/* Implementation note about OpenGL drawing on the Wayland platform
-
-After eglCreateWindowSurface() with attributes {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE},
-eglQueryContext() reports that EGL_RENDER_BUFFER equals EGL_BACK_BUFFER.
-This experiment suggests that the platform only supports double-buffer drawing.
-Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayland.
-*/
 
 class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
