@@ -174,8 +174,8 @@ public:
    changes the current context.
 
    The FL_OPENGL3 flag is recommended to use OpenGL version 3 or more.
-   This flag is required (not just recommended) if  OpenGL version 3 is in use
-   and at least one of these conditions apply:
+   This flag is required (not just recommended) if  GL ≥ 3.0 is in use
+   and at least one of these conditions applies:
    - the program runs on the macOS platform;
    - the Fl_Gl_Window has child widgets.
    
