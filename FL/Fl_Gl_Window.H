@@ -173,8 +173,12 @@ public:
    mode() must not be called within draw() since it
    changes the current context.
 
-   The FL_OPENGL3 flag is required to access OpenGL version 3 or more
-   under the X11 and MacOS platforms; it's optional under Windows and Wayland.
+   The FL_OPENGL3 flag is recommended to use OpenGL version 3 or more.
+   This flag is required (not just recommended) if  OpenGL version 3 is in use
+   and at least one of these conditions apply:
+   - the program runs on the macOS platform;
+   - the Fl_Gl_Window has child widgets.
+   
    See more details in \ref opengl3.
 
    \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4
