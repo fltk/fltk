@@ -458,11 +458,11 @@ line. If you don't specify a cap or join type you will get a
 system-defined default of whatever value is fastest.
 
 \par
-\li <tt>FL_SOLID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------</tt>
-\li <tt>FL_DASH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - - - -</tt>
-\li <tt>FL_DOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......</tt>
-\li <tt>FL_DASHDOT&nbsp;&nbsp;&nbsp; - . - .</tt>
-\li <tt>FL_DASHDOTDOT - .. -</tt>
+\li <tt>FL_SOLID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ━━━━━━━━━</tt>
+\li <tt>FL_DASH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ━ ━ ━ ━ ━</tt>
+\li <tt>FL_DOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; · · · · ·</tt>
+\li <tt>FL_DASHDOT&nbsp;&nbsp;&nbsp; ━ · ━ · ━ ·</tt>
+\li <tt>FL_DASHDOTDOT ━ · · ━ · ·</tt>
 \li <tt>FL_CAP_FLAT</tt>
 \li <tt>FL_CAP_ROUND</tt>
 \li <tt>FL_CAP_SQUARE</tt> (extends past end point 1/2 line width)
