@@ -193,12 +193,6 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
   return g;
 }
 
-static bool ctxErrorOccurred = false;
-static int ctxErrorHandler( Display *, XErrorEvent * )
-{
-  ctxErrorOccurred = true;
-  return 0;
-}
 
 GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window,
                                                      const Fl_Gl_Choice* g) {
