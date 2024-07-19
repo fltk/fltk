@@ -141,7 +141,7 @@ void Fl_GDIplus_Graphics_Driver::end_line() {
 void Fl_GDIplus_Graphics_Driver::end_loop() {
   if (!active) return Fl_GDI_Graphics_Driver::end_loop();
   fixloop();
-  if (n>2) {
+  if (n >= 2) {
     Gdiplus::GraphicsPath path;
     Gdiplus::Point *gdi2_p = new Gdiplus::Point[n];
     for (int i = 0; i < n; i++) {
