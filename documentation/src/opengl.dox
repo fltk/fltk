@@ -39,34 +39,7 @@ To make a subclass of Fl_Gl_Window, you must provide:
 
 If your subclass provides static controls in the window, they
 must be redrawn whenever the \p FL_DAMAGE_ALL bit is set
-in the value returned by \p damage(). For double-buffered
-windows you will need to surround the drawing code with the
-following code to make sure that both buffers are redrawn:
-
-\code
-#ifndef MESA
-glDrawBuffer(GL_FRONT_AND_BACK);
-#endif // !MESA
-... draw stuff here ...
-#ifndef MESA
-glDrawBuffer(GL_BACK);
-#endif // !MESA
-\endcode
-
-<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
-<TR>
-        <TD><B>Note:</B>
-
-        If you are using the Mesa graphics library, the call
-        to \p glDrawBuffer() is not required and will slow
-        down drawing considerably. The preprocessor instructions
-        shown above will optimize your code based upon the
-        graphics library used.
-
-        </TD>
-
-</TR>
-</TABLE></CENTER>
+in the value returned by \p damage().
 
 \subsection opengl_defining Defining the Subclass
 
