@@ -223,6 +223,9 @@ inline void fl_point(int x, int y) {
   If you change this it is your responsibility to set it back to the default
   using \c fl_line_style(0).
 
+  \image html  fl_line_style.png "fl_line_style() styles"
+  \image latex fl_line_style.png "fl_line_style() styles" width=4cm
+
   \param[in] style A bitmask which is a bitwise-OR of \ref LineStyles "Line Styles",
     a cap style, and a join style. If you don't specify a dash type you
     will get a solid line. If you don't specify a cap or join type
@@ -251,12 +254,16 @@ inline void fl_line_style(int style, int width = 0, char *dashes = 0) {
 }
 
 /// \anchor LineStyles
+///
+///  \image html  fl_line_style.png "fl_line_style() styles"
+///  \image latex fl_line_style.png "fl_line_style() styles" width=4cm
+///
 enum {
-  FL_SOLID      = 0,      ///< line style: <tt>___________</tt>
-  FL_DASH       = 1,      ///< line style: <tt>_ _ _ _ _ _</tt>
-  FL_DOT        = 2,      ///< line style: <tt>. . . . . .</tt>
-  FL_DASHDOT    = 3,      ///< line style: <tt>_ . _ . _ .</tt>
-  FL_DASHDOTDOT = 4,      ///< line style: <tt>_ . . _ . .</tt>
+  FL_SOLID      = 0,      ///< line style: solid line
+  FL_DASH       = 1,      ///< line style: 75% dashed line
+  FL_DOT        = 2,      ///< line style: 50% pixel dotted
+  FL_DASHDOT    = 3,      ///< line style: dash / dot pattern
+  FL_DASHDOTDOT = 4,      ///< line style: dash / two dot pattern
 
   FL_CAP_FLAT   = 0x100,  ///< cap style: end is flat
   FL_CAP_ROUND  = 0x200,  ///< cap style: end is round
