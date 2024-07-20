@@ -223,8 +223,8 @@ inline void fl_point(int x, int y) {
   If you change this it is your responsibility to set it back to the default
   using \c fl_line_style(0).
 
-  \param[in] style A bitmask which is a bitwise-OR of a line style, a cap
-    style, and a join style. If you don't specify a dash type you
+  \param[in] style A bitmask which is a bitwise-OR of \ref LineStyles "Line Styles",
+    a cap style, and a join style. If you don't specify a dash type you
     will get a solid line. If you don't specify a cap or join type
     you will get a system-defined default of whatever value is fastest.
   \param[in] width The thickness of the lines in pixels. Zero results in the
@@ -249,6 +249,8 @@ inline void fl_point(int x, int y) {
 inline void fl_line_style(int style, int width = 0, char *dashes = 0) {
   fl_graphics_driver->line_style(style, width, dashes);
 }
+
+/// \anchor LineStyles
 enum {
   FL_SOLID      = 0,      ///< line style: <tt>___________</tt>
   FL_DASH       = 1,      ///< line style: <tt>_ _ _ _ _ _</tt>
