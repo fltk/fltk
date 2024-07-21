@@ -103,6 +103,7 @@
 	@i:clock:clock
 	@i:popups:message
 	@i:boxtypes:boxtype
+	@i:line styles:line_style_docs
 	@i:Resize Examples\n...:@ir
 		@ir:Example\n1:resize-example1
 		@ir:Example\n2:resize-example2

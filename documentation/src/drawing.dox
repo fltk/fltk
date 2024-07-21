@@ -433,23 +433,16 @@ Please see the documentation for details.
 
 \subsection drawing_lines Line Dashes and Thickness
 
-FLTK supports drawing of lines with different styles and
-widths. Full functionality is not available under Windows 95, 98,
-and Me due to the reduced drawing functionality these operating
-systems provide.
+FLTK supports drawing of lines with different styles and widths.
 
-void fl_line_style(int style, int width, char* dashes)
+  void fl_line_style(int style, int width, char* dashes)
+
+  \image html  fl_line_style.png "fl_line_style() styles"
+  \image latex fl_line_style.png "fl_line_style() styles" width=12cm
 
 \par
 Set how to draw lines (the "pen").  If you change this it is your
-responsibility to set it back to the default with
-\p fl_line_style(0).
-
-\par
-\b Note:
-Because of how line styles are implemented on Windows systems, you \e must
-set the line style \e after setting the drawing color. If you set the
-color after the line style you will lose the line style settings!
+responsibility to set it back to the default with \p fl_line_style(0).
 
 \par
 \p style is a bitmask which is a bitwise-OR of the following
@@ -483,10 +476,18 @@ terminated with a zero-length entry. A \p NULL pointer or a zero-length
 array results in a solid line. Odd array sizes are not supported and
 result in undefined behavior.
 
+<!--
 \par
-\b Note:
-The dashes array does not work under Windows 95, 98, or Me, since those
-operating systems do not support complex line styles.
+\b Notes:
+-->
+\note
+- Full functionality is not available under Windows 95, 98, and Me due to
+  the reduced drawing functionality these operating systems provide.
+- Because of how line styles are implemented on Windows systems, you \e must
+  set the line style \e after setting the drawing color. If you set the
+  color after the line style you will lose the line style settings!
+- The dashes array does not work under Windows 95, 98, or Me, since those
+  operating systems do not support complex line styles.
 
 
 \subsection drawing_fast Drawing Fast Shapes

@@ -224,7 +224,7 @@ inline void fl_point(int x, int y) {
   using \c fl_line_style(0).
 
   \image html  fl_line_style.png "fl_line_style() styles"
-  \image latex fl_line_style.png "fl_line_style() styles" width=4cm
+  \image latex fl_line_style.png "fl_line_style() styles" width=12cm
 
   \param[in] style A bitmask which is a bitwise-OR of \ref LineStyles "Line Styles",
     a cap style, and a join style. If you don't specify a dash type you
@@ -256,7 +256,7 @@ inline void fl_line_style(int style, int width = 0, char *dashes = 0) {
 /// \anchor LineStyles
 ///
 ///  \image html  fl_line_style.png "fl_line_style() styles"
-///  \image latex fl_line_style.png "fl_line_style() styles" width=4cm
+///  \image latex fl_line_style.png "fl_line_style() styles" width=12cm
 ///
 enum {
   FL_SOLID      = 0,      ///< line style: solid line

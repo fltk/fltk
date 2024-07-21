@@ -91,6 +91,7 @@ CPPFILES =\
 	keyboard.cxx \
 	label.cxx \
 	line_style.cxx \
+	line_style_docs.cxx \
 	list_visuals.cxx \
 	mandelbrot.cxx \
 	menubar.cxx \
@@ -180,6 +181,7 @@ ALL =	\
 	input_choice$(EXEEXT) \
 	label$(EXEEXT) \
 	line_style$(EXEEXT) \
+	line_style_docs$(EXEEXT) \
 	list_visuals$(EXEEXT) \
 	menubar$(EXEEXT) \
 	message$(EXEEXT) \
@@ -493,6 +495,8 @@ label$(EXEEXT): label.o
 	$(OSX_ONLY) ../fltk-config --post $@
 
 line_style$(EXEEXT): line_style.o
+
+line_style_docs$(EXEEXT): line_style_docs.o
 
 list_visuals$(EXEEXT): list_visuals.o
 
