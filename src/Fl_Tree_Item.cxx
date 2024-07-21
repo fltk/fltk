@@ -1144,11 +1144,34 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
       Y += prefs.openchild_marginbottom();              // offset below open child tree
     }
     if ( ! lastchild ) {
-      // Special 'clipped' calculation. (intentional variable shadowing)
-      int is_clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
-                       ((child_y_start > tree_bot) && (Y > tree_bot));
-      if (render && !is_clipped )
-        draw_vertical_connector(hconn_x, child_y_start, Y, prefs);
+      // Draw vertical connector between this item and the bottom of its children.
+      //
+      //           o Aaa            <- Item we're drawing has >20k children.
+      //   ytop →  :  :.. 0001
+      //           :  :.. 0002
+      //           :  :       } ~20k items
+      //           :  :.. 19998
+      //        ┌──:──:.. 19999 ──┐
+      //        │  :  :.. 20000   │
+      //        │  :  :.. 20001   │ <- visible screen
+      //        │  :  :.. 20002   │    area
+      //        └──:──:.. 20003 ──┘
+      //           :  :.. 20004
+      //           :
+      //   ybot →  :  ← we're drawing this long vertical connector
+      //           :
+      //           o Bbb
+      //
+      int ytop = child_y_start;
+      int ybot = Y;
+      int is_clipped = ((ytop < tree_top) && (ybot < tree_top)) ||   // completely off top of scrn? clip
+                       ((ytop > tree_bot) && (ybot > tree_bot));     // completely off bot of scrn? clip
+      if (render && !is_clipped ) {
+        // Clip vert line to within screen area
+        ytop = (ytop < tree_top) ? tree_top : ytop;
+        ybot = (ybot > tree_bot) ? tree_bot : ybot;
+        draw_vertical_connector(hconn_x, ytop, ybot, prefs);
+      }
     }
   }
 }
