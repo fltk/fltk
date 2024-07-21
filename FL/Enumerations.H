@@ -407,7 +407,14 @@ enum Fl_Event { // events
   /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_ZOOM_EVENT = 27
+  FL_ZOOM_EVENT         = 27,
+  /** This event is sent if the parent widget is deleted and the parent is about
+   to delete this widget as well. Returning the default value 0 will give the
+   parent permission to call the destructor of this widget. Returning 1 will
+   preserve this widget, but still remove it from the widget hierarchy.
+   \see Fl_Group::clear()
+   */
+  FL_AUTO_DELETE_EVENT  = 28
 // DEV NOTE: Keep this list in sync with FL/names.h
 };
 
