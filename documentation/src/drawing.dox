@@ -451,17 +451,17 @@ line. If you don't specify a cap or join type you will get a
 system-defined default of whatever value is fastest.
 
 \par
-\li <tt>FL_SOLID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ━━━━━━━━━</tt>
-\li <tt>FL_DASH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ━ ━ ━ ━ ━</tt>
-\li <tt>FL_DOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; · · · · ·</tt>
-\li <tt>FL_DASHDOT&nbsp;&nbsp;&nbsp; ━ · ━ · ━ ·</tt>
-\li <tt>FL_DASHDOTDOT ━ · · ━ · ·</tt>
-\li <tt>FL_CAP_FLAT</tt>
-\li <tt>FL_CAP_ROUND</tt>
-\li <tt>FL_CAP_SQUARE</tt> (extends past end point 1/2 line width)
-\li <tt>FL_JOIN_MITER</tt> (pointed)
-\li <tt>FL_JOIN_ROUND</tt>
-\li <tt>FL_JOIN_BEVEL</tt> (flat)
+\li <tt>FL_SOLID</tt> solid line
+\li <tt>FL_DASH</tt>  75% dashed line
+\li <tt>FL_DOT</tt> 50% pixel dotted
+\li <tt>FL_DASHDOT</tt> dash / dot pattern
+\li <tt>FL_DASHDOTDOT</tt> dash / two dot pattern
+\li <tt>FL_CAP_FLAT</tt> end is flat
+\li <tt>FL_CAP_ROUND</tt> end is round
+\li <tt>FL_CAP_SQUARE</tt> extends past end point 1/2 line width
+\li <tt>FL_JOIN_MITER</tt> line join extends to a point
+\li <tt>FL_JOIN_ROUND</tt> line join is rounded
+\li <tt>FL_JOIN_BEVEL</tt> line join is flat (tidied)
 
 \par
 \p width is the number of \ref drawing_DrawingUnit "FLTK units" thick to draw the lines.
