@@ -1078,10 +1078,7 @@ void Fl_Scalable_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {}
 
 void Fl_Scalable_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1) {}
 
-void Fl_Scalable_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
-  line_unscaled(x, y, x1, y1);
-  line_unscaled(x1, y1, x2, y2);
-}
+void Fl_Scalable_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1, int x2, int y2) {}
 
 void Fl_Scalable_Graphics_Driver::xyline_unscaled(int x, int y, int x1) {}
 
