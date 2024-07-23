@@ -14,6 +14,15 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// Notes to devs (and users):
+//
+// 1. Run this program to create the screenshot for the fl_line_style() docs.
+//    Save a screenshot of its original size to documentation/src/fl_line_style.png
+// 2. For further tests it's possible to resize the window. Line sizes and widths
+//    are adjusted (resized) as well, depending on the window size.
+// 3. Some lines may draw outside their boxes in unusual window width/height ratios.
+//    These effects are intentionally ignored.
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Grid.H>
@@ -22,9 +31,8 @@
 
 // constants
 
-static const int len = 35;          // length of line segments
-static const int sep = 15;          // separation between items
-static const int width[] = {0, 4};  // line widths (thin + thick)
+static const int sep = 22;    // separation between items
+static int width[] = {1, 4};  // line widths (thin + thick/dyn.)
 
 // This class draws a box with one line style inside an Fl_Grid widget.
 // Row and column parameters are used to position the box inside the grid.
@@ -57,37 +65,66 @@ public:
     }
   }
   void draw() FL_OVERRIDE {
-    int X = x() + sep / 2;
-    int Y = y() + (h() - len) / 2;
     draw_box();
+    if (style < 0) // draw an empty box
+      return;
+
+    // set font and measure widest text
     fl_font(FL_HELVETICA, 12);
     fl_color(FL_BLACK);
+    static int text_width = 0;
+    if (!text_width) {
+      int h = 0; // dummy
+      fl_measure("FL_DASHDOTDOT", text_width, h);
+    }
+
     // draw the text
+    int X = x() + sep / 2;
     fl_draw(style_str(style), X, y() + h()/2 + fl_height()/2 - 2);
-    X += 110;
-    for (int i = 0; i < 2; i++, X += len + sep) { // thin + thick lines
+
+    // calculate dynamic line sizes and widths
+    X += text_width + sep / 2;
+    int dx = (w() - text_width - 5 * sep) / 4; // horizontal distance
+    int dy = h() - sep;
+    int Y = y() + sep / 2;
+    if (dx >= 80 || dy >= 80)
+      width[1] = 9;
+    else if (dx >= 60 || dy >= 60)
+      width[1] = 8;
+    else if (dx >= 40 || dy >= 40)
+      width[1] = 7;
+    else
+      width[1] = 5;
+
+    // draw the lines
+    for (int i = 0; i < 2; i++, X += dx + sep) { // thin + thick lines
       fl_line_style(style, width[i]);
       // ___
       //    |
       //    |
-      fl_line(X, Y, X + len, Y, X + len, Y + len);
-      X += len + sep;
+      fl_line(X, Y, X + dx, Y, X + dx, Y + dy);
+      X += dx + sep;
       // ___
       //   /
       //  /
-      fl_line(X, Y, X + len, Y, X, Y + len);
+      fl_line(X, Y, X + dx, Y, X, Y + dy);
     }
-    fl_line_style(FL_SOLID, 0); // restore to default
+
+    // restore line settings to default
+    fl_line_style(FL_SOLID, 0);
   }
 };
 
 int main(int argc, char **argv) {
-  Fl_Double_Window win(660, 340, "fl_line_style()");
+  Fl_Double_Window win(740, 400, "fl_line_style()");
   win.color(FL_WHITE);
+
+  // create grid with a nice white 4px border and a
+  // light gray background (color) so margins and gaps show thru
   Fl_Grid grid(4, 4, win.w() - 8, win.h() - 8);
   grid.box(FL_FLAT_BOX);
-  grid.color(0xd0d0d000);   // margins and gaps
-  grid.layout(6, 2, 4, 4);  // 6 rows, 2 columns
+  grid.color(0xd0d0d000);
+  grid.layout(6, 2, 4, 4);  // 6 rows, 2 columns, ...
 
   // first column
   StyleBox sb00(FL_SOLID,      0, 0);
@@ -95,25 +132,20 @@ int main(int argc, char **argv) {
   StyleBox sb02(FL_DOT,        2, 0);
   StyleBox sb03(FL_DASHDOT,    3, 0);
   StyleBox sb04(FL_DASHDOTDOT, 4, 0);
-
-  // empty box in row 5
-  Fl_Box empty(0, 0, 0, 0);
-  empty.box(FL_FLAT_BOX);
-  empty.color(FL_WHITE);
-  grid.widget(&empty, 5, 0, FL_GRID_FILL);
+  StyleBox sb05(-1,            5, 0); // empty box
 
   // second column
-  StyleBox sb05(FL_CAP_FLAT,   0, 1);
-  StyleBox sb06(FL_CAP_ROUND,  1, 1);
-  StyleBox sb07(FL_CAP_SQUARE, 2, 1);
-  StyleBox sb08(FL_JOIN_MITER, 3, 1);
-  StyleBox sb09(FL_JOIN_ROUND, 4, 1);
-  StyleBox sb10(FL_JOIN_BEVEL, 5, 1);
+  StyleBox sb10(FL_CAP_FLAT,   0, 1);
+  StyleBox sb11(FL_CAP_ROUND,  1, 1);
+  StyleBox sb12(FL_CAP_SQUARE, 2, 1);
+  StyleBox sb13(FL_JOIN_MITER, 3, 1);
+  StyleBox sb14(FL_JOIN_ROUND, 4, 1);
+  StyleBox sb15(FL_JOIN_BEVEL, 5, 1);
 
   grid.end();
   win.end();
-  // win.resizable(win);
-  // win.size_range(win.w(), win.h()); // don't allow to shrink
+  win.resizable(win);
+  win.size_range(660, 340); // don't allow to shrink too much
   win.show(argc, argv);
   return Fl::run();
 }
