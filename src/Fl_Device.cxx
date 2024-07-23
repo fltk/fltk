@@ -61,6 +61,7 @@
       +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
           +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
           +- Fl_GDI_Graphics_Driver: Windows-specific graphics driver
+              +- Fl_GDIplus_Graphics_Driver: overrides oblique lines, arcs and circles
               +- Fl_GDI_Printer_Graphics_Driver: overrides a few member functions especially for output to printer
       +- Fl_Cairo_Graphics_Driver: full FLTK drawing API based on Cairo and Pango
           +- Fl_Wayland_Graphics_Driver: Wayland-specific graphics driver
