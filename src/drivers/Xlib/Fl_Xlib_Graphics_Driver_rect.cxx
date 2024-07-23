@@ -242,10 +242,11 @@ void Fl_Xlib_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1) {
 void Fl_Xlib_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
   if (!clip_line(x1, y1, x, y) && !clip_line(x1, y1, x2, y2)) {
     XPoint p[3];
-    int offset = floor(offset_x_);
-    p[0].x = x + offset;  p[0].y = y + offset;
-    p[1].x = x1 + offset; p[1].y = y1 + offset;
-    p[2].x = x2 + offset; p[2].y = y2 + offset;
+    int x_offset = floor(offset_x_);
+    int y_offset = floor(offset_y_);
+    p[0].x = x + x_offset;  p[0].y = y + y_offset;
+    p[1].x = x1 + x_offset; p[1].y = y1 + y_offset;
+    p[2].x = x2 + x_offset; p[2].y = y2 + y_offset;
     XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
   }
 }
