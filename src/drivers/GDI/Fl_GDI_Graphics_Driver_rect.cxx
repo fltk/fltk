@@ -61,6 +61,14 @@ void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
   for (yy = h; yy > 0; yy--, i++) if (i & 1) SetPixel(gc_, x, y+yy, c);
 }
 
+void Fl_GDI_Graphics_Driver::rect_unscaled(int x, int y, int w, int h) {
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x+w, y);
+  LineTo(fl_gc, x+w, y+h);
+  LineTo(fl_gc, x, y+h);
+  LineTo(fl_gc, x, y);
+}
+
 void Fl_GDI_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {
   RECT rect;
   rect.left = x; rect.top = y;

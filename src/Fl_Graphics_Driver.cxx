@@ -751,10 +751,10 @@ Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver(
 void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
 {
   if (w > 0 && h > 0) {
-    xyline(x, y, x+w-1);
-    yxline(x, y, y+h-1);
-    yxline(x+w-1, y, y+h-1);
-    xyline(x, y+h-1, x+w-1);
+    int s = (int)scale()/2;
+    rect_unscaled(this->floor(x) + s, this->floor(y) + s,
+                  this->floor(x + w - 1) - this->floor(x),
+                  this->floor(y + h - 1) - this->floor(y));
   }
 }
 
@@ -794,6 +794,7 @@ void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1) {
   } else {
     y = this->floor(y);
     if (line_width_ <= s_int) y += int(s/2.f);
+    else y += s_int/2;
     xyline_unscaled(this->floor(xx), y, this->floor(xx1+1) - 1);
   }
 }
@@ -813,6 +814,7 @@ void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1) {
   } else {
     x = this->floor(x);
     if (line_width_ <= s_int) x += int(s/2.f);
+    else x += s_int/2;
     yxline_unscaled(x, this->floor(yy), this->floor(yy1+1) - 1);
   }
 }
@@ -1073,6 +1075,8 @@ void Fl_Scalable_Graphics_Driver::unscale_clip(Fl_Region r) {
 Fl_Region Fl_Scalable_Graphics_Driver::scale_clip(float f) { return 0; }
 
 void Fl_Scalable_Graphics_Driver::point_unscaled(float x, float y) {}
+
+void Fl_Scalable_Graphics_Driver::rect_unscaled(int x, int y, int w, int h) {}
 
 void Fl_Scalable_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {}
 

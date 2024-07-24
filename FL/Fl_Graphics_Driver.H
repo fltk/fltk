@@ -426,6 +426,7 @@ protected:
   virtual void point_unscaled(float x, float y);
   void rect(int x, int y, int w, int h) FL_OVERRIDE;
   void rectf(int x, int y, int w, int h) FL_OVERRIDE;
+  virtual void rect_unscaled(int x, int y, int w, int h);
   virtual void rectf_unscaled(int x, int y, int w, int h);
   void line(int x, int y, int x1, int y1) FL_OVERRIDE;
   virtual void line_unscaled(int x, int y, int x1, int y1);

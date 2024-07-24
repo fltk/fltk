@@ -227,6 +227,10 @@ void Fl_Xlib_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
   }
 }
 
+void Fl_Xlib_Graphics_Driver::rect_unscaled(int x, int y, int w, int h) {
+  XDrawRectangle(fl_display, fl_window, gc_, x, y, w, h);
+}
+
 void Fl_Xlib_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {
   x += floor(offset_x_);
   y += floor(offset_y_);

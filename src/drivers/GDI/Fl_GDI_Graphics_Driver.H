@@ -109,6 +109,7 @@ protected:
   void fixloop() FL_OVERRIDE;
   void point(int x, int y) FL_OVERRIDE;
   void focus_rect(int x, int y, int w, int h) FL_OVERRIDE;
+  void rect_unscaled(int x, int y, int w, int h) FL_OVERRIDE;
   void rectf_unscaled(int x, int y, int w, int h) FL_OVERRIDE;
 #if USE_COLORMAP
   void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) FL_OVERRIDE;
