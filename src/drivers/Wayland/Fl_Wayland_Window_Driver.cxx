@@ -1831,7 +1831,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   // When moving or resizing a non-GL subwindow independently from its parent, this condition
   // delays application of X,Y,W,H values until the compositor signals
   // it's ready for a new frame using the frame callback mechanism.
-  if (depth > 1 || pWindow->as_gl_window() || !parent_xid || wait_for_expose_value || (parent_xid->frame_cb && !xid_rect)) {
+  if (in_tile_intersection_drag() || depth > 1 || pWindow->as_gl_window() || !parent_xid || wait_for_expose_value || (parent_xid->frame_cb && !xid_rect)) {
     if (is_a_resize) {
       if (pWindow->parent()) {
         if (W < 1) W = 1;
@@ -1909,7 +1909,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       }
       Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
     } else {
-      if (!parent_xid->frame_cb) {
+      if (!in_tile_intersection_drag() && !parent_xid->frame_cb) {
         // use the frame callback mechanism and memorize current X,Y,W,H values
         xid_rect = new xid_and_rect;
         xid_rect->xid = parent_xid;
