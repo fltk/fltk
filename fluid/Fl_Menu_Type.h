@@ -35,6 +35,7 @@
 extern Fl_Menu_Item dummymenu[];
 extern Fl_Menu_Item button_type_menu[];
 extern Fl_Menu_Item menu_item_type_menu[];
+extern Fl_Menu_Item menu_bar_type_menu[];
 
 /**
  \brief Manage all types on menu items.
@@ -261,13 +262,24 @@ public:
 class Fl_Menu_Bar_Type : public Fl_Menu_Base_Type
 {
   typedef Fl_Menu_Base_Type super;
+  Fl_Menu_Item *subtypes() FL_OVERRIDE {return menu_bar_type_menu;}
 public:
+  Fl_Menu_Bar_Type();
+  ~Fl_Menu_Bar_Type() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "Fl_Menu_Bar";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::MenuBar";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Bar_Type();}
+  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+//  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Menu_Bar; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Bar) ? true : super::is_a(inID); }
+  bool is_sys_menu_bar();
+  const char *sys_menubar_name();
+  const char *sys_menubar_proxy_name();
+protected:
+  char *_proxy_name;
 };
 
 

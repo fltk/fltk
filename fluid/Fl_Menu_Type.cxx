@@ -290,19 +290,49 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
     f.write_c("\n");
     // Matt: disabled f.tag(FD_TAG_MENU_CALLBACK, get_uid());
     f.write_c("}\n");
+
+    // If the menu item is part of a Class or Widget Class, FLUID generates
+    // a dummy static callback which retrieves a pointer to the class and then
+    // calls the original callback from within the class context.
+    // k is the name of the enclosing class (or classes)
     if (k) {
+      // Implement the callback as a static member function
       f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
-      f.write_c("%s((%s*)(o", f.indent(1), k);
+      // Find the Fl_Menu_ container for this menu item
       Fl_Type* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
-      Fl_Type *q = 0;
-      // Go up one more level for Fl_Input_Choice, as these are groups themselves
-      if (t && t->is_a(ID_Input_Choice))
-        f.write_c("->parent()");
-      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
-        f.write_c("->parent()");
-      if (!q || !q->is_a(ID_Widget_Class))
-        f.write_c("->user_data()");
-      f.write_c("))->%s_i(o,v);\n}\n", cn);
+      if (t) {
+        Fl_Widget_Type *tw = (t->is_widget()) ? static_cast<Fl_Widget_Type*>(t) : NULL;
+        Fl_Type *q = NULL;
+        // Generate code to call the callback
+        if (tw->is_a(ID_Menu_Bar) && ((Fl_Menu_Bar_Type*)tw)->is_sys_menu_bar()) {
+          // Fl_Sys_Menu_Bar removes itself from any parent on macOS, so we
+          // wrapped it in a class and remeber the parent class in a new
+          // class memeber variable.
+          Fl_Menu_Bar_Type *tmb = (Fl_Menu_Bar_Type*)tw;
+          f.write_c("%s%s* sys_menu_bar = ((%s*)o);\n", f.indent(1),
+                    tmb->sys_menubar_proxy_name(), tmb->sys_menubar_proxy_name());
+          f.write_c("%s%s* parent_class = ((%s*)sys_menu_bar->_parent_class);\n",
+                    f.indent(1), k, k);
+          f.write_c("%sparent_class->%s_i(o,v);\n}\n",
+                    f.indent(1), cn);
+        } else {
+          f.write_c("%s((%s*)(o", f.indent(1), k);
+          // The class pointer is in the user_data field of the top widget
+          if (t && t->is_a(ID_Input_Choice)) {
+            // Go up one more level for Fl_Input_Choice, as these are groups themselves
+            f.write_c("->parent()");
+          }
+          // Now generate code to find the topmost widget in this class
+          for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
+            f.write_c("->parent()");
+          // user_data is cast into a pointer to the
+          if (!q || !q->is_a(ID_Widget_Class))
+            f.write_c("->user_data()");
+          f.write_c("))->%s_i(o,v);\n}\n", cn);
+        }
+      } else {
+        f.write_c("#error Enclosing Fl_Menu_* not found\n");
+      }
     }
   }
   if (image) {
@@ -700,10 +730,80 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
 
 Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 
+Fl_Menu_Item menu_bar_type_menu[] = {
+  {"Fl_Menu_Bar",0,0,(void*)0},
+  {"Fl_Sys_Menu_Bar",0,0,(void*)1},
+  {0}};
+
+Fl_Menu_Bar_Type::Fl_Menu_Bar_Type()
+: _proxy_name(NULL)
+{
+}
+
+Fl_Menu_Bar_Type::~Fl_Menu_Bar_Type() {
+  if (_proxy_name)
+    ::free(_proxy_name);
+}
+
+/**
+ \brief Return true if this is an Fl_Sys_Menu_Bar.
+ This test fails if subclass() is the name of a class that the user may have
+ derived from Fl_Sys_Menu_Bar.
+ */
+bool Fl_Menu_Bar_Type::is_sys_menu_bar() {
+  if (o->type()==1) return true;
+  return ( subclass() && (strcmp(subclass(), "Fl_Sys_Menu_Bar")==0) );
+}
+
+const char *Fl_Menu_Bar_Type::sys_menubar_name() {
+  if (subclass())
+    return subclass();
+  else
+    return "Fl_Sys_Menu_Bar";
+}
+
+const char *Fl_Menu_Bar_Type::sys_menubar_proxy_name() {
+  if (!_proxy_name)
+    _proxy_name = (char*)::malloc(128);
+  ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name());
+  return _proxy_name;
+}
+
+
+void Fl_Menu_Bar_Type::write_static(Fd_Code_Writer& f) {
+  super::write_static(f);
+  if (is_sys_menu_bar()) {
+    f.write_h_once("#include <FL/Fl_Sys_Menu_Bar.H>");
+    if (is_in_class()) {
+      // Make room for a pointer to the enclosing class.
+      f.write_c_once( // must be less than 1024 bytes!
+                     "\nclass %s: public %s {\n"
+                     "public:\n"
+                     "  %s(int x, int y, int w, int h, const char *l=NULL)\n"
+                     "  : %s(x, y, w, h, l) { }\n"
+                     "  void *_parent_class;\n"
+                     "};\n",
+                     sys_menubar_proxy_name(), sys_menubar_name(),
+                     sys_menubar_proxy_name(), sys_menubar_name()
+                     );
+    }
+  }
+}
+
+void Fl_Menu_Bar_Type::write_code1(Fd_Code_Writer& f) {
+  super::write_code1(f);
+  if (is_sys_menu_bar() && is_in_class()) {
+    f.write_c("%s((%s*)%s)->_parent_class = (void*)this;\n",
+              f.indent(), sys_menubar_proxy_name(), name() ? name() : "o");
+  }
+}
+
+//void Fl_Menu_Bar_Type::write_code2(Fd_Code_Writer& f) {
+//  super::write_code2(f);
+//}
+
 ////////////////////////////////////////////////////////////////
 // Shortcut entry item in panel:
-
-
 void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())

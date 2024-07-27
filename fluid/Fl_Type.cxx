@@ -1006,6 +1006,19 @@ const char *Fl_Type::callback_name(Fd_Code_Writer& f) {
   return f.unique_id(this, "cb", name(), label());
 }
 
+/**
+ \brief Return the class name if this type is inside a Class or Widget Class.
+
+ This methods traverses up the hirarchy to find out if this Type is located
+ inside a Class or Widget Class. It then return the name of that class. If
+ need_nest is set, class_name searches all the way up the tree and concatenates
+ the names of classes within classes, separated by a "::".
+
+ \param need_nest if clear, search up one level to the first enclosing class.
+ If set, recurse all the way up to the top node.
+ \return the name of the enclosing class, or names of the enclosing classes
+ in a static buffe (don't call free), or NULL if this Type is not inside a class
+ */
 const char* Fl_Type::class_name(const int need_nest) const {
   Fl_Type* p = parent;
   while (p) {

@@ -54,6 +54,11 @@ int Fl_Widget_Type::is_widget() const {return 1;}
 int Fl_Widget_Type::is_public() const {return public_;}
 
 const char* subclassname(Fl_Type* l) {
+  if (l->is_a(ID_Menu_Bar)) {
+    Fl_Menu_Bar_Type *mb = static_cast<Fl_Menu_Bar_Type*>(l);
+    if (mb->is_sys_menu_bar())
+      return mb->sys_menubar_name();
+  }
   if (l->is_widget()) {
     Fl_Widget_Type* p = (Fl_Widget_Type*)l;
     const char* c = p->subclass();
@@ -2991,6 +2996,12 @@ void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
       f.write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
     else
       f.write_c("new %s(%d, %d", t, o->w(), o->h());
+  } else if (is_a(ID_Menu_Bar) 
+             && ((Fl_Menu_Bar_Type*)this)->is_sys_menu_bar()
+             && is_in_class()) {
+    f.write_c("(%s*)new %s(%d, %d, %d, %d",
+              t, ((Fl_Menu_Bar_Type*)this)->sys_menubar_proxy_name(),
+              o->x(), o->y(), o->w(), o->h());
   } else {
     f.write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
   }
