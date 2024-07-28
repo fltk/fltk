@@ -31,7 +31,6 @@
 #include <FL/Fl_Export.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Overlay_Window.H>
-#include <FL/Fl_Tile.H>
 
 #include <stdlib.h>
 
