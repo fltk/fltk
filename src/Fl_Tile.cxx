@@ -482,7 +482,6 @@ void Fl_Tile::move_intersection(int oldx, int oldy, int newx, int newy) {
   }
 }
 
-bool Fl_Tile::in_drag_intersection_ = false;
 
 /**
  Drags the intersection at (\p oldx,\p oldy) to (\p newx,\p newy).
@@ -534,12 +533,10 @@ void Fl_Tile::drag_intersection(int oldx, int oldy, int newx, int newy) {
       }
     }
     // resize all children that have changed in size
-    in_drag_intersection_ = true;
     for (i = 0; i < children(); i++) {
       Fl_Rect &r = final_size[i];
       child(i)->damage_resize(r.x(), r.y(), r.w(), r.h());
     }
-    in_drag_intersection_ = false;
     delete[] final_size;
   } else {
     move_intersection(oldx, oldy, newx, newy);

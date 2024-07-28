@@ -1822,7 +1822,8 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   if (shown() && !(parent() || popup_window())) {
     X = Y = 0;
   }
-  struct wld_window *parent_xid = parent() ? fl_wl_xid(pWindow->window()) : NULL;
+  Fl_Window *parent = this->parent() ? pWindow->window() : NULL;
+  struct wld_window *parent_xid = parent ? fl_wl_xid(parent) : NULL;
   xid_and_rect *xid_rect = NULL;
   if (parent_xid && parent_xid->frame_cb && wl_proxy_get_listener((struct wl_proxy*)parent_xid->frame_cb) == &surface_frame_listener) {
     xid_rect = (xid_and_rect*)wl_callback_get_user_data(parent_xid->frame_cb);
@@ -1831,7 +1832,8 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   // When moving or resizing a non-GL subwindow independently from its parent, this condition
   // delays application of X,Y,W,H values until the compositor signals
   // it's ready for a new frame using the frame callback mechanism.
-  if (in_tile_intersection_drag() || depth > 1 || pWindow->as_gl_window() || !parent_xid || wait_for_expose_value || (parent_xid->frame_cb && !xid_rect)) {
+  if ((parent && parent->damage()) || depth > 1 || pWindow->as_gl_window() || !parent_xid || 
+      wait_for_expose_value || (parent_xid->frame_cb && !xid_rect)) {
     if (is_a_resize) {
       if (pWindow->parent()) {
         if (W < 1) W = 1;
@@ -1909,7 +1911,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       }
       Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
     } else {
-      if (!in_tile_intersection_drag() && !parent_xid->frame_cb) {
+      if (!(parent && parent->damage()) && !parent_xid->frame_cb) {
         // use the frame callback mechanism and memorize current X,Y,W,H values
         xid_rect = new xid_and_rect;
         xid_rect->xid = parent_xid;

@@ -25,9 +25,6 @@
 */
 
 class FL_EXPORT Fl_Tile : public Fl_Group {
-  friend class Fl_Window_Driver;
-private:
-  static bool in_drag_intersection_;
 public:
   int handle(int event) FL_OVERRIDE;
   Fl_Tile(int X, int Y, int W, int H, const char *L=0);

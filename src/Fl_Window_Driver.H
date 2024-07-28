@@ -209,7 +209,6 @@ public:
 
   virtual fl_uintptr_t os_id() { return 0; }
   virtual void allow_expand_outside_parent() {}
-  static bool in_tile_intersection_drag() { return Fl_Tile::in_drag_intersection_; }
 };
 
 #endif // FL_WINDOW_DRIVER_H
