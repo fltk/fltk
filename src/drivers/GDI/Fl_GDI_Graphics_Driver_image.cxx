@@ -619,7 +619,7 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if ( (rgb->d() % 2) == 0 ) {
     alpha_blend_(this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
-    SetStretchBltMode(gc_, HALFTONE);
+    SetStretchBltMode(gc_, (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR ? HALFTONE : BLACKONWHITE));
     StretchBlt(gc_, this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
