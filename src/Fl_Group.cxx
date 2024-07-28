@@ -376,18 +376,7 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
   Fl::pushed() widget these are set to sensible values (other widgets
   or the Fl_Group widget itself).
 
-  \note FLTK's auto-delete feature efficiently manages widget hierarchies in
-  C++ applications by automatically cleaning up. However, this feature can
-  cause issues when FLTK is used with reference-counting languages like Python,
-  where automatic deletion might interfere with reference counting. To address
-  this, auto-delete can be disabled for individual widgets. When
-  \ref Fl_Group::clear() is called, it sends an \ref FL_AUTO_DELETE event to
-  each widget. If a widget returns 1 in response to this event, it will not
-  be deleted. In a Python wrapper, this behavior would typically involve
-  decrementing the widget's reference count instead of deleting it.
-
-  \see Fl_Group::remove(int), Fl_Group::delete_child(int),
-  Fl_Group::~Fl_Group()
+  \see Fl_Group::remove(int), Fl_Group::delete_child(int), Fl_Group::~Fl_Group()
 */
 void Fl_Group::clear() {
   savedfocus_ = 0;
@@ -430,8 +419,7 @@ void Fl_Group::clear() {
       } else {                          // slow removal
         remove(idx);
       }
-      if (w->handle(FL_AUTO_DELETE_EVENT)==0)
-        delete w;                       // delete the child
+      delete w;                         // delete the child
     } else {                            // should never happen
       remove(idx);                      // remove it anyway
     }
