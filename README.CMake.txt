@@ -20,8 +20,9 @@ README.CMake.txt - Building and using FLTK with CMake
     2.4.1  Building under Windows with Visual Studio
     2.4.2  Building under Windows with NMake
     2.5    Building under Windows with MinGW using Makefiles
-    2.6    Building under MacOS with Xcode
-    2.7    Crosscompiling
+    2.6    Building under Windows WSL with Clang using Makefiles
+    2.7    Building under MacOS with Xcode
+    2.8    Crosscompiling
 
   3     Using CMake with FLTK
 
@@ -513,8 +514,41 @@ Note the path to FLTK ".." in the last command line. Depending on where you
 installed CMake you may need to adjust the path's in the alias commands.
 
 
-2.6  Building under MacOS with Xcode
-------------------------------------
+ 2.6  Building under Windows WSL with Clang and Makefiles
+----------------------------------------------------------
+
+WSL, the Windows Subsystem for Linux allows developers to run a Linux 
+environment without the need for a separate virtual machine or dual booting.
+WSL 2 runs inside a managed virtual machine that implements the full 
+Linux kernel. WSL requires Windows 11.
+
+FLTK apps generated using WSL are Linux compatible binaries. To run those
+binaries on Windows, WSL comes with a limited built-in X11 server. Third 
+party X11 servers can be installed that better support all features of FLTK.
+
+1) Install WSL from PowerShell with admin privileges: 
+     > wsl --install
+
+2) Reboot and open the Linux terminal. You will need to install the following
+   Linux apps to compile FLTK
+     > sudo apt update
+     > sudo apt install clang cmake freeglut3-dev
+
+3) Change to the directory containing the FLTK project. For example:
+     > cd ~/dev/fltk-1.4.x
+
+4) Use CMake to configure the build system
+     > cmake -B build
+
+5) Use CMake to build the demo app and all dependencies
+     > cmake --build build
+
+6) Run the demo app
+     > ./build/bin/test/demo
+
+
+ 2.7  Building under MacOS with Xcode
+--------------------------------------
 
 Building with CMake under Xcode requires the CMake generator
 with the -G command line switch. This step need to be done only once. If any
@@ -557,7 +591,7 @@ of the cmake related files are updated, Xcode will rerun cmake for you.
 9) The "install" Scheme currently fails because it is run with user permission.
 
 
- 2.7  Crosscompiling
+ 2.8  Crosscompiling
 ---------------------
 
 Once you have a crosscompiler going, to use CMake to build FLTK you need
