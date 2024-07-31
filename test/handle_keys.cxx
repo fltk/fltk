@@ -335,16 +335,21 @@ void close_cb(Fl_Widget *win, void *) {
 
 int main(int argc, char **argv) {
 
-// Set an appropriate font for Wine on Linux (test only).
-// This is very likely not necessary on a real Windows system
+  // Set an appropriate font for Wine on Linux (test only).
+  // This is very likely not necessary on a real Windows system.
+  // Set environment variable FLTK_USING_WINE to a non-empty string
+  // to enable this feature, e.g. (in bash) `export FLTK_USING_WINE=1`.
 
-#if (0) // test/experimental for wine on Linux (maybe missing fonts)
 #ifdef _WIN32
-  // Fl::set_font(FL_COURIER, " DejaVu Sans Mono");     // DejaVu Mono
-  // Fl::set_font(FL_COURIER, "BNimbus Mono PS");       // Nimbus Mono PS bold
-  Fl::set_font(FL_COURIER, " Liberation Mono");         // Liberation Mono
+  const char *using_wine = fl_getenv("FLTK_USING_WINE");
+  printf("FLTK_USING_WINE = %s\n", using_wine ? using_wine : "");
+  if (using_wine && *using_wine) {
+    // set an alternate fixed font for the terminal widget
+    // Fl::set_font(FL_COURIER, " DejaVu Sans Mono");     // DejaVu Mono
+    // Fl::set_font(FL_COURIER, "BNimbus Mono PS");       // Nimbus Mono PS bold
+    Fl::set_font(FL_COURIER, " Liberation Mono");         // Liberation Mono
+  }
 #endif
-#endif // test
 
   const int WW = 700, WH = 400;
   app *win = new app(0, 0, WW, WH);
