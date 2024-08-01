@@ -23,6 +23,7 @@
 #endif
 
 #include <dlfcn.h>
+#include <stdlib.h>
 static void *dlopen_corrected(const char *, int);
 #define dlopen(A, B) dlopen_corrected(A, B)
 #include "fl_libdecor.h"
@@ -126,8 +127,21 @@ struct libdecor *fl_libdecor_new(struct wl_display *wl_display, const struct lib
     // no plug-in was found by dlopen(), use built-in plugin instead
     // defined in the source code of the built-in plugin:  libdecor-cairo.c or libdecor-gtk.c
     extern const struct libdecor_plugin_description libdecor_plugin_description;
+#if HAVE_GTK
+    bool gdk_caution = false;
+    if (getenv("GDK_BACKEND") && strcmp(getenv("GDK_BACKEND"), "x11") == 0) {
+      // Environment variable GDK_BACKEND=x11 makes the .constructor below fail
+      // for the built-in GTK plugin and then FLTK crashes (#1029).
+      // Temporarily unset GDK_BACKEND to prevent that.
+      gdk_caution = true;
+      unsetenv("GDK_BACKEND");
+    }
+#endif
     context->plugin = libdecor_plugin_description.constructor(context);
-  }
+#if HAVE_GTK
+    if (gdk_caution) putenv("GDK_BACKEND=x11");
+#endif
+ }
 
   wl_display_flush(wl_display);
   return context;
