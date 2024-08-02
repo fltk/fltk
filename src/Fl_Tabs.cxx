@@ -375,6 +375,35 @@ void Fl_Tabs::check_overflow_menu() {
 }
 
 /**
+ Take keyboard focus if o is not NULL.
+ \param[in] o selected tab
+ */
+void Fl_Tabs::take_focus(Fl_Widget *o) {
+  if (o && Fl::visible_focus() && Fl::focus()!=this) {
+    Fl::focus(this);
+    redraw_tabs();
+  }
+}
+
+/**
+ Set tab o as selected an call callbacks if needed.
+ \param[in] o the newly selected tab
+ */
+void Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
+  if (o &&                              // Released on a tab and..
+      (value(o) ||                      // tab changed value or..
+       (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
+       )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
+      ) {
+    Fl_Widget_Tracker wp(o);
+    set_changed();
+    do_callback(FL_REASON_SELECTED);
+    if (wp.deleted()) return;
+  }
+  return;
+}
+
+/**
  This is called when the user clicks the overflow pulldown menu button.
 
  This method creates a menu item array that contains the titles of all
@@ -414,8 +443,13 @@ void Fl_Tabs::handle_overflow_menu() {
 
   // show the menu and handle the selection
   const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (tab_height()>0)?(y()+H):(y()+h()));
-  if (m)
-    value((Fl_Widget*)m->user_data());
+  if (m) {
+    Fl_Widget *o = (Fl_Widget*)m->user_data();
+    push(0);
+    take_focus(o);
+    maybe_do_callback(o);
+    Fl_Tooltip::current(o);
+  }
 
   // delete the menu until we need it next time
   if (overflow_menu) {
@@ -532,24 +566,12 @@ int Fl_Tabs::handle(int event) {
     }
     if (event == FL_RELEASE) {
       push(0);
-      if (o && Fl::visible_focus() && Fl::focus()!=this) {
-        Fl::focus(this);
-        redraw_tabs();
-      }
+      take_focus(o);
       if (o && (o->when() & FL_WHEN_CLOSED) && hit_close(o, Fl::event_x(), Fl::event_y())) {
         o->do_callback(FL_REASON_CLOSED);
         return 1; // o may be deleted at this point
       }
-      if (o &&                              // Released on a tab and..
-          (value(o) ||                      // tab changed value or..
-           (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
-          )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
-         ) {
-        Fl_Widget_Tracker wp(o);
-        set_changed();
-        do_callback(FL_REASON_SELECTED);
-        if (wp.deleted()) return 1;
-      }
+      maybe_do_callback(o);
       Fl_Tooltip::current(o);
     } else {
       push(o);

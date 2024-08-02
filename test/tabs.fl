@@ -12,7 +12,13 @@ Function {} {open
       label {class Fl_Tabs}
       xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Tabs tabs_group {open
+    Fl_Tabs tabs_group {
+      callback {Fl_Widget *sel_tab = o->value();
+if (sel_tab) {
+  printf("Callback called for tab \\"%s\\"\\n", sel_tab->label());
+} else {
+  printf("Callback called\\n");
+}} open selected
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 315 260} selection_color 4 labelcolor 7 resizable
       code0 {// tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
     } {
@@ -159,7 +165,7 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab2 selected
+        label tab2
         tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {330 60 320 235} selection_color 2
       } {
         Fl_Button {} {

@@ -251,6 +251,8 @@ protected:
   Fl_Align tab_align_;  ///< tab label alignment
   int has_overflow_menu;///< set in OVERFLOW_PULLDOWN mode if tabs overflow. The actual menu array is created only on demand
 
+  void take_focus(Fl_Widget *o);
+  void maybe_do_callback(Fl_Widget *o);
   void check_overflow_menu();
   void handle_overflow_menu();
   void draw_overflow_menu_button();
