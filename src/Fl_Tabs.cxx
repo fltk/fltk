@@ -388,19 +388,28 @@ void Fl_Tabs::take_focus(Fl_Widget *o) {
 /**
  Set tab o as selected an call callbacks if needed.
  \param[in] o the newly selected tab
+ \return 0 if o is invalide or was deleted by the callback and must no longer be used
  */
-void Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
-  if (o &&                              // Released on a tab and..
-      (value(o) ||                      // tab changed value or..
-       (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
-       )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
-      ) {
-    Fl_Widget_Tracker wp(o);
+int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
+  // chaeck if o is valid
+  if ( o == NULL )
+    return 0;
+
+  // set the new tab value
+  int tab_changed = value(o);
+  if ( tab_changed )
     set_changed();
-    do_callback(FL_REASON_SELECTED);
-    if (wp.deleted()) return;
+
+  // do we need to call the callback?
+  if ( tab_changed || ( when() & (FL_WHEN_NOT_CHANGED) ) ) {
+    Fl_Widget_Tracker wp(o);          // we want to know if the widget lives on
+    do_callback(FL_REASON_SELECTED);  // this may delete the tab
+    if (wp.deleted()) return 0;       // if it did, return 0
   }
-  return;
+
+  // if o is still valid, do remaining tasks
+  Fl_Tooltip::current(o);
+  return 1;
 }
 
 /**
@@ -448,7 +457,6 @@ void Fl_Tabs::handle_overflow_menu() {
     push(0);
     take_focus(o);
     maybe_do_callback(o);
-    Fl_Tooltip::current(o);
   }
 
   // delete the menu until we need it next time
@@ -572,7 +580,6 @@ int Fl_Tabs::handle(int event) {
         return 1; // o may be deleted at this point
       }
       maybe_do_callback(o);
-      Fl_Tooltip::current(o);
     } else {
       push(o);
     }
