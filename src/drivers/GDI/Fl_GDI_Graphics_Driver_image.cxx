@@ -172,17 +172,19 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   static U32* buffer;
   static long buffer_size;
   int blocking = h;
-  {int size = linesize*h;
-  // when printing, don't limit buffer size not to get a crash in StretchDIBits
-  if (size > MAXBUFFER && !fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
-    size = MAXBUFFER;
-    blocking = MAXBUFFER/linesize;
+  {
+    int size = linesize * h;
+    // when printing, don't limit buffer size not to get a crash in StretchDIBits
+    if (size > MAXBUFFER && !fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
+      size = MAXBUFFER;
+      blocking = MAXBUFFER / linesize;
+    }
+    if (size > buffer_size) {
+      delete[] buffer;
+      buffer_size = size;
+      buffer = new U32[(size + 3) / 4];
+    }
   }
-  if (size > buffer_size) {
-    delete[] buffer;
-    buffer_size = size;
-    buffer = new U32[(size+3)/4];
-  }}
   bmi.bmiHeader.biHeight = blocking;
   static U32* line_buffer;
   if (!buf) {
@@ -250,7 +252,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
             break;
         }
       }
-    }
+    } // for (k = 0; j<h && k<blocking ...)
+
     if (fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
@@ -277,8 +280,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
                         DIB_RGB_COLORS
 #endif
                         );
-      }
-  }
+    }
+  } // for (int j=0; j<h; )
 }
 
 void Fl_GDI_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
