@@ -212,7 +212,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
           monodither(to, from, w, delta);
         else
           dither(to, from, w, delta);
-        to += w;
       } else
 #endif
       {
