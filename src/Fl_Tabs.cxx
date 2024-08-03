@@ -72,6 +72,12 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
   Fl_Group::resize(X, Y, W, H);
 }
 
+/** Ensure proper placement of selected tab. */
+void Fl_Tabs::show() {
+  Fl::damage(FL_DAMAGE_SCROLL);
+  Fl_Group::show();
+}
+
 /** Calculate tab positions and widths.
 
   This protected method calculates the horizontal display positions and
@@ -739,9 +745,8 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
       o->hide();
     }
   }
-  // make sure that the selected tab is visible
+  // always make sure that the selected tab is visible
   if (   (selected >= 0)
-      && (ret == 1)
       && ( (overflow_type == OVERFLOW_DRAG)
         || (overflow_type == OVERFLOW_PULLDOWN) ) ) {
     int m = MARGIN;
@@ -769,8 +774,10 @@ void Fl_Tabs::draw() {
   //  FL_DAMAGE_EXPOSE  : this is set if some setting in a widget changed
   //                      Fl_Tabs uses this to indicate that the tabs area needs a full redraw
   //  FL_DAMAGE_SCROLL  : this is used as a custom flag in various widgets
-  //                      Fl_Tabs honors this flag for back compatibly as FL_DAMAGE_EXPOSE
-  //  FL_DAMAGE_ALL     : just redraw everything
+  //                      Fl_Tabs uses FL_DAMAGE_EXPOSE to indicate that the
+  //                      tabs bar needs repositioning and teh tabs must be
+  //                      redrawn
+  //  FL_DAMAGE_ALL     : just recalculate and redraw everything
 
   // Anatomy of tabs on top:
   //  +------+             +---+  <<-- selected tabs start at y()
@@ -832,6 +839,13 @@ void Fl_Tabs::draw() {
     child_area_h = h() - tabs_h;
     clipped_child_area_y = y();
     clipped_child_area_h = h() - tabs_h - selection_border_h;
+  }
+
+  // ---- recalculate the tabs so that the selected tab is visible
+  if (damage() & (FL_DAMAGE_ALL|FL_DAMAGE_SCROLL)) {
+    Fl_Widget *selected_tab = value();
+    if (selected_tab)
+      value(selected_tab);
   }
 
   // ---- draw the tabs and the selection border
@@ -1177,7 +1191,7 @@ void Fl_Tabs::handle_overflow(int ov) {
   overflow_type = ov;
   tab_offset = 0;
   has_overflow_menu = 0;
-  damage(FL_DAMAGE_EXPOSE);
+  damage(FL_DAMAGE_SCROLL);
   redraw();
 }
 
