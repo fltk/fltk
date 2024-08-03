@@ -482,7 +482,12 @@ void Fl_Tabs::draw_overflow_menu_button() {
   }
   draw_box(box(), X, Y, H, H, color());
   Fl_Rect r(X, Y, H, H);
-  Fl_Color arrow_color = active_r() ? labelcolor() : fl_inactive(labelcolor());
+  // labelcolor() is historically used to contrast selectioncolor() and is
+  // useless her, so we fall back to contrast the background color on the
+  // gray ramp.
+  Fl_Color arrow_color = fl_contrast(FL_GRAY_RAMP+0, color());
+  if (!active_r())
+    arrow_color = fl_inactive(arrow_color);
   fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, arrow_color);
 }
 
@@ -986,7 +991,10 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
     // Draw the "close" button if requested
     if ( (o->when() & FL_WHEN_CLOSED) && !(flags & 1) ) {
       int sz = labelsize()/2, sy = (H - sz)/2;
-      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + yofs/2 + sy, sz, sz, o->labelcolor());
+      Fl_Color close_color = fl_contrast(FL_GRAY_RAMP+0, bc);
+      if (!active_r())
+        close_color = fl_inactive(close_color);
+      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + yofs/2 + sy, sz, sz, close_color);
       wc = sz + EXTRAGAP;
     }
 
@@ -1008,7 +1016,10 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
     // Draw the "close" button if requested
     if ( (o->when() & FL_WHEN_CLOSED) && (x1+W < x2) ) {
       int sz = labelsize()/2, sy = (H - sz)/2;
-      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + h() - H -yofs/2 + sy, sz, sz, o->labelcolor());
+      Fl_Color close_color = fl_contrast(FL_GRAY_RAMP+0, bc);
+      if (!active_r())
+        close_color = fl_inactive(close_color);
+      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + h() - H -yofs/2 + sy, sz, sz, close_color);
       wc = sz + EXTRAGAP;
     }
 
