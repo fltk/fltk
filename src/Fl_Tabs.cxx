@@ -31,6 +31,7 @@
 #include <stdlib.h>
 
 #define BORDER 2
+#define OV_BORDER 2
 #define EXTRASPACE 10
 #define SELECTION_BORDER 5
 #define EXTRAGAP 2
@@ -336,7 +337,7 @@ int Fl_Tabs::hit_overflow_menu(int event_x, int event_y) {
   if (!has_overflow_menu)
     return 0;
   int H = tab_height();
-  if (event_x < x()+w()-abs(H))
+  if (event_x < x()+w()-abs(H)+OV_BORDER)
     return 0;
   if (H >= 0) {
     if (event_y > y()+H)
@@ -362,7 +363,7 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
     if (event_y < y()+h()+H)
       return 0;
   }
-  if (has_overflow_menu && event_x > x()+w()-abs(H))
+  if (has_overflow_menu && event_x > x()+w()-abs(H)+OV_BORDER)
     return 0;
   return 1;
 }
@@ -373,7 +374,7 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
 void Fl_Tabs::check_overflow_menu() {
   int nc = children();
   int H = tab_height(); if (H < 0) H = -H;
-  if (tab_pos[nc] > w()-H) {
+  if (tab_pos[nc] > w()-H+OV_BORDER) {
     has_overflow_menu = 1;
   } else {
     has_overflow_menu = 0;
@@ -439,7 +440,7 @@ void Fl_Tabs::handle_overflow_menu() {
   // count visible children
   for (i = 0; i < nc; i++) {
     if (tab_pos[i]+tab_offset < 0) fv = i;
-    if (tab_pos[i]+tab_width[i]+tab_offset <= w()-H) lv = i;
+    if (tab_pos[i]+tab_width[i]+tab_offset <= w()-H+OV_BORDER) lv = i;
   }
 
   // create a menu with all children
@@ -457,7 +458,7 @@ void Fl_Tabs::handle_overflow_menu() {
   }
 
   // show the menu and handle the selection
-  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (tab_height()>0)?(y()+H):(y()+h()));
+  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H+OV_BORDER, (tab_height()>0)?(y()+H):(y()+h()-OV_BORDER));
   if (m) {
     Fl_Widget *o = (Fl_Widget*)m->user_data();
     push(0);
@@ -479,13 +480,18 @@ void Fl_Tabs::draw_overflow_menu_button() {
   int H = tab_height();
   int X, Y;
   if (H > 0) {
-    X = x() + w() - H;
-    Y = y();
+    X = x() + w() - H + OV_BORDER;
+    if (OV_BORDER > 0)
+      fl_rectf(X, y(), H - OV_BORDER, OV_BORDER, color());
+    Y = y() + OV_BORDER;
   } else {
     H = -H;
-    X = x() + w() - H;
-    Y = y() + h() - H - 1;
+    X = x() + w() - H + OV_BORDER;
+    Y = y() + h() - H;
+    if (OV_BORDER > 0)
+      fl_rectf(X, Y + H - OV_BORDER, H - OV_BORDER, OV_BORDER, color());
   }
+  H -= OV_BORDER;
   draw_box(box(), X, Y, H, H, color());
   Fl_Rect r(X, Y, H, H);
   // labelcolor() is historically used to contrast selectioncolor() and is
@@ -568,7 +574,7 @@ int Fl_Tabs::handle(int event) {
       } else if (!Fl::event_is_click()) {
         tab_offset = initial_tab_offset + Fl::event_x() - initial_x;
         int m = 0;
-        if (overflow_type == OVERFLOW_PULLDOWN) m = abs(tab_height());
+        if (overflow_type == OVERFLOW_PULLDOWN) m = abs(tab_height()) - OV_BORDER;
         if (tab_offset > 0) {
           initial_tab_offset -= tab_offset;
           tab_offset = 0;
@@ -750,10 +756,10 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
       && ( (overflow_type == OVERFLOW_DRAG)
         || (overflow_type == OVERFLOW_PULLDOWN) ) ) {
     int m = MARGIN;
-    if ( (selected == 0) || (selected == children()-1) ) m = 0;
+    if ( (selected == 0) || (selected == children()-1) ) m = BORDER;
     int mr = m;
-    if (overflow_type == OVERFLOW_PULLDOWN) mr += abs(tab_height());
     tab_positions();
+    if (overflow_type == OVERFLOW_PULLDOWN) mr += abs(tab_height() - OV_BORDER);
     if (tab_pos[selected]+tab_width[selected]+tab_offset+mr > w()) {
       tab_offset = w() - tab_pos[selected] - tab_width[selected] - mr;
     } else if (tab_pos[selected]+tab_offset-m < 0) {
@@ -780,10 +786,10 @@ void Fl_Tabs::draw() {
   //  FL_DAMAGE_ALL     : just recalculate and redraw everything
 
   // Anatomy of tabs on top:
-  //  +------+             +---+  <<-- selected tabs start at y()
-  //  | text | +------+    | V |   <-- other tabs are offset down by BORDER
-  //  |      | | text |    +---+   <-- the pulldown button width equals H
-  // ++      +-----------------+   <-- tab_height() to tab_height + Fl::box_dx(box())
+  //  +------+                    <<-- selected tabs start at y()
+  //  | text | +------+    +---+   <-- other tabs are offset down by BORDER
+  //  |      | | text |    | ▼ |   <-- the pulldown button width equals H - OV_BORDER
+  // ++      +-------------+---+   <-- tab_height() to tab_height + Fl::box_dx(box())
   // +-------------------------+   <-- tab_height + SELECTION_BORDER
   // |                         |
   //   ↑____↑ this area within the SELECTION_BORDER is called "stem"
