@@ -560,9 +560,9 @@ void Fl_Text_Display::recalc_display() {
     if (mContinuousWrap && !mWrapMarginPix && text_area.w != oldTAWidth) {
 
       int oldFirstChar = mFirstChar;
-      mNBufferLines = count_lines(0, buffer()->length(), true);
       mFirstChar = line_start(mFirstChar);
       mTopLineNum = count_lines(0, mFirstChar, true)+1;
+      mNBufferLines = mTopLineNum-1 + count_lines(mFirstChar, buffer()->length(), true);
       absolute_top_line_number(oldFirstChar);
 #ifdef DEBUG2
       printf("    mNBufferLines=%d\n", mNBufferLines);
@@ -1436,16 +1436,66 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
   if (!mContinuousWrap)
     return buffer()->count_lines(startPos, endPos);
 
-  wrapped_line_counter(buffer(), startPos, endPos, INT_MAX,
-                       startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
-                       &retLineEnd);
+  /*
+   Correctly counting wrapped lines is very slow. We have to query the length
+   of every segment of text for every line change and style change and find
+   potential soft line breaks.
+
+   Most of the resulting information is needed for calculating the vertical
+   scroll bar size. After a certain text length, the scroll bar size is no
+   longer very precise anyway, so we optimize line count for all lines but
+   the visible ones (plus minus a few lines for rounding).
+
+   The optimized code is several magnitudes faster and makes scrolling and
+   window resizing of long texts quite responsive. There is a slight but IMHO
+   tollerable drawback: when walking huge files using arrow up and down, the
+   text display sometimes jumps 2 or 3 lines instead of 1, but the overall
+   buffer stays intact as well as the scroll position.
+   */
+  if (buffer()->length() > 16384) {
+    // Optimized line counting
+    int nLines = 0;
+    int firstVisibleChar = buffer()->rewind_lines(mFirstChar, 3);
+    int lastVisibleChar = buffer()->skip_lines(mLastChar, 3);
+    // Calculate the averga number of characters up to a soft line break
+    if (mColumnScale==0.0) x_to_col(1.0);
+    int avgCharsPerLine = mWrapMarginPix;
+    if (!avgCharsPerLine) avgCharsPerLine = text_area.w;
+    avgCharsPerLine = (int)(avgCharsPerLine / mColumnScale) + 1;
+
+    // first segment, lines up to display, count fast
+    if (startPos < firstVisibleChar) {
+      int tmpEnd = endPos<firstVisibleChar ? endPos : firstVisibleChar;
+      nLines += buffer()->estimate_lines(startPos, tmpEnd, avgCharsPerLine);
+      startPos = tmpEnd;
+    }
+    // second segement, count displayed liens
+    if (startPos < endPos && startPos < mLastChar) {
+      // Precisse line counting only for visible text:
+      int tmpEnd = endPos<lastVisibleChar ? endPos : lastVisibleChar;
+      wrapped_line_counter(buffer(), startPos, tmpEnd, INT_MAX,
+                           startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
+                           &retLineEnd);
+      nLines += retLines;
+      startPos = tmpEnd;
+    }
+    // third segement is everything after displayed lines
+    if (startPos < endPos && startPos >= lastVisibleChar) {
+      nLines += buffer()->estimate_lines(startPos, endPos, avgCharsPerLine);
+    }
+    return nLines;
+  } else {
+    // Precise line counting only for small text buffer sizes:
+    wrapped_line_counter(buffer(), startPos, endPos, INT_MAX,
+                         startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
+                         &retLineEnd);
 
 #ifdef DEBUG
-  printf("   # after WLC: retPos=%d, retLines=%d, retLineStart=%d, retLineEnd=%d\n",
-         retPos, retLines, retLineStart, retLineEnd);
+    printf("   # after WLC: retPos=%d, retLines=%d, retLineStart=%d, retLineEnd=%d\n",
+           retPos, retLines, retLineStart, retLineEnd);
 #endif // DEBUG
-
-  return retLines;
+    return retLines;
+  }
 }
 
 

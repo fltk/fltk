@@ -636,6 +636,13 @@ public:
   int count_lines(int startPos, int endPos) const;
 
   /**
+   Estimate the number of newlines between \p startPos and \p endPos in buffer.
+   This call takes line wrapping into account. It assumes a line break at every
+   `lineLen` characters after the beginning of a line.
+   */
+  int estimate_lines(int startPos, int endPos, int lineLen) const;
+
+  /**
    Finds the first character of the line \p nLines forward from \p startPos
    in the buffer and returns its position.
    */
