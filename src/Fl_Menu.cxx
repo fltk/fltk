@@ -1155,6 +1155,10 @@ const Fl_Menu_Item* Fl_Menu_Item::popup(
   return pulldown(X, Y, 0, 0, picked, menu_button, title ? &dummy : 0);
 }
 
+static bool is_special_labeltype(uchar t) {
+  return t == _FL_MULTI_LABEL || t == _FL_ICON_LABEL || t == _FL_IMAGE_LABEL;
+}
+
 /**
   Search only the top level menu for a shortcut.
   Either &x in the label or the shortcut fields are used.
@@ -1172,7 +1176,13 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt)
   if (m) for (int ii = 0; m->text; m = next_visible_or_not(m), ii++) {
     if (m->active()) {
       if (Fl::test_shortcut(m->shortcut_)
-         || Fl_Widget::test_shortcut(m->text, require_alt)) {
+         || (!is_special_labeltype(m->labeltype_) && Fl_Widget::test_shortcut(m->text, require_alt))
+         || (m->labeltype_ == _FL_MULTI_LABEL
+             && !is_special_labeltype(((Fl_Multi_Label*)m->text)->typea)
+             && Fl_Widget::test_shortcut(((Fl_Multi_Label*)m->text)->labela, require_alt))
+         || (m->labeltype_ == _FL_MULTI_LABEL
+             && !is_special_labeltype(((Fl_Multi_Label*)m->text)->typeb)
+             && Fl_Widget::test_shortcut(((Fl_Multi_Label*)m->text)->labelb, require_alt))) {
         if (ip) *ip=ii;
         return m;
       }
