@@ -195,6 +195,7 @@ class Sudoku : public Fl_Double_Window {
   void          update_helpers();
 };
 
+Sudoku *sudoku = NULL;
 
 // Sound class globals...
 int SudokuSound::frequencies[9] = {
@@ -558,7 +559,7 @@ SudokuCell::handle(int event) {
           if (value()) {
             if (value() < 9) value(value() + 1);
             else value(1);
-          } else value(((Sudoku *)window())->next_value(this));
+          } else value(sudoku->next_value(this));
         }
 
         Fl::focus(this);
@@ -745,7 +746,7 @@ Sudoku::~Sudoku() {
 // Check for a solution to the game...
 void
 Sudoku::check_cb(Fl_Widget *widget, void *) {
-  ((Sudoku *)(widget->window()))->check_game();
+  sudoku->check_game();
 }
 
 
@@ -834,10 +835,8 @@ Sudoku::check_game(bool highlight) {
 // Close the window, saving the game first...
 void
 Sudoku::close_cb(Fl_Widget *widget, void *) {
-  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
-
-  s->save_game();
-  s->hide();
+  sudoku->save_game();
+  sudoku->hide();
 
   if (help_dialog_) help_dialog_->hide();
 }
@@ -846,13 +845,12 @@ Sudoku::close_cb(Fl_Widget *widget, void *) {
 // Set the level of difficulty...
 void
 Sudoku::diff_cb(Fl_Widget *widget, void *d) {
-  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
   int diff = atoi((char *)d);
 
-  if (diff != s->difficulty_) {
-    s->difficulty_ = diff;
-    s->new_game(s->seed_);
-    s->set_title();
+  if (diff != sudoku->difficulty_) {
+    sudoku->difficulty_ = diff;
+    sudoku->new_game(sudoku->seed_);
+    sudoku->set_title();
 
     if (diff > 1)
     {
@@ -871,15 +869,14 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
       }
     }
 
-    prefs_.set("difficulty", s->difficulty_);
+    prefs_.set("difficulty", sudoku->difficulty_);
   }
 }
 
 // Update the little marker numbers in all cells
 void
 Sudoku::update_helpers_cb(Fl_Widget *widget, void *) {
-  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
-  s->update_helpers();
+  sudoku->update_helpers();
 }
 
 void
@@ -1048,14 +1045,12 @@ Sudoku::load_game() {
 // Mute/unmute sound...
 void
 Sudoku::mute_cb(Fl_Widget *widget, void *) {
-  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
-
-  if (s->sound_) {
-    delete s->sound_;
-    s->sound_ = NULL;
+  if (sudoku->sound_) {
+    delete sudoku->sound_;
+    sudoku->sound_ = NULL;
     prefs_.set("mute_sound", 1);
   } else {
-    s->sound_ = new SudokuSound();
+    sudoku->sound_ = new SudokuSound();
     prefs_.set("mute_sound", 0);
   }
 }
@@ -1064,15 +1059,12 @@ Sudoku::mute_cb(Fl_Widget *widget, void *) {
 // Create a new game...
 void
 Sudoku::new_cb(Fl_Widget *widget, void *) {
-  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
-
-  if (s->grid_cells_[0][0]->color() != FL_GREEN) {
+  if (sudoku->grid_cells_[0][0]->color() != FL_GREEN) {
     if (!fl_choice("Are you sure you want to change the difficulty level and "
                    "discard the current game?", "Keep Current Game", "Start New Game",
                    NULL)) return;
   }
-
-  s->new_game(time(NULL));
+  sudoku->new_game(time(NULL));
 }
 
 
@@ -1234,23 +1226,22 @@ Sudoku::resize(int X, int Y, int W, int H) {
 // Restart game from beginning...
 void
 Sudoku::restart_cb(Fl_Widget *widget, void *) {
-  Sudoku *s = (Sudoku *)(widget->window());
   bool solved = true;
 
   for (int j = 0; j < 9; j ++)
     for (int k = 0; k < 9; k ++) {
-      SudokuCell *cell = s->grid_cells_[j][k];
+      SudokuCell *cell = sudoku->grid_cells_[j][k];
 
       if (!cell->readonly()) {
         solved = false;
         int v = cell->value();
         cell->value(0);
         cell->color(FL_LIGHT3);
-        if (v && s->sound_) s->sound_->play('A' + v - 1);
+        if (v && sudoku->sound_) sudoku->sound_->play('A' + v - 1);
       }
     }
 
-  if (solved) s->new_game(s->seed_);
+  if (solved) sudoku->new_game(sudoku->seed_);
 }
 
 
@@ -1297,7 +1288,7 @@ Sudoku::set_title() {
 // Solve the puzzle...
 void
 Sudoku::solve_cb(Fl_Widget *widget, void *) {
-  ((Sudoku *)(widget->window()))->solve_game();
+  sudoku->solve_game();
 }
 
 
@@ -1324,6 +1315,7 @@ Sudoku::solve_game() {
 int
 main(int argc, char *argv[]) {
   Sudoku s;
+  sudoku = &s;
 
   // Show the game...
   s.show(argc, argv);
