@@ -130,6 +130,8 @@ class SudokuSound {
   void  play(char note);
 };
 
+typedef unsigned int State;
+typedef State GameState[81];
 
 // Sudoku cell class...
 class SudokuCell : public Fl_Widget {
@@ -137,6 +139,7 @@ class SudokuCell : public Fl_Widget {
   int           col_;
   bool          readonly_;
   int           value_;
+  int           solution_;
   int           hint_map_;
 
   public:
@@ -156,6 +159,14 @@ class SudokuCell : public Fl_Widget {
   bool          hint_set(int n) const { return ((hint_map_&(1<<n))!=0); }
   void          value(int v) { value_ = v; redraw(); }
   int           value() const { return value_; }
+  State         state() { return (hint_map_>>1) | (value_<<12) | (readonly_<<9); }
+  void          state(State s) {
+    hint_map_   = (s & 0x000001ff) << 1;
+    readonly_   = (s & 0x00000200) >> 9;
+    value_      = (s & 0x0000f000) >> 12;
+    if (readonly_) color(FL_GRAY); else color(FL_LIGHT3);
+    redraw();
+  }
 };
 
 
@@ -169,6 +180,8 @@ class Sudoku : public Fl_Double_Window {
   Fl_Group      *grid_groups_[3][3];
   int           difficulty_;
   SudokuSound   *sound_;
+  GameState     undo_stack[64];
+  int           undo_head_, undo_tail_, redo_head_;
 
   static void   check_cb(Fl_Widget *widget, void *);
   static void   close_cb(Fl_Widget *widget, void *);
@@ -198,6 +211,12 @@ class Sudoku : public Fl_Double_Window {
   void          solve_game();
   void          update_helpers();
   void          clear_hints_for(int row, int col, int val);
+  void          save_state(GameState &s);
+  void          load_state(GameState &s);
+  void          undo();
+  void          redo();
+  void          clear_undo();
+  void          undo_checkpoint();
 };
 
 Sudoku *sudoku = NULL;
@@ -216,7 +235,6 @@ int SudokuSound::frequencies[9] = {
 };
 short *SudokuSound::sample_data[9] = { 0 };
 int SudokuSound::sample_size = 0;
-
 
 // Initialize the SudokuSound class
 SudokuSound::SudokuSound() {
@@ -566,7 +584,7 @@ SudokuCell::handle(int event) {
             else value(1);
           } else value(sudoku->next_value(this));
         }
-
+        // TODO: add this to the undo process
         Fl::focus(this);
         redraw();
         return 1;
@@ -589,10 +607,12 @@ SudokuCell::handle(int event) {
           } else {
             set_hint(key);
           }
+          sudoku->undo_checkpoint();
           redraw();
         } else {
           value(key);
           sudoku->clear_hints_for(row(), col(), key);
+          sudoku->undo_checkpoint();
           do_callback();
         }
         return 1;
@@ -604,9 +624,11 @@ SudokuCell::handle(int event) {
         }
         if (Fl::event_state() & (FL_SHIFT | FL_CAPS_LOCK)) {
           clear_hints();
+          sudoku->undo_checkpoint();
         } else {
           value(0);
           do_callback();
+          sudoku->undo_checkpoint();
         }
         return 1;
       }
@@ -621,35 +643,49 @@ SudokuCell::handle(int event) {
 Fl_Help_Dialog  *Sudoku::help_dialog_ = (Fl_Help_Dialog *)0;
 Fl_Preferences  Sudoku::prefs_(Fl_Preferences::USER_L, "fltk.org", "sudoku");
 
+static void undo_cb(Fl_Widget*, void*) {
+  sudoku->undo();
+}
+
+static void redo_cb(Fl_Widget*, void*) {
+  sudoku->redo();
+}
 
 // Create a Sudoku game window...
 Sudoku::Sudoku()
-  : Fl_Double_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku")
+  : Fl_Double_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku"),
+  undo_head_(0), undo_tail_(0), redo_head_(0)
 {
   int j, k;
   Fl_Group *g;
   SudokuCell *cell;
   static Fl_Menu_Item   items[] = {
     { "&Game", 0, 0, 0, FL_SUBMENU },
-    { "&New Game", FL_COMMAND | 'n', new_cb, 0, FL_MENU_DIVIDER },
-    { "&Check Game", FL_COMMAND | 'c', check_cb, 0, 0 },
-    { "&Restart Game", FL_COMMAND | 'r', restart_cb, 0, 0 },
-    { "&Solve Game", FL_COMMAND | 's', solve_cb, 0, FL_MENU_DIVIDER },
-    { "&Update Helpers", 0, update_helpers_cb, 0, 0 },
-    { "&Mute Sound", FL_COMMAND | 'm', mute_cb, 0, FL_MENU_TOGGLE | FL_MENU_DIVIDER },
+    {   "&New Game", FL_COMMAND | 'n', new_cb, 0, FL_MENU_DIVIDER },
+    {   "&Check Game", FL_COMMAND | 'c', check_cb, 0, 0 },
+    {   "&Restart Game", FL_COMMAND | 'r', restart_cb, 0, 0 },
+    {   "&Solve Game", FL_COMMAND | 's', solve_cb, 0, FL_MENU_DIVIDER },
+    {   "&Update Helpers", 0, update_helpers_cb, 0, 0 },
+    {   "&Mute Sound", FL_COMMAND | 'm', mute_cb, 0, FL_MENU_TOGGLE | FL_MENU_DIVIDER },
 #ifndef USE_MACOS
-    { "&Quit", FL_COMMAND | 'q', close_cb, 0, 0 },
+    {   "&Quit", FL_COMMAND | 'q', close_cb, 0, 0 },
 #endif
-    { 0 },
+    {   0 },
+    { "&Edit", 0, 0, 0, FL_SUBMENU },
+    {   "&Undo", FL_COMMAND | 'z', undo_cb },
+    {   "&Redo", FL_COMMAND | 'Z', redo_cb },
+    {   0 },
     { "&Difficulty", 0, 0, 0, FL_SUBMENU },
-    { "&Easy", 0, diff_cb, (void *)"0", FL_MENU_RADIO },
-    { "&Medium", 0, diff_cb, (void *)"1", FL_MENU_RADIO },
-    { "&Hard", 0, diff_cb, (void *)"2", FL_MENU_RADIO },
-    { "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO },
-    { 0 },
+    {   "&Easy", 0, diff_cb, (void *)"0", FL_MENU_RADIO },
+    {   "&Medium", 0, diff_cb, (void *)"1", FL_MENU_RADIO },
+    {   "&Hard", 0, diff_cb, (void *)"2", FL_MENU_RADIO },
+    {   "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO },
+    {   0 },
+#ifndef USE_MACOS
     { "&Help", 0, 0, 0, FL_SUBMENU },
-    { "&About Sudoku", FL_F + 1, help_cb, 0, 0 },
-    { 0 },
+    {   "&About Sudoku", FL_F + 1, help_cb, 0, 0 },
+    {   0 },
+#endif
     { 0 }
   };
 
@@ -670,6 +706,9 @@ Sudoku::Sudoku()
 
   menubar_ = new Fl_Sys_Menu_Bar(0, 0, 3 * GROUP_SIZE, 25);
   menubar_->menu(items);
+#ifdef USE_MACOS
+  menubar_->about(help_cb, NULL);
+#endif
 
   // Create the grids...
   grid_ = new Fl_Group(0, MENU_OFFSET, 3 * GROUP_SIZE, 3 * GROUP_SIZE);
@@ -728,6 +767,7 @@ Sudoku::Sudoku()
   }
 
   set_title();
+  clear_undo();
 }
 
 
@@ -843,7 +883,7 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
 
   if (diff != sudoku->difficulty_) {
     sudoku->difficulty_ = diff;
-    sudoku->new_game(sudoku->seed_);
+    sudoku->new_cb(widget, NULL);
     sudoku->set_title();
 
     if (diff > 1)
@@ -921,6 +961,7 @@ Sudoku::update_helpers() {
         dst_cell->set_hint(m);
     }
   }
+  undo_checkpoint();
 }
 
 void Sudoku::clear_hints_for(int row, int col, int val) {
@@ -1044,6 +1085,7 @@ Sudoku::load_game() {
   // create a new game automatically...
   if (solved || !grid_values_[0][0]) new_game(time(NULL));
   else check_game(false);
+  clear_undo();
 }
 
 
@@ -1127,10 +1169,10 @@ Sudoku::new_game(time_t seed) {
   for (j = 0; j < 9; j ++)
     for (k = 0; k < 9; k ++) {
       cell = grid_cells_[j][k];
-
       cell->value(0);
       cell->readonly(0);
       cell->color(FL_LIGHT3);
+      cell->clear_hints();
     }
 
   // Show N cells...
@@ -1166,6 +1208,7 @@ Sudoku::new_game(time_t seed) {
       }
     }
   }
+  clear_undo();
 }
 
 
@@ -1236,7 +1279,7 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
   for (int j = 0; j < 9; j ++)
     for (int k = 0; k < 9; k ++) {
       SudokuCell *cell = sudoku->grid_cells_[j][k];
-
+      cell->clear_hints();
       if (!cell->readonly()) {
         solved = false;
         int v = cell->value();
@@ -1246,7 +1289,10 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
       }
     }
 
-  if (solved) sudoku->new_game(sudoku->seed_);
+  if (solved) 
+    sudoku->new_game(sudoku->seed_);
+  else
+    sudoku->clear_undo();
 }
 
 
@@ -1273,6 +1319,58 @@ Sudoku::save_game() {
         prefs_.set(name, cell->get_hint_map());
       }
     }
+}
+
+void Sudoku::save_state(GameState &s) {
+  for (int j = 0; j < 9; j ++) {
+    for (int k = 0; k < 9; k ++) {
+      s[j*9+k] = grid_cells_[j][k]->state();
+    }
+  }
+}
+
+void Sudoku::load_state(GameState &s) {
+  for (int j = 0; j < 9; j ++) {
+    for (int k = 0; k < 9; k ++) {
+      grid_cells_[j][k]->state(s[j*9+k]);
+    }
+  }
+}
+
+void Sudoku::undo() {
+  if (undo_head_ != undo_tail_) {
+    undo_head_ = ((undo_head_-1) & 63);
+    load_state(undo_stack[undo_head_]);
+    redraw();
+  } else {
+    fl_beep(FL_BEEP_ERROR);
+  }
+}
+
+void Sudoku::redo() {
+  if (undo_head_ != redo_head_) {
+    undo_head_ = ((undo_head_+1) & 63);
+    load_state(undo_stack[undo_head_]);
+    redraw();
+  } else {
+    fl_beep(FL_BEEP_ERROR);
+  }
+}
+
+void Sudoku::clear_undo() {
+  undo_head_ = undo_tail_ = redo_head_ = 0;
+  save_state(undo_stack[undo_head_]);
+}
+
+void Sudoku::undo_checkpoint() {
+  if (undo_head_ == redo_head_) {
+    redo_head_ = ((redo_head_+1) & 63);
+  }
+  undo_head_ = ((undo_head_+1) & 63);
+  if (undo_head_ == undo_tail_) {
+    undo_tail_ = ((undo_tail_+1) & 63);
+  }
+  save_state(undo_stack[undo_head_]);
 }
 
 
@@ -1313,6 +1411,7 @@ Sudoku::solve_game() {
 
     if (sound_) sound_->play('A' + grid_cells_[j][8]->value() - 1);
   }
+  undo_checkpoint();
 }
 
 
