@@ -310,10 +310,10 @@ int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
   Fl::copy("", 0, 0);
   switch (c) {
   case FL_Home:
-      e->insert_position(e->buffer()->line_start(e->insert_position()));
+      e->insert_position(e->line_start(e->insert_position()));
       break;
     case FL_End:
-      e->insert_position(e->buffer()->line_end(e->insert_position()));
+      e->insert_position(e->line_end(e->insert_position(), false));
       break;
     case FL_Left:
       e->move_left();
