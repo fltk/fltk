@@ -40,7 +40,7 @@ endif(DEBUG_VARIABLES_CMAKE)
 # FIXME: check fontconfig conditions (only if Xft is used or ...)
 
 if(WIN32)
-  list(APPEND FLTK_LDLIBS -lole32 -luuid -lcomctl32 -lws2_32)
+  list(APPEND FLTK_LDLIBS -lole32 -luuid -lcomctl32 -lws2_32 -lwinspool)
 elseif(APPLE AND NOT FLTK_BACKEND_X11)
   list(APPEND FLTK_LDLIBS ${FLTK_COCOA_FRAMEWORKS})
 elseif(FLTK_BACKEND_WAYLAND)
