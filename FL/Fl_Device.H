@@ -38,16 +38,17 @@ class Fl_Image_Surface;
  an instance of the Fl_Display_Device class.
 
  A drawing surface other than the computer's display, is typically used as follows:
- <ol><li> Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
+ <ol><li> Create \c surface, an object from an Fl_Surface_Device derived class (e.g., Fl_Image_Surface, Fl_Printer, Fl_Copy_Surface).
  <li> Call \c Fl_Surface_Device::push_current(surface); to redirect all graphics requests to
- \c surface which becomes the new current drawing surface (not necessary with classes Fl_Printer / Fl_PostScript_File_Device
- because it is done by Fl_Paged_Device::begin_page()).
+ \c surface which becomes the new current drawing surface (not necessary with classes Fl_Printer / Fl_PostScript_File_Device /
+ Fl_PDF_File_Surface because it is done by Fl_Paged_Device::begin_page()).
  <li> At this point all of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
  (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface.
- Drawing surfaces from Fl_Widget_Surface derived classes allow additional ways
- to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
+ It's also possible to draw to the current surface any widget with Fl_Widget_Surface::draw(Fl_Widget*, int, int), a window and its
+ titlebar with Fl_Widget_Surface::draw_decorated_window(), or the content of a rectangular zone of a window
+ with Fl_Widget_Surface::print_window_part().
  <li> After all drawing requests have been performed, redirect graphics requests back to their previous destination
- with \c Fl_Surface_Device::pop_current(); (not necessary with classes Fl_Printer / Fl_PostScript_File_Device).
+ with \c Fl_Surface_Device::pop_current(); (not necessary with classes Fl_Printer / Fl_PostScript_File_Device / Fl_PDF_File_Surface).
  <li> Delete \c surface.
  </ol>
  For back-compatibility, it is also possible to use the Fl_Surface_Device::set_current() member function
