@@ -241,14 +241,6 @@ static void del_context(GLContext ctx) {
 
 #if defined(USE_X11)
 
-static bool ctxErrorOccurred = false;
-static int ctxErrorHandler( Display *dpy, XErrorEvent *ev )
-{
-  ctxErrorOccurred = true;
-  return 0;
-}
-
-
 GLContext fl_create_gl_context(Fl_Window *window, const Fl_Gl_Choice* g) {
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
