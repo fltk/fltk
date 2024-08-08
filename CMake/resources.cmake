@@ -65,31 +65,11 @@ include(FindPkgConfig)
 #
 # FIXME: we can remove this code some time after the release of FLTK 1.4.0.
 
-### DEBUG:
-if(DEFINED OPENGL_GLU_INCLUDE_DIR)
-  set(OPENGL_GLU_INCLUDE_DIR_DEFINED TRUE)
-endif()
-
-if(DEFINED FLTK_OPENGL_GLU_INCLUDE_DIR)
-  set(FLTK_OPENGL_GLU_INCLUDE_DIR_DEFINED TRUE)
-endif()
-
-fl_debug_var(OPENGL_FOUND)
-fl_debug_var(OPENGL_INCLUDE_DIR)
-
-fl_debug_var(OPENGL_GLU_INCLUDE_DIR_DEFINED)
-fl_debug_var(OPENGL_GLU_INCLUDE_DIR)
-
-fl_debug_var(FLTK_OPENGL_GLU_INCLUDE_DIR_DEFINED)
-fl_debug_var(FLTK_OPENGL_GLU_INCLUDE_DIR)
-### /DEBUG
-
 if(DEFINED OPENGL_GLU_INCLUDE_DIR)
 
   if(CMAKE_VERSION VERSION_LESS 3.29 OR
      (NOT DEFINED FLTK_OPENGL_GLU_INCLUDE_DIR) OR
      (NOT OPENGL_GLU_INCLUDE_DIR))
-    # message(STATUS "**** Removing OPENGL_GLU_INCLUDE_DIR from CMake cache ****")
     unset(OPENGL_GLU_INCLUDE_DIR)
     unset(OPENGL_GLU_INCLUDE_DIR CACHE)
   else()
