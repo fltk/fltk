@@ -611,7 +611,7 @@ endif(FLTK_OPTION_SVG)
 
 #######################################################################
 
-# FIXME: GL libs have already been searched in resources.cmake
+# FIXME: GLU libs have already been searched in resources.cmake
 
 set(HAVE_GL LIB_GL OR LIB_MesaGL)
 set(FLTK_USE_GL FALSE)
@@ -681,8 +681,8 @@ set(FLTK_GL_FOUND FALSE)
 
 if(OPENGL_FOUND)
   set(FLTK_GL_FOUND TRUE)
-  find_path(OPENGL_GLU_INCLUDE_DIR NAMES GL/glu.h OpenGL/glu.h HINTS ${OPENGL_INCLUDE_DIR} ${X11_INCLUDE_DIR})
-  set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL ${OPENGL_GLU_INCLUDE_DIR})
+  find_path(FLTK_OPENGL_GLU_INCLUDE_DIR NAMES GL/glu.h OpenGL/glu.h HINTS ${OPENGL_INCLUDE_DIR} ${X11_INCLUDE_DIR})
+  set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL ${FLTK_OPENGL_GLU_INCLUDE_DIR})
 
   if(WIN32)
     list(APPEND GLLIBS -lglu32 -lopengl32)

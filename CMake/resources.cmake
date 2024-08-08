@@ -46,6 +46,61 @@ include(FindPkgConfig)
 # fl_debug_var(PKG_CONFIG_VERSION_STRING)
 
 #######################################################################
+# GitHub Issue #1001: try to "repair" the CMake Cache
+#######################################################################
+#
+# Note: we renamed "our" CMake cache variable OPENGL_GLU_INCLUDE_DIR
+# to FLTK_OPENGL_GLU_INCLUDE_DIR because the former is now defined
+# in find_package(OpenGL) (FindOpenGL.cmake) since CMake 3.29.0.
+#
+# We can remove "our" cache variable if any of these conditions is true:
+#
+#  - CMAKE_VERSION < 3.29
+#  - FLTK_OPENGL_GLU_INCLUDE_DIR is undefined (first run after rename)
+#  - OPENGL_GLU_INCLUDE_DIR is FALSE, i.e. OPENGL_GLU_INCLUDE_DIR-NOTFOUND.
+#
+# Otherwise we can't be sure to remove the *correct* definition of
+# OPENGL_GLU_INCLUDE_DIR and we force the user to rebuild in a clean
+# CMake build directory. This should rarely happen.
+#
+# FIXME: we can remove this code some time after the release of FLTK 1.4.0.
+
+### DEBUG:
+if(DEFINED OPENGL_GLU_INCLUDE_DIR)
+  set(OPENGL_GLU_INCLUDE_DIR_DEFINED TRUE)
+endif()
+
+if(DEFINED FLTK_OPENGL_GLU_INCLUDE_DIR)
+  set(FLTK_OPENGL_GLU_INCLUDE_DIR_DEFINED TRUE)
+endif()
+
+fl_debug_var(OPENGL_FOUND)
+fl_debug_var(OPENGL_INCLUDE_DIR)
+
+fl_debug_var(OPENGL_GLU_INCLUDE_DIR_DEFINED)
+fl_debug_var(OPENGL_GLU_INCLUDE_DIR)
+
+fl_debug_var(FLTK_OPENGL_GLU_INCLUDE_DIR_DEFINED)
+fl_debug_var(FLTK_OPENGL_GLU_INCLUDE_DIR)
+### /DEBUG
+
+if(DEFINED OPENGL_GLU_INCLUDE_DIR)
+
+  if(CMAKE_VERSION VERSION_LESS 3.29 OR
+     (NOT DEFINED FLTK_OPENGL_GLU_INCLUDE_DIR) OR
+     (NOT OPENGL_GLU_INCLUDE_DIR))
+    # message(STATUS "**** Removing OPENGL_GLU_INCLUDE_DIR from CMake cache ****")
+    unset(OPENGL_GLU_INCLUDE_DIR)
+    unset(OPENGL_GLU_INCLUDE_DIR CACHE)
+  else()
+    message(STATUS "")
+    message(NOTICE "FLTK configure: CMake cache inconsistency detected")
+    message(FATAL_ERROR "Please rebuild FLTK in a clean CMake build directory")
+  endif()
+
+endif() # (DEFINED OPENGL_GLU_INCLUDE_DIR)
+
+#######################################################################
 # Find header files...
 #######################################################################
 
