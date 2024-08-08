@@ -109,18 +109,15 @@ const char *get_keyname(int k, int &lg) {
     return "0";
   }
   else if (k < 32) {  // control character
-    sprintf(buffer, "^%c", (char)(k + 64));
-    lg = 2;
+    lg = sprintf(buffer, "^%c", (char)(k + 64));
   }
   else if (k < 128) { // ASCII
-    snprintf(buffer, sizeof(buffer), "'%c'", k);
-    lg = 3;
+    lg = snprintf(buffer, sizeof(buffer), "'%c'", k);
   } else if (k >= 0xa0 && k <= 0xff) { // ISO-8859-1 (international keyboards)
     char key[8];
     int kl = fl_utf8encode((unsigned)k, key);
     key[kl] = '\0';
-    snprintf(buffer, sizeof(buffer), "'%s'", key);
-    lg = 3;
+    lg = snprintf(buffer, sizeof(buffer), "'%s'", key);
   } else if (k > FL_F && k <= FL_F_Last) {
     lg = snprintf(buffer, sizeof(buffer), "FL_F+%d", k - FL_F);
   } else if (k >= FL_KP && k <= FL_KP_Last) {
@@ -335,18 +332,15 @@ void close_cb(Fl_Widget *win, void *) {
 
 int main(int argc, char **argv) {
 
+#ifdef _WIN32
   // Set an appropriate font for Wine on Linux (test only).
   // This is very likely not necessary on a real Windows system.
   // Set environment variable FLTK_USING_WINE to a non-empty string
   // to enable this feature, e.g. (in bash) `export FLTK_USING_WINE=1`.
-
-#ifdef _WIN32
   const char *using_wine = fl_getenv("FLTK_USING_WINE");
   printf("FLTK_USING_WINE = %s\n", using_wine ? using_wine : "");
   if (using_wine && *using_wine) {
-    // set an alternate fixed font for the terminal widget
     // Fl::set_font(FL_COURIER, " DejaVu Sans Mono");     // DejaVu Mono
-    // Fl::set_font(FL_COURIER, "BNimbus Mono PS");       // Nimbus Mono PS bold
     Fl::set_font(FL_COURIER, " Liberation Mono");         // Liberation Mono
   }
 #endif
