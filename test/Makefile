@@ -1,5 +1,5 @@
 #
-# Test/example program Makefile for the Fast Light Tool Kit (FLTK).
+# Test/demo program Makefile for the Fast Light Tool Kit (FLTK).
 #
 # Copyright 1998-2024 by Bill Spitzak and others.
 #
@@ -282,60 +282,60 @@ clean:
 
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
-	-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples
+	-$(INSTALL_DIR) "$(DESTDIR)$(docdir)/examples"
 	for file in *.h *.cxx *.fl demo.menu; do \
-		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples; \
+		$(INSTALL_DATA) $$file "$(DESTDIR)$(docdir)/examples"; \
 	done
-	-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples/pixmaps
+	-$(INSTALL_DIR) "$(DESTDIR)$(docdir)/examples/pixmaps"
 	for file in pixmaps/*.xbm pixmaps/*.xpm; do \
-		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples/pixmaps; \
+		$(INSTALL_DATA) $$file "$(DESTDIR)$(docdir)/examples/pixmaps"; \
 	done
 
 install-linux:
 	echo Installing games to $(DESTDIR)$(bindir)...
-	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
+	-$(INSTALL_DIR) "$(DESTDIR)$(bindir)"
+	-$(INSTALL_DIR) "$(DESTDIR)$(datadir)/applications"
+	-$(INSTALL_DIR) "$(DESTDIR)$(datadir)/icons/hicolor/32x32/apps"
+	-$(INSTALL_DIR) "$(DESTDIR)$(datadir)/icons/hicolor/128x128/apps"
 	for game in blocks checkers sudoku; do \
-		$(INSTALL_BIN) $$game $(DESTDIR)$(bindir); \
-		$(INSTALL_DATA) desktop/$$game.desktop  $(DESTDIR)/usr/share/applications; \
-		$(INSTALL_DATA) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(INSTALL_DATA) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(INSTALL_BIN) $$game "$(DESTDIR)$(bindir)"; \
+		$(INSTALL_DATA) desktop/$$game.desktop "$(DESTDIR)$(datadir)/applications"; \
+		$(INSTALL_DATA) desktop/$$game-32.png "$(DESTDIR)$(datadir)/icons/hicolor/32x32/apps/$$game.png"; \
+		$(INSTALL_DATA) desktop/$$game-128.png "$(DESTDIR)$(datadir)/icons/hicolor/128x128/apps/$$game.png"; \
 	done
 
 install-osx:
 	echo Installing games in $(DESTDIR)/Applications...
 	for game in blocks checkers sudoku; do \
-		if test ! -d $(DESTDIR)/Applications/$$game.app; then \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app; \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents; \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+		if test ! -d "$(DESTDIR)/Applications/$$game.app"; then \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app"; \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app/Contents"; \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app/Contents/MacOS"; \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app/Contents/Resources"; \
 		fi; \
-		$(INSTALL_DATA) $$game.app/Contents/Info.plist $(DESTDIR)/Applications/$$game.app/Contents; \
-		$(INSTALL_BIN) $$game.app/Contents/MacOS/$$game $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
-		$(INSTALL_DATA) $$game.app/Contents/Resources/$$game.icns $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+		$(INSTALL_DATA) $$game.app/Contents/Info.plist "$(DESTDIR)/Applications/$$game.app/Contents"; \
+		$(INSTALL_BIN) $$game.app/Contents/MacOS/$$game "$(DESTDIR)/Applications/$$game.app/Contents/MacOS"; \
+		$(INSTALL_DATA) $$game.app/Contents/Resources/$$game.icns "$(DESTDIR)/Applications/$$game.app/Contents/Resources"; \
 	done
 
 uninstall:
 	echo "Removing examples programs from $(DESTDIR)$(docdir)/examples..."
-	-$(RMDIR) $(DESTDIR)$(docdir)/examples
+	-$(RMDIR) "$(DESTDIR)$(docdir)/examples"
 
 uninstall-linux:
 	echo Removing games from $(DESTDIR)$(bindir)...
 	for game in blocks checkers sudoku; do \
-		$(RM) $(DESTDIR)$(bindir)/$$game; \
-		$(RM) $(DESTDIR)/usr/share/applications/$$game.desktop; \
-		$(RM) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(RM) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(RM) "$(DESTDIR)$(bindir)/$$game"; \
+		$(RM) "$(DESTDIR)$(datadir)/applications/$$game.desktop"; \
+		$(RM) "$(DESTDIR)$(datadir)/icons/hicolor/32x32/apps/$$game.png"; \
+		$(RM) "$(DESTDIR)$(datadir)/icons/hicolor/128x128/apps/$$game.png"; \
 	done
 
 uninstall-osx:
 	echo Removing games from $(DESTDIR)/Applications...
-	$(RMDIR) $(DESTDIR)/Applications/blocks.app
-	$(RMDIR) $(DESTDIR)/Applications/checkers.app
-	$(RMDIR) $(DESTDIR)/Applications/sudoku.app
+	$(RMDIR) "$(DESTDIR)/Applications/blocks.app"
+	$(RMDIR) "$(DESTDIR)/Applications/checkers.app"
+	$(RMDIR) "$(DESTDIR)/Applications/sudoku.app"
 
 # FLUID file rules
 .fl.cxx .fl.h:

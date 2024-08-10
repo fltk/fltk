@@ -79,59 +79,59 @@ depend:
 
 install: $(MANPAGES)
 	echo "Installing documentation files in $(DESTDIR)$(docdir) ..."
-	-$(INSTALL_DIR) $(DESTDIR)$(docdir)
+	-$(INSTALL_DIR) "$(DESTDIR)$(docdir)"
 	if test -f html/index.html ; then \
 	  for file in html/* ; do \
-		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir); \
+		$(INSTALL_DATA) $$file "$(DESTDIR)$(docdir)"; \
 	  done \
 	fi
 	if test -f fltk.pdf ; then \
 	  echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."; \
-	  $(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir); \
+	  $(INSTALL_DATA) fltk.pdf "$(DESTDIR)$(docdir)"; \
 	fi
 	echo "Installing man pages in $(DESTDIR)$(mandir) ..."
-	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
-	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat3
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.$(CAT3EXT) $(DESTDIR)$(mandir)/cat3
-	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man $(DESTDIR)$(mandir)/man1/fluid.1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man $(DESTDIR)$(mandir)/man1/fltk-config.1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.man $(DESTDIR)$(mandir)/man1/fltk-options.1
-	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man3
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man $(DESTDIR)$(mandir)/man3/fltk.3
+	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/cat1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) "$(DESTDIR)$(mandir)/cat1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) "$(DESTDIR)$(mandir)/cat1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.$(CAT1EXT) "$(DESTDIR)$(mandir)/cat1"
+	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/cat3"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.$(CAT3EXT) "$(DESTDIR)$(mandir)/cat3"
+	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man "$(DESTDIR)$(mandir)/man1/fluid.1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man "$(DESTDIR)$(mandir)/man1/fltk-config.1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.man "$(DESTDIR)$(mandir)/man1/fltk-options.1"
+	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man3"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man "$(DESTDIR)$(mandir)/man3/fltk.3"
 
 install-linux install-osx:
-	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat6
-	$(INSTALL_MAN) $(SRC_DOCDIR)/blocks.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
-	$(INSTALL_MAN) $(SRC_DOCDIR)/checkers.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
-	$(INSTALL_MAN) $(SRC_DOCDIR)/sudoku.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
-	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man6
-	$(INSTALL_MAN) $(SRC_DOCDIR)/blocks.man $(DESTDIR)$(mandir)/man6/blocks.6
-	$(INSTALL_MAN) $(SRC_DOCDIR)/checkers.man $(DESTDIR)$(mandir)/man6/checkers.6
-	$(INSTALL_MAN) $(SRC_DOCDIR)/sudoku.man $(DESTDIR)$(mandir)/man6/sudoku.6
+	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/cat6"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/blocks.$(CAT6EXT) "$(DESTDIR)$(mandir)/cat6"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/checkers.$(CAT6EXT) "$(DESTDIR)$(mandir)/cat6"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/sudoku.$(CAT6EXT) "$(DESTDIR)$(mandir)/cat6"
+	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man6"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/blocks.man "$(DESTDIR)$(mandir)/man6/blocks.6"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/checkers.man "$(DESTDIR)$(mandir)/man6/checkers.6"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/sudoku.man "$(DESTDIR)$(mandir)/man6/sudoku.6"
 
 
 uninstall:
-	$(RMDIR) $(DESTDIR)$(docdir)
-	$(RM) $(DESTDIR)$(mandir)/cat1/fluid.$(CAT1EXT)
-	$(RM) $(DESTDIR)$(mandir)/man1/fluid.1
-	$(RM) $(DESTDIR)$(mandir)/cat1/fltk-config.$(CAT1EXT)
-	$(RM) $(DESTDIR)$(mandir)/man1/fltk-config.1
-	$(RM) $(DESTDIR)$(mandir)/cat1/fltk-options.$(CAT1EXT)
-	$(RM) $(DESTDIR)$(mandir)/man1/fltk-options.1
-	$(RM) $(DESTDIR)$(mandir)/cat3/fltk.$(CAT3EXT)
-	$(RM) $(DESTDIR)$(mandir)/man3/fltk.3
+	$(RMDIR) "$(DESTDIR)$(docdir)"
+	$(RM) "$(DESTDIR)$(mandir)/cat1/fluid.$(CAT1EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/man1/fluid.1"
+	$(RM) "$(DESTDIR)$(mandir)/cat1/fltk-config.$(CAT1EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/man1/fltk-config.1"
+	$(RM) "$(DESTDIR)$(mandir)/cat1/fltk-options.$(CAT1EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/man1/fltk-options.1"
+	$(RM) "$(DESTDIR)$(mandir)/cat3/fltk.$(CAT3EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/man3/fltk.3"
 
 uninstall-linux uninstall-osx:
-	$(RM) $(DESTDIR)$(mandir)/cat6/blocks.$(CAT6EXT)
-	$(RM) $(DESTDIR)$(mandir)/cat6/checkers.$(CAT6EXT)
-	$(RM) $(DESTDIR)$(mandir)/cat6/sudoku.$(CAT6EXT)
-	$(RM) $(DESTDIR)$(mandir)/man6/blocks.6
-	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
-	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
+	$(RM) "$(DESTDIR)$(mandir)/cat6/blocks.$(CAT6EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/cat6/checkers.$(CAT6EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/cat6/sudoku.$(CAT6EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/man6/blocks.6"
+	$(RM) "$(DESTDIR)$(mandir)/man6/checkers.6"
+	$(RM) "$(DESTDIR)$(mandir)/man6/sudoku.6"
 
 # The documentation is generated using doxygen. There are two control files
 # for doxygen: Doxyfile for html documentation and Doxybook for pdf docs.

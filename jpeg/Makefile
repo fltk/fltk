@@ -4,7 +4,7 @@
 #
 # JPEG library makefile for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1997-2023 by Bill Spitzak and others.
+# Copyright 1997-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -93,16 +93,16 @@ clean:
 
 install:	$(LIBJPEG)
 	echo "Installing $(LIBJPEG) in $(libdir)..."
-	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(LIBJPEG) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_jpeg$(LIBEXT)
+	-$(INSTALL_DIR) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(LIBJPEG) "$(DESTDIR)$(libdir)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/libfltk_jpeg$(LIBEXT)"
 	echo "Installing jpeg headers in $(includedir)/FL/images..."
-	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jconfig.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jerror.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jmorecfg.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jpeglib.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) fltk_jpeg_prefix.h $(DESTDIR)$(includedir)/FL/images
+	-$(INSTALL_DIR) "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jconfig.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jerror.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jmorecfg.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jpeglib.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) fltk_jpeg_prefix.h "$(DESTDIR)$(includedir)/FL/images"
 
 #
 # Uninstall everything...
@@ -110,13 +110,13 @@ install:	$(LIBJPEG)
 
 uninstall:
 	echo "Uninstalling libfltk_jpeg$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
+	$(RM) "$(libdir)/libfltk_jpeg$(LIBEXT)"
 	echo "Uninstalling jpeg headers in $(includedir)/FL/images..."
-	$(RM) $(includedir)/FL/images/jconfig.h
-	$(RM) $(includedir)/FL/images/jerror.h
-	$(RM) $(includedir)/FL/images/jmorecfg.h
-	$(RM) $(includedir)/FL/images/jpeglib.h
-	$(RM) $(includedir)/FL/images/fltk_jpeg_prefix.h
+	$(RM) "$(includedir)/FL/images/jconfig.h"
+	$(RM) "$(includedir)/FL/images/jerror.h"
+	$(RM) "$(includedir)/FL/images/jmorecfg.h"
+	$(RM) "$(includedir)/FL/images/jpeglib.h"
+	$(RM) "$(includedir)/FL/images/fltk_jpeg_prefix.h"
 
 #
 # libfltk_jpeg.a
@@ -132,7 +132,7 @@ $(LIBJPEG):	$(OBJS)
 # Make dependencies...
 #
 
-depend: $(OBJS:.o=.c)
+depend:	$(OBJS:.o=.c)
 	makedepend -Y -I.. -f makedepend -w 20 $(OBJS:.o=.c)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp

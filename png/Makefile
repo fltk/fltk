@@ -2,7 +2,7 @@
 # PNG library Makefile for the Fast Light Toolkit (FLTK).
 #
 # Copyright 1997-2011 by Easy Software Products.
-# Copyright 2012-2023 by Bill Spitzak and others.
+# Copyright 2012-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -52,15 +52,15 @@ clean:
 
 install: $(LIBPNG)
 	echo "Installing libfltk_png$(LIBEXT) in $(libdir)..."
-	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(LIBPNG) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
+	-$(INSTALL_DIR) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(LIBPNG) "$(DESTDIR)$(libdir)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)"
 	echo "Installing png headers in $(includedir)/FL/images..."
-	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) png.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) pngconf.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) pnglibconf.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) pngprefix.h $(DESTDIR)$(includedir)/FL/images
+	-$(INSTALL_DIR) "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) png.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) pngconf.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) pnglibconf.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) pngprefix.h "$(DESTDIR)$(includedir)/FL/images"
 
 
 #
@@ -69,12 +69,12 @@ install: $(LIBPNG)
 
 uninstall:
 	echo "Uninstalling libfltk_png$(LIBEXT) in $(libdir)..."
-	$(RM) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
+	$(RM) "$(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)"
 	echo "Uninstalling png headers in $(includedir)/FL/images..."
-	$(RM) $(DESTDIR)$(includedir)/FL/images/png.h
-	$(RM) $(DESTDIR)$(includedir)/FL/images/pngconf.h
-	$(RM) $(DESTDIR)$(includedir)/FL/images/pnglibconf.h
-	$(RM) $(DESTDIR)$(includedir)/FL/images/pngprefix.h
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/png.h"
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/pngconf.h"
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/pnglibconf.h"
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/pngprefix.h"
 
 
 #
@@ -92,7 +92,7 @@ $(LIBPNG):	$(OBJS)
 # Make dependencies...
 #
 
-depend: $(OBJS:.o=.c)
+depend:	$(OBJS:.o=.c)
 	makedepend -Y -I.. -f makedepend -w 20 $(OBJS:.o=.c)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp

@@ -46,14 +46,14 @@ clean:
 
 install: $(LIBZ)
 	echo "Installing libfltk_z$(LIBEXT) in $(libdir)..."
-	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(LIBZ) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_z$(LIBEXT)
+	-$(INSTALL_DIR) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(LIBZ) "$(DESTDIR)$(libdir)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/libfltk_z$(LIBEXT)"
 	echo "Installing zlib headers in $(includedir)/FL/images..."
-	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) zconf.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) zlib.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) zutil.h $(DESTDIR)$(includedir)/FL/images
+	-$(INSTALL_DIR) "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) zconf.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) zlib.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) zutil.h "$(DESTDIR)$(includedir)/FL/images"
 
 #
 # Uninstall everything...
@@ -61,11 +61,11 @@ install: $(LIBZ)
 
 uninstall:
 	echo "Uninstalling libfltk_z$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libfltk_z$(LIBEXT)
+	$(RM) "$(libdir)/libfltk_z$(LIBEXT)"
 	echo "Uninstalling zlib headers in $(includedir)/FL/images..."
-	$(RM) $(includedir)/FL/images/zconf.h
-	$(RM) $(includedir)/FL/images/zlib.h
-	$(RM) $(includedir)/FL/images/zutil.h
+	$(RM) "$(includedir)/FL/images/zconf.h"
+	$(RM) "$(includedir)/FL/images/zlib.h"
+	$(RM) "$(includedir)/FL/images/zutil.h"
 
 #
 # libfltk_z.a
