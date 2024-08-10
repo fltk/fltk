@@ -769,15 +769,15 @@ syspnginc_ok=no
 AS_IF([test x$enable_localpng != xyes -a x$PKGCONFIG != x], [
     AC_MSG_CHECKING([for libpng-1.6.x])
     AS_IF([$PKGCONFIG --exists libpng16], [
-	AC_MSG_RESULT([yes])
-	AC_DEFINE([HAVE_PNG_H], 1, [Have PNG library?])
-	syspnginc_ok=yes
-	syspnglib_ok=yes
-	PNGINC="$($PKGCONFIG --cflags libpng16)"
-	IMAGELIBS="$($PKGCONFIG --libs libpng16) $IMAGELIBS"
-	STATICIMAGELIBS="$($PKGCONFIG --libs libpng16) $STATICIMAGELIBS"
+        AC_MSG_RESULT([yes])
+        AC_DEFINE([HAVE_PNG_H], 1, [Have PNG library?])
+        syspnginc_ok=yes
+        syspnglib_ok=yes
+        PNGINC="$($PKGCONFIG --cflags libpng16)"
+        IMAGELIBS="$($PKGCONFIG --libs libpng16) $IMAGELIBS"
+        STATICIMAGELIBS="$($PKGCONFIG --libs libpng16) $STATICIMAGELIBS"
     ], [
-	AC_MSG_RESULT([no])
+        AC_MSG_RESULT([no])
     ])
 ])
 

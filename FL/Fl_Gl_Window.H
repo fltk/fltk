@@ -178,7 +178,7 @@ public:
    and at least one of these conditions applies:
    - the program runs on the macOS platform;
    - the Fl_Gl_Window has child widgets.
-   
+
    See more details in \ref opengl3.
 
    \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4

@@ -68,6 +68,7 @@ input_choice
 keyboard
 label
 line_style
+line_style_docs
 list_visuals
 mandelbrot
 menubar

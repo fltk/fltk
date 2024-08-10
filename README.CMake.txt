@@ -517,16 +517,16 @@ installed CMake you may need to adjust the path's in the alias commands.
  2.6  Building under Windows WSL with Clang and Makefiles
 ----------------------------------------------------------
 
-WSL, the Windows Subsystem for Linux allows developers to run a Linux 
+WSL, the Windows Subsystem for Linux allows developers to run a Linux
 environment without the need for a separate virtual machine or dual booting.
-WSL 2 runs inside a managed virtual machine that implements the full 
+WSL 2 runs inside a managed virtual machine that implements the full
 Linux kernel. WSL requires Windows 11.
 
 FLTK apps generated using WSL are Linux compatible binaries. To run those
-binaries on Windows, WSL comes with a limited built-in X11 server. Third 
+binaries on Windows, WSL comes with a limited built-in X11 server. Third
 party X11 servers can be installed that better support all features of FLTK.
 
-1) Install WSL from PowerShell with admin privileges: 
+1) Install WSL from PowerShell with admin privileges:
      > wsl --install
 
 2) Reboot and open the Linux terminal. You will need to install the following

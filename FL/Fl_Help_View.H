@@ -388,7 +388,7 @@ public:
 
   // Check if the user selected text in this view.
   int text_selected();
-  
+
   // If text is selected in this view, copy it to a clipboard.
   int copy(int clipboard=1);
 };

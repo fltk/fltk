@@ -1288,7 +1288,7 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
       }
     }
 
-  if (solved) 
+  if (solved)
     sudoku->new_game(sudoku->seed_);
   else
     sudoku->clear_undo();

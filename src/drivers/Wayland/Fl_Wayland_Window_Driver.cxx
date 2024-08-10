@@ -1832,7 +1832,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   // When moving or resizing a non-GL subwindow independently from its parent, this condition
   // delays application of X,Y,W,H values until the compositor signals
   // it's ready for a new frame using the frame callback mechanism.
-  if ((parent && parent->damage()) || depth > 1 || pWindow->as_gl_window() || !parent_xid || 
+  if ((parent && parent->damage()) || depth > 1 || pWindow->as_gl_window() || !parent_xid ||
       wait_for_expose_value || (parent_xid->frame_cb && !xid_rect)) {
     if (is_a_resize) {
       if (pWindow->parent()) {

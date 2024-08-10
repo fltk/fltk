@@ -2996,7 +2996,7 @@ void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
       f.write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
     else
       f.write_c("new %s(%d, %d", t, o->w(), o->h());
-  } else if (is_a(ID_Menu_Bar) 
+  } else if (is_a(ID_Menu_Bar)
              && ((Fl_Menu_Bar_Type*)this)->is_sys_menu_bar()
              && is_in_class()) {
     f.write_c("(%s*)new %s(%d, %d, %d, %d",
