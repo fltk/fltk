@@ -139,7 +139,6 @@ class SudokuCell : public Fl_Widget {
   int           col_;
   bool          readonly_;
   int           value_;
-  int           solution_;
   int           hint_map_;
 
   public:
