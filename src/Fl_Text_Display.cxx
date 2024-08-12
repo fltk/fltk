@@ -160,6 +160,8 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mVScrollBar = new Fl_Scrollbar(0,0,1,1);
   mVScrollBar->callback((Fl_Callback*)v_scrollbar_cb, this);
 
+  display_needs_recalc_ = false;
+
   scrollbar_width_ = 0;         // 0: default from Fl::scrollbar_size()
   scrollbar_align_ = FL_ALIGN_BOTTOM_RIGHT;
 
@@ -236,7 +238,7 @@ Fl_Text_Display::~Fl_Text_Display() {
 void Fl_Text_Display::linenumber_width(int width) {
   if (width < 0) return;
   mLineNumWidth = width;
-  recalc_display();             // recalc line#s        // resize(x(), y(), w(), h());
+  display_needs_recalc(); // recalc line#s        // resize(x(), y(), w(), h());
   if (width > 0) reset_absolute_top_line_number();
 }
 
@@ -390,7 +392,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   }
 
   /* Resize the widget to update the screen... */
-  recalc_display();             // resize(x(), y(), w(), h());
+  display_needs_recalc(); // resize(x(), y(), w(), h());
 }
 
 
@@ -489,11 +491,23 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 
   Fl_Widget::resize(X,Y,W,H);
   mColumnScale = 0; // force recomputation of the width of a column when display is rescaled
-  recalc_display();
+  display_needs_recalc();
 }
 
 /**
- Recalculate the display's visible lines and scrollbar sizes.
+  Schedule a recalc_display() to be done on next draw().
+  Call this from methods that might be called repeatedly, to defers potentially
+  CPU intensive recalc_display() until it's actually needed just before draw().
+*/
+void Fl_Text_Display::display_needs_recalc() {
+  display_needs_recalc_ = true;
+  redraw(); // ensure draw() gets called
+}
+ 
+/**
+  Recalculate the display's visible lines and scrollbar sizes.
+  Beware calling this directly may cause a lot of CPU if called repeatedly (issue 300).
+  Better to call display_needs_recalc() to flag a recalc to be done during next draw().
  */
 void Fl_Text_Display::recalc_display() {
   if (!buffer()) return;
@@ -982,7 +996,7 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
     mAbsTopLineNum = 1;         // changed from 0 to 1 -- LZA / STR#2621
   }
 
-  recalc_display();             // resize(x(), y(), w(), h());
+  display_needs_recalc();             // resize(x(), y(), w(), h());
 }
 
 
@@ -1289,7 +1303,7 @@ void Fl_Text_Display::display_insert() {
  */
 void Fl_Text_Display::show_insert_position() {
   display_insert_position_hint = 1;
-  recalc_display();             // resize(x(), y(), w(), h());
+  display_needs_recalc();             // resize(x(), y(), w(), h());
 }
 
 
@@ -1807,7 +1821,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   }
 
   // refigure scrollbars & stuff
-  textD->resize(textD->x(), textD->y(), textD->w(), textD->h());
+  textD->display_needs_recalc(); // textD->resize(textD->x(), textD->y(), textD->w(), textD->h());
 
   // don't need to do anything else if not visible?
   if (!textD->visible_r()) return;
@@ -1846,7 +1860,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
     }
     if (linesInserted > 1) {
       // textD->draw_line_numbers(false); // can't do this b/c not called from virtual draw();
-      textD->damage(::FL_DAMAGE_EXPOSE);
+      textD->damage(FL_DAMAGE_EXPOSE);
     }
   } else {
     endDispPos = buf->next_char(textD->mLastChar);
@@ -3060,7 +3074,7 @@ void Fl_Text_Display::calc_last_char() {
 void Fl_Text_Display::scroll(int topLineNum, int horizOffset) {
   mTopLineNumHint = topLineNum;
   mHorizOffsetHint = horizOffset;
-  recalc_display();     // resize(x(), y(), w(), h());
+  display_needs_recalc();     // resize(x(), y(), w(), h());
 }
 
 
@@ -3900,6 +3914,12 @@ void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
 void Fl_Text_Display::draw(void) {
   // don't even try if there is no associated text buffer!
   if (!buffer()) { draw_box(); return; }
+
+  // recalc if needed -- issue #300
+  if (display_needs_recalc_ || (damage() & FL_DAMAGE_ALL)) {
+    display_needs_recalc_ = false;
+    recalc_display();
+  }
 
   fl_push_clip(x(),y(),w(),h());        // prevent drawing outside widget area
 
