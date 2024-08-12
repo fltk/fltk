@@ -55,6 +55,17 @@ MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT) \
 		$(SRC_DOCDIR)/fltk-options.$(CAT1EXT)
 
+# Get FLTK's Git Revision either from Git /or/ from fltk_git_rev.dat (Issue #499)
+#
+# Note: this may fail (return "unknown") if the sources were downloaded
+# from GitHub as a "release" (zip) archive. This is not supported.
+
+# Test/debug only: should be commented out unless used (see: debug_git_rev)
+# GIT_REV_FROM_GIT  := "$$(git rev-parse HEAD 2>/dev/null)"
+# GIT_REV_FROM_FILE := "$$(cat ../fltk_git_rev.dat 2>/dev/null)"
+
+FLTK_GIT_REVISION := "`( (git rev-parse HEAD || cat ../fltk_git_rev.dat;) || echo 'unknown'; ) 2>/dev/null`"
+
 all:	$(MANPAGES)
 
 # Use `make docs' to create all docs for distribution files.
@@ -66,6 +77,11 @@ docs:	all html pdf
 
 alldocs: docs
 dist:	docs
+
+debug_git_rev:
+	# echo "GIT_REV_FROM_GIT  = $(GIT_REV_FROM_GIT)"
+	# echo "GIT_REV_FROM_FILE = $(GIT_REV_FROM_FILE)"
+	echo "FLTK_GIT_REVISION = $(FLTK_GIT_REVISION)"
 
 clean:
 	$(RM) Doxyfile Doxybook
@@ -203,8 +219,7 @@ refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 
 src/fltk-title.tex: src/fltk-title.tex.in
 	echo "Generating $@ ..."
-	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
-	sed -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
+	sed -e"s/@FLTK_GIT_REVISION@/$(FLTK_GIT_REVISION)/g" \
 	    < $< > $@
 
 src/fltk-book.tex.in: src/fltk-title.tex
@@ -223,10 +238,9 @@ src/fltk-book.tex: src/fltk-book.tex.in
 generated.dox: generated.dox.in
 	echo "Generating $@ ..."
 	CURRENT_DATE=`date "+%b %d, %Y"`; \
-	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
 	DOXYGEN_VERSION_SHORT=`"$(DOXYDOC)" --version|cut -f1 -d' '`; \
 	sed -e"s/@CURRENT_DATE@/$$CURRENT_DATE/g" \
-	    -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
+	    -e"s/@FLTK_GIT_REVISION@/$(FLTK_GIT_REVISION)/g" \
 	    -e"s/@DOXYGEN_VERSION_SHORT@/$$DOXYGEN_VERSION_SHORT/g" \
 	    < $< > $@
 

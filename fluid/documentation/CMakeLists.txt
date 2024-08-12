@@ -15,7 +15,6 @@
 #
 
 set(DOCS)
-set(GIT_REVISION "")
 set(YEAR "")
 set(CURRENT_DATE "")
 
@@ -37,26 +36,6 @@ if(FLTK_BUILD_FLUID_DOCS OR FLTK_BUILD_PDF_DOCS)
     OUTPUT_VARIABLE CURRENT_DATE
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
-
-  # find git revision
-
-  # FIXME: This must also work with tarballs where git is not available.
-  #        For now we just ignore errors and set GIT_REVISION = "unknown".
-  #        In the future tarball/zip generation should create a file
-  #        that contains the git revision.
-
-  execute_process(COMMAND
-    git rev-parse --short=10 HEAD
-    OUTPUT_VARIABLE GIT_REVISION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    WORKING_DIRECTORY ${FLTK_SOURCE_DIR}
-    ERROR_QUIET
-  )
-
-  # set to "'unknown'" if git is not available
-  if(GIT_REVISION STREQUAL "")
-    set(GIT_REVISION "'unknown'")
-  endif()
 
   # Find "short" doxygen version if it was built from Git
   # Note: this is still needed in CMake 3.12.0 but later CMake versions

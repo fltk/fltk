@@ -52,6 +52,8 @@ SNAPSHOT='https://www.fltk.org/pub/fltk/snapshots'
 
 DATE="`date +'%Y%m%d'`"
 
+GIT_REVISION=$(git rev-parse HEAD)
+
 # VS = short version number ('major.minor'), for instance '1.4'.
 # Note: VS is used only for snapshot generation
 # fltk_version = full version number w/o 'rcN' (from file fltk_version.dat)
@@ -117,6 +119,13 @@ sed -e '1,$s/@VERSION@/'$version'/' \
 	-e '1,$s/@RELEASE@/'$rev'/' \
 	-e '1,$s#^Source:.*#Source: '$fileurl'#' \
 	<fltk.spec.in >fltk.spec
+
+
+# Write git revision file with full git revision
+# which will be stored in the distribution tarball
+
+echo Writing git revision file...
+echo "$GIT_REVISION" > fltk_git_rev.dat
 
 echo Creating configure script...
 autoconf -f

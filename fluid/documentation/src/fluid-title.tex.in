@@ -27,7 +27,7 @@ provided this copyright and permission notice are preserved.}\\
 \vspace*{0.5cm}
 \today{}\\
 \vspace*{0.5cm}
-{\small Git revision @GIT_REVISION@}\\
+{\small Git revision '@FLTK_GIT_REVISION@'}\\
 \end{center}
 \end{titlepage}
 %
