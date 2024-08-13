@@ -1967,6 +1967,31 @@ void textcolor_menu_cb(Fl_Menu_Button* i, void* v) {
   }
 }
 
+void image_spacing_cb(Fl_Value_Input* i, void* v) {
+  Fl_Font n; int s; Fl_Color c;
+  if (v == LOAD) {
+    if (!current_widget->is_true_widget()) return;
+    i->value(((Fl_Widget_Type*)current_widget)->o->label_image_spacing());
+  } else {
+    int mod = 0;
+    s = int(i->value());
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_true_widget()) {
+        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+        if (q->o->label_image_spacing() != s) {
+          q->o->label_image_spacing(s);
+          if (q->o->parent())
+            q->o->parent()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          q->o->redraw();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+  i->value(s);
+}
+
 ////////////////////////////////////////////////////////////////
 // Kludges to the panel for subclasses:
 
@@ -3368,6 +3393,8 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("labelcolor %d", o->labelcolor());
   if (o->align()!=tplate->align())
     f.write_string("align %d", o->align());
+  if (o->label_image_spacing()!=tplate->label_image_spacing())
+    f.write_string("image_spacing %d", o->label_image_spacing());
   if (o->when() != tplate->when())
     f.write_string("when %d", o->when());
   if (is_a(ID_Valuator_)) {
@@ -3537,6 +3564,8 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->labelcolor(x);
   } else if (!strcmp(c,"align")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->align(x);
+  } else if (!strcmp(c,"image_spacing")) {
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->label_image_spacing(x);
   } else if (!strcmp(c,"when")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->when(x);
   } else if (!strcmp(c,"minimum")) {

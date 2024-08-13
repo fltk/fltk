@@ -144,6 +144,7 @@ extern void textsize_cb(Fl_Value_Input*, void*);
 extern void textcolor_cb(Fl_Button*, void*);
 extern Fl_Button *w_textcolor;
 extern void textcolor_menu_cb(Fl_Menu_Button*, void*);
+extern void image_spacing_cb(Fl_Value_Input*, void*);
 extern void compact_cb(Fl_Light_Button*, void*);
 extern Fl_Group *wp_cpp_tab;
 extern Fl_Group *wp_cpp_class;

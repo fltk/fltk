@@ -468,6 +468,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "labelsize" <word> : integer
   "labelcolor" <word> : integer, color index
   "align" <word> : integer, see Fl_Align
+  "image_spacing" <word> : integer, see Fl_Widget::label_image_spacing()
   "when" <word> : integer, see Fl_When
   "minimum" <word> : (is_valuator(), is_spinner()) double
   "maximum" <word> : (is_valuator(), is_spinner()) double

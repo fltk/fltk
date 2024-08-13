@@ -1538,12 +1538,12 @@ Fl_Double_Window* make_widget_panel() {
         wp_style_tab->callback((Fl_Callback*)propagate_load);
         wp_style_tab->when(FL_WHEN_NEVER);
         wp_style_tab->hide();
-        { wp_style_label = new Fl_Group(95, 40, 309, 20, "Label Font:");
+        { wp_style_label = new Fl_Group(99, 40, 305, 20, "Label Font:");
           wp_style_label->labelfont(1);
           wp_style_label->labelsize(11);
           wp_style_label->callback((Fl_Callback*)propagate_load);
           wp_style_label->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 40, 152, 20);
+          { Fl_Choice* o = new Fl_Choice(99, 40, 148, 20);
             o->tooltip("The style of the label text.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -1574,12 +1574,12 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Menu_Button* o
           wp_style_label->end();
         } // Fl_Group* wp_style_label
-        { wp_style_box = new Fl_Group(95, 65, 309, 20, "Box:");
+        { wp_style_box = new Fl_Group(99, 65, 305, 20, "Box:");
           wp_style_box->labelfont(1);
           wp_style_box->labelsize(11);
           wp_style_box->callback((Fl_Callback*)propagate_load);
           wp_style_box->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 65, 201, 20);
+          { Fl_Choice* o = new Fl_Choice(100, 65, 196, 20);
             o->tooltip("The \"up\" box of the widget.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -1601,12 +1601,12 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Menu_Button* o
           wp_style_box->end();
         } // Fl_Group* wp_style_box
-        { wp_style_downbox = new Fl_Group(95, 90, 309, 20, "Down Box:");
+        { wp_style_downbox = new Fl_Group(99, 90, 305, 20, "Down Box:");
           wp_style_downbox->labelfont(1);
           wp_style_downbox->labelsize(11);
           wp_style_downbox->callback((Fl_Callback*)propagate_load);
           wp_style_downbox->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 90, 201, 20);
+          { Fl_Choice* o = new Fl_Choice(99, 90, 197, 20);
             o->tooltip("The \"down\" box of the widget.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -1628,12 +1628,12 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Menu_Button* o
           wp_style_downbox->end();
         } // Fl_Group* wp_style_downbox
-        { wp_style_text = new Fl_Group(95, 115, 309, 20, "Text Font:");
+        { wp_style_text = new Fl_Group(99, 115, 305, 20, "Text Font:");
           wp_style_text->labelfont(1);
           wp_style_text->labelsize(11);
           wp_style_text->callback((Fl_Callback*)propagate_load);
           wp_style_text->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 115, 152, 20);
+          { Fl_Choice* o = new Fl_Choice(99, 115, 148, 20);
             o->tooltip("The value text style.");
             o->box(FL_DOWN_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -1664,16 +1664,26 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Menu_Button* o
           wp_style_text->end();
         } // Fl_Group* wp_style_text
-        { Fl_Box* o = new Fl_Box(95, 165, 300, 40);
+        { Fl_Value_Input* o = new Fl_Value_Input(99, 140, 49, 20, "Image Spacing:");
+          o->tooltip("Gap between label image and text in pixels");
+          o->labelfont(1);
           o->labelsize(11);
-          Fl_Group::current()->resizable(o);
-        } // Fl_Box* o
-        { Fl_Light_Button* o = new Fl_Light_Button(95, 140, 90, 20, "Compact");
+          o->maximum(100);
+          o->step(1);
+          o->value(14);
+          o->textsize(11);
+          o->callback((Fl_Callback*)image_spacing_cb);
+        } // Fl_Value_Input* o
+        { Fl_Light_Button* o = new Fl_Light_Button(99, 165, 90, 20, "Compact");
           o->tooltip("use compact box types for closely set buttons");
           o->selection_color((Fl_Color)1);
           o->labelsize(11);
           o->callback((Fl_Callback*)compact_cb);
         } // Fl_Light_Button* o
+        { Fl_Box* o = new Fl_Box(195, 195, 40, 40);
+          o->labelsize(11);
+          Fl_Group::current()->resizable(o);
+        } // Fl_Box* o
         wp_style_tab->end();
       } // Fl_Group* wp_style_tab
       { wp_cpp_tab = new Fl_Group(10, 30, 400, 330, "C++");
