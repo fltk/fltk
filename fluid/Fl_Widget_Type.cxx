@@ -1968,7 +1968,7 @@ void textcolor_menu_cb(Fl_Menu_Button* i, void* v) {
 }
 
 void image_spacing_cb(Fl_Value_Input* i, void* v) {
-  Fl_Font n; int s; Fl_Color c;
+  int s;
   if (v == LOAD) {
     if (!current_widget->is_true_widget()) {
       i->deactivate();
