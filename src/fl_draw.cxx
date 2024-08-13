@@ -202,14 +202,14 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
  \param[in] img pointer to image
  \param[in] draw_symbols if true, interprete leading and trailing '@sym'
  as graphical symbols
- \param[in] text_to_image_spacing spacing between text and image
+ \param[in] gap spacing between text and image
  */
 void fl_draw(
     const char* str,    // the (multi-line) string
     int x, int y, int w, int h, // bounding box
     Fl_Align align,
     void (*callthis)(const char*,int,int,int),
-    Fl_Image* img, int draw_symbols)
+    Fl_Image* img, int draw_symbols, int gap)
 {
   char *linebuf = NULL;       // Pointer to a buffer managed by expand_text_
   const char* p;              // Scratch pointer into text, multiple use
@@ -228,7 +228,7 @@ void fl_draw(
   int height = fl_height();   // Height of a line of text
 
 
-  // Ff the image is set as a backdrop, ignore it in this function
+  // If the image is set as a backdrop, ignore it in this function
   if (img && (align & FL_ALIGN_IMAGE_BACKDROP)) img = 0;
 
   symbol[0][0] = '\0';
@@ -258,7 +258,7 @@ void fl_draw(
   // Width and height of both symbols combined
   symtotal = symwidth[0] + symwidth[1];
   // Image width if image is to the left or right of the text, else 0
-  imgtotal = (img && (align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)) ? img->w() : 0;
+  imgtotal = (img && (align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)) ? img->w() + gap : 0;
 
   int strw = 0;               // Width of text only without symbols
   int strh;                   // Height of text only without symbols
@@ -289,7 +289,7 @@ void fl_draw(
   // Figure out vertical position of the first element
   int xpos;                   // Position of image or text
   int ypos;                   // Position of image or text
-  int imgh = img && imgvert ? img->h() : 0; // Height of image if image is above or below text
+  int imgh = img && imgvert ? img->h() + gap : 0; // Height of image if image is above or below text
   int imgw[2] = {0, 0};       // Width of image on the left and right side of the text
 
   symoffset = 0;
@@ -316,14 +316,14 @@ void fl_draw(
     }
 
     img->draw(xpos, ypos - height);
-    ypos += img->h();
+    ypos += img->h() + gap;
   }
 
   // Draw the image if either on the *left* or *right* side of the text
   if (img && !imgvert) {
     if (align & FL_ALIGN_TEXT_OVER_IMAGE) {
       // Image is to the right of the text
-      imgw[1] = img->w();
+      imgw[1] = img->w() + gap;
       // Find the horizontal position of the image
       if (align & FL_ALIGN_LEFT) {
         xpos = x + symwidth[0] + strw + 1;
@@ -332,9 +332,10 @@ void fl_draw(
       } else {
         xpos = x + (w - strw - symtotal - imgw[1]) / 2 + symwidth[0] + strw + 1;
       }
+      xpos += gap;
     } else {
       // Image is to the left of the text
-      imgw[0] = img->w();
+      imgw[0] = img->w() + gap;
       // Find the horizontal position of the image
       if (align & FL_ALIGN_LEFT) {
         xpos = x + symwidth[0] - 1;
@@ -361,10 +362,12 @@ void fl_draw(
   if (str) {
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
-      if (lines>1)
+      if (lines>1) {
         e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen,
                          width, align&FL_ALIGN_WRAP, draw_symbols);
-      else e = "";
+      } else {
+        e = "";
+      }
 
       if (width > symoffset) symoffset = (int)(width + 0.5);
 
@@ -398,7 +401,7 @@ void fl_draw(
       xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
     }
 
-    img->draw(xpos, ypos);
+    img->draw(xpos, ypos + gap);
   }
 
   // Draw the symbols, if any...
@@ -465,20 +468,21 @@ void fl_draw(
  \param[in] img pointer to image
  \param[in] draw_symbols if true, interprete leading and trailing '@sym'
             as graphical symbols
- \param[in] text_to_image_spacing spacing between text and image
+ \param[in] gap spacing between text and image
  */
 void fl_draw(
   const char* str,
   int x, int y, int w, int h,
   Fl_Align align,
   Fl_Image* img,
-  int draw_symbols)
+  int draw_symbols,
+  int gap)
 {
   if ((!str || !*str) && !img) return;
   if (w && h && !fl_not_clipped(x, y, w, h) && (align & FL_ALIGN_INSIDE)) return;
   if (align & FL_ALIGN_CLIP)
     fl_push_clip(x, y, w, h);
-  fl_draw(str, x, y, w, h, align, fl_draw, img, draw_symbols);
+  fl_draw(str, x, y, w, h, align, fl_draw, img, draw_symbols, gap);
   if (align & FL_ALIGN_CLIP)
     fl_pop_clip();
 }
