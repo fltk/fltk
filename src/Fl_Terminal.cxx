@@ -4047,7 +4047,7 @@ void  Fl_Terminal::redraw_rate(float val) {
 
 /**
   Return the "show unknown" flag.
-  \See show_unknown(bool), error_char(const char*).
+  \see show_unknown(bool), error_char(const char*).
 */
 bool Fl_Terminal::show_unknown(void) const {
   return show_unknown_;

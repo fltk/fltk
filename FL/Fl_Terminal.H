@@ -1173,18 +1173,13 @@ public:
   // API: Show unknown/invalid utf8/ANSI sequences with an error character (¿).
   bool  show_unknown(void) const;
   void  show_unknown(bool val);
-
-  /** Sets the "error character" utf8 string shown for invalid utf8
-      or bad ANSI sequences if show_unknown() is true. Default: "¿".
-      \See show_unknown(bool)
-   */
+  /// Sets the "error character" utf8 string shown for invalid utf8
+  /// or bad ANSI sequences if show_unknown() is true. Default: "¿".
+  /// \see show_unknown(bool)
   void error_char(const char* val) { error_char_ = val; }
-
-  /** Returns the "error character" utf8 string, which is shown for invalid utf8
-      or bad ANSI sequences if show_unknown() is true. \See show_unknown(bool)
-   */
+  /// Returns the "error character" utf8 string, which is shown for invalid utf8
+  /// or bad ANSI sequences if show_unknown() is true. \see show_unknown(bool)
   const char* error_char(void) const { return error_char_; }
-public:
   // API: ANSI sequences
   bool  ansi(void) const;
   void  ansi(bool val);
