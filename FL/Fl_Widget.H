@@ -63,6 +63,8 @@ struct FL_EXPORT Fl_Label {
   Fl_Align align_;
   /** type of label. \see Fl_Labeltype */
   uchar type;
+  /** Spacing between an image and the label text */
+  uchar spacing;
 
   /** Draws the label aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
@@ -684,6 +686,17 @@ public:
    \see deimage_bound(), bind_image()
    */
   void bind_deimage(int f) { if (f) set_flag(DEIMAGE_BOUND); else clear_flag(DEIMAGE_BOUND); }
+
+  /** Set the gap between the label and the image in pixels.
+   This value is limited to 0..255.
+   \param[in] gap spacing in pixels 
+   */
+  void label_image_spacing(int gap) { label_.spacing = (uchar)gap; }
+
+  /** Return the gap size between the label and the image.
+   \return spacing in pixels
+   */
+  int label_image_spacing() { return label_.spacing; }
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL

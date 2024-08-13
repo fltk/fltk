@@ -261,6 +261,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   l.font    = labelsize_ || labelfont_ ? labelfont_ : (m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
   l.color   = FL_FOREGROUND_COLOR; // this makes no difference?
+  l.spacing = 0;
   fl_draw_shortcut = 1;
   int w = 0; int h = 0;
   l.measure(w, hp ? *hp : h);
@@ -280,6 +281,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.font    = labelsize_ || labelfont_ ? labelfont_ : (m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
   l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_FOREGROUND_COLOR);
+  l.spacing = 0;
   if (!active()) l.color = fl_inactive((Fl_Color)l.color);
   if (selected) {
     Fl_Color r = m ? m->selection_color() : FL_SELECTION_COLOR;

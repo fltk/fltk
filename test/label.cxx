@@ -32,6 +32,7 @@ Fl_Box *text;
 Fl_Input *input;
 Fl_Hor_Value_Slider *fonts;
 Fl_Hor_Value_Slider *sizes;
+Fl_Hor_Value_Slider *spacing;
 Fl_Double_Window *window;
 Fl_Pixmap *img;
 
@@ -61,6 +62,11 @@ void image_cb(Fl_Widget *,void *) {
 
 void font_cb(Fl_Widget *,void *) {
   text->labelfont(int(fonts->value()));
+  window->redraw();
+}
+
+void spacing_cb(Fl_Widget *,void *) {
+  text->label_image_spacing(int(spacing->value()));
   window->redraw();
 }
 
@@ -114,9 +120,9 @@ Fl_Menu_Item choices[] = {
 int main(int argc, char **argv) {
   img = new Fl_Pixmap(blast_xpm);
 
-  window = new Fl_Double_Window(440,420);
+  window = new Fl_Double_Window(440,445);
 
-  input = new Fl_Input(70,375,350,25,"Label:");
+  input = new Fl_Input(70,400,350,25,"Label:");
   input->static_value("The quick brown fox jumped over the lazy dog.");
   input->when(FL_WHEN_CHANGED);
   input->callback(input_cb);
@@ -135,6 +141,13 @@ int main(int argc, char **argv) {
   fonts->step(1);
   fonts->value(0);
   fonts->callback(font_cb);
+
+  spacing=new Fl_Hor_Value_Slider(70,375,350,25,"Spacing:");
+  spacing->align(FL_ALIGN_LEFT);
+  spacing->bounds(0,100);
+  spacing->step(1);
+  spacing->value(0);
+  spacing->callback(spacing_cb);
 
   Fl_Group *g = new Fl_Group(70,275,350,50);
   imageb = new Fl_Toggle_Button(70,275,50,25,"image");

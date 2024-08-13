@@ -118,6 +118,7 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   label_.size    = FL_NORMAL_SIZE;
   label_.color   = FL_FOREGROUND_COLOR;
   label_.align_  = FL_ALIGN_CENTER;
+  label_.spacing = 0;
   tooltip_       = 0;
   callback_      = default_callback;
   user_data_     = 0;

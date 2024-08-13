@@ -209,7 +209,7 @@ void fl_draw(
     int x, int y, int w, int h, // bounding box
     Fl_Align align,
     void (*callthis)(const char*,int,int,int),
-    Fl_Image* img, int draw_symbols, int gap)
+    Fl_Image* img, int draw_symbols, int spacing)
 {
   char *linebuf = NULL;       // Pointer to a buffer managed by expand_text_
   const char* p;              // Scratch pointer into text, multiple use
@@ -258,7 +258,7 @@ void fl_draw(
   // Width and height of both symbols combined
   symtotal = symwidth[0] + symwidth[1];
   // Image width if image is to the left or right of the text, else 0
-  imgtotal = (img && (align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)) ? img->w() + gap : 0;
+  imgtotal = (img && (align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)) ? img->w() + spacing : 0;
 
   int strw = 0;               // Width of text only without symbols
   int strh;                   // Height of text only without symbols
@@ -289,7 +289,7 @@ void fl_draw(
   // Figure out vertical position of the first element
   int xpos;                   // Position of image or text
   int ypos;                   // Position of image or text
-  int imgh = img && imgvert ? img->h() + gap : 0; // Height of image if image is above or below text
+  int imgh = img && imgvert ? img->h() + spacing : 0; // Height of image if image is above or below text
   int imgw[2] = {0, 0};       // Width of image on the left and right side of the text
 
   symoffset = 0;
@@ -316,14 +316,14 @@ void fl_draw(
     }
 
     img->draw(xpos, ypos - height);
-    ypos += img->h() + gap;
+    ypos += img->h() + spacing;
   }
 
   // Draw the image if either on the *left* or *right* side of the text
   if (img && !imgvert) {
     if (align & FL_ALIGN_TEXT_OVER_IMAGE) {
       // Image is to the right of the text
-      imgw[1] = img->w() + gap;
+      imgw[1] = img->w() + spacing;
       // Find the horizontal position of the image
       if (align & FL_ALIGN_LEFT) {
         xpos = x + symwidth[0] + strw + 1;
@@ -332,10 +332,10 @@ void fl_draw(
       } else {
         xpos = x + (w - strw - symtotal - imgw[1]) / 2 + symwidth[0] + strw + 1;
       }
-      xpos += gap;
+      xpos += spacing;
     } else {
       // Image is to the left of the text
-      imgw[0] = img->w() + gap;
+      imgw[0] = img->w() + spacing;
       // Find the horizontal position of the image
       if (align & FL_ALIGN_LEFT) {
         xpos = x + symwidth[0] - 1;
@@ -401,7 +401,7 @@ void fl_draw(
       xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
     }
 
-    img->draw(xpos, ypos + gap);
+    img->draw(xpos, ypos + spacing);
   }
 
   // Draw the symbols, if any...
@@ -476,13 +476,13 @@ void fl_draw(
   Fl_Align align,
   Fl_Image* img,
   int draw_symbols,
-  int gap)
+  int spacing)
 {
   if ((!str || !*str) && !img) return;
   if (w && h && !fl_not_clipped(x, y, w, h) && (align & FL_ALIGN_INSIDE)) return;
   if (align & FL_ALIGN_CLIP)
     fl_push_clip(x, y, w, h);
-  fl_draw(str, x, y, w, h, align, fl_draw, img, draw_symbols, gap);
+  fl_draw(str, x, y, w, h, align, fl_draw, img, draw_symbols, spacing);
   if (align & FL_ALIGN_CLIP)
     fl_pop_clip();
 }

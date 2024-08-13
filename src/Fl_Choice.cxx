@@ -113,6 +113,7 @@ void Fl_Choice::draw() {
       l.font = m.labelsize_ || m.labelfont_ ? m.labelfont_ : textfont();
       l.size = m.labelsize_ ? m.labelsize_ : textsize();
       l.color= m.labelcolor_ ? m.labelcolor_ : textcolor();
+      l.spacing = 0;
       if (!m.active()) l.color = fl_inactive((Fl_Color)l.color);
       fl_draw_shortcut = 2; // hack value to make '&' disappear
       l.draw(xx+3, yy, ww>6 ? ww-6 : 0, hh, FL_ALIGN_LEFT);

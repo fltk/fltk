@@ -32,7 +32,7 @@ fl_normal_label(const Fl_Label* o, int X, int Y, int W, int H, Fl_Align align)
 {
   fl_font(o->font, o->size);
   fl_color((Fl_Color)o->color);
-  fl_draw(o->value, X, Y, W, H, align, o->image);
+  fl_draw(o->value, X, Y, W, H, align, o->image, 1, o->spacing);
 }
 
 void
@@ -44,11 +44,11 @@ fl_normal_measure(const Fl_Label* o, int& W, int& H) {
     if (o->align_ & FL_ALIGN_IMAGE_BACKDROP) {          // backdrop: ignore
       // ignore backdrop image for calculation
     } else if (o->align_ & FL_ALIGN_IMAGE_NEXT_TO_TEXT) { // text and image side by side
-      W += iw;
+      W += iw + o->spacing;
       if (ih > H) H = ih;
     } else {
       if (iw > W) W = iw;
-      H += ih;
+      H += ih + o->spacing;
     }
   }
 }
