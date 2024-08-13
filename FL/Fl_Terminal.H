@@ -852,6 +852,8 @@ public:
    */
   Fl_Scrollbar  *hscrollbar;        // horizontal scrollbar
 private:
+  // Special utf8 symbols
+  const char    *error_char_;       // utf8 string shown for invalid utf8, bad ANSI, etc
   bool           fontsize_defer_;   // flag defers font calcs until first draw() (issue 837)
   int            scrollbar_size_;   // local preference for scrollbar size
   ScrollbarStyle hscrollbar_style_;
@@ -897,7 +899,6 @@ protected:
 private:
   void create_ring(int drows, int dcols, int hrows);
   void init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer);
-private:
   // Tabstops
   void init_tabstops(int newsize);
   void default_tabstops(void);
@@ -999,6 +1000,7 @@ public:
 private:
   void handle_lf(void);
   void handle_cr(void);
+  void handle_esc(void);
   // Printing
   void handle_ctrl(char c);
   bool is_printable(char c);
@@ -1168,11 +1170,20 @@ private:
 public:
   float redraw_rate(void) const;
   void  redraw_rate(float val);
-  // API: Show unknown/unprintable chars
+  // API: Show unknown/invalid utf8/ANSI sequences with an error character (¿).
   bool  show_unknown(void) const;
   void  show_unknown(bool val);
-protected:
-  static const char *unknown_char; ///< "unknown" replacement character
+
+  /** Sets the "error character" utf8 string shown for invalid utf8
+      or bad ANSI sequences if show_unknown() is true. Default: "¿".
+      \See show_unknown(bool)
+   */
+  void error_char(const char* val) { error_char_ = val; }
+
+  /** Returns the "error character" utf8 string, which is shown for invalid utf8
+      or bad ANSI sequences if show_unknown() is true. \See show_unknown(bool)
+   */
+  const char* error_char(void) const { return error_char_; }
 public:
   // API: ANSI sequences
   bool  ansi(void) const;

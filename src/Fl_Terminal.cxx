@@ -38,12 +38,6 @@
 #include "Fl_String.H"
 
 /////////////////////////////////
-////// Static Class Data ////////
-/////////////////////////////////
-
-const char *Fl_Terminal::unknown_char = "¿";
-
-/////////////////////////////////
 ////// Static Functions /////////
 /////////////////////////////////
 
@@ -181,6 +175,7 @@ bool Fl_Terminal::Selection::get_selection(int &srow,int &scol,
 //    Always returns true.
 //
 bool Fl_Terminal::Selection::start(int row, int col, bool char_right) {
+  (void) char_right;    // silence warning
   srow_ = erow_ = row;
   scol_ = ecol_ = col;
   state_ = 1;                                      // state: "started selection"
@@ -2558,6 +2553,16 @@ void Fl_Terminal::handle_lf(void) {
   else                           cursor_down(1, do_scroll);
 }
 
+// Handle '\e' escape character.
+void Fl_Terminal::handle_esc(void) {
+  if (!ansi_)                                  // not in ansi mode?
+    { handle_unknown_char(); return; }         //   ..show unknown char, early exit
+  if (escseq.esc_mode() == 0x1b)               // already in esc mode?
+    { handle_unknown_char(); }                 //   ..show 1st esc as unknown char, parse 2nd
+  if (escseq.parse(0x1b) == EscapeSeq::fail)   // parse esc
+    { handle_unknown_char(); return; }         //   ..error? show unknown char
+}
+
 /**
   Sets the combined output translation flags to \p val.
 
@@ -2599,9 +2604,7 @@ void Fl_Terminal::handle_ctrl(char c) {
     case '\r': handle_cr();                return;  // CR?
     case '\n': handle_lf();                return;  // LF?
     case '\t': cursor_tab_right();         return;  // TAB?
-    case 0x1b: if (ansi_) escseq.parse(c);          // ESC?
-               else       append_utf8("␛");
-               return;
+    case 0x1b: handle_esc();               return;  // ESC?
     default:   handle_unknown_char();      return;  // Unknown ctrl char?
   }
 }
@@ -2731,12 +2734,16 @@ void Fl_Terminal::handle_escseq(char c) {
   // NOTE: Use xterm to test. gnome-terminal has bugs, even in 2022.
   const bool do_scroll = true;
   const bool no_scroll = false;
-  //UNUSED const bool do_wrap   = true;
-  //UNUSED const bool no_wrap   = false;
   switch (escseq.parse(c)) {                           // parse char, advance s..
-    case EscapeSeq::fail: escseq.reset(); return;      // failed? reset, done
-    case EscapeSeq::success:              return;      // keep parsing..
-    case EscapeSeq::completed:            break;       // parsed complete esc sequence?
+    case EscapeSeq::fail:                              // failed?
+      escseq.reset();                                  //   ..reset to let error_char be visible
+      handle_unknown_char();                           //   ..show error char (if enabled)
+      print_char(c);                                   //   ..show char we couldn't handle
+      return;                                          //   ..done.
+    case EscapeSeq::success:                           // success?
+      return;                                          //   ..keep parsing
+    case EscapeSeq::completed:                         // parsed complete esc sequence?
+      break;                                           //   ..fall through to handle operation
   }
   // Shortcut varnames for escseq parsing..
   EscapeSeq &esc = escseq;
@@ -3254,7 +3261,7 @@ void Fl_Terminal::append(const char *s, int len/*=-1*/) {
 int Fl_Terminal::handle_unknown_char(void) {
   if (!show_unknown_) return 0;
   escseq.reset();               // disable any pending esc seq to prevent eating unknown char
-  print_char(unknown_char);
+  print_char(error_char_);
   return 1;
 }
 
@@ -3270,9 +3277,9 @@ int Fl_Terminal::handle_unknown_char(void) {
 */
 int Fl_Terminal::handle_unknown_char(int drow, int dcol) {
   if (!show_unknown_) return 0;
-  int len = (int)strlen(unknown_char);
+  int len = (int)strlen(error_char_);
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
-  u8c->text_utf8(unknown_char, len, *current_style_);
+  u8c->text_utf8(error_char_, len, *current_style_);
   return 1;
 }
 
@@ -3384,6 +3391,7 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,
 
 // Private constructor method
 void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist,bool fontsize_defer) {
+  error_char_ = "¿";
   scrollbar = hscrollbar = 0;           // avoid problems w/update_screen_xywh()
   // currently unused params
   (void)X; (void)Y; (void)W; (void)H; (void)L;
@@ -4039,7 +4047,7 @@ void  Fl_Terminal::redraw_rate(float val) {
 
 /**
   Return the "show unknown" flag.
-  See show_unknown(bool) for more info.
+  \See show_unknown(bool), error_char(const char*).
 */
 bool Fl_Terminal::show_unknown(void) const {
   return show_unknown_;
@@ -4048,12 +4056,12 @@ bool Fl_Terminal::show_unknown(void) const {
 /**
   Set the "show unknown" flag.
 
-  If true, unknown escape sequences and unprintable control characters
-  will be shown with the error character "¿".
+  If true, invalid utf8 and invalid ANSI sequences will be shown
+  with the error character "¿".
 
-  If false, those sequences and characters will be ignored.
+  If false, errors characters won't be shown.
 
-  \see handle_unknown_char()
+  \see handle_unknown_char(), error_char(const char*).
 */
 void Fl_Terminal::show_unknown(bool val) {
   show_unknown_ = val;
