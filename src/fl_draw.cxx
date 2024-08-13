@@ -38,15 +38,36 @@ char fl_draw_shortcut;  // set by fl_labeltypes.cxx
 
 static char* underline_at;
 
-/* If called with maxbuf==0, use an internally allocated buffer and enlarge it as needed.
+/*
+ Extract the part of text that fits into the given maximum width.
+
+ If called with maxbuf==0, use an internally allocated buffer and enlarge it as needed.
  Otherwise, use buf as buffer but don't go beyond its length of maxbuf.
+
+ \param[in] from input text, can contain '\n' and single or double '\@' characters
+ \param[out] buf buffer for the output text segment
+ \param[in] maxbuf size of the buffer, or 0 to use the internal buffer allocated in this function
+ \param[in] maxw maximum width in pixels of the output text
+ \param[out] n number of characters in the output text segment
+ \param[out] width actual width in pixels of the output text
+ \param[in] wrap if true, wrap at maxw, else wrap at newlines
+ \param[in] draw_symbols if true, double '\@' characters are escaped into a single '@'
+
+ \return pointer to the next character in the input text
  */
 static const char* expand_text_(const char* from, char*& buf, int maxbuf, double maxw, int& n,
                double &width, int wrap, int draw_symbols) {
-  underline_at = 0;
+  // Reset underline_at to null
+  underline_at = NULL;
+
+  // Initialize the total width to 0
   double w = 0;
+
+  // Check if the caller wants to use the internal buffer
   static int l_local_buff = 500;
   static char *local_buf = (char*)malloc(l_local_buff); // initial buffer allocation
+
+  // Calculate the end pointer of the buffer
   char* e;
   if (maxbuf == 0) {
     buf = local_buf;
@@ -54,32 +75,48 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
   } else {
     e = buf+(maxbuf-4);
   }
+
+  // Initialize the output pointer to the buffer
   char* o = buf;
+
+  // Initialize the word end pointer that points into the `out` buffer
   char* word_end = o;
+
+  // Initialize the word start pointer that points into the `from` buffer
   const char* word_start = from;
 
+  // Iterate over the input text
   const char* p = from;
   for (;; p++) {
-
     int c = *p & 255;
 
+    // Check for end of line, space, or '\n'
     if (!c || c == ' ' || c == '\n') {
-      // test for word-wrap:
+      // Check for word wrap
       if (word_start < p && wrap) {
+        // Calculate the new width
         double newwidth = w + fl_width(word_end, (int) (o-word_end) );
+
+        // Check if the new width exceeds the maximum width
         if (word_end > buf && int(newwidth) > maxw) { // break before this word
           o = word_end;
           p = word_start;
           break;
         }
+        // Update the word end pointer
         word_end = o;
         w = newwidth;
       }
+
+      // Check for end of line
       if (!c) break;
       else if (c == '\n') {p++; break;}
+
+      // Update the word start pointer
       word_start = p+1;
     }
 
+    // Check if the buffer needs to be enlarged
     if (o > e) {
       if (maxbuf) break; // don't overflow buffer
       l_local_buff += int(o - e) + 200; // enlarge buffer
@@ -92,27 +129,37 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
       word_end = local_buf + delta_end;
     }
 
+    // Process the character based on its type
     if (c == '\t') {
+      // Process tab character
       for (c = fl_utf_nb_char((uchar*)buf, (int) (o-buf) )%8; c<8 && o<e; c++)
            *o++ = ' ';
     } else if (c == '&' && fl_draw_shortcut && *(p+1)) {
+      // Process '&' character
       if (*(p+1) == '&') {p++; *o++ = '&';}
       else if (fl_draw_shortcut != 2) underline_at = o;
     } else if (c < ' ' || c == 127) { // ^X
+      // Process control characters
       *o++ = '^';
       *o++ = c ^ 0x40;
     } else if (c == '@' && draw_symbols) { // Symbol???
+      // Process '@' character
       if (p[1] && p[1] != '@')  break;
       *o++ = c;
       if (p[1]) p++;
     } else {
+      // Process regular characters
       *o++ = c;
     }
   }
 
+  // Calculate the final width
   width = w + fl_width(word_end, (int) (o-word_end));
+
+  // Add the null terminator and set the number of characters
   *o = 0;
-  n = (int) (o-buf);
+  n = (int)(o-buf);
+
   return p;
 }
 
@@ -124,6 +171,17 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
  Returns a pointer to the start of the next line of characters.
  Sets n to the number of characters put into the buffer.
  Sets width to the width of the string in the \ref drawing_fl_font "current font".
+
+ \param[in] from input text, can contain '\n' and single or double '\@' characters
+ \param[out] buf buffer for the output text segment
+ \param[in] maxbuf size of the buffer, or 0 to use the internal buffer allocated in this function
+ \param[in] maxw maximum width in pixels of the output text
+ \param[out] n number of characters in the output text segment
+ \param[out] width actual width in pixels of the output text
+ \param[in] wrap if true, wrap at maxw, else wrap at newlines
+ \param[in] draw_symbols if true, double '\@' characters are escaped into a single '@'
+
+ \return pointer to the next character in the input text
  */
 const char*
 fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
@@ -132,10 +190,20 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
 }
 
 /**
-  The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
-  the addition of the \p callthis parameter, which is a pointer to a text drawing
-  function such as fl_draw(const char*, int, int, int) to do the real work
-*/
+ The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
+ the addition of the \p callthis parameter, which is a pointer to a text drawing
+ function such as fl_draw(const char*, int, int, int) to do the real work.
+
+ \param[in] str UTF-8 string, can start and end with an '@sym' symbol,
+ can contain '\n'
+ \param[in] x,y,w,h bounding box
+ \param[in] align label and image alignment in bounding box
+ \param[in] callthis pointer to text drawing function
+ \param[in] img pointer to image
+ \param[in] draw_symbols if true, interprete leading and trailing '@sym'
+ as graphical symbols
+ \param[in] text_to_image_spacing spacing between text and image
+ */
 void fl_draw(
     const char* str,    // the (multi-line) string
     int x, int y, int w, int h, // bounding box
@@ -143,28 +211,35 @@ void fl_draw(
     void (*callthis)(const char*,int,int,int),
     Fl_Image* img, int draw_symbols)
 {
-  char *linebuf = NULL;
-  const char* p;
-  const char* e;
-  int buflen;
-  char symbol[2][255], *symptr;
-  int symwidth[2], symoffset, symtotal, imgtotal;
+  char *linebuf = NULL;       // Pointer to a buffer managed by expand_text_
+  const char* p;              // Scratch pointer into text, multiple use
+  const char* e;              // Scratch pointer into text, multiple use
+  int buflen;                 // Number of bytes copied into linebuf
+                              // by expand_text_
+  char symbol[2][255];        // Copy of symbol text at start and end of str
+  int symwidth[2];            // Width and height of symbols (always square)
+  int symoffset;
+  int symtotal;               // Combined width of both sybols
+  int imgtotal;               // Width of image if image is to the left or right
+  int imgvert = ((align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)==0); // True if image is
+                              // above or below text
+  int lines;                  // Number of text lines including '\n' and wrapping
+  double width;               // width of the longest text line
+  int height = fl_height();   // Height of a line of text
 
-  // count how many lines and put the last one into the buffer:
-  int lines;
-  double width;
 
-  // if the image is set as a backdrop, ignore it here
+  // Ff the image is set as a backdrop, ignore it in this function
   if (img && (align & FL_ALIGN_IMAGE_BACKDROP)) img = 0;
 
   symbol[0][0] = '\0';
   symwidth[0]  = 0;
-
   symbol[1][0] = '\0';
   symwidth[1]  = 0;
 
+  // Find the symbol at the start and end of the string
   if (draw_symbols) {
     if (str && str[0] == '@' && str[1] && str[1] != '@') {
+      char *symptr;
       // Start with a symbol...
       for (symptr = symbol[0];
            *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
@@ -180,12 +255,15 @@ void fl_draw(
     }
   }
 
+  // Width and height of both symbols combined
   symtotal = symwidth[0] + symwidth[1];
+  // Image width if image is to the left or right of the text, else 0
   imgtotal = (img && (align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)) ? img->w() : 0;
 
-  int strw = 0;
-  int strh;
+  int strw = 0;               // Width of text only without symbols
+  int strh;                   // Height of text only without symbols
 
+  // Count how many lines and put the last one into the buffer:
   if (str) {
     for (p = str, lines=0; p;) {
       e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen, width,
@@ -197,61 +275,89 @@ void fl_draw(
     }
   } else lines = 0;
 
-  if ((symwidth[0] || symwidth[1]) && lines) {
-    if (symwidth[0]) symwidth[0] = lines * fl_height();
-    if (symwidth[1]) symwidth[1] = lines * fl_height();
+  // Fix the size of the symbols if there is at least one line of text to print
+  if (lines) {
+    if (symwidth[0]) symwidth[0] = lines * height;
+    if (symwidth[1]) symwidth[1] = lines * height;
   }
 
+  // Width and height of both symbols combined
   symtotal = symwidth[0] + symwidth[1];
+  // Height of text only
   strh = lines * fl_height();
 
-  // figure out vertical position of the first line:
-  int xpos;
-  int ypos;
-  int height = fl_height();
-  int imgvert = ((align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)==0);
-  int imgh = img && imgvert ? img->h() : 0;
-  int imgw[2] = {0, 0};
+  // Figure out vertical position of the first element
+  int xpos;                   // Position of image or text
+  int ypos;                   // Position of image or text
+  int imgh = img && imgvert ? img->h() : 0; // Height of image if image is above or below text
+  int imgw[2] = {0, 0};       // Width of image on the left and right side of the text
 
   symoffset = 0;
 
-  if (align & FL_ALIGN_BOTTOM) ypos = y+h-(lines-1)*height-imgh;
-  else if (align & FL_ALIGN_TOP) ypos = y+height;
-  else ypos = y+(h-lines*height-imgh)/2+height;
+  // Figure out vertical position of the first line of text or top image
+  if (align & FL_ALIGN_BOTTOM) {
+    ypos = y+h-(lines-1)*height-imgh;
+  } else if (align & FL_ALIGN_TOP) {
+    ypos = y+height;
+  } else {
+    ypos = y+(h-lines*height-imgh)/2+height;
+  }
 
-  // draw the image unless the "text over image" alignment flag is set...
+  // Draw the image if located *above* the text
   if (img && imgvert && !(align & FL_ALIGN_TEXT_OVER_IMAGE)) {
     if (img->w() > symoffset) symoffset = img->w();
 
-    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
-    else if (align & FL_ALIGN_RIGHT) xpos = x + w - img->w() - symwidth[1];
-    else xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
+    if (align & FL_ALIGN_LEFT) {
+      xpos = x + symwidth[0];
+    } else if (align & FL_ALIGN_RIGHT) {
+      xpos = x + w - img->w() - symwidth[1];
+    } else {
+      xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
+    }
 
     img->draw(xpos, ypos - height);
     ypos += img->h();
   }
 
-  // draw the image to the side of the text
-  if (img && !imgvert /* && (align & !FL_ALIGN_TEXT_NEXT_TO_IMAGE)*/ ) {
-    if (align & FL_ALIGN_TEXT_OVER_IMAGE) { // image is right of text
+  // Draw the image if either on the *left* or *right* side of the text
+  if (img && !imgvert) {
+    if (align & FL_ALIGN_TEXT_OVER_IMAGE) {
+      // Image is to the right of the text
       imgw[1] = img->w();
-      if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0] + strw + 1;
-      else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth[1] - imgw[1] + 1;
-      else xpos = x + (w - strw - symtotal - imgw[1]) / 2 + symwidth[0] + strw + 1;
-    } else { // image is to the left of the text
+      // Find the horizontal position of the image
+      if (align & FL_ALIGN_LEFT) {
+        xpos = x + symwidth[0] + strw + 1;
+      } else if (align & FL_ALIGN_RIGHT) {
+        xpos = x + w - symwidth[1] - imgw[1] + 1;
+      } else {
+        xpos = x + (w - strw - symtotal - imgw[1]) / 2 + symwidth[0] + strw + 1;
+      }
+    } else {
+      // Image is to the left of the text
       imgw[0] = img->w();
-      if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0] - 1;
-      else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth[1] - strw - imgw[0] - 1;
-      else xpos = x + (w - strw - symtotal - imgw[0]) / 2 - 1;
+      // Find the horizontal position of the image
+      if (align & FL_ALIGN_LEFT) {
+        xpos = x + symwidth[0] - 1;
+      } else if (align & FL_ALIGN_RIGHT) {
+        xpos = x + w - symwidth[1] - strw - imgw[0] - 1;
+      } else {
+        xpos = x + (w - strw - symtotal - imgw[0]) / 2 - 1;
+      }
     }
-    int yimg = ypos - height;
-    if (align & FL_ALIGN_TOP) ;
-    else if (align & FL_ALIGN_BOTTOM) yimg += strh - img->h() - 1;
-    else yimg += (strh - img->h() - 1) / 2;
+    // Find the vertical position of the image
+    int yimg;
+    if (align & FL_ALIGN_TOP) {
+      yimg = ypos - height;
+    } else if (align & FL_ALIGN_BOTTOM) {
+      yimg = ypos - height + strh - img->h() - 1;
+    } else {
+      yimg = ypos - height + (strh - img->h() - 1) / 2;
+    }
+    // Draw the image
     img->draw(xpos, yimg);
   }
 
-  // now draw all the lines:
+  // Now draw all the text lines
   if (str) {
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
@@ -262,9 +368,13 @@ void fl_draw(
 
       if (width > symoffset) symoffset = (int)(width + 0.5);
 
-      if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0] + imgw[0];
-      else if (align & FL_ALIGN_RIGHT) xpos = x + w - (int)(width + .5) - symwidth[1] - imgw[1];
-      else xpos = x + (w - (int)(width + .5) - symtotal - imgw[0] - imgw[1]) / 2 + symwidth[0] + imgw[0];
+      if (align & FL_ALIGN_LEFT) {
+        xpos = x + symwidth[0] + imgw[0];
+      } else if (align & FL_ALIGN_RIGHT) {
+        xpos = x + w - (int)(width + .5) - symwidth[1] - imgw[1];
+      } else {
+        xpos = x + (w - (int)(width + .5) - symtotal - imgw[0] - imgw[1]) / 2 + symwidth[0] + imgw[0];
+      }
 
       callthis(linebuf,buflen,xpos,ypos-desc);
 
@@ -276,40 +386,60 @@ void fl_draw(
     }
   }
 
-  // draw the image if the "text over image" alignment flag is set...
+  // Draw the image if the image is *below* the text
   if (img && imgvert && (align & FL_ALIGN_TEXT_OVER_IMAGE)) {
     if (img->w() > symoffset) symoffset = img->w();
 
-    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
-    else if (align & FL_ALIGN_RIGHT) xpos = x + w - img->w() - symwidth[1];
-    else xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
+    if (align & FL_ALIGN_LEFT) {
+      xpos = x + symwidth[0];
+    } else if (align & FL_ALIGN_RIGHT) {
+      xpos = x + w - img->w() - symwidth[1];
+    } else {
+      xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
+    }
 
     img->draw(xpos, ypos);
   }
 
-  // draw the symbols, if any...
+  // Draw the symbols, if any...
   if (symwidth[0]) {
-    // draw to the left
-    if (align & FL_ALIGN_LEFT) xpos = x;
-    else if (align & FL_ALIGN_RIGHT) xpos = x + w - symtotal - symoffset;
-    else xpos = x + (w - symoffset - symtotal) / 2;
+    // Draw the leading symbol to the left of the text
+    if (align & FL_ALIGN_LEFT) {
+      xpos = x;
+    } else if (align & FL_ALIGN_RIGHT) {
+      xpos = x + w - symtotal - symoffset;
+    } else {
+      xpos = x + (w - symoffset - symtotal) / 2;
+    }
 
-    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth[0];
-    else if (align & FL_ALIGN_TOP) ypos = y;
-    else ypos = y + (h - symwidth[0]) / 2;
+    if (align & FL_ALIGN_BOTTOM) {
+      ypos = y + h - symwidth[0];
+    } else if (align & FL_ALIGN_TOP) {
+      ypos = y;
+    } else {
+      ypos = y + (h - symwidth[0]) / 2;
+    }
 
     fl_draw_symbol(symbol[0], xpos, ypos, symwidth[0], symwidth[0], fl_color());
   }
 
   if (symwidth[1]) {
-    // draw to the right
-    if (align & FL_ALIGN_LEFT) xpos = x + symoffset + symwidth[0];
-    else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth[1];
-    else xpos = x + (w - symoffset - symtotal) / 2 + symoffset + symwidth[0];
+    // Draw the trailing symbol to the right of the text
+    if (align & FL_ALIGN_LEFT) {
+      xpos = x + symoffset + symwidth[0];
+    } else if (align & FL_ALIGN_RIGHT) {
+      xpos = x + w - symwidth[1];
+    } else {
+      xpos = x + (w - symoffset - symtotal) / 2 + symoffset + symwidth[0];
+    }
 
-    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth[1];
-    else if (align & FL_ALIGN_TOP) ypos = y;
-    else ypos = y + (h - symwidth[1]) / 2;
+    if (align & FL_ALIGN_BOTTOM) {
+      ypos = y + h - symwidth[1];
+    } else if (align & FL_ALIGN_TOP) {
+      ypos = y;
+    } else {
+      ypos = y + (h - symwidth[1]) / 2;
+    }
 
     fl_draw_symbol(symbol[1], xpos, ypos, symwidth[1], symwidth[1], fl_color());
   }
@@ -327,7 +457,16 @@ void fl_draw(
   below the text as specified by the \p align value.
   The \p draw_symbols argument specifies whether or not to look for symbol
   names starting with the '\@' character'
-*/
+
+ \param[in] str UTF-8 string, can start and end with an '@sym' symbol,
+            can contain '\n'
+ \param[in] x,y,w,h bounding box
+ \param[in] align label and image alignment in bounding box
+ \param[in] img pointer to image
+ \param[in] draw_symbols if true, interprete leading and trailing '@sym'
+            as graphical symbols
+ \param[in] text_to_image_spacing spacing between text and image
+ */
 void fl_draw(
   const char* str,
   int x, int y, int w, int h,
