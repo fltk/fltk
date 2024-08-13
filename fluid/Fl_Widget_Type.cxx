@@ -1970,8 +1970,13 @@ void textcolor_menu_cb(Fl_Menu_Button* i, void* v) {
 void image_spacing_cb(Fl_Value_Input* i, void* v) {
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
-    if (!current_widget->is_true_widget()) return;
-    i->value(((Fl_Widget_Type*)current_widget)->o->label_image_spacing());
+    if (!current_widget->is_true_widget()) {
+      i->deactivate();
+      i->value(0);
+    } else {
+      i->activate();
+      i->value(((Fl_Widget_Type*)current_widget)->o->label_image_spacing());
+    }
   } else {
     int mod = 0;
     s = int(i->value());
@@ -1989,7 +1994,6 @@ void image_spacing_cb(Fl_Value_Input* i, void* v) {
     }
     if (mod) set_modflag(1);
   }
-  i->value(s);
 }
 
 ////////////////////////////////////////////////////////////////
