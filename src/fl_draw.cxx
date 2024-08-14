@@ -194,15 +194,15 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
  the addition of the \p callthis parameter, which is a pointer to a text drawing
  function such as fl_draw(const char*, int, int, int) to do the real work.
 
- \param[in] str UTF-8 string, can start and end with an '@sym' symbol,
- can contain '\n'
+ \param[in] str UTF-8 string, can start and end with an '\@sym' symbol,
+ can contain '\\n'
  \param[in] x,y,w,h bounding box
  \param[in] align label and image alignment in bounding box
  \param[in] callthis pointer to text drawing function
  \param[in] img pointer to image
- \param[in] draw_symbols if true, interprete leading and trailing '@sym'
+ \param[in] draw_symbols if true, interprete leading and trailing '\@sym'
  as graphical symbols
- \param[in] gap spacing between text and image
+ \param[in] spacing spacing between text and image
  */
 void fl_draw(
     const char* str,    // the (multi-line) string
@@ -461,14 +461,14 @@ void fl_draw(
   The \p draw_symbols argument specifies whether or not to look for symbol
   names starting with the '\@' character'
 
- \param[in] str UTF-8 string, can start and end with an '@sym' symbol,
-            can contain '\n'
+ \param[in] str UTF-8 string, can start and end with an '\@sym' symbol,
+            can contain '\\n'
  \param[in] x,y,w,h bounding box
  \param[in] align label and image alignment in bounding box
  \param[in] img pointer to image
- \param[in] draw_symbols if true, interprete leading and trailing '@sym'
+ \param[in] draw_symbols if true, interprete leading and trailing '\@sym'
             as graphical symbols
- \param[in] gap spacing between text and image
+ \param[in] spacing spacing between text and image
  */
 void fl_draw(
   const char* str,
