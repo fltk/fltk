@@ -125,6 +125,22 @@ if (FLTK_BUILD_EXAMPLES)
 endif (FLTK_BUILD_EXAMPLES)
 
 #######################################################################
+# create and install version config file 'FLTKConfigVersion.cmake'
+#######################################################################
+
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(FLTKConfigVersion.cmake
+  # [VERSION requiredVersion]       # defaults to project version
+  COMPATIBILITY SameMinorVersion
+)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/FLTKConfigVersion.cmake
+  DESTINATION ${FLTK_CONFIG_PATH}
+)
+
+#######################################################################
 # installation
 #######################################################################
 include (CMake/install.cmake)
