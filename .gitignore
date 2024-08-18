@@ -45,6 +45,7 @@ etc/FLTKConfig.cmake
 /fltk.spec
 /makeinclude
 /TAGS
+/out
 
 # /FL
 
