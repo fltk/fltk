@@ -150,9 +150,11 @@ void fl_overlay_rect(int x, int y, int w, int h) {
     d = -y; if (d>0) { y += d; h -= d; }
     d = (y+h)-win->h(); if (d>0) { h -= d; }
   }
+  //
   if (w<1) w = 1;
   if (h<1) h = 1;
-  // Store the rect so we can erase it later, and draw it now
+  // Store the rect in global variables so we can erase it later
   px = x; py = y; pw = w; ph = h;
+  // Draw it
   draw_current_rect();
 }
