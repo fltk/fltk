@@ -20,11 +20,14 @@ FLTK.sln
 FLTK-Targets.cmake
 FLTKConfig.cmake
 etc/FLTKConfig.cmake
+/CMakeSettings.json
+/CppProperties.json
 
-# MSVC
+# Visual Studio (MSVC) build artifacts
 
 *.tlog
 .vs/
+/out
 
 # VS Code (Visual Studio Code) Editor
 
@@ -45,7 +48,6 @@ etc/FLTKConfig.cmake
 /fltk.spec
 /makeinclude
 /TAGS
-/out
 
 # /FL
 
@@ -86,12 +88,3 @@ src/xdg-decoration-client-protocol.h
 src/xdg-decoration-protocol.c
 src/xdg-shell-client-protocol.h
 src/xdg-shell-protocol.c
-
-# Wayland demo programs (no longer being built)
-
-# libdecor/build/demo
-# libdecor/build/egl
-/out/build/x64-Debug/.cmake/api/v1/query/client-MicrosoftVS/query.json
-/out/build/x64-Debug
-/CMakeSettings.json
-/CppProperties.json
