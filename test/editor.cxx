@@ -658,7 +658,7 @@ void tut9_split_editor() {
   app_window->end();
   app_window->resizable(app_tile);
   app_tile->resizable(app_editor);
-  app_menu_bar->add("Window/Split", FL_COMMAND+'2', menu_split_callback, NULL, FL_MENU_TOGGLE);
+  app_menu_bar->add("Window/Split", FL_COMMAND+'i', menu_split_callback, NULL, FL_MENU_TOGGLE);
 }
 
 #endif
