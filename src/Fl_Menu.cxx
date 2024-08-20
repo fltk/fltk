@@ -821,6 +821,7 @@ int menuwindow::handle_part1(int e) {
       }
       return 1;
     case FL_Right:
+    RIGHT:
       if (pp.menubar && (pp.menu_number<=0 || (pp.menu_number == pp.nummenus-1)))
         forward(0);
       else if (pp.menu_number < pp.nummenus-1) forward(pp.menu_number+1);
@@ -833,6 +834,11 @@ int menuwindow::handle_part1(int e) {
     case FL_Enter:
     case FL_KP_Enter:
     case ' ':
+      // if the current item is a submenu with no callback,
+      // simulate FL_Right to enter the submenu
+      if (pp.current_item && (!pp.menubar || pp.menu_number > 0) &&
+          pp.current_item->activevisible() && pp.current_item->submenu() && !pp.current_item->callback_)
+        goto RIGHT;
       pp.state = DONE_STATE;
       return 1;
     case FL_Escape:
@@ -922,8 +928,9 @@ int menuwindow::handle_part1(int e) {
         pp.p[pp.menu_number]->redraw();
       } else
 #endif
-      // do nothing if they try to pick inactive items
-      if (!pp.current_item || pp.current_item->activevisible())
+      // do nothing if they try to pick an inactive item, or a submenu with no callback
+      if (!pp.current_item || (pp.current_item->activevisible() &&
+         (!pp.current_item->submenu() || pp.current_item->callback_ || (pp.menubar && pp.menu_number <= 0))))
         pp.state = DONE_STATE;
     }
     return 1;
