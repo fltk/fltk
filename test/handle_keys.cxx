@@ -228,7 +228,7 @@ int app::handle(int ev) {
   const char *etxt = Fl::event_text();
   int ekey    = Fl::event_key();
   int elen    = Fl::event_length();
-  char ctrl   = (Fl::event_state() & FL_COMMAND)   ? 'C' : '.';
+  char ctrl   = (Fl::event_state() & FL_CTRL)      ? 'C' : '.';
   char alt    = (Fl::event_state() & FL_ALT)       ? 'A' : '.';
   char shift  = (Fl::event_state() & FL_SHIFT)     ? 'S' : '.';
   char meta   = (Fl::event_state() & FL_META)      ? 'M' : '.';
