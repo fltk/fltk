@@ -47,38 +47,23 @@ include(FindPkgConfig)
 
 #######################################################################
 # GitHub Issue #1001: try to "repair" the CMake Cache
+# GitHub Issue #1046: don't try "too hard" (see GitHub Issue)
 #######################################################################
 #
 # Note: we renamed "our" CMake cache variable OPENGL_GLU_INCLUDE_DIR
 # to FLTK_OPENGL_GLU_INCLUDE_DIR because the former is now defined
 # in find_package(OpenGL) (FindOpenGL.cmake) since CMake 3.29.0.
 #
-# We can remove "our" cache variable if any of these conditions is true:
-#
-#  - CMAKE_VERSION < 3.29
-#  - FLTK_OPENGL_GLU_INCLUDE_DIR is undefined (first run after rename)
-#  - OPENGL_GLU_INCLUDE_DIR is FALSE, i.e. OPENGL_GLU_INCLUDE_DIR-NOTFOUND.
-#
-# Otherwise we can't be sure to remove the *correct* definition of
-# OPENGL_GLU_INCLUDE_DIR and we force the user to rebuild in a clean
-# CMake build directory. This should rarely happen.
+# We remove "our" cache variable if OPENGL_GLU_INCLUDE_DIR is defined
+# but FLTK_OPENGL_GLU_INCLUDE_DIR is not yet defined which indicates
+# the first execution after the rename.
 #
 # FIXME: we can remove this code some time after the release of FLTK 1.4.0.
 
-if(DEFINED OPENGL_GLU_INCLUDE_DIR)
-
-  if(CMAKE_VERSION VERSION_LESS 3.29 OR
-     (NOT DEFINED FLTK_OPENGL_GLU_INCLUDE_DIR) OR
-     (NOT OPENGL_GLU_INCLUDE_DIR))
-    unset(OPENGL_GLU_INCLUDE_DIR)
-    unset(OPENGL_GLU_INCLUDE_DIR CACHE)
-  else()
-    message(STATUS "")
-    message(NOTICE "FLTK configure: CMake cache inconsistency detected")
-    message(FATAL_ERROR "Please rebuild FLTK in a clean CMake build directory")
-  endif()
-
-endif() # (DEFINED OPENGL_GLU_INCLUDE_DIR)
+if(DEFINED OPENGL_GLU_INCLUDE_DIR AND NOT DEFINED FLTK_OPENGL_GLU_INCLUDE_DIR)
+  unset(OPENGL_GLU_INCLUDE_DIR)
+  unset(OPENGL_GLU_INCLUDE_DIR CACHE)
+endif() # (DEFINED OPENGL_GLU_INCLUDE_DIR AND NOT ...)
 
 #######################################################################
 # Find header files...
