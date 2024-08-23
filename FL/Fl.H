@@ -728,11 +728,17 @@ public:
     - FL_BUTTON2
     - FL_BUTTON3
 
-    X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and
-    FL_SCROLL_LOCK may not work. The values were selected to match the
-    XFree86 server on Linux. In addition there is a bug in the way X works
-    so that the shift state is not correctly reported until the first event
-    <I>after</I> the shift key is pressed or released.
+   \note FLTK platforms differ in what Fl::event_state() returns when it is called while a modifier key
+   is being pressed or released.
+   Under X11 and Wayland, Fl::event_state() indicates the state of the modifier keys just \b prior to the event.
+   Thus, during the FL_KEYDOWN event generated when pressing the shift key, for example, the FL_SHIFT bit of event_state()
+   is 0 and becomes 1 only at the next event (which can be another FL_KEYDOWN, FL_DRAG or FL_KEYUP).
+   Under other platforms, the reported state of modifier keys includes that of the key being pressed or released.
+   Notice that Fl::event_state() returns the same value under all platforms when it's called while a non-modifier key
+   (e.g., a letter, a function key) is being pressed or released.
+   X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and
+   FL_SCROLL_LOCK may not work. The values were selected to match the
+   XFree86 server on Linux.
   */
   static int event_state()      {return e_state;}
 
