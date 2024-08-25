@@ -27,6 +27,11 @@
 set(CMAKE_REQUIRED_QUIET 1)
 
 include(CheckIncludeFiles)
+include(CheckSymbolExists)
+
+# FIXME: replace check_function_exists() with check_symbol_exists()
+# FIXME: ... and remove the next line when done (Issue #1049)
+include(CheckFunctionExists)
 
 macro(fl_find_header VAR HEADER)
   check_include_files("${HEADER}" ${VAR})
@@ -235,7 +240,9 @@ check_function_exists(setenv                    HAVE_SETENV)
 if(LIB_m AND NOT WIN32)
   set(CMAKE_REQUIRED_LIBRARIES ${LIB_m})
 endif()
-check_function_exists(trunc                     HAVE_TRUNC)
+
+check_symbol_exists(trunc       "math.h"        HAVE_TRUNC)
+
 set(CMAKE_REQUIRED_LIBRARIES)
 
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
