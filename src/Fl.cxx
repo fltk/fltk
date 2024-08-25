@@ -960,6 +960,7 @@ static system_handler_link *sys_handlers = 0;
    - X11: XEvent
    - Windows: MSG
    - OS X: NSEvent
+   - Wayland: not implemented
 
  \param ha The event handler function to register
  \param data User data to include on each call
