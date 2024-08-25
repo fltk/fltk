@@ -680,8 +680,8 @@ int Fl_Wayland_Screen_Driver::compose(int& del) {
   // pressing modifier key
   // FL_Shift_L, FL_Shift_R, FL_Control_L, FL_Control_R, FL_Caps_Lock
   // FL_Meta_L, FL_Meta_R, FL_Alt_L, FL_Alt_R
-  // TODO: FL_Alt_Gr
-  condition |= (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R);
+  condition |= ((Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) ||
+                Fl::e_keysym == FL_Alt_Gr);
   // FL_Home FL_Left FL_Up FL_Right FL_Down FL_Page_Up FL_Page_Down FL_End
   // FL_Print FL_Insert FL_Menu FL_Help and more
   condition |= (Fl::e_keysym >= FL_Home && Fl::e_keysym <= FL_Help);
