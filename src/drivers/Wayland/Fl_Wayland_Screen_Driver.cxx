@@ -1335,7 +1335,11 @@ static const struct wl_registry_listener registry_listener = {
 };
 
 
+extern int fl_send_system_handlers(void *);
+
+
 static void wayland_socket_callback(int fd, struct wl_display *display) {
+  if (fl_send_system_handlers(NULL)) return;
   struct pollfd fds = (struct pollfd) { fd, POLLIN, 0 };
   do {
     if (wl_display_dispatch(display) == -1) {
