@@ -228,7 +228,10 @@ void Fl_Xlib_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
 }
 
 void Fl_Xlib_Graphics_Driver::rect_unscaled(int x, int y, int w, int h) {
+  void *old = NULL;
+  if (line_width_ == 0) old = change_pen_width(1); // #156, #1052
   XDrawRectangle(fl_display, fl_window, gc_, x, y, w, h);
+  if (old) reset_pen_width(old);
 }
 
 void Fl_Xlib_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {
