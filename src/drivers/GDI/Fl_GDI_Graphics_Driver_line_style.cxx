@@ -58,6 +58,8 @@ void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, int width, char* das
   DeleteObject(oldpen);
   DeleteObject(fl_current_xmap->pen);
   fl_current_xmap->pen = newpen;
+  is_solid_ = ((style & 0xff) == FL_SOLID && (!dashes || !*dashes));
+  style_ = style;
 }
 
 #if USE_GDIPLUS

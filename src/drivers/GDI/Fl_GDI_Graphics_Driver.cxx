@@ -96,6 +96,8 @@ Fl_GDI_Graphics_Driver::Fl_GDI_Graphics_Driver() {
   long_point = NULL;
   depth = -1;
   origins = NULL;
+  is_solid_ = true;
+  style_ = FL_SOLID;
 }
 
 Fl_GDI_Graphics_Driver::~Fl_GDI_Graphics_Driver() {

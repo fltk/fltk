@@ -62,21 +62,17 @@ void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
 }
 
 void Fl_GDI_Graphics_Driver::rect_unscaled(int x, int y, int w, int h) {
-  HPEN oldpen, newpen;
-  if (line_width_ > 1) {
-    LOGBRUSH penbrush = {BS_SOLID, fl_RGB(), 0};
-    newpen = ExtCreatePen(PS_GEOMETRIC | PS_ENDCAP_SQUARE, line_width_, &penbrush, 0, 0);
-    oldpen = (HPEN)SelectObject(gc_, newpen);
+  if (is_solid_ && line_width_ > 1) {
+    line_style_unscaled(FL_CAP_SQUARE, line_width_, 0); // see issue #1052
   }
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x+w, y);
-  if (line_width_ <= 1) LineTo(gc_, x+w, y+h+1); // see issue #1052
+  if (is_solid_ && line_width_ <= 1) LineTo(gc_, x+w, y+h+1); // see issue #1052
   LineTo(gc_, x+w, y+h);
   LineTo(gc_, x, y+h);
   LineTo(gc_, x, y);
-  if (line_width_ > 1) {
-    SelectObject(gc_, oldpen);
-    DeleteObject(newpen);
+  if (is_solid_ && line_width_ > 1) {
+    line_style_unscaled(style_, line_width_, 0);
   }
 }
 
