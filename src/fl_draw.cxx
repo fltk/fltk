@@ -504,7 +504,9 @@ void fl_draw(
   \p w to 0 before calling fl_measure() when wrap behavior isn't needed.
 
   \param[in] str nul-terminated string
-  \param[out] w,h width and height of string in current font
+  \param[in,out] w call with w=0, or with the prefered width for word wrapping,
+        returns with the width of the string in current font
+  \param[out] h height of string in current font
   \param[in] draw_symbols non-zero to enable @@symbol handling [default=1]
 
   \code
