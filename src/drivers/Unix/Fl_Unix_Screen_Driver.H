@@ -52,7 +52,9 @@ static pollfd *pollfds = 0;
 
 class Fl_Unix_Screen_Driver : public Fl_Screen_Driver {
 public:
+#  if !USE_POLL
   static fd_set fdsets[3];
+#  endif
   static int maxfd;
   static int nfds;
   static struct FD {
