@@ -935,18 +935,37 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Value_Input {} {
-          label {Image Spacing:}
-          callback image_spacing_cb
-          tooltip {Gap between label image and text in pixels} xywh {99 140 49 20} labelfont 1 labelsize 11 maximum 100 step 1 value 14 textsize 11
+        Fl_Group {} {
+          label {Label Margin:}
+          callback propagate_load open
+          xywh {99 150 242 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Horizontal:}
+            callback h_label_margin_cb
+            tooltip {Spacing between label and the horizontally aligned side of the widget.} xywh {99 150 55 20} labelsize 11 align 5 minimum -127 maximum 128 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Vertical:}
+            callback v_label_margin_cb
+            tooltip {Spacing between label and the vertically aligned side of the widget.} xywh {159 150 55 20} labelsize 11 align 5 minimum -127 maximum 127 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Text to Image:}
+            callback image_spacing_cb
+            tooltip {Gap between label image and text in pixels} xywh {219 150 55 20} labelsize 11 align 5 maximum 255 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {281 150 60 20} labelsize 11 hide resizable
+          }
         }
         Fl_Light_Button {} {
           label Compact
           callback compact_cb
-          tooltip {use compact box types for closely set buttons} xywh {99 165 90 20} selection_color 1 labelsize 11
+          tooltip {use compact box types for closely set buttons} xywh {99 175 90 20} selection_color 1 labelsize 11
         }
         Fl_Box {} {
-          xywh {195 195 40 40} labelsize 11 resizable
+          xywh {195 205 40 40} labelsize 11 resizable
         }
       }
       Fl_Group wp_cpp_tab {

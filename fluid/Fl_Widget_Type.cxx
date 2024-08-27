@@ -1985,8 +1985,66 @@ void image_spacing_cb(Fl_Value_Input* i, void* v) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         if (q->o->label_image_spacing() != s) {
           q->o->label_image_spacing(s);
-          if (q->o->parent())
-            q->o->parent()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          q->o->redraw();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
+void h_label_margin_cb(Fl_Value_Input* i, void* v) {
+  int s;
+  if (v == LOAD) {
+    if (!current_widget->is_true_widget()) {
+      i->deactivate();
+      i->value(0);
+    } else {
+      i->activate();
+      i->value(((Fl_Widget_Type*)current_widget)->o->horizontal_label_margin());
+    }
+  } else {
+    int mod = 0;
+    s = int(i->value());
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_true_widget()) {
+        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+        if (q->o->horizontal_label_margin() != s) {
+          q->o->horizontal_label_margin(s);
+          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          q->o->redraw();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
+void v_label_margin_cb(Fl_Value_Input* i, void* v) {
+  int s;
+  if (v == LOAD) {
+    if (!current_widget->is_true_widget()) {
+      i->deactivate();
+      i->value(0);
+    } else {
+      i->activate();
+      i->value(((Fl_Widget_Type*)current_widget)->o->vertical_label_margin());
+    }
+  } else {
+    int mod = 0;
+    s = int(i->value());
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_true_widget()) {
+        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+        if (q->o->vertical_label_margin() != s) {
+          q->o->vertical_label_margin(s);
+          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
           q->o->redraw();
           mod = 1;
         }
@@ -3218,6 +3276,12 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     f.write_c("%s%s->labelsize(%d);\n", f.indent(), var, o->labelsize());
   if (o->labelcolor() != tplate->labelcolor() || subclass())
     write_color(f, "labelcolor", o->labelcolor());
+  if (o->horizontal_label_margin() != tplate->horizontal_label_margin())
+    f.write_c("%s%s->horizontal_label_margin(%d);\n", f.indent(), var, o->horizontal_label_margin());
+  if (o->vertical_label_margin() != tplate->vertical_label_margin())
+    f.write_c("%s%s->vertical_label_margin(%d);\n", f.indent(), var, o->vertical_label_margin());
+  if (o->label_image_spacing() != tplate->label_image_spacing())
+    f.write_c("%s%s->label_image_spacing(%d);\n", f.indent(), var, o->label_image_spacing());
   if (is_a(ID_Valuator_)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
@@ -3397,6 +3461,10 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("labelcolor %d", o->labelcolor());
   if (o->align()!=tplate->align())
     f.write_string("align %d", o->align());
+  if (o->horizontal_label_margin()!=tplate->horizontal_label_margin())
+    f.write_string("h_label_margin %d", o->horizontal_label_margin());
+  if (o->vertical_label_margin()!=tplate->vertical_label_margin())
+    f.write_string("v_label_margin %d", o->vertical_label_margin());
   if (o->label_image_spacing()!=tplate->label_image_spacing())
     f.write_string("image_spacing %d", o->label_image_spacing());
   if (o->when() != tplate->when())
@@ -3568,6 +3636,10 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->labelcolor(x);
   } else if (!strcmp(c,"align")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->align(x);
+  } else if (!strcmp(c,"h_label_margin")) {
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->horizontal_label_margin(x);
+  } else if (!strcmp(c,"v_label_margin")) {
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->vertical_label_margin(x);
   } else if (!strcmp(c,"image_spacing")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->label_image_spacing(x);
   } else if (!strcmp(c,"when")) {

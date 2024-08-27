@@ -82,6 +82,29 @@ void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m)
 /** Draws a label with arbitrary alignment in an arbitrary box. */
 void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
   if (!value && !image) return;
+  const Fl_Align FL_ALIGN_CENTER          = 0x0000;
+  const Fl_Align FL_ALIGN_TOP             = 0x0001;
+  const Fl_Align FL_ALIGN_BOTTOM          = 0x0002;
+  const Fl_Align FL_ALIGN_LEFT            = 0x0004;
+  const Fl_Align FL_ALIGN_RIGHT           = 0x0008;
+  const Fl_Align FL_ALIGN_TOP_LEFT        = FL_ALIGN_TOP | FL_ALIGN_LEFT;
+  const Fl_Align FL_ALIGN_TOP_RIGHT       = FL_ALIGN_TOP | FL_ALIGN_RIGHT;
+  const Fl_Align FL_ALIGN_BOTTOM_LEFT     = FL_ALIGN_BOTTOM | FL_ALIGN_LEFT;
+  const Fl_Align FL_ALIGN_BOTTOM_RIGHT    = FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT;
+  const Fl_Align FL_ALIGN_LEFT_TOP        = 0x0007;
+  const Fl_Align FL_ALIGN_RIGHT_TOP       = 0x000b;
+  const Fl_Align FL_ALIGN_LEFT_BOTTOM     = 0x000d;
+  const Fl_Align FL_ALIGN_RIGHT_BOTTOM    = 0x000e;
+  switch (align&(FL_ALIGN_TOP|FL_ALIGN_BOTTOM)) {
+    case 0: Y += v_margin_; H -= 2*v_margin_; break;
+    case FL_ALIGN_TOP: Y += v_margin_; H -= v_margin_; break;
+    case FL_ALIGN_BOTTOM: H -= v_margin_; break;
+  }
+  switch (align&(FL_ALIGN_LEFT|FL_ALIGN_RIGHT)) {
+    case 0: X += h_margin_; W -= 2*h_margin_; break;
+    case FL_ALIGN_LEFT: X += h_margin_; W -= h_margin_; break;
+    case FL_ALIGN_RIGHT: W -= h_margin_; break;
+  }
   table[type](this, X, Y, W, H, align);
 }
 /**
@@ -95,6 +118,7 @@ void Fl_Label::measure(int& W, int& H) const {
     return;
   }
 
+//  if (W > 0) W -= h_margin_;
   Fl_Label_Measure_F* f = ::measure[type]; if (!f) f = fl_normal_measure;
   f(this, W, H);
 }

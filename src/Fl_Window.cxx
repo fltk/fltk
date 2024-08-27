@@ -526,7 +526,7 @@ void Fl_Window::draw_backdrop() {
     l1.image = image();
     if (!active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
     l1.type = labeltype();
-    l1.spacing = 0;
+    l1.h_margin_ = l1.v_margin_ = l1.spacing = 0;
     l1.draw(0,0,w(),h(),align());
   }
 }

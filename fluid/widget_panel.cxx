@@ -1664,23 +1664,54 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Menu_Button* o
           wp_style_text->end();
         } // Fl_Group* wp_style_text
-        { Fl_Value_Input* o = new Fl_Value_Input(99, 140, 49, 20, "Image Spacing:");
-          o->tooltip("Gap between label image and text in pixels");
+        { Fl_Group* o = new Fl_Group(99, 150, 242, 20, "Label Margin:");
           o->labelfont(1);
           o->labelsize(11);
-          o->maximum(100);
-          o->step(1);
-          o->value(14);
-          o->textsize(11);
-          o->callback((Fl_Callback*)image_spacing_cb);
-        } // Fl_Value_Input* o
-        { Fl_Light_Button* o = new Fl_Light_Button(99, 165, 90, 20, "Compact");
+          o->callback((Fl_Callback*)propagate_load);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fl_Value_Input* o = new Fl_Value_Input(99, 150, 55, 20, "Horizontal:");
+            o->tooltip("Spacing between label and the horizontally aligned side of the widget.");
+            o->labelsize(11);
+            o->minimum(-127);
+            o->maximum(128);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)h_label_margin_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(159, 150, 55, 20, "Vertical:");
+            o->tooltip("Spacing between label and the vertically aligned side of the widget.");
+            o->labelsize(11);
+            o->minimum(-127);
+            o->maximum(127);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)v_label_margin_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Text to Image:");
+            o->tooltip("Gap between label image and text in pixels");
+            o->labelsize(11);
+            o->maximum(255);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)image_spacing_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Box* o = new Fl_Box(281, 150, 60, 20);
+            o->labelsize(11);
+            o->hide();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
+        { Fl_Light_Button* o = new Fl_Light_Button(99, 175, 90, 20, "Compact");
           o->tooltip("use compact box types for closely set buttons");
           o->selection_color((Fl_Color)1);
           o->labelsize(11);
           o->callback((Fl_Callback*)compact_cb);
         } // Fl_Light_Button* o
-        { Fl_Box* o = new Fl_Box(195, 195, 40, 40);
+        { Fl_Box* o = new Fl_Box(195, 205, 40, 40);
           o->labelsize(11);
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o

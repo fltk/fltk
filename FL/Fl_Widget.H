@@ -63,6 +63,10 @@ struct FL_EXPORT Fl_Label {
   Fl_Align align_;
   /** type of label. \see Fl_Labeltype */
   uchar type;
+  /** Spacing between label and the horizontally aligned side of the widget. */
+  signed char h_margin_;
+  /** Spacing between label and the vertically aligned side of the widget. */
+  signed char v_margin_;
   /** Spacing between an image and the label text */
   uchar spacing;
 
@@ -697,6 +701,26 @@ public:
    \return spacing in pixels
    */
   int label_image_spacing() { return label_.spacing; }
+
+  /** Set the spacing between the label and the horizontal edge of the widget.
+   \param[in] px gap in pixels
+   */
+  void horizontal_label_margin(int px) { label_.h_margin_ = (signed char)px; }
+
+  /** Get the spacing between the label and the horizontal edge of the widget.
+   \return px gap in pixels
+   */
+  int horizontal_label_margin() { return label_.h_margin_; }
+
+  /** Set the spacing between the label and the vertical edge of the widget.
+   \param[in] px gap in pixels
+   */
+  void vertical_label_margin(int px) { label_.v_margin_ = (signed char)px; }
+
+  /** Get the spacing between the label and the vertical edge of the widget.
+   \return px gap in pixels
+   */
+  int vertical_label_margin() { return label_.v_margin_; }
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL
