@@ -775,7 +775,7 @@ void fl_rtl_draw(const char *str, int n, int x, int y)
 \par
 Draw a UTF-8 string of length n bytes right to left starting at the given x, y location.
 
-void fl_draw(const char* str, int x, int y, int w, int h, Fl_Align align, Fl_Image* img, int draw_symbols)
+void fl_draw(const char* str, int x, int y, int w, int h, Fl_Align align, Fl_Image* img, int draw_symbols, int spacing)
 
 \par
 Fancy string drawing function which is used to draw all the
@@ -785,7 +785,7 @@ characters to ^X, and aligns inside or against the edges of the
 box described by \p x, \p y, \p w and \p h.
 See Fl_Widget::align() for values for \p align.
 The value \p FL_ALIGN_INSIDE is ignored, as this function always
-prints inside the box.
+prints inside the box. Parameter \p spacing controls the space between text and image.
 
 \par
 If \p img is provided and is not \p NULL, the

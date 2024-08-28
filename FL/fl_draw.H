@@ -975,9 +975,46 @@ inline void fl_rtl_draw(const char *str, int n, int x, int y) {
   fl_graphics_driver->rtl_draw(str, n, x, y);
 }
 FL_EXPORT void fl_measure(const char *str, int &x, int &y, int draw_symbols = 1);
+/**
+  Fancy string drawing function which is used to draw all the labels.
+
+  The string is formatted and aligned inside the passed box.
+  Handles '\\t' and '\\n', expands all other control characters to '^X',
+  and aligns inside or against the edges of the box.
+  See Fl_Widget::align() for values of \p align. The value FL_ALIGN_INSIDE
+  is ignored, as this function always prints inside the box.
+  If \p img is provided and is not \p NULL, the image is drawn above or
+  below the text as specified by the \p align value.
+  The \p draw_symbols argument specifies whether or not to look for symbol
+  names starting with the '\@' character'
+
+ \param[in] str UTF-8 string, can start and end with an '\@sym' symbol,
+            can contain '\\n'
+ \param[in] x,y,w,h bounding box
+ \param[in] align label and image alignment in bounding box
+ \param[in] img pointer to image
+ \param[in] draw_symbols if true, interprete leading and trailing '\@sym'
+            as graphical symbols
+ \param[in] spacing spacing between text and image
+ */
 FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h, 
                        Fl_Align align, Fl_Image *img = 0,
                        int draw_symbols = 1, int spacing = 0);
+/**
+ The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
+ the addition of the \p callthis parameter, which is a pointer to a text drawing
+ function such as fl_draw(const char*, int, int, int) to do the real work.
+
+ \param[in] str UTF-8 string, can start and end with an '\@sym' symbol,
+ can contain '\\n'
+ \param[in] x,y,w,h bounding box
+ \param[in] align label and image alignment in bounding box
+ \param[in] callthis pointer to text drawing function
+ \param[in] img pointer to image
+ \param[in] draw_symbols if true, interprete leading and trailing '\@sym'
+ as graphical symbols
+ \param[in] spacing spacing between text and image
+ */
 FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h, Fl_Align align,
                        void (*callthis)(const char *, int, int, int),
                        Fl_Image *img = 0, int draw_symbols = 1, int spacing = 0);
