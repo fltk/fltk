@@ -43,8 +43,11 @@ class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
 #define GTK_PAPER_NAME_JB5 "jis_b5"
 #define GTK_PAPER_NAME_TABLOID "na_ledger"
 #define GTK_PAPER_NAME_DLE "iso_dl"
-#define GTK_RESPONSE_NONE 0
+#define GTK_RESPONSE_NONE -1
+#define GTK_RESPONSE_REJECT -2
 #define GTK_RESPONSE_OK -5
+#define GTK_RESPONSE_CANCEL -6
+#define GTK_RESPONSE_DELETE_EVENT -4
 #define GTK_PRINT_PAGES_RANGES 2
 class Fl_GTK_Printer_Driver : public Fl_PostScript_File_Device {
 public:
@@ -195,7 +198,7 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
         Fl_PostScript_File_Device::begin_job(output, 0, format, layout);
         response_id = GTK_RESPONSE_OK;
       } else {
-        response_id = GTK_RESPONSE_NONE + GTK_RESPONSE_OK + 1;
+        response_id = GTK_RESPONSE_REJECT;
         if (perr_message) {
           *perr_message = new char[strlen(line)+50];
           snprintf(*perr_message, strlen(line)+50, "Can't open output file %s", line);
@@ -211,7 +214,7 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
         pjob = CALL_GTK(gtk_print_job_new)("FLTK print job", gprinter, psettings, psetup); //2.10
         response_id = GTK_RESPONSE_OK;
       } else {
-        response_id = GTK_RESPONSE_NONE + GTK_RESPONSE_OK + 1;
+        response_id = GTK_RESPONSE_REJECT;
         if (perr_message) {
           *perr_message = new char[strlen(tmpfilename)+50];
           snprintf(*perr_message, strlen(tmpfilename)+50, "Can't create temporary file %s", tmpfilename);
@@ -231,7 +234,9 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
     while (Fl::ready()) Fl::check();
     Fl_Surface_Device::pop_current();
   }
-  return (response_id == GTK_RESPONSE_OK ? 0 : (response_id == GTK_RESPONSE_NONE ? 1 : 2));
+  if (response_id == GTK_RESPONSE_OK) return 0;
+  if (response_id == GTK_RESPONSE_CANCEL || response_id == GTK_RESPONSE_DELETE_EVENT) return 1;
+  return 2;
 }
 
 static void pJobCompleteFunc(Fl_GTK_Printer_Driver::GtkPrintJob *print_job, Fl_GTK_Printer_Driver::gboolean *user_data, const Fl_GTK_Printer_Driver::GError *error) {
