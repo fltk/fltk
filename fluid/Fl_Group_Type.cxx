@@ -100,14 +100,14 @@ void group_cb(Fl_Widget *, void *) {
     fl_message("Only widgets and menu items can be grouped.");
     return;
   }
-  if (Fl_Type::current->is_a(ID::ID_Menu_Item)) {
+  if (Fl_Type::current->is_a(ID_Menu_Item)) {
     group_selected_menuitems();
     return;
   }
   // The group will be created in the parent group of the current widget
   Fl_Type *qq = Fl_Type::current->parent;
   Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
-  while (qq && !qq->is_a(ID::ID_Group)) {
+  while (qq && !qq->is_a(ID_Group)) {
     qq = qq->parent;
   }
   if (!qq) {
@@ -148,7 +148,7 @@ void ungroup_cb(Fl_Widget *, void *) {
     fl_message("Only widgets and menu items can be ungrouped.");
     return;
   }
-  if (Fl_Type::current->is_a(ID::ID_Menu_Item)) {
+  if (Fl_Type::current->is_a(ID_Menu_Item)) {
     ungroup_selected_menuitems();
     return;
   }
