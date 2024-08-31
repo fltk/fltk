@@ -257,10 +257,11 @@ __Edit > Later (F3)__: Move all of the selected widgets one later in order
 among the children of their parent (if possible).
 
 __Edit > Group (F7)__: Create a new Fl_Group and make all the currently
-selected widgets children of it.
+selected widgets children of that group.
 
-__Edit > Ungroup (F8)__: Delete the parent group if all the children of a
-group are selected.
+__Edit > Ungroup (F8)__: Move the selected children of a group out of the
+group and up one level in the hierarchy. If all children of a group are
+selected and moved, the remaining empty group is deleted.
 
 __Edit > Show or Hide Overlays (Ctrl+Shift+O)__: Toggle the display of the
 red overlays off, without changing the selection. This makes it easier to see

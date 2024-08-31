@@ -89,59 +89,95 @@ void fix_group_size(Fl_Type *tt) {
   t->o->resize(X,Y,R-X,B-Y);
 }
 
+extern void group_selected_menuitems();
+
 void group_cb(Fl_Widget *, void *) {
-  // Find the current widget:
-  Fl_Type *qq = Fl_Type::current;
-  while (qq && !qq->is_true_widget()) qq = qq->parent;
-  if (!qq || qq->level < 1 || (qq->level == 1 && qq->is_a(ID_Widget_Class))) {
-    fl_message("Please select widgets to group");
+  if (!Fl_Type::current) {
+    fl_message("No widgets selected.");
+    return;
+  }
+  if (!Fl_Type::current->is_widget()) {
+    fl_message("Only widgets and menu items can be grouped.");
+    return;
+  }
+  if (Fl_Type::current->is_a(ID::ID_Menu_Item)) {
+    group_selected_menuitems();
+    return;
+  }
+  // The group will be created in the parent group of the current widget
+  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  while (qq && !qq->is_a(ID::ID_Group)) {
+    qq = qq->parent;
+  }
+  if (!qq) {
+    fl_message("Can't create a new group here.");
     return;
   }
   undo_checkpoint();
   undo_suspend();
-  Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
-  force_parent = 1;
+  Fl_Type::current = qq;
   Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(kAddAsLastChild));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
-  for (Fl_Type *t = Fl_Type::first; t;) {
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
-      t = t->next; continue;}
+      t = t->next; 
+      continue;
+    }
     Fl_Type *nxt = t->remove();
     t->add(n, kAddAsLastChild);
     t = nxt;
   }
   fix_group_size(n);
+  Fl_Type::current = q;
   n->layout_widget();
   widget_browser->rebuild();
   undo_resume();
   set_modflag(1);
 }
 
+extern void ungroup_selected_menuitems();
+
 void ungroup_cb(Fl_Widget *, void *) {
-  // Find the group:
-  Fl_Type *q = Fl_Type::current;
-  while (q && !q->is_true_widget()) q = q->parent;
-  if (q) q = q->parent;
-  if (!q || q->level < 1 || (q->level == 1 && q->is_a(ID_Widget_Class))) {
-    fl_message("Please select widgets in a group");
+  if (!Fl_Type::current) {
+    fl_message("No widgets selected.");
     return;
   }
-  Fl_Type* n;
-  for (n = q->next; n && n->level > q->level; n = n->next) {
-    if (n->level == q->level+1 && !n->selected) {
-      fl_message("Please select all widgets in group");
-      return;
-    }
+  if (!Fl_Type::current->is_widget()) {
+    fl_message("Only widgets and menu items can be ungrouped.");
+    return;
+  }
+  if (Fl_Type::current->is_a(ID::ID_Menu_Item)) {
+    ungroup_selected_menuitems();
+    return;
+  }
+
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  int q_level = q->level;
+  Fl_Type *qq = Fl_Type::current->parent;
+  while (qq && !qq->is_true_widget()) qq = qq->parent;
+  if (!qq || !qq->is_a(ID_Group)) {
+    fl_message("Only menu widgets inside a group can be ungrouped.");
+    return;
   }
   undo_checkpoint();
   undo_suspend();
-  for (n = q->next; n && n->level > q->level;) {
-    Fl_Type *nxt = n->remove();
-    n->insert(q);
-    n = nxt;
+  Fl_Type::current = qq;
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != q_level || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Fl_Type *nxt = t->remove();
+    t->insert(qq);
+    t = nxt;
   }
-  delete q;
+  if (!qq->next || (qq->next->level <= qq->level)) {
+    qq->remove();
+    delete qq;   // qq has no children that need to be delete
+  }
+  Fl_Type::current = q;
   widget_browser->rebuild();
   undo_resume();
   set_modflag(1);

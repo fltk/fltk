@@ -29,6 +29,8 @@
 #include "Fluid_Image.h"
 #include "custom_widgets.h"
 #include "mergeback.h"
+#include "undo.h"
+#include "widget_browser.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
@@ -174,6 +176,65 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
   if (!reading_file) t->label(submenuflag ? "submenu" : "item");
   return t;
 }
+
+void group_selected_menuitems() {
+  // The group will be created in the parent group of the current menuitem
+  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  if (!qq || !(qq->is_a(ID_Menu_Manager_) || qq->is_a(ID_Submenu))) {
+    fl_message("Can't create a new group here.");
+    return;
+  }
+  undo_checkpoint();
+  undo_suspend();
+  submenuflag = 1;
+  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(kAddAfterCurrent));
+  submenuflag = 0;
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != n->level || t == n || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Fl_Type *nxt = t->remove();
+    t->add(n, kAddAsLastChild);
+    t = nxt;
+  }
+  widget_browser->rebuild();
+  undo_resume();
+  set_modflag(1);
+}
+
+void ungroup_selected_menuitems() {
+  // Find the submenu
+  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  int q_level = q->level;
+  if (!qq || !qq->is_a(ID_Submenu)) {
+    fl_message("Only menu items inside a submenu can be ungrouped.");
+    return;
+  }
+  undo_checkpoint();
+  undo_suspend();
+  Fl_Type::current = qq;
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != q_level || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Fl_Type *nxt = t->remove();
+    t->insert(qq);
+    t = nxt;
+  }
+  if (!qq->next || (qq->next->level <= qq->level)) {
+    qq->remove();
+    delete qq;   // qq has no children that need to be delete
+  }
+  Fl_Type::current = q;
+  widget_browser->rebuild();
+  undo_resume();
+  set_modflag(1);
+}
+
 
 /**
  Create and add a new Checkbox Menu Item node.
