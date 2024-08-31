@@ -64,6 +64,9 @@ static Fl_Fontdesc built_in_table[] = {
 
 FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
 
+// Number of fonts found by Fl::set_fonts(char*) beyond FL_FREE_FONT
+// -1 denotes "not yet initialised"
+Fl_Font Fl_Cairo_Graphics_Driver::font_count_ = -1;
 
 // duplicated from Fl_PostScript.cxx
 struct callback_data {
@@ -799,7 +802,7 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
   cairo_save(cairo_);
   bool need_extend = (cache_w != Ws || cache_h != Hs || (W >= 2 && H >= 2));
   if (need_extend || cx || cy || W < img->w() || H < img->h()) { // clip when necessary
-    cairo_rectangle(cairo_, X - 0.5, Y - 0.5, W + 0.5, H + 0.5);
+    cairo_rectangle(cairo_, X - 0.5, Y - 0.5, W, H);
     cairo_clip(cairo_);
   }
   // remove any scaling and the current "0.5" translation useful for lines but bad for images
@@ -811,7 +814,7 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
     bool condition = Fl_RGB_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR &&
       (fabs(Ws/float(cache_w) - 1) > 0.02 || fabs(Hs/float(cache_h) - 1) > 0.02);
     cairo_pattern_set_filter(pat, condition ? CAIRO_FILTER_GOOD : CAIRO_FILTER_FAST);
-    cairo_pattern_set_extend(pat, CAIRO_EXTEND_PAD);
+    cairo_pattern_set_extend(pat, CAIRO_EXTEND_NONE);
   }
   cairo_matrix_init_scale(&matrix, double(cache_w)/Ws, double(cache_h)/Hs);
   cairo_matrix_translate(&matrix, -Xs , -Ys );
@@ -1103,6 +1106,9 @@ static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
 
 Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
 {
+  // Return immideatly if the fonts were already counted
+  if (font_count_ != -1) 
+    return FL_FREE_FONT + font_count_;
   fl_open_display();
   int n_families, count = 0;
   PangoFontFamily **families;
@@ -1147,6 +1153,7 @@ Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
   }
   // Sort the list into alphabetic order
   qsort(fl_fonts + FL_FREE_FONT, count, sizeof(Fl_Fontdesc), (sort_f_type)font_sort);
+  font_count_ = count;
   return FL_FREE_FONT + count;
 }
 

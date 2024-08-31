@@ -49,6 +49,7 @@ protected:
   cairo_t *cairo_;
   PangoContext *pango_context_;
   PangoLayout *pango_layout_;
+  static Fl_Font font_count_;
 public:
   Fl_Cairo_Graphics_Driver();
   ~Fl_Cairo_Graphics_Driver() FL_OVERRIDE;
