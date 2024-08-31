@@ -1637,7 +1637,8 @@ static void menu_file_new_from_template_cb(Fl_Widget *, void *) { new_project_fr
 static void menu_file_open_cb(Fl_Widget *, void *) { open_project_file(""); }
 static void menu_file_insert_cb(Fl_Widget *, void *) { merge_project_file(""); }
 static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(Fl_String((const char*)v)); }
-
+static void menu_layout_sync_resize_cb(Fl_Menu_ *m, void*) {
+  if (m->mvalue()->value()) Fl_Type::allow_layout = 1; else Fl_Type::allow_layout = 0; }
 /**
  This is the main Fluid menu.
 
@@ -1722,10 +1723,11 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Height",0,(Fl_Callback *)align_widget_cb,(void*)31},
     {"&Both",0,(Fl_Callback *)align_widget_cb,(void*)32},
     {0},
-  {"&Center In Group",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
+  {"&Center In Group",0,0,0,FL_SUBMENU},
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
+  {"Synchronized Resize", 0, (Fl_Callback*)menu_layout_sync_resize_cb, NULL, FL_MENU_TOGGLE|FL_MENU_DIVIDER },
   {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
   {"Presets", 0, layout_suite_marker, (void*)main_layout_submenu_, FL_SUBMENU_POINTER },
   {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },

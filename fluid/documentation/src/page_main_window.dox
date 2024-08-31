@@ -346,6 +346,11 @@ the first selected widget.
 __Layout > Center in Group > ...__: Center all selected widgets relative to
 their parent widget
 
+__Layout > Synchronized Resize__: If unchecked, groups and windows can be
+resized without resizing their children. If set, the layout of the children
+is changed according to their `resize()` settings. Try __Live Resize__ to
+verify the effects before permanently modifying the layout.
+
 __Layout > Grid and Size Settings... (Ctrl+g)__: Display the grid settings
 panel. See \ref setting_layout .
 

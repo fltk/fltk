@@ -5,7 +5,7 @@
 // for interacting with the overlay, which allows the user to
 // select, move, and resize the children widgets.
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -408,7 +408,12 @@ Fl_Window_Type Fl_Window_type;
 
 // Resize from window manager...
 void Overlay_Window::resize(int X,int Y,int W,int H) {
-  Fl_Widget* t = resizable(); resizable(0);
+  undo_checkpoint_once(kUndoWindowResize);
+
+  Fl_Widget* t = resizable();
+  if (Fl_Type::allow_layout == 0) {
+    resizable(0);
+  }
 
   // do not set the mod flag if the window was not resized. In FLUID, all
   // windows are opened without a given x/y position, so modifying x/y
