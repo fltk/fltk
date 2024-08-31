@@ -29,9 +29,6 @@ set(CMAKE_REQUIRED_QUIET 1)
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 
-# FIXME: replace check_function_exists() with check_symbol_exists()
-# FIXME: ... and remove the next line when done (Issue #1049)
-include(CheckFunctionExists)
 
 macro(fl_find_header VAR HEADER)
   check_include_files("${HEADER}" ${VAR})
@@ -257,40 +254,40 @@ if(HAVE_DLFCN_H)
 endif(HAVE_DLFCN_H)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_DL_LIBS})
-check_function_exists(dlsym                     HAVE_DLSYM)
+check_symbol_exists(dlsym       "dlfcn.h"            HAVE_DLSYM)
 set(CMAKE_REQUIRED_LIBRARIES)
 
-check_function_exists(localeconv                HAVE_LOCALECONV)
+check_symbol_exists(localeconv  "locale.h"           HAVE_LOCALECONV)
 
 if(LIB_png)
   set(CMAKE_REQUIRED_LIBRARIES ${LIB_png})
-  check_function_exists(png_get_valid           HAVE_PNG_GET_VALID)
-  check_function_exists(png_set_tRNS_to_alpha   HAVE_PNG_SET_TRNS_TO_ALPHA)
+  check_symbol_exists(png_get_valid          "png.h"   HAVE_PNG_GET_VALID)
+  check_symbol_exists(png_set_tRNS_to_alpha  "png.h"   HAVE_PNG_SET_TRNS_TO_ALPHA)
   set(CMAKE_REQUIRED_LIBRARIES)
 endif(LIB_png)
 
-check_function_exists(scandir                   HAVE_SCANDIR)
-check_function_exists(snprintf                  HAVE_SNPRINTF)
+check_symbol_exists(scandir       "dirent.h"          HAVE_SCANDIR)
+check_symbol_exists(snprintf      "stdio.h"           HAVE_SNPRINTF)
 
 # not really true but we convert strcasecmp calls to _stricmp calls in flstring.h
 if(MSVC)
    set(HAVE_STRCASECMP 1)
 endif(MSVC)
 
-check_function_exists(strcasecmp                HAVE_STRCASECMP)
+check_symbol_exists(strcasecmp   "strings.h"     HAVE_STRCASECMP)
 
-check_function_exists(strlcat                   HAVE_STRLCAT)
-check_function_exists(strlcpy                   HAVE_STRLCPY)
-check_function_exists(vsnprintf                 HAVE_VSNPRINTF)
+check_symbol_exists(strlcat      "string.h"      HAVE_STRLCAT)
+check_symbol_exists(strlcpy      "string.h"      HAVE_STRLCPY)
+check_symbol_exists(vsnprintf    "stdio.h"       HAVE_VSNPRINTF)
 
-check_function_exists(setenv                    HAVE_SETENV)
+check_symbol_exists(setenv       "stdlib.h"      HAVE_SETENV)
 
 # Windows doesn't require '-lm' for trunc(), other platforms do
 if(LIB_m AND NOT WIN32)
   set(CMAKE_REQUIRED_LIBRARIES ${LIB_m})
 endif()
 
-check_symbol_exists(trunc       "math.h"        HAVE_TRUNC)
+check_symbol_exists(trunc        "math.h"        HAVE_TRUNC)
 
 set(CMAKE_REQUIRED_LIBRARIES)
 

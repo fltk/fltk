@@ -424,7 +424,7 @@ option(FLTK_USE_POLL "use poll if available" OFF)
 mark_as_advanced(FLTK_USE_POLL)
 
 if(FLTK_USE_POLL)
-  check_function_exists(poll USE_POLL)
+  check_symbol_exists(poll   "poll.h"   USE_POLL)
 endif(FLTK_USE_POLL)
 
 #######################################################################
@@ -699,7 +699,7 @@ if(OPENGL_FOUND)
   # check if function glXGetProcAddressARB exists
   set(TEMP_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
   set(CMAKE_REQUIRED_LIBRARIES ${OPENGL_LIBRARIES})
-  check_function_exists(glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
+  check_symbol_exists(glXGetProcAddressARB  "glx.h"   HAVE_GLXGETPROCADDRESSARB)
   set(CMAKE_REQUIRED_LIBRARIES ${TEMP_REQUIRED_LIBRARIES})
   unset(TEMP_REQUIRED_LIBRARIES)
 endif(OPENGL_FOUND)
