@@ -802,8 +802,10 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
   cairo_save(cairo_);
   bool need_extend = (cache_w != Ws || cache_h != Hs || (W >= 2 && H >= 2));
   if (need_extend || cx || cy || W < img->w() || H < img->h()) { // clip when necessary
+    cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
     cairo_rectangle(cairo_, X - 0.5, Y - 0.5, W, H);
     cairo_clip(cairo_);
+    cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   }
   // remove any scaling and the current "0.5" translation useful for lines but bad for images
   matrix.xx = matrix.yy = 1;
@@ -814,7 +816,7 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
     bool condition = Fl_RGB_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR &&
       (fabs(Ws/float(cache_w) - 1) > 0.02 || fabs(Hs/float(cache_h) - 1) > 0.02);
     cairo_pattern_set_filter(pat, condition ? CAIRO_FILTER_GOOD : CAIRO_FILTER_FAST);
-    cairo_pattern_set_extend(pat, CAIRO_EXTEND_NONE);
+    cairo_pattern_set_extend(pat, CAIRO_EXTEND_PAD);
   }
   cairo_matrix_init_scale(&matrix, double(cache_w)/Ws, double(cache_h)/Hs);
   cairo_matrix_translate(&matrix, -Xs , -Ys );
