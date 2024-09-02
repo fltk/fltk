@@ -1088,7 +1088,7 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o
-        { wp_gui_alignment = new Fl_Group(95, 115, 310, 20, "Alignment:");
+        { wp_gui_alignment = new Fl_Group(95, 115, 312, 20, "Alignment:");
           wp_gui_alignment->labelfont(1);
           wp_gui_alignment->labelsize(11);
           wp_gui_alignment->callback((Fl_Callback*)propagate_load);
@@ -1158,7 +1158,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)align_position_cb);
             o->menu(menu_1);
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(384, 115, 20, 20, "@-3square");
+          { Fl_Button* o = new Fl_Button(384, 115, 22, 20, "@-3square");
             o->tooltip("Show the label inside the widget.");
             o->type(1);
             o->selection_color(FL_INACTIVE_COLOR);
@@ -1166,7 +1166,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelcolor(FL_INACTIVE_COLOR);
             o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_INSIDE));
           } // Fl_Button* o
-          { Fl_Box* o = new Fl_Box(404, 115, 0, 20);
+          { Fl_Box* o = new Fl_Box(406, 115, 1, 20);
             o->labelsize(11);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
