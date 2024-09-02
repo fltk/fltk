@@ -332,7 +332,9 @@ void Fl_WinAPI_Screen_Driver::get_system_colors()
 
 int Fl_WinAPI_Screen_Driver::compose(int &del) {
   unsigned char ascii = (unsigned char)Fl::e_text[0];
-  int condition = (Fl::e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128) ;
+  /* WARNING: The [AltGr] key on international keyboards falsely set FL_CTRL! */
+  /* More investigation needed. */
+  int condition = (Fl::e_state & (FL_ALT | FL_META /* | FL_CTRL */ )) && !(ascii & 128) ;
   if (condition) { // this stuff is to be treated as a function key
     del = 0;
     return 0;
