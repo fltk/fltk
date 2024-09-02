@@ -1158,7 +1158,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)align_position_cb);
             o->menu(menu_1);
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(384, 115, 22, 20, "@-3square");
+          { Fl_Button* o = new Fl_Button(384, 115, 20, 20, "@-3square");
             o->tooltip("Show the label inside the widget.");
             o->type(1);
             o->selection_color(FL_INACTIVE_COLOR);

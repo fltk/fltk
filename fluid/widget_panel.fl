@@ -333,7 +333,7 @@ Function {make_widget_panel()} {
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open selected
-    xywh {430 217 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {372 208 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs widget_tabs {
@@ -560,7 +560,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
             label {@-3square}
             user_data {(fl_intptr_t)FL_ALIGN_INSIDE}
             callback align_cb
-            tooltip {Show the label inside the widget.} xywh {384 115 22 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
+            tooltip {Show the label inside the widget.} xywh {384 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
           }
           Fl_Box {} {
             xywh {406 115 1 20} labelsize 11 resizable
