@@ -85,16 +85,17 @@ set(FL_ABI_VERSION ${FLTK_ABI_VERSION})
 #  Note: this might be handled better by the 'MSVC_RUNTIME_LIBRARY'
 #  target property for each target rather than setting a global
 #  CMake variable - but this version does the latter.
+#  This also applies when using LLVM/clang on Windows (#1058).
 #######################################################################
 
-if(MSVC)
+if(WIN32 AND NOT MINGW AND NOT MSYS)
   option(FLTK_MSVC_RUNTIME_DLL "use MSVC Runtime-DLL (/MDx)" ON)
   if(FLTK_MSVC_RUNTIME_DLL)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
   else()
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   endif()
-endif(MSVC)
+endif(WIN32 AND NOT MINGW AND NOT MSYS)
 
 #######################################################################
 
