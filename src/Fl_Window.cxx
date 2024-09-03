@@ -324,6 +324,44 @@ void Fl_Window::default_icons(const Fl_RGB_Image *icons[], int count) {
   Fl::screen_driver()->default_icons(icons, count);
 }
 
+/** Use default icons associated to the executable.
+
+  Right now only for Windows where it picks the default icon from the
+  exe's resources.
+
+  To do: pick default icon from inside a .app bundle on macOS.
+*/
+void Fl_Window::use_default_icon() {
+#ifdef _WIN32
+  HICON *pbig, *psmall, big_icons[1], small_icons[1];
+  wchar_t path[FL_PATH_MAX];
+
+  big_icons[0] = NULL;
+  small_icons[0] = NULL;
+  pbig = big_icons;
+  psmall = small_icons;
+
+  if (default_big_icon != NULL)
+    DestroyIcon(default_big_icon);
+  if (default_small_icon != NULL)
+    DestroyIcon(default_small_icon);
+
+  // use exe's/module's icon resource to set window default icons
+  if (GetModuleFileNameW(NULL, path, FL_PATH_MAX) == 0)
+    return;
+  if (ExtractIconExW(path, 0, pbig, psmall, 1) == 0)
+    return;
+
+  default_big_icon = NULL;
+  default_small_icon = NULL;
+
+  if (big_icons[0] != NULL)
+    default_big_icon = big_icons[0];
+  if (small_icons[0] != NULL)
+    default_small_icon = small_icons[0];
+#endif
+}
+
 /** Sets or resets a single window icon.
 
   A window icon \e can be changed while the window is shown, but this
