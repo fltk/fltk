@@ -493,8 +493,11 @@ void menuwindow::autoscroll(int n) {
 
   int xx, ww;
   Fl_Window_Driver::driver(this)->menu_window_area(xx, scr_y, ww, scr_h);
-  if (Y <= scr_y) Y = scr_y-Y+10;
-  else {
+  if (n==0 && Y <= scr_y + itemheight) {
+    Y = scr_y - Y + 10;
+  } else if (Y <= scr_y + itemheight) {
+    Y = scr_y - Y + 10 + itemheight;
+  } else {
     Y = Y+itemheight-scr_h-scr_y;
     if (Y < 0) return;
     Y = -Y-10;
@@ -896,14 +899,7 @@ int menuwindow::handle_part1(int e) {
           return 0;
         }
       }
-      if ( (!pp.menubar) && (my == 0) && (item > 0) ) {
-        // Allow vertical scrolling when the mouse reaches the top of the screen.
-        // TODO: the top of many screens is not 0 (see Fl::screen_work_area
-        // and Fl::screen_xywh)
-        setitem(mymenu, item - 1);
-      } else {
-        setitem(mymenu, item);
-      }
+      setitem(mymenu, item);
       if (e == FL_PUSH) {
         if (pp.current_item && pp.current_item->submenu() // this is a menu title
             && item != pp.p[mymenu]->selected // and it is not already on
