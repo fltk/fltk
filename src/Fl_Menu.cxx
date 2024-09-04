@@ -896,8 +896,14 @@ int menuwindow::handle_part1(int e) {
           return 0;
         }
       }
-      if (my == 0 && item > 0) setitem(mymenu, item - 1);
-      else setitem(mymenu, item);
+      if ( (!pp.menubar) && (my == 0) && (item > 0) ) {
+        // Allow vertical scrolling when the mouse reaches the top of the screen.
+        // TODO: the top of many screens is not 0 (see Fl::screen_work_area
+        // and Fl::screen_xywh)
+        setitem(mymenu, item - 1);
+      } else {
+        setitem(mymenu, item);
+      }
       if (e == FL_PUSH) {
         if (pp.current_item && pp.current_item->submenu() // this is a menu title
             && item != pp.p[mymenu]->selected // and it is not already on
