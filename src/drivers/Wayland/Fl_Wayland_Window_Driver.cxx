@@ -1788,7 +1788,6 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
     xid_rect->win->redraw();
   } else {
     xid_rect->win->Fl_Widget::resize(xid_rect->X, xid_rect->Y, xid_rect->W, xid_rect->H);
-    wl_surface_commit(xid_rect->xid->wl_surface);
   }
   delete xid_rect;
 }
@@ -1887,18 +1886,14 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         xdg_surface_set_window_geometry(fl_win->xdg_surface, 0, 0, W, H);
         //printf("xdg_surface_set_window_geometry: %dx%d\n",W, H);
       }
-    } else {
-      if (!in_handle_configure && xdg_toplevel()) {
-        // Wayland doesn't seem to provide a reliable way for the app to set the
-        // window position on screen. This is functional when the move is mouse-driven.
-        Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-        if (Fl::e_state == FL_BUTTON1) {
-          xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
-          Fl::pushed(NULL);
-          Fl::e_state = 0;
-        }
-      } else if (fl_win->kind == SUBWINDOW && fl_win->subsurface) {
-        wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
+    } else if (!in_handle_configure && xdg_toplevel()) {
+      // Wayland doesn't seem to provide a reliable way for the app to set the
+      // window position on screen. This is functional when the move is mouse-driven.
+      Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+      if (Fl::e_state == FL_BUTTON1) {
+        xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
+        Fl::pushed(NULL);
+        Fl::e_state = 0;
       }
     }
   }
@@ -1920,12 +1915,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         wl_callback_add_listener(parent_xid->frame_cb, &surface_frame_listener, xid_rect);
         xid_rect->X = X; xid_rect->Y = Y; xid_rect->W = W; xid_rect->H = H;
         xid_rect->need_resize = is_a_resize;
+        wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
         wl_surface_commit(parent_xid->wl_surface);
-      } else if (xid_rect) {
-        // update the active frame callback with new X,Y,W,H values
-        xid_rect->X = X; xid_rect->Y = Y; xid_rect->W = W; xid_rect->H = H;
-        xid_rect->need_resize |= is_a_resize;
-      } else {
+      } else if (!xid_rect) {
         wl_surface_commit(parent_xid->wl_surface);
       }
     }
