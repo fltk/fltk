@@ -1351,8 +1351,13 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
-  int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
-    XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
+  int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X;
+  if ( !(origin_win->fullscreen_active() &&
+        Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
+        pWindow->menu_window() && !menu_offset_y(pWindow) && !is_floating_title(pWindow)) ) {
+    // Condition above is only to bypass Mutter bug for fullscreen windows (see #1061)
+    constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
+  }
   if (Fl_Window_Driver::menu_bartitle(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
     constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
   }
