@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1157,6 +1157,7 @@ static const struct {
   {0xdc,        '\\'},
   {0xdd,        ']'},
   {0xde,        '\''},
+  {VK_OEM_PLUS,  '+'},
   {VK_OEM_102,  FL_Iso_Key}
 };
 static int ms2fltk(WPARAM vk, int extended) {
@@ -1439,6 +1440,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       case WM_SYSKEYUP:
         // save the keysym until we figure out the characters:
         Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam, lParam & (1 << 24));
+        // Kludge to allow recognizing ctrl+'-' on keyboards with digits in uppercase positions (e.g. French)
+        if (Fl::e_keysym == '6' && (VkKeyScanA('-') & 0xff) == '6') {
+          Fl::e_keysym = '-';
+        }
         // See if TranslateMessage turned it into a WM_*CHAR message:
         if (PeekMessageW(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE)) {
           uMsg = fl_msg.message;
