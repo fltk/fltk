@@ -234,7 +234,7 @@ public:
   int msgnum();
 
   /** Return 1 if the Type can have children. */
-  virtual int is_parent() const {return 0;}
+  virtual int can_have_children() const {return 0;}
   /** Return 1 if the type is a widget or menu item. */
   virtual int is_widget() const {return 0;}
   /** Return 1 if the type is a widget but not a menu item. */

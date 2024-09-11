@@ -60,7 +60,7 @@ public:
   const char *title() FL_OVERRIDE {
     return name() ? name() : "main()";
   }
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Function; }
@@ -113,7 +113,7 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "codeblock";}
   int is_code_block() const FL_OVERRIDE {return 1;}
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE { return -1; }
   ID id() const FL_OVERRIDE { return ID_CodeBlock; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_CodeBlock) ? true : super::is_a(inID); }
@@ -193,7 +193,7 @@ public:
   const char *type_name() FL_OVERRIDE {return "declblock";}
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_DeclBlock; }
@@ -242,7 +242,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "class";}
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_class() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;

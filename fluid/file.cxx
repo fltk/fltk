@@ -384,7 +384,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         t->read_property(*this, cc);
       }
 
-      if (!t->is_parent()) continue;
+      if (!t->can_have_children()) continue;
       c = read_word(1);
       if (strcmp(c,"{")) {
         read_error("Missing child list for %s\n",t->title());

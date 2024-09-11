@@ -89,7 +89,7 @@ void Fl_Input_Choice_Type::build_menu() {
   int n = 0;
   Fl_Type* q;
   for (q = next; q && q->level > level; q = q->next) {
-    if (q->is_parent()) n++; // space for null at end of submenu
+    if (q->can_have_children()) n++; // space for null at end of submenu
     n++;
   }
   if (!n) {
@@ -136,7 +136,7 @@ void Fl_Input_Choice_Type::build_menu() {
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());
-      if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
+      if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
         (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
@@ -157,7 +157,7 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
   Fl_Type* q = Fl_Type::current;
   Fl_Type* p = q;
   if (p) {
-    if ( (force_parent && q->is_a(ID_Menu_Item)) || !q->is_parent()) p = p->parent;
+    if ( (force_parent && q->is_a(ID_Menu_Item)) || !q->can_have_children()) p = p->parent;
   }
   force_parent = 0;
   if (!p || !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
@@ -295,7 +295,7 @@ const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
     // be sure to count the {0} that ends a submenu:
     if (t->level > t->next->level) i += (t->level - t->next->level);
     // detect empty submenu:
-    else if (t->level == t->next->level && t->is_parent()) i++;
+    else if (t->level == t->next->level && t->can_have_children()) i++;
     t = t->prev;
     i++;
   }
@@ -414,7 +414,7 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
   Fl_Type* t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
   for (Fl_Type* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
     ((Fl_Menu_Item_Type*)q)->write_item(f);
-    int thislevel = q->level; if (q->is_parent()) thislevel++;
+    int thislevel = q->level; if (q->can_have_children()) thislevel++;
     int nextlevel =
       (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : t->level+1;
     while (thislevel > nextlevel) {f.write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
@@ -448,7 +448,7 @@ int Fl_Menu_Item_Type::flags() {
   if (((Fl_Button*)o)->value()) i |= FL_MENU_VALUE;
   if (!o->active()) i |= FL_MENU_INACTIVE;
   if (!o->visible()) i |= FL_MENU_INVISIBLE;
-  if (is_parent()) {
+  if (can_have_children()) {
     if (user_data() == NULL) i |= FL_SUBMENU;
     else i |= FL_SUBMENU_POINTER;
   }
@@ -640,7 +640,7 @@ void Fl_Menu_Base_Type::build_menu() {
   int n = 0;
   Fl_Type* q;
   for (q = next; q && q->level > level; q = q->next) {
-    if (q->is_parent()) n++; // space for null at end of submenu
+    if (q->can_have_children()) n++; // space for null at end of submenu
     n++;
   }
   if (!n) {
@@ -687,7 +687,7 @@ void Fl_Menu_Base_Type::build_menu() {
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());
-      if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
+      if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
         (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;

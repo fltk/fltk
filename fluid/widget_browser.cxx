@@ -337,7 +337,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   else fl_color(FL_FOREGROUND_COLOR);
 
   // Width=10: Draw the triangle that indicates possible children
-  if (l->is_parent()) {
+  if (l->can_have_children()) {
     X = X - 18 - 13;
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
@@ -507,7 +507,7 @@ int Widget_Browser::handle(int e) {
     l = (Fl_Type*)find_item(Fl::event_y());
     if (l) {
       X += 3 + 12*l->level - hposition();
-      if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) {
+      if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) {
         title = pushedtitle = l;
         redraw_line(l);
         return 1;
@@ -519,7 +519,7 @@ int Widget_Browser::handle(int e) {
     l = (Fl_Type*)find_item(Fl::event_y());
     if (l) {
       X += 3 + 12*l->level - hposition();
-      if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) ;
+      if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) ;
       else l = 0;
     }
     if (l != pushedtitle) {
@@ -546,7 +546,7 @@ int Widget_Browser::handle(int e) {
         l->open_ = 1;
         for (Fl_Type*k=l->next; k&&k->level>l->level;) {
           k->visible = 1;
-          if (k->is_parent() && !k->open_) {
+          if (k->can_have_children() && !k->open_) {
             Fl_Type *j;
             for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
             k = j;

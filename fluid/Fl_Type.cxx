@@ -713,7 +713,7 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
   if (f.write_codeview()) proj1_end = (int)ftell(f.file());
-  if (!is_parent()) {
+  if (!can_have_children()) {
     if (f.write_codeview()) proj2_end = (int)ftell(f.file());
     return;
   }
@@ -757,7 +757,7 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
     f.write_word("comment");
     f.write_word(comment());
   }
-  if (is_parent() && open_) f.write_word("open");
+  if (can_have_children() && open_) f.write_word("open");
   if (selected) f.write_word("selected");
 }
 

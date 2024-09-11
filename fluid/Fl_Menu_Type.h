@@ -105,7 +105,7 @@ public:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return 0;}
   const char* type_name() FL_OVERRIDE {return "Submenu";}
   const char* alt_type_name() FL_OVERRIDE {return "fltk::ItemGroup";}
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_button() const FL_OVERRIDE {return 0;} // disable shortcut
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
   // changes to submenu must propagate up so build_menu is called
@@ -133,7 +133,7 @@ public:
     w = layout->textsize_not_null() * 6 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int menusize;
   virtual void build_menu() = 0;
   Fl_Menu_Manager_Type() : Fl_Widget_Type() {menusize = 0;}
@@ -205,7 +205,7 @@ class Fl_Menu_Base_Type : public Fl_Menu_Manager_Type
     return 1;
   }
 public:
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   void build_menu() FL_OVERRIDE;
   ~Fl_Menu_Base_Type() {
     if (menusize) delete[] (Fl_Menu_Item*)(((Fl_Menu_*)o)->menu());
