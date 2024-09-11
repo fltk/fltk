@@ -150,7 +150,7 @@ void Fl_Input_Choice_Type::build_menu() {
  \return new Menu Item node
  */
 Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
-  return make(0, strategy);
+  return Fl_Menu_Item_Type::make(0, strategy);
 }
 
 /**
@@ -261,7 +261,7 @@ void ungroup_selected_menuitems() {
  \return new node
  */
 Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
-    return Fl_Menu_Item_Type::make(FL_MENU_TOGGLE, strategy);
+  return Fl_Menu_Item_Type::make(FL_MENU_TOGGLE, strategy);
 }
 
 /**
@@ -279,8 +279,7 @@ Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
  \return new node
  */
 Fl_Type *Fl_Submenu_Type::make(Strategy strategy) {
-  Fl_Type* t = Fl_Menu_Item_Type::make(FL_SUBMENU, strategy);
-  return t;
+  return Fl_Menu_Item_Type::make(FL_SUBMENU, strategy);
 }
 
 Fl_Menu_Item_Type Fl_Menu_Item_type;
