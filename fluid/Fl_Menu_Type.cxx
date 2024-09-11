@@ -54,9 +54,6 @@ Fl_Menu_Item menu_item_type_menu[] = {
   {"Radio",0,0,(void*)FL_MENU_RADIO},
   {0}};
 
-static char submenuflag;
-static uchar menuitemtype = 0;
-
 static void delete_dependents(Fl_Menu_Item *m) {
   if (!m)
     return;
@@ -153,6 +150,16 @@ void Fl_Input_Choice_Type::build_menu() {
  \return new Menu Item node
  */
 Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
+  return make(0, strategy);
+}
+
+/**
+ Create an add a specific Menu Item node.
+ \param[in] flags set to 0, FL_MENU_RADIO, FL_MENU_TOGGLE, or FL_SUBMENU
+ \param[in] strategy add after current or as last child
+ \return new Menu Item node
+ */
+Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
   // Find the current menu item:
   Fl_Type* q = Fl_Type::current;
   Fl_Type* p = q;
@@ -168,28 +175,40 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
     o = new Fl_Button(0,0,100,20); // create template widget
   }
 
-  Fl_Menu_Item_Type* t = submenuflag ? new Fl_Submenu_Type() : new Fl_Menu_Item_Type();
+  Fl_Menu_Item_Type* t = NULL;
+  if (flags==FL_SUBMENU) {
+    t = new Fl_Submenu_Type();
+  } else {
+    t = new Fl_Menu_Item_Type();
+  }
   t->o = new Fl_Button(0,0,100,20);
-  t->o->type(menuitemtype);
+  t->o->type(flags);
   t->factory = this;
   t->add(p, strategy);
-  if (!reading_file) t->label(submenuflag ? "submenu" : "item");
+  if (!reading_file) {
+    if (flags==FL_SUBMENU) {
+      t->label("submenu");
+    } else {
+      t->label("item");
+    }
+  }
   return t;
 }
 
 void group_selected_menuitems() {
   // The group will be created in the parent group of the current menuitem
+  if (!Fl_Type::current->is_a(ID_Menu_Item)) {
+    return;
+  }
+  Fl_Menu_Item_Type *q = static_cast<Fl_Menu_Item_Type*>(Fl_Type::current);
   Fl_Type *qq = Fl_Type::current->parent;
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
   if (!qq || !(qq->is_a(ID_Menu_Manager_) || qq->is_a(ID_Submenu))) {
-    fl_message("Can't create a new group here.");
+    fl_message("Can't create a new submenu here.");
     return;
   }
   undo_checkpoint();
   undo_suspend();
-  submenuflag = 1;
-  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(kAddAfterCurrent));
-  submenuflag = 0;
+  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(FL_SUBMENU, kAddAfterCurrent));
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
       t = t->next;
@@ -242,10 +261,7 @@ void ungroup_selected_menuitems() {
  \return new node
  */
 Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
-    menuitemtype = FL_MENU_TOGGLE;
-    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
-    menuitemtype = 0;
-    return t;
+    return Fl_Menu_Item_Type::make(FL_MENU_TOGGLE, strategy);
 }
 
 /**
@@ -254,10 +270,7 @@ Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
  \return new node
  */
 Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
-    menuitemtype = FL_MENU_RADIO;
-    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
-    menuitemtype = 0;
-    return t;
+  return Fl_Menu_Item_Type::make(FL_MENU_RADIO, strategy);
 }
 
 /**
@@ -266,9 +279,7 @@ Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
  \return new node
  */
 Fl_Type *Fl_Submenu_Type::make(Strategy strategy) {
-  submenuflag = 1;
-  Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
-  submenuflag = 0;
+  Fl_Type* t = Fl_Menu_Item_Type::make(FL_SUBMENU, strategy);
   return t;
 }
 

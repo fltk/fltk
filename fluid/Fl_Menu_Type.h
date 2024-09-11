@@ -51,6 +51,7 @@ public:
   const char* type_name() FL_OVERRIDE {return "MenuItem";}
   const char* alt_type_name() FL_OVERRIDE {return "fltk::Item";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
+  Fl_Type* make(int flags, Strategy strategy);
   int is_button() const FL_OVERRIDE {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return 0;}
   Fl_Widget_Type* _make() FL_OVERRIDE {return 0;}

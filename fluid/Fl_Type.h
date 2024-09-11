@@ -29,6 +29,22 @@ class Fl_Window_Type;
 class Fd_Project_Reader;
 class Fd_Project_Writer;
 
+/**
+ Declare where a new type is placed in the hierarchy.
+
+ Note that a type can also be the start of a hierarchy of types. In that case,
+
+ \see Fl_Type *Fl_..._Type::make(Strategy strategy) calls `add()`
+ Add single Type:
+    Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open)
+    Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open)
+    Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy)
+ Add a hierarchy of Types
+    void Fl_Type::add(Fl_Type *p, Strategy strategy)
+    int read_file(const char *filename, int merge, Strategy strategy)
+    Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options)
+    int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
+ */
 typedef enum {
   kAddAsLastChild = 0,
   kAddAfterCurrent
