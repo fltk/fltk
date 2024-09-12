@@ -1046,7 +1046,7 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
  */
 static void cocoaMouseHandler(NSEvent *theEvent)
 {
-  static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
+  static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2, FL_Button+8, FL_Button+9 };
   static int px, py;
 
   fl_lock_function();
