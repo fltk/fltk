@@ -1095,7 +1095,7 @@ int Fl_Input_::undo() {
 /**
  Check if the last operation can be undone.
 
- \return true if the widget can unod the last change
+ \return true if the widget can undo the last change
  */
 bool Fl_Input_::can_undo() const {
   return (undo_->undocut || undo_->undoinsert);
