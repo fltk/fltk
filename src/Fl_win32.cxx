@@ -1347,6 +1347,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       case WM_RBUTTONUP:
         mouse_event(window, 2, 3, wParam, lParam);
         return 0;
+      case WM_XBUTTONDOWN: {
+        int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 8 : 9;
+        mouse_event(window, 0, xbutton, wParam, lParam);
+        return 0;
+      }
+      case WM_XBUTTONDBLCLK: {
+        int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 8 : 9;
+        mouse_event(window, 1, xbutton, wParam, lParam);
+        return 0;
+      }
+      case WM_XBUTTONUP: {
+        int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 8 : 9;
+        mouse_event(window, 2, xbutton, wParam, lParam);
+        return 0;
+      }
 
       case WM_MOUSEMOVE:
 #ifdef USE_TRACK_MOUSE
