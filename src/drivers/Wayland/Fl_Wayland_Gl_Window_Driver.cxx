@@ -209,6 +209,11 @@ void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context
       Fl::error("eglMakeCurrent() failed\n");
     }
   }
+  if (!(mode() & FL_ALPHA)) { // useful at least for Linux on MacBook hardware
+    GLfloat vals[4];
+    glGetFloatv(GL_COLOR_CLEAR_VALUE, vals);
+    if (vals[3] == 0.) glClearColor(vals[0], vals[1], vals[2], 1.);
+  }
 }
 
 /* CONTROL_LEAKING_SUB_GL_WINDOWS

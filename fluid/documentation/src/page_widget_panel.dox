@@ -212,6 +212,11 @@
  using hierarchies of groups. Resizing of a window or group can be tested
  using the *live resize* button.
 
+ Note that the *Resizable* indicator is ambiguous when a window is selected.
+ Making a window resizable will resize all children proportionally. Setting
+ a child of a window will make that child the center of the resize operation.
+ In both cases, the *Resizable* indicator of the window will be set.
+
  The *Hotspot* button causes the parent window to be
  positioned with that widget centered on the mouse. This
  position is determined when the FLUID function is called,
