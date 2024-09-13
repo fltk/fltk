@@ -1351,13 +1351,8 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
-  int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X;
-  if ( !(origin_win->fullscreen_active() &&
-        Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
-        pWindow->menu_window() && !menu_offset_y(pWindow) && !is_floating_title(pWindow)) ) {
-    // Condition above is only to bypass Mutter bug for fullscreen windows (see #1061)
-    constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
-  }
+  int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
+    XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
   if (Fl_Window_Driver::menu_bartitle(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
     constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
   }
@@ -1891,14 +1886,18 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         xdg_surface_set_window_geometry(fl_win->xdg_surface, 0, 0, W, H);
         //printf("xdg_surface_set_window_geometry: %dx%d\n",W, H);
       }
-    } else if (!in_handle_configure && xdg_toplevel()) {
-      // Wayland doesn't seem to provide a reliable way for the app to set the
-      // window position on screen. This is functional when the move is mouse-driven.
-      Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-      if (Fl::e_state == FL_BUTTON1) {
-        xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
-        Fl::pushed(NULL);
-        Fl::e_state = 0;
+    } else {
+      if (!in_handle_configure && xdg_toplevel()) {
+        // Wayland doesn't seem to provide a reliable way for the app to set the
+        // window position on screen. This is functional when the move is mouse-driven.
+        Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+        if (Fl::e_state == FL_BUTTON1) {
+          xdg_toplevel_move(xdg_toplevel(), scr_driver->seat->wl_seat, scr_driver->seat->serial);
+          Fl::pushed(NULL);
+          Fl::e_state = 0;
+        }
+      } else if (pWindow->as_gl_window() && fl_win->kind == SUBWINDOW && fl_win->subsurface) {
+        wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
       }
     }
   }
