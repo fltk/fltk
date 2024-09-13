@@ -1908,7 +1908,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         wl_callback_destroy(fl_win->frame_cb);
         fl_win->frame_cb = NULL;
       }
-      Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
+      if (parent_xid->buffer) Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
     } else {
       if (!(parent && parent->damage()) && !parent_xid->frame_cb) {
         // use the frame callback mechanism and memorize current X,Y,W,H values
