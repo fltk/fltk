@@ -46,7 +46,8 @@ class Fd_Project_Writer;
     int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
  */
 typedef enum {
-  kAddAsLastChild = 0,
+  kAddAsFirstChild = 0,
+  kAddAsLastChild,
   kAddAfterCurrent
 } Strategy;
 
@@ -91,6 +92,13 @@ void select_all_cb(Fl_Widget *,void *);
 void select_none_cb(Fl_Widget *,void *);
 void earlier_cb(Fl_Widget*,void*);
 void later_cb(Fl_Widget*,void*);
+
+#ifndef NDEBUG
+void print_project_tree();
+bool validate_project_tree();
+bool validate_independent_branch(class Fl_Type *root);
+bool validate_branch(class Fl_Type *root);
+#endif
 
 /**
  \brief This is the base class for all elements in the project tree.
@@ -150,7 +158,7 @@ public: // things that should not be public:
    (see `haderror`). It seems that this is often confused with new_selected
    which seems to hold the true and visible selection state. */
   char selected; // copied here by selection_changed()
-  char open_;   // state of triangle in browser
+  char folded_;  // if set, children are not shown in browser
   char visible; // true if all parents are open
   int level;    // number of parents over this
   static Fl_Type *first, *last;

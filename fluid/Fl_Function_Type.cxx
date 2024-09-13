@@ -206,12 +206,17 @@ Fl_Function_Type::~Fl_Function_Type() {
  \return the new node
  */
 Fl_Type *Fl_Function_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_Function_Type *o = new Fl_Function_Type();
   o->name("make_window()");
   o->return_type = 0;
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
   o->cdecl_ = 0;
@@ -590,15 +595,20 @@ Fl_Code_Type::Fl_Code_Type() :
  \return new Code node
  */
 Fl_Type *Fl_Code_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_code_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   if (!p) {
     fl_message("Please select a function");
     return 0;
   }
   Fl_Code_Type *o = new Fl_Code_Type();
   o->name("printf(\"Hello, World!\\n\");");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -752,8 +762,13 @@ Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
  \return new CodeBlock
  */
 Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_code_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   if (!p) {
     fl_message("Please select a function");
     return 0;
@@ -761,7 +776,7 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   Fl_CodeBlock_Type *o = new Fl_CodeBlock_Type();
   o->name("if (test())");
   o->after = 0;
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -888,13 +903,18 @@ int Fl_Decl_Type::is_public() const
  \return new Declaration node
  */
 Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_Decl_Type *o = new Fl_Decl_Type();
   o->public_ = 0;
   o->static_ = 1;
   o->name("int x;");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1110,15 +1130,20 @@ Fl_Data_Type::~Fl_Data_Type() {
  \return new inline data node
  */
 Fl_Type *Fl_Data_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_Data_Type *o = new Fl_Data_Type();
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = 0;
   o->text_mode_ = 0;
   o->name("myInlineData");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1448,13 +1473,18 @@ int Fl_DeclBlock_Type::is_public() const {
  \return new Declaration Block node
  */
 Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
   o->name("#if 1");
   o->write_map_ = CODE_IN_SOURCE;
   o->after = fl_strdup("#endif");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1675,14 +1705,19 @@ Fl_Comment_Type::Fl_Comment_Type() :
  \return new Comment node
  */
 Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_code_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_Comment_Type *o = new Fl_Comment_Type();
   o->in_c_ = 1;
   o->in_h_ = 1;
   o->style_ = 0;
   o->name("my comment");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1949,14 +1984,19 @@ void Fl_Class_Type::prefix(const char*p) {
  \return new Class node
  */
 Fl_Type *Fl_Class_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_Class_Type *o = new Fl_Class_Type();
   o->name("UserInterface");
   o->class_prefix = NULL;
   o->subclass_of = NULL;
   o->public_ = 1;
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }

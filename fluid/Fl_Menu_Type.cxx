@@ -160,15 +160,16 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
  \return new Menu Item node
  */
 Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
-  // Find the current menu item:
-  Fl_Type* q = Fl_Type::current;
-  Fl_Type* p = q;
-  if (p) {
-    if ( (force_parent && q->is_a(ID_Menu_Item)) || !q->can_have_children()) p = p->parent;
+  // Find a good insert position based on the current marked node
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
   }
-  force_parent = 0;
-  if (!p || !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
-    fl_message("Please select a menu to add to");
+  if (!p) {
+    fl_message("Please select a menu widget or a menu item");
     return 0;
   }
   if (!o) {
@@ -184,7 +185,7 @@ Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
   t->o = new Fl_Button(0,0,100,20);
   t->o->type(flags);
   t->factory = this;
-  t->add(p, strategy);
+  t->add(anchor, strategy);
   if (!reading_file) {
     if (flags==FL_SUBMENU) {
       t->label("submenu");

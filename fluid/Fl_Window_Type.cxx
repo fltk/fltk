@@ -227,8 +227,13 @@ int Overlay_Window::handle(int e) {
  \return new node
  */
 Fl_Type *Fl_Window_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   if (!p) {
     fl_message("Please select a function");
     return 0;
@@ -245,7 +250,7 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   w->size_range(10, 10);
   w->window = myo;
   myo->o = w;
-  myo->add(p, strategy);
+  myo->add(anchor, strategy);
   myo->modal = 0;
   myo->non_modal = 0;
   return myo;
@@ -1363,8 +1368,13 @@ Fl_Widget_Class_Type *current_widget_class = 0;
  \return new node
  */
 Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) {
+    anchor = p;
+    strategy = kAddAfterCurrent;
+    p = p->parent;
+  }
   Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();
   myo->name("UserInterface");
 
@@ -1379,7 +1389,7 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   w->size_range(10, 10);
   w->window = myo;
   myo->o = w;
-  myo->add(p, strategy);
+  myo->add(anchor, strategy);
   myo->modal = 0;
   myo->non_modal = 0;
   myo->wc_relative = 0;

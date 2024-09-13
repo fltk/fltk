@@ -51,8 +51,6 @@ typedef enum {
 
 // ---- global variables
 
-extern int force_parent;
-
 extern Fl_Preferences fluid_prefs;
 extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Bar *main_menubar;

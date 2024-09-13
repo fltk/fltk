@@ -120,8 +120,8 @@ void reveal_in_browser(Fl_Type *t) {
   Fl_Type *p = t->parent;
   if (p) {
     for (;;) {
-      if (!p->open_)
-        p->open_ = 1;
+      if (p->folded_)
+        p->folded_ = 0;
       if (!p->parent) break;
       p = p->parent;
     }
@@ -340,7 +340,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (l->can_have_children()) {
     X = X - 18 - 13;
     if (!l->next || l->next->level <= l->level) {
-      if (l->open_!=(l==pushedtitle)) {
+      if (l->folded_==(l==pushedtitle)) {
         // an outlined triangle to the right indicates closed item, no children
         fl_loop(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
@@ -348,7 +348,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
         fl_loop(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     } else {
-      if (l->open_!=(l==pushedtitle)) {
+      if (l->folded_==(l==pushedtitle)) {
         // a filled triangle to the right indicates closed item, with children
         fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
@@ -538,15 +538,15 @@ int Widget_Browser::handle(int e) {
     l = pushedtitle;
     title = pushedtitle = 0;
     if (l) {
-      if (l->open_) {
-        l->open_ = 0;
+      if (!l->folded_) {
+        l->folded_ = 1;
         for (Fl_Type*k = l->next; k&&k->level>l->level; k = k->next)
           k->visible = 0;
       } else {
-        l->open_ = 1;
+        l->folded_ = 0;
         for (Fl_Type*k=l->next; k&&k->level>l->level;) {
           k->visible = 1;
-          if (k->can_have_children() && !k->open_) {
+          if (k->can_have_children() && k->folded_) {
             Fl_Type *j;
             for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
             k = j;

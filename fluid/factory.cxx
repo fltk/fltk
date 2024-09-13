@@ -1342,11 +1342,11 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool an
 }
 
 /**
- Callback for all menu items.
+ Callback for all non-widget menu items.
  */
 static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group))
+  if (Fl_Type::current && Fl_Type::current->can_have_children())
     t = ((Fl_Type*)v)->make(kAddAsLastChild);
   else
     t = ((Fl_Type*)v)->make(kAddAfterCurrent);
@@ -1354,11 +1354,11 @@ static void cbf(Fl_Widget *, void *v) {
 }
 
 /**
- Callback for all menu items.
+ Callback for all widget menu items.
  */
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group))
+  if (Fl_Type::current && Fl_Type::current->can_have_children())
     t = add_new_widget_from_user((Fl_Type*)v, kAddAsLastChild);
   else
     t = add_new_widget_from_user((Fl_Type*)v, kAddAfterCurrent);

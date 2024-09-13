@@ -227,6 +227,7 @@ int Fd_Project_Reader::read_quoted() {      // read whatever character is after 
 Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options) {
   Fl_Type::current = p;
   Fl_Type *last_child_read = NULL;
+  Fl_Type *t = NULL;
   for (;;) {
     const char *c = read_word();
   REUSE_C:
@@ -354,7 +355,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
       }
     }
     {
-      Fl_Type *t = add_new_widget_from_file(c, strategy);
+      t = add_new_widget_from_file(c, strategy);
       if (!t) {
         read_error("Unknown word \"%s\"", c);
         continue;
@@ -377,7 +378,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         goto REUSE_C;
       }
 
-      t->open_ = 0;
+      t->folded_ = 1;
       for (;;) {
         const char *cc = read_word();
         if (!cc || !strcmp(cc,"}")) break;
@@ -390,7 +391,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         read_error("Missing child list for %s\n",t->title());
         goto REUSE_C;
       }
-      read_children(t, 0, strategy, skip_options);
+      read_children(t, 0, kAddAsLastChild, skip_options);
       t->postprocess_read();
       // FIXME: this has no business in the file reader!
       // TODO: this is called whenever something is pasted from the top level into a grid
@@ -405,8 +406,11 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
 
       t->layout_widget();
     }
-
-    Fl_Type::current = p;
+    if (strategy == kAddAfterCurrent) {
+      Fl_Type::current = t;
+    } else {
+      Fl_Type::current = p;
+    }
 
   CONTINUE:;
   }

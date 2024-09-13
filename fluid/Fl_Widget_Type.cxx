@@ -87,19 +87,20 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
  \return new node
  */
 Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
-  // Find the current widget, or widget to copy:
-  Fl_Type *qq = Fl_Type::current;
-  while (qq && (!qq->is_true_widget() || !qq->can_have_children())) qq = qq->parent;
-  if (!qq) {
+  Fl_Type *anchor = Fl_Type::current, *pp = anchor;
+  if (pp && (strategy == kAddAfterCurrent)) pp = pp->parent;
+  while (pp && !pp->is_a(ID_Group)) {
+    anchor = pp;
+    strategy = kAddAfterCurrent;
+    pp = pp->parent;
+  }
+  if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
     fl_message("Please select a group widget or window");
     return 0;
   }
-  Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
-  // find the parent widget:
-  Fl_Widget_Type* p = q;
-  if ((force_parent || !p->is_a(ID_Group)) && p->parent && p->parent->is_widget())
-    p = (Fl_Widget_Type*)(p->parent);
-  force_parent = 0;
+
+  Fl_Widget_Type* p = (Fl_Widget_Type*)pp;
+  Fl_Widget_Type* q = (Fl_Widget_Type*)anchor;
 
   // Figure out a border between widget and window:
   int B = p->o->w()/2; if (p->o->h()/2 < B) B = p->o->h()/2; if (B>25) B = 25;
@@ -146,7 +147,7 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   // Put it in the parent:
   //  ((Fl_Group *)(p->o))->add(t->o); (done by Fl_Type::add())
   // add to browser:
-  t->add(p, strategy);
+  t->add(anchor, strategy);
   t->redraw();
   return t;
 }

@@ -130,6 +130,143 @@ Fl_Type *in_this_only; // set if menu popped-up in window
 
 // ---- various functions
 
+#if 0
+#ifndef NDEBUG
+/**
+ Print the current project tree to stderr.
+ */
+void print_project_tree() {
+  fprintf(stderr, "---- %s --->\n", g_project.projectfile_name().c_str());
+  for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+    for (int i = t->level; i > 0; i--)
+      fprintf(stderr, ". ");
+    fprintf(stderr, "%s\n", subclassname(t));
+  }
+}
+#endif
+
+#ifndef NDEBUG
+/**
+ Check the validity of the project tree.
+
+ Write problems with the project tree to stderr.
+
+ \return true if the project tree is valid
+ */
+bool validate_project_tree() {
+  // Validate `first` and `last`
+  if (Fl_Type::first == NULL) {
+    if (Fl_Type::last == NULL) {
+      return true;
+    } else {
+      fprintf(stderr, "ERROR: `first` is NULL, but `last` is not!\n");
+      return false;
+    }
+  }
+  if (Fl_Type::last == NULL) {
+    fprintf(stderr, "ERROR: `last` is NULL, but `first` is not!\n");
+    return false;
+  }
+  // Validate the branch linkage, parent links, etc.
+  return validate_branch(Fl_Type::first);
+}
+#endif
+
+#ifndef NDEBUG
+/**
+ Check the validity of a Type branch that is not connected to the project.
+
+ Write problems with the branch to stderr.
+
+ \param[in] root the first node in a branch
+ \return true if the branch is correctly separated and valid
+ */
+bool validate_independent_branch(class Fl_Type *root) {
+  // Make sure that `first` and `last` do not point at any node in this branch
+  if (Fl_Type::first) {
+    for (Fl_Type *t = root; t; t = t->next) {
+      if (Fl_Type::first == t) {
+        fprintf(stderr, "ERROR: Branch is not independent, `first` is pointing to branch member!\n");
+        return false;
+      }
+    }
+  }
+  if (Fl_Type::last) {
+    for (Fl_Type *t = root; t; t = t->next) {
+      if (Fl_Type::last == t) {
+        fprintf(stderr, "ERROR: Branch is not independent, `last` is pointing to branch member!\n");
+        return false;
+      }
+    }
+  }
+  // Validate the branch linkage, parent links, etc.
+  return validate_branch(root);
+}
+#endif
+
+#ifndef NDEBUG
+/**
+ Check the validity of a Type branch.
+
+ Write problems with the branch to stderr.
+
+ \param[in] root the first node in a branch
+ \return true if the branch is valid
+ */
+bool validate_branch(class Fl_Type *root) {
+  // Only check real branches
+  if (!root) {
+    fprintf(stderr, "WARNING: Branch is empty!\n");
+    return false;
+  }
+  // Check relation between this and next node
+  for (Fl_Type *t = root; t; t = t->next) {
+    if (t->level < root->level) {
+      fprintf(stderr, "ERROR: Node in tree is above root level!\n");
+      return false;
+    }
+    if (t->next) {
+      // Make sure that all `next` types have the `prev` member link back
+      if (t->next->prev != t) {
+        fprintf(stderr, "ERROR: Doubly linked list broken!\n");
+        return false;
+      }
+      if (t->next->level > t->level) {
+        // Validate `level` changes
+        if (t->next->level - t->level > 1) {
+          fprintf(stderr, "ERROR: Child level increment greater than one!\n");
+          return false;
+        }
+        // Ensure that this node can actually have children
+        if (!t->can_have_children()) {
+          fprintf(stderr, "ERROR: This parent must not have children!\n");
+          return false;
+        }
+      }
+    }
+    // Validate the `parent` entry
+    for (Fl_Type *p = t->prev; ; p = p->prev) {
+      if (p == NULL) {
+        if (t->parent != NULL) {
+          fprintf(stderr, "ERROR: `parent` pointer should be NULL!\n");
+          return false;
+        }
+        break;
+      }
+      if (p->level < t->level) {
+        if (t->parent != p) {
+          fprintf(stderr, "ERROR: `parent` points to wrong parent!\n");
+          return false;
+        }
+        break;
+      }
+    }
+  }
+  return true;
+}
+#endif
+#endif
+
 void select_all_cb(Fl_Widget *,void *) {
   Fl_Type *p = Fl_Type::current ? Fl_Type::current->parent : 0;
   if (in_this_only) {
@@ -317,7 +454,7 @@ int storestring(const char *n, const char * & p, int nostrip) {
 void update_visibility_flag(Fl_Type *p) {
   Fl_Type *t = p;
   for (;;) {
-    if (t->parent) t->visible = t->parent->visible && t->parent->open_;
+    if (t->parent) t->visible = t->parent->visible && !t->parent->folded_;
     else t->visible = 1;
     t = t->next;
     if (!t || t->level <= p->level) break;
@@ -470,42 +607,85 @@ Fl_Group_Type *Fl_Type::group() {
  \param[in] p insert \c this tree as a child of \c p
  \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
  */
-void Fl_Type::add(Fl_Type *p, Strategy strategy) {
-  if (p && parent == p) return;
-  undo_checkpoint();
-  parent = p;
-  // 'this' is not in the Widget_Browser, so we must run the linked list to find the last entry
+void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
+#if 0
+#ifndef NDEBUG
+  // print_project_tree();
+  // fprintf(stderr, "Validating project\n");
+  validate_project_tree();
+  // fprintf(stderr, "Validating branch\n");
+  validate_independent_branch(this);
+#endif
+#endif
+
+  Fl_Type *target = NULL; // insert self before target node, if NULL, insert last
+  Fl_Type *target_parent = NULL; // this will be the new parent for branch
+  int target_level = 0;   // adjust self to this new level
+
+  // Find the node after our insertion position
+  switch (strategy) {
+    case kAddAsFirstChild:
+      if (anchor == NULL) {
+        target = Fl_Type::first;
+      } else {
+        target = anchor->next;
+        target_level = anchor->level + 1;
+        target_parent = anchor;
+      }
+      break;
+    case kAddAsLastChild:
+      if (anchor == NULL) {
+        /* empty */
+      } else {
+        for (target = anchor->next; target && target->level > anchor->level; target = target->next) {/*empty*/}
+        target_level = anchor->level + 1;
+        target_parent = anchor;
+      }
+      break;
+    case kAddAfterCurrent:
+      if (anchor == NULL) {
+        target = Fl_Type::first;
+      } else {
+        for (target = anchor->next; target && target->level > anchor->level; target = target->next) {/*empty*/}
+        target_level = anchor->level;
+        target_parent = anchor->parent;
+      }
+      break;
+  }
+
+
+  // Find the last node of our tree
   Fl_Type *end = this;
   while (end->next) end = end->next;
-  // run the list again to set the future node levels
-  Fl_Type *q; // insert 'this' before q
-  int newlevel;
-  if (p) {
-    // find the last node that is a child or grandchild of p
-    for (q = p->next; q && q->level > p->level; q = q->next) {/*empty*/}
-    newlevel = p->level+1;
-  } else {
-    q = 0;
-    newlevel = 0;
+
+  // Everything is prepared, now insert ourself in front of the target node
+  undo_checkpoint();
+
+  // Walk the tree to update parent pointers and levels
+  int source_level = level;
+  for (Fl_Type *t = this; t; t = t->next) {
+    t->level += (target_level-source_level);
+    if (t->level == target_level)
+      t->parent = target_parent;
   }
-  for (Fl_Type *t = this->next; t; t = t->next) t->level += (newlevel-level);
-  level = newlevel;
-  // now link 'this' and its children before 'q', or last, if 'q' is NULL
-  if (q) {
-    prev = q->prev;
-    prev->next = this;
-    q->prev = end;
-    end->next = q;
-  } else if (first) {
-    prev = last;
-    prev->next = this;
-    end->next = 0;
-    last = end;
+
+  // Now link ourselves and our children before 'target', or last, if 'target' is NULL
+  if (target) {
+    prev = target->prev;
+    target->prev = end;
+    end->next = target;
   } else {
-    first = this;
-    last = end;
-    prev = end->next = 0;
+    prev = Fl_Type::last;
+    end->next = NULL;
+    Fl_Type::last = end;
   }
+  if (prev) {
+    prev->next = this;
+  } else {
+    Fl_Type::first = this;
+  }
+
+#if 0
   { // make sure that we have no duplicate uid's
     Fl_Type *tp = this;
     do {
@@ -513,28 +693,24 @@ void Fl_Type::add(Fl_Type *p, Strategy strategy) {
       tp = tp->next;
     } while (tp!=end && tp!=NULL);
   }
+#endif
 
-  // tell this that it was added, so it can update itself
-  if (p) p->add_child(this,0);
-  open_ = 1;
-  update_visibility_flag(this);
-  set_modflag(1);
-
-  if (strategy==kAddAfterCurrent && current) {
-    // we have current, t is the new node, p is the parent
-    // find the next child of the parent after current
-    //t->add(p); // add as a last child
-    Fl_Type *cc;
-    for (cc = current->next; cc; cc = cc->next) {
-      if (cc->level <= this->level)
-        break;
-    }
-    if (cc && cc->level==this->level && cc!=this) {
-      this->move_before(cc);
-    }
-    select(this, 1);
+  // Give the widgets in our tree a chance to update themselves
+  for (Fl_Type *t = this; t && t!=end->next; t = t->next) {
+    if (target_parent && (t->level == target_level))
+      target_parent->add_child(t, 0);
+    update_visibility_flag(t);
   }
+
+  set_modflag(1);
   widget_browser->redraw();
+
+#if 0
+#ifndef NDEBUG
+  // fprintf(stderr, "Validating project after adding branch\n");
+  validate_project_tree();
+#endif
+#endif
 }
 
 /**
@@ -757,7 +933,7 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
     f.write_word("comment");
     f.write_word(comment());
   }
-  if (can_have_children() && open_) f.write_word("open");
+  if (can_have_children() && !folded_) f.write_word("open");
   if (selected) f.write_word("selected");
 }
 
@@ -779,7 +955,7 @@ void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
   else if (!strcmp(c,"comment"))
     comment(f.read_word());
   else if (!strcmp(c,"open"))
-    open_ = 1;
+    folded_ = 0;
   else if (!strcmp(c,"selected"))
     select(this,1);
   else if (!strcmp(c,"parent_properties"))

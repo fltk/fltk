@@ -106,11 +106,6 @@ int G_debug = 0;
 char G_external_editor_command[512];
 
 
-/// If set, if the `current` node is a group, and a new group is added, it will
-/// be added as sibling to the first group instead of inside the group.
-/// \todo Needs to be verified.
-int force_parent = 0;
-
 /// This is set to create different labels when creating new widgets.
 /// \todo Details unclear.
 int reading_file = 0;
@@ -1411,13 +1406,16 @@ void delete_cb(Fl_Widget *, void *) {
  User chose to paste the widgets from the cut buffer.
  */
 void paste_cb(Fl_Widget*, void*) {
-  //if (ipasteoffset) force_parent = 1;
   pasteoffset = ipasteoffset;
   undo_checkpoint();
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
-  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group))
-    strategy = kAddAsLastChild;
+  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group)) {
+    Fl_Group_Type *current_group = static_cast<Fl_Group_Type*>(Fl_Type::current);
+    if (current_group->folded_ == 0) {
+      strategy = kAddAsLastChild;
+    }
+  }
   if (!read_file(cutfname(), 1, strategy)) {
     widget_browser->rebuild();
     fl_message("Can't read %s: %s", cutfname(), strerror(errno));
@@ -1427,7 +1425,6 @@ void paste_cb(Fl_Widget*, void*) {
   widget_browser->rebuild();
   pasteoffset = 0;
   ipasteoffset += 10;
-  force_parent = 0;
 }
 
 /**
@@ -1447,7 +1444,6 @@ void duplicate_cb(Fl_Widget*, void*) {
   }
 
   pasteoffset  = 0;
-  force_parent = 1;
 
   undo_checkpoint();
   undo_suspend();
@@ -1458,8 +1454,6 @@ void duplicate_cb(Fl_Widget*, void*) {
   widget_browser->display(Fl_Type::current);
   widget_browser->rebuild();
   undo_resume();
-
-  force_parent = 0;
 }
 
 /**
