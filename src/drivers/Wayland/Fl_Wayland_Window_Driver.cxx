@@ -1351,12 +1351,19 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
-  int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
-    XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
-  if (Fl_Window_Driver::menu_bartitle(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
-    constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
+  int constraint = 0;
+  if ( !(parent_win->fullscreen_active() &&
+        Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
+        ((!Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) ||
+          Fl_Window_Driver::menu_bartitle(pWindow)))
+     ) {
+    // Condition above is only to bypass Mutter bug for fullscreen windows (see #1061)
+    constraint |= (XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X | XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y);
+    if (Fl_Window_Driver::menu_bartitle(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
+      constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
+    }
+    xdg_positioner_set_constraint_adjustment(positioner, constraint);
   }
-  xdg_positioner_set_constraint_adjustment(positioner, constraint);
   if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
     xdg_positioner_set_offset(positioner, 0, popup_y);
   }
