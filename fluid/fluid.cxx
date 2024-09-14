@@ -1406,6 +1406,10 @@ void delete_cb(Fl_Widget *, void *) {
 
 /**
  User chose to paste the widgets from the cut buffer.
+
+ This function will paste the widgets in the cut buffer after the currently
+ selected widget. If the currently selected widget is a group widget and
+ it is not folded, the new widgets will be added inside the group.
  */
 void paste_cb(Fl_Widget*, void*) {
   pasteoffset = ipasteoffset;
@@ -1413,8 +1417,9 @@ void paste_cb(Fl_Widget*, void*) {
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
   if (Fl_Type::current && Fl_Type::current->can_have_children()) {
-    Fl_Group_Type *current_group = static_cast<Fl_Group_Type*>(Fl_Type::current);
-    if (current_group->folded_ == 0) {
+    if (Fl_Type::current->folded_ == 0) {
+      // If the current widget is a group widget and it is not folded,
+      // add the new widgets inside the group.
       strategy = kAddAsLastChild;
     }
   }
@@ -1431,28 +1436,24 @@ void paste_cb(Fl_Widget*, void*) {
 
 /**
  Duplicate the selected widgets.
+
+ This code is a bit complex because it needs to find the last selected
+ widget with the lowest level, so that the new widgets are inserted after
+ this one.
  */
 void duplicate_cb(Fl_Widget*, void*) {
   if (!Fl_Type::current) {
     fl_beep();
     return;
   }
+
+  // flush the text widgets to make sure the user's changes are saved:
   flush_text_widgets();
 
-  bool find_insert_position = false;
-  if (Fl_Type::current->selected) find_insert_position = true;
-
-  if (!write_file(cutfname(1),1)) {
-    fl_message("Can't write %s: %s", cutfname(1), strerror(errno));
-    return;
-  }
-
-  pasteoffset  = 0;
-
-  // Find the last selected node with the lowest level
+  // find the last selected node with the lowest level:
   int lowest_level = 9999;
   Fl_Type *new_insert = NULL;
-  if (find_insert_position) {
+  if (Fl_Type::current->selected) {
     for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
       if (t->selected && (t->level <= lowest_level)) {
         lowest_level = t->level;
@@ -1463,7 +1464,14 @@ void duplicate_cb(Fl_Widget*, void*) {
   if (new_insert)
     Fl_Type::current = new_insert;
 
+  // write the selected widgets to a file:
+  if (!write_file(cutfname(1),1)) {
+    fl_message("Can't write %s: %s", cutfname(1), strerror(errno));
+    return;
+  }
 
+  // read the file and add the widgets after the current one:
+  pasteoffset  = 0;
   undo_checkpoint();
   undo_suspend();
   if (!read_file(cutfname(1), 1, kAddAfterCurrent)) {
