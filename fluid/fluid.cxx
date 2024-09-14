@@ -1355,6 +1355,7 @@ void copy_cb(Fl_Widget*, void*) {
     fl_beep();
     return;
   }
+  flush_text_widgets();
   ipasteoffset = 10;
   if (!write_file(cutfname(),1)) {
     fl_message("Can't write %s: %s", cutfname(), strerror(errno));
@@ -1370,6 +1371,7 @@ void cut_cb(Fl_Widget *, void *) {
     fl_beep();
     return;
   }
+  flush_text_widgets();
   if (!write_file(cutfname(),1)) {
     fl_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
@@ -1410,7 +1412,7 @@ void paste_cb(Fl_Widget*, void*) {
   undo_checkpoint();
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
-  if (Fl_Type::current && Fl_Type::current->is_a(ID_Group)) {
+  if (Fl_Type::current && Fl_Type::current->can_have_children()) {
     Fl_Group_Type *current_group = static_cast<Fl_Group_Type*>(Fl_Type::current);
     if (current_group->folded_ == 0) {
       strategy = kAddAsLastChild;
@@ -1435,8 +1437,10 @@ void duplicate_cb(Fl_Widget*, void*) {
     fl_beep();
     return;
   }
-
   flush_text_widgets();
+
+  bool find_insert_position = false;
+  if (Fl_Type::current->selected) find_insert_position = true;
 
   if (!write_file(cutfname(1),1)) {
     fl_message("Can't write %s: %s", cutfname(1), strerror(errno));
@@ -1444,6 +1448,21 @@ void duplicate_cb(Fl_Widget*, void*) {
   }
 
   pasteoffset  = 0;
+
+  // Find the last selected node with the lowest level
+  int lowest_level = 9999;
+  Fl_Type *new_insert = NULL;
+  if (find_insert_position) {
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && (t->level <= lowest_level)) {
+        lowest_level = t->level;
+        new_insert = t;
+      }
+    }
+  }
+  if (new_insert)
+    Fl_Type::current = new_insert;
+
 
   undo_checkpoint();
   undo_suspend();
