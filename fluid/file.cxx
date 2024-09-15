@@ -406,6 +406,9 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
 
       t->layout_widget();
     }
+    if (strategy == kAddAsFirstChild) {
+      strategy = kAddAfterCurrent;
+    }
     if (strategy == kAddAfterCurrent) {
       Fl_Type::current = t;
     } else {

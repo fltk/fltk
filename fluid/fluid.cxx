@@ -1421,6 +1421,8 @@ void paste_cb(Fl_Widget*, void*) {
       // If the current widget is a group widget and it is not folded,
       // add the new widgets inside the group.
       strategy = kAddAsLastChild;
+      // The following alternative also works quite nicely
+      //strategy = kAddAsFirstChild;
     }
   }
   if (!read_file(cutfname(), 1, strategy)) {
