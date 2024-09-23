@@ -263,6 +263,8 @@ FLTK_USE_LIBDECOR_GTK - default ON (Wayland only).
     is always 'ON' if FLTK_USE_SYSTEM_LIBDECOR is 'ON'.
 
 FLTK_USE_PANGO - default OFF (see note below)
+    This option is highly recommended under X11 if FLTK is expected to draw
+    text that does not use the latin alphabet.
     Enables use of the Pango library for drawing text. Pango supports all
     unicode-defined scripts and gives FLTK limited support of right-to-left
     scripts. This option makes sense only under X11 or Wayland, and also
