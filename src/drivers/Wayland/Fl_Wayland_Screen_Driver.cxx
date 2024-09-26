@@ -300,13 +300,21 @@ static void pointer_button(void *data,
   int b = 0;
   // Fl::e_state &= ~FL_BUTTONS;    // DO NOT reset the mouse button state!
   if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-    if (button == BTN_LEFT) { Fl::e_state |= FL_BUTTON1; b = 1; }
-    else if (button == BTN_RIGHT) { Fl::e_state |= FL_BUTTON3; b = 3; }
-    else if (button == BTN_MIDDLE) { Fl::e_state |= FL_BUTTON2; b = 2; }
+    if (button == BTN_LEFT)         { Fl::e_state |= FL_BUTTON1; b = 1; }
+    else if (button == BTN_RIGHT)   { Fl::e_state |= FL_BUTTON3; b = 3; }
+    else if (button == BTN_MIDDLE)  { Fl::e_state |= FL_BUTTON2; b = 2; }
+    else if (button == BTN_BACK)    { Fl::e_state |= FL_BUTTON4; b = 4; } // ?
+    else if (button == BTN_SIDE)    { Fl::e_state |= FL_BUTTON4; b = 4; } // OK: Debian 12
+    else if (button == BTN_FORWARD) { Fl::e_state |= FL_BUTTON5; b = 5; } // ?
+    else if (button == BTN_EXTRA)   { Fl::e_state |= FL_BUTTON5; b = 5; } // OK: Debian 12
   } else { // must be WL_POINTER_BUTTON_STATE_RELEASED
-    if (button == BTN_LEFT) { Fl::e_state &= ~FL_BUTTON1; b = 1; }
-    else if (button == BTN_RIGHT) { Fl::e_state &= ~FL_BUTTON3; b = 3; }
-    else if (button == BTN_MIDDLE) { Fl::e_state &= ~FL_BUTTON2; b = 2; }
+    if (button == BTN_LEFT)         { Fl::e_state &= ~FL_BUTTON1; b = 1; }
+    else if (button == BTN_RIGHT)   { Fl::e_state &= ~FL_BUTTON3; b = 3; }
+    else if (button == BTN_MIDDLE)  { Fl::e_state &= ~FL_BUTTON2; b = 2; }
+    else if (button == BTN_BACK)    { Fl::e_state &= ~FL_BUTTON4; b = 4; } // ?
+    else if (button == BTN_SIDE)    { Fl::e_state &= ~FL_BUTTON4; b = 4; } // OK: Debian 12
+    else if (button == BTN_FORWARD) { Fl::e_state &= ~FL_BUTTON5; b = 5; } // ?
+    else if (button == BTN_EXTRA)   { Fl::e_state &= ~FL_BUTTON5; b = 5; } // OK: Debian 12
   }
   Fl::e_keysym = FL_Button + b;
   Fl::e_dx = Fl::e_dy = 0;
