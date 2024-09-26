@@ -1046,7 +1046,7 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
  */
 static void cocoaMouseHandler(NSEvent *theEvent)
 {
-  static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
+  static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2, FL_Button+4, FL_Button+5 };
   static int px, py;
 
   fl_lock_function();
@@ -1060,7 +1060,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   float s = Fl::screen_driver()->scale(0);
   pos.x /= s; pos.y /= s;
   pos.y = window->h() - pos.y;
-  NSInteger btn = [theEvent buttonNumber]  + 1;
+  NSInteger btn = [theEvent buttonNumber] + 1;
   NSUInteger mods = [theEvent modifierFlags];
   int sendEvent = 0;
 
@@ -1070,13 +1070,17 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     if (btn == 1) Fl::e_state |= FL_BUTTON1;
     else if (btn == 3) Fl::e_state |= FL_BUTTON2;
     else if (btn == 2) Fl::e_state |= FL_BUTTON3;
+    else if (btn == 4) Fl::e_state |= FL_BUTTON4;
+    else if (btn == 5) Fl::e_state |= FL_BUTTON5;
   }
   else if (etype == NSEventTypeLeftMouseUp || etype == NSEventTypeRightMouseUp ||
            etype == NSEventTypeOtherMouseUp) {
     if (btn == 1) Fl::e_state &= ~FL_BUTTON1;
     else if (btn == 3) Fl::e_state &= ~FL_BUTTON2;
     else if (btn == 2) Fl::e_state &= ~FL_BUTTON3;
-    }
+    else if (btn == 4) Fl::e_state &= ~FL_BUTTON4;
+    else if (btn == 5) Fl::e_state &= ~FL_BUTTON5;
+  }
 
   switch ( etype ) {
     case NSEventTypeLeftMouseDown:
