@@ -2139,7 +2139,7 @@ int Fl_Text_Display::handle_vline(
             // find x pos inside block
             free(lineStr);
             if (cursor_pos && (startX+w/2<rightClip))  // STR #2788
-              return lineStartPos + startIndex + len;  // STR #2788
+              return lineStartPos + startIndex + 1;  // STR #2788
             return lineStartPos + startIndex;
           }
         } else {
