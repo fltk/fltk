@@ -651,42 +651,16 @@ Function {make_window()} {open
       xywh {440 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
     }
     Fl_Button {} {
-      label whl
-      user_data 0x800 user_data_type {void*}
+      label bck
+      user_data FL_BUTTON4 user_data_type {void*}
       callback shift_cb
       xywh {460 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
     }
     Fl_Button {} {
-      label {?}
-      user_data 0x1000 user_data_type {void*}
-      callback shift_cb
+      label fwd
+      user_data FL_BUTTON5 user_data_type {void*}
+      callback shift_cb selected
       xywh {400 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
-    }
-    Fl_Button {} {
-      label {?}
-      user_data 0x2000 user_data_type {void*}
-      callback shift_cb
-      xywh {420 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
-    }
-    Fl_Button {} {
-      label {?}
-      user_data 0x4000 user_data_type {void*}
-      callback shift_cb
-      xywh {440 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
-    }
-    Fl_Button {} {
-      label {?}
-      user_data 0x8000 user_data_type {void*}
-      callback shift_cb
-      xywh {460 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
-    }
-    Fl_Output key_output {
-      label {Fl::event_key():}
-      xywh {15 20 170 30} labelsize 9 align 5
-    }
-    Fl_Box {} {
-      label {Fl::event_state():}
-      xywh {400 15 80 40} labelsize 9 align 5
     }
     Fl_Output text_output {
       label {Fl::event_text():}
@@ -713,6 +687,32 @@ Function {make_window()} {open
       label {y:}
       callback wheel_cb
       xywh {460 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
+    }
+    Fl_Box {} {
+      label {Fl::event_state():}
+      xywh {400 15 80 0} labelsize 9 align 5
+    }
+    Fl_Output key_output {
+      label {Fl::event_key():}
+      xywh {15 20 170 30} labelsize 9 align 5
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x8000 user_data_type {void*}
+      callback shift_cb
+      xywh {460 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x4000 user_data_type {void*}
+      callback shift_cb
+      xywh {440 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x2000 user_data_type {void*}
+      callback shift_cb
+      xywh {420 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
     }
   }
 }
