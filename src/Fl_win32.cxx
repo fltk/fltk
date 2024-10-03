@@ -955,9 +955,12 @@ static int mouse_event(Fl_Window *window, int what, int button,
   if (wParam & MK_SHIFT) state |= FL_SHIFT;
   if (wParam & MK_CONTROL) state |= FL_CTRL;
 #endif
-  if (wParam & MK_LBUTTON) state |= FL_BUTTON1;
-  if (wParam & MK_MBUTTON) state |= FL_BUTTON2;
-  if (wParam & MK_RBUTTON) state |= FL_BUTTON3;
+  if (wParam & MK_LBUTTON)  state |= FL_BUTTON1;  // left
+  if (wParam & MK_MBUTTON)  state |= FL_BUTTON2;  // right
+  if (wParam & MK_RBUTTON)  state |= FL_BUTTON3;  // middle
+  if (wParam & MK_XBUTTON1) state |= FL_BUTTON4;  // side button 1 (back)
+  if (wParam & MK_XBUTTON2) state |= FL_BUTTON5;  // side button 2 (forward)
+
   Fl::e_state = state;
 
   switch (what) {
@@ -1206,7 +1209,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RBUTTONDOWN:  mouse_event(window, 0, 3, wParam, lParam); return 0;
   case WM_RBUTTONDBLCLK:mouse_event(window, 1, 3, wParam, lParam); return 0;
   case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
-
+  case WM_XBUTTONDOWN: {
+    int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 4 : 5;
+    mouse_event(window, 0, xbutton, wParam, lParam);
+    return 0;
+  }
+  case WM_XBUTTONDBLCLK: {
+    int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 4 : 5;
+    mouse_event(window, 1, xbutton, wParam, lParam);
+    return 0;
+  }
+  case WM_XBUTTONUP: {
+    int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 4 : 5;
+    mouse_event(window, 2, xbutton, wParam, lParam);
+    return 0;
+  }
   case WM_MOUSEMOVE:
 #ifdef USE_TRACK_MOUSE
     if (track_mouse_win != window) {
