@@ -275,6 +275,7 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h,
   cairo_paint(cairo_);
   cairo_pattern_destroy(pat);
   cairo_restore(cairo_);
+  surface_needs_commit();
 }
 
 
