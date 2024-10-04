@@ -2534,9 +2534,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   // We have to have at least one cursor rect for invalidateCursorRectsForView
   // to work, hence the "else" clause.
   if (Fl_Cocoa_Window_Driver::driver(w)->cursor)
-    [self addCursorRect:[self visibleRect] cursor:Fl_Cocoa_Window_Driver::driver(w)->cursor];
+    [self addCursorRect:[self frame] cursor:Fl_Cocoa_Window_Driver::driver(w)->cursor];
   else
-    [self addCursorRect:[self visibleRect] cursor:[NSCursor arrowCursor]];
+    [self addCursorRect:[self frame] cursor:[NSCursor arrowCursor]];
 }
 - (void)mouseUp:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
