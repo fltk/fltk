@@ -4335,7 +4335,6 @@ int Fl_Text_Display::handle(int event) {
           scroll_direction = 0;
         }
         pos = xy_to_position(X, Y, CURSOR_POS);
-        pos = buffer()->next_char(pos);
       }
       fl_text_drag_me(pos, this);
       return 1;
