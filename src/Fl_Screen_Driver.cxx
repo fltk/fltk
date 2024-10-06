@@ -481,10 +481,33 @@ int Fl_Screen_Driver::scale_handler(int event)
   if (Fl::test_shortcut(FL_COMMAND+'+')) zoom = zoom_in;
   else if (Fl::test_shortcut(FL_COMMAND+'-')) zoom = zoom_out;
   else if (Fl::test_shortcut(FL_COMMAND+'0')) zoom = zoom_reset;
+
+  // Kludge to recognize shortcut FL_COMMAND+'+' without pressing SHIFT.
   if (Fl::option(Fl::OPTION_SIMPLE_ZOOM_SHORTCUT)) {
-    // kludge to recognize shortcut FL_COMMAND+'+' without pressing SHIFT
-    if ((Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) == FL_COMMAND &&
-           Fl::event_key() == '=') zoom = zoom_in;
+    if ((Fl::event_state() & (FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) == FL_COMMAND) {
+      // We use Ctrl + key '=|+' for instance on US, UK, and FR keyboards.
+      // This works as expected on all keyboard layouts that have the '=' key in the
+      // lower and the '+' key in the upper position on the same key.
+      // This test would be "false positive" if a keyboard layout had the '=' key in
+      // the lower and any other key than '+' in the upper position!
+
+      if (Fl::event_key() == '=') zoom = zoom_in;
+
+      // Note: Fl::event_key() is often incorrect under X11 *if* the selected keyboard
+      // layout is *not* the primary one in the keyboard selection list, e.g. under Gnome.
+      // The observation is that Fl::event_key() is erroneously derived from the primary
+      // keyboard layout instead. This can be very confusing and I don't know why this
+      // happens. Albrecht-S, Oct 2024, on Debian 12 (Bookworm aka Stable as of now).
+
+      // Example: 0xfe51 ("dead_acute") is sent by the '=' key of the US layout if the
+      // primary layout is German. This *would* be the correct key value for the German
+      // keyboard layout.
+      // The following statement would work around this for this very special case but
+      // this should IMHO not be done. A valid workaround is to make the desired layout
+      // the first in the keyboard layout selection list!
+
+      // else if (Fl::event_key() == 0xfe51) zoom = zoom_in; // dead_acute, see above
+    }
   }
   if (zoom != none) {
     int i, count;
