@@ -354,38 +354,37 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         goto CONTINUE;
       }
     }
-    {
-      t = add_new_widget_from_file(c, strategy);
-      if (!t) {
-        read_error("Unknown word \"%s\"", c);
-        continue;
-      }
-      last_child_read = t;
-      // After reading the first widget, we no longer need to look for options
-      skip_options = 1;
+    t = add_new_widget_from_file(c, strategy);
+    if (!t) {
+      read_error("Unknown word \"%s\"", c);
+      continue;
+    }
+    last_child_read = t;
+    // After reading the first widget, we no longer need to look for options
+    skip_options = 1;
 
-      t->name(read_word());
+    t->name(read_word());
 
+    c = read_word(1);
+    if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
+      ((Fl_Class_Type*)t)->prefix(t->name());
+      t->name(c);
       c = read_word(1);
-      if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
-        ((Fl_Class_Type*)t)->prefix(t->name());
-        t->name(c);
-        c = read_word(1);
-      }
+    }
 
-      if (strcmp(c,"{")) {
-        read_error("Missing property list for %s\n",t->title());
-        goto REUSE_C;
-      }
+    if (strcmp(c,"{")) {
+      read_error("Missing property list for %s\n",t->title());
+      goto REUSE_C;
+    }
 
-      t->folded_ = 1;
-      for (;;) {
-        const char *cc = read_word();
-        if (!cc || !strcmp(cc,"}")) break;
-        t->read_property(*this, cc);
-      }
+    t->folded_ = 1;
+    for (;;) {
+      const char *cc = read_word();
+      if (!cc || !strcmp(cc,"}")) break;
+      t->read_property(*this, cc);
+    }
 
-      if (!t->can_have_children()) continue;
+    if (t->can_have_children()) {
       c = read_word(1);
       if (strcmp(c,"{")) {
         read_error("Missing child list for %s\n",t->title());
@@ -406,6 +405,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
 
       t->layout_widget();
     }
+    
     if (strategy == kAddAsFirstChild) {
       strategy = kAddAfterCurrent;
     }
