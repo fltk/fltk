@@ -2585,6 +2585,11 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     int scr_x, scr_y, scr_w, scr_h;
     Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X, Y, W, H);
 
+#if 0
+    // Munging the coordinates here just makes it impossible to put windows in
+    // the right place.  With win_gravity hints now being set, this should all
+    // be down to the window manager.
+
     if (win->border()) {
       // ensure border is on screen:
       // (assume extremely minimal dimensions for this border)
@@ -2602,6 +2607,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     if (X < scr_x) X = scr_x;
     if (Y+H > scr_y+scr_h) Y = scr_y+scr_h-H;
     if (Y < scr_y) Y = scr_y;
+#endif
   }
 
   // if the window is a subwindow and our parent is not mapped yet, we
@@ -2691,10 +2697,34 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   s = Fl::screen_driver()->scale(nscreen);
   // if (!win->parent()) printf("win creation on screen #%d\n", nscreen);
 #endif
+
+  int win_x = rint(X*s);
+  int win_y = rint(Y*s);
+
+  switch (Fl_X11_Window_Driver::driver(win)->win_gravity_) {
+    case Fl_X11_Window_Driver::WIN_GRAVITY_NORTHEAST:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_EAST:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTHEAST:
+      win_x = Fl::screen_driver()->x_from_right(X);
+      break;
+    default:
+      break;
+  }
+
+  switch (Fl_X11_Window_Driver::driver(win)->win_gravity_) {
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTHWEST:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTH:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTHEAST:
+      win_y = Fl::screen_driver()->y_from_bottom(Y);
+      break;
+    default:
+      break;
+  }
+
   Fl_X* xp =
     set_xid(win, XCreateWindow(fl_display,
                                root,
-                               rint(X*s), rint(Y*s), W*s, H*s,
+                               win_x, win_y, W*s, H*s,
                                0, // borderwidth
                                visual->depth,
                                InputOutput,
@@ -2859,7 +2889,18 @@ void Fl_X11_Window_Driver::sendxjunk() {
     hints->height_inc = 0;
   }
 
-  hints->win_gravity = StaticGravity;
+  switch (win_gravity_) {
+    case WIN_GRAVITY_NORTHWEST: hints->win_gravity = NorthWestGravity; break;
+    case WIN_GRAVITY_NORTH: hints->win_gravity = NorthGravity; break;
+    case WIN_GRAVITY_NORTHEAST: hints->win_gravity = NorthEastGravity; break;
+    case WIN_GRAVITY_WEST: hints->win_gravity = WestGravity; break;
+    case WIN_GRAVITY_CENTER: hints->win_gravity = CenterGravity; break;
+    case WIN_GRAVITY_EAST: hints->win_gravity = EastGravity; break;
+    case WIN_GRAVITY_SOUTHWEST: hints->win_gravity = SouthWestGravity; break;
+    case WIN_GRAVITY_SOUTH: hints->win_gravity = SouthGravity; break;
+    case WIN_GRAVITY_SOUTHEAST: hints->win_gravity = SouthEastGravity; break;
+    default: hints->win_gravity = StaticGravity; break;
+  }
 
   // see the file /usr/include/X11/Xm/MwmUtil.h:
   // fill all fields to avoid bugs in kwm and perhaps other window managers:
