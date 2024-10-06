@@ -229,7 +229,7 @@ Function {} {open
       xywh {460 385 110 115} box BORDER_FRAME color 0 selection_color 0 labelsize 11 align 128
     }
     Fl_Terminal tty {selected
-      xywh {10 513 560 117} box DOWN_BOX
+      xywh {10 513 560 117}
       code0 {o->ansi(true);}
     }
   }

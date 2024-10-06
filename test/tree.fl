@@ -1744,7 +1744,7 @@ helpwin->show();}
       xywh {0 263 15 14}
     }
     Fl_Terminal tty {selected
-      xywh {16 571 1014 149} box DOWN_BOX
+      xywh {16 571 1014 149}
     }
   }
   code {// Initialize Tree

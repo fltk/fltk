@@ -97,7 +97,7 @@ class MyTerminal {
   decl {bool interactivecursor;} {private local
   }
   Function {MyTerminal(int X,int Y,int W,int H, const char *L=0):Fl_Terminal(X,Y,W,H,L)} {
-    comment CTOR
+    comment CTOR open
   } {
     code {ring_debug_win = 0;
 debug_tty = 0;
@@ -368,8 +368,7 @@ return 1;           // hit end of test, reset} {}
   Function {test_firstpage(bool reset)} {
     comment {--- 0000: Test unicode alignment} return_type {static int}
   } {
-    code {
-(void) reset;  // unused arg: quiets compiler warnings
+    code {(void) reset;  // unused arg: quiets compiler warnings
 G_app->AppendTty(
   "\\033[0m\\033[H\\033[2J\\033[3J"    // color/attr reset, home, cls, clear history
   "hello.\\nLine one\\nLine two\\n"
@@ -419,7 +418,7 @@ const char *test[] = {
   "  \\033[2;9m Dim strikeout [█]\\033[0m   \\033[9m Normal strikeout [█]\\033[0m  \\033[1;9m Bold strikeout [█]\\033[0m\\n"
   "\\n"
   "Xterm Colors With Attributes\\n"
-  "  \\033[2;3m(Dim+Bold attributes should affect brightness of all xterm colors)\033[0m\\n"
+  "  \\033[2;3m(Dim+Bold attributes should affect brightness of all xterm colors)\\033[0m\\n"
   "  \\033[2;30m Dim Blk(30)   [█]\\033[0m   \\033[30m Normal Blk(30)   [█]\\033[0m  \\033[1;30m Bold Blk(30)   [█]\\033[0m\\n"
   "  \\033[2;31m Dim Red(31)   [█]\\033[0m   \\033[31m Normal Red(31)   [█]\\033[0m  \\033[1;31m Bold Red(31)   [█]\\033[0m\\n"
   "  \\033[2;32m Dim Grn(32)   [█]\\033[0m   \\033[32m Normal Grn(32)   [█]\\033[0m  \\033[1;32m Bold Grn(32)   [█]\\033[0m\\n"
@@ -453,7 +452,8 @@ const char *test[] = {
 };
 
 if (reset) { index = 0; return 0; }
-return show_test(test, index);} {}
+return show_test(test, index);} {selected
+    }
   }
   Function {test_esc_rgbcolors(bool reset)} {
     comment {--- 0020: Test RGB Colors} return_type {static int}
@@ -1355,8 +1355,7 @@ G_tty->append("\\033[2J\\033[H");
 }
 // Restore fg/bg colors
 G_tty->textfgcolor(fgsave);
-G_tty->textbgcolor(bgsave);
-} {}
+G_tty->textbgcolor(bgsave);} {}
   }
   Function {unicode_alignment()} {
     comment {Show unicode alignment test
@@ -1557,7 +1556,7 @@ G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
     Fl_Window win {
       label {Fl_Terminal Test}
       callback {exit(0);} open
-      xywh {1022 64 897 838} type Double size_range {897 330 0 0} visible
+      xywh {831 66 897 838} type Double size_range {897 330 0 0} visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1855,9 +1854,7 @@ G_tty->textfgcolor_xterm(7);     // XTERM_WHITE (influenced by Dim/Bold)
 G_tty->textbgcolor(0xffffffff);  // "see through" color
 
 update_inputs();
-add_lines(5);
-
-}
+add_lines(5);}
           tooltip {Sets text fg to XTERM White, text bg to "see through", and widget's color() to amber. Text fg can be influenced by Dim/Bold.} xywh {10 10 100 20} labelsize 9
         }
         MenuItem {} {
@@ -2100,7 +2097,7 @@ Hit ENTER to run command.
 The command's stdout will appear in terminal.} xywh {109 269 773 25} labelsize 12 when 12 textfont 4
       }
       Fl_Terminal tty {
-        xywh {10 302 872 524} box DOWN_BOX
+        xywh {10 302 872 524}
         class MyTerminal
       }
     }
