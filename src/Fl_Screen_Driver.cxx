@@ -501,10 +501,10 @@ int Fl_Screen_Driver::scale_handler(int event)
 
       // Example: 0xfe51 ("dead_acute") is sent by the '=' key of the US layout if the
       // primary layout is German. This *would* be the correct key value for the German
-      // keyboard layout.
+      // keyboard layout but not for the US layout.
       // The following statement would work around this for this very special case but
-      // this should IMHO not be done. A valid workaround is to make the desired layout
-      // the first in the keyboard layout selection list!
+      // this should IMHO not be done. A valid workaround by the user is to make the
+      // *used* layout the first in the keyboard layout selection list!
 
       // else if (Fl::event_key() == 0xfe51) zoom = zoom_in; // dead_acute, see above
     }
