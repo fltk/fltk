@@ -90,6 +90,12 @@ void fl_cleanup_dc_list(void);
 # include <wchar.h>
 #endif
 
+// old versions of MinGW lack definition of GET_XBUTTON_WPARAM:
+
+#ifndef GET_XBUTTON_WPARAM
+#define GET_XBUTTON_WPARAM(wParam) (HIWORD(wParam))
+#endif
+
 static bool is_dpi_aware = false;
 
 extern bool fl_clipboard_notify_empty(void);
