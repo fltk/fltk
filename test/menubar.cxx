@@ -37,6 +37,11 @@
 
 #define TERMINAL_HEIGHT 120
 
+// Set the macro below to 1 to test shortcuts usually used for screen scaling.
+// This should normally be set to 0, enable only for testing!
+// Note: screen scaling does not work with ctrl/+/-/0 if enabled (1)!
+#define OVERRIDE_SCALING_SHORTCUTS 0
+
 // Globals
 Fl_Terminal *G_tty = 0;
 
@@ -66,6 +71,14 @@ Fl_Menu_Item menutable[] = {
     {"&Open",   FL_ALT+'o', 0, 0, FL_MENU_INACTIVE},
     {"&Close",  0,      0},
     {"&Quit",   FL_ALT+'q', quit_cb, 0, FL_MENU_DIVIDER},
+
+#if (OVERRIDE_SCALING_SHORTCUTS)
+    {"CTRL/0",  FL_COMMAND+'0', 0},
+    {"CTRL/-",  FL_COMMAND+'-', 0},
+    {"CTRL/+",  FL_COMMAND+'+', 0},
+    {"CTRL/=",  FL_COMMAND+'=', 0},
+#endif
+
     {"shortcut",'a'},
     {"shortcut",FL_SHIFT+'a'},
     {"shortcut",FL_CTRL+'a'},
@@ -224,7 +237,6 @@ void about_cb(Fl_Widget*, void*) {
 }
 
 int main(int argc, char **argv) {
-  //Fl::set_color(Fl_Color(15),0,0,128);
   for (int i=0; i<99; i++) {
     char buf[100];
     snprintf(buf, 100,"item %d",i);
