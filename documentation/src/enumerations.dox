@@ -95,9 +95,11 @@ The following constants determine when a callback is performed:
 The following constants define the button numbers for FL_PUSH and
 FL_RELEASE events:
 
-  - FL_LEFT_MOUSE - the left mouse button
-  - FL_MIDDLE_MOUSE - the middle mouse button
-  - FL_RIGHT_MOUSE - the right mouse button
+  - FL_LEFT_MOUSE    - the left mouse button
+  - FL_MIDDLE_MOUSE  - the middle mouse button
+  - FL_RIGHT_MOUSE   - the right mouse button
+  - FL_BACK_MOUSE    - the back mouse button (side button 1)
+  - FL_FORWARD_MOUSE - the forward mouse button (side button 2)
 
 
 \section enumerations_event_key Fl::event_key() Values
@@ -140,6 +142,7 @@ FL_KEYBOARD and FL_SHORTCUT events:
   - FL_Alt_L - The left alt key.
   - FL_Alt_R - The right alt key.
   - FL_Delete - The delete key.
+  - FL_Alt_Gr - The AltGr key on some international keyboards.
 
 
 \section enumerations_event_state Fl::event_state() Values
@@ -161,7 +164,9 @@ value:
   - FL_BUTTON1 - Mouse button 1 is pushed.
   - FL_BUTTON2 - Mouse button 2 is pushed.
   - FL_BUTTON3 - Mouse button 3 is pushed.
-  - FL_BUTTONS - Any mouse button is pushed.
+  - FL_BUTTON4 - Mouse button 4 (back) is pushed.
+  - FL_BUTTON5 - Mouse button 5 (forward) is pushed.
+  - FL_BUTTONS - Any mouse button (1..5) is pushed.
   - FL_BUTTON(n) - Mouse button \p n ( where <tt>n > 0</tt>) is pushed.
 
 \section enumerations_alignment Alignment Values

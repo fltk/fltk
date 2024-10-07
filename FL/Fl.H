@@ -707,7 +707,7 @@ public:
     \retval FL_MIDDLE_MOUSE
     \retval FL_RIGHT_MOUSE
     \retval FL_BACK_MOUSE
-    \retval FL_FORWARD_MOUSE.
+    \retval FL_FORWARD_MOUSE
     \see Fl::event_buttons(), Fl::event_state()
   */
   static int event_button() { return e_keysym - FL_Button; }
