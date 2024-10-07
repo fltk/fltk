@@ -1572,6 +1572,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   pango_layout_set_font_description(pango_layout_, pfd);
   int pwidth, pheight;
   cairo_save(cairo_);
+  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_layout_get_size(pango_layout_, &pwidth, &pheight);
   if (pwidth > 0) {

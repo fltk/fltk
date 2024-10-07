@@ -66,6 +66,7 @@ public:
   PangoLayout *pango_layout() {return pango_layout_;}
   void set_cairo(cairo_t *c, float f = 0);
   static cairo_pattern_t *calc_cairo_mask(const Fl_RGB_Image *rgb);
+  static const char *clean_utf8(const char* str, int &n);
 
   void check_status(void);
 
