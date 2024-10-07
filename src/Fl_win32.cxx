@@ -1150,7 +1150,7 @@ static const struct {
   {VK_LAUNCH_MAIL,      FL_Mail},
 #endif
   {0xba,        ';'},
-  {0xbb,        '='},
+  {0xbb,        '='},   // 0xbb == VK_OEM_PLUS (see #1086)
   {0xbc,        ','},
   {0xbd,        '-'},
   {0xbe,        '.'},
@@ -1160,7 +1160,6 @@ static const struct {
   {0xdc,        '\\'},
   {0xdd,        ']'},
   {0xde,        '\''},
-  {VK_OEM_PLUS,  '+'},
   {VK_OEM_102,  FL_Iso_Key}
 };
 static int ms2fltk(WPARAM vk, int extended) {
