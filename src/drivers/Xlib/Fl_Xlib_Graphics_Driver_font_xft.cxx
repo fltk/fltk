@@ -18,7 +18,9 @@
 
 #include "../../flstring.h"
 #include "Fl_Xlib_Graphics_Driver.H"
-#include "../Cairo/Fl_Cairo_Graphics_Driver.H"
+#if USE_PANGO
+#  include "../Cairo/Fl_Cairo_Graphics_Driver.H"
+#endif
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>  // fl_strdup()
