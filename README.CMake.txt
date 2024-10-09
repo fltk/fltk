@@ -217,10 +217,11 @@ FLTK_GRAPHICS_GDIPLUS - default ON (Windows only).
     Make FLTK use GDI+ to draw oblique lines and curves resulting in
     antialiased graphics. If this option is OFF standard GDI is used.
 
-FLTK_MSVC_RUNTIME_DLL - default ON (Windows only: Visual Studio and NMake).
+FLTK_MSVC_RUNTIME_DLL - default ON (Windows: Visual Studio, NMake, clang).
     Select whether the build uses the MS runtime DLL (ON) or not (OFF).
     Default is ON: either /MD or /MDd for Release or Debug, respectively.
     Select OFF for either /MT or /MTd for Release or Debug, respectively.
+    If this variable is defined on other platforms it is silently ignored.
 
 FLTK_OPTION_CAIRO_EXT - default OFF
     Enable extended libcairo support - see README.Cairo.txt.

@@ -95,6 +95,12 @@ if(WIN32 AND NOT MINGW AND NOT MSYS)
   else()
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   endif()
+else(WIN32 AND NOT MINGW AND NOT MSYS)
+  # suppress CMake warning if the user sets FLTK_MSVC_RUNTIME_DLL on other platforms
+  if(DEFINED FLTK_MSVC_RUNTIME_DLL)
+    unset(FLTK_MSVC_RUNTIME_DLL)
+    unset(FLTK_MSVC_RUNTIME_DLL CACHE)
+  endif()
 endif(WIN32 AND NOT MINGW AND NOT MSYS)
 
 #######################################################################
