@@ -39,7 +39,7 @@
 
  This is the unofficial documentation of the file format as it currently stands.
  The format may change at any point (although it really should stay backwards
- compatible). Preferences files are supposed to be edited manually.
+ compatible). Preferences files are *not* supposed to be edited manually.
  Nevertheless, here are the docs:
 
  A .prefs file contains multiple lines. A line is defined a 0 or more ASCII 
