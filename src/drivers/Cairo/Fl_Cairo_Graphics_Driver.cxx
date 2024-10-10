@@ -1311,11 +1311,11 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 }
 
 
-// Scans the input string str with fl_utf8decode() that accepts also non-UTF-8
-// and processes it as if encoded in CP1252.
+// Scans the input string str with fl_utf8decode() that, by default, accepts
+// also non-UTF-8 and processes it as if encoded in CP1252.
 // Returns a true UTF-8 string and its length, possibly transformed from CP1252.
-// If the input string is true UTF-8, returned string is the same memory as input.
-// Otherwise, returned string is in private memory allocated inside clean_utf8()
+// If the input string is true UTF-8, the returned string is the same pointer as input.
+// Otherwise, the returned string is in private memory allocated inside clean_utf8()
 // and extended when necessary.
 const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
   static char *utf8_buffer = NULL;
@@ -1328,8 +1328,8 @@ const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
   char buf4[4];
   while (p < end) {
     unsigned codepoint = fl_utf8decode(p, end, &len);
-    len2 = fl_utf8encode(codepoint, buf4);
-    if (retval != str || len != len2) { // switch to using utf8_buffer
+    if (retval != str || (len == 1 &&  *(uchar*)p >= 0x80)) { // switch to using utf8_buffer
+      len2 = fl_utf8encode(codepoint, buf4);
       if (!utf8_buffer_len || utf8_buffer_len < (q - utf8_buffer) + len2) {
         utf8_buffer_len += (q - utf8_buffer) + len2 + 1000;
         utf8_buffer = (char *)realloc(utf8_buffer, utf8_buffer_len);
