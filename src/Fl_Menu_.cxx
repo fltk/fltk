@@ -533,7 +533,7 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   See void Fl_Menu_::menu(const Fl_Menu_Item* m).
 */
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* ud) {
-  int n = m->size();
+  unsigned int n = m->size();
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
   memcpy(newMenu, m, n*sizeof(Fl_Menu_Item));
   menu(newMenu);
