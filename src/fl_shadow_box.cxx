@@ -32,7 +32,7 @@ static void fl_shadow_frame(int x, int y, int w, int h, Fl_Color c) {
 
 static void fl_shadow_box(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
-  fl_rectf(x+1,y+1,w-2-BW,h-2-BW);
+  fl_rectf(x,y,w-BW,h-BW);
   fl_shadow_frame(x,y,w,h,FL_GRAY0);
 }
 

@@ -751,10 +751,11 @@ Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver(
 void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
 {
   if (w > 0 && h > 0) {
-    int s = (int)scale()/2;
-    rect_unscaled(this->floor(x) + s, this->floor(y) + s,
-                  this->floor(x + w - 1) - this->floor(x),
-                  this->floor(y + h - 1) - this->floor(y));
+    int s = (int)scale();
+    int d = s / 2;
+    rect_unscaled(this->floor(x) + d, this->floor(y) + d,
+                  this->floor(x + w) - this->floor(x) - s,
+                  this->floor(y + h) - this->floor(y) - s);
   }
 }
 

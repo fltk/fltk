@@ -267,10 +267,13 @@ void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
   Equivalent to drawing a box of type FL_BORDER_BOX.
 */
 void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
+  // New algorithm (see Discussion #1089):
+  // 1) draw with adequate bg color a filled rectangle that covers also the rectangle border
+  // 2) draw with adequate border color the rectangle border overwriting what was drawn at 1)
+  Fl::set_box_color(bgcolor);
+  fl_rectf(x, y, w, h);
   Fl::set_box_color(FL_BLACK);
   fl_rect(x, y, w, h);
-  Fl::set_box_color(bgcolor);
-  fl_rectf(x+1, y+1, w-2, h-2);
 }
 #define fl_border_box fl_rectbound      /**< allow consistent naming */
 
