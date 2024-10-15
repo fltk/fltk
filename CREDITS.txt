@@ -1,5 +1,5 @@
-CREDITS.txt - Fast Light Tool Kit (FLTK) Version 1.4.0
-------------------------------------------------------
+CREDITS.txt - Fast Light Tool Kit (FLTK)
+----------------------------------------
 
   This file lists the people responsible for the toolkit you are
   now using.  If you've been looking for your name in lights

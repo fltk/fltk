@@ -2,9 +2,9 @@
 
  \page preface Preface
 
-This manual describes the Fast Light Tool Kit ("FLTK")
-version 1.4.0, a C++ Graphical User Interface
-("GUI") toolkit for UNIX, Microsoft Windows and Apple macOS.
+This manual describes the Fast Light Tool Kit ("FLTK") version 1.4.0,
+a C++ Graphical User Interface ("GUI") toolkit for UNIX, Microsoft Windows,
+and Apple macOS.
 
 Version 1.4.0 introduces support for a new windowing system under
 Linux/Unix: Wayland. FLTK applications under Linux/Unix run unchanged

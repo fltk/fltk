@@ -18,7 +18,7 @@ Online Documentation (Latest Release):
 A documentation version is available online at the FLTK web site,
 along with the PDF version of the manual. The docs on the web site
 are usually somewhat older (latest release). The active development
-version (currently 1.4.0) is updated from time to time.
+version is updated from time to time.
 
 Use this URL to find the current online documentation:
 
