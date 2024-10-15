@@ -328,7 +328,7 @@ int Fl_Input::kf_copy_cut() {
   handles key combinations for Insert, Enter, and Tab depending on the
   widget's input_type().
 
-  The method then checks for Ctrl key combinations, such as Ctrl-A, Ctrl-C, 
+  The method then checks for Ctrl key combinations, such as Ctrl-A, Ctrl-C,
   Ctrl-V, Ctrl-X, and Ctrl-Z, which are commonly used for select all, copy,
   paste, cut, and undo operations.
 

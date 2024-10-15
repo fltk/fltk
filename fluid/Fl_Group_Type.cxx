@@ -122,7 +122,7 @@ void group_cb(Fl_Widget *, void *) {
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
-      t = t->next; 
+      t = t->next;
       continue;
     }
     Fl_Type *nxt = t->remove();

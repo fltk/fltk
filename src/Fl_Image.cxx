@@ -83,7 +83,7 @@ void Fl_Image::draw_empty(int X, int Y) {
   It is recommended not to call this member function to reduce the size
   of an image to the size of the area where this image will be drawn,
   and to use Fl_Image::scale() instead.
- 
+
   The new image should be released when you are done with it.
 
   Note: since FLTK 1.4.0 you can use Fl_Image::release() for all types

@@ -503,7 +503,7 @@ void Fl_Text_Display::display_needs_recalc() {
   display_needs_recalc_ = true;
   redraw(); // ensure draw() gets called
 }
- 
+
 /**
   Recalculate the display's visible lines and scrollbar sizes.
   Beware calling this directly may cause a lot of CPU if called repeatedly (issue 300).

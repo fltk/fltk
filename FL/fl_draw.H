@@ -997,7 +997,7 @@ FL_EXPORT void fl_measure(const char *str, int &x, int &y, int draw_symbols = 1)
             as graphical symbols
  \param[in] spacing spacing between text and image
  */
-FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h, 
+FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h,
                        Fl_Align align, Fl_Image *img = 0,
                        int draw_symbols = 1, int spacing = 0);
 /**

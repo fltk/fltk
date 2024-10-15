@@ -1,7 +1,7 @@
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1091,7 +1091,7 @@ int Fd_Code_Writer::crc_puts(const char *text) {
 
 /** Write a single ASCII character to the code file.
  If MergeBack is enabled, the CRC calculation is continued.
- \note to wrote UTF8 characters, use Fd_Code_Writer::crc_puts(const char *text)
+ \note to write UTF-8 characters, use Fd_Code_Writer::crc_puts(const char *text)
  \param[in] c any character between 0 and 127 inclusive
  \return see fputc(int, FILE*)
  */

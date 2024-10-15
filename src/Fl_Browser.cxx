@@ -1,7 +1,7 @@
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -526,9 +526,9 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
     Fl_Color lcol = textcolor();
     Fl_Align talign = FL_ALIGN_LEFT;
     // check for all the @-lines recognized by XForms:
-    //#if defined(__GNUC__)
-    //#warning FIXME This maybe needs to be more UTF8 aware now...?
-    //#endif /*__GNUC__*/
+    // #if defined(__GNUC__)
+    // #warning FIXME This maybe needs to be more UTF-8 aware now...?
+    // #endif /*__GNUC__*/
     if ( format_char() ) {      // can be NULL
       while (*str == format_char() && *++str && *str != format_char()) {
         switch (*str++) {

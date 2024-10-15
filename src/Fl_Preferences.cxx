@@ -42,33 +42,33 @@
  compatible). Preferences files are *not* supposed to be edited manually.
  Nevertheless, here are the docs:
 
- A .prefs file contains multiple lines. A line is defined a 0 or more ASCII 
+ A .prefs file contains multiple lines. A line is defined by 0 or more ASCII
  characters in the range from 0x20 to 0x7e, followed by a single '\n' line
  ending character. Note that there are no tabs, \0 characters, or '\r'
  characters anywhere in a line. Some parts of a line may allow 0x80 to 0xff
- to support Unicode UTF8 octets.
+ to support Unicode UTF-8 octets.
 
- The first line is always "; FLTK preferences file format 1.0", followed by a 
+ The first line is always "; FLTK preferences file format 1.0", followed by a
  '\n' to indicate the end of the line. The version number may change some time
  in the future if the file format ever changes.
 
- The second line contains the vendor information when the file was created: 
+ The second line contains the vendor information when the file was created:
  "; vendor: VENDOR\n"
 
- The third line contains the application name 
+ The third line contains the application name
  "; application: APPLICATION_NAME\n"
 
- Any following line that starts with a ';' is not relevant for data and seen 
+ Any following line that starts with a ';' is not relevant for data and seen
  as a comment. Fl_Preferences tries to preserve comments, but has no API to set
  or read comments.
 
- All data is stored in key/value pairs. All key/value pairs are store inside
+ All data is stored in key/value pairs. All key/value pairs are stored inside
  their group. There can be multiple groups. Group naming is used to
  indicate a hierarchy.
 
- A line starting with a '[' starts a group. Before and after a group line, 
+ A line starting with a '[' starts a group. Before and after a group line,
  there is always an empty line (no characters, just a '\n'). A group line ends
- in "]\n". Directly between the '[] and ']' is the name of the group. The first
+ in "]\n". Directly between the '[' and ']' is the name of the group. The first
  ("root")-group is always declared with the line "[.]\n".
 
  Simple group names are written starting with "./", for example "[./name]\n".
@@ -86,17 +86,17 @@
  the value. There is no space before or after the ":". The value may contain
  more ":" characters.
 
- The value is a text of ASCII characters 0x20 to 0x7e, or UTF8 Unicode octets 
+ The value is a text of ASCII characters 0x20 to 0x7e or UTF-8 Unicode octets
  0x80 to 0xff.
 
  The key/value line ends in a "\n". Key/value lines wrap before or at column 80
- with a "/n" and continue in the next line, starting with a "+" which indicates
+ with a "\n" and continue in the next line, starting with a "+" which indicates
  that this is an overflow line and is furthermore ignored. The type of a value
- is not stored in a file. It is not an error to call Fl_Preferences::set with a
- "double" and read back a string.
+ is not stored in the file. It is not an error to call Fl_Preferences::set with
+ a "double" and read back a string.
 
  * Integers are written as signed int using "%d".
- * Floating point values are written with decimal points if C_LOCALE is set 
+ * Floating point values are written with decimal points if C_LOCALE is set
    when creating the file.
  * When text is written, "\r", "\n", and the "\" character are escaped by
    prepending them with an additional "\", other characters <0x20 and 0x7f
@@ -241,7 +241,7 @@ unsigned int Fl_Preferences::file_access()
 }
 
 /**
- Determine the file name and path to preferences that would be openend with
+ Determine the file name and path to preferences that would be opened with
  these parameters.
 
  Find the possible location of a preference file on disk without touching any
@@ -327,7 +327,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  For backward compatibility, the old \c USER `.prefs` file naming scheme
  <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> is checked first.
  If that file does not exist, the environment variable `$XDG_CONFIG_HOME` is
- read as a base directory. If `$XDG_CONFIG_HOME` not set, the base directory
+ read as a base directory. If `$XDG_CONFIG_HOME` is not set, the base directory
  defaults to `$HOME/.config/`.
 
  The user preferences will be stored in

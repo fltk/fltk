@@ -693,7 +693,7 @@ public:
 
   /** Set the gap between the label and the image in pixels.
    This value is limited to 0..255.
-   \param[in] gap spacing in pixels 
+   \param[in] gap spacing in pixels
    */
   void label_image_spacing(int gap) { label_.spacing = (uchar)gap; }
 

@@ -43,7 +43,7 @@
  in a key name are treated as subgroups, i.e. the key 'window/width' would
  actually refer to the key 'width' inside the group 'window'.
 
- Keys have a unique name within their group. A value can be any string includin
+ Keys have a unique name within their group. A value can be any string including
  control characters 0x00 to 0x1f, 0x7f, and UTF-8 octets.
 
  Several methods allow setting and getting numerical values and binary data.
@@ -61,11 +61,11 @@
  may change at any time. Preferences files are not meant to be created
  or edited "by hand."
 
- FLTK preferences are not meant to replace a fully features database. No merging
+ FLTK preferences are not meant to replace a fully featured database. No merging
  of data takes place. If several instances of an app access the same database at
  the same time, only the most recent changes will persist.
 
- Preferences should no be used to store document data. The .prefs file should
+ Preferences should not be used to store document data. The .prefs file should
  be kept small for performance reasons. One application can have multiple
  preferences files. Extensive binary data however should be stored in separate
  files: see \a Fl_Preferences::get_userdata_path() .
@@ -135,9 +135,9 @@ public:
     MEMORY,                            ///< Returned if querying memory mapped preferences
     ROOT_MASK     = 0x00FF,            ///< Mask for the values above
     CORE          = 0x0100,            ///< OR'd by FLTK to read and write core library preferences and options
-    C_LOCALE      = 0x1000,            ///< This flag should always be set, it makes sure that floating point
+    C_LOCALE      = 0x1000,            ///< This flag should always be set to ensure that floating point values
+                                       ///< are written and read correctly independently of the current locale
     CLEAR         = 0x2000,            ///< Don't read a possibly existing database. Instead, start with an empty set of preferences.
-                                       ///< values are written correctly independently of the current locale
     SYSTEM_L      = SYSTEM | C_LOCALE, ///< Preferences are used system-wide, locale independent
     USER_L        = USER | C_LOCALE,   ///< Preferences apply only to the current user, locale independent
     CORE_SYSTEM_L = CORE | SYSTEM_L,   ///< Same as CORE | SYSTEM | C_LOCALE

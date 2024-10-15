@@ -32,7 +32,7 @@ static void innards(const char *str, int len, int X, int Y, const int data[][3],
   fl_color(c);
 }
 
-static void dispatch(const Fl_Label* o, 
+static void dispatch(const Fl_Label* o,
   int x, int y, int w, int h, Fl_Align align,
   void (*callthis)(const char*,int,int,int))
 {

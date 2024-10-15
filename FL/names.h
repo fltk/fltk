@@ -1,7 +1,7 @@
 //
-// Event names header file for the Fast Light Tool Kit (FLTK).
+// Event and other names header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -116,7 +116,7 @@ const char * const fl_fontnames[] =
 };
 
 /**
- This is an array of callback reason names you can use to convert font numbers into names.
+ This is an array of callback reason names you can use to convert callback reasons into names.
 
  The array gets defined inline wherever your '\#include <FL/names.h>' appears.
  */

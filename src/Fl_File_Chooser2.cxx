@@ -1315,7 +1315,7 @@ Fl_File_Chooser::update_preview()
     window->cursor(FL_CURSOR_DEFAULT);
     Fl::check();
 
-    // Scan the buffer for printable UTF8 chars...
+    // Scan the buffer for printable UTF-8 chars...
     for (ptr = preview_text_; *ptr; ptr++) {
       uchar c = uchar(*ptr);
       if ( (c&0x80)==0 ) {

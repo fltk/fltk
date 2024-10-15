@@ -1109,7 +1109,7 @@ static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
 Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
 {
   // Return immideatly if the fonts were already counted
-  if (font_count_ != -1) 
+  if (font_count_ != -1)
     return FL_FREE_FONT + font_count_;
   fl_open_display();
   int n_families, count = 0;
