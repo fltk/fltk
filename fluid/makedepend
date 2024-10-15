@@ -1067,6 +1067,7 @@ Fl_Menu_Type.o: ../FL/Fl.H
 Fl_Menu_Type.o: ../FL/fl_ask.H
 Fl_Menu_Type.o: ../FL/fl_attr.h
 Fl_Menu_Type.o: ../FL/Fl_Bitmap.H
+Fl_Menu_Type.o: ../FL/Fl_Browser_.H
 Fl_Menu_Type.o: ../FL/Fl_Button.H
 Fl_Menu_Type.o: ../FL/Fl_Cairo.H
 Fl_Menu_Type.o: ../FL/fl_casts.H
@@ -1127,6 +1128,8 @@ Fl_Menu_Type.o: Fl_Type.h
 Fl_Menu_Type.o: Fl_Widget_Type.h
 Fl_Menu_Type.o: Fl_Window_Type.h
 Fl_Menu_Type.o: mergeback.h
+Fl_Menu_Type.o: undo.h
+Fl_Menu_Type.o: widget_browser.h
 Fl_Type.o: ../config.h
 Fl_Type.o: ../FL/Enumerations.H
 Fl_Type.o: ../FL/filename.H
