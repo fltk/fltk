@@ -101,6 +101,8 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
   - New member functions Fl_Paged_Device::begin_job() and begin_page()
     replace start_job() and start_page(). The start_... names are maintained
     for API compatibility.
+  - Fl_GL_Window can now contain FLTK widgets that are drawn on top of the
+    OpenGL scene.
   - OpenGL draws text using textures on all platforms, when the necessary
     hardware support is present (a backup mechanism is available in absence
     of this support). Thus, all text drawable in Fl_Window's can be drawn
@@ -233,6 +235,7 @@ Changes in FLTK 1.4.0                            Released: Feb ?? 2024
     documentations to make clear that the leading underscore must not be
     used in user code, although the enum documentation still contains
     leading underscores for technical reasons (internal use).
+  - Boxtypes can now be configured to draw their own custom focus box.
   - The blocks demo program got a new keyboard shortcut (ALT+SHIFT+H) to
     reset the user's high score. It is now slower than before in higher
     levels, hence you can expect higher scores (due to a bug fix in the
