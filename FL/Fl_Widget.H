@@ -78,8 +78,8 @@ struct FL_EXPORT Fl_Label {
 
 /** A class prototype that allows for additional data in callbacks.
 
- Users can extend this class and pass it to widget callbacks. Widgets can
- take ownership of the callback data, deleting the data when the widget
+ Users can derive this class and pass objects of such derived classes to widget callbacks.
+ Widgets can take ownership of the callback data, deleting the data when the widget
  itself is deleted.
 
  The destructor of this class is virtual, allowing for additional code to
@@ -89,9 +89,11 @@ struct FL_EXPORT Fl_Label {
  \see Fl_Widget::callback(Fl_Callback*, Fl_Callback_User_Data*, bool)
  \see Fl_Widget::user_data(Fl_Callback_User_Data*, bool)
  */
-class Fl_Callback_User_Data {
+class FL_EXPORT Fl_Callback_User_Data {
+protected:
+  Fl_Callback_User_Data() {} ///< Protected constructor
 public:
-  virtual ~Fl_Callback_User_Data() { }
+  virtual ~Fl_Callback_User_Data() { } ///< Destructor
 };
 
 
