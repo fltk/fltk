@@ -489,29 +489,32 @@ void update_visibility_flag(Fl_Type *p) {
  Constructor and base for any node in the widget tree.
  */
 Fl_Type::Fl_Type() :
-uid_(0),
-code_static_start(-1), code_static_end(-1),
-code1_start(-1), code1_end(-1),
-code2_start(-1), code2_end(-1),
-header1_start(-1), header1_end(-1),
-header2_start(-1), header2_end(-1),
-header_static_start(-1), header_static_end(-1),
-proj1_start(-1), proj1_end(-1),
-proj2_start(-1), proj2_end(-1)
+  name_(NULL),
+  label_(NULL),
+  callback_(NULL),
+  user_data_(NULL),
+  user_data_type_(NULL),
+  comment_(NULL),
+  uid_(0),
+  parent(NULL),
+  new_selected(0),
+  selected(0),
+  folded_(0),
+  visible(0),
+  level(0),
+  next(NULL), prev(NULL),
+  factory(NULL),
+  code_static_start(-1), code_static_end(-1),
+  code1_start(-1), code1_end(-1),
+  code2_start(-1), code2_end(-1),
+  header1_start(-1), header1_end(-1),
+  header2_start(-1), header2_end(-1),
+  header_static_start(-1), header_static_end(-1),
+  proj1_start(-1), proj1_end(-1),
+  proj2_start(-1), proj2_end(-1)
 {
-  factory = 0;
-  parent = 0;
-  next = prev = 0;
-  selected = new_selected = 0;
-  visible = 0;
-  name_ = 0;
-  label_ = 0;
-  user_data_ = 0;
-  user_data_type_ = 0;
-  callback_ = 0;
-  comment_ = 0;
-  level = 0;
 }
+
 
 /**
  Destructor for any node in the tree.
