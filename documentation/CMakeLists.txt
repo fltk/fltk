@@ -161,6 +161,12 @@ if(FLTK_BUILD_PDF_DOCS)
 
   # convert Doxybook to current doxygen version
 
+  # set DOXY_VERSION for compatibility with configure/make,
+  # to be replaced in fltk-title.tex.in
+  # FIXME: this can be simplified when configure/make is no longer supported
+
+  set(DOXY_VERSION "${DOXYGEN_VERSION_SHORT}") #
+
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
