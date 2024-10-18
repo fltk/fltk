@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: install prerequisites
       run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglew-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxft-dev libxinerama-dev
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install prerequisites
       run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libgtk-3-dev
@@ -88,7 +88,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -123,7 +123,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build

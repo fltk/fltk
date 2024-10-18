@@ -3,7 +3,7 @@
 # document on a Linux machine.
 #
 
-name: 'Build FLUID User Handbook'
+name: 'Build FLUID User Manual.'
 
 # This job must be called explicitly form the 'Actions' tab in GitHub
 on: [workflow_dispatch]
@@ -19,7 +19,7 @@ jobs:
 #    runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install prerequisites
       run: |
