@@ -4,12 +4,12 @@ README - Fast Light Tool Kit (FLTK) Version 1.4.0
 WHAT IS FLTK?
 
     The Fast Light Tool Kit is a cross-platform C++ GUI toolkit for
-    UNIX(r)/Linux(r) (X11 or Wayland), Microsoft(r) Windows(r), and
-    macOS(r). FLTK provides modern GUI functionality without bloat
-    and supports 3D graphics via OpenGL(r) and its built-in GLUT
-    emulation. It was originally developed by Mr. Bill Spitzak and is
-    currently maintained by a small group of developers across
-    the world with a central repository on GitHub.
+    UNIX®/Linux® (X11 or Wayland), Microsoft® Windows®, and macOS®.
+    FLTK provides modern GUI functionality without bloat and
+    supports 3D graphics via OpenGL® and its built-in GLUT
+    emulation. It was originally developed by Mr. Bill Spitzak
+    and is currently maintained by a small group of developers
+    across the world with a central repository on GitHub.
 
         https://www.fltk.org/
         https://github.com/fltk/fltk/
@@ -201,7 +201,7 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2023 by Bill Spitzak and others,
+    FLTK is copyright 1998-2024 by Bill Spitzak and others,
     see the CREDITS.txt file for more info.
 
     This library is free software. Distribution and use rights are
