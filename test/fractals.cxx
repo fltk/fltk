@@ -724,28 +724,28 @@ void MenuInit(void)
   int submenu3, submenu2, submenu1;
 
   submenu1 = glutCreateMenu(setlevel);
-  glutAddMenuEntry((char *)"0", 0);  glutAddMenuEntry((char *)"1", 1);
-  glutAddMenuEntry((char *)"2", 2);  glutAddMenuEntry((char *)"3", 3);
-  glutAddMenuEntry((char *)"4", 4);  glutAddMenuEntry((char *)"5", 5);
-  glutAddMenuEntry((char *)"6", 6);  glutAddMenuEntry((char *)"7", 7);
-  glutAddMenuEntry((char *)"8", 8);
+  glutAddMenuEntry("0", 0);  glutAddMenuEntry("1", 1);
+  glutAddMenuEntry("2", 2);  glutAddMenuEntry("3", 3);
+  glutAddMenuEntry("4", 4);  glutAddMenuEntry("5", 5);
+  glutAddMenuEntry("6", 6);  glutAddMenuEntry("7", 7);
+  glutAddMenuEntry("8", 8);
 
   submenu2 = glutCreateMenu(choosefract);
-  glutAddMenuEntry((char *)"Moutain", MOUNTAIN);
-  glutAddMenuEntry((char *)"Tree", TREE);
-  glutAddMenuEntry((char *)"Island", ISLAND);
+  glutAddMenuEntry("Moutain", MOUNTAIN);
+  glutAddMenuEntry("Tree", TREE);
+  glutAddMenuEntry("Island", ISLAND);
 
   submenu3 = glutCreateMenu(agvSwitchMoveMode);
-  glutAddMenuEntry((char *)"Flying", FLYING);
-  glutAddMenuEntry((char *)"Polar", POLAR);
+  glutAddMenuEntry("Flying", FLYING);
+  glutAddMenuEntry("Polar", POLAR);
 
   glutCreateMenu(handlemenu);
   glutAddSubMenu((char *)"Level", submenu1);
   glutAddSubMenu((char *)"Fractal", submenu2);
   glutAddSubMenu((char *)"Movement", submenu3);
-  glutAddMenuEntry((char *)"New Fractal",      MENU_RAND);
-  glutAddMenuEntry((char *)"Toggle Axes", MENU_AXES);
-  glutAddMenuEntry((char *)"Quit",             MENU_QUIT);
+  glutAddMenuEntry("New Fractal",      MENU_RAND);
+  glutAddMenuEntry("Toggle Axes", MENU_AXES);
+  glutAddMenuEntry("Quit",             MENU_QUIT);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 

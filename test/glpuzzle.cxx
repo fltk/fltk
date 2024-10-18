@@ -4,7 +4,7 @@
 // This is a GLUT demo program to demonstrate fltk's GLUT emulation.
 // Search for "fltk" to find all the changes
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1485,10 +1485,10 @@ main(int argc, char **argv)
   glutMouseFunc(mouse);
   glutVisibilityFunc(visibility);
   glutCreateMenu(menu);
-  glutAddMenuEntry((char *)"Normal pos", 1);
-  glutAddMenuEntry((char *)"Solve", 2);
-  glutAddMenuEntry((char *)"Reset", 3);
-  glutAddMenuEntry((char *)"Quit", 4);
+  glutAddMenuEntry("Normal pos", 1);
+  glutAddMenuEntry("Solve", 2);
+  glutAddMenuEntry("Reset", 3);
+  glutAddMenuEntry("Quit", 4);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
   glutMainLoop();
   return 0;             /* ANSI C requires main to return int. */
