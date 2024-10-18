@@ -55,7 +55,7 @@ public:
   /**
     Same as Fl_Window::flush()
   */
-  void flush() { Fl_Window::flush(); }
+  void flush() FL_OVERRIDE { Fl_Window::flush(); }
 };
 
 #endif
