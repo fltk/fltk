@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Single-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,12 +45,11 @@ public:
     position, size, and label (title) string.
   */
   Fl_Single_Window(int X, int Y, int W, int H, const char *l=0);
-  
-  int make_current();
+
+  /**
+    Same as Fl_Window::make_current()
+  */
+  void make_current() { Fl_Window::make_current(); }
 };
 
 #endif
-
-//
-// End of "$Id$".
-//
