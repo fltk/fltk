@@ -1573,6 +1573,46 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
         }
         Fl::e_text = buffer;
+
+        // Kludge to process the +-containing key in cross-platform way when used with Ctrl
+/* Table of how Windows processes the '+'-containing key by keyboard layout
+  key  virtual
+content  key    keyboard layout
+  =|+   0xbb    US/UK/Fr/Arabic/Chinese/Hebrew/Brazil/Russian/Vietnam/Japan/Korean/Persian
+  +|*   0xbb    German/Spanish/Italy/Greek/Portugal
+  +|?   0xbb    Swedish/Finish/Norway
+  +|±   0xbb    Dutch
+  1|+   '1'     Swiss/Luxemburg
+  3|+   '3'     Hungarian
+  4|+   '4'     Turkish
+*/
+        if (Fl::e_state & FL_CTRL) { // extra processing necessary only when Ctrl is down
+          int vk_plus_key = (VkKeyScanA('+') & 0xff); // virtual key of '+'-containing key
+          bool plus_shift_pos = ((VkKeyScanA('+') & 0x100) != 0); // true means '+' in shifted position
+          int plus_other_char;  // the other char on same key as '+'
+          if (plus_shift_pos) plus_other_char = ms2fltk(vk_plus_key, 0);
+          else if ((VkKeyScanA('*') & 0xff) == vk_plus_key) plus_other_char = '*'; // German
+          else if ((VkKeyScanA('?') & 0xff) == vk_plus_key) plus_other_char = '?'; // Swedish
+          else if ((VkKeyScanW(L'±') & 0xff) == vk_plus_key) plus_other_char = L'±'; // Dutch
+          else plus_other_char = '='; // fallback
+//fprintf(stderr, "plus_shift_pos=%d plus_other_char='%c' vk+=0x%x\n", plus_shift_pos,
+//        plus_other_char, vk_plus_key);
+          if ( (vk_plus_key == 0xbb && Fl::e_keysym == '=') || // the '+'-containing key is down
+                (plus_shift_pos && Fl::e_keysym == plus_other_char) ) {
+            Fl::e_keysym = (plus_shift_pos ? plus_other_char : '+');
+            static char plus_other_char_utf8[4];
+            int lutf8 = fl_utf8encode(plus_other_char, plus_other_char_utf8);
+            plus_other_char_utf8[lutf8] = 0;
+            if (plus_shift_pos) {
+              Fl::e_text = ( (Fl::e_state & FL_SHIFT) ? (char*)"+" : plus_other_char_utf8 );
+            } else {
+              Fl::e_text = ( (Fl::e_state & FL_SHIFT) ? plus_other_char_utf8 : (char*)"+" );
+            }
+            Fl::e_length = strlen(Fl::e_text);
+          }
+        }
+        // end of processing of the +-containing key
+
         if (lParam & (1 << 31)) { // key up events.
           if (Fl::handle(FL_KEYUP, window))
             return 0;
