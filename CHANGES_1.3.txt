@@ -1,3 +1,187 @@
+CHANGES IN FLTK 1.3.9                                   RELEASED: Dec 09 2023
+
+FLTK 1.3.9 is a maintenance release with some fixes and enhancements.
+
+Highlights in this release:
+
+  - Support macOS up to macOS 14 "Sonoma".
+  - Update bundled libraries to current versions (see below).
+  - Introduce bundled image library "prefixing" to avoid conflicts
+    with system libraries.
+  - New CMake option FLTK_MSVC_RUNTIME_DLL to select Visual Studio
+    Runtime version: DLL (/MDx) or static (/MTx), see README.CMake.txt
+
+
+Bundled library versions (see also README.bundled-libs.txt):
+
+    Library       Version            Release date
+    ---------------------------------------------
+    jpeg          jpeg-9e            2022-01-16
+    png           libpng-1.6.40      2023-06-21
+    zlib          zlib-1.3           2023-08-18
+
+
+Details:
+
+  Albrecht Schlosser:
+    Backport X11 INCR protocol fixes from 1.4.0 (issue #451)
+    X11: Suppress compiler warnings when using gcc or clang
+    Fix crash if a program exits before it opens a window (STR 3484).
+    Fix compilation error with current Visual Studio 2022
+    Windows: #define WIN32 if not defined by user
+    Backport warning fixes from 1.4.0 in src/fl_draw.cxx (#693)
+    Fix compiler warning as pointed out in PR #693
+    Fix another compiler warning (#693)
+    Remove unused variable, fix "type issue" (#445, part 2)
+    Fix stack buffer overflow found by address sanitizer
+    Fix "gtk+ rendering" (GitHub Issue #443)
+    Fix doxygen warnings
+    Bump version numbers, prepare release 1.3.9
+    Fix several compiler warnings
+    Update bundled image libraries and zlib to current versions
+    Update README, README.CMake.txt, and some support files
+    Fix compiler warnings: backported from 1.4 (git 'master')
+    CMake/MSVC: remove confusing recommendation to rerun CMake
+    Documentation: remove dark color on title page
+    Raise CMake minimum required version to 3.15 and more
+
+  ManoloFLTK:
+    macOS platform: Issue #325 "Disabling IM disables Greek and Cyrillic layouts"
+    Fix fullscreen window level corner cases on macOS
+    Fix issue #373 apparent with macOS platform and SDK ≤ 10.13
+    Issue #452: Fl::get_font_name failure on OS-X.
+    Issue #454: crash in Fl::get_font_name().
+    Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Esc or Tab don't work on Mac
+    Fix "Focus is lost leaving full screen on macOS 13" (#608)
+    Add support of macOS Ventura 13.0 and macOS Sonoma 14.0
+    macOS: remove configure option --enable-x11 and CMake OPTION_APPLE_X11;
+      this functionality remains in FLTK 1.4.
+    configure.ac: make sure local-png and local-zlib always run together
+    Remove the -mwindows argument from CFLAGS and CXXFLAGS
+
+Matthias Melcher:
+    Issue #188: Fix reference counts and search for Fl_Shared_Image original
+
+  YX:
+    Fix IME problem (issue #270)
+
+
+CHANGES IN FLTK 1.3.8                                   RELEASED: Nov 20 2021
+
+FLTK 1.3.8 is a maintenance release with some fixes and enhancements.
+
+Details:
+
+  Albrecht Schlosser:
+    Make "FLTK_CONSOLIDATE_MOTION" user-definable (issue #76)
+    Fix compiler warnings (backported from 1.4)
+    Add new dialog fl_choice_n() with extended return values (#282)
+
+  ManoloFLTK:
+    Account for deprecation of [NSBitmapImageRep initWithFocusedViewRect:]
+      in macOS 10.14
+    macOS: fix fullscreen window when other windows were created before
+    Fix issue #287: "FLTK 1.3.6 doesn't handle fullscreen on macOS"
+    Fix issue #288: "FLTK 1.3.6+ doesn't notify window movement on macOS"
+    Fix issue #279: "HiDpi issue on macOS with retina display"
+    macOS: Allow building with non-Apple compiler that may not support blocks
+
+
+CHANGES IN FLTK 1.3.7                                   RELEASED: Jul 25 2021
+
+FLTK 1.3.7 is a maintenance release for macOS only. It fixes one
+regression introduced in FLTK 1.3.6 and two long standing timer
+issues on macOS.
+
+Other platforms than macOS are not concerned.
+
+Changes:
+
+  Avoid premature FL_RELEASE event at start of drag-n-drop operation
+  Fix a timer inconsistency and prevent a crash
+  Fl::add_timeout() must always create a new timer (#248)
+
+
+
+CHANGES IN FLTK 1.3.6                                   RELEASED: May 15 2021
+
+There have been no changes since FLTK 1.3.6rc2.
+
+
+CHANGES IN FLTK 1.3.6rc2                                RELEASED: May 04 2021
+
+FLTK 1.3.6rc2 fixes some minor issues of 1.3.6rc1, particularly macOS
+bundle generation. It addresses an issue that bundles can't be executed
+on macOS 11.3 Big Sur if built with configure/make after downloading
+the release tarball because of the macOS "quarantine" feature.
+
+Details:
+
+  Albrecht Schlosser:
+    Rename file 'VERSION' to 'fltk_version.dat' (#191)
+    Fix version number in doxygen docs
+    Fix build with Cairo for CMake < 3.13
+    CMake: fix old (pre 3.13) link_directories() usage
+    Enhance CMake build configuration summary
+    Refactor macOS bundle generation to avoid "quarantine"
+    Fix a new compiler warning
+
+
+CHANGES IN FLTK 1.3.6rc1                                RELEASED: Apr 26 2021
+
+FLTK 1.3.6 is a maintenance release with new macOS Big Sur support
+and some bug fixes. macOS Big Sur is supported on both Intel and the
+new Apple Silicon (M1) chips.
+
+CMake support has been improved but is not yet "perfect". Documentation
+has been enhanced, bundled image libraries have been updated to current
+versions.
+
+The following lists are subsets of all commits. References in '(...)'
+are either STR numbers (STR xxxx) or GitHub Issues or Pull Requests
+(#nnn).
+
+
+Bug fixes and other improvements
+
+  Albrecht Schlosser:
+    Fix Fl::add_timeout() in draw() under Linux (STR 3188)
+    X11: Fix X Input Methods (XIM) (STR 3502, 3192)
+    Fix overly restrictive JPEG filter (#81)
+    Fix DND in read-only Fl_Input (Fl_Output) (#113)
+    Fix offscreen drawing under X11 (STR 3384)
+    Fix potential fluid crashes (STR 3420) + memory leak
+    Fix X11 copy-paste and drag-and-drop target selection (#182)
+    Fix CMake install procedure (#212)
+    Avoid "Bogus FL_MOVE/FL_DRAG events" (#76)
+    CMake: Document FLTKConfig.cmake and set FLTK_INCLUDE_DIR
+
+  Greg Ercolano:
+    Fix issue92, added -d debug flag to fluid (#92)
+    Merge pull request #176 from ComputerNerd/errmsg-fix-13
+
+  ManoloFLTK:
+    X11: add support for copy+paste of image within one app
+    Windows: add bitmap version of graphics when copying to clipboard
+    Fix use of Xrender extension with old, 16-bit framebuffers.
+    Fix for Fl_Native_File_Chooser under macOS 10.15 Catalina and ...
+    Restore macOS capacity to turn window fullscreen encompassing several screens.
+    Improve Fl_Copy_Surface under macOS
+    Set OPTION_USE_SYSTEM_LIBPNG/JPEG off under macOS by default
+    Have Fl_Pack::draw() call Fl_Group::init_sizes() on its parent group.
+    CMake support of the Darwin+XQuartz test platform
+    Add support of macOS "Big Sur" 11.0
+    Fix when building with SDK 10.15 and running with 11.0 Big Sur
+    Backport fix for issue #185 "Shared Image reload() loses initial dimensions" from branch 1.4
+    Fix fl_endpoints() for macOS platform that was not effective.
+    Fix stack corruption when loading GIF (pull request #200)
+    Restore ./configure --enable-x11 on macOS
+    Fix crash when terminating any macOS app by cmd-Q
+
+  OKAMURA, Yasunobu:
+    Fix JIS Keyboard dead keys
+
+
 CHANGES IN FLTK 1.3.5                            RELEASED: Mar 03 2019
 
   Bug fixes and other improvements
