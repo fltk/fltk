@@ -147,7 +147,7 @@ Changes in FLTK 1.4.0 RC1                               Released: Oct 20 2024
   - New member functions Fl_Paged_Device::begin_job() and begin_page()
     replace start_job() and start_page(). The start_... names are maintained
     for API compatibility.
-  - Fl_GL_Window can now contain FLTK widgets that are drawn on top of the
+  - Fl_Gl_Window can now contain FLTK widgets that are drawn on top of the
     OpenGL scene.
   - OpenGL draws text using textures on all platforms, when the necessary
     hardware support is present (a backup mechanism is available in absence
@@ -338,7 +338,7 @@ Changes in FLTK 1.4.0 RC1                               Released: Oct 20 2024
   - Fixed missing item handling in Fl_Check_Browser (STR #3480).
   - Fixed Delete key in Fl_Input deleting entire widgets in Fluid (STR #2841).
   - Duplicating Widget Class in Fluid no longer crashes (STR #3445).
-  - Fixed 'fluid.app' on case sensitive macOS (was: Fluid.app).
+  - Fixed 'fluid.app' on case sensitive macOS (was: 'Fluid.app').
   - Fl_Check_Browser::add(item) now accepts NULL (STR #3498).
   - Interface to set maximum width of spinner text field (STR #3386).
   - Fl_Text_Display no longer wiggles (STR #2531).

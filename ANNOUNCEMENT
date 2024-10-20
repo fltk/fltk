@@ -7,8 +7,8 @@ you don't need to change source code when you switch to FLTK 1.4.
 However, all programs must be recompiled with FLTK 1.4 because the
 ABI (Application Binary Interface) has changed.
 
-Potential source code conflicts are documented in the in chapter
-"Migrating Code from FLTK 1.3 to 1.4" of the user documentation [1].
+Potential source code conflicts are documented in chapter "Migrating
+Code from FLTK 1.3 to 1.4" of the user documentation [1].
 
 FLTK 1.4 adds some new widgets (e.g. Fl_Flex, Fl_Grid) for flexible GUI
 layout, Fl_Scheme_Choice for scheme selection by users, and more.
