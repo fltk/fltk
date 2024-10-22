@@ -253,6 +253,7 @@ public:
   virtual Fl_Widget *enter_live_mode(int top=0); // build widgets needed for live mode
   virtual void leave_live_mode(); // free allocated resources
   virtual void copy_properties(); // copy properties from this type into a potential live object
+  virtual void copy_properties_for_children() { } // copy remaining properties after children were added
 
   // get message number for I18N
   int msgnum();

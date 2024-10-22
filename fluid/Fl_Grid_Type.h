@@ -64,6 +64,7 @@ public:
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
+  void copy_properties_for_children() FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;

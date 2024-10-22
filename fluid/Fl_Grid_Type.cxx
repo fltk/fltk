@@ -303,13 +303,39 @@ void Fl_Grid_Type::copy_properties()
 {
   super::copy_properties();
   Fl_Grid *d = (Fl_Grid*)live_widget, *s =(Fl_Grid*)o;
+  d->layout(s->rows(), s->cols());
   int lm, tm, rm, bm;
   s->margin(&lm, &tm, &rm, &bm);
   d->margin(lm, tm, rm, bm);
   int rg, cg;
   s->gap(&rg, &cg);
   d->gap(rg, cg);
-  // TODO: lots to do!
+  // copy col widths, heights, and gaps
+  for (int c=0; c<s->cols(); c++) {
+    d->col_width(c, s->col_width(c));
+    d->col_gap(c, s->col_gap(c));
+    d->col_weight(c, s->col_weight(c));
+  }
+  // copy row widths, heights, and gaps
+  for (int r=0; r<s->rows(); r++) {
+    d->row_height(r, s->row_height(r));
+    d->row_gap(r, s->row_gap(r));
+    d->row_weight(r, s->row_weight(r));
+  }
+}
+
+void Fl_Grid_Type::copy_properties_for_children() {
+  Fl_Grid *d = (Fl_Grid*)live_widget, *s =(Fl_Grid*)o;
+  for (int i=0; i<s->children(); i++) {
+    Fl_Grid::Cell *cell = s->cell(s->child(i));
+    if (cell && i<d->children()) {
+      d->widget(d->child(i),
+                cell->row(), cell->col(),
+                cell->rowspan(), cell->colspan(),
+                cell->align());
+    }
+  }
+  d->layout();
 }
 
 void Fl_Grid_Type::write_properties(Fd_Project_Writer &f)

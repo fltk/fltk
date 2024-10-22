@@ -3834,6 +3834,8 @@ Fl_Widget* Fl_Widget_Type::propagate_live_mode(Fl_Group* grp) {
     }
   }
   grp->end();
+  live_widget = grp;
+  copy_properties_for_children();
   return live_widget;
 }
 

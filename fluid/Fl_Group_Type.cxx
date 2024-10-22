@@ -334,6 +334,20 @@ void Fl_Flex_Type::copy_properties()
   d->gap( s->gap() );
 }
 
+void Fl_Flex_Type::copy_properties_for_children() {
+  Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
+  for (int i=0; i<s->children(); i++) {
+    if (s->fixed(s->child(i)) && i<d->children()) {
+      if (s->horizontal()) {
+        d->fixed(d->child(i), d->child(i)->w());
+      } else {
+        d->fixed(d->child(i), d->child(i)->h());
+      }
+    }
+  }
+  d->layout();
+}
+
 void Fl_Flex_Type::write_properties(Fd_Project_Writer &f)
 {
   Fl_Group_Type::write_properties(f);
