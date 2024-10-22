@@ -535,9 +535,11 @@ enum Fl_When { // Fl_Widget::when():
 
 /*@{*/
 
-#define FL_LEFT_MOUSE	1	///< The left mouse button
-#define FL_MIDDLE_MOUSE	2	///< The middle mouse button
-#define FL_RIGHT_MOUSE	3	///< The right mouse button
+#define FL_LEFT_MOUSE     1       ///< The left mouse button
+#define FL_MIDDLE_MOUSE   2       ///< The middle mouse button
+#define FL_RIGHT_MOUSE    3       ///< The right mouse button
+#define FL_BACK_MOUSE     4       ///< The back mouse button (side button 1)
+#define FL_FORWARD_MOUSE  5       ///< The forward mouse button (side button 2)
 
 /*@}*/		// group: Mouse Buttons
 
@@ -562,11 +564,18 @@ enum Fl_When { // Fl_Widget::when():
 					// correct for XFree86
 #define FL_SCROLL_LOCK	0x00800000	///< The scroll lock is on
 					// correct for XFree86
-#define FL_BUTTON1	0x01000000	///< Mouse button 1 is pushed
-#define FL_BUTTON2	0x02000000	///< Mouse button 2 is pushed
-#define FL_BUTTON3	0x04000000	///< Mouse button 3 is pushed
-#define FL_BUTTONS	0x7f000000	///< Any mouse button is pushed
-#define FL_BUTTON(n)	(0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
+
+// Mouse buttons
+
+#define FL_BUTTON1      0x01000000        ///< Mouse button 1 is pushed (L)
+#define FL_BUTTON2      0x02000000        ///< Mouse button 2 is pushed (M)
+#define FL_BUTTON3      0x04000000        ///< Mouse button 3 is pushed (R)
+#define FL_BUTTON4      0x08000000        ///< Mouse button 4 is pushed (BACK)
+#define FL_BUTTON5      0x10000000        ///< Mouse button 5 is pushed (FORWARD)
+#define FL_BUTTONS      0x1f000000        ///< Bitmask: any mouse button (1-5) is pushed
+
+#define FL_BUTTON(n)   (0x00800000<<(n))  ///< Mouse button n (n = 1..5) is pushed,
+                                          ///< *undefined* if n outside 1..5
 
 #define FL_KEY_MASK 0x0000ffff		///< All keys are 16 bit for now 
 					//   FIXME: Unicode needs 24 bits!
