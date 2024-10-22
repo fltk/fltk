@@ -291,6 +291,14 @@ Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
   return g;
 }
 
+Fl_Widget *Fl_Grid_Type::enter_live_mode(int top) {
+  Fl_Grid *grid = new Fl_Grid(o->x(), o->y(), o->w(), o->h());
+  return propagate_live_mode(grid);
+}
+
+void Fl_Grid_Type::leave_live_mode() {
+}
+
 void Fl_Grid_Type::copy_properties()
 {
   super::copy_properties();
