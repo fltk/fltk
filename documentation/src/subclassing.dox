@@ -47,8 +47,8 @@ pass the same arguments:
 
 \code
 MyClass::MyClass(int x, int y, int w, int h, const char *label)
-: Fl_Widget(x, y, w, h, label) {
-// do initialization stuff...
+  : Fl_Widget(x, y, w, h, label) {
+  // do initialization stuff...
 }
 \endcode
 
@@ -57,19 +57,19 @@ Fl_Widget's protected constructor sets \p x(), \p y(),
 and initializes the other instance variables to:
 
 \code
-type(0);
-box(FL_NO_BOX);
-color(FL_BACKGROUND_COLOR);
-selection_color(FL_BACKGROUND_COLOR);
-labeltype(FL_NORMAL_LABEL);
-labelstyle(FL_NORMAL_STYLE);
-labelsize(FL_NORMAL_SIZE);
-labelcolor(FL_FOREGROUND_COLOR);
-align(FL_ALIGN_CENTER);
-callback(default_callback,0);
-flags(ACTIVE|VISIBLE);
-image(0);
-deimage(0);
+  type(0);
+  box(FL_NO_BOX);
+  color(FL_BACKGROUND_COLOR);
+  selection_color(FL_BACKGROUND_COLOR);
+  labeltype(FL_NORMAL_LABEL);
+  labelstyle(FL_NORMAL_STYLE);
+  labelsize(FL_NORMAL_SIZE);
+  labelcolor(FL_FOREGROUND_COLOR);
+  align(FL_ALIGN_CENTER);
+  callback(default_callback,0);
+  flags(ACTIVE|VISIBLE);
+  image(0);
+  deimage(0);
 \endcode
 
 \section subclassing_protected Protected Methods of Fl_Widget
@@ -118,22 +118,22 @@ see what parts of your widget need redrawing.</I> The \p handle()
 method can then set individual damage bits to limit the amount of drawing
 that needs to be done:
 \code
-MyClass::handle(int event) {
-  ...
-  if (change_to_part1) damage(1);
-  if (change_to_part2) damage(2);
-  if (change_to_part3) damage(4);
-}
-
-MyClass::draw() {
-  if (damage() & FL_DAMAGE_ALL) {
-    ... draw frame/box and other static stuff ...
+  int MyClass::handle(int event) {
+    // ...
+    if (change_to_part1) damage(1);
+    if (change_to_part2) damage(2);
+    if (change_to_part3) damage(4);
   }
 
-  if (damage() & (FL_DAMAGE_ALL | 1)) draw_part1();
-  if (damage() & (FL_DAMAGE_ALL | 2)) draw_part2();
-  if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
-}
+  void MyClass::draw() {
+    if (damage() & FL_DAMAGE_ALL) {
+      // ... draw frame/box and other static stuff ...
+    }
+
+    if (damage() & (FL_DAMAGE_ALL | 1)) draw_part1();
+    if (damage() & (FL_DAMAGE_ALL | 2)) draw_part2();
+    if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
+  }
 \endcode
 
 \todo Clarify Fl_Window::damage(uchar) handling - seems confused/wrong?
@@ -259,18 +259,18 @@ a pushbutton and also accepts the keystroke \p 'x' to cause the callback:
 
 \code
 int MyClass::handle(int event) {
-  switch(event) {
+  switch (event) {
     case FL_PUSH:
       highlight = 1;
       redraw();
       return 1;
     case FL_DRAG: {
-        int t = Fl::event_inside(this);
-        if (t != highlight) {
-          highlight = t;
-          redraw();
-        }
+      int t = Fl::event_inside(this);
+      if (t != highlight) {
+        highlight = t;
+        redraw();
       }
+    }
       return 1;
     case FL_RELEASE:
       if (highlight) {
@@ -416,14 +416,16 @@ that a child needs to be drawn. It is fastest if you avoid
 drawing anything else in this case:
 
 \code
-int MyClass::draw() {
+void MyClass::draw() {
   Fl_Widget *const*a = array();
   if (damage() == FL_DAMAGE_CHILD) { // only redraw some children
-    for (int i = children(); i --; a ++) update_child(**a);
+    for (int i = children(); i--; a++) {
+      update_child(**a);
+    }
   } else { // total redraw
-    ... draw background graphics ...
+    // ... draw background graphics ...
     // now draw all the children atop the background:
-    for (int i = children_; i --; a ++) {
+    for (int i = children(); i--; a++) {
       draw_child(**a);
       draw_outside_label(**a); // you may not need to do this
     }
