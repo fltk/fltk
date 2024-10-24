@@ -108,7 +108,7 @@ void show_settings_cb(Fl_Widget *, void *) {
 
 Fl_Menu_Item window_type_menu[] = {
   {"Single",0,0,(void*)FL_WINDOW},
-  {"Double",0,0,(void*)(FL_WINDOW+1)},
+  {"Double",0,0,(void*)(FL_DOUBLE_WINDOW)},
   {0}};
 
 static int overlays_invisible;

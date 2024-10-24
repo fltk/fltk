@@ -1,7 +1,7 @@
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -64,7 +64,7 @@ const char* subclassname(Fl_Type* l) {
     const char* c = p->subclass();
     if (c) return c;
     if (l->is_class()) return "Fl_Group";
-    if (p->o->type() == FL_WINDOW+1) return "Fl_Double_Window";
+    if (p->o->type() == FL_DOUBLE_WINDOW) return "Fl_Double_Window";
     if (p->id() == ID_Input) {
       if (p->o->type() == FL_FLOAT_INPUT) return "Fl_Float_Input";
       if (p->o->type() == FL_INT_INPUT) return "Fl_Int_Input";
