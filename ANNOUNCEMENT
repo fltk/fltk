@@ -15,6 +15,11 @@ layout, Fl_Scheme_Choice for scheme selection by users, and more.
 Other widgets (Fl_Tabs, Fl_Tile, Fl_Spinner etc.) have been improved
 for better user experience.
 
+FLTK 1.4 supports HighDPI displays under Linux/Unix and Windows and
+improves HighDPI support on macOS. The initial screen scaling factor is
+read from the system and application windows can be zoomed (in/out/reset)
+by the user with ctrl/+/-/0 shortcuts, respectively.
+
 CMake support has been improved significantly and requires CMake 3.15 or
 higher, autotools/configure/make is still supported. The latter will be
 dropped in the next minor release (1.5.0).
