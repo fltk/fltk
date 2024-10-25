@@ -29,7 +29,7 @@ class Fl_Rect;
 
 
 /**
-  The Fl_Group class is the FLTK container widget. It maintains
+  The Fl_Group class is the main FLTK container widget. It maintains
   an array of child widgets. These children can themselves be any widget
   including Fl_Group. The most important subclass of Fl_Group
   is Fl_Window, however groups can also be used to control radio buttons
@@ -95,11 +95,23 @@ public:
   /**
     Returns how many child widgets the group has.
   */
-  int children() const {return children_;}
+  int children() const { return children_; }
+
   /**
-    Returns array()[n].  <i>No range checking is done!</i>
+    Returns the n'th child.
+
+    Returns \c NULL if \c n is out of range (since FLTK 1.4.0).
+
+    <i>No range checking was done in FLTK 1.3 and older versions!</i>
+
+    \param[in]  n   index of child (0 .. children() - 1)
+    \return     pointer to the n'th child or NULL if out of range
   */
-  Fl_Widget* child(int n) const {return array()[n];}
+  Fl_Widget *child(int n) const {
+    if (n < 0 || n > children() - 1) return NULL;
+    return array()[n];
+  }
+
   int find(const Fl_Widget*) const;
   /**
     See int Fl_Group::find(const Fl_Widget *w) const
