@@ -29,27 +29,30 @@
 
 Fl_Group* Fl_Group::current_;
 
-// Hack: A single child is stored in the pointer to the array, while
-// multiple children are stored in an allocated array:
-
 /**
-  Returns a pointer to the array of children.
+  Returns a pointer to the internal array of children.
 
   \note This pointer is only valid until the next time a child
         is added or removed.
+
+  \internal This "array" of children is the storage area of an
+        internal std::vector.
 */
 Fl_Widget*const* Fl_Group::array() const {
-  return children_ <= 1 ? &child1_ : array_;
+  return child_.data();
 }
 
 /**
-  Searches the child array for the widget and returns the index.
+  Searches the children for the widget and returns the index.
 
   Returns children() if the widget is NULL or not found.
 */
 int Fl_Group::find(const Fl_Widget* o) const {
   Fl_Widget*const* a = array();
-  int i; for (i=0; i < children_; i++) if (*a++ == o) break;
+  int i;
+  for (i = 0; i < children(); i++) {
+    if (*a++ == o) break;
+  }
   return i;
 }
 
@@ -307,17 +310,17 @@ int Fl_Group::navigation(int key) {
   if (children() <= 1) return 0;
   int i;
   for (i = 0; ; i++) {
-    if (i >= children_) return 0;
-    if (array_[i]->contains(Fl::focus())) break;
+    if (i >= children()) return 0;
+    if (child_[i]->contains(Fl::focus())) break;
   }
-  Fl_Widget *previous = array_[i];
+  Fl_Widget *previous = child_[i];
 
   for (;;) {
     switch (key) {
     case FL_Right:
     case FL_Down:
       i++;
-      if (i >= children_) {
+      if (i >= children()) {
         if (parent()) return 0;
         i = 0;
       }
@@ -327,13 +330,13 @@ int Fl_Group::navigation(int key) {
       if (i) i--;
       else {
         if (parent()) return 0;
-        i = children_-1;
+        i = children() - 1;
       }
       break;
     default:
       return 0;
     }
-    Fl_Widget* o = array_[i];
+    Fl_Widget* o = child_[i];
     if (o == previous) return 0;
     switch (key) {
     case FL_Down:
@@ -348,15 +351,13 @@ int Fl_Group::navigation(int key) {
 
 ////////////////////////////////////////////////////////////////
 
-Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
-: Fl_Widget(X,Y,W,H,l) {
+Fl_Group::Fl_Group(int X, int Y, int W, int H, const char *L)
+  : Fl_Widget(X, Y, W, H, L) {
   align(FL_ALIGN_TOP);
-  children_ = 0;
-  array_ = 0;
   savedfocus_ = 0;
   resizable_ = this;
   bounds_ = 0; // this is allocated when first resize() is done
-  sizes_ = 0; // see bounds_ (FLTK 1.3 compatibility)
+  sizes_ = 0;  // see bounds_ (FLTK 1.3 compatibility)
 
   // Subclasses may want to construct child objects as part of their
   // constructor, so make sure they are add()'d to this object.
@@ -408,25 +409,14 @@ void Fl_Group::clear() {
   // child which is much faster than the other way around and
   // should be the "natural order" (last in, first out).
 
-  while (children_) {                   // delete all children
-    int idx = children_-1;              // last child's index
-    Fl_Widget* w = child(idx);          // last child widget
-    if (w->parent()==this) {            // should always be true
-      if (children_>2) {                // optimized removal
-        w->parent_ = 0;                 // reset child's parent
-        on_remove(idx);
-        children_--;                    // update counter
-      } else {                          // slow removal
-        remove(idx);
-      }
-      delete w;                         // delete the child
-    } else {                            // should never happen
-      remove(idx);                      // remove it anyway
-    }
+  for (int i = children() - 1; i >= 0; i--) {
+    // some children may have been deleted, so check always
+    if (i >= children()) continue;
+    delete_child(i);
   }
 
-  if (pushed != this) Fl::pushed(pushed); // reset pushed() widget
-
+  if (pushed != this)
+    Fl::pushed(pushed);       // reset pushed() widget
 }
 
 /**
@@ -457,17 +447,17 @@ Fl_Group::~Fl_Group() {
  structures just before the child is added.
 
  This method usually returns the same index that was given in the parameters.
- By setting a new index, the position of other widgets in the child pointer
- array can be preserved (e.g. Fl_Scroll keeps its scroll bars as the last
+ By setting a new index, the position of other widgets in the list of children
+ can be preserved (e.g. Fl_Scroll keeps its scroll bars as the last
  two children).
 
- By returning -1, Fl_Group::insert will not add the child to
- array_. This is not recommended, but Fl_Table does something similar to
+ By returning -1, Fl_Group::insert will not add the child to the group.
+ This is not recommended, but Fl_Table does something similar to
  forward children to a hidden group.
 
- \param candidate the candidate will be added to the child array_ after this
+ \param candidate the candidate will be added to the child vector after this
             method returns.
- \param index add the child at this position in the array_
+ \param index add the child at this position in the list of children
  \return index to position the child as planned
  \return a new index to force the child to a different position
  \return -1 to keep the group from adding the candidate
@@ -485,8 +475,8 @@ int Fl_Group::on_insert(Fl_Widget *candidate, int index) {
  structures just before the child itself is moved.
 
  This method usually returns the new index that was given in the
- parameters. By setting a different destination index, the position of other
- widgets in the child pointer array can be preserved.
+ parameters. By setting a different destination index, the position of
+ other widgets in the list of children can be preserved.
 
  By returning -1, Fl_Group::insert will not move the child.
 
@@ -516,15 +506,21 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
       // avoid expensive remove() and add() if we just move a widget within the group
       index = on_move(n, index);
       if (index < 0) return;      // don't move: requested by subclass
-      if (index > children_)
-        index = children_;
+      if (index > children())
+        index = children();
       if (index > n) index--;     // compensate for removal and re-insertion
-      if (index == n) return;     // same position; this includes (children_ == 1)
-      if (index > n)
-        memmove(array_+n, array_+(n+1), (index-n) * sizeof(Fl_Widget*));
-      else
-        memmove(array_+(index+1), array_+index, (n-index) * sizeof(Fl_Widget*));
-      array_[index] = &o;
+      if (index == n) return;     // same position; this includes (children() == 1)
+
+      // now it's OK to move the child inside this group
+
+      if (index > n) { // target > current position: move "up" and all other children "down"
+        for (int j = n; j < index; j++)
+          child_[j] = child_[j + 1];
+      } else { // n > index: move "down" and all other children "up"
+        for (int j = n; j > index; j--)
+          child_[j] = child_[j - 1];
+      }
+      child_[index] = &o;
       init_sizes();
       return;
     }
@@ -533,23 +529,12 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
 
   index = on_insert(&o, index);
   if (index == -1) return;
-
-  o.parent_ = this;
-  if (children_ == 0) { // use array pointer to point at single child
-    child1_ = &o;
-  } else if (children_ == 1) { // go from 1 to 2 children
-    Fl_Widget* t = child1_;
-    array_ = (Fl_Widget**)malloc(2*sizeof(Fl_Widget*));
-    if (index) {array_[0] = t; array_[1] = &o;}
-    else {array_[0] = &o; array_[1] = t;}
-  } else {
-    if (!(children_ & (children_-1))) // double number of children
-      array_ = (Fl_Widget**)realloc((void*)array_,
-                                    2*children_*sizeof(Fl_Widget*));
-    int j; for (j = children_; j > index; j--) array_[j] = array_[j-1];
-    array_[j] = &o;
+  if (index >= children()) {              // append
+    child_.push_back(&o);
+  } else {                                // insert
+    child_.insert(child_.begin() + index, &o);
   }
-  children_++;
+  o.parent_ = this;
   init_sizes();
 }
 
@@ -557,7 +542,9 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   The widget is removed from its current group (if any) and then added
   to the end of this group.
 */
-void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
+void Fl_Group::add(Fl_Widget &o) {
+  insert(o, children());
+}
 
 /**
  Allow derived groups to act when a child widget is removed from the group.
@@ -566,7 +553,7 @@ void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
  Overriding this method will allow derived classes to remove these data
  structures just before the child is removed.
 
- \param index remove the child at this position in the array_
+ \param index remove the child at this position
  */
 void Fl_Group::on_remove(int index) {
   (void)index;
@@ -583,8 +570,11 @@ void Fl_Group::on_remove(int index) {
   \since FLTK 1.3.0
 */
 void Fl_Group::remove(int index) {
-  if (index < 0 || index >= children_) return;
-  on_remove(index);
+  if (index < 0 || index >= children())
+    return;
+  on_remove(index);         // notify subclass
+  if (index >= children())  // do nothing if the subclass removed it (?)
+    return;
 
   Fl_Widget &o = *child(index);
   if (&o == savedfocus_) savedfocus_ = 0;
@@ -593,15 +583,10 @@ void Fl_Group::remove(int index) {
     o.parent_ = 0;
   }
 
-  // remove the widget from the group
-
-  children_--;
-  if (children_ == 1) { // go from 2 to 1 child
-    Fl_Widget *t = array_[!index];
-    free((void*)array_);
-    child1_ = t;
-  } else if (children_ > 1) { // delete from array
-    for (; index < children_; index++) array_[index] = array_[index+1];
+  if (index == children() - 1) {
+    child_.pop_back();
+  } else {
+    child_.erase(child_.begin() + index); // remove the widget from the group
   }
   init_sizes();
 }
@@ -614,15 +599,15 @@ void Fl_Group::remove(int index) {
   This method differs from the clear() method in that it only affects
   a single widget and does not delete it from memory.
 
-  \note If you have the child's index anyway, use remove(int index)
-  instead, because this doesn't need a child lookup in the group's
-  table of children. This can be much faster, if there are lots of
-  children.
+  \note If you have the child's index anyway, use remove(int index) instead,
+  because this doesn't need a child lookup in the group's table of children.
+  This can be much faster, if there are lots of children.
 */
 void Fl_Group::remove(Fl_Widget &o) {
-  if (!children_) return;
+  if (!children()) return;
   int i = find(o);
-  if (i < children_) remove(i);
+  if (i < children())
+    remove(i);
 }
 
 /**
@@ -663,7 +648,7 @@ void Fl_Group::remove(Fl_Widget &o) {
   \since FLTK 1.4.0
 */
 int Fl_Group::delete_child(int index) {
-  if (index < 0 || index >= children_)
+  if (index < 0 || index >= children())
     return 1;
   Fl_Widget *w = child(index);
   remove(index);
@@ -740,7 +725,7 @@ void Fl_Group::init_sizes() {
 */
 Fl_Rect* Fl_Group::bounds() {
   if (!bounds_) {
-    Fl_Rect* p = bounds_ = new Fl_Rect[children_+2];
+    Fl_Rect* p = bounds_ = new Fl_Rect[children()+2];
     // first thing in bounds array is the group's size:
     if (as_window())
       p[0] = Fl_Rect(w(),h()); // x = y = 0
@@ -763,7 +748,7 @@ Fl_Rect* Fl_Group::bounds() {
     // next is all the children's sizes:
     p += 2;
     Fl_Widget*const* a = array();
-    for (int i=children_; i--;) {
+    for (int i = children(); i--;) {
       *p++ = Fl_Rect(*a++);
     }
   }
@@ -796,13 +781,12 @@ Fl_Rect* Fl_Group::bounds() {
 
   \see bounds()
 */
-int* Fl_Group::sizes()
-{
+int* Fl_Group::sizes() {
   if (sizes_) return sizes_;
   // allocate new sizes_ array and copy bounds_ over to sizes_
-  int* pi = sizes_ = new int[4*(children_+2)];
+  int* pi = sizes_ = new int[4*(children() + 2)];
   Fl_Rect *rb = bounds();
-  for (int i = 0; i < children_+2; i++, rb++) {
+  for (int i = 0; i < children() + 2; i++, rb++) {
     *pi++ = rb->x();
     *pi++ = rb->r();
     *pi++ = rb->y();
@@ -849,7 +833,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
     if (Fl_Window::is_a_rescale() || dx || dy) {
       Fl_Widget*const* a = array();
-      for (int i = children_; i--;) {
+      for (int i = children(); i--;) {
         Fl_Widget* o = *a++;
         o->resize(o->x() + dx, o->y() + dy, o->w(), o->h());
       }
@@ -858,7 +842,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   // Part 2: here we definitely have a resizable() widget, resize children
 
-  else if (children_) {
+  else if (children()) {
 
     // get changes in size/position from the initial size:
     dx = X - p->x();
@@ -886,7 +870,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
     // resize children
     Fl_Widget*const* a = array();
 
-    for (int i = children_; i--; p++) {
+    for (int i = children(); i--; p++) {
 
       Fl_Widget* o = *a++;
       int L = p->x();
@@ -928,13 +912,14 @@ void Fl_Group::draw_children() {
   }
 
   if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
-    for (int i=children_; i--;) {
+    for (int i = children(); i--;) {
       Fl_Widget& o = **a++;
       draw_child(o);
       draw_outside_label(o);
     }
   } else {      // only redraw the children that need it:
-    for (int i=children_; i--;) update_child(**a++);
+    for (int i = children(); i--;)
+      update_child(**a++);
   }
 
   if (clip_children()) fl_pop_clip();

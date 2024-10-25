@@ -23,27 +23,30 @@
 
 #include "Fl_Widget.H"
 
+#include <vector>
+
 // Don't #include Fl_Rect.H because this would introduce lots
 // of unnecessary dependencies on Fl_Rect.H
 class Fl_Rect;
 
 
 /**
-  The Fl_Group class is the main FLTK container widget. It maintains
-  an array of child widgets. These children can themselves be any widget
-  including Fl_Group. The most important subclass of Fl_Group
-  is Fl_Window, however groups can also be used to control radio buttons
-  or to enforce resize behavior.
+  The Fl_Group class is the main FLTK container widget. It maintains an
+  ordered list of child widgets. These children can themselves be any
+  widget including Fl_Group. The most important subclass of Fl_Group
+  is Fl_Window, however groups can also be used to control radio buttons,
+  to enforce resize behavior, or to manage layout of widgets, see
+  Fl_Pack, Fl_Flex, Fl_Grid.
 
   The tab and arrow keys are used to move the focus between widgets of
   this group, and to other groups. The only modifier grabbed is shift
-  (for shift-tab), so that ctrl-tab, alt-up, and such are free
-  for the app to use as shortcuts.
+  (for shift-tab), so that ctrl-tab, alt-up, and such are free for
+  the app to use as shortcuts.
 
   To remove a widget from the group and destroy it, in 1.3.x (and up)
   you can simply use:
   \code
-  delete some_widget;
+    delete some_widget;
   \endcode
   ..and this will trigger proper scheduling of the widget's removal
   from its parent group.
@@ -55,13 +58,9 @@ class Fl_Rect;
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
-  union {
-    Fl_Widget** array_; // used if group has two or more children or NULL
-    Fl_Widget* child1_; // used if group has one child or NULL
-  };
+  std::vector<Fl_Widget *>child_; // vector of children
   Fl_Widget* savedfocus_;
   Fl_Widget* resizable_;
-  int children_;
   Fl_Rect *bounds_; // remembered initial sizes of children
   int *sizes_; // remembered initial sizes of children (FLTK 1.3 compat.)
 
@@ -95,28 +94,29 @@ public:
   /**
     Returns how many child widgets the group has.
   */
-  int children() const { return children_; }
+  int children() const { return (int)child_.size(); }
 
   /**
     Returns the n'th child.
 
-    Returns \c NULL if \c n is out of range (since FLTK 1.4.0).
+    Returns \c nullptr if \c n is out of range (since FLTK 1.4.0).
 
     <i>No range checking was done in FLTK 1.3 and older versions!</i>
 
     \param[in]  n   index of child (0 .. children() - 1)
-    \return     pointer to the n'th child or NULL if out of range
+    \return     pointer to the n'th child or nullptr if out of range
   */
   Fl_Widget *child(int n) const {
-    if (n < 0 || n > children() - 1) return NULL;
-    return array()[n];
+    if (n < 0 || n > children() - 1) return nullptr;
+    return child_[n];
   }
 
   int find(const Fl_Widget*) const;
   /**
     See int Fl_Group::find(const Fl_Widget *w) const
   */
-  int find(const Fl_Widget& o) const {return find(&o);}
+  int find(const Fl_Widget& o) const { return find(&o); }
+
   Fl_Widget* const* array() const;
 
   void resize(int,int,int,int) FL_OVERRIDE;
