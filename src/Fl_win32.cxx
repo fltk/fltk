@@ -1586,7 +1586,8 @@ content  key    keyboard layout
   3|+   '3'     Hungarian
   4|+   '4'     Turkish
 */
-        if (Fl::e_state & FL_CTRL) { // extra processing necessary only when Ctrl is down
+        if ((Fl::e_state & FL_CTRL) && !(GetAsyncKeyState(VK_MENU) >> 15)) {
+          // extra processing necessary only when Ctrl is down and Alt is up
           int vk_plus_key = (VkKeyScanA('+') & 0xff); // virtual key of '+'-containing key
           bool plus_shift_pos = ((VkKeyScanA('+') & 0x100) != 0); // true means '+' in shifted position
           int plus_other_char;  // the other char on same key as '+'
