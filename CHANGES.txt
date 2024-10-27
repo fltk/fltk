@@ -1,3 +1,13 @@
+Changes in FLTK 1.4.0 RC2                               Released: Oct 27 2024
+
+  - Add range check to Fl_Group::child(int)
+  - Fix Windows Ctrl character handling for scaling shortcuts
+  - Fluid: Add missing code for Fl_Grid and Fl_Flex live preview (#1092)
+  - Enhance documentation
+  - Mention HighDPI support in 'ANNOUNCEMENT'
+  - Update CHANGES.txt
+
+
 Changes in FLTK 1.4.0 RC1                               Released: Oct 20 2024
 
   General Information about this Release
