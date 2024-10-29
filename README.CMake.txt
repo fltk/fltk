@@ -1,5 +1,5 @@
 README.CMake.txt - Building and using FLTK with CMake
------------------------------------------------------
+------------------------------------------------------
 
 
  CONTENTS
@@ -11,18 +11,19 @@ README.CMake.txt - Building and using FLTK with CMake
 
     2.1    Prerequisites
     2.2    Options
-    2.2.1  General CMake Options
-    2.2.2  FLTK Specific Build Options
+    2.2.1  CMake Specific Configuration Options
+    2.2.2  FLTK Specific Configuration Options
     2.2.3  Documentation Options
     2.2.4  Special Options
-    2.3    Building under Linux with Unix Makefiles
-    2.4    Building under Windows with Visual Studio and/or NMake
-    2.4.1  Building under Windows with Visual Studio
-    2.4.2  Building under Windows with NMake
-    2.5    Building under Windows with MinGW using Makefiles
-    2.6    Building under Windows WSL with Clang using Makefiles
-    2.7    Building under MacOS with Xcode
-    2.8    Crosscompiling
+    2.3    Building FLTK with CMake (all Platforms)
+    2.4    Building under Linux with Unix Makefiles
+    2.5    Building under Windows with Visual Studio and/or NMake
+    2.5.1  Building under Windows with Visual Studio
+    2.5.2  Building under Windows with NMake
+    2.6    Building under Windows with MinGW using Makefiles
+    2.7    Building under Windows WSL with Clang using Makefiles
+    2.8    Building under macOS with Xcode
+    2.9    Crosscompiling
 
   3     Using CMake with FLTK
 
@@ -107,8 +108,8 @@ All options have sensible defaults so you won't usually need to specify
 them explicitly.
 
 
- 2.2.1  General CMake Options
-------------------------------
+ 2.2.1  CMake Specific Configuration Options
+---------------------------------------------
 
 There are only three CMake options that you may want to specify:
 
@@ -132,8 +133,8 @@ Note: the CMake variable BUILD_SHARED_LIBS is ignored by FLTK. FLTK builds
     Please see FLTK_BUILD_SHARED_LIBS instead.
 
 
- 2.2.2  FLTK Specific Build Options
-------------------------------------
+ 2.2.2  FLTK Specific Configuration Options
+--------------------------------------------
 
 Following are the FLTK specific options. Platform specific options are
 ignored on other platforms. For convenience the list of options is ordered
@@ -325,7 +326,7 @@ FLTK_BUILD_PDF_DOCS  - default ON
 FLTK_BUILD_FLUID_DOCS - default OFF
     If this option is ON, the FLUID user documentation will be built. If
     FLTK_BUILD_PDF_DOCS is ON, the FLUID documentation will be generated
-    in PDF forma. To generate the screen shots used in the handbook,
+    in PDF form. To generate the screen shots used in the handbook,
     the CMake build mode must be set to "Debug".
 
 FLTK_INCLUDE_DRIVER_DOCS - default OFF
@@ -352,22 +353,80 @@ FLTK_INSTALL_LINKS - default OFF
     better cross-platform compatibility.
 
 
- 2.3  Building under Linux with Unix Makefiles
+ 2.3  Building FLTK with CMake (all Platforms)
+-----------------------------------------------
+
+CMake is used to generate a build system that will subsequently be used
+to build and install the FLTK library and test and demo applications.
+
+Note that "installing" FLTK is optional: you can skip this step if you
+like to build your own applications directly from the FLTK build tree.
+This has advantages if you are building FLTK with different options or
+are developing FLTK (changing sources) or if you pull new FLTK versions
+from git frequently.
+
+The following generic commands may need some changes on Windows where
+you may not have an adequate (POSIX) shell (command window).
+
+(1) Generate the build system in the FLTK root directory:
+
+    cmake -B build [ -G "Generator" -D "Options" … ]
+
+  This command creates the 'build' subdirectory if it does not exist yet
+  and generates the build (project) files in the 'build' directory.
+  See above for usable options.
+
+  Note: Although this 'build' directory is part of the source tree it
+  is considered an out-of-source build because CMake does not create
+  any files in source directories. You can also use CMake to build FLTK
+  in an arbitrary build folder elsewhere on the system:
+
+    cmake -B /path/to/my-fltk-build [ -G "Generator" -D "Options" … ]
+
+  Commandline elements in […] are optional.
+
+  Use `cmake --help` to find out which generators are available on your
+  platform. The default generator is marked with '*'.
+
+(2) Build FLTK with the generated build system:
+
+  No matter which generator you selected in (1), the following CMake
+  command can always be used to build the library:
+
+    cmake --build build
+
+  This uses the previously generated build system in the 'build' folder.
+  This works even with Visual Studio where the build will be executed
+  without opening the Visual Studio GUI, similar to NMake.
+
+  Instead of using the above command you can also `cd build` and run
+  the native build command, for instance `make -j7` or `ninja`, or
+  you can open the IDE project (Xcode, Visual Studio, ...).
+
+(3) Install FLTK (optional):
+
+    cmake --install build
+
+  This command installs the previously built library and headers in the
+  installation folder. On Unix/Linux/macOS systems this requires root
+  privileges if the target is a system directory.
+
+The following chapters describe some special cases in more detail. Skip
+chapters you don't need...
+
+
+ 2.4  Building under Linux with Unix Makefiles
 -----------------------------------------------
 
 After unpacking the FLTK source, go to the root of the FLTK tree and type
 the following.
 
-    mkdir build
+    cmake -B build -G "Unix Makefiles" [options]
     cd build
-    cmake ..
-    make
+    make [ -j 3 ]
     sudo make install (optional)
 
-IMPORTANT: The trailing ".." on the cmake command must be specified
-(it is NOT an ellipsis).                          ^^^^^^^^^^^^^^^^^
-
-This will build and install a default configuration FLTK.
+This will build and optionally install a default configuration FLTK.
 
 Some flags can be changed during the 'make' command, such as:
 
@@ -388,7 +447,7 @@ options, then use subdirectories in the build directory, like this:
     sudo make install (optional)
 
 
- 2.4  Building under Windows with Visual Studio and/or NMake
+ 2.5  Building under Windows with Visual Studio and/or NMake
 -------------------------------------------------------------
 
 Building with CMake under Visual Studio may require to specify the CMake
@@ -398,7 +457,7 @@ are not sure which one to select use `cmake --help` which lists all
 generators known to CMake on your system.
 
 
- 2.4.1 Building under Windows with Visual Studio
+ 2.5.1 Building under Windows with Visual Studio
 -------------------------------------------------
 
 CMake often finds an installed Visual Studio generator and uses it w/o
@@ -457,7 +516,7 @@ using the commandline switch, particularly if you are using a special
 
       build\FL
 
-  *and* [1] in the source folder where you downloade FLTK, e.g. in
+  *and* [1] in the source folder where you downloaded FLTK, e.g. in
 
       C:\fltk-1.4.x\FL
 
@@ -473,12 +532,12 @@ using the commandline switch, particularly if you are using a special
       tree in the compiler's header search list.
 
 
- 2.4.2 Building under Windows with NMake
+ 2.5.2 Building under Windows with NMake
 -----------------------------------------
 
   This example uses cmake to generate + build FLTK in Release mode using nmake,
   using purely the command line (never need to open the Visual Studio IDE)
-  using Multithreaded (/MT):
+  using the static Multithreaded runtime (/MT):
 
     mkdir build-nmake
     cd build-nmake
@@ -493,7 +552,7 @@ using the commandline switch, particularly if you are using a special
     cmake --build .
 
 
- 2.5  Building under Windows with MinGW using Makefiles
+ 2.6  Building under Windows with MinGW using Makefiles
 --------------------------------------------------------
 
 Building with CMake under MinGW requires you to specify the CMake Generator
@@ -517,7 +576,7 @@ Note the path to FLTK ".." in the last command line. Depending on where you
 installed CMake you may need to adjust the path's in the alias commands.
 
 
- 2.6  Building under Windows WSL with Clang and Makefiles
+ 2.7  Building under Windows WSL with Clang and Makefiles
 ----------------------------------------------------------
 
 WSL, the Windows Subsystem for Linux allows developers to run a Linux
@@ -533,7 +592,7 @@ party X11 servers can be installed that better support all features of FLTK.
      > wsl --install
 
 2) Reboot and open the Linux terminal. You will need to install the following
-   Linux apps to compile FLTK
+   Linux packages to compile FLTK
      > sudo apt update
      > sudo apt install clang cmake freeglut3-dev
 
@@ -550,14 +609,14 @@ party X11 servers can be installed that better support all features of FLTK.
      > ./build/bin/test/demo
 
 
- 2.7  Building under MacOS with Xcode
---------------------------------------
+2.8  Building under macOS with Xcode
+-------------------------------------
 
-Building with CMake under Xcode requires the CMake generator
-with the -G command line switch. This step need to be done only once. If any
-of the cmake related files are updated, Xcode will rerun cmake for you.
+Building with CMake under Xcode requires the CMake generator with
+the -G command line switch. This step need to be done only once. If any
+of the CMake related files are updated, Xcode will rerun CMake for you.
 
-1) Open the MacOS Terminal
+1) Open the macOS Terminal
 
 2) Change to the directory containing the FLTK project. For example:
      > cd ~/dev/fltk-1.4.x
@@ -589,12 +648,15 @@ of the cmake related files are updated, Xcode will rerun cmake for you.
 
 8) The interactive user interface tool "Fluid" will be located in
    build/Xcode/bin/Debug. The example apps are in .../bin/examples/Debug.
-   Static libraries are in .../lib/Debug/
+   Static libraries are in .../lib/Debug/.
+   Replace 'Debug' with 'Release' for a Release build.
 
-9) The "install" Scheme currently fails because it is run with user permission.
+9) The "install" Scheme may fail because it is run with user permissions.
+   You may want to configure the build to install in a folder below your
+   home directory.
 
 
- 2.8  Crosscompiling
+ 2.9  Crosscompiling
 ---------------------
 
 Once you have a crosscompiler going, to use CMake to build FLTK you need
@@ -668,6 +730,10 @@ This howto assumes that you have FLTK libraries which were built using CMake,
 installed. Building them with CMake generates some CMake helper files which
 are installed in standard locations, making FLTK easy to find and use.
 
+If FLTK is not installed in a standard system location where it is found
+automatically, you may need to set a CMake variable to point CMake to the
+right location.
+
 In the following examples we set the CMake cache variable 'FLTK_DIR' so
 CMake knows where to find the FLTK configuration file 'FLTKConfig.cmake'.
 It is important (recommended practice) to set this as a CMake cache variable
@@ -675,6 +741,7 @@ which enables the user executing 'cmake' to override this path either on the
 commandline or interactively using the CMake GUI 'cmake-gui' or 'ccmake' on
 Unix/Linux, for instance like this:
 
+  $ cd my-project
   $ mkdir build
   $ cd build
   $ cmake -G "Unix Makefiles" -S.. -D "FLTK_DIR=/home/me/fltk"
@@ -715,7 +782,7 @@ consumer projects (projects that use FLTK) for several reasons which are
 beyond the scope of this README file. The following table shows the FLTK
 libraries and their aliases in the FLTK build tree.
 
-  Library Name      Alias          Shared Library Alias   Notes
+  Library Name     Alias          Shared Library Alias    Notes
   --------------------------------------------------------------
     fltk           fltk::fltk     fltk::fltk-shared       [1]
     fltk_forms     fltk::forms    fltk::forms-shared      [2]
@@ -734,7 +801,7 @@ libraries and their aliases in the FLTK build tree.
       automatically.
   [3] The bundled libraries are only built if requested and are usually
       not needed in user projects. They are linked in with fltk::images
-      automatically if they were built with FLTK.
+      automatically if they were built together with FLTK.
       The only reason you may need them would be if you used libpng,
       libjpeg, or zlib functions directly in your application and need
       to use the bundled FLTK libs (e.g. on Windows).
@@ -748,7 +815,7 @@ CMake files export targets and its CONFIG module FLTKConfig.cmake imports
 targets so user projects can use them. Hence, if you use CMake's CONFIG
 mode to find FLTK all library targets will be defined using the namespace
 convention listed above in the "Alias" column. This is what user projects
-are intended to use.
+are recommended to use.
 
 In addition to the library targets FLTK defines the "imported target"
 'fltk::fluid' which can be used to generate source (.cxx) and header (.h)
@@ -777,7 +844,7 @@ project(hello)
 set(FLTK_DIR "/path/to/fltk"
     CACHE FILEPATH "FLTK installation or build directory")
 
-find_package(FLTK CONFIG REQUIRED)
+find_package(FLTK 1.4 CONFIG REQUIRED)
 
 add_executable       (hello WIN32 MACOSX_BUNDLE hello.cxx)
 target_link_libraries(hello PRIVATE fltk::fltk)
@@ -788,7 +855,7 @@ building projects that use FLTK. Lower CMake versions may work for user
 projects but this is not tested by FLTK developers.
 
 The optional `set(FLTK_DIR ...)` command is a superhint to the find_package
-command. This is very useful if you don't install or have a non-standard
+command. This is useful if you don't install FLTK or have a non-standard
 install location. The path you give to it must be that of a directory that
 contains the file FLTKConfig.cmake.
 
@@ -797,10 +864,13 @@ without it. This variable is stored in the CMake Cache so users can change
 it with the ususal CMake GUI interfaces (ccmake, cmake-gui) or on the
 CMake commandline (-D FLTK_DIR=...).
 
-The find_package command tells CMake to find the package FLTK, REQUIRED
-means that it is an error if it's not found. CONFIG tells it to search
+The find_package command tells CMake to find the package FLTK, '1.4' says
+that we want FLTK 1.4.x: any patch version of 1.4 will march. 'REQUIRED'
+means that it is an error if it's not found. 'CONFIG' tells it to search
 only for the FLTKConfig.cmake file, not using the FindFLTK.cmake "module"
-supplied with CMake, which doesn't work with this version of FLTK.
+supplied with CMake, which doesn't work with this version of FLTK. Since
+we specify a version (1.4) the file 'FLTKConfigVersion.cmake' must also
+be found. This file is created since FLTK 1.3.10.
 
 "WIN32 MACOSX_BUNDLE" in the add_executable() command tells CMake that
 this is a GUI app. It is ignored on other platforms than Windows or macOS,
@@ -847,7 +917,7 @@ project(CubeView)
 set(FLTK_DIR "/path/to/fltk"
     CACHE FILEPATH "FLTK installation or build directory")
 
-find_package(FLTK CONFIG REQUIRED)
+find_package(FLTK 1.4 CONFIG REQUIRED)
 
 # run fluid -c to generate CubeViewUI.cxx and CubeViewUI.h files
 add_custom_command(
@@ -927,5 +997,5 @@ Unfortunately this module has to be used if the FLTK library wasn't built
 with CMake and thus CONFIG mode can't be used. In this case CMake falls back
 to MODULE mode and find_package() uses this old CMake module.
 
-There are plans to provide a FindFLTK.cmake module with FLTK 1.4.0 but this
-module is not yet written. Look here for further info if you need it...
+There are plans to provide a FindFLTK.cmake module with a later FLTK release.
+Look here for further info if you need it...
