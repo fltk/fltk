@@ -1,7 +1,7 @@
 //
 // fltk-options for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,9 +34,9 @@
 // user interface sizes
 // |<->|<-  group browser ->|<->|<- options ->|<->|
 const int FO_GAP = 10;
-const int FO_BROWSER_W = 200;
-const int FO_SCROLL_W = 16 + 4; //Fl::scrollbar_size() + Fl::box_dw(FL_DOWN_BOX);
-const int FO_CHOICE_W = 75;
+const int FO_BROWSER_W = 220;
+const int FO_SCROLL_W = 16 + 4; // Fl::scrollbar_size() + Fl::box_dw(FL_DOWN_BOX);
+const int FO_CHOICE_W = 80;
 const int FO_OPTIONS_W = 420;
 const int FO_BUTTON_W = 75;
 const int FO_WINDOW_W = FO_GAP + FO_BROWSER_W + FO_GAP + FO_SCROLL_W + FO_OPTIONS_W + FO_SCROLL_W + FO_GAP;
@@ -44,7 +44,7 @@ const int FO_SYSTEM_X = FO_OPTIONS_W - 2*FO_GAP - 2*FO_CHOICE_W;
 const int FO_USER_X = FO_OPTIONS_W - FO_GAP - FO_CHOICE_W;
 
 const int FO_TITLE_H = 20;
-const int FO_BROWSER_H = 340;
+const int FO_BROWSER_H = 370;
 const int FO_BUTTON_H = 25;
 const int FO_CHOICE_H = 22;
 const int FO_WINDOW_H = FO_GAP + FO_BROWSER_H + FO_GAP + FO_BUTTON_H + FO_GAP;
@@ -289,7 +289,7 @@ void list_options(char cmd) {
   Fo_Option_Descr *opt;
   for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
     if (opt->name) {
-      printf("%-24s", opt->name);
+      printf("%-28s", opt->name);
       if (cmd == 'S' || cmd == 0) {
         int value = get_option(FO_SYSTEM, opt->prefs_name);
         printf(" system:%2d", value);
@@ -679,7 +679,7 @@ Fl_Window* build_ui() {
                                    "Close");
   close->callback(close_cb);
   g_window->end();
-  g_window->size_range(FO_WINDOW_W, 200, FO_WINDOW_W, 32767);
+  g_window->size_range(FO_WINDOW_W, FO_WINDOW_H);
   return g_window;
 }
 
