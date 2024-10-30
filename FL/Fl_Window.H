@@ -98,8 +98,13 @@ protected:
   /** Stores the last window that was made current. See current() const */
   static Fl_Window *current_;
   void draw() FL_OVERRIDE;
+
+public:
+
   /** Forces the window to be drawn, this window is also made current and calls draw(). */
   virtual void flush();
+
+protected:
 
   /**
     Sets an internal flag that tells FLTK and the window manager to
