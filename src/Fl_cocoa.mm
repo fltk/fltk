@@ -3370,7 +3370,6 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     FLWindow *nswin = fl_xid(pWindow);
     [nswin toggleFullScreen:nil];
-    pWindow->resize(*no_fullscreen_x(), *no_fullscreen_y(), *no_fullscreen_w(), *no_fullscreen_h());
 #  endif
   } else if (fl_mac_os_version >= 100600) {
     FLWindow *nswin = fl_xid(pWindow);
