@@ -87,11 +87,12 @@ bool Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   // ignore them all:
   XWindowAttributes w_attributes;
   XGetWindowAttributes(fl_display, Fl_X::flx(win)->xid, &w_attributes);
-  bool true_sides = true;
+  bool true_sides = false;
   if (attributes.width - w_attributes.width >= 20) {
     attributes.height -= (attributes.width - w_attributes.width);
     attributes.width = w_attributes.width;
-    true_sides = false;
+  } else if (attributes.width > w_attributes.width) {
+    true_sides = true;
   }
 
   int nscreen = screen_num();
