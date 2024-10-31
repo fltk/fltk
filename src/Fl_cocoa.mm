@@ -3403,8 +3403,8 @@ void Fl_Cocoa_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   if (fl_mac_os_version >= 100600) {
-    if (pWindow->fullscreen_active()) {
-      // prevent changing border while window is fullscreen
+    if (pWindow->fullscreen_active() || pWindow->maximize_active()) {
+      // prevent changing border while window is fullscreen or maximized
       static bool active = false;
       if (!active) {
         active = true;
