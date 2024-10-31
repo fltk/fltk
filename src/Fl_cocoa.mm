@@ -3403,6 +3403,17 @@ void Fl_Cocoa_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   if (fl_mac_os_version >= 100600) {
+    if (pWindow->fullscreen_active()) {
+      // prevent changing border while window is fullscreen
+      static bool active = false;
+      if (!active) {
+        active = true;
+        bool b = !border();
+        pWindow->border(b);
+        active = false;
+      }
+      return;
+    }
     [fl_xid(pWindow) setStyleMask:calc_win_style(pWindow)]; // 10.6
     if (border()) restore_window_title_and_icon(pWindow, icon_image);
     pWindow->redraw();

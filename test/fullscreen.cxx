@@ -174,10 +174,12 @@ void double_cb(Fl_Widget *o, void *p) {
 void double_cb(Fl_Widget *, void *) {}
 #endif
 
-void border_cb(Fl_Widget *o, void *p) {
-  Fl_Window *w = (Fl_Window *)p;
-  int d = ((Fl_Button *)o)->value();
+
+void border_cb(Fl_Button *b, Fl_Window *w) {
+  int d = b->value();
   w->border(d);
+  // border change may have been refused (e.g. with fullscreen window)
+  if (w->border() != d) b->value(w->border());
 }
 
 
@@ -337,7 +339,7 @@ int main(int argc, char **argv) {
   y+=30;
 
   Fl_Toggle_Light_Button b2(50,y,window.w()-60,30,"Border");
-  b2.callback(border_cb,w);
+  b2.callback((Fl_Callback*)border_cb,w);
   b2.set();
   border_button = &b2;
   y+=30;
