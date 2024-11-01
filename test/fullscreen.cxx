@@ -183,14 +183,13 @@ void border_cb(Fl_Button *b, Fl_Window *w) {
 }
 
 
-void maximize_cb(Fl_Widget *o, void *p) {
-  Fl_Window *w = (Fl_Window *)p;
+void maximize_cb(Fl_Button *b, Fl_Window *w) {
   if (w->maximize_active()) {
     w->un_maximize();
-    //((Fl_Button*)o)->set();
+    if (w->maximize_active()) b->set();
   } else {
     w->maximize();
-    //((Fl_Button*)o)->clear();
+    if (!w->maximize_active()) b->clear();
   }
 }
 
@@ -349,7 +348,7 @@ int main(int argc, char **argv) {
   y+=30;
 
   window.b3_maxi = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"Maximize");
-  window.b3_maxi->callback(maximize_cb,w);
+  window.b3_maxi->callback((Fl_Callback*)maximize_cb,w);
   y+=30;
 
   window.b4 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"All Screens");

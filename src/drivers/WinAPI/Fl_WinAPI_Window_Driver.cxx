@@ -610,6 +610,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   scaledW += bx*2;
   scaledH += by*2+bt;
   SetWindowLong(fl_xid(pWindow), GWL_STYLE, style);
+  if (pWindow->maximize_active()) return this->maximize();
   SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH,
                SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
   Fl::handle(FL_FULLSCREEN, pWindow);
@@ -617,10 +618,12 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 
 
 void Fl_WinAPI_Window_Driver::maximize() {
+  if (!border()) return Fl_Window_Driver::maximize();
   ShowWindow(fl_xid(pWindow), SW_SHOWMAXIMIZED);
 }
 
 void Fl_WinAPI_Window_Driver::un_maximize() {
+  if (!border()) return Fl_Window_Driver::un_maximize();
   ShowWindow(fl_xid(pWindow), SW_SHOWNORMAL);
 }
 

@@ -217,7 +217,9 @@ public:
   */
   void resize(int X,int Y,int W,int H) FL_OVERRIDE;
   /** Sets whether or not the window manager border is around the window.
-  The default value is true. <I>With some X window
+  The default value is true. The macOS platform ignores requests to change the
+  border state of a fullscreen or maximized window.
+   <I>With some X window
   managers, this does not work after show() has been called.</I>
   */
   void border(int b);

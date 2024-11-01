@@ -2175,10 +2175,12 @@ Fl_Wayland_Plugin *Fl_Wayland_Window_Driver::gl_plugin() {
 void Fl_Wayland_Window_Driver::maximize() {
   struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
   if (xid->kind == DECORATED) libdecor_frame_set_maximized(xid->frame);
+  else Fl_Window_Driver::maximize();
 }
 
 
 void Fl_Wayland_Window_Driver::un_maximize() {
   struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
   if (xid->kind == DECORATED) libdecor_frame_unset_maximized(xid->frame);
+  else Fl_Window_Driver::un_maximize();
 }

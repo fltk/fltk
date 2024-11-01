@@ -3328,12 +3328,14 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
 
 
 void Fl_Cocoa_Window_Driver::maximize() {
-  [fl_xid(pWindow) performZoom:nil];
+  if (border()) [fl_xid(pWindow) performZoom:nil];
+  else Fl_Window_Driver::maximize();
 }
 
 
 void Fl_Cocoa_Window_Driver::un_maximize() {
-  [fl_xid(pWindow) performZoom:nil];
+  if (border()) [fl_xid(pWindow) performZoom:nil];
+  else Fl_Window_Driver::un_maximize();
 }
 
 
@@ -3387,6 +3389,7 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
     restore_window_title_and_icon(pWindow, icon_image);
     pWindow->resize(X, Y, W, H);
+    if (pWindow->maximize_active()) Fl_Window_Driver::maximize();
     if (has_focus) [nswin makeKeyAndOrderFront:nil];
     else [nswin orderFront:nil];
   } else
