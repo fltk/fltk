@@ -37,6 +37,7 @@ class Fl_Window;
 @class NSOpenGLContext;
 @class NSOpenGLPixelFormat;
 @class NSView;
+@class NSWindow;
 #else
 class CALayer;
 class NSCursor;
@@ -45,6 +46,7 @@ class FLWindow;
 class NSOpenGLContext;
 class NSOpenGLPixelFormat;
 class NSView;
+class NSWindow;
 #endif // __OBJC__
 
 /**
@@ -95,6 +97,7 @@ public:
   NSCursor *cursor;
   static void q_release_context(Fl_Cocoa_Window_Driver *x = 0); // free all resources associated with gc
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
+  static CGImageRef capture_decorated_window_10_6(NSWindow *nswin);
   void set_key_window();
   bool mapped_to_retina();      // is window mapped to retina display?
   void mapped_to_retina(bool);  // sets whether window is mapped to retina display
