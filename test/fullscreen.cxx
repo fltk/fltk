@@ -1,6 +1,6 @@
 //
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -179,7 +179,7 @@ void border_cb(Fl_Button *b, Fl_Window *w) {
   int d = b->value();
   w->border(d);
   // border change may have been refused (e.g. with fullscreen window)
-  if (w->border() != d) b->value(w->border());
+  if ((int)w->border() != d) b->value(w->border());
 }
 
 
