@@ -32,7 +32,7 @@ public:
   void resize(int X, int Y, int W, int H) FL_OVERRIDE;
   virtual void move_intersection(int oldx, int oldy, int newx, int newy);
   virtual void drag_intersection(int oldx, int oldy, int newx, int newy);
-  FL_DEPRECATED("in 1.4.0 - use move_intersection(p) instead",
+  FL_DEPRECATED("since 1.4.0 - use move_intersection(p) instead",
   void position(int oldx, int oldy, int newx, int newy)) { move_intersection(oldx, oldy, newx, newy); }
   void position(int x, int y) { Fl_Group::position(x, y); }
   void size_range(int index, int minw, int minh, int maxw=0x7FFFFFFF, int maxh=0x7FFFFFFF);

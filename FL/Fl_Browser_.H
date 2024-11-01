@@ -246,11 +246,11 @@ public:
     \see position(), hposition()
   */
   int vposition() const { return position_; }
-  FL_DEPRECATED("in 1.4.0 - use vposition() instead",
+  FL_DEPRECATED("since 1.4.0 - use vposition() instead",
   int position() const) { return vposition(); }
 
   void vposition(int pos); // scroll to here
-  FL_DEPRECATED("in 1.4.0 - use vposition(pos) instead",
+  FL_DEPRECATED("since 1.4.0 - use vposition(pos) instead",
   void position(int pos)) { return vposition(pos); }
   void position(int x, int y) { Fl_Group::position(x, y); }
 

@@ -2,7 +2,7 @@
 // Fl_Flex widget header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2020 by Karsten Pedersen
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,10 +70,10 @@
   is undefined, i.e. widgets may overlap and/or shrink to zero size.
 
   \b Hint: In many cases Fl_Flex can be used as a drop-in replacement
-  for Fl_Pack. This is the recommended single row/column container since
-  FLTK 1.4.0. Its resizing behavior is much more predictable (as expected)
-  than that of Fl_Pack which "resizes itself to shrink-wrap itself around
-  all of the children".
+  for Fl_Pack. This is the recommended single row/column container
+  since FLTK 1.4.0. Its resizing behavior is much more predictable
+  than that of Fl_Pack which <i>"resizes itself to shrink-wrap itself
+  around all of the children"</i>.
 
   Fl_Flex containers can be nested so you can create flexible layouts with
   multiple columns and rows. However, if your UI design is more complex you
@@ -106,7 +106,7 @@
     window.size_range(300, 30);
     window.show(argc, argv);
     return Fl::run();
-}
+  }
   \endcode
 
   \since 1.4.0

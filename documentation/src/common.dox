@@ -428,9 +428,9 @@ The following standard label types are included:
     the widget's align() flag. FL_MULTI_LABEL was designed to be used with
     Fl_Menu_Item's to support icons or small images, typically left of the
     menu text.\n
-    As of this writing (FLTK 1.4.0, Sep 2017) Fl_Menu_Items support only
-    one label part (text \b or image), but using Fl_Multi_Label as the
-    label can extend this to more than one part.
+    As of this writing (FLTK 1.4.0) Fl_Menu_Items support only one label
+    part (text \b or image), but using Fl_Multi_Label as the label can extend
+    this to more than one part.
 
   \see class Fl_Multi_Label, Fl_Widget::align()
 

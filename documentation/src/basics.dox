@@ -395,7 +395,7 @@ fltk-config --use-forms --use-gl --use-images --compile filename.cpp
 
 Before version 1.4.0 \p fltk-config accepted only a single source file
 and no additional compiler options or libraries.
-As of FLTK 1.4.0 it is possible to use additional compiler flags, more than
+Since FLTK 1.4.0 it is possible to use additional compiler flags, more than
 one source file, and additional link libraries.
 
 This is intended to be used for quick prototyping and not for production code

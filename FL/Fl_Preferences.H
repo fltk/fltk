@@ -203,7 +203,7 @@ public:
   Fl_Preferences( ID id );
   virtual ~Fl_Preferences();
 
-  FL_DEPRECATED("in 1.4.0 - use Fl_Preferences(path, vendor, application, flags) instead",
+  FL_DEPRECATED("since 1.4.0 - use Fl_Preferences(path, vendor, application, flags) instead",
                 Fl_Preferences( const char *path, const char *vendor, const char *application ) );
 
   Root filename( char *buffer, size_t buffer_size);

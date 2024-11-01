@@ -736,20 +736,20 @@ public:
 
   The legal event state bits are:
 
-    | Device   | State Bit      | Key or Button           | Since |
-    |----------|----------------|-------------------------|-------|
-    | Keyboard | FL_SHIFT       | Shift                   |       |
-    | Keyboard | FL_CAPS_LOCK   | Caps Lock               |       |
-    | Keyboard | FL_CTRL        | Ctrl                    |       |
-    | Keyboard | FL_ALT         | Alt                     |       |
-    | Keyboard | FL_NUM_LOCK    | Num Lock                |       |
-    | Keyboard | FL_META        | Meta, e.g. "Windows"    |       |
-    | Keyboard | FL_SCROLL_LOCK | Scroll Lock             |       |
-    | Mouse    | FL_BUTTON1     | left button             |       |
-    | Mouse    | FL_BUTTON2     | middle button           |       |
-    | Mouse    | FL_BUTTON3     | right button            |       |
-    | Mouse    | FL_BUTTON4     | side button 1 (back)    | 1.4.0 |
-    | Mouse    | FL_BUTTON5     | side button 2 (forward) | 1.4.0 |
+    | Device   | State Bit      | Key or Button           | Since  |
+    |----------|----------------|-------------------------|--------|
+    | Keyboard | FL_SHIFT       | Shift                   |        |
+    | Keyboard | FL_CAPS_LOCK   | Caps Lock               |        |
+    | Keyboard | FL_CTRL        | Ctrl                    |        |
+    | Keyboard | FL_ALT         | Alt                     |        |
+    | Keyboard | FL_NUM_LOCK    | Num Lock                |        |
+    | Keyboard | FL_META        | Meta, e.g. "Windows"    |        |
+    | Keyboard | FL_SCROLL_LOCK | Scroll Lock             |        |
+    | Mouse    | FL_BUTTON1     | left button             |        |
+    | Mouse    | FL_BUTTON2     | middle button           |        |
+    | Mouse    | FL_BUTTON3     | right button            |        |
+    | Mouse    | FL_BUTTON4     | side button 1 (back)    | 1.3.10 |
+    | Mouse    | FL_BUTTON5     | side button 2 (forward) | 1.3.10 |
   */
   static int event_state()      {return e_state;}
 
