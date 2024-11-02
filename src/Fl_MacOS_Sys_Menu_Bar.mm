@@ -593,10 +593,12 @@ static void move_tab_cb(Fl_Widget *, void *data)
 
 static void merge_all_windows_cb(Fl_Widget *, void *)
 {
-    Fl_Window *first = Fl::first_window();
-    if (first) {
-        [(NSWindow*)fl_xid(first) mergeAllWindows:nil];
-      }
+  Fl_Window *first = Fl::first_window();
+  while (first && (first->parent() || !first->border()))
+    first = Fl::next_window(first);
+  if (first) {
+    [(NSWindow*)fl_xid(first) mergeAllWindows:nil];
+  }
 }
 
 #endif
