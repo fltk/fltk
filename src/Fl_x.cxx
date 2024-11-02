@@ -2042,8 +2042,8 @@ int fl_handle(const XEvent& thisevent)
   // mouse buttons 4 (back) and 5 (forward) since X11 doesn't keep their status.
 
   case ButtonPress: {
-    int mb = xevent.xbutton.button;             // mouse button
-    if (mb < 1 || mb > 9) return 0;             // unknown or unsupported button, ignore
+    int mb = xevent.xbutton.button; // mouse button
+    if (mb < 1 || mb > 9) return 0; // unknown or unsupported button, ignore
 
     // FIXME(?): here we set some event related variables although we *might*
     // ignore an event sent by X because we don't know or want it. This may lead to
@@ -2062,20 +2062,20 @@ int fl_handle(const XEvent& thisevent)
       Fl::e_dy = +1;                            // down
       event = FL_MOUSEWHEEL;
     } else if (mb == 6 || (mb == Button4 && Fl::event_shift())) {
-        Fl::e_dx = -1;                          // left
-        event = FL_MOUSEWHEEL;
+      Fl::e_dx = -1;                            // left
+      event = FL_MOUSEWHEEL;
     } else if (mb == 7 || (mb == Button5 && Fl::event_shift())) {
-        Fl::e_dx = +1;                          // right
-        event = FL_MOUSEWHEEL;
+      Fl::e_dx = +1;                            // right
+      event = FL_MOUSEWHEEL;
     } else if (mb < 4 || mb > 7) {              // real mouse *buttons*, not scroll wheel
-        if (mb > 7)                             // 8 = back, 9 = forward
-          mb -= 4;                              // map to 4 and 5, resp.
-        Fl::e_keysym = FL_Button + mb;
-        Fl::e_state |= (FL_BUTTON1 << (mb-1));  // set button state
-        if (mb == 4) xbutton_state |= FL_BUTTON4; // save extra button state internally
-        if (mb == 5) xbutton_state |= FL_BUTTON5; // save extra button state internally
-        event = FL_PUSH;
-        checkdouble();
+      if (mb > 7)                               // 8 = back, 9 = forward
+        mb -= 4;                                // map to 4 and 5, resp.
+      Fl::e_keysym = FL_Button + mb;
+      Fl::e_state |= (FL_BUTTON1 << (mb-1));    // set button state
+      if (mb == 4) xbutton_state |= FL_BUTTON4; // save extra button state internally
+      if (mb == 5) xbutton_state |= FL_BUTTON5; // save extra button state internally
+      event = FL_PUSH;
+      checkdouble();
     } else { // unknown button or shift combination
       return 0;
     }
