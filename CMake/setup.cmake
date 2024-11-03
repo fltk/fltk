@@ -124,10 +124,10 @@ if(APPLE)
   else()
     set(FLTK_COCOA_FRAMEWORKS "-framework Cocoa")
     if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
-      if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 20.0) # a.k.a. macOS version ≥ 11.0
+      if(${CMAKE_OSX_DEPLOYMENT_TARGET} VERSION_GREATER_EQUAL 11.0)
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
       endif()
-      if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 24.0) # a.k.a. macOS version ≥ 15.0
+      if(${CMAKE_OSX_DEPLOYMENT_TARGET} VERSION_GREATER_EQUAL 12.3)
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework ScreenCaptureKit")
       endif()
     endif()
