@@ -49,10 +49,6 @@ extern "C" {
 #include <pwd.h>
 
 #import <Cocoa/Cocoa.h>
-#ifdef   __MAC_OS_X_VERSION_MAX_ALLOWED
-#  undef   MAC_OS_X_VERSION_MAX_ALLOWED
-#  define  MAC_OS_X_VERSION_MAX_ALLOWED  __MAC_OS_X_VERSION_MAX_ALLOWED
-#endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0
 # import <ScreenCaptureKit/ScreenCaptureKit.h>
 #endif

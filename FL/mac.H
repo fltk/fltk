@@ -47,6 +47,10 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 // Standard MacOS C/C++ includes...
 #include <ApplicationServices/ApplicationServices.h>
 #undef check // because of Fl::check()
+#ifdef   __MAC_OS_X_VERSION_MAX_ALLOWED
+#  undef   MAC_OS_X_VERSION_MAX_ALLOWED
+#  define  MAC_OS_X_VERSION_MAX_ALLOWED  __MAC_OS_X_VERSION_MAX_ALLOWED
+#endif
 
 #ifndef MAC_OS_X_VERSION_10_4
 #define MAC_OS_X_VERSION_10_4 1040
