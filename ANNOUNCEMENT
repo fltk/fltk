@@ -26,10 +26,10 @@ dropped in the next minor release (1.5.0).
 
 macOS is supported up to 15.0 "Sequoia".
 
-The platform dependent code in FLTK 1.4 was rewritten to enable
-better porting to new platforms. Basically all platform dependent code
-has been isolated and implemented in virtual methods of "driver" classes.
-See src/drivers and subdirectories.
+The platform dependent code in FLTK 1.4 was rewritten to enable easier
+porting to new platforms. Basically all platform dependent code has
+been isolated and implemented in virtual methods of "driver" classes.
+For details see 'src/drivers' and subdirectories.
 
 FLTK is now compatible with the Wayland platform on current Linux
 distributions and FreeBSD. The default build of the library on these
@@ -38,7 +38,8 @@ compiled and linked to this library start using Wayland if it is
 available at runtime and fall back to using X11 if not. Programs using
 X11 specific code that are not yet ported to Wayland can still be used
 on pure X11 systems or by disabling the Wayland support on startup so
-they fall back to using X11 only.
+they fall back to using X11 only. This requires 'XWayland' support on
+Wayland enabled (Linux) systems.
 
 The current development branch on GitHub [2] is `master`. This will be
 changed to `branch-1.4` when development of FLTK 1.5.0 begins and 1.4
