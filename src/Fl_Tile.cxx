@@ -585,7 +585,7 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
         c->position(c->x()+dx, c->y()+dy);
       }
     }
-    // check the bounding box of all children at minimum size
+    // check the current bounding box of all children
     init_sizes();
     Fl_Rect *p = bounds();
     int bbr = X, bbb = Y;
@@ -605,11 +605,34 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
     // perform the actual resize within a safe range
     if ((dw!=0) || (dh!=0)) {
       Fl_Widget *r = resizable();
+      // Find the target right and bottom position of the resizable child.
+      int trr = 0, trb = 0;
+      if (r) {
+        trr = r->x() + r->w() - dw;
+        trb = r->y() + r->h() - dh;
+      }
+      // Grow width and/or height of tile and adjust all children as needed.
+      if ((dw < 0) && (dh < 0)) {
+        move_intersection(bbr, bbb, bbr-dw, bbb-dh);
+      } else if (dw < 0) {
+        move_intersection(bbr, bbb, bbr-dw, bbb);
+      } else if (dh < 0) {
+        move_intersection(bbr, bbb, bbr, bbb-dh);
+      }
+      // Fix the resizable child, trying to keep its size plus all other
+      // widgets within their limits.
       if (r) {
         int rr = r->x() + r->w(), rb = r->y() + r->h();
-        move_intersection(rr, rb, rr-dw, rb-dh);
+        move_intersection(rr, rb, trr, trb);
       }
-      move_intersection(bbr, bbb, bbr-dw, bbb-dh);
+      // Shrink width and/or height of tile and adjust all children as needed.
+      if ((dw > 0) && (dh > 0)) {
+        move_intersection(bbr, bbb, bbr-dw, bbb-dh);
+      } else if (dw > 0) {
+        move_intersection(bbr, bbb, bbr-dw, bbb);
+      } else if (dh > 0) {
+        move_intersection(bbr, bbb, bbr, bbb-dh);
+      }
       init_sizes();
     }
     // resize the tile itself
