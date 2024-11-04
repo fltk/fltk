@@ -111,25 +111,23 @@ if(CMAKE_GENERATOR MATCHES "Xcode")
 endif()
 
 if(APPLE)
+  # Check if the __MAC_OS_X_VERSION_MAX_ALLOWED compile time macro is at least
+  # the version encoded in SDK_VERSION and return TRUE or FALSE in RESULT.
+  macro(CHECK_OSX_MAX_ALLOWED SDK_VERSION RESULT)
+    try_compile(LOCAL_RESULT
+      ${CMAKE_BINARY_DIR}/CMakeTmpDup
+      SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMake/macOSMaxAllowed.c
+      COMPILE_DEFINITIONS -DSDK_VERSION_CHECK=${SDK_VERSION}
+    )
+    set(${RESULT} ${LOCAL_RESULT})
+  endmacro()
+  # APPLE macOS setup
   set(HAVE_STRCASECMP 1)
   set(HAVE_DIRENT_H 1)
   set(HAVE_SNPRINTF 1)
   set(HAVE_VSNPRINTF 1)
   set(HAVE_SCANDIR 1)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
-  # Retrieve the value of the macOS compile-time macro
-  # __MAC_OS_X_VERSION_MAX_ALLOWED. This is needed to decide which
-  # frameworks must be linked later.
-  try_run(
-    RUN_RESULT COMPILE_RESULT
-    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMake/macOSMaxAllowed.c
-    RUN_OUTPUT_VARIABLE MAC_OS_X_VERSION_MAX_ALLOWED
-  )
-  if (NOT COMPILE_RESULT)
-    set(MAC_OS_X_VERSION_MAX_ALLOWED ${CURRENT_OSX_VERSION})
-  endif()
-  fl_debug_var(CMAKE_OSX_DEPLOYMENT_TARGET)
-  fl_debug_var(MAC_OS_X_VERSION_MAX_ALLOWED)
   if(FLTK_BACKEND_X11)
     if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_LIBCPP_HAS_THREAD_API_PTHREAD")
@@ -137,10 +135,12 @@ if(APPLE)
   else()
     set(FLTK_COCOA_FRAMEWORKS "-framework Cocoa")
     if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
-      if(${MAC_OS_X_VERSION_MAX_ALLOWED} VERSION_GREATER_EQUAL 11.0)
+      CHECK_OSX_MAX_ALLOWED(110000 SDK_AVAILABLE) # at least SDK 11.0.0 ?
+      if (SDK_AVAILABLE)
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
       endif()
-      if(${MAC_OS_X_VERSION_MAX_ALLOWED} VERSION_GREATER_EQUAL 15.0)
+      CHECK_OSX_MAX_ALLOWED(150000 SDK_AVAILABLE) # at least SDK 15.0.0 ?
+      if (SDK_AVAILABLE)
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework ScreenCaptureKit")
       endif()
     endif()

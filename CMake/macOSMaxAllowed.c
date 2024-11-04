@@ -1,8 +1,6 @@
-#include <Availability.h>
-#include <stdio.h>
 
-int main(int argc, char **argv) {
-  unsigned int ver = __MAC_OS_X_VERSION_MAX_ALLOWED;
-  printf("%d.%d.%d", ver/10000, (ver/100)%100, ver%100);
-  return 0;
-}
+#include <AvailabilityMacros.h>
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < SDK_VERSION_CHECK
+#error __MAC_OS_X_VERSION_MAX_ALLOWED < SDK_VERSION_CHECK
+#endif
+int main(int, char**) { return 0; }
