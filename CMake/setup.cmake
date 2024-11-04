@@ -117,6 +117,9 @@ if(APPLE)
   set(HAVE_VSNPRINTF 1)
   set(HAVE_SCANDIR 1)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+  # Retrieve the value of the macOS compile-time macro
+  # __MAC_OS_X_VERSION_MAX_ALLOWED. This is needed to decide which
+  # frameworks must be linked later.
   try_run(
     RUN_RESULT COMPILE_RESULT
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMake/macOSMaxAllowed.c
@@ -125,9 +128,8 @@ if(APPLE)
   if (NOT COMPILE_RESULT)
     set(MAC_OS_X_VERSION_MAX_ALLOWED ${CURRENT_OSX_VERSION})
   endif()
-  # message("MAC_OS_X_VERSION_MAX_ALLOWED: ${MAC_OS_X_VERSION_MAX_ALLOWED}")
-  # message("COMPILE_RESULT: ${COMPILE_RESULT}")
-  # message("RUN_RESULT: ${RUN_RESULT}")
+  fl_debug_var(CMAKE_OSX_DEPLOYMENT_TARGET)
+  fl_debug_var(MAC_OS_X_VERSION_MAX_ALLOWED)
   if(FLTK_BACKEND_X11)
     if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_LIBCPP_HAS_THREAD_API_PTHREAD")
@@ -135,7 +137,7 @@ if(APPLE)
   else()
     set(FLTK_COCOA_FRAMEWORKS "-framework Cocoa")
     if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
-      if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 20.0) # a.k.a. macOS version ≥ 11.0
+      if(${MAC_OS_X_VERSION_MAX_ALLOWED} VERSION_GREATER_EQUAL 11.0)
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
       endif()
       if(${MAC_OS_X_VERSION_MAX_ALLOWED} VERSION_GREATER_EQUAL 15.0)

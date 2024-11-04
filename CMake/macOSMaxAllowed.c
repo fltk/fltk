@@ -1,4 +1,4 @@
-#include <AvailabilityMacros.h>
+#include <Availability.h>
 #include <stdio.h>
 
 int main(int argc, char **argv) {
