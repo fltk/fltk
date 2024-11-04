@@ -1023,13 +1023,29 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 
     # MacOS X uses Cocoa for graphics.
     LIBS="$LIBS -framework Cocoa"
-    macosversion_maj=$(sw_vers -productVersion | cut -d. -f1)
-    AS_IF([test $macosversion_maj -ge 11], [
-      LIBS="$LIBS -weak_framework UniformTypeIdentifiers"
-    ])
-    AS_IF([test $macosversion_maj -ge 15], [
-      LIBS="$LIBS -weak_framework ScreenCaptureKit"
-    ])
+    # Add weak-linked additional frameworks for increasingly high macOS versions
+    AC_LANG_PUSH([C])
+    AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM(
+            [[#include <AvailabilityMacros.h>
+              #if __MAC_OS_X_VERSION_MAX_ALLOWED < 110000
+              #error __MAC_OS_X_VERSION_MAX_ALLOWED < 110000
+              #endif
+            ]], [[
+            ]])],
+        [LIBS="$LIBS -weak_framework UniformTypeIdentifiers"],
+        [])
+    AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM(
+            [[#include <AvailabilityMacros.h>
+              #if __MAC_OS_X_VERSION_MAX_ALLOWED < 150000
+              #error __MAC_OS_X_VERSION_MAX_ALLOWED < 150000
+              #endif
+            ]], [[
+            ]])],
+        [LIBS="$LIBS -weak_framework ScreenCaptureKit"],
+        [])
+    AC_LANG_POP([])
 
     AS_IF([test x$have_pthread = xyes], [
         AC_DEFINE([HAVE_PTHREAD])
