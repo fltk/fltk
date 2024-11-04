@@ -117,6 +117,17 @@ if(APPLE)
   set(HAVE_VSNPRINTF 1)
   set(HAVE_SCANDIR 1)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+  try_run(
+    RUN_RESULT COMPILE_RESULT
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMake/macosMaxAllowd.c
+    RUN_OUTPUT_VARIABLE MAC_OS_X_VERSION_MAX_ALLOWED
+  )
+  if (COMPILE_RESULT STREQUAL "FALSE")
+    set(MAC_OS_X_VERSION_MAX_ALLOWED ${CURRENT_OSX_VERSION})
+  endif()
+  # message("MAC_OS_X_VERSION_MAX_ALLOWED: ${MAC_OS_X_VERSION_MAX_ALLOWED}")
+  # message("COMPILE_RESULT: ${COMPILE_RESULT}")
+  # message("RUN_RESULT: ${RUN_RESULT}")
   if(FLTK_BACKEND_X11)
     if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_LIBCPP_HAS_THREAD_API_PTHREAD")
@@ -127,7 +138,7 @@ if(APPLE)
       if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 20.0) # a.k.a. macOS version ≥ 11.0
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
       endif()
-      if(${CMAKE_SYSTEM_VERSION} VERSION_GREATER_EQUAL 24.0) # a.k.a. macOS version ≥ 15.0
+      if(${MAC_OS_X_VERSION_MAX_ALLOWED} VERSION_GREATER_EQUAL 15.0)
         list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework ScreenCaptureKit")
       endif()
     endif()
