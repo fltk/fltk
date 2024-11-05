@@ -113,14 +113,22 @@ endif()
 if(APPLE)
   # Check if the __MAC_OS_X_VERSION_MAX_ALLOWED compile time macro is at least
   # the version encoded in SDK_VERSION and return TRUE or FALSE in RESULT.
-  macro(CHECK_OSX_MAX_ALLOWED SDK_VERSION RESULT)
-    try_compile(LOCAL_RESULT
-      ${CMAKE_BINARY_DIR}/CMakeTmpDup
+  # Note 1: try_compile() always creates an *internal* CMake cache variable for
+  #         the result which we set to 'FLTK_CHECK_OSX_MAX_ALLOWED_${SDK_VERSION}'.
+  # Note 2: 'FLTK_' to avoid polluting the cache if FLTK is built as a subproject.
+  # Note 3: We don't care about the cache, i.e. we run try_compile() unconditionally
+  #         so users can switch SDK's, particularly if they *upgrade* Xcode.
+
+  function(CHECK_OSX_MAX_ALLOWED SDK_VERSION RESULT)
+    set(_result FLTK_CHECK_OSX_MAX_ALLOWED_${SDK_VERSION})
+    try_compile(${_result}
+      ${CMAKE_CURRENT_BINARY_DIR}_SDK_${SDK_VERSION}
       SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMake/macOSMaxAllowed.c
       COMPILE_DEFINITIONS -DSDK_VERSION_CHECK=${SDK_VERSION}
     )
-    set(${RESULT} ${LOCAL_RESULT})
-  endmacro()
+    set(${RESULT} ${${_result}} PARENT_SCOPE)
+  endfunction()
+
   # APPLE macOS setup
   set(HAVE_STRCASECMP 1)
   set(HAVE_DIRENT_H 1)
@@ -135,14 +143,16 @@ if(APPLE)
   else()
     set(FLTK_COCOA_FRAMEWORKS "-framework Cocoa")
     if (NOT (CMAKE_OSX_ARCHITECTURES STREQUAL "ppc" OR CMAKE_OSX_ARCHITECTURES STREQUAL "i386"))
-      CHECK_OSX_MAX_ALLOWED(110000 SDK_AVAILABLE) # at least SDK 11.0.0 ?
-      if (SDK_AVAILABLE)
-        list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
-      endif()
-      CHECK_OSX_MAX_ALLOWED(150000 SDK_AVAILABLE) # at least SDK 15.0.0 ?
-      if (SDK_AVAILABLE)
-        list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework ScreenCaptureKit")
-      endif()
+      CHECK_OSX_MAX_ALLOWED(150000 SDK_15_AVAILABLE) # at least SDK 15.0.0 ?
+      if (SDK_15_AVAILABLE)
+        list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework ScreenCaptureKit")       # 15.0
+        list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers") # 11.0
+      else(SDK_15_AVAILABLE)
+        CHECK_OSX_MAX_ALLOWED(110000 SDK_11_AVAILABLE) # at least SDK 11.0.0 ?
+        if (SDK_11_AVAILABLE)
+          list(APPEND FLTK_COCOA_FRAMEWORKS "-weak_framework UniformTypeIdentifiers")
+        endif(SDK_11_AVAILABLE)
+      endif(SDK_15_AVAILABLE)
     endif()
   endif(FLTK_BACKEND_X11)
 endif(APPLE)
