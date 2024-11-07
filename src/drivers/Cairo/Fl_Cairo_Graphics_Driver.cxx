@@ -426,13 +426,6 @@ void Fl_Cairo_Graphics_Driver::reconcat(){
   cairo_transform(cairo_, &mat);
 }
 
-void Fl_Cairo_Graphics_Driver::begin_points() {
-  cairo_save(cairo_);
-  concat();
-  cairo_new_path(cairo_);
-  gap_=1;
-  what=POINTS;
-}
 
 void Fl_Cairo_Graphics_Driver::begin_line() {
   cairo_save(cairo_);
@@ -460,11 +453,7 @@ void Fl_Cairo_Graphics_Driver::begin_polygon() {
 
 void Fl_Cairo_Graphics_Driver::vertex(double x, double y) {
   if (what==POINTS){
-    cairo_move_to(cairo_, x, y);
-    cairo_rectangle(cairo_, x-0.5, y-0.5, 1, 1);
-    cairo_fill(cairo_);
-    gap_=1;
-    return;
+    return Fl_Graphics_Driver::vertex(x, y);
   }
   if (gap_){
     cairo_move_to(cairo_, x, y);
@@ -541,7 +530,9 @@ void Fl_Cairo_Graphics_Driver::pie(int x, int y, int w, int h, double a1, double
 }
 
 void Fl_Cairo_Graphics_Driver::end_points() {
-  end_line();
+ for (int i = 0; i < n; i++) {
+   point(xpoint[i].x, xpoint[i].y);
+ }
 }
 
 void Fl_Cairo_Graphics_Driver::end_line() {
@@ -575,9 +566,7 @@ void Fl_Cairo_Graphics_Driver::end_polygon() {
 
 void Fl_Cairo_Graphics_Driver::transformed_vertex(double x, double y) {
   if (what == POINTS) {
-    cairo_move_to(cairo_, x, y);
-    point(x, y);
-    gap_ = 1;
+    Fl_Graphics_Driver::transformed_vertex(x, y);
   } else {
     reconcat();
     if (gap_) {

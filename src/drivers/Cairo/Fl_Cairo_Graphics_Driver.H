@@ -125,7 +125,6 @@ public:
   void restore_clip() FL_OVERRIDE;
   int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
 
-  void begin_points() FL_OVERRIDE;
   void begin_line() FL_OVERRIDE;
   void begin_loop() FL_OVERRIDE;
   void begin_polygon() FL_OVERRIDE;
