@@ -1,18 +1,27 @@
-Changes in FLTK 1.4.0 RC3                               Released: Nov 03 2024
+Changes in FLTK 1.4.0 RC3                               Released: Nov 08 2024
 
-  - Restore Fl_Widget_Surface::draw_decorated_window() under XQuartz
-  - Fix "Mac: Mixing native fullscreen button with Fl_Window::fullscreen()
-    has side effects" (#1098)
-  - macOS: prevent changing window border while window is fullscreen
-  - macOS: prevent changing window border while window is maximized
-  - Fix "Windows: fullscreen doesn't always pick the correct display" (#1097)
-  - Wayland: Fix issue in maximization of a borderless window (#1099)
-  - Fix Mac: "Merge All Windows" fails if focused window is borderless (#1100)
-  - macOS: Recent Xcode versions badly define MAC_OS_X_VERSION_MAX_ALLOWED
-  - macOS: Recent macOS SDKs badly define MAC_OS_X_VERSION_MAX_ALLOWED
+  Bug Fixes:
+
+  - Windows: "Fullscreen doesn't always pick the correct display" (#1097)
+  - macOS: "Mixing native fullscreen button with Fl_Window::fullscreen()" (#1098)
+  - Wayland: Issue in maximization of a borderless window (#1099)
+  - macOS: "Merge All Windows" fails if focused window is borderless (#1100)
+  - macOS: Fl_Window::fullscreen() doesn't work for unfocused tabbed window (#1101)
+  - Fl_Tile resizing for "sudden" size changes (#1102)
+  - macOS: Weak linking error with latest SDK 15 (#1103, #1105)
+  - X11: test/checkers drawing artifacts when window is scaled (#1109)
+  - X11: test/curve "points" mode not drawn correctly (#1110)
+  - X11: test/gl_overlay stale overlay rendering (#1111)
+  - fl_draw_image() with horizontal flip reads out of bounds (#1112)
+  - macOS: Very minor high DPI rounding issue with fl_rect (#1113)
+  - macOS: Prevent changing window border if window is fullscreen or maximized
+  - Mac/XQuartz: Restore Fl_Widget_Surface::draw_decorated_window()
+
+  Other Improvements:
+
+  - Improve member function Fl_Wayland_Graphics_Driver::copy_offscreen()
   - Make Fl_Window::flush() public for consistency with subclasses
   - Improve UI layout of 'fltk-options'
-  - Fix Fl_Tile resizing for "sudden" size changes (#1102)
   - Fix compiler warnings
   - Improve and clarify documentation, including README.CMake.txt
 
