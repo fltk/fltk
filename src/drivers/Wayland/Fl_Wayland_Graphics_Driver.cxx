@@ -264,8 +264,10 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h,
   cairo_get_matrix(cairo_, &matrix);
   double s = matrix.xx;
   cairo_save(cairo_);
-  cairo_rectangle(cairo_, x, y, w, h);
+  cairo_rectangle(cairo_, x - 0.5, y - 0.5, w, h);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_clip(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   cairo_surface_t *surf = cairo_get_target((cairo_t *)src);
   cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
   cairo_set_source(cairo_, pat);
