@@ -149,8 +149,8 @@ static void copy_region(struct wld_window *window, cairo_region_t *r) {
     cairo_region_get_rectangle(r, i, &rect);
     int left = rect.x * f;
     int top = rect.y * f;
-    int width = rect.width * f;
-    int height = rect.height * f;
+    int width = ceil((rect.x + rect.width)*f) - left;
+    int height = ceil((rect.y + rect.height)*f) - top;
     int offset = top * buffer->draw_buffer.stride + 4 * left;
     int W4 = 4 * width;
     for (int l = 0; l < height; l++) {

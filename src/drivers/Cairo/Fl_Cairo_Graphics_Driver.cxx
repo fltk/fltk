@@ -1477,7 +1477,9 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
       clip_->y = rect.y;
       clip_->w = rect.width;
       clip_->h = rect.height;
+      cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
       cairo_clip(cairo_);
+      cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT );
     } else if (clip_) {
       clip_->w = -1;
     }
