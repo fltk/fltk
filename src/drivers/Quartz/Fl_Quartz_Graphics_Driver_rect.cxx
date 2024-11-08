@@ -37,10 +37,9 @@ void Fl_Quartz_Graphics_Driver::point(int x, int y) {
 
 void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
-  CGRect rect = CGRectMake(x, y, w-1, h-1);
+  double offset = (quartz_line_width_ >= 2 ? quartz_line_width_/4 : 0);
+  CGRect rect = CGRectMake(x - offset, y - offset, w-1, h-1);
   CGContextStrokeRect(gc_, rect);
-  if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::focus_rect(int x, int y, int w, int h)
