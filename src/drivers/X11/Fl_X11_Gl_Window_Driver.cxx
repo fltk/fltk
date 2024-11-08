@@ -278,6 +278,33 @@ int Fl_X11_Gl_Window_Driver::mode_(int m, const int *a) {
 void Fl_X11_Gl_Window_Driver::swap_buffers() {
   if (!fl_xid(pWindow)) // window not shown
     return;
+  if (overlay()) {
+    int wo = pWindow->pixel_w(), ho = pWindow->pixel_h();
+    GLint matrixmode;
+    GLfloat pos[4];
+    glGetIntegerv(GL_MATRIX_MODE, &matrixmode);
+    glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);       // save original glRasterPos
+    glMatrixMode(GL_PROJECTION);                        // save proj/model matrices
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glScalef(2.0f/wo, 2.0f/ho, 1.0f);
+    glTranslatef(-wo/2.0f, -ho/2.0f, 0.0f);         // set transform so 0,0 is bottom/left of Gl_Window
+    glRasterPos2i(0,0);                             // set glRasterPos to bottom left corner
+    {
+      // Emulate overlay by doing copypixels
+      glReadBuffer(GL_BACK);
+      glDrawBuffer(GL_FRONT);
+      glCopyPixels(0, 0, wo, ho, GL_COLOR);         // copy GL_BACK to GL_FRONT
+    }
+    glPopMatrix(); // GL_MODELVIEW                  // restore model/proj matrices
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(matrixmode);
+    glRasterPos3f(pos[0], pos[1], pos[2]);              // restore original glRasterPos
+  } else
   glXSwapBuffers(fl_display, fl_xid(pWindow));
 }
 
