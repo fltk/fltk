@@ -667,7 +667,6 @@ void Fl_Cairo_Graphics_Driver::draw_image_mono(const uchar *data, int ix, int iy
   struct callback_data cb_data;
   const size_t aD = abs(D);
   if (!LD) LD = iw * aD;
-  if (D<0) data += iw * aD;
   cb_data.data = data;
   cb_data.D = D;
   cb_data.LD = LD;
@@ -740,7 +739,6 @@ void Fl_Cairo_Graphics_Driver::draw_image(const uchar *data, int ix, int iy, int
   }
   struct callback_data cb_data;
   if (!LD) LD = iw*abs(D);
-  if (D<0) data += iw*abs(D);
   cb_data.data = data;
   cb_data.D = D;
   cb_data.LD = LD;
