@@ -577,24 +577,32 @@ void Fl_WinAPI_Window_Driver::fullscreen_on() {
 }
 
 
+static void delayed_maximize(Fl_Window *win){
+  Fl::remove_check((Fl_Timeout_Handler)delayed_maximize, win);
+  win->un_maximize();
+  win->maximize();
+}
+
+
 void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
   DWORD style = GetWindowLong(fl_xid(pWindow), GWL_STYLE);
+  if (pWindow->border()) style |= WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_CAPTION;
   // Remove the xid temporarily so that Fl_WinAPI_Window_Driver::fake_X_wm() behaves like it
   // does in Fl_WinAPI_Window_Driver::makeWindow().
   HWND xid = fl_xid(pWindow);
   Fl_X::flx(pWindow)->xid = 0;
   int wx, wy, bt, bx, by;
-  switch (fake_X_wm(wx, wy, bt, bx, by)) {
+  switch (fake_X_wm(wx, wy, bt, bx, by, style)) {
     case 0:
       break;
     case 1:
       style |= WS_CAPTION;
       break;
     case 2:
-      if (border()) {
+      /*if (border()) {
         style |= WS_THICKFRAME | WS_CAPTION;
-      }
+      }*/
       break;
   }
   Fl_X::flx(pWindow)->xid = (fl_uintptr_t)xid;
@@ -610,10 +618,10 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   scaledW += bx*2;
   scaledH += by*2+bt;
   SetWindowLong(fl_xid(pWindow), GWL_STYLE, style);
-  if (pWindow->maximize_active()) return this->maximize();
   SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH,
                SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
   Fl::handle(FL_FULLSCREEN, pWindow);
+  if (pWindow->maximize_active()) Fl::add_check((Fl_Timeout_Handler)delayed_maximize, pWindow);
 }
 
 
