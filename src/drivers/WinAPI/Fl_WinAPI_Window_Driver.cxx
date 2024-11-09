@@ -577,13 +577,6 @@ void Fl_WinAPI_Window_Driver::fullscreen_on() {
 }
 
 
-static void delayed_maximize(Fl_Window *win){
-  Fl::remove_check((Fl_Timeout_Handler)delayed_maximize, win);
-  win->un_maximize();
-  win->maximize();
-}
-
-
 void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
   DWORD style = GetWindowLong(fl_xid(pWindow), GWL_STYLE);
@@ -606,22 +599,28 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
       break;
   }
   Fl_X::flx(pWindow)->xid = (fl_uintptr_t)xid;
-  // compute window position and size in scaled units
-  float s = Fl::screen_driver()->scale(screen_num());
-  int scaledX = int(ceil(X*s)), scaledY= int(ceil(Y*s)), scaledW = int(ceil(W*s)), scaledH = int(ceil(H*s));
-  // Adjust for decorations (but not if that puts the decorations
-  // outside the screen)
-  if ((X != x()) || (Y != y())) {
-    scaledX -= bx;
-    scaledY -= by+bt;
-  }
-  scaledW += bx*2;
-  scaledH += by*2+bt;
   SetWindowLong(fl_xid(pWindow), GWL_STYLE, style);
-  SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH,
-               SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  if (!pWindow->maximize_active()) {
+    // compute window position and size in scaled units
+    float s = Fl::screen_driver()->scale(screen_num());
+    int scaledX = int(ceil(X*s)), scaledY= int(ceil(Y*s)), scaledW = int(ceil(W*s)), scaledH = int(ceil(H*s));
+    // Adjust for decorations (but not if that puts the decorations
+    // outside the screen)
+    if ((X != x()) || (Y != y())) {
+      scaledX -= bx;
+      scaledY -= by+bt;
+    }
+    scaledW += bx*2;
+    scaledH += by*2+bt;
+    SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH,
+                 SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  } else {
+    int WX, WY, WW, WH;
+    ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->screen_xywh_unscaled(WX, WY, WW, WH, screen_num());
+    SetWindowPos(fl_xid(pWindow), 0, WX, WY, WW, WH,
+                 SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  }
   Fl::handle(FL_FULLSCREEN, pWindow);
-  if (pWindow->maximize_active()) Fl::add_check((Fl_Timeout_Handler)delayed_maximize, pWindow);
 }
 
 
