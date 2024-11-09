@@ -141,16 +141,20 @@ const struct wl_callback_listener *Fl_Wayland_Graphics_Driver::p_surface_frame_l
 // copy pixels in region r from the Cairo surface to the Wayland buffer
 static void copy_region(struct wld_window *window, cairo_region_t *r) {
   struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer = window->buffer;
-  float f = Fl::screen_scale(window->fl_win->screen_num()) *
-    Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale();
+  float f = Fl::screen_scale(window->fl_win->screen_num());
+  int d = Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale();
   int count = cairo_region_num_rectangles(r);
   cairo_rectangle_int_t rect;
   for (int i = 0; i < count; i++) {
     cairo_region_get_rectangle(r, i, &rect);
-    int left = rect.x * f;
-    int top = rect.y * f;
-    int width = ceil((rect.x + rect.width)*f) - left;
-    int height = ceil((rect.y + rect.height)*f) - top;
+    int left = d * int(rect.x * f);
+    int top = d * int(rect.y * f);
+    int right = d * ceil((rect.x + rect.width) * f);
+    if (right > d * int(window->fl_win->w() * f)) right = d * int(window->fl_win->w() * f);
+    int width = right - left;
+    int bottom = d * ceil((rect.y + rect.height) * f);
+    if (bottom > d * int(window->fl_win->h() * f)) bottom = d * int(window->fl_win->h() * f);
+    int height = bottom - top;
     int offset = top * buffer->draw_buffer.stride + 4 * left;
     int W4 = 4 * width;
     for (int l = 0; l < height; l++) {
