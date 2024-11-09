@@ -86,6 +86,21 @@ static int fl_draw_arrow_single(Fl_Rect r, Fl_Orientation o, Fl_Color col, int d
 
   int x1, y1;
 
+  // Revert gtk+ specific "chevron style" arrow drawing: see GitHub Issue #1117.
+  //  - gtk_chevron == true  : use gtk+ specific ("chevron style") arrows
+  //  - gtk_chevron == false : use standard ("triangle") arrows
+  //
+  // Note 1: the "chevron style" was initially copied from Fl_Scrollbar and
+  //   then used in all "arrow" drawings, e.g. in Fl_Menu to unify arrow
+  //   appearance across all widgets and per scheme. This was probably
+  //   too much as mentioned in GitHub Issue #1117. The consequence is to
+  //   set 'gtk_chevron' to false to prevent the "chevron style".
+  //
+  // Note 2: In the future we may use more specific arrow types if needed and
+  //   integrate arrow drawing in Fl_Scheme_* classes.
+
+  static const bool gtk_chevron = false; // ... or: Fl::is_scheme("gtk+");
+
   x1 = r.x();
   y1 = r.y();
   if (d < 0)
@@ -98,7 +113,7 @@ static int fl_draw_arrow_single(Fl_Rect r, Fl_Orientation o, Fl_Color col, int d
     case FL_ORIENT_LEFT:
       x1 += (r.w()-d)/2 - 1;
       y1 += r.h()/2;
-      if (Fl::is_scheme("gtk+"))
+      if (gtk_chevron)
         fl_polygon(x1, y1, x1+d, y1-d, x1+d-1, y1, x1+d, y1+d);
       else
         fl_polygon(x1, y1, x1+d, y1-d, x1+d, y1+d);
@@ -107,7 +122,7 @@ static int fl_draw_arrow_single(Fl_Rect r, Fl_Orientation o, Fl_Color col, int d
     case FL_ORIENT_RIGHT:
       x1 += (r.w()-d)/2;
       y1 += r.h()/2;
-      if (Fl::is_scheme("gtk+"))
+      if (gtk_chevron)
         fl_polygon(x1, y1-d, x1+1, y1, x1, y1+d, x1+d, y1);
       else
         fl_polygon(x1, y1-d, x1, y1+d, x1+d, y1);
@@ -116,7 +131,7 @@ static int fl_draw_arrow_single(Fl_Rect r, Fl_Orientation o, Fl_Color col, int d
     case FL_ORIENT_UP:
       x1 += r.w()/2;
       y1 += (r.h()-d)/2 - 1;
-      if (Fl::is_scheme("gtk+"))
+      if (gtk_chevron)
         fl_polygon(x1, y1, x1+d, y1+d, x1, y1+d-1, x1-d, y1+d);
       else
         fl_polygon(x1, y1, x1+d, y1+d, x1-d, y1+d);
@@ -125,7 +140,7 @@ static int fl_draw_arrow_single(Fl_Rect r, Fl_Orientation o, Fl_Color col, int d
     case FL_ORIENT_DOWN:
       x1 += r.w()/2-d;
       y1 += (r.h()-d)/2;
-      if (Fl::is_scheme("gtk+")) {
+      if (gtk_chevron) {
         fl_polygon(x1, y1, x1+d, y1+1, x1+d, y1+d);
         fl_polygon(x1+d, y1+1, x1+2*d, y1, x1+d, y1+d);
       } else {
