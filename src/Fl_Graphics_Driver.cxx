@@ -759,6 +759,15 @@ void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
   }
 }
 
+// This function aims to compute accurately int(x * s) in
+// presence of rounding errors existing with floating point numbers
+// and that sometimes differ between 32 and 64 bits.
+int Fl_Scalable_Graphics_Driver::floor(int x, float s) {
+  if (s == 1) return x;
+  int retval = int(abs(x) * s + 0.001f);
+  return (x >= 0 ? retval : -retval);
+}
+
 void Fl_Scalable_Graphics_Driver::rectf(int x, int y, int w, int h)
 {
   if (w <= 0 || h <= 0) return;
