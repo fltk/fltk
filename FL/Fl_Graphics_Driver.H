@@ -416,7 +416,7 @@ public:
   // This function aims to compute accurately int(x * s) in
   // presence of rounding errors existing with floating point numbers
   // and that sometimes differ between 32 and 64 bits.
-  static inline int floor(int x, float s) { return int(x * s + 0.001f); }
+  static inline int floor(int x, float s) { return int(x * s + (x < 0 ? -0.001f : 0.001f)); }
   inline int floor(int x) { return Fl_Scalable_Graphics_Driver::floor(x, scale()); }
 protected:
   int line_width_;
