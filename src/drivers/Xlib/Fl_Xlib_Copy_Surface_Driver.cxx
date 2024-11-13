@@ -49,7 +49,6 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
   cairo_save(cairo_);
   ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #endif
-  driver()->push_no_clip();
   fl_window = xid->offscreen();
   driver()->color(FL_WHITE);
   driver()->rectf(0, 0, w, h);
@@ -58,7 +57,6 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
 
 
 Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
-  driver()->pop_clip();
   Window old_win = fl_window;
   fl_window = xid->offscreen();
   Fl_RGB_Image *rgb = Fl::screen_driver()->read_win_rectangle(0, 0, width, height, 0);
