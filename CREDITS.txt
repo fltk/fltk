@@ -69,3 +69,4 @@ OTHER CONTRIBUTORS
     Josef Vitu
     Jim Wilson
     Ken Yarnall
+    Daniel Harding
