@@ -65,6 +65,12 @@
 
 #include <winerror.h>
 
+// old versions of MinGW lack definition of GET_XBUTTON_WPARAM:
+
+#ifndef GET_XBUTTON_WPARAM
+#define GET_XBUTTON_WPARAM(wParam) (HIWORD(wParam))
+#endif
+
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 // USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:

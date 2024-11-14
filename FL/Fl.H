@@ -681,7 +681,7 @@ int main() {
     \retval FL_MIDDLE_MOUSE
     \retval FL_RIGHT_MOUSE
     \retval FL_BACK_MOUSE
-    \retval FL_FORWARD_MOUSE.
+    \retval FL_FORWARD_MOUSE
     \see Fl::event_buttons(), Fl::event_state()
   */
   static int event_button()	{return e_keysym-FL_Button;}
@@ -691,8 +691,9 @@ int main() {
     This is a bitfield of what shift states were on and what mouse buttons
     were held down during the most recent event.
 
-  \note FLTK platforms differ in what Fl::event_state() returns when it is called
-        while a modifier key or mouse button is being pressed or released.
+    \note FLTK platforms differ in what Fl::event_state() returns when it is called
+      while a modifier key or mouse button is being pressed or released.
+
   - Under X11 and Wayland, Fl::event_state() indicates the state of the modifier keys and
     mouse buttons just \b prior to the event. Thus, during the \c FL_KEYDOWN event generated
     when pressing the shift key, for example, the \c FL_SHIFT bit of event_state() is 0 and
@@ -704,9 +705,12 @@ int main() {
   - X servers do not agree on shift states, and \c FL_NUM_LOCK, \c FL_META, and \c FL_SCROLL_LOCK
     may not work.
   - The values were selected to match the XFree86 server on Linux.
+
   \note This inconsistency \b may be fixed (on X11 and Wayland) in a later release.
+
   The legal event state bits are:
-    | Device   | State Bit      | Function                | Since  |
+
+    | Device   | State Bit      | Key or Button           | Since  |
     |----------|----------------|-------------------------|--------|
     | Keyboard | FL_SHIFT       | Shift                   |        |
     | Keyboard | FL_CAPS_LOCK   | Caps Lock               |        |
@@ -1165,28 +1169,28 @@ int main() {
   static int event_alt() {return e_state&FL_ALT;}
   /**
     Returns the mouse buttons state bits; if non-zero, then at least one
-    button is pressed now.  This function returns the button state at the 
-    time of the event. During an FL_RELEASE event, the state 
-    of the released button will be 0. To find out, which button 
+    button is pressed now.  This function returns the button state at the
+    time of the event. During an FL_RELEASE event, the state
+    of the released button will be 0. To find out, which button
     caused an FL_RELEASE event, you can use Fl::event_button() instead.
     \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | ... | [FL_BUTTON5] }
   */
-  static int event_buttons() {return e_state&0x7f000000;}
+  static int event_buttons() {return e_state & FL_BUTTONS;}
   /**
     Returns non-zero if mouse button 1 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button1() {return e_state&FL_BUTTON1;}
+  static int event_button1() {return e_state & FL_BUTTON1;}
   /**
     Returns non-zero if mouse button 2 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button2() {return e_state&FL_BUTTON2;}
+  static int event_button2() {return e_state & FL_BUTTON2;}
   /**
     Returns non-zero if mouse button 3 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button3() {return e_state&FL_BUTTON3;}
+  static int event_button3() {return e_state & FL_BUTTON3;}
   /**
     Returns non-zero if mouse button 4 is currently held down.
     For more details, see Fl::event_buttons().
