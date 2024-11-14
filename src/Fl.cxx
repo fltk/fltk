@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1404,19 +1402,46 @@ int Fl::handle_(int e, Fl_Window* window)
     return ret;}
 
   case FL_RELEASE: {
-//    printf("FL_RELEASE: window=%p, pushed() = %p, grab() = %p, modal() = %p\n",
-//           window, pushed(), grab(), modal());
+
+    // Mouse drag release mode
+    //   - in branch 'master' (1.4.0) on Jul 14, 2023, Albrecht (WIP):
+    //   - backported to 'branch-1.3' for 1.3.10 on Nov 14, 2024 (Albrecht)
+    //   0 = old: *first* mouse button release ("up") turns drag mode off
+    //   1 = new: *last* mouse button release ("up") turns drag mode off
+    // The latter enables dragging with two or more pressed mouse buttons
+    // and to continue dragging (i.e. sending FL_DRAG) until the *last*
+    // mouse button is released.
+    // See fltk.general, thread started on Jul 12, 2023
+    // "Is handling simultaneous Left-click and Right-click drags supported?"
+
+    static const int drag_release = 1; // should be 1 => new behavior since Jul 2023
+
+    // Implementation notes:
+    // (1) Mode 1 (new): only if *all* mouse buttons have been released, the
+    //     Fl::pushed_ widget is reset to 0 (NULL) so subsequent system "move"
+    //     events are no longer sent as FL_DRAG events.
+    // (2) Mode 0 (old): Fl::pushed_ was reset on the *first* mouse button release.
+    // (3) The constant 'drag_release' should be removed once the new mode has been
+    //     confirmed to work correctly and no side effects have been observed.
+    //     Hint: remove condition "!drag_release || " twice (below).
+
+    // printf("FL_RELEASE: window=%p, pushed() = %p, grab() = %p, modal() = %p, drag_release = %d, buttons = 0x%x\n",
+    //        window, pushed(), grab(), modal(), drag_release, Fl::event_buttons()>>24);
 
     if (grab()) {
       wi = grab();
-      pushed_ = 0; // must be zero before callback is done!
+      if (!drag_release || !Fl::event_buttons())
+        pushed_ = 0; // must be zero before callback is done!
     } else if (pushed()) {
       wi = pushed();
-      pushed_ = 0; // must be zero before callback is done!
-    } else if (modal() && wi != modal()) return 0;
+      if (!drag_release || !Fl::event_buttons())
+        pushed_ = 0; // must be zero before callback is done!
+    } else if (modal() && wi != modal())
+      return 0;
     int r = send_event(e, wi, window);
     fl_fix_focus();
-    return r;}
+    return r;
+  }
 
   case FL_UNFOCUS:
     window = 0;
