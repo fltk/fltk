@@ -1165,8 +1165,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     else if (btn == 2) Fl::e_state &= ~FL_BUTTON3;
     else if (btn == 4) Fl::e_state &= ~FL_BUTTON4;
     else if (btn == 5) Fl::e_state &= ~FL_BUTTON5;
-    }
-    
+  }
+
   switch ( etype ) {
     case NSLeftMouseDown:
     case NSRightMouseDown:

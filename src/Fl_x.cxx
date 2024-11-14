@@ -2180,7 +2180,7 @@ int fl_handle(const XEvent& thisevent)
     set_event_xy();
     Fl::e_is_click = 0; }
     break;
-  
+
   // Mouse button "press" event:
   // ---------------------------
   // X11 uses special conventions for mouse "button" numbers:
@@ -2195,8 +2195,8 @@ int fl_handle(const XEvent& thisevent)
   // mouse buttons 4 (back) and 5 (forward) since X11 doesn't keep their status.
 
   case ButtonPress: {
-    int mb = xevent.xbutton.button;     // mouse button
-    if (mb < 1 || mb > 9) return 0;     // unknown or unsupported button, ignore
+    int mb = xevent.xbutton.button; // mouse button
+    if (mb < 1 || mb > 9) return 0; // unknown or unsupported button, ignore
 
     // FIXME(?): here we set some event related variables although we *might*
     // ignore an event sent by X because we don't know or want it. This may lead to
@@ -2207,24 +2207,24 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_keysym = 0;       // init: not used (zero) for scroll wheel events
     set_event_xy();
     Fl::e_dx = Fl::e_dy = 0;
+
     if (mb == Button4 && !Fl::event_shift()) {
-      Fl::e_dy = -1; // Up
+      Fl::e_dy = -1;                            // up
       event = FL_MOUSEWHEEL;
     } else if (mb == Button5 && !Fl::event_shift()) {
-      Fl::e_dy = +1; // Down
+      Fl::e_dy = +1;                            // down
       event = FL_MOUSEWHEEL;
-    } else if (mb == 6 || mb == Button4 && Fl::event_shift()) {
-      Fl::e_dx = -1; // Left
-	    event = FL_MOUSEWHEEL;
-    } else if (mb == 7 || mb == Button5 && Fl::event_shift()) {
-	    Fl::e_dx = +1; // Right
-	    event = FL_MOUSEWHEEL;
-    } else if (mb < 4 || mb > 7) { // real mouse *buttons*, not scroll wheel
-      if (mb > 7)                  // 8 = back, 9 = forward
-        mb -= 4;                   // map to 4 and 5, resp.
-
+    } else if (mb == 6 || (mb == Button4 && Fl::event_shift())) {
+      Fl::e_dx = -1;                            // left
+      event = FL_MOUSEWHEEL;
+    } else if (mb == 7 || (mb == Button5 && Fl::event_shift())) {
+      Fl::e_dx = +1;                            // right
+      event = FL_MOUSEWHEEL;
+    } else if (mb < 4 || mb > 7) {              // real mouse *buttons*, not scroll wheel
+      if (mb > 7)                               // 8 = back, 9 = forward
+        mb -= 4;                                // map to 4 and 5, resp.
       Fl::e_keysym = FL_Button + mb;
-      Fl::e_state |= (FL_BUTTON1 << (mb-1));  // set button state
+      Fl::e_state |= (FL_BUTTON1 << (mb-1));    // set button state
       if (mb == 4) xbutton_state |= FL_BUTTON4; // save extra button state internally
       if (mb == 5) xbutton_state |= FL_BUTTON5; // save extra button state internally
       event = FL_PUSH;
@@ -2235,10 +2235,41 @@ int fl_handle(const XEvent& thisevent)
 
 #if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
-#endif
+#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     break;
   } // ButtonPress
+
+  // Mouse button release event: for details see ButtonPress above
+
+  case ButtonRelease: {
+    int mb = xevent.xbutton.button; // mouse button
+    switch (mb) {                   // figure out which real button this is
+      case 1:                       // left
+      case 2:                       // middle
+      case 3:                       // right
+        break;                      // continue
+      case 8:                       // side button 1 (back)
+      case 9:                       // side button 2 (forward)
+        mb -= 4;                    // map to 4 and 5, respectively
+        break;                      // continue
+      default:                      // unknown button or scroll wheel:
+        return 0;                   // don't send FL_RELEASE event
+    }
+    Fl::e_keysym = FL_Button + mb;  // == FL_BUTTON1 .. FL_BUTTON5
+    set_event_xy();
+
+    Fl::e_state &= ~(FL_BUTTON1 << (mb-1));
+    if (mb == 4) xbutton_state &= ~FL_BUTTON4; // clear internal button state
+    if (mb == 5) xbutton_state &= ~FL_BUTTON5; // clear internal button state
+    event = FL_RELEASE;
+
+#if FLTK_CONSOLIDATE_MOTION
+    fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
+    in_a_window = true;
+    break;
+  } // ButtonRelease
 
   case PropertyNotify:
     if (xevent.xproperty.atom == fl_NET_WM_STATE) {
@@ -2276,39 +2307,6 @@ int fl_handle(const XEvent& thisevent)
     event = FL_MOVE;
     break;
 #  endif
-
-  // Mouse button release event: for details see ButtonPress above
-
-  case ButtonRelease: {
-    int mb = xevent.xbutton.button; // mouse button
-
-    switch (mb) {                   // figure out which real button this is
-      case 1:                       // left
-      case 2:                       // middle
-      case 3:                       // right
-        break;                      // continue
-      case 8:                       // side button 1 (back)
-      case 9:                       // side button 2 (forward)
-        mb -= 4;                    // map to 4 and 5, respectively
-        break;                      // continue
-      default:                      // unknown button or scroll wheel:
-        return 0;                   // don't send FL_RELEASE event
-    }
-
-    Fl::e_keysym = FL_Button + mb;  // == FL_BUTTON1 .. FL_BUTTON5
-    set_event_xy();
-
-    Fl::e_state &= ~(FL_BUTTON1 << (mb-1));
-    if (mb == 4) xbutton_state &= ~FL_BUTTON4; // clear internal button state
-    if (mb == 5) xbutton_state &= ~FL_BUTTON5; // clear internal button state
-    event = FL_RELEASE;
-
-#if FLTK_CONSOLIDATE_MOTION
-    fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
-    in_a_window = true;
-    break;
-  } // ButtonRelease
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
