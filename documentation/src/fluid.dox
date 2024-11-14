@@ -1215,7 +1215,7 @@ underscore then FLUID treats it as code.
 
 \par
 A name refers to a function in your own code.  It must be
-declared as <tt>void name(<class>*,void*)</tt>.
+declared as '<tt>void name(\<class\> \*, void \*)</tt>'.
 
 \par
 A code snippet is inserted into a static function in the
