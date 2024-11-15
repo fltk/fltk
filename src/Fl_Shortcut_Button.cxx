@@ -19,6 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_utf8.h>
+#include "Fl_System_Driver.H"
 #include "flstring.h"
 
 #include <ctype.h>
@@ -174,6 +175,7 @@ void Fl_Shortcut_Button::do_end_hot_callback() {
  Handle keystrokes to catch the user's shortcut.
  */
 int Fl_Shortcut_Button::handle(int e) {
+  static int alt_modifier_extra_handler = Fl::system_driver()->need_test_shortcut_extra();
 #if 0
   bool inside_default_button = false;
   if (default_set_ && ( (e == FL_PUSH) || (e == FL_DRAG) || (e == FL_RELEASE) ) ) {
@@ -235,6 +237,17 @@ int Fl_Shortcut_Button::handle(int e) {
         //       type, so we don't handle them here either
         // Todo: use fl_utf_tolower and fl_utf_toupper
         int v = fl_utf8decode(Fl::event_text(), 0, 0);
+        if (alt_modifier_extra_handler && Fl::event_state(FL_ALT)) {
+          // MacOS returns special characters when the alt modifier is held down.
+          // FLTK handles shortcuts as ASCII keys, so let's convert the keystroke.
+          int c = Fl::event_key();
+          if ( (c>32) && (c<128) && (isalnum(c)) ) {
+            v = c;
+            if (Fl::event_state(FL_SHIFT)) {
+              v = toupper(c);
+            }
+          }
+        }
         if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
           if (isupper(v)) {
             v = tolower(v);
