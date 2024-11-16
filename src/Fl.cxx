@@ -1549,7 +1549,7 @@ int Fl::handle_(int e, Fl_Window* window)
       send_event(FL_MOUSEWHEEL, modal(), window);
       return 1;
     }
-    // Finally try sending it to the window, the event occured in
+    // Finally try sending it to the window, the event occurred in
     if (send_event(FL_MOUSEWHEEL, window, window)) return 1;
   default:
     break;
@@ -2249,7 +2249,7 @@ bool Fl::option(Fl_Option opt)
       opt_prefs.get("FNFCUsesGTK", tmp, -1);
       if (tmp >= 0) options_[OPTION_FNFC_USES_GTK] = tmp;
     }
-    { // now, if the developer has registered this app, we could as for per-application preferences
+    { // now, if the developer has registered this app, we could ask for per-application preferences
     }
     options_read_ = 1;
   }

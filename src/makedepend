@@ -856,6 +856,7 @@ Fl_File_Chooser.o: ../FL/Fl_Plugin.H
 Fl_File_Chooser.o: ../FL/Fl_Preferences.H
 Fl_File_Chooser.o: ../FL/Fl_Return_Button.H
 Fl_File_Chooser.o: ../FL/Fl_RGB_Image.H
+Fl_File_Chooser.o: ../FL/Fl_Shared_Image.H
 Fl_File_Chooser.o: ../FL/Fl_Tile.H
 Fl_File_Chooser.o: ../FL/fl_types.h
 Fl_File_Chooser.o: ../FL/fl_utf8.h
