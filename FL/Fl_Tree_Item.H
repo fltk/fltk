@@ -349,7 +349,7 @@ public:
   }
   /// See if the item is selected.
   char is_selected() const {
-    return(is_flag(SELECTED));
+    return((char)is_flag(SELECTED));
   }
   /// Change the item's activation state to the optionally specified 'val'.
   ///
@@ -378,7 +378,7 @@ public:
   }
   /// See if the item is activated.
   char is_activated() const {
-    return(is_flag(ACTIVE));
+    return((char)is_flag(ACTIVE));
   }
   /// See if the item is activated. Alias for is_activated().
   char is_active() const {

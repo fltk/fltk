@@ -99,7 +99,7 @@ public:
   Fl_Boxtype slider() const {return (Fl_Boxtype)slider_;}
 
   /** Sets the slider box type. */
-  void slider(Fl_Boxtype c) {slider_ = c;}
+  void slider(Fl_Boxtype c) {slider_ = (uchar)c;}
 };
 
 #endif

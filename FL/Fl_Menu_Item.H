@@ -206,7 +206,7 @@ struct FL_EXPORT Fl_Menu_Item {
     \see const char* Fl_Menu_Item::label() const
   */
   void label(Fl_Labeltype a, const char* b) {
-    labeltype_ = a;
+    labeltype_ = (uchar)a;
     text = b;
   }
 
@@ -262,7 +262,7 @@ struct FL_EXPORT Fl_Menu_Item {
     the label() pointer as another form of data such as a bitmap.
     The value FL_NORMAL_LABEL prints the label as text.
   */
-  void labeltype(Fl_Labeltype a) {labeltype_ = a;}
+  void labeltype(Fl_Labeltype a) {labeltype_ = (uchar)a;}
 
   /**
     Gets the menu item's label color.

@@ -223,7 +223,7 @@ inline void fl_set_object_callback(Fl_Widget*o,Forms_CB c,long a) {o->callback(c
 inline void fl_call_object_callback(Fl_Widget* o) {o->do_callback();}
 inline void fl_trigger_object(Fl_Widget* o) {o->do_callback();}
 inline void fl_set_object_return(Fl_Widget* o, int v) {
-  o->when((Fl_When)(v|FL_WHEN_RELEASE));}
+  o->when((uchar)(v|FL_WHEN_RELEASE));}
 
 inline void fl_redraw_object(Fl_Widget* o) {o->redraw();}
 inline void fl_show_object(Fl_Widget* o) {o->show();}
@@ -490,11 +490,11 @@ forms_constructor(Fl_Round_Button, fl_add_round3dbutton)
 #include "Fl_Check_Button.H"
 forms_constructor(Fl_Check_Button, fl_add_checkbutton)
 
-inline Fl_Widget* fl_add_bitmapbutton(int t,int x,int y,int w,int h,const char* l) {Fl_Widget* o = fl_add_button(t,x,y,w,h,l); return o;}
+inline Fl_Widget* fl_add_bitmapbutton(int t,int x,int y,int w,int h,const char* l) {Fl_Widget* o = fl_add_button((uchar)t,x,y,w,h,l); return o;}
 inline void fl_set_bitmapbutton_data(Fl_Widget* o,int a,int b,uchar* c) {
   (new Fl_Bitmap(c,a,b))->label(o);}  // does not delete old Fl_Bitmap!
 
-inline Fl_Widget* fl_add_pixmapbutton(int t,int x,int y,int w,int h,const char* l) {Fl_Widget* o = fl_add_button(t,x,y,w,h,l); return o;}
+inline Fl_Widget* fl_add_pixmapbutton(int t,int x,int y,int w,int h,const char* l) {Fl_Widget* o = fl_add_button((uchar)t,x,y,w,h,l); return o;}
 inline void fl_set_pixmapbutton_data(Fl_Widget* o, const char*const* c) {
   (new Fl_Pixmap(c))->label(o);}  // does not delete old Fl_Pixmap!
 
@@ -516,7 +516,7 @@ inline void fl_set_chart_bounds(Fl_Widget* o, double a, double b) {
 inline void fl_set_chart_maxnumb(Fl_Widget* o, int v) {
   ((Fl_Chart*)o)->maxsize(v);}
 inline void fl_set_chart_autosize(Fl_Widget* o, int v) {
-  ((Fl_Chart*)o)->autosize(v);}
+  ((Fl_Chart*)o)->autosize((uchar)v);}
 inline void fl_set_chart_lstyle(Fl_Widget* o, Fl_Font v) {
   ((Fl_Chart*)o)->textfont(v);}
 inline void fl_set_chart_lsize(Fl_Widget* o, int v) {
@@ -575,7 +575,7 @@ inline void fl_set_counter_step(Fl_Widget* o, double a, double b) {
 inline void fl_set_counter_precision(Fl_Widget* o, int v) {
     ((Fl_Counter*)o)->precision(v);}
 inline void fl_set_counter_return(Fl_Widget* o, int v) {
-    ((Fl_Counter*)o)->when((Fl_When)(v|FL_WHEN_RELEASE));}
+    ((Fl_Counter*)o)->when((uchar)(v|FL_WHEN_RELEASE));}
 inline double fl_get_counter_value(Fl_Widget* o) {
     return ((Fl_Counter*)o)->value();}
 inline void fl_get_counter_bounds(Fl_Widget* o, float* a, float* b) {
@@ -606,7 +606,7 @@ inline void fl_get_dial_bounds(Fl_Widget* o, float* a, float* b) {
   *b = float(((Fl_Dial*)o)->maximum());
 }
 inline void fl_set_dial_return(Fl_Widget* o, int i) {
-  ((Fl_Dial*)o)->when((Fl_When)(i|FL_WHEN_RELEASE));}
+  ((Fl_Dial*)o)->when((uchar)(i|FL_WHEN_RELEASE));}
 inline void fl_set_dial_angles(Fl_Widget* o, int a, int b) {
   ((Fl_Dial*)o)->angles((short)a, (short)b);}
 //inline void fl_set_dial_cross(Fl_Widget* o, int);
@@ -632,7 +632,7 @@ inline Fl_Free*
 fl_add_free(int t,double x,double y,double w,double h,const char* l,
             FL_HANDLEPTR hdl) {
  return (Fl_Free*)(fl_add_new(
-   new Fl_Free(t,int(x),int(y),int(w),int(h),l,hdl)));
+   new Fl_Free((uchar)t,int(x),int(y),int(w),int(h),l,hdl)));
 }
 
 #include "fl_ask.H"
@@ -676,7 +676,7 @@ forms_constructor(Fl_Input, fl_add_input)
 inline void fl_set_input(Fl_Widget* o, const char* v) {
     ((Fl_Input*)o)->value(v);}
 inline void fl_set_input_return(Fl_Widget* o, int x) {
-    ((Fl_Input*)o)->when((Fl_When)(x | FL_WHEN_RELEASE));}
+    ((Fl_Input*)o)->when((uchar)(x | FL_WHEN_RELEASE));}
 inline void fl_set_input_color(Fl_Widget* o, Fl_Color a, Fl_Color b) {
     ((Fl_Input*)o)->textcolor(a);
     ((Fl_Input*)o)->cursor_color(b);
@@ -765,7 +765,7 @@ inline void fl_set_positioner_xstep(Fl_Widget* o, double v) {
 inline void fl_set_positioner_ystep(Fl_Widget* o, double v) {
     ((Fl_Positioner*)o)->ystep(v);}
 inline void fl_set_positioner_return(Fl_Widget* o, int v) {
-    ((Fl_Positioner*)o)->when((Fl_When)(v|FL_WHEN_RELEASE));}
+    ((Fl_Positioner*)o)->when((uchar)(v|FL_WHEN_RELEASE));}
 
 #include "Fl_Slider.H"
 
@@ -785,7 +785,7 @@ inline void fl_get_slider_bounds(Fl_Widget* o, float* a, float* b) {
   *b = float(((Fl_Slider*)o)->maximum());
 }
 inline void fl_set_slider_return(Fl_Widget* o, int i) {
-    ((Fl_Slider*)o)->when((Fl_When)(i|FL_WHEN_RELEASE));}
+    ((Fl_Slider*)o)->when((uchar)(i|FL_WHEN_RELEASE));}
 inline void fl_set_slider_step(Fl_Widget* o, double v) {
     ((Fl_Slider*)o)->step(v);}
 // inline void fl_set_slider_increment(Fl_Widget* o, double v, double);
