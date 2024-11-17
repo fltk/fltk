@@ -1,7 +1,7 @@
 //
 // Screen/monitor bounding box API for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,7 +57,7 @@ int Fl::h()
 
 /**
   Gets the total count of available screens.
-  \note Screen numbers range from 0 to Fl::screen_count()-1 in the FLTK API.
+  \note Screen numbers range from 0 to Fl::screen_count() - 1 in the FLTK API.
 */
 int Fl::screen_count()
 {
@@ -133,13 +133,16 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int
 
 
 /**
-  Gets the screen number of a screen
-  that contains the specified screen position \p x, \p y
+  Gets the screen number of a screen that contains the specified
+  screen position \p x, \p y.
+
   \param[in] x, y the absolute screen position
   \return a screen number ∈ [0 , Fl::screen_count()-1]
-  \attention When the running system contains screens with different scaling factor values, this API
- may become ambiguous because a given value pair (\p x, \p y) may belong to distinct screens.
- In that situation, other APIs should be preferred, e.g., Fl_Window::screen_num() and Fl::screen_scale(int).
+
+  \attention When the running system contains screens with different scaling
+    factors, this API may become ambiguous because a given value pair (\p x, \p y)
+    may belong to distinct screens. In that situation other APIs should be
+    preferred, e.g. Fl_Window::screen_num() and Fl::screen_scale(int).
 */
 int Fl::screen_num(int x, int y)
 {
@@ -148,12 +151,13 @@ int Fl::screen_num(int x, int y)
 
 
 /**
-  Gets the screen number for the screen
-  which intersects the most with the rectangle
-  defined by \p x, \p y, \p w, \p h.
+  Gets the screen number of the screen which intersects the most with
+  the rectangle defined by \p x, \p y, \p w, \p h.
+
   \param[in] x, y, w, h the rectangle to search for intersection with
+
   \return a screen number ∈ [0 , Fl::screen_count()-1]
-  */
+*/
 int Fl::screen_num(int x, int y, int w, int h)
 {
   return screen_driver()->screen_num(x, y, w, h);

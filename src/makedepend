@@ -3701,6 +3701,7 @@ fl_shortcut.o: Fl_Screen_Driver.H
 fl_shortcut.o: Fl_System_Driver.H
 Fl_Shortcut_Button.o: ../config.h
 Fl_Shortcut_Button.o: ../FL/Enumerations.H
+Fl_Shortcut_Button.o: ../FL/filename.H
 Fl_Shortcut_Button.o: ../FL/Fl.H
 Fl_Shortcut_Button.o: ../FL/fl_attr.h
 Fl_Shortcut_Button.o: ../FL/Fl_Button.H
@@ -3709,6 +3710,7 @@ Fl_Shortcut_Button.o: ../FL/fl_casts.H
 Fl_Shortcut_Button.o: ../FL/fl_config.h
 Fl_Shortcut_Button.o: ../FL/fl_draw.H
 Fl_Shortcut_Button.o: ../FL/Fl_Export.H
+Fl_Shortcut_Button.o: ../FL/Fl_Preferences.H
 Fl_Shortcut_Button.o: ../FL/Fl_Shortcut_Button.H
 Fl_Shortcut_Button.o: ../FL/fl_string_functions.h
 Fl_Shortcut_Button.o: ../FL/fl_types.h
@@ -3716,6 +3718,7 @@ Fl_Shortcut_Button.o: ../FL/fl_utf8.h
 Fl_Shortcut_Button.o: ../FL/Fl_Widget.H
 Fl_Shortcut_Button.o: ../FL/platform_types.h
 Fl_Shortcut_Button.o: flstring.h
+Fl_Shortcut_Button.o: Fl_System_Driver.H
 fl_show_colormap.o: ../config.h
 fl_show_colormap.o: ../FL/Enumerations.H
 fl_show_colormap.o: ../FL/Fl.H

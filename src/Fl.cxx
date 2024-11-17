@@ -164,6 +164,7 @@ void Fl::scrollbar_size(int W) {
 /**
   Gets the default line spacing used by menus.
   \returns The default line spacing, in pixels.
+  \since 1.4.0
 */
 int Fl::menu_linespacing() {
   return menu_linespacing_;
@@ -173,6 +174,7 @@ int Fl::menu_linespacing() {
   Sets the default line spacing used by menus.
   Default is 4.
   \param[in] H The new default line spacing between menu items, in pixels.
+  \since 1.4.0
 */
 void Fl::menu_linespacing(int H) {
   menu_linespacing_ = H;
@@ -872,19 +874,23 @@ void Fl::add_handler(Fl_Event_Handler ha) {
 }
 
 
-/** Returns the last function installed by a call to Fl::add_handler() */
+/** Returns the last function installed by a call to Fl::add_handler().
+
+  \since 1.4.0
+*/
 Fl_Event_Handler Fl::last_handler() {
   return handlers ? handlers->handle : NULL;
 }
 
 
 /** Install a function to parse unrecognized events with less priority than another function.
- Install function \p ha to handle unrecognized events
- giving it the priority just lower than that of function \p before
- which was previously installed.
- \see Fl::add_handler(Fl_Event_Handler)
- \see Fl::last_handler()
- */
+  Install function \p ha to handle unrecognized events
+  giving it the priority just lower than that of function \p before
+  which was previously installed.
+  \see Fl::add_handler(Fl_Event_Handler)
+  \see Fl::last_handler()
+  \since 1.4.0
+*/
 void Fl::add_handler(Fl_Event_Handler ha, Fl_Event_Handler before) {
   if (!before) return Fl::add_handler(ha);
   handler_link *l = handlers;
@@ -1028,10 +1034,10 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
     \e test if the widget wants the focus (by it returning non-zero from
     handle()).
 
-    Widgets can set the NEEDS_KEYBOARD flag to indicate that a keyboard is
-    essential for the widget to function. Touchscreen devices will be sent a
-    request to show an on-screen keyboard if no hardware keyboard is
-    connected.
+    Since FLTK 1.4.0 widgets can set the NEEDS_KEYBOARD flag to indicate that
+    a keyboard is essential for the widget to function. Touchscreen devices
+    will be sent a request to show an on-screen keyboard if no hardware keyboard
+    is connected.
 
     \see Fl_Widget::take_focus()
     \see Fl_Widget::needs_keyboard() const
@@ -1273,9 +1279,11 @@ static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
 }
 
 /**
- \brief Give the reason for calling a callback.
- \return the reason for the current callback
- \see Fl_Widget::when(), Fl_Widget::do_callback(), Fl_Widget::callback()
+  Give the reason for calling a callback.
+
+  \return the reason for the current callback
+  \see Fl_Widget::when(), Fl_Widget::do_callback(), Fl_Widget::callback()
+  \since 1.4.0
  */
 Fl_Callback_Reason Fl::callback_reason() {
   return callback_reason_;
@@ -2109,27 +2117,27 @@ bool Fl::option(Fl_Option opt)
 }
 
 /**
- \brief Override an option while the application is running.
+  Override an option while the application is running.
 
- Apps can override the machine settings and the user settings by calling
- `Fl::option(option, bool)`. The override takes effect immediately for this
- option for all widgets in the app for the life time of the app.
+  Apps can override the machine settings and the user settings by calling
+  `Fl::option(option, bool)`. The override takes effect immediately for this
+  option for all widgets in the app for the life time of the app.
 
- The override is not saved anywhere, and relaunching the app will restore the
- old settings.
+  The override is not saved anywhere, and relaunching the app will restore the
+  old settings.
 
- Example:
- \code
-     Fl::option(Fl::OPTION_ARROW_FOCUS, true);     // on
-     Fl::option(Fl::OPTION_ARROW_FOCUS, false);    // off
- \endcode
+  Example:
+  \code
+    Fl::option(Fl::OPTION_ARROW_FOCUS, true);     // on
+    Fl::option(Fl::OPTION_ARROW_FOCUS, false);    // off
+  \endcode
 
- \param opt which option
- \param val set to true or false
+  \param opt which option
+  \param val set to true or false
 
  \see enum Fl::Fl_Option
  \see bool Fl::option(Fl_Option)
- */
+*/
 void Fl::option(Fl_Option opt, bool val)
 {
   if (opt<0 || opt>=OPTION_LAST)
@@ -2281,16 +2289,24 @@ void fl_close_display()
 }
 
 #ifdef FL_DOXYGEN
-/** Prevent the FLTK library from using its Wayland backend and forces it to use its X11 backend.
- Put this declaration somewhere in your code outside the body of any function  :
- \code
- FL_EXPORT bool fl_disable_wayland = true;
- \endcode
- This declaration makes sure source code developed for FLTK 1.3, including X11-specific code,
- will build and run with FLTK 1.4 and its Wayland platform with this single source code level change.
- This declaration has no effect on non-Wayland platforms.
- Don't put this declaration if you want the Wayland backend to be used when it's available.
- */
+/** Prevent the FLTK library from using its Wayland backend and force it to use its X11 backend.
+
+  Put this declaration somewhere in your source code outside the body of any function:
+  \code
+    FL_EXPORT bool fl_disable_wayland = true;
+  \endcode
+  This declaration makes sure that source code developed for FLTK 1.3, including
+  X11-specific code, will build and run with FLTK 1.4 and its Wayland platform
+  with a single line source code level change.
+  This declaration has no effect on non-Wayland platforms.
+  Don't add this declaration if you want the Wayland backend to be used when
+  it's available.
+
+  \note Please see also chapter 2.1 of README.Wayland.txt for further information
+    on how to build your application to ensure that this declaration is effective.
+
+  \since 1.4.0
+*/
 FL_EXPORT bool fl_disable_wayland = true;
 #endif // FL_DOXYGEN
 
@@ -2331,15 +2347,44 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return Fl_Graphics_Driver::default_driver().get_font_sizes(fnum, sizep);
 }
 
-/** Current value of the GUI scaling factor for screen number \p n (n ∈ [0 , Fl::screen_count()-1]) */
+/** Gets the GUI scaling factor of screen number \p n.
+
+  The valid range of \p n is 0 .. Fl::screen_count() - 1.
+
+  The return value is \c 1.0 if screen scaling is not supported or
+  \p n is outside the valid range.
+
+  \return Current screen scaling factor (default: \c 1.0)
+
+  \see Fl::screen_count()
+  \see Fl::screen_scaling_supported()
+
+  \since 1.4.0
+*/
 float Fl::screen_scale(int n) {
-  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return 1.;
+  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count())
+    return 1.;
   return Fl::screen_driver()->scale(n);
 }
 
-/** Sets the value of the GUI scaling factor for screen number \p n (n ∈ [0 , Fl::screen_count()-1]).
- Also sets the scale factor value of all windows mapped to screen number \p n, if any.
- */
+/** Sets the GUI scaling factor of screen number \p n.
+
+  The valid range of \p n is 0 .. Fl::screen_count() - 1.
+
+  This method does nothing if \p n is out of range or screen scaling
+  is not supported by this platform.
+
+  Otherwise it also sets the scaling factor of all windows mapped to
+  screen number \p n or all screens, depending on the type of screen
+  scaling support on the platform.
+
+  \param[in] n        screen number
+  \param[in] factor   scaling factor of screen \p n
+
+  \see Fl::screen_scaling_supported()
+
+  \since 1.4.0
+*/
 void Fl::screen_scale(int n, float factor) {
   Fl_Screen_Driver::APP_SCALING_CAPABILITY capability = Fl::screen_driver()->rescalable();
   if (!capability || n < 0 || n >= Fl::screen_count()) return;
@@ -2347,16 +2392,21 @@ void Fl::screen_scale(int n, float factor) {
     for (int s = 0; s < Fl::screen_count(); s++) {
       Fl::screen_driver()->rescale_all_windows_from_screen(s, factor, factor);
     }
-  } else Fl::screen_driver()->rescale_all_windows_from_screen(n, factor, factor);
+  } else
+    Fl::screen_driver()->rescale_all_windows_from_screen(n, factor, factor);
 }
 
 /**
-  See if scaling factors are supported by this platform.
- \return 0 if scaling factors are not supported by this platform,
- 1 if a single scaling factor value is shared by all screens, 2 if each screen
- can have its own scaling factor value.
+  Returns whether scaling factors are supported by this platform.
+
+  \retval 0 scaling factors are not supported by this platform
+  \retval 1 a single scaling factor is shared by all screens
+  \retval 2 each screen can have its own scaling factor
+
   \see Fl::screen_scale(int)
- */
+
+  \since 1.4.0
+*/
 int Fl::screen_scaling_supported() {
   return Fl::screen_driver()->rescalable();
 }
@@ -2373,6 +2423,8 @@ int Fl::screen_scaling_supported() {
 
   \param value 0 to stop recognition of ctrl/+/-/0/ (or cmd/+/-/0/ under macOS)
     keys as window scaling.
+
+  \since 1.4.0
 */
 void Fl::keyboard_screen_scaling(int value) {
   Fl_Screen_Driver::keyboard_screen_scaling = value;

@@ -953,10 +953,16 @@ fltk-versions.o: ../FL/Fl_Cairo.H
 fltk-versions.o: ../FL/fl_casts.H
 fltk-versions.o: ../FL/fl_config.h
 fltk-versions.o: ../FL/Fl_Export.H
+fltk-versions.o: ../FL/Fl_Grid.H
+fltk-versions.o: ../FL/Fl_Group.H
+fltk-versions.o: ../FL/Fl_Rect.H
 fltk-versions.o: ../FL/fl_types.h
 fltk-versions.o: ../FL/fl_utf8.h
+fltk-versions.o: ../FL/Fl_Widget.H
 fltk-versions.o: ../FL/Fl_Window.H
+fltk-versions.o: ../FL/platform.H
 fltk-versions.o: ../FL/platform_types.h
+fltk-versions.o: ../FL/x11.H
 fonts.o: ../FL/Enumerations.H
 fonts.o: ../FL/filename.H
 fonts.o: ../FL/Fl.H
