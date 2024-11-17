@@ -1,3 +1,21 @@
+Changes in FLTK 1.4.0                                   Released: Nov 17 2024
+
+  Bug Fixes:
+
+  - Windows: Fix "fullscreen_off does not correctly preserve window size" (#1116)
+  - Fix rounding issues with Fl_RGB_Image::draw() + Fl_Copy_Surface (#1120, #1124)
+  - Windows: Fix "Keyboard shortcut (alt+letter) does not work in input widget" (#1122)
+  - macOS: Fix Alt-modifier handling in Fl_Shorcut_Button
+  - Windows: Fix flicker/animation when transitioning from fullscreen to maximized
+  - Wayland: protect against rounding errors in copy_region()
+
+  Documentation and other Improvements:
+
+  - Revert gtk+ specific "chevron style" arrow drawing (#1117)
+  - Update CREDITS.txt
+  - Improve 'test/fltk-versions' demo program
+
+
 Changes in FLTK 1.4.0 RC3                               Released: Nov 08 2024
 
   Bug Fixes:
