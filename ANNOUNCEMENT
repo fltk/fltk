@@ -1,6 +1,5 @@
 FLTK 1.4 is based on the final release of FLTK 1.3.4. Later updates
-have been backported to 1.3.5 - 1.3.9. FLTK 1.3.10 with the latest
-backports is planned to be released shortly after 1.4.0 or 1.4.1.
+have been backported to 1.3.5 - 1.3.10.
 
 FLTK 1.4 is intended to be mostly API compatible with FLTK 1.3.x so
 you don't need to change source code when you switch to FLTK 1.4.
@@ -43,7 +42,7 @@ Wayland enabled (Linux) systems.
 
 The current development branch on GitHub [2] is `master`. This will be
 changed to `branch-1.4` when development of FLTK 1.5.0 begins and 1.4
-will move to maintenance mode.
+will be switched to maintenance mode.
 
 [1] https://www.fltk.org/doc-1.4/ (HTML) and
     https://www.fltk.org/doc-1.4/fltk.pdf (PDF)
