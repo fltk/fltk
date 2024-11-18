@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
   grid->row_height(0, 40);
   title->labelsize(20);
 
-  Fl_Box *box[versions];
+  Fl_Box **box = new Fl_Box*[versions];
   for (int i = 0; i < versions/3; i += 1) {
     box[3 * i    ] = new Fl_Box(0, 0, 270, 0, version[3 * i]);
     box[3 * i + 1] = new Fl_Box(0, 0, 270, 0, version[3 * i + 1]);
