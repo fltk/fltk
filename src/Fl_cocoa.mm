@@ -3284,7 +3284,10 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     NSWindow *nswin = fl_xid(pWindow);
 #    if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
-       if (fl_mac_os_version >= 101300) nswin = [[nswin tabGroup] selectedWindow];
+    if (fl_mac_os_version >= 101300) {
+      NSWindow *active_tab = [[nswin tabGroup] selectedWindow];
+      if (active_tab) nswin = active_tab;
+    }
 #    endif
     [nswin toggleFullScreen:nil];
 #  endif
@@ -3375,7 +3378,10 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     NSWindow *nswin = fl_xid(pWindow);
 #    if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
-       if (fl_mac_os_version >= 101300) nswin = [[nswin tabGroup] selectedWindow];
+    if (fl_mac_os_version >= 101300) {
+      NSWindow *active_tab = [[nswin tabGroup] selectedWindow];
+      if (active_tab) nswin = active_tab;
+    }
 #    endif
     [nswin toggleFullScreen:nil];
 #  endif
