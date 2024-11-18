@@ -63,6 +63,7 @@ static void set_attributes(Fl_Widget *w, Fl_Color col) {
 }
 
 static char version[9][80];
+static Fl_Box *box[9];
 
 // Optional: uncomment next line to disable wayland backend
 // FL_EXPORT bool fl_disable_wayland = true;
@@ -120,8 +121,7 @@ int main(int argc, char **argv) {
   grid->row_height(0, 40);
   title->labelsize(20);
 
-  Fl_Box *box[versions];
-  for (int i = 0; i < versions/3; i += 1) {
+  for (int i = 0; i < 3; i += 1) {
     box[3 * i    ] = new Fl_Box(0, 0, 270, 0, version[3 * i]);
     box[3 * i + 1] = new Fl_Box(0, 0, 270, 0, version[3 * i + 1]);
     box[3 * i + 2] = new Fl_Box(0, 0,  40, 0, version[3 * i + 2]);
@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     grid->row_height(i + 1, 30);
   }
 
-  for (int i = 0; i < versions; i++)
+  for (int i = 0; i < 9; i++)
     set_attributes(box[i], FL_GREEN);
 
   window->end();
