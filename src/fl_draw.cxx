@@ -779,3 +779,48 @@ void fl_draw_radio(int x, int y, int d, Fl_Color color) {
   }
   fl_color(current);
 }
+
+
+typedef struct {
+  const uchar *buf;
+  int D_in;
+  int D_out;
+  int L;
+} image_data;
+
+
+static void scan_cb(image_data *data, int x, int y, int w, uchar *buffer) {
+  const uchar *from = data->buf + y * data->L + data->D_in * x;
+  while (w-- > 0) {
+    memcpy(buffer, from, data->D_out);
+    buffer += data->D_out;
+    from += data->D_in;
+  }
+}
+
+
+void fl_draw_image(const uchar *buf, int X, int Y, int W, int H, int D, int L) {
+  if (abs(D) > 3) {
+    image_data data;
+    data.buf = buf;
+    data.D_in = D;
+    data.D_out = 3;
+    data.L = (L ? L : W * D);
+    fl_graphics_driver->draw_image((Fl_Draw_Image_Cb)scan_cb, &data, X, Y, W, H, 3);
+  } else
+    fl_graphics_driver->draw_image(buf, X, Y, W, H, D, L);
+}
+
+
+void fl_draw_image_mono(const uchar *buf, int X, int Y, int W, int H, int D, int L) {
+  if (abs(D) > 1) {
+    image_data data;
+    data.buf = buf;
+    data.D_in = D;
+    data.D_out = 1;
+    data.L = (L ? L : W * D);
+    fl_graphics_driver->draw_image_mono((Fl_Draw_Image_Cb)scan_cb, &data, X, Y, W, H, 1);
+  } else
+    fl_graphics_driver->draw_image_mono(buf, X, Y, W, H, D, L);
+}
+
