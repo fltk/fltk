@@ -1078,13 +1078,13 @@ FL_EXPORT void fl_draw_radio(int x, int y, int d, Fl_Color color);
   any visual of 8 bits or less, and all common TrueColor visuals up
   to 32 bits.
 */
-void fl_draw_image(const uchar *buf, int X, int Y, int W, int H, int D = 3, int L = 0);
+FL_EXPORT void fl_draw_image(const uchar *buf, int X, int Y, int W, int H, int D = 3, int L = 0);
 
 /**
   Draw a gray-scale (1 channel) image.
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 */
-void fl_draw_image_mono(const uchar *buf, int X, int Y, int W, int H, int D = 1, int L = 0);
+FL_EXPORT void fl_draw_image_mono(const uchar *buf, int X, int Y, int W, int H, int D = 1, int L = 0);
 
 /**
   Draw an image using a callback function to generate image data.
