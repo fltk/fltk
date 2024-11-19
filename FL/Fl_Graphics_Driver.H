@@ -79,8 +79,8 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
   friend class Fl_SVG_Image;
-  friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
-  friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend FL_EXPORT void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
