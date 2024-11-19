@@ -2302,6 +2302,8 @@ int main(int argc,char **argv) {
   // check if the user wants FLUID to generate image for the user documentation
   if (!g_autodoc_path.empty()) {
     run_autodoc(g_autodoc_path);
+    set_modflag(0, 0);
+    exit_cb(0,0);
     return 0;
   }
 #endif
