@@ -79,8 +79,8 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
   friend class Fl_SVG_Image;
-  friend FL_EXPORT void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
-  friend FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
@@ -137,6 +137,8 @@ private:
   virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
   // some platforms may need to reimplement this
   virtual void set_current_();
+  void draw_image_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
+  void draw_image_mono_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
 public:
   /** Creates the graphics driver that is used for core operations. */
