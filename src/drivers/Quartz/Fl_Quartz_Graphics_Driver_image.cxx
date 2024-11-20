@@ -107,6 +107,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 }
 
 void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+  d &= ~FL_IMAGE_WITH_ALPHA;
   innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
