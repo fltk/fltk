@@ -54,7 +54,7 @@ extern Fl_Double_Window *settings_window;
  @{
  */
 
-const int FL_SNAP_TO_WINDOW = 0x7f000000;
+const int FL_SNAP_TO_WINDOW = 0x01000000;
 
 static Fl_Box snap_clear_(0, 0, 0, 0);
 Fl_Widget *FL_SNAP_AREA_CLEAR = &snap_clear_;
