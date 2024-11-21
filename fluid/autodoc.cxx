@@ -104,7 +104,7 @@ static int convert_RGB_to_RGBA(Fl_RGB_Image *&img) {
   delete img;
   // Create the new image
   img = new Fl_RGB_Image(data, img_w, img_h, 4);
-  delete[] data;
+  img->alloc_array = 1;
   return 0;
 }
 
