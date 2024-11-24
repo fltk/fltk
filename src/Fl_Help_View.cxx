@@ -2701,7 +2701,7 @@ Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char    *localname;             // Local filename
   char          dir[FL_PATH_MAX];       // Current directory
-  char          temp[2 * FL_PATH_MAX],  // Temporary filename
+  char          temp[3 * FL_PATH_MAX],  // Temporary filename
                 *tempptr;               // Pointer into temporary name
   Fl_Shared_Image *ip;                  // Image pointer...
 
@@ -2798,8 +2798,8 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
   {
     char        dir[FL_PATH_MAX];       // Current directory
-    char        temp[2 * FL_PATH_MAX],  // Temporary filename
-              *tempptr; // Pointer into temporary filename
+    char        temp[3 * FL_PATH_MAX],  // Temporary filename
+               *tempptr;                // Pointer into temporary filename
 
 
     if (strchr(directory_, ':') != NULL &&
@@ -2809,7 +2809,7 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
       {
         strlcpy(temp, directory_, sizeof(temp));
         if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-          strlcpy(tempptr, linkp->filename, sizeof(temp));
+          strlcpy(tempptr, linkp->filename, 2 * FL_PATH_MAX); // sizeof(temp));
         else
           strlcat(temp, linkp->filename, sizeof(temp));
       }
