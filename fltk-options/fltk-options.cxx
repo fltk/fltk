@@ -68,7 +68,7 @@ typedef enum {
   FO_USER
 } Fo_Context;
 
-// Avalable option types.
+// Available option types.
 // We can add more types later as needed.
 // See: Fl_Group* add_option( Fo_Option_Descr* opt)
 // See: Fl_Group* add_option_bool(Fo_Option_Descr* opt)
@@ -170,9 +170,9 @@ Fo_Option_Descr g_option_list[] = {
     "If disabled, the zoom-in operation requires the shift key to be pressed also "
     "with such a keyboard." },
   // -- When adding new options here, please make sure that you also update
-  // --   documentation.src/fltk-options.dox
+  // --   documentation/src/fltk-options.dox
   // -- and
-  // --   documentation.src/fltk-options.man
+  // --   documentation/src/fltk-options.man
   { FO_END_OF_LIST }
 };
 
@@ -195,10 +195,10 @@ bool write_permission(Fo_Context ctx) {
  */
 void set_option(Fo_Context ctx, const char *name, int value) {
   enum Fl_Preferences::Root context =
-    (ctx==FO_SYSTEM) ? Fl_Preferences::CORE_SYSTEM : Fl_Preferences::CORE_USER;
+    (ctx == FO_SYSTEM) ? Fl_Preferences::CORE_SYSTEM : Fl_Preferences::CORE_USER;
   Fl_Preferences prefs(context, "fltk.org", "fltk");
   Fl_Preferences options(prefs, "options");
-  if (value==-1)
+  if (value == -1)
     options.deleteEntry(name);
   else
     options.set(name, value);
@@ -212,7 +212,7 @@ void set_option(Fo_Context ctx, const char *name, int value) {
 int get_option(Fo_Context ctx, const char *name) {
   int value = -1;
   enum Fl_Preferences::Root context =
-    (ctx==FO_SYSTEM) ? Fl_Preferences::SYSTEM_L : Fl_Preferences::USER_L;
+    (ctx == FO_SYSTEM) ? Fl_Preferences::SYSTEM_L : Fl_Preferences::USER_L;
   Fl_Preferences prefs(context, "fltk.org", "fltk");
   Fl_Preferences options(prefs, "options");
   options.get(name, value, -1);
@@ -228,7 +228,7 @@ void clear_option(Fo_Context ctx, const char *name) {
 }
 
 /** Print the Usage: text and list all system and user options.
- \param[in] argv application name when called from the shell
+ \param[in] argv0 application name when called from the shell
  */
 void print_usage(const char *argv0) {
   const char *app_name = NULL;
@@ -250,10 +250,10 @@ void print_usage(const char *argv0) {
   fprintf(stdout, "  -h[option], --help [option]  general help, or info for the given option\n\n");
   fprintf(stdout, "    This version of %s supports the following options:\n", app_name);
   Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+  for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
     if (opt->name) {
       if (opt->brief)
-        fprintf(stdout, "  %-24s %s\n", opt->name, opt->brief);
+        fprintf(stdout, "  %-28s %s\n", opt->name, opt->brief);
       else
         fprintf(stdout, "  %s\n", opt->name);
     }
@@ -261,12 +261,12 @@ void print_usage(const char *argv0) {
   fprintf(stdout, "\n  Calling %s without options will launch %s interactive mode.\n", app_name, app_name);
 }
 
-/** Print more information for a given options.
- \param[in] options the name of the option, case insensitive
+/** Print more information for a given option.
+ \param[in] option the name of the option, case insensitive
  */
 void print_info(const char *option) {
   Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+  for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
     if ( opt->name && (fl_ascii_strcasecmp(opt->name, option) == 0) ) {
       if (opt->brief)
         fprintf(stdout, "%s: %s\n", opt->name, opt->brief);
@@ -287,18 +287,18 @@ void print_info(const char *option) {
  */
 void list_options(char cmd) {
   Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+  for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
     if (opt->name) {
       printf("%-28s", opt->name);
       if (cmd == 'S' || cmd == 0) {
         int value = get_option(FO_SYSTEM, opt->prefs_name);
-        printf(" system:%2d", value);
+        printf(" system: %2d", value);
       }
       if (cmd == 0)
         printf(",");
       if (cmd == 'U' || cmd == 0) {
         int value = get_option(FO_USER, opt->prefs_name);
-        printf(" user:%2d", value);
+        printf(" user: %2d", value);
       }
       printf("\n");
     }
@@ -308,13 +308,13 @@ void list_options(char cmd) {
 /** Handle a commmand line argument for system or user options.
  \param[in] ctx settings context
  \param[in] name the name of the option
- \param ival 0 or 1 to set, -1 to reset to default, and FO_PRINT_VALUE to
+ \param[in] ival 0 or 1 to set, -1 to reset to default, and FO_PRINT_VALUE to
     print the current value
  */
 void handle_option(Fo_Context ctx, const char *name, int ival) {
-  const char *ctx_name = (ctx==FO_SYSTEM) ? "system" : "user";
+  const char *ctx_name = (ctx == FO_SYSTEM) ? "system" : "user";
   Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+  for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
     if ( opt->name && (fl_ascii_strcasecmp(opt->name, name) == 0) ) {
       if (ival == FO_PRINT_VALUE) {
         int value = get_option(ctx, opt->prefs_name);
@@ -322,7 +322,7 @@ void handle_option(Fo_Context ctx, const char *name, int ival) {
           printf("Current value for %s option %s is %d\n", ctx_name, name, value);
         else
           printf("%d\n", value);
-      } else if (ival ==-1) {
+      } else if (ival == -1) {
         if (g_verbose) printf("Reset %s option %s to default\n", ctx_name, name);
         clear_option(ctx, opt->prefs_name);
       } else {
@@ -397,24 +397,24 @@ static int read_command_line_args(int argc, char** argv, int& i) {
       const char *eq = strchr(arg+2, '=');
       if (eq) {
         size_t n = (eq - (arg+2));
-        if (n==0) {
+        if (n == 0) {
           i--;
           return 0;
         }
         if (n > sizeof(opt)-1) n = sizeof(opt)-1;
         strlcpy(opt, arg+2, n+1);
         strlcpy(val, eq+1, sizeof(val));
-        if (fl_ascii_strcasecmp(val, "ON")==0)
+        if (fl_ascii_strcasecmp(val, "ON") == 0)
           ival = 1;
-        else if (fl_ascii_strcasecmp(val, "OFF")==0)
+        else if (fl_ascii_strcasecmp(val, "OFF") == 0)
           ival = 0;
-        else if (fl_ascii_strcasecmp(val, "DEFAULT")==0)
+        else if (fl_ascii_strcasecmp(val, "DEFAULT") == 0)
           ival = -1;
-        else if (strcmp(val, "1")==0)
+        else if (strcmp(val, "1") == 0)
           ival = 1;
-        else if (strcmp(val, "0")==0)
+        else if (strcmp(val, "0") == 0)
           ival = 0;
-        else if (strcmp(val, "-1")==0)
+        else if (strcmp(val, "-1") == 0)
           ival = -1;
         else {
           fprintf(stderr, "Warning: Unrecognized value \"%s\" for option \"%s\".\n", val, opt);
@@ -437,7 +437,7 @@ static int read_command_line_args(int argc, char** argv, int& i) {
     return 1;
   }
   // check for -L, -LS, or -LU
-  if (strcmp(arg, "-L")==0 || strcmp(arg, "-LS")==0 || strcmp(arg, "-LU")==0) {
+  if (strcmp(arg, "-L") == 0 || strcmp(arg, "-LS") == 0 || strcmp(arg, "-LU") == 0) {
     list_options(arg[2]);
     g_batch_mode = 1;
     return 1;
@@ -596,7 +596,7 @@ void add_option(Fl_Pack* pack, Fo_Option_Descr* opt) {
  */
 void add_options(Fl_Pack* pack) {
   Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+  for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
     if (opt->type != FO_HEADLINE)
       add_option(pack, opt);
   }
@@ -608,7 +608,7 @@ void select_headline_cb(Fl_Widget*, void*) {
     Fo_Option_Descr* sel = (Fo_Option_Descr*)g_headline_browser->data(line);
     Fo_Option_Descr *opt;
     bool show = false;
-    for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+    for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
       if (opt->type == FO_HEADLINE) show = false;
       if (opt == sel) {
         show = true;
@@ -623,7 +623,7 @@ void select_headline_cb(Fl_Widget*, void*) {
     }
   } else {
     Fo_Option_Descr *opt;
-    for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+    for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
       if (opt->ui)
         opt->ui->show();
     }
@@ -637,7 +637,7 @@ void select_headline_cb(Fl_Widget*, void*) {
  */
 void add_headlines(Fl_Hold_Browser* browser) {
   Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+  for (opt = g_option_list; opt->type != FO_END_OF_LIST; ++opt) {
     if (opt->type == FO_HEADLINE)
       browser->add(opt->text, (void*)opt);
   }
