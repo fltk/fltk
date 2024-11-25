@@ -1389,7 +1389,9 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
     if (s && sscanf(s, "%f", &(this->current_xft_dpi)) == 1) {
       float factor = this->current_xft_dpi / 96.;
       // checks to prevent potential crash (factor <= 0) or very large factors
-      if (factor < 0.25) factor = 0.25;
+      // and round nearly 1 or nearly 2 values (issue #1138)
+      if (factor < 1.1) factor = 1;
+      else if (factor > 1.8 && factor < 2.2) factor = 2;
       else if (factor > 10.0) factor = 10.0;
       for (int i = 0; i < screen_count(); i++)  scale(i, factor);
     }
