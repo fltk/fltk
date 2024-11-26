@@ -189,17 +189,14 @@ int Fl_Button::handle(int event) {
             do_callback(FL_REASON_RELEASED);
         } else {
           simulate_key_action();
-          value(1);
           if (when() & FL_WHEN_CHANGED) {
             set_changed();
             Fl_Widget_Tracker wp(this);
             do_callback(FL_REASON_CHANGED);
             if (wp.deleted()) return 1;
-            value(0);
             set_changed();
             do_callback(FL_REASON_RELEASED);
           } else if (when() & FL_WHEN_RELEASE) {
-            value(0);
             set_changed();
             do_callback(FL_REASON_RELEASED);
           }
