@@ -20,6 +20,7 @@
 
 #if defined(FL_NO_PRINT_SUPPORT)
 #include <FL/Fl_PostScript.H>
+#include <FL/Fl_PDF_File_Surface.H>
 
 Fl_Printer::Fl_Printer(void) {
   printer = NULL;
@@ -96,6 +97,14 @@ void Fl_EPS_File_Surface::translate(int, int) {}
 void Fl_EPS_File_Surface::untranslate() {}
 FILE* Fl_EPS_File_Surface::file() {return NULL;}
 int Fl_EPS_File_Surface::close() {return 1;}
+
+Fl_PDF_File_Surface::Fl_PDF_File_Surface(void) {}
+int Fl_PDF_File_Surface::begin_job(const char* defaultfilename, char **perr)  {return 2;}
+int Fl_PDF_File_Surface::begin_document(const char* pathname,
+              enum Fl_Paged_Device::Page_Format format,
+              enum Fl_Paged_Device::Page_Layout layout,
+                                        char **perr) {return 2;}
+Fl_PDF_File_Surface::~Fl_PDF_File_Surface(void) {}
 
 #else
 

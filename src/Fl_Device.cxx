@@ -180,7 +180,6 @@ Fl_PDF_File_Surface::~Fl_PDF_File_Surface() {
   delete platform_surface_;
 }
 
-#endif // !defined(FL_NO_PRINT_SUPPORT)
 
 /** Localizable text of the "PDF document settings" dialog */
 const char * Fl_PDF_File_Surface::format_dialog_title = "PDF document settings";
@@ -190,3 +189,5 @@ const char * Fl_PDF_File_Surface::format_dialog_page_size = "Page Size:";
 const char * Fl_PDF_File_Surface::format_dialog_default = "Set as default";
 /** Localizable text of the "PDF document settings" dialog */
 const char * Fl_PDF_File_Surface::format_dialog_orientation = "Orientation:";
+
+#endif // !defined(FL_NO_PRINT_SUPPORT)
