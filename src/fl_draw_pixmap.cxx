@@ -217,7 +217,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     } // for Y
   }
 
-  fl_draw_image(buffer, x, y, w, h, 4 | FL_IMAGE_WITH_ALPHA);
+  fl_graphics_driver->draw_image(buffer, x, y, w, h, 4);
 
   delete[] buffer;
   return 1;
