@@ -90,7 +90,7 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   friend int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
-  friend int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
+  friend FL_EXPORT int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
   friend FL_EXPORT void gl_start();
   /* ============== Implementation note about image drawing =========================
    A graphics driver can implement up to 6 virtual member functions to draw images:
