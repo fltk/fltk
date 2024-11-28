@@ -131,10 +131,13 @@ int Fl_Button::handle(int event) {
         if (when() & FL_WHEN_NOT_CHANGED) do_callback(FL_REASON_SELECTED);
         return 1;
       }
-      set_changed();
-      if (type() == FL_RADIO_BUTTON) setonly();
-      else if (type() == FL_TOGGLE_BUTTON) oldval = value_;
-      else {
+      if (type() == FL_RADIO_BUTTON) {
+        setonly();
+        set_changed();
+      } else if (type() == FL_TOGGLE_BUTTON) {
+        oldval = value_;
+        set_changed();
+      } else {
         value(oldval);
         set_changed();
         if (when() & FL_WHEN_CHANGED) {
