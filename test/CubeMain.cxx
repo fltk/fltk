@@ -1,7 +1,7 @@
 //
 // CubeView class .
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
 #include <FL/Fl.H>
 #include "CubeViewUI.h"
 
