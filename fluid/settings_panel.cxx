@@ -913,10 +913,12 @@ static void cb_a(Fl_Button*, void* v) {
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
-    if (cmd->storage == FD_STORE_USER)
+    if (cmd->storage == FD_STORE_USER) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-    else if (cmd->storage == FD_STORE_PROJECT)
+    } else if (cmd->storage == FD_STORE_PROJECT) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
+      set_modflag(1);
+    }
     w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -940,12 +942,13 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
-    w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
-    if (cmd->storage == FD_STORE_USER)
+    if (cmd->storage == FD_STORE_USER) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-    else if (cmd->storage == FD_STORE_PROJECT)
+    } else if (cmd->storage == FD_STORE_PROJECT) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
+      set_modflag(1);
+    }
     w_settings_shell_list->do_callback();
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -968,6 +971,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     int ret = fl_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
       "Delete", "Cancel", NULL, g_shell_config->list[selected-1]->name.c_str());
     if (ret==1) return;
+    if (g_shell_config->at(selected-1)->storage == FD_STORE_PROJECT) set_modflag(1);
     g_shell_config->remove(selected-1);
     w_settings_shell_list->remove(selected);
     if (selected <= w_settings_shell_list->size())
@@ -2442,6 +2446,7 @@ Fl_Double_Window* make_settings_window() {
         w_settings_general_tab->image( image_general_64() );
         w_settings_general_tab->image()->scale(36, 24, 0, 1);
         w_settings_general_tab->labelsize(11);
+        w_settings_general_tab->hide();
         { Fl_Group* o = new Fl_Group(120, 78, 130, 25);
           o->callback((Fl_Callback*)cb_);
           { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
@@ -3003,7 +3008,6 @@ Fl_Double_Window* make_settings_window() {
         w_settings_shell_tab->image()->scale(36, 24, 0, 1);
         w_settings_shell_tab->labelsize(11);
         w_settings_shell_tab->callback((Fl_Callback*)propagate_load);
-        w_settings_shell_tab->hide();
         { Fl_Group* o = new Fl_Group(10, 90, 320, 132);
           o->callback((Fl_Callback*)propagate_load);
           { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell\ncommand\nlist:");

@@ -64,7 +64,13 @@
 
 // FEATURE: Fd_Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
-// FEATURE: ad the files ./fluid.prefs and ./fluid.user.prefs as tool locations
+// FEATURE: add the files ./fluid.prefs and ./fluid.user.prefs as tool locations
+// FEATURE: interpret compiler output, for example: clang, and highlight errors and warnings
+//          `.../shell_command.cxx:71:2: error: test`
+//          `71 | #error test`
+//          `clang++: error: no such file or directory: '.../shell_command.o'`
+//          would make the error message clickable in the shell window and could select the widget,
+//          open the matching editor in the widget panel, and highlight the line in SourceView.
 
 /*
  Some ideas:

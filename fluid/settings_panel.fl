@@ -82,7 +82,7 @@ decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
 decl {\#include <FL/Fl_Preferences.H>} {private global
 }
 
-decl {\#include <FL/Fl_Tooltip.H>} {selected private global
+decl {\#include <FL/Fl_Tooltip.H>} {private global
 }
 
 decl {\#include <FL/fl_ask.H>} {private global
@@ -197,7 +197,7 @@ Function {make_settings_window()} {open
     } {
       Fl_Group w_settings_general_tab {
         label General open
-        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
+        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -893,7 +893,7 @@ g_layout_list.update_dialogs();}
       Fl_Group w_settings_shell_tab {
         label Shell
         callback propagate_load open
-        scale_image {36 24} image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
+        scale_image {36 24} image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
       } {
         Fl_Group {} {
           callback propagate_load open
@@ -927,7 +927,7 @@ list:}
   }
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
-}}
+}} selected
             xywh {100 90 220 110} type Multi labelfont 1 labelsize 11 align 4 textsize 13 resizable
           }
           Fl_Group w_settings_shell_toolbox {
@@ -945,10 +945,12 @@ list:}
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
   w_settings_shell_list->deselect();
   w_settings_shell_list->value(selected+1);
-  if (cmd->storage == FD_STORE_USER)
+  if (cmd->storage == FD_STORE_USER) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-  else if (cmd->storage == FD_STORE_PROJECT)
+  } else if (cmd->storage == FD_STORE_PROJECT) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
+    set_modflag(1);
+  }
   w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -971,12 +973,13 @@ if (v==LOAD) {
   g_shell_config->insert(selected, cmd);
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
   w_settings_shell_list->deselect();
-  w_settings_shell_list->deselect();
   w_settings_shell_list->value(selected+1);
-  if (cmd->storage == FD_STORE_USER)
+  if (cmd->storage == FD_STORE_USER) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-  else if (cmd->storage == FD_STORE_PROJECT)
+  } else if (cmd->storage == FD_STORE_PROJECT) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
+    set_modflag(1);
+  }
   w_settings_shell_list->do_callback();
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
@@ -998,6 +1001,7 @@ if (v==LOAD) {
   int ret = fl_choice("Delete the shell command\\n\\"%s\\"?\\n\\nThis can not be undone.",
     "Delete", "Cancel", NULL, g_shell_config->list[selected-1]->name.c_str());
   if (ret==1) return;
+  if (g_shell_config->at(selected-1)->storage == FD_STORE_PROJECT) set_modflag(1);
   g_shell_config->remove(selected-1);
   w_settings_shell_list->remove(selected);
   if (selected <= w_settings_shell_list->size())
