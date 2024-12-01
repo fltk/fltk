@@ -16,7 +16,18 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
+// Define 'HAVE_GL=1' on the compiler commandline to build this program
+// w/o 'config.h' (needs FLTK lib with GL).
+//   $ fltk-config --use-gl --compile cube.cxx -DHAVE_GL=1
+// Use '-DHAVE_GL=0' to build and test w/o OpenGL support.
+
+#ifndef HAVE_GL
+#include <config.h> // needed only for 'HAVE_GL'
+#endif
+
+// ... or uncomment the next line to test w/o OpenGL (see also above)
+// #undef HAVE_GL
+
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Window.H>
@@ -27,7 +38,23 @@
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/Fl_Printer.H>      // demo printing
 #include <FL/Fl_Grid.H>         // grid layout
-#include <stdlib.h>
+
+// Glocal constants and variables
+
+const int FPS         =  25;  // desired frame rate (independent of speed slider)
+const int MAX_LOOP    =   0;  // <= 0: no limit, >0: max. timer (draw) iterations
+int iters             =   0;  // total loop (draw) iterations
+int done              =   0;  // set to 1 in exit button callback
+Fl_Timestamp start;           // taken at start of main
+
+// Pointers to widgets
+
+class cube_box;               // forward declaration
+
+Fl_Window *form;
+Fl_Slider *speed, *size;
+Fl_Button *exit_button, *wire, *flat;
+cube_box  *lt_cube, *rt_cube;
 
 #if !HAVE_GL
 class cube_box : public Fl_Box {
@@ -36,7 +63,7 @@ public:
   int wire;
   double size;
   double speed;
-  cube_box(int x,int y,int w,int h,const char *l=0) :Fl_Box(FL_DOWN_BOX,x,y,w,h,l) {
+  cube_box(int x,int y,int w,int h,const char *l=0) : Fl_Box(FL_DOWN_BOX,x,y,w,h,l) {
     label("This demo does\nnot work without GL");
   }
 };
@@ -95,7 +122,7 @@ void drawcube(int wire) {
 }
 
 void cube_box::draw() {
-  lasttime = lasttime+speed;
+  lasttime = lasttime + speed;
   if (!valid()) {
     glLoadIdentity();
     glViewport(0,0,pixel_w(),pixel_h());
@@ -153,15 +180,59 @@ void overlay_button(cube_box *cube) {
 
 #endif // HAVE_GL
 
-Fl_Window *form;
-Fl_Slider *speed, *size;
-Fl_Button *exit_button, *wire, *flat;
-cube_box  *lt_cube, *rt_cube;
-int done = 0; // set to 1 in exit button callback
+void exit_cb(Fl_Widget *w = NULL, void *v = NULL) {
 
-// exit button callback
-void exit_cb(Fl_Widget *w, void *) {
-  done = 1;
+  // display performance data on stdout and (for Windows!) in a message window
+
+  double runtime = Fl::seconds_since(start);
+  char buffer[120];
+
+  sprintf(buffer, "Iterations = %4d, runtime = %7.3f sec, fps = %5.2f, requested: %d",
+          iters, runtime, iters / runtime, FPS);
+  printf("%s\n", buffer);
+  fflush(stdout);
+
+  int choice = fl_choice(buffer, "Continue", "Exit", NULL);
+  if (choice == 1) {
+    // exit program, close all windows
+    done = 1;
+    Fl::hide_all_windows(); // return from Fl::run()
+  }
+}
+
+#if HAVE_GL
+
+void timer_cb(void *data) {
+  iters++;
+  if (done || (MAX_LOOP > 0 && iters >= MAX_LOOP)) {
+    exit_cb();
+    return;
+  }
+  lt_cube->redraw();
+  rt_cube->redraw();
+  Fl::repeat_timeout(1.0/FPS, timer_cb);
+}
+
+#endif // HAVE_GL
+
+void speed_cb(Fl_Widget *w, void *) {
+  lt_cube->speed = rt_cube->speed = ((Fl_Slider *)w)->value();
+}
+
+void size_cb(Fl_Widget *w, void *) {
+  lt_cube->size = rt_cube->size = ((Fl_Slider *)w)->value();
+}
+
+void flat_cb(Fl_Widget *w, void *) {
+  int flat = ((Fl_Light_Button *)w)->value();
+  lt_cube->wire = 1 - flat;
+  rt_cube->wire = flat;
+}
+
+void wire_cb(Fl_Widget *w, void *) {
+  int wire = ((Fl_Light_Button *)w)->value();
+  lt_cube->wire = wire;
+  rt_cube->wire = 1 - wire;
 }
 
 // print screen demo
@@ -234,8 +305,9 @@ void makeform(const char *name) {
   flat  = new Fl_Radio_Light_Button(    0, 0, 100, 25, "Flat");
   speed = new Fl_Slider(FL_VERT_SLIDER, 0, 0,  40, 90, "Speed");
   size  = new Fl_Slider(FL_VERT_SLIDER, 0, 0,  40, 90, "Size");
-  exit_button = new Fl_Button(          0, 0, 100, 25, "Exit");
+  exit_button = new Fl_Button(          0, 0, 100, 25, "Stats / Exit");
   exit_button->callback(exit_cb);
+  exit_button->tooltip("Display statistics (fps) and\nchoose to exit or continue\n");
 
   // right GL window
   rt_cube = new cube_box(0, 0, 350, 350);
@@ -263,43 +335,57 @@ int main(int argc, char **argv) {
   Fl::use_high_res_GL(1);
   Fl::set_color(FL_FREE_COLOR, 255, 255, 0, 75);
   makeform(argv[0]);
-  speed->bounds(4, 0);
-  speed->value(lt_cube->speed = rt_cube->speed = 1.0);
+
+  speed->bounds(6, 0);
+  speed->value(lt_cube->speed = rt_cube->speed = 2.0);
+  speed->callback(speed_cb);
+
   size->bounds(4, 0.2);
   size->value(lt_cube->size = rt_cube->size = 2.0);
-  flat->value(1); lt_cube->wire = 0; rt_cube->wire = 1;
+  size->callback(size_cb);
+
+  flat->value(1);
+  flat->callback(flat_cb);
+  wire->value(0);
+  wire->callback(wire_cb);
+
   form->label("Cube Demo");
   form->show(argc,argv);
   lt_cube->show();
   rt_cube->show();
 
-#if 0
+  lt_cube->wire  = wire->value();
+  rt_cube->wire  = !wire->value();
+  lt_cube->size  = rt_cube->size = size->value();
+  lt_cube->speed = rt_cube->speed = speed->value();
+  lt_cube->redraw();
+  rt_cube->redraw();
+
+#if HAVE_GL
+
+#if (0) // share OpenGL contexts
+
   // This demonstrates how to manipulate OpenGL contexts.
   // In this case the same context is used by multiple windows (I'm not
   // sure if this is allowed on Win32, can somebody check?).
   // This fixes a bug on the XFree86 3.0 OpenGL where only one context per
   // program seems to work, but there are probably better uses for this!
-  lt_cube->make_current(); // causes context to be created
-  rt_cube->context(lt_cube->context()); // share the contexts
-#endif
 
-#if HAVE_GL
-  for (;;) {
-    if (form->visible() && speed->value()) {
-      if (!Fl::check()) break;   // returns immediately
-    } else {
-      if (!Fl::wait()) break;    // waits until something happens
-    }
-    lt_cube->wire  = wire->value();
-    rt_cube->wire  = !wire->value();
-    lt_cube->size  = rt_cube->size = size->value();
-    lt_cube->speed = rt_cube->speed = speed->value();
-    lt_cube->redraw();
-    rt_cube->redraw();
-    if (done) break; // exit button was clicked
-  }
-  return 0;
-#else
-  while (!done) Fl::wait();
+  lt_cube->make_current();              // causes context to be created
+  rt_cube->context(lt_cube->context()); // share the contexts
+
+#endif // share OpenGL contexts
+
+  // with GL: use a timer for drawing and measure performance
+
+  Fl::add_timeout(0.01, timer_cb);      // start timer
+  start = Fl::now();
+  int ret = Fl::run();
+  return ret;
+
+#else // w/o GL: no timer, no performance report
+
+  return Fl::run();
+
 #endif
 }
