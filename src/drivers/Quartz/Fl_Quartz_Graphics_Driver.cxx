@@ -159,13 +159,15 @@ void Fl_Quartz_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &heigh
 float Fl_Quartz_Graphics_Driver::override_scale() {
   float s = scale();
   if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
-    scale(1);
+    CGContextScaleCTM(gc_, 1./s, 1./s);
+    Fl_Graphics_Driver::scale(1);
   }
   return s;
 }
 
 void Fl_Quartz_Graphics_Driver::restore_scale(float s) {
   if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
-    scale(s);
+    CGContextScaleCTM(gc_, s, s);
+    Fl_Graphics_Driver::scale(s);
   }
 }

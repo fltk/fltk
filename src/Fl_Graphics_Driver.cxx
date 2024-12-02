@@ -1199,7 +1199,6 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, 
 float Fl_Scalable_Graphics_Driver::override_scale() {
   float s = scale();
   if (s != 1.f) {
-    push_no_clip();
     scale(1.f);
   }
   return s;
@@ -1208,7 +1207,6 @@ float Fl_Scalable_Graphics_Driver::override_scale() {
 void Fl_Scalable_Graphics_Driver::restore_scale(float s) {
   if (s != 1.f) {
     scale(s);
-    pop_clip();
   }
 }
 
