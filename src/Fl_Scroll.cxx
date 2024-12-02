@@ -350,6 +350,7 @@ void Fl_Scroll::draw() {
 
   uchar d = damage();
 
+  // See: https://github.com/fltk/fltk/issues/1149#issuecomment-2511135611
   float scale = Fl_Surface_Device::surface()->driver()->scale();
   if ((d & FL_DAMAGE_ALL) || scale != int(scale)) { // full redraw
     draw_box(box(),x(),y(),w(),h(),color());
