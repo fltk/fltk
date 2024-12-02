@@ -424,7 +424,7 @@ void Fl_Scroll::draw() {
   }
 
   // draw the scrollbars:
-  if (d & FL_DAMAGE_ALL) {
+  if ((d & FL_DAMAGE_ALL) || scale != int(scale)) {
     draw_child(scrollbar);
     draw_child(hscrollbar);
     if (scrollbar.visible() && hscrollbar.visible()) {
