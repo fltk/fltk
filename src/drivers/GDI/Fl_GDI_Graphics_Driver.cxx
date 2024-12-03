@@ -266,6 +266,7 @@ void Fl_GDI_Graphics_Driver::scale(float f) {
   if (f != scale()) {
     size_ = 0;
     Fl_Graphics_Driver::scale(f);
+    color(FL_BLACK);
     line_style(FL_SOLID); // scale also default line width
   }
 }
