@@ -413,7 +413,13 @@ Fl_Window_Type Fl_Window_type;
 
 // Resize from window manager...
 void Overlay_Window::resize(int X,int Y,int W,int H) {
-  undo_checkpoint_once(kUndoWindowResize);
+  // Make sure we don't create undo checkpoints if the window does not actually change.
+  // Some WMs seem to send spurious resize events.
+  if (X!=x() || Y!=y() || W!=w() || H!=h()) {
+    // Set a checkpoint on the first resize event, ignore further resizes until
+    // a different type of checkpoint is triggered.
+    undo_checkpoint_once(kUndoWindowResize);
+  }
 
   Fl_Widget* t = resizable();
   if (Fl_Type::allow_layout == 0) {
