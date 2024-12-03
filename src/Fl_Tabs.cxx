@@ -1117,6 +1117,10 @@ Fl_Tabs::~Fl_Tabs() {
 
   \note Children should always use the same positions and sizes.
 
+  \note This function requires access to the display drivers to determine the
+  selected font height. If `client_area` is invoked before the first window is
+  displayed, ensure that `fl_open_display()` is called beforehand.
+
   \p tabh can be one of
   \li    0: calculate label size, tabs on top
   \li   -1: calculate label size, tabs on bottom
