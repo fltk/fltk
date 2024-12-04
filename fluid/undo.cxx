@@ -89,7 +89,10 @@ void redo_cb(Fl_Widget *, void *) {
   }
 
   undo_suspend();
-  if (widget_browser) widget_browser->save_scroll_position();
+  if (widget_browser) {
+    widget_browser->save_scroll_position();
+    widget_browser->new_list();
+  }
   int reload_panel = (the_panel && the_panel->visible());
   if (!read_file(undo_filename(undo_current + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
@@ -116,6 +119,7 @@ void redo_cb(Fl_Widget *, void *) {
   // Update undo/redo menu items...
   // if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
   // Main_Menu[undo_item].activate();
+  undo_resume();
 }
 
 // Undo menu callback
@@ -137,7 +141,10 @@ void undo_cb(Fl_Widget *, void *) {
   // Undo first deletes all widgets which resets the widget_tree browser.
   // Save the current scroll position, so we don't scroll back to 0 at undo.
   // TODO: make the scroll position part of the .fl project file
-  if (widget_browser) widget_browser->save_scroll_position();
+  if (widget_browser) {
+    widget_browser->save_scroll_position();
+    widget_browser->new_list();
+  }
   int reload_panel = (the_panel && the_panel->visible());
   if (!read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
@@ -172,13 +179,23 @@ void undo_cb(Fl_Widget *, void *) {
   undo_resume();
 }
 
-void undo_checkpoint_once(int type) {
-  if (undo_paused) return;
+/**
+ \param[in] type set a new type, or set to 0 to clear the once_type without setting a checkpoint
+ \return 1 if the checkpoint was set, 0 if this is a repeating event
+ */
+int undo_checkpoint_once(int type) {
+  if (type == 0) {
+    undo_once_type = 0;
+    return 0;
+  }
+  if (undo_paused) return 0;
   if (undo_once_type != type) {
     undo_checkpoint();
     undo_once_type = type;
+    return 1;
   } else {
     // do not add more checkpoints for the same undo type
+    return 0;
   }
 }
 

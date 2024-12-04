@@ -29,7 +29,7 @@ extern int undo_once_type;              // Suspend further undos of the same typ
 void redo_cb(Fl_Widget *, void *);      // Redo menu callback
 void undo_cb(Fl_Widget *, void *);      // Undo menu callback
 void undo_checkpoint();                 // Save current file to undo buffer
-void undo_checkpoint_once(int type);    // Save undo buffer once until a different checkpoint type is called
+int undo_checkpoint_once(int type);     // Save undo buffer once until a different checkpoint type is called
 void undo_clear();                      // Clear undo buffer
 void undo_resume();                     // Resume undo checkpoints
 void undo_suspend();                    // Suspend undo checkpoints

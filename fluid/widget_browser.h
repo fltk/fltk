@@ -62,6 +62,7 @@ public:
   void save_scroll_position();
   void restore_scroll_position();
   void rebuild();
+  void new_list() { Fl_Browser_::new_list(); }
   void display(Fl_Type *);
   void load_prefs();
   void save_prefs();

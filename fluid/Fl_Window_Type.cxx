@@ -418,7 +418,8 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   if (X!=x() || Y!=y() || W!=w() || H!=h()) {
     // Set a checkpoint on the first resize event, ignore further resizes until
     // a different type of checkpoint is triggered.
-    undo_checkpoint_once(kUndoWindowResize);
+    if (undo_checkpoint_once(kUndoWindowResize))
+      set_modflag(1);
   }
 
   Fl_Widget* t = resizable();
