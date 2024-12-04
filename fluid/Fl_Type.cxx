@@ -387,6 +387,11 @@ static void delete_children(Fl_Type *p) {
  don't reset the project.
  */
 void delete_all(int selected_only) {
+  if (widget_browser) {
+    if (selected_only)
+      widget_browser->save_scroll_position();
+    widget_browser->new_list();
+  }
   for (Fl_Type *f = Fl_Type::first; f;) {
     if (f->selected || !selected_only) {
       delete_children(f);
@@ -404,15 +409,21 @@ void delete_all(int selected_only) {
       g_shell_config->rebuild_shell_menu();
       g_shell_config->update_settings_dialog();
     }
-    widget_browser->hposition(0);
-    widget_browser->vposition(0);
+    if (widget_browser) {
+      widget_browser->hposition(0);
+      widget_browser->vposition(0);
+    }
     g_layout_list.remove_all(FD_STORE_PROJECT);
     g_layout_list.current_suite(0);
     g_layout_list.current_preset(0);
     g_layout_list.update_dialogs();
   }
   selection_changed(0);
-  widget_browser->redraw();
+  if (widget_browser) {
+    if (selected_only)
+      widget_browser->restore_scroll_position();
+    widget_browser->rebuild();
+  }
 }
 
 /** Update a string.
