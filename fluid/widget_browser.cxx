@@ -114,7 +114,7 @@ void deselect() {
  Make sure that the given item is visible in the browser by opening
  all parent groups and moving the item into the visible space.
 
- \param[in] t show this ite
+ \param[in] t show this item
  */
 void reveal_in_browser(Fl_Type *t) {
   Fl_Type *p = t->parent;

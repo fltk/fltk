@@ -196,8 +196,8 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {
-        label General open
-        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide resizable
+        label General open selected
+        scale_image {36 24} image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -893,7 +893,7 @@ g_layout_list.update_dialogs();}
       Fl_Group w_settings_shell_tab {
         label Shell
         callback propagate_load open
-        scale_image {36 24} image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
+        scale_image {36 24} image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Group {} {
           callback propagate_load open
@@ -927,7 +927,7 @@ list:}
   }
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
-}} selected
+}}
             xywh {100 90 220 110} type Multi labelfont 1 labelsize 11 align 4 textsize 13 resizable
           }
           Fl_Group w_settings_shell_toolbox {
