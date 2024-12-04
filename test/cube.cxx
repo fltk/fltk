@@ -17,7 +17,7 @@
 //
 
 // Define 'HAVE_GL=1' on the compiler commandline to build this program
-// w/o 'config.h' (needs FLTK lib with GL).
+// w/o 'config.h' (needs FLTK lib with GL), for instance like:
 //   $ fltk-config --use-gl --compile cube.cxx -DHAVE_GL=1
 // Use '-DHAVE_GL=0' to build and test w/o OpenGL support.
 
@@ -41,15 +41,23 @@
 
 // Glocal constants and variables
 
-const int FPS         =  25;  // desired frame rate (independent of speed slider)
-const int MAX_LOOP    =   0;  // <= 0: no limit, >0: max. timer (draw) iterations
-int iters             =   0;  // total loop (draw) iterations
-int done              =   0;  // set to 1 in exit button callback
-Fl_Timestamp start;           // taken at start of main
+const double fps      = 25.0;     // desired frame rate (independent of speed slider)
+const double delay    = 1.0/fps;  // calculated timer delay
+int count             = -2;       // initialize loop (draw) counter
+int done              =  0;       // set to 1 in exit button callback
+Fl_Timestamp start;               // taken at start of main or after reset
 
-// Pointers to widgets
+#define DEBUG_TIMER (0)           // >0: detailed debugging, see code (should be 0)
 
-class cube_box;               // forward declaration
+#if (DEBUG_TIMER)
+const double dx       = 0.001;    // max. allowed deviation from delta time
+const double d_min    = delay - dx;
+const double d_max    = delay + dx;
+#endif // DEBUG_TIMER
+
+// Global pointers to widgets
+
+class cube_box;
 
 Fl_Window *form;
 Fl_Slider *speed, *size;
@@ -182,35 +190,73 @@ void overlay_button(cube_box *cube) {
 
 void exit_cb(Fl_Widget *w = NULL, void *v = NULL) {
 
+#if HAVE_GL
+
   // display performance data on stdout and (for Windows!) in a message window
 
   double runtime = Fl::seconds_since(start);
   char buffer[120];
 
-  sprintf(buffer, "Iterations = %4d, runtime = %7.3f sec, fps = %5.2f, requested: %d",
-          iters, runtime, iters / runtime, FPS);
+  sprintf(buffer, "Count =%5d, time = %7.3f sec, fps = %5.2f, requested: %5.2f",
+          count, runtime, count / runtime, fps);
   printf("%s\n", buffer);
   fflush(stdout);
 
-  int choice = fl_choice("%s", "Continue", "Exit", NULL, buffer);
-  if (choice == 1) {
-    // exit program, close all windows
-    done = 1;
-    Fl::hide_all_windows(); // return from Fl::run()
+  int choice = fl_choice("%s", "E&xit", "&Continue", "&Reset", buffer);
+  switch(choice) {
+    case 0:                     // exit program, close all windows
+      done = 1;
+      Fl::hide_all_windows();
+      break;
+    case 2:                     // reset
+      count = -2;
+      printf("*** RESET ***\n");
+      fflush(stdout);
+      break;
+    default:                    // continue
+      break;
   }
+
+#else
+  done = 1;
+  Fl::hide_all_windows();
+#endif
 }
 
 #if HAVE_GL
 
 void timer_cb(void *data) {
-  iters++;
-  if (done || (MAX_LOOP > 0 && iters >= MAX_LOOP)) {
-    exit_cb();
-    return;
+  static Fl_Timestamp last = Fl::now();
+  static Fl_Timestamp now;
+  count++;
+  if (count == 0) {
+    start = Fl::now();
+    last  = start;
+  } else if (count > 0) {
+    now = Fl::now();
+#if (DEBUG_TIMER)
+    double delta = Fl::seconds_since(last);
+    if ((delta < d_min || delta > d_max) && count > 1) {
+      printf("Count =%5d, delay should be %7.5f but %7.5f is outside [%7.5f .. %7.5f]\n",
+             count, delay, delta, d_min, d_max);
+      fflush(stdout);
+    }
+#endif // DEBUG_TIMER
   }
+
+#if (DEBUG_TIMER > 1)
+  if (count > 0 && count <= DEBUG_TIMER) { // log the first N iterations
+    double runtime = Fl::seconds_since(start);
+    printf("Count =%5d, time = %7.3f sec, fps = %5.2f, requested: %5.2f\n",
+            count, runtime, count / runtime, fps);
+    fflush(stdout);
+  }
+#endif // (DEBUG_TIMER > 1)
+
   lt_cube->redraw();
   rt_cube->redraw();
-  Fl::repeat_timeout(1.0/FPS, timer_cb);
+  Fl::repeat_timeout(delay, timer_cb);
+  last = Fl::now();
 }
 
 #endif // HAVE_GL
@@ -305,7 +351,11 @@ void makeform(const char *name) {
   flat  = new Fl_Radio_Light_Button(    0, 0, 100, 25, "Flat");
   speed = new Fl_Slider(FL_VERT_SLIDER, 0, 0,  40, 90, "Speed");
   size  = new Fl_Slider(FL_VERT_SLIDER, 0, 0,  40, 90, "Size");
-  exit_button = new Fl_Button(          0, 0, 100, 25, "Stats / Exit");
+#if HAVE_GL
+  exit_button = new Fl_Button(          0, 0, 100, 25, "Stats / E&xit");
+#else
+  exit_button = new Fl_Button(          0, 0, 100, 25, "E&xit");
+#endif
   exit_button->callback(exit_cb);
   exit_button->tooltip("Display statistics (fps) and\nchoose to exit or continue\n");
 
@@ -378,8 +428,8 @@ int main(int argc, char **argv) {
 
   // with GL: use a timer for drawing and measure performance
 
-  Fl::add_timeout(0.01, timer_cb);      // start timer
-  start = Fl::now();
+  form->wait_for_expose();
+  Fl::add_timeout(0.1, timer_cb);      // start timer
   int ret = Fl::run();
   return ret;
 
