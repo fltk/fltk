@@ -156,7 +156,7 @@ void undo_cb(Fl_Widget *, void *) {
     }
   }
   // Restore old browser position.
-  // Ideally, we would save the browser position insied the undo file.
+  // Ideally, we would save the browser position inside the undo file.
   if (widget_browser) widget_browser->restore_scroll_position();
 
   undo_current --;
@@ -178,7 +178,7 @@ void undo_checkpoint_once(int type) {
     undo_checkpoint();
     undo_once_type = type;
   } else {
-    // do not add more checkpoints for the same undo typw
+    // do not add more checkpoints for the same undo type
   }
 }
 
