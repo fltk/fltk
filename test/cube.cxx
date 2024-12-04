@@ -192,7 +192,7 @@ void exit_cb(Fl_Widget *w = NULL, void *v = NULL) {
   printf("%s\n", buffer);
   fflush(stdout);
 
-  int choice = fl_choice(buffer, "Continue", "Exit", NULL);
+  int choice = fl_choice("%s", "Continue", "Exit", NULL, buffer);
   if (choice == 1) {
     // exit program, close all windows
     done = 1;
