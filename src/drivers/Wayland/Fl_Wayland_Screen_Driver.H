@@ -30,7 +30,6 @@ class Fl_Window;
 
 class Fl_Wayland_Screen_Driver : public Fl_Unix_Screen_Driver
 {
-  friend class Fl_Screen_Driver;
 private:
   static int insertion_point_x;
   static int insertion_point_y;
