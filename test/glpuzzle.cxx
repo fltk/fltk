@@ -84,7 +84,7 @@ static unsigned char colors[PIECES + 1][3] =
 };
 
 void changeState(void);
-void animate(void);
+void animate(int);
 
 static struct puzzle *hashtable[HASHSIZE];
 static struct puzzle *startPuzzle;
@@ -1123,6 +1123,9 @@ static int spinning;
 static int enable_spinning = 1;
 static float lastquat[4];
 static int sel_piece;
+static int timer_active = 0;   // restart another rimer at the end of `animate`
+static int timer_pending = 0;  // a timer is waiting to be triggered
+static int timer_delay = 20;   // timeout in msec (20ms = 50 frames per second)
 
 static void
 Reshape(int width, int height)
@@ -1140,11 +1143,11 @@ toggleSolve(void)
     if (solving) {
       freeSolutions();
       solving = 0;
-      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutChangeToMenuEntry(2, (char *)"Solve", 2);
       glutSetWindowTitle((char *)"glpuzzle");
       movingPiece = 0;
     } else {
-      glutChangeToMenuEntry(1, (char *)"Stop solving", 1);
+      glutChangeToMenuEntry(2, (char *)"Stop solving", 2);
       glutSetWindowTitle((char *)"Solving...");
       if (solvePuzzle()) {
         solving = 1;
@@ -1158,7 +1161,10 @@ void reset_position(void)
 {
     spinning = 0;
     trackball(curquat, 0.0, 0.0, 0.0, 0.0); // reset position
-    glutIdleFunc(animate);
+    if (!timer_pending) {
+        timer_pending = 1;
+        glutTimerFunc(timer_delay, animate, 0);
+    }
 }
 
 void reset(void)
@@ -1167,7 +1173,7 @@ void reset(void)
     if (solving) {
       freeSolutions();
       solving = 0;
-      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutChangeToMenuEntry(2, (char *)"Solve", 2);
       glutSetWindowTitle((char *)"glpuzzle");
       movingPiece = 0;
       changeState();
@@ -1195,7 +1201,7 @@ keyboard(unsigned char c, int x, int y)
     if (solving) {
       freeSolutions();
       solving = 0;
-      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutChangeToMenuEntry(2, (char *)"Solve", 2);
       glutSetWindowTitle((char *)"glpuzzle");
       movingPiece = 0;
       changeState();
@@ -1270,7 +1276,7 @@ mouse(int b, int s, int x, int y)
       if (solving) {
         freeSolutions();
         solving = 0;
-      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+        glutChangeToMenuEntry(2, (char *)"Solve", 2);
         glutSetWindowTitle((char *)"glpuzzle");
         movingPiece = 0;
       }
@@ -1303,8 +1309,9 @@ mouse(int b, int s, int x, int y)
 }
 
 void
-animate(void)
+animate(int)
 {
+  timer_pending = 0;
   if (spinning) {
     add_quats(lastquat, curquat, curquat);
   }
@@ -1312,12 +1319,16 @@ animate(void)
   if (solving) {
     if (!continueSolving()) {
       solving = 0;
-      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutChangeToMenuEntry(2, (char *)"Solve", 2);
       glutSetWindowTitle((char *)"glpuzzle");
     }
   }
   if ((!solving && !spinning) || !visible) {
-    glutIdleFunc(NULL);
+    timer_active = 0;
+  }
+  if (timer_active && !timer_pending) {
+    timer_pending = 1;
+    glutTimerFunc(timer_delay, animate, 0);
   }
 }
 
@@ -1326,12 +1337,16 @@ changeState(void)
 {
   if (visible) {
     if (!solving && !spinning) {
-      glutIdleFunc(NULL);
+      timer_active = 0;
     } else {
-      glutIdleFunc(animate);
+      timer_active = 1;
+      if (!timer_pending) {
+        timer_pending = 1;
+        glutTimerFunc(timer_delay, animate, 0);
+      }
     }
   } else {
-    glutIdleFunc(NULL);
+    timer_active = 0;
   }
 }
 
