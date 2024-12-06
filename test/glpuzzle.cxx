@@ -1125,7 +1125,7 @@ static float lastquat[4];
 static int sel_piece;
 static int timer_active = 0;   // restart another rimer at the end of `animate`
 static int timer_pending = 0;  // a timer is waiting to be triggered
-static int timer_delay = 20;   // timeout in msec (20ms = 50 frames per second)
+static int timer_delay = 13;   // timeout in msec (13ms = 72 frames per second)
 
 static void
 Reshape(int width, int height)
