@@ -2,12 +2,9 @@
 ------------------------------------------------------------
 
 
-
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 ***   CAUTION: This file is outdated. This needs a major rework!   ***
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-
 
 
 
@@ -53,6 +50,8 @@ XP, and later.  Older Windows versions are not officially supported,
 but may still work.  The main reason is that the OS version needs
 to support UTF-8. FLTK 1.3 is known to work on Windows Vista, Windows 7,
 Windows 8/8.1, and Windows 10.
+
+FLTK 1.4 and later versions may require Windows 10 or later.
 
 FLTK currently supports the following development
 environments on the Windows platform:
@@ -117,7 +116,7 @@ this as a cross compiler, but it works well.
 
 The MinGW distribution (Minimalist GNU for Windows) provides
 a similar toolset but geared solely towards native Windows
-development without the Unix-like POSIX library.  The lack of
+development without the Unix-like POSIX library. The lack of
 any libraries under the GPL or any other restrictive license
 means that programs built with the MinGW environment may
 always be released under any license freely. MinGW also
@@ -133,20 +132,28 @@ check out their license conditions carefully before use.
  The Tools
 -----------
 
-There are currently three main configurations supported by
+There are currently four main configurations supported by
 FLTK with the GNU tools:
 
     1. Cygwin: Built using the Cygwin toolset and using the Unix-like
        POSIX compatibility layer provided by the Cygwin DLL.
        License: GPL or non-free commercial license (ask Redhat).
+       Note: no longer tested by the FLTK team.
 
     2. Cygwin using the MinGW cross compiler suite: Built using
        the Cygwin tools but not using the Cygwin DLL.
        License: freely distributable on all Windows systems.
+       Note: no longer tested by the FLTK team.
 
     3. MinGW: Built using the MinGW utilities, compiler and tools. This
        is, in many aspects, analogous to (2.). This is the recommended
        one if you want to build native Windows programs only.
+       License: freely distributable on all Windows systems.
+
+    4. MSYS2/Mingw-w64: Built using the MSYS2 utilities, compiler and tools.
+       This similar to (3.) but may need some fiddling with the setup if
+       you want to build native Windows programs only because the built
+       executables *may* depend on some MSYS2 dll's.
        License: freely distributable on all Windows systems.
 
 
@@ -166,6 +173,8 @@ Our recommendation is to:
        This will only produce normal Windows native executables
        without any Unix or POSIX compatibility layer.
 
+    3. Get the latest MSYS2/Mingw-w64 toolset.
+
     See the links section below for more information.
 
 Either option can generate Windows native executables and option 1 can
@@ -179,10 +188,12 @@ one of these configurations.
 ---------------
 
 In order to build FLTK from the command line, you need to install the MinGW
-environment from www.mingw.org. The graphical installer "mingw-get-inst" can
-be downloaded here for free:
+environment. The graphical installer "mingw-get-inst" can be downloaded for
+free.
 
-  http://www.mingw.org/wiki/Getting_Started
+  NOTE: as of Dec 07, 2024 MinGW development seems to be dormant or dead.
+  According to Wikipedia (https://en.wikipedia.org/wiki/MinGW)
+  "MinGW migrated to OSDN". See link section below.
 
 Launch the installer and follow the instructions. In the "Select Components"
 dialog, add "C++ Compiler", "MSYS Basic System", and "MinGW Developer Toolkit".
@@ -199,7 +210,7 @@ Download FLTK from here:
 
   https://www.fltk.org/software.php
 
-into your home folder. The default location as seen from MSWindows is similar
+into your home folder. The default location as seen from Windows is similar
 to
 
   C:\MinGW\msys\1.0\home\matt\
@@ -212,8 +223,8 @@ in my dev directory:
   cd
   mkdir dev
   cd dev
-  tar xvfz fltk-1.3.xxxx.tar.gz
-  cd fltk-1.3.xxxx
+  tar xvzf fltk-1.x.y-source.tar.gz
+  cd fltk-1.x.y
 
 
  Configuring FLTK
@@ -318,7 +329,7 @@ source file is:
   fltk-config --compile myProgram.cxx
 
 "fltk-config" and "fluid" will be installed in "/usr/local/bin/" by default.
-I recommend that you add it to the command search path.
+We recommend that you add it to the command search path.
 
 
 
@@ -334,16 +345,19 @@ Visual C++ developer environment from the Microsoft web site. The "Express"
 or "Community" edition is free of charge and sufficient to develop FLTK
 applications:
 
-  https://visualstudio.microsoft.com/vs/express/
+  https://visualstudio.microsoft.com/free-developer-offers/
 
 If you intend to use an older (maybe commercial) version you need at least
 a version that is supported by the version of CMake you are using to generate
 the project files. You should make sure that all available service packs are
 installed or building FLTK may fail.
 
-As of this writing (07/2017) the FLTK team recommends at least Visual
-Studio 2008 with current service packs. Visual Studio 2008, 2010, 2013,
-2015, and 2017 are known to work with FLTK 1.4.0 (Git: 07/2017).
+As of Juli 2017 the FLTK team recommend at least Visual Studio 2008 with
+current service packs. Visual Studio 2008, 2010, 2013, 2015, and 2017 are
+known to work with FLTK 1.4.0 (Git master, as of Juli 2017).
+
+For development of FLTK 1.4 or higher Visual Studio 2019 Community or later
+versions are highly recommended.
 
 You may also need to install CMake (cmake-gui) from:
 
@@ -364,20 +378,18 @@ Download FLTK from here:
 
   https://www.fltk.org/software.php
 
-If you are familiar with "git" and like to stay current with your
-version, you will find the git access parameters at the bottom of
-that page.
+If you are familiar with "git" and like to stay current with your version,
+you will find the git access parameters at the bottom of that page.
 
 Unpack FLTK by using an appropriate unpacker and copy the new folder into a
-convenient location. I have set up a "dev" folder in my home folder for all
-my projects.
+convenient location, for instance a "dev" folder in your home folder.
 
 
  Configuring FLTK
 ------------------
 
 Note: Configuration with Visual Studio 2017's internal CMake support is
-not yet included here. You may try yourself...
+not yet included in this document. You may try yourself...
 
 Please refer to README.CMake.txt for how to configure FLTK with CMake.
 
@@ -428,7 +440,7 @@ without adding link and include paths to the solution.
 
   copy fluid.exe in the fluid directory to the bin directory
 
-I highly discourage using dll's (dynamically linking libraries) on MSWindows
+We highly discourage using dll's (dynamically linking libraries) on Windows
 because they will require an installation process and likely cause version
 conflicts. Use the static .lib libraries instead.
 
@@ -525,19 +537,33 @@ will change this to compile and link in OpenGL.
 
 The following links may be of use:
 
-  1. Main Cygwin homepage:
+  1. Cygwin Homepage:
 
         https://www.cygwin.com/
 
-  2. Main MinGW homepage:
 
-        http://www.mingw.org/
+  2. MinGW Homepage - see Wikipedia:
 
-     In particular look for the MinGW FAQ at this link for
-     a lot of useful MinGW-native development documentation.
+        https://en.wikipedia.org/wiki/MinGW (English)
+        https://de.wikipedia.org/wiki/MinGW (German, see links)
+
+    --------------------------------------------------------------------
+    IMPORTANT: As of Dec 07, 2024 the links below could not be verified:
+    --------------------------------------------------------------------
+
+        Repository :  https://osdn.net/projects/mingw/scm/
+        Website (1):  https://osdn.net/projects/mingw/
+        Website (2):  https://mingw.osdn.io/
 
 
-  3. Check out the FLTK newsgroups at the FLTK homepage:
+  3. MSYS2/Mingw-w64 Wikipedia and Homepage:
+
+        https://en.wikipedia.org/wiki/Mingw-w64
+        https://mingw-w64.org/
+        https://www.msys2.org/
+
+
+  4. Check out the FLTK newsgroups at the FLTK homepage:
 
         https://www.fltk.org/
 
@@ -545,20 +571,26 @@ The following links may be of use:
      to check back through previous problems with this
      sort of configuration before posting new questions.
 
-  4. GNU Compiler Collection (GCC) compiler homepage:
+
+  5. GNU Compiler Collection (GCC) compiler homepage:
 
         https://gcc.gnu.org/
 
-  5. OpenGL page - for OpenGL and GLUT libs
+
+  6. OpenGL page - for OpenGL and GLUT libs
 
         https://www.opengl.org/
 
-  6. CMake homepage:
+
+  7. CMake homepage:
 
         https://cmake.org/
 
-  Note: all links in this document have been checked on Mar 21, 2020.
-    We can't guarantee that these links are still valid any time later.
+
+  Note 1: all links in this document have been checked and verified
+    on Dec 07, 2024 except where noted above.
+
+  Note 2: We can't guarantee that these links will be valid any time later.
 
 
   6 DOCUMENT HISTORY
