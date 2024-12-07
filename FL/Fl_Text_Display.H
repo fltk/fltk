@@ -537,7 +537,11 @@ protected:
   void xy_to_rowcol(int x, int y, int* row, int* column,
                     int PosType = CHARACTER_POS) const;
   void maintain_absolute_top_line_number(int state);
+public:
   int get_absolute_top_line_number() const;
+  int scroll_row() { return mTopLineNum; }
+  int scroll_col() { return mHorizOffset; }
+protected:
   void absolute_top_line_number(int oldFirstChar);
   int maintaining_absolute_top_line_number() const;
   void reset_absolute_top_line_number();
