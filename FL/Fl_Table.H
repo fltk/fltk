@@ -524,7 +524,7 @@ public:
     row_header() must also be enabled to allow resizing.
   */
   void row_resize(int flag) {                   // enable row resizing
-    _row_resize = flag;
+    _row_resize = (char)flag;
   }
 
   /**
@@ -541,7 +541,7 @@ public:
     \p col_header() must also be enabled to allow resizing.
   */
   void col_resize(int flag) {                   // enable col resizing
-    _col_resize = flag;
+    _col_resize = (char)flag;
   }
 
   /**
@@ -588,7 +588,7 @@ public:
     If changed, the table is redrawn.
   */
   void row_header(int flag) {
-    _row_header = flag;
+    _row_header = (char)flag;
     table_resized();
     redraw();
   }
@@ -605,7 +605,7 @@ public:
     If changed, the table is redrawn.
   */
   void col_header(int flag) {
-    _col_header = flag;
+    _col_header = (char)flag;
     table_resized();
     redraw();
   }
