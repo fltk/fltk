@@ -711,7 +711,7 @@ static int forward(int menu) { // go to next item in menu menu if possible
     }
     item = -1;
   }
-  while (pp.menubar && (Fl::event_key() == FL_Right || Fl::event_key() == FL_Tab));
+  while (pp.menubar && Fl::event_key() != FL_Down);
   return 0;
 }
 
@@ -729,7 +729,7 @@ static int backward(int menu) { // previous item in menu menu if possible
     }
     item = m.numitems;
   }
-  while (pp.menubar && Fl::event_key() == FL_Left);
+  while (pp.menubar && Fl::event_key() != FL_Up);
   return 0;
 }
 
