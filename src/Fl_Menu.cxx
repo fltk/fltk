@@ -711,7 +711,7 @@ static int forward(int menu) { // go to next item in menu menu if possible
     }
     item = -1;
   }
-  while (pp.menubar && Fl::event_key() == FL_Right);
+  while (pp.menubar && (Fl::event_key() == FL_Right || Fl::event_key() == FL_Tab));
   return 0;
 }
 
@@ -797,8 +797,10 @@ int menuwindow::handle_part1(int e) {
     switch (Fl::event_key()) {
     case FL_BackSpace:
     BACKTAB:
-      if (!backward(pp.menu_number)) {
-        pp.item_number = -1;
+      if (pp.menubar && pp.menu_number<0)
+        backward(0);
+      else if (!backward(pp.menu_number)) {
+        pp.item_number = pp.menu_number >= 0 ? pp.p[pp.menu_number]->numitems : -1;
         backward(pp.menu_number);
       }
       return 1;
@@ -813,6 +815,7 @@ int menuwindow::handle_part1(int e) {
       return 1;
     case FL_Tab:
       if (Fl::event_shift()) goto BACKTAB;
+      if (pp.menubar && pp.menu_number == 0) goto RIGHT;
     case FL_Down:
       if (pp.menu_number || !pp.menubar) {
         if (!forward(pp.menu_number) && Fl::event_key()==FL_Tab) {
