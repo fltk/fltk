@@ -698,18 +698,21 @@ static void setitem(int m, int n) {
 }
 
 static int forward(int menu) { // go to next item in menu menu if possible
-  menustate &pp = *p;
   // `menu` is -1 if no item is currently selected, so use the first menu
   if (menu<0)
     menu = 0;
+  menustate& pp = *p;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
+  bool wrapped = false;
   do {
     while (++item < m.numitems) {
       const Fl_Menu_Item* m1 = m.menu->next(item);
       if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
     }
+    if (wrapped) break;
     item = -1;
+    wrapped = true;
   }
   while (Fl::event_key() != FL_Down);
   return 0;
@@ -722,12 +725,15 @@ static int backward(int menu) { // previous item in menu menu if possible
   menustate &pp = *p;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
+  bool wrapped = false;
   do {
     while (--item >= 0) {
       const Fl_Menu_Item* m1 = m.menu->next(item);
       if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
     }
+    if (wrapped) break;
     item = m.numitems;
+    wrapped = true;
   }
   while (Fl::event_key() != FL_Up);
   return 0;
