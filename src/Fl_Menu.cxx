@@ -699,9 +699,9 @@ static void setitem(int m, int n) {
 
 static int forward(int menu) { // go to next item in menu menu if possible
   // `menu` is -1 if no item is currently selected, so use the first menu
-  if (menu<0)
+  if (menu < 0)
     menu = 0;
-  menustate& pp = *p;
+  menustate &pp = *p;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
   bool wrapped = false;
@@ -720,7 +720,7 @@ static int forward(int menu) { // go to next item in menu menu if possible
 
 static int backward(int menu) { // previous item in menu menu if possible
   // `menu` is -1 if no item is currently selected, so use the first menu
-  if (menu<0)
+  if (menu < 0)
     menu = 0;
   menustate &pp = *p;
   menuwindow &m = *(pp.p[menu]);
