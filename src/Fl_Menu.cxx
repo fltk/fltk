@@ -803,12 +803,7 @@ int menuwindow::handle_part1(int e) {
     switch (Fl::event_key()) {
     case FL_BackSpace:
     BACKTAB:
-      if (pp.menubar && pp.menu_number<0)
-        backward(0);
-      else if (!backward(pp.menu_number)) {
-        pp.item_number = pp.menu_number >= 0 ? pp.p[pp.menu_number]->numitems : -1;
-        backward(pp.menu_number);
-      }
+      backward(pp.menu_number);
       return 1;
     case FL_Up:
       if (pp.menubar && pp.menu_number == 0) {
@@ -824,10 +819,7 @@ int menuwindow::handle_part1(int e) {
       if (pp.menubar && pp.menu_number == 0) goto RIGHT;
     case FL_Down:
       if (pp.menu_number || !pp.menubar) {
-        if (!forward(pp.menu_number) && Fl::event_key()==FL_Tab) {
-          pp.item_number = -1;
-          forward(pp.menu_number);
-        }
+        forward(pp.menu_number);
       } else if (pp.menu_number < pp.nummenus-1) {
         forward(pp.menu_number+1);
       }
