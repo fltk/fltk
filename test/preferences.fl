@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 i18n_type 1
 i18n_include {<stdio.h>}
 i18n_conditional {}

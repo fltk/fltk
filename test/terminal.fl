@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 utf8_in_src
 header_name {.h}
 code_name {.cxx}
