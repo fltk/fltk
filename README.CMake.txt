@@ -260,9 +260,9 @@ FLTK_OPTION_SVG - default ON
     Turning this option off disables SVG (read and write) support.
 
 FLTK_USE_LIBDECOR_GTK - default ON (Wayland only).
-    Allow to use libdecor's GTK plugin to draw window titlebars. Otherwise
-    FLTK does not use GTK and apps will not need linking to GTK. This feature
-    is always 'ON' if FLTK_USE_SYSTEM_LIBDECOR is 'ON'.
+    Meaningful only under Wayland and if FLTK_USE_SYSTEM_LIBDECOR is 'OFF'.
+    Allows to use libdecor's GTK plugin to draw window titlebars. Otherwise
+    FLTK does not use GTK and apps will not need linking to GTK.
 
 FLTK_USE_PANGO - default OFF (see note below)
     This option is highly recommended under X11 if FLTK is expected to draw
