@@ -211,6 +211,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
 
 /**
  This is called by the timer itself
+
 */
 void update_codeview_timer(void*) {
   update_codeview_cb(0,0);
@@ -227,6 +228,7 @@ void codeview_defer_update() {
 /**
  Show or hide the source code preview.
  The state is stored in the app preferences.
+
 */
 void codeview_toggle_visibility() {
   if (!codeview_panel) {
