@@ -970,7 +970,7 @@ endif((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 if(FLTK_BACKEND_WAYLAND)
 
   # Note: Disable FLTK_USE_LIBDECOR_GTK to get cairo titlebars rather than GTK
-  if(FLTK_USE_LIBDECOR_GTK)
+  if(FLTK_USE_LIBDECOR_GTK AND NOT USE_SYSTEM_LIBDECOR)
     pkg_check_modules(GTK IMPORTED_TARGET gtk+-3.0)
     if(GTK_FOUND)
       list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${GTK_INCLUDE_DIRS})
@@ -978,7 +978,7 @@ if(FLTK_BACKEND_WAYLAND)
       message(WARNING "Installation of the development files for the GTK library "
       "(e.g., libgtk-3-dev) is recommended when using the gnome desktop.")
     endif(GTK_FOUND)
-  endif(FLTK_USE_LIBDECOR_GTK)
+  endif(FLTK_USE_LIBDECOR_GTK AND NOT USE_SYSTEM_LIBDECOR)
 
 endif()
 

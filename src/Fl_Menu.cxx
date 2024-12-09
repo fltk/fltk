@@ -843,7 +843,7 @@ int menuwindow::handle_part1(int e) {
       if (pp.current_item && (!pp.menubar || pp.menu_number > 0) &&
           pp.current_item->activevisible() && pp.current_item->submenu() && !pp.current_item->callback_)
         goto RIGHT;
-      pp.state = DONE_STATE;
+      if (pp.current_item && pp.current_item->activevisible()) pp.state = DONE_STATE;
       return 1;
     case FL_Escape:
       setitem(0, -1, 0);
@@ -1008,7 +1008,13 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     }
   }
   initial_item = pp.current_item;
-  if (initial_item) goto STARTUP;
+  if (initial_item) {
+    if (menubar && !initial_item->activevisible()) { // pointing at inactive item
+      Fl::grab(0);
+      return NULL;
+    }
+    goto STARTUP;
+  }
 
   // the main loop: runs until p.state goes to DONE_STATE or the menu
   // widget is deleted (e.g. from a timer callback, see STR #3503):
