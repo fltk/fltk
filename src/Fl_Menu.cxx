@@ -841,10 +841,19 @@ int menuwindow::handle_part1(int e) {
     case ' ':
       // if the current item is a submenu with no callback,
       // simulate FL_Right to enter the submenu
-      if (pp.current_item && (!pp.menubar || pp.menu_number > 0) &&
-          pp.current_item->activevisible() && pp.current_item->submenu() && !pp.current_item->callback_)
+      if (   pp.current_item
+          && (!pp.menubar || pp.menu_number > 0)
+          && pp.current_item->activevisible()
+          && pp.current_item->submenu()
+          && !pp.current_item->callback_)
+      {
         goto RIGHT;
-      if (pp.current_item && pp.current_item->activevisible()) pp.state = DONE_STATE;
+      }
+      // Ignore keypresses over inactive items, mark KEYBOARD event as used.
+      if (pp.current_item && !pp.current_item->activevisible())
+        return 1;
+      // Mark the menu 'done' which will trigger the callback
+      pp.state = DONE_STATE;
       return 1;
     case FL_Escape:
       setitem(0, -1, 0);
