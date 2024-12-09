@@ -704,11 +704,13 @@ static int forward(int menu) { // go to next item in menu menu if possible
     menu = 0;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
+  int item0 = item;
   do {
     while (++item < m.numitems) {
       const Fl_Menu_Item* m1 = m.menu->next(item);
       if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
     }
+    if (item0 == -1) break;
     item = -1;
   }
   while (pp.menubar && Fl::event_key() == FL_Right);
@@ -1007,7 +1009,13 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     }
   }
   initial_item = pp.current_item;
-  if (initial_item) goto STARTUP;
+  if (initial_item) {
+    if (menubar && !initial_item->activevisible()) { // pointing at inactive item
+      Fl::grab(0);
+      return NULL;
+    }
+    goto STARTUP;
+  }
 
   // the main loop: runs until p.state goes to DONE_STATE or the menu
   // widget is deleted (e.g. from a timer callback, see STR #3503):
