@@ -1096,11 +1096,13 @@ void Fl_Type::write_comment_c(Fd_Code_Writer& f, const char *pre)
   if (comment() && *comment()) {
     f.write_c("%s/**\n", pre);
     const char *s = comment();
-    f.write_c("%s ", pre);
+    if (*s && *s!='\n')
+      f.write_c("%s ", pre);
     while(*s) {
       if (*s=='\n') {
-        if (s[1]) {
-          f.write_c("\n%s ", pre);
+        f.write_c("\n");
+        if (s[1] && s[1]!='\n') {
+          f.write_c("%s ", pre);
         }
       } else {
         f.write_c("%c", *s); // FIXME this is much too slow!
@@ -1125,17 +1127,20 @@ void Fl_Type::write_comment_inline_c(Fd_Code_Writer& f, const char *pre)
       if (!pre) f.write_c("%s", f.indent_plus(1));
     } else {
       f.write_c("%s/*\n", pre?pre:"");
-      if (pre)
-        f.write_c("%s ", pre);
-      else
-        f.write_c("%s ", f.indent_plus(1));
+      if (*s && *s!='\n') {
+        if (pre)
+          f.write_c("%s ", pre);
+        else
+          f.write_c("%s ", f.indent_plus(1));
+      }
       while(*s) {
         if (*s=='\n') {
-          if (s[1]) {
+          f.write_c("\n");
+          if (s[1] && s[1]!='\n') {
             if (pre)
-              f.write_c("\n%s ", pre);
+              f.write_c("%s ", pre);
             else
-              f.write_c("\n%s ", f.indent_plus(1));
+              f.write_c("%s ", f.indent_plus(1));
           }
         } else {
           f.write_c("%c", *s); // FIXME this is much too slow!
