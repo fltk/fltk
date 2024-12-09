@@ -842,6 +842,7 @@ int menuwindow::handle_part1(int e) {
       if (pp.current_item && (!pp.menubar || pp.menu_number > 0) &&
           pp.current_item->activevisible() && pp.current_item->submenu() && !pp.current_item->callback_)
         goto RIGHT;
+      if (pp.current_item && !pp.current_item->activevisible()) return 0;
       pp.state = DONE_STATE;
       return 1;
     case FL_Escape:
