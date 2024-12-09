@@ -4,40 +4,46 @@
 #
 # There are 3 different modes of operation, dependent on commandline arguments:
 #
-#  (1)	Create snapshot:
+# (1) Create snapshot:
 #
-#	makesrcdist [snapshot]
+#     ./makesrcdist [snapshot]
 #
-#	Use no arguments or "snapshot" (verbatim).
+#     Use no arguments or "snapshot" (verbatim).
 #
-#  (2)	Create distribution tarballs for test and verification:
+# (2) Create distribution tarballs for test and verification:
 #
-#	makesrcdist <version>
+#     ./makesrcdist <version> <doc-dir>
 #
-#	Use a version number as argument, e.g. "1.3.3" or "1.3.4rc2".
-#	This can be used for local testing.
+#     <version> : Use a version number as argument, e.g. "1.3.3" or "1.3.4rc2".
+#     This can be used for local testing.
 #
-#	Note: the release tarballs will be created from the current
-#	'HEAD' revision of your local Git repository.
+#     <doc-dir> : This *MUST* be a CMake build folder where all the
+#     documentation (HTML, PDF, Fluid-HTML, and Fluid-PDF) were built.
+#     The directory name can be relative to the FLTK root or absolute.
 #
-#  (3)	Create distribution tarballs (final):
+#     Note: the release tarballs will be created from the current
+#     'HEAD' revision of your local Git repository. Make sure that
+#     you committed all changes.
 #
-#	makesrcdist <version> tag
+# (3) Create distribution tarballs (final):
 #
-#	Same as (2), but create Git tag with version number.
-#	Enter "tag" (verbatim) as 2nd argument.
-#	This will create the Git tag "release-<version>" for the
-#	current revision in the (local) FLTK Git repository and export the
-#	FLTK sources from this tag for creation of distribution files.
+#     ./makesrcdist <version> <doc-dir> tag
 #
-#	Note: You need to 'git push' the Git tag manually when you
-#	are satisfied with the result. You may use:
-#	  $ git push origin release-<version>
-#	where '<version>' is the version number (argument #1)
+#     Same as (2), but create Git tag with version number.
+#     Enter "tag" (verbatim) as 3rd argument.
+#     This will create the Git tag "release-<version>" for the
+#     current revision in the (local) FLTK Git repository and export the
+#     FLTK sources from this tag for creation of distribution files.
+#
+#     Note: You need to 'git push' the Git tag manually when you
+#     are satisfied with the result. You may use:
+#       $ git push <origin> release-<version>
+#     where <origin> is your remote repository, e.g. "origin" or "upstream"
+#     and <version> is the version number (argument #1)
 #
 # Note: define FLTK_TAR if you want to use a different compatible tar
-#	command than "tar", e.g. to use "gtar" (bash syntax):
-#	$ export FLTK_TAR="gtar"
+# command than "tar", e.g. to use "gtar" (bash syntax):
+#   $ export FLTK_TAR="gtar"
 #
 
 TAR="tar"
@@ -45,18 +51,31 @@ if test "x$FLTK_TAR" != "x"; then
   TAR="$FLTK_TAR"
 fi
 
-# These are the release and snapshot download URL's currently in use:
+# Default version numbers from commandline, overwritten later for snapshots
+version="$1"
+fileversion="$1"
 
-DOWNLOAD='https://www.fltk.org/pub/fltk'
+# Set DOC_DIR for full source distribution with documentation.
+# This is not used for snapshots, see comments above.
+
+DOC_DIR="$2"
+
+# These are the release and snapshot download URL's currently in use.
+# The 'DOWNLOAD' URL is on GitHub since FLTK 1.4.1,
+# the 'SNAPSHOT' URL is on fltk.org.
+
+DOWNLOAD="https://github.com/fltk/fltk/releases/download" # /release-$1/fltk-$1-source.tar.gz
 SNAPSHOT='https://www.fltk.org/pub/fltk/snapshots'
 
 DATE="`date +'%Y%m%d'`"
 
 GIT_REVISION=$(git rev-parse HEAD)
+     git_rev=$(git rev-parse --short=12 HEAD)
 
 # VS = short version number ('major.minor'), for instance '1.4'.
 # Note: VS is used only for snapshot generation
 # fltk_version = full version number w/o 'rcN' (from file fltk_version.dat)
+# git_rev = short Git revision (12 chars)
 
 fltk_version="`cat fltk_version.dat`"
 VS="`echo $fltk_version | cut -f 1-2 -d '.'`"
@@ -64,62 +83,104 @@ VS="`echo $fltk_version | cut -f 1-2 -d '.'`"
 echo "Getting distribution..."
 
 if test $# = 0 -o "x$1" = "xsnapshot"; then
-	echo Getting snapshot revision...
-	rev="`git rev-parse --short=8 HEAD`"
-	version="${VS}-${rev}"
-	fileversion="${VS}.x-${DATE}-$rev"
-	fileurl="$SNAPSHOT/fltk-$fileversion.tar.gz"
+  echo Getting snapshot revision...
+  version="${VS}-${git_rev}"
+  fileversion="${VS}.x-${DATE}-$git_rev"
+  fileurl="$SNAPSHOT/fltk-$fileversion.tar.gz"
 else
-	if test ! -e "documentation/html/"; then
-		echo "ERROR: Please generate the HTML documentation before distributing:"
-		echo "  autoconf"
-		echo "  ./configure"
-		echo "  cd documentation; make dist"
-		exit
-	fi
-	if test ! -e "documentation/fltk.pdf"; then
-		echo "ERROR: Please generate the PDF documentation before distributing:"
-		echo "  autoconf"
-		echo "  ./configure"
-		echo "  cd documentation; make dist"
-		exit
-	fi
-	rev="1"
-	version=$1
-	fileversion=$1
-	fileurl="$DOWNLOAD/$version/fltk-$fileversion-source.tar.gz"
+  # DOC_DIR must be specified
+  if test $# = 1 ; then
+    echo "ERROR: doc-dir (2nd argument) must be specified"
+    exit
+  fi
+  # DOC_DIR must be a CMake build folder
+  if test ! -f $DOC_DIR/CMakeCache.txt ; then
+    echo "ERROR: doc-dir (2nd argument) must be a CMake build folder."
+    echo "Please generate all docs in this CMake build before distributing:"
+    echo "  cd $DOC_DIR"
+    echo "  make|ninja html pdf fluid_docs fluid_pdf"
+    exit
+  fi
+  if test ! -e "$DOC_DIR/documentation/html/"; then
+    echo "ERROR: Please generate the HTML documentation before distributing:"
+    echo "  cd $DOC_DIR"
+    echo "  make|ninja html pdf fluid_docs fluid_pdf"
+    exit
+  fi
+  if test ! -e "$DOC_DIR/documentation/fltk.pdf"; then
+    echo "ERROR: Please generate the PDF documentation before distributing:"
+    echo "  cd $DOC_DIR"
+    echo "  make|ninja pdf fluid_docs fluid_pdf"
+    exit
+  fi
+  if test ! -e "$DOC_DIR/fluid/documentation/fluid.pdf"; then
+    echo "ERROR: Please generate the fluid documentation before distributing:"
+    echo "  cd $DOC_DIR"
+    echo "  ninja fluid_docs fluid_pdf"
+    exit
+  fi
 
-	if test "x$2" = "xtag"; then
-		echo "Creating Git tag 'release-$version' ..."
-		git tag -a -m "Release $version" release-$version || exit 1
-	fi
+  fileurl="$DOWNLOAD/release-$version/fltk-$fileversion-source.tar.gz"
+
+  if test "x$3" = "xtag"; then
+    echo "Creating Git tag 'release-$version' ..."
+    git tag -a -m "Release $version" release-$version || exit 1
+  fi
 fi
 
-# Debug:
-# echo "fltk_version = $fltk_version"
-# echo "version      = $version"
-# echo "fileversion  = $fileversion"
-# echo "fileurl      = $fileurl"
+# where to build the distribution tarballs and other files:
 
-echo Exporting $fltk_version to /tmp/fltk-$version/...
+TEMP_DIR="/tmp/fltk-$version"
+
+# subdirectory of $TEMP_DIR for documentation in their tarballs
+#
+# This resembles the directory structure of releases where documentation
+# would likely be installed in "/usr/share/doc/fltk".
+
+DOC_TEMPDIR="share/doc/fltk"
+
+# Debug:
+### echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+### echo "fltk_version = $fltk_version"
+### echo "version      = $version"
+### echo "fileversion  = $fileversion"
+### echo "fileurl      = $fileurl"
+### echo "GIT_REVISION = $GIT_REVISION"
+### echo "git_rev      = $git_rev"
+### echo "TEMP_DIR     = $TEMP_DIR"
+### echo "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+
+echo Exporting $fltk_version to $TEMP_DIR/...
 rm -rf /tmp/fltk-$version
 mkdir /tmp/fltk-$version
 git archive --format=tar HEAD | $TAR -C /tmp/fltk-$version -x --
 
 if test $# != 0 -a "x$1" != "xsnapshot"; then
-	echo "Copying HTML and PDF documentation..."
-	cp -r documentation/html /tmp/fltk-$version/documentation/
-	cp documentation/fltk.pdf /tmp/fltk-$version/documentation/
+
+  mkdir -p $TEMP_DIR/$DOC_TEMPDIR/fluid
+
+  echo "Copying HTML and PDF documentation..."
+  cp -r $DOC_DIR/documentation/html $TEMP_DIR/$DOC_TEMPDIR/
+  cp $DOC_DIR/documentation/fltk.pdf $TEMP_DIR/$DOC_TEMPDIR/
+
+  echo "Copying FLUID HTML and PDF documentation..."
+  cp -r $DOC_DIR/fluid/documentation/html $TEMP_DIR/$DOC_TEMPDIR/fluid/
+  cp $DOC_DIR/fluid/documentation/fluid.pdf $TEMP_DIR/$DOC_TEMPDIR/
 fi
 
 echo Applying version number...
 cd /tmp/fltk-$version
 
-sed -e '1,$s/@VERSION@/'$version'/' \
-	-e '1,$s/@RELEASE@/'$rev'/' \
-	-e '1,$s#^Source:.*#Source: '$fileurl'#' \
-	<fltk.spec.in >fltk.spec
+sed -e '1,$s/@FLTK_VERSION@/'$version'/' \
+    -e '1,$s#^Source:.*#Source: '$fileurl'#' \
+    <fltk.spec.in >fltk.spec
 
+# Debug:
+### echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+### echo "$ egrep --color -1 'Source:|$version|$git_rev' fltk.spec"
+### echo "··································································"
+### egrep --color -1 "Source:|$version|$git_rev" fltk.spec
+### echo "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 
 # Write git revision file with full git revision
 # which will be stored in the distribution tarball
@@ -136,16 +197,25 @@ rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
 cd ..
 
 if test $# != 0 -a "x$1" != "xsnapshot"; then
-	echo "Making HTML docs distribution..."
-	$TAR czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
+  echo "Making HTML docs distribution..."
+  $TAR czf fltk-$fileversion-docs-html.tar.gz fltk-$version/$DOC_TEMPDIR/html/
 
-	echo "Making PDF docs distribution..."
-	$TAR czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
+  echo "Making PDF docs distribution..."
+  $TAR czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/$DOC_TEMPDIR/fltk.pdf
+
+  echo "Making Fluid HTML docs distribution..."
+  $TAR czf fltk-$fileversion-fluid-docs-html.tar.gz fltk-$version/$DOC_TEMPDIR/fluid/html/
+
+  echo "Making Fluid PDF docs distribution..."
+  $TAR czf fltk-$fileversion-fluid-docs-pdf.tar.gz fltk-$version/$DOC_TEMPDIR/fluid.pdf
+
 fi
 
 echo "Removing documentation..."
 rm -rf fltk-$version/documentation/html/
 rm -f fltk-$version/documentation/fltk.pdf
+rm -rf fltk-$version/fluid-documentation/html/
+rm -f fltk-$version/fluid-documentation/fltk.pdf
 
 echo "Making UNIX (.tar.gz) distribution..."
 $TAR czf fltk-$fileversion-source.tar.gz fltk-$version
@@ -161,33 +231,74 @@ echo "Removing distribution directory..."
 
 rm -rf fltk-$version
 
-# Create MD5 sums
+# Create releases.txt and sha256sums.txt
 
-out="`pwd`/fltk-$fileversion-md5sums.txt"
-echo "Creating MD5 sums in $out"
-rm -f $out
-touch $out
+OUT="`pwd`/fltk-$fileversion-releases.txt"
+SHA="`pwd`/fltk-$fileversion-sha256sums.txt"
 
-# make sure the order is source - html - pdf
+echo
+echo "Creating Release Info in $OUT and $SHA"
 
-for f in source docs-html docs-pdf; do
-  if [ -f fltk-$fileversion-$f.tar.bz2 ] ; then
-    md5sum fltk-$fileversion-$f.tar.bz2 >> $out
-  fi
-  if [ -f fltk-$fileversion-$f.tar.gz ] ; then
-    md5sum fltk-$fileversion-$f.tar.gz >> $out
-  fi
+echo "" > $OUT
+echo "github $fltk_version $fileversion" >> $OUT
+echo "" >> $OUT
+rm -f $SHA
+touch $SHA
+
+# make sure the order is source, html, pdf, fluid-html, fluid-pdf and gz, bz2
+
+for f in source docs-html docs-pdf fluid-docs-html fluid-docs-pdf; do
+  for t in gz bz2; do
+    FILE="fltk-$fileversion-$f.tar.$t"
+    if [ -f $FILE ] ; then
+
+      # (a) releases file:
+      MD5=`md5sum $FILE | cut -f1 -d' '`
+      SIZ=`wc -c  $FILE | cut -f1 -d' '`
+      echo "$MD5 $FILE $SIZ" >> $OUT
+
+      # (b) sha256sum file
+      sha256sum $FILE >> $SHA
+    fi
+  done
 done
 
-sed -e"s#  # $fltk_version fltk/$fltk_version/#" -i $out
+# finally add the sha256sum file (after it is complete) to the releases file
 
-if test "x$2" = "xtag"; then
-	echo ""
-	echo "Don't forget to push the Git tag"
-	echo "(assuming your remote Git repository is 'origin'):"
-	echo ""
-	echo "Use: \$ git push origin release-$version"
-	echo ""
+FILE="fltk-$fileversion-sha256sums.txt"
+MD5=`md5sum $FILE | cut -f1 -d' '`
+SIZ=`wc -c  $FILE | cut -f1 -d' '`
+echo "$MD5 $FILE $SIZ" >> $OUT
+
+echo
+echo "Done!"
+echo
+echo "================================================================================"
+echo
+echo "$OUT:"
+echo
+echo "--- copy the contents of this file to the top of data/releases.dat:"
+cat $OUT
+echo "--- end of file ---"
+
+echo
+echo "$SHA:"
+echo
+cat $SHA
+
+if test "x$3" = "xtag"; then
+  echo
+  echo "================================================================================"
+  echo "Don't forget to push the Git tag if the result is OK"
+  echo "(assuming your remote Git repository is 'origin'):"
+  echo
+  echo "Use: \$ git push origin release-$version"
+  echo
+  echo "If test results are not OK you can delete the tag before pushing:"
+  echo
+  echo "$ git tag -d release-$version"
 fi
 
-echo "Done!"
+echo
+echo "================================================================================"
+echo
