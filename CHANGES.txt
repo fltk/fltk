@@ -1,3 +1,14 @@
+Changes in FLTK 1.4.1                                   Released: Dec xx 2024
+
+  FLTK 1.4.1 is a maintenance release with bug fixes and improvements.
+
+  Changes yet to be filled in:
+
+WIP: the list of changes can be created by ...
+WIP: $ git shortlog release-1.4.0.. | sed -e's/ ([0-9]*):/:/' | sed -e's/^      /- /'
+WIP: then reformat the list and remove these instructions.
+
+
 Changes in FLTK 1.4.0                                   Released: Nov 17 2024
 
   Bug Fixes:

@@ -36,7 +36,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # define the FLTK project and version
 #######################################################################
 
-project(FLTK VERSION 1.4.0)
+project(FLTK VERSION 1.4.1)
 
 #######################################################################
 # include macro and function definitions for general usage
@@ -105,8 +105,8 @@ unset(debug_build)
 
 #######################################################################
 # Build a dummy ("empty") Cairo library for backwards compatibility.
-# This should be removed some time after 1.4.0 was released, maybe
-# in FLTK 1.4.1, 1.4.2, 1.5.0, or whatever the next minor release is.
+# This should be removed in the next minor release after 1.4.x, likely
+# in FLTK 1.5.0.
 #######################################################################
 
 if(FLTK_HAVE_CAIRO)

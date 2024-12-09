@@ -60,7 +60,7 @@ Newer mice add even more buttons, called "side buttons":
   - a "back" button, typically used to "go back", e.g. in browsers
   - a "forward" button, typically used to "go forward", e.g. in browsers
 
-FLTK handles up to five buttons since version 1.4.0 across all supported
+FLTK handles up to five buttons since version 1.3.10 across all supported
 platforms. Note that Windows doesn't support more than five buttons
 whereas other platforms may support more. FLTK ignores other buttons as
 long as they send "mouse button" events.

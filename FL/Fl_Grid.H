@@ -98,7 +98,7 @@ const Fl_Grid_Align  FL_GRID_BOTTOM_RIGHT    =  FL_GRID_BOTTOM |  FL_GRID_RIGHT;
   Fl_Group::resizable() widget is ignored (if set). Calling init_sizes()
   is not necessary.
 
-  \note Fl_Grid is, as of FLTK 1.4.0, still in experimental state and
+  \note Fl_Grid is, as of FLTK 1.4.1, still in experimental state and
     should be used with caution. The API can still be changed although it is
     assumed to be almost stable - as stable as possible for a first release.
 

@@ -21,7 +21,7 @@ AC_PREREQ([2.50])
 
 
 dnl Package name and version
-AC_INIT([fltk], [1.4.0], [https://github.com/fltk/fltk/issues], [fltk], [https://www.fltk.org/])
+AC_INIT([fltk], [1.4.1], [https://github.com/fltk/fltk/issues], [fltk], [https://www.fltk.org/])
 
 FLTK_VERSION="AC_PACKAGE_VERSION"
 FLTK_VERSION_MAJOR=$(echo AC_PACKAGE_VERSION | awk -F. '{print $1}')
