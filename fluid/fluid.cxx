@@ -168,6 +168,9 @@ int compile_file = 0;           // fluid -c
 /// Set, if Fluid was started with the command line argument -cs
 int compile_strings = 0;        // fluid -cs
 
+/// Set, if Fluid was started with the command line argument -v
+int show_version = 0;        // fluid -v
+
 /// Set, if Fluid runs in batch mode, and no user interface is activated.
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
@@ -2113,6 +2116,10 @@ static int arg(int argc, char** argv, int& i) {
     batch_mode++;
     i++; return 1;
   }
+  if (argv[i][1] == 'v' && !argv[i][2]) {
+    show_version = 1;
+    i++; return 1;
+  }
   if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {
     compile_file++;
     compile_strings++;
@@ -2204,6 +2211,7 @@ int main(int argc,char **argv) {
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
+      " -v : print FLUID version number\n"
       " -d : enable internal debugging\n";
     const char *app_name = NULL;
     if ( (argc > 0) && argv[0] && argv[0][0] )
@@ -2216,6 +2224,10 @@ int main(int argc,char **argv) {
     fprintf(stderr, msg, app_name);
 #endif
     return 1;
+  }
+  if (show_version) {
+    printf("FLUID version %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+    ::exit(0);
   }
 
   const char *c = NULL;
