@@ -1,12 +1,82 @@
-Changes in FLTK 1.4.1                                   Released: Dec xx 2024
+Changes in FLTK 1.4.1                                   Released: Dec 12 2024
 
   FLTK 1.4.1 is a maintenance release with bug fixes and improvements.
 
-  Changes yet to be filled in:
+  Bug Fixes
 
-WIP: the list of changes can be created by ...
-WIP: $ git shortlog release-1.4.0.. | sed -e's/ ([0-9]*):/:/' | sed -e's/^      /- /'
-WIP: then reformat the list and remove these instructions.
+  - Fix rounding issues with Fl_RGB_Image::draw() + window scaling (#1128)
+  - Fix fullscreen regression on macOS( #1129)
+  - Fix fl_draw_image sometimes crashes when window is scaled (#1134)
+  - Fix: Can't control scale of Fl_Copy_Surface dimensions on Linux (#1135)
+  - Improve output of 'fltk-options -h' and 'fltk-options -L*'
+  - Windows: Fix rescale bug while window is maximized or fullscreen
+  - Fix graphical glitches on 101 DPI screen (#1138)
+  - Fix changed flag for radio buttons (#1146)
+  - Fix Fl_Scroll with real *_BOX draws over scrollbars at non-default scales (#1149)
+  - Fix drawing bugs on Windows at very large scales (#1144)
+  - Fix button down state when triggered by shortcut (#1145)
+  - Give access to some Fl_Text_Display member variables (#1153)
+  - Fix: Mouse hover + Enter key selects inactive menu items (#1159)
+  - Fix hang/infinite loop on submenu with all inactive/invisible items (#1158)
+  - Fix triggering callback for inactive menu items (#1159)
+  - Fix inconsistencies with Tab/Backspace handling in menus (#1157)
+  - Fix Fl_Menu_Item::measure() width calculation (#1164)
+  - Fix drawing issue for checkbox buttons with bad box type (#1130)
+  - Fix: Window can be moved while menu is open (#1166)
+
+  Image libraries
+
+  - Update bundled libpng to version 1.6.44
+
+  Fixes and Improvements in Fluid:
+
+  - Fix autodocs file leak and memory leak
+  - Fix autodoc image memory allocation
+  - Fix project modflags when adding shell commands
+  - Avoid generating undo on spurious relayout events (#1152)
+  - Minor improvements to buffer handling (#1152)
+  - Clear cached browser values and cached pointers (#1152)
+  - Fix default settings tab
+  - Avoid trailing spaces in empty comment lines (#1161)
+  - Command line arguments '-v' and '--version' show fltk version
+  - Command line argument '--help' shows brief usage information
+
+  Optional ABI changes: these require configure or CMake option
+    to define FL_ABI_VERSION = 10401
+
+  - Increase clipping stack size from 10 to 64 entries (#1139)
+  - Fix potential (likely false positive) compiler warning in Fl_Help_View
+
+  Documentation Improvements
+
+  - Update build instructions in README.Unix.txt (#67)
+  - Update README.Windows.txt
+  - Update README.CMake.txt for cross-building (#1154)
+  - Document that fl_scroll() doesn't work OK with non-integral scaling factors
+  - Add details about fl_override_scale() and clip
+  - Clarify use of Fl_Tabs::client_area()
+  - Fix Makefile example in chapter "FLTK Basics"
+
+  Improvements and minor Fixes in Test and Demo Programs
+
+  - MSVC: Fix array allocation in test/fltk-versions (#1131)
+  - Enable building the CubeView demo w/o requiring '<config.h>'
+  - Use a constant frame rate (25 fps) in test/cube demo
+  - Add comment linking source code to related information in issue #1149
+  - Improve timer statistics in test/cube demo
+  - glpuzzle: fix timer and trackball max speed, make smoother animation at 72fps
+
+  Technical Details and Build Procedure Improvements
+
+  - Fix FL_EXPORT qualifiers
+  - Fix compiler warnings
+  - Remove unnecessary friend declaration
+  - Restore building with configure --disable-print (#1147)
+  - macOS: Improve procedure to construct best link command
+  - Fix: Building with FLTK_BUILD_GL=0 fails on systems without opengl installed (#1151)
+  - Don't link to libgtk when using package libdecor-0-dev
+  - Update makesrcdist for releases on GitHub (1.4.1 and higher)
+  - Update CHANGES.txt for release 1.4.1
 
 
 Changes in FLTK 1.4.0                                   Released: Nov 17 2024
