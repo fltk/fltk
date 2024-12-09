@@ -1002,7 +1002,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   pp.current_item = 0; pp.menu_number = 0; pp.item_number = -1;
   if (menubar) {
     // find the initial menu
-    if (!mw.handle(FL_DRAG)) {
+    if (!mw.handle(FL_DRAG) || (pp.current_item && !pp.current_item->activevisible())) {
       Fl::grab(0);
       return 0;
     }
