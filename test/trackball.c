@@ -66,7 +66,7 @@
  */
 static float tb_project_to_sphere(float, float, float);
 static void normalize_quat(float [4]);
-static float max_velocity = 0.1;
+static float max_velocity = 0.1f;
 
 void
 vzero(float *v)

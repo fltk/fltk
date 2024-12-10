@@ -1609,7 +1609,7 @@ content  key    keyboard layout
             } else {
               Fl::e_text = ( (Fl::e_state & FL_SHIFT) ? plus_other_char_utf8 : (char*)"+" );
             }
-            Fl::e_length = strlen(Fl::e_text);
+            Fl::e_length = (int)strlen(Fl::e_text);
           }
         }
         // end of processing of the +-containing key

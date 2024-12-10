@@ -154,7 +154,7 @@ int Fl_PDF_GDI_File_Surface::begin_job(const char *defaultfname, char **perr_mes
   char *buffer = new char[count];
   DEVMODEA *pDevMode = (DEVMODEA*)buffer;
   memset(buffer, 0, count);
-  pDevMode->dmSize = count;
+  pDevMode->dmSize = (WORD)count;
   count = DocumentPropertiesA(hwndOwner, hPr2, pdf_printer_name_, pDevMode, NULL, DM_OUT_BUFFER | DM_IN_PROMPT);
   ClosePrinter(hPr2);
   if (count == IDCANCEL || count < 0) { delete[] buffer; return 1; }
@@ -171,7 +171,7 @@ int Fl_PDF_GDI_File_Surface::begin_job(const char *defaultfname, char **perr_mes
   wchar_t        docName [256];
   wchar_t        outName [256];
   fl_utf8towc("FLTK", 4, docName, 256);
-  fl_utf8towc(fnfc.filename(), strlen(fnfc.filename()), outName, 256);
+  fl_utf8towc(fnfc.filename(), (unsigned int)strlen(fnfc.filename()), outName, 256);
   memset(&di, 0, sizeof(DOCINFOW));
   di.cbSize = sizeof(DOCINFOW);
   di.lpszDocName = (LPCWSTR)docName;
@@ -231,7 +231,7 @@ int Fl_PDF_GDI_File_Surface::begin_document(const char* outfname,
   di.cbSize = sizeof(DOCINFOW);
   di.lpszDocName = (LPCWSTR)docName;
   di.lpszOutput = (LPCWSTR)outName;
-  fl_utf8towc(outfname, strlen(outfname), outName, 256);
+  fl_utf8towc(outfname, (unsigned int)strlen(outfname), outName, 256);
   err = StartDocW(hPr, &di);
   if (err <= 0) {
     DWORD dw = GetLastError();
