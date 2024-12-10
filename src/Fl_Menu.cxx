@@ -266,7 +266,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   int w = 0; int h = 0;
   l.measure(w, hp ? *hp : h);
   fl_draw_shortcut = 0;
-  if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += FL_NORMAL_SIZE;
+  if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += FL_NORMAL_SIZE + 4;
   return w;
 }
 
