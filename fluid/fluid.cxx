@@ -694,6 +694,8 @@ int exit_early = 0;
 int update_file = 0;		// fluid -u
 int compile_file = 0;		// fluid -c
 int compile_strings = 0;	// fluic -cs
+int show_version = 0; // fluid --version
+int show_usage = 0; // fluid --help
 int batch_mode = 0;		// if set (-c, -u) don't open display
 int header_file_set = 0;
 int code_file_set = 0;
@@ -1721,10 +1723,21 @@ void set_modflag(int mf) {
 ////////////////////////////////////////////////////////////////
 
 static int arg(int argc, char** argv, int& i) {
+  if (argv[i][0] != '-') return 0;
   if (argv[i][1] == 'd' && !argv[i][2]) {G_debug=1; i++; return 1;}
   if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_file++; compile_strings++; batch_mode++; i++; return 1;}
+  if ((strcmp(argv[i], "-v")==0) || (strcmp(argv[i], "--version")==0)) {
+    show_version = 1;
+    exit_early = 1;
+    i++; return 1;
+  }
+  if (strcmp(argv[i], "--help")==0) {
+    show_usage = 1;
+    exit_early = 1;
+    i++; return 1;
+  }
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
     code_file_name = argv[i+1];
     code_file_set  = 1;
@@ -1744,6 +1757,8 @@ static int arg(int argc, char** argv, int& i) {
     int r = pi->arg(argc, argv, i);
     if (r) return r;
   }
+  show_usage = 1;
+  exit_early = 1;
   return 0;
 }
 
@@ -1772,14 +1787,16 @@ static void sigint(SIGARG) {
 int main(int argc,char **argv) {
   int i = 1;
   
-  if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
-    static const char *msg = 
+  if (!Fl::args(argc,argv,i,arg) || i < argc-1 || show_usage) {
+    static const char *msg =
       "usage: %s <switches> name.fl\n"
       " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"
       " -c : write .cxx and .h and exit\n"
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
+      " --help : brief usage information\n"
+      " --version, -v : print fluid version number\n"
       " -d : enable internal debugging\n";
     int len = (int)(strlen(msg) + strlen(argv[0]) + strlen(Fl::help));
     Fl_Plugin_Manager pm("commandline");
@@ -1802,6 +1819,9 @@ int main(int argc,char **argv) {
 #endif
     free(buf);
     return 1;
+  }
+  if (show_version) {
+    printf("fluid v%d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
   }
   if (exit_early)
     exit(0);
