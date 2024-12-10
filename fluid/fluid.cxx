@@ -2116,7 +2116,7 @@ static int arg(int argc, char** argv, int& i) {
     batch_mode++;
     i++; return 1;
   }
-  if (argv[i][1] == 'v' && !argv[i][2]) {
+  if ((strcmp(argv[i], "-v")==0) || (strcmp(argv[i], "--version")==0)) {
     show_version = 1;
     i++; return 1;
   }
@@ -2137,6 +2137,9 @@ static int arg(int argc, char** argv, int& i) {
     i += 2; return 2;
   }
 #endif
+  if (strcmp(argv[i], "--help")==0) {
+    return 0;
+  }
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
       g_header_filename_arg = argv[i+1];
@@ -2211,7 +2214,8 @@ int main(int argc,char **argv) {
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
-      " -v : print FLUID version number\n"
+      " --help : brief usage information\n"
+      " --version, -v : print fluid version number\n"
       " -d : enable internal debugging\n";
     const char *app_name = NULL;
     if ( (argc > 0) && argv[0] && argv[0][0] )
@@ -2219,6 +2223,7 @@ int main(int argc,char **argv) {
     if ( !app_name || !app_name[0])
       app_name = "fluid";
 #ifdef _MSC_VER
+    // TODO: if this is fluid-cmd, use stderr and not fl_message
     fl_message(msg, app_name);
 #else
     fprintf(stderr, msg, app_name);
@@ -2226,7 +2231,7 @@ int main(int argc,char **argv) {
     return 1;
   }
   if (show_version) {
-    printf("FLUID version %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+    printf("fluid v%d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
     ::exit(0);
   }
 
