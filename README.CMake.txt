@@ -15,6 +15,7 @@ README.CMake.txt - Building and using FLTK with CMake
     2.2.2  FLTK Specific Configuration Options
     2.2.3  Documentation Options
     2.2.4  Special Options
+    2.2.5  Other CMake Cache Variables
     2.3    Building FLTK with CMake (all Platforms)
     2.4    Building under Linux with Unix Makefiles
     2.5    Building under Windows with Visual Studio and/or NMake
@@ -351,6 +352,49 @@ FLTK_INSTALL_LINKS - default OFF
     include statements (for case sensitive file systems only).
     You should not use this option, please fix the sources instead for
     better cross-platform compatibility.
+
+
+ 2.2.5  Other CMake Cache Variables
+------------------------------------
+
+The following CMake cache variables can be used to view their computed values
+in the CMake cache or to change the build behavior in special cases. To view
+the variables
+
+ - use `cmake -LA` or
+ - use `cmake-gui` (switch 'Advanced' view ON) or
+ - use `ccmake` (hit 't' to "Toggle advanced mode")
+ - search the CMake cache 'CMakeCache.txt' with your favorite tool.
+
+Use either the `cmake` commandline, `cmake-gui`, or `ccmake` to change these
+variables if needed.
+
+CMake cache variables can also be preset using a toolchain file (see below)
+and on the commandline.
+
+
+FLTK_FLUID_EXECUTABLE - default = fltk::fluid (see exceptions below)
+
+    This represents the `fluid` executable or CMake target that is used
+    to "compile" fluid `.fl` files to source (.cxx) and header (.h) files.
+
+    The default `fltk::fluid` is used when `fluid` is built and not
+    cross-compiled, i.e. the fluid executable that is built can be used.
+    On Windows and macOS `fltk::fluid-cmd` (the console program) is used
+    instead.
+
+    When cross-compiling this variable should be a compatible `fluid`
+    executable on the build host. For details see chapter 2.9.
+
+FLTK_FLUID_HOST - default = fluid executable on the build host
+
+    This variable is used if `fluid` is not built (FLTK_BUILD_FLUID=OFF)
+    or if cross-compiling. It can be preset by the CMake commandline to
+    point the build at a compatible `fluid` executable.
+
+FLUID_PATH - obsolete (FLTK 1.3.x): predecessor of FLTK_FLUID_HOST
+
+    This variable can safely be deleted from the CMake cache if it exists.
 
 
  2.3  Building FLTK with CMake (all Platforms)
@@ -690,7 +734,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_FIND_ROOT_PATH}/usr CACHE FILEPATH
    "install path prefix")
 
-# initialize required linker flags
+# initialize required linker flags to build compatible Windows programs
 set(CMAKE_EXE_LINKER_FLAGS_INIT "-static-libgcc -static-libstdc++")
 
 # end of toolchain file
@@ -698,18 +742,32 @@ set(CMAKE_EXE_LINKER_FLAGS_INIT "-static-libgcc -static-libstdc++")
 
 Not too tough. The other thing you need is a native installation of FLTK
 on your build platform. This is to supply the fluid executable which will
-compile the *.fl into C++ source and header files.
+compile the *.fl into C++ source and header files. This is only needed if
+the test/* and/or example/* demo programs are built.
 
-So, again from the FLTK tree root.
+CMake finds the fluid executable on the build host automatically when
+cross-compiling if it exists and is in the user's PATH. On systems that
+provide multiple fluid versions (e.g. 1.3.x and 1.4.x) or if only an older
+version is installed (e.g. 1.3.x) you can set the variable `FLTK_FLUID_HOST`
+on the cmake commandline like
 
-    mkdir mingw
-    cd mingw
-    cmake -DCMAKE_TOOLCHAIN_FILE=~/projects/toolchain/Toolchain-mingw32.cmake ..
-    make
-    sudo make install
+    cmake -B mingw -S . [ -G "Ninja" ] \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D CMAKE_TOOLCHAIN_FILE=<toolchain-file> \
+      -D FLTK_FLUID_HOST=/path/to/fluid [.. more parameters ..]
 
-IMPORTANT: The trailing ".." on the cmake command must be specified
-(it is NOT an ellipsis).                          ^^^^^^^^^^^^^^^^^
+Note: replace '-G "Ninja" ' with the build tool of your choice or omit this
+argument to use the default generator of your platform.
+
+Theoretically the variable FLTK_FLUID_HOST can also be set in a toolchain
+file. This has been tested successfully but is not recommended because the
+toolchain file should be independent of the project using it.
+
+After generating the build system (above), build and optionally install the
+library:
+
+    cmake --build mingw
+    [sudo] cmake --install mingw  # optional
 
 This will create a default configuration FLTK suitable for mingw/msys and
 install it in the /usr/x86_64-w64-mingw32/usr tree.
