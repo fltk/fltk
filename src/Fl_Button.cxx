@@ -122,7 +122,8 @@ int Fl_Button::handle(int event) {
       if (newval != value_) {
         value_ = newval;
         set_changed();
-        redraw();
+        if (box() && (fl_box(box())==box())) redraw();
+        else redraw_label();
         if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
       }
       return 1;
@@ -163,7 +164,10 @@ int Fl_Button::handle(int event) {
           int X = x() > 0 ? x() - 1 : 0;
           int Y = y() > 0 ? y() - 1 : 0;
           if (window()) window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
-        } else redraw();
+        } else {
+          if (box() && (fl_box(box())==box())) redraw();
+          else redraw_label();
+        }
         return 1;
       } else return 0;
       /* NOTREACHED */
