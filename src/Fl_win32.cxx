@@ -1398,6 +1398,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         break;
 
       case WM_SETFOCUS:
+        if (Fl::grab() && (Fl::grab() != window) && Fl::grab()->menu_window()) {
+          // simulate click at remote location (see issue #1166)
+          mouse_event(Fl::grab(), 0, 1, MK_LBUTTON, MAKELPARAM(100000, 0));
+          return 0;
+        }
         if ((Fl::modal_) && (Fl::modal_ != window)) {
           SetFocus(fl_xid(Fl::modal_));
           return 0;
