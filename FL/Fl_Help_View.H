@@ -3,7 +3,7 @@
 //
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
-// Copyright 2011-2022 by Bill Spitzak and others.
+// Copyright 2011-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -225,7 +225,12 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
                 atargets_;              ///< Allocated targets
   Fl_Help_Target *targets_;             ///< Targets
 
+#if FL_ABI_VERSION >= 10401
   char          directory_[2 * FL_PATH_MAX + 15]; ///< Directory for current file
+#else
+  char          directory_[FL_PATH_MAX]; ///< Directory for current file
+#endif
+
   char          filename_[FL_PATH_MAX]; ///< Current filename
   int           topline_,               ///< Top line in document
                 leftline_,              ///< Lefthand position
