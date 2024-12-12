@@ -169,10 +169,17 @@ if(WIN32)
     endif()
     set(BORDER_WIDTH 2)
   endif(MSVC)
-  if(MINGW AND EXISTS /mingw)
-    list(APPEND CMAKE_PREFIX_PATH /mingw)
+
+ if(MINGW AND EXISTS /mingw)
+    if(DEFINED ENV{MSYSTEM} AND $ENV{MSYSTEM} STREQUAL "UCRT64") # UCRT64
+      list(APPEND CMAKE_PREFIX_PATH "$ENV{UCRT64}")
+    else()
+     list(APPEND CMAKE_PREFIX_PATH /mingw)
+    endif() # UCRT64
   endif(MINGW AND EXISTS /mingw)
-endif(WIN32)
+
+
+  endif(WIN32)
 
 #######################################################################
 # size of ints
