@@ -172,7 +172,6 @@ if(WIN32)
 
  if(MINGW AND EXISTS /mingw)
     if(DEFINED ENV{MSYSTEM} AND $ENV{MSYSTEM} STREQUAL "UCRT64") # UCRT64
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32") # suppress compiler warnings
       list(APPEND CMAKE_PREFIX_PATH "$ENV{UCRT64}")
     else()
      list(APPEND CMAKE_PREFIX_PATH /mingw)
