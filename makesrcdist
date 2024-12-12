@@ -212,10 +212,7 @@ if test $# != 0 -a "x$1" != "xsnapshot"; then
 fi
 
 echo "Removing documentation..."
-rm -rf fltk-$version/documentation/html/
-rm -f fltk-$version/documentation/fltk.pdf
-rm -rf fltk-$version/fluid-documentation/html/
-rm -f fltk-$version/fluid-documentation/fltk.pdf
+rm -rf fltk-$version/$DOC_TEMPDIR
 
 echo "Making UNIX (.tar.gz) distribution..."
 $TAR czf fltk-$fileversion-source.tar.gz fltk-$version
