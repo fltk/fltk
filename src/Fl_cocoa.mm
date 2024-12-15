@@ -2630,6 +2630,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 - (void)keyUp:(NSEvent *)theEvent {
   //NSLog(@"keyUp:%@",[theEvent characters]);
+  if (![[theEvent window] isKindOfClass:[FLWindow class]]) // issue #1170
+    return [super keyUp:theEvent];
   fl_lock_function();
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
