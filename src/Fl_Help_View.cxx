@@ -1052,6 +1052,27 @@ Fl_Help_View::draw()
   fl_pop_clip();
 } // draw()
 
+// In an html style text, set the character pointer p, skipping anything from a
+// leading '<' up to and including the closing '>'. If the end of the buffer is
+// reached, the function returns `end`.
+// No need to handle UTF-8 here.
+//
+// \param[in] p pointer to html text, UTF-8 characters possible
+// \param[in] end pointer to the end of the text (need nut be NUL)
+// \return new pointer to text after skipping over '<...>' blocks, or `end`
+//    if NUL was found or a '<...>' block was not closed.
+static const char *vanilla(const char *p, const char *end) {
+  if (*p == '\0' || p >= end) return end;
+  for (;;) {
+    if (*p != '<') {
+      return p;
+    } else {
+      while (*p && p < end && *p != '>') p++;
+    }
+    p++;
+    if (*p == '\0' || p >= end) return end;
+  }
+}
 
 /** Finds the specified string \p s at starting position \p p.
 
@@ -1065,10 +1086,6 @@ Fl_Help_View::draw()
   - ASCII characters (7-bit, \< 0x80) are compared case insensitive
   - every newline (LF, '\\n') in value() is treated like a single space
   - all other strings are compared as-is (byte by byte)
-
-  \todo complex HTML entities for Unicode code points \> 0x80 are currently treated
-    like one byte (not character!) and do not (yet) match correctly ("<" matches "&lt;"
-    but "€" doesn't match "&euro;", and "ü" doesn't match "&uuml;")
 
   \param[in]  s   search string in UTF-8 encoding
   \param[in]  p   starting position for search (0,...), Default = 0
@@ -1098,22 +1115,33 @@ Fl_Help_View::find(const char *s,               // I - String to find
     if (b->end < (value_ + p))
       continue;
 
-    if (b->start < (value_ + p)) bp = value_ + p;
-    else bp = b->start;
+    if (b->start < (value_ + p))
+      bp = value_ + p;
+    else
+      bp = b->start;
 
-    for (sp = s, bs = bp; *sp && *bp && bp < b->end; bp++) {
-      if (*bp == '<') {
-        // skip to end of element...
-        while (*bp && bp < b->end && *bp != '>') bp++;
-        // no match, so reset to start of search...
-        sp = s;
-        bs = bp + 1;
-        continue;
-      } else if (*bp == '&') {
+    bp = vanilla(bp, b->end);
+    if (bp == b->end)
+      continue;
+
+    for (sp = s, bs = bp; *sp && *bp && bp < b->end; ) {
+      bool is_html_entity = false;
+      if (*bp == '&') {
         // decode HTML entity...
-        if ((c = quote_char(bp + 1)) < 0) c = '&';      // *FIXME* UTF-8, see below
-        else bp = strchr(bp + 1, ';') + 1;
-      } else c = *bp;
+        if ((c = quote_char(bp + 1)) < 0) {
+          c = '&';
+        } else {
+          const char *entity_end = strchr(bp + 1, ';');
+          if (entity_end) {
+            is_html_entity = true; // c contains the unicode character
+            bp = entity_end;
+          } else {
+            c = '&';
+          }
+        }
+      } else {
+        c = *bp;
+      }
 
       if (c == '\n') c = ' '; // treat newline as a single space
 
@@ -1125,12 +1153,28 @@ Fl_Help_View::find(const char *s,               // I - String to find
       // For instance: "&euro;" == 0x20ac -> 0xe2 0x82 0xac (UTF-8: 3 bytes).
       // Hint: use fl_utf8encode() [see below]
 
-      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) sp++;
-      else if (*sp == c) sp++;
-      else { // No match, so reset to start of search...
+      int utf_len = 1;
+      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) {
+        // Check for ASCII case insensitive match.
+        //printf("%ld text match %c/%c\n", bp-value_, *sp, c);
+        sp++;
+        bp = vanilla(bp+1, b->end);
+      } else if (is_html_entity && fl_utf8decode(sp, NULL, &utf_len) == c ) {
+        // Check if a &lt; entity ini html matches a UTF-8 character in the
+        // search string.
+        //printf("%ld unicode match 0x%02X 0x%02X\n", bp-value_, *sp, c);
+        sp += utf_len;
+        bp = vanilla(bp+1, b->end);
+      } else if (*sp == c) {
+        // Check if UTF-8 bytes in html and the search string match.
+        //printf("%ld binary match %c/%c\n", bp-value_, *sp, c);
+        sp++;
+        bp = vanilla(bp+1, b->end);
+      } else {
+        // No match, so reset to start of search... .
+        //printf("reset search (%c/%c)\n", *sp, c);
         sp = s;
-        bp = bs;
-        bs++;
+        bp = bs = vanilla(bs+1, b->end);
       }
     }
 
