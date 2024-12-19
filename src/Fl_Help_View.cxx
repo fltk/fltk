@@ -1159,7 +1159,7 @@ Fl_Help_View::find(const char *s,               // I - String to find
         //printf("%ld text match %c/%c\n", bp-value_, *sp, c);
         sp++;
         bp = vanilla(bp+1, b->end);
-      } else if (is_html_entity && fl_utf8decode(sp, NULL, &utf_len) == c ) {
+      } else if (is_html_entity && fl_utf8decode(sp, NULL, &utf_len) == (unsigned int)c ) {
         // Check if a &lt; entity ini html matches a UTF-8 character in the
         // search string.
         //printf("%ld unicode match 0x%02X 0x%02X\n", bp-value_, *sp, c);
