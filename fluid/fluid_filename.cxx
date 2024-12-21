@@ -208,12 +208,12 @@ Fl_String fl_filename_shortened(const Fl_String &filename, int max_chars) {
     // Create a new string by replacing characters in the middle.
     int remove_chars = num_chars - max_chars + ell_bytes;
     int left_chars = (max_chars - ell_bytes)/2;
-    int right_chars = max_chars - left_chars - 3;
-    int right_start_char = num_chars - right_chars;
+//    int right_chars = max_chars - left_chars - 3;
+//    int right_start_char = num_chars - right_chars;
     // Convert character counts into byte counts.
     int left_bytes = fl_utf8strlen(homed_filename.c_str(), left_chars);
     int right_start_byte = fl_utf8strlen(homed_filename.c_str()+left_bytes, remove_chars) + left_bytes;
-    return homed_filename.substr(0, left_bytes) + "..." + homed_filename.substr(right_start_byte);
+    return homed_filename.substr(0, left_bytes) + ell + homed_filename.substr(right_start_byte);
   } else {
     // Nothing to change.
     return homed_filename;
