@@ -1981,6 +1981,14 @@ void update_history(const char *flname) {
   if (max_files > 10) max_files = 10;
 
   fl_filename_absolute(absolute, sizeof(absolute), flname);
+#ifdef _WIN32
+  // Make path canonical.
+  for (char *s = absolute; *s; s++) {
+    if (*s == '\\')
+      *s = '/';
+  }
+#endif
+
 
   for (i = 0; i < max_files; i ++)
 #if defined(_WIN32) || defined(__APPLE__)

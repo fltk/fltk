@@ -568,7 +568,7 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *fr
     switch (*a) {
       case '~': // a home directory name
         if (e <= a+1) { // current user's directory
-          value = getenv("HOME");
+          value = home_directory_name();
         }
         break;
       case '$':         /* an environment variable */
@@ -987,9 +987,39 @@ int Fl_WinAPI_System_Driver::file_type(const char *filename)
 
 const char *Fl_WinAPI_System_Driver::home_directory_name()
 {
-  const char *h = getenv("HOME");
-  if (!h) h = getenv("UserProfile");
-  return h;
+  static char *home = NULL;
+  if (home)
+    return home;
+  // Various ways to retrieve the HOME path.
+  if (!home) {
+    const char *home_drive = getenv("HOMEDRIVE");
+    const char *home_path = getenv("HOMEPATH");
+    if (home_path && home_drive) {
+      int n = strlen(home_drive) + strlen(home_path) + 2;
+      home = (char *)::malloc(n);
+      ::strncpy(home, home_drive, n);
+      ::strncat(home, home_path, n);
+    }
+  }
+  if (!home) {
+    const char *h = getenv("UserProfile");
+    if (h) 
+      home = ::strdup(h);
+  }
+  if (!home) {
+    const char *h = getenv("HOME");
+    if (h)
+      home = ::strdup(h);
+  }
+  if (!home) {
+    home = ::strdup("~/"); // last resort
+  }
+  // Make path canonical.
+  for (char *s = home; *s; s++) {
+    if (*s == '\\')
+      *s = '/';
+  }
+  return home;
 }
 
 void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
