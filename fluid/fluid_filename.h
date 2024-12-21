@@ -41,6 +41,7 @@
 
 class Fl_String;
 
+Fl_String fl_filename_shortened(const Fl_String &filename, int maxchars);
 Fl_String fl_filename_name(const Fl_String &filename);
 Fl_String fl_filename_path(const Fl_String &filename);
 Fl_String fl_filename_ext(const Fl_String &filename);

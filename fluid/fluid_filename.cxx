@@ -162,3 +162,60 @@ Fl_String fl_getcwd() {
   fl_getcwd(buffer, FL_PATH_MAX);
   return Fl_String(buffer);
 }
+
+/**
+ Return a shortened filename for limited display width.
+
+ Replace the start uf a path with "~" if it matches the home directory.
+ If the remaining filename has more than the give number of characters, it will
+ be shortened by replacing parts of the path with an ellipsis ("...").
+
+ The shortened name can no longer be used to open a file. This is purely to
+ make as much information visible while fitting into a give space.
+
+ \param[in] filename absolute path and name, UTF-8 aware
+ \param[in[ max_chars maximum number of characters in result, including ellipsis
+ \return shortened file path and name
+ */
+Fl_String fl_filename_shortened(const Fl_String &filename, int max_chars) {
+  // Insert this as the ellipsis
+  static const char *ell = "...";
+  static const int ell_bytes = 3;
+  // Replace the start of a path with "~" if it matches the home directory
+  static Fl_String tilde = "~/";
+  static Fl_String home;
+  static int home_chars = -1;
+  if (home_chars==-1) {
+    home = fl_filename_expand(tilde);
+    home_chars = fl_utf_nb_char((const uchar*)home.c_str(), home.size());
+  }
+  Fl_String homed_filename;
+#if defined(_WIN32) || defined(__APPLE__)
+  bool starts_with_home = fl_utf_strncasecmp(home.c_str(), filename.c_str(), home_chars)==0;
+#else
+  bool starts_with_home = ::strncmp(home.c_str(), filename.c_str(), home.size())==0;
+#endif
+  if (starts_with_home) {
+    homed_filename = tilde + filename.substr(home.size());
+  } else {
+    homed_filename = filename;
+  }
+  // C style pointer will stay valid until filename is modified.
+  const unsigned char *u8str = reinterpret_cast<const unsigned char *>(homed_filename.c_str());
+  // Count the number of UTF-8 characters in the name.
+  int num_chars = fl_utf_nb_char(u8str, homed_filename.size());
+  if (num_chars+ell_bytes-1 > max_chars) {
+    // Create a new string by replacing characters in the middle.
+    int remove_chars = num_chars - max_chars + ell_bytes;
+    int left_chars = (max_chars - ell_bytes)/2;
+    int right_chars = max_chars - left_chars - 3;
+    int right_start_char = num_chars - right_chars;
+    // Convert character counts into byte counts.
+    int left_bytes = fl_utf8strlen(homed_filename.c_str(), left_chars);
+    int right_start_byte = fl_utf8strlen(homed_filename.c_str()+left_bytes, remove_chars) + left_bytes;
+    return homed_filename.substr(0, left_bytes) + "..." + homed_filename.substr(right_start_byte);
+  } else {
+    // Nothing to change.
+    return homed_filename;
+  }
+}
