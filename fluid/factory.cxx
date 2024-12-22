@@ -9,7 +9,7 @@
 // to a factory instance for every class (both the ones defined
 // here and ones in other files)
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1116,6 +1116,9 @@ extern void select_only(Fl_Type *);
  This is used to convert a type name into a pointer to the prototype.
  This list may contain types that are supported in .fl files, but not
  available in the *New* menu.
+
+ \note Make sure that this array stays synchronized to `Fl_Menu_Item New_Menu[]`
+    further down in this file.
  */
 static Fl_Type *known_types[] = {
   // functions
@@ -1203,6 +1206,8 @@ static Fl_Type *known_types[] = {
  \param[in] inPrototype pointer to one of the FL_..._type prototype; note the
     lower case 't' in type.
  \param[in] strategy add after current or as last child
+ \param[in] and_open if set to true, call open() on the widget after creating it
+ \return the newly created type or NULL
 
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
@@ -1326,9 +1331,12 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
 
 /**
  Create and add a new widget to the widget tree.
+
  \param[in] inName find the right prototype by this name
  \param[in] strategy where to add the node
- \return the newly created node
+ \param[in] and_open if set to true, call open() on the widget after creating it
+ \return the newly created type or NULL
+
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
  add_new_widget_from_user(const char*, int)
@@ -1355,6 +1363,9 @@ static void cbf(Fl_Widget *, void *v) {
 
 /**
  Callback for all widget menu items.
+
+ \param[in] v cast to Fl_Type to get the prototype of the type that the user
+    wants to create.
  */
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
@@ -1365,6 +1376,10 @@ static void cb(Fl_Widget *, void *v) {
   select_only(t);
 }
 
+/**
+ \note Make sure that this menu stays synchronized to `Fl_Type *known_types[]`
+    defined further up in this file.
+ */
 Fl_Menu_Item New_Menu[] = {
 {"Code",0,0,0,FL_SUBMENU},
   {"Function/Method",0,cbf,(void*)&Fl_Function_type},
@@ -1471,6 +1486,11 @@ static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
   }
 }
 
+/**
+ Create the labels and icons for the `New_Menu` array.
+
+ Names and icons are taken from the referenced prototypes.
+ */
 void fill_in_New_Menu() {
   for (unsigned i = 0; i < sizeof(New_Menu)/sizeof(*New_Menu); i++) {
     Fl_Menu_Item *m = New_Menu+i;
@@ -1523,10 +1543,10 @@ Fl_Type *typename_to_prototype(const char *inName)
  add_new_widget_from_user(const char*, int)
 */
 Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
-  reading_file = 1; // makes labels be null
   Fl_Type *prototype = typename_to_prototype(inName);
   if (!prototype)
     return NULL;
+  reading_file = 1; // makes labels be null
   Fl_Type *new_node = prototype->make(strategy);
   reading_file = 0;
   return new_node;
