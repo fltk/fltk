@@ -424,7 +424,8 @@ or just ".ext" to set extension.}
 }}
           tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {100 255 220 20} down_box DOWN_BOX labelsize 11
         }
-        Fl_Group {} {open
+        Fl_Group {} {
+          callback {propagate_load(o, v);} open
           xywh {100 283 220 20}
           code3 {// hide this group if experimental features not wanted
 \#ifndef FLUID_OPTION_MERGEBACK
