@@ -474,8 +474,8 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
       !w() || !h() || !d() || !array) {
     if (array) {
       // Make a copy of the image data and return a new Fl_RGB_Image...
-      new_array = new uchar[W * H * d()];
-      if (ld() && (ld() != W  *d())) {
+      new_array = new uchar[((long)W) * H * d()];
+      if (ld() && (ld() != W*d())) {
         const uchar *src = array;
         uchar *dst = new_array;
         int dy, dh = H, wd = W*d(), wld = ld();
@@ -485,7 +485,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
           dst += wd;
         }
       } else {
-        memcpy(new_array, array, W * H * d());
+        memcpy(new_array, array, ((long)W) * H * d());
       }
       new_image = new Fl_RGB_Image(new_array, W, H, d());
       new_image->alloc_array = 1;
@@ -503,7 +503,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
                 line_d;         // stride from line to line
 
   // Allocate memory for the new image...
-  new_array = new uchar [W * H * d()];
+  new_array = new uchar [((long)W) * H * d()];
   new_image = new Fl_RGB_Image(new_array, W, H, d());
   new_image->alloc_array = 1;
 
@@ -525,7 +525,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
 
     // Scale the image using a nearest-neighbor algorithm...
     for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-      for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
+      for (dx = W, xerr = W, old_ptr = array + ((long)sy) * line_d; dx > 0; dx --) {
         for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
 
         old_ptr += xstep;
@@ -555,7 +555,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
       const float yfract = oldy - (unsigned) oldy;
 
       for (dx = 0; dx < W; dx++) {
-        new_ptr = new_array + dy * W * d() + dx * d();
+        new_ptr = new_array + ((long)dy) * W * d() + dx * d();
 
         float oldx = dx * xscale;
         if (oldx >= data_w())
@@ -572,10 +572,10 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
         const unsigned drighty = (unsigned)dlefty;
 
         uchar left[4], right[4], downleft[4], downright[4];
-        memcpy(left, array + lefty * line_d + leftx * d(), d());
-        memcpy(right, array + righty * line_d + rightx * d(), d());
-        memcpy(downleft, array + dlefty * line_d + dleftx * d(), d());
-        memcpy(downright, array + drighty * line_d + drightx * d(), d());
+        memcpy(left, array + ((long)lefty) * line_d + leftx * d(), d());
+        memcpy(right, array + ((long)righty) * line_d + rightx * d(), d());
+        memcpy(downleft, array + ((long)dlefty) * line_d + dleftx * d(), d());
+        memcpy(downright, array + ((long)drighty) * line_d + drightx * d(), d());
 
         int i;
         if (d() == 4) {
