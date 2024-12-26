@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -67,7 +67,7 @@ Fl_Double_Window *script_panel=(Fl_Double_Window *)0;
 static void cb_script_panel(Fl_Double_Window*, void*) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
-  script_panel->hide(); // otherwise hide..;
+  script_panel->hide(); // otherwise hide...;
 }
 
 Fl_Text_Editor *script_input=(Fl_Text_Editor *)0;
@@ -2656,22 +2656,26 @@ Fl_Double_Window* make_settings_window() {
           avoid_early_includes_button->labelsize(11);
           avoid_early_includes_button->callback((Fl_Callback*)cb_avoid_early_includes_button);
         } // Fl_Check_Button* avoid_early_includes_button
-        { Fl_Box* o = new Fl_Box(100, 283, 0, 20, "Experimental: ");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
-        } // Fl_Box* o
-        { // // Matt: disabled
-          w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
-          w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
+        { Fl_Group* o = new Fl_Group(100, 283, 220, 20);
+          { Fl_Box* o = new Fl_Box(100, 283, 0, 20, "Experimental: ");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+          } // Fl_Box* o
+          { w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
+            w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
 "o be merged back into the project file. Checking this option will generate add"
 "itional data in code and project files.");
-          w_proj_mergeback->down_box(FL_DOWN_BOX);
-          w_proj_mergeback->labelsize(11);
-          w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
-          w_proj_mergeback->hide();
-        } // Fl_Check_Button* w_proj_mergeback
+            w_proj_mergeback->down_box(FL_DOWN_BOX);
+            w_proj_mergeback->labelsize(11);
+            w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
+          } // Fl_Check_Button* w_proj_mergeback
+          // hide this group if experimental features not wanted
+#ifndef FLUID_OPTION_MERGEBACK
+o->hide();
+#endif
+          o->end();
+        } // Fl_Group* o
         { Fl_Box* o = new Fl_Box(100, 530, 220, 10);
           o->hide();
           Fl_Group::current()->resizable(o);

@@ -2965,7 +2965,9 @@ void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
     f.write_c(", %s", ut);
     if (use_v) f.write_c(" v");
     f.write_c(") {\n");
-    // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
+#ifdef FLUID_OPTION_MERGEBACK
+    f.tag(FD_TAG_GENERIC, 0);
+#endif // FLUID_OPTION_MERGEBACK
     f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
@@ -2976,7 +2978,9 @@ void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
       if (*p != '#' && *p) f.write_c(";");
     }
     f.write_c("\n");
-    // Matt: disabled f.tag(FD_TAG_WIDGET_CALLBACK, get_uid());
+#ifdef FLUID_OPTION_MERGEBACK
+    f.tag(FD_TAG_WIDGET_CALLBACK, get_uid());
+#endif // FLUID_OPTION_MERGEBACK
     f.write_c("}\n");
     if (k) {
       f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);

@@ -678,9 +678,13 @@ void Fl_Code_Type::write_code1(Fd_Code_Writer& f) {
   if ( handle_editor_changes() == 1 ) {
     main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
-  // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
+#ifdef FLUID_OPTION_MERGEBACK
+  f.tag(FD_TAG_GENERIC, 0);
+#endif // FLUID_OPTION_MERGEBACK
   f.write_c_indented(name(), 0, '\n');
-  // Matt: disabled f.tag(FD_TAG_CODE, get_uid());
+#ifdef FLUID_OPTION_MERGEBACK
+  f.tag(FD_TAG_CODE, get_uid());
+#endif // FLUID_OPTION_MERGEBACK
 }
 
 /**

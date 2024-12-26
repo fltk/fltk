@@ -34,7 +34,7 @@ snap {
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -155,7 +155,7 @@ Function {make_script_panel()} {open
     label {Shell Script Editor}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   return; // ignore Escape
-script_panel->hide(); // otherwise hide..} open
+script_panel->hide(); // otherwise hide...} open
     xywh {764 319 540 180} type Double labelsize 11 resizable
     code0 {o->size_range(200, 150);} modal visible
   } {
@@ -424,13 +424,20 @@ or just ".ext" to set extension.}
 }}
           tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {100 255 220 20} down_box DOWN_BOX labelsize 11
         }
-        Fl_Box {} {
-          label {Experimental: }
-          xywh {100 283 0 20} labelfont 1 labelsize 11 align 4 hide
-        }
-        Fl_Check_Button w_proj_mergeback {
-          label {generate MergeBack data}
-          callback {if (v == LOAD) {
+        Fl_Group {} {open
+          xywh {100 283 220 20}
+          code3 {// hide this group if experimental features not wanted
+\#ifndef FLUID_OPTION_MERGEBACK
+o->hide();
+\#endif}
+        } {
+          Fl_Box {} {
+            label {Experimental: }
+            xywh {100 283 0 20} labelfont 1 labelsize 11 align 4
+          }
+          Fl_Check_Button w_proj_mergeback {
+            label {generate MergeBack data}
+            callback {if (v == LOAD) {
   o->value(g_project.write_mergeback_data);
 } else {
   if (g_project.write_mergeback_data != o->value()) {
@@ -438,8 +445,8 @@ or just ".ext" to set extension.}
     g_project.write_mergeback_data = o->value();
   }
 }}
-          comment {// Matt: disabled}
-          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11 hide
+            tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11
+          }
         }
         Fl_Box {} {
           xywh {100 530 220 10} hide resizable
