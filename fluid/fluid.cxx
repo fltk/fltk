@@ -106,11 +106,6 @@ int G_debug = 0;
 char G_external_editor_command[512];
 
 
-/// This is set to create different labels when creating new widgets.
-/// \todo Details unclear.
-int reading_file = 0;
-
-
 // File history info...
 
 /// Stores the absolute filename of the last 10 design files, saved in app preferences.
@@ -1418,14 +1413,14 @@ void paste_cb(Fl_Widget*, void*) {
   pasteoffset = ipasteoffset;
   undo_checkpoint();
   undo_suspend();
-  Strategy strategy = kAddAfterCurrent;
+  Strategy strategy = Strategy::FROM_FILE_AFTER_CURRENT;
   if (Fl_Type::current && Fl_Type::current->can_have_children()) {
     if (Fl_Type::current->folded_ == 0) {
       // If the current widget is a group widget and it is not folded,
       // add the new widgets inside the group.
-      strategy = kAddAsLastChild;
+      strategy = Strategy::FROM_FILE_AS_LAST_CHILD;
       // The following alternative also works quite nicely
-      //strategy = kAddAsFirstChild;
+      //strategy = Strategy::FROM_FILE_AS_FIRST_CHILD;
     }
   }
   if (!read_file(cutfname(), 1, strategy)) {
@@ -1479,7 +1474,7 @@ void duplicate_cb(Fl_Widget*, void*) {
   pasteoffset  = 0;
   undo_checkpoint();
   undo_suspend();
-  if (!read_file(cutfname(1), 1, kAddAfterCurrent)) {
+  if (!read_file(cutfname(1), 1, Strategy::FROM_FILE_AFTER_CURRENT)) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
   fl_unlink(cutfname(1));

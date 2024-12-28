@@ -83,15 +83,16 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
 
 /**
  Make a new Widget node.
- \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
+ \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  \return new node
  */
 Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *pp = anchor;
-  if (pp && (strategy == kAddAfterCurrent)) pp = pp->parent;
+  if (pp && (strategy.placement() == Strategy::AFTER_CURRENT))
+    pp = pp->parent;
   while (pp && !pp->is_a(ID_Group)) {
     anchor = pp;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     pp = pp->parent;
   }
   if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
@@ -141,7 +142,8 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   t->factory = this;
   // Construct the Fl_Widget:
   t->o = widget(X,Y,W,H);
-  if (reading_file) t->o->label(0);
+  if (strategy.source() == Strategy::FROM_FILE)
+    t->o->label(0);
   else if (t->o->label()) t->label(t->o->label()); // allow editing
   t->o->user_data((void*)t);
   // Put it in the parent:

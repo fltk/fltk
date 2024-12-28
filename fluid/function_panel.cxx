@@ -766,9 +766,9 @@ Fl_Double_Window* make_comment_panel() {
 void type_make_cb(Fl_Widget*,void*d) {
   const char *type_name = (const char*)d;
   if (Fl_Type::current && Fl_Type::current->can_have_children())
-    add_new_widget_from_user(type_name, kAddAsLastChild);
+    add_new_widget_from_user(type_name, Strategy::AS_LAST_CHILD);
   else
-    add_new_widget_from_user(type_name, kAddAfterCurrent);
+    add_new_widget_from_user(type_name, Strategy::AFTER_CURRENT);
 }
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;

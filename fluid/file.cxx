@@ -63,6 +63,7 @@ int fdesign_flip = 0;
  */
 int read_file(const char *filename, int merge, Strategy strategy) {
   Fd_Project_Reader f;
+  strategy.source(Strategy::FROM_FILE);
   return f.read_project(filename, merge, strategy);
 }
 
@@ -260,7 +261,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
 
       // back compatibility with Vincent Penne's original class code:
       if (!p && !strcmp(c,"define_in_struct")) {
-        Fl_Type *t = add_new_widget_from_file("class", kAddAsLastChild);
+        Fl_Type *t = add_new_widget_from_file("class", Strategy::FROM_FILE_AS_LAST_CHILD);
         t->name(read_word());
         Fl_Type::current = p = t;
         merge = 1; // stops "missing }" error
@@ -390,7 +391,7 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
         read_error("Missing child list for %s\n",t->title());
         goto REUSE_C;
       }
-      read_children(t, 0, kAddAsLastChild, skip_options);
+      read_children(t, 0, Strategy::FROM_FILE_AS_LAST_CHILD, skip_options);
       t->postprocess_read();
       // FIXME: this has no business in the file reader!
       // TODO: this is called whenever something is pasted from the top level into a grid
@@ -406,10 +407,10 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
       t->layout_widget();
     }
 
-    if (strategy == kAddAsFirstChild) {
-      strategy = kAddAfterCurrent;
+    if (strategy.placement() == Strategy::AS_FIRST_CHILD) {
+      strategy.placement(Strategy::AFTER_CURRENT);
     }
-    if (strategy == kAddAfterCurrent) {
+    if (strategy.placement() == Strategy::AFTER_CURRENT) {
       Fl_Type::current = t;
     } else {
       Fl_Type::current = p;
@@ -733,7 +734,7 @@ void Fd_Project_Reader::read_fdesign() {
   Fl_Widget_Type *group = 0;
   Fl_Widget_Type *widget = 0;
   if (!Fl_Type::current) {
-    Fl_Type *t = add_new_widget_from_file("Function", kAddAsLastChild);
+    Fl_Type *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
     t->name("create_the_forms()");
     Fl_Type::current = t;
   }
@@ -744,7 +745,7 @@ void Fd_Project_Reader::read_fdesign() {
 
     if (!strcmp(name,"Name")) {
 
-      window = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Window", kAddAsLastChild);
+      window = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Window", Strategy::FROM_FILE_AS_LAST_CHILD);
       window->name(value);
       window->label(value);
       Fl_Type::current = widget = window;
@@ -752,7 +753,7 @@ void Fd_Project_Reader::read_fdesign() {
     } else if (!strcmp(name,"class")) {
 
       if (!strcmp(value,"FL_BEGIN_GROUP")) {
-        group = widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Group", kAddAsLastChild);
+        group = widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Group", Strategy::FROM_FILE_AS_LAST_CHILD);
         Fl_Type::current = group;
       } else if (!strcmp(value,"FL_END_GROUP")) {
         if (group) {
@@ -767,10 +768,10 @@ void Fd_Project_Reader::read_fdesign() {
         for (int i = 0; class_matcher[i]; i += 2)
           if (!strcmp(value,class_matcher[i])) {
             value = class_matcher[i+1]; break;}
-        widget = (Fl_Widget_Type*)add_new_widget_from_file(value, kAddAsLastChild);
+        widget = (Fl_Widget_Type*)add_new_widget_from_file(value, Strategy::FROM_FILE_AS_LAST_CHILD);
         if (!widget) {
           printf("class %s not found, using Fl_Button\n", value);
-          widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Button", kAddAsLastChild);
+          widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Button", Strategy::FROM_FILE_AS_LAST_CHILD);
         }
       }
 

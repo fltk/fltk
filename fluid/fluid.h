@@ -65,8 +65,6 @@ extern int G_use_external_editor;
 extern int G_debug;
 extern char G_external_editor_command[512];
 
-extern int reading_file;
-
 // File history info...
 extern char absolute_history[10][FL_PATH_MAX];
 extern char relative_history[10][FL_PATH_MAX];

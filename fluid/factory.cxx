@@ -1355,9 +1355,9 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool an
 static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
   if (Fl_Type::current && Fl_Type::current->can_have_children())
-    t = ((Fl_Type*)v)->make(kAddAsLastChild);
+    t = ((Fl_Type*)v)->make(Strategy::AS_LAST_CHILD);
   else
-    t = ((Fl_Type*)v)->make(kAddAfterCurrent);
+    t = ((Fl_Type*)v)->make(Strategy::AFTER_CURRENT);
   select_only(t);
 }
 
@@ -1370,9 +1370,9 @@ static void cbf(Fl_Widget *, void *v) {
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
   if (Fl_Type::current && Fl_Type::current->can_have_children())
-    t = add_new_widget_from_user((Fl_Type*)v, kAddAsLastChild);
+    t = add_new_widget_from_user((Fl_Type*)v, Strategy::AS_LAST_CHILD);
   else
-    t = add_new_widget_from_user((Fl_Type*)v, kAddAfterCurrent);
+    t = add_new_widget_from_user((Fl_Type*)v, Strategy::AFTER_CURRENT);
   select_only(t);
 }
 
@@ -1546,9 +1546,7 @@ Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
   Fl_Type *prototype = typename_to_prototype(inName);
   if (!prototype)
     return NULL;
-  reading_file = 1; // makes labels be null
   Fl_Type *new_node = prototype->make(strategy);
-  reading_file = 0;
   return new_node;
 }
 
