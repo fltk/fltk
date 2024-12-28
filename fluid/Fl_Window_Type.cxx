@@ -223,15 +223,15 @@ int Overlay_Window::handle(int e) {
 
 /**
  Make and add a new Window node.
- \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
+ \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  \return new node
  */
 Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   if (!p) {
@@ -1073,10 +1073,10 @@ int Fl_Window_Type::handle(int event) {
       {
         Fl_Type *cc = Fl_Type::current;
         Fl_Type::current = Fl_Type::current_dnd;
-        add_new_widget_from_user(prototype, kAddAsLastChild);
+        add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
         Fl_Type::current = cc;
       } else {
-        add_new_widget_from_user(prototype, kAddAsLastChild);
+        add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
       }
       popupx = 0x7FFFFFFF;
       popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
@@ -1376,10 +1376,10 @@ Fl_Widget_Class_Type *current_widget_class = 0;
  */
 Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();

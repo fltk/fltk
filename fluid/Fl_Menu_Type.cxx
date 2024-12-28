@@ -162,10 +162,11 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
 Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
   // Find a good insert position based on the current marked node
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   if (!p) {
@@ -186,7 +187,7 @@ Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
   t->o->type(flags);
   t->factory = this;
   t->add(anchor, strategy);
-  if (!reading_file) {
+  if (strategy.source() == Strategy::FROM_USER) {
     if (flags==FL_SUBMENU) {
       t->label("submenu");
     } else {
@@ -209,14 +210,14 @@ void group_selected_menuitems() {
   }
   undo_checkpoint();
   undo_suspend();
-  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(FL_SUBMENU, kAddAfterCurrent));
+  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
       t = t->next;
       continue;
     }
     Fl_Type *nxt = t->remove();
-    t->add(n, kAddAsLastChild);
+    t->add(n, Strategy::AS_LAST_CHILD);
     t = nxt;
   }
   widget_browser->rebuild();

@@ -25,7 +25,7 @@ class Fl_Type;
 
 extern int fdesign_flip;
 
-int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
+int read_file(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
 int write_file(const char *, int selected_only = 0, bool to_codeview = false);
 
 class Fd_Project_Reader
@@ -58,7 +58,7 @@ public:
   const char *filename_name();
   int read_quoted();
   Fl_Type *read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options=0);
-  int read_project(const char *, int merge, Strategy strategy=kAddAsLastChild);
+  int read_project(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
   void read_error(const char *format, ...);
   const char *read_word(int wantbrace = 0);
   int read_int();

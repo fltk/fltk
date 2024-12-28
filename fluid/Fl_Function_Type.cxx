@@ -202,15 +202,16 @@ Fl_Function_Type::~Fl_Function_Type() {
 
 /**
  Create a new function for the widget tree.
- \param[in] strategy new function add after current or as last child
+ \param[in] strategy add new function after current or as last child
  \return the new node
  */
 Fl_Type *Fl_Function_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_Function_Type *o = new Fl_Function_Type();
@@ -596,10 +597,11 @@ Fl_Code_Type::Fl_Code_Type() :
  */
 Fl_Type *Fl_Code_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_code_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   if (!p) {
@@ -767,10 +769,11 @@ Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
  */
 Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_code_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   if (!p) {
@@ -908,10 +911,11 @@ int Fl_Decl_Type::is_public() const
  */
 Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_Decl_Type *o = new Fl_Decl_Type();
@@ -1135,10 +1139,11 @@ Fl_Data_Type::~Fl_Data_Type() {
  */
 Fl_Type *Fl_Data_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_Data_Type *o = new Fl_Data_Type();
@@ -1478,10 +1483,10 @@ int Fl_DeclBlock_Type::is_public() const {
  */
 Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
@@ -1710,10 +1715,11 @@ Fl_Comment_Type::Fl_Comment_Type() :
  */
 Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_code_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_Comment_Type *o = new Fl_Comment_Type();
@@ -1989,10 +1995,11 @@ void Fl_Class_Type::prefix(const char*p) {
  */
 Fl_Type *Fl_Class_Type::make(Strategy strategy) {
   Fl_Type *anchor = Fl_Type::current, *p = anchor;
-  if (p && (strategy == kAddAfterCurrent)) p = p->parent;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
-    strategy = kAddAfterCurrent;
+    strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   Fl_Class_Type *o = new Fl_Class_Type();

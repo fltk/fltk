@@ -621,7 +621,7 @@ Fl_Group_Type *Fl_Type::group() {
  This methods updates the widget_browser.
 
  \param[in] p insert \c this tree as a child of \c p
- \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
+ \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  */
 void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 #if 0
@@ -639,8 +639,9 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
   int target_level = 0;   // adjust self to this new level
 
   // Find the node after our insertion position
-  switch (strategy) {
-    case kAddAsFirstChild:
+  switch (strategy.placement()) {
+    case Strategy::AS_FIRST_CHILD:
+    default:
       if (anchor == NULL) {
         target = Fl_Type::first;
       } else {
@@ -649,7 +650,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
         target_parent = anchor;
       }
       break;
-    case kAddAsLastChild:
+    case Strategy::AS_LAST_CHILD:
       if (anchor == NULL) {
         /* empty */
       } else {
@@ -658,7 +659,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
         target_parent = anchor;
       }
       break;
-    case kAddAfterCurrent:
+    case Strategy::AFTER_CURRENT:
       if (anchor == NULL) {
         target = Fl_Type::first;
       } else {

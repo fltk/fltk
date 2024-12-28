@@ -117,7 +117,7 @@ void group_cb(Fl_Widget *, void *) {
   undo_checkpoint();
   undo_suspend();
   Fl_Type::current = qq;
-  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(kAddAsLastChild));
+  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(Strategy::AS_LAST_CHILD));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
@@ -126,7 +126,7 @@ void group_cb(Fl_Widget *, void *) {
       continue;
     }
     Fl_Type *nxt = t->remove();
-    t->add(n, kAddAsLastChild);
+    t->add(n, Strategy::AS_LAST_CHILD);
     t = nxt;
   }
   fix_group_size(n);

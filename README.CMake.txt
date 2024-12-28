@@ -923,7 +923,7 @@ it with the ususal CMake GUI interfaces (ccmake, cmake-gui) or on the
 CMake commandline (-D FLTK_DIR=...).
 
 The find_package command tells CMake to find the package FLTK, '1.4' says
-that we want FLTK 1.4.x: any patch version of 1.4 will march. 'REQUIRED'
+that we want FLTK 1.4.x: any patch version of 1.4 will match. 'REQUIRED'
 means that it is an error if it's not found. 'CONFIG' tells it to search
 only for the FLTKConfig.cmake file, not using the FindFLTK.cmake "module"
 supplied with CMake, which doesn't work with this version of FLTK. Since

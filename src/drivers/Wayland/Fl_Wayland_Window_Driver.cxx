@@ -1929,6 +1929,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
         wl_surface_commit(parent_xid->wl_surface);
       } else if (!xid_rect) {
+        if (is_a_move) wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
         wl_surface_commit(parent_xid->wl_surface);
       }
     }
