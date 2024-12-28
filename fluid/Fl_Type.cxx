@@ -703,8 +703,9 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
   }
 
 #ifdef FLUID_OPTION_MERGEBACK
+  if (   g_project.write_mergeback_data
+      && strategy.source() == Strategy::FROM_USER)
   { // make sure that we have no duplicate uid's
-    // FIXME: if 'add' is called while loading a file, the UID will be set by the tag later
     Fl_Type *tp = this;
     do {
       tp->set_uid(tp->uid_);
@@ -759,7 +760,7 @@ void Fl_Type::insert(Fl_Type *g) {
   g->prev = end;
   update_visibility_flag(this);
 #ifdef FLUID_OPTION_MERGEBACK
-  { // make sure that we have no duplicate uid's
+  if (g_project.write_mergeback_data) { // make sure that we have no duplicate uid's
     Fl_Type *tp = this;
     do {
       tp->set_uid(tp->uid_);
