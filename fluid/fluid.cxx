@@ -2005,7 +2005,7 @@ void update_history(const char *flname) {
   // Put the new file at the top...
   strlcpy(absolute_history[0], absolute, sizeof(absolute_history[0]));
   Fl_String fn = fl_filename_shortened(absolute_history[0], 48);
-  strncpy(relative_history[0], fn.c_str(), sizeof(relative_history[0]-1));
+  strncpy(relative_history[0], fn.c_str(), sizeof(relative_history[0]));
 
   // Update the menu items as needed...
   for (i = 0; i < max_files; i ++) {
