@@ -82,6 +82,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my)
  that contains the specified screen position \p mx, \p my
  \param[out]  X,Y,W,H the work area bounding box
  \param[in] mx, my the absolute screen position
+ \see void screen_work_area(int &x, int &y, int &w, int &h, int n)
  */
 void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my)
 {
@@ -94,6 +95,9 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my)
  \param[out]  X,Y,W,H the work area bounding box
  \param[in] n the screen number (0 to Fl::screen_count() - 1)
  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
+ \note Under X11, the screen work area is given values that differ from that screen's bounding box
+ only if the system contains a single screen. Under Wayland, a screen work area is always
+ equal to that screen's bounding box.
  \note Like all quantities accessible via public APIs of FLTK, values of \p X,Y,W,H
  are given in FLTK units, that is, in drawing units divided by the scaling factor of screen \p n.
 */
@@ -192,7 +196,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H)
 /**
  Gets the bounding box of the work area of the screen that contains the mouse pointer.
  \param[out]  X,Y,W,H the work area bounding box
- \see void screen_work_area(int &x, int &y, int &w, int &h, int mx, int my)
+ \see void screen_work_area(int &x, int &y, int &w, int &h, int n)
  */
 void Fl::screen_work_area(int &X, int &Y, int &W, int &H)
 {
