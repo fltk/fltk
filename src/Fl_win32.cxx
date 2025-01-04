@@ -1220,6 +1220,18 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (window) {
     switch (uMsg) {
 
+      case WM_SYSCOLORCHANGE: {
+        Fl::get_system_colors(); // For selection color
+        DWORD bg = GetSysColor(COLOR_BTNFACE);
+        Fl::background(uchar(bg&255), uchar(bg>>8), uchar(bg>>16));
+        DWORD bg2 = GetSysColor(COLOR_WINDOW);
+        Fl::background2(uchar(bg2&255), uchar(bg2>>8), uchar(bg2>>16));
+        DWORD fg = GetSysColor(COLOR_WINDOWTEXT);
+        Fl::foreground(uchar(fg&255), uchar(fg>>8), uchar(fg>>16));
+        Fl::redraw();
+        return 0;
+      }
+
       case WM_DPICHANGED: { // 0x02E0, after display re-scaling and followed by WM_DISPLAYCHANGE
         if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
           RECT r, *lParam_rect = (RECT*)lParam;
