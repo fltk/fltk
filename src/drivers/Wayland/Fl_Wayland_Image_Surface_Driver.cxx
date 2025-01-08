@@ -27,12 +27,10 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h,
   int d = 1;
   if (!off) {
     fl_open_display();
-    if (Fl_Wayland_Window_Driver::wld_window) {
-      d = Fl_Wayland_Window_Driver::driver(
-            Fl_Wayland_Window_Driver::wld_window->fl_win
-                                           )->wld_scale();
+    if (Fl::first_window()) {
+      d = Fl_Wayland_Window_Driver::driver(Fl::first_window())->wld_scale();
     }
-    s = fl_graphics_driver->scale();
+    s =  Fl_Graphics_Driver::default_driver().scale();
     if (d*s != 1 && high_res) {
       w = int(w * s) * d;
       h = int(h * s) * d;
