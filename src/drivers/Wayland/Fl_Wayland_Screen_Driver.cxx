@@ -559,6 +559,9 @@ static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
 }
 
 
+static uint32_t last_keydown_serial = 0; // serial of last keydown event
+
+
 static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, struct wl_surface *surface, struct wl_array *keys) {
   struct Fl_Wayland_Screen_Driver::seat *seat =
@@ -582,6 +585,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
 //fprintf(stderr, "\n");
   seat->keyboard_surface = surface;
   seat->keyboard_enter_serial = serial;
+  last_keydown_serial = 0;
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   if (win) {
     Fl::handle(FL_FOCUS, win);
@@ -594,7 +598,6 @@ struct key_repeat_data_t {
   uint32_t serial;
   Fl_Window *window;
 };
-static uint32_t last_keydown_serial = 0; // serial of last keydown event
 
 #define KEY_REPEAT_DELAY 0.5 // sec
 #define KEY_REPEAT_INTERVAL 0.05 // sec
