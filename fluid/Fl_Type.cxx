@@ -130,6 +130,8 @@ Fl_Type *in_this_only; // set if menu popped-up in window
 
 // ---- various functions
 
+// The following functions help debugging the type tree and are usually not
+// compiled into the app.
 #if 0
 #ifndef NDEBUG
 /**
@@ -700,7 +702,9 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
     Fl_Type::first = this;
   }
 
-#if 0
+#ifdef FLUID_OPTION_MERGEBACK
+  if (   g_project.write_mergeback_data
+      && strategy.source() == Strategy::FROM_USER)
   { // make sure that we have no duplicate uid's
     Fl_Type *tp = this;
     do {
@@ -708,7 +712,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
       tp = tp->next;
     } while (tp!=end && tp!=NULL);
   }
-#endif
+#endif // FLUID_OPTION_MERGEBACK
 
   // Give the widgets in our tree a chance to update themselves
   for (Fl_Type *t = this; t && t!=end->next; t = t->next) {
@@ -755,13 +759,15 @@ void Fl_Type::insert(Fl_Type *g) {
   end->next = g;
   g->prev = end;
   update_visibility_flag(this);
-  { // make sure that we have no duplicate uid's
+#ifdef FLUID_OPTION_MERGEBACK
+  if (g_project.write_mergeback_data) { // make sure that we have no duplicate uid's
     Fl_Type *tp = this;
     do {
       tp->set_uid(tp->uid_);
       tp = tp->next;
     } while (tp!=end && tp!=NULL);
   }
+#endif // FLUID_OPTION_MERGEBACK
   // tell parent that it has a new child, so it can update itself
   if (parent) parent->add_child(this, g);
   widget_browser->redraw();
@@ -957,7 +963,7 @@ void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
     const char *hex = f.read_word();
     int x = 0;
     if (hex)
-      x = sscanf(hex, "%04x", &x);
+      sscanf(hex, "%04x", &x);
     set_uid(x);
   } else if (!strcmp(c,"label"))
     label(f.read_word());
@@ -1271,7 +1277,7 @@ void Fl_Type::write_code2(Fd_Code_Writer&) {
  until we find one that is unique.
 
  \param[in] suggested_uid the preferred uid for this node
- \return the actualt uid that was given to the node
+ \return the actual uid that was given to the node
  */
 unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
   if (suggested_uid==0)

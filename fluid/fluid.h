@@ -17,6 +17,9 @@
 #ifndef _FLUID_FLUID_H
 #define _FLUID_FLUID_H
 
+// Set this to `define` to enable mergeback, or `undef` to disable if.
+#undef FLUID_OPTION_MERGEBACK
+
 #include "fluid_filename.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
