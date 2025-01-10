@@ -76,7 +76,8 @@ Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
 
 void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
-  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_cairo((cairo_t*)offscreen);
+  Fl_Cairo_Graphics_Driver *dr = (Fl_Cairo_Graphics_Driver*)driver();
+  if (!dr->cr()) dr->set_cairo((cairo_t*)offscreen);
   pre_window = Fl_Wayland_Window_Driver::wld_window;
   Fl_Wayland_Window_Driver::wld_window = NULL;
   fl_window = 0;

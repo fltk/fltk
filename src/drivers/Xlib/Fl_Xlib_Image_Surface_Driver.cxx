@@ -82,7 +82,8 @@ void Fl_Xlib_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
   fl_window = offscreen;
 #if FLTK_USE_CAIRO
-  ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+  Fl_Cairo_Graphics_Driver *dr = (Fl_Cairo_Graphics_Driver*)driver();
+  if (!dr->cr()) dr->set_cairo(cairo_);
 #endif
 }
 
