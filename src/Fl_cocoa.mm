@@ -26,7 +26,6 @@ extern "C" {
 #include "Fl_Timeout.h"
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
-#include <FL/Fl_Printer.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Rect.H>
