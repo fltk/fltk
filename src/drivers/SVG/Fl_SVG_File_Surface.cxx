@@ -24,7 +24,7 @@
 #include <FL/math.h>
 #include <FL/Fl_Widget_Surface.H>
 #include <FL/Fl_Graphics_Driver.H>
-#include "Fl_System_Driver.H"
+#include "../../Fl_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Pixmap.H>
