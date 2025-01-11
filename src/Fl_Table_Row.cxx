@@ -150,9 +150,9 @@ void Fl_Table_Row::select_all_rows(int flag) {
 
 // Set number of rows
 void Fl_Table_Row::rows(int val) {
-  Fl_Table::rows(val);
   while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }	// enlarge
   while ( val < (int)_rowselect.size() ) { _rowselect.pop_back(); }	// shrink
+  Fl_Table::rows(val);
 }
 
 //#define DEBUG 1
