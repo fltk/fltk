@@ -116,9 +116,9 @@ void Fl_Tabs::show() {
         were documented as 1 based index and 0 if there were no children. This
         was actually never the case. It always returned a 0 based index and
         the (useless) value of also 0 if there were no children. The current
-        version return -1 if there are no children.
+        version returns -1 if there are no children.
 
-  \note For this method to work, only on single child should be selected.
+  \note For this method to work, only a single child should be selected.
         Calling the method \ref value() before calling \ref tab_positions()
         will ensure that exactly one child is selected and return a pointer
         to that child.
@@ -251,8 +251,8 @@ int Fl_Tabs::tab_positions() {
   negative and the tabs should be placed at the bottom.
 
   \returns Vertical space that can be used for the tabs.
-  \retval  > 0  To put the tabs at the top of the widget.
-  \retval  < 0  To put the tabs on the bottom.
+  \retval  >0  To put the tabs at the top of the widget.
+  \retval  <0  To put the tabs on the bottom.
   \retval Full height, if children() == 0.
 */
 int Fl_Tabs::tab_height() {
@@ -393,9 +393,9 @@ void Fl_Tabs::take_focus(Fl_Widget *o) {
 }
 
 /**
- Set tab o as selected an call callbacks if needed.
+ Set tab o as selected and call callbacks if needed.
  \param[in] o the newly selected tab
- \return 0 if o is invalide or was deleted by the callback and must no longer be used
+ \return 0 if o is invalid or was deleted by the callback and must no longer be used
  */
 int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
   // chaeck if o is valid
@@ -429,7 +429,7 @@ int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
  The menu is then presented until the user selects an item or cancels.
  The chosen tab is then selected and made visible.
 
- The menu item array is the deleted.
+ The menu item array is then deleted.
  */
 void Fl_Tabs::handle_overflow_menu() {
   int nc = children();
@@ -730,7 +730,7 @@ Fl_Widget* Fl_Tabs::value() {
   return v;
 }
 
-/** Sets the widget to become the current visible widget/tab.
+/** Sets the widget to become the currently visible widget/tab.
 
   The Fl_Tabs::value() method allows you to set a particular child widget of
   the Fl_Tabs container to be the currently visible widget. If the specified
