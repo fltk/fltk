@@ -35,10 +35,20 @@ struct Fl_Menu_Item;
   \image html  tabs.png
   \image latex tabs.png "Fl_Tabs" width=8cm
 
-  Clicking the tab makes a child visible() by calling
-  show() on it, and all other children are made invisible
-  by calling hide() on them. Usually the children are Fl_Group widgets
-  containing several widgets themselves.
+  Clicking the tab makes a child visible() by calling show() on it, and all
+  other children are made invisible by calling hide() on them. Usually the
+  children are Fl_Group widgets containing several widgets themselves.
+
+  \b Note: The widgets contained in each child should leave some clear space (five
+  pixels as of FLTK 1.4.0) at the top or bottom of the group where the tabs are
+  displayed, otherwise drawing the children may interfere with the separation
+  border between the tabs and the children. This is particularly important if the
+  child group is an Fl_Scroll widget: either the Fl_Scroll widget can be inset by
+  five pixels relative to other children or it must be ensured that the widgets
+  inside the Fl_Scroll group stay away from the top or bottom by this amount. You
+  can use an invisible Fl_Box at the top (or bottom) of the Fl_Scroll widget so
+  other (visible) widgets can't be scrolled all the way up or down to achieve this.
+  <!-- See GitHub issue #1175. -->
 
   Each child makes a card, and its label() is printed
   on the card tab, including the label font and style.  The
