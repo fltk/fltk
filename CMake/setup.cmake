@@ -2,7 +2,7 @@
 # CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -169,9 +169,14 @@ if(WIN32)
     endif()
     set(BORDER_WIDTH 2)
   endif(MSVC)
-  if(MINGW AND EXISTS /mingw)
-    list(APPEND CMAKE_PREFIX_PATH /mingw)
-  endif(MINGW AND EXISTS /mingw)
+
+  # Don't use the following code, it breaks building with MSYS2/UCRT64
+  # See GitHub PR #1167. Solution is to remove the entire block!
+
+  ### if(MINGW AND EXISTS /mingw)
+  ###   list(APPEND CMAKE_PREFIX_PATH /mingw)
+  ### endif(MINGW AND EXISTS /mingw)
+
 endif(WIN32)
 
 #######################################################################
