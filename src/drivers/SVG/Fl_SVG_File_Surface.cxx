@@ -183,7 +183,7 @@ void Fl_SVG_Graphics_Driver::rect(int x, int y, int w, int h) {
 }
 
 void Fl_SVG_Graphics_Driver::rectf(int x, int y, int w, int h) {
-  fprintf(out_, "<rect x=\"%.3f\" y=\"%.3f\" width=\"%d\" height=\"%d\" "
+  clocale_fprintf(out_, "<rect x=\"%.3f\" y=\"%.3f\" width=\"%d\" height=\"%d\" "
           "fill=\"rgb(%u,%u,%u)\" />\n", x-.5, y-.5, w, h, red_, green_, blue_);
 }
 
