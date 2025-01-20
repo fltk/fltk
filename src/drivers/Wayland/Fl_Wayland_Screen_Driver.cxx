@@ -643,7 +643,7 @@ static void send_commit(struct zwp_text_input_v3 *zwp_text_input_v3) {
 void Fl_Wayland_Screen_Driver::insertion_point_location(int x, int y, int height) {
 //printf("insertion_point_location %dx%d\n",x,y);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  if (scr_driver->seat->text_input && !current_pre_edit &&
+  if (scr_driver->seat->text_input /*&& !current_pre_edit*/ &&
         (x != previous_cursor_x || y != previous_cursor_y  || height != previous_cursor_h)) {
     previous_cursor_x = x;
     previous_cursor_y = y;
