@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -652,6 +652,9 @@ endif()
 #
 #######################################################################
 
+set(OPTIONAL_LIBS)
+set(OPTIONAL_INCLUDES)
+
 macro(append_optional_libs targets)
   foreach(_target ${targets})
     get_target_property(_link_libraries ${_target} INTERFACE_LINK_LIBRARIES)
@@ -666,8 +669,15 @@ macro(append_optional_libs targets)
   unset(_include_dirs)
 endmacro()
 
-set(OPTIONAL_LIBS)
-set(OPTIONAL_INCLUDES)
+# Add the required properties for ${OPTIONAL_LIBS} to the given target.
+# Note: we must use 'PUBLIC', see GitHub Issue #1173
+
+macro(add_optional_libs target)
+  target_link_libraries     (${target} PUBLIC ${OPTIONAL_LIBS})
+  target_include_directories(${target} PUBLIC ${OPTIONAL_INCLUDES})
+endmacro()
+
+# Build the list of optional libs
 
 if(LIB_dl)
   list(APPEND OPTIONAL_LIBS ${LIB_dl})
@@ -679,6 +689,7 @@ endif(USE_THREADS)
 
 if(FLTK_USE_X11)
   list(APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
+  list(APPEND OPTIONAL_INCLUDES ${X11_INCLUDE_DIR})
 endif(FLTK_USE_X11)
 
 if(WIN32)
@@ -807,8 +818,7 @@ list(REMOVE_DUPLICATES OPTIONAL_INCLUDES)
 #######################################################################
 
 fl_add_library(fltk STATIC "${STATIC_FILES}")
-target_link_libraries(fltk PRIVATE ${OPTIONAL_LIBS})
-target_include_directories(fltk PRIVATE ${OPTIONAL_INCLUDES})
+add_optional_libs(fltk)
 
 #######################################################################
 
@@ -846,8 +856,7 @@ if(FLTK_USE_GL)
   target_include_directories(fltk_gl PUBLIC ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
 
   # Add "optional libs" (FIXME: this can be optimized, we don't need *all* these libs here)
-  target_link_libraries(fltk_gl PRIVATE ${OPTIONAL_LIBS})
-  target_include_directories(fltk_gl PRIVATE ${OPTIONAL_INCLUDES})
+  add_optional_libs(fltk_gl)
 
   if(FLTK_OPENGL_GLU_INCLUDE_DIR)
     target_include_directories(fltk_gl PUBLIC ${FLTK_OPENGL_GLU_INCLUDE_DIR})
@@ -863,8 +872,7 @@ endif(FLTK_USE_GL)
 if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
 
   fl_add_library(fltk SHARED "${SHARED_FILES}")
-  target_link_libraries(fltk-shared PRIVATE ${OPTIONAL_LIBS})
-  target_include_directories(fltk-shared PRIVATE ${OPTIONAL_INCLUDES})
+  add_optional_libs(fltk-shared)
 
   ###################################################################
 
@@ -909,8 +917,7 @@ if(FLTK_BUILD_SHARED_LIBS AND NOT MSVC)
     target_include_directories(fltk_gl-shared PUBLIC ${OPENGL_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
 
     # Add "optional libs" (FIXME: this can be optimized, we don't need *all* these libs here)
-    target_link_libraries(fltk_gl-shared PRIVATE ${OPTIONAL_LIBS})
-    target_include_directories(fltk_gl-shared PRIVATE ${OPTIONAL_INCLUDES})
+    add_optional_libs(fltk_gl-shared)
 
     if(FLTK_OPENGL_GLU_INCLUDE_DIR)
       target_include_directories(fltk_gl-shared PUBLIC ${FLTK_OPENGL_GLU_INCLUDE_DIR})
@@ -938,8 +945,7 @@ if(FLTK_BUILD_SHARED_LIBS AND MSVC)
   endif(OPENGL_FOUND)
 
   fl_add_library(fltk SHARED "${SOURCES}")
-  target_link_libraries(fltk-shared PRIVATE ${OPTIONAL_LIBS})
-  target_include_directories(fltk-shared PRIVATE ${OPTIONAL_INCLUDES})
+  add_optional_libs(fltk-shared)
 
   if(FLTK_USE_BUNDLED_JPEG)
     target_link_libraries(fltk-shared PUBLIC fltk::jpeg-shared)
