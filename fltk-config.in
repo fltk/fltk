@@ -71,7 +71,6 @@ CAIROLIBS="@CAIROLIBS@"
 GLLIBS="@GLLIBS@"
 
 # Check bundled image libraries in source tree
-echo "--- includedir='$includedir' ---"
 if test -f "$libdir/libfltk_jpeg.a" -a -d $includedir/jpeg; then
     CFLAGS="-I$includedir/jpeg $CFLAGS"
     CXXFLAGS="-I$includedir/jpeg $CXXFLAGS"
@@ -94,10 +93,10 @@ if test -d "$includedir/FL/images"; then
     CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
 fi
 
-# Cairo support
+# Cairo support: *append* CAIROFLAGS
 if test -n "$CAIROFLAGS"; then
-    CFLAGS="$CAIROFLAGS $CFLAGS"
-    CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
+    CFLAGS="$CFLAGS $CAIROFLAGS"
+    CXXFLAGS="$CXXFLAGS $CAIROFLAGS"
 fi
 
 usage ()
