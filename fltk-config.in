@@ -71,17 +71,18 @@ CAIROLIBS="@CAIROLIBS@"
 GLLIBS="@GLLIBS@"
 
 # Check bundled image libraries in source tree
-if test -f "$libdir/libfltk_jpeg.a"; then
+echo "--- includedir='$includedir' ---"
+if test -f "$libdir/libfltk_jpeg.a" -a -d $includedir/jpeg; then
     CFLAGS="-I$includedir/jpeg $CFLAGS"
     CXXFLAGS="-I$includedir/jpeg $CXXFLAGS"
 fi
 
-if test -f "$libdir/libfltk_z.a"; then
+if test -f "$libdir/libfltk_z.a" -a -d $includedir/zlib; then
     CFLAGS="-I$includedir/zlib $CFLAGS"
     CXXFLAGS="-I$includedir/zlib $CXXFLAGS"
 fi
 
-if test -f "$libdir/libfltk_png.a"; then
+if test -f "$libdir/libfltk_png.a" -a -d $includedir/png; then
     CFLAGS="-I$includedir/png $CFLAGS"
     CXXFLAGS="-I$includedir/png $CXXFLAGS"
 fi
