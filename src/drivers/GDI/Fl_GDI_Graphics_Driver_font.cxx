@@ -1,7 +1,7 @@
 //
 // Windows font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -280,10 +280,10 @@ Fl_GDI_Font_Descriptor::~Fl_GDI_Font_Descriptor() {
 // WARNING: if you add to this table, you must redefine FL_FREE_FONT
 // in Enumerations.H & recompile!!
 static Fl_Fontdesc built_in_table[] = {
-{" Arial"},
-{"BArial"},
-{"IArial"},
-{"PArial"},
+  {" Microsoft Sans Serif"},
+  {"BMicrosoft Sans Serif"},
+  {"IMicrosoft Sans Serif"},
+  {"PMicrosoft Sans Serif"},
 {" Courier New"},
 {"BCourier New"},
 {"ICourier New"},

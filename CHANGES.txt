@@ -1,3 +1,10 @@
+Changes in FLTK 1.4.2                                   Released: ??? ?? 2025
+
+  Technical Details and Build Procedure Improvements
+
+  - Use "Microsoft Sans Serif" instead of "Arial" for the FL_HELVETICA font
+  family under Windows.
+
 Changes in FLTK 1.4.1                                   Released: Dec 12 2024
 
   FLTK 1.4.1 is a maintenance release with bug fixes and improvements.
