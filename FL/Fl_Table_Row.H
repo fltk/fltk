@@ -1,12 +1,10 @@
 //
-// "$Id$"
-//
 
 #ifndef _FL_TABLE_ROW_H
 #define _FL_TABLE_ROW_H
 
 //
-// Fl_Table_Row -- A row oriented table widget
+// Fl_Table_Row -- A row oriented table widget for the Fast Light Tool Kit (FLTK).
 //
 //    A class specializing in a table of rows.
 //    Handles row-specific selection behavior.
@@ -17,12 +15,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to "erco at seriss dot com".
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
 //
 
-#include "Fl_Table.H"
+#include <FL/Fl_Table.H>
 
 /**
  A table with row selection capabilities.
@@ -167,19 +167,11 @@ public:
     return(_selectmode);
   }
   
-  /**
-   Checks to see if 'row' is selected. Returns 1 if selected, 0 if not. You can
-   change the selection of a row by clicking on it, or by using
-   select_row(row, flag)
-   */
-  int row_selected(int row);		// is row selected? (0=no, 1=yes, -1=range err)
+  // Checks to see if 'row' is selected. Returns 1 if selected, 0 if not.
+  int row_selected(int row);
   
-  /**
-   Changes the selection state for 'row', depending on the value
-   of 'flag'.  0=deselected, 1=select, 2=toggle existing state.
-   */
-  int select_row(int row, int flag=1);	// select state for row: flag:0=off, 1=on, 2=toggle
-  // returns: 0=no change, 1=changed, -1=range err
+  // Changes the selection state for 'row', depending on the value of 'flag'.
+  int select_row(int row, int flag = 1);
   
   /**
    This convenience function changes the selection state 
@@ -195,7 +187,3 @@ public:
 };
 
 #endif /*_FL_TABLE_ROW_H*/
-
-//
-// End of "$Id$".
-//

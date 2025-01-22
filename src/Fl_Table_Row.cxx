@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Table_Row -- A row oriented table widget
 //
 //    A class specializing in a table of rows.
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -29,10 +27,24 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Table_Row.H>
 
-// Is row selected?
+/**
+  Checks to see if 'row' is selected.
+
+  Returns 1 if selected, 0 if not. You can change the selection of a row
+  by clicking on it, or by using select_row(row, flag)
+
+  \p row \b should be a valid row. If the row is out of range the return
+  value is 0 (zero).
+
+  \param[in] row  row to be checked
+
+  \return whether given row is selected
+  \retval  1  row is selected
+  \retval  0  row is not selected or \p row is out of range
+*/
 int Fl_Table_Row::row_selected(int row) {
-  if ( row < 0 || row >= rows() ) return(-1);
-  return(_rowselect[row]);
+  if (row < 0 || row >= rows()) return 0;
+  return _rowselect[row];
 }
 
 // Change row selection type
@@ -63,18 +75,22 @@ void Fl_Table_Row::type(TableRowSelectMode val) {
   }
 }
 
-// Change selection state for row
-//
-//     flag:
-//        0 - clear selection
-//        1 - set selection
-//        2 - toggle selection
-//
-//     Returns:
-//        0 - selection state did not change
-//        1 - selection state changed
-//       -1 - row out of range or incorrect selection mode
-//
+/**
+  Changes the selection state for \p 'row', depending on the value of \p 'flag'.
+
+  The optional \p flag can be:
+    -  0: clear selection
+    -  1: set selection (default)
+    -  2: toggle selection
+
+  \param[in]  row   row to be selected, deselected, or toggled
+  \param[in]  flag  change mode, see description
+  \return     result of modification, see description
+  \retval   0: selection state did not change
+  \retval   1: selection state changed
+  \retval  -1: row out of range or incorrect selection mode (\p flag)
+*/
+
 int Fl_Table_Row::select_row(int row, int flag) {
   int ret = 0;
   if ( row < 0 || row >= rows() ) { return(-1); }
@@ -150,8 +166,8 @@ void Fl_Table_Row::select_all_rows(int flag) {
 
 // Set number of rows
 void Fl_Table_Row::rows(int val) {
+  while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }   // enlarge
   Fl_Table::rows(val);
-  while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }	// enlarge
   while ( val < (int)_rowselect.size() ) { _rowselect.pop_back(); }	// shrink
 }
 
@@ -321,7 +337,3 @@ int Fl_Table_Row::handle(int event) {
   _last_y = _event_y;
   return(ret);
 }
-
-//
-// End of "$Id$".
-//
