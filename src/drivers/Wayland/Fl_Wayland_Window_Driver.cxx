@@ -1786,6 +1786,12 @@ struct xid_and_rect {
 };
 
 
+static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
+
+static const struct wl_callback_listener surface_frame_listener = {
+  .done = surface_frame_done,
+};
+
 static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
   struct xid_and_rect *xid_rect = (xid_and_rect *)data;
   wl_callback_destroy(cb);
@@ -1795,14 +1801,26 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
     xid_rect->win->redraw();
   } else {
     xid_rect->win->Fl_Widget::resize(xid_rect->X, xid_rect->Y, xid_rect->W, xid_rect->H);
+    if (xid_rect->xid->buffer && xid_rect->xid->buffer->draw_buffer_needs_commit) {
+      // for scenarios where the child window is moved and its parent is simultaneously modified
+      cairo_surface_t *surf = cairo_get_target(xid_rect->xid->buffer->draw_buffer.cairo_);
+      cairo_surface_flush(surf);
+      xid_rect->xid->buffer->draw_buffer_needs_commit = false;
+      memcpy(xid_rect->xid->buffer->data, xid_rect->xid->buffer->draw_buffer.buffer,
+               xid_rect->xid->buffer->draw_buffer.data_size);
+      wl_surface_damage_buffer(xid_rect->xid->wl_surface, 0, 0, 1000000, 1000000);
+      xid_rect->xid->buffer->in_use = true;
+      wl_surface_attach(xid_rect->xid->wl_surface, xid_rect->xid->buffer->wl_buffer, 0, 0);
+      wl_surface_set_buffer_scale( xid_rect->xid->wl_surface,
+          Fl_Wayland_Window_Driver::driver(xid_rect->xid->fl_win)->wld_scale() );
+      xid_rect->xid->frame_cb = wl_surface_frame(xid_rect->xid->wl_surface);
+      wl_callback_add_listener(xid_rect->xid->frame_cb, &surface_frame_listener, xid_rect);
+      wl_surface_commit(xid_rect->xid->wl_surface);
+      return;
+    }
   }
   delete xid_rect;
 }
-
-
-static const struct wl_callback_listener surface_frame_listener = {
-  .done = surface_frame_done,
-};
 
 
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
