@@ -3117,9 +3117,17 @@ NSOpenGLContext* Fl_X::GLcontext_getcurrent()
   return [NSOpenGLContext currentContext];
 }
 
+
+static BOOL fullscreen_screen_border = NO;
+
+
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 100700 && fullscreen_screen_top >= 0 && border()) {
+    fullscreen_screen_border = YES;
+    border(0);
+  }
   if (fl_mac_os_version >= 100700 && border()) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     [i->xid toggleFullScreen:nil];
@@ -3167,7 +3175,12 @@ void Fl_Window::fullscreen_x() {
 void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   _clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700) {
+  if (fullscreen_screen_border) border(1);
+  if (fl_mac_os_version >= 100700
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+      && ([i->xid styleMask] & NSWindowStyleMaskFullScreen)
+#  endif
+      ) {
   #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
       [i->xid toggleFullScreen:nil];
   #  endif
@@ -3193,6 +3206,7 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
     show();
   }
   Fl::handle(FL_FULLSCREEN, this);
+  fullscreen_screen_border = NO;
 }
 
 /*

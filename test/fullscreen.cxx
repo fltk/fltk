@@ -196,6 +196,9 @@ void fullscreen_cb(Fl_Widget *o, void *p) {
 #endif
   } else {
     w->fullscreen_off();
+#ifndef WIN32 // update our border state in case border was turned off
+    border_button->value(w->border());
+#endif
   }
 }
 
