@@ -3133,6 +3133,18 @@ void Fl_Window::fullscreen_x() {
     [i->xid toggleFullScreen:nil];
 #  endif
   } else if (fl_mac_os_version >= 100600) {
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    if (fl_mac_os_version >= 100700 && (i->xid.styleMask & NSWindowStyleMaskFullScreen)) {
+      [i->xid toggleFullScreen:nil];
+      if (no_fullscreen_w == 0) {
+        no_fullscreen_x = x();
+        no_fullscreen_y = y();
+        no_fullscreen_w = w();
+        no_fullscreen_h = h();
+      }
+      _set_fullscreen();
+    }
+#endif
     [i->xid setStyleMask:NSBorderlessWindowMask]; // 10.6
     if ([i->xid isKeyWindow]) {
        if ([i->xid level] != NSStatusWindowLevel) {
