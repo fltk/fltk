@@ -847,7 +847,19 @@ target_link_libraries(fltk_images PRIVATE ${FLTK_IMAGE_LIBRARIES})
 if(FLTK_USE_BUNDLED_JPEG)
   target_include_directories(fltk_images PUBLIC
     $<BUILD_INTERFACE:${FLTK_SOURCE_DIR}/jpeg>
-    $<INSTALL_INTERFACE:include>)
+    $<INSTALL_INTERFACE:include/FL/images>)
+endif()
+
+if(FLTK_USE_BUNDLED_PNG)
+  target_include_directories(fltk_images PUBLIC
+    $<BUILD_INTERFACE:${FLTK_SOURCE_DIR}/png>
+    $<INSTALL_INTERFACE:include/FL/images>)
+endif()
+
+if(FLTK_USE_BUNDLED_ZLIB)
+  target_include_directories(fltk_images PUBLIC
+    $<BUILD_INTERFACE:${FLTK_SOURCE_DIR}/zlib>
+    $<INSTALL_INTERFACE:include/FL/images>)
 endif()
 
 #######################################################################
