@@ -108,11 +108,13 @@ void Fl_Window::fullscreen_screens(int top, int bottom, int left, int right) {
     fullscreen_screen_bottom = -1;
     fullscreen_screen_left = -1;
     fullscreen_screen_right = -1;
+    fullscreen_screens_x(false);
   } else {
     fullscreen_screen_top = top;
     fullscreen_screen_bottom = bottom;
     fullscreen_screen_left = left;
     fullscreen_screen_right = right;
+    fullscreen_screens_x(true);
   }
 
   if (shown() && fullscreen_active())

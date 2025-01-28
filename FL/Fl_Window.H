@@ -157,6 +157,12 @@ private:
   void _Fl_Window(); // constructor innards
   void fullscreen_x(); // platform-specific part of sending a window to full screen
   void fullscreen_off_x(int X, int Y, int W, int H);// platform-specific part of leaving full screen
+  void fullscreen_screens_x(bool on_off)
+#if __APPLE__
+  ;
+#else
+  {}
+#endif
 
   // unimplemented copy ctor and assignment operator
   Fl_Window(const Fl_Window&);

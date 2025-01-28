@@ -3124,6 +3124,15 @@ NSOpenGLContext* Fl_X::GLcontext_getcurrent()
 
 static BOOL fullscreen_screen_border = NO;
 
+void Fl_Window::fullscreen_screens_x(bool on_off) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700) {
+    if (on_off) i->xid.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
+    else i->xid.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
+  }
+#endif
+}
+
 
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
