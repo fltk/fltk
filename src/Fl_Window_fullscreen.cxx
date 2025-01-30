@@ -1,7 +1,7 @@
 //
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -75,11 +75,13 @@ void Fl_Window::fullscreen_screens(int top, int bottom, int left, int right) {
     fullscreen_screen_bottom = -1;
     fullscreen_screen_left = -1;
     fullscreen_screen_right = -1;
+    pWindowDriver->fullscreen_screens(false);
   } else {
     fullscreen_screen_top = top;
     fullscreen_screen_bottom = bottom;
     fullscreen_screen_left = left;
     fullscreen_screen_right = right;
+    pWindowDriver->fullscreen_screens(true);
   }
 
   if (shown() && fullscreen_active())

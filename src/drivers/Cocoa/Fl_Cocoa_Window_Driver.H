@@ -2,7 +2,7 @@
 // Definition of Apple Cocoa window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -133,6 +133,7 @@ public:
   void unmap() FL_OVERRIDE;
   void fullscreen_on() FL_OVERRIDE;
   void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
+  void fullscreen_screens(bool on_off) FL_OVERRIDE;
   void maximize() FL_OVERRIDE;
   void un_maximize() FL_OVERRIDE;
   void use_border() FL_OVERRIDE;

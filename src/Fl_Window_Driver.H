@@ -2,7 +2,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2024 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -152,6 +152,7 @@ public:
   virtual void unmap() {}
   virtual void fullscreen_on() {}
   virtual void fullscreen_off(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
+  virtual void fullscreen_screens(bool /*on_off*/) {}
   virtual void maximize();
   virtual void un_maximize();
   virtual bool maximize_needs_hide() { return false; }

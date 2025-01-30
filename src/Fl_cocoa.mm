@@ -1,7 +1,7 @@
 //
 // macOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -557,6 +557,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
 #endif
 - (NSBitmapImageRep*)rect_to_NSBitmapImageRep:(Fl_Rect*)r;
+- (void)makeKeyWindow;
 @end
 
 
@@ -794,6 +795,11 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 }
 - (NSBitmapImageRep*)rect_to_NSBitmapImageRep:(Fl_Rect*)r {
   return rect_to_NSBitmapImageRep(w, r->x(), r->y(), r->w(), r->h());
+}
+- (void)makeKeyWindow {
+  // Necessary in this scenario at least:
+  // transition of a subwindow-containing window from multiscreen-fullscreen mode to normal mode.
+  if ([self canBecomeKeyWindow]) [super makeKeyWindow];
 }
 @end
 
@@ -1437,7 +1443,11 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
   /* Restore previous fullscreen level */
-  if (w->fullscreen_active() && fl_mac_os_version < 100700) {
+  if (w->fullscreen_active() && (fl_mac_os_version < 100700
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+                                 || !(nsw.styleMask & NSWindowStyleMaskFullScreen)
+#endif
+      )) {
     [nsw setLevel:NSStatusWindowLevel];
     fixup_window_levels();
   }
@@ -3278,10 +3288,23 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   [pool release];
 }
 
+
+static BOOL fullscreen_screen_border = NO; // YES means the multi-screened window had a border before
+
+static NSUInteger calc_win_style(Fl_Window *win);
+
+
 void Fl_Cocoa_Window_Driver::fullscreen_on() {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  bool has_border = pWindow->border();
+  if (fl_mac_os_version >= 100700 && fullscreen_screen_top() >= 0 && has_border) {
+    fullscreen_screen_border = YES;
+    has_border = false;
+  }
+#endif
   pWindow->_set_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700 && pWindow->border()) {
+  if (fl_mac_os_version >= 100700 && has_border) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     NSWindow *nswin = fl_xid(pWindow);
 #    if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
@@ -3290,10 +3313,29 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
       if (active_tab) nswin = active_tab;
     }
 #    endif
+    if (fullscreen_screen_border) { // from "All Screens" fullscreen to single-screen fullscreen
+      pWindow->_clear_fullscreen();
+      [nswin setLevel:NSNormalWindowLevel];
+      [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
+      pWindow->_set_fullscreen();
+    }
     [nswin toggleFullScreen:nil];
 #  endif
   } else if (fl_mac_os_version >= 100600) {
     FLWindow *nswin = fl_xid(pWindow);
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    if (fl_mac_os_version >= 100700 && (nswin.styleMask & NSWindowStyleMaskFullScreen)) {
+      // from single-screen fullscreen to "All Screens" fullscreen
+      [nswin toggleFullScreen:nil];
+      if (*no_fullscreen_w() == 0) {
+        *no_fullscreen_x() = x();
+        *no_fullscreen_y() = y();
+        *no_fullscreen_w() = w();
+        *no_fullscreen_h() = h();
+      }
+      pWindow->_set_fullscreen();
+    }
+#endif
     [nswin setStyleMask:NSWindowStyleMaskBorderless]; // 10.6
     if ([nswin isKeyWindow]) {
       if ([nswin level] != NSStatusWindowLevel) {
@@ -3373,11 +3415,15 @@ static void restore_window_title_and_icon(Fl_Window *pWindow, NSImage *icon) {
 #endif
 
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
+  NSWindow *nswin = fl_xid(pWindow);
   pWindow->_clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700 && pWindow->border()) {
+  if (fl_mac_os_version >= 100700
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    NSWindow *nswin = fl_xid(pWindow);
+      && ([nswin styleMask] & NSWindowStyleMaskFullScreen)
+#  endif
+      ) {
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 #    if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
     if (fl_mac_os_version >= 101300) {
       NSWindow *active_tab = [[nswin tabGroup] selectedWindow];
@@ -3385,9 +3431,10 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     }
 #    endif
     [nswin toggleFullScreen:nil];
+    pWindow->resize(*no_fullscreen_x(), *no_fullscreen_y(), *no_fullscreen_w(), *no_fullscreen_h());
 #  endif
   } else if (fl_mac_os_version >= 100600) {
-    FLWindow *nswin = fl_xid(pWindow);
+    // Transition from multi-screen fullscreen mode to normal mode
     NSInteger level = NSNormalWindowLevel;
     if (pWindow->modal()) level = modal_window_level();
     else if (pWindow->non_modal()) level = non_modal_window_level();
@@ -3413,7 +3460,20 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     pWindow->show();
   }
   Fl::handle(FL_FULLSCREEN, pWindow);
+  fullscreen_screen_border = NO;
 }
+
+
+void Fl_Cocoa_Window_Driver::fullscreen_screens(bool on_off) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700) {
+    FLWindow *xid = fl_mac_xid(pWindow);
+    if (on_off) xid.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
+    else xid.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
+  }
+#endif
+}
+
 
 void Fl_Cocoa_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
