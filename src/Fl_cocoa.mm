@@ -3272,7 +3272,14 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
     else [cw orderFront:nil];
     if (w->fullscreen_active() && fl_mac_os_version >= 100700) {
-      [cw toggleFullScreen:nil];
+      if (fullscreen_screen_top() >= 0)  {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+        cw.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
+#endif
+        *no_fullscreen_x() = pWindow->x();
+        *no_fullscreen_y() = pWindow->y();
+      }
+      fullscreen_on();
     }
   }
   if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() && !w->parent() && w->border() &&
