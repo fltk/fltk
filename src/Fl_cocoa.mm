@@ -1,7 +1,7 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -655,6 +655,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
 #endif
+- (void)makeKeyWindow;
 @end
 
 
@@ -874,6 +875,11 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 {
   if ([self parentWindow]) return frameRect; // do not constrain subwindows
   return [super constrainFrameRect:frameRect toScreen:screen]; // will prevent a window from going above the menu bar
+}
+- (void)makeKeyWindow {
+  // Necessary in this scenario at least:
+  // transition of a subwindow-containing window from multiscreen-fullscreen mode to normal mode.
+  if ([self canBecomeKeyWindow]) [super makeKeyWindow];
 }
 @end
 
@@ -3126,7 +3132,7 @@ static BOOL fullscreen_screen_border = NO;
 
 void Fl_Window::fullscreen_screens_x(bool on_off) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700) {
+  if (fl_mac_os_version >= 100700 && shown()) {
     if (on_off) i->xid.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
     else i->xid.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
   }
@@ -3137,12 +3143,20 @@ void Fl_Window::fullscreen_screens_x(bool on_off) {
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700 && fullscreen_screen_top >= 0 && border()) {
+  bool has_border = border();
+  if (fl_mac_os_version >= 100700 && fullscreen_screen_top >= 0 && has_border) {
     fullscreen_screen_border = YES;
-    border(0);
+    has_border = false;
   }
-  if (fl_mac_os_version >= 100700 && border()) {
+  if (fl_mac_os_version >= 100700 && has_border) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    if (fullscreen_screen_border) { // from "All Screens" fullscreen to single-screen fullscreen
+      [i->xid setLevel:NSNormalWindowLevel];
+      NSUInteger winstyle = (border() ?
+                             (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) : NSBorderlessWindowMask);
+      if (!modal()) winstyle |= NSMiniaturizableWindowMask;
+      [i->xid setStyleMask:winstyle]; //10.6
+    }
     [i->xid toggleFullScreen:nil];
 #  endif
   } else if (fl_mac_os_version >= 100600) {
@@ -3200,7 +3214,6 @@ void Fl_Window::fullscreen_x() {
 void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   _clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fullscreen_screen_border) border(1);
   if (fl_mac_os_version >= 100700
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
       && ([i->xid styleMask] & NSWindowStyleMaskFullScreen)
@@ -3208,6 +3221,7 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
       ) {
   #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
       [i->xid toggleFullScreen:nil];
+      resize(no_fullscreen_x, no_fullscreen_y, no_fullscreen_w, no_fullscreen_h);
   #  endif
   } else if (fl_mac_os_version >= 100600) {
     NSInteger level = NSNormalWindowLevel;
@@ -3447,7 +3461,14 @@ void Fl_X::make(Fl_Window* w)
     if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
     else [cw orderFront:nil];
     if (w->fullscreen_active() && fl_mac_os_version >= 100700) {
-      [cw toggleFullScreen:nil];
+      if (w->fullscreen_screen_top >= 0)  {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+        cw.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
+#endif
+        w->no_fullscreen_x = w->x();
+        w->no_fullscreen_y = w->y();
+      }
+      w->fullscreen_x();
     }
   }
   
