@@ -5,7 +5,7 @@
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2023 by Bill Spitzak and others.
+// Copyright 2011-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -83,6 +83,24 @@ extern "C"
 static int      quote_char(const char *);
 static void     scrollbar_callback(Fl_Widget *s, void *);
 static void     hscrollbar_callback(Fl_Widget *s, void *);
+
+// This function skips 'n' bytes *within* a string, i.e. it checks
+// for a NUL byte as string terminator.
+// If a NUL byte is found before 'n' bytes have been scanned it returns
+// a pointer to the end of the string (the NUL byte).
+// This avoids pure pointer arithmetic that would potentially overrun
+// the end of the string (buffer), see GitHub Issue #1196.
+//
+// Note: this should be rewritten and improved in FLTK 1.5.0 or later
+// by using std::string etc..
+
+static char *skip_bytes(const char *p, int n) {
+  for (int i = 0; i < n; ++i) {
+    if (*p == '\0') break;
+    ++p;
+  }
+  return const_cast<char *>(p);
+}
 
 //
 // global flag for image loading (see get_image).
@@ -2753,8 +2771,9 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
   if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
     if (name[0] == '/') {
       strlcpy(temp, directory_, sizeof(temp));
-
-      if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL) {
+      // the following search (strchr) will always succeed, see condition above!
+      tempptr = skip_bytes(strchr(temp, ':'), 3);
+      if ((tempptr = strrchr(tempptr, '/')) != NULL) {
         strlcpy(tempptr, name, sizeof(temp) - (tempptr - temp));
       } else {
         strlcat(temp, name, sizeof(temp));
@@ -2852,10 +2871,13 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
       if (linkp->filename[0] == '/')
       {
         strlcpy(temp, directory_, sizeof(temp));
-        if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-          strlcpy(tempptr, linkp->filename, 2 * FL_PATH_MAX); // sizeof(temp));
-        else
+        // the following search (strchr) will always succeed, see condition above!
+        tempptr = skip_bytes(strchr(temp, ':'), 3);
+        if ((tempptr = strrchr(tempptr, '/')) != NULL) {
+          strlcpy(tempptr, linkp->filename, sizeof(temp) - (tempptr - temp));
+        } else {
           strlcat(temp, linkp->filename, sizeof(temp));
+        }
       }
       else
         snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
