@@ -384,6 +384,35 @@ OPTION_USE_XRENDER                   | FLTK_USE_XRENDER
 OPTION_WAYLAND_ONLY                  | FLTK_BACKEND_X11=OFF
 
 
+\section migration_1_4_windows_font New FL_HELVETICA Font on Windows
+
+In FLTK releases before 1.4.2 the Windows font name used for the FLTK font
+'FL_HELVETICA' and its variants was named 'Arial'. It turned out that this
+was a very old font used in early Windows versions and had been replaced with
+the newer font name 'Microsoft Sans Serif'. This font has many more UTF-8
+capable glyphs (characters) and is almost 100% compatible with the previously
+used font 'Arial'. It is supported by Microsoft since Windows XP, our oldest
+currently (partially) supported Windows platform.
+
+This new font is used since FLTK 1.4.2.
+
+We don't expect any issues with this much better font but if you really want
+strict backwards compatibility with FLTK 1.3.x or early 1.4.0/1.4.1 versions
+you can apply a tiny patch at the beginning of your program.
+
+This code will load the old font 'Arial' on Windows:
+
+\code
+#ifdef _WIN32
+  // reset Windows fonts to pre-1.4.2 state
+  Fl::set_font(FL_HELVETICA,     " Arial");
+  Fl::set_font(FL_HELVETICA + 1, "BArial");
+  Fl::set_font(FL_HELVETICA + 2, "IArial");
+  Fl::set_font(FL_HELVETICA + 3, "PArial");
+#endif
+\endcode
+
+
 \htmlonly
 <hr>
 <table summary="navigation bar" width="100%" border="0">
