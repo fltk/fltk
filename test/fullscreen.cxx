@@ -1,6 +1,6 @@
 //
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -121,42 +121,30 @@ void shape_window::draw() {
 
 class fullscreen_window : public Fl_Single_Window {
   public:
-  fullscreen_window(int W, int H, const char *t=0);
-  int handle (int e) FL_OVERRIDE;
+  fullscreen_window(int W, int H, const char *t=0) : Fl_Single_Window(W, H, t) {}
   void resize(int x, int y, int w, int h) FL_OVERRIDE;
-  Fl_Toggle_Light_Button *b3_maxi;
-  Fl_Toggle_Light_Button *b3;
-  Fl_Toggle_Light_Button *b4;
+  Fl_Toggle_Light_Button *border_button;
+  Fl_Toggle_Light_Button *maximize_button;
+  Fl_Toggle_Light_Button *fullscreen_button;
+  Fl_Toggle_Light_Button *allscreens_button;
 };
 
-fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) {
 
+void after_resize(fullscreen_window *win) {
+  if (win->maximize_active()) win->maximize_button->set();
+  else win->maximize_button->clear();
+  win->maximize_button->redraw();
+  if (win->fullscreen_active()) win->fullscreen_button->set();
+  else win->fullscreen_button->clear();
+  win->fullscreen_button->redraw();
 }
 
-void after_resize(void *data) {
-  Fl::remove_check(after_resize, data);
-  fullscreen_window *win = (fullscreen_window*)data;
-  if (win->maximize_active()) win->b3_maxi->set();
-  else win->b3_maxi->clear();
-  win->b3_maxi->redraw();
-  if (win->fullscreen_active()) win->b3->set();
-  else win->b3->clear();
-  win->b3->redraw();
-}
 
 void fullscreen_window::resize(int x, int y, int w, int h) {
   Fl_Single_Window::resize(x,y,w,h);
-  Fl::add_check(after_resize, this);
-};
-
-int fullscreen_window::handle(int e) {
-  if (e == FL_FULLSCREEN) {
-    // fprintf(stderr, "Received FL_FULLSCREEN event\n");
-    b3->value(fullscreen_active());
-  }
-  if (Fl_Single_Window::handle(e)) return 1;
-  return 0;
+  Fl::add_timeout(0, (Fl_Timeout_Handler)after_resize, this);
 }
+
 
 void sides_cb(Fl_Widget *o, void *p) {
   shape_window *sw = (shape_window *)p;
@@ -184,25 +172,25 @@ void border_cb(Fl_Button *b, Fl_Window *w) {
 
 
 void maximize_cb(Fl_Button *b, Fl_Window *w) {
+  if (w->fullscreen_active()) {
+    b->value(1 - b->value());
+    return;
+  }
   if (w->maximize_active()) {
     w->un_maximize();
-    if (w->maximize_active()) b->set();
   } else {
     w->maximize();
-    if (!w->maximize_active()) b->clear();
   }
 }
 
 
-Fl_Button *border_button;
-void fullscreen_cb(Fl_Widget *o, void *p) {
-  Fl_Window *w = (Fl_Window *)p;
-  int d = ((Fl_Button *)o)->value();
-  if (d) {
+void fullscreen_cb(Fl_Button *b, Fl_Window *w) {
+  if (w->maximize_active()) {
+    b->value(1 - b->value());
+    return;
+  }
+  if (b->value()) {
     w->fullscreen();
-#ifndef _WIN32 // update our border state in case border was turned off
-    border_button->value(w->border());
-#endif
   } else {
     w->fullscreen_off();
   }
@@ -307,7 +295,7 @@ int main(int argc, char **argv) {
 #endif
 
   Fl_Window *w;
-  if (twowindow) {      // make it's own window
+  if (twowindow) {      // make its own window
     sw.resizable(&sw);
     w = &sw;
     window.set_modal(); // makes controls stay on top when fullscreen pushed
@@ -337,22 +325,21 @@ int main(int argc, char **argv) {
   Fl_Input i1(50,y,window.w()-60,30, "Input");
   y+=30;
 
-  Fl_Toggle_Light_Button b2(50,y,window.w()-60,30,"Border");
-  b2.callback((Fl_Callback*)border_cb,w);
-  b2.set();
-  border_button = &b2;
+  window.border_button = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"Border");
+  window.border_button->callback((Fl_Callback*)border_cb,w);
+  window.border_button->set();
   y+=30;
 
-  window.b3 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"FullScreen");
-  window.b3->callback(fullscreen_cb,w);
+  window.fullscreen_button = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"FullScreen");
+  window.fullscreen_button->callback((Fl_Callback*)fullscreen_cb,w);
   y+=30;
 
-  window.b3_maxi = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"Maximize");
-  window.b3_maxi->callback((Fl_Callback*)maximize_cb,w);
+  window.maximize_button = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"Maximize");
+  window.maximize_button->callback((Fl_Callback*)maximize_cb,w);
   y+=30;
 
-  window.b4 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"All Screens");
-  window.b4->callback(allscreens_cb,w);
+  window.allscreens_button = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"All Screens");
+  window.allscreens_button->callback(allscreens_cb,w);
   y+=30;
 
   Fl_Button eb(50,y,window.w()-60,30,"Exit");
@@ -367,7 +354,7 @@ int main(int argc, char **argv) {
   update.callback(update_screeninfo, browser);
   y+=30;
 
-  if (initfull) {window.b3->set(); window.b3->do_callback();}
+  if (initfull) {window.fullscreen_button->set(); window.fullscreen_button->do_callback();}
 
   window.end();
   window.show(argc,argv);
