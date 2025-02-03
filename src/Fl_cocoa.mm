@@ -3162,7 +3162,10 @@ void Fl_Window::fullscreen_x() {
   } else if (fl_mac_os_version >= 100600) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && (i->xid.styleMask & NSWindowStyleMaskFullScreen)) {
+      // from single-screen fullscreen to "All Screens" fullscreen, with border
+      i->xid.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone; // just transiently
       [i->xid toggleFullScreen:nil];
+      i->xid.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
       if (no_fullscreen_w == 0) {
         no_fullscreen_x = x();
         no_fullscreen_y = y();
