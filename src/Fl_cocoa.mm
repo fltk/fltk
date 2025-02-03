@@ -3128,7 +3128,10 @@ NSOpenGLContext* Fl_X::GLcontext_getcurrent()
 }
 
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 static BOOL fullscreen_screen_border = NO;
+#endif
+
 
 void Fl_Window::fullscreen_screens_x(bool on_off) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
@@ -3143,13 +3146,13 @@ void Fl_Window::fullscreen_screens_x(bool on_off) {
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   bool has_border = border();
   if (fl_mac_os_version >= 100700 && fullscreen_screen_top >= 0 && has_border) {
     fullscreen_screen_border = YES;
     has_border = false;
   }
   if (fl_mac_os_version >= 100700 && has_border) {
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fullscreen_screen_border) { // from "All Screens" fullscreen to single-screen fullscreen
       [i->xid setLevel:NSNormalWindowLevel];
       NSUInteger winstyle = (border() ?
@@ -3158,8 +3161,9 @@ void Fl_Window::fullscreen_x() {
       [i->xid setStyleMask:winstyle]; //10.6
     }
     [i->xid toggleFullScreen:nil];
+  } else
 #  endif
-  } else if (fl_mac_os_version >= 100600) {
+    if (fl_mac_os_version >= 100600) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && (i->xid.styleMask & NSWindowStyleMaskFullScreen)) {
       // from single-screen fullscreen to "All Screens" fullscreen, with border
@@ -3217,16 +3221,13 @@ void Fl_Window::fullscreen_x() {
 void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   _clear_fullscreen();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100700
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-      && ([i->xid styleMask] & NSWindowStyleMaskFullScreen)
-#  endif
-      ) {
-  #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700 && ([i->xid styleMask] & NSWindowStyleMaskFullScreen)) {
       [i->xid toggleFullScreen:nil];
       resize(no_fullscreen_x, no_fullscreen_y, no_fullscreen_w, no_fullscreen_h);
-  #  endif
-  } else if (fl_mac_os_version >= 100600) {
+  } else
+#  endif
+    if (fl_mac_os_version >= 100600) {
     NSInteger level = NSNormalWindowLevel;
     if (modal()) level = modal_window_level();
     else if (non_modal()) level = non_modal_window_level();
@@ -3248,7 +3249,9 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
     show();
   }
   Fl::handle(FL_FULLSCREEN, this);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   fullscreen_screen_border = NO;
+#endif
 }
 
 /*
