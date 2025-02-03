@@ -1419,7 +1419,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
 #endif
   if (!window->parent() && window->border() && Fl_Window_Driver::driver(window)->is_resizable()) {
-    Fl_Cocoa_Window_Driver::driver(window)->is_maximized([nsw isZoomed]);
+    Fl_Cocoa_Window_Driver::driver(window)->is_maximized([nsw isZoomed] &&
+                                                         !window->fullscreen_active());
   }
   fl_unlock_function();
 }
@@ -3332,8 +3333,11 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
     FLWindow *nswin = fl_xid(pWindow);
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && (nswin.styleMask & NSWindowStyleMaskFullScreen)) {
-      // from single-screen fullscreen to "All Screens" fullscreen
+      // from single-screen fullscreen to "All Screens" fullscreen, with border
+      bool allscreens_on = (nswin.collectionBehavior & NSWindowCollectionBehaviorFullScreenNone);
+      if (allscreens_on) nswin.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
       [nswin toggleFullScreen:nil];
+      if (allscreens_on) nswin.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
       if (*no_fullscreen_w() == 0) {
         *no_fullscreen_x() = x();
         *no_fullscreen_y() = y();
