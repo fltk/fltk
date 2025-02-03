@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -2494,17 +2494,7 @@ void Fl_X11_Window_Driver::maximize() {
     send_wm_event(fl_xid(pWindow), fl_NET_WM_STATE, _NET_WM_STATE_ADD,
                   fl_NET_WM_STATE_MAXIMIZED_VERT, fl_NET_WM_STATE_MAXIMIZED_HORZ);
   } else {
-    *no_fullscreen_x() = x();
-    *no_fullscreen_y() = y();
-    *no_fullscreen_w() = w();
-    *no_fullscreen_h() = h();
-    int X,Y,W,H;
-    Fl::screen_work_area(X, Y, W, H, screen_num());
-    int width, height;
-    decorated_win_size(width, height);
-    int dw = (width - w());
-    int dh = (height - h() - dw);
-    resize(X + dw/2, Y + dh + dw/2, W - dw, H - dh - dw);
+    Fl_Window_Driver::maximize();
   }
 }
 
@@ -2513,12 +2503,7 @@ void Fl_X11_Window_Driver::un_maximize() {
     send_wm_event(fl_xid(pWindow), fl_NET_WM_STATE, _NET_WM_STATE_REMOVE,
                   fl_NET_WM_STATE_MAXIMIZED_VERT, fl_NET_WM_STATE_MAXIMIZED_HORZ);
   } else {
-    resize(*no_fullscreen_x(), *no_fullscreen_y(),
-           *no_fullscreen_w(), *no_fullscreen_h());
-    *no_fullscreen_x() = 0;
-    *no_fullscreen_y() = 0;
-    *no_fullscreen_w() = 0;
-    *no_fullscreen_h() = 0;
+    Fl_Window_Driver::un_maximize();
   }
 }
 
