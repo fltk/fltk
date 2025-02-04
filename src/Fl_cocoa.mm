@@ -1508,11 +1508,11 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
   /* Restore previous fullscreen level */
-  if (w->fullscreen_active() && (fl_mac_os_version < 100700
+  if (w->fullscreen_active()
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-                                 || !(nsw.styleMask & NSWindowStyleMaskFullScreen)
+      && (fl_mac_os_version < 100700 || !(nsw.styleMask & NSWindowStyleMaskFullScreen))
 #endif
-                                 )) {
+                                 ) {
     [nsw setLevel:NSStatusWindowLevel];
     fixup_window_levels();
   }
