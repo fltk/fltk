@@ -1,23 +1,21 @@
 //
-// "$Id$"
-//
-// Fl_Help_View widget routines.
+// Fl_Help_View widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2016 by Bill Spitzak and others.
+// Copyright 2011-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -25,8 +23,7 @@
 //   Fl_Help_View::add_link()        - Add a new link to the list.
 //   Fl_Help_View::add_target()      - Add a new target to the list.
 //   Fl_Help_View::compare_targets() - Compare two targets.
-//   Fl_Help_View::do_align()        - Compute the alignment for a line in
-//                                     a block.
+//   Fl_Help_View::do_align()        - Compute the alignment for a line in a block.
 //   Fl_Help_View::draw()            - Draw the Fl_Help_View widget.
 //   Fl_Help_View::format()          - Format the help text.
 //   Fl_Help_View::format_table()    - Format a table...
@@ -88,6 +85,24 @@ extern "C"
 static int	quote_char(const char *);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 static void	hscrollbar_callback(Fl_Widget *s, void *);
+
+// This function skips 'n' bytes *within* a string, i.e. it checks
+// for a NUL byte as string terminator.
+// If a NUL byte is found before 'n' bytes have been scanned it returns
+// a pointer to the end of the string (the NUL byte).
+// This avoids pure pointer arithmetic that would potentially overrun
+// the end of the string (buffer), see GitHub Issue #1196.
+//
+// Note: this should be rewritten and improved in FLTK 1.5.0 or later
+// by using std::string etc..
+
+static char *skip_bytes(const char *p, int n) {
+  for (int i = 0; i < n; ++i) {
+    if (*p == '\0') break;
+    ++p;
+  }
+  return const_cast<char *>(p);
+}
 
 //
 // global flag for image loading (see get_image).
@@ -2789,8 +2804,9 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
   if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
     if (name[0] == '/') {
       strlcpy(temp, directory_, sizeof(temp));
-
-      if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL) {
+      // the following search (strchr) will always succeed, see condition above!
+      tempptr = skip_bytes(strchr(temp, ':'), 3);
+      if ((tempptr = strrchr(tempptr, '/')) != NULL) {
         strlcpy(tempptr, name, sizeof(temp) - (tempptr - temp));
       } else {
         strlcat(temp, name, sizeof(temp));
@@ -2879,8 +2895,7 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   {
     char	dir[FL_PATH_MAX];	// Current directory
     char	temp[2 * FL_PATH_MAX],	// Temporary filename
-	      *tempptr;	// Pointer into temporary filename
-
+		*tempptr;		// Pointer into temporary filename
 
     if (strchr(directory_, ':') != NULL &&
         strchr(linkp->filename, ':') == NULL)
@@ -2888,10 +2903,13 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
       if (linkp->filename[0] == '/')
       {
         strlcpy(temp, directory_, sizeof(temp));
-        if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-	  strlcpy(tempptr, linkp->filename, sizeof(temp));
-	else
-	  strlcat(temp, linkp->filename, sizeof(temp));
+        // the following search (strchr) will always succeed, see condition above!
+        tempptr = skip_bytes(strchr(temp, ':'), 3);
+        if ((tempptr = strrchr(tempptr, '/')) != NULL) {
+          strlcpy(tempptr, linkp->filename, sizeof(temp) - (tempptr - temp));
+        } else {
+          strlcat(temp, linkp->filename, sizeof(temp));
+        }
       }
       else
 	snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
@@ -3711,8 +3729,3 @@ hscrollbar_callback(Fl_Widget *s, void *)
 {
   ((Fl_Help_View *)(s->parent()))->leftline(int(((Fl_Scrollbar*)s)->value()));
 }
-
-
-//
-// End of "$Id$".
-//
