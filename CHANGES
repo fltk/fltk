@@ -1,3 +1,21 @@
+CHANGES IN FLTK 1.3.11                                  RELEASED: Feb 05 2025
+
+FLTK 1.3.11 is a maintenance release with fixes and enhancements.
+No further releases are planned for the 1.3.x series. Please
+consider updating to FLTK 1.4 or higher.
+
+Details:
+
+  Fix potential crash when backspace is typed in a menu (#1155)
+  Fluid: output version for -v and --version command line args
+  Fix Fl_Table_Row inconsistencies (#1187)
+  Fix "Full screen broken on macOS in FLTK 1.3.10" (#1192),
+      improve transitions between fullscreen modes
+  Fix potential buffer overflow in Fl_Help_View (#1196)
+  Fix crash in test/fullscreen under macOS
+  Release 1.3.11
+
+
 CHANGES IN FLTK 1.3.10                                  RELEASED: Nov 16 2024
 
 FLTK 1.3.10 is a maintenance release with some fixes and enhancements.
