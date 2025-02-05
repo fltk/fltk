@@ -186,6 +186,9 @@ const NSUInteger NSWindowStyleMaskBorderless = NSBorderlessWindowMask;
 const NSUInteger NSWindowStyleMaskMiniaturizable = NSMiniaturizableWindowMask;
 const NSUInteger NSWindowStyleMaskClosable = NSClosableWindowMask;
 const NSUInteger NSWindowStyleMaskTitled = NSTitledWindowMask;
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+const NSUInteger NSWindowStyleMaskFullScreen = NSFullScreenWindowMask;
+#  endif
 
 const NSUInteger NSEventMaskAny = NSAnyEventMask;
 const NSUInteger NSEventMaskSystemDefined = NSSystemDefinedMask;
@@ -3274,8 +3277,9 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     else [cw orderFront:nil];
     if (w->fullscreen_active() && fl_mac_os_version >= 100700) {
       if (fullscreen_screen_top() >= 0)  {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-        cw.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+        if (fl_mac_os_version >= 101200)
+          cw.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
 #endif
         *no_fullscreen_x() = pWindow->x();
         *no_fullscreen_y() = pWindow->y();
@@ -3336,10 +3340,15 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && (nswin.styleMask & NSWindowStyleMaskFullScreen)) {
       // from single-screen fullscreen to "All Screens" fullscreen, with border
-      bool allscreens_on = (nswin.collectionBehavior & NSWindowCollectionBehaviorFullScreenNone);
-      if (allscreens_on) nswin.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+      if (fl_mac_os_version >= 101200) {
+        bool allscreens_on = (nswin.collectionBehavior & NSWindowCollectionBehaviorFullScreenNone);
+        if (allscreens_on) nswin.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
+        [nswin toggleFullScreen:nil];
+        if (allscreens_on) nswin.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
+      } else
+#endif
       [nswin toggleFullScreen:nil];
-      if (allscreens_on) nswin.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
       if (*no_fullscreen_w() == 0) {
         *no_fullscreen_x() = x();
         *no_fullscreen_y() = y();
@@ -3477,8 +3486,8 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 
 
 void Fl_Cocoa_Window_Driver::fullscreen_screens(bool on_off) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  if (fl_mac_os_version >= 101200) {
     FLWindow *xid = fl_mac_xid(pWindow);
     if (on_off) xid.collectionBehavior |= NSWindowCollectionBehaviorFullScreenNone;
     else xid.collectionBehavior &= ~NSWindowCollectionBehaviorFullScreenNone;
