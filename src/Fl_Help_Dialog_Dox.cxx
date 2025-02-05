@@ -40,9 +40,9 @@
 
 /** \fn int Fl_Help_Dialog::load(const char *f)
  \brief Loads the specified HTML file into the Fl_Help_View widget.
- The filename can also contain a target name ("filename.html#target"). Always
- use forward slashes as path deliminators, MSWindows-style backslashes are not
- supported here
+  The filename can also contain a target name ("filename.html#target"). Always
+  use forward slashes as path delimiters, Windows-style backslashes are not
+  supported here.
  \param[in] f the name and path of an HTML file
  \return 0 on success, -1 on error
  \see Fl_Help_View::load(), fl_load_uri()

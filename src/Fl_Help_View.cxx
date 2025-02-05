@@ -3326,7 +3326,7 @@ Fl_Help_View::~Fl_Help_View()
  requested page in an external browser.
 
  In all other cases, the URL is interpreted as a filename. The file is read and
- displayed in this borwser. Note that MSWindows style backslashes are not
+ displayed in this browser. Note that Windows style backslashes are not
  supported in the file name.
 
  \param[in] f filename or URL

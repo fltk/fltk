@@ -33,7 +33,7 @@ Line Endings
 ------------
 
 Although FLUID writes all line endings as '\n', readers should tolerate '\r\n'
-MSWindows line endings as well. Except for the Header, the FLUID reader does not
+Windows line endings as well. Except for the Header, the FLUID reader does not
 differentiate between a line ending and a space character outside of a 'word'.
 
 
@@ -42,7 +42,7 @@ Unicode
 
 FLUID does not handle UTF-8 characters in any special manner (unescaped),
 but stores and reads them verbatim, making UTF-8 character sequences perfectly
-legal in .fl files. FLUID can translate UTF-8 into escape sequence when writing
+legal in .fl files. FLUID can translate UTF-8 into escape sequences when writing
 source code files.
 
 
@@ -63,7 +63,7 @@ case-sensitive.
 Simple Words that are composed of 'a'-'z', 'A'-'Z', '0'-'9', and '_' only are
 written verbatim, followed by a space or newline.
 
-All other character sequences are bracketed between between ‘{‘ and ‘}’ without
+All other character sequences are bracketed between ‘{‘ and ‘}’ without
 padding spaces. For example, an empty word with no characters is written
 as '{}', and ".hello" is written as '{.hello}'.
 
@@ -117,7 +117,7 @@ followed by a newline, followed by
 
   version <float v>
 
-wehere 'v' is the version number as in FL_VERSION (major*1.0 + minor * 0.01
+where 'v' is the version number as in FL_VERSION (major*1.0 + minor * 0.01
 + patch * 0.0001). So for FLTK 1.3.4, 'v' would be 1.0304
 
 Note: the version number corresponds not so much to the version of FLUID, but
@@ -137,8 +137,8 @@ Note: fdesign files (.fd) start with the text "Magic:". FLUID can read these
 Options
 -------
 
-Options are usually comprised of a Word, two Words, or a Word and a String. If
-an Option is missing, a default value is assumed.
+Options are usually comprised of a Word, two Words, or a Word and a String.
+If an Option is missing, a default value is assumed.
 
   "Magic:" : used by fdesign, not written by FLUID
 
@@ -181,12 +181,11 @@ an Option is missing, a default value is assumed.
 
   "i18n_conditional" <word> : string
 
-  "header_name" <word> : can be the full filename, or just the
-      extension e.g. “.h” in which case FLUID will use the same filename
-      as the .fl file.
+  "header_name" <word> : can be the full filename or just the extension,
+      e.g. “.h” in which case FLUID will use the same filename as the .fl file.
 
-  "code_name" <word> : can be the full filename, or just the
-      extension e.g. “.cxx”
+  "code_name" <word> : can be the full filename or just the extension,
+      e.g. “.cxx”.
 
   "snap" <word> : starting in V1.4 from May 2023, the 'snap' keyword can be
       used to store the selected layout and preset and include more suites
@@ -212,20 +211,19 @@ an Option is missing, a default value is assumed.
   "gridy" <word> : ignored
 
   "shell_commands" <word> : starting in V1.4 from Sep 2023, the 'shell_commands'
-      keyword can be used to store user configurable shell commands in a
-      project file. The following block can be skipped by reading it as a
-      single word.
+      keyword can be used to store user configurable shell commands in a project
+      file. The following block can be skipped by reading it as a single word.
 
       shell_commands {
         command {
           name <string>
           label <string>
-          shortcut <int>            (optional if not 0)
+          shortcut <int>          (optional if not 0)
           condition <int>         (optional if not 0, see Fd_Shell_Command enum)
-          condition_data <string>   (optional if not "")
-          command <string>          (optional, but usually there)
-          flags <int>         (optional if not 0, see Fd_Shell_Command 2nd enum)
-        }                           ( repeat as needed)
+          condition_data <string> (optional if not "")
+          command <string>        (optional, but usually there)
+          flags <int>             (optional if not 0, see Fd_Shell_Command 2nd enum)
+        }                         (repeat as needed)
       }
 
 Note: There is no keyword that marks the end of the Options section. The
@@ -516,7 +514,7 @@ Type "Fl_Window" <word> : C++ variable name
       min_w, min_h, max_w, max_h
   "xywh" <word> : this Word is written with printf as "{%d %d %d %d}",
       x, y, w, h. This as actually read in the Fl_Widget Type, but here
-      it ensures that window is not created as a subwindow.
+      it ensures that the window is not created as a subwindow.
   ... : inherits more from Fl_Widget (not Fl_Group)
 
 Type "Fl_Grid" <word> : C++ variable name

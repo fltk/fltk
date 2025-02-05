@@ -3,7 +3,7 @@ Changes in FLTK 1.4.2                                   Released: ??? ?? 2025
   Technical Details and Build Procedure Improvements
 
   - Use "Microsoft Sans Serif" instead of "Arial" for the FL_HELVETICA font
-  family under Windows.
+    family under Windows.
 
 Changes in FLTK 1.4.1                                   Released: Dec 12 2024
 
@@ -199,7 +199,7 @@ Changes in FLTK 1.4.0 RC1                               Released: Oct 20 2024
     "wide character" commandline arguments to UTF-8.
   - X11 and Wayland platforms: Added support of HiDPI displays. FLTK apps
     detect the current display scaling factor and use it to scale all windows.
-  - MSWindows platform: FLTK applications detect the display scaling factor and
+  - Windows platform: FLTK applications detect the display scaling factor and
     automatically scale their GUI accordingly. This effectively renders WIN32
     FLTK apps "per-monitor DPI-aware" whereas they were "DPI-unaware" before.
   - Dynamical GUI rescaling: it is possible on all platforms to rescale all

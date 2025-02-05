@@ -2192,9 +2192,9 @@ static void sigint(SIGARG) {
  \param[in] argv pointer to an array of arguments
  \return in batch mode, an error code will be returned via \c exit() . This
     function return 1, if there was an error in the parameters list.
- \todo On MSWindows, Fluid can under certain conditions open a dialog box, even
+ \todo On Windows, Fluid can under certain conditions open a dialog box, even
     in batch mode. Is that intentional? Does it circumvent issues with Windows'
- stderr and stdout?
+    stderr and stdout?
  */
 int main(int argc,char **argv) {
   int i = 1;

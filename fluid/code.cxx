@@ -1023,7 +1023,7 @@ unsigned long Fd_Code_Writer::block_crc(const void *data, int n, unsigned long i
       while (n>0 && *s>0 && isspace(*s)) { s++; n--; }
       if (*s) line_start = false;
     }
-    // don't count '\r' that may be introduces by MSWindows
+    // don't count '\r' that may be introduced by Windows
     if (n>0 && *s=='\r') { s++; n--; }
     if (n>0 && *s=='\n') line_start = true;
     if (n>0) {

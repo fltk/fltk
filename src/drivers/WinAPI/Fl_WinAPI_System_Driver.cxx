@@ -1003,7 +1003,7 @@ const char *Fl_WinAPI_System_Driver::home_directory_name()
   }
   if (!home) {
     const char *h = getenv("UserProfile");
-    if (h) 
+    if (h)
       home = ::strdup(h);
   }
   if (!home) {
