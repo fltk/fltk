@@ -488,7 +488,9 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   if (fl_mac_os_version >= 100600) {
     NSWindow *nswin = (NSWindow*)fl_mac_xid(pWindow);
     CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_6(nswin);
-    CGRect cgr = CGRectMake(x, y, w, h);
+    int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
+    bt *= (factor / Fl_Graphics_Driver::default_driver().scale());
+    CGRect cgr = CGRectMake(x, y + bt, w, h); // add vertical offset to bypass titlebar
     CGImageRef cgimg = CGImageCreateWithImageInRect(img_full, cgr); // 10.4
     CGImageRelease(img_full);
     Fl_RGB_Image *rgb = cgimage_to_rgb3(cgimg);
