@@ -4542,14 +4542,17 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
   if (!plugin) return nil;
   Fl_RGB_Image *img = plugin->rectangle_capture(win, x, y, w, h);
   NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:img->w() pixelsHigh:img->h() bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*img->w() bitsPerPixel:32];
-  memset([bitmap bitmapData], 0xFF, [bitmap bytesPerPlane]);
-  const uchar *from = img->array;
-  for (int r = 0; r < img->h(); r++) {
-    uchar *to = [bitmap bitmapData] + r * [bitmap bytesPerRow];
-    for (int c = 0; c < img->w(); c++) {
-      memcpy(to, from, 3);
-      from += 3;
-      to += 4;
+  if (img->d() == 4) memcpy([bitmap bitmapData], img->array, 4*img->data_w()*img->data_h());
+  else {
+    memset([bitmap bitmapData], 0xFF, [bitmap bytesPerPlane]);
+    const uchar *from = img->array;
+    for (int r = 0; r < img->h(); r++) {
+      uchar *to = [bitmap bitmapData] + r * [bitmap bytesPerRow];
+      for (int c = 0; c < img->w(); c++) {
+        memcpy(to, from, 3);
+        from += 3;
+        to += 4;
+      }
     }
   }
   delete img;
@@ -4800,8 +4803,8 @@ static CGImageRef capture_decorated_window_SCK(NSWindow *nswin) {
 #endif //MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0
 
 
-CGImageRef Fl_Cocoa_Window_Driver::capture_decorated_window_10_6(NSWindow *nswin) {
-  // usable with 10.6 and above
+CGImageRef Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(NSWindow *nswin) {
+  // usable with 10.5 and above
   CGImageRef img = NULL;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0
@@ -4824,15 +4827,18 @@ CGImageRef Fl_Cocoa_Window_Driver::capture_decorated_window_10_6(NSWindow *nswin
 
 static CGImageRef capture_window_titlebar(Fl_Window *win, Fl_Cocoa_Window_Driver *cocoa_dr) {
   CGImageRef img;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   if (fl_mac_os_version >= 100600) { // verified OK from 10.6
     FLWindow *nswin = fl_xid(win);
-    CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_6(nswin);
+    CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(nswin);
     int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
     int s = CGImageGetWidth(img_full) / [nswin frame].size.width;
     CGRect cgr = CGRectMake(0, 0, CGImageGetWidth(img_full), bt * s);
-    img = CGImageCreateWithImageInRect(img_full, cgr);
+    img = CGImageCreateWithImageInRect(img_full, cgr); // 10.4
     CGImageRelease(img_full);
-  } else {
+  } else
+#endif
+  {
     int w = win->w(), h = win->decorated_h() - win->h();
     Fl_Graphics_Driver::default_driver().scale(1);
     img = cocoa_dr->CGImage_from_window_rect(0, -h, w, h, false);
