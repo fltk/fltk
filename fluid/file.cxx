@@ -384,6 +384,8 @@ Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strate
       if (!cc || !strcmp(cc,"}")) break;
       t->read_property(*this, cc);
     }
+    if (g_project.write_mergeback_data && t->get_uid()==0)
+      t->set_uid(0);
 
     if (t->can_have_children()) {
       c = read_word(1);
