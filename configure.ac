@@ -1128,6 +1128,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
        ])
       AS_IF([$PKGCONFIG --exists 'libdecor-0 >= 0.2.0'],
       [
+        libdecor="system"
         plugin_dir="$($PKGCONFIG --variable=libdir libdecor-0)/libdecor/plugins-1"
         CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR"
         CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR"
@@ -1135,6 +1136,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         LIBS="$LIBS $($PKGCONFIG --libs libdecor-0)"
       ],
       [
+        libdecor="bundled"
         CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0 -DLIBDECOR_PLUGIN_DIR=\\\"\\\" "
         CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       ]
@@ -1172,13 +1174,15 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           GLDEMOS=""
       ])
 
-      dnl Check for GTK-3 ...
-      gtk_found=no
-      CFLAGS="$($PKGCONFIG --cflags gtk+-3.0) $CFLAGS"
-      AC_CHECK_HEADERS([gtk/gtk.h], [
-          CFLAGS="$CFLAGS -DHAVE_GTK"
-          LIBS="$LIBS $($PKGCONFIG --libs gtk+-3.0)"
-          gtk_found=yes
+      AS_IF([test x$libdecor = xbundled], [
+          dnl Check for GTK-3 ...
+          gtk_found=no
+          CFLAGS="$($PKGCONFIG --cflags gtk+-3.0) $CFLAGS"
+          AC_CHECK_HEADERS([gtk/gtk.h], [
+              CFLAGS="$CFLAGS -DHAVE_GTK"
+              LIBS="$LIBS $($PKGCONFIG --libs gtk+-3.0)"
+              gtk_found=yes
+          ])
       ])
 
       dnl Check for the Pango library ...
