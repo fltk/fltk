@@ -2915,6 +2915,12 @@ libdecor_plugin_new(struct libdecor *context)
 	struct libdecor_plugin_gtk *plugin_gtk;
 	struct wl_display *wl_display;
 
+#ifdef HAVE_GETTID
+	/* Only support running on the main thread. */
+	if (getpid () != gettid ())
+		return NULL;
+#endif
+
 	plugin_gtk = zalloc(sizeof *plugin_gtk);
 	libdecor_plugin_init(&plugin_gtk->plugin,
 			     context,

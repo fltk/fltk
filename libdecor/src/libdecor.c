@@ -124,6 +124,7 @@ struct libdecor_frame_private {
 
 	enum libdecor_window_state window_state;
 
+	bool has_decoration_mode;
 	enum zxdg_toplevel_decoration_v1_mode decoration_mode;
 
 	enum libdecor_capabilities capabilities;
@@ -504,7 +505,13 @@ toplevel_decoration_configure(
 		struct zxdg_toplevel_decoration_v1 *zxdg_toplevel_decoration_v1,
 		uint32_t mode)
 {
-	((struct libdecor_frame_private *)(data))->decoration_mode = mode;
+	struct libdecor_frame_private *frame_priv = (struct libdecor_frame_private *)data;
+	/* Ignore any _configure calls after the first, they will be
+	 * from our set_mode call. */
+	if (!frame_priv->has_decoration_mode) {
+		frame_priv->has_decoration_mode = true;
+		frame_priv->decoration_mode = mode;
+	}
 }
 
 static const struct zxdg_toplevel_decoration_v1_listener
@@ -640,9 +647,9 @@ libdecor_frame_unref(struct libdecor_frame *frame)
 		struct libdecor_plugin *plugin = context->plugin;
 
 		if (context->decoration_manager && frame_priv->toplevel_decoration) {
-        		zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
-        		frame_priv->toplevel_decoration = NULL;
-        	}
+			zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
+			frame_priv->toplevel_decoration = NULL;
+		}
 
 		wl_list_remove(&frame->link);
 
@@ -684,24 +691,21 @@ libdecor_frame_set_visibility(struct libdecor_frame *frame,
 
 	frame_priv->visible = visible;
 
-	/* enable/disable decorations that are managed by the compositor,
-	 * only xdg-decoration version 2 and above allows to toggle decoration */
+	/* enable/disable decorations that are managed by the compositor.
+	 * Note that, as of xdg_decoration v1, this is just a hint and there is
+	 * no reliable way of disabling all decorations. In practice this should
+	 * work but per spec this is not guaranteed.
+	 *
+	 * See also: https://gitlab.freedesktop.org/wayland/wayland-protocols/-/merge_requests/17
+	 */
 	if (context->decoration_manager &&
-	    zxdg_decoration_manager_v1_get_version(context->decoration_manager) > 1) {
-		if (frame_priv->visible &&
-		    frame_priv->toplevel_decoration == NULL) {
-			/* - request to SHOW decorations
-			 * - decorations are NOT HANDLED
-			 * => create new decorations for already mapped surface */
-			libdecor_frame_create_xdg_decoration(frame_priv);
-		} else if (!frame_priv->visible &&
-			 frame_priv->toplevel_decoration != NULL) {
-			/* - request to HIDE decorations
-			 * - decorations are HANDLED
-			 * => destroy decorations */
-			zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
-			frame_priv->toplevel_decoration = NULL;
-		}
+	    frame_priv->toplevel_decoration &&
+	    frame_priv->has_decoration_mode &&
+	    frame_priv->decoration_mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE) {
+		zxdg_toplevel_decoration_v1_set_mode(frame_priv->toplevel_decoration,
+						     frame->priv->visible
+						     ? ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE
+						     : ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
 	}
 
 	/* enable/disable decorations that are managed by a plugin */
