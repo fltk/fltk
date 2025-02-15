@@ -213,10 +213,6 @@ static XX_gtk_widget_show_now fl_gtk_widget_show_now = NULL;
 typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
 static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
 
-// Window gdk_x11_drawable_get_xid(GdkWindow *);
-typedef Window (*XX_gdk_x11_drawable_get_xid)(GdkWindow *);
-static XX_gdk_x11_drawable_get_xid fl_gdk_x11_drawable_get_xid = NULL;
-
 // GtkWidget *gtk_check_button_new_with_label(const gchar *);
 typedef GtkWidget* (*XX_gtk_check_button_new_with_label)(const gchar *);
 static XX_gtk_check_button_new_with_label fl_gtk_check_button_new_with_label = NULL;
@@ -541,11 +537,6 @@ int Fl_GTK_File_Chooser::fl_gtk_chooser_wrapper()
   fl_g_signal_connect_data(toggle, "toggled", G_CALLBACK(hidden_files_cb), gtkw_ptr, NULL, (GConnectFlags) 0);
   Fl_Window* firstw = Fl::first_window();
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
-  if (firstw) {
-    GdkWindow* gdkw = fl_gtk_widget_get_window(gtkw_ptr);
-    Window xw = fl_gdk_x11_drawable_get_xid(gdkw); // get the X11 ref of the GTK window
-    XSetTransientForHint(fl_display, xw, fl_xid(firstw)); // set the GTK window transient for the last FLTK win
-    }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
   fl_gtk_toggle_button_set_active((GtkToggleButton *)toggle, state);
   
@@ -716,7 +707,6 @@ void Fl_GTK_File_Chooser::probe_for_GTK_libs(void) {
   GET_SYM(gtk_file_chooser_set_extra_widget, ptr_gtk);
   GET_SYM(gtk_widget_show_now, ptr_gtk);
   GET_SYM(gtk_widget_get_window, ptr_gtk);
-  GET_SYM(gdk_x11_drawable_get_xid, ptr_gtk);
   GET_SYM(gtk_check_button_new_with_label, ptr_gtk);
   GET_SYM(g_signal_connect_data, ptr_gtk);
   GET_SYM(gtk_toggle_button_get_active, ptr_gtk);
