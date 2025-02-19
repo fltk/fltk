@@ -1,4 +1,4 @@
-# README - Fast Light Tool Kit (FLTK) Version 1.4.1
+# README - Fast Light Tool Kit (FLTK) Version 1.4.2
 
 ## WHAT IS FLTK?
 

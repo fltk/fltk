@@ -1,4 +1,4 @@
-README - Fast Light Tool Kit (FLTK) Version 1.4.1
+README - Fast Light Tool Kit (FLTK) Version 1.4.2
 -------------------------------------------------
 
 WHAT IS FLTK?
@@ -201,7 +201,7 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2024 by Bill Spitzak and others,
+    FLTK is copyright 1998-2025 by Bill Spitzak and others,
     see the CREDITS.txt file for more info.
 
     This library is free software. Distribution and use rights are

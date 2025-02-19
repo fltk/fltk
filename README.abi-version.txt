@@ -1,4 +1,4 @@
-Configuration of the ABI version for the Fast Light Toolkit (FLTK)
+Configuration of the ABI Version for the Fast Light Toolkit (FLTK)
 ------------------------------------------------------------------
 
 FLTK preserves the application binary interface (ABI) throughout
@@ -23,10 +23,10 @@ wrapped in so-called ABI guards in the library code, e.g.
 This documentation is written for FLTK 1.4.x, but it applies to all later
 versions as well. Replace the version numbers given here with the version
 numbers of the version you are using. FLTK version 1.4.1 was chosen as an
-example only. As of this writing, FLTK 1.4.1 does not yet exist.
+example only.
 
 
-How to define the FLTK ABI version
+How to Define the FLTK ABI Version
 ----------------------------------
 
 To define the ABI version the preprocessor macro FL_ABI_VERSION must be
@@ -40,7 +40,7 @@ and '1' is the major version number.
 The default ABI version for all FLTK 1.4.x versions is 10400 (the binary
 version of FLTK 1.4.0), but you can configure another version, e.g.
 10401 for FLTK 1.4.1 to enable the ABI features of FLTK 1.4.1 and all
-previous versions. See CHANGES.txt file.
+previous versions. See CHANGES.txt.
 
 
 Depending on how you build FLTK, there are two different ways to configure
@@ -49,8 +49,8 @@ following examples are written for FLTK 1.4.1, hence we use "10401" for
 the version number.
 
 
-(1) Traditional configure + make (Unix, Linux, MinGW etc.)
-----------------------------------------------------------
+(1) Traditional configure + make (Unix, Linux, MinGW, MSYS, etc.)
+-----------------------------------------------------------------
 
     Run
         make clean
@@ -93,30 +93,27 @@ the version number.
     You need to install CMake to generate the IDE files.
 
     Use CMake to generate the IDE project files of your choice. Currently
-    the FLTK team uses some Visual C++ (Visual Studio) versions and Xcode.
-    Other IDE's may work as well (not yet tested).
+    the FLTK team uses some Visual C++ (Visual Studio) versions and Xcode
+    for testing FLTK. Other IDE's may work as well but are not tested.
 
-    For more informations on how to install and use CMake see ...
-    ... *FIXME* [Add documentation how to use CMake with FLTK].
+    For more informations on how to install and use CMake see README.CMake.txt.
 
-
-    Use CMake option FLTK_ABI_VERSION:STRING=10401 with the command line
+    Use CMake option `-D FLTK_ABI_VERSION:STRING=10401` on the command line
     or set FLTK_ABI_VERSION with one of the CMake GUI programs.
 
     Then start the build process in the IDE solution of your choice. This
     will run the build with the defined ABI version.
 
 
-General note on CMake:
+General Note on CMake:
 ----------------------
 
     CMake generates FL/fl_config.h in the build tree. You may run
     'make install' to install the FLTK library including all headers in
-    the chosen installation directory, although this is not necessary.
+    the chosen installation directory (set CMAKE_INSTALL_PREFIX to do this),
+    although this is not necessary.
 
     The FLTK team recommends to use the FLTK library directly from the
     build folder. See README.CMake.txt for more information.
 
     Possible exception: Visual Studio IDE builds (Windows).
-
-    ... to be continued ...
