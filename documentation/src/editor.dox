@@ -131,6 +131,7 @@ void update_title() {
     fname = fl_filename_name(app_filename);
   if (fname) {
     char buf[FL_PATH_MAX + 3];
+    buf[FL_PATH_MAX + 2] = '\0';   // ensure that the buffer is always terminated
     if (text_changed) {
       snprintf(buf, FL_PATH_MAX+2, "%s *", fname);
     } else {
