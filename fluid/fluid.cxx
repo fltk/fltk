@@ -1936,7 +1936,6 @@ void load_history() {
   int   i;              // Looping var
   int   max_files;
 
-
   fluid_prefs.get("recent_files", max_files, 5);
   if (max_files > 10) max_files = 10;
 
@@ -1945,7 +1944,7 @@ void load_history() {
     if (absolute_history[i][0]) {
       // Make a shortened version of the filename for the menu...
       Fl_String fn = fl_filename_shortened(absolute_history[i], 48);
-      strncpy(relative_history[i], fn.c_str(), sizeof(relative_history[i]));
+      strncpy(relative_history[i], fn.c_str(), sizeof(relative_history[i]) - 1);
       if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
       else history_item[i].flags = 0;
     } else break;
@@ -2005,7 +2004,7 @@ void update_history(const char *flname) {
   // Put the new file at the top...
   strlcpy(absolute_history[0], absolute, sizeof(absolute_history[0]));
   Fl_String fn = fl_filename_shortened(absolute_history[0], 48);
-  strncpy(relative_history[0], fn.c_str(), sizeof(relative_history[0]));
+  strncpy(relative_history[0], fn.c_str(), sizeof(relative_history[0]) - 1);
 
   // Update the menu items as needed...
   for (i = 0; i < max_files; i ++) {
