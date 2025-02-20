@@ -220,10 +220,11 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   fl_jpeg_error_mgr       jerr;     // Error handler info
   JSAMPROW                row;      // Sample row pointer
 
-  // the following variables are pointers allocating some private space that
-  // is not reset by 'setjmp()'
-  char* max_finish_decompress_err;      // count errors and give up after a while
-  char* max_destroy_decompress_err;     // to avoid recursion and deadlock
+  // The following variables are pointers allocating some private space that
+  // is not reset by 'setjmp()'. At least under macOS, it's necessay to make
+  // these variables volatile to avoid errors occuring when compiled with -O1 (issue #1207).
+  volatile char* max_finish_decompress_err;      // count errors and give up after a while
+  volatile char* max_destroy_decompress_err;     // to avoid recursion and deadlock
 
   // Note: The file pointer fp must not be an automatic (stack) variable
   // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
@@ -289,8 +290,8 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
       alloc_array = 0;
     }
 
-    free(max_destroy_decompress_err);
-    free(max_finish_decompress_err);
+    free((void*)max_destroy_decompress_err);
+    free((void*)max_finish_decompress_err);
 
     ld(ERR_FORMAT);
     delete fp;
@@ -335,8 +336,8 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   jpeg_finish_decompress(&dinfo);
   jpeg_destroy_decompress(&dinfo);
 
-  free(max_destroy_decompress_err);
-  free(max_finish_decompress_err);
+  free((char*)max_destroy_decompress_err);
+  free((char*)max_finish_decompress_err);
 
   if (*fp)
     fclose(*fp);
