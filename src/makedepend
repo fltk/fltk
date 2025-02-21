@@ -318,6 +318,7 @@ drivers/PostScript/Fl_PostScript_image.o: ../FL/platform_types.h
 drivers/PostScript/Fl_PostScript_image.o: drivers/PostScript/Fl_PostScript_Graphics_Driver.H
 drivers/SVG/Fl_SVG_File_Surface.o: ../config.h
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/Enumerations.H
+drivers/SVG/Fl_SVG_File_Surface.o: ../FL/filename.H
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/Fl.H
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/fl_attr.h
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/Fl_Bitmap.H
@@ -343,6 +344,7 @@ drivers/SVG/Fl_SVG_File_Surface.o: ../FL/Fl_Widget_Surface.H
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/Fl_Window.H
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/math.h
 drivers/SVG/Fl_SVG_File_Surface.o: ../FL/platform_types.h
+drivers/SVG/Fl_SVG_File_Surface.o: Fl_System_Driver.H
 drivers/Unix/Fl_Unix_Screen_Driver.o: ../config.h
 drivers/Unix/Fl_Unix_Screen_Driver.o: ../FL/Enumerations.H
 drivers/Unix/Fl_Unix_Screen_Driver.o: ../FL/Fl.H
