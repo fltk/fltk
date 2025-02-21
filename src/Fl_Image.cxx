@@ -738,7 +738,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     // fl_max(cx, 0),fl_max(cy, 0) = top-left of drawn part in image.
     int l = (ld() ? ld() : d() * w());
     const uchar *p = array + fl_max(cy, 0) * l + fl_max(cx, 0) * d();
-    fl_graphics_driver->draw_image(p, XP, YP, WP, HP, d(), l);
+    fl_graphics_driver->draw_image(p, XP, YP, WP - fl_max(cx, 0), HP - fl_max(cy, 0), d(), l);
   } else
     fl_graphics_driver->draw_rgb(this, XP, YP, WP, HP, cx, cy);
 }
