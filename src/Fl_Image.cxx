@@ -727,7 +727,7 @@ static void crect_intersect(rectangle_int_t *to, rectangle_int_t *with) {
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   float s = fl_graphics_driver->scale();
-  if (s != int(s) && (cx || cy || WP != w() || HP != h())) {
+  if (s != int(s) && (cx || cy || WP != w() || HP != h()) && w() == data_w() && h() == data_h()) {
     // See issue #1128: clipping to a part of the image while the scaling
     // has a fractional value creates problems
     rectangle_int_t r1 = { XP-cx, YP-cy, w(), h() };
@@ -737,7 +737,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     // After this, r1.x,r1.y = position of top-left of drawn image part;
     // r1.width,r1.height = size of drawn image part, in FLTK units;
     // fl_max(cx, 0),fl_max(cy, 0) = top-left of drawn part in image.
-    int l = (ld() ? ld() : d() * data_w());
+    int l = (ld() ? ld() : d() * w());
     const uchar *p = array + fl_max(cy, 0) * l + fl_max(cx, 0) * d();
     fl_graphics_driver->draw_image(p, r1.x, r1.y, r1.width, r1.height, d(), l);
   } else
