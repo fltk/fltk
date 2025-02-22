@@ -733,12 +733,13 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     rectangle_int_t r1 = { XP-cx, YP-cy, w(), h() };
     rectangle_int_t r2 = { XP, YP, WP, HP };
     crect_intersect(&r1, &r2);
+    if (!r1.width || !r1.height) return;
     // After this, r1.x,r1.y = position of top-left of drawn image part;
     // r1.width,r1.height = size of drawn image part, in FLTK units;
     // fl_max(cx, 0),fl_max(cy, 0) = top-left of drawn part in image.
-    int l = (ld() ? ld() : d() * w());
+    int l = (ld() ? ld() : d() * data_w());
     const uchar *p = array + fl_max(cy, 0) * l + fl_max(cx, 0) * d();
-    fl_graphics_driver->draw_image(p, XP, YP, WP, HP, d(), l);
+    fl_graphics_driver->draw_image(p, r1.x, r1.y, r1.width, r1.height, d(), l);
   } else
     fl_graphics_driver->draw_rgb(this, XP, YP, WP, HP, cx, cy);
 }
