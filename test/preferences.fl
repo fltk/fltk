@@ -1,5 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0401
+use_FL_COMMAND
+utf8_in_src
 i18n_type 1
 i18n_include {<stdio.h>}
 i18n_conditional {}
@@ -119,7 +121,8 @@ for (i=0; i<n; i++) {
 if (found)
   return found;
 else
-  return text;} {}
+  return text;} {selected
+  }
 }
 
 Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
@@ -138,8 +141,7 @@ Function {} {open return_type int
   code {readLanguagePrefs();
 Fl_Input::cut_menu_text = gettext("Cut");
 Fl_Input::copy_menu_text = gettext("Copy");
-Fl_Input::paste_menu_text = gettext("Paste");} {selected
-  }
+Fl_Input::paste_menu_text = gettext("Paste");} {}
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open

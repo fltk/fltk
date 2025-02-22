@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -67,7 +67,7 @@ Fl_Double_Window *script_panel=(Fl_Double_Window *)0;
 static void cb_script_panel(Fl_Double_Window*, void*) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
-  script_panel->hide(); // otherwise hide..;
+  script_panel->hide(); // otherwise hide...;
 }
 
 Fl_Text_Editor *script_input=(Fl_Text_Editor *)0;
@@ -441,6 +441,10 @@ static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
   }
 }
 
+static void cb_2(Fl_Group* o, void* v) {
+  propagate_load(o, v);
+}
+
 Fl_Check_Button *w_proj_mergeback=(Fl_Check_Button *)0;
 
 static void cb_w_proj_mergeback(Fl_Check_Button* o, void* v) {
@@ -507,7 +511,7 @@ Fl_Menu_Item menu_layout_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-static void cb_2(Fl_Button*, void* v) {
+static void cb_3(Fl_Button*, void* v) {
   // Clone the current layout suite
 
   if (v == LOAD) return;
@@ -765,7 +769,7 @@ static void cb_Gap(Fl_Value_Input* o, void* v) {
   }
 }
 
-static void cb_3(Fl_Value_Input* o, void* v) {
+static void cb_4(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
     o->value((double)layout->widget_min_h);
   } else {
@@ -773,7 +777,7 @@ static void cb_3(Fl_Value_Input* o, void* v) {
   }
 }
 
-static void cb_4(Fl_Value_Input* o, void* v) {
+static void cb_5(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
     o->value((double)layout->widget_inc_h);
   } else {
@@ -781,7 +785,7 @@ static void cb_4(Fl_Value_Input* o, void* v) {
   }
 }
 
-static void cb_5(Fl_Value_Input* o, void* v) {
+static void cb_6(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
     o->value((double)layout->widget_gap_y);
   } else {
@@ -789,7 +793,7 @@ static void cb_5(Fl_Value_Input* o, void* v) {
   }
 }
 
-static void cb_6(Fl_Choice* o, void* v) {
+static void cb_7(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     o->value(layout->labelfont+1);
   } else {
@@ -797,7 +801,7 @@ static void cb_6(Fl_Choice* o, void* v) {
   }
 }
 
-static void cb_7(Fl_Value_Input* o, void* v) {
+static void cb_8(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
     o->value(layout->labelsize);
   } else {
@@ -805,7 +809,7 @@ static void cb_7(Fl_Value_Input* o, void* v) {
   }
 }
 
-static void cb_8(Fl_Choice* o, void* v) {
+static void cb_9(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     o->value(layout->textfont+1);
   } else {
@@ -813,7 +817,7 @@ static void cb_8(Fl_Choice* o, void* v) {
   }
 }
 
-static void cb_9(Fl_Value_Input* o, void* v) {
+static void cb_a(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
     o->value(layout->textsize);
   } else {
@@ -905,7 +909,7 @@ static void cb_w_settings_shell_toolbox(Fl_Group* o, void* v) {
   }
 }
 
-static void cb_a(Fl_Button*, void* v) {
+static void cb_b(Fl_Button*, void* v) {
   if (v != LOAD) {
     int selected = w_settings_shell_list_selected;
     Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
@@ -1079,7 +1083,7 @@ static void cb_Menu(Fl_Input* o, void* v) {
   }
 }
 
-static void cb_b(Fl_Group* o, void* v) {
+static void cb_c(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
@@ -2217,7 +2221,7 @@ static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
   }
 }
 
-static void cb_c(Fl_Group* o, void* v) {
+static void cb_d(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
@@ -2656,22 +2660,27 @@ Fl_Double_Window* make_settings_window() {
           avoid_early_includes_button->labelsize(11);
           avoid_early_includes_button->callback((Fl_Callback*)cb_avoid_early_includes_button);
         } // Fl_Check_Button* avoid_early_includes_button
-        { Fl_Box* o = new Fl_Box(100, 283, 0, 20, "Experimental: ");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
-        } // Fl_Box* o
-        { // // Matt: disabled
-          w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
-          w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
+        { Fl_Group* o = new Fl_Group(100, 283, 220, 20);
+          o->callback((Fl_Callback*)cb_2);
+          { Fl_Box* o = new Fl_Box(100, 283, 0, 20, "Experimental: ");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+          } // Fl_Box* o
+          { w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
+            w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
 "o be merged back into the project file. Checking this option will generate add"
 "itional data in code and project files.");
-          w_proj_mergeback->down_box(FL_DOWN_BOX);
-          w_proj_mergeback->labelsize(11);
-          w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
-          w_proj_mergeback->hide();
-        } // Fl_Check_Button* w_proj_mergeback
+            w_proj_mergeback->down_box(FL_DOWN_BOX);
+            w_proj_mergeback->labelsize(11);
+            w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
+          } // Fl_Check_Button* w_proj_mergeback
+          // hide this group if experimental features not wanted
+#ifndef FLUID_OPTION_MERGEBACK
+o->hide();
+#endif
+          o->end();
+        } // Fl_Group* o
         { Fl_Box* o = new Fl_Box(100, 530, 220, 10);
           o->hide();
           Fl_Group::current()->resizable(o);
@@ -2695,7 +2704,7 @@ Fl_Double_Window* make_settings_window() {
           layout_choice->menu(menu_layout_choice);
         } // Fl_Choice* layout_choice
         { Fl_Button* o = new Fl_Button(272, 78, 24, 24, "+");
-          o->callback((Fl_Callback*)cb_2);
+          o->callback((Fl_Callback*)cb_3);
         } // Fl_Button* o
         { w_layout_menu = new Fl_Menu_Button(296, 78, 24, 24);
           w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);
@@ -2926,14 +2935,14 @@ Fl_Double_Window* make_settings_window() {
           o->maximum(32767);
           o->step(1);
           o->textsize(11);
-          o->callback((Fl_Callback*)cb_3);
+          o->callback((Fl_Callback*)cb_4);
         } // Fl_Value_Input* o
         { Fl_Value_Input* o = new Fl_Value_Input(145, 440, 55, 20);
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
           o->textsize(11);
-          o->callback((Fl_Callback*)cb_4);
+          o->callback((Fl_Callback*)cb_5);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
         { Fl_Value_Input* o = new Fl_Value_Input(205, 440, 55, 20);
@@ -2941,7 +2950,7 @@ Fl_Double_Window* make_settings_window() {
           o->maximum(32767);
           o->step(1);
           o->textsize(11);
-          o->callback((Fl_Callback*)cb_5);
+          o->callback((Fl_Callback*)cb_6);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
         { Fl_Group* o = new Fl_Group(85, 465, 201, 20, "Label Font:");
@@ -2955,7 +2964,7 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_6);
+            o->callback((Fl_Callback*)cb_7);
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu_w_default);
           } // Fl_Choice* o
@@ -2967,7 +2976,7 @@ Fl_Double_Window* make_settings_window() {
             o->step(1);
             o->value(14);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_7);
+            o->callback((Fl_Callback*)cb_8);
           } // Fl_Value_Input* o
           o->end();
         } // Fl_Group* o
@@ -2982,7 +2991,7 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_8);
+            o->callback((Fl_Callback*)cb_9);
             o->menu(fontmenu_w_default);
           } // Fl_Choice* o
           { Fl_Value_Input* o = new Fl_Value_Input(235, 490, 50, 20);
@@ -2992,7 +3001,7 @@ Fl_Double_Window* make_settings_window() {
             o->step(1);
             o->value(14);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_9);
+            o->callback((Fl_Callback*)cb_a);
           } // Fl_Value_Input* o
           o->end();
         } // Fl_Group* o
@@ -3025,7 +3034,7 @@ Fl_Double_Window* make_settings_window() {
               o->tooltip("insert a new shell command into the list after the selected command");
               o->labelfont(1);
               o->labelsize(11);
-              o->callback((Fl_Callback*)cb_a);
+              o->callback((Fl_Callback*)cb_b);
             } // Fl_Button* o
             { w_settings_shell_dup = new Fl_Button(124, 200, 24, 22, "++");
               w_settings_shell_dup->tooltip("duplicate the selected shell command and insert it into the list");
@@ -3085,7 +3094,7 @@ Fl_Double_Window* make_settings_window() {
             o->callback((Fl_Callback*)cb_Menu);
           } // Fl_Input* o
           { Fl_Group* o = new Fl_Group(100, 297, 140, 71);
-            o->callback((Fl_Callback*)cb_b);
+            o->callback((Fl_Callback*)cb_c);
             { Fl_Shortcut_Button* o = new Fl_Shortcut_Button(100, 297, 130, 20, "Shortcut");
               o->tooltip("an optional keyboard shortcut to run this shell command");
               o->box(FL_UP_BOX);
@@ -3312,7 +3321,7 @@ Fl_Double_Window* make_settings_window() {
             i18n_pos_file_input->callback((Fl_Callback*)cb_i18n_pos_file_input);
           } // Fl_Input* i18n_pos_file_input
           { Fl_Group* o = new Fl_Group(100, 178, 90, 20);
-            o->callback((Fl_Callback*)cb_c);
+            o->callback((Fl_Callback*)cb_d);
             { i18n_pos_set_input = new Fl_Int_Input(100, 178, 80, 20, "Set:");
               i18n_pos_set_input->tooltip("The message set number.");
               i18n_pos_set_input->type(2);
