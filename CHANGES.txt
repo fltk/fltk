@@ -1,9 +1,71 @@
-Changes in FLTK 1.4.2                                   Released: ??? ?? 2025
+Changes in FLTK 1.4.2                                   Released: Feb 23 2025
 
-  Technical Details and Build Procedure Improvements
+  Bug Fixes and other Improvements
 
-  - Use "Microsoft Sans Serif" instead of "Arial" for the FL_HELVETICA font
-    family under Windows.
+  - Fix Help View 'find' method (#1119)
+  - Fix possibly uncleared damage flag of Fl_Pack (#1172)
+  - Fix integer overflow in image interpolation (#73)
+  - Fix "Fl_Text_Editor::wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0)
+    hurts scrolling" (#1186)
+  - Use C locale when writing float values to SVG images
+  - Fix return value of Fl_Table_Row::row_selected(int) (PR #1187)
+  - Fix Fl_Table_Row inconsistencies, final part (#1187)
+  - Fix potential buffer overflow in Fl_Help_View (#1196)
+  - Improve fullscreen window handling (#1192 and more)
+  - Fix "Fl_RGB_Image::draw() seg faults when offset is too big" (#1211)
+
+  Platform Specific Fixes and Build Procedure Improvements
+
+  - CMake/Windows/MSYS2: Correctly detect ucrt64 environment (PR #1167)
+  - CMake: make "optional" dependencies 'PUBLIC' (#1173)
+  - CMake: check INTERFACE_LINK_LIBRARIES for empty value
+  - CMake: fix include directories of bundled image libs
+  - macOS: Fix crash if Escape is pressed while Help submenu is open (#1170)
+  - macOS: Don't capture the cursor in capture_decorated_window_SCK()
+  - macOS: Fix "Full screen broken on macOS in FLTK 1.3.10 (regression)" (#1192)
+  - macOS: add support of showing window to multi-screen fullscreen state
+  - fix "macOS Sonoma/Sequoia not capturing OpenGL 1 text on macOS"  (#1197)
+  - Remove incorrect use of Fl_Window::current() in Fl_Quartz_Image_Surface_Driver
+  - Make Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle() return a depth-4 image
+  - macOS: Fix "Fl_JPEG_Image infinite longjmp loop on Mac release builds" (#1207)
+  - Windows: replace "Arial" by "Microsoft Sans Serif" fonts for 'FL_HELVETICA'
+  - fltk-config: fix "Check bundled image libraries in source tree"
+  - fltk-config: reorder include dirs of bundled image libs
+  - Fix "fltk-config reports dep on gtk3 when it does not exist" (#1201)
+
+  Wayland related Improvements and Fixes
+
+  - Fix a border case in member function Fl_Wayland_Window_Driver::resize()
+  - Make draw to image and draw to clipboard behave equally in X11 and Wayland
+  - Fix Fl_{Wayland|Xlib}_{Copy|Image}_Surface_Driver::set_current()
+  - Fix handling of key repeats
+  - Improve member function Fl_Wayland_Screen_Driver::insertion_point_location()
+  - Fix "Redrawing of a surface may fail if a subsurface is being moved" (#1191)
+  - Update bundled libdecor to last upstream version (21 Jan 2025)
+
+  Fixes and Improvements in Fluid:
+
+  - Improve filename list in main menu
+  - Improve path handling on Windows
+  - Minor fix and docs
+  - Rename Strategy constants to comply with CMP
+  - Fix file history text
+
+  Documentation Improvements
+
+  - Document how screen work areas are computed across platforms (#1180)
+  - Remove duplication and typo in documentation of Fl::copy()
+  - Improve and reorder Fl_Tabs documentation
+  - Document issues with Fl_Scroll as children of Fl_Tabs (#1175)
+  - Improve documentation of Fl_Box constructors (#1194)
+
+  Other Changes
+
+  - Fix typos and compiler warnings
+  - Add Fl_Valuator destructor
+  - test/utf8: Change default font under Windows for "Unicode Display Test"
+  - test/editor: ensure buffer termination, update documentation accordingly
+
 
 Changes in FLTK 1.4.1                                   Released: Dec 12 2024
 
