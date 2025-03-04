@@ -60,7 +60,6 @@ protected:
   uchar *mask_bitmap_;
   uchar **mask_bitmap() FL_OVERRIDE {return &mask_bitmap_;}
   POINT *long_point;
-  bool is_solid_;
   int style_;
 public:
   Fl_GDI_Graphics_Driver();

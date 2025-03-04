@@ -430,6 +430,7 @@ public:
   inline int floor(int x) { return Fl_Scalable_Graphics_Driver::floor(x, scale()); }
 protected:
   int line_width_;
+  bool is_solid_;
   virtual Fl_Region scale_clip(float f);
   void unscale_clip(Fl_Region r);
   void point(int x, int y) FL_OVERRIDE;
