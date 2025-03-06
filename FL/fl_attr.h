@@ -1,7 +1,7 @@
 /*
  * Function attribute declarations for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2024 by Bill Spitzak and others.
+ * Copyright 1998-2025 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -24,6 +24,21 @@
 
 
 /**
+  This macro makes it safe to use the C++11 keyword \c override with
+  older compilers.
+
+  Since FLTK 1.5.0 a C++11 capable compiler is required, hence we can safely
+  define FL_OVERRIDE unconditionally as 'override'.
+
+  This macro is kept for backwards compatibility with old (1.4.x) user code
+  that uses the FL_OVERRIDE macro.
+
+  We recommend to use 'override' explicitly if C++11 or higher is available.
+*/
+#define FL_OVERRIDE override
+
+
+/**
  This section lists macros for Doxygen documentation only. The next section
  will define the actual macros based on the compile used and based on the
  capabilities of the version of that compiler.
@@ -39,11 +54,6 @@
  */
 #define __fl_attr(x)
 
-/**
-  This macro makes it safe to use the C++11 keyword \c override with
-  older compilers.
-*/
-#define FL_OVERRIDE override
 
 /**
  Enclosing a function or method in FL_DEPRECATED marks it as no longer
@@ -100,9 +110,6 @@
 #if defined(_MSC_VER)
 
 #if (_MSC_VER >= 1900) // Visual Studio 2015 (14.0)
-#ifndef FL_OVERRIDE
-#define FL_OVERRIDE override
-#endif
 #endif // Visual Studio 2015 (14.0)
 
 #if (_MSC_VER >= 1400) // Visual Studio 2005 (8.0)
@@ -138,9 +145,6 @@
 #endif // C++14
 
 #if (__cplusplus >= 201103L) // C++11
-#ifndef FL_OVERRIDE
-#define FL_OVERRIDE override
-#endif
 #endif // C+11
 
 #if (__cplusplus >= 199711L) // C++89
@@ -196,10 +200,6 @@
 
 #ifndef __fl_attr
 #define __fl_attr(x)
-#endif
-
-#ifndef FL_OVERRIDE
-#define FL_OVERRIDE
 #endif
 
 #ifndef FL_DEPRECATED
