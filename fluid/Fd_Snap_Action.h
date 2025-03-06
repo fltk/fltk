@@ -119,7 +119,7 @@ public:
   bool list_is_static_;
   int current_suite_;
   int current_preset_;
-  Fl_String filename_;
+  std::string filename_;
 public:
   Fd_Layout_List();
   ~Fd_Layout_List();
@@ -127,7 +127,7 @@ public:
   void update_menu_labels();
   int current_suite() const { return current_suite_; }
   void current_suite(int ix);
-  void current_suite(Fl_String);
+  void current_suite(std::string);
   int current_preset() const { return current_preset_; }
   void current_preset(int ix);
   Fd_Layout_Suite &operator[](int ix) { return list_[ix]; }
@@ -135,8 +135,8 @@ public:
   void rename(const char *name);
   void capacity(int);
 
-  int load(const Fl_String &filename);
-  int save(const Fl_String &filename);
+  int load(const std::string &filename);
+  int save(const std::string &filename);
   void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void write(Fd_Project_Writer*);

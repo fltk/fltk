@@ -108,7 +108,7 @@
 
 #include <errno.h>
 
-static Fl_String fltk_config_cmd;
+static std::string fltk_config_cmd;
 static Fl_Process s_proc;
 
 /**
@@ -129,7 +129,7 @@ bool shell_command_running() {
  \param[in] defaultValue default value to be used if no preference was set
  \return 0 if the default value was used
  */
-char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, const Fl_String &defaultValue) {
+char preferences_get(Fl_Preferences &prefs, const char *key, std::string &value, const std::string &defaultValue) {
   char *v = NULL;
   char ret = prefs.get(key, v, defaultValue.c_str());
   value = v;
@@ -147,7 +147,7 @@ char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, c
  \param[in] value set this entry to value (stops at the first nul character).
  \return 0 if setting the value failed
  */
-char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value) {
+char preferences_set(Fl_Preferences &prefs, const char *key, const std::string &value) {
   return prefs.set(key, value.c_str());
 }
 
@@ -362,15 +362,15 @@ void shell_pipe_cb(FL_SOCKET, void*) {
 //
 //}
 
-static void expand_macro(Fl_String &cmd, const Fl_String &macro, const Fl_String &content) {
+static void expand_macro(std::string &cmd, const std::string &macro, const std::string &content) {
   for (int i=0;;) {
     i = cmd.find(macro, i);
-    if (i==Fl_String::npos) break;
+    if (i==std::string::npos) break;
     cmd.replace(i, macro.size(), content);
   }
 }
 
-static void expand_macros(Fl_String &cmd) {
+static void expand_macros(std::string &cmd) {
   expand_macro(cmd, "@BASENAME@",         g_project.basename());
   expand_macro(cmd, "@PROJECTFILE_PATH@", g_project.projectfile_path());
   expand_macro(cmd, "@PROJECTFILE_NAME@", g_project.projectfile_name());
@@ -381,11 +381,11 @@ static void expand_macros(Fl_String &cmd) {
   expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.stringsfile_path());
   expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.stringsfile_name());
 //  TODO: implement finding the script `fltk-config` for all platforms
-//  if (cmd.find("@FLTK_CONFIG@") != Fl_String::npos) {
+//  if (cmd.find("@FLTK_CONFIG@") != std::string::npos) {
 //    find_fltk_config();
 //    expand_macro(cmd, "@FLTK_CONFIG@",      fltk_config_cmd.c_str());
 //  }
-  if (cmd.find("@TMPDIR@") != Fl_String::npos)
+  if (cmd.find("@TMPDIR@") != std::string::npos)
     expand_macro(cmd, "@TMPDIR@",           get_tmpdir());
 }
 
@@ -411,7 +411,7 @@ void show_terminal_window() {
  \param[in] cmd the command that is sent to `/bin/sh -c ...` or `cmd.exe` on Windows machines
  \param[in] flags various flags in preparation of the command
  */
-void run_shell_command(const Fl_String &cmd, int flags) {
+void run_shell_command(const std::string &cmd, int flags) {
   if (cmd.empty()) {
     fl_alert("No shell command entered!");
     return;
@@ -419,7 +419,7 @@ void run_shell_command(const Fl_String &cmd, int flags) {
 
   if (!prepare_shell_command(flags)) return;
 
-  Fl_String expanded_cmd = cmd;
+  std::string expanded_cmd = cmd;
   expand_macros(expanded_cmd);
 
   if (   ((flags & Fd_Shell_Command::DONT_SHOW_TERMINAL) == 0)
@@ -487,7 +487,7 @@ Fd_Shell_Command::Fd_Shell_Command(const Fd_Shell_Command *rhs)
 
  \param[in] name is used as a stand-in for the command name and label
  */
-Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name)
+Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 : name(in_name),
   label(in_name),
   shortcut(0),
@@ -511,13 +511,13 @@ Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name)
  \param[in] in_command the shell command that we want to run
  \param[in] in_flags some flags to tell FLUID to save the project, code, or strings before running the command
  */
-Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name,
-                 const Fl_String &in_label,
+Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name,
+                 const std::string &in_label,
                  Fl_Shortcut in_shortcut,
                  Fd_Tool_Store in_storage,
                  int in_condition,
-                 const Fl_String &in_condition_data,
-                 const Fl_String &in_command,
+                 const std::string &in_condition_data,
+                 const std::string &in_command,
                  int in_flags)
 : name(in_name),
   label(in_label),

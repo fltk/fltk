@@ -53,7 +53,7 @@ extern const int FL_SNAP_TO_WINDOW;
 
 extern Fl_Widget *FL_SNAP_AREA_CLEAR;
 
-extern void run_autodoc(const Fl_String &target_dir);
+extern void run_autodoc(const std::string &target_dir);
 
 #endif
 

@@ -551,7 +551,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
     prefs_path_14 = home_path + "/.config";
   } else {
     if (prefs_path_14[prefs_path_14.size()-1]!='/')
-      prefs_path_14.append('/');
+      prefs_path_14.append("/");
     if (prefs_path_14.find("~/")==0) // starts with "~"
       prefs_path_14.replace(0, 1, home_path);
     int h_env = prefs_path_14.find("${HOME}");
@@ -562,7 +562,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
       prefs_path_14.replace(h_env, 5, home_path);
   }
   if (prefs_path_14[prefs_path_14.size()-1]!='/')
-    prefs_path_14.append('/');
+    prefs_path_14.append("/");
   prefs_path_14.append(vendor);
 
   // 2: If this base path does not exist, try the 1.3 path
@@ -578,7 +578,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
   }
 
   // 3: neither path exists, return the 1.4 file path and name
-  prefs_path_14.append('/');
+  prefs_path_14.append("/");
   prefs_path_14.append(application);
   prefs_path_14.append(".prefs");
   strlcpy(buffer, prefs_path_14.c_str(), FL_PATH_MAX);

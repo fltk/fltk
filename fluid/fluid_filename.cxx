@@ -18,10 +18,10 @@
 
   \brief File names and URI utility functions for FLUID only.
 
-  This file defines all fl_filename* functions using Fl_String and also
+  This file defines all fl_filename* functions using std::string and also
   includes the main header file <FL/filename.H>.
 
-  \note This file contains some filename functions using Fl_String which
+  \note This file contains some filename functions using std::string which
         which are used in FLTK 1.4.x but will be removed in the next minor
         or major release after 1.4.x (i.e. 1.5 or maybe 4.0).
 
@@ -45,8 +45,8 @@
  \return the name part of a filename
  \see fl_filename_name(const char *filename)
  */
-Fl_String fl_filename_name(const Fl_String &filename) {
-  return Fl_String(fl_filename_name(filename.c_str()));
+std::string fl_filename_name(const std::string &filename) {
+  return std::string(fl_filename_name(filename.c_str()));
 }
 
 /**
@@ -55,13 +55,13 @@ Fl_String fl_filename_name(const Fl_String &filename) {
  \return the path part of a filename without the name
  \see fl_filename_name(const char *filename)
  */
-Fl_String fl_filename_path(const Fl_String &filename) {
+std::string fl_filename_path(const std::string &filename) {
   const char *base = filename.c_str();
   const char *name = fl_filename_name(base);
   if (name) {
-    return Fl_String(base, (int)(name-base));
+    return std::string(base, (int)(name-base));
   } else {
-    return Fl_String();
+    return std::string();
   }
 }
 
@@ -72,8 +72,8 @@ Fl_String fl_filename_path(const Fl_String &filename) {
     string if the filename has no extension
  \see fl_filename_ext(const char *buf)
  */
-Fl_String fl_filename_ext(const Fl_String &filename) {
-  return Fl_String(fl_filename_ext(filename.c_str()));
+std::string fl_filename_ext(const std::string &filename) {
+  return std::string(fl_filename_ext(filename.c_str()));
 }
 
 /**
@@ -83,11 +83,11 @@ Fl_String fl_filename_ext(const Fl_String &filename) {
  \return the new filename
  \see fl_filename_setext(char *to, int tolen, const char *ext)
  */
-Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_extension) {
+std::string fl_filename_setext(const std::string &filename, const std::string &new_extension) {
   char buffer[FL_PATH_MAX];
   fl_strlcpy(buffer, filename.c_str(), FL_PATH_MAX);
   fl_filename_setext(buffer, FL_PATH_MAX, new_extension.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -96,10 +96,10 @@ Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_ext
  \return the new, expanded filename
  \see fl_filename_expand(char *to, int tolen, const char *from)
 */
-Fl_String fl_filename_expand(const Fl_String &from) {
+std::string fl_filename_expand(const std::string &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_expand(buffer, FL_PATH_MAX, from.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -108,10 +108,10 @@ Fl_String fl_filename_expand(const Fl_String &from) {
  \return the new, absolute filename
  \see fl_filename_absolute(char *to, int tolen, const char *from)
  */
-Fl_String fl_filename_absolute(const Fl_String &from) {
+std::string fl_filename_absolute(const std::string &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -122,10 +122,10 @@ Fl_String fl_filename_absolute(const Fl_String &from) {
  \return the new, absolute filename
  \see fl_filename_absolute(char *to, int tolen, const char *from, const char *base)
  */
-Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base) {
+std::string fl_filename_absolute(const std::string &from, const std::string &base) {
   char buffer[FL_PATH_MAX];
   fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -134,10 +134,10 @@ Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base) {
  \return the new, relative filename
  \see fl_filename_relative(char *to, int tolen, const char *from)
  */
-Fl_String fl_filename_relative(const Fl_String &from) {
+std::string fl_filename_relative(const std::string &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_relative(buffer, FL_PATH_MAX, from.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -147,20 +147,20 @@ Fl_String fl_filename_relative(const Fl_String &from) {
  \return the new, relative filename
  \see fl_filename_relative(char *to, int tolen, const char *from, const char *base)
  */
-Fl_String fl_filename_relative(const Fl_String &from, const Fl_String &base) {
+std::string fl_filename_relative(const std::string &from, const std::string &base) {
   char buffer[FL_PATH_MAX];
   fl_filename_relative(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /** Cross-platform function to get the current working directory
- as a UTF-8 encoded value in an Fl_String.
+ as a UTF-8 encoded value in an std::string.
  \return the CWD encoded as UTF-8
  */
-Fl_String fl_getcwd() {
+std::string fl_getcwd() {
   char buffer[FL_PATH_MAX];
   fl_getcwd(buffer, FL_PATH_MAX);
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -177,19 +177,19 @@ Fl_String fl_getcwd() {
  \param[in[ max_chars maximum number of characters in result, including ellipsis
  \return shortened file path and name
  */
-Fl_String fl_filename_shortened(const Fl_String &filename, int max_chars) {
+std::string fl_filename_shortened(const std::string &filename, int max_chars) {
   // Insert this as the ellipsis
   static const char *ell = "...";
   static const int ell_bytes = 3;
   // Replace the start of a path with "~" if it matches the home directory
-  static Fl_String tilde = "~/";
-  static Fl_String home;
+  static std::string tilde = "~/";
+  static std::string home;
   static int home_chars = -1;
   if (home_chars==-1) {
     home = fl_filename_expand(tilde);
     home_chars = fl_utf_nb_char((const uchar*)home.c_str(), home.size());
   }
-  Fl_String homed_filename;
+  std::string homed_filename;
 #if defined(_WIN32) || defined(__APPLE__)
   bool starts_with_home = fl_utf_strncasecmp(home.c_str(), filename.c_str(), home_chars)==0;
 #else

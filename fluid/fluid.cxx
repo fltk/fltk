@@ -148,7 +148,7 @@ int modflag_c = 0;
 
 /// Application work directory, stored here when temporarily changing to the source code directory.
 /// \see goto_source_dir()
-static Fl_String app_work_dir;
+static std::string app_work_dir;
 
 /// Used as a counter to set the .fl project dir as the current directory.
 /// \see enter_project_dir(), leave_project_dir()
@@ -170,20 +170,20 @@ int show_version = 0;        // fluid -v
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
 /// command line arguments that overrides the generate code file extension or name
-Fl_String g_code_filename_arg;
+std::string g_code_filename_arg;
 
 /// command line arguments that overrides the generate header file extension or name
-Fl_String g_header_filename_arg;
+std::string g_header_filename_arg;
 
 /// current directory path at application launch
-Fl_String g_launch_path;
+std::string g_launch_path;
 
 /// if set, generate images for automatic documentation in this directory
-Fl_String g_autodoc_path;
+std::string g_autodoc_path;
 
 /// path to store temporary files during app run
 /// \see tmpdir_create_called
-Fl_String tmpdir_path;
+std::string tmpdir_path;
 
 /// true if the temporary file path was already created
 /// \see tmpdir_path
@@ -267,7 +267,7 @@ void Fluid_Project::update_settings_dialog() {
  \param[in] str directory or path name
  \return a new string, ending with a '/'
  */
-static Fl_String end_with_slash(const Fl_String &str) {
+static std::string end_with_slash(const std::string &str) {
   char last = str[str.size()-1];
   if (last !='/' && last != '\\')
     return str + "/";
@@ -293,7 +293,7 @@ static void create_tmpdir() {
   //    C:/Windows/Temp/
   //    C:\Users\<username>\AppData\Local\Temp
   fl_snprintf(buf, sizeof(buf)-1, "fluid-%d/", (long)GetCurrentProcessId());
-  Fl_String name = buf;
+  std::string name = buf;
   wchar_t tempdirW[FL_PATH_MAX+1];
   char tempdir[FL_PATH_MAX+1];
   unsigned len = GetTempPathW(FL_PATH_MAX, tempdirW);
@@ -303,15 +303,15 @@ static void create_tmpdir() {
     unsigned wn = fl_utf8fromwc(tempdir, FL_PATH_MAX, tempdirW, len);
     tempdir[wn] = 0;
   }
-  Fl_String path = tempdir;
+  std::string path = tempdir;
   end_with_slash(path);
   path += name;
   fl_make_path(path.c_str());
   if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
 #else
   fl_snprintf(buf, sizeof(buf)-1, "fluid-%d/", getpid());
-  Fl_String name = buf;
-  Fl_String path = fl_getenv("TMPDIR");
+  std::string name = buf;
+  std::string path = fl_getenv("TMPDIR");
   if (!path.empty()) {
     end_with_slash(path);
     path += name;
@@ -319,7 +319,7 @@ static void create_tmpdir() {
     if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
   }
   if (tmpdir_path.empty()) {
-    path = Fl_String("/tmp/") + name;
+    path = std::string("/tmp/") + name;
     fl_make_path(path.c_str());
     if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
   }
@@ -327,7 +327,7 @@ static void create_tmpdir() {
   if (tmpdir_path.empty()) {
     char pbuf[FL_PATH_MAX+1];
     fluid_prefs.get_userdata_path(pbuf, FL_PATH_MAX);
-    path = Fl_String(pbuf);
+    path = std::string(pbuf);
     end_with_slash(path);
     path += name;
     fl_make_path(path.c_str());
@@ -357,7 +357,7 @@ static void delete_tmpdir() {
   int n_de = fl_filename_list(tmpdir_path.c_str(), &de);
   if (n_de >= 0) {
     for (int i=0; i<n_de; i++) {
-      Fl_String path = tmpdir_path + de[i]->d_name;
+      std::string path = tmpdir_path + de[i]->d_name;
       fl_unlink(path.c_str());
     }
     fl_filename_free_list(&de, n_de);
@@ -379,7 +379,7 @@ static void delete_tmpdir() {
  \return the path to the temporary directory, ending in a '/', or and empty
       string if no directory could be created.
  */
-const Fl_String &get_tmpdir() {
+const std::string &get_tmpdir() {
   if (!tmpdir_create_called)
     create_tmpdir();
   return tmpdir_path;
@@ -465,7 +465,7 @@ void enter_project_dir() {
   // store the current working directory for later
   app_work_dir = fl_getcwd();
   // set the current directory to the path of our .fl file
-  Fl_String project_path = fl_filename_path(fl_filename_absolute(filename));
+  std::string project_path = fl_filename_path(fl_filename_absolute(filename));
   if (fl_chdir(project_path.c_str()) == -1) {
     fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
             project_path.c_str(), strerror(errno));
@@ -610,7 +610,7 @@ void save_cb(Fl_Widget *, void *v) {
     if (fnfc.show() != 0) return;
     c = fnfc.filename();
     if (!fl_access(c, 0)) {
-      Fl_String basename = fl_filename_name(Fl_String(c));
+      std::string basename = fl_filename_name(std::string(c));
       if (fl_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
                     "Replace", NULL, basename.c_str()) == 0) return;
@@ -972,19 +972,19 @@ bool new_project_from_template() {
  \param title a text describing the action after selecting a file (load, merge, ...)
  \return the file path and name, or an empty string if the operation was canceled
  */
-Fl_String open_project_filechooser(const Fl_String &title) {
+std::string open_project_filechooser(const std::string &title) {
   Fl_Native_File_Chooser dialog;
   dialog.title(title.c_str());
   dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
   dialog.filter("FLUID Files\t*.f[ld]\n");
   if (filename) {
-    Fl_String current_project_file = filename;
+    std::string current_project_file = filename;
     dialog.directory(fl_filename_path(current_project_file).c_str());
     dialog.preset_file(fl_filename_name(current_project_file).c_str());
   }
   if (dialog.show() != 0)
-    return Fl_String();
-  return Fl_String(dialog.filename());
+    return std::string();
+  return std::string(dialog.filename());
 }
 
 /**
@@ -997,12 +997,12 @@ Fl_String open_project_filechooser(const Fl_String &title) {
  \param[in] filename_arg path and name of the new project file
  \return false if the operation failed
  */
-bool merge_project_file(const Fl_String &filename_arg) {
+bool merge_project_file(const std::string &filename_arg) {
   bool is_a_merge = (Fl_Type::first != NULL);
-  Fl_String title = is_a_merge ? "Merge Project File" : "Open Project File";
+  std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
 
   // ask for a filename if none was given
-  Fl_String new_filename = filename_arg;
+  std::string new_filename = filename_arg;
   if (new_filename.empty()) {
     new_filename = open_project_filechooser(title);
     if (new_filename.empty()) {
@@ -1052,13 +1052,13 @@ bool merge_project_file(const Fl_String &filename_arg) {
  \param[in] filename_arg load from this file, or show file chooser if empty
  \return false if the operation was canceled or failed otherwise
  */
-bool open_project_file(const Fl_String &filename_arg) {
+bool open_project_file(const std::string &filename_arg) {
   // verify user intention
   if (confirm_project_clear() == false)
     return false;
 
   // ask for a filename if none was given
-  Fl_String new_filename = filename_arg;
+  std::string new_filename = filename_arg;
   if (new_filename.empty()) {
     new_filename = open_project_filechooser("Open Project File");
     if (new_filename.empty()) {
@@ -1078,7 +1078,7 @@ bool open_project_file(const Fl_String &filename_arg) {
  \param[in] c the filename of the new design
  */
 void apple_open_cb(const char *c) {
-  open_project_file(Fl_String(c));
+  open_project_file(std::string(c));
 }
 #endif // __APPLE__
 
@@ -1086,7 +1086,7 @@ void apple_open_cb(const char *c) {
  Get the absolute path of the project file, for example `/Users/matt/dev/`.
  \return the path ending in '/'
  */
-Fl_String Fluid_Project::projectfile_path() const {
+std::string Fluid_Project::projectfile_path() const {
   return end_with_slash(fl_filename_absolute(fl_filename_path(filename), g_launch_path));
 }
 
@@ -1094,7 +1094,7 @@ Fl_String Fluid_Project::projectfile_path() const {
  Get the project file name including extension, for example `test.fl`.
  \return the file name without path
  */
-Fl_String Fluid_Project::projectfile_name() const {
+std::string Fluid_Project::projectfile_name() const {
   return fl_filename_name(filename);
 }
 
@@ -1102,8 +1102,8 @@ Fl_String Fluid_Project::projectfile_name() const {
  Get the absolute path of the generated C++ code file, for example `/Users/matt/dev/src/`.
  \return the path ending in '/'
  */
-Fl_String Fluid_Project::codefile_path() const {
-  Fl_String path = fl_filename_path(code_file_name);
+std::string Fluid_Project::codefile_path() const {
+  std::string path = fl_filename_path(code_file_name);
   if (batch_mode)
     return end_with_slash(fl_filename_absolute(path, g_launch_path));
   else
@@ -1114,8 +1114,8 @@ Fl_String Fluid_Project::codefile_path() const {
  Get the generated C++ code file name including extension, for example `test.cxx`.
  \return the file name without path
  */
-Fl_String Fluid_Project::codefile_name() const {
-  Fl_String name = fl_filename_name(code_file_name);
+std::string Fluid_Project::codefile_name() const {
+  std::string name = fl_filename_name(code_file_name);
   if (name.empty()) {
     return fl_filename_setext(fl_filename_name(filename), ".cxx");
   } else if (name[0] == '.') {
@@ -1129,8 +1129,8 @@ Fl_String Fluid_Project::codefile_name() const {
  Get the absolute path of the generated C++ header file, for example `/Users/matt/dev/src/`.
  \return the path ending in '/'
  */
-Fl_String Fluid_Project::headerfile_path() const {
-  Fl_String path = fl_filename_path(header_file_name);
+std::string Fluid_Project::headerfile_path() const {
+  std::string path = fl_filename_path(header_file_name);
   if (batch_mode)
     return end_with_slash(fl_filename_absolute(path, g_launch_path));
   else
@@ -1141,8 +1141,8 @@ Fl_String Fluid_Project::headerfile_path() const {
  Get the generated C++ header file name including extension, for example `test.cxx`.
  \return the file name without path
  */
-Fl_String Fluid_Project::headerfile_name() const {
-  Fl_String name = fl_filename_name(header_file_name);
+std::string Fluid_Project::headerfile_name() const {
+  std::string name = fl_filename_name(header_file_name);
   if (name.empty()) {
     return fl_filename_setext(fl_filename_name(filename), ".h");
   } else if (name[0] == '.') {
@@ -1160,7 +1160,7 @@ Fl_String Fluid_Project::headerfile_name() const {
  batch mode.
  \return the path ending in '/'
  */
-Fl_String Fluid_Project::stringsfile_path() const {
+std::string Fluid_Project::stringsfile_path() const {
   if (batch_mode)
     return g_launch_path;
   else
@@ -1171,7 +1171,7 @@ Fl_String Fluid_Project::stringsfile_path() const {
  Get the generated i18n text file name including extension, for example `test.po`.
  \return the file name without path
  */
-Fl_String Fluid_Project::stringsfile_name() const {
+std::string Fluid_Project::stringsfile_name() const {
   switch (i18n_type) {
     default: return fl_filename_setext(fl_filename_name(filename), ".txt");
     case FD_I18N_GNU: return fl_filename_setext(fl_filename_name(filename), ".po");
@@ -1183,7 +1183,7 @@ Fl_String Fluid_Project::stringsfile_name() const {
  Get the name of the project file without the filename extension.
  \return the file name without path or extension
  */
-Fl_String Fluid_Project::basename() const {
+std::string Fluid_Project::basename() const {
   return fl_filename_setext(fl_filename_name(filename), "");
 }
 
@@ -1218,14 +1218,14 @@ int write_code_files(bool dont_show_completion_dialog)
 
   // -- generate the file names with absolute paths
   Fd_Code_Writer f;
-  Fl_String code_filename = g_project.codefile_path() + g_project.codefile_name();
-  Fl_String header_filename = g_project.headerfile_path() + g_project.headerfile_name();
+  std::string code_filename = g_project.codefile_path() + g_project.codefile_name();
+  std::string header_filename = g_project.headerfile_path() + g_project.headerfile_name();
 
   // -- write the code and header files
   if (!batch_mode) enter_project_dir();
   int x = f.write_code(code_filename.c_str(), header_filename.c_str());
-  Fl_String code_filename_rel = fl_filename_relative(code_filename);
-  Fl_String header_filename_rel = fl_filename_relative(header_filename);
+  std::string code_filename_rel = fl_filename_relative(code_filename);
+  std::string header_filename_rel = fl_filename_relative(header_filename);
   if (!batch_mode) leave_project_dir();
 
   // -- print error message in batch mode or pop up an error or confirmation dialog box
@@ -1278,8 +1278,8 @@ int mergeback_code_files()
     return 0;
   }
 
-  Fl_String proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
-  Fl_String code_filename;
+  std::string proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
+  std::string code_filename;
 #if 1
   if (!batch_mode) {
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
@@ -1317,7 +1317,7 @@ void write_strings_cb(Fl_Widget *, void *) {
     save_cb(0,0);
     if (!filename) return;
   }
-  Fl_String filename = g_project.stringsfile_path() + g_project.stringsfile_name();
+  std::string filename = g_project.stringsfile_path() + g_project.stringsfile_name();
   int x = write_strings(filename);
   if (batch_mode) {
     if (x) {
@@ -1626,7 +1626,7 @@ void print_menu_cb(Fl_Widget *, void *) {
     fl_draw(date, w - (int)fl_width(date), fl_height());
 
     // Get the base filename...
-    Fl_String basename = fl_filename_name(Fl_String(filename));
+    std::string basename = fl_filename_name(std::string(filename));
     fl_draw(basename.c_str(), 0, fl_height());
 
     // print centered and scaled to fit in the page
@@ -1657,7 +1657,7 @@ static void menu_file_new_cb(Fl_Widget *, void *) { new_project(); }
 static void menu_file_new_from_template_cb(Fl_Widget *, void *) { new_project_from_template(); }
 static void menu_file_open_cb(Fl_Widget *, void *) { open_project_file(""); }
 static void menu_file_insert_cb(Fl_Widget *, void *) { merge_project_file(""); }
-static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(Fl_String((const char*)v)); }
+static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(std::string((const char*)v)); }
 static void menu_layout_sync_resize_cb(Fl_Menu_ *m, void*) {
   if (m->mvalue()->value()) Fl_Type::allow_layout = 1; else Fl_Type::allow_layout = 0; }
 /**
@@ -1943,7 +1943,7 @@ void load_history() {
     fluid_prefs.get( Fl_Preferences::Name("file%d", i), absolute_history[i], "", sizeof(absolute_history[i]));
     if (absolute_history[i][0]) {
       // Make a shortened version of the filename for the menu...
-      Fl_String fn = fl_filename_shortened(absolute_history[i], 48);
+      std::string fn = fl_filename_shortened(absolute_history[i], 48);
       strncpy(relative_history[i], fn.c_str(), sizeof(relative_history[i]) - 1);
       if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
       else history_item[i].flags = 0;
@@ -2003,7 +2003,7 @@ void update_history(const char *flname) {
 
   // Put the new file at the top...
   strlcpy(absolute_history[0], absolute, sizeof(absolute_history[0]));
-  Fl_String fn = fl_filename_shortened(absolute_history[0], 48);
+  std::string fn = fl_filename_shortened(absolute_history[0], 48);
   strncpy(relative_history[0], fn.c_str(), sizeof(relative_history[0]) - 1);
 
   // Update the menu items as needed...
@@ -2072,9 +2072,9 @@ void set_modflag(int mf, int mfc) {
   }
 
   if (main_window) {
-    Fl_String basename;
+    std::string basename;
     if (!filename) basename = "Untitled.fl";
-    else basename = fl_filename_name(Fl_String(filename));
+    else basename = fl_filename_name(std::string(filename));
     code_ext = fl_filename_ext(g_project.code_file_name.c_str());
     char mod_star = modflag ? '*' : ' ';
     char mod_c_star = modflag_c ? '*' : ' ';

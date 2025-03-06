@@ -18,10 +18,10 @@
 
   \brief File names and URI utility functions for FLUID only.
 
-  This file declares all fl_filename* functions using Fl_String and also
+  This file declares all fl_filename* functions using std::string and also
   includes the main header file <FL/filename.H>.
 
-  \note This file contains some filename functions using Fl_String which
+  \note This file contains some filename functions using std::string which
         which are used in FLTK 1.4.x but will be removed in the next minor
         or major release after 1.4.x (i.e. 1.5 or maybe 4.0).
 
@@ -41,17 +41,17 @@
 
 #include "../src/Fl_String.H"
 
-Fl_String fl_filename_shortened(const Fl_String &filename, int maxchars);
-Fl_String fl_filename_name(const Fl_String &filename);
-Fl_String fl_filename_path(const Fl_String &filename);
-Fl_String fl_filename_ext(const Fl_String &filename);
-Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_extension);
-Fl_String fl_filename_expand(const Fl_String &from);
-Fl_String fl_filename_absolute(const Fl_String &from);
-Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base);
-Fl_String fl_filename_relative(const Fl_String &from);
-Fl_String fl_filename_relative(const Fl_String &from, const Fl_String &base);
-Fl_String fl_getcwd();
+std::string fl_filename_shortened(const std::string &filename, int maxchars);
+std::string fl_filename_name(const std::string &filename);
+std::string fl_filename_path(const std::string &filename);
+std::string fl_filename_ext(const std::string &filename);
+std::string fl_filename_setext(const std::string &filename, const std::string &new_extension);
+std::string fl_filename_expand(const std::string &from);
+std::string fl_filename_absolute(const std::string &from);
+std::string fl_filename_absolute(const std::string &from, const std::string &base);
+std::string fl_filename_relative(const std::string &from);
+std::string fl_filename_relative(const std::string &from, const std::string &base);
+std::string fl_getcwd();
 
 #  endif
 

@@ -38,7 +38,7 @@ const int FD_MERGEBACK_APPLY = 2;
 const int FD_MERGEBACK_APPLY_IF_SAFE = 3;
 
 /** Class that implements the MergeBack functionality.
- \see merge_back(const Fl_String &s, int task)
+ \see merge_back(const std::string &s, int task)
  */
 class Fd_Mergeback
 {
@@ -59,7 +59,7 @@ protected:
   int num_possible_override;
 
   void unindent(char *s);
-  Fl_String read_and_unindent_block(long start, long end);
+  std::string read_and_unindent_block(long start, long end);
   void analyse_callback(unsigned long code_crc, unsigned long tag_crc, int uid);
   void analyse_code(unsigned long code_crc, unsigned long tag_crc, int uid);
   int apply_callback(long block_end, long block_start, unsigned long code_crc, int uid);
@@ -68,13 +68,13 @@ protected:
 public:
   Fd_Mergeback();
   ~Fd_Mergeback();
-  int merge_back(const Fl_String &s, const Fl_String &p, int task);
-  int ask_user_to_merge(const Fl_String &s, const Fl_String &p);
+  int merge_back(const std::string &s, const std::string &p, int task);
+  int ask_user_to_merge(const std::string &s, const std::string &p);
   int analyse();
   int apply();
 };
 
-extern int merge_back(const Fl_String &s, const Fl_String &p, int task);
+extern int merge_back(const std::string &s, const std::string &p, int task);
 
 
 #endif // _FLUID_MERGEBACK_H

@@ -101,7 +101,7 @@ extern void redraw_browser();
  \return -2 if no code file was found
  \return see above
  */
-int merge_back(const Fl_String &s, const Fl_String &p, int task) {
+int merge_back(const std::string &s, const std::string &p, int task) {
   if (g_project.write_mergeback_data) {
     Fd_Mergeback mergeback;
     return mergeback.merge_back(s, p, task);
@@ -154,7 +154,7 @@ void Fd_Mergeback::unindent(char *s) {
  \param[in] end end of text within the file
  \return a string holding the text that was found in the file
  */
-Fl_String Fd_Mergeback::read_and_unindent_block(long start, long end) {
+std::string Fd_Mergeback::read_and_unindent_block(long start, long end) {
   long bsize = end-start;
   long here = ::ftell(code);
   ::fseek(code, start, SEEK_SET);
@@ -165,7 +165,7 @@ Fl_String Fd_Mergeback::read_and_unindent_block(long start, long end) {
   else
     block[bsize] = 0;
   unindent(block);
-  Fl_String str = block;
+  std::string str = block;
   ::free(block);
   ::fseek(code, here, SEEK_SET);
   return str;
@@ -178,7 +178,7 @@ Fl_String Fd_Mergeback::read_and_unindent_block(long start, long end) {
  \return -1 if the user wants to cancel or an error occurred or an issue was presented
         (message or choice dialog was shown)
  */
-int Fd_Mergeback::ask_user_to_merge(const Fl_String &code_filename, const Fl_String &proj_filename) {
+int Fd_Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &proj_filename) {
   if (tag_error) {
     fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                "MergeBack found an error in line %d while reading tags\n"
@@ -198,7 +198,7 @@ int Fd_Mergeback::ask_user_to_merge(const Fl_String &code_filename, const Fl_Str
                code_filename.c_str(), proj_filename.c_str(), num_changed_structure);
     return -1;
   }
-  Fl_String msg = "Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
+  std::string msg = "Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
                   "MergeBack found %3$d modifications in the source code.";
   if (num_possible_override)
     msg += "\n\nWARNING: %6$d of these modified blocks appear to also have\n"
@@ -241,7 +241,7 @@ int Fd_Mergeback::ask_user_to_merge(const Fl_String &code_filename, const Fl_Str
 void Fd_Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_crc, int uid) {
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
-    Fl_String cb = tp->callback(); cb += "\n";
+    std::string cb = tp->callback(); cb += "\n";
     unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
@@ -263,7 +263,7 @@ void Fd_Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_cr
 void Fd_Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, int uid) {
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
-    Fl_String code = tp->name(); code += "\n";
+    std::string code = tp->name(); code += "\n";
     unsigned long project_crc = Fd_Code_Writer::block_crc(code.c_str());
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
@@ -356,7 +356,7 @@ int Fd_Mergeback::analyse() {
 int Fd_Mergeback::apply_callback(long block_end, long block_start, unsigned long code_crc, int uid) {
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
-    Fl_String cb = tp->callback(); cb += "\n";
+    std::string cb = tp->callback(); cb += "\n";
     unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
     if (project_crc!=code_crc) {
       tp->callback(read_and_unindent_block(block_start, block_end).c_str());
@@ -372,7 +372,7 @@ int Fd_Mergeback::apply_callback(long block_end, long block_start, unsigned long
 int Fd_Mergeback::apply_code(long block_end, long block_start, unsigned long code_crc, int uid) {
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
-    Fl_String cb = tp->name(); cb += "\n";
+    std::string cb = tp->name(); cb += "\n";
     unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
     if (project_crc!=code_crc) {
       tp->name(read_and_unindent_block(block_start, block_end).c_str());
@@ -439,9 +439,9 @@ int Fd_Mergeback::apply() {
             FD_MERGEBACK_APPLY_IF_SAFE, or FD_MERGEBACK_APPLY
  \return -1 if an error was found in a tag
  \return -2 if no code file was found
- \return See more at ::merge_back(const Fl_String &s, int task).
+ \return See more at ::merge_back(const std::string &s, int task).
  */
-int Fd_Mergeback::merge_back(const Fl_String &s, const Fl_String &p, int task) {
+int Fd_Mergeback::merge_back(const std::string &s, const std::string &p, int task) {
   int ret = 0;
   code = fl_fopen(s.c_str(), "rb");
   if (!code) return -2;

@@ -18,7 +18,6 @@
 
 #include "Fl_Group_Type.h"
 #include "settings_panel.h"
-#include "shell_command.h"  // get and set Fl_String preferences
 #include "file.h"
 
 #include <FL/fl_draw.H>
@@ -388,7 +387,7 @@ void Fd_Layout_Suite::read(Fd_Project_Reader *in) {
  Also updates the FLUID user interface.
  */
 void Fd_Layout_Suite::update_label() {
-  Fl_String sym;
+  std::string sym;
   switch (storage_) {
     case FD_STORE_INTERNAL: sym.assign("@fd_beaker  "); break;
     case FD_STORE_USER: sym.assign("@fd_user  "); break;
@@ -650,7 +649,7 @@ void Fd_Layout_List::update_menu_labels() {
 /**
  Load all user layouts from the FLUID user preferences.
  */
-int Fd_Layout_List::load(const Fl_String &filename) {
+int Fd_Layout_List::load(const std::string &filename) {
   remove_all(FD_STORE_FILE);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
   read(prefs, FD_STORE_FILE);
@@ -660,7 +659,7 @@ int Fd_Layout_List::load(const Fl_String &filename) {
 /**
  Save all user layouts to the FLUID user preferences.
  */
-int Fd_Layout_List::save(const Fl_String &filename) {
+int Fd_Layout_List::save(const std::string &filename) {
   assert(this);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
@@ -691,7 +690,7 @@ void Fd_Layout_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) {
  */
 void Fd_Layout_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
-  Fl_String cs;
+  std::string cs;
   int cp = 0;
   preferences_get(prefs_list, "current_suite", cs, "");
   prefs_list.get("current_preset", cp, 0);
@@ -741,7 +740,7 @@ void Fd_Layout_List::read(Fd_Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
-    Fl_String cs;
+    std::string cs;
     int cp = 0;
     for (;;) {
       key = in->read_word();
@@ -786,7 +785,7 @@ void Fd_Layout_List::current_suite(int ix) {
  \param[in] arg_name name of the selected suite
  \return if no name is given or the name is not found, keep the current suite selected
  */
-void Fd_Layout_List::current_suite(Fl_String arg_name) {
+void Fd_Layout_List::current_suite(std::string arg_name) {
   if (arg_name.empty()) return;
   for (int i = 0; i < list_size_; ++i) {
     Fd_Layout_Suite &suite = list_[i];

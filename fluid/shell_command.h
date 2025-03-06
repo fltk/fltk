@@ -39,11 +39,11 @@ struct Fl_Menu_Item;
 class Fl_Widget;
 class Fl_Preferences;
 
-char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, const Fl_String &defaultValue);
-char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value);
+char preferences_get(Fl_Preferences &prefs, const char *key, std::string &value, const std::string &defaultValue);
+char preferences_set(Fl_Preferences &prefs, const char *key, const std::string &value);
 
 void show_terminal_window();
-void run_shell_command(const Fl_String &cmd, int flags);
+void run_shell_command(const std::string &cmd, int flags);
 bool shell_command_running(void);
 
 class Fl_Process {
@@ -84,22 +84,22 @@ public:
     DONT_SHOW_TERMINAL = 8, CLEAR_TERMINAL = 16, CLEAR_HISTORY = 32 }; // flags
   Fd_Shell_Command();
   Fd_Shell_Command(const Fd_Shell_Command *rhs);
-  Fd_Shell_Command(const Fl_String &in_name);
-  Fd_Shell_Command(const Fl_String &in_name,
-                   const Fl_String &in_label,
+  Fd_Shell_Command(const std::string &in_name);
+  Fd_Shell_Command(const std::string &in_name,
+                   const std::string &in_label,
                    Fl_Shortcut in_shortcut,
                    Fd_Tool_Store in_storage,
                    int in_condition,
-                   const Fl_String &in_condition_data,
-                   const Fl_String &in_command,
+                   const std::string &in_condition_data,
+                   const std::string &in_command,
                    int in_flags);
-  Fl_String name;
-  Fl_String label;
+  std::string name;
+  std::string label;
   Fl_Shortcut shortcut;
   Fd_Tool_Store storage;
   int condition; // always, hide, windows only, linux only, mac only, user, machine
-  Fl_String condition_data; // user name, machine name
-  Fl_String command;
+  std::string condition_data; // user name, machine name
+  std::string command;
   int flags; // save_project, save_code, save_string, ...
   Fl_Menu_Item *shell_menu_item_;
   void run();
@@ -128,8 +128,8 @@ public:
   void clear(Fd_Tool_Store store);
 //  void move_up();
 //  void move_down();
-//  int load(const Fl_String &filename);
-//  int save(const Fl_String &filename);
+//  int load(const std::string &filename);
+//  int save(const std::string &filename);
   void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void read(class Fd_Project_Reader*);

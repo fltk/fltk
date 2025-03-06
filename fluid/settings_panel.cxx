@@ -512,7 +512,7 @@ static void cb_2(Fl_Button*, void* v) {
 
   if (v == LOAD) return;
 
-  Fl_String old_name = "Copy of ";
+  std::string old_name = "Copy of ";
   old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
   const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
   if (new_name == NULL)
@@ -543,7 +543,7 @@ static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
 static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
   // Rename the current layout suite
 
-  Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name_;
+  std::string old_name = g_layout_list[g_layout_list.current_suite()].name_;
   const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
   if (new_name == NULL)
     return;
@@ -598,7 +598,7 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
     fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
     fnfc.filter("FLUID Layouts\t*.fll\n");
-    Fl_String filename = g_layout_list.filename_;
+    std::string filename = g_layout_list.filename_;
     fnfc.directory(fl_filename_path(filename).c_str());
     fnfc.preset_file(fl_filename_name(filename).c_str());
     if (fnfc.show() != 0) return;

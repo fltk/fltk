@@ -85,7 +85,7 @@ int write_escaped_strings(FILE *out, const char *text) {
  \param[in] filename file path and name to a file that will hold the strings
  \return 1 if the file could not be opened for writing, or the result of `fclose`.
  */
-int write_strings(const Fl_String &filename) {
+int write_strings(const std::string &filename) {
   Fl_Type *p;
   Fl_Widget_Type *w;
   int i;
@@ -797,7 +797,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   }
   // Remember the last code file location for MergeBack
   if (s && g_project.write_mergeback_data && !to_codeview) {
-    Fl_String proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
+    std::string proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
     int i, n = proj_filename.size();
     for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
@@ -848,7 +848,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       write_c("#include \"%s\"\n", g_project.header_file_name.c_str());
     }
   }
-  Fl_String loc_include, loc_conditional;
+  std::string loc_include, loc_conditional;
   if (g_project.i18n_type==FD_I18N_GNU) {
     loc_include = g_project.i18n_gnu_include;
     loc_conditional = g_project.i18n_gnu_conditional;

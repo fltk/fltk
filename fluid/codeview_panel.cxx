@@ -182,9 +182,9 @@ void update_codeview_cb(class Fl_Button*, void*) {
       cv_strings->buffer()->loadfile(fn);
       cv_strings->scroll(top, 0);
     } else if (cv_source->visible_r() || cv_header->visible_r()) {
-      Fl_String code_file_name_bak = g_project.code_file_name;
+      std::string code_file_name_bak = g_project.code_file_name;
       g_project.code_file_name = cv_source_filename;
-      Fl_String header_file_name_bak = g_project.header_file_name;
+      std::string header_file_name_bak = g_project.header_file_name;
       g_project.header_file_name = cv_header_filename;
 
       // generate the code and load the files

@@ -601,9 +601,9 @@ needs no additional maintenance. It is also C++98 compatible. For example:
 \code
 #include <FL/fl_callback_macros.H>
 ...
-Fl_String *str = new Fl_String("FLTK");
+std::string *str = new std::string("FLTK");
 Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
-FL_METHOD_CALLBACK_2(btn,  Fl_String, str, insert,  int, 2,  const char*, "...");
+FL_METHOD_CALLBACK_2(btn,  std::string, str, insert,  int, 2,  const char*, "...");
 ...
 Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");
 FL_INLINE_CALLBACK_2( inline_cb_btn_2,

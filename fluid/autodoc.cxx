@@ -368,7 +368,7 @@ int fl_snapshot(const char *filename, Fl_Widget *w,
 /** @} */
 
 
-void run_autodoc(const Fl_String &target_dir) {
+void run_autodoc(const std::string &target_dir) {
   // A list of all the margins we will use later
   Fl_Margin win_margin(0, 0, 0, 0);
   Fl_Margin win_blend(10, 10, 10, 10);
