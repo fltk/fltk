@@ -569,7 +569,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
   if (::access(prefs_path_14.c_str(), F_OK) == -1) {
     Fl_String prefs_path_13 = home_path + "/.fltk/" + vendor;
     if (::access(prefs_path_13.c_str(), F_OK) == 0) {
-      prefs_path_13.append('/');
+      prefs_path_13.append("/");
       prefs_path_13.append(application);
       prefs_path_13.append(".prefs");
       strlcpy(buffer, prefs_path_13.c_str(), FL_PATH_MAX);
