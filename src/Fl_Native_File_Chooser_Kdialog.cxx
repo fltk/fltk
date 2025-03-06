@@ -312,7 +312,7 @@ const char *Fl_Kdialog_Native_File_Chooser_Driver::title() const {
 //
 void Fl_Kdialog_Native_File_Chooser_Driver::shell_quote(Fl_String& s) {
   Fl_String out = "'";                          // leading quote
-  for (int t=0; t<s.size(); t++) {
+  for (int t=0; t<(int)s.size(); t++) {
     if (s[t] == '\'') out += "'\"'\"'";         // quote any quotes
     else              out += s[t];
   }

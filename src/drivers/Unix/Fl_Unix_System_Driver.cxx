@@ -555,10 +555,10 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
     if (prefs_path_14.find("~/")==0) // starts with "~"
       prefs_path_14.replace(0, 1, home_path);
     int h_env = prefs_path_14.find("${HOME}");
-    if (h_env!=prefs_path_14.npos)
+    if (h_env!=(int)prefs_path_14.npos)
       prefs_path_14.replace(h_env, 7, home_path);
     h_env = prefs_path_14.find("$HOME/");
-    if (h_env!=prefs_path_14.npos)
+    if (h_env!=(int)prefs_path_14.npos)
       prefs_path_14.replace(h_env, 5, home_path);
   }
   if (prefs_path_14[prefs_path_14.size()-1]!='/')
