@@ -36,7 +36,8 @@
 #  include "fl_types.h"
 #  include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
 
-// Current FLTK version: 1.4.2
+// Keep the following comment in sync with the values below for searching
+// Current FLTK version: 1.5.0
 
 /** \name Version Numbers
 
@@ -58,14 +59,14 @@
 
    FLTK remains mostly source-code compatible between minor version changes.
  */
-#define FL_MINOR_VERSION        4
+#define FL_MINOR_VERSION        5
 
 /**
    The patch version for this library.
 
    FLTK remains binary compatible between patches.
  */
-#define FL_PATCH_VERSION        2
+#define FL_PATCH_VERSION        0
 
 /**
     The FLTK version number as a \em double.

@@ -19,13 +19,10 @@
 # Set CMake minimum version first: must be set before `project()`
 #######################################################################
 
-# Minimum CMake version required by FLTK 1.4
+# Minimum CMake version required by FLTK 1.5
 
-# Note 1: Linking against OBJECT libraries (fluid, test) requires
-#         at least CMake 3.12.0
-# Note 2: Used in fluid since 05/2023,
-#         used for Windows (MSVC) shared lib builds much earlier
-# Note 3: More modern CMake features require 3.13...3.15 (Nov 2023)
+# Note 1: Currently the same as for FLTK 1.4.x but will likely be raised
+#         depending on new features introduced in FLTK 1.5.
 
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
@@ -36,7 +33,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # define the FLTK project and version
 #######################################################################
 
-project(FLTK VERSION 1.4.2)
+project(FLTK VERSION 1.5.0)
 
 #######################################################################
 # include macro and function definitions for general usage
@@ -60,7 +57,8 @@ endif()
 # Set FLTK_VERSION in the cache so user projects can access it,
 # for instance if FLTK is built as a subproject (FetchContent)
 
-set(FLTK_VERSION ${FLTK_VERSION} CACHE STRING "FLTK version" FORCE)
+set(FLTK_VERSION ${FLTK_VERSION} CACHE STRING
+    "FLTK version: generated, do not change" FORCE)
 
 #######################################################################
 # basic setup
