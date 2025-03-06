@@ -29,6 +29,18 @@
 
 #include <FL/Fl_Export.H>
 
+#include <string>
+
+#if 1
+
+// Since fltk 1.5.0, Fl_String is no longer needed and now maps to std::string.
+// Fl_String is not part of the public API. All occurrences of Fl_String in the
+// core library and in Fluid should be replaced with std::string. When done,
+// src/Fl_String.H and src/Fl_String.cxx can be deleted.
+using Fl_String = std::string;
+
+#else
+
 // See: https://en.cppreference.com/w/cpp/string/basic_string/basic_string
 
 /**
@@ -141,5 +153,7 @@ FL_EXPORT bool operator!=(const Fl_String & lhs, const Fl_String & rhs);
 \}
 \endcond
 */
+
+#endif
 
 #endif // _FL_Fl_String_H_

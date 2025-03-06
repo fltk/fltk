@@ -28,9 +28,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#if (FLTK_USE_STD)
 #include <string>
-#endif
 
 /*
  The format of preferences files is not part of the FLTK specification
@@ -966,12 +964,12 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
   return ( v != defaultValue );
 }
 
-#if (FLTK_USE_STD)
-
 /**
- Reads an entry from the group. A default value must be
- supplied. The return value indicates if the value was available
- (non-zero) or the default was used (0).
+ Reads an entry from the group.
+
+ A default value must be supplied. The return value indicates if the value was
+ available (non-zero) or the default was used (0). NUL characters in std::string
+ are treated as the end of the text.
 
  \param[in] key name of entry
  \param[out] value returned from preferences or default value if none was set
@@ -994,8 +992,6 @@ char Fl_Preferences::get( const char *key, std::string &value, const std::string
     return 0;
   }
 }
-
-#endif
 
 /**
  Sets an entry (name/value pair). The return value indicates if there
@@ -1167,12 +1163,12 @@ char Fl_Preferences::set( const char *key, const void *data, int dsize ) {
   return 1;
 }
 
-#if (FLTK_USE_STD)
-
 /**
- Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preference file.
+ Sets an entry (name/value pair).
+
+ The return value indicates if there was a problem storing the data in memory.
+ However it does not reflect if the value was actually stored in the preference
+ file. NUL characters in std::string are treated as the end of the text.
 
  \param[in] entry name of entry
  \param[in] value set this entry to value (stops at the first nul character).
@@ -1181,8 +1177,6 @@ char Fl_Preferences::set( const char *key, const void *data, int dsize ) {
 char Fl_Preferences::set( const char *entry, const std::string &value ) {
   return set(entry, value.c_str());
 }
-
-#endif // FLTK_USE_STD
 
 /**
  Returns the size of the value part of an entry.

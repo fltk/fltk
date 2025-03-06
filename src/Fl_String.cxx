@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#if 0
+
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
@@ -662,3 +664,5 @@ bool operator!=(const Fl_String &lhs, const Fl_String &rhs) {
 \}
 \endcond
 */
+
+#endif

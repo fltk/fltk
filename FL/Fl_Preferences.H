@@ -24,10 +24,7 @@
 #  include "Fl_Export.H"
 #  include "fl_attr.h"
 
-//class Fl_String;
-#if (FLTK_USE_STD)
 #include <string>
-#endif
 
 /**
  \brief Fl_Preferences store user settings between application starts.
@@ -245,6 +242,7 @@ public:
   char set( const char *entry, double value, int precision );
   char set( const char *entry, const char *value );
   char set( const char *entry, const void *value, int size );
+  char set( const char *entry, const std::string &value );
 
   char get( const char *entry, int &value, int defaultValue );
   char get( const char *entry, float &value,  float defaultValue );
@@ -254,14 +252,7 @@ public:
   char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int *size );
-
-//  char set( const char *entry, const Fl_String &value );
-//  char get( const char *entry, Fl_String &value, const Fl_String &defaultValue );
-
-#if (FLTK_USE_STD)
-  char set( const char *entry, const std::string &value );
   char get( const char *entry, std::string &value, const std::string &defaultValue );
-#endif
 
   int size( const char *entry );
 

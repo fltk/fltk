@@ -39,7 +39,7 @@
 
 #  if defined(__cplusplus)
 
-class Fl_String;
+#include "../src/Fl_String.H"
 
 Fl_String fl_filename_shortened(const Fl_String &filename, int maxchars);
 Fl_String fl_filename_name(const Fl_String &filename);

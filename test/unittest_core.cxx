@@ -25,159 +25,6 @@
 #include <FL/filename.H>
 #include <FL/fl_utf8.h>
 
-/* Test Fl_String constructor and assignment. */
-TEST(Fl_String, Assignment) {
-  Fl_String null;
-  EXPECT_STREQ(null.c_str(), "");   // default initialisation is an empty string
-  EXPECT_TRUE(null.empty());
-
-  Fl_String null2(NULL);
-  EXPECT_STREQ(null2.c_str(), "");  // initialise with a NULL pointer gets an empty string
-  EXPECT_TRUE(null2.empty());
-
-  Fl_String empty("");
-  EXPECT_STREQ(empty.c_str(), "");  // also, empty CString make empty Fl_String
-  EXPECT_TRUE(empty.empty());
-
-  Fl_String text("hello");
-  EXPECT_STREQ(text.c_str(), "hello");  // Load some text from a CString
-  EXPECT_EQ(text.size(), 5);        // did we get the size right?
-  EXPECT_EQ(text.strlen(), 5);      // do we have a trailing 0
-  EXPECT_GE(text.capacity(), 5);    // do we have the capacity
-  EXPECT_TRUE(!text.empty());       // test the empty() method
-
-  Fl_String text2("abcdef", 3);
-  EXPECT_STREQ(text2.c_str(), "abc");
-  EXPECT_EQ(text2.size(), 3);
-
-  Fl_String text3("abc\0def", 7);
-  EXPECT_EQ(text3.strlen(), 3);
-  EXPECT_EQ(text3.size(), 7);
-
-  Fl_String text4(text);
-  EXPECT_STREQ(text4.c_str(), "hello");
-
-  Fl_String text5 = text;
-  EXPECT_STREQ(text5.c_str(), "hello");
-
-  Fl_String text6 = "yoohoo";
-  EXPECT_STREQ(text6.c_str(), "yoohoo");
-
-  return true;
-}
-
-/* Test methods that access Fl_String content and parts of it. */
-TEST(Fl_String, Access) {
-  Fl_String hello = "hello";
-  EXPECT_STREQ(hello.c_str(), "hello");
-  EXPECT_STREQ(hello.data(), "hello");
-  EXPECT_EQ(hello[1], 'e');
-  EXPECT_EQ(hello[hello.size()], 0);
-  EXPECT_EQ(hello.at(1), 'e');
-  EXPECT_EQ(hello.at(-1), 0);
-  EXPECT_EQ(hello.at(11), 0);
-
-  hello[1] = 'a';
-  EXPECT_STREQ(hello.c_str(), "hallo");
-
-  hello.data()[1] = 'e';
-  EXPECT_STREQ(hello.c_str(), "hello");
-
-  return true;
-}
-
-/* Test the Fl_String capacity management. */
-TEST(Fl_String, Capacity) {
-  Fl_String hello;
-  EXPECT_EQ(hello.capacity(), 0);
-
-  hello = "hi";
-  EXPECT_STREQ(hello.c_str(), "hi");
-  EXPECT_GE(hello.capacity(), 2);
-
-  hello = "the quick brown fox jumps over the lazy dog";
-  EXPECT_STREQ(hello.c_str(), "the quick brown fox jumps over the lazy dog");
-  EXPECT_GE(hello.capacity(), 41);
-
-  int c = hello.capacity();
-  hello.reserve(c+100);
-  EXPECT_STREQ(hello.c_str(), "the quick brown fox jumps over the lazy dog");
-  EXPECT_GE(hello.capacity(), 141);
-
-  hello = "hi";
-  hello.shrink_to_fit();
-  EXPECT_EQ(hello.capacity(), 2);
-
-  return true;
-}
-
-/* Test all methods that operate on Fl_String. */
-TEST(Fl_String, Operations) {
-  Fl_String empty;
-  Fl_String hello = "Hello", world = "World";
-  hello.resize(4);
-  EXPECT_STREQ(hello.c_str(), "Hell");
-
-  hello.clear();
-  EXPECT_TRUE(hello.empty());
-
-  hello = "Hello";
-  hello.insert(3, "-");
-  EXPECT_STREQ(hello.c_str(), "Hel-lo");
-  hello = "Hello";
-  hello.erase(2, 2);
-  EXPECT_STREQ(hello.c_str(), "Heo");
-
-  hello = "Hello";
-  hello.push_back('!');
-  EXPECT_STREQ(hello.c_str(), "Hello!");
-  hello.pop_back();
-  EXPECT_STREQ(hello.c_str(), "Hello");
-  hello.append(world);
-  EXPECT_STREQ(hello.c_str(), "HelloWorld");
-  hello.append("!");
-  EXPECT_STREQ(hello.c_str(), "HelloWorld!");
-  hello = "Hello";
-  hello += world;
-  EXPECT_STREQ(hello.c_str(), "HelloWorld");
-  hello += "!";
-  EXPECT_STREQ(hello.c_str(), "HelloWorld!");
-  hello += '?';
-  EXPECT_STREQ(hello.c_str(), "HelloWorld!?");
-
-  hello = "Hello";
-  hello.replace(0, 0, "Say ", 4);
-  EXPECT_STREQ(hello.c_str(), "Say Hello");
-  hello.replace(0, 4, "");
-  EXPECT_STREQ(hello.c_str(), "Hello");
-  hello.replace(2, 2, "bb");
-  EXPECT_STREQ(hello.c_str(), "Hebbo");
-  hello.replace(2, 2, "xxx");
-  EXPECT_STREQ(hello.c_str(), "Hexxxo");
-  hello.replace(2, 3, "ll");
-  EXPECT_STREQ(hello.c_str(), "Hello");
-  hello.replace(2, 0, NULL, 0);
-  EXPECT_STREQ(hello.c_str(), "Hello");
-  hello.replace(Fl_String::npos, Fl_String::npos, world);
-  EXPECT_STREQ(hello.c_str(), "HelloWorld");
-
-  hello = "Hello";
-  Fl_String sub = hello.substr();
-  EXPECT_STREQ(sub.c_str(), "Hello"); // check correct usage
-  sub = hello.substr(2);
-  EXPECT_STREQ(sub.c_str(), "llo");
-  sub = hello.substr(2, 2);
-  EXPECT_STREQ(sub.c_str(), "ll");
-  sub = hello.substr(-1, 2);
-  EXPECT_TRUE(sub.empty()); // check faulty values
-  sub = hello.substr(20, 2);
-  EXPECT_TRUE(sub.empty());
-  sub = empty.substr(0, 2);
-  EXPECT_TRUE(sub.empty());
-
-  return true;
-}
-
 #if (0) // FIXME - Fl_String
 
 /* Test all Fl_String functions that are no part of the class. */
@@ -225,28 +72,32 @@ TEST(Fl_String, fl_filename_...) {
   return true;
 }
 
+#endif
+
 /* Test additions to Fl_Preferences. */
-//TEST(Fl_Preferences, Strings) {
-//  {
-//    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
-//    prefs.set("a", Fl_String());
-//    prefs.set("b", Fl_String("Hello"));
-//    prefs.set("c", Fl_String("Hel\\l\nö"));
-//  }
-//  {
-//    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
-//    Fl_String r;
-//    prefs.get("a", r, "x");
-//    EXPECT_STREQ(r.c_str(), "");
-//    prefs.get("b", r, "x");
-//    EXPECT_STREQ(r.c_str(), "Hello");
-//    prefs.get("c", r, "x");
-//    EXPECT_STREQ(r.c_str(), "Hel\\l\nö");
-//    prefs.get("d", r, "x");
-//    EXPECT_STREQ(r.c_str(), "x");
-//  }
-//  return true;
-//}
+TEST(Fl_Preferences, Strings) {
+  {
+    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
+    prefs.set("a", Fl_String());
+    prefs.set("b", Fl_String("Hello"));
+    prefs.set("c", Fl_String("Hel\\l\nö"));
+  }
+  {
+    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
+    Fl_String r;
+    prefs.get("a", r, "x");
+    EXPECT_STREQ(r.c_str(), "");
+    prefs.get("b", r, "x");
+    EXPECT_STREQ(r.c_str(), "Hello");
+    prefs.get("c", r, "x");
+    EXPECT_STREQ(r.c_str(), "Hel\\l\nö");
+    prefs.get("d", r, "x");
+    EXPECT_STREQ(r.c_str(), "x");
+  }
+  return true;
+}
+
+#if 0
 
 TEST(fl_filename, ext) {
   Fl_String r = fl_filename_ext("test.txt");
