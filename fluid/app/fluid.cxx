@@ -33,7 +33,7 @@
 #include "rsrcs/pixmaps.h"
 #include "app/shell_command.h"
 #include "tools/autodoc.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
 #ifdef __APPLE__

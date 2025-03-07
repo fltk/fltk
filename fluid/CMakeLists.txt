@@ -56,7 +56,7 @@ set(CPPFILES
   widgets/Formula_Input.cxx
   widgets/Bin_Button.cxx
   widgets/Style_Parser.cxx
-  widgets/widget_browser.cxx
+  widgets/Node_Browser.cxx
 )
 
 # List header files in Apple's Xcode IDE
@@ -96,7 +96,7 @@ set(HEADERFILES
   widgets/Formula_Input.h
   widgets/Bin_Button.h
   widgets/Style_Parser.h
-  widgets/widget_browser.h
+  widgets/Node_Browser.h
 )
 
 # Add ExternalCodeEditor: platform specific files

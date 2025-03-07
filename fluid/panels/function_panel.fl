@@ -43,7 +43,7 @@ decl {\#include "rsrcs/pixmaps.h"} {private local
 decl {\#include "widgets/Bin_Button.h"} {private global
 }
 
-decl {\#include "widgets/widget_browser.h"} {private local
+decl {\#include "widgets/Node_Browser.h"} {private local
 }
 
 Function {use_tab_navigation(int, Fl_Text_Editor*)} {

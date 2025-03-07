@@ -26,7 +26,7 @@
 #include "panels/function_panel.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Enumerations.H>
 #include <FL/fl_draw.H>

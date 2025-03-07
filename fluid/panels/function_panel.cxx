@@ -23,7 +23,7 @@
 #include "nodes/factory.h"
 #include "rsrcs/pixmaps.h"
 #include "widgets/Bin_Button.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 /**
  Allow widget navigation on text fields with Tab.

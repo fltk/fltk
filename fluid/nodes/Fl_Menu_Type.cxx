@@ -30,7 +30,7 @@
 #include "io/code.h"
 #include "nodes/Fl_Window_Type.h"
 #include "widgets/Formula_Input.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_message.H>

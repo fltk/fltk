@@ -19,7 +19,7 @@
 #include "app/fluid.h"
 #include "nodes/factory.h"
 #include "nodes/Fl_Window_Type.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Window.H>

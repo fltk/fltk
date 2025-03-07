@@ -107,7 +107,7 @@
 #include "nodes/Fl_Window_Type.h"
 #include "nodes/Fl_Group_Type.h"
 #include "rsrcs/pixmaps.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
@@ -739,7 +739,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
  \param[in] g pointer to a node within the tree
  */
 void Fl_Type::insert(Fl_Type *g) {
-  // 'this' is not in the Widget_Browser, so we must run the linked list to find the last entry
+  // 'this' is not in the Node_Browser, so we must run the linked list to find the last entry
   Fl_Type *end = this;
   while (end->next) end = end->next;
   // 'this' will get the same parent as 'g'

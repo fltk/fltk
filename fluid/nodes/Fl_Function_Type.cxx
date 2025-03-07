@@ -25,7 +25,7 @@
 #include "nodes/Fl_Group_Type.h"
 #include "panels/function_panel.h"
 #include "rsrcs/comments.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>

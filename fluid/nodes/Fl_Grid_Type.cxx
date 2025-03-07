@@ -21,7 +21,7 @@
 #include "app/undo.h"
 #include "io/file.h"
 #include "io/code.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 #include "widgets/Formula_Input.h"
 
 #include <FL/Fl_Grid.H>

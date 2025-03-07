@@ -25,7 +25,7 @@
 #include "app/Fd_Snap_Action.h"
 #include "io/file.h"
 #include "io/code.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>

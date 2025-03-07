@@ -23,6 +23,7 @@
 #include <FL/fl_ask.H>
 #include "../src/flstring.h"
 #include <string.h>
+using namespace fld::widget;
 void scheme_cb(Fl_Scheme_Choice *, void *);
 int w_settings_shell_list_selected;
 
@@ -3355,16 +3356,16 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::label_font));
+            o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::label_font));
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
           { Fl_Button* o = new Fl_Button(251, 112, 51, 20);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::label_color));
+            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::label_color));
           } // Fl_Button* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(302, 112, 18, 20);
-            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Widget_Browser::label_color));
+            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::label_color));
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           o->end();
@@ -3377,16 +3378,16 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::class_font));
+            o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::class_font));
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
           { Fl_Button* o = new Fl_Button(251, 137, 51, 20);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::class_color));
+            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::class_color));
           } // Fl_Button* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(302, 137, 18, 20);
-            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Widget_Browser::class_color));
+            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::class_color));
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           o->end();
@@ -3399,16 +3400,16 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::func_font));
+            o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::func_font));
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
           { Fl_Button* o = new Fl_Button(251, 162, 51, 20);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::func_color));
+            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::func_color));
           } // Fl_Button* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(302, 162, 18, 20);
-            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Widget_Browser::func_color));
+            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::func_color));
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           o->end();
@@ -3421,16 +3422,16 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::name_font));
+            o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::name_font));
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
           { Fl_Button* o = new Fl_Button(251, 187, 51, 20);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::name_color));
+            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::name_color));
           } // Fl_Button* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(302, 187, 18, 20);
-            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Widget_Browser::name_color));
+            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::name_color));
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           o->end();
@@ -3443,16 +3444,16 @@ Fl_Double_Window* make_settings_window() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::code_font));
+            o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::code_font));
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
           { Fl_Button* o = new Fl_Button(251, 212, 51, 20);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::code_color));
+            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::code_color));
           } // Fl_Button* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(302, 212, 18, 20);
-            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Widget_Browser::code_color));
+            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::code_color));
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           o->end();
@@ -3465,16 +3466,16 @@ Fl_Double_Window* make_settings_window() {
             w_settings_user_commenttext->labelfont(1);
             w_settings_user_commenttext->labelsize(11);
             w_settings_user_commenttext->textsize(11);
-            w_settings_user_commenttext->callback((Fl_Callback*)cb_Comments, (void*)(&Widget_Browser::comment_font));
+            w_settings_user_commenttext->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::comment_font));
             Fl_Group::current()->resizable(w_settings_user_commenttext);
             o->menu(fontmenu);
           } // Fl_Choice* w_settings_user_commenttext
           { Fl_Button* o = new Fl_Button(251, 237, 51, 20);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Widget_Browser::comment_color));
+            o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::comment_color));
           } // Fl_Button* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(302, 237, 18, 20);
-            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Widget_Browser::comment_color));
+            o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::comment_color));
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           o->end();

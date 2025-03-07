@@ -23,7 +23,7 @@
 #include "app/Fd_Snap_Action.h"
 #include "app/shell_command.h"
 #include "tools/fluid_filename.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/fl_string_functions.h>

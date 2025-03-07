@@ -20,7 +20,7 @@
 #include "io/file.h"
 #include "nodes/Fl_Type.h"
 #include "nodes/Fl_Widget_Type.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>

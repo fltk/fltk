@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include "app/fluid.h"
 #include "nodes/Fl_Widget_Type.h"
@@ -24,8 +24,18 @@
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
 
+
+// ---- global variables
+
+/// Global access to the widget browser.
+fld::widget::Node_Browser *widget_browser = nullptr;
+
+using namespace fld;
+using namespace fld::widget;
+
+
 /**
- \class Widget_Browser
+ \class Node_Browser
 
  A widget that displays the nodes in the widget tree.
 
@@ -36,25 +46,21 @@
  \see Fl_Type
  */
 
-// ---- global variables
-
-/// Global access to the widget browser.
-Widget_Browser *widget_browser = NULL;
 
 // ---- static variables
 
-Fl_Color Widget_Browser::label_color    = 72;
-Fl_Font Widget_Browser::label_font      = FL_HELVETICA;
-Fl_Color Widget_Browser::class_color    = FL_FOREGROUND_COLOR;
-Fl_Font Widget_Browser::class_font      = FL_HELVETICA_BOLD;
-Fl_Color Widget_Browser::func_color     = FL_FOREGROUND_COLOR;
-Fl_Font Widget_Browser::func_font       = FL_HELVETICA;
-Fl_Color Widget_Browser::name_color     = FL_FOREGROUND_COLOR;
-Fl_Font Widget_Browser::name_font       = FL_HELVETICA;
-Fl_Color Widget_Browser::code_color     = FL_FOREGROUND_COLOR;
-Fl_Font Widget_Browser::code_font       = FL_HELVETICA;
-Fl_Color Widget_Browser::comment_color  = FL_DARK_GREEN;
-Fl_Font Widget_Browser::comment_font    = FL_HELVETICA;
+Fl_Color  Node_Browser::label_color   = 72;
+Fl_Font   Node_Browser::label_font    = FL_HELVETICA;
+Fl_Color  Node_Browser::class_color   = FL_FOREGROUND_COLOR;
+Fl_Font   Node_Browser::class_font    = FL_HELVETICA_BOLD;
+Fl_Color  Node_Browser::func_color    = FL_FOREGROUND_COLOR;
+Fl_Font   Node_Browser::func_font     = FL_HELVETICA;
+Fl_Color  Node_Browser::name_color    = FL_FOREGROUND_COLOR;
+Fl_Font   Node_Browser::name_font     = FL_HELVETICA;
+Fl_Color  Node_Browser::code_color    = FL_FOREGROUND_COLOR;
+Fl_Font   Node_Browser::code_font     = FL_HELVETICA;
+Fl_Color  Node_Browser::comment_color = FL_DARK_GREEN;
+Fl_Font   Node_Browser::comment_font  = FL_HELVETICA;
 
 // ---- global functions
 
@@ -69,7 +75,7 @@ void redraw_browser() {
  Shortcut to create the widget browser.
  */
 Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
-  return (widget_browser = new Widget_Browser(x,y,w,h));
+  return (widget_browser = new Node_Browser(x,y,w,h));
 }
 
 /**
@@ -193,10 +199,10 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
   return p;
 }
 
-// ---- Widget_Browser implementation
+// ---- Node_Browser implementation
 
 /**
- Create a new instance of the Widget_Browser widget.
+ Create a new instance of the Node_Browser widget.
 
  Fluid currently generates only one instance of this browser. If we want
  to use multiple browser at some point, we need to refactor a few global
@@ -207,11 +213,8 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
  \todo It would be nice to be able to grab one or more nodes and move them
     within the hierarchy.
  */
-Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l) :
-  Fl_Browser_(X,Y,W,H,l),
-  pushedtitle(NULL),
-  saved_h_scroll_(0),
-  saved_v_scroll_(0)
+Node_Browser::Node_Browser(int X,int Y,int W,int H,const char*l) :
+  Fl_Browser_(X,Y,W,H,l)
 {
   type(FL_MULTI_BROWSER);
   Fl_Widget::callback(callback_stub);
@@ -222,7 +225,7 @@ Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l) :
  Override the method to find the first item in the list of elements.
  \return the first item
  */
-void *Widget_Browser::item_first() const {
+void *Node_Browser::item_first() const {
   return Fl_Type::first;
 }
 
@@ -231,7 +234,7 @@ void *Widget_Browser::item_first() const {
  \param l this item
  \return the next item, irregardless of tree depth, or NULL at the end
  */
-void *Widget_Browser::item_next(void *l) const {
+void *Node_Browser::item_next(void *l) const {
   return ((Fl_Type*)l)->next;
 }
 
@@ -240,7 +243,7 @@ void *Widget_Browser::item_next(void *l) const {
  \param l this item
  \return the previous item, irregardless of tree depth, or NULL at the start
  */
-void *Widget_Browser::item_prev(void *l) const {
+void *Node_Browser::item_prev(void *l) const {
   return ((Fl_Type*)l)->prev;
 }
 
@@ -250,7 +253,7 @@ void *Widget_Browser::item_prev(void *l) const {
  \return 1 if selected, 0 if not
  \todo what is the difference between selected and new_selected, and why do we do this?
  */
-int Widget_Browser::item_selected(void *l) const {
+int Node_Browser::item_selected(void *l) const {
   return ((Fl_Type*)l)->new_selected;
 }
 
@@ -259,7 +262,7 @@ int Widget_Browser::item_selected(void *l) const {
  \param l this item
  \param[in] v 1 if selecting, 0 if not
  */
-void Widget_Browser::item_select(void *l,int v) {
+void Node_Browser::item_select(void *l,int v) {
   ((Fl_Type*)l)->new_selected = v;
 }
 
@@ -268,7 +271,7 @@ void Widget_Browser::item_select(void *l,int v) {
  \param l this item
  \return height in FLTK units (used to be pixels before high res screens)
  */
-int Widget_Browser::item_height(void *l) const {
+int Node_Browser::item_height(void *l) const {
   Fl_Type *t = (Fl_Type*)l;
   if (t->visible) {
     if (show_comments && t->comment())
@@ -283,7 +286,7 @@ int Widget_Browser::item_height(void *l) const {
  Override the method to return the estimated height of all items.
  \return height in FLTK units
  */
-int Widget_Browser::incr_height() const {
+int Node_Browser::incr_height() const {
   return textsize() + 5 + linespacing();
 }
 
@@ -308,7 +311,7 @@ int Widget_Browser::incr_height() const {
  \param X,Y    these give the position in window coordinates of the top left
     corner of this line
  */
-void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
+void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
 
@@ -451,7 +454,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
  \param v this item
  \return width in FLTK units
  */
-int Widget_Browser::item_width(void *v) const {
+int Node_Browser::item_width(void *v) const {
 
   char buf[500]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
@@ -486,7 +489,7 @@ int Widget_Browser::item_width(void *v) const {
 /**
  Callback to tell the Fluid UI when the list of selected items changed.
  */
-void Widget_Browser::callback() {
+void Node_Browser::callback() {
   selection_changed((Fl_Type*)selection());
 }
 
@@ -504,7 +507,7 @@ void Widget_Browser::callback() {
  \param[in] e the incoming event type
  \return 0 if the event is not supported, and 1 if the event was "used up"
  */
-int Widget_Browser::handle(int e) {
+int Node_Browser::handle(int e) {
   static Fl_Type *title;
   Fl_Type *l;
   int X,Y,W,H; bbox(X,Y,W,H);
@@ -571,7 +574,7 @@ int Widget_Browser::handle(int e) {
 /**
  Save the current scrollbar position during rebuild.
  */
-void Widget_Browser::save_scroll_position() {
+void Node_Browser::save_scroll_position() {
   saved_h_scroll_ = hposition();
   saved_v_scroll_ = vposition();
 }
@@ -579,7 +582,7 @@ void Widget_Browser::save_scroll_position() {
 /**
  Restore the previous scrollbar position after rebuild.
  */
-void Widget_Browser::restore_scroll_position() {
+void Node_Browser::restore_scroll_position() {
   hposition(saved_h_scroll_);
   vposition(saved_v_scroll_);
 }
@@ -589,7 +592,7 @@ void Widget_Browser::restore_scroll_position() {
  This clears internal caches, recalculates the scroll bar sizes, and
  sends a redraw() request to the widget.
  */
-void Widget_Browser::rebuild() {
+void Node_Browser::rebuild() {
   save_scroll_position();
   new_list();
   damage(FL_DAMAGE_SCROLL);
@@ -601,7 +604,7 @@ void Widget_Browser::rebuild() {
  Rebuild the browser layout and make sure that the given item is visible.
  \param[in] inNode pointer to a widget node derived from Fl_Type.
  */
-void Widget_Browser::display(Fl_Type *inNode) {
+void Node_Browser::display(Fl_Type *inNode) {
   if (!inNode) {
     // Alternative: find the first (last?) visible selected item.
     return;
@@ -635,7 +638,7 @@ void Widget_Browser::display(Fl_Type *inNode) {
     vposition(newV);
 }
 
-void Widget_Browser::load_prefs() {
+void Node_Browser::load_prefs() {
   int c;
   Fl_Preferences p(fluid_prefs, "widget_browser");
   p.get("label_color",  c, 72); label_color = c;
@@ -652,7 +655,7 @@ void Widget_Browser::load_prefs() {
   p.get("comment_font", c, FL_HELVETICA); comment_font = c;
 }
 
-void Widget_Browser::save_prefs() {
+void Node_Browser::save_prefs() {
   Fl_Preferences p(fluid_prefs, "widget_browser");
   p.set("label_color",    (int)label_color);
   p.set("label_font",     (int)label_font);

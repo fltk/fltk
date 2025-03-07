@@ -30,7 +30,7 @@
 #include "nodes/Fl_Grid_Type.h"
 #include "panels/settings_panel.h"
 #include "panels/widget_panel.h"
-#include "widgets/widget_browser.h"
+#include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
