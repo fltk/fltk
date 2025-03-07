@@ -1,7 +1,7 @@
 //
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,7 +54,7 @@ extern const char *fl_bg;
 extern const char *fl_bg2;
 // end of extern additions workaround
 
-#if !USE_XFT
+#if !(USE_XFT || FLTK_USE_CAIRO)
 extern char *fl_get_font_xfld(int fnum, int size);
 #endif
 
@@ -239,7 +239,7 @@ void Fl_X11_Screen_Driver::init_workarea()
 int Fl_X11_Screen_Driver::x() {
   if (!fl_display) open_display();
   return fl_workarea_xywh[0]
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   / screens[0].scale
 #endif
   ;
@@ -248,7 +248,7 @@ int Fl_X11_Screen_Driver::x() {
 int Fl_X11_Screen_Driver::y() {
   if (!fl_display) open_display();
   return fl_workarea_xywh[1]
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   / screens[0].scale
 #endif
   ;
@@ -257,7 +257,7 @@ int Fl_X11_Screen_Driver::y() {
 int Fl_X11_Screen_Driver::w() {
   if (!fl_display) open_display();
   return fl_workarea_xywh[2]
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
       / screens[0].scale
 #endif
   ;
@@ -266,7 +266,7 @@ int Fl_X11_Screen_Driver::w() {
 int Fl_X11_Screen_Driver::h() {
   if (!fl_display) open_display();
   return fl_workarea_xywh[3]
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   / screens[0].scale
 #endif
   ;
@@ -349,7 +349,7 @@ void Fl_X11_Screen_Driver::init() {
       screens[i].y_org = 0;
       screens[i].width = DisplayWidth(fl_display, i);
       screens[i].height = DisplayHeight(fl_display, i);
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
       screens[i].scale = 1;
 #endif
       if (dpi_by_randr) {
@@ -390,7 +390,7 @@ void Fl_X11_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     float s = screens[n].scale;
 #else
     float s = 1;
@@ -597,7 +597,7 @@ void Fl_X11_Screen_Driver::compose_reset()
 }
 
 int Fl_X11_Screen_Driver::text_display_can_leak() const {
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   return 1;
 #else
   return 0;
@@ -1131,7 +1131,7 @@ void Fl_X11_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int
     if (fs) {
       XFreeFontSet(fl_display, fs);
     }
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     fnt = NULL; // FIXME: missing XFT support here
 #else
     fnt = fl_get_font_xfld(font, size);
@@ -1163,7 +1163,7 @@ void Fl_X11_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int
 }
 
 
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
 //NOTICE: returns -1 if x,y is not in any screen
 int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
 {
@@ -1198,4 +1198,4 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
   }
 }
 
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO

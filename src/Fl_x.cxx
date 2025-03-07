@@ -327,7 +327,10 @@ extern "C" {
   }
 }
 
+
+#if !(USE_XFT || FLTK_USE_CAIRO)
 extern char *fl_get_font_xfld(int fnum, int size);
+#endif
 
 void Fl_X11_Screen_Driver::new_ic()
 {
@@ -343,7 +346,7 @@ void Fl_X11_Screen_Driver::new_ic()
   int sarea = 0;
   XIMStyles* xim_styles = NULL;
 
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
 
 #if defined(__GNUC__)
 // FIXME: warning XFT support here
@@ -662,7 +665,7 @@ int Fl_X11_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
   Window root = RootWindow(fl_display, fl_screen);
   Window c; int cx,cy; unsigned int mask;
   XQueryPointer(fl_display, root, &root, &c, &mx, &my, &cx, &cy, &mask);
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   int screen = screen_num_unscaled(mx, my);
   return screen >= 0 ? screen : 0;
 #else
@@ -1012,7 +1015,7 @@ static void set_event_xy(Fl_Window *win) {
   send_motion = 0;
 #  endif
   float s = 1;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
 #endif
   Fl::e_x_root  = fl_xevent->xbutton.x_root/s;
@@ -1206,7 +1209,7 @@ static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
 
 #if USE_XRANDR
 static void react_to_screen_reconfiguration() {
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   // memorize previous screen sizes and scales
   int old_count = Fl::screen_count();
   int (*sizes)[4] =  new int[old_count][4];
@@ -1215,9 +1218,9 @@ static void react_to_screen_reconfiguration() {
     Fl::screen_xywh(sizes[screen][0], sizes[screen][1], sizes[screen][2], sizes[screen][3], screen);
     scales[screen] = Fl::screen_scale(screen);
   }
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
   Fl::call_screen_init(); // compute new screen sizes
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   // detect whether screen sizes were unchanged
   bool nochange = (old_count == Fl::screen_count());
   if (nochange) {
@@ -1248,11 +1251,11 @@ static void react_to_screen_reconfiguration() {
     }
   }
   delete[] scales;
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
 }
 #endif // USE_XRANDR
 
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
 static void after_display_rescale(float *p_current_xft_dpi) {
   Display *new_dpy = XOpenDisplay(XDisplayString(fl_display));
   if (!new_dpy) return;
@@ -1269,7 +1272,7 @@ static void after_display_rescale(float *p_current_xft_dpi) {
   }
   XCloseDisplay(new_dpy);
 }
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
 
 
 static Window *xid_vector = NULL; // list of FLTK-created xid's (see issue #935)
@@ -1347,9 +1350,9 @@ int fl_handle(const XEvent& thisevent)
   if (xevent.type == PropertyNotify && xevent.xproperty.atom == fl_NET_WORKAREA) {
     Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
     d->init_workarea();
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     after_display_rescale(&(d->current_xft_dpi));
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
   }
 
   switch (xevent.type) {
@@ -1713,7 +1716,7 @@ int fl_handle(const XEvent& thisevent)
       in_a_window = true;
       fl_dnd_source_window = data[0];
       float s = 1;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
       if (window) s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num());
 #endif
       Fl::e_x_root = (data[2]>>16)/s;
@@ -1788,7 +1791,7 @@ int fl_handle(const XEvent& thisevent)
 
   case GraphicsExpose:
     {
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
       int ns = Fl_Window_Driver::driver(window)->screen_num();
       float s = Fl::screen_driver()->scale(ns);
       window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x/s, xevent.xexpose.y/s,
@@ -2208,7 +2211,7 @@ int fl_handle(const XEvent& thisevent)
     Window cr; int X, Y, W = actual.width, H = actual.height;
     XTranslateCoordinates(fl_display, fl_xid(window), actual.root,
                           0, 0, &X, &Y, &cr);
-#if USE_XFT // detect when window centre changes screen
+#if USE_XFT || FLTK_USE_CAIRO // detect when window centre changes screen
     Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
     Fl_X11_Window_Driver *wd = Fl_X11_Window_Driver::driver(window);
     int olds = wd->screen_num();
@@ -2230,13 +2233,13 @@ int fl_handle(const XEvent& thisevent)
       Fl::remove_timeout(Fl_X11_Window_Driver::resize_after_screen_change, window);
       Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy = false;
     }
-#else // ! USE_XFT
+#else // ! (USE_XFT || FLTK_USE_CAIRO)
     Fl_Window_Driver::driver(window)->screen_num( Fl::screen_num(X, Y, W, H) );
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
 
     // tell Fl_Window about it and set flag to prevent echoing:
     resize_bug_fix = window;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
       ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) ) {
         window->resize(rint(X/s), rint(Y/s), ceil(W/s), ceil(H/s));
@@ -2267,7 +2270,7 @@ int fl_handle(const XEvent& thisevent)
     // tell Fl_Window about it and set flag to prevent echoing:
     if ( !wasXExceptionRaised() ) {
       resize_bug_fix = window;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
       int ns = Fl_Window_Driver::driver(window)->screen_num();
       float s = Fl::screen_driver()->scale(ns);
 #else
@@ -2659,7 +2662,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 #endif // (ENABLE_BOXCHEAT)
 
   float s = 1;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   //compute adequate screen where to put the window
   int nscreen = 0;
   if (win->parent()) {

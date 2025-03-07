@@ -1,7 +1,7 @@
 //
 // Class Fl_X11_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2024 by Bill Spitzak and others.
+// Copyright 2021-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,7 +21,7 @@
 #include "../../Fl_Screen_Driver.H"
 #include "Fl_X11_Gl_Window_Driver.H"
 #include <GL/glx.h>
-#if ! USE_XFT
+#if ! (USE_XFT || FLTK_USE_CAIRO)
 #  include "../Xlib/Fl_Font.H"
 #endif
 
@@ -51,7 +51,7 @@ void Fl_X11_Gl_Window_Driver::draw_string_legacy(const char* str, int n) {
 }
 
 int Fl_X11_Gl_Window_Driver::genlistsize() {
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   return 256;
 #else
   return 0x10000;
@@ -86,7 +86,7 @@ void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
 
 
 void Fl_X11_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
-# if USE_XFT
+# if USE_XFT || FLTK_USE_CAIRO
   /* We hope not to come here: We hope that any system using XFT will also
    * have sufficient GL capability to support our font texture pile mechansim,
    * allowing XFT to render the face directly. */
@@ -107,7 +107,7 @@ void Fl_X11_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
 # endif
 }
 
-#if !USE_XFT
+#if !(USE_XFT || FLTK_USE_CAIRO)
 Fl_Font_Descriptor** Fl_X11_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
   Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts) + fnum;
   return &(s->first);

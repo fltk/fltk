@@ -1,7 +1,7 @@
 //
 // Definition of X11 window driver.
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -561,7 +561,7 @@ Window fl_x11_xid(const Fl_Window *win) {
 }
 
 
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
 
 Fl_X11_Window_Driver::type_for_resize_window_between_screens Fl_X11_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
 
@@ -572,7 +572,7 @@ void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
   data_for_resize_window_between_screens_.busy = false;
 }
 
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
 
 fl_uintptr_t Fl_X11_Window_Driver::os_id() {
   return fl_xid(pWindow);

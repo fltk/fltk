@@ -280,6 +280,9 @@ if(UNIX)
     option(FLTK_BACKEND_WAYLAND "support the Wayland backend" ON)
   endif(NOT APPLE)
   if(FLTK_BACKEND_WAYLAND)
+    if(NOT PKG_CONFIG_FOUND)
+      message(FATAL_ERROR "Option FLTK_BACKEND_WAYLAND requires availability of pkg-config on the build machine.")
+    endif(NOT PKG_CONFIG_FOUND)
     pkg_check_modules(WLDCLIENT IMPORTED_TARGET wayland-client>=1.18)
     pkg_check_modules(WLDCURSOR IMPORTED_TARGET wayland-cursor)
     pkg_check_modules(WLDPROTO IMPORTED_TARGET wayland-protocols>=1.15)
@@ -323,7 +326,6 @@ if(UNIX)
       if(NOT X11_Xft_FOUND)
         message(WARNING "Install development headers for libXft (e.g., libxft-dev)")
       endif()
-      set(USE_XFT 1)
       if(NOT X11_Xcursor_FOUND)
         message(WARNING "Install development headers for libXcursor (e.g., libxcursor-dev)")
       endif()
@@ -829,11 +831,13 @@ endif(FLTK_USE_XCURSOR)
 
 #######################################################################
 if(X11_Xft_FOUND)
-  option(FLTK_USE_XFT "use lib Xft" ON)
   option(FLTK_USE_PANGO "use lib Pango" OFF)
   if(NOT FLTK_BACKEND_WAYLAND)
     option(FLTK_GRAPHICS_CAIRO "all drawing to X11 windows uses Cairo" OFF)
   endif(NOT FLTK_BACKEND_WAYLAND)
+  if(NOT FLTK_GRAPHICS_CAIRO)
+    option(FLTK_USE_XFT "use lib Xft" ON)
+  endif()
 endif(X11_Xft_FOUND)
 
 # test option compatibility: Cairo for Xlib requires Pango
@@ -842,19 +846,19 @@ if(FLTK_GRAPHICS_CAIRO)
   set(FLTK_USE_PANGO TRUE CACHE BOOL "use lib Pango")
 endif(FLTK_GRAPHICS_CAIRO)
 
-if(FLTK_USE_X11 AND (FLTK_USE_PANGO OR FLTK_GRAPHICS_CAIRO)) # implies to use PANGOXFT
+if(FLTK_USE_X11 AND FLTK_USE_PANGO AND NOT FLTK_GRAPHICS_CAIRO)
   set(USE_PANGOXFT true)
 endif()
 
-# test option compatibility: Pango requires Xft
+# test option compatibility: PangoXft requires Xft
 if(USE_PANGOXFT)
   if(NOT X11_Xft_FOUND)
-    message(STATUS "Pango requires Xft but Xft library or headers could not be found.")
+    message(STATUS "PangoXft requires Xft but Xft library or headers could not be found.")
     message(STATUS "Please install Xft development files and try again or disable FLTK_USE_PANGO.")
     message(FATAL_ERROR "*** Aborting ***")
   else()
     if(NOT FLTK_USE_XFT)
-      message(STATUS "Pango requires Xft but usage of Xft was disabled.")
+      message(STATUS "PangoXft requires Xft but usage of Xft was disabled.")
       message(STATUS "Please enable FLTK_USE_XFT and try again or disable FLTK_USE_PANGO.")
       message(FATAL_ERROR "*** Aborting ***")
     endif(NOT FLTK_USE_XFT)
@@ -863,6 +867,9 @@ endif(USE_PANGOXFT)
 
 #######################################################################
 if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
+  if(NOT PKG_CONFIG_FOUND)
+    message(FATAL_ERROR "Option FLTK_USE_PANGO requires availability of pkg-config on the build machine.")
+  endif(NOT PKG_CONFIG_FOUND)
   pkg_check_modules(CAIRO IMPORTED_TARGET cairo)
   if(USE_PANGOXFT)
     pkg_check_modules(PANGOXFT IMPORTED_TARGET pangoxft)
@@ -877,23 +884,6 @@ if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
     endif(USE_PANGOXFT)
     list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${CAIRO_INCLUDE_DIRS})
 
-    find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
-    mark_as_advanced(HAVE_LIB_PANGO)
-
-    if(USE_PANGOXFT)
-      find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
-      mark_as_advanced(HAVE_LIB_PANGOXFT)
-    endif(USE_PANGOXFT)
-
-    find_library(HAVE_LIB_PANGOCAIRO pangocairo-1.0 ${CMAKE_LIBRARY_PATH})
-    mark_as_advanced(HAVE_LIB_PANGOCAIRO)
-
-    find_library(HAVE_LIB_CAIRO cairo ${CMAKE_LIBRARY_PATH})
-    mark_as_advanced(HAVE_LIB_CAIRO)
-
-    find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
-    mark_as_advanced(HAVE_LIB_GOBJECT)
-
     set(USE_PANGO TRUE)
 
     # add required libraries to fltk-config ...
@@ -902,62 +892,6 @@ if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
     endif(USE_PANGOXFT)
     list(APPEND FLTK_LDLIBS ${PANGOCAIRO_LDFLAGS})
 
-    # *FIXME* Libraries should not be added explicitly if possible
-    if(FLTK_BACKEND_WAYLAND AND FLTK_USE_LIBDECOR_GTK AND NOT USE_SYSTEM_LIBDECOR)
-      list(APPEND FLTK_LDLIBS -lgtk-3 -lgdk-3 -lgio-2.0)
-    endif()
-    if(FLTK_BACKEND_X11)
-      list(APPEND FLTK_LDLIBS -lX11)
-    endif()
-
-    if(APPLE)
-      get_filename_component(PANGO_L_PATH ${HAVE_LIB_PANGO} PATH)
-      set(LDFLAGS "${LDFLAGS} -L${PANGO_L_PATH}")
-    endif(APPLE)
-
-  else()
-
-    # this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
-    if(APPLE AND FLTK_BACKEND_X11)
-      find_file(FINK_PREFIX NAMES /opt/sw /sw)
-      if(FINK_PREFIX)
-        list(APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
-        list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${FINK_PREFIX}/include/cairo)
-        list(APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
-      endif(FINK_PREFIX)
-    endif(APPLE AND FLTK_BACKEND_X11)
-
-    find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})
-    find_file(HAVE_PANGOXFT_H pango-1.0/pango/pangoxft.h ${CMAKE_INCLUDE_PATH})
-
-    if(HAVE_PANGO_H AND HAVE_PANGOXFT_H)
-      find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
-      find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
-      if(APPLE)
-        set(HAVE_LIB_GOBJECT TRUE)
-      else()
-        find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
-      endif(APPLE)
-    endif(HAVE_PANGO_H AND HAVE_PANGOXFT_H)
-
-    if(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
-      set(USE_PANGO TRUE)
-      # remove last 3 components of HAVE_PANGO_H and put in PANGO_H_PREFIX
-      get_filename_component(PANGO_H_PREFIX ${HAVE_PANGO_H} PATH)
-      get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
-      get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
-
-      get_filename_component(PANGOLIB_DIR ${HAVE_LIB_PANGO} PATH)
-      # glib.h is usually in ${PANGO_H_PREFIX}/glib-2.0/ ...
-      find_path(GLIB_H_PATH glib.h
-                PATHS ${PANGO_H_PREFIX}/glib-2.0
-                      ${PANGO_H_PREFIX}/glib/glib-2.0)
-      list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
-
-      # *FIXME* Libraries should not be added explicitly if possible
-      list(APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
-
-    endif(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
   endif((PANGOXFT_FOUND OR NOT USE_PANGOXFT) AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
 
   if(USE_PANGO AND (FLTK_GRAPHICS_CAIRO OR FLTK_BACKEND_WAYLAND))
@@ -974,6 +908,7 @@ if(FLTK_BACKEND_WAYLAND)
     pkg_check_modules(GTK IMPORTED_TARGET gtk+-3.0)
     if(GTK_FOUND)
       list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${GTK_INCLUDE_DIRS})
+      list(APPEND FLTK_LDLIBS ${GTK_LDFLAGS})
     else()
       message(WARNING "Installation of the development files for the GTK library "
       "(e.g., libgtk-3-dev) is recommended when using the gnome desktop.")

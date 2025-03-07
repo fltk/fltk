@@ -1,7 +1,7 @@
 /*
  * Character encoding support for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2025 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -13,12 +13,8 @@
  *
  *     https://www.fltk.org/bugs.php
  */
-
-#if defined(_WIN32) || defined(__APPLE__) /* PORTME: is this really needed? It's huge! */
-
-  /* not needed */
-
-#else
+#include <FL/fl_config.h>
+#if !defined(_WIN32) && (!defined(__APPLE__) || defined(FLTK_USE_X11))
 
 #ifndef CP936
 #ifdef NEED_TOWC
@@ -38,7 +34,7 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 }
 #endif /* NEED_TOMB */
 
-#else
+#else /* CP936 */
 /*
  * CP936EXT
  */
@@ -6246,4 +6242,4 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 
 #endif /* CP936 */
 
-#endif /* _WIN32 || __APPLE__  */ /* PORTME: Unicode stuff */
+#endif /* _WIN32 || __APPLE__  */

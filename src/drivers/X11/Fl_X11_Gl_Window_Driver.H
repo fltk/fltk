@@ -1,7 +1,7 @@
 //
 // Class Fl_X11_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,7 +47,7 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) FL_OVERRIDE;
   void get_list(Fl_Font_Descriptor *fd, int r) FL_OVERRIDE;
   int genlistsize() FL_OVERRIDE;
-#if !USE_XFT
+#if !(USE_XFT || FLTK_USE_CAIRO)
   virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum) FL_OVERRIDE;
 #endif
   //static GLContext create_gl_context(XVisualInfo* vis);

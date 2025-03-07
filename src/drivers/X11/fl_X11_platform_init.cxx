@@ -1,7 +1,7 @@
 //
 // X11-specific code to initialize wayland support.
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,7 +47,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
   Fl_X11_Screen_Driver *d = new Fl_X11_Screen_Driver();
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   for (int i = 0;  i < MAX_SCREENS; i++) d->screens[i].scale = 1;
   d->current_xft_dpi = 0.; // means the value of the Xft.dpi resource is still unknown
 #else

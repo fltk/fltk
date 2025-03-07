@@ -2,7 +2,7 @@
 // Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -40,7 +40,7 @@ protected:
     short y_org;
     short width;
     short height;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     float scale;
 #endif
   } FLScreenInfo;
@@ -49,7 +49,7 @@ protected:
   int get_mouse_unscaled(int &xx, int &yy);
 
 public:
-#if USE_XFT // scaling does not work without Xft
+#if USE_XFT || FLTK_USE_CAIRO // scaling does not work without Xft
   float current_xft_dpi; // current value of the Xft.dpi X resource
   APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return PER_SCREEN_APP_SCALING; }
   float scale(int n) FL_OVERRIDE {return screens[n].scale;}

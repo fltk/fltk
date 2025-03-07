@@ -1,7 +1,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,10 +23,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-
-#if !USE_XFT
-extern char *fl_get_font_xfld(int fnum, int size);
-#endif
 
 
 GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
@@ -62,7 +58,7 @@ void Fl_Xlib_Graphics_Driver::gc(void *value) {
 }
 
 void Fl_Xlib_Graphics_Driver::scale(float f) {
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   if (f != scale()) {
     size_ = 0;
     Fl_Graphics_Driver::scale(f);

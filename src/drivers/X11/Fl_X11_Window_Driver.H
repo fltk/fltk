@@ -2,7 +2,7 @@
 // Definition of X11 window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2024 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -66,14 +66,14 @@ private:
     Fl_Image* shape_; ///<  shape image
     Fl_Bitmap *effective_bitmap_; ///<  auxiliary bitmap image
   } *shape_data_;
-#if  USE_XFT
+#if  USE_XFT || FLTK_USE_CAIRO
   // --- support for screen-specific scaling factors
   struct type_for_resize_window_between_screens {
     int screen;
     bool busy;
   };
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
 #if FLTK_USE_CAIRO
   cairo_t *cairo_;
 #endif // FLTK_USE_CAIRO
@@ -89,9 +89,9 @@ public:
   Fl_X11_Window_Driver(Fl_Window*);
   ~Fl_X11_Window_Driver() FL_OVERRIDE;
   static inline Fl_X11_Window_Driver* driver(const Fl_Window *w) {return (Fl_X11_Window_Driver*)Fl_Window_Driver::driver(w);}
-#if  USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
   static void resize_after_screen_change(void *data);
-#endif // USE_XFT
+#endif // USE_XFT || FLTK_USE_CAIRO
 
   // --- window data
   int decorated_w() FL_OVERRIDE;

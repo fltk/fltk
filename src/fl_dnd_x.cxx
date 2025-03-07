@@ -1,7 +1,7 @@
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -106,7 +106,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
       if ((new_local_window = fl_find(child))) break;
       if ((new_version = dnd_aware(new_window))) break;
     }
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     if (new_local_window) {
       float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(new_local_window)->screen_num());
       Fl::e_x_root /= s;
@@ -158,7 +158,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
       local_handle(FL_DND_DRAG, local_window);
     } else if (dndversion) {
       int exroot = Fl::e_x_root, eyroot = Fl::e_y_root;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
       Fl_Window *target = fl_find(target_window);
       if (target) {
         float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
@@ -189,7 +189,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
     msg.x = dest_x;
     msg.y = dest_y;
     float s = 1;
-#if USE_XFT
+#if USE_XFT || FLTK_USE_CAIRO
     Fl_Window *target = fl_find(target_window);
     if (target) s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
 #endif
