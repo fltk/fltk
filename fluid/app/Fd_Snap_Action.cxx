@@ -16,7 +16,8 @@
 
 #include "app/Fd_Snap_Action.h"
 
-#include "io/file.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
 #include "nodes/Fl_Group_Type.h"
 #include "panels/settings_panel.h"
 
@@ -227,7 +228,7 @@ void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
 /**
  Write presets to an .fl project file.
  */
-void Fd_Layout_Preset::write(Fd_Project_Writer *out) {
+void Fd_Layout_Preset::write(fld::io::Project_Writer *out) {
   out->write_string("    preset { 1\n"); // preset format version
   out->write_string("      %d %d %d %d %d %d\n",
                     left_window_margin, right_window_margin,
@@ -249,7 +250,7 @@ void Fd_Layout_Preset::write(Fd_Project_Writer *out) {
 /**
  Read presets from an .fl project file.
  */
-void Fd_Layout_Preset::read(Fd_Project_Reader *in) {
+void Fd_Layout_Preset::read(fld::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -346,7 +347,7 @@ void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
 /**
  Write a presets suite to an .fl project file.
  */
-void Fd_Layout_Suite::write(Fd_Project_Writer *out) {
+void Fd_Layout_Suite::write(fld::io::Project_Writer *out) {
   out->write_string("  suite {\n");
   out->write_string("    name "); out->write_word(name_); out->write_string("\n");
   for (int i = 0; i < 3; ++i) {
@@ -358,7 +359,7 @@ void Fd_Layout_Suite::write(Fd_Project_Writer *out) {
 /**
  Read a presets suite from an .fl project file.
  */
-void Fd_Layout_Suite::read(Fd_Project_Reader *in) {
+void Fd_Layout_Suite::read(fld::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -713,7 +714,7 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
 /**
  Write Suite and Layout selection and project layout data to an .fl project file.
  */
-void Fd_Layout_List::write(Fd_Project_Writer *out) {
+void Fd_Layout_List::write(fld::io::Project_Writer *out) {
   // Don't write the Snap field if no custom layout was used
   if ((current_suite()==0) && (current_preset()==0)) {
     int nSuite = 0;
@@ -736,7 +737,7 @@ void Fd_Layout_List::write(Fd_Project_Writer *out) {
 /**
  Read Suite and Layout selection and project layout data from an .fl project file.
  */
-void Fd_Layout_List::read(Fd_Project_Reader *in) {
+void Fd_Layout_List::read(fld::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {

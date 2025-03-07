@@ -22,9 +22,11 @@
 
 #include "app/Fd_Snap_Action.h"
 #include "app/fluid.h"
+#include "app/project.h"
 #include "app/undo.h"
-#include "io/file.h"
-#include "io/code.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
+#include "io/Code_Writer.h"
 #include "nodes/factory.h"
 #include "nodes/Fl_Group_Type.h"
 #include "nodes/Fl_Grid_Type.h"
@@ -1262,7 +1264,7 @@ int Fl_Window_Type::handle(int event) {
  Write the C++ code that comes before the children of the window are written.
  \param f the source code output stream
  */
-void Fl_Window_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Window_Type::write_code1(fld::io::Code_Writer& f) {
   Fl_Widget_Type::write_code1(f);
 }
 
@@ -1271,7 +1273,7 @@ void Fl_Window_Type::write_code1(Fd_Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Fl_Window_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Window_Type::write_code2(fld::io::Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
   // make the window modal or non-modal
   if (modal) {
@@ -1306,7 +1308,7 @@ void Fl_Window_Type::write_code2(Fd_Code_Writer& f) {
   write_block_close(f);
 }
 
-void Fl_Window_Type::write_properties(Fd_Project_Writer &f) {
+void Fl_Window_Type::write_properties(fld::io::Project_Writer &f) {
   Fl_Widget_Type::write_properties(f);
   if (modal) f.write_string("modal");
   else if (non_modal) f.write_string("non_modal");
@@ -1317,7 +1319,7 @@ void Fl_Window_Type::write_properties(Fd_Project_Writer &f) {
   if (o->visible() || override_visible_) f.write_string("visible");
 }
 
-void Fl_Window_Type::read_property(Fd_Project_Reader &f, const char *c) {
+void Fl_Window_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
   } else if (!strcmp(c,"non_modal")) {
@@ -1404,7 +1406,7 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   return myo;
 }
 
-void Fl_Widget_Class_Type::write_properties(Fd_Project_Writer &f) {
+void Fl_Widget_Class_Type::write_properties(fld::io::Project_Writer &f) {
   Fl_Window_Type::write_properties(f);
   if (wc_relative==1)
     f.write_string("position_relative");
@@ -1412,7 +1414,7 @@ void Fl_Widget_Class_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("position_relative_rescale");
 }
 
-void Fl_Widget_Class_Type::read_property(Fd_Project_Reader &f, const char *c) {
+void Fl_Widget_Class_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
   } else if (!strcmp(c,"position_relative_rescale")) {
@@ -1435,9 +1437,9 @@ static const char *trimclassname(const char *n) {
 }
 
 
-void Fl_Widget_Class_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Widget_Class_Type::write_code1(fld::io::Code_Writer& f) {
 #if 0
-  Fl_Widget_Type::write_code1(Fd_Code_Writer& f);
+  Fl_Widget_Type::write_code1(fld::io::Code_Writer& f);
 #endif // 0
 
   current_widget_class = this;
@@ -1505,7 +1507,7 @@ void Fl_Widget_Class_Type::write_code1(Fd_Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Fl_Widget_Class_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Widget_Class_Type::write_code2(fld::io::Code_Writer& f) {
   // make the window modal or non-modal
   if (modal) {
     f.write_c("%sset_modal();\n", f.indent());

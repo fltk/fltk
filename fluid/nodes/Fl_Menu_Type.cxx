@@ -23,11 +23,13 @@
 #include "nodes/Fl_Menu_Type.h"
 
 #include "app/fluid.h"
+#include "app/project.h"
 #include "app/Fluid_Image.h"
 #include "app/mergeback.h"
 #include "app/undo.h"
-#include "io/file.h"
-#include "io/code.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
+#include "io/Code_Writer.h"
 #include "nodes/Fl_Window_Type.h"
 #include "widgets/Formula_Input.h"
 #include "widgets/Node_Browser.h"
@@ -300,7 +302,7 @@ int isdeclare(const char *c);
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
 // to this menu item.
-const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
+const char* Fl_Menu_Item_Type::menu_name(fld::io::Code_Writer& f, int& i) {
   i = 0;
   Fl_Type* t = prev;
   while (t && t->is_a(ID_Menu_Item)) {
@@ -315,7 +317,7 @@ const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
   return f.unique_id(t, "menu", t->name(), t->label());
 }
 
-void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
+void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
   if (image && label() && label()[0]) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
@@ -447,7 +449,7 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
           f.write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
         } else {
           // if the name is an array, only define the array.
-          // The actual assignment is in write_code1(Fd_Code_Writer& f)
+          // The actual assignment is in write_code1(fld::io::Code_Writer& f)
           f.write_c("Fl_Menu_Item* %s::%s;\n", k, c);
         }
       }
@@ -468,7 +470,7 @@ int Fl_Menu_Item_Type::flags() {
   return i;
 }
 
-void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
+void Fl_Menu_Item_Type::write_item(fld::io::Code_Writer& f) {
   static const char * const labeltypes[] = {
     "FL_NORMAL_LABEL",
     "FL_NO_LABEL",
@@ -534,7 +536,7 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
   f.write_c("},\n");
 }
 
-void start_menu_initialiser(Fd_Code_Writer& f, int &initialized, const char *name, int index) {
+void start_menu_initialiser(fld::io::Code_Writer& f, int &initialized, const char *name, int index) {
   if (!initialized) {
     initialized = 1;
     f.write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", f.indent(), name, index);
@@ -542,7 +544,7 @@ void start_menu_initialiser(Fd_Code_Writer& f, int &initialized, const char *nam
   }
 }
 
-void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Menu_Item_Type::write_code1(fld::io::Code_Writer& f) {
   int i; const char* mname = menu_name(f, i);
 
   if (!prev->is_a(ID_Menu_Item)) {
@@ -637,7 +639,7 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
   }
 }
 
-void Fl_Menu_Item_Type::write_code2(Fd_Code_Writer&) {}
+void Fl_Menu_Item_Type::write_code2(fld::io::Code_Writer&) {}
 
 ////////////////////////////////////////////////////////////////
 // This is the base class for widgets that contain a menu (ie
@@ -729,7 +731,7 @@ Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
   return this;
 }
 
-void Fl_Menu_Manager_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Menu_Manager_Type::write_code2(fld::io::Code_Writer& f) {
   if (next && next->is_a(ID_Menu_Item)) {
     f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
             f.unique_id(this, "menu", name(), label()));
@@ -843,7 +845,7 @@ const char *Fl_Menu_Bar_Type::sys_menubar_proxy_name() {
 }
 
 
-void Fl_Menu_Bar_Type::write_static(Fd_Code_Writer& f) {
+void Fl_Menu_Bar_Type::write_static(fld::io::Code_Writer& f) {
   super::write_static(f);
   if (is_sys_menu_bar()) {
     f.write_h_once("#include <FL/Fl_Sys_Menu_Bar.H>");
@@ -863,7 +865,7 @@ void Fl_Menu_Bar_Type::write_static(Fd_Code_Writer& f) {
   }
 }
 
-void Fl_Menu_Bar_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Menu_Bar_Type::write_code1(fld::io::Code_Writer& f) {
   super::write_code1(f);
   if (is_sys_menu_bar() && is_in_class()) {
     f.write_c("%s((%s*)%s)->_parent_class = (void*)this;\n",
@@ -871,7 +873,7 @@ void Fl_Menu_Bar_Type::write_code1(Fd_Code_Writer& f) {
   }
 }
 
-//void Fl_Menu_Bar_Type::write_code2(Fd_Code_Writer& f) {
+//void Fl_Menu_Bar_Type::write_code2(fld::io::Code_Writer& f) {
 //  super::write_code2(f);
 //}
 

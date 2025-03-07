@@ -23,8 +23,9 @@
 #include "app/fluid.h"
 #include "app/undo.h"
 #include "app/Fd_Snap_Action.h"
-#include "io/file.h"
-#include "io/code.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
+#include "io/Code_Writer.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
@@ -195,11 +196,11 @@ void Fl_Group_Type::ideal_size(int &w, int &h) {
   Fd_Snap_Action::better_size(w, h);
 }
 
-void Fl_Group_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Group_Type::write_code1(fld::io::Code_Writer& f) {
   Fl_Widget_Type::write_code1(f);
 }
 
-void Fl_Group_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Group_Type::write_code2(fld::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   write_extra_code(f);
   f.write_c("%s%s->end();\n", f.indent(), var);
@@ -348,7 +349,7 @@ void Fl_Flex_Type::copy_properties_for_children() {
   d->layout();
 }
 
-void Fl_Flex_Type::write_properties(Fd_Project_Writer &f)
+void Fl_Flex_Type::write_properties(fld::io::Project_Writer &f)
 {
   Fl_Group_Type::write_properties(f);
   Fl_Flex* flex = (Fl_Flex*)o;
@@ -373,7 +374,7 @@ void Fl_Flex_Type::write_properties(Fd_Project_Writer &f)
   }
 }
 
-void Fl_Flex_Type::read_property(Fd_Project_Reader &f, const char *c)
+void Fl_Flex_Type::read_property(fld::io::Project_Reader &f, const char *c)
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
@@ -421,7 +422,7 @@ void Fl_Flex_Type::postprocess_read()
   suspend_auto_layout = 0;
 }
 
-void Fl_Flex_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Flex_Type::write_code2(fld::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;

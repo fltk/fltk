@@ -18,6 +18,7 @@
 
 #include "tools/ExternalCodeEditor_WIN32.h"
 #include "app/fluid.h"
+#include "app/project.h"
 
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()

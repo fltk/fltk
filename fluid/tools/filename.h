@@ -14,7 +14,7 @@
  *     https://www.fltk.org/bugs.php
  */
 
-/** \file fluid/fluid_filename.h
+/** \file fluid/filename.h
   \brief Handling file names operations that are not in the core library.
 */
 
@@ -24,5 +24,11 @@
 #include <string>
 
 std::string fl_filename_shortened(const std::string &filename, int maxchars);
+
+namespace fld {
+
+using filename = std::string;
+
+} // namespace fld
 
 #endif // FLUID_TOOLS_FILENAME_H

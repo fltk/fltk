@@ -52,8 +52,8 @@ public:
   Fl_Function_Type();
   ~Fl_Function_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   int ismain() {return name_ == 0;}
   const char *type_name() FL_OVERRIDE {return "Function";}
@@ -65,8 +65,8 @@ public:
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Function; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Function) ? true : super::is_a(inID); }
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
 };
 
@@ -83,9 +83,9 @@ class Fl_Code_Type : public Fl_Type
 public:
   Fl_Code_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write(Fd_Project_Writer &f) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
+  void write(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "code";}
   int is_code_block() const FL_OVERRIDE {return 0;}
@@ -108,8 +108,8 @@ public:
   Fl_CodeBlock_Type();
   ~Fl_CodeBlock_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "codeblock";}
   int is_code_block() const FL_OVERRIDE {return 1;}
@@ -117,8 +117,8 @@ public:
   int is_public() const FL_OVERRIDE { return -1; }
   ID id() const FL_OVERRIDE { return ID_CodeBlock; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_CodeBlock) ? true : super::is_a(inID); }
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
 };
 
 // ---- Fl_Decl_Type declaration
@@ -134,12 +134,12 @@ protected:
 public:
   Fl_Decl_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "decl";}
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Decl; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Decl) ? true : super::is_a(inID); }
@@ -157,12 +157,12 @@ public:
   Fl_Data_Type();
   ~Fl_Data_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE {}
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE {}
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "data";}
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Data; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Data) ? true : super::is_a(inID); }
 };
@@ -185,14 +185,14 @@ public:
   Fl_DeclBlock_Type();
   ~Fl_DeclBlock_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_static_after(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_static_after(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "declblock";}
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   int can_have_children() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
@@ -210,12 +210,12 @@ class Fl_Comment_Type : public Fl_Type
 public:
   Fl_Comment_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "comment";}
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
   ID id() const FL_OVERRIDE { return ID_Comment; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Comment) ? true : super::is_a(inID); }
@@ -238,8 +238,8 @@ public:
   Fl_Class_Type* parent_class; // save class if nested
 //
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "class";}
   int can_have_children() const FL_OVERRIDE {return 1;}
@@ -248,8 +248,8 @@ public:
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Class; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Class) ? true : super::is_a(inID); }
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
 
   // class prefix attribute access
   void prefix(const char* p);

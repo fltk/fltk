@@ -17,7 +17,9 @@
 #include "app/undo.h"
 
 #include "app/fluid.h"
-#include "io/file.h"
+#include "app/project.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
 #include "nodes/Fl_Type.h"
 #include "nodes/Fl_Widget_Type.h"
 #include "widgets/Node_Browser.h"
@@ -27,7 +29,7 @@
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_ask.H>
-#include "tools/fluid_filename.h"
+#include "tools/filename.h"
 #include "../src/flstring.h"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -94,7 +96,7 @@ void redo_cb(Fl_Widget *, void *) {
     widget_browser->new_list();
   }
   int reload_panel = (the_panel && the_panel->visible());
-  if (!read_file(undo_filename(undo_current + 1), 0)) {
+  if (!fld::io::read_file(undo_filename(undo_current + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
     widget_browser->rebuild();
     g_project.update_settings_dialog();
@@ -134,7 +136,7 @@ void undo_cb(Fl_Widget *, void *) {
   }
 
   if (undo_current == undo_last) {
-    write_file(undo_filename(undo_current));
+    fld::io::write_file(undo_filename(undo_current));
   }
 
   undo_suspend();
@@ -146,7 +148,7 @@ void undo_cb(Fl_Widget *, void *) {
     widget_browser->new_list();
   }
   int reload_panel = (the_panel && the_panel->visible());
-  if (!read_file(undo_filename(undo_current - 1), 0)) {
+  if (!fld::io::read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
     widget_browser->rebuild();
     g_project.update_settings_dialog();
@@ -213,7 +215,7 @@ void undo_checkpoint() {
 
   // Save the current UI to a checkpoint file...
   const char *filename = undo_filename(undo_current);
-  if (!write_file(filename)) {
+  if (!fld::io::write_file(filename)) {
     // Don't attempt to do undo stuff if we can't write a checkpoint file...
     perror(filename);
     return;

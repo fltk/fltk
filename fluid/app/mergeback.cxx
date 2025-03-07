@@ -21,7 +21,7 @@
 
 #include "app/fluid.h"
 #include "app/undo.h"
-#include "io/code.h"
+#include "io/Code_Writer.h"
 #include "nodes/Fl_Function_Type.h"
 #include "nodes/Fl_Widget_Type.h"
 
@@ -92,7 +92,7 @@ extern void redraw_browser();
  Returns 0 if nothing changed, and 1 if it merged any changes back, and -1 if
  there were conflicts.
 
- \note this function is currently part of Fd_Code_Writer to get easy access
+ \note this function is currently part of fld::io::Code_Writer to get easy access
  to our crc32 code that also wrote the code file originally.
 
  \param[in] s path and filename of the source code file
@@ -242,7 +242,7 @@ void Fd_Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_cr
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
-    unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
       num_changed_code++;
@@ -264,7 +264,7 @@ void Fd_Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, i
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
     std::string code = tp->name(); code += "\n";
-    unsigned long project_crc = Fd_Code_Writer::block_crc(code.c_str());
+    unsigned long project_crc = fld::io::Code_Writer::block_crc(code.c_str());
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
       num_changed_code++;
@@ -321,7 +321,7 @@ int Fd_Mergeback::analyse() {
     const char *tag = strstr(line, "//~fl~");
     if (!tag) {
       // if this line has no tag, add the contents to the CRC and continue
-      code_crc = Fd_Code_Writer::block_crc(line, -1, code_crc, &line_start);
+      code_crc = fld::io::Code_Writer::block_crc(line, -1, code_crc, &line_start);
     } else {
       // if this line has a tag, read all tag data
       int tag_type = -1, uid = 0;
@@ -357,7 +357,7 @@ int Fd_Mergeback::apply_callback(long block_end, long block_start, unsigned long
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
-    unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
     if (project_crc!=code_crc) {
       tp->callback(read_and_unindent_block(block_start, block_end).c_str());
       return 1;
@@ -373,7 +373,7 @@ int Fd_Mergeback::apply_code(long block_end, long block_start, unsigned long cod
   Fl_Type *tp = Fl_Type::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
     std::string cb = tp->name(); cb += "\n";
-    unsigned long project_crc = Fd_Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
     if (project_crc!=code_crc) {
       tp->name(read_and_unindent_block(block_start, block_end).c_str());
       return 1;
@@ -409,7 +409,7 @@ int Fd_Mergeback::apply() {
     const char *tag = strstr(line, "//~fl~");
     if (!tag) {
       // if this line has no tag, add the contents to the CRC and continue
-      code_crc = Fd_Code_Writer::block_crc(line, -1, code_crc, &line_start);
+      code_crc = fld::io::Code_Writer::block_crc(line, -1, code_crc, &line_start);
       block_end = ::ftell(code);
     } else {
       // if this line has a tag, read all tag data

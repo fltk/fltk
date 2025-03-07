@@ -17,11 +17,12 @@
 #include "app/Fluid_Image.h"
 
 #include "app/fluid.h"
-#include "io/file.h"
-#include "io/code.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
+#include "io/Code_Writer.h"
 #include "nodes/Fl_Group_Type.h"
 #include "nodes/Fl_Window_Type.h"
-#include "tools/fluid_filename.h"
+#include "tools/filename.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
@@ -49,7 +50,7 @@ void Fluid_Image::deimage(Fl_Widget *o) {
 /** Write the contents of the name() file as binary source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
-size_t Fluid_Image::write_static_binary(Fd_Code_Writer& f, const char* fmt) {
+size_t Fluid_Image::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   enter_project_dir();
   FILE *in = fl_fopen(name(), "rb");
@@ -75,7 +76,7 @@ size_t Fluid_Image::write_static_binary(Fd_Code_Writer& f, const char* fmt) {
 /** Write the contents of the name() file as textual source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
-size_t Fluid_Image::write_static_text(Fd_Code_Writer& f, const char* fmt) {
+size_t Fluid_Image::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   enter_project_dir();
   FILE *in = fl_fopen(name(), "rb");
@@ -98,7 +99,7 @@ size_t Fluid_Image::write_static_text(Fd_Code_Writer& f, const char* fmt) {
   return nData;
 }
 
-void Fluid_Image::write_static_rgb(Fd_Code_Writer& f, const char* idata_name) {
+void Fluid_Image::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
   // Write image data...
   f.write_c("\n");
   f.write_c_once("#include <FL/Fl_Image.H>\n");
@@ -119,7 +120,7 @@ void Fluid_Image::write_static_rgb(Fd_Code_Writer& f, const char* idata_name) {
 
  \param compressed write data in the original compressed file format
  */
-void Fluid_Image::write_static(Fd_Code_Writer& f, int compressed) {
+void Fluid_Image::write_static(fld::io::Code_Writer& f, int compressed) {
   if (!img) return;
   const char *idata_name = f.unique_id(this, "idata", fl_filename_name(name()), 0);
   function_name_ = f.unique_id(this, "image", fl_filename_name(name()), 0);
@@ -241,14 +242,14 @@ void Fluid_Image::write_static(Fd_Code_Writer& f, int compressed) {
   }
 }
 
-void Fluid_Image::write_file_error(Fd_Code_Writer& f, const char *fmt) {
+void Fluid_Image::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
   f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, name(), strerror(errno));
   enter_project_dir();
   f.write_c("// Searching in path \"%s\"\n", fl_getcwd(0, FL_PATH_MAX));
   leave_project_dir();
 }
 
-void Fluid_Image::write_initializer(Fd_Code_Writer& f, const char *type_name, const char *format, ...) {
+void Fluid_Image::write_initializer(fld::io::Code_Writer& f, const char *type_name, const char *format, ...) {
   /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
    static Fl_Image *'function_name_'() {
      static Fl_Image *image = NULL;
@@ -271,7 +272,7 @@ void Fluid_Image::write_initializer(Fd_Code_Writer& f, const char *type_name, co
   va_end(ap);
 }
 
-void Fluid_Image::write_code(Fd_Code_Writer& f, int bind, const char *var, int inactive) {
+void Fluid_Image::write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive) {
   /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
    This code calls a function output before by Fluid_Image::write_initializer() */
   if (img) {
@@ -281,7 +282,7 @@ void Fluid_Image::write_code(Fd_Code_Writer& f, int bind, const char *var, int i
   }
 }
 
-void Fluid_Image::write_inline(Fd_Code_Writer& f, int inactive) {
+void Fluid_Image::write_inline(fld::io::Code_Writer& f, int inactive) {
   if (img)
     f.write_c("%s()", function_name_);
 }

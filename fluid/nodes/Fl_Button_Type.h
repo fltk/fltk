@@ -35,8 +35,8 @@ public:
   int is_button() const FL_OVERRIDE { return 1; }
   ID id() const FL_OVERRIDE { return ID_Button; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Button) ? true : super::is_a(inID); }
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 };
 

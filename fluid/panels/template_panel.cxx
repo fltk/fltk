@@ -18,7 +18,7 @@
 
 #include "template_panel.h"
 #include "app/fluid.h"
-#include "tools/fluid_filename.h"
+#include "tools/filename.h"
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_string_functions.h>

@@ -19,6 +19,7 @@
 #include "tools/autodoc.h"
 
 #include "app/fluid.h"
+#include "app/project.h"
 #include "nodes/factory.h"
 #include "nodes/Fl_Widget_Type.h"
 #include "nodes/Fl_Window_Type.h"

@@ -97,11 +97,13 @@
 #include "nodes/Fl_Type.h"
 
 #include "app/fluid.h"
+#include "app/project.h"
 #include "app/Fd_Snap_Action.h"
 #include "app/shell_command.h"
 #include "app/undo.h"
-#include "io/file.h"
-#include "io/code.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
+#include "io/Code_Writer.h"
 #include "nodes/Fl_Function_Type.h"
 #include "nodes/Fl_Widget_Type.h"
 #include "nodes/Fl_Window_Type.h"
@@ -886,7 +888,7 @@ void Fl_Type::move_before(Fl_Type* g) {
 
 
 // write a widget and all its children:
-void Fl_Type::write(Fd_Project_Writer &f) {
+void Fl_Type::write(fld::io::Project_Writer &f) {
   if (f.write_codeview()) proj1_start = (int)ftell(f.file()) + 1;
   if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
   f.write_indent(level);
@@ -918,7 +920,7 @@ void Fl_Type::write(Fd_Project_Writer &f) {
   if (f.write_codeview()) proj2_end = (int)ftell(f.file());
 }
 
-void Fl_Type::write_properties(Fd_Project_Writer &f) {
+void Fl_Type::write_properties(fld::io::Project_Writer &f) {
   // repeat this for each attribute:
   if (g_project.write_mergeback_data && uid_) {
     f.write_word("uid");
@@ -952,7 +954,7 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
   if (selected) f.write_word("selected");
 }
 
-void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
+void Fl_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"uid")) {
     const char *hex = f.read_word();
     int x = 0;
@@ -1017,13 +1019,13 @@ void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
  Lastly, this method should call the super class to give it a chance to append
  its own properties.
 
- \see Fl_Grid_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate)
+ \see Fl_Grid_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate)
 
  \param[in] f the project file writer
  \param[in] child write properties for this child, make sure it has the correct type
  \param[in] encapsulate write the `parent_properties {}` block if true before writing any properties
  */
-void Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate) {
+void Fl_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate) {
   (void)f; (void)child; (void)encapsulate;
   // nothing to do here
   // put the following code into your implementation of write_parent_properties
@@ -1050,14 +1052,14 @@ void Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool
  method reads back those properties. This function is virtual, so if a Type
  does not support a property, it will propagate to its super class.
 
- \see Fl_Type::write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate)
- \see Fl_Grid_Type::read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property)
+ \see Fl_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate)
+ \see Fl_Grid_Type::read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property)
 
  \param[in] f the project file writer
  \param[in] child read properties for this child
  \param[in] property the name of a property, or "}" when we reach the end of the list
  */
-void Fl_Type::read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property) {
+void Fl_Type::read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property) {
   (void)child;
   f.read_error("Unknown parent property \"%s\"", property);
 }
@@ -1069,7 +1071,7 @@ int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
  Write a comment into the header file.
  \param[in] pre indent the comment by this string
 */
-void Fl_Type::write_comment_h(Fd_Code_Writer& f, const char *pre)
+void Fl_Type::write_comment_h(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     f.write_h("%s/**\n", pre);
@@ -1092,7 +1094,7 @@ void Fl_Type::write_comment_h(Fd_Code_Writer& f, const char *pre)
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_c(Fd_Code_Writer& f, const char *pre)
+void Fl_Type::write_comment_c(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     f.write_c("%s/**\n", pre);
@@ -1117,7 +1119,7 @@ void Fl_Type::write_comment_c(Fd_Code_Writer& f, const char *pre)
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_inline_c(Fd_Code_Writer& f, const char *pre)
+void Fl_Type::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     const char *s = comment();
@@ -1197,7 +1199,7 @@ int Fl_Type::user_defined(const char* cbname) const {
   return 0;
 }
 
-const char *Fl_Type::callback_name(Fd_Code_Writer& f) {
+const char *Fl_Type::callback_name(fld::io::Code_Writer& f) {
   if (is_name(callback())) return callback();
   return f.unique_id(this, "cb", name(), label());
 }
@@ -1250,18 +1252,18 @@ bool Fl_Type::is_in_class() const {
   return false;
 }
 
-void Fl_Type::write_static(Fd_Code_Writer&) {
+void Fl_Type::write_static(fld::io::Code_Writer&) {
 }
 
-void Fl_Type::write_static_after(Fd_Code_Writer&) {
+void Fl_Type::write_static_after(fld::io::Code_Writer&) {
 }
 
-void Fl_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Type::write_code1(fld::io::Code_Writer& f) {
   f.write_h("// Header for %s\n", title());
   f.write_c("// Code for %s\n", title());
 }
 
-void Fl_Type::write_code2(Fd_Code_Writer&) {
+void Fl_Type::write_code2(fld::io::Code_Writer&) {
 }
 
 /** Set a uid that is unique within the project.

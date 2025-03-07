@@ -67,8 +67,8 @@ public:
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
-  void write(Fd_Project_Writer*);
-  void read(Fd_Project_Reader*);
+  void write(fld::io::Project_Writer*);
+  void read(fld::io::Project_Reader*);
 
   int textsize_not_null();
 };
@@ -91,8 +91,8 @@ public:
   Fd_Tool_Store storage_;       ///< storage location (see FD_STORE_INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
-  void write(Fd_Project_Writer*);
-  void read(Fd_Project_Reader*);
+  void write(fld::io::Project_Writer*);
+  void read(fld::io::Project_Reader*);
   void update_label();
   void storage(Fd_Tool_Store s) { storage_ = s; update_label(); }
   void name(const char *n);
@@ -139,8 +139,8 @@ public:
   int save(const std::string &filename);
   void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
-  void write(Fd_Project_Writer*);
-  void read(Fd_Project_Reader*);
+  void write(fld::io::Project_Writer*);
+  void read(fld::io::Project_Reader*);
   int add(Fd_Layout_Suite*);
   void remove(int index);
   void remove_all(Fd_Tool_Store storage);

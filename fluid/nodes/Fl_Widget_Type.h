@@ -60,13 +60,13 @@ protected:
   /// disabling the output of the "hide" property by the Widget Type.
   uchar override_visible_;
 
-  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_widget_code(Fd_Code_Writer& f);
-  void write_extra_code(Fd_Code_Writer& f);
-  void write_block_close(Fd_Code_Writer& f);
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_color(Fd_Code_Writer& f, const char*, Fl_Color);
+  void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_widget_code(fld::io::Code_Writer& f);
+  void write_extra_code(fld::io::Code_Writer& f);
+  void write_block_close(fld::io::Code_Writer& f);
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_color(fld::io::Code_Writer& f, const char*, Fl_Color);
   Fl_Widget *live_widget;
 
 public:
@@ -112,8 +112,8 @@ public:
   int is_true_widget() const FL_OVERRIDE { return 1; }
   int is_public() const FL_OVERRIDE;
 
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;

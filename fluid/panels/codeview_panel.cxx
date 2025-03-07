@@ -18,7 +18,9 @@
 
 #include "codeview_panel.h"
 #include "app/fluid.h"
-#include "io/file.h"
+#include "app/project.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Button.H>
 #include "../src/flstring.h"
@@ -167,7 +169,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
     }
 
     if (cv_project->visible_r()) {
-      write_file(cv_design_filename, false, true);
+      fld::io::write_file(cv_design_filename, false, true);
       int top = cv_project->top_line();
       cv_project->buffer()->loadfile(cv_design_filename);
       cv_project->scroll(top, 0);
@@ -188,7 +190,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       g_project.header_file_name = cv_header_filename;
 
       // generate the code and load the files
-      Fd_Code_Writer f;
+      fld::io::Code_Writer f;
       // generate files
       if (f.write_code(cv_source_filename, cv_header_filename, true))
       {

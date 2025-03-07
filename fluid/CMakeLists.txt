@@ -28,10 +28,12 @@ set(CPPFILES
   app/fluid.cxx
   app/Fluid_Image.cxx
   app/mergeback.cxx
+  app/project.cxx
   app/shell_command.cxx
   app/undo.cxx
-  io/code.cxx
-  io/file.cxx
+  io/Code_Writer.cxx
+  io/Project_Writer.cxx
+  io/Project_Reader.cxx
   nodes/factory.cxx
   nodes/Fl_Button_Type.cxx
   nodes/Fl_Function_Type.cxx
@@ -49,7 +51,7 @@ set(CPPFILES
   panels/widget_panel.cxx
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
-  tools/fluid_filename.cxx
+  tools/filename.cxx
   widgets/Code_Editor.cxx
   widgets/Code_Viewer.cxx
   widgets/Text_Viewer.cxx
@@ -66,11 +68,13 @@ set(HEADERFILES
   app/Fd_Snap_Action.h
   app/fluid.h
   app/Fluid_Image.h
+  app/project.h
   app/mergeback.h
   app/shell_command.h
   app/undo.h
-  io/code.h
-  io/file.h
+  io/Code_Writer.h
+  io/Project_Writer.h
+  io/Project_Reader.h
   nodes/factory.h
   nodes/Fl_Button_Type.h
   nodes/Fl_Function_Type.h
@@ -89,7 +93,7 @@ set(HEADERFILES
   rsrcs/comments.h
   rsrcs/pixmaps.h
   tools/autodoc.h
-  tools/fluid_filename.h
+  tools/filename.h
   widgets/Code_Editor.h
   widgets/Code_Viewer.h
   widgets/Text_Viewer.h

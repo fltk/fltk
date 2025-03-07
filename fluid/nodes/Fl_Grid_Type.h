@@ -57,16 +57,16 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Grid; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Grid) ? true : super::is_a(inID); }
-  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
-  void write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate) FL_OVERRIDE;
-  void read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
+  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate) FL_OVERRIDE;
+  void read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property) FL_OVERRIDE;
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
   void copy_properties_for_children() FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;

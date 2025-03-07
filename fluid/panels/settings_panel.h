@@ -22,7 +22,7 @@
 #include "app/fluid.h"
 #include "app/Fd_Snap_Action.h"
 #include "app/shell_command.h"
-#include "tools/fluid_filename.h"
+#include "tools/filename.h"
 #include "widgets/Node_Browser.h"
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>

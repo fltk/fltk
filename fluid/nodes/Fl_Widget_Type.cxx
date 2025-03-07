@@ -17,11 +17,13 @@
 #include "nodes/Fl_Widget_Type.h"
 
 #include "app/fluid.h"
+#include "app/project.h"
 #include "app/Fluid_Image.h"
 #include "app/mergeback.h"
 #include "app/undo.h"
-#include "io/file.h"
-#include "io/code.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
+#include "io/Code_Writer.h"
 #include "nodes/Fl_Window_Type.h"
 #include "nodes/Fl_Group_Type.h"
 #include "nodes/Fl_Menu_Type.h"
@@ -2912,7 +2914,7 @@ int isdeclare(const char *c) {
   return 0;
 }
 
-void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
+void Fl_Widget_Type::write_static(fld::io::Code_Writer& f) {
   const char* t = subclassname(this);
   if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
     f.write_h_once("#include <FL/Fl.H>");
@@ -3001,7 +3003,7 @@ void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
   }
 }
 
-void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
+void Fl_Widget_Type::write_code1(fld::io::Code_Writer& f) {
   const char* t = subclassname(this);
   const char *c = array_name(this);
   if (c) {
@@ -3126,7 +3128,7 @@ void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
   write_widget_code(f);
 }
 
-void Fl_Widget_Type::write_color(Fd_Code_Writer& f, const char* field, Fl_Color color) {
+void Fl_Widget_Type::write_color(fld::io::Code_Writer& f, const char* field, Fl_Color color) {
   const char* color_name = 0;
   switch (color) {
   case FL_FOREGROUND_COLOR:     color_name = "FL_FOREGROUND_COLOR";     break;
@@ -3164,8 +3166,8 @@ void Fl_Widget_Type::write_color(Fd_Code_Writer& f, const char* field, Fl_Color 
   }
 }
 
-// this is split from write_code1(Fd_Code_Writer& f) for Fl_Window_Type:
-void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
+// this is split from write_code1(fld::io::Code_Writer& f) for Fl_Window_Type:
+void Fl_Widget_Type::write_widget_code(fld::io::Code_Writer& f) {
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
   const char *var = is_class() ? "this" : name() ? name() : "o";
 
@@ -3363,26 +3365,26 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
   }
 }
 
-void Fl_Widget_Type::write_extra_code(Fd_Code_Writer& f) {
+void Fl_Widget_Type::write_extra_code(fld::io::Code_Writer& f) {
   for (int n=0; n < NUM_EXTRA_CODE; n++)
     if (extra_code(n) && !isdeclare(extra_code(n)))
       f.write_c("%s%s\n", f.indent(), extra_code(n));
 }
 
-void Fl_Widget_Type::write_block_close(Fd_Code_Writer& f) {
+void Fl_Widget_Type::write_block_close(fld::io::Code_Writer& f) {
   f.indentation--;
   f.write_c("%s} // %s* %s\n", f.indent(), subclassname(this),
           name() ? name() : "o");
 }
 
-void Fl_Widget_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Widget_Type::write_code2(fld::io::Code_Writer& f) {
   write_extra_code(f);
   write_block_close(f);
 }
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
+void Fl_Widget_Type::write_properties(fld::io::Project_Writer &f) {
   Fl_Type::write_properties(f);
   f.write_indent(level+1);
   switch (public_) {
@@ -3515,7 +3517,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
   }
 }
 
-void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
+void Fl_Widget_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   int x,y,w,h; Fl_Font ft; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
     public_ = 0;
@@ -3726,7 +3728,7 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
   if (!strcmp(propname,"box")) {
     float x,y,w,h;
     if (sscanf(value,"%f %f %f %f",&x,&y,&w,&h) == 4) {
-      if (fdesign_flip) {
+      if (fld::io::fdesign_flip) {
         Fl_Type *p;
         for (p = parent; p && !p->is_a(ID_Window); p = p->parent) {/*empty*/}
         if (p && p->is_widget()) y = ((Fl_Widget_Type*)p)->o->h()-(y+h);

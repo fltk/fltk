@@ -98,7 +98,9 @@
 #include "app/shell_command.h"
 
 #include "app/fluid.h"
-#include "io/file.h"
+#include "app/project.h"
+#include "io/Project_Reader.h"
+#include "io/Project_Writer.h"
 #include "panels/settings_panel.h"
 
 #include <FL/Fl_Double_Window.H>
@@ -618,7 +620,7 @@ void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
   if (flags != 0) prefs.set("flags", flags);
 }
 
-void Fd_Shell_Command::read(class Fd_Project_Reader *in) {
+void Fd_Shell_Command::read(class fld::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
   storage = FD_STORE_PROJECT;
@@ -644,7 +646,7 @@ void Fd_Shell_Command::read(class Fd_Project_Reader *in) {
   }
 }
 
-void Fd_Shell_Command::write(class Fd_Project_Writer *out) {
+void Fd_Shell_Command::write(class fld::io::Project_Writer *out) {
   out->write_string("\n  command {");
   out->write_string("\n    name "); out->write_word(name.c_str());
   out->write_string("\n    label "); out->write_word(label.c_str());
@@ -771,7 +773,7 @@ void Fd_Shell_Command_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) 
 /**
  Read shell configuration from a project file.
  */
-void Fd_Shell_Command_List::read(Fd_Project_Reader *in) {
+void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
   clear(FD_STORE_PROJECT);
@@ -791,7 +793,7 @@ void Fd_Shell_Command_List::read(Fd_Project_Reader *in) {
 /**
  Write shell configuration to a project file.
  */
-void Fd_Shell_Command_List::write(Fd_Project_Writer *out) {
+void Fd_Shell_Command_List::write(fld::io::Project_Writer *out) {
   int n_in_project_file = 0;
   for (int i=0; i<list_size; i++) {
     if (list[i]->storage == FD_STORE_PROJECT)

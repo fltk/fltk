@@ -52,6 +52,9 @@ comment {//
 decl {\#include "app/fluid.h"} {public global
 }
 
+decl {\#include "app/project.h"} {private local
+}
+
 decl {\#include "app/undo.h"} {private global
 }
 
@@ -61,7 +64,7 @@ decl {\#include "app/Fd_Snap_Action.h"} {public global
 decl {\#include "app/shell_command.h"} {public global
 }
 
-decl {\#include "tools/fluid_filename.h"} {public local
+decl {\#include "tools/filename.h"} {public local
 }
 
 decl {\#include "widgets/Node_Browser.h"} {public global

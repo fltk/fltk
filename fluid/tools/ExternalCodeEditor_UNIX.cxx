@@ -6,6 +6,7 @@
 #include "ExternalCodeEditor_UNIX.h"
 
 #include "app/fluid.h"
+#include "app/project.h"
 
 #include <FL/Fl.H>      /* Fl_Timeout_Handler.. */
 #include <FL/fl_ask.H>  /* fl_alert() */

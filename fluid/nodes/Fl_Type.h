@@ -17,7 +17,7 @@
 #ifndef _FLUID_FL_TYPE_H
 #define _FLUID_FL_TYPE_H
 
-#include "io/code.h"
+#include "io/Code_Writer.h"
 
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
@@ -26,8 +26,14 @@ class Fl_Type;
 class Fl_Group_Type;
 class Fl_Window_Type;
 
-class Fd_Project_Reader;
-class Fd_Project_Writer;
+namespace fld {
+namespace io {
+
+class Project_Reader;
+class Project_Writer;
+
+} // namespace io
+} // namespace fld
 
 /**
  Declare where a new type is placed and how to create it.
@@ -47,8 +53,8 @@ class Fd_Project_Writer;
  Add a hierarchy of Types
     void Fl_Type::add(Fl_Type *p, Strategy strategy)
     int read_file(const char *filename, int merge, Strategy strategy)
-    Fl_Type *Fd_Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options)
-    int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
+    Fl_Type *fld::io::Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options)
+    int fld::io::Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
  */
 typedef struct Strategy {
   enum Flags {
@@ -188,7 +194,7 @@ public: // things that should not be public:
   Fl_Type *first_child();
 
   Fl_Type *factory;
-  const char *callback_name(Fd_Code_Writer& f);
+  const char *callback_name(fld::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
   int code_static_start, code_static_end;
@@ -252,22 +258,22 @@ public:
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
-  virtual void write(Fd_Project_Writer &f);
-  virtual void write_properties(Fd_Project_Writer &f);
-  virtual void read_property(Fd_Project_Reader &f, const char *);
-  virtual void write_parent_properties(Fd_Project_Writer &f, Fl_Type *child, bool encapsulate);
-  virtual void read_parent_property(Fd_Project_Reader &f, Fl_Type *child, const char *property);
+  virtual void write(fld::io::Project_Writer &f);
+  virtual void write_properties(fld::io::Project_Writer &f);
+  virtual void read_property(fld::io::Project_Reader &f, const char *);
+  virtual void write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate);
+  virtual void read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 
   // write code, these are called in order:
-  virtual void write_static(Fd_Code_Writer& f); // write static stuff to .c file
-  virtual void write_static_after(Fd_Code_Writer& f); // write static stuff after children
-  virtual void write_code1(Fd_Code_Writer& f); // code and .h before children
-  virtual void write_code2(Fd_Code_Writer& f); // code and .h after children
-  void write_comment_h(Fd_Code_Writer& f, const char *ind=""); // write the commentary text into the header file
-  void write_comment_c(Fd_Code_Writer& f, const char *ind=""); // write the commentary text into the source file
-  void write_comment_inline_c(Fd_Code_Writer& f, const char *ind=0L); // write the commentary text
+  virtual void write_static(fld::io::Code_Writer& f); // write static stuff to .c file
+  virtual void write_static_after(fld::io::Code_Writer& f); // write static stuff after children
+  virtual void write_code1(fld::io::Code_Writer& f); // code and .h before children
+  virtual void write_code2(fld::io::Code_Writer& f); // code and .h after children
+  void write_comment_h(fld::io::Code_Writer& f, const char *ind=""); // write the commentary text into the header file
+  void write_comment_c(fld::io::Code_Writer& f, const char *ind=""); // write the commentary text into the source file
+  void write_comment_inline_c(fld::io::Code_Writer& f, const char *ind=0L); // write the commentary text
 
   // live mode
   virtual Fl_Widget *enter_live_mode(int top=0); // build widgets needed for live mode

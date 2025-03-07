@@ -23,7 +23,7 @@ comment {//
 decl {\#include "app/fluid.h"} {private local
 }
 
-decl {\#include "tools/fluid_filename.h"} {selected private local
+decl {\#include "tools/filename.h"} {selected private local
 }
 
 decl {\#include <FL/Fl_Shared_Image.H>} {private local

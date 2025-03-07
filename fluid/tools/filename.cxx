@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/** \file fluid/fluid_filename.cxx
+/** \file fluid/filename.cxx
 
   \brief File names and URI utility functions for FLUID only.
 
@@ -29,7 +29,7 @@
         the next release after 1.4.x will be. We'll use std::string instead!
 */
 
-#include "tools/fluid_filename.h"
+#include "tools/filename.h"
 
 #include <FL/filename.H>
 #include <FL/Fl.H>

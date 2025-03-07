@@ -14,21 +14,26 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FILE_H
-#define _FLUID_FILE_H
+#ifndef FLUID_IO_PROJECT_READER_H
+#define FLUID_IO_PROJECT_READER_H
 
 #include "nodes/Fl_Type.h"
 
 #include <FL/fl_attr.h>
 
+#include <stdio.h>
+
+
 class Fl_Type;
+
+namespace fld {
+namespace io {
 
 extern int fdesign_flip;
 
 int read_file(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
-int write_file(const char *, int selected_only = 0, bool to_codeview = false);
 
-class Fd_Project_Reader
+class Project_Reader
 {
 protected:
   /// Project input file
@@ -51,8 +56,8 @@ public:
   double read_version;
 
 public:
-  Fd_Project_Reader();
-  ~Fd_Project_Reader();
+  Project_Reader();
+  ~Project_Reader();
   int open_read(const char *s);
   int close_read();
   const char *filename_name();
@@ -66,29 +71,7 @@ public:
   void read_fdesign();
 };
 
-class Fd_Project_Writer
-{
-protected:
-  // Project output file, always opened in "wb" mode
-  FILE *fout;
-  /// If set, one space is written before text unless the format starts with a newline character
-  int needspace;
-  /// Set if this file will be used in the codeview dialog
-  bool write_codeview_;
+} // namespace io
+} // namespace fld
 
-public:
-  Fd_Project_Writer();
-  ~Fd_Project_Writer();
-  int open_write(const char *s);
-  int close_write();
-  int write_project(const char *filename, int selected_only, bool codeview);
-  void write_word(const char *);
-  void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
-  void write_indent(int n);
-  void write_open();
-  void write_close(int n);
-  FILE *file() const { return fout; }
-  bool write_codeview() const { return write_codeview_; }
-};
-
-#endif // _FLUID_FILE_H
+#endif // FLUID_IO_PROJECT_READER_H

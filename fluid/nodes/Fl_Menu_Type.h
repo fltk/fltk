@@ -55,12 +55,12 @@ public:
   int is_button() const FL_OVERRIDE {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return 0;}
   Fl_Widget_Type* _make() FL_OVERRIDE {return 0;}
-  virtual const char* menu_name(Fd_Code_Writer& f, int& i);
+  virtual const char* menu_name(fld::io::Code_Writer& f, int& i);
   int flags();
-  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_item(Fd_Code_Writer& f);
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_item(fld::io::Code_Writer& f);
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   int is_true_widget() const FL_OVERRIDE { return 0; }
   ID id() const FL_OVERRIDE { return ID_Menu_Item; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Item) ? true : super::is_a(inID); }
@@ -142,7 +142,7 @@ public:
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE { build_menu(); }
   void remove_child(Fl_Type*) FL_OVERRIDE { build_menu();}
   Fl_Type* click_test(int x, int y) FL_OVERRIDE = 0;
-  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE = 0;
   ID id() const FL_OVERRIDE { return ID_Menu_Manager_; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Manager_) ? true : super::is_a(inID); }
@@ -271,9 +271,9 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::MenuBar";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Bar_Type();}
-  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
-  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
-//  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+//  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Menu_Bar; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Bar) ? true : super::is_a(inID); }
   bool is_sys_menu_bar();
