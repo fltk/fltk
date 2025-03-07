@@ -13,8 +13,6 @@
  *
  *     https://www.fltk.org/bugs.php
  */
-#include <FL/fl_config.h>
-#if !defined(_WIN32) && (!defined(__APPLE__) || defined(FLTK_USE_X11))
 
 #ifndef CP936
 #ifdef NEED_TOWC
@@ -6241,5 +6239,3 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 #endif /* NEED_TOMB */
 
 #endif /* CP936 */
-
-#endif /* _WIN32 || __APPLE__  */

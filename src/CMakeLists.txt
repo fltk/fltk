@@ -524,9 +524,11 @@ if(FLTK_USE_X11)
   if(NOT USE_XFT)
     list(APPEND CFILES
       xutf8/utf8Utils.c
-      xutf8/utf8Wrap.c
       xutf8/utf8Input.c
     )
+    if(NOT APPLE)
+      list(APPEND CFILES xutf8/utf8Wrap.c)
+    endif(NOT APPLE)
   endif(NOT USE_XFT)
 endif(FLTK_USE_X11)
 
