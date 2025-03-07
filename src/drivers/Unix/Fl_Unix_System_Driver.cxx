@@ -538,7 +538,8 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
     char *buffer)
 {
   // Find the path to the user's home directory.
-  std::string home_path = getenv("HOME");
+  const char *home_path_c = getenv("HOME");
+  std::string home_path = home_path_c ? home_path_c : "";
   if (home_path.empty()) {
     struct passwd *pw = getpwuid(getuid());
     if (pw)
@@ -546,7 +547,8 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
   }
 
   // 1: Generate the 1.4 path for this vendor and application.
-  std::string prefs_path_14 = getenv("XDG_CONFIG_HOME");
+  const char *prefs_path_14_c = getenv("XDG_CONFIG_HOME");
+  std::string prefs_path_14 = prefs_path_14_c ? prefs_path_14_c : "";
   if (prefs_path_14.empty()) {
     prefs_path_14 = home_path + "/.config";
   } else {
