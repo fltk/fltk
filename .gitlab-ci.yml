@@ -25,27 +25,6 @@ stages:
   - build
   - deploy
 
-# Build with autoconf/make (including Pango and Cairo)
-
-# Disabled for regular builds after commits to save build time: "only schedules"
-# Note: Build time limits on "GitLab Free" effective Oct 2020: 400 minutes per month
-
-build-autotools:
-  stage: build
-  only:
-    - schedules
-  # install the necessary build tools
-  before_script:
-    - apt update && apt -y install make autoconf man
-    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
-    - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
-    - apt -y install libpango1.0-dev libcairo2-dev
-  script:
-    - make clean
-    - ./configure --enable-pango --enable-cairo
-    - time make -j3
-    - cd examples && time make
-
 # Build with CMake and Ninja (with pango, cairo, building examples)
 
 build-cmake:
@@ -79,20 +58,24 @@ pages:
   # install the necessary build tools
   before_script:
     - date
-    - apt update && apt -y install make autoconf man doxygen doxygen-latex
+    - apt update && apt -y install cmake ninja-build man doxygen-latex
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
+    - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
+    - apt -y install libpango1.0-dev libcairo2-dev
   script:
     - date
-    - make clean
-    - cd documentation
+    - pwd
+    - mkdir build && cd build
+    - cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D FLTK_BUILD_TEST=OFF -D FLTK_USE_PANGO=ON -D FLTK_OPTION_CAIRO_WINDOW=ON ..
     - date
-    - make && make html
-    - date
-    - make pdf
+    - time ninja html
+    - time ninja pdf
     - date
     - cd ..
+    - pwd
     - mkdir -p public/
-    - mv documentation/html/* public/
-    - mv documentation/fltk.pdf public/
+    - mv build/documentation/html/* public/
+    - mv build/documentation/fltk.pdf public/
     - date
   artifacts:
     paths:
