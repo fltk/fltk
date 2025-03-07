@@ -7,6 +7,8 @@
 #ifndef _EXTCODEEDITOR_H
 #define _EXTCODEEDITOR_H
 
+#include <FL/Fl.H>
+
 /* We require at least Windows 2000 (WINVER == 0x0500) for GetFileSizeEx().  */
 /* This must be defined before #include <windows.h> - MinGW doesn't do that. */
 #if !defined(WINVER) || (WINVER < 0x0500)

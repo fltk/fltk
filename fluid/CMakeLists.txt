@@ -129,7 +129,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   # macOS
 
   set(ICON_NAME fluid.icns)
-  set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../icons/${ICON_NAME}")
+  set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
   add_executable(fluid MACOSX_BUNDLE main.cxx main.h ${ICON_PATH})
 
   # create macOS bundle wrapper script
@@ -221,8 +221,8 @@ if(UNIX)
 
   # Install desktop icons
   foreach(icon 32 48 64 128)
-    install(FILES ../icons/fluid-${icon}.png
-      DESTINATION ${FLTK_DATADIR}/../icons/hicolor/${icon}x${icon}/apps
+    install(FILES icons/fluid-${icon}.png
+      DESTINATION ${FLTK_DATADIR}/icons/hicolor/${icon}x${icon}/apps
       RENAME fluid.png
     )
   endforeach()
