@@ -1,9 +1,5 @@
-# data file for the Fltk User Interface Designer (fluid)
-version 1.0401
-header_name {.h}
-code_name {.cxx}
-comment {//
-// @INSTANCE@ for the Fast Light Tool Kit (FLTK).
+//
+// FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -17,5 +13,10 @@ comment {//
 //
 //     https://www.fltk.org/bugs.php
 //
-} {in_source in_header
-}
+
+#ifndef _FLUID_MAIN_H
+#define _FLUID_MAIN_H
+
+extern int main(int argc,char **argv);
+
+#endif // _FLUID_MAIN_H

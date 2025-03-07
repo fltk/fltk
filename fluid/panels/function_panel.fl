@@ -1,0 +1,1043 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0500
+header_name {.h}
+code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
+comment {//
+// Code dialogs for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2023 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
+//
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
+//
+} {in_source in_header
+}
+
+decl {\#include "app/fluid.h"} {private local
+}
+
+decl {\#include "app/undo.h"} {selected private local
+}
+
+decl {\#include "nodes/Fl_Type.h"} {private local
+}
+
+decl {\#include "nodes/factory.h"} {private local
+}
+
+decl {\#include "rsrcs/pixmaps.h"} {private local
+}
+
+decl {\#include "widgets/custom_widgets.h"} {private global
+}
+
+decl {\#include "widgets/widget_browser.h"} {private local
+}
+
+Function {use_tab_navigation(int, Fl_Text_Editor*)} {
+  comment {Allow widget navigation on text fields with Tab.} private return_type int
+} {
+  code {return 0;} {}
+}
+
+Function {make_function_panel()} {open
+} {
+  Fl_Window function_panel {
+    label {Function/Method Properties}
+    xywh {540 418 343 232} type Double align 80 resizable modal visible
+  } {
+    Fl_Group {} {open
+      xywh {10 10 270 20}
+    } {
+      Fl_Choice f_public_member_choice {open
+        tooltip {Change member access attribute.} xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
+      } {
+        MenuItem {} {
+          label private
+          user_data 0 user_data_type long
+          xywh {5 5 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label public
+          user_data 1 user_data_type long
+          xywh {5 5 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label protected
+          user_data 2 user_data_type long
+          xywh {5 5 100 20} labelsize 11
+        }
+      }
+      Fl_Choice f_public_choice {open
+        tooltip {Change widget accessibility.} xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
+      } {
+        MenuItem {} {
+          label static
+          user_data 0 user_data_type long
+          xywh {15 15 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label global
+          user_data 1 user_data_type long
+          xywh {15 15 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label local
+          user_data 2 user_data_type long
+          xywh {15 15 100 20} labelsize 11
+        }
+      }
+      Fl_Light_Button f_c_button {
+        label {C declaration}
+        tooltip {Declare with a C interface instead of C++.} xywh {95 10 120 20} labelsize 11
+      }
+      Fl_Box {} {
+        xywh {235 10 45 20} resizable
+      }
+    }
+    Fl_Input f_name_input {
+      label {Name(args): (blank for main())}
+      tooltip {The name of the function or method.} xywh {10 50 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Input f_return_type_input {
+      label {Return Type: (blank to return outermost widget)}
+      tooltip {The return type of the function or method.} xywh {10 90 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Text_Editor f_comment_input {
+      label {Comment:}
+      tooltip {Function comment in Doxygen format} xywh {10 125 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {f_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {f_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
+    Fl_Group {} {open
+      xywh {10 200 320 20}
+    } {
+      Fl_Return_Button f_panel_ok {
+        label OK
+        tooltip {Apply the changes.} xywh {220 200 50 20} labelsize 11 hotspot
+      }
+      Fl_Button f_panel_cancel {
+        label Cancel
+        tooltip {Cancel the changes.} xywh {280 200 50 20} labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 200 205 20} resizable
+      }
+    }
+  }
+}
+
+Function {make_code_panel()} {open
+} {
+  Fl_Window code_panel {
+    label {Code Properties}
+    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
+  return; // ignore Escape
+code_panel->hide(); // otherwise hide..}
+    xywh {539 567 540 180} type Double labelsize 11 hide resizable
+    code0 {o->size_range(200, 150);} modal
+  } {
+    Fl_Text_Editor code_input {
+      xywh {10 10 520 130} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
+      code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+      code1 {\#include "widgets/CodeEditor.h"}
+      class CodeEditor
+    }
+    Fl_Group {} {open
+      xywh {10 150 520 20} labelsize 11
+    } {
+      Fl_Return_Button code_panel_ok {
+        label OK
+        xywh {400 150 60 20} labelsize 11 hotspot
+      }
+      Fl_Button code_panel_cancel {
+        label Cancel
+        xywh {470 150 60 20} labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 150 380 20} labelsize 11 resizable
+      }
+    }
+  }
+  code {// Enable line numbers
+code_input->linenumber_width(60);
+code_input->linenumber_size(code_input->Fl_Text_Display::textsize());} {}
+}
+
+Function {make_codeblock_panel()} {open
+} {
+  Fl_Window codeblock_panel {
+    label {Code Block Properties}
+    xywh {806 735 300 115} type Double labelsize 11 hide resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
+  } {
+    Fl_Input code_before_input {
+      label {Conditional code block}
+      tooltip {\#ifdef or similar conditional code block.} xywh {10 15 280 20} labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Input code_after_input {
+      label {"{...child code...}" is inserted here}
+      tooltip {\#endif or similar conditional code block.} xywh {10 55 280 20} labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
+    }
+    Fl_Group {} {open
+      xywh {10 85 280 20}
+    } {
+      Fl_Return_Button codeblock_panel_ok {
+        label OK
+        xywh {160 85 60 20} labelsize 11 hotspot
+      }
+      Fl_Button codeblock_panel_cancel {
+        label Cancel
+        xywh {230 85 60 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 85 140 20} resizable
+      }
+    }
+  }
+}
+
+Function {make_declblock_panel()} {open
+} {
+  Fl_Window declblock_panel {
+    label {Declaration Block Properties} open
+    xywh {645 452 300 355} type Double labelsize 11 align 80 resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal size_range {300 355 0 0} visible
+  } {
+    Fl_Input declblock_before_input {
+      label {Start Code:}
+      tooltip {\#ifdef or similar conditional declaration block.} xywh {10 23 280 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Box {} {
+      label {"\\n...child code...\\n" is inserted here}
+      xywh {10 48 280 20} labelsize 11
+    }
+    Fl_Input declblock_after_input {
+      label {End Code:}
+      tooltip {\#endif or similar declaration code block.} xywh {10 80 280 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Group {} {open
+      xywh {10 105 280 120}
+    } {
+      Fl_Box {} {
+        label {Enclose code generated by children in source file:}
+        xywh {10 105 270 20} labelsize 11 align 20
+      }
+      Fl_Check_Button declblock_code_source {
+        label implementations
+        xywh {20 125 260 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Check_Button declblock_static_source {
+        label {static initializations and callbacks}
+        xywh {20 145 260 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Box {} {
+        label {Enclose code in header file:}
+        xywh {10 165 270 20} labelsize 11 align 20
+      }
+      Fl_Check_Button declblock_code_header {
+        label {forward declarations}
+        xywh {20 185 260 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Check_Button declblock_static_header {
+        label {preprecessor and callback declarations}
+        xywh {20 205 260 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Box {} {
+        xywh {280 105 10 120} labelsize 11 hide resizable
+      }
+    }
+    Fl_Text_Editor declblock_comment_input {
+      label {Comment:}
+      tooltip {Declaration comment in Doxygen format} xywh {10 242 280 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {declblock_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {declblock_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
+    Fl_Group {} {
+      xywh {10 321 280 20}
+    } {
+      Fl_Return_Button declblock_panel_ok {
+        label OK
+        xywh {160 321 60 20} labelsize 11 hotspot
+      }
+      Fl_Button declblock_panel_cancel {
+        label Cancel
+        xywh {230 321 60 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 321 140 20} resizable
+      }
+    }
+  }
+}
+
+Function {make_decl_panel()} {open
+} {
+  Fl_Window decl_panel {
+    label {Declaration Properties}
+    xywh {497 618 343 262} type Double align 80 resizable size_range {343 262 0 0} visible
+  } {
+    Fl_Group {} {
+      xywh {10 10 270 20}
+    } {
+      Fl_Box {} {
+        xywh {200 10 80 20} resizable
+      }
+      Fl_Choice decl_choice {
+        xywh {10 10 185 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label {in source file only}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {in header file only}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {"static" in source file}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {in source and "extern" in header}
+          xywh {0 0 100 20} labelsize 11
+        }
+      }
+      Fl_Choice decl_class_choice {
+        xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label private
+          xywh {10 10 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label public
+          xywh {10 10 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label protected
+          xywh {10 10 100 20} labelsize 11
+        }
+      }
+    }
+    Fl_Tile {} {open
+      xywh {10 40 320 180} resizable
+      code2 {o->size_range(0, 320, 100);}
+      code3 {o->size_range(1, 320, 60);}
+    } {
+      Fl_Group {} {open
+        xywh {10 40 320 100} box FLAT_BOX resizable
+      } {
+        Fl_Text_Editor decl_input {
+          label {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
+          xywh {10 40 320 45} labelsize 11 align 134 resizable
+          code0 {\#include "widgets/CodeEditor.h"}
+          class CodeEditor
+        }
+        Fl_Box {} {
+          xywh {20 139 300 1} box BORDER_FRAME color 43
+        }
+      }
+      Fl_Group {} {open
+        xywh {10 140 320 80} box FLAT_BOX
+      } {
+        Fl_Text_Editor decl_comment_input {
+          label {Comment:}
+          tooltip {Declaration comment in Doxygen format} xywh {10 155 320 64} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+          code0 {decl_comment_input->buffer(new Fl_Text_Buffer());}
+          code1 {decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+        }
+      }
+    }
+    Fl_Group {} {open
+      xywh {10 230 320 20}
+    } {
+      Fl_Return_Button decl_panel_ok {
+        label OK
+        xywh {200 230 60 20} labelsize 11 hotspot
+      }
+      Fl_Button decl_panel_cancel {
+        label Cancel
+        xywh {270 230 60 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 230 185 20} resizable
+      }
+    }
+  }
+}
+
+Function {make_data_panel()} {open
+} {
+  Fl_Window data_panel {
+    label {Inline Data Properties}
+    xywh {567 382 343 264} type Double align 80 resizable size_range {343 237 0 0} visible
+  } {
+    Fl_Group {} {open
+      xywh {10 10 320 48}
+    } {
+      Fl_Box {} {
+        xywh {288 10 42 20} resizable
+      }
+      Fl_Choice data_choice {open
+        xywh {10 10 185 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label {in source file only}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {in header file only}
+          xywh {0 0 100 20} labelsize 11 hide
+        }
+        MenuItem {} {
+          label {"static" in source file}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {in source and "extern" in header}
+          xywh {0 0 100 20} labelsize 11
+        }
+      }
+      Fl_Choice data_class_choice {open
+        xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label private
+          xywh {10 10 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label public
+          xywh {10 10 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label protected
+          xywh {10 10 100 20} labelsize 11
+        }
+      }
+      Fl_Choice data_mode {open
+        tooltip {text mode generates a "const char*" and a trailing NUL, compressed mode uses zlib to generate a binary block} xywh {10 38 185 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label {binary mode}
+          user_data 0 user_data_type long
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {text mode}
+          user_data 1 user_data_type long
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {compressed binary}
+          user_data 2 user_data_type long
+          xywh {0 0 100 20} labelsize 11
+        }
+      }
+    }
+    Fl_Input data_input {
+      label {Variable Name:}
+      tooltip {Inline Data variables are declared "const unsigned char []" in binary mode and "const char*" in text mode.} xywh {10 78 320 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
+    }
+    Fl_Input data_filename {
+      label {Filename:}
+      tooltip {Name and path of file that will be inlined.} xywh {10 116 280 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
+    }
+    Fl_Button data_filebrowser {
+      label {@fileopen}
+      xywh {290 116 40 20} labelcolor 134
+    }
+    Fl_Text_Editor data_comment_input {
+      label {Comment:}
+      tooltip {Declaration comment in Doxygen format} xywh {10 156 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {data_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {data_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
+    Fl_Group {} {open
+      xywh {10 231 320 20}
+    } {
+      Fl_Return_Button data_panel_ok {
+        label OK
+        xywh {200 231 60 20} labelsize 11 hotspot
+      }
+      Fl_Button data_panel_cancel {
+        label Cancel
+        xywh {270 231 60 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 231 185 20} resizable
+      }
+    }
+  }
+}
+
+Function {make_class_panel()} {open
+} {
+  Fl_Window class_panel {
+    label {Class Properties}
+    xywh {795 337 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
+  } {
+    Fl_Group {} {open
+      xywh {10 10 280 20} hide
+    } {
+      Fl_Light_Button c_public_button {
+        label public
+        tooltip {Make the class publicly accessible.} xywh {10 10 60 20} labelsize 11 when 0 hide
+      }
+      Fl_Box {} {
+        xywh {80 10 210 20} resizable
+      }
+    }
+    Fl_Input c_name_input {
+      label {Name:}
+      tooltip {Name of class.} xywh {10 20 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Input c_subclass_input {
+      label {Subclass of (text between : and \{)}
+      tooltip {Name of subclass.} xywh {10 55 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Text_Editor c_comment_input {
+      label {Comment:}
+      tooltip {Class comment in Doxygen format} xywh {10 90 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {c_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {c_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
+    Fl_Group {} {open
+      xywh {10 165 320 20}
+    } {
+      Fl_Return_Button c_panel_ok {
+        label OK
+        xywh {200 165 60 20} labelsize 11 hotspot
+      }
+      Fl_Button c_panel_cancel {
+        label Cancel
+        xywh {270 165 60 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 165 185 20} resizable
+      }
+    }
+  }
+}
+
+Function {make_comment_panel()} {open
+} {
+  Fl_Window comment_panel {
+    label {Comment Properties}
+    xywh {519 374 550 280} type Double labelsize 11 hide resizable
+    code0 {o->size_range(320, 180);} modal
+  } {
+    Fl_Text_Editor comment_input {
+      xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 textcolor 58 resizable
+      code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+      code1 {o->buffer(new Fl_Text_Buffer());}
+    }
+    Fl_Group {} {open
+      xywh {110 250 430 20} labelsize 11
+    } {
+      Fl_Return_Button comment_panel_ok {
+        label OK
+        xywh {370 250 80 20} labelsize 11 hotspot
+      }
+      Fl_Button comment_panel_cancel {
+        label Cancel
+        xywh {460 250 80 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {110 250 250 20} labelsize 11 resizable
+      }
+    }
+    Fl_Group {} {open
+      xywh {10 10 90 243} labelsize 11
+    } {
+      Fl_Light_Button comment_in_source {
+        label {In Source}
+        tooltip {Put the comment into the source (.cxx) file.} xywh {10 10 90 20} labelsize 11 when 0
+      }
+      Fl_Light_Button comment_in_header {
+        label {In Header}
+        tooltip {Put the comment into the header (.h) file.} xywh {10 40 90 20} labelsize 11 when 0
+      }
+      Fl_Menu_Button comment_predefined {
+        label Predefined open
+        xywh {10 70 90 20} labelsize 11 textsize 11
+      } {}
+      Fl_Button comment_load {
+        label {Import...}
+        xywh {10 100 90 20} labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 132 90 121} labelsize 11 resizable
+      }
+    }
+  }
+}
+
+Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
+} {
+  code {const char *type_name = (const char*)d;
+if (Fl_Type::current && Fl_Type::current->can_have_children())
+  add_new_widget_from_user(type_name, Strategy::AS_LAST_CHILD);
+else
+  add_new_widget_from_user(type_name, Strategy::AFTER_CURRENT);} {}
+}
+
+Function {make_widgetbin()} {open
+} {
+  Fl_Window widgetbin_panel {
+    label {Widget Bin}
+    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
+  exit_cb((Fl_Widget*)o, v);
+else
+  toggle_widgetbin_cb((Fl_Widget*)o, v);} open
+    xywh {395 227 600 102} type Single align 80 non_modal visible
+  } {
+    Fl_Group {} {
+      label Code open
+      xywh {3 19 79 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Function"}
+        callback type_make_cb
+        tooltip Function xywh {5 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Function]);}
+      }
+      Fl_Button {} {
+        user_data {"Class"}
+        callback type_make_cb
+        tooltip Class xywh {30 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Class]);}
+      }
+      Fl_Button {} {
+        user_data {"comment"}
+        callback type_make_cb
+        tooltip Comment xywh {55 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Comment]);}
+      }
+      Fl_Button {} {
+        user_data {"Code"}
+        callback type_make_cb
+        tooltip Code xywh {5 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Code]);}
+      }
+      Fl_Button {} {
+        user_data {"CodeBlock"}
+        callback type_make_cb
+        tooltip {Code Block} xywh {30 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_CodeBlock]);}
+      }
+      Fl_Button {} {
+        user_data {"widget_class"}
+        callback type_make_cb
+        tooltip {Widget Class} xywh {55 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Widget_Class]);}
+        class Widget_Bin_Window_Button
+      }
+      Fl_Button {} {
+        user_data {"decl"}
+        callback type_make_cb
+        tooltip Declaration xywh {5 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Decl]);}
+      }
+      Fl_Button {} {
+        user_data {"declblock"}
+        callback type_make_cb
+        tooltip {Declaration Block} xywh {30 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_DeclBlock]);}
+      }
+      Fl_Button {} {
+        user_data {"data"}
+        callback type_make_cb
+        tooltip {Inline Data} xywh {55 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Data]);}
+      }
+    }
+    Fl_Group {} {
+      label Groups open
+      xywh {87 19 79 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Window"}
+        callback type_make_cb
+        tooltip Window xywh {89 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Window]);}
+        class Widget_Bin_Window_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Group"}
+        callback type_make_cb
+        tooltip Group xywh {114 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Group]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Pack"}
+        callback type_make_cb
+        tooltip Pack xywh {139 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Pack]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Tabs"}
+        callback type_make_cb
+        tooltip Tabs xywh {89 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Tabs]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Scroll"}
+        callback type_make_cb
+        tooltip Scroll xywh {114 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Scroll]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Flex"}
+        callback type_make_cb
+        tooltip Flex xywh {139 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Flex]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Tile"}
+        callback type_make_cb
+        tooltip Tile xywh {89 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Tile]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Wizard"}
+        callback type_make_cb
+        tooltip Wizard xywh {114 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Wizard]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Grid"}
+        callback type_make_cb
+        tooltip Grid xywh {139 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Grid]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Buttons open
+      xywh {171 19 54 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Button"}
+        callback type_make_cb
+        tooltip Button xywh {173 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Button]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Return_Button"}
+        callback type_make_cb
+        tooltip {Return Button} xywh {198 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Return_Button]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Light_Button"}
+        callback type_make_cb
+        tooltip {Light Button} xywh {173 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Light_Button]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Repeat_Button"}
+        callback type_make_cb
+        tooltip {Repeat Button} xywh {198 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Repeat_Button]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Check_Button"}
+        callback type_make_cb
+        tooltip {Check Button} xywh {173 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Check_Button]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Round_Button"}
+        callback type_make_cb
+        tooltip {Round Button} xywh {198 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Round_Button]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Valuators open
+      xywh {230 19 104 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Slider"}
+        callback type_make_cb
+        tooltip Slider xywh {232 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Slider]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Scrollbar"}
+        callback type_make_cb
+        tooltip {Scroll Bar} xywh {257 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Scrollbar]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Value_Slider"}
+        callback type_make_cb
+        tooltip {Value Slider} xywh {282 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Value_Slider]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Value_Output"}
+        callback type_make_cb
+        tooltip {Value Output} xywh {307 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Value_Output]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Adjuster"}
+        callback type_make_cb
+        tooltip Adjuster xywh {232 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Adjuster]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Counter"}
+        callback type_make_cb
+        tooltip Counter xywh {257 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Counter]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Dial"}
+        callback type_make_cb
+        tooltip Dial xywh {282 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Dial]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Roller"}
+        callback type_make_cb
+        tooltip Roller xywh {232 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Roller]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Spinner"}
+        callback type_make_cb
+        tooltip Spinner xywh {257 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Spinner]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Value_Input"}
+        callback type_make_cb
+        tooltip {Value Input} xywh {282 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Value_Input]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Text open
+      xywh {339 19 54 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Input"}
+        callback type_make_cb
+        tooltip Input xywh {341 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Input]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Output"}
+        callback type_make_cb
+        tooltip Output xywh {366 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Output]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Text_Editor"}
+        callback type_make_cb
+        tooltip {Text Edit} xywh {341 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Text_Editor]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Text_Display"}
+        callback type_make_cb
+        tooltip {Text Display} xywh {366 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Text_Display]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_File_Input"}
+        callback type_make_cb
+        tooltip {File Input} xywh {341 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_File_Input]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Terminal"}
+        callback type_make_cb
+        tooltip Terminal xywh {366 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Terminal]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Menus open
+      xywh {398 19 79 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Input_Choice"}
+        callback type_make_cb
+        tooltip {Input Choice} xywh {400 22 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Input_Choice]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"menuitem"}
+        callback type_make_cb
+        tooltip {Menu Item} xywh {425 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Menu_Item]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Menu_Bar"}
+        callback type_make_cb
+        tooltip {Menu Bar} xywh {450 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Menu_Bar]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Menu_Button"}
+        callback type_make_cb
+        tooltip {Menu Button} xywh {400 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Menu_Button]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"checkmenuitem"}
+        callback type_make_cb
+        tooltip {Checkbox Menu Item} xywh {425 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Checkbox_Menu_Item]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"submenu"}
+        callback type_make_cb
+        tooltip {Sub Menu} xywh {450 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Submenu]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Choice"}
+        callback type_make_cb
+        tooltip Choice xywh {400 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Choice]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"radiomenuitem"}
+        callback type_make_cb
+        tooltip {Radio Menu Item} xywh {425 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Radio_Menu_Item]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Browsers open
+      xywh {482 19 54 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Browser"}
+        callback type_make_cb
+        tooltip Browser xywh {484 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Browser]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Tree"}
+        callback type_make_cb
+        tooltip Tree xywh {509 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Tree]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Check_Browser"}
+        callback type_make_cb
+        tooltip {Check Browser} xywh {484 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Check_Browser]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Help_View"}
+        callback type_make_cb
+        tooltip {Help Browser} xywh {509 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Help_View]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_File_Browser"}
+        callback type_make_cb
+        tooltip {File Browser} xywh {484 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_File_Browser]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Table"}
+        callback type_make_cb
+        tooltip Table xywh {509 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Table]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Misc open
+      xywh {540 19 55 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Box"}
+        callback type_make_cb
+        tooltip Box xywh {542 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Box]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Clock"}
+        callback type_make_cb
+        tooltip Clock xywh {567 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Clock]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Progress"}
+        callback type_make_cb
+        tooltip Progress xywh {542 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[ID_Progress]);}
+        class Widget_Bin_Button
+      }
+    }
+  }
+}
+
+comment {
+//} {in_source in_header
+}

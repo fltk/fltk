@@ -6,7 +6,7 @@ fluid
 fluid-shared
 TAGS
 fluid.app
-pixmaps/*.bck
+../pixmaps/*.bck
 
 # local documentation generation
 

@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -18,96 +18,108 @@
 set(TARGETS fluid)
 
 # Source files for 'fluid-lib' = all source files except the main files
-# (fluid.cxx and fluid.h)
-# Note: macOS (Xcode) needs at least one source file (fluid.cxx) to link the main
+# (main.cxx and main.h)
+# Note: macOS (Xcode) needs at least one source file (main.cxx) to link the main
 # program fluid properly
 
 set(CPPFILES
-  CodeEditor.cxx
-  StyleParse.cxx
-  Fd_Snap_Action.cxx
-  Fl_Function_Type.cxx
-  Fl_Grid_Type.cxx
-  Fl_Group_Type.cxx
-  Fl_Menu_Type.cxx
-  Fl_Type.cxx
-  Fl_Widget_Type.cxx
-  Fl_Window_Type.cxx
-  Fl_Button_Type.cxx
-  Fluid_Image.cxx
-  about_panel.cxx
-  align_widget.cxx
-  settings_panel.cxx
-  autodoc.cxx
-  code.cxx
-  custom_widgets.cxx
-  factory.cxx
-  file.cxx
-  fluid_filename.cxx
-  function_panel.cxx
-  mergeback.cxx
-  pixmaps.cxx
-  shell_command.cxx
-  codeview_panel.cxx
-  template_panel.cxx
-  undo.cxx
-  widget_browser.cxx
-  widget_panel.cxx
+  app/align_widget.cxx
+  app/Fd_Snap_Action.cxx
+  app/fluid.cxx
+  app/Fluid_Image.cxx
+  app/mergeback.cxx
+  app/shell_command.cxx
+  app/undo.cxx
+  io/code.cxx
+  io/file.cxx
+  nodes/factory.cxx
+  nodes/Fl_Button_Type.cxx
+  nodes/Fl_Function_Type.cxx
+  nodes/Fl_Grid_Type.cxx
+  nodes/Fl_Group_Type.cxx
+  nodes/Fl_Menu_Type.cxx
+  nodes/Fl_Type.cxx
+  nodes/Fl_Widget_Type.cxx
+  nodes/Fl_Window_Type.cxx
+  panels/about_panel.cxx
+  panels/codeview_panel.cxx
+  panels/function_panel.cxx
+  panels/settings_panel.cxx
+  panels/template_panel.cxx
+  panels/widget_panel.cxx
+  rsrcs/pixmaps.cxx
+  tools/autodoc.cxx
+  tools/fluid_filename.cxx
+  widgets/CodeEditor.cxx
+  widgets/custom_widgets.cxx
+  widgets/StyleParse.cxx
+  widgets/widget_browser.cxx
 )
 
 # List header files in Apple's Xcode IDE
 
 set(HEADERFILES
-  CodeEditor.h
-  Fd_Snap_Action.h
-  Fl_Function_Type.h
-  Fl_Grid_Type.h
-  Fl_Group_Type.h
-  Fl_Menu_Type.h
-  Fl_Type.h
-  Fl_Widget_Type.h
-  Fl_Window_Type.h
-  Fl_Button_Type.h
-  Fluid_Image.h
-  StyleParse.h
-  about_panel.h
-  align_widget.h
-  settings_panel.h
-  autodoc.h
-  code.h
-  comments.h
-  custom_widgets.h
-  factory.h
-  file.h
-  function_panel.h
-  mergeback.h
-  print_panel.h
-  pixmaps.h
-  shell_command.h
-  codeview_panel.h
-  template_panel.h
-  undo.h
-  widget_browser.h
-  widget_panel.h
+  app/align_widget.h
+  app/Fd_Snap_Action.h
+  app/fluid.h
+  app/Fluid_Image.h
+  app/mergeback.h
+  app/shell_command.h
+  app/undo.h
+  io/code.h
+  io/file.h
+  nodes/factory.h
+  nodes/Fl_Button_Type.h
+  nodes/Fl_Function_Type.h
+  nodes/Fl_Grid_Type.h
+  nodes/Fl_Group_Type.h
+  nodes/Fl_Menu_Type.h
+  nodes/Fl_Type.h
+  nodes/Fl_Widget_Type.h
+  nodes/Fl_Window_Type.h
+  panels/about_panel.h
+  panels/codeview_panel.h
+  panels/function_panel.h
+  panels/settings_panel.h
+  panels/template_panel.h
+  panels/widget_panel.h
+  rsrcs/comments.h
+  rsrcs/pixmaps.h
+  tools/autodoc.h
+  tools/fluid_filename.h
+  widgets/CodeEditor.h
+  widgets/custom_widgets.h
+  widgets/StyleParse.h
+  widgets/widget_browser.h
 )
 
 # Add ExternalCodeEditor: platform specific files
 
 if(WIN32)
-  list(APPEND CPPFILES ExternalCodeEditor_WIN32.cxx)
-  list(APPEND HEADERFILES ExternalCodeEditor_WIN32.h)
+  list(APPEND CPPFILES tools/ExternalCodeEditor_WIN32.cxx)
+  list(APPEND HEADERFILES tools/ExternalCodeEditor_WIN32.h)
 else()
-  list(APPEND CPPFILES ExternalCodeEditor_UNIX.cxx)
-  list(APPEND HEADERFILES ExternalCodeEditor_UNIX.h)
+  list(APPEND CPPFILES tools/ExternalCodeEditor_UNIX.cxx)
+  list(APPEND HEADERFILES tools/ExternalCodeEditor_UNIX.h)
 endif(WIN32)
 
-source_group("Header Files" FILES ${HEADERFILES})
+source_group(
+  TREE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  FILES
+    ${CPPFILES}
+    ${HEADERFILES}
+    main.cxx
+    main.h
+    CMakeLists.txt
+)
 
 # Build a local object library to avoid compiling all source files
 # multiple times for all fluid targets on Windows (fluid + fluid-cmd).
 
 add_library(fluid-lib OBJECT EXCLUDE_FROM_ALL)
 target_sources(fluid-lib PRIVATE ${CPPFILES} ${HEADERFILES})
+target_include_directories(fluid-lib PRIVATE .)
 target_link_libraries(fluid-lib PUBLIC fltk::images)
 
 # Build targets
@@ -117,8 +129,8 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   # macOS
 
   set(ICON_NAME fluid.icns)
-  set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable(fluid MACOSX_BUNDLE fluid.cxx fluid.h ${ICON_PATH})
+  set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../icons/${ICON_NAME}")
+  add_executable(fluid MACOSX_BUNDLE main.cxx main.h ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -135,10 +147,11 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 else()
 
   # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
-  add_executable(fluid WIN32 fluid.cxx fluid.h)
+  add_executable(fluid WIN32 main.cxx main.h)
 
 endif()
 
+target_include_directories(fluid PRIVATE .)
 target_link_libraries(fluid PRIVATE fluid-lib)
 
 # Build the console app on Windows
@@ -146,7 +159,8 @@ target_link_libraries(fluid PRIVATE fluid-lib)
 
 if(WIN32)
   list(APPEND TARGETS fluid-cmd)
-  add_executable(fluid-cmd fluid.cxx fluid.h)
+  add_executable(fluid-cmd main.cxx main.h)
+  target_include_directories(fluid-cmd PRIVATE .)
   target_link_libraries(fluid-cmd PRIVATE fluid-lib)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()
@@ -207,8 +221,8 @@ if(UNIX)
 
   # Install desktop icons
   foreach(icon 32 48 64 128)
-    install(FILES icons/fluid-${icon}.png
-      DESTINATION ${FLTK_DATADIR}/icons/hicolor/${icon}x${icon}/apps
+    install(FILES ../icons/fluid-${icon}.png
+      DESTINATION ${FLTK_DATADIR}/../icons/hicolor/${icon}x${icon}/apps
       RENAME fluid.png
     )
   endforeach()
