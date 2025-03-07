@@ -35,8 +35,28 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
 project(FLTK VERSION 1.5.0)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+#######################################################################
+# set the required C++ standard -- may be overridden by the user
+#######################################################################
+
+# Note 1: We don't check if the user sets a standard older than C++11,
+#         but if they do, the build will fail.
+# Note 2: For optimal portability we disable compiler specific
+#         extensions, but this can also be overridden by the user.
+# Note 3: This code is experimental and intentionally undocumented.
+#         It may be removed or changed w/o notice.
+
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 11)
+endif()
+
+if(NOT DEFINED CMAKE_CXX_STANDARD_REQUIRED)
+  set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+endif()
+
+if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 #######################################################################
 # include macro and function definitions for general usage
