@@ -600,8 +600,8 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
     fnfc.filter("FLUID Layouts\t*.fll\n");
     std::string filename = g_layout_list.filename_;
-    fnfc.directory(fl_filename_path(filename).c_str());
-    fnfc.preset_file(fl_filename_name(filename).c_str());
+    fnfc.directory(fl_filename_path_str(filename).c_str());
+    fnfc.preset_file(fl_filename_name_str(filename).c_str());
     if (fnfc.show() != 0) return;
     const char *new_filename = fnfc.filename();
     if (!new_filename) return;

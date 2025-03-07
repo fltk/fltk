@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/filename.H>
 
 #include <string>
 

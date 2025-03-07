@@ -29,137 +29,15 @@
         the next release after 1.4.x will be. We'll use std::string instead!
 */
 
+#include "tools/fluid_filename.h"
+
 #include <FL/filename.H>
 #include <FL/Fl.H>
-#include <FL/fl_string_functions.h>
-#include "../src/flstring.h"
-
-#include <stdlib.h>
-#include <string>
-
-/**
- Return a new string that contains the name part of the filename.
- \param[in] filename file path and name
- \return the name part of a filename
- \see fl_filename_name(const char *filename)
- */
-std::string fl_filename_name(const std::string &filename) {
-  return std::string(fl_filename_name(filename.c_str()));
-}
-
-/**
- Return a new string that contains the path part of the filename.
- \param[in] filename file path and name
- \return the path part of a filename without the name
- \see fl_filename_name(const char *filename)
- */
-std::string fl_filename_path(const std::string &filename) {
-  const char *base = filename.c_str();
-  const char *name = fl_filename_name(base);
-  if (name) {
-    return std::string(base, (int)(name-base));
-  } else {
-    return std::string();
-  }
-}
-
-/**
- Return a new string that contains the filename extension.
- \param[in] filename file path and name
- \return the filename extension including the prepending '.', or an empty
-    string if the filename has no extension
- \see fl_filename_ext(const char *buf)
- */
-std::string fl_filename_ext(const std::string &filename) {
-  return std::string(fl_filename_ext(filename.c_str()));
-}
-
-/**
- Return a copy of the old filename with the new extension.
- \param[in] filename file path and name
- \param[in] new_extension new filename extension, starts with a '.'
- \return the new filename
- \see fl_filename_setext(char *to, int tolen, const char *ext)
- */
-std::string fl_filename_setext(const std::string &filename, const std::string &new_extension) {
-  char buffer[FL_PATH_MAX];
-  fl_strlcpy(buffer, filename.c_str(), FL_PATH_MAX);
-  fl_filename_setext(buffer, FL_PATH_MAX, new_extension.c_str());
-  return std::string(buffer);
-}
-
-/**
- Expands a filename containing shell variables and tilde (~).
- \param[in] from file path and name
- \return the new, expanded filename
- \see fl_filename_expand(char *to, int tolen, const char *from)
-*/
-std::string fl_filename_expand(const std::string &from) {
-  char buffer[FL_PATH_MAX];
-  fl_filename_expand(buffer, FL_PATH_MAX, from.c_str());
-  return std::string(buffer);
-}
-
-/**
- Makes a filename absolute from a filename relative to the current working directory.
- \param[in] from relative filename
- \return the new, absolute filename
- \see fl_filename_absolute(char *to, int tolen, const char *from)
- */
-std::string fl_filename_absolute(const std::string &from) {
-  char buffer[FL_PATH_MAX];
-  fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str());
-  return std::string(buffer);
-}
-
-/**
- Append the relative filename `from` to the absolute filename `base` to form
- the new absolute path.
- \param[in] from relative filename
- \param[in] base `from` is relative to this absolute file path
- \return the new, absolute filename
- \see fl_filename_absolute(char *to, int tolen, const char *from, const char *base)
- */
-std::string fl_filename_absolute(const std::string &from, const std::string &base) {
-  char buffer[FL_PATH_MAX];
-  fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
-  return std::string(buffer);
-}
-
-/**
- Makes a filename relative to the current working directory.
- \param[in] from file path and name
- \return the new, relative filename
- \see fl_filename_relative(char *to, int tolen, const char *from)
- */
-std::string fl_filename_relative(const std::string &from) {
-  char buffer[FL_PATH_MAX];
-  fl_filename_relative(buffer, FL_PATH_MAX, from.c_str());
-  return std::string(buffer);
-}
-
-/**
- Makes a filename relative to any directory.
- \param[in] from file path and name
- \param[in] base relative to this absolute path
- \return the new, relative filename
- \see fl_filename_relative(char *to, int tolen, const char *from, const char *base)
- */
-std::string fl_filename_relative(const std::string &from, const std::string &base) {
-  char buffer[FL_PATH_MAX];
-  fl_filename_relative(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
-  return std::string(buffer);
-}
-
-/** Cross-platform function to get the current working directory
- as a UTF-8 encoded value in an std::string.
- \return the CWD encoded as UTF-8
- */
-std::string fl_getcwd() {
-  char buffer[FL_PATH_MAX];
-  fl_getcwd(buffer, FL_PATH_MAX);
-  return std::string(buffer);
-}
+//#include <FL/fl_string_functions.h>
+//#include "../src/flstring.h"
+//
+//#include <stdlib.h>
+//#include <string>
 
 /**
  Return a shortened filename for limited display width.
@@ -184,7 +62,7 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
   static std::string home;
   static int home_chars = -1;
   if (home_chars==-1) {
-    home = fl_filename_expand(tilde);
+    home = fl_filename_expand_str(tilde);
     home_chars = fl_utf_nb_char((const uchar*)home.c_str(), (int)home.size());
   }
   std::string homed_filename;
