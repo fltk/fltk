@@ -22,7 +22,7 @@
 #include "nodes/Fl_Type.h"
 #include "nodes/factory.h"
 #include "rsrcs/pixmaps.h"
-#include "widgets/custom_widgets.h"
+#include "widgets/Bin_Button.h"
 #include "widgets/widget_browser.h"
 
 /**
@@ -152,7 +152,7 @@ static void cb_code_panel(Fl_Double_Window*, void*) {
   code_panel->hide(); // otherwise hide..;
 }
 
-CodeEditor *code_input=(CodeEditor *)0;
+fld::widget::Code_Editor *code_input=(fld::widget::Code_Editor *)0;
 
 Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
 
@@ -162,7 +162,7 @@ Fl_Double_Window* make_code_panel() {
   { Fl_Double_Window* o = code_panel = new Fl_Double_Window(540, 180, "Code Properties");
     code_panel->labelsize(11);
     code_panel->callback((Fl_Callback*)cb_code_panel);
-    { CodeEditor* o = code_input = new CodeEditor(10, 10, 520, 130);
+    { fld::widget::Code_Editor* o = code_input = new fld::widget::Code_Editor(10, 10, 520, 130);
       code_input->box(FL_DOWN_BOX);
       code_input->color(FL_BACKGROUND2_COLOR);
       code_input->selection_color(FL_SELECTION_COLOR);
@@ -176,7 +176,7 @@ Fl_Double_Window* make_code_panel() {
       code_input->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(code_input);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
-    } // CodeEditor* code_input
+    } // fld::widget::Code_Editor* code_input
     { Fl_Group* o = new Fl_Group(10, 150, 520, 20);
       o->labelsize(11);
       { code_panel_ok = new Fl_Return_Button(400, 150, 60, 20, "OK");
@@ -385,7 +385,7 @@ Fl_Menu_Item menu_decl_class_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-CodeEditor *decl_input=(CodeEditor *)0;
+fld::widget::Code_Editor *decl_input=(fld::widget::Code_Editor *)0;
 
 Fl_Text_Editor *decl_comment_input=(Fl_Text_Editor *)0;
 
@@ -417,7 +417,7 @@ Fl_Double_Window* make_decl_panel() {
     { Fl_Tile* o = new Fl_Tile(10, 40, 320, 180);
       { Fl_Group* o = new Fl_Group(10, 40, 320, 100);
         o->box(FL_FLAT_BOX);
-        { decl_input = new CodeEditor(10, 40, 320, 45, "This can be any declaration, like \"int x;\", an external symbol like \"exter"
+        { decl_input = new fld::widget::Code_Editor(10, 40, 320, 45, "This can be any declaration, like \"int x;\", an external symbol like \"exter"
 "n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo"
 "\" or \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list"
 ";\".");
@@ -431,7 +431,7 @@ Fl_Double_Window* make_decl_panel() {
           decl_input->align(Fl_Align(134));
           decl_input->when(FL_WHEN_RELEASE);
           Fl_Group::current()->resizable(decl_input);
-        } // CodeEditor* decl_input
+        } // fld::widget::Code_Editor* decl_input
         { Fl_Box* o = new Fl_Box(20, 139, 300, 1);
           o->box(FL_BORDER_FRAME);
           o->color((Fl_Color)43);
@@ -816,7 +816,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("CodeBlock"));
         o->image(pixmap[ID_CodeBlock]);
       } // Fl_Button* o
-      { Widget_Bin_Window_Button* o = new Widget_Bin_Window_Button(55, 46, 24, 24);
+      { fld::widget::Bin_Window_Button* o = new fld::widget::Bin_Window_Button(55, 46, 24, 24);
         o->tooltip("Widget Class");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -829,7 +829,7 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Widget_Class]);
-      } // Widget_Bin_Window_Button* o
+      } // fld::widget::Bin_Window_Button* o
       { Fl_Button* o = new Fl_Button(5, 71, 24, 24);
         o->tooltip("Declaration");
         o->box(FL_THIN_UP_BOX);
@@ -852,7 +852,7 @@ Fl_Window* make_widgetbin() {
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(87, 19, 79, 79, "Groups");
       o->labelsize(12);
-      { Widget_Bin_Window_Button* o = new Widget_Bin_Window_Button(89, 21, 24, 24);
+      { fld::widget::Bin_Window_Button* o = new fld::widget::Bin_Window_Button(89, 21, 24, 24);
         o->tooltip("Window");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -865,8 +865,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Window]);
-      } // Widget_Bin_Window_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(114, 21, 24, 24);
+      } // fld::widget::Bin_Window_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(114, 21, 24, 24);
         o->tooltip("Group");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -879,8 +879,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Group]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(139, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(139, 21, 24, 24);
         o->tooltip("Pack");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -893,8 +893,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Pack]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(89, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(89, 46, 24, 24);
         o->tooltip("Tabs");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -907,8 +907,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Tabs]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(114, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(114, 46, 24, 24);
         o->tooltip("Scroll");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -921,8 +921,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Scroll]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(139, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(139, 46, 24, 24);
         o->tooltip("Flex");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -935,8 +935,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Flex]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(89, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(89, 71, 24, 24);
         o->tooltip("Tile");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -949,8 +949,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Tile]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(114, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(114, 71, 24, 24);
         o->tooltip("Wizard");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -963,8 +963,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Wizard]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(139, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(139, 71, 24, 24);
         o->tooltip("Grid");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -977,12 +977,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Grid]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(171, 19, 54, 79, "Buttons");
       o->labelsize(12);
-      { Widget_Bin_Button* o = new Widget_Bin_Button(173, 21, 24, 24);
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(173, 21, 24, 24);
         o->tooltip("Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -995,8 +995,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Button]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(198, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(198, 21, 24, 24);
         o->tooltip("Return Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1009,8 +1009,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Return_Button]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(173, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(173, 46, 24, 24);
         o->tooltip("Light Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1023,8 +1023,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Light_Button]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(198, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(198, 46, 24, 24);
         o->tooltip("Repeat Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1037,8 +1037,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Repeat_Button]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(173, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(173, 71, 24, 24);
         o->tooltip("Check Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1051,8 +1051,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Check_Button]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(198, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(198, 71, 24, 24);
         o->tooltip("Round Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1065,12 +1065,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Round_Button]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(230, 19, 104, 79, "Valuators");
       o->labelsize(12);
-      { Widget_Bin_Button* o = new Widget_Bin_Button(232, 21, 24, 24);
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(232, 21, 24, 24);
         o->tooltip("Slider");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1083,8 +1083,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Slider]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(257, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(257, 21, 24, 24);
         o->tooltip("Scroll Bar");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1097,8 +1097,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Scrollbar]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(282, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(282, 21, 24, 24);
         o->tooltip("Value Slider");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1111,8 +1111,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Value_Slider]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(307, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(307, 21, 24, 24);
         o->tooltip("Value Output");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1125,8 +1125,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Value_Output]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(232, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(232, 46, 24, 24);
         o->tooltip("Adjuster");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1139,8 +1139,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Adjuster]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(257, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(257, 46, 24, 24);
         o->tooltip("Counter");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1153,8 +1153,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Counter]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(282, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(282, 46, 24, 24);
         o->tooltip("Dial");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1167,8 +1167,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Dial]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(232, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(232, 71, 24, 24);
         o->tooltip("Roller");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1181,8 +1181,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Roller]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(257, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(257, 71, 24, 24);
         o->tooltip("Spinner");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1195,8 +1195,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Spinner]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(282, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(282, 71, 24, 24);
         o->tooltip("Value Input");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1209,12 +1209,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Value_Input]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(339, 19, 54, 79, "Text");
       o->labelsize(12);
-      { Widget_Bin_Button* o = new Widget_Bin_Button(341, 21, 24, 24);
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(341, 21, 24, 24);
         o->tooltip("Input");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1227,8 +1227,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Input]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(366, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(366, 21, 24, 24);
         o->tooltip("Output");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1241,8 +1241,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Output]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(341, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(341, 46, 24, 24);
         o->tooltip("Text Edit");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1255,8 +1255,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Text_Editor]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(366, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(366, 46, 24, 24);
         o->tooltip("Text Display");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1269,8 +1269,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Text_Display]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(341, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(341, 71, 24, 24);
         o->tooltip("File Input");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1283,8 +1283,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_File_Input]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(366, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(366, 71, 24, 24);
         o->tooltip("Terminal");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1297,12 +1297,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Terminal]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(398, 19, 79, 79, "Menus");
       o->labelsize(12);
-      { Widget_Bin_Button* o = new Widget_Bin_Button(400, 22, 24, 24);
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(400, 22, 24, 24);
         o->tooltip("Input Choice");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1315,8 +1315,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Input_Choice]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(425, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(425, 21, 24, 24);
         o->tooltip("Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1329,8 +1329,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Menu_Item]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(450, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(450, 21, 24, 24);
         o->tooltip("Menu Bar");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1343,8 +1343,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Menu_Bar]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(400, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(400, 46, 24, 24);
         o->tooltip("Menu Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1357,8 +1357,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Menu_Button]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(425, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(425, 46, 24, 24);
         o->tooltip("Checkbox Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1371,8 +1371,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Checkbox_Menu_Item]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(450, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(450, 46, 24, 24);
         o->tooltip("Sub Menu");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1385,8 +1385,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Submenu]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(400, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(400, 71, 24, 24);
         o->tooltip("Choice");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1399,8 +1399,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Choice]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(425, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(425, 71, 24, 24);
         o->tooltip("Radio Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1413,12 +1413,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Radio_Menu_Item]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(482, 19, 54, 79, "Browsers");
       o->labelsize(12);
-      { Widget_Bin_Button* o = new Widget_Bin_Button(484, 21, 24, 24);
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(484, 21, 24, 24);
         o->tooltip("Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1431,8 +1431,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Browser]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(509, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(509, 21, 24, 24);
         o->tooltip("Tree");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1445,8 +1445,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Tree]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(484, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(484, 46, 24, 24);
         o->tooltip("Check Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1459,8 +1459,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Check_Browser]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(509, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(509, 46, 24, 24);
         o->tooltip("Help Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1473,8 +1473,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Help_View]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(484, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(484, 71, 24, 24);
         o->tooltip("File Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1487,8 +1487,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_File_Browser]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(509, 71, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(509, 71, 24, 24);
         o->tooltip("Table");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1501,12 +1501,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Table]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(540, 19, 55, 79, "Misc");
       o->labelsize(12);
-      { Widget_Bin_Button* o = new Widget_Bin_Button(542, 21, 24, 24);
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(542, 21, 24, 24);
         o->tooltip("Box");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1519,8 +1519,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Box]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(567, 21, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(567, 21, 24, 24);
         o->tooltip("Clock");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1533,8 +1533,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Clock]);
-      } // Widget_Bin_Button* o
-      { Widget_Bin_Button* o = new Widget_Bin_Button(542, 46, 24, 24);
+      } // fld::widget::Bin_Button* o
+      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(542, 46, 24, 24);
         o->tooltip("Progress");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -1547,7 +1547,7 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[ID_Progress]);
-      } // Widget_Bin_Button* o
+      } // fld::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     widgetbin_panel->set_non_modal();

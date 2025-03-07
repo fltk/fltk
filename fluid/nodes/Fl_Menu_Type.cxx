@@ -29,7 +29,7 @@
 #include "io/file.h"
 #include "io/code.h"
 #include "nodes/Fl_Window_Type.h"
-#include "widgets/custom_widgets.h"
+#include "widgets/Formula_Input.h"
 #include "widgets/widget_browser.h"
 
 #include <FL/Fl.H>

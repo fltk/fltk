@@ -1,7 +1,7 @@
 //
 // Syntax highlighting for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 // Copyright 2020 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -15,12 +15,15 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "StyleParse.h"
+#include "Style_Parser.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>     // bsearch()
+
+using namespace fld;
+using namespace fld::widget;
 
 // Sorted list of C/C++ keywords...
 static const char * const code_keywords[] = {
@@ -130,7 +133,7 @@ static void* search_types(char *find) {
 //    Applies the current style, advances to next text + style char.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_over_char(int handle_crlf) {
+int Style_Parser::parse_over_char(int handle_crlf) {
   char c = *tbuff;
 
   // End of line?
@@ -157,7 +160,7 @@ int StyleParse::parse_over_char(int handle_crlf) {
 // Parse over white space using current style
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_over_white() {
+int Style_Parser::parse_over_white() {
   while ( len > 0 && strchr(" \t", *tbuff))
     { if ( !parse_over_char() ) return 0; }
   return 1;
@@ -166,7 +169,7 @@ int StyleParse::parse_over_white() {
 // Parse over non-white alphabetic text
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_over_alpha() {
+int Style_Parser::parse_over_alpha() {
   while ( len > 0 && isalpha(*tbuff) )
     { if ( !parse_over_char() ) return 0; }
   return 1;
@@ -175,7 +178,7 @@ int StyleParse::parse_over_alpha() {
 // Parse to end of line in specified style.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_to_eol(char s) {
+int Style_Parser::parse_to_eol(char s) {
   char save = style;
   style = s;
   while ( *tbuff != '\n' )
@@ -187,7 +190,7 @@ int StyleParse::parse_to_eol(char s) {
 // Parse a block comment until end of comment or buffer.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_block_comment() {
+int Style_Parser::parse_block_comment() {
   char save = style;
   style = 'C';                            // block comment style
   while ( len > 0 ) {
@@ -203,7 +206,7 @@ int StyleParse::parse_block_comment() {
 }
 
 // Copy keyword from tbuff -> keyword[] buffer
-void StyleParse::buffer_keyword() {
+void Style_Parser::buffer_keyword() {
   char *key  = keyword;
   char *kend = key + sizeof(keyword) - 1; // end of buffer
   for ( const char *s=tbuff;
@@ -215,7 +218,7 @@ void StyleParse::buffer_keyword() {
 // Parse over specified 'key'word in specified style 's'.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_over_key(const char *key, char s) {
+int Style_Parser::parse_over_key(const char *key, char s) {
   char save = style;
   style = s;
   // Parse over the keyword while applying style to sbuff
@@ -229,7 +232,7 @@ int StyleParse::parse_over_key(const char *key, char s) {
 // Parse over angle brackets <..> in specified style.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_over_angles(char s) {
+int Style_Parser::parse_over_angles(char s) {
   if ( *tbuff != '<' ) return 1; // not <..>, early exit
   char save = style;
   style = s;
@@ -245,7 +248,7 @@ int StyleParse::parse_over_angles(char s) {
 //    spi.keyword[] will contain parsed word.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_keyword() {
+int Style_Parser::parse_keyword() {
   // Parse into 'keyword' buffer
   buffer_keyword();
   char *key = keyword;
@@ -262,7 +265,7 @@ int StyleParse::parse_keyword() {
 // Style parse a quoted string, either "" or ''.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_quoted_string(char quote_char, // e.g. '"' or '\''
+int Style_Parser::parse_quoted_string(char quote_char, // e.g. '"' or '\''
                                     char in_style) { // style for quoted text
   style = in_style;                      // start string style
   if ( !parse_over_char() ) return 0;    // parse over opening quote
@@ -289,7 +292,7 @@ int StyleParse::parse_quoted_string(char quote_char, // e.g. '"' or '\''
 // Style parse a directive (#include, #define..)
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_directive() {
+int Style_Parser::parse_directive() {
   style = 'E';                             // start directive style
   if ( !parse_over_char()  )    return 0;  // Parse over '#'
   if ( !parse_over_white() )    return 0;  // Parse over any whitespace after '#'
@@ -303,7 +306,7 @@ int StyleParse::parse_directive() {
 // Style parse a line comment to end of line.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_line_comment() {
+int Style_Parser::parse_line_comment() {
   return parse_to_eol('B');
 }
 
@@ -312,7 +315,7 @@ int StyleParse::parse_line_comment() {
 //    a continuation of a line, such as in a multiline #directive.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_escape() {
+int Style_Parser::parse_escape() {
   const char no_crlf = 0;
   if ( !parse_over_char(no_crlf) ) return 0;     // backslash
   if ( !parse_over_char(no_crlf) ) return 0;     // char escaped
@@ -322,7 +325,7 @@ int StyleParse::parse_escape() {
 // Parse all other non-specific characters
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_all_else() {
+int Style_Parser::parse_all_else() {
   last = isalnum(*tbuff) || *tbuff == '_' || *tbuff == '.';
   return parse_over_char();
 }

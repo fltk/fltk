@@ -50,9 +50,12 @@ set(CPPFILES
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
   tools/fluid_filename.cxx
-  widgets/CodeEditor.cxx
-  widgets/custom_widgets.cxx
-  widgets/StyleParse.cxx
+  widgets/Code_Editor.cxx
+  widgets/Code_Viewer.cxx
+  widgets/Text_Viewer.cxx
+  widgets/Formula_Input.cxx
+  widgets/Bin_Button.cxx
+  widgets/Style_Parser.cxx
   widgets/widget_browser.cxx
 )
 
@@ -87,9 +90,12 @@ set(HEADERFILES
   rsrcs/pixmaps.h
   tools/autodoc.h
   tools/fluid_filename.h
-  widgets/CodeEditor.h
-  widgets/custom_widgets.h
-  widgets/StyleParse.h
+  widgets/Code_Editor.h
+  widgets/Code_Viewer.h
+  widgets/Text_Viewer.h
+  widgets/Formula_Input.h
+  widgets/Bin_Button.h
+  widgets/Style_Parser.h
   widgets/widget_browser.h
 )
 

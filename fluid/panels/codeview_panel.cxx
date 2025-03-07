@@ -265,13 +265,13 @@ Fl_Tabs *cv_tab=(Fl_Tabs *)0;
 
 Fl_Group *cv_source_tab=(Fl_Group *)0;
 
-CodeViewer *cv_source=(CodeViewer *)0;
+fld::widget::Code_Viewer *cv_source=(fld::widget::Code_Viewer *)0;
 
-CodeViewer *cv_header=(CodeViewer *)0;
+fld::widget::Code_Viewer *cv_header=(fld::widget::Code_Viewer *)0;
 
-TextViewer *cv_strings=(TextViewer *)0;
+fld::widget::Text_Viewer *cv_strings=(fld::widget::Text_Viewer *)0;
 
-TextViewer *cv_project=(TextViewer *)0;
+fld::widget::Text_Viewer *cv_project=(fld::widget::Text_Viewer *)0;
 
 Fl_Group *cv_find_row=(Fl_Group *)0;
 
@@ -400,7 +400,7 @@ Fl_Double_Window* make_codeview() {
       cv_tab->callback((Fl_Callback*)update_codeview_position_cb);
       { cv_source_tab = new Fl_Group(10, 35, 500, 415, "Source");
         cv_source_tab->labelsize(13);
-        { CodeViewer* o = cv_source = new CodeViewer(10, 40, 500, 410);
+        { fld::widget::Code_Viewer* o = cv_source = new fld::widget::Code_Viewer(10, 40, 500, 410);
           cv_source->box(FL_DOWN_FRAME);
           cv_source->color(FL_BACKGROUND2_COLOR);
           cv_source->selection_color(FL_SELECTION_COLOR);
@@ -415,14 +415,14 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_source);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // CodeViewer* cv_source
+        } // fld::widget::Code_Viewer* cv_source
         cv_source_tab->end();
         Fl_Group::current()->resizable(cv_source_tab);
       } // Fl_Group* cv_source_tab
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Header");
         o->labelsize(13);
         o->hide();
-        { CodeViewer* o = cv_header = new CodeViewer(10, 40, 500, 410);
+        { fld::widget::Code_Viewer* o = cv_header = new fld::widget::Code_Viewer(10, 40, 500, 410);
           cv_header->box(FL_DOWN_FRAME);
           cv_header->color(FL_BACKGROUND2_COLOR);
           cv_header->selection_color(FL_SELECTION_COLOR);
@@ -437,13 +437,13 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_header);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // CodeViewer* cv_header
+        } // fld::widget::Code_Viewer* cv_header
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Strings");
         o->labelsize(13);
         o->hide();
-        { TextViewer* o = cv_strings = new TextViewer(10, 40, 500, 410);
+        { fld::widget::Text_Viewer* o = cv_strings = new fld::widget::Text_Viewer(10, 40, 500, 410);
           cv_strings->box(FL_DOWN_FRAME);
           cv_strings->color(FL_BACKGROUND2_COLOR);
           cv_strings->selection_color(FL_SELECTION_COLOR);
@@ -458,13 +458,13 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_strings);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // TextViewer* cv_strings
+        } // fld::widget::Text_Viewer* cv_strings
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Project");
         o->labelsize(13);
         o->hide();
-        { TextViewer* o = cv_project = new TextViewer(10, 40, 500, 410);
+        { fld::widget::Text_Viewer* o = cv_project = new fld::widget::Text_Viewer(10, 40, 500, 410);
           cv_project->box(FL_DOWN_FRAME);
           cv_project->color(FL_BACKGROUND2_COLOR);
           cv_project->selection_color(FL_SELECTION_COLOR);
@@ -479,7 +479,7 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_project);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // TextViewer* cv_project
+        } // fld::widget::Text_Viewer* cv_project
         o->end();
       } // Fl_Group* o
       cv_tab->end();

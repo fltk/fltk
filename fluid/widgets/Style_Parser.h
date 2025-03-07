@@ -1,7 +1,7 @@
 //
 // Syntax highlighting for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 // Copyright 2020 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -15,30 +15,25 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef StyleParse_h
-#define StyleParse_h
+#ifndef FLUID_WIDGETS_STYLE_PARSER_H
+#define FLUID_WIDGETS_STYLE_PARSER_H
 
-// Class to manage style parsing, friend of CodeEditor
-class StyleParse {
+namespace fld {
+namespace widget {
+
+// Class to manage style parsing, friend of Code_Editor
+class Style_Parser {
 public:
-  const char *tbuff;        // text buffer
-  char       *sbuff;        // style buffer
-  int         len;          // running length
-  char        style;        // current style
-  char        lwhite;       // leading white space (1=white, 0=past white)
-  int         col;          // line's column counter
-  char        keyword[40];  // keyword parsing buffer
-  char        last;         // flag for keyword parsing
+  const char *tbuff { nullptr };  // text buffer
+  char       *sbuff { nullptr };  // style buffer
+  int         len { 0 };          // running length
+  char        style { 0 };        // current style
+  char        lwhite { 1 };       // leading white space (1=white, 0=past white)
+  int         col { 0 };          // line's column counter
+  char        keyword[40] { };    // keyword parsing buffer
+  char        last { 0 };         // flag for keyword parsing
 
-  StyleParse() {
-    tbuff  = 0;
-    sbuff  = 0;
-    len    = 0;
-    style  = 0;
-    lwhite = 1;
-    col    = 0;
-    last   = 0;
-  }
+  Style_Parser() = default;
 
   // Methods to aid in parsing
   int  parse_over_char(int handle_crlf=1);
@@ -51,11 +46,14 @@ public:
   int  parse_over_angles(char s);
   int  parse_keyword();           // "switch"
   int  parse_quoted_string(char quote_char, char in_style);
-                                  // "hello", 'x'
+  // "hello", 'x'
   int  parse_directive();         // "#define"
   int  parse_line_comment();      // "// text.."
   int  parse_escape();            // "\'"
   int  parse_all_else();          // all other code
 };
 
-#endif // StyleParse_h
+} // namespace widget
+} // namespace fld
+
+#endif // FLUID_WIDGETS_STYLE_PARSER_H

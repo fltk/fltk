@@ -41,8 +41,8 @@ Fl_Double_Window* make_function_panel();
 extern Fl_Menu_Item menu_f_public_member_choice[];
 extern Fl_Menu_Item menu_f_public_choice[];
 extern Fl_Double_Window *code_panel;
-#include "widgets/CodeEditor.h"
-extern CodeEditor *code_input;
+#include "widgets/Code_Editor.h"
+extern fld::widget::Code_Editor *code_input;
 extern Fl_Return_Button *code_panel_ok;
 extern Fl_Button *code_panel_cancel;
 Fl_Double_Window* make_code_panel();
@@ -68,7 +68,7 @@ extern Fl_Double_Window *decl_panel;
 extern Fl_Choice *decl_choice;
 extern Fl_Choice *decl_class_choice;
 #include <FL/Fl_Tile.H>
-extern CodeEditor *decl_input;
+extern fld::widget::Code_Editor *decl_input;
 extern Fl_Text_Editor *decl_comment_input;
 extern Fl_Return_Button *decl_panel_ok;
 extern Fl_Button *decl_panel_cancel;

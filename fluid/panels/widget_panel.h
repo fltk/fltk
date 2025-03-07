@@ -19,7 +19,7 @@
 #ifndef widget_panel_h
 #define widget_panel_h
 #include <FL/Fl.H>
-#include "widgets/custom_widgets.h"
+#include "widgets/Formula_Input.h"
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *image_panel_window;
 #include <FL/Fl_Group.H>
@@ -28,16 +28,16 @@ extern Fl_Group *image_panel_imagegroup;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Shared_Image.H>
 extern Fl_Box *image_panel_data;
-extern Fluid_Coord_Input *image_panel_imagew;
-extern Fluid_Coord_Input *image_panel_imageh;
+extern fld::widget::Formula_Input *image_panel_imagew;
+extern fld::widget::Formula_Input *image_panel_imageh;
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Button.H>
 extern void compress_image_cb(Fl_Check_Button*, void*);
 extern void bind_image_cb(Fl_Check_Button*, void*);
 extern Fl_Group *image_panel_deimagegroup;
 extern Fl_Box *image_panel_dedata;
-extern Fluid_Coord_Input *image_panel_deimagew;
-extern Fluid_Coord_Input *image_panel_deimageh;
+extern fld::widget::Formula_Input *image_panel_deimagew;
+extern fld::widget::Formula_Input *image_panel_deimageh;
 extern void compress_deimage_cb(Fl_Check_Button*, void*);
 extern void bind_deimage_cb(Fl_Check_Button*, void*);
 extern Fl_Button *image_panel_close;
@@ -63,14 +63,14 @@ extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
 extern void position_group_cb(Fl_Group*, void*);
-extern void x_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_x_input;
-extern void y_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_y_input;
-extern void w_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_w_input;
-extern void h_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_h_input;
+extern void x_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_x_input;
+extern void y_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_y_input;
+extern void w_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_w_input;
+extern void h_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_h_input;
 extern void wc_relative_cb(Fl_Choice*, void*);
 extern void flex_size_group_cb(Fl_Group*, void*);
 extern Fl_Group *wp_gui_flexp;
@@ -161,9 +161,9 @@ extern Fl_Input *v_input[4];
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Text_Editor.H>
 extern Fl_Text_Editor *wComment;
-#include "widgets/CodeEditor.h"
-extern void callback_cb(CodeEditor*, void*);
-extern CodeEditor *wCallback;
+#include "widgets/Code_Editor.h"
+extern void callback_cb(fld::widget::Code_Editor*, void*);
+extern fld::widget::Code_Editor *wCallback;
 extern Fl_Group *wp_cpp_callback;
 extern void user_data_cb(Fl_Input*, void*);
 extern Fl_Menu_Item whenmenu[];
@@ -172,12 +172,12 @@ extern void when_cb(Fl_Menu_Button*, void*);
 extern void user_data_type_cb(Fl_Input_Choice*, void*);
 extern Fl_Box *w_when_box;
 extern Fl_Group *widget_tab_grid_child;
-extern void grid_set_row_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_grid_row_input;
+extern void grid_set_row_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_grid_row_input;
 extern void grid_dec_row_cb(Fl_Button*, void*);
 extern void grid_inc_row_cb(Fl_Button*, void*);
-extern void grid_set_col_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_grid_col_input;
+extern void grid_set_col_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_grid_col_input;
 extern void grid_dec_col_cb(Fl_Button*, void*);
 extern void grid_inc_col_cb(Fl_Button*, void*);
 extern Fl_Box *widget_grid_transient;
@@ -186,24 +186,24 @@ extern Fl_Group *wp_gridc_align;
 extern void grid_align_horizontal_cb(Fl_Choice*, void*);
 extern void grid_align_vertical_cb(Fl_Choice*, void*);
 extern Fl_Group *wp_gridc_size;
-extern void grid_set_min_wdt_cb(Fluid_Coord_Input*, void*);
-extern void grid_set_min_hgt_cb(Fluid_Coord_Input*, void*);
-extern void grid_set_rowspan_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_grid_rowspan_input;
+extern void grid_set_min_wdt_cb(fld::widget::Formula_Input*, void*);
+extern void grid_set_min_hgt_cb(fld::widget::Formula_Input*, void*);
+extern void grid_set_rowspan_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_grid_rowspan_input;
 extern void grid_dec_rowspan_cb(Fl_Button*, void*);
 extern void grid_inc_rowspan_cb(Fl_Button*, void*);
-extern void grid_set_colspan_cb(Fluid_Coord_Input*, void*);
-extern Fluid_Coord_Input *widget_grid_colspan_input;
+extern void grid_set_colspan_cb(fld::widget::Formula_Input*, void*);
+extern fld::widget::Formula_Input *widget_grid_colspan_input;
 extern void grid_dec_colspan_cb(Fl_Button*, void*);
 extern void grid_inc_colspan_cb(Fl_Button*, void*);
 extern Fl_Group *widget_tab_grid;
-extern Fluid_Coord_Input *widget_grid_rows;
-extern Fluid_Coord_Input *widget_grid_cols;
+extern fld::widget::Formula_Input *widget_grid_rows;
+extern fld::widget::Formula_Input *widget_grid_cols;
 extern Fl_Group *wp_grid_margin;
 extern Fl_Group *wp_grid_gaps;
-extern Fluid_Coord_Input *widget_grid_curr_row;
+extern fld::widget::Formula_Input *widget_grid_curr_row;
 extern Fl_Group *widget_grid_curr_row_attributes;
-extern Fluid_Coord_Input *widget_grid_curr_col;
+extern fld::widget::Formula_Input *widget_grid_curr_col;
 extern Fl_Group *widget_grid_curr_col_attributes;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);

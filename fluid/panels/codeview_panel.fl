@@ -296,10 +296,10 @@ Function {make_codeview()} {open
       } {
         Fl_Text_Editor cv_source {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
-          code0 {\#include "widgets/CodeEditor.h"}
+          code0 {\#include "widgets/Code_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class CodeViewer
+          class {fld::widget::Code_Viewer}
         }
       }
       Fl_Group {} {
@@ -308,10 +308,10 @@ Function {make_codeview()} {open
       } {
         Fl_Text_Editor cv_header {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
-          code0 {\#include "widgets/CodeEditor.h"}
+          code0 {\#include "widgets/Code_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class CodeViewer
+          class {fld::widget::Code_Viewer}
         }
       }
       Fl_Group {} {
@@ -320,9 +320,10 @@ Function {make_codeview()} {open
       } {
         Fl_Text_Display cv_strings {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
+          code0 {\#include "widgets/Text_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class TextViewer
+          class {fld::widget::Text_Viewer}
         }
       }
       Fl_Group {} {
@@ -331,9 +332,10 @@ Function {make_codeview()} {open
       } {
         Fl_Text_Display cv_project {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
+          code0 {\#include "widgets/Text_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class TextViewer
+          class {fld::widget::Text_Viewer}
         }
       }
     }

@@ -19,20 +19,18 @@
 // Include necessary headers...
 //
 
-#include "widgets/CodeEditor.h"
+#include "widgets/Code_Editor.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+using namespace fld;
+using namespace fld::widget;
 
-// ---- CodeEditor implementation
+// ---- Code_Editor implementation
 
 /**
  Lookup table for all supported styles.
  Every table entry describes a rendering style for the corresponding text.
  */
-Fl_Text_Display::Style_Table_Entry CodeEditor::styletable[] = {   // Style table
+Fl_Text_Display::Style_Table_Entry Code_Editor::styletable[] = {   // Style table
                   { FL_FOREGROUND_COLOR, FL_COURIER,        11 }, // A - Plain
                   { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // B - Line comments
                   { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // C - Block comments
@@ -50,7 +48,7 @@ Fl_Text_Display::Style_Table_Entry CodeEditor::styletable[] = {   // Style table
  \param[in] in_len byte length to parse
  \param[in] in_style starting style letter
  */
-void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to parse
+void Code_Editor::style_parse(const char *in_tbuff,         // text buffer to parse
                              char       *in_sbuff,         // style buffer we modify
                              int         in_len,           // byte length to parse
                              char        in_style) {       // starting style letter
@@ -65,7 +63,7 @@ void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to par
   // 'G' - Keywords       if, while..
   // 'H' - Chars          'x'
 
-  StyleParse sp;
+  Style_Parser sp;
   sp.tbuff  = in_tbuff;
   sp.sbuff  = in_sbuff;
   sp.len    = in_len;
@@ -103,7 +101,7 @@ void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to par
 /**
  Update unfinished styles.
  */
-void CodeEditor::style_unfinished_cb(int, void*) {
+void Code_Editor::style_unfinished_cb(int, void*) {
 }
 
 /**
@@ -113,10 +111,10 @@ void CodeEditor::style_unfinished_cb(int, void*) {
  \param[in] nDeleted number of bytes deleted
  \param[in] cbArg pointer back to the code editor
  */
-void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
+void Code_Editor::style_update(int pos, int nInserted, int nDeleted,
                               int /*nRestyled*/, const char * /*deletedText*/,
                               void *cbArg) {
-  CodeEditor *editor = (CodeEditor*)cbArg;
+  Code_Editor *editor = (Code_Editor*)cbArg;
   char       *style,                         // Style data
              *text;                          // Text data
 
@@ -164,7 +162,7 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
  Find the right indentation depth after pressing the Enter key.
  \param[in] e pointer back to the code editor
  */
-int CodeEditor::auto_indent(int, CodeEditor* e) {
+int Code_Editor::auto_indent(int, Code_Editor* e) {
   if (e->buffer()->selected()) {
     e->insert_position(e->buffer()->primary_selection()->start());
     e->buffer()->remove_selection();
@@ -198,11 +196,11 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
 }
 
 /**
- Create a CodeEditor widget.
+ Create a Code_Editor widget.
  \param[in] X, Y, W, H position and size of the widget
  \param[in] L optional label
  */
-CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
+Code_Editor::Code_Editor(int X, int Y, int W, int H, const char *L) :
   Fl_Text_Editor(X, Y, W, H, L) {
   buffer(new Fl_Text_Buffer);
 
@@ -228,9 +226,9 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
 }
 
 /**
- Destroy a CodeEditor widget.
+ Destroy a Code_Editor widget.
  */
-CodeEditor::~CodeEditor() {
+Code_Editor::~Code_Editor() {
   Fl_Text_Buffer *buf = mStyleBuffer;
   mStyleBuffer = 0;
   delete buf;
@@ -245,7 +243,7 @@ CodeEditor::~CodeEditor() {
  This works by updating the fontsizes in the style table.
  \param[in] s the new general height of the text font
  */
-void CodeEditor::textsize(Fl_Fontsize s) {
+void Code_Editor::textsize(Fl_Fontsize s) {
   Fl_Text_Editor::textsize(s); // call base class method
   // now attempt to update our styletable to honor the new size...
   int entries = sizeof(styletable) / sizeof(styletable[0]);
@@ -253,64 +251,4 @@ void CodeEditor::textsize(Fl_Fontsize s) {
     styletable[iter].size = s;
   }
 } // textsize
-
-// ---- CodeViewer implementation
-
-/**
- Create a CodeViewer widget.
- \param[in] X, Y, W, H position and size of the widget
- \param[in] L optional label
- */
-CodeViewer::CodeViewer(int X, int Y, int W, int H, const char *L)
-: CodeEditor(X, Y, W, H, L)
-{
-  default_key_function(kf_ignore);
-  remove_all_key_bindings(&key_bindings);
-  cursor_style(CARET_CURSOR);
-}
-
-/**
- Tricking Fl_Text_Display into using bearable colors for this specific task.
- */
-void CodeViewer::draw()
-{
-  Fl_Color c = Fl::get_color(FL_SELECTION_COLOR);
-  Fl::set_color(FL_SELECTION_COLOR, fl_color_average(FL_BACKGROUND_COLOR, FL_FOREGROUND_COLOR, 0.9f));
-  CodeEditor::draw();
-  Fl::set_color(FL_SELECTION_COLOR, c);
-}
-
-// ---- TextViewer implementation
-
-/**
- Create a TextViewer widget.
- \param[in] X, Y, W, H position and size of the widget
- \param[in] L optional label
- */
-TextViewer::TextViewer(int X, int Y, int W, int H, const char *L)
-: Fl_Text_Display(X, Y, W, H, L)
-{
-  buffer(new Fl_Text_Buffer);
-}
-
-/**
- Avoid memory leaks.
- */
-TextViewer::~TextViewer() {
-  Fl_Text_Buffer *buf = mBuffer;
-  buffer(0);
-  delete buf;
-}
-
-/**
- Tricking Fl_Text_Display into using bearable colors for this specific task.
- */
-void TextViewer::draw()
-{
-  Fl_Color c = Fl::get_color(FL_SELECTION_COLOR);
-  Fl::set_color(FL_SELECTION_COLOR, fl_color_average(FL_BACKGROUND_COLOR, FL_FOREGROUND_COLOR, 0.9f));
-  Fl_Text_Display::draw();
-  Fl::set_color(FL_SELECTION_COLOR, c);
-}
-
 

@@ -33,11 +33,12 @@ extern Fl_Double_Window *codeview_panel;
 extern Fl_Tabs *cv_tab;
 #include <FL/Fl_Group.H>
 extern Fl_Group *cv_source_tab;
-#include "widgets/CodeEditor.h"
-extern CodeViewer *cv_source;
-extern CodeViewer *cv_header;
-extern TextViewer *cv_strings;
-extern TextViewer *cv_project;
+#include "widgets/Code_Viewer.h"
+extern fld::widget::Code_Viewer *cv_source;
+extern fld::widget::Code_Viewer *cv_header;
+#include "widgets/Text_Viewer.h"
+extern fld::widget::Text_Viewer *cv_strings;
+extern fld::widget::Text_Viewer *cv_project;
 extern Fl_Group *cv_find_row;
 #include <FL/Fl_Button.H>
 extern Fl_Button *cv_find_text_case;

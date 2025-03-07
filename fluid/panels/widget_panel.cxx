@@ -52,9 +52,9 @@ static void cb_image_panel_data(Fl_Box* o, void* v) {
   }
 }
 
-Fluid_Coord_Input *image_panel_imagew=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *image_panel_imagew=(fld::widget::Formula_Input *)0;
 
-static void cb_image_panel_imagew(Fluid_Coord_Input* o, void* v) {
+static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
         o->value(current_widget->scale_image_w_);
@@ -82,9 +82,9 @@ static void cb_image_panel_imagew(Fluid_Coord_Input* o, void* v) {
     }
 }
 
-Fluid_Coord_Input *image_panel_imageh=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *image_panel_imageh=(fld::widget::Formula_Input *)0;
 
-static void cb_image_panel_imageh(Fluid_Coord_Input* o, void* v) {
+static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
         o->value(current_widget->scale_image_h_);
@@ -144,9 +144,9 @@ static void cb_image_panel_dedata(Fl_Box* o, void* v) {
   }
 }
 
-Fluid_Coord_Input *image_panel_deimagew=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *image_panel_deimagew=(fld::widget::Formula_Input *)0;
 
-static void cb_image_panel_deimagew(Fluid_Coord_Input* o, void* v) {
+static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
         o->value(current_widget->scale_deimage_w_);
@@ -174,9 +174,9 @@ static void cb_image_panel_deimagew(Fluid_Coord_Input* o, void* v) {
     }
 }
 
-Fluid_Coord_Input *image_panel_deimageh=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *image_panel_deimageh=(fld::widget::Formula_Input *)0;
 
-static void cb_image_panel_deimageh(Fluid_Coord_Input* o, void* v) {
+static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
         o->value(current_widget->scale_deimage_h_);
@@ -240,7 +240,7 @@ Fl_Double_Window* make_image_panel() {
       } // Fl_Box* image_panel_data
       { Fl_Group* o = new Fl_Group(75, 75, 170, 20);
         o->callback((Fl_Callback*)propagate_load);
-        { image_panel_imagew = new Fluid_Coord_Input(75, 75, 55, 20, "Width:");
+        { image_panel_imagew = new fld::widget::Formula_Input(75, 75, 55, 20, "Width:");
           image_panel_imagew->tooltip("Scale image to this width in pixel units");
           image_panel_imagew->box(FL_DOWN_BOX);
           image_panel_imagew->color(FL_BACKGROUND2_COLOR);
@@ -253,8 +253,8 @@ Fl_Double_Window* make_image_panel() {
           image_panel_imagew->callback((Fl_Callback*)cb_image_panel_imagew);
           image_panel_imagew->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_imagew->when(FL_WHEN_RELEASE);
-        } // Fluid_Coord_Input* image_panel_imagew
-        { image_panel_imageh = new Fluid_Coord_Input(135, 75, 55, 20, "Height:");
+        } // fld::widget::Formula_Input* image_panel_imagew
+        { image_panel_imageh = new fld::widget::Formula_Input(135, 75, 55, 20, "Height:");
           image_panel_imageh->tooltip("Scale image to this height in pixel units");
           image_panel_imageh->box(FL_DOWN_BOX);
           image_panel_imageh->color(FL_BACKGROUND2_COLOR);
@@ -267,7 +267,7 @@ Fl_Double_Window* make_image_panel() {
           image_panel_imageh->callback((Fl_Callback*)cb_image_panel_imageh);
           image_panel_imageh->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_imageh->when(FL_WHEN_RELEASE);
-        } // Fluid_Coord_Input* image_panel_imageh
+        } // fld::widget::Formula_Input* image_panel_imageh
         { Fl_Button* o = new Fl_Button(195, 75, 50, 20, "Reset");
           o->tooltip("Reset scale to original size");
           o->labelsize(11);
@@ -316,7 +316,7 @@ Fl_Double_Window* make_image_panel() {
       } // Fl_Box* image_panel_dedata
       { Fl_Group* o = new Fl_Group(75, 215, 170, 20);
         o->callback((Fl_Callback*)propagate_load);
-        { image_panel_deimagew = new Fluid_Coord_Input(75, 215, 55, 20, "Width:");
+        { image_panel_deimagew = new fld::widget::Formula_Input(75, 215, 55, 20, "Width:");
           image_panel_deimagew->tooltip("Scale image to this width in pixel units");
           image_panel_deimagew->box(FL_DOWN_BOX);
           image_panel_deimagew->color(FL_BACKGROUND2_COLOR);
@@ -329,8 +329,8 @@ Fl_Double_Window* make_image_panel() {
           image_panel_deimagew->callback((Fl_Callback*)cb_image_panel_deimagew);
           image_panel_deimagew->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_deimagew->when(FL_WHEN_RELEASE);
-        } // Fluid_Coord_Input* image_panel_deimagew
-        { image_panel_deimageh = new Fluid_Coord_Input(135, 215, 55, 20, "Height:");
+        } // fld::widget::Formula_Input* image_panel_deimagew
+        { image_panel_deimageh = new fld::widget::Formula_Input(135, 215, 55, 20, "Height:");
           image_panel_deimageh->tooltip("Scale image to this height in pixel units");
           image_panel_deimageh->box(FL_DOWN_BOX);
           image_panel_deimageh->color(FL_BACKGROUND2_COLOR);
@@ -343,7 +343,7 @@ Fl_Double_Window* make_image_panel() {
           image_panel_deimageh->callback((Fl_Callback*)cb_image_panel_deimageh);
           image_panel_deimageh->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_deimageh->when(FL_WHEN_RELEASE);
-        } // Fluid_Coord_Input* image_panel_deimageh
+        } // fld::widget::Formula_Input* image_panel_deimageh
         { Fl_Button* o = new Fl_Button(195, 215, 50, 20, "Reset");
           o->tooltip("Reset scale to original size");
           o->labelsize(11);
@@ -460,13 +460,13 @@ Fl_Menu_Item menu_1[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-Fluid_Coord_Input *widget_x_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_x_input=(fld::widget::Formula_Input *)0;
 
-Fluid_Coord_Input *widget_y_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_y_input=(fld::widget::Formula_Input *)0;
 
-Fluid_Coord_Input *widget_w_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_w_input=(fld::widget::Formula_Input *)0;
 
-Fluid_Coord_Input *widget_h_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_h_input=(fld::widget::Formula_Input *)0;
 
 Fl_Menu_Item menu_Children[] = {
  {"Fixed", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -541,7 +541,7 @@ static void cb_1(Fl_Tile*, void* v) {
 
 Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
 
-CodeEditor *wCallback=(CodeEditor *)0;
+fld::widget::Code_Editor *wCallback=(fld::widget::Code_Editor *)0;
 
 Fl_Group *wp_cpp_callback=(Fl_Group *)0;
 
@@ -555,9 +555,9 @@ Fl_Box *w_when_box=(Fl_Box *)0;
 
 Fl_Group *widget_tab_grid_child=(Fl_Group *)0;
 
-Fluid_Coord_Input *widget_grid_row_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_row_input=(fld::widget::Formula_Input *)0;
 
-Fluid_Coord_Input *widget_grid_col_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_col_input=(fld::widget::Formula_Input *)0;
 
 Fl_Box *widget_grid_transient=(Fl_Box *)0;
 
@@ -599,15 +599,15 @@ Fl_Menu_Item menu_Vertical[] = {
 
 Fl_Group *wp_gridc_size=(Fl_Group *)0;
 
-Fluid_Coord_Input *widget_grid_rowspan_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_rowspan_input=(fld::widget::Formula_Input *)0;
 
-Fluid_Coord_Input *widget_grid_colspan_input=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_colspan_input=(fld::widget::Formula_Input *)0;
 
 Fl_Group *widget_tab_grid=(Fl_Group *)0;
 
-Fluid_Coord_Input *widget_grid_rows=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_rows=(fld::widget::Formula_Input *)0;
 
-static void cb_widget_grid_rows(Fluid_Coord_Input* o, void* v) {
+static void cb_widget_grid_rows(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
@@ -647,9 +647,9 @@ static void cb_3(Fl_Button*, void* v) {
   }
 }
 
-Fluid_Coord_Input *widget_grid_cols=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_cols=(fld::widget::Formula_Input *)0;
 
-static void cb_widget_grid_cols(Fluid_Coord_Input* o, void* v) {
+static void cb_widget_grid_cols(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
@@ -818,9 +818,9 @@ static void cb_Row1(Fl_Group* o, void* v) {
   }
 }
 
-Fluid_Coord_Input *widget_grid_curr_row=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_curr_row=(fld::widget::Formula_Input *)0;
 
-static void cb_widget_grid_curr_row(Fluid_Coord_Input* o, void* v) {
+static void cb_widget_grid_curr_row(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int r = o->value(), old_r = r;
@@ -850,7 +850,7 @@ static void cb_7(Fl_Button*, void* v) {
 
 Fl_Group *widget_grid_curr_row_attributes=(Fl_Group *)0;
 
-static void cb_Height(Fluid_Coord_Input* o, void* v) {
+static void cb_Height(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int r = widget_grid_curr_row->value();
@@ -868,7 +868,7 @@ static void cb_Height(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_Weight(Fluid_Coord_Input* o, void* v) {
+static void cb_Weight(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int r = widget_grid_curr_row->value();
@@ -886,7 +886,7 @@ static void cb_Weight(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_Gap(Fluid_Coord_Input* o, void* v) {
+static void cb_Gap(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int r = widget_grid_curr_row->value();
@@ -904,9 +904,9 @@ static void cb_Gap(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-Fluid_Coord_Input *widget_grid_curr_col=(Fluid_Coord_Input *)0;
+fld::widget::Formula_Input *widget_grid_curr_col=(fld::widget::Formula_Input *)0;
 
-static void cb_widget_grid_curr_col(Fluid_Coord_Input* o, void* v) {
+static void cb_widget_grid_curr_col(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int c = o->value(), old_c = c;
@@ -936,7 +936,7 @@ static void cb_9(Fl_Button*, void* v) {
 
 Fl_Group *widget_grid_curr_col_attributes=(Fl_Group *)0;
 
-static void cb_Width(Fluid_Coord_Input* o, void* v) {
+static void cb_Width(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int c = widget_grid_curr_col->value();
@@ -954,7 +954,7 @@ static void cb_Width(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_Weight1(Fluid_Coord_Input* o, void* v) {
+static void cb_Weight1(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int c = widget_grid_curr_col->value();
@@ -972,7 +972,7 @@ static void cb_Weight1(Fluid_Coord_Input* o, void* v) {
   }
 }
 
-static void cb_Gap1(Fluid_Coord_Input* o, void* v) {
+static void cb_Gap1(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
   if (!grid) return;
   int c = widget_grid_curr_col->value();
@@ -1177,7 +1177,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)position_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
+          { widget_x_input = new fld::widget::Formula_Input(95, 150, 55, 20, "X:");
             widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple "
 "math, including the variables\nx, px, sx, cx, and i");
             widget_x_input->box(FL_DOWN_BOX);
@@ -1191,8 +1191,8 @@ Fl_Double_Window* make_widget_panel() {
             widget_x_input->callback((Fl_Callback*)x_cb);
             widget_x_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_x_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_x_input
-          { widget_y_input = new Fluid_Coord_Input(155, 150, 55, 20, "Y:");
+          } // fld::widget::Formula_Input* widget_x_input
+          { widget_y_input = new fld::widget::Formula_Input(155, 150, 55, 20, "Y:");
             widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple "
 "math, including the variables\ny, py, sy, cy, and i");
             widget_y_input->box(FL_DOWN_BOX);
@@ -1206,8 +1206,8 @@ Fl_Double_Window* make_widget_panel() {
             widget_y_input->callback((Fl_Callback*)y_cb);
             widget_y_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_y_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_y_input
-          { widget_w_input = new Fluid_Coord_Input(215, 150, 55, 20, "Width:");
+          } // fld::widget::Formula_Input* widget_y_input
+          { widget_w_input = new fld::widget::Formula_Input(215, 150, 55, 20, "Width:");
             widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,"
 " including the variables\nw, pw, sw, cw, and i");
             widget_w_input->box(FL_DOWN_BOX);
@@ -1221,8 +1221,8 @@ Fl_Double_Window* make_widget_panel() {
             widget_w_input->callback((Fl_Callback*)w_cb);
             widget_w_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_w_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_w_input
-          { widget_h_input = new Fluid_Coord_Input(275, 150, 55, 20, "Height:");
+          } // fld::widget::Formula_Input* widget_w_input
+          { widget_h_input = new fld::widget::Formula_Input(275, 150, 55, 20, "Height:");
             widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math"
 ", including the variables\nh, ph, sh, ch, and i");
             widget_h_input->box(FL_DOWN_BOX);
@@ -1236,7 +1236,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_h_input->callback((Fl_Callback*)h_cb);
             widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_h_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_h_input
+          } // fld::widget::Formula_Input* widget_h_input
           { Fl_Choice* o = new Fl_Choice(335, 150, 64, 20, "Children:");
             o->tooltip("When instantiating a widget class, the children can either be fixed in their "
 "original position, automatically be repositioned, or both repsositioned and re"
@@ -1832,7 +1832,7 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Group* o
           { Fl_Group* o = new Fl_Group(95, 223, 310, 82);
             o->box(FL_FLAT_BOX);
-            { wCallback = new CodeEditor(95, 225, 310, 80, "Callback:");
+            { wCallback = new fld::widget::Code_Editor(95, 225, 310, 80, "Callback:");
               wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
 "access the Widget pointer and \'v\' to access the user value.");
               wCallback->box(FL_DOWN_BOX);
@@ -1848,7 +1848,7 @@ Fl_Double_Window* make_widget_panel() {
               wCallback->align(Fl_Align(FL_ALIGN_LEFT));
               wCallback->when(FL_WHEN_RELEASE);
               Fl_Group::current()->resizable(wCallback);
-            } // CodeEditor* wCallback
+            } // fld::widget::Code_Editor* wCallback
             o->end();
           } // Fl_Group* o
           o->end();
@@ -1916,7 +1916,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_row_input = new Fluid_Coord_Input(95, 60, 40, 20, "Row:");
+          { widget_grid_row_input = new fld::widget::Formula_Input(95, 60, 40, 20, "Row:");
             widget_grid_row_input->box(FL_DOWN_BOX);
             widget_grid_row_input->color(FL_BACKGROUND2_COLOR);
             widget_grid_row_input->selection_color(FL_SELECTION_COLOR);
@@ -1928,7 +1928,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_row_input->callback((Fl_Callback*)grid_set_row_cb);
             widget_grid_row_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_row_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_row_input
+          } // fld::widget::Formula_Input* widget_grid_row_input
           { Fl_Group* o = new Fl_Group(135, 60, 30, 20);
             { Fl_Button* o = new Fl_Button(135, 60, 15, 20, "-");
               o->compact(1);
@@ -1944,7 +1944,7 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { widget_grid_col_input = new Fluid_Coord_Input(175, 60, 40, 20, "Column:");
+          { widget_grid_col_input = new fld::widget::Formula_Input(175, 60, 40, 20, "Column:");
             widget_grid_col_input->box(FL_DOWN_BOX);
             widget_grid_col_input->color(FL_BACKGROUND2_COLOR);
             widget_grid_col_input->selection_color(FL_SELECTION_COLOR);
@@ -1956,7 +1956,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_col_input->callback((Fl_Callback*)grid_set_col_cb);
             widget_grid_col_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_col_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_col_input
+          } // fld::widget::Formula_Input* widget_grid_col_input
           { Fl_Group* o = new Fl_Group(215, 60, 30, 20);
             { Fl_Button* o = new Fl_Button(215, 60, 15, 20, "-");
               o->compact(1);
@@ -2020,7 +2020,7 @@ Fl_Double_Window* make_widget_panel() {
           wp_gridc_size->labelsize(11);
           wp_gridc_size->callback((Fl_Callback*)propagate_load);
           wp_gridc_size->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(95, 135, 55, 20, "Width:");
+          { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(95, 135, 55, 20, "Width:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -2032,8 +2032,8 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)grid_set_min_wdt_cb);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* o
-          { Fluid_Coord_Input* o = new Fluid_Coord_Input(155, 135, 55, 20, "Height:");
+          } // fld::widget::Formula_Input* o
+          { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(155, 135, 55, 20, "Height:");
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -2045,7 +2045,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)grid_set_min_hgt_cb);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* o
+          } // fld::widget::Formula_Input* o
           { Fl_Box* o = new Fl_Box(395, 135, 1, 20);
             o->hide();
             Fl_Group::current()->resizable(o);
@@ -2057,7 +2057,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_rowspan_input = new Fluid_Coord_Input(95, 170, 40, 20, "Row Span:");
+          { widget_grid_rowspan_input = new fld::widget::Formula_Input(95, 170, 40, 20, "Row Span:");
             widget_grid_rowspan_input->box(FL_DOWN_BOX);
             widget_grid_rowspan_input->color(FL_BACKGROUND2_COLOR);
             widget_grid_rowspan_input->selection_color(FL_SELECTION_COLOR);
@@ -2069,7 +2069,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_rowspan_input->callback((Fl_Callback*)grid_set_rowspan_cb);
             widget_grid_rowspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_rowspan_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_rowspan_input
+          } // fld::widget::Formula_Input* widget_grid_rowspan_input
           { Fl_Group* o = new Fl_Group(135, 170, 30, 20);
             { Fl_Button* o = new Fl_Button(135, 170, 15, 20, "-");
               o->compact(1);
@@ -2085,7 +2085,7 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { widget_grid_colspan_input = new Fluid_Coord_Input(175, 170, 40, 20, "Col. Span:");
+          { widget_grid_colspan_input = new fld::widget::Formula_Input(175, 170, 40, 20, "Col. Span:");
             widget_grid_colspan_input->box(FL_DOWN_BOX);
             widget_grid_colspan_input->color(FL_BACKGROUND2_COLOR);
             widget_grid_colspan_input->selection_color(FL_SELECTION_COLOR);
@@ -2097,7 +2097,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_colspan_input->callback((Fl_Callback*)grid_set_colspan_cb);
             widget_grid_colspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_colspan_input->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_colspan_input
+          } // fld::widget::Formula_Input* widget_grid_colspan_input
           { Fl_Group* o = new Fl_Group(215, 170, 30, 20);
             { Fl_Button* o = new Fl_Button(215, 170, 15, 20, "-");
               o->compact(1);
@@ -2135,7 +2135,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_rows = new Fluid_Coord_Input(95, 60, 40, 20, "Rows:");
+          { widget_grid_rows = new fld::widget::Formula_Input(95, 60, 40, 20, "Rows:");
             widget_grid_rows->tooltip("Number of horizontal rows in the Grid group");
             widget_grid_rows->box(FL_DOWN_BOX);
             widget_grid_rows->color(FL_BACKGROUND2_COLOR);
@@ -2148,7 +2148,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_rows->callback((Fl_Callback*)cb_widget_grid_rows);
             widget_grid_rows->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_rows->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_rows
+          } // fld::widget::Formula_Input* widget_grid_rows
           { Fl_Group* o = new Fl_Group(135, 60, 30, 20);
             { Fl_Button* o = new Fl_Button(135, 60, 15, 20, "-");
               o->compact(1);
@@ -2164,7 +2164,7 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { widget_grid_cols = new Fluid_Coord_Input(175, 60, 40, 20, "Columns:");
+          { widget_grid_cols = new fld::widget::Formula_Input(175, 60, 40, 20, "Columns:");
             widget_grid_cols->tooltip("Number of vertical columns in the Grid group");
             widget_grid_cols->box(FL_DOWN_BOX);
             widget_grid_cols->color(FL_BACKGROUND2_COLOR);
@@ -2177,7 +2177,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_cols->callback((Fl_Callback*)cb_widget_grid_cols);
             widget_grid_cols->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_cols->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_cols
+          } // fld::widget::Formula_Input* widget_grid_cols
           { Fl_Group* o = new Fl_Group(215, 60, 30, 20);
             { Fl_Button* o = new Fl_Button(215, 60, 15, 20, "-");
               o->compact(1);
@@ -2277,7 +2277,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)cb_Row1);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_curr_row = new Fluid_Coord_Input(95, 175, 40, 20, "Index");
+          { widget_grid_curr_row = new fld::widget::Formula_Input(95, 175, 40, 20, "Index");
             widget_grid_curr_row->box(FL_DOWN_BOX);
             widget_grid_curr_row->color(FL_BACKGROUND2_COLOR);
             widget_grid_curr_row->selection_color(FL_SELECTION_COLOR);
@@ -2289,7 +2289,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_curr_row->callback((Fl_Callback*)cb_widget_grid_curr_row);
             widget_grid_curr_row->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_curr_row->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_curr_row
+          } // fld::widget::Formula_Input* widget_grid_curr_row
           { Fl_Group* o = new Fl_Group(135, 175, 30, 20);
             o->callback((Fl_Callback*)propagate_load);
             { Fl_Button* o = new Fl_Button(135, 175, 15, 20, "-");
@@ -2311,7 +2311,7 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Box* o
           { widget_grid_curr_row_attributes = new Fl_Group(180, 175, 175, 20);
             widget_grid_curr_row_attributes->callback((Fl_Callback*)propagate_load);
-            { Fluid_Coord_Input* o = new Fluid_Coord_Input(180, 175, 55, 20, "Height:");
+            { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(180, 175, 55, 20, "Height:");
               o->box(FL_DOWN_BOX);
               o->color(FL_BACKGROUND2_COLOR);
               o->selection_color(FL_SELECTION_COLOR);
@@ -2323,8 +2323,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Height);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->when(FL_WHEN_RELEASE);
-            } // Fluid_Coord_Input* o
-            { Fluid_Coord_Input* o = new Fluid_Coord_Input(240, 175, 55, 20, "Weight:");
+            } // fld::widget::Formula_Input* o
+            { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(240, 175, 55, 20, "Weight:");
               o->box(FL_DOWN_BOX);
               o->color(FL_BACKGROUND2_COLOR);
               o->selection_color(FL_SELECTION_COLOR);
@@ -2336,8 +2336,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Weight);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->when(FL_WHEN_RELEASE);
-            } // Fluid_Coord_Input* o
-            { Fluid_Coord_Input* o = new Fluid_Coord_Input(300, 175, 55, 20, "Gap:");
+            } // fld::widget::Formula_Input* o
+            { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(300, 175, 55, 20, "Gap:");
               o->box(FL_DOWN_BOX);
               o->color(FL_BACKGROUND2_COLOR);
               o->selection_color(FL_SELECTION_COLOR);
@@ -2349,7 +2349,7 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Gap);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->when(FL_WHEN_RELEASE);
-            } // Fluid_Coord_Input* o
+            } // fld::widget::Formula_Input* o
             widget_grid_curr_row_attributes->end();
           } // Fl_Group* widget_grid_curr_row_attributes
           { Fl_Box* o = new Fl_Box(400, 175, 1, 20);
@@ -2363,7 +2363,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_curr_col = new Fluid_Coord_Input(95, 210, 40, 20, "Index");
+          { widget_grid_curr_col = new fld::widget::Formula_Input(95, 210, 40, 20, "Index");
             widget_grid_curr_col->box(FL_DOWN_BOX);
             widget_grid_curr_col->color(FL_BACKGROUND2_COLOR);
             widget_grid_curr_col->selection_color(FL_SELECTION_COLOR);
@@ -2375,7 +2375,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_grid_curr_col->callback((Fl_Callback*)cb_widget_grid_curr_col);
             widget_grid_curr_col->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_grid_curr_col->when(FL_WHEN_RELEASE);
-          } // Fluid_Coord_Input* widget_grid_curr_col
+          } // fld::widget::Formula_Input* widget_grid_curr_col
           { Fl_Group* o = new Fl_Group(135, 210, 30, 20);
             { Fl_Button* o = new Fl_Button(135, 210, 15, 20, "-");
               o->compact(1);
@@ -2396,7 +2396,7 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Box* o
           { widget_grid_curr_col_attributes = new Fl_Group(180, 210, 175, 20);
             widget_grid_curr_col_attributes->callback((Fl_Callback*)propagate_load);
-            { Fluid_Coord_Input* o = new Fluid_Coord_Input(180, 210, 55, 20, "Width:");
+            { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(180, 210, 55, 20, "Width:");
               o->box(FL_DOWN_BOX);
               o->color(FL_BACKGROUND2_COLOR);
               o->selection_color(FL_SELECTION_COLOR);
@@ -2408,8 +2408,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Width);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->when(FL_WHEN_RELEASE);
-            } // Fluid_Coord_Input* o
-            { Fluid_Coord_Input* o = new Fluid_Coord_Input(240, 210, 55, 20, "Weight:");
+            } // fld::widget::Formula_Input* o
+            { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(240, 210, 55, 20, "Weight:");
               o->box(FL_DOWN_BOX);
               o->color(FL_BACKGROUND2_COLOR);
               o->selection_color(FL_SELECTION_COLOR);
@@ -2421,8 +2421,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Weight1);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->when(FL_WHEN_RELEASE);
-            } // Fluid_Coord_Input* o
-            { Fluid_Coord_Input* o = new Fluid_Coord_Input(300, 210, 55, 20, "Gap:");
+            } // fld::widget::Formula_Input* o
+            { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(300, 210, 55, 20, "Gap:");
               o->box(FL_DOWN_BOX);
               o->color(FL_BACKGROUND2_COLOR);
               o->selection_color(FL_SELECTION_COLOR);
@@ -2434,7 +2434,7 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Gap1);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->when(FL_WHEN_RELEASE);
-            } // Fluid_Coord_Input* o
+            } // fld::widget::Formula_Input* o
             widget_grid_curr_col_attributes->end();
           } // Fl_Group* widget_grid_curr_col_attributes
           { Fl_Box* o = new Fl_Box(400, 210, 1, 20);
