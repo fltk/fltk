@@ -364,7 +364,7 @@ void shell_pipe_cb(FL_SOCKET, void*) {
 
 static void expand_macro(std::string &cmd, const std::string &macro, const std::string &content) {
   for (int i=0;;) {
-    i = cmd.find(macro, i);
+    i = (int)cmd.find(macro, i);
     if (i==(int)std::string::npos) break;
     cmd.replace(i, macro.size(), content);
   }

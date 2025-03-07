@@ -21,7 +21,6 @@
 #include <FL/fl_string_functions.h>  // fl_strdup
 #include <FL/platform.H>
 #include "../../flstring.h"
-#include "../../Fl_String.H"
 #include "../../Fl_Timeout.h"
 
 #include <locale.h>
@@ -31,6 +30,7 @@
 #include <pwd.h>
 #include <string.h>     // strerror(errno)
 #include <errno.h>      // errno
+#include <string>
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <dlfcn.h>   // for dlsym
 #endif
@@ -538,7 +538,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
     char *buffer)
 {
   // Find the path to the user's home directory.
-  Fl_String home_path = getenv("HOME");
+  std::string home_path = getenv("HOME");
   if (home_path.empty()) {
     struct passwd *pw = getpwuid(getuid());
     if (pw)
@@ -546,7 +546,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
   }
 
   // 1: Generate the 1.4 path for this vendor and application.
-  Fl_String prefs_path_14 = getenv("XDG_CONFIG_HOME");
+  std::string prefs_path_14 = getenv("XDG_CONFIG_HOME");
   if (prefs_path_14.empty()) {
     prefs_path_14 = home_path + "/.config";
   } else {
@@ -567,7 +567,7 @@ char *Fl_Unix_System_Driver::preference_user_rootnode(
 
   // 2: If this base path does not exist, try the 1.3 path
   if (::access(prefs_path_14.c_str(), F_OK) == -1) {
-    Fl_String prefs_path_13 = home_path + "/.fltk/" + vendor;
+    std::string prefs_path_13 = home_path + "/.fltk/" + vendor;
     if (::access(prefs_path_13.c_str(), F_OK) == 0) {
       prefs_path_13.append("/");
       prefs_path_13.append(application);

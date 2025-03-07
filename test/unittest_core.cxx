@@ -19,72 +19,25 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Terminal.H>
-#include "../src/Fl_String.H"
 #include <FL/Fl_Preferences.H>
 #include <FL/fl_callback_macros.H>
 #include <FL/filename.H>
 #include <FL/fl_utf8.h>
 
-#if (0) // FIXME - Fl_String
+#include <string>
 
-/* Test all Fl_String functions that are no part of the class. */
-TEST(Fl_String, Non-Member Functions) {
-  Fl_String a = "a", b = "b", empty = "", result;
-  result = a + b;
-  EXPECT_STREQ(result.c_str(), "ab");
-  result = a + empty;
-  EXPECT_STREQ(result.c_str(), "a");
-  result = a + "c";
-  EXPECT_STREQ(result.c_str(), "ac");
-  result = empty + "x";
-  EXPECT_STREQ(result.c_str(), "x");
-  EXPECT_TRUE(!(a == b));
-  EXPECT_TRUE(a == a);
-  EXPECT_FALSE((a != a));              // neq -erco
-  EXPECT_TRUE((a != b));               // neq -erco
-  EXPECT_TRUE(empty == empty);
-  EXPECT_TRUE(a+b == "ab");
-  EXPECT_TRUE(a+"b" == "a" + b);
-
-  return true;
-}
-
-/* Test additions to Fl_Preferences. */
-TEST(Fl_String, fl_filename_...) {
-  const Fl_String ref = "/test/me.txt";
-  Fl_String name = fl_filename_name(ref);
-  EXPECT_STREQ(name.c_str(), "me.txt");
-  name = fl_filename_name(Fl_String("/test/"));
-  EXPECT_STREQ(name.c_str(), "");
-  Fl_String path = fl_filename_path(ref);
-  EXPECT_STREQ(path.c_str(), "/test/");
-  Fl_String ext = fl_filename_ext(ref);
-  EXPECT_STREQ(ext.c_str(), ".txt");
-  ext = fl_filename_setext(ref, ".rtf");
-  EXPECT_STREQ(ext.c_str(), "/test/me.rtf");
-  fl_putenv("FL_UNITTEST=unit/test");
-  name = fl_filename_expand(Fl_String("abc/$FL_UNITTEST/xyz"));
-  EXPECT_STREQ(name.c_str(), "abc/unit/test/xyz");
-  Fl_String abs = fl_filename_absolute(Fl_String("./abc/def.txt"));
-  Fl_String rel = fl_filename_relative(abs);
-  EXPECT_STREQ(rel.c_str(), "abc/def.txt");
-  EXPECT_STREQ(ref.c_str(), "/test/me.txt");
-  return true;
-}
-
-#endif
 
 /* Test additions to Fl_Preferences. */
 TEST(Fl_Preferences, Strings) {
   {
     Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
-    prefs.set("a", Fl_String());
-    prefs.set("b", Fl_String("Hello"));
-    prefs.set("c", Fl_String("Hel\\l\nö"));
+    prefs.set("a", std::string());
+    prefs.set("b", std::string("Hello"));
+    prefs.set("c", std::string("Hel\\l\nö"));
   }
   {
     Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
-    Fl_String r;
+    std::string r;
     prefs.get("a", r, "x");
     EXPECT_STREQ(r.c_str(), "");
     prefs.get("b", r, "x");
@@ -100,7 +53,7 @@ TEST(Fl_Preferences, Strings) {
 #if 0
 
 TEST(fl_filename, ext) {
-  Fl_String r = fl_filename_ext("test.txt");
+  std::string r = fl_filename_ext("test.txt");
   EXPECT_STREQ(r.c_str(), ".txt");
   r = fl_filename_ext("test");
   EXPECT_STREQ(r.c_str(), "");
@@ -110,22 +63,22 @@ TEST(fl_filename, ext) {
 }
 
 TEST(fl_filename, setext) {
-  Fl_String r = fl_filename_setext(Fl_String("test.txt"), ".rtf");
+  std::string r = fl_filename_setext(std::string("test.txt"), ".rtf");
   EXPECT_STREQ(r.c_str(), "test.rtf");
-  r = fl_filename_setext(Fl_String("test"), ".rtf");
+  r = fl_filename_setext(std::string("test"), ".rtf");
   EXPECT_STREQ(r.c_str(), "test.rtf");
-  r = fl_filename_setext(Fl_String("test.txt"), "");
+  r = fl_filename_setext(std::string("test.txt"), "");
   EXPECT_STREQ(r.c_str(), "test");
-  r = fl_filename_setext(Fl_String(""), ".rtf");
+  r = fl_filename_setext(std::string(""), ".rtf");
   EXPECT_STREQ(r.c_str(), ".rtf");
-  r = fl_filename_setext(Fl_String("path/test"), ".rtf");
+  r = fl_filename_setext(std::string("path/test"), ".rtf");
   EXPECT_STREQ(r.c_str(), "path/test.rtf");
   return true;
 }
 
 TEST(fl_filename, relative) {
-  Fl_String base = "/var/tmp/somedir";
-  Fl_String r = fl_filename_relative("/var/tmp/somedir/foo.txt", base);
+  std::string base = "/var/tmp/somedir";
+  std::string r = fl_filename_relative("/var/tmp/somedir/foo.txt", base);
   EXPECT_STREQ(r.c_str(), "foo.txt");
   r = fl_filename_relative("/var/tmp/foo.txt", base);
   EXPECT_STREQ(r.c_str(), "../foo.txt");
@@ -137,8 +90,8 @@ TEST(fl_filename, relative) {
 }
 
 TEST(fl_filename, absolute) {
-  Fl_String base = "/var/tmp/somedir";
-  Fl_String r = fl_filename_absolute("foo.txt", base);
+  std::string base = "/var/tmp/somedir";
+  std::string r = fl_filename_absolute("foo.txt", base);
   EXPECT_STREQ(r.c_str(), "/var/tmp/somedir/foo.txt");
   r = fl_filename_absolute("/var/tmp/foo.txt", base);
   EXPECT_STREQ(r.c_str(), "/var/tmp/foo.txt");
@@ -152,11 +105,11 @@ TEST(fl_filename, absolute) {
 
 bool cb1a_ok = false, cb1b_ok = false, cb1c_ok = false;
 int cb1_alloc = 0;
-class MyString : public Fl_String {
+class MyString : public std::string {
 public:
-  MyString() : Fl_String() { cb1_alloc++; }
-  MyString(const MyString &str) : Fl_String(str) { cb1_alloc++; }
-  MyString(const char *t) : Fl_String(t) { cb1_alloc++; }
+  MyString() : std::string() { cb1_alloc++; }
+  MyString(const MyString &str) : std::string(str) { cb1_alloc++; }
+  MyString(const char *t) : std::string(t) { cb1_alloc++; }
   ~MyString() { cb1_alloc--; }
 };
 void cb1(MyString a, int b) {
@@ -187,9 +140,9 @@ TEST(Fl_Callback_Macros, FL_FUNCTION_CALLBACK) {
 
 TEST(Fl_Callback_Macros, FL_METHOD_CALLBACK) {
   Fl_Group::current(NULL);
-  Fl_String *str = new Fl_String("FLTK");
+  std::string *str = new std::string("FLTK");
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
-  FL_METHOD_CALLBACK_2(btn, Fl_String, str, insert, int, 2, const char*, "XX");
+  FL_METHOD_CALLBACK_2(btn, std::string, str, insert, int, 2, const char*, "XX");
   btn->do_callback();
   EXPECT_STREQ(str->c_str(), "FLXXTK");
   delete btn;

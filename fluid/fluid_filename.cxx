@@ -30,12 +30,11 @@
 */
 
 #include <stdlib.h>
+#include <string>
 
 #include <FL/filename.H>
 #include <FL/Fl.H>
 #include <FL/fl_string_functions.h>
-
-#include "../src/Fl_String.H"       // NOTE: FLTK 1.4.x only !
 #include "../src/flstring.h"
 
 
@@ -187,7 +186,7 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
   static int home_chars = -1;
   if (home_chars==-1) {
     home = fl_filename_expand(tilde);
-    home_chars = fl_utf_nb_char((const uchar*)home.c_str(), home.size());
+    home_chars = fl_utf_nb_char((const uchar*)home.c_str(), (int)home.size());
   }
   std::string homed_filename;
 #if defined(_WIN32) || defined(__APPLE__)
@@ -203,7 +202,7 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
   // C style pointer will stay valid until filename is modified.
   const unsigned char *u8str = reinterpret_cast<const unsigned char *>(homed_filename.c_str());
   // Count the number of UTF-8 characters in the name.
-  int num_chars = fl_utf_nb_char(u8str, homed_filename.size());
+  int num_chars = fl_utf_nb_char(u8str, (int)homed_filename.size());
   if (num_chars+ell_bytes-1 > max_chars) {
     // Create a new string by replacing characters in the middle.
     int remove_chars = num_chars - max_chars + ell_bytes;

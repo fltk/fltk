@@ -20,7 +20,7 @@
 #include "fluid.h"
 #include "Fl_Window_Type.h"
 
-#include "../src/Fl_String.H"
+#include <string>
 
 struct Fl_Menu_Item;
 

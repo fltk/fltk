@@ -22,9 +22,8 @@
 
 #include <FL/fl_attr.h>
 
-#include "../src/Fl_String.H"
-
 #include <stdio.h>
+#include <string>
 
 const int FD_TAG_GENERIC = 0;
 const int FD_TAG_CODE = 1;

@@ -22,11 +22,11 @@
 #ifndef fl_screenshot_H
 #define fl_screenshot_H
 
-#include "../src/Fl_String.H"
-
 #include <FL/Fl_Export.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Rect.H>
+
+#include <string>
 
 /** Class to initialize a Rect by providing the margin around a rect. */
 class Fl_Margin : public Fl_Rect {

@@ -20,7 +20,8 @@
 #include "fluid_filename.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
-#include "../src/Fl_String.H"
+
+#include <string>
 
 #define BROWSERWIDTH 300
 #define BROWSERHEIGHT 500

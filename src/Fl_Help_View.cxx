@@ -52,7 +52,6 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Menu_Item.H>
 #include "Fl_Int_Vector.H"
-#include "Fl_String.H"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,6 +62,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <math.h>
+#include <string>
 
 #define MAX_COLUMNS     200
 
@@ -304,14 +304,14 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
 /* Note: Don't use Doxygen docs for this internal class.
 
   Internal class to manage the Fl_Help_View edit buffer.
-  This is a subclass of Fl_String since FLTK 1.4.0.
+  This is a subclass of Fl_String since FLTK 1.4.0 and std::string since 1.5.0.
 
   This class is for internal use in this file. Its sole purpose is to
   allow buffer management to avoid buffer overflows in stack variables
   used to edit strings for formatting and drawing (STR #3275).
 */
 
-class HV_Edit_Buffer : public Fl_String {
+class HV_Edit_Buffer : public std::string {
 public:
   // use default constructor and destructor, none defined here
 
@@ -1021,7 +1021,7 @@ Fl_Help_View::draw()
           if (qch < 0)
             buf += '&';
           else {
-            int utf8l = buf.size();
+            size_t utf8l = buf.size();
             buf.add(qch);
             utf8l = buf.size() - utf8l; // length of added UTF-8 text
             const char *oldptr = ptr;

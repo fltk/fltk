@@ -19,11 +19,11 @@
 
 #include "fluid.h"
 
-#include "../src/Fl_String.H"
 #include <FL/Enumerations.H>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>

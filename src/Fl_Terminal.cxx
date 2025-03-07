@@ -29,13 +29,13 @@
 #include <string.h>     // strlen
 #include <stdarg.h>     // vprintf, va_list
 #include <assert.h>
+#include <string>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Terminal.H>
 #include <FL/fl_utf8.h> // fl_utf8len1
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
-#include "Fl_String.H"
 
 /////////////////////////////////
 ////// Static Functions /////////
@@ -3948,7 +3948,7 @@ int Fl_Terminal::handle(int e) {
   \return A string allocated with strdup(3) which must be free'd, text is UTF-8.
 */
 const char* Fl_Terminal::text(bool lines_below_cursor) const {
-  Fl_String lines;          // lines of text we'll return
+  std::string lines;          // lines of text we'll return
   // See how many display rows we need to include
   int disprows = lines_below_cursor ? disp_rows() - 1    // all display lines
                                     : cursor_row();      // only lines up to cursor

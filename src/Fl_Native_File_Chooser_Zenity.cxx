@@ -36,8 +36,8 @@ bool Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity = false;
 Fl_Zenity_Native_File_Chooser_Driver::Fl_Zenity_Native_File_Chooser_Driver(int val) :  Fl_Kdialog_Native_File_Chooser_Driver(val) {
 }
 
-void Fl_Zenity_Native_File_Chooser_Driver::append_filter(Fl_String& ret_command) {
-  // TODO: This could probably be simplified + toughened with Fl_String -erco 1/10/24
+void Fl_Zenity_Native_File_Chooser_Driver::append_filter(std::string& ret_command) {
+  // TODO: This could probably be simplified + toughened with std::string -erco 1/10/24
   int l;
   int lcommand = 10000;
   char *command = new char[lcommand];
@@ -72,11 +72,11 @@ void Fl_Zenity_Native_File_Chooser_Driver::append_filter(Fl_String& ret_command)
     p = strtok(NULL, "\n");
   }
   free(parsed_filter_copy);
-  ret_command += command;        // append to parent's Fl_String
+  ret_command += command;        // append to parent's std::string
   delete [] command;
 }
 
-void Fl_Zenity_Native_File_Chooser_Driver::build_command(Fl_String& command) {
+void Fl_Zenity_Native_File_Chooser_Driver::build_command(std::string& command) {
   const char *option;
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
@@ -100,14 +100,14 @@ void Fl_Zenity_Native_File_Chooser_Driver::build_command(Fl_String& command) {
   }
 
   // Build preset
-  Fl_String preset;
+  std::string preset;
   if (_preset_file) {
-    Fl_String quoted_filename = _preset_file; shell_quote(quoted_filename);
+    std::string quoted_filename = _preset_file; shell_quote(quoted_filename);
     preset = "--filename=";
     preset += quoted_filename;
   } else if (_directory) {
     // This doesn't actually seem to do anything, but supply it anyway.
-    Fl_String quoted_dir = _directory; shell_quote(quoted_dir);
+    std::string quoted_dir = _directory; shell_quote(quoted_dir);
     preset = "--filename=";
     preset += quoted_dir;
   }
@@ -115,7 +115,7 @@ void Fl_Zenity_Native_File_Chooser_Driver::build_command(Fl_String& command) {
   // Build command
   command = "zenity";
   if (_title) {
-    Fl_String quoted_title = _title; shell_quote(quoted_title);
+    std::string quoted_title = _title; shell_quote(quoted_title);
     command += " --title ";
     command += quoted_title;
   }

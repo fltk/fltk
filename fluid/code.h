@@ -18,10 +18,10 @@
 #define _FLUID_CODE_H
 
 #include <FL/fl_attr.h>
-#include "../src/Fl_String.H"
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <string>
 
 class Fl_Type;
 struct Fd_Identifier_Tree;

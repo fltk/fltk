@@ -39,7 +39,7 @@
 
 #  if defined(__cplusplus)
 
-#include "../src/Fl_String.H"
+#include <string>
 
 std::string fl_filename_shortened(const std::string &filename, int maxchars);
 std::string fl_filename_name(const std::string &filename);

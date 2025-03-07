@@ -73,7 +73,7 @@ static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
 }
 
 
-void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
+void Fl_Kdialog_Native_File_Chooser_Driver::build_command(std::string& command) {
   const char *option;
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
@@ -105,7 +105,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
   // Build command
   command = "kdialog";
   if (_title) {
-    Fl_String quoted_title = _title; shell_quote(quoted_title);
+    std::string quoted_title = _title; shell_quote(quoted_title);
     command += " --title ";
     command += quoted_title;
   }
@@ -114,7 +114,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
   command += " ";
   command += preset;
   if (_parsedfilt) {
-    Fl_String quoted_filt = _parsedfilt; shell_quote(quoted_filt);     // NOTE: orig code used double quoting -erco 1/10/24
+    std::string quoted_filt = _parsedfilt; shell_quote(quoted_filt);     // NOTE: orig code used double quoting -erco 1/10/24
     command += " ";
     command += quoted_filt;
   }
@@ -146,7 +146,7 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
       return retval;
   }
 
-  Fl_String command;
+  std::string command;
   build_command(command);
   //fprintf(stderr, "DEBUG: POPEN: %s\n", command.c_str());
   FILE *pipe = popen(command.c_str(), "r");
@@ -310,8 +310,8 @@ const char *Fl_Kdialog_Native_File_Chooser_Driver::title() const {
 // Add shell quotes around string 's'.
 // Handles quoting embedded quotes.
 //
-void Fl_Kdialog_Native_File_Chooser_Driver::shell_quote(Fl_String& s) {
-  Fl_String out = "'";                          // leading quote
+void Fl_Kdialog_Native_File_Chooser_Driver::shell_quote(std::string& s) {
+  std::string out = "'";                          // leading quote
   for (int t=0; t<(int)s.size(); t++) {
     if (s[t] == '\'') out += "'\"'\"'";         // quote any quotes
     else              out += s[t];
