@@ -20,6 +20,7 @@
 #include "nodes/Fl_Window_Type.h"
 #include "nodes/Fl_Function_Type.h"
 
+#include <FL/filename.H>
 #include "../src/flstring.h"
 
 #include <zlib.h>
