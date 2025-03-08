@@ -1,7 +1,7 @@
 //
 // Cairo drawing test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,8 +26,8 @@
 
 #define DEF_WIDTH 0.03
 
-// This demo program can be used in 3 modes. All 3 modes require configure
-// option --enable-cairo or CMake FLTK_OPTION_CAIRO_WINDOW.
+// This demo program can be used in 3 modes. All 3 modes require CMake
+// option FLTK_OPTION_CAIRO_WINDOW.
 //
 // 1) using class Fl_Cairo_Window useful when all the content of a window
 //    is drawn with Cairo.
@@ -38,9 +38,9 @@
 //    This is achieved setting #define USE_FL_CAIRO_WINDOW 0 below
 // or
 // 3) showing how to use "cairo extended use".
-//    This is achieved when FLTK was built with one more option
-//    (configure --enable-cairoext or CMake FLTK_OPTION_CAIRO_EXT)
-//    which defines the preprocessor variable FLTK_HAVE_CAIROEXT.
+//    This is achieved when FLTK was built with one more CMake option
+//    (FLTK_OPTION_CAIRO_EXT) which defines the preprocessor variable
+//    FLTK_HAVE_CAIROEXT.
 //    If Fl::cairo_autolink_context(true); is called at the beginning
 //    of main(), any overridden draw() function gets access to an adequate
 //    Cairo context with Fl::cairo_cc() without having to call
@@ -211,8 +211,8 @@ int main(int argc, char **argv) {
 int main(int argc, char **argv) {
   fl_message_title("This program needs a Cairo enabled FLTK library");
   fl_message(
-    "Please configure FLTK with Cairo enabled (--enable-cairo or --enable-cairoext)\n"
-    "or one of the CMake options FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT, respectively.");
+    "Please configure FLTK with Cairo enabled, i.e. use one of the\n"
+    "CMake options FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT.");
   return 0;
 }
 #endif // (FLTK_HAVE_CAIRO)

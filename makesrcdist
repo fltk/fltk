@@ -188,12 +188,6 @@ sed -e '1,$s/@FLTK_VERSION@/'$version'/' \
 echo Writing git revision file...
 echo "$GIT_REVISION" > fltk_git_rev.dat
 
-echo Creating configure script...
-autoconf -f
-
-echo Cleaning developer files...
-rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
-
 cd ..
 
 if test $# != 0 -a "x$1" != "xsnapshot"; then
