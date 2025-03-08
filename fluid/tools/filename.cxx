@@ -95,3 +95,17 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
     return homed_filename;
   }
 }
+
+/**
+ Make sure that a path name ends with a forward slash.
+ \param[in] str directory or path name
+ \return a new string, ending with a '/'
+ */
+std::string fld::end_with_slash(const std::string &str) {
+  char last = str[str.size()-1];
+  if (last !='/' && last != '\\')
+    return str + "/";
+  else
+    return str;
+}
+

@@ -14,9 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "app/align_widget.h"
+#include "proj/align_widget.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "app/undo.h"
 #include "nodes/Fl_Group_Type.h"
 

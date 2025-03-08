@@ -19,7 +19,7 @@
 #ifndef settings_panel_h
 #define settings_panel_h
 #include <FL/Fl.H>
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "app/Fd_Snap_Action.h"
 #include "app/shell_command.h"
 #include "tools/filename.h"

@@ -14,10 +14,16 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "main.h"
-#include "Fluid.h"
+#ifndef FLUID_APP_TEMPLATES_H
+#define FLUID_APP_TEMPLATES_H
 
-int main(int argc,char **argv) {
-  return Fluid.run(argc, argv);
-}
+namespace fld {
+namespace app {
+
+void save_template();
+
+} // namespace app
+} // namespace fld
+
+#endif // FLUID_APP_TEMPLATES_H
 

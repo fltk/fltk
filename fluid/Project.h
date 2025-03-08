@@ -15,8 +15,8 @@
 //
 
 
-#ifndef FLUID_APP_PROJECT_H
-#define FLUID_APP_PROJECT_H
+#ifndef FLUID_PROJECT_H
+#define FLUID_PROJECT_H
 
 #include <string>
 
@@ -31,13 +31,15 @@ typedef enum {
   FD_I18N_POSIX     ///< Posix catgets internationalization
 } Fd_I18n_Type;
 
+namespace fld {
+
 /**
  Data and settings for a FLUID project file.
  */
-class Fluid_Project {
+class Project {
 public:
-  Fluid_Project();
-  ~Fluid_Project();
+  Project();
+  ~Project();
   void reset();
   void update_settings_dialog();
 
@@ -94,10 +96,20 @@ public:
   std::string header_file_name;
   /// Hold the default extension for source code  files, or the entire filename if set via command line.
   std::string code_file_name;
+
+  /// Used as a counter to set the .fl project dir as the current directory.
+  int in_project_dir { 0 };
+  /// Application work directory, stored here when temporarily changing to the source code directory.
+  /// \see goto_source_dir()
+  std::string app_work_dir;
+
+  void enter_project_dir();
+  void leave_project_dir();
+
 };
 
-extern Fluid_Project g_project;
+} // namespace fld
 
-#endif // FLUID_APP_PROJECT_H
+#endif // FLUID_PROJECT_H
 
 

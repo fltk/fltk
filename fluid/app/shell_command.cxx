@@ -97,8 +97,8 @@
 
 #include "app/shell_command.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "panels/settings_panel.h"
@@ -312,10 +312,10 @@ static bool prepare_shell_command(int flags)  {
     return false;
   }
   if (flags & Fd_Shell_Command::SAVE_PROJECT) {
-    save_cb(0, 0);
+    Fluid.save_project_file(nullptr);
   }
   if (flags & Fd_Shell_Command::SAVE_SOURCECODE) {
-    write_code_files(true);
+    Fluid.write_code_files(true);
   }
   if (flags & Fd_Shell_Command::SAVE_STRINGS) {
     write_strings_cb(0, 0);
@@ -373,29 +373,29 @@ static void expand_macro(std::string &cmd, const std::string &macro, const std::
 }
 
 static void expand_macros(std::string &cmd) {
-  expand_macro(cmd, "@BASENAME@",         g_project.basename());
-  expand_macro(cmd, "@PROJECTFILE_PATH@", g_project.projectfile_path());
-  expand_macro(cmd, "@PROJECTFILE_NAME@", g_project.projectfile_name());
-  expand_macro(cmd, "@CODEFILE_PATH@",    g_project.codefile_path());
-  expand_macro(cmd, "@CODEFILE_NAME@",    g_project.codefile_name());
-  expand_macro(cmd, "@HEADERFILE_PATH@",  g_project.headerfile_path());
-  expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.headerfile_name());
-  expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.stringsfile_path());
-  expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.stringsfile_name());
+  expand_macro(cmd, "@BASENAME@",         Fluid.proj.basename());
+  expand_macro(cmd, "@PROJECTFILE_PATH@", Fluid.proj.projectfile_path());
+  expand_macro(cmd, "@PROJECTFILE_NAME@", Fluid.proj.projectfile_name());
+  expand_macro(cmd, "@CODEFILE_PATH@",    Fluid.proj.codefile_path());
+  expand_macro(cmd, "@CODEFILE_NAME@",    Fluid.proj.codefile_name());
+  expand_macro(cmd, "@HEADERFILE_PATH@",  Fluid.proj.headerfile_path());
+  expand_macro(cmd, "@HEADERFILE_NAME@",  Fluid.proj.headerfile_name());
+  expand_macro(cmd, "@TEXTFILE_PATH@",    Fluid.proj.stringsfile_path());
+  expand_macro(cmd, "@TEXTFILE_NAME@",    Fluid.proj.stringsfile_name());
 //  TODO: implement finding the script `fltk-config` for all platforms
 //  if (cmd.find("@FLTK_CONFIG@") != std::string::npos) {
 //    find_fltk_config();
 //    expand_macro(cmd, "@FLTK_CONFIG@",      fltk_config_cmd.c_str());
 //  }
   if (cmd.find("@TMPDIR@") != std::string::npos)
-    expand_macro(cmd, "@TMPDIR@",           get_tmpdir());
+    expand_macro(cmd, "@TMPDIR@",           Fluid.get_tmpdir());
 }
 
 /**
  Show the terminal window where it was last positioned.
  */
 void show_terminal_window() {
-  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+  Fl_Preferences pos(Fluid.preferences, "shell_run_Window_pos");
   int x, y, w, h;
   pos.get("x", x, -1);
   pos.get("y", y, 0);
@@ -722,7 +722,7 @@ void Fd_Shell_Command_List::clear(Fd_Tool_Store storage) {
  */
 void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   // import the old shell commands from previous user settings
-  if (&fluid_prefs == &prefs) {
+  if (&Fluid.preferences == &prefs) {
     int version;
     prefs.get("shell_commands_version", version, 0);
     if (version == 0) {
@@ -732,10 +732,10 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
       cmd->name = "Sample Shell Command";
       cmd->label = "Sample Shell Command";
       cmd->shortcut = FL_ALT+'g';
-      preferences_get(fluid_prefs, "shell_command", cmd->command, "echo \"Sample Shell Command\"");
-      fluid_prefs.get("shell_savefl", save_fl, 1);
-      fluid_prefs.get("shell_writecode", save_code, 1);
-      fluid_prefs.get("shell_writemsgs", save_strings, 0);
+      preferences_get(Fluid.preferences, "shell_command", cmd->command, "echo \"Sample Shell Command\"");
+      Fluid.preferences.get("shell_savefl", save_fl, 1);
+      Fluid.preferences.get("shell_writecode", save_code, 1);
+      Fluid.preferences.get("shell_writemsgs", save_strings, 0);
       if (save_fl) cmd->flags |= Fd_Shell_Command::SAVE_PROJECT;
       if (save_code) cmd->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
       if (save_strings) cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
@@ -951,8 +951,8 @@ void Fd_Shell_Command_List::export_selected() {
   dialog.title("Export selected shell commands:");
   dialog.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(g_project.projectfile_path().c_str());
-  dialog.preset_file((g_project.basename() + ".flcmd").c_str());
+  dialog.directory(Fluid.proj.projectfile_path().c_str());
+  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
   Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
@@ -980,8 +980,8 @@ void Fd_Shell_Command_List::import_from_file() {
   dialog.title("Import shell commands:");
   dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
   dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(g_project.projectfile_path().c_str());
-  dialog.preset_file((g_project.basename() + ".flcmd").c_str());
+  dialog.directory(Fluid.proj.projectfile_path().c_str());
+  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
   Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);

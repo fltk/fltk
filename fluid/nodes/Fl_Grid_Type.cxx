@@ -16,7 +16,7 @@
 
 #include "nodes/Fl_Grid_Type.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "app/Fd_Snap_Action.h"
 #include "app/undo.h"
 #include "io/Project_Reader.h"
@@ -75,7 +75,7 @@ void Fl_Grid_Proxy::resize(int X, int Y, int W, int H) {
  Override draw() to make groups with no box or flat box background visible.
  */
 void Fl_Grid_Proxy::draw() {
-  if (show_ghosted_outline && (box() == FL_NO_BOX)) {
+  if (Fluid.show_ghosted_outline && (box() == FL_NO_BOX)) {
     fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
   }
   Fl_Grid::draw();

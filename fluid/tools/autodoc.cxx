@@ -18,8 +18,8 @@
 
 #include "tools/autodoc.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "nodes/factory.h"
 #include "nodes/Fl_Widget_Type.h"
 #include "nodes/Fl_Window_Type.h"
@@ -383,7 +383,7 @@ void run_autodoc(const std::string &target_dir) {
 //  Fl::scheme("gtk+");
 
   // Create a silly project that contains all widgets that we want to document
-  new_project(false);
+  Fluid.new_project(false);
 
   /*Fl_Type *t_func = */ add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
   Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", Strategy::AS_LAST_CHILD, false);
@@ -403,7 +403,7 @@ void run_autodoc(const std::string &target_dir) {
   Fl_Type *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
-  g_project.update_settings_dialog();
+  Fluid.proj.update_settings_dialog();
 
   // TODO: FLUID overview
 

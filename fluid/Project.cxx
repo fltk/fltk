@@ -14,20 +14,19 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "app/project.h"
+#include "Project.h"
 
 #include "nodes/Fl_Type.h"
 #include "panels/settings_panel.h"
 
-// ---- project settings
+using namespace fld;
 
-/// The current project, possibly a new, empty roject
-Fluid_Project g_project;
+// ---- project settings
 
 /**
  Initialize a new project.
  */
-Fluid_Project::Fluid_Project() :
+Project::Project() :
 i18n_type(FD_I18N_NONE),
 include_H_from_C(1),
 use_FL_COMMAND(0),
@@ -44,13 +43,13 @@ code_file_name(".cxx")
  Clear all project resources.
  Not implemented.
  */
-Fluid_Project::~Fluid_Project() {
+Project::~Project() {
 }
 
 /**
  Reset all project setting to create a new empty project.
  */
-void Fluid_Project::reset() {
+void Project::reset() {
   ::delete_all();
   i18n_type = FD_I18N_NONE;
 
@@ -78,7 +77,7 @@ void Fluid_Project::reset() {
 /**
  Tell the project and i18n tab of the settings dialog to refresh themselves.
  */
-void Fluid_Project::update_settings_dialog() {
+void Project::update_settings_dialog() {
   if (settings_window) {
     w_settings_project_tab->do_callback(w_settings_project_tab, LOAD);
     w_settings_i18n_tab->do_callback(w_settings_i18n_tab, LOAD);
@@ -89,15 +88,15 @@ void Fluid_Project::update_settings_dialog() {
  Get the absolute path of the project file, for example `/Users/matt/dev/`.
  \return the path ending in '/'
  */
-std::string Fluid_Project::projectfile_path() const {
-  return end_with_slash(fl_filename_absolute_str(fl_filename_path_str(proj_filename), g_launch_path));
+std::string Project::projectfile_path() const {
+  return end_with_slash(fl_filename_absolute_str(fl_filename_path_str(proj_filename), Fluid.launch_path));
 }
 
 /**
  Get the project file name including extension, for example `test.fl`.
  \return the file name without path
  */
-std::string Fluid_Project::projectfile_name() const {
+std::string Project::projectfile_name() const {
   return fl_filename_name(proj_filename);
 }
 
@@ -105,10 +104,10 @@ std::string Fluid_Project::projectfile_name() const {
  Get the absolute path of the generated C++ code file, for example `/Users/matt/dev/src/`.
  \return the path ending in '/'
  */
-std::string Fluid_Project::codefile_path() const {
+std::string Project::codefile_path() const {
   std::string path = fl_filename_path_str(code_file_name);
-  if (batch_mode)
-    return end_with_slash(fl_filename_absolute_str(path, g_launch_path));
+  if (Fluid.batch_mode)
+    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path));
   else
     return end_with_slash(fl_filename_absolute_str(path, projectfile_path()));
 }
@@ -117,7 +116,7 @@ std::string Fluid_Project::codefile_path() const {
  Get the generated C++ code file name including extension, for example `test.cxx`.
  \return the file name without path
  */
-std::string Fluid_Project::codefile_name() const {
+std::string Project::codefile_name() const {
   std::string name = fl_filename_name_str(code_file_name);
   if (name.empty()) {
     return fl_filename_setext_str(fl_filename_name(proj_filename), ".cxx");
@@ -132,10 +131,10 @@ std::string Fluid_Project::codefile_name() const {
  Get the absolute path of the generated C++ header file, for example `/Users/matt/dev/src/`.
  \return the path ending in '/'
  */
-std::string Fluid_Project::headerfile_path() const {
+std::string Project::headerfile_path() const {
   std::string path = fl_filename_path_str(header_file_name);
-  if (batch_mode)
-    return end_with_slash(fl_filename_absolute_str(path, g_launch_path));
+  if (Fluid.batch_mode)
+    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path));
   else
     return end_with_slash(fl_filename_absolute_str(path, projectfile_path()));
 }
@@ -144,7 +143,7 @@ std::string Fluid_Project::headerfile_path() const {
  Get the generated C++ header file name including extension, for example `test.cxx`.
  \return the file name without path
  */
-std::string Fluid_Project::headerfile_name() const {
+std::string Project::headerfile_name() const {
   std::string name = fl_filename_name_str(header_file_name);
   if (name.empty()) {
     return fl_filename_setext_str(fl_filename_name_str(proj_filename), ".h");
@@ -163,9 +162,9 @@ std::string Fluid_Project::headerfile_name() const {
  batch mode.
  \return the path ending in '/'
  */
-std::string Fluid_Project::stringsfile_path() const {
-  if (batch_mode)
-    return g_launch_path;
+std::string Project::stringsfile_path() const {
+  if (Fluid.batch_mode)
+    return Fluid.launch_path;
   else
     return projectfile_path();
 }
@@ -174,7 +173,7 @@ std::string Fluid_Project::stringsfile_path() const {
  Get the generated i18n text file name including extension, for example `test.po`.
  \return the file name without path
  */
-std::string Fluid_Project::stringsfile_name() const {
+std::string Project::stringsfile_name() const {
   switch (i18n_type) {
     default: return fl_filename_setext_str(fl_filename_name(proj_filename), ".txt");
     case FD_I18N_GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
@@ -186,7 +185,68 @@ std::string Fluid_Project::stringsfile_name() const {
  Get the name of the project file without the filename extension.
  \return the file name without path or extension
  */
-std::string Fluid_Project::basename() const {
+std::string Project::basename() const {
   return fl_filename_setext_str(fl_filename_name(proj_filename), "");
+}
+
+
+/**
+ Change the current working directory to the .fl project directory.
+
+ Every call to enter_project_dir() must have a corresponding leave_project_dir()
+ call. Enter and leave calls can be nested.
+
+ The first call to enter_project_dir() remembers the original directory, usually
+ the launch directory of the application. Nested calls will increment a nesting
+ counter. When the nesting counter is back to 0, leave_project_dir() will return
+ to the original directory.
+
+ The global variable 'filename' must be set to the current project file with
+ absolute or relative path information.
+
+ \see leave_project_dir(), pwd, in_project_dir
+ */
+void Project::enter_project_dir() {
+  if (in_project_dir<0) {
+    fprintf(stderr, "** Fluid internal error: enter_project_dir() calls unmatched\n");
+    return;
+  }
+  in_project_dir++;
+  // check if we are already in the project dir and do nothing if so
+  if (in_project_dir>1) return;
+  // check if there is an active project, and do nothing if there is none
+  if (!Fluid.proj.proj_filename || !*Fluid.proj.proj_filename) {
+    fprintf(stderr, "** Fluid internal error: enter_project_dir() no filename set\n");
+    return;
+  }
+  // store the current working directory for later
+  app_work_dir = fl_getcwd_str();
+  // set the current directory to the path of our .fl file
+  std::string project_path = fl_filename_path_str(fl_filename_absolute_str(Fluid.proj.proj_filename));
+  if (fl_chdir(project_path.c_str()) == -1) {
+    fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
+            project_path.c_str(), strerror(errno));
+    return;
+  }
+  //fprintf(stderr, "chdir from %s to %s\n", app_work_dir.c_str(), fl_getcwd().c_str());
+}
+
+/**
+ Change the current working directory to the previous directory.
+ \see enter_project_dir(), pwd, in_project_dir
+ */
+void Project::leave_project_dir() {
+  if (in_project_dir == 0) {
+    fprintf(stderr, "** Fluid internal error: leave_project_dir() calls unmatched\n");
+    return;
+  }
+  in_project_dir--;
+  // still nested, stay in the project directory
+  if (in_project_dir > 0) return;
+  // no longer nested, return to the original, usually the application working directory
+  if (fl_chdir(app_work_dir.c_str()) < 0) {
+    fprintf(stderr, "** Fluid internal error: leave_project_dir() can't chdir back to %s : %s\n",
+            app_work_dir.c_str(), strerror(errno));
+  }
 }
 

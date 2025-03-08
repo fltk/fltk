@@ -16,8 +16,8 @@
 
 #include "app/undo.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "nodes/Fl_Type.h"
@@ -67,7 +67,7 @@ static char *undo_filename(int level) {
   static unsigned int undo_path_len = 0;   // length w/o filename
 
   if (!undo_path_len) {
-    fluid_prefs.getUserdataPath(undo_path, sizeof(undo_path));
+    Fluid.preferences.getUserdataPath(undo_path, sizeof(undo_path));
     undo_path_len = (unsigned int)strlen(undo_path);
   }
 
@@ -99,7 +99,7 @@ void redo_cb(Fl_Widget *, void *) {
   if (!fld::io::read_file(undo_filename(undo_current + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
     widget_browser->rebuild();
-    g_project.update_settings_dialog();
+    Fluid.proj.update_settings_dialog();
     undo_resume();
     return;
   }
@@ -116,7 +116,7 @@ void redo_cb(Fl_Widget *, void *) {
   // Update modified flag...
   set_modflag(undo_current != undo_save);
   widget_browser->rebuild();
-  g_project.update_settings_dialog();
+  Fluid.proj.update_settings_dialog();
 
   // Update undo/redo menu items...
   // if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
@@ -151,7 +151,7 @@ void undo_cb(Fl_Widget *, void *) {
   if (!fld::io::read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
     widget_browser->rebuild();
-    g_project.update_settings_dialog();
+    Fluid.proj.update_settings_dialog();
     set_modflag(0, 0);
     undo_resume();
     return;
@@ -177,7 +177,7 @@ void undo_cb(Fl_Widget *, void *) {
   // if (undo_current <= 0) Main_Menu[undo_item].deactivate();
   // Main_Menu[redo_item].activate();
   widget_browser->rebuild();
-  g_project.update_settings_dialog();
+  Fluid.proj.update_settings_dialog();
   undo_resume();
 }
 

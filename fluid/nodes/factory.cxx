@@ -25,7 +25,7 @@
 #include "nodes/factory.h"
 
 #include "app/Fd_Snap_Action.h"
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "app/undo.h"
 #include "nodes/Fl_Group_Type.h"
 #include "nodes/Fl_Grid_Type.h"
@@ -132,7 +132,7 @@ public:
     Fl_Browser* b = new Fl_Browser(x, y, w, h);
     // Fl_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
         sprintf(buffer,"Browser Line %d",i);
@@ -165,7 +165,7 @@ public:
     Fl_Check_Browser* b = new Fl_Check_Browser(x, y, w, h);
     // Fl_Check_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
         sprintf(buffer,"Browser Line %d",i);
@@ -197,7 +197,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE { return "fltk::FileBrowser"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_File_Browser* b = new Fl_File_Browser(x, y, w, h);
-    if (!batch_mode) b->load(".");
+    if (!Fluid.batch_mode) b->load(".");
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_File_Browser_Type(); }
@@ -231,7 +231,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE { return "fltk::TreeBrowser"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Tree* b = new Fl_Tree(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       b->add("/A1/B1/C1");
       b->add("/A1/B1/C2");
       b->add("/A1/B2/C1");
@@ -283,7 +283,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE { return "fltk::HelpView"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Help_View *myo = new Fl_Help_View(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
                  "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
     }
@@ -801,7 +801,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE { return "fltk::TextDisplay"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Text_Display *myo = new Fl_Text_Display(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       Fl_Text_Buffer *b = new Fl_Text_Buffer();
       b->text("Lorem ipsum dolor\nsit amet, consetetur\nsadipscing elitr");
       myo->buffer(b);
@@ -828,7 +828,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TextEditor";}
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Text_Editor *myo = new Fl_Text_Editor(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       Fl_Text_Buffer *b = new Fl_Text_Buffer();
       b->text("Lorem ipsum dolor\nsit amet, consetetur\nsadipscing elitr");
       myo->buffer(b);
@@ -898,7 +898,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
     Fl_Widget *ret = NULL;
-    if (batch_mode) {
+    if (Fluid.batch_mode) {
       ret = new Fl_Batchmode_Terminal(x, y, w, h);
     } else {
       Fl_Terminal_Proxy *term = new Fl_Terminal_Proxy(x, y, w+100, h);
@@ -907,7 +907,7 @@ public:
     return ret;
   }
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    if (batch_mode) {
+    if (Fluid.batch_mode) {
       Fl_Batchmode_Terminal *myo = (Fl_Batchmode_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
       switch (w) {
         case 4:

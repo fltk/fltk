@@ -20,10 +20,10 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include "app/fluid.h"} {private local
+decl {\#include "Fluid.h"} {private local
 }
 
-decl {\#include "app/project.h"} {private local
+decl {\#include "Project.h"} {private local
 }
 
 decl {\#include "io/Project_Reader.h"} {private local
@@ -203,16 +203,16 @@ and load those into the Code Viewer widgets.} open return_type void
     char fn[FL_PATH_MAX+1];
     fl_strlcpy(fn, get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(fn, "strings", FL_PATH_MAX);
-    fl_filename_setext(fn, FL_PATH_MAX, exts[g_project.i18n_type]);
+    fl_filename_setext(fn, FL_PATH_MAX, exts[Fluid.proj.i18n_type]);
     write_strings(fn);
     int top = cv_strings->top_line();
     cv_strings->buffer()->loadfile(fn);
     cv_strings->scroll(top, 0);
   } else if (cv_source->visible_r() || cv_header->visible_r()) {
-    std::string code_file_name_bak = g_project.code_file_name;
-    g_project.code_file_name = cv_source_filename;
-    std::string header_file_name_bak = g_project.header_file_name;
-    g_project.header_file_name = cv_header_filename;
+    std::string code_file_name_bak = Fluid.proj.code_file_name;
+    Fluid.proj.code_file_name = cv_source_filename;
+    std::string header_file_name_bak = Fluid.proj.header_file_name;
+    Fluid.proj.header_file_name = cv_header_filename;
 
     // generate the code and load the files
     fld::io::Code_Writer f;
@@ -231,8 +231,8 @@ and load those into the Code Viewer widgets.} open return_type void
       update_codeview_position();
     }
 
-    g_project.code_file_name = code_file_name_bak;
-    g_project.header_file_name = header_file_name_bak;
+    Fluid.proj.code_file_name = code_file_name_bak;
+    Fluid.proj.header_file_name = header_file_name_bak;
   }} {}
 }
 
@@ -260,7 +260,7 @@ The state is stored in the app preferences.
   code {if (!codeview_panel) {
     make_codeview();
     codeview_panel->callback((Fl_Callback*)toggle_codeview_cb);
-    Fl_Preferences svp(fluid_prefs, "codeview");
+    Fl_Preferences svp(Fluid.preferences, "codeview");
     int autorefresh;
     svp.get("autorefresh", autorefresh, 1);
     cv_autorefresh->value(autorefresh);

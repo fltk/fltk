@@ -29,6 +29,9 @@ namespace fld {
 
 using filename = std::string;
 
+extern std::string end_with_slash(const std::string &str);
+
+
 } // namespace fld
 
 #endif // FLUID_TOOLS_FILENAME_H

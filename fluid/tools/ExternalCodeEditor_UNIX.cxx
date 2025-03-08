@@ -5,8 +5,8 @@
 
 #include "ExternalCodeEditor_UNIX.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 
 #include <FL/Fl.H>      /* Fl_Timeout_Handler.. */
 #include <FL/fl_ask.H>  /* fl_alert() */
@@ -69,7 +69,7 @@ ExternalCodeEditor::ExternalCodeEditor() {
  This also closes the external editor.
  */
 ExternalCodeEditor::~ExternalCodeEditor() {
-  if ( G_debug )
+  if ( Fluid.debug_external_editor )
     printf("ExternalCodeEditor() DTOR CALLED (this=%p, pid=%ld)\n",
            (void*)this, (long)pid_);
   close_editor();   // close editor, delete tmp file
@@ -105,7 +105,7 @@ int ExternalCodeEditor::is_editing() {
  Wait for editor to close
  */
 void ExternalCodeEditor::close_editor() {
-  if ( G_debug ) printf("close_editor() called: pid=%ld\n", long(pid_));
+  if ( Fluid.debug_external_editor ) printf("close_editor() called: pid=%ld\n", long(pid_));
   // Wait until editor is closed + reaped
   while ( is_editing() ) {
     switch ( reap_editor() ) {
@@ -141,7 +141,7 @@ void ExternalCodeEditor::close_editor() {
  The dtor calls this to ensure no editors remain running when fluid exits.
  */
 void ExternalCodeEditor::kill_editor() {
-  if ( G_debug ) printf("kill_editor() called: pid=%ld\n", (long)pid_);
+  if ( Fluid.debug_external_editor ) printf("kill_editor() called: pid=%ld\n", (long)pid_);
   if ( !is_editing() ) return;  // editor not running? return..
   kill(pid_, SIGTERM);          // kill editor
   int wcount = 0;
@@ -164,7 +164,7 @@ void ExternalCodeEditor::kill_editor() {
         }
         continue;
       case 1:  // process reaped (reap_editor() sets pid_ to -1)
-        if ( G_debug )
+        if ( Fluid.debug_external_editor )
           printf("*** REAPED KILLED EXTERNAL EDITOR: PID %ld\n", (long)pid_reaped);
         break;
     }
@@ -239,7 +239,7 @@ int ExternalCodeEditor::remove_tmpfile() {
   if ( !tmpfile ) return 0;
   // Filename set? remove (if exists) and zero filename/mtime/size
   if ( is_file(tmpfile) ) {
-    if ( G_debug ) printf("Removing tmpfile '%s'\n", tmpfile);
+    if ( Fluid.debug_external_editor ) printf("Removing tmpfile '%s'\n", tmpfile);
     if ( remove(tmpfile) < 0 ) {
       fl_alert("WARNING: Can't remove() '%s': %s", tmpfile, strerror(errno));
       return -1;
@@ -268,7 +268,7 @@ const char* ExternalCodeEditor::tmpdir_name() {
 void ExternalCodeEditor::tmpdir_clear() {
   const char *tmpdir = tmpdir_name();
   if ( is_dir(tmpdir) ) {
-    if ( G_debug ) printf("Removing tmpdir '%s'\n", tmpdir);
+    if ( Fluid.debug_external_editor ) printf("Removing tmpdir '%s'\n", tmpdir);
     if ( rmdir(tmpdir) < 0 ) {
       fl_alert("WARNING: Can't rmdir() '%s': %s", tmpdir, strerror(errno));
     }
@@ -300,7 +300,7 @@ const char* ExternalCodeEditor::tmp_filename() {
   static char path[FL_PATH_MAX+1];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  const char *ext = g_project.code_file_name.c_str();   // e.g. ".cxx"
+  const char *ext = Fluid.proj.code_file_name.c_str();   // e.g. ".cxx"
   snprintf(path, FL_PATH_MAX, "%s/%p%s", tmpdir, (void*)this, ext);
   path[FL_PATH_MAX] = 0;
   return path;
@@ -383,7 +383,7 @@ void ExternalCodeEditor::open_alert_pipe() {
  */
 int ExternalCodeEditor::start_editor(const char *editor_cmd,
                                      const char *filename) {
-  if ( G_debug ) printf("start_editor() cmd='%s', filename='%s'\n",
+  if ( Fluid.debug_external_editor ) printf("start_editor() cmd='%s', filename='%s'\n",
                         editor_cmd, filename);
   char cmd[1024];
   snprintf(cmd, sizeof(cmd), "%s %s", editor_cmd, filename);
@@ -416,7 +416,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
     default:    // parent
       if ( L_editors_open++ == 0 )  // first editor? start timers
         { start_update_timer(); }
-      if ( G_debug )
+      if ( Fluid.debug_external_editor )
         printf("--- EDITOR STARTED: pid_=%ld #open=%d\n", (long)pid_, L_editors_open);
       break;
   }
@@ -453,7 +453,7 @@ int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
         { stop_update_timer(); }
       break;
   }
-  if ( G_debug )
+  if ( Fluid.debug_external_editor )
     printf("*** EDITOR REAPED: pid=%ld #open=%d\n", long(wpid), L_editors_open);
   return 1;
 }
@@ -492,7 +492,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
             filename(), (long)pid_);
           return 0;
         case 1:        // process reaped, wpid is pid reaped
-          if ( G_debug )
+          if ( Fluid.debug_external_editor )
             printf("*** REAPED EXTERNAL EDITOR: PID %ld\n", (long)wpid);
           break;        // fall thru to open new editor instance
       }
@@ -512,7 +512,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
   file_mtime_ = sbuf.st_mtime;
   file_size_  = sbuf.st_size;
   if ( start_editor(editor_cmd, filename()) < 0 ) { // open file in external editor
-    if ( G_debug ) printf("Editor failed to start\n");
+    if ( Fluid.debug_external_editor ) printf("Editor failed to start\n");
     return -1;  // errors were shown in dialog
   }
   return 0;
@@ -523,7 +523,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
  */
 void ExternalCodeEditor::start_update_timer() {
   if ( !L_update_timer_cb ) return;
-  if ( G_debug ) printf("--- TIMER: STARTING UPDATES\n");
+  if ( Fluid.debug_external_editor ) printf("--- TIMER: STARTING UPDATES\n");
   Fl::add_timeout(2.0, L_update_timer_cb);
 }
 
@@ -532,7 +532,7 @@ void ExternalCodeEditor::start_update_timer() {
  */
 void ExternalCodeEditor::stop_update_timer() {
   if ( !L_update_timer_cb ) return;
-  if ( G_debug ) printf("--- TIMER: STOPPING UPDATES\n");
+  if ( Fluid.debug_external_editor ) printf("--- TIMER: STOPPING UPDATES\n");
   Fl::remove_timeout(L_update_timer_cb);
 }
 

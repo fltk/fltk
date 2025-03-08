@@ -7,7 +7,7 @@
 #ifndef _EXTCODEEDITOR_H
 #define _EXTCODEEDITOR_H
 
-#include "app/fluid.h"
+#include "Fluid.h"
 
 #include <FL/Fl.H>
 

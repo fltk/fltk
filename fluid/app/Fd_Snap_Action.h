@@ -17,7 +17,7 @@
 #ifndef _FLUID_FD_SNAP_ACTION_H
 #define _FLUID_FD_SNAP_ACTION_H
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "nodes/Fl_Window_Type.h"
 
 #include <string>

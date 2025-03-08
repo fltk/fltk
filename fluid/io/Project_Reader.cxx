@@ -21,8 +21,8 @@
 
 #include "io/Project_Reader.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "app/shell_command.h"
 #include "app/undo.h"
 #include "app/Fd_Snap_Action.h"
@@ -251,63 +251,63 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       }
 
       if (!strcmp(c,"do_not_include_H_from_C")) {
-        g_project.include_H_from_C=0;
+        Fluid.proj.include_H_from_C=0;
         goto CONTINUE;
       }
       if (!strcmp(c,"use_FL_COMMAND")) {
-        g_project.use_FL_COMMAND=1;
+        Fluid.proj.use_FL_COMMAND=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"utf8_in_src")) {
-        g_project.utf8_in_src=1;
+        Fluid.proj.utf8_in_src=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"avoid_early_includes")) {
-        g_project.avoid_early_includes=1;
+        Fluid.proj.avoid_early_includes=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
-        g_project.i18n_type = static_cast<Fd_I18n_Type>(atoi(read_word()));
+        Fluid.proj.i18n_type = static_cast<Fd_I18n_Type>(atoi(read_word()));
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_function")) {
-        g_project.i18n_gnu_function = read_word();
+        Fluid.proj.i18n_gnu_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_static_function")) {
-        g_project.i18n_gnu_static_function = read_word();
+        Fluid.proj.i18n_gnu_static_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_pos_file")) {
-        g_project.i18n_pos_file = read_word();
+        Fluid.proj.i18n_pos_file = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_pos_set")) {
-        g_project.i18n_pos_set = read_word();
+        Fluid.proj.i18n_pos_set = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        if (g_project.i18n_type == FD_I18N_GNU)
-          g_project.i18n_gnu_include = read_word();
-        else if (g_project.i18n_type == FD_I18N_POSIX)
-          g_project.i18n_pos_include = read_word();
+        if (Fluid.proj.i18n_type == FD_I18N_GNU)
+          Fluid.proj.i18n_gnu_include = read_word();
+        else if (Fluid.proj.i18n_type == FD_I18N_POSIX)
+          Fluid.proj.i18n_pos_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        if (g_project.i18n_type == FD_I18N_GNU)
-          g_project.i18n_gnu_conditional = read_word();
-        else if (g_project.i18n_type == FD_I18N_POSIX)
-          g_project.i18n_pos_conditional = read_word();
+        if (Fluid.proj.i18n_type == FD_I18N_GNU)
+          Fluid.proj.i18n_gnu_conditional = read_word();
+        else if (Fluid.proj.i18n_type == FD_I18N_POSIX)
+          Fluid.proj.i18n_pos_conditional = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"header_name")) {
-        if (!g_project.header_file_set) g_project.header_file_name = read_word();
+        if (!Fluid.proj.header_file_set) Fluid.proj.header_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
 
       if (!strcmp(c,"code_name")) {
-        if (!g_project.code_file_set) g_project.code_file_name = read_word();
+        if (!Fluid.proj.code_file_set) Fluid.proj.code_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
@@ -333,7 +333,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       }
 
       if (!strcmp(c, "mergeback")) {
-        g_project.write_mergeback_data = read_int();
+        Fluid.proj.write_mergeback_data = read_int();
         goto CONTINUE;
       }
     }
@@ -425,7 +425,7 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
   if (merge)
     deselect();
   else
-    g_project.reset();
+    Fluid.proj.reset();
   read_children(Fl_Type::current, merge, strategy);
   // clear this
   Fl_Type::current = 0;
@@ -447,7 +447,7 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
     g_shell_config->update_settings_dialog();
   }
   g_layout_list.update_dialogs();
-  g_project.update_settings_dialog();
+  Fluid.proj.update_settings_dialog();
   int ret = close_read();
   undo_resume();
   return ret;
@@ -457,8 +457,8 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
  Display an error while reading the file.
  If the .fl file isn't opened for reading, pop up an FLTK dialog, otherwise
  print to stdout.
- \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c batch_mode?
- \todo Not happy about this function. Output channel should depend on `batch_mode`
+ \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c Fluid.batch_mode?
+ \todo Not happy about this function. Output channel should depend on `Fluid.batch_mode`
        as the note above already states. I want to make all file readers and writers
        depend on an error handling base class that outputs a useful analysis of file
        operations.

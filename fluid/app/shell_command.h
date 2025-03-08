@@ -17,7 +17,7 @@
 #ifndef _FLUID_SHELL_COMMAND_H
 #define _FLUID_SHELL_COMMAND_H
 
-#include "app/fluid.h"
+#include "Fluid.h"
 
 #include <FL/Enumerations.H>
 

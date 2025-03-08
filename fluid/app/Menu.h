@@ -14,10 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "main.h"
-#include "Fluid.h"
+#ifndef FLUID_APP_MENU_H
+#define FLUID_APP_MENU_H
 
-int main(int argc,char **argv) {
-  return Fluid.run(argc, argv);
-}
+#include <FL/Fl_Menu_Item.H>
+
+extern Fl_Menu_Item Main_Menu[];
+
+#endif // FLUID_APP_MENU_H
 

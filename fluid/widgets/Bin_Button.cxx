@@ -16,7 +16,7 @@
 
 #include "widgets/Bin_Button.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "nodes/factory.h"
 #include "nodes/Fl_Window_Type.h"
 #include "widgets/Node_Browser.h"

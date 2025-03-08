@@ -16,7 +16,7 @@
 
 #include "widgets/Node_Browser.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "nodes/Fl_Widget_Type.h"
 #include "rsrcs/pixmaps.h"
 
@@ -274,7 +274,7 @@ void Node_Browser::item_select(void *l,int v) {
 int Node_Browser::item_height(void *l) const {
   Fl_Type *t = (Fl_Type*)l;
   if (t->visible) {
-    if (show_comments && t->comment())
+    if (Fluid.show_comments && t->comment())
       return textsize()*2+4;
     else
       return textsize()+5;
@@ -331,7 +331,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // items can contain a comment. If they do, the comment gets a second text
   // line inside this browser line
   int comment_incr = 0;
-  if (show_comments && l->comment()) {
+  if (Fluid.show_comments && l->comment()) {
     // -- comment
     copy_trunc(buf, l->comment(), 80, 0, 1);
     comment_incr = textsize()-1;
@@ -640,7 +640,7 @@ void Node_Browser::display(Fl_Type *inNode) {
 
 void Node_Browser::load_prefs() {
   int c;
-  Fl_Preferences p(fluid_prefs, "widget_browser");
+  Fl_Preferences p(Fluid.preferences, "widget_browser");
   p.get("label_color",  c, 72); label_color = c;
   p.get("label_font",   c, FL_HELVETICA); label_font = c;
   p.get("class_color",  c, FL_FOREGROUND_COLOR); class_color = c;
@@ -656,7 +656,7 @@ void Node_Browser::load_prefs() {
 }
 
 void Node_Browser::save_prefs() {
-  Fl_Preferences p(fluid_prefs, "widget_browser");
+  Fl_Preferences p(Fluid.preferences, "widget_browser");
   p.set("label_color",    (int)label_color);
   p.set("label_font",     (int)label_font);
   p.set("class_color",    (int)class_color);

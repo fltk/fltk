@@ -96,8 +96,8 @@
 
 #include "nodes/Fl_Type.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "app/Fd_Snap_Action.h"
 #include "app/shell_command.h"
 #include "app/undo.h"
@@ -138,7 +138,7 @@ Fl_Type *in_this_only; // set if menu popped-up in window
  Print the current project tree to stderr.
  */
 void print_project_tree() {
-  fprintf(stderr, "---- %s --->\n", g_project.projectfile_name().c_str());
+  fprintf(stderr, "---- %s --->\n", Fluid.proj.projectfile_name().c_str());
   for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
     for (int i = t->level; i > 0; i--)
       fprintf(stderr, ". ");
@@ -384,7 +384,7 @@ static void delete_children(Fl_Type *p) {
 
 /** Delete all nodes in the Types tree and reset project settings, or delete selected nodes.
  Also calls the browser to refresh.
- \note Please refactor this into two separate methods of Fluid_Project.
+ \note Please refactor this into two separate methods of Project.
  \param[in] selected_only if set, delete only the selected widgets and
  don't reset the project.
  */
@@ -922,7 +922,7 @@ void Fl_Type::write(fld::io::Project_Writer &f) {
 
 void Fl_Type::write_properties(fld::io::Project_Writer &f) {
   // repeat this for each attribute:
-  if (g_project.write_mergeback_data && uid_) {
+  if (Fluid.proj.write_mergeback_data && uid_) {
     f.write_word("uid");
     f.write_string("%04x", uid_);
   }

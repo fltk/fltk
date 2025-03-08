@@ -16,7 +16,7 @@
 
 #include "nodes/Fl_Function_Type.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "app/mergeback.h"
 #include "app/undo.h"
 #include "io/Project_Reader.h"
@@ -621,8 +621,8 @@ Fl_Type *Fl_Code_Type::make(Strategy strategy) {
  */
 void Fl_Code_Type::open() {
   // Using an external code editor? Open it..
-  if ( G_use_external_editor && G_external_editor_command[0] ) {
-    const char *cmd = G_external_editor_command;
+  if ( Fluid.use_external_editor && Fluid.external_editor_command[0] ) {
+    const char *cmd = Fluid.external_editor_command;
     const char *code = name();
     if (!code) code = "";
     if ( editor_.open_editor(cmd, code) == 0 )
@@ -1214,9 +1214,9 @@ void Fl_Data_Type::open() {
       if (w == data_panel_cancel) goto BREAK2;
       else if (w == data_panel_ok) break;
       else if (w == data_filebrowser) {
-        enter_project_dir();
+        Fluid.proj.enter_project_dir();
         const char *fn = fl_file_chooser("Load Inline Data", 0L, data_filename->value(), 1);
-        leave_project_dir();
+        Fluid.proj.leave_project_dir();
         if (fn) {
           if (strcmp(fn, data_filename->value()))
             set_modflag(1);
@@ -1311,9 +1311,9 @@ void Fl_Data_Type::write_code1(fld::io::Code_Writer& f) {
   int uncompressedDataSize = 0;
   // path should be set correctly already
   if (filename_ && !f.write_codeview) {
-    enter_project_dir();
+    Fluid.proj.enter_project_dir();
     FILE *f = fl_fopen(filename_, "rb");
-    leave_project_dir();
+    Fluid.proj.leave_project_dir();
     if (!f) {
       message = "Can't include data from file. Can't open";
     } else {
@@ -1426,9 +1426,9 @@ void Fl_Data_Type::write_code1(fld::io::Code_Writer& f) {
     }
   }
   // if we are in interactive mode, we pop up a warning dialog
-  // giving the error: (batch_mode && !write_codeview) ???
+  // giving the error: (Fluid.batch_mode && !write_codeview) ???
   if (message && !f.write_codeview) {
-    if (batch_mode)
+    if (Fluid.batch_mode)
       fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn);
     else
       fl_alert("%s\n%s\n", message, fn);

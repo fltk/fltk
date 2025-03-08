@@ -25,7 +25,7 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include "app/fluid.h"} {private local
+decl {\#include "Fluid.h"} {private local
 }
 
 decl {\#include "app/undo.h"} {private local

@@ -19,7 +19,7 @@
 
 #include "app/mergeback.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "app/undo.h"
 #include "io/Code_Writer.h"
 #include "nodes/Fl_Function_Type.h"
@@ -102,7 +102,7 @@ extern void redraw_browser();
  \return see above
  */
 int merge_back(const std::string &s, const std::string &p, int task) {
-  if (g_project.write_mergeback_data) {
+  if (Fluid.proj.write_mergeback_data) {
     Fd_Mergeback mergeback;
     return mergeback.merge_back(s, p, task);
   } else {

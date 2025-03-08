@@ -23,13 +23,14 @@ set(TARGETS fluid)
 # program fluid properly
 
 set(CPPFILES
-  app/align_widget.cxx
+  Fluid.cxx
+  Project.cxx
   app/Fd_Snap_Action.cxx
-  app/fluid.cxx
   app/Fluid_Image.cxx
+  app/Menu.cxx
   app/mergeback.cxx
-  app/project.cxx
   app/shell_command.cxx
+  app/templates.cxx
   app/undo.cxx
   io/Code_Writer.cxx
   io/Project_Writer.cxx
@@ -49,6 +50,7 @@ set(CPPFILES
   panels/settings_panel.cxx
   panels/template_panel.cxx
   panels/widget_panel.cxx
+  proj/align_widget.cxx
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
   tools/filename.cxx
@@ -64,13 +66,14 @@ set(CPPFILES
 # List header files in Apple's Xcode IDE
 
 set(HEADERFILES
-  app/align_widget.h
+  Fluid.h
+  Project.h
   app/Fd_Snap_Action.h
-  app/fluid.h
   app/Fluid_Image.h
-  app/project.h
+  app/Menu.h
   app/mergeback.h
   app/shell_command.h
+  app/templates.h
   app/undo.h
   io/Code_Writer.h
   io/Project_Writer.h
@@ -90,6 +93,7 @@ set(HEADERFILES
   panels/settings_panel.h
   panels/template_panel.h
   panels/widget_panel.h
+  proj/align_widget.h
   rsrcs/comments.h
   rsrcs/pixmaps.h
   tools/autodoc.h

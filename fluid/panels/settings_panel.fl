@@ -49,10 +49,10 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include "app/fluid.h"} {public global
+decl {\#include "Fluid.h"} {public global
 }
 
-decl {\#include "app/project.h"} {private local
+decl {\#include "Project.h"} {private local
 }
 
 decl {\#include "app/undo.h"} {private global
@@ -227,45 +227,45 @@ Function {make_settings_window()} {open
         Fl_Check_Button tooltips_button {
           label {Show Tooltips}
           callback {Fl_Tooltip::enable(tooltips_button->value());
-fluid_prefs.set("show_tooltips", tooltips_button->value());}
+Fluid.preferences.set("show_tooltips", tooltips_button->value());}
           xywh {120 115 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
-          code1 {fluid_prefs.get("show_tooltips", b, 1);}
+          code1 {Fluid.preferences.get("show_tooltips", b, 1);}
           code2 {tooltips_button->value(b);}
           code3 {Fl_Tooltip::enable(b);}
         }
         Fl_Check_Button completion_button {
           label {Show Completion Dialogs}
-          callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
+          callback {Fluid.preferences.set("show_completion_dialogs", completion_button->value());}
           xywh {120 135 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
-          code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
+          code1 {Fluid.preferences.get("show_completion_dialogs", b, 1);}
           code2 {completion_button->value(b);}
         }
         Fl_Check_Button openlast_button {
           label {Open Previous File on Startup}
-          callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
+          callback {Fluid.preferences.set("open_previous_file", openlast_button->value());}
           xywh {120 155 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
-          code1 {fluid_prefs.get("open_previous_file", b, 0);}
+          code1 {Fluid.preferences.get("open_previous_file", b, 0);}
           code2 {openlast_button->value(b);}
         }
         Fl_Check_Button prevpos_button {
           label {Remember Window Positions}
-          callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
+          callback {Fluid.preferences.set("prev_window_pos", prevpos_button->value());}
           xywh {120 175 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
-          code1 {fluid_prefs.get("prev_window_pos", b, 1);}
+          code1 {Fluid.preferences.get("prev_window_pos", b, 1);}
           code2 {prevpos_button->value(b);}
         }
         Fl_Check_Button show_comments_button {
           label {Show Comments in Browser}
-          callback {show_comments = show_comments_button->value();
-fluid_prefs.set("show_comments", show_comments);
+          callback {Fluid.show_comments = show_comments_button->value();
+Fluid.preferences.set("Fluid.show_comments", Fluid.show_comments);
 redraw_browser();}
           xywh {120 195 200 20} down_box DOWN_BOX labelsize 11
-          code1 {fluid_prefs.get("show_comments", show_comments, 1);}
-          code2 {show_comments_button->value(show_comments);}
+          code1 {Fluid.preferences.get("Fluid.show_comments", Fluid.show_comments, 1);}
+          code2 {show_comments_button->value(Fluid.show_comments);}
         }
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -273,11 +273,11 @@ redraw_browser();}
         } {
           Fl_Spinner recent_spinner {
             label {\# Recent Files:}
-            callback {fluid_prefs.set("recent_files", recent_spinner->value());
-load_history();}
+            callback {Fluid.preferences.set("recent_files", recent_spinner->value());
+Fluid.load_project_history();}
             xywh {120 225 40 20} labelfont 1 labelsize 11 when 1 maximum 10 textsize 11
             code0 {int c;}
-            code1 {fluid_prefs.get("recent_files", c, 5);}
+            code1 {Fluid.preferences.get("recent_files", c, 5);}
             code2 {recent_spinner->maximum(10);}
             code3 {recent_spinner->value(c);}
           }
@@ -287,18 +287,18 @@ load_history();}
         }
         Fl_Check_Button use_external_editor_button {
           label {Use for Code Nodes}
-          callback {G_use_external_editor = use_external_editor_button->value();
-fluid_prefs.set("use_external_editor", G_use_external_editor);
+          callback {Fluid.use_external_editor = use_external_editor_button->value();
+Fluid.preferences.set("use_external_editor", Fluid.use_external_editor);
 redraw_browser();}
           xywh {120 275 200 20} down_box DOWN_BOX labelsize 11
-          code1 {fluid_prefs.get("use_external_editor", G_use_external_editor, 0);}
-          code2 {use_external_editor_button->value(G_use_external_editor);}
+          code1 {Fluid.preferences.get("use_external_editor", Fluid.use_external_editor, 0);}
+          code2 {use_external_editor_button->value(Fluid.use_external_editor);}
         }
         Fl_Input editor_command_input {
           label {External Editor:}
-          callback {strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
-G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
-fluid_prefs.set("external_editor_command", G_external_editor_command);
+          callback {strncpy(Fluid.external_editor_command, editor_command_input->value(), sizeof(Fluid.external_editor_command)-1);
+Fluid.external_editor_command[sizeof(Fluid.external_editor_command)-1] = 0;
+Fluid.preferences.set("external_editor_command", Fluid.external_editor_command);
 redraw_browser();}
           tooltip {The editor command to open your external text editor.
 Include any necessary flags to ensure your editor does not background itself.
@@ -306,8 +306,8 @@ Examples:
     gvim -f
     gedit
  emacs} xywh {120 255 200 20} labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
-          code1 {fluid_prefs.get("external_editor_command", G_external_editor_command, "", sizeof(G_external_editor_command)-1);}
-          code2 {editor_command_input->value(G_external_editor_command);}
+          code1 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "", sizeof(Fluid.external_editor_command)-1);}
+          code2 {editor_command_input->value(Fluid.external_editor_command);}
         }
         Fl_Box {} {
           label {Overlays: }
@@ -317,19 +317,19 @@ Examples:
           label {Show Positioning Guides}
           callback toggle_guides_cb
           tooltip {show guides that help to position and resize widgets and enable snapping} xywh {120 300 200 20} down_box DOWN_BOX labelsize 11
-          code0 {o->value(show_guides);}
+          code0 {o->value(Fluid.show_guides);}
         }
         Fl_Check_Button restricted_button {
           label {Show Restricted Areas}
           callback toggle_restricted_cb
           tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {120 320 200 20} down_box DOWN_BOX labelsize 11
-          code0 {o->value(show_restricted);}
+          code0 {o->value(Fluid.show_restricted);}
         }
         Fl_Check_Button ghosted_outline_button {
           label {Show Ghosted Group Outlines}
           callback toggle_ghosted_outline_cb
           tooltip {groups with no box type or flat boxtypes without contrast will be rendered with a dim outline in the editing window only} xywh {120 340 200 20} down_box DOWN_BOX labelsize 11
-          code0 {o->value(show_ghosted_outline);}
+          code0 {o->value(Fluid.show_ghosted_outline);}
         }
         Fl_Box {} {
           xywh {120 530 200 10} hide resizable
@@ -356,10 +356,10 @@ or just ".ext" to set extension.}
           label {Header File:}
           user_data 1 user_data_type {void*}
           callback {if (v == LOAD) {
-  o->value(g_project.header_file_name.c_str());
+  o->value(Fluid.proj.header_file_name.c_str());
 } else {
-  if (strcmp(g_project.header_file_name.c_str(), o->value())) {
-    g_project.header_file_name = o->value();
+  if (strcmp(Fluid.proj.header_file_name.c_str(), o->value())) {
+    Fluid.proj.header_file_name = o->value();
     set_modflag(1);
   }
 }}
@@ -369,10 +369,10 @@ or just ".ext" to set extension.}
           label {Code File:}
           user_data 1 user_data_type {void*}
           callback {if (v == LOAD) {
-  o->value(g_project.code_file_name.c_str());
+  o->value(Fluid.proj.code_file_name.c_str());
 } else {
-  if (strcmp(g_project.code_file_name.c_str(), o->value())) {
-    g_project.code_file_name = o->value();
+  if (strcmp(Fluid.proj.code_file_name.c_str(), o->value())) {
+    Fluid.proj.code_file_name = o->value();
     set_modflag(1);
   }
 }}
@@ -381,11 +381,11 @@ or just ".ext" to set extension.}
         Fl_Check_Button include_H_from_C_button {
           label {Include Header from Code}
           callback {if (v == LOAD) {
-  o->value(g_project.include_H_from_C);
+  o->value(Fluid.proj.include_H_from_C);
 } else {
-  if (g_project.include_H_from_C != o->value()) {
+  if (Fluid.proj.include_H_from_C != o->value()) {
     set_modflag(1);
-    g_project.include_H_from_C = o->value();
+    Fluid.proj.include_H_from_C = o->value();
   }
 }}
           tooltip {Include the header file from the code file.} xywh {100 162 220 20} down_box DOWN_BOX labelsize 11
@@ -397,11 +397,11 @@ or just ".ext" to set extension.}
         Fl_Check_Button use_FL_COMMAND_button {
           label {Menu shortcuts use FL_COMMAND}
           callback {if (v == LOAD) {
-  o->value(g_project.use_FL_COMMAND);
+  o->value(Fluid.proj.use_FL_COMMAND);
 } else {
-  if (g_project.use_FL_COMMAND != o->value()) {
+  if (Fluid.proj.use_FL_COMMAND != o->value()) {
     set_modflag(1);
-    g_project.use_FL_COMMAND = o->value();
+    Fluid.proj.use_FL_COMMAND = o->value();
   }
 }}
           tooltip {Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts} xywh {100 205 220 20} down_box DOWN_BOX labelsize 11
@@ -409,11 +409,11 @@ or just ".ext" to set extension.}
         Fl_Check_Button utf8_in_src_button {
           label {allow Unicode UTF-8 in source code}
           callback {if (v == LOAD) {
-  o->value(g_project.utf8_in_src);
+  o->value(Fluid.proj.utf8_in_src);
 } else {
-  if (g_project.utf8_in_src != o->value()) {
+  if (Fluid.proj.utf8_in_src != o->value()) {
     set_modflag(1);
-    g_project.utf8_in_src = o->value();
+    Fluid.proj.utf8_in_src = o->value();
   }
 }}
           tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {100 230 220 20} down_box DOWN_BOX labelsize 11
@@ -421,11 +421,11 @@ or just ".ext" to set extension.}
         Fl_Check_Button avoid_early_includes_button {
           label {avoid early include of Fl.H}
           callback {if (v == LOAD) {
-  o->value(g_project.avoid_early_includes);
+  o->value(Fluid.proj.avoid_early_includes);
 } else {
-  if (g_project.avoid_early_includes != o->value()) {
+  if (Fluid.proj.avoid_early_includes != o->value()) {
     set_modflag(1);
-    g_project.avoid_early_includes = o->value();
+    Fluid.proj.avoid_early_includes = o->value();
   }
 }}
           tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {100 255 220 20} down_box DOWN_BOX labelsize 11
@@ -437,11 +437,11 @@ or just ".ext" to set extension.}
         Fl_Check_Button w_proj_mergeback {
           label {generate MergeBack data}
           callback {if (v == LOAD) {
-  o->value(g_project.write_mergeback_data);
+  o->value(Fluid.proj.write_mergeback_data);
 } else {
-  if (g_project.write_mergeback_data != o->value()) {
+  if (Fluid.proj.write_mergeback_data != o->value()) {
     set_modflag(1);
-    g_project.write_mergeback_data = o->value();
+    Fluid.proj.write_mergeback_data = o->value();
   }
 }}
           comment {// Matt: disabled}
@@ -1564,10 +1564,10 @@ if (v == LOAD) {
           Fl_Input i18n_gnu_include_input {
             label {\#include:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_gnu_include.c_str());
+  o->value(Fluid.proj.i18n_gnu_include.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_gnu_include = o->value();
+  Fluid.proj.i18n_gnu_include = o->value();
   set_modflag(1);
 }}
             tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1575,10 +1575,10 @@ if (v == LOAD) {
           Fl_Input i18n_gnu_conditional_input {
             label {Conditional:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_gnu_conditional.c_str());
+  o->value(Fluid.proj.i18n_gnu_conditional.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_gnu_conditional = o->value();
+  Fluid.proj.i18n_gnu_conditional = o->value();
   set_modflag(1);
 }}
             tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1586,10 +1586,10 @@ if (v == LOAD) {
           Fl_Input i18n_gnu_function_input {
             label {Function:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_gnu_function.c_str());
+  o->value(Fluid.proj.i18n_gnu_function.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_gnu_function = o->value();
+  Fluid.proj.i18n_gnu_function = o->value();
   set_modflag(1);
 }}
             tooltip {The function to call to translate labels and tooltips, usually "gettext" or "_"} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1597,10 +1597,10 @@ if (v == LOAD) {
           Fl_Input i18n_gnu_static_function_input {
             label {Static Function:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_gnu_static_function.c_str());
+  o->value(Fluid.proj.i18n_gnu_static_function.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_gnu_static_function = o->value();
+  Fluid.proj.i18n_gnu_static_function = o->value();
   set_modflag(1);
 }}
             tooltip {function to call to translate static text, The function to call to internationalize labels and tooltips, usually "gettext_noop" or "N_"} xywh {100 178 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1613,10 +1613,10 @@ if (v == LOAD) {
           Fl_Input i18n_pos_include_input {
             label {\#include:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_pos_include.c_str());
+  o->value(Fluid.proj.i18n_pos_include.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_pos_include = o->value();
+  Fluid.proj.i18n_pos_include = o->value();
   set_modflag(1);
 }}
             tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1624,10 +1624,10 @@ if (v == LOAD) {
           Fl_Input i18n_pos_conditional_input {
             label {Conditional:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_pos_conditional.c_str());
+  o->value(Fluid.proj.i18n_pos_conditional.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_pos_conditional = o->value();
+  Fluid.proj.i18n_pos_conditional = o->value();
   set_modflag(1);
 }}
             tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1635,10 +1635,10 @@ if (v == LOAD) {
           Fl_Input i18n_pos_file_input {
             label {Catalog:}
             callback {if (v == LOAD) {
-  o->value(g_project.i18n_pos_file.c_str());
+  o->value(Fluid.proj.i18n_pos_file.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_pos_file = o->value();
+  Fluid.proj.i18n_pos_file = o->value();
   set_modflag(1);
 }}
             tooltip {The name of the message catalog.} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1650,10 +1650,10 @@ if (v == LOAD) {
             Fl_Input i18n_pos_set_input {
               label {Set:}
               callback {if (v == LOAD) {
-  o->value(g_project.i18n_pos_set.c_str());
+  o->value(Fluid.proj.i18n_pos_set.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_pos_set = o->value();
+  Fluid.proj.i18n_pos_set = o->value();
   set_modflag(1);
 }}
               tooltip {The message set number.} xywh {100 178 80 20} type Int box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
@@ -1835,8 +1835,8 @@ if (v == LOAD) {
       Fl_Button {} {
         label Close
         callback {if (g_shell_config)
-  g_shell_config->write(fluid_prefs, FD_STORE_USER);
-g_layout_list.write(fluid_prefs, FD_STORE_USER);
+  g_shell_config->write(Fluid.preferences, FD_STORE_USER);
+g_layout_list.write(Fluid.preferences, FD_STORE_USER);
 settings_window->hide();}
         tooltip {Close this dialog.} xywh {230 550 100 20} labelsize 11
       }
@@ -1873,7 +1873,7 @@ shell_run_terminal->append("\\033[2J\\033[3J\\033[H");}
       }
       Fl_Return_Button shell_run_button {
         label Close
-        callback {Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+        callback {Fl_Preferences pos(Fluid.preferences, "shell_run_Window_pos");
 pos.set("x", shell_run_window->x());
 pos.set("y", shell_run_window->y());
 pos.set("w", shell_run_window->w());

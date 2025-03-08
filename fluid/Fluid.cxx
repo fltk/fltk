@@ -14,9 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "app/fluid.h"
+#include "Fluid.h"
 
-#include "app/project.h"
+#include "Project.h"
 #include "app/mergeback.h"
 #include "app/undo.h"
 #include "io/Project_Reader.h"
@@ -62,6 +62,15 @@ extern "C"
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
+fld::Application Fluid;
+
+using namespace fld;
+
+Application::Application()
+: preferences( Fl_Preferences::USER_L, "fltk.org", "fluid" ) 
+{ }
+
+
 /// \defgroup globals Fluid Global Variables, Functions and Callbacks
 /// \{
 
@@ -78,42 +87,9 @@ Fl_Menu_Bar *main_menubar = NULL;
 /// Main app window.
 Fl_Window *main_window;
 
-/// Fluid application preferences, always accessible, will be flushed when app closes.
-Fl_Preferences fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
-
-/// Show guides in the design window when positioning widgets, saved in app preferences.
-int show_guides = 1;
-
-/// Show areas of restricted use in overlay plane.
-/// Restricted areas are widget that overlap each other, widgets that are outside
-/// of their parent's bounds (except children of Scroll groups), and areas
-/// within an Fl_Tile that are not covered by children.
-int show_restricted = 1;
-
-/// Show a ghosted outline for groups that have very little contrast.
-/// This makes groups with NO_BOX or FLAT_BOX better editable.
-int show_ghosted_outline = 1;
-
-/// Show widget comments in the browser, saved in app preferences.
-int show_comments = 1;
-
-/// Use external editor for editing Fl_Code_Type, saved in app preferences.
-int G_use_external_editor = 0;
-
-/// Debugging help for external Fl_Code_Type editor.
-int G_debug = 0;
-
-/// Run this command to load an Fl_Code_Type into an external editor, save in app preferences.
-char G_external_editor_command[512];
 
 
 // File history info...
-
-/// Stores the absolute filename of the last 10 design files, saved in app preferences.
-char absolute_history[10][FL_PATH_MAX];
-
-/// This list of filenames is computed from \c absolute_history and displayed in the main menu.
-char relative_history[10][FL_PATH_MAX];
 
 /// Menuitem to save a .fl design file, will be deactivated if the design is unchanged.
 Fl_Menu_Item *save_item = NULL;
@@ -144,49 +120,8 @@ int modflag = 0;
 /// Set if the code files are older than the current design.
 int modflag_c = 0;
 
-/// Application work directory, stored here when temporarily changing to the source code directory.
-/// \see goto_source_dir()
-static std::string app_work_dir;
-
-/// Used as a counter to set the .fl project dir as the current directory.
-/// \see enter_project_dir(), leave_project_dir()
-static char in_project_dir = 0;
-
-/// Set, if Fluid was started with the command line argument -u
-int update_file = 0;            // fluid -u
-
-/// Set, if Fluid was started with the command line argument -c
-int compile_file = 0;           // fluid -c
-
-/// Set, if Fluid was started with the command line argument -cs
-int compile_strings = 0;        // fluid -cs
-
 /// Set, if Fluid was started with the command line argument -v
 int show_version = 0;        // fluid -v
-
-/// Set, if Fluid runs in batch mode, and no user interface is activated.
-int batch_mode = 0;             // if set (-c, -u) don't open display
-
-/// command line arguments that overrides the generate code file extension or name
-std::string g_code_filename_arg;
-
-/// command line arguments that overrides the generate header file extension or name
-std::string g_header_filename_arg;
-
-/// current directory path at application launch
-std::string g_launch_path;
-
-/// if set, generate images for automatic documentation in this directory
-std::string g_autodoc_path;
-
-/// path to store temporary files during app run
-/// \see tmpdir_create_called
-std::string tmpdir_path;
-
-/// true if the temporary file path was already created
-/// \see tmpdir_path
-bool tmpdir_create_called = false;
-
 
 /// Offset in pixels when adding widgets from an .fl file.
 int pasteoffset = 0;
@@ -196,23 +131,11 @@ static int ipasteoffset = 0;
 
 
 /**
- Make sure that a path name ends with a forward slash.
- \param[in] str directory or path name
- \return a new string, ending with a '/'
- */
-std::string end_with_slash(const std::string &str) {
-  char last = str[str.size()-1];
-  if (last !='/' && last != '\\')
-    return str + "/";
-  else
-    return str;
-}
-
-/**
  Generate a path to a directory for temporary data storage.
  The path is stored in g_tmpdir.
+ TODO: see ExternalCodeEditor::create_tmpdir()!
  */
-static void create_tmpdir() {
+void Application::create_tmpdir() {
   if (tmpdir_create_called)
     return;
   tmpdir_create_called = true;
@@ -260,7 +183,7 @@ static void create_tmpdir() {
 #endif
   if (tmpdir_path.empty()) {
     char pbuf[FL_PATH_MAX+1];
-    fluid_prefs.get_userdata_path(pbuf, FL_PATH_MAX);
+    preferences.get_userdata_path(pbuf, FL_PATH_MAX);
     path = std::string(pbuf);
     end_with_slash(path);
     path += name;
@@ -279,7 +202,7 @@ static void create_tmpdir() {
 /**
  Delete the temporary directory that was created in set_tmpdir.
  */
-static void delete_tmpdir() {
+void Application::delete_tmpdir() {
   // was a temporary directory created
   if (!tmpdir_create_called)
     return;
@@ -313,7 +236,7 @@ static void delete_tmpdir() {
  \return the path to the temporary directory, ending in a '/', or and empty
       string if no directory could be created.
  */
-const std::string &get_tmpdir() {
+const std::string &Application::get_tmpdir() {
   if (!tmpdir_create_called)
     create_tmpdir();
   return tmpdir_path;
@@ -341,7 +264,7 @@ bool confirm_project_clear() {
     case 0 : /* Cancel */
       return false;
     case 1 : /* Save */
-      save_cb(NULL, NULL);
+      Fluid.save_project_file(nullptr);
       if (modflag) return false;  // user canceled the "Save As" dialog
   }
   return true;
@@ -367,65 +290,6 @@ void flush_text_widgets() {
 
 // ----
 
-/**
- Change the current working directory to the .fl project directory.
-
- Every call to enter_project_dir() must have a corresponding leave_project_dir()
- call. Enter and leave calls can be nested.
-
- The first call to enter_project_dir() remembers the original directory, usually
- the launch directory of the application. Nested calls will increment a nesting
- counter. When the nesting counter is back to 0, leave_project_dir() will return
- to the original directory.
-
- The global variable 'filename' must be set to the current project file with
- absolute or relative path information.
-
- \see leave_project_dir(), pwd, in_project_dir
- */
-void enter_project_dir() {
-  if (in_project_dir<0) {
-    fprintf(stderr, "** Fluid internal error: enter_project_dir() calls unmatched\n");
-    return;
-  }
-  in_project_dir++;
-  // check if we are already in the project dir and do nothing if so
-  if (in_project_dir>1) return;
-  // check if there is an active project, and do nothing if there is none
-  if (!g_project.proj_filename || !*g_project.proj_filename) {
-    fprintf(stderr, "** Fluid internal error: enter_project_dir() no filename set\n");
-    return;
-  }
-  // store the current working directory for later
-  app_work_dir = fl_getcwd_str();
-  // set the current directory to the path of our .fl file
-  std::string project_path = fl_filename_path_str(fl_filename_absolute_str(g_project.proj_filename));
-  if (fl_chdir(project_path.c_str()) == -1) {
-    fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
-            project_path.c_str(), strerror(errno));
-    return;
-  }
-  //fprintf(stderr, "chdir from %s to %s\n", app_work_dir.c_str(), fl_getcwd().c_str());
-}
-
-/**
- Change the current working directory to the previous directory.
- \see enter_project_dir(), pwd, in_project_dir
- */
-void leave_project_dir() {
-  if (in_project_dir == 0) {
-    fprintf(stderr, "** Fluid internal error: leave_project_dir() calls unmatched\n");
-    return;
-  }
-  in_project_dir--;
-  // still nested, stay in the project directory
-  if (in_project_dir > 0) return;
-  // no longer nested, return to the original, usually the application working directory
-  if (fl_chdir(app_work_dir.c_str()) < 0) {
-    fprintf(stderr, "** Fluid internal error: leave_project_dir() can't chdir back to %s : %s\n",
-            app_work_dir.c_str(), strerror(errno));
-  }
-}
 
 /**
  Position the given window window based on entries in the app preferences.
@@ -439,7 +303,7 @@ void leave_project_dir() {
  \return 1 if the caller should make the window visible, 0 if hidden.
  */
 char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W, int H) {
-  Fl_Preferences pos(fluid_prefs, prefsName);
+  Fl_Preferences pos(Fluid.preferences, prefsName);
   if (prevpos_button->value()) {
     pos.get("x", X, X);
     pos.get("y", Y, Y);
@@ -461,7 +325,7 @@ char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, in
  \param[in] prefsName name of the preferences item that stores the window settings
  */
 void save_position(Fl_Window *w, const char *prefsName) {
-  Fl_Preferences pos(fluid_prefs, prefsName);
+  Fl_Preferences pos(Fluid.preferences, prefsName);
   pos.set("x", w->x());
   pos.set("y", w->y());
   pos.set("w", w->w());
@@ -480,9 +344,9 @@ static char* cutfname(int which = 0) {
 
   if (!beenhere) {
     beenhere = 1;
-    fluid_prefs.getUserdataPath(name[0], sizeof(name[0]));
+    Fluid.preferences.getUserdataPath(name[0], sizeof(name[0]));
     strlcat(name[0], "cut_buffer", sizeof(name[0]));
-    fluid_prefs.getUserdataPath(name[1], sizeof(name[1]));
+    Fluid.preferences.getUserdataPath(name[1], sizeof(name[1]));
     strlcat(name[1], "dup_buffer", sizeof(name[1]));
   }
 
@@ -498,7 +362,7 @@ static char* cutfname(int which = 0) {
  */
 static void external_editor_timer(void*) {
   int editors_open = ExternalCodeEditor::editors_open();
-  if ( G_debug ) printf("--- TIMER --- External editors open=%d\n", editors_open);
+  if ( Fluid.debug_external_editor ) printf("--- TIMER --- External editors open=%d\n", editors_open);
   if ( editors_open > 0 ) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
@@ -533,10 +397,10 @@ static void external_editor_timer(void*) {
  verify with the user.
  \param[in] v if v is not NULL, or no filename is set, open a filechooser.
  */
-void save_cb(Fl_Widget *, void *v) {
+void Application::save_project_file(void *v) {
   flush_text_widgets();
   Fl_Native_File_Chooser fnfc;
-  const char *c = g_project.proj_filename;
+  const char *c = proj.proj_filename;
   if (v || !c || !*c) {
     fnfc.title("Save To:");
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
@@ -563,138 +427,29 @@ void save_cb(Fl_Widget *, void *v) {
   }
 }
 
-/**
- Save a design template.
- \todo We should document the concept of templates.
- */
-void save_template_cb(Fl_Widget *, void *) {
-  // Setup the template panel...
-  if (!template_panel) make_template_panel();
-
-  template_clear();
-  template_browser->add("New Template");
-  template_load();
-
-  template_name->show();
-  template_name->value("");
-
-  template_instance->hide();
-
-  template_delete->show();
-  template_delete->deactivate();
-
-  template_submit->label("Save");
-  template_submit->deactivate();
-
-  template_panel->label("Save Template");
-
-  // Show the panel and wait for the user to do something...
-  template_panel->show();
-  while (template_panel->shown()) Fl::wait();
-
-  // Get the template name, return if it is empty...
-  const char *c = template_name->value();
-  if (!c || !*c) return;
-
-  // Convert template name to filename_with_underscores
-  char savename[FL_PATH_MAX], *saveptr;
-  strlcpy(savename, c, sizeof(savename));
-  for (saveptr = savename; *saveptr; saveptr ++) {
-    if (isspace(*saveptr)) *saveptr = '_';
-  }
-
-  // Find the templates directory...
-  char filename[FL_PATH_MAX];
-  fluid_prefs.getUserdataPath(filename, sizeof(filename));
-
-  strlcat(filename, "templates", sizeof(filename));
-  if (fl_access(filename, 0)) fl_make_path(filename);
-
-  strlcat(filename, "/", sizeof(filename));
-  strlcat(filename, savename, sizeof(filename));
-
-  char *ext = filename + strlen(filename);
-  if (ext >= (filename + sizeof(filename) - 5)) {
-    fl_alert("The template name \"%s\" is too long!", c);
-    return;
-  }
-
-  // Save the .fl file...
-  strcpy(ext, ".fl");
-
-  if (!fl_access(filename, 0)) {
-    if (fl_choice("The template \"%s\" already exists.\n"
-                  "Do you want to replace it?", "Cancel",
-                  "Replace", NULL, c) == 0) return;
-  }
-
-  if (!fld::io::write_file(filename)) {
-    fl_alert("Error writing %s: %s", filename, strerror(errno));
-    return;
-  }
-
-#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
-  // Get the screenshot, if any...
-  Fl_Type *t;
-
-  for (t = Fl_Type::first; t; t = t->next) {
-    // Find the first window...
-    if (t->is_a(ID_Window)) break;
-  }
-
-  if (!t) return;
-
-  // Grab a screenshot...
-  Fl_Window_Type *wt = (Fl_Window_Type *)t;
-  uchar *pixels;
-  int w, h;
-
-  if ((pixels = wt->read_image(w, h)) == NULL) return;
-
-  // Save to a PNG file...
-  strcpy(ext, ".png");
-
-  errno = 0;
-  if (fl_write_png(filename, pixels, w, h, 3) != 0) {
-    delete[] pixels;
-    fl_alert("Error writing %s: %s", filename, strerror(errno));
-    return;
-  }
-
-#  if 0 // The original PPM output code...
-  strcpy(ext, ".ppm");
-  fp = fl_fopen(filename, "wb");
-  fprintf(fp, "P6\n%d %d 255\n", w, h);
-  fwrite(pixels, w * h, 3, fp);
-  fclose(fp);
-#  endif // 0
-
-  delete[] pixels;
-#endif // HAVE_LIBPNG && HAVE_LIBZ
-}
 
 /**
  Reload the file set by \c filename, replacing the current design.
  If the design was modified, a dialog will ask for confirmation.
  */
-void revert_cb(Fl_Widget *,void *) {
+void Application::revert_project() {
   if (modflag) {
     if (!fl_choice("This user interface has been changed. Really revert?",
                    "Cancel", "Revert", NULL)) return;
   }
   undo_suspend();
-  if (!fld::io::read_file(g_project.proj_filename, 0)) {
+  if (!fld::io::read_file(proj.proj_filename, 0)) {
     undo_resume();
     widget_browser->rebuild();
-    g_project.update_settings_dialog();
-    fl_message("Can't read %s: %s", g_project.proj_filename, strerror(errno));
+    proj.update_settings_dialog();
+    fl_message("Can't read %s: %s", proj.proj_filename, strerror(errno));
     return;
   }
   widget_browser->rebuild();
   undo_resume();
   set_modflag(0, 0);
   undo_clear();
-  g_project.update_settings_dialog();
+  proj.update_settings_dialog();
 }
 
 /**
@@ -728,7 +483,7 @@ void exit_cb(Fl_Widget *,void *) {
     delete widgetbin_panel;
   }
   if (codeview_panel) {
-    Fl_Preferences svp(fluid_prefs, "codeview");
+    Fl_Preferences svp(Fluid.preferences, "codeview");
     svp.set("autorefresh", cv_autorefresh->value());
     svp.set("autoposition", cv_autoposition->value());
     svp.set("tab", cv_tab->find(cv_tab->value()));
@@ -747,17 +502,17 @@ void exit_cb(Fl_Widget *,void *) {
     delete help_dialog;
 
   if (g_shell_config)
-    g_shell_config->write(fluid_prefs, FD_STORE_USER);
-  g_layout_list.write(fluid_prefs, FD_STORE_USER);
+    g_shell_config->write(Fluid.preferences, FD_STORE_USER);
+  g_layout_list.write(Fluid.preferences, FD_STORE_USER);
 
   undo_clear();
 
   // Destroy tree
   //    Doing so causes dtors to automatically close all external editors
   //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
-  g_project.reset();
+  Fluid.proj.reset();
   ExternalCodeEditor::tmpdir_clear();
-  delete_tmpdir();
+  Fluid.delete_tmpdir();
 
   exit(0);
 }
@@ -772,17 +527,17 @@ void exit_cb(Fl_Widget *,void *) {
     user before resetting the project. Default is `true`.
  \return false if the operation was canceled
  */
-bool new_project(bool user_must_confirm) {
+bool Application::new_project(bool user_must_confirm) {
   // verify user intention
   if ((user_must_confirm) &&  (confirm_project_clear() == false))
     return false;
 
   // clear the current project
-  g_project.reset();
+  proj.reset();
   set_filename(NULL);
   set_modflag(0, 0);
   widget_browser->rebuild();
-  g_project.update_settings_dialog();
+  proj.update_settings_dialog();
 
   // all is clear to continue
   return true;
@@ -796,7 +551,7 @@ bool new_project(bool user_must_confirm) {
 
  \return false if the operation was canceled or failed otherwise
  */
-bool new_project_from_template() {
+bool Application::new_project_from_template() {
   // clear the current project first
   if (new_project() == false)
     return false;
@@ -890,7 +645,7 @@ bool new_project_from_template() {
   }
 
   widget_browser->rebuild();
-  g_project.update_settings_dialog();
+  proj.update_settings_dialog();
   set_modflag(0);
   undo_clear();
 
@@ -911,8 +666,8 @@ std::string open_project_filechooser(const std::string &title) {
   dialog.title(title.c_str());
   dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
   dialog.filter("FLUID Files\t*.f[ld]\n");
-  if (g_project.proj_filename) {
-    std::string current_project_file = g_project.proj_filename;
+  if (Fluid.proj.proj_filename) {
+    std::string current_project_file = Fluid.proj.proj_filename;
     dialog.directory(fl_filename_path_str(current_project_file).c_str());
     dialog.preset_file(fl_filename_name_str(current_project_file).c_str());
   }
@@ -931,7 +686,7 @@ std::string open_project_filechooser(const std::string &title) {
  \param[in] filename_arg path and name of the new project file
  \return false if the operation failed
  */
-bool merge_project_file(const std::string &filename_arg) {
+bool Application::merge_project_file(const std::string &filename_arg) {
   bool is_a_merge = (Fl_Type::first != NULL);
   std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
 
@@ -945,18 +700,18 @@ bool merge_project_file(const std::string &filename_arg) {
   }
 
   const char *c = new_filename.c_str();
-  const char *oldfilename = g_project.proj_filename;
-  g_project.proj_filename    = NULL;
+  const char *oldfilename = proj.proj_filename;
+  proj.proj_filename    = NULL;
   set_filename(c);
   if (is_a_merge) undo_checkpoint();
   undo_suspend();
   if (!fld::io::read_file(c, is_a_merge)) {
     undo_resume();
     widget_browser->rebuild();
-    g_project.update_settings_dialog();
+    proj.update_settings_dialog();
     fl_message("Can't read %s: %s", c, strerror(errno));
-    free((void *)g_project.proj_filename);
-    g_project.proj_filename = oldfilename;
+    free((void *)proj.proj_filename);
+    proj.proj_filename = oldfilename;
     if (main_window) set_modflag(modflag);
     return false;
   }
@@ -986,7 +741,7 @@ bool merge_project_file(const std::string &filename_arg) {
  \param[in] filename_arg load from this file, or show file chooser if empty
  \return false if the operation was canceled or failed otherwise
  */
-bool open_project_file(const std::string &filename_arg) {
+bool Application::open_project_file(const std::string &filename_arg) {
   // verify user intention
   if (confirm_project_clear() == false)
     return false;
@@ -1012,7 +767,7 @@ bool open_project_file(const std::string &filename_arg) {
  \param[in] c the filename of the new design
  */
 void apple_open_cb(const char *c) {
-  open_project_file(std::string(c));
+  Fluid.open_project_file(std::string(c));
 }
 #endif // __APPLE__
 
@@ -1027,7 +782,7 @@ void apple_open_cb(const char *c) {
  If the code filename has not been set yet, a "save file as" dialog will be
  presented to the user.
 
- In batch_mode, the function will either be silent, or, if opening or writing
+ In Fluid.batch_mode, the function will either be silent, or, if opening or writing
  the files fails, write an error message to \c stderr and exit with exit code 1.
 
  In interactive mode, it will pop up an error message, or, if the user
@@ -1036,26 +791,26 @@ void apple_open_cb(const char *c) {
  \param[in] dont_show_completion_dialog don't show the completion dialog
  \return 1 if the operation failed, 0 if it succeeded
  */
-int write_code_files(bool dont_show_completion_dialog)
+int Application::write_code_files(bool dont_show_completion_dialog)
 {
   // -- handle user interface issues
   flush_text_widgets();
-  if (!g_project.proj_filename) {
-    save_cb(0,0);
-    if (!g_project.proj_filename) return 1;
+  if (!proj.proj_filename) {
+    save_project_file(nullptr);
+    if (!proj.proj_filename) return 1;
   }
 
   // -- generate the file names with absolute paths
   fld::io::Code_Writer f;
-  std::string code_filename = g_project.codefile_path() + g_project.codefile_name();
-  std::string header_filename = g_project.headerfile_path() + g_project.headerfile_name();
+  std::string code_filename = proj.codefile_path() + proj.codefile_name();
+  std::string header_filename = proj.headerfile_path() + proj.headerfile_name();
 
   // -- write the code and header files
-  if (!batch_mode) enter_project_dir();
+  if (!batch_mode) proj.enter_project_dir();
   int x = f.write_code(code_filename.c_str(), header_filename.c_str());
   std::string code_filename_rel = fl_filename_relative_str(code_filename);
   std::string header_filename_rel = fl_filename_relative_str(header_filename);
-  if (!batch_mode) leave_project_dir();
+  if (!batch_mode) proj.leave_project_dir();
 
   // -- print error message in batch mode or pop up an error or confirmation dialog box
   if (batch_mode) {
@@ -1084,13 +839,6 @@ int write_code_files(bool dont_show_completion_dialog)
   return 0;
 }
 
-/**
- Callback to write C++ code and header files.
- */
-void write_cb(Fl_Widget *, void *) {
-    write_code_files();
-}
-
 #if 0
 // Matt: disabled
 /**
@@ -1100,17 +848,17 @@ int mergeback_code_files()
 {
   flush_text_widgets();
   if (!filename) return 1;
-  if (!g_project.write_mergeback_data) {
+  if (!Fluid.proj.write_mergeback_data) {
     fl_message("MergeBack is not enabled for this project.\n"
                "Please enable MergeBack in the project settings\n"
                "dialog and re-save the project file and the code.");
     return 0;
   }
 
-  std::string proj_filename = g_project.projectfile_path() + g_project.projectfile_name();
+  std::string proj_filename = Fluid.proj.projectfile_path() + Fluid.proj.projectfile_name();
   std::string code_filename;
 #if 1
-  if (!batch_mode) {
+  if (!Fluid.batch_mode) {
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
     Fl_Preferences path(build_records, proj_filename.c_str());
     int i, n = proj_filename.size();
@@ -1119,10 +867,10 @@ int mergeback_code_files()
   }
 #endif
   if (code_filename.empty())
-    code_filename = g_project.codefile_path() + g_project.codefile_name();
-  if (!batch_mode) enter_project_dir();
+    code_filename = Fluid.proj.codefile_path() + Fluid.proj.codefile_name();
+  if (!Fluid.batch_mode) proj.enter_project_dir();
   int c = merge_back(code_filename, proj_filename, FD_MERGEBACK_INTERACTIVE);
-  if (!batch_mode) leave_project_dir();
+  if (!Fluid.batch_mode) proj.leave_project_dir();
 
   if (c==0) fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                        "MergeBack found no external modifications\n"
@@ -1142,13 +890,13 @@ void mergeback_cb(Fl_Widget *, void *) {
  */
 void write_strings_cb(Fl_Widget *, void *) {
   flush_text_widgets();
-  if (!g_project.proj_filename) {
-    save_cb(0,0);
-    if (!g_project.proj_filename) return;
+  if (!Fluid.proj.proj_filename) {
+    Fluid.save_project_file(nullptr);
+    if (!Fluid.proj.proj_filename) return;
   }
-  std::string filename = g_project.stringsfile_path() + g_project.stringsfile_name();
+  std::string filename = Fluid.proj.stringsfile_path() + Fluid.proj.stringsfile_name();
   int x = write_strings(filename);
-  if (batch_mode) {
+  if (Fluid.batch_mode) {
     if (x) {
       fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));
       exit(1);
@@ -1157,7 +905,7 @@ void write_strings_cb(Fl_Widget *, void *) {
     if (x) {
       fl_message("Can't write %s: %s", filename.c_str(), strerror(errno));
     } else if (completion_button->value()) {
-      fl_message("Wrote %s", g_project.stringsfile_name().c_str());
+      fl_message("Wrote %s", Fluid.proj.stringsfile_name().c_str());
     }
   }
 }
@@ -1165,7 +913,7 @@ void write_strings_cb(Fl_Widget *, void *) {
 /**
  Show the editor for the \c current Fl_Type.
  */
-void openwidget_cb(Fl_Widget *, void *) {
+void Application::edit_selected() {
   if (!Fl_Type::current) {
     fl_message("Please select a widget");
     return;
@@ -1176,7 +924,7 @@ void openwidget_cb(Fl_Widget *, void *) {
 /**
  User chose to copy the currently selected widgets.
  */
-void copy_cb(Fl_Widget*, void*) {
+void Application::copy_selected() {
   flush_text_widgets();
   if (!Fl_Type::current) {
     fl_beep();
@@ -1193,7 +941,7 @@ void copy_cb(Fl_Widget*, void*) {
 /**
  User chose to cut the currently selected widgets.
  */
-void cut_cb(Fl_Widget *, void *) {
+void Application::cut_selected() {
   if (!Fl_Type::current) {
     fl_beep();
     return;
@@ -1216,7 +964,7 @@ void cut_cb(Fl_Widget *, void *) {
 /**
  User chose to delete the currently selected widgets.
  */
-void delete_cb(Fl_Widget *, void *) {
+void Application::delete_selected() {
   if (!Fl_Type::current) {
     fl_beep();
     return;
@@ -1238,7 +986,7 @@ void delete_cb(Fl_Widget *, void *) {
  selected widget. If the currently selected widget is a group widget and
  it is not folded, the new widgets will be added inside the group.
  */
-void paste_cb(Fl_Widget*, void*) {
+void Application::paste_from_clipboard() {
   pasteoffset = ipasteoffset;
   undo_checkpoint();
   undo_suspend();
@@ -1270,7 +1018,7 @@ void paste_cb(Fl_Widget*, void*) {
  widget with the lowest level, so that the new widgets are inserted after
  this one.
  */
-void duplicate_cb(Fl_Widget*, void*) {
+void Application::duplicate_selected() {
   if (!Fl_Type::current) {
     fl_beep();
     return;
@@ -1315,7 +1063,7 @@ void duplicate_cb(Fl_Widget*, void*) {
 /**
  User wants to sort selected widgets by y coordinate.
  */
-static void sort_cb(Fl_Widget *,void *) {
+void Application::sort_selected() {
   undo_checkpoint();
   sort((Fl_Type*)NULL);
   widget_browser->rebuild();
@@ -1325,7 +1073,7 @@ static void sort_cb(Fl_Widget *,void *) {
 /**
  Open the "About" dialog.
  */
-void about_cb(Fl_Widget *, void *) {
+void Application::about() {
   if (!about_panel) make_about_panel();
   about_panel->show();
 }
@@ -1334,7 +1082,7 @@ void about_cb(Fl_Widget *, void *) {
  Open a dialog to show the HTML help page form the FLTK documentation folder.
  \param[in] name name of the HTML help file.
  */
-void show_help(const char *name) {
+void Application::show_help(const char *name) {
   const char    *docdir;
   char          helpname[FL_PATH_MAX];
 
@@ -1398,26 +1146,13 @@ void show_help(const char *name) {
   help_dialog->show();
 }
 
-/**
- User wants help on Fluid.
- */
-void help_cb(Fl_Widget *, void *) {
-  show_help("fluid.html");
-}
-
-/**
- User wants to see the Fluid manual.
- */
-void manual_cb(Fl_Widget *, void *) {
-  show_help("index.html");
-}
 
 // ---- Printing
 
 /**
  Open the dialog to allow the user to print the current window.
  */
-void print_menu_cb(Fl_Widget *, void *) {
+void Application::print_snapshots() {
   int w, h, ww, hh;
   int frompage, topage;
   Fl_Type       *t;                     // Current widget
@@ -1455,7 +1190,7 @@ void print_menu_cb(Fl_Widget *, void *) {
     fl_draw(date, w - (int)fl_width(date), fl_height());
 
     // Get the base filename...
-    std::string basename = fl_filename_name_str(std::string(g_project.proj_filename));
+    std::string basename = fl_filename_name_str(std::string(proj.proj_filename));
     fl_draw(basename.c_str(), 0, fl_height());
 
     // print centered and scaled to fit in the page
@@ -1479,118 +1214,6 @@ void print_menu_cb(Fl_Widget *, void *) {
 
 // ---- Main menu bar
 
-extern void select_layout_preset_cb(Fl_Widget *, void *user_data);
-extern void layout_suite_marker(Fl_Widget *, void *user_data);
-
-static void menu_file_new_cb(Fl_Widget *, void *) { new_project(); }
-static void menu_file_new_from_template_cb(Fl_Widget *, void *) { new_project_from_template(); }
-static void menu_file_open_cb(Fl_Widget *, void *) { open_project_file(""); }
-static void menu_file_insert_cb(Fl_Widget *, void *) { merge_project_file(""); }
-static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(std::string((const char*)v)); }
-static void menu_layout_sync_resize_cb(Fl_Menu_ *m, void*) {
-  if (m->mvalue()->value()) Fl_Type::allow_layout = 1; else Fl_Type::allow_layout = 0; }
-/**
- This is the main Fluid menu.
-
- Design history is manipulated right inside this menu structure.
- Some menu items change or deactivate correctly, but most items just trigger
- various callbacks.
-
- \c New_Menu creates new widgets and is explained in detail in another location.
-
- \see New_Menu
- \todo This menu needs some major modernization. Menus are too long and their
-    sorting is not always obvious.
- \todo Shortcuts are all over the place (Alt, Ctrl, Command, Shift-Ctrl,
-    function keys), and there should be a help page listing all shortcuts.
- */
-Fl_Menu_Item Main_Menu[] = {
-{"&File",0,0,0,FL_SUBMENU},
-  {"&New", FL_COMMAND+'n', menu_file_new_cb},
-  {"&Open...", FL_COMMAND+'o', menu_file_open_cb},
-  {"&Insert...", FL_COMMAND+'i', menu_file_insert_cb, 0, FL_MENU_DIVIDER},
-  {"&Save", FL_COMMAND+'s', save_cb, 0},
-  {"Save &As...", FL_COMMAND+FL_SHIFT+'s', save_cb, (void*)1},
-  {"Sa&ve A Copy...", 0, save_cb, (void*)2},
-  {"&Revert...", 0, revert_cb, 0, FL_MENU_DIVIDER},
-  {"New &From Template...", FL_COMMAND+'N', menu_file_new_from_template_cb, 0},
-  {"Save As &Template...", 0, save_template_cb, 0, FL_MENU_DIVIDER},
-  {"&Print...", FL_COMMAND+'p', print_menu_cb},
-  {"Write &Code", FL_COMMAND+FL_SHIFT+'c', write_cb, 0},
-// Matt: disabled {"MergeBack Code", FL_COMMAND+FL_SHIFT+'m', mergeback_cb, 0},
-  {"&Write Strings", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
-  {relative_history[0], FL_COMMAND+'1', menu_file_open_history_cb, absolute_history[0]},
-  {relative_history[1], FL_COMMAND+'2', menu_file_open_history_cb, absolute_history[1]},
-  {relative_history[2], FL_COMMAND+'3', menu_file_open_history_cb, absolute_history[2]},
-  {relative_history[3], FL_COMMAND+'4', menu_file_open_history_cb, absolute_history[3]},
-  {relative_history[4], FL_COMMAND+'5', menu_file_open_history_cb, absolute_history[4]},
-  {relative_history[5], FL_COMMAND+'6', menu_file_open_history_cb, absolute_history[5]},
-  {relative_history[6], FL_COMMAND+'7', menu_file_open_history_cb, absolute_history[6]},
-  {relative_history[7], FL_COMMAND+'8', menu_file_open_history_cb, absolute_history[7]},
-  {relative_history[8], FL_COMMAND+'9', menu_file_open_history_cb, absolute_history[8]},
-  {relative_history[9], 0, menu_file_open_history_cb, absolute_history[9], FL_MENU_DIVIDER},
-  {"&Quit", FL_COMMAND+'q', exit_cb},
-  {0},
-{"&Edit",0,0,0,FL_SUBMENU},
-  {"&Undo", FL_COMMAND+'z', undo_cb},
-  {"&Redo", FL_COMMAND+FL_SHIFT+'z', redo_cb, 0, FL_MENU_DIVIDER},
-  {"C&ut", FL_COMMAND+'x', cut_cb},
-  {"&Copy", FL_COMMAND+'c', copy_cb},
-  {"&Paste", FL_COMMAND+'v', paste_cb},
-  {"Dup&licate", FL_COMMAND+'u', duplicate_cb},
-  {"&Delete", FL_Delete, delete_cb, 0, FL_MENU_DIVIDER},
-  {"Select &All", FL_COMMAND+'a', select_all_cb},
-  {"Select &None", FL_COMMAND+FL_SHIFT+'a', select_none_cb, 0, FL_MENU_DIVIDER},
-  {"Pr&operties...", FL_F+1, openwidget_cb},
-  {"&Sort",0,sort_cb},
-  {"&Earlier", FL_F+2, earlier_cb},
-  {"&Later", FL_F+3, later_cb},
-  {"&Group", FL_F+7, group_cb},
-  {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
-  {"Hide O&verlays",FL_COMMAND+FL_SHIFT+'o',toggle_overlays},
-  {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
-  {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
-  {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-  {"Show Code View",FL_ALT+'c', (Fl_Callback*)toggle_codeview_cb, 0, FL_MENU_DIVIDER},
-  {"Settings...",FL_ALT+'p',show_settings_cb},
-  {0},
-{"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
-{"&Layout",0,0,0,FL_SUBMENU},
-  {"&Align",0,0,0,FL_SUBMENU},
-    {"&Left",0,(Fl_Callback *)align_widget_cb,(void*)10},
-    {"&Center",0,(Fl_Callback *)align_widget_cb,(void*)11},
-    {"&Right",0,(Fl_Callback *)align_widget_cb,(void*)12},
-    {"&Top",0,(Fl_Callback *)align_widget_cb,(void*)13},
-    {"&Middle",0,(Fl_Callback *)align_widget_cb,(void*)14},
-    {"&Bottom",0,(Fl_Callback *)align_widget_cb,(void*)15},
-    {0},
-  {"&Space Evenly",0,0,0,FL_SUBMENU},
-    {"&Across",0,(Fl_Callback *)align_widget_cb,(void*)20},
-    {"&Down",0,(Fl_Callback *)align_widget_cb,(void*)21},
-    {0},
-  {"&Make Same Size",0,0,0,FL_SUBMENU},
-    {"&Width",0,(Fl_Callback *)align_widget_cb,(void*)30},
-    {"&Height",0,(Fl_Callback *)align_widget_cb,(void*)31},
-    {"&Both",0,(Fl_Callback *)align_widget_cb,(void*)32},
-    {0},
-  {"&Center In Group",0,0,0,FL_SUBMENU},
-    {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
-    {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
-    {0},
-  {"Synchronized Resize", 0, (Fl_Callback*)menu_layout_sync_resize_cb, NULL, FL_MENU_TOGGLE|FL_MENU_DIVIDER },
-  {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
-  {"Presets", 0, layout_suite_marker, (void*)main_layout_submenu_, FL_SUBMENU_POINTER },
-  {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
-  {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
-  {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
-  {0},
-{"&Shell", 0, Fd_Shell_Command_List::menu_marker, (void*)Fd_Shell_Command_List::default_menu, FL_SUBMENU_POINTER},
-{"&Help",0,0,0,FL_SUBMENU},
-  {"&Rapid development with FLUID...",0,help_cb},
-  {"&FLTK Programmers Manual...",0,manual_cb, 0, FL_MENU_DIVIDER},
-  {"&About FLUID...",0,about_cb},
-  {0},
-{0}};
 
 /**
  Change the app's and hence preview the design's scheme.
@@ -1607,7 +1230,7 @@ Fl_Menu_Item Main_Menu[] = {
  \see init_scheme() for choice values and backwards compatibility
  */
 void scheme_cb(Fl_Scheme_Choice *choice, void *) {
-  if (batch_mode)
+  if (Fluid.batch_mode)
     return;
 
   // set the new scheme only if the scheme was changed
@@ -1617,7 +1240,7 @@ void scheme_cb(Fl_Scheme_Choice *choice, void *) {
     return;
 
   Fl::scheme(new_scheme);
-  fluid_prefs.set("scheme_name", new_scheme);
+  Fluid.preferences.set("scheme_name", new_scheme);
 
   // Backwards compatibility: store 1.3 scheme index (1-4).
   // We assume that index 0-3 (base, plastic, gtk+, gleam) are in the
@@ -1625,7 +1248,7 @@ void scheme_cb(Fl_Scheme_Choice *choice, void *) {
 
   int scheme_index = scheme_choice->value();
   if (scheme_index <= 3)                          // max. index for 1.3.x (Gleam)
-    fluid_prefs.set("scheme", scheme_index + 1);  // compensate for different indexing
+    Fluid.preferences.set("scheme", scheme_index + 1);  // compensate for different indexing
 }
 
 /**
@@ -1655,9 +1278,9 @@ void scheme_cb(Fl_Scheme_Choice *choice, void *) {
 void init_scheme() {
   int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
   char *scheme_name = 0;                    // scheme name since 1.4.0
-  fluid_prefs.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
+  Fluid.preferences.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
   if (!strcmp(scheme_name, "XXX")) {
-    fluid_prefs.get("scheme", scheme_index, 0);
+    Fluid.preferences.get("scheme", scheme_index, 0);
     if (scheme_index > 0) {
       scheme_index--;
       scheme_choice->value(scheme_index);   // set the choice value
@@ -1667,7 +1290,7 @@ void init_scheme() {
     else if (scheme_index > scheme_choice->size() - 1)
       scheme_index = 0;
     scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
-    fluid_prefs.set("scheme_name", scheme_name);
+    Fluid.preferences.set("scheme_name", scheme_name);
   }
   // Set the new scheme only if it was not overridden by the -scheme
   // command line option
@@ -1696,29 +1319,19 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
   }
 }
 
-/**
- Show or hide the code preview window.
- */
-void toggle_codeview_cb(Fl_Double_Window *, void *) {
-  codeview_toggle_visibility();
-}
 
-/**
- Show or hide the code preview window, button callback.
- */
-void toggle_codeview_b_cb(Fl_Button*, void *) {
-  codeview_toggle_visibility();
-}
+extern void menu_file_save_cb(Fl_Widget *, void *arg);
+extern void menu_file_open_history_cb(Fl_Widget *, void *v);
 
 /**
  Build the main app window and create a few other dialogs.
  */
 void make_main_window() {
-  if (!batch_mode) {
-    fluid_prefs.get("show_guides", show_guides, 1);
-    fluid_prefs.get("show_restricted", show_restricted, 1);
-    fluid_prefs.get("show_ghosted_outline", show_ghosted_outline, 0);
-    fluid_prefs.get("show_comments", show_comments, 1);
+  if (!Fluid.batch_mode) {
+    Fluid.preferences.get("Fluid.show_guides", Fluid.show_guides, 1);
+    Fluid.preferences.get("Fluid.show_restricted", Fluid.show_restricted, 1);
+    Fluid.preferences.get("Fluid.show_ghosted_outline", Fluid.show_ghosted_outline, 0);
+    Fluid.preferences.get("Fluid.show_comments", Fluid.show_comments, 1);
     make_shell_window();
   }
 
@@ -1734,7 +1347,7 @@ void make_main_window() {
     main_menubar = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
     main_menubar->menu(Main_Menu);
     // quick access to all dynamic menu items
-    save_item = (Fl_Menu_Item*)main_menubar->find_item(save_cb);
+    save_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_save_cb);
     history_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_open_history_cb);
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
     codeview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_codeview_cb);
@@ -1746,8 +1359,8 @@ void make_main_window() {
     main_window->end();
   }
 
-  if (!batch_mode) {
-    load_history();
+  if (!Fluid.batch_mode) {
+    Fluid.load_project_history();
     g_shell_config = new Fd_Shell_Command_List;
     widget_browser->load_prefs();
     make_settings_window();
@@ -1761,19 +1374,19 @@ void make_main_window() {
  It also computes and stores the relative filepaths for display in
  the main menu.
  */
-void load_history() {
+void Application::load_project_history() {
   int   i;              // Looping var
   int   max_files;
 
-  fluid_prefs.get("recent_files", max_files, 5);
+  preferences.get("recent_files", max_files, 5);
   if (max_files > 10) max_files = 10;
 
   for (i = 0; i < max_files; i ++) {
-    fluid_prefs.get( Fl_Preferences::Name("file%d", i), absolute_history[i], "", sizeof(absolute_history[i]));
-    if (absolute_history[i][0]) {
+    preferences.get( Fl_Preferences::Name("file%d", i), project_history_abspath[i], "", sizeof(project_history_abspath[i]));
+    if (project_history_abspath[i][0]) {
       // Make a shortened version of the filename for the menu...
-      std::string fn = fl_filename_shortened(absolute_history[i], 48);
-      strncpy(relative_history[i], fn.c_str(), sizeof(relative_history[i]) - 1);
+      std::string fn = fl_filename_shortened(project_history_abspath[i], 48);
+      strncpy(project_history_relpath[i], fn.c_str(), sizeof(project_history_relpath[i]) - 1);
       if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
       else history_item[i].flags = 0;
     } else break;
@@ -1794,13 +1407,13 @@ void load_history() {
  \param[in] flname path or filename of .fl file, will be converted into an
     absolute file path based on the current working directory.
  */
-void update_history(const char *flname) {
+void Application::update_project_history(const char *flname) {
   int   i;              // Looping var
   char  absolute[FL_PATH_MAX];
   int   max_files;
 
 
-  fluid_prefs.get("recent_files", max_files, 5);
+  preferences.get("recent_files", max_files, 5);
   if (max_files > 10) max_files = 10;
 
   fl_filename_absolute(absolute, sizeof(absolute), flname);
@@ -1815,9 +1428,9 @@ void update_history(const char *flname) {
 
   for (i = 0; i < max_files; i ++)
 #if defined(_WIN32) || defined(__APPLE__)
-    if (!strcasecmp(absolute, absolute_history[i])) break;
+    if (!strcasecmp(absolute, project_history_abspath[i])) break;
 #else
-    if (!strcmp(absolute, absolute_history[i])) break;
+    if (!strcmp(absolute, project_history_abspath[i])) break;
 #endif // _WIN32 || __APPLE__
 
   if (i == 0) return;
@@ -1825,31 +1438,31 @@ void update_history(const char *flname) {
   if (i >= max_files) i = max_files - 1;
 
   // Move the other flnames down in the list...
-  memmove(absolute_history + 1, absolute_history,
-          i * sizeof(absolute_history[0]));
-  memmove(relative_history + 1, relative_history,
-          i * sizeof(relative_history[0]));
+  memmove(project_history_abspath + 1, project_history_abspath,
+          i * sizeof(project_history_abspath[0]));
+  memmove(project_history_relpath + 1, project_history_relpath,
+          i * sizeof(project_history_relpath[0]));
 
   // Put the new file at the top...
-  strlcpy(absolute_history[0], absolute, sizeof(absolute_history[0]));
-  std::string fn = fl_filename_shortened(absolute_history[0], 48);
-  strncpy(relative_history[0], fn.c_str(), sizeof(relative_history[0]) - 1);
+  strlcpy(project_history_abspath[0], absolute, sizeof(project_history_abspath[0]));
+  std::string fn = fl_filename_shortened(project_history_abspath[0], 48);
+  strncpy(project_history_relpath[0], fn.c_str(), sizeof(project_history_relpath[0]) - 1);
 
   // Update the menu items as needed...
   for (i = 0; i < max_files; i ++) {
-    fluid_prefs.set( Fl_Preferences::Name("file%d", i), absolute_history[i]);
-    if (absolute_history[i][0]) {
+    preferences.set( Fl_Preferences::Name("file%d", i), project_history_abspath[i]);
+    if (project_history_abspath[i][0]) {
       if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
       else history_item[i].flags = 0;
     } else break;
   }
 
   for (; i < 10; i ++) {
-    fluid_prefs.set( Fl_Preferences::Name("file%d", i), "");
+    preferences.set( Fl_Preferences::Name("file%d", i), "");
     if (i) history_item[i-1].flags |= FL_MENU_DIVIDER;
     history_item[i].hide();
   }
-  fluid_prefs.flush();
+  preferences.flush();
 }
 
 /**
@@ -1857,11 +1470,11 @@ void update_history(const char *flname) {
  \param[in] c the new absolute filename and path
  */
 void set_filename(const char *c) {
-  if (g_project.proj_filename) free((void *)g_project.proj_filename);
-  g_project.proj_filename = c ? fl_strdup(c) : NULL;
+  if (Fluid.proj.proj_filename) free((void *)Fluid.proj.proj_filename);
+  Fluid.proj.proj_filename = c ? fl_strdup(c) : NULL;
 
-  if (g_project.proj_filename && !batch_mode)
-    update_history(g_project.proj_filename);
+  if (Fluid.proj.proj_filename && !Fluid.batch_mode)
+    Fluid.update_project_history(Fluid.proj.proj_filename);
 
   set_modflag(modflag);
 }
@@ -1902,9 +1515,9 @@ void set_modflag(int mf, int mfc) {
 
   if (main_window) {
     std::string basename;
-    if (!g_project.proj_filename) basename = "Untitled.fl";
-    else basename = fl_filename_name_str(std::string(g_project.proj_filename));
-    code_ext = fl_filename_ext(g_project.code_file_name.c_str());
+    if (!Fluid.proj.proj_filename) basename = "Untitled.fl";
+    else basename = fl_filename_name_str(std::string(Fluid.proj.proj_filename));
+    code_ext = fl_filename_ext(Fluid.proj.code_file_name.c_str());
     char mod_star = modflag ? '*' : ' ';
     char mod_c_star = modflag_c ? '*' : ' ';
     snprintf(new_title, sizeof(new_title), "%s%c  %s%c",
@@ -1921,6 +1534,11 @@ void set_modflag(int mf, int mfc) {
 
 // ---- Main program entry point
 
+
+int Application::arg_cb(int argc, char** argv, int& i) {
+  return Fluid.arg(argc, argv, i);
+}
+
 /**
  Handle command line arguments.
  \param[in] argc number of arguments in the list
@@ -1928,11 +1546,11 @@ void set_modflag(int mf, int mfc) {
  \param[inout] i current argument index
  \return number of arguments used; if 0, the argument is not supported
  */
-static int arg(int argc, char** argv, int& i) {
+int Application::arg(int argc, char** argv, int& i) {
   if (argv[i][0] != '-')
     return 0;
   if (argv[i][1] == 'd' && !argv[i][2]) {
-    G_debug=1;
+    debug_external_editor=1;
     i++; return 1;
   }
   if (argv[i][1] == 'u' && !argv[i][2]) {
@@ -1956,13 +1574,13 @@ static int arg(int argc, char** argv, int& i) {
     i++; return 1;
   }
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
-    g_code_filename_arg = argv[i+1];
+    code_filename_arg = argv[i+1];
     batch_mode++;
     i += 2; return 2;
   }
 #ifndef NDEBUG
   if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
-    g_autodoc_path = argv[i+1];
+    autodoc_path = argv[i+1];
     i += 2; return 2;
   }
 #endif
@@ -1971,7 +1589,7 @@ static int arg(int argc, char** argv, int& i) {
   }
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
-      g_header_filename_arg = argv[i+1];
+      header_filename_arg = argv[i+1];
       batch_mode++;
       i += 2;
       return 2;
@@ -2024,15 +1642,15 @@ static void sigint(SIGARG) {
     in batch mode. Is that intentional? Does it circumvent issues with Windows'
     stderr and stdout?
  */
-int fluid_main(int argc,char **argv) {
+int Application::run(int argc,char **argv) {
   int i = 1;
 
   setlocale(LC_ALL, "");      // enable multi-language errors in file chooser
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
-  g_launch_path = end_with_slash(fl_getcwd_str()); // store the current path at launch
+  launch_path = end_with_slash(fl_getcwd_str()); // store the current path at launch
 
   Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
-  if (   (Fl::args(argc,argv,i,arg) == 0)     // unsupported argument found
+  if (   (Fl::args(argc,argv,i,arg_cb) == 0)     // unsupported argument found
       || (batch_mode && (i != argc-1))        // .fl filename missing
       || (!batch_mode && (i < argc-1))        // more than one filename found
       || (argv[i] && (argv[i][0] == '-'))) {  // unknown option
@@ -2065,7 +1683,7 @@ int fluid_main(int argc,char **argv) {
   }
 
   const char *c = NULL;
-  if (g_autodoc_path.empty())
+  if (autodoc_path.empty())
     c = argv[i];
 
   fl_register_images();
@@ -2082,17 +1700,17 @@ int fluid_main(int argc,char **argv) {
     main_window->callback(exit_cb);
     position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
     if (g_shell_config) {
-      g_shell_config->read(fluid_prefs, FD_STORE_USER);
+      g_shell_config->read(preferences, FD_STORE_USER);
       g_shell_config->update_settings_dialog();
       g_shell_config->rebuild_shell_menu();
     }
-    g_layout_list.read(fluid_prefs, FD_STORE_USER);
+    g_layout_list.read(preferences, FD_STORE_USER);
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_codeview_cb(0,0);
-    if (!c && openlast_button->value() && absolute_history[0][0] && g_autodoc_path.empty()) {
+    if (!c && openlast_button->value() && project_history_abspath[0][0] && autodoc_path.empty()) {
       // Open previous file when no file specified...
-      open_project_file(absolute_history[0]);
+      open_project_file(project_history_abspath[0]);
     }
   }
   undo_suspend();
@@ -2108,13 +1726,13 @@ int fluid_main(int argc,char **argv) {
   // command line args override code and header filenames from the project file
   // in batch mode only
   if (batch_mode) {
-    if (!g_code_filename_arg.empty()) {
-      g_project.code_file_set = 1;
-      g_project.code_file_name = g_code_filename_arg;
+    if (!code_filename_arg.empty()) {
+      proj.code_file_set = 1;
+      proj.code_file_name = code_filename_arg;
     }
-    if (!g_header_filename_arg.empty()) {
-      g_project.header_file_set = 1;
-      g_project.header_file_name = g_header_filename_arg;
+    if (!header_filename_arg.empty()) {
+      proj.header_file_set = 1;
+      proj.header_file_name = header_filename_arg;
     }
   }
 
@@ -2127,7 +1745,7 @@ int fluid_main(int argc,char **argv) {
   if (compile_file) {           // fluid -c[s]
     if (compile_strings)
       write_strings_cb(0,0);
-    write_cb(0,0);
+    write_code_files();
     exit(0);
   }
 
@@ -2146,8 +1764,8 @@ int fluid_main(int argc,char **argv) {
 
 #ifndef NDEBUG
   // check if the user wants FLUID to generate image for the user documentation
-  if (!g_autodoc_path.empty()) {
-    run_autodoc(g_autodoc_path);
+  if (!autodoc_path.empty()) {
+    run_autodoc(autodoc_path);
     set_modflag(0, 0);
     exit_cb(0,0);
     return 0;
