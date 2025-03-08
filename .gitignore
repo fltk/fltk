@@ -10,6 +10,7 @@
 **/.DS_Store
 
 # CMake build artifacts if built in source - strongly discouraged!
+# We may disallow this later...
 
 bin/
 **/cmake_install.cmake
@@ -35,29 +36,15 @@ etc/FLTKConfig.cmake
 
 # /
 
-/autom4te*.cache
 /build
-/clang
-/config.cache
-/config.h
-/config.log
-/config.status
-/configure
 /fltk-config
 /fltk.list
 /fltk.spec
-/makeinclude
 /TAGS
 
 # /FL
 
 /FL/fl_config.h
-/FL/Makefile
-
-# /cairo/
-
-/cairo/*.so*
-/cairo/*.dll
 
 # /lib/
 
@@ -68,23 +55,3 @@ etc/FLTKConfig.cmake
 # /misc/
 
 /misc/doxystar
-
-# /src/
-
-/src/*.so*
-/src/*.sl*
-/src/*.a
-/src/*.dll
-/src/*.sav
-/src/*.dylib
-
-# Wayland build artifacts (generated files)
-
-src/gtk-shell-client-protocol.h
-src/gtk-shell-protocol.c
-src/text-input-client-protocol.h
-src/text-input-protocol.c
-src/xdg-decoration-client-protocol.h
-src/xdg-decoration-protocol.c
-src/xdg-shell-client-protocol.h
-src/xdg-shell-protocol.c
