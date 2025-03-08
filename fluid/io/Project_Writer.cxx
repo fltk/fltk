@@ -117,18 +117,18 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     write_string("\nutf8_in_src");
   if (Fluid.proj.avoid_early_includes)
     write_string("\navoid_early_includes");
-  if (Fluid.proj.i18n_type) {
+  if ((Fluid.proj.i18n_type != fld::I18n_Type::NONE)) {
     write_string("\ni18n_type %d", Fluid.proj.i18n_type);
     switch (Fluid.proj.i18n_type) {
-      case FD_I18N_NONE:
+      case fld::I18n_Type::NONE:
         break;
-      case FD_I18N_GNU : /* GNU gettext */
+      case fld::I18n_Type::GNU : /* GNU gettext */
         write_string("\ni18n_include"); write_word(Fluid.proj.i18n_gnu_include.c_str());
         write_string("\ni18n_conditional"); write_word(Fluid.proj.i18n_gnu_conditional.c_str());
         write_string("\ni18n_gnu_function"); write_word(Fluid.proj.i18n_gnu_function.c_str());
         write_string("\ni18n_gnu_static_function"); write_word(Fluid.proj.i18n_gnu_static_function.c_str());
         break;
-      case FD_I18N_POSIX : /* POSIX catgets */
+      case fld::I18n_Type::POSIX : /* POSIX catgets */
         write_string("\ni18n_include"); write_word(Fluid.proj.i18n_pos_include.c_str());
         write_string("\ni18n_conditional"); write_word(Fluid.proj.i18n_pos_conditional.c_str());
         if (!Fluid.proj.i18n_pos_file.empty()) {

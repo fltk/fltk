@@ -62,7 +62,7 @@
 // TODO: make the settings dialog resizable
 // TODO: make g_shell_config static, not a pointer, but don't load anything in batch mode
 
-// FEATURE: fld::ToolStore icons are currently redundant with @file and @save and could be improved
+// FEATURE: fld::Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
 // FEATURE: add the files ./fluid.prefs and ./fluid.user.prefs as tool locations
 // FEATURE: interpret compiler output, for example: clang, and highlight errors and warnings
@@ -119,40 +119,6 @@ static Fl_Process s_proc;
 bool shell_command_running() {
   return s_proc.desc() ? true : false;
 }
-
-/**
- Reads an entry from the group. A default value must be
- supplied. The return value indicates if the value was available
- (non-zero) or the default was used (0).
-
- \param[in] prefs preference group
- \param[in] key name of entry
- \param[out] value returned from preferences or default value if none was set
- \param[in] defaultValue default value to be used if no preference was set
- \return 0 if the default value was used
- */
-char preferences_get(Fl_Preferences &prefs, const char *key, std::string &value, const std::string &defaultValue) {
-  char *v = NULL;
-  char ret = prefs.get(key, v, defaultValue.c_str());
-  value = v;
-  ::free(v);
-  return ret;
-}
-
-/**
- Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preference file.
-
- \param[in] prefs preference group
- \param[in] entry name of entry
- \param[in] value set this entry to value (stops at the first nul character).
- \return 0 if setting the value failed
- */
-char preferences_set(Fl_Preferences &prefs, const char *key, const std::string &value) {
-  return prefs.set(key, value.c_str());
-}
-
 
 /** \class Fl_Process
  Launch an external shell command.
@@ -459,7 +425,7 @@ void run_shell_command(const std::string &cmd, int flags) {
  */
 Fd_Shell_Command::Fd_Shell_Command()
 : shortcut(0),
-  storage(fld::ToolStore::USER),
+  storage(fld::Tool_Store::USER),
   condition(0),
   flags(0),
   shell_menu_item_(NULL)
@@ -493,7 +459,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 : name(in_name),
   label(in_name),
   shortcut(0),
-  storage(fld::ToolStore::USER),
+  storage(fld::Tool_Store::USER),
   condition(Fd_Shell_Command::ALWAYS),
   command("echo \"Hello, FLUID!\""),
   flags(Fd_Shell_Command::SAVE_PROJECT|Fd_Shell_Command::SAVE_SOURCECODE),
@@ -516,7 +482,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name,
                  const std::string &in_label,
                  Fl_Shortcut in_shortcut,
-                 fld::ToolStore in_storage,
+                 fld::Tool_Store in_storage,
                  int in_condition,
                  const std::string &in_condition_data,
                  const std::string &in_command,
@@ -597,33 +563,33 @@ bool Fd_Shell_Command::is_active() {
 
 void Fd_Shell_Command::read(Fl_Preferences &prefs) {
   int tmp;
-  preferences_get(prefs, "name", name, "<unnamed>");
-  preferences_get(prefs, "label", label, "<no label>");
+  prefs.get("name", name, "<unnamed>");
+  prefs.get("label", label, "<no label>");
   prefs.get("shortcut", tmp, 0);
   shortcut = (Fl_Shortcut)tmp;
   prefs.get("storage", tmp, -1);
-  if (tmp != -1) storage = (fld::ToolStore)tmp;
+  if (tmp != -1) storage = (fld::Tool_Store)tmp;
   prefs.get("condition", condition, ALWAYS);
-  preferences_get(prefs, "condition_data", condition_data, "");
-  preferences_get(prefs, "command", command, "");
+  prefs.get("condition_data", condition_data, "");
+  prefs.get("command", command, "");
   prefs.get("flags", flags, 0);
 }
 
 void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
-  preferences_set(prefs, "name", name);
-  preferences_set(prefs, "label", label);
+  prefs.set("name", name);
+  prefs.set("label", label);
   if (shortcut != 0) prefs.set("shortcut", (int)shortcut);
   if (save_location) prefs.set("storage", (int)storage);
   if (condition != ALWAYS) prefs.set("condition", condition);
-  if (!condition_data.empty()) preferences_set(prefs, "condition_data", condition_data);
-  if (!command.empty()) preferences_set(prefs, "command", command);
+  if (!condition_data.empty()) prefs.set("condition_data", condition_data);
+  if (!command.empty()) prefs.set("command", command);
   if (flags != 0) prefs.set("flags", flags);
 }
 
 void Fd_Shell_Command::read(class fld::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  storage = fld::ToolStore::PROJECT;
+  storage = fld::Tool_Store::PROJECT;
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -709,7 +675,7 @@ void Fd_Shell_Command_List::clear() {
 /**
  remove all shell commands of the given storage location from the list.
  */
-void Fd_Shell_Command_List::clear(fld::ToolStore storage) {
+void Fd_Shell_Command_List::clear(fld::Tool_Store storage) {
   for (int i=list_size-1; i>=0; i--) {
     if (list[i]->storage == storage) {
       remove(i);
@@ -720,7 +686,7 @@ void Fd_Shell_Command_List::clear(fld::ToolStore storage) {
 /**
  Read shell configuration from a preferences group.
  */
-void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::ToolStore storage) {
+void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
   // import the old shell commands from previous user settings
   if (&Fluid.preferences == &prefs) {
     int version;
@@ -728,11 +694,11 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::ToolStore storage) 
     if (version == 0) {
       int save_fl, save_code, save_strings;
       Fd_Shell_Command *cmd = new Fd_Shell_Command();
-      cmd->storage = fld::ToolStore::USER;
+      cmd->storage = fld::Tool_Store::USER;
       cmd->name = "Sample Shell Command";
       cmd->label = "Sample Shell Command";
       cmd->shortcut = FL_ALT+'g';
-      preferences_get(Fluid.preferences, "shell_command", cmd->command, "echo \"Sample Shell Command\"");
+      Fluid.preferences.get("shell_command", cmd->command, "echo \"Sample Shell Command\"");
       Fluid.preferences.get("shell_savefl", save_fl, 1);
       Fluid.preferences.get("shell_writecode", save_code, 1);
       Fluid.preferences.get("shell_writemsgs", save_strings, 0);
@@ -749,7 +715,7 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::ToolStore storage) 
   for (int i=0; i<n; i++) {
     Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
     Fd_Shell_Command *cmd = new Fd_Shell_Command();
-    cmd->storage = fld::ToolStore::USER;
+    cmd->storage = fld::Tool_Store::USER;
     cmd->read(cmd_prefs);
     add(cmd);
   }
@@ -758,12 +724,12 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::ToolStore storage) 
 /**
  Write shell configuration to a preferences group.
  */
-void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fld::ToolStore storage) {
+void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
   Fl_Preferences shell_commands(prefs, "shell_commands");
   shell_commands.delete_all_groups();
   int index = 0;
   for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == fld::ToolStore::USER) {
+    if (list[i]->storage == fld::Tool_Store::USER) {
       Fl_Preferences cmd(shell_commands, Fl_Preferences::Name(index++));
       list[i]->write(cmd);
     }
@@ -776,7 +742,7 @@ void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fld::ToolStore storage)
 void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  clear(fld::ToolStore::PROJECT);
+  clear(fld::Tool_Store::PROJECT);
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -796,13 +762,13 @@ void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
 void Fd_Shell_Command_List::write(fld::io::Project_Writer *out) {
   int n_in_project_file = 0;
   for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == fld::ToolStore::PROJECT)
+    if (list[i]->storage == fld::Tool_Store::PROJECT)
       n_in_project_file++;
   }
   if (n_in_project_file > 0) {
     out->write_string("\nshell_commands {");
     for (int i=0; i<list_size; i++) {
-      if (list[i]->storage == fld::ToolStore::PROJECT)
+      if (list[i]->storage == fld::Tool_Store::PROJECT)
         list[i]->write(out);
     }
     out->write_string("\n}");
@@ -990,7 +956,7 @@ void Fd_Shell_Command_List::import_from_file() {
   for (i = 0; i < n; i++) {
     Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
     Fd_Shell_Command *cmd = new Fd_Shell_Command();
-    cmd->storage = fld::ToolStore::USER;
+    cmd->storage = fld::Tool_Store::USER;
     cmd->read(cmd_prefs);
     g_shell_config->add(cmd);
   }

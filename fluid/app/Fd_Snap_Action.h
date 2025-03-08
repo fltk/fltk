@@ -88,13 +88,13 @@ public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
   Fd_Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
-  fld::ToolStore storage_;       ///< storage location (see fld::ToolStore::INTERNAL, etc.)
+  fld::Tool_Store storage_;       ///< storage location (see fld::Tool_Store::INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(fld::io::Project_Writer*);
   void read(fld::io::Project_Reader*);
   void update_label();
-  void storage(fld::ToolStore s) { storage_ = s; update_label(); }
+  void storage(fld::Tool_Store s) { storage_ = s; update_label(); }
   void name(const char *n);
   void init();
   ~Fd_Layout_Suite();
@@ -137,13 +137,13 @@ public:
 
   int load(const std::string &filename);
   int save(const std::string &filename);
-  void write(Fl_Preferences &prefs, fld::ToolStore storage);
-  void read(Fl_Preferences &prefs, fld::ToolStore storage);
+  void write(Fl_Preferences &prefs, fld::Tool_Store storage);
+  void read(Fl_Preferences &prefs, fld::Tool_Store storage);
   void write(fld::io::Project_Writer*);
   void read(fld::io::Project_Reader*);
   int add(Fd_Layout_Suite*);
   void remove(int index);
-  void remove_all(fld::ToolStore storage);
+  void remove_all(fld::Tool_Store storage);
   Fd_Layout_Preset *at(int);
   int size();
 };

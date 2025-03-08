@@ -407,7 +407,7 @@ void delete_all(int selected_only) {
   if(!selected_only) {
     // reset the setting for the external shell command
     if (g_shell_config) {
-      g_shell_config->clear(fld::ToolStore::PROJECT);
+      g_shell_config->clear(fld::Tool_Store::PROJECT);
       g_shell_config->rebuild_shell_menu();
       g_shell_config->update_settings_dialog();
     }
@@ -415,7 +415,7 @@ void delete_all(int selected_only) {
       widget_browser->hposition(0);
       widget_browser->vposition(0);
     }
-    g_layout_list.remove_all(fld::ToolStore::PROJECT);
+    g_layout_list.remove_all(fld::Tool_Store::PROJECT);
     g_layout_list.current_suite(0);
     g_layout_list.current_preset(0);
     g_layout_list.update_dialogs();

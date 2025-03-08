@@ -48,9 +48,6 @@ struct Fl_Menu_Item;
 class Fl_Widget;
 class Fl_Preferences;
 
-char preferences_get(Fl_Preferences &prefs, const char *key, std::string &value, const std::string &defaultValue);
-char preferences_set(Fl_Preferences &prefs, const char *key, const std::string &value);
-
 void show_terminal_window();
 void run_shell_command(const std::string &cmd, int flags);
 bool shell_command_running(void);
@@ -97,7 +94,7 @@ public:
   Fd_Shell_Command(const std::string &in_name,
                    const std::string &in_label,
                    Fl_Shortcut in_shortcut,
-                   fld::ToolStore in_storage,
+                   fld::Tool_Store in_storage,
                    int in_condition,
                    const std::string &in_condition_data,
                    const std::string &in_command,
@@ -105,7 +102,7 @@ public:
   std::string name;
   std::string label;
   Fl_Shortcut shortcut;
-  fld::ToolStore storage;
+  fld::Tool_Store storage;
   int condition; // always, hide, windows only, linux only, mac only, user, machine
   std::string condition_data; // user name, machine name
   std::string command;
@@ -134,13 +131,13 @@ public:
   void insert(int index, Fd_Shell_Command *cmd);
   void remove(int index);
   void clear();
-  void clear(fld::ToolStore store);
+  void clear(fld::Tool_Store store);
 //  void move_up();
 //  void move_down();
 //  int load(const std::string &filename);
 //  int save(const std::string &filename);
-  void read(Fl_Preferences &prefs, fld::ToolStore storage);
-  void write(Fl_Preferences &prefs, fld::ToolStore storage);
+  void read(Fl_Preferences &prefs, fld::Tool_Store storage);
+  void write(Fl_Preferences &prefs, fld::Tool_Store storage);
   void read(class fld::io::Project_Reader*);
   void write(class fld::io::Project_Writer*);
   void rebuild_shell_menu();

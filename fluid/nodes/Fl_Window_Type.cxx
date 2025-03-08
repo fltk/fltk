@@ -70,22 +70,22 @@ static void update_xywh() {
 
 void i18n_type_cb(Fl_Choice *c, void *v) {
   if (v == LOAD) {
-    c->value(Fluid.proj.i18n_type);
+    c->value(static_cast<int>(Fluid.proj.i18n_type));
   } else {
     undo_checkpoint();
-    Fluid.proj.i18n_type = static_cast<Fd_I18n_Type>(c->value());
+    Fluid.proj.i18n_type = static_cast<fld::I18n_Type>(c->value());
     Fluid.proj.set_modflag(1);
   }
   switch (Fluid.proj.i18n_type) {
-  case FD_I18N_NONE : /* None */
+  case fld::I18n_Type::NONE : /* None */
       i18n_gnu_group->hide();
       i18n_posix_group->hide();
       break;
-  case FD_I18N_GNU : /* GNU gettext */
+  case fld::I18n_Type::GNU : /* GNU gettext */
       i18n_gnu_group->show();
       i18n_posix_group->hide();
       break;
-  case FD_I18N_POSIX : /* POSIX cat */
+  case fld::I18n_Type::POSIX : /* POSIX cat */
       i18n_gnu_group->hide();
       i18n_posix_group->show();
       break;

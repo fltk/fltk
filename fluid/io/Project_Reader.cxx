@@ -267,7 +267,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
-        Fluid.proj.i18n_type = static_cast<Fd_I18n_Type>(atoi(read_word()));
+        Fluid.proj.i18n_type = static_cast<fld::I18n_Type>(atoi(read_word()));
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_function")) {
@@ -287,16 +287,16 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        if (Fluid.proj.i18n_type == FD_I18N_GNU)
+        if (Fluid.proj.i18n_type == fld::I18n_Type::GNU)
           Fluid.proj.i18n_gnu_include = read_word();
-        else if (Fluid.proj.i18n_type == FD_I18N_POSIX)
+        else if (Fluid.proj.i18n_type == fld::I18n_Type::POSIX)
           Fluid.proj.i18n_pos_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        if (Fluid.proj.i18n_type == FD_I18N_GNU)
+        if (Fluid.proj.i18n_type == fld::I18n_Type::GNU)
           Fluid.proj.i18n_gnu_conditional = read_word();
-        else if (Fluid.proj.i18n_type == FD_I18N_POSIX)
+        else if (Fluid.proj.i18n_type == fld::I18n_Type::POSIX)
           Fluid.proj.i18n_pos_conditional = read_word();
         goto CONTINUE;
       }

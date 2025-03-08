@@ -49,7 +49,7 @@ namespace fld {
  Indicate the storage location for tools like layout suites and shell macros.
  \see class Fd_Shell_Command, class Fd_Layout_Suite
  */
-enum class ToolStore {
+enum class Tool_Store {
   INTERNAL,  ///< stored inside FLUID app
   USER,      ///< suite is stored in the user wide FLUID settings
   PROJECT,   ///< suite is stored within the current .fl project file

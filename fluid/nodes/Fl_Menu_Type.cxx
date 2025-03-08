@@ -486,13 +486,13 @@ void Fl_Menu_Item_Type::write_item(fld::io::Code_Writer& f) {
   f.write_c(" {");
   if (label() && label()[0])
     switch (Fluid.proj.i18n_type) {
-      case FD_I18N_GNU:
+      case fld::I18n_Type::GNU:
         // we will call i18n when the menu is instantiated for the first time
         f.write_c("%s(", Fluid.proj.i18n_gnu_static_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
-      case FD_I18N_POSIX:
+      case fld::I18n_Type::POSIX:
         // fall through: strings can't be translated before a catalog is chosen
       default:
         f.write_cstring(label());
@@ -591,12 +591,12 @@ void Fl_Menu_Item_Type::write_code1(fld::io::Code_Writer& f) {
       f.write_c("%sml->labela = (char*)", f.indent());
       image->write_inline(f);
       f.write_c(";\n");
-      if (Fluid.proj.i18n_type==FD_I18N_NONE) {
+      if (Fluid.proj.i18n_type==fld::I18n_Type::NONE) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
-      } else if (Fluid.proj.i18n_type==FD_I18N_GNU) {
+      } else if (Fluid.proj.i18n_type==fld::I18n_Type::GNU) {
         f.write_c("%sml->labelb = %s(o->label());\n",
                 f.indent(), Fluid.proj.i18n_gnu_function.c_str());
-      } else if (Fluid.proj.i18n_type==FD_I18N_POSIX) {
+      } else if (Fluid.proj.i18n_type==fld::I18n_Type::POSIX) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
                   f.indent(),
                   Fluid.proj.i18n_pos_file.empty() ? "_catalog" : Fluid.proj.i18n_pos_file.c_str(),
@@ -609,17 +609,17 @@ void Fl_Menu_Item_Type::write_code1(fld::io::Code_Writer& f) {
       image->write_code(f, 0, "o");
     }
   }
-  if (Fluid.proj.i18n_type && label() && label()[0]) {
+  if ((Fluid.proj.i18n_type != fld::I18n_Type::NONE) && label() && label()[0]) {
     Fl_Labeltype t = o->labeltype();
     if (image) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
-      if (Fluid.proj.i18n_type==FD_I18N_GNU) {
+      if (Fluid.proj.i18n_type==fld::I18n_Type::GNU) {
         f.write_c("%so->label(%s(o->label()));\n",
                 f.indent(), Fluid.proj.i18n_gnu_function.c_str());
-      } else if (Fluid.proj.i18n_type==FD_I18N_POSIX) {
+      } else if (Fluid.proj.i18n_type==fld::I18n_Type::POSIX) {
         f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
                   f.indent(),
                   Fluid.proj.i18n_pos_file.empty() ? "_catalog" : Fluid.proj.i18n_pos_file.c_str(),

@@ -3100,15 +3100,15 @@ void Fl_Widget_Type::write_code1(fld::io::Code_Writer& f) {
   if (label() && *label()) {
     f.write_c(", ");
     switch (Fluid.proj.i18n_type) {
-    case FD_I18N_NONE : /* None */
+    case fld::I18n_Type::NONE : /* None */
         f.write_cstring(label());
         break;
-    case FD_I18N_GNU : /* GNU gettext */
+    case fld::I18n_Type::GNU : /* GNU gettext */
         f.write_c("%s(", Fluid.proj.i18n_gnu_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
-    case FD_I18N_POSIX : /* POSIX catgets */
+    case fld::I18n_Type::POSIX : /* POSIX catgets */
         f.write_c("catgets(%s,%s,%d,",
                   Fluid.proj.i18n_pos_file.empty() ? "_catalog" : Fluid.proj.i18n_pos_file.c_str(),
                   Fluid.proj.i18n_pos_set.c_str(), msgnum());
@@ -3174,15 +3174,15 @@ void Fl_Widget_Type::write_widget_code(fld::io::Code_Writer& f) {
   if (tooltip() && *tooltip()) {
     f.write_c("%s%s->tooltip(",f.indent(), var);
     switch (Fluid.proj.i18n_type) {
-    case FD_I18N_NONE : /* None */
+    case fld::I18n_Type::NONE : /* None */
         f.write_cstring(tooltip());
         break;
-    case FD_I18N_GNU : /* GNU gettext */
+    case fld::I18n_Type::GNU : /* GNU gettext */
         f.write_c("%s(", Fluid.proj.i18n_gnu_function.c_str());
         f.write_cstring(tooltip());
         f.write_c(")");
         break;
-    case FD_I18N_POSIX : /* POSIX catgets */
+    case fld::I18n_Type::POSIX : /* POSIX catgets */
         f.write_c("catgets(%s,%s,%d,",
                   Fluid.proj.i18n_pos_file.empty() ? "_catalog" : Fluid.proj.i18n_pos_file.c_str(),
                   Fluid.proj.i18n_pos_set.c_str(),

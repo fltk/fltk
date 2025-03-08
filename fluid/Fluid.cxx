@@ -295,7 +295,7 @@ void Application::flush_text_widgets() {
  \return 1 if the caller should make the window visible, 0 if hidden.
  */
 char Application::position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W, int H) {
-  Fl_Preferences pos(Fluid.preferences, prefsName);
+  Fl_Preferences pos(preferences, prefsName);
   if (prevpos_button->value()) {
     pos.get("x", X, X);
     pos.get("y", Y, Y);
@@ -317,7 +317,7 @@ char Application::position_window(Fl_Window *w, const char *prefsName, int Visib
  \param[in] prefsName name of the preferences item that stores the window settings
  */
 void Application::save_position(Fl_Window *w, const char *prefsName) {
-  Fl_Preferences pos(Fluid.preferences, prefsName);
+  Fl_Preferences pos(preferences, prefsName);
   pos.set("x", w->x());
   pos.set("y", w->y());
   pos.set("w", w->w());
@@ -336,9 +336,9 @@ char* Application::cutfname(int which) {
 
   if (!beenhere) {
     beenhere = 1;
-    Fluid.preferences.getUserdataPath(name[0], sizeof(name[0]));
+    preferences.getUserdataPath(name[0], sizeof(name[0]));
     strlcat(name[0], "cut_buffer", sizeof(name[0]));
-    Fluid.preferences.getUserdataPath(name[1], sizeof(name[1]));
+    preferences.getUserdataPath(name[1], sizeof(name[1]));
     strlcat(name[1], "dup_buffer", sizeof(name[1]));
   }
 
@@ -406,7 +406,7 @@ void Application::save_project_file(void *v) {
                     "Replace", NULL, basename.c_str()) == 0) return;
     }
 
-    if (v != (void *)2) Fluid.proj.set_filename(c);
+    if (v != (void *)2) proj.set_filename(c);
   }
   if (!fld::io::write_file(c)) {
     fl_alert("Error writing %s: %s", c, strerror(errno));
@@ -425,7 +425,7 @@ void Application::save_project_file(void *v) {
  If the design was modified, a dialog will ask for confirmation.
  */
 void Application::revert_project() {
-  if ( Fluid.proj.modflag) {
+  if ( proj.modflag) {
     if (!fl_choice("This user interface has been changed. Really revert?",
                    "Cancel", "Revert", NULL)) return;
   }
@@ -462,7 +462,7 @@ void Application::quit() {
   flush_text_widgets();
 
   // verify user intention
-  if (Fluid.confirm_project_clear() == false)
+  if (confirm_project_clear() == false)
     return;
 
   // Stop any external editor update timers
@@ -475,7 +475,7 @@ void Application::quit() {
     delete widgetbin_panel;
   }
   if (codeview_panel) {
-    Fl_Preferences svp(Fluid.preferences, "codeview");
+    Fl_Preferences svp(preferences, "codeview");
     svp.set("autorefresh", cv_autorefresh->value());
     svp.set("autoposition", cv_autoposition->value());
     svp.set("tab", cv_tab->find(cv_tab->value()));
@@ -494,17 +494,17 @@ void Application::quit() {
     delete help_dialog;
 
   if (g_shell_config)
-    g_shell_config->write(Fluid.preferences, fld::ToolStore::USER);
-  g_layout_list.write(Fluid.preferences, fld::ToolStore::USER);
+    g_shell_config->write(preferences, fld::Tool_Store::USER);
+  g_layout_list.write(preferences, fld::Tool_Store::USER);
 
   undo_clear();
 
   // Destroy tree
   //    Doing so causes dtors to automatically close all external editors
   //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
-  Fluid.proj.reset();
+  proj.reset();
   ExternalCodeEditor::tmpdir_clear();
-  Fluid.delete_tmpdir();
+  delete_tmpdir();
 
   exit(0);
 }
@@ -526,7 +526,7 @@ bool Application::new_project(bool user_must_confirm) {
 
   // clear the current project
   proj.reset();
-  Fluid.proj.set_filename(NULL);
+  proj.set_filename(NULL);
   proj.set_modflag(0, 0);
   widget_browser->rebuild();
   proj.update_settings_dialog();
@@ -659,7 +659,7 @@ std::string Application::open_project_filechooser(const std::string &title) {
   dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
   dialog.filter("FLUID Files\t*.f[ld]\n");
   if (proj.proj_filename) {
-    std::string current_project_file = Fluid.proj.proj_filename;
+    std::string current_project_file = proj.proj_filename;
     dialog.directory(fl_filename_path_str(current_project_file).c_str());
     dialog.preset_file(fl_filename_name_str(current_project_file).c_str());
   }
@@ -694,7 +694,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
   const char *c = new_filename.c_str();
   const char *oldfilename = proj.proj_filename;
   proj.proj_filename    = NULL;
-  Fluid.proj.set_filename(c);
+  proj.set_filename(c);
   if (is_a_merge) undo_checkpoint();
   undo_suspend();
   if (!fld::io::read_file(c, is_a_merge)) {
@@ -711,7 +711,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
   widget_browser->rebuild();
   if (is_a_merge) {
     // Inserting a file; restore the original filename...
-    Fluid.proj.set_filename(oldfilename);
+    proj.set_filename(oldfilename);
     proj.set_modflag(1);
   } else {
     // Loaded a file; free the old filename...
@@ -774,7 +774,7 @@ void Application::apple_open_cb(const char *c) {
  If the code filename has not been set yet, a "save file as" dialog will be
  presented to the user.
 
- In Fluid.batch_mode, the function will either be silent, or, if opening or writing
+ In batch_mode, the function will either be silent, or, if opening or writing
  the files fails, write an error message to \c stderr and exit with exit code 1.
 
  In interactive mode, it will pop up an error message, or, if the user
@@ -874,7 +874,7 @@ void Application::cut_selected() {
     return;
   }
   undo_checkpoint();
-  Fluid.proj.set_modflag(1);
+  proj.set_modflag(1);
   ipasteoffset = 0;
   Fl_Type *p = Fl_Type::current->parent;
   while (p && p->selected) p = p->parent;
@@ -989,7 +989,7 @@ void Application::sort_selected() {
   undo_checkpoint();
   sort((Fl_Type*)NULL);
   widget_browser->rebuild();
-  Fluid.proj.set_modflag(1);
+  proj.set_modflag(1);
 }
 
 /**
@@ -1198,9 +1198,9 @@ void Application::set_scheme(const char *new_scheme) {
 void Application::init_scheme() {
   int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
   char *scheme_name = 0;                    // scheme name since 1.4.0
-  Fluid.preferences.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
+  preferences.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
   if (!strcmp(scheme_name, "XXX")) {
-    Fluid.preferences.get("scheme", scheme_index, 0);
+    preferences.get("scheme", scheme_index, 0);
     if (scheme_index > 0) {
       scheme_index--;
       scheme_choice->value(scheme_index);   // set the choice value
@@ -1210,7 +1210,7 @@ void Application::init_scheme() {
     else if (scheme_index > scheme_choice->size() - 1)
       scheme_index = 0;
     scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
-    Fluid.preferences.set("scheme_name", scheme_name);
+    preferences.set("scheme_name", scheme_name);
   }
   // Set the new scheme only if it was not overridden by the -scheme
   // command line option
@@ -1227,7 +1227,7 @@ void Application::init_scheme() {
 void Application::toggle_widget_bin() {
   if (!widgetbin_panel) {
     make_widgetbin();
-    if (!Fluid.position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
+    if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
   }
 
   if (widgetbin_panel->visible()) {
@@ -1542,7 +1542,7 @@ int Application::run(int argc,char **argv) {
 
   make_main_window();
 
-  if (c) Fluid.proj.set_filename(c);
+  if (c) proj.set_filename(c);
   if (!batch_mode) {
 #ifdef __APPLE__
     fl_open_callback(apple_open_cb);
@@ -1552,13 +1552,13 @@ int Application::run(int argc,char **argv) {
     main_window->callback(exit_cb);
     position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
     if (g_shell_config) {
-      g_shell_config->read(preferences, fld::ToolStore::USER);
+      g_shell_config->read(preferences, fld::Tool_Store::USER);
       g_shell_config->update_settings_dialog();
       g_shell_config->rebuild_shell_menu();
     }
-    g_layout_list.read(preferences, fld::ToolStore::USER);
+    g_layout_list.read(preferences, fld::Tool_Store::USER);
     main_window->show(argc,argv);
-    Fluid.toggle_widget_bin();
+    toggle_widget_bin();
     toggle_codeview_cb(0,0);
     if (!c && openlast_button->value() && project_history_abspath[0][0] && autodoc_path.empty()) {
       // Open previous file when no file specified...

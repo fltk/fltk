@@ -22,16 +22,17 @@
 
 // ---- project class declaration
 
+namespace fld {
+
 /**
  Enumeration of available internationalization types.
  */
-typedef enum {
-  FD_I18N_NONE = 0, ///< No i18n, all strings are litearals
-  FD_I18N_GNU,      ///< GNU gettext internationalization
-  FD_I18N_POSIX     ///< Posix catgets internationalization
-} Fd_I18n_Type;
+enum class I18n_Type {
+  NONE = 0, ///< No i18n, all strings are litearals
+  GNU,      ///< GNU gettext internationalization
+  POSIX     ///< Posix catgets internationalization
+};
 
-namespace fld {
 
 /**
  Data and settings for a FLUID project file.
@@ -54,7 +55,7 @@ public:
   std::string basename() const;
 
   /// One of the available internationalization types.
-  Fd_I18n_Type i18n_type;
+  fld::I18n_Type i18n_type;
   /// Include file for GNU i18n, writes an #include statement into the source
   /// file. This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
   std::string i18n_gnu_include;

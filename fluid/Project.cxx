@@ -28,7 +28,7 @@ using namespace fld;
  Initialize a new project.
  */
 Project::Project() :
-i18n_type(FD_I18N_NONE),
+i18n_type(fld::I18n_Type::NONE),
 include_H_from_C(1),
 use_FL_COMMAND(0),
 utf8_in_src(0),
@@ -52,7 +52,7 @@ Project::~Project() {
  */
 void Project::reset() {
   ::delete_all();
-  i18n_type = FD_I18N_NONE;
+  i18n_type = fld::I18n_Type::NONE;
 
   i18n_gnu_include = "<libintl.h>";
   i18n_gnu_conditional = "";
@@ -177,8 +177,8 @@ std::string Project::stringsfile_path() const {
 std::string Project::stringsfile_name() const {
   switch (i18n_type) {
     default: return fl_filename_setext_str(fl_filename_name(proj_filename), ".txt");
-    case FD_I18N_GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
-    case FD_I18N_POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");
+    case fld::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
+    case fld::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");
   }
 }
 
@@ -270,11 +270,11 @@ void Project::set_filename(const char *c) {
  */
 void Project::write_strings() {
   Fluid.flush_text_widgets();
-  if (!Fluid.proj.proj_filename) {
+  if (!proj_filename) {
     Fluid.save_project_file(nullptr);
-    if (!Fluid.proj.proj_filename) return;
+    if (!proj_filename) return;
   }
-  std::string filename = Fluid.proj.stringsfile_path() + Fluid.proj.stringsfile_name();
+  std::string filename = stringsfile_path() + stringsfile_name();
   int x = fld::io::write_strings(filename);
   if (Fluid.batch_mode) {
     if (x) {
@@ -285,7 +285,7 @@ void Project::write_strings() {
     if (x) {
       fl_message("Can't write %s: %s", filename.c_str(), strerror(errno));
     } else if (completion_button->value()) {
-      fl_message("Wrote %s", Fluid.proj.stringsfile_name().c_str());
+      fl_message("Wrote %s", stringsfile_name().c_str());
     }
   }
 }
@@ -326,9 +326,9 @@ void Project::set_modflag(int mf, int mfc) {
 
   if (Fluid.main_window) {
     std::string basename;
-    if (!Fluid.proj.proj_filename) basename = "Untitled.fl";
-    else basename = fl_filename_name_str(std::string(Fluid.proj.proj_filename));
-    code_ext = fl_filename_ext(Fluid.proj.code_file_name.c_str());
+    if (!proj_filename) basename = "Untitled.fl";
+    else basename = fl_filename_name_str(std::string(proj_filename));
+    code_ext = fl_filename_ext(code_file_name.c_str());
     char mod_star = modflag ? '*' : ' ';
     char mod_c_star = modflag_c ? '*' : ' ';
     snprintf(new_title, sizeof(new_title), "%s%c  %s%c",

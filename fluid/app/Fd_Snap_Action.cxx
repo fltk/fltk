@@ -91,8 +91,8 @@ static Fd_Layout_Preset grid_tool = {
 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, fld::ToolStore::INTERNAL },
-  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, fld::ToolStore::INTERNAL }
+  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, fld::Tool_Store::INTERNAL },
+  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, fld::Tool_Store::INTERNAL }
 };
 
 Fl_Menu_Item main_layout_submenu_[] = {
@@ -391,10 +391,10 @@ void Fd_Layout_Suite::read(fld::io::Project_Reader *in) {
 void Fd_Layout_Suite::update_label() {
   std::string sym;
   switch (storage_) {
-    case fld::ToolStore::INTERNAL: sym.assign("@fd_beaker  "); break;
-    case fld::ToolStore::USER: sym.assign("@fd_user  "); break;
-    case fld::ToolStore::PROJECT: sym.assign("@fd_project  "); break;
-    case fld::ToolStore::FILE: sym.assign("@fd_file  "); break;
+    case fld::Tool_Store::INTERNAL: sym.assign("@fd_beaker  "); break;
+    case fld::Tool_Store::USER: sym.assign("@fd_user  "); break;
+    case fld::Tool_Store::PROJECT: sym.assign("@fd_project  "); break;
+    case fld::Tool_Store::FILE: sym.assign("@fd_file  "); break;
   }
   sym.append(name_);
   if (menu_label)
@@ -424,14 +424,14 @@ void Fd_Layout_Suite::init() {
   name_ = NULL;
   menu_label = NULL;
   layout[0] = layout[1] = layout[2] = NULL;
-  storage_ = fld::ToolStore::INTERNAL;
+  storage_ = fld::Tool_Store::INTERNAL;
 }
 
 /**
  Free all allocated resources.
  */
 Fd_Layout_Suite::~Fd_Layout_Suite() {
-  if (storage_ == fld::ToolStore::INTERNAL) return;
+  if (storage_ == fld::Tool_Store::INTERNAL) return;
   if (name_) ::free(name_);
   for (int i = 0; i < 3; ++i) {
     delete layout[i];
@@ -607,7 +607,7 @@ Fd_Layout_List::~Fd_Layout_List() {
     ::free(choice_menu_);
     for (int i = 0; i < list_size_; i++) {
       Fd_Layout_Suite &suite = list_[i];
-      if (suite.storage_ != fld::ToolStore::INTERNAL)
+      if (suite.storage_ != fld::Tool_Store::INTERNAL)
         suite.~Fd_Layout_Suite();
     }
     ::free(list_);
@@ -652,9 +652,9 @@ void Fd_Layout_List::update_menu_labels() {
  Load all user layouts from the FLUID user preferences.
  */
 int Fd_Layout_List::load(const std::string &filename) {
-  remove_all(fld::ToolStore::FILE);
+  remove_all(fld::Tool_Store::FILE);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
-  read(prefs, fld::ToolStore::FILE);
+  read(prefs, fld::Tool_Store::FILE);
   return 0;
 }
 
@@ -665,14 +665,14 @@ int Fd_Layout_List::save(const std::string &filename) {
   assert(this);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
-  write(prefs, fld::ToolStore::FILE);
+  write(prefs, fld::Tool_Store::FILE);
   return 0;
 }
 
 /**
  Write Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::write(Fl_Preferences &prefs, fld::ToolStore storage) {
+void Fd_Layout_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   prefs_list.clear();
   prefs_list.set("current_suite", list_[current_suite()].name_);
@@ -690,11 +690,11 @@ void Fd_Layout_List::write(Fl_Preferences &prefs, fld::ToolStore storage) {
 /**
  Read Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::read(Fl_Preferences &prefs, fld::ToolStore storage) {
+void Fd_Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   std::string cs;
   int cp = 0;
-  preferences_get(prefs_list, "current_suite", cs, "");
+  prefs_list.get("current_suite", cs, "");
   prefs_list.get("current_preset", cp, 0);
   for (int i = 0; i < prefs_list.groups(); ++i) {
     Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(i));
@@ -720,7 +720,7 @@ void Fd_Layout_List::write(fld::io::Project_Writer *out) {
   if ((current_suite()==0) && (current_preset()==0)) {
     int nSuite = 0;
     for (int i=0; i<list_size_; i++) {
-      if (list_[i].storage_ == fld::ToolStore::PROJECT) nSuite++;
+      if (list_[i].storage_ == fld::Tool_Store::PROJECT) nSuite++;
     }
     if (nSuite == 0) return;
   }
@@ -729,7 +729,7 @@ void Fd_Layout_List::write(fld::io::Project_Writer *out) {
   out->write_string("  current_preset %d\n", current_preset());
   for (int i=0; i<list_size_; i++) {
     Fd_Layout_Suite &suite = list_[i];
-    if (suite.storage_ == fld::ToolStore::PROJECT)
+    if (suite.storage_ == fld::Tool_Store::PROJECT)
       suite.write(out);
   }
   out->write_string("}");
@@ -756,7 +756,7 @@ void Fd_Layout_List::read(fld::io::Project_Reader *in) {
       } else if (!strcmp(key, "suite")) {
         int n = add(in->filename_name());
         list_[n].read(in);
-        list_[n].storage(fld::ToolStore::PROJECT);
+        list_[n].storage(fld::Tool_Store::PROJECT);
       } else if (!strcmp(key, "}")) {
         break;
       } else {
@@ -861,9 +861,9 @@ int Fd_Layout_List::add(const char *name) {
     new_suite.layout[i] = new Fd_Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
   }
-  fld::ToolStore new_storage = old_suite.storage_;
-  if (new_storage == fld::ToolStore::INTERNAL)
-    new_storage = fld::ToolStore::USER;
+  fld::Tool_Store new_storage = old_suite.storage_;
+  if (new_storage == fld::Tool_Store::INTERNAL)
+    new_storage = fld::Tool_Store::USER;
   new_suite.storage(new_storage);
   main_menu_[n].label(new_suite.menu_label);
   main_menu_[n].callback(main_menu_[0].callback());
@@ -904,9 +904,9 @@ void Fd_Layout_List::remove(int ix) {
 
 /**
  Remove all Suites that use the given storage attribute.
- \param[in] storage storage attribute, see fld::ToolStore::INTERNAL, etc.
+ \param[in] storage storage attribute, see fld::Tool_Store::INTERNAL, etc.
  */
-void Fd_Layout_List::remove_all(fld::ToolStore storage) {
+void Fd_Layout_List::remove_all(fld::Tool_Store storage) {
   for (int i=list_size_-1; i>=0; --i) {
     if (list_[i].storage_ == storage)
       remove(i);
