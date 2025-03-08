@@ -105,6 +105,15 @@ public:
 
   void enter_project_dir();
   void leave_project_dir();
+  
+  void set_filename(const char *c);
+  void write_strings();
+
+  /// Set if the current design has been modified compared to the associated .fl design file.
+  int modflag { 0 };
+  /// Set if the code files are older than the current design.
+  int modflag_c { 0 };
+  void set_modflag(int mf, int mfc = -1);
 
 };
 

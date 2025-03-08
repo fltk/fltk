@@ -26,11 +26,11 @@
 
 #include <string>
 
-#define BROWSERWIDTH 300
-#define BROWSERHEIGHT 500
-#define WINWIDTH 300
-#define MENUHEIGHT 25
-#define WINHEIGHT (BROWSERHEIGHT+MENUHEIGHT)
+constexpr int BROWSERWIDTH = 300;
+constexpr int BROWSERHEIGHT = 500;
+constexpr int WINWIDTH = 300;
+constexpr int MENUHEIGHT = 25;
+constexpr int WINHEIGHT = (BROWSERHEIGHT+MENUHEIGHT);
 
 // ---- types
 
@@ -42,19 +42,20 @@ class Fl_Choice;
 class Fl_Button;
 class Fl_Check_Button;
 
+
+namespace fld {
+
 /**
  Indicate the storage location for tools like layout suites and shell macros.
  \see class Fd_Shell_Command, class Fd_Layout_Suite
  */
-// TODO: make this into a class
-typedef enum {
-  FD_STORE_INTERNAL,  ///< stored inside FLUID app
-  FD_STORE_USER,      ///< suite is stored in the user wide FLUID settings
-  FD_STORE_PROJECT,   ///< suite is stored within the current .fl project file
-  FD_STORE_FILE       ///< store suite in external file
-} Fd_Tool_Store;
+enum class ToolStore {
+  INTERNAL,  ///< stored inside FLUID app
+  USER,      ///< suite is stored in the user wide FLUID settings
+  PROJECT,   ///< suite is stored within the current .fl project file
+  FILE       ///< store suite in external file
+};
 
-namespace fld {
 
 class Project;
 
@@ -64,6 +65,10 @@ class Application {
   std::string tmpdir_path;
   /// true if the temporary file path was already created
   bool tmpdir_create_called = false;
+
+#ifdef __APPLE__
+  static void apple_open_cb(const char *c);
+#endif // __APPLE__
 
 public:
   /// Create the main application class
@@ -106,7 +111,7 @@ public:
   void load_project_history();
   void update_project_history(const char *);
 
-  // TODO: make this into a class for command line args: app::Args 
+  // TODO: make this into a class for command line args: app::Args
   /// Set, if Fluid was started with the command line argument -u
   int update_file { 0 };            // fluid -u
   /// Set, if Fluid was started with the command line argument -c
@@ -128,7 +133,9 @@ public:
   std::string launch_path;
 
   int run(int argc,char **argv);
+  void quit();
 
+  std::string open_project_filechooser(const std::string &title);
   bool new_project(bool user_must_confirm = true);
   bool open_project_file(const std::string &filename_arg);
   bool merge_project_file(const std::string &filename_arg);
@@ -146,11 +153,34 @@ public:
   void sort_selected();
   void show_help(const char *name);
   void about();
+  bool confirm_project_clear();
 
   void create_tmpdir();
   void delete_tmpdir();
   const std::string &get_tmpdir();
+  char* cutfname(int which = 0);
 
+  Fl_Window *main_window { nullptr };
+  Fl_Menu_Item *Main_Menu { nullptr };
+  Fl_Menu_Bar *main_menubar { nullptr };
+  Fl_Menu_Item *save_item { nullptr };
+  Fl_Menu_Item *history_item { nullptr };
+  Fl_Menu_Item *widgetbin_item { nullptr };
+  Fl_Menu_Item *codeview_item { nullptr };
+  Fl_Menu_Item *overlay_item { nullptr };
+  Fl_Button *overlay_button { nullptr };
+  Fl_Menu_Item *guides_item { nullptr };
+  Fl_Menu_Item *restricted_item { nullptr };
+  void make_main_window();
+  /// Offset in pixels when adding widgets from an .fl file.
+  int pasteoffset { 0 };
+
+  void flush_text_widgets(); // TODO: should be in a GUI class?
+  char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0);
+  void save_position(Fl_Window *w, const char *prefsName);
+  void set_scheme(const char *new_scheme);
+  void init_scheme();
+  void toggle_widget_bin();
 
 };
 
@@ -158,44 +188,6 @@ public:
 
 extern fld::Application Fluid;
 
-// ---- global variables
-
-extern Fl_Menu_Item Main_Menu[];
-extern Fl_Menu_Bar *main_menubar;
-extern Fl_Window *main_window;
-extern Fl_Menu_Item *save_item;
-extern Fl_Menu_Item *history_item;
-extern Fl_Menu_Item *widgetbin_item;
-extern Fl_Menu_Item *codeview_item;
-extern Fl_Menu_Item *overlay_item;
-extern Fl_Button *overlay_button;
-extern Fl_Menu_Item *guides_item;
-extern Fl_Menu_Item *restricted_item;
-extern Fl_Check_Button *guides_button;
-
-extern int modflag; // TODO: move to Project class
-extern int pasteoffset;
-
-// ---- public functions
-
-extern int fluid_main(int argc,char **argv);
-
-extern void set_filename(const char *c);
-extern void set_modflag(int mf, int mfc=-1);
-
-// ---- public callback functions
-
-extern void exit_cb(Fl_Widget *,void *);
-
-extern void write_strings_cb(Fl_Widget *, void *);
-extern void align_widget_cb(Fl_Widget *, long);
-extern void toggle_widgetbin_cb(Fl_Widget *, void *);
-
-extern char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0);
-
-inline int fd_min(int a, int b) { return (a < b ? a : b); }
-inline int fd_max(int a, int b) { return (a > b ? a : b); }
-inline int fd_min(int a, int b, int c) { return fd_min(a, fd_min(b, c)); }
 
 #endif // FLUID_FLUID_H
 

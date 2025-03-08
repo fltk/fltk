@@ -775,9 +775,9 @@ Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 static void cb_widgetbin_panel(Fl_Window* o, void* v) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
-    exit_cb((Fl_Widget*)o, v);
+    Fluid.quit();
   else
-    toggle_widgetbin_cb((Fl_Widget*)o, v);
+    Fluid.toggle_widget_bin();
 }
 
 Fl_Window* make_widgetbin() {

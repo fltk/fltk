@@ -338,14 +338,14 @@ void Fl_Function_Type::open() {
     }
     c = f_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
+      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment())  { set_modflag(1); redraw_browser(); }
+      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
     break;
   }
 BREAK2:
@@ -668,7 +668,7 @@ BREAK2:
 void Fl_Code_Type::write(fld::io::Project_Writer &f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
-    main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
+    Fluid.main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
   Fl_Type::write(f);
 }
@@ -679,7 +679,7 @@ void Fl_Code_Type::write(fld::io::Project_Writer &f) {
 void Fl_Code_Type::write_code1(fld::io::Code_Writer& f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
-    main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
+    Fluid.main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
   // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
   f.write_c_indented(name(), 0, '\n');
@@ -1003,25 +1003,25 @@ void Fl_Decl_Type::open() {
     name(c);
     if (is_in_class()) {
       if (public_!=decl_class_choice->value()) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         public_ = decl_class_choice->value();
       }
     } else {
       if (public_!=(decl_choice->value()&1)) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         public_ = (decl_choice->value()&1);
       }
       if (static_!=((decl_choice->value()>>1)&1)) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         static_ = ((decl_choice->value()>>1)&1);
       }
     }
     c = decl_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
+      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment())  { set_modflag(1); redraw_browser(); }
+      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -1219,7 +1219,7 @@ void Fl_Data_Type::open() {
         Fluid.proj.leave_project_dir();
         if (fn) {
           if (strcmp(fn, data_filename->value()))
-            set_modflag(1);
+            Fluid.proj.set_modflag(1);
           data_filename->value(fn);
         }
       }
@@ -1257,16 +1257,16 @@ void Fl_Data_Type::open() {
     // store flags
     if (is_in_class()) {
       if (public_!=data_class_choice->value()) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         public_ = data_class_choice->value();
       }
     } else {
       if (public_!=(data_choice->value()&1)) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         public_ = (data_choice->value()&1);
       }
       if (static_!=((data_choice->value()>>1)&1)) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         static_ = ((data_choice->value()>>1)&1);
       }
     }
@@ -1276,22 +1276,22 @@ void Fl_Data_Type::open() {
     // store the filename
     c = data_filename->value();
     if (filename_ && strcmp(filename_, data_filename->value()))
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
     else if (!filename_ && *c)
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
     if (filename_) { free((void*)filename_); filename_ = 0L; }
     if (c && *c) filename_ = fl_strdup(c);
     // store the comment
     c = data_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
+      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment())  { set_modflag(1); redraw_browser(); }
+      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
     break;
   }
 BREAK2:
@@ -1573,53 +1573,53 @@ void Fl_DeclBlock_Type::open() {
     if (write_map_ & STATIC_IN_HEADER) {
       if (declblock_static_header->value()==0) {
         write_map_ &= ~STATIC_IN_HEADER;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     } else {
       if (declblock_static_header->value()) {
         write_map_ |= STATIC_IN_HEADER;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     }
     if (write_map_ & STATIC_IN_SOURCE) {
       if (declblock_static_source->value()==0) {
         write_map_ &= ~STATIC_IN_SOURCE;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     } else {
       if (declblock_static_source->value()) {
         write_map_ |= STATIC_IN_SOURCE;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     }
     if (write_map_ & CODE_IN_HEADER) {
       if (declblock_code_header->value()==0) {
         write_map_ &= ~CODE_IN_HEADER;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     } else {
       if (declblock_code_header->value()) {
         write_map_ |= CODE_IN_HEADER;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     }
     if (write_map_ & CODE_IN_SOURCE) {
       if (declblock_code_source->value()==0) {
         write_map_ &= ~CODE_IN_SOURCE;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     } else {
       if (declblock_code_source->value()) {
         write_map_ |= CODE_IN_SOURCE;
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     }
     c = declblock_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) { set_modflag(1); redraw_browser(); }
+      if (!comment() || strcmp(c, comment())) { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) { set_modflag(1); redraw_browser(); }
+      if (comment()) { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -1891,7 +1891,7 @@ void Fl_Comment_Type::open() {
       in_h_ = comment_in_header->value();
       mod = 1;
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
     break;
   }
 BREAK2:
@@ -2099,14 +2099,14 @@ void Fl_Class_Type::open() {
     storestring(c, subclass_of);
     if (public_ != c_public_button->value()) {
       public_ = c_public_button->value();
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
     }
     c = c_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
+      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment())  { set_modflag(1); redraw_browser(); }
+      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);

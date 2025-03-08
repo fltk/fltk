@@ -25,6 +25,9 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include "Fluid.h"} {private global
+}
+
 decl {\#include "app/undo.h"} {private global
 }
 
@@ -38,9 +41,6 @@ decl {\#include "widgets/Formula_Input.h"} {selected public global
 }
 
 decl {\#include <FL/Fl_Grid.H>} {private global
-}
-
-decl {extern void set_modflag(int mf, int mfc=-1);} {private local
 }
 
 Function {make_image_panel()} {
@@ -109,7 +109,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this width in pixel units} xywh {75 75 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -139,7 +139,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this height in pixel units} xywh {135 75 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -231,7 +231,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this width in pixel units} xywh {75 215 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -261,7 +261,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this height in pixel units} xywh {135 215 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -1371,7 +1371,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->layout(m, grid->cols());
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
     widget_tab_grid->do_callback(widget_tab_grid, LOAD);
   }
 }}
@@ -1421,7 +1421,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->layout(grid->rows(), m);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
     widget_tab_grid->do_callback(widget_tab_grid, LOAD);
   }
 }}
@@ -1474,7 +1474,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->margin(m, -1, -1, -1);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {Left margin in group.} xywh {95 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
@@ -1494,7 +1494,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->margin(-1, m, -1, -1);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {Top margin in group.} xywh {155 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
@@ -1514,7 +1514,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->margin(-1, -1, m, -1);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {Right margin in group.} xywh {215 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
@@ -1534,7 +1534,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->margin(-1, -1, -1, m);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {Bottom margin in group.} xywh {275 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
@@ -1563,7 +1563,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->gap(m, m2);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {Gap between children.} xywh {95 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
@@ -1583,7 +1583,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->gap(m2, m);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {Gap between children.} xywh {155 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
@@ -1665,7 +1665,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->row_height(r, h);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
               xywh {180 175 55 20} labelsize 11 align 5 textsize 11
@@ -1685,7 +1685,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->row_weight(r, h);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
               xywh {240 175 55 20} labelsize 11 align 5 textsize 11
@@ -1705,7 +1705,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->row_gap(r, h);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
               xywh {300 175 55 20} labelsize 11 align 5 textsize 11
@@ -1781,7 +1781,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->col_width(c, h);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
               xywh {180 210 55 20} labelsize 11 align 5 textsize 11
@@ -1801,7 +1801,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->col_weight(c, h);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
               xywh {240 210 55 20} labelsize 11 align 5 textsize 11
@@ -1821,7 +1821,7 @@ if (v == LOAD) {
     undo_checkpoint();
     grid->col_gap(c, h);
     grid->need_layout(true);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }}
               xywh {300 210 55 20} labelsize 11 align 5 textsize 11

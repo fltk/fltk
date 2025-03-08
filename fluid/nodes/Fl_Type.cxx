@@ -337,7 +337,7 @@ void earlier_cb(Fl_Widget*,void*) {
     }
     f = nxt;
   }
-  if (mod) set_modflag(1);
+  if (mod) Fluid.proj.set_modflag(1);
   widget_browser->display(Fl_Type::current);
   widget_browser->rebuild();
 }
@@ -362,7 +362,7 @@ void later_cb(Fl_Widget*,void*) {
     }
     f = prv;
   }
-  if (mod) set_modflag(1);
+  if (mod) Fluid.proj.set_modflag(1);
   widget_browser->display(Fl_Type::current);
   widget_browser->rebuild();
 }
@@ -407,7 +407,7 @@ void delete_all(int selected_only) {
   if(!selected_only) {
     // reset the setting for the external shell command
     if (g_shell_config) {
-      g_shell_config->clear(FD_STORE_PROJECT);
+      g_shell_config->clear(fld::ToolStore::PROJECT);
       g_shell_config->rebuild_shell_menu();
       g_shell_config->update_settings_dialog();
     }
@@ -415,7 +415,7 @@ void delete_all(int selected_only) {
       widget_browser->hposition(0);
       widget_browser->vposition(0);
     }
-    g_layout_list.remove_all(FD_STORE_PROJECT);
+    g_layout_list.remove_all(fld::ToolStore::PROJECT);
     g_layout_list.current_suite(0);
     g_layout_list.current_preset(0);
     g_layout_list.update_dialogs();
@@ -457,7 +457,7 @@ int storestring(const char *n, const char * & p, int nostrip) {
     strlcpy(q,n,length+1);
     p = q;
   }
-  set_modflag(1);
+  Fluid.proj.set_modflag(1);
   return 1;
 }
 
@@ -719,7 +719,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
     update_visibility_flag(t);
   }
 
-  set_modflag(1);
+  Fluid.proj.set_modflag(1);
   widget_browser->redraw();
 
 #if 0

@@ -77,7 +77,7 @@ int write_escaped_strings(FILE *out, const char *text) {
  \param[in] filename file path and name to a file that will hold the strings
  \return 1 if the file could not be opened for writing, or the result of `fclose`.
  */
-int write_strings(const std::string &filename) {
+int fld::io::write_strings(const std::string &filename) {
   Fl_Type *p;
   Fl_Widget_Type *w;
   int i;

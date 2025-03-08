@@ -179,7 +179,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
       fl_strlcat(fn, "strings", FL_PATH_MAX);
       fl_filename_setext(fn, FL_PATH_MAX, exts[Fluid.proj.i18n_type]);
-      write_strings(fn);
+      fld::io::write_strings(fn);
       int top = cv_strings->top_line();
       cv_strings->buffer()->loadfile(fn);
       cv_strings->scroll(top, 0);
@@ -248,15 +248,15 @@ void codeview_toggle_visibility() {
       if (tab>=0 && tab<cv_tab->children()) cv_tab->value(cv_tab->child(tab));
       svp.get("code_choice", cv_code_choice, 2);
       cv_code_choice_w->value(cv_code_choice_w->find_item_with_argument(cv_code_choice));
-      if (!position_window(codeview_panel,"codeview_pos", 0, 320, 120, 550, 500)) return;
+      if (!Fluid.position_window(codeview_panel,"codeview_pos", 0, 320, 120, 550, 500)) return;
     }
 
     if (codeview_panel->visible()) {
       codeview_panel->hide();
-      codeview_item->label("Show Code View");
+      Fluid.codeview_item->label("Show Code View");
     } else {
       codeview_panel->show();
-      codeview_item->label("Hide Code View");
+      Fluid.codeview_item->label("Hide Code View");
       update_codeview_cb(0,0);
     }
 }

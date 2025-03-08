@@ -97,7 +97,7 @@ public:
   Fd_Shell_Command(const std::string &in_name,
                    const std::string &in_label,
                    Fl_Shortcut in_shortcut,
-                   Fd_Tool_Store in_storage,
+                   fld::ToolStore in_storage,
                    int in_condition,
                    const std::string &in_condition_data,
                    const std::string &in_command,
@@ -105,7 +105,7 @@ public:
   std::string name;
   std::string label;
   Fl_Shortcut shortcut;
-  Fd_Tool_Store storage;
+  fld::ToolStore storage;
   int condition; // always, hide, windows only, linux only, mac only, user, machine
   std::string condition_data; // user name, machine name
   std::string command;
@@ -134,13 +134,13 @@ public:
   void insert(int index, Fd_Shell_Command *cmd);
   void remove(int index);
   void clear();
-  void clear(Fd_Tool_Store store);
+  void clear(fld::ToolStore store);
 //  void move_up();
 //  void move_down();
 //  int load(const std::string &filename);
 //  int save(const std::string &filename);
-  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
-  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
+  void read(Fl_Preferences &prefs, fld::ToolStore storage);
+  void write(Fl_Preferences &prefs, fld::ToolStore storage);
   void read(class fld::io::Project_Reader*);
   void write(class fld::io::Project_Writer*);
   void rebuild_shell_menu();

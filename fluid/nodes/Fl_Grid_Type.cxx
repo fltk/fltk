@@ -847,7 +847,7 @@ void grid_child_cb(fld::widget::Formula_Input* i, void* v, int what) {
       if (!cell && new_cell)
         new_cell->minimum_size(20, 20);
       g->need_layout(true);
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -951,7 +951,7 @@ void grid_align_horizontal_cb(Fl_Choice* i, void* v) {
         cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
         g->need_layout(true);
         g->redraw();
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     }
   }
@@ -986,7 +986,7 @@ void grid_align_vertical_cb(Fl_Choice* i, void* v) {
         cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
         g->need_layout(true);
         g->redraw();
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
       }
     }
   }

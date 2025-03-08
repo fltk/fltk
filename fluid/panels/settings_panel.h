@@ -31,7 +31,6 @@
 /**
  // initialize the scheme from preferences
 */
-void init_scheme(void);
 extern struct Fl_Menu_Item *dbmanager_item;
 extern void i18n_cb(Fl_Choice *,void *);
 extern void scheme_cb(Fl_Scheme_Choice *, void *);
@@ -52,7 +51,6 @@ extern Fl_Double_Window *settings_window;
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs *w_settings_tabs;
 extern Fl_Group *w_settings_general_tab;
-extern void scheme_cb(Fl_Scheme_Choice*, void*);
 extern Fl_Scheme_Choice *scheme_choice;
 #include <FL/Fl_Check_Button.H>
 extern Fl_Check_Button *tooltips_button;

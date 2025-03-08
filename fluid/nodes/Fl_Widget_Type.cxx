@@ -365,7 +365,7 @@ void name_public_member_cb(Fl_Choice* i, void* v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       redraw_browser();
     }
   }
@@ -384,7 +384,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       redraw_browser();
     }
   }
@@ -439,7 +439,7 @@ void label_cb(Fl_Input* i, void *v) {
         }
       }
       undo_resume();
-      if (mod) set_modflag(1);
+      if (mod) Fluid.proj.set_modflag(1);
     }
     int r = (int)Fl::callback_reason();
     if ( (r == FL_REASON_LOST_FOCUS) || (r == FL_REASON_ENTER_KEY) )
@@ -464,7 +464,7 @@ void image_cb(Fl_Input* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -484,7 +484,7 @@ void image_browse_cb(Fl_Button* b, void *v) {
           mod = 1;
         }
       }
-      if (mod) set_modflag(1);
+      if (mod) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -505,7 +505,7 @@ void bind_image_cb(Fl_Check_Button* b, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -525,7 +525,7 @@ void compress_image_cb(Fl_Check_Button* b, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -546,7 +546,7 @@ void inactive_cb(Fl_Input* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -566,7 +566,7 @@ void inactive_browse_cb(Fl_Button* b, void *v) {
           mod = 1;
         }
       }
-      if (mod) set_modflag(1);
+      if (mod) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -587,7 +587,7 @@ void bind_deimage_cb(Fl_Check_Button* b, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -607,7 +607,7 @@ void compress_deimage_cb(Fl_Check_Button* b, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -625,7 +625,7 @@ void tooltip_cb(Fl_Input* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -810,7 +810,7 @@ void x_cb(fld::widget::Formula_Input *i, void *v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       i->value(v);    // change the displayed value to the result of the last
                       // calculation. Keep the formula if it was not used.
     }
@@ -841,7 +841,7 @@ void y_cb(fld::widget::Formula_Input *i, void *v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       i->value(v);
     }
   }
@@ -871,7 +871,7 @@ void w_cb(fld::widget::Formula_Input *i, void *v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       i->value(v);
     }
   }
@@ -901,7 +901,7 @@ void h_cb(fld::widget::Formula_Input *i, void *v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       i->value(v);
     }
   }
@@ -925,7 +925,7 @@ void wc_relative_cb(Fl_Choice *i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1071,7 +1071,7 @@ void box_cb(Fl_Choice* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1113,7 +1113,7 @@ void down_box_cb(Fl_Choice* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1144,7 +1144,7 @@ void compact_cb(Fl_Light_Button* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1236,7 +1236,7 @@ void when_cb(Fl_Menu_Button* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1275,7 +1275,7 @@ void resizable_cb(Fl_Light_Button* i,void* v) {
   } else {
     undo_checkpoint();
     current_widget->resizable(i->value());
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1302,7 +1302,7 @@ void hotspot_cb(Fl_Light_Button* i,void* v) {
           ((Fl_Widget_Type*)o)->hotspot(0);
       }
     }
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1333,7 +1333,7 @@ void visible_cb(Fl_Light_Button* i, void* v) {
       }
     }
     if (mod) {
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
       redraw_browser();
     }
   }
@@ -1358,7 +1358,7 @@ void active_cb(Fl_Light_Button* i, void* v) {
         q->redraw();
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1423,7 +1423,7 @@ void labelfont_cb(Fl_Choice* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1443,7 +1443,7 @@ void labelsize_cb(Fl_Value_Input* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
   i->value(n);
 }
@@ -1478,7 +1478,7 @@ void labeltype_cb(Fl_Choice* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1514,7 +1514,7 @@ void color_common(Fl_Color c) {
       mod = 1;
     }
   }
-  if (mod) set_modflag(1);
+  if (mod) Fluid.proj.set_modflag(1);
 }
 
 void color_cb(Fl_Button* i, void *v) {
@@ -1552,7 +1552,7 @@ void color2_common(Fl_Color c) {
       mod = 1;
     }
   }
-  if (mod) set_modflag(1);
+  if (mod) Fluid.proj.set_modflag(1);
 }
 
 void color2_cb(Fl_Button* i, void *v) {
@@ -1590,7 +1590,7 @@ void labelcolor_common(Fl_Color c) {
       mod = 1;
     }
   }
-  if (mod) set_modflag(1);
+  if (mod) Fluid.proj.set_modflag(1);
 }
 
 void labelcolor_cb(Fl_Button* i, void *v) {
@@ -1675,7 +1675,7 @@ void align_cb(Fl_Button* i, void *v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1705,7 +1705,7 @@ void align_position_cb(Fl_Choice *i, void *v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1735,7 +1735,7 @@ void align_text_image_cb(Fl_Choice *i, void *v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1760,7 +1760,7 @@ void callback_cb(fld::widget::Code_Editor* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
     free(c);
   }
 }
@@ -1778,7 +1778,7 @@ void comment_cb(Fl_Text_Editor* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
     free(c);
   }
 }
@@ -1797,7 +1797,7 @@ void user_data_cb(Fl_Input *i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1824,7 +1824,7 @@ void user_data_type_cb(Fl_Input_Choice *i, void *v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1846,7 +1846,7 @@ void v_input_cb(Fl_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1864,7 +1864,7 @@ void subclass_cb(Fl_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1902,7 +1902,7 @@ void textfont_cb(Fl_Choice* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -1924,7 +1924,7 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
   i->value(s);
 }
@@ -1939,7 +1939,7 @@ void textcolor_common(Fl_Color c) {
       mod = 1;
     }
   }
-  if (mod) set_modflag(1);
+  if (mod) Fluid.proj.set_modflag(1);
 }
 
 void textcolor_cb(Fl_Button* i, void* v) {
@@ -1997,7 +1997,7 @@ void image_spacing_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2026,7 +2026,7 @@ void h_label_margin_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2055,7 +2055,7 @@ void v_label_margin_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2076,7 +2076,7 @@ void min_w_cb(Fl_Value_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2094,7 +2094,7 @@ void min_h_cb(Fl_Value_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2112,7 +2112,7 @@ void max_w_cb(Fl_Value_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2130,7 +2130,7 @@ void max_h_cb(Fl_Value_Input* i, void* v) {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2148,7 +2148,7 @@ void set_min_size_cb(Fl_Button*, void* v) {
       }
     }
     propagate_load(the_panel, LOAD);
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2166,7 +2166,7 @@ void set_max_size_cb(Fl_Button*, void* v) {
       }
     }
     propagate_load(the_panel, LOAD);
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2189,7 +2189,7 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2223,7 +2223,7 @@ void min_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2257,7 +2257,7 @@ void max_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2291,7 +2291,7 @@ void step_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2328,7 +2328,7 @@ void value_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2392,7 +2392,7 @@ static void flex_margin_cb(Fl_Value_Input* i, void* v,
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2562,7 +2562,7 @@ void flex_size_cb(Fl_Value_Input* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2594,7 +2594,7 @@ void flex_fixed_cb(Fl_Check_Button* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2649,7 +2649,7 @@ void subtype_cb(Fl_Choice* i, void* v) {
         }
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -3525,8 +3525,8 @@ void Fl_Widget_Type::read_property(fld::io::Project_Reader &f, const char *c) {
     public_ = 2;
   } else if (!strcmp(c,"xywh")) {
     if (sscanf(f.read_word(),"%d %d %d %d",&x,&y,&w,&h) == 4) {
-      x += pasteoffset;
-      y += pasteoffset;
+      x += Fluid.pasteoffset;
+      y += Fluid.pasteoffset;
       // FIXME temporary change!
       if (f.read_version>=2.0 && o->parent() && o->parent()!=o->window()) {
         x += o->parent()->x();
@@ -3733,8 +3733,8 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
         for (p = parent; p && !p->is_a(ID_Window); p = p->parent) {/*empty*/}
         if (p && p->is_widget()) y = ((Fl_Widget_Type*)p)->o->h()-(y+h);
       }
-      x += pasteoffset;
-      y += pasteoffset;
+      x += Fluid.pasteoffset;
+      y += Fluid.pasteoffset;
       o->resize(int(x),int(y),int(w),int(h));
     }
   } else if (!strcmp(propname,"label")) {

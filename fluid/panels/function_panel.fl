@@ -599,9 +599,9 @@ Function {make_widgetbin()} {open
   Fl_Window widgetbin_panel {
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
-  exit_cb((Fl_Widget*)o, v);
+  Fluid.quit();
 else
-  toggle_widgetbin_cb((Fl_Widget*)o, v);} open
+  Fluid.toggle_widget_bin();} open
     xywh {395 227 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {

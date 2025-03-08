@@ -68,7 +68,9 @@ static void menu_layout_sync_resize_cb(Fl_Menu_ *m, void*) {
  if (m->mvalue()->value()) Fl_Type::allow_layout = 1; else Fl_Type::allow_layout = 0; 
 }
 static void menu_file_revert_cb(Fl_Widget *, void *) { Fluid.revert_project(); }
-
+void exit_cb(Fl_Widget *,void *) { Fluid.quit(); }
+static void write_strings_cb(Fl_Widget *, void *) { Fluid.proj.write_strings(); }
+void toggle_widgetbin_cb(Fl_Widget *, void *) { Fluid.toggle_widget_bin(); }
 /**
  This is the main Fluid menu.
 

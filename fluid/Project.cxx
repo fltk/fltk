@@ -18,6 +18,7 @@
 
 #include "nodes/Fl_Type.h"
 #include "panels/settings_panel.h"
+#include "panels/codeview_panel.h"
 
 using namespace fld;
 
@@ -215,14 +216,14 @@ void Project::enter_project_dir() {
   // check if we are already in the project dir and do nothing if so
   if (in_project_dir>1) return;
   // check if there is an active project, and do nothing if there is none
-  if (!Fluid.proj.proj_filename || !*Fluid.proj.proj_filename) {
+  if (!proj_filename || !*proj_filename) {
     fprintf(stderr, "** Fluid internal error: enter_project_dir() no filename set\n");
     return;
   }
   // store the current working directory for later
   app_work_dir = fl_getcwd_str();
   // set the current directory to the path of our .fl file
-  std::string project_path = fl_filename_path_str(fl_filename_absolute_str(Fluid.proj.proj_filename));
+  std::string project_path = fl_filename_path_str(fl_filename_absolute_str(proj_filename));
   if (fl_chdir(project_path.c_str()) == -1) {
     fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
             project_path.c_str(), strerror(errno));
@@ -250,3 +251,94 @@ void Project::leave_project_dir() {
   }
 }
 
+/**
+ Set the filename of the current .fl design.
+ \param[in] c the new absolute filename and path
+ */
+void Project::set_filename(const char *c) {
+  if (proj_filename) free((void *)proj_filename);
+  proj_filename = c ? fl_strdup(c) : NULL;
+
+  if (proj_filename && !Fluid.batch_mode)
+    Fluid.update_project_history(proj_filename);
+
+  set_modflag(modflag);
+}
+
+/**
+ Write the strings that are used in i18n.
+ */
+void Project::write_strings() {
+  Fluid.flush_text_widgets();
+  if (!Fluid.proj.proj_filename) {
+    Fluid.save_project_file(nullptr);
+    if (!Fluid.proj.proj_filename) return;
+  }
+  std::string filename = Fluid.proj.stringsfile_path() + Fluid.proj.stringsfile_name();
+  int x = fld::io::write_strings(filename);
+  if (Fluid.batch_mode) {
+    if (x) {
+      fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));
+      exit(1);
+    }
+  } else {
+    if (x) {
+      fl_message("Can't write %s: %s", filename.c_str(), strerror(errno));
+    } else if (completion_button->value()) {
+      fl_message("Wrote %s", Fluid.proj.stringsfile_name().c_str());
+    }
+  }
+}
+
+
+/**
+ Set the "modified" flag and update the title of the main window.
+
+ The first argument sets the modification state of the current design against
+ the corresponding .fl design file. Any change to the widget tree will mark
+ the design 'modified'. Saving the design will mark it clean.
+
+ The second argument is optional and set the modification state of the current
+ design against the source code and header file. Any change to the tree,
+ including saving the tree, will mark the code 'outdated'. Generating source
+ code and header files will clear this flag until the next modification.
+
+ \param[in] mf 0 to clear the modflag, 1 to mark the design "modified", -1 to
+ ignore this parameter
+ \param[in] mfc default -1 to let \c mf control \c modflag_c, 0 to mark the
+ code files current, 1 to mark it out of date. -2 to ignore changes to mf.
+ */
+void Project::set_modflag(int mf, int mfc) {
+  const char *code_ext = NULL;
+  char new_title[FL_PATH_MAX];
+
+  // Update the modflag_c to the worst possible condition. We could be a bit
+  // more graceful and compare modification times of the files, but C++ has
+  // no API for that until C++17.
+  if (mf!=-1) {
+    modflag = mf;
+    if (mfc==-1 && mf==1)
+      mfc = mf;
+  }
+  if (mfc>=0) {
+    modflag_c = mfc;
+  }
+
+  if (Fluid.main_window) {
+    std::string basename;
+    if (!Fluid.proj.proj_filename) basename = "Untitled.fl";
+    else basename = fl_filename_name_str(std::string(Fluid.proj.proj_filename));
+    code_ext = fl_filename_ext(Fluid.proj.code_file_name.c_str());
+    char mod_star = modflag ? '*' : ' ';
+    char mod_c_star = modflag_c ? '*' : ' ';
+    snprintf(new_title, sizeof(new_title), "%s%c  %s%c",
+             basename.c_str(), mod_star, code_ext, mod_c_star);
+    const char *old_title = Fluid.main_window->label();
+    // only update the title if it actually changed
+    if (!old_title || strcmp(old_title, new_title))
+      Fluid.main_window->copy_label(new_title);
+  }
+  // if the UI was modified in any way, update the Code View panel
+  if (codeview_panel && codeview_panel->visible() && cv_autorefresh->value())
+    codeview_defer_update();
+}

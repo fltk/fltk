@@ -74,7 +74,7 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
   } else {
     undo_checkpoint();
     Fluid.proj.i18n_type = static_cast<Fd_I18n_Type>(c->value());
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
   switch (Fluid.proj.i18n_type) {
   case FD_I18N_NONE : /* None */
@@ -138,7 +138,7 @@ public:
  */
 void Overlay_Window::close_cb(Overlay_Window *self, void*) {
   if (self->visible())
-    set_modflag(1, -2);
+    Fluid.proj.set_modflag(1, -2);
   self->hide();
 }
 
@@ -172,12 +172,10 @@ void Overlay_Window::draw() {
   }
 }
 
-extern Fl_Window *main_window;
-
 // Read an image of the overlay window
 uchar *Overlay_Window::read_image(int &ww, int &hh) {
   // Create an off-screen buffer for the window...
-  //main_window->make_current();
+  //Fluid.main_window->make_current();
   make_current();
 
   ww = w();
@@ -201,7 +199,7 @@ uchar *Overlay_Window::read_image(int &ww, int &hh) {
 
   // Cleanup and return...
   fl_delete_offscreen(offscreen);
-  main_window->make_current();
+  Fluid.main_window->make_current();
   return pixels;
 }
 
@@ -307,7 +305,7 @@ void Fl_Window_Type::open_() {
 void Fl_Window_Type::open() {
   Overlay_Window *w = (Overlay_Window *)o;
   if (!w->visible()) {
-    set_modflag(1, -2);
+    Fluid.proj.set_modflag(1, -2);
   }
   open_();
 }
@@ -328,12 +326,12 @@ uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
 
 void Fl_Window_Type::ideal_size(int &w, int &h) {
   w = 480; h = 320;
-  if (main_window) {
+  if (Fluid.main_window) {
     int sx, sy, sw, sh;
-    Fl_Window *win = main_window;
+    Fl_Window *win = Fluid.main_window;
     int screen = Fl::screen_num(win->x(), win->y());
     Fl::screen_work_area(sx, sy, sw, sh, screen);
-    w = fd_min(w, sw*3/4); h = fd_min(h, sh*3/4);
+    w = std::min(w, sw*3/4); h = std::min(h, sh*3/4);
   }
   Fd_Snap_Action::better_size(w, h);
 }
@@ -349,7 +347,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
   } else {
     undo_checkpoint();
     ((Fl_Window_Type *)current_widget)->modal = i->value();
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }
 
@@ -361,7 +359,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
   } else {
     undo_checkpoint();
     ((Fl_Window_Type *)current_widget)->non_modal = i->value();
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }
 
@@ -373,7 +371,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
   } else {
     undo_checkpoint();
     ((Fl_Window*)(current_widget->o))->border(i->value());
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
   }
 }
 
@@ -398,7 +396,7 @@ void xclass_cb(Fl_Input* i, void* v) {
         ((Fl_Window*)(wt->o))->xclass(wt->xclass);
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -419,7 +417,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
     // Set a checkpoint on the first resize event, ignore further resizes until
     // a different type of checkpoint is triggered.
     if (undo_checkpoint_once(kUndoWindowResize))
-      set_modflag(1);
+      Fluid.proj.set_modflag(1);
   }
 
   Fl_Widget* t = resizable();
@@ -431,7 +429,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   // windows are opened without a given x/y position, so modifying x/y
   // should not mark the project as dirty
   if (W!=w() || H!=h())
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
 
   Fl_Overlay_Window::resize(X,Y,W,H);
   resizable(t);
@@ -593,10 +591,10 @@ void Fl_Window_Type::draw_overlaps() {
           if (p->level==q->level && p->is_true_widget()) {
             Fl_Widget_Type *wp = (Fl_Widget_Type*)p;
             if (wp->o->visible()) {
-              int px = fd_max(x, wp->o->x());
-              int py = fd_max(y, wp->o->y());
-              int pr = fd_min(r, wp->o->x() + wp->o->w());
-              int pb = fd_min(b, wp->o->y() + wp->o->h());
+              int px = std::max(x, wp->o->x());
+              int py = std::max(y, wp->o->y());
+              int pr = std::min(r, wp->o->x() + wp->o->w());
+              int pb = std::min(b, wp->o->y() + wp->o->h());
               if (pr > px && pb > py)
                 fd_hatch(px, py, pr-px, pb-py);
             }
@@ -720,7 +718,7 @@ extern Fl_Menu_Item Main_Menu[];
 
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
-  overlay_item->label("Hide O&verlays");
+  Fluid.overlay_item->label("Hide O&verlays");
   if (overlay_button) overlay_button->label("Hide &Overlays");
   overlays_invisible = 0;
   recalc = 1;
@@ -757,10 +755,10 @@ void toggle_overlays(Fl_Widget *,void *) {
   overlays_invisible = !overlays_invisible;
 
   if (overlays_invisible) {
-    overlay_item->label("Show O&verlays");
+    Fluid.overlay_item->label("Show O&verlays");
     if (overlay_button) overlay_button->label("Show &Overlays");
   } else {
-    overlay_item->label("Hide O&verlays");
+    Fluid.overlay_item->label("Hide O&verlays");
     if (overlay_button) overlay_button->label("Hide &Overlays");
   }
 
@@ -781,9 +779,9 @@ void toggle_guides(Fl_Widget *,void *) {
   Fluid.preferences.set("Fluid.show_guides", Fluid.show_guides);
 
   if (Fluid.show_guides)
-    guides_item->label("Hide Guides");
+    Fluid.guides_item->label("Hide Guides");
   else
-    guides_item->label("Show Guides");
+    Fluid.guides_item->label("Show Guides");
   if (guides_button)
     guides_button->value(Fluid.show_guides);
 
@@ -813,9 +811,9 @@ void toggle_restricted(Fl_Widget *,void *) {
   Fluid.preferences.set("Fluid.show_restricted", Fluid.show_restricted);
 
   if (Fluid.show_restricted)
-    restricted_item->label("Hide Restricted");
+    Fluid.restricted_item->label("Hide Restricted");
   else
-    restricted_item->label("Show Restricted");
+    Fluid.restricted_item->label("Show Restricted");
   if (restricted_button)
     restricted_button->value(Fluid.show_restricted);
 
@@ -958,7 +956,7 @@ void Fl_Window_Type::moveallchildren(int key)
   o->redraw();
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
-  set_modflag(1);
+  Fluid.proj.set_modflag(1);
   dx = dy = 0;
 
   update_xywh();
@@ -1339,7 +1337,7 @@ void Fl_Window_Type::read_property(fld::io::Project_Reader &f, const char *c) {
     }
   } else if (!strcmp(c,"xywh")) {
     Fl_Widget_Type::read_property(f, c);
-    pasteoffset = 0; // make it not apply to contents
+    Fluid.pasteoffset = 0; // make it not apply to contents
   } else {
     Fl_Widget_Type::read_property(f, c);
   }

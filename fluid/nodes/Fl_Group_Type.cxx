@@ -135,7 +135,7 @@ void group_cb(Fl_Widget *, void *) {
   n->layout_widget();
   widget_browser->rebuild();
   undo_resume();
-  set_modflag(1);
+  Fluid.proj.set_modflag(1);
 }
 
 extern void ungroup_selected_menuitems();
@@ -181,7 +181,7 @@ void ungroup_cb(Fl_Widget *, void *) {
   Fl_Type::current = q;
   widget_browser->rebuild();
   undo_resume();
-  set_modflag(1);
+  Fluid.proj.set_modflag(1);
 }
 
 void Fl_Group_Type::ideal_size(int &w, int &h) {
@@ -755,7 +755,7 @@ Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
   t->handle(FL_PUSH);
   Fl::pushed(t);
   while (Fl::pushed()==t) Fl::wait();
-  if (changed) set_modflag(1);
+  if (changed) Fluid.proj.set_modflag(1);
   return (Fl_Type*)(t->value()->user_data());
 }
 

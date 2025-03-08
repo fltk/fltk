@@ -28,6 +28,7 @@
 #include <string.h>
 #include <assert.h>
 
+
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
 // INFO: how about a small tool box for quick preset selection and disabling of individual snaps?
@@ -90,8 +91,8 @@ static Fd_Layout_Preset grid_tool = {
 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, FD_STORE_INTERNAL },
-  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, FD_STORE_INTERNAL }
+  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, fld::ToolStore::INTERNAL },
+  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, fld::ToolStore::INTERNAL }
 };
 
 Fl_Menu_Item main_layout_submenu_[] = {
@@ -390,10 +391,10 @@ void Fd_Layout_Suite::read(fld::io::Project_Reader *in) {
 void Fd_Layout_Suite::update_label() {
   std::string sym;
   switch (storage_) {
-    case FD_STORE_INTERNAL: sym.assign("@fd_beaker  "); break;
-    case FD_STORE_USER: sym.assign("@fd_user  "); break;
-    case FD_STORE_PROJECT: sym.assign("@fd_project  "); break;
-    case FD_STORE_FILE: sym.assign("@fd_file  "); break;
+    case fld::ToolStore::INTERNAL: sym.assign("@fd_beaker  "); break;
+    case fld::ToolStore::USER: sym.assign("@fd_user  "); break;
+    case fld::ToolStore::PROJECT: sym.assign("@fd_project  "); break;
+    case fld::ToolStore::FILE: sym.assign("@fd_file  "); break;
   }
   sym.append(name_);
   if (menu_label)
@@ -423,14 +424,14 @@ void Fd_Layout_Suite::init() {
   name_ = NULL;
   menu_label = NULL;
   layout[0] = layout[1] = layout[2] = NULL;
-  storage_ = FD_STORE_INTERNAL;
+  storage_ = fld::ToolStore::INTERNAL;
 }
 
 /**
  Free all allocated resources.
  */
 Fd_Layout_Suite::~Fd_Layout_Suite() {
-  if (storage_ == FD_STORE_INTERNAL) return;
+  if (storage_ == fld::ToolStore::INTERNAL) return;
   if (name_) ::free(name_);
   for (int i = 0; i < 3; ++i) {
     delete layout[i];
@@ -606,7 +607,7 @@ Fd_Layout_List::~Fd_Layout_List() {
     ::free(choice_menu_);
     for (int i = 0; i < list_size_; i++) {
       Fd_Layout_Suite &suite = list_[i];
-      if (suite.storage_ != FD_STORE_INTERNAL)
+      if (suite.storage_ != fld::ToolStore::INTERNAL)
         suite.~Fd_Layout_Suite();
     }
     ::free(list_);
@@ -619,7 +620,7 @@ Fd_Layout_List::~Fd_Layout_List() {
 void Fd_Layout_List::update_dialogs() {
   static Fl_Menu_Item *preset_menu = NULL;
   if (!preset_menu) {
-    preset_menu = (Fl_Menu_Item*)main_menubar->find_item(select_layout_preset_cb);
+    preset_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(select_layout_preset_cb);
     assert(preset_menu);
   }
   assert(this);
@@ -651,9 +652,9 @@ void Fd_Layout_List::update_menu_labels() {
  Load all user layouts from the FLUID user preferences.
  */
 int Fd_Layout_List::load(const std::string &filename) {
-  remove_all(FD_STORE_FILE);
+  remove_all(fld::ToolStore::FILE);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
-  read(prefs, FD_STORE_FILE);
+  read(prefs, fld::ToolStore::FILE);
   return 0;
 }
 
@@ -664,14 +665,14 @@ int Fd_Layout_List::save(const std::string &filename) {
   assert(this);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
-  write(prefs, FD_STORE_FILE);
+  write(prefs, fld::ToolStore::FILE);
   return 0;
 }
 
 /**
  Write Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+void Fd_Layout_List::write(Fl_Preferences &prefs, fld::ToolStore storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   prefs_list.clear();
   prefs_list.set("current_suite", list_[current_suite()].name_);
@@ -689,7 +690,7 @@ void Fd_Layout_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) {
 /**
  Read Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+void Fd_Layout_List::read(Fl_Preferences &prefs, fld::ToolStore storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   std::string cs;
   int cp = 0;
@@ -719,7 +720,7 @@ void Fd_Layout_List::write(fld::io::Project_Writer *out) {
   if ((current_suite()==0) && (current_preset()==0)) {
     int nSuite = 0;
     for (int i=0; i<list_size_; i++) {
-      if (list_[i].storage_ == FD_STORE_PROJECT) nSuite++;
+      if (list_[i].storage_ == fld::ToolStore::PROJECT) nSuite++;
     }
     if (nSuite == 0) return;
   }
@@ -728,7 +729,7 @@ void Fd_Layout_List::write(fld::io::Project_Writer *out) {
   out->write_string("  current_preset %d\n", current_preset());
   for (int i=0; i<list_size_; i++) {
     Fd_Layout_Suite &suite = list_[i];
-    if (suite.storage_ == FD_STORE_PROJECT)
+    if (suite.storage_ == fld::ToolStore::PROJECT)
       suite.write(out);
   }
   out->write_string("}");
@@ -755,7 +756,7 @@ void Fd_Layout_List::read(fld::io::Project_Reader *in) {
       } else if (!strcmp(key, "suite")) {
         int n = add(in->filename_name());
         list_[n].read(in);
-        list_[n].storage(FD_STORE_PROJECT);
+        list_[n].storage(fld::ToolStore::PROJECT);
       } else if (!strcmp(key, "}")) {
         break;
       } else {
@@ -814,7 +815,7 @@ void Fd_Layout_List::current_preset(int ix) {
 void Fd_Layout_List::capacity(int n) {
   static Fl_Menu_Item *suite_menu = NULL;
   if (!suite_menu)
-    suite_menu = (Fl_Menu_Item*)main_menubar->find_item(layout_suite_marker);
+    suite_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(layout_suite_marker);
 
   int old_n = list_size_;
   int i;
@@ -860,9 +861,9 @@ int Fd_Layout_List::add(const char *name) {
     new_suite.layout[i] = new Fd_Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
   }
-  Fd_Tool_Store new_storage = old_suite.storage_;
-  if (new_storage == FD_STORE_INTERNAL)
-    new_storage = FD_STORE_USER;
+  fld::ToolStore new_storage = old_suite.storage_;
+  if (new_storage == fld::ToolStore::INTERNAL)
+    new_storage = fld::ToolStore::USER;
   new_suite.storage(new_storage);
   main_menu_[n].label(new_suite.menu_label);
   main_menu_[n].callback(main_menu_[0].callback());
@@ -903,9 +904,9 @@ void Fd_Layout_List::remove(int ix) {
 
 /**
  Remove all Suites that use the given storage attribute.
- \param[in] storage storage attribute, see FD_STORE_INTERNAL, etc.
+ \param[in] storage storage attribute, see fld::ToolStore::INTERNAL, etc.
  */
-void Fd_Layout_List::remove_all(Fd_Tool_Store storage) {
+void Fd_Layout_List::remove_all(fld::ToolStore storage) {
   for (int i=list_size_-1; i>=0; --i) {
     if (list_[i].storage_ == storage)
       remove(i);
@@ -1105,8 +1106,8 @@ void Fd_Snap_Action::better_size(int &w, int &h) {
     x_min = x_inc;
     y_min = y_inc;
   }
-  int ww = fd_max(w - x_min, 0); w = (w - ww + x_inc - 1) / x_inc; w = w * x_inc; w = w + ww;
-  int hh = fd_max(h - y_min, 0); h = (h - hh + y_inc - 1) / y_inc; h = h * y_inc; h = h + hh;
+  int ww = std::max(w - x_min, 0); w = (w - ww + x_inc - 1) / x_inc; w = w * x_inc; w = w + ww;
+  int hh = std::max(h - y_min, 0); h = (h - hh + y_inc - 1) / y_inc; h = h * y_inc; h = h + hh;
 }
 
 
@@ -1495,7 +1496,7 @@ class Fd_Snap_Siblings_Left : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fd_min(check_x_(d, d.bx, s->x()+s->w()),
+    return std::min(check_x_(d, d.bx, s->x()+s->w()),
                   check_x_(d, d.bx, s->x()+s->w()+layout->widget_gap_x) );
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -1520,7 +1521,7 @@ class Fd_Snap_Siblings_Right : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fd_min(check_x_(d, d.br, s->x()),
+    return std::min(check_x_(d, d.br, s->x()),
                   check_x_(d, d.br, s->x()-layout->widget_gap_x));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -1545,7 +1546,7 @@ class Fd_Snap_Siblings_Top : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fd_min(check_y_(d, d.by, s->y()+s->h()),
+    return std::min(check_y_(d, d.by, s->y()+s->h()),
                   check_y_(d, d.by, s->y()+s->h()+layout->widget_gap_y));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -1570,7 +1571,7 @@ class Fd_Snap_Siblings_Bottom : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Bottom() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fd_min(check_y_(d, d.bt, s->y()),
+    return std::min(check_y_(d, d.bt, s->y()),
                   check_y_(d, d.bt, s->y()-layout->widget_gap_y));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {

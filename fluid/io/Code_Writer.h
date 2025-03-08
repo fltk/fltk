@@ -29,10 +29,11 @@ struct Fd_Text_Tree;
 struct Fd_Pointer_Tree;
 
 int is_id(char c);
-int write_strings(const std::string &filename);
 
 namespace fld {
 namespace io {
+
+int write_strings(const std::string &filename);
 
 class Code_Writer
 {

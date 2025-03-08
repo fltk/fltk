@@ -1306,9 +1306,9 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
       int x = 0, y = 0, w = 480, h = 320;
       Fl_Window_Type *wt = (Fl_Window_Type *)t;
       wt->ideal_size(w, h);
-      if (main_window) {
+      if (Fluid.main_window) {
         int sx, sy, sw, sh;
-        Fl_Window *win = main_window;
+        Fl_Window *win = Fluid.main_window;
         int screen = Fl::screen_num(win->x(), win->y());
         Fl::screen_work_area(sx, sy, sw, sh, screen);
         x = sx + sw/2 - w/2;
@@ -1318,7 +1318,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
     }
     // make the new widget visible
     select_only(t);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
     if (and_open)
       t->open();
   } else {

@@ -477,7 +477,7 @@ int Fd_Mergeback::merge_back(const std::string &s, const std::string &p, int tas
     if (task == FD_MERGEBACK_APPLY) {
       ret = apply();
       if (ret == 1) {
-        set_modflag(1);
+        Fluid.proj.set_modflag(1);
         redraw_browser();
         load_panel();
       }
@@ -488,6 +488,52 @@ int Fd_Mergeback::merge_back(const std::string &s, const std::string &p, int tas
   code = NULL;
   return ret;
 }
+
+#if 0
+// Matt: disabled
+/**
+ Merge the possibly modified content of code files back into the project.
+ */
+int mergeback_code_files()
+{
+  flush_text_widgets();
+  if (!filename) return 1;
+  if (!Fluid.proj.write_mergeback_data) {
+    fl_message("MergeBack is not enabled for this project.\n"
+               "Please enable MergeBack in the project settings\n"
+               "dialog and re-save the project file and the code.");
+    return 0;
+  }
+
+  std::string proj_filename = Fluid.proj.projectfile_path() + Fluid.proj.projectfile_name();
+  std::string code_filename;
+#if 1
+  if (!Fluid.batch_mode) {
+    Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
+    Fl_Preferences path(build_records, proj_filename.c_str());
+    int i, n = proj_filename.size();
+    for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
+    preferences_get(path, "code", code_filename, "");
+  }
+#endif
+  if (code_filename.empty())
+    code_filename = Fluid.proj.codefile_path() + Fluid.proj.codefile_name();
+  if (!Fluid.batch_mode) proj.enter_project_dir();
+  int c = merge_back(code_filename, proj_filename, FD_MERGEBACK_INTERACTIVE);
+  if (!Fluid.batch_mode) proj.leave_project_dir();
+
+  if (c==0) fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+                       "MergeBack found no external modifications\n"
+                       "in the source code.",
+                       code_filename.c_str(), proj_filename.c_str());
+  if (c==-2) fl_message("No corresponding source code file found.");
+  return c;
+}
+
+void mergeback_cb(Fl_Widget *, void *) {
+  mergeback_code_files();
+}
+#endif
 
 #endif
 
