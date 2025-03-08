@@ -1,5 +1,5 @@
 README.Cairo.txt - Cairo Window Support for FLTK
-----------------------------------------------------
+-------------------------------------------------
 
 
  CONTENTS
@@ -38,25 +38,22 @@ use the class Fl_Cairo_Window which sets up a Cairo context so the user
 progam can call Cairo drawing calls in their own drawing callback.
 
     CMake option name: FLTK_OPTION_CAIRO_WINDOW
-    Configure option : --enable-cairo
 
 Since FLTK 1.3 the library can also be configured to provide a Cairo context
-in all subclasses of Fl_Window. This is called "extended" Cairo support.
+in all subclasses of Fl_Window. This is called "extended" Cairo support and
+is not recommended for general use.
 
     CMake option name: FLTK_OPTION_CAIRO_EXT
-    Configure option : --enable-cairoext
 
 These two options provide users with an interface to use Cairo to draw
 into FLTK windows. FLTK does not use Cairo for rendering its own graphics
 with these two options. Both options must be enabled explicitly.
-
 
 Since FLTK 1.4 the new Wayland platform uses Cairo for all drawings.
 Under X11 drawing with Cairo rather than Xlib is a build option.
 The old "Fl_Cairo_Window support" is still available on all platforms.
 
     CMake option name: FLTK_GRAPHICS_CAIRO
-    Configure option : --enable-usecairo
 
 Full Cairo drawing is provided on Unix/Linux platforms. It is always used if
 Wayland (FLTK_BACKEND_WAYLAND) is enabled during the build. It is optional
@@ -97,10 +94,10 @@ drawing by itself (FLTK_GRAPHICS_CAIRO).
       to automatically making possible the use of a Cairo context
       in any FLTK window.
 
-    This feature must be enabled with 'configure --enable-cairoext' or the
-    CMake option FLTK_OPTION_CAIRO_EXT:BOOL=ON (Default: OFF).
+    This feature must be enabled explicitly with the CMake option
+    FLTK_OPTION_CAIRO_EXT:BOOL=ON (Default: OFF).
 
-(4) A new Cairo demo that is available in the test subdirectory.
+(4) A Cairo demo program in the test subdirectory.
 
 For more details, please have a look to the doxygen documentation,
 in the Modules section.
@@ -122,7 +119,8 @@ on the various supported operating systems.
         sudo apt install libcairo2-dev
 
     Then build fltk using the Cairo support option using:
-      cmake -G "Unix Makefiles" -D FLTK_OPTION_CAIRO_WINDOW:BOOL=ON -S <fltk_dir> -B <your_build_dir>
+
+      cmake -G "Unix Makefiles" -D FLTK_OPTION_CAIRO_WINDOW=ON -S <fltk_dir> -B <your_build_dir>
       cd <your_build_dir>
       make
 
@@ -134,26 +132,8 @@ on the various supported operating systems.
 
         sudo yum install cairo-devel
 
-    ..and then rebuild FLTK:
+    ..and then rebuild FLTK (see above for CMake command and options).
 
-        make distclean
-        ./configure --enable-cairo
-        make
-
-    If you get this error:
-
-        [..]
-        Linking cairo_test...
-        /usr/bin/ld: cannot find -lpixman-1
-        collect2: ld returned 1 exit status
-        make[1]: *** [cairo_test] Error 1
-
-    ..remove "-lpixman-1" from FLTK's makeinclude file, i.e. change this line:
-
-        -CAIROLIBS      = -lcairo -lpixman-1
-        +CAIROLIBS      = -lcairo
-
-    ..then another 'make' should finish the build without errors.
     You should be able to then run the test/cairo_test program.
 
     According to the Cairo site, "For Debian and Debian derivatives including
@@ -166,12 +146,9 @@ on the various supported operating systems.
     as well.
 
     As of Feb 2021 (FLTK 1.4.0) dependencies like pixman-1 will be detected by
-    configure or CMake automatically using pkg-config.
+    CMake automatically using pkg-config.
 
-    Note 1: CMake builds *require* the use of pkg-config.
-
-    Note 2: As of Feb 2021 autoconf/configure/make builds require pkg-config
-    as well.
+    Note: builds with Cairo and/or Wayland *require* pkg-config.
 
 
     3.2 Windows
@@ -181,11 +158,12 @@ on the various supported operating systems.
 
     3.3 macOS
     ----------
-    As under Linux you can use both build options, i.e. autoconf/make or CMake
-    to build FLTK with Cairo support. One option is to install Homebrew and
-    add the required libraries with `brew install ...'. It is always required
-    to install the "Xcode commandline tools" but a full installation of Xcode
-    is not necessary. If you choose to use Xcode you can generate the Xcode
+    As under Linux you can use CMake to build FLTK with Cairo support.
+
+    One option is to install Homebrew and add the required libraries with
+    `brew install ...'. It is always required to install the "Xcode
+    commandline tools" but a full installation of Xcode is not necessary.
+    If you choose to use Xcode you can generate the Xcode
     IDE files with CMake.
 
     The following instructions are intentionally terse. More detailed
@@ -200,16 +178,7 @@ on the various supported operating systems.
 
     With these tools installed it is already possible to download and build
     a current FLTK tarball or snapshot. All you need to do is unpack the
-    tarball and run `make' in the root directory. This will run `configure',
-    generate the necessary files, and build FLTK in its standard configuration.
-
-    Note 1: this requires an existing `configure' file which is included in
-    FLTK releases and snapshots but not in the FLTK Git repository.
-
-    Note 2: to build current FLTK downloaded from Git using configure + make
-    you need to run `autoconf' to generate 'configure'. If autoconf is not
-    available on your system you can download a FLTK snapshot, unpack it,
-    and copy the 'configure' file from the snapshot to your Git worktree.
+    tarball and cmake and make as described in README.CMake.txt.
 
 
     3.3.2 Install Homebrew for Cairo and other Library Support
@@ -232,9 +201,9 @@ on the various supported operating systems.
     other software (package) name to see if it can be installed. If yes, run
     `brew install cairo' (or other name) to install it.
 
-    Other helpful packages are 'autoconf' and other Unix (Linux) tools, for
-    instance 'git-gui' (installs 'gitk' and 'git gui' commands). The Xcode
-    commandline tools mentioned above install only the git commandline tool.
+    Other helpful packages are some Unix (Linux) tools, for instance 'git-gui'
+    (installs 'gitk' and 'git gui' commands). The Xcode commandline tools
+    mentioned above install only the git commandline tool.
 
 
     3.3.3 Install CMake and Build with CMake

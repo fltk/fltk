@@ -17,16 +17,15 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
     2.7   HP-UX
     2.8   AIX
 
-  3   How to Build FLTK Using GCC
+  3   How to Build FLTK on Unix or Unix-like Systems
     3.1   Downloading and Unpacking
     3.2   Configuration and Build Systems
-    3.3   Configuring FLTK with autoconf and configure (deprecated)
-    3.4   Building FLTK
-    3.5   Testing FLTK
-    3.6   Installing FLTK
-    3.7   Creating new Projects
+    3.3   Building FLTK in a Nutshell
+    3.4   Testing FLTK
+    3.5   Installing FLTK
+    3.6   Creating Your Own Projects
 
-  4   Creating a new Project in Code::Blocks
+  4   Creating a New Project in Code::Blocks
 
 
 [*] TODO: we still need to write these chapters
@@ -272,8 +271,8 @@ you want to do so.
 
 
 
- 3  How to Build FLTK Using GCC
-================================
+ 3  How to Build FLTK on Unix or Unix-like Systems
+===================================================
 
 
  3.1  Downloading and Unpacking
@@ -285,8 +284,8 @@ The FLTK source code and documentation can be downloaded from:
 
 If you are familiar with "git" and like to stay current with your version,
 you will find the git access parameters at the bottom of that page.
-Unpack FLTK into a convenient location. I like to have everything in my
-dev directory. Change the following instructions to fit your preferences.
+Unpack FLTK into a convenient location, e.g. in your `dev` directory.
+Change the following instructions to fit your preferences.
 
   cd
   mkdir dev
@@ -296,114 +295,62 @@ dev directory. Change the following instructions to fit your preferences.
   cd fltk-1.x.y
 
 
- 3.2  Configuration and Build Systems
---------------------------------------
+ 3.2  Configuration and Building
+---------------------------------
 
-The following paragraphs describe the "classic" build system with autoconf,
-configure, and make that has been used to build FLTK up to version 1.3.x
-and can still be used with FLTK 1.4.x.
-
-However, the FLTK team recommend to use CMake which is the preferred build
-system generator since FLTK 1.4 used for all platforms (including Windows).
+Since FLTK 1.5 the only build system (generator) used by FLTK is CMake.
 CMake can be used to create the build system of your choice, for instance
 Makefiles, Ninja build files, Xcode or Visual Studio IDE projects etc..
 
--------------------------------------------------------------------
-  Note: usage of autotools, configure, and the included Makefiles
-  to build the FLTK library is deprecated since FLTK 1.4 and will
-  be removed in the next minor version (1.5).
-  Please consider using CMake instead, see README.CMake.txt.
--------------------------------------------------------------------
+Note: The "classic" build system with autoconf, configure, and Makefiles
+is no longer available.
 
 Please see README.CMake.txt for how to build FLTK and your application
-programs using CMake. You can stop reading here if you do this.
+programs using CMake.
 
 You can, of course, build FLTK with CMake and your own application(s)
 with your existing and well-known build system.
 
-If you like the "classic" build system more, continue reading the
-following chapters but please be aware that configure support will
-be removed in FLTK 1.5.
+
+ 3.3  Building FLTK in a Nutshell
+----------------------------------
+
+Following are only basic commands, please see details in README.CMake.txt.
+
+Building FLTK with all default parameters on your platform is easy.
+Stay in your FLTK source-code directory and type:
+
+  cmake . -B build -D [ CMAKE_BUILD_TYPE=Debug ... more options ]
+  cmake --build build
+
+The entire FLTK toolkit including many test programs will be built for you
+in the subdirectory `build`. No warnings should appear. If some do, please
+let the FLTK developer team know via the mailing list "fltk.general" or
+view the bug reporting guidelines at https://www.fltk.org/bugs.php .
 
 
- 3.3  Configuring FLTK with autoconf and configure (deprecated)
-----------------------------------------------------------------
-
--------------------------------------------------------------------
-  Note: usage of autotools, configure, and the included Makefiles
-  to build the FLTK library is deprecated since FLTK 1.4 and will
-  be removed in the next minor version (1.5).
-  Please consider using CMake instead, see README.CMake.txt.
--------------------------------------------------------------------
-
-If you got FLTK via git then you need one extra step. Otherwise skip
-over this part. Stay in your FLTK source-code directory and type:
-
-  autoconf
-
-or
-
-  make configure
-
-Both commands create the configure script for you.
-
-Now configure your FLTK installation:
-
-  ./configure
-
-Hint: Instead of executing `autoconf` and `configure` followed by `make`
-to build FLTK (see next section) you can also run `make` directly which
-will create and execute the 'configure' script with default parameters
-and build FLTK with the default configuration.
-
-ADVANCED: type "./configure --help" to get a complete list of optional
-configuration parameters. These should be pretty self-explanatory. Some
-more details can be found in README.txt.
-:END_ADVANCED
-
-The configuration script will check your machine for the required resources
-which you should have installed as described in the "Prerequisites" chapter.
-Review the "Configuration Summary", maybe take some notes.
-
-
- 3.4  Building FLTK
---------------------
-
-Now this is easy. Stay in your FLTK source-code directory and type:
-
-  make
-
-The entire FLTK toolkit including many test programs will be built for you. No
-warnings should appear. If some do, please let the FLTK developer team know via
-the mailing list "fltk.general" or view the bug reporting guidelines at
-https://www.fltk.org/bugs.php
-
-
- 3.5  Testing FLTK
+ 3.4  Testing FLTK
 -------------------
 
 After a successful build, you can test FLTK's capabilities:
 
+  cd build
   test/demo
 
 
- 3.6  Installing FLTK
+ 3.5  Installing FLTK
 ----------------------
 
 If you did not change any of the configuration settings, FLTK will be installed
 in "/usr/local/include" and "/usr/local/lib" by typing
 
-  sudo make install
+  sudo cmake --install .
 
-If you are using the KDE, GNOME or XFCE desktop environments and want to call
-"fluid" from the desktop menu, you will need to install additional files and
-icons under "/usr/share" by typing:
-
-  sudo make install-desktop
+in your build folder. Note the trailing '.' .
 
 It is possible to install FLTK without superuser privileges by changing the
 installation path to a location within the user account by adding the
-"--prefix=PREFIX" parameters to the "./configure" command.
+"-D CMAKE_INSTALL_PREFIX=<path>" parameters to the "cmake" command.
 
 Note: installing FLTK is optional. You can build your own software by using
 the FLTK build tree directly. This is recommended if you link your application
@@ -415,8 +362,8 @@ shared FLTK libraries you may want to install FLTK, particularly on a production
 system.
 
 
- 3.7  Creating new Projects
-----------------------------
+ 3.6  Creating Your Own Projects
+---------------------------------
 
 FLTK provides a neat script named "fltk-config" that can provide all the flags
 needed to build FLTK applications using the same flags that were used to build
@@ -429,14 +376,16 @@ source file is:
 Since version 1.4.0 `fltk-config --compile` can also be used to build a program
 from multiple source files. See the official docs in chapter "FLTK Basics" and
 section "Compiling Multiple Source Files with 'fltk-config'":
-https://www.fltk.org/doc-1.4/basics.html#basics_fltk_config2
+https://www.fltk.org/doc-1.5/basics.html#basics_fltk_config2
 
 "fltk-config" and "fluid" will be installed in "/usr/local/bin/" by default.
 We recommend that you add it to the command search path.
 
+For larger projects than just a few source files we recommend to use CMake.
+Details can be found in README.CMake.txt.
 
 
- 4  Creating a new Project in Code::Blocks
+ 4  Creating a New Project in Code::Blocks
 ===========================================
 
 Code::Blocks is a free and popular C++ IDE in the Linux world. It also runs on
