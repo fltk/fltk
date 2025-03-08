@@ -387,12 +387,17 @@ if(WIN32)
 endif(WIN32)
 
 #######################################################################
-option(FLTK_OPTION_STD "allow FLTK to use some std:: features" OFF)
-if(FLTK_OPTION_STD)
-  set(FLTK_USE_STD 1)
-else()
-  set(FLTK_USE_STD 0)
-endif()
+# FLTK_OPTION_STD: temporary option in 1.4, always on in 1.5.
+#                  FIXME: remove this obsolete option entirely ...
+#                  after the source code has been fixed.
+#######################################################################
+
+option(FLTK_OPTION_STD
+      "Use std:: (obsolete since 1.5.0, ignored: always ON)"
+      ON)
+
+set(FLTK_USE_STD 1) # always ON since FLTK 1.5.0, option will be
+                    # removed as soon as the code has been updated
 
 #######################################################################
 
