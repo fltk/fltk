@@ -149,11 +149,11 @@ FL_EXPORT Fl_String operator+(const Fl_String& lhs, const char* rhs);
 FL_EXPORT bool operator==(const Fl_String & lhs, const Fl_String & rhs);
 FL_EXPORT bool operator!=(const Fl_String & lhs, const Fl_String & rhs);
 
+#endif
+
 /**
 \}
 \endcond
 */
-
-#endif
 
 #endif // _FL_Fl_String_H_
