@@ -34,7 +34,7 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
 -------------------------------------------------------------------
   Note: usage of autotools, configure, and included Makefiles to
   build the FLTK library is no longer available since FLTK 1.5.0.
-  You must use CMake instead, see README.CMake.txt.
+  You must use CMake instead, see below and/or README.CMake.txt.
 -------------------------------------------------------------------
 
 
@@ -82,9 +82,8 @@ Open a shell and install some development software:
   sudo apt-get install g++
   sudo apt-get install gdb
   sudo apt-get install git
-  sudo apt-get install make
-  sudo apt-get install cmake      # install CMake...
-  sudo apt-get install autoconf   # ...or autoconf (or both)
+  sudo apt-get install make               # if used
+  sudo apt-get install cmake
   sudo apt-get install libx11-dev
   sudo apt-get install libglu1-mesa-dev
   sudo apt-get install libxft-dev
@@ -295,7 +294,7 @@ Change the following instructions to fit your preferences.
 
 Since FLTK 1.5 the only build system (generator) used by FLTK is CMake.
 CMake can be used to create the build system of your choice, for instance
-Makefiles, Ninja build files, Xcode or Visual Studio IDE projects etc..
+Makefiles, Ninja build files, Xcode, or Visual Studio IDE projects etc..
 
 Note: The "classic" build system with autoconf, configure, and Makefiles
 is no longer available.

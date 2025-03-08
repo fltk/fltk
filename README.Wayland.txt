@@ -222,7 +222,7 @@ The Wayland platform is known to work with Fedora version 35 or more recent.
 
 These packages are necessary to build the FLTK library, in addition to
 package groups listed in section 2.2 of file README.Unix.txt :
-- autoconf
+
 - wayland-devel
 - wayland-protocols-devel
 - cairo-devel
@@ -245,6 +245,7 @@ Package installation command: sudo yum install <package-name ...>
 The Wayland platform is known to work with FreeBSD version 13.1 and the Sway compositor.
 
 These packages are necessary to build the FLTK library and use the Sway compositor:
+
 git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu evdev-proto
 
 Package installation command: sudo pkg install <package-name ...>
