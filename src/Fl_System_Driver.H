@@ -64,6 +64,7 @@ protected:
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
   static bool awake_ring_empty();
+  int filename_relative_(char *to, int tolen, const char *from, const char *base, bool case_sensitive);
 public:
   virtual ~Fl_System_Driver();
   static int command_key;

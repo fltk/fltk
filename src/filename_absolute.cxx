@@ -201,7 +201,12 @@ int fl_filename_relative(char *to, int tolen, const char *from, const char *base
  \{
  */
 
-int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_dir, const char *base_dir)
+int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_dir, const char *base_dir) {
+  return filename_relative_(to, tolen, dest_dir, base_dir, true);
+}
+
+
+int Fl_System_Driver::filename_relative_(char *to, int tolen, const char *dest_dir, const char *base_dir, bool case_sensitive)
 {
   // Find the relative path from base_dir to dest_dir.
   // Both paths must be absolute and well formed (contain no /../ and /./ segments).
@@ -223,16 +228,17 @@ int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_di
 
   // compare both path names until we find a difference
   for (;;) {
-#ifndef __APPLE__ // case sensitive
-    base_i++;
-    dest_i++;
-    char b = *base_i, d = *dest_i;
-#else // case insensitive
-    base_i += fl_utf8len1(*base_i);
-    int b = fl_tolower(fl_utf8decode(base_i, NULL, NULL));
-    dest_i += fl_utf8len1(*dest_i);
-    int d = fl_tolower(fl_utf8decode(dest_i, NULL, NULL));
-#endif
+    int b, d;
+    if (case_sensitive) { // case sensitive
+      base_i++;
+      dest_i++;
+      b = *base_i, d = *dest_i;
+    } else { // case insensitive
+      base_i += fl_utf8len1(*base_i);
+      b = fl_tolower(fl_utf8decode(base_i, NULL, NULL));
+      dest_i += fl_utf8len1(*dest_i);
+      d = fl_tolower(fl_utf8decode(dest_i, NULL, NULL));
+    }
     int b0 = (b==0) || (isdirsep(b));
     int d0 = (d==0) || (isdirsep(d));
     if (b0 && d0) {

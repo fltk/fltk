@@ -367,3 +367,8 @@ void Fl_Darwin_System_Driver::tree_draw_expando_button(int x, int y, bool state,
 int Fl_Darwin_System_Driver::tree_connector_style() {
   return FL_TREE_CONNECTOR_NONE;
 }
+
+
+int Fl_Darwin_System_Driver::filename_relative(char *to, int tolen, const char *dest_dir, const char *base_dir) {
+  return Fl_System_Driver::filename_relative_(to, tolen, dest_dir, base_dir, false);
+}
