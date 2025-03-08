@@ -1,5 +1,6 @@
-README.txt (documentation)
----------------------------
+README.documentation.txt
+------------------------
+
 Documentation is available in HTML and PDF format built using 'doxygen'
 since FLTK 1.3. The documentation must be generated in a separate step
 or downloaded from FLTK's software download pages. The documentation can
@@ -7,10 +8,11 @@ also be accessed online.
 
 To read the docs after downloading or generating them, open the files:
 
-    documentation/html/index.html
-    documentation/fltk.pdf
+    build/documentation/html/index.html
+    build/documentation/fltk.pdf
 
 with your browser or PDF viewer, respectively.
+Note that 'build' represents your CMake build folder.
 
 
 Online Documentation (Latest Release):
@@ -55,9 +57,9 @@ did with the source tarball.
 Generation of Documentation (Common Part):
 ------------------------------------------
 To generate the documentation yourself you should have Doxygen
-version 1.8 or later. Recommended version as of this writing
-(October 2023) is 1.9.8 or later.
-Older Doxygen versions than 1.8 may or may not work.
+version 1.9.8 or later. Recommended version as of this writing
+(March 2025) is 1.12.0 or later.
+Older Doxygen versions than 1.9 may or may not work.
 
 Full documentation generation is supported only on Unix/Linux
 platforms that provide a POSIX compatible shell (e.g. 'bash') and
@@ -80,15 +82,6 @@ On other (and older) distributions you may use the packages tetex (older)
 or texlive (current as of Ubuntu 18.04) if your distribution provides
 them. You may need to install additional fonts and other sub-packages
 for the PDF version to be generated correctly.
-
-
-Generation of Documentation with autoconf (configure) + make:
--------------------------------------------------------------
-Use "make html" in the documentation directory to generate the HTML
-documentation, or "make pdf" to generate the PDF version. "make docs"
-generates both versions in one step (as would do "make clean html pdf").
-
-To read the HTML or PDF docs, see above.
 
 
 Generation of Documentation with CMake:

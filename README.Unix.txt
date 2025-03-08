@@ -32,10 +32,9 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
 
 
 -------------------------------------------------------------------
-  Note: usage of autotools, configure, and the included Makefiles
-  to build the FLTK library is deprecated since FLTK 1.4 and will
-  be removed in the next minor version (1.5).
-  Please consider using CMake instead, see README.CMake.txt.
+  Note: usage of autotools, configure, and included Makefiles to
+  build the FLTK library is no longer available since FLTK 1.5.0.
+  You must use CMake instead, see README.CMake.txt.
 -------------------------------------------------------------------
 
 
@@ -187,15 +186,11 @@ To update to the latest version, just `cd` into the fltk directory and type
   git pull
 
 If you have installed JPEG and PNG libraries from pkgsrc, configure your
-environment as follows so that the FLTK configure script can find them:
+environment as follows so that CMake can find them:
 
   export CPPFLAGS="-I/usr/pkg/include"
   export LDFLAGS="-L/usr/pkg/lib"
 
-To install GNU autoconf from pkgsrc:
-
-  cd /usr/pkgsrc/devel/autoconf
-  bmake install
 
 
  2.4  OpenSuSE

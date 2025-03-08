@@ -6,7 +6,7 @@
 // This demo show the different boxtypes. Note that some
 // boxtypes are not appropriate for some objects
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -186,8 +186,8 @@ int main(int argc, char *argv[]) {
 int main(int argc, char **argv) {
   fl_message_title("This program needs the Forms compatibility library");
   fl_message(
-    "Please configure FLTK with Forms enabled (--enable-forms)\n"
-    "or the CMake option FLTK_BUILD_FORMS=ON.");
+    "Please configure FLTK with Forms enabled, i.e.\n"
+    "use the CMake option FLTK_BUILD_FORMS=ON.");
   return 0;
 }
 #endif // (FLTK_HAVE_FORMS)

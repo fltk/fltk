@@ -1,7 +1,7 @@
 HOW TO CREATE A NEW UNIT TEST
 -----------------------------
 
-    1) Create your new test/unittest_xxx.cxx file (or use an existing one)
+    1) Create your new test/unittest_xxx.cxx file (or copy an existing one)
 
     2) In your new cxx file, define a class derived from Fl_Group
        for your test (e.g. Ut_Test_Foo).
@@ -50,30 +50,30 @@ HOW TO CREATE A NEW UNIT TEST
 
     3) Add an entry anywhere to the enum {} at the top of the unittests.h file. Example:
 
-           enum {
-             UT_TEST_ABOUT = 0,
-             UT_TEST_POINTS,
-             ...
-             UT_TEST_FOO,    <-- ADD YOUR TEST CLASS NAME IN ALL CAPS
-             ...
-           };
+        enum {
+          UT_TEST_ABOUT = 0,
+          UT_TEST_POINTS,
+          ...
+          UT_TEST_FOO,    <-- ADD YOUR TEST CLASS NAME IN ALL CAPS
+          ...
+        };
 
     4) Add your new unittest_xxx.cxx file to:
 
-                a) test/CMakeLists.txt          -- cmake needs this
-                b) test/Makefile                -- configure needs this (?)
+        test/CMakeLists.txt          -- cmake needs this
 
-       You should then be able to use cmake to create a build directory that
-       builds with your new test. e.g.
+      You should then be able to use cmake to create a build directory that
+      builds with your new test. e.g.
 
-           mkdir build
-           cmake ..
+        mkdir build
+        cd build
+        cmake ..
 
-        ..and from there, you should be able to go through the common
-        edit/make/run development cycle:
+      ..and from there, you should be able to go through the common
+      edit/make/run development cycle:
 
-           make -j 4                    <-- should build bin/test/unittests with your test
-           bin/test/unittests           <-- run unittests to check your work
+        make -j 4                    <-- should build bin/test/unittests with your test
+        bin/test/unittests           <-- run unittests to check your work
 
       5) That's it!
 

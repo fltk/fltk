@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -105,8 +105,8 @@ extern void fl_cleanup_pens(void);
 
 // MSVC 2010 can't find round() although <math.h> is included above,
 // which is surprising because ceil() works fine.
-// We could (should?) probably add configure/CMake feature tests for
-// round() and ceil() rather than depending on MSVC version numbers.
+// We could (should?) probably add CMake feature tests for round()
+// and ceil() rather than depending on MSVC version numbers.
 // AlbrechtS, 02/2010 - Note: we don't know about MSVC 2012 - 2015, see
 // https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros
 
