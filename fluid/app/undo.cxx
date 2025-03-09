@@ -119,8 +119,8 @@ void redo_cb(Fl_Widget *, void *) {
   Fluid.proj.update_settings_dialog();
 
   // Update undo/redo menu items...
-  // if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
-  // Main_Menu[undo_item].activate();
+  // if (undo_current >= undo_last) main_menu[redo_item].deactivate();
+  // main_menu[undo_item].activate();
   undo_resume();
 }
 
@@ -174,8 +174,8 @@ void undo_cb(Fl_Widget *, void *) {
   Fluid.proj.set_modflag(undo_current != undo_save);
 
   // Update undo/redo menu items...
-  // if (undo_current <= 0) Main_Menu[undo_item].deactivate();
-  // Main_Menu[redo_item].activate();
+  // if (undo_current <= 0) main_menu[undo_item].deactivate();
+  // main_menu[redo_item].activate();
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
   undo_resume();
@@ -231,8 +231,8 @@ void undo_checkpoint() {
   if (undo_current > undo_max) undo_max = undo_current;
 
   // Enable the Undo and disable the Redo menu items...
-  // Main_Menu[undo_item].activate();
-  // Main_Menu[redo_item].deactivate();
+  // main_menu[undo_item].activate();
+  // main_menu[redo_item].deactivate();
 }
 
 // Clear undo buffer
@@ -250,8 +250,8 @@ void undo_clear() {
   else undo_save = 0;
 
   // Disable the Undo and Redo menu items...
-  // Main_Menu[undo_item].deactivate();
-  // Main_Menu[redo_item].deactivate();
+  // main_menu[undo_item].deactivate();
+  // main_menu[redo_item].deactivate();
 }
 
 // Resume undo checkpoints

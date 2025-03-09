@@ -714,8 +714,6 @@ void Fl_Window_Type::draw_overlay() {
   }
 }
 
-extern Fl_Menu_Item Main_Menu[];
-
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
   Fluid.overlay_item->label("Hide O&verlays");
@@ -853,7 +851,6 @@ extern void deselect();
 extern Fl_Type* in_this_only;
 extern void fix_group_size(Fl_Type *t);
 
-extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Item New_Menu[];
 
 /**
@@ -1243,7 +1240,7 @@ int Fl_Window_Type::handle(int event) {
 
   case FL_SHORTCUT: {
     in_this_only = this; // modifies how some menu items work.
-    const Fl_Menu_Item* m = Main_Menu->test_shortcut();
+    const Fl_Menu_Item* m = Fluid.main_menu->test_shortcut();
     if (m && m->callback()) m->do_callback(this->o);
     in_this_only = 0;
     return (m != 0);}

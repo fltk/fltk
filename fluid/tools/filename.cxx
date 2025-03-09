@@ -101,7 +101,7 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
  \param[in] str directory or path name
  \return a new string, ending with a '/'
  */
-std::string fld::end_with_slash(const std::string &str) {
+fld::filename fld::end_with_slash(const fld::filename &str) {
   char last = str[str.size()-1];
   if (last !='/' && last != '\\')
     return str + "/";
@@ -109,3 +109,17 @@ std::string fld::end_with_slash(const std::string &str) {
     return str;
 }
 
+/**
+ Replace Windows '\\' directory separator with UNix '/' separators.
+ \param[in] fn a file path in Unix or Windows format
+ \return a copy of the file path in Unix format.
+ */
+fld::filename fld::fix_separators(const fld::filename &fn) {
+  fld::filename ret = fn;
+  for (size_t i=0; i<ret.size(); ++i) {
+    if (ret[i] == '\\') {
+      ret[i] = '/';
+    }
+  }
+  return ret;
+}

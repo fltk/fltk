@@ -789,11 +789,11 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   }
   // Remember the last code file location for MergeBack
   if (s && Fluid.proj.write_mergeback_data && !to_codeview) {
-    std::string proj_filename = Fluid.proj.projectfile_path() + Fluid.proj.projectfile_name();
-    int i, n = (int)proj_filename.size();
-    for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
+    std::string filename = Fluid.proj.projectfile_path() + Fluid.proj.projectfile_name();
+    int i, n = (int)filename.size();
+    for (i=0; i<n; i++) if (filename[i]=='\\') filename[i] = '/';
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
-    Fl_Preferences path(build_records, proj_filename.c_str());
+    Fl_Preferences path(build_records, filename.c_str());
     path.set("code", s);
   }
   // if the first entry in the Type tree is a comment, then it is probably

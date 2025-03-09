@@ -287,7 +287,7 @@ Fl_Spinner *recent_spinner=(Fl_Spinner *)0;
 
 static void cb_recent_spinner(Fl_Spinner*, void*) {
   Fluid.preferences.set("recent_files", recent_spinner->value());
-  Fluid.load_project_history();
+  Fluid.history.load();
 }
 
 Fl_Check_Button *use_external_editor_button=(Fl_Check_Button *)0;

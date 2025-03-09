@@ -29,7 +29,8 @@ namespace fld {
 
 using filename = std::string;
 
-extern std::string end_with_slash(const std::string &str);
+extern fld::filename end_with_slash(const fld::filename &fn);
+extern fld::filename fix_separators(const fld::filename &fn);
 
 
 } // namespace fld

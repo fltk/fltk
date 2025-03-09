@@ -17,8 +17,10 @@
 #ifndef FLUID_FLUID_H
 #define FLUID_FLUID_H
 
-#include "tools/filename.h"
 #include "Project.h"
+#include "app/args.h"
+#include "app/history.h"
+#include "tools/filename.h"
 
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
@@ -41,7 +43,7 @@ class Fl_Type;
 class Fl_Choice;
 class Fl_Button;
 class Fl_Check_Button;
-
+class Fl_Help_Dialog;
 
 namespace fld {
 
@@ -60,24 +62,57 @@ enum class Tool_Store {
 class Project;
 
 class Application {
-  Project current_project_ { };
-  /// path to store temporary files during app run
+  /// Currently selected project.
+  Project *current_project_ = new Project();
+  /// Working directory at application launch.
+  fld::filename launch_path_;
+  /// Path to store temporary files during app run.
   std::string tmpdir_path;
-  /// true if the temporary file path was already created
+  /// True if the temporary file path was already created.
   bool tmpdir_create_called = false;
+  // Generate a path to a directory for temporary data storage.
+  void create_tmpdir();
+  // Delete the temporary directory and all its contents.
+  void delete_tmpdir();
+
+public:
+  // Create the Fluid application.
+  Application();
+  /// Destructor.
+  ~Application() = default;
+  // Launch the application.
+  int run(int argc,char **argv);
+  // Quit the application and clean up.
+  void quit();
+  /// Application wide preferences
+  Fl_Preferences preferences;
+  /// Project history.
+  app::History history;
+  /// Command line arguments
+  app::Args args;
+  /// Set, if Fluid runs in batch mode, and no user interface is activated.
+  int batch_mode { 0 };             // fluid + any code generators (-u, -c, -cs)
+  /// Quick access to the current project. Make sure it stays synched to current_project_.
+  Project &proj { *current_project_ };
+  // Return the working directory path at application launch.
+  const fld::filename &launch_path() const;
+  // Return the path to a temporary directory for this instance of Fluid.
+  const std::string &get_tmpdir();
+  // Return the path and filename of a temporary file for cut or duplicated data.
+  const char *cutfname(int which = 0);
+
+
+
+
+private: // TODO: verify stuff below
 
 #ifdef __APPLE__
   static void apple_open_cb(const char *c);
 #endif // __APPLE__
 
+
+
 public:
-  /// Create the main application class
-  Application();
-  ~Application() = default;
-  /// Quick access to the current project
-  Project &proj { current_project_ };
-  /// Application wide preferences
-  Fl_Preferences preferences;
 
   // TODO: make this into a class: app::Settings
   /// Show guides in the design window when positioning widgets, saved in app preferences.
@@ -102,38 +137,6 @@ public:
   // TODO: make this into a std::string
   char external_editor_command[512] { };
 
-  // File history info...
-  // TODO: make this into a class: app::Project_History
-  /// Stores the absolute filename of the last 10 design files, saved in app preferences.
-  char project_history_abspath[10][FL_PATH_MAX] { };
-  /// This list of filenames is computed from \c Fluid.project_history_abspath and displayed in the main menu.
-  char project_history_relpath[10][FL_PATH_MAX] { };
-  void load_project_history();
-  void update_project_history(const char *);
-
-  // TODO: make this into a class for command line args: app::Args
-  /// Set, if Fluid was started with the command line argument -u
-  int update_file { 0 };            // fluid -u
-  /// Set, if Fluid was started with the command line argument -c
-  int compile_file { 0 };           // fluid -c
-  /// Set, if Fluid was started with the command line argument -cs
-  int compile_strings { 0 };        // fluic -cs
-  /// Set, if Fluid runs in batch mode, and no user interface is activated.
-  int batch_mode { 0 };
-  /// command line arguments that overrides the generate code file extension or name
-  std::string code_filename_arg;
-  /// command line arguments that overrides the generate header file extension or name
-  std::string header_filename_arg;
-  /// if set, generate images for automatic documentation in this directory
-  std::string autodoc_path;
-  static int arg_cb(int argc, char** argv, int& i);
-  int arg(int argc, char** argv, int& i);
-
-  /// current directory path at application launch
-  std::string launch_path;
-
-  int run(int argc,char **argv);
-  void quit();
 
   std::string open_project_filechooser(const std::string &title);
   bool new_project(bool user_must_confirm = true);
@@ -155,13 +158,8 @@ public:
   void about();
   bool confirm_project_clear();
 
-  void create_tmpdir();
-  void delete_tmpdir();
-  const std::string &get_tmpdir();
-  char* cutfname(int which = 0);
-
   Fl_Window *main_window { nullptr };
-  Fl_Menu_Item *Main_Menu { nullptr };
+  static Fl_Menu_Item main_menu[];
   Fl_Menu_Bar *main_menubar { nullptr };
   Fl_Menu_Item *save_item { nullptr };
   Fl_Menu_Item *history_item { nullptr };
@@ -174,6 +172,7 @@ public:
   void make_main_window();
   /// Offset in pixels when adding widgets from an .fl file.
   int pasteoffset { 0 };
+  int ipasteoffset { 0 };
 
   void flush_text_widgets(); // TODO: should be in a GUI class?
   char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0);
@@ -182,9 +181,13 @@ public:
   void init_scheme();
   void toggle_widget_bin();
 
+  /// FLUID-wide help dialog.
+  Fl_Help_Dialog *help_dialog { nullptr };
+
+
 };
 
-} // namespce fld
+} // namespace fld
 
 extern fld::Application Fluid;
 

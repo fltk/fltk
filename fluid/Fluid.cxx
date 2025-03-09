@@ -67,65 +67,261 @@ fld::Application Fluid;
 
 using namespace fld;
 
+
+/**
+ Timer to watch for external editor modifications.
+
+ If one or more external editors open, check if their files were modified.
+ If so: reload to ram, update size/mtime records, and change fluid's
+ 'modified' state.
+ */
+static void external_editor_timer(void*) {
+  int editors_open = ExternalCodeEditor::editors_open();
+  if ( Fluid.debug_external_editor ) printf("--- TIMER --- External editors open=%d\n", editors_open);
+  if ( editors_open > 0 ) {
+    // Walk tree looking for files modified by external editors.
+    int modified = 0;
+    for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
+      if ( p->is_a(ID_Code) ) {
+        Fl_Code_Type *code = (Fl_Code_Type*)p;
+        // Code changed by external editor?
+        if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
+          modified++;
+        }
+        if ( code->is_editing() ) {             // editor open?
+          code->reap_editor();                  // Try to reap; maybe it recently closed
+        }
+      }
+    }
+    if ( modified ) Fluid.proj.set_modflag(1);
+  }
+  // Repeat timeout if editors still open
+  //    The ExternalCodeEditor class handles start/stopping timer, we just
+  //    repeat_timeout() if it's already on. NOTE: above code may have reaped
+  //    only open editor, which would disable further timeouts. So *recheck*
+  //    if editors still open, to ensure we don't accidentally re-enable them.
+  //
+  if ( ExternalCodeEditor::editors_open() ) {
+    Fl::repeat_timeout(2.0, external_editor_timer);
+  }
+}
+
+
+/**
+ Create the Fluid application.
+ This creates the basic app with an empty project and reads the Fluid
+ preferences database.
+ */
 Application::Application()
 : preferences( Fl_Preferences::USER_L, "fltk.org", "fluid" ) 
 { }
 
 
-/// \defgroup globals Fluid Global Variables, Functions and Callbacks
-/// \{
+/**
+ Start Fluid.
 
-//
-// Globals..
-//
+ Fluid can run in interactive mode with a full user interface to design new
+ user interfaces and write the C++ files to manage them,
 
-/// FLUID-wide help dialog.
-static Fl_Help_Dialog *help_dialog = NULL;
+ Fluid can run form the command line in batch mode to convert .fl design files
+ into C++ source and header files. In batch mode, no display is needed,
+ particularly no X11 connection will be attempted on Linux/Unix.
 
-/// Main app window menu bar.
-Fl_Menu_Bar *main_menubar = NULL;
+ \param[in] argc number of arguments in the list
+ \param[in] argv pointer to an array of arguments
+ \return in batch mode, an error code will be returned via \c exit() . This
+ function return 1, if there was an error in the parameters list.
+ \todo On Windows, Fluid can under certain conditions open a dialog box, even
+ in batch mode. Is that intentional? Does it circumvent issues with Windows'
+ stderr and stdout?
+ */
+int Application::run(int argc,char **argv) {
+  setlocale(LC_ALL, "");      // enable multi-language errors in file chooser
+  setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
+  launch_path_ = end_with_slash(fl_getcwd_str()); // store the current path at launch
 
-/// Main app window.
-Fl_Window *main_window;
+  int i = 1;
+  if ((i = args.load(argc, argv)) == -1)
+    return 1;
+
+  if (args.show_version) {
+    printf("fluid v%d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+    ::exit(0);
+  }
+
+  const char *c = NULL;
+  if (args.autodoc_path.empty())
+    c = argv[i];
+
+  fl_register_images();
+
+  make_main_window();
+
+  if (c) proj.set_filename(c);
+  if (!batch_mode) {
+#ifdef __APPLE__
+    fl_open_callback(apple_open_cb);
+#endif // __APPLE__
+    Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
+    Fl_File_Icon::load_system_icons();
+    main_window->callback(exit_cb);
+    position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
+    if (g_shell_config) {
+      g_shell_config->read(preferences, fld::Tool_Store::USER);
+      g_shell_config->update_settings_dialog();
+      g_shell_config->rebuild_shell_menu();
+    }
+    g_layout_list.read(preferences, fld::Tool_Store::USER);
+    main_window->show(argc,argv);
+    toggle_widget_bin();
+    toggle_codeview_cb(0,0);
+    if (!c && openlast_button->value() && history.abspath[0][0] && args.autodoc_path.empty()) {
+      // Open previous file when no file specified...
+      open_project_file(history.abspath[0]);
+    }
+  }
+  undo_suspend();
+  if (c && !fld::io::read_file(c,0)) {
+    if (batch_mode) {
+      fprintf(stderr,"%s : %s\n", c, strerror(errno));
+      exit(1);
+    }
+    fl_message("Can't read %s: %s", c, strerror(errno));
+  }
+  undo_resume();
+
+  // command line args override code and header filenames from the project file
+  // in batch mode only
+  if (batch_mode) {
+    if (!args.code_filename.empty()) {
+      proj.code_file_set = 1;
+      proj.code_file_name = args.code_filename;
+    }
+    if (!args.header_filename.empty()) {
+      proj.header_file_set = 1;
+      proj.header_file_name = args.header_filename;
+    }
+  }
+
+  if (args.update_file) {            // fluid -u
+    fld::io::write_file(c,0);
+    if (!args.compile_file)
+      exit(0);
+  }
+
+  if (args.compile_file) {           // fluid -c[s]
+    if (args.compile_strings)
+      proj.write_strings();
+    write_code_files();
+    exit(0);
+  }
+
+  // don't lock up if inconsistent command line arguments were given
+  if (batch_mode)
+    exit(0);
+
+  proj.set_modflag(0);
+  undo_clear();
+
+  // Set (but do not start) timer callback for external editor updates
+  ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
+
+#ifndef NDEBUG
+  // check if the user wants FLUID to generate image for the user documentation
+  if (!args.autodoc_path.empty()) {
+    run_autodoc(args.autodoc_path);
+    proj.set_modflag(0, 0);
+    quit();
+    return 0;
+  }
+#endif
+
+  Fl::run();
+
+  undo_clear();
+  return 0;
+}
 
 
+/**
+ Exit Fluid; we hope you had a nice experience.
+ If the design was modified, a dialog will ask for confirmation.
+ */
+void Application::quit() {
+  if (shell_command_running()) {
+    int choice = fl_choice("Previous shell command still running!",
+                           "Cancel",
+                           "Exit",
+                           NULL);
+    if (choice == 0) { // user chose to cancel the exit operation
+      return;
+    }
+  }
 
-// File history info...
+  flush_text_widgets();
 
-/// Menuitem to save a .fl design file, will be deactivated if the design is unchanged.
-Fl_Menu_Item *save_item = NULL;
+  // verify user intention
+  if (confirm_project_clear() == false)
+    return;
 
-/// First Menuitem that shows the .fl design file history.
-Fl_Menu_Item *history_item = NULL;
+  // Stop any external editor update timers
+  ExternalCodeEditor::stop_update_timer();
 
-/// Menuitem to show or hide the widget bin, label will change if bin is visible.
-Fl_Menu_Item *widgetbin_item = NULL;
+  save_position(main_window,"main_window_pos");
 
-/// Menuitem to show or hide the code view, label will change if view is visible.
-Fl_Menu_Item *codeview_item = NULL;
+  if (widgetbin_panel) {
+    save_position(widgetbin_panel,"widgetbin_pos");
+    delete widgetbin_panel;
+  }
+  if (codeview_panel) {
+    Fl_Preferences svp(preferences, "codeview");
+    svp.set("autorefresh", cv_autorefresh->value());
+    svp.set("autoposition", cv_autoposition->value());
+    svp.set("tab", cv_tab->find(cv_tab->value()));
+    svp.set("code_choice", cv_code_choice);
+    save_position(codeview_panel,"codeview_pos");
+    delete codeview_panel;
+    codeview_panel = 0;
+  }
+  if (shell_run_window) {
+    save_position(shell_run_window,"shell_run_Window_pos");
+  }
 
-/// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
-Fl_Menu_Item *overlay_item = NULL;
+  if (about_panel)
+    delete about_panel;
+  if (help_dialog)
+    delete help_dialog;
 
-/// Menuitem to show or hide the editing guides, label will change if overlay visibility changes.
-Fl_Menu_Item *guides_item = NULL;
+  if (g_shell_config)
+    g_shell_config->write(preferences, fld::Tool_Store::USER);
+  g_layout_list.write(preferences, fld::Tool_Store::USER);
 
-/// Menuitem to show or hide the restricted area overlys, label will change if overlay visibility changes.
-Fl_Menu_Item *restricted_item = NULL;
+  undo_clear();
 
-////////////////////////////////////////////////////////////////
+  // Destroy tree
+  //    Doing so causes dtors to automatically close all external editors
+  //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
+  proj.reset();
+  ExternalCodeEditor::tmpdir_clear();
+  delete_tmpdir();
 
-/// Set, if Fluid was started with the command line argument -v
-int show_version = 0;        // fluid -v
+  exit(0);
+}
 
-/// Paste offset incrementing at every paste command.
-static int ipasteoffset = 0;
+
+/**
+ Return the working directory path at application launch.
+ \return a reference to the '/' terminated path.
+ */
+const fld::filename &Application::launch_path() const {
+  return launch_path_;
+}
 
 
 /**
  Generate a path to a directory for temporary data storage.
- The path is stored in g_tmpdir.
- TODO: see ExternalCodeEditor::create_tmpdir()!
+ \see delete_tmpdir(), get_tmpdir()
+ \todo remove duplicate API or reuse ExternalCodeEditor::create_tmpdir()!
  */
 void Application::create_tmpdir() {
   if (tmpdir_create_called)
@@ -191,8 +387,10 @@ void Application::create_tmpdir() {
   }
 }
 
+
 /**
- Delete the temporary directory that was created in set_tmpdir.
+ Delete the temporary directory and all its contents.
+ \see create_tmpdir(), get_tmpdir()
  */
 void Application::delete_tmpdir() {
   // was a temporary directory created
@@ -222,17 +420,47 @@ void Application::delete_tmpdir() {
   }
 }
 
+
 /**
- Return the path to a temporary directory for this instance of FLUID.
+ Return the path to a temporary directory for this instance of Fluid.
  Fluid will do its best to clear and delete this directory when exiting.
  \return the path to the temporary directory, ending in a '/', or and empty
-      string if no directory could be created.
+    string if no directory could be created.
  */
 const std::string &Application::get_tmpdir() {
   if (!tmpdir_create_called)
     create_tmpdir();
   return tmpdir_path;
 }
+
+
+/**
+ Return the path and filename of a temporary file for cut or duplicated data.
+ \param[in] which 0 gets the cut/copy/paste buffer, 1 gets the duplication buffer
+ \return a pointer to a string in a static buffer
+ */
+const char *Application::cutfname(int which) {
+  static char name[2][FL_PATH_MAX];
+  static char beenhere = 0;
+
+  if (!beenhere) {
+    beenhere = 1;
+    preferences.getUserdataPath(name[0], sizeof(name[0]));
+    strlcat(name[0], "cut_buffer", sizeof(name[0]));
+    preferences.getUserdataPath(name[1], sizeof(name[1]));
+    strlcat(name[1], "dup_buffer", sizeof(name[1]));
+  }
+
+  return name[which];
+}
+
+
+
+
+
+
+
+
 
 /**
  Give the user the opportunity to save a project before clearing it.
@@ -325,63 +553,6 @@ void Application::save_position(Fl_Window *w, const char *prefsName) {
   pos.set("visible", (int)(w->shown() && w->visible()));
 }
 
-/**
- Return the path and filename of a temporary file for cut or duplicated data.
- \param[in] which 0 gets the cut/copy/paste buffer, 1 gets the duplication buffer
- \return a pointer to a string in a static buffer
- */
-char* Application::cutfname(int which) {
-  static char name[2][FL_PATH_MAX];
-  static char beenhere = 0;
-
-  if (!beenhere) {
-    beenhere = 1;
-    preferences.getUserdataPath(name[0], sizeof(name[0]));
-    strlcat(name[0], "cut_buffer", sizeof(name[0]));
-    preferences.getUserdataPath(name[1], sizeof(name[1]));
-    strlcat(name[1], "dup_buffer", sizeof(name[1]));
-  }
-
-  return name[which];
-}
-
-/**
- Timer to watch for external editor modifications.
-
- If one or more external editors open, check if their files were modified.
- If so: reload to ram, update size/mtime records, and change fluid's
- 'modified' state.
- */
-static void external_editor_timer(void*) {
-  int editors_open = ExternalCodeEditor::editors_open();
-  if ( Fluid.debug_external_editor ) printf("--- TIMER --- External editors open=%d\n", editors_open);
-  if ( editors_open > 0 ) {
-    // Walk tree looking for files modified by external editors.
-    int modified = 0;
-    for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
-      if ( p->is_a(ID_Code) ) {
-        Fl_Code_Type *code = (Fl_Code_Type*)p;
-        // Code changed by external editor?
-        if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
-          modified++;
-        }
-        if ( code->is_editing() ) {             // editor open?
-          code->reap_editor();                  // Try to reap; maybe it recently closed
-        }
-      }
-    }
-    if ( modified ) Fluid.proj.set_modflag(1);
-  }
-  // Repeat timeout if editors still open
-  //    The ExternalCodeEditor class handles start/stopping timer, we just
-  //    repeat_timeout() if it's already on. NOTE: above code may have reaped
-  //    only open editor, which would disable further timeouts. So *recheck*
-  //    if editors still open, to ensure we don't accidentally re-enable them.
-  //
-  if ( ExternalCodeEditor::editors_open() ) {
-    Fl::repeat_timeout(2.0, external_editor_timer);
-  }
-}
 
 /**
  Save the current design to the file given by \c filename.
@@ -442,71 +613,6 @@ void Application::revert_project() {
   proj.set_modflag(0, 0);
   undo_clear();
   proj.update_settings_dialog();
-}
-
-/**
- Exit Fluid; we hope you had a nice experience.
- If the design was modified, a dialog will ask for confirmation.
- */
-void Application::quit() {
-  if (shell_command_running()) {
-    int choice = fl_choice("Previous shell command still running!",
-                           "Cancel",
-                           "Exit",
-                           NULL);
-    if (choice == 0) { // user chose to cancel the exit operation
-      return;
-    }
-  }
-
-  flush_text_widgets();
-
-  // verify user intention
-  if (confirm_project_clear() == false)
-    return;
-
-  // Stop any external editor update timers
-  ExternalCodeEditor::stop_update_timer();
-
-  save_position(main_window,"main_window_pos");
-
-  if (widgetbin_panel) {
-    save_position(widgetbin_panel,"widgetbin_pos");
-    delete widgetbin_panel;
-  }
-  if (codeview_panel) {
-    Fl_Preferences svp(preferences, "codeview");
-    svp.set("autorefresh", cv_autorefresh->value());
-    svp.set("autoposition", cv_autoposition->value());
-    svp.set("tab", cv_tab->find(cv_tab->value()));
-    svp.set("code_choice", cv_code_choice);
-    save_position(codeview_panel,"codeview_pos");
-    delete codeview_panel;
-    codeview_panel = 0;
-  }
-  if (shell_run_window) {
-    save_position(shell_run_window,"shell_run_Window_pos");
-  }
-
-  if (about_panel)
-    delete about_panel;
-  if (help_dialog)
-    delete help_dialog;
-
-  if (g_shell_config)
-    g_shell_config->write(preferences, fld::Tool_Store::USER);
-  g_layout_list.write(preferences, fld::Tool_Store::USER);
-
-  undo_clear();
-
-  // Destroy tree
-  //    Doing so causes dtors to automatically close all external editors
-  //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
-  proj.reset();
-  ExternalCodeEditor::tmpdir_clear();
-  delete_tmpdir();
-
-  exit(0);
 }
 
 /**
@@ -1262,7 +1368,7 @@ void Application::make_main_window() {
     o->tooltip("Double-click to view or change an item.");
     main_window->resizable(o);
     main_menubar = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
-    main_menubar->menu(Main_Menu);
+    main_menubar->menu(main_menu);
     // quick access to all dynamic menu items
     save_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_save_cb);
     history_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_open_history_cb);
@@ -1277,363 +1383,10 @@ void Application::make_main_window() {
   }
 
   if (!batch_mode) {
-    load_project_history();
+    history.load();
     g_shell_config = new Fd_Shell_Command_List;
     widget_browser->load_prefs();
     make_settings_window();
   }
 }
-
-/**
- Load file history from preferences.
-
- This loads the absolute filepaths of the last 10 used design files.
- It also computes and stores the relative filepaths for display in
- the main menu.
- */
-void Application::load_project_history() {
-  int   i;              // Looping var
-  int   max_files;
-
-  preferences.get("recent_files", max_files, 5);
-  if (max_files > 10) max_files = 10;
-
-  for (i = 0; i < max_files; i ++) {
-    preferences.get( Fl_Preferences::Name("file%d", i), project_history_abspath[i], "", sizeof(project_history_abspath[i]));
-    if (project_history_abspath[i][0]) {
-      // Make a shortened version of the filename for the menu...
-      std::string fn = fl_filename_shortened(project_history_abspath[i], 48);
-      strncpy(project_history_relpath[i], fn.c_str(), sizeof(project_history_relpath[i]) - 1);
-      if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
-      else history_item[i].flags = 0;
-    } else break;
-  }
-
-  for (; i < 10; i ++) {
-    if (i) history_item[i-1].flags |= FL_MENU_DIVIDER;
-    history_item[i].hide();
-  }
-}
-
-/**
- Update file history from preferences.
-
- Add this new filepath to the history and update the main menu.
- Writes the new file history to the app preferences.
-
- \param[in] flname path or filename of .fl file, will be converted into an
-    absolute file path based on the current working directory.
- */
-void Application::update_project_history(const char *flname) {
-  int   i;              // Looping var
-  char  absolute[FL_PATH_MAX];
-  int   max_files;
-
-
-  preferences.get("recent_files", max_files, 5);
-  if (max_files > 10) max_files = 10;
-
-  fl_filename_absolute(absolute, sizeof(absolute), flname);
-#ifdef _WIN32
-  // Make path canonical.
-  for (char *s = absolute; *s; s++) {
-    if (*s == '\\')
-      *s = '/';
-  }
-#endif
-
-
-  for (i = 0; i < max_files; i ++)
-#if defined(_WIN32) || defined(__APPLE__)
-    if (!strcasecmp(absolute, project_history_abspath[i])) break;
-#else
-    if (!strcmp(absolute, project_history_abspath[i])) break;
-#endif // _WIN32 || __APPLE__
-
-  if (i == 0) return;
-
-  if (i >= max_files) i = max_files - 1;
-
-  // Move the other flnames down in the list...
-  memmove(project_history_abspath + 1, project_history_abspath,
-          i * sizeof(project_history_abspath[0]));
-  memmove(project_history_relpath + 1, project_history_relpath,
-          i * sizeof(project_history_relpath[0]));
-
-  // Put the new file at the top...
-  strlcpy(project_history_abspath[0], absolute, sizeof(project_history_abspath[0]));
-  std::string fn = fl_filename_shortened(project_history_abspath[0], 48);
-  strncpy(project_history_relpath[0], fn.c_str(), sizeof(project_history_relpath[0]) - 1);
-
-  // Update the menu items as needed...
-  for (i = 0; i < max_files; i ++) {
-    preferences.set( Fl_Preferences::Name("file%d", i), project_history_abspath[i]);
-    if (project_history_abspath[i][0]) {
-      if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
-      else history_item[i].flags = 0;
-    } else break;
-  }
-
-  for (; i < 10; i ++) {
-    preferences.set( Fl_Preferences::Name("file%d", i), "");
-    if (i) history_item[i-1].flags |= FL_MENU_DIVIDER;
-    history_item[i].hide();
-  }
-  preferences.flush();
-}
-
-
-// ---- Main program entry point
-
-
-int Application::arg_cb(int argc, char** argv, int& i) {
-  return Fluid.arg(argc, argv, i);
-}
-
-/**
- Handle command line arguments.
- \param[in] argc number of arguments in the list
- \param[in] argv pointer to an array of arguments
- \param[inout] i current argument index
- \return number of arguments used; if 0, the argument is not supported
- */
-int Application::arg(int argc, char** argv, int& i) {
-  if (argv[i][0] != '-')
-    return 0;
-  if (argv[i][1] == 'd' && !argv[i][2]) {
-    debug_external_editor=1;
-    i++; return 1;
-  }
-  if (argv[i][1] == 'u' && !argv[i][2]) {
-    update_file++;
-    batch_mode++;
-    i++; return 1;
-  }
-  if (argv[i][1] == 'c' && !argv[i][2]) {
-    compile_file++;
-    batch_mode++;
-    i++; return 1;
-  }
-  if ((strcmp(argv[i], "-v")==0) || (strcmp(argv[i], "--version")==0)) {
-    show_version = 1;
-    i++; return 1;
-  }
-  if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {
-    compile_file++;
-    compile_strings++;
-    batch_mode++;
-    i++; return 1;
-  }
-  if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
-    code_filename_arg = argv[i+1];
-    batch_mode++;
-    i += 2; return 2;
-  }
-#ifndef NDEBUG
-  if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
-    autodoc_path = argv[i+1];
-    i += 2; return 2;
-  }
-#endif
-  if (strcmp(argv[i], "--help")==0) {
-    return 0;
-  }
-  if (argv[i][1] == 'h' && !argv[i][2]) {
-    if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
-      header_filename_arg = argv[i+1];
-      batch_mode++;
-      i += 2;
-      return 2;
-    } else {
-      // a lone "-h" without a filename will output the help string
-      return 0;
-    }
-  }
-  return 0;
-}
-
-#if ! (defined(_WIN32) && !defined (__CYGWIN__))
-
-int quit_flag = 0;
-#include <signal.h>
-#ifdef _sigargs
-#define SIGARG _sigargs
-#else
-#ifdef __sigargs
-#define SIGARG __sigargs
-#else
-#define SIGARG int // you may need to fix this for older systems
-#endif
-#endif
-
-extern "C" {
-static void sigint(SIGARG) {
-  signal(SIGINT,sigint);
-  quit_flag = 1;
-}
-}
-
-#endif
-
-
-/**
- Start Fluid.
-
- Fluid can run in interactive mode with a full user interface to design new
- user interfaces and write the C++ files to manage them,
-
- Fluid can run form the command line in batch mode to convert .fl design files
- into C++ source and header files. In batch mode, no display is needed,
- particularly no X11 connection will be attempted on Linux/Unix.
-
- \param[in] argc number of arguments in the list
- \param[in] argv pointer to an array of arguments
- \return in batch mode, an error code will be returned via \c exit() . This
-    function return 1, if there was an error in the parameters list.
- \todo On Windows, Fluid can under certain conditions open a dialog box, even
-    in batch mode. Is that intentional? Does it circumvent issues with Windows'
-    stderr and stdout?
- */
-int Application::run(int argc,char **argv) {
-  int i = 1;
-
-  setlocale(LC_ALL, "");      // enable multi-language errors in file chooser
-  setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
-  launch_path = end_with_slash(fl_getcwd_str()); // store the current path at launch
-
-  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
-  if (   (Fl::args(argc,argv,i,arg_cb) == 0)     // unsupported argument found
-      || (batch_mode && (i != argc-1))        // .fl filename missing
-      || (!batch_mode && (i < argc-1))        // more than one filename found
-      || (argv[i] && (argv[i][0] == '-'))) {  // unknown option
-    static const char *msg =
-      "usage: %s <switches> name.fl\n"
-      " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"
-      " -c : write .cxx and .h and exit\n"
-      " -cs : write .cxx and .h and strings and exit\n"
-      " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
-      " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
-      " --help : brief usage information\n"
-      " --version, -v : print fluid version number\n"
-      " -d : enable internal debugging\n";
-    const char *app_name = NULL;
-    if ( (argc > 0) && argv[0] && argv[0][0] )
-      app_name = fl_filename_name(argv[0]);
-    if ( !app_name || !app_name[0])
-      app_name = "fluid";
-#ifdef _MSC_VER
-    // TODO: if this is fluid-cmd, use stderr and not fl_message
-    fl_message(msg, app_name);
-#else
-    fprintf(stderr, msg, app_name);
-#endif
-    return 1;
-  }
-  if (show_version) {
-    printf("fluid v%d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
-    ::exit(0);
-  }
-
-  const char *c = NULL;
-  if (autodoc_path.empty())
-    c = argv[i];
-
-  fl_register_images();
-
-  make_main_window();
-
-  if (c) proj.set_filename(c);
-  if (!batch_mode) {
-#ifdef __APPLE__
-    fl_open_callback(apple_open_cb);
-#endif // __APPLE__
-    Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
-    Fl_File_Icon::load_system_icons();
-    main_window->callback(exit_cb);
-    position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
-    if (g_shell_config) {
-      g_shell_config->read(preferences, fld::Tool_Store::USER);
-      g_shell_config->update_settings_dialog();
-      g_shell_config->rebuild_shell_menu();
-    }
-    g_layout_list.read(preferences, fld::Tool_Store::USER);
-    main_window->show(argc,argv);
-    toggle_widget_bin();
-    toggle_codeview_cb(0,0);
-    if (!c && openlast_button->value() && project_history_abspath[0][0] && autodoc_path.empty()) {
-      // Open previous file when no file specified...
-      open_project_file(project_history_abspath[0]);
-    }
-  }
-  undo_suspend();
-  if (c && !fld::io::read_file(c,0)) {
-    if (batch_mode) {
-      fprintf(stderr,"%s : %s\n", c, strerror(errno));
-      exit(1);
-    }
-    fl_message("Can't read %s: %s", c, strerror(errno));
-  }
-  undo_resume();
-
-  // command line args override code and header filenames from the project file
-  // in batch mode only
-  if (batch_mode) {
-    if (!code_filename_arg.empty()) {
-      proj.code_file_set = 1;
-      proj.code_file_name = code_filename_arg;
-    }
-    if (!header_filename_arg.empty()) {
-      proj.header_file_set = 1;
-      proj.header_file_name = header_filename_arg;
-    }
-  }
-
-  if (update_file) {            // fluid -u
-    fld::io::write_file(c,0);
-    if (!compile_file)
-      exit(0);
-  }
-
-  if (compile_file) {           // fluid -c[s]
-    if (compile_strings)
-      proj.write_strings();
-    write_code_files();
-    exit(0);
-  }
-
-  // don't lock up if inconsistent command line arguments were given
-  if (batch_mode)
-    exit(0);
-
-  proj.set_modflag(0);
-  undo_clear();
-#ifndef _WIN32
-  signal(SIGINT,sigint);
-#endif
-
-  // Set (but do not start) timer callback for external editor updates
-  ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
-
-#ifndef NDEBUG
-  // check if the user wants FLUID to generate image for the user documentation
-  if (!autodoc_path.empty()) {
-    run_autodoc(autodoc_path);
-    proj.set_modflag(0, 0);
-    quit();
-    return 0;
-  }
-#endif
-
-#ifdef _WIN32
-  Fl::run();
-#else
-  while (!quit_flag) Fl::wait();
-  if (quit_flag) quit();
-#endif // _WIN32
-
-  undo_clear();
-  return (0);
-}
-
-/// \}
 

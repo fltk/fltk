@@ -90,7 +90,7 @@ void Project::update_settings_dialog() {
  \return the path ending in '/'
  */
 std::string Project::projectfile_path() const {
-  return end_with_slash(fl_filename_absolute_str(fl_filename_path_str(proj_filename), Fluid.launch_path));
+  return end_with_slash(fl_filename_absolute_str(fl_filename_path_str(proj_filename), Fluid.launch_path()));
 }
 
 /**
@@ -108,7 +108,7 @@ std::string Project::projectfile_name() const {
 std::string Project::codefile_path() const {
   std::string path = fl_filename_path_str(code_file_name);
   if (Fluid.batch_mode)
-    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path));
+    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path()));
   else
     return end_with_slash(fl_filename_absolute_str(path, projectfile_path()));
 }
@@ -135,7 +135,7 @@ std::string Project::codefile_name() const {
 std::string Project::headerfile_path() const {
   std::string path = fl_filename_path_str(header_file_name);
   if (Fluid.batch_mode)
-    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path));
+    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path()));
   else
     return end_with_slash(fl_filename_absolute_str(path, projectfile_path()));
 }
@@ -165,7 +165,7 @@ std::string Project::headerfile_name() const {
  */
 std::string Project::stringsfile_path() const {
   if (Fluid.batch_mode)
-    return Fluid.launch_path;
+    return Fluid.launch_path();
   else
     return projectfile_path();
 }
@@ -260,7 +260,7 @@ void Project::set_filename(const char *c) {
   proj_filename = c ? fl_strdup(c) : NULL;
 
   if (proj_filename && !Fluid.batch_mode)
-    Fluid.update_project_history(proj_filename);
+    Fluid.history.update_project_history(proj_filename);
 
   set_modflag(modflag);
 }
