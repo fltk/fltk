@@ -26,11 +26,11 @@
 #include <FL/Fl_Shared_Image.H>
 
 class Fluid_Image {
-  bool is_animated_gif_;
-  const char *name_;
-  int refcount;
-  Fl_Shared_Image *img;
-  const char *function_name_;
+  bool is_animated_gif_ = false;
+  const char *name_ = nullptr;
+  int refcount = 0;
+  Fl_Shared_Image *img = nullptr;
+  const char *function_name_ = nullptr;
 protected:
   Fluid_Image(const char *name); // no public constructor
   ~Fluid_Image(); // no public destructor

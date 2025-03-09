@@ -35,11 +35,11 @@ public:
   /// Set, if Fluid was started with the command line argument -cs
   int compile_strings { 0 };        // fluid -cs
   /// command line arguments that overrides the generate code file extension or name
-  std::string code_filename;    // fluid -o filename
+  std::string code_filename { };    // fluid -o filename
   /// command line arguments that overrides the generate header file extension or name
-  std::string header_filename;  // fluid -h filename
+  std::string header_filename { };  // fluid -h filename
   /// if set, generate images for automatic documentation in this directory
-  std::string autodoc_path;         // fluid --autodoc path
+  std::string autodoc_path { };         // fluid --autodoc path
   /// Set, if Fluid was started with the command line argument -v
   int show_version { 0 };           // fluid -v
   /// Constructor.

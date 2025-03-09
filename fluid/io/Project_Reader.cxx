@@ -98,12 +98,6 @@ void Project_Reader::expand_buffer(int length) {
 
 /** \brief Construct local project reader. */
 Project_Reader::Project_Reader()
-: fin(NULL),
-  lineno(0),
-  fname(NULL),
-  buffer(NULL),
-  buflen(0),
-  read_version(0.0)
 {
 }
 

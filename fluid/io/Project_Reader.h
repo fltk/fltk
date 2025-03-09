@@ -37,15 +37,15 @@ class Project_Reader
 {
 protected:
   /// Project input file
-  FILE *fin;
+  FILE *fin = nullptr;
   /// Number of most recently read line
-  int lineno;
+  int lineno = 0;
   /// Pointer to the file path and name (not copied!)
-  const char *fname;
+  const char *fname = nullptr;
   /// Expanding buffer to store the most recently read word
-  char *buffer;
+  char *buffer = nullptr;
   /// Exact size of the expanding buffer in bytes
-  int buflen;
+  int buflen = 0;
 
   void expand_buffer(int length);
 
@@ -53,7 +53,7 @@ protected:
 
 public:
   /// Holds the file version number after reading the "version" tag
-  double read_version;
+  double read_version = 0.0;
 
 public:
   Project_Reader();

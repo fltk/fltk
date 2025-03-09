@@ -27,18 +27,8 @@ using namespace fld;
 /**
  Initialize a new project.
  */
-Project::Project() :
-i18n_type(fld::I18n_Type::NONE),
-include_H_from_C(1),
-use_FL_COMMAND(0),
-utf8_in_src(0),
-avoid_early_includes(0),
-header_file_set(0),
-code_file_set(0),
-write_mergeback_data(0),
-header_file_name(".h"),
-code_file_name(".cxx")
-{ }
+Project::Project() {
+}
 
 /**
  Clear all project resources.

@@ -52,6 +52,7 @@ void show_terminal_window();
 void run_shell_command(const std::string &cmd, int flags);
 bool shell_command_running(void);
 
+
 class Fl_Process {
 public:
   Fl_Process();
@@ -80,8 +81,9 @@ private:
 #endif
 
 protected:
-  FILE * _fpt;
+  FILE * _fpt = nullptr;
 };
+
 
 class Fd_Shell_Command {
 public:
@@ -99,14 +101,14 @@ public:
                    const std::string &in_condition_data,
                    const std::string &in_command,
                    int in_flags);
-  std::string name;
-  std::string label;
-  Fl_Shortcut shortcut;
-  fld::Tool_Store storage;
-  int condition; // always, hide, windows only, linux only, mac only, user, machine
-  std::string condition_data; // user name, machine name
-  std::string command;
-  int flags; // save_project, save_code, save_string, ...
+  std::string name { };
+  std::string label { };
+  Fl_Shortcut shortcut = 0;
+  fld::Tool_Store storage = fld::Tool_Store::USER;
+  int condition = ALWAYS; // always, hide, windows only, linux only, mac only, user, machine
+  std::string condition_data { }; // user name, machine name
+  std::string command { };
+  int flags = 0; // save_project, save_code, save_string, ...
   Fl_Menu_Item *shell_menu_item_;
   void run();
   void read(Fl_Preferences &prefs);
@@ -117,12 +119,13 @@ public:
   bool is_active();
 };
 
+
 class Fd_Shell_Command_List {
 public:
-  Fd_Shell_Command **list;
-  int list_size;
-  int list_capacity;
-  Fl_Menu_Item *shell_menu_;
+  Fd_Shell_Command **list = nullptr;
+  int list_size = 0;
+  int list_capacity = 0;
+  Fl_Menu_Item *shell_menu_ = nullptr;
 public:
   Fd_Shell_Command_List();
   ~Fd_Shell_Command_List();

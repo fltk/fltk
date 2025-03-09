@@ -41,54 +41,54 @@ class Project
 {
 public: // Member Variables
   /// One of the available internationalization types.
-  fld::I18n_Type i18n_type;
+  fld::I18n_Type i18n_type = I18n_Type::NONE;
   /// Include file for GNU i18n, writes an #include statement into the source
   /// file. This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
-  std::string i18n_gnu_include;
+  std::string i18n_gnu_include = "<libintl.h>";
   // Optional name of a macro for conditional i18n compilation.
-  std::string i18n_gnu_conditional;
+  std::string i18n_gnu_conditional = "";
   /// For the gettext/intl.h options, this is the function that translates text
   /// at runtime. This is usually "gettext" or "_".
-  std::string i18n_gnu_function;
+  std::string i18n_gnu_function = "gettext";
   /// For the gettext/intl.h options, this is the function that marks the translation
   /// of text at initialisation time. This is usually "gettext_noop" or "N_".
-  std::string i18n_gnu_static_function;
+  std::string i18n_gnu_static_function = "gettext_noop";
 
   /// Include file for Posix i18n, write a #include statement into the source
   /// file. This is usually `<nl_types.h>` for Posix catgets.
-  std::string i18n_pos_include;
+  std::string i18n_pos_include = "<nl_types.h>";
   // Optional name of a macro for conditional i18n compilation.
-  std::string i18n_pos_conditional;
+  std::string i18n_pos_conditional = "";
   /// Name of the nl_catd database
-  std::string i18n_pos_file;
+  std::string i18n_pos_file = "";
   /// Message set ID for the catalog.
-  std::string i18n_pos_set;
+  std::string i18n_pos_set = "1";
 
   /// If set, generate code to include the header file form the c++ file
-  int include_H_from_C;
+  int include_H_from_C = 1;
   /// If set, handle keyboard shortcut Ctrl on macOS using Cmd instead
-  int use_FL_COMMAND;
+  int use_FL_COMMAND = 0;
   /// Clear if UTF-8 characters in statics texts are written as escape sequences
-  int utf8_in_src;
+  int utf8_in_src = 0;
   /// If set, <FL/Fl.H> will not be included from the header code before anything else
-  int avoid_early_includes;
+  int avoid_early_includes = 0;
   /// If set, command line overrides header file name in .fl file.
-  int header_file_set;
+  int header_file_set = 0;
   ///  If set, command line overrides source code file name in .fl file.
-  int code_file_set;
-  int write_mergeback_data;
+  int code_file_set = 0;
+  /// later
+  int write_mergeback_data = 0;
   /// Filename of the current .fl project file
   const char *proj_filename { nullptr };
   /// Hold the default extension for header files, or the entire filename if set via command line.
-  std::string header_file_name;
+  std::string header_file_name = ".h";
   /// Hold the default extension for source code  files, or the entire filename if set via command line.
-  std::string code_file_name;
+  std::string code_file_name = ".cxx";
 
   /// Used as a counter to set the .fl project dir as the current directory.
   int in_project_dir { 0 };
   /// Application work directory, stored here when temporarily changing to the source code directory.
-  /// \see goto_source_dir()
-  std::string app_work_dir;
+  std::string app_work_dir = "";
 
   /// Set if the current design has been modified compared to the associated .fl design file.
   int modflag { 0 };

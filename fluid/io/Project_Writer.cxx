@@ -51,9 +51,6 @@ int fld::io::write_file(const char *filename, int selected_only, bool to_codevie
 
 /** \brief Construct local project writer. */
 Project_Writer::Project_Writer()
-: fout(NULL),
-  needspace(0),
-  write_codeview_(false)
 {
 }
 

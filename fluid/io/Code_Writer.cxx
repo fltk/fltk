@@ -948,22 +948,7 @@ void Code_Writer::write_public(int state) {
 /**
  Create and initialize a new C++ source code writer.
  */
-Code_Writer::Code_Writer()
-: code_file(NULL),
-  header_file(NULL),
-  id_root(NULL),
-  text_in_header(NULL),
-  text_in_code(NULL),
-  ptr_in_code(NULL),
-  block_crc_(0),
-  block_line_start_(true),
-  block_buffer_(NULL),
-  block_buffer_size_(0),
-  indentation(0),
-  write_codeview(false),
-  varused_test(0),
-  varused(0)
-{
+Code_Writer::Code_Writer() {
   block_crc_ = crc32(0, NULL, 0);
 }
 

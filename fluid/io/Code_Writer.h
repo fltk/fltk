@@ -39,27 +39,27 @@ class Code_Writer
 {
 protected:
   /// file pointer for the C++ code file
-  FILE *code_file;
+  FILE *code_file = nullptr;
   /// file pointer for the C++ header file
-  FILE *header_file;
+  FILE *header_file = nullptr;
 
   /// tree of unique but human-readable identifiers
-  Fd_Identifier_Tree* id_root;
+  Fd_Identifier_Tree* id_root = nullptr;
   /// searchable text tree for text that is only written once to the header file
-  Fd_Text_Tree *text_in_header;
+  Fd_Text_Tree *text_in_header = nullptr;
   /// searchable text tree for text that is only written once to the code file
-  Fd_Text_Tree *text_in_code;
+  Fd_Text_Tree *text_in_code = nullptr;
   /// searchable tree for pointers that are only written once to the code file
-  Fd_Pointer_Tree *ptr_in_code;
+  Fd_Pointer_Tree *ptr_in_code = nullptr;
 
   /// crc32 for blocks of text written to the code file
-  unsigned long block_crc_;
+  unsigned long block_crc_ = 0;
   /// if set, we are at the start of a line and can ignore leading spaces in crc
-  bool block_line_start_;
+  bool block_line_start_ = true;
   /// expanding buffer for vsnprintf
-  char *block_buffer_;
+  char *block_buffer_ = nullptr;
   /// size of expanding buffer for vsnprintf
-  int block_buffer_size_;
+  int block_buffer_size_ = 0;
 
   void crc_add(const void *data, int n=-1);
   int crc_printf(const char *format, ...);
@@ -69,16 +69,16 @@ protected:
 
 public:
   /// current level of source code indentation
-  int indentation;
+  int indentation = 0;
   /// set if we write abbreviated file for the source code previewer
   /// (disables binary data blocks, for example)
-  bool write_codeview;
+  bool write_codeview = false;
   /// silly thing to prevent declaring unused variables:
   /// When this symbol is on, all attempts to write code don't write
   /// anything, but set a variable if it looks like the variable "o" is used:
-  int varused_test;
+  int varused_test = 0;
   /// set to 1 if varused_test found that a variable is actually used
-  int varused;
+  int varused = 0;
 
 public:
   Code_Writer();

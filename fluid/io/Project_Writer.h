@@ -32,11 +32,11 @@ class Project_Writer
 {
 protected:
   // Project output file, always opened in "wb" mode
-  FILE *fout;
+  FILE *fout = nullptr;
   /// If set, one space is written before text unless the format starts with a newline character
-  int needspace;
+  int needspace = 0;
   /// Set if this file will be used in the codeview dialog
-  bool write_codeview_;
+  bool write_codeview_ = false;
 
 public:
   Project_Writer();

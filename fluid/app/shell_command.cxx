@@ -128,7 +128,6 @@ bool shell_command_running() {
  Create a process manager
  */
 Fl_Process::Fl_Process() {
-  _fpt= NULL;
 }
 
 /**
@@ -633,10 +632,6 @@ void Fd_Shell_Command::write(class fld::io::Project_Writer *out) {
  Manage a list of shell commands and their parameters.
  */
 Fd_Shell_Command_List::Fd_Shell_Command_List()
-: list(NULL),
-  list_size(0),
-  list_capacity(0),
-  shell_menu_(NULL)
 {
 }
 

@@ -349,11 +349,8 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
 }
 
 Fluid_Image::Fluid_Image(const char *iname)
-  : is_animated_gif_(false)
 {
   name_ = fl_strdup(iname);
-  written = 0;
-  refcount = 0;
   img = Fl_Shared_Image::get(iname);
   if (img && iname) {
     const char *ext = fl_filename_ext(iname);
@@ -362,7 +359,6 @@ Fluid_Image::Fluid_Image(const char *iname)
       if (fc > 0) is_animated_gif_ = true;
     }
   }
-  function_name_ = NULL;
 }
 
 void Fluid_Image::increment() {
