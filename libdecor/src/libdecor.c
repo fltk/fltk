@@ -739,10 +739,10 @@ libdecor_frame_set_parent(struct libdecor_frame *frame,
 	if (!frame_priv->xdg_toplevel)
 		return;
 
-	frame_priv->state.parent = parent->priv->xdg_toplevel;
+	frame_priv->state.parent = parent ? parent->priv->xdg_toplevel : NULL;
 
 	xdg_toplevel_set_parent(frame_priv->xdg_toplevel,
-				parent->priv->xdg_toplevel);
+				frame_priv->state.parent);
 }
 
 LIBDECOR_EXPORT void
