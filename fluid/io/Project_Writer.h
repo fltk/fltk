@@ -24,13 +24,19 @@
 class Fl_Type;
 
 namespace fld {
+
+class Project;
+
 namespace io {
 
-int write_file(const char *, int selected_only = 0, bool to_codeview = false);
+int write_file(Project &proj, const char *, int selected_only = 0, bool to_codeview = false);
 
 class Project_Writer
 {
 protected:
+  /// Link Project_Writer class to the project.
+  Project &proj_;
+
   // Project output file, always opened in "wb" mode
   FILE *fout = nullptr;
   /// If set, one space is written before text unless the format starts with a newline character
@@ -39,7 +45,7 @@ protected:
   bool write_codeview_ = false;
 
 public:
-  Project_Writer();
+  Project_Writer(Project &proj);
   ~Project_Writer();
   int open_write(const char *s);
   int close_write();

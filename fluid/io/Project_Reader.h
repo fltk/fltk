@@ -27,15 +27,21 @@
 class Fl_Type;
 
 namespace fld {
+
+class Project;
+
 namespace io {
 
 extern int fdesign_flip;
 
-int read_file(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
+int read_file(Project &proj, const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
 
 class Project_Reader
 {
 protected:
+  /// Link Project_Reader class to the project.
+  Project &proj_;
+
   /// Project input file
   FILE *fin = nullptr;
   /// Number of most recently read line
@@ -56,7 +62,7 @@ public:
   double read_version = 0.0;
 
 public:
-  Project_Reader();
+  Project_Reader(Project &proj);
   ~Project_Reader();
   int open_read(const char *s);
   int close_read();

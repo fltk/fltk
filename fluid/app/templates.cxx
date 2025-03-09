@@ -95,7 +95,7 @@ void fld::app::save_template() {
                   "Replace", NULL, c) == 0) return;
   }
 
-  if (!fld::io::write_file(filename)) {
+  if (!fld::io::write_file(Fluid.proj, filename)) {
     fl_alert("Error writing %s: %s", filename, strerror(errno));
     return;
   }

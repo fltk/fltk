@@ -36,6 +36,7 @@ set(CPPFILES
   io/Code_Writer.cxx
   io/Project_Writer.cxx
   io/Project_Reader.cxx
+  io/String_Writer.cxx
   nodes/factory.cxx
   nodes/Fl_Button_Type.cxx
   nodes/Fl_Function_Type.cxx
@@ -81,6 +82,7 @@ set(HEADERFILES
   io/Code_Writer.h
   io/Project_Writer.h
   io/Project_Reader.h
+  io/String_Writer.h
   nodes/factory.h
   nodes/Fl_Button_Type.h
   nodes/Fl_Function_Type.h

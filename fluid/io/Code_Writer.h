@@ -31,13 +31,17 @@ struct Fd_Pointer_Tree;
 int is_id(char c);
 
 namespace fld {
-namespace io {
 
-int write_strings(const std::string &filename);
+class Project;
+
+namespace io {
 
 class Code_Writer
 {
-protected:
+private:
+  /// Link Code_Writer class to the project.
+  Project &proj_;
+
   /// file pointer for the C++ code file
   FILE *code_file = nullptr;
   /// file pointer for the C++ header file
@@ -81,7 +85,7 @@ public:
   int varused = 0;
 
 public:
-  Code_Writer();
+  Code_Writer(Project &proj);
   ~Code_Writer();
   const char* unique_id(void* o, const char*, const char*, const char*);
   /// Increment source code indentation level.

@@ -57,8 +57,8 @@ int fld::io::fdesign_flip = 0;
  \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
-int fld::io::read_file(const char *filename, int merge, Strategy strategy) {
-  Project_Reader f;
+int fld::io::read_file(Project &proj, const char *filename, int merge, Strategy strategy) {
+  Project_Reader f(proj);
   strategy.source(Strategy::FROM_FILE);
   return f.read_project(filename, merge, strategy);
 }
@@ -97,7 +97,8 @@ void Project_Reader::expand_buffer(int length) {
 }
 
 /** \brief Construct local project reader. */
-Project_Reader::Project_Reader()
+Project_Reader::Project_Reader(Project &proj)
+: proj_(proj)
 {
 }
 

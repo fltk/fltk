@@ -16,6 +16,7 @@
 
 #include "Project.h"
 
+#include "io/String_Writer.h"
 #include "nodes/Fl_Type.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
@@ -265,7 +266,7 @@ void Project::write_strings() {
     if (!proj_filename) return;
   }
   std::string filename = stringsfile_path() + stringsfile_name();
-  int x = fld::io::write_strings(filename);
+  int x = fld::io::write_strings(*this, filename);
   if (Fluid.batch_mode) {
     if (x) {
       fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));

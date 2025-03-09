@@ -21,6 +21,7 @@
 #include "Project.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
+#include "io/String_Writer.h"
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Button.H>
 #include "../src/flstring.h"
@@ -169,7 +170,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
     }
 
     if (cv_project->visible_r()) {
-      fld::io::write_file(cv_design_filename, false, true);
+      fld::io::write_file(Fluid.proj, cv_design_filename, false, true);
       int top = cv_project->top_line();
       cv_project->buffer()->loadfile(cv_design_filename);
       cv_project->scroll(top, 0);
@@ -179,7 +180,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
       fl_strlcat(fn, "strings", FL_PATH_MAX);
       fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n_type)]);
-      fld::io::write_strings(fn);
+      fld::io::write_strings(Fluid.proj, fn);
       int top = cv_strings->top_line();
       cv_strings->buffer()->loadfile(fn);
       cv_strings->scroll(top, 0);
@@ -190,7 +191,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       Fluid.proj.header_file_name = cv_header_filename;
 
       // generate the code and load the files
-      fld::io::Code_Writer f;
+      fld::io::Code_Writer f(Fluid.proj);
       // generate files
       if (f.write_code(cv_source_filename, cv_header_filename, true))
       {
