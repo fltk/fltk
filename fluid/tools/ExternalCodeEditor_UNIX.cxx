@@ -23,6 +23,8 @@
 #include <stdlib.h>     /* free().. */
 #include <stdio.h>      /* snprintf().. */
 
+using namespace fld;
+
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
 static Fl_Timeout_Handler L_update_timer_cb = 0;        // app's update timer callback

@@ -48,6 +48,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#undef min
+#undef max
 #include <algorithm>
 
 extern Fl_Window *the_panel;

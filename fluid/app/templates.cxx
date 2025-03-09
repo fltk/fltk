@@ -18,10 +18,14 @@
 
 #include "Fluid.h"
 #include "io/Project_Writer.h"
+#include "nodes/factory.h"
+#include "nodes/Fl_Window_Type.h"
 #include "panels/template_panel.h"
 
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
+#include <FL/Fl_PNG_Image.H>
+#include "../src/flstring.h"
 
 using namespace fld;
 using namespace fld::app;

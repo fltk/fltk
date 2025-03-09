@@ -28,6 +28,8 @@
 #include <math.h>
 #include <string.h>
 #include <assert.h>
+#undef min
+#undef max
 #include <algorithm>
 
 // TODO: warning if the user wants to change builtin layouts

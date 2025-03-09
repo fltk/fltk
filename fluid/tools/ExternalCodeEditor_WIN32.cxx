@@ -28,6 +28,8 @@
 #include <stdio.h>      // snprintf()
 #include <stdlib.h>
 
+using namespace fld;
+
 extern int Fluid.debug_external_editor;     // defined in fluid.cxx
 
 // Static local data

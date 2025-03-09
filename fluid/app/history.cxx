@@ -18,6 +18,8 @@
 
 #include "Fluid.h"
 
+#include "../src/flstring.h"
+
 using namespace fld;
 using namespace fld::app;
 
