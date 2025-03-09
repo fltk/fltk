@@ -62,7 +62,7 @@ void History::load() {
  \param[in] project_file path and filename of .fl project file, will be
     converted into an absolute file path based on the current working directory.
  */
-void History::update_project_history(fld::filename project_file) {
+void History::update(fld::filename project_file) {
   int   i;              // Looping var
   int   max_files;
 

@@ -260,7 +260,7 @@ void Project::set_filename(const char *c) {
   proj_filename = c ? fl_strdup(c) : NULL;
 
   if (proj_filename && !Fluid.batch_mode)
-    Fluid.history.update_project_history(proj_filename);
+    Fluid.history.update(proj_filename);
 
   set_modflag(modflag);
 }

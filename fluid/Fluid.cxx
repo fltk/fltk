@@ -19,6 +19,7 @@
 #include "Project.h"
 #include "app/mergeback.h"
 #include "app/Menu.h"
+#include "app/shell_command.h"
 #include "app/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
@@ -34,11 +35,11 @@
 #include "panels/template_panel.h"
 #include "panels/about_panel.h"
 #include "rsrcs/pixmaps.h"
-#include "app/shell_command.h"
 #include "tools/autodoc.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
+#include <FL/fl_ask.H>
 #ifdef __APPLE__
 #include <FL/platform.H> // for fl_open_callback
 #endif
@@ -48,20 +49,10 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_string_functions.h>
+
 #include <locale.h>     // setlocale()..
 #include "../src/flstring.h"
 
-extern "C"
-{
-#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
-#  include <zlib.h>
-#  ifdef HAVE_PNG_H
-#    include <png.h>
-#  else
-#    include <libpng/png.h>
-#  endif // HAVE_PNG_H
-#endif // HAVE_LIBPNG && HAVE_LIBZ
-}
 
 fld::Application Fluid;
 
@@ -455,102 +446,116 @@ const char *Application::cutfname(int which) {
 }
 
 
-
-
-
-
-
-
-
 /**
- Give the user the opportunity to save a project before clearing it.
+ Clear the current project and create a new, empty one.
 
- If the project has unsaved changes, this function pops up a dialog, that
- allows the user to save the project, continue without saving the project,
- or to cancel the operation.
+ If the current project was modified, FLUID will give the user the opportunity
+ to save the old project first.
 
- If the user chooses to save, and no filename was set, a file dialog allows
- the user to pick a name and location, or to cancel the operation.
-
- \return false if the user aborted the operation and the calling function
- should abort as well
+ \param[in] user_must_confirm if set, a confimation dialog is presented to the
+ user before resetting the project. Default is `true`.
+ \return false if the operation was canceled
  */
-bool Application::confirm_project_clear() {
-  if (proj.modflag == 0) return true;
-  switch (fl_choice("This project has unsaved changes. Do you want to save\n"
-                    "the project file before proceeding?",
-                    "Cancel", "Save", "Don't Save"))
-  {
-    case 0 : /* Cancel */
-      return false;
-    case 1 : /* Save */
-      save_project_file(nullptr);
-      if (proj.modflag) return false;  // user canceled the "Save As" dialog
-  }
+bool Application::new_project(bool user_must_confirm) {
+  // verify user intention
+  if ((user_must_confirm) &&  (confirm_project_clear() == false))
+    return false;
+
+  // clear the current project
+  proj.reset();
+  proj.set_filename(NULL);
+  proj.set_modflag(0, 0);
+  widget_browser->rebuild();
+  proj.update_settings_dialog();
+
+  // all is clear to continue
   return true;
 }
 
-// ----
-
-extern Fl_Window *the_panel;
 
 /**
- Ensure that text widgets in the widget panel propagates apply current changes.
- By temporarily clearing the text focus, all text widgets with changed text
- will unfocus and call their respective callbacks, propagating those changes to
- their data set.
+ Open a file chooser and load an exiting project file.
+
+ If the current project was modified, FLUID will give the user the opportunity
+ to save the old project first.
+
+ If no filename is given, FLUID will open a file chooser dialog.
+
+ \param[in] filename_arg load from this file, or show file chooser if empty
+ \return false if the operation was canceled or failed otherwise
  */
-void Application::flush_text_widgets() {
-  if (Fl::focus() && (Fl::focus()->top_window() == the_panel)) {
-    Fl_Widget *old_focus = Fl::focus();
-    Fl::focus(NULL); // trigger callback of the widget that is losing focus
-    Fl::focus(old_focus);
-  }
-}
+bool Application::open_project_file(const std::string &filename_arg) {
+  // verify user intention
+  if (confirm_project_clear() == false)
+    return false;
 
-// ----
-
-
-/**
- Position the given window window based on entries in the app preferences.
- Customisable by user; feature can be switched off.
- The window is not shown or hidden by this function, but a value is returned
- to indicate the state to the caller.
- \param[in] w position this window
- \param[in] prefsName name of the preferences item that stores the window settings
- \param[in] Visible default value if window is hidden or shown
- \param[in] X, Y, W, H default size and position if nothing is specified in the preferences
- \return 1 if the caller should make the window visible, 0 if hidden.
- */
-char Application::position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W, int H) {
-  Fl_Preferences pos(preferences, prefsName);
-  if (prevpos_button->value()) {
-    pos.get("x", X, X);
-    pos.get("y", Y, Y);
-    if ( W!=0 ) {
-      pos.get("w", W, W);
-      pos.get("h", H, H);
-      w->resize( X, Y, W, H );
+  // ask for a filename if none was given
+  std::string new_filename = filename_arg;
+  if (new_filename.empty()) {
+    new_filename = open_project_filechooser("Open Project File");
+    if (new_filename.empty()) {
+      return false;
     }
-    else
-      w->position( X, Y );
   }
-  pos.get("visible", Visible, Visible);
-  return Visible;
+
+  // clear the project and merge a file by the given name
+  new_project(false);
+  return merge_project_file(new_filename);
 }
 
+
 /**
- Save the position and visibility state of a window to the app preferences.
- \param[in] w save this window data
- \param[in] prefsName name of the preferences item that stores the window settings
+ Load a project from the give file name and path.
+
+ The project file is inserted at the currently selected type.
+
+ If no filename is given, FLUID will open a file chooser dialog.
+
+ \param[in] filename_arg path and name of the new project file
+ \return false if the operation failed
  */
-void Application::save_position(Fl_Window *w, const char *prefsName) {
-  Fl_Preferences pos(preferences, prefsName);
-  pos.set("x", w->x());
-  pos.set("y", w->y());
-  pos.set("w", w->w());
-  pos.set("h", w->h());
-  pos.set("visible", (int)(w->shown() && w->visible()));
+bool Application::merge_project_file(const std::string &filename_arg) {
+  bool is_a_merge = (Fl_Type::first != NULL);
+  std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
+
+  // ask for a filename if none was given
+  std::string new_filename = filename_arg;
+  if (new_filename.empty()) {
+    new_filename = open_project_filechooser(title);
+    if (new_filename.empty()) {
+      return false;
+    }
+  }
+
+  const char *c = new_filename.c_str();
+  const char *oldfilename = proj.proj_filename;
+  proj.proj_filename    = NULL;
+  proj.set_filename(c);
+  if (is_a_merge) undo_checkpoint();
+  undo_suspend();
+  if (!fld::io::read_file(c, is_a_merge)) {
+    undo_resume();
+    widget_browser->rebuild();
+    proj.update_settings_dialog();
+    fl_message("Can't read %s: %s", c, strerror(errno));
+    free((void *)proj.proj_filename);
+    proj.proj_filename = oldfilename;
+    if (main_window) proj.set_modflag(proj.modflag);
+    return false;
+  }
+  undo_resume();
+  widget_browser->rebuild();
+  if (is_a_merge) {
+    // Inserting a file; restore the original filename...
+    proj.set_filename(oldfilename);
+    proj.set_modflag(1);
+  } else {
+    // Loaded a file; free the old filename...
+    proj.set_modflag(0, 0);
+    undo_clear();
+  }
+  if (oldfilename) free((void *)oldfilename);
+  return true;
 }
 
 
@@ -615,31 +620,6 @@ void Application::revert_project() {
   proj.update_settings_dialog();
 }
 
-/**
- Clear the current project and create a new, empty one.
-
- If the current project was modified, FLUID will give the user the opportunity
- to save the old project first.
-
- \param[in] user_must_confirm if set, a confimation dialog is presented to the
-    user before resetting the project. Default is `true`.
- \return false if the operation was canceled
- */
-bool Application::new_project(bool user_must_confirm) {
-  // verify user intention
-  if ((user_must_confirm) &&  (confirm_project_clear() == false))
-    return false;
-
-  // clear the current project
-  proj.reset();
-  proj.set_filename(NULL);
-  proj.set_modflag(0, 0);
-  widget_browser->rebuild();
-  proj.update_settings_dialog();
-
-  // all is clear to continue
-  return true;
-}
 
 /**
  Open the template browser and load a new file from templates.
@@ -750,124 +730,70 @@ bool Application::new_project_from_template() {
   return true;
 }
 
-/**
- Open a native file chooser to allow choosing a project file for reading.
-
- Path and filename are preset with the current project filename, if there
- is one.
-
- \param title a text describing the action after selecting a file (load, merge, ...)
- \return the file path and name, or an empty string if the operation was canceled
- */
-std::string Application::open_project_filechooser(const std::string &title) {
-  Fl_Native_File_Chooser dialog;
-  dialog.title(title.c_str());
-  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  dialog.filter("FLUID Files\t*.f[ld]\n");
-  if (proj.proj_filename) {
-    std::string current_project_file = proj.proj_filename;
-    dialog.directory(fl_filename_path_str(current_project_file).c_str());
-    dialog.preset_file(fl_filename_name_str(current_project_file).c_str());
-  }
-  if (dialog.show() != 0)
-    return std::string();
-  return std::string(dialog.filename());
-}
 
 /**
- Load a project from the give file name and path.
-
- The project file is inserted at the currently selected type.
-
- If no filename is given, FLUID will open a file chooser dialog.
-
- \param[in] filename_arg path and name of the new project file
- \return false if the operation failed
+ Open the dialog to allow the user to print the current window.
  */
-bool Application::merge_project_file(const std::string &filename_arg) {
-  bool is_a_merge = (Fl_Type::first != NULL);
-  std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
+void Application::print_snapshots() {
+  int w, h, ww, hh;
+  int frompage, topage;
+  Fl_Type       *t;                     // Current widget
+  int           num_windows;            // Number of windows
+  Fl_Window_Type *windows[1000];        // Windows to print
+  int           winpage;                // Current window page
+  Fl_Window *win;
 
-  // ask for a filename if none was given
-  std::string new_filename = filename_arg;
-  if (new_filename.empty()) {
-    new_filename = open_project_filechooser(title);
-    if (new_filename.empty()) {
-      return false;
+  for (t = Fl_Type::first, num_windows = 0; t; t = t->next) {
+    if (t->is_a(ID_Window)) {
+      windows[num_windows] = (Fl_Window_Type *)t;
+      if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
+      num_windows ++;
     }
   }
 
-  const char *c = new_filename.c_str();
-  const char *oldfilename = proj.proj_filename;
-  proj.proj_filename    = NULL;
-  proj.set_filename(c);
-  if (is_a_merge) undo_checkpoint();
-  undo_suspend();
-  if (!fld::io::read_file(c, is_a_merge)) {
-    undo_resume();
-    widget_browser->rebuild();
-    proj.update_settings_dialog();
-    fl_message("Can't read %s: %s", c, strerror(errno));
-    free((void *)proj.proj_filename);
-    proj.proj_filename = oldfilename;
-    if (main_window) proj.set_modflag(proj.modflag);
-    return false;
-  }
-  undo_resume();
-  widget_browser->rebuild();
-  if (is_a_merge) {
-    // Inserting a file; restore the original filename...
-    proj.set_filename(oldfilename);
-    proj.set_modflag(1);
-  } else {
-    // Loaded a file; free the old filename...
-    proj.set_modflag(0, 0);
-    undo_clear();
-  }
-  if (oldfilename) free((void *)oldfilename);
-  return true;
-}
+  Fl_Printer printjob;
+  if ( printjob.start_job(num_windows, &frompage, &topage) ) return;
+  int pagecount = 0;
+  for (winpage = 0; winpage < num_windows; winpage++) {
+    float scale = 1, scale_x = 1, scale_y = 1;
+    if (winpage+1 < frompage || winpage+1 > topage) continue;
+    printjob.start_page();
+    printjob.printable_rect(&w, &h);
 
-/**
- Open a file chooser and load an exiting project file.
+    // Get the time and date...
+    time_t curtime = time(NULL);
+    struct tm *curdate = localtime(&curtime);
+    char date[1024];
+    strftime(date, sizeof(date), "%c", curdate);
+    fl_font(FL_HELVETICA, 12);
+    fl_color(FL_BLACK);
+    fl_draw(date, (w - (int)fl_width(date))/2, fl_height());
+    sprintf(date, "%d/%d", ++pagecount, topage-frompage+1);
+    fl_draw(date, w - (int)fl_width(date), fl_height());
 
- If the current project was modified, FLUID will give the user the opportunity
- to save the old project first.
+    // Get the base filename...
+    std::string basename = fl_filename_name_str(std::string(proj.proj_filename));
+    fl_draw(basename.c_str(), 0, fl_height());
 
- If no filename is given, FLUID will open a file chooser dialog.
-
- \param[in] filename_arg load from this file, or show file chooser if empty
- \return false if the operation was canceled or failed otherwise
- */
-bool Application::open_project_file(const std::string &filename_arg) {
-  // verify user intention
-  if (confirm_project_clear() == false)
-    return false;
-
-  // ask for a filename if none was given
-  std::string new_filename = filename_arg;
-  if (new_filename.empty()) {
-    new_filename = open_project_filechooser("Open Project File");
-    if (new_filename.empty()) {
-      return false;
+    // print centered and scaled to fit in the page
+    win = (Fl_Window*)windows[winpage]->o;
+    ww = win->decorated_w();
+    if(ww > w) scale_x = float(w)/ww;
+    hh = win->decorated_h();
+    if(hh > h) scale_y = float(h)/hh;
+    if (scale_x < scale) scale = scale_x;
+    if (scale_y < scale) scale = scale_y;
+    if (scale < 1) {
+      printjob.scale(scale);
+      printjob.printable_rect(&w, &h);
     }
+    printjob.origin(w/2, h/2);
+    printjob.print_window(win, -ww/2, -hh/2);
+    printjob.end_page();
   }
-
-  // clear the project and merge a file by the given name
-  new_project(false);
-  return merge_project_file(new_filename);
+  printjob.end_job();
 }
 
-#ifdef __APPLE__
-/**
- Handle app launch with an associated filename (macOS only).
- Should there be a modified design already, Fluid asks for user confirmation.
- \param[in] c the filename of the new design
- */
-void Application::apple_open_cb(const char *c) {
-  Fluid.open_project_file(std::string(c));
-}
-#endif // __APPLE__
 
 /**
  Generate the C++ source and header filenames and write those files.
@@ -939,34 +865,6 @@ int Application::write_code_files(bool dont_show_completion_dialog)
 
 
 /**
- Show the editor for the \c current Fl_Type.
- */
-void Application::edit_selected() {
-  if (!Fl_Type::current) {
-    fl_message("Please select a widget");
-    return;
-  }
-  Fl_Type::current->open();
-}
-
-/**
- User chose to copy the currently selected widgets.
- */
-void Application::copy_selected() {
-  flush_text_widgets();
-  if (!Fl_Type::current) {
-    fl_beep();
-    return;
-  }
-  flush_text_widgets();
-  ipasteoffset = 10;
-  if (!fld::io::write_file(cutfname(),1)) {
-    fl_message("Can't write %s: %s", cutfname(), strerror(errno));
-    return;
-  }
-}
-
-/**
  User chose to cut the currently selected widgets.
  */
 void Application::cut_selected() {
@@ -989,23 +887,24 @@ void Application::cut_selected() {
   widget_browser->rebuild();
 }
 
+
 /**
- User chose to delete the currently selected widgets.
+ User chose to copy the currently selected widgets.
  */
-void Application::delete_selected() {
+void Application::copy_selected() {
+  flush_text_widgets();
   if (!Fl_Type::current) {
     fl_beep();
     return;
   }
-  undo_checkpoint();
-  proj.set_modflag(1);
-  ipasteoffset = 0;
-  Fl_Type *p = Fl_Type::current->parent;
-  while (p && p->selected) p = p->parent;
-  delete_all(1);
-  if (p) select_only(p);
-  widget_browser->rebuild();
+  flush_text_widgets();
+  ipasteoffset = 10;
+  if (!fld::io::write_file(cutfname(),1)) {
+    fl_message("Can't write %s: %s", cutfname(), strerror(errno));
+    return;
+  }
 }
+
 
 /**
  User chose to paste the widgets from the cut buffer.
@@ -1038,6 +937,7 @@ void Application::paste_from_clipboard() {
   pasteoffset = 0;
   ipasteoffset += 10;
 }
+
 
 /**
  Duplicate the selected widgets.
@@ -1088,6 +988,38 @@ void Application::duplicate_selected() {
   undo_resume();
 }
 
+
+/**
+ User chose to delete the currently selected widgets.
+ */
+void Application::delete_selected() {
+  if (!Fl_Type::current) {
+    fl_beep();
+    return;
+  }
+  undo_checkpoint();
+  proj.set_modflag(1);
+  ipasteoffset = 0;
+  Fl_Type *p = Fl_Type::current->parent;
+  while (p && p->selected) p = p->parent;
+  delete_all(1);
+  if (p) select_only(p);
+  widget_browser->rebuild();
+}
+
+
+/**
+ Show the editor for the \c current Fl_Type.
+ */
+void Application::edit_selected() {
+  if (!Fl_Type::current) {
+    fl_message("Please select a widget");
+    return;
+  }
+  Fl_Type::current->open();
+}
+
+
 /**
  User wants to sort selected widgets by y coordinate.
  */
@@ -1098,13 +1030,26 @@ void Application::sort_selected() {
   proj.set_modflag(1);
 }
 
+
 /**
- Open the "About" dialog.
+ Show or hide the widget bin.
+ The state is stored in the app preferences.
  */
-void Application::about() {
-  if (!about_panel) make_about_panel();
-  about_panel->show();
+void Application::toggle_widget_bin() {
+  if (!widgetbin_panel) {
+    make_widgetbin();
+    if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
+  }
+
+  if (widgetbin_panel->visible()) {
+    widgetbin_panel->hide();
+    widgetbin_item->label("Show Widget &Bin...");
+  } else {
+    widgetbin_panel->show();
+    widgetbin_item->label("Hide Widget &Bin");
+  }
 }
+
 
 /**
  Open a dialog to show the HTML help page form the FLTK documentation folder.
@@ -1175,174 +1120,12 @@ void Application::show_help(const char *name) {
 }
 
 
-// ---- Printing
-
 /**
- Open the dialog to allow the user to print the current window.
+ Open the "About" dialog.
  */
-void Application::print_snapshots() {
-  int w, h, ww, hh;
-  int frompage, topage;
-  Fl_Type       *t;                     // Current widget
-  int           num_windows;            // Number of windows
-  Fl_Window_Type *windows[1000];        // Windows to print
-  int           winpage;                // Current window page
-  Fl_Window *win;
-
-  for (t = Fl_Type::first, num_windows = 0; t; t = t->next) {
-    if (t->is_a(ID_Window)) {
-      windows[num_windows] = (Fl_Window_Type *)t;
-      if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
-      num_windows ++;
-    }
-  }
-
-  Fl_Printer printjob;
-  if ( printjob.start_job(num_windows, &frompage, &topage) ) return;
-  int pagecount = 0;
-  for (winpage = 0; winpage < num_windows; winpage++) {
-    float scale = 1, scale_x = 1, scale_y = 1;
-    if (winpage+1 < frompage || winpage+1 > topage) continue;
-    printjob.start_page();
-    printjob.printable_rect(&w, &h);
-
-    // Get the time and date...
-    time_t curtime = time(NULL);
-    struct tm *curdate = localtime(&curtime);
-    char date[1024];
-    strftime(date, sizeof(date), "%c", curdate);
-    fl_font(FL_HELVETICA, 12);
-    fl_color(FL_BLACK);
-    fl_draw(date, (w - (int)fl_width(date))/2, fl_height());
-    sprintf(date, "%d/%d", ++pagecount, topage-frompage+1);
-    fl_draw(date, w - (int)fl_width(date), fl_height());
-
-    // Get the base filename...
-    std::string basename = fl_filename_name_str(std::string(proj.proj_filename));
-    fl_draw(basename.c_str(), 0, fl_height());
-
-    // print centered and scaled to fit in the page
-    win = (Fl_Window*)windows[winpage]->o;
-    ww = win->decorated_w();
-    if(ww > w) scale_x = float(w)/ww;
-    hh = win->decorated_h();
-    if(hh > h) scale_y = float(h)/hh;
-    if (scale_x < scale) scale = scale_x;
-    if (scale_y < scale) scale = scale_y;
-    if (scale < 1) {
-      printjob.scale(scale);
-      printjob.printable_rect(&w, &h);
-    }
-    printjob.origin(w/2, h/2);
-    printjob.print_window(win, -ww/2, -hh/2);
-    printjob.end_page();
-  }
-  printjob.end_job();
-}
-
-// ---- Main menu bar
-
-
-/**
- Change the app's and hence preview the design's scheme.
-
- The scheme setting is stored in the app preferences
- - in key \p 'scheme_name' since 1.4.0
- - in key \p 'scheme' (index: 0 - 4) in 1.3.x
-
- This callback is triggered by changing the scheme in the
- Fl_Scheme_Choice widget (\p Edit/GUI Settings).
-
- \param[in] choice the calling widget
-
- \see init_scheme() for choice values and backwards compatibility
- */
-void Application::set_scheme(const char *new_scheme) {
-  if (batch_mode)
-    return;
-
-  // set the new scheme only if the scheme was changed
-  if (Fl::is_scheme(new_scheme))
-    return;
-
-  Fl::scheme(new_scheme);
-  preferences.set("scheme_name", new_scheme);
-
-  // Backwards compatibility: store 1.3 scheme index (1-4).
-  // We assume that index 0-3 (base, plastic, gtk+, gleam) are in the
-  // same order as in 1.3.x (index 1-4), higher values are ignored
-
-  int scheme_index = scheme_choice->value();
-  if (scheme_index <= 3)                          // max. index for 1.3.x (Gleam)
-    preferences.set("scheme", scheme_index + 1);  // compensate for different indexing
-}
-
-/**
-  Read Fluid's scheme preferences and set the app's scheme.
-
-  Since FLTK 1.4.0 the scheme \b name is stored as a character string
-  with key "scheme_name" in the preference database.
-
-  In FLTK 1.3.x the scheme preference was stored as an integer index
-  with key "scheme" in the database. The known schemes were hardcoded in
-  Fluid's sources (here for reference):
-
-    | Index | 1.3 Scheme Name | Choice | 1.4 Scheme Name |
-    |-------|-----------------|-------|-----------------|
-    | 0 | Default (same as None) | n/a | n/a |
-    | 1 | None (same as Default) | 0 | base |
-    | 2 | Plastic | 1 | plastic |
-    | 3 | GTK+ | 2 | gtk+ |
-    | 4 | Gleam | 3 | gleam |
-    | n/a | n/a | 4 | oxy |
-
-  The new Fluid tries to keep backwards compatibility and reads both
-  keys (\p scheme and \p scheme_name). If the latter is defined, it is used.
-  If not the old \p scheme (index) is used - but we need to subtract one to
-  get the new Fl_Scheme_Choice index (column "Choice" above).
-*/
-void Application::init_scheme() {
-  int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
-  char *scheme_name = 0;                    // scheme name since 1.4.0
-  preferences.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
-  if (!strcmp(scheme_name, "XXX")) {
-    preferences.get("scheme", scheme_index, 0);
-    if (scheme_index > 0) {
-      scheme_index--;
-      scheme_choice->value(scheme_index);   // set the choice value
-    }
-    if (scheme_index < 0)
-      scheme_index = 0;
-    else if (scheme_index > scheme_choice->size() - 1)
-      scheme_index = 0;
-    scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
-    preferences.set("scheme_name", scheme_name);
-  }
-  // Set the new scheme only if it was not overridden by the -scheme
-  // command line option
-  if (Fl::scheme() == NULL) {
-    Fl::scheme(scheme_name);
-  }
-  free(scheme_name);
-}
-
-/**
- Show or hide the widget bin.
- The state is stored in the app preferences.
- */
-void Application::toggle_widget_bin() {
-  if (!widgetbin_panel) {
-    make_widgetbin();
-    if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
-  }
-
-  if (widgetbin_panel->visible()) {
-    widgetbin_panel->hide();
-    widgetbin_item->label("Show Widget &Bin...");
-  } else {
-    widgetbin_panel->show();
-    widgetbin_item->label("Hide Widget &Bin");
-  }
+void Application::about() {
+  if (!about_panel) make_about_panel();
+  about_panel->show();
 }
 
 
@@ -1389,4 +1172,214 @@ void Application::make_main_window() {
     make_settings_window();
   }
 }
+
+
+/**
+ Open a native file chooser to allow choosing a project file for reading.
+
+ Path and filename are preset with the current project filename, if there
+ is one.
+
+ \param title a text describing the action after selecting a file (load, merge, ...)
+ \return the file path and name, or an empty string if the operation was canceled
+ */
+std::string Application::open_project_filechooser(const std::string &title) {
+  Fl_Native_File_Chooser dialog;
+  dialog.title(title.c_str());
+  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  dialog.filter("FLUID Files\t*.f[ld]\n");
+  if (proj.proj_filename) {
+    std::string current_project_file = proj.proj_filename;
+    dialog.directory(fl_filename_path_str(current_project_file).c_str());
+    dialog.preset_file(fl_filename_name_str(current_project_file).c_str());
+  }
+  if (dialog.show() != 0)
+    return std::string();
+  return std::string(dialog.filename());
+}
+
+
+/**
+ Give the user the opportunity to save a project before clearing it.
+
+ If the project has unsaved changes, this function pops up a dialog, that
+ allows the user to save the project, continue without saving the project,
+ or to cancel the operation.
+
+ If the user chooses to save, and no filename was set, a file dialog allows
+ the user to pick a name and location, or to cancel the operation.
+
+ \return false if the user aborted the operation and the calling function
+ should abort as well
+ */
+bool Application::confirm_project_clear() {
+  if (proj.modflag == 0) return true;
+  switch (fl_choice("This project has unsaved changes. Do you want to save\n"
+                    "the project file before proceeding?",
+                    "Cancel", "Save", "Don't Save"))
+  {
+    case 0 : /* Cancel */
+      return false;
+    case 1 : /* Save */
+      save_project_file(nullptr);
+      if (proj.modflag) return false;  // user canceled the "Save As" dialog
+  }
+  return true;
+}
+
+
+/**
+ Ensure that text widgets in the widget panel propagates apply current changes.
+ By temporarily clearing the text focus, all text widgets with changed text
+ will unfocus and call their respective callbacks, propagating those changes to
+ their data set.
+ */
+void Application::flush_text_widgets() {
+  if (Fl::focus() && (Fl::focus()->top_window() == the_panel)) {
+    Fl_Widget *old_focus = Fl::focus();
+    Fl::focus(NULL); // trigger callback of the widget that is losing focus
+    Fl::focus(old_focus);
+  }
+}
+
+
+/**
+ Position the given window window based on entries in the app preferences.
+ Customisable by user; feature can be switched off.
+ The window is not shown or hidden by this function, but a value is returned
+ to indicate the state to the caller.
+ \param[in] w position this window
+ \param[in] prefsName name of the preferences item that stores the window settings
+ \param[in] Visible default value if window is hidden or shown
+ \param[in] X, Y, W, H default size and position if nothing is specified in the preferences
+ \return 1 if the caller should make the window visible, 0 if hidden.
+ */
+char Application::position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W, int H) {
+  Fl_Preferences pos(preferences, prefsName);
+  if (prevpos_button->value()) {
+    pos.get("x", X, X);
+    pos.get("y", Y, Y);
+    if ( W!=0 ) {
+      pos.get("w", W, W);
+      pos.get("h", H, H);
+      w->resize( X, Y, W, H );
+    }
+    else
+      w->position( X, Y );
+  }
+  pos.get("visible", Visible, Visible);
+  return Visible;
+}
+
+
+/**
+ Save the position and visibility state of a window to the app preferences.
+ \param[in] w save this window data
+ \param[in] prefsName name of the preferences item that stores the window settings
+ */
+void Application::save_position(Fl_Window *w, const char *prefsName) {
+  Fl_Preferences pos(preferences, prefsName);
+  pos.set("x", w->x());
+  pos.set("y", w->y());
+  pos.set("w", w->w());
+  pos.set("h", w->h());
+  pos.set("visible", (int)(w->shown() && w->visible()));
+}
+
+
+/**
+ Change the app's and hence preview the design's scheme.
+
+ The scheme setting is stored in the app preferences
+ - in key \p 'scheme_name' since 1.4.0
+ - in key \p 'scheme' (index: 0 - 4) in 1.3.x
+
+ This callback is triggered by changing the scheme in the
+ Fl_Scheme_Choice widget (\p Edit/GUI Settings).
+
+ \param[in] choice the calling widget
+
+ \see init_scheme() for choice values and backwards compatibility
+ */
+void Application::set_scheme(const char *new_scheme) {
+  if (batch_mode)
+    return;
+
+  // set the new scheme only if the scheme was changed
+  if (Fl::is_scheme(new_scheme))
+    return;
+
+  Fl::scheme(new_scheme);
+  preferences.set("scheme_name", new_scheme);
+
+  // Backwards compatibility: store 1.3 scheme index (1-4).
+  // We assume that index 0-3 (base, plastic, gtk+, gleam) are in the
+  // same order as in 1.3.x (index 1-4), higher values are ignored
+
+  int scheme_index = scheme_choice->value();
+  if (scheme_index <= 3)                          // max. index for 1.3.x (Gleam)
+    preferences.set("scheme", scheme_index + 1);  // compensate for different indexing
+}
+
+
+/**
+ Read Fluid's scheme preferences and set the app's scheme.
+
+ Since FLTK 1.4.0 the scheme \b name is stored as a character string
+ with key "scheme_name" in the preference database.
+
+ In FLTK 1.3.x the scheme preference was stored as an integer index
+ with key "scheme" in the database. The known schemes were hardcoded in
+ Fluid's sources (here for reference):
+
+ | Index | 1.3 Scheme Name | Choice | 1.4 Scheme Name |
+ |-------|-----------------|-------|-----------------|
+ | 0 | Default (same as None) | n/a | n/a |
+ | 1 | None (same as Default) | 0 | base |
+ | 2 | Plastic | 1 | plastic |
+ | 3 | GTK+ | 2 | gtk+ |
+ | 4 | Gleam | 3 | gleam |
+ | n/a | n/a | 4 | oxy |
+
+ The new Fluid tries to keep backwards compatibility and reads both
+ keys (\p scheme and \p scheme_name). If the latter is defined, it is used.
+ If not the old \p scheme (index) is used - but we need to subtract one to
+ get the new Fl_Scheme_Choice index (column "Choice" above).
+ */
+void Application::init_scheme() {
+  int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
+  char *scheme_name = 0;                    // scheme name since 1.4.0
+  preferences.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
+  if (!strcmp(scheme_name, "XXX")) {
+    preferences.get("scheme", scheme_index, 0);
+    if (scheme_index > 0) {
+      scheme_index--;
+      scheme_choice->value(scheme_index);   // set the choice value
+    }
+    if (scheme_index < 0)
+      scheme_index = 0;
+    else if (scheme_index > scheme_choice->size() - 1)
+      scheme_index = 0;
+    scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
+    preferences.set("scheme_name", scheme_name);
+  }
+  // Set the new scheme only if it was not overridden by the -scheme
+  // command line option
+  if (Fl::scheme() == NULL) {
+    Fl::scheme(scheme_name);
+  }
+  free(scheme_name);
+}
+
+
+#ifdef __APPLE__
+/**
+ Handle app launch with an associated filename (macOS only).
+ Should there be a modified design already, Fluid asks for user confirmation.
+ \param[in] c the filename of the new design
+ */
+void Application::apple_open_cb(const char *c) {
+  Fluid.open_project_file(std::string(c));
+}
+#endif // __APPLE__
 

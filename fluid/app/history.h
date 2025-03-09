@@ -35,7 +35,7 @@ public:
   // Load the project history from the preferences database.
   void load();
   // Add a new file to the project history using absolute paths.
-  void update_project_history(fld::filename project_file);
+  void update(fld::filename project_file);
 };
 
 } // namespace app

@@ -37,23 +37,9 @@ enum class I18n_Type {
 /**
  Data and settings for a FLUID project file.
  */
-class Project {
-public:
-  Project();
-  ~Project();
-  void reset();
-  void update_settings_dialog();
-
-  std::string projectfile_path() const;
-  std::string projectfile_name() const;
-  std::string codefile_path() const;
-  std::string codefile_name() const;
-  std::string headerfile_path() const;
-  std::string headerfile_name() const;
-  std::string stringsfile_path() const;
-  std::string stringsfile_name() const;
-  std::string basename() const;
-
+class Project
+{
+public: // Member Variables
   /// One of the available internationalization types.
   fld::I18n_Type i18n_type;
   /// Include file for GNU i18n, writes an #include statement into the source
@@ -104,18 +90,34 @@ public:
   /// \see goto_source_dir()
   std::string app_work_dir;
 
+  /// Set if the current design has been modified compared to the associated .fl design file.
+  int modflag { 0 };
+  /// Set if the code files are older than the current design.
+  int modflag_c { 0 };
+
+public: // Methods
+  Project();
+  ~Project();
+  void reset();
+  void update_settings_dialog();
+
+  std::string projectfile_path() const;
+  std::string projectfile_name() const;
+  std::string codefile_path() const;
+  std::string codefile_name() const;
+  std::string headerfile_path() const;
+  std::string headerfile_name() const;
+  std::string stringsfile_path() const;
+  std::string stringsfile_name() const;
+  std::string basename() const;
+
   void enter_project_dir();
   void leave_project_dir();
   
   void set_filename(const char *c);
   void write_strings();
 
-  /// Set if the current design has been modified compared to the associated .fl design file.
-  int modflag { 0 };
-  /// Set if the code files are older than the current design.
-  int modflag_c { 0 };
   void set_modflag(int mf, int mfc = -1);
-
 };
 
 } // namespace fld

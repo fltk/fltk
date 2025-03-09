@@ -75,15 +75,7 @@ class Application {
   // Delete the temporary directory and all its contents.
   void delete_tmpdir();
 
-public:
-  // Create the Fluid application.
-  Application();
-  /// Destructor.
-  ~Application() = default;
-  // Launch the application.
-  int run(int argc,char **argv);
-  // Quit the application and clean up.
-  void quit();
+public: // Member Variables
   /// Application wide preferences
   Fl_Preferences preferences;
   /// Project history.
@@ -92,27 +84,6 @@ public:
   app::Args args;
   /// Set, if Fluid runs in batch mode, and no user interface is activated.
   int batch_mode { 0 };             // fluid + any code generators (-u, -c, -cs)
-  /// Quick access to the current project. Make sure it stays synched to current_project_.
-  Project &proj { *current_project_ };
-  // Return the working directory path at application launch.
-  const fld::filename &launch_path() const;
-  // Return the path to a temporary directory for this instance of Fluid.
-  const std::string &get_tmpdir();
-  // Return the path and filename of a temporary file for cut or duplicated data.
-  const char *cutfname(int which = 0);
-
-
-
-
-private: // TODO: verify stuff below
-
-#ifdef __APPLE__
-  static void apple_open_cb(const char *c);
-#endif // __APPLE__
-
-
-
-public:
 
   // TODO: make this into a class: app::Settings
   /// Show guides in the design window when positioning widgets, saved in app preferences.
@@ -137,27 +108,7 @@ public:
   // TODO: make this into a std::string
   char external_editor_command[512] { };
 
-
-  std::string open_project_filechooser(const std::string &title);
-  bool new_project(bool user_must_confirm = true);
-  bool open_project_file(const std::string &filename_arg);
-  bool merge_project_file(const std::string &filename_arg);
-  void save_project_file(void *arg);
-  void revert_project();
-  bool new_project_from_template();
-  void print_snapshots();
-  int write_code_files(bool dont_show_completion_dialog=false);
-  void cut_selected();
-  void copy_selected();
-  void paste_from_clipboard();
-  void duplicate_selected();
-  void delete_selected();
-  void edit_selected();
-  void sort_selected();
-  void show_help(const char *name);
-  void about();
-  bool confirm_project_clear();
-
+  // TODO: make this into a class: app::GUI
   Fl_Window *main_window { nullptr };
   static Fl_Menu_Item main_menu[];
   Fl_Menu_Bar *main_menubar { nullptr };
@@ -169,22 +120,88 @@ public:
   Fl_Button *overlay_button { nullptr };
   Fl_Menu_Item *guides_item { nullptr };
   Fl_Menu_Item *restricted_item { nullptr };
-  void make_main_window();
   /// Offset in pixels when adding widgets from an .fl file.
   int pasteoffset { 0 };
   int ipasteoffset { 0 };
-
-  void flush_text_widgets(); // TODO: should be in a GUI class?
-  char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0);
-  void save_position(Fl_Window *w, const char *prefsName);
-  void set_scheme(const char *new_scheme);
-  void init_scheme();
-  void toggle_widget_bin();
-
   /// FLUID-wide help dialog.
   Fl_Help_Dialog *help_dialog { nullptr };
 
+public: // Methods
+  // Create the Fluid application.
+  Application();
+  /// Destructor.
+  ~Application() = default;
+  // Launch the application.
+  int run(int argc,char **argv);
+  // Quit the application and clean up.
+  void quit();
+  /// Quick access to the current project. Make sure it stays synched to current_project_.
+  Project &proj { *current_project_ };
+  // Return the working directory path at application launch.
+  const fld::filename &launch_path() const;
+  // Return the path to a temporary directory for this instance of Fluid.
+  const std::string &get_tmpdir();
+  // Return the path and filename of a temporary file for cut or duplicated data.
+  const char *cutfname(int which = 0);
 
+  // Clear the current project and create a new, empty one.
+  bool new_project(bool user_must_confirm = true);
+  // Open a file chooser and load an exiting project file.
+  bool open_project_file(const std::string &filename_arg);
+  // Load a project from the give file name and path.
+  bool merge_project_file(const std::string &filename_arg);
+  // Save the current design to the file given by \c filename.
+  void save_project_file(void *arg);
+  // Reload the file set by \c filename, replacing the current design.
+  void revert_project();
+  // Open the template browser and load a new file from templates.
+  bool new_project_from_template();
+  // Open the dialog to allow the user to print the current window.
+  void print_snapshots();
+  // Generate the C++ source and header filenames and write those files.
+  int write_code_files(bool dont_show_completion_dialog=false);
+
+  // User chose to cut the currently selected widgets.
+  void cut_selected();
+  // User chose to copy the currently selected widgets.
+  void copy_selected();
+  // User chose to paste the widgets from the cut buffer.
+  void paste_from_clipboard();
+  // Duplicate the selected widgets.
+  void duplicate_selected();
+  // User chose to delete the currently selected widgets.
+  void delete_selected();
+  // Show the editor for the \c current Fl_Type.
+  void edit_selected();
+  // User wants to sort selected widgets by y coordinate.
+  void sort_selected();
+  // Show or hide the widget bin.
+  void toggle_widget_bin();
+  // Open a dialog to show the HTML help page form the FLTK documentation folder.
+  void show_help(const char *name);
+  // Open the "About" dialog.
+  void about();
+
+  // Build the main app window and create a few other dialogs.
+  void make_main_window();
+  // Open a native file chooser to allow choosing a project file for reading.
+  std::string open_project_filechooser(const std::string &title);
+  // Give the user the opportunity to save a project before clearing it.
+  bool confirm_project_clear();
+  // Ensure that text widgets in the widget panel propagates apply current changes.
+  void flush_text_widgets();
+  // Position the given window window based on entries in the app preferences.
+  char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0);
+  // Save the position and visibility state of a window to the app preferences.
+  void save_position(Fl_Window *w, const char *prefsName);
+  // Change the app's and hence preview the design's scheme.
+  void set_scheme(const char *new_scheme);
+  // Read Fluid's scheme preferences and set the app's scheme.
+  void init_scheme();
+
+#ifdef __APPLE__
+  static void apple_open_cb(const char *c);
+#endif // __APPLE__
 };
 
 } // namespace fld
