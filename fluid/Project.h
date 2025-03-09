@@ -19,6 +19,7 @@
 #define FLUID_PROJECT_H
 
 #include "proj/undo.h"
+#include "nodes/tree.h"
 
 #include <string>
 
@@ -44,6 +45,9 @@ class Project
 public: // Member Variables
   // Undo actions for this Project.
   proj::Undo undo { *this };
+
+  // Manage the node tree of the project.
+  node::Tree tree { *this };
 
   /// One of the available internationalization types.
   fld::I18n_Type i18n_type = I18n_Type::NONE;

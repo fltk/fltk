@@ -38,6 +38,7 @@ set(CPPFILES
   io/Project_Reader.cxx
   io/String_Writer.cxx
   nodes/factory.cxx
+  nodes/tree.cxx
   nodes/Fl_Button_Type.cxx
   nodes/Fl_Function_Type.cxx
   nodes/Fl_Grid_Type.cxx
@@ -84,6 +85,7 @@ set(HEADERFILES
   io/Project_Reader.h
   io/String_Writer.h
   nodes/factory.h
+  nodes/tree.h
   nodes/Fl_Button_Type.h
   nodes/Fl_Function_Type.h
   nodes/Fl_Grid_Type.h
