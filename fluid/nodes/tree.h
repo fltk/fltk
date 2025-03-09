@@ -17,13 +17,13 @@
 #ifndef FLUID_NODES_TREE_H
 #define FLUID_NODES_TREE_H
 
+class Fl_Type;
+
 namespace fld {
 
 class Project;
 
 namespace node {
-
-class Fl_Type;
 
 class Tree {
   /// Link Tree class to the project.
@@ -33,11 +33,13 @@ public:
 
   Fl_Type *first = nullptr;
   Fl_Type *last = nullptr;
-//  Fl_Type *current;  // most recently picked object
-//  Fl_Type *current_dnd;
-//  Fl_Type *find_by_uid(unsigned short uid);
+  Fl_Type *current = nullptr;  // most recently picked object
+  Fl_Type *current_dnd = nullptr;
+  /// If this is greater zero, widgets will be allowed to lay out their children.
+  int allow_layout = 0;
+
+  //  Fl_Type *find_by_uid(unsigned short uid);
 //  Fl_Type *find_in_text(int text_type, int crsr);
-//  int allow_layout;
 
 public:
 

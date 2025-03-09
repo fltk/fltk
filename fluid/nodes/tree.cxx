@@ -37,7 +37,7 @@ Tree::Tree(Project &proj)
 // \return the node with this uid, or NULL if not found
 // */
 //Fl_Type *Fl_Type::find_by_uid(unsigned short uid) {
-//  for (Fl_Type *tp = Fl_Type::first; tp; tp = tp->next) {
+//  for (Fl_Type *tp = Fluid.proj.tree.first; tp; tp = tp->next) {
 //    if (tp->uid_ == uid) return tp;
 //  }
 //  return NULL;

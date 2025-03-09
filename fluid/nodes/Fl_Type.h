@@ -175,7 +175,7 @@ protected:
   unsigned short uid_;
 
 public: // things that should not be public:
-
+  // TODO: reference back to the tree
   /** Quick link to the parent Type instead of walking up the linked list. */
   Fl_Type *parent;
   /** This type is rendered "selected" in the tree browser. */
@@ -187,7 +187,6 @@ public: // things that should not be public:
   char folded_;  // if set, children are not shown in browser
   char visible; // true if all parents are open
   int level;    // number of parents over this
-  static Fl_Type *first, *last;
   Fl_Type *next, *prev;
   Fl_Type *prev_sibling();
   Fl_Type *next_sibling();
@@ -252,9 +251,6 @@ public:
    */
   virtual void layout_widget() { }
 
-  static Fl_Type *current;  // most recently picked object
-  static Fl_Type *current_dnd;
-
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
@@ -315,9 +311,6 @@ public:
   static Fl_Type *find_by_uid(unsigned short uid);
 
   static Fl_Type *find_in_text(int text_type, int crsr);
-
-  /// If this is greater zero, widgets will be allowed to lay out their children.
-  static int allow_layout;
 };
 
 #endif // _FLUID_FL_TYPE_H

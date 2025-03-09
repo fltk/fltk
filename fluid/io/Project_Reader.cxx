@@ -53,7 +53,7 @@ int fld::io::fdesign_flip = 0;
 
  \param[in] filename read this file
  \param[in] merge if this is set, merge the file into an existing project
-    at Fl_Type::current
+    at Fluid.proj.tree.current
  \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
@@ -203,7 +203,7 @@ int Project_Reader::read_quoted() {      // read whatever character is after a \
  \return the last type that was created
  */
 Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options) {
-  Fl_Type::current = p;
+  Fluid.proj.tree.current = p;
   Fl_Type *last_child_read = NULL;
   Fl_Type *t = NULL;
   for (;;) {
@@ -240,7 +240,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       if (!p && !strcmp(c,"define_in_struct")) {
         Fl_Type *t = add_new_widget_from_file("class", Strategy::FROM_FILE_AS_LAST_CHILD);
         t->name(read_word());
-        Fl_Type::current = p = t;
+        Fluid.proj.tree.current = p = t;
         merge = 1; // stops "missing }" error
         continue;
       }
@@ -388,9 +388,9 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       strategy.placement(Strategy::AFTER_CURRENT);
     }
     if (strategy.placement() == Strategy::AFTER_CURRENT) {
-      Fl_Type::current = t;
+      Fluid.proj.tree.current = t;
     } else {
-      Fl_Type::current = p;
+      Fluid.proj.tree.current = p;
     }
 
   CONTINUE:;
@@ -405,7 +405,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 /** \brief Read a .fl project file.
  \param[in] filename read this file
  \param[in] merge if this is set, merge the file into an existing project
- at Fl_Type::current
+ at Fluid.proj.tree.current
  \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
@@ -421,22 +421,22 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
     deselect();
   else
     proj_.reset();
-  read_children(Fl_Type::current, merge, strategy);
+  read_children(Fluid.proj.tree.current, merge, strategy);
   // clear this
-  Fl_Type::current = 0;
+  Fluid.proj.tree.current = 0;
   // Force menu items to be rebuilt...
-  for (o = Fl_Type::first; o; o = o->next) {
+  for (o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->is_a(ID_Menu_Manager_)) {
       o->add_child(0,0);
     }
   }
-  for (o = Fl_Type::first; o; o = o->next) {
+  for (o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->selected) {
-      Fl_Type::current = o;
+      Fluid.proj.tree.current = o;
       break;
     }
   }
-  selection_changed(Fl_Type::current);
+  selection_changed(Fluid.proj.tree.current);
   if (g_shell_config) {
     g_shell_config->rebuild_shell_menu();
     g_shell_config->update_settings_dialog();
@@ -710,10 +710,10 @@ void Project_Reader::read_fdesign() {
   Fl_Widget_Type *window = 0;
   Fl_Widget_Type *group = 0;
   Fl_Widget_Type *widget = 0;
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     Fl_Type *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
     t->name("create_the_forms()");
-    Fl_Type::current = t;
+    Fluid.proj.tree.current = t;
   }
   for (;;) {
     const char *name;
@@ -725,13 +725,13 @@ void Project_Reader::read_fdesign() {
       window = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Window", Strategy::FROM_FILE_AS_LAST_CHILD);
       window->name(value);
       window->label(value);
-      Fl_Type::current = widget = window;
+      Fluid.proj.tree.current = widget = window;
 
     } else if (!strcmp(name,"class")) {
 
       if (!strcmp(value,"FL_BEGIN_GROUP")) {
         group = widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Group", Strategy::FROM_FILE_AS_LAST_CHILD);
-        Fl_Type::current = group;
+        Fluid.proj.tree.current = group;
       } else if (!strcmp(value,"FL_END_GROUP")) {
         if (group) {
           Fl_Group* g = (Fl_Group*)(group->o);
@@ -740,7 +740,7 @@ void Project_Reader::read_fdesign() {
           Fl_Group::current(0);
         }
         group = widget = 0;
-        Fl_Type::current = window;
+        Fluid.proj.tree.current = window;
       } else {
         for (int i = 0; class_matcher[i]; i += 2)
           if (!strcmp(value,class_matcher[i])) {

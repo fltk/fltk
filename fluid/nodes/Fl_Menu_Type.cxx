@@ -163,7 +163,7 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
  */
 Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
   // Find a good insert position based on the current marked node
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
@@ -201,11 +201,11 @@ Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
 
 void group_selected_menuitems() {
   // The group will be created in the parent group of the current menuitem
-  if (!Fl_Type::current->is_a(ID_Menu_Item)) {
+  if (!Fluid.proj.tree.current->is_a(ID_Menu_Item)) {
     return;
   }
-  Fl_Menu_Item_Type *q = static_cast<Fl_Menu_Item_Type*>(Fl_Type::current);
-  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Menu_Item_Type *q = static_cast<Fl_Menu_Item_Type*>(Fluid.proj.tree.current);
+  Fl_Type *qq = Fluid.proj.tree.current->parent;
   if (!qq || !(qq->is_a(ID_Menu_Manager_) || qq->is_a(ID_Submenu))) {
     fl_message("Can't create a new submenu here.");
     return;
@@ -229,8 +229,8 @@ void group_selected_menuitems() {
 
 void ungroup_selected_menuitems() {
   // Find the submenu
-  Fl_Type *qq = Fl_Type::current->parent;
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  Fl_Type *qq = Fluid.proj.tree.current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fluid.proj.tree.current);
   int q_level = q->level;
   if (!qq || !qq->is_a(ID_Submenu)) {
     fl_message("Only menu items inside a submenu can be ungrouped.");
@@ -238,7 +238,7 @@ void ungroup_selected_menuitems() {
   }
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
-  Fl_Type::current = qq;
+  Fluid.proj.tree.current = qq;
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != q_level || !t->selected) {
       t = t->next;
@@ -252,7 +252,7 @@ void ungroup_selected_menuitems() {
     qq->remove();
     delete qq;   // qq has no children that need to be delete
   }
-  Fl_Type::current = q;
+  Fluid.proj.tree.current = q;
   widget_browser->rebuild();
   Fluid.proj.undo.resume();
   Fluid.proj.set_modflag(1);
@@ -900,7 +900,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
     i->redraw();
   } else {
     int mod = 0;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+    for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_button()) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;

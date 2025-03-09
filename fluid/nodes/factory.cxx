@@ -1354,7 +1354,7 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool an
  */
 static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->can_have_children())
+  if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())
     t = ((Fl_Type*)v)->make(Strategy::AS_LAST_CHILD);
   else
     t = ((Fl_Type*)v)->make(Strategy::AFTER_CURRENT);
@@ -1369,7 +1369,7 @@ static void cbf(Fl_Widget *, void *v) {
  */
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->can_have_children())
+  if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())
     t = add_new_widget_from_user((Fl_Type*)v, Strategy::AS_LAST_CHILD);
   else
     t = add_new_widget_from_user((Fl_Type*)v, Strategy::AFTER_CURRENT);

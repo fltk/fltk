@@ -42,7 +42,7 @@ void align_widget_cb(Fl_Widget*, long how)
   //---- align
   case 10: // align left
     left = max;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -51,7 +51,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (left!=max)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -59,16 +59,16 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(left, w->y(), w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
     break;
   case 11: // align h.center
     left = max; right = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -81,7 +81,7 @@ void align_widget_cb(Fl_Widget*, long how)
     if (left!=max)
     {
       int center2 = left+right;
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -89,9 +89,9 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
@@ -99,7 +99,7 @@ void align_widget_cb(Fl_Widget*, long how)
     break;
   case 12: // align right
     right = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -108,7 +108,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (right!=min)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -116,16 +116,16 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(right-w->w(), w->y(), w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
     break;
   case 13: // align top
     top = max;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -134,7 +134,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (top!=max)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -142,16 +142,16 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), top, w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
     break;
   case 14: // align v.center
     top = max; bot = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -164,7 +164,7 @@ void align_widget_cb(Fl_Widget*, long how)
     if (top!=max)
     {
       int center2 = top+bot;
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -172,9 +172,9 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
@@ -182,7 +182,7 @@ void align_widget_cb(Fl_Widget*, long how)
     break;
   case 15: // align bottom
     bot = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -191,7 +191,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (bot!=min)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -199,9 +199,9 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize( w->x(), bot-w->h(), w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
@@ -209,7 +209,7 @@ void align_widget_cb(Fl_Widget*, long how)
   //---- space evenly
   case 20: // space evenly across
     left = max; right = min; wdt = 0; n = 0;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -226,7 +226,7 @@ void align_widget_cb(Fl_Widget*, long how)
     {
       wdt = wdt/n*n; // make sure that all gaps are the same, possibly moving the rightmost widget
       int cnt = 0, wsum = 0;
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -234,9 +234,9 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(left+wsum+wdt*cnt/n, w->y(), w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
           cnt++;
@@ -246,7 +246,7 @@ void align_widget_cb(Fl_Widget*, long how)
     break;
   case 21: // space evenly down
     top = max; bot = min; hgt = 0, n = 0;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -263,7 +263,7 @@ void align_widget_cb(Fl_Widget*, long how)
     {
       hgt = hgt/n*n; // make sure that all gaps are the same, possibly moving the rightmost widget
       int cnt = 0, hsum = 0;
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -271,9 +271,9 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), top+hsum+hgt*cnt/n, w->w(), w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
           cnt++;
@@ -284,7 +284,7 @@ void align_widget_cb(Fl_Widget*, long how)
   //---- make same size
   case 30: // same width
     wdt = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -293,7 +293,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (wdt!=min)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -301,16 +301,16 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), w->y(), wdt, w->h());
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
     break;
   case 31: // same height
     hgt = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -319,7 +319,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (hgt!=min)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -327,16 +327,16 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize( w->x(), w->y(), w->w(), hgt);
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
     break;
   case 32: // same size
     hgt = min; wdt = min;
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
@@ -347,7 +347,7 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (hgt!=min)
-      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
@@ -355,16 +355,16 @@ void align_widget_cb(Fl_Widget*, long how)
             Fluid.proj.undo.checkpoint();
           }
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-          Fl_Type::allow_layout++;
+          Fluid.proj.tree.allow_layout++;
           w->resize( w->x(), w->y(), wdt, hgt);
-          Fl_Type::allow_layout--;
+          Fluid.proj.tree.allow_layout--;
           w->redraw();
           if (w->window()) w->window()->redraw();
         }
     break;
   //---- center in group
   case 40: // center hor
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget() && o->parent)
       {
         if (!changed) {
@@ -378,15 +378,15 @@ void align_widget_cb(Fl_Widget*, long how)
         if (w->window() == p) center2 = p->w();
         else center2 = 2*p->x()+p->w();
 
-        Fl_Type::allow_layout++;
+        Fluid.proj.tree.allow_layout++;
         w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
-        Fl_Type::allow_layout--;
+        Fluid.proj.tree.allow_layout--;
         w->redraw();
         if (w->window()) w->window()->redraw();
       }
     break;
   case 41: // center vert
-    for (o = Fl_Type::first; o; o = o->next)
+    for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget() && o->parent)
       {
         if (!changed) {
@@ -400,9 +400,9 @@ void align_widget_cb(Fl_Widget*, long how)
         if (w->window() == p) center2 = p->h();
         else center2 = 2*p->y()+p->h();
 
-        Fl_Type::allow_layout++;
+        Fluid.proj.tree.allow_layout++;
         w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
-        Fl_Type::allow_layout--;
+        Fluid.proj.tree.allow_layout--;
         Fluid.proj.set_modflag(1);
         w->redraw();
         if (w->window()) w->window()->redraw();

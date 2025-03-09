@@ -72,7 +72,7 @@ static void external_editor_timer(void*) {
   if ( editors_open > 0 ) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
-    for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
+    for (Fl_Type *p = Fluid.proj.tree.first; p; p = p->next) {
       if ( p->is_a(ID_Code) ) {
         Fl_Code_Type *code = (Fl_Code_Type*)p;
         // Code changed by external editor?
@@ -515,7 +515,7 @@ bool Application::open_project_file(const std::string &filename_arg) {
  \return false if the operation failed
  */
 bool Application::merge_project_file(const std::string &filename_arg) {
-  bool is_a_merge = (Fl_Type::first != NULL);
+  bool is_a_merge = (Fluid.proj.tree.first != NULL);
   std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
 
   // ask for a filename if none was given
@@ -743,7 +743,7 @@ void Application::print_snapshots() {
   int           winpage;                // Current window page
   Fl_Window *win;
 
-  for (t = Fl_Type::first, num_windows = 0; t; t = t->next) {
+  for (t = Fluid.proj.tree.first, num_windows = 0; t; t = t->next) {
     if (t->is_a(ID_Window)) {
       windows[num_windows] = (Fl_Window_Type *)t;
       if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
@@ -868,7 +868,7 @@ int Application::write_code_files(bool dont_show_completion_dialog)
  User chose to cut the currently selected widgets.
  */
 void Application::cut_selected() {
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_beep();
     return;
   }
@@ -880,7 +880,7 @@ void Application::cut_selected() {
   proj.undo.checkpoint();
   proj.set_modflag(1);
   ipasteoffset = 0;
-  Fl_Type *p = Fl_Type::current->parent;
+  Fl_Type *p = Fluid.proj.tree.current->parent;
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
@@ -893,7 +893,7 @@ void Application::cut_selected() {
  */
 void Application::copy_selected() {
   flush_text_widgets();
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_beep();
     return;
   }
@@ -918,8 +918,8 @@ void Application::paste_from_clipboard() {
   proj.undo.checkpoint();
   proj.undo.suspend();
   Strategy strategy = Strategy::FROM_FILE_AFTER_CURRENT;
-  if (Fl_Type::current && Fl_Type::current->can_have_children()) {
-    if (Fl_Type::current->folded_ == 0) {
+  if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children()) {
+    if (Fluid.proj.tree.current->folded_ == 0) {
       // If the current widget is a group widget and it is not folded,
       // add the new widgets inside the group.
       strategy = Strategy::FROM_FILE_AS_LAST_CHILD;
@@ -932,7 +932,7 @@ void Application::paste_from_clipboard() {
     fl_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
   proj.undo.resume();
-  widget_browser->display(Fl_Type::current);
+  widget_browser->display(Fluid.proj.tree.current);
   widget_browser->rebuild();
   pasteoffset = 0;
   ipasteoffset += 10;
@@ -947,7 +947,7 @@ void Application::paste_from_clipboard() {
  this one.
  */
 void Application::duplicate_selected() {
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_beep();
     return;
   }
@@ -958,8 +958,8 @@ void Application::duplicate_selected() {
   // find the last selected node with the lowest level:
   int lowest_level = 9999;
   Fl_Type *new_insert = NULL;
-  if (Fl_Type::current->selected) {
-    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+  if (Fluid.proj.tree.current->selected) {
+    for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && (t->level <= lowest_level)) {
         lowest_level = t->level;
         new_insert = t;
@@ -967,7 +967,7 @@ void Application::duplicate_selected() {
     }
   }
   if (new_insert)
-    Fl_Type::current = new_insert;
+    Fluid.proj.tree.current = new_insert;
 
   // write the selected widgets to a file:
   if (!fld::io::write_file(proj, cutfname(1),1)) {
@@ -983,7 +983,7 @@ void Application::duplicate_selected() {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
   fl_unlink(cutfname(1));
-  widget_browser->display(Fl_Type::current);
+  widget_browser->display(Fluid.proj.tree.current);
   widget_browser->rebuild();
   proj.undo.resume();
 }
@@ -993,14 +993,14 @@ void Application::duplicate_selected() {
  User chose to delete the currently selected widgets.
  */
 void Application::delete_selected() {
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_beep();
     return;
   }
   proj.undo.checkpoint();
   proj.set_modflag(1);
   ipasteoffset = 0;
-  Fl_Type *p = Fl_Type::current->parent;
+  Fl_Type *p = Fluid.proj.tree.current->parent;
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
@@ -1012,11 +1012,11 @@ void Application::delete_selected() {
  Show the editor for the \c current Fl_Type.
  */
 void Application::edit_selected() {
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_message("Please select a widget");
     return;
   }
-  Fl_Type::current->open();
+  Fluid.proj.tree.current->open();
 }
 
 

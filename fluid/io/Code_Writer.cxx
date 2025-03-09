@@ -579,7 +579,7 @@ Fl_Type* Code_Writer::write_static(Fl_Type* p) {
 Fl_Type* Code_Writer::write_code(Fl_Type* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
-  if (!(p==Fl_Type::last && p->is_a(ID_Comment))) {
+  if (!(p==Fluid.proj.tree.last && p->is_a(ID_Comment))) {
     if (write_codeview) p->code1_start = (int)ftell(code_file);
     if (write_codeview) p->header1_start = (int)ftell(header_file);
     p->write_code1(*this);
@@ -674,7 +674,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   }
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
-  Fl_Type* first_type = Fl_Type::first;
+  Fl_Type* first_type = Fluid.proj.tree.first;
   if (first_type && first_type->is_a(ID_Comment)) {
     if (write_codeview) {
       first_type->code1_start = first_type->code2_start = (int)ftell(code_file);
@@ -778,8 +778,8 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
 
   fprintf(header_file, "#endif\n");
 
-  Fl_Type* last_type = Fl_Type::last;
-  if (last_type && (last_type != Fl_Type::first) && last_type->is_a(ID_Comment)) {
+  Fl_Type* last_type = Fluid.proj.tree.last;
+  if (last_type && (last_type != Fluid.proj.tree.first) && last_type->is_a(ID_Comment)) {
     if (write_codeview) {
       last_type->code1_start = last_type->code2_start = (int)ftell(code_file);
       last_type->header1_start = last_type->header2_start = (int)ftell(header_file);

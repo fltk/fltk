@@ -206,7 +206,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
 
  Fluid currently generates only one instance of this browser. If we want
  to use multiple browser at some point, we need to refactor a few global
- variables, i.e. Fl_Type::first and Fl_Type::last .
+ variables, i.e. Fluid.proj.tree.first and Fluid.proj.tree.last .
 
  \param[in] X, Y, W, H position and size of widget
  \param[in] l optional label
@@ -226,7 +226,7 @@ Node_Browser::Node_Browser(int X,int Y,int W,int H,const char*l) :
  \return the first item
  */
 void *Node_Browser::item_first() const {
-  return Fl_Type::first;
+  return Fluid.proj.tree.first;
 }
 
 /**
@@ -613,7 +613,7 @@ void Node_Browser::display(Fl_Type *inNode) {
   int currentV = vposition(), newV = currentV;
   int nodeV = 0;
   // find the inNode in the tree and check, if it is already visible
-  Fl_Type *p=Fl_Type::first;
+  Fl_Type *p=Fluid.proj.tree.first;
   for ( ; p && p!=inNode; p=p->next) {
     if (p->visible)
       nodeV += item_height(p) + linespacing();

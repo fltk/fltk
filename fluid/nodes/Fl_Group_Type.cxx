@@ -49,7 +49,7 @@ Fl_Group_Type Fl_Group_type;    // the "factory"
  \param[in] X, Y, W, H new size
  */
 void Fl_Group_Proxy::resize(int X, int Y, int W, int H) {
-  if (Fl_Type::allow_layout > 0) {
+  if (Fluid.proj.tree.allow_layout > 0) {
     Fl_Group::resize(X, Y, W, H);
   } else {
     Fl_Widget::resize(X, Y, W, H);
@@ -93,21 +93,21 @@ void fix_group_size(Fl_Type *tt) {
 extern void group_selected_menuitems();
 
 void group_cb(Fl_Widget *, void *) {
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_message("No widgets selected.");
     return;
   }
-  if (!Fl_Type::current->is_widget()) {
+  if (!Fluid.proj.tree.current->is_widget()) {
     fl_message("Only widgets and menu items can be grouped.");
     return;
   }
-  if (Fl_Type::current->is_a(ID_Menu_Item)) {
+  if (Fluid.proj.tree.current->is_a(ID_Menu_Item)) {
     group_selected_menuitems();
     return;
   }
   // The group will be created in the parent group of the current widget
-  Fl_Type *qq = Fl_Type::current->parent;
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  Fl_Type *qq = Fluid.proj.tree.current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fluid.proj.tree.current);
   while (qq && !qq->is_a(ID_Group)) {
     qq = qq->parent;
   }
@@ -117,7 +117,7 @@ void group_cb(Fl_Widget *, void *) {
   }
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
-  Fl_Type::current = qq;
+  Fluid.proj.tree.current = qq;
   Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(Strategy::AS_LAST_CHILD));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
@@ -131,7 +131,7 @@ void group_cb(Fl_Widget *, void *) {
     t = nxt;
   }
   fix_group_size(n);
-  Fl_Type::current = q;
+  Fluid.proj.tree.current = q;
   n->layout_widget();
   widget_browser->rebuild();
   Fluid.proj.undo.resume();
@@ -141,22 +141,22 @@ void group_cb(Fl_Widget *, void *) {
 extern void ungroup_selected_menuitems();
 
 void ungroup_cb(Fl_Widget *, void *) {
-  if (!Fl_Type::current) {
+  if (!Fluid.proj.tree.current) {
     fl_message("No widgets selected.");
     return;
   }
-  if (!Fl_Type::current->is_widget()) {
+  if (!Fluid.proj.tree.current->is_widget()) {
     fl_message("Only widgets and menu items can be ungrouped.");
     return;
   }
-  if (Fl_Type::current->is_a(ID_Menu_Item)) {
+  if (Fluid.proj.tree.current->is_a(ID_Menu_Item)) {
     ungroup_selected_menuitems();
     return;
   }
 
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fluid.proj.tree.current);
   int q_level = q->level;
-  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Type *qq = Fluid.proj.tree.current->parent;
   while (qq && !qq->is_true_widget()) qq = qq->parent;
   if (!qq || !qq->is_a(ID_Group)) {
     fl_message("Only menu widgets inside a group can be ungrouped.");
@@ -164,7 +164,7 @@ void ungroup_cb(Fl_Widget *, void *) {
   }
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
-  Fl_Type::current = qq;
+  Fluid.proj.tree.current = qq;
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != q_level || !t->selected) {
       t = t->next;
@@ -178,7 +178,7 @@ void ungroup_cb(Fl_Widget *, void *) {
     qq->remove();
     delete qq;   // qq has no children that need to be delete
   }
-  Fl_Type::current = q;
+  Fluid.proj.tree.current = q;
   widget_browser->rebuild();
   Fluid.proj.undo.resume();
   Fluid.proj.set_modflag(1);
@@ -292,7 +292,7 @@ Fl_Flex_Type Fl_Flex_type;      // the "factory"
  \param[in] X, Y, W, H new size
  */
 void Fl_Flex_Proxy::resize(int X, int Y, int W, int H) {
-  if (Fl_Type::allow_layout > 0) {
+  if (Fluid.proj.tree.allow_layout > 0) {
     Fl_Flex::resize(X, Y, W, H);
   } else {
     Fl_Widget::resize(X, Y, W, H);
@@ -461,9 +461,9 @@ void Fl_Flex_Type::remove_child(Fl_Type* a) {
 }
 
 void Fl_Flex_Type::layout_widget() {
-  allow_layout++;
+  Fluid.proj.tree.allow_layout++;
   ((Fl_Flex*)o)->layout();
-  allow_layout--;
+  Fluid.proj.tree.allow_layout--;
 }
 
 // Change from HORIZONTAL to VERTICAL or back.
@@ -722,7 +722,7 @@ const char tabs_type_name[] = "Fl_Tabs";
 
 // Override group's resize behavior to do nothing to children:
 void Fl_Tabs_Proxy::resize(int X, int Y, int W, int H) {
-  if (Fl_Type::allow_layout > 0) {
+  if (Fluid.proj.tree.allow_layout > 0) {
     Fl_Tabs::resize(X, Y, W, H);
   } else {
     Fl_Widget::resize(X, Y, W, H);
@@ -829,7 +829,7 @@ const char wizard_type_name[] = "Fl_Wizard";
 
 // Override group's resize behavior to do nothing to children:
 void Fl_Wizard_Proxy::resize(int X, int Y, int W, int H) {
-  if (Fl_Type::allow_layout > 0) {
+  if (Fluid.proj.tree.allow_layout > 0) {
     Fl_Wizard::resize(X, Y, W, H);
   } else {
     Fl_Widget::resize(X, Y, W, H);

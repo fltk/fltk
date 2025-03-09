@@ -63,7 +63,7 @@ Fl_Grid_Proxy::~Fl_Grid_Proxy() {
 
 // Override group's resize behavior to do nothing to children:
 void Fl_Grid_Proxy::resize(int X, int Y, int W, int H) {
-  if (Fl_Type::allow_layout > 0) {
+  if (Fluid.proj.tree.allow_layout > 0) {
     Fl_Grid::resize(X, Y, W, H);
   } else {
     Fl_Widget::resize(X, Y, W, H);
@@ -149,9 +149,9 @@ void Fl_Grid_Proxy::move_cell(Fl_Widget *in_child, int to_row, int to_col, int h
       if (old_cell) remove_cell(old_cell->row(), old_cell->col());
       new_cell = transient_widget(in_child, to_row, to_col, rowspan, colspan, align);
       Fl_Widget *w = current->widget();
-      Fl_Type::allow_layout++;
+      Fluid.proj.tree.allow_layout++;
       in_child->resize(w->x(), w->y(), w->w(), w->h());
-      Fl_Type::allow_layout--;
+      Fluid.proj.tree.allow_layout--;
     }
   }
   if (new_cell) new_cell->minimum_size(w, h);
@@ -764,9 +764,9 @@ void Fl_Grid_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
 }
 
 void Fl_Grid_Type::layout_widget() {
-  allow_layout++;
+  Fluid.proj.tree.allow_layout++;
   ((Fl_Grid*)o)->layout();
-  allow_layout--;
+  Fluid.proj.tree.allow_layout--;
 }
 
 

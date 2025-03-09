@@ -103,7 +103,7 @@ void Undo::redo() {
     return;
   }
   if (reload_panel) {
-    for (Fl_Type *t = Fl_Type::first; t; t=t->next) {
+    for (Fl_Type *t = Fluid.proj.tree.first; t; t=t->next) {
       if (t->is_widget() && t->selected)
         t->open();
     }
@@ -156,7 +156,7 @@ void Undo::undo() {
     return;
   }
   if (reload_panel) {
-    for (Fl_Type *t = Fl_Type::first; t; t=t->next) {
+    for (Fl_Type *t = Fluid.proj.tree.first; t; t=t->next) {
       if (t->is_widget() && t->selected) {
         t->open();
         break;

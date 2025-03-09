@@ -19,6 +19,7 @@
 #include "Fluid.h"
 #include "io/Project_Writer.h"
 #include "nodes/factory.h"
+#include "nodes/tree.h"
 #include "nodes/Fl_Window_Type.h"
 #include "panels/template_panel.h"
 
@@ -104,7 +105,7 @@ void fld::app::save_template() {
   // Get the screenshot, if any...
   Fl_Type *t;
 
-  for (t = Fl_Type::first; t; t = t->next) {
+  for (t = Fluid.proj.tree.first; t; t = t->next) {
     // Find the first window...
     if (t->is_a(ID_Window)) break;
   }

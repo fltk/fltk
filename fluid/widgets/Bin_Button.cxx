@@ -57,7 +57,7 @@ int fld::widget::Bin_Button::handle(int inEvent)
         Fl_Button::handle(FL_RELEASE);
         // make it into a dnd event
         const char *type_name = (const char*)user_data();
-        Fl_Type::current_dnd = Fl_Type::current;
+        Fluid.proj.tree.current_dnd = Fluid.proj.tree.current;
         Fl::copy(type_name, (int)strlen(type_name)+1, 0);
         Fl::dnd();
         return 1;
@@ -118,7 +118,7 @@ int fld::widget::Bin_Window_Button::handle(int inEvent)
             w->position(Fl::event_x_root(), Fl::event_y_root());
           }
         }
-        widget_browser->display(Fl_Type::current);
+        widget_browser->display(Fluid.proj.tree.current);
         widget_browser->rebuild();
       }
       return Fl_Button::handle(inEvent);

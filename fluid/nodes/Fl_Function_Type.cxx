@@ -50,7 +50,7 @@ Fl_Class_Type *current_class = NULL;
  */
 int has_toplevel_function(const char *rtype, const char *sig) {
   Fl_Type *child;
-  for (child = Fl_Type::first; child; child = child->next) {
+  for (child = Fluid.proj.tree.first; child; child = child->next) {
     if (!child->is_in_class() && child->is_a(ID_Function)) {
       const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
       if (fn->has_signature(rtype, sig))
@@ -207,7 +207,7 @@ Fl_Function_Type::~Fl_Function_Type() {
  \return the new node
  */
 Fl_Type *Fl_Function_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -597,7 +597,7 @@ Fl_Code_Type::Fl_Code_Type() :
  \return new Code node
  */
 Fl_Type *Fl_Code_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_code_block()) {
@@ -765,7 +765,7 @@ Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
  \return new CodeBlock
  */
 Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_code_block()) {
@@ -907,7 +907,7 @@ int Fl_Decl_Type::is_public() const
  \return new Declaration node
  */
 Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -1135,7 +1135,7 @@ Fl_Data_Type::~Fl_Data_Type() {
  \return new inline data node
  */
 Fl_Type *Fl_Data_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -1479,7 +1479,7 @@ int Fl_DeclBlock_Type::is_public() const {
  \return new Declaration Block node
  */
 Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
@@ -1711,7 +1711,7 @@ Fl_Comment_Type::Fl_Comment_Type() :
  \return new Comment node
  */
 Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_code_block()) {
@@ -1991,7 +1991,7 @@ void Fl_Class_Type::prefix(const char*p) {
  \return new Class node
  */
 Fl_Type *Fl_Class_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {

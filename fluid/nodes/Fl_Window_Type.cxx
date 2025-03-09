@@ -228,7 +228,7 @@ int Overlay_Window::handle(int e) {
  \return new node
  */
 Fl_Type *Fl_Window_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) {
     anchor = p;
@@ -391,7 +391,7 @@ void xclass_cb(Fl_Input* i, void* v) {
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+    for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_a(ID_Window)) {
         mod = 1;
         Fl_Window_Type *wt = (Fl_Window_Type *)o;
@@ -424,7 +424,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   }
 
   Fl_Widget* t = resizable();
-  if (Fl_Type::allow_layout == 0) {
+  if (Fluid.proj.tree.allow_layout == 0) {
     resizable(0);
   }
 
@@ -748,7 +748,7 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
 
 // do that for every window (when selected set changes):
 void redraw_overlays() {
-  for (Fl_Type *o=Fl_Type::first; o; o=o->next)
+  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next)
     if (o->is_a(ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
 }
 
@@ -763,7 +763,7 @@ void toggle_overlays(Fl_Widget *,void *) {
     if (overlay_button) overlay_button->label("Hide &Overlays");
   }
 
-  for (Fl_Type *o=Fl_Type::first; o; o=o->next)
+  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next)
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
@@ -786,7 +786,7 @@ void toggle_guides(Fl_Widget *,void *) {
   if (guides_button)
     guides_button->value(Fluid.show_guides);
 
-  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next) {
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
@@ -818,7 +818,7 @@ void toggle_restricted(Fl_Widget *,void *) {
   if (restricted_button)
     restricted_button->value(Fluid.show_restricted);
 
-  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next) {
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
@@ -832,7 +832,7 @@ void toggle_restricted(Fl_Widget *,void *) {
 void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
   Fluid.show_ghosted_outline = !Fluid.show_ghosted_outline;
   Fluid.preferences.set("Fluid.show_ghosted_outline", Fluid.show_ghosted_outline);
-  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next) {
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw();
@@ -883,9 +883,9 @@ void Fl_Window_Type::moveallchildren(int key)
       newposition(myo,x,y,r,t);
       if (myo->is_a(ID_Flex) || myo->is_a(ID_Grid)) {
         // Flex and Grid need to be able to layout their children.
-        allow_layout++;
+        Fluid.proj.tree.allow_layout++;
         myo->o->resize(x,y,r-x,t-y);
-        allow_layout--;
+        Fluid.proj.tree.allow_layout--;
       } else {
         // Other groups are resized without affecting their children, however
         // they move their children if the entire widget is moved.
@@ -914,9 +914,9 @@ void Fl_Window_Type::moveallchildren(int key)
           }
         }
         // relayout the Flex parent
-        allow_layout++;
+        Fluid.proj.tree.allow_layout++;
         f->layout();
-        allow_layout--;
+        Fluid.proj.tree.allow_layout--;
       } else if (myo->parent && myo->parent->is_a(ID_Grid)) {
         Fl_Grid_Type* gt = (Fl_Grid_Type*)myo->parent;
         Fl_Grid* g = (Fl_Grid*)gt->o;
@@ -929,9 +929,9 @@ void Fl_Window_Type::moveallchildren(int key)
             gt->child_resized(myo);
           }
         }
-        allow_layout++;
+        Fluid.proj.tree.allow_layout++;
         g->layout();
-        allow_layout--;
+        Fluid.proj.tree.allow_layout--;
         update_widget_panel = true;
       } else if (myo->parent && myo->parent->is_a(ID_Group)) {
         Fl_Group_Type* gt = (Fl_Group_Type*)myo->parent;
@@ -1065,21 +1065,21 @@ int Fl_Window_Type::handle(int event) {
       // If the selected widget at dnd start and the drop target are the same,
       // or in the same group, add after selection. Otherwise, just add
       // at the end of the selected group.
-      if (   Fl_Type::current_dnd->group()
+      if (   Fluid.proj.tree.current_dnd->group()
           && selection && selection->group()
-          && Fl_Type::current_dnd->group()==selection->group())
+          && Fluid.proj.tree.current_dnd->group()==selection->group())
       {
-        Fl_Type *cc = Fl_Type::current;
-        Fl_Type::current = Fl_Type::current_dnd;
+        Fl_Type *cc = Fluid.proj.tree.current;
+        Fluid.proj.tree.current = Fluid.proj.tree.current_dnd;
         add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
-        Fl_Type::current = cc;
+        Fluid.proj.tree.current = cc;
       } else {
         add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
       }
       popupx = 0x7FFFFFFF;
       popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
       in_this_only = NULL;
-      widget_browser->display(Fl_Type::current);
+      widget_browser->display(Fluid.proj.tree.current);
       widget_browser->rebuild();
       return 1;
     }
@@ -1197,7 +1197,7 @@ int Fl_Window_Type::handle(int event) {
     case FL_Tab: {
       if (Fl::event_state(FL_SHIFT)) backtab = 1;
       // find current child:
-      Fl_Type *i = Fl_Type::current;
+      Fl_Type *i = Fluid.proj.tree.current;
       while (i && !i->is_true_widget()) i = i->parent;
       if (!i) return 0;
       Fl_Type *p = i->parent;
@@ -1373,7 +1373,7 @@ Fl_Widget_Class_Type *current_widget_class = 0;
  \return new node
  */
 Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) {
     anchor = p;

@@ -121,12 +121,6 @@
 
 // ---- global variables
 
-Fl_Type *Fl_Type::first = NULL;
-Fl_Type *Fl_Type::last = NULL;
-Fl_Type *Fl_Type::current = NULL;
-Fl_Type *Fl_Type::current_dnd = NULL;
-int Fl_Type::allow_layout = 0;
-
 Fl_Type *in_this_only; // set if menu popped-up in window
 
 
@@ -139,7 +133,7 @@ Fl_Type *in_this_only; // set if menu popped-up in window
  */
 void print_project_tree() {
   fprintf(stderr, "---- %s --->\n", Fluid.proj.projectfile_name().c_str());
-  for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+  for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
     for (int i = t->level; i > 0; i--)
       fprintf(stderr, ". ");
     fprintf(stderr, "%s\n", subclassname(t));
@@ -157,20 +151,20 @@ void print_project_tree() {
  */
 bool validate_project_tree() {
   // Validate `first` and `last`
-  if (Fl_Type::first == NULL) {
-    if (Fl_Type::last == NULL) {
+  if (Fluid.proj.tree.first == NULL) {
+    if (Fluid.proj.tree.last == NULL) {
       return true;
     } else {
       fprintf(stderr, "ERROR: `first` is NULL, but `last` is not!\n");
       return false;
     }
   }
-  if (Fl_Type::last == NULL) {
+  if (Fluid.proj.tree.last == NULL) {
     fprintf(stderr, "ERROR: `last` is NULL, but `first` is not!\n");
     return false;
   }
   // Validate the branch linkage, parent links, etc.
-  return validate_branch(Fl_Type::first);
+  return validate_branch(Fluid.proj.tree.first);
 }
 #endif
 
@@ -185,17 +179,17 @@ bool validate_project_tree() {
  */
 bool validate_independent_branch(class Fl_Type *root) {
   // Make sure that `first` and `last` do not point at any node in this branch
-  if (Fl_Type::first) {
+  if (Fluid.proj.tree.first) {
     for (Fl_Type *t = root; t; t = t->next) {
-      if (Fl_Type::first == t) {
+      if (Fluid.proj.tree.first == t) {
         fprintf(stderr, "ERROR: Branch is not independent, `first` is pointing to branch member!\n");
         return false;
       }
     }
   }
-  if (Fl_Type::last) {
+  if (Fluid.proj.tree.last) {
     for (Fl_Type *t = root; t; t = t->next) {
-      if (Fl_Type::last == t) {
+      if (Fluid.proj.tree.last == t) {
         fprintf(stderr, "ERROR: Branch is not independent, `last` is pointing to branch member!\n");
         return false;
       }
@@ -270,7 +264,7 @@ bool validate_branch(class Fl_Type *root) {
 #endif
 
 void select_all_cb(Fl_Widget *,void *) {
-  Fl_Type *p = Fl_Type::current ? Fl_Type::current->parent : 0;
+  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : 0;
   if (in_this_only) {
     Fl_Type *t = p;
     for (; t && t != in_this_only; t = t->parent) {/*empty*/}
@@ -285,7 +279,7 @@ void select_all_cb(Fl_Widget *,void *) {
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Fl_Type *t = Fl_Type::first; t; t = t->next)
+      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next)
         widget_browser->select(t,1,0);
       break;
     }
@@ -294,7 +288,7 @@ void select_all_cb(Fl_Widget *,void *) {
 }
 
 void select_none_cb(Fl_Widget *,void *) {
-  Fl_Type *p = Fl_Type::current ? Fl_Type::current->parent : 0;
+  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : 0;
   if (in_this_only) {
     Fl_Type *t = p;
     for (; t && t != in_this_only; t = t->parent) {/*empty*/}
@@ -309,7 +303,7 @@ void select_none_cb(Fl_Widget *,void *) {
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Fl_Type *t = Fl_Type::first; t; t = t->next)
+      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next)
         widget_browser->select(t,0,0);
       break;
     }
@@ -323,7 +317,7 @@ void select_none_cb(Fl_Widget *,void *) {
 void earlier_cb(Fl_Widget*,void*) {
   Fl_Type *f;
   int mod = 0;
-  for (f = Fl_Type::first; f; ) {
+  for (f = Fluid.proj.tree.first; f; ) {
     Fl_Type* nxt = f->next;
     if (f->selected) {
       Fl_Type* g;
@@ -338,7 +332,7 @@ void earlier_cb(Fl_Widget*,void*) {
     f = nxt;
   }
   if (mod) Fluid.proj.set_modflag(1);
-  widget_browser->display(Fl_Type::current);
+  widget_browser->display(Fluid.proj.tree.current);
   widget_browser->rebuild();
 }
 
@@ -348,7 +342,7 @@ void earlier_cb(Fl_Widget*,void*) {
 void later_cb(Fl_Widget*,void*) {
   Fl_Type *f;
   int mod = 0;
-  for (f = Fl_Type::last; f; ) {
+  for (f = Fluid.proj.tree.last; f; ) {
     Fl_Type* prv = f->prev;
     if (f->selected) {
       Fl_Type* g;
@@ -363,7 +357,7 @@ void later_cb(Fl_Widget*,void*) {
     f = prv;
   }
   if (mod) Fluid.proj.set_modflag(1);
-  widget_browser->display(Fl_Type::current);
+  widget_browser->display(Fluid.proj.tree.current);
   widget_browser->rebuild();
 }
 
@@ -394,7 +388,7 @@ void delete_all(int selected_only) {
       widget_browser->save_scroll_position();
     widget_browser->new_list();
   }
-  for (Fl_Type *f = Fl_Type::first; f;) {
+  for (Fl_Type *f = Fluid.proj.tree.first; f;) {
     if (f->selected || !selected_only) {
       delete_children(f);
       Fl_Type *g = f->next;
@@ -540,9 +534,9 @@ Fl_Type::~Fl_Type() {
   // warning: destructor only works for widgets that have been add()ed.
   if (prev) prev->next = next; // else first = next; // don't do that! The Type may not be part of the main list
   if (next) next->prev = prev; // else last = prev;
-  if (Fl_Type::last == this) Fl_Type::last = prev;
-  if (Fl_Type::first == this) Fl_Type::first = next;
-  if (current == this) current = NULL;
+  if (Fluid.proj.tree.last == this) Fluid.proj.tree.last = prev;
+  if (Fluid.proj.tree.first == this) Fluid.proj.tree.first = next;
+  if (Fluid.proj.tree.current == this) Fluid.proj.tree.current = NULL;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
   if (label_) free((void*)label_);
@@ -616,7 +610,7 @@ Fl_Group_Type *Fl_Type::group() {
  Add this list/tree of widgets as a new last child of p.
 
  \c this must not be part of the widget browser. \c p however must be in the
- widget_browser, so \c Fl_Type::first and \c Fl_Type::last are valid for \c p.
+ widget_browser, so \c Fluid.proj.tree.first and \c Fluid.proj.tree.last are valid for \c p.
 
  This methods updates the widget_browser.
 
@@ -643,7 +637,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
     case Strategy::AS_FIRST_CHILD:
     default:
       if (anchor == NULL) {
-        target = Fl_Type::first;
+        target = Fluid.proj.tree.first;
       } else {
         target = anchor->next;
         target_level = anchor->level + 1;
@@ -661,7 +655,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
       break;
     case Strategy::AFTER_CURRENT:
       if (anchor == NULL) {
-        target = Fl_Type::first;
+        target = Fluid.proj.tree.first;
       } else {
         for (target = anchor->next; target && target->level > anchor->level; target = target->next) {/*empty*/}
         target_level = anchor->level;
@@ -692,14 +686,14 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
     target->prev = end;
     end->next = target;
   } else {
-    prev = Fl_Type::last;
+    prev = Fluid.proj.tree.last;
     end->next = NULL;
-    Fl_Type::last = end;
+    Fluid.proj.tree.last = end;
   }
   if (prev) {
     prev->next = this;
   } else {
-    Fl_Type::first = this;
+    Fluid.proj.tree.first = this;
   }
 
 #if 0
@@ -734,7 +728,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
  Add `this` list/tree of widgets as a new sibling before `g`.
 
  `This` is not part of the widget browser. `g` must be in the
- widget_browser, so `Fl_Type::first` and `Fl_Type::last` are valid for `g .
+ widget_browser, so `Fluid.proj.tree.first` and `Fluid.proj.tree.last` are valid for `g .
 
  This methods updates the widget_browser.
 
@@ -753,7 +747,7 @@ void Fl_Type::insert(Fl_Type *g) {
   level = newlevel;
   // insert this in the list before g
   prev = g->prev;
-  if (prev) prev->next = this; else first = this;
+  if (prev) prev->next = this; else Fluid.proj.tree.first = this;
   end->next = g;
   g->prev = end;
   update_visibility_flag(this);
@@ -789,7 +783,7 @@ int Fl_Type::msgnum() {
  Remove this node and all its children from the parent node.
 
  This does not delete anything. The resulting list//tree will no longer be in
- the widget_browser, so \c Fl_Type::first and \c Fl_Type::last do not apply
+ the widget_browser, so \c Fluid.proj.tree.first and \c Fluid.proj.tree.last do not apply
  to it.
 
  \return the node that follows this node after the operation; can be NULL
@@ -806,12 +800,12 @@ Fl_Type *Fl_Type::remove() {
   if (prev)
     prev->next = end->next;
   else
-    first = end->next;
+    Fluid.proj.tree.first = end->next;
   // unlink the last child from their next node
   if (end->next)
     end->next->prev = prev;
   else
-    last = prev;
+    Fluid.proj.tree.last = prev;
   Fl_Type *r = end->next;
   prev = end->next = 0;
   // allow the parent to update changes in the UI
@@ -875,12 +869,12 @@ void Fl_Type::move_before(Fl_Type* g) {
   for (n = next; n && n->level > level; n = n->next) ;
   if (n == g) return;
   // now link this tree before g
-  Fl_Type *l = n ? n->prev : Fl_Type::last;
+  Fl_Type *l = n ? n->prev : Fluid.proj.tree.last;
   prev->next = n;
-  if (n) n->prev = prev; else Fl_Type::last = prev;
+  if (n) n->prev = prev; else Fluid.proj.tree.last = prev;
   prev = g->prev;
   l->next = g;
-  if (prev) prev->next = this; else Fl_Type::first = this;
+  if (prev) prev->next = this; else Fluid.proj.tree.first = this;
   g->prev = l;
   // tell parent that it has a new child, so it can update itself
   if (parent && is_widget()) parent->move_child(this,g);
@@ -1191,7 +1185,7 @@ void Fl_Type::copy_properties() {
   the parameter types match.
  */
 int Fl_Type::user_defined(const char* cbname) const {
-  for (Fl_Type* p = Fl_Type::first; p ; p = p->next)
+  for (Fl_Type* p = Fluid.proj.tree.first; p ; p = p->next)
     if (p->is_a(ID_Function) && p->name() != 0)
       if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
         if (p->name()[strlen(cbname)] == '(')
@@ -1279,7 +1273,7 @@ unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
   if (suggested_uid==0)
     suggested_uid = (unsigned short)rand();
   for (;;) {
-    Fl_Type *tp = Fl_Type::first;
+    Fl_Type *tp = Fluid.proj.tree.first;
     for ( ; tp; tp = tp->next)
       if (tp!=this && tp->uid_==suggested_uid)
         break;
@@ -1300,7 +1294,7 @@ unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
  \return the node with this uid, or NULL if not found
  */
 Fl_Type *Fl_Type::find_by_uid(unsigned short uid) {
-  for (Fl_Type *tp = Fl_Type::first; tp; tp = tp->next) {
+  for (Fl_Type *tp = Fluid.proj.tree.first; tp; tp = tp->next) {
     if (tp->uid_ == uid) return tp;
   }
   return NULL;
@@ -1313,7 +1307,7 @@ Fl_Type *Fl_Type::find_by_uid(unsigned short uid) {
  \return the node we found or NULL
  */
 Fl_Type *Fl_Type::find_in_text(int text_type, int crsr) {
-  for (Fl_Type *node = first; node; node = node->next) {
+  for (Fl_Type *node = Fluid.proj.tree.first; node; node = node->next) {
     switch (text_type) {
       case 0:
         if (crsr >= node->code1_start && crsr < node->code1_end) return node;

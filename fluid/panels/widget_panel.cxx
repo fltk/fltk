@@ -61,7 +61,7 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
           wt->scale_image_w_ = o->value();
@@ -91,7 +91,7 @@ static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
           wt->scale_image_h_ = o->value();
@@ -153,7 +153,7 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
           wt->scale_deimage_w_ = o->value();
@@ -183,7 +183,7 @@ static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
           wt->scale_deimage_h_ = o->value();
