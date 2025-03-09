@@ -48,6 +48,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <algorithm>
 
 extern Fl_Window *the_panel;
 extern void draw_width(int x, int y, int r, Fl_Align a);

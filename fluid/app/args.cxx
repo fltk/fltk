@@ -20,6 +20,7 @@
 
 #include <FL/Fl.H>
 #include <FL/filename.H>
+#include <FL/fl_ask.H>
 
 using namespace fld;
 using namespace fld::app;

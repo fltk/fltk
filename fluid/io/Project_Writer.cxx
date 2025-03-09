@@ -118,7 +118,7 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
   if (Fluid.proj.avoid_early_includes)
     write_string("\navoid_early_includes");
   if ((Fluid.proj.i18n_type != fld::I18n_Type::NONE)) {
-    write_string("\ni18n_type %d", Fluid.proj.i18n_type);
+    write_string("\ni18n_type %d", static_cast<int>(Fluid.proj.i18n_type));
     switch (Fluid.proj.i18n_type) {
       case fld::I18n_Type::NONE:
         break;

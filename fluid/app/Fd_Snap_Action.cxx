@@ -24,10 +24,11 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_string_functions.h>
+
 #include <math.h>
 #include <string.h>
 #include <assert.h>
-
+#include <algorithm>
 
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)

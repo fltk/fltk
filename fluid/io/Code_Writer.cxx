@@ -16,6 +16,7 @@
 
 #include "io/Code_Writer.h"
 
+#include "Fluid.h"
 #include "Project.h"
 #include "nodes/Fl_Window_Type.h"
 #include "nodes/Fl_Function_Type.h"
