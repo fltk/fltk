@@ -20,7 +20,7 @@
 #include "app/mergeback.h"
 #include "app/Menu.h"
 #include "app/shell_command.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -171,7 +171,7 @@ int Application::run(int argc,char **argv) {
       open_project_file(history.abspath[0]);
     }
   }
-  undo_suspend();
+  proj.undo.suspend();
   if (c && !fld::io::read_file(c,0)) {
     if (batch_mode) {
       fprintf(stderr,"%s : %s\n", c, strerror(errno));
@@ -179,7 +179,7 @@ int Application::run(int argc,char **argv) {
     }
     fl_message("Can't read %s: %s", c, strerror(errno));
   }
-  undo_resume();
+  proj.undo.resume();
 
   // command line args override code and header filenames from the project file
   // in batch mode only
@@ -212,7 +212,7 @@ int Application::run(int argc,char **argv) {
     exit(0);
 
   proj.set_modflag(0);
-  undo_clear();
+  proj.undo.clear();
 
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
@@ -229,7 +229,7 @@ int Application::run(int argc,char **argv) {
 
   Fl::run();
 
-  undo_clear();
+  proj.undo.clear();
   return 0;
 }
 
@@ -287,7 +287,7 @@ void Application::quit() {
     g_shell_config->write(preferences, fld::Tool_Store::USER);
   g_layout_list.write(preferences, fld::Tool_Store::USER);
 
-  undo_clear();
+  proj.undo.clear();
 
   // Destroy tree
   //    Doing so causes dtors to automatically close all external editors
@@ -304,7 +304,7 @@ void Application::quit() {
  Return the working directory path at application launch.
  \return a reference to the '/' terminated path.
  */
-const fld::filename &Application::launch_path() const {
+const std::string &Application::launch_path() const {
   return launch_path_;
 }
 
@@ -531,10 +531,10 @@ bool Application::merge_project_file(const std::string &filename_arg) {
   const char *oldfilename = proj.proj_filename;
   proj.proj_filename    = NULL;
   proj.set_filename(c);
-  if (is_a_merge) undo_checkpoint();
-  undo_suspend();
+  if (is_a_merge) proj.undo.checkpoint();
+  proj.undo.suspend();
   if (!fld::io::read_file(c, is_a_merge)) {
-    undo_resume();
+    proj.undo.resume();
     widget_browser->rebuild();
     proj.update_settings_dialog();
     fl_message("Can't read %s: %s", c, strerror(errno));
@@ -543,7 +543,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
     if (main_window) proj.set_modflag(proj.modflag);
     return false;
   }
-  undo_resume();
+  proj.undo.resume();
   widget_browser->rebuild();
   if (is_a_merge) {
     // Inserting a file; restore the original filename...
@@ -552,7 +552,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
   } else {
     // Loaded a file; free the old filename...
     proj.set_modflag(0, 0);
-    undo_clear();
+    proj.undo.clear();
   }
   if (oldfilename) free((void *)oldfilename);
   return true;
@@ -591,7 +591,7 @@ void Application::save_project_file(void *v) {
 
   if (v != (void *)2) {
     proj.set_modflag(0, 1);
-    undo_save = undo_current;
+    proj.undo.save_ = proj.undo.current_;
   }
 }
 
@@ -605,18 +605,18 @@ void Application::revert_project() {
     if (!fl_choice("This user interface has been changed. Really revert?",
                    "Cancel", "Revert", NULL)) return;
   }
-  undo_suspend();
+  proj.undo.suspend();
   if (!fld::io::read_file(proj.proj_filename, 0)) {
-    undo_resume();
+    proj.undo.resume();
     widget_browser->rebuild();
     proj.update_settings_dialog();
     fl_message("Can't read %s: %s", proj.proj_filename, strerror(errno));
     return;
   }
   widget_browser->rebuild();
-  undo_resume();
+  proj.undo.resume();
   proj.set_modflag(0, 0);
-  undo_clear();
+  proj.undo.clear();
   proj.update_settings_dialog();
 }
 
@@ -684,7 +684,7 @@ bool Application::new_project_from_template() {
         fl_alert("Error reading template file \"%s\":\n%s", tname,
                  strerror(errno));
         proj.set_modflag(0);
-        undo_clear();
+        proj.undo.clear();
         return false;
       }
 
@@ -693,7 +693,7 @@ bool Application::new_project_from_template() {
                  strerror(errno));
         fclose(infile);
         proj.set_modflag(0);
-        undo_clear();
+        proj.undo.clear();
         return false;
       }
 
@@ -710,22 +710,22 @@ bool Application::new_project_from_template() {
       fclose(infile);
       fclose(outfile);
 
-      undo_suspend();
+      proj.undo.suspend();
       fld::io::read_file(cutfname(1), 0);
       fl_unlink(cutfname(1));
-      undo_resume();
+      proj.undo.resume();
     } else {
       // No instance name, so read the template without replacements...
-      undo_suspend();
+      proj.undo.suspend();
       fld::io::read_file(tname, 0);
-      undo_resume();
+      proj.undo.resume();
     }
   }
 
   widget_browser->rebuild();
   proj.update_settings_dialog();
   proj.set_modflag(0);
-  undo_clear();
+  proj.undo.clear();
 
   return true;
 }
@@ -877,7 +877,7 @@ void Application::cut_selected() {
     fl_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
   }
-  undo_checkpoint();
+  proj.undo.checkpoint();
   proj.set_modflag(1);
   ipasteoffset = 0;
   Fl_Type *p = Fl_Type::current->parent;
@@ -915,8 +915,8 @@ void Application::copy_selected() {
  */
 void Application::paste_from_clipboard() {
   pasteoffset = ipasteoffset;
-  undo_checkpoint();
-  undo_suspend();
+  proj.undo.checkpoint();
+  proj.undo.suspend();
   Strategy strategy = Strategy::FROM_FILE_AFTER_CURRENT;
   if (Fl_Type::current && Fl_Type::current->can_have_children()) {
     if (Fl_Type::current->folded_ == 0) {
@@ -931,7 +931,7 @@ void Application::paste_from_clipboard() {
     widget_browser->rebuild();
     fl_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
-  undo_resume();
+  proj.undo.resume();
   widget_browser->display(Fl_Type::current);
   widget_browser->rebuild();
   pasteoffset = 0;
@@ -977,15 +977,15 @@ void Application::duplicate_selected() {
 
   // read the file and add the widgets after the current one:
   pasteoffset  = 0;
-  undo_checkpoint();
-  undo_suspend();
+  proj.undo.checkpoint();
+  proj.undo.suspend();
   if (!fld::io::read_file(cutfname(1), 1, Strategy::FROM_FILE_AFTER_CURRENT)) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
   fl_unlink(cutfname(1));
   widget_browser->display(Fl_Type::current);
   widget_browser->rebuild();
-  undo_resume();
+  proj.undo.resume();
 }
 
 
@@ -997,7 +997,7 @@ void Application::delete_selected() {
     fl_beep();
     return;
   }
-  undo_checkpoint();
+  proj.undo.checkpoint();
   proj.set_modflag(1);
   ipasteoffset = 0;
   Fl_Type *p = Fl_Type::current->parent;
@@ -1024,7 +1024,7 @@ void Application::edit_selected() {
  User wants to sort selected widgets by y coordinate.
  */
 void Application::sort_selected() {
-  undo_checkpoint();
+  proj.undo.checkpoint();
   sort((Fl_Type*)NULL);
   widget_browser->rebuild();
   proj.set_modflag(1);

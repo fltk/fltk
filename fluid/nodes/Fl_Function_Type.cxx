@@ -18,7 +18,7 @@
 
 #include "Fluid.h"
 #include "app/mergeback.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -1251,7 +1251,7 @@ void Fl_Data_Type::open() {
       if (v==0) { free(s); continue; }    // Continue Editing
       //if (v==1) { }                     // Ignore Error and close dialog
     }
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     name(n);
     free(s);
     // store flags

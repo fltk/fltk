@@ -26,7 +26,7 @@
 
 #include "app/Fd_Snap_Action.h"
 #include "Fluid.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "nodes/Fl_Group_Type.h"
 #include "nodes/Fl_Grid_Type.h"
 #include "nodes/Fl_Menu_Type.h"
@@ -1214,8 +1214,8 @@ static Fl_Type *known_types[] = {
  add_new_widget_from_user(const char*, int)
  */
 Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open) {
-  undo_checkpoint();
-  undo_suspend();
+  Fluid.proj.undo.checkpoint();
+  Fluid.proj.undo.suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
     if (t->is_widget() && !t->is_a(ID_Window)) {
@@ -1322,10 +1322,10 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
     if (and_open)
       t->open();
   } else {
-    undo_current --;
-    undo_last --;
+    Fluid.proj.undo.current_ --;
+    Fluid.proj.undo.last_ --;
   }
-  undo_resume();
+  Fluid.proj.undo.resume();
   return t;
 }
 

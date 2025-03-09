@@ -33,7 +33,6 @@ set(CPPFILES
   app/mergeback.cxx
   app/shell_command.cxx
   app/templates.cxx
-  app/undo.cxx
   io/Code_Writer.cxx
   io/Project_Writer.cxx
   io/Project_Reader.cxx
@@ -53,6 +52,7 @@ set(CPPFILES
   panels/template_panel.cxx
   panels/widget_panel.cxx
   proj/align_widget.cxx
+  proj/undo.cxx
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
   tools/filename.cxx
@@ -78,7 +78,6 @@ set(HEADERFILES
   app/mergeback.h
   app/shell_command.h
   app/templates.h
-  app/undo.h
   io/Code_Writer.h
   io/Project_Writer.h
   io/Project_Reader.h
@@ -98,6 +97,7 @@ set(HEADERFILES
   panels/template_panel.h
   panels/widget_panel.h
   proj/align_widget.h
+  proj/undo.h
   rsrcs/comments.h
   rsrcs/pixmaps.h
   tools/autodoc.h

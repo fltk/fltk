@@ -27,11 +27,8 @@ std::string fl_filename_shortened(const std::string &filename, int maxchars);
 
 namespace fld {
 
-using filename = std::string;
-
-extern fld::filename end_with_slash(const fld::filename &fn);
-extern fld::filename fix_separators(const fld::filename &fn);
-
+extern std::string end_with_slash(const std::string &fn);
+extern std::string fix_separators(const std::string &fn);
 
 } // namespace fld
 

@@ -138,8 +138,7 @@ Function {} {open return_type int
   code {readLanguagePrefs();
 Fl_Input::cut_menu_text = gettext("Cut");
 Fl_Input::copy_menu_text = gettext("Copy");
-Fl_Input::paste_menu_text = gettext("Paste");} {selected
-  }
+Fl_Input::paste_menu_text = gettext("Paste");} {}
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
@@ -188,7 +187,7 @@ Fl_Input::paste_menu_text = gettext("Paste");} {selected
           xywh {0 0 100 20}
         }
         MenuItem {} {
-          label {flip flops}
+          label {flip flops} selected
           xywh {0 0 100 20}
         }
         MenuItem {} {

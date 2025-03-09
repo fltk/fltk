@@ -28,7 +28,7 @@ comment {//
 decl {\#include "Fluid.h"} {private local
 }
 
-decl {\#include "app/undo.h"} {private local
+decl {\#include "proj/undo.h"} {private local
 }
 
 decl {\#include "nodes/Fl_Type.h"} {private local

@@ -18,7 +18,7 @@
 
 #include "function_panel.h"
 #include "Fluid.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "nodes/Fl_Type.h"
 #include "nodes/factory.h"
 #include "rsrcs/pixmaps.h"

@@ -64,14 +64,14 @@ void History::load() {
  \param[in] project_file path and filename of .fl project file, will be
     converted into an absolute file path based on the current working directory.
  */
-void History::update(fld::filename project_file) {
+void History::update(std::string project_file) {
   int   i;              // Looping var
   int   max_files;
 
   Fluid.preferences.get("recent_files", max_files, 5);
   if (max_files > 10) max_files = 10;
 
-  fld::filename absolute = fld::fix_separators(fl_filename_absolute_str(project_file));
+  std::string absolute = fld::fix_separators(fl_filename_absolute_str(project_file));
   for (i = 0; i < max_files; i ++)
 #if defined(_WIN32) || defined(__APPLE__)
     if (!strcasecmp(absolute.c_str(), abspath[i])) break;

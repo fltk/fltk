@@ -18,7 +18,7 @@
 
 #include "widget_panel.h"
 #include "Fluid.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "nodes/Fl_Widget_Type.h"
 #include "nodes/Fl_Grid_Type.h"
 #include <FL/Fl_Grid.H>
@@ -624,7 +624,7 @@ static void cb_widget_grid_rows(fld::widget::Formula_Input* o, void* v) {
       // Offer a dialog with "delete children", "unlink cells", "cancel"
     }
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->layout(m, grid->cols());
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -666,7 +666,7 @@ static void cb_widget_grid_cols(fld::widget::Formula_Input* o, void* v) {
       // Offer a dialog with "delete children", "unlink cells", "cancel"
     }
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->layout(grid->rows(), m);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -702,7 +702,7 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(&old_m, NULL, NULL, NULL);
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->margin(m, -1, -1, -1);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -721,7 +721,7 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(NULL, &old_m, NULL, NULL);
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->margin(-1, m, -1, -1);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -740,7 +740,7 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(NULL, NULL, &old_m, NULL);
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->margin(-1, -1, m, -1);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -759,7 +759,7 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m;
     grid->margin(NULL, NULL, NULL, &old_m);
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->margin(-1, -1, -1, m);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -780,7 +780,7 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m, m2;
     grid->gap(&old_m, &m2);
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->gap(m, m2);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -799,7 +799,7 @@ static void cb_Col(Fl_Value_Input* o, void* v) {
     int m = (int)o->value(), old_m, m2;
     grid->gap(&m2, &old_m);
     if (m != old_m) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->gap(m2, m);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -860,7 +860,7 @@ static void cb_Height(fld::widget::Formula_Input* o, void* v) {
     int h = o->value(), old_h = grid->row_height(r);
     if (h < 0) h = 0;
     if (h != old_h) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->row_height(r, h);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -878,7 +878,7 @@ static void cb_Weight(fld::widget::Formula_Input* o, void* v) {
     int h = o->value(), old_h = grid->row_weight(r);
     if (h < 0) h = 0;
     if (h != old_h) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->row_weight(r, h);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -896,7 +896,7 @@ static void cb_Gap(fld::widget::Formula_Input* o, void* v) {
     int h = o->value(), old_h = grid->row_gap(r);
     if (h < -1) h = -1;
     if (h != old_h) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->row_gap(r, h);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -946,7 +946,7 @@ static void cb_Width(fld::widget::Formula_Input* o, void* v) {
     int h = o->value(), old_h = grid->col_width(c);
     if (h < 0) h = 0;
     if (h != old_h) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->col_width(c, h);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -964,7 +964,7 @@ static void cb_Weight1(fld::widget::Formula_Input* o, void* v) {
     int h = o->value(), old_h = grid->col_weight(c);
     if (h < 0) h = 0;
     if (h != old_h) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->col_weight(c, h);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);
@@ -982,7 +982,7 @@ static void cb_Gap1(fld::widget::Formula_Input* o, void* v) {
     int h = o->value(), old_h = grid->col_gap(c);
     if (h < -1) h = -1;
     if (h != old_h) {
-      undo_checkpoint();
+      Fluid.proj.undo.checkpoint();
       grid->col_gap(c, h);
       grid->need_layout(true);
       Fluid.proj.set_modflag(1);

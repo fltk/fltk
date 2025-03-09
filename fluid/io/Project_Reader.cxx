@@ -24,7 +24,7 @@
 #include "Fluid.h"
 #include "Project.h"
 #include "app/shell_command.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "app/Fd_Snap_Action.h"
 #include "nodes/factory.h"
 #include "nodes/Fl_Function_Type.h"
@@ -410,10 +410,10 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
  */
 int Project_Reader::read_project(const char *filename, int merge, Strategy strategy) {
   Fl_Type *o;
-  undo_suspend();
+  Fluid.proj.undo.suspend();
   read_version = 0.0;
   if (!open_read(filename)) {
-    undo_resume();
+    Fluid.proj.undo.resume();
     return 0;
   }
   if (merge)
@@ -443,7 +443,7 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
   g_layout_list.update_dialogs();
   Fluid.proj.update_settings_dialog();
   int ret = close_read();
-  undo_resume();
+  Fluid.proj.undo.resume();
   return ret;
 }
 

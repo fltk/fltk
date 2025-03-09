@@ -26,7 +26,7 @@
 #include "Project.h"
 #include "app/Fluid_Image.h"
 #include "app/mergeback.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -210,8 +210,8 @@ void group_selected_menuitems() {
     fl_message("Can't create a new submenu here.");
     return;
   }
-  undo_checkpoint();
-  undo_suspend();
+  Fluid.proj.undo.checkpoint();
+  Fluid.proj.undo.suspend();
   Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
@@ -223,7 +223,7 @@ void group_selected_menuitems() {
     t = nxt;
   }
   widget_browser->rebuild();
-  undo_resume();
+  Fluid.proj.undo.resume();
   Fluid.proj.set_modflag(1);
 }
 
@@ -236,8 +236,8 @@ void ungroup_selected_menuitems() {
     fl_message("Only menu items inside a submenu can be ungrouped.");
     return;
   }
-  undo_checkpoint();
-  undo_suspend();
+  Fluid.proj.undo.checkpoint();
+  Fluid.proj.undo.suspend();
   Fl_Type::current = qq;
   for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != q_level || !t->selected) {
@@ -254,7 +254,7 @@ void ungroup_selected_menuitems() {
   }
   Fl_Type::current = q;
   widget_browser->rebuild();
-  undo_resume();
+  Fluid.proj.undo.resume();
   Fluid.proj.set_modflag(1);
 }
 

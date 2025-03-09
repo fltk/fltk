@@ -18,7 +18,7 @@
 
 #include "Fluid.h"
 
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "app/templates.h"
 #include "nodes/Fl_Type.h"
 #include "nodes/Fl_Group_Type.h"
@@ -114,8 +114,8 @@ Fl_Menu_Item Application::main_menu[] = {
   {"&Quit", FL_COMMAND+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
-  {"&Undo", FL_COMMAND+'z', undo_cb},
-  {"&Redo", FL_COMMAND+FL_SHIFT+'z', redo_cb, 0, FL_MENU_DIVIDER},
+  {"&Undo", FL_COMMAND+'z', fld::proj::Undo::undo_cb},
+  {"&Redo", FL_COMMAND+FL_SHIFT+'z', fld::proj::Undo::redo_cb, 0, FL_MENU_DIVIDER},
   {"C&ut", FL_COMMAND+'x', cut_cb},
   {"&Copy", FL_COMMAND+'c', copy_cb},
   {"&Paste", FL_COMMAND+'v', paste_cb},

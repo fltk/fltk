@@ -24,7 +24,7 @@
 #include "Fluid.h"
 #include "Project.h"
 #include "app/shell_command.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "app/Fd_Snap_Action.h"
 
 /// \defgroup flfile .fl Project File Operations
@@ -99,9 +99,9 @@ int Project_Writer::close_write() {
  */
 int Project_Writer::write_project(const char *filename, int selected_only, bool sv) {
   write_codeview_ = sv;
-  undo_suspend();
+  Fluid.proj.undo.suspend();
   if (!open_write(filename)) {
-    undo_resume();
+    Fluid.proj.undo.resume();
     return 0;
   }
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
@@ -158,7 +158,7 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     }
   }
   int ret = close_write();
-  undo_resume();
+  Fluid.proj.undo.resume();
   return ret;
 }
 

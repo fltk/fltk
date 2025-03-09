@@ -65,7 +65,7 @@ class Application {
   /// Currently selected project.
   Project *current_project_ = new Project();
   /// Working directory at application launch.
-  fld::filename launch_path_;
+  std::string launch_path_;
   /// Path to store temporary files during app run.
   std::string tmpdir_path;
   /// True if the temporary file path was already created.
@@ -138,7 +138,7 @@ public: // Methods
   /// Quick access to the current project. Make sure it stays synched to current_project_.
   Project &proj { *current_project_ };
   // Return the working directory path at application launch.
-  const fld::filename &launch_path() const;
+  const std::string &launch_path() const;
   // Return the path to a temporary directory for this instance of Fluid.
   const std::string &get_tmpdir();
   // Return the path and filename of a temporary file for cut or duplicated data.

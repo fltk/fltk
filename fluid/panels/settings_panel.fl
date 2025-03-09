@@ -55,7 +55,7 @@ decl {\#include "Fluid.h"} {public global
 decl {\#include "Project.h"} {private local
 }
 
-decl {\#include "app/undo.h"} {private global
+decl {\#include "proj/undo.h"} {private global
 }
 
 decl {\#include "app/Fd_Snap_Action.h"} {public global
@@ -1562,7 +1562,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_gnu_include.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_gnu_include = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1573,7 +1573,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_gnu_conditional.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_gnu_conditional = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1584,7 +1584,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_gnu_function.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_gnu_function = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1595,7 +1595,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_gnu_static_function.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_gnu_static_function = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1611,7 +1611,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_pos_include.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_pos_include = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1622,7 +1622,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_pos_conditional.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_pos_conditional = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1633,7 +1633,7 @@ if (v == LOAD) {
             callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_pos_file.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_pos_file = o->value();
   Fluid.proj.set_modflag(1);
 }}
@@ -1648,7 +1648,7 @@ if (v == LOAD) {
               callback {if (v == LOAD) {
   o->value(Fluid.proj.i18n_pos_set.c_str());
 } else {
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n_pos_set = o->value();
   Fluid.proj.set_modflag(1);
 }}

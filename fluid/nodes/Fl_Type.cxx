@@ -100,7 +100,7 @@
 #include "Project.h"
 #include "app/Fd_Snap_Action.h"
 #include "app/shell_command.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -329,7 +329,7 @@ void earlier_cb(Fl_Widget*,void*) {
       Fl_Type* g;
       for (g = f->prev; g && g->level > f->level; g = g->prev) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
-        if (!mod) undo_checkpoint();
+        if (!mod) Fluid.proj.undo.checkpoint();
         f->move_before(g);
         if (f->parent) f->parent->layout_widget();
         mod = 1;
@@ -354,7 +354,7 @@ void later_cb(Fl_Widget*,void*) {
       Fl_Type* g;
       for (g = f->next; g && g->level > f->level; g = g->next) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
-        if (!mod) undo_checkpoint();
+        if (!mod) Fluid.proj.undo.checkpoint();
         g->move_before(f);
         if (f->parent) f->parent->layout_widget();
         mod = 1;
@@ -438,7 +438,7 @@ void delete_all(int selected_only) {
  */
 int storestring(const char *n, const char * & p, int nostrip) {
   if (n == p) return 0;
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   int length = 0;
   if (n) { // see if blank, strip leading & trailing blanks
     if (!nostrip) while (isspace((int)(unsigned char)*n)) n++;
@@ -676,7 +676,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
   while (end->next) end = end->next;
 
   // Everything is prepared, now insert ourself in front of the target node
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
 
   // Walk the tree to update parent pointers and levels
   int source_level = level;

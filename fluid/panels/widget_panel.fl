@@ -28,7 +28,7 @@ comment {//
 decl {\#include "Fluid.h"} {private global
 }
 
-decl {\#include "app/undo.h"} {private global
+decl {\#include "proj/undo.h"} {private global
 }
 
 decl {\#include "nodes/Fl_Widget_Type.h"} {private global
@@ -1368,7 +1368,7 @@ if (v == LOAD) {
     // Offer a dialog with "delete children", "unlink cells", "cancel"
   }
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->layout(m, grid->cols());
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1418,7 +1418,7 @@ if (v == LOAD) {
     // Offer a dialog with "delete children", "unlink cells", "cancel"
   }
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->layout(grid->rows(), m);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1471,7 +1471,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(&old_m, NULL, NULL, NULL);
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->margin(m, -1, -1, -1);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1491,7 +1491,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(NULL, &old_m, NULL, NULL);
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->margin(-1, m, -1, -1);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1511,7 +1511,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(NULL, NULL, &old_m, NULL);
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->margin(-1, -1, m, -1);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1531,7 +1531,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m;
   grid->margin(NULL, NULL, NULL, &old_m);
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->margin(-1, -1, -1, m);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1560,7 +1560,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m, m2;
   grid->gap(&old_m, &m2);
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->gap(m, m2);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1580,7 +1580,7 @@ if (v == LOAD) {
   int m = (int)o->value(), old_m, m2;
   grid->gap(&m2, &old_m);
   if (m != old_m) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->gap(m2, m);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1662,7 +1662,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->row_height(r);
   if (h < 0) h = 0;
   if (h != old_h) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->row_height(r, h);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1682,7 +1682,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->row_weight(r);
   if (h < 0) h = 0;
   if (h != old_h) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->row_weight(r, h);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1702,7 +1702,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->row_gap(r);
   if (h < -1) h = -1;
   if (h != old_h) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->row_gap(r, h);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1778,7 +1778,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->col_width(c);
   if (h < 0) h = 0;
   if (h != old_h) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->col_width(c, h);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1798,7 +1798,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->col_weight(c);
   if (h < 0) h = 0;
   if (h != old_h) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->col_weight(c, h);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);
@@ -1818,7 +1818,7 @@ if (v == LOAD) {
   int h = o->value(), old_h = grid->col_gap(c);
   if (h < -1) h = -1;
   if (h != old_h) {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     grid->col_gap(c, h);
     grid->need_layout(true);
     Fluid.proj.set_modflag(1);

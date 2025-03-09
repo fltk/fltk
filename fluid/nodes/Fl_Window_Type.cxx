@@ -23,7 +23,7 @@
 #include "app/Fd_Snap_Action.h"
 #include "Fluid.h"
 #include "Project.h"
-#include "app/undo.h"
+#include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -75,7 +75,7 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
   if (v == LOAD) {
     c->value(static_cast<int>(Fluid.proj.i18n_type));
   } else {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     Fluid.proj.i18n_type = static_cast<fld::I18n_Type>(c->value());
     Fluid.proj.set_modflag(1);
   }
@@ -348,7 +348,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->modal);
   } else {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     ((Fl_Window_Type *)current_widget)->modal = i->value();
     Fluid.proj.set_modflag(1);
   }
@@ -360,7 +360,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->non_modal);
   } else {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     ((Fl_Window_Type *)current_widget)->non_modal = i->value();
     Fluid.proj.set_modflag(1);
   }
@@ -372,7 +372,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
     i->show();
     i->value(((Fl_Window*)(current_widget->o))->border());
   } else {
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     ((Fl_Window*)(current_widget->o))->border(i->value());
     Fluid.proj.set_modflag(1);
   }
@@ -390,7 +390,7 @@ void xclass_cb(Fl_Input* i, void* v) {
     }
   } else {
     int mod = 0;
-    undo_checkpoint();
+    Fluid.proj.undo.checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_a(ID_Window)) {
         mod = 1;
@@ -419,7 +419,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   if (X!=x() || Y!=y() || W!=w() || H!=h()) {
     // Set a checkpoint on the first resize event, ignore further resizes until
     // a different type of checkpoint is triggered.
-    if (undo_checkpoint_once(kUndoWindowResize))
+    if (Fluid.proj.undo.checkpoint(fld::proj::Undo::OnceType::WINDOW_RESIZE))
       Fluid.proj.set_modflag(1);
   }
 
@@ -874,7 +874,7 @@ extern Fl_Menu_Item New_Menu[];
 void Fl_Window_Type::moveallchildren(int key)
 {
   bool update_widget_panel = false;
-  undo_checkpoint();
+  Fluid.proj.undo.checkpoint();
   Fl_Type *i;
   for (i=next; i && i->level>level;) {
     if (i->selected && i->is_true_widget()) {

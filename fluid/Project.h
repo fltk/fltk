@@ -18,6 +18,8 @@
 #ifndef FLUID_PROJECT_H
 #define FLUID_PROJECT_H
 
+#include "proj/undo.h"
+
 #include <string>
 
 // ---- project class declaration
@@ -40,6 +42,9 @@ enum class I18n_Type {
 class Project
 {
 public: // Member Variables
+  // Undo actions for this Project.
+  proj::Undo undo { *this };
+
   /// One of the available internationalization types.
   fld::I18n_Type i18n_type = I18n_Type::NONE;
   /// Include file for GNU i18n, writes an #include statement into the source
