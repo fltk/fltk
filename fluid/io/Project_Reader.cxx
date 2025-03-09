@@ -246,63 +246,63 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       }
 
       if (!strcmp(c,"do_not_include_H_from_C")) {
-        Fluid.proj.include_H_from_C=0;
+        proj_.include_H_from_C=0;
         goto CONTINUE;
       }
       if (!strcmp(c,"use_FL_COMMAND")) {
-        Fluid.proj.use_FL_COMMAND=1;
+        proj_.use_FL_COMMAND=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"utf8_in_src")) {
-        Fluid.proj.utf8_in_src=1;
+        proj_.utf8_in_src=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"avoid_early_includes")) {
-        Fluid.proj.avoid_early_includes=1;
+        proj_.avoid_early_includes=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
-        Fluid.proj.i18n_type = static_cast<fld::I18n_Type>(atoi(read_word()));
+        proj_.i18n_type = static_cast<fld::I18n_Type>(atoi(read_word()));
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_function")) {
-        Fluid.proj.i18n_gnu_function = read_word();
+        proj_.i18n_gnu_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_static_function")) {
-        Fluid.proj.i18n_gnu_static_function = read_word();
+        proj_.i18n_gnu_static_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_pos_file")) {
-        Fluid.proj.i18n_pos_file = read_word();
+        proj_.i18n_pos_file = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_pos_set")) {
-        Fluid.proj.i18n_pos_set = read_word();
+        proj_.i18n_pos_set = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        if (Fluid.proj.i18n_type == fld::I18n_Type::GNU)
-          Fluid.proj.i18n_gnu_include = read_word();
-        else if (Fluid.proj.i18n_type == fld::I18n_Type::POSIX)
-          Fluid.proj.i18n_pos_include = read_word();
+        if (proj_.i18n_type == fld::I18n_Type::GNU)
+          proj_.i18n_gnu_include = read_word();
+        else if (proj_.i18n_type == fld::I18n_Type::POSIX)
+          proj_.i18n_pos_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        if (Fluid.proj.i18n_type == fld::I18n_Type::GNU)
-          Fluid.proj.i18n_gnu_conditional = read_word();
-        else if (Fluid.proj.i18n_type == fld::I18n_Type::POSIX)
-          Fluid.proj.i18n_pos_conditional = read_word();
+        if (proj_.i18n_type == fld::I18n_Type::GNU)
+          proj_.i18n_gnu_conditional = read_word();
+        else if (proj_.i18n_type == fld::I18n_Type::POSIX)
+          proj_.i18n_pos_conditional = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"header_name")) {
-        if (!Fluid.proj.header_file_set) Fluid.proj.header_file_name = read_word();
+        if (!proj_.header_file_set) proj_.header_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
 
       if (!strcmp(c,"code_name")) {
-        if (!Fluid.proj.code_file_set) Fluid.proj.code_file_name = read_word();
+        if (!proj_.code_file_set) proj_.code_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
@@ -328,7 +328,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       }
 
       if (!strcmp(c, "mergeback")) {
-        Fluid.proj.write_mergeback_data = read_int();
+        proj_.write_mergeback_data = read_int();
         goto CONTINUE;
       }
     }
@@ -411,16 +411,16 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
  */
 int Project_Reader::read_project(const char *filename, int merge, Strategy strategy) {
   Fl_Type *o;
-  Fluid.proj.undo.suspend();
+  proj_.undo.suspend();
   read_version = 0.0;
   if (!open_read(filename)) {
-    Fluid.proj.undo.resume();
+    proj_.undo.resume();
     return 0;
   }
   if (merge)
     deselect();
   else
-    Fluid.proj.reset();
+    proj_.reset();
   read_children(Fl_Type::current, merge, strategy);
   // clear this
   Fl_Type::current = 0;
@@ -442,9 +442,9 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
     g_shell_config->update_settings_dialog();
   }
   g_layout_list.update_dialogs();
-  Fluid.proj.update_settings_dialog();
+  proj_.update_settings_dialog();
   int ret = close_read();
-  Fluid.proj.undo.resume();
+  proj_.undo.resume();
   return ret;
 }
 

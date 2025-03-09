@@ -100,52 +100,52 @@ int Project_Writer::close_write() {
  */
 int Project_Writer::write_project(const char *filename, int selected_only, bool sv) {
   write_codeview_ = sv;
-  Fluid.proj.undo.suspend();
+  proj_.undo.suspend();
   if (!open_write(filename)) {
-    Fluid.proj.undo.resume();
+    proj_.undo.resume();
     return 0;
   }
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
                "version %.4f",FL_VERSION);
-  if(!Fluid.proj.include_H_from_C)
+  if(!proj_.include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
-  if(Fluid.proj.use_FL_COMMAND)
+  if(proj_.use_FL_COMMAND)
     write_string("\nuse_FL_COMMAND");
-  if (Fluid.proj.utf8_in_src)
+  if (proj_.utf8_in_src)
     write_string("\nutf8_in_src");
-  if (Fluid.proj.avoid_early_includes)
+  if (proj_.avoid_early_includes)
     write_string("\navoid_early_includes");
-  if ((Fluid.proj.i18n_type != fld::I18n_Type::NONE)) {
-    write_string("\ni18n_type %d", static_cast<int>(Fluid.proj.i18n_type));
-    switch (Fluid.proj.i18n_type) {
+  if ((proj_.i18n_type != fld::I18n_Type::NONE)) {
+    write_string("\ni18n_type %d", static_cast<int>(proj_.i18n_type));
+    switch (proj_.i18n_type) {
       case fld::I18n_Type::NONE:
         break;
       case fld::I18n_Type::GNU : /* GNU gettext */
-        write_string("\ni18n_include"); write_word(Fluid.proj.i18n_gnu_include.c_str());
-        write_string("\ni18n_conditional"); write_word(Fluid.proj.i18n_gnu_conditional.c_str());
-        write_string("\ni18n_gnu_function"); write_word(Fluid.proj.i18n_gnu_function.c_str());
-        write_string("\ni18n_gnu_static_function"); write_word(Fluid.proj.i18n_gnu_static_function.c_str());
+        write_string("\ni18n_include"); write_word(proj_.i18n_gnu_include.c_str());
+        write_string("\ni18n_conditional"); write_word(proj_.i18n_gnu_conditional.c_str());
+        write_string("\ni18n_gnu_function"); write_word(proj_.i18n_gnu_function.c_str());
+        write_string("\ni18n_gnu_static_function"); write_word(proj_.i18n_gnu_static_function.c_str());
         break;
       case fld::I18n_Type::POSIX : /* POSIX catgets */
-        write_string("\ni18n_include"); write_word(Fluid.proj.i18n_pos_include.c_str());
-        write_string("\ni18n_conditional"); write_word(Fluid.proj.i18n_pos_conditional.c_str());
-        if (!Fluid.proj.i18n_pos_file.empty()) {
+        write_string("\ni18n_include"); write_word(proj_.i18n_pos_include.c_str());
+        write_string("\ni18n_conditional"); write_word(proj_.i18n_pos_conditional.c_str());
+        if (!proj_.i18n_pos_file.empty()) {
           write_string("\ni18n_pos_file");
-          write_word(Fluid.proj.i18n_pos_file.c_str());
+          write_word(proj_.i18n_pos_file.c_str());
         }
-        write_string("\ni18n_pos_set"); write_word(Fluid.proj.i18n_pos_set.c_str());
+        write_string("\ni18n_pos_set"); write_word(proj_.i18n_pos_set.c_str());
         break;
     }
   }
 
   if (!selected_only) {
-    write_string("\nheader_name"); write_word(Fluid.proj.header_file_name.c_str());
-    write_string("\ncode_name"); write_word(Fluid.proj.code_file_name.c_str());
+    write_string("\nheader_name"); write_word(proj_.header_file_name.c_str());
+    write_string("\ncode_name"); write_word(proj_.code_file_name.c_str());
     g_layout_list.write(this);
     if (g_shell_config)
       g_shell_config->write(this);
-    if (Fluid.proj.write_mergeback_data)
-      write_string("\nmergeback %d", Fluid.proj.write_mergeback_data);
+    if (proj_.write_mergeback_data)
+      write_string("\nmergeback %d", proj_.write_mergeback_data);
   }
 
   for (Fl_Type *p = Fl_Type::first; p;) {
@@ -159,7 +159,7 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     }
   }
   int ret = close_write();
-  Fluid.proj.undo.resume();
+  proj_.undo.resume();
   return ret;
 }
 
