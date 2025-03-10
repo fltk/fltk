@@ -239,7 +239,13 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
 }
 
 void Fl_Window_Driver::reposition_menu_window(int x, int y) {
-  if (y != pWindow->y() || x != pWindow->x()) pWindow->Fl_Widget::position(x, y);
+  if (y != pWindow->y() || x != pWindow->x()) {
+    int ns = pWindow->screen_num();
+    pWindow->Fl_Widget::position(x, y);
+    Fl::check();
+    // the window move may erroneously change the window's screen number; reset it
+    if (pWindow->screen_num() != ns) screen_num(ns);
+  }
 }
 
 void Fl_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscreen) {
