@@ -546,7 +546,7 @@ int Node_Browser::handle(int e) {
       break;
     }
     l = pushedtitle;
-      title = pushedtitle = nullptr;
+    title = pushedtitle = 0;
     if (l) {
       if (!l->folded_) {
         l->folded_ = 1;

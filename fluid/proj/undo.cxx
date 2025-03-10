@@ -103,9 +103,8 @@ void Undo::redo() {
     return;
   }
   if (reload_panel) {
-    for (Fl_Type *t = Fluid.proj.tree.first; t; t=t->next) {
-      if (t->is_widget() && t->selected)
-        t->open();
+    for (auto &w: Fluid.proj.tree.all_selected_widgets()) {
+      w.open();
     }
   }
   if (widget_browser) widget_browser->restore_scroll_position();

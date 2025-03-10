@@ -32,39 +32,43 @@ class Tree {
   // A class that can iterate over the entire scene graph.
   class Iterator {
     Fl_Type *type_ = nullptr;
+    bool only_selected_ = false;
   public:
-    explicit Iterator(Fl_Type *t) : type_(t) {}
+    explicit Iterator(Fl_Type *t, bool only_selected) : type_(t), only_selected_(only_selected) {}
     Fl_Type& operator*() { return *type_; }
-    Iterator& operator++() { type_ = type_->next; return *this; }
+    Iterator& operator++();
     bool operator!=(const Iterator& other) const { return type_ != other.type_; }
   };
 
   // A container for a node iterator
   class Container {
     Tree &tree_;
+    bool only_selected_ = false;
   public:
-    Container(Tree &tree) : tree_ { tree } { }
-    Iterator begin() { return Iterator(tree_.first); }
-    Iterator end() { return Iterator(nullptr); }
+    Container(Tree &tree, bool only_selected) : tree_(tree), only_selected_(only_selected) { }
+    Iterator begin() { return Iterator(tree_.first, only_selected_); }
+    Iterator end() { return Iterator(nullptr, only_selected_); }
   };
 
   // A class that iterate over the scene graph, but returns only nodes of type widget.
   class WIterator {
     Fl_Type *type_ = nullptr;
+    bool only_selected_ = false;
   public:
-    explicit WIterator(Fl_Type *t) : type_(t) {}
+    explicit WIterator(Fl_Type *t, bool only_selected) : type_(t), only_selected_(only_selected) {}
     Fl_Widget_Type& operator*() { return *static_cast<Fl_Widget_Type*>(type_); }
-    WIterator& operator++() { do { type_ = type_->next; } while (type_ && !type_->is_widget()); return *this; }
+    WIterator& operator++();
     bool operator!=(const WIterator& other) const { return type_ != other.type_; }
   };
 
   // A container for a widget node iterator
   class WContainer {
     Tree &tree_;
+    bool only_selected_ = false;
   public:
-    WContainer(Tree &tree) : tree_ { tree } { }
-    WIterator begin() { return WIterator(tree_.first); }
-    WIterator end() { return WIterator(nullptr); }
+    WContainer(Tree &tree, bool only_selected) : tree_(tree), only_selected_(only_selected) { }
+    WIterator begin() { return WIterator(tree_.first, only_selected_); }
+    WIterator end() { return WIterator(nullptr, only_selected_); }
   };
 
   /// Link Tree class to the project.
@@ -83,9 +87,13 @@ public:
 
   Tree(Project &proj);
 
+  bool empty() { return first == nullptr; }
+
   // Iterators: `for (auto &n: tree.all_nodes()) { n.print(); }
-  Container all_nodes() { return Container(*this); }
-  WContainer all_widgets() { return WContainer(*this); }
+  Container all_nodes() { return Container(*this, false); }
+  WContainer all_widgets() { return WContainer(*this, false); }
+  Container all_selected_nodes() { return Container(*this, true); }
+  WContainer all_selected_widgets() { return WContainer(*this, true); }
 
 //  Fl_Type *find_by_uid(unsigned short uid);
 //  Fl_Type *find_in_text(int text_type, int crsr);

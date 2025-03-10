@@ -23,6 +23,31 @@ using namespace fld;
 using namespace fld::node;
 
 
+Tree::Iterator &Tree::Iterator::operator++() {
+  if (only_selected_) {
+    do {
+      type_ = type_->next;
+    } while (type_ && !type_->selected);
+  } else {
+    type_ = type_->next;
+  }
+  return *this;
+}
+
+Tree::WIterator& Tree::WIterator::operator++() {
+  if (only_selected_) {
+    do {
+      type_ = type_->next;
+    } while (type_ && (!type_->selected || !type_->is_widget()));
+  } else {
+    do {
+      type_ = type_->next;
+    } while (type_ && !type_->is_widget());
+  }
+  return *this;
+}
+
+
 Tree::Tree(Project &proj)
 : proj_(proj)
 { (void)proj_; }

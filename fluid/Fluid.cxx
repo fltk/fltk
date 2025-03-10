@@ -72,15 +72,15 @@ static void external_editor_timer(void*) {
   if ( editors_open > 0 ) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
-    for (Fl_Type *p = Fluid.proj.tree.first; p; p = p->next) {
-      if ( p->is_a(ID_Code) ) {
-        Fl_Code_Type *code = (Fl_Code_Type*)p;
+    for (auto &p: Fluid.proj.tree.all_nodes()) {
+      if ( p.is_a(ID_Code) ) {
+        Fl_Code_Type &code = (Fl_Code_Type&)p;
         // Code changed by external editor?
-        if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
+        if ( code.handle_editor_changes() ) {  // updates ram, file size/mtime
           modified++;
         }
-        if ( code->is_editing() ) {             // editor open?
-          code->reap_editor();                  // Try to reap; maybe it recently closed
+        if ( code.is_editing() ) {             // editor open?
+          code.reap_editor();                  // Try to reap; maybe it recently closed
         }
       }
     }
@@ -515,7 +515,7 @@ bool Application::open_project_file(const std::string &filename_arg) {
  \return false if the operation failed
  */
 bool Application::merge_project_file(const std::string &filename_arg) {
-  bool is_a_merge = (proj.tree.first != NULL);
+  bool is_a_merge = (!proj.tree.empty());
   std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
 
   // ask for a filename if none was given
@@ -737,16 +737,17 @@ bool Application::new_project_from_template() {
 void Application::print_snapshots() {
   int w, h, ww, hh;
   int frompage, topage;
-  Fl_Type       *t;                     // Current widget
-  int           num_windows;            // Number of windows
+  int           num_windows = 0;        // Number of windows
   Fl_Window_Type *windows[1000];        // Windows to print
   int           winpage;                // Current window page
   Fl_Window *win;
 
-  for (t = proj.tree.first, num_windows = 0; t; t = t->next) {
-    if (t->is_a(ID_Window)) {
-      windows[num_windows] = (Fl_Window_Type *)t;
-      if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
+  for (auto &w: proj.tree.all_widgets()) {
+    if (w.is_a(ID_Window)) {
+      Fl_Window_Type *win_t = static_cast<Fl_Window_Type*>(&w);
+      windows[num_windows] = win_t;
+      Fl_Window *win = static_cast<Fl_Window*>(win_t->o);
+      if (!win->shown()) continue;
       num_windows ++;
     }
   }
