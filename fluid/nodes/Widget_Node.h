@@ -3,7 +3,7 @@
 //
 // Type for creating all subclasses of Fl_Widget
 // This should have the widget pointer in it, but it is still in the
-// Fl_Type base class.
+// Node base class.
 //
 // Copyright 1998-2023 by Bill Spitzak and others.
 //
@@ -21,28 +21,28 @@
 #ifndef _FLUID_FL_WIDGET_TYPE_H
 #define _FLUID_FL_WIDGET_TYPE_H
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 #define NUM_EXTRA_CODE 4
 
-class Fl_Widget_Type;
+class Widget_Node;
 class Fluid_Image;
 
 extern void* const LOAD;
-extern Fl_Widget_Type *current_widget; // one of the selected ones
+extern Widget_Node *current_widget; // one of the selected ones
 
-extern const char* subclassname(Fl_Type* l);
+extern const char* subclassname(Node* l);
 extern int is_name(const char *c);
-void selection_changed(Fl_Type* new_current);
-Fl_Type *sort(Fl_Type *parent);
+void selection_changed(Node* new_current);
+Node *sort(Node *parent);
 void comment_cb(class Fl_Text_Editor* i, void *v);
 
-class Fl_Widget_Type : public Fl_Type
+class Widget_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
 
   virtual Fl_Widget *widget(int,int,int,int) = 0;
-  virtual Fl_Widget_Type *_make() = 0; // virtual constructor
+  virtual Widget_Node *_make() = 0; // virtual constructor
   void setlabel(const char *) FL_OVERRIDE;
 
   const char *extra_code_[NUM_EXTRA_CODE];
@@ -84,8 +84,8 @@ public:
   Fluid_Image *inactive;
   void setinactive(Fluid_Image *);
 
-  Fl_Widget_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Widget_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void open() FL_OVERRIDE;
 
   const char *extra_code(int n) const {return extra_code_[n];}
@@ -123,7 +123,7 @@ public:
 
   virtual void ideal_size(int &w, int &h);
 
-  ~Fl_Widget_Type();
+  ~Widget_Node();
   void redraw();
 };
 

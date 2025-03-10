@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "nodes/Fl_Grid_Type.h"
+#include "nodes/Grid_Node.h"
 
 #include "Fluid.h"
 #include "app/Fd_Snap_Action.h"
@@ -276,31 +276,31 @@ Fl_Grid::Cell *Fl_Grid_Proxy::widget(Fl_Widget *wi, int row, int col, int rowspa
 
 
 
-// ---- Fl_Grid_Type --------------------------------------------------- MARK: -
+// ---- Grid_Node --------------------------------------------------- MARK: -
 
 const char grid_type_name[] = "Fl_Grid";
 
-Fl_Grid_Type Fl_Grid_type;      // the "factory"
+Grid_Node Fl_Grid_type;      // the "factory"
 
-Fl_Grid_Type::Fl_Grid_Type() {
+Grid_Node::Grid_Node() {
 }
 
-Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
+Fl_Widget *Grid_Node::widget(int X,int Y,int W,int H) {
   Fl_Grid *g = new Fl_Grid_Proxy(X,Y,W,H);
   g->layout(3, 3);
   Fl_Group::current(nullptr);
   return g;
 }
 
-Fl_Widget *Fl_Grid_Type::enter_live_mode(int top) {
+Fl_Widget *Grid_Node::enter_live_mode(int top) {
   Fl_Grid *grid = new Fl_Grid(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grid);
 }
 
-void Fl_Grid_Type::leave_live_mode() {
+void Grid_Node::leave_live_mode() {
 }
 
-void Fl_Grid_Type::copy_properties()
+void Grid_Node::copy_properties()
 {
   super::copy_properties();
   Fl_Grid *d = (Fl_Grid*)live_widget, *s =(Fl_Grid*)o;
@@ -325,7 +325,7 @@ void Fl_Grid_Type::copy_properties()
   }
 }
 
-void Fl_Grid_Type::copy_properties_for_children() {
+void Grid_Node::copy_properties_for_children() {
   Fl_Grid *d = (Fl_Grid*)live_widget, *s =(Fl_Grid*)o;
   for (int i=0; i<s->children(); i++) {
     Fl_Grid::Cell *cell = s->cell(s->child(i));
@@ -339,7 +339,7 @@ void Fl_Grid_Type::copy_properties_for_children() {
   d->layout();
 }
 
-void Fl_Grid_Type::write_properties(fld::io::Project_Writer &f)
+void Grid_Node::write_properties(fld::io::Project_Writer &f)
 {
   super::write_properties(f);
   Fl_Grid* grid = (Fl_Grid*)o;
@@ -404,7 +404,7 @@ void Fl_Grid_Type::write_properties(fld::io::Project_Writer &f)
   }
 }
 
-void Fl_Grid_Type::read_property(fld::io::Project_Reader &f, const char *c)
+void Grid_Node::read_property(fld::io::Project_Reader &f, const char *c)
 {
   Fl_Grid* grid = (Fl_Grid*)o;
   if (!strcmp(c,"dimensions")) {
@@ -454,13 +454,13 @@ void Fl_Grid_Type::read_property(fld::io::Project_Reader &f, const char *c)
   }
 }
 
-void Fl_Grid_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate) {
+void Grid_Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) {
   Fl_Grid *grid;
   Fl_Widget *child_widget;
   Fl_Grid::Cell *cell;
   if (!child->is_true_widget()) return super::write_parent_properties(f, child, true);
   grid = (Fl_Grid*)o;
-  child_widget = ((Fl_Widget_Type*)child)->o;
+  child_widget = ((Widget_Node*)child)->o;
   cell = grid->cell(child_widget);
   if (!cell) return super::write_parent_properties(f, child, true);
   if (encapsulate) {
@@ -501,13 +501,13 @@ void Fl_Grid_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *
 // NOTE: we have to do this in a loop just as ::read_property() in case a new
 //    property is added. In the current setup, all the remaining properties
 //    will be skipped
-void Fl_Grid_Type::read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property) {
+void Grid_Node::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) {
   if (!child->is_true_widget()) {
     super::read_parent_property(f, child, property);
     return;
   }
   Fl_Grid *grid = (Fl_Grid*)o;
-  Fl_Widget *child_widget = ((Fl_Widget_Type*)child)->o;
+  Fl_Widget *child_widget = ((Widget_Node*)child)->o;
   if (!strcmp(property, "location")) {
     int row = -1, col = -1;
     const char *value = f.read_word();
@@ -540,10 +540,10 @@ void Fl_Grid_Type::read_parent_property(fld::io::Project_Reader &f, Fl_Type *chi
   }
 }
 
-void Fl_Grid_Type::write_code1(fld::io::Code_Writer& f) {
+void Grid_Node::write_code1(fld::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
-  Fl_Widget_Type::write_code1(f);
+  Widget_Node::write_code1(f);
   int i, rows = grid->rows(), cols = grid->cols();
   f.write_c("%s%s->layout(%d, %d);\n", f.indent(), var, rows, cols);
   int lm, tm, rm, bm;
@@ -604,7 +604,7 @@ void Fl_Grid_Type::write_code1(fld::io::Code_Writer& f) {
   }
 }
 
-void Fl_Grid_Type::write_code2(fld::io::Code_Writer& f) {
+void Grid_Node::write_code2(fld::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
   bool first_cell = true;
@@ -627,21 +627,21 @@ void Fl_Grid_Type::write_code2(fld::io::Code_Writer& f) {
   super::write_code2(f);
 }
 
-void Fl_Grid_Type::add_child(Fl_Type* a, Fl_Type* b) {
+void Grid_Node::add_child(Node* a, Node* b) {
   super::add_child(a, b);
   Fl_Grid* grid = (Fl_Grid*)o;
   grid->need_layout(1);
   grid->redraw();
 }
 
-void Fl_Grid_Type::move_child(Fl_Type* a, Fl_Type* b) {
+void Grid_Node::move_child(Node* a, Node* b) {
   super::move_child(a, b);
   Fl_Grid* grid = (Fl_Grid*)o;
   grid->need_layout(1);
   grid->redraw();
 }
 
-void Fl_Grid_Type::remove_child(Fl_Type* a) {
+void Grid_Node::remove_child(Node* a) {
   super::remove_child(a);
   Fl_Grid* grid = (Fl_Grid*)o;
   grid->need_layout(1);
@@ -653,7 +653,7 @@ void Fl_Grid_Type::remove_child(Fl_Type* a) {
  FLUID, users will want to resize children. So we need to trick Fl_Grid into
  taking the new size as the initial size.
  */
-void Fl_Grid_Type::child_resized(Fl_Widget_Type *child_type) {
+void Grid_Node::child_resized(Widget_Node *child_type) {
   Fl_Grid *grid = (Fl_Grid*)o;
   Fl_Widget *child = child_type->o;
   Fl_Grid::Cell *cell = grid->cell(child);
@@ -671,9 +671,9 @@ void Fl_Grid_Type::child_resized(Fl_Widget_Type *child_type) {
 }
 
 /** Return the currently selected Grid widget if is a Grid Type. */
-Fl_Grid *Fl_Grid_Type::selected() {
+Fl_Grid *Grid_Node::selected() {
   if (current_widget && current_widget->is_a(ID_Grid))
-    return ((Fl_Grid*)((Fl_Grid_Type*)current_widget)->o);
+    return ((Fl_Grid*)((Grid_Node*)current_widget)->o);
   return nullptr;
 }
 
@@ -682,7 +682,7 @@ Fl_Grid *Fl_Grid_Type::selected() {
  /param[in] child
  /param[in] x, y pixels from the top left of the window
  */
-void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
+void Grid_Node::insert_child_at(Fl_Widget *child, int x, int y) {
   Fl_Grid_Proxy *grid = (Fl_Grid_Proxy*)o;
   int row = -1, col = -1, ml, mt, grg, gcg;
   grid->margin(&ml, &mt, nullptr, nullptr);
@@ -716,7 +716,7 @@ void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
 
  /param[in] child
  */
-void Fl_Grid_Type::insert_child_at_next_free_cell(Fl_Widget *child) {
+void Grid_Node::insert_child_at_next_free_cell(Fl_Widget *child) {
   Fl_Grid_Proxy *grid = (Fl_Grid_Proxy*)o;
   if (grid->cell(child)) return;
 // The code below would insert the new widget after the last selected one, but
@@ -748,7 +748,7 @@ void Fl_Grid_Type::insert_child_at_next_free_cell(Fl_Widget *child) {
  \param[in] child pointer to the child type
  \param[in] key code of the last keypress when handling a FL_KEYBOARD event.
  */
-void Fl_Grid_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
+void Grid_Node::keyboard_move_child(Widget_Node *child, int key) {
   Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)o);
   Fl_Grid::Cell *cell = grid->any_cell(child->o);
   if (!cell) return;
@@ -763,7 +763,7 @@ void Fl_Grid_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
   }
 }
 
-void Fl_Grid_Type::layout_widget() {
+void Grid_Node::layout_widget() {
   Fluid.proj.tree.allow_layout++;
   ((Fl_Grid*)o)->layout();
   Fluid.proj.tree.allow_layout--;
@@ -789,8 +789,8 @@ void grid_child_cb(fld::widget::Formula_Input* i, void* v, int what) {
   {
     return;
   }
-  Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
-  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Widget *child = ((Widget_Node*)current_widget)->o;
+  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
   Fl_Grid::Cell *cell = g->any_cell(child);
   if (v == LOAD) {
     int v = -1;
@@ -930,7 +930,7 @@ void grid_align_horizontal_cb(Fl_Choice* i, void* v) {
     return;
   }
   int mask = (FL_GRID_LEFT | FL_GRID_RIGHT | FL_GRID_HORIZONTAL);
-  Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Grid *g = ((Fl_Grid*)((Widget_Node*)current_widget->parent)->o);
   if (v == LOAD) {
     int a = FL_GRID_FILL & mask;
     Fl_Grid::Cell *cell = g->cell(current_widget->o);
@@ -965,7 +965,7 @@ void grid_align_vertical_cb(Fl_Choice* i, void* v) {
     return;
   }
   int mask = (FL_GRID_TOP | FL_GRID_BOTTOM | FL_GRID_VERTICAL);
-  Fl_Grid *g = ((Fl_Grid*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Grid *g = ((Fl_Grid*)((Widget_Node*)current_widget->parent)->o);
   if (v == LOAD) {
     int a = FL_GRID_FILL & mask;
     Fl_Grid::Cell *cell = g->cell(current_widget->o);

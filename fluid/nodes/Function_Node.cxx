@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "nodes/Fl_Function_Type.h"
+#include "nodes/Function_Node.h"
 
 #include "Fluid.h"
 #include "app/mergeback.h"
@@ -22,8 +22,8 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
-#include "nodes/Fl_Window_Type.h"
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Window_Node.h"
+#include "nodes/Group_Node.h"
 #include "panels/function_panel.h"
 #include "rsrcs/comments.h"
 #include "widgets/Node_Browser.h"
@@ -37,22 +37,22 @@
 
 
 /// Set a current class, so that the code of the children is generated correctly.
-Fl_Class_Type *current_class = nullptr;
+Class_Node *current_class = nullptr;
 
 /**
  \brief Return 1 if the list contains a function with the given signature at the top level.
- Fl_Widget_Type uses this to check if a callback by a certain signature is
- already defined by the user within this file. If not, Fl_Widget_Type will
+ Widget_Node uses this to check if a callback by a certain signature is
+ already defined by the user within this file. If not, Widget_Node will
  generate an `extern $sig$;` statement.
- \param[in] rtype return type, can be nullptr to avoid checking (not used by Fl_Widget_Type)
+ \param[in] rtype return type, can be nullptr to avoid checking (not used by Widget_Node)
  \param[in] sig function signature
  \return 1 if found.
  */
 int has_toplevel_function(const char *rtype, const char *sig) {
-  Fl_Type *child;
+  Node *child;
   for (child = Fluid.proj.tree.first; child; child = child->next) {
     if (!child->is_in_class() && child->is_a(ID_Function)) {
-      const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
+      const Function_Node *fn = (const Function_Node*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
     }
@@ -169,9 +169,9 @@ const char *c_check(const char *c, int type) {
   return _c_check(c,type);
 }
 
-// ---- Fl_Function_Type implementation
+// ---- Function_Node implementation
 
-/** \class Fl_Function_Type
+/** \class Function_Node
  Manage a C++ function node in the Fluid design.
 
  A function can have a signature (name followed by arguments), a return type
@@ -180,13 +180,13 @@ const char *c_check(const char *c, int type) {
  */
 
 /// Prototype for a function to be used by the factory.
-Fl_Function_Type Fl_Function_type;
+Function_Node Fl_Function_type;
 
 /**
  Create a new function.
  */
-Fl_Function_Type::Fl_Function_Type() :
-  Fl_Type(),
+Function_Node::Function_Node() :
+  Node(),
   return_type(nullptr),
   public_(0),
   cdecl_(0),
@@ -197,7 +197,7 @@ Fl_Function_Type::Fl_Function_Type() :
 /**
  Destructor.
  */
-Fl_Function_Type::~Fl_Function_Type() {
+Function_Node::~Function_Node() {
   if (return_type) free((void*)return_type);
 }
 
@@ -206,8 +206,8 @@ Fl_Function_Type::~Fl_Function_Type() {
  \param[in] strategy add new function after current or as last child
  \return the new node
  */
-Fl_Type *Fl_Function_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Function_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -215,7 +215,7 @@ Fl_Type *Fl_Function_Type::make(Strategy strategy) {
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_Function_Type *o = new Fl_Function_Type();
+  Function_Node *o = new Function_Node();
   o->name("make_window()");
   o->return_type = nullptr;
   o->add(anchor, strategy);
@@ -231,8 +231,8 @@ Fl_Type *Fl_Function_Type::make(Strategy strategy) {
   - "C" is written if we want a C signature instead of C++
   - "return_type" is followed by the return type of the function
  */
-void Fl_Function_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Type::write_properties(f);
+void Function_Node::write_properties(fld::io::Project_Writer &f) {
+  Node::write_properties(f);
   switch (public_) {
     case 0: f.write_string("private"); break;
     case 2: f.write_string("protected"); break;
@@ -248,7 +248,7 @@ void Fl_Function_Type::write_properties(fld::io::Project_Writer &f) {
  Read function specific properties fron an .fl file.
  \param[in] c read from this string
  */
-void Fl_Function_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
@@ -258,14 +258,14 @@ void Fl_Function_Type::read_property(fld::io::Project_Reader &f, const char *c) 
   } else if (!strcmp(c,"return_type")) {
     storestring(f.read_word(),return_type);
   } else {
-    Fl_Type::read_property(f, c);
+    Node::read_property(f, c);
   }
 }
 
 /**
  Open the function_panel dialog box to edit this function.
  */
-void Fl_Function_Type::open() {
+void Function_Node::open() {
   // fill dialog box
   if (!function_panel) make_function_panel();
   f_return_type_input->value(return_type);
@@ -356,7 +356,7 @@ BREAK2:
  Return 1 if the function is global.
  \return 1 if public, 0 if local.
  */
-int Fl_Function_Type::is_public() const {
+int Function_Node::is_public() const {
   return public_;
 }
 
@@ -410,10 +410,10 @@ static void clean_function_for_implementation(char *out, const char *function_na
  This writes the code that goes \b before all children of this class.
  \see write_code2(fld::io::Code_Writer& f)
  */
-void Fl_Function_Type::write_code1(fld::io::Code_Writer& f) {
+void Function_Node::write_code1(fld::io::Code_Writer& f) {
   constructor=0;
   havewidgets = 0;
-  Fl_Type *child;
+  Node *child;
   // if the function has no children (hence no body), Fluid will not generate
   // the function either. This is great if you decide to implement that function
   // inside another module
@@ -529,8 +529,8 @@ void Fl_Function_Type::write_code1(fld::io::Code_Writer& f) {
  This writes the code that goes \b after all children of this class.
  \see write_code1(fld::io::Code_Writer& f)
  */
-void Fl_Function_Type::write_code2(fld::io::Code_Writer& f) {
-  Fl_Type *child;
+void Function_Node::write_code2(fld::io::Code_Writer& f) {
+  Node *child;
   const char *var = "w";
   char havechildren = 0;
   for (child = next; child && child->level > level; child = child->next) {
@@ -557,7 +557,7 @@ void Fl_Function_Type::write_code2(fld::io::Code_Writer& f) {
  \param[in] sig function name followed by arguments
  \return 1 if they match, 0 if not
  */
-int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
+int Function_Node::has_signature(const char *rtype, const char *sig) const {
   if (rtype && !return_type) return 0;
   if (!name()) return 0;
   if ( (rtype==nullptr || strcmp(return_type, rtype)==0)
@@ -567,9 +567,9 @@ int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
   return 0;
 }
 
-// ---- Fl_Code_Type declaration
+// ---- Code_Node declaration
 
-/** \class Fl_Code_Type
+/** \class Code_Node
  Manage a block of C++ code in the Fluid design.
 
  This node manages an arbitrary block of code inside a function that will
@@ -578,12 +578,12 @@ int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
  */
 
 /// Prototype for code to be used by the factory.
-Fl_Code_Type Fl_Code_type;
+Code_Node Fl_Code_type;
 
 /**
  Constructor.
  */
-Fl_Code_Type::Fl_Code_Type() :
+Code_Node::Code_Node() :
   cursor_position_(0),
   code_input_scroll_row(0),
   code_input_scroll_col(0)
@@ -596,8 +596,8 @@ Fl_Code_Type::Fl_Code_Type() :
  \param[in] strategy add code after current or as last child
  \return new Code node
  */
-Fl_Type *Fl_Code_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Code_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_code_block()) {
@@ -609,7 +609,7 @@ Fl_Type *Fl_Code_Type::make(Strategy strategy) {
     fl_message("Please select a function");
     return nullptr;
   }
-  Fl_Code_Type *o = new Fl_Code_Type();
+  Code_Node *o = new Code_Node();
   o->name("printf(\"Hello, World!\\n\");");
   o->add(anchor, strategy);
   o->factory = this;
@@ -619,7 +619,7 @@ Fl_Type *Fl_Code_Type::make(Strategy strategy) {
 /**
  Open the code_panel or an external editor to edit this code section.
  */
-void Fl_Code_Type::open() {
+void Code_Node::open() {
   // Using an external code editor? Open it..
   if ( Fluid.use_external_editor && Fluid.external_editor_command[0] ) {
     const char *cmd = Fluid.external_editor_command;
@@ -665,18 +665,18 @@ BREAK2:
 /**
  Grab changes from an external editor and write this node.
  */
-void Fl_Code_Type::write(fld::io::Project_Writer &f) {
+void Code_Node::write(fld::io::Project_Writer &f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
     Fluid.main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
-  Fl_Type::write(f);
+  Node::write(f);
 }
 
 /**
  Write the code block with the correct indentation.
  */
-void Fl_Code_Type::write_code1(fld::io::Code_Writer& f) {
+void Code_Node::write_code1(fld::io::Code_Writer& f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
     Fluid.main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
@@ -689,7 +689,7 @@ void Fl_Code_Type::write_code1(fld::io::Code_Writer& f) {
 /**
  See if external editor is open.
  */
-int Fl_Code_Type::is_editing() {
+int Code_Node::is_editing() {
   return editor_.is_editing();
 }
 
@@ -700,7 +700,7 @@ int Fl_Code_Type::is_editing() {
  \return 0: process still running
  \return \>0: process finished + reaped (returns pid)
  */
-int Fl_Code_Type::reap_editor() {
+int Code_Node::reap_editor() {
   return editor_.reap_editor();
 }
 
@@ -713,7 +713,7 @@ int Fl_Code_Type::reap_editor() {
  \todo Figure out how saving a fluid file can be intercepted to grab
     current contents of editor file..
  */
-int Fl_Code_Type::handle_editor_changes() {
+int Code_Node::handle_editor_changes() {
   const char *newcode = nullptr;
   switch ( editor_.handle_changes(&newcode) ) {
     case 1: {            // (1)=changed
@@ -727,9 +727,9 @@ int Fl_Code_Type::handle_editor_changes() {
   return 0;
 }
 
-// ---- Fl_CodeBlock_Type implementation
+// ---- CodeBlock_Node implementation
 
-/** \class Fl_CodeBlock_Type
+/** \class CodeBlock_Node
  Manage two blocks of C++ code enclosing its children.
 
  This node manages two lines of code that enclose all children
@@ -739,20 +739,20 @@ int Fl_Code_Type::handle_editor_changes() {
  */
 
 /// Prototype for a block of code to be used by the factory.
-Fl_CodeBlock_Type Fl_CodeBlock_type;
+CodeBlock_Node Fl_CodeBlock_type;
 
 /**
  Constructor.
  */
-Fl_CodeBlock_Type::Fl_CodeBlock_Type() :
-  Fl_Type(),
+CodeBlock_Node::CodeBlock_Node() :
+  Node(),
   after(nullptr)
 { }
 
 /**
  Destructor.
  */
-Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
+CodeBlock_Node::~CodeBlock_Node() {
   if (after)
     free((void*)after);
 }
@@ -764,8 +764,8 @@ Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
  \param[in] strategy add after current or as last child
  \return new CodeBlock
  */
-Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *CodeBlock_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_code_block()) {
@@ -777,7 +777,7 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
     fl_message("Please select a function");
     return nullptr;
   }
-  Fl_CodeBlock_Type *o = new Fl_CodeBlock_Type();
+  CodeBlock_Node *o = new CodeBlock_Node();
   o->name("if (test())");
   o->after = nullptr;
   o->add(anchor, strategy);
@@ -790,8 +790,8 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   - "after" is followed by the code that comes after the children
  The "before" code is stored in the name() field.
  */
-void Fl_CodeBlock_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Type::write_properties(f);
+void CodeBlock_Node::write_properties(fld::io::Project_Writer &f) {
+  Node::write_properties(f);
   if (after) {
     f.write_string("after");
     f.write_word(after);
@@ -801,18 +801,18 @@ void Fl_CodeBlock_Type::write_properties(fld::io::Project_Writer &f) {
 /**
  Read the node specific properties.
  */
-void Fl_CodeBlock_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void CodeBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"after")) {
     storestring(f.read_word(),after);
   } else {
-    Fl_Type::read_property(f, c);
+    Node::read_property(f, c);
   }
 }
 
 /**
  Open the codeblock_panel.
  */
-void Fl_CodeBlock_Type::open() {
+void CodeBlock_Node::open() {
   if (!codeblock_panel) make_codeblock_panel();
   code_before_input->value(name());
   code_after_input->value(after);
@@ -850,7 +850,7 @@ BREAK2:
 /**
  Write the "before" code.
  */
-void Fl_CodeBlock_Type::write_code1(fld::io::Code_Writer& f) {
+void CodeBlock_Node::write_code1(fld::io::Code_Writer& f) {
   const char* c = name();
   f.write_c("%s%s {\n", f.indent(), c ? c : "");
   f.indentation++;
@@ -859,15 +859,15 @@ void Fl_CodeBlock_Type::write_code1(fld::io::Code_Writer& f) {
 /**
  Write the "after" code.
  */
-void Fl_CodeBlock_Type::write_code2(fld::io::Code_Writer& f) {
+void CodeBlock_Node::write_code2(fld::io::Code_Writer& f) {
   f.indentation--;
   if (after) f.write_c("%s} %s\n", f.indent(), after);
   else f.write_c("%s}\n", f.indent());
 }
 
-// ---- Fl_Decl_Type declaration
+// ---- Decl_Node declaration
 
-/** \class Fl_Decl_Type
+/** \class Decl_Node
  Manage the C/C++ declaration of a variable.
 
  This node manages a single line of code that can be in the header or the source
@@ -877,12 +877,12 @@ void Fl_CodeBlock_Type::write_code2(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a declaration to be used by the factory.
-Fl_Decl_Type Fl_Decl_type;
+Decl_Node Fl_Decl_type;
 
 /**
  Constructor.
  */
-Fl_Decl_Type::Fl_Decl_Type() :
+Decl_Node::Decl_Node() :
   public_(0),
   static_(1)
 { }
@@ -890,9 +890,9 @@ Fl_Decl_Type::Fl_Decl_Type() :
 /**
  Return 1 if this declaration and its parents are public.
  */
-int Fl_Decl_Type::is_public() const
+int Decl_Node::is_public() const
 {
-  Fl_Type *p = parent;
+  Node *p = parent;
   while (p && !p->is_decl_block()) p = p->parent;
   if(p && p->is_public() && public_)
     return public_;
@@ -906,8 +906,8 @@ int Fl_Decl_Type::is_public() const
  \param[in] strategy add after current or as last child
  \return new Declaration node
  */
-Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Decl_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -915,7 +915,7 @@ Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_Decl_Type *o = new Fl_Decl_Type();
+  Decl_Node *o = new Decl_Node();
   o->public_ = 0;
   o->static_ = 1;
   o->name("int x;");
@@ -929,8 +929,8 @@ Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
   - "private"/"public"/"protected"
   - "local"/"global" if this is static or not
  */
-void Fl_Decl_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Type::write_properties(f);
+void Decl_Node::write_properties(fld::io::Project_Writer &f) {
+  Node::write_properties(f);
   switch (public_) {
     case 0: f.write_string("private"); break;
     case 1: f.write_string("public"); break;
@@ -945,7 +945,7 @@ void Fl_Decl_Type::write_properties(fld::io::Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void Fl_Decl_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Decl_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
   } else if (!strcmp(c,"private")) {
@@ -957,14 +957,14 @@ void Fl_Decl_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"global")) {
     static_ = 0;
   } else {
-    Fl_Type::read_property(f, c);
+    Node::read_property(f, c);
   }
 }
 
 /**
  Open the decl_panel to edit this node.
  */
-void Fl_Decl_Type::open() {
+void Decl_Node::open() {
   if (!decl_panel) make_decl_panel();
   decl_input->buffer()->text(name());
   if (is_in_class()) {
@@ -1036,7 +1036,7 @@ BREAK2:
  \todo There are a lot of side effect in this node depending on the given text
     and the parent node. They need to be understood and documented.
  */
-void Fl_Decl_Type::write_code1(fld::io::Code_Writer& f) {
+void Decl_Node::write_code1(fld::io::Code_Writer& f) {
   const char* c = name();
   if (!c) return;
   // handle a few keywords differently if inside a class
@@ -1100,9 +1100,9 @@ void Fl_Decl_Type::write_code1(fld::io::Code_Writer& f) {
   }
 }
 
-// ---- Fl_Data_Type declaration
+// ---- Data_Node declaration
 
-/** \class Fl_Data_Type
+/** \class Data_Node
  Manage data from an external arbitrary file.
 
  The content of the file will be stored in binary inside the generated
@@ -1110,13 +1110,13 @@ void Fl_Decl_Type::write_code1(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a data node to be used by the factory.
-Fl_Data_Type Fl_Data_type;
+Data_Node Fl_Data_type;
 
 /**
  Constructor.
  */
-Fl_Data_Type::Fl_Data_Type() :
-  Fl_Decl_Type(),
+Data_Node::Data_Node() :
+  Decl_Node(),
   filename_(nullptr),
   text_mode_(0)
 { }
@@ -1124,7 +1124,7 @@ Fl_Data_Type::Fl_Data_Type() :
 /**
  Destructor.
  */
-Fl_Data_Type::~Fl_Data_Type() {
+Data_Node::~Data_Node() {
   if (filename_)
     free((void*)filename_);
 }
@@ -1134,8 +1134,8 @@ Fl_Data_Type::~Fl_Data_Type() {
  \param[in] strategy add after current or as last child
  \return new inline data node
  */
-Fl_Type *Fl_Data_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Data_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -1143,7 +1143,7 @@ Fl_Type *Fl_Data_Type::make(Strategy strategy) {
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_Data_Type *o = new Fl_Data_Type();
+  Data_Node *o = new Data_Node();
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = nullptr;
@@ -1159,8 +1159,8 @@ Fl_Type *Fl_Data_Type::make(Strategy strategy) {
   - "filename" followed by the filename of the file to inline
   - "textmode" if data is written in ASCII vs. binary
  */
-void Fl_Data_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Decl_Type::write_properties(f);
+void Data_Node::write_properties(fld::io::Project_Writer &f) {
+  Decl_Node::write_properties(f);
   if (filename_) {
     f.write_string("filename");
     f.write_word(filename_);
@@ -1176,7 +1176,7 @@ void Fl_Data_Type::write_properties(fld::io::Project_Writer &f) {
 /**
  Read specific properties.
  */
-void Fl_Data_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Data_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"filename")) {
     storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
@@ -1184,14 +1184,14 @@ void Fl_Data_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"compressed")) {
     text_mode_ = 2;
   } else {
-    Fl_Decl_Type::read_property(f, c);
+    Decl_Node::read_property(f, c);
   }
 }
 
 /**
  Open the data_panel to edit this node.
  */
-void Fl_Data_Type::open() {
+void Data_Node::open() {
   if (!data_panel) make_data_panel();
   data_input->value(name());
   if (is_in_class()) {
@@ -1301,7 +1301,7 @@ BREAK2:
 /**
  Write the content of the external file inline into the source code.
  */
-void Fl_Data_Type::write_code1(fld::io::Code_Writer& f) {
+void Data_Node::write_code1(fld::io::Code_Writer& f) {
   const char *message = nullptr;
   const char *c = name();
   if (!c) return;
@@ -1436,9 +1436,9 @@ void Fl_Data_Type::write_code1(fld::io::Code_Writer& f) {
   if (data) free(data);
 }
 
-// ---- Fl_DeclBlock_Type declaration
+// ---- DeclBlock_Node declaration
 
-/** \class Fl_DeclBlock_Type
+/** \class DeclBlock_Node
  Manage a declaration block.
 
  Declaration blocks have two text field that are written before and after
@@ -1447,13 +1447,13 @@ void Fl_Data_Type::write_code1(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a declaration block to be used by the factory.
-Fl_DeclBlock_Type Fl_DeclBlock_type;
+DeclBlock_Node Fl_DeclBlock_type;
 
 /**
  Constructor.
  */
-Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
-  Fl_Type(),
+DeclBlock_Node::DeclBlock_Node() :
+  Node(),
   after(nullptr),
   write_map_(CODE_IN_SOURCE)
 { }
@@ -1461,7 +1461,7 @@ Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
 /**
  Destructor.
  */
-Fl_DeclBlock_Type::~Fl_DeclBlock_Type() {
+DeclBlock_Node::~DeclBlock_Node() {
   if (after)
     ::free((void*)after);
 }
@@ -1469,7 +1469,7 @@ Fl_DeclBlock_Type::~Fl_DeclBlock_Type() {
 /**
  Return 1 if this block is public.
  */
-int Fl_DeclBlock_Type::is_public() const {
+int DeclBlock_Node::is_public() const {
   return ((write_map_&CODE_IN_HEADER) != 0);
 }
 
@@ -1478,15 +1478,15 @@ int Fl_DeclBlock_Type::is_public() const {
  \param[in] strategy add after current or as last child
  \return new Declaration Block node
  */
-Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *DeclBlock_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && !p->is_decl_block()) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
+  DeclBlock_Node *o = new DeclBlock_Node();
   o->name("#if 1");
   o->write_map_ = CODE_IN_SOURCE;
   o->after = fl_strdup("#endif");
@@ -1500,8 +1500,8 @@ Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   - "public"/"protected"
   - "after" followed by the second code block.
  */
-void Fl_DeclBlock_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Type::write_properties(f);
+void DeclBlock_Node::write_properties(fld::io::Project_Writer &f) {
+  Node::write_properties(f);
   // deprecated
   if (is_public()) f.write_string("public");
   // new way to map declaration block to various parts of the generated code
@@ -1514,7 +1514,7 @@ void Fl_DeclBlock_Type::write_properties(fld::io::Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void Fl_DeclBlock_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void DeclBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if(!strcmp(c,"public")) {
     write_map_ |= CODE_IN_HEADER;
   } else if(!strcmp(c,"protected")) {
@@ -1524,14 +1524,14 @@ void Fl_DeclBlock_Type::read_property(fld::io::Project_Reader &f, const char *c)
   } else  if (!strcmp(c,"after")) {
     storestring(f.read_word(),after);
   } else {
-    Fl_Type::read_property(f, c);
+    Node::read_property(f, c);
   }
 }
 
 /**
  Open the declblock_panel to edit this node.
  */
-void Fl_DeclBlock_Type::open() {
+void DeclBlock_Node::open() {
   // build dialog box
   if (!declblock_panel) make_declblock_panel();
   // preset all values
@@ -1633,7 +1633,7 @@ BREAK2:
  Write the \b before static code to the source file, and to the header file if declared public.
  The before code is stored in the name() field.
  */
-void Fl_DeclBlock_Type::write_static(fld::io::Code_Writer& f) {
+void DeclBlock_Node::write_static(fld::io::Code_Writer& f) {
   const char* c = name();
   if (c && *c) {
     if (write_map_ & STATIC_IN_HEADER)
@@ -1646,7 +1646,7 @@ void Fl_DeclBlock_Type::write_static(fld::io::Code_Writer& f) {
 /**
  Write the \b after static code to the source file, and to the header file if declared public.
  */
-void Fl_DeclBlock_Type::write_static_after(fld::io::Code_Writer& f) {
+void DeclBlock_Node::write_static_after(fld::io::Code_Writer& f) {
   const char* c = after;
   if (c && *c) {
     if (write_map_ & STATIC_IN_HEADER)
@@ -1660,7 +1660,7 @@ void Fl_DeclBlock_Type::write_static_after(fld::io::Code_Writer& f) {
  Write the \b before code to the source file, and to the header file if declared public.
  The before code is stored in the name() field.
  */
-void Fl_DeclBlock_Type::write_code1(fld::io::Code_Writer& f) {
+void DeclBlock_Node::write_code1(fld::io::Code_Writer& f) {
   const char* c = name();
   if (c && *c) {
     if (write_map_ & CODE_IN_HEADER)
@@ -1673,7 +1673,7 @@ void Fl_DeclBlock_Type::write_code1(fld::io::Code_Writer& f) {
 /**
  Write the \b after code to the source file, and to the header file if declared public.
  */
-void Fl_DeclBlock_Type::write_code2(fld::io::Code_Writer& f) {
+void DeclBlock_Node::write_code2(fld::io::Code_Writer& f) {
   const char* c = after;
   if (c && *c) {
     if (write_map_ & CODE_IN_HEADER)
@@ -1683,9 +1683,9 @@ void Fl_DeclBlock_Type::write_code2(fld::io::Code_Writer& f) {
   }
 }
 
-// ---- Fl_Comment_Type declaration
+// ---- Comment_Node declaration
 
-/** \class Fl_Comment_Type
+/** \class Comment_Node
  Manage a comment node.
 
  The comment field takes one or more lines of ASCII text. If the text starts
@@ -1694,12 +1694,12 @@ void Fl_DeclBlock_Type::write_code2(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a comment node to be used by the factory.
-Fl_Comment_Type Fl_Comment_type;
+Comment_Node Fl_Comment_type;
 
 /**
  Constructor.
  */
-Fl_Comment_Type::Fl_Comment_Type() :
+Comment_Node::Comment_Node() :
   in_c_(1),
   in_h_(1),
   style_(0)
@@ -1710,8 +1710,8 @@ Fl_Comment_Type::Fl_Comment_Type() :
  \param[in] strategy add after current or as last child
  \return new Comment node
  */
-Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Comment_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_code_block()) {
@@ -1719,7 +1719,7 @@ Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_Comment_Type *o = new Fl_Comment_Type();
+  Comment_Node *o = new Comment_Node();
   o->in_c_ = 1;
   o->in_h_ = 1;
   o->style_ = 0;
@@ -1734,8 +1734,8 @@ Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
   - "in_source"/"not_in_source" if the comment will be written to the source code
   - "in_header"/"not_in_header" if the comment will be written to the header file
  */
-void Fl_Comment_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Type::write_properties(f);
+void Comment_Node::write_properties(fld::io::Project_Writer &f) {
+  Node::write_properties(f);
   if (in_c_) f.write_string("in_source"); else f.write_string("not_in_source");
   if (in_h_) f.write_string("in_header"); else f.write_string("not_in_header");
 }
@@ -1743,7 +1743,7 @@ void Fl_Comment_Type::write_properties(fld::io::Project_Writer &f) {
 /**
  Read extra properties.
  */
-void Fl_Comment_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Comment_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"in_source")) {
     in_c_ = 1;
   } else if (!strcmp(c,"not_in_source")) {
@@ -1753,7 +1753,7 @@ void Fl_Comment_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"not_in_header")) {
     in_h_ = 0;
   } else {
-    Fl_Type::read_property(f, c);
+    Node::read_property(f, c);
   }
 }
 
@@ -1782,7 +1782,7 @@ static void load_comments_preset(Fl_Preferences &menu) {
 /**
  Open the comment_panel to edit this node.
  */
-void Fl_Comment_Type::open() {
+void Comment_Node::open() {
   if (!comment_panel) make_comment_panel();
   const char *text = name();
   {
@@ -1901,7 +1901,7 @@ BREAK2:
 /**
  Write the comment to the files.
  */
-void Fl_Comment_Type::write_code1(fld::io::Code_Writer& f) {
+void Comment_Node::write_code1(fld::io::Code_Writer& f) {
   const char* c = name();
   if (!c) return;
   if (!in_c_ && !in_h_) return;
@@ -1941,20 +1941,20 @@ void Fl_Comment_Type::write_code1(fld::io::Code_Writer& f) {
   free(txt);
 }
 
-// ---- Fl_Class_Type declaration
+// ---- Class_Node declaration
 
-/** \class Fl_Class_Type
+/** \class Class_Node
  Manage a class declaration and implementation.
  */
 
 /// Prototype for a class node to be used by the factory.
-Fl_Class_Type Fl_Class_type;
+Class_Node Fl_Class_type;
 
 /**
  Constructor.
  */
-Fl_Class_Type::Fl_Class_Type() :
-  Fl_Type(),
+Class_Node::Class_Node() :
+  Node(),
   subclass_of(nullptr),
   public_(1),
   class_prefix(nullptr)
@@ -1963,7 +1963,7 @@ Fl_Class_Type::Fl_Class_Type() :
 /**
  Destructor.
  */
-Fl_Class_Type::~Fl_Class_Type() {
+Class_Node::~Class_Node() {
   if (subclass_of)
     free((void*)subclass_of);
   if (class_prefix)
@@ -1973,14 +1973,14 @@ Fl_Class_Type::~Fl_Class_Type() {
 /**
  Return 1 if this class is marked public.
  */
-int Fl_Class_Type::is_public() const {
+int Class_Node::is_public() const {
   return public_;
 }
 
 /**
  Set the prefixx string.
  */
-void Fl_Class_Type::prefix(const char*p) {
+void Class_Node::prefix(const char*p) {
   free((void*) class_prefix);
   class_prefix=fl_strdup(p ? p : "" );
 }
@@ -1990,8 +1990,8 @@ void Fl_Class_Type::prefix(const char*p) {
  \param[in] strategy add after current or as last child
  \return new Class node
  */
-Fl_Type *Fl_Class_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Class_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !p->is_decl_block()) {
@@ -1999,7 +1999,7 @@ Fl_Type *Fl_Class_Type::make(Strategy strategy) {
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_Class_Type *o = new Fl_Class_Type();
+  Class_Node *o = new Class_Node();
   o->name("UserInterface");
   o->class_prefix = nullptr;
   o->subclass_of = nullptr;
@@ -2014,8 +2014,8 @@ Fl_Type *Fl_Class_Type::make(Strategy strategy) {
   - ":" followed by the super class
   - "private"/"protected"
  */
-void Fl_Class_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Type::write_properties(f);
+void Class_Node::write_properties(fld::io::Project_Writer &f) {
+  Node::write_properties(f);
   if (subclass_of) {
     f.write_string(":");
     f.write_word(subclass_of);
@@ -2029,7 +2029,7 @@ void Fl_Class_Type::write_properties(fld::io::Project_Writer &f) {
 /**
  Read additional properties.
  */
-void Fl_Class_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
@@ -2037,14 +2037,14 @@ void Fl_Class_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,":")) {
     storestring(f.read_word(), subclass_of);
   } else {
-    Fl_Type::read_property(f, c);
+    Node::read_property(f, c);
   }
 }
 
 /**
  Open the class_panel to edit the class name and superclass name.
  */
-void Fl_Class_Type::open() {
+void Class_Node::open() {
   if (!class_panel) make_class_panel();
   char fullname[FL_PATH_MAX]="";
   if (prefix() && strlen(prefix()))
@@ -2119,7 +2119,7 @@ BREAK2:
 /**
  Write the header code that declares this class.
  */
-void Fl_Class_Type::write_code1(fld::io::Code_Writer& f) {
+void Class_Node::write_code1(fld::io::Code_Writer& f) {
   parent_class = current_class;
   current_class = this;
   write_public_state = 0;
@@ -2136,7 +2136,7 @@ void Fl_Class_Type::write_code1(fld::io::Code_Writer& f) {
 /**
  Write the header code that ends the declaration of this class.
  */
-void Fl_Class_Type::write_code2(fld::io::Code_Writer& f) {
+void Class_Node::write_code2(fld::io::Code_Writer& f) {
   f.write_h("};\n");
   current_class = parent_class;
 }
@@ -2144,11 +2144,11 @@ void Fl_Class_Type::write_code2(fld::io::Code_Writer& f) {
 /**
  Return 1 if this class contains a function with the given signature.
  */
-int Fl_Type::has_function(const char *rtype, const char *sig) const {
-  Fl_Type *child;
+int Node::has_function(const char *rtype, const char *sig) const {
+  Node *child;
   for (child = next; child && child->level > level; child = child->next) {
     if (child->level == level+1 && child->is_a(ID_Function)) {
-      const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
+      const Function_Node *fn = (const Function_Node*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
     }

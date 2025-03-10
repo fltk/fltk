@@ -22,7 +22,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 
-class Fl_Type;
+class Node;
 class Fl_Group_Type;
 class Fl_Window_Type;
 
@@ -45,15 +45,15 @@ class Project_Writer;
  labels. Type created FROM_FILE will start with no label, so the label is set
  correctly later.
 
- \see Fl_Type *Fl_..._Type::make(Strategy strategy) calls `add()`
+ \see Node *Fl_..._Type::make(Strategy strategy) calls `add()`
  Add single Type:
-    Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open)
-    Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open)
-    Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy)
+    Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open)
+    Node *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open)
+    Node *add_new_widget_from_file(const char *inName, Strategy strategy)
  Add a hierarchy of Types
-    void Fl_Type::add(Fl_Type *p, Strategy strategy)
+    void Node::add(Node *p, Strategy strategy)
     int read_file(const char *filename, int merge, Strategy strategy)
-    Fl_Type *fld::io::Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options)
+    Node *fld::io::Project_Reader::read_children(Node *p, int merge, Strategy strategy, char skip_options)
     int fld::io::Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
  */
 typedef struct Strategy {
@@ -110,7 +110,7 @@ enum ID {
   ID_Max_
 };
 
-void update_visibility_flag(Fl_Type *p);
+void update_visibility_flag(Node *p);
 void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
 
@@ -122,8 +122,8 @@ void later_cb(Fl_Widget*,void*);
 #ifndef NDEBUG
 void print_project_tree();
 bool validate_project_tree();
-bool validate_independent_branch(class Fl_Type *root);
-bool validate_branch(class Fl_Type *root);
+bool validate_independent_branch(class Node *root);
+bool validate_branch(class Node *root);
 #endif
 
 /**
@@ -149,13 +149,13 @@ bool validate_branch(class Fl_Type *root);
  \todo it may make sense to have a readable iterator class instead of relying
  on pointer manipulation. Or use std in future releases.
  */
-class Fl_Type {
+class Node {
   /** Copy the label text to Widgets and Windows, does nothing in Type. */
   virtual void setlabel(const char *) { } // virtual part of label(char*)
 
 protected:
 
-  Fl_Type();
+  Node();
 
   /** Name of a widget, or code some non-widget Types. */
   const char *name_;
@@ -177,7 +177,7 @@ protected:
 public: // things that should not be public:
   // TODO: reference back to the tree
   /** Quick link to the parent Type instead of walking up the linked list. */
-  Fl_Type *parent;
+  Node *parent;
   /** This type is rendered "selected" in the tree browser. */
   char new_selected; // browser highlight
   /** Backup storage for selection if an error occurred during some operation
@@ -187,12 +187,12 @@ public: // things that should not be public:
   char folded_;  // if set, children are not shown in browser
   char visible; // true if all parents are open
   int level;    // number of parents over this
-  Fl_Type *next, *prev;
-  Fl_Type *prev_sibling();
-  Fl_Type *next_sibling();
-  Fl_Type *first_child();
+  Node *next, *prev;
+  Node *prev_sibling();
+  Node *next_sibling();
+  Node *first_child();
 
-  Fl_Type *factory;
+  Node *factory;
   const char *callback_name(fld::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
@@ -210,16 +210,16 @@ protected:
 
 public:
 
-  virtual ~Fl_Type();
-  virtual Fl_Type *make(Strategy strategy) = 0;
+  virtual ~Node();
+  virtual Node *make(Strategy strategy) = 0;
 
   Fl_Window_Type *window();
   Fl_Group_Type *group();
 
-  void add(Fl_Type *parent, Strategy strategy);
-  void insert(Fl_Type *n); // insert into list before n
-  Fl_Type* remove();    // remove from list
-  void move_before(Fl_Type*); // move before a sibling
+  void add(Node *parent, Strategy strategy);
+  void insert(Node *n); // insert into list before n
+  Node* remove();    // remove from list
+  void move_before(Node*); // move before a sibling
 
   virtual const char *title(); // string for browser
   virtual const char *type_name() = 0; // type for code output
@@ -238,11 +238,11 @@ public:
   const char *comment() { return comment_; }
   void comment(const char *);
 
-  virtual Fl_Type* click_test(int,int) { return nullptr; }
+  virtual Node* click_test(int,int) { return nullptr; }
 
-  virtual void add_child(Fl_Type*, Fl_Type* beforethis) { }
-  virtual void move_child(Fl_Type*, Fl_Type* beforethis) { }
-  virtual void remove_child(Fl_Type*) { }
+  virtual void add_child(Node*, Node* beforethis) { }
+  virtual void move_child(Node*, Node* beforethis) { }
+  virtual void remove_child(Node*) { }
 
   /** Give widgets a chance to arrange their children after all children were added.
    If adding individual children, this is called immediately, but if children
@@ -257,8 +257,8 @@ public:
   virtual void write(fld::io::Project_Writer &f);
   virtual void write_properties(fld::io::Project_Writer &f);
   virtual void read_property(fld::io::Project_Reader &f, const char *);
-  virtual void write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate);
-  virtual void read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property);
+  virtual void write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate);
+  virtual void read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 

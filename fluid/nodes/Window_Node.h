@@ -3,7 +3,7 @@
 //
 // Type for creating all subclasses of Fl_Widget
 // This should have the widget pointer in it, but it is still in the
-// Fl_Type base class.
+// Node base class.
 //
 // Copyright 1998-2023 by Bill Spitzak and others.
 //
@@ -23,10 +23,10 @@
 
 #include "nodes/Fl_Group_Type.h"
 
-class Fl_Widget_Class_Type;
+class Widget_Class_Node;
 
 extern Fl_Menu_Item window_type_menu[];
-extern Fl_Widget_Class_Type *current_widget_class;
+extern Widget_Class_Node *current_widget_class;
 
 void toggle_overlays(Fl_Widget *,void *);
 void toggle_guides(Fl_Widget *,void *);
@@ -44,7 +44,7 @@ enum {
   FD_BOX    = 32  // user creates a new selection box
 };
 
-class Fl_Window_Type : public Fl_Group_Type
+class Window_Node : public Fl_Group_Type
 {
   typedef Fl_Group_Type super;
 protected:
@@ -79,7 +79,7 @@ protected:
 
 public:
 
-  Fl_Window_Type() :
+  Window_Node() :
     mx(0), my(0),
     x1(0), y1(0),
     bx(0), by(0), br(0), bt(0),
@@ -95,7 +95,7 @@ public:
   uchar modal, non_modal;
   const char *xclass; // junk string, used for shortcut
 
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Node *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "Fl_Window";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::Window";}
 
@@ -109,9 +109,9 @@ public:
   void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
-  void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
-  void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
-  void remove_child(Fl_Type*) FL_OVERRIDE;
+  void add_child(Node*, Node*) FL_OVERRIDE;
+  void move_child(Node*, Node*) FL_OVERRIDE;
+  void remove_child(Node*) FL_OVERRIDE;
 
   int can_have_children() const FL_OVERRIDE {return 1;}
 
@@ -124,14 +124,14 @@ public:
   static int popupx, popupy;
 };
 
-class Fl_Widget_Class_Type : private Fl_Window_Type
+class Widget_Class_Node : private Window_Node
 {
-  typedef Fl_Window_Type super;
+  typedef Window_Node super;
 protected:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return nullptr;}
 
 public:
-  Fl_Widget_Class_Type() {
+  Widget_Class_Node() {
     write_public_state = 0;
     wc_relative = 0;
   }
@@ -144,7 +144,7 @@ public:
 
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Node *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "widget_class";}
   ID id() const FL_OVERRIDE { return ID_Widget_Class; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }

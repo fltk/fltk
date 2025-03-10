@@ -30,7 +30,7 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Window_Node.h"
 #include "widgets/Formula_Input.h"
 #include "widgets/Node_Browser.h"
 
@@ -82,11 +82,11 @@ static void delete_menu(Fl_Menu_Item *m) {
   delete[] m;
 }
 
-void Fl_Input_Choice_Type::build_menu() {
+void Input_Choice_Node::build_menu() {
   Fl_Input_Choice* w = (Fl_Input_Choice*)o;
   // count how many Fl_Menu_Item structures needed:
   int n = 0;
-  Fl_Type* q;
+  Node* q;
   for (q = next; q && q->level > level; q = q->next) {
     if (q->can_have_children()) n++; // space for null at end of submenu
     n++;
@@ -113,7 +113,7 @@ void Fl_Input_Choice_Type::build_menu() {
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
-      Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
+      Menu_Item_Node* i = (Menu_Item_Node*)q;
       if (i->o->image()) {
         if (i->o->label() && i->o->label()[0]) {
           Fl_Multi_Label *ml = new Fl_Multi_Label;
@@ -151,8 +151,8 @@ void Fl_Input_Choice_Type::build_menu() {
  \param[in] strategy add after current or as last child
  \return new Menu Item node
  */
-Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
-  return Fl_Menu_Item_Type::make(0, strategy);
+Node *Menu_Item_Node::make(Strategy strategy) {
+  return Menu_Item_Node::make(0, strategy);
 }
 
 /**
@@ -161,9 +161,9 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
  \param[in] strategy add after current or as last child
  \return new Menu Item node
  */
-Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
+Node* Menu_Item_Node::make(int flags, Strategy strategy) {
   // Find a good insert position based on the current marked node
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
   while (p && !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
@@ -179,11 +179,11 @@ Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
     o = new Fl_Button(0,0,100,20); // create template widget
   }
 
-  Fl_Menu_Item_Type* t = nullptr;
+  Menu_Item_Node* t = nullptr;
   if (flags==FL_SUBMENU) {
-    t = new Fl_Submenu_Type();
+    t = new Submenu_Node();
   } else {
-    t = new Fl_Menu_Item_Type();
+    t = new Menu_Item_Node();
   }
   t->o = new Fl_Button(0,0,100,20);
   t->o->type(flags);
@@ -204,21 +204,21 @@ void group_selected_menuitems() {
   if (!Fluid.proj.tree.current->is_a(ID_Menu_Item)) {
     return;
   }
-  Fl_Menu_Item_Type *q = static_cast<Fl_Menu_Item_Type*>(Fluid.proj.tree.current);
-  Fl_Type *qq = Fluid.proj.tree.current->parent;
+  Menu_Item_Node *q = static_cast<Menu_Item_Node*>(Fluid.proj.tree.current);
+  Node *qq = Fluid.proj.tree.current->parent;
   if (!qq || !(qq->is_a(ID_Menu_Manager_) || qq->is_a(ID_Submenu))) {
     fl_message("Can't create a new submenu here.");
     return;
   }
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
-  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
-  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+  Widget_Node *n = (Widget_Node*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
       t = t->next;
       continue;
     }
-    Fl_Type *nxt = t->remove();
+    Node *nxt = t->remove();
     t->add(n, Strategy::AS_LAST_CHILD);
     t = nxt;
   }
@@ -229,8 +229,8 @@ void group_selected_menuitems() {
 
 void ungroup_selected_menuitems() {
   // Find the submenu
-  Fl_Type *qq = Fluid.proj.tree.current->parent;
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fluid.proj.tree.current);
+  Node *qq = Fluid.proj.tree.current->parent;
+  Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
   int q_level = q->level;
   if (!qq || !qq->is_a(ID_Submenu)) {
     fl_message("Only menu items inside a submenu can be ungrouped.");
@@ -239,12 +239,12 @@ void ungroup_selected_menuitems() {
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
   Fluid.proj.tree.current = qq;
-  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != q_level || !t->selected) {
       t = t->next;
       continue;
     }
-    Fl_Type *nxt = t->remove();
+    Node *nxt = t->remove();
     t->insert(qq);
     t = nxt;
   }
@@ -264,8 +264,8 @@ void ungroup_selected_menuitems() {
  \param[in] strategy add after current or as last child
  \return new node
  */
-Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
-  return Fl_Menu_Item_Type::make(FL_MENU_TOGGLE, strategy);
+Node *Checkbox_Menu_Item_Node::make(Strategy strategy) {
+  return Menu_Item_Node::make(FL_MENU_TOGGLE, strategy);
 }
 
 /**
@@ -273,8 +273,8 @@ Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
  \param[in] strategy add after current or as last child
  \return new node
  */
-Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
-  return Fl_Menu_Item_Type::make(FL_MENU_RADIO, strategy);
+Node *Radio_Menu_Item_Node::make(Strategy strategy) {
+  return Menu_Item_Node::make(FL_MENU_RADIO, strategy);
 }
 
 /**
@@ -282,29 +282,29 @@ Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
  \param[in] strategy add after current or as last child
  \return new node
  */
-Fl_Type *Fl_Submenu_Type::make(Strategy strategy) {
-  return Fl_Menu_Item_Type::make(FL_SUBMENU, strategy);
+Node *Submenu_Node::make(Strategy strategy) {
+  return Menu_Item_Node::make(FL_SUBMENU, strategy);
 }
 
-Fl_Menu_Item_Type Fl_Menu_Item_type;
-Fl_Checkbox_Menu_Item_Type Fl_Checkbox_Menu_Item_type;
-Fl_Radio_Menu_Item_Type Fl_Radio_Menu_Item_type;
-Fl_Submenu_Type Fl_Submenu_type;
+Menu_Item_Node Fl_Menu_Item_type;
+Checkbox_Menu_Item_Node Fl_Checkbox_Menu_Item_type;
+Radio_Menu_Item_Node Fl_Radio_Menu_Item_type;
+Submenu_Node Fl_Submenu_type;
 
 ////////////////////////////////////////////////////////////////
 // Writing the C code:
 
-// test functions in Fl_Widget_Type.C:
+// test functions in Widget_Node.C:
 int is_name(const char *c);
-const char *array_name(Fl_Widget_Type *o);
+const char *array_name(Widget_Node *o);
 int isdeclare(const char *c);
 
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
 // to this menu item.
-const char* Fl_Menu_Item_Type::menu_name(fld::io::Code_Writer& f, int& i) {
+const char* Menu_Item_Node::menu_name(fld::io::Code_Writer& f, int& i) {
   i = 0;
-  Fl_Type* t = prev;
+  Node* t = prev;
   while (t && t->is_a(ID_Menu_Item)) {
     // be sure to count the {0} that ends a submenu:
     if (t->level > t->next->level) i += (t->level - t->next->level);
@@ -313,11 +313,11 @@ const char* Fl_Menu_Item_Type::menu_name(fld::io::Code_Writer& f, int& i) {
     t = t->prev;
     i++;
   }
-  if (!t) return "\n#error Fl_Menu_Item_Type::menu_name, invalid f\n";
+  if (!t) return "\n#error Menu_Item_Node::menu_name, invalid f\n";
   return f.unique_id(t, "menu", t->name(), t->label());
 }
 
-void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
+void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
   if (image && label() && label()[0]) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
@@ -374,16 +374,16 @@ void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
       // Implement the callback as a static member function
       f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
       // Find the Fl_Menu_ container for this menu item
-      Fl_Type* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
+      Node* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
       if (t) {
-        Fl_Widget_Type *tw = (t->is_widget()) ? static_cast<Fl_Widget_Type*>(t) : nullptr;
-        Fl_Type *q = nullptr;
+        Widget_Node *tw = (t->is_widget()) ? static_cast<Widget_Node*>(t) : nullptr;
+        Node *q = nullptr;
         // Generate code to call the callback
-        if (tw->is_a(ID_Menu_Bar) && ((Fl_Menu_Bar_Type*)tw)->is_sys_menu_bar()) {
+        if (tw->is_a(ID_Menu_Bar) && ((Menu_Bar_Node*)tw)->is_sys_menu_bar()) {
           // Fl_Sys_Menu_Bar removes itself from any parent on macOS, so we
           // wrapped it in a class and remeber the parent class in a new
           // class memeber variable.
-          Fl_Menu_Bar_Type *tmb = (Fl_Menu_Bar_Type*)tw;
+          Menu_Bar_Node *tmb = (Menu_Bar_Node*)tw;
           f.write_c("%s%s* sys_menu_bar = ((%s*)o);\n", f.indent(1),
                     tmb->sys_menubar_proxy_name(), tmb->sys_menubar_proxy_name());
           f.write_c("%s%s* parent_class = ((%s*)sys_menu_bar->_parent_class);\n",
@@ -425,9 +425,9 @@ void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
     int i;
     f.write_c("\nFl_Menu_Item %s[] = {\n", menu_name(f, i));
   }
-  Fl_Type* t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
-  for (Fl_Type* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
-    ((Fl_Menu_Item_Type*)q)->write_item(f);
+  Node* t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
+  for (Node* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
+    ((Menu_Item_Node*)q)->write_item(f);
     int thislevel = q->level; if (q->can_have_children()) thislevel++;
     int nextlevel =
       (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : t->level+1;
@@ -438,14 +438,14 @@ void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
   if (k) {
     // Write menu item variables...
     t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
-    for (Fl_Type* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
-      Fl_Menu_Item_Type *m = (Fl_Menu_Item_Type*)q;
+    for (Node* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
+      Menu_Item_Node *m = (Menu_Item_Node*)q;
       const char *c = array_name(m);
       if (c) {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
           int i;
-          const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(f, i);
+          const char* n = ((Menu_Item_Node *)q)->menu_name(f, i);
           f.write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
         } else {
           // if the name is an array, only define the array.
@@ -457,7 +457,7 @@ void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
   }
 }
 
-int Fl_Menu_Item_Type::flags() {
+int Menu_Item_Node::flags() {
   int i = o->type();
   if (((Fl_Button*)o)->value()) i |= FL_MENU_VALUE;
   if (!o->active()) i |= FL_MENU_INACTIVE;
@@ -470,7 +470,7 @@ int Fl_Menu_Item_Type::flags() {
   return i;
 }
 
-void Fl_Menu_Item_Type::write_item(fld::io::Code_Writer& f) {
+void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
   static const char * const labeltypes[] = {
     "FL_NORMAL_LABEL",
     "FL_NO_LABEL",
@@ -544,7 +544,7 @@ void start_menu_initialiser(fld::io::Code_Writer& f, int &initialized, const cha
   }
 }
 
-void Fl_Menu_Item_Type::write_code1(fld::io::Code_Writer& f) {
+void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   int i; const char* mname = menu_name(f, i);
 
   if (!prev->is_a(ID_Menu_Item)) {
@@ -639,7 +639,7 @@ void Fl_Menu_Item_Type::write_code1(fld::io::Code_Writer& f) {
   }
 }
 
-void Fl_Menu_Item_Type::write_code2(fld::io::Code_Writer&) {}
+void Menu_Item_Node::write_code2(fld::io::Code_Writer&) {}
 
 ////////////////////////////////////////////////////////////////
 // This is the base class for widgets that contain a menu (ie
@@ -648,11 +648,11 @@ void Fl_Menu_Item_Type::write_code2(fld::io::Code_Writer&) {}
 // children.  An actual array of Fl_Menu_Items is kept parallel
 // with the child objects and updated as they change.
 
-void Fl_Menu_Base_Type::build_menu() {
+void Menu_Base_Node::build_menu() {
   Fl_Menu_* w = (Fl_Menu_*)o;
   // count how many Fl_Menu_Item structures needed:
   int n = 0;
-  Fl_Type* q;
+  Node* q;
   for (q = next; q && q->level > level; q = q->next) {
     if (q->can_have_children()) n++; // space for null at end of submenu
     n++;
@@ -679,7 +679,7 @@ void Fl_Menu_Base_Type::build_menu() {
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
-      Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
+      Menu_Item_Node* i = (Menu_Item_Node*)q;
       if (i->o->image()) {
         if (i->o->label() && i->o->label()[0]) {
           Fl_Multi_Label *ml = new Fl_Multi_Label;
@@ -712,7 +712,7 @@ void Fl_Menu_Base_Type::build_menu() {
   o->redraw();
 }
 
-Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
+Node* Menu_Base_Node::click_test(int, int) {
   if (selected) return nullptr; // let user move the widget
   Fl_Menu_* w = (Fl_Menu_*)o;
   if (!menusize) return nullptr;
@@ -725,22 +725,22 @@ Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
   if (m) {
     // restore the settings of toggles & radio items:
     if (m->flags & (FL_MENU_RADIO | FL_MENU_TOGGLE)) build_menu();
-    return (Fl_Type*)(m->user_data());
+    return (Node*)(m->user_data());
   }
   w->value(save);
   return this;
 }
 
-void Fl_Menu_Manager_Type::write_code2(fld::io::Code_Writer& f) {
+void Menu_Manager_Node::write_code2(fld::io::Code_Writer& f) {
   if (next && next->is_a(ID_Menu_Item)) {
     f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
             f.unique_id(this, "menu", name(), label()));
   }
-  Fl_Widget_Type::write_code2(f);
+  Widget_Node::write_code2(f);
 }
 
-void Fl_Menu_Base_Type::copy_properties() {
-  Fl_Widget_Type::copy_properties();
+void Menu_Base_Node::copy_properties() {
+  Widget_Node::copy_properties();
   Fl_Menu_ *s = (Fl_Menu_*)o, *d = (Fl_Menu_*)live_widget;
   d->menu(s->menu());
   d->down_box(s->down_box());
@@ -762,18 +762,18 @@ Fl_Menu_Item button_type_menu[] = {
   {"popup123",0,nullptr,(void*)Fl_Menu_Button::POPUP123},
   {nullptr}};
 
-Fl_Menu_Button_Type Fl_Menu_Button_type;
+Menu_Button_Node Fl_Menu_Button_type;
 
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item dummymenu[] = {{"CHOICE"},{nullptr}};
 
-Fl_Choice_Type Fl_Choice_type;
+Choice_Node Fl_Choice_type;
 
-Fl_Input_Choice_Type Fl_Input_Choice_type;
+Input_Choice_Node Fl_Input_Choice_type;
 
-void Fl_Input_Choice_Type::copy_properties() {
-  Fl_Widget_Type::copy_properties();
+void Input_Choice_Node::copy_properties() {
+  Widget_Node::copy_properties();
   Fl_Input_Choice *s = (Fl_Input_Choice*)o, *d = (Fl_Input_Choice*)live_widget;
   d->menu(s->menu());
   d->down_box(s->down_box());
@@ -782,7 +782,7 @@ void Fl_Input_Choice_Type::copy_properties() {
   d->textsize(s->textsize());
 }
 
-Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
+Node* Input_Choice_Node::click_test(int, int) {
   if (selected) return nullptr; // let user move the widget
   Fl_Menu_* w = ((Fl_Input_Choice*)o)->menubutton();
   if (!menusize) return nullptr;
@@ -795,7 +795,7 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
   if (m) {
     // restore the settings of toggles & radio items:
     if (m->flags & (FL_MENU_RADIO | FL_MENU_TOGGLE)) build_menu();
-    return (Fl_Type*)(m->user_data());
+    return (Node*)(m->user_data());
   }
   w->value(save);
   return this;
@@ -803,19 +803,19 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
 
 ////////////////////////////////////////////////////////////////
 
-Fl_Menu_Bar_Type Fl_Menu_Bar_type;
+Menu_Bar_Node Fl_Menu_Bar_type;
 
 Fl_Menu_Item menu_bar_type_menu[] = {
   {"Fl_Menu_Bar",0,nullptr,(void*)nullptr},
   {"Fl_Sys_Menu_Bar",0,nullptr,(void*)1},
   {nullptr}};
 
-Fl_Menu_Bar_Type::Fl_Menu_Bar_Type()
+Menu_Bar_Node::Menu_Bar_Node()
 : _proxy_name(nullptr)
 {
 }
 
-Fl_Menu_Bar_Type::~Fl_Menu_Bar_Type() {
+Menu_Bar_Node::~Menu_Bar_Node() {
   if (_proxy_name)
     ::free(_proxy_name);
 }
@@ -825,19 +825,19 @@ Fl_Menu_Bar_Type::~Fl_Menu_Bar_Type() {
  This test fails if subclass() is the name of a class that the user may have
  derived from Fl_Sys_Menu_Bar.
  */
-bool Fl_Menu_Bar_Type::is_sys_menu_bar() {
+bool Menu_Bar_Node::is_sys_menu_bar() {
   if (o->type()==1) return true;
   return ( subclass() && (strcmp(subclass(), "Fl_Sys_Menu_Bar")==0) );
 }
 
-const char *Fl_Menu_Bar_Type::sys_menubar_name() {
+const char *Menu_Bar_Node::sys_menubar_name() {
   if (subclass())
     return subclass();
   else
     return "Fl_Sys_Menu_Bar";
 }
 
-const char *Fl_Menu_Bar_Type::sys_menubar_proxy_name() {
+const char *Menu_Bar_Node::sys_menubar_proxy_name() {
   if (!_proxy_name)
     _proxy_name = (char*)::malloc(128);
   ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name());
@@ -845,7 +845,7 @@ const char *Fl_Menu_Bar_Type::sys_menubar_proxy_name() {
 }
 
 
-void Fl_Menu_Bar_Type::write_static(fld::io::Code_Writer& f) {
+void Menu_Bar_Node::write_static(fld::io::Code_Writer& f) {
   super::write_static(f);
   if (is_sys_menu_bar()) {
     f.write_h_once("#include <FL/Fl_Sys_Menu_Bar.H>");
@@ -865,7 +865,7 @@ void Fl_Menu_Bar_Type::write_static(fld::io::Code_Writer& f) {
   }
 }
 
-void Fl_Menu_Bar_Type::write_code1(fld::io::Code_Writer& f) {
+void Menu_Bar_Node::write_code1(fld::io::Code_Writer& f) {
   super::write_code1(f);
   if (is_sys_menu_bar() && is_in_class()) {
     f.write_c("%s((%s*)%s)->_parent_class = (void*)this;\n",
@@ -873,7 +873,7 @@ void Fl_Menu_Bar_Type::write_code1(fld::io::Code_Writer& f) {
   }
 }
 
-//void Fl_Menu_Bar_Type::write_code2(fld::io::Code_Writer& f) {
+//void Menu_Bar_Node::write_code2(fld::io::Code_Writer& f) {
 //  super::write_code2(f);
 //}
 
@@ -900,22 +900,22 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
     i->redraw();
   } else {
     int mod = 0;
-    for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+    for (Node *o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_button()) {
-        Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
+        Fl_Button* b = (Fl_Button*)(((Widget_Node*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-        if (o->is_a(ID_Menu_Item)) ((Fl_Widget_Type*)o)->redraw();
+        if (o->is_a(ID_Menu_Item)) ((Widget_Node*)o)->redraw();
       } else if (o->selected && o->is_a(ID_Input)) {
-        Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
+        Fl_Input_* b = (Fl_Input_*)(((Widget_Node*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
       } else if (o->selected && o->is_a(ID_Value_Input)) {
-        Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
+        Fl_Value_Input* b = (Fl_Value_Input*)(((Widget_Node*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
       } else if (o->selected && o->is_a(ID_Text_Display)) {
-        Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
+        Fl_Text_Display* b = (Fl_Text_Display*)(((Widget_Node*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
       }

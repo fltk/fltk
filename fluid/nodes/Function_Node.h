@@ -17,7 +17,7 @@
 #ifndef _FLUID_FL_FUNCTION_TYPE_H
 #define _FLUID_FL_FUNCTION_TYPE_H
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 #include "app/Fluid_Image.h"
 #ifdef _WIN32
@@ -34,24 +34,24 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-extern class Fl_Class_Type *current_class;
+extern class Class_Node *current_class;
 
 int has_toplevel_function(const char *rtype, const char *sig);
 
 const char *c_check(const char *c, int type = 0);
 
-// ---- Fl_Function_Type declaration
+// ---- Function_Node declaration
 
-class Fl_Function_Type : public Fl_Type
+class Function_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
   const char* return_type;
   char public_, cdecl_, constructor, havewidgets;
 
 public:
-  Fl_Function_Type();
-  ~Fl_Function_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Function_Node();
+  ~Function_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
@@ -70,19 +70,19 @@ public:
   int has_signature(const char *, const char*) const;
 };
 
-// ---- Fl_Code_Type declaration
+// ---- Code_Node declaration
 
-class Fl_Code_Type : public Fl_Type
+class Code_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
   ExternalCodeEditor editor_;
   int cursor_position_;
   int code_input_scroll_row;
   int code_input_scroll_col;
 
 public:
-  Fl_Code_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Code_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write(fld::io::Project_Writer &f) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE { }
@@ -97,17 +97,17 @@ public:
   int handle_editor_changes();
 };
 
-// ---- Fl_CodeBlock_Type declaration
+// ---- CodeBlock_Node declaration
 
-class Fl_CodeBlock_Type : public Fl_Type
+class CodeBlock_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
   const char* after;
 
 public:
-  Fl_CodeBlock_Type();
-  ~Fl_CodeBlock_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  CodeBlock_Node();
+  ~CodeBlock_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
@@ -121,19 +121,19 @@ public:
   void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
 };
 
-// ---- Fl_Decl_Type declaration
+// ---- Decl_Node declaration
 
-class Fl_Decl_Type : public Fl_Type
+class Decl_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
 
 protected:
   char public_;
   char static_;
 
 public:
-  Fl_Decl_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Decl_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
@@ -145,18 +145,18 @@ public:
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Decl) ? true : super::is_a(inID); }
 };
 
-// ---- Fl_Data_Type declaration
+// ---- Data_Node declaration
 
-class Fl_Data_Type : public Fl_Decl_Type
+class Data_Node : public Decl_Node
 {
-  typedef Fl_Decl_Type super;
+  typedef Decl_Node super;
   const char *filename_;
   int text_mode_;
 
 public:
-  Fl_Data_Type();
-  ~Fl_Data_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Data_Node();
+  ~Data_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE {}
   void open() FL_OVERRIDE;
@@ -167,11 +167,11 @@ public:
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Data) ? true : super::is_a(inID); }
 };
 
-// ---- Fl_DeclBlock_Type declaration
+// ---- DeclBlock_Node declaration
 
-class Fl_DeclBlock_Type : public Fl_Type
+class DeclBlock_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
   enum {
     CODE_IN_HEADER = 1,
     CODE_IN_SOURCE = 2,
@@ -182,9 +182,9 @@ class Fl_DeclBlock_Type : public Fl_Type
   int write_map_;     ///< see enum above
 
 public:
-  Fl_DeclBlock_Type();
-  ~Fl_DeclBlock_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  DeclBlock_Node();
+  ~DeclBlock_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_static_after(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
@@ -200,16 +200,16 @@ public:
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_DeclBlock) ? true : super::is_a(inID); }
 };
 
-// ---- Fl_Comment_Type declaration
+// ---- Comment_Node declaration
 
-class Fl_Comment_Type : public Fl_Type
+class Comment_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
   char in_c_, in_h_, style_;
 
 public:
-  Fl_Comment_Type();
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Comment_Node();
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
@@ -221,23 +221,23 @@ public:
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Comment) ? true : super::is_a(inID); }
 };
 
-// ---- Fl_Class_Type declaration
+// ---- Class_Node declaration
 
-class Fl_Class_Type : public Fl_Type
+class Class_Node : public Node
 {
-  typedef Fl_Type super;
+  typedef Node super;
   const char* subclass_of;
   char public_;
   const char* class_prefix;
 
 public:
-  Fl_Class_Type();
-  ~Fl_Class_Type();
+  Class_Node();
+  ~Class_Node();
   // state variables for output:
   char write_public_state; // true when public: has been printed
-  Fl_Class_Type* parent_class; // save class if nested
+  Class_Node* parent_class; // save class if nested
 //
-  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  Node *make(Strategy strategy) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;

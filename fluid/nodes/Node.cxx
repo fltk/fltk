@@ -17,7 +17,7 @@
 /// \defgroup fl_type Basic Node for all Widgets and Functions
 /// \{
 
-/** \class Fl_Type
+/** \class Node
  Each object described by Fluid is one of these objects.  They
  are all stored in a double-linked list.
 
@@ -30,8 +30,8 @@
  not in the linked list and are not written to files or
  copied or otherwise examined.
 
- The Fl_Type inheritance is currently:
-      --+-- Fl_Type
+ The Node inheritance is currently:
+      --+-- Node
         +-- Fl_Function_Type
         +-- Fl_Code_Type
         +-- Fl_CodeBlock_Type
@@ -94,7 +94,7 @@
 
 */
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 #include "Fluid.h"
 #include "Project.h"
@@ -121,7 +121,7 @@
 
 // ---- global variables
 
-Fl_Type *in_this_only; // set if menu popped-up in window
+Node *in_this_only; // set if menu popped-up in window
 
 
 // ---- various functions
@@ -133,7 +133,7 @@ Fl_Type *in_this_only; // set if menu popped-up in window
  */
 void print_project_tree() {
   fprintf(stderr, "---- %s --->\n", Fluid.proj.projectfile_name().c_str());
-  for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+  for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
     for (int i = t->level; i > 0; i--)
       fprintf(stderr, ". ");
     fprintf(stderr, "%s\n", subclassname(t));
@@ -177,10 +177,10 @@ bool validate_project_tree() {
  \param[in] root the first node in a branch
  \return true if the branch is correctly separated and valid
  */
-bool validate_independent_branch(class Fl_Type *root) {
+bool validate_independent_branch(class Node *root) {
   // Make sure that `first` and `last` do not point at any node in this branch
   if (Fluid.proj.tree.first) {
-    for (Fl_Type *t = root; t; t = t->next) {
+    for (Node *t = root; t; t = t->next) {
       if (Fluid.proj.tree.first == t) {
         fprintf(stderr, "ERROR: Branch is not independent, `first` is pointing to branch member!\n");
         return false;
@@ -188,7 +188,7 @@ bool validate_independent_branch(class Fl_Type *root) {
     }
   }
   if (Fluid.proj.tree.last) {
-    for (Fl_Type *t = root; t; t = t->next) {
+    for (Node *t = root; t; t = t->next) {
       if (Fluid.proj.tree.last == t) {
         fprintf(stderr, "ERROR: Branch is not independent, `last` is pointing to branch member!\n");
         return false;
@@ -209,14 +209,14 @@ bool validate_independent_branch(class Fl_Type *root) {
  \param[in] root the first node in a branch
  \return true if the branch is valid
  */
-bool validate_branch(class Fl_Type *root) {
+bool validate_branch(class Node *root) {
   // Only check real branches
   if (!root) {
     fprintf(stderr, "WARNING: Branch is empty!\n");
     return false;
   }
   // Check relation between this and next node
-  for (Fl_Type *t = root; t; t = t->next) {
+  for (Node *t = root; t; t = t->next) {
     if (t->level < root->level) {
       fprintf(stderr, "ERROR: Node in tree is above root level!\n");
       return false;
@@ -241,7 +241,7 @@ bool validate_branch(class Fl_Type *root) {
       }
     }
     // Validate the `parent` entry
-    for (Fl_Type *p = t->prev; ; p = p->prev) {
+    for (Node *p = t->prev; ; p = p->prev) {
       if (p == nullptr) {
         if (t->parent != nullptr) {
           fprintf(stderr, "ERROR: `parent` pointer should be nullptr!\n");
@@ -264,22 +264,22 @@ bool validate_branch(class Fl_Type *root) {
 #endif
 
 void select_all_cb(Fl_Widget *,void *) {
-  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
+  Node *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
   if (in_this_only) {
-    Fl_Type *t = p;
+    Node *t = p;
     for (; t && t != in_this_only; t = t->parent) {/*empty*/}
     if (t != in_this_only) p = in_this_only;
   }
   for (;;) {
     if (p) {
       int foundany = 0;
-      for (Fl_Type *t = p->next; t && t->level>p->level; t = t->next) {
+      for (Node *t = p->next; t && t->level>p->level; t = t->next) {
         if (!t->new_selected) {widget_browser->select(t,1,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next)
+      for (Node *t = Fluid.proj.tree.first; t; t = t->next)
         widget_browser->select(t,1,0);
       break;
     }
@@ -288,22 +288,22 @@ void select_all_cb(Fl_Widget *,void *) {
 }
 
 void select_none_cb(Fl_Widget *,void *) {
-  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
+  Node *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
   if (in_this_only) {
-    Fl_Type *t = p;
+    Node *t = p;
     for (; t && t != in_this_only; t = t->parent) {/*empty*/}
     if (t != in_this_only) p = in_this_only;
   }
   for (;;) {
     if (p) {
       int foundany = 0;
-      for (Fl_Type *t = p->next; t && t->level>p->level; t = t->next) {
+      for (Node *t = p->next; t && t->level>p->level; t = t->next) {
         if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next)
+      for (Node *t = Fluid.proj.tree.first; t; t = t->next)
         widget_browser->select(t,0,0);
       break;
     }
@@ -315,12 +315,12 @@ void select_none_cb(Fl_Widget *,void *) {
  Callback to move all selected items before their previous unselected sibling.
  */
 void earlier_cb(Fl_Widget*,void*) {
-  Fl_Type *f;
+  Node *f;
   int mod = 0;
   for (f = Fluid.proj.tree.first; f; ) {
-    Fl_Type* nxt = f->next;
+    Node* nxt = f->next;
     if (f->selected) {
-      Fl_Type* g;
+      Node* g;
       for (g = f->prev; g && g->level > f->level; g = g->prev) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
         if (!mod) Fluid.proj.undo.checkpoint();
@@ -340,12 +340,12 @@ void earlier_cb(Fl_Widget*,void*) {
  Callback to move all selected items after their next unselected sibling.
  */
 void later_cb(Fl_Widget*,void*) {
-  Fl_Type *f;
+  Node *f;
   int mod = 0;
   for (f = Fluid.proj.tree.last; f; ) {
-    Fl_Type* prv = f->prev;
+    Node* prv = f->prev;
     if (f->selected) {
-      Fl_Type* g;
+      Node* g;
       for (g = f->next; g && g->level > f->level; g = g->next) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
         if (!mod) Fluid.proj.undo.checkpoint();
@@ -363,14 +363,14 @@ void later_cb(Fl_Widget*,void*) {
 
 /** \brief Delete all children of a Type.
  */
-static void delete_children(Fl_Type *p) {
-  Fl_Type *f;
+static void delete_children(Node *p) {
+  Node *f;
   // find all types following p that are higher in level, effectively finding
   // the last child of the last child
   for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
   // now loop back up to p, deleting all children on the way
   for (; f != p; ) {
-    Fl_Type *g = f->prev;
+    Node *g = f->prev;
     delete f;
     f = g;
   }
@@ -388,10 +388,10 @@ void delete_all(int selected_only) {
       widget_browser->save_scroll_position();
     widget_browser->new_list();
   }
-  for (Fl_Type *f = Fluid.proj.tree.first; f;) {
+  for (Node *f = Fluid.proj.tree.first; f;) {
     if (f->selected || !selected_only) {
       delete_children(f);
-      Fl_Type *g = f->next;
+      Node *g = f->next;
       delete f;
       f = g;
     } else {
@@ -458,8 +458,8 @@ int storestring(const char *n, const char * & p, int nostrip) {
 /** Update the `visible` flag for `p` and all its descendants.
  \param[in] p start here and update all descendants
  */
-void update_visibility_flag(Fl_Type *p) {
-  Fl_Type *t = p;
+void update_visibility_flag(Node *p) {
+  Node *t = p;
   for (;;) {
     if (t->parent) t->visible = t->parent->visible && !t->parent->folded_;
     else t->visible = 1;
@@ -468,25 +468,25 @@ void update_visibility_flag(Fl_Type *p) {
   }
 }
 
-// ---- implementation of Fl_Type
+// ---- implementation of Node
 
-/** \var Fl_Type *Fl_Type::parent
+/** \var Node *Node::parent
  Link to the parent node in the tree structure.
  Used for simulating a tree structure via a doubly linked list.
  */
-/** \var Fl_Type *Fl_Type::level
+/** \var Node *Node::level
  Zero based depth of the node within the tree structure.
  Level is used to emulate a tree structure: the first node with a lower
  level in the prev list would be the parent of this node. If the next member
  has a higher level value, it is this nodes first child. At the same level,
  it would be the first sibling.
  */
-/** \var Fl_Type *Fl_Type::next
+/** \var Node *Node::next
  Points to the next node in the doubly linked list.
  If this is nullptr, we are at the end of the list.
  Used for simulating a tree structure via a doubly linked list.
  */
-/** \var Fl_Type *Fl_Type::prev
+/** \var Node *Node::prev
  Link to the next node in the tree structure.
  If this is nullptr, we are at the beginning of the list.
  Used for simulating a tree structure via a doubly linked list.
@@ -495,7 +495,7 @@ void update_visibility_flag(Fl_Type *p) {
 /**
  Constructor and base for any node in the widget tree.
  */
-Fl_Type::Fl_Type() :
+Node::Node() :
   name_(nullptr),
   label_(nullptr),
   callback_(nullptr),
@@ -530,7 +530,7 @@ Fl_Type::Fl_Type() :
  because the node does not know if it is part of the widget tree, or if it is
  in a separate tree. We try to take care of that as well as possible.
  */
-Fl_Type::~Fl_Type() {
+Node::~Node() {
   // warning: destructor only works for widgets that have been add()ed.
   if (prev) prev->next = next; // else first = next; // don't do that! The Type may not be part of the main list
   if (next) next->prev = prev; // else last = prev;
@@ -547,8 +547,8 @@ Fl_Type::~Fl_Type() {
 }
 
 // Return the previous sibling in the tree structure or nullptr.
-Fl_Type *Fl_Type::prev_sibling() {
-  Fl_Type *n;
+Node *Node::prev_sibling() {
+  Node *n;
   for (n = prev; n && n->level > level; n = n->prev) ;
   if (n && (n->level == level))
     return n;
@@ -556,8 +556,8 @@ Fl_Type *Fl_Type::prev_sibling() {
 }
 
 // Return the next sibling in the tree structure or nullptr.
-Fl_Type *Fl_Type::next_sibling() {
-  Fl_Type *n;
+Node *Node::next_sibling() {
+  Node *n;
   for (n = next; n && n->level > level; n = n->next) ;
   if (n && (n->level == level))
     return n;
@@ -565,15 +565,15 @@ Fl_Type *Fl_Type::next_sibling() {
 }
 
 // Return the first child or nullptr
-Fl_Type *Fl_Type::first_child() {
-  Fl_Type *n = next;
+Node *Node::first_child() {
+  Node *n = next;
   if (n->level > level)
     return n;
   return nullptr;
 }
 
 // Generate a descriptive text for this item, to put in browser & window titles
-const char* Fl_Type::title() {
+const char* Node::title() {
   const char* c = name();
   if (c)
     return c;
@@ -584,10 +584,10 @@ const char* Fl_Type::title() {
  Return the window that contains this widget.
  \return nullptr if this is not a widget.
  */
-Fl_Window_Type *Fl_Type::window() {
+Fl_Window_Type *Node::window() {
   if (!is_widget())
     return nullptr;
-  for (Fl_Type *t = this; t; t=t->parent)
+  for (Node *t = this; t; t=t->parent)
     if (t->is_a(ID_Window))
       return (Fl_Window_Type*)t;
   return nullptr;
@@ -597,10 +597,10 @@ Fl_Window_Type *Fl_Type::window() {
  Return the group that contains this widget.
  \return nullptr if this is not a widget.
  */
-Fl_Group_Type *Fl_Type::group() {
+Fl_Group_Type *Node::group() {
   if (!is_widget())
     return nullptr;
-  for (Fl_Type *t = this; t; t=t->parent)
+  for (Node *t = this; t; t=t->parent)
     if (t->is_a(ID_Group))
       return (Fl_Group_Type*)t;
   return nullptr;
@@ -617,7 +617,7 @@ Fl_Group_Type *Fl_Type::group() {
  \param[in] p insert \c this tree as a child of \c p
  \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  */
-void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
+void Node::add(Node *anchor, Strategy strategy) {
 #if 0
 #ifndef NDEBUG
   // print_project_tree();
@@ -628,8 +628,8 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 #endif
 #endif
 
-  Fl_Type *target = nullptr; // insert self before target node, if nullptr, insert last
-  Fl_Type *target_parent = nullptr; // this will be the new parent for branch
+  Node *target = nullptr; // insert self before target node, if nullptr, insert last
+  Node *target_parent = nullptr; // this will be the new parent for branch
   int target_level = 0;   // adjust self to this new level
 
   // Find the node after our insertion position
@@ -666,7 +666,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 
 
   // Find the last node of our tree
-  Fl_Type *end = this;
+  Node *end = this;
   while (end->next) end = end->next;
 
   // Everything is prepared, now insert ourself in front of the target node
@@ -674,7 +674,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 
   // Walk the tree to update parent pointers and levels
   int source_level = level;
-  for (Fl_Type *t = this; t; t = t->next) {
+  for (Node *t = this; t; t = t->next) {
     t->level += (target_level-source_level);
     if (t->level == target_level)
       t->parent = target_parent;
@@ -698,7 +698,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 
 #if 0
   { // make sure that we have no duplicate uid's
-    Fl_Type *tp = this;
+    Node *tp = this;
     do {
       tp->set_uid(tp->uid_);
       tp = tp->next;
@@ -707,7 +707,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 #endif
 
   // Give the widgets in our tree a chance to update themselves
-  for (Fl_Type *t = this; t && t!=end->next; t = t->next) {
+  for (Node *t = this; t && t!=end->next; t = t->next) {
     if (target_parent && (t->level == target_level))
       target_parent->add_child(t, nullptr);
     update_visibility_flag(t);
@@ -734,16 +734,16 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 
  \param[in] g pointer to a node within the tree
  */
-void Fl_Type::insert(Fl_Type *g) {
+void Node::insert(Node *g) {
   // 'this' is not in the Node_Browser, so we must run the linked list to find the last entry
-  Fl_Type *end = this;
+  Node *end = this;
   while (end->next) end = end->next;
   // 'this' will get the same parent as 'g'
   parent = g->parent;
   // run the list again to set the future node levels
   int newlevel = g->level;
   visible = g->visible;
-  for (Fl_Type *t = this->next; t; t = t->next) t->level += newlevel-level;
+  for (Node *t = this->next; t; t = t->next) t->level += newlevel-level;
   level = newlevel;
   // insert this in the list before g
   prev = g->prev;
@@ -752,7 +752,7 @@ void Fl_Type::insert(Fl_Type *g) {
   g->prev = end;
   update_visibility_flag(this);
   { // make sure that we have no duplicate uid's
-    Fl_Type *tp = this;
+    Node *tp = this;
     do {
       tp->set_uid(tp->uid_);
       tp = tp->next;
@@ -764,9 +764,9 @@ void Fl_Type::insert(Fl_Type *g) {
 }
 
 // Return message number for I18N...
-int Fl_Type::msgnum() {
+int Node::msgnum() {
   int           count;
-  Fl_Type       *p;
+  Node       *p;
 
   for (count = 0, p = this; p;) {
     if (p->label()) count ++;
@@ -788,9 +788,9 @@ int Fl_Type::msgnum() {
 
  \return the node that follows this node after the operation; can be nullptr
  */
-Fl_Type *Fl_Type::remove() {
+Node *Node::remove() {
   // find the last child of this node
-  Fl_Type *end = this;
+  Node *end = this;
   for (;;) {
     if (!end->next || end->next->level <= level)
       break;
@@ -806,7 +806,7 @@ Fl_Type *Fl_Type::remove() {
     end->next->prev = prev;
   else
     Fluid.proj.tree.last = prev;
-  Fl_Type *r = end->next;
+  Node *r = end->next;
   prev = end->next = nullptr;
   // allow the parent to update changes in the UI
   if (parent) parent->remove_child(this);
@@ -817,39 +817,39 @@ Fl_Type *Fl_Type::remove() {
   return r;
 }
 
-void Fl_Type::name(const char *n) {
+void Node::name(const char *n) {
   int nostrip = is_a(ID_Comment);
   if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
 }
 
-void Fl_Type::label(const char *n) {
+void Node::label(const char *n) {
   if (storestring(n,label_,1)) {
     setlabel(label_);
     if (visible && !name_) widget_browser->redraw();
   }
 }
 
-void Fl_Type::callback(const char *n) {
+void Node::callback(const char *n) {
   storestring(n,callback_);
 }
 
-void Fl_Type::user_data(const char *n) {
+void Node::user_data(const char *n) {
   storestring(n,user_data_);
 }
 
-void Fl_Type::user_data_type(const char *n) {
+void Node::user_data_type(const char *n) {
   storestring(n,user_data_type_);
 }
 
-void Fl_Type::comment(const char *n) {
+void Node::comment(const char *n) {
   if (storestring(n,comment_,1)) {
     if (visible) widget_browser->redraw();
   }
 }
 
-void Fl_Type::open() {
+void Node::open() {
   printf("Open of '%s' is not yet implemented\n",type_name());
 }
 
@@ -861,15 +861,15 @@ void Fl_Type::open() {
  The caller must make sure that the widget browser is rebuilt correctly.
  \param[in] g move \c this tree before \c g
  */
-void Fl_Type::move_before(Fl_Type* g) {
+void Node::move_before(Node* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",
                                 level, g->level);
   // Find the last child in the list
-  Fl_Type *n;
+  Node *n;
   for (n = next; n && n->level > level; n = n->next) ;
   if (n == g) return;
   // now link this tree before g
-  Fl_Type *l = n ? n->prev : Fluid.proj.tree.last;
+  Node *l = n ? n->prev : Fluid.proj.tree.last;
   prev->next = n;
   if (n) n->prev = prev; else Fluid.proj.tree.last = prev;
   prev = g->prev;
@@ -882,7 +882,7 @@ void Fl_Type::move_before(Fl_Type* g) {
 
 
 // write a widget and all its children:
-void Fl_Type::write(fld::io::Project_Writer &f) {
+void Node::write(fld::io::Project_Writer &f) {
   if (f.write_codeview()) proj1_start = (int)ftell(f.file()) + 1;
   if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
   f.write_indent(level);
@@ -906,7 +906,7 @@ void Fl_Type::write(fld::io::Project_Writer &f) {
   }
   // now do children:
   f.write_open();
-  Fl_Type *child;
+  Node *child;
   for (child = next; child && child->level > level; child = child->next)
     if (child->level == level+1) child->write(f);
   if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
@@ -914,7 +914,7 @@ void Fl_Type::write(fld::io::Project_Writer &f) {
   if (f.write_codeview()) proj2_end = (int)ftell(f.file());
 }
 
-void Fl_Type::write_properties(fld::io::Project_Writer &f) {
+void Node::write_properties(fld::io::Project_Writer &f) {
   // repeat this for each attribute:
   if (Fluid.proj.write_mergeback_data && uid_) {
     f.write_word("uid");
@@ -948,7 +948,7 @@ void Fl_Type::write_properties(fld::io::Project_Writer &f) {
   if (selected) f.write_word("selected");
 }
 
-void Fl_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"uid")) {
     const char *hex = f.read_word();
     int x = 0;
@@ -1013,13 +1013,13 @@ void Fl_Type::read_property(fld::io::Project_Reader &f, const char *c) {
  Lastly, this method should call the super class to give it a chance to append
  its own properties.
 
- \see Fl_Grid_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate)
+ \see Fl_Grid_Type::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
 
  \param[in] f the project file writer
  \param[in] child write properties for this child, make sure it has the correct type
  \param[in] encapsulate write the `parent_properties {}` block if true before writing any properties
  */
-void Fl_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate) {
+void Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) {
   (void)f; (void)child; (void)encapsulate;
   // nothing to do here
   // put the following code into your implementation of write_parent_properties
@@ -1046,26 +1046,26 @@ void Fl_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child
  method reads back those properties. This function is virtual, so if a Type
  does not support a property, it will propagate to its super class.
 
- \see Fl_Type::write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate)
- \see Fl_Grid_Type::read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property)
+ \see Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
+ \see Fl_Grid_Type::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property)
 
  \param[in] f the project file writer
  \param[in] child read properties for this child
  \param[in] property the name of a property, or "}" when we reach the end of the list
  */
-void Fl_Type::read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property) {
+void Node::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) {
   (void)child;
   f.read_error("Unknown parent property \"%s\"", property);
 }
 
 
-int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
+int Node::read_fdesign(const char*, const char*) {return 0;}
 
 /**
  Write a comment into the header file.
  \param[in] pre indent the comment by this string
 */
-void Fl_Type::write_comment_h(fld::io::Code_Writer& f, const char *pre)
+void Node::write_comment_h(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     f.write_h("%s/**\n", pre);
@@ -1088,7 +1088,7 @@ void Fl_Type::write_comment_h(fld::io::Code_Writer& f, const char *pre)
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_c(fld::io::Code_Writer& f, const char *pre)
+void Node::write_comment_c(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     f.write_c("%s/**\n", pre);
@@ -1113,7 +1113,7 @@ void Fl_Type::write_comment_c(fld::io::Code_Writer& f, const char *pre)
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
+void Node::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     const char *s = comment();
@@ -1159,7 +1159,7 @@ void Fl_Type::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
   \return a widget pointer that the live mode initiator can 'show()'
   \see leave_live_mode()
 */
-Fl_Widget *Fl_Type::enter_live_mode(int) {
+Fl_Widget *Node::enter_live_mode(int) {
   return nullptr;
 }
 
@@ -1167,13 +1167,13 @@ Fl_Widget *Fl_Type::enter_live_mode(int) {
   Release all resources created when entering live mode.
   \see enter_live_mode()
 */
-void Fl_Type::leave_live_mode() {
+void Node::leave_live_mode() {
 }
 
 /**
   Copy all needed properties for this type into the live object.
 */
-void Fl_Type::copy_properties() {
+void Node::copy_properties() {
 }
 
 /**
@@ -1184,8 +1184,8 @@ void Fl_Type::copy_properties() {
   plain function or a member function within the same class and that
   the parameter types match.
  */
-int Fl_Type::user_defined(const char* cbname) const {
-  for (Fl_Type* p = Fluid.proj.tree.first; p ; p = p->next)
+int Node::user_defined(const char* cbname) const {
+  for (Node* p = Fluid.proj.tree.first; p ; p = p->next)
     if (p->is_a(ID_Function) && p->name() != nullptr)
       if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
         if (p->name()[strlen(cbname)] == '(')
@@ -1193,7 +1193,7 @@ int Fl_Type::user_defined(const char* cbname) const {
   return 0;
 }
 
-const char *Fl_Type::callback_name(fld::io::Code_Writer& f) {
+const char *Node::callback_name(fld::io::Code_Writer& f) {
   if (is_name(callback())) return callback();
   return f.unique_id(this, "cb", name(), label());
 }
@@ -1211,8 +1211,8 @@ const char *Fl_Type::callback_name(fld::io::Code_Writer& f) {
  \return the name of the enclosing class, or names of the enclosing classes
  in a static buffe (don't call free), or nullptr if this Type is not inside a class
  */
-const char* Fl_Type::class_name(const int need_nest) const {
-  Fl_Type* p = parent;
+const char* Node::class_name(const int need_nest) const {
+  Node* p = parent;
   while (p) {
     if (p->is_class()) {
       // see if we are nested in another class, we must fully-qualify name:
@@ -1237,8 +1237,8 @@ const char* Fl_Type::class_name(const int need_nest) const {
  Check if this is inside a Fl_Class_Type or Fl_Widget_Class_Type.
  \return true if any of the parents is Fl_Class_Type or Fl_Widget_Class_Type
  */
-bool Fl_Type::is_in_class() const {
-  Fl_Type* p = parent;
+bool Node::is_in_class() const {
+  Node* p = parent;
   while (p) {
     if (p->is_class()) return true;
     p = p->parent;
@@ -1246,18 +1246,18 @@ bool Fl_Type::is_in_class() const {
   return false;
 }
 
-void Fl_Type::write_static(fld::io::Code_Writer&) {
+void Node::write_static(fld::io::Code_Writer&) {
 }
 
-void Fl_Type::write_static_after(fld::io::Code_Writer&) {
+void Node::write_static_after(fld::io::Code_Writer&) {
 }
 
-void Fl_Type::write_code1(fld::io::Code_Writer& f) {
+void Node::write_code1(fld::io::Code_Writer& f) {
   f.write_h("// Header for %s\n", title());
   f.write_c("// Code for %s\n", title());
 }
 
-void Fl_Type::write_code2(fld::io::Code_Writer&) {
+void Node::write_code2(fld::io::Code_Writer&) {
 }
 
 /** Set a uid that is unique within the project.
@@ -1269,11 +1269,11 @@ void Fl_Type::write_code2(fld::io::Code_Writer&) {
  \param[in] suggested_uid the preferred uid for this node
  \return the actualt uid that was given to the node
  */
-unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
+unsigned short Node::set_uid(unsigned short suggested_uid) {
   if (suggested_uid==0)
     suggested_uid = (unsigned short)rand();
   for (;;) {
-    Fl_Type *tp = Fluid.proj.tree.first;
+    Node *tp = Fluid.proj.tree.first;
     for ( ; tp; tp = tp->next)
       if (tp!=this && tp->uid_==suggested_uid)
         break;

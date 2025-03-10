@@ -1,7 +1,7 @@
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
-// Object describing an Fl_Group and links to Fl_Window_Type.C and
+// Object describing an Fl_Group and links to Window_Node.C and
 // the Fl_Tabs widget, with special stuff to select tab items and
 // insure that only one is visible.
 //
@@ -18,7 +18,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Group_Node.h"
 
 #include "Fluid.h"
 #include "proj/undo.h"
@@ -40,9 +40,9 @@
 #include <stdlib.h>
 
 
-// ---- Fl_Group_Type -------------------------------------------------- MARK: -
+// ---- Group_Node -------------------------------------------------- MARK: -
 
-Fl_Group_Type Fl_Group_type;    // the "factory"
+Group_Node Fl_Group_type;    // the "factory"
 
 /**
  Override group's resize behavior to do nothing to children by default.
@@ -71,16 +71,16 @@ void Fl_Group_Proxy::draw() {
 /**
  \brief Enlarge the group size, so all children fit within.
  */
-void fix_group_size(Fl_Type *tt) {
+void fix_group_size(Node *tt) {
   if (!tt || !tt->is_a(ID_Group)) return;
-  Fl_Group_Type* t = (Fl_Group_Type*)tt;
+  Group_Node* t = (Group_Node*)tt;
   int X = t->o->x();
   int Y = t->o->y();
   int R = X+t->o->w();
   int B = Y+t->o->h();
-  for (Fl_Type *nn = t->next; nn && nn->level > t->level; nn = nn->next) {
+  for (Node *nn = t->next; nn && nn->level > t->level; nn = nn->next) {
     if (nn->is_true_widget()) {
-      Fl_Widget_Type* n = (Fl_Widget_Type*)nn;
+      Widget_Node* n = (Widget_Node*)nn;
       int x = n->o->x();  if (x < X) X = x;
       int y = n->o->y();  if (y < Y) Y = y;
       int r = x+n->o->w();if (r > R) R = r;
@@ -106,8 +106,8 @@ void group_cb(Fl_Widget *, void *) {
     return;
   }
   // The group will be created in the parent group of the current widget
-  Fl_Type *qq = Fluid.proj.tree.current->parent;
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fluid.proj.tree.current);
+  Node *qq = Fluid.proj.tree.current->parent;
+  Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
   while (qq && !qq->is_a(ID_Group)) {
     qq = qq->parent;
   }
@@ -118,15 +118,15 @@ void group_cb(Fl_Widget *, void *) {
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
   Fluid.proj.tree.current = qq;
-  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(Strategy::AS_LAST_CHILD));
+  Group_Node *n = (Group_Node*)(Fl_Group_type.make(Strategy::AS_LAST_CHILD));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
-  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
       t = t->next;
       continue;
     }
-    Fl_Type *nxt = t->remove();
+    Node *nxt = t->remove();
     t->add(n, Strategy::AS_LAST_CHILD);
     t = nxt;
   }
@@ -154,9 +154,9 @@ void ungroup_cb(Fl_Widget *, void *) {
     return;
   }
 
-  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fluid.proj.tree.current);
+  Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
   int q_level = q->level;
-  Fl_Type *qq = Fluid.proj.tree.current->parent;
+  Node *qq = Fluid.proj.tree.current->parent;
   while (qq && !qq->is_true_widget()) qq = qq->parent;
   if (!qq || !qq->is_a(ID_Group)) {
     fl_message("Only menu widgets inside a group can be ungrouped.");
@@ -165,12 +165,12 @@ void ungroup_cb(Fl_Widget *, void *) {
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
   Fluid.proj.tree.current = qq;
-  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != q_level || !t->selected) {
       t = t->next;
       continue;
     }
-    Fl_Type *nxt = t->remove();
+    Node *nxt = t->remove();
     t->insert(qq);
     t = nxt;
   }
@@ -184,9 +184,9 @@ void ungroup_cb(Fl_Widget *, void *) {
   Fluid.proj.set_modflag(1);
 }
 
-void Fl_Group_Type::ideal_size(int &w, int &h) {
+void Group_Node::ideal_size(int &w, int &h) {
   if (parent && parent->is_true_widget()) {
-    Fl_Widget *p = ((Fl_Widget_Type*)parent)->o;
+    Fl_Widget *p = ((Widget_Node*)parent)->o;
     w = p->w() / 2;
     h = p->h() / 2;
   } else {
@@ -196,11 +196,11 @@ void Fl_Group_Type::ideal_size(int &w, int &h) {
   Fd_Snap_Action::better_size(w, h);
 }
 
-void Fl_Group_Type::write_code1(fld::io::Code_Writer& f) {
-  Fl_Widget_Type::write_code1(f);
+void Group_Node::write_code1(fld::io::Code_Writer& f) {
+  Widget_Node::write_code1(f);
 }
 
-void Fl_Group_Type::write_code2(fld::io::Code_Writer& f) {
+void Group_Node::write_code2(fld::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   write_extra_code(f);
   f.write_c("%s%s->end();\n", f.indent(), var);
@@ -212,48 +212,48 @@ void Fl_Group_Type::write_code2(fld::io::Code_Writer& f) {
 
 // This is called when o is created.  If it is in the tab group make
 // sure it is visible:
-void Fl_Group_Type::add_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
+void Group_Node::add_child(Node* cc, Node* before) {
+  Widget_Node* c = (Widget_Node*)cc;
+  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
   ((Fl_Group*)o)->insert(*(c->o), b);
   o->redraw();
 }
 
 // This is called when o is deleted.  If it is in the tab group make
 // sure it is not visible:
-void Fl_Group_Type::remove_child(Fl_Type* cc) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+void Group_Node::remove_child(Node* cc) {
+  Widget_Node* c = (Widget_Node*)cc;
   ((Fl_Group*)o)->remove(c->o);
   o->redraw();
 }
 
 // move, don't change selected value:
-void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
+void Group_Node::move_child(Node* cc, Node* before) {
+  Widget_Node* c = (Widget_Node*)cc;
+  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
   ((Fl_Group*)o)->insert(*(c->o), b);
   o->redraw();
 }
 
 // live mode support
-Fl_Widget* Fl_Group_Type::enter_live_mode(int) {
+Fl_Widget* Group_Node::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Group(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grp);
 }
 
-void Fl_Group_Type::leave_live_mode() {
+void Group_Node::leave_live_mode() {
 }
 
 /**
  copy all properties from the edit widget to the live widget
  */
-void Fl_Group_Type::copy_properties() {
-  Fl_Widget_Type::copy_properties();
+void Group_Node::copy_properties() {
+  Widget_Node::copy_properties();
 }
 
-// ---- Fl_Pack_Type --------------------------------------------------- MARK: -
+// ---- Pack_Node --------------------------------------------------- MARK: -
 
-Fl_Pack_Type Fl_Pack_type;      // the "factory"
+Pack_Node Fl_Pack_type;      // the "factory"
 
 const char pack_type_name[] = "Fl_Pack";
 
@@ -263,19 +263,19 @@ Fl_Menu_Item pack_type_menu[] = {
   {nullptr}
 };
 
-Fl_Widget *Fl_Pack_Type::enter_live_mode(int) {
+Fl_Widget *Pack_Node::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Pack(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grp);
 }
 
-void Fl_Pack_Type::copy_properties()
+void Pack_Node::copy_properties()
 {
-  Fl_Group_Type::copy_properties();
+  Group_Node::copy_properties();
   Fl_Pack *d = (Fl_Pack*)live_widget, *s =(Fl_Pack*)o;
   d->spacing(s->spacing());
 }
 
-// ---- Fl_Flex_Type --------------------------------------------------- MARK: -
+// ---- Flex_Node --------------------------------------------------- MARK: -
 
 const char flex_type_name[] = "Fl_Flex";
 
@@ -284,7 +284,7 @@ Fl_Menu_Item flex_type_menu[] = {
   {"VERTICAL", 0, nullptr, (void*)Fl_Flex::VERTICAL},
   {nullptr}};
 
-Fl_Flex_Type Fl_Flex_type;      // the "factory"
+Flex_Node Fl_Flex_type;      // the "factory"
 
 /**
  Override flex's resize behavior to do nothing to children by default.
@@ -310,7 +310,7 @@ void Fl_Flex_Proxy::draw() {
   Fl_Flex::draw();
 }
 
-Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
+Fl_Widget *Flex_Node::enter_live_mode(int) {
   Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(grp);
   Fl_Flex *d = grp, *s =(Fl_Flex*)o;
@@ -325,9 +325,9 @@ Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
   return grp;
 }
 
-void Fl_Flex_Type::copy_properties()
+void Flex_Node::copy_properties()
 {
-  Fl_Group_Type::copy_properties();
+  Group_Node::copy_properties();
   Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
   int lm, tm, rm, bm;
   s->margin(&lm, &tm, &rm, &bm);
@@ -335,7 +335,7 @@ void Fl_Flex_Type::copy_properties()
   d->gap( s->gap() );
 }
 
-void Fl_Flex_Type::copy_properties_for_children() {
+void Flex_Node::copy_properties_for_children() {
   Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
   for (int i=0; i<s->children(); i++) {
     if (s->fixed(s->child(i)) && i<d->children()) {
@@ -349,9 +349,9 @@ void Fl_Flex_Type::copy_properties_for_children() {
   d->layout();
 }
 
-void Fl_Flex_Type::write_properties(fld::io::Project_Writer &f)
+void Flex_Node::write_properties(fld::io::Project_Writer &f)
 {
-  Fl_Group_Type::write_properties(f);
+  Group_Node::write_properties(f);
   Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
   flex->margin(&lm, &tm, &rm, &bm);
@@ -374,7 +374,7 @@ void Fl_Flex_Type::write_properties(fld::io::Project_Writer &f)
   }
 }
 
-void Fl_Flex_Type::read_property(fld::io::Project_Reader &f, const char *c)
+void Flex_Node::read_property(fld::io::Project_Reader &f, const char *c)
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
@@ -399,11 +399,11 @@ void Fl_Flex_Type::read_property(fld::io::Project_Reader &f, const char *c)
     }
     f.read_word(1); // must be '}'
   } else {
-    Fl_Group_Type::read_property(f, c);
+    Group_Node::read_property(f, c);
   }
 }
 
-void Fl_Flex_Type::postprocess_read()
+void Flex_Node::postprocess_read()
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   if (fixedSizeTupleSize>0) {
@@ -422,7 +422,7 @@ void Fl_Flex_Type::postprocess_read()
   suspend_auto_layout = 0;
 }
 
-void Fl_Flex_Type::write_code2(fld::io::Code_Writer& f) {
+void Flex_Node::write_code2(fld::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
@@ -437,30 +437,30 @@ void Fl_Flex_Type::write_code2(fld::io::Code_Writer& f) {
       f.write_c("%s%s->fixed(%s->child(%d), %d);\n", f.indent(), var, var, i,
                 flex->horizontal() ? ci->w() : ci->h());
   }
-  Fl_Group_Type::write_code2(f);
+  Group_Node::write_code2(f);
 }
 
-//void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
-//  Fl_Group_Type::add_child(a, b);
+//void Flex_Node::add_child(Node* a, Node* b) {
+//  Group_Node::add_child(a, b);
 //  if (!suspend_auto_layout)
 //    ((Fl_Flex*)o)->layout();
 //}
 //
-//void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
-//  Fl_Group_Type::move_child(a, b);
+//void Flex_Node::move_child(Node* a, Node* b) {
+//  Group_Node::move_child(a, b);
 //  if (!suspend_auto_layout)
 //    ((Fl_Flex*)o)->layout();
 //}
 
-void Fl_Flex_Type::remove_child(Fl_Type* a) {
+void Flex_Node::remove_child(Node* a) {
   if (a->is_widget())
-    ((Fl_Flex*)o)->fixed(((Fl_Widget_Type*)a)->o, 0);
-  Fl_Group_Type::remove_child(a);
+    ((Fl_Flex*)o)->fixed(((Widget_Node*)a)->o, 0);
+  Group_Node::remove_child(a);
 //  ((Fl_Flex*)o)->layout();
   layout_widget();
 }
 
-void Fl_Flex_Type::layout_widget() {
+void Flex_Node::layout_widget() {
   Fluid.proj.tree.allow_layout++;
   ((Fl_Flex*)o)->layout();
   Fluid.proj.tree.allow_layout--;
@@ -470,7 +470,7 @@ void Fl_Flex_Type::layout_widget() {
 // Children in a horizontal Flex have already the full vertical height. If we
 // just change to vertical, the accumulated hight of all children is too big.
 // We need to relayout existing children.
-void Fl_Flex_Type::change_subtype_to(int n) {
+void Flex_Node::change_subtype_to(int n) {
   Fl_Flex* f = (Fl_Flex*)o;
   if (f->type()==n) return;
 
@@ -504,7 +504,7 @@ void Fl_Flex_Type::change_subtype_to(int n) {
   f->layout();
 }
 
-int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
+int Flex_Node::parent_is_flex(Node *t) {
   return (t->is_widget()
           && t->parent
           && t->parent->is_a(ID_Flex));
@@ -517,7 +517,7 @@ int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
       this and will be relocated if so
  \param[in] x, y pixel coordinates relative to the top left of the window
  */
-void Fl_Flex_Type::insert_child_at(Fl_Widget *child, int x, int y) {
+void Flex_Node::insert_child_at(Fl_Widget *child, int x, int y) {
   Fl_Flex *flex = (Fl_Flex*)o;
   // find the insertion point closest to x, y
   int d = flex->w() + flex->h(), di = -1;
@@ -551,7 +551,7 @@ void Fl_Flex_Type::insert_child_at(Fl_Widget *child, int x, int y) {
  \param[in] child pointer to the child type
  \param[in] key code of the last keypress when handling a FL_KEYBOARD event.
  */
-void Fl_Flex_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
+void Flex_Node::keyboard_move_child(Widget_Node *child, int key) {
   Fl_Flex *flex = ((Fl_Flex*)o);
   int ix = flex->find(child->o);
   if (ix == flex->children()) return;
@@ -570,30 +570,30 @@ void Fl_Flex_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
   }
 }
 
-int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
+int Flex_Node::size(Node *t, char fixed_only) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
   if (!t->parent->is_a(ID_Flex)) return 0;
-  Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
+  Flex_Node* ft = (Flex_Node*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
-  Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
+  Fl_Widget *w = ((Widget_Node*)t)->o;
   if (fixed_only && !f->fixed(w)) return 0;
   return f->horizontal() ? w->w() : w->h();
 }
 
-int Fl_Flex_Type::is_fixed(Fl_Type *t) {
+int Flex_Node::is_fixed(Node *t) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
   if (!t->parent->is_a(ID_Flex)) return 0;
-  Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
+  Flex_Node* ft = (Flex_Node*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
-  Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
+  Fl_Widget *w = ((Widget_Node*)t)->o;
   return f->fixed(w);
 }
 
-// ---- Fl_Table_Type -------------------------------------------------- MARK: -
+// ---- Table_Node -------------------------------------------------- MARK: -
 
-Fl_Table_Type Fl_Table_type;    // the "factory"
+Table_Node Fl_Table_type;    // the "factory"
 
 static const int MAX_ROWS = 14;
 static const int MAX_COLS = 7;
@@ -671,14 +671,14 @@ public:
   }
 };
 
-Fl_Widget *Fl_Table_Type::widget(int X,int Y,int W,int H) {
+Fl_Widget *Table_Node::widget(int X,int Y,int W,int H) {
   Fluid_Table *table = new Fluid_Table(X, Y, W, H);
   return table;
 }
 
-void Fl_Table_Type::add_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
+void Table_Node::add_child(Node* cc, Node* before) {
+  Widget_Node* c = (Widget_Node*)cc;
+  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
   if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
     fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
                "Please refer to the documentation on Fl_Table.");
@@ -687,20 +687,20 @@ void Fl_Table_Type::add_child(Fl_Type* cc, Fl_Type* before) {
   o->redraw();
 }
 
-void Fl_Table_Type::remove_child(Fl_Type* cc) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+void Table_Node::remove_child(Node* cc) {
+  Widget_Node* c = (Widget_Node*)cc;
   ((Fl_Table*)o)->remove(*(c->o));
   o->redraw();
 }
 
-void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
+void Table_Node::move_child(Node* cc, Node* before) {
+  Widget_Node* c = (Widget_Node*)cc;
+  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
   ((Fl_Table*)o)->insert(*(c->o), b);
   o->redraw();
 }
 
-Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
+Fl_Widget *Table_Node::enter_live_mode(int) {
   Fl_Group *grp = new Fluid_Table(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
   copy_properties();
@@ -708,15 +708,15 @@ Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
   return live_widget;
 }
 
-void Fl_Table_Type::ideal_size(int &w, int &h) {
+void Table_Node::ideal_size(int &w, int &h) {
   w = 160;
   h = 120;
   Fd_Snap_Action::better_size(w, h);
 }
 
-// ---- Fl_Tabs_Type --------------------------------------------------- MARK: -
+// ---- Tabs_Node --------------------------------------------------- MARK: -
 
-Fl_Tabs_Type Fl_Tabs_type;      // the "factory"
+Tabs_Node Fl_Tabs_type;      // the "factory"
 
 const char tabs_type_name[] = "Fl_Tabs";
 
@@ -744,7 +744,7 @@ void Fl_Tabs_Proxy::draw() {
 // if it is a tab title, and adjust visibility and return new selection:
 // If none, return o unchanged:
 
-Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
+Node* Tabs_Node::click_test(int x, int y) {
   Fl_Tabs *t = (Fl_Tabs*)o;
   Fl_Widget *a = t->which(x,y);
   if (!a) return nullptr; // didn't click on tab
@@ -756,21 +756,21 @@ Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
   Fl::pushed(t);
   while (Fl::pushed()==t) Fl::wait();
   if (changed) Fluid.proj.set_modflag(1);
-  return (Fl_Type*)(t->value()->user_data());
+  return (Node*)(t->value()->user_data());
 }
 
-void Fl_Tabs_Type::add_child(Fl_Type* c, Fl_Type* before) {
-  Fl_Group_Type::add_child(c, before);
+void Tabs_Node::add_child(Node* c, Node* before) {
+  Group_Node::add_child(c, before);
 }
 
-void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+void Tabs_Node::remove_child(Node* cc) {
+  Widget_Node* c = (Widget_Node*)cc;
   Fl_Tabs *t = (Fl_Tabs*)o;
   if (t->value() == c->o) t->value(nullptr);
-  Fl_Group_Type::remove_child(c);
+  Group_Node::remove_child(c);
 }
 
-Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
+Fl_Widget *Tabs_Node::enter_live_mode(int) {
   Fl_Tabs *original = static_cast<Fl_Tabs*>(o);
   Fl_Tabs *clone = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(clone);
@@ -780,9 +780,9 @@ Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
   return clone;
 }
 
-// ---- Fl_Scroll_Type ------------------------------------------------- MARK: -
+// ---- Scroll_Node ------------------------------------------------- MARK: -
 
-Fl_Scroll_Type Fl_Scroll_type;  // the "factory"
+Scroll_Node Fl_Scroll_type;  // the "factory"
 
 const char scroll_type_name[] = "Fl_Scroll";
 
@@ -795,14 +795,14 @@ Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH_ALWAYS", 0, nullptr, (void*)Fl_Scroll::BOTH_ALWAYS},
   {nullptr}};
 
-Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
+Fl_Widget *Scroll_Node::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
   grp->show();
   return propagate_live_mode(grp);
 }
 
-void Fl_Scroll_Type::copy_properties() {
-  Fl_Group_Type::copy_properties();
+void Scroll_Node::copy_properties() {
+  Group_Node::copy_properties();
   Fl_Scroll *s = (Fl_Scroll*)o, *d = (Fl_Scroll*)live_widget;
   d->scroll_to(s->xposition(), s->yposition());
   d->type(s->type());
@@ -810,20 +810,20 @@ void Fl_Scroll_Type::copy_properties() {
   d->hscrollbar.align(s->hscrollbar.align());
 }
 
-// ---- Fl_Tile_Type --------------------------------------------------- MARK: -
+// ---- Tile_Node --------------------------------------------------- MARK: -
 
-Fl_Tile_Type Fl_Tile_type;      // the "factory"
+Tile_Node Fl_Tile_type;      // the "factory"
 
 const char tile_type_name[] = "Fl_Tile";
 
-void Fl_Tile_Type::copy_properties() {
-  Fl_Group_Type::copy_properties();
+void Tile_Node::copy_properties() {
+  Group_Node::copy_properties();
   // no additional properties
 }
 
-// ---- Fl_Wizard_Type ------------------------------------------------ MARK: -
+// ---- Wizard_Node ------------------------------------------------ MARK: -
 
-Fl_Wizard_Type Fl_Wizard_type;  // the "factory"
+Wizard_Node Fl_Wizard_type;  // the "factory"
 
 const char wizard_type_name[] = "Fl_Wizard";
 

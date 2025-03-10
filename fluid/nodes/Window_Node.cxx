@@ -18,7 +18,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Window_Node.h"
 
 #include "app/Fd_Snap_Action.h"
 #include "Fluid.h"
@@ -124,7 +124,7 @@ class Overlay_Window : public Fl_Overlay_Window {
   void draw_overlay() FL_OVERRIDE;
   static void close_cb(Overlay_Window *self, void*);
 public:
-  Fl_Window_Type *window;
+  Window_Node *window;
   int handle(int) FL_OVERRIDE;
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {
     Fl_Group::current(nullptr);
@@ -227,8 +227,8 @@ int Overlay_Window::handle(int e) {
  \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  \return new node
  */
-Fl_Type *Fl_Window_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Window_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) {
     anchor = p;
@@ -239,7 +239,7 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
     fl_message("Please select a function");
     return nullptr;
   }
-  Fl_Window_Type *myo = new Fl_Window_Type();
+  Window_Node *myo = new Window_Node();
   if (!this->o) {// template widget
     this->o = new Fl_Window(100,100);
     Fl_Group::current(nullptr);
@@ -257,7 +257,7 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   return myo;
 }
 
-void Fl_Window_Type::add_child(Fl_Type* cc, Fl_Type* before) {
+void Window_Node::add_child(Node* cc, Node* before) {
   if (!cc->is_widget()) return;
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
@@ -265,13 +265,13 @@ void Fl_Window_Type::add_child(Fl_Type* cc, Fl_Type* before) {
   o->redraw();
 }
 
-void Fl_Window_Type::remove_child(Fl_Type* cc) {
+void Window_Node::remove_child(Node* cc) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   ((Fl_Window*)o)->remove(c->o);
   o->redraw();
 }
 
-void Fl_Window_Type::move_child(Fl_Type* cc, Fl_Type* before) {
+void Window_Node::move_child(Node* cc, Node* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   ((Fl_Window*)o)->remove(c->o);
   Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
@@ -283,9 +283,9 @@ void Fl_Window_Type::move_child(Fl_Type* cc, Fl_Type* before) {
 
 /**
  \brief Show the Window Type editor window without setting the modified flag.
- \see Fl_Window_Type::open()
+ \see Window_Node::open()
  */
-void Fl_Window_Type::open_() {
+void Window_Node::open_() {
   Overlay_Window *w = (Overlay_Window *)o;
   if (w->shown()) {
     w->show();
@@ -303,9 +303,9 @@ void Fl_Window_Type::open_() {
  \brief Show the Window Type editor window and set the modified flag if needed.
  Double-click on window widget shows the window, or if already shown, it shows
  the control panel.
- \see Fl_Window_Type::open_()
+ \see Window_Node::open_()
  */
-void Fl_Window_Type::open() {
+void Window_Node::open() {
   Overlay_Window *w = (Overlay_Window *)o;
   if (!w->visible()) {
     Fluid.proj.set_modflag(1, -2);
@@ -314,7 +314,7 @@ void Fl_Window_Type::open() {
 }
 
 // Read an image of the window
-uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
+uchar *Window_Node::read_image(int &ww, int &hh) {
   Overlay_Window *w = (Overlay_Window *)o;
 
   int hidden = !w->shown();
@@ -327,7 +327,7 @@ uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
   return idata;
 }
 
-void Fl_Window_Type::ideal_size(int &w, int &h) {
+void Window_Node::ideal_size(int &w, int &h) {
   w = 480; h = 320;
   if (Fluid.main_window) {
     int sx, sy, sw, sh;
@@ -346,10 +346,10 @@ void modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
     if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
-    i->value(((Fl_Window_Type *)current_widget)->modal);
+    i->value(((Window_Node *)current_widget)->modal);
   } else {
     Fluid.proj.undo.checkpoint();
-    ((Fl_Window_Type *)current_widget)->modal = i->value();
+    ((Window_Node *)current_widget)->modal = i->value();
     Fluid.proj.set_modflag(1);
   }
 }
@@ -358,10 +358,10 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
     if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
-    i->value(((Fl_Window_Type *)current_widget)->non_modal);
+    i->value(((Window_Node *)current_widget)->non_modal);
   } else {
     Fluid.proj.undo.checkpoint();
-    ((Fl_Window_Type *)current_widget)->non_modal = i->value();
+    ((Window_Node *)current_widget)->non_modal = i->value();
     Fluid.proj.set_modflag(1);
   }
 }
@@ -383,7 +383,7 @@ void xclass_cb(Fl_Input* i, void* v) {
     if (current_widget->is_a(ID_Window)) {
       i->show();
       i->parent()->show();
-      i->value(((Fl_Window_Type *)current_widget)->xclass);
+      i->value(((Window_Node *)current_widget)->xclass);
     } else {
       i->hide();
       i->parent()->hide(); // hides the "X Class:" label as well
@@ -391,10 +391,10 @@ void xclass_cb(Fl_Input* i, void* v) {
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
-    for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next) {
+    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_a(ID_Window)) {
         mod = 1;
-        Fl_Window_Type *wt = (Fl_Window_Type *)o;
+        Window_Node *wt = (Window_Node *)o;
         storestring(i->value(), wt->xclass);
         ((Fl_Window*)(wt->o))->xclass(wt->xclass);
       }
@@ -405,12 +405,12 @@ void xclass_cb(Fl_Input* i, void* v) {
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_Window_Type::setlabel(const char *n) {
+void Window_Node::setlabel(const char *n) {
   if (o) ((Fl_Window *)o)->label(n);
 }
 
 // make() is called on this widget when user picks window off New menu:
-Fl_Window_Type Fl_Window_type;
+Window_Node Fl_Window_type;
 
 // Resize from window manager...
 void Overlay_Window::resize(int X,int Y,int W,int H) {
@@ -441,7 +441,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
 
 // calculate actual move by moving mouse position (mx,my) to
 // nearest multiple of gridsize, and snap to original position
-void Fl_Window_Type::newdx() {
+void Window_Node::newdx() {
   int mydx, mydy;
   mydx = mx-x1;
   mydy = my-y1;
@@ -457,8 +457,8 @@ void Fl_Window_Type::newdx() {
   }
 
   if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
-    Fl_Type *selection = nullptr; // special power for the first selected widget
-    for (Fl_Type *q=next; q && q->level>level; q = q->next) {
+    Node *selection = nullptr; // special power for the first selected widget
+    for (Node *q=next; q && q->level>level; q = q->next) {
       if (q->selected && q->is_true_widget()) {
         selection = q;
         break;
@@ -477,7 +477,7 @@ void Fl_Window_Type::newdx() {
 }
 
 // Move a widget according to dx and dy calculated above
-void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T) {
+void Window_Node::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T) {
   X = myo->o->x();
   Y = myo->o->y();
   R = X+myo->o->w();
@@ -547,8 +547,8 @@ void fd_hatch(int x, int y, int w, int h, int size=6, int offset=0, int pad=3) {
  \param[in] group check all children of this group
  \param[in] x, y, w, h bounding box of this group
  */
-void Fl_Window_Type::draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int w, int h) {
-  for (Fl_Type *p = group->next; p && p->level>group->level; p = p->next) {
+void Window_Node::draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int w, int h) {
+  for (Node *p = group->next; p && p->level>group->level; p = p->next) {
     if (p->level == group->level+1 && p->is_true_widget()) {
       Fl_Widget *o = ((Fl_Widget_Type*)p)->o;
       if (o->x() < x) fd_hatch(o->x(), o->y(), x-o->x(), o->h());
@@ -562,11 +562,11 @@ void Fl_Window_Type::draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int
 /**
  \brief Draw a hatch pattern for all groups that have out of bounds children.
  */
-void Fl_Window_Type::draw_out_of_bounds() {
+void Window_Node::draw_out_of_bounds() {
   // get every group in the hierarchy, then draw any overlap of a direct child with that group
   fl_color(FL_DARK_RED);
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
-  for (Fl_Type *q=next; q && q->level>level; q = q->next) {
+  for (Node *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
     if (q->is_a(ID_Group) && !q->is_a(ID_Scroll)) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
@@ -579,10 +579,10 @@ void Fl_Window_Type::draw_out_of_bounds() {
 /**
  \brief Compare all children in the same level and hatch overlapping areas.
  */
-void Fl_Window_Type::draw_overlaps() {
+void Window_Node::draw_overlaps() {
   fl_color(FL_DARK_YELLOW);
   // loop through all widgets in this window
-  for (Fl_Type *q=next; q && q->level>level; q = q->next) {
+  for (Node *q=next; q && q->level>level; q = q->next) {
     // is it a valid widget
     if (q->is_true_widget()) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
@@ -590,7 +590,7 @@ void Fl_Window_Type::draw_overlaps() {
       if (w->o->visible()) {
         int x = w->o->x(), y = w->o->y();
         int r = x + w->o->w(), b = y + w->o->h();
-        for (Fl_Type *p=q->next; p && p->level>=q->level; p = p->next) {
+        for (Node *p=q->next; p && p->level>=q->level; p = p->next) {
           if (p->level==q->level && p->is_true_widget()) {
             Fl_Widget_Type *wp = (Fl_Widget_Type*)p;
             if (wp->o->visible()) {
@@ -612,11 +612,11 @@ void Fl_Window_Type::draw_overlaps() {
   fl_color(FL_RED);
 }
 
-void Fl_Window_Type::draw_overlay() {
+void Window_Node::draw_overlay() {
   if (recalc) {
     bx = o->w(); by = o->h(); br = 0; bt = 0;
     numselected = 0;
-    for (Fl_Type *q=next; q && q->level>level; q=q->next)
+    for (Node *q=next; q && q->level>level; q=q->next)
       if (q->selected && q->is_true_widget()) {
         numselected++;
         Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
@@ -647,8 +647,8 @@ void Fl_Window_Type::draw_overlay() {
   int mybx,myby,mybr,mybt;
   int mysx,mysy,mysr,myst;
   mybx = mysx = o->w(); myby = mysy = o->h(); mybr = mysr = 0; mybt = myst = 0;
-  Fl_Type *selection = nullptr; // special power for the first selected widget
-  for (Fl_Type *q=next; q && q->level>level; q = q->next)
+  Node *selection = nullptr; // special power for the first selected widget
+  for (Node *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_true_widget()) {
       if (!selection) selection = q;
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
@@ -718,7 +718,7 @@ void Fl_Window_Type::draw_overlay() {
 }
 
 // Calculate new bounding box of selected widgets:
-void Fl_Window_Type::fix_overlay() {
+void Window_Node::fix_overlay() {
   Fluid.overlay_item->label("Hide O&verlays");
   if (overlay_button) overlay_button->label("Hide &Overlays");
   overlays_invisible = 0;
@@ -727,10 +727,10 @@ void Fl_Window_Type::fix_overlay() {
 }
 
 // check if we must redraw any parent of tabs/wizard type
-void check_redraw_corresponding_parent(Fl_Type *s) {
+void check_redraw_corresponding_parent(Node *s) {
   Fl_Widget_Type * prev_parent = nullptr;
   if( !s || !s->selected || !s->is_widget()) return;
-  for (Fl_Type *i=s; i && i->parent; i=i->parent) {
+  for (Node *i=s; i && i->parent; i=i->parent) {
     if (i->is_a(ID_Group) && prev_parent) {
       if (i->is_a(ID_Tabs)) {
         ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
@@ -748,8 +748,8 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
 
 // do that for every window (when selected set changes):
 void redraw_overlays() {
-  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next)
-    if (o->is_a(ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
+  for (Node *o=Fluid.proj.tree.first; o; o=o->next)
+    if (o->is_a(ID_Window)) ((Window_Node*)o)->fix_overlay();
 }
 
 void toggle_overlays(Fl_Widget *,void *) {
@@ -763,7 +763,7 @@ void toggle_overlays(Fl_Widget *,void *) {
     if (overlay_button) overlay_button->label("Hide &Overlays");
   }
 
-  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next)
+  for (Node *o=Fluid.proj.tree.first; o; o=o->next)
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
@@ -786,7 +786,7 @@ void toggle_guides(Fl_Widget *,void *) {
   if (guides_button)
     guides_button->value(Fluid.show_guides);
 
-  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next) {
+  for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
@@ -818,7 +818,7 @@ void toggle_restricted(Fl_Widget *,void *) {
   if (restricted_button)
     restricted_button->value(Fluid.show_restricted);
 
-  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next) {
+  for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
@@ -832,7 +832,7 @@ void toggle_restricted(Fl_Widget *,void *) {
 void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
   Fluid.show_ghosted_outline = !Fluid.show_ghosted_outline;
   Fluid.preferences.set("Fluid.show_ghosted_outline", Fluid.show_ghosted_outline);
-  for (Fl_Type *o=Fluid.proj.tree.first; o; o=o->next) {
+  for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
     if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw();
@@ -848,11 +848,11 @@ void toggle_restricted_cb(Fl_Check_Button *o, void *v) {
   toggle_restricted(nullptr, nullptr);
 }
 
-extern void select(Fl_Type *,int);
-extern void select_only(Fl_Type *);
+extern void select(Node *,int);
+extern void select_only(Node *);
 extern void deselect();
-extern Fl_Type* in_this_only;
-extern void fix_group_size(Fl_Type *t);
+extern Node* in_this_only;
+extern void fix_group_size(Node *t);
 
 extern Fl_Menu_Item New_Menu[];
 
@@ -871,11 +871,11 @@ extern Fl_Menu_Item New_Menu[];
  \param[in] key if key is not 0, it contains the code of the keypress that
       caused this call. This must only be set when handle FL_KEYBOARD events.
  */
-void Fl_Window_Type::moveallchildren(int key)
+void Window_Node::moveallchildren(int key)
 {
   bool update_widget_panel = false;
   Fluid.proj.undo.checkpoint();
-  Fl_Type *i;
+  Node *i;
   for (i=next; i && i->level>level;) {
     if (i->selected && i->is_true_widget()) {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
@@ -938,7 +938,7 @@ void Fl_Window_Type::moveallchildren(int key)
         ((Fl_Group*)gt->o)->init_sizes();
       }
       // move all the children, whether selected or not:
-      Fl_Type* p;
+      Node* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
         if (p->is_true_widget() && !myo->is_a(ID_Flex) && !myo->is_a(ID_Grid)) {
           Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
@@ -965,11 +965,11 @@ void Fl_Window_Type::moveallchildren(int key)
   }
 }
 
-int Fl_Window_Type::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)
-int Fl_Window_Type::popupy = 0x7FFFFFFF;
+int Window_Node::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)
+int Window_Node::popupy = 0x7FFFFFFF;
 
-int Fl_Window_Type::handle(int event) {
-  static Fl_Type* selection = nullptr;
+int Window_Node::handle(int event) {
+  static Node* selection = nullptr;
   switch (event) {
   case FL_DND_ENTER:
     // printf("DND enter\n");
@@ -978,7 +978,7 @@ int Fl_Window_Type::handle(int event) {
     {
       // find the innermost item clicked on:
       selection = this;
-      for (Fl_Type* i=next; i && i->level>level; i=i->next)
+      for (Node* i=next; i && i->level>level; i=i->next)
         if (i->is_a(ID_Group)) {
           Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
           if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
@@ -1000,7 +1000,7 @@ int Fl_Window_Type::handle(int event) {
     return 1;
   case FL_PASTE:
     // printf("DND paste\n");
-    { Fl_Type *prototype = typename_to_prototype(Fl::event_text());
+    { Node *prototype = typename_to_prototype(Fl::event_text());
       if (prototype==nullptr) {
         // it's not a FLUID type, so it could be the filename of an image
         const char *cfn = Fl::event_text();
@@ -1030,7 +1030,7 @@ int Fl_Window_Type::handle(int event) {
         // ok, so it is an image - now add it as image() or deimage() to the widget
         // printf("DND check for target %s\n", fn);
         Fl_Widget_Type *tgt = nullptr;
-        for (Fl_Type* i=next; i && i->level>level; i=i->next) {
+        for (Node* i=next; i && i->level>level; i=i->next) {
           if (i->is_widget()) {
             Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
             if (Fl::event_inside(myo->o) && myo->o->visible_r())
@@ -1069,7 +1069,7 @@ int Fl_Window_Type::handle(int event) {
           && selection && selection->group()
           && Fluid.proj.tree.current_dnd->group()==selection->group())
       {
-        Fl_Type *cc = Fluid.proj.tree.current;
+        Node *cc = Fluid.proj.tree.current;
         Fluid.proj.tree.current = Fluid.proj.tree.current_dnd;
         add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
         Fluid.proj.tree.current = cc;
@@ -1100,7 +1100,7 @@ int Fl_Window_Type::handle(int event) {
     }
     // find the innermost item clicked on:
     selection = this;
-    {for (Fl_Type* i=next; i && i->level>level; i=i->next)
+    {for (Node* i=next; i && i->level>level; i=i->next)
       if (i->is_true_widget()) {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
@@ -1122,7 +1122,7 @@ int Fl_Window_Type::handle(int event) {
       if (!drag) drag = FD_DRAG;
     }
     // do object-specific selection of other objects:
-    {Fl_Type* t = selection->click_test(mx, my);
+    {Node* t = selection->click_test(mx, my);
     if (t) {
       //if (t == selection) return 1; // indicates mouse eaten w/o change
       if (Fl::event_state(FL_SHIFT)) {
@@ -1163,7 +1163,7 @@ int Fl_Window_Type::handle(int event) {
       // clear selection on everything:
       if (!toggle) deselect(); else Fl::event_is_click(0);
       // select everything in box:
-      for (Fl_Type*i=next; i&&i->level>level; i=i->next)
+      for (Node*i=next; i&&i->level>level; i=i->next)
         if (i->is_true_widget()) {
         Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
         for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
@@ -1197,10 +1197,10 @@ int Fl_Window_Type::handle(int event) {
     case FL_Tab: {
       if (Fl::event_state(FL_SHIFT)) backtab = 1;
       // find current child:
-      Fl_Type *i = Fluid.proj.tree.current;
+      Node *i = Fluid.proj.tree.current;
       while (i && !i->is_true_widget()) i = i->parent;
       if (!i) return 0;
-      Fl_Type *p = i->parent;
+      Node *p = i->parent;
       while (p && p != this) p = p->parent;
       if (!p || !p->is_widget()) {
         i = next; if (!i || i->level <= level) return 0;
@@ -1260,7 +1260,7 @@ int Fl_Window_Type::handle(int event) {
  Write the C++ code that comes before the children of the window are written.
  \param f the source code output stream
  */
-void Fl_Window_Type::write_code1(fld::io::Code_Writer& f) {
+void Window_Node::write_code1(fld::io::Code_Writer& f) {
   Fl_Widget_Type::write_code1(f);
 }
 
@@ -1269,7 +1269,7 @@ void Fl_Window_Type::write_code1(fld::io::Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Fl_Window_Type::write_code2(fld::io::Code_Writer& f) {
+void Window_Node::write_code2(fld::io::Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
   // make the window modal or non-modal
   if (modal) {
@@ -1304,7 +1304,7 @@ void Fl_Window_Type::write_code2(fld::io::Code_Writer& f) {
   write_block_close(f);
 }
 
-void Fl_Window_Type::write_properties(fld::io::Project_Writer &f) {
+void Window_Node::write_properties(fld::io::Project_Writer &f) {
   Fl_Widget_Type::write_properties(f);
   if (modal) f.write_string("modal");
   else if (non_modal) f.write_string("non_modal");
@@ -1315,7 +1315,7 @@ void Fl_Window_Type::write_properties(fld::io::Project_Writer &f) {
   if (o->visible() || override_visible_) f.write_string("visible");
 }
 
-void Fl_Window_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Window_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
   } else if (!strcmp(c,"non_modal")) {
@@ -1343,7 +1343,7 @@ void Fl_Window_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   }
 }
 
-int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
+int Window_Node::read_fdesign(const char* propname, const char* value) {
   int x;
   o->box(FL_NO_BOX); // because fdesign always puts an Fl_Box next
   if (!strcmp(propname,"Width")) {
@@ -1364,23 +1364,23 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
 
 ///////////////////////////////////////////////////////////////////////
 
-Fl_Widget_Class_Type Fl_Widget_Class_type;
-Fl_Widget_Class_Type *current_widget_class = nullptr;
+Widget_Class_Node Fl_Widget_Class_type;
+Widget_Class_Node *current_widget_class = nullptr;
 
 /**
  Create and add a new Widget Class node.
  \param[in] strategy add after current or as last child
  \return new node
  */
-Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
-  Fl_Type *anchor = Fluid.proj.tree.current, *p = anchor;
+Node *Widget_Class_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
   while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
-  Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();
+  Widget_Class_Node *myo = new Widget_Class_Node();
   myo->name("UserInterface");
 
   if (!this->o) {// template widget
@@ -1402,21 +1402,21 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   return myo;
 }
 
-void Fl_Widget_Class_Type::write_properties(fld::io::Project_Writer &f) {
-  Fl_Window_Type::write_properties(f);
+void Widget_Class_Node::write_properties(fld::io::Project_Writer &f) {
+  Window_Node::write_properties(f);
   if (wc_relative==1)
     f.write_string("position_relative");
   else if (wc_relative==2)
     f.write_string("position_relative_rescale");
 }
 
-void Fl_Widget_Class_Type::read_property(fld::io::Project_Reader &f, const char *c) {
+void Widget_Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
   } else if (!strcmp(c,"position_relative_rescale")) {
       wc_relative = 2;
   } else {
-    Fl_Window_Type::read_property(f, c);
+    Window_Node::read_property(f, c);
   }
 }
 
@@ -1433,7 +1433,7 @@ static const char *trimclassname(const char *n) {
 }
 
 
-void Fl_Widget_Class_Type::write_code1(fld::io::Code_Writer& f) {
+void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
 #if 0
   Fl_Widget_Type::write_code1(fld::io::Code_Writer& f);
 #endif // 0
@@ -1503,7 +1503,7 @@ void Fl_Widget_Class_Type::write_code1(fld::io::Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Fl_Widget_Class_Type::write_code2(fld::io::Code_Writer& f) {
+void Widget_Class_Node::write_code2(fld::io::Code_Writer& f) {
   // make the window modal or non-modal
   if (modal) {
     f.write_c("%sset_modal();\n", f.indent());
@@ -1538,18 +1538,18 @@ void Fl_Widget_Class_Type::write_code2(fld::io::Code_Writer& f) {
 ////////////////////////////////////////////////////////////////
 // live mode support
 
-Fl_Widget *Fl_Window_Type::enter_live_mode(int) {
+Fl_Widget *Window_Node::enter_live_mode(int) {
   Fl_Window *win = new Fl_Window(10, 10, o->w(), o->h());
   return propagate_live_mode(win);
 }
 
-void Fl_Window_Type::leave_live_mode() {
+void Window_Node::leave_live_mode() {
 }
 
 /**
  copy all properties from the edit widget to the live widget
  */
-void Fl_Window_Type::copy_properties() {
+void Window_Node::copy_properties() {
   Fl_Window *self = static_cast<Fl_Window*>(o);
   Fl_Window *live = static_cast<Fl_Window*>(live_widget);
   if (self->resizable() == self)

@@ -17,10 +17,10 @@
 #ifndef _FLUID_FL_GRID_TYPE_H
 #define _FLUID_FL_GRID_TYPE_H
 
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Group_Node.h"
 #include <FL/Fl_Grid.H>
 
-// ---- Fl_Grid_Type --------------------------------------------------- MARK: -
+// ---- Grid_Node --------------------------------------------------- MARK: -
 
 extern const char grid_type_name[];
 
@@ -46,35 +46,35 @@ public:
   Cell* widget(Fl_Widget *wi, int row, int col, int rowspan, int colspan, Fl_Grid_Align align = FL_GRID_FILL);
 };
 
-class Fl_Grid_Type : public Fl_Group_Type
+class Grid_Node : public Group_Node
 {
-  typedef Fl_Group_Type super;
+  typedef Group_Node super;
 public:
-  Fl_Grid_Type();
+  Grid_Node();
   const char *type_name() FL_OVERRIDE {return grid_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::GridGroup";}
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Grid_Type(); }
+  Widget_Node *_make() FL_OVERRIDE { return new Grid_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Grid; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Grid) ? true : super::is_a(inID); }
   void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
   void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
-  void write_parent_properties(fld::io::Project_Writer &f, Fl_Type *child, bool encapsulate) FL_OVERRIDE;
-  void read_parent_property(fld::io::Project_Reader &f, Fl_Type *child, const char *property) FL_OVERRIDE;
+  void write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) FL_OVERRIDE;
+  void read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) FL_OVERRIDE;
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
   void copy_properties_for_children() FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
-  void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
-  void remove_child(Fl_Type*) FL_OVERRIDE;
+  void add_child(Node*, Node*) FL_OVERRIDE;
+  void move_child(Node*, Node*) FL_OVERRIDE;
+  void remove_child(Node*) FL_OVERRIDE;
   void layout_widget() FL_OVERRIDE;
-  void child_resized(Fl_Widget_Type *child);
+  void child_resized(Widget_Node *child);
   void insert_child_at(Fl_Widget *child, int x, int y);
   void insert_child_at_next_free_cell(Fl_Widget *child);
-  void keyboard_move_child(Fl_Widget_Type*, int key);
+  void keyboard_move_child(Widget_Node*, int key);
 
   static class Fl_Grid *selected();
 };
