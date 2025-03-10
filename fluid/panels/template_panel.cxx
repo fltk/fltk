@@ -33,12 +33,12 @@
 #include <unistd.h>
 #endif // _WIN32 && !__CYGWIN__
 
-Fl_Double_Window *template_panel=(Fl_Double_Window *)nullptr;
+Fl_Double_Window *template_panel=(Fl_Double_Window *)0;
 
 static void cb_template_panel(Fl_Double_Window*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
-  template_preview->image(nullptr);
+  template_preview->image(0);
 
   template_browser->deselect();
   template_name->value("");
@@ -46,7 +46,7 @@ static void cb_template_panel(Fl_Double_Window*, void*) {
   template_panel->hide();
 }
 
-Fl_Browser *template_browser=(Fl_Browser *)nullptr;
+Fl_Browser *template_browser=(Fl_Browser *)0;
 
 static void cb_template_browser(Fl_Browser*, void*) {
   if (Fl::event_clicks()) {
@@ -55,7 +55,7 @@ static void cb_template_browser(Fl_Browser*, void*) {
   }
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
-  template_preview->image(nullptr);
+  template_preview->image(0);
   template_preview->redraw();
 
   int item = template_browser->value();
@@ -95,9 +95,9 @@ static void cb_template_browser(Fl_Browser*, void*) {
   }
 }
 
-Fl_Box *template_preview=(Fl_Box *)nullptr;
+Fl_Box *template_preview=(Fl_Box *)0;
 
-Fl_Input *template_name=(Fl_Input *)nullptr;
+Fl_Input *template_name=(Fl_Input *)0;
 
 static void cb_template_name(Fl_Input*, void*) {
   if (strlen(template_name->value())) {
@@ -106,14 +106,14 @@ static void cb_template_name(Fl_Input*, void*) {
   } else template_submit->deactivate();
 }
 
-Fl_Input *template_instance=(Fl_Input *)nullptr;
+Fl_Input *template_instance=(Fl_Input *)0;
 
-Fl_Button *template_delete=(Fl_Button *)nullptr;
+Fl_Button *template_delete=(Fl_Button *)0;
 
 static void cb_Cancel(Fl_Button*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
-  template_preview->image(nullptr);
+  template_preview->image(0);
 
   template_browser->deselect();
   template_name->value("");
@@ -121,12 +121,12 @@ static void cb_Cancel(Fl_Button*, void*) {
   template_panel->hide();
 }
 
-Fl_Return_Button *template_submit=(Fl_Return_Button *)nullptr;
+Fl_Return_Button *template_submit=(Fl_Return_Button *)0;
 
 static void cb_template_submit(Fl_Return_Button*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
-  template_preview->image(nullptr);
+  template_preview->image(0);
 
   template_panel->hide();
 }
@@ -199,7 +199,7 @@ void template_delete_cb(Fl_Button *, void *) {
   if (!flfile) return;
 
   if (!fl_choice("Are you sure you want to delete the template \"%s\"?",
-                 "Cancel", "Delete", nullptr, name)) return;
+                 "Cancel", "Delete", 0, name)) return;
 
   if (fl_unlink(flfile)) {
     fl_alert("Unable to delete template \"%s\":\n%s", name, strerror(errno));

@@ -270,7 +270,7 @@ redraw_browser();}
           Fl_Spinner recent_spinner {
             label {\# Recent Files:}
             callback {Fluid.preferences.set("recent_files", recent_spinner->value());
-Fluid.load();}
+Fluid.history.load();}
             xywh {120 225 40 20} labelfont 1 labelsize 11 when 1 maximum 10 textsize 11
             code0 {int c;}
             code1 {Fluid.preferences.get("recent_files", c, 5);}
@@ -503,7 +503,7 @@ g_layout_list.update_dialogs();}
     for (int i=1; i<4; i++) w_layout_menu_storage[i]->activate();
     w_layout_menu_delete->activate();
   }
-  w_layout_menu_storage[suite.storage_]->setonly();
+  w_layout_menu_storage[static_cast<int>(suite.storage_)]->setonly();
 }} open
           xywh {296 78 24 24}
         } {
@@ -1183,12 +1183,12 @@ if (v == LOAD) {
             } {
               MenuItem {} {
                 label {@fd_user User Setting}
-                user_data fld::Tool_Store::USER user_data_type long
+                user_data {fld::Tool_Store::USER} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
               MenuItem {} {
                 label {@fd_project Project File}
-                user_data fld::Tool_Store::PROJECT user_data_type long
+                user_data {fld::Tool_Store::PROJECT} user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
             }

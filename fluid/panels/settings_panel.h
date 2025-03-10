@@ -28,9 +28,6 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_Scheme_Choice.H>
-/**
- // initialize the scheme from preferences
-*/
 extern struct Fl_Menu_Item *dbmanager_item;
 extern void i18n_cb(Fl_Choice *,void *);
 extern void scheme_cb(Fl_Scheme_Choice *, void *);

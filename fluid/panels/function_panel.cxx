@@ -773,7 +773,7 @@ void type_make_cb(Fl_Widget*,void*d) {
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
-static void cb_widgetbin_panel(Fl_Window* o, void* v) {
+static void cb_widgetbin_panel(Fl_Window*, void*) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     Fluid.quit();
   else
