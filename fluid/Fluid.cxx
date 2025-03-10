@@ -165,7 +165,7 @@ int Application::run(int argc,char **argv) {
     g_layout_list.read(preferences, fld::Tool_Store::USER);
     main_window->show(argc,argv);
     toggle_widget_bin();
-    toggle_codeview_cb(0,0);
+    toggle_codeview_cb(nullptr,nullptr);
     if (!c && openlast_button->value() && history.abspath[0][0] && args.autodoc_path.empty()) {
       // Open previous file when no file specified...
       open_project_file(history.abspath[0]);
@@ -272,7 +272,7 @@ void Application::quit() {
     svp.set("code_choice", cv_code_choice);
     save_position(codeview_panel,"codeview_pos");
     delete codeview_panel;
-    codeview_panel = 0;
+    codeview_panel = nullptr;
   }
   if (shell_run_window) {
     save_position(shell_run_window,"shell_run_Window_pos");
@@ -1354,7 +1354,7 @@ void Application::set_scheme(const char *new_scheme) {
  */
 void Application::init_scheme() {
   int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
-  char *scheme_name = 0;                    // scheme name since 1.4.0
+  char *scheme_name = nullptr;                    // scheme name since 1.4.0
   preferences.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
   if (!strcmp(scheme_name, "XXX")) {
     preferences.get("scheme", scheme_index, 0);

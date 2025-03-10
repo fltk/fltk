@@ -64,7 +64,7 @@ static void cb_Color_Choice(Fl_Menu_Button* o, void* v) {
   }
 }
 
-Fl_Double_Window *script_panel=(Fl_Double_Window *)0;
+Fl_Double_Window *script_panel=(Fl_Double_Window *)nullptr;
 
 static void cb_script_panel(Fl_Double_Window*, void*) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
@@ -72,11 +72,11 @@ static void cb_script_panel(Fl_Double_Window*, void*) {
   script_panel->hide(); // otherwise hide..;
 }
 
-Fl_Text_Editor *script_input=(Fl_Text_Editor *)0;
+Fl_Text_Editor *script_input=(Fl_Text_Editor *)nullptr;
 
-Fl_Return_Button *script_panel_ok=(Fl_Return_Button *)0;
+Fl_Return_Button *script_panel_ok=(Fl_Return_Button *)nullptr;
 
-Fl_Button *script_panel_cancel=(Fl_Button *)0;
+Fl_Button *script_panel_cancel=(Fl_Button *)nullptr;
 
 Fl_Double_Window* make_script_panel() {
   { Fl_Double_Window* o = script_panel = new Fl_Double_Window(540, 180, "Shell Script Editor");
@@ -117,15 +117,15 @@ Fl_Double_Window* make_script_panel() {
   return script_panel;
 }
 
-Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
+Fl_Double_Window *settings_window=(Fl_Double_Window *)nullptr;
 
-Fl_Tabs *w_settings_tabs=(Fl_Tabs *)0;
+Fl_Tabs *w_settings_tabs=(Fl_Tabs *)nullptr;
 
 static void cb_w_settings_tabs(Fl_Tabs* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Group *w_settings_general_tab=(Fl_Group *)0;
+Fl_Group *w_settings_general_tab=(Fl_Group *)nullptr;
 
 #include <FL/Fl_PNG_Image.H>
 
@@ -240,38 +240,38 @@ static void cb_(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Scheme_Choice *scheme_choice=(Fl_Scheme_Choice *)0;
+Fl_Scheme_Choice *scheme_choice=(Fl_Scheme_Choice *)nullptr;
 
 static void cb_scheme_choice(Fl_Scheme_Choice* o, void*) {
   Fluid.set_scheme(o->text(o->value()));
 }
 
-Fl_Check_Button *tooltips_button=(Fl_Check_Button *)0;
+Fl_Check_Button *tooltips_button=(Fl_Check_Button *)nullptr;
 
 static void cb_tooltips_button(Fl_Check_Button*, void*) {
   Fl_Tooltip::enable(tooltips_button->value());
   Fluid.preferences.set("show_tooltips", tooltips_button->value());
 }
 
-Fl_Check_Button *completion_button=(Fl_Check_Button *)0;
+Fl_Check_Button *completion_button=(Fl_Check_Button *)nullptr;
 
 static void cb_completion_button(Fl_Check_Button*, void*) {
   Fluid.preferences.set("show_completion_dialogs", completion_button->value());
 }
 
-Fl_Check_Button *openlast_button=(Fl_Check_Button *)0;
+Fl_Check_Button *openlast_button=(Fl_Check_Button *)nullptr;
 
 static void cb_openlast_button(Fl_Check_Button*, void*) {
   Fluid.preferences.set("open_previous_file", openlast_button->value());
 }
 
-Fl_Check_Button *prevpos_button=(Fl_Check_Button *)0;
+Fl_Check_Button *prevpos_button=(Fl_Check_Button *)nullptr;
 
 static void cb_prevpos_button(Fl_Check_Button*, void*) {
   Fluid.preferences.set("prev_window_pos", prevpos_button->value());
 }
 
-Fl_Check_Button *show_comments_button=(Fl_Check_Button *)0;
+Fl_Check_Button *show_comments_button=(Fl_Check_Button *)nullptr;
 
 static void cb_show_comments_button(Fl_Check_Button*, void*) {
   Fluid.show_comments = show_comments_button->value();
@@ -283,14 +283,14 @@ static void cb_1(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Spinner *recent_spinner=(Fl_Spinner *)0;
+Fl_Spinner *recent_spinner=(Fl_Spinner *)nullptr;
 
 static void cb_recent_spinner(Fl_Spinner*, void*) {
   Fluid.preferences.set("recent_files", recent_spinner->value());
   Fluid.history.load();
 }
 
-Fl_Check_Button *use_external_editor_button=(Fl_Check_Button *)0;
+Fl_Check_Button *use_external_editor_button=(Fl_Check_Button *)nullptr;
 
 static void cb_use_external_editor_button(Fl_Check_Button*, void*) {
   Fluid.use_external_editor = use_external_editor_button->value();
@@ -298,7 +298,7 @@ static void cb_use_external_editor_button(Fl_Check_Button*, void*) {
   redraw_browser();
 }
 
-Fl_Input *editor_command_input=(Fl_Input *)0;
+Fl_Input *editor_command_input=(Fl_Input *)nullptr;
 
 static void cb_editor_command_input(Fl_Input*, void*) {
   strncpy(Fluid.external_editor_command, editor_command_input->value(), sizeof(Fluid.external_editor_command)-1);
@@ -307,13 +307,13 @@ static void cb_editor_command_input(Fl_Input*, void*) {
   redraw_browser();
 }
 
-Fl_Check_Button *guides_button=(Fl_Check_Button *)0;
+Fl_Check_Button *guides_button=(Fl_Check_Button *)nullptr;
 
-Fl_Check_Button *restricted_button=(Fl_Check_Button *)0;
+Fl_Check_Button *restricted_button=(Fl_Check_Button *)nullptr;
 
-Fl_Check_Button *ghosted_outline_button=(Fl_Check_Button *)0;
+Fl_Check_Button *ghosted_outline_button=(Fl_Check_Button *)nullptr;
 
-Fl_Group *w_settings_project_tab=(Fl_Group *)0;
+Fl_Group *w_settings_project_tab=(Fl_Group *)nullptr;
 
 static void cb_w_settings_project_tab(Fl_Group* o, void* v) {
   propagate_load(o, v);
@@ -369,7 +369,7 @@ static Fl_Image *image_document_64() {
   return image;
 }
 
-Fl_Input *header_file_input=(Fl_Input *)0;
+Fl_Input *header_file_input=(Fl_Input *)nullptr;
 
 static void cb_header_file_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -382,7 +382,7 @@ static void cb_header_file_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Input *code_file_input=(Fl_Input *)0;
+Fl_Input *code_file_input=(Fl_Input *)nullptr;
 
 static void cb_code_file_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -395,7 +395,7 @@ static void cb_code_file_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Check_Button *include_H_from_C_button=(Fl_Check_Button *)0;
+Fl_Check_Button *include_H_from_C_button=(Fl_Check_Button *)nullptr;
 
 static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
@@ -408,7 +408,7 @@ static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
   }
 }
 
-Fl_Check_Button *use_FL_COMMAND_button=(Fl_Check_Button *)0;
+Fl_Check_Button *use_FL_COMMAND_button=(Fl_Check_Button *)nullptr;
 
 static void cb_use_FL_COMMAND_button(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
@@ -421,7 +421,7 @@ static void cb_use_FL_COMMAND_button(Fl_Check_Button* o, void* v) {
   }
 }
 
-Fl_Check_Button *utf8_in_src_button=(Fl_Check_Button *)0;
+Fl_Check_Button *utf8_in_src_button=(Fl_Check_Button *)nullptr;
 
 static void cb_utf8_in_src_button(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
@@ -434,7 +434,7 @@ static void cb_utf8_in_src_button(Fl_Check_Button* o, void* v) {
   }
 }
 
-Fl_Check_Button *avoid_early_includes_button=(Fl_Check_Button *)0;
+Fl_Check_Button *avoid_early_includes_button=(Fl_Check_Button *)nullptr;
 
 static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
@@ -447,7 +447,7 @@ static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
   }
 }
 
-Fl_Check_Button *w_proj_mergeback=(Fl_Check_Button *)0;
+Fl_Check_Button *w_proj_mergeback=(Fl_Check_Button *)nullptr;
 
 static void cb_w_proj_mergeback(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
@@ -460,7 +460,7 @@ static void cb_w_proj_mergeback(Fl_Check_Button* o, void* v) {
   }
 }
 
-Fl_Group *w_settings_layout_tab=(Fl_Group *)0;
+Fl_Group *w_settings_layout_tab=(Fl_Group *)nullptr;
 
 static void cb_w_settings_layout_tab(Fl_Group* o, void* v) {
   propagate_load(o, v);
@@ -495,7 +495,7 @@ static Fl_Image *image_layout_64() {
   return image;
 }
 
-Fl_Choice *layout_choice=(Fl_Choice *)0;
+Fl_Choice *layout_choice=(Fl_Choice *)nullptr;
 
 static void cb_layout_choice(Fl_Choice* o, void* v) {
   if (v == LOAD) {
@@ -508,9 +508,9 @@ static void cb_layout_choice(Fl_Choice* o, void* v) {
 }
 
 Fl_Menu_Item menu_layout_choice[] = {
- {"FLTK", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Grid", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"FLTK", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"Grid", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 static void cb_2(Fl_Button*, void* v) {
@@ -528,7 +528,7 @@ static void cb_2(Fl_Button*, void* v) {
   g_layout_list.update_dialogs();
 }
 
-Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
+Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)nullptr;
 
 static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
   if (v == LOAD) {
@@ -622,18 +622,18 @@ static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
 }
 
 Fl_Menu_Item menu_w_layout_menu[] = {
- {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"@fd_beaker  FLUID Built-In", 0,  (Fl_Callback*)cb_w_layout_menu_storage, 0, 9, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"@fd_user  User Preference", 0,  (Fl_Callback*)cb_w_layout_menu_storage1, 0, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"@fd_project  Store in .fl Project File", 0,  (Fl_Callback*)cb_w_layout_menu_storage2, 0, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"@fd_file  Store in External File", 0,  (Fl_Callback*)cb_w_layout_menu_storage3, 0, 136, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Load...", 0,  (Fl_Callback*)cb_w_layout_menu_load, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, nullptr, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"@fd_beaker  FLUID Built-In", 0,  (Fl_Callback*)cb_w_layout_menu_storage, nullptr, 9, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"@fd_user  User Preference", 0,  (Fl_Callback*)cb_w_layout_menu_storage1, nullptr, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"@fd_project  Store in .fl Project File", 0,  (Fl_Callback*)cb_w_layout_menu_storage2, nullptr, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"@fd_file  Store in External File", 0,  (Fl_Callback*)cb_w_layout_menu_storage3, nullptr, 136, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"Load...", 0,  (Fl_Callback*)cb_w_layout_menu_load, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, nullptr, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-Fl_Button *preset_choice[3]={(Fl_Button *)0};
+Fl_Button *preset_choice[3]={(Fl_Button *)nullptr};
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
@@ -827,7 +827,7 @@ static void cb_9(Fl_Value_Input* o, void* v) {
   }
 }
 
-Fl_Group *w_settings_shell_tab=(Fl_Group *)0;
+Fl_Group *w_settings_shell_tab=(Fl_Group *)nullptr;
 
 static const unsigned char idata_shell_64[] =
 {137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,96,0,0,0,64,8,4,0,0,0,
@@ -873,7 +873,7 @@ static Fl_Image *image_shell_64() {
   return image;
 }
 
-Fl_Browser *w_settings_shell_list=(Fl_Browser *)0;
+Fl_Browser *w_settings_shell_list=(Fl_Browser *)nullptr;
 
 static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
   if (v == LOAD) {
@@ -903,7 +903,7 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
   }
 }
 
-Fl_Group *w_settings_shell_toolbox=(Fl_Group *)0;
+Fl_Group *w_settings_shell_toolbox=(Fl_Group *)nullptr;
 
 static void cb_w_settings_shell_toolbox(Fl_Group* o, void* v) {
   if (v==LOAD) {
@@ -932,7 +932,7 @@ static void cb_a(Fl_Button*, void* v) {
   }
 }
 
-Fl_Button *w_settings_shell_dup=(Fl_Button *)0;
+Fl_Button *w_settings_shell_dup=(Fl_Button *)nullptr;
 
 static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
@@ -962,7 +962,7 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
   }
 }
 
-Fl_Button *w_settings_shell_remove=(Fl_Button *)0;
+Fl_Button *w_settings_shell_remove=(Fl_Button *)nullptr;
 
 static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
@@ -991,7 +991,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
   }
 }
 
-Fl_Menu_Button *w_settings_shell_menu=(Fl_Menu_Button *)0;
+Fl_Menu_Button *w_settings_shell_menu=(Fl_Menu_Button *)nullptr;
 
 static void cb_Import(Fl_Menu_*, void* v) {
   if (v != LOAD)
@@ -1004,21 +1004,21 @@ static void cb_Export(Fl_Menu_*, void* v) {
 }
 
 Fl_Menu_Item menu_w_settings_shell_menu[] = {
- {"Import...", 0,  (Fl_Callback*)cb_Import, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Export selected...", 0,  (Fl_Callback*)cb_Export, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Example Scripts:", 0,  0, 0, 17, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
- {"Compile with fltk-config", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Build and run", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Build with Xcode on macOS", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Build with CMake", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"Import...", 0,  (Fl_Callback*)cb_Import, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Export selected...", 0,  (Fl_Callback*)cb_Export, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Example Scripts:", 0,  nullptr, nullptr, 17, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
+  {"Compile with fltk-config", 0,  nullptr, nullptr, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Build and run", 0,  nullptr, nullptr, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Build with Xcode on macOS", 0,  nullptr, nullptr, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Build with CMake", 0,  nullptr, nullptr, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 static void cb_T(Fl_Button*, void* v) {
   if (v!=LOAD) show_terminal_window();
 }
 
-Fl_Button *w_settings_shell_play=(Fl_Button *)0;
+Fl_Button *w_settings_shell_play=(Fl_Button *)nullptr;
 
 static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
@@ -1035,7 +1035,7 @@ static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
   }
 }
 
-Fl_Group *w_settings_shell_cmd=(Fl_Group *)0;
+Fl_Group *w_settings_shell_cmd=(Fl_Group *)nullptr;
 
 static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
   if (v==LOAD) {
@@ -1134,9 +1134,9 @@ static void cb_Store(Fl_Choice* o, void* v) {
 }
 
 Fl_Menu_Item menu_Store[] = {
- {"@fd_user User Setting", 0,  0, (void*)(fld::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"@fd_project Project File", 0,  0, (void*)(fld::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"@fd_user User Setting", 0,  nullptr, (void*)(fld::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"@fd_project Project File", 0,  nullptr, (void*)(fld::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 static void cb_Condition(Fl_Choice* o, void* v) {
@@ -1160,13 +1160,13 @@ static void cb_Condition(Fl_Choice* o, void* v) {
 }
 
 Fl_Menu_Item menu_Condition[] = {
- {"all platforms", 0,  0, (void*)(Fd_Shell_Command::ALWAYS), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Windows only", 0,  0, (void*)(Fd_Shell_Command::WIN_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Linux only", 0,  0, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"macOS only", 0,  0, (void*)(Fd_Shell_Command::MAC_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Linux and macOS", 0,  0, (void*)(Fd_Shell_Command::MAC_AND_UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"don\'t use", 0,  0, (void*)(Fd_Shell_Command::NEVER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"all platforms", 0,  nullptr, (void*)(Fd_Shell_Command::ALWAYS), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Windows only", 0,  nullptr, (void*)(Fd_Shell_Command::WIN_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Linux only", 0,  nullptr, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"macOS only", 0,  nullptr, (void*)(Fd_Shell_Command::MAC_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Linux and macOS", 0,  nullptr, (void*)(Fd_Shell_Command::MAC_AND_UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"don\'t use", 0,  nullptr, (void*)(Fd_Shell_Command::NEVER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 static void cb_Label(Fl_Input* o, void* v) {
@@ -1177,7 +1177,7 @@ static void cb_Label(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Text_Editor *w_settings_shell_command=(Fl_Text_Editor *)0;
+Fl_Text_Editor *w_settings_shell_command=(Fl_Text_Editor *)nullptr;
 
 static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   int selected = w_settings_shell_list_selected;
@@ -1196,7 +1196,7 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   }
 }
 
-Fl_Menu_Button *w_settings_shell_text_macros=(Fl_Menu_Button *)0;
+Fl_Menu_Button *w_settings_shell_text_macros=(Fl_Menu_Button *)nullptr;
 
 static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
   const Fl_Menu_Item *mi = o->mvalue();
@@ -1220,19 +1220,19 @@ static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
 }
 
 Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
- {"@@BASENAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@PROJECTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@PROJECTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@CODEFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@CODEFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@HEADERFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@HEADERFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@TEXTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@TEXTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@BASENAME@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@PROJECTFILE_PATH@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@PROJECTFILE_NAME@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@CODEFILE_PATH@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@CODEFILE_NAME@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@HEADERFILE_PATH@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@HEADERFILE_NAME@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@TEXTFILE_PATH@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@TEXTFILE_NAME@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  // Not yet implemented
- {"@@FLTK_CONFIG@@", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"@@TMPDIR@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"@@FLTK_CONFIG@@", 0,  nullptr, nullptr, 16, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"@@TMPDIR@@", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 static void cb_1fd_zoom(Fl_Button*, void*) {
@@ -1385,7 +1385,7 @@ static void cb_clear1(Fl_Check_Button* o, void* v) {
   }
 }
 
-Fl_Box *w_settings_shell_fd_project=(Fl_Box *)0;
+Fl_Box *w_settings_shell_fd_project=(Fl_Box *)nullptr;
 
 static const unsigned char idata_fd_project[] =
 {137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,
@@ -1674,7 +1674,7 @@ static Fl_Image *image_fd_project() {
   return image;
 }
 
-Fl_Box *w_settings_shell_fd_user=(Fl_Box *)0;
+Fl_Box *w_settings_shell_fd_user=(Fl_Box *)nullptr;
 
 static const unsigned char idata_fd_user[] =
 {137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,
@@ -2039,7 +2039,7 @@ static Fl_Image *image_fd_user() {
   return image;
 }
 
-Fl_Group *w_settings_i18n_tab=(Fl_Group *)0;
+Fl_Group *w_settings_i18n_tab=(Fl_Group *)nullptr;
 
 static void cb_w_settings_i18n_tab(Fl_Group* o, void* v) {
   propagate_load(o, v);
@@ -2118,22 +2118,22 @@ static Fl_Image *image_language_64() {
   return image;
 }
 
-Fl_Choice *i18n_type_chooser=(Fl_Choice *)0;
+Fl_Choice *i18n_type_chooser=(Fl_Choice *)nullptr;
 
 Fl_Menu_Item menu_i18n_type_chooser[] = {
- {"None", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GNU gettext", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"POSIX catgets", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"None", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GNU gettext", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"POSIX catgets", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-Fl_Group *i18n_gnu_group=(Fl_Group *)0;
+Fl_Group *i18n_gnu_group=(Fl_Group *)nullptr;
 
 static void cb_i18n_gnu_group(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Input *i18n_gnu_include_input=(Fl_Input *)0;
+Fl_Input *i18n_gnu_include_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2145,7 +2145,7 @@ static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Input *i18n_gnu_conditional_input=(Fl_Input *)0;
+Fl_Input *i18n_gnu_conditional_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2157,7 +2157,7 @@ static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Input *i18n_gnu_function_input=(Fl_Input *)0;
+Fl_Input *i18n_gnu_function_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2169,7 +2169,7 @@ static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Input *i18n_gnu_static_function_input=(Fl_Input *)0;
+Fl_Input *i18n_gnu_static_function_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2181,13 +2181,13 @@ static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Group *i18n_posix_group=(Fl_Group *)0;
+Fl_Group *i18n_posix_group=(Fl_Group *)nullptr;
 
 static void cb_i18n_posix_group(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Input *i18n_pos_include_input=(Fl_Input *)0;
+Fl_Input *i18n_pos_include_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2199,7 +2199,7 @@ static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Input *i18n_pos_conditional_input=(Fl_Input *)0;
+Fl_Input *i18n_pos_conditional_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2211,7 +2211,7 @@ static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
   }
 }
 
-Fl_Input *i18n_pos_file_input=(Fl_Input *)0;
+Fl_Input *i18n_pos_file_input=(Fl_Input *)nullptr;
 
 static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
@@ -2227,7 +2227,7 @@ static void cb_c(Fl_Group* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Int_Input *i18n_pos_set_input=(Fl_Int_Input *)0;
+Fl_Int_Input *i18n_pos_set_input=(Fl_Int_Input *)nullptr;
 
 static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
   if (v == LOAD) {
@@ -2239,7 +2239,7 @@ static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
   }
 }
 
-Fl_Group *w_settings_user_tab=(Fl_Group *)0;
+Fl_Group *w_settings_user_tab=(Fl_Group *)nullptr;
 
 static void cb_w_settings_user_tab(Fl_Group* o, void* v) {
   propagate_load(o, v);
@@ -2431,7 +2431,7 @@ static Fl_Image *image_user_circle_64() {
   return image;
 }
 
-Fl_Choice *w_settings_user_commenttext=(Fl_Choice *)0;
+Fl_Choice *w_settings_user_commenttext=(Fl_Choice *)nullptr;
 
 static void cb_Close(Fl_Button*, void*) {
   if (g_shell_config)
@@ -2725,7 +2725,7 @@ Fl_Double_Window* make_settings_window() {
             preset_choice[0]->compact(1);
             preset_choice[0]->selection_color(FL_DARK2);
             preset_choice[0]->labelsize(11);
-            preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(0));
+            preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)nullptr);
           } // Fl_Button* preset_choice[0]
           { preset_choice[1] = new Fl_Button(163, 107, 79, 20, "Dialog");
             preset_choice[1]->type(102);
@@ -3509,16 +3509,16 @@ Fl_Double_Window* make_settings_window() {
   return settings_window;
 }
 
-Fl_Double_Window *shell_run_window=(Fl_Double_Window *)0;
+Fl_Double_Window *shell_run_window=(Fl_Double_Window *)nullptr;
 
-Fl_Terminal *shell_run_terminal=(Fl_Terminal *)0;
+Fl_Terminal *shell_run_terminal=(Fl_Terminal *)nullptr;
 
 static void cb_Clear(Fl_Button*, void*) {
   // clear screen, clear scrollback, home cursor
   shell_run_terminal->append("\033[2J\033[3J\033[H");
 }
 
-Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
+Fl_Return_Button *shell_run_button=(Fl_Return_Button *)nullptr;
 
 static void cb_shell_run_button(Fl_Return_Button*, void*) {
   Fl_Preferences pos(Fluid.preferences, "shell_run_Window_pos");

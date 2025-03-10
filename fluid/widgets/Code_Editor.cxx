@@ -230,11 +230,11 @@ Code_Editor::Code_Editor(int X, int Y, int W, int H, const char *L) :
  */
 Code_Editor::~Code_Editor() {
   Fl_Text_Buffer *buf = mStyleBuffer;
-  mStyleBuffer = 0;
+  mStyleBuffer = nullptr;
   delete buf;
 
   buf = mBuffer;
-  buffer(0);
+  buffer(nullptr);
   delete buf;
 }
 

@@ -83,7 +83,7 @@ const char *_q_check(const char * & c, int type) {
       if (*c) c++;
       break;
     default:
-      if (*(c-1) == type) return 0;
+      if (*(c-1) == type) return nullptr;
   }
 }
 
@@ -100,7 +100,7 @@ const char *_c_check(const char * & c, int type) {
   const char *d;
   for (;;) switch (*c++) {
     case 0:
-      if (!type) return 0;
+      if (!type) return nullptr;
       sprintf(buffer, "missing '%c'", type);
       return buffer;
     case '/':
@@ -147,7 +147,7 @@ const char *_c_check(const char * & c, int type) {
     case ')':
     case ']':
     UNEXPECTED:
-      if (type == *(c-1)) return 0;
+      if (type == *(c-1)) return nullptr;
       sprintf(buffer, "unexpected '%c'", *(c-1));
       return buffer;
   }
@@ -187,7 +187,7 @@ Fl_Function_Type Fl_Function_type;
  */
 Fl_Function_Type::Fl_Function_Type() :
   Fl_Type(),
-  return_type(0L),
+  return_type(nullptr),
   public_(0),
   cdecl_(0),
   constructor(0),
@@ -217,7 +217,7 @@ Fl_Type *Fl_Function_Type::make(Strategy strategy) {
   }
   Fl_Function_Type *o = new Fl_Function_Type();
   o->name("make_window()");
-  o->return_type = 0;
+  o->return_type = nullptr;
   o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
@@ -285,7 +285,7 @@ void Fl_Function_Type::open() {
   const char *c = comment();
   f_comment_input->buffer()->text(c?c:"");
   function_panel->show();
-  const char* message = 0;
+  const char* message = nullptr;
   for (;;) { // repeat as long as there are errors
     // - message loop until OK or cancel is pressed
     for (;;) {
@@ -342,7 +342,7 @@ void Fl_Function_Type::open() {
       comment(c);
     } else {
       if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(0);
+      comment(nullptr);
     }
     if (c) free((void*)c);
     if (mod) Fluid.proj.set_modflag(1);
@@ -438,11 +438,11 @@ void Fl_Function_Type::write_code1(fld::io::Code_Writer& f) {
     int is_static = 0;
     int is_virtual = 0;
     if (rtype) {
-      if (!strcmp(rtype,"static")) {is_static = 1; rtype = 0;}
+      if (!strcmp(rtype,"static")) {is_static = 1; rtype = nullptr;}
       else if (!strncmp(rtype, "static ",7)) {is_static = 1; rtype += 7;}
     }
     if (rtype) {
-      if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = 0;}
+      if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = nullptr;}
       else if (!strncmp(rtype, "virtual ",8)) {is_virtual = 1; rtype += 8;}
     }
     if (!rtype) {
@@ -560,7 +560,7 @@ void Fl_Function_Type::write_code2(fld::io::Code_Writer& f) {
 int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
   if (rtype && !return_type) return 0;
   if (!name()) return 0;
-  if ( (rtype==0L || strcmp(return_type, rtype)==0)
+  if ( (rtype==nullptr || strcmp(return_type, rtype)==0)
       && fl_filename_match(name(), sig)) {
     return 1;
   }
@@ -607,7 +607,7 @@ Fl_Type *Fl_Code_Type::make(Strategy strategy) {
   }
   if (!p) {
     fl_message("Please select a function");
-    return 0;
+    return nullptr;
   }
   Fl_Code_Type *o = new Fl_Code_Type();
   o->name("printf(\"Hello, World!\\n\");");
@@ -635,7 +635,7 @@ void Fl_Code_Type::open() {
   code_input->insert_position(cursor_position_);
   code_input->scroll(code_input_scroll_row, code_input_scroll_col);
   code_panel->show();
-  const char* message = 0;
+  const char* message = nullptr;
   for (;;) { // repeat as long as there are errors
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
@@ -714,7 +714,7 @@ int Fl_Code_Type::reap_editor() {
     current contents of editor file..
  */
 int Fl_Code_Type::handle_editor_changes() {
-  const char *newcode = 0;
+  const char *newcode = nullptr;
   switch ( editor_.handle_changes(&newcode) ) {
     case 1: {            // (1)=changed
       name(newcode);     // update value in ram
@@ -775,11 +775,11 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   }
   if (!p) {
     fl_message("Please select a function");
-    return 0;
+    return nullptr;
   }
   Fl_CodeBlock_Type *o = new Fl_CodeBlock_Type();
   o->name("if (test())");
-  o->after = 0;
+  o->after = nullptr;
   o->add(anchor, strategy);
   o->factory = this;
   return o;
@@ -817,7 +817,7 @@ void Fl_CodeBlock_Type::open() {
   code_before_input->value(name());
   code_after_input->value(after);
   codeblock_panel->show();
-  const char* message = 0;
+  const char* message = nullptr;
   for (;;) { // repeat as long as there are errors
     // event loop
     for (;;) {
@@ -979,7 +979,7 @@ void Fl_Decl_Type::open() {
   const char *c = comment();
   decl_comment_input->buffer()->text(c?c:"");
   decl_panel->show();
-  const char* message = 0;
+  const char* message = nullptr;
   for (;;) { // repeat as long as there are errors
     // event loop
     for (;;) {
@@ -1022,7 +1022,7 @@ void Fl_Decl_Type::open() {
       comment(c);
     } else {
       if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(0);
+      comment(nullptr);
     }
     if (c) free((void*)c);
     break;
@@ -1146,7 +1146,7 @@ Fl_Type *Fl_Data_Type::make(Strategy strategy) {
   Fl_Data_Type *o = new Fl_Data_Type();
   o->public_ = 1;
   o->static_ = 1;
-  o->filename_ = 0;
+  o->filename_ = nullptr;
   o->text_mode_ = 0;
   o->name("myInlineData");
   o->add(anchor, strategy);
@@ -1215,7 +1215,7 @@ void Fl_Data_Type::open() {
       else if (w == data_panel_ok) break;
       else if (w == data_filebrowser) {
         Fluid.proj.enter_project_dir();
-        const char *fn = fl_file_chooser("Load Inline Data", 0L, data_filename->value(), 1);
+        const char *fn = fl_file_chooser("Load Inline Data", nullptr, data_filename->value(), 1);
         Fluid.proj.leave_project_dir();
         if (fn) {
           if (strcmp(fn, data_filename->value()))
@@ -1279,7 +1279,7 @@ void Fl_Data_Type::open() {
       Fluid.proj.set_modflag(1);
     else if (!filename_ && *c)
       Fluid.proj.set_modflag(1);
-    if (filename_) { free((void*)filename_); filename_ = 0L; }
+    if (filename_) { free((void*)filename_); filename_ = nullptr; }
     if (c && *c) filename_ = fl_strdup(c);
     // store the comment
     c = data_comment_input->buffer()->text();
@@ -1288,7 +1288,7 @@ void Fl_Data_Type::open() {
       comment(c);
     } else {
       if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(0);
+      comment(nullptr);
     }
     if (c) free((void*)c);
     Fluid.proj.set_modflag(1);
@@ -1302,11 +1302,11 @@ BREAK2:
  Write the content of the external file inline into the source code.
  */
 void Fl_Data_Type::write_code1(fld::io::Code_Writer& f) {
-  const char *message = 0;
+  const char *message = nullptr;
   const char *c = name();
   if (!c) return;
   const char *fn = filename_;
-  char *data = 0;
+  char *data = nullptr;
   int nData = -1;
   int uncompressedDataSize = 0;
   // path should be set correctly already
@@ -1545,7 +1545,7 @@ void Fl_DeclBlock_Type::open() {
   declblock_comment_input->buffer()->text(c?c:"");
   // show modal dialog and loop until satisfied
   declblock_panel->show();
-  const char* message = 0;
+  const char* message = nullptr;
   for (;;) { // repeat as long as there are errors
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
@@ -1620,7 +1620,7 @@ void Fl_DeclBlock_Type::open() {
       comment(c);
     } else {
       if (comment()) { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(0);
+      comment(nullptr);
     }
     if (c) free((void*)c);
     break;
@@ -1869,7 +1869,7 @@ void Fl_Comment_Type::open() {
       else if (w == comment_load) {
         // load a comment from disk
         fl_file_chooser_ok_label("Use File");
-        const char *fname = fl_file_chooser("Pick a comment", 0L, 0L);
+        const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
         fl_file_chooser_ok_label(NULL);
         if (fname) {
           if (comment_input->buffer()->loadfile(fname)) {
@@ -2057,9 +2057,9 @@ void Fl_Class_Type::open() {
   const char *c = comment();
   c_comment_input->buffer()->text(c?c:"");
   class_panel->show();
-  const char* message = 0;
+  const char* message = nullptr;
 
-  char *na=0,*pr=0,*p=0; // name and prefix substrings
+  char *na=nullptr,*pr=nullptr,*p=nullptr; // name and prefix substrings
 
   for (;;) { // repeat as long as there are errors
     // we don;t give the option to ignore this error here because code depends
@@ -2107,7 +2107,7 @@ void Fl_Class_Type::open() {
       comment(c);
     } else {
       if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(0);
+      comment(nullptr);
     }
     if (c) free((void*)c);
     break;

@@ -39,7 +39,7 @@ void ungroup_cb(Fl_Widget *, void *);
  */
 class Fl_Group_Proxy : public Fl_Group {
 public:
-  Fl_Group_Proxy(int X,int Y,int W,int H) : Fl_Group(X, Y, W, H) { Fl_Group::current(0); }
+  Fl_Group_Proxy(int X,int Y,int W,int H) : Fl_Group(X, Y, W, H) { Fl_Group::current(nullptr); }
   void resize(int x, int y, int w, int h) FL_OVERRIDE;
   void draw() FL_OVERRIDE;
 };
@@ -52,7 +52,7 @@ public:
   const char *type_name() FL_OVERRIDE {return "Fl_Group";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::Group";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
-    Fl_Group_Proxy *g = new Fl_Group_Proxy(X,Y,W,H); Fl_Group::current(0); return g;}
+    Fl_Group_Proxy *g = new Fl_Group_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Group_Type();}
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
@@ -93,7 +93,7 @@ extern Fl_Menu_Item flex_type_menu[];
 
 class Fl_Flex_Proxy : public Fl_Flex {
 public:
-  Fl_Flex_Proxy(int X,int Y,int W,int H) : Fl_Flex(X, Y, W, H) { Fl_Group::current(0); }
+  Fl_Flex_Proxy(int X,int Y,int W,int H) : Fl_Flex(X, Y, W, H) { Fl_Group::current(nullptr); }
   void resize(int x, int y, int w, int h) FL_OVERRIDE;
   void draw() FL_OVERRIDE;
 };
@@ -111,7 +111,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::FlexGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Flex_Type(); }
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
-    Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(0); return g;}
+    Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   ID id() const FL_OVERRIDE { return ID_Flex; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Flex) ? true : super::is_a(inID); }
   void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
@@ -170,7 +170,7 @@ public:
   const char *type_name() FL_OVERRIDE {return tabs_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TabGroup";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
-    Fl_Tabs_Proxy *g = new Fl_Tabs_Proxy(X,Y,W,H); Fl_Group::current(0); return g;}
+    Fl_Tabs_Proxy *g = new Fl_Tabs_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tabs_Type();}
   Fl_Type* click_test(int,int) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
@@ -233,7 +233,7 @@ public:
   const char *type_name() FL_OVERRIDE {return wizard_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::WizardGroup";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
-    Fl_Wizard_Proxy *g = new Fl_Wizard_Proxy(X,Y,W,H); Fl_Group::current(0); return g;}
+    Fl_Wizard_Proxy *g = new Fl_Wizard_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Wizard_Type();}
   ID id() const FL_OVERRIDE { return ID_Wizard; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Wizard) ? true : super::is_a(inID); }

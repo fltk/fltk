@@ -69,8 +69,8 @@ protected:
   void setlabel(const char *) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  Fl_Widget_Type *_make() FL_OVERRIDE {return 0;} // we don't call this
-  Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return 0;}
+  Fl_Widget_Type *_make() FL_OVERRIDE {return nullptr;} // we don't call this
+  Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return nullptr;}
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
   ID id() const FL_OVERRIDE { return ID_Window; }
@@ -128,7 +128,7 @@ class Fl_Widget_Class_Type : private Fl_Window_Type
 {
   typedef Fl_Window_Type super;
 protected:
-  Fl_Menu_Item* subtypes() FL_OVERRIDE {return 0;}
+  Fl_Menu_Item* subtypes() FL_OVERRIDE {return nullptr;}
 
 public:
   Fl_Widget_Class_Type() {

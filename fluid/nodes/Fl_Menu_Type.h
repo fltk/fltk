@@ -53,8 +53,8 @@ public:
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
   Fl_Type* make(int flags, Strategy strategy);
   int is_button() const FL_OVERRIDE {return 1;} // this gets shortcut to work
-  Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return 0;}
-  Fl_Widget_Type* _make() FL_OVERRIDE {return 0;}
+  Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return nullptr;}
+  Fl_Widget_Type* _make() FL_OVERRIDE {return nullptr;}
   virtual const char* menu_name(fld::io::Code_Writer& f, int& i);
   int flags();
   void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
@@ -103,7 +103,7 @@ class Fl_Submenu_Type : public Fl_Menu_Item_Type
 {
   typedef Fl_Menu_Item_Type super;
 public:
-  Fl_Menu_Item* subtypes() FL_OVERRIDE {return 0;}
+  Fl_Menu_Item* subtypes() FL_OVERRIDE {return nullptr;}
   const char* type_name() FL_OVERRIDE {return "Submenu";}
   const char* alt_type_name() FL_OVERRIDE {return "fltk::ItemGroup";}
   int can_have_children() const FL_OVERRIDE {return 1;}

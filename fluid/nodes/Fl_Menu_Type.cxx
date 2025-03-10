@@ -51,10 +51,10 @@
 #include <stdlib.h>
 
 Fl_Menu_Item menu_item_type_menu[] = {
-  {"Normal",0,0,(void*)0},
-  {"Toggle",0,0,(void*)FL_MENU_BOX},
-  {"Radio",0,0,(void*)FL_MENU_RADIO},
-  {0}};
+  {"Normal",0,nullptr,(void*)nullptr},
+  {"Toggle",0,nullptr,(void*)FL_MENU_BOX},
+  {"Radio",0,nullptr,(void*)FL_MENU_RADIO},
+  {nullptr}};
 
 static void delete_dependents(Fl_Menu_Item *m) {
   if (!m)
@@ -93,7 +93,7 @@ void Fl_Input_Choice_Type::build_menu() {
   }
   if (!n) {
     if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
-    w->menu(0);
+    w->menu(nullptr);
     menusize = 0;
   } else {
     n++; // space for null at end of menu
@@ -130,7 +130,7 @@ void Fl_Input_Choice_Type::build_menu() {
         m->labeltype(i->o->labeltype());
       }
       m->shortcut(((Fl_Button*)(i->o))->shortcut());
-      m->callback(0,(void*)i);
+      m->callback(nullptr,(void*)i);
       m->flags = i->flags();
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
@@ -139,7 +139,7 @@ void Fl_Input_Choice_Type::build_menu() {
       m++;
       int l1 =
         (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
-      while (lvl > l1) {m->label(0); m++; lvl--;}
+      while (lvl > l1) {m->label(nullptr); m++; lvl--;}
       lvl = l1;
     }
   }
@@ -173,7 +173,7 @@ Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
   }
   if (!p) {
     fl_message("Please select a menu widget or a menu item");
-    return 0;
+    return nullptr;
   }
   if (!o) {
     o = new Fl_Button(0,0,100,20); // create template widget
@@ -519,7 +519,7 @@ void Fl_Menu_Item_Type::write_item(fld::io::Code_Writer& f) {
     f.write_c(", 0, ");
   }
   if (callback()) {
-    const char* k = is_name(callback()) ? 0 : class_name(1);
+    const char* k = is_name(callback()) ? nullptr : class_name(1);
     if (k) {
       f.write_c(" (Fl_Callback*)%s::%s,", k, callback_name(f));
     } else {
@@ -659,7 +659,7 @@ void Fl_Menu_Base_Type::build_menu() {
   }
   if (!n) {
     if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
-    w->menu(0);
+    w->menu(nullptr);
     menusize = 0;
   } else {
     n++; // space for null at end of menu
@@ -696,7 +696,7 @@ void Fl_Menu_Base_Type::build_menu() {
         m->labeltype(i->o->labeltype());
       }
       m->shortcut(((Fl_Button*)(i->o))->shortcut());
-      m->callback(0,(void*)i);
+      m->callback(nullptr,(void*)i);
       m->flags = i->flags() | i->o->type();
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
@@ -705,7 +705,7 @@ void Fl_Menu_Base_Type::build_menu() {
       m++;
       int l1 =
         (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
-      while (lvl > l1) {m->label(0); m++; lvl--;}
+      while (lvl > l1) {m->label(nullptr); m++; lvl--;}
       lvl = l1;
     }
   }
@@ -713,11 +713,11 @@ void Fl_Menu_Base_Type::build_menu() {
 }
 
 Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
-  if (selected) return 0; // let user move the widget
+  if (selected) return nullptr; // let user move the widget
   Fl_Menu_* w = (Fl_Menu_*)o;
-  if (!menusize) return 0;
+  if (!menusize) return nullptr;
   const Fl_Menu_Item* save = w->mvalue();
-  w->value((Fl_Menu_Item*)0);
+  w->value((Fl_Menu_Item*)nullptr);
   Fl::pushed(w);
   w->handle(FL_PUSH);
   Fl::focus(NULL);
@@ -752,21 +752,21 @@ void Fl_Menu_Base_Type::copy_properties() {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item button_type_menu[] = {
-  {"normal",0,0,(void*)0},
-  {"popup1",0,0,(void*)Fl_Menu_Button::POPUP1},
-  {"popup2",0,0,(void*)Fl_Menu_Button::POPUP2},
-  {"popup3",0,0,(void*)Fl_Menu_Button::POPUP3},
-  {"popup12",0,0,(void*)Fl_Menu_Button::POPUP12},
-  {"popup23",0,0,(void*)Fl_Menu_Button::POPUP23},
-  {"popup13",0,0,(void*)Fl_Menu_Button::POPUP13},
-  {"popup123",0,0,(void*)Fl_Menu_Button::POPUP123},
-  {0}};
+  {"normal",0,nullptr,(void*)nullptr},
+  {"popup1",0,nullptr,(void*)Fl_Menu_Button::POPUP1},
+  {"popup2",0,nullptr,(void*)Fl_Menu_Button::POPUP2},
+  {"popup3",0,nullptr,(void*)Fl_Menu_Button::POPUP3},
+  {"popup12",0,nullptr,(void*)Fl_Menu_Button::POPUP12},
+  {"popup23",0,nullptr,(void*)Fl_Menu_Button::POPUP23},
+  {"popup13",0,nullptr,(void*)Fl_Menu_Button::POPUP13},
+  {"popup123",0,nullptr,(void*)Fl_Menu_Button::POPUP123},
+  {nullptr}};
 
 Fl_Menu_Button_Type Fl_Menu_Button_type;
 
 ////////////////////////////////////////////////////////////////
 
-Fl_Menu_Item dummymenu[] = {{"CHOICE"},{0}};
+Fl_Menu_Item dummymenu[] = {{"CHOICE"},{nullptr}};
 
 Fl_Choice_Type Fl_Choice_type;
 
@@ -783,11 +783,11 @@ void Fl_Input_Choice_Type::copy_properties() {
 }
 
 Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
-  if (selected) return 0; // let user move the widget
+  if (selected) return nullptr; // let user move the widget
   Fl_Menu_* w = ((Fl_Input_Choice*)o)->menubutton();
-  if (!menusize) return 0;
+  if (!menusize) return nullptr;
   const Fl_Menu_Item* save = w->mvalue();
-  w->value((Fl_Menu_Item*)0);
+  w->value((Fl_Menu_Item*)nullptr);
   Fl::pushed(w);
   w->handle(FL_PUSH);
   Fl::focus(NULL);
@@ -806,9 +806,9 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
 Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 
 Fl_Menu_Item menu_bar_type_menu[] = {
-  {"Fl_Menu_Bar",0,0,(void*)0},
-  {"Fl_Sys_Menu_Bar",0,0,(void*)1},
-  {0}};
+  {"Fl_Menu_Bar",0,nullptr,(void*)nullptr},
+  {"Fl_Sys_Menu_Bar",0,nullptr,(void*)1},
+  {nullptr}};
 
 Fl_Menu_Bar_Type::Fl_Menu_Bar_Type()
 : _proxy_name(NULL)

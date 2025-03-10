@@ -99,7 +99,7 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   }
   if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
     fl_message("Please select a group widget or window");
-    return 0;
+    return nullptr;
   }
 
   Fl_Widget_Type* p = (Fl_Widget_Type*)pp;
@@ -145,7 +145,7 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   // Construct the Fl_Widget:
   t->o = widget(X,Y,W,H);
   if (strategy.source() == Strategy::FROM_FILE)
-    t->o->label(0);
+    t->o->label(nullptr);
   else if (t->o->label()) t->label(t->o->label()); // allow editing
   t->o->user_data((void*)t);
   // Put it in the parent:
@@ -169,7 +169,7 @@ void Fl_Widget_Type::setimage(Fluid_Image *i) {
       o->image()->scale(iw, ih, 0, 1);
     }
   } else {
-    o->image(0);
+    o->image(nullptr);
     //scale_image_w_ = scale_image_h_ = 0;
   }
   redraw();
@@ -188,7 +188,7 @@ void Fl_Widget_Type::setinactive(Fluid_Image *i) {
       o->deimage()->scale(iw, ih, 0, 1);
     }
   } else {
-    o->deimage(0);
+    o->deimage(nullptr);
     //scale_deimage_w_ = scale_deimage_h_ = 0;
   }
   redraw();
@@ -202,15 +202,15 @@ void Fl_Widget_Type::setlabel(const char *n) {
 Fl_Widget_Type::Fl_Widget_Type()
 : override_visible_(0)
 {
-  for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = 0; }
-  subclass_ = 0;
+  for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = nullptr; }
+  subclass_ = nullptr;
   hotspot_ = 0;
-  tooltip_ = 0;
-  image_name_ = 0;
-  inactive_name_ = 0;
-  image = 0;
-  inactive = 0;
-  o = 0;
+  tooltip_ = nullptr;
+  image_name_ = nullptr;
+  inactive_name_ = nullptr;
+  image = nullptr;
+  inactive = nullptr;
+  o = nullptr;
   public_ = 1;
   bind_image_ = 0;
   compress_image_ = 1;
@@ -276,7 +276,7 @@ void Fl_Widget_Type::redraw() {
     do t = t->parent; while (t && t->is_a(ID_Menu_Item));
     // kludge to cause build_menu to be called again:
     if (t)
-      t->add_child(0, 0);
+      t->add_child(nullptr, nullptr);
   } else {
     while (t->parent && t->parent->is_widget()) t = t->parent;
     ((Fl_Widget_Type*)t)->o->redraw();
@@ -285,7 +285,7 @@ void Fl_Widget_Type::redraw() {
 
 // the recursive part sorts all children, returns pointer to next:
 Fl_Type *sort(Fl_Type *parent) {
-  Fl_Type *f,*n=0;
+  Fl_Type *f,*n=nullptr;
   for (f = parent ? parent->next : Fluid.proj.tree.first; ; f = n) {
     if (!f || (parent && f->level <= parent->level)) break;
     n = sort(f);
@@ -783,7 +783,7 @@ fld::widget::Formula_Input_Vars widget_vars[] = {
   { "cy", vars_cy_cb },
   { "cw", vars_cw_cb },
   { "ch", vars_ch_cb },
-  { 0 }
+  { nullptr }
 };
 
 void x_cb(fld::widget::Formula_Input *i, void *v) {
@@ -961,85 +961,85 @@ int item_number(Fl_Menu_Item* m, const char* i) {
 #define ZERO_ENTRY 1000
 
 Fl_Menu_Item boxmenu[] = {
-{"NO_BOX",0,0,(void *)ZERO_ENTRY},
-{"boxes",0,0,0,FL_SUBMENU},
-{"UP_BOX",0,0,(void *)FL_UP_BOX},
-{"DOWN_BOX",0,0,(void *)FL_DOWN_BOX},
-{"FLAT_BOX",0,0,(void *)FL_FLAT_BOX},
-{"BORDER_BOX",0,0,(void *)FL_BORDER_BOX},
-{"THIN_UP_BOX",0,0,(void *)FL_THIN_UP_BOX},
-{"THIN_DOWN_BOX",0,0,(void *)FL_THIN_DOWN_BOX},
-{"ENGRAVED_BOX",0,0,(void *)FL_ENGRAVED_BOX},
-{"EMBOSSED_BOX",0,0,(void *)FL_EMBOSSED_BOX},
-{"ROUND_UP_BOX",0,0,(void *)FL_ROUND_UP_BOX},
-{"ROUND_DOWN_BOX",0,0,(void *)FL_ROUND_DOWN_BOX},
-{"DIAMOND_UP_BOX",0,0,(void *)FL_DIAMOND_UP_BOX},
-{"DIAMOND_DOWN_BOX",0,0,(void *)FL_DIAMOND_DOWN_BOX},
-{"SHADOW_BOX",0,0,(void *)FL_SHADOW_BOX},
-{"ROUNDED_BOX",0,0,(void *)FL_ROUNDED_BOX},
-{"RSHADOW_BOX",0,0,(void *)FL_RSHADOW_BOX},
-{"RFLAT_BOX",0,0,(void *)FL_RFLAT_BOX},
-{"OVAL_BOX",0,0,(void *)FL_OVAL_BOX},
-{"OSHADOW_BOX",0,0,(void *)FL_OSHADOW_BOX},
-{"OFLAT_BOX",0,0,(void *)FL_OFLAT_BOX},
-{"PLASTIC_UP_BOX",0,0,(void *)FL_PLASTIC_UP_BOX},
-{"PLASTIC_DOWN_BOX",0,0,(void *)FL_PLASTIC_DOWN_BOX},
-{"PLASTIC_THIN_UP_BOX",0,0,(void *)FL_PLASTIC_THIN_UP_BOX},
-{"PLASTIC_THIN_DOWN_BOX",0,0,(void *)FL_PLASTIC_THIN_DOWN_BOX},
-{"PLASTIC_ROUND_UP_BOX",0,0,(void *)FL_PLASTIC_ROUND_UP_BOX},
-{"PLASTIC_ROUND_DOWN_BOX",0,0,(void *)FL_PLASTIC_ROUND_DOWN_BOX},
-{"GTK_UP_BOX",0,0,(void *)FL_GTK_UP_BOX},
-{"GTK_DOWN_BOX",0,0,(void *)FL_GTK_DOWN_BOX},
-{"GTK_THIN_UP_BOX",0,0,(void *)FL_GTK_THIN_UP_BOX},
-{"GTK_THIN_DOWN_BOX",0,0,(void *)FL_GTK_THIN_DOWN_BOX},
-{"GTK_ROUND_UP_BOX",0,0,(void *)FL_GTK_ROUND_UP_BOX},
-{"GTK_ROUND_DOWN_BOX",0,0,(void *)FL_GTK_ROUND_DOWN_BOX},
-{"GLEAM_UP_BOX",0,0,(void *)FL_GLEAM_UP_BOX},
-{"GLEAM_DOWN_BOX",0,0,(void *)FL_GLEAM_DOWN_BOX},
-{"GLEAM_THIN_UP_BOX",0,0,(void *)FL_GLEAM_THIN_UP_BOX},
-{"GLEAM_THIN_DOWN_BOX",0,0,(void *)FL_GLEAM_THIN_DOWN_BOX},
-{"GLEAM_ROUND_UP_BOX",0,0,(void *)FL_GLEAM_ROUND_UP_BOX},
-{"GLEAM_ROUND_DOWN_BOX",0,0,(void *)FL_GLEAM_ROUND_DOWN_BOX},
-{"OXY_UP_BOX",0,0,(void *)FL_OXY_UP_BOX},
-{"OXY_DOWN_BOX",0,0,(void *)FL_OXY_DOWN_BOX},
-{"OXY_THIN_UP_BOX",0,0,(void *)FL_OXY_THIN_UP_BOX},
-{"OXY_THIN_DOWN_BOX",0,0,(void *)FL_OXY_THIN_DOWN_BOX},
-{"OXY_ROUND_UP_BOX",0,0,(void *)FL_OXY_ROUND_UP_BOX},
-{"OXY_ROUND_DOWN_BOX",0,0,(void *)FL_OXY_ROUND_DOWN_BOX},
-{"OXY_BUTTON_UP_BOX",0,0,(void *)FL_OXY_BUTTON_UP_BOX},
-{"OXY_BUTTON_DOWN_BOX",0,0,(void *)FL_OXY_BUTTON_DOWN_BOX},
-{0},
-{"frames",0,0,0,FL_SUBMENU},
-{"UP_FRAME",0,0,(void *)FL_UP_FRAME},
-{"DOWN_FRAME",0,0,(void *)FL_DOWN_FRAME},
-{"THIN_UP_FRAME",0,0,(void *)FL_THIN_UP_FRAME},
-{"THIN_DOWN_FRAME",0,0,(void *)FL_THIN_DOWN_FRAME},
-{"ENGRAVED_FRAME",0,0,(void *)FL_ENGRAVED_FRAME},
-{"EMBOSSED_FRAME",0,0,(void *)FL_EMBOSSED_FRAME},
-{"BORDER_FRAME",0,0,(void *)FL_BORDER_FRAME},
-{"SHADOW_FRAME",0,0,(void *)FL_SHADOW_FRAME},
-{"ROUNDED_FRAME",0,0,(void *)FL_ROUNDED_FRAME},
-{"OVAL_FRAME",0,0,(void *)FL_OVAL_FRAME},
-{"PLASTIC_UP_FRAME",0,0,(void *)FL_PLASTIC_UP_FRAME},
-{"PLASTIC_DOWN_FRAME",0,0,(void *)FL_PLASTIC_DOWN_FRAME},
-{"GTK_UP_FRAME",0,0,(void *)FL_GTK_UP_FRAME},
-{"GTK_DOWN_FRAME",0,0,(void *)FL_GTK_DOWN_FRAME},
-{"GTK_THIN_UP_FRAME",0,0,(void *)FL_GTK_THIN_UP_FRAME},
-{"GTK_THIN_DOWN_FRAME",0,0,(void *)FL_GTK_THIN_DOWN_FRAME},
-{"GLEAM_UP_FRAME",0,0,(void *)FL_GLEAM_UP_FRAME},
-{"GLEAM_DOWN_FRAME",0,0,(void *)FL_GLEAM_DOWN_FRAME},
-{"OXY_UP_FRAME",0,0,(void *)FL_OXY_UP_FRAME},
-{"OXY_DOWN_FRAME",0,0,(void *)FL_OXY_DOWN_FRAME},
-{"OXY_THIN_UP_FRAME",0,0,(void *)FL_OXY_THIN_UP_FRAME},
-{"OXY_THIN_DOWN_FRAME",0,0,(void *)FL_OXY_THIN_DOWN_FRAME},
-{0},
-{0}};
+  {"NO_BOX",0,nullptr,(void *)ZERO_ENTRY},
+  {"boxes",0,nullptr,nullptr,FL_SUBMENU},
+  {"UP_BOX",0,nullptr,(void *)FL_UP_BOX},
+  {"DOWN_BOX",0,nullptr,(void *)FL_DOWN_BOX},
+  {"FLAT_BOX",0,nullptr,(void *)FL_FLAT_BOX},
+  {"BORDER_BOX",0,nullptr,(void *)FL_BORDER_BOX},
+  {"THIN_UP_BOX",0,nullptr,(void *)FL_THIN_UP_BOX},
+  {"THIN_DOWN_BOX",0,nullptr,(void *)FL_THIN_DOWN_BOX},
+  {"ENGRAVED_BOX",0,nullptr,(void *)FL_ENGRAVED_BOX},
+  {"EMBOSSED_BOX",0,nullptr,(void *)FL_EMBOSSED_BOX},
+  {"ROUND_UP_BOX",0,nullptr,(void *)FL_ROUND_UP_BOX},
+  {"ROUND_DOWN_BOX",0,nullptr,(void *)FL_ROUND_DOWN_BOX},
+  {"DIAMOND_UP_BOX",0,nullptr,(void *)FL_DIAMOND_UP_BOX},
+  {"DIAMOND_DOWN_BOX",0,nullptr,(void *)FL_DIAMOND_DOWN_BOX},
+  {"SHADOW_BOX",0,nullptr,(void *)FL_SHADOW_BOX},
+  {"ROUNDED_BOX",0,nullptr,(void *)FL_ROUNDED_BOX},
+  {"RSHADOW_BOX",0,nullptr,(void *)FL_RSHADOW_BOX},
+  {"RFLAT_BOX",0,nullptr,(void *)FL_RFLAT_BOX},
+  {"OVAL_BOX",0,nullptr,(void *)FL_OVAL_BOX},
+  {"OSHADOW_BOX",0,nullptr,(void *)FL_OSHADOW_BOX},
+  {"OFLAT_BOX",0,nullptr,(void *)FL_OFLAT_BOX},
+  {"PLASTIC_UP_BOX",0,nullptr,(void *)FL_PLASTIC_UP_BOX},
+  {"PLASTIC_DOWN_BOX",0,nullptr,(void *)FL_PLASTIC_DOWN_BOX},
+  {"PLASTIC_THIN_UP_BOX",0,nullptr,(void *)FL_PLASTIC_THIN_UP_BOX},
+  {"PLASTIC_THIN_DOWN_BOX",0,nullptr,(void *)FL_PLASTIC_THIN_DOWN_BOX},
+  {"PLASTIC_ROUND_UP_BOX",0,nullptr,(void *)FL_PLASTIC_ROUND_UP_BOX},
+  {"PLASTIC_ROUND_DOWN_BOX",0,nullptr,(void *)FL_PLASTIC_ROUND_DOWN_BOX},
+  {"GTK_UP_BOX",0,nullptr,(void *)FL_GTK_UP_BOX},
+  {"GTK_DOWN_BOX",0,nullptr,(void *)FL_GTK_DOWN_BOX},
+  {"GTK_THIN_UP_BOX",0,nullptr,(void *)FL_GTK_THIN_UP_BOX},
+  {"GTK_THIN_DOWN_BOX",0,nullptr,(void *)FL_GTK_THIN_DOWN_BOX},
+  {"GTK_ROUND_UP_BOX",0,nullptr,(void *)FL_GTK_ROUND_UP_BOX},
+  {"GTK_ROUND_DOWN_BOX",0,nullptr,(void *)FL_GTK_ROUND_DOWN_BOX},
+  {"GLEAM_UP_BOX",0,nullptr,(void *)FL_GLEAM_UP_BOX},
+  {"GLEAM_DOWN_BOX",0,nullptr,(void *)FL_GLEAM_DOWN_BOX},
+  {"GLEAM_THIN_UP_BOX",0,nullptr,(void *)FL_GLEAM_THIN_UP_BOX},
+  {"GLEAM_THIN_DOWN_BOX",0,nullptr,(void *)FL_GLEAM_THIN_DOWN_BOX},
+  {"GLEAM_ROUND_UP_BOX",0,nullptr,(void *)FL_GLEAM_ROUND_UP_BOX},
+  {"GLEAM_ROUND_DOWN_BOX",0,nullptr,(void *)FL_GLEAM_ROUND_DOWN_BOX},
+  {"OXY_UP_BOX",0,nullptr,(void *)FL_OXY_UP_BOX},
+  {"OXY_DOWN_BOX",0,nullptr,(void *)FL_OXY_DOWN_BOX},
+  {"OXY_THIN_UP_BOX",0,nullptr,(void *)FL_OXY_THIN_UP_BOX},
+  {"OXY_THIN_DOWN_BOX",0,nullptr,(void *)FL_OXY_THIN_DOWN_BOX},
+  {"OXY_ROUND_UP_BOX",0,nullptr,(void *)FL_OXY_ROUND_UP_BOX},
+  {"OXY_ROUND_DOWN_BOX",0,nullptr,(void *)FL_OXY_ROUND_DOWN_BOX},
+  {"OXY_BUTTON_UP_BOX",0,nullptr,(void *)FL_OXY_BUTTON_UP_BOX},
+  {"OXY_BUTTON_DOWN_BOX",0,nullptr,(void *)FL_OXY_BUTTON_DOWN_BOX},
+  {nullptr},
+  {"frames",0,nullptr,nullptr,FL_SUBMENU},
+  {"UP_FRAME",0,nullptr,(void *)FL_UP_FRAME},
+  {"DOWN_FRAME",0,nullptr,(void *)FL_DOWN_FRAME},
+  {"THIN_UP_FRAME",0,nullptr,(void *)FL_THIN_UP_FRAME},
+  {"THIN_DOWN_FRAME",0,nullptr,(void *)FL_THIN_DOWN_FRAME},
+  {"ENGRAVED_FRAME",0,nullptr,(void *)FL_ENGRAVED_FRAME},
+  {"EMBOSSED_FRAME",0,nullptr,(void *)FL_EMBOSSED_FRAME},
+  {"BORDER_FRAME",0,nullptr,(void *)FL_BORDER_FRAME},
+  {"SHADOW_FRAME",0,nullptr,(void *)FL_SHADOW_FRAME},
+  {"ROUNDED_FRAME",0,nullptr,(void *)FL_ROUNDED_FRAME},
+  {"OVAL_FRAME",0,nullptr,(void *)FL_OVAL_FRAME},
+  {"PLASTIC_UP_FRAME",0,nullptr,(void *)FL_PLASTIC_UP_FRAME},
+  {"PLASTIC_DOWN_FRAME",0,nullptr,(void *)FL_PLASTIC_DOWN_FRAME},
+  {"GTK_UP_FRAME",0,nullptr,(void *)FL_GTK_UP_FRAME},
+  {"GTK_DOWN_FRAME",0,nullptr,(void *)FL_GTK_DOWN_FRAME},
+  {"GTK_THIN_UP_FRAME",0,nullptr,(void *)FL_GTK_THIN_UP_FRAME},
+  {"GTK_THIN_DOWN_FRAME",0,nullptr,(void *)FL_GTK_THIN_DOWN_FRAME},
+  {"GLEAM_UP_FRAME",0,nullptr,(void *)FL_GLEAM_UP_FRAME},
+  {"GLEAM_DOWN_FRAME",0,nullptr,(void *)FL_GLEAM_DOWN_FRAME},
+  {"OXY_UP_FRAME",0,nullptr,(void *)FL_OXY_UP_FRAME},
+  {"OXY_DOWN_FRAME",0,nullptr,(void *)FL_OXY_DOWN_FRAME},
+  {"OXY_THIN_UP_FRAME",0,nullptr,(void *)FL_OXY_THIN_UP_FRAME},
+  {"OXY_THIN_DOWN_FRAME",0,nullptr,(void *)FL_OXY_THIN_DOWN_FRAME},
+  {nullptr},
+  {nullptr}};
 
 const char *boxname(int i) {
   if (!i) i = ZERO_ENTRY;
   for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
     if (boxmenu[j].argument() == i) return boxmenu[j].label();
-  return 0;
+  return nullptr;
 }
 
 int boxnumber(const char *i) {
@@ -1154,37 +1154,37 @@ void compact_cb(Fl_Light_Button* i, void* v) {
 
 Fl_Menu_Item whenmenu[] = {
   // set individual bits
-  {"FL_WHEN_CHANGED",0,0,(void*)FL_WHEN_CHANGED, FL_MENU_TOGGLE},
-  {"FL_WHEN_NOT_CHANGED",0,0,(void*)FL_WHEN_NOT_CHANGED, FL_MENU_TOGGLE},
-  {"FL_WHEN_RELEASE",0,0,(void*)FL_WHEN_RELEASE, FL_MENU_TOGGLE},
-  {"FL_WHEN_ENTER_KEY",0,0,(void*)FL_WHEN_ENTER_KEY, FL_MENU_TOGGLE},
-  {"FL_WHEN_CLOSED",0,0,(void*)FL_WHEN_CLOSED, FL_MENU_TOGGLE|FL_MENU_DIVIDER},
+  {"FL_WHEN_CHANGED",0,nullptr,(void*)FL_WHEN_CHANGED, FL_MENU_TOGGLE},
+  {"FL_WHEN_NOT_CHANGED",0,nullptr,(void*)FL_WHEN_NOT_CHANGED, FL_MENU_TOGGLE},
+  {"FL_WHEN_RELEASE",0,nullptr,(void*)FL_WHEN_RELEASE, FL_MENU_TOGGLE},
+  {"FL_WHEN_ENTER_KEY",0,nullptr,(void*)FL_WHEN_ENTER_KEY, FL_MENU_TOGGLE},
+  {"FL_WHEN_CLOSED",0,nullptr,(void*)FL_WHEN_CLOSED, FL_MENU_TOGGLE|FL_MENU_DIVIDER},
   // set bit combinations
-  {"FL_WHEN_NEVER",0,0,(void*)FL_WHEN_NEVER},
-  {"FL_WHEN_RELEASE_ALWAYS",0,0,(void*)FL_WHEN_RELEASE_ALWAYS},
-  {"FL_WHEN_ENTER_KEY_ALWAYS",0,0,(void*)FL_WHEN_ENTER_KEY_ALWAYS},
-  {"FL_WHEN_ENTER_KEY_CHANGED",0,0,(void*)FL_WHEN_ENTER_KEY_CHANGED},
-  {0}};
+  {"FL_WHEN_NEVER",0,nullptr,(void*)FL_WHEN_NEVER},
+  {"FL_WHEN_RELEASE_ALWAYS",0,nullptr,(void*)FL_WHEN_RELEASE_ALWAYS},
+  {"FL_WHEN_ENTER_KEY_ALWAYS",0,nullptr,(void*)FL_WHEN_ENTER_KEY_ALWAYS},
+  {"FL_WHEN_ENTER_KEY_CHANGED",0,nullptr,(void*)FL_WHEN_ENTER_KEY_CHANGED},
+  {nullptr}};
 
 
 static Fl_Menu_Item whensymbolmenu[] = {
-  /*  0 */ {"FL_WHEN_NEVER",0,0,(void*)FL_WHEN_NEVER},
-  /*  1 */ {"FL_WHEN_CHANGED",0,0,(void*)FL_WHEN_CHANGED},
-  /*  2 */ {"FL_WHEN_NOT_CHANGED",0,0,(void*)FL_WHEN_NOT_CHANGED},
-  /*  3 */ {"FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED)},
-  /*  4 */ {"FL_WHEN_RELEASE",0,0,(void*)FL_WHEN_RELEASE},
-  /*  5 */ {"FL_WHEN_CHANGED | FL_WHEN_RELEASE",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_RELEASE)},
-  /*  6 */ {"FL_WHEN_RELEASE_ALWAYS",0,0,(void*)FL_WHEN_RELEASE_ALWAYS},
-  /*  7 */ {"FL_WHEN_CHANGED | FL_WHEN_RELEASE_ALWAYS",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_RELEASE_ALWAYS)},
-  /*  8 */ {"FL_WHEN_ENTER_KEY",0,0,(void*)FL_WHEN_ENTER_KEY},
-  /*  9 */ {"FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_ENTER_KEY)},
-  /* 10 */ {"FL_WHEN_ENTER_KEY_ALWAYS",0,0,(void*)FL_WHEN_ENTER_KEY_ALWAYS},
-  /* 11 */ {"FL_WHEN_ENTER_KEY_CHANGED",0,0,(void*)FL_WHEN_ENTER_KEY_CHANGED},
-  /* 12 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY)},
-  /* 13 */ {"FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_CHANGED|FL_WHEN_ENTER_KEY)},
-  /* 14 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_ALWAYS",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY_ALWAYS)},
-  /* 15 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY_CHANGED)},
-  {0}
+  /*  0 */ {"FL_WHEN_NEVER",0,nullptr,(void*)FL_WHEN_NEVER},
+  /*  1 */ {"FL_WHEN_CHANGED",0,nullptr,(void*)FL_WHEN_CHANGED},
+  /*  2 */ {"FL_WHEN_NOT_CHANGED",0,nullptr,(void*)FL_WHEN_NOT_CHANGED},
+  /*  3 */ {"FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED",0,nullptr,(void*)(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED)},
+  /*  4 */ {"FL_WHEN_RELEASE",0,nullptr,(void*)FL_WHEN_RELEASE},
+  /*  5 */ {"FL_WHEN_CHANGED | FL_WHEN_RELEASE",0,nullptr,(void*)(FL_WHEN_CHANGED|FL_WHEN_RELEASE)},
+  /*  6 */ {"FL_WHEN_RELEASE_ALWAYS",0,nullptr,(void*)FL_WHEN_RELEASE_ALWAYS},
+  /*  7 */ {"FL_WHEN_CHANGED | FL_WHEN_RELEASE_ALWAYS",0,nullptr,(void*)(FL_WHEN_CHANGED|FL_WHEN_RELEASE_ALWAYS)},
+  /*  8 */ {"FL_WHEN_ENTER_KEY",0,nullptr,(void*)FL_WHEN_ENTER_KEY},
+  /*  9 */ {"FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY",0,nullptr,(void*)(FL_WHEN_CHANGED|FL_WHEN_ENTER_KEY)},
+  /* 10 */ {"FL_WHEN_ENTER_KEY_ALWAYS",0,nullptr,(void*)FL_WHEN_ENTER_KEY_ALWAYS},
+  /* 11 */ {"FL_WHEN_ENTER_KEY_CHANGED",0,nullptr,(void*)FL_WHEN_ENTER_KEY_CHANGED},
+  /* 12 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY",0,nullptr,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY)},
+  /* 13 */ {"FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY",0,nullptr,(void*)(FL_WHEN_RELEASE|FL_WHEN_CHANGED|FL_WHEN_ENTER_KEY)},
+  /* 14 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_ALWAYS",0,nullptr,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY_ALWAYS)},
+  /* 15 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED",0,nullptr,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY_CHANGED)},
+  {nullptr}
 };
 
 // Return a text string representing  the Fl_When value n
@@ -1241,7 +1241,7 @@ void when_cb(Fl_Menu_Button* i, void *v) {
 }
 
 uchar Fl_Widget_Type::resizable() const {
-  if (is_a(ID_Window)) return ((Fl_Window*)o)->resizable() != 0;
+  if (is_a(ID_Window)) return ((Fl_Window*)o)->resizable() != nullptr;
   Fl_Group* p = (Fl_Group*)o->parent();
   if (p) return p->resizable() == o;
   else return 0;
@@ -1258,10 +1258,10 @@ void Fl_Widget_Type::resizable(uchar v) {
   } else {
     if (!resizable()) return;
     if (is_a(ID_Window)) {
-      ((Fl_Window*)o)->resizable(0);
+      ((Fl_Window*)o)->resizable(nullptr);
     } else {
       Fl_Group* p = (Fl_Group*)o->parent();
-      if (p) p->resizable(0);
+      if (p) p->resizable(nullptr);
     }
   }
 }
@@ -1451,12 +1451,12 @@ void labelsize_cb(Fl_Value_Input* i, void *v) {
 extern const char *ui_find_image_name;
 
 Fl_Menu_Item labeltypemenu[] = {
-  {"NORMAL_LABEL",0,0,(void*)0},
-  {"SHADOW_LABEL",0,0,(void*)FL_SHADOW_LABEL},
-  {"ENGRAVED_LABEL",0,0,(void*)FL_ENGRAVED_LABEL},
-  {"EMBOSSED_LABEL",0,0,(void*)FL_EMBOSSED_LABEL},
-  {"NO_LABEL",0,0,(void*)(FL_NO_LABEL)},
-{0}};
+  {"NORMAL_LABEL",0,nullptr,(void*)nullptr},
+  {"SHADOW_LABEL",0,nullptr,(void*)FL_SHADOW_LABEL},
+  {"ENGRAVED_LABEL",0,nullptr,(void*)FL_ENGRAVED_LABEL},
+  {"EMBOSSED_LABEL",0,nullptr,(void*)FL_EMBOSSED_LABEL},
+  {"NO_LABEL",0,nullptr,(void*)(FL_NO_LABEL)},
+  {nullptr}};
 
 void labeltype_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
@@ -1485,21 +1485,21 @@ void labeltype_cb(Fl_Choice* i, void *v) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item colormenu[] = {
-  { "Foreground Color",   0, 0, (void*)(fl_intptr_t)FL_FOREGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
-  { "Background Color",   0, 0, (void*)(fl_intptr_t)FL_BACKGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
-  { "Background Color 2", 0, 0, (void*)(fl_intptr_t)FL_BACKGROUND2_COLOR, 0, 0, FL_HELVETICA, 11},
-  { "Selection Color",    0, 0, (void*)(fl_intptr_t)FL_SELECTION_COLOR,   0, 0, FL_HELVETICA, 11},
-  { "Inactive Color",     0, 0, (void*)(fl_intptr_t)FL_INACTIVE_COLOR,    FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
-  { "Black",              0, 0, (void*)(fl_intptr_t)FL_BLACK,             0, 0, FL_HELVETICA, 11},
-  { "White",              0, 0, (void*)(fl_intptr_t)FL_WHITE,             FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
-  { "Gray 0",             0, 0, (void*)(fl_intptr_t)FL_GRAY0,             0, 0, FL_HELVETICA, 11},
-  { "Dark 3",             0, 0, (void*)(fl_intptr_t)FL_DARK3,             0, 0, FL_HELVETICA, 11},
-  { "Dark 2",             0, 0, (void*)(fl_intptr_t)FL_DARK2,             0, 0, FL_HELVETICA, 11},
-  { "Dark 1",             0, 0, (void*)(fl_intptr_t)FL_DARK1,             0, 0, FL_HELVETICA, 11},
-  { "Light 1",            0, 0, (void*)(fl_intptr_t)FL_LIGHT1,            0, 0, FL_HELVETICA, 11},
-  { "Light 2",            0, 0, (void*)(fl_intptr_t)FL_LIGHT2,            0, 0, FL_HELVETICA, 11},
-  { "Light 3",            0, 0, (void*)(fl_intptr_t)FL_LIGHT3,            0, 0, FL_HELVETICA, 11},
-  { 0 }
+  { "Foreground Color",   0, nullptr, (void*)(fl_intptr_t)FL_FOREGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
+  { "Background Color",   0, nullptr, (void*)(fl_intptr_t)FL_BACKGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
+  { "Background Color 2", 0, nullptr, (void*)(fl_intptr_t)FL_BACKGROUND2_COLOR, 0, 0, FL_HELVETICA, 11},
+  { "Selection Color",    0, nullptr, (void*)(fl_intptr_t)FL_SELECTION_COLOR,   0, 0, FL_HELVETICA, 11},
+  { "Inactive Color",     0, nullptr, (void*)(fl_intptr_t)FL_INACTIVE_COLOR,    FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
+  { "Black",              0, nullptr, (void*)(fl_intptr_t)FL_BLACK,             0, 0, FL_HELVETICA, 11},
+  { "White",              0, nullptr, (void*)(fl_intptr_t)FL_WHITE,             FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
+  { "Gray 0",             0, nullptr, (void*)(fl_intptr_t)FL_GRAY0,             0, 0, FL_HELVETICA, 11},
+  { "Dark 3",             0, nullptr, (void*)(fl_intptr_t)FL_DARK3,             0, 0, FL_HELVETICA, 11},
+  { "Dark 2",             0, nullptr, (void*)(fl_intptr_t)FL_DARK2,             0, 0, FL_HELVETICA, 11},
+  { "Dark 1",             0, nullptr, (void*)(fl_intptr_t)FL_DARK1,             0, 0, FL_HELVETICA, 11},
+  { "Light 1",            0, nullptr, (void*)(fl_intptr_t)FL_LIGHT1,            0, 0, FL_HELVETICA, 11},
+  { "Light 2",            0, nullptr, (void*)(fl_intptr_t)FL_LIGHT2,            0, 0, FL_HELVETICA, 11},
+  { "Light 3",            0, nullptr, (void*)(fl_intptr_t)FL_LIGHT3,            0, 0, FL_HELVETICA, 11},
+  { nullptr }
 };
 
 void color_common(Fl_Color c) {
@@ -1621,24 +1621,24 @@ static Fl_Button* relative(Fl_Widget* o, int i) {
 }
 
 static Fl_Menu_Item alignmenu[] = {
-  {"FL_ALIGN_CENTER",0,0,(void*)(fl_intptr_t)(FL_ALIGN_CENTER)},
-  {"FL_ALIGN_TOP",0,0,(void*)(fl_intptr_t)(FL_ALIGN_TOP)},
-  {"FL_ALIGN_BOTTOM",0,0,(void*)(fl_intptr_t)(FL_ALIGN_BOTTOM)},
-  {"FL_ALIGN_LEFT",0,0,(void*)(fl_intptr_t)(FL_ALIGN_LEFT)},
-  {"FL_ALIGN_RIGHT",0,0,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT)},
-  {"FL_ALIGN_INSIDE",0,0,(void*)(fl_intptr_t)(FL_ALIGN_INSIDE)},
-  {"FL_ALIGN_CLIP",0,0,(void*)(fl_intptr_t)(FL_ALIGN_CLIP)},
-  {"FL_ALIGN_WRAP",0,0,(void*)(fl_intptr_t)(FL_ALIGN_WRAP)},
-  {"FL_ALIGN_TEXT_OVER_IMAGE",0,0,(void*)(fl_intptr_t)(FL_ALIGN_TEXT_OVER_IMAGE)},
-  {"FL_ALIGN_TOP_LEFT",0,0,(void*)(fl_intptr_t)(FL_ALIGN_TOP_LEFT)},
-  {"FL_ALIGN_TOP_RIGHT",0,0,(void*)(fl_intptr_t)(FL_ALIGN_TOP_RIGHT)},
-  {"FL_ALIGN_BOTTOM_LEFT",0,0,(void*)(fl_intptr_t)(FL_ALIGN_BOTTOM_LEFT)},
-  {"FL_ALIGN_BOTTOM_RIGHT",0,0,(void*)(fl_intptr_t)(FL_ALIGN_BOTTOM_RIGHT)},
-  {"FL_ALIGN_LEFT_TOP",0,0,(void*)(fl_intptr_t)(FL_ALIGN_LEFT_TOP)},
-  {"FL_ALIGN_RIGHT_TOP",0,0,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT_TOP)},
-  {"FL_ALIGN_LEFT_BOTTOM",0,0,(void*)(fl_intptr_t)(FL_ALIGN_LEFT_BOTTOM)},
-  {"FL_ALIGN_RIGHT_BOTTOM",0,0,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT_BOTTOM)},
-{0}};
+  {"FL_ALIGN_CENTER",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_CENTER)},
+  {"FL_ALIGN_TOP",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_TOP)},
+  {"FL_ALIGN_BOTTOM",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_BOTTOM)},
+  {"FL_ALIGN_LEFT",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_LEFT)},
+  {"FL_ALIGN_RIGHT",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT)},
+  {"FL_ALIGN_INSIDE",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_INSIDE)},
+  {"FL_ALIGN_CLIP",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_CLIP)},
+  {"FL_ALIGN_WRAP",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_WRAP)},
+  {"FL_ALIGN_TEXT_OVER_IMAGE",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_TEXT_OVER_IMAGE)},
+  {"FL_ALIGN_TOP_LEFT",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_TOP_LEFT)},
+  {"FL_ALIGN_TOP_RIGHT",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_TOP_RIGHT)},
+  {"FL_ALIGN_BOTTOM_LEFT",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_BOTTOM_LEFT)},
+  {"FL_ALIGN_BOTTOM_RIGHT",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_BOTTOM_RIGHT)},
+  {"FL_ALIGN_LEFT_TOP",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_LEFT_TOP)},
+  {"FL_ALIGN_RIGHT_TOP",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT_TOP)},
+  {"FL_ALIGN_LEFT_BOTTOM",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_LEFT_BOTTOM)},
+  {"FL_ALIGN_RIGHT_BOTTOM",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT_BOTTOM)},
+  {nullptr}};
 
 void align_cb(Fl_Button* i, void *v) {
   Fl_Align b = Fl_Align(fl_uintptr_t(i->user_data()));
@@ -1812,7 +1812,7 @@ void user_data_type_cb(Fl_Input_Choice *i, void *v) {
     const char *c = i->value();
     const char *d = c_check(c);
     if (!*c) i->value(dflt);
-    else if (!strcmp(c,dflt)) c = 0;
+    else if (!strcmp(c,dflt)) c = nullptr;
     if (!d) {
       if (c && *c && c[strlen(c)-1] != '*' && strcmp(c,"long"))
         d = "must be pointer or long";
@@ -2602,12 +2602,12 @@ void flex_fixed_cb(Fl_Check_Button* i, void* v) {
 
 // subtypes:
 
-Fl_Menu_Item *Fl_Widget_Type::subtypes() {return 0;}
+Fl_Menu_Item *Fl_Widget_Type::subtypes() {return nullptr;}
 
 void subtype_cb(Fl_Choice* i, void* v) {
   static Fl_Menu_Item empty_type_menu[] = {
-    {"Normal",0,0,(void*)0},
-    {0}};
+    {"Normal",0,nullptr,(void*)nullptr},
+    {nullptr}};
 
   if (v == LOAD) {
     Fl_Menu_Item* m = current_widget->subtypes();
@@ -2693,9 +2693,9 @@ void leave_live_mode_cb(Fl_Widget*, void*);
 void live_mode_cb(Fl_Button*o,void *) {
   /// \todo live mode should end gracefully when the application quits
   ///       or when the user closes the live widget
-  static Fl_Type *live_type = 0L;
-  static Fl_Widget *live_widget = 0L;
-  static Fl_Window *live_window = 0L;
+  static Fl_Type *live_type = nullptr;
+  static Fl_Widget *live_widget = nullptr;
+  static Fl_Window *live_window = nullptr;
   // if 'o' is 0, we must quit live mode
   if (!o) {
     o = wLiveMode;
@@ -2703,11 +2703,11 @@ void live_mode_cb(Fl_Button*o,void *) {
   }
   if (o->value()) {
     if (numselected == 1) {
-      Fl_Group::current(0L);
+      Fl_Group::current(nullptr);
       live_widget = current_widget->enter_live_mode(1);
       if (live_widget) {
         live_type = current_widget;
-        Fl_Group::current(0);
+        Fl_Group::current(nullptr);
         int w = live_widget->w();
         int h = live_widget->h();
         live_window = new Fl_Double_Window(w+20, h+55, "Fluid Live Resize");
@@ -2747,9 +2747,9 @@ void live_mode_cb(Fl_Button*o,void *) {
       live_window->hide();
       Fl::delete_widget(live_window);
     }
-    live_type = 0L;
-    live_widget = 0L;
-    live_window = 0L;
+    live_type = nullptr;
+    live_widget = nullptr;
+    live_window = nullptr;
   }
 }
 
@@ -2759,7 +2759,7 @@ void load_panel() {
 
   // find all the Fl_Widget subclasses currently selected:
   numselected = 0;
-  current_widget = 0;
+  current_widget = nullptr;
   if (Fluid.proj.tree.current) {
     if (Fluid.proj.tree.current->is_widget())
       current_widget=(Fl_Widget_Type*)Fluid.proj.tree.current;
@@ -2832,10 +2832,10 @@ extern void update_codeview_position();
 void selection_changed(Fl_Type *p) {
   // store all changes to the current selected objects:
   if (p && the_panel && the_panel->visible()) {
-    set_cb(0,0);
+    set_cb(nullptr,nullptr);
     // if there was an error, we try to leave the selected set unchanged:
     if (haderror) {
-      Fl_Type *q = 0;
+      Fl_Type *q = nullptr;
       for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next) {
         o->new_selected = o->selected;
         if (!q && o->selected) q = o;
@@ -2847,7 +2847,7 @@ void selection_changed(Fl_Type *p) {
     }
   }
   // update the selected flags to new set:
-  Fl_Type *q = 0;
+  Fl_Type *q = nullptr;
   for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next) {
     o->selected = o->new_selected;
     if (!q && o->selected) q = o;
@@ -2877,11 +2877,11 @@ int is_name(const char *c) {
 // number or a field or function.  Return name() if not an array entry.
 const char *array_name(Fl_Widget_Type *o) {
   const char *c = o->name();
-  if (!c) return 0;
+  if (!c) return nullptr;
   const char *d;
   for (d = c; *d != '['; d++) {
     if (!*d) return c;
-    if (ispunct(*d) && *d!='_') return 0;
+    if (ispunct(*d) && *d!='_') return nullptr;
   }
   int num = atoi(d+1);
   int sawthis = 0;
@@ -2895,7 +2895,7 @@ const char *array_name(Fl_Widget_Type *o) {
     if (!e) continue;
     if (strncmp(c,e,d-c)) continue;
     int n1 = atoi(e+(d-c)+1);
-    if (n1 > num || (n1==num && sawthis)) return 0;
+    if (n1 > num || (n1==num && sawthis)) return nullptr;
   }
   static char buffer[128];
   // MRS: we want strncpy() here...
@@ -2931,7 +2931,7 @@ void Fl_Widget_Type::write_static(fld::io::Code_Writer& f) {
       if (has_function("static void", buf))
         write_extern_declaration = 0;
     } else {
-      if (has_toplevel_function(0L, buf))
+      if (has_toplevel_function(nullptr, buf))
         write_extern_declaration = 0;
     }
     if (write_extern_declaration)
@@ -2985,7 +2985,7 @@ void Fl_Widget_Type::write_static(fld::io::Code_Writer& f) {
     if (k) {
       f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
       f.write_c("%s((%s*)(o", f.indent(1), k);
-      Fl_Type *q = 0;
+      Fl_Type *q = nullptr;
       for (Fl_Type* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
       if (!q || !q->is_a(ID_Widget_Class))
@@ -3129,7 +3129,7 @@ void Fl_Widget_Type::write_code1(fld::io::Code_Writer& f) {
 }
 
 void Fl_Widget_Type::write_color(fld::io::Code_Writer& f, const char* field, Fl_Color color) {
-  const char* color_name = 0;
+  const char* color_name = nullptr;
   switch (color) {
   case FL_FOREGROUND_COLOR:     color_name = "FL_FOREGROUND_COLOR";     break;
   case FL_BACKGROUND2_COLOR:    color_name = "FL_BACKGROUND2_COLOR";    break;
@@ -3650,19 +3650,19 @@ void Fl_Widget_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"when")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->when(x);
   } else if (!strcmp(c,"minimum")) {
-    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),0));
-    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),nullptr));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"maximum")) {
-    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),0));
-    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),nullptr));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"step")) {
-    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),0));
-    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->step(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),nullptr));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->step(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"value")) {
-    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),0));
-    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->value(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),nullptr));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->value(strtod(f.read_word(),nullptr));
   } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) && is_a(ID_Slider)) {
-    ((Fl_Slider*)o)->slider_size(strtod(f.read_word(),0));
+    ((Fl_Slider*)o)->slider_size(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"textfont")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) {ft=(Fl_Font)x; textstuff(1,ft,s,cc);}
   } else if (!strcmp(c,"textsize")) {
@@ -3680,7 +3680,7 @@ void Fl_Widget_Type::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"class")) {
     subclass(f.read_word());
   } else if (!strcmp(c,"shortcut")) {
-    int shortcut = (int)strtol(f.read_word(),0,0);
+    int shortcut = (int)strtol(f.read_word(),nullptr,0);
     if (is_button()) ((Fl_Button*)o)->shortcut(shortcut);
     else if (is_a(ID_Input)) ((Fl_Input_*)o)->shortcut(shortcut);
     else if (is_a(ID_Value_Input)) ((Fl_Value_Input*)o)->shortcut(shortcut);
@@ -3702,24 +3702,24 @@ void Fl_Widget_Type::read_property(fld::io::Project_Reader &f, const char *c) {
 
 Fl_Menu_Item boxmenu1[] = {
   // these extra ones are for looking up fdesign saved strings:
-  {"NO_FRAME",          0,0,(void *)FL_NO_BOX},
-  {"ROUNDED3D_UPBOX",   0,0,(void *)_FL_ROUND_UP_BOX},
-  {"ROUNDED3D_DOWNBOX", 0,0,(void *)_FL_ROUND_DOWN_BOX},
-  {"OVAL3D_UPBOX",      0,0,(void *)_FL_ROUND_UP_BOX},
-  {"OVAL3D_DOWNBOX",    0,0,(void *)_FL_ROUND_DOWN_BOX},
-  {"0",                 0,0,(void *)ZERO_ENTRY},
-  {"1",                 0,0,(void *)FL_UP_BOX},
-  {"2",                 0,0,(void *)FL_DOWN_BOX},
-  {"3",                 0,0,(void *)FL_FLAT_BOX},
-  {"4",                 0,0,(void *)FL_BORDER_BOX},
-  {"5",                 0,0,(void *)FL_SHADOW_BOX},
-  {"6",                 0,0,(void *)FL_FRAME_BOX},
-  {"7",                 0,0,(void *)FL_ROUNDED_BOX},
-  {"8",                 0,0,(void *)FL_RFLAT_BOX},
-  {"9",                 0,0,(void *)FL_RSHADOW_BOX},
-  {"10",                0,0,(void *)FL_UP_FRAME},
-  {"11",                0,0,(void *)FL_DOWN_FRAME},
-{0}};
+  {"NO_FRAME",          0,nullptr,(void *)FL_NO_BOX},
+  {"ROUNDED3D_UPBOX",   0,nullptr,(void *)_FL_ROUND_UP_BOX},
+  {"ROUNDED3D_DOWNBOX", 0,nullptr,(void *)_FL_ROUND_DOWN_BOX},
+  {"OVAL3D_UPBOX",      0,nullptr,(void *)_FL_ROUND_UP_BOX},
+  {"OVAL3D_DOWNBOX",    0,nullptr,(void *)_FL_ROUND_DOWN_BOX},
+  {"0",                 0,nullptr,(void *)ZERO_ENTRY},
+  {"1",                 0,nullptr,(void *)FL_UP_BOX},
+  {"2",                 0,nullptr,(void *)FL_DOWN_BOX},
+  {"3",                 0,nullptr,(void *)FL_FLAT_BOX},
+  {"4",                 0,nullptr,(void *)FL_BORDER_BOX},
+  {"5",                 0,nullptr,(void *)FL_SHADOW_BOX},
+  {"6",                 0,nullptr,(void *)FL_FRAME_BOX},
+  {"7",                 0,nullptr,(void *)FL_ROUNDED_BOX},
+  {"8",                 0,nullptr,(void *)FL_RFLAT_BOX},
+  {"9",                 0,nullptr,(void *)FL_RSHADOW_BOX},
+  {"10",                0,nullptr,(void *)FL_UP_FRAME},
+  {"11",                0,nullptr,(void *)FL_DOWN_FRAME},
+  {nullptr}};
 
 int lookup_symbol(const char *, int &, int numberok = 0);
 
@@ -3815,7 +3815,7 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 void leave_live_mode_cb(Fl_Widget*, void*) {
-  live_mode_cb(0, 0);
+  live_mode_cb(nullptr, nullptr);
 }
 
 Fl_Widget *Fl_Widget_Type::enter_live_mode(int) {

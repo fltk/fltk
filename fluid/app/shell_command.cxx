@@ -663,7 +663,7 @@ void Fd_Shell_Command_List::clear() {
     ::free(list);
     list_size = 0;
     list_capacity = 0;
-    list = 0;
+    list = nullptr;
   }
 }
 

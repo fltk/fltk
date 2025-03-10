@@ -27,7 +27,7 @@ using namespace fld;
 
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
-static Fl_Timeout_Handler L_update_timer_cb = 0;        // app's update timer callback
+static Fl_Timeout_Handler L_update_timer_cb = nullptr;        // app's update timer callback
 
 // [Static/Local] See if file exists
 static int is_file(const char *filename) {
@@ -59,7 +59,7 @@ static int is_dir(const char *dirname) {
  */
 ExternalCodeEditor::ExternalCodeEditor() {
   pid_        = -1;
-  filename_   = 0;
+  filename_   = nullptr;
   file_mtime_ = 0;
   file_size_  = 0;
   alert_pipe_[0] = alert_pipe_[1] = -1;
@@ -75,7 +75,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
     printf("ExternalCodeEditor() DTOR CALLED (this=%p, pid=%ld)\n",
            (void*)this, (long)pid_);
   close_editor();   // close editor, delete tmp file
-  set_filename(0);  // free()s filename
+  set_filename(nullptr);  // free()s filename
 
   if (alert_pipe_open_) {
     Fl::remove_fd(alert_pipe_[0]);
@@ -92,7 +92,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
  */
 void ExternalCodeEditor::set_filename(const char *val) {
   if ( filename_ ) free((void*)filename_);
-  filename_ = val ? fl_strdup(val) : 0;
+  filename_ = val ? fl_strdup(val) : nullptr;
 }
 
 /**
@@ -121,7 +121,7 @@ void ExternalCodeEditor::close_editor() {
         switch ( fl_choice("Please close external editor\npid=%ld file=%s",
                            "Force Close",       // button 0
                            "Closed",            // button 1
-                           0,                   // button 2
+                           nullptr,                   // button 2
                            long(pid_), filename() ) ) {
           case 0:       // Force Close
             kill_editor();
@@ -187,7 +187,7 @@ void ExternalCodeEditor::kill_editor() {
  \return -1 error getting file info (strerror() has reason)
 */
 int ExternalCodeEditor::handle_changes(const char **code, int force) {
-  code[0] = 0;
+  code[0] = nullptr;
   if ( !is_editing() ) return 0;
   // Get current time/size info, see if file changed
   int changed = 0;
@@ -247,7 +247,7 @@ int ExternalCodeEditor::remove_tmpfile() {
       return -1;
     }
   }
-  set_filename(0);
+  set_filename(nullptr);
   file_mtime_ = 0;
   file_size_  = 0;
   return 1;
@@ -301,7 +301,7 @@ const char* ExternalCodeEditor::create_tmpdir() {
 const char* ExternalCodeEditor::tmp_filename() {
   static char path[FL_PATH_MAX+1];
   const char *tmpdir = create_tmpdir();
-  if ( !tmpdir ) return 0;
+  if ( !tmpdir ) return nullptr;
   const char *ext = Fluid.proj.code_file_name.c_str();   // e.g. ".cxx"
   snprintf(path, FL_PATH_MAX, "%s/%p%s", tmpdir, (void*)this, ext);
   path[FL_PATH_MAX] = 0;
@@ -315,7 +315,7 @@ const char* ExternalCodeEditor::tmp_filename() {
  \return -1 on error (posts dialog with reason)
  */
 static int save_file(const char *filename, const char *code) {
-  if ( code == 0 ) code = "";   // NULL? write an empty file
+  if ( code == nullptr ) code = "";   // NULL? write an empty file
   int fd = open(filename, O_WRONLY|O_CREAT, 0666);
   if ( fd == -1 ) {
     fl_alert("ERROR: open() '%s': %s", filename, strerror(errno));
@@ -352,10 +352,10 @@ static int make_args(char *s,         // string containing words (gets trashed!)
     return -1;
   }
   int t;
-  for(t=0; (t==0)?(ss=strtok(s," \t")):(ss=strtok(0," \t")); t++) {
+  for(t=0; (t==0)?(ss=strtok(s," \t")):(ss=strtok(nullptr," \t")); t++) {
     argv[t] = ss;
   }
-  argv[t] = 0;
+  argv[t] = nullptr;
   aargv[0] = argv;
   aargc[0] = t;
   return(t);
@@ -401,7 +401,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
       // NOTE: no FLTK calls after a fork. Use a pipe to tell the app if the
       //       command can't launch
       int nargs;
-      char **args = 0;
+      char **args = nullptr;
       if (make_args(cmd, &nargs, &args) > 0) {
         execvp(args[0], args);  // run command - doesn't return if succeeds
         if (alert_pipe_open_) {

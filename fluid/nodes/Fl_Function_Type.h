@@ -55,7 +55,7 @@ public:
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
-  int ismain() {return name_ == 0;}
+  int ismain() {return name_ == nullptr;}
   const char *type_name() FL_OVERRIDE {return "Function";}
   const char *title() FL_OVERRIDE {
     return name() ? name() : "main()";

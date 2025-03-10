@@ -23,15 +23,15 @@
 #include "nodes/Fl_Grid_Type.h"
 #include <FL/Fl_Grid.H>
 
-Fl_Double_Window *image_panel_window=(Fl_Double_Window *)0;
+Fl_Double_Window *image_panel_window=(Fl_Double_Window *)nullptr;
 
 static void cb_image_panel_window(Fl_Double_Window* o, void* v) {
   propagate_load(o, v);
 }
 
-Fl_Group *image_panel_imagegroup=(Fl_Group *)0;
+Fl_Group *image_panel_imagegroup=(Fl_Group *)nullptr;
 
-Fl_Box *image_panel_data=(Fl_Box *)0;
+Fl_Box *image_panel_data=(Fl_Box *)nullptr;
 
 static void cb_image_panel_data(Fl_Box* o, void* v) {
   if (v == LOAD) {
@@ -52,7 +52,7 @@ static void cb_image_panel_data(Fl_Box* o, void* v) {
   }
 }
 
-fld::widget::Formula_Input *image_panel_imagew=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *image_panel_imagew=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
@@ -82,7 +82,7 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
     }
 }
 
-fld::widget::Formula_Input *image_panel_imageh=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *image_panel_imageh=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
@@ -121,9 +121,9 @@ static void cb_Reset(Fl_Button*, void* v) {
   }
 }
 
-Fl_Group *image_panel_deimagegroup=(Fl_Group *)0;
+Fl_Group *image_panel_deimagegroup=(Fl_Group *)nullptr;
 
-Fl_Box *image_panel_dedata=(Fl_Box *)0;
+Fl_Box *image_panel_dedata=(Fl_Box *)nullptr;
 
 static void cb_image_panel_dedata(Fl_Box* o, void* v) {
   if (v == LOAD) {
@@ -144,7 +144,7 @@ static void cb_image_panel_dedata(Fl_Box* o, void* v) {
   }
 }
 
-fld::widget::Formula_Input *image_panel_deimagew=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *image_panel_deimagew=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
@@ -174,7 +174,7 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
     }
 }
 
-fld::widget::Formula_Input *image_panel_deimageh=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *image_panel_deimageh=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
@@ -213,7 +213,7 @@ static void cb_Reset1(Fl_Button*, void* v) {
   }
 }
 
-Fl_Button *image_panel_close=(Fl_Button *)0;
+Fl_Button *image_panel_close=(Fl_Button *)nullptr;
 
 static void cb_image_panel_close(Fl_Button*, void* v) {
   if (v != LOAD)
@@ -393,9 +393,9 @@ void run_image_panel() {
 
   image_panel_window->do_callback(image_panel_window, LOAD);
 
-  Fl::pushed(0);
+  Fl::pushed(nullptr);
   Fl_Window *g = Fl::grab();
-  if (g) Fl::grab(0);
+  if (g) Fl::grab(nullptr);
   image_panel_window->show();
   while (image_panel_window->shown())
     Fl::wait();
@@ -409,17 +409,17 @@ void run_image_panel() {
   }
 }
 
-Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
+Fl_Tabs *widget_tabs=(Fl_Tabs *)nullptr;
 
 static void cb_widget_tabs(Fl_Tabs* o, void* v) {
   propagate_load((Fl_Group *)o,v);
 }
 
-Fl_Group *wp_gui_tab=(Fl_Group *)0;
+Fl_Group *wp_gui_tab=(Fl_Group *)nullptr;
 
-Fl_Input *wp_gui_label=(Fl_Input *)0;
+Fl_Input *wp_gui_label=(Fl_Input *)nullptr;
 
-Fl_Input *widget_image_input=(Fl_Input *)0;
+Fl_Input *widget_image_input=(Fl_Input *)nullptr;
 
 static void cb_(Fl_Button*, void* v) {
   if (v != LOAD) {
@@ -427,139 +427,139 @@ static void cb_(Fl_Button*, void* v) {
   }
 }
 
-Fl_Input *widget_deimage_input=(Fl_Input *)0;
+Fl_Input *widget_deimage_input=(Fl_Input *)nullptr;
 
-Fl_Group *wp_gui_alignment=(Fl_Group *)0;
+Fl_Group *wp_gui_alignment=(Fl_Group *)nullptr;
 
 Fl_Menu_Item menu_[] = {
- {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
- {"image over text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"text over image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"text next to image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"image next to text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"image is backdrop", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"   Image Alignment   ", 0,  nullptr, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+  {"image over text", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"text over image", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"text next to image", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"image next to text", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"image is backdrop", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 Fl_Menu_Item menu_1[] = {
- {"   Inside && Outside   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
- {"top left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"top right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"center", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
- {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"left bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"right bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"   Inside && Outside   ", 0,  nullptr, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+  {"top left", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"top", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"top right", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"left", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"center", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"right", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"bottom left", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"bottom", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"bottom right", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"   Outside Alignment   ", 0,  nullptr, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+  {"left top", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"right top", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"left bottom", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {"right bottom", 0,  nullptr, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-fld::widget::Formula_Input *widget_x_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_x_input=(fld::widget::Formula_Input *)nullptr;
 
-fld::widget::Formula_Input *widget_y_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_y_input=(fld::widget::Formula_Input *)nullptr;
 
-fld::widget::Formula_Input *widget_w_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_w_input=(fld::widget::Formula_Input *)nullptr;
 
-fld::widget::Formula_Input *widget_h_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_h_input=(fld::widget::Formula_Input *)nullptr;
 
 Fl_Menu_Item menu_Children[] = {
- {"Fixed", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Reposition", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"Resize", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"Fixed", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Reposition", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"Resize", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-Fl_Group *wp_gui_flexp=(Fl_Group *)0;
+Fl_Group *wp_gui_flexp=(Fl_Group *)nullptr;
 
-Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
+Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)nullptr;
 
-Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
+Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)nullptr;
 
-Fl_Group *wp_gui_values=(Fl_Group *)0;
+Fl_Group *wp_gui_values=(Fl_Group *)nullptr;
 
-Fl_Group *wp_gui_margins=(Fl_Group *)0;
+Fl_Group *wp_gui_margins=(Fl_Group *)nullptr;
 
-Fl_Group *wp_gui_sizerange=(Fl_Group *)0;
+Fl_Group *wp_gui_sizerange=(Fl_Group *)nullptr;
 
-Fl_Shortcut_Button *wp_gui_shortcut=(Fl_Shortcut_Button *)0;
+Fl_Shortcut_Button *wp_gui_shortcut=(Fl_Shortcut_Button *)nullptr;
 
-Fl_Group *wp_gui_xclass=(Fl_Group *)0;
+Fl_Group *wp_gui_xclass=(Fl_Group *)nullptr;
 
-Fl_Group *wp_gui_attributes=(Fl_Group *)0;
+Fl_Group *wp_gui_attributes=(Fl_Group *)nullptr;
 
-Fl_Input *wp_gui_tooltip=(Fl_Input *)0;
+Fl_Input *wp_gui_tooltip=(Fl_Input *)nullptr;
 
-Fl_Group *wp_style_tab=(Fl_Group *)0;
+Fl_Group *wp_style_tab=(Fl_Group *)nullptr;
 
-Fl_Group *wp_style_label=(Fl_Group *)0;
+Fl_Group *wp_style_label=(Fl_Group *)nullptr;
 
-Fl_Button *w_labelcolor=(Fl_Button *)0;
+Fl_Button *w_labelcolor=(Fl_Button *)nullptr;
 
-Fl_Group *wp_style_box=(Fl_Group *)0;
+Fl_Group *wp_style_box=(Fl_Group *)nullptr;
 
-Fl_Button *w_color=(Fl_Button *)0;
+Fl_Button *w_color=(Fl_Button *)nullptr;
 
-Fl_Group *wp_style_downbox=(Fl_Group *)0;
+Fl_Group *wp_style_downbox=(Fl_Group *)nullptr;
 
-Fl_Button *w_selectcolor=(Fl_Button *)0;
+Fl_Button *w_selectcolor=(Fl_Button *)nullptr;
 
-Fl_Group *wp_style_text=(Fl_Group *)0;
+Fl_Group *wp_style_text=(Fl_Group *)nullptr;
 
-Fl_Button *w_textcolor=(Fl_Button *)0;
+Fl_Button *w_textcolor=(Fl_Button *)nullptr;
 
-Fl_Group *wp_cpp_tab=(Fl_Group *)0;
+Fl_Group *wp_cpp_tab=(Fl_Group *)nullptr;
 
-Fl_Group *wp_cpp_class=(Fl_Group *)0;
+Fl_Group *wp_cpp_class=(Fl_Group *)nullptr;
 
-Fl_Group *wp_cpp_name=(Fl_Group *)0;
+Fl_Group *wp_cpp_name=(Fl_Group *)nullptr;
 
 Fl_Menu_Item menu_2[] = {
- {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"public", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"protected", 0,  0, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"private", 0,  nullptr, (void*)nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"public", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"protected", 0,  nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 Fl_Menu_Item menu_3[] = {
- {"local", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"global", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"local", 0,  nullptr, (void*)nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"global", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-Fl_Input *v_input[4]={(Fl_Input *)0};
+Fl_Input *v_input[4]={(Fl_Input *)nullptr};
 
 static void cb_1(Fl_Tile*, void* v) {
   wComment->do_callback(wComment, v);
   wCallback->do_callback(wCallback, v);
 }
 
-Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
+Fl_Text_Editor *wComment=(Fl_Text_Editor *)nullptr;
 
-fld::widget::Code_Editor *wCallback=(fld::widget::Code_Editor *)0;
+fld::widget::Code_Editor *wCallback=(fld::widget::Code_Editor *)nullptr;
 
-Fl_Group *wp_cpp_callback=(Fl_Group *)0;
+Fl_Group *wp_cpp_callback=(Fl_Group *)nullptr;
 
 Fl_Menu_Item menu_4[] = {
- {"void*", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"long", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"void*", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {"long", 0,  nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-Fl_Box *w_when_box=(Fl_Box *)0;
+Fl_Box *w_when_box=(Fl_Box *)nullptr;
 
-Fl_Group *widget_tab_grid_child=(Fl_Group *)0;
+Fl_Group *widget_tab_grid_child=(Fl_Group *)nullptr;
 
-fld::widget::Formula_Input *widget_grid_row_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_row_input=(fld::widget::Formula_Input *)nullptr;
 
-fld::widget::Formula_Input *widget_grid_col_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_col_input=(fld::widget::Formula_Input *)nullptr;
 
-Fl_Box *widget_grid_transient=(Fl_Box *)0;
+Fl_Box *widget_grid_transient=(Fl_Box *)nullptr;
 
 static void cb_widget_grid_transient(Fl_Box* o, void* v) {
   if (v==LOAD) {
@@ -577,35 +577,35 @@ static void cb_widget_grid_transient(Fl_Box* o, void* v) {
   }
 }
 
-Fl_Box *widget_grid_unlinked=(Fl_Box *)0;
+Fl_Box *widget_grid_unlinked=(Fl_Box *)nullptr;
 
-Fl_Group *wp_gridc_align=(Fl_Group *)0;
+Fl_Group *wp_gridc_align=(Fl_Group *)nullptr;
 
 Fl_Menu_Item menu_Horizontal[] = {
- {"GRID_LEFT", 0,  0, (void*)((fl_intptr_t)FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_RIGHT", 0,  0, (void*)((fl_intptr_t)FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"GRID_LEFT", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GRID_CENTER", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GRID_RIGHT", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GRID_FILL", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
 Fl_Menu_Item menu_Vertical[] = {
- {"GRID_TOP", 0,  0, (void*)((fl_intptr_t)FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_BOTTOM", 0,  0, (void*)((fl_intptr_t)FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+  {"GRID_TOP", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GRID_CENTER", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GRID_BOTTOM", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {"GRID_FILL", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+  {nullptr,0,nullptr,nullptr,0,0,0,0,0}
 };
 
-Fl_Group *wp_gridc_size=(Fl_Group *)0;
+Fl_Group *wp_gridc_size=(Fl_Group *)nullptr;
 
-fld::widget::Formula_Input *widget_grid_rowspan_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_rowspan_input=(fld::widget::Formula_Input *)nullptr;
 
-fld::widget::Formula_Input *widget_grid_colspan_input=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_colspan_input=(fld::widget::Formula_Input *)nullptr;
 
-Fl_Group *widget_tab_grid=(Fl_Group *)0;
+Fl_Group *widget_tab_grid=(Fl_Group *)nullptr;
 
-fld::widget::Formula_Input *widget_grid_rows=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_rows=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_widget_grid_rows(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb
@@ -647,7 +647,7 @@ static void cb_3(Fl_Button*, void* v) {
   }
 }
 
-fld::widget::Formula_Input *widget_grid_cols=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_cols=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_widget_grid_cols(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb
@@ -689,7 +689,7 @@ static void cb_5(Fl_Button*, void* v) {
   }
 }
 
-Fl_Group *wp_grid_margin=(Fl_Group *)0;
+Fl_Group *wp_grid_margin=(Fl_Group *)nullptr;
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -767,7 +767,7 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
   }
 }
 
-Fl_Group *wp_grid_gaps=(Fl_Group *)0;
+Fl_Group *wp_grid_gaps=(Fl_Group *)nullptr;
 
 static void cb_Row(Fl_Value_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -818,7 +818,7 @@ static void cb_Row1(Fl_Group* o, void* v) {
   }
 }
 
-fld::widget::Formula_Input *widget_grid_curr_row=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_curr_row=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_widget_grid_curr_row(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -848,7 +848,7 @@ static void cb_7(Fl_Button*, void* v) {
   }
 }
 
-Fl_Group *widget_grid_curr_row_attributes=(Fl_Group *)0;
+Fl_Group *widget_grid_curr_row_attributes=(Fl_Group *)nullptr;
 
 static void cb_Height(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -904,7 +904,7 @@ static void cb_Gap(fld::widget::Formula_Input* o, void* v) {
   }
 }
 
-fld::widget::Formula_Input *widget_grid_curr_col=(fld::widget::Formula_Input *)0;
+fld::widget::Formula_Input *widget_grid_curr_col=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_widget_grid_curr_col(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -934,7 +934,7 @@ static void cb_9(Fl_Button*, void* v) {
   }
 }
 
-Fl_Group *widget_grid_curr_col_attributes=(Fl_Group *)0;
+Fl_Group *widget_grid_curr_col_attributes=(Fl_Group *)nullptr;
 
 static void cb_Width(fld::widget::Formula_Input* o, void* v) {
   Fl_Grid *grid = Fl_Grid_Type::selected();
@@ -990,11 +990,11 @@ static void cb_Gap1(fld::widget::Formula_Input* o, void* v) {
   }
 }
 
-Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
+Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)nullptr;
 
-Fl_Button *wLiveMode=(Fl_Button *)0;
+Fl_Button *wLiveMode=(Fl_Button *)nullptr;
 
-Fl_Button *overlay_button=(Fl_Button *)0;
+Fl_Button *overlay_button=(Fl_Button *)nullptr;
 
 /**
  Create a panel that can be used with all known widgets
@@ -1786,7 +1786,7 @@ Fl_Double_Window* make_widget_panel() {
           v_input[0]->labelsize(11);
           v_input[0]->textfont(4);
           v_input[0]->textsize(11);
-          v_input[0]->callback((Fl_Callback*)v_input_cb, (void*)(0));
+          v_input[0]->callback((Fl_Callback*)v_input_cb, (void*)nullptr);
         } // Fl_Input* v_input[0]
         { v_input[1] = new Fl_Input(95, 110, 310, 20);
           v_input[1]->tooltip("Extra initialization code for the widget.");

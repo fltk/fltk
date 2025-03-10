@@ -269,7 +269,7 @@ public:
   virtual void write_code2(fld::io::Code_Writer& f); // code and .h after children
   void write_comment_h(fld::io::Code_Writer& f, const char *ind=""); // write the commentary text into the header file
   void write_comment_c(fld::io::Code_Writer& f, const char *ind=""); // write the commentary text into the source file
-  void write_comment_inline_c(fld::io::Code_Writer& f, const char *ind=0L); // write the commentary text
+  void write_comment_inline_c(fld::io::Code_Writer& f, const char *ind=nullptr); // write the commentary text
 
   // live mode
   virtual Fl_Widget *enter_live_mode(int top=0); // build widgets needed for live mode

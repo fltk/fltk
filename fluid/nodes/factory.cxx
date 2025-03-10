@@ -70,11 +70,11 @@
 // ---- Browser_Base ----
 
 static Fl_Menu_Item browser_base_type_menu[] = {
-  {"No Select", 0, 0, (void*)FL_NORMAL_BROWSER},
-  {"Select", 0, 0, (void*)FL_SELECT_BROWSER},
-  {"Hold", 0, 0, (void*)FL_HOLD_BROWSER},
-  {"Multi", 0, 0, (void*)FL_MULTI_BROWSER},
-  {0}
+  {"No Select", 0, nullptr, (void*)nullptr},
+  {"Select", 0, nullptr, (void*)FL_SELECT_BROWSER},
+  {"Hold", 0, nullptr, (void*)FL_HOLD_BROWSER},
+  {"Multi", 0, nullptr, (void*)FL_MULTI_BROWSER},
+  {nullptr}
 };
 
 /**
@@ -326,9 +326,9 @@ static Fl_Valuator_Type Fl_Valuator_type;
 // ---- Counter ----
 
 static Fl_Menu_Item counter_type_menu[] = {
-  { "Normal", 0, 0, (void*)FL_NORMAL_COUNTER },
-  { "Simple", 0, 0, (void*)FL_SIMPLE_COUNTER },
-  { 0 }
+  { "Normal", 0, nullptr, (void*)nullptr },
+  { "Simple", 0, nullptr, (void*)FL_SIMPLE_COUNTER },
+  { nullptr }
 };
 
 /**
@@ -399,10 +399,10 @@ static Fl_Adjuster_Type Fl_Adjuster_type;
 // ---- Dial ----
 
 static Fl_Menu_Item dial_type_menu[] = {
-  { "Dot", 0, 0, (void*)0 },
-  { "Line", 0, 0, (void*)FL_LINE_DIAL },
-  { "Fill", 0, 0, (void*)FL_FILL_DIAL },
-  { 0 }
+  { "Dot", 0, nullptr, (void*)nullptr },
+  { "Line", 0, nullptr, (void*)FL_LINE_DIAL },
+  { "Fill", 0, nullptr, (void*)FL_FILL_DIAL },
+  { nullptr }
 };
 
 /**
@@ -432,9 +432,9 @@ static Fl_Dial_Type Fl_Dial_type;
 // ---- Roller ----
 
 static Fl_Menu_Item roller_type_menu[] = {
-  { "Vertical", 0, 0, (void*)0 },
-  { "Horizontal", 0, 0, (void*)FL_HORIZONTAL },
-  { 0 }
+  { "Vertical", 0, nullptr, (void*)nullptr },
+  { "Horizontal", 0, nullptr, (void*)FL_HORIZONTAL },
+  { nullptr }
 };
 
 /**
@@ -466,13 +466,13 @@ static Fl_Roller_Type Fl_Roller_type;
 // ---- Slider ----
 
 static Fl_Menu_Item slider_type_menu[] = {
-  { "Vertical", 0, 0, (void*)FL_VERT_SLIDER },
-  { "Horizontal", 0, 0, (void*)FL_HOR_SLIDER },
-  { "Vert Fill", 0, 0, (void*)FL_VERT_FILL_SLIDER },
-  { "Horz Fill", 0, 0, (void*)FL_HOR_FILL_SLIDER },
-  { "Vert Knob", 0, 0, (void*)FL_VERT_NICE_SLIDER },
-  { "Horz Knob", 0, 0, (void*)FL_HOR_NICE_SLIDER },
-  { 0 }
+  { "Vertical", 0, nullptr, (void*)nullptr },
+  { "Horizontal", 0, nullptr, (void*)FL_HOR_SLIDER },
+  { "Vert Fill", 0, nullptr, (void*)FL_VERT_FILL_SLIDER },
+  { "Horz Fill", 0, nullptr, (void*)FL_HOR_FILL_SLIDER },
+  { "Vert Knob", 0, nullptr, (void*)FL_VERT_NICE_SLIDER },
+  { "Horz Knob", 0, nullptr, (void*)FL_HOR_NICE_SLIDER },
+  { nullptr }
 };
 
 /**
@@ -506,9 +506,9 @@ static Fl_Slider_Type Fl_Slider_type;
 // ---- Scrollbar ----
 
 static Fl_Menu_Item scrollbar_type_menu[] = {
-  { "Vertical", 0, 0, (void*)FL_VERT_SLIDER },
-  { "Horizontal", 0, 0, (void*)FL_HOR_SLIDER },
-  { 0 }
+  { "Vertical", 0, nullptr, (void*)nullptr },
+  { "Horizontal", 0, nullptr, (void*)FL_HOR_SLIDER },
+  { nullptr }
 };
 
 /**
@@ -649,12 +649,12 @@ static Fl_Value_Output_Type Fl_Value_Output_type;
 // ---- Input ----
 
 static Fl_Menu_Item input_type_menu[] = {
-  { "Normal", 0, 0, (void*)FL_NORMAL_INPUT },
-  { "Multiline", 0, 0, (void*)FL_MULTILINE_INPUT },
-  { "Secret", 0, 0, (void*)FL_SECRET_INPUT },
-  { "Int", 0, 0, (void*)FL_INT_INPUT },
-  { "Float", 0, 0, (void*)FL_FLOAT_INPUT },
-  {0}
+  { "Normal", 0, nullptr, (void*)nullptr },
+  { "Multiline", 0, nullptr, (void*)FL_MULTILINE_INPUT },
+  { "Secret", 0, nullptr, (void*)FL_SECRET_INPUT },
+  { "Int", 0, nullptr, (void*)FL_INT_INPUT },
+  { "Float", 0, nullptr, (void*)FL_FLOAT_INPUT },
+  {nullptr}
 };
 
 /**
@@ -738,9 +738,9 @@ static Fl_File_Input_Type Fl_File_Input_type;
 // ---- Output ----
 
 static Fl_Menu_Item output_type_menu[] = {
-  { "Normal", 0, 0, (void*)FL_NORMAL_OUTPUT },
-  { "Multiline", 0, 0, (void*)FL_MULTILINE_OUTPUT },
-  { 0 }
+  { "Normal", 0, nullptr, (void*)FL_NORMAL_OUTPUT },
+  { "Multiline", 0, nullptr, (void*)FL_MULTILINE_OUTPUT },
+  { nullptr }
 };
 
 /**
@@ -1026,9 +1026,9 @@ static Fl_Progress_Type Fl_Progress_type;
 // ---- Spinner ----
 
 static Fl_Menu_Item spinner_type_menu[] = {
-  { "Integer", 0, 0, (void*)FL_INT_INPUT },
-  { "Float",  0, 0, (void*)FL_FLOAT_INPUT },
-  { 0 }
+  { "Integer", 0, nullptr, (void*)FL_INT_INPUT },
+  { "Float",  0, nullptr, (void*)FL_FLOAT_INPUT },
+  { nullptr }
 };
 
 /**
@@ -1381,7 +1381,7 @@ static void cb(Fl_Widget *, void *v) {
     defined further up in this file.
  */
 Fl_Menu_Item New_Menu[] = {
-{"Code",0,0,0,FL_SUBMENU},
+  {"Code",0,nullptr,nullptr,FL_SUBMENU},
   {"Function/Method",0,cbf,(void*)&Fl_Function_type},
   {"Code",0,cbf,(void*)&Fl_Code_type},
   {"Code Block",0,cbf,(void*)&Fl_CodeBlock_type},
@@ -1391,70 +1391,70 @@ Fl_Menu_Item New_Menu[] = {
   {"Widget Class",0,cb,(void*)&Fl_Widget_Class_type},
   {"Comment",0,cbf,(void*)&Fl_Comment_type},
   {"Inlined Data",0,cbf,(void*)&Fl_Data_type},
-{0},
-{"Group",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Window_type},
-  {0,0,cb,(void*)&Fl_Group_type},
-  {0,0,cb,(void*)&Fl_Pack_type},
-  {0,0,cb,(void*)&Fl_Flex_type},
-  {0,0,cb,(void*)&Fl_Tabs_type},
-  {0,0,cb,(void*)&Fl_Scroll_type},
-  {0,0,cb,(void*)&Fl_Tile_type},
-  {0,0,cb,(void*)&Fl_Wizard_type},
-  {0,0,cb,(void*)&Fl_Grid_type},
-{0},
-{"Buttons",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Button_type},
-  {0,0,cb,(void*)&Fl_Return_Button_type},
-  {0,0,cb,(void*)&Fl_Light_Button_type},
-  {0,0,cb,(void*)&Fl_Check_Button_type},
-  {0,0,cb,(void*)&Fl_Repeat_Button_type},
-  {0,0,cb,(void*)&Fl_Round_Button_type},
-{0},
-{"Valuators",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Slider_type},
-  {0,0,cb,(void*)&Fl_Scrollbar_type},
-  {0,0,cb,(void*)&Fl_Value_Slider_type},
-  {0,0,cb,(void*)&Fl_Adjuster_type},
-  {0,0,cb,(void*)&Fl_Counter_type},
-  {0,0,cb,(void*)&Fl_Spinner_type},
-  {0,0,cb,(void*)&Fl_Dial_type},
-  {0,0,cb,(void*)&Fl_Roller_type},
-  {0,0,cb,(void*)&Fl_Value_Input_type},
-  {0,0,cb,(void*)&Fl_Value_Output_type},
-{0},
-{"Text",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Input_type},
-  {0,0,cb,(void*)&Fl_Output_type},
-  {0,0,cb,(void*)&Fl_Text_Editor_type},
-  {0,0,cb,(void*)&Fl_Text_Display_type},
-  {0,0,cb,(void*)&Fl_File_Input_type},
-  {0,0,cb,(void*)&Fl_Terminal_type},
-{0},
-{"Menus",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Menu_Bar_type},
-  {0,0,cb,(void*)&Fl_Menu_Button_type},
-  {0,0,cb,(void*)&Fl_Choice_type},
-  {0,0,cb,(void*)&Fl_Input_Choice_type},
-  {0,0,cb, (void*)&Fl_Submenu_type},
-  {0,0,cb, (void*)&Fl_Menu_Item_type},
+  {nullptr},
+  {"Group",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Window_type},
+  {nullptr,0,cb,(void*)&Fl_Group_type},
+  {nullptr,0,cb,(void*)&Fl_Pack_type},
+  {nullptr,0,cb,(void*)&Fl_Flex_type},
+  {nullptr,0,cb,(void*)&Fl_Tabs_type},
+  {nullptr,0,cb,(void*)&Fl_Scroll_type},
+  {nullptr,0,cb,(void*)&Fl_Tile_type},
+  {nullptr,0,cb,(void*)&Fl_Wizard_type},
+  {nullptr,0,cb,(void*)&Fl_Grid_type},
+  {nullptr},
+  {"Buttons",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Button_type},
+  {nullptr,0,cb,(void*)&Fl_Return_Button_type},
+  {nullptr,0,cb,(void*)&Fl_Light_Button_type},
+  {nullptr,0,cb,(void*)&Fl_Check_Button_type},
+  {nullptr,0,cb,(void*)&Fl_Repeat_Button_type},
+  {nullptr,0,cb,(void*)&Fl_Round_Button_type},
+  {nullptr},
+  {"Valuators",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Slider_type},
+  {nullptr,0,cb,(void*)&Fl_Scrollbar_type},
+  {nullptr,0,cb,(void*)&Fl_Value_Slider_type},
+  {nullptr,0,cb,(void*)&Fl_Adjuster_type},
+  {nullptr,0,cb,(void*)&Fl_Counter_type},
+  {nullptr,0,cb,(void*)&Fl_Spinner_type},
+  {nullptr,0,cb,(void*)&Fl_Dial_type},
+  {nullptr,0,cb,(void*)&Fl_Roller_type},
+  {nullptr,0,cb,(void*)&Fl_Value_Input_type},
+  {nullptr,0,cb,(void*)&Fl_Value_Output_type},
+  {nullptr},
+  {"Text",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Input_type},
+  {nullptr,0,cb,(void*)&Fl_Output_type},
+  {nullptr,0,cb,(void*)&Fl_Text_Editor_type},
+  {nullptr,0,cb,(void*)&Fl_Text_Display_type},
+  {nullptr,0,cb,(void*)&Fl_File_Input_type},
+  {nullptr,0,cb,(void*)&Fl_Terminal_type},
+  {nullptr},
+  {"Menus",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Menu_Bar_type},
+  {nullptr,0,cb,(void*)&Fl_Menu_Button_type},
+  {nullptr,0,cb,(void*)&Fl_Choice_type},
+  {nullptr,0,cb,(void*)&Fl_Input_Choice_type},
+  {nullptr,0,cb, (void*)&Fl_Submenu_type},
+  {nullptr,0,cb, (void*)&Fl_Menu_Item_type},
   {"Checkbox Menu Item",0,cb, (void*)&Fl_Checkbox_Menu_Item_type},
   {"Radio Menu Item",0,cb, (void*)&Fl_Radio_Menu_Item_type},
-{0},
-{"Browsers",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Browser_type},
-  {0,0,cb,(void*)&Fl_Check_Browser_type},
-  {0,0,cb,(void*)&Fl_File_Browser_type},
-  {0,0,cb,(void*)&Fl_Tree_type},
-  {0,0,cb,(void*)&Fl_Help_View_type},
-  {0,0,cb,(void*)&Fl_Table_type},
-{0},
-{"Other",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Box_type},
-  {0,0,cb,(void*)&Fl_Clock_type},
-  {0,0,cb,(void*)&Fl_Progress_type},
-{0},
-{0}};
+  {nullptr},
+  {"Browsers",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Browser_type},
+  {nullptr,0,cb,(void*)&Fl_Check_Browser_type},
+  {nullptr,0,cb,(void*)&Fl_File_Browser_type},
+  {nullptr,0,cb,(void*)&Fl_Tree_type},
+  {nullptr,0,cb,(void*)&Fl_Help_View_type},
+  {nullptr,0,cb,(void*)&Fl_Table_type},
+  {nullptr},
+  {"Other",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Fl_Box_type},
+  {nullptr,0,cb,(void*)&Fl_Clock_type},
+  {nullptr,0,cb,(void*)&Fl_Progress_type},
+  {nullptr},
+  {nullptr}};
 
 #include <FL/Fl_Multi_Label.H>
 

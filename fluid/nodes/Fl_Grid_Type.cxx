@@ -288,7 +288,7 @@ Fl_Grid_Type::Fl_Grid_Type() {
 Fl_Widget *Fl_Grid_Type::widget(int X,int Y,int W,int H) {
   Fl_Grid *g = new Fl_Grid_Proxy(X,Y,W,H);
   g->layout(3, 3);
-  Fl_Group::current(0);
+  Fl_Group::current(nullptr);
   return g;
 }
 

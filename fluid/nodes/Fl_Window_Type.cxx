@@ -110,9 +110,9 @@ void show_settings_cb(Fl_Widget *, void *) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item window_type_menu[] = {
-  {"Single",0,0,(void*)FL_WINDOW},
-  {"Double",0,0,(void*)(FL_DOUBLE_WINDOW)},
-  {0}};
+  {"Single",0,nullptr,(void*)FL_WINDOW},
+  {"Double",0,nullptr,(void*)(FL_DOUBLE_WINDOW)},
+  {nullptr}};
 
 static int overlays_invisible;
 
@@ -127,7 +127,7 @@ public:
   Fl_Window_Type *window;
   int handle(int) FL_OVERRIDE;
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {
-    Fl_Group::current(0);
+    Fl_Group::current(nullptr);
     callback((Fl_Callback*)close_cb);
   }
   void resize(int,int,int,int) FL_OVERRIDE;
@@ -196,7 +196,7 @@ uchar *Overlay_Window::read_image(int &ww, int &hh) {
   draw();
 
   // Read the screen image...
-  pixels = fl_read_image(0, 0, 0, ww, hh);
+  pixels = fl_read_image(nullptr, 0, 0, ww, hh);
 
   fl_end_offscreen();
 
@@ -237,12 +237,12 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   }
   if (!p) {
     fl_message("Please select a function");
-    return 0;
+    return nullptr;
   }
   Fl_Window_Type *myo = new Fl_Window_Type();
   if (!this->o) {// template widget
     this->o = new Fl_Window(100,100);
-    Fl_Group::current(0);
+    Fl_Group::current(nullptr);
   }
   myo->factory = this;
   myo->drag = 0;
@@ -260,7 +260,7 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
 void Fl_Window_Type::add_child(Fl_Type* cc, Fl_Type* before) {
   if (!cc->is_widget()) return;
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
   ((Fl_Window*)o)->insert(*(c->o), b);
   o->redraw();
 }
@@ -274,7 +274,7 @@ void Fl_Window_Type::remove_child(Fl_Type* cc) {
 void Fl_Window_Type::move_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   ((Fl_Window*)o)->remove(c->o);
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
   ((Fl_Window*)o)->insert(*(c->o), b);
   o->redraw();
 }
@@ -425,7 +425,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
 
   Fl_Widget* t = resizable();
   if (Fluid.proj.tree.allow_layout == 0) {
-    resizable(0);
+    resizable(nullptr);
   }
 
   // do not set the mod flag if the window was not resized. In FLUID, all
@@ -457,7 +457,7 @@ void Fl_Window_Type::newdx() {
   }
 
   if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
-    Fl_Type *selection = 0L; // special power for the first selected widget
+    Fl_Type *selection = nullptr; // special power for the first selected widget
     for (Fl_Type *q=next; q && q->level>level; q = q->next) {
       if (q->selected && q->is_true_widget()) {
         selection = q;
@@ -647,7 +647,7 @@ void Fl_Window_Type::draw_overlay() {
   int mybx,myby,mybr,mybt;
   int mysx,mysy,mysr,myst;
   mybx = mysx = o->w(); myby = mysy = o->h(); mybr = mysr = 0; mybt = myst = 0;
-  Fl_Type *selection = 0L; // special power for the first selected widget
+  Fl_Type *selection = nullptr; // special power for the first selected widget
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_true_widget()) {
       if (!selection) selection = q;
@@ -728,7 +728,7 @@ void Fl_Window_Type::fix_overlay() {
 
 // check if we must redraw any parent of tabs/wizard type
 void check_redraw_corresponding_parent(Fl_Type *s) {
-  Fl_Widget_Type * prev_parent = 0;
+  Fl_Widget_Type * prev_parent = nullptr;
   if( !s || !s->selected || !s->is_widget()) return;
   for (Fl_Type *i=s; i && i->parent; i=i->parent) {
     if (i->is_a(ID_Group) && prev_parent) {
@@ -1095,7 +1095,7 @@ int Fl_Window_Type::handle(int event) {
       const Fl_Menu_Item* m = New_Menu->popup(mx,my,"New",myprev);
       if (m && m->callback()) {myprev = m; m->do_callback(this->o);}
       popupx = 0x7FFFFFFF; popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
-      in_this_only = 0;
+      in_this_only = nullptr;
       return 1;
     }
     // find the innermost item clicked on:
@@ -1234,7 +1234,7 @@ int Fl_Window_Type::handle(int event) {
       return 1;
 
     case 'o':
-      toggle_overlays(0, 0);
+        toggle_overlays(nullptr, nullptr);
       break;
 
     default:
@@ -1245,8 +1245,8 @@ int Fl_Window_Type::handle(int event) {
     in_this_only = this; // modifies how some menu items work.
     const Fl_Menu_Item* m = Fluid.main_menu->test_shortcut();
     if (m && m->callback()) m->do_callback(this->o);
-    in_this_only = 0;
-    return (m != 0);}
+    in_this_only = nullptr;
+    return (m != nullptr);}
 
   default:
     return 0;
@@ -1365,7 +1365,7 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
 ///////////////////////////////////////////////////////////////////////
 
 Fl_Widget_Class_Type Fl_Widget_Class_type;
-Fl_Widget_Class_Type *current_widget_class = 0;
+Fl_Widget_Class_Type *current_widget_class = nullptr;
 
 /**
  Create and add a new Widget Class node.
@@ -1385,7 +1385,7 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
 
   if (!this->o) {// template widget
     this->o = new Fl_Window(100,100);
-    Fl_Group::current(0);
+    Fl_Group::current(nullptr);
   }
   myo->factory = this;
   myo->drag = 0;

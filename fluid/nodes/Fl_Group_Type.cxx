@@ -214,7 +214,7 @@ void Fl_Group_Type::write_code2(fld::io::Code_Writer& f) {
 // sure it is visible:
 void Fl_Group_Type::add_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
   ((Fl_Group*)o)->insert(*(c->o), b);
   o->redraw();
 }
@@ -230,7 +230,7 @@ void Fl_Group_Type::remove_child(Fl_Type* cc) {
 // move, don't change selected value:
 void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
   ((Fl_Group*)o)->insert(*(c->o), b);
   o->redraw();
 }
@@ -258,9 +258,9 @@ Fl_Pack_Type Fl_Pack_type;      // the "factory"
 const char pack_type_name[] = "Fl_Pack";
 
 Fl_Menu_Item pack_type_menu[] = {
-  {"HORIZONTAL", 0, 0, (void*)Fl_Pack::HORIZONTAL},
-  {"VERTICAL", 0, 0, (void*)Fl_Pack::VERTICAL},
-  {0}
+  {"HORIZONTAL", 0, nullptr, (void*)Fl_Pack::HORIZONTAL},
+  {"VERTICAL", 0, nullptr, (void*)Fl_Pack::VERTICAL},
+  {nullptr}
 };
 
 Fl_Widget *Fl_Pack_Type::enter_live_mode(int) {
@@ -280,9 +280,9 @@ void Fl_Pack_Type::copy_properties()
 const char flex_type_name[] = "Fl_Flex";
 
 Fl_Menu_Item flex_type_menu[] = {
-  {"HORIZONTAL", 0, 0, (void*)Fl_Flex::HORIZONTAL},
-  {"VERTICAL", 0, 0, (void*)Fl_Flex::VERTICAL},
-  {0}};
+  {"HORIZONTAL", 0, nullptr, (void*)Fl_Flex::HORIZONTAL},
+  {"VERTICAL", 0, nullptr, (void*)Fl_Flex::VERTICAL},
+  {nullptr}};
 
 Fl_Flex_Type Fl_Flex_type;      // the "factory"
 
@@ -652,7 +652,7 @@ class Fluid_Table : public Fl_Table {
     }
   }
 public:
-  Fluid_Table(int x, int y, int w, int h, const char *l=0L)
+  Fluid_Table(int x, int y, int w, int h, const char *l=nullptr)
   : Fl_Table(x, y, w, h, l) {
     end();
     for ( int r=0; r<MAX_ROWS; r++ )
@@ -678,7 +678,7 @@ Fl_Widget *Fl_Table_Type::widget(int X,int Y,int W,int H) {
 
 void Fl_Table_Type::add_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
   if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
     fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
                "Please refer to the documentation on Fl_Table.");
@@ -695,7 +695,7 @@ void Fl_Table_Type::remove_child(Fl_Type* cc) {
 
 void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : nullptr;
   ((Fl_Table*)o)->insert(*(c->o), b);
   o->redraw();
 }
@@ -747,7 +747,7 @@ void Fl_Tabs_Proxy::draw() {
 Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
   Fl_Tabs *t = (Fl_Tabs*)o;
   Fl_Widget *a = t->which(x,y);
-  if (!a) return 0; // didn't click on tab
+  if (!a) return nullptr; // didn't click on tab
   // changing the visible tab has an impact on the generated
   // source code, so mark this project as changed.
   int changed = (a!=t->value());
@@ -766,7 +766,7 @@ void Fl_Tabs_Type::add_child(Fl_Type* c, Fl_Type* before) {
 void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   Fl_Tabs *t = (Fl_Tabs*)o;
-  if (t->value() == c->o) t->value(0);
+  if (t->value() == c->o) t->value(nullptr);
   Fl_Group_Type::remove_child(c);
 }
 
@@ -787,13 +787,13 @@ Fl_Scroll_Type Fl_Scroll_type;  // the "factory"
 const char scroll_type_name[] = "Fl_Scroll";
 
 Fl_Menu_Item scroll_type_menu[] = {
-  {"BOTH", 0, 0, 0/*(void*)Fl_Scroll::BOTH*/},
-  {"HORIZONTAL", 0, 0, (void*)Fl_Scroll::HORIZONTAL},
-  {"VERTICAL", 0, 0, (void*)Fl_Scroll::VERTICAL},
-  {"HORIZONTAL_ALWAYS", 0, 0, (void*)Fl_Scroll::HORIZONTAL_ALWAYS},
-  {"VERTICAL_ALWAYS", 0, 0, (void*)Fl_Scroll::VERTICAL_ALWAYS},
-  {"BOTH_ALWAYS", 0, 0, (void*)Fl_Scroll::BOTH_ALWAYS},
-  {0}};
+  {"BOTH", 0, nullptr, nullptr/*(void*)Fl_Scroll::BOTH*/},
+  {"HORIZONTAL", 0, nullptr, (void*)Fl_Scroll::HORIZONTAL},
+  {"VERTICAL", 0, nullptr, (void*)Fl_Scroll::VERTICAL},
+  {"HORIZONTAL_ALWAYS", 0, nullptr, (void*)Fl_Scroll::HORIZONTAL_ALWAYS},
+  {"VERTICAL_ALWAYS", 0, nullptr, (void*)Fl_Scroll::VERTICAL_ALWAYS},
+  {"BOTH_ALWAYS", 0, nullptr, (void*)Fl_Scroll::BOTH_ALWAYS},
+  {nullptr}};
 
 Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());

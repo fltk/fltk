@@ -46,10 +46,10 @@
 // ---- Button ----
 
 static Fl_Menu_Item buttontype_menu[] = {
-  {"Normal", 0, 0, (void*)0},
-  {"Toggle", 0, 0, (void*)FL_TOGGLE_BUTTON},
-  {"Radio", 0, 0, (void*)FL_RADIO_BUTTON},
-  {0}
+  {"Normal", 0, nullptr, (void*)nullptr},
+  {"Toggle", 0, nullptr, (void*)FL_TOGGLE_BUTTON},
+  {"Radio", 0, nullptr, (void*)FL_RADIO_BUTTON},
+  {nullptr}
 };
 
 Fl_Menu_Item *Fl_Button_Type::subtypes() {

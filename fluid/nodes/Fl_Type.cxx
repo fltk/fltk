@@ -264,7 +264,7 @@ bool validate_branch(class Fl_Type *root) {
 #endif
 
 void select_all_cb(Fl_Widget *,void *) {
-  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : 0;
+  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
   if (in_this_only) {
     Fl_Type *t = p;
     for (; t && t != in_this_only; t = t->parent) {/*empty*/}
@@ -288,7 +288,7 @@ void select_all_cb(Fl_Widget *,void *) {
 }
 
 void select_none_cb(Fl_Widget *,void *) {
-  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : 0;
+  Fl_Type *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
   if (in_this_only) {
     Fl_Type *t = p;
     for (; t && t != in_this_only; t = t->parent) {/*empty*/}
@@ -414,7 +414,7 @@ void delete_all(int selected_only) {
     g_layout_list.current_preset(0);
     g_layout_list.update_dialogs();
   }
-  selection_changed(0);
+  selection_changed(nullptr);
   if (widget_browser) {
     if (selected_only)
       widget_browser->restore_scroll_position();
@@ -439,13 +439,13 @@ int storestring(const char *n, const char * & p, int nostrip) {
     const char *e = n + strlen(n);
     if (!nostrip) while (e > n && isspace((int)(unsigned char)*(e-1))) e--;
     length = int(e-n);
-    if (!length) n = 0;
+    if (!length) n = nullptr;
   }
   if (n == p) return 0;
   if (n && p && !strncmp(n,p,length) && !p[length]) return 0;
   if (p) free((void *)p);
   if (!n || !*n) {
-    p = 0;
+    p = nullptr;
   } else {
     char *q = (char *)malloc(length+1);
     strlcpy(q,n,length+1);
@@ -552,7 +552,7 @@ Fl_Type *Fl_Type::prev_sibling() {
   for (n = prev; n && n->level > level; n = n->prev) ;
   if (n && (n->level == level))
     return n;
-  return 0;
+  return nullptr;
 }
 
 // Return the next sibling in the tree structure or NULL.
@@ -561,7 +561,7 @@ Fl_Type *Fl_Type::next_sibling() {
   for (n = next; n && n->level > level; n = n->next) ;
   if (n && (n->level == level))
     return n;
-  return 0;
+  return nullptr;
 }
 
 // Return the first child or NULL
@@ -709,7 +709,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
   // Give the widgets in our tree a chance to update themselves
   for (Fl_Type *t = this; t && t!=end->next; t = t->next) {
     if (target_parent && (t->level == target_level))
-      target_parent->add_child(t, 0);
+      target_parent->add_child(t, nullptr);
     update_visibility_flag(t);
   }
 
@@ -807,13 +807,13 @@ Fl_Type *Fl_Type::remove() {
   else
     Fluid.proj.tree.last = prev;
   Fl_Type *r = end->next;
-  prev = end->next = 0;
+  prev = end->next = nullptr;
   // allow the parent to update changes in the UI
   if (parent) parent->remove_child(this);
-  parent = 0;
+  parent = nullptr;
   // tell the widget_browser that we removed some nodes
   widget_browser->redraw();
-  selection_changed(0);
+  selection_changed(nullptr);
   return r;
 }
 
@@ -1117,7 +1117,7 @@ void Fl_Type::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     const char *s = comment();
-    if (strchr(s, '\n')==0L) {
+    if (strchr(s, '\n')==nullptr) {
       // single line comment
       if (pre) f.write_c("%s", pre);
       f.write_c("// %s\n", s);
@@ -1160,7 +1160,7 @@ void Fl_Type::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
   \see leave_live_mode()
 */
 Fl_Widget *Fl_Type::enter_live_mode(int) {
-  return 0L;
+  return nullptr;
 }
 
 /**
@@ -1186,7 +1186,7 @@ void Fl_Type::copy_properties() {
  */
 int Fl_Type::user_defined(const char* cbname) const {
   for (Fl_Type* p = Fluid.proj.tree.first; p ; p = p->next)
-    if (p->is_a(ID_Function) && p->name() != 0)
+    if (p->is_a(ID_Function) && p->name() != nullptr)
       if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
         if (p->name()[strlen(cbname)] == '(')
           return 1;
@@ -1217,7 +1217,7 @@ const char* Fl_Type::class_name(const int need_nest) const {
     if (p->is_class()) {
       // see if we are nested in another class, we must fully-qualify name:
       // this is lame but works...
-      const char* q = 0;
+      const char* q = nullptr;
       if(need_nest) q=p->class_name(need_nest);
       if (q) {
         static char s[256];
@@ -1230,7 +1230,7 @@ const char* Fl_Type::class_name(const int need_nest) const {
     }
     p = p->parent;
   }
-  return 0;
+  return nullptr;
 }
 
 /**
@@ -1325,7 +1325,7 @@ Fl_Type *Fl_Type::find_in_text(int text_type, int crsr) {
         break;
     }
   }
-  return 0;
+  return nullptr;
 }
 
 /// \}

@@ -49,7 +49,7 @@ class Code_Editor : public Fl_Text_Editor {
   static int auto_indent(int, Code_Editor* e);
 
 public:
-  Code_Editor(int X, int Y, int W, int H, const char *L=0);
+  Code_Editor(int X, int Y, int W, int H, const char *L=nullptr);
   ~Code_Editor();
   void textsize(Fl_Fontsize s);
 

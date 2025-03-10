@@ -25,7 +25,7 @@ using namespace fld::node;
 
 Tree::Tree(Project &proj)
 : proj_(proj)
-{ }
+{ (void)proj_; }
 
 
 ///** Find a node by its unique id.

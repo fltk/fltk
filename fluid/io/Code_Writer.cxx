@@ -47,7 +47,7 @@ struct Fd_Identifier_Tree {
   char* text;
   void* object;
   Fd_Identifier_Tree *left, *right;
-  Fd_Identifier_Tree (const char* t, void* o) : text(fl_strdup(t)), object(o) {left = right = 0;}
+  Fd_Identifier_Tree (const char* t, void* o) : text(fl_strdup(t)), object(o) {left = right = nullptr;}
   ~Fd_Identifier_Tree();
 };
 
@@ -160,7 +160,7 @@ struct Fd_Text_Tree {
   Fd_Text_Tree *left, *right;
   Fd_Text_Tree(const char *t) {
     text = fl_strdup(t);
-    left = right = 0;
+    left = right = nullptr;
   }
   ~Fd_Text_Tree();
 };
@@ -177,7 +177,7 @@ struct Fd_Pointer_Tree {
   Fd_Pointer_Tree *left, *right;
   Fd_Pointer_Tree(void *p) {
     ptr = p;
-    left = right = 0;
+    left = right = nullptr;
   }
   ~Fd_Pointer_Tree();
 };
@@ -291,7 +291,7 @@ void Code_Writer::write_cstring(const char *s, int length) {
       crc_puts("\" ... text... \"");
     return;
   }
-  if (length==-1 || s==0L) {
+  if (length==-1 || s==nullptr) {
     crc_puts("\n#error  string not found\n");
     crc_puts("\" ... undefined size text... \"");
     return;
@@ -621,7 +621,7 @@ Fl_Type* Code_Writer::write_code(Fl_Type* p) {
     }
 
     write_h("};\n");
-    current_widget_class = 0L;
+    current_widget_class = nullptr;
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children
@@ -647,10 +647,10 @@ Fl_Type* Code_Writer::write_code(Fl_Type* p) {
  */
 int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   write_codeview = to_codeview;
-  delete id_root; id_root = 0;
+  delete id_root; id_root = nullptr;
   indentation = 0;
-  current_class = 0L;
-  current_widget_class = 0L;
+  current_class = nullptr;
+  current_widget_class = nullptr;
   if (!s) code_file = stdout;
   else {
     FILE *f = fl_fopen(s, "wb");
@@ -794,10 +794,10 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
 
   if (code_file != stdout)
     x = fclose(code_file);
-  code_file = 0;
+  code_file = nullptr;
   if (header_file != stdout)
     y = fclose(header_file);
-  header_file = 0;
+  header_file = nullptr;
   return x >= 0 && y >= 0;
 }
 

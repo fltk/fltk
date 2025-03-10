@@ -137,7 +137,7 @@ int Project_Reader::open_read(const char *s) {
 int Project_Reader::close_read() {
   if (fin != stdin) {
     int x = fclose(fin);
-    fin = 0;
+    fin = nullptr;
     return x >= 0;
   }
   return 1;
@@ -230,7 +230,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 
       if (!strcmp(c,"version")) {
         c = read_word();
-        read_version = strtod(c,0);
+        read_version = strtod(c,nullptr);
         if (read_version<=0 || read_version>double(FL_VERSION+0.00001))
           read_error("unknown version '%s'",c);
         continue;
@@ -423,11 +423,11 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
     proj_.reset();
   read_children(Fluid.proj.tree.current, merge, strategy);
   // clear this
-  Fluid.proj.tree.current = 0;
+  Fluid.proj.tree.current = nullptr;
   // Force menu items to be rebuilt...
   for (o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->is_a(ID_Menu_Manager_)) {
-      o->add_child(0,0);
+      o->add_child(nullptr,nullptr);
     }
   }
   for (o = Fluid.proj.tree.first; o; o = o->next) {
@@ -499,7 +499,7 @@ const char *Project_Reader::read_word(int wantbrace) {
   for (;;) {
     x = nextchar();
     if (x < 0 && feof(fin)) {   // eof
-      return 0;
+      return nullptr;
     } else if (x == '#') {      // comment
       do x = nextchar(); while (x >= 0 && x != '\n');
       lineno++;
@@ -645,7 +645,7 @@ static const char *class_matcher[] = {
   "2", "FL_BOX", // was FL_TEXT
   "62","FL_TIMER",
   "24","Fl_Value_Slider",
-  0};
+  nullptr};
 
 
 /**
@@ -707,9 +707,9 @@ static void forms_end(Fl_Group *g, int flip) {
 void Project_Reader::read_fdesign() {
   int fdesign_magic = atoi(read_word());
   fdesign_flip = (fdesign_magic < 13000);
-  Fl_Widget_Type *window = 0;
-  Fl_Widget_Type *group = 0;
-  Fl_Widget_Type *widget = 0;
+  Fl_Widget_Type *window = nullptr;
+  Fl_Widget_Type *group = nullptr;
+  Fl_Widget_Type *widget = nullptr;
   if (!Fluid.proj.tree.current) {
     Fl_Type *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
     t->name("create_the_forms()");
@@ -737,9 +737,9 @@ void Project_Reader::read_fdesign() {
           Fl_Group* g = (Fl_Group*)(group->o);
           g->begin();
           forms_end(g, fdesign_flip);
-          Fl_Group::current(0);
+          Fl_Group::current(nullptr);
         }
-        group = widget = 0;
+        group = widget = nullptr;
         Fluid.proj.tree.current = window;
       } else {
         for (int i = 0; class_matcher[i]; i += 2)

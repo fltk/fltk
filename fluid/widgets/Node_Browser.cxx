@@ -530,7 +530,7 @@ int Node_Browser::handle(int e) {
     if (l) {
       X += 3 + 12*l->level - hposition();
       if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) ;
-      else l = 0;
+      else l = nullptr;
     }
     if (l != pushedtitle) {
       if (pushedtitle) redraw_line(pushedtitle);
@@ -546,7 +546,7 @@ int Node_Browser::handle(int e) {
       break;
     }
     l = pushedtitle;
-    title = pushedtitle = 0;
+      title = pushedtitle = nullptr;
     if (l) {
       if (!l->folded_) {
         l->folded_ = 1;
