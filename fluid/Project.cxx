@@ -17,7 +17,7 @@
 #include "Project.h"
 
 #include "io/String_Writer.h"
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
 

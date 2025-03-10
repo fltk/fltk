@@ -31,10 +31,10 @@ decl {\#include "Fluid.h"} {private global
 decl {\#include "proj/undo.h"} {private global
 }
 
-decl {\#include "nodes/Fl_Widget_Type.h"} {private global
+decl {\#include "nodes/Widget_Node.h"} {private global
 }
 
-decl {\#include "nodes/Fl_Grid_Type.h"} {private global
+decl {\#include "nodes/Grid_Node.h"} {private global
 }
 
 decl {\#include "widgets/Formula_Input.h"} {selected public global
@@ -92,9 +92,9 @@ Function {make_image_panel()} {
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_image_w_ = o->value();
         Fl_Image *img = wt->o->image();
         if (img) {
@@ -122,9 +122,9 @@ Function {make_image_panel()} {
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_image_h_ = o->value();
         Fl_Image *img = wt->o->image();
         if (img) {
@@ -214,9 +214,9 @@ Function {make_image_panel()} {
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_deimage_w_ = o->value();
         Fl_Image *img = wt->o->deimage();
         if (img) {
@@ -244,9 +244,9 @@ Function {make_image_panel()} {
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_deimage_h_ = o->value();
         Fl_Image *img = wt->o->deimage();
         if (img) {
@@ -1182,8 +1182,8 @@ wCallback->do_callback(wCallback, v);} open
           Fl_Box widget_grid_transient {
             label TRANSIENT
             callback {if (v==LOAD) {
-  Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
-  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
+  Fl_Widget *child = ((Widget_Node*)current_widget)->o;
+  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
 //  Fl_Grid::Cell *cell = g->cell(child);
 //  Fl_Grid::Cell *tcell = g->transient_cell(child);
   widget_grid_transient->hide();
@@ -1353,7 +1353,7 @@ wCallback->do_callback(wCallback, v);} open
           Fl_Input widget_grid_rows {
             label {Rows:}
             callback {// grid_rows_cb
-Fl_Grid *grid = Fl_Grid_Type::selected();
+Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 if (v == LOAD) {
   o->value(grid->rows());
@@ -1403,7 +1403,7 @@ if (v == LOAD) {
           Fl_Input widget_grid_cols {
             label {Columns:}
             callback {// grid_rows_cb
-Fl_Grid *grid = Fl_Grid_Type::selected();
+Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 if (v == LOAD) {
   o->value(grid->cols());
@@ -1461,7 +1461,7 @@ if (v == LOAD) {
         } {
           Fl_Value_Input {} {
             label {Left:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int m = 0;
 if (v == LOAD) {
@@ -1481,7 +1481,7 @@ if (v == LOAD) {
           }
           Fl_Value_Input {} {
             label {Top:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int m = 0;
 if (v == LOAD) {
@@ -1501,7 +1501,7 @@ if (v == LOAD) {
           }
           Fl_Value_Input {} {
             label {Right:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int m = 0;
 if (v == LOAD) {
@@ -1521,7 +1521,7 @@ if (v == LOAD) {
           }
           Fl_Value_Input {} {
             label {Bottom:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int m = 0;
 if (v == LOAD) {
@@ -1550,7 +1550,7 @@ if (v == LOAD) {
         } {
           Fl_Value_Input {} {
             label {Row:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 if (v == LOAD) {
   int m = 0;
@@ -1570,7 +1570,7 @@ if (v == LOAD) {
           }
           Fl_Value_Input {} {
             label {Col:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 if (v == LOAD) {
   int m = 0;
@@ -1595,7 +1595,7 @@ if (v == LOAD) {
         Fl_Group {} {
           label {Row:}
           callback {if (v == LOAD) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (grid)
     o->activate();
   else
@@ -1606,7 +1606,7 @@ if (v == LOAD) {
         } {
           Fl_Input widget_grid_curr_row {
             label Index
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int r = o->value(), old_r = r;
 if (r < 0) r = 0;
@@ -1653,7 +1653,7 @@ if (v == LOAD) {
           } {
             Fl_Input {} {
               label {Height:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+              callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int r = widget_grid_curr_row->value();
 if (v == LOAD) {
@@ -1673,7 +1673,7 @@ if (v == LOAD) {
             }
             Fl_Input {} {
               label {Weight:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+              callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int r = widget_grid_curr_row->value();
 if (v == LOAD) {
@@ -1693,7 +1693,7 @@ if (v == LOAD) {
             }
             Fl_Input {} {
               label {Gap:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+              callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int r = widget_grid_curr_row->value();
 if (v == LOAD) {
@@ -1723,7 +1723,7 @@ if (v == LOAD) {
         } {
           Fl_Input widget_grid_curr_col {
             label Index
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+            callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int c = o->value(), old_c = c;
 if (c < 0) c = 0;
@@ -1769,7 +1769,7 @@ if (v == LOAD) {
           } {
             Fl_Input {} {
               label {Width:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+              callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int c = widget_grid_curr_col->value();
 if (v == LOAD) {
@@ -1789,7 +1789,7 @@ if (v == LOAD) {
             }
             Fl_Input {} {
               label {Weight:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+              callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int c = widget_grid_curr_col->value();
 if (v == LOAD) {
@@ -1809,7 +1809,7 @@ if (v == LOAD) {
             }
             Fl_Input {} {
               label {Gap:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+              callback {Fl_Grid *grid = Grid_Node::selected();
 if (!grid) return;
 int c = widget_grid_curr_col->value();
 if (v == LOAD) {

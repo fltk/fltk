@@ -20,8 +20,8 @@
 #include "Project.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
-#include "nodes/Fl_Type.h"
-#include "nodes/Fl_Widget_Type.h"
+#include "nodes/Node.h"
+#include "nodes/Widget_Node.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
@@ -155,7 +155,7 @@ void Undo::undo() {
     return;
   }
   if (reload_panel) {
-    for (Fl_Type *t = Fluid.proj.tree.first; t; t=t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t=t->next) {
       if (t->is_widget() && t->selected) {
         t->open();
         break;

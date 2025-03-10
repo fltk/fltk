@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string>
 
-class Fl_Type;
+class Node;
 struct Fd_Identifier_Tree;
 struct Fd_Text_Tree;
 struct Fd_Pointer_Tree;
@@ -107,8 +107,8 @@ public:
   void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_hc(const char *, int, const char*, const char*);
   void write_c_indented(const char *textlines, int inIndent, char inTrailwWith);
-  Fl_Type* write_static(Fl_Type* p);
-  Fl_Type* write_code(Fl_Type* p);
+  Node* write_static(Node* p);
+  Node* write_code(Node* p);
   int write_code(const char *cfile, const char *hfile, bool to_codeview=false);
   void write_public(int state); // writes pubic:/private: as needed
 

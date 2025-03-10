@@ -31,7 +31,7 @@ decl {\#include "Fluid.h"} {private local
 decl {\#include "proj/undo.h"} {private local
 }
 
-decl {\#include "nodes/Fl_Type.h"} {private local
+decl {\#include "nodes/Node.h"} {private local
 }
 
 decl {\#include "nodes/factory.h"} {private local

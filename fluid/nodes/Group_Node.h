@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FL_GROUP_TYPE_H
-#define _FLUID_FL_GROUP_TYPE_H
+#ifndef FLUID_NODES_GROUP_NODE_H
+#define FLUID_NODES_GROUP_NODE_H
 
 #include "nodes/Widget_Node.h"
 
@@ -239,4 +239,4 @@ public:
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Wizard) ? true : super::is_a(inID); }
 };
 
-#endif // _FLUID_FL_GROUP_TYPE_H
+#endif // FLUID_NODES_GROUP_NODE_H

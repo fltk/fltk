@@ -18,8 +18,8 @@
 
 #include "Fluid.h"
 #include "Project.h"
-#include "nodes/Fl_Window_Type.h"
-#include "nodes/Fl_Function_Type.h"
+#include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 
 #include <FL/filename.H>
 #include "../src/flstring.h"
@@ -520,7 +520,7 @@ void Code_Writer::write_c_indented(const char *textlines, int inIndent, char inT
  constructor whereas functions, declarations, and inline data are seen as
  members of the class itself.
  */
-bool is_class_member(Fl_Type *t) {
+bool is_class_member(Node *t) {
   return    t->is_a(ID_Function)
          || t->is_a(ID_Decl)
          || t->is_a(ID_Data);
@@ -537,9 +537,9 @@ bool is_class_member(Fl_Type *t) {
  \param[in] q should be a comment type
  \return true if this comment is followed by a class member
  \return false if it is followed by a widget or code
- \see is_class_member(Fl_Type *t)
+ \see is_class_member(Node *t)
  */
-bool is_comment_before_class_member(Fl_Type *q) {
+bool is_comment_before_class_member(Node *q) {
   if (q->is_a(ID_Comment) && q->next && q->next->level==q->level) {
     if (q->next->is_a(ID_Comment))
       return is_comment_before_class_member(q->next);
@@ -554,14 +554,14 @@ bool is_comment_before_class_member(Fl_Type *q) {
  \param[in] p write this type and all its children
  \return pointer to the next sibling
  */
-Fl_Type* Code_Writer::write_static(Fl_Type* p) {
+Node* Code_Writer::write_static(Node* p) {
   if (write_codeview) p->header_static_start = (int)ftell(header_file);
   if (write_codeview) p->code_static_start = (int)ftell(code_file);
   p->write_static(*this);
   if (write_codeview) p->code_static_end = (int)ftell(code_file);
   if (write_codeview) p->header_static_end = (int)ftell(header_file);
 
-  Fl_Type* q;
+  Node* q;
   for (q = p->next; q && q->level > p->level;) {
     q = write_static(q);
   }
@@ -576,7 +576,7 @@ Fl_Type* Code_Writer::write_static(Fl_Type* p) {
  \param[in] p write this type and all its children
  \return pointer to the next sibling
  */
-Fl_Type* Code_Writer::write_code(Fl_Type* p) {
+Node* Code_Writer::write_code(Node* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
   if (!(p==Fluid.proj.tree.last && p->is_a(ID_Comment))) {
@@ -587,7 +587,7 @@ Fl_Type* Code_Writer::write_code(Fl_Type* p) {
     if (write_codeview) p->header1_end = (int)ftell(header_file);
   }
   // recursively write the code of all children
-  Fl_Type* q;
+  Node* q;
   if (p->is_widget() && p->is_class()) {
     // Handle widget classes specially
     for (q = p->next; q && q->level > p->level;) {
@@ -674,7 +674,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   }
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
-  Fl_Type* first_type = Fluid.proj.tree.first;
+  Node* first_type = Fluid.proj.tree.first;
   if (first_type && first_type->is_a(ID_Comment)) {
     if (write_codeview) {
       first_type->code1_start = first_type->code2_start = (int)ftell(code_file);
@@ -767,7 +767,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       write_c("#endif\n");
     }
   }
-  for (Fl_Type* p = first_type; p;) {
+  for (Node* p = first_type; p;) {
     // write all static data for this & all children first
     write_static(p);
     // then write the nested code:
@@ -778,7 +778,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
 
   fprintf(header_file, "#endif\n");
 
-  Fl_Type* last_type = Fluid.proj.tree.last;
+  Node* last_type = Fluid.proj.tree.last;
   if (last_type && (last_type != Fluid.proj.tree.first) && last_type->is_a(ID_Comment)) {
     if (write_codeview) {
       last_type->code1_start = last_type->code2_start = (int)ftell(code_file);

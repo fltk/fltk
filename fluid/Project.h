@@ -19,7 +19,7 @@
 #define FLUID_PROJECT_H
 
 #include "proj/undo.h"
-#include "nodes/tree.h"
+#include "nodes/Tree.h"
 
 #include <string>
 

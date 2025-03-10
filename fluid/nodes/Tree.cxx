@@ -15,7 +15,7 @@
 //
 
 
-#include "nodes/tree.h"
+#include "nodes/Tree.h"
 
 #include "Project.h"
 
@@ -23,7 +23,7 @@ using namespace fld;
 using namespace fld::node;
 
 
-Tree::Iterator::Iterator(Fl_Type *t, bool only_selected)
+Tree::Iterator::Iterator(Node *t, bool only_selected)
 : type_(t)
 , only_selected_(only_selected)
 {
@@ -47,7 +47,7 @@ Tree::Iterator &Tree::Iterator::operator++() {
   return *this;
 }
 
-Tree::WIterator::WIterator(Fl_Type *t, bool only_selected)
+Tree::WIterator::WIterator(Node *t, bool only_selected)
 : type_(t)
 , only_selected_(only_selected)
 {
@@ -91,7 +91,7 @@ Tree::Tree(Project &proj)
  \param[in] uid any number between 0 and 65535
  \return the node with this uid, or nullptr if not found
  */
-Fl_Type *Tree::find_by_uid(unsigned short uid) {
+Node *Tree::find_by_uid(unsigned short uid) {
   for (auto tp: all_nodes()) {
     if (tp->get_uid() == uid) return tp;
   }
@@ -105,7 +105,7 @@ Fl_Type *Tree::find_by_uid(unsigned short uid) {
  \param[in] crsr cursor position in text
  \return the node we found or nullptr
  */
-Fl_Type *Tree::find_in_text(int text_type, int crsr) {
+Node *Tree::find_in_text(int text_type, int crsr) {
   for (auto node: all_nodes()) {
     switch (text_type) {
       case 0:

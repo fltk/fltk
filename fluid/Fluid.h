@@ -39,7 +39,7 @@ constexpr int WINHEIGHT = (BROWSERHEIGHT+MENUHEIGHT);
 class Fl_Double_Window;
 class Fl_Window;
 class Fl_Menu_Bar;
-class Fl_Type;
+class Node;
 class Fl_Choice;
 class Fl_Button;
 class Fl_Check_Button;
@@ -100,11 +100,11 @@ public: // Member Variables
   int show_comments { 1 };
 
   // TODO: make this into a class: app::External_Editor
-  /// Use external editor for editing Fl_Code_Type, saved in app preferences.
+  /// Use external editor for editing Code_Node, saved in app preferences.
   int use_external_editor { 0 };
-  /// Debugging help for external Fl_Code_Type editor.
+  /// Debugging help for external Code_Node editor.
   int debug_external_editor { 0 };
-  /// Run this command to load an Fl_Code_Type into an external editor, save in app preferences.
+  /// Run this command to load an Code_Node into an external editor, save in app preferences.
   // TODO: make this into a std::string
   char external_editor_command[512] { };
 
@@ -171,7 +171,7 @@ public: // Methods
   void duplicate_selected();
   // User chose to delete the currently selected widgets.
   void delete_selected();
-  // Show the editor for the \c current Fl_Type.
+  // Show the editor for the \c current Node.
   void edit_selected();
   // User wants to sort selected widgets by y coordinate.
   void sort_selected();

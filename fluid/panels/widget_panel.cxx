@@ -19,8 +19,8 @@
 #include "widget_panel.h"
 #include "Fluid.h"
 #include "proj/undo.h"
-#include "nodes/Fl_Widget_Type.h"
-#include "nodes/Fl_Grid_Type.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Grid_Node.h"
 #include <FL/Fl_Grid.H>
 
 Fl_Double_Window *image_panel_window=(Fl_Double_Window *)nullptr;
@@ -61,9 +61,9 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
-          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          Widget_Node* wt = ((Widget_Node*)t);
           wt->scale_image_w_ = o->value();
           Fl_Image *img = wt->o->image();
           if (img) {
@@ -91,9 +91,9 @@ static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
-          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          Widget_Node* wt = ((Widget_Node*)t);
           wt->scale_image_h_ = o->value();
           Fl_Image *img = wt->o->image();
           if (img) {
@@ -153,9 +153,9 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
-          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          Widget_Node* wt = ((Widget_Node*)t);
           wt->scale_deimage_w_ = o->value();
           Fl_Image *img = wt->o->deimage();
           if (img) {
@@ -183,9 +183,9 @@ static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
       }
     } else {
       int mod = 0;
-      for (Fl_Type *t = Fluid.proj.tree.first; t; t = t->next) {
+      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
-          Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+          Widget_Node* wt = ((Widget_Node*)t);
           wt->scale_deimage_h_ = o->value();
           Fl_Image *img = wt->o->deimage();
           if (img) {
@@ -563,8 +563,8 @@ Fl_Box *widget_grid_transient=(Fl_Box *)nullptr;
 
 static void cb_widget_grid_transient(Fl_Box* o, void* v) {
   if (v==LOAD) {
-    Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
-    Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
+    Fl_Widget *child = ((Widget_Node*)current_widget)->o;
+    Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
   //  Fl_Grid::Cell *cell = g->cell(child);
   //  Fl_Grid::Cell *tcell = g->transient_cell(child);
     widget_grid_transient->hide();
@@ -609,7 +609,7 @@ fld::widget::Formula_Input *widget_grid_rows=(fld::widget::Formula_Input *)nullp
 
 static void cb_widget_grid_rows(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   if (v == LOAD) {
     o->value(grid->rows());
@@ -651,7 +651,7 @@ fld::widget::Formula_Input *widget_grid_cols=(fld::widget::Formula_Input *)nullp
 
 static void cb_widget_grid_cols(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   if (v == LOAD) {
     o->value(grid->cols());
@@ -692,7 +692,7 @@ static void cb_5(Fl_Button*, void* v) {
 Fl_Group *wp_grid_margin=(Fl_Group *)nullptr;
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
@@ -711,7 +711,7 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Top(Fl_Value_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
@@ -730,7 +730,7 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
@@ -749,7 +749,7 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
@@ -770,7 +770,7 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
 Fl_Group *wp_grid_gaps=(Fl_Group *)nullptr;
 
 static void cb_Row(Fl_Value_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   if (v == LOAD) {
     int m = 0;
@@ -789,7 +789,7 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Col(Fl_Value_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   if (v == LOAD) {
     int m = 0;
@@ -809,7 +809,7 @@ static void cb_Col(Fl_Value_Input* o, void* v) {
 
 static void cb_Row1(Fl_Group* o, void* v) {
   if (v == LOAD) {
-    Fl_Grid *grid = Fl_Grid_Type::selected();
+    Fl_Grid *grid = Grid_Node::selected();
     if (grid)
       o->activate();
     else
@@ -821,7 +821,7 @@ static void cb_Row1(Fl_Group* o, void* v) {
 fld::widget::Formula_Input *widget_grid_curr_row=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_widget_grid_curr_row(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int r = o->value(), old_r = r;
   if (r < 0) r = 0;
@@ -851,7 +851,7 @@ static void cb_7(Fl_Button*, void* v) {
 Fl_Group *widget_grid_curr_row_attributes=(Fl_Group *)nullptr;
 
 static void cb_Height(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int r = widget_grid_curr_row->value();
   if (v == LOAD) {
@@ -869,7 +869,7 @@ static void cb_Height(fld::widget::Formula_Input* o, void* v) {
 }
 
 static void cb_Weight(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int r = widget_grid_curr_row->value();
   if (v == LOAD) {
@@ -887,7 +887,7 @@ static void cb_Weight(fld::widget::Formula_Input* o, void* v) {
 }
 
 static void cb_Gap(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int r = widget_grid_curr_row->value();
   if (v == LOAD) {
@@ -907,7 +907,7 @@ static void cb_Gap(fld::widget::Formula_Input* o, void* v) {
 fld::widget::Formula_Input *widget_grid_curr_col=(fld::widget::Formula_Input *)nullptr;
 
 static void cb_widget_grid_curr_col(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int c = o->value(), old_c = c;
   if (c < 0) c = 0;
@@ -937,7 +937,7 @@ static void cb_9(Fl_Button*, void* v) {
 Fl_Group *widget_grid_curr_col_attributes=(Fl_Group *)nullptr;
 
 static void cb_Width(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int c = widget_grid_curr_col->value();
   if (v == LOAD) {
@@ -955,7 +955,7 @@ static void cb_Width(fld::widget::Formula_Input* o, void* v) {
 }
 
 static void cb_Weight1(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int c = widget_grid_curr_col->value();
   if (v == LOAD) {
@@ -973,7 +973,7 @@ static void cb_Weight1(fld::widget::Formula_Input* o, void* v) {
 }
 
 static void cb_Gap1(fld::widget::Formula_Input* o, void* v) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
+  Fl_Grid *grid = Grid_Node::selected();
   if (!grid) return;
   int c = widget_grid_curr_col->value();
   if (v == LOAD) {

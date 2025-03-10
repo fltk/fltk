@@ -20,9 +20,9 @@
 
 #include "proj/undo.h"
 #include "app/templates.h"
-#include "nodes/Fl_Type.h"
-#include "nodes/Fl_Group_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Node.h"
+#include "nodes/Group_Node.h"
+#include "nodes/Window_Node.h"
 #include "nodes/factory.h"
 #include "panels/codeview_panel.h"
 #include "app/shell_command.h"

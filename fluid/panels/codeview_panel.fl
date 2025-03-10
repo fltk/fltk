@@ -56,10 +56,10 @@ decl {char *cv_design_filename = nullptr;} {private local
 decl {int cv_code_choice;} {public local
 }
 
-decl {extern void select_only(Fl_Type *o);} {private global
+decl {extern void select_only(Node *o);} {private global
 }
 
-decl {extern void reveal_in_browser(Fl_Type *t);} {private global
+decl {extern void reveal_in_browser(Node *t);} {private global
 }
 
 Function {update_codeview_position()} {
@@ -432,7 +432,7 @@ if (e) {
       Fl_Button {} {
         label Reveal
         callback {if (codeview_panel && codeview_panel->visible()) {
-  Fl_Type *node = nullptr;
+  Node *node = nullptr;
   if (cv_source->visible_r())
     node = Fluid.proj.tree.find_in_text(0, cv_source->insert_position());
   else if (cv_header->visible_r())

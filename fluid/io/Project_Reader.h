@@ -17,14 +17,14 @@
 #ifndef FLUID_IO_PROJECT_READER_H
 #define FLUID_IO_PROJECT_READER_H
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 #include <FL/fl_attr.h>
 
 #include <stdio.h>
 
 
-class Fl_Type;
+class Node;
 
 namespace fld {
 
@@ -68,7 +68,7 @@ public:
   int close_read();
   const char *filename_name();
   int read_quoted();
-  Fl_Type *read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options=0);
+  Node *read_children(Node *p, int merge, Strategy strategy, char skip_options=0);
   int read_project(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
   void read_error(const char *format, ...);
   const char *read_word(int wantbrace = 0);

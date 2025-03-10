@@ -27,10 +27,10 @@
 #include "proj/undo.h"
 #include "app/Fd_Snap_Action.h"
 #include "nodes/factory.h"
-#include "nodes/Fl_Function_Type.h"
-#include "nodes/Fl_Widget_Type.h"
-#include "nodes/Fl_Grid_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Function_Node.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Grid_Node.h"
+#include "nodes/Window_Node.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl_Window.H>
@@ -202,10 +202,10 @@ int Project_Reader::read_quoted() {      // read whatever character is after a \
  a previous call, and there is no need to waste time searching for them.
  \return the last type that was created
  */
-Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options) {
+Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char skip_options) {
   Fluid.proj.tree.current = p;
-  Fl_Type *last_child_read = nullptr;
-  Fl_Type *t = nullptr;
+  Node *last_child_read = nullptr;
+  Node *t = nullptr;
   for (;;) {
     const char *c = read_word();
   REUSE_C:
@@ -238,7 +238,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 
       // back compatibility with Vincent Penne's original class code:
       if (!p && !strcmp(c,"define_in_struct")) {
-        Fl_Type *t = add_new_widget_from_file("class", Strategy::FROM_FILE_AS_LAST_CHILD);
+        Node *t = add_new_widget_from_file("class", Strategy::FROM_FILE_AS_LAST_CHILD);
         t->name(read_word());
         Fluid.proj.tree.current = p = t;
         merge = 1; // stops "missing }" error
@@ -345,7 +345,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 
     c = read_word(1);
     if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
-      ((Fl_Class_Type*)t)->prefix(t->name());
+      ((Class_Node*)t)->prefix(t->name());
       t->name(c);
       c = read_word(1);
     }
@@ -374,10 +374,10 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       // TODO: this is called whenever something is pasted from the top level into a grid
       //    It makes sense to make this more universal for other widget types too.
       if (merge && t && t->parent && t->parent->is_a(ID_Grid)) {
-        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
-          ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+        if (Window_Node::popupx != 0x7FFFFFFF) {
+          ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
-          ((Fl_Grid_Type*)t->parent)->insert_child_at_next_free_cell(((Fl_Widget_Type*)t)->o);
+          ((Grid_Node*)t->parent)->insert_child_at_next_free_cell(((Widget_Node*)t)->o);
         }
       }
 
@@ -410,7 +410,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
  \return 0 if the operation failed, 1 if it succeeded
  */
 int Project_Reader::read_project(const char *filename, int merge, Strategy strategy) {
-  Fl_Type *o;
+  Node *o;
   proj_.undo.suspend();
   read_version = 0.0;
   if (!open_read(filename)) {
@@ -707,11 +707,11 @@ static void forms_end(Fl_Group *g, int flip) {
 void Project_Reader::read_fdesign() {
   int fdesign_magic = atoi(read_word());
   fdesign_flip = (fdesign_magic < 13000);
-  Fl_Widget_Type *window = nullptr;
-  Fl_Widget_Type *group = nullptr;
-  Fl_Widget_Type *widget = nullptr;
+  Widget_Node *window = nullptr;
+  Widget_Node *group = nullptr;
+  Widget_Node *widget = nullptr;
   if (!Fluid.proj.tree.current) {
-    Fl_Type *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
+    Node *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
     t->name("create_the_forms()");
     Fluid.proj.tree.current = t;
   }
@@ -722,7 +722,7 @@ void Project_Reader::read_fdesign() {
 
     if (!strcmp(name,"Name")) {
 
-      window = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Window", Strategy::FROM_FILE_AS_LAST_CHILD);
+      window = (Widget_Node*)add_new_widget_from_file("Fl_Window", Strategy::FROM_FILE_AS_LAST_CHILD);
       window->name(value);
       window->label(value);
       Fluid.proj.tree.current = widget = window;
@@ -730,7 +730,7 @@ void Project_Reader::read_fdesign() {
     } else if (!strcmp(name,"class")) {
 
       if (!strcmp(value,"FL_BEGIN_GROUP")) {
-        group = widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Group", Strategy::FROM_FILE_AS_LAST_CHILD);
+        group = widget = (Widget_Node*)add_new_widget_from_file("Fl_Group", Strategy::FROM_FILE_AS_LAST_CHILD);
         Fluid.proj.tree.current = group;
       } else if (!strcmp(value,"FL_END_GROUP")) {
         if (group) {
@@ -745,10 +745,10 @@ void Project_Reader::read_fdesign() {
         for (int i = 0; class_matcher[i]; i += 2)
           if (!strcmp(value,class_matcher[i])) {
             value = class_matcher[i+1]; break;}
-        widget = (Fl_Widget_Type*)add_new_widget_from_file(value, Strategy::FROM_FILE_AS_LAST_CHILD);
+        widget = (Widget_Node*)add_new_widget_from_file(value, Strategy::FROM_FILE_AS_LAST_CHILD);
         if (!widget) {
           printf("class %s not found, using Fl_Button\n", value);
-          widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Button", Strategy::FROM_FILE_AS_LAST_CHILD);
+          widget = (Widget_Node*)add_new_widget_from_file("Fl_Button", Strategy::FROM_FILE_AS_LAST_CHILD);
         }
       }
 

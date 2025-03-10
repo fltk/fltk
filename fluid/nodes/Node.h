@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FL_TYPE_H
-#define _FLUID_FL_TYPE_H
+#ifndef FLUID_NODES_NODE_H
+#define FLUID_NODES_NODE_H
 
 #include "io/Code_Writer.h"
 
@@ -23,8 +23,8 @@
 #include <FL/fl_draw.H>
 
 class Node;
-class Fl_Group_Type;
-class Fl_Window_Type;
+class Group_Node;
+class Window_Node;
 
 namespace fld {
 namespace io {
@@ -213,8 +213,8 @@ public:
   virtual ~Node();
   virtual Node *make(Strategy strategy) = 0;
 
-  Fl_Window_Type *window();
-  Fl_Group_Type *group();
+  Window_Node *window();
+  Group_Node *group();
 
   void add(Node *parent, Strategy strategy);
   void insert(Node *n); // insert into list before n
@@ -286,13 +286,13 @@ public:
   virtual int is_widget() const {return 0;}
   /** Return 1 if the type is a widget but not a menu item. */
   virtual int is_true_widget() const {return 0;}
-  /** Return 1 if a type behaves like a button (Fl_Button and Fl_Menu_Item and derived, but not Fl_Submenu_Type. */
+  /** Return 1 if a type behaves like a button (Fl_Button and Fl_Menu_Item and derived, but not Submenu_Node. */
   virtual int is_button() const {return 0;}
-  /** Return 1 if this is a Fl_Widget_Class_Type, Fl_CodeBlock_Type, or Fl_Function_Type */
+  /** Return 1 if this is a Widget_Class_Node, CodeBlock_Node, or Function_Node */
   virtual int is_code_block() const {return 0;}
-  /** Return 1 if this is a Fl_Widget_Class_Type, Fl_Class_Type, or Fl_DeclBlock_Type */
+  /** Return 1 if this is a Widget_Class_Node, Class_Node, or DeclBlock_Node */
   virtual int is_decl_block() const {return 0;}
-  /** Return 1 if this is a Fl_Class_Type or Fl_Widget_Class_Type. */
+  /** Return 1 if this is a Class_Node or Widget_Class_Node. */
   virtual int is_class() const {return 0;}
   /** Return 1 if the type browser shall draw a padlock over the icon. */
   virtual int is_public() const {return 1;}
@@ -310,4 +310,4 @@ public:
   unsigned short get_uid() { return uid_; }
 };
 
-#endif // _FLUID_FL_TYPE_H
+#endif // FLUID_NODES_NODE_H

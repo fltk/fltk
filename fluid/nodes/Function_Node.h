@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FL_FUNCTION_TYPE_H
-#define _FLUID_FL_FUNCTION_TYPE_H
+#ifndef FLUID_NODES_FUNCTION_NODE_H
+#define FLUID_NODES_FUNCTION_NODE_H
 
 #include "nodes/Node.h"
 
@@ -256,4 +256,4 @@ public:
   const char*  prefix() const {return class_prefix;}
 };
 
-#endif // _FLUID_FL_FUNCTION_TYPE_H
+#endif // FLUID_NODES_FUNCTION_NODE_H

@@ -38,15 +38,15 @@ set(CPPFILES
   io/Project_Reader.cxx
   io/String_Writer.cxx
   nodes/factory.cxx
-  nodes/tree.cxx
-  nodes/Fl_Button_Type.cxx
-  nodes/Fl_Function_Type.cxx
-  nodes/Fl_Grid_Type.cxx
-  nodes/Fl_Group_Type.cxx
-  nodes/Fl_Menu_Type.cxx
-  nodes/Fl_Type.cxx
-  nodes/Fl_Widget_Type.cxx
-  nodes/Fl_Window_Type.cxx
+  nodes/Tree.cxx
+  nodes/Button_Node.cxx
+  nodes/Function_Node.cxx
+  nodes/Grid_Node.cxx
+  nodes/Group_Node.cxx
+  nodes/Menu_Node.cxx
+  nodes/Node.cxx
+  nodes/Widget_Node.cxx
+  nodes/Window_Node.cxx
   panels/about_panel.cxx
   panels/codeview_panel.cxx
   panels/function_panel.cxx
@@ -85,15 +85,15 @@ set(HEADERFILES
   io/Project_Reader.h
   io/String_Writer.h
   nodes/factory.h
-  nodes/tree.h
-  nodes/Fl_Button_Type.h
-  nodes/Fl_Function_Type.h
-  nodes/Fl_Grid_Type.h
-  nodes/Fl_Group_Type.h
-  nodes/Fl_Menu_Type.h
-  nodes/Fl_Type.h
-  nodes/Fl_Widget_Type.h
-  nodes/Fl_Window_Type.h
+  nodes/Tree.h
+  nodes/Button_Node.h
+  nodes/Function_Node.h
+  nodes/Grid_Node.h
+  nodes/Group_Node.h
+  nodes/Menu_Node.h
+  nodes/Node.h
+  nodes/Widget_Node.h
+  nodes/Window_Node.h
   panels/about_panel.h
   panels/codeview_panel.h
   panels/function_panel.h

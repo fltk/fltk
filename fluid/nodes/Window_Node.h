@@ -18,10 +18,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FL_WINDOW_TYPE_H
-#define _FLUID_FL_WINDOW_TYPE_H
+#ifndef FLUID_NODES_WINDOW_NODE_H
+#define FLUID_NODES_WINDOW_NODE_H
 
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Group_Node.h"
 
 class Widget_Class_Node;
 
@@ -44,9 +44,9 @@ enum {
   FD_BOX    = 32  // user creates a new selection box
 };
 
-class Window_Node : public Fl_Group_Type
+class Window_Node : public Group_Node
 {
-  typedef Fl_Group_Type super;
+  typedef Group_Node super;
 protected:
 
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return window_type_menu;}
@@ -59,17 +59,17 @@ protected:
   int dx,dy;
   int drag;             // which parts of bbox are being moved
   int numselected;      // number of children selected
-  void draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int w, int h);
+  void draw_out_of_bounds(Widget_Node *group, int x, int y, int w, int h);
   void draw_out_of_bounds();
   void draw_overlaps();
   void draw_overlay();
   void newdx();
-  void newposition(Fl_Widget_Type *,int &x,int &y,int &w,int &h);
+  void newposition(Widget_Node *,int &x,int &y,int &w,int &h);
   int handle(int);
   void setlabel(const char *) FL_OVERRIDE;
   void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
   void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  Fl_Widget_Type *_make() FL_OVERRIDE {return nullptr;} // we don't call this
+  Widget_Node *_make() FL_OVERRIDE {return nullptr;} // we don't call this
   Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return nullptr;}
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
@@ -154,4 +154,4 @@ public:
   int is_class() const FL_OVERRIDE {return 1;}
 };
 
-#endif // _FLUID_FL_WINDOW_TYPE_H
+#endif // FLUID_NODES_WINDOW_NODE_H

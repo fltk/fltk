@@ -20,7 +20,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "nodes/Fl_Menu_Type.h"
+#include "nodes/Menu_Node.h"
 
 #include "Fluid.h"
 #include "Project.h"

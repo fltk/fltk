@@ -19,8 +19,8 @@
 #include "Fluid.h"
 #include "io/Project_Writer.h"
 #include "nodes/factory.h"
-#include "nodes/tree.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Tree.h"
+#include "nodes/Window_Node.h"
 #include "panels/template_panel.h"
 
 #include <FL/filename.H>
@@ -103,7 +103,7 @@ void fld::app::save_template() {
 
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
   // Get the screenshot, if any...
-  Fl_Type *t;
+  Node *t;
 
   for (t = Fluid.proj.tree.first; t; t = t->next) {
     // Find the first window...
@@ -113,7 +113,7 @@ void fld::app::save_template() {
   if (!t) return;
 
   // Grab a screenshot...
-  Fl_Window_Type *wt = (Fl_Window_Type *)t;
+  Window_Node *wt = (Window_Node *)t;
   uchar *pixels;
   int w, h;
 

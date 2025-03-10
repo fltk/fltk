@@ -18,8 +18,8 @@
 
 #include "Fluid.h"
 #include "Project.h"
-#include "nodes/Fl_Window_Type.h"
-#include "nodes/Fl_Function_Type.h"
+#include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 
 using namespace fld;
 using namespace fld::io;
@@ -61,8 +61,8 @@ static int write_escaped_strings(FILE *out, const char *text) {
  \return 1 if the file could not be opened for writing, or the result of `fclose`.
  */
 int fld::io::write_strings(Project &proj, const std::string &filename) {
-  Fl_Type *p;
-  Fl_Widget_Type *w;
+  Node *p;
+  Widget_Node *w;
   int i;
 
   FILE *fp = fl_fopen(filename.c_str(), "wb");
@@ -88,7 +88,7 @@ int fld::io::write_strings(Project &proj, const std::string &filename) {
               FL_VERSION);
       for (p = proj.tree.first; p; p = p->next) {
         if (p->is_widget()) {
-          w = (Fl_Widget_Type *)p;
+          w = (Widget_Node *)p;
 
           if (w->label()) {
             fputs("msgid \"", fp);
@@ -120,7 +120,7 @@ int fld::io::write_strings(Project &proj, const std::string &filename) {
 
       for (i = 1, p = proj.tree.first; p; p = p->next) {
         if (p->is_widget()) {
-          w = (Fl_Widget_Type *)p;
+          w = (Widget_Node *)p;
 
           if (w->label()) {
             fprintf(fp, "%d \"", i ++);

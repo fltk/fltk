@@ -18,7 +18,7 @@
 #define _FLUID_FD_SNAP_ACTION_H
 
 #include "Fluid.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Window_Node.h"
 
 #include <string>
 
@@ -159,8 +159,8 @@ typedef struct Fd_Snap_Data {
   int drag;             ///< drag event mask
   int x_dist, y_dist;   ///< current closest snapping distance in x and y
   int dx_out, dy_out;   ///< current closest snapping point as a delta
-  Fl_Widget_Type *wgt;  ///< first selected widget
-  Fl_Window_Type *win;  ///< window that handles the drag action
+  Widget_Node *wgt;  ///< first selected widget
+  Window_Node *win;  ///< window that handles the drag action
   int ex_out, ey_out;   ///< chosen snap position
 } Fd_Snap_Data;
 

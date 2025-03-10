@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FL_BUTTON_TYPE_H
-#define _FL_BUTTON_TYPE_H
+#ifndef FLUID_NODES_BUTTON_NODE_H
+#define FLUID_NODES_BUTTON_NODE_H
 
 #include "nodes/Widget_Node.h"
 
@@ -43,4 +43,4 @@ public:
 extern Button_Node Fl_Button_type;
 
 
-#endif // _FL_BUTTON_TYPE_H
+#endif // FLUID_NODES_BUTTON_NODE_H

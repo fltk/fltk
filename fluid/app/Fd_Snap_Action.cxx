@@ -18,7 +18,7 @@
 
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Group_Node.h"
 #include "panels/settings_panel.h"
 
 #include <FL/fl_draw.H>
@@ -31,6 +31,8 @@
 #undef min
 #undef max
 #include <algorithm>
+
+using namespace fld;
 
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
@@ -1455,7 +1457,7 @@ public:
     if (!d.wgt) return;
     if (!d.wgt->parent->is_a(ID_Group)) return;
     int dsib_min = 1024;
-    Fl_Group_Type *gt = (Fl_Group_Type*)d.wgt->parent;
+    Group_Node *gt = (Group_Node*)d.wgt->parent;
     Fl_Group *g = (Fl_Group*)gt->o;
     Fl_Widget *w = d.wgt->o;
     for (int i=0; i<g->children(); i++) {

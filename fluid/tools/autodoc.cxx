@@ -21,8 +21,8 @@
 #include "Fluid.h"
 #include "Project.h"
 #include "nodes/factory.h"
-#include "nodes/Fl_Widget_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
 #include "panels/widget_panel.h"
 #include "panels/function_panel.h"
 #include "panels/settings_panel.h"
@@ -385,22 +385,22 @@ void run_autodoc(const std::string &target_dir) {
   // Create a silly project that contains all widgets that we want to document
   Fluid.new_project(false);
 
-  /*Fl_Type *t_func = */ add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
-  Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", Strategy::AS_LAST_CHILD, false);
+  /*Node *t_func = */ add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
+  Window_Node *t_win = (Window_Node*)add_new_widget_from_user("Fl_Window", Strategy::AS_LAST_CHILD, false);
   t_win->label("My Main Window");
-  Fl_Widget_Type *t_grp = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Group", Strategy::AS_LAST_CHILD, false);
+  Widget_Node *t_grp = (Widget_Node*)add_new_widget_from_user("Fl_Group", Strategy::AS_LAST_CHILD, false);
   t_grp->public_ = 0;
-  Fl_Widget_Type *t_btn = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Widget_Node *t_btn = (Widget_Node*)add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
   t_btn->comment("Don't press this button!");
   t_btn->name("emergency_btn");
   ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
-  Fl_Type *t_sldr = add_new_widget_from_user("Fl_Slider", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_inp = add_new_widget_from_user("Fl_Input", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_flx = add_new_widget_from_user("Fl_Flex", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_flxc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Node *t_sldr = add_new_widget_from_user("Fl_Slider", Strategy::AS_LAST_CHILD, false);
+  Node *t_inp = add_new_widget_from_user("Fl_Input", Strategy::AS_LAST_CHILD, false);
+  Node *t_flx = add_new_widget_from_user("Fl_Flex", Strategy::AS_LAST_CHILD, false);
+  Node *t_flxc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
   select_only(t_grp);
-  Fl_Type *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Node *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
+  Node *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -529,7 +529,7 @@ void run_autodoc(const std::string &target_dir) {
   fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
   adoc_class_panel->hide();
 
-  // -- ID_Widget_Class is handled like Fl_Window_Type
+  // -- ID_Widget_Class is handled like Window_Node
 
   // -- ID_Comment
   Fl_Window *adoc_comment_panel = make_comment_panel();

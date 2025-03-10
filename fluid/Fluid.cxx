@@ -24,10 +24,10 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
-#include "nodes/Fl_Type.h"
-#include "nodes/Fl_Function_Type.h"
-#include "nodes/Fl_Group_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Node.h"
+#include "nodes/Function_Node.h"
+#include "nodes/Group_Node.h"
+#include "nodes/Window_Node.h"
 #include "nodes/factory.h"
 #include "panels/settings_panel.h"
 #include "panels/function_panel.h"
@@ -72,9 +72,9 @@ static void external_editor_timer(void*) {
   if ( editors_open > 0 ) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
-    for (Fl_Type *p: Fluid.proj.tree.all_nodes()) {
+    for (Node *p: Fluid.proj.tree.all_nodes()) {
       if ( p->is_a(ID_Code) ) {
-        Fl_Code_Type &code = (Fl_Code_Type&)p;
+        Code_Node &code = (Code_Node&)p;
         // Code changed by external editor?
         if ( code.handle_editor_changes() ) {  // updates ram, file size/mtime
           modified++;
@@ -738,13 +738,13 @@ void Application::print_snapshots() {
   int w, h, ww, hh;
   int frompage, topage;
   int           num_windows = 0;        // Number of windows
-  Fl_Window_Type *windows[1000];        // Windows to print
+  Window_Node *windows[1000];        // Windows to print
   int           winpage;                // Current window page
   Fl_Window *win;
 
   for (auto w: proj.tree.all_widgets()) {
     if (w->is_a(ID_Window)) {
-      Fl_Window_Type *win_t = static_cast<Fl_Window_Type*>(w);
+      Window_Node *win_t = static_cast<Window_Node*>(w);
       windows[num_windows] = win_t;
       Fl_Window *win = static_cast<Fl_Window*>(win_t->o);
       if (!win->shown()) continue;
@@ -881,7 +881,7 @@ void Application::cut_selected() {
   proj.undo.checkpoint();
   proj.set_modflag(1);
   ipasteoffset = 0;
-  Fl_Type *p = proj.tree.current->parent;
+  Node *p = proj.tree.current->parent;
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
@@ -958,7 +958,7 @@ void Application::duplicate_selected() {
 
   // find the last selected node with the lowest level:
   int lowest_level = 9999;
-  Fl_Type *new_insert = nullptr;
+  Node *new_insert = nullptr;
   if (proj.tree.current->selected) {
     for (auto t: proj.tree.all_selected_nodes()) {
       if (t->level <= lowest_level) {
@@ -1001,7 +1001,7 @@ void Application::delete_selected() {
   proj.undo.checkpoint();
   proj.set_modflag(1);
   ipasteoffset = 0;
-  Fl_Type *p = proj.tree.current->parent;
+  Node *p = proj.tree.current->parent;
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
@@ -1010,7 +1010,7 @@ void Application::delete_selected() {
 
 
 /**
- Show the editor for the \c current Fl_Type.
+ Show the editor for the \c current Node.
  */
 void Application::edit_selected() {
   if (!proj.tree.current) {
@@ -1026,7 +1026,7 @@ void Application::edit_selected() {
  */
 void Application::sort_selected() {
   proj.undo.checkpoint();
-  sort((Fl_Type*)nullptr);
+  sort((Node*)nullptr);
   widget_browser->rebuild();
   proj.set_modflag(1);
 }

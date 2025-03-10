@@ -17,9 +17,9 @@
 #ifndef FLUID_NODES_TREE_H
 #define FLUID_NODES_TREE_H
 
-#include "nodes/Fl_Widget_Type.h"
+#include "nodes/Widget_Node.h"
 
-class Fl_Type;
+class Node;
 
 namespace fld {
 
@@ -31,11 +31,11 @@ class Tree {
 
   // A class that can iterate over the entire scene graph.
   class Iterator {
-    Fl_Type *type_ = nullptr;
+    Node *type_ = nullptr;
     bool only_selected_ = false;
   public:
-    explicit Iterator(Fl_Type *t, bool only_selected);
-    Fl_Type* operator*() { return type_; }
+    explicit Iterator(Node *t, bool only_selected);
+    Node* operator*() { return type_; }
     Iterator& operator++();
     bool operator!=(const Iterator& other) const { return type_ != other.type_; }
   };
@@ -52,11 +52,11 @@ class Tree {
 
   // A class that iterate over the scene graph, but returns only nodes of type widget.
   class WIterator {
-    Fl_Type *type_ = nullptr;
+    Node *type_ = nullptr;
     bool only_selected_ = false;
   public:
-    explicit WIterator(Fl_Type *t, bool only_selected);
-    Fl_Widget_Type* operator*() { return static_cast<Fl_Widget_Type*>(type_); }
+    explicit WIterator(Node *t, bool only_selected);
+    Widget_Node* operator*() { return static_cast<Widget_Node*>(type_); }
     WIterator& operator++();
     bool operator!=(const WIterator& other) const { return type_ != other.type_; }
   };
@@ -76,10 +76,10 @@ class Tree {
 
 public:
 
-  Fl_Type *first = nullptr;
-  Fl_Type *last = nullptr;
-  Fl_Type *current = nullptr;  // most recently picked object
-  Fl_Type *current_dnd = nullptr;
+  Node *first = nullptr;
+  Node *last = nullptr;
+  Node *current = nullptr;  // most recently picked object
+  Node *current_dnd = nullptr;
   /// If this is greater zero, widgets will be allowed to lay out their children.
   int allow_layout = 0;
 
@@ -95,8 +95,8 @@ public:
   Container all_selected_nodes() { return Container(*this, true); }
   WContainer all_selected_widgets() { return WContainer(*this, true); }
 
-  Fl_Type *find_by_uid(unsigned short uid);
-  Fl_Type *find_in_text(int text_type, int crsr);
+  Node *find_by_uid(unsigned short uid);
+  Node *find_in_text(int text_type, int crsr);
 };
 
 } // namespace node

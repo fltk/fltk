@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 
-class Fl_Type;
+class Node;
 
 namespace fld {
 

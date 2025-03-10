@@ -25,9 +25,9 @@
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
 #include "nodes/Window_Node.h"
-#include "nodes/Fl_Group_Type.h"
-#include "nodes/Fl_Menu_Type.h"
-#include "nodes/Fl_Function_Type.h"
+#include "nodes/Group_Node.h"
+#include "nodes/Menu_Node.h"
+#include "nodes/Function_Node.h"
 #include "panels/settings_panel.h"
 #include "panels/widget_panel.h"
 
@@ -57,7 +57,7 @@ int Widget_Node::is_public() const {return public_;}
 
 const char* subclassname(Node* l) {
   if (l->is_a(ID_Menu_Bar)) {
-    Fl_Menu_Bar_Type *mb = static_cast<Fl_Menu_Bar_Type*>(l);
+    Menu_Bar_Node *mb = static_cast<Menu_Bar_Node*>(l);
     if (mb->is_sys_menu_bar())
       return mb->sys_menubar_name();
   }
@@ -2384,7 +2384,7 @@ static void flex_margin_cb(Fl_Value_Input* i, void* v,
     int new_value = (int)i->value();
     for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_a(ID_Flex)) {
-        Fl_Flex_Type* q = (Fl_Flex_Type*)o;
+        Flex_Node* q = (Flex_Node*)o;
         Fl_Flex* w = (Fl_Flex*)q->o;
         if (update_margin(w, new_value)) {
           w->layout();
@@ -2511,7 +2511,7 @@ void flex_margin_gap_cb(Fl_Value_Input* i, void* v) {
 
 void position_group_cb(Fl_Group* g, void* v) {
   if (v == LOAD) {
-    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
+    if (Flex_Node::parent_is_flex(current_widget)) {
       g->hide();
     } else {
       g->show();
@@ -2522,7 +2522,7 @@ void position_group_cb(Fl_Group* g, void* v) {
 
 void flex_size_group_cb(Fl_Group* g, void* v) {
   if (v == LOAD) {
-    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
+    if (Flex_Node::parent_is_flex(current_widget)) {
       g->show();
     } else {
       g->hide();
@@ -2533,16 +2533,16 @@ void flex_size_group_cb(Fl_Group* g, void* v) {
 
 void flex_size_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
-      i->value(Fl_Flex_Type::size(current_widget));
+    if (Flex_Node::parent_is_flex(current_widget)) {
+      i->value(Flex_Node::size(current_widget));
     }
   } else {
     int mod = 0;
     int new_size = (int)i->value();
     for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget() && Fl_Flex_Type::parent_is_flex(o)) {
+      if (o->selected && o->is_widget() && Flex_Node::parent_is_flex(o)) {
         Fl_Widget* w = (Fl_Widget*)((Widget_Node*)o)->o;
-        Fl_Flex* f = (Fl_Flex*)((Fl_Flex_Type*)o->parent)->o;
+        Fl_Flex* f = (Fl_Flex*)((Flex_Node*)o->parent)->o;
         int was_fixed = f->fixed(w);
         if (new_size==0) {
           if (was_fixed) {
@@ -2552,7 +2552,7 @@ void flex_size_cb(Fl_Value_Input* i, void* v) {
             mod = 1;
           }
         } else {
-          int old_size = Fl_Flex_Type::size(o);
+          int old_size = Flex_Node::size(o);
           if (old_size!=new_size || !was_fixed) {
             f->fixed(w, new_size);
             f->layout();
@@ -2568,16 +2568,16 @@ void flex_size_cb(Fl_Value_Input* i, void* v) {
 
 void flex_fixed_cb(Fl_Check_Button* i, void* v) {
   if (v == LOAD) {
-    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
-      i->value(Fl_Flex_Type::is_fixed(current_widget));
+    if (Flex_Node::parent_is_flex(current_widget)) {
+      i->value(Flex_Node::is_fixed(current_widget));
     }
   } else {
     int mod = 0;
     int new_fixed = (int)i->value();
     for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget() && Fl_Flex_Type::parent_is_flex(o)) {
+      if (o->selected && o->is_widget() && Flex_Node::parent_is_flex(o)) {
         Fl_Widget* w = (Fl_Widget*)((Widget_Node*)o)->o;
-        Fl_Flex* f = (Fl_Flex*)((Fl_Flex_Type*)o->parent)->o;
+        Fl_Flex* f = (Fl_Flex*)((Flex_Node*)o->parent)->o;
         int was_fixed = f->fixed(w);
         if (new_fixed==0) {
           if (was_fixed) {
@@ -2587,7 +2587,7 @@ void flex_fixed_cb(Fl_Check_Button* i, void* v) {
           }
         } else {
           if (!was_fixed) {
-            f->fixed(w, Fl_Flex_Type::size(o));
+            f->fixed(w, Flex_Node::size(o));
             f->layout();
             mod = 1;
           }
@@ -2641,7 +2641,7 @@ void subtype_cb(Fl_Choice* i, void* v) {
           if (q->is_a(ID_Spinner))
             ((Fl_Spinner*)q->o)->type(n);
           else if (q->is_a(ID_Flex))
-            ((Fl_Flex_Type*)q)->change_subtype_to(n);
+            ((Flex_Node*)q)->change_subtype_to(n);
           else
             q->o->type(n);
           q->redraw();
@@ -3089,10 +3089,10 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
     else
       f.write_c("new %s(%d, %d", t, o->w(), o->h());
   } else if (is_a(ID_Menu_Bar)
-             && ((Fl_Menu_Bar_Type*)this)->is_sys_menu_bar()
+             && ((Menu_Bar_Node*)this)->is_sys_menu_bar()
              && is_in_class()) {
     f.write_c("(%s*)new %s(%d, %d, %d, %d",
-              t, ((Fl_Menu_Bar_Type*)this)->sys_menubar_proxy_name(),
+              t, ((Menu_Bar_Node*)this)->sys_menubar_proxy_name(),
               o->x(), o->y(), o->w(), o->h());
   } else {
     f.write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());

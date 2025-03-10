@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FL_GRID_TYPE_H
-#define _FLUID_FL_GRID_TYPE_H
+#ifndef FLUID_NODES_GRID_NODE_H
+#define FLUID_NODES_GRID_NODE_H
 
 #include "nodes/Group_Node.h"
 #include <FL/Fl_Grid.H>
@@ -79,4 +79,4 @@ public:
   static class Fl_Grid *selected();
 };
 
-#endif // _FLUID_FL_GRID_TYPE_H
+#endif // FLUID_NODES_GRID_NODE_H

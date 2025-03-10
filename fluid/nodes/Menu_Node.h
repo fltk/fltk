@@ -18,10 +18,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FL_MENU_TYPE_H
-#define _FLUID_FL_MENU_TYPE_H
+#ifndef FLUID_NODES_MENU_NODE_H
+#define FLUID_NODES_MENU_NODE_H
 
-#include "nodes/Fl_Button_Type.h"
+#include "nodes/Button_Node.h"
 
 #include "app/Fd_Snap_Action.h"
 
@@ -39,13 +39,13 @@ extern Fl_Menu_Item menu_bar_type_menu[];
 
 /**
  \brief Manage all types on menu items.
- Deriving Menu_Item_Node from Fl_Button_Type is intentional. For the purpose
+ Deriving Menu_Item_Node from Button_Node is intentional. For the purpose
  of editing, a Menu Item is implemented with `o` pointing to an Fl_Button for
  holding all properties.
  */
-class Menu_Item_Node : public Fl_Button_Type
+class Menu_Item_Node : public Button_Node
 {
-  typedef Fl_Button_Type super;
+  typedef Button_Node super;
 public:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return menu_item_type_menu;}
   const char* type_name() FL_OVERRIDE {return "MenuItem";}
@@ -110,7 +110,7 @@ public:
   int is_button() const FL_OVERRIDE {return 0;} // disable shortcut
   Node* make(Strategy strategy) FL_OVERRIDE;
   // changes to submenu must propagate up so build_menu is called
-  // on the parent Fl_Menu_Type:
+  // on the parent Menu_Node:
   void add_child(Node*a, Node*b) FL_OVERRIDE {parent->add_child(a,b);}
   void move_child(Node*a, Node*b) FL_OVERRIDE {parent->move_child(a,b);}
   void remove_child(Node*a) FL_OVERRIDE {parent->remove_child(a);}
@@ -284,4 +284,4 @@ protected:
 };
 
 
-#endif // _FLUID_FL_MENU_TYPE_H
+#endif // FLUID_NODES_MENU_NODE_H

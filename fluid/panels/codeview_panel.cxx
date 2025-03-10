@@ -29,8 +29,8 @@ static char *cv_source_filename = nullptr;
 static char *cv_header_filename = nullptr;
 static char *cv_design_filename = nullptr;
 int cv_code_choice;
-extern void select_only(Fl_Type *o);
-extern void reveal_in_browser(Fl_Type *t);
+extern void select_only(Node *o);
+extern void reveal_in_browser(Node *t);
 
 /**
  Update the header and source code highlighting depending on the
@@ -355,7 +355,7 @@ static void cb_1(Fl_Button*, void*) {
 
 static void cb_Reveal(Fl_Button*, void*) {
   if (codeview_panel && codeview_panel->visible()) {
-    Fl_Type *node = nullptr;
+    Node *node = nullptr;
     if (cv_source->visible_r())
       node = Fluid.proj.tree.find_in_text(0, cv_source->insert_position());
     else if (cv_header->visible_r())

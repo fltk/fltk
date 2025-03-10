@@ -16,7 +16,7 @@
 
 #include "rsrcs/pixmaps.h"
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 #include <FL/Fl_Pixmap.H>
 

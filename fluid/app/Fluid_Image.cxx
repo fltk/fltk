@@ -20,8 +20,8 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
-#include "nodes/Fl_Group_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Group_Node.h"
+#include "nodes/Window_Node.h"
 #include "tools/filename.h"
 
 #include <FL/Fl.H>

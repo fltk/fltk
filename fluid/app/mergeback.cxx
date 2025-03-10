@@ -22,8 +22,8 @@
 #include "Fluid.h"
 #include "proj/undo.h"
 #include "io/Code_Writer.h"
-#include "nodes/Fl_Function_Type.h"
-#include "nodes/Fl_Widget_Type.h"
+#include "nodes/Function_Node.h"
+#include "nodes/Widget_Node.h"
 
 #include <FL/Fl_Window.H>
 #include <FL/fl_ask.H>
@@ -62,7 +62,7 @@ extern void redraw_browser();
  can not be transferred back into the project.
 
  Modifications to code blocks and callbacks (CODE, CALLBACK) can be merged back
- into the project. Their corresponding Fl_Type is found using the unique
+ into the project. Their corresponding Node is found using the unique
  node id that is part of the tag. The block is only merged back if the crc's
  from the project and from the edited block differ.
 
@@ -239,7 +239,7 @@ int Fd_Mergeback::ask_user_to_merge(const std::string &code_filename, const std:
  Return findings in num_changed_code, num_changed_code, and num_uid_not_found.
  */
 void Fd_Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_crc, int uid) {
-  Fl_Type *tp = Fl_Type::find_by_uid(uid);
+  Node *tp = Node::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
     unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
@@ -261,7 +261,7 @@ void Fd_Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_cr
  Return findings in num_changed_code, num_changed_code, and num_uid_not_found.
  */
 void Fd_Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, int uid) {
-  Fl_Type *tp = Fl_Type::find_by_uid(uid);
+  Node *tp = Node::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
     std::string code = tp->name(); code += "\n";
     unsigned long project_crc = fld::io::Code_Writer::block_crc(code.c_str());
@@ -354,7 +354,7 @@ int Fd_Mergeback::analyse() {
  \return 1 if the project changed
  */
 int Fd_Mergeback::apply_callback(long block_end, long block_start, unsigned long code_crc, int uid) {
-  Fl_Type *tp = Fl_Type::find_by_uid(uid);
+  Node *tp = Node::find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
     unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
@@ -370,7 +370,7 @@ int Fd_Mergeback::apply_callback(long block_end, long block_start, unsigned long
  \return 1 if the project changed
  */
 int Fd_Mergeback::apply_code(long block_end, long block_start, unsigned long code_crc, int uid) {
-  Fl_Type *tp = Fl_Type::find_by_uid(uid);
+  Node *tp = Node::find_by_uid(uid);
   if (tp && tp->is_a(ID_Code)) {
     std::string cb = tp->name(); cb += "\n";
     unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());

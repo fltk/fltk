@@ -32,15 +32,15 @@
 
  The Node inheritance is currently:
       --+-- Node
-        +-- Fl_Function_Type
-        +-- Fl_Code_Type
-        +-- Fl_CodeBlock_Type
-        +-+ Fl_Decl_Type
+        +-- Function_Node
+        +-- Code_Node
+        +-- CodeBlock_Node
+        +-+ Decl_Node
         | +-- Fl_Data
-        +-- Fl_DeclBlock_Type
-        +-- Fl_Comment_Type
-        +-- Fl_Class_Type
-        +-+ Fl_Widget_Type, 'o' points to a class derived from Fl_Widget
+        +-- DeclBlock_Node
+        +-- Comment_Node
+        +-- Class_Node
+        +-+ Widget_Node, 'o' points to a class derived from Fl_Widget
           +-+ Fl_Browser_Base_Type, 'o' is Fl_Browser
           | +-+ Fl_Browser
           | | +-- Fl_File_Browser
@@ -64,32 +64,32 @@
           +-- Fl_Clock_Type
           +-- Fl_Progress_Type
           +-- Fl_Spinner_Type
-          +-+ Fl_Group_Type
-          | +-- Fl_Pack_Type
-          | +-- Fl_Flex_Type
-          | +-- Fl_Grid_Type
-          | +-- Fl_Table_Type
-          | +-- Fl_Tabs_Type
-          | +-- Fl_Scroll_Type
-          | +-- Fl_Tile_Type
-          | +-- Fl_Wizard_Type
-          | +-+ Fl_Window_Type
-          |   +-- Fl_Widget_Class_Type
-          +-+ Fl_Menu_Manager_Type, 'o' is based on Fl_Widget
-          | +-+ Fl_Menu_Base_Type, 'o' is based on Fl_Menu_
-          | | +-- Fl_Menu_Button_Type
-          | | +-- Fl_Choice_Type
-          | | +-- Fl_Menu_Bar_Type
-          | +-- Fl_Input_Choice_Type, 'o' is based on Fl_Input_Choice which is Fl_Group
-          +-+ Fl_Button_Type
+          +-+ Group_Node
+          | +-- Pack_Node
+          | +-- Flex_Node
+          | +-- Grid_Node
+          | +-- Table_Node
+          | +-- Tabs_Node
+          | +-- Scroll_Node
+          | +-- Tile_Node
+          | +-- Wizard_Node
+          | +-+ Window_Node
+          |   +-- Widget_Class_Node
+          +-+ Menu_Manager_Node, 'o' is based on Fl_Widget
+          | +-+ Menu_Base_Node, 'o' is based on Fl_Menu_
+          | | +-- Menu_Button_Node
+          | | +-- Choice_Node
+          | | +-- Menu_Bar_Node
+          | +-- Input_Choice_Node, 'o' is based on Fl_Input_Choice which is Fl_Group
+          +-+ Button_Node
             +-- Fl_Return_Button_Type
             +-- Fl_Repeat_Button_Type
             +-- Fl_Light_Button_Type
             +-- Fl_Check_Button_Type
             +-- Fl_Round_Button_Type
-            +-+ Fl_Menu_Item_Type, 'o' is derived from Fl_Button in FLUID
-              +-- Fl_Radio_Menu_Item_Type
-              +-- Fl_Checkbox_Menu_Item_Type
+            +-+ Menu_Item_Node, 'o' is derived from Fl_Button in FLUID
+              +-- Radio_Menu_Item_Node
+              +-- Checkbox_Menu_Item_Node
               +-- Fl_Submenu_Item_Type
 
 */
@@ -104,10 +104,10 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
-#include "nodes/Fl_Function_Type.h"
-#include "nodes/Fl_Widget_Type.h"
-#include "nodes/Fl_Window_Type.h"
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Function_Node.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
+#include "nodes/Group_Node.h"
 #include "rsrcs/pixmaps.h"
 #include "widgets/Node_Browser.h"
 
@@ -584,12 +584,12 @@ const char* Node::title() {
  Return the window that contains this widget.
  \return nullptr if this is not a widget.
  */
-Fl_Window_Type *Node::window() {
+Window_Node *Node::window() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
     if (t->is_a(ID_Window))
-      return (Fl_Window_Type*)t;
+      return (Window_Node*)t;
   return nullptr;
 }
 
@@ -597,12 +597,12 @@ Fl_Window_Type *Node::window() {
  Return the group that contains this widget.
  \return nullptr if this is not a widget.
  */
-Fl_Group_Type *Node::group() {
+Group_Node *Node::group() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
     if (t->is_a(ID_Group))
-      return (Fl_Group_Type*)t;
+      return (Group_Node*)t;
   return nullptr;
 }
 
@@ -770,7 +770,7 @@ int Node::msgnum() {
 
   for (count = 0, p = this; p;) {
     if (p->label()) count ++;
-    if (p != this && p->is_widget() && ((Fl_Widget_Type *)p)->tooltip()) count ++;
+    if (p != this && p->is_widget() && ((Widget_Node *)p)->tooltip()) count ++;
 
     if (p->prev) p = p->prev;
     else p = p->parent;
@@ -889,7 +889,7 @@ void Node::write(fld::io::Project_Writer &f) {
   f.write_word(type_name());
 
   if (is_class()) {
-    const char * p =  ((Fl_Class_Type*)this)->prefix();
+    const char * p =  ((Class_Node*)this)->prefix();
     if (p &&  strlen(p))
       f.write_word(p);
   }
@@ -1013,7 +1013,7 @@ void Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Lastly, this method should call the super class to give it a chance to append
  its own properties.
 
- \see Fl_Grid_Type::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
+ \see Grid_Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
 
  \param[in] f the project file writer
  \param[in] child write properties for this child, make sure it has the correct type
@@ -1047,7 +1047,7 @@ void Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool
  does not support a property, it will propagate to its super class.
 
  \see Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
- \see Fl_Grid_Type::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property)
+ \see Grid_Node::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property)
 
  \param[in] f the project file writer
  \param[in] child read properties for this child
@@ -1234,8 +1234,8 @@ const char* Node::class_name(const int need_nest) const {
 }
 
 /**
- Check if this is inside a Fl_Class_Type or Fl_Widget_Class_Type.
- \return true if any of the parents is Fl_Class_Type or Fl_Widget_Class_Type
+ Check if this is inside a Class_Node or Widget_Class_Node.
+ \return true if any of the parents is Class_Node or Widget_Class_Node
  */
 bool Node::is_in_class() const {
   Node* p = parent;

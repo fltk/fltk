@@ -18,7 +18,7 @@
 
 #include "Fluid.h"
 #include "proj/undo.h"
-#include "nodes/Fl_Group_Type.h"
+#include "nodes/Group_Node.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -35,7 +35,7 @@ void align_widget_cb(Fl_Widget*, long how)
 {
   const int max = 32768, min = -32768;
   int left, right, top, bot, wdt, hgt, n;
-  Fl_Type *o;
+  Node *o;
   int changed = 0;
   switch ( how )
   {
@@ -45,20 +45,20 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->x()<left)
           left = w->x();
         BREAK_ON_FIRST;
       }
     if (left!=max)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(left, w->y(), w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -71,7 +71,7 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->x()<left)
           left = w->x();
         if (w->x()+w->w()>right)
@@ -81,14 +81,14 @@ void align_widget_cb(Fl_Widget*, long how)
     if (left!=max)
     {
       int center2 = left+right;
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -102,20 +102,20 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->x()+w->w()>right)
           right = w->x()+w->w();
         BREAK_ON_FIRST;
       }
     if (right!=min)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(right-w->w(), w->y(), w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -128,20 +128,20 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->y()<top)
           top = w->y();
         BREAK_ON_FIRST;
       }
     if (top!=max)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), top, w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -154,7 +154,7 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->y()<top)
           top = w->y();
         if (w->y()+w->h()>bot)
@@ -164,14 +164,14 @@ void align_widget_cb(Fl_Widget*, long how)
     if (top!=max)
     {
       int center2 = top+bot;
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -185,20 +185,20 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->y()+w->h()>bot)
           bot = w->y()+w->h();
         BREAK_ON_FIRST;
       }
     if (bot!=min)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize( w->x(), bot-w->h(), w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -212,7 +212,7 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->x()<left)
           left = w->x();
         if (w->x()+w->w()>right)
@@ -226,14 +226,14 @@ void align_widget_cb(Fl_Widget*, long how)
     {
       wdt = wdt/n*n; // make sure that all gaps are the same, possibly moving the rightmost widget
       int cnt = 0, wsum = 0;
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(left+wsum+wdt*cnt/n, w->y(), w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -249,7 +249,7 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->y()<top)
           top = w->y();
         if (w->y()+w->h()>bot)
@@ -263,14 +263,14 @@ void align_widget_cb(Fl_Widget*, long how)
     {
       hgt = hgt/n*n; // make sure that all gaps are the same, possibly moving the rightmost widget
       int cnt = 0, hsum = 0;
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), top+hsum+hgt*cnt/n, w->w(), w->h());
           Fluid.proj.tree.allow_layout--;
@@ -287,20 +287,20 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->w()>wdt)
           wdt = w->w();
         BREAK_ON_FIRST;
       }
     if (wdt!=min)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize(w->x(), w->y(), wdt, w->h());
           Fluid.proj.tree.allow_layout--;
@@ -313,20 +313,20 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->h()>hgt)
           hgt = w->h();
         BREAK_ON_FIRST;
       }
     if (hgt!=min)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize( w->x(), w->y(), w->w(), hgt);
           Fluid.proj.tree.allow_layout--;
@@ -339,7 +339,7 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fluid.proj.tree.first; o; o = o->next)
       if (o->selected && o->is_widget())
       {
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
         if (w->w()>wdt)
           wdt = w->w();
         if (w->h()>hgt)
@@ -347,14 +347,14 @@ void align_widget_cb(Fl_Widget*, long how)
         BREAK_ON_FIRST;
       }
     if (hgt!=min)
-      for (Fl_Type *o = Fluid.proj.tree.first; o; o = o->next)
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next)
         if (o->selected && o->is_widget())
         {
           if (!changed) {
             changed = 1;
             Fluid.proj.undo.checkpoint();
           }
-          Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+          Fl_Widget *w = ((Widget_Node *)o)->o;
           Fluid.proj.tree.allow_layout++;
           w->resize( w->x(), w->y(), wdt, hgt);
           Fluid.proj.tree.allow_layout--;
@@ -371,8 +371,8 @@ void align_widget_cb(Fl_Widget*, long how)
           changed = 1;
           Fluid.proj.undo.checkpoint();
         }
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-        Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
+        Fl_Widget *p = ((Widget_Node *)o->parent)->o;
         int center2;
 
         if (w->window() == p) center2 = p->w();
@@ -393,8 +393,8 @@ void align_widget_cb(Fl_Widget*, long how)
           changed = 1;
           Fluid.proj.undo.checkpoint();
         }
-        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-        Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
+        Fl_Widget *w = ((Widget_Node *)o)->o;
+        Fl_Widget *p = ((Widget_Node *)o->parent)->o;
         int center2;
 
         if (w->window() == p) center2 = p->h();

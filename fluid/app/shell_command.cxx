@@ -110,6 +110,8 @@
 
 #include <errno.h>
 
+using namespace fld;
+
 static std::string fltk_config_cmd;
 static Fl_Process s_proc;
 

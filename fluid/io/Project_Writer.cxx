@@ -148,7 +148,7 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
       write_string("\nmergeback %d", proj_.write_mergeback_data);
   }
 
-  for (Fl_Type *p = proj_.tree.first; p;) {
+  for (Node *p = proj_.tree.first; p;) {
     if (!selected_only || p->selected) {
       p->write(*this);
       write_string("\n");
