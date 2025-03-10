@@ -1,7 +1,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -549,7 +549,6 @@ int main(int argc, char **argv) {
   fix_path(app_path);
 
   // fluid's path is relative to app_path:
-  // - "../fluid" for autoconf/make builds
   // - ".." (parent directory) for single configuration CMake builds
   // - "../../$CMAKE_INTDIR" for multi-config (Visual Studio or Xcode) CMake builds
 
@@ -564,16 +563,11 @@ int main(int argc, char **argv) {
   fix_path(fluid_path); // remove folder name ("test")
   fix_path(options_path);
 
-#if !defined(GENERATED_BY_CMAKE)
-  strcat(fluid_path, "/fluid");
-  strcat(options_path, "/fltk-options");
-#else
   // CMake: potentially Visual Studio or Xcode (multi config)
   if (cmake_intdir) {
     strcat(fluid_path, cmake_intdir); // append e.g. "/Debug"
     strcat(options_path, cmake_intdir);
   }
-#endif // GENERATED_BY_CMAKE
 
   // construct data_path for the menu file and all resources (data files)
   // CMake: replace "/bin/test/*" with "/data"
@@ -581,13 +575,11 @@ int main(int argc, char **argv) {
 
   strcpy(data_path, app_path);
 
-#if defined(GENERATED_BY_CMAKE)
   {
     char *pos = strstr(data_path, "/bin/test");
     if (pos)
       strcpy(pos, "/data");
   }
-#endif // GENERATED_BY_CMAKE
 
   // Construct the menu file name, optionally overridden by command args.
   // Use data_path and append "/<exe-file-name>.menu"

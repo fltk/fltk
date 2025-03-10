@@ -1379,14 +1379,14 @@ void show_help(const char *name) {
        "the <code>.cxx</code> file so it still appears to be a single source file.<p>"
        "<img src=\"embedded:/fluid_flow_chart_800.png\"></p>"
        "<p>More information is available online at <a href="
-       "\"https://www.fltk.org/doc-1.4/fluid.html\">https://www.fltk.org/</a>"
+       "\"https://www.fltk.org/doc-1.5/fluid.html\">https://www.fltk.org/</a>"
        "</body></html>"
        );
     } else if (strcmp(name, "license.html")==0) {
-      fl_open_uri("https://www.fltk.org/doc-1.4/license.html");
+      fl_open_uri("https://www.fltk.org/doc-1.5/license.html");
       return;
     } else if (strcmp(name, "index.html")==0) {
-      fl_open_uri("https://www.fltk.org/doc-1.4/index.html");
+      fl_open_uri("https://www.fltk.org/doc-1.5/index.html");
       return;
     } else {
       snprintf(helpname, sizeof(helpname), "https://www.fltk.org/%s", name);

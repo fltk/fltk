@@ -352,5 +352,3 @@ file(COPY
 # The main test program 'demo' needs additional hints and configurations.
 # Note: CMake defines "CMAKE_INTDIR" which is the build type folder (e.g. "Debug")
 # for multi config builds (MSVC, Xcode)
-
-target_compile_definitions (demo PRIVATE GENERATED_BY_CMAKE)

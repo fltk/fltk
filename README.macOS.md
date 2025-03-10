@@ -258,7 +258,7 @@ The configuration summary should not show any errors. You can now continue to bu
 For the advanced user there are a few more options to the _CMake_ setup. Type
 `cmake -L ../..` to get a complete list of options. These should be pretty
 self-explanatory. Some more details can be found in
-[online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
+[online documentation](https://www.fltk.org/doc-1.5/intro.html#intro_cmake).
 
 <a name="bcm_build"></a>
 ### Building FLTK (CMake, make)
@@ -429,7 +429,7 @@ The configuration summary should not show any errors. You can now continue to bu
 For the advanced user there are a few more options to the _configure_ script. Type
 `./configure --help` to get a complete list of options. These should be pretty
 self-explanatory. Some more details can be found in
-[online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
+[online documentation](https://www.fltk.org/doc-1.5/intro.html#intro_cmake).
 
 <a name="bam_build"></a>
 ### Building FLTK (autoconf, make)
@@ -507,7 +507,7 @@ CFBundleDocumentTypes/Item 0/CFBundleTypeExtensions/Item 0
 from the current "*" to the desired file extension. Use several items to
 declare several extensions.
 
-- Call function <a href=https://www.fltk.org/doc-1.4/group__group__macosx.html#ga0702a54934d10f5b72157137cf291296>fl\_open\_callback()</a> at the beginning of your main() function to set
+- Call function <a href=https://www.fltk.org/doc-1.5/group__group__macosx.html#ga0702a54934d10f5b72157137cf291296>fl\_open\_callback()</a> at the beginning of your main() function to set
 what function will be called when a file is dropped on the application icon.
 
 - In Xcode, set the "Info.plist File" build setting of your target application

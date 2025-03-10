@@ -16,7 +16,7 @@ It has always been Bill's belief that the GUI API of all
 modern  systems is much too high level. Toolkits (even FLTK) are
 \e not what should be provided and documented as part of an
 operating system. The  system only has to provide arbitrary
-shaped but featureless windows, a  powerful set of graphics
+shaped but featureless windows, a powerful set of graphics
 drawing calls, and a simple \e unalterable method of
 delivering events to the owners of the windows. NeXT (if you
 ignored NextStep) provided this, but they chose to hide it and
@@ -83,6 +83,10 @@ simple pixel drawing, but this experimental code is not included
 in FLTK 1.4. There are thoughts to enable more platforms in later
 FLTK versions.
 
+FLTK 1.5 removed autotools (configure + Makefile) support in favor
+of exclusive use of CMake to generate the build files. FLTK 1.5
+allows to use a basic set of C++ features from the C++11 standard.
+
 
 \section intro_features Features
 
@@ -93,12 +97,12 @@ parts that are used, and thus do not get linked in. This allows
 you to make an easy-to-install program or to modify FLTK to
 the exact requirements of your application without worrying
 about bloat. FLTK works fine as a shared library, though, and
-is now included with several Linux distributions.
+is included with several Linux distributions.
 
 Here are some of the core features unique to FLTK:
 
 Note: sizes given below are mostly from 32-bit systems and FLTK 1.1
-or earlier, this list needs updates for current FLTK (1.4).
+or earlier, this list needs updates for current FLTK 1.5 (64-bit).
 
 \li sizeof(Fl_Widget) == 64 to 92 (120 in FLTK 1.4 on 64-bit Linux).
 
@@ -110,19 +114,21 @@ or earlier, this list needs updates for current FLTK (1.4).
     (FLTK 1.4 with more widgets on 64-bit Linux: 2.3 MB and
     2.0 MB on 32-bit Windows).
 
-\li Written directly atop core libraries (Xlib, Wayland, Windows or Cocoa) for
-    maximum speed, and carefully optimized for code size and performance.
+\li Written directly atop core libraries (Xlib, Wayland, Windows or Cocoa)
+    for maximum speed and carefully optimized for code size and performance.
 
-\li Precise low-level compatibility between the X11, Windows and MacOS
-    versions - only about 10% of the code is different.
+\li Precise low-level compatibility between the X11/Wayland, Windows, and
+    macOS versions - only about 10% of the code is different.
 
 \li Interactive user interface builder program FLUID. Its output is
     human-readable and editable C++ source code.
 
 \li Support for overlay hardware, with emulation if none is available.
+    Note: hardware support has been removed in 1.4.0.
 
 \li Very small & fast portable 2-D drawing library to hide Xlib, Cairo,
-    Windows, or macOS Quartz.
+    Windows, or macOS Quartz. Since FLTK 1.4 Wayland graphics use Cairo
+    for drawing. This is optionally available for X11 drawing as well.
 
 \li OpenGL/Mesa drawing area widget.
 
@@ -175,142 +181,46 @@ target in the CMake build environment.
 
 \section intro_cmake Building and Installing FLTK with CMake
 
-Starting with version 1.4, the recommended FLTK building system is CMake.
+Starting with version 1.4, the \b recommended FLTK build system was CMake.
+Since FLTK 1.5.0 CMake is the \b only available build system for FLTK.
+
 CMake is a "Build System Generator" that can generate build environments
-for usage with Ninja, Make, and many more, for instance IDE's.
+for usage with Ninja, Make, and many more, for instance several IDE's.
 See file README.CMake.txt of the FLTK source tree for more information.
 
-\note
-In FLTK 1.4 you can also use \p configure and \p make as follows to build and
-install FLTK. However, configure/make support will be dropped in FLTK 1.5.0.
-
-
-\section intro_unix Building and Installing FLTK Under UNIX and macOS with make
-
-In most cases you can just type "make". This will run configure with
-the default of no options and then compile everything.
-
-FLTK uses GNU autoconf to configure itself for your UNIX
-platform. The main things that the configure script will look
-for are the X11 and OpenGL (or Mesa) header and library files.
-If these cannot be found in the standard include/library
-locations you'll need to define the \p CFLAGS,
-\p CXXFLAGS, and \p LDFLAGS environment variables.
-For the Bourne and Korn shells you'd use:
+By default CMake will look for a C++ compiler named \p CC, \p c++, \p g++,
+or \p gcc. To use another compiler you can set the \p CXX and \p CC
+environment variables for the C++ and C compiler, respectively. The code
+to use depends on your shell, for instance:
 
 \code
-CFLAGS=-Iincludedir; export CFLAGS
-CXXFLAGS=-Iincludedir; export CXXFLAGS
-LDFLAGS=-Llibdir; export LDFLAGS
+  CXX=clang++; export CXX
+  setenv CXX "clang++"
+
+  CC=clang; export CC
+  setenv CC "clang"
 \endcode
 
-For C shell and tcsh, use:
+  Then execute CMake like
+\code
+  cd /path/to/fltk
+  cmake . -B build [ -G <GENERATOR> ] [ options ... ]
+\endcode
+
+Note that you can also specify the compiler and build tools on the CMake
+command line or in the CMake GUI.
+
+When CMake is done you can just run CMake again to build the FLTK library,
+fluid, fltk-options (setup tool), and all test programs, depending on the
+configuration.
 
 \code
-setenv CFLAGS "-Iincludedir"
-setenv CXXFLAGS "-Iincludedir"
-setenv LDFLAGS "-Llibdir"
+  cmake --build build
 \endcode
 
-By default configure will look for a C++ compiler named
-\p CC, \p c++, \p g++, or \p gcc in that
-order. To use another compiler you need to set the \p CXX
-environment variable:
-
-\code
-CXX=xlC; export CXX
-setenv CXX "xlC"
-\endcode
-
-The \p CC environment variable can also be used to
-override the default C compiler (\p cc or \p gcc),
-which is used for a few FLTK source files.
-
-You can run configure yourself to get the exact setup you need.
-Type  "./configure <options>", where some of the options are:
-
-\par --enable-cygwin
-Enable the Cygwin libraries under Windows
-
-\par --enable-debug
-Enable debugging code & symbols
-
-\par --disable-gl
-Disable OpenGL support
-
-\par --disable-svg
-Disable support of reading and writing of Scalable Vector Graphics (.svg) files.
-
-\par --disable-print
-Disable print support for an X11/Wayland platform
-
-\par --enable-shared
-Enable generation of shared libraries
-
-\par --enable-threads
-Enable multithreading support
-
-\par --enable-wayland
-This is the default for Linux and FreeBSD systems equipped with the Wayland software.
-Enable the use of Wayland for all window operations, of Cairo for all graphics, and
-of Pango for text drawing. Resulting FLTK apps run as Wayland clients if a Wayland
-compositor is available at run-time, and as X11 clients otherwise but keep using
-Cairo and Pango for all graphics.
-
-\par --disable-xft
-Disables the Xft library, resulting in non anti-aliased fonts (X11 platform).
-This is not recommended.
-
-\par --enable-usecairo
-All drawing operations use the Cairo library (rather than Xlib) producing
-antialiased graphics (X11 platform, implies --enable-pango).
-
-\par --enable-pango
-Enable the Pango library for drawing any text in any script with any font
-under X11/Wayland.
-
-\par --enable-x11
-When targeting Cygwin, build with X11 GUI instead of windows GDI.
-Also applicable to macOS platforms supplemented with XQuartz.
-
-\par --enable-cairo
-Enable support of class Fl_Cairo_Window (all platforms, requires Cairo as
-an external library).
-
-\par --enable-cairoext
-Enable the FLTK instrumentation for cairo extended use (implies --enable-cairo).
-
-\par --disable-gdiplus
-Don't use GDI+ when drawing curves and oblique lines (Windows platform).
-
-\par --enable-cp936
-Under X11, enable use of the GB2312 locale.
-
-\par --bindir=/path
-Set the location for executables. [default = $prefix/bin]
-
-\par --datadir=/path
-Set the location for data files. [default = $prefix/share]
-
-\par --libdir=/path
-Set the location for libraries. [default = $prefix/lib]
-
-\par --includedir=/path
-Set the location for include files. [default = $prefix/include]
-
-\par --mandir=/path
-Set the location for man pages. [default = $prefix/man]
-
-\par --prefix=/dir
-Set the directory prefix for files. [default = /usr/local]
-
-When the configure script is done you can just run the
-"make" command. This will build the library, FLUID tool,
-fltk-options (setup tool), and all of the test programs.
-
-To install the library, become root and type "make install".
-This will copy the "fluid" executable to "bindir", the header
-files to "includedir", and the library files to "libdir".
+To install the library, become root and type "cmake --install build".
+This will copy the "fluid" executable to "bindir", the header files
+to "includedir", and the library files to "libdir".
 
 
 \section intro_windows Building FLTK Under Microsoft Windows
@@ -321,51 +231,62 @@ up-to-date information for this release may be available in the files
 these files to determine if there are changes that may be
 applicable to your build environment.
 
-FLTK 1.4 is officially supported on Windows (2000,) 2003,
-XP, and later.  Older Windows versions prior to Windows 2000
-are not officially supported but may still work.
-The main reason is that the OS version needs to support UTF-8.
-FLTK 1.4 is known to work on recent versions of Windows such as
-Windows 7, Windows 8/8.1, Windows 10 and Windows 11, and has been
-reported to work in both 32-bit and 64-bit Windows versions.
+FLTK 1.5 is \b officially \b supported on Windows 10 (11) and later. We don't
+intend to remove the ability to build and run FLTK 1.5 programs on older
+Windows versions but the FLTK Team can't build and test on Windows systems
+that are no longer supported by Microsoft. Therefore, such older systems
+(including Windows 10, starting in Oct. 2025, when Microsoft does no longer
+support Windows 10) may work with FLTK or not.
+
+\note FLTK 1.4 is known to work on Windows (2000,) 2003, XP, and later. The
+  main prerequisite is that the OS version supports UTF-8. FLTK 1.4 is also
+  known to work on recent versions of Windows such as Windows 7, Windows 8/8.1,
+  Windows 10, and Windows 11, and has been reported to work in both 32-bit and
+  64-bit Windows versions. If you need to use FLTK on older versions than
+  Windows 11 (or Windows 10) you may use FLTK 1.4.x.
+
+\n
 
 \note Libraries built by any one of the following build environments
-can not be mixed with object files from any of the other environments
-because they use incompatible C++ conventions internally.
+  can not be mixed with object files from any of the other environments
+  because they use incompatible C++ conventions internally.
 
 FLTK currently supports the following development environments on the
 Windows platform:
-
 
 \subsection intro_msvc Free and Commercial Microsoft Visual Studio Versions
 
 Visual Studio 2015 Community or later versions use workspace and project
 files generated by CMake. Older versions and the commercial versions can
 be used as well, if they can open the project files generated by CMake.
-FLTK support of Visual C++ is limited to the support of CMake for these
-Visual Studio versions.
-Be sure to get your service packs!
+However, FLTK 1.5 and later requires newer C++ features (C++11 or higher)
+that may not be available in older versions of Visual Studio.
 
-Since FLTK 1.4 the project files MUST be generated with CMake.
-Please read "README.CMake.txt" for more information about this.
+FLTK support of Visual Studio is limited to CMake's support for these
+Visual Studio versions. Be sure to get your service packs!
+
+Since FLTK 1.5 the project files MUST be generated with CMake. Please
+read "README.txt", "README.CMake.txt", and "README.Windows.txt" for more
+information about this.
 
 
 \subsection intro_msvc_dll Using the Visual C++ DLL Library
 
-The Visual Studio project files can be used to build a DLL version
-of the FLTK library if CMake option 'FLTK_BUILD_SHARED_LIBS=ON' is
-set. Because of name mangling differences between PC compilers (even
-between different versions of Visual Studio) you can only use the DLL
-that is generated with the same compiler version that you built it with.
+The Visual Studio project files can be used to build a DLL version of the
+FLTK library if CMake option 'FLTK_BUILD_SHARED_LIBS=ON' is set. Because
+of name mangling differences between PC compilers (even between different
+versions of Visual Studio) you can only use the DLL that is generated with
+the same compiler version that you built it with.
 
 When compiling an application or DLL that uses the FLTK DLL with Visual
 Studio, you need to define the \p FL_DLL preprocessor symbol to get
 the correct linkage commands embedded within the FLTK header files.
 
 New since FLTK 1.4.0:
+
 If you build your application project with CMake and use the CMake target
 'fltk::fltk-shared' to link your application, then 'FL_DLL' is defined
-automatically for you (by CMake Compile Definition). If you use your
+automatically for you (by CMake Compile Definitions). If you use your
 own (hand-made) Visual Studio project you still need to define FL_DLL
 to compile all source files that use FLTK headers.
 
@@ -374,18 +295,16 @@ to compile all source files that use FLTK headers.
 
 If using Cygwin with the Cygwin shell, or MinGW with the Msys shell,
 these build environments behave very much like a Unix or macOS build
-and the notes above in the section on
-<i>Building and Installing FLTK Under UNIX and Apple macOS</i>
-apply, in particular the descriptions of using the
-"configure" script and its related options.
+and the notes above can be applied. Build files are generated by CMake for
+the platform you are using. See README.CMake.txt for more info.
 
 In general for a build using these tools, e.g. for the Msys shell with
 MinGW, it should suffice to "cd" into the directory where you have
 extracted the FLTK tarball and type:
 
 \code
-./configure
-make
+  cmake . -B build
+  cmake --build build
 \endcode
 
 This will build the FLTK libraries and they can then be
@@ -398,43 +317,39 @@ For example, if you "install" the libraries using Msys/MinGW
 with the following command
 
 \code
-make install
+  cmake --install build
 \endcode
 
-then Msys will "install" the libraries to where it thinks
-the path "/usr/local/" leads to. If you only ever build code
-from within the Msys environment this works well, but the
-actual "Windows path" these files are located in will be
-something like "C:\msys\1.0\local\lib", depending
-on where your Msys installation is rooted, which may
-not be useful to other tools.
+then Msys will "install" the libraries to where it thinks the path
+"/usr/local/" leads to. If you only ever build code from within the Msys
+environment this works well, but the actual "Windows path" these files
+are located in will be something like "C:\msys\1.0\local\lib", depending
+on where your Msys installation is rooted, which may not be useful to
+other tools.
 
 If you want to install your built FLTK libraries in a
 non-standard location you may do:
 
 \code
-sh configure --prefix=C:/FLTK
-make
+  cmake . -B build -D CMAKE_INSTALL_PATH="C:/FLTK"
+  cmake --build build
+  cmake --install build
 \endcode
 
-Where the value passed to "prefix" is the path at which
-you would like FLTK to be installed.
-
-A subsequent invocation of "make install" will then place
-the FLTK libraries and header files into that path.
-
-The other options to "configure" may also be used to
-tailor the build to suit your environment.
+Where the value passed to "CMAKE_INSTALL_PATH" is the path at which
+you would like FLTK to be installed. Depending on the build environment
+using standard Windows path syntax may work, or you need to use MinGW
+(or Cygwin) syntax.
 
 
 \section intro_internet Internet Resources
 
-FLTK is available on the 'net in a bunch of locations:
+FLTK is available on the internet in a bunch of locations:
 
 \par FLTK Source Repository on GitHub
 https://github.com/fltk/fltk
 
-\par WWW
+\par WWW (fltk.org)
 https://www.fltk.org/ <br>
 https://www.fltk.org/bugs.php [for reporting bugs] <br>
 https://www.fltk.org/software.php [download source code]<br>
@@ -444,6 +359,12 @@ https://www.fltk.org/newsgroups.php [newsgroup/forums]
 https://groups.google.com/forum/#!forum/fltkgeneral [Google Groups interface] <br>
 news://fltk.org:1024/ [NNTP interface]<br>
 https://www.fltk.org/newsgroups.php [web interface]
+
+\par GitHub
+https://github.com/fltk/fltk
+https://github.com/fltk/fltk/discussions [FLTK Discussions on GitHub]
+https://github.com/fltk/fltk/discussions/categories/q-a [Q&A: Questions and Answers]
+https://github.com/fltk/fltk/releases [Releases, i.e. Source Code and Documentation]
 
 
 \section intro_reporting Reporting Bugs
@@ -455,7 +376,8 @@ or ask for help on using FLTK.
 
 For general support and questions, please use the fltk.general newsgroup
 (see above, "NNTP Newsgroups") or the web interface to the newsgroups at
-<A href="https://www.fltk.org/newsgroups.php">https://www.fltk.org/newsgroups.php</A>.
+<A href="https://www.fltk.org/newsgroups.php">https://www.fltk.org/newsgroups.php</A>,
+or GitHub Discussions (see link above).
 
 \htmlonly
 <hr>
