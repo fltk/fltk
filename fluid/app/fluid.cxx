@@ -244,7 +244,8 @@ static void create_tmpdir() {
 #else
   fl_snprintf(buf, sizeof(buf)-1, "fluid-%d/", getpid());
   std::string name = buf;
-  std::string path = fl_getenv("TMPDIR");
+  auto path_temp = fl_getenv("TMPDIR");
+  std::string path = path_temp ? path_temp : "";
   if (!path.empty()) {
     end_with_slash(path);
     path += name;
