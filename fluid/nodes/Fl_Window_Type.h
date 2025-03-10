@@ -89,7 +89,7 @@ public:
     numselected(0),
     recalc(0),
     modal(0), non_modal(0),
-    xclass(NULL),
+    xclass(nullptr),
     sr_min_w(0), sr_min_h(0), sr_max_w(0), sr_max_h(0)
   { }
   uchar modal, non_modal;

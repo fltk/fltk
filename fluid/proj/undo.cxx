@@ -103,8 +103,8 @@ void Undo::redo() {
     return;
   }
   if (reload_panel) {
-    for (auto &w: Fluid.proj.tree.all_selected_widgets()) {
-      w.open();
+    for (auto w: Fluid.proj.tree.all_selected_widgets()) {
+      w->open();
     }
   }
   if (widget_browser) widget_browser->restore_scroll_position();

@@ -81,7 +81,7 @@ int fld::widget::Bin_Button::handle(int inEvent)
  */
 int fld::widget::Bin_Window_Button::handle(int inEvent)
 {
-  static Fl_Window *drag_win = NULL;
+  static Fl_Window *drag_win = nullptr;
   int ret = 0;
   switch (inEvent) {
     case FL_PUSH:
@@ -107,7 +107,7 @@ int fld::widget::Bin_Window_Button::handle(int inEvent)
     case FL_RELEASE:
       if (drag_win) {
         Fl::delete_widget(drag_win);
-        drag_win = NULL;
+        drag_win = nullptr;
         // create a new window here
         Fl_Type *prototype = typename_to_prototype((char*)user_data());
         if (prototype) {

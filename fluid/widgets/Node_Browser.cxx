@@ -81,7 +81,7 @@ Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
 /**
  Make sure that the caller is visible in the widget browser.
  \param[in] caller scroll the browser in y so that caller
- is visible (may be NULL)
+ is visible (may be nullptr)
  */
 void redraw_widget_browser(Fl_Type *caller)
 {
@@ -165,7 +165,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
 {
   int size = 0;                         // truncated string size in characters
   int bs;                               // size of UTF-8 character in bytes
-  if (!p) return NULL;                  // bad buffer
+  if (!p) return nullptr;                  // bad buffer
   if (!str) {                           // no input string
     if (quote) { *p++='"'; *p++='"'; }
     *p = 0;
@@ -232,7 +232,7 @@ void *Node_Browser::item_first() const {
 /**
  Override the method to find the next item in the list of elements.
  \param l this item
- \return the next item, irregardless of tree depth, or NULL at the end
+ \return the next item, irregardless of tree depth, or nullptr at the end
  */
 void *Node_Browser::item_next(void *l) const {
   return ((Fl_Type*)l)->next;
@@ -241,7 +241,7 @@ void *Node_Browser::item_next(void *l) const {
 /**
  Override the method to find the previous item in the list of elements.
  \param l this item
- \return the previous item, irregardless of tree depth, or NULL at the start
+ \return the previous item, irregardless of tree depth, or nullptr at the start
  */
 void *Node_Browser::item_prev(void *l) const {
   return ((Fl_Type*)l)->prev;

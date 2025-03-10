@@ -405,7 +405,7 @@ void run_image_panel() {
   Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
   if (img) {
     img->release();
-    image_panel_data->user_data(NULL);
+    image_panel_data->user_data(nullptr);
   }
 }
 
@@ -696,11 +696,11 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(&m, NULL, NULL, NULL);
+    grid->margin(&m, nullptr, nullptr, nullptr);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(&old_m, NULL, NULL, NULL);
+    grid->margin(&old_m, nullptr, nullptr, nullptr);
     if (m != old_m) {
       Fluid.proj.undo.checkpoint();
       grid->margin(m, -1, -1, -1);
@@ -715,11 +715,11 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(NULL, &m, NULL, NULL);
+    grid->margin(nullptr, &m, nullptr, nullptr);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, &old_m, NULL, NULL);
+    grid->margin(nullptr, &old_m, nullptr, nullptr);
     if (m != old_m) {
       Fluid.proj.undo.checkpoint();
       grid->margin(-1, m, -1, -1);
@@ -734,11 +734,11 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(NULL, NULL, &m, NULL);
+    grid->margin(nullptr, nullptr, &m, nullptr);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, NULL, &old_m, NULL);
+    grid->margin(nullptr, nullptr, &old_m, nullptr);
     if (m != old_m) {
       Fluid.proj.undo.checkpoint();
       grid->margin(-1, -1, m, -1);
@@ -753,11 +753,11 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   int m = 0;
   if (v == LOAD) {
-    grid->margin(NULL, NULL, NULL, &m);
+    grid->margin(nullptr, nullptr, nullptr, &m);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m;
-    grid->margin(NULL, NULL, NULL, &old_m);
+    grid->margin(nullptr, nullptr, nullptr, &old_m);
     if (m != old_m) {
       Fluid.proj.undo.checkpoint();
       grid->margin(-1, -1, -1, m);
@@ -774,7 +774,7 @@ static void cb_Row(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   if (v == LOAD) {
     int m = 0;
-    grid->gap(&m, NULL);
+    grid->gap(&m, nullptr);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m, m2;
@@ -793,7 +793,7 @@ static void cb_Col(Fl_Value_Input* o, void* v) {
   if (!grid) return;
   if (v == LOAD) {
     int m = 0;
-    grid->gap(NULL, &m);
+    grid->gap(nullptr, &m);
     o->value(m);
   } else {
     int m = (int)o->value(), old_m, m2;

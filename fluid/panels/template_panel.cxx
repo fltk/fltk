@@ -84,7 +84,7 @@ static void cb_template_browser(Fl_Browser*, void*) {
   char pngfile[1024], *ext;
 
   strlcpy(pngfile, flfile, sizeof(pngfile));
-  if ((ext = strrchr(pngfile, '.')) == NULL) return;
+  if ((ext = strrchr(pngfile, '.')) == nullptr) return;
   strcpy(ext, ".png");
 
   img = Fl_Shared_Image::get(pngfile);
@@ -183,7 +183,7 @@ void template_clear() {
   void *filename;
 
   for (i = 1; i <= template_browser->size(); i ++) {
-    if ((filename = template_browser->data(i)) != NULL) free(filename);
+    if ((filename = template_browser->data(i)) != nullptr) free(filename);
   }
 
   template_browser->deselect();
@@ -208,7 +208,7 @@ void template_delete_cb(Fl_Button *, void *) {
 
   char pngfile[1024], *ext;
   strlcpy(pngfile, flfile, sizeof(pngfile));
-  if ((ext = strrchr(pngfile, '.')) != NULL) {
+  if ((ext = strrchr(pngfile, '.')) != nullptr) {
     strcpy(ext, ".png");
     fl_unlink(pngfile);
   }

@@ -90,7 +90,7 @@ Fl_Pixmap *protected_pixmap;
 Fl_Pixmap *invisible_pixmap;
 Fl_Pixmap *compressed_pixmap;
 
-Fl_Pixmap *pixmap[ID_Max_] = { NULL };
+Fl_Pixmap *pixmap[ID_Max_] = { nullptr };
 
 /**
  Draw a zoom cross pointing in all four diagonal directions

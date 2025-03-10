@@ -33,12 +33,12 @@ using namespace fld;
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
 static Fl_Timeout_Handler L_update_timer_cb = 0;        // app's update timer callback
-static wchar_t *wbuf = NULL;
-static char *abuf = NULL;
+static wchar_t *wbuf = nullptr;
+static char *abuf = nullptr;
 
 static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
   unsigned len = (lg >= 0) ? (unsigned)lg : (unsigned)strlen(utf8);
-  unsigned wn = fl_utf8toUtf16(utf8, len, NULL, 0) + 1; // Query length
+  unsigned wn = fl_utf8toUtf16(utf8, len, nullptr, 0) + 1; // Query length
   wbuf = (wchar_t *)realloc(wbuf, sizeof(wchar_t) * wn);
   wn = fl_utf8toUtf16(utf8, len, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
@@ -47,7 +47,7 @@ static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
 
 static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
   unsigned len = (unsigned)wcslen(wstr);
-  unsigned wn = fl_utf8fromwc(NULL, 0, wstr, len) + 1; // query length
+  unsigned wn = fl_utf8fromwc(nullptr, 0, wstr, len) + 1; // query length
   utf8 = (char *)realloc(utf8, wn);
   wn = fl_utf8fromwc(utf8, wn, wstr, len); // convert string
   utf8[wn] = 0;
@@ -68,7 +68,7 @@ static const char *get_ms_errmsg() {
   DWORD msize = 0;
 
   // Get error message from Windows
-  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, NULL);
+  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, nullptr);
   if ( msize == 0 ) {
     _snprintf(emsg, sizeof(emsg), "Error #%ld", (unsigned long)lastErr);
   } else {
@@ -119,7 +119,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
 }
 
 // [Protected] Set the filename. Handles memory allocation/free
-//     If set to NULL, frees memory.
+//     If set to nullptr, frees memory.
 //
 void ExternalCodeEditor::set_filename(const char *val) {
   if ( filename_ ) free((void*)filename_);
@@ -252,10 +252,10 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   HANDLE fh = CreateFileW(wbuf,           // file to read
                          GENERIC_READ,    // reading only
                          FILE_SHARE_READ, // sharing -- allow read share; just getting file size
-                         NULL,            // security
+                         nullptr,            // security
                          OPEN_EXISTING,   // create flags -- must exist
                          0,               // misc flags
-                         NULL);           // templates
+                         nullptr);           // templates
   if ( fh == INVALID_HANDLE_VALUE ) return -1;
   LARGE_INTEGER fsize;
   // Get file size
@@ -368,7 +368,7 @@ void ExternalCodeEditor::tmpdir_clear() {
 }
 
 // [Protected] Creates temp dir (if doesn't exist) and returns the dirname
-// as a static string. Returns NULL on error, dialog shows reason.
+// as a static string. Returns nullptr on error, dialog shows reason.
 //
 const char* ExternalCodeEditor::create_tmpdir() {
   const char *dirname = tmpdir_name();
@@ -377,14 +377,14 @@ const char* ExternalCodeEditor::create_tmpdir() {
     if (CreateDirectoryW(wbuf, 0) == 0) {
       fl_alert("can't create directory '%s': %s",
         dirname, get_ms_errmsg());
-      return NULL;
+      return nullptr;
     }
   }
   return dirname;
 }
 
 // [Protected] Returns temp filename in static buffer.
-//    Returns NULL if can't, posts dialog explaining why.
+//    Returns nullptr if can't, posts dialog explaining why.
 //
 const char* ExternalCodeEditor::tmp_filename() {
   static char path[512];
@@ -397,7 +397,7 @@ const char* ExternalCodeEditor::tmp_filename() {
 }
 
 // [Static/Local] Save string 'code' to 'filename', returning file's mtime/size
-// 'code' can be NULL -- writes an empty file if so.
+// 'code' can be nullptr -- writes an empty file if so.
 // Returns:
 //    0 on success
 //   -1 on error (posts dialog with reason)
@@ -406,17 +406,17 @@ static int save_file(const char *filename,
                      const char *code,
                      FILETIME &file_mtime,        // return these since in win32 it's..
                      LARGE_INTEGER &file_size) {  // ..efficient to get while file open
-  if ( code == 0 ) code = "";   // NULL? write an empty file
+  if ( code == 0 ) code = "";   // nullptr? write an empty file
   memset(&file_mtime, 0, sizeof(file_mtime));
   memset(&file_size, 0, sizeof(file_size));
   utf8_to_wchar(filename, wbuf);
   HANDLE fh = CreateFileW(wbuf,                   // filename
                          GENERIC_WRITE,           // write only
                          0,                       // sharing -- no share during write
-                         NULL,                    // security
+                         nullptr,                    // security
                          CREATE_ALWAYS,           // create flags -- recreate
                          FILE_ATTRIBUTE_NORMAL,   // misc flags
-                         NULL);                   // templates
+                         nullptr);                   // templates
   if ( fh == INVALID_HANDLE_VALUE ) {
     fl_alert("ERROR: couldn't create file '%s': %s",
              filename, get_ms_errmsg());
@@ -426,7 +426,7 @@ static int save_file(const char *filename,
   DWORD clen = (DWORD)strlen(code);
   DWORD count = 0;
   int ret = 0;
-  if ( WriteFile(fh, code, clen, &count, NULL) == 0 ) {
+  if ( WriteFile(fh, code, clen, &count, nullptr) == 0 ) {
     fl_alert("ERROR: WriteFile() '%s': %s", filename, get_ms_errmsg());
     ret = -1; // fallthru to CloseHandle()
   } else if ( count != clen ) {
@@ -474,14 +474,14 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   _snprintf(cmd, sizeof(cmd), "%s %s", editor_cmd, filename);
   utf8_to_wchar(cmd, wbuf);
   // Start editor process
-  if (CreateProcessW(NULL,              // app name
+  if (CreateProcessW(nullptr,              // app name
                     wbuf,               // command to exec
-                    NULL,               // secure attribs
-                    NULL,               // thread secure attribs
+                    nullptr,               // secure attribs
+                    nullptr,               // thread secure attribs
                     FALSE,              // handle inheritance
                     0,                  // creation flags
-                    NULL,               // environ block
-                    NULL,               // current dir
+                    nullptr,               // environ block
+                    nullptr,               // current dir
                     &sinfo,             // startup info
                     &pinfo_) == 0 ) {   // process info
     fl_alert("CreateProcess() failed to start '%s': %s",
@@ -512,7 +512,7 @@ void ExternalCodeEditor::reap_cleanup() {
 }
 
 // [Public] Try to reap external editor process
-// If 'pid_reaped' not NULL, returns PID of reaped editor.
+// If 'pid_reaped' not nullptr, returns PID of reaped editor.
 // Returns:
 //   -2 -- editor not open
 //   -1 -- WaitForSingleObject() failed (get_ms_errmsg() has reason)
@@ -548,7 +548,7 @@ int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
 // [Public] Open external editor using 'editor_cmd' to edit 'code'.
 //
 // 'code' contains multiline code to be edited as a temp file.
-// 'code' can be NULL -- edits an empty file if so.
+// 'code' can be nullptr -- edits an empty file if so.
 //
 // Returns:
 //   0 if succeeds

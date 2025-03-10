@@ -101,13 +101,13 @@ static Fd_Layout_Suite static_suite_list[] = {
 Fl_Menu_Item main_layout_submenu_[] = {
   { static_suite_list[0].menu_label, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
   { static_suite_list[1].menu_label, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
-  { NULL }
+  { nullptr }
 };
 
 static Fl_Menu_Item static_choice_menu[] = {
   { static_suite_list[0].menu_label },
   { static_suite_list[1].menu_label },
-  { NULL }
+  { nullptr }
 };
 
 Fd_Layout_Preset *layout = &fltk_app;
@@ -416,7 +416,7 @@ void Fd_Layout_Suite::name(const char *n) {
   if (n)
     name_ = fl_strdup(n);
   else
-    name_ = NULL;
+    name_ = nullptr;
   update_label();
 }
 
@@ -424,9 +424,9 @@ void Fd_Layout_Suite::name(const char *n) {
  Initialize the class for first use.
  */
 void Fd_Layout_Suite::init() {
-  name_ = NULL;
-  menu_label = NULL;
-  layout[0] = layout[1] = layout[2] = NULL;
+  name_ = nullptr;
+  menu_label = nullptr;
+  layout[0] = layout[1] = layout[2] = nullptr;
   storage_ = fld::Tool_Store::INTERNAL;
 }
 
@@ -621,7 +621,7 @@ Fd_Layout_List::~Fd_Layout_List() {
  Update the Setting dialog and menus to reflect the current Layout selection state.
  */
 void Fd_Layout_List::update_dialogs() {
-  static Fl_Menu_Item *preset_menu = NULL;
+  static Fl_Menu_Item *preset_menu = nullptr;
   if (!preset_menu) {
     preset_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(select_layout_preset_cb);
     assert(preset_menu);
@@ -656,7 +656,7 @@ void Fd_Layout_List::update_menu_labels() {
  */
 int Fd_Layout_List::load(const std::string &filename) {
   remove_all(fld::Tool_Store::FILE);
-  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
   read(prefs, fld::Tool_Store::FILE);
   return 0;
 }
@@ -666,7 +666,7 @@ int Fd_Layout_List::load(const std::string &filename) {
  */
 int Fd_Layout_List::save(const std::string &filename) {
   assert(this);
-  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
   write(prefs, fld::Tool_Store::FILE);
   return 0;
@@ -701,8 +701,8 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
   prefs_list.get("current_preset", cp, 0);
   for (int i = 0; i < prefs_list.groups(); ++i) {
     Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(i));
-    char *new_name = NULL;
-    prefs_suite.get("name", new_name, NULL);
+    char *new_name = nullptr;
+    prefs_suite.get("name", new_name, nullptr);
     if (new_name) {
       int n = add(new_name);
       list_[n].read(prefs_suite);
@@ -816,7 +816,7 @@ void Fd_Layout_List::current_preset(int ix) {
  Allocate enough space for n entries in the list.
  */
 void Fd_Layout_List::capacity(int n) {
-  static Fl_Menu_Item *suite_menu = NULL;
+  static Fl_Menu_Item *suite_menu = nullptr;
   if (!suite_menu)
     suite_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(layout_suite_marker);
 
@@ -1447,11 +1447,11 @@ class Fd_Snap_Sibling : public Fd_Snap_Action {
 protected:
   Fl_Widget *best_match;
 public:
-  Fd_Snap_Sibling() : best_match(NULL) { }
+  Fd_Snap_Sibling() : best_match(nullptr) { }
   virtual int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) = 0;
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
     clr();
-    best_match = NULL;
+    best_match = nullptr;
     if (!d.wgt) return;
     if (!d.wgt->parent->is_a(ID_Group)) return;
     int dsib_min = 1024;
@@ -1685,7 +1685,7 @@ Fd_Snap_Action *Fd_Snap_Action::list[] = {
   &snap_widget_ideal_width,
   &snap_widget_ideal_height,
 
-  NULL
+  nullptr
 };
 
 // ---- draw alignment marks ------------------------------------------- MARK: -

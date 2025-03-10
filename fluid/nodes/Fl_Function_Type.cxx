@@ -37,14 +37,14 @@
 
 
 /// Set a current class, so that the code of the children is generated correctly.
-Fl_Class_Type *current_class = NULL;
+Fl_Class_Type *current_class = nullptr;
 
 /**
  \brief Return 1 if the list contains a function with the given signature at the top level.
  Fl_Widget_Type uses this to check if a callback by a certain signature is
  already defined by the user within this file. If not, Fl_Widget_Type will
  generate an `extern $sig$;` statement.
- \param[in] rtype return type, can be NULL to avoid checking (not used by Fl_Widget_Type)
+ \param[in] rtype return type, can be nullptr to avoid checking (not used by Fl_Widget_Type)
  \param[in] sig function signature
  \return 1 if found.
  */
@@ -71,7 +71,7 @@ static char buffer[128]; // for error messages
  This is used to find a matching " or ' in a string.
  \param[inout] c start searching here, return where we found \c type
  \param[in] type find this character
- \return NULL if the character was found, else a pointer to a static string
+ \return nullptr if the character was found, else a pointer to a static string
     with an error message
  */
 const char *_q_check(const char * & c, int type) {
@@ -93,7 +93,7 @@ const char *_q_check(const char * & c, int type) {
  {, [, ", ', and ( are matched.
  \param[inout] c start searching here, return the end of the search
  \param[in] type find this character match
- \return NULL if the character was found, else a pointer to a static string
+ \return nullptr if the character was found, else a pointer to a static string
     with an error message
  */
 const char *_c_check(const char * & c, int type) {
@@ -158,7 +158,7 @@ const char *_c_check(const char * & c, int type) {
  Make sure that {, ", ', and ( are matched.
  \param[in] c start searching here
  \param[in] type find this character match (default is 0)
- \return NULL if the character was found, else a pointer to a static string
+ \return nullptr if the character was found, else a pointer to a static string
     with an error message
  \note This function checks every conceivable line of code, which is not
     always wanted. It can't differentiate characters in comments, and the
@@ -311,7 +311,7 @@ void Fl_Function_Type::open() {
     // - alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", NULL, message);
+                        "Continue Editing", "Ignore Error", nullptr, message);
       if (v==0) continue;     // Continue Editing
       //if (v==1) { }         // Ignore Error and close dialog
     }
@@ -647,7 +647,7 @@ void Fl_Code_Type::open() {
     message = c_check(c);
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", NULL, message);
+                        "Continue Editing", "Ignore Error", nullptr, message);
       if (v==0) continue;     // Continue Editing
       //if (v==1) { }         // Ignore Error and close dialog
     }
@@ -746,7 +746,7 @@ Fl_CodeBlock_Type Fl_CodeBlock_type;
  */
 Fl_CodeBlock_Type::Fl_CodeBlock_Type() :
   Fl_Type(),
-  after(NULL)
+  after(nullptr)
 { }
 
 /**
@@ -834,7 +834,7 @@ void Fl_CodeBlock_Type::open() {
     // alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", NULL, message);
+                        "Continue Editing", "Ignore Error", nullptr, message);
       if (v==0) continue;     // Continue Editing
       //if (v==1) { }         // Ignore Error and close dialog
     }
@@ -995,7 +995,7 @@ void Fl_Decl_Type::open() {
     // alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", NULL, message);
+                        "Continue Editing", "Ignore Error", nullptr, message);
       if (v==0) continue;     // Continue Editing
       //if (v==1) { }         // Ignore Error and close dialog
     }
@@ -1117,7 +1117,7 @@ Fl_Data_Type Fl_Data_type;
  */
 Fl_Data_Type::Fl_Data_Type() :
   Fl_Decl_Type(),
-  filename_(NULL),
+  filename_(nullptr),
   text_mode_(0)
 { }
 
@@ -1246,7 +1246,7 @@ void Fl_Data_Type::open() {
     if (n==q) {
     OOPS:
       int v = fl_choice("%s",
-                        "Continue Editing", "Ignore Error", NULL,
+                        "Continue Editing", "Ignore Error", nullptr,
                         "Variable name must be a C identifier");
       if (v==0) { free(s); continue; }    // Continue Editing
       //if (v==1) { }                     // Ignore Error and close dialog
@@ -1454,7 +1454,7 @@ Fl_DeclBlock_Type Fl_DeclBlock_type;
  */
 Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
   Fl_Type(),
-  after(NULL),
+  after(nullptr),
   write_map_(CODE_IN_SOURCE)
 { }
 
@@ -1563,7 +1563,7 @@ void Fl_DeclBlock_Type::open() {
       message = c_check(b&&b[0]=='#' ? b+1 : b);
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", NULL, message);
+                        "Continue Editing", "Ignore Error", nullptr, message);
       if (v==0) continue;     // Continue Editing
       //if (v==1) { }         // Ignore Error and close dialog
     }
@@ -1838,7 +1838,7 @@ void Fl_Comment_Type::open() {
             fl_message("Please select an entry from this menu first.");
           } else if (fl_choice("Are you sure that you want to delete the entry\n"
                                "\"%s\"\nfrom the database?", "Cancel", "Delete",
-                               NULL, itempath)) {
+                               nullptr, itempath)) {
             Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
             db.deleteEntry(itempath);
             comment_predefined->remove(last_selected_item);
@@ -1870,7 +1870,7 @@ void Fl_Comment_Type::open() {
         // load a comment from disk
         fl_file_chooser_ok_label("Use File");
         const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
-        fl_file_chooser_ok_label(NULL);
+        fl_file_chooser_ok_label(nullptr);
         if (fname) {
           if (comment_input->buffer()->loadfile(fname)) {
             fl_alert("Error loading file\n%s", fname);
@@ -1955,9 +1955,9 @@ Fl_Class_Type Fl_Class_type;
  */
 Fl_Class_Type::Fl_Class_Type() :
   Fl_Type(),
-  subclass_of(NULL),
+  subclass_of(nullptr),
   public_(1),
-  class_prefix(NULL)
+  class_prefix(nullptr)
 { }
 
 /**
@@ -2001,8 +2001,8 @@ Fl_Type *Fl_Class_Type::make(Strategy strategy) {
   }
   Fl_Class_Type *o = new Fl_Class_Type();
   o->name("UserInterface");
-  o->class_prefix = NULL;
-  o->subclass_of = NULL;
+  o->class_prefix = nullptr;
+  o->subclass_of = nullptr;
   o->public_ = 1;
   o->add(anchor, strategy);
   o->factory = this;

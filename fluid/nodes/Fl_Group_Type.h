@@ -106,7 +106,7 @@ class Fl_Flex_Type : public Fl_Group_Type
   int *fixedSizeTuple; /* [ index, size, index2, size2, ... ] */
   int suspend_auto_layout;
 public:
-  Fl_Flex_Type() : fixedSizeTupleSize(0), fixedSizeTuple(NULL), suspend_auto_layout(0) { }
+  Fl_Flex_Type() : fixedSizeTupleSize(0), fixedSizeTuple(nullptr), suspend_auto_layout(0) { }
   const char *type_name() FL_OVERRIDE {return flex_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::FlexGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Flex_Type(); }

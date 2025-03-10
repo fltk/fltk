@@ -248,7 +248,7 @@ void Project::leave_project_dir() {
  */
 void Project::set_filename(const char *c) {
   if (proj_filename) free((void *)proj_filename);
-  proj_filename = c ? fl_strdup(c) : NULL;
+  proj_filename = c ? fl_strdup(c) : nullptr;
 
   if (proj_filename && !Fluid.batch_mode)
     Fluid.history.update(proj_filename);
@@ -300,7 +300,7 @@ void Project::write_strings() {
  code files current, 1 to mark it out of date. -2 to ignore changes to mf.
  */
 void Project::set_modflag(int mf, int mfc) {
-  const char *code_ext = NULL;
+  const char *code_ext = nullptr;
   char new_title[FL_PATH_MAX];
 
   // Update the modflag_c to the worst possible condition. We could be a bit

@@ -151,16 +151,16 @@ void print_project_tree() {
  */
 bool validate_project_tree() {
   // Validate `first` and `last`
-  if (Fluid.proj.tree.first == NULL) {
-    if (Fluid.proj.tree.last == NULL) {
+  if (Fluid.proj.tree.first == nullptr) {
+    if (Fluid.proj.tree.last == nullptr) {
       return true;
     } else {
-      fprintf(stderr, "ERROR: `first` is NULL, but `last` is not!\n");
+      fprintf(stderr, "ERROR: `first` is nullptr, but `last` is not!\n");
       return false;
     }
   }
-  if (Fluid.proj.tree.last == NULL) {
-    fprintf(stderr, "ERROR: `last` is NULL, but `first` is not!\n");
+  if (Fluid.proj.tree.last == nullptr) {
+    fprintf(stderr, "ERROR: `last` is nullptr, but `first` is not!\n");
     return false;
   }
   // Validate the branch linkage, parent links, etc.
@@ -242,9 +242,9 @@ bool validate_branch(class Fl_Type *root) {
     }
     // Validate the `parent` entry
     for (Fl_Type *p = t->prev; ; p = p->prev) {
-      if (p == NULL) {
-        if (t->parent != NULL) {
-          fprintf(stderr, "ERROR: `parent` pointer should be NULL!\n");
+      if (p == nullptr) {
+        if (t->parent != nullptr) {
+          fprintf(stderr, "ERROR: `parent` pointer should be nullptr!\n");
           return false;
         }
         break;
@@ -425,7 +425,7 @@ void delete_all(int selected_only) {
 /** Update a string.
  Replace a string pointer with new value, strips leading/trailing blanks.
  As a side effect, this call also sets the mod flags.
- \param[in] n new string, can be NULL
+ \param[in] n new string, can be nullptr
  \param[out] p update this pointer, possibly reallocate memory
  \param[in] nostrip if set, do not strip leading and trailing spaces and tabs
  \return 1 if the string in p changed
@@ -483,12 +483,12 @@ void update_visibility_flag(Fl_Type *p) {
  */
 /** \var Fl_Type *Fl_Type::next
  Points to the next node in the doubly linked list.
- If this is NULL, we are at the end of the list.
+ If this is nullptr, we are at the end of the list.
  Used for simulating a tree structure via a doubly linked list.
  */
 /** \var Fl_Type *Fl_Type::prev
  Link to the next node in the tree structure.
- If this is NULL, we are at the beginning of the list.
+ If this is nullptr, we are at the beginning of the list.
  Used for simulating a tree structure via a doubly linked list.
  */
 
@@ -496,21 +496,21 @@ void update_visibility_flag(Fl_Type *p) {
  Constructor and base for any node in the widget tree.
  */
 Fl_Type::Fl_Type() :
-  name_(NULL),
-  label_(NULL),
-  callback_(NULL),
-  user_data_(NULL),
-  user_data_type_(NULL),
-  comment_(NULL),
+  name_(nullptr),
+  label_(nullptr),
+  callback_(nullptr),
+  user_data_(nullptr),
+  user_data_type_(nullptr),
+  comment_(nullptr),
   uid_(0),
-  parent(NULL),
+  parent(nullptr),
   new_selected(0),
   selected(0),
   folded_(0),
   visible(0),
   level(0),
-  next(NULL), prev(NULL),
-  factory(NULL),
+  next(nullptr), prev(nullptr),
+  factory(nullptr),
   code_static_start(-1), code_static_end(-1),
   code1_start(-1), code1_end(-1),
   code2_start(-1), code2_end(-1),
@@ -536,7 +536,7 @@ Fl_Type::~Fl_Type() {
   if (next) next->prev = prev; // else last = prev;
   if (Fluid.proj.tree.last == this) Fluid.proj.tree.last = prev;
   if (Fluid.proj.tree.first == this) Fluid.proj.tree.first = next;
-  if (Fluid.proj.tree.current == this) Fluid.proj.tree.current = NULL;
+  if (Fluid.proj.tree.current == this) Fluid.proj.tree.current = nullptr;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
   if (label_) free((void*)label_);
@@ -546,7 +546,7 @@ Fl_Type::~Fl_Type() {
   if (comment_) free((void*)comment_);
 }
 
-// Return the previous sibling in the tree structure or NULL.
+// Return the previous sibling in the tree structure or nullptr.
 Fl_Type *Fl_Type::prev_sibling() {
   Fl_Type *n;
   for (n = prev; n && n->level > level; n = n->prev) ;
@@ -555,7 +555,7 @@ Fl_Type *Fl_Type::prev_sibling() {
   return nullptr;
 }
 
-// Return the next sibling in the tree structure or NULL.
+// Return the next sibling in the tree structure or nullptr.
 Fl_Type *Fl_Type::next_sibling() {
   Fl_Type *n;
   for (n = next; n && n->level > level; n = n->next) ;
@@ -564,12 +564,12 @@ Fl_Type *Fl_Type::next_sibling() {
   return nullptr;
 }
 
-// Return the first child or NULL
+// Return the first child or nullptr
 Fl_Type *Fl_Type::first_child() {
   Fl_Type *n = next;
   if (n->level > level)
     return n;
-  return NULL;
+  return nullptr;
 }
 
 // Generate a descriptive text for this item, to put in browser & window titles
@@ -582,28 +582,28 @@ const char* Fl_Type::title() {
 
 /**
  Return the window that contains this widget.
- \return NULL if this is not a widget.
+ \return nullptr if this is not a widget.
  */
 Fl_Window_Type *Fl_Type::window() {
   if (!is_widget())
-    return NULL;
+    return nullptr;
   for (Fl_Type *t = this; t; t=t->parent)
     if (t->is_a(ID_Window))
       return (Fl_Window_Type*)t;
-  return NULL;
+  return nullptr;
 }
 
 /**
  Return the group that contains this widget.
- \return NULL if this is not a widget.
+ \return nullptr if this is not a widget.
  */
 Fl_Group_Type *Fl_Type::group() {
   if (!is_widget())
-    return NULL;
+    return nullptr;
   for (Fl_Type *t = this; t; t=t->parent)
     if (t->is_a(ID_Group))
       return (Fl_Group_Type*)t;
-  return NULL;
+  return nullptr;
 }
 
 /**
@@ -628,15 +628,15 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
 #endif
 #endif
 
-  Fl_Type *target = NULL; // insert self before target node, if NULL, insert last
-  Fl_Type *target_parent = NULL; // this will be the new parent for branch
+  Fl_Type *target = nullptr; // insert self before target node, if nullptr, insert last
+  Fl_Type *target_parent = nullptr; // this will be the new parent for branch
   int target_level = 0;   // adjust self to this new level
 
   // Find the node after our insertion position
   switch (strategy.placement()) {
     case Strategy::AS_FIRST_CHILD:
     default:
-      if (anchor == NULL) {
+      if (anchor == nullptr) {
         target = Fluid.proj.tree.first;
       } else {
         target = anchor->next;
@@ -645,7 +645,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
       }
       break;
     case Strategy::AS_LAST_CHILD:
-      if (anchor == NULL) {
+      if (anchor == nullptr) {
         /* empty */
       } else {
         for (target = anchor->next; target && target->level > anchor->level; target = target->next) {/*empty*/}
@@ -654,7 +654,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
       }
       break;
     case Strategy::AFTER_CURRENT:
-      if (anchor == NULL) {
+      if (anchor == nullptr) {
         target = Fluid.proj.tree.first;
       } else {
         for (target = anchor->next; target && target->level > anchor->level; target = target->next) {/*empty*/}
@@ -680,14 +680,14 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
       t->parent = target_parent;
   }
 
-  // Now link ourselves and our children before 'target', or last, if 'target' is NULL
+  // Now link ourselves and our children before 'target', or last, if 'target' is nullptr
   if (target) {
     prev = target->prev;
     target->prev = end;
     end->next = target;
   } else {
     prev = Fluid.proj.tree.last;
-    end->next = NULL;
+    end->next = nullptr;
     Fluid.proj.tree.last = end;
   }
   if (prev) {
@@ -702,7 +702,7 @@ void Fl_Type::add(Fl_Type *anchor, Strategy strategy) {
     do {
       tp->set_uid(tp->uid_);
       tp = tp->next;
-    } while (tp!=end && tp!=NULL);
+    } while (tp!=end && tp!=nullptr);
   }
 #endif
 
@@ -756,7 +756,7 @@ void Fl_Type::insert(Fl_Type *g) {
     do {
       tp->set_uid(tp->uid_);
       tp = tp->next;
-    } while (tp!=end && tp!=NULL);
+    } while (tp!=end && tp!=nullptr);
   }
   // tell parent that it has a new child, so it can update itself
   if (parent) parent->add_child(this, g);
@@ -786,7 +786,7 @@ int Fl_Type::msgnum() {
  the widget_browser, so \c Fluid.proj.tree.first and \c Fluid.proj.tree.last do not apply
  to it.
 
- \return the node that follows this node after the operation; can be NULL
+ \return the node that follows this node after the operation; can be nullptr
  */
 Fl_Type *Fl_Type::remove() {
   // find the last child of this node
@@ -1209,7 +1209,7 @@ const char *Fl_Type::callback_name(fld::io::Code_Writer& f) {
  \param need_nest if clear, search up one level to the first enclosing class.
  If set, recurse all the way up to the top node.
  \return the name of the enclosing class, or names of the enclosing classes
- in a static buffe (don't call free), or NULL if this Type is not inside a class
+ in a static buffe (don't call free), or nullptr if this Type is not inside a class
  */
 const char* Fl_Type::class_name(const int need_nest) const {
   Fl_Type* p = parent;
@@ -1277,7 +1277,7 @@ unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
     for ( ; tp; tp = tp->next)
       if (tp!=this && tp->uid_==suggested_uid)
         break;
-    if (tp==NULL)
+    if (tp==nullptr)
       break;
     suggested_uid = (unsigned short)rand();
   }
@@ -1285,48 +1285,6 @@ unsigned short Fl_Type::set_uid(unsigned short suggested_uid) {
   return suggested_uid;
 }
 
-/** Find a node by its unique id.
-
- Every node in a type tree has an id that is unique for the current project.
- Walk the tree and return the node with this uid.
-
- \param[in] uid any number between 0 and 65535
- \return the node with this uid, or NULL if not found
- */
-Fl_Type *Fl_Type::find_by_uid(unsigned short uid) {
-  for (Fl_Type *tp = Fluid.proj.tree.first; tp; tp = tp->next) {
-    if (tp->uid_ == uid) return tp;
-  }
-  return NULL;
-}
-
-/** Find a type node by using the codeview text positions.
-
- \param[in] text_type 0=source file, 1=header, 2=.fl project file
- \param[in] crsr cursor position in text
- \return the node we found or NULL
- */
-Fl_Type *Fl_Type::find_in_text(int text_type, int crsr) {
-  for (Fl_Type *node = Fluid.proj.tree.first; node; node = node->next) {
-    switch (text_type) {
-      case 0:
-        if (crsr >= node->code1_start && crsr < node->code1_end) return node;
-        if (crsr >= node->code2_start && crsr < node->code2_end) return node;
-        if (crsr >= node->code_static_start && crsr < node->code_static_end) return node;
-        break;
-      case 1:
-        if (crsr >= node->header1_start && crsr < node->header1_end) return node;
-        if (crsr >= node->header2_start && crsr < node->header2_end) return node;
-        if (crsr >= node->header_static_start && crsr < node->header_static_end) return node;
-        break;
-      case 2:
-        if (crsr >= node->proj1_start && crsr < node->proj1_end) return node;
-        if (crsr >= node->proj2_start && crsr < node->proj2_end) return node;
-        break;
-    }
-  }
-  return nullptr;
-}
 
 /// \}
 

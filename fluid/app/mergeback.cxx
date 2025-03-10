@@ -113,7 +113,7 @@ int merge_back(const std::string &s, const std::string &p, int task) {
 
 /** Allocate and initialize MergeBack class. */
 Fd_Mergeback::Fd_Mergeback() :
-  code(NULL),
+  code(nullptr),
   line_no(0),
   tag_error(0),
   num_changed_code(0),
@@ -226,7 +226,7 @@ int Fd_Mergeback::ask_user_to_merge(const std::string &code_filename, const std:
     msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
     "Click Merge to merge all code changes back into\n"
     "the open project.";
-    int c = fl_choice(msg.c_str(), "Cancel", "Merge", NULL,
+    int c = fl_choice(msg.c_str(), "Cancel", "Merge", nullptr,
                       code_filename.c_str(), proj_filename.c_str(),
                       num_changed_code, num_uid_not_found,
                       num_changed_structure, num_possible_override);
@@ -485,7 +485,7 @@ int Fd_Mergeback::merge_back(const std::string &s, const std::string &p, int tas
     }
   } while (0);
   fclose(code);
-  code = NULL;
+  code = nullptr;
   return ret;
 }
 

@@ -222,8 +222,8 @@ void Fluid_Image::write_static(fld::io::Code_Writer& f, int compressed) {
     } else {
       // if FLUID runs from the command line, make sure that the image is not
       // only loaded but also rasterized, so we can write the RGB image data
-      Fl_RGB_Image* rgb_image = NULL;
-      Fl_SVG_Image* svg_image = NULL;
+      Fl_RGB_Image* rgb_image = nullptr;
+      Fl_SVG_Image* svg_image = nullptr;
       if (img->d()>0)
         rgb_image = (Fl_RGB_Image*)img->image();
       if (rgb_image)
@@ -252,7 +252,7 @@ void Fluid_Image::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
 void Fluid_Image::write_initializer(fld::io::Code_Writer& f, const char *type_name, const char *format, ...) {
   /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
    static Fl_Image *'function_name_'() {
-     static Fl_Image *image = NULL;
+     static Fl_Image *image = nullptr;
      if (!image)
        image = new 'type_name'('product of format and remaining args');
      return image;
@@ -262,7 +262,7 @@ void Fluid_Image::write_initializer(fld::io::Code_Writer& f, const char *type_na
   f.write_c("static Fl_Image *%s() {\n", function_name_);
   if (is_animated_gif_)
     f.write_c("%sFl_GIF_Image::animate = true;\n", f.indent(1));
-  f.write_c("%sstatic Fl_Image *image = NULL;\n", f.indent(1));
+  f.write_c("%sstatic Fl_Image *image = nullptr;\n", f.indent(1));
   f.write_c("%sif (!image)\n", f.indent(1));
   f.write_c("%simage = new %s(", f.indent(2), type_name);
   f.vwrite_c(format, ap);
@@ -401,7 +401,7 @@ Fluid_Image *ui_find_image(const char *oldname) {
 #endif
                                      "})",
             oldname,1);
-  fl_file_chooser_ok_label(NULL);
+  fl_file_chooser_ok_label(nullptr);
   ui_find_image_name = name;
   Fluid_Image *ret = (name && *name) ? Fluid_Image::find(name) : nullptr;
   Fluid.proj.leave_project_dir();

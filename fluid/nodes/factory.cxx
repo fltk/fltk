@@ -713,7 +713,7 @@ static Fl_Input_Type Fl_Input_type;
 class Fl_File_Input_Type : public Fl_Input_Type
 {
   typedef Fl_Input_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return NULL; } // Don't inherit.
+  Fl_Menu_Item *subtypes() FL_OVERRIDE { return nullptr; } // Don't inherit.
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     h = layout->textsize_not_null() + 8 + 10; // Directoy bar is additional 10 pixels high
@@ -848,7 +848,7 @@ static Fl_Text_Editor_Type Fl_Text_Editor_type;
 /** Use this terminal instead of Fl_Terminal to capture resize actions. */
 class Fl_Terminal_Proxy : public Fl_Terminal {
 public:
-  Fl_Terminal_Proxy(int x, int y, int w, int h, const char *l=NULL)
+  Fl_Terminal_Proxy(int x, int y, int w, int h, const char *l=nullptr)
   : Fl_Terminal(x, y, w, h, l) { }
   void print_sample_text() {
     clear_screen_home(false);
@@ -867,7 +867,7 @@ public:
   Fl_Font tfont_;
   int tsize_;
   Fl_Color tcolor_;
-  Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=NULL)
+  Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=nullptr)
   : Fl_Group(x, y, w, h, l)
   { // set the defaults that Fl_Terminal would set
     box(FL_DOWN_BOX);
@@ -897,7 +897,7 @@ public:
   // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
   const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
   Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    Fl_Widget *ret = NULL;
+    Fl_Widget *ret = nullptr;
     if (Fluid.batch_mode) {
       ret = new Fl_Batchmode_Terminal(x, y, w, h);
     } else {
@@ -1207,7 +1207,7 @@ static Fl_Type *known_types[] = {
     lower case 't' in type.
  \param[in] strategy add after current or as last child
  \param[in] and_open if set to true, call open() on the widget after creating it
- \return the newly created type or NULL
+ \return the newly created type or nullptr
 
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
@@ -1335,7 +1335,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
  \param[in] inName find the right prototype by this name
  \param[in] strategy where to add the node
  \param[in] and_open if set to true, call open() on the widget after creating it
- \return the newly created type or NULL
+ \return the newly created type or nullptr
 
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
@@ -1346,14 +1346,14 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool an
   if (prototype)
     return add_new_widget_from_user(prototype, strategy, and_open);
   else
-    return NULL;
+    return nullptr;
 }
 
 /**
  Callback for all non-widget menu items.
  */
 static void cbf(Fl_Widget *, void *v) {
-  Fl_Type *t = NULL;
+  Fl_Type *t = nullptr;
   if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())
     t = ((Fl_Type*)v)->make(Strategy::AS_LAST_CHILD);
   else
@@ -1368,7 +1368,7 @@ static void cbf(Fl_Widget *, void *v) {
     wants to create.
  */
 static void cb(Fl_Widget *, void *v) {
-  Fl_Type *t = NULL;
+  Fl_Type *t = nullptr;
   if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())
     t = add_new_widget_from_user((Fl_Type*)v, Strategy::AS_LAST_CHILD);
   else
@@ -1464,8 +1464,8 @@ Fl_Menu_Item New_Menu[] = {
  The icon may be null. If ic is null only the text is assigned
  to the label and Fl_Multi_Label is not used.
  \param[in] mi pointer to tme menu item that will be modified
- \param[in] ic icon for the menu, may be NULL
- \param[in] txt new label text, may *not* be NULL, will not be copied
+ \param[in] ic icon for the menu, may be nullptr
+ \param[in] txt new label text, may *not* be nullptr, will not be copied
  */
 static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
 {
@@ -1512,12 +1512,12 @@ void fill_in_New_Menu() {
  Find the correct prototype for a given type name.
  \param[in] inName a C string that must match type_name() or alt_type_name() of
     one of the known Fl_Type classes.
- \return the matching prototype or NULL
+ \return the matching prototype or nullptr
  */
 Fl_Type *typename_to_prototype(const char *inName)
 {
-  if (inName==NULL || *inName==0)
-    return NULL;
+  if (inName==nullptr || *inName==0)
+    return nullptr;
   for (unsigned i = 0; i < sizeof(known_types)/sizeof(*known_types); i++) {
     Fl_Type *prototype = known_types[i];
     if (fl_ascii_strcasecmp(inName, prototype->type_name())==0)
@@ -1525,7 +1525,7 @@ Fl_Type *typename_to_prototype(const char *inName)
     if (fl_ascii_strcasecmp(inName, prototype->alt_type_name())==0)
       return prototype;
   }
-  return NULL;
+  return nullptr;
 }
 
 /**
@@ -1537,7 +1537,7 @@ Fl_Type *typename_to_prototype(const char *inName)
 
  \param[in] inName a C string that described the type we want
  \param[in] strategy add after current or as last child
- \return the type node that was created or NULL
+ \return the type node that was created or nullptr
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
  add_new_widget_from_user(const char*, int)
@@ -1545,7 +1545,7 @@ Fl_Type *typename_to_prototype(const char *inName)
 Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
   Fl_Type *prototype = typename_to_prototype(inName);
   if (!prototype)
-    return NULL;
+    return nullptr;
   Fl_Type *new_node = prototype->make(strategy);
   return new_node;
 }

@@ -87,7 +87,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
 /**
  Set the filename for the file we wish to edit.
  Handles memory allocation/free.
- If set to NULL, frees memory.
+ If set to nullptr, frees memory.
  \param[in] val new filename
  */
 void ExternalCodeEditor::set_filename(const char *val) {
@@ -280,7 +280,7 @@ void ExternalCodeEditor::tmpdir_clear() {
 /**
  Creates temp dir (if doesn't exist) and returns the dirname
  as a static string.
- \return NULL on error, dialog shows reason.
+ \return nullptr on error, dialog shows reason.
  */
 const char* ExternalCodeEditor::create_tmpdir() {
   const char *dirname = tmpdir_name();
@@ -288,7 +288,7 @@ const char* ExternalCodeEditor::create_tmpdir() {
     if ( mkdir(dirname, 0777) < 0 ) {
       fl_alert("can't create directory '%s': %s",
         dirname, strerror(errno));
-      return NULL;
+      return nullptr;
     }
   }
   return dirname;
@@ -296,7 +296,7 @@ const char* ExternalCodeEditor::create_tmpdir() {
 
 /**
  Returns temp filename in static buffer.
- \return NULL if can't, posts dialog explaining why.
+ \return nullptr if can't, posts dialog explaining why.
  */
 const char* ExternalCodeEditor::tmp_filename() {
   static char path[FL_PATH_MAX+1];
@@ -310,12 +310,12 @@ const char* ExternalCodeEditor::tmp_filename() {
 
 /**
  Save string 'code' to 'filename', returning file's mtime/size.
- 'code' can be NULL -- writes an empty file if so.
+ 'code' can be nullptr -- writes an empty file if so.
  \return 0 on success
  \return -1 on error (posts dialog with reason)
  */
 static int save_file(const char *filename, const char *code) {
-  if ( code == nullptr ) code = "";   // NULL? write an empty file
+  if ( code == nullptr ) code = "";   // nullptr? write an empty file
   int fd = open(filename, O_WRONLY|O_CREAT, 0666);
   if ( fd == -1 ) {
     fl_alert("ERROR: open() '%s': %s", filename, strerror(errno));
@@ -338,7 +338,7 @@ static int save_file(const char *filename, const char *code) {
 
 /**
  Convert string 's' to array of argv[], useful for execve().
-  - 's' will be modified (words will be NULL separated)
+  - 's' will be modified (words will be nullptr separated)
   - argv[] will end up pointing to the words of 's'
   - Caller must free argv with: free(argv);
  \return -1 in case of memory allocation error
@@ -348,7 +348,7 @@ static int make_args(char *s,         // string containing words (gets trashed!)
                      int *aargc,      // pointer to argc
                      char ***aargv) { // pointer to argv
   char *ss, **argv;
-  if ((argv=(char**)malloc(sizeof(char*) * (strlen(s)/2)))==NULL) {
+  if ((argv=(char**)malloc(sizeof(char*) * (strlen(s)/2)))==nullptr) {
     return -1;
   }
   int t;
@@ -428,7 +428,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
 /**
  Try to reap external editor process.
 
- If 'pid_reaped' not NULL, returns PID of reaped editor.
+ If 'pid_reaped' not nullptr, returns PID of reaped editor.
 
  \return -2: editor not open
  \return -1: waitpid() failed (errno has reason)
@@ -464,7 +464,7 @@ int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
  Open external editor using 'editor_cmd' to edit 'code'.
 
  'code' contains multiline code to be edited as a temp file.
- 'code' can be NULL -- edits an empty file if so.
+ 'code' can be nullptr -- edits an empty file if so.
 
  \return 0 if succeeds
  \return -1 if can't open editor (already open, etc),

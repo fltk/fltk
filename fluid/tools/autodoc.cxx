@@ -232,7 +232,7 @@ void blend_alpha_bottom(const Fl_RGB_Image *img, int dy) {
  created in FLTK resolution, even if the screen uses a higher resolution.
 
  \param[in] filename the snapshot will be written to this file in png format
- \param[in] w draw a bounding box around all widgets in the NULL terminated list
+ \param[in] w draw a bounding box around all widgets in the nullptr terminated list
  \param[in] frame add a margin around the bounding box
  \param[in] blend add another margin around the bounding box that fades to full transparency
  \param[in] scale scale everything by this factor before saving it
@@ -342,7 +342,7 @@ int fl_snapshot(const char *filename, Fl_Widget *w1, Fl_Widget *w2,
                 const Fl_Rect &blend,
                 double scale)
 {
-  Fl_Widget *ww[3] = { w1, w2, NULL };
+  Fl_Widget *ww[3] = { w1, w2, nullptr };
   return fl_snapshot(filename, ww, frame, blend, scale);
 }
 
@@ -363,7 +363,7 @@ int fl_snapshot(const char *filename, Fl_Widget *w,
                 const Fl_Rect &blend,
                 double scale)
 {
-  Fl_Widget *ww[2] = { w, NULL };
+  Fl_Widget *ww[2] = { w, nullptr };
   return fl_snapshot(filename, ww, frame, blend, scale);
 }
 
@@ -453,7 +453,7 @@ void run_autodoc(const std::string &target_dir) {
   codeview_panel->show();
   Fl::wait(0.2);
   Fl::flush();
-  update_codeview_cb(NULL, NULL); // must be visible on screen for this to work
+  update_codeview_cb(nullptr, nullptr); // must be visible on screen for this to work
   cv_tab->value(cv_source_tab);
   codeview_panel->redraw();
   Fl::flush();

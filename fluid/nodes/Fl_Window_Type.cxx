@@ -799,7 +799,7 @@ void toggle_guides(Fl_Widget *,void *) {
  This is called from the check button in the Settings dialog.
  */
 void toggle_guides_cb(Fl_Check_Button *o, void *v) {
-  toggle_guides(NULL, NULL);
+  toggle_guides(nullptr, nullptr);
 }
 
 /**
@@ -845,7 +845,7 @@ void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
  This is called from the check button in the Settings dialog.
  */
 void toggle_restricted_cb(Fl_Check_Button *o, void *v) {
-  toggle_restricted(NULL, NULL);
+  toggle_restricted(nullptr, nullptr);
 }
 
 extern void select(Fl_Type *,int);
@@ -969,7 +969,7 @@ int Fl_Window_Type::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)
 int Fl_Window_Type::popupy = 0x7FFFFFFF;
 
 int Fl_Window_Type::handle(int event) {
-  static Fl_Type* selection = NULL;
+  static Fl_Type* selection = nullptr;
   switch (event) {
   case FL_DND_ENTER:
     // printf("DND enter\n");
@@ -1001,11 +1001,11 @@ int Fl_Window_Type::handle(int event) {
   case FL_PASTE:
     // printf("DND paste\n");
     { Fl_Type *prototype = typename_to_prototype(Fl::event_text());
-      if (prototype==NULL) {
+      if (prototype==nullptr) {
         // it's not a FLUID type, so it could be the filename of an image
         const char *cfn = Fl::event_text();
         // printf("DND is filename %s?\n", cfn);
-        if ((cfn == NULL) || (*cfn == 0)) return 0;
+        if ((cfn == nullptr) || (*cfn == 0)) return 0;
         if (strlen(cfn) >= FL_PATH_MAX) return 0;
         char fn[FL_PATH_MAX+1];
         // some platform prepend "file://" or "computer://" or similar text
@@ -1029,7 +1029,7 @@ int Fl_Window_Type::handle(int event) {
         if (!img || (img->ld() < 0)) return 0;
         // ok, so it is an image - now add it as image() or deimage() to the widget
         // printf("DND check for target %s\n", fn);
-        Fl_Widget_Type *tgt = NULL;
+        Fl_Widget_Type *tgt = nullptr;
         for (Fl_Type* i=next; i && i->level>level; i=i->next) {
           if (i->is_widget()) {
             Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
@@ -1078,7 +1078,7 @@ int Fl_Window_Type::handle(int event) {
       }
       popupx = 0x7FFFFFFF;
       popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
-      in_this_only = NULL;
+      in_this_only = nullptr;
       widget_browser->display(Fluid.proj.tree.current);
       widget_browser->rebuild();
       return 1;
@@ -1424,7 +1424,7 @@ void Fl_Widget_Class_Type::read_property(fld::io::Project_Reader &f, const char 
 // This is useful for classes that contain a namespace component
 static const char *trimclassname(const char *n) {
   if (!n)
-    return NULL;
+    return nullptr;
   const char *nn;
   while((nn = strstr(n, "::"))) {
     n = nn + 2;

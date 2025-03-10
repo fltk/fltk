@@ -72,8 +72,8 @@ static void external_editor_timer(void*) {
   if ( editors_open > 0 ) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
-    for (auto &p: Fluid.proj.tree.all_nodes()) {
-      if ( p.is_a(ID_Code) ) {
+    for (Fl_Type *p: Fluid.proj.tree.all_nodes()) {
+      if ( p->is_a(ID_Code) ) {
         Fl_Code_Type &code = (Fl_Code_Type&)p;
         // Code changed by external editor?
         if ( code.handle_editor_changes() ) {  // updates ram, file size/mtime
@@ -140,7 +140,7 @@ int Application::run(int argc,char **argv) {
     ::exit(0);
   }
 
-  const char *c = NULL;
+  const char *c = nullptr;
   if (args.autodoc_path.empty())
     c = argv[i];
 
@@ -243,7 +243,7 @@ void Application::quit() {
     int choice = fl_choice("Previous shell command still running!",
                            "Cancel",
                            "Exit",
-                           NULL);
+                           nullptr);
     if (choice == 0) { // user chose to cancel the exit operation
       return;
     }
@@ -463,7 +463,7 @@ bool Application::new_project(bool user_must_confirm) {
 
   // clear the current project
   proj.reset();
-  proj.set_filename(NULL);
+  proj.set_filename(nullptr);
   proj.set_modflag(0, 0);
   widget_browser->rebuild();
   proj.update_settings_dialog();
@@ -529,7 +529,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
 
   const char *c = new_filename.c_str();
   const char *oldfilename = proj.proj_filename;
-  proj.proj_filename    = NULL;
+  proj.proj_filename    = nullptr;
   proj.set_filename(c);
   if (is_a_merge) proj.undo.checkpoint();
   proj.undo.suspend();
@@ -563,7 +563,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
  Save the current design to the file given by \c filename.
  If automatic, this overwrites an existing file. If interactive, if will
  verify with the user.
- \param[in] v if v is not NULL, or no filename is set, open a filechooser.
+ \param[in] v if v is not nullptr, or no filename is set, open a filechooser.
  */
 void Application::save_project_file(void *v) {
   flush_text_widgets();
@@ -579,7 +579,7 @@ void Application::save_project_file(void *v) {
       std::string basename = fl_filename_name_str(std::string(c));
       if (fl_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
-                    "Replace", NULL, basename.c_str()) == 0) return;
+                    "Replace", nullptr, basename.c_str()) == 0) return;
     }
 
     if (v != (void *)2) proj.set_filename(c);
@@ -603,7 +603,7 @@ void Application::save_project_file(void *v) {
 void Application::revert_project() {
   if ( proj.modflag) {
     if (!fl_choice("This user interface has been changed. Really revert?",
-                   "Cancel", "Revert", NULL)) return;
+                   "Cancel", "Revert", nullptr)) return;
   }
   proj.undo.suspend();
   if (!fld::io::read_file(proj, proj.proj_filename, 0)) {
@@ -680,7 +680,7 @@ bool Application::new_project_from_template() {
       char line[1024], *ptr, *next;
       FILE *infile, *outfile;
 
-      if ((infile = fl_fopen(tname, "rb")) == NULL) {
+      if ((infile = fl_fopen(tname, "rb")) == nullptr) {
         fl_alert("Error reading template file \"%s\":\n%s", tname,
                  strerror(errno));
         proj.set_modflag(0);
@@ -688,7 +688,7 @@ bool Application::new_project_from_template() {
         return false;
       }
 
-      if ((outfile = fl_fopen(cutfname(1), "wb")) == NULL) {
+      if ((outfile = fl_fopen(cutfname(1), "wb")) == nullptr) {
         fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
                  strerror(errno));
         fclose(infile);
@@ -699,7 +699,7 @@ bool Application::new_project_from_template() {
 
       while (fgets(line, sizeof(line), infile)) {
         // Replace @INSTANCE@ with the instance name...
-        for (ptr = line; (next = strstr(ptr, "@INSTANCE@")) != NULL; ptr = next + 10) {
+        for (ptr = line; (next = strstr(ptr, "@INSTANCE@")) != nullptr; ptr = next + 10) {
           fwrite(ptr, next - ptr, 1, outfile);
           fputs(iname, outfile);
         }
@@ -742,9 +742,9 @@ void Application::print_snapshots() {
   int           winpage;                // Current window page
   Fl_Window *win;
 
-  for (auto &w: proj.tree.all_widgets()) {
-    if (w.is_a(ID_Window)) {
-      Fl_Window_Type *win_t = static_cast<Fl_Window_Type*>(&w);
+  for (auto w: proj.tree.all_widgets()) {
+    if (w->is_a(ID_Window)) {
+      Fl_Window_Type *win_t = static_cast<Fl_Window_Type*>(w);
       windows[num_windows] = win_t;
       Fl_Window *win = static_cast<Fl_Window*>(win_t->o);
       if (!win->shown()) continue;
@@ -762,7 +762,7 @@ void Application::print_snapshots() {
     printjob.printable_rect(&w, &h);
 
     // Get the time and date...
-    time_t curtime = time(NULL);
+    time_t curtime = time(nullptr);
     struct tm *curdate = localtime(&curtime);
     char date[1024];
     strftime(date, sizeof(date), "%c", curdate);
@@ -958,10 +958,10 @@ void Application::duplicate_selected() {
 
   // find the last selected node with the lowest level:
   int lowest_level = 9999;
-  Fl_Type *new_insert = NULL;
+  Fl_Type *new_insert = nullptr;
   if (proj.tree.current->selected) {
-    for (Fl_Type *t = proj.tree.first; t; t = t->next) {
-      if (t->selected && (t->level <= lowest_level)) {
+    for (auto t: proj.tree.all_selected_nodes()) {
+      if (t->level <= lowest_level) {
         lowest_level = t->level;
         new_insert = t;
       }
@@ -1026,7 +1026,7 @@ void Application::edit_selected() {
  */
 void Application::sort_selected() {
   proj.undo.checkpoint();
-  sort((Fl_Type*)NULL);
+  sort((Fl_Type*)nullptr);
   widget_browser->rebuild();
   proj.set_modflag(1);
 }
@@ -1062,7 +1062,7 @@ void Application::show_help(const char *name) {
 
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
-  if ((docdir = fl_getenv("FLTK_DOCDIR")) == NULL) {
+  if ((docdir = fl_getenv("FLTK_DOCDIR")) == nullptr) {
     docdir = FLTK_DOCDIR;
   }
   snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);
@@ -1244,7 +1244,7 @@ bool Application::confirm_project_clear() {
 void Application::flush_text_widgets() {
   if (Fl::focus() && (Fl::focus()->top_window() == the_panel)) {
     Fl_Widget *old_focus = Fl::focus();
-    Fl::focus(NULL); // trigger callback of the widget that is losing focus
+    Fl::focus(nullptr); // trigger callback of the widget that is losing focus
     Fl::focus(old_focus);
   }
 }
@@ -1372,7 +1372,7 @@ void Application::init_scheme() {
   }
   // Set the new scheme only if it was not overridden by the -scheme
   // command line option
-  if (Fl::scheme() == NULL) {
+  if (Fl::scheme() == nullptr) {
     Fl::scheme(scheme_name);
   }
   free(scheme_name);

@@ -62,8 +62,8 @@ Project_Writer::~Project_Writer()
 
 /**
  Open the .fl design file for writing.
- If the filename is NULL, associate stdout instead.
- \param[in] s the filename or NULL for stdout
+ If the filename is nullptr, associate stdout instead.
+ \param[in] s the filename or nullptr for stdout
  \return 1 if successful. 0 if the operation failed
  */
 int Project_Writer::open_write(const char *s) {

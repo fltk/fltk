@@ -61,7 +61,7 @@ static void delete_dependents(Fl_Menu_Item *m) {
     return;
   int level = 0;
   for (;;m++) {
-    if (m->label()==NULL) {
+    if (m->label()==nullptr) {
       if (level==0) {
         break;
       } else {
@@ -105,7 +105,7 @@ void Fl_Input_Choice_Type::build_menu() {
       if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
     // Menus are already built during the .fl file reading process, so if the
-    // end of a menu list is not read yet, the end markers (label==NULL) will
+    // end of a menu list is not read yet, the end markers (label==nullptr) will
     // not be set, and deleting dependents will randomly free memory.
     // Clearing the array should avoid that.
     memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
@@ -179,7 +179,7 @@ Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
     o = new Fl_Button(0,0,100,20); // create template widget
   }
 
-  Fl_Menu_Item_Type* t = NULL;
+  Fl_Menu_Item_Type* t = nullptr;
   if (flags==FL_SUBMENU) {
     t = new Fl_Submenu_Type();
   } else {
@@ -376,8 +376,8 @@ void Fl_Menu_Item_Type::write_static(fld::io::Code_Writer& f) {
       // Find the Fl_Menu_ container for this menu item
       Fl_Type* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
       if (t) {
-        Fl_Widget_Type *tw = (t->is_widget()) ? static_cast<Fl_Widget_Type*>(t) : NULL;
-        Fl_Type *q = NULL;
+        Fl_Widget_Type *tw = (t->is_widget()) ? static_cast<Fl_Widget_Type*>(t) : nullptr;
+        Fl_Type *q = nullptr;
         // Generate code to call the callback
         if (tw->is_a(ID_Menu_Bar) && ((Fl_Menu_Bar_Type*)tw)->is_sys_menu_bar()) {
           // Fl_Sys_Menu_Bar removes itself from any parent on macOS, so we
@@ -463,7 +463,7 @@ int Fl_Menu_Item_Type::flags() {
   if (!o->active()) i |= FL_MENU_INACTIVE;
   if (!o->visible()) i |= FL_MENU_INVISIBLE;
   if (can_have_children()) {
-    if (user_data() == NULL) i |= FL_SUBMENU;
+    if (user_data() == nullptr) i |= FL_SUBMENU;
     else i |= FL_SUBMENU_POINTER;
   }
   if (hotspot()) i |= FL_MENU_DIVIDER;
@@ -671,7 +671,7 @@ void Fl_Menu_Base_Type::build_menu() {
       if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
     // Menus are already built during the .fl file reading process, so if the
-    // end of a menu list is not read yet, the end markers (label==NULL) will
+    // end of a menu list is not read yet, the end markers (label==nullptr) will
     // not be set, and deleting dependents will randomly free memory.
     // Clearing the array should avoid that.
     memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
@@ -720,7 +720,7 @@ Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
   w->value((Fl_Menu_Item*)nullptr);
   Fl::pushed(w);
   w->handle(FL_PUSH);
-  Fl::focus(NULL);
+  Fl::focus(nullptr);
   const Fl_Menu_Item* m = w->mvalue();
   if (m) {
     // restore the settings of toggles & radio items:
@@ -790,7 +790,7 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
   w->value((Fl_Menu_Item*)nullptr);
   Fl::pushed(w);
   w->handle(FL_PUSH);
-  Fl::focus(NULL);
+  Fl::focus(nullptr);
   const Fl_Menu_Item* m = w->mvalue();
   if (m) {
     // restore the settings of toggles & radio items:
@@ -811,7 +811,7 @@ Fl_Menu_Item menu_bar_type_menu[] = {
   {nullptr}};
 
 Fl_Menu_Bar_Type::Fl_Menu_Bar_Type()
-: _proxy_name(NULL)
+: _proxy_name(nullptr)
 {
 }
 
@@ -854,7 +854,7 @@ void Fl_Menu_Bar_Type::write_static(fld::io::Code_Writer& f) {
       f.write_c_once( // must be less than 1024 bytes!
                      "\nclass %s: public %s {\n"
                      "public:\n"
-                     "  %s(int x, int y, int w, int h, const char *l=NULL)\n"
+                     "  %s(int x, int y, int w, int h, const char *l=nullptr)\n"
                      "  : %s(x, y, w, h, l) { }\n"
                      "  void *_parent_class;\n"
                      "};\n",

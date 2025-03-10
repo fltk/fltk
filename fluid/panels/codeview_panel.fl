@@ -44,13 +44,13 @@ decl {\#include <FL/Fl_Button.H>} {private local
 decl {\#include "../src/flstring.h"} {selected private local
 }
 
-decl {char *cv_source_filename = NULL;} {private local
+decl {char *cv_source_filename = nullptr;} {private local
 }
 
-decl {char *cv_header_filename = NULL;} {private local
+decl {char *cv_header_filename = nullptr;} {private local
 }
 
-decl {char *cv_design_filename = NULL;} {private local
+decl {char *cv_design_filename = nullptr;} {private local
 }
 
 decl {int cv_code_choice;} {public local
@@ -357,7 +357,7 @@ Function {make_codeview()} {open
       }
       Fl_Input cv_find_text {
         label {Find:}
-        callback {Fl_Text_Display *e = NULL;
+        callback {Fl_Text_Display *e = nullptr;
 if (cv_source->visible_r()) {
   e = cv_source;
 } else if (cv_header->visible_r()) {
@@ -379,7 +379,7 @@ if (e) {
       }
       Fl_Button {} {
         label {<<}
-        callback {Fl_Text_Display *e = NULL;
+        callback {Fl_Text_Display *e = nullptr;
 if (cv_source->visible_r()) {
   e = cv_source;
 } else if (cv_header->visible_r()) {
@@ -405,7 +405,7 @@ if (e) {
       }
       Fl_Button {} {
         label {>>}
-        callback {Fl_Text_Display *e = NULL;
+        callback {Fl_Text_Display *e = nullptr;
 if (cv_source->visible_r()) {
   e = cv_source;
 } else if (cv_header->visible_r()) {
@@ -432,13 +432,13 @@ if (e) {
       Fl_Button {} {
         label Reveal
         callback {if (codeview_panel && codeview_panel->visible()) {
-  Fl_Type *node = NULL;
+  Fl_Type *node = nullptr;
   if (cv_source->visible_r())
-    node = Fl_Type::find_in_text(0, cv_source->insert_position());
+    node = Fluid.proj.tree.find_in_text(0, cv_source->insert_position());
   else if (cv_header->visible_r())
-    node = Fl_Type::find_in_text(1, cv_header->insert_position());
+    node = Fluid.proj.tree.find_in_text(1, cv_header->insert_position());
   else if (cv_project->visible_r())
-    node = Fl_Type::find_in_text(2, cv_project->insert_position());
+    node = Fluid.proj.tree.find_in_text(2, cv_project->insert_position());
   if (node) {
     select_only(node);
     reveal_in_browser(node);

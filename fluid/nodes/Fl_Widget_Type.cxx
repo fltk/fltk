@@ -1381,11 +1381,11 @@ Fl_Menu_Item fontmenu[] = {
   {"Terminal"},
   {"Terminal Bold"},
   {"Zapf Dingbats"},
-  {NULL}
+  {nullptr}
 };
 
 Fl_Menu_Item fontmenu_w_default[] = {
-  {"<default>", 0, NULL, NULL, FL_MENU_DIVIDER},
+  {"<default>", 0, nullptr, nullptr, FL_MENU_DIVIDER},
   {"Helvetica"},
   {"Helvetica bold"},
   {"Helvetica italic"},
@@ -1402,7 +1402,7 @@ Fl_Menu_Item fontmenu_w_default[] = {
   {"Terminal"},
   {"Terminal Bold"},
   {"Zapf Dingbats"},
-  {NULL}
+  {nullptr}
 };
 
 void labelfont_cb(Fl_Choice* i, void *v) {
@@ -2399,7 +2399,7 @@ static void flex_margin_cb(Fl_Value_Input* i, void* v,
 static void load_left_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margin(&v, NULL, NULL, NULL);
+  w->margin(&v, nullptr, nullptr, nullptr);
   i->value((double)v);
 }
 
@@ -2422,7 +2422,7 @@ void flex_margin_left_cb(Fl_Value_Input* i, void* v) {
 static void load_top_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margin(NULL, &v, NULL, NULL);
+  w->margin(nullptr, &v, nullptr, nullptr);
   i->value((double)v);
 }
 
@@ -2445,7 +2445,7 @@ void flex_margin_top_cb(Fl_Value_Input* i, void* v) {
 static void load_right_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margin(NULL, NULL, &v, NULL);
+  w->margin(nullptr, nullptr, &v, nullptr);
   i->value((double)v);
 }
 
@@ -2468,7 +2468,7 @@ void flex_margin_right_cb(Fl_Value_Input* i, void* v) {
 static void load_bottom_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margin(NULL, NULL, NULL, &v);
+  w->margin(nullptr, nullptr, nullptr, &v);
   i->value((double)v);
 }
 
@@ -2944,7 +2944,7 @@ void Fl_Widget_Type::write_static(fld::io::Code_Writer& f) {
     f.write_c("\n");
     if (!public_) f.write_c("static ");
     else f.write_h("extern %s *%s;\n", t, c);
-    if (strchr(c, '[') == NULL) f.write_c("%s *%s=(%s *)0;\n", t, c, t);
+    if (strchr(c, '[') == nullptr) f.write_c("%s *%s=(%s *)0;\n", t, c, t);
     else f.write_c("%s *%s={(%s *)0};\n", t, c, t);
   }
   if (callback() && !is_name(callback())) {

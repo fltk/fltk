@@ -114,7 +114,7 @@ public:
 
   void tag(int type, unsigned short uid);
 
-  static unsigned long block_crc(const void *data, int n=-1, unsigned long in_crc=0, bool *inout_line_start=NULL);
+  static unsigned long block_crc(const void *data, int n=-1, unsigned long in_crc=0, bool *inout_line_start=nullptr);
 };
 
 } // namespace io

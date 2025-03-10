@@ -45,7 +45,7 @@
  */
 Fl_Grid_Proxy::Fl_Grid_Proxy(int X,int Y,int W,int H)
 : Fl_Grid(X,Y,W,H),
-  transient_(NULL),
+  transient_(nullptr),
   num_transient_(0),
   cap_transient_(0)
 {
@@ -131,19 +131,19 @@ void Fl_Grid_Proxy::move_cell(Fl_Widget *in_child, int to_row, int to_col, int h
   }
   if ((to_row < 0) || (to_row+rowspan > rows())) return;
   if ((to_col < 0) || (to_col+colspan > cols())) return;
-  Fl_Grid::Cell *new_cell = NULL;
+  Fl_Grid::Cell *new_cell = nullptr;
   if (how == 0) { // replace old occupant in cell, making that one homeless
     new_cell = widget(in_child, to_row, to_col, rowspan, colspan, align);
   } else if (how == 1) { // don't replace an old occupant, making ourselves homeless
     // todo: colspan, rowspan?
-    if (cell(to_row, to_col) == NULL) {
+    if (cell(to_row, to_col) == nullptr) {
       new_cell = widget(in_child, to_row, to_col, rowspan, colspan, align);
     } else {
       if (old_cell) remove_cell(old_cell->row(), old_cell->col());
     }
   } else if (how == 2) {
     Cell *current = cell(to_row, to_col);
-    if (current == NULL) {
+    if (current == nullptr) {
       new_cell = widget(in_child, to_row, to_col, rowspan, colspan, align);
     } else {
       if (old_cell) remove_cell(old_cell->row(), old_cell->col());
@@ -234,7 +234,7 @@ void Fl_Grid_Proxy::transient_remove_(Fl_Widget *w) {
 /**
  Find a cell in the grid or in the transient cell list.
  \param[in] widget must be a child of the grid.
- \return the cell, the transient cell, or NULL if neither was found.
+ \return the cell, the transient cell, or nullptr if neither was found.
  */
 Fl_Grid_Proxy::Cell *Fl_Grid_Proxy::any_cell(Fl_Widget *widget) const {
   Cell *c = cell(widget);
@@ -245,14 +245,14 @@ Fl_Grid_Proxy::Cell *Fl_Grid_Proxy::any_cell(Fl_Widget *widget) const {
 /**
  Find a cell in the transient cell list.
  \param[in] widget must be a child of the grid.
- \return the transient cell, or NULL if it was not found.
+ \return the transient cell, or nullptr if it was not found.
  */
 Fl_Grid_Proxy::Cell *Fl_Grid_Proxy::transient_cell(Fl_Widget *widget) const {
   for (int i=0; i<num_transient_; i++) {
     if (transient_[i].widget == widget)
       return transient_[i].cell;
   }
-  return NULL;
+  return nullptr;
 }
 
 /**
@@ -613,7 +613,7 @@ void Fl_Grid_Type::write_code2(fld::io::Code_Writer& f) {
     Fl_Grid::Cell *cell = grid->cell(c);
     if (cell) {
       if (first_cell) {
-        f.write_c("%sFl_Grid::Cell *cell = NULL;\n", f.indent());
+        f.write_c("%sFl_Grid::Cell *cell = nullptr;\n", f.indent());
         first_cell = false;
       }
       f.write_c("%scell = %s->widget(%s->child(%d), %d, %d, %d, %d, %d);\n",
@@ -674,7 +674,7 @@ void Fl_Grid_Type::child_resized(Fl_Widget_Type *child_type) {
 Fl_Grid *Fl_Grid_Type::selected() {
   if (current_widget && current_widget->is_a(ID_Grid))
     return ((Fl_Grid*)((Fl_Grid_Type*)current_widget)->o);
-  return NULL;
+  return nullptr;
 }
 
 /**
@@ -685,7 +685,7 @@ Fl_Grid *Fl_Grid_Type::selected() {
 void Fl_Grid_Type::insert_child_at(Fl_Widget *child, int x, int y) {
   Fl_Grid_Proxy *grid = (Fl_Grid_Proxy*)o;
   int row = -1, col = -1, ml, mt, grg, gcg;
-  grid->margin(&ml, &mt, NULL, NULL);
+  grid->margin(&ml, &mt, nullptr, nullptr);
   grid->gap(&grg, &gcg);
   int x0 = grid->x() + Fl::box_dx(grid->box()) + ml;
   int y0 = grid->y() + Fl::box_dy(grid->box()) + mt;
@@ -800,8 +800,8 @@ void grid_child_cb(fld::widget::Formula_Input* i, void* v, int what) {
         case 9: v = cell->col(); break;
         case 10: v = cell->rowspan(); break;
         case 11: v = cell->colspan(); break;
-        case 12: cell->minimum_size(&v, NULL); break;
-        case 13: cell->minimum_size(NULL, &v); break;
+        case 12: cell->minimum_size(&v, nullptr); break;
+        case 13: cell->minimum_size(nullptr, &v); break;
       }
     }
     i->value(v);
@@ -810,7 +810,7 @@ void grid_child_cb(fld::widget::Formula_Input* i, void* v, int what) {
     int v2 = -2, old_v = -2, v = i->value();
     if (i==widget_grid_row_input) v2 = widget_grid_col_input->value();
     if (i==widget_grid_col_input) v2 = widget_grid_row_input->value();
-    Fl_Grid::Cell *new_cell = NULL;
+    Fl_Grid::Cell *new_cell = nullptr;
     if (cell) {
       switch (what & 0x00ff) {
         case 8: old_v = cell->row(); v2 = cell->col(); break;

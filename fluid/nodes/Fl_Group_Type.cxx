@@ -417,7 +417,7 @@ void Fl_Flex_Type::postprocess_read()
     }
     fixedSizeTupleSize = 0;
     delete[] fixedSizeTuple;
-    fixedSizeTuple = NULL;
+    fixedSizeTuple = nullptr;
   }
   suspend_auto_layout = 0;
 }

@@ -25,9 +25,9 @@
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Button.H>
 #include "../src/flstring.h"
-static char *cv_source_filename = NULL;
-static char *cv_header_filename = NULL;
-static char *cv_design_filename = NULL;
+static char *cv_source_filename = nullptr;
+static char *cv_header_filename = nullptr;
+static char *cv_design_filename = nullptr;
 int cv_code_choice;
 extern void select_only(Fl_Type *o);
 extern void reveal_in_browser(Fl_Type *t);
@@ -283,7 +283,7 @@ Fl_Button *cv_find_text_case=(Fl_Button *)0;
 Fl_Input *cv_find_text=(Fl_Input *)0;
 
 static void cb_cv_find_text(Fl_Input* o, void*) {
-  Fl_Text_Display *e = NULL;
+  Fl_Text_Display *e = nullptr;
   if (cv_source->visible_r()) {
     e = cv_source;
   } else if (cv_header->visible_r()) {
@@ -304,7 +304,7 @@ static void cb_cv_find_text(Fl_Input* o, void*) {
 }
 
 static void cb_(Fl_Button*, void*) {
-  Fl_Text_Display *e = NULL;
+  Fl_Text_Display *e = nullptr;
   if (cv_source->visible_r()) {
     e = cv_source;
   } else if (cv_header->visible_r()) {
@@ -329,7 +329,7 @@ static void cb_(Fl_Button*, void*) {
 }
 
 static void cb_1(Fl_Button*, void*) {
-  Fl_Text_Display *e = NULL;
+  Fl_Text_Display *e = nullptr;
   if (cv_source->visible_r()) {
     e = cv_source;
   } else if (cv_header->visible_r()) {
@@ -355,13 +355,13 @@ static void cb_1(Fl_Button*, void*) {
 
 static void cb_Reveal(Fl_Button*, void*) {
   if (codeview_panel && codeview_panel->visible()) {
-    Fl_Type *node = NULL;
+    Fl_Type *node = nullptr;
     if (cv_source->visible_r())
-      node = Fl_Type::find_in_text(0, cv_source->insert_position());
+      node = Fluid.proj.tree.find_in_text(0, cv_source->insert_position());
     else if (cv_header->visible_r())
-      node = Fl_Type::find_in_text(1, cv_header->insert_position());
+      node = Fluid.proj.tree.find_in_text(1, cv_header->insert_position());
     else if (cv_project->visible_r())
-      node = Fl_Type::find_in_text(2, cv_project->insert_position());
+      node = Fluid.proj.tree.find_in_text(2, cv_project->insert_position());
     if (node) {
       select_only(node);
       reveal_in_browser(node);

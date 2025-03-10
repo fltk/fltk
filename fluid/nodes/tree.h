@@ -34,8 +34,8 @@ class Tree {
     Fl_Type *type_ = nullptr;
     bool only_selected_ = false;
   public:
-    explicit Iterator(Fl_Type *t, bool only_selected) : type_(t), only_selected_(only_selected) {}
-    Fl_Type& operator*() { return *type_; }
+    explicit Iterator(Fl_Type *t, bool only_selected);
+    Fl_Type* operator*() { return type_; }
     Iterator& operator++();
     bool operator!=(const Iterator& other) const { return type_ != other.type_; }
   };
@@ -55,8 +55,8 @@ class Tree {
     Fl_Type *type_ = nullptr;
     bool only_selected_ = false;
   public:
-    explicit WIterator(Fl_Type *t, bool only_selected) : type_(t), only_selected_(only_selected) {}
-    Fl_Widget_Type& operator*() { return *static_cast<Fl_Widget_Type*>(type_); }
+    explicit WIterator(Fl_Type *t, bool only_selected);
+    Fl_Widget_Type* operator*() { return static_cast<Fl_Widget_Type*>(type_); }
     WIterator& operator++();
     bool operator!=(const WIterator& other) const { return type_ != other.type_; }
   };
@@ -95,8 +95,8 @@ public:
   Container all_selected_nodes() { return Container(*this, true); }
   WContainer all_selected_widgets() { return WContainer(*this, true); }
 
-//  Fl_Type *find_by_uid(unsigned short uid);
-//  Fl_Type *find_in_text(int text_type, int crsr);
+  Fl_Type *find_by_uid(unsigned short uid);
+  Fl_Type *find_in_text(int text_type, int crsr);
 };
 
 } // namespace node

@@ -162,7 +162,7 @@ protected:
   /** Label text of a widget. */
   const char *label_;
   /** If it is just a word, it's the name of the callback function. Otherwise
-   it is the full callback C++ code. Can be NULL. */
+   it is the full callback C++ code. Can be nullptr. */
   const char *callback_;
   /** Widget user data field as C++ text. */
   const char *user_data_;
@@ -238,7 +238,7 @@ public:
   const char *comment() { return comment_; }
   void comment(const char *);
 
-  virtual Fl_Type* click_test(int,int) { return NULL; }
+  virtual Fl_Type* click_test(int,int) { return nullptr; }
 
   virtual void add_child(Fl_Type*, Fl_Type* beforethis) { }
   virtual void move_child(Fl_Type*, Fl_Type* beforethis) { }
@@ -308,9 +308,6 @@ public:
 
   unsigned short set_uid(unsigned short suggested_uid=0);
   unsigned short get_uid() { return uid_; }
-  static Fl_Type *find_by_uid(unsigned short uid);
-
-  static Fl_Type *find_in_text(int text_type, int crsr);
 };
 
 #endif // _FLUID_FL_TYPE_H

@@ -112,7 +112,7 @@ Project_Reader::~Project_Reader()
 
 /**
  Open an .fl file for reading.
- \param[in] s filename, if NULL, read from stdin instead
+ \param[in] s filename, if nullptr, read from stdin instead
  \return 0 if the operation failed, 1 if it succeeded
  */
 int Project_Reader::open_read(const char *s) {
@@ -195,7 +195,7 @@ int Project_Reader::read_quoted() {      // read whatever character is after a \
 
  If this is the first call, also read the global settings for this design.
 
- \param[in] p parent node or NULL
+ \param[in] p parent node or nullptr
  \param[in] merge if set, merge into existing design, else replace design
  \param[in] strategy add nodes after current or as last child
  \param[in] skip_options this is set if the options were already found in
@@ -204,8 +204,8 @@ int Project_Reader::read_quoted() {      // read whatever character is after a \
  */
 Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options) {
   Fluid.proj.tree.current = p;
-  Fl_Type *last_child_read = NULL;
-  Fl_Type *t = NULL;
+  Fl_Type *last_child_read = nullptr;
+  Fl_Type *t = nullptr;
   for (;;) {
     const char *c = read_word();
   REUSE_C:
@@ -225,7 +225,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       // this is the first word in a .fd file:
       if (!strcmp(c,"Magic:")) {
         read_fdesign();
-        return NULL;
+        return nullptr;
       }
 
       if (!strcmp(c,"version")) {
@@ -475,7 +475,7 @@ void Project_Reader::read_error(const char *format, ...) {
 }
 
 /**
- Return a word read from the .fl file, or NULL at the EOF.
+ Return a word read from the .fl file, or nullptr at the EOF.
 
  This will skip all comments (# to end of line), and evaluate
  all \\xxx sequences and use \\ at the end of line to remove the newline.

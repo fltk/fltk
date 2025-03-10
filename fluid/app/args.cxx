@@ -50,7 +50,7 @@ int Args::load(int argc,char **argv) {
     " --help : brief usage information\n"
     " --version, -v : print fluid version number\n"
     " -d : enable internal debugging\n";
-    const char *app_name = NULL;
+    const char *app_name = nullptr;
     if ( (argc > 0) && argv[0] && argv[0][0] )
       app_name = fl_filename_name(argv[0]);
     if ( !app_name || !app_name[0])

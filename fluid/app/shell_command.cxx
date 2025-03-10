@@ -148,13 +148,13 @@ Fl_Process::~Fl_Process() {
 FILE * Fl_Process::popen(const char *cmd, const char *mode) {
 #if defined(_WIN32)  && !defined(__CYGWIN__)
   // PRECONDITIONS
-  if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return NULL;
+  if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return nullptr;
   if (_fpt) close(); // close first before reuse
 
   ptmode = *mode;
   pin[0] = pin[1] = pout[0] = pout[1] = perr[0] = perr[1] = INVALID_HANDLE_VALUE;
   // stderr to stdout wanted ?
-  int fusion = (strstr(cmd,"2>&1") !=NULL);
+  int fusion = (strstr(cmd,"2>&1") !=nullptr);
 
   // Create windows pipes
   if (!createPipe(pin) || !createPipe(pout) || (!fusion && !createPipe(perr) ) )
@@ -168,8 +168,8 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
   si.hStdOutput   = pout[1];
   si.hStdError  = fusion ? pout[1] : perr [1];
 
-  if ( CreateProcess(NULL, (LPTSTR) cmd,NULL,NULL,TRUE,
-                     DETACHED_PROCESS,NULL,NULL, &si, &pi)) {
+  if ( CreateProcess(nullptr, (LPTSTR) cmd,nullptr,nullptr,TRUE,
+                     DETACHED_PROCESS,nullptr,nullptr, &si, &pi)) {
     // don't need theses handles inherited by child process:
     clean_close(pin[0]); clean_close(pout[1]); clean_close(perr[1]);
     HANDLE & h = *mode == 'r' ? pout[0] : pin[1];
@@ -196,13 +196,13 @@ int Fl_Process::close() {
     clean_close(perr[0]);
     clean_close(pin[1]);
     clean_close(pout[0]);
-    _fpt = NULL;
+    _fpt = nullptr;
     return 0;
   }
   return -1;
 #else
   int ret = ::pclose(_fpt);
-  _fpt=NULL;
+  _fpt=nullptr;
   return ret;
 #endif
 }
@@ -221,10 +221,10 @@ FILE *Fl_Process::desc() const {
 
  \param[out] line buffer to receive the line
  \param[in] s size of the provided buffer
- \return NULL if an error occurred, otherwise a pointer to the string
+ \return nullptr if an error occurred, otherwise a pointer to the string
  */
 char *Fl_Process::get_line(char * line, size_t s) const {
-  return _fpt ? fgets(line, (int)s, _fpt) : NULL;
+  return _fpt ? fgets(line, (int)s, _fpt) : nullptr;
 }
 
 // returns fileno(FILE*):
@@ -244,7 +244,7 @@ int Fl_Process::get_fileno() const {
 bool Fl_Process::createPipe(HANDLE * h, BOOL bInheritHnd) {
   SECURITY_ATTRIBUTES sa;
   sa.nLength = sizeof(sa);
-  sa.lpSecurityDescriptor = NULL;
+  sa.lpSecurityDescriptor = nullptr;
   sa.bInheritHandle = bInheritHnd;
   return CreatePipe (&h[0],&h[1],&sa,0) ? true : false;
 }
@@ -253,7 +253,7 @@ FILE *Fl_Process::freeHandles()  {
   clean_close(pin[0]);    clean_close(pin[1]);
   clean_close(pout[0]);   clean_close(pout[1]);
   clean_close(perr[0]);   clean_close(perr[1]);
-  return NULL; // convenient for error management
+  return nullptr; // convenient for error management
 }
 
 void Fl_Process::clean_close(HANDLE& h) {
@@ -310,7 +310,7 @@ void shell_timer_cb(void*) {
 void shell_pipe_cb(FL_SOCKET, void*) {
   char  line[1024]="";          // Line from command output...
 
-  if (s_proc.get_line(line, sizeof(line)) != NULL) {
+  if (s_proc.get_line(line, sizeof(line)) != nullptr) {
     // Add the line to the output list...
     shell_run_terminal->append(line);
   } else {
@@ -404,7 +404,7 @@ void run_shell_command(const std::string &cmd, int flags) {
   shell_run_terminal->printf("\033[0;32m%s\033[0m\n", expanded_cmd.c_str());
   shell_run_window->label(expanded_cmd.c_str());
 
-  if (s_proc.popen((char *)expanded_cmd.c_str()) == NULL) {
+  if (s_proc.popen((char *)expanded_cmd.c_str()) == nullptr) {
     shell_run_terminal->printf("\033[1;31mUnable to run shell command: %s\033[0m\n",
                                strerror(errno));
     shell_run_window->label("FLUID Shell");
@@ -427,7 +427,7 @@ Fd_Shell_Command::Fd_Shell_Command()
   storage(fld::Tool_Store::USER),
   condition(0),
   flags(0),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -445,7 +445,7 @@ Fd_Shell_Command::Fd_Shell_Command(const Fd_Shell_Command *rhs)
   condition_data(rhs->condition_data),
   command(rhs->command),
   flags(rhs->flags),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -462,7 +462,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
   condition(Fd_Shell_Command::ALWAYS),
   command("echo \"Hello, FLUID!\""),
   flags(Fd_Shell_Command::SAVE_PROJECT|Fd_Shell_Command::SAVE_SOURCECODE),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -494,7 +494,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name,
   condition_data(in_condition_data),
   command(in_command),
   flags(in_flags),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -514,8 +514,8 @@ void Fd_Shell_Command::run() {
  */
 void Fd_Shell_Command::update_shell_menu() {
   if (shell_menu_item_) {
-    const char *old_label = shell_menu_item_->label();  // can be NULL
-    const char *new_label = label.c_str();              // never NULL
+    const char *old_label = shell_menu_item_->label();  // can be nullptr
+    const char *new_label = label.c_str();              // never nullptr
     if (!old_label || (old_label && strcmp(old_label, new_label))) {
       if (old_label) ::free((void*)old_label);
       shell_menu_item_->label(fl_strdup(new_label));
@@ -833,7 +833,7 @@ void menu_shell_customize_cb(Fl_Widget*, void*) {
  Rebuild the entire shell submenu from scratch and replace the old menu.
  */
 void Fd_Shell_Command_List::rebuild_shell_menu() {
-  static Fl_Menu_Item *shell_submenu = NULL;
+  static Fl_Menu_Item *shell_submenu = nullptr;
   if (!shell_submenu)
     shell_submenu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(menu_marker);
 
@@ -887,7 +887,7 @@ void Fd_Shell_Command_List::update_settings_dialog() {
  */
 Fl_Menu_Item Fd_Shell_Command_List::default_menu[] = {
   {   "Customize...", FL_ALT+'x', menu_shell_customize_cb },
-  { NULL }
+  { nullptr }
 };
 
 /**
@@ -900,7 +900,7 @@ void Fd_Shell_Command_List::menu_marker(Fl_Widget*, void*) {
 /**
  Export all selected shell commands to an external file.
 
- Verify that g_shell_config and w_settings_shell_list are not NULL. Open a
+ Verify that g_shell_config and w_settings_shell_list are not nullptr. Open a
  file chooser and export all items that are selected in w_settings_shell_list
  into an external file.
  */
@@ -916,7 +916,7 @@ void Fd_Shell_Command_List::export_selected() {
   dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, index = 0, n = w_settings_shell_list->size();
   for (i = 0; i < n; i++) {
@@ -930,7 +930,7 @@ void Fd_Shell_Command_List::export_selected() {
 /**
  Import shell commands from an external file and add them to the list.
 
- Verify that g_shell_config and w_settings_shell_list are not NULL. Open a
+ Verify that g_shell_config and w_settings_shell_list are not nullptr. Open a
  file chooser and import all items.
  */
 void Fd_Shell_Command_List::import_from_file() {
@@ -945,7 +945,7 @@ void Fd_Shell_Command_List::import_from_file() {
   dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, n = shell_commands.groups();
   for (i = 0; i < n; i++) {
@@ -964,5 +964,5 @@ void Fd_Shell_Command_List::import_from_file() {
 /**
  A pointer to the list of shell commands if we are not in batch mode.
  */
-Fd_Shell_Command_List *g_shell_config = NULL;
+Fd_Shell_Command_List *g_shell_config = nullptr;
 

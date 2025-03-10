@@ -93,7 +93,7 @@ void fld::app::save_template() {
   if (!fl_access(filename, 0)) {
     if (fl_choice("The template \"%s\" already exists.\n"
                   "Do you want to replace it?", "Cancel",
-                  "Replace", NULL, c) == 0) return;
+                  "Replace", nullptr, c) == 0) return;
   }
 
   if (!fld::io::write_file(Fluid.proj, filename)) {
@@ -117,7 +117,7 @@ void fld::app::save_template() {
   uchar *pixels;
   int w, h;
 
-  if ((pixels = wt->read_image(w, h)) == NULL) return;
+  if ((pixels = wt->read_image(w, h)) == nullptr) return;
 
   // Save to a PNG file...
   strcpy(ext, ".png");

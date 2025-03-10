@@ -284,7 +284,7 @@ void Code_Writer::write_cstring(const char *s, int length) {
   }
   // if we are rendering to the source code preview window, and the text is
   // longer than four lines, we only render a placeholder.
-  if (write_codeview && ((s==NULL) || (length>300))) {
+  if (write_codeview && ((s==nullptr) || (length>300))) {
     if (length>=0)
       crc_printf("\" ... %d bytes of text... \"", length);
     else
@@ -710,7 +710,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   if (t && proj_.include_H_from_C) {
     if (to_codeview) {
       write_c("#include \"CodeView.h\"\n");
-    } else if (proj_.header_file_name[0] == '.' && strchr(proj_.header_file_name.c_str(), '/') == NULL) {
+    } else if (proj_.header_file_name[0] == '.' && strchr(proj_.header_file_name.c_str(), '/') == nullptr) {
       write_c("#include \"%s\"\n", fl_filename_name(t));
     } else {
       write_c("#include \"%s\"\n", proj_.header_file_name.c_str());
@@ -826,7 +826,7 @@ void Code_Writer::write_public(int state) {
 Code_Writer::Code_Writer(Project &proj)
 : proj_ { proj }
 {
-  block_crc_ = crc32(0, NULL, 0);
+  block_crc_ = crc32(0, nullptr, 0);
 }
 
 /**
@@ -852,7 +852,7 @@ Code_Writer::~Code_Writer()
 void Code_Writer::tag(int type, unsigned short uid) {
   if (proj_.write_mergeback_data)
     fprintf(code_file, "//~fl~%d~%04x~%08x~~\n", type, (int)uid, (unsigned int)block_crc_);
-  block_crc_ = crc32(0, NULL, 0);
+  block_crc_ = crc32(0, nullptr, 0);
 }
 
 /**

@@ -484,7 +484,7 @@ if (v == LOAD) return;
 std::string old_name = "Copy of ";
 old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
 const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
-if (new_name == NULL)
+if (new_name == nullptr)
   return;
 
 g_layout_list.add(new_name);
@@ -513,7 +513,7 @@ g_layout_list.update_dialogs();}
 
 std::string old_name = g_layout_list[g_layout_list.current_suite()].name_;
 const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
-if (new_name == NULL)
+if (new_name == nullptr)
   return;
 
 g_layout_list.rename(new_name);
@@ -1001,7 +1001,7 @@ if (v==LOAD) {
 } else {
   if (!selected) return;
   int ret = fl_choice("Delete the shell command\\n\\"%s\\"?\\n\\nThis can not be undone.",
-    "Delete", "Cancel", NULL, g_shell_config->list[selected-1]->name.c_str());
+    "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
   if (ret==1) return;
   if (g_shell_config->at(selected-1)->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   g_shell_config->remove(selected-1);
@@ -1300,7 +1300,7 @@ if (mi) {
     int pos = w_settings_shell_command->insert_position();
     w_settings_shell_command->buffer()->insert(pos, word);
   }
-  w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
+  w_settings_shell_command->do_callback(w_settings_shell_command, (void*)nullptr);
 }} open
                 tooltip {a list of text replacements available for the shell script} xywh {296 373 24 22} labelsize 11 textsize 11
               } {
