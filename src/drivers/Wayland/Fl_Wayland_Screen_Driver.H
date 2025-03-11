@@ -67,8 +67,10 @@ public:
   struct output { // one record for each screen
     uint32_t id;
     int x, y; // logical position of screen
-    int width; // in pixels
-    int height; // in pixels
+    int pixel_width; // in pixels
+    int pixel_height; // in pixels
+    int width; // in pixels, account for fractional scaling
+    int height; // in pixels, account for fractional scaling
     float dpi;
     struct wl_output *wl_output;
     int wld_scale; // Wayland scale factor

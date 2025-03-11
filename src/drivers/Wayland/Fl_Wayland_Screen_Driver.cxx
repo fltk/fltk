@@ -1106,8 +1106,8 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
       int32_t width, int32_t height, int32_t refresh)
 {
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
-  output->width = int(width);
-  output->height = int(height);
+  output->pixel_width = int(width);
+  output->pixel_height = int(height);
 //fprintf(stderr, "output_mode: [%p]=%dx%d\n",output->wl_output,width,height);
 }
 
@@ -1531,18 +1531,107 @@ void Fl_Wayland_Screen_Driver::close_display() {
 }
 
 
+struct pair_s { int W, H; };
+static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel,
+                                   int32_t width, int32_t height, struct wl_array *states)
+{
+  struct pair_s *pair = (struct pair_s*)data;
+  pair->W = width;
+  pair->H = height;
+}
+
+static void xdg_toplevel_close(void *data, struct xdg_toplevel *toplevel) {}
+
+static const struct xdg_toplevel_listener xdg_toplevel_listener = {
+  .configure = xdg_toplevel_configure,
+  .close = xdg_toplevel_close,
+};
+
+
+static void compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
+                                             int& Wfullscreen, int& Hfullscreen,
+                                             int& Wworkarea, int& Hworkarea,
+                                             bool need_workarea) {
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  struct wl_surface *wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
+  wl_surface_set_opaque_region(wl_surface, NULL);
+  struct xdg_surface *xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface);
+  struct xdg_toplevel *xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
+  struct pair_s pair = {0, 0};
+  xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &pair);
+  xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
+  wl_surface_commit(wl_surface);
+  while (!pair.H) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  Wfullscreen = pair.W;
+  Hfullscreen = pair.H;
+  if (need_workarea) {
+    xdg_toplevel_unset_fullscreen(xdg_toplevel);
+    xdg_toplevel_set_maximized(xdg_toplevel);
+    pair.H = 0;
+    wl_surface_commit(wl_surface);
+    while (!pair.H) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  }
+  Wworkarea = pair.W;
+  Hworkarea = pair.H;
+  xdg_toplevel_destroy(xdg_toplevel);
+  xdg_surface_destroy(xdg_surface);
+  wl_surface_destroy(wl_surface);
+  //int H = output->pixel_height / output->wld_scale;
+  //float fractional_scale = Hfullscreen / float(H);
+  //printf("fullscreen=%dx%d workarea=%dx%d  apparentH=%d fractional_scale=%g wld_s=%d\n",
+  //       Wfullscreen,Hfullscreen,Wworkarea,Hworkarea,H,fractional_scale,output->wld_scale);
+}
+
 static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
+
+/* Implementation note about computing work area and about handling fractional scaling.
+ 
+ FLTK computes 2 pairs of (WxH) values for each display:
+ 1) (pixel_width x pixel_height) gives the size in pixel of a display. It's unchanged by
+ any scaling applied by the compositor; it's assigned by function output_mode().
+ 2) (width x height) gives the size in pixels of a buffer that would fully cover the display.
+ When the active scaling is non-fractional, these equations hold:
+   pixel_width = width = wld_scale * configured-width-of-fullscreen-window
+   pixel_height = height = wld_scale * configured-height-of-fullscreen-window
+ 
+ When fractional scaling is active, buffers received from client are scaled down
+ by the compositor and mapped to screen. These equations hold:
+   pixel_width < width = wld_scale * configured-width-of-fullscreen-window
+   pixel_height < height = wld_scale * configured-height-of-fullscreen-window
+
+ One way for a client to discover that fractional scaling is active on a given display
+ is to ask for a fullscreen window on that display, get its configured size and compare
+ it to the display pixel size. That's what function compute_full_and_maximized_areas() does.
+ 
+ One way for a client to discover the work area size is to get the configured size
+ of a maximized window on a given display. But it's not possible to control on what display
+ the compositor puts the maximized window. Therefore, FLTK computes an exact work area size
+ only when the system contains a single display. That's also done by function
+ compute_full_and_maximized_areas().
+ 
+ FLTK didn't find how to recognize the primary display within the list of displays
+ received from the compositor. That's another reason why FLTK doesn't attempt
+ to compute work area sizes when there are multiple displays.
+ */
 
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
   Fl_Wayland_Screen_Driver::output *output;
+  int count = 0;
+  wl_list_for_each(output, &outputs, link) ++count;
+  bool need_workarea = (count == 1);
+  bool first = true;
   wl_list_for_each(output, &outputs, link) {
-    workarea_xywh[0] = output->x; // pixels
-    workarea_xywh[1] = output->y; // pixels
-    workarea_xywh[2] = output->width; // pixels
-    workarea_xywh[3] = output->height; // pixels
-    break;
+    if (first) workarea_xywh[0] = output->x; // pixels
+    if (first) workarea_xywh[1] = output->y; // pixels
+    int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
+    compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea, need_workarea);
+    output->width = Wfullscreen * output->wld_scale; // pixels
+    if (first) workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
+    output->height = Hfullscreen * output->wld_scale; // pixels
+    if (first) workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+    first = false;
   }
 }
 
