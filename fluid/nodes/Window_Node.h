@@ -46,7 +46,9 @@ enum {
 
 class Window_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Window_Node prototype;
 protected:
 
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return window_type_menu;}
@@ -126,7 +128,10 @@ public:
 
 class Widget_Class_Node : private Window_Node
 {
+public:
   typedef Window_Node super;
+  static Widget_Class_Node prototype;
+
 protected:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return nullptr;}
 

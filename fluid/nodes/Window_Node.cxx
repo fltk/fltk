@@ -405,12 +405,11 @@ void xclass_cb(Fl_Input* i, void* v) {
 
 ////////////////////////////////////////////////////////////////
 
+Window_Node Window_Node::prototype;
+
 void Window_Node::setlabel(const char *n) {
   if (o) ((Fl_Window *)o)->label(n);
 }
-
-// make() is called on this widget when user picks window off New menu:
-Window_Node Fl_Window_type;
 
 // Resize from window manager...
 void Overlay_Window::resize(int X,int Y,int W,int H) {
@@ -1364,7 +1363,8 @@ int Window_Node::read_fdesign(const char* propname, const char* value) {
 
 ///////////////////////////////////////////////////////////////////////
 
-Widget_Class_Node Fl_Widget_Class_type;
+Widget_Class_Node Widget_Class_Node::prototype;
+
 Widget_Class_Node *current_widget_class = nullptr;
 
 /**

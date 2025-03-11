@@ -180,7 +180,7 @@ const char *c_check(const char *c, int type) {
  */
 
 /// Prototype for a function to be used by the factory.
-Function_Node Fl_Function_type;
+Function_Node Function_Node::prototype;
 
 /**
  Create a new function.
@@ -578,7 +578,7 @@ int Function_Node::has_signature(const char *rtype, const char *sig) const {
  */
 
 /// Prototype for code to be used by the factory.
-Code_Node Fl_Code_type;
+Code_Node Code_Node::prototype;
 
 /**
  Constructor.
@@ -739,7 +739,7 @@ int Code_Node::handle_editor_changes() {
  */
 
 /// Prototype for a block of code to be used by the factory.
-CodeBlock_Node Fl_CodeBlock_type;
+CodeBlock_Node CodeBlock_Node::prototype;
 
 /**
  Constructor.
@@ -877,7 +877,7 @@ void CodeBlock_Node::write_code2(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a declaration to be used by the factory.
-Decl_Node Fl_Decl_type;
+Decl_Node Decl_Node::prototype;
 
 /**
  Constructor.
@@ -1110,7 +1110,7 @@ void Decl_Node::write_code1(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a data node to be used by the factory.
-Data_Node Fl_Data_type;
+Data_Node Data_Node::prototype;
 
 /**
  Constructor.
@@ -1447,7 +1447,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a declaration block to be used by the factory.
-DeclBlock_Node Fl_DeclBlock_type;
+DeclBlock_Node DeclBlock_Node::prototype;
 
 /**
  Constructor.
@@ -1694,7 +1694,7 @@ void DeclBlock_Node::write_code2(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a comment node to be used by the factory.
-Comment_Node Fl_Comment_type;
+Comment_Node Comment_Node::prototype;
 
 /**
  Constructor.
@@ -1948,7 +1948,7 @@ void Comment_Node::write_code1(fld::io::Code_Writer& f) {
  */
 
 /// Prototype for a class node to be used by the factory.
-Class_Node Fl_Class_type;
+Class_Node Class_Node::prototype;
 
 /**
  Constructor.

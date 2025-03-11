@@ -44,10 +44,12 @@ const char *c_check(const char *c, int type = 0);
 
 class Function_Node : public Node
 {
+public:
   typedef Node super;
+  static Function_Node prototype;
+private:
   const char* return_type;
   char public_, cdecl_, constructor, havewidgets;
-
 public:
   Function_Node();
   ~Function_Node();
@@ -74,12 +76,14 @@ public:
 
 class Code_Node : public Node
 {
+public:
   typedef Node super;
+  static Code_Node prototype;
+private:
   ExternalCodeEditor editor_;
   int cursor_position_;
   int code_input_scroll_row;
   int code_input_scroll_col;
-
 public:
   Code_Node();
   Node *make(Strategy strategy) FL_OVERRIDE;
@@ -101,9 +105,11 @@ public:
 
 class CodeBlock_Node : public Node
 {
+public:
   typedef Node super;
+  static CodeBlock_Node prototype;
+private:
   const char* after;
-
 public:
   CodeBlock_Node();
   ~CodeBlock_Node();
@@ -125,8 +131,9 @@ public:
 
 class Decl_Node : public Node
 {
+public:
   typedef Node super;
-
+  static Decl_Node prototype;
 protected:
   char public_;
   char static_;
@@ -149,7 +156,10 @@ public:
 
 class Data_Node : public Decl_Node
 {
+public:
   typedef Decl_Node super;
+  static Data_Node prototype;
+private:
   const char *filename_;
   int text_mode_;
 
@@ -171,7 +181,10 @@ public:
 
 class DeclBlock_Node : public Node
 {
+public:
   typedef Node super;
+  static DeclBlock_Node prototype;
+private:
   enum {
     CODE_IN_HEADER = 1,
     CODE_IN_SOURCE = 2,
@@ -204,7 +217,10 @@ public:
 
 class Comment_Node : public Node
 {
+public:
   typedef Node super;
+  static Comment_Node prototype;
+private:
   char in_c_, in_h_, style_;
 
 public:
@@ -225,11 +241,13 @@ public:
 
 class Class_Node : public Node
 {
+public:
   typedef Node super;
+  static Class_Node prototype;
+private:
   const char* subclass_of;
   char public_;
   const char* class_prefix;
-
 public:
   Class_Node();
   ~Class_Node();

@@ -46,7 +46,9 @@ public:
 
 class Group_Node : public Widget_Node
 {
+public:
   typedef Widget_Node super;
+  static Group_Node prototype;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "Fl_Group";}
@@ -74,7 +76,10 @@ extern Fl_Menu_Item pack_type_menu[];
 
 class Pack_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Pack_Node prototype;
+private:
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return pack_type_menu;}
 public:
   const char *type_name() FL_OVERRIDE {return pack_type_name;}
@@ -100,7 +105,10 @@ public:
 
 class Flex_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Flex_Node prototype;
+private:
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return flex_type_menu;}
   int fixedSizeTupleSize; /* number of pairs in array */
   int *fixedSizeTuple; /* [ index, size, index2, size2, ... ] */
@@ -137,7 +145,9 @@ public:
 
 class Table_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Table_Node prototype;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE { return "Fl_Table"; }
@@ -165,7 +175,9 @@ public:
 
 class Tabs_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Tabs_Node prototype;
 public:
   const char *type_name() FL_OVERRIDE {return tabs_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TabGroup";}
@@ -187,7 +199,10 @@ extern Fl_Menu_Item scroll_type_menu[];
 
 class Scroll_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Scroll_Node prototype;
+private:
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return scroll_type_menu;}
 public:
   const char *type_name() FL_OVERRIDE {return scroll_type_name;}
@@ -205,7 +220,9 @@ extern const char tile_type_name[];
 
 class Tile_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Tile_Node prototype;
 public:
   const char *type_name() FL_OVERRIDE {return tile_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TileGroup";}
@@ -228,7 +245,9 @@ extern const char wizard_type_name[];
 
 class Wizard_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Wizard_Node prototype;
 public:
   const char *type_name() FL_OVERRIDE {return wizard_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::WizardGroup";}

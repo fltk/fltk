@@ -41,29 +41,29 @@
         +-- Comment_Node
         +-- Class_Node
         +-+ Widget_Node, 'o' points to a class derived from Fl_Widget
-          +-+ Fl_Browser_Base_Type, 'o' is Fl_Browser
+          +-+ Browser_Base_Node, 'o' is Fl_Browser
           | +-+ Fl_Browser
           | | +-- Fl_File_Browser
           | +-- Fl_Check_Browser
-          +-- Fl_Tree_Type
-          +-- Fl_Help_View_Type
-          +-+ Fl_Valuator_Type, 'o' is Fl_Valuator_
-          | +-- Fl_Counter_Type
-          | +-- Fl_Adjuster_Type
-          | +-- Fl_Dial_Type
-          | +-- Fl_Roller_Type
-          | +-- Fl_Slider_Type
-          | +-- Fl_Value_Input_Type
-          | +-- Fl_Value_Output_Type
-          +-+ Fl_Input_Type
-          | +-- Fl_Output_Type
-          +-+ Fl_Text_Display_Type
-          | +-- Fl_Text_Editor_Type
-          +-- Fl_Terminal_Type
-          +-- Fl_Box_Type
-          +-- Fl_Clock_Type
-          +-- Fl_Progress_Type
-          +-- Fl_Spinner_Type
+          +-- Tree_Node
+          +-- Help_View_Node
+          +-+ Valuator_Node, 'o' is Fl_Valuator_
+          | +-- Counter_Node
+          | +-- Adjuster_Node
+          | +-- Dial_Node
+          | +-- Roller_Node
+          | +-- Slider_Node
+          | +-- Value_Input_Node
+          | +-- Value_Output_Node
+          +-+ Input_Node
+          | +-- Output_Node
+          +-+ Text_Display_Node
+          | +-- Text_Editor_Node
+          +-- Terminal_Node
+          +-- Box_Node
+          +-- Clock_Node
+          +-- Progress_Node
+          +-- Spinner_Node
           +-+ Group_Node
           | +-- Pack_Node
           | +-- Flex_Node
@@ -82,11 +82,11 @@
           | | +-- Menu_Bar_Node
           | +-- Input_Choice_Node, 'o' is based on Fl_Input_Choice which is Fl_Group
           +-+ Button_Node
-            +-- Fl_Return_Button_Type
-            +-- Fl_Repeat_Button_Type
-            +-- Fl_Light_Button_Type
-            +-- Fl_Check_Button_Type
-            +-- Fl_Round_Button_Type
+            +-- Return_Button_Node
+            +-- Repeat_Button_Node
+            +-- Light_Button_Node
+            +-- Check_Button_Node
+            +-- Round_Button_Node
             +-+ Menu_Item_Node, 'o' is derived from Fl_Button in FLUID
               +-- Radio_Menu_Item_Node
               +-- Checkbox_Menu_Item_Node

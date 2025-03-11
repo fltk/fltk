@@ -286,10 +286,13 @@ Node *Submenu_Node::make(Strategy strategy) {
   return Menu_Item_Node::make(FL_SUBMENU, strategy);
 }
 
-Menu_Item_Node Fl_Menu_Item_type;
-Checkbox_Menu_Item_Node Fl_Checkbox_Menu_Item_type;
-Radio_Menu_Item_Node Fl_Radio_Menu_Item_type;
-Submenu_Node Fl_Submenu_type;
+Menu_Item_Node Menu_Item_Node::prototype;
+
+Checkbox_Menu_Item_Node Checkbox_Menu_Item_Node::prototype;
+
+Radio_Menu_Item_Node Radio_Menu_Item_Node::prototype;
+
+Submenu_Node Submenu_Node::prototype;
 
 ////////////////////////////////////////////////////////////////
 // Writing the C code:
@@ -762,15 +765,15 @@ Fl_Menu_Item button_type_menu[] = {
   {"popup123",0,nullptr,(void*)Fl_Menu_Button::POPUP123},
   {nullptr}};
 
-Menu_Button_Node Fl_Menu_Button_type;
+Menu_Button_Node Menu_Button_Node::prototype;
 
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item dummymenu[] = {{"CHOICE"},{nullptr}};
 
-Choice_Node Fl_Choice_type;
+Choice_Node Choice_Node::prototype;
 
-Input_Choice_Node Fl_Input_Choice_type;
+Input_Choice_Node Input_Choice_Node::prototype;
 
 void Input_Choice_Node::copy_properties() {
   Widget_Node::copy_properties();
@@ -803,7 +806,7 @@ Node* Input_Choice_Node::click_test(int, int) {
 
 ////////////////////////////////////////////////////////////////
 
-Menu_Bar_Node Fl_Menu_Bar_type;
+Menu_Bar_Node Menu_Bar_Node::prototype;
 
 Fl_Menu_Item menu_bar_type_menu[] = {
   {"Fl_Menu_Bar",0,nullptr,(void*)nullptr},

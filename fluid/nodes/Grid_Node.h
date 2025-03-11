@@ -48,7 +48,9 @@ public:
 
 class Grid_Node : public Group_Node
 {
+public:
   typedef Group_Node super;
+  static Grid_Node prototype;
 public:
   Grid_Node();
   const char *type_name() FL_OVERRIDE {return grid_type_name;}

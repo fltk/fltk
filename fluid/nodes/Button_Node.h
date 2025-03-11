@@ -24,7 +24,10 @@
  */
 class Button_Node : public Widget_Node
 {
+public:
   typedef Widget_Node super;
+  static Button_Node prototype;
+private:
   Fl_Menu_Item *subtypes() FL_OVERRIDE;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE;
@@ -40,7 +43,108 @@ public:
   void copy_properties() FL_OVERRIDE;
 };
 
-extern Button_Node Fl_Button_type;
+// ---- Return Button ----
+
+/**
+ \brief The Return Button is simply a Button with the return key as a hotkey.
+ */
+class Return_Button_Node : public Button_Node
+{
+public:
+  typedef Button_Node super;
+  static Return_Button_Node prototype;
+public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE { return "Fl_Return_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::ReturnButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE;
+  Widget_Node *_make() FL_OVERRIDE { return new Return_Button_Node(); }
+  ID id() const FL_OVERRIDE { return ID_Return_Button; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
+};
+
+// ---- Repeat Button ----
+
+/**
+ \brief Handler for Fl_Repeat_Button.
+ \note Even though Fl_Repeat_Button is somewhat limited compared to Fl_Button,
+ and some settings may not make much sense, it is still derived from it,
+ so the wrapper should be as well.
+ */
+class Repeat_Button_Node : public Button_Node
+{
+public:
+  typedef Button_Node super;
+  static Repeat_Button_Node prototype;
+public:
+  const char *type_name() FL_OVERRIDE { return "Fl_Repeat_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::RepeatButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE;
+  Widget_Node *_make() FL_OVERRIDE { return new Repeat_Button_Node(); }
+  ID id() const FL_OVERRIDE { return ID_Repeat_Button; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
+};
+
+// ---- Light Button ----
+
+/**
+ \brief A handler for a toggle button with an indicator light.
+ */
+class Light_Button_Node : public Button_Node
+{
+public:
+  typedef Button_Node super;
+  static Light_Button_Node prototype;
+public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE { return "Fl_Light_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::LightButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE;
+  Widget_Node *_make() FL_OVERRIDE { return new Light_Button_Node(); }
+  ID id() const FL_OVERRIDE { return ID_Light_Button; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
+};
+
+// ---- Check Button ----
+
+/**
+ \brief Manage buttons with a check mark on its left.
+ */
+class Check_Button_Node : public Button_Node
+{
+public:
+  typedef Button_Node super;
+  static Check_Button_Node prototype;
+public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE { return "Fl_Check_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::CheckButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE;
+  Widget_Node *_make() FL_OVERRIDE { return new Check_Button_Node(); }
+  ID id() const FL_OVERRIDE { return ID_Check_Button; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
+};
+
+// ---- Round Button ----
+
+/**
+ \brief Manage buttons with a round indicator on its left.
+ */
+class Round_Button_Node : public Button_Node
+{
+public:
+  typedef Button_Node super;
+  static Round_Button_Node prototype;
+public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE { return "Fl_Round_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::RadioButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE;
+  Widget_Node *_make() FL_OVERRIDE { return new Round_Button_Node(); }
+  ID id() const FL_OVERRIDE { return ID_Round_Button; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
+};
+
 
 
 #endif // FLUID_NODES_BUTTON_NODE_H

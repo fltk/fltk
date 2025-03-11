@@ -280,7 +280,7 @@ Fl_Grid::Cell *Fl_Grid_Proxy::widget(Fl_Widget *wi, int row, int col, int rowspa
 
 const char grid_type_name[] = "Fl_Grid";
 
-Grid_Node Fl_Grid_type;      // the "factory"
+Grid_Node Grid_Node::prototype;      // the "factory"
 
 Grid_Node::Grid_Node() {
 }

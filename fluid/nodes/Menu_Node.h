@@ -45,7 +45,9 @@ extern Fl_Menu_Item menu_bar_type_menu[];
  */
 class Menu_Item_Node : public Button_Node
 {
+public:
   typedef Button_Node super;
+  static Menu_Item_Node prototype;
 public:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return menu_item_type_menu;}
   const char* type_name() FL_OVERRIDE {return "MenuItem";}
@@ -71,7 +73,9 @@ public:
  */
 class Radio_Menu_Item_Node : public Menu_Item_Node
 {
+public:
   typedef Menu_Item_Node super;
+  static Radio_Menu_Item_Node prototype;
 public:
   const char* type_name() FL_OVERRIDE {return "RadioMenuItem";}
   Node* make(Strategy strategy) FL_OVERRIDE;
@@ -84,7 +88,9 @@ public:
  */
 class Checkbox_Menu_Item_Node : public Menu_Item_Node
 {
+public:
   typedef Menu_Item_Node super;
+  static Checkbox_Menu_Item_Node prototype;
 public:
   const char* type_name() FL_OVERRIDE {return "CheckMenuItem";}
   Node* make(Strategy strategy) FL_OVERRIDE;
@@ -101,7 +107,9 @@ public:
  */
 class Submenu_Node : public Menu_Item_Node
 {
+public:
   typedef Menu_Item_Node super;
+  static Submenu_Node prototype;
 public:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return nullptr;}
   const char* type_name() FL_OVERRIDE {return "Submenu";}
@@ -156,7 +164,10 @@ public:
  */
 class Input_Choice_Node : public Menu_Manager_Node
 {
+public:
   typedef Menu_Manager_Node super;
+  static Input_Choice_Node prototype;
+private:
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
     Fl_Input_Choice *myo = (Fl_Input_Choice*)(w==4 ? ((Widget_Node*)this->factory)->o : this->o);
     switch (w) {
@@ -224,7 +235,10 @@ extern Fl_Menu_Item button_type_menu[];
  */
 class Menu_Button_Node : public Menu_Base_Node
 {
+public:
   typedef Menu_Base_Node super;
+  static Menu_Button_Node prototype;
+private:
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return button_type_menu;}
 public:
   const char *type_name() FL_OVERRIDE {return "Fl_Menu_Button";}
@@ -242,7 +256,9 @@ public:
  */
 class Choice_Node : public Menu_Base_Node
 {
+public:
   typedef Menu_Base_Node super;
+  static Choice_Node prototype;
 public:
   const char *type_name() FL_OVERRIDE {return "Fl_Choice";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::Choice";}
@@ -262,7 +278,10 @@ public:
  */
 class Menu_Bar_Node : public Menu_Base_Node
 {
+public:
   typedef Menu_Base_Node super;
+  static Menu_Bar_Node prototype;
+private:
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return menu_bar_type_menu;}
 public:
   Menu_Bar_Node();

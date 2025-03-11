@@ -42,7 +42,7 @@
 
 // ---- Group_Node -------------------------------------------------- MARK: -
 
-Group_Node Fl_Group_type;    // the "factory"
+Group_Node Group_Node::prototype;
 
 /**
  Override group's resize behavior to do nothing to children by default.
@@ -118,7 +118,7 @@ void group_cb(Fl_Widget *, void *) {
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
   Fluid.proj.tree.current = qq;
-  Group_Node *n = (Group_Node*)(Fl_Group_type.make(Strategy::AS_LAST_CHILD));
+  Group_Node *n = (Group_Node*)(Group_Node::prototype.make(Strategy::AS_LAST_CHILD));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
   for (Node *t = qq->next; t && (t->level > qq->level);) {
@@ -253,7 +253,7 @@ void Group_Node::copy_properties() {
 
 // ---- Pack_Node --------------------------------------------------- MARK: -
 
-Pack_Node Fl_Pack_type;      // the "factory"
+Pack_Node Pack_Node::prototype;      // the "factory"
 
 const char pack_type_name[] = "Fl_Pack";
 
@@ -284,7 +284,7 @@ Fl_Menu_Item flex_type_menu[] = {
   {"VERTICAL", 0, nullptr, (void*)Fl_Flex::VERTICAL},
   {nullptr}};
 
-Flex_Node Fl_Flex_type;      // the "factory"
+Flex_Node Flex_Node::prototype;      // the "factory"
 
 /**
  Override flex's resize behavior to do nothing to children by default.
@@ -593,13 +593,13 @@ int Flex_Node::is_fixed(Node *t) {
 
 // ---- Table_Node -------------------------------------------------- MARK: -
 
-Table_Node Fl_Table_type;    // the "factory"
+Table_Node Table_Node::prototype;    // the "factory"
 
 static const int MAX_ROWS = 14;
 static const int MAX_COLS = 7;
 
 // this is a minimal table widget used as an example when adding tables in Fluid
-class Fluid_Table : public Fl_Table {
+class Fl_Table_Proxy : public Fl_Table {
   int data[MAX_ROWS][MAX_COLS];         // data array for cells
 
   // Draw the row/col headings
@@ -652,7 +652,7 @@ class Fluid_Table : public Fl_Table {
     }
   }
 public:
-  Fluid_Table(int x, int y, int w, int h, const char *l=nullptr)
+  Fl_Table_Proxy(int x, int y, int w, int h, const char *l=nullptr)
   : Fl_Table(x, y, w, h, l) {
     end();
     for ( int r=0; r<MAX_ROWS; r++ )
@@ -672,7 +672,7 @@ public:
 };
 
 Fl_Widget *Table_Node::widget(int X,int Y,int W,int H) {
-  Fluid_Table *table = new Fluid_Table(X, Y, W, H);
+  Fl_Table_Proxy *table = new Fl_Table_Proxy(X, Y, W, H);
   return table;
 }
 
@@ -701,7 +701,7 @@ void Table_Node::move_child(Node* cc, Node* before) {
 }
 
 Fl_Widget *Table_Node::enter_live_mode(int) {
-  Fl_Group *grp = new Fluid_Table(o->x(), o->y(), o->w(), o->h());
+  Fl_Group *grp = new Fl_Table_Proxy(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
   copy_properties();
   grp->end();
@@ -716,7 +716,7 @@ void Table_Node::ideal_size(int &w, int &h) {
 
 // ---- Tabs_Node --------------------------------------------------- MARK: -
 
-Tabs_Node Fl_Tabs_type;      // the "factory"
+Tabs_Node Tabs_Node::prototype;
 
 const char tabs_type_name[] = "Fl_Tabs";
 
@@ -782,7 +782,7 @@ Fl_Widget *Tabs_Node::enter_live_mode(int) {
 
 // ---- Scroll_Node ------------------------------------------------- MARK: -
 
-Scroll_Node Fl_Scroll_type;  // the "factory"
+Scroll_Node Scroll_Node::prototype;  // the "factory"
 
 const char scroll_type_name[] = "Fl_Scroll";
 
@@ -812,7 +812,7 @@ void Scroll_Node::copy_properties() {
 
 // ---- Tile_Node --------------------------------------------------- MARK: -
 
-Tile_Node Fl_Tile_type;      // the "factory"
+Tile_Node Tile_Node::prototype;      // the "factory"
 
 const char tile_type_name[] = "Fl_Tile";
 
@@ -823,7 +823,7 @@ void Tile_Node::copy_properties() {
 
 // ---- Wizard_Node ------------------------------------------------ MARK: -
 
-Wizard_Node Fl_Wizard_type;  // the "factory"
+Wizard_Node Wizard_Node::prototype;  // the "factory"
 
 const char wizard_type_name[] = "Fl_Wizard";
 

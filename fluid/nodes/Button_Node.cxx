@@ -45,6 +45,8 @@
 
 // ---- Button ----
 
+Button_Node Button_Node::prototype;
+
 static Fl_Menu_Item buttontype_menu[] = {
   {"Normal", 0, nullptr, (void*)nullptr},
   {"Toggle", 0, nullptr, (void*)FL_TOGGLE_BUTTON},
@@ -90,138 +92,72 @@ void Button_Node::copy_properties() {
   d->compact(s->compact());
 }
 
-Button_Node Fl_Button_type;
-
 
 // ---- Return Button ----
 
-/**
- \brief The Return Button is simply a Button with the return key as a hotkey.
- */
-class Fl_Return_Button_Type : public Button_Node
-{
-  typedef Button_Node super;
-public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8 + h; // make room for the symbol
-    Fd_Snap_Action::better_size(w, h);
-  }
-  const char *type_name() FL_OVERRIDE { return "Fl_Return_Button"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::ReturnButton"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    return new Fl_Return_Button(x, y, w, h, "Button");
-  }
-  Widget_Node *_make() FL_OVERRIDE { return new Fl_Return_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Return_Button; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
-};
+void Return_Button_Node::ideal_size(int &w, int &h) {
+  h = layout->labelsize + 8;
+  w = layout->labelsize * 4 + 8 + h; // make room for the symbol
+  Fd_Snap_Action::better_size(w, h);
+}
 
-Fl_Return_Button_Type Fl_Return_Button_type;
+Fl_Widget *Return_Button_Node::widget(int x, int y, int w, int h) {
+  return new Fl_Return_Button(x, y, w, h, "Button");
+}
+
+Return_Button_Node Return_Button_Node::prototype;
 
 
 // ---- Repeat Button ----
 
-/**
- \brief Handler for Fl_Repeat_Button.
- \note Even though Fl_Repeat_Button is somewhat limited compared to Fl_Button,
-    and some settings may not make much sense, it is still derived from it,
-    so the wrapper should be as well.
- */
-class Fl_Repeat_Button_Type : public Button_Node
-{
-  typedef Button_Node super;
-public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Repeat_Button"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::RepeatButton"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    return new Fl_Repeat_Button(x, y, w, h, "Button");
-  }
-  Widget_Node *_make() FL_OVERRIDE { return new Fl_Repeat_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Repeat_Button; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
-};
+Fl_Widget *Repeat_Button_Node::widget(int x, int y, int w, int h) {
+  return new Fl_Repeat_Button(x, y, w, h, "Button");
+}
 
-Fl_Repeat_Button_Type Fl_Repeat_Button_type;
+Repeat_Button_Node Repeat_Button_Node::prototype;
 
 
 // ---- Light Button ----
 
-/**
- \brief A handler for a toggle button with an indicator light.
- */
-class Fl_Light_Button_Type : public Button_Node
-{
-  typedef Button_Node super;
-public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the light
-    Fd_Snap_Action::better_size(w, h);
-  }
-  const char *type_name() FL_OVERRIDE { return "Fl_Light_Button"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::LightButton"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    return new Fl_Light_Button(x, y, w, h, "Button");
-  }
-  Widget_Node *_make() FL_OVERRIDE { return new Fl_Light_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Light_Button; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
-};
+void Light_Button_Node::ideal_size(int &w, int &h) {
+  h = layout->labelsize + 8;
+  w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the light
+  Fd_Snap_Action::better_size(w, h);
+}
 
-Fl_Light_Button_Type Fl_Light_Button_type;
+Fl_Widget *Light_Button_Node::widget(int x, int y, int w, int h) {
+  return new Fl_Light_Button(x, y, w, h, "Button");
+}
+
+Light_Button_Node Light_Button_Node::prototype;
 
 
 // ---- Check Button ----
 
-/**
- \brief Manage buttons with a check mark on its left.
- */
-class Fl_Check_Button_Type : public Button_Node
-{
-  typedef Button_Node super;
-public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
-    Fd_Snap_Action::better_size(w, h);
-  }
-  const char *type_name() FL_OVERRIDE { return "Fl_Check_Button"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::CheckButton"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    return new Fl_Check_Button(x, y, w, h, "Button");
-  }
-  Widget_Node *_make() FL_OVERRIDE { return new Fl_Check_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Check_Button; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
-};
+void Check_Button_Node::ideal_size(int &w, int &h) {
+  h = layout->labelsize + 8;
+  w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
+  Fd_Snap_Action::better_size(w, h);
+}
 
-Fl_Check_Button_Type Fl_Check_Button_type;
+Fl_Widget *Check_Button_Node::widget(int x, int y, int w, int h) {
+  return new Fl_Check_Button(x, y, w, h, "Button");
+}
+
+Check_Button_Node Check_Button_Node::prototype;
 
 
 // ---- Round Button ----
 
-/**
- \brief Manage buttons with a round indicator on its left.
- */
-class Fl_Round_Button_Type : public Button_Node
-{
-  typedef Button_Node super;
-public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
-    Fd_Snap_Action::better_size(w, h);
-  }
-  const char *type_name() FL_OVERRIDE { return "Fl_Round_Button"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::RadioButton"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    return new Fl_Round_Button(x, y, w, h, "Button");
-  }
-  Widget_Node *_make() FL_OVERRIDE { return new Fl_Round_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Round_Button; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
-};
+void Round_Button_Node::ideal_size(int &w, int &h) {
+  h = layout->labelsize + 8;
+  w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
+  Fd_Snap_Action::better_size(w, h);
+}
 
-Fl_Round_Button_Type Fl_Round_Button_type;
+Fl_Widget *Round_Button_Node::widget(int x, int y, int w, int h) {
+  return new Fl_Round_Button(x, y, w, h, "Button");
+}
+
+Round_Button_Node Round_Button_Node::prototype;
 
