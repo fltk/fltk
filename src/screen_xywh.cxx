@@ -95,9 +95,8 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my)
  \param[out]  X,Y,W,H the work area bounding box
  \param[in] n the screen number (0 to Fl::screen_count() - 1)
  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
- \note Under X11, the screen work area is given values that differ from that screen's bounding box
- only if the system contains a single screen. Under Wayland, a screen work area is always
- equal to that screen's bounding box.
+ \note Under X11 and Wayland, the screen work area is given values that differ
+ from that screen's bounding box only if the system contains a single screen.
  \note Like all quantities accessible via public APIs of FLTK, values of \p X,Y,W,H
  are given in FLTK units, that is, in drawing units divided by the scaling factor of screen \p n.
 */
