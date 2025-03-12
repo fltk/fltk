@@ -1347,7 +1347,13 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
     popup_y++;
   }
-  xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
+  int V, screen_H;
+  Fl::screen_work_area(V, V, V, screen_H, origin_win->screen_num());
+  // Under KWIN, we need to have in screen_H the size of the current screen's work-area.
+  // We get this exactly only when there's a single screen. Otherwise, we get the screen height.
+  bool tall_kde = (pWindow->h() > screen_H) &&
+    (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN);
+  xdg_positioner_set_size(positioner, pWindow->w() * f , (tall_kde ? screen_H : pWindow->h()) * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
@@ -2008,7 +2014,8 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   if (y == pWindow->y()) return;
   if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN) {
     // The KWin compositor refuses to position a popup such that it extends above
-    // the top of the screen. Therefore, instead of sliding the popup window
+    // the top of the screen. That's no longer true with version 6 of KWIN.
+    // Instead of sliding the popup window
     // on the display, we slide the drawing inside the fixed popup via
     // member variable offset_y of the menuwindow class, and we redraw the popup
     // content. It's also useful to make such tall popup window transparent.
