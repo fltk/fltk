@@ -278,8 +278,6 @@ Fl_Grid::Cell *Fl_Grid_Proxy::widget(Fl_Widget *wi, int row, int col, int rowspa
 
 // ---- Grid_Node --------------------------------------------------- MARK: -
 
-const char grid_type_name[] = "Fl_Grid";
-
 Grid_Node Grid_Node::prototype;      // the "factory"
 
 Grid_Node::Grid_Node() {

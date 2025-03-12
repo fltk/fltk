@@ -22,8 +22,6 @@
 
 // ---- Grid_Node --------------------------------------------------- MARK: -
 
-extern const char grid_type_name[];
-
 class Fl_Grid_Proxy : public Fl_Grid {
 protected:
   typedef struct { Fl_Widget *widget; Cell *cell; } Cell_Widget_Pair;
@@ -53,7 +51,7 @@ public:
   static Grid_Node prototype;
 public:
   Grid_Node();
-  const char *type_name() FL_OVERRIDE {return grid_type_name;}
+  const char *type_name() FL_OVERRIDE {return "Fl_Grid";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::GridGroup";}
   Widget_Node *_make() FL_OVERRIDE { return new Grid_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE;
