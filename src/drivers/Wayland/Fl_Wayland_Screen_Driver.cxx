@@ -1557,19 +1557,19 @@ static void compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   wl_surface_set_opaque_region(wl_surface, NULL);
   struct xdg_surface *xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface);
   struct xdg_toplevel *xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
-  struct pair_s pair = {0, 0};
+  struct pair_s pair = {0, -1};
   xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &pair);
   xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
   wl_surface_commit(wl_surface);
-  while (!pair.H) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   Wfullscreen = pair.W;
   Hfullscreen = pair.H;
-  if (need_workarea) {
+  if (need_workarea && Wfullscreen && Hfullscreen) {
     xdg_toplevel_unset_fullscreen(xdg_toplevel);
     xdg_toplevel_set_maximized(xdg_toplevel);
-    pair.H = 0;
+    pair.H = -1;
     wl_surface_commit(wl_surface);
-    while (!pair.H) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+    while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   }
   Wworkarea = pair.W;
   Hworkarea = pair.H;
@@ -1627,10 +1627,19 @@ void Fl_Wayland_Screen_Driver::init_workarea()
     if (first) workarea_xywh[1] = output->y; // pixels
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
     compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea, need_workarea);
-    output->width = Wfullscreen * output->wld_scale; // pixels
-    if (first) workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
-    output->height = Hfullscreen * output->wld_scale; // pixels
-    if (first) workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+    if (!Wfullscreen || !Hfullscreen) { // sway returns 0 there
+      output->width = output->pixel_width;
+      output->height = output->pixel_height;
+      if (first) {
+        workarea_xywh[2] = output->width;
+        workarea_xywh[3] = output->height;
+      }
+    } else {
+      output->width = Wfullscreen * output->wld_scale; // pixels
+      if (first) workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
+      output->height = Hfullscreen * output->wld_scale; // pixels
+      if (first) workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+    }
     first = false;
   }
 }
