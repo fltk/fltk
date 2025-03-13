@@ -2,7 +2,7 @@
 # Macro used by the CMake build system for the Fast Light Tool Kit (FLTK).
 # Originally written by Michael Surette
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -98,7 +98,10 @@ function(fl_add_library LIBNAME LIBTYPE SOURCES)
 
   target_compile_definitions(${TARGET_NAME} PRIVATE "FL_LIBRARY")
 
-  # Set PUBLIC include and linker directories
+  # Set PUBLIC properties, e.g. C++ standard and include and linker directories.
+  # These properties are inherited by consumers of the libraries
+
+  target_compile_features(${TARGET_NAME} PUBLIC "cxx_std_${CMAKE_CXX_STANDARD}")
 
   if(0) # DEBUG
     message(STATUS "fl_add_library and alias         : fltk::${alias_name} ALIAS ${TARGET_NAME}")

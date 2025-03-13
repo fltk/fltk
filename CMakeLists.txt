@@ -46,16 +46,20 @@ project(FLTK VERSION 1.5.0)
 # Note 3: This code is experimental and intentionally undocumented.
 #         It may be removed or changed w/o notice.
 
-if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 11)
+if(DEFINED CMAKE_CXX_STANDARD)
+  if(CMAKE_CXX_STANDARD EQUAL 98 OR CMAKE_CXX_STANDARD LESS 11)
+    message(FATAL_ERROR           "The FLTK project requires at least C++11")
+  endif()
+else()
+  set(CMAKE_CXX_STANDARD          11 CACHE STRING "Minimal C++ Standard")
 endif()
 
 if(NOT DEFINED CMAKE_CXX_STANDARD_REQUIRED)
-  set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Minimal C++ Standard Required?")
 endif()
 
 if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
-  set(CMAKE_CXX_EXTENSIONS OFF)
+  set(CMAKE_CXX_EXTENSIONS        OFF CACHE BOOL "Use Compiler Specific C++ Extensions")
 endif()
 
 #######################################################################
@@ -69,12 +73,24 @@ include(CMake/fl_add_library.cmake)
 # right now we don't use compatibility functions
 # include(CMake/compatibility.cmake)
 
-if(0)
+if(0) # debug most important CMake variables and features
+  # FLTK version
   fl_debug_var(FLTK_VERSION_MAJOR)
   fl_debug_var(FLTK_VERSION_MINOR)
   fl_debug_var(FLTK_VERSION_PATCH)
   fl_debug_var(FLTK_VERSION)
+  # CMake version and C++ standard
   fl_debug_var(CMAKE_VERSION)
+  fl_debug_var(CMAKE_CXX_STANDARD)
+  fl_debug_var(CMAKE_CXX_STANDARD_REQUIRED)
+  fl_debug_var(CMAKE_CXX_EXTENSIONS)
+  # Build platform
+  fl_debug_var(MSVC)
+  fl_debug_var(MINGW)
+  fl_debug_var(MSYS)
+  fl_debug_var(UNIX)
+  fl_debug_var(APPLE)
+  fl_debug_var(CMAKE_CROSSCOMPILING)
 endif()
 
 # Set FLTK_VERSION in the cache so user projects can access it,
@@ -345,7 +361,17 @@ else()
   fl_summary("${title}" "No")
 endif()
 
-fl_summary_yn("Use std::" FLTK_USE_STD)
+message("")
+
+if(FLTK_USE_STD)
+  fl_summary("Use std::"                    "Yes - obsolete: always enabled since FLTK 1.5.0")
+else()
+  fl_summary("Use std::"                    "No - *should* always be enabled since FLTK 1.5.0 !!")
+endif()
+
+fl_summary(   "CMAKE_CXX_STANDARD"          "${CMAKE_CXX_STANDARD}")
+fl_summary_yn("CMAKE_CXX_STANDARD_REQUIRED" CMAKE_CXX_STANDARD_REQUIRED)
+fl_summary_yn("CMAKE_CXX_EXTENSIONS"        CMAKE_CXX_EXTENSIONS)
 
 message("")
 message(STATUS "End of Configuration Summary --\n")

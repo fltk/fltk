@@ -30,7 +30,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/fl_debug_var.cmake)
 ########################################################################
 
 macro(fl_summary title value)
-  fl_expand_name(label "${title}" 24)
+  fl_expand_name(label "${title}" 30)
   message(STATUS "${label} ${value}")
 endmacro(fl_summary title value)
 
