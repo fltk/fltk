@@ -166,6 +166,7 @@ public:
 
 // Wayland-specific member functions
   void screen_count_set(int count) {num_screens = count;}
+  int screen_count_get() {return num_screens;}
   void reset_cursor();
   // this one is in fl_wayland_clipboard_dnd.cxx
   void copy_image(const unsigned char* data, int W, int H);

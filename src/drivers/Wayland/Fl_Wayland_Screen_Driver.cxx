@@ -1,7 +1,7 @@
 //
 // Implementation of Wayland Screen interface
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1108,13 +1108,21 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
   output->pixel_width = int(width);
   output->pixel_height = int(height);
+  output->width = output->pixel_width; // until further notice
+  output->height = output->pixel_height;
 //fprintf(stderr, "output_mode: [%p]=%dx%d\n",output->wl_output,width,height);
 }
 
 
+static void compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
+                                             int& Wfullscreen, int& Hfullscreen,
+                                             int& Wworkarea, int& Hworkarea,
+                                             bool need_workarea);
+
+
 static void output_done(void *data, struct wl_output *wl_output)
 {
-  // Runs at startup and when desktop scale factor is changed
+  // Runs at startup and when desktop scale factor is changed or screen added
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
 //fprintf(stderr, "output_done output=%p\n",output);
   Fl_X *xp = Fl_X::first;
@@ -1138,9 +1146,14 @@ static void output_done(void *data, struct wl_output *wl_output)
   output->done = true;
 
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  if (scr_driver->seat) try_update_cursor(scr_driver->seat);
-  scr_driver->init_workarea();
-  Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+  if (scr_driver->screen_count_get() > 0) { // true when output_done runs after initial screen dectection
+    scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
+    int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
+    compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea, false);
+    output->width = Wfullscreen * output->wld_scale; // pixels
+    output->height = Hfullscreen * output->wld_scale; // pixels
+    Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+  }
 }
 
 
@@ -1269,9 +1282,15 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     output->gui_scale = 1.f;
     wl_proxy_set_tag((struct wl_proxy *) output->wl_output, &proxy_tag);
     wl_output_add_listener(output->wl_output, &output_listener, output);
-    wl_list_insert(&(scr_driver->outputs), &output->link);
-    scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
-//fprintf(stderr, "wl_output: id=%d wl_output=%p screen_count()=%d\n", id, output->wl_output, Fl::screen_count());
+    // Put new screen in list of screens, but make sure it's not in list already
+    // which may occur after having removed a screen.
+    bool found = false;
+    Fl_Wayland_Screen_Driver::output *elt;
+    wl_list_for_each(elt, &scr_driver->outputs, link) {
+      if (elt == output) found = true;
+    }
+    if (!found) wl_list_insert(&(scr_driver->outputs), &output->link);
+//fprintf(stderr, "wl_output: id=%d wl_output=%p \n", id, output->wl_output);
 
   } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
 //fprintf(stderr, "registry_handle_global interface=%s\n", interface);
@@ -1299,6 +1318,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       output->wld_scale = 1;
       output->gui_scale = 1.f;
       output->width = 1440; output->height = 900;
+      output->pixel_width = 1440; output->pixel_height = 900;
       output->done = true;
       wl_list_insert(&(scr_driver->outputs), &output->link);
       scr_driver->screen_count_set(1);
@@ -1311,10 +1331,11 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 }
 
 
-static void registry_handle_global_remove(void *data, struct wl_registry *registry, uint32_t name) {//TODO to be tested
+static void registry_handle_global_remove(void *data, struct wl_registry *registry, uint32_t name) {
   Fl_Wayland_Screen_Driver::output *output, *tmp;
 //fprintf(stderr, "registry_handle_global_remove data=%p id=%u\n", data, name);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  bool has_removed_screen = false;
   wl_list_for_each_safe(output, tmp, &(scr_driver->outputs), link) { // all screens
     if (output->id == name) { // the screen being removed
       again:
@@ -1331,11 +1352,15 @@ static void registry_handle_global_remove(void *data, struct wl_registry *regist
         xp = xp->next;
       }
       wl_list_remove(&output->link);
-      scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
       wl_output_destroy(output->wl_output);
       free(output);
+      has_removed_screen = true;
       break;
     }
+  }
+  if (has_removed_screen) {
+    scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
+    scr_driver->init_workarea();
   }
 }
 
@@ -1388,6 +1413,10 @@ static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
   wl_list_for_each(output, &scr_driver->outputs, link) { // each screen of the system
     while (!output->done) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   }
+  // Now all screens have been initialized
+  scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
+  if (scr_driver->seat) try_update_cursor(scr_driver->seat);
+  if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL) scr_driver->init_workarea();
 }
 
 
@@ -1576,10 +1605,9 @@ static void compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   xdg_toplevel_destroy(xdg_toplevel);
   xdg_surface_destroy(xdg_surface);
   wl_surface_destroy(wl_surface);
-  //int H = output->pixel_height / output->wld_scale;
-  //float fractional_scale = Hfullscreen / float(H);
-  //printf("fullscreen=%dx%d workarea=%dx%d  apparentH=%d fractional_scale=%g wld_s=%d\n",
-  //       Wfullscreen,Hfullscreen,Wworkarea,Hworkarea,H,fractional_scale,output->wld_scale);
+  //int fractional_scale = int(100 * (output->pixel_width / float(Wfullscreen)));
+  //printf("fullscreen=%dx%d workarea=%dx%d  fractional_scale=%d%%  wld_s=%d\n",
+  //       Wfullscreen,Hfullscreen,Wworkarea,Hworkarea,fractional_scale,output->wld_scale);
 }
 
 static int workarea_xywh[4] = { -1, -1, -1, -1 };
@@ -1618,16 +1646,14 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
   Fl_Wayland_Screen_Driver::output *output;
-  int count = 0;
-  wl_list_for_each(output, &outputs, link) ++count;
-  bool need_workarea = (count == 1);
+  bool need_workarea = (screen_count_get() == 1);
   bool first = true;
   wl_list_for_each(output, &outputs, link) {
     if (first) workarea_xywh[0] = output->x; // pixels
     if (first) workarea_xywh[1] = output->y; // pixels
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
     compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea, need_workarea);
-    if (!Wfullscreen || !Hfullscreen) { // sway returns 0 there
+    if (!Wfullscreen || !Hfullscreen) { // sway puts 0 there
       output->width = output->pixel_width;
       output->height = output->pixel_height;
       if (first) {
@@ -1636,12 +1662,15 @@ void Fl_Wayland_Screen_Driver::init_workarea()
       }
     } else {
       output->width = Wfullscreen * output->wld_scale; // pixels
-      if (first) workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
       output->height = Hfullscreen * output->wld_scale; // pixels
-      if (first) workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+      if (first) {
+        workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
+        workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+      }
     }
     first = false;
   }
+  Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
 }
 
 
