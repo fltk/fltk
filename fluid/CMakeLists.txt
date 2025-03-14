@@ -55,6 +55,7 @@ set(CPPFILES
   panels/template_panel.cxx
   panels/widget_panel.cxx
   panels/widget_panel/Grid_Tab.cxx
+  panels/widget_panel/Grid_Child_Tab.cxx
   proj/align_widget.cxx
   proj/undo.cxx
   rsrcs/pixmaps.cxx
@@ -104,6 +105,7 @@ set(HEADERFILES
   panels/template_panel.h
   panels/widget_panel.h
   panels/widget_panel/Grid_Tab.h
+  panels/widget_panel/Grid_Child_Tab.h
   proj/align_widget.h
   proj/undo.h
   rsrcs/comments.h

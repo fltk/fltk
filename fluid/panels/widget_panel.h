@@ -19,6 +19,7 @@
 #ifndef widget_panel_h
 #define widget_panel_h
 #include <FL/Fl.H>
+#include "panels/widget_panel/Grid_Child_Tab.h"
 #include "panels/widget_panel/Grid_Tab.h"
 #include "widgets/Formula_Input.h"
 #include <FL/Fl_Double_Window.H>
@@ -172,32 +173,8 @@ extern void when_cb(Fl_Menu_Button*, void*);
 #include <FL/Fl_Input_Choice.H>
 extern void user_data_type_cb(Fl_Input_Choice*, void*);
 extern Fl_Box *w_when_box;
-extern Fl_Group *widget_tab_grid_child;
-extern void grid_set_row_cb(fld::widget::Formula_Input*, void*);
-extern fld::widget::Formula_Input *widget_grid_row_input;
-extern void grid_dec_row_cb(Fl_Button*, void*);
-extern void grid_inc_row_cb(Fl_Button*, void*);
-extern void grid_set_col_cb(fld::widget::Formula_Input*, void*);
-extern fld::widget::Formula_Input *widget_grid_col_input;
-extern void grid_dec_col_cb(Fl_Button*, void*);
-extern void grid_inc_col_cb(Fl_Button*, void*);
-extern Fl_Box *widget_grid_transient;
-extern Fl_Box *widget_grid_unlinked;
-extern Fl_Group *wp_gridc_align;
-extern void grid_align_horizontal_cb(Fl_Choice*, void*);
-extern void grid_align_vertical_cb(Fl_Choice*, void*);
-extern Fl_Group *wp_gridc_size;
-extern void grid_set_min_wdt_cb(fld::widget::Formula_Input*, void*);
-extern void grid_set_min_hgt_cb(fld::widget::Formula_Input*, void*);
-extern void grid_set_rowspan_cb(fld::widget::Formula_Input*, void*);
-extern fld::widget::Formula_Input *widget_grid_rowspan_input;
-extern void grid_dec_rowspan_cb(Fl_Button*, void*);
-extern void grid_inc_rowspan_cb(Fl_Button*, void*);
-extern void grid_set_colspan_cb(fld::widget::Formula_Input*, void*);
-extern fld::widget::Formula_Input *widget_grid_colspan_input;
-extern void grid_dec_colspan_cb(Fl_Button*, void*);
-extern void grid_inc_colspan_cb(Fl_Button*, void*);
 extern Grid_Tab *widget_tab_grid;
+extern Grid_Child_Tab *widget_tab_grid_child;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
@@ -212,7 +189,4 @@ extern Fl_Menu_Item menu_Children[];
 extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
 extern Fl_Menu_Item menu_4[];
-extern Fl_Menu_Item menu_Horizontal[];
-#define GRID_LEFT (menu_Horizontal+0)
-extern Fl_Menu_Item menu_Vertical[];
 #endif

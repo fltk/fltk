@@ -4,7 +4,7 @@
 #include "Fluid.h"
 #include "proj/undo.h"
 #include "nodes/Grid_Node.h"
-extern Fl_Group *widget_tab_grid;
+extern Grid_Tab *widget_tab_grid;
 
 void Grid_Tab::cb_widget_grid_rows_i(fld::widget::Formula_Input* o, void* v) {
   // grid_rows_cb

@@ -553,59 +553,15 @@ Fl_Menu_Item menu_4[] = {
 
 Fl_Box *w_when_box=(Fl_Box *)0;
 
-Fl_Group *widget_tab_grid_child=(Fl_Group *)0;
-
-fld::widget::Formula_Input *widget_grid_row_input=(fld::widget::Formula_Input *)0;
-
-fld::widget::Formula_Input *widget_grid_col_input=(fld::widget::Formula_Input *)0;
-
-Fl_Box *widget_grid_transient=(Fl_Box *)0;
-
-static void cb_widget_grid_transient(Fl_Box* o, void* v) {
-  if (v==LOAD) {
-    Fl_Widget *child = ((Widget_Node*)current_widget)->o;
-    Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
-  //  Fl_Grid::Cell *cell = g->cell(child);
-  //  Fl_Grid::Cell *tcell = g->transient_cell(child);
-    widget_grid_transient->hide();
-    widget_grid_unlinked->hide();
-    if (g->transient_cell(child)) {
-      widget_grid_transient->show();
-    } else if (!g->cell(child)) {
-      widget_grid_unlinked->show();
-    }
-  }
-}
-
-Fl_Box *widget_grid_unlinked=(Fl_Box *)0;
-
-Fl_Group *wp_gridc_align=(Fl_Group *)0;
-
-Fl_Menu_Item menu_Horizontal[] = {
- {"GRID_LEFT", 0,  0, (void*)((fl_intptr_t)FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_RIGHT", 0,  0, (void*)((fl_intptr_t)FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
-};
-
-Fl_Menu_Item menu_Vertical[] = {
- {"GRID_TOP", 0,  0, (void*)((fl_intptr_t)FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_BOTTOM", 0,  0, (void*)((fl_intptr_t)FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
-};
-
-Fl_Group *wp_gridc_size=(Fl_Group *)0;
-
-fld::widget::Formula_Input *widget_grid_rowspan_input=(fld::widget::Formula_Input *)0;
-
-fld::widget::Formula_Input *widget_grid_colspan_input=(fld::widget::Formula_Input *)0;
-
 Grid_Tab *widget_tab_grid=(Grid_Tab *)0;
 
 static void cb_widget_tab_grid(Grid_Tab* o, void*) {
+  o->callback((Fl_Callback*)propagate_load);
+}
+
+Grid_Child_Tab *widget_tab_grid_child=(Grid_Child_Tab *)0;
+
+static void cb_widget_tab_grid_child(Grid_Child_Tab* o, void*) {
   o->callback((Fl_Callback*)propagate_load);
 }
 
@@ -1526,226 +1482,6 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* o
         wp_cpp_tab->end();
       } // Fl_Group* wp_cpp_tab
-      { widget_tab_grid_child = new Fl_Group(10, 30, 400, 330, "Grid Child");
-        widget_tab_grid_child->labelsize(11);
-        widget_tab_grid_child->callback((Fl_Callback*)propagate_load);
-        widget_tab_grid_child->hide();
-        { Fl_Group* o = new Fl_Group(95, 60, 315, 20, "Location:");
-          o->box(FL_FLAT_BOX);
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_row_input = new fld::widget::Formula_Input(95, 60, 40, 20, "Row:");
-            widget_grid_row_input->box(FL_DOWN_BOX);
-            widget_grid_row_input->color(FL_BACKGROUND2_COLOR);
-            widget_grid_row_input->selection_color(FL_SELECTION_COLOR);
-            widget_grid_row_input->labeltype(FL_NORMAL_LABEL);
-            widget_grid_row_input->labelfont(0);
-            widget_grid_row_input->labelsize(11);
-            widget_grid_row_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_grid_row_input->textsize(11);
-            widget_grid_row_input->callback((Fl_Callback*)grid_set_row_cb);
-            widget_grid_row_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_grid_row_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_grid_row_input
-          { Fl_Group* o = new Fl_Group(135, 60, 30, 20);
-            { Fl_Button* o = new Fl_Button(135, 60, 15, 20, "-");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_dec_row_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(150, 60, 15, 20, "+");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_inc_row_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            o->end();
-          } // Fl_Group* o
-          { widget_grid_col_input = new fld::widget::Formula_Input(175, 60, 40, 20, "Column:");
-            widget_grid_col_input->box(FL_DOWN_BOX);
-            widget_grid_col_input->color(FL_BACKGROUND2_COLOR);
-            widget_grid_col_input->selection_color(FL_SELECTION_COLOR);
-            widget_grid_col_input->labeltype(FL_NORMAL_LABEL);
-            widget_grid_col_input->labelfont(0);
-            widget_grid_col_input->labelsize(11);
-            widget_grid_col_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_grid_col_input->textsize(11);
-            widget_grid_col_input->callback((Fl_Callback*)grid_set_col_cb);
-            widget_grid_col_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_grid_col_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_grid_col_input
-          { Fl_Group* o = new Fl_Group(215, 60, 30, 20);
-            { Fl_Button* o = new Fl_Button(215, 60, 15, 20, "-");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_dec_col_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(230, 60, 15, 20, "+");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_inc_col_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            o->end();
-          } // Fl_Group* o
-          { Fl_Box* o = new Fl_Box(395, 60, 1, 20);
-            o->hide();
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          { widget_grid_transient = new Fl_Box(250, 60, 80, 20, "TRANSIENT");
-            widget_grid_transient->labelsize(11);
-            widget_grid_transient->labelcolor((Fl_Color)1);
-            widget_grid_transient->callback((Fl_Callback*)cb_widget_grid_transient);
-          } // Fl_Box* widget_grid_transient
-          { widget_grid_unlinked = new Fl_Box(250, 60, 80, 20, "UNLINKED");
-            widget_grid_unlinked->labelsize(11);
-            widget_grid_unlinked->labelcolor((Fl_Color)1);
-            widget_grid_unlinked->hide();
-          } // Fl_Box* widget_grid_unlinked
-          o->end();
-        } // Fl_Group* o
-        { wp_gridc_align = new Fl_Group(95, 100, 315, 20, "Align:");
-          wp_gridc_align->labelfont(1);
-          wp_gridc_align->labelsize(11);
-          wp_gridc_align->callback((Fl_Callback*)propagate_load);
-          wp_gridc_align->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 100, 115, 20, "Horizontal");
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_align_horizontal_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->menu(menu_Horizontal);
-          } // Fl_Choice* o
-          { Fl_Choice* o = new Fl_Choice(215, 100, 115, 20, "Vertical");
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_align_vertical_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->menu(menu_Vertical);
-          } // Fl_Choice* o
-          { Fl_Box* o = new Fl_Box(395, 100, 1, 20);
-            o->hide();
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          wp_gridc_align->end();
-        } // Fl_Group* wp_gridc_align
-        { wp_gridc_size = new Fl_Group(95, 135, 315, 20, "Min. Size:");
-          wp_gridc_size->labelfont(1);
-          wp_gridc_size->labelsize(11);
-          wp_gridc_size->callback((Fl_Callback*)propagate_load);
-          wp_gridc_size->align(Fl_Align(FL_ALIGN_LEFT));
-          { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(95, 135, 55, 20, "Width:");
-            o->box(FL_DOWN_BOX);
-            o->color(FL_BACKGROUND2_COLOR);
-            o->selection_color(FL_SELECTION_COLOR);
-            o->labeltype(FL_NORMAL_LABEL);
-            o->labelfont(0);
-            o->labelsize(11);
-            o->labelcolor(FL_FOREGROUND_COLOR);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_set_min_wdt_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* o
-          { fld::widget::Formula_Input* o = new fld::widget::Formula_Input(155, 135, 55, 20, "Height:");
-            o->box(FL_DOWN_BOX);
-            o->color(FL_BACKGROUND2_COLOR);
-            o->selection_color(FL_SELECTION_COLOR);
-            o->labeltype(FL_NORMAL_LABEL);
-            o->labelfont(0);
-            o->labelsize(11);
-            o->labelcolor(FL_FOREGROUND_COLOR);
-            o->textsize(11);
-            o->callback((Fl_Callback*)grid_set_min_hgt_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* o
-          { Fl_Box* o = new Fl_Box(395, 135, 1, 20);
-            o->hide();
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          wp_gridc_size->end();
-        } // Fl_Group* wp_gridc_size
-        { Fl_Group* o = new Fl_Group(95, 170, 315, 20, "Span:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_grid_rowspan_input = new fld::widget::Formula_Input(95, 170, 40, 20, "Row Span:");
-            widget_grid_rowspan_input->box(FL_DOWN_BOX);
-            widget_grid_rowspan_input->color(FL_BACKGROUND2_COLOR);
-            widget_grid_rowspan_input->selection_color(FL_SELECTION_COLOR);
-            widget_grid_rowspan_input->labeltype(FL_NORMAL_LABEL);
-            widget_grid_rowspan_input->labelfont(0);
-            widget_grid_rowspan_input->labelsize(11);
-            widget_grid_rowspan_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_grid_rowspan_input->textsize(11);
-            widget_grid_rowspan_input->callback((Fl_Callback*)grid_set_rowspan_cb);
-            widget_grid_rowspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_grid_rowspan_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_grid_rowspan_input
-          { Fl_Group* o = new Fl_Group(135, 170, 30, 20);
-            { Fl_Button* o = new Fl_Button(135, 170, 15, 20, "-");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_dec_rowspan_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(150, 170, 15, 20, "+");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_inc_rowspan_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            o->end();
-          } // Fl_Group* o
-          { widget_grid_colspan_input = new fld::widget::Formula_Input(175, 170, 40, 20, "Col. Span:");
-            widget_grid_colspan_input->box(FL_DOWN_BOX);
-            widget_grid_colspan_input->color(FL_BACKGROUND2_COLOR);
-            widget_grid_colspan_input->selection_color(FL_SELECTION_COLOR);
-            widget_grid_colspan_input->labeltype(FL_NORMAL_LABEL);
-            widget_grid_colspan_input->labelfont(0);
-            widget_grid_colspan_input->labelsize(11);
-            widget_grid_colspan_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_grid_colspan_input->textsize(11);
-            widget_grid_colspan_input->callback((Fl_Callback*)grid_set_colspan_cb);
-            widget_grid_colspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_grid_colspan_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_grid_colspan_input
-          { Fl_Group* o = new Fl_Group(215, 170, 30, 20);
-            { Fl_Button* o = new Fl_Button(215, 170, 15, 20, "-");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_dec_colspan_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(230, 170, 15, 20, "+");
-              o->compact(1);
-              o->labelsize(11);
-              o->callback((Fl_Callback*)grid_inc_colspan_cb);
-              o->clear_visible_focus();
-            } // Fl_Button* o
-            o->end();
-          } // Fl_Group* o
-          { Fl_Box* o = new Fl_Box(395, 170, 1, 20);
-            o->hide();
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(95, 350, 300, 5);
-          o->labelsize(11);
-          o->hide();
-          Fl_Group::current()->resizable(o);
-        } // Fl_Box* o
-        widget_tab_grid_child->end();
-      } // Fl_Group* widget_tab_grid_child
       { widget_tab_grid = new Grid_Tab(10, 30, 400, 330, "Grid");
         widget_tab_grid->box(FL_NO_BOX);
         widget_tab_grid->color(FL_BACKGROUND_COLOR);
@@ -1757,8 +1493,22 @@ Fl_Double_Window* make_widget_panel() {
         widget_tab_grid->callback((Fl_Callback*)cb_widget_tab_grid);
         widget_tab_grid->align(Fl_Align(FL_ALIGN_TOP));
         widget_tab_grid->when(FL_WHEN_RELEASE);
+        widget_tab_grid->hide();
         widget_tab_grid->end();
       } // Grid_Tab* widget_tab_grid
+      { widget_tab_grid_child = new Grid_Child_Tab(10, 30, 400, 330, "Grid Child");
+        widget_tab_grid_child->box(FL_NO_BOX);
+        widget_tab_grid_child->color(FL_BACKGROUND_COLOR);
+        widget_tab_grid_child->selection_color(FL_BACKGROUND_COLOR);
+        widget_tab_grid_child->labeltype(FL_NORMAL_LABEL);
+        widget_tab_grid_child->labelfont(0);
+        widget_tab_grid_child->labelsize(11);
+        widget_tab_grid_child->labelcolor(FL_FOREGROUND_COLOR);
+        widget_tab_grid_child->callback((Fl_Callback*)cb_widget_tab_grid_child);
+        widget_tab_grid_child->align(Fl_Align(FL_ALIGN_TOP));
+        widget_tab_grid_child->when(FL_WHEN_RELEASE);
+        widget_tab_grid_child->end();
+      } // Grid_Child_Tab* widget_tab_grid_child
       o->show();
       widget_tabs->end();
       Fl_Group::current()->resizable(widget_tabs);

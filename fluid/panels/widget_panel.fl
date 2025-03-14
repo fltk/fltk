@@ -25,6 +25,9 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {public global
+}
+
 decl {\#include "panels/widget_panel/Grid_Tab.h"} {public global
 }
 
@@ -1125,229 +1128,17 @@ wCallback->do_callback(wCallback, v);} open
           }
         }
       }
-      Fl_Group widget_tab_grid_child {
-        label {Grid Child}
-        callback propagate_load
-        xywh {10 30 400 330} labelsize 11 hide
-      } {
-        Fl_Group {} {
-          label {Location:}
-          callback propagate_load open
-          xywh {95 60 315 20} box FLAT_BOX labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_row_input {
-            label {Row:}
-            callback grid_set_row_cb
-            xywh {95 60 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {135 60 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_row_cb
-              xywh {135 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_row_cb
-              xywh {150 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Input widget_grid_col_input {
-            label {Column:}
-            callback grid_set_col_cb
-            xywh {175 60 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {215 60 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_col_cb
-              xywh {215 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_col_cb
-              xywh {230 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            xywh {395 60 1 20} hide resizable
-          }
-          Fl_Box widget_grid_transient {
-            label TRANSIENT
-            callback {if (v==LOAD) {
-  Fl_Widget *child = ((Widget_Node*)current_widget)->o;
-  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
-//  Fl_Grid::Cell *cell = g->cell(child);
-//  Fl_Grid::Cell *tcell = g->transient_cell(child);
-  widget_grid_transient->hide();
-  widget_grid_unlinked->hide();
-  if (g->transient_cell(child)) {
-    widget_grid_transient->show();
-  } else if (!g->cell(child)) {
-    widget_grid_unlinked->show();
-  }
-}}
-            xywh {250 60 80 20} labelsize 11 labelcolor 1
-          }
-          Fl_Box widget_grid_unlinked {
-            label UNLINKED
-            xywh {250 60 80 20} labelsize 11 labelcolor 1 hide
-          }
-        }
-        Fl_Group wp_gridc_align {
-          label {Align:}
-          callback propagate_load open
-          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Choice {} {
-            label Horizontal
-            callback grid_align_horizontal_cb open
-            xywh {95 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
-          } {
-            MenuItem GRID_LEFT {
-              label GRID_LEFT
-              user_data {(fl_intptr_t)FL_GRID_LEFT} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_CENTER
-              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_RIGHT
-              user_data {(fl_intptr_t)FL_GRID_RIGHT} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_FILL
-              user_data {(fl_intptr_t)FL_GRID_HORIZONTAL} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-          }
-          Fl_Choice {} {
-            label Vertical
-            callback grid_align_vertical_cb open
-            xywh {215 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
-          } {
-            MenuItem {} {
-              label GRID_TOP
-              user_data {(fl_intptr_t)FL_GRID_TOP} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_CENTER
-              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_BOTTOM
-              user_data {(fl_intptr_t)FL_GRID_BOTTOM} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_FILL
-              user_data {(fl_intptr_t)FL_GRID_VERTICAL} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-          }
-          Fl_Box {} {
-            xywh {395 100 1 20} hide resizable
-          }
-        }
-        Fl_Group wp_gridc_size {
-          label {Min. Size:}
-          callback propagate_load open
-          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input {} {
-            label {Width:}
-            callback grid_set_min_wdt_cb
-            xywh {95 135 55 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Input {} {
-            label {Height:}
-            callback grid_set_min_hgt_cb
-            xywh {155 135 55 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Box {} {
-            xywh {395 135 1 20} hide resizable
-          }
-        }
-        Fl_Group {} {
-          label {Span:}
-          callback propagate_load open
-          xywh {95 170 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_rowspan_input {
-            label {Row Span:}
-            callback grid_set_rowspan_cb
-            xywh {95 170 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {135 170 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_rowspan_cb
-              xywh {135 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_rowspan_cb
-              xywh {150 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Input widget_grid_colspan_input {
-            label {Col. Span:}
-            callback grid_set_colspan_cb
-            xywh {175 170 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {215 170 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_colspan_cb
-              xywh {215 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_colspan_cb
-              xywh {230 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            xywh {395 170 1 20} hide resizable
-          }
-        }
-        Fl_Box {} {
-          xywh {95 350 300 5} labelsize 11 hide resizable
-        }
-      }
       Fl_Group widget_tab_grid {
         label Grid
+        callback {o->callback((Fl_Callback*)propagate_load);} open
+        xywh {10 30 400 330} labelsize 11 hide
+        class Grid_Tab
+      } {}
+      Fl_Group widget_tab_grid_child {
+        label {Grid Child}
         callback {o->callback((Fl_Callback*)propagate_load);} open selected
         xywh {10 30 400 330} labelsize 11
-        class Grid_Tab
+        class Grid_Child_Tab
       } {}
     }
     Fl_Tabs widget_tabs_repo {

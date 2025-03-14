@@ -14,7 +14,7 @@ decl {\#include "proj/undo.h"} {private global
 decl {\#include "nodes/Grid_Node.h"} {private global
 }
 
-decl {extern Fl_Group *widget_tab_grid;} {selected private global
+decl {extern Grid_Tab *widget_tab_grid;} {selected private global
 }
 
 widget_class Grid_Tab {
