@@ -19,6 +19,7 @@
 #ifndef widget_panel_h
 #define widget_panel_h
 #include <FL/Fl.H>
+#include "panels/widget_panel/Grid_Tab.h"
 #include "widgets/Formula_Input.h"
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *image_panel_window;
@@ -196,15 +197,7 @@ extern void grid_set_colspan_cb(fld::widget::Formula_Input*, void*);
 extern fld::widget::Formula_Input *widget_grid_colspan_input;
 extern void grid_dec_colspan_cb(Fl_Button*, void*);
 extern void grid_inc_colspan_cb(Fl_Button*, void*);
-extern Fl_Group *widget_tab_grid;
-extern fld::widget::Formula_Input *widget_grid_rows;
-extern fld::widget::Formula_Input *widget_grid_cols;
-extern Fl_Group *wp_grid_margin;
-extern Fl_Group *wp_grid_gaps;
-extern fld::widget::Formula_Input *widget_grid_curr_row;
-extern Fl_Group *widget_grid_curr_row_attributes;
-extern fld::widget::Formula_Input *widget_grid_curr_col;
-extern Fl_Group *widget_grid_curr_col_attributes;
+extern Grid_Tab *widget_tab_grid;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
