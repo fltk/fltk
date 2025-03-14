@@ -74,13 +74,13 @@ static void external_editor_timer(void*) {
     int modified = 0;
     for (Node *p: Fluid.proj.tree.all_nodes()) {
       if ( p->is_a(ID_Code) ) {
-        Code_Node &code = (Code_Node&)p;
+        Code_Node *code = static_cast<Code_Node*>(p);
         // Code changed by external editor?
-        if ( code.handle_editor_changes() ) {  // updates ram, file size/mtime
+        if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
           modified++;
         }
-        if ( code.is_editing() ) {             // editor open?
-          code.reap_editor();                  // Try to reap; maybe it recently closed
+        if ( code->is_editing() ) {             // editor open?
+          code->reap_editor();                  // Try to reap; maybe it recently closed
         }
       }
     }
