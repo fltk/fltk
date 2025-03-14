@@ -1,5 +1,5 @@
 //
-// FLUID undo definitions for the Fast Light Tool Kit (FLTK).
+// Fluid Undo header for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //

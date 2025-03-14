@@ -1,11 +1,7 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Widget Node header file for the Fast Light Tool Kit (FLTK).
 //
-// Type for creating all subclasses of Fl_Widget
-// This should have the widget pointer in it, but it is still in the
-// Node base class.
-//
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +13,10 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// Type for creating all subclasses of Fl_Widget
+// This should have the widget pointer in it, but it is still in the
+// Node base class.
 
 #ifndef FLUID_NODES_WIDGET_NODE_H
 #define FLUID_NODES_WIDGET_NODE_H
@@ -43,7 +43,7 @@ class Widget_Node : public Node
 
   virtual Fl_Widget *widget(int,int,int,int) = 0;
   virtual Widget_Node *_make() = 0; // virtual constructor
-  void setlabel(const char *) FL_OVERRIDE;
+  void setlabel(const char *) override;
 
   const char *extra_code_[NUM_EXTRA_CODE];
   const char *subclass_;
@@ -60,12 +60,12 @@ protected:
   /// disabling the output of the "hide" property by the Widget Type.
   uchar override_visible_;
 
-  void write_static(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_static(fld::io::Code_Writer& f) override;
+  void write_code1(fld::io::Code_Writer& f) override;
   void write_widget_code(fld::io::Code_Writer& f);
   void write_extra_code(fld::io::Code_Writer& f);
   void write_block_close(fld::io::Code_Writer& f);
-  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
+  void write_code2(fld::io::Code_Writer& f) override;
   void write_color(fld::io::Code_Writer& f, const char*, Fl_Color);
   Fl_Widget *live_widget;
 
@@ -85,8 +85,8 @@ public:
   void setinactive(Fluid_Image *);
 
   Widget_Node();
-  Node *make(Strategy strategy) FL_OVERRIDE;
-  void open() FL_OVERRIDE;
+  Node *make(Strategy strategy) override;
+  void open() override;
 
   const char *extra_code(int n) const {return extra_code_[n];}
   void extra_code(int n,const char *);
@@ -106,20 +106,20 @@ public:
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();
 
-  ID id() const FL_OVERRIDE { return ID_Widget_; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Widget_) ? true : super::is_a(inID); }
-  int is_widget() const FL_OVERRIDE;
-  int is_true_widget() const FL_OVERRIDE { return 1; }
-  int is_public() const FL_OVERRIDE;
+  ID id() const override { return ID_Widget_; }
+  bool is_a(ID inID) const override { return (inID==ID_Widget_) ? true : super::is_a(inID); }
+  int is_widget() const override;
+  int is_true_widget() const override { return 1; }
+  int is_public() const override;
 
-  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
-  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
-  int read_fdesign(const char*, const char*) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) override;
+  void read_property(fld::io::Project_Reader &f, const char *) override;
+  int read_fdesign(const char*, const char*) override;
 
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  Fl_Widget *enter_live_mode(int top=0) override;
   Fl_Widget *propagate_live_mode(Fl_Group* grp);
-  void leave_live_mode() FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
+  void leave_live_mode() override;
+  void copy_properties() override;
 
   virtual void ideal_size(int &w, int &h);
 

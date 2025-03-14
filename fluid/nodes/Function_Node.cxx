@@ -1,7 +1,7 @@
 //
-// C function type code for the Fast Light Tool Kit (FLTK).
+// C function Node code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -378,9 +378,9 @@ static void clean_function_for_implementation(char *out, const char *function_na
   bool arglist_done = false;
   for (;*nptr; nc++,nptr++) {
     if (arglist_done && fd_isspace(nptr[0])) {
-      // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
+      // skip `override` and `override` keywords if they are following the list of arguments
       if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
-      else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
+      else if (strncmp(nptr+1, "override", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
     }
     if (!skips && *nptr=='(') plevel++;
     else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }

@@ -1,5 +1,5 @@
 //
-// FLUID undo support for the Fast Light Tool Kit (FLTK).
+// Fluid Undo code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //

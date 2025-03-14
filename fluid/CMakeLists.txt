@@ -37,7 +37,6 @@ set(CPPFILES
   io/Project_Writer.cxx
   io/Project_Reader.cxx
   io/String_Writer.cxx
-  nodes/factory.cxx
   nodes/Tree.cxx
   nodes/Button_Node.cxx
   nodes/Function_Node.cxx
@@ -47,6 +46,8 @@ set(CPPFILES
   nodes/Node.cxx
   nodes/Widget_Node.cxx
   nodes/Window_Node.cxx
+  nodes/callbacks.cxx
+  nodes/factory.cxx
   panels/about_panel.cxx
   panels/codeview_panel.cxx
   panels/function_panel.cxx
@@ -84,7 +85,6 @@ set(HEADERFILES
   io/Project_Writer.h
   io/Project_Reader.h
   io/String_Writer.h
-  nodes/factory.h
   nodes/Tree.h
   nodes/Button_Node.h
   nodes/Function_Node.h
@@ -94,6 +94,8 @@ set(HEADERFILES
   nodes/Node.h
   nodes/Widget_Node.h
   nodes/Window_Node.h
+  nodes/callbacks.h
+  nodes/factory.h
   panels/about_panel.h
   panels/codeview_panel.h
   panels/function_panel.h

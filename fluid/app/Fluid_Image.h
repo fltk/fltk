@@ -1,11 +1,7 @@
 //
-// Image header file for the Fast Light Tool Kit (FLTK).
+// Image Helper header file for the Fast Light Tool Kit (FLTK).
 //
-// This class stores the image labels for widgets in fluid.  This is
-// not a class in FLTK itself, and will produce different types of
-// code depending on what the image type is.
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +13,11 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// This class stores the image labels for widgets in fluid.  This is
+// not a class in FLTK itself, and will produce different types of
+// code depending on what the image type is.
+
 
 #ifndef FLUID_IMAGE_H
 #define FLUID_IMAGE_H

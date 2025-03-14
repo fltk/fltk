@@ -1,6 +1,5 @@
 //
-// Code editor widget for the Fast Light Tool Kit (FLTK).
-// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
+// Text Viewer widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //

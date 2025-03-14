@@ -1,15 +1,7 @@
 //
-// Button type factory code for the Fast Light Tool Kit (FLTK).
+// Button Node code for the Fast Light Tool Kit (FLTK).
 //
-// Type classes for most of the fltk widgets.  Most of the work
-// is done by code in Widget_Node.C.  Also a factory instance
-// of each of these type classes.
-//
-// This file also contains the "new" menu, which has a pointer
-// to a factory instance for every class (both the ones defined
-// here and ones in other files)
-//
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +13,13 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+/**
+ \file Bottun_Node.cxx
+
+ Node prototypes for Fl_Button based classes. Those are used by the Node
+ Factory to generate the scene from project files or user input.
+ */
 
 #include "nodes/Button_Node.h"
 
@@ -38,9 +37,7 @@
 
 #include <stdlib.h>
 
-
-
-// ---- Button Types --------------------------------------------------- MARK: -
+// ---- Button Nodes --------------------------------------------------- MARK: -
 
 
 // ---- Button ----

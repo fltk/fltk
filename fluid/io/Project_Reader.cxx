@@ -1,12 +1,7 @@
 //
-// Fluid file routines for the Fast Light Tool Kit (FLTK).
+// Fluid Project File Reader code for the Fast Light Tool Kit (FLTK).
 //
-// You may find the basic read_* and write_* routines to
-// be useful for other programs.  I have used them many times.
-// They are somewhat similar to tcl, using matching { and }
-// to quote strings.
-//
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,6 +13,11 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// You may find the basic read_* and write_* routines to
+// be useful for other programs.  I have used them many times.
+// They are somewhat similar to tcl, using matching { and }
+// to quote strings.
 
 #include "io/Project_Reader.h"
 

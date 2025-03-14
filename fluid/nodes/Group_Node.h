@@ -1,5 +1,5 @@
 //
-// Group type header file for the Fast Light Tool Kit (FLTK).
+// Group Node header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2023 by Bill Spitzak and others.
 //
@@ -40,8 +40,8 @@ void ungroup_cb(Fl_Widget *, void *);
 class Fl_Group_Proxy : public Fl_Group {
 public:
   Fl_Group_Proxy(int X,int Y,int W,int H) : Fl_Group(X, Y, W, H) { Fl_Group::current(nullptr); }
-  void resize(int x, int y, int w, int h) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
+  void resize(int x, int y, int w, int h) override;
+  void draw() override;
 };
 
 class Group_Node : public Widget_Node
@@ -50,23 +50,23 @@ public:
   typedef Widget_Node super;
   static Group_Node prototype;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE;
-  const char *type_name() FL_OVERRIDE {return "Fl_Group";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::Group";}
-  Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override;
+  const char *type_name() override {return "Fl_Group";}
+  const char *alt_type_name() override {return "fltk::Group";}
+  Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Group_Proxy *g = new Fl_Group_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
-  Widget_Node *_make() FL_OVERRIDE {return new Group_Node();}
-  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void add_child(Node*, Node*) FL_OVERRIDE;
-  void move_child(Node*, Node*) FL_OVERRIDE;
-  void remove_child(Node*) FL_OVERRIDE;
-  int can_have_children() const FL_OVERRIDE {return 1;}
-  ID id() const FL_OVERRIDE { return ID_Group; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Group) ? true : super::is_a(inID); }
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void leave_live_mode() FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
+  Widget_Node *_make() override {return new Group_Node();}
+  void write_code1(fld::io::Code_Writer& f) override;
+  void write_code2(fld::io::Code_Writer& f) override;
+  void add_child(Node*, Node*) override;
+  void move_child(Node*, Node*) override;
+  void remove_child(Node*) override;
+  int can_have_children() const override {return 1;}
+  ID id() const override { return ID_Group; }
+  bool is_a(ID inID) const override { return (inID==ID_Group) ? true : super::is_a(inID); }
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void leave_live_mode() override;
+  void copy_properties() override;
 };
 
 // ---- Pack_Node --------------------------------------------------- MARK: -
@@ -80,15 +80,15 @@ public:
   typedef Group_Node super;
   static Pack_Node prototype;
 private:
-  Fl_Menu_Item *subtypes() FL_OVERRIDE {return pack_type_menu;}
+  Fl_Menu_Item *subtypes() override {return pack_type_menu;}
 public:
-  const char *type_name() FL_OVERRIDE {return pack_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::PackedGroup";}
-  Widget_Node *_make() FL_OVERRIDE {return new Pack_Node();}
-  ID id() const FL_OVERRIDE { return ID_Pack; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Pack) ? true : super::is_a(inID); }
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
+  const char *type_name() override {return pack_type_name;}
+  const char *alt_type_name() override {return "fltk::PackedGroup";}
+  Widget_Node *_make() override {return new Pack_Node();}
+  ID id() const override { return ID_Pack; }
+  bool is_a(ID inID) const override { return (inID==ID_Pack) ? true : super::is_a(inID); }
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void copy_properties() override;
 };
 
 // ---- Flex_Node --------------------------------------------------- MARK: -
@@ -99,8 +99,8 @@ extern Fl_Menu_Item flex_type_menu[];
 class Fl_Flex_Proxy : public Fl_Flex {
 public:
   Fl_Flex_Proxy(int X,int Y,int W,int H) : Fl_Flex(X, Y, W, H) { Fl_Group::current(nullptr); }
-  void resize(int x, int y, int w, int h) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
+  void resize(int x, int y, int w, int h) override;
+  void draw() override;
 };
 
 class Flex_Node : public Group_Node
@@ -109,30 +109,30 @@ public:
   typedef Group_Node super;
   static Flex_Node prototype;
 private:
-  Fl_Menu_Item *subtypes() FL_OVERRIDE {return flex_type_menu;}
+  Fl_Menu_Item *subtypes() override {return flex_type_menu;}
   int fixedSizeTupleSize; /* number of pairs in array */
   int *fixedSizeTuple; /* [ index, size, index2, size2, ... ] */
   int suspend_auto_layout;
 public:
   Flex_Node() : fixedSizeTupleSize(0), fixedSizeTuple(nullptr), suspend_auto_layout(0) { }
-  const char *type_name() FL_OVERRIDE {return flex_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::FlexGroup";}
-  Widget_Node *_make() FL_OVERRIDE { return new Flex_Node(); }
-  Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
+  const char *type_name() override {return flex_type_name;}
+  const char *alt_type_name() override {return "fltk::FlexGroup";}
+  Widget_Node *_make() override { return new Flex_Node(); }
+  Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
-  ID id() const FL_OVERRIDE { return ID_Flex; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Flex) ? true : super::is_a(inID); }
-  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
-  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
-  void copy_properties_for_children() FL_OVERRIDE;
-  void postprocess_read() FL_OVERRIDE;
-  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-//  void add_child(Node*, Node*) FL_OVERRIDE;
-//  void move_child(Node*, Node*) FL_OVERRIDE;
-  void remove_child(Node*) FL_OVERRIDE;
-  void layout_widget() FL_OVERRIDE;
+  ID id() const override { return ID_Flex; }
+  bool is_a(ID inID) const override { return (inID==ID_Flex) ? true : super::is_a(inID); }
+  void write_properties(fld::io::Project_Writer &f) override;
+  void read_property(fld::io::Project_Reader &f, const char *) override;
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void copy_properties() override;
+  void copy_properties_for_children() override;
+  void postprocess_read() override;
+  void write_code2(fld::io::Code_Writer& f) override;
+//  void add_child(Node*, Node*) override;
+//  void move_child(Node*, Node*) override;
+  void remove_child(Node*) override;
+  void layout_widget() override;
   void change_subtype_to(int n);
   void insert_child_at(Fl_Widget *child, int x, int y);
   void keyboard_move_child(Widget_Node*, int key);
@@ -149,17 +149,17 @@ public:
   typedef Group_Node super;
   static Table_Node prototype;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE;
-  const char *type_name() FL_OVERRIDE { return "Fl_Table"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::TableGroup"; }
-  Widget_Node *_make() FL_OVERRIDE { return new Table_Node(); }
-  Fl_Widget *widget(int X, int Y, int W, int H) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID_Table; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Table) ? true : super::is_a(inID); }
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void add_child(Node*, Node*) FL_OVERRIDE;
-  void move_child(Node*, Node*) FL_OVERRIDE;
-  void remove_child(Node*) FL_OVERRIDE;
+  void ideal_size(int &w, int &h) override;
+  const char *type_name() override { return "Fl_Table"; }
+  const char *alt_type_name() override { return "fltk::TableGroup"; }
+  Widget_Node *_make() override { return new Table_Node(); }
+  Fl_Widget *widget(int X, int Y, int W, int H) override;
+  ID id() const override { return ID_Table; }
+  bool is_a(ID inID) const override { return (inID==ID_Table) ? true : super::is_a(inID); }
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void add_child(Node*, Node*) override;
+  void move_child(Node*, Node*) override;
+  void remove_child(Node*) override;
 };
 
 // ---- Tabs_Node --------------------------------------------------- MARK: -
@@ -169,8 +169,8 @@ extern const char tabs_type_name[];
 class Fl_Tabs_Proxy : public Fl_Tabs {
 public:
   Fl_Tabs_Proxy(int X,int Y,int W,int H) : Fl_Tabs(X,Y,W,H) {}
-  void resize(int,int,int,int) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
+  void resize(int,int,int,int) override;
+  void draw() override;
 };
 
 class Tabs_Node : public Group_Node
@@ -179,17 +179,17 @@ public:
   typedef Group_Node super;
   static Tabs_Node prototype;
 public:
-  const char *type_name() FL_OVERRIDE {return tabs_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::TabGroup";}
-  Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
+  const char *type_name() override {return tabs_type_name;}
+  const char *alt_type_name() override {return "fltk::TabGroup";}
+  Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Tabs_Proxy *g = new Fl_Tabs_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
-  Widget_Node *_make() FL_OVERRIDE {return new Tabs_Node();}
-  Node* click_test(int,int) FL_OVERRIDE;
-  void add_child(Node*, Node*) FL_OVERRIDE;
-  void remove_child(Node*) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID_Tabs; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Tabs) ? true : super::is_a(inID); }
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  Widget_Node *_make() override {return new Tabs_Node();}
+  Node* click_test(int,int) override;
+  void add_child(Node*, Node*) override;
+  void remove_child(Node*) override;
+  ID id() const override { return ID_Tabs; }
+  bool is_a(ID inID) const override { return (inID==ID_Tabs) ? true : super::is_a(inID); }
+  Fl_Widget *enter_live_mode(int top=0) override;
 };
 
 // ---- Scroll_Node ------------------------------------------------- MARK: -
@@ -203,15 +203,15 @@ public:
   typedef Group_Node super;
   static Scroll_Node prototype;
 private:
-  Fl_Menu_Item *subtypes() FL_OVERRIDE {return scroll_type_menu;}
+  Fl_Menu_Item *subtypes() override {return scroll_type_menu;}
 public:
-  const char *type_name() FL_OVERRIDE {return scroll_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::ScrollGroup";}
-  Widget_Node *_make() FL_OVERRIDE {return new Scroll_Node();}
-  ID id() const FL_OVERRIDE { return ID_Scroll; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Scroll) ? true : super::is_a(inID); }
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
+  const char *type_name() override {return scroll_type_name;}
+  const char *alt_type_name() override {return "fltk::ScrollGroup";}
+  Widget_Node *_make() override {return new Scroll_Node();}
+  ID id() const override { return ID_Scroll; }
+  bool is_a(ID inID) const override { return (inID==ID_Scroll) ? true : super::is_a(inID); }
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void copy_properties() override;
 };
 
 // ---- Tile_Node --------------------------------------------------- MARK: -
@@ -224,12 +224,12 @@ public:
   typedef Group_Node super;
   static Tile_Node prototype;
 public:
-  const char *type_name() FL_OVERRIDE {return tile_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::TileGroup";}
-  Widget_Node *_make() FL_OVERRIDE {return new Tile_Node();}
-  ID id() const FL_OVERRIDE { return ID_Tile; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Tile) ? true : super::is_a(inID); }
-  void copy_properties() FL_OVERRIDE;
+  const char *type_name() override {return tile_type_name;}
+  const char *alt_type_name() override {return "fltk::TileGroup";}
+  Widget_Node *_make() override {return new Tile_Node();}
+  ID id() const override { return ID_Tile; }
+  bool is_a(ID inID) const override { return (inID==ID_Tile) ? true : super::is_a(inID); }
+  void copy_properties() override;
 };
 
 // ---- Wizard_Node ------------------------------------------------- MARK: -
@@ -237,8 +237,8 @@ public:
 class Fl_Wizard_Proxy : public Fl_Wizard {
 public:
   Fl_Wizard_Proxy(int X,int Y,int W,int H) : Fl_Wizard(X,Y,W,H) {}
-  void resize(int,int,int,int) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
+  void resize(int,int,int,int) override;
+  void draw() override;
 };
 
 extern const char wizard_type_name[];
@@ -249,13 +249,13 @@ public:
   typedef Group_Node super;
   static Wizard_Node prototype;
 public:
-  const char *type_name() FL_OVERRIDE {return wizard_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::WizardGroup";}
-  Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
+  const char *type_name() override {return wizard_type_name;}
+  const char *alt_type_name() override {return "fltk::WizardGroup";}
+  Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Wizard_Proxy *g = new Fl_Wizard_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
-  Widget_Node *_make() FL_OVERRIDE {return new Wizard_Node();}
-  ID id() const FL_OVERRIDE { return ID_Wizard; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Wizard) ? true : super::is_a(inID); }
+  Widget_Node *_make() override {return new Wizard_Node();}
+  ID id() const override { return ID_Wizard; }
+  bool is_a(ID inID) const override { return (inID==ID_Wizard) ? true : super::is_a(inID); }
 };
 
 #endif // FLUID_NODES_GROUP_NODE_H

@@ -1,7 +1,7 @@
 //
-// Fl_Grid type header file for the Fast Light Tool Kit (FLTK).
+// Grid Node header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2023 by Bill Spitzak and others.
+// Copyright 2023-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -33,8 +33,8 @@ protected:
 public:
   Fl_Grid_Proxy(int X,int Y,int W,int H);
   ~Fl_Grid_Proxy();
-  void resize(int,int,int,int) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
+  void resize(int,int,int,int) override;
+  void draw() override;
   void draw_overlay();
   void move_cell(Fl_Widget *child, int to_row, int to_col, int how = 0);
   Cell* any_cell(Fl_Widget *widget) const;
@@ -51,26 +51,26 @@ public:
   static Grid_Node prototype;
 public:
   Grid_Node();
-  const char *type_name() FL_OVERRIDE {return "Fl_Grid";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::GridGroup";}
-  Widget_Node *_make() FL_OVERRIDE { return new Grid_Node(); }
-  Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID_Grid; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Grid) ? true : super::is_a(inID); }
-  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
-  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
-  void write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) FL_OVERRIDE;
-  void read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) FL_OVERRIDE;
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void leave_live_mode() FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
-  void copy_properties_for_children() FL_OVERRIDE;
-  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void add_child(Node*, Node*) FL_OVERRIDE;
-  void move_child(Node*, Node*) FL_OVERRIDE;
-  void remove_child(Node*) FL_OVERRIDE;
-  void layout_widget() FL_OVERRIDE;
+  const char *type_name() override {return "Fl_Grid";}
+  const char *alt_type_name() override {return "fltk::GridGroup";}
+  Widget_Node *_make() override { return new Grid_Node(); }
+  Fl_Widget *widget(int X,int Y,int W,int H) override;
+  ID id() const override { return ID_Grid; }
+  bool is_a(ID inID) const override { return (inID==ID_Grid) ? true : super::is_a(inID); }
+  void write_properties(fld::io::Project_Writer &f) override;
+  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) override;
+  void read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) override;
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void leave_live_mode() override;
+  void copy_properties() override;
+  void copy_properties_for_children() override;
+  void write_code1(fld::io::Code_Writer& f) override;
+  void write_code2(fld::io::Code_Writer& f) override;
+  void add_child(Node*, Node*) override;
+  void move_child(Node*, Node*) override;
+  void remove_child(Node*) override;
+  void layout_widget() override;
   void child_resized(Widget_Node *child);
   void insert_child_at(Fl_Widget *child, int x, int y);
   void insert_child_at_next_free_cell(Fl_Widget *child);

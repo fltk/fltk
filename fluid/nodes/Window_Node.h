@@ -1,11 +1,7 @@
 //
 // Window type header file for the Fast Light Tool Kit (FLTK).
 //
-// Type for creating all subclasses of Fl_Widget
-// This should have the widget pointer in it, but it is still in the
-// Node base class.
-//
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +13,11 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+//
+// Type for creating all subclasses of Fl_Widget
+// This should have the widget pointer in it, but it is still in the
+// Node base class.
 
 #ifndef FLUID_NODES_WINDOW_NODE_H
 #define FLUID_NODES_WINDOW_NODE_H
@@ -51,7 +52,7 @@ public:
   static Window_Node prototype;
 protected:
 
-  Fl_Menu_Item* subtypes() FL_OVERRIDE {return window_type_menu;}
+  Fl_Menu_Item* subtypes() override {return window_type_menu;}
 
   friend class Overlay_Window;
   int mx,my;            // mouse position during dragging
@@ -68,15 +69,15 @@ protected:
   void newdx();
   void newposition(Widget_Node *,int &x,int &y,int &w,int &h);
   int handle(int);
-  void setlabel(const char *) FL_OVERRIDE;
-  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  Widget_Node *_make() FL_OVERRIDE {return nullptr;} // we don't call this
-  Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return nullptr;}
+  void setlabel(const char *) override;
+  void write_code1(fld::io::Code_Writer& f) override;
+  void write_code2(fld::io::Code_Writer& f) override;
+  Widget_Node *_make() override {return nullptr;} // we don't call this
+  Fl_Widget *widget(int,int,int,int) override {return nullptr;}
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
-  ID id() const FL_OVERRIDE { return ID_Window; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Window) ? true : super::is_a(inID); }
+  ID id() const override { return ID_Window; }
+  bool is_a(ID inID) const override { return (inID==ID_Window) ? true : super::is_a(inID); }
   void open_();
 
 public:
@@ -97,29 +98,29 @@ public:
   uchar modal, non_modal;
   const char *xclass; // junk string, used for shortcut
 
-  Node *make(Strategy strategy) FL_OVERRIDE;
-  const char *type_name() FL_OVERRIDE {return "Fl_Window";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::Window";}
+  Node *make(Strategy strategy) override;
+  const char *type_name() override {return "Fl_Window";}
+  const char *alt_type_name() override {return "fltk::Window";}
 
-  void open() FL_OVERRIDE;
-  void ideal_size(int &w, int &h) FL_OVERRIDE;
+  void open() override;
+  void ideal_size(int &w, int &h) override;
 
   void fix_overlay();                   // Update the bounding box, etc
   uchar *read_image(int &ww, int &hh);  // Read an image of the window
 
-  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
-  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
-  int read_fdesign(const char*, const char*) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) override;
+  void read_property(fld::io::Project_Reader &f, const char *) override;
+  int read_fdesign(const char*, const char*) override;
 
-  void add_child(Node*, Node*) FL_OVERRIDE;
-  void move_child(Node*, Node*) FL_OVERRIDE;
-  void remove_child(Node*) FL_OVERRIDE;
+  void add_child(Node*, Node*) override;
+  void move_child(Node*, Node*) override;
+  void remove_child(Node*) override;
 
-  int can_have_children() const FL_OVERRIDE {return 1;}
+  int can_have_children() const override {return 1;}
 
-  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  void leave_live_mode() FL_OVERRIDE;
-  void copy_properties() FL_OVERRIDE;
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void leave_live_mode() override;
+  void copy_properties() override;
 
   int sr_min_w, sr_min_h, sr_max_w, sr_max_h;
 
@@ -133,7 +134,7 @@ public:
   static Widget_Class_Node prototype;
 
 protected:
-  Fl_Menu_Item* subtypes() FL_OVERRIDE {return nullptr;}
+  Fl_Menu_Item* subtypes() override {return nullptr;}
 
 public:
   Widget_Class_Node() {
@@ -144,19 +145,19 @@ public:
   char write_public_state; // true when public: has been printed
   char wc_relative; // if 1, reposition all children, if 2, reposition and resize
 
-  void write_properties(fld::io::Project_Writer &f) FL_OVERRIDE;
-  void read_property(fld::io::Project_Reader &f, const char *) FL_OVERRIDE;
+  void write_properties(fld::io::Project_Writer &f) override;
+  void read_property(fld::io::Project_Reader &f, const char *) override;
 
-  void write_code1(fld::io::Code_Writer& f) FL_OVERRIDE;
-  void write_code2(fld::io::Code_Writer& f) FL_OVERRIDE;
-  Node *make(Strategy strategy) FL_OVERRIDE;
-  const char *type_name() FL_OVERRIDE {return "widget_class";}
-  ID id() const FL_OVERRIDE { return ID_Widget_Class; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
-  int can_have_children() const FL_OVERRIDE {return 1;}
-  int is_code_block() const FL_OVERRIDE {return 1;}
-  int is_decl_block() const FL_OVERRIDE {return 1;}
-  int is_class() const FL_OVERRIDE {return 1;}
+  void write_code1(fld::io::Code_Writer& f) override;
+  void write_code2(fld::io::Code_Writer& f) override;
+  Node *make(Strategy strategy) override;
+  const char *type_name() override {return "widget_class";}
+  ID id() const override { return ID_Widget_Class; }
+  bool is_a(ID inID) const override { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
+  int can_have_children() const override {return 1;}
+  int is_code_block() const override {return 1;}
+  int is_decl_block() const override {return 1;}
+  int is_class() const override {return 1;}
 };
 
 #endif // FLUID_NODES_WINDOW_NODE_H

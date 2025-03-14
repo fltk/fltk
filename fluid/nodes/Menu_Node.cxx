@@ -1,13 +1,7 @@
 //
-// Menu item code for the Fast Light Tool Kit (FLTK).
+// Menu Node code for the Fast Light Tool Kit (FLTK).
 //
-// Menu items are kludged by making a phony Fl_Box widget so the normal
-// widget panel can be used to control them.
-//
-// This file also contains code to make Fl_Menu_Button, Fl_Menu_Bar,
-// etc widgets.
-//
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this

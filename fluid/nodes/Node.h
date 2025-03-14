@@ -1,5 +1,5 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Node base class header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //

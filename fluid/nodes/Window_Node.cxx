@@ -1,9 +1,5 @@
 //
-// Window type code file for the Fast Light Tool Kit (FLTK).
-//
-// The widget describing an Fl_Window.  This is also all the code
-// for interacting with the overlay, which allows the user to
-// select, move, and resize the children widgets.
+// Window Node code file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -17,6 +13,11 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+//
+// The widget describing an Fl_Window.  This is also all the code
+// for interacting with the overlay, which allows the user to
+// select, move, and resize the children widgets.
 
 #include "nodes/Window_Node.h"
 
@@ -120,17 +121,17 @@ static int overlays_invisible;
 // an overlay for the fluid ui, and special-cases the FL_NO_BOX.
 
 class Overlay_Window : public Fl_Overlay_Window {
-  void draw() FL_OVERRIDE;
-  void draw_overlay() FL_OVERRIDE;
+  void draw() override;
+  void draw_overlay() override;
   static void close_cb(Overlay_Window *self, void*);
 public:
   Window_Node *window;
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {
     Fl_Group::current(nullptr);
     callback((Fl_Callback*)close_cb);
   }
-  void resize(int,int,int,int) FL_OVERRIDE;
+  void resize(int,int,int,int) override;
   uchar *read_image(int &ww, int &hh);
 };
 

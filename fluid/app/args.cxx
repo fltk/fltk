@@ -1,5 +1,5 @@
 //
-// FLUID main entry for the Fast Light Tool Kit (FLTK).
+// Command Line Arguments Handling code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
