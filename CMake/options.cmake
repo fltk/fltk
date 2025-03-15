@@ -29,7 +29,7 @@
 # which can be applied to particular targets and source files only.
 #
 # This could remove some of these potential build conflicts, for
-# instance # if the bundled image libs and Cairo or Pango are used
+# instance if the bundled image libs and Cairo or Pango are used
 # together (Pango depends on Cairo and Cairo depends on libpng).
 # However, this is not a proper solution!
 #

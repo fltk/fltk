@@ -36,7 +36,7 @@ CJK text-input methods, as well as dead and compose keys are supported.
 
 On Linux and FreeBSD systems, the FLTK library is by default configured so FLTK
 apps do all their windowing through the Wayland protocol, all their graphics
-withCairo or EGL, and all text-drawing with Pango. If no Wayland compositor
+with Cairo or EGL, and all text-drawing with Pango. If no Wayland compositor
 is available at run-time, FLTK apps fall back to using X11 for windowing.
 Cairo and Pango remain used for graphics and text, respectively.
 

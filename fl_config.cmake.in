@@ -30,7 +30,7 @@
 /*
  * FLTK_HAVE_CAIRO
  *
- * Do we have the Cairo library available?
+ * Do we have the Fl_Cairo_Window support?
 */
 
 #cmakedefine FLTK_HAVE_CAIRO 1
@@ -71,7 +71,7 @@
  * Do we use Cairo to draw to the display?
  *
  */
- 
+
 #cmakedefine FLTK_USE_CAIRO 1
 
 

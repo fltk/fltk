@@ -341,11 +341,7 @@ The libraries are named `fltk.lib`, `fltk_forms.lib`, `fltk_gl.lib`, and
 
 \note
   The separate \p fltk_cairo library is no longer necessary since FLTK 1.4.0.
-  However, this release of FLTK builds a dummy `fltk_cairo` library for
-  backwards compatibility. You are advised to remove the usage of
-  the `fltk_cairo` library from your build systems and tools.
-  <b>The `fltk_cairo` library will be removed in a future release.</b>
-
+  It is no longer built since FLTK 1.5.0.
 
 As before, the \p fltk-config script can be used to get the options that are
 required by your linker:
@@ -370,7 +366,7 @@ c++ ... `fltk-config --use-forms --use-gl --use-images --ldflags`
 The option `--use-cairo` may be used to build your program with Cairo libs if
 you use Cairo in your code. It does no longer include the `fltk_cairo` lib but
 all necessary Cairo compiler flags and Cairo libs, if and only if FLTK has been
-built with the optional Cairo support by configure or CMake.
+configured with the optional Cairo support by CMake.
 
 Finally, you can use the \p fltk-config script to compile one or more source
 files as a FLTK program.

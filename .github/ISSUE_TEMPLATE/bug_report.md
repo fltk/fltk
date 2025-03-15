@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+**Description of the Bug Report**
 A clear and concise description of what the bug is.
 
 **To Reproduce**
@@ -38,11 +38,9 @@ Please complete the following information and delete non-applicable lines:
  - If from Git, commit: [e.g. 7d58e2385452]
 
 **FLTK Configure / Build Options**
-Please add the complete configure and build command lines if you built FLTK yourself.
-Please include all configure or CMake options and add all CMake options you changed
-by using CMake GUI tools (if any).
- - ./configure --enable-cairo ...
- - cmake -G"..." -DCMAKE_BUILD_TYPE=Debug ...
+Please add the complete CMake and build command lines if you built FLTK yourself.
+Please add all CMake options you changed by using CMake GUI tools (if any).
+ - cmake -G"..." -D CMAKE_BUILD_TYPE=Debug ...
 
 **Operating System / Platform:**
 Please be as precise as possible, e.g. "Linux: Ubuntu 20.04"

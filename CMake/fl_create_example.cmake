@@ -2,7 +2,7 @@
 # A function used by the CMake build system for the Fast Light Tool Kit (FLTK).
 # Originally written by Michael Surette
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -114,20 +114,6 @@ function(fl_create_example NAME SOURCES LIBRARIES)
 
   set_target_properties   (${TARGET_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
 
-  ### *FIXME* Remove the entire 'if' block below when verified:
-
-  if(0) # This should no longer be necessary (implied by linking the libs)
-
-    # we must link all programs with Cairo if option CAIROEXT is enabled
-    if(FLTK_HAVE_CAIROEXT)
-      target_link_libraries(${TARGET_NAME} PRIVATE ${PKG_CAIRO_LIBRARIES})
-    endif()
-
-    if(FLTK_HAVE_CAIRO AND PKG_CAIRO_LIBRARY_DIRS)
-      target_link_directories(${TARGET_NAME} PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
-    endif()
-
-  endif() # This should no longer be necessary (implied by linking the libs)
 
   # Search the current binary directory for header files created by CMake
   # or fluid and the source folder for other headers included by test programs

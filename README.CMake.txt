@@ -825,10 +825,10 @@ specific prefixes and postfixes. For instance, on Linux/Unix 'fltk' is libfltk.a
 and the shared library (fltk-shared) is libfltk.so.1.4.0 (in FLTK 1.4.0) with
 additional system specific links.
 
-Note: since FLTK 1.4.0 the library fltk_cairo is no longer necessary and
-should be removed from CMake files of user projects. fltk_cairo is now an
-empty library solely for backwards compatibility and will be removed in the
-future.
+Note: since FLTK 1.5.0 the library fltk_cairo is no longer necessary and
+must be removed from CMake files of user projects. fltk_cairo was an
+empty library solely for backwards compatibility in FLTK 1.4 and has been
+removed from FLTK 1.5.
 
 
  3.2  Library Aliases
