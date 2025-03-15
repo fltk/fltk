@@ -43,7 +43,7 @@ decl {\#include "Fluid.h"} {private global
 decl {\#include "app/Fd_Snap_Action.h"} {private global
 }
 
-decl {\#include "app/Fluid_Image.h"} {private global
+decl {\#include "app/Image_Asset.h"} {private global
 }
 
 decl {\#include "proj/undo.h"} {private global

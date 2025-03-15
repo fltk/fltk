@@ -19,43 +19,45 @@
 // code depending on what the image type is.
 
 
-#ifndef FLUID_IMAGE_H
-#define FLUID_IMAGE_H
+#ifndef APP_IMAGE_ASSET_H
+#define APP_IMAGE_ASSET_H
 
 #include "io/Code_Writer.h"
 
 #include <FL/Fl_Shared_Image.H>
 
-class Fluid_Image {
-  bool is_animated_gif_ = false;
-  const char *name_ = nullptr;
-  int refcount = 0;
-  Fl_Shared_Image *img = nullptr;
-  const char *function_name_ = nullptr;
-protected:
-  Fluid_Image(const char *name); // no public constructor
-  ~Fluid_Image(); // no public destructor
+class Image_Asset {
+
+private:  // member variables
+  bool is_animated_gif_ = false;          ///< It's an animated gif.
+  std::string filename_ { };              ///< Relative path to the image file
+  int refcount_ = 0;                      ///< Reference count
+  Fl_Shared_Image *image_ = nullptr;      ///< The actual image as managed by FLTK
+  std::string initializer_function_ { };  ///< The name of the initializer function
+
+private: // methods
+  Image_Asset(const char *name); // no public constructor
+  ~Image_Asset(); // no public destructor
   size_t write_static_binary(fld::io::Code_Writer& f, const char* fmt);
   size_t write_static_text(fld::io::Code_Writer& f, const char* fmt);
   void write_static_rgb(fld::io::Code_Writer& f, const char* idata_name);
-public:
-  int written;
-  static Fluid_Image* find(const char *);
-  void decrement(); // reference counting & automatic free
-  void increment();
-  void image(Fl_Widget *); // set the image of this widget
-  void deimage(Fl_Widget *); // set the deimage of this widget
+
+public: // methods
+  static Image_Asset* find(const char *);
+  void dec_ref(); // reference counting & automatic free
+  void inc_ref();
+  Fl_Shared_Image *image() const { return image_; }
   void write_static(fld::io::Code_Writer& f, int compressed);
   void write_initializer(fld::io::Code_Writer& f, const char *type_name, const char *format, ...);
   void write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive = 0);
   void write_inline(fld::io::Code_Writer& f, int inactive = 0);
   void write_file_error(fld::io::Code_Writer& f, const char *fmt);
-  const char *name() const {return name_;}
+  const char *filename() const { return filename_.c_str(); }
 };
 
 // pop up file chooser and return a legal image selected by user,
 // or zero for any errors:
-Fluid_Image *ui_find_image(const char *);
+Image_Asset *ui_find_image(const char *);
 extern const char *ui_find_image_name;
 
-#endif
+#endif // APP_IMAGE_ASSET_H

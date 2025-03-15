@@ -19,7 +19,7 @@
 #include "widget_panel.h"
 #include "Fluid.h"
 #include "app/Fd_Snap_Action.h"
-#include "app/Fluid_Image.h"
+#include "app/Image_Asset.h"
 #include "proj/undo.h"
 #include "nodes/Widget_Node.h"
 #include "nodes/Grid_Node.h"

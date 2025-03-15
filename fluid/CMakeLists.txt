@@ -27,7 +27,7 @@ set(CPPFILES
   Project.cxx
   app/args.cxx
   app/Fd_Snap_Action.cxx
-  app/Fluid_Image.cxx
+  app/Image_Asset.cxx
   app/history.cxx
   app/Menu.cxx
   app/mergeback.cxx
@@ -77,7 +77,7 @@ set(HEADERFILES
   Project.h
   app/args.h
   app/Fd_Snap_Action.h
-  app/Fluid_Image.h
+  app/Image_Asset.h
   app/history.h
   app/Menu.h
   app/mergeback.h

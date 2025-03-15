@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "app/Fluid_Image.h"
+#include "app/Image_Asset.h"
 
 #include "Fluid.h"
 #include "io/Project_Reader.h"
@@ -39,21 +39,14 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-void Fluid_Image::image(Fl_Widget *o) {
-  if (o->window() != o) o->image(img);
-}
 
-void Fluid_Image::deimage(Fl_Widget *o) {
-  if (o->window() != o) o->deimage(img);
-}
-
-/** Write the contents of the name() file as binary source code.
+/** Write the contents of the filename() file as binary source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
-size_t Fluid_Image::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
+size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   Fluid.proj.enter_project_dir();
-  FILE *in = fl_fopen(name(), "rb");
+  FILE *in = fl_fopen(filename(), "rb");
   Fluid.proj.leave_project_dir();
   if (!in) {
     write_file_error(f, fmt);
@@ -76,10 +69,10 @@ size_t Fluid_Image::write_static_binary(fld::io::Code_Writer& f, const char* fmt
 /** Write the contents of the name() file as textual source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
-size_t Fluid_Image::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
+size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   Fluid.proj.enter_project_dir();
-  FILE *in = fl_fopen(name(), "rb");
+  FILE *in = fl_fopen(filename(), "rb");
   Fluid.proj.leave_project_dir();
   if (!in) {
     write_file_error(f, fmt);
@@ -99,19 +92,19 @@ size_t Fluid_Image::write_static_text(fld::io::Code_Writer& f, const char* fmt) 
   return nData;
 }
 
-void Fluid_Image::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
+void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
   // Write image data...
   f.write_c("\n");
   f.write_c_once("#include <FL/Fl_Image.H>\n");
   f.write_c("static const unsigned char %s[] =\n", idata_name);
-  const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
-  f.write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
+  const int extra_data = image_->ld() ? (image_->ld()-image_->w()*image_->d()) : 0;
+  f.write_cdata(image_->data()[0], (image_->w() * image_->d() + extra_data) * image_->h());
   f.write_c(";\n");
-  write_initializer(f, "Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
+  write_initializer(f, "Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, image_->w(), image_->h(), image_->d(), image_->ld());
 }
 
 /**
- Write the static image data into the soutrce file.
+ Write the static image data into the source file.
 
  If \p compressed is set, write the original image format, which requires
  linking the matching image reader at runtime, or if we want to store the raw
@@ -120,10 +113,10 @@ void Fluid_Image::write_static_rgb(fld::io::Code_Writer& f, const char* idata_na
 
  \param compressed write data in the original compressed file format
  */
-void Fluid_Image::write_static(fld::io::Code_Writer& f, int compressed) {
-  if (!img) return;
-  const char *idata_name = f.unique_id(this, "idata", fl_filename_name(name()), nullptr);
-  function_name_ = f.unique_id(this, "image", fl_filename_name(name()), nullptr);
+void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
+  if (!image_) return;
+  const char *idata_name = f.unique_id(this, "idata", fl_filename_name(filename()), nullptr);
+  initializer_function_ = f.unique_id(this, "image", fl_filename_name(filename()), nullptr);
 
   if (is_animated_gif_) {
     // Write animated gif image data...
@@ -132,78 +125,78 @@ void Fluid_Image::write_static(fld::io::Code_Writer& f, int compressed) {
     f.write_c("static const unsigned char %s[] =\n", idata_name);
     size_t nData = write_static_binary(f, "AnimGIF");
     f.write_c(";\n");
-    write_initializer(f, "Fl_Anim_GIF_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".gif")==0) {
+    write_initializer(f, "Fl_Anim_GIF_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".gif")==0) {
     // Write gif image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_GIF_Image.H>\n");
     f.write_c("static const unsigned char %s[] =\n", idata_name);
     size_t nData = write_static_binary(f, "GIF");
     f.write_c(";\n");
-    write_initializer(f, "Fl_GIF_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".bmp")==0) {
+    write_initializer(f, "Fl_GIF_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".bmp")==0) {
     // Write bmp image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_BMP_Image.H>\n");
     f.write_c("static const unsigned char %s[] =\n", idata_name);
     size_t nData = write_static_binary(f, "BMP");
     f.write_c(";\n");
-    write_initializer(f, "Fl_BMP_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (img->count() > 1) {
+    write_initializer(f, "Fl_BMP_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+  } else if (image_->count() > 1) {
     // Write Pixmap data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Pixmap.H>\n");
     f.write_c("static const char *%s[] = {\n", idata_name);
-    f.write_cstring(img->data()[0], (int)strlen(img->data()[0]));
+    f.write_cstring(image_->data()[0], (int)strlen(image_->data()[0]));
 
     int i;
     int ncolors, chars_per_color;
-    sscanf(img->data()[0], "%*d%*d%d%d", &ncolors, &chars_per_color);
+    sscanf(image_->data()[0], "%*d%*d%d%d", &ncolors, &chars_per_color);
 
     if (ncolors < 0) {
       f.write_c(",\n");
-      f.write_cstring(img->data()[1], ncolors * -4);
+      f.write_cstring(image_->data()[1], ncolors * -4);
       i = 2;
     } else {
       for (i = 1; i <= ncolors; i ++) {
         f.write_c(",\n");
-        f.write_cstring(img->data()[i], (int)strlen(img->data()[i]));
+        f.write_cstring(image_->data()[i], (int)strlen(image_->data()[i]));
       }
     }
-    for (; i < img->count(); i ++) {
+    for (; i < image_->count(); i ++) {
       f.write_c(",\n");
-      f.write_cstring(img->data()[i], img->w() * chars_per_color);
+      f.write_cstring(image_->data()[i], image_->w() * chars_per_color);
     }
     f.write_c("\n};\n");
     write_initializer(f, "Fl_Pixmap", "%s", idata_name);
-  } else if (img->d() == 0) {
+  } else if (image_->d() == 0) {
     // Write Bitmap data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Bitmap.H>\n");
     f.write_c("static const unsigned char %s[] =\n", idata_name);
-    f.write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
+    f.write_cdata(image_->data()[0], ((image_->w() + 7) / 8) * image_->h());
     f.write_c(";\n");
-    write_initializer(f, "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((img->w() + 7) / 8) * img->h(), img->w(), img->h());
-  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".jpg")==0) {
+    write_initializer(f, "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((image_->w() + 7) / 8) * image_->h(), image_->w(), image_->h());
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".jpg")==0) {
     // Write jpeg image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_JPEG_Image.H>\n");
     f.write_c("static const unsigned char %s[] =\n", idata_name);
     size_t nData = write_static_binary(f, "JPEG");
     f.write_c(";\n");
-    write_initializer(f, "Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".png")==0) {
+    write_initializer(f, "Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".png")==0) {
     // Write png image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_PNG_Image.H>\n");
     f.write_c("static const unsigned char %s[] =\n", idata_name);
     size_t nData = write_static_binary(f, "PNG");
     f.write_c(";\n");
-    write_initializer(f, "Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+    write_initializer(f, "Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
   }
 #ifdef FLTK_USE_SVG
-  else if (fl_ascii_strcasecmp(fl_filename_ext(name()), ".svg")==0 || fl_ascii_strcasecmp(fl_filename_ext(name()), ".svgz")==0) {
-    bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
+  else if (fl_ascii_strcasecmp(fl_filename_ext(filename()), ".svg")==0 || fl_ascii_strcasecmp(fl_filename_ext(filename()), ".svgz")==0) {
+    bool gzipped = (strcmp(fl_filename_ext(filename()), ".svgz") == 0);
     // Write svg image data...
     if (compressed) {
       f.write_c("\n");
@@ -212,20 +205,20 @@ void Fluid_Image::write_static(fld::io::Code_Writer& f, int compressed) {
         f.write_c("static const unsigned char %s[] =\n", idata_name);
         size_t nData = write_static_binary(f, "SVGZ");
         f.write_c(";\n");
-        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(name()), idata_name, nData);
+        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(filename()), idata_name, nData);
       } else {
         f.write_c("static const char %s[] =\n", idata_name);
         write_static_text(f, "SVG");
         f.write_c(";\n");
-        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s", fl_filename_name(filename()), idata_name);
       }
     } else {
       // if FLUID runs from the command line, make sure that the image is not
       // only loaded but also rasterized, so we can write the RGB image data
       Fl_RGB_Image* rgb_image = nullptr;
       Fl_SVG_Image* svg_image = nullptr;
-      if (img->d()>0)
-        rgb_image = (Fl_RGB_Image*)img->image();
+      if (image_->d()>0)
+        rgb_image = (Fl_RGB_Image*)image_->image();
       if (rgb_image)
         svg_image = rgb_image->as_svg_image();
       if (svg_image) {
@@ -242,29 +235,41 @@ void Fluid_Image::write_static(fld::io::Code_Writer& f, int compressed) {
   }
 }
 
-void Fluid_Image::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
-  f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, name(), strerror(errno));
+void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
+  f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, filename(), strerror(errno));
   Fluid.proj.enter_project_dir();
   f.write_c("// Searching in path \"%s\"\n", fl_getcwd(nullptr, FL_PATH_MAX));
   Fluid.proj.leave_project_dir();
 }
 
-void Fluid_Image::write_initializer(fld::io::Code_Writer& f, const char *type_name, const char *format, ...) {
-  /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
-   static Fl_Image *'function_name_'() {
-     static Fl_Image *image = nullptr;
-     if (!image)
-       image = new 'type_name'('product of format and remaining args');
-     return image;
-   } */
+/**
+ \brief Outputs code that loads and returns an Fl_Image.
+
+ The generated code loads the image if it hasn't been loaded yet, and then
+ returns a pointer to the image.
+
+ \code 
+  static Fl_Image *'initializer_function_'() {
+    static Fl_Image *image = nullptr;
+    if (!image)
+      image = new 'type_name'('product of format and remaining args');
+    return image;
+  }
+ \endcode  
+ 
+ \param f Write the C++ code to this file.
+ \param image_class Name of the Fl_Image class, for example Fl_GIF_Image.
+ \param format Format string for additional parameters for the constructor.
+  */
+void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_class, const char *format, ...) {
   va_list ap;
   va_start(ap, format);
-  f.write_c("static Fl_Image *%s() {\n", function_name_);
+  f.write_c("static Fl_Image *%s() {\n", initializer_function_.c_str());
   if (is_animated_gif_)
     f.write_c("%sFl_GIF_Image::animate = true;\n", f.indent(1));
   f.write_c("%sstatic Fl_Image *image = nullptr;\n", f.indent(1));
   f.write_c("%sif (!image)\n", f.indent(1));
-  f.write_c("%simage = new %s(", f.indent(2), type_name);
+  f.write_c("%simage = new %s(", f.indent(2), image_class);
   f.vwrite_c(format, ap);
   f.write_c(");\n");
   f.write_c("%sreturn image;\n", f.indent(1));
@@ -272,29 +277,57 @@ void Fluid_Image::write_initializer(fld::io::Code_Writer& f, const char *type_na
   va_end(ap);
 }
 
-void Fluid_Image::write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive) {
-  /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
-   This code calls a function output before by Fluid_Image::write_initializer() */
-  if (img) {
-    f.write_c("%s%s->%s%s( %s() );\n", f.indent(), var, bind ? "bind_" : "", inactive ? "deimage" : "image", function_name_);
+/**
+ \brief Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
+
+ The generated code will call the image initializer function and assign
+ the resulting image to the widget.
+ 
+ \param f Write the C++ code to this file.
+ \param bind If true, use bind_image() instead of image().
+ \param var Name of the Fl_Widget or Fl_Menu_Item to attach the image to.
+ \param inactive If true, use deimage() instead of image().
+ */
+void Image_Asset::write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive) {
+  if (image_) {
+    f.write_c("%s%s->%s%s( %s() );\n", 
+      f.indent(), 
+      var, 
+      bind ? "bind_" : "", 
+      inactive ? "deimage" : "image", 
+      initializer_function_.c_str());
     if (is_animated_gif_)
-      f.write_c("%s((Fl_Anim_GIF_Image*)(%s()))->canvas(%s, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n", f.indent(), function_name_, var);
+      f.write_c("%s((Fl_Anim_GIF_Image*)(%s()))->canvas(%s, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n", 
+        f.indent(), 
+        initializer_function_.c_str(), 
+        var);
   }
 }
 
-void Fluid_Image::write_inline(fld::io::Code_Writer& f, int inactive) {
-  if (img)
-    f.write_c("%s()", function_name_);
+/**
+ \brief Outputs code that calls the image initializer function.
+
+ The generated code calls the image initializer function, loading an image and
+ assigning it to a Fl_Menu_Item.
+
+ \param f Write the C++ code to this file.
+ \param inactive Unused.
+ */
+void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
+  (void)inactive;
+  if (image_) {
+    f.write_c("%s()", initializer_function_.c_str());
+  }
 }
 
 
 ////////////////////////////////////////////////////////////////
 
-static Fluid_Image** images = nullptr; // sorted list
+static Image_Asset** images = nullptr; // sorted list
 static int numimages = 0;
 static int tablesize = 0;
 
-Fluid_Image* Fluid_Image::find(const char *iname) {
+Image_Asset* Image_Asset::find(const char *iname) {
   if (!iname || !*iname) return nullptr;
 
   // first search to see if it exists already:
@@ -302,7 +335,7 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   int b = numimages;
   while (a < b) {
     int c = (a+b)/2;
-    int i = strcmp(iname,images[c]->name_);
+    int i = strcmp(iname,images[c]->filename_.c_str());
     if (i < 0) b = c;
     else if (i > 0) a = c+1;
     else return images[c];
@@ -322,9 +355,9 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   }
   fclose(f);
 
-  Fluid_Image *ret = new Fluid_Image(iname);
+  Image_Asset *ret = new Image_Asset(iname);
 
-  if (!ret->img || !ret->img->w() || !ret->img->h()) {
+  if (!ret->image_ || !ret->image_->w() || !ret->image_->h()) {
     delete ret;
     ret = nullptr;
     if (Fluid.batch_mode)
@@ -339,8 +372,8 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   numimages++;
   if (numimages > tablesize) {
     tablesize = tablesize ? 2*tablesize : 16;
-    if (images) images = (Fluid_Image**)realloc(images, tablesize*sizeof(Fluid_Image*));
-    else images = (Fluid_Image**)malloc(tablesize*sizeof(Fluid_Image*));
+    if (images) images = (Image_Asset**)realloc(images, tablesize*sizeof(Image_Asset*));
+    else images = (Image_Asset**)malloc(tablesize*sizeof(Image_Asset*));
   }
   for (b = numimages-1; b > a; b--) images[b] = images[b-1];
   images[a] = ret;
@@ -348,11 +381,11 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   return ret;
 }
 
-Fluid_Image::Fluid_Image(const char *iname)
+Image_Asset::Image_Asset(const char *iname)
 {
-  name_ = fl_strdup(iname);
-  img = Fl_Shared_Image::get(iname);
-  if (img && iname) {
+  filename_ = iname;
+  image_ = Fl_Shared_Image::get(iname);
+  if (image_ && iname) {
     const char *ext = fl_filename_ext(iname);
     if (fl_ascii_strcasecmp(ext, ".gif")==0) {
       int fc = Fl_Anim_GIF_Image::frame_count(iname);
@@ -361,17 +394,17 @@ Fluid_Image::Fluid_Image(const char *iname)
   }
 }
 
-void Fluid_Image::increment() {
-  ++refcount;
+void Image_Asset::inc_ref() {
+  ++refcount_;
 }
 
-void Fluid_Image::decrement() {
-  --refcount;
-  if (refcount > 0) return;
+void Image_Asset::dec_ref() {
+  --refcount_;
+  if (refcount_ > 0) return;
   delete this;
 }
 
-Fluid_Image::~Fluid_Image() {
+Image_Asset::~Image_Asset() {
   int a;
   if (images) {
     for (a = 0; a<numimages; a++) {
@@ -384,14 +417,13 @@ Fluid_Image::~Fluid_Image() {
       }
     }
   }
-  if (img) img->release();
-  free((void*)name_);
+  if (image_) image_->release();
 }
 
 ////////////////////////////////////////////////////////////////
 
 const char *ui_find_image_name;
-Fluid_Image *ui_find_image(const char *oldname) {
+Image_Asset *ui_find_image(const char *oldname) {
   Fluid.proj.enter_project_dir();
   fl_file_chooser_ok_label("Use Image");
   const char *name = fl_file_chooser("Image?",
@@ -403,7 +435,7 @@ Fluid_Image *ui_find_image(const char *oldname) {
             oldname,1);
   fl_file_chooser_ok_label(nullptr);
   ui_find_image_name = name;
-  Fluid_Image *ret = (name && *name) ? Fluid_Image::find(name) : nullptr;
+  Image_Asset *ret = (name && *name) ? Image_Asset::find(name) : nullptr;
   Fluid.proj.leave_project_dir();
   return ret;
 }

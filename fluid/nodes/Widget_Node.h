@@ -26,7 +26,7 @@
 #define NUM_EXTRA_CODE 4
 
 class Widget_Node;
-class Fluid_Image;
+class Image_Asset;
 
 extern void* const LOAD;
 extern Widget_Node *current_widget; // one of the selected ones
@@ -78,10 +78,10 @@ public:
   int scale_image_w_, scale_image_h_;
   int scale_deimage_w_, scale_deimage_h_;
 
-  Fluid_Image *image;
-  void setimage(Fluid_Image *);
-  Fluid_Image *inactive;
-  void setinactive(Fluid_Image *);
+  Image_Asset *image;
+  void setimage(Image_Asset *);
+  Image_Asset *inactive;
+  void setinactive(Image_Asset *);
 
   Widget_Node();
   Node *make(Strategy strategy) override;

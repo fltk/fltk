@@ -18,7 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
-#include "app/Fluid_Image.h"
+#include "app/Image_Asset.h"
 #include "app/mergeback.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"

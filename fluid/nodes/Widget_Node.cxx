@@ -18,7 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
-#include "app/Fluid_Image.h"
+#include "app/Image_Asset.h"
 #include "app/mergeback.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
@@ -155,13 +155,13 @@ Node *Widget_Node::make(Strategy strategy) {
   return t;
 }
 
-void Widget_Node::setimage(Fluid_Image *i) {
+void Widget_Node::setimage(Image_Asset *i) {
   if (i == image || is_a(ID_Window)) return;
-  if (image) image->decrement();
-  if (i) i->increment();
+  if (image) image->dec_ref();
+  if (i) i->inc_ref();
   image = i;
   if (i) {
-    i->image(o);
+    o->image(i->image());
     if (o->image() && (scale_image_w_ || scale_image_h_)) {
       int iw = scale_image_w_>0 ? scale_image_w_ : o->image()->data_w();
       int ih = scale_image_h_>0 ? scale_image_h_ : o->image()->data_h();
@@ -174,13 +174,13 @@ void Widget_Node::setimage(Fluid_Image *i) {
   redraw();
 }
 
-void Widget_Node::setinactive(Fluid_Image *i) {
+void Widget_Node::setinactive(Image_Asset *i) {
   if (i == inactive || is_a(ID_Window)) return;
-  if (inactive) inactive->decrement();
-  if (i) i->increment();
+  if (inactive) inactive->dec_ref();
+  if (i) i->inc_ref();
   inactive = i;
   if (i) {
-    i->deimage(o);
+    o->deimage(i->image());
     if (o->deimage()) {
       int iw = scale_deimage_w_>0 ? scale_deimage_w_ : o->deimage()->data_w();
       int ih = scale_deimage_h_>0 ? scale_deimage_h_ : o->deimage()->data_h();
@@ -232,11 +232,11 @@ Widget_Node::~Widget_Node() {
   if (tooltip_) free((void*)tooltip_);
   if (image_name_) {
     free((void*)image_name_);
-    if (image) image->decrement();
+    if (image) image->dec_ref();
   }
   if (inactive_name_) {
     free((void*)inactive_name_);
-    if (inactive) inactive->decrement();
+    if (inactive) inactive->dec_ref();
   }
   for (int n=0; n<NUM_EXTRA_CODE; n++) {
     if (extra_code_[n]) free((void*) extra_code_[n]);
@@ -259,12 +259,12 @@ void Widget_Node::tooltip(const char *n) {
 }
 
 void Widget_Node::image_name(const char *n) {
-  setimage(Fluid_Image::find(n));
+  setimage(Image_Asset::find(n));
   storestring(n,image_name_);
 }
 
 void Widget_Node::inactive_name(const char *n) {
-  setinactive(Fluid_Image::find(n));
+  setinactive(Image_Asset::find(n));
   storestring(n,inactive_name_);
 }
 
@@ -2122,7 +2122,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"labeltype")) {
     c = f.read_word();
     if (!strcmp(c,"image")) {
-      Fluid_Image *i = Fluid_Image::find(label());
+      Image_Asset *i = Image_Asset::find(label());
       if (!i) f.read_error("Image file '%s' not found", label());
       else setimage(i);
       image_name(label());

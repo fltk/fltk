@@ -19,7 +19,7 @@
 
 #include "nodes/Node.h"
 
-#include "app/Fluid_Image.h"
+#include "app/Image_Asset.h"
 #ifdef _WIN32
 #include "tools/ExternalCodeEditor_WIN32.h"
 #else
