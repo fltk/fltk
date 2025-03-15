@@ -40,7 +40,7 @@ decl {class Fl_Flex;} {public global
 decl {\#include "Fluid.h"} {private global
 }
 
-decl {\#include "app/Fd_Snap_Action.h"} {private global
+decl {\#include "app/Snap_Action.h"} {private global
 }
 
 decl {\#include "app/Image_Asset.h"} {private global
@@ -49,7 +49,7 @@ decl {\#include "app/Image_Asset.h"} {private global
 decl {\#include "proj/undo.h"} {private global
 }
 
-decl {\#include "nodes/Widget_Node.h"} {private global
+decl {\#include "nodes/Window_Node.h"} {private global
 }
 
 decl {\#include "nodes/Grid_Node.h"} {private global
@@ -87,8 +87,6 @@ extern fld::widget::Formula_Input_Vars widget_vars[];} {private global
 }
 
 decl {extern int numselected;
-extern Fd_Layout_Preset *layout;
-extern Fd_Layout_List g_layout_list;
 extern Fl_Menu_Item boxmenu[];} {private global
 }
 
@@ -1716,7 +1714,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
 } else {
   int mod = 0;
   int n = o->value();
-  if (n <= 0) n = layout->labelfont;
+  if (n <= 0) n = Fluid.proj.layout->labelfont;
   if (n <= 0) n = FL_HELVETICA;
   for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
     q->o->labelfont(n);
@@ -1736,7 +1734,7 @@ if (v == LOAD) {
 } else {
   int mod = 0;
   n = int(o->value());
-  if (n <= 0) n = layout->labelsize;
+  if (n <= 0) n = Fluid.proj.layout->labelsize;
   for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
     q->o->labelsize(n);
     q->redraw();
@@ -1947,7 +1945,7 @@ if (v == LOAD) {
 } else {
   int mod = 0;
   n = (Fl_Font)o->value();
-  if (n <= 0) n = layout->textfont;
+  if (n <= 0) n = Fluid.proj.layout->textfont;
   for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
     q->textstuff(1,n,s,c);
     q->o->redraw();
@@ -1967,8 +1965,8 @@ if (v == LOAD) {
 } else {
   int mod = 0;
   s = int(o->value());
-  if (s <= 0) s = layout->textsize;
-  if (s <= 0) s = layout->labelsize;
+  if (s <= 0) s = Fluid.proj.layout->textsize;
+  if (s <= 0) s = Fluid.proj.layout->labelsize;
   for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
     q->textstuff(2,n,s,c);
     q->o->redraw();

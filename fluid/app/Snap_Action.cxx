@@ -14,11 +14,13 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 
+#include "Fluid.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "nodes/Group_Node.h"
+#include "nodes/Window_Node.h"
 #include "panels/settings_panel.h"
 
 #include <FL/fl_draw.H>
@@ -33,6 +35,7 @@
 #include <algorithm>
 
 using namespace fld;
+using namespace fld::app;
 
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
@@ -40,10 +43,10 @@ using namespace fld;
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
-int Fd_Snap_Action::eex = 0;
-int Fd_Snap_Action::eey = 0;
+int Snap_Action::eex = 0;
+int Snap_Action::eey = 0;
 
-static Fd_Layout_Preset fltk_app = {
+static Layout_Preset fltk_app = {
   15, 15, 15, 15, 0, 0, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
   25, 25,               // tabs:      t, b
@@ -51,7 +54,7 @@ static Fd_Layout_Preset fltk_app = {
   20,  4, 8,            // widget_y:  min, inc, gap
   0, 14, -1, 14          // labelfont/size, textfont/size
 };
-static Fd_Layout_Preset fltk_dlg = {
+static Layout_Preset fltk_dlg = {
   10, 10, 10, 10, 0, 0, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
   20, 20,               // tabs:      t, b
@@ -59,7 +62,7 @@ static Fd_Layout_Preset fltk_dlg = {
   20,  5, 5,            // widget_y:  min, inc, gap
   0, 11, -1, 11          // labelfont/size, textfont/size
 };
-static Fd_Layout_Preset fltk_tool = {
+static Layout_Preset fltk_tool = {
   10, 10, 10, 10, 0, 0, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
   18, 18,               // tabs:      t, b
@@ -68,7 +71,7 @@ static Fd_Layout_Preset fltk_tool = {
   0, 10, -1, 10          // labelfont/size, textfont/size
 };
 
-static Fd_Layout_Preset grid_app = {
+static Layout_Preset grid_app = {
   12, 12, 12, 12, 12, 12, // window:    l, r, t, b, gx, gy
   12, 12, 12, 12, 12, 12, // group:     l, r, t, b, gx, gy
   24, 24,                 // tabs:      t, b
@@ -77,7 +80,7 @@ static Fd_Layout_Preset grid_app = {
   0, 14, -1, 14            // labelfont/size, textfont/size
 };
 
-static Fd_Layout_Preset grid_dlg = {
+static Layout_Preset grid_dlg = {
   10, 10, 10, 10, 10, 10, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 10, 10, // group:     l, r, t, b, gx, gy
   20, 20,                 // tabs:      t, b
@@ -86,7 +89,7 @@ static Fd_Layout_Preset grid_dlg = {
   0, 12, -1, 12            // labelfont/size, textfont/size
 };
 
-static Fd_Layout_Preset grid_tool = {
+static Layout_Preset grid_tool = {
   8, 8, 8, 8, 8, 8, // window:    l, r, t, b, gx, gy
   8, 8, 8, 8, 8, 8, // group:     l, r, t, b, gx, gy
   16, 16,           // tabs:      t, b
@@ -95,7 +98,9 @@ static Fd_Layout_Preset grid_tool = {
   0, 10, -1, 10      // labelfont/size, textfont/size
 };
 
-static Fd_Layout_Suite static_suite_list[] = {
+Layout_Preset *fld::app::default_layout_preset = &fltk_app;
+
+static Layout_Suite static_suite_list[] = {
   { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, fld::Tool_Store::INTERNAL },
   { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, fld::Tool_Store::INTERNAL }
 };
@@ -112,8 +117,6 @@ static Fl_Menu_Item static_choice_menu[] = {
   { nullptr }
 };
 
-Fd_Layout_Preset *layout = &fltk_app;
-Fd_Layout_List g_layout_list;
 
 // ---- Callbacks ------------------------------------------------------ MARK: -
 
@@ -124,17 +127,17 @@ void layout_suite_marker(Fl_Widget *, void *) {
 void select_layout_suite_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
   assert(index >= 0);
-  assert(index < g_layout_list.list_size_);
-  g_layout_list.current_suite(index);
-  g_layout_list.update_dialogs();
+  assert(index < Fluid.layout_list.list_size_);
+  Fluid.layout_list.current_suite(index);
+  Fluid.layout_list.update_dialogs();
 }
 
 void select_layout_preset_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
   assert(index >= 0);
   assert(index < 3);
-  g_layout_list.current_preset(index);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.current_preset(index);
+  Fluid.layout_list.update_dialogs();
 }
 
 void edit_layout_preset_cb(Fl_Button *w, long user_data) {
@@ -142,19 +145,19 @@ void edit_layout_preset_cb(Fl_Button *w, long user_data) {
   assert(index >= 0);
   assert(index < 3);
   if (user_data == (long)(fl_intptr_t)LOAD) {
-    w->value(g_layout_list.current_preset() == index);
+    w->value(Fluid.layout_list.current_preset() == index);
   } else {
-    g_layout_list.current_preset(index);
-    g_layout_list.update_dialogs();
+    Fluid.layout_list.current_preset(index);
+    Fluid.layout_list.update_dialogs();
   }
 }
 
-// ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
+// ---- Layout_Suite ------------------------------------------------ MARK: -
 
 /**
  Write presets to a Preferences database.
  */
-void Fd_Layout_Preset::write(Fl_Preferences &prefs) {
+void Layout_Preset::write(Fl_Preferences &prefs) {
   assert(this);
   Fl_Preferences p_win(prefs, "Window");
   p_win.set("left_margin", left_window_margin);
@@ -194,7 +197,7 @@ void Fd_Layout_Preset::write(Fl_Preferences &prefs) {
 /**
  Read presets from a Preferences database.
  */
-void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
+void Layout_Preset::read(Fl_Preferences &prefs) {
   assert(this);
   Fl_Preferences p_win(prefs, "Window");
   p_win.get("left_margin", left_window_margin, 15);
@@ -234,7 +237,7 @@ void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
 /**
  Write presets to an .fl project file.
  */
-void Fd_Layout_Preset::write(fld::io::Project_Writer *out) {
+void Layout_Preset::write(fld::io::Project_Writer *out) {
   out->write_string("    preset { 1\n"); // preset format version
   out->write_string("      %d %d %d %d %d %d\n",
                     left_window_margin, right_window_margin,
@@ -256,7 +259,7 @@ void Fd_Layout_Preset::write(fld::io::Project_Writer *out) {
 /**
  Read presets from an .fl project file.
  */
-void Fd_Layout_Preset::read(fld::io::Project_Reader *in) {
+void Layout_Preset::read(fld::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -312,7 +315,7 @@ void Fd_Layout_Preset::read(fld::io::Project_Reader *in) {
 /**
  Return the preferred text size, but make sure it's not 0.
  */
-int Fd_Layout_Preset::textsize_not_null() {
+int Layout_Preset::textsize_not_null() {
   // try the user selected text size
   if (textsize > 0) return textsize;
   // if the user did not set one, try the label size
@@ -322,12 +325,12 @@ int Fd_Layout_Preset::textsize_not_null() {
 }
 
 
-// ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
+// ---- Layout_Suite ------------------------------------------------ MARK: -
 
 /**
  Write a presets suite to a Preferences database.
  */
-void Fd_Layout_Suite::write(Fl_Preferences &prefs) {
+void Layout_Suite::write(Fl_Preferences &prefs) {
   assert(this);
   assert(name_);
   prefs.set("name", name_);
@@ -341,7 +344,7 @@ void Fd_Layout_Suite::write(Fl_Preferences &prefs) {
 /**
  Read a presets suite from a Preferences database.
  */
-void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
+void Layout_Suite::read(Fl_Preferences &prefs) {
   assert(this);
   for (int i = 0; i < 3; ++i) {
     Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
@@ -353,7 +356,7 @@ void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
 /**
  Write a presets suite to an .fl project file.
  */
-void Fd_Layout_Suite::write(fld::io::Project_Writer *out) {
+void Layout_Suite::write(fld::io::Project_Writer *out) {
   out->write_string("  suite {\n");
   out->write_string("    name "); out->write_word(name_); out->write_string("\n");
   for (int i = 0; i < 3; ++i) {
@@ -365,7 +368,7 @@ void Fd_Layout_Suite::write(fld::io::Project_Writer *out) {
 /**
  Read a presets suite from an .fl project file.
  */
-void Fd_Layout_Suite::read(fld::io::Project_Reader *in) {
+void Layout_Suite::read(fld::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -393,7 +396,7 @@ void Fd_Layout_Suite::read(fld::io::Project_Reader *in) {
  \brief Update the menu_label to show a symbol representing the storage location.
  Also updates the FLUID user interface.
  */
-void Fd_Layout_Suite::update_label() {
+void Layout_Suite::update_label() {
   std::string sym;
   switch (storage_) {
     case fld::Tool_Store::INTERNAL: sym.assign("@fd_beaker  "); break;
@@ -405,14 +408,14 @@ void Fd_Layout_Suite::update_label() {
   if (menu_label)
     ::free(menu_label);
   menu_label = fl_strdup(sym.c_str());
-  g_layout_list.update_menu_labels();
+  Fluid.layout_list.update_menu_labels();
 }
 
 /**
  \brief Update the Suite name and the Suite menu_label.
  Also updates the FLUID user interface.
  */
-void Fd_Layout_Suite::name(const char *n) {
+void Layout_Suite::name(const char *n) {
   if (name_)
     ::free(name_);
   if (n)
@@ -425,7 +428,7 @@ void Fd_Layout_Suite::name(const char *n) {
 /**
  Initialize the class for first use.
  */
-void Fd_Layout_Suite::init() {
+void Layout_Suite::init() {
   name_ = nullptr;
   menu_label = nullptr;
   layout[0] = layout[1] = layout[2] = nullptr;
@@ -435,7 +438,7 @@ void Fd_Layout_Suite::init() {
 /**
  Free all allocated resources.
  */
-Fd_Layout_Suite::~Fd_Layout_Suite() {
+Layout_Suite::~Layout_Suite() {
   if (storage_ == fld::Tool_Store::INTERNAL) return;
   if (name_) ::free(name_);
   for (int i = 0; i < 3; ++i) {
@@ -443,7 +446,7 @@ Fd_Layout_Suite::~Fd_Layout_Suite() {
   }
 }
 
-// ---- Fd_Layout_List ------------------------------------------------- MARK: -
+// ---- Layout_List ------------------------------------------------- MARK: -
 
 /**
  Draw a little FLUID beaker symbol.
@@ -586,7 +589,7 @@ void fd_file(Fl_Color c) {
 /**
  Instantiate the class that holds a list of all layouts and manages the UI.
  */
-Fd_Layout_List::Fd_Layout_List()
+Layout_List::Layout_List()
 : main_menu_(main_layout_submenu_),
   choice_menu_(static_choice_menu),
   list_(static_suite_list),
@@ -605,15 +608,15 @@ Fd_Layout_List::Fd_Layout_List()
 /**
  Release allocated resources.
  */
-Fd_Layout_List::~Fd_Layout_List() {
+Layout_List::~Layout_List() {
   assert(this);
   if (!list_is_static_) {
     ::free(main_menu_);
     ::free(choice_menu_);
     for (int i = 0; i < list_size_; i++) {
-      Fd_Layout_Suite &suite = list_[i];
+      Layout_Suite &suite = list_[i];
       if (suite.storage_ != fld::Tool_Store::INTERNAL)
-        suite.~Fd_Layout_Suite();
+        suite.~Layout_Suite();
     }
     ::free(list_);
   }
@@ -622,7 +625,7 @@ Fd_Layout_List::~Fd_Layout_List() {
 /**
  Update the Setting dialog and menus to reflect the current Layout selection state.
  */
-void Fd_Layout_List::update_dialogs() {
+void Layout_List::update_dialogs() {
   static Fl_Menu_Item *preset_menu = nullptr;
   if (!preset_menu) {
     preset_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(select_layout_preset_cb);
@@ -633,8 +636,8 @@ void Fd_Layout_List::update_dialogs() {
   assert(current_suite_ < list_size_);
   assert(current_preset_ >= 0 );
   assert(current_preset_ < 3);
-  layout = list_[current_suite_].layout[current_preset_];
-  assert(layout);
+  Fluid.proj.layout = list_[current_suite_].layout[current_preset_];
+  assert(Fluid.proj.layout);
   if (w_settings_layout_tab) {
     w_settings_layout_tab->do_callback(w_settings_layout_tab, LOAD);
     layout_choice->redraw();
@@ -646,7 +649,7 @@ void Fd_Layout_List::update_dialogs() {
 /**
  Refresh the label pointers for both pulldown menus.
  */
-void Fd_Layout_List::update_menu_labels() {
+void Layout_List::update_menu_labels() {
   for (int i=0; i<list_size_; i++) {
     main_menu_[i].label(list_[i].menu_label);
     choice_menu_[i].label(list_[i].menu_label);
@@ -656,7 +659,7 @@ void Fd_Layout_List::update_menu_labels() {
 /**
  Load all user layouts from the FLUID user preferences.
  */
-int Fd_Layout_List::load(const std::string &filename) {
+int Layout_List::load(const std::string &filename) {
   remove_all(fld::Tool_Store::FILE);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
   read(prefs, fld::Tool_Store::FILE);
@@ -666,7 +669,7 @@ int Fd_Layout_List::load(const std::string &filename) {
 /**
  Save all user layouts to the FLUID user preferences.
  */
-int Fd_Layout_List::save(const std::string &filename) {
+int Layout_List::save(const std::string &filename) {
   assert(this);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
@@ -677,14 +680,14 @@ int Fd_Layout_List::save(const std::string &filename) {
 /**
  Write Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
+void Layout_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   prefs_list.clear();
   prefs_list.set("current_suite", list_[current_suite()].name_);
   prefs_list.set("current_preset", current_preset());
   int n = 0;
   for (int i = 0; i < list_size_; ++i) {
-    Fd_Layout_Suite &suite = list_[i];
+    Layout_Suite &suite = list_[i];
     if (suite.storage_ == storage) {
       Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(n++));
       suite.write(prefs_suite);
@@ -695,7 +698,7 @@ void Fd_Layout_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
 /**
  Read Suite and Layout selection and selected layout data to Preferences database.
  */
-void Fd_Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
+void Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   std::string cs;
   int cp = 0;
@@ -720,7 +723,7 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
 /**
  Write Suite and Layout selection and project layout data to an .fl project file.
  */
-void Fd_Layout_List::write(fld::io::Project_Writer *out) {
+void Layout_List::write(fld::io::Project_Writer *out) {
   // Don't write the Snap field if no custom layout was used
   if ((current_suite()==0) && (current_preset()==0)) {
     int nSuite = 0;
@@ -733,7 +736,7 @@ void Fd_Layout_List::write(fld::io::Project_Writer *out) {
   out->write_string("  current_suite "); out->write_word(list_[current_suite()].name_); out->write_string("\n");
   out->write_string("  current_preset %d\n", current_preset());
   for (int i=0; i<list_size_; i++) {
-    Fd_Layout_Suite &suite = list_[i];
+    Layout_Suite &suite = list_[i];
     if (suite.storage_ == fld::Tool_Store::PROJECT)
       suite.write(out);
   }
@@ -743,7 +746,7 @@ void Fd_Layout_List::write(fld::io::Project_Writer *out) {
 /**
  Read Suite and Layout selection and project layout data from an .fl project file.
  */
-void Fd_Layout_List::read(fld::io::Project_Reader *in) {
+void Layout_List::read(fld::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -780,11 +783,11 @@ void Fd_Layout_List::read(fld::io::Project_Reader *in) {
  Set the current Suite.
  \param[in] ix index into list of suites
  */
-void Fd_Layout_List::current_suite(int ix) {
+void Layout_List::current_suite(int ix) {
   assert(ix >= 0);
   assert(ix < list_size_);
   current_suite_ = ix;
-  layout = list_[current_suite_].layout[current_preset_];
+  Fluid.proj.layout = list_[current_suite_].layout[current_preset_];
 }
 
 /**
@@ -792,10 +795,10 @@ void Fd_Layout_List::current_suite(int ix) {
  \param[in] arg_name name of the selected suite
  \return if no name is given or the name is not found, keep the current suite selected
  */
-void Fd_Layout_List::current_suite(std::string arg_name) {
+void Layout_List::current_suite(std::string arg_name) {
   if (arg_name.empty()) return;
   for (int i = 0; i < list_size_; ++i) {
-    Fd_Layout_Suite &suite = list_[i];
+    Layout_Suite &suite = list_[i];
     if (suite.name_ && (strcmp(suite.name_, arg_name.c_str()) == 0)) {
       current_suite(i);
       break;
@@ -807,17 +810,17 @@ void Fd_Layout_List::current_suite(std::string arg_name) {
  Select a Preset within the current Suite.
  \param[in] ix 0 = application, 1 = dialog, 2 = toolbox
  */
-void Fd_Layout_List::current_preset(int ix) {
+void Layout_List::current_preset(int ix) {
   assert(ix >= 0);
   assert(ix < 3);
   current_preset_ = ix;
-  layout = list_[current_suite_].layout[current_preset_];
+  Fluid.proj.layout = list_[current_suite_].layout[current_preset_];
 }
 
 /**
  Allocate enough space for n entries in the list.
  */
-void Fd_Layout_List::capacity(int n) {
+void Layout_List::capacity(int n) {
   static Fl_Menu_Item *suite_menu = nullptr;
   if (!suite_menu)
     suite_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(layout_suite_marker);
@@ -825,7 +828,7 @@ void Fd_Layout_List::capacity(int n) {
   int old_n = list_size_;
   int i;
 
-  Fd_Layout_Suite *new_list = (Fd_Layout_Suite*)::calloc(n, sizeof(Fd_Layout_Suite));
+  Layout_Suite *new_list = (Layout_Suite*)::calloc(n, sizeof(Layout_Suite));
   for (i = 0; i < old_n; i++)
     new_list[i] = list_[i];
   if (!list_is_static_) ::free(list_);
@@ -853,18 +856,18 @@ void Fd_Layout_List::capacity(int n) {
  \brief Clone the currently selected suite and append it to the list.
  Selects the new layout and updates the UI.
  */
-int Fd_Layout_List::add(const char *name) {
+int Layout_List::add(const char *name) {
   if (list_size_ == list_capacity_) {
     capacity(list_capacity_ * 2);
   }
   int n = list_size_;
-  Fd_Layout_Suite &old_suite = list_[current_suite_];
-  Fd_Layout_Suite &new_suite = list_[n];
+  Layout_Suite &old_suite = list_[current_suite_];
+  Layout_Suite &new_suite = list_[n];
   new_suite.init();
   new_suite.name(name);
   for (int i=0; i<3; ++i) {
-    new_suite.layout[i] = new Fd_Layout_Preset;
-    ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
+    new_suite.layout[i] = new Layout_Preset;
+    ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Layout_Preset));
   }
   fld::Tool_Store new_storage = old_suite.storage_;
   if (new_storage == fld::Tool_Store::INTERNAL)
@@ -883,7 +886,7 @@ int Fd_Layout_List::add(const char *name) {
 /**
  Rename the current Suite.
  */
-void Fd_Layout_List::rename(const char *name) {
+void Layout_List::rename(const char *name) {
   int n = current_suite();
   list_[n].name(name);
   main_menu_[n].label(list_[n].menu_label);
@@ -894,7 +897,7 @@ void Fd_Layout_List::rename(const char *name) {
  Remove the given suite.
  \param[in] ix index into list of suites
  */
-void Fd_Layout_List::remove(int ix) {
+void Layout_List::remove(int ix) {
   int tail = list_size_-ix-1;
   if (tail) {
     for (int i = ix; i < list_size_-1; i++)
@@ -911,7 +914,7 @@ void Fd_Layout_List::remove(int ix) {
  Remove all Suites that use the given storage attribute.
  \param[in] storage storage attribute, see fld::Tool_Store::INTERNAL, etc.
  */
-void Fd_Layout_List::remove_all(fld::Tool_Store storage) {
+void Layout_List::remove_all(fld::Tool_Store storage) {
   for (int i=list_size_-1; i>=0; --i) {
     if (list_[i].storage_ == storage)
       remove(i);
@@ -937,25 +940,25 @@ static int nearest(int x, int left, int grid, int right=0x7fff) {
   return grid_x;
 }
 
-static bool in_window(Fd_Snap_Data &d) {
+static bool in_window(Snap_Data &d) {
   return (d.wgt && d.wgt->parent == d.win);
 }
 
-static bool in_group(Fd_Snap_Data &d) {
+static bool in_group(Snap_Data &d) {
   return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(ID_Group) && d.wgt->parent != d.win);
 }
 
-static bool in_tabs(Fd_Snap_Data &d) {
+static bool in_tabs(Snap_Data &d) {
   return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(ID_Tabs));
 }
 
-static Fl_Group *parent(Fd_Snap_Data &d) {
+static Fl_Group *parent(Snap_Data &d) {
   return (d.wgt->o->parent());
 }
 
-// ---- Fd_Snap_Action ------------------------------------------------- MARK: -
+// ---- Snap_Action ------------------------------------------------- MARK: -
 
-/** \class Fd_Snap_Action
+/** \class Snap_Action
 
  When a user drags one or more widgets, snap actions can be defined that provide
  hints if a preferred widget position or size is nearby. The user's motion is
@@ -980,7 +983,7 @@ static Fl_Group *parent(Fd_Snap_Data &d) {
  \return -1 if this point is closer than any previous check, and this is the
     new distance to beat.
  */
-int Fd_Snap_Action::check_x_(Fd_Snap_Data &d, int x_ref, int x_snap) {
+int Snap_Action::check_x_(Snap_Data &d, int x_ref, int x_snap) {
   int dd = x_ref + d.dx - x_snap;
   int d2 = abs(dd);
   if (d2 > d.x_dist) return 1;
@@ -993,9 +996,9 @@ int Fd_Snap_Action::check_x_(Fd_Snap_Data &d, int x_ref, int x_snap) {
 
 /**
  \brief Check if a snap action has reached a preferred y position.
- \see Fd_Snap_Action::check_x_(Fd_Snap_Data &d, int x_ref, int x_snap)
+ \see Snap_Action::check_x_(Snap_Data &d, int x_ref, int x_snap)
  */
-int Fd_Snap_Action::check_y_(Fd_Snap_Data &d, int y_ref, int y_snap) {
+int Snap_Action::check_y_(Snap_Data &d, int y_ref, int y_snap) {
   int dd = y_ref + d.dy - y_snap;
   int d2 = abs(dd);
   if (d2 > d.y_dist) return 1;
@@ -1008,9 +1011,9 @@ int Fd_Snap_Action::check_y_(Fd_Snap_Data &d, int y_ref, int y_snap) {
 
 /**
  \brief Check if a snap action has reached a preferred x and y position.
- \see Fd_Snap_Action::check_x_(Fd_Snap_Data &d, int x_ref, int x_snap)
+ \see Snap_Action::check_x_(Snap_Data &d, int x_ref, int x_snap)
  */
-void Fd_Snap_Action::check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap) {
+void Snap_Action::check_x_y_(Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap) {
   int ddx = x_ref + d.dx - x_snap;
   int d2x = abs(ddx);
   int ddy = y_ref + d.dy - y_snap;
@@ -1031,7 +1034,7 @@ void Fd_Snap_Action::check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_re
  should be drawn.
  \param[inout] d current event data
  */
-bool Fd_Snap_Action::matches(Fd_Snap_Data &d) {
+bool Snap_Action::matches(Snap_Data &d) {
   switch (type) {
     case 1: return (d.drag & mask) && (eex == ex) && (d.dx == dx);
     case 2: return (d.drag & mask) && (eey == ey) && (d.dy == dy);
@@ -1044,7 +1047,7 @@ bool Fd_Snap_Action::matches(Fd_Snap_Data &d) {
  \brief Run through all possible snap actions and store the winning coordinates in eex and eey.
  \param[inout] d current event data
  */
-void Fd_Snap_Action::check_all(Fd_Snap_Data &data) {
+void Snap_Action::check_all(Snap_Data &data) {
   for (int i=0; list[i]; i++) {
     if (list[i]->mask & data.drag)
       list[i]->check(data);
@@ -1060,7 +1063,7 @@ void Fd_Snap_Action::check_all(Fd_Snap_Data &data) {
  coordinate, all of them will be drawn.
  \param[inout] d current event data
  */
-void Fd_Snap_Action::draw_all(Fd_Snap_Data &data) {
+void Snap_Action::draw_all(Snap_Data &data) {
   for (int i=0; list[i]; i++) {
     if (list[i]->matches(data))
       list[i]->draw(data);
@@ -1068,7 +1071,8 @@ void Fd_Snap_Action::draw_all(Fd_Snap_Data &data) {
 }
 
 /** Return a sensible step size for resizing a widget. */
-void Fd_Snap_Action::get_resize_stepsize(int &x_step, int &y_step) {
+void Snap_Action::get_resize_stepsize(int &x_step, int &y_step) {
+  auto layout = Fluid.proj.layout;
   if ((layout->widget_inc_w > 1) && (layout->widget_inc_h > 1)) {
     x_step = layout->widget_inc_w;
     y_step = layout->widget_inc_h;
@@ -1082,7 +1086,8 @@ void Fd_Snap_Action::get_resize_stepsize(int &x_step, int &y_step) {
 }
 
 /** Return a sensible step size for moving a widget. */
-void Fd_Snap_Action::get_move_stepsize(int &x_step, int &y_step) {
+void Snap_Action::get_move_stepsize(int &x_step, int &y_step) {
+  auto layout = Fluid.proj.layout;
   if ((layout->group_grid_x > 1) && (layout->group_grid_y > 1)) {
     x_step = layout->group_grid_x;
     y_step = layout->group_grid_y;
@@ -1096,7 +1101,8 @@ void Fd_Snap_Action::get_move_stepsize(int &x_step, int &y_step) {
 }
 
 /** Fix the given size to the same or next bigger snap position. */
-void Fd_Snap_Action::better_size(int &w, int &h) {
+void Snap_Action::better_size(int &w, int &h) {
+  auto layout = Fluid.proj.layout;
   int x_min = 1, y_min = 1, x_inc = 1, y_inc = 1;
   get_resize_stepsize(x_inc, y_inc);
   if (x_inc < 1) x_inc = 1;
@@ -1121,7 +1127,7 @@ void Fd_Snap_Action::better_size(int &w, int &h) {
 /**
  Base class for all actions that drag the left side or the entire widget.
  */
-class Fd_Snap_Left : public Fd_Snap_Action {
+class Fd_Snap_Left : public Snap_Action {
 public:
   Fd_Snap_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
 };
@@ -1129,7 +1135,7 @@ public:
 /**
  Base class for all actions that drag the right side or the entire widget.
  */
-class Fd_Snap_Right : public Fd_Snap_Action {
+class Fd_Snap_Right : public Snap_Action {
 public:
   Fd_Snap_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
 };
@@ -1137,7 +1143,7 @@ public:
 /**
  Base class for all actions that drag the top side or the entire widget.
  */
-class Fd_Snap_Top : public Fd_Snap_Action {
+class Fd_Snap_Top : public Snap_Action {
 public:
   Fd_Snap_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
 };
@@ -1145,7 +1151,7 @@ public:
 /**
  Base class for all actions that drag the bottom side or the entire widget.
  */
-class Fd_Snap_Bottom : public Fd_Snap_Action {
+class Fd_Snap_Bottom : public Snap_Action {
 public:
   Fd_Snap_Bottom() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
 };
@@ -1157,8 +1163,8 @@ public:
  */
 class Fd_Snap_Left_Window_Edge : public Fd_Snap_Left {
 public:
-  void check(Fd_Snap_Data &d) override { clr(); check_x_(d, d.bx, 0); }
-  void draw(Fd_Snap_Data &d) override { draw_left_brace(d.win->o); };
+  void check(Snap_Data &d) override { clr(); check_x_(d, d.bx, 0); }
+  void draw(Snap_Data &d) override { draw_left_brace(d.win->o); };
 };
 Fd_Snap_Left_Window_Edge snap_left_window_edge;
 
@@ -1167,8 +1173,8 @@ Fd_Snap_Left_Window_Edge snap_left_window_edge;
  */
 class Fd_Snap_Right_Window_Edge : public Fd_Snap_Right {
 public:
-  void check(Fd_Snap_Data &d) override { clr(); check_x_(d, d.br, d.win->o->w()); }
-  void draw(Fd_Snap_Data &d) override { draw_right_brace(d.win->o); };
+  void check(Snap_Data &d) override { clr(); check_x_(d, d.br, d.win->o->w()); }
+  void draw(Snap_Data &d) override { draw_right_brace(d.win->o); };
 };
 Fd_Snap_Right_Window_Edge snap_right_window_edge;
 
@@ -1177,8 +1183,8 @@ Fd_Snap_Right_Window_Edge snap_right_window_edge;
  */
 class Fd_Snap_Top_Window_Edge : public Fd_Snap_Top {
 public:
-  void check(Fd_Snap_Data &d) override { clr(); check_y_(d, d.by, 0); }
-  void draw(Fd_Snap_Data &d) override { draw_top_brace(d.win->o); };
+  void check(Snap_Data &d) override { clr(); check_y_(d, d.by, 0); }
+  void draw(Snap_Data &d) override { draw_top_brace(d.win->o); };
 };
 Fd_Snap_Top_Window_Edge snap_top_window_edge;
 
@@ -1187,8 +1193,8 @@ Fd_Snap_Top_Window_Edge snap_top_window_edge;
  */
 class Fd_Snap_Bottom_Window_Edge : public Fd_Snap_Bottom {
 public:
-  void check(Fd_Snap_Data &d) override { clr(); check_y_(d, d.bt, d.win->o->h()); }
-  void draw(Fd_Snap_Data &d) override { draw_bottom_brace(d.win->o); };
+  void check(Snap_Data &d) override { clr(); check_y_(d, d.bt, d.win->o->h()); }
+  void draw(Snap_Data &d) override { draw_bottom_brace(d.win->o); };
 };
 Fd_Snap_Bottom_Window_Edge snap_bottom_window_edge;
 
@@ -1197,11 +1203,11 @@ Fd_Snap_Bottom_Window_Edge snap_bottom_window_edge;
  */
 class Fd_Snap_Left_Window_Margin : public Fd_Snap_Left {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_window(d)) check_x_(d, d.bx, layout->left_window_margin);
+    if (in_window(d)) check_x_(d, d.bx, Fluid.proj.layout->left_window_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_h_arrow(d.bx, (d.by+d.bt)/2, 0);
   };
 };
@@ -1209,11 +1215,11 @@ Fd_Snap_Left_Window_Margin snap_left_window_margin;
 
 class Fd_Snap_Right_Window_Margin : public Fd_Snap_Right {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_window(d)) check_x_(d, d.br, d.win->o->w()-layout->right_window_margin);
+    if (in_window(d)) check_x_(d, d.br, d.win->o->w()-Fluid.proj.layout->right_window_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_h_arrow(d.br, (d.by+d.bt)/2, d.win->o->w()-1);
   };
 };
@@ -1221,11 +1227,11 @@ Fd_Snap_Right_Window_Margin snap_right_window_margin;
 
 class Fd_Snap_Top_Window_Margin : public Fd_Snap_Top {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_window(d)) check_y_(d, d.by, layout->top_window_margin);
+    if (in_window(d)) check_y_(d, d.by, Fluid.proj.layout->top_window_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_v_arrow((d.bx+d.br)/2, d.by, 0);
   };
 };
@@ -1233,11 +1239,11 @@ Fd_Snap_Top_Window_Margin snap_top_window_margin;
 
 class Fd_Snap_Bottom_Window_Margin : public Fd_Snap_Bottom {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_window(d)) check_y_(d, d.bt, d.win->o->h()-layout->bottom_window_margin);
+    if (in_window(d)) check_y_(d, d.bt, d.win->o->h()-Fluid.proj.layout->bottom_window_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_v_arrow((d.bx+d.br)/2, d.bt, d.win->o->h()-1);
   };
 };
@@ -1250,11 +1256,11 @@ Fd_Snap_Bottom_Window_Margin snap_bottom_window_margin;
  */
 class Fd_Snap_Left_Group_Edge : public Fd_Snap_Left {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
     if (in_group(d)) check_x_(d, d.bx, parent(d)->x());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_left_brace(parent(d));
   };
 };
@@ -1262,11 +1268,11 @@ Fd_Snap_Left_Group_Edge snap_left_group_edge;
 
 class Fd_Snap_Right_Group_Edge : public Fd_Snap_Right {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
     if (in_group(d)) check_x_(d, d.br, parent(d)->x() + parent(d)->w());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_right_brace(parent(d));
   };
 };
@@ -1274,11 +1280,11 @@ Fd_Snap_Right_Group_Edge snap_right_group_edge;
 
 class Fd_Snap_Top_Group_Edge : public Fd_Snap_Top {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
     if (in_group(d)) check_y_(d, d.by, parent(d)->y());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_top_brace(parent(d));
   };
 };
@@ -1286,11 +1292,11 @@ Fd_Snap_Top_Group_Edge snap_top_group_edge;
 
 class Fd_Snap_Bottom_Group_Edge : public Fd_Snap_Bottom {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
     if (in_group(d)) check_y_(d, d.bt, parent(d)->y() + parent(d)->h());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_bottom_brace(parent(d));
   };
 };
@@ -1302,11 +1308,11 @@ Fd_Snap_Bottom_Group_Edge snap_bottom_group_edge;
  */
 class Fd_Snap_Left_Group_Margin : public Fd_Snap_Left {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_group(d)) check_x_(d, d.bx, parent(d)->x() + layout->left_group_margin);
+    if (in_group(d)) check_x_(d, d.bx, parent(d)->x() + Fluid.proj.layout->left_group_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_left_brace(parent(d));
     draw_h_arrow(d.bx, (d.by+d.bt)/2, parent(d)->x());
   };
@@ -1315,11 +1321,11 @@ Fd_Snap_Left_Group_Margin snap_left_group_margin;
 
 class Fd_Snap_Right_Group_Margin : public Fd_Snap_Right {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_group(d)) check_x_(d, d.br, parent(d)->x()+parent(d)->w()-layout->right_group_margin);
+    if (in_group(d)) check_x_(d, d.br, parent(d)->x()+parent(d)->w()-Fluid.proj.layout->right_group_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_right_brace(parent(d));
     draw_h_arrow(d.br, (d.by+d.bt)/2, parent(d)->x()+parent(d)->w()-1);
   };
@@ -1328,11 +1334,11 @@ Fd_Snap_Right_Group_Margin snap_right_group_margin;
 
 class Fd_Snap_Top_Group_Margin : public Fd_Snap_Top {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_group(d) && !in_tabs(d)) check_y_(d, d.by, parent(d)->y()+layout->top_group_margin);
+    if (in_group(d) && !in_tabs(d)) check_y_(d, d.by, parent(d)->y()+Fluid.proj.layout->top_group_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_top_brace(parent(d));
     draw_v_arrow((d.bx+d.br)/2, d.by, parent(d)->y());
   };
@@ -1341,11 +1347,11 @@ Fd_Snap_Top_Group_Margin snap_top_group_margin;
 
 class Fd_Snap_Bottom_Group_Margin : public Fd_Snap_Bottom {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_group(d) && !in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-layout->bottom_group_margin);
+    if (in_group(d) && !in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-Fluid.proj.layout->bottom_group_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_bottom_brace(parent(d));
     draw_v_arrow((d.bx+d.br)/2, d.bt, parent(d)->y()+parent(d)->h()-1);
   };
@@ -1359,18 +1365,18 @@ Fd_Snap_Bottom_Group_Margin snap_bottom_group_margin;
  */
 class Fd_Snap_Top_Tabs_Margin : public Fd_Snap_Top_Group_Margin {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_tabs(d)) check_y_(d, d.by, parent(d)->y()+layout->top_tabs_margin);
+    if (in_tabs(d)) check_y_(d, d.by, parent(d)->y()+Fluid.proj.layout->top_tabs_margin);
   }
 };
 Fd_Snap_Top_Tabs_Margin snap_top_tabs_margin;
 
 class Fd_Snap_Bottom_Tabs_Margin : public Fd_Snap_Bottom_Group_Margin {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     clr();
-    if (in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-layout->bottom_tabs_margin);
+    if (in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-Fluid.proj.layout->bottom_tabs_margin);
   }
 };
 Fd_Snap_Bottom_Tabs_Margin snap_bottom_tabs_margin;
@@ -1380,12 +1386,12 @@ Fd_Snap_Bottom_Tabs_Margin snap_bottom_tabs_margin;
 /**
  Base class for grid based snapping.
  */
-class Fd_Snap_Grid : public Fd_Snap_Action {
+class Fd_Snap_Grid : public Snap_Action {
 protected:
   int nearest_x, nearest_y;
 public:
   Fd_Snap_Grid() { type = 3; mask = FD_LEFT|FD_TOP|FD_DRAG; }
-  void check_grid(Fd_Snap_Data &d, int left, int grid_x, int right, int top, int grid_y, int bottom) {
+  void check_grid(Snap_Data &d, int left, int grid_x, int right, int top, int grid_y, int bottom) {
     if ((grid_x <= 1) || (grid_y <= 1)) return;
     int suggested_x = d.bx + d.dx;
     nearest_x = nearest(suggested_x, left, grid_x, right);
@@ -1398,7 +1404,7 @@ public:
     else
       check_x_y_(d, d.bx, nearest_x, d.by, nearest_y);
   }
-  bool matches(Fd_Snap_Data &d) override {
+  bool matches(Snap_Data &d) override {
     if (d.drag == FD_LEFT) return (eex == ex);
     if (d.drag == FD_TOP) return (eey == ey) && (d.dx == dx);
     return (d.drag & mask) && (eex == ex) && (d.dx == dx) && (eey == ey) && (d.dy == dy);
@@ -1410,12 +1416,14 @@ public:
  */
 class Fd_Snap_Window_Grid : public Fd_Snap_Grid {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
+    auto layout = Fluid.proj.layout;
     clr();
     if (in_window(d)) check_grid(d, layout->left_window_margin, layout->window_grid_x, d.win->o->w()-layout->right_window_margin,
                                  layout->top_window_margin, layout->window_grid_y, d.win->o->h()-layout->bottom_window_margin);
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
+    auto layout = Fluid.proj.layout;
     draw_grid(nearest_x, nearest_y, layout->window_grid_x, layout->window_grid_y);
   };
 };
@@ -1426,15 +1434,17 @@ Fd_Snap_Window_Grid snap_window_grid;
  */
 class Fd_Snap_Group_Grid : public Fd_Snap_Grid {
 public:
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
     if (in_group(d)) {
+      auto layout = Fluid.proj.layout;
       clr();
       Fl_Widget *g = parent(d);
       check_grid(d, g->x()+layout->left_group_margin, layout->group_grid_x, g->x()+g->w()-layout->right_group_margin,
                  g->y()+layout->top_group_margin, layout->group_grid_y, g->y()+g->h()-layout->bottom_group_margin);
     }
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
+    auto layout = Fluid.proj.layout;
     draw_grid(nearest_x, nearest_y, layout->group_grid_x, layout->group_grid_y);
   };
 };
@@ -1445,13 +1455,13 @@ Fd_Snap_Group_Grid snap_group_grid;
 /**
  Base class the check distance to other widgets in the same group.
  */
-class Fd_Snap_Sibling : public Fd_Snap_Action {
+class Fd_Snap_Sibling : public Snap_Action {
 protected:
   Fl_Widget *best_match;
 public:
   Fd_Snap_Sibling() : best_match(nullptr) { }
-  virtual int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) = 0;
-  void check(Fd_Snap_Data &d) override {
+  virtual int sibling_check(Snap_Data &d, Fl_Widget *s) = 0;
+  void check(Snap_Data &d) override {
     clr();
     best_match = nullptr;
     if (!d.wgt) return;
@@ -1485,10 +1495,10 @@ public:
 class Fd_Snap_Siblings_Left_Same : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Left_Same() { type = 1; mask = FD_LEFT|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return check_x_(d, d.bx, s->x());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_left_brace(best_match);
   };
 };
@@ -1500,11 +1510,11 @@ Fd_Snap_Siblings_Left_Same snap_siblings_left_same;
 class Fd_Snap_Siblings_Left : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return std::min(check_x_(d, d.bx, s->x()+s->w()),
-                  check_x_(d, d.bx, s->x()+s->w()+layout->widget_gap_x) );
+                  check_x_(d, d.bx, s->x()+s->w()+Fluid.proj.layout->widget_gap_x) );
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_right_brace(best_match);
   };
 };
@@ -1513,10 +1523,10 @@ Fd_Snap_Siblings_Left snap_siblings_left;
 class Fd_Snap_Siblings_Right_Same : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Right_Same() { type = 1; mask = FD_RIGHT|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return check_x_(d, d.br, s->x()+s->w());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_right_brace(best_match);
   };
 };
@@ -1525,11 +1535,11 @@ Fd_Snap_Siblings_Right_Same snap_siblings_right_same;
 class Fd_Snap_Siblings_Right : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return std::min(check_x_(d, d.br, s->x()),
-                  check_x_(d, d.br, s->x()-layout->widget_gap_x));
+                  check_x_(d, d.br, s->x()-Fluid.proj.layout->widget_gap_x));
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_left_brace(best_match);
   };
 };
@@ -1538,10 +1548,10 @@ Fd_Snap_Siblings_Right snap_siblings_right;
 class Fd_Snap_Siblings_Top_Same : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Top_Same() { type = 2; mask = FD_TOP|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return check_y_(d, d.by, s->y());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_top_brace(best_match);
   };
 };
@@ -1550,11 +1560,11 @@ Fd_Snap_Siblings_Top_Same snap_siblings_top_same;
 class Fd_Snap_Siblings_Top : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return std::min(check_y_(d, d.by, s->y()+s->h()),
-                  check_y_(d, d.by, s->y()+s->h()+layout->widget_gap_y));
+                  check_y_(d, d.by, s->y()+s->h()+Fluid.proj.layout->widget_gap_y));
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_bottom_brace(best_match);
   };
 };
@@ -1563,10 +1573,10 @@ Fd_Snap_Siblings_Top snap_siblings_top;
 class Fd_Snap_Siblings_Bottom_Same : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Bottom_Same() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return check_y_(d, d.bt, s->y()+s->h());
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_bottom_brace(best_match);
   };
 };
@@ -1575,11 +1585,11 @@ Fd_Snap_Siblings_Bottom_Same snap_siblings_bottom_same;
 class Fd_Snap_Siblings_Bottom : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Bottom() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
-  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) override {
+  int sibling_check(Snap_Data &d, Fl_Widget *s) override {
     return std::min(check_y_(d, d.bt, s->y()),
-                  check_y_(d, d.bt, s->y()-layout->widget_gap_y));
+                  check_y_(d, d.bt, s->y()-Fluid.proj.layout->widget_gap_y));
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     if (best_match) draw_top_brace(best_match);
   };
 };
@@ -1591,10 +1601,11 @@ Fd_Snap_Siblings_Bottom snap_siblings_bottom;
 /**
  Snap horizontal resizing to min_w or min_w and a multiple of inc_w.
  */
-class Fd_Snap_Widget_Ideal_Width : public Fd_Snap_Action {
+class Fd_Snap_Widget_Ideal_Width : public Snap_Action {
 public:
   Fd_Snap_Widget_Ideal_Width() { type = 1; mask = FD_LEFT|FD_RIGHT; }
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
+    auto layout = Fluid.proj.layout;
     clr();
     if (!d.wgt) return;
     int iw = 15, ih = 15;
@@ -1611,16 +1622,17 @@ public:
       check_x_(d, d.bx, d.br-iw);
     }
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_width(d.bx, d.bt+7, d.br, 0);
   };
 };
 Fd_Snap_Widget_Ideal_Width snap_widget_ideal_width;
 
-class Fd_Snap_Widget_Ideal_Height : public Fd_Snap_Action {
+class Fd_Snap_Widget_Ideal_Height : public Snap_Action {
 public:
   Fd_Snap_Widget_Ideal_Height() { type = 2; mask = FD_TOP|FD_BOTTOM; }
-  void check(Fd_Snap_Data &d) override {
+  void check(Snap_Data &d) override {
+    auto layout = Fluid.proj.layout;
     clr();
     if (!d.wgt) return;
     int iw, ih;
@@ -1637,7 +1649,7 @@ public:
       check_y_(d, d.by, d.bt-ih);
     }
   }
-  void draw(Fd_Snap_Data &d) override {
+  void draw(Snap_Data &d) override {
     draw_height(d.br+7, d.by, d.bt, 0);
   };
 };
@@ -1652,7 +1664,7 @@ Fd_Snap_Widget_Ideal_Height snap_widget_ideal_height;
  action in the list wins. All snap actions with the same distance and same
  winning coordinates are drawn in the overlay plane.
  */
-Fd_Snap_Action *Fd_Snap_Action::list[] = {
+Snap_Action *Snap_Action::list[] = {
   &snap_left_window_edge,
   &snap_right_window_edge,
   &snap_top_window_edge,

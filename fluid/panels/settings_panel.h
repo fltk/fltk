@@ -20,7 +20,7 @@
 #define settings_panel_h
 #include <FL/Fl.H>
 #include "Fluid.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "app/shell_command.h"
 #include "tools/filename.h"
 #include "widgets/Node_Browser.h"

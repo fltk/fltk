@@ -17,14 +17,25 @@
 #ifndef _FLUID_FD_SNAP_ACTION_H
 #define _FLUID_FD_SNAP_ACTION_H
 
-#include "Fluid.h"
-#include "nodes/Window_Node.h"
-
 #include <string>
 
+class Window_Node;
+class Widget_Node;
 struct Fl_Menu_Item;
+class Fl_Preferences;
 
 extern Fl_Menu_Item main_layout_submenu_[];
+
+namespace fld {
+enum class Tool_Store; // fld::
+namespace io {
+class Project_Reader; // fld::io::
+class Project_Writer; // fld::io::
+} // namespace io
+} // namespace fld
+
+namespace fld {
+namespace app {
 
 /**
  \brief Collection of layout settings.
@@ -34,7 +45,7 @@ extern Fl_Menu_Item main_layout_submenu_[];
  There are three Presets available in one Suite, marked "application",
  "dialog", and "toolbox".
  */
-class Fd_Layout_Preset {
+class Layout_Preset {
 public:
   int left_window_margin;   ///< gap between the window border and the widget
   int right_window_margin;
@@ -73,7 +84,7 @@ public:
   int textsize_not_null();
 };
 
-extern Fd_Layout_Preset *layout;
+extern Layout_Preset *default_layout_preset;
 
 /**
  \brief A collection of layout presets.
@@ -83,11 +94,11 @@ extern Fd_Layout_Preset *layout;
  There are three Presets available in one Suite, marked "application",
  "dialog", and "toolbox".
  */
-class Fd_Layout_Suite {
+class Layout_Suite {
 public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
-  Fd_Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
+  Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
   fld::Tool_Store storage_;       ///< storage location (see fld::Tool_Store::INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
@@ -97,10 +108,11 @@ public:
   void storage(fld::Tool_Store s) { storage_ = s; update_label(); }
   void name(const char *n);
   void init();
-  ~Fd_Layout_Suite();
+  ~Layout_Suite();
 public:
 
 };
+
 
 /**
  \brief Manage all layout suites that are available to the user.
@@ -109,11 +121,11 @@ public:
  as a user preference, as part of an .fl project file, or in a separate file
  for import/export and sharing.
  */
-class Fd_Layout_List {
+class Layout_List {
 public:
   Fl_Menu_Item *main_menu_;
   Fl_Menu_Item *choice_menu_;
-  Fd_Layout_Suite *list_;
+  Layout_Suite *list_;
   int list_size_;
   int list_capacity_;
   bool list_is_static_;
@@ -121,8 +133,8 @@ public:
   int current_preset_;
   std::string filename_;
 public:
-  Fd_Layout_List();
-  ~Fd_Layout_List();
+  Layout_List();
+  ~Layout_List();
   void update_dialogs();
   void update_menu_labels();
   int current_suite() const { return current_suite_; }
@@ -130,7 +142,7 @@ public:
   void current_suite(std::string);
   int current_preset() const { return current_preset_; }
   void current_preset(int ix);
-  Fd_Layout_Suite &operator[](int ix) { return list_[ix]; }
+  Layout_Suite &operator[](int ix) { return list_[ix]; }
   int add(const char *name);
   void rename(const char *name);
   void capacity(int);
@@ -141,19 +153,17 @@ public:
   void read(Fl_Preferences &prefs, fld::Tool_Store storage);
   void write(fld::io::Project_Writer*);
   void read(fld::io::Project_Reader*);
-  int add(Fd_Layout_Suite*);
+  int add(Layout_Suite*);
   void remove(int index);
   void remove_all(fld::Tool_Store storage);
-  Fd_Layout_Preset *at(int);
+  Layout_Preset *at(int);
   int size();
 };
-
-extern Fd_Layout_List g_layout_list;
 
 /**
  \brief Structure holding all the data to perform interactive alignment operations.
  */
-typedef struct Fd_Snap_Data {
+typedef struct Snap_Data {
   int dx, dy;           ///< distance of the mouse from its initial PUSH event
   int bx, by, br, bt;   ///< bounding box of the original push event or current bounding box when drawing
   int drag;             ///< drag event mask
@@ -162,32 +172,36 @@ typedef struct Fd_Snap_Data {
   Widget_Node *wgt;  ///< first selected widget
   Window_Node *win;  ///< window that handles the drag action
   int ex_out, ey_out;   ///< chosen snap position
-} Fd_Snap_Data;
+} Snap_Data;
 
 /**
  \brief Find points of interest when moving the bounding box of all selected widgets.
  */
-class Fd_Snap_Action {
+class Snap_Action {
 protected:
-  int check_x_(Fd_Snap_Data &d, int x_ref, int x_snap);
-  int check_y_(Fd_Snap_Data &d, int y_ref, int y_snap);
-  void check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap);
+  int check_x_(Snap_Data &d, int x_ref, int x_snap);
+  int check_y_(Snap_Data &d, int y_ref, int y_snap);
+  void check_x_y_(Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap);
   void clr() { ex = dx = 0x7fff;  }
 public:
   int ex, ey, dx, dy, type, mask;
-  Fd_Snap_Action() : ex(0x7fff), ey(0x7fff), dx(128), dy(128), type(0), mask(0) { }
-  virtual ~Fd_Snap_Action() { }
-  virtual void check(Fd_Snap_Data &d) = 0;
-  virtual void draw(Fd_Snap_Data &d) { }
-  virtual bool matches(Fd_Snap_Data &d);
+  Snap_Action() : ex(0x7fff), ey(0x7fff), dx(128), dy(128), type(0), mask(0) { }
+  virtual ~Snap_Action() { }
+  virtual void check(Snap_Data &d) = 0;
+  virtual void draw(Snap_Data &d) { }
+  virtual bool matches(Snap_Data &d);
 public:
   static int eex, eey;
-  static Fd_Snap_Action *list[];
-  static void check_all(Fd_Snap_Data &d);
-  static void draw_all(Fd_Snap_Data &d);
+  static Snap_Action *list[];
+  static void check_all(Snap_Data &d);
+  static void draw_all(Snap_Data &d);
   static void get_resize_stepsize(int &x_step, int &y_step);
   static void get_move_stepsize(int &x_step, int &y_step);
   static void better_size(int &w, int &h);
 };
+
+} // namespace app
+} // namespace fld
+
 
 #endif // _FLUID_FD_SNAP_ACTION_H

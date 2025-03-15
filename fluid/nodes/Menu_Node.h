@@ -25,7 +25,8 @@
 
 #include "nodes/Button_Node.h"
 
-#include "app/Fd_Snap_Action.h"
+#include "Fluid.h"
+#include "app/Snap_Action.h"
 
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Menu_.H>
@@ -140,9 +141,10 @@ class Menu_Manager_Node : public Widget_Node
   typedef Widget_Node super;
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 6 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   int can_have_children() const override {return 1;}
   int menusize;

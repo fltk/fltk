@@ -104,7 +104,7 @@ static void external_editor_timer(void*) {
  preferences database.
  */
 Application::Application()
-: preferences( Fl_Preferences::USER_L, "fltk.org", "fluid" ) 
+: preferences( Fl_Preferences::USER_L, "fltk.org", "fluid" )
 { }
 
 
@@ -162,7 +162,7 @@ int Application::run(int argc,char **argv) {
       g_shell_config->update_settings_dialog();
       g_shell_config->rebuild_shell_menu();
     }
-    g_layout_list.read(preferences, fld::Tool_Store::USER);
+    Fluid.layout_list.read(preferences, fld::Tool_Store::USER);
     main_window->show(argc,argv);
     toggle_widget_bin();
     toggle_codeview_cb(nullptr,nullptr);
@@ -285,7 +285,7 @@ void Application::quit() {
 
   if (g_shell_config)
     g_shell_config->write(preferences, fld::Tool_Store::USER);
-  g_layout_list.write(preferences, fld::Tool_Store::USER);
+  Fluid.layout_list.write(preferences, fld::Tool_Store::USER);
 
   proj.undo.clear();
 

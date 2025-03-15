@@ -18,10 +18,10 @@
 
 #include "widget_panel.h"
 #include "Fluid.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "app/Image_Asset.h"
 #include "proj/undo.h"
-#include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
@@ -41,8 +41,6 @@ extern void textcolor_common(Fl_Color c);
 extern int widget_i;
 extern fld::widget::Formula_Input_Vars widget_vars[];
 extern int numselected;
-extern Fd_Layout_Preset *layout;
-extern Fd_Layout_List g_layout_list;
 extern Fl_Menu_Item boxmenu[];
 extern int haderror;
 
@@ -1525,7 +1523,7 @@ static void cb_4(Fl_Choice* o, void* v) {
   } else {
     int mod = 0;
     int n = o->value();
-    if (n <= 0) n = layout->labelfont;
+    if (n <= 0) n = Fluid.proj.layout->labelfont;
     if (n <= 0) n = FL_HELVETICA;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       q->o->labelfont(n);
@@ -1543,7 +1541,7 @@ static void cb_5(Fl_Value_Input* o, void* v) {
   } else {
     int mod = 0;
     n = int(o->value());
-    if (n <= 0) n = layout->labelsize;
+    if (n <= 0) n = Fluid.proj.layout->labelsize;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       q->o->labelsize(n);
       q->redraw();
@@ -1735,7 +1733,7 @@ static void cb_b(Fl_Choice* o, void* v) {
   } else {
     int mod = 0;
     n = (Fl_Font)o->value();
-    if (n <= 0) n = layout->textfont;
+    if (n <= 0) n = Fluid.proj.layout->textfont;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       q->textstuff(1,n,s,c);
       q->o->redraw();
@@ -1753,8 +1751,8 @@ static void cb_c(Fl_Value_Input* o, void* v) {
   } else {
     int mod = 0;
     s = int(o->value());
-    if (s <= 0) s = layout->textsize;
-    if (s <= 0) s = layout->labelsize;
+    if (s <= 0) s = Fluid.proj.layout->textsize;
+    if (s <= 0) s = Fluid.proj.layout->labelsize;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       q->textstuff(2,n,s,c);
       q->o->redraw();

@@ -499,11 +499,11 @@ Fl_Choice *layout_choice=(Fl_Choice *)0;
 
 static void cb_layout_choice(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-      o->value(g_layout_list.current_suite());
+      o->value(Fluid.layout_list.current_suite());
     } else {
       int index = o->value();
-      g_layout_list.current_suite(index);
-      g_layout_list.update_dialogs();
+      Fluid.layout_list.current_suite(index);
+      Fluid.layout_list.update_dialogs();
     }
 }
 
@@ -519,20 +519,20 @@ static void cb_2(Fl_Button*, void* v) {
   if (v == LOAD) return;
 
   std::string old_name = "Copy of ";
-  old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
+  old_name.append(Fluid.layout_list[Fluid.layout_list.current_suite()].name_);
   const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
   if (new_name == nullptr)
     return;
 
-  g_layout_list.add(new_name);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.add(new_name);
+  Fluid.layout_list.update_dialogs();
 }
 
 Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
 
 static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
   if (v == LOAD) {
-    Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+    fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
     if (suite.storage_ == fld::Tool_Store::INTERNAL) {
       w_layout_menu_rename->deactivate();
       for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
@@ -549,37 +549,37 @@ static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
 static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
   // Rename the current layout suite
 
-  std::string old_name = g_layout_list[g_layout_list.current_suite()].name_;
+  std::string old_name = Fluid.layout_list[Fluid.layout_list.current_suite()].name_;
   const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
   if (new_name == nullptr)
     return;
 
-  g_layout_list.rename(new_name);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.rename(new_name);
+  Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage(Fl_Menu_*, void*) {
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
   suite.storage(fld::Tool_Store::INTERNAL);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage1(Fl_Menu_*, void*) {
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
   suite.storage(fld::Tool_Store::USER);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage2(Fl_Menu_*, void*) {
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
   suite.storage(fld::Tool_Store::PROJECT);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
   suite.storage(fld::Tool_Store::FILE);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
@@ -592,9 +592,9 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
   if (fnfc.show() != 0) return;
   const char *new_filename = fnfc.filename();
   if (!new_filename) return;
-  g_layout_list.load(new_filename);
-  //g_layout_list.current_suite(n);
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.load(new_filename);
+  //Fluid.layout_list.current_suite(n);
+  Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
@@ -604,21 +604,21 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
     fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
     fnfc.filter("FLUID Layouts\t*.fll\n");
-    std::string filename = g_layout_list.filename_;
+    std::string filename = Fluid.layout_list.filename_;
     fnfc.directory(fl_filename_path_str(filename).c_str());
     fnfc.preset_file(fl_filename_name_str(filename).c_str());
     if (fnfc.show() != 0) return;
     const char *new_filename = fnfc.filename();
     if (!new_filename) return;
-    g_layout_list.filename_ = new_filename;
-    g_layout_list.save(new_filename);
+    Fluid.layout_list.filename_ = new_filename;
+    Fluid.layout_list.save(new_filename);
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
   // remove the current suite
 
-  g_layout_list.remove(g_layout_list.current_suite());
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.remove(Fluid.layout_list.current_suite());
+  Fluid.layout_list.update_dialogs();
 }
 
 Fl_Menu_Item menu_w_layout_menu[] = {
@@ -637,193 +637,193 @@ Fl_Button *preset_choice[3]={(Fl_Button *)0};
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->left_window_margin);
+    o->value((double)Fluid.proj.layout->left_window_margin);
   } else {
-    layout->left_window_margin = (int)o->value();
+    Fluid.proj.layout->left_window_margin = (int)o->value();
   }
 }
 
 static void cb_Top(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->top_window_margin);
+    o->value((double)Fluid.proj.layout->top_window_margin);
   } else {
-    layout->top_window_margin = (int)o->value();
+    Fluid.proj.layout->top_window_margin = (int)o->value();
   }
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->right_window_margin);
+    o->value((double)Fluid.proj.layout->right_window_margin);
   } else {
-    layout->right_window_margin = (int)o->value();
+    Fluid.proj.layout->right_window_margin = (int)o->value();
   }
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->bottom_window_margin);
+    o->value((double)Fluid.proj.layout->bottom_window_margin);
   } else {
-    layout->bottom_window_margin = (int)o->value();
+    Fluid.proj.layout->bottom_window_margin = (int)o->value();
   }
 }
 
 static void cb_Horizontal(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->window_grid_x);
+    o->value((double)Fluid.proj.layout->window_grid_x);
   } else {
-    layout->window_grid_x = (int)o->value();
+    Fluid.proj.layout->window_grid_x = (int)o->value();
   }
 }
 
 static void cb_Vertical(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->window_grid_y);
+    o->value((double)Fluid.proj.layout->window_grid_y);
   } else {
-    layout->window_grid_y = (int)o->value();
+    Fluid.proj.layout->window_grid_y = (int)o->value();
   }
 }
 
 static void cb_Left1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->left_group_margin);
+    o->value((double)Fluid.proj.layout->left_group_margin);
   } else {
-    layout->left_group_margin = (int)o->value();
+    Fluid.proj.layout->left_group_margin = (int)o->value();
   }
 }
 
 static void cb_Top1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->top_group_margin);
+    o->value((double)Fluid.proj.layout->top_group_margin);
   } else {
-    layout->top_group_margin = (int)o->value();
+    Fluid.proj.layout->top_group_margin = (int)o->value();
   }
 }
 
 static void cb_Right1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->right_group_margin);
+    o->value((double)Fluid.proj.layout->right_group_margin);
   } else {
-    layout->right_group_margin = (int)o->value();
+    Fluid.proj.layout->right_group_margin = (int)o->value();
   }
 }
 
 static void cb_Bottom1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->bottom_group_margin);
+    o->value((double)Fluid.proj.layout->bottom_group_margin);
   } else {
-    layout->bottom_group_margin = (int)o->value();
+    Fluid.proj.layout->bottom_group_margin = (int)o->value();
   }
 }
 
 static void cb_Horizontal1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->group_grid_x);
+    o->value((double)Fluid.proj.layout->group_grid_x);
   } else {
-    layout->group_grid_x = (int)o->value();
+    Fluid.proj.layout->group_grid_x = (int)o->value();
   }
 }
 
 static void cb_Vertical1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->group_grid_y);
+    o->value((double)Fluid.proj.layout->group_grid_y);
   } else {
-    layout->group_grid_y = (int)o->value();
+    Fluid.proj.layout->group_grid_y = (int)o->value();
   }
 }
 
 static void cb_Top2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->top_tabs_margin);
+    o->value((double)Fluid.proj.layout->top_tabs_margin);
   } else {
-    layout->top_tabs_margin = (int)o->value();
+    Fluid.proj.layout->top_tabs_margin = (int)o->value();
   }
 }
 
 static void cb_Bottom2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->bottom_tabs_margin);
+    o->value((double)Fluid.proj.layout->bottom_tabs_margin);
   } else {
-    layout->bottom_tabs_margin = (int)o->value();
+    Fluid.proj.layout->bottom_tabs_margin = (int)o->value();
   }
 }
 
 static void cb_Minimum(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->widget_min_w);
+    o->value((double)Fluid.proj.layout->widget_min_w);
   } else {
-    layout->widget_min_w = (int)o->value();
+    Fluid.proj.layout->widget_min_w = (int)o->value();
   }
 }
 
 static void cb_Increment(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->widget_inc_w);
+    o->value((double)Fluid.proj.layout->widget_inc_w);
   } else {
-    layout->widget_inc_w = (int)o->value();
+    Fluid.proj.layout->widget_inc_w = (int)o->value();
   }
 }
 
 static void cb_Gap(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->widget_gap_x);
+    o->value((double)Fluid.proj.layout->widget_gap_x);
   } else {
-    layout->widget_gap_x = (int)o->value();
+    Fluid.proj.layout->widget_gap_x = (int)o->value();
   }
 }
 
 static void cb_3(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->widget_min_h);
+    o->value((double)Fluid.proj.layout->widget_min_h);
   } else {
-    layout->widget_min_h = (int)o->value();
+    Fluid.proj.layout->widget_min_h = (int)o->value();
   }
 }
 
 static void cb_4(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->widget_inc_h);
+    o->value((double)Fluid.proj.layout->widget_inc_h);
   } else {
-    layout->widget_inc_h = (int)o->value();
+    Fluid.proj.layout->widget_inc_h = (int)o->value();
   }
 }
 
 static void cb_5(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->widget_gap_y);
+    o->value((double)Fluid.proj.layout->widget_gap_y);
   } else {
-    layout->widget_gap_y = (int)o->value();
+    Fluid.proj.layout->widget_gap_y = (int)o->value();
   }
 }
 
 static void cb_6(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    o->value(layout->labelfont+1);
+    o->value(Fluid.proj.layout->labelfont+1);
   } else {
-    layout->labelfont = (int)o->value()-1;
+    Fluid.proj.layout->labelfont = (int)o->value()-1;
   }
 }
 
 static void cb_7(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(layout->labelsize);
+    o->value(Fluid.proj.layout->labelsize);
   } else {
-    layout->labelsize = (int)o->value();
+    Fluid.proj.layout->labelsize = (int)o->value();
   }
 }
 
 static void cb_8(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    o->value(layout->textfont+1);
+    o->value(Fluid.proj.layout->textfont+1);
   } else {
-    layout->textfont = (int)o->value()-1;
+    Fluid.proj.layout->textfont = (int)o->value()-1;
   }
 }
 
 static void cb_9(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(layout->textsize);
+    o->value(Fluid.proj.layout->textsize);
   } else {
-    layout->textsize = (int)o->value();
+    Fluid.proj.layout->textsize = (int)o->value();
   }
 }
 
@@ -2436,7 +2436,7 @@ Fl_Choice *w_settings_user_commenttext=(Fl_Choice *)0;
 static void cb_Close(Fl_Button*, void*) {
   if (g_shell_config)
     g_shell_config->write(Fluid.preferences, fld::Tool_Store::USER);
-  g_layout_list.write(Fluid.preferences, fld::Tool_Store::USER);
+  Fluid.layout_list.write(Fluid.preferences, fld::Tool_Store::USER);
   settings_window->hide();
 }
 

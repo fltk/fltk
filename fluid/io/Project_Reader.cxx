@@ -25,7 +25,7 @@
 #include "Project.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "nodes/factory.h"
 #include "nodes/Function_Node.h"
 #include "nodes/Widget_Node.h"
@@ -308,7 +308,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
       }
 
       if (!strcmp(c, "snap")) {
-        g_layout_list.read(this);
+        Fluid.layout_list.read(this);
         goto CONTINUE;
       }
 
@@ -441,7 +441,7 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
     g_shell_config->rebuild_shell_menu();
     g_shell_config->update_settings_dialog();
   }
-  g_layout_list.update_dialogs();
+  Fluid.layout_list.update_dialogs();
   proj_.update_settings_dialog();
   int ret = close_read();
   proj_.undo.resume();

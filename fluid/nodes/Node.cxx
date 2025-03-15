@@ -98,7 +98,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
@@ -409,10 +409,10 @@ void delete_all(int selected_only) {
       widget_browser->hposition(0);
       widget_browser->vposition(0);
     }
-    g_layout_list.remove_all(fld::Tool_Store::PROJECT);
-    g_layout_list.current_suite(0);
-    g_layout_list.current_preset(0);
-    g_layout_list.update_dialogs();
+    Fluid.layout_list.remove_all(fld::Tool_Store::PROJECT);
+    Fluid.layout_list.current_suite(0);
+    Fluid.layout_list.current_preset(0);
+    Fluid.layout_list.update_dialogs();
   }
   selection_changed(nullptr);
   if (widget_browser) {

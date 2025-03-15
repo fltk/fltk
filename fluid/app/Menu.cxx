@@ -29,7 +29,7 @@
 
 #include <FL/Fl_Menu_Bar.H>
 
-// In Fd_Snap_Action.h
+// In Snap_Action.h
 extern void layout_suite_marker(Fl_Widget *, void *user_data);
 extern void select_layout_preset_cb(Fl_Widget *, void *user_data);
 extern Fl_Menu_Item main_layout_submenu_[];

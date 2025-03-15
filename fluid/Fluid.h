@@ -20,6 +20,7 @@
 #include "Project.h"
 #include "app/args.h"
 #include "app/history.h"
+#include "app/Snap_Action.h"
 #include "tools/filename.h"
 
 #include <FL/Fl_Preferences.H>
@@ -46,10 +47,13 @@ class Fl_Check_Button;
 class Fl_Help_Dialog;
 
 namespace fld {
+namespace app {
+class Layout_List;
+}
 
 /**
  Indicate the storage location for tools like layout suites and shell macros.
- \see class Fd_Shell_Command, class Fd_Layout_Suite
+ \see class Fd_Shell_Command, class Layout_Suite
  */
 enum class Tool_Store {
   INTERNAL,  ///< stored inside FLUID app
@@ -82,6 +86,8 @@ public: // Member Variables
   app::History history;
   /// Command line arguments
   app::Args args;
+  /// List of available layouts 
+  app::Layout_List layout_list;
   /// Set, if Fluid runs in batch mode, and no user interface is activated.
   int batch_mode { 0 };             // fluid + any code generators (-u, -c, -cs)
 

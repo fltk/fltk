@@ -21,7 +21,7 @@
 
 #include "nodes/Window_Node.h"
 
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "Fluid.h"
 #include "Project.h"
 #include "proj/undo.h"
@@ -337,7 +337,7 @@ void Window_Node::ideal_size(int &w, int &h) {
     Fl::screen_work_area(sx, sy, sw, sh, screen);
     w = std::min(w, sw*3/4); h = std::min(h, sh*3/4);
   }
-  Fd_Snap_Action::better_size(w, h);
+  fld::app::Snap_Action::better_size(w, h);
 }
 
 
@@ -402,8 +402,8 @@ void Window_Node::newdx() {
         break;
       }
     }
-    Fd_Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Widget_Node*)selection, this };
-    Fd_Snap_Action::check_all(data);
+    fld::app::Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Widget_Node*)selection, this };
+    fld::app::Snap_Action::check_all(data);
     if (data.x_dist < 4) mydx = data.dx_out;
     if (data.y_dist < 4) mydy = data.dy_out;
   }
@@ -650,8 +650,8 @@ void Window_Node::draw_overlay() {
   fl_rectf(mysx,myst-5,5,5);
 
   if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
-    Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
-    Fd_Snap_Action::draw_all(data);
+    fld::app::Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
+    fld::app::Snap_Action::draw_all(data);
   }
 }
 
@@ -1161,9 +1161,9 @@ int Window_Node::handle(int event) {
       if (Fl::event_state(FL_COMMAND)) {
         int x_step, y_step;
         if (drag & (FD_RIGHT|FD_BOTTOM))
-          Fd_Snap_Action::get_resize_stepsize(x_step, y_step);
+          fld::app::Snap_Action::get_resize_stepsize(x_step, y_step);
         else
-          Fd_Snap_Action::get_move_stepsize(x_step, y_step);
+          fld::app::Snap_Action::get_move_stepsize(x_step, y_step);
         dx *= x_step;
         dy *= y_step;
       }

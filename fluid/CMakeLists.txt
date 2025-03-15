@@ -26,7 +26,7 @@ set(CPPFILES
   Fluid.cxx
   Project.cxx
   app/args.cxx
-  app/Fd_Snap_Action.cxx
+  app/Snap_Action.cxx
   app/Image_Asset.cxx
   app/history.cxx
   app/Menu.cxx
@@ -76,7 +76,7 @@ set(HEADERFILES
   Fluid.h
   Project.h
   app/args.h
-  app/Fd_Snap_Action.h
+  app/Snap_Action.h
   app/Image_Asset.h
   app/history.h
   app/Menu.h

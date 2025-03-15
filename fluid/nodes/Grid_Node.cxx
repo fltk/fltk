@@ -17,7 +17,7 @@
 #include "nodes/Grid_Node.h"
 
 #include "Fluid.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"

@@ -25,7 +25,7 @@
 #include "Project.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 
 /// \defgroup flfile .fl Project File Operations
 /// \{
@@ -141,7 +141,7 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
   if (!selected_only) {
     write_string("\nheader_name"); write_word(proj_.header_file_name.c_str());
     write_string("\ncode_name"); write_word(proj_.code_file_name.c_str());
-    g_layout_list.write(this);
+    Fluid.layout_list.write(this);
     if (g_shell_config)
       g_shell_config->write(this);
     if (proj_.write_mergeback_data)

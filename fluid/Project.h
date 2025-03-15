@@ -25,7 +25,13 @@
 
 // ---- project class declaration
 
+
 namespace fld {
+
+namespace app {
+  class Layout_Preset;
+  extern Layout_Preset *default_layout_preset;
+} // namespace app
 
 /**
  Enumeration of available internationalization types.
@@ -103,6 +109,9 @@ public: // Member Variables
   int modflag { 0 };
   /// Set if the code files are older than the current design.
   int modflag_c { 0 };
+
+  /// Currently used layout preset.
+  app::Layout_Preset *layout { app::default_layout_preset };
 
 public: // Methods
   Project();

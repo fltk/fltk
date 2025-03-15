@@ -39,7 +39,7 @@
  */
 #include "nodes/factory.h"
 
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "Fluid.h"
 #include "proj/undo.h"
 #include "nodes/Button_Node.h"
@@ -122,7 +122,7 @@ public:
   void ideal_size(int &w, int &h) override {
     w = 120;
     h = 160;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Browser_"; }
   const char *alt_type_name() override { return "fltk::Browser_"; }
@@ -255,7 +255,7 @@ public:
   void ideal_size(int &w, int &h) override {
     w = 120;
     h = 160;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Tree"; }
   const char *alt_type_name() override { return "fltk::TreeBrowser"; }
@@ -310,7 +310,7 @@ public:
   void ideal_size(int &w, int &h) override {
     w = 160;
     h = 120;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Help_View"; }
   const char *alt_type_name() override { return "fltk::HelpView"; }
@@ -390,9 +390,10 @@ private:
   }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 4 * h; // make room for the arrows
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Counter"; }
   const char *alt_type_name() override { return "fltk::Counter"; }
@@ -419,9 +420,10 @@ public:
   static Adjuster_Node prototype;
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->labelsize + 8;
     w = 3 * h;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Adjuster"; }
   const char *alt_type_name() override { return "fltk::Adjuster"; }
@@ -458,7 +460,7 @@ private:
 public:
   void ideal_size(int &w, int &h) override {
     w = 60; h = 60;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Dial"; }
   const char *alt_type_name() override { return "fltk::Dial"; }
@@ -493,9 +495,10 @@ private:
   Fl_Menu_Item *subtypes() override { return roller_type_menu; }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     w = layout->labelsize + 8;
     h = 4 * w;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Roller"; }
   const char *alt_type_name() override { return "fltk::Roller"; }
@@ -536,9 +539,10 @@ private:
   Fl_Menu_Item *subtypes() override { return slider_type_menu; }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     w = layout->labelsize + 8;
     h = 4 * w;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Slider"; }
   const char *alt_type_name() override { return "fltk::Slider"; }
@@ -645,9 +649,10 @@ private:
   }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Value_Input"; }
   const char *alt_type_name() override { return "fltk::ValueInput"; }
@@ -687,9 +692,10 @@ private:
   }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Value_Output"; }
   const char *alt_type_name() override { return "fltk::ValueOutput"; }
@@ -745,9 +751,10 @@ private:
   }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 6 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Input"; }
   const char *alt_type_name() override { return "fltk::Input"; }
@@ -786,9 +793,10 @@ private:
   Fl_Menu_Item *subtypes() override { return nullptr; } // Don't inherit.
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8 + 10; // Directoy bar is additional 10 pixels high
     w = layout->textsize_not_null() * 10 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_File_Input"; }
   const char *alt_type_name() override { return "fltk::FileInput"; }
@@ -869,9 +877,10 @@ private:
   }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() * 4 + 8;
     w = layout->textsize_not_null() * 10 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Text_Display"; }
   const char *alt_type_name() override { return "fltk::TextDisplay"; }
@@ -1034,7 +1043,7 @@ public:
 public:
   void ideal_size(int &w, int &h) override {
     w = 100; h = 100;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Box"; }
   const char *alt_type_name() override { return "fltk::Widget"; }
@@ -1063,7 +1072,7 @@ public:
 public:
   void ideal_size(int &w, int &h) override {
     w = 80; h = 80;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Clock"; }
   const char *alt_type_name() override { return "fltk::Clock"; }
@@ -1092,9 +1101,10 @@ public:
   static Progress_Node prototype;
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->labelsize + 8;
     w = layout->labelsize * 12;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Progress"; }
   const char *alt_type_name() override { return "fltk::ProgressBar"; }
@@ -1143,9 +1153,10 @@ private:
   }
 public:
   void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Spinner"; }
   const char *alt_type_name() override { return "fltk::Spinner"; }
@@ -1271,9 +1282,11 @@ static Node *known_types[] = {
 Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open) {
   Fluid.proj.undo.checkpoint();
   Fluid.proj.undo.suspend();
+  auto layout = Fluid.proj.layout;
   Node *t = ((Node*)inPrototype)->make(strategy);
   if (t) {
     if (t->is_widget() && !t->is_a(ID_Window)) {
+      auto layout = Fluid.proj.layout;
       Widget_Node *wt = (Widget_Node *)t;
       bool changed = false;
 

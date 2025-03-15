@@ -26,6 +26,7 @@
 #include "io/Code_Writer.h"
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
+#include "nodes/Window_Node.h"
 #include "panels/widget_panel.h"
 
 #include <FL/Fl.H>
@@ -36,6 +37,7 @@
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Flex.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
@@ -79,7 +81,7 @@ void
 Widget_Node::ideal_size(int &w, int &h) {
   w = 120;
   h = 100;
-  Fd_Snap_Action::better_size(w, h);
+  fld::app::Snap_Action::better_size(w, h);
 }
 
 /**

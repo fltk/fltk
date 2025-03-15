@@ -22,7 +22,7 @@
 
 #include "Fluid.h"
 #include "proj/undo.h"
-#include "app/Fd_Snap_Action.h"
+#include "app/Snap_Action.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -193,7 +193,7 @@ void Group_Node::ideal_size(int &w, int &h) {
     w = 140;
     h = 140;
   }
-  Fd_Snap_Action::better_size(w, h);
+  fld::app::Snap_Action::better_size(w, h);
 }
 
 void Group_Node::write_code1(fld::io::Code_Writer& f) {
@@ -711,7 +711,7 @@ Fl_Widget *Table_Node::enter_live_mode(int) {
 void Table_Node::ideal_size(int &w, int &h) {
   w = 160;
   h = 120;
-  Fd_Snap_Action::better_size(w, h);
+  fld::app::Snap_Action::better_size(w, h);
 }
 
 // ---- Tabs_Node --------------------------------------------------- MARK: -
