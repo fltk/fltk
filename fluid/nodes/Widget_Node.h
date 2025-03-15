@@ -35,7 +35,6 @@ extern const char* subclassname(Node* l);
 extern int is_name(const char *c);
 void selection_changed(Node* new_current);
 Node *sort(Node *parent);
-void comment_cb(class Fl_Text_Editor* i, void *v);
 
 class Widget_Node : public Node
 {

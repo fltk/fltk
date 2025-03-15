@@ -18,10 +18,33 @@
 
 #include "widget_panel.h"
 #include "Fluid.h"
+#include "app/Fd_Snap_Action.h"
+#include "app/Fluid_Image.h"
 #include "proj/undo.h"
 #include "nodes/Widget_Node.h"
 #include "nodes/Grid_Node.h"
+#include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
+#include <FL/Fl_Flex.H>
+#include <FL/fl_ask.H>
+#include <FL/Fl_Menu_Item.H>
+#define ZERO_ENTRY 1000
+extern const char* when_symbol_name(int n);
+extern void set_whenmenu(int n);
+extern void redraw_browser();
+const char *c_check(const char *c, int type=0);
+extern Fl_Color fl_show_colormap(Fl_Color oldcol);
+extern void labelcolor_common(Fl_Color c);
+extern void color_common(Fl_Color c);
+extern void color2_common(Fl_Color c);
+extern void textcolor_common(Fl_Color c);
+extern int widget_i;
+extern fld::widget::Formula_Input_Vars widget_vars[];
+extern int numselected;
+extern Fd_Layout_Preset *layout;
+extern Fd_Layout_List g_layout_list;
+extern Fl_Menu_Item boxmenu[];
+extern int haderror;
 
 Fl_Double_Window *image_panel_window=(Fl_Double_Window *)0;
 
@@ -121,6 +144,42 @@ static void cb_Reset(Fl_Button*, void* v) {
   }
 }
 
+static void cb_convert(Fl_Check_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->activate();
+      o->value(!current_widget->compress_image_);
+    } else {
+      o->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->compress_image_ = !o->value();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_bind(Fl_Check_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->activate();
+      o->value(current_widget->bind_image_);
+    } else {
+      o->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->bind_image_ = o->value();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Group *image_panel_deimagegroup=(Fl_Group *)0;
 
 Fl_Box *image_panel_dedata=(Fl_Box *)0;
@@ -213,6 +272,42 @@ static void cb_Reset1(Fl_Button*, void* v) {
   }
 }
 
+static void cb_convert1(Fl_Check_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->activate();
+      o->value(!current_widget->compress_deimage_);
+    } else {
+      o->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->compress_deimage_ = !o->value();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_bind1(Fl_Check_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->activate();
+      o->value(current_widget->bind_deimage_);
+    } else {
+      o->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->bind_deimage_ = o->value();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Button *image_panel_close=(Fl_Button *)0;
 
 static void cb_image_panel_close(Fl_Button*, void* v) {
@@ -291,13 +386,13 @@ Fl_Double_Window* make_image_panel() {
 "ixel data");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
-        o->callback((Fl_Callback*)compress_image_cb);
+        o->callback((Fl_Callback*)cb_convert);
       } // Fl_Check_Button* o
       { Fl_Check_Button* o = new Fl_Check_Button(75, 120, 170, 20, "bind to widget");
         o->tooltip("bind the image to the widget, so it will be deleted automatically");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
-        o->callback((Fl_Callback*)bind_image_cb);
+        o->callback((Fl_Callback*)cb_bind);
         o->window()->hotspot(o);
       } // Fl_Check_Button* o
       image_panel_imagegroup->end();
@@ -367,13 +462,13 @@ Fl_Double_Window* make_image_panel() {
 "ixel data");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
-        o->callback((Fl_Callback*)compress_deimage_cb);
+        o->callback((Fl_Callback*)cb_convert1);
       } // Fl_Check_Button* o
       { Fl_Check_Button* o = new Fl_Check_Button(75, 260, 170, 20, "bind to widget");
         o->tooltip("bind the image to the widget, so it will be deleted automatically");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
-        o->callback((Fl_Callback*)bind_deimage_cb);
+        o->callback((Fl_Callback*)cb_bind1);
       } // Fl_Check_Button* o
       image_panel_deimagegroup->end();
     } // Fl_Group* image_panel_deimagegroup
@@ -409,6 +504,28 @@ void run_image_panel() {
   }
 }
 
+void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int)) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Flex)) {
+      load_margin((Fl_Flex*)current_widget->o, i);
+    }
+  } else {
+    int mod = 0;
+    int new_value = (int)i->value();
+    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+      if (o->selected && o->is_a(ID_Flex)) {
+        Flex_Node* q = (Flex_Node*)o;
+        Fl_Flex* w = (Fl_Flex*)q->o;
+        if (update_margin(w, new_value)) {
+          w->layout();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
 
 static void cb_widget_tabs(Fl_Tabs* o, void* v) {
@@ -421,6 +538,41 @@ Fl_Input *wp_gui_label=(Fl_Input *)0;
 
 Fl_Input *widget_image_input=(Fl_Input *)0;
 
+static void cb_widget_image_input(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->activate();
+      o->value(((Widget_Node*)current_widget)->image_name());
+    } else o->deactivate();
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->image_name(o->value());
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Browse(Fl_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window))
+      o->activate();
+    else
+      o->deactivate();
+  } else {
+    int mod = 0;
+    if (ui_find_image(widget_image_input->value())) {
+      widget_image_input->value(ui_find_image_name);
+      for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+        q->image_name(ui_find_image_name);
+        mod = 1;
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+    }
+  }
+}
+
 static void cb_(Fl_Button*, void* v) {
   if (v != LOAD) {
     run_image_panel();
@@ -428,6 +580,41 @@ static void cb_(Fl_Button*, void* v) {
 }
 
 Fl_Input *widget_deimage_input=(Fl_Input *)0;
+
+static void cb_widget_deimage_input(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->activate();
+      o->value(((Widget_Node*)current_widget)->inactive_name());
+    } else o->deactivate();
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->inactive_name(o->value());
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Browse1(Fl_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window))
+      o->activate();
+    else
+      o->deactivate();
+  } else {
+    int mod = 0;
+    if (ui_find_image(widget_deimage_input->value())) {
+      widget_deimage_input->value(ui_find_image_name);
+      for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+        q->inactive_name(ui_find_image_name);
+        mod = 1;
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+    }
+  }
+}
 
 Fl_Group *wp_gui_alignment=(Fl_Group *)0;
 
@@ -462,11 +649,150 @@ Fl_Menu_Item menu_1[] = {
 
 fld::widget::Formula_Input *widget_x_input=(fld::widget::Formula_Input *)0;
 
+static void cb_widget_x_input(fld::widget::Formula_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_true_widget()) {
+      o->value(((Widget_Node *)current_widget)->o->x());
+      o->activate();
+    } else o->deactivate();
+  } else {
+    Fluid.proj.undo.checkpoint();
+    widget_i = 0;
+    int mod = 0;
+    int v = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        Fl_Widget *w = q->o;
+        o->variables(widget_vars, q);
+        v = o->value();
+        w->resize(v, w->y(), w->w(), w->h());
+        if (w->window()) w->window()->redraw();
+        widget_i++;
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      o->value(v);    // change the displayed value to the result of the last
+                      // calculation. Keep the formula if it was not used.
+    }
+  }
+}
+
 fld::widget::Formula_Input *widget_y_input=(fld::widget::Formula_Input *)0;
+
+static void cb_widget_y_input(fld::widget::Formula_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_true_widget()) {
+      o->value(((Widget_Node *)current_widget)->o->y());
+      o->activate();
+    } else o->deactivate();
+  } else {
+    Fluid.proj.undo.checkpoint();
+    widget_i = 0;
+    int mod = 0;
+    int v = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        Fl_Widget *w = q->o;
+        o->variables(widget_vars, q);
+        v = o->value();
+        w->resize(w->x(), v, w->w(), w->h());
+        if (w->window()) w->window()->redraw();
+        widget_i++;
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      o->value(v);
+    }
+  }
+}
 
 fld::widget::Formula_Input *widget_w_input=(fld::widget::Formula_Input *)0;
 
+static void cb_widget_w_input(fld::widget::Formula_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_true_widget()) {
+      o->value(((Widget_Node *)current_widget)->o->w());
+      o->activate();
+    } else o->deactivate();
+  } else {
+    Fluid.proj.undo.checkpoint();
+    widget_i = 0;
+    int mod = 0;
+    int v = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        Fl_Widget *w = q->o;
+        o->variables(widget_vars, q);
+        v = o->value();
+        w->resize(w->x(), w->y(), v, w->h());
+        if (w->window()) w->window()->redraw();
+        widget_i++;
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      o->value(v);
+    }
+  }
+}
+
 fld::widget::Formula_Input *widget_h_input=(fld::widget::Formula_Input *)0;
+
+static void cb_widget_h_input(fld::widget::Formula_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_true_widget()) {
+      o->value(((Widget_Node *)current_widget)->o->h());
+      o->activate();
+    } else o->deactivate();
+  } else {
+    Fluid.proj.undo.checkpoint();
+    widget_i = 0;
+    int mod = 0;
+    int v = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        Fl_Widget *w = q->o;
+        o->variables(widget_vars, q);
+        v = o->value();
+        w->resize(w->x(), w->y(), w->w(), v);
+        if (w->window()) w->window()->redraw();
+        widget_i++;
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      o->value(v);
+    }
+  }
+}
+
+static void cb_Children(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Widget_Class)) {
+      o->show();
+      o->value(((Widget_Class_Node *)current_widget)->wc_relative);
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Widget_Class)) {
+        Widget_Class_Node *t = (Widget_Class_Node *)q;
+        t->wc_relative = o->value();
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Menu_Item menu_Children[] = {
  {"Fixed", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -477,47 +803,1238 @@ Fl_Menu_Item menu_Children[] = {
 
 Fl_Group *wp_gui_flexp=(Fl_Group *)0;
 
+static void cb_wp_gui_flexp(Fl_Group* o, void* v) {
+  if (v == LOAD) {
+    if (Flex_Node::parent_is_flex(current_widget)) {
+      o->show();
+      propagate_load(o, v);
+    } else {
+      o->hide();
+    }
+  }
+}
+
 Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
+
+static void cb_widget_flex_size(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (Flex_Node::parent_is_flex(current_widget)) {
+      o->value(Flex_Node::size(current_widget));
+    }
+  } else {
+    int mod = 0;
+    int new_size = (int)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (Flex_Node::parent_is_flex(q)) {
+        Fl_Widget* w = (Fl_Widget*)q->o;
+        Fl_Flex* f = (Fl_Flex*)((Flex_Node*)q->parent)->o;
+        int was_fixed = f->fixed(w);
+        if (new_size==0) {
+          if (was_fixed) {
+            f->fixed(w, 0);
+            f->layout();
+            widget_flex_fixed->value(0);
+            mod = 1;
+          }
+        } else {
+          int old_size = Flex_Node::size(q);
+          if (old_size!=new_size || !was_fixed) {
+            f->fixed(w, new_size);
+            f->layout();
+            widget_flex_fixed->value(1);
+            mod = 1;
+          }
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
 
+static void cb_widget_flex_fixed(Fl_Check_Button* o, void* v) {
+  if (v == LOAD) {
+    if (Flex_Node::parent_is_flex(current_widget)) {
+      o->value(Flex_Node::is_fixed(current_widget));
+    }
+  } else {
+    int mod = 0;
+    int new_fixed = (int)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (Flex_Node::parent_is_flex(q)) {
+        Fl_Widget* w = q->o;
+        Fl_Flex* f = (Fl_Flex*)((Flex_Node*)q->parent)->o;
+        int was_fixed = f->fixed(w);
+        if (new_fixed==0) {
+          if (was_fixed) {
+            f->fixed(w, 0);
+            f->layout();
+            mod = 1;
+          }
+        } else {
+          if (!was_fixed) {
+            f->fixed(w, Flex_Node::size(q));
+            f->layout();
+            mod = 1;
+          }
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Group *wp_gui_values=(Fl_Group *)0;
+
+static void cb_wp_gui_values(Fl_Group* o, void* v) {
+  if (v == LOAD) {
+    if (   current_widget->is_a(ID_Flex)
+        || current_widget->is_a(ID_Grid)
+        || current_widget->is_a(ID_Window))
+    {
+      o->hide();
+    } else {
+      o->show();
+      propagate_load(o, v);
+    }
+  }
+}
+
+static void cb_Size(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Slider)) {o->deactivate(); return;}
+    o->activate();
+    o->value(((Fl_Slider*)(current_widget->o))->slider_size());
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    double n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Slider)) {
+        ((Fl_Slider*)(q->o))->slider_size(n);
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Minimum(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Valuator_)) {
+      o->activate();
+      o->value(((Fl_Valuator*)(current_widget->o))->minimum());
+    } else if (current_widget->is_a(ID_Spinner)) {
+      o->activate();
+      o->value(((Fl_Spinner*)(current_widget->o))->minimum());
+    } else {
+      o->deactivate();
+      return;
+    }
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    double n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Valuator_)) {
+        ((Fl_Valuator*)(q->o))->minimum(n);
+        q->o->redraw();
+        mod = 1;
+      } else if (q->is_a(ID_Spinner)) {
+        ((Fl_Spinner*)(q->o))->minimum(n);
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Maximum(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Valuator_)) {
+      o->activate();
+      o->value(((Fl_Valuator*)(current_widget->o))->maximum());
+    } else if (current_widget->is_a(ID_Spinner)) {
+      o->activate();
+      o->value(((Fl_Spinner*)(current_widget->o))->maximum());
+    } else {
+      o->deactivate();
+      return;
+    }
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    double n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Valuator_)) {
+        ((Fl_Valuator*)(q->o))->maximum(n);
+        q->o->redraw();
+        mod = 1;
+      } else if (q->is_a(ID_Spinner)) {
+        ((Fl_Spinner*)(q->o))->maximum(n);
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Step(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Valuator_)) {
+      o->activate();
+      o->value(((Fl_Valuator*)(current_widget->o))->step());
+    } else if (current_widget->is_a(ID_Spinner)) {
+      o->activate();
+      o->value(((Fl_Spinner*)(current_widget->o))->step());
+    } else {
+      o->deactivate();
+      return;
+    }
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    double n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Valuator_)) {
+        ((Fl_Valuator*)(q->o))->step(n);
+        q->o->redraw();
+        mod = 1;
+      } else if (q->is_a(ID_Spinner)) {
+        ((Fl_Spinner*)(q->o))->step(n);
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Value(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Valuator_)) {
+      o->activate();
+      o->value(((Fl_Valuator*)(current_widget->o))->value());
+    } else if (current_widget->is_button()) {
+      o->activate();
+      o->value(((Fl_Button*)(current_widget->o))->value());
+    } else if (current_widget->is_a(ID_Spinner)) {
+      o->activate();
+      o->value(((Fl_Spinner*)(current_widget->o))->value());
+    } else
+      o->deactivate();
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    double n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Valuator_)) {
+        ((Fl_Valuator*)(q->o))->value(n);
+        mod = 1;
+      } else if (q->is_button()) {
+        ((Fl_Button*)(q->o))->value(n != 0);
+        if (q->is_a(ID_Menu_Item)) q->redraw();
+        mod = 1;
+      } else if (q->is_a(ID_Spinner)) {
+        ((Fl_Spinner*)(q->o))->value(n);
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Group *wp_gui_margins=(Fl_Group *)0;
 
+static void cb_wp_gui_margins(Fl_Group* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Flex)) {
+      o->show();
+      propagate_load(o, v);
+    } else {
+      o->hide();
+    }
+  }
+}
+
+static void cb_Left(Fl_Value_Input* o, void* v) {
+  flex_margin_cb(o, v, 
+    [](Fl_Flex *w, Fl_Value_Input* i) -> void
+    {
+      int v;
+      w->margin(&v, nullptr, nullptr, nullptr);
+      i->value((double)v);
+    }, 
+    [](Fl_Flex *w, int new_value) -> int
+    {
+      int l, t, r, b;
+      w->margin(&l, &t, &r, &b);
+      if (new_value!=l) {
+        w->margin(new_value, t, r, b);
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  );
+}
+
+static void cb_Top(Fl_Value_Input* o, void* v) {
+  flex_margin_cb(o, v,
+    [](Fl_Flex *w, Fl_Value_Input* i) -> void
+    {
+      int v;
+      w->margin(nullptr, &v, nullptr, nullptr);
+      i->value((double)v);
+    },
+    [](Fl_Flex *w, int new_value)
+    {
+      int l, t, r, b;
+      w->margin(&l, &t, &r, &b);
+      if (new_value!=t) {
+        w->margin(l, new_value, r, b);
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  );
+}
+
+static void cb_Right(Fl_Value_Input* o, void* v) {
+  flex_margin_cb(o, v, 
+    [](Fl_Flex *w, Fl_Value_Input* i) -> void
+    {
+      int v;
+      w->margin(nullptr, nullptr, &v, nullptr);
+      i->value((double)v);
+    },
+    [](Fl_Flex *w, int new_value) -> int
+    {
+      int l, t, r, b;
+      w->margin(&l, &t, &r, &b);
+      if (new_value!=r) {
+        w->margin(l, t, new_value, b);
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  );
+}
+
+static void cb_Bottom(Fl_Value_Input* o, void* v) {
+  flex_margin_cb(o, v, 
+    [](Fl_Flex *w, Fl_Value_Input* i) -> void
+    {
+      int v;
+      w->margin(nullptr, nullptr, nullptr, &v);
+      i->value((double)v);
+    },
+    [](Fl_Flex *w, int new_value) -> int
+    {
+      int l, t, r, b;
+      w->margin(&l, &t, &r, &b);
+      if (new_value!=b) {
+        w->margin(l, t, r, new_value);
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  );
+}
+
+static void cb_Gap(Fl_Value_Input* o, void* v) {
+  flex_margin_cb(o, v, 
+    [](Fl_Flex *w, Fl_Value_Input* o) -> void
+    {
+      int v = w->gap();
+      o->value((double)v);
+    }, 
+    [](Fl_Flex *w, int new_value) -> int
+    {
+      int g = w->gap();
+      if (new_value!=g) {
+        w->gap(new_value);
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  );
+}
+
 Fl_Group *wp_gui_sizerange=(Fl_Group *)0;
+
+static void cb_wp_gui_sizerange(Fl_Group* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Window)) {
+      o->show();
+      propagate_load(o, v);
+    } else {
+      o->hide();
+    }
+  }
+}
+
+static void cb_Minimum1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) return;
+    o->value(((Window_Node*)current_widget)->sr_min_w);
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    int n = (int)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        ((Window_Node*)q)->sr_min_w = n;
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) return;
+    o->value(((Window_Node*)current_widget)->sr_min_h);
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    int n = (int)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        ((Window_Node*)q)->sr_min_h = n;
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_set(Fl_Button* o, void* v) {
+  if (v == LOAD) {
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        Window_Node *win = (Window_Node*)q;
+        win->sr_min_w = win->o->w();
+        win->sr_min_h = win->o->h();
+        mod = 1;
+      }
+    }
+    propagate_load(the_panel, LOAD);
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Maximum1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) return;
+    o->value(((Window_Node*)current_widget)->sr_max_w);
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    int n = (int)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        ((Window_Node*)q)->sr_max_w = n;
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_2(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) return;
+    o->value(((Window_Node*)current_widget)->sr_max_h);
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    int n = (int)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        ((Window_Node*)q)->sr_max_h = n;
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_set1(Fl_Button* o, void* v) {
+  if (v == LOAD) {
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        Window_Node *win = (Window_Node*)q;
+        win->sr_max_w = win->o->w();
+        win->sr_max_h = win->o->h();
+        mod = 1;
+      }
+    }
+    propagate_load(the_panel, LOAD);
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Shortcut_Button *wp_gui_shortcut=(Fl_Shortcut_Button *)0;
 
+static void cb_wp_gui_shortcut(Fl_Shortcut_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_button())
+      o->value( ((Fl_Button*)(current_widget->o))->shortcut() );
+    else if (current_widget->is_a(ID_Input))
+      o->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
+    else if (current_widget->is_a(ID_Value_Input))
+      o->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
+    else if (current_widget->is_a(ID_Text_Display))
+      o->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
+    else {
+      o->hide();
+      o->parent()->hide();
+      return;
+    }
+    //i->default_value( i->value() ); // enable the "undo" capability of the shortcut button
+    o->show();
+    o->parent()->show();
+    o->redraw();
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets())
+      if (q->is_button()) {
+        Fl_Button* b = (Fl_Button*)(q->o);
+        if (b->shortcut() != (int)o->value()) mod = 1;
+        b->shortcut(o->value());
+        if (q->is_a(ID_Menu_Item)) q->redraw();
+      } else if (q->is_a(ID_Input)) {
+        Fl_Input_* b = (Fl_Input_*)(q->o);
+        if (b->shortcut() != (int)o->value()) mod = 1;
+        b->shortcut(o->value());
+      } else if (q->is_a(ID_Value_Input)) {
+        Fl_Value_Input* b = (Fl_Value_Input*)(q->o);
+        if (b->shortcut() != (int)o->value()) mod = 1;
+        b->shortcut(o->value());
+      } else if (q->is_a(ID_Text_Display)) {
+        Fl_Text_Display* b = (Fl_Text_Display*)(q->o);
+        if (b->shortcut() != (int)o->value()) mod = 1;
+        b->shortcut(o->value());
+      }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Group *wp_gui_xclass=(Fl_Group *)0;
+
+static void cb_3(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Window)) {
+      o->show();
+      o->parent()->show();
+      o->value(((Window_Node *)current_widget)->xclass);
+    } else {
+      o->hide();
+      o->parent()->hide(); // hides the "X Class:" label as well
+    }
+  } else {
+    int mod = 0;
+    Fluid.proj.undo.checkpoint();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Window)) {
+        mod = 1;
+        Window_Node *wt = (Window_Node *)q;
+        storestring(o->value(), wt->xclass);
+        ((Fl_Window*)(wt->o))->xclass(wt->xclass);
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Border(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) {o->hide(); return;}
+    o->show();
+    o->value(((Fl_Window*)(current_widget->o))->border());
+  } else {
+    Fluid.proj.undo.checkpoint();
+    ((Fl_Window*)(current_widget->o))->border(o->value());
+    Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Modal(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) {o->hide(); return;}
+    o->show();
+    o->value(((Window_Node *)current_widget)->modal);
+  } else {
+    Fluid.proj.undo.checkpoint();
+    ((Window_Node *)current_widget)->modal = o->value();
+    Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Nonmodal(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(ID_Window)) {o->hide(); return;}
+    o->show();
+    o->value(((Window_Node *)current_widget)->non_modal);
+  } else {
+    Fluid.proj.undo.checkpoint();
+    ((Window_Node *)current_widget)->non_modal = o->value();
+    Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Group *wp_gui_attributes=(Fl_Group *)0;
 
+static void cb_Visible(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    o->value(current_widget->o->visible());
+    if (current_widget->is_a(ID_Window)) o->deactivate();
+    else o->activate();
+  } else {
+    int mod = 0;
+    int n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (!mod) {
+        mod = 1;
+        Fluid.proj.undo.checkpoint();
+      }
+      n ? q->o->show() : q->o->hide();
+      q->redraw();
+      if (n && q->parent && q->parent->type_name()) {
+        if (q->parent->is_a(ID_Tabs)) {
+          ((Fl_Tabs *)q->o->parent())->value(q->o);
+        } else if (q->parent->is_a(ID_Wizard)) {
+          ((Fl_Wizard *)q->o->parent())->value(q->o);
+        }
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+}
+
+static void cb_Active(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    o->value(current_widget->o->active());
+    if (current_widget->is_a(ID_Window)) o->deactivate();
+    else o->activate();
+  } else {
+    int mod = 0;
+    int n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (!mod) {
+        mod = 1;
+        Fluid.proj.undo.checkpoint();
+      }
+      n ? q->o->activate() : q->o->deactivate();
+      q->redraw();
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Resizable(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {o->deactivate(); return;}
+    if (numselected > 1) {o->deactivate(); return;}
+    o->activate();
+    o->value(current_widget->resizable());
+  } else {
+    Fluid.proj.undo.checkpoint();
+    current_widget->resizable(o->value());
+    Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Hotspot(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    if (numselected > 1) {o->deactivate(); return;}
+    if (current_widget->is_a(ID_Menu_Item)) o->label("divider");
+    else o->label("hotspot");
+    o->activate();
+    o->value(current_widget->hotspot());
+  } else {
+    Fluid.proj.undo.checkpoint();
+    current_widget->hotspot(o->value());
+    if (current_widget->is_a(ID_Menu_Item)) {
+      current_widget->redraw();
+      return;
+    }
+    if (o->value()) {
+      Node *p = current_widget->parent;
+      if (!p || !p->is_widget()) return;
+      while (!p->is_a(ID_Window)) p = p->parent;
+      for (Node *q = p->next; q && q->level > p->level; q = q->next) {
+        if (q->is_widget() && q != current_widget)
+          ((Widget_Node*)q)->hotspot(0);
+      }
+    }
+    Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Input *wp_gui_tooltip=(Fl_Input *)0;
+
+static void cb_wp_gui_tooltip(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget()) {
+      o->activate();
+      o->value(((Widget_Node*)current_widget)->tooltip());
+    } else {
+      o->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->tooltip(o->value());
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Group *wp_style_tab=(Fl_Group *)0;
 
 Fl_Group *wp_style_label=(Fl_Group *)0;
 
+static void cb_4(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    int n = current_widget->o->labelfont();
+    if (n > 15) n = 0;
+    o->value(n);
+  } else {
+    int mod = 0;
+    int n = o->value();
+    if (n <= 0) n = layout->labelfont;
+    if (n <= 0) n = FL_HELVETICA;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->o->labelfont(n);
+      q->redraw();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_5(Fl_Value_Input* o, void* v) {
+  int n;
+  if (v == LOAD) {
+    n = current_widget->o->labelsize();
+  } else {
+    int mod = 0;
+    n = int(o->value());
+    if (n <= 0) n = layout->labelsize;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->o->labelsize(n);
+      q->redraw();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+  o->value(n);
+}
+
 Fl_Button *w_labelcolor=(Fl_Button *)0;
+
+static void cb_w_labelcolor(Fl_Button* o, void* v) {
+  Fl_Color c = current_widget->o->labelcolor();
+  if (v != LOAD) {
+    Fl_Color d = fl_show_colormap(c);
+    if (d == c) return;
+    c = d;
+    labelcolor_common(c);
+  }
+  o->color(c);
+  o->labelcolor(fl_contrast(FL_BLACK,c));
+  o->redraw();
+}
+
+static void cb_6(Fl_Menu_Button* o, void* v) {
+  Fl_Color c = current_widget->o->labelcolor();
+  if (v != LOAD) {
+    Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+    if (d == c) return;
+    c = d;
+    labelcolor_common(c);
+    w_labelcolor->color(c); 
+    w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c)); 
+    w_labelcolor->redraw();
+  }
+}
 
 Fl_Group *wp_style_box=(Fl_Group *)0;
 
+static void cb_7(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {o->deactivate(); return;} else o->activate();
+    int n = current_widget->o->box(); 
+    if (!n) n = ZERO_ENTRY;
+    for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
+      if (boxmenu[j].argument() == n) {o->value(j); break;}
+  } else {
+    int mod = 0;
+    int m = o->value();
+    int n = int(boxmenu[m].argument());
+    if (!n) return; // should not happen
+    if (n == ZERO_ENTRY) n = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->o->box((Fl_Boxtype)n);
+      q->redraw();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Button *w_color=(Fl_Button *)0;
+
+static void cb_w_color(Fl_Button* o, void* v) {
+  Fl_Color c = current_widget->o->color();
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {
+      o->deactivate();
+    } else {
+      o->activate();
+    }
+  } else {
+    Fl_Color d = fl_show_colormap(c);
+    if (d == c) return;
+    c = d;
+    color_common(c);
+  }
+  o->color(c);
+  o->labelcolor(fl_contrast(FL_BLACK,c));
+  o->redraw();
+}
+
+static void cb_8(Fl_Menu_Button* o, void* v) {
+  Fl_Color c = current_widget->o->color();
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {o->deactivate(); return;} else o->activate();
+  } else {
+    Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+    if (d == c) return;
+    c = d;
+    color_common(c);
+    w_color->color(c);
+    w_color->labelcolor(fl_contrast(FL_BLACK,c));
+    w_color->redraw();
+  }
+}
 
 Fl_Group *wp_style_downbox=(Fl_Group *)0;
 
+static void cb_9(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    int n;
+    if (current_widget->is_a(ID_Button))
+      n = ((Fl_Button*)(current_widget->o))->down_box();
+    else if (current_widget->is_a(ID_Input_Choice))
+      n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
+    else if (current_widget->is_a(ID_Menu_Manager_))
+      n = ((Fl_Menu_*)(current_widget->o))->down_box();
+    else {
+      o->deactivate(); return;
+    }
+    o->activate();
+    if (!n) n = ZERO_ENTRY;
+    for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
+      if (boxmenu[j].argument() == n) {o->value(j); break;}
+  } else {
+    int mod = 0;
+    int m = o->value();
+    int n = int(boxmenu[m].argument());
+    if (!n) return; // should not happen
+    if (n == ZERO_ENTRY) n = 0;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Button)) {
+        ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
+        if (((Fl_Button*)(q->o))->value()) q->redraw();
+      } else if (q->is_a(ID_Input_Choice)) {
+        ((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
+      } else if (q->is_a(ID_Menu_Manager_)) {
+        ((Fl_Menu_*)(q->o))->down_box((Fl_Boxtype)n);
+      }
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
 Fl_Button *w_selectcolor=(Fl_Button *)0;
+
+static void cb_w_selectcolor(Fl_Button* o, void* v) {
+  Fl_Color c = current_widget->o->selection_color();
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {
+      o->deactivate();
+      return;
+    } else {
+      o->activate();
+    }
+  } else {
+    Fl_Color d = fl_show_colormap(c);
+    if (d == c) return;
+    c = d;
+    color2_common(c);
+  }
+  o->color(c);
+  o->labelcolor(fl_contrast(FL_BLACK,c));
+  o->redraw();
+}
+
+static void cb_a(Fl_Menu_Button* o, void* v) {
+  Fl_Color c = current_widget->o->selection_color();
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {
+      o->deactivate();
+      return;
+    } else {
+      o->activate();
+    }
+  } else {
+    Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+    if (d == c) return;
+    c = d;
+    color2_common(c);
+    w_selectcolor->color(c);
+    w_selectcolor->labelcolor(fl_contrast(FL_BLACK,c));
+    w_selectcolor->redraw();
+  }
+}
 
 Fl_Group *wp_style_text=(Fl_Group *)0;
 
+static void cb_b(Fl_Choice* o, void* v) {
+  Fl_Font n; int s; Fl_Color c;
+  if (v == LOAD) {
+    if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
+    o->activate();
+    if (n > 15) n = FL_HELVETICA;
+    o->value(n);
+  } else {
+    int mod = 0;
+    n = (Fl_Font)o->value();
+    if (n <= 0) n = layout->textfont;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->textstuff(1,n,s,c);
+      q->o->redraw();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_c(Fl_Value_Input* o, void* v) {
+  Fl_Font n; int s; Fl_Color c;
+  if (v == LOAD) {
+    if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
+    o->activate();
+  } else {
+    int mod = 0;
+    s = int(o->value());
+    if (s <= 0) s = layout->textsize;
+    if (s <= 0) s = layout->labelsize;
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->textstuff(2,n,s,c);
+      q->o->redraw();
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+  o->value(s);
+}
+
 Fl_Button *w_textcolor=(Fl_Button *)0;
+
+static void cb_w_textcolor(Fl_Button* o, void* v) {
+  Fl_Font n; int s; Fl_Color c;
+  if (v == LOAD) {
+    if (!current_widget->textstuff(0,n,s,c)) {
+      o->deactivate();
+      return;
+    }
+    o->activate();
+  } else {
+    c = o->color();
+    Fl_Color d = fl_show_colormap(c);
+    if (d == c) return;
+    c = d;
+    textcolor_common(c);
+  }
+  o->color(c);
+  o->labelcolor(fl_contrast(FL_BLACK,c));
+  o->redraw();
+}
+
+static void cb_d(Fl_Menu_Button* o, void* v) {
+  Fl_Font n; int s; Fl_Color c;
+  if (v == LOAD) {
+    if (!current_widget->textstuff(0,n,s,c)) {
+      o->deactivate();
+      return;
+    }
+    o->activate();
+  } else {
+    c = o->color();
+    Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+    if (d == c) return;
+    c = d;
+    textcolor_common(c);
+    w_textcolor->color(c);
+    w_textcolor->labelcolor(fl_contrast(FL_BLACK,c));
+    w_textcolor->redraw();
+  }
+}
+
+static void cb_Horizontal(Fl_Value_Input* o, void* v) {
+  int s;
+  if (v == LOAD) {
+    if (!current_widget->is_true_widget()) {
+      o->deactivate();
+      o->value(0);
+    } else {
+      o->activate();
+      o->value(((Widget_Node*)current_widget)->o->horizontal_label_margin());
+    }
+  } else {
+    int mod = 0;
+    s = int(o->value());
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        if (q->o->horizontal_label_margin() != s) {
+          q->o->horizontal_label_margin(s);
+          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          q->o->redraw();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Vertical(Fl_Value_Input* o, void* v) {
+  int s;
+  if (v == LOAD) {
+    if (!current_widget->is_true_widget()) {
+      o->deactivate();
+      o->value(0);
+    } else {
+      o->activate();
+      o->value(((Widget_Node*)current_widget)->o->vertical_label_margin());
+    }
+  } else {
+    int mod = 0;
+    s = int(o->value());
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        if (q->o->vertical_label_margin() != s) {
+          q->o->vertical_label_margin(s);
+          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          q->o->redraw();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Text(Fl_Value_Input* o, void* v) {
+  int s;
+  if (v == LOAD) {
+    if (!current_widget->is_true_widget()) {
+      o->deactivate();
+      o->value(0);
+    } else {
+      o->activate();
+      o->value(((Widget_Node*)current_widget)->o->label_image_spacing());
+    }
+  } else {
+    int mod = 0;
+    s = int(o->value());
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_true_widget()) {
+        if (q->o->label_image_spacing() != s) {
+          q->o->label_image_spacing(s);
+          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+          q->o->redraw();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Compact(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    uchar n;
+    if (current_widget->is_a(ID_Button) && !current_widget->is_a(ID_Menu_Item)) {
+      n = ((Fl_Button*)(current_widget->o))->compact();
+      o->value(n);
+      o->show();
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    uchar n = (uchar)o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(ID_Button) && !q->is_a(ID_Menu_Item)) {
+        uchar v = ((Fl_Button*)(q->o))->compact();
+        if (n != v) {
+          if (!mod) {
+            mod = 1;
+            Fluid.proj.undo.checkpoint();
+          }
+          ((Fl_Button*)(q->o))->compact(n);
+          q->redraw();
+        }
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Group *wp_cpp_tab=(Fl_Group *)0;
 
 Fl_Group *wp_cpp_class=(Fl_Group *)0;
 
+static void cb_e(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+      if (current_widget->is_a(ID_Menu_Item)) {
+        o->deactivate(); 
+      } else {
+        o->activate();
+        o->value(current_widget->subclass());
+      }
+    } else {
+      int mod = 0;
+      const char *c = o->value();
+      for (Widget_Node *t: Fluid.proj.tree.all_selected_widgets()) {
+        t->subclass(c);
+        mod = 1;
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+    }
+}
+
+static void cb_f(Fl_Choice* o, void* v) {
+  static Fl_Menu_Item empty_type_menu[] = {
+      {"Normal",0,nullptr,(void*)nullptr},
+      {nullptr}};
+
+    if (v == LOAD) {
+      Fl_Menu_Item* m = current_widget->subtypes();
+      if (!m) {
+        o->menu(empty_type_menu);
+        o->value(0);
+        o->deactivate();
+      } else {
+        o->menu(m);
+        int j;
+        for (j = 0;; j++) {
+          if (!m[j].text) {j = 0; break;}
+          if (current_widget->is_a(ID_Spinner)) {
+            if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
+          } else {
+            if (m[j].argument() == current_widget->o->type()) break;
+          }
+        }
+        o->value(j);
+        o->activate();
+      }
+      o->redraw();
+    } else {
+      int mod = 0;
+      int n = int(o->mvalue()->argument());
+      Fl_Menu_Item* m = current_widget->subtypes();
+      for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+        if (q->subtypes()==m) {
+          if (q->is_a(ID_Spinner))
+            ((Fl_Spinner*)q->o)->type(n);
+          else if (q->is_a(ID_Flex))
+            ((Flex_Node*)q)->change_subtype_to(n);
+          else
+            q->o->type(n);
+          q->redraw();
+          mod = 1;
+        }
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+    }
+}
+
 Fl_Group *wp_cpp_name=(Fl_Group *)0;
+
+static void cb_10(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+      static char buf[1024];
+      if (numselected != 1) {
+        snprintf(buf, sizeof(buf), "Widget Properties (%d widgets)", numselected);
+        o->hide();
+      } else {
+        o->value(current_widget->name());
+        o->show();
+        snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
+      }
+
+      the_panel->label(buf);
+    } else {
+      if (numselected == 1) {
+        current_widget->name(o->value());
+        // I don't update window title, as it probably is being closed
+        // and wm2 (a window manager) barfs if you retitle and then
+        // hide a window:
+        // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
+      }
+    }
+}
+
+static void cb_11(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    o->value(current_widget->public_);
+    if (current_widget->is_in_class()) o->show(); else o->hide();
+  } else {
+    int mod = 0;
+    for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
+      if (w->is_in_class()) {
+        w->public_ = o->value();
+      } else {
+        // if this is not in a class, it can be only private or public
+        w->public_ = (o->value()>0);
+      }
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+}
 
 Fl_Menu_Item menu_2[] = {
  {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -532,18 +2049,154 @@ Fl_Menu_Item menu_3[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+static void cb_v_input(Fl_Input* o, void* v) {
+  int n = fl_int(o->user_data());
+    if (v == LOAD) {
+      o->value(current_widget->extra_code(n));
+    } else {
+      int mod = 0;
+      const char *c = o->value();
+      const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
+      if (d) {fl_message("Error in %s: %s",o->label(),d); haderror = 1; return;}
+      for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
+        w->extra_code(n,c);
+        mod = 1;
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+    }
+}
+
+static void cb_v_input1(Fl_Input* o, void* v) {
+  cb_v_input(o, v);
+}
+
+static void cb_v_input2(Fl_Input* o, void* v) {
+  cb_v_input(o, v);
+}
+
 Fl_Input *v_input[4]={(Fl_Input *)0};
 
-static void cb_1(Fl_Tile*, void* v) {
+static void cb_v_input3(Fl_Input* o, void* v) {
+  cb_v_input(o, v);
+}
+
+static void cb_12(Fl_Tile*, void* v) {
   wComment->do_callback(wComment, v);
   wCallback->do_callback(wCallback, v);
 }
 
 Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
 
+static void cb_wComment(Fl_Text_Editor* o, void* v) {
+  if (v == LOAD) {
+      const char *cmttext = current_widget->comment();
+      o->buffer()->text( cmttext ? cmttext : "" );
+    } else {
+      int mod = 0;
+      char *c = o->buffer()->text();
+      for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+        n->comment(c);
+        mod = 1;
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+      free(c);
+    }
+}
+
 fld::widget::Code_Editor *wCallback=(fld::widget::Code_Editor *)0;
 
+static void cb_wCallback(fld::widget::Code_Editor* o, void* v) {
+  if (v == LOAD) {
+      const char *cbtext = current_widget->callback();
+      o->buffer()->text( cbtext ? cbtext : "" );
+    } else {
+      int mod = 0;
+      char *c = o->buffer()->text();
+      const char *d = c_check(c);
+      if (d) {
+        fl_message("Error in callback: %s",d);
+        if (o->window()) o->window()->make_current();
+        haderror = 1;
+      }
+      for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+        n->callback(c);
+        mod = 1;
+      }
+      if (mod) Fluid.proj.set_modflag(1);
+      free(c);
+    }
+}
+
 Fl_Group *wp_cpp_callback=(Fl_Group *)0;
+
+static void cb_13(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value(current_widget->user_data());
+  } else {
+    int mod = 0;
+    const char *c = o->value();
+    const char *d = c_check(c);
+    if (d) {fl_message("Error in user_data: %s",d); haderror = 1; return;}
+    for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+      n->user_data(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_When(Fl_Menu_Button* o, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_a(ID_Menu_Item)) {o->deactivate(); return;} else o->activate();
+    int n = current_widget->o->when();
+    set_whenmenu(n);
+    w_when_box->copy_label(when_symbol_name(n));
+  } else {
+    int mod = 0;
+    int n = 0;
+    if (o->mvalue() && ((o->mvalue()->flags & FL_MENU_TOGGLE) == 0) ) {
+      n = (int)o->mvalue()->argument();
+      set_whenmenu(n);
+    } else {
+      if (whenmenu[0].value()) n |= FL_WHEN_CHANGED;
+      if (whenmenu[1].value()) n |= FL_WHEN_NOT_CHANGED;
+      if (whenmenu[2].value()) n |= FL_WHEN_RELEASE;
+      if (whenmenu[3].value()) n |= FL_WHEN_ENTER_KEY;
+      if (whenmenu[4].value()) n |= FL_WHEN_CLOSED;
+    }
+    w_when_box->copy_label(when_symbol_name(n));
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->o->when(n);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_14(Fl_Input_Choice* o, void* v) {
+  static const char *dflt = "void*";
+  if (v == LOAD) {
+    const char *c = current_widget->user_data_type();
+    if (!c) c = dflt;
+    o->value(c);
+  } else {
+    int mod = 0;
+    const char *c = o->value();
+    const char *d = c_check(c);
+    if (!*c) o->value(dflt);
+    else if (!strcmp(c,dflt)) c = nullptr;
+    if (!d) {
+      if (c && *c && c[strlen(c)-1] != '*' && strcmp(c,"long"))
+        d = "must be pointer or long";
+    }
+    if (d) {fl_message("Error in type: %s",d); haderror = 1; return;}
+    for (Node *q: Fluid.proj.tree.all_selected_nodes()) {
+      q->user_data_type(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}
 
 Fl_Menu_Item menu_4[] = {
  {"void*", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
@@ -592,7 +2245,6 @@ Fl_Double_Window* make_widget_panel() {
         wp_gui_tab->labelsize(11);
         wp_gui_tab->callback((Fl_Callback*)propagate_load);
         wp_gui_tab->when(FL_WHEN_NEVER);
-        wp_gui_tab->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -629,13 +2281,13 @@ Fl_Double_Window* make_widget_panel() {
             widget_image_input->labelfont(1);
             widget_image_input->labelsize(11);
             widget_image_input->textsize(11);
-            widget_image_input->callback((Fl_Callback*)image_cb);
+            widget_image_input->callback((Fl_Callback*)cb_widget_image_input);
             Fl_Group::current()->resizable(widget_image_input);
           } // Fl_Input* widget_image_input
           { Fl_Button* o = new Fl_Button(295, 65, 89, 20, "Browse...");
             o->tooltip("Click to choose the active image.");
             o->labelsize(11);
-            o->callback((Fl_Callback*)image_browse_cb);
+            o->callback((Fl_Callback*)cb_Browse);
             o->align(Fl_Align(256));
           } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(384, 65, 20, 20, "...");
@@ -654,13 +2306,13 @@ Fl_Double_Window* make_widget_panel() {
             widget_deimage_input->labelfont(1);
             widget_deimage_input->labelsize(11);
             widget_deimage_input->textsize(11);
-            widget_deimage_input->callback((Fl_Callback*)inactive_cb);
+            widget_deimage_input->callback((Fl_Callback*)cb_widget_deimage_input);
             Fl_Group::current()->resizable(widget_deimage_input);
           } // Fl_Input* widget_deimage_input
           { Fl_Button* o = new Fl_Button(295, 90, 89, 20, "Browse...");
             o->tooltip("Click to choose the inactive image.");
             o->labelsize(11);
-            o->callback((Fl_Callback*)inactive_browse_cb);
+            o->callback((Fl_Callback*)cb_Browse1);
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o
@@ -764,7 +2416,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_x_input->labelsize(11);
             widget_x_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_x_input->textsize(11);
-            widget_x_input->callback((Fl_Callback*)x_cb);
+            widget_x_input->callback((Fl_Callback*)cb_widget_x_input);
             widget_x_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_x_input->when(FL_WHEN_RELEASE);
           } // fld::widget::Formula_Input* widget_x_input
@@ -779,7 +2431,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_y_input->labelsize(11);
             widget_y_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_y_input->textsize(11);
-            widget_y_input->callback((Fl_Callback*)y_cb);
+            widget_y_input->callback((Fl_Callback*)cb_widget_y_input);
             widget_y_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_y_input->when(FL_WHEN_RELEASE);
           } // fld::widget::Formula_Input* widget_y_input
@@ -794,7 +2446,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_w_input->labelsize(11);
             widget_w_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_w_input->textsize(11);
-            widget_w_input->callback((Fl_Callback*)w_cb);
+            widget_w_input->callback((Fl_Callback*)cb_widget_w_input);
             widget_w_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_w_input->when(FL_WHEN_RELEASE);
           } // fld::widget::Formula_Input* widget_w_input
@@ -809,7 +2461,7 @@ Fl_Double_Window* make_widget_panel() {
             widget_h_input->labelsize(11);
             widget_h_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_h_input->textsize(11);
-            widget_h_input->callback((Fl_Callback*)h_cb);
+            widget_h_input->callback((Fl_Callback*)cb_widget_h_input);
             widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_h_input->when(FL_WHEN_RELEASE);
           } // fld::widget::Formula_Input* widget_h_input
@@ -820,7 +2472,7 @@ Fl_Double_Window* make_widget_panel() {
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)wc_relative_cb);
+            o->callback((Fl_Callback*)cb_Children);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->menu(menu_Children);
           } // Fl_Choice* o
@@ -834,21 +2486,21 @@ Fl_Double_Window* make_widget_panel() {
           wp_gui_flexp = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
           wp_gui_flexp->labelfont(1);
           wp_gui_flexp->labelsize(11);
-          wp_gui_flexp->callback((Fl_Callback*)flex_size_group_cb);
+          wp_gui_flexp->callback((Fl_Callback*)cb_wp_gui_flexp);
           wp_gui_flexp->align(Fl_Align(FL_ALIGN_LEFT));
           wp_gui_flexp->hide();
           { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
             widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
             widget_flex_size->labelsize(11);
             widget_flex_size->textsize(11);
-            widget_flex_size->callback((Fl_Callback*)flex_size_cb);
+            widget_flex_size->callback((Fl_Callback*)cb_widget_flex_size);
             widget_flex_size->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* widget_flex_size
           { widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
             widget_flex_fixed->tooltip("If checked, the size of the widget stays fixed.");
             widget_flex_fixed->down_box(FL_DOWN_BOX);
             widget_flex_fixed->labelsize(11);
-            widget_flex_fixed->callback((Fl_Callback*)flex_fixed_cb);
+            widget_flex_fixed->callback((Fl_Callback*)cb_widget_flex_fixed);
           } // Fl_Check_Button* widget_flex_fixed
           { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
             Fl_Group::current()->resizable(o);
@@ -858,20 +2510,20 @@ Fl_Double_Window* make_widget_panel() {
         { wp_gui_values = new Fl_Group(95, 185, 300, 20, "Values:");
           wp_gui_values->labelfont(1);
           wp_gui_values->labelsize(11);
-          wp_gui_values->callback((Fl_Callback*)values_group_cb);
+          wp_gui_values->callback((Fl_Callback*)cb_wp_gui_values);
           wp_gui_values->align(Fl_Align(FL_ALIGN_LEFT));
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
             o->tooltip("The size of the slider.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)slider_size_cb);
+            o->callback((Fl_Callback*)cb_Size);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Minimum:");
             o->tooltip("The minimum value of the widget.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)min_cb);
+            o->callback((Fl_Callback*)cb_Minimum);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Maximum:");
@@ -879,21 +2531,21 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->value(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)max_cb);
+            o->callback((Fl_Callback*)cb_Maximum);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Step:");
             o->tooltip("The resolution of the widget value.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)step_cb);
+            o->callback((Fl_Callback*)cb_Step);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Value:");
             o->tooltip("The current widget value.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)value_cb);
+            o->callback((Fl_Callback*)cb_Value);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
@@ -905,42 +2557,42 @@ Fl_Double_Window* make_widget_panel() {
           wp_gui_margins = new Fl_Group(95, 185, 300, 20, "Margins:");
           wp_gui_margins->labelfont(1);
           wp_gui_margins->labelsize(11);
-          wp_gui_margins->callback((Fl_Callback*)flex_margin_group_cb);
+          wp_gui_margins->callback((Fl_Callback*)cb_wp_gui_margins);
           wp_gui_margins->align(Fl_Align(FL_ALIGN_LEFT));
           wp_gui_margins->hide();
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
             o->tooltip("Left margin in group.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)flex_margin_left_cb);
+            o->callback((Fl_Callback*)cb_Left);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
             o->tooltip("Top margin in group.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)flex_margin_top_cb);
+            o->callback((Fl_Callback*)cb_Top);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
             o->tooltip("Right margin in group.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)flex_margin_right_cb);
+            o->callback((Fl_Callback*)cb_Right);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
             o->tooltip("Bottom margin in group.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)flex_margin_bottom_cb);
+            o->callback((Fl_Callback*)cb_Bottom);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
             o->tooltip("Gap between children.");
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)flex_margin_gap_cb);
+            o->callback((Fl_Callback*)cb_Gap);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
@@ -951,7 +2603,7 @@ Fl_Double_Window* make_widget_panel() {
         { wp_gui_sizerange = new Fl_Group(95, 185, 300, 20, "Size Range:");
           wp_gui_sizerange->labelfont(1);
           wp_gui_sizerange->labelsize(11);
-          wp_gui_sizerange->callback((Fl_Callback*)size_range_group_cb);
+          wp_gui_sizerange->callback((Fl_Callback*)cb_wp_gui_sizerange);
           wp_gui_sizerange->align(Fl_Align(FL_ALIGN_LEFT));
           wp_gui_sizerange->hide();
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");
@@ -960,7 +2612,7 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(2048);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)min_w_cb);
+            o->callback((Fl_Callback*)cb_Minimum1);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20);
@@ -969,12 +2621,12 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(2048);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)min_h_cb);
+            o->callback((Fl_Callback*)cb_1);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Button* o = new Fl_Button(215, 185, 25, 20, "set");
             o->labelsize(11);
-            o->callback((Fl_Callback*)set_min_size_cb);
+            o->callback((Fl_Callback*)cb_set);
           } // Fl_Button* o
           { Fl_Value_Input* o = new Fl_Value_Input(245, 185, 55, 20, "Maximum Size:");
             o->tooltip("The maximum value of the widget.");
@@ -982,7 +2634,7 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(2048);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)max_w_cb);
+            o->callback((Fl_Callback*)cb_Maximum1);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(305, 185, 55, 20);
@@ -991,12 +2643,12 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(2048);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)max_h_cb);
+            o->callback((Fl_Callback*)cb_2);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Button* o = new Fl_Button(365, 185, 25, 20, "set");
             o->labelsize(11);
-            o->callback((Fl_Callback*)set_max_size_cb);
+            o->callback((Fl_Callback*)cb_set1);
           } // Fl_Button* o
           { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
             Fl_Group::current()->resizable(o);
@@ -1018,7 +2670,7 @@ Fl_Double_Window* make_widget_panel() {
             wp_gui_shortcut->labelfont(0);
             wp_gui_shortcut->labelsize(11);
             wp_gui_shortcut->labelcolor(FL_FOREGROUND_COLOR);
-            wp_gui_shortcut->callback((Fl_Callback*)shortcut_in_cb);
+            wp_gui_shortcut->callback((Fl_Callback*)cb_wp_gui_shortcut);
             wp_gui_shortcut->align(Fl_Align(FL_ALIGN_CENTER));
             wp_gui_shortcut->when(FL_WHEN_CHANGED);
           } // Fl_Shortcut_Button* wp_gui_shortcut
@@ -1034,26 +2686,26 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)xclass_cb);
+            o->callback((Fl_Callback*)cb_3);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
           { Fl_Light_Button* o = new Fl_Light_Button(195, 235, 60, 20, "Border");
             o->tooltip("Add a border around the window.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)border_cb);
+            o->callback((Fl_Callback*)cb_Border);
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(260, 235, 55, 20, "Modal");
             o->tooltip("Make the window modal.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)modal_cb);
+            o->callback((Fl_Callback*)cb_Modal);
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(320, 235, 75, 20, "Nonmodal");
             o->tooltip("Make the window non-modal.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)non_modal_cb);
+            o->callback((Fl_Callback*)cb_Nonmodal);
             o->align(Fl_Align(132|FL_ALIGN_INSIDE));
           } // Fl_Light_Button* o
           wp_gui_xclass->end();
@@ -1067,26 +2719,26 @@ Fl_Double_Window* make_widget_panel() {
             o->tooltip("Show the widget.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)visible_cb);
+            o->callback((Fl_Callback*)cb_Visible);
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
             o->tooltip("Activate the widget.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)active_cb);
+            o->callback((Fl_Callback*)cb_Active);
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Resizable");
             o->tooltip("Make the widget resizable.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)resizable_cb);
+            o->callback((Fl_Callback*)cb_Resizable);
             o->when(FL_WHEN_CHANGED);
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(305, 260, 70, 20, "Hotspot");
             o->tooltip("Center the window under this widget.");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)hotspot_cb);
+            o->callback((Fl_Callback*)cb_Hotspot);
             o->when(FL_WHEN_CHANGED);
           } // Fl_Light_Button* o
           { Fl_Box* o = new Fl_Box(395, 260, 0, 20);
@@ -1100,7 +2752,7 @@ Fl_Double_Window* make_widget_panel() {
           wp_gui_tooltip->labelfont(1);
           wp_gui_tooltip->labelsize(11);
           wp_gui_tooltip->textsize(11);
-          wp_gui_tooltip->callback((Fl_Callback*)tooltip_cb);
+          wp_gui_tooltip->callback((Fl_Callback*)cb_wp_gui_tooltip);
         } // Fl_Input* wp_gui_tooltip
         { Fl_Box* o = new Fl_Box(95, 305, 300, 5);
           o->hide();
@@ -1126,7 +2778,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)labelfont_cb);
+            o->callback((Fl_Callback*)cb_4);
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
@@ -1137,15 +2789,15 @@ Fl_Double_Window* make_widget_panel() {
             o->step(1);
             o->value(14);
             o->textsize(11);
-            o->callback((Fl_Callback*)labelsize_cb);
+            o->callback((Fl_Callback*)cb_5);
           } // Fl_Value_Input* o
           { w_labelcolor = new Fl_Button(296, 40, 90, 20, "Label Color");
             w_labelcolor->tooltip("The color of the label text.");
             w_labelcolor->labelsize(11);
-            w_labelcolor->callback((Fl_Callback*)labelcolor_cb);
+            w_labelcolor->callback((Fl_Callback*)cb_w_labelcolor);
           } // Fl_Button* w_labelcolor
           { Fl_Menu_Button* o = new Fl_Menu_Button(386, 40, 18, 20);
-            o->callback((Fl_Callback*)labelcolor_menu_cb);
+            o->callback((Fl_Callback*)cb_6);
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           wp_style_label->end();
@@ -1162,17 +2814,17 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)box_cb);
+            o->callback((Fl_Callback*)cb_7);
             Fl_Group::current()->resizable(o);
             o->menu(boxmenu);
           } // Fl_Choice* o
           { w_color = new Fl_Button(296, 65, 90, 20, "Color");
             w_color->tooltip("The background color of the widget.");
             w_color->labelsize(11);
-            w_color->callback((Fl_Callback*)color_cb);
+            w_color->callback((Fl_Callback*)cb_w_color);
           } // Fl_Button* w_color
           { Fl_Menu_Button* o = new Fl_Menu_Button(386, 65, 18, 20);
-            o->callback((Fl_Callback*)color_menu_cb);
+            o->callback((Fl_Callback*)cb_8);
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           wp_style_box->end();
@@ -1189,17 +2841,17 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)down_box_cb);
+            o->callback((Fl_Callback*)cb_9);
             Fl_Group::current()->resizable(o);
             o->menu(boxmenu);
           } // Fl_Choice* o
           { w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
             w_selectcolor->tooltip("The selection color of the widget.");
             w_selectcolor->labelsize(11);
-            w_selectcolor->callback((Fl_Callback*)color2_cb);
+            w_selectcolor->callback((Fl_Callback*)cb_w_selectcolor);
           } // Fl_Button* w_selectcolor
           { Fl_Menu_Button* o = new Fl_Menu_Button(386, 90, 18, 20);
-            o->callback((Fl_Callback*)color2_menu_cb);
+            o->callback((Fl_Callback*)cb_a);
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           wp_style_downbox->end();
@@ -1216,7 +2868,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)textfont_cb);
+            o->callback((Fl_Callback*)cb_b);
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
@@ -1227,15 +2879,15 @@ Fl_Double_Window* make_widget_panel() {
             o->step(1);
             o->value(14);
             o->textsize(11);
-            o->callback((Fl_Callback*)textsize_cb);
+            o->callback((Fl_Callback*)cb_c);
           } // Fl_Value_Input* o
           { w_textcolor = new Fl_Button(296, 115, 90, 20, "Text Color");
             w_textcolor->tooltip("The value text color.");
             w_textcolor->labelsize(11);
-            w_textcolor->callback((Fl_Callback*)textcolor_cb);
+            w_textcolor->callback((Fl_Callback*)cb_w_textcolor);
           } // Fl_Button* w_textcolor
           { Fl_Menu_Button* o = new Fl_Menu_Button(386, 115, 18, 20);
-            o->callback((Fl_Callback*)textcolor_menu_cb);
+            o->callback((Fl_Callback*)cb_d);
             o->menu(colormenu);
           } // Fl_Menu_Button* o
           wp_style_text->end();
@@ -1252,7 +2904,7 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(128);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)h_label_margin_cb);
+            o->callback((Fl_Callback*)cb_Horizontal);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(159, 150, 55, 20, "Vertical:");
@@ -1262,7 +2914,7 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(127);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)v_label_margin_cb);
+            o->callback((Fl_Callback*)cb_Vertical);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Text to Image:");
@@ -1271,7 +2923,7 @@ Fl_Double_Window* make_widget_panel() {
             o->maximum(255);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)image_spacing_cb);
+            o->callback((Fl_Callback*)cb_Text);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Box* o = new Fl_Box(281, 150, 60, 20);
@@ -1285,7 +2937,7 @@ Fl_Double_Window* make_widget_panel() {
           o->tooltip("use compact box types for closely set buttons");
           o->selection_color((Fl_Color)1);
           o->labelsize(11);
-          o->callback((Fl_Callback*)compact_cb);
+          o->callback((Fl_Callback*)cb_Compact);
         } // Fl_Light_Button* o
         { Fl_Box* o = new Fl_Box(195, 205, 40, 40);
           o->labelsize(11);
@@ -1309,7 +2961,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)subclass_cb, (void*)(4));
+            o->callback((Fl_Callback*)cb_e, (void*)(4));
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
           { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
@@ -1318,7 +2970,7 @@ Fl_Double_Window* make_widget_panel() {
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)subtype_cb);
+            o->callback((Fl_Callback*)cb_f);
           } // Fl_Choice* o
           wp_cpp_class->end();
         } // Fl_Group* wp_cpp_class
@@ -1332,7 +2984,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)name_cb);
+            o->callback((Fl_Callback*)cb_10);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
           { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
@@ -1340,7 +2992,7 @@ Fl_Double_Window* make_widget_panel() {
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)name_public_member_cb);
+            o->callback((Fl_Callback*)cb_11);
             o->when(FL_WHEN_CHANGED);
             o->menu(menu_2);
           } // Fl_Choice* o
@@ -1362,31 +3014,31 @@ Fl_Double_Window* make_widget_panel() {
           v_input[0]->labelsize(11);
           v_input[0]->textfont(4);
           v_input[0]->textsize(11);
-          v_input[0]->callback((Fl_Callback*)v_input_cb, (void*)(0));
+          v_input[0]->callback((Fl_Callback*)cb_v_input, (void*)(0));
         } // Fl_Input* v_input[0]
         { v_input[1] = new Fl_Input(95, 110, 310, 20);
           v_input[1]->tooltip("Extra initialization code for the widget.");
           v_input[1]->labelsize(11);
           v_input[1]->textfont(4);
           v_input[1]->textsize(11);
-          v_input[1]->callback((Fl_Callback*)v_input_cb, (void*)(1));
+          v_input[1]->callback((Fl_Callback*)cb_v_input1, (void*)(1));
         } // Fl_Input* v_input[1]
         { v_input[2] = new Fl_Input(95, 130, 310, 20);
           v_input[2]->tooltip("Extra initialization code for the widget.");
           v_input[2]->labelsize(11);
           v_input[2]->textfont(4);
           v_input[2]->textsize(11);
-          v_input[2]->callback((Fl_Callback*)v_input_cb, (void*)(2));
+          v_input[2]->callback((Fl_Callback*)cb_v_input2, (void*)(2));
         } // Fl_Input* v_input[2]
         { v_input[3] = new Fl_Input(95, 150, 310, 20);
           v_input[3]->tooltip("Extra initialization code for the widget.");
           v_input[3]->labelsize(11);
           v_input[3]->textfont(4);
           v_input[3]->textsize(11);
-          v_input[3]->callback((Fl_Callback*)v_input_cb, (void*)(3));
+          v_input[3]->callback((Fl_Callback*)cb_v_input3, (void*)(3));
         } // Fl_Input* v_input[3]
         { Fl_Tile* o = new Fl_Tile(95, 175, 310, 130);
-          o->callback((Fl_Callback*)cb_1);
+          o->callback((Fl_Callback*)cb_12);
           { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
             o->box(FL_FLAT_BOX);
             { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
@@ -1398,11 +3050,11 @@ Fl_Double_Window* make_widget_panel() {
               wComment->textfont(6);
               wComment->textsize(11);
               wComment->textcolor((Fl_Color)59);
+              wComment->callback((Fl_Callback*)cb_wComment);
               wComment->align(Fl_Align(FL_ALIGN_LEFT));
               wComment->when(FL_WHEN_CHANGED);
               Fl_Group::current()->resizable(wComment);
               wComment->buffer(new Fl_Text_Buffer());
-              wComment->callback((Fl_Callback*)comment_cb);
             } // Fl_Text_Editor* wComment
             o->end();
           } // Fl_Group* o
@@ -1420,7 +3072,7 @@ Fl_Double_Window* make_widget_panel() {
               wCallback->labelcolor(FL_FOREGROUND_COLOR);
               wCallback->textfont(4);
               wCallback->textsize(11);
-              wCallback->callback((Fl_Callback*)callback_cb);
+              wCallback->callback((Fl_Callback*)cb_wCallback);
               wCallback->align(Fl_Align(FL_ALIGN_LEFT));
               wCallback->when(FL_WHEN_RELEASE);
               Fl_Group::current()->resizable(wCallback);
@@ -1441,7 +3093,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)user_data_cb);
+            o->callback((Fl_Callback*)cb_13);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
           { Fl_Menu_Button* o = new Fl_Menu_Button(260, 310, 145, 20, "When");
@@ -1451,7 +3103,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
-            o->callback((Fl_Callback*)when_cb);
+            o->callback((Fl_Callback*)cb_When);
             o->when(FL_WHEN_CHANGED);
             o->menu(whenmenu);
           } // Fl_Menu_Button* o
@@ -1468,7 +3120,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)user_data_type_cb);
+            o->callback((Fl_Callback*)cb_14);
             Fl_Group::current()->resizable(o);
             o->menu(menu_4);
           } // Fl_Input_Choice* o
@@ -1507,6 +3159,7 @@ Fl_Double_Window* make_widget_panel() {
         widget_tab_grid_child->callback((Fl_Callback*)cb_widget_tab_grid_child);
         widget_tab_grid_child->align(Fl_Align(FL_ALIGN_TOP));
         widget_tab_grid_child->when(FL_WHEN_RELEASE);
+        widget_tab_grid_child->hide();
         widget_tab_grid_child->end();
       } // Grid_Child_Tab* widget_tab_grid_child
       o->show();

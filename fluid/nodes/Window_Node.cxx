@@ -341,68 +341,6 @@ void Window_Node::ideal_size(int &w, int &h) {
 }
 
 
-// control panel items:
-
-void modal_cb(Fl_Light_Button* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
-    i->show();
-    i->value(((Window_Node *)current_widget)->modal);
-  } else {
-    Fluid.proj.undo.checkpoint();
-    ((Window_Node *)current_widget)->modal = i->value();
-    Fluid.proj.set_modflag(1);
-  }
-}
-
-void non_modal_cb(Fl_Light_Button* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
-    i->show();
-    i->value(((Window_Node *)current_widget)->non_modal);
-  } else {
-    Fluid.proj.undo.checkpoint();
-    ((Window_Node *)current_widget)->non_modal = i->value();
-    Fluid.proj.set_modflag(1);
-  }
-}
-
-void border_cb(Fl_Light_Button* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
-    i->show();
-    i->value(((Fl_Window*)(current_widget->o))->border());
-  } else {
-    Fluid.proj.undo.checkpoint();
-    ((Fl_Window*)(current_widget->o))->border(i->value());
-    Fluid.proj.set_modflag(1);
-  }
-}
-
-void xclass_cb(Fl_Input* i, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Window)) {
-      i->show();
-      i->parent()->show();
-      i->value(((Window_Node *)current_widget)->xclass);
-    } else {
-      i->hide();
-      i->parent()->hide(); // hides the "X Class:" label as well
-    }
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        mod = 1;
-        Window_Node *wt = (Window_Node *)o;
-        storestring(i->value(), wt->xclass);
-        ((Fl_Window*)(wt->o))->xclass(wt->xclass);
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 

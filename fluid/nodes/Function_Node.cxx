@@ -123,7 +123,8 @@ const char *_c_check(const char * & c, int type) {
 //      while (*c != '\n' && *c) c++;
 //      break;
     case '{':
-      if (type==')') goto UNEXPECTED;
+//      // Matt: C++ does allow {} inside () now
+//      if (type==')') goto UNEXPECTED;
       d = _c_check(c,'}');
       if (d) return d;
       break;
@@ -146,7 +147,7 @@ const char *_c_check(const char * & c, int type) {
     case '}':
     case ')':
     case ']':
-    UNEXPECTED:
+//    UNEXPECTED:
       if (type == *(c-1)) return nullptr;
       sprintf(buffer, "unexpected '%c'", *(c-1));
       return buffer;

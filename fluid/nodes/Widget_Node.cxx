@@ -24,11 +24,8 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
-#include "nodes/Window_Node.h"
-#include "nodes/Group_Node.h"
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
-#include "panels/settings_panel.h"
 #include "panels/widget_panel.h"
 
 #include <FL/Fl.H>
@@ -39,11 +36,13 @@
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Window.H>
-#include <FL/fl_show_colormap.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#undef min
+#undef max
+#include <algorithm>
 
 // Make an Widget_Node subclass instance.
 // It figures out the automatic size and parent of the new widget,
@@ -319,57 +318,8 @@ Fl_Window *the_panel;
 
 Widget_Node *current_widget; // one of the selected ones
 void* const LOAD = (void *)"LOAD"; // "magic" pointer to indicate that we need to load values into the dialog
-static int numselected; // number selected
-static int haderror;
-
-void name_cb(Fl_Input* o, void *v) {
-  if (v == LOAD) {
-    static char buf[1024];
-    if (numselected != 1) {
-      snprintf(buf, sizeof(buf), "Widget Properties (%d widgets)", numselected);
-      o->hide();
-    } else {
-      o->value(current_widget->name());
-      o->show();
-      snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
-    }
-
-    the_panel->label(buf);
-  } else {
-    if (numselected == 1) {
-      current_widget->name(o->value());
-      // I don't update window title, as it probably is being closed
-      // and wm2 (a window manager) barfs if you retitle and then
-      // hide a window:
-      // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
-    }
-  }
-}
-
-void name_public_member_cb(Fl_Choice* i, void* v) {
-  if (v == LOAD) {
-    i->value(current_widget->public_);
-    if (current_widget->is_in_class()) i->show(); else i->hide();
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node *w = ((Widget_Node*)o);
-        if (w->is_in_class()) {
-          w->public_ = i->value();
-        } else {
-          // if this is not in a class, it can be only private or public
-          w->public_ = (i->value()>0);
-        }
-        mod = 1;
-      }
-    }
-    if (mod) {
-      Fluid.proj.set_modflag(1);
-      redraw_browser();
-    }
-  }
-}
+int numselected; // number selected
+int haderror;
 
 void name_public_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
@@ -447,191 +397,12 @@ void label_cb(Fl_Input* i, void *v) {
   }
 }
 
-static Fl_Input *image_input;
 
-void image_cb(Fl_Input* i, void *v) {
-  if (v == LOAD) {
-    image_input = i;
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
-      i->activate();
-      i->value(((Widget_Node*)current_widget)->image_name());
-    } else i->deactivate();
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->image_name(i->value());
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-void image_browse_cb(Fl_Button* b, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window))
-      b->activate();
-    else
-      b->deactivate();
-  } else {
-    int mod = 0;
-    if (ui_find_image(image_input->value())) {
-      image_input->value(ui_find_image_name);
-      for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-        if (o->selected && o->is_widget()) {
-          ((Widget_Node*)o)->image_name(ui_find_image_name);
-          mod = 1;
-        }
-      }
-      if (mod) Fluid.proj.set_modflag(1);
-    }
-  }
-}
 
-void bind_image_cb(Fl_Check_Button* b, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
-      b->activate();
-      b->value(current_widget->bind_image_);
-    } else {
-      b->deactivate();
-    }
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->bind_image_ = b->value();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-void compress_image_cb(Fl_Check_Button* b, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
-      b->activate();
-      b->value(!current_widget->compress_image_);
-    } else {
-      b->deactivate();
-    }
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->compress_image_ = !b->value();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-static Fl_Input *inactive_input;
-
-void inactive_cb(Fl_Input* i, void *v) {
-  if (v == LOAD) {
-    inactive_input = i;
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
-      i->activate();
-      i->value(((Widget_Node*)current_widget)->inactive_name());
-    } else i->deactivate();
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->inactive_name(i->value());
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void inactive_browse_cb(Fl_Button* b, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window))
-      b->activate();
-    else
-      b->deactivate();
-  } else {
-    int mod = 0;
-    if (ui_find_image(inactive_input->value())) {
-      inactive_input->value(ui_find_image_name);
-      for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-        if (o->selected && o->is_widget()) {
-          ((Widget_Node*)o)->inactive_name(ui_find_image_name);
-          mod = 1;
-        }
-      }
-      if (mod) Fluid.proj.set_modflag(1);
-    }
-  }
-}
-
-void bind_deimage_cb(Fl_Check_Button* b, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
-      b->activate();
-      b->value(current_widget->bind_deimage_);
-    } else {
-      b->deactivate();
-    }
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->bind_deimage_ = b->value();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void compress_deimage_cb(Fl_Check_Button* b, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
-      b->activate();
-      b->value(!current_widget->compress_deimage_);
-    } else {
-      b->deactivate();
-    }
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->compress_deimage_ = !b->value();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void tooltip_cb(Fl_Input* i, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_widget()) {
-      i->activate();
-      i->value(((Widget_Node*)current_widget)->tooltip());
-    } else i->deactivate();
-  } else {
-    int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        ((Widget_Node*)o)->tooltip(i->value());
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-fld::widget::Formula_Input *x_input, *y_input, *w_input, *h_input;
-
-static int widget_i = 0;
+int widget_i = 0;
 
 static int vars_i_cb(const fld::widget::Formula_Input*, void *v) {
   return widget_i;
@@ -722,8 +493,6 @@ static int vars_sh_cb(const fld::widget::Formula_Input*, void *v) {
 }
 
 static int bbox_x, bbox_y, bbox_r, bbox_b;
-static int bbox_min(int a, int b) { return (a<b) ? a : b; }
-static int bbox_max(int a, int b) { return (a>b) ? a : b; }
 
 static void calculate_bbox(Node *p) {
   char first = 1;
@@ -736,10 +505,10 @@ static void calculate_bbox(Node *p) {
         bbox_r = o->x() + o->w(); bbox_b = o->y() + o->h();
         first = 0;
       } else {
-        bbox_x = bbox_min(bbox_x, o->x());
-        bbox_y = bbox_min(bbox_y, o->y());
-        bbox_r = bbox_max(bbox_r, o->x() + o->w());
-        bbox_b = bbox_max(bbox_b, o->y() + o->h());
+        bbox_x = std::min(bbox_x, o->x());
+        bbox_y = std::min(bbox_y, o->y());
+        bbox_r = std::max(bbox_r, o->x() + o->w());
+        bbox_b = std::max(bbox_b, o->y() + o->h());
       }
     }
   }
@@ -786,148 +555,9 @@ fld::widget::Formula_Input_Vars widget_vars[] = {
   { nullptr }
 };
 
-void x_cb(fld::widget::Formula_Input *i, void *v) {
-  if (v == LOAD) {
-    x_input = i;
-    if (current_widget->is_true_widget()) {
-      i->value(((Widget_Node *)current_widget)->o->x());
-      x_input->activate();
-    } else x_input->deactivate();
-  } else {
-    Fluid.proj.undo.checkpoint();
-    widget_i = 0;
-    int mod = 0;
-    int v = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Fl_Widget *w = ((Widget_Node *)o)->o;
-        i->variables(widget_vars, o);
-        v = i->value();
-        w->resize(v, w->y(), w->w(), w->h());
-        if (w->window()) w->window()->redraw();
-        widget_i++;
-        mod = 1;
-      }
-    }
-    if (mod) {
-      Fluid.proj.set_modflag(1);
-      i->value(v);    // change the displayed value to the result of the last
-                      // calculation. Keep the formula if it was not used.
-    }
-  }
-}
 
-void y_cb(fld::widget::Formula_Input *i, void *v) {
-  if (v == LOAD) {
-    y_input = i;
-    if (current_widget->is_true_widget()) {
-      i->value(((Widget_Node *)current_widget)->o->y());
-      y_input->activate();
-    } else y_input->deactivate();
-  } else {
-    Fluid.proj.undo.checkpoint();
-    widget_i = 0;
-    int mod = 0;
-    int v = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Fl_Widget *w = ((Widget_Node *)o)->o;
-        i->variables(widget_vars, o);
-        v = i->value();
-        w->resize(w->x(), v, w->w(), w->h());
-        if (w->window()) w->window()->redraw();
-        widget_i++;
-        mod = 1;
-      }
-    }
-    if (mod) {
-      Fluid.proj.set_modflag(1);
-      i->value(v);
-    }
-  }
-}
 
-void w_cb(fld::widget::Formula_Input *i, void *v) {
-  if (v == LOAD) {
-    w_input = i;
-    if (current_widget->is_true_widget()) {
-      i->value(((Widget_Node *)current_widget)->o->w());
-      w_input->activate();
-    } else w_input->deactivate();
-  } else {
-    Fluid.proj.undo.checkpoint();
-    widget_i = 0;
-    int mod = 0;
-    int v = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Fl_Widget *w = ((Widget_Node *)o)->o;
-        i->variables(widget_vars, o);
-        v = i->value();
-        w->resize(w->x(), w->y(), v, w->h());
-        if (w->window()) w->window()->redraw();
-        widget_i++;
-        mod = 1;
-      }
-    }
-    if (mod) {
-      Fluid.proj.set_modflag(1);
-      i->value(v);
-    }
-  }
-}
 
-void h_cb(fld::widget::Formula_Input *i, void *v) {
-  if (v == LOAD) {
-    h_input = i;
-    if (current_widget->is_true_widget()) {
-      i->value(((Widget_Node *)current_widget)->o->h());
-      h_input->activate();
-    } else h_input->deactivate();
-  } else {
-    Fluid.proj.undo.checkpoint();
-    widget_i = 0;
-    int mod = 0;
-    int v = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Fl_Widget *w = ((Widget_Node *)o)->o;
-        i->variables(widget_vars, o);
-        v = i->value();
-        w->resize(w->x(), w->y(), w->w(), v);
-        if (w->window()) w->window()->redraw();
-        widget_i++;
-        mod = 1;
-      }
-    }
-    if (mod) {
-      Fluid.proj.set_modflag(1);
-      i->value(v);
-    }
-  }
-}
-
-void wc_relative_cb(Fl_Choice *i, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Widget_Class)) {
-      i->show();
-      i->value(((Widget_Class_Node *)current_widget)->wc_relative);
-    } else {
-      i->hide();
-    }
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && current_widget->is_a(ID_Widget_Class)) {
-        Widget_Class_Node *t = (Widget_Class_Node *)o;
-        t->wc_relative = i->value();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 
@@ -1051,102 +681,6 @@ int boxnumber(const char *i) {
   return 0;
 }
 
-void box_cb(Fl_Choice* i, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-    int n = current_widget->o->box(); if (!n) n = ZERO_ENTRY;
-    for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
-      if (boxmenu[j].argument() == n) {i->value(j); break;}
-  } else {
-    int mod = 0;
-    int m = i->value();
-    int n = int(boxmenu[m].argument());
-    if (!n) return; // should not happen
-    if (n == ZERO_ENTRY) n = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        q->o->box((Fl_Boxtype)n);
-        q->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void down_box_cb(Fl_Choice* i, void *v) {
-  if (v == LOAD) {
-    int n;
-    if (current_widget->is_a(ID_Button))
-      n = ((Fl_Button*)(current_widget->o))->down_box();
-    else if (current_widget->is_a(ID_Input_Choice))
-      n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
-    else if (current_widget->is_a(ID_Menu_Manager_))
-      n = ((Fl_Menu_*)(current_widget->o))->down_box();
-    else {
-      i->deactivate(); return;
-    }
-    i->activate();
-    if (!n) n = ZERO_ENTRY;
-    for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
-      if (boxmenu[j].argument() == n) {i->value(j); break;}
-  } else {
-    int mod = 0;
-    int m = i->value();
-    int n = int(boxmenu[m].argument());
-    if (!n) return; // should not happen
-    if (n == ZERO_ENTRY) n = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected) {
-        if (o->is_a(ID_Button)) {
-          Widget_Node* q = (Widget_Node*)o;
-          ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
-          if (((Fl_Button*)(q->o))->value()) q->redraw();
-        } else if (o->is_a(ID_Input_Choice)) {
-          Widget_Node* q = (Widget_Node*)o;
-          ((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
-        } else if (o->is_a(ID_Menu_Manager_)) {
-          Widget_Node* q = (Widget_Node*)o;
-          ((Fl_Menu_*)(q->o))->down_box((Fl_Boxtype)n);
-        }
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void compact_cb(Fl_Light_Button* i, void* v) {
-  if (v == LOAD) {
-    uchar n;
-    if (current_widget->is_a(ID_Button) && !current_widget->is_a(ID_Menu_Item)) {
-      n = ((Fl_Button*)(current_widget->o))->compact();
-      i->value(n);
-      i->show();
-    } else {
-      i->hide();
-    }
-  } else {
-    int mod = 0;
-    uchar n = (uchar)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Button) && !o->is_a(ID_Menu_Item)) {
-        Widget_Node* q = (Widget_Node*)o;
-        uchar v = ((Fl_Button*)(q->o))->compact();
-        if (n != v) {
-          if (!mod) {
-            mod = 1;
-            Fluid.proj.undo.checkpoint();
-          }
-          ((Fl_Button*)(q->o))->compact(n);
-          q->redraw();
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 
 
@@ -1209,36 +743,6 @@ void set_whenmenu(int n) {
   if (n&FL_WHEN_CLOSED)       whenmenu[4].set(); else whenmenu[4].clear();
 }
 
-void when_cb(Fl_Menu_Button* i, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-    int n = current_widget->o->when();
-    set_whenmenu(n);
-    w_when_box->copy_label(when_symbol_name(n));
-  } else {
-    int mod = 0;
-    int n = 0;
-    if (i->mvalue() && ((i->mvalue()->flags & FL_MENU_TOGGLE) == 0) ) {
-      n = (int)i->mvalue()->argument();
-      set_whenmenu(n);
-    } else {
-      if (whenmenu[0].value()) n |= FL_WHEN_CHANGED;
-      if (whenmenu[1].value()) n |= FL_WHEN_NOT_CHANGED;
-      if (whenmenu[2].value()) n |= FL_WHEN_RELEASE;
-      if (whenmenu[3].value()) n |= FL_WHEN_ENTER_KEY;
-      if (whenmenu[4].value()) n |= FL_WHEN_CLOSED;
-    }
-    w_when_box->copy_label(when_symbol_name(n));
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        q->o->when(n);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 uchar Widget_Node::resizable() const {
   if (is_a(ID_Window)) return ((Fl_Window*)o)->resizable() != nullptr;
@@ -1266,101 +770,7 @@ void Widget_Node::resizable(uchar v) {
   }
 }
 
-void resizable_cb(Fl_Light_Button* i,void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;}
-    if (numselected > 1) {i->deactivate(); return;}
-    i->activate();
-    i->value(current_widget->resizable());
-  } else {
-    Fluid.proj.undo.checkpoint();
-    current_widget->resizable(i->value());
-    Fluid.proj.set_modflag(1);
-  }
-}
 
-void hotspot_cb(Fl_Light_Button* i,void* v) {
-  if (v == LOAD) {
-    if (numselected > 1) {i->deactivate(); return;}
-    if (current_widget->is_a(ID_Menu_Item)) i->label("divider");
-    else i->label("hotspot");
-    i->activate();
-    i->value(current_widget->hotspot());
-  } else {
-    Fluid.proj.undo.checkpoint();
-    current_widget->hotspot(i->value());
-    if (current_widget->is_a(ID_Menu_Item)) {
-      current_widget->redraw();
-      return;
-    }
-    if (i->value()) {
-      Node *p = current_widget->parent;
-      if (!p || !p->is_widget()) return;
-      while (!p->is_a(ID_Window)) p = p->parent;
-      for (Node *o = p->next; o && o->level > p->level; o = o->next) {
-        if (o->is_widget() && o != current_widget)
-          ((Widget_Node*)o)->hotspot(0);
-      }
-    }
-    Fluid.proj.set_modflag(1);
-  }
-}
-
-void visible_cb(Fl_Light_Button* i, void* v) {
-  if (v == LOAD) {
-    i->value(current_widget->o->visible());
-    if (current_widget->is_a(ID_Window)) i->deactivate();
-    else i->activate();
-  } else {
-    int mod = 0;
-    int n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        if (!mod) {
-          mod = 1;
-          Fluid.proj.undo.checkpoint();
-        }
-        Widget_Node* q = (Widget_Node*)o;
-        n ? q->o->show() : q->o->hide();
-        q->redraw();
-        if (n && q->parent && q->parent->type_name()) {
-          if (q->parent->is_a(ID_Tabs)) {
-            ((Fl_Tabs *)q->o->parent())->value(q->o);
-          } else if (q->parent->is_a(ID_Wizard)) {
-            ((Fl_Wizard *)q->o->parent())->value(q->o);
-          }
-        }
-      }
-    }
-    if (mod) {
-      Fluid.proj.set_modflag(1);
-      redraw_browser();
-    }
-  }
-}
-
-void active_cb(Fl_Light_Button* i, void* v) {
-  if (v == LOAD) {
-    i->value(current_widget->o->active());
-    if (current_widget->is_a(ID_Window)) i->deactivate();
-    else i->activate();
-  } else {
-    int mod = 0;
-    int n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        if (!mod) {
-          mod = 1;
-          Fluid.proj.undo.checkpoint();
-        }
-        Widget_Node* q = (Widget_Node*)o;
-        n ? q->o->activate() : q->o->deactivate();
-        q->redraw();
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 
@@ -1405,48 +815,7 @@ Fl_Menu_Item fontmenu_w_default[] = {
   {nullptr}
 };
 
-void labelfont_cb(Fl_Choice* i, void *v) {
-  if (v == LOAD) {
-    int n = current_widget->o->labelfont();
-    if (n > 15) n = 0;
-    i->value(n);
-  } else {
-    int mod = 0;
-    int n = i->value();
-    if (n <= 0) n = layout->labelfont;
-    if (n <= 0) n = FL_HELVETICA;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        q->o->labelfont(n);
-        q->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-void labelsize_cb(Fl_Value_Input* i, void *v) {
-  int n;
-  if (v == LOAD) {
-    n = current_widget->o->labelsize();
-  } else {
-    int mod = 0;
-    n = int(i->value());
-    if (n <= 0) n = layout->labelsize;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        q->o->labelsize(n);
-        q->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-  i->value(n);
-}
 
 extern const char *ui_find_image_name;
 
@@ -1517,31 +886,7 @@ void color_common(Fl_Color c) {
   if (mod) Fluid.proj.set_modflag(1);
 }
 
-void color_cb(Fl_Button* i, void *v) {
-  Fl_Color c = current_widget->o->color();
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-  } else {
-    Fl_Color d = fl_show_colormap(c);
-    if (d == c) return;
-    c = d;
-    color_common(c);
-  }
-  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
-}
 
-void color_menu_cb(Fl_Menu_Button* i, void *v) {
-  Fl_Color c = current_widget->o->color();
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-  } else {
-    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
-    if (d == c) return;
-    c = d;
-    color_common(c);
-    w_color->color(c); w_color->labelcolor(fl_contrast(FL_BLACK,c)); w_color->redraw();
-  }
-}
 
 void color2_common(Fl_Color c) {
   int mod = 0;
@@ -1555,31 +900,7 @@ void color2_common(Fl_Color c) {
   if (mod) Fluid.proj.set_modflag(1);
 }
 
-void color2_cb(Fl_Button* i, void *v) {
-  Fl_Color c = current_widget->o->selection_color();
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-  } else {
-    Fl_Color d = fl_show_colormap(c);
-    if (d == c) return;
-    c = d;
-    color2_common(c);
-  }
-  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
-}
 
-void color2_menu_cb(Fl_Menu_Button* i, void *v) {
-  Fl_Color c = current_widget->o->selection_color();
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-  } else {
-    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
-    if (d == c) return;
-    c = d;
-    color2_common(c);
-    w_selectcolor->color(c); w_selectcolor->labelcolor(fl_contrast(FL_BLACK,c)); w_selectcolor->redraw();
-  }
-}
 
 void labelcolor_common(Fl_Color c) {
   int mod = 0;
@@ -1593,27 +914,7 @@ void labelcolor_common(Fl_Color c) {
   if (mod) Fluid.proj.set_modflag(1);
 }
 
-void labelcolor_cb(Fl_Button* i, void *v) {
-  Fl_Color c = current_widget->o->labelcolor();
-  if (v != LOAD) {
-    Fl_Color d = fl_show_colormap(c);
-    if (d == c) return;
-    c = d;
-    labelcolor_common(c);
-  }
-  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
-}
 
-void labelcolor_menu_cb(Fl_Menu_Button* i, void *v) {
-  Fl_Color c = current_widget->o->labelcolor();
-  if (v != LOAD) {
-    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
-    if (d == c) return;
-    c = d;
-    labelcolor_common(c);
-    w_labelcolor->color(c); w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c)); w_labelcolor->redraw();
-  }
-}
 
 static Fl_Button* relative(Fl_Widget* o, int i) {
   Fl_Group* g = (Fl_Group*)(o->parent());
@@ -1741,132 +1042,9 @@ void align_text_image_cb(Fl_Choice *i, void *v) {
 
 ////////////////////////////////////////////////////////////////
 
-void callback_cb(fld::widget::Code_Editor* i, void *v) {
-  if (v == LOAD) {
-    const char *cbtext = current_widget->callback();
-    i->buffer()->text( cbtext ? cbtext : "" );
-  } else {
-    int mod = 0;
-    char *c = i->buffer()->text();
-    const char *d = c_check(c);
-    if (d) {
-      fl_message("Error in callback: %s",d);
-      if (i->window()) i->window()->make_current();
-      haderror = 1;
-    }
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected) {
-        o->callback(c);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-    free(c);
-  }
-}
 
-void comment_cb(Fl_Text_Editor* i, void *v) {
-  if (v == LOAD) {
-    const char *cmttext = current_widget->comment();
-    i->buffer()->text( cmttext ? cmttext : "" );
-  } else {
-    int mod = 0;
-    char *c = i->buffer()->text();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected) {
-        o->comment(c);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-    free(c);
-  }
-}
 
-void user_data_cb(Fl_Input *i, void *v) {
-  if (v == LOAD) {
-    i->value(current_widget->user_data());
-  } else {
-    int mod = 0;
-    const char *c = i->value();
-    const char *d = c_check(c);
-    if (d) {fl_message("Error in user_data: %s",d); haderror = 1; return;}
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected) {
-        o->user_data(c);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-void user_data_type_cb(Fl_Input_Choice *i, void *v) {
-  static const char *dflt = "void*";
-  if (v == LOAD) {
-    const char *c = current_widget->user_data_type();
-    if (!c) c = dflt;
-    i->value(c);
-  } else {
-    int mod = 0;
-    const char *c = i->value();
-    const char *d = c_check(c);
-    if (!*c) i->value(dflt);
-    else if (!strcmp(c,dflt)) c = nullptr;
-    if (!d) {
-      if (c && *c && c[strlen(c)-1] != '*' && strcmp(c,"long"))
-        d = "must be pointer or long";
-    }
-    if (d) {fl_message("Error in type: %s",d); haderror = 1; return;}
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected) {
-        o->user_data_type(c);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-// "v_attributes" let user type in random code for attribute settings:
-
-void v_input_cb(Fl_Input* i, void* v) {
-  int n = fl_int(i->user_data());
-  if (v == LOAD) {
-    i->value(current_widget->extra_code(n));
-  } else {
-    int mod = 0;
-    const char *c = i->value();
-    const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (d) {fl_message("Error in %s: %s",i->label(),d); haderror = 1; return;}
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node *t = (Widget_Node*)o;
-        t->extra_code(n,c);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void subclass_cb(Fl_Input* i, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Menu_Item)) {i->deactivate(); return;} else i->activate();
-    i->value(current_widget->subclass());
-  } else {
-    int mod = 0;
-    const char *c = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node *t = (Widget_Node*)o;
-        t->subclass(c);
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 
@@ -1883,51 +1061,7 @@ int Widget_Node::textstuff(int, Fl_Font&, int&, Fl_Color&) {
   return 0;
 }
 
-void textfont_cb(Fl_Choice* i, void* v) {
-  Fl_Font n; int s; Fl_Color c;
-  if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
-    i->activate();
-    if (n > 15) n = FL_HELVETICA;
-    i->value(n);
-  } else {
-    int mod = 0;
-    n = (Fl_Font)i->value();
-    if (n <= 0) n = layout->textfont;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        q->textstuff(1,n,s,c);
-        q->o->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-void textsize_cb(Fl_Value_Input* i, void* v) {
-  Fl_Font n; int s; Fl_Color c;
-  if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
-    i->activate();
-  } else {
-    int mod = 0;
-    s = int(i->value());
-    if (s <= 0) s = layout->textsize;
-    if (s <= 0) s = layout->labelsize;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        q->textstuff(2,n,s,c);
-        q->o->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-  i->value(s);
-}
 
 void textcolor_common(Fl_Color c) {
   Fl_Font n; int s;
@@ -1942,551 +1076,38 @@ void textcolor_common(Fl_Color c) {
   if (mod) Fluid.proj.set_modflag(1);
 }
 
-void textcolor_cb(Fl_Button* i, void* v) {
-  Fl_Font n; int s; Fl_Color c;
-  if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
-    i->activate();
-  } else {
-    c = i->color();
-    Fl_Color d = fl_show_colormap(c);
-    if (d == c) return;
-    c = d;
-    textcolor_common(c);
-  }
-  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
-}
-
-void textcolor_menu_cb(Fl_Menu_Button* i, void* v) {
-  Fl_Font n; int s; Fl_Color c;
-  if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
-    i->activate();
-  } else {
-    c = i->color();
-    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
-    if (d == c) return;
-    c = d;
-    textcolor_common(c);
-    w_textcolor->color(c); w_textcolor->labelcolor(fl_contrast(FL_BLACK,c)); w_textcolor->redraw();
-  }
-}
-
-void image_spacing_cb(Fl_Value_Input* i, void* v) {
-  int s;
-  if (v == LOAD) {
-    if (!current_widget->is_true_widget()) {
-      i->deactivate();
-      i->value(0);
-    } else {
-      i->activate();
-      i->value(((Widget_Node*)current_widget)->o->label_image_spacing());
-    }
-  } else {
-    int mod = 0;
-    s = int(i->value());
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->o->label_image_spacing() != s) {
-          q->o->label_image_spacing(s);
-          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
-            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void h_label_margin_cb(Fl_Value_Input* i, void* v) {
-  int s;
-  if (v == LOAD) {
-    if (!current_widget->is_true_widget()) {
-      i->deactivate();
-      i->value(0);
-    } else {
-      i->activate();
-      i->value(((Widget_Node*)current_widget)->o->horizontal_label_margin());
-    }
-  } else {
-    int mod = 0;
-    s = int(i->value());
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->o->horizontal_label_margin() != s) {
-          q->o->horizontal_label_margin(s);
-          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
-            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void v_label_margin_cb(Fl_Value_Input* i, void* v) {
-  int s;
-  if (v == LOAD) {
-    if (!current_widget->is_true_widget()) {
-      i->deactivate();
-      i->value(0);
-    } else {
-      i->activate();
-      i->value(((Widget_Node*)current_widget)->o->vertical_label_margin());
-    }
-  } else {
-    int mod = 0;
-    s = int(i->value());
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_true_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->o->vertical_label_margin() != s) {
-          q->o->vertical_label_margin(s);
-          if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
-            q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
 ////////////////////////////////////////////////////////////////
 // Kludges to the panel for subclasses:
 
-void min_w_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) return;
-    i->value(((Window_Node*)current_widget)->sr_min_w);
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    int n = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        ((Window_Node*)current_widget)->sr_min_w = n;
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void min_h_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) return;
-    i->value(((Window_Node*)current_widget)->sr_min_h);
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    int n = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        ((Window_Node*)current_widget)->sr_min_h = n;
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void max_w_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) return;
-    i->value(((Window_Node*)current_widget)->sr_max_w);
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    int n = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        ((Window_Node*)current_widget)->sr_max_w = n;
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void max_h_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Window)) return;
-    i->value(((Window_Node*)current_widget)->sr_max_h);
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    int n = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        ((Window_Node*)current_widget)->sr_max_h = n;
-        mod = 1;
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void set_min_size_cb(Fl_Button*, void* v) {
-  if (v == LOAD) {
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        Window_Node *win = (Window_Node*)current_widget;
-        win->sr_min_w = win->o->w();
-        win->sr_min_h = win->o->h();
-        mod = 1;
-      }
-    }
-    propagate_load(the_panel, LOAD);
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void set_max_size_cb(Fl_Button*, void* v) {
-  if (v == LOAD) {
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Window)) {
-        Window_Node *win = (Window_Node*)current_widget;
-        win->sr_max_w = win->o->w();
-        win->sr_max_h = win->o->h();
-        mod = 1;
-      }
-    }
-    propagate_load(the_panel, LOAD);
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void slider_size_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (!current_widget->is_a(ID_Slider)) {i->deactivate(); return;}
-    i->activate();
-    i->value(((Fl_Slider*)(current_widget->o))->slider_size());
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    double n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->is_a(ID_Slider)) {
-          ((Fl_Slider*)(q->o))->slider_size(n);
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void min_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Valuator_)) {
-      i->activate();
-      i->value(((Fl_Valuator*)(current_widget->o))->minimum());
-    } else if (current_widget->is_a(ID_Spinner)) {
-      i->activate();
-      i->value(((Fl_Spinner*)(current_widget->o))->minimum());
-    } else {
-      i->deactivate();
-      return;
-    }
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    double n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->is_a(ID_Valuator_)) {
-          ((Fl_Valuator*)(q->o))->minimum(n);
-          q->o->redraw();
-          mod = 1;
-        } else if (q->is_a(ID_Spinner)) {
-          ((Fl_Spinner*)(q->o))->minimum(n);
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void max_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Valuator_)) {
-      i->activate();
-      i->value(((Fl_Valuator*)(current_widget->o))->maximum());
-    } else if (current_widget->is_a(ID_Spinner)) {
-      i->activate();
-      i->value(((Fl_Spinner*)(current_widget->o))->maximum());
-    } else {
-      i->deactivate();
-      return;
-    }
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    double n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->is_a(ID_Valuator_)) {
-          ((Fl_Valuator*)(q->o))->maximum(n);
-          q->o->redraw();
-          mod = 1;
-        } else if (q->is_a(ID_Spinner)) {
-          ((Fl_Spinner*)(q->o))->maximum(n);
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void step_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Valuator_)) {
-      i->activate();
-      i->value(((Fl_Valuator*)(current_widget->o))->step());
-    } else if (current_widget->is_a(ID_Spinner)) {
-      i->activate();
-      i->value(((Fl_Spinner*)(current_widget->o))->step());
-    } else {
-      i->deactivate();
-      return;
-    }
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    double n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->is_a(ID_Valuator_)) {
-          ((Fl_Valuator*)(q->o))->step(n);
-          q->o->redraw();
-          mod = 1;
-        } else if (q->is_a(ID_Spinner)) {
-          ((Fl_Spinner*)(q->o))->step(n);
-          q->o->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void value_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Valuator_)) {
-      i->activate();
-      i->value(((Fl_Valuator*)(current_widget->o))->value());
-    } else if (current_widget->is_button()) {
-      i->activate();
-      i->value(((Fl_Button*)(current_widget->o))->value());
-    } else if (current_widget->is_a(ID_Spinner)) {
-      i->activate();
-      i->value(((Fl_Spinner*)(current_widget->o))->value());
-    } else
-      i->deactivate();
-  } else {
-    int mod = 0;
-    Fluid.proj.undo.checkpoint();
-    double n = i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->is_a(ID_Valuator_)) {
-          ((Fl_Valuator*)(q->o))->value(n);
-          mod = 1;
-        } else if (q->is_button()) {
-          ((Fl_Button*)(q->o))->value(n != 0);
-          if (q->is_a(ID_Menu_Item)) q->redraw();
-          mod = 1;
-        } else if (q->is_a(ID_Spinner)) {
-          ((Fl_Spinner*)(q->o))->value(n);
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-// The following three callbacks cooperate, showing only one of the groups of
-// widgets that use the same space in the dialog.
-
-void values_group_cb(Fl_Group* g, void* v) {
-  if (v == LOAD) {
-    if (   current_widget->is_a(ID_Flex)
-        || current_widget->is_a(ID_Grid)
-        || current_widget->is_a(ID_Window))
-    {
-      g->hide();
-    } else {
-      g->show();
-    }
-    propagate_load(g, v);
-  }
-}
-
-void flex_margin_group_cb(Fl_Group* g, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Flex)) {
-      g->show();
-    } else {
-      g->hide();
-    }
-    propagate_load(g, v);
-  }
-}
-
-void size_range_group_cb(Fl_Group* g, void* v) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Window)) {
-      g->show();
-    } else {
-      g->hide();
-    }
-    propagate_load(g, v);
-  }
-}
 
 
-static void flex_margin_cb(Fl_Value_Input* i, void* v,
-                           void (*load_margin)(Fl_Flex*,Fl_Value_Input*),
-                           int (*update_margin)(Fl_Flex*,int)) {
-  if (v == LOAD) {
-    if (current_widget->is_a(ID_Flex)) {
-      load_margin((Fl_Flex*)current_widget->o, i);
-    }
-  } else {
-    int mod = 0;
-    int new_value = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(ID_Flex)) {
-        Flex_Node* q = (Flex_Node*)o;
-        Fl_Flex* w = (Fl_Flex*)q->o;
-        if (update_margin(w, new_value)) {
-          w->layout();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
-static void load_left_margin(Fl_Flex *w, Fl_Value_Input* i)
-{
-  int v;
-  w->margin(&v, nullptr, nullptr, nullptr);
-  i->value((double)v);
-}
+//static void flex_margin_cb(Fl_Value_Input* i, void* v,
+//                           void (*load_margin)(Fl_Flex*,Fl_Value_Input*),
+//                           int (*update_margin)(Fl_Flex*,int)) {
+//  if (v == LOAD) {
+//    if (current_widget->is_a(ID_Flex)) {
+//      load_margin((Fl_Flex*)current_widget->o, i);
+//    }
+//  } else {
+//    int mod = 0;
+//    int new_value = (int)i->value();
+//    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+//      if (o->selected && o->is_a(ID_Flex)) {
+//        Flex_Node* q = (Flex_Node*)o;
+//        Fl_Flex* w = (Fl_Flex*)q->o;
+//        if (update_margin(w, new_value)) {
+//          w->layout();
+//          mod = 1;
+//        }
+//      }
+//    }
+//    if (mod) Fluid.proj.set_modflag(1);
+//  }
+//}
 
-static int update_left_margin(Fl_Flex *w, int new_value)
-{
-  int l, t, r, b;
-  w->margin(&l, &t, &r, &b);
-  if (new_value!=l) {
-    w->margin(new_value, t, r, b);
-    return 1;
-  } else {
-    return 0;
-  }
-}
 
-void flex_margin_left_cb(Fl_Value_Input* i, void* v) {
-  flex_margin_cb(i, v, load_left_margin, update_left_margin);
-}
 
-static void load_top_margin(Fl_Flex *w, Fl_Value_Input* i)
-{
-  int v;
-  w->margin(nullptr, &v, nullptr, nullptr);
-  i->value((double)v);
-}
-
-static int update_top_margin(Fl_Flex *w, int new_value)
-{
-  int l, t, r, b;
-  w->margin(&l, &t, &r, &b);
-  if (new_value!=t) {
-    w->margin(l, new_value, r, b);
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-void flex_margin_top_cb(Fl_Value_Input* i, void* v) {
-  flex_margin_cb(i, v, load_top_margin, update_top_margin);
-}
-
-static void load_right_margin(Fl_Flex *w, Fl_Value_Input* i)
-{
-  int v;
-  w->margin(nullptr, nullptr, &v, nullptr);
-  i->value((double)v);
-}
-
-static int update_right_margin(Fl_Flex *w, int new_value)
-{
-  int l, t, r, b;
-  w->margin(&l, &t, &r, &b);
-  if (new_value!=r) {
-    w->margin(l, t, new_value, b);
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-void flex_margin_right_cb(Fl_Value_Input* i, void* v) {
-  flex_margin_cb(i, v, load_right_margin, update_right_margin);
-}
-
-static void load_bottom_margin(Fl_Flex *w, Fl_Value_Input* i)
-{
-  int v;
-  w->margin(nullptr, nullptr, nullptr, &v);
-  i->value((double)v);
-}
-
-static int update_bottom_margin(Fl_Flex *w, int new_value)
-{
-  int l, t, r, b;
-  w->margin(&l, &t, &r, &b);
-  if (new_value!=b) {
-    w->margin(l, t, r, new_value);
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-void flex_margin_bottom_cb(Fl_Value_Input* i, void* v) {
-  flex_margin_cb(i, v, load_bottom_margin, update_bottom_margin);
-}
 
 static void load_gap(Fl_Flex *w, Fl_Value_Input* i)
 {
@@ -2520,83 +1141,7 @@ void position_group_cb(Fl_Group* g, void* v) {
   propagate_load(g, v);
 }
 
-void flex_size_group_cb(Fl_Group* g, void* v) {
-  if (v == LOAD) {
-    if (Flex_Node::parent_is_flex(current_widget)) {
-      g->show();
-    } else {
-      g->hide();
-    }
-  }
-  propagate_load(g, v);
-}
 
-void flex_size_cb(Fl_Value_Input* i, void* v) {
-  if (v == LOAD) {
-    if (Flex_Node::parent_is_flex(current_widget)) {
-      i->value(Flex_Node::size(current_widget));
-    }
-  } else {
-    int mod = 0;
-    int new_size = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget() && Flex_Node::parent_is_flex(o)) {
-        Fl_Widget* w = (Fl_Widget*)((Widget_Node*)o)->o;
-        Fl_Flex* f = (Fl_Flex*)((Flex_Node*)o->parent)->o;
-        int was_fixed = f->fixed(w);
-        if (new_size==0) {
-          if (was_fixed) {
-            f->fixed(w, 0);
-            f->layout();
-            widget_flex_fixed->value(0);
-            mod = 1;
-          }
-        } else {
-          int old_size = Flex_Node::size(o);
-          if (old_size!=new_size || !was_fixed) {
-            f->fixed(w, new_size);
-            f->layout();
-            widget_flex_fixed->value(1);
-            mod = 1;
-          }
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
-
-void flex_fixed_cb(Fl_Check_Button* i, void* v) {
-  if (v == LOAD) {
-    if (Flex_Node::parent_is_flex(current_widget)) {
-      i->value(Flex_Node::is_fixed(current_widget));
-    }
-  } else {
-    int mod = 0;
-    int new_fixed = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget() && Flex_Node::parent_is_flex(o)) {
-        Fl_Widget* w = (Fl_Widget*)((Widget_Node*)o)->o;
-        Fl_Flex* f = (Fl_Flex*)((Flex_Node*)o->parent)->o;
-        int was_fixed = f->fixed(w);
-        if (new_fixed==0) {
-          if (was_fixed) {
-            f->fixed(w, 0);
-            f->layout();
-            mod = 1;
-          }
-        } else {
-          if (!was_fixed) {
-            f->fixed(w, Flex_Node::size(o));
-            f->layout();
-            mod = 1;
-          }
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 
@@ -2604,54 +1149,6 @@ void flex_fixed_cb(Fl_Check_Button* i, void* v) {
 
 Fl_Menu_Item *Widget_Node::subtypes() {return nullptr;}
 
-void subtype_cb(Fl_Choice* i, void* v) {
-  static Fl_Menu_Item empty_type_menu[] = {
-    {"Normal",0,nullptr,(void*)nullptr},
-    {nullptr}};
-
-  if (v == LOAD) {
-    Fl_Menu_Item* m = current_widget->subtypes();
-    if (!m) {
-      i->menu(empty_type_menu);
-      i->value(0);
-      i->deactivate();
-    } else {
-      i->menu(m);
-      int j;
-      for (j = 0;; j++) {
-        if (!m[j].text) {j = 0; break;}
-        if (current_widget->is_a(ID_Spinner)) {
-          if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
-        } else {
-          if (m[j].argument() == current_widget->o->type()) break;
-        }
-      }
-      i->value(j);
-      i->activate();
-    }
-    i->redraw();
-  } else {
-    int mod = 0;
-    int n = int(i->mvalue()->argument());
-    Fl_Menu_Item* m = current_widget->subtypes();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Widget_Node* q = (Widget_Node*)o;
-        if (q->subtypes()==m) {
-          if (q->is_a(ID_Spinner))
-            ((Fl_Spinner*)q->o)->type(n);
-          else if (q->is_a(ID_Flex))
-            ((Flex_Node*)q)->change_subtype_to(n);
-          else
-            q->o->type(n);
-          q->redraw();
-          mod = 1;
-        }
-      }
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 
