@@ -562,10 +562,11 @@ static void cb_Browse(Fl_Button* o, void* v) {
       o->deactivate();
   } else {
     int mod = 0;
-    if (ui_find_image(widget_image_input->value())) {
-      widget_image_input->value(ui_find_image_name);
+    Image_Asset *image_asset = ui_find_image(widget_image_input->value());
+    if (image_asset) {
+      widget_image_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-        q->image_name(ui_find_image_name);
+        q->image_name(image_asset->filename());
         mod = 1;
       }
       if (mod) Fluid.proj.set_modflag(1);
@@ -605,10 +606,11 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       o->deactivate();
   } else {
     int mod = 0;
-    if (ui_find_image(widget_deimage_input->value())) {
-      widget_deimage_input->value(ui_find_image_name);
+    Image_Asset *image_asset = ui_find_image(widget_deimage_input->value());
+    if (image_asset) {
+      widget_deimage_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-        q->inactive_name(ui_find_image_name);
+        q->inactive_name(image_asset->filename());
         mod = 1;
       }
       if (mod) Fluid.proj.set_modflag(1);

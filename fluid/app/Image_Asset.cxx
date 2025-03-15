@@ -38,11 +38,30 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <map>
+#include <string>
 
 
-/** Write the contents of the filename() file as binary source code.
+/**
+ \brief A map of all image assets.
+ \todo This is a global variable, but should be associated 
+    with a project instead.
+ */
+static std::map<std::string, Image_Asset*> image_asset_map;
+
+
+/** 
+ \brief Write the contents of the image file as binary source code.
+
+ Write the contents of the image file as C++ code, so the image is available in 
+ the target app in the original binary format, for example:
+ ```
+ { 1, 2, 3, ...}
+ ```
+ \param f Write code to this C++ source code file
  \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read */
+ \return 0 if the file could not be opened or read 
+ */
 size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   Fluid.proj.enter_project_dir();
@@ -66,9 +85,17 @@ size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt
   return nData;
 }
 
-/** Write the contents of the name() file as textual source code.
+
+/** 
+ \brief Write the contents of the image file as text with escaped special characters.
+
+ This function is only useful for writing out image formats that are ASCII text
+ based, like svg and pixmaps. Other formats should use write_static_binary().
+
+ \param f Write code to this C++ source code file
  \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read */
+ \return 0 if the file could not be opened or read 
+ */
 size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   Fluid.proj.enter_project_dir();
@@ -92,6 +119,20 @@ size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) 
   return nData;
 }
 
+
+/** 
+ \brief Write the contents of the image file as uncompressed RGB.
+
+ Write source code that generates the uncompressed RGB image data at compile
+ time, and an initializer that creates the image at run time.
+
+ \todo If the ld() value is not 0 and not d()*w(), the image data is not 
+ written correctly. There is no check if the data is actually in RGB format.
+
+ \param f Write code to this C++ source code file
+ \param fmt short name of file contents for error message
+ \return 0 if the file could not be opened or read 
+ */
 void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
   // Write image data...
   f.write_c("\n");
@@ -103,14 +144,19 @@ void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_na
   write_initializer(f, "Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, image_->w(), image_->h(), image_->d(), image_->ld());
 }
 
+
 /**
- Write the static image data into the source file.
+ \brief Write the static image data into the source file.
+
+ Write source code that generates the image data at compile time, and an
+ initializer that creates the image at run time.
 
  If \p compressed is set, write the original image format, which requires
  linking the matching image reader at runtime, or if we want to store the raw
  uncompressed pixels, which makes images fast, needs no reader, but takes a
  lot of memory (current default for PNG)
 
+ \param f Write code to this C++ source code file
  \param compressed write data in the original compressed file format
  */
 void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
@@ -235,12 +281,24 @@ void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
   }
 }
 
+
+/**
+ \brief Write a warning message to the generated code file that the image asset
+ can't be read.
+
+ This writes a #warning directive to the generated code file which contains the
+ filename of the image asset and the error message as returned by strerror(errno).
+ The current working directory is also printed for debugging purposes.
+ \param f The C++ source code file to write the warning message to.
+ \param fmt The format string for the image file type.
+ */
 void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
   f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, filename(), strerror(errno));
   Fluid.proj.enter_project_dir();
   f.write_c("// Searching in path \"%s\"\n", fl_getcwd(nullptr, FL_PATH_MAX));
   Fluid.proj.leave_project_dir();
 }
+
 
 /**
  \brief Outputs code that loads and returns an Fl_Image.
@@ -277,6 +335,7 @@ void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_c
   va_end(ap);
 }
 
+
 /**
  \brief Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
 
@@ -304,6 +363,7 @@ void Image_Asset::write_code(fld::io::Code_Writer& f, int bind, const char *var,
   }
 }
 
+
 /**
  \brief Outputs code that calls the image initializer function.
 
@@ -321,28 +381,25 @@ void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
 }
 
 
-////////////////////////////////////////////////////////////////
+/**
+ \brief Finds an image asset by filename.
 
-static Image_Asset** images = nullptr; // sorted list
-static int numimages = 0;
-static int tablesize = 0;
+ If the image asset has already been loaded, it is returned from the cache.
+ If the image asset has not been loaded, it is loaded from the file system.
+ If the image asset cannot be loaded, nullptr is returned.
 
+ \param iname The filename of the image asset to find.
+ \returns The image asset, or nullptr if it cannot be loaded.
+ */
 Image_Asset* Image_Asset::find(const char *iname) {
   if (!iname || !*iname) return nullptr;
 
-  // first search to see if it exists already:
-  int a = 0;
-  int b = numimages;
-  while (a < b) {
-    int c = (a+b)/2;
-    int i = strcmp(iname,images[c]->filename_.c_str());
-    if (i < 0) b = c;
-    else if (i > 0) a = c+1;
-    else return images[c];
-  }
+  // First search to see if it exists already. If it does, return it.
+  auto result = image_asset_map.find(iname);
+  if (result != image_asset_map.end())
+    return result->second;
 
-  // no, so now see if the file exists:
-
+  // Check if a file by that name exists.
   Fluid.proj.enter_project_dir();
   FILE *f = fl_fopen(iname,"rb");
   if (!f) {
@@ -355,32 +412,36 @@ Image_Asset* Image_Asset::find(const char *iname) {
   }
   fclose(f);
 
-  Image_Asset *ret = new Image_Asset(iname);
-
-  if (!ret->image_ || !ret->image_->w() || !ret->image_->h()) {
-    delete ret;
-    ret = nullptr;
+  // We found the file. Create the asset.
+  Image_Asset *asset = new Image_Asset(iname);
+  if (!asset->image_ || !asset->image_->w() || !asset->image_->h()) {
+    delete asset;
     if (Fluid.batch_mode)
       fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format",iname);
     else
       fl_message("Can't read image file:\n%s\nunrecognized image format",iname);
+    Fluid.proj.leave_project_dir();
+    return nullptr;
   }
-  Fluid.proj.leave_project_dir();
-  if (!ret) return nullptr;
 
-  // make a new entry in the table:
-  numimages++;
-  if (numimages > tablesize) {
-    tablesize = tablesize ? 2*tablesize : 16;
-    if (images) images = (Image_Asset**)realloc(images, tablesize*sizeof(Image_Asset*));
-    else images = (Image_Asset**)malloc(tablesize*sizeof(Image_Asset*));
-  }
-  for (b = numimages-1; b > a; b--) images[b] = images[b-1];
-  images[a] = ret;
-
-  return ret;
+  // Add the new asset to our image asset map and return it to the caller.
+  image_asset_map[iname] = asset;
+  return asset;
 }
 
+/**
+ \brief Construct an image asset from a file in the project directory.
+
+ This constructor creates an image asset from a file in the project
+ directory. The image file is loaded and stored in the map of image
+ assets. The image asset is given a reference count of 1, which means
+ that it will be destroyed when all references to it have been released.
+ The constructor also sets the flag to indicate if the image is an
+ animated GIF. This information is used when generating code for the
+ image asset.
+
+ \param iname The name of the image file in the project directory.
+*/
 Image_Asset::Image_Asset(const char *iname)
 {
   filename_ = iname;
@@ -394,35 +455,65 @@ Image_Asset::Image_Asset(const char *iname)
   }
 }
 
+/**
+ \brief Increments the reference count of the image asset.
+
+ This method increments the reference count of the image asset. The
+ reference count is used to keep track of how many times the image asset
+ is referenced in the user interface. When the reference count reaches zero,
+ the image asset is destroyed.
+*/
 void Image_Asset::inc_ref() {
   ++refcount_;
 }
 
+/**
+ \brief Decrements the reference count of the image asset.
+
+ This method decrements the reference count of the image asset. The
+ reference count is used to keep track of how many times the image asset
+ is referenced in the user interface. If the reference count reaches zero,
+ the image asset is destroyed.
+*/
 void Image_Asset::dec_ref() {
   --refcount_;
   if (refcount_ > 0) return;
   delete this;
 }
 
+/**
+ \brief Destructor for the Image_Asset class.
+
+ This destructor removes the image asset from the global image asset map
+ and releases the associated shared image if it exists. It ensures that 
+ any resources associated with the Image_Asset are properly cleaned up 
+ when the object is destroyed.
+*/
 Image_Asset::~Image_Asset() {
-  int a;
-  if (images) {
-    for (a = 0; a<numimages; a++) {
-      if (images[a] == this) {
-        numimages--;
-        for (; a < numimages; a++) {
-          images[a] = images[a+1];
-        }
-        break;
-      }
-    }
-  }
+  image_asset_map.erase(filename_);
   if (image_) image_->release();
 }
 
 ////////////////////////////////////////////////////////////////
 
-const char *ui_find_image_name;
+/**
+ \brief Displays a file chooser for the user to select an image file.
+
+ This function displays a file chooser dialog with the title "Image?" and
+ the current working directory set to the project directory. The file
+ chooser displays files with the extensions .bm, .bmp, .gif, .jpg, .pbm,
+ .pgm, .png, .ppm, .xbm, .xpm, and .svg (and .svgz if zlib support is
+ enabled). The function returns a pointer to an Image_Asset object that
+ references the selected image. If the user cancels the file chooser or
+ selects a file that does not exist, the function returns nullptr.
+
+ \param oldname The default filename to display in the file chooser.
+
+ \return A pointer to an Image_Asset object that references the selected
+ image, or nullptr if the user cancels the file chooser or selects a file
+ that does not exist. The asset is automaticly added to the global image
+ asset map.
+*/
 Image_Asset *ui_find_image(const char *oldname) {
   Fluid.proj.enter_project_dir();
   fl_file_chooser_ok_label("Use Image");
@@ -434,8 +525,8 @@ Image_Asset *ui_find_image(const char *oldname) {
                                      "})",
             oldname,1);
   fl_file_chooser_ok_label(nullptr);
-  ui_find_image_name = name;
   Image_Asset *ret = (name && *name) ? Image_Asset::find(name) : nullptr;
   Fluid.proj.leave_project_dir();
   return ret;
 }
+

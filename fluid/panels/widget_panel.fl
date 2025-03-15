@@ -407,7 +407,7 @@ Function {make_image_panel()} {
     Fl_Button image_panel_close {
       label Close
       callback {if (v != LOAD)
-  image_panel_window->hide();} selected
+  image_panel_window->hide();}
       xywh {165 295 80 20} labelsize 11
     }
   }
@@ -524,10 +524,11 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
     o->deactivate();
 } else {
   int mod = 0;
-  if (ui_find_image(widget_image_input->value())) {
-    widget_image_input->value(ui_find_image_name);
+  Image_Asset *image_asset = ui_find_image(widget_image_input->value());
+  if (image_asset) {
+    widget_image_input->value(image_asset->filename());
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->image_name(ui_find_image_name);
+      q->image_name(image_asset->filename());
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
@@ -573,15 +574,16 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
     o->deactivate();
 } else {
   int mod = 0;
-  if (ui_find_image(widget_deimage_input->value())) {
-    widget_deimage_input->value(ui_find_image_name);
+  Image_Asset *image_asset = ui_find_image(widget_deimage_input->value());
+  if (image_asset) {
+    widget_deimage_input->value(image_asset->filename());
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->inactive_name(ui_find_image_name);
+      q->inactive_name(image_asset->filename());
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-}}
+}} selected
             tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
           }
         }
