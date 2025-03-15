@@ -1114,10 +1114,9 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
 }
 
 
-static void compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
+static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
                                              int& Wfullscreen, int& Hfullscreen,
-                                             int& Wworkarea, int& Hworkarea,
-                                             bool need_workarea);
+                                             int& Wworkarea, int& Hworkarea);
 
 
 static void output_done(void *data, struct wl_output *wl_output)
@@ -1149,9 +1148,11 @@ static void output_done(void *data, struct wl_output *wl_output)
   if (scr_driver->screen_count_get() > 0) { // true when output_done runs after initial screen dectection
     scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
-    compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea, false);
-    output->width = Wfullscreen * output->wld_scale; // pixels
-    output->height = Hfullscreen * output->wld_scale; // pixels
+    compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea);
+    if (Wfullscreen && Hfullscreen) {
+      output->width = Wfullscreen * output->wld_scale; // pixels
+      output->height = Hfullscreen * output->wld_scale; // pixels
+    }
     Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
   }
 }
@@ -1569,45 +1570,70 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
   pair->H = height;
 }
 
-static void xdg_toplevel_close(void *data, struct xdg_toplevel *toplevel) {}
-
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
   .configure = xdg_toplevel_configure,
-  .close = xdg_toplevel_close,
 };
 
+static void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, uint32_t serial)
+{
+  xdg_surface_ack_configure(xdg_surface, serial);
+}
 
-static void compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
+static const struct xdg_surface_listener xdg_surface_listener = {
+    .configure = xdg_surface_configure,
+};
+
+static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
                                              int& Wfullscreen, int& Hfullscreen,
-                                             int& Wworkarea, int& Hworkarea,
-                                             bool need_workarea) {
+                                             int& Wworkarea, int& Hworkarea) {
+  bool found_workarea = false;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   struct wl_surface *wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
   wl_surface_set_opaque_region(wl_surface, NULL);
   struct xdg_surface *xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface);
+  xdg_surface_add_listener(xdg_surface, &xdg_surface_listener, NULL);
   struct xdg_toplevel *xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
   struct pair_s pair = {0, -1};
   xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &pair);
   xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
   wl_surface_commit(wl_surface);
   while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  pair.H = -1;
+  xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
+  wl_surface_commit(wl_surface);
+  while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   Wfullscreen = pair.W;
   Hfullscreen = pair.H;
-  if (need_workarea && Wfullscreen && Hfullscreen) {
-    xdg_toplevel_unset_fullscreen(xdg_toplevel);
-    xdg_toplevel_set_maximized(xdg_toplevel);
-    pair.H = -1;
-    wl_surface_commit(wl_surface);
-    while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  if (Wfullscreen && Hfullscreen && (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER ||
+                                     wl_list_length(&scr_driver->outputs) == 1)) {
+    struct wl_surface *wl_surface2 = wl_compositor_create_surface(scr_driver->wl_compositor);
+    struct xdg_surface *xdg_surface2 = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface2);
+    struct xdg_toplevel *xdg_toplevel2 = xdg_surface_get_toplevel(xdg_surface2);
+    struct pair_s pair2 = {0, -1};
+    xdg_toplevel_add_listener(xdg_toplevel2, &xdg_toplevel_listener, &pair2);
+    xdg_toplevel_set_parent(xdg_toplevel2, xdg_toplevel);
+    xdg_toplevel_set_maximized(xdg_toplevel2);
+    pair2.H = -1;
+    wl_surface_commit(wl_surface2);
+    while (pair2.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+    Wworkarea = pair2.W;
+    Hworkarea = pair2.H;
+    xdg_toplevel_destroy(xdg_toplevel2);
+    xdg_surface_destroy(xdg_surface2);
+    wl_surface_destroy(wl_surface2);
+    if (Wworkarea == Wfullscreen && Hworkarea < Hfullscreen && Hworkarea > Hfullscreen - 80)
+      found_workarea = true;
+  } else {
+    Wworkarea = Wfullscreen;
+    Hworkarea = Hfullscreen;
   }
-  Wworkarea = pair.W;
-  Hworkarea = pair.H;
   xdg_toplevel_destroy(xdg_toplevel);
   xdg_surface_destroy(xdg_surface);
   wl_surface_destroy(wl_surface);
-  //int fractional_scale = int(100 * (output->pixel_width / float(Wfullscreen)));
-  //printf("fullscreen=%dx%d workarea=%dx%d  fractional_scale=%d%%  wld_s=%d\n",
-  //       Wfullscreen,Hfullscreen,Wworkarea,Hworkarea,fractional_scale,output->wld_scale);
+  /*int fractional_scale = int(100 * (output->pixel_width / float(Wfullscreen)));
+  printf("fullscreen=%dx%d workarea=%dx%d  fractional_scale=%d%%  wld_s=%d\n",
+         Wfullscreen,Hfullscreen,Wworkarea,Hworkarea,fractional_scale,output->wld_scale);*/
+  return found_workarea;
 }
 
 static int workarea_xywh[4] = { -1, -1, -1, -1 };
@@ -1630,45 +1656,55 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
  One way for a client to discover that fractional scaling is active on a given display
  is to ask for a fullscreen window on that display, get its configured size and compare
- it to the display pixel size. That's what function compute_full_and_maximized_areas() does.
+ it to that display's pixel size. That's what function compute_full_and_maximized_areas() does.
  
- One way for a client to discover the work area size is to get the configured size
- of a maximized window on a given display. But it's not possible to control on what display
- the compositor puts the maximized window. Therefore, FLTK computes an exact work area size
- only when the system contains a single display. That's also done by function
- compute_full_and_maximized_areas().
+ One way for a client to discover the work area size of a display is to get the configured size
+ of a maximized window on that display. FLTK didn't find a way to control in general
+ on what display the compositor puts a maximized window. One procedure which works
+ under Mutter or with a single display was found. In this procedure, we create first a fullscreen
+ window on a given display and then we create a maximized window made a child of the
+ fullscreen one. Under mutter, this puts reliably the maximized window on the same
+ display as the fullscreen one, giving the size of that display's work area.
+ Therefore, FLTK computes an exact work area size only with MUTTER or when the system
+ contains a single display. That's also done by function compute_full_and_maximized_areas().
  
- FLTK didn't find how to recognize the primary display within the list of displays
- received from the compositor. That's another reason why FLTK doesn't attempt
- to compute work area sizes when there are multiple displays.
+ The procedure to compute the work area size also reveals which display is primary:
+ that with a work area vertically smaller than the display's pixel height. This allows
+ to place the primary display as FLTK display #0. Again, FLTK guarantees to identify
+ the primary display only under MUTTER.
  */
 
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
-  Fl_Wayland_Screen_Driver::output *output;
-  bool need_workarea = (screen_count_get() == 1);
-  bool first = true;
+  Fl_Wayland_Screen_Driver::output *output, *mainscreen = NULL;
   wl_list_for_each(output, &outputs, link) {
-    if (first) workarea_xywh[0] = output->x; // pixels
-    if (first) workarea_xywh[1] = output->y; // pixels
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
-    compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea, need_workarea);
-    if (!Wfullscreen || !Hfullscreen) { // sway puts 0 there
-      output->width = output->pixel_width;
-      output->height = output->pixel_height;
-      if (first) {
-        workarea_xywh[2] = output->width;
-        workarea_xywh[3] = output->height;
-      }
-    } else {
+    bool found_workarea = compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea);
+    if (found_workarea && !mainscreen) {
+      mainscreen = output;
+    } else found_workarea = false;
+    if (Wfullscreen && Hfullscreen) { // skip sway which puts 0 there
       output->width = Wfullscreen * output->wld_scale; // pixels
       output->height = Hfullscreen * output->wld_scale; // pixels
-      if (first) {
+      if (found_workarea) {
+        workarea_xywh[0] = output->x; // pixels
+        workarea_xywh[1] = output->y; // pixels
         workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
         workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
       }
     }
-    first = false;
+  }
+  if (mainscreen) { // put mainscreen first in list of screens
+    wl_list_remove(&mainscreen->link);
+    wl_list_insert(&outputs, &mainscreen->link);
+  } else {
+    wl_list_for_each(output, &outputs, link) { // find first screen in list
+      workarea_xywh[0] = output->x; // pixels
+      workarea_xywh[1] = output->y; // pixels
+      workarea_xywh[2] = output->width; // pixels
+      workarea_xywh[3] = output->height; // pixels
+      break;
+    }
   }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
 }
