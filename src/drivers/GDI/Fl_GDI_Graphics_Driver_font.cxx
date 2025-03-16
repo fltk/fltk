@@ -110,7 +110,7 @@ enumcbw(CONST LOGFONTW    *lpelf,
   if (!fn) return 1;
   fn[0] = ' ';
   dstlen = fl_utf8fromwc(fn+1, dstlen+1, (wchar_t*)lpelf->lfFaceName, lw); // convert the string
-  fn[dstlen] = 0;
+  fn[dstlen + 1] = 0;
   // skip if it is one of our built-in fonts
   for (int i = 0; i < FL_FREE_FONT; i++) {
     if (!strcmp(Fl::get_font_name((Fl_Font)i), fn+1)) {
