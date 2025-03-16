@@ -51,7 +51,7 @@ Class_Node *current_class = nullptr;
 int has_toplevel_function(const char *rtype, const char *sig) {
   Node *child;
   for (child = Fluid.proj.tree.first; child; child = child->next) {
-    if (!child->is_in_class() && child->is_a(ID_Function)) {
+    if (!child->is_in_class() && child->is_a(Type::Function)) {
       const Function_Node *fn = (const Function_Node*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
@@ -536,7 +536,7 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
   char havechildren = 0;
   for (child = next; child && child->level > level; child = child->next) {
     havechildren = 1;
-    if (child->is_a(ID_Window) && child->name()) var = child->name();
+    if (child->is_a(Type::Window) && child->name()) var = child->name();
   }
 
   if (ismain()) {
@@ -553,7 +553,7 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
 }
 
 /**
- Check if the return type and signature s match.
+ Check if the return type and signatures match.
  \param[in] rtype function return type
  \param[in] sig function name followed by arguments
  \return 1 if they match, 0 if not
@@ -2148,7 +2148,7 @@ void Class_Node::write_code2(fld::io::Code_Writer& f) {
 int Node::has_function(const char *rtype, const char *sig) const {
   Node *child;
   for (child = next; child && child->level > level; child = child->next) {
-    if (child->level == level+1 && child->is_a(ID_Function)) {
+    if (child->level == level+1 && child->is_a(Type::Function)) {
       const Function_Node *fn = (const Function_Node*)child;
       if (fn->has_signature(rtype, sig))
         return 1;

@@ -73,7 +73,7 @@ static void external_editor_timer(void*) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
     for (Node *p: Fluid.proj.tree.all_nodes()) {
-      if ( p->is_a(ID_Code) ) {
+      if ( p->is_a(Type::Code) ) {
         Code_Node *code = static_cast<Code_Node*>(p);
         // Code changed by external editor?
         if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
@@ -743,7 +743,7 @@ void Application::print_snapshots() {
   Fl_Window *win;
 
   for (auto w: proj.tree.all_widgets()) {
-    if (w->is_a(ID_Window)) {
+    if (w->is_a(Type::Window)) {
       Window_Node *win_t = static_cast<Window_Node*>(w);
       windows[num_windows] = win_t;
       Fl_Window *win = static_cast<Fl_Window*>(win_t->o);

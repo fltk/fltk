@@ -76,8 +76,8 @@ protected:
   Fl_Widget *widget(int,int,int,int) override {return nullptr;}
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
-  ID id() const override { return ID_Window; }
-  bool is_a(ID inID) const override { return (inID==ID_Window) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Window; }
+  bool is_a(Type inType) const override { return (inType==Type::Window) ? true : super::is_a(inType); }
   void open_();
 
 public:
@@ -152,8 +152,8 @@ public:
   void write_code2(fld::io::Code_Writer& f) override;
   Node *make(Strategy strategy) override;
   const char *type_name() override {return "widget_class";}
-  ID id() const override { return ID_Widget_Class; }
-  bool is_a(ID inID) const override { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Widget_Class; }
+  bool is_a(Type inType) const override { return (inType==Type::Widget_Class) ? true : super::is_a(inType); }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_decl_block() const override {return 1;}

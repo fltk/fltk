@@ -131,8 +131,8 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Browser_Base_Node(); }
-  ID id() const override { return ID_Browser_; }
-  bool is_a(ID inID) const override { return (inID==ID_Browser_) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Browser_; }
+  bool is_a(Type inType) const override { return (inType==Type::Browser_) ? true : super::is_a(inType); }
 };
 
 Browser_Base_Node Browser_Base_Node::prototype;
@@ -166,8 +166,8 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Browser_Node(); }
-  ID id() const override { return ID_Browser; }
-  bool is_a(ID inID) const override { return (inID==ID_Browser) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Browser; }
+  bool is_a(Type inType) const override { return (inType==Type::Browser) ? true : super::is_a(inType); }
 };
 
 Browser_Node Browser_Node::prototype;
@@ -201,8 +201,8 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Check_Browser_Node(); }
-  ID id() const override { return ID_Check_Browser; }
-  bool is_a(ID inID) const override { return (inID==ID_Check_Browser) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Check_Browser; }
+  bool is_a(Type inType) const override { return (inType==Type::Check_Browser) ? true : super::is_a(inType); }
 };
 
 Check_Browser_Node Check_Browser_Node::prototype;
@@ -229,8 +229,8 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new File_Browser_Node(); }
-  ID id() const override { return ID_File_Browser; }
-  bool is_a(ID inID) const override { return (inID==ID_File_Browser) ? true : super::is_a(inID); }
+  Type type() const override { return Type::File_Browser; }
+  bool is_a(Type inType) const override { return (inType==Type::File_Browser) ? true : super::is_a(inType); }
 };
 
 File_Browser_Node File_Browser_Node::prototype;
@@ -274,8 +274,8 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Tree_Node(); }
-  ID id() const override { return ID_Tree; }
-  bool is_a(ID inID) const override { return (inID==ID_Tree) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Tree; }
+  bool is_a(Type inType) const override { return (inType==Type::Tree) ? true : super::is_a(inType); }
 };
 
 Tree_Node Tree_Node::prototype;
@@ -323,8 +323,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Help_View_Node(); }
-  ID id() const override { return ID_Help_View; }
-  bool is_a(ID inID) const override { return (inID==ID_Help_View) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Help_View; }
+  bool is_a(Type inType) const override { return (inType==Type::Help_View) ? true : super::is_a(inType); }
 };
 
 Help_View_Node Help_View_Node::prototype;
@@ -351,8 +351,8 @@ public:
     return new Fl_Slider(x, y, w, h, "Valuator");
   }
   Widget_Node *_make() override { return new Valuator_Node(); }
-  ID id() const override { return ID_Valuator_; }
-  bool is_a(ID inID) const override { return (inID==ID_Valuator_) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Valuator_; }
+  bool is_a(Type inType) const override { return (inType==Type::Valuator_) ? true : super::is_a(inType); }
 };
 
 Valuator_Node Valuator_Node::prototype;
@@ -401,8 +401,8 @@ public:
     return new Fl_Counter(x, y, w, h, "counter:");
   }
   Widget_Node *_make() override { return new Counter_Node(); }
-  ID id() const override { return ID_Counter; }
-  bool is_a(ID inID) const override { return (inID==ID_Counter) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Counter; }
+  bool is_a(Type inType) const override { return (inType==Type::Counter) ? true : super::is_a(inType); }
 };
 
 Counter_Node Counter_Node::prototype;
@@ -431,8 +431,8 @@ public:
     return new Fl_Adjuster(x, y, w, h);
   }
   Widget_Node *_make() override { return new Adjuster_Node(); }
-  ID id() const override { return ID_Adjuster; }
-  bool is_a(ID inID) const override { return (inID==ID_Adjuster) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Adjuster; }
+  bool is_a(Type inType) const override { return (inType==Type::Adjuster) ? true : super::is_a(inType); }
 };
 
 Adjuster_Node Adjuster_Node::prototype;
@@ -468,8 +468,8 @@ public:
     return new Fl_Dial(x, y, w, h);
   }
   Widget_Node *_make() override { return new Dial_Node(); }
-  ID id() const override { return ID_Dial; }
-  bool is_a(ID inID) const override { return (inID==ID_Dial) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Dial; }
+  bool is_a(Type inType) const override { return (inType==Type::Dial) ? true : super::is_a(inType); }
 };
 
 Dial_Node Dial_Node::prototype;
@@ -506,8 +506,8 @@ public:
     return new Fl_Roller(x, y, w, h);
   }
   Widget_Node *_make() override { return new Roller_Node(); }
-  ID id() const override { return ID_Roller; }
-  bool is_a(ID inID) const override { return (inID==ID_Roller) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Roller; }
+  bool is_a(Type inType) const override { return (inType==Type::Roller) ? true : super::is_a(inType); }
 };
 
 Roller_Node Roller_Node::prototype;
@@ -550,8 +550,8 @@ public:
     return new Fl_Slider(x, y, w, h, "slider:");
   }
   Widget_Node *_make() override { return new Slider_Node(); }
-  ID id() const override { return ID_Slider; }
-  bool is_a(ID inID) const override { return (inID==ID_Slider) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Slider; }
+  bool is_a(Type inType) const override { return (inType==Type::Slider) ? true : super::is_a(inType); }
 };
 
 Slider_Node Slider_Node::prototype;
@@ -582,8 +582,8 @@ public:
     return new Fl_Scrollbar(x, y, w, h);
   }
   Widget_Node *_make() override { return new Scrollbar_Node(); }
-  ID id() const override { return ID_Scrollbar; }
-  bool is_a(ID inID) const override { return (inID==ID_Scrollbar) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Scrollbar; }
+  bool is_a(Type inType) const override { return (inType==Type::Scrollbar) ? true : super::is_a(inType); }
 };
 
 Scrollbar_Node Scrollbar_Node::prototype;
@@ -618,8 +618,8 @@ public:
     return new Fl_Value_Slider(x, y, w, h, "slider:");
   }
   Widget_Node *_make() override { return new Value_Slider_Node(); }
-  ID id() const override { return ID_Value_Slider; }
-  bool is_a(ID inID) const override { return (inID==ID_Value_Slider) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Value_Slider; }
+  bool is_a(Type inType) const override { return (inType==Type::Value_Slider) ? true : super::is_a(inType); }
 };
 
 Value_Slider_Node Value_Slider_Node::prototype;
@@ -661,8 +661,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Value_Input_Node(); }
-  ID id() const override { return ID_Value_Input; }
-  bool is_a(ID inID) const override { return (inID==ID_Value_Input) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Value_Input; }
+  bool is_a(Type inType) const override { return (inType==Type::Value_Input) ? true : super::is_a(inType); }
 };
 
 Value_Input_Node Value_Input_Node::prototype;
@@ -704,8 +704,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Value_Output_Node(); }
-  ID id() const override { return ID_Value_Output; }
-  bool is_a(ID inID) const override { return (inID==ID_Value_Output) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Value_Output; }
+  bool is_a(Type inType) const override { return (inType==Type::Value_Output) ? true : super::is_a(inType); }
 };
 
 Value_Output_Node Value_Output_Node::prototype;
@@ -764,8 +764,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Input_Node(); }
-  ID id() const override { return ID_Input; }
-  bool is_a(ID inID) const override { return (inID==ID_Input) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Input; }
+  bool is_a(Type inType) const override { return (inType==Type::Input) ? true : super::is_a(inType); }
   void copy_properties() override {
     Widget_Node::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
@@ -806,8 +806,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new File_Input_Node(); }
-  ID id() const override { return ID_File_Input; }
-  bool is_a(ID inID) const override { return (inID==ID_File_Input) ? true : super::is_a(inID); }
+  Type type() const override { return Type::File_Input; }
+  bool is_a(Type inType) const override { return (inType==Type::File_Input) ? true : super::is_a(inType); }
 };
 
 File_Input_Node File_Input_Node::prototype;
@@ -840,8 +840,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Output_Node(); }
-  ID id() const override { return ID_Output; }
-  bool is_a(ID inID) const override { return (inID==ID_Output) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Output; }
+  bool is_a(Type inType) const override { return (inType==Type::Output) ? true : super::is_a(inType); }
 };
 
 Output_Node Output_Node::prototype;
@@ -894,8 +894,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Text_Display_Node(); }
-  ID id() const override { return ID_Text_Display; }
-  bool is_a(ID inID) const override { return (inID==ID_Text_Display) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Text_Display; }
+  bool is_a(Type inType) const override { return (inType==Type::Text_Display) ? true : super::is_a(inType); }
 };
 
 Text_Display_Node Text_Display_Node::prototype;
@@ -924,8 +924,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Text_Editor_Node(); }
-  ID id() const override { return ID_Text_Editor; }
-  bool is_a(ID inID) const override { return (inID==ID_Text_Editor) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Text_Editor; }
+  bool is_a(Type inType) const override { return (inType==Type::Text_Editor) ? true : super::is_a(inType); }
 };
 
 Text_Editor_Node Text_Editor_Node::prototype;
@@ -1019,8 +1019,8 @@ public:
     return 1;
   }
   Widget_Node *_make() override {return new Terminal_Node();}
-  ID id() const override { return ID_Terminal; }
-  bool is_a(ID inID) const override { return (inID==ID_Terminal) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Terminal; }
+  bool is_a(Type inType) const override { return (inType==Type::Terminal) ? true : super::is_a(inType); }
 };
 
 Terminal_Node Terminal_Node::prototype;
@@ -1051,8 +1051,8 @@ public:
     return new Fl_Box(x, y, w, h, "label");
   }
   Widget_Node *_make() override { return new Box_Node(); }
-  ID id() const override { return ID_Box; }
-  bool is_a(ID inID) const override { return (inID==ID_Box) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Box; }
+  bool is_a(Type inType) const override { return (inType==Type::Box) ? true : super::is_a(inType); }
 };
 
 Box_Node Box_Node::prototype;
@@ -1080,8 +1080,8 @@ public:
     return new Fl_Clock(x, y, w, h);
   }
   Widget_Node *_make() override { return new Clock_Node(); }
-  ID id() const override { return ID_Clock; }
-  bool is_a(ID inID) const override { return (inID==ID_Clock) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Clock; }
+  bool is_a(Type inType) const override { return (inType==Type::Clock) ? true : super::is_a(inType); }
 };
 
 Clock_Node Clock_Node::prototype;
@@ -1114,8 +1114,8 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Progress_Node(); }
-  ID id() const override { return ID_Progress; }
-  bool is_a(ID inID) const override { return (inID==ID_Progress) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Progress; }
+  bool is_a(Type inType) const override { return (inType==Type::Progress) ? true : super::is_a(inType); }
 };
 
 Progress_Node Progress_Node::prototype;
@@ -1164,8 +1164,8 @@ public:
     return new Fl_Spinner(x, y, w, h, "spinner:");
   }
   Widget_Node *_make() override { return new Spinner_Node(); }
-  ID id() const override { return ID_Spinner; }
-  bool is_a(ID inID) const override { return (inID==ID_Spinner) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Spinner; }
+  bool is_a(Type inType) const override { return (inType==Type::Spinner) ? true : super::is_a(inType); }
 };
 
 Spinner_Node Spinner_Node::prototype;
@@ -1285,7 +1285,7 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
   auto layout = Fluid.proj.layout;
   Node *t = ((Node*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_a(ID_Window)) {
+    if (t->is_widget() && !t->is_a(Type::Window)) {
       auto layout = Fluid.proj.layout;
       Widget_Node *wt = (Widget_Node *)t;
       bool changed = false;
@@ -1312,14 +1312,14 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
         wt->textstuff(2, f, s, c);
       }
 
-      if (changed && t->is_a(ID_Menu_Item)) {
+      if (changed && t->is_a(Type::Menu_Item)) {
         Node * tt = t->parent;
-        while (tt && !tt->is_a(ID_Menu_Manager_)) tt = tt->parent;
+        while (tt && !tt->is_a(Type::Menu_Manager_)) tt = tt->parent;
         if (tt)
           ((Menu_Manager_Node*)tt)->build_menu();
       }
     }
-    if (t->is_true_widget() && !t->is_a(ID_Window)) {
+    if (t->is_true_widget() && !t->is_a(Type::Window)) {
       // Resize and/or reposition new widget...
       Widget_Node *wt = (Widget_Node *)t;
 
@@ -1328,13 +1328,13 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if ((t->parent && t->parent->is_a(ID_Flex))) {
+      if ((t->parent && t->parent->is_a(Type::Flex))) {
         if (Window_Node::popupx != 0x7FFFFFFF)
           ((Flex_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         t->parent->layout_widget();
-      } else if (   wt->is_a(ID_Group)
+      } else if (   wt->is_a(Type::Group)
                  && wt->parent
-                 && wt->parent->is_a(ID_Tabs)
+                 && wt->parent->is_a(Type::Tabs)
                  //&& (Window_Node::popupx == 0x7FFFFFFF)
                  && (layout->top_tabs_margin > 0)) {
         // If the widget is a group and the parent is tabs and the top tabs
@@ -1343,9 +1343,9 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
         Fl_Widget *po = ((Tabs_Node*)wt->parent)->o;
         wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
                       po->w(), po->h() - layout->top_tabs_margin);
-      } else if (   wt->is_a(ID_Menu_Bar)
+      } else if (   wt->is_a(Type::Menu_Bar)
                  && wt->parent
-                 && wt->parent->is_a(ID_Window)
+                 && wt->parent->is_a(Type::Window)
                  && (wt->prev == wt->parent)) {
         // If this is the first child of a window, make the menu bar as wide as
         // the window and drop it at 0, 0. Otherwise just use the suggested size.
@@ -1362,7 +1362,7 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
           wt->o->size(w, h);
         }
       }
-      if (t->parent && t->parent->is_a(ID_Grid)) {
+      if (t->parent && t->parent->is_a(Type::Grid)) {
         if (Window_Node::popupx != 0x7FFFFFFF) {
           ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
@@ -1370,7 +1370,7 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
         }
       }
     }
-    if (t->is_a(ID_Window)) {
+    if (t->is_a(Type::Window)) {
       int x = 0, y = 0, w = 480, h = 320;
       Window_Node *wt = (Window_Node *)t;
       wt->ideal_size(w, h);
@@ -1565,12 +1565,12 @@ void fill_in_New_Menu() {
     if (m->user_data()) {
       Node *t = (Node*)m->user_data();
       if (m->text) {
-        make_iconlabel( m, pixmap[t->id()], m->label() );
+        make_iconlabel( m, pixmap[(int)t->type()], m->label() );
       } else {
         const char *n = t->type_name();
         if (!strncmp(n,"Fl_",3)) n += 3;
         if (!strncmp(n,"fltk::",6)) n += 6;
-        make_iconlabel( m, pixmap[t->id()], n );
+        make_iconlabel( m, pixmap[(int)t->type()], n );
       }
     }
   }

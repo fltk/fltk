@@ -676,7 +676,7 @@ void Grid_Node::child_resized(Widget_Node *child_type) {
 
 /** Return the currently selected Grid widget if is a Grid Type. */
 Fl_Grid *Grid_Node::selected() {
-  if (current_widget && current_widget->is_a(ID_Grid))
+  if (current_widget && current_widget->is_a(Type::Grid))
     return ((Fl_Grid*)((Grid_Node*)current_widget)->o);
   return nullptr;
 }

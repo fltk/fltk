@@ -370,7 +370,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   // Width=18: Draw the icon associated with the type.
-  Fl_Pixmap *pm = pixmap[l->id()];
+  Fl_Pixmap *pm = pixmap[(int)l->type()];
   if (pm) pm->draw(X-18, Y);
 
   // Add tags on top of the icon for locked and protected types.
@@ -380,11 +380,11 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   if (   l->is_widget()
-      && !l->is_a(ID_Window)
+      && !l->is_a(Type::Window)
       && ((Widget_Node*)l)->o
       && !((Widget_Node*)l)->o->visible()
-      && (!l->parent || (   !l->parent->is_a(ID_Tabs)
-                         && !l->parent->is_a(ID_Wizard) ) )
+      && (!l->parent || (   !l->parent->is_a(Type::Tabs)
+                         && !l->parent->is_a(Type::Wizard) ) )
       )
   {
     invisible_pixmap->draw(X - 17, Y);
@@ -424,7 +424,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
       else fl_color(func_color);
       copy_trunc(buf, l->title(), 55, 0, 0);
     } else {
-      if (l->is_a(ID_Comment)) {
+      if (l->is_a(Type::Comment)) {
         // -- comment (in main line, not above entry)
         fl_font(comment_font, textsize());
         if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));

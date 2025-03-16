@@ -112,7 +112,7 @@ int fld::widget::Bin_Window_Button::handle(int inEvent)
         Node *prototype = typename_to_prototype((char*)user_data());
         if (prototype) {
           Node *new_type = add_new_widget_from_user(prototype, Strategy::AFTER_CURRENT);
-          if (new_type && new_type->is_a(ID_Window)) {
+          if (new_type && new_type->is_a(Type::Window)) {
             Window_Node *new_window = (Window_Node*)new_type;
             Fl_Window *w = (Fl_Window *)new_window->o;
             w->position(Fl::event_x_root(), Fl::event_y_root());

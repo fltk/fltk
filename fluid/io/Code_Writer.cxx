@@ -450,12 +450,12 @@ void Code_Writer::write_c_indented(const char *textlines, int inIndent, char inT
  members of the class itself.
  */
 bool is_class_member(Node *t) {
-  return    t->is_a(ID_Function)
-         || t->is_a(ID_Decl)
-         || t->is_a(ID_Data);
-//         || t->is_a(ID_Class)         // FLUID can't handle a class inside a class
-//         || t->is_a(ID_Widget_Class)
-//         || t->is_a(ID_DeclBlock)     // Declaration blocks are generally not handled well
+  return    t->is_a(Type::Function)
+         || t->is_a(Type::Decl)
+         || t->is_a(Type::Data);
+//         || t->is_a(Type::Class)         // FLUID can't handle a class inside a class
+//         || t->is_a(Type::Widget_Class)
+//         || t->is_a(Type::DeclBlock)     // Declaration blocks are generally not handled well
 }
 
 /**
@@ -469,8 +469,8 @@ bool is_class_member(Node *t) {
  \see is_class_member(Node *t)
  */
 bool is_comment_before_class_member(Node *q) {
-  if (q->is_a(ID_Comment) && q->next && q->next->level==q->level) {
-    if (q->next->is_a(ID_Comment))
+  if (q->is_a(Type::Comment) && q->next && q->next->level==q->level) {
+    if (q->next->is_a(Type::Comment))
       return is_comment_before_class_member(q->next);
     if (is_class_member(q->next))
       return true;
@@ -502,13 +502,13 @@ Node* Code_Writer::write_static(Node* p) {
 
 /**
  Recursively write code, putting children between the two parts of the parent code.
- \param[in] p write this type and all its children
+ \param[in] p write this node and all its children
  \return pointer to the next sibling
  */
 Node* Code_Writer::write_code(Node* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
-  if (!(p==Fluid.proj.tree.last && p->is_a(ID_Comment))) {
+  if (!(p==Fluid.proj.tree.last && p->is_a(Type::Comment))) {
     if (write_codeview) p->code1_start = (int)ftell(code_file);
     if (write_codeview) p->header1_start = (int)ftell(header_file);
     p->write_code1(*this);
@@ -603,19 +603,19 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   }
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
-  Node* first_type = Fluid.proj.tree.first;
-  if (first_type && first_type->is_a(ID_Comment)) {
+  Node* first_node = Fluid.proj.tree.first;
+  if (first_node && first_node->is_a(Type::Comment)) {
     if (write_codeview) {
-      first_type->code1_start = first_type->code2_start = (int)ftell(code_file);
-      first_type->header1_start = first_type->header2_start = (int)ftell(header_file);
+      first_node->code1_start = first_node->code2_start = (int)ftell(code_file);
+      first_node->header1_start = first_node->header2_start = (int)ftell(header_file);
     }
     // it is ok to write non-recursive code here, because comments have no children or code2 blocks
-    first_type->write_code1(*this);
+    first_node->write_code1(*this);
     if (write_codeview) {
-      first_type->code1_end = first_type->code2_end = (int)ftell(code_file);
-      first_type->header1_end = first_type->header2_end = (int)ftell(header_file);
+      first_node->code1_end = first_node->code2_end = (int)ftell(code_file);
+      first_node->header1_end = first_node->header2_end = (int)ftell(header_file);
     }
-    first_type = first_type->next;
+    first_node = first_node->next;
   }
 
   const char *hdr = "\
@@ -696,7 +696,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       write_c("#endif\n");
     }
   }
-  for (Node* p = first_type; p;) {
+  for (Node* p = first_node; p;) {
     // write all static data for this & all children first
     write_static(p);
     // then write the nested code:
@@ -707,16 +707,16 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
 
   fprintf(header_file, "#endif\n");
 
-  Node* last_type = Fluid.proj.tree.last;
-  if (last_type && (last_type != Fluid.proj.tree.first) && last_type->is_a(ID_Comment)) {
+  Node* last_node = Fluid.proj.tree.last;
+  if (last_node && (last_node != Fluid.proj.tree.first) && last_node->is_a(Type::Comment)) {
     if (write_codeview) {
-      last_type->code1_start = last_type->code2_start = (int)ftell(code_file);
-      last_type->header1_start = last_type->header2_start = (int)ftell(header_file);
+      last_node->code1_start = last_node->code2_start = (int)ftell(code_file);
+      last_node->header1_start = last_node->header2_start = (int)ftell(header_file);
     }
-    last_type->write_code1(*this);
+    last_node->write_code1(*this);
     if (write_codeview) {
-      last_type->code1_end = last_type->code2_end = (int)ftell(code_file);
-      last_type->header1_end = last_type->header2_end = (int)ftell(header_file);
+      last_node->code1_end = last_node->code2_end = (int)ftell(code_file);
+      last_node->header1_end = last_node->header2_end = (int)ftell(header_file);
     }
   }
   int x = 0, y = 0;

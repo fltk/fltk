@@ -945,11 +945,11 @@ static bool in_window(Snap_Data &d) {
 }
 
 static bool in_group(Snap_Data &d) {
-  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(ID_Group) && d.wgt->parent != d.win);
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(Type::Group) && d.wgt->parent != d.win);
 }
 
 static bool in_tabs(Snap_Data &d) {
-  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(ID_Tabs));
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(Type::Tabs));
 }
 
 static Fl_Group *parent(Snap_Data &d) {
@@ -1465,7 +1465,7 @@ public:
     clr();
     best_match = nullptr;
     if (!d.wgt) return;
-    if (!d.wgt->parent->is_a(ID_Group)) return;
+    if (!d.wgt->parent->is_a(Type::Group)) return;
     int dsib_min = 1024;
     Group_Node *gt = (Group_Node*)d.wgt->parent;
     Fl_Group *g = (Fl_Group*)gt->o;

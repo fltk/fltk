@@ -132,7 +132,7 @@ void Input_Choice_Node::build_menu() {
       if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-        (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
+        (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : level;
       while (lvl > l1) {m->label(nullptr); m++; lvl--;}
       lvl = l1;
     }
@@ -160,7 +160,7 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
   Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
-  while (p && !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
+  while (p && !(p->is_a(Type::Menu_Manager_) || p->is_a(Type::Submenu))) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
@@ -195,12 +195,12 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
 
 void group_selected_menuitems() {
   // The group will be created in the parent group of the current menuitem
-  if (!Fluid.proj.tree.current->is_a(ID_Menu_Item)) {
+  if (!Fluid.proj.tree.current->is_a(Type::Menu_Item)) {
     return;
   }
   Menu_Item_Node *q = static_cast<Menu_Item_Node*>(Fluid.proj.tree.current);
   Node *qq = Fluid.proj.tree.current->parent;
-  if (!qq || !(qq->is_a(ID_Menu_Manager_) || qq->is_a(ID_Submenu))) {
+  if (!qq || !(qq->is_a(Type::Menu_Manager_) || qq->is_a(Type::Submenu))) {
     fl_message("Can't create a new submenu here.");
     return;
   }
@@ -226,7 +226,7 @@ void ungroup_selected_menuitems() {
   Node *qq = Fluid.proj.tree.current->parent;
   Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
   int q_level = q->level;
-  if (!qq || !qq->is_a(ID_Submenu)) {
+  if (!qq || !qq->is_a(Type::Submenu)) {
     fl_message("Only menu items inside a submenu can be ungrouped.");
     return;
   }
@@ -302,7 +302,7 @@ int isdeclare(const char *c);
 const char* Menu_Item_Node::menu_name(fld::io::Code_Writer& f, int& i) {
   i = 0;
   Node* t = prev;
-  while (t && t->is_a(ID_Menu_Item)) {
+  while (t && t->is_a(Type::Menu_Item)) {
     // be sure to count the {0} that ends a submenu:
     if (t->level > t->next->level) i += (t->level - t->next->level);
     // detect empty submenu:
@@ -371,12 +371,12 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
       // Implement the callback as a static member function
       f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
       // Find the Fl_Menu_ container for this menu item
-      Node* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
+      Node* t = parent; while (t->is_a(Type::Menu_Item)) t = t->parent;
       if (t) {
         Widget_Node *tw = (t->is_widget()) ? static_cast<Widget_Node*>(t) : nullptr;
         Node *q = nullptr;
         // Generate code to call the callback
-        if (tw->is_a(ID_Menu_Bar) && ((Menu_Bar_Node*)tw)->is_sys_menu_bar()) {
+        if (tw->is_a(Type::Menu_Bar) && ((Menu_Bar_Node*)tw)->is_sys_menu_bar()) {
           // Fl_Sys_Menu_Bar removes itself from any parent on macOS, so we
           // wrapped it in a class and remeber the parent class in a new
           // class memeber variable.
@@ -390,7 +390,7 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
         } else {
           f.write_c("%s((%s*)(o", f.indent(1), k);
           // The class pointer is in the user_data field of the top widget
-          if (t && t->is_a(ID_Input_Choice)) {
+          if (t && t->is_a(Type::Input_Choice)) {
             // Go up one more level for Fl_Input_Choice, as these are groups themselves
             f.write_c("->parent()");
           }
@@ -398,7 +398,7 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
           for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
             f.write_c("->parent()");
           // user_data is cast into a pointer to the
-          if (!q || !q->is_a(ID_Widget_Class))
+          if (!q || !q->is_a(Type::Widget_Class))
             f.write_c("->user_data()");
           f.write_c("))->%s_i(o,v);\n}\n", cn);
         }
@@ -411,7 +411,7 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     if (!f.c_contains(image))
       image->write_static(f, compress_image_);
   }
-  if (next && next->is_a(ID_Menu_Item)) return;
+  if (next && next->is_a(Type::Menu_Item)) return;
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
   const char* k = class_name(1);
@@ -422,20 +422,20 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     int i;
     f.write_c("\nFl_Menu_Item %s[] = {\n", menu_name(f, i));
   }
-  Node* t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
-  for (Node* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
+  Node* t = prev; while (t && t->is_a(Type::Menu_Item)) t = t->prev;
+  for (Node* q = t->next; q && q->is_a(Type::Menu_Item); q = q->next) {
     ((Menu_Item_Node*)q)->write_item(f);
     int thislevel = q->level; if (q->can_have_children()) thislevel++;
     int nextlevel =
-      (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : t->level+1;
+      (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : t->level+1;
     while (thislevel > nextlevel) {f.write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
   }
   f.write_c(" {0,0,0,0,0,0,0,0,0}\n};\n");
 
   if (k) {
     // Write menu item variables...
-    t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
-    for (Node* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
+    t = prev; while (t && t->is_a(Type::Menu_Item)) t = t->prev;
+    for (Node* q = t->next; q && q->is_a(Type::Menu_Item); q = q->next) {
       Menu_Item_Node *m = (Menu_Item_Node*)q;
       const char *c = array_name(m);
       if (c) {
@@ -544,7 +544,7 @@ void start_menu_initialiser(fld::io::Code_Writer& f, int &initialized, const cha
 void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   int i; const char* mname = menu_name(f, i);
 
-  if (!prev->is_a(ID_Menu_Item)) {
+  if (!prev->is_a(Type::Menu_Item)) {
     // for first menu item, declare the array
     if (class_name(1)) {
       f.write_h("%sstatic Fl_Menu_Item %s[];\n", f.indent(1), mname);
@@ -701,7 +701,7 @@ void Menu_Base_Node::build_menu() {
       if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-        (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
+        (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : level;
       while (lvl > l1) {m->label(nullptr); m++; lvl--;}
       lvl = l1;
     }
@@ -729,7 +729,7 @@ Node* Menu_Base_Node::click_test(int, int) {
 }
 
 void Menu_Manager_Node::write_code2(fld::io::Code_Writer& f) {
-  if (next && next->is_a(ID_Menu_Item)) {
+  if (next && next->is_a(Type::Menu_Item)) {
     f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
             f.unique_id(this, "menu", name(), label()));
   }

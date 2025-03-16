@@ -77,37 +77,37 @@ typedef struct Strategy {
   Flags source() { return (Flags)(flags & SOURCE_MASK); }
 } Strategy;
 
-enum ID {
+enum class Type {
   // administrative
-  ID_Base_, ID_Widget_, ID_Menu_Manager_, ID_Menu_, ID_Browser_, ID_Valuator_,
+  Base_, Widget_, Menu_Manager_, Menu_, Browser_, Valuator_,
   // non-widget
-  ID_Function, ID_Code, ID_CodeBlock,
-  ID_Decl, ID_DeclBlock, ID_Class,
-  ID_Widget_Class, ID_Comment, ID_Data,
+  Function, Code, CodeBlock,
+  Decl, DeclBlock, Class,
+  Widget_Class, Comment, Data,
   // groups
-  ID_Window, ID_Group, ID_Pack,
-  ID_Flex, ID_Tabs, ID_Scroll,
-  ID_Tile, ID_Wizard, ID_Grid,
+  Window, Group, Pack,
+  Flex, Tabs, Scroll,
+  Tile, Wizard, Grid,
   // buttons
-  ID_Button, ID_Return_Button, ID_Light_Button,
-  ID_Check_Button, ID_Repeat_Button, ID_Round_Button,
+  Button, Return_Button, Light_Button,
+  Check_Button, Repeat_Button, Round_Button,
   // valuators
-  ID_Slider, ID_Scrollbar, ID_Value_Slider,
-  ID_Adjuster, ID_Counter, ID_Spinner,
-  ID_Dial, ID_Roller, ID_Value_Input, ID_Value_Output,
+  Slider, Scrollbar, Value_Slider,
+  Adjuster, Counter, Spinner,
+  Dial, Roller, Value_Input, Value_Output,
   // text
-  ID_Input, ID_Output, ID_Text_Editor,
-  ID_Text_Display, ID_File_Input, ID_Terminal,
+  Input, Output, Text_Editor,
+  Text_Display, File_Input, Terminal,
   // menus
-  ID_Menu_Bar, ID_Menu_Button, ID_Choice,
-  ID_Input_Choice, ID_Submenu, ID_Menu_Item,
-  ID_Checkbox_Menu_Item, ID_Radio_Menu_Item,
+  Menu_Bar, Menu_Button, Choice,
+  Input_Choice, Submenu, Menu_Item,
+  Checkbox_Menu_Item, Radio_Menu_Item,
   // browsers
-  ID_Browser, ID_Check_Browser, ID_File_Browser,
-  ID_Tree, ID_Help_View, ID_Table,
+  Browser, Check_Browser, File_Browser,
+  Tree, Help_View, Table,
   // misc
-  ID_Box, ID_Clock, ID_Progress,
-  ID_Max_
+  Box, Clock, Progress,
+  Max_
 };
 
 void update_visibility_flag(Node *p);
@@ -134,8 +134,8 @@ bool validate_branch(class Node *root);
  to create a pseudo tree structure. To make walking up the tree faster, Type
  also holds a pointer to the `parent` Type.
 
- Types can be identified using the builtin ID system that works like RTTI. The
- method `id()` returns the exact type, and the method `is_a(ID)` returns true
+ Types can be identified using the builtin Type system that works like RTTI. The
+ method `type()` returns the exact type, and the method `is_a(Type)` returns true
  if this is the exact type or derived from the type, and a dynamic cast will
  work reliably.
 
@@ -296,10 +296,10 @@ public:
   virtual int is_class() const {return 0;}
   /** Return 1 if the type browser shall draw a padlock over the icon. */
   virtual int is_public() const {return 1;}
-  /** Return the type ID for this Type. */
-  virtual ID id() const { return ID_Base_; }
-  /** Check if this Type is of the give type ID or derived from that type ID. */
-  virtual bool is_a(ID inID) const { return (inID==ID_Base_); }
+  /** Return the type Type for this Type. */
+  virtual Type type() const { return Type::Base_; }
+  /** Check if this Type is of the give type Type or derived from that type Type. */
+  virtual bool is_a(Type inType) const { return (inType==Type::Base_); }
 
   const char* class_name(const int need_nest) const;
   bool is_in_class() const;

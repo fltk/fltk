@@ -105,8 +105,8 @@ public:
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();
 
-  ID id() const override { return ID_Widget_; }
-  bool is_a(ID inID) const override { return (inID==ID_Widget_) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Widget_; }
+  bool is_a(Type inType) const override { return (inType==Type::Widget_) ? true : super::is_a(inType); }
   int is_widget() const override;
   int is_true_widget() const override { return 1; }
   int is_public() const override;

@@ -84,7 +84,7 @@ void Grid_Child_Tab::cb_widget_grid_transient(Fl_Box* o, void* v) {
 void Grid_Child_Tab::cb_Horizontal_i(Fl_Choice* o, void* v) {
   if (   !current_widget
         || !current_widget->parent
-        || !current_widget->parent->is_a(ID_Grid))
+        || !current_widget->parent->is_a(Type::Grid))
     {
       return;
     }
@@ -131,7 +131,7 @@ Fl_Menu_Item* Grid_Child_Tab::GRID_LEFT = Grid_Child_Tab::menu_Horizontal + 0;
 void Grid_Child_Tab::cb_Vertical_i(Fl_Choice* o, void* v) {
   if (   !current_widget
         || !current_widget->parent
-        || !current_widget->parent->is_a(ID_Grid))
+        || !current_widget->parent->is_a(Type::Grid))
     {
       return;
     }
@@ -470,7 +470,7 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char *L) :
 void Grid_Child_Tab::grid_child_cb(fld::widget::Formula_Input* i, void* v, int what) {
   if (   !current_widget
         || !current_widget->parent
-        || !current_widget->parent->is_a(ID_Grid))
+        || !current_widget->parent->is_a(Type::Grid))
     {
       return;
     }

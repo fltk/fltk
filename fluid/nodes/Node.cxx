@@ -588,7 +588,7 @@ Window_Node *Node::window() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
-    if (t->is_a(ID_Window))
+    if (t->is_a(Type::Window))
       return (Window_Node*)t;
   return nullptr;
 }
@@ -601,7 +601,7 @@ Group_Node *Node::group() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
-    if (t->is_a(ID_Group))
+    if (t->is_a(Type::Group))
       return (Group_Node*)t;
   return nullptr;
 }
@@ -818,7 +818,7 @@ Node *Node::remove() {
 }
 
 void Node::name(const char *n) {
-  int nostrip = is_a(ID_Comment);
+  int nostrip = is_a(Type::Comment);
   if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
@@ -1186,7 +1186,7 @@ void Node::copy_properties() {
  */
 int Node::user_defined(const char* cbname) const {
   for (Node* p = Fluid.proj.tree.first; p ; p = p->next)
-    if (p->is_a(ID_Function) && p->name() != nullptr)
+    if (p->is_a(Type::Function) && p->name() != nullptr)
       if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
         if (p->name()[strlen(cbname)] == '(')
           return 1;

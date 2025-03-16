@@ -487,41 +487,41 @@ void run_autodoc(const std::string &target_dir) {
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
 
-  // -- ID_Function
+  // -- Type::Function
   Fl_Window *adoc_function_panel = make_function_panel();
   f_name_input->value("count_trees(const char *forest_name)");
   f_return_type_input->value("unsigned int");
   fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
   adoc_function_panel->hide();
 
-  // -- ID_Code
+  // -- Type::Code
   Fl_Window *adoc_code_panel = make_code_panel();
   code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
   adoc_code_panel->hide();
 
-  // -- ID_CodeBlock
+  // -- Type::CodeBlock
   Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
   code_before_input->value("if (test())");
   code_after_input->value("// test widgets added...");
   fl_snapshot((target_dir + "codeblock_panel.png").c_str(), adoc_codeblock_panel, win_margin, win_blend);
   adoc_codeblock_panel->hide();
 
-  // -- ID_Decl
+  // -- Type::Decl
   Fl_Window *adoc_decl_panel = make_decl_panel();
   decl_class_choice->hide();
   decl_input->buffer()->text("const char *damage = \"'tis but a scratch\";");
   fl_snapshot((target_dir + "decl_panel.png").c_str(), adoc_decl_panel, win_margin, win_blend);
   adoc_decl_panel->hide();
 
-  // -- ID_DeclBlock
+  // -- Type::DeclBlock
   Fl_Window *adoc_declblock_panel = make_declblock_panel();
   declblock_before_input->value("#ifdef NDEBUG");
   declblock_after_input->value("#endif // NDEBUG");
   fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
   adoc_declblock_panel->hide();
 
-  // -- ID_Class
+  // -- Type::Class
   Fl_Window *adoc_class_panel = make_class_panel();
   decl_class_choice->hide();
   c_name_input->value("Zoo_Giraffe");
@@ -529,15 +529,15 @@ void run_autodoc(const std::string &target_dir) {
   fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
   adoc_class_panel->hide();
 
-  // -- ID_Widget_Class is handled like Window_Node
+  // -- Type::Widget_Class is handled like Window_Node
 
-  // -- ID_Comment
+  // -- Type::Comment
   Fl_Window *adoc_comment_panel = make_comment_panel();
   comment_input->buffer()->text("Make sure that the giraffe gets enough hay,\nbut the monkey can't reach it.");
   fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
   adoc_comment_panel->hide();
 
-  // -- ID_Data
+  // -- Type::Data
   Fl_Window *adoc_data_panel = make_data_panel();
   data_class_choice->hide();
   data_input->value("emulated_ROM");

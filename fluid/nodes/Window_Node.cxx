@@ -231,7 +231,7 @@ int Overlay_Window::handle(int e) {
 Node *Window_Node::make(Strategy strategy) {
   Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
-  while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) {
+  while (p && (!p->is_code_block() || p->is_a(Type::Widget_Class))) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
@@ -506,7 +506,7 @@ void Window_Node::draw_out_of_bounds() {
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
   for (Node *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
-    if (q->is_a(ID_Group) && !q->is_a(ID_Scroll)) {
+    if (q->is_a(Type::Group) && !q->is_a(Type::Scroll)) {
       Widget_Node *w = (Widget_Node*)q;
       draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
     }
@@ -594,7 +594,7 @@ void Window_Node::draw_overlay() {
       newposition(myo,x,y,r,t);
       if (Fluid.show_guides) {
         // If we are in a drag operation, and the parent is a grid, show the grid overlay
-        if (drag && q->parent && q->parent->is_a(ID_Grid)) {
+        if (drag && q->parent && q->parent->is_a(Type::Grid)) {
           Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Grid_Node*)q->parent)->o);
           grid->draw_overlay();
         }
@@ -608,7 +608,7 @@ void Window_Node::draw_overlay() {
           } else {
             draw_height(wgt->x()+15, wgt->y(), wgt->y()+wgt->h(), FL_ALIGN_CENTER);
           }
-        } else if (q->is_a(ID_Grid)) {
+        } else if (q->is_a(Type::Grid)) {
           Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Grid_Node*)q)->o);
           grid->draw_overlay();
         }
@@ -669,17 +669,17 @@ void check_redraw_corresponding_parent(Node *s) {
   Widget_Node * prev_parent = nullptr;
   if( !s || !s->selected || !s->is_widget()) return;
   for (Node *i=s; i && i->parent; i=i->parent) {
-    if (i->is_a(ID_Group) && prev_parent) {
-      if (i->is_a(ID_Tabs)) {
+    if (i->is_a(Type::Group) && prev_parent) {
+      if (i->is_a(Type::Tabs)) {
         ((Fl_Tabs*)((Widget_Node*)i)->o)->value(prev_parent->o);
         return;
       }
-      if (i->is_a(ID_Wizard)) {
+      if (i->is_a(Type::Wizard)) {
         ((Fl_Wizard*)((Widget_Node*)i)->o)->value(prev_parent->o);
         return;
       }
     }
-    if (i->is_a(ID_Group) && s->is_widget())
+    if (i->is_a(Type::Group) && s->is_widget())
       prev_parent = (Widget_Node*)i;
   }
 }
@@ -687,7 +687,7 @@ void check_redraw_corresponding_parent(Node *s) {
 // do that for every window (when selected set changes):
 void redraw_overlays() {
   for (Node *o=Fluid.proj.tree.first; o; o=o->next)
-    if (o->is_a(ID_Window)) ((Window_Node*)o)->fix_overlay();
+    if (o->is_a(Type::Window)) ((Window_Node*)o)->fix_overlay();
 }
 
 void toggle_overlays(Fl_Widget *,void *) {
@@ -702,7 +702,7 @@ void toggle_overlays(Fl_Widget *,void *) {
   }
 
   for (Node *o=Fluid.proj.tree.first; o; o=o->next)
-    if (o->is_a(ID_Window)) {
+    if (o->is_a(Type::Window)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -725,7 +725,7 @@ void toggle_guides(Fl_Widget *,void *) {
     guides_button->value(Fluid.show_guides);
 
   for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (o->is_a(ID_Window)) {
+    if (o->is_a(Type::Window)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -757,7 +757,7 @@ void toggle_restricted(Fl_Widget *,void *) {
     restricted_button->value(Fluid.show_restricted);
 
   for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (o->is_a(ID_Window)) {
+    if (o->is_a(Type::Window)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -771,7 +771,7 @@ void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
   Fluid.show_ghosted_outline = !Fluid.show_ghosted_outline;
   Fluid.preferences.set("Fluid.show_ghosted_outline", Fluid.show_ghosted_outline);
   for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (o->is_a(ID_Window)) {
+    if (o->is_a(Type::Window)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw();
     }
@@ -819,7 +819,7 @@ void Window_Node::moveallchildren(int key)
       Widget_Node* myo = (Widget_Node*)i;
       int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
-      if (myo->is_a(ID_Flex) || myo->is_a(ID_Grid)) {
+      if (myo->is_a(Type::Flex) || myo->is_a(Type::Grid)) {
         // Flex and Grid need to be able to layout their children.
         Fluid.proj.tree.allow_layout++;
         myo->o->resize(x,y,r-x,t-y);
@@ -855,7 +855,7 @@ void Window_Node::moveallchildren(int key)
         Fluid.proj.tree.allow_layout++;
         f->layout();
         Fluid.proj.tree.allow_layout--;
-      } else if (myo->parent && myo->parent->is_a(ID_Grid)) {
+      } else if (myo->parent && myo->parent->is_a(Type::Grid)) {
         Grid_Node* gt = (Grid_Node*)myo->parent;
         Fl_Grid* g = (Fl_Grid*)gt->o;
         if (key) {
@@ -871,14 +871,14 @@ void Window_Node::moveallchildren(int key)
         g->layout();
         Fluid.proj.tree.allow_layout--;
         update_widget_panel = true;
-      } else if (myo->parent && myo->parent->is_a(ID_Group)) {
+      } else if (myo->parent && myo->parent->is_a(Type::Group)) {
         Group_Node* gt = (Group_Node*)myo->parent;
         ((Fl_Group*)gt->o)->init_sizes();
       }
       // move all the children, whether selected or not:
       Node* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_true_widget() && !myo->is_a(ID_Flex) && !myo->is_a(ID_Grid)) {
+        if (p->is_true_widget() && !myo->is_a(Type::Flex) && !myo->is_a(Type::Grid)) {
           Widget_Node* myo2 = (Widget_Node*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);
@@ -917,7 +917,7 @@ int Window_Node::handle(int event) {
       // find the innermost item clicked on:
       selection = this;
       for (Node* i=next; i && i->level>level; i=i->next)
-        if (i->is_a(ID_Group)) {
+        if (i->is_a(Type::Group)) {
           Widget_Node* myo = (Widget_Node*)i;
           if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
             selection = myo;
@@ -1069,7 +1069,7 @@ int Window_Node::handle(int event) {
       } else {
         deselect();
         select(t, 1);
-        if (t->is_a(ID_Menu_Item)) t->open();
+        if (t->is_a(Type::Menu_Item)) t->open();
       }
       selection = t;
       drag = 0;

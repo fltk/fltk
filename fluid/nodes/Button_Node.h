@@ -36,8 +36,8 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Button_Node(); }
   int is_button() const override { return 1; }
-  ID id() const override { return ID_Button; }
-  bool is_a(ID inID) const override { return (inID==ID_Button) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Button; }
+  bool is_a(Type inType) const override { return (inType==Type::Button) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   void copy_properties() override;
@@ -59,8 +59,8 @@ public:
   const char *alt_type_name() override { return "fltk::ReturnButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Return_Button_Node(); }
-  ID id() const override { return ID_Return_Button; }
-  bool is_a(ID inID) const override { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Return_Button; }
+  bool is_a(Type inType) const override { return (inType==Type::Return_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Repeat Button ----
@@ -81,8 +81,8 @@ public:
   const char *alt_type_name() override { return "fltk::RepeatButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Repeat_Button_Node(); }
-  ID id() const override { return ID_Repeat_Button; }
-  bool is_a(ID inID) const override { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Repeat_Button; }
+  bool is_a(Type inType) const override { return (inType==Type::Repeat_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Light Button ----
@@ -101,8 +101,8 @@ public:
   const char *alt_type_name() override { return "fltk::LightButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Light_Button_Node(); }
-  ID id() const override { return ID_Light_Button; }
-  bool is_a(ID inID) const override { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Light_Button; }
+  bool is_a(Type inType) const override { return (inType==Type::Light_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Check Button ----
@@ -121,8 +121,8 @@ public:
   const char *alt_type_name() override { return "fltk::CheckButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Check_Button_Node(); }
-  ID id() const override { return ID_Check_Button; }
-  bool is_a(ID inID) const override { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Check_Button; }
+  bool is_a(Type inType) const override { return (inType==Type::Check_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Round Button ----
@@ -141,8 +141,8 @@ public:
   const char *alt_type_name() override { return "fltk::RadioButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Round_Button_Node(); }
-  ID id() const override { return ID_Round_Button; }
-  bool is_a(ID inID) const override { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Round_Button; }
+  bool is_a(Type inType) const override { return (inType==Type::Round_Button) ? true : super::is_a(inType); }
 };
 
 

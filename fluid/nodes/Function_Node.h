@@ -65,8 +65,8 @@ public:
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_public() const override;
-  ID id() const override { return ID_Function; }
-  bool is_a(ID inID) const override { return (inID==ID_Function) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Function; }
+  bool is_a(Type inType) const override { return (inType==Type::Function) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   int has_signature(const char *, const char*) const;
@@ -93,8 +93,8 @@ public:
   void open() override;
   const char *type_name() override {return "code";}
   int is_code_block() const override {return 0;}
-  ID id() const override { return ID_Code; }
-  bool is_a(ID inID) const override { return (inID==ID_Code) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Code; }
+  bool is_a(Type inType) const override { return (inType==Type::Code) ? true : super::is_a(inType); }
   int is_public() const override { return -1; }
   int is_editing();
   int reap_editor();
@@ -121,8 +121,8 @@ public:
   int is_code_block() const override {return 1;}
   int can_have_children() const override {return 1;}
   int is_public() const override { return -1; }
-  ID id() const override { return ID_CodeBlock; }
-  bool is_a(ID inID) const override { return (inID==ID_CodeBlock) ? true : super::is_a(inID); }
+  Type type() const override { return Type::CodeBlock; }
+  bool is_a(Type inType) const override { return (inType==Type::CodeBlock) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
 };
@@ -148,8 +148,8 @@ public:
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   int is_public() const override;
-  ID id() const override { return ID_Decl; }
-  bool is_a(ID inID) const override { return (inID==ID_Decl) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Decl; }
+  bool is_a(Type inType) const override { return (inType==Type::Decl) ? true : super::is_a(inType); }
 };
 
 // ---- Data_Node declaration
@@ -173,8 +173,8 @@ public:
   const char *type_name() override {return "data";}
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
-  ID id() const override { return ID_Data; }
-  bool is_a(ID inID) const override { return (inID==ID_Data) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Data; }
+  bool is_a(Type inType) const override { return (inType==Type::Data) ? true : super::is_a(inType); }
 };
 
 // ---- DeclBlock_Node declaration
@@ -209,8 +209,8 @@ public:
   int can_have_children() const override {return 1;}
   int is_decl_block() const override {return 1;}
   int is_public() const override;
-  ID id() const override { return ID_DeclBlock; }
-  bool is_a(ID inID) const override { return (inID==ID_DeclBlock) ? true : super::is_a(inID); }
+  Type type() const override { return Type::DeclBlock; }
+  bool is_a(Type inType) const override { return (inType==Type::DeclBlock) ? true : super::is_a(inType); }
 };
 
 // ---- Comment_Node declaration
@@ -233,8 +233,8 @@ public:
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   int is_public() const override { return 1; }
-  ID id() const override { return ID_Comment; }
-  bool is_a(ID inID) const override { return (inID==ID_Comment) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Comment; }
+  bool is_a(Type inType) const override { return (inType==Type::Comment) ? true : super::is_a(inType); }
 };
 
 // ---- Class_Node declaration
@@ -264,8 +264,8 @@ public:
   int is_decl_block() const override {return 1;}
   int is_class() const override {return 1;}
   int is_public() const override;
-  ID id() const override { return ID_Class; }
-  bool is_a(ID inID) const override { return (inID==ID_Class) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Class; }
+  bool is_a(Type inType) const override { return (inType==Type::Class) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
 

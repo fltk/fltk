@@ -200,7 +200,7 @@ int Project_Reader::read_quoted() {      // read whatever character is after a \
  \param[in] strategy add nodes after current or as last child
  \param[in] skip_options this is set if the options were already found in
  a previous call, and there is no need to waste time searching for them.
- \return the last type that was created
+ \return the last node that was created
  */
 Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char skip_options) {
   Fluid.proj.tree.current = p;
@@ -373,7 +373,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
       // FIXME: this has no business in the file reader!
       // TODO: this is called whenever something is pasted from the top level into a grid
       //    It makes sense to make this more universal for other widget types too.
-      if (merge && t && t->parent && t->parent->is_a(ID_Grid)) {
+      if (merge && t && t->parent && t->parent->is_a(Type::Grid)) {
         if (Window_Node::popupx != 0x7FFFFFFF) {
           ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
@@ -426,7 +426,7 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
   Fluid.proj.tree.current = nullptr;
   // Force menu items to be rebuilt...
   for (o = Fluid.proj.tree.first; o; o = o->next) {
-    if (o->is_a(ID_Menu_Manager_)) {
+    if (o->is_a(Type::Menu_Manager_)) {
       o->add_child(nullptr,nullptr);
     }
   }

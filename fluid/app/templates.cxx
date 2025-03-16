@@ -107,7 +107,7 @@ void fld::app::save_template() {
 
   for (t = Fluid.proj.tree.first; t; t = t->next) {
     // Find the first window...
-    if (t->is_a(ID_Window)) break;
+    if (t->is_a(Type::Window)) break;
   }
 
   if (!t) return;

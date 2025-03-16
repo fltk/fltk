@@ -55,8 +55,8 @@ public:
   const char *alt_type_name() override {return "fltk::GridGroup";}
   Widget_Node *_make() override { return new Grid_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) override;
-  ID id() const override { return ID_Grid; }
-  bool is_a(ID inID) const override { return (inID==ID_Grid) ? true : super::is_a(inID); }
+  Type type() const override { return Type::Grid; }
+  bool is_a(Type inType) const override { return (inType==Type::Grid) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   void write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) override;
