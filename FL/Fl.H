@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1449,7 +1449,7 @@ public:
     In this last case, you don't need anymore to call Fl::cairo_make_current().
     You can use Fl::cairo_cc() to get the current Cairo context anytime.
 
-    \note Only available when configure has the --enable-cairo option
+    \note Only available if built with CMake option FLTK_OPTION_CAIRO_WINDOW=ON.
   */
   static void cairo_autolink_context(bool alink) {
     cairo_state_.autolink(alink);
@@ -1460,8 +1460,9 @@ public:
     \retval false if no Cairo context autolink is made for each window.
     \retval true if any fltk window is attached a Cairo context when it
     is current. \see void cairo_autolink_context(bool alink)
-    \note Only available when configure has the --enable-cairo option
- */
+
+    \note Only available if built with CMake option FLTK_OPTION_CAIRO_EXT=ON.
+    */
   static bool cairo_autolink_context() {
     return cairo_state_.autolink();
   }
@@ -1473,7 +1474,8 @@ public:
 
   /** Sets the current Cairo context to \p c.
     Set \p own to true if you want fltk to handle this cc deletion.
-    \note Only available when configure has the --enable-Cairo option
+
+    \note Only available if built with CMake option FLTK_OPTION_CAIRO_WINDOW=ON.
   */
   static void cairo_cc(cairo_t *c, bool own=false) {
     cairo_state_.cc(c, own);
@@ -1498,8 +1500,8 @@ public:
       Fl::cairo_flush(cc);            // flush Cairo drawings to the device
     \endcode
 
-    If you configure FLTK with \c '--enable-cairo' or CMake option
-    \c 'FLTK_OPTION_CAIRO_WINDOW' (i.e. without \c '--enable-cairoext' or CMake option
+    If you configure FLTK with CMake option
+    \c 'FLTK_OPTION_CAIRO_WINDOW' (i.e. without CMake option
     \c 'FLTK_OPTION_CAIRO_EXT') or if you don't enable the \c 'autolink' Cairo
     context you may do the equivalent to use Cairo drawings in an
     overridden draw() method of derived classes by using

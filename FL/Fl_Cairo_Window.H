@@ -1,7 +1,7 @@
 //
 // Fl_Cairo_Window header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -78,7 +78,7 @@
   \see test/cairo_test.cxx
 
   \note Class Fl_Cairo_Window requires the FLTK library to have been built with
-  CMake option FLTK_OPTION_CAIRO_WINDOW or configure --enable-cairo.
+    CMake option FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT.
 
   \note You can alternatively define your custom Cairo FLTK window,
   and thus at least override the draw() method to provide custom Cairo

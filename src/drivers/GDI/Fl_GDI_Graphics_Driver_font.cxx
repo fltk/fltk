@@ -84,11 +84,24 @@ const char* Fl_GDI_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
 
 static int fl_free_font = FL_FREE_FONT;
 
+// helper function for `enumcbw()` to avoid code repetition
+// input:
+//   ft: font "type", i.e. ' ', 'B', 'I', or 'P'
+//   fn: font name whose first byte is overwritten and then stored
+
+static void set_font_name(const char ft, char *fn) {
+  fn[0] = ft;
+  Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(fn));
+}
+
+// Callback for EnumFontFamiliesW():
+// return 1 to continue, 0 to stop enumeration
+
 static int CALLBACK
 enumcbw(CONST LOGFONTW    *lpelf,
-        CONST TEXTMETRICW * /*lpntm*/,
-       DWORD            /*FontType*/,
-       LPARAM           p) {
+        CONST TEXTMETRICW * /* lpntm */,
+        DWORD               /* FontType */,
+        LPARAM            p) {
   if (!p && lpelf->lfCharSet != ANSI_CHARSET) return 1;
   char *n = NULL;
   size_t l = wcslen(lpelf->lfFaceName);
@@ -106,11 +119,11 @@ enumcbw(CONST LOGFONTW    *lpelf,
   buffer[LF_FACESIZE] = 0; // Ensure null termination
   buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
   if (lpelf->lfWeight <= 400)
-    buffer[0] = 'B', Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
-  buffer[0] = 'I'; Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
+    set_font_name('B', fn);
+  set_font_name('I', fn);
   if (lpelf->lfWeight <= 400)
-    buffer[0] = 'P', Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
-  free(n);
+    set_font_name('P', fn);
+  free(fn);
   return 1;
 } /* enumcbw */
 
@@ -132,9 +145,9 @@ static int sizes[128];
 static int CALLBACK
 
 EnumSizeCbW(CONST LOGFONTW    * /*lpelf*/,
-           CONST TEXTMETRICW *lpntm,
-           DWORD            fontType,
-           LPARAM           /*p*/) {
+            CONST TEXTMETRICW *lpntm,
+            DWORD              fontType,
+            LPARAM             /*p*/) {
   if ((fontType & RASTER_FONTTYPE) == 0) {
     sizes[0] = 0;
     nbSize = 1;

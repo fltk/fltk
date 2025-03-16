@@ -141,16 +141,6 @@ endif(debug_build)
 unset(debug_build)
 
 #######################################################################
-# Build a dummy ("empty") Cairo library for backwards compatibility.
-# This should be removed in the next minor release after 1.4.x, likely
-# in FLTK 1.5.0.
-#######################################################################
-
-if(FLTK_HAVE_CAIRO)
-  add_subdirectory(cairo)
-endif()
-
-#######################################################################
 # build the standard FLTK libraries
 #######################################################################
 
@@ -380,7 +370,7 @@ message(STATUS "End of Configuration Summary --\n")
 
 if(0) # debug built library and fluid targets
   message(STATUS "------------------------ TARGETS ------------------------")
-  foreach(tgt fltk fluid fluid-cmd options options-cmd images gl forms cairo jpeg png z)
+  foreach(tgt fltk fluid fluid-cmd options options-cmd images gl forms jpeg png z)
     if(TARGET fltk::${tgt})
       message("Target: fltk::${tgt}")
       # fl_debug_target(fltk::${tgt})

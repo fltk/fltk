@@ -117,7 +117,7 @@ else(CMAKE_CROSSCOMPILING)
     _fltk_make_alias(fltk-options fltk::options)
     _fltk_make_alias(fltk-options-cmd fltk::options-cmd)
 
-    foreach(target cairo forms gl images jpeg png z)
+    foreach(target forms gl images jpeg png z)
       _fltk_make_alias(fltk_${target} fltk::${target})
       _fltk_make_alias(fltk_${target}-shared fltk::${target}-shared)
     endforeach()
