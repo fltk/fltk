@@ -617,7 +617,7 @@ void Grid_Node::write_code2(fld::io::Code_Writer& f) {
     Fl_Grid::Cell *cell = grid->cell(c);
     if (cell) {
       if (first_cell) {
-        f.write_c("%sFl_Grid::Cell *cell = nullptr;\n", f.indent());
+        f.write_c("%sFl_Grid::Cell *cell = 0L;\n", f.indent());
         first_cell = false;
       }
       f.write_c("%scell = %s->widget(%s->child(%d), %d, %d, %d, %d, %d);\n",

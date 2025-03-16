@@ -17,7 +17,7 @@
 #include "nodes/Function_Node.h"
 
 #include "Fluid.h"
-#include "app/mergeback.h"
+#include "proj/mergeback.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"

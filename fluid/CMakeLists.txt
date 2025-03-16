@@ -30,7 +30,6 @@ set(CPPFILES
   app/Image_Asset.cxx
   app/history.cxx
   app/Menu.cxx
-  app/mergeback.cxx
   app/shell_command.cxx
   app/templates.cxx
   io/Code_Writer.cxx
@@ -57,6 +56,7 @@ set(CPPFILES
   panels/widget_panel/Grid_Tab.cxx
   panels/widget_panel/Grid_Child_Tab.cxx
   proj/align_widget.cxx
+  proj/mergeback.cxx
   proj/undo.cxx
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
@@ -80,7 +80,6 @@ set(HEADERFILES
   app/Image_Asset.h
   app/history.h
   app/Menu.h
-  app/mergeback.h
   app/shell_command.h
   app/templates.h
   io/Code_Writer.h
@@ -107,6 +106,7 @@ set(HEADERFILES
   panels/widget_panel/Grid_Tab.h
   panels/widget_panel/Grid_Child_Tab.h
   proj/align_widget.h
+  proj/mergeback.h
   proj/undo.h
   rsrcs/comments.h
   rsrcs/pixmaps.h

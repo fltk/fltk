@@ -17,7 +17,7 @@
 #if 0
 // Matt: disabled
 
-#include "app/mergeback.h"
+#include "proj/mergeback.h"
 
 #include "Fluid.h"
 #include "proj/undo.h"

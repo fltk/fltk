@@ -230,7 +230,7 @@ static const unsigned char idata_general_64[] =
 150,102,123,63,248,127,27,97,180,206,27,14,172,151,0,0,0,0,73,69,78,68,174,66,
 96,130};
 static Fl_Image *image_general_64() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("general_64.png", idata_general_64, 2162);
   return image;
@@ -363,7 +363,7 @@ static const unsigned char idata_document_64[] =
 147,239,104,255,202,153,244,20,250,15,100,60,232,29,230,9,101,148,0,0,0,0,73,69,
 78,68,174,66,96,130};
 static Fl_Image *image_document_64() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("document_64.png", idata_document_64, 927);
   return image;
@@ -489,7 +489,7 @@ static const unsigned char idata_layout_64[] =
 219,234,153,20,127,159,185,12,250,99,90,14,203,239,127,120,165,154,78,208,47,
 215,15,118,242,56,45,94,1,0,0,0,0,73,69,78,68,174,66,96,130};
 static Fl_Image *image_layout_64() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("layout_64.png", idata_layout_64, 481);
   return image;
@@ -867,7 +867,7 @@ static const unsigned char idata_shell_64[] =
 82,219,229,239,135,114,138,14,109,164,201,83,85,44,126,133,81,55,103,232,191,0,
 145,21,211,195,226,88,204,195,0,0,0,0,73,69,78,68,174,66,96,130};
 static Fl_Image *image_shell_64() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("shell_64.png", idata_shell_64, 802);
   return image;
@@ -1668,7 +1668,7 @@ static const unsigned char idata_fd_project[] =
 213,122,16,176,223,94,207,73,175,70,249,59,81,177,117,128,158,31,49,127,246,30,
 207,181,170,20,0,0,0,0,73,69,78,68,174,66,96,130};
 static Fl_Image *image_fd_project() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("fd_project.png", idata_fd_project, 6950);
   return image;
@@ -2033,7 +2033,7 @@ static const unsigned char idata_fd_user[] =
 116,89,108,93,41,107,255,5,119,155,194,247,64,241,254,70,0,0,0,0,73,69,78,68,
 174,66,96,130};
 static Fl_Image *image_fd_user() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("fd_user.png", idata_fd_user, 8612);
   return image;
@@ -2112,7 +2112,7 @@ static const unsigned char idata_language_64[] =
 157,33,48,255,61,163,226,212,114,146,206,17,166,130,48,126,136,23,88,161,222,
 205,191,56,75,123,84,202,251,159,166,0,0,0,0,73,69,78,68,174,66,96,130};
 static Fl_Image *image_language_64() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("language_64.png", idata_language_64, 1450);
   return image;
@@ -2425,7 +2425,7 @@ static const unsigned char idata_user_circle_64[] =
 252,106,89,247,128,255,3,60,207,245,248,165,38,113,147,0,0,0,0,73,69,78,68,174,
 66,96,130};
 static Fl_Image *image_user_circle_64() {
-  static Fl_Image *image = nullptr;
+  static Fl_Image *image = 0L;
   if (!image)
     image = new Fl_PNG_Image("user_circle_64.png", idata_user_circle_64, 3909);
   return image;

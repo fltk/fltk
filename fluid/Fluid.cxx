@@ -17,7 +17,7 @@
 #include "Fluid.h"
 
 #include "Project.h"
-#include "app/mergeback.h"
+#include "proj/mergeback.h"
 #include "app/Menu.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
@@ -801,7 +801,7 @@ void Application::print_snapshots() {
 
  This function creates the source filename by setting the file
  extension to \c code_file_name and a header filename
- with the extension \c code_file_name which are both
+ with the extension \c header_file_name which are both
  settable by the user.
 
  If the code filename has not been set yet, a "save file as" dialog will be
