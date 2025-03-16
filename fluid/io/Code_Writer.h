@@ -22,6 +22,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string>
+#include <set>
 
 class Node;
 struct Fd_Identifier_Tree;
@@ -48,13 +49,13 @@ private:
   FILE *header_file = nullptr;
 
   /// tree of unique but human-readable identifiers
-  Fd_Identifier_Tree* id_root = nullptr;
+  std::set<std::string> unique_id_list { };
   /// searchable text tree for text that is only written once to the header file
-  Fd_Text_Tree *text_in_header = nullptr;
+  std::set<std::string> text_in_header { };
   /// searchable text tree for text that is only written once to the code file
-  Fd_Text_Tree *text_in_code = nullptr;
+  std::set<std::string> text_in_code { };
   /// searchable tree for pointers that are only written once to the code file
-  Fd_Pointer_Tree *ptr_in_code = nullptr;
+  std::set<void*> ptr_in_code { };
 
   /// crc32 for blocks of text written to the code file
   unsigned long block_crc_ = 0;
