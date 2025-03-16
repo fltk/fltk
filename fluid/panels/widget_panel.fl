@@ -472,7 +472,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group wp_gui_tab {
         label GUI
-        callback propagate_load open
+        callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -581,7 +581,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-}} selected
+}}
             tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
           }
         }
@@ -1027,7 +1027,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
     o->show();
     propagate_load(o, v);
   }
-}}
+}} open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Value_Input {} {
@@ -1698,7 +1698,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group wp_style_tab {
         label Style
-        callback propagate_load
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group wp_style_label {
@@ -2085,7 +2085,7 @@ if (v == LOAD) {
             tooltip {Spacing between label and the vertically aligned side of the widget.} xywh {159 150 55 20} labelsize 11 align 5 minimum -127 maximum 127 step 1 textsize 11
           }
           Fl_Value_Input {} {
-            label {Text to Image:}
+            label {Image Gap:}
             callback {int s;
 if (v == LOAD) {
   if (!current_widget->is_true_widget()) {

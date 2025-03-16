@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string>
 #include <set>
+#include <map>
 
 class Node;
 struct Fd_Identifier_Tree;
@@ -49,7 +50,7 @@ private:
   FILE *header_file = nullptr;
 
   /// tree of unique but human-readable identifiers
-  std::set<std::string> unique_id_list { };
+  std::map<std::string, void*> unique_id_list { };
   /// searchable text tree for text that is only written once to the header file
   std::set<std::string> text_in_header { };
   /// searchable text tree for text that is only written once to the code file

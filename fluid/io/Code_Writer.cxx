@@ -68,16 +68,20 @@ const char* Code_Writer::unique_id(void* o, const char* type, const char* name, 
   *q = 0;
   // okay, search the tree and see if the name was already used:
   int which = 0;
-  auto it = unique_id_list.end();
   for (;;) {
-    if (unique_id_list.find(buffer)==unique_id_list.end()) {
-      it = unique_id_list.insert(buffer).first;;
-      break;
-    } else {
-      sprintf(q,"%x",++which);
+    auto it = unique_id_list.find(buffer);
+    // If the id does not exist, add it to the map
+    if (it == unique_id_list.end()) {
+      it = unique_id_list.insert(std::make_pair(buffer, o)).first;
+      return it->first.c_str();
     }
+    // If it does exist, and the pointers are the same, just return it.
+    if (it->second == o) {
+      return it->first.c_str();
+    }
+    // Else repeat until we have a new id,
+    sprintf(q,"%x",++which);
   }
-  return it->c_str();
 }
 
 ////////////////////////////////////////////////////////////////

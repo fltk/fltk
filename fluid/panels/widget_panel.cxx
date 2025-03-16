@@ -1861,7 +1861,7 @@ static void cb_Vertical(Fl_Value_Input* o, void* v) {
   }
 }
 
-static void cb_Text(Fl_Value_Input* o, void* v) {
+static void cb_Image(Fl_Value_Input* o, void* v) {
   int s;
   if (v == LOAD) {
     if (!current_widget->is_true_widget()) {
@@ -2917,13 +2917,13 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Vertical);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Text to Image:");
+          { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Image Gap:");
             o->tooltip("Gap between label image and text in pixels");
             o->labelsize(11);
             o->maximum(255);
             o->step(1);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_Text);
+            o->callback((Fl_Callback*)cb_Image);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           } // Fl_Value_Input* o
           { Fl_Box* o = new Fl_Box(281, 150, 60, 20);
