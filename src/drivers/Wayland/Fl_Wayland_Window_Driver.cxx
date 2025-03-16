@@ -658,6 +658,14 @@ static struct libdecor_interface libdecor_iface = {
 };
 
 
+
+static void delayed_rescale(Fl_Window *win) {
+  Fl_Window_Driver::driver(win)->is_a_rescale(true);
+  win->size(win->w(), win->h());
+  Fl_Window_Driver::driver(win)->is_a_rescale(false);
+}
+
+
 void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *window,
                   float pre_scale) {
   Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
@@ -681,9 +689,8 @@ void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *w
       Fl_Wayland_Graphics_Driver::buffer_release(window);
       window->fl_win->redraw();
     } else {
-      win_driver->is_a_rescale(true);
-      window->fl_win->size(window->fl_win->w(), window->fl_win->h());
-      win_driver->is_a_rescale(false);
+      // delaying the rescaling is necessary to set first the window's size_range according to the new screen
+      Fl::add_timeout(0, (Fl_Timeout_Handler)delayed_rescale, window->fl_win);
     }
   }
   if (window->fl_win->as_gl_window())
@@ -715,7 +722,7 @@ static void surface_enter(void *data, struct wl_surface *wl_surface,
   while (e->next != &window->outputs) e = e->next; // move e to end of linked list
   wl_list_insert(e, &surface_output->link);
 //printf("window %p enters screen id=%d length=%d\n", window->fl_win, output->id, wl_list_length(&window->outputs));
-  if (list_was_empty) {
+  if (list_was_empty && !window->fl_win->parent()) {
     change_scale(output, window, pre_scale);
   }
 }
@@ -741,7 +748,7 @@ static void surface_leave(void *data, struct wl_surface *wl_surface,
       break;
     }
   }
-  if (count == 1 && !wl_list_empty(&window->outputs)) {
+  if (count == 1 && !wl_list_empty(&window->outputs) && !window->fl_win->parent()) {
     s_output = wl_container_of(window->outputs.next, s_output, link);
     change_scale(s_output->output, window, pre_scale);
   }
@@ -1353,11 +1360,11 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     // results in tall popup windows starting at the top of the screen, what we want.
     // Unfortunately, we know the work area height exactly only for single-screen systems,
     // otherwise FLTK returns work area height == screen height. In that case we estimate
-    // work area height ≈ screen height - 40.
+    // work area height ≈ screen height - 44.
     int V, work_area_H, screen_H;
     Fl::screen_work_area(V, V, V, work_area_H, origin_win->screen_num());
     Fl::screen_xywh(V, V, V, screen_H, origin_win->screen_num());
-    if (work_area_H == screen_H) work_area_H -= 40;
+    if (work_area_H == screen_H) work_area_H -= 44;
     if (positioner_H > work_area_H) positioner_H = work_area_H;
   }
   xdg_positioner_set_size(positioner, pWindow->w() * f , positioner_H * f );

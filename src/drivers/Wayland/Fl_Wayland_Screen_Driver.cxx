@@ -1114,11 +1114,6 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
 }
 
 
-static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
-                                             int& Wfullscreen, int& Hfullscreen,
-                                             int& Wworkarea, int& Hworkarea);
-
-
 static void output_done(void *data, struct wl_output *wl_output)
 {
   // Runs at startup and when desktop scale factor is changed or screen added
@@ -1147,13 +1142,7 @@ static void output_done(void *data, struct wl_output *wl_output)
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (scr_driver->screen_count_get() > 0) { // true when output_done runs after initial screen dectection
     scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
-    int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
-    compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea);
-    if (Wfullscreen && Hfullscreen) {
-      output->width = Wfullscreen * output->wld_scale; // pixels
-      output->height = Hfullscreen * output->wld_scale; // pixels
-    }
-    Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+    scr_driver->init_workarea();
   }
 }
 
@@ -1290,7 +1279,11 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_list_for_each(elt, &scr_driver->outputs, link) {
       if (elt == output) found = true;
     }
-    if (!found) wl_list_insert(&(scr_driver->outputs), &output->link);
+    if (!found) { // add to end of the linked list of displays
+      struct wl_list *e = &scr_driver->outputs;
+      while (e->next != &scr_driver->outputs) e = e->next; // move e to end of linked list
+      wl_list_insert(e, &output->link);
+    }
 //fprintf(stderr, "wl_output: id=%d wl_output=%p \n", id, output->wl_output);
 
   } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
@@ -1333,25 +1326,12 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 
 
 static void registry_handle_global_remove(void *data, struct wl_registry *registry, uint32_t name) {
-  Fl_Wayland_Screen_Driver::output *output, *tmp;
+  Fl_Wayland_Screen_Driver::output *output;
 //fprintf(stderr, "registry_handle_global_remove data=%p id=%u\n", data, name);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   bool has_removed_screen = false;
-  wl_list_for_each_safe(output, tmp, &(scr_driver->outputs), link) { // all screens
+  wl_list_for_each(output, &(scr_driver->outputs), link) { // all screens
     if (output->id == name) { // the screen being removed
-      again:
-      Fl_X *xp = Fl_X::first;
-      while (xp) { // all mapped windows
-        struct wld_window *win = (struct wld_window*)xp->xid;
-        struct Fl_Wayland_Window_Driver::surface_output *s_output;
-        wl_list_for_each(s_output, &win->outputs, link) {
-          if (output == s_output->output) {
-            delete win->fl_win;
-            goto again;
-          }
-      }
-        xp = xp->next;
-      }
       wl_list_remove(&output->link);
       wl_output_destroy(output->wl_output);
       free(output);
