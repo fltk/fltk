@@ -1,5 +1,5 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Node Factory header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2021 by Bill Spitzak and others.
 //
@@ -14,21 +14,21 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FACTORY_H
-#define _FLUID_FACTORY_H
+#ifndef FLUID_NODES_FACTORY_H
+#define FLUID_NODES_FACTORY_H
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 struct Fl_Menu_Item;
 
 extern Fl_Menu_Item New_Menu[];
 
 void fill_in_New_Menu();
-Fl_Type *typename_to_prototype(const char *inName);
+Node *typename_to_prototype(const char *inName);
 
-Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy);
-Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open=true);
-Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open=true);
+Node *add_new_widget_from_file(const char *inName, Strategy strategy);
+Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open=true);
+Node *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open=true);
 
 
-#endif // _FLUID_FACTORY_H
+#endif // FLUID_NODES_FACTORY_H

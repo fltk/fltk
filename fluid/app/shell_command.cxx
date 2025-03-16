@@ -1,7 +1,7 @@
 //
-// FLUID main entry for the Fast Light Tool Kit (FLTK).
+// Shell Command database coe for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -62,7 +62,7 @@
 // TODO: make the settings dialog resizable
 // TODO: make g_shell_config static, not a pointer, but don't load anything in batch mode
 
-// FEATURE: Fd_Tool_Store icons are currently redundant with @file and @save and could be improved
+// FEATURE: fld::Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
 // FEATURE: add the files ./fluid.prefs and ./fluid.user.prefs as tool locations
 // FEATURE: interpret compiler output, for example: clang, and highlight errors and warnings
@@ -97,8 +97,8 @@
 
 #include "app/shell_command.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "panels/settings_panel.h"
@@ -110,6 +110,8 @@
 
 #include <errno.h>
 
+using namespace fld;
+
 static std::string fltk_config_cmd;
 static Fl_Process s_proc;
 
@@ -120,40 +122,6 @@ bool shell_command_running() {
   return s_proc.desc() ? true : false;
 }
 
-/**
- Reads an entry from the group. A default value must be
- supplied. The return value indicates if the value was available
- (non-zero) or the default was used (0).
-
- \param[in] prefs preference group
- \param[in] key name of entry
- \param[out] value returned from preferences or default value if none was set
- \param[in] defaultValue default value to be used if no preference was set
- \return 0 if the default value was used
- */
-char preferences_get(Fl_Preferences &prefs, const char *key, std::string &value, const std::string &defaultValue) {
-  char *v = NULL;
-  char ret = prefs.get(key, v, defaultValue.c_str());
-  value = v;
-  ::free(v);
-  return ret;
-}
-
-/**
- Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preference file.
-
- \param[in] prefs preference group
- \param[in] entry name of entry
- \param[in] value set this entry to value (stops at the first nul character).
- \return 0 if setting the value failed
- */
-char preferences_set(Fl_Preferences &prefs, const char *key, const std::string &value) {
-  return prefs.set(key, value.c_str());
-}
-
-
 /** \class Fl_Process
  Launch an external shell command.
  */
@@ -162,7 +130,6 @@ char preferences_set(Fl_Preferences &prefs, const char *key, const std::string &
  Create a process manager
  */
 Fl_Process::Fl_Process() {
-  _fpt= NULL;
 }
 
 /**
@@ -183,13 +150,13 @@ Fl_Process::~Fl_Process() {
 FILE * Fl_Process::popen(const char *cmd, const char *mode) {
 #if defined(_WIN32)  && !defined(__CYGWIN__)
   // PRECONDITIONS
-  if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return NULL;
+  if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return nullptr;
   if (_fpt) close(); // close first before reuse
 
   ptmode = *mode;
   pin[0] = pin[1] = pout[0] = pout[1] = perr[0] = perr[1] = INVALID_HANDLE_VALUE;
   // stderr to stdout wanted ?
-  int fusion = (strstr(cmd,"2>&1") !=NULL);
+  int fusion = (strstr(cmd,"2>&1") !=nullptr);
 
   // Create windows pipes
   if (!createPipe(pin) || !createPipe(pout) || (!fusion && !createPipe(perr) ) )
@@ -203,8 +170,8 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
   si.hStdOutput   = pout[1];
   si.hStdError  = fusion ? pout[1] : perr [1];
 
-  if ( CreateProcess(NULL, (LPTSTR) cmd,NULL,NULL,TRUE,
-                     DETACHED_PROCESS,NULL,NULL, &si, &pi)) {
+  if ( CreateProcess(nullptr, (LPTSTR) cmd,nullptr,nullptr,TRUE,
+                     DETACHED_PROCESS,nullptr,nullptr, &si, &pi)) {
     // don't need theses handles inherited by child process:
     clean_close(pin[0]); clean_close(pout[1]); clean_close(perr[1]);
     HANDLE & h = *mode == 'r' ? pout[0] : pin[1];
@@ -231,13 +198,13 @@ int Fl_Process::close() {
     clean_close(perr[0]);
     clean_close(pin[1]);
     clean_close(pout[0]);
-    _fpt = NULL;
+    _fpt = nullptr;
     return 0;
   }
   return -1;
 #else
   int ret = ::pclose(_fpt);
-  _fpt=NULL;
+  _fpt=nullptr;
   return ret;
 #endif
 }
@@ -256,10 +223,10 @@ FILE *Fl_Process::desc() const {
 
  \param[out] line buffer to receive the line
  \param[in] s size of the provided buffer
- \return NULL if an error occurred, otherwise a pointer to the string
+ \return nullptr if an error occurred, otherwise a pointer to the string
  */
 char *Fl_Process::get_line(char * line, size_t s) const {
-  return _fpt ? fgets(line, (int)s, _fpt) : NULL;
+  return _fpt ? fgets(line, (int)s, _fpt) : nullptr;
 }
 
 // returns fileno(FILE*):
@@ -279,7 +246,7 @@ int Fl_Process::get_fileno() const {
 bool Fl_Process::createPipe(HANDLE * h, BOOL bInheritHnd) {
   SECURITY_ATTRIBUTES sa;
   sa.nLength = sizeof(sa);
-  sa.lpSecurityDescriptor = NULL;
+  sa.lpSecurityDescriptor = nullptr;
   sa.bInheritHandle = bInheritHnd;
   return CreatePipe (&h[0],&h[1],&sa,0) ? true : false;
 }
@@ -288,7 +255,7 @@ FILE *Fl_Process::freeHandles()  {
   clean_close(pin[0]);    clean_close(pin[1]);
   clean_close(pout[0]);   clean_close(pout[1]);
   clean_close(perr[0]);   clean_close(perr[1]);
-  return NULL; // convenient for error management
+  return nullptr; // convenient for error management
 }
 
 void Fl_Process::clean_close(HANDLE& h) {
@@ -312,13 +279,13 @@ static bool prepare_shell_command(int flags)  {
     return false;
   }
   if (flags & Fd_Shell_Command::SAVE_PROJECT) {
-    save_cb(0, 0);
+    Fluid.save_project_file(nullptr);
   }
   if (flags & Fd_Shell_Command::SAVE_SOURCECODE) {
-    write_code_files(true);
+    Fluid.write_code_files(true);
   }
   if (flags & Fd_Shell_Command::SAVE_STRINGS) {
-    write_strings_cb(0, 0);
+    Fluid.proj.write_strings();
   }
   return true;
 }
@@ -345,7 +312,7 @@ void shell_timer_cb(void*) {
 void shell_pipe_cb(FL_SOCKET, void*) {
   char  line[1024]="";          // Line from command output...
 
-  if (s_proc.get_line(line, sizeof(line)) != NULL) {
+  if (s_proc.get_line(line, sizeof(line)) != nullptr) {
     // Add the line to the output list...
     shell_run_terminal->append(line);
   } else {
@@ -373,29 +340,29 @@ static void expand_macro(std::string &cmd, const std::string &macro, const std::
 }
 
 static void expand_macros(std::string &cmd) {
-  expand_macro(cmd, "@BASENAME@",         g_project.basename());
-  expand_macro(cmd, "@PROJECTFILE_PATH@", g_project.projectfile_path());
-  expand_macro(cmd, "@PROJECTFILE_NAME@", g_project.projectfile_name());
-  expand_macro(cmd, "@CODEFILE_PATH@",    g_project.codefile_path());
-  expand_macro(cmd, "@CODEFILE_NAME@",    g_project.codefile_name());
-  expand_macro(cmd, "@HEADERFILE_PATH@",  g_project.headerfile_path());
-  expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.headerfile_name());
-  expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.stringsfile_path());
-  expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.stringsfile_name());
+  expand_macro(cmd, "@BASENAME@",         Fluid.proj.basename());
+  expand_macro(cmd, "@PROJECTFILE_PATH@", Fluid.proj.projectfile_path());
+  expand_macro(cmd, "@PROJECTFILE_NAME@", Fluid.proj.projectfile_name());
+  expand_macro(cmd, "@CODEFILE_PATH@",    Fluid.proj.codefile_path());
+  expand_macro(cmd, "@CODEFILE_NAME@",    Fluid.proj.codefile_name());
+  expand_macro(cmd, "@HEADERFILE_PATH@",  Fluid.proj.headerfile_path());
+  expand_macro(cmd, "@HEADERFILE_NAME@",  Fluid.proj.headerfile_name());
+  expand_macro(cmd, "@TEXTFILE_PATH@",    Fluid.proj.stringsfile_path());
+  expand_macro(cmd, "@TEXTFILE_NAME@",    Fluid.proj.stringsfile_name());
 //  TODO: implement finding the script `fltk-config` for all platforms
 //  if (cmd.find("@FLTK_CONFIG@") != std::string::npos) {
 //    find_fltk_config();
 //    expand_macro(cmd, "@FLTK_CONFIG@",      fltk_config_cmd.c_str());
 //  }
   if (cmd.find("@TMPDIR@") != std::string::npos)
-    expand_macro(cmd, "@TMPDIR@",           get_tmpdir());
+    expand_macro(cmd, "@TMPDIR@",           Fluid.get_tmpdir());
 }
 
 /**
  Show the terminal window where it was last positioned.
  */
 void show_terminal_window() {
-  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+  Fl_Preferences pos(Fluid.preferences, "shell_run_Window_pos");
   int x, y, w, h;
   pos.get("x", x, -1);
   pos.get("y", y, 0);
@@ -439,7 +406,7 @@ void run_shell_command(const std::string &cmd, int flags) {
   shell_run_terminal->printf("\033[0;32m%s\033[0m\n", expanded_cmd.c_str());
   shell_run_window->label(expanded_cmd.c_str());
 
-  if (s_proc.popen((char *)expanded_cmd.c_str()) == NULL) {
+  if (s_proc.popen((char *)expanded_cmd.c_str()) == nullptr) {
     shell_run_terminal->printf("\033[1;31mUnable to run shell command: %s\033[0m\n",
                                strerror(errno));
     shell_run_window->label("FLUID Shell");
@@ -459,10 +426,10 @@ void run_shell_command(const std::string &cmd, int flags) {
  */
 Fd_Shell_Command::Fd_Shell_Command()
 : shortcut(0),
-  storage(FD_STORE_USER),
+  storage(fld::Tool_Store::USER),
   condition(0),
   flags(0),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -480,7 +447,7 @@ Fd_Shell_Command::Fd_Shell_Command(const Fd_Shell_Command *rhs)
   condition_data(rhs->condition_data),
   command(rhs->command),
   flags(rhs->flags),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -493,11 +460,11 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 : name(in_name),
   label(in_name),
   shortcut(0),
-  storage(FD_STORE_USER),
+  storage(fld::Tool_Store::USER),
   condition(Fd_Shell_Command::ALWAYS),
   command("echo \"Hello, FLUID!\""),
   flags(Fd_Shell_Command::SAVE_PROJECT|Fd_Shell_Command::SAVE_SOURCECODE),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -516,7 +483,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name,
                  const std::string &in_label,
                  Fl_Shortcut in_shortcut,
-                 Fd_Tool_Store in_storage,
+                 fld::Tool_Store in_storage,
                  int in_condition,
                  const std::string &in_condition_data,
                  const std::string &in_command,
@@ -529,7 +496,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name,
   condition_data(in_condition_data),
   command(in_command),
   flags(in_flags),
-  shell_menu_item_(NULL)
+  shell_menu_item_(nullptr)
 {
 }
 
@@ -549,8 +516,8 @@ void Fd_Shell_Command::run() {
  */
 void Fd_Shell_Command::update_shell_menu() {
   if (shell_menu_item_) {
-    const char *old_label = shell_menu_item_->label();  // can be NULL
-    const char *new_label = label.c_str();              // never NULL
+    const char *old_label = shell_menu_item_->label();  // can be nullptr
+    const char *new_label = label.c_str();              // never nullptr
     if (!old_label || (old_label && strcmp(old_label, new_label))) {
       if (old_label) ::free((void*)old_label);
       shell_menu_item_->label(fl_strdup(new_label));
@@ -597,33 +564,33 @@ bool Fd_Shell_Command::is_active() {
 
 void Fd_Shell_Command::read(Fl_Preferences &prefs) {
   int tmp;
-  preferences_get(prefs, "name", name, "<unnamed>");
-  preferences_get(prefs, "label", label, "<no label>");
+  prefs.get("name", name, "<unnamed>");
+  prefs.get("label", label, "<no label>");
   prefs.get("shortcut", tmp, 0);
   shortcut = (Fl_Shortcut)tmp;
   prefs.get("storage", tmp, -1);
-  if (tmp != -1) storage = (Fd_Tool_Store)tmp;
+  if (tmp != -1) storage = (fld::Tool_Store)tmp;
   prefs.get("condition", condition, ALWAYS);
-  preferences_get(prefs, "condition_data", condition_data, "");
-  preferences_get(prefs, "command", command, "");
+  prefs.get("condition_data", condition_data, "");
+  prefs.get("command", command, "");
   prefs.get("flags", flags, 0);
 }
 
 void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
-  preferences_set(prefs, "name", name);
-  preferences_set(prefs, "label", label);
+  prefs.set("name", name);
+  prefs.set("label", label);
   if (shortcut != 0) prefs.set("shortcut", (int)shortcut);
   if (save_location) prefs.set("storage", (int)storage);
   if (condition != ALWAYS) prefs.set("condition", condition);
-  if (!condition_data.empty()) preferences_set(prefs, "condition_data", condition_data);
-  if (!command.empty()) preferences_set(prefs, "command", command);
+  if (!condition_data.empty()) prefs.set("condition_data", condition_data);
+  if (!command.empty()) prefs.set("command", command);
   if (flags != 0) prefs.set("flags", flags);
 }
 
 void Fd_Shell_Command::read(class fld::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  storage = FD_STORE_PROJECT;
+  storage = fld::Tool_Store::PROJECT;
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -667,10 +634,6 @@ void Fd_Shell_Command::write(class fld::io::Project_Writer *out) {
  Manage a list of shell commands and their parameters.
  */
 Fd_Shell_Command_List::Fd_Shell_Command_List()
-: list(NULL),
-  list_size(0),
-  list_capacity(0),
-  shell_menu_(NULL)
 {
 }
 
@@ -702,14 +665,14 @@ void Fd_Shell_Command_List::clear() {
     ::free(list);
     list_size = 0;
     list_capacity = 0;
-    list = 0;
+    list = nullptr;
   }
 }
 
 /**
  remove all shell commands of the given storage location from the list.
  */
-void Fd_Shell_Command_List::clear(Fd_Tool_Store storage) {
+void Fd_Shell_Command_List::clear(fld::Tool_Store storage) {
   for (int i=list_size-1; i>=0; i--) {
     if (list[i]->storage == storage) {
       remove(i);
@@ -720,22 +683,22 @@ void Fd_Shell_Command_List::clear(Fd_Tool_Store storage) {
 /**
  Read shell configuration from a preferences group.
  */
-void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
   // import the old shell commands from previous user settings
-  if (&fluid_prefs == &prefs) {
+  if (&Fluid.preferences == &prefs) {
     int version;
     prefs.get("shell_commands_version", version, 0);
     if (version == 0) {
       int save_fl, save_code, save_strings;
       Fd_Shell_Command *cmd = new Fd_Shell_Command();
-      cmd->storage = FD_STORE_USER;
+      cmd->storage = fld::Tool_Store::USER;
       cmd->name = "Sample Shell Command";
       cmd->label = "Sample Shell Command";
       cmd->shortcut = FL_ALT+'g';
-      preferences_get(fluid_prefs, "shell_command", cmd->command, "echo \"Sample Shell Command\"");
-      fluid_prefs.get("shell_savefl", save_fl, 1);
-      fluid_prefs.get("shell_writecode", save_code, 1);
-      fluid_prefs.get("shell_writemsgs", save_strings, 0);
+      Fluid.preferences.get("shell_command", cmd->command, "echo \"Sample Shell Command\"");
+      Fluid.preferences.get("shell_savefl", save_fl, 1);
+      Fluid.preferences.get("shell_writecode", save_code, 1);
+      Fluid.preferences.get("shell_writemsgs", save_strings, 0);
       if (save_fl) cmd->flags |= Fd_Shell_Command::SAVE_PROJECT;
       if (save_code) cmd->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
       if (save_strings) cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
@@ -749,7 +712,7 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   for (int i=0; i<n; i++) {
     Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
     Fd_Shell_Command *cmd = new Fd_Shell_Command();
-    cmd->storage = FD_STORE_USER;
+    cmd->storage = fld::Tool_Store::USER;
     cmd->read(cmd_prefs);
     add(cmd);
   }
@@ -758,12 +721,12 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
 /**
  Write shell configuration to a preferences group.
  */
-void Fd_Shell_Command_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) {
+void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
   Fl_Preferences shell_commands(prefs, "shell_commands");
   shell_commands.delete_all_groups();
   int index = 0;
   for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == FD_STORE_USER) {
+    if (list[i]->storage == fld::Tool_Store::USER) {
       Fl_Preferences cmd(shell_commands, Fl_Preferences::Name(index++));
       list[i]->write(cmd);
     }
@@ -776,7 +739,7 @@ void Fd_Shell_Command_List::write(Fl_Preferences &prefs, Fd_Tool_Store storage) 
 void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  clear(FD_STORE_PROJECT);
+  clear(fld::Tool_Store::PROJECT);
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -796,13 +759,13 @@ void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
 void Fd_Shell_Command_List::write(fld::io::Project_Writer *out) {
   int n_in_project_file = 0;
   for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == FD_STORE_PROJECT)
+    if (list[i]->storage == fld::Tool_Store::PROJECT)
       n_in_project_file++;
   }
   if (n_in_project_file > 0) {
     out->write_string("\nshell_commands {");
     for (int i=0; i<list_size; i++) {
-      if (list[i]->storage == FD_STORE_PROJECT)
+      if (list[i]->storage == fld::Tool_Store::PROJECT)
         list[i]->write(out);
     }
     out->write_string("\n}");
@@ -872,9 +835,9 @@ void menu_shell_customize_cb(Fl_Widget*, void*) {
  Rebuild the entire shell submenu from scratch and replace the old menu.
  */
 void Fd_Shell_Command_List::rebuild_shell_menu() {
-  static Fl_Menu_Item *shell_submenu = NULL;
+  static Fl_Menu_Item *shell_submenu = nullptr;
   if (!shell_submenu)
-    shell_submenu = (Fl_Menu_Item*)main_menubar->find_item(menu_marker);
+    shell_submenu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(menu_marker);
 
   int i, j, num_active_items = 0;
   // count the active commands
@@ -926,7 +889,7 @@ void Fd_Shell_Command_List::update_settings_dialog() {
  */
 Fl_Menu_Item Fd_Shell_Command_List::default_menu[] = {
   {   "Customize...", FL_ALT+'x', menu_shell_customize_cb },
-  { NULL }
+  { nullptr }
 };
 
 /**
@@ -939,7 +902,7 @@ void Fd_Shell_Command_List::menu_marker(Fl_Widget*, void*) {
 /**
  Export all selected shell commands to an external file.
 
- Verify that g_shell_config and w_settings_shell_list are not NULL. Open a
+ Verify that g_shell_config and w_settings_shell_list are not nullptr. Open a
  file chooser and export all items that are selected in w_settings_shell_list
  into an external file.
  */
@@ -951,11 +914,11 @@ void Fd_Shell_Command_List::export_selected() {
   dialog.title("Export selected shell commands:");
   dialog.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(g_project.projectfile_path().c_str());
-  dialog.preset_file((g_project.basename() + ".flcmd").c_str());
+  dialog.directory(Fluid.proj.projectfile_path().c_str());
+  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, index = 0, n = w_settings_shell_list->size();
   for (i = 0; i < n; i++) {
@@ -969,7 +932,7 @@ void Fd_Shell_Command_List::export_selected() {
 /**
  Import shell commands from an external file and add them to the list.
 
- Verify that g_shell_config and w_settings_shell_list are not NULL. Open a
+ Verify that g_shell_config and w_settings_shell_list are not nullptr. Open a
  file chooser and import all items.
  */
 void Fd_Shell_Command_List::import_from_file() {
@@ -980,17 +943,17 @@ void Fd_Shell_Command_List::import_from_file() {
   dialog.title("Import shell commands:");
   dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
   dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(g_project.projectfile_path().c_str());
-  dialog.preset_file((g_project.basename() + ".flcmd").c_str());
+  dialog.directory(Fluid.proj.projectfile_path().c_str());
+  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
   if (dialog.show() != 0) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", NULL, Fl_Preferences::C_LOCALE);
+  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, n = shell_commands.groups();
   for (i = 0; i < n; i++) {
     Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
     Fd_Shell_Command *cmd = new Fd_Shell_Command();
-    cmd->storage = FD_STORE_USER;
+    cmd->storage = fld::Tool_Store::USER;
     cmd->read(cmd_prefs);
     g_shell_config->add(cmd);
   }
@@ -1003,5 +966,5 @@ void Fd_Shell_Command_List::import_from_file() {
 /**
  A pointer to the list of shell commands if we are not in batch mode.
  */
-Fd_Shell_Command_List *g_shell_config = NULL;
+Fd_Shell_Command_List *g_shell_config = nullptr;
 

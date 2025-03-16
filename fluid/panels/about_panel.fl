@@ -20,10 +20,10 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <time.h>} {public global
+decl {\#include "Fluid.h"} {public global
 }
 
-decl {void show_help(const char *name);} {public local
+decl {\#include <time.h>} {public global
 }
 
 Function {make_about_panel()} {open
@@ -60,7 +60,7 @@ Version x.x.x}
     }
     Fl_Button {} {
       label {View License...}
-      callback {show_help("license.html");}
+      callback {Fluid.show_help("license.html");}
       xywh {115 145 123 25} labelcolor 136
     }
     Fl_Return_Button {} {

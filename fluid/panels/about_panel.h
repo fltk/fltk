@@ -19,8 +19,8 @@
 #ifndef about_panel_h
 #define about_panel_h
 #include <FL/Fl.H>
+#include "Fluid.h"
 #include <time.h>
-extern void show_help(const char *name);
 #include <FL/Fl_Double_Window.H>
 #include "../src/flstring.h"
 extern Fl_Double_Window *about_panel;

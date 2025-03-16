@@ -1,5 +1,5 @@
 //
-// Formula_Input widget header file for the Fast Light Tool Kit (FLTK).
+// Formula Int Input widget header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -29,7 +29,7 @@ typedef int (Fluid_Coord_Callback)(Formula_Input const *, void*);
 
 // Entry for a list of variables available to an input field.
 // Formula_Input::variables() expects an array of
-// Formula_Input_Vars with the last entry's name_ set to NULL.
+// Formula_Input_Vars with the last entry's name_ set to nullptr.
 typedef struct Formula_Input_Vars {
   const char *name_;
   Fluid_Coord_Callback *callback_;

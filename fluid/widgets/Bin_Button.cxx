@@ -16,9 +16,9 @@
 
 #include "widgets/Bin_Button.h"
 
-#include "app/fluid.h"
+#include "Fluid.h"
 #include "nodes/factory.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Window_Node.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl_Button.H>
@@ -57,7 +57,7 @@ int fld::widget::Bin_Button::handle(int inEvent)
         Fl_Button::handle(FL_RELEASE);
         // make it into a dnd event
         const char *type_name = (const char*)user_data();
-        Fl_Type::current_dnd = Fl_Type::current;
+        Fluid.proj.tree.current_dnd = Fluid.proj.tree.current;
         Fl::copy(type_name, (int)strlen(type_name)+1, 0);
         Fl::dnd();
         return 1;
@@ -81,7 +81,7 @@ int fld::widget::Bin_Button::handle(int inEvent)
  */
 int fld::widget::Bin_Window_Button::handle(int inEvent)
 {
-  static Fl_Window *drag_win = NULL;
+  static Fl_Window *drag_win = nullptr;
   int ret = 0;
   switch (inEvent) {
     case FL_PUSH:
@@ -107,18 +107,18 @@ int fld::widget::Bin_Window_Button::handle(int inEvent)
     case FL_RELEASE:
       if (drag_win) {
         Fl::delete_widget(drag_win);
-        drag_win = NULL;
+        drag_win = nullptr;
         // create a new window here
-        Fl_Type *prototype = typename_to_prototype((char*)user_data());
+        Node *prototype = typename_to_prototype((char*)user_data());
         if (prototype) {
-          Fl_Type *new_type = add_new_widget_from_user(prototype, Strategy::AFTER_CURRENT);
-          if (new_type && new_type->is_a(ID_Window)) {
-            Fl_Window_Type *new_window = (Fl_Window_Type*)new_type;
+          Node *new_type = add_new_widget_from_user(prototype, Strategy::AFTER_CURRENT);
+          if (new_type && new_type->is_a(Type::Window)) {
+            Window_Node *new_window = (Window_Node*)new_type;
             Fl_Window *w = (Fl_Window *)new_window->o;
             w->position(Fl::event_x_root(), Fl::event_y_root());
           }
         }
-        widget_browser->display(Fl_Type::current);
+        widget_browser->display(Fluid.proj.tree.current);
         widget_browser->rebuild();
       }
       return Fl_Button::handle(inEvent);

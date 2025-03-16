@@ -1,5 +1,5 @@
 //
-// Widget snapshot header-only file for the Fast Light Tool Kit (FLTK).
+// Self-generate snapshots of user interface for FLUID documentation.
 //
 // Copyright 2023-2025 by Bill Spitzak and others.
 //

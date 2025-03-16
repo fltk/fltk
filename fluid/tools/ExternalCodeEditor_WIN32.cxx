@@ -17,8 +17,8 @@
 //      Note: This entire file Windows only.
 
 #include "tools/ExternalCodeEditor_WIN32.h"
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()
@@ -28,17 +28,17 @@
 #include <stdio.h>      // snprintf()
 #include <stdlib.h>
 
-extern int G_debug;     // defined in fluid.cxx
+using namespace fld;
 
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
 static Fl_Timeout_Handler L_update_timer_cb = 0;        // app's update timer callback
-static wchar_t *wbuf = NULL;
-static char *abuf = NULL;
+static wchar_t *wbuf = nullptr;
+static char *abuf = nullptr;
 
 static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
   unsigned len = (lg >= 0) ? (unsigned)lg : (unsigned)strlen(utf8);
-  unsigned wn = fl_utf8toUtf16(utf8, len, NULL, 0) + 1; // Query length
+  unsigned wn = fl_utf8toUtf16(utf8, len, nullptr, 0) + 1; // Query length
   wbuf = (wchar_t *)realloc(wbuf, sizeof(wchar_t) * wn);
   wn = fl_utf8toUtf16(utf8, len, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
@@ -47,7 +47,7 @@ static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
 
 static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
   unsigned len = (unsigned)wcslen(wstr);
-  unsigned wn = fl_utf8fromwc(NULL, 0, wstr, len) + 1; // query length
+  unsigned wn = fl_utf8fromwc(nullptr, 0, wstr, len) + 1; // query length
   utf8 = (char *)realloc(utf8, wn);
   wn = fl_utf8fromwc(utf8, wn, wstr, len); // convert string
   utf8[wn] = 0;
@@ -68,7 +68,7 @@ static const char *get_ms_errmsg() {
   DWORD msize = 0;
 
   // Get error message from Windows
-  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, NULL);
+  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, nullptr);
   if ( msize == 0 ) {
     _snprintf(emsg, sizeof(emsg), "Error #%ld", (unsigned long)lastErr);
   } else {
@@ -119,7 +119,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
 }
 
 // [Protected] Set the filename. Handles memory allocation/free
-//     If set to NULL, frees memory.
+//     If set to nullptr, frees memory.
 //
 void ExternalCodeEditor::set_filename(const char *val) {
   if ( filename_ ) free((void*)filename_);
@@ -137,7 +137,7 @@ static BOOL CALLBACK terminate_app_enum(HWND hwnd, LPARAM lParam) {
   GetWindowThreadProcessId(hwnd, &dwID);
   if (dwID == (DWORD)lParam) {
     PostMessage(hwnd, WM_CLOSE, 0, 0);
-    if ( G_debug )
+    if ( Fluid.debug_external_editor )
       printf("terminate_app_enum() sends WIN_CLOSE to hwnd=%p\n", (void*)hwnd);
   }
   return TRUE;
@@ -154,12 +154,12 @@ static int terminate_app(DWORD pid, DWORD msecTimeout) {
   // Wait on handle. If it closes, great. If it times out, use TerminateProcess()
   int ret = 0;
   if ( WaitForSingleObject(hProc, msecTimeout) != WAIT_OBJECT_0 ) {
-    if ( G_debug ) {
+    if ( Fluid.debug_external_editor ) {
       printf("WARNING: sent WIN_CLOSE, but timeout after %ld msecs.."
              "trying TerminateProcess\n", msecTimeout);
     }
     if ( TerminateProcess(hProc, 0) == 0 ) {
-      if ( G_debug ) {
+      if ( Fluid.debug_external_editor ) {
         printf("ERROR: TerminateProcess() for pid=%ld failed: %s\n",
                long(pid), get_ms_errmsg());
       }
@@ -176,7 +176,7 @@ static int terminate_app(DWORD pid, DWORD msecTimeout) {
 
 // [Protected] Wait for editor to close
 void ExternalCodeEditor::close_editor() {
-  if ( G_debug ) printf("close_editor() called: pid=%ld\n", long(pinfo_.dwProcessId));
+  if ( Fluid.debug_external_editor ) printf("close_editor() called: pid=%ld\n", long(pinfo_.dwProcessId));
   // Wait until editor is closed + reaped
   while ( is_editing() ) {
     switch ( reap_editor() ) {
@@ -210,7 +210,7 @@ void ExternalCodeEditor::close_editor() {
 //   The dtor calls this to ensure no editors remain running when fluid exits.
 //
 void ExternalCodeEditor::kill_editor() {
-  if ( G_debug )
+  if ( Fluid.debug_external_editor )
     printf("kill_editor() called: pid=%ld\n", (long)pinfo_.dwProcessId);
   if ( !is_editing() ) return;
   switch ( terminate_app(pinfo_.dwProcessId, 500) ) {  // kill editor, wait up to 1/2 sec to die
@@ -222,7 +222,7 @@ void ExternalCodeEditor::kill_editor() {
     case 0: {  // success -- process reaped
       DWORD pid = pinfo_.dwProcessId;     // save pid
       reap_cleanup();                     // clears pinfo_
-      if ( G_debug )
+      if ( Fluid.debug_external_editor )
         printf("*** kill_editor() REAP pid=%ld #open=%ld\n",
                long(pid), long(L_editors_open));
       break;
@@ -252,10 +252,10 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   HANDLE fh = CreateFileW(wbuf,           // file to read
                          GENERIC_READ,    // reading only
                          FILE_SHARE_READ, // sharing -- allow read share; just getting file size
-                         NULL,            // security
+                         nullptr,            // security
                          OPEN_EXISTING,   // create flags -- must exist
                          0,               // misc flags
-                         NULL);           // templates
+                         nullptr);           // templates
   if ( fh == INVALID_HANDLE_VALUE ) return -1;
   LARGE_INTEGER fsize;
   // Get file size
@@ -315,18 +315,18 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
 //
 int ExternalCodeEditor::remove_tmpfile() {
   const char *tmpfile = filename();
-  if ( G_debug ) printf("remove_tmpfile() '%s'\n", tmpfile ? tmpfile : "(empty)");
+  if ( Fluid.debug_external_editor ) printf("remove_tmpfile() '%s'\n", tmpfile ? tmpfile : "(empty)");
   if ( !tmpfile ) return 0;
   // Filename set? remove (if exists) and zero filename/mtime/size
   if ( is_file(tmpfile) ) {
-    if ( G_debug ) printf("Removing tmpfile '%s'\n", tmpfile);
+    if ( Fluid.debug_external_editor ) printf("Removing tmpfile '%s'\n", tmpfile);
     utf8_to_wchar(tmpfile, wbuf);
     if (DeleteFileW(wbuf) == 0) {
       fl_alert("WARNING: Can't DeleteFile() '%s': %s", tmpfile, get_ms_errmsg());
       return -1;
     }
   } else {
-    if ( G_debug ) printf("remove_tmpfile(): is_file(%s) failed\n", tmpfile);
+    if ( Fluid.debug_external_editor ) printf("remove_tmpfile(): is_file(%s) failed\n", tmpfile);
   }
   set_filename(0);
   memset(&file_mtime_, 0, sizeof(file_mtime_));
@@ -348,7 +348,7 @@ const char* ExternalCodeEditor::tmpdir_name() {
   static char dirname[100];
   _snprintf(dirname, sizeof(dirname), "%s.fluid-%ld",
     tempdir, (long)GetCurrentProcessId());
-  if ( G_debug ) printf("tmpdir_name(): '%s'\n", dirname);
+  if ( Fluid.debug_external_editor ) printf("tmpdir_name(): '%s'\n", dirname);
   return dirname;
 }
 
@@ -358,7 +358,7 @@ const char* ExternalCodeEditor::tmpdir_name() {
 void ExternalCodeEditor::tmpdir_clear() {
   const char *tmpdir = tmpdir_name();
   if ( is_dir(tmpdir) ) {
-    if ( G_debug ) printf("Removing tmpdir '%s'\n", tmpdir);
+    if ( Fluid.debug_external_editor ) printf("Removing tmpdir '%s'\n", tmpdir);
     utf8_to_wchar(tmpdir, wbuf);
     if ( RemoveDirectoryW(wbuf) == 0 ) {
       fl_alert("WARNING: Can't RemoveDirectory() '%s': %s",
@@ -368,7 +368,7 @@ void ExternalCodeEditor::tmpdir_clear() {
 }
 
 // [Protected] Creates temp dir (if doesn't exist) and returns the dirname
-// as a static string. Returns NULL on error, dialog shows reason.
+// as a static string. Returns nullptr on error, dialog shows reason.
 //
 const char* ExternalCodeEditor::create_tmpdir() {
   const char *dirname = tmpdir_name();
@@ -377,27 +377,27 @@ const char* ExternalCodeEditor::create_tmpdir() {
     if (CreateDirectoryW(wbuf, 0) == 0) {
       fl_alert("can't create directory '%s': %s",
         dirname, get_ms_errmsg());
-      return NULL;
+      return nullptr;
     }
   }
   return dirname;
 }
 
 // [Protected] Returns temp filename in static buffer.
-//    Returns NULL if can't, posts dialog explaining why.
+//    Returns nullptr if can't, posts dialog explaining why.
 //
 const char* ExternalCodeEditor::tmp_filename() {
   static char path[512];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  const char *ext  = g_project.code_file_name.c_str();    // e.g. ".cxx"
+  const char *ext  = Fluid.proj.code_file_name.c_str();    // e.g. ".cxx"
   _snprintf(path, sizeof(path), "%s\\%p%s", tmpdir, (void*)this, ext);
   path[sizeof(path)-1] = 0;
   return path;
 }
 
 // [Static/Local] Save string 'code' to 'filename', returning file's mtime/size
-// 'code' can be NULL -- writes an empty file if so.
+// 'code' can be nullptr -- writes an empty file if so.
 // Returns:
 //    0 on success
 //   -1 on error (posts dialog with reason)
@@ -406,17 +406,17 @@ static int save_file(const char *filename,
                      const char *code,
                      FILETIME &file_mtime,        // return these since in win32 it's..
                      LARGE_INTEGER &file_size) {  // ..efficient to get while file open
-  if ( code == 0 ) code = "";   // NULL? write an empty file
+  if ( code == 0 ) code = "";   // nullptr? write an empty file
   memset(&file_mtime, 0, sizeof(file_mtime));
   memset(&file_size, 0, sizeof(file_size));
   utf8_to_wchar(filename, wbuf);
   HANDLE fh = CreateFileW(wbuf,                   // filename
                          GENERIC_WRITE,           // write only
                          0,                       // sharing -- no share during write
-                         NULL,                    // security
+                         nullptr,                    // security
                          CREATE_ALWAYS,           // create flags -- recreate
                          FILE_ATTRIBUTE_NORMAL,   // misc flags
-                         NULL);                   // templates
+                         nullptr);                   // templates
   if ( fh == INVALID_HANDLE_VALUE ) {
     fl_alert("ERROR: couldn't create file '%s': %s",
              filename, get_ms_errmsg());
@@ -426,7 +426,7 @@ static int save_file(const char *filename,
   DWORD clen = (DWORD)strlen(code);
   DWORD count = 0;
   int ret = 0;
-  if ( WriteFile(fh, code, clen, &count, NULL) == 0 ) {
+  if ( WriteFile(fh, code, clen, &count, nullptr) == 0 ) {
     fl_alert("ERROR: WriteFile() '%s': %s", filename, get_ms_errmsg());
     ret = -1; // fallthru to CloseHandle()
   } else if ( count != clen ) {
@@ -459,7 +459,7 @@ static int save_file(const char *filename,
 //
 int ExternalCodeEditor::start_editor(const char *editor_cmd,
                                      const char *filename) {
-  if ( G_debug ) printf("start_editor() cmd='%s', filename='%s'\n",
+  if ( Fluid.debug_external_editor ) printf("start_editor() cmd='%s', filename='%s'\n",
                         editor_cmd, filename);
   // Startup info
   STARTUPINFOW sinfo;
@@ -474,14 +474,14 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   _snprintf(cmd, sizeof(cmd), "%s %s", editor_cmd, filename);
   utf8_to_wchar(cmd, wbuf);
   // Start editor process
-  if (CreateProcessW(NULL,              // app name
+  if (CreateProcessW(nullptr,              // app name
                     wbuf,               // command to exec
-                    NULL,               // secure attribs
-                    NULL,               // thread secure attribs
+                    nullptr,               // secure attribs
+                    nullptr,               // thread secure attribs
                     FALSE,              // handle inheritance
                     0,                  // creation flags
-                    NULL,               // environ block
-                    NULL,               // current dir
+                    nullptr,               // environ block
+                    nullptr,               // current dir
                     &sinfo,             // startup info
                     &pinfo_) == 0 ) {   // process info
     fl_alert("CreateProcess() failed to start '%s': %s",
@@ -490,7 +490,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   }
   if ( L_editors_open++ == 0 )  // first editor? start timers
     { start_update_timer(); }
-  if ( G_debug )
+  if ( Fluid.debug_external_editor )
     printf("--- EDITOR STARTED: pid_=%ld #open=%d\n",
            (long)pinfo_.dwProcessId, L_editors_open);
   return 0;
@@ -512,7 +512,7 @@ void ExternalCodeEditor::reap_cleanup() {
 }
 
 // [Public] Try to reap external editor process
-// If 'pid_reaped' not NULL, returns PID of reaped editor.
+// If 'pid_reaped' not nullptr, returns PID of reaped editor.
 // Returns:
 //   -2 -- editor not open
 //   -1 -- WaitForSingleObject() failed (get_ms_errmsg() has reason)
@@ -534,7 +534,7 @@ int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
       DWORD wpid = pinfo_.dwProcessId;      // save pid
       reap_cleanup();                       // clears pinfo_
       if ( pid_reaped ) *pid_reaped = wpid; // return pid to caller
-      if ( G_debug ) printf("*** EDITOR REAPED: pid=%ld #open=%d\n",
+      if ( Fluid.debug_external_editor ) printf("*** EDITOR REAPED: pid=%ld #open=%d\n",
                             long(wpid), L_editors_open);
       return 1;
     }
@@ -548,7 +548,7 @@ int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
 // [Public] Open external editor using 'editor_cmd' to edit 'code'.
 //
 // 'code' contains multiline code to be edited as a temp file.
-// 'code' can be NULL -- edits an empty file if so.
+// 'code' can be nullptr -- edits an empty file if so.
 //
 // Returns:
 //   0 if succeeds
@@ -579,7 +579,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
             filename(), long(pinfo_.dwProcessId));
           return 0;
         case 1:         // process reaped, wpid is pid reaped
-          if ( G_debug )
+          if ( Fluid.debug_external_editor )
             printf("*** REAPED EXTERNAL EDITOR: PID %ld\n", long(wpid));
           break;        // fall thru to open new editor instance
       }
@@ -592,12 +592,12 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
     return -1;  // errors were shown in dialog
   }
   if ( start_editor(editor_cmd, filename()) < 0 ) { // open file in external editor
-    if ( G_debug ) printf("Editor failed to start\n");
+    if ( Fluid.debug_external_editor ) printf("Editor failed to start\n");
     return -1;  // errors were shown in dialog
   }
   // New editor opened -- start update timer (if not already)
   if ( L_update_timer_cb && !Fl::has_timeout(L_update_timer_cb) ) {
-    if ( G_debug ) printf("--- Editor opened: STARTING UPDATE TIMER\n");
+    if ( Fluid.debug_external_editor ) printf("--- Editor opened: STARTING UPDATE TIMER\n");
     Fl::add_timeout(2.0, L_update_timer_cb);
   }
   return 0;
@@ -606,14 +606,14 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
 // [Public/Static] Start update timer
 void ExternalCodeEditor::start_update_timer() {
   if ( !L_update_timer_cb ) return;
-  if ( G_debug ) printf("--- TIMER: STARTING UPDATES\n");
+  if ( Fluid.debug_external_editor ) printf("--- TIMER: STARTING UPDATES\n");
   Fl::add_timeout(2.0, L_update_timer_cb);
 }
 
 // [Public/Static] Stop update timer
 void ExternalCodeEditor::stop_update_timer() {
   if ( !L_update_timer_cb ) return;
-  if ( G_debug ) printf("--- TIMER: STOPPING UPDATES\n");
+  if ( Fluid.debug_external_editor ) printf("--- TIMER: STOPPING UPDATES\n");
   Fl::remove_timeout(L_update_timer_cb);
 }
 

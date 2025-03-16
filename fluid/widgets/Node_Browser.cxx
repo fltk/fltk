@@ -1,5 +1,5 @@
 //
-// Widget Browser code for the Fast Light Tool Kit (FLTK).
+// Widget Tree Browser code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -16,8 +16,8 @@
 
 #include "widgets/Node_Browser.h"
 
-#include "app/fluid.h"
-#include "nodes/Fl_Widget_Type.h"
+#include "Fluid.h"
+#include "nodes/Widget_Node.h"
 #include "rsrcs/pixmaps.h"
 
 #include <FL/Fl.H>
@@ -41,9 +41,9 @@ using namespace fld::widget;
 
  The Widget Browser is derived from the FLTK basic browser, extending
  tree browsing functionality by using the \c depth component of the double
- linked list of \c Fl_Type items.
+ linked list of \c Node items.
 
- \see Fl_Type
+ \see Node
  */
 
 
@@ -81,9 +81,9 @@ Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
 /**
  Make sure that the caller is visible in the widget browser.
  \param[in] caller scroll the browser in y so that caller
- is visible (may be NULL)
+ is visible (may be nullptr)
  */
-void redraw_widget_browser(Fl_Type *caller)
+void redraw_widget_browser(Node *caller)
 {
   if (caller)
     widget_browser->display(caller);
@@ -95,7 +95,7 @@ void redraw_widget_browser(Fl_Type *caller)
  \param[in] o (de)select this node
  \param[in] v the new selection state (1=select, 0=de-select)
  */
-void select(Fl_Type *o, int v) {
+void select(Node *o, int v) {
   widget_browser->select(o,v,1);
 }
 
@@ -103,7 +103,7 @@ void select(Fl_Type *o, int v) {
  Select a single node in the widget browser, deselect all others.
  \param[in] o select this node
  */
-void select_only(Fl_Type *o) {
+void select_only(Node *o) {
   widget_browser->select_only(o,1);
 }
 
@@ -122,8 +122,8 @@ void deselect() {
 
  \param[in] t show this item
  */
-void reveal_in_browser(Fl_Type *t) {
-  Fl_Type *p = t->parent;
+void reveal_in_browser(Node *t) {
+  Node *p = t->parent;
   if (p) {
     for (;;) {
       if (p->folded_)
@@ -165,7 +165,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
 {
   int size = 0;                         // truncated string size in characters
   int bs;                               // size of UTF-8 character in bytes
-  if (!p) return NULL;                  // bad buffer
+  if (!p) return nullptr;                  // bad buffer
   if (!str) {                           // no input string
     if (quote) { *p++='"'; *p++='"'; }
     *p = 0;
@@ -206,7 +206,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
 
  Fluid currently generates only one instance of this browser. If we want
  to use multiple browser at some point, we need to refactor a few global
- variables, i.e. Fl_Type::first and Fl_Type::last .
+ variables, i.e. Fluid.proj.tree.first and Fluid.proj.tree.last .
 
  \param[in] X, Y, W, H position and size of widget
  \param[in] l optional label
@@ -226,25 +226,25 @@ Node_Browser::Node_Browser(int X,int Y,int W,int H,const char*l) :
  \return the first item
  */
 void *Node_Browser::item_first() const {
-  return Fl_Type::first;
+  return Fluid.proj.tree.first;
 }
 
 /**
  Override the method to find the next item in the list of elements.
  \param l this item
- \return the next item, irregardless of tree depth, or NULL at the end
+ \return the next item, irregardless of tree depth, or nullptr at the end
  */
 void *Node_Browser::item_next(void *l) const {
-  return ((Fl_Type*)l)->next;
+  return ((Node*)l)->next;
 }
 
 /**
  Override the method to find the previous item in the list of elements.
  \param l this item
- \return the previous item, irregardless of tree depth, or NULL at the start
+ \return the previous item, irregardless of tree depth, or nullptr at the start
  */
 void *Node_Browser::item_prev(void *l) const {
-  return ((Fl_Type*)l)->prev;
+  return ((Node*)l)->prev;
 }
 
 /**
@@ -254,7 +254,7 @@ void *Node_Browser::item_prev(void *l) const {
  \todo what is the difference between selected and new_selected, and why do we do this?
  */
 int Node_Browser::item_selected(void *l) const {
-  return ((Fl_Type*)l)->new_selected;
+  return ((Node*)l)->new_selected;
 }
 
 /**
@@ -263,7 +263,7 @@ int Node_Browser::item_selected(void *l) const {
  \param[in] v 1 if selecting, 0 if not
  */
 void Node_Browser::item_select(void *l,int v) {
-  ((Fl_Type*)l)->new_selected = v;
+  ((Node*)l)->new_selected = v;
 }
 
 /**
@@ -272,9 +272,9 @@ void Node_Browser::item_select(void *l,int v) {
  \return height in FLTK units (used to be pixels before high res screens)
  */
 int Node_Browser::item_height(void *l) const {
-  Fl_Type *t = (Fl_Type*)l;
+  Node *t = (Node*)l;
   if (t->visible) {
-    if (show_comments && t->comment())
+    if (Fluid.show_comments && t->comment())
       return textsize()*2+4;
     else
       return textsize()+5;
@@ -307,13 +307,13 @@ int Node_Browser::incr_height() const {
  text, possibly abbreviated with an ellipsis.
 
  \param v      v is a pointer to the actual widget type and can be cast safely
-    to Fl_Type
+    to Node
  \param X,Y    these give the position in window coordinates of the top left
     corner of this line
  */
 void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
-  Fl_Type *l = (Fl_Type *)v;
+  Node *l = (Node *)v;
 
   char buf[500]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
@@ -331,7 +331,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // items can contain a comment. If they do, the comment gets a second text
   // line inside this browser line
   int comment_incr = 0;
-  if (show_comments && l->comment()) {
+  if (Fluid.show_comments && l->comment()) {
     // -- comment
     copy_trunc(buf, l->comment(), 80, 0, 1);
     comment_incr = textsize()-1;
@@ -370,7 +370,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   // Width=18: Draw the icon associated with the type.
-  Fl_Pixmap *pm = pixmap[l->id()];
+  Fl_Pixmap *pm = pixmap[(int)l->type()];
   if (pm) pm->draw(X-18, Y);
 
   // Add tags on top of the icon for locked and protected types.
@@ -380,11 +380,11 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   if (   l->is_widget()
-      && !l->is_a(ID_Window)
-      && ((Fl_Widget_Type*)l)->o
-      && !((Fl_Widget_Type*)l)->o->visible()
-      && (!l->parent || (   !l->parent->is_a(ID_Tabs)
-                         && !l->parent->is_a(ID_Wizard) ) )
+      && !l->is_a(Type::Window)
+      && ((Widget_Node*)l)->o
+      && !((Widget_Node*)l)->o->visible()
+      && (!l->parent || (   !l->parent->is_a(Type::Tabs)
+                         && !l->parent->is_a(Type::Wizard) ) )
       )
   {
     invisible_pixmap->draw(X - 17, Y);
@@ -424,7 +424,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
       else fl_color(func_color);
       copy_trunc(buf, l->title(), 55, 0, 0);
     } else {
-      if (l->is_a(ID_Comment)) {
+      if (l->is_a(Type::Comment)) {
         // -- comment (in main line, not above entry)
         fl_font(comment_font, textsize());
         if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
@@ -458,7 +458,7 @@ int Node_Browser::item_width(void *v) const {
 
   char buf[500]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
-  Fl_Type *l = (Fl_Type *)v;
+  Node *l = (Node *)v;
 
   if (!l->visible) return 0;
 
@@ -490,7 +490,7 @@ int Node_Browser::item_width(void *v) const {
  Callback to tell the Fluid UI when the list of selected items changed.
  */
 void Node_Browser::callback() {
-  selection_changed((Fl_Type*)selection());
+  selection_changed((Node*)selection());
 }
 
 /**
@@ -508,13 +508,13 @@ void Node_Browser::callback() {
  \return 0 if the event is not supported, and 1 if the event was "used up"
  */
 int Node_Browser::handle(int e) {
-  static Fl_Type *title;
-  Fl_Type *l;
+  static Node *title;
+  Node *l;
   int X,Y,W,H; bbox(X,Y,W,H);
   switch (e) {
   case FL_PUSH:
     if (!Fl::event_inside(X,Y,W,H)) break;
-    l = (Fl_Type*)find_item(Fl::event_y());
+    l = (Node*)find_item(Fl::event_y());
     if (l) {
       X += 3 + 12*l->level - hposition();
       if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) {
@@ -526,11 +526,11 @@ int Node_Browser::handle(int e) {
     break;
   case FL_DRAG:
     if (!title) break;
-    l = (Fl_Type*)find_item(Fl::event_y());
+    l = (Node*)find_item(Fl::event_y());
     if (l) {
       X += 3 + 12*l->level - hposition();
       if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) ;
-      else l = 0;
+      else l = nullptr;
     }
     if (l != pushedtitle) {
       if (pushedtitle) redraw_line(pushedtitle);
@@ -540,7 +540,7 @@ int Node_Browser::handle(int e) {
     return 1;
   case FL_RELEASE:
     if (!title) {
-      l = (Fl_Type*)find_item(Fl::event_y());
+      l = (Node*)find_item(Fl::event_y());
       if (l && l->new_selected && (Fl::event_clicks() || Fl::event_state(FL_CTRL)))
         l->open();
       break;
@@ -550,14 +550,14 @@ int Node_Browser::handle(int e) {
     if (l) {
       if (!l->folded_) {
         l->folded_ = 1;
-        for (Fl_Type*k = l->next; k&&k->level>l->level; k = k->next)
+        for (Node*k = l->next; k&&k->level>l->level; k = k->next)
           k->visible = 0;
       } else {
         l->folded_ = 0;
-        for (Fl_Type*k=l->next; k&&k->level>l->level;) {
+        for (Node*k=l->next; k&&k->level>l->level;) {
           k->visible = 1;
           if (k->can_have_children() && k->folded_) {
-            Fl_Type *j;
+            Node *j;
             for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
             k = j;
           } else
@@ -602,9 +602,9 @@ void Node_Browser::rebuild() {
 
 /**
  Rebuild the browser layout and make sure that the given item is visible.
- \param[in] inNode pointer to a widget node derived from Fl_Type.
+ \param[in] inNode pointer to a widget node derived from Node.
  */
-void Node_Browser::display(Fl_Type *inNode) {
+void Node_Browser::display(Node *inNode) {
   if (!inNode) {
     // Alternative: find the first (last?) visible selected item.
     return;
@@ -613,7 +613,7 @@ void Node_Browser::display(Fl_Type *inNode) {
   int currentV = vposition(), newV = currentV;
   int nodeV = 0;
   // find the inNode in the tree and check, if it is already visible
-  Fl_Type *p=Fl_Type::first;
+  Node *p=Fluid.proj.tree.first;
   for ( ; p && p!=inNode; p=p->next) {
     if (p->visible)
       nodeV += item_height(p) + linespacing();
@@ -640,7 +640,7 @@ void Node_Browser::display(Fl_Type *inNode) {
 
 void Node_Browser::load_prefs() {
   int c;
-  Fl_Preferences p(fluid_prefs, "widget_browser");
+  Fl_Preferences p(Fluid.preferences, "widget_browser");
   p.get("label_color",  c, 72); label_color = c;
   p.get("label_font",   c, FL_HELVETICA); label_font = c;
   p.get("class_color",  c, FL_FOREGROUND_COLOR); class_color = c;
@@ -656,7 +656,7 @@ void Node_Browser::load_prefs() {
 }
 
 void Node_Browser::save_prefs() {
-  Fl_Preferences p(fluid_prefs, "widget_browser");
+  Fl_Preferences p(Fluid.preferences, "widget_browser");
   p.set("label_color",    (int)label_color);
   p.set("label_font",     (int)label_font);
   p.set("class_color",    (int)class_color);

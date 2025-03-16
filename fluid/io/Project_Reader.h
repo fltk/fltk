@@ -1,7 +1,7 @@
 //
-// Fluid file routines for the Fast Light Tool Kit (FLTK).
+// Fluid Project File Reader header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,35 +17,41 @@
 #ifndef FLUID_IO_PROJECT_READER_H
 #define FLUID_IO_PROJECT_READER_H
 
-#include "nodes/Fl_Type.h"
+#include "nodes/Node.h"
 
 #include <FL/fl_attr.h>
 
 #include <stdio.h>
 
 
-class Fl_Type;
+class Node;
 
 namespace fld {
+
+class Project;
+
 namespace io {
 
 extern int fdesign_flip;
 
-int read_file(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
+int read_file(Project &proj, const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
 
 class Project_Reader
 {
 protected:
+  /// Link Project_Reader class to the project.
+  Project &proj_;
+
   /// Project input file
-  FILE *fin;
+  FILE *fin = nullptr;
   /// Number of most recently read line
-  int lineno;
+  int lineno = 0;
   /// Pointer to the file path and name (not copied!)
-  const char *fname;
+  const char *fname = nullptr;
   /// Expanding buffer to store the most recently read word
-  char *buffer;
+  char *buffer = nullptr;
   /// Exact size of the expanding buffer in bytes
-  int buflen;
+  int buflen = 0;
 
   void expand_buffer(int length);
 
@@ -53,16 +59,16 @@ protected:
 
 public:
   /// Holds the file version number after reading the "version" tag
-  double read_version;
+  double read_version = 0.0;
 
 public:
-  Project_Reader();
+  Project_Reader(Project &proj);
   ~Project_Reader();
   int open_read(const char *s);
   int close_read();
   const char *filename_name();
   int read_quoted();
-  Fl_Type *read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options=0);
+  Node *read_children(Node *p, int merge, Strategy strategy, char skip_options=0);
   int read_project(const char *, int merge, Strategy strategy=Strategy::FROM_FILE_AS_LAST_CHILD);
   void read_error(const char *format, ...);
   const char *read_word(int wantbrace = 0);

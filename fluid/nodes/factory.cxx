@@ -1,13 +1,5 @@
 //
-// Widget factory code for the Fast Light Tool Kit (FLTK).
-//
-// Type classes for most of the fltk widgets.  Most of the work
-// is done by code in Fl_Widget_Type.cxx.  Also a factory instance
-// of each of these type classes.
-//
-// This file also contains the "new" menu, which has a pointer
-// to a factory instance for every class (both the ones defined
-// here and ones in other files)
+// Node Factory code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -22,14 +14,41 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/**
+
+ 
+ \todo Verify the text
+
+ Type classes for most of the fltk widgets.  Most of the work
+ is done by code in Widget_Node.cxx.  Also a factory instance
+ of each of these type classes.
+
+ This file also contains the "new" menu, which has a pointer
+ to a factory instance for every class (both the ones defined
+ here and ones in other files)
+
+
+ Type classes for most of the fltk widgets.  Most of the work
+ is done by code in Widget_Node.C.  Also a factory instance
+ of each of these type classes.
+
+ This file also contains the "new" menu, which has a pointer
+ to a factory instance for every class (both the ones defined
+ here and ones in other files)
+
+ */
 #include "nodes/factory.h"
 
-#include "app/Fd_Snap_Action.h"
-#include "app/fluid.h"
-#include "app/undo.h"
-#include "nodes/Fl_Group_Type.h"
-#include "nodes/Fl_Grid_Type.h"
-#include "nodes/Fl_Menu_Type.h"
+#include "app/Snap_Action.h"
+#include "Fluid.h"
+#include "proj/undo.h"
+#include "nodes/Button_Node.h"
+#include "nodes/Function_Node.h"
+#include "nodes/Grid_Node.h"
+#include "nodes/Group_Node.h"
+#include "nodes/Menu_Node.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
 #include "rsrcs/pixmaps.h"
 
 #include <FL/Fl.H>
@@ -70,23 +89,26 @@
 // ---- Browser_Base ----
 
 static Fl_Menu_Item browser_base_type_menu[] = {
-  {"No Select", 0, 0, (void*)FL_NORMAL_BROWSER},
-  {"Select", 0, 0, (void*)FL_SELECT_BROWSER},
-  {"Hold", 0, 0, (void*)FL_HOLD_BROWSER},
-  {"Multi", 0, 0, (void*)FL_MULTI_BROWSER},
-  {0}
+  {"No Select", 0, nullptr, (void*)nullptr},
+  {"Select", 0, nullptr, (void*)FL_SELECT_BROWSER},
+  {"Hold", 0, nullptr, (void*)FL_HOLD_BROWSER},
+  {"Multi", 0, nullptr, (void*)FL_MULTI_BROWSER},
+  {nullptr}
 };
 
 /**
  \brief This is the base class for some browsers types.
  This class will not be instantiated.
  */
-class Fl_Browser_Base_Type : public Fl_Widget_Type
+class Browser_Base_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return browser_base_type_menu; }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Browser_ *myo = (Fl_Browser_*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Widget_Node super;
+  static Browser_Base_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return browser_base_type_menu; }
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Browser_ *myo = (Fl_Browser_*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -97,42 +119,44 @@ class Fl_Browser_Base_Type : public Fl_Widget_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     w = 120;
     h = 160;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Browser_"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Browser_"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Browser_"; }
+  const char *alt_type_name() override { return "fltk::Browser_"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Browser* b = new Fl_Browser(x, y, w, h);
     return b;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Browser_Base_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Browser_; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Browser_) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Browser_Base_Node(); }
+  Type type() const override { return Type::Browser_; }
+  bool is_a(Type inType) const override { return (inType==Type::Browser_) ? true : super::is_a(inType); }
 };
 
-static Fl_Browser_Base_Type Fl_Browser_Base_type;
+Browser_Base_Node Browser_Base_Node::prototype;
 
 
 // ---- Browser ----
 
 /**
  \brief Handle a plain browser widget.
- Most of the work is already done in Fl_Browser_Base_Type.
+ Most of the work is already done in Browser_Base_Node.
  */
-class Fl_Browser_Type : public Fl_Browser_Base_Type
+class Browser_Node : public Browser_Base_Node
 {
-  typedef Fl_Browser_Base_Type super;
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Browser"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Browser"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Browser_Base_Node super;
+  static Browser_Node prototype;
+public:
+  const char *type_name() override { return "Fl_Browser"; }
+  const char *alt_type_name() override { return "fltk::Browser"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Browser* b = new Fl_Browser(x, y, w, h);
     // Fl_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
         sprintf(buffer,"Browser Line %d",i);
@@ -141,12 +165,12 @@ public:
     }
     return b;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Browser_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Browser; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Browser) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Browser_Node(); }
+  Type type() const override { return Type::Browser; }
+  bool is_a(Type inType) const override { return (inType==Type::Browser) ? true : super::is_a(inType); }
 };
 
-static Fl_Browser_Type Fl_Browser_type;
+Browser_Node Browser_Node::prototype;
 
 
 // ---- Check Browser ----
@@ -155,17 +179,19 @@ static Fl_Browser_Type Fl_Browser_type;
  \brief Manage the Check Browser.
  The Fl_Check_Browser is derived form Fl_Browser_ (underline!), not Fl_Browser.
  */
-class Fl_Check_Browser_Type : public Fl_Browser_Base_Type
+class Check_Browser_Node : public Browser_Base_Node
 {
-  typedef Fl_Browser_Base_Type super;
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Check_Browser"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::CheckBrowser"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Browser_Base_Node super;
+  static Check_Browser_Node prototype;
+public:
+  const char *type_name() override { return "Fl_Check_Browser"; }
+  const char *alt_type_name() override { return "fltk::CheckBrowser"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Check_Browser* b = new Fl_Check_Browser(x, y, w, h);
     // Fl_Check_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
         sprintf(buffer,"Browser Line %d",i);
@@ -174,12 +200,12 @@ public:
     }
     return b;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Check_Browser_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Check_Browser; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Check_Browser) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Check_Browser_Node(); }
+  Type type() const override { return Type::Check_Browser; }
+  bool is_a(Type inType) const override { return (inType==Type::Check_Browser) ? true : super::is_a(inType); }
 };
 
-static Fl_Check_Browser_Type Fl_Check_Browser_type;
+Check_Browser_Node Check_Browser_Node::prototype;
 
 
 // ---- File Browser ----
@@ -189,23 +215,25 @@ static Fl_Check_Browser_Type Fl_Check_Browser_type;
  As oppoesed to the Hold, Multi, and Select Browser, this is not a subclass, but
  its own implementation, based on Fl_Browser.
  */
-class Fl_File_Browser_Type : public Fl_Browser_Type
+class File_Browser_Node : public Browser_Node
 {
-  typedef Fl_Browser_Type super;
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_File_Browser"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::FileBrowser"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Browser_Node super;
+  static File_Browser_Node prototype;
+public:
+  const char *type_name() override { return "Fl_File_Browser"; }
+  const char *alt_type_name() override { return "fltk::FileBrowser"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_File_Browser* b = new Fl_File_Browser(x, y, w, h);
-    if (!batch_mode) b->load(".");
+    if (!Fluid.batch_mode) b->load(".");
     return b;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_File_Browser_Type(); }
-  ID id() const FL_OVERRIDE { return ID_File_Browser; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_File_Browser) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new File_Browser_Node(); }
+  Type type() const override { return Type::File_Browser; }
+  bool is_a(Type inType) const override { return (inType==Type::File_Browser) ? true : super::is_a(inType); }
 };
 
-static Fl_File_Browser_Type Fl_File_Browser_type;
+File_Browser_Node File_Browser_Node::prototype;
 
 
 // ---- Tree Type ------------------------------------------------------ MARK: -
@@ -213,25 +241,27 @@ static Fl_File_Browser_Type Fl_File_Browser_type;
 /**
  \brief Handle the Tree widget.
  Fl_Tree is derived from Fl_Group, but FLUID does not support extended Fl_Tree
- functionality, so we derive the Type from Fl_Widget_Type.
+ functionality, so we derive the Type from Widget_Node.
  \note Updating item_labelfont etc. does not refresh any of the existing
     items in the tree, so I decided against implementig those via
     the labelfont UI.
  */
-class Fl_Tree_Type : public Fl_Widget_Type
+class Tree_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Widget_Node super;
+  static Tree_Node prototype;
+public:
+  void ideal_size(int &w, int &h) override {
     w = 120;
     h = 160;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Tree"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::TreeBrowser"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Tree"; }
+  const char *alt_type_name() override { return "fltk::TreeBrowser"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Tree* b = new Fl_Tree(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       b->add("/A1/B1/C1");
       b->add("/A1/B1/C2");
       b->add("/A1/B2/C1");
@@ -243,12 +273,12 @@ public:
     }
     return b;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Tree_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Tree; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Tree) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Tree_Node(); }
+  Type type() const override { return Type::Tree; }
+  bool is_a(Type inType) const override { return (inType==Type::Tree) ? true : super::is_a(inType); }
 };
 
-static Fl_Tree_Type Fl_Tree_type;
+Tree_Node Tree_Node::prototype;
 
 
 
@@ -257,13 +287,16 @@ static Fl_Tree_Type Fl_Tree_type;
 /**
  \brief Handle the Help View widget.
  Fl_Help_View is derived from Fl_Group, but supporting children is not useful,
- so we derive from Fl_Widget_Type.
+ so we derive from Widget_Node.
  */
-class Fl_Help_View_Type : public Fl_Widget_Type
+class Help_View_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Help_View *myo = (Fl_Help_View*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Widget_Node super;
+  static Help_View_Node prototype;
+private:
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Help_View *myo = (Fl_Help_View*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -274,27 +307,27 @@ class Fl_Help_View_Type : public Fl_Widget_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     w = 160;
     h = 120;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Help_View"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::HelpView"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Help_View"; }
+  const char *alt_type_name() override { return "fltk::HelpView"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Help_View *myo = new Fl_Help_View(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
                  "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
     }
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Help_View_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Help_View; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Help_View) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Help_View_Node(); }
+  Type type() const override { return Type::Help_View; }
+  bool is_a(Type inType) const override { return (inType==Type::Help_View) ? true : super::is_a(inType); }
 };
 
-static Fl_Help_View_Type Fl_Help_View_type;
+Help_View_Node Help_View_Node::prototype;
 
 
 
@@ -306,41 +339,46 @@ static Fl_Help_View_Type Fl_Help_View_type;
 /**
  \brief Just a base class for all valuators.
  */
-class Fl_Valuator_Type : public Fl_Widget_Type
+class Valuator_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Valuator"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Valuator"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Widget_Node super;
+  static Valuator_Node prototype;
+public:
+  const char *type_name() override { return "Fl_Valuator"; }
+  const char *alt_type_name() override { return "fltk::Valuator"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Slider(x, y, w, h, "Valuator");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Valuator_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Valuator_; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Valuator_) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Valuator_Node(); }
+  Type type() const override { return Type::Valuator_; }
+  bool is_a(Type inType) const override { return (inType==Type::Valuator_) ? true : super::is_a(inType); }
 };
 
-static Fl_Valuator_Type Fl_Valuator_type;
+Valuator_Node Valuator_Node::prototype;
 
 
 // ---- Counter ----
 
 static Fl_Menu_Item counter_type_menu[] = {
-  { "Normal", 0, 0, (void*)FL_NORMAL_COUNTER },
-  { "Simple", 0, 0, (void*)FL_SIMPLE_COUNTER },
-  { 0 }
+  { "Normal", 0, nullptr, (void*)nullptr },
+  { "Simple", 0, nullptr, (void*)FL_SIMPLE_COUNTER },
+  { nullptr }
 };
 
 /**
  \brief Manage the Counter widget.
  Strictly speaking, the ideal size should derive from the textsize not the labelsize.
  */
-class Fl_Counter_Type : public Fl_Valuator_Type
+class Counter_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return counter_type_menu; }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Counter *myo = (Fl_Counter*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Valuator_Node super;
+  static Counter_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return counter_type_menu; }
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Counter *myo = (Fl_Counter*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -351,22 +389,23 @@ class Fl_Counter_Type : public Fl_Valuator_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 4 * h; // make room for the arrows
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Counter"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Counter"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Counter"; }
+  const char *alt_type_name() override { return "fltk::Counter"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Counter(x, y, w, h, "counter:");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Counter_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Counter; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Counter) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Counter_Node(); }
+  Type type() const override { return Type::Counter; }
+  bool is_a(Type inType) const override { return (inType==Type::Counter) ? true : super::is_a(inType); }
 };
 
-static Fl_Counter_Type Fl_Counter_type;
+Counter_Node Counter_Node::prototype;
 
 
 // ---- Adjuster ----
@@ -374,105 +413,116 @@ static Fl_Counter_Type Fl_Counter_type;
 /**
  \brief Handle Adjuster widgets which are derived from valuators.
  */
-class Fl_Adjuster_Type : public Fl_Valuator_Type
+class Adjuster_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Valuator_Node super;
+  static Adjuster_Node prototype;
+public:
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->labelsize + 8;
     w = 3 * h;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Adjuster"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Adjuster"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Adjuster"; }
+  const char *alt_type_name() override { return "fltk::Adjuster"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Adjuster(x, y, w, h);
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Adjuster_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Adjuster; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Adjuster) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Adjuster_Node(); }
+  Type type() const override { return Type::Adjuster; }
+  bool is_a(Type inType) const override { return (inType==Type::Adjuster) ? true : super::is_a(inType); }
 };
 
-static Fl_Adjuster_Type Fl_Adjuster_type;
+Adjuster_Node Adjuster_Node::prototype;
 
 
 // ---- Dial ----
 
 static Fl_Menu_Item dial_type_menu[] = {
-  { "Dot", 0, 0, (void*)0 },
-  { "Line", 0, 0, (void*)FL_LINE_DIAL },
-  { "Fill", 0, 0, (void*)FL_FILL_DIAL },
-  { 0 }
+  { "Dot", 0, nullptr, (void*)nullptr },
+  { "Line", 0, nullptr, (void*)FL_LINE_DIAL },
+  { "Fill", 0, nullptr, (void*)FL_FILL_DIAL },
+  { nullptr }
 };
 
 /**
  \brief Manage dials.
  */
-class Fl_Dial_Type : public Fl_Valuator_Type
+class Dial_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return dial_type_menu; }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Valuator_Node super;
+  static Dial_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return dial_type_menu; }
+public:
+  void ideal_size(int &w, int &h) override {
     w = 60; h = 60;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Dial"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Dial"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Dial"; }
+  const char *alt_type_name() override { return "fltk::Dial"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Dial(x, y, w, h);
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Dial_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Dial; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Dial) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Dial_Node(); }
+  Type type() const override { return Type::Dial; }
+  bool is_a(Type inType) const override { return (inType==Type::Dial) ? true : super::is_a(inType); }
 };
-static Fl_Dial_Type Fl_Dial_type;
+
+Dial_Node Dial_Node::prototype;
 
 
 // ---- Roller ----
 
 static Fl_Menu_Item roller_type_menu[] = {
-  { "Vertical", 0, 0, (void*)0 },
-  { "Horizontal", 0, 0, (void*)FL_HORIZONTAL },
-  { 0 }
+  { "Vertical", 0, nullptr, (void*)nullptr },
+  { "Horizontal", 0, nullptr, (void*)FL_HORIZONTAL },
+  { nullptr }
 };
 
 /**
  \brief Manage Roller widgets. They are vertical by default.
  */
-class Fl_Roller_Type : public Fl_Valuator_Type
+class Roller_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return roller_type_menu; }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Valuator_Node super;
+  static Roller_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return roller_type_menu; }
+public:
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     w = layout->labelsize + 8;
     h = 4 * w;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Roller"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Roller"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Roller"; }
+  const char *alt_type_name() override { return "fltk::Roller"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Roller(x, y, w, h);
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Roller_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Roller; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Roller) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Roller_Node(); }
+  Type type() const override { return Type::Roller; }
+  bool is_a(Type inType) const override { return (inType==Type::Roller) ? true : super::is_a(inType); }
 };
 
-static Fl_Roller_Type Fl_Roller_type;
+Roller_Node Roller_Node::prototype;
 
 
 // ---- Slider ----
 
 static Fl_Menu_Item slider_type_menu[] = {
-  { "Vertical", 0, 0, (void*)FL_VERT_SLIDER },
-  { "Horizontal", 0, 0, (void*)FL_HOR_SLIDER },
-  { "Vert Fill", 0, 0, (void*)FL_VERT_FILL_SLIDER },
-  { "Horz Fill", 0, 0, (void*)FL_HOR_FILL_SLIDER },
-  { "Vert Knob", 0, 0, (void*)FL_VERT_NICE_SLIDER },
-  { "Horz Knob", 0, 0, (void*)FL_HOR_NICE_SLIDER },
-  { 0 }
+  { "Vertical", 0, nullptr, (void*)nullptr },
+  { "Horizontal", 0, nullptr, (void*)FL_HOR_SLIDER },
+  { "Vert Fill", 0, nullptr, (void*)FL_VERT_FILL_SLIDER },
+  { "Horz Fill", 0, nullptr, (void*)FL_HOR_FILL_SLIDER },
+  { "Vert Knob", 0, nullptr, (void*)FL_VERT_NICE_SLIDER },
+  { "Horz Knob", 0, nullptr, (void*)FL_HOR_NICE_SLIDER },
+  { nullptr }
 };
 
 /**
@@ -480,55 +530,63 @@ static Fl_Menu_Item slider_type_menu[] = {
  They are vertical by default.
  Fl_Value_Slider has its own type.
  */
-class Fl_Slider_Type : public Fl_Valuator_Type
+class Slider_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return slider_type_menu; }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Valuator_Node super;
+  static Slider_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return slider_type_menu; }
+public:
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     w = layout->labelsize + 8;
     h = 4 * w;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Slider"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Slider"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Slider"; }
+  const char *alt_type_name() override { return "fltk::Slider"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Slider(x, y, w, h, "slider:");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Slider_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Slider; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Slider) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Slider_Node(); }
+  Type type() const override { return Type::Slider; }
+  bool is_a(Type inType) const override { return (inType==Type::Slider) ? true : super::is_a(inType); }
 };
 
-static Fl_Slider_Type Fl_Slider_type;
+Slider_Node Slider_Node::prototype;
 
 
 // ---- Scrollbar ----
 
 static Fl_Menu_Item scrollbar_type_menu[] = {
-  { "Vertical", 0, 0, (void*)FL_VERT_SLIDER },
-  { "Horizontal", 0, 0, (void*)FL_HOR_SLIDER },
-  { 0 }
+  { "Vertical", 0, nullptr, (void*)nullptr },
+  { "Horizontal", 0, nullptr, (void*)FL_HOR_SLIDER },
+  { nullptr }
 };
 
 /**
  \brief Manage Scrollbars which are derived from Sliders.
  */
-class Fl_Scrollbar_Type : public Fl_Slider_Type
+class Scrollbar_Node : public Slider_Node
 {
-  typedef Fl_Slider_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return scrollbar_type_menu; }
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Scrollbar"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Scrollbar"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Slider_Node super;
+  static Scrollbar_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return scrollbar_type_menu; }
+public:
+  const char *type_name() override { return "Fl_Scrollbar"; }
+  const char *alt_type_name() override { return "fltk::Scrollbar"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Scrollbar(x, y, w, h);
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Scrollbar_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Scrollbar; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Scrollbar) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Scrollbar_Node(); }
+  Type type() const override { return Type::Scrollbar; }
+  bool is_a(Type inType) const override { return (inType==Type::Scrollbar) ? true : super::is_a(inType); }
 };
-static Fl_Scrollbar_Type Fl_Scrollbar_type;
+
+Scrollbar_Node Scrollbar_Node::prototype;
 
 
 // ---- Value Slider ----
@@ -536,11 +594,14 @@ static Fl_Scrollbar_Type Fl_Scrollbar_type;
 /**
  \brief Manage Value Sliders and their text settings.
  */
-class Fl_Value_Slider_Type : public Fl_Slider_Type
+class Value_Slider_Node : public Slider_Node
 {
-  typedef Fl_Slider_Type super;
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Value_Slider *myo = (Fl_Value_Slider*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Slider_Node super;
+  static Value_Slider_Node prototype;
+private:
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Value_Slider *myo = (Fl_Value_Slider*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -551,17 +612,17 @@ class Fl_Value_Slider_Type : public Fl_Slider_Type
     return 1;
   }
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Value_Slider"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::ValueSlider"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Value_Slider"; }
+  const char *alt_type_name() override { return "fltk::ValueSlider"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Value_Slider(x, y, w, h, "slider:");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Value_Slider_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Value_Slider; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Value_Slider) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Value_Slider_Node(); }
+  Type type() const override { return Type::Value_Slider; }
+  bool is_a(Type inType) const override { return (inType==Type::Value_Slider) ? true : super::is_a(inType); }
 };
 
-static Fl_Value_Slider_Type Fl_Value_Slider_type;
+Value_Slider_Node Value_Slider_Node::prototype;
 
 
 // ---- Value Input ----
@@ -569,11 +630,14 @@ static Fl_Value_Slider_Type Fl_Value_Slider_type;
 /**
  \brief Manage Value Inputs and their text settings.
  */
-class Fl_Value_Input_Type : public Fl_Valuator_Type
+class Value_Input_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Value_Input *myo = (Fl_Value_Input*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Valuator_Node super;
+  static Value_Input_Node prototype;
+private:
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Value_Input *myo = (Fl_Value_Input*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -584,23 +648,24 @@ class Fl_Value_Input_Type : public Fl_Valuator_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Value_Input"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::ValueInput"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Value_Input"; }
+  const char *alt_type_name() override { return "fltk::ValueInput"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Value_Input *myo = new Fl_Value_Input(x, y, w, h, "value:");
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Value_Input_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Value_Input; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Value_Input) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Value_Input_Node(); }
+  Type type() const override { return Type::Value_Input; }
+  bool is_a(Type inType) const override { return (inType==Type::Value_Input) ? true : super::is_a(inType); }
 };
 
-static Fl_Value_Input_Type Fl_Value_Input_type;
+Value_Input_Node Value_Input_Node::prototype;
 
 
 // ---- Value Output ----
@@ -608,11 +673,14 @@ static Fl_Value_Input_Type Fl_Value_Input_type;
 /**
  \brief Handle Value Output widgets, no shortcut with Value Input unfortunately.
  */
-class Fl_Value_Output_Type : public Fl_Valuator_Type
+class Value_Output_Node : public Valuator_Node
 {
-  typedef Fl_Valuator_Type super;
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Value_Output *myo = (Fl_Value_Output*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Valuator_Node super;
+  static Value_Output_Node prototype;
+private:
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Value_Output *myo = (Fl_Value_Output*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -623,23 +691,24 @@ class Fl_Value_Output_Type : public Fl_Valuator_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Value_Output"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::ValueOutput"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Value_Output"; }
+  const char *alt_type_name() override { return "fltk::ValueOutput"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Value_Output *myo = new Fl_Value_Output(x, y, w, h, "value:");
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Value_Output_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Value_Output; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Value_Output) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Value_Output_Node(); }
+  Type type() const override { return Type::Value_Output; }
+  bool is_a(Type inType) const override { return (inType==Type::Value_Output) ? true : super::is_a(inType); }
 };
 
-static Fl_Value_Output_Type Fl_Value_Output_type;
+Value_Output_Node Value_Output_Node::prototype;
 
 
 
@@ -649,25 +718,28 @@ static Fl_Value_Output_Type Fl_Value_Output_type;
 // ---- Input ----
 
 static Fl_Menu_Item input_type_menu[] = {
-  { "Normal", 0, 0, (void*)FL_NORMAL_INPUT },
-  { "Multiline", 0, 0, (void*)FL_MULTILINE_INPUT },
-  { "Secret", 0, 0, (void*)FL_SECRET_INPUT },
-  { "Int", 0, 0, (void*)FL_INT_INPUT },
-  { "Float", 0, 0, (void*)FL_FLOAT_INPUT },
-  {0}
+  { "Normal", 0, nullptr, (void*)nullptr },
+  { "Multiline", 0, nullptr, (void*)FL_MULTILINE_INPUT },
+  { "Secret", 0, nullptr, (void*)FL_SECRET_INPUT },
+  { "Int", 0, nullptr, (void*)FL_INT_INPUT },
+  { "Float", 0, nullptr, (void*)FL_FLOAT_INPUT },
+  {nullptr}
 };
 
 /**
  \brief Manage simple text input widgets.
  The managed class is derived from Fl_Input_, but for simplicity, deriving from
- Fl_Widget_Type seems sufficient here.
+ Widget_Node seems sufficient here.
  */
-class Fl_Input_Type : public Fl_Widget_Type
+class Input_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return input_type_menu; }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Input_ *myo = (Fl_Input_*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Widget_Node super;
+  static Input_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return input_type_menu; }
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Input_ *myo = (Fl_Input_*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -678,23 +750,24 @@ class Fl_Input_Type : public Fl_Widget_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 6 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Input"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Input"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Input"; }
+  const char *alt_type_name() override { return "fltk::Input"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Input *myo = new Fl_Input(x, y, w, h, "input:");
     myo->value("Text Input");
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Input_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Input; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Input) ? true : super::is_a(inID); }
-  void copy_properties() FL_OVERRIDE {
-    Fl_Widget_Type::copy_properties();
+  Widget_Node *_make() override { return new Input_Node(); }
+  Type type() const override { return Type::Input; }
+  bool is_a(Type inType) const override { return (inType==Type::Input) ? true : super::is_a(inType); }
+  void copy_properties() override {
+    Widget_Node::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
     d->textfont(s->textfont());
     d->textsize(s->textsize());
@@ -702,7 +775,8 @@ public:
     d->shortcut(s->shortcut());
   }
 };
-static Fl_Input_Type Fl_Input_type;
+
+Input_Node Input_Node::prototype;
 
 
 // ---- File Input ----
@@ -710,60 +784,67 @@ static Fl_Input_Type Fl_Input_type;
 /**
  \brief Manage file name input widgets.
  */
-class Fl_File_Input_Type : public Fl_Input_Type
+class File_Input_Node : public Input_Node
 {
-  typedef Fl_Input_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return NULL; } // Don't inherit.
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Input_Node super;
+  static File_Input_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return nullptr; } // Don't inherit.
+public:
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8 + 10; // Directoy bar is additional 10 pixels high
     w = layout->textsize_not_null() * 10 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_File_Input"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::FileInput"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_File_Input"; }
+  const char *alt_type_name() override { return "fltk::FileInput"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_File_Input *myo = new Fl_File_Input(x, y, w, h, "file:");
     myo->value("/usr/include/FL/Fl.H");
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_File_Input_Type(); }
-  ID id() const FL_OVERRIDE { return ID_File_Input; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_File_Input) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new File_Input_Node(); }
+  Type type() const override { return Type::File_Input; }
+  bool is_a(Type inType) const override { return (inType==Type::File_Input) ? true : super::is_a(inType); }
 };
 
-static Fl_File_Input_Type Fl_File_Input_type;
+File_Input_Node File_Input_Node::prototype;
 
 
 // ---- Output ----
 
 static Fl_Menu_Item output_type_menu[] = {
-  { "Normal", 0, 0, (void*)FL_NORMAL_OUTPUT },
-  { "Multiline", 0, 0, (void*)FL_MULTILINE_OUTPUT },
-  { 0 }
+  { "Normal", 0, nullptr, (void*)FL_NORMAL_OUTPUT },
+  { "Multiline", 0, nullptr, (void*)FL_MULTILINE_OUTPUT },
+  { nullptr }
 };
 
 /**
  \brief Manage Output widgets, derived from Input.
  */
-class Fl_Output_Type : public Fl_Input_Type
+class Output_Node : public Input_Node
 {
-  typedef Fl_Input_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return output_type_menu; }
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Output"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Output"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Input_Node super;
+  static Output_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return output_type_menu; }
+public:
+  const char *type_name() override { return "Fl_Output"; }
+  const char *alt_type_name() override { return "fltk::Output"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Output *myo = new Fl_Output(x, y, w, h, "output:");
     myo->value("Text Output");
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Output_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Output; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Output) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Output_Node(); }
+  Type type() const override { return Type::Output; }
+  bool is_a(Type inType) const override { return (inType==Type::Output) ? true : super::is_a(inType); }
 };
 
-static Fl_Output_Type Fl_Output_type;
+Output_Node Output_Node::prototype;
 
 
 
@@ -777,11 +858,14 @@ static Fl_Output_Type Fl_Output_type;
  Fl_Text_Display is actually derived from Fl_Group, but for FLUID, deriving
  the type from Widget is better.
  */
-class Fl_Text_Display_Type : public Fl_Widget_Type
+class Text_Display_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Text_Display *myo = (Fl_Text_Display*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Widget_Node super;
+  static Text_Display_Node prototype;
+private:
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Text_Display *myo = (Fl_Text_Display*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -792,27 +876,29 @@ class Fl_Text_Display_Type : public Fl_Widget_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() * 4 + 8;
     w = layout->textsize_not_null() * 10 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Text_Display"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::TextDisplay"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Text_Display"; }
+  const char *alt_type_name() override { return "fltk::TextDisplay"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Text_Display *myo = new Fl_Text_Display(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       Fl_Text_Buffer *b = new Fl_Text_Buffer();
       b->text("Lorem ipsum dolor\nsit amet, consetetur\nsadipscing elitr");
       myo->buffer(b);
     }
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Text_Display_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Text_Display; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Text_Display) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Text_Display_Node(); }
+  Type type() const override { return Type::Text_Display; }
+  bool is_a(Type inType) const override { return (inType==Type::Text_Display) ? true : super::is_a(inType); }
 };
-static Fl_Text_Display_Type Fl_Text_Display_type;
+
+Text_Display_Node Text_Display_Node::prototype;
 
 
 // ---- Text Editor ----
@@ -820,27 +906,29 @@ static Fl_Text_Display_Type Fl_Text_Display_type;
 /**
  \brief Manage Text Editors based on Text Display.
  */
-class Fl_Text_Editor_Type : public Fl_Text_Display_Type
+class Text_Editor_Node : public Text_Display_Node
 {
-  typedef Fl_Text_Display_Type super;
 public:
-  const char *type_name() FL_OVERRIDE {return "Fl_Text_Editor";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::TextEditor";}
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  typedef Text_Display_Node super;
+  static Text_Editor_Node prototype;
+public:
+  const char *type_name() override {return "Fl_Text_Editor";}
+  const char *alt_type_name() override {return "fltk::TextEditor";}
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Text_Editor *myo = new Fl_Text_Editor(x, y, w, h);
-    if (!batch_mode) {
+    if (!Fluid.batch_mode) {
       Fl_Text_Buffer *b = new Fl_Text_Buffer();
       b->text("Lorem ipsum dolor\nsit amet, consetetur\nsadipscing elitr");
       myo->buffer(b);
     }
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Text_Editor_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Text_Editor; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Text_Editor) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Text_Editor_Node(); }
+  Type type() const override { return Type::Text_Editor; }
+  bool is_a(Type inType) const override { return (inType==Type::Text_Editor) ? true : super::is_a(inType); }
 };
 
-static Fl_Text_Editor_Type Fl_Text_Editor_type;
+Text_Editor_Node Text_Editor_Node::prototype;
 
 
 // ---- Terminal ----
@@ -848,13 +936,13 @@ static Fl_Text_Editor_Type Fl_Text_Editor_type;
 /** Use this terminal instead of Fl_Terminal to capture resize actions. */
 class Fl_Terminal_Proxy : public Fl_Terminal {
 public:
-  Fl_Terminal_Proxy(int x, int y, int w, int h, const char *l=NULL)
+  Fl_Terminal_Proxy(int x, int y, int w, int h, const char *l=nullptr)
   : Fl_Terminal(x, y, w, h, l) { }
   void print_sample_text() {
     clear_screen_home(false);
     append("> ls -als");
   }
-  void resize(int x, int y, int w, int h) FL_OVERRIDE {
+  void resize(int x, int y, int w, int h) override {
     Fl_Terminal::resize(x, y, w, h);
     // After a resize, the top text vanishes, so make sure we redraw it.
     print_sample_text();
@@ -867,7 +955,7 @@ public:
   Fl_Font tfont_;
   int tsize_;
   Fl_Color tcolor_;
-  Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=NULL)
+  Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=nullptr)
   : Fl_Group(x, y, w, h, l)
   { // set the defaults that Fl_Terminal would set
     box(FL_DOWN_BOX);
@@ -889,16 +977,18 @@ public:
 /**
  \brief Manage a terminal widget.
  */
-class Fl_Terminal_Type : public Fl_Widget_Type
+class Terminal_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Terminal"; }
+  typedef Widget_Node super;
+  static Terminal_Node prototype;
+public:
+  const char *type_name() override { return "Fl_Terminal"; }
   // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
-  const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    Fl_Widget *ret = NULL;
-    if (batch_mode) {
+  const char *alt_type_name() override { return "Fl_Simple_Terminal"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
+    Fl_Widget *ret = nullptr;
+    if (Fluid.batch_mode) {
       ret = new Fl_Batchmode_Terminal(x, y, w, h);
     } else {
       Fl_Terminal_Proxy *term = new Fl_Terminal_Proxy(x, y, w+100, h);
@@ -906,9 +996,9 @@ public:
     }
     return ret;
   }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    if (batch_mode) {
-      Fl_Batchmode_Terminal *myo = (Fl_Batchmode_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    if (Fluid.batch_mode) {
+      Fl_Batchmode_Terminal *myo = (Fl_Batchmode_Terminal*)(w==4 ? ((Widget_Node*)factory)->o : o);
       switch (w) {
         case 4:
         case 0: f = (Fl_Font)myo->tfont_; s = myo->tsize_; c = myo->tcolor_; break;
@@ -917,7 +1007,7 @@ public:
         case 3: myo->tcolor_ = c; break;
       }
     } else {
-      Fl_Terminal_Proxy *myo = (Fl_Terminal_Proxy*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+      Fl_Terminal_Proxy *myo = (Fl_Terminal_Proxy*)(w==4 ? ((Widget_Node*)factory)->o : o);
       switch (w) {
         case 4:
         case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -928,12 +1018,12 @@ public:
     }
     return 1;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Terminal_Type();}
-  ID id() const FL_OVERRIDE { return ID_Terminal; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Terminal) ? true : super::is_a(inID); }
+  Widget_Node *_make() override {return new Terminal_Node();}
+  Type type() const override { return Type::Terminal; }
+  bool is_a(Type inType) const override { return (inType==Type::Terminal) ? true : super::is_a(inType); }
 };
 
-static Fl_Terminal_Type Fl_Terminal_type;
+Terminal_Node Terminal_Node::prototype;
 
 
 // ---- Other ---------------------------------------------------------- MARK: -
@@ -945,25 +1035,27 @@ static Fl_Terminal_Type Fl_Terminal_type;
  \brief Manage box widgets.
  Ideal size is set to 100x100, snapped to layout.
  */
-class Fl_Box_Type : public Fl_Widget_Type
+class Box_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Widget_Node super;
+  static Box_Node prototype;
+public:
+  void ideal_size(int &w, int &h) override {
     w = 100; h = 100;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Box"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Widget"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Box"; }
+  const char *alt_type_name() override { return "fltk::Widget"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Box(x, y, w, h, "label");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Box_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Box; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Box) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Box_Node(); }
+  Type type() const override { return Type::Box; }
+  bool is_a(Type inType) const override { return (inType==Type::Box) ? true : super::is_a(inType); }
 };
 
-static Fl_Box_Type Fl_Box_type;
+Box_Node Box_Node::prototype;
 
 
 // ---- Clock ----
@@ -972,25 +1064,27 @@ static Fl_Box_Type Fl_Box_type;
  \brief Manage Clock widgets.
  Ideal size is set to 80x80 snapped to layout.
  */
-class Fl_Clock_Type : public Fl_Widget_Type
+class Clock_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Widget_Node super;
+  static Clock_Node prototype;
+public:
+  void ideal_size(int &w, int &h) override {
     w = 80; h = 80;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Clock"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Clock"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Clock"; }
+  const char *alt_type_name() override { return "fltk::Clock"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Clock(x, y, w, h);
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Clock_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Clock; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Clock) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Clock_Node(); }
+  Type type() const override { return Type::Clock; }
+  bool is_a(Type inType) const override { return (inType==Type::Clock) ? true : super::is_a(inType); }
 };
 
-static Fl_Clock_Type Fl_Clock_type;
+Clock_Node Clock_Node::prototype;
 
 
 // ---- Progress ----
@@ -1000,35 +1094,38 @@ static Fl_Clock_Type Fl_Clock_type;
  Ideal size is set to match the label font and label text width times 3.
  \note minimum, maximum, and value must be set via extra code fields.
  */
-class Fl_Progress_Type : public Fl_Widget_Type
+class Progress_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  typedef Widget_Node super;
+  static Progress_Node prototype;
+public:
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->labelsize + 8;
     w = layout->labelsize * 12;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Progress"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::ProgressBar"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Progress"; }
+  const char *alt_type_name() override { return "fltk::ProgressBar"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Progress *myo = new Fl_Progress(x, y, w, h, "label");
     myo->value(50);
     return myo;
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Progress_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Progress; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Progress) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Progress_Node(); }
+  Type type() const override { return Type::Progress; }
+  bool is_a(Type inType) const override { return (inType==Type::Progress) ? true : super::is_a(inType); }
 };
 
-static Fl_Progress_Type Fl_Progress_type;
+Progress_Node Progress_Node::prototype;
 
 // ---- Spinner ----
 
 static Fl_Menu_Item spinner_type_menu[] = {
-  { "Integer", 0, 0, (void*)FL_INT_INPUT },
-  { "Float",  0, 0, (void*)FL_FLOAT_INPUT },
-  { 0 }
+  { "Integer", 0, nullptr, (void*)FL_INT_INPUT },
+  { "Float",  0, nullptr, (void*)FL_FLOAT_INPUT },
+  { nullptr }
 };
 
 /**
@@ -1036,12 +1133,15 @@ static Fl_Menu_Item spinner_type_menu[] = {
  \note Fl_Spinner is derived from Fl_Group, *not* Fl_Valuator as one may expect.
     For FLUID, this means some special handling and no Group support.
  */
-class Fl_Spinner_Type : public Fl_Widget_Type
+class Spinner_Node : public Widget_Node
 {
-  typedef Fl_Widget_Type super;
-  Fl_Menu_Item *subtypes() FL_OVERRIDE { return spinner_type_menu; }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
-    Fl_Spinner *myo = (Fl_Spinner*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+public:
+  typedef Widget_Node super;
+  static Spinner_Node prototype;
+private:
+  Fl_Menu_Item *subtypes() override { return spinner_type_menu; }
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
+    Fl_Spinner *myo = (Fl_Spinner*)(w==4 ? ((Widget_Node*)factory)->o : o);
     switch (w) {
       case 4:
       case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -1052,64 +1152,30 @@ class Fl_Spinner_Type : public Fl_Widget_Type
     return 1;
   }
 public:
-  void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
+    auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    Fd_Snap_Action::better_size(w, h);
+    fld::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE { return "Fl_Spinner"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::Spinner"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+  const char *type_name() override { return "Fl_Spinner"; }
+  const char *alt_type_name() override { return "fltk::Spinner"; }
+  Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Spinner(x, y, w, h, "spinner:");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Spinner_Type(); }
-  ID id() const FL_OVERRIDE { return ID_Spinner; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Spinner) ? true : super::is_a(inID); }
+  Widget_Node *_make() override { return new Spinner_Node(); }
+  Type type() const override { return Type::Spinner; }
+  bool is_a(Type inType) const override { return (inType==Type::Spinner) ? true : super::is_a(inType); }
 };
 
-static Fl_Spinner_Type Fl_Spinner_type;
+Spinner_Node Spinner_Node::prototype;
 
 
 
 // ---- Type Factory --------------------------------------------------- MARK: -
 
-extern class Fl_Function_Type Fl_Function_type;
-extern class Fl_Code_Type Fl_Code_type;
-extern class Fl_CodeBlock_Type Fl_CodeBlock_type;
-extern class Fl_Data_Type Fl_Data_type;
-extern class Fl_Decl_Type Fl_Decl_type;
-extern class Fl_DeclBlock_Type Fl_DeclBlock_type;
-extern class Fl_Comment_Type Fl_Comment_type;
-extern class Fl_Class_Type Fl_Class_type;
-extern class Fl_Window_Type Fl_Window_type;
-extern class Fl_Widget_Class_Type Fl_Widget_Class_type;
-extern class Fl_Group_Type Fl_Group_type;
-extern class Fl_Pack_Type Fl_Pack_type;
-extern class Fl_Flex_Type Fl_Flex_type;
-extern class Fl_Grid_Type Fl_Grid_type;
-extern class Fl_Tabs_Type Fl_Tabs_type;
-extern class Fl_Scroll_Type Fl_Scroll_type;
-extern class Fl_Table_Type Fl_Table_type;
-extern class Fl_Tile_Type Fl_Tile_type;
-extern class Fl_Input_Choice_Type Fl_Input_Choice_type;
-extern class Fl_Choice_Type Fl_Choice_type;
-extern class Fl_Menu_Bar_Type Fl_Menu_Bar_type;
-extern class Fl_Menu_Button_Type Fl_Menu_Button_type;
-extern class Fl_Menu_Item_Type Fl_Menu_Item_type;
-extern class Fl_Checkbox_Menu_Item_Type Fl_Checkbox_Menu_Item_type;
-extern class Fl_Radio_Menu_Item_Type Fl_Radio_Menu_Item_type;
-extern class Fl_Submenu_Type Fl_Submenu_type;
-extern class Fl_Wizard_Type Fl_Wizard_type;
-
-extern class Fl_Button_Type Fl_Button_type;
-extern class Fl_Return_Button_Type Fl_Return_Button_type;
-extern class Fl_Light_Button_Type Fl_Light_Button_type;
-extern class Fl_Check_Button_Type Fl_Check_Button_type;
-extern class Fl_Repeat_Button_Type Fl_Repeat_Button_type;
-extern class Fl_Round_Button_Type Fl_Round_Button_type;
-
-extern void select(Fl_Type *,int);
-extern void select_only(Fl_Type *);
+extern void select(Node *,int);
+extern void select_only(Node *);
 
 /**
  List all known types.
@@ -1120,72 +1186,72 @@ extern void select_only(Fl_Type *);
  \note Make sure that this array stays synchronized to `Fl_Menu_Item New_Menu[]`
     further down in this file.
  */
-static Fl_Type *known_types[] = {
+static Node *known_types[] = {
   // functions
-  (Fl_Type*)&Fl_Function_type,
-  (Fl_Type*)&Fl_Code_type,
-  (Fl_Type*)&Fl_CodeBlock_type,
-  (Fl_Type*)&Fl_Decl_type,
-  (Fl_Type*)&Fl_DeclBlock_type,
-  (Fl_Type*)&Fl_Class_type,
-  (Fl_Type*)&Fl_Widget_Class_type,
-  (Fl_Type*)&Fl_Comment_type,
-  (Fl_Type*)&Fl_Data_type,
+  (Node*)&Function_Node::prototype,
+  (Node*)&Code_Node::prototype,
+  (Node*)&CodeBlock_Node::prototype,
+  (Node*)&Decl_Node::prototype,
+  (Node*)&DeclBlock_Node::prototype,
+  (Node*)&Class_Node::prototype,
+  (Node*)&Widget_Class_Node::prototype,
+  (Node*)&Comment_Node::prototype,
+  (Node*)&Data_Node::prototype,
   // groups
-  (Fl_Type*)&Fl_Window_type,
-  (Fl_Type*)&Fl_Group_type,
-  (Fl_Type*)&Fl_Pack_type,
-  (Fl_Type*)&Fl_Flex_type,
-  (Fl_Type*)&Fl_Tabs_type,
-  (Fl_Type*)&Fl_Scroll_type,
-  (Fl_Type*)&Fl_Tile_type,
-  (Fl_Type*)&Fl_Wizard_type,
-  (Fl_Type*)&Fl_Grid_type,
+  (Node*)&Window_Node::prototype,
+  (Node*)&Group_Node::prototype,
+  (Node*)&Pack_Node::prototype,
+  (Node*)&Flex_Node::prototype,
+  (Node*)&Tabs_Node::prototype,
+  (Node*)&Scroll_Node::prototype,
+  (Node*)&Tile_Node::prototype,
+  (Node*)&Wizard_Node::prototype,
+  (Node*)&Grid_Node::prototype,
   // buttons
-  (Fl_Type*)&Fl_Button_type,
-  (Fl_Type*)&Fl_Return_Button_type,
-  (Fl_Type*)&Fl_Light_Button_type,
-  (Fl_Type*)&Fl_Check_Button_type,
-  (Fl_Type*)&Fl_Repeat_Button_type,
-  (Fl_Type*)&Fl_Round_Button_type,
+  (Node*)&Button_Node::prototype,
+  (Node*)&Return_Button_Node::prototype,
+  (Node*)&Light_Button_Node::prototype,
+  (Node*)&Check_Button_Node::prototype,
+  (Node*)&Repeat_Button_Node::prototype,
+  (Node*)&Round_Button_Node::prototype,
   // valuators
-  (Fl_Type*)&Fl_Slider_type,
-  (Fl_Type*)&Fl_Scrollbar_type,
-  (Fl_Type*)&Fl_Value_Slider_type,
-  (Fl_Type*)&Fl_Adjuster_type,
-  (Fl_Type*)&Fl_Counter_type,
-  (Fl_Type*)&Fl_Spinner_type,
-  (Fl_Type*)&Fl_Dial_type,
-  (Fl_Type*)&Fl_Roller_type,
-  (Fl_Type*)&Fl_Value_Input_type,
-  (Fl_Type*)&Fl_Value_Output_type,
+  (Node*)&Slider_Node::prototype,
+  (Node*)&Scrollbar_Node::prototype,
+  (Node*)&Value_Slider_Node::prototype,
+  (Node*)&Adjuster_Node::prototype,
+  (Node*)&Counter_Node::prototype,
+  (Node*)&Spinner_Node::prototype,
+  (Node*)&Dial_Node::prototype,
+  (Node*)&Roller_Node::prototype,
+  (Node*)&Value_Input_Node::prototype,
+  (Node*)&Value_Output_Node::prototype,
   // text
-  (Fl_Type*)&Fl_Input_type,
-  (Fl_Type*)&Fl_Output_type,
-  (Fl_Type*)&Fl_Text_Editor_type,
-  (Fl_Type*)&Fl_Text_Display_type,
-  (Fl_Type*)&Fl_File_Input_type,
-  (Fl_Type*)&Fl_Terminal_type,
+  (Node*)&Input_Node::prototype,
+  (Node*)&Output_Node::prototype,
+  (Node*)&Text_Editor_Node::prototype,
+  (Node*)&Text_Display_Node::prototype,
+  (Node*)&File_Input_Node::prototype,
+  (Node*)&Terminal_Node::prototype,
   // menus
-  (Fl_Type*)&Fl_Menu_Bar_type,
-  (Fl_Type*)&Fl_Menu_Button_type,
-  (Fl_Type*)&Fl_Choice_type,
-  (Fl_Type*)&Fl_Input_Choice_type,
-  (Fl_Type*)&Fl_Submenu_type,
-  (Fl_Type*)&Fl_Menu_Item_type,
-  (Fl_Type*)&Fl_Checkbox_Menu_Item_type,
-  (Fl_Type*)&Fl_Radio_Menu_Item_type,
+  (Node*)&Menu_Bar_Node::prototype,
+  (Node*)&Menu_Button_Node::prototype,
+  (Node*)&Choice_Node::prototype,
+  (Node*)&Input_Choice_Node::prototype,
+  (Node*)&Submenu_Node::prototype,
+  (Node*)&Menu_Item_Node::prototype,
+  (Node*)&Checkbox_Menu_Item_Node::prototype,
+  (Node*)&Radio_Menu_Item_Node::prototype,
   // browsers
-  (Fl_Type*)&Fl_Browser_type,
-  (Fl_Type*)&Fl_Check_Browser_type,
-  (Fl_Type*)&Fl_File_Browser_type,
-  (Fl_Type*)&Fl_Tree_type,
-  (Fl_Type*)&Fl_Help_View_type,
-  (Fl_Type*)&Fl_Table_type,
+  (Node*)&Browser_Node::prototype,
+  (Node*)&Check_Browser_Node::prototype,
+  (Node*)&File_Browser_Node::prototype,
+  (Node*)&Tree_Node::prototype,
+  (Node*)&Help_View_Node::prototype,
+  (Node*)&Table_Node::prototype,
   // misc
-  (Fl_Type*)&Fl_Box_type,
-  (Fl_Type*)&Fl_Clock_type,
-  (Fl_Type*)&Fl_Progress_type,
+  (Node*)&Box_Node::prototype,
+  (Node*)&Clock_Node::prototype,
+  (Node*)&Progress_Node::prototype,
 };
 
 /**
@@ -1207,19 +1273,21 @@ static Fl_Type *known_types[] = {
     lower case 't' in type.
  \param[in] strategy add after current or as last child
  \param[in] and_open if set to true, call open() on the widget after creating it
- \return the newly created type or NULL
+ \return the newly created type or nullptr
 
  \see add_new_widget_from_file(const char*, int)
- add_new_widget_from_user(Fl_Type*, int)
+ add_new_widget_from_user(Node*, int)
  add_new_widget_from_user(const char*, int)
  */
-Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open) {
-  undo_checkpoint();
-  undo_suspend();
-  Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
+Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open) {
+  Fluid.proj.undo.checkpoint();
+  Fluid.proj.undo.suspend();
+  auto layout = Fluid.proj.layout;
+  Node *t = ((Node*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_a(ID_Window)) {
-      Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
+    if (t->is_widget() && !t->is_a(Type::Window)) {
+      auto layout = Fluid.proj.layout;
+      Widget_Node *wt = (Widget_Node *)t;
       bool changed = false;
 
       // Set font sizes...
@@ -1244,71 +1312,71 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
         wt->textstuff(2, f, s, c);
       }
 
-      if (changed && t->is_a(ID_Menu_Item)) {
-        Fl_Type * tt = t->parent;
-        while (tt && !tt->is_a(ID_Menu_Manager_)) tt = tt->parent;
+      if (changed && t->is_a(Type::Menu_Item)) {
+        Node * tt = t->parent;
+        while (tt && !tt->is_a(Type::Menu_Manager_)) tt = tt->parent;
         if (tt)
-          ((Fl_Menu_Manager_Type*)tt)->build_menu();
+          ((Menu_Manager_Node*)tt)->build_menu();
       }
     }
-    if (t->is_true_widget() && !t->is_a(ID_Window)) {
+    if (t->is_true_widget() && !t->is_a(Type::Window)) {
       // Resize and/or reposition new widget...
-      Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
+      Widget_Node *wt = (Widget_Node *)t;
 
       // The parent field is already set at this point, so we can use that
       // inside ideal_size().
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if ((t->parent && t->parent->is_a(ID_Flex))) {
-        if (Fl_Window_Type::popupx != 0x7FFFFFFF)
-          ((Fl_Flex_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+      if ((t->parent && t->parent->is_a(Type::Flex))) {
+        if (Window_Node::popupx != 0x7FFFFFFF)
+          ((Flex_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         t->parent->layout_widget();
-      } else if (   wt->is_a(ID_Group)
+      } else if (   wt->is_a(Type::Group)
                  && wt->parent
-                 && wt->parent->is_a(ID_Tabs)
-                 //&& (Fl_Window_Type::popupx == 0x7FFFFFFF)
+                 && wt->parent->is_a(Type::Tabs)
+                 //&& (Window_Node::popupx == 0x7FFFFFFF)
                  && (layout->top_tabs_margin > 0)) {
         // If the widget is a group and the parent is tabs and the top tabs
         // margin is set (and the user is not requesting a specific position)
         // then prefit the group correctly to the Tabs container.
-        Fl_Widget *po = ((Fl_Tabs_Type*)wt->parent)->o;
+        Fl_Widget *po = ((Tabs_Node*)wt->parent)->o;
         wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
                       po->w(), po->h() - layout->top_tabs_margin);
-      } else if (   wt->is_a(ID_Menu_Bar)
+      } else if (   wt->is_a(Type::Menu_Bar)
                  && wt->parent
-                 && wt->parent->is_a(ID_Window)
+                 && wt->parent->is_a(Type::Window)
                  && (wt->prev == wt->parent)) {
         // If this is the first child of a window, make the menu bar as wide as
         // the window and drop it at 0, 0. Otherwise just use the suggested size.
         w = wt->o->window()->w();
         wt->o->resize(0, 0, w, h);
       } else {
-        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
+        if (Window_Node::popupx != 0x7FFFFFFF) {
           // If this callback was called from the RMB popup menu in a window,
           // popupx and popupy will contain the mouse coordinates at RMB event.
-          wt->o->resize(Fl_Window_Type::popupx, Fl_Window_Type::popupy, w, h);
+          wt->o->resize(Window_Node::popupx, Window_Node::popupy, w, h);
         } else {
           // If popupx is invalid, use the default position and find a good
           // size for the widget.
           wt->o->size(w, h);
         }
       }
-      if (t->parent && t->parent->is_a(ID_Grid)) {
-        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
-          ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+      if (t->parent && t->parent->is_a(Type::Grid)) {
+        if (Window_Node::popupx != 0x7FFFFFFF) {
+          ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
-          ((Fl_Grid_Type*)t->parent)->insert_child_at_next_free_cell(((Fl_Widget_Type*)t)->o);
+          ((Grid_Node*)t->parent)->insert_child_at_next_free_cell(((Widget_Node*)t)->o);
         }
       }
     }
-    if (t->is_a(ID_Window)) {
+    if (t->is_a(Type::Window)) {
       int x = 0, y = 0, w = 480, h = 320;
-      Fl_Window_Type *wt = (Fl_Window_Type *)t;
+      Window_Node *wt = (Window_Node *)t;
       wt->ideal_size(w, h);
-      if (main_window) {
+      if (Fluid.main_window) {
         int sx, sy, sw, sh;
-        Fl_Window *win = main_window;
+        Fl_Window *win = Fluid.main_window;
         int screen = Fl::screen_num(win->x(), win->y());
         Fl::screen_work_area(sx, sy, sw, sh, screen);
         x = sx + sw/2 - w/2;
@@ -1318,14 +1386,14 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
     }
     // make the new widget visible
     select_only(t);
-    set_modflag(1);
+    Fluid.proj.set_modflag(1);
     if (and_open)
       t->open();
   } else {
-    undo_current --;
-    undo_last --;
+    Fluid.proj.undo.current_ --;
+    Fluid.proj.undo.last_ --;
   }
-  undo_resume();
+  Fluid.proj.undo.resume();
   return t;
 }
 
@@ -1335,126 +1403,126 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool 
  \param[in] inName find the right prototype by this name
  \param[in] strategy where to add the node
  \param[in] and_open if set to true, call open() on the widget after creating it
- \return the newly created type or NULL
+ \return the newly created type or nullptr
 
  \see add_new_widget_from_file(const char*, int)
- add_new_widget_from_user(Fl_Type*, int)
+ add_new_widget_from_user(Node*, int)
  add_new_widget_from_user(const char*, int)
  */
-Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open) {
-  Fl_Type *prototype = typename_to_prototype(inName);
+Node *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open) {
+  Node *prototype = typename_to_prototype(inName);
   if (prototype)
     return add_new_widget_from_user(prototype, strategy, and_open);
   else
-    return NULL;
+    return nullptr;
 }
 
 /**
  Callback for all non-widget menu items.
  */
 static void cbf(Fl_Widget *, void *v) {
-  Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->can_have_children())
-    t = ((Fl_Type*)v)->make(Strategy::AS_LAST_CHILD);
+  Node *t = nullptr;
+  if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())
+    t = ((Node*)v)->make(Strategy::AS_LAST_CHILD);
   else
-    t = ((Fl_Type*)v)->make(Strategy::AFTER_CURRENT);
+    t = ((Node*)v)->make(Strategy::AFTER_CURRENT);
   select_only(t);
 }
 
 /**
  Callback for all widget menu items.
 
- \param[in] v cast to Fl_Type to get the prototype of the type that the user
+ \param[in] v cast to Node to get the prototype of the type that the user
     wants to create.
  */
 static void cb(Fl_Widget *, void *v) {
-  Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->can_have_children())
-    t = add_new_widget_from_user((Fl_Type*)v, Strategy::AS_LAST_CHILD);
+  Node *t = nullptr;
+  if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())
+    t = add_new_widget_from_user((Node*)v, Strategy::AS_LAST_CHILD);
   else
-    t = add_new_widget_from_user((Fl_Type*)v, Strategy::AFTER_CURRENT);
+    t = add_new_widget_from_user((Node*)v, Strategy::AFTER_CURRENT);
   select_only(t);
 }
 
 /**
- \note Make sure that this menu stays synchronized to `Fl_Type *known_types[]`
+ \note Make sure that this menu stays synchronized to `Node *known_types[]`
     defined further up in this file.
  */
 Fl_Menu_Item New_Menu[] = {
-{"Code",0,0,0,FL_SUBMENU},
-  {"Function/Method",0,cbf,(void*)&Fl_Function_type},
-  {"Code",0,cbf,(void*)&Fl_Code_type},
-  {"Code Block",0,cbf,(void*)&Fl_CodeBlock_type},
-  {"Declaration",0,cbf,(void*)&Fl_Decl_type},
-  {"Declaration Block",0,cbf,(void*)&Fl_DeclBlock_type},
-  {"Class",0,cbf,(void*)&Fl_Class_type},
-  {"Widget Class",0,cb,(void*)&Fl_Widget_Class_type},
-  {"Comment",0,cbf,(void*)&Fl_Comment_type},
-  {"Inlined Data",0,cbf,(void*)&Fl_Data_type},
-{0},
-{"Group",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Window_type},
-  {0,0,cb,(void*)&Fl_Group_type},
-  {0,0,cb,(void*)&Fl_Pack_type},
-  {0,0,cb,(void*)&Fl_Flex_type},
-  {0,0,cb,(void*)&Fl_Tabs_type},
-  {0,0,cb,(void*)&Fl_Scroll_type},
-  {0,0,cb,(void*)&Fl_Tile_type},
-  {0,0,cb,(void*)&Fl_Wizard_type},
-  {0,0,cb,(void*)&Fl_Grid_type},
-{0},
-{"Buttons",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Button_type},
-  {0,0,cb,(void*)&Fl_Return_Button_type},
-  {0,0,cb,(void*)&Fl_Light_Button_type},
-  {0,0,cb,(void*)&Fl_Check_Button_type},
-  {0,0,cb,(void*)&Fl_Repeat_Button_type},
-  {0,0,cb,(void*)&Fl_Round_Button_type},
-{0},
-{"Valuators",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Slider_type},
-  {0,0,cb,(void*)&Fl_Scrollbar_type},
-  {0,0,cb,(void*)&Fl_Value_Slider_type},
-  {0,0,cb,(void*)&Fl_Adjuster_type},
-  {0,0,cb,(void*)&Fl_Counter_type},
-  {0,0,cb,(void*)&Fl_Spinner_type},
-  {0,0,cb,(void*)&Fl_Dial_type},
-  {0,0,cb,(void*)&Fl_Roller_type},
-  {0,0,cb,(void*)&Fl_Value_Input_type},
-  {0,0,cb,(void*)&Fl_Value_Output_type},
-{0},
-{"Text",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Input_type},
-  {0,0,cb,(void*)&Fl_Output_type},
-  {0,0,cb,(void*)&Fl_Text_Editor_type},
-  {0,0,cb,(void*)&Fl_Text_Display_type},
-  {0,0,cb,(void*)&Fl_File_Input_type},
-  {0,0,cb,(void*)&Fl_Terminal_type},
-{0},
-{"Menus",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Menu_Bar_type},
-  {0,0,cb,(void*)&Fl_Menu_Button_type},
-  {0,0,cb,(void*)&Fl_Choice_type},
-  {0,0,cb,(void*)&Fl_Input_Choice_type},
-  {0,0,cb, (void*)&Fl_Submenu_type},
-  {0,0,cb, (void*)&Fl_Menu_Item_type},
-  {"Checkbox Menu Item",0,cb, (void*)&Fl_Checkbox_Menu_Item_type},
-  {"Radio Menu Item",0,cb, (void*)&Fl_Radio_Menu_Item_type},
-{0},
-{"Browsers",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Browser_type},
-  {0,0,cb,(void*)&Fl_Check_Browser_type},
-  {0,0,cb,(void*)&Fl_File_Browser_type},
-  {0,0,cb,(void*)&Fl_Tree_type},
-  {0,0,cb,(void*)&Fl_Help_View_type},
-  {0,0,cb,(void*)&Fl_Table_type},
-{0},
-{"Other",0,0,0,FL_SUBMENU},
-  {0,0,cb,(void*)&Fl_Box_type},
-  {0,0,cb,(void*)&Fl_Clock_type},
-  {0,0,cb,(void*)&Fl_Progress_type},
-{0},
-{0}};
+  {"Code",0,nullptr,nullptr,FL_SUBMENU},
+  {"Function/Method",0,cbf,(void*)&Function_Node::prototype},
+  {"Code",0,cbf,(void*)&Code_Node::prototype},
+  {"Code Block",0,cbf,(void*)&CodeBlock_Node::prototype},
+  {"Declaration",0,cbf,(void*)&Decl_Node::prototype},
+  {"Declaration Block",0,cbf,(void*)&DeclBlock_Node::prototype},
+  {"Class",0,cbf,(void*)&Class_Node::prototype},
+  {"Widget Class",0,cb,(void*)&Widget_Class_Node::prototype},
+  {"Comment",0,cbf,(void*)&Comment_Node::prototype},
+  {"Inlined Data",0,cbf,(void*)&Data_Node::prototype},
+  {nullptr},
+  {"Group",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Window_Node::prototype},
+  {nullptr,0,cb,(void*)&Group_Node::prototype},
+  {nullptr,0,cb,(void*)&Pack_Node::prototype},
+  {nullptr,0,cb,(void*)&Flex_Node::prototype},
+  {nullptr,0,cb,(void*)&Tabs_Node::prototype},
+  {nullptr,0,cb,(void*)&Scroll_Node::prototype},
+  {nullptr,0,cb,(void*)&Tile_Node::prototype},
+  {nullptr,0,cb,(void*)&Wizard_Node::prototype},
+  {nullptr,0,cb,(void*)&Grid_Node::prototype},
+  {nullptr},
+  {"Buttons",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Button_Node::prototype},
+  {nullptr,0,cb,(void*)&Return_Button_Node::prototype},
+  {nullptr,0,cb,(void*)&Light_Button_Node::prototype},
+  {nullptr,0,cb,(void*)&Check_Button_Node::prototype},
+  {nullptr,0,cb,(void*)&Repeat_Button_Node::prototype},
+  {nullptr,0,cb,(void*)&Round_Button_Node::prototype},
+  {nullptr},
+  {"Valuators",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Slider_Node::prototype},
+  {nullptr,0,cb,(void*)&Scrollbar_Node::prototype},
+  {nullptr,0,cb,(void*)&Value_Slider_Node::prototype},
+  {nullptr,0,cb,(void*)&Adjuster_Node::prototype},
+  {nullptr,0,cb,(void*)&Counter_Node::prototype},
+  {nullptr,0,cb,(void*)&Spinner_Node::prototype},
+  {nullptr,0,cb,(void*)&Dial_Node::prototype},
+  {nullptr,0,cb,(void*)&Roller_Node::prototype},
+  {nullptr,0,cb,(void*)&Value_Input_Node::prototype},
+  {nullptr,0,cb,(void*)&Value_Output_Node::prototype},
+  {nullptr},
+  {"Text",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Input_Node::prototype},
+  {nullptr,0,cb,(void*)&Output_Node::prototype},
+  {nullptr,0,cb,(void*)&Text_Editor_Node::prototype},
+  {nullptr,0,cb,(void*)&Text_Display_Node::prototype},
+  {nullptr,0,cb,(void*)&File_Input_Node::prototype},
+  {nullptr,0,cb,(void*)&Terminal_Node::prototype},
+  {nullptr},
+  {"Menus",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Menu_Bar_Node::prototype},
+  {nullptr,0,cb,(void*)&Menu_Button_Node::prototype},
+  {nullptr,0,cb,(void*)&Choice_Node::prototype},
+  {nullptr,0,cb,(void*)&Input_Choice_Node::prototype},
+  {nullptr,0,cb, (void*)&Submenu_Node::prototype},
+  {nullptr,0,cb, (void*)&Menu_Item_Node::prototype},
+  {"Checkbox Menu Item",0,cb, (void*)&Checkbox_Menu_Item_Node::prototype},
+  {"Radio Menu Item",0,cb, (void*)&Radio_Menu_Item_Node::prototype},
+  {nullptr},
+  {"Browsers",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Browser_Node::prototype},
+  {nullptr,0,cb,(void*)&Check_Browser_Node::prototype},
+  {nullptr,0,cb,(void*)&File_Browser_Node::prototype},
+  {nullptr,0,cb,(void*)&Tree_Node::prototype},
+  {nullptr,0,cb,(void*)&Help_View_Node::prototype},
+  {nullptr,0,cb,(void*)&Table_Node::prototype},
+  {nullptr},
+  {"Other",0,nullptr,nullptr,FL_SUBMENU},
+  {nullptr,0,cb,(void*)&Box_Node::prototype},
+  {nullptr,0,cb,(void*)&Clock_Node::prototype},
+  {nullptr,0,cb,(void*)&Progress_Node::prototype},
+  {nullptr},
+  {nullptr}};
 
 #include <FL/Fl_Multi_Label.H>
 
@@ -1464,8 +1532,8 @@ Fl_Menu_Item New_Menu[] = {
  The icon may be null. If ic is null only the text is assigned
  to the label and Fl_Multi_Label is not used.
  \param[in] mi pointer to tme menu item that will be modified
- \param[in] ic icon for the menu, may be NULL
- \param[in] txt new label text, may *not* be NULL, will not be copied
+ \param[in] ic icon for the menu, may be nullptr
+ \param[in] txt new label text, may *not* be nullptr, will not be copied
  */
 static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
 {
@@ -1495,14 +1563,14 @@ void fill_in_New_Menu() {
   for (unsigned i = 0; i < sizeof(New_Menu)/sizeof(*New_Menu); i++) {
     Fl_Menu_Item *m = New_Menu+i;
     if (m->user_data()) {
-      Fl_Type *t = (Fl_Type*)m->user_data();
+      Node *t = (Node*)m->user_data();
       if (m->text) {
-        make_iconlabel( m, pixmap[t->id()], m->label() );
+        make_iconlabel( m, pixmap[(int)t->type()], m->label() );
       } else {
         const char *n = t->type_name();
         if (!strncmp(n,"Fl_",3)) n += 3;
         if (!strncmp(n,"fltk::",6)) n += 6;
-        make_iconlabel( m, pixmap[t->id()], n );
+        make_iconlabel( m, pixmap[(int)t->type()], n );
       }
     }
   }
@@ -1511,21 +1579,21 @@ void fill_in_New_Menu() {
 /**
  Find the correct prototype for a given type name.
  \param[in] inName a C string that must match type_name() or alt_type_name() of
-    one of the known Fl_Type classes.
- \return the matching prototype or NULL
+    one of the known Node classes.
+ \return the matching prototype or nullptr
  */
-Fl_Type *typename_to_prototype(const char *inName)
+Node *typename_to_prototype(const char *inName)
 {
-  if (inName==NULL || *inName==0)
-    return NULL;
+  if (inName==nullptr || *inName==0)
+    return nullptr;
   for (unsigned i = 0; i < sizeof(known_types)/sizeof(*known_types); i++) {
-    Fl_Type *prototype = known_types[i];
+    Node *prototype = known_types[i];
     if (fl_ascii_strcasecmp(inName, prototype->type_name())==0)
       return prototype;
     if (fl_ascii_strcasecmp(inName, prototype->alt_type_name())==0)
       return prototype;
   }
-  return NULL;
+  return nullptr;
 }
 
 /**
@@ -1537,16 +1605,16 @@ Fl_Type *typename_to_prototype(const char *inName)
 
  \param[in] inName a C string that described the type we want
  \param[in] strategy add after current or as last child
- \return the type node that was created or NULL
+ \return the type node that was created or nullptr
  \see add_new_widget_from_file(const char*, int)
- add_new_widget_from_user(Fl_Type*, int)
+ add_new_widget_from_user(Node*, int)
  add_new_widget_from_user(const char*, int)
 */
-Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
-  Fl_Type *prototype = typename_to_prototype(inName);
+Node *add_new_widget_from_file(const char *inName, Strategy strategy) {
+  Node *prototype = typename_to_prototype(inName);
   if (!prototype)
-    return NULL;
-  Fl_Type *new_node = prototype->make(strategy);
+    return nullptr;
+  Node *new_node = prototype->make(strategy);
   return new_node;
 }
 

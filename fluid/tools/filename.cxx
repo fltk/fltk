@@ -1,7 +1,7 @@
 //
-// Filename expansion routines for the Fast Light Tool Kit (FLTK).
+// Filename handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -94,4 +94,32 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
     // Nothing to change.
     return homed_filename;
   }
+}
+
+/**
+ Make sure that a path name ends with a forward slash.
+ \param[in] str directory or path name
+ \return a new string, ending with a '/'
+ */
+std::string fld::end_with_slash(const std::string &str) {
+  char last = str[str.size()-1];
+  if (last !='/' && last != '\\')
+    return str + "/";
+  else
+    return str;
+}
+
+/**
+ Replace Windows '\\' directory separator with UNix '/' separators.
+ \param[in] fn a file path in Unix or Windows format
+ \return a copy of the file path in Unix format.
+ */
+std::string fld::fix_separators(const std::string &fn) {
+  std::string ret = fn;
+  for (size_t i=0; i<ret.size(); ++i) {
+    if (ret[i] == '\\') {
+      ret[i] = '/';
+    }
+  }
+  return ret;
 }

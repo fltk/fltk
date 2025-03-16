@@ -1,7 +1,7 @@
 //
-// Fluid file routines for the Fast Light Tool Kit (FLTK).
+// Fluid Project File Writer header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,25 +21,31 @@
 
 #include <stdio.h>
 
-class Fl_Type;
+class Node;
 
 namespace fld {
+
+class Project;
+
 namespace io {
 
-int write_file(const char *, int selected_only = 0, bool to_codeview = false);
+int write_file(Project &proj, const char *, int selected_only = 0, bool to_codeview = false);
 
 class Project_Writer
 {
 protected:
+  /// Link Project_Writer class to the project.
+  Project &proj_;
+
   // Project output file, always opened in "wb" mode
-  FILE *fout;
+  FILE *fout = nullptr;
   /// If set, one space is written before text unless the format starts with a newline character
-  int needspace;
+  int needspace = 0;
   /// Set if this file will be used in the codeview dialog
-  bool write_codeview_;
+  bool write_codeview_ = false;
 
 public:
-  Project_Writer();
+  Project_Writer(Project &proj);
   ~Project_Writer();
   int open_write(const char *s);
   int close_write();

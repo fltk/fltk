@@ -1,12 +1,7 @@
 //
-// Fluid file routines for the Fast Light Tool Kit (FLTK).
+// Fluid Project File Reader code for the Fast Light Tool Kit (FLTK).
 //
-// You may find the basic read_* and write_* routines to
-// be useful for other programs.  I have used them many times.
-// They are somewhat similar to tcl, using matching { and }
-// to quote strings.
-//
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,18 +14,23 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// You may find the basic read_* and write_* routines to
+// be useful for other programs.  I have used them many times.
+// They are somewhat similar to tcl, using matching { and }
+// to quote strings.
+
 #include "io/Project_Reader.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "app/shell_command.h"
-#include "app/undo.h"
-#include "app/Fd_Snap_Action.h"
+#include "proj/undo.h"
+#include "app/Snap_Action.h"
 #include "nodes/factory.h"
-#include "nodes/Fl_Function_Type.h"
-#include "nodes/Fl_Widget_Type.h"
-#include "nodes/Fl_Grid_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Function_Node.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Grid_Node.h"
+#include "nodes/Window_Node.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl_Window.H>
@@ -53,12 +53,12 @@ int fld::io::fdesign_flip = 0;
 
  \param[in] filename read this file
  \param[in] merge if this is set, merge the file into an existing project
-    at Fl_Type::current
+    at Fluid.proj.tree.current
  \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
-int fld::io::read_file(const char *filename, int merge, Strategy strategy) {
-  Project_Reader f;
+int fld::io::read_file(Project &proj, const char *filename, int merge, Strategy strategy) {
+  Project_Reader f(proj);
   strategy.source(Strategy::FROM_FILE);
   return f.read_project(filename, merge, strategy);
 }
@@ -97,13 +97,8 @@ void Project_Reader::expand_buffer(int length) {
 }
 
 /** \brief Construct local project reader. */
-Project_Reader::Project_Reader()
-: fin(NULL),
-  lineno(0),
-  fname(NULL),
-  buffer(NULL),
-  buflen(0),
-  read_version(0.0)
+Project_Reader::Project_Reader(Project &proj)
+: proj_(proj)
 {
 }
 
@@ -117,7 +112,7 @@ Project_Reader::~Project_Reader()
 
 /**
  Open an .fl file for reading.
- \param[in] s filename, if NULL, read from stdin instead
+ \param[in] s filename, if nullptr, read from stdin instead
  \return 0 if the operation failed, 1 if it succeeded
  */
 int Project_Reader::open_read(const char *s) {
@@ -142,7 +137,7 @@ int Project_Reader::open_read(const char *s) {
 int Project_Reader::close_read() {
   if (fin != stdin) {
     int x = fclose(fin);
-    fin = 0;
+    fin = nullptr;
     return x >= 0;
   }
   return 1;
@@ -200,17 +195,17 @@ int Project_Reader::read_quoted() {      // read whatever character is after a \
 
  If this is the first call, also read the global settings for this design.
 
- \param[in] p parent node or NULL
+ \param[in] p parent node or nullptr
  \param[in] merge if set, merge into existing design, else replace design
  \param[in] strategy add nodes after current or as last child
  \param[in] skip_options this is set if the options were already found in
  a previous call, and there is no need to waste time searching for them.
- \return the last type that was created
+ \return the last node that was created
  */
-Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy, char skip_options) {
-  Fl_Type::current = p;
-  Fl_Type *last_child_read = NULL;
-  Fl_Type *t = NULL;
+Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char skip_options) {
+  Fluid.proj.tree.current = p;
+  Node *last_child_read = nullptr;
+  Node *t = nullptr;
   for (;;) {
     const char *c = read_word();
   REUSE_C:
@@ -230,12 +225,12 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       // this is the first word in a .fd file:
       if (!strcmp(c,"Magic:")) {
         read_fdesign();
-        return NULL;
+        return nullptr;
       }
 
       if (!strcmp(c,"version")) {
         c = read_word();
-        read_version = strtod(c,0);
+        read_version = strtod(c,nullptr);
         if (read_version<=0 || read_version>double(FL_VERSION+0.00001))
           read_error("unknown version '%s'",c);
         continue;
@@ -243,77 +238,77 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 
       // back compatibility with Vincent Penne's original class code:
       if (!p && !strcmp(c,"define_in_struct")) {
-        Fl_Type *t = add_new_widget_from_file("class", Strategy::FROM_FILE_AS_LAST_CHILD);
+        Node *t = add_new_widget_from_file("class", Strategy::FROM_FILE_AS_LAST_CHILD);
         t->name(read_word());
-        Fl_Type::current = p = t;
+        Fluid.proj.tree.current = p = t;
         merge = 1; // stops "missing }" error
         continue;
       }
 
       if (!strcmp(c,"do_not_include_H_from_C")) {
-        g_project.include_H_from_C=0;
+        proj_.include_H_from_C=0;
         goto CONTINUE;
       }
       if (!strcmp(c,"use_FL_COMMAND")) {
-        g_project.use_FL_COMMAND=1;
+        proj_.use_FL_COMMAND=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"utf8_in_src")) {
-        g_project.utf8_in_src=1;
+        proj_.utf8_in_src=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"avoid_early_includes")) {
-        g_project.avoid_early_includes=1;
+        proj_.avoid_early_includes=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
-        g_project.i18n_type = static_cast<Fd_I18n_Type>(atoi(read_word()));
+        proj_.i18n_type = static_cast<fld::I18n_Type>(atoi(read_word()));
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_function")) {
-        g_project.i18n_gnu_function = read_word();
+        proj_.i18n_gnu_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_gnu_static_function")) {
-        g_project.i18n_gnu_static_function = read_word();
+        proj_.i18n_gnu_static_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_pos_file")) {
-        g_project.i18n_pos_file = read_word();
+        proj_.i18n_pos_file = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_pos_set")) {
-        g_project.i18n_pos_set = read_word();
+        proj_.i18n_pos_set = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        if (g_project.i18n_type == FD_I18N_GNU)
-          g_project.i18n_gnu_include = read_word();
-        else if (g_project.i18n_type == FD_I18N_POSIX)
-          g_project.i18n_pos_include = read_word();
+        if (proj_.i18n_type == fld::I18n_Type::GNU)
+          proj_.i18n_gnu_include = read_word();
+        else if (proj_.i18n_type == fld::I18n_Type::POSIX)
+          proj_.i18n_pos_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        if (g_project.i18n_type == FD_I18N_GNU)
-          g_project.i18n_gnu_conditional = read_word();
-        else if (g_project.i18n_type == FD_I18N_POSIX)
-          g_project.i18n_pos_conditional = read_word();
+        if (proj_.i18n_type == fld::I18n_Type::GNU)
+          proj_.i18n_gnu_conditional = read_word();
+        else if (proj_.i18n_type == fld::I18n_Type::POSIX)
+          proj_.i18n_pos_conditional = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"header_name")) {
-        if (!g_project.header_file_set) g_project.header_file_name = read_word();
+        if (!proj_.header_file_set) proj_.header_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
 
       if (!strcmp(c,"code_name")) {
-        if (!g_project.code_file_set) g_project.code_file_name = read_word();
+        if (!proj_.code_file_set) proj_.code_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
 
       if (!strcmp(c, "snap")) {
-        g_layout_list.read(this);
+        Fluid.layout_list.read(this);
         goto CONTINUE;
       }
 
@@ -333,7 +328,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       }
 
       if (!strcmp(c, "mergeback")) {
-        g_project.write_mergeback_data = read_int();
+        proj_.write_mergeback_data = read_int();
         goto CONTINUE;
       }
     }
@@ -350,7 +345,7 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 
     c = read_word(1);
     if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
-      ((Fl_Class_Type*)t)->prefix(t->name());
+      ((Class_Node*)t)->prefix(t->name());
       t->name(c);
       c = read_word(1);
     }
@@ -378,11 +373,11 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       // FIXME: this has no business in the file reader!
       // TODO: this is called whenever something is pasted from the top level into a grid
       //    It makes sense to make this more universal for other widget types too.
-      if (merge && t && t->parent && t->parent->is_a(ID_Grid)) {
-        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
-          ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+      if (merge && t && t->parent && t->parent->is_a(Type::Grid)) {
+        if (Window_Node::popupx != 0x7FFFFFFF) {
+          ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
-          ((Fl_Grid_Type*)t->parent)->insert_child_at_next_free_cell(((Fl_Widget_Type*)t)->o);
+          ((Grid_Node*)t->parent)->insert_child_at_next_free_cell(((Widget_Node*)t)->o);
         }
       }
 
@@ -393,9 +388,9 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
       strategy.placement(Strategy::AFTER_CURRENT);
     }
     if (strategy.placement() == Strategy::AFTER_CURRENT) {
-      Fl_Type::current = t;
+      Fluid.proj.tree.current = t;
     } else {
-      Fl_Type::current = p;
+      Fluid.proj.tree.current = p;
     }
 
   CONTINUE:;
@@ -410,46 +405,46 @@ Fl_Type *Project_Reader::read_children(Fl_Type *p, int merge, Strategy strategy,
 /** \brief Read a .fl project file.
  \param[in] filename read this file
  \param[in] merge if this is set, merge the file into an existing project
- at Fl_Type::current
+ at Fluid.proj.tree.current
  \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
 int Project_Reader::read_project(const char *filename, int merge, Strategy strategy) {
-  Fl_Type *o;
-  undo_suspend();
+  Node *o;
+  proj_.undo.suspend();
   read_version = 0.0;
   if (!open_read(filename)) {
-    undo_resume();
+    proj_.undo.resume();
     return 0;
   }
   if (merge)
     deselect();
   else
-    g_project.reset();
-  read_children(Fl_Type::current, merge, strategy);
+    proj_.reset();
+  read_children(Fluid.proj.tree.current, merge, strategy);
   // clear this
-  Fl_Type::current = 0;
+  Fluid.proj.tree.current = nullptr;
   // Force menu items to be rebuilt...
-  for (o = Fl_Type::first; o; o = o->next) {
-    if (o->is_a(ID_Menu_Manager_)) {
-      o->add_child(0,0);
+  for (o = Fluid.proj.tree.first; o; o = o->next) {
+    if (o->is_a(Type::Menu_Manager_)) {
+      o->add_child(nullptr,nullptr);
     }
   }
-  for (o = Fl_Type::first; o; o = o->next) {
+  for (o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->selected) {
-      Fl_Type::current = o;
+      Fluid.proj.tree.current = o;
       break;
     }
   }
-  selection_changed(Fl_Type::current);
+  selection_changed(Fluid.proj.tree.current);
   if (g_shell_config) {
     g_shell_config->rebuild_shell_menu();
     g_shell_config->update_settings_dialog();
   }
-  g_layout_list.update_dialogs();
-  g_project.update_settings_dialog();
+  Fluid.layout_list.update_dialogs();
+  proj_.update_settings_dialog();
   int ret = close_read();
-  undo_resume();
+  proj_.undo.resume();
   return ret;
 }
 
@@ -457,8 +452,8 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
  Display an error while reading the file.
  If the .fl file isn't opened for reading, pop up an FLTK dialog, otherwise
  print to stdout.
- \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c batch_mode?
- \todo Not happy about this function. Output channel should depend on `batch_mode`
+ \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c Fluid.batch_mode?
+ \todo Not happy about this function. Output channel should depend on `Fluid.batch_mode`
        as the note above already states. I want to make all file readers and writers
        depend on an error handling base class that outputs a useful analysis of file
        operations.
@@ -480,7 +475,7 @@ void Project_Reader::read_error(const char *format, ...) {
 }
 
 /**
- Return a word read from the .fl file, or NULL at the EOF.
+ Return a word read from the .fl file, or nullptr at the EOF.
 
  This will skip all comments (# to end of line), and evaluate
  all \\xxx sequences and use \\ at the end of line to remove the newline.
@@ -504,7 +499,7 @@ const char *Project_Reader::read_word(int wantbrace) {
   for (;;) {
     x = nextchar();
     if (x < 0 && feof(fin)) {   // eof
-      return 0;
+      return nullptr;
     } else if (x == '#') {      // comment
       do x = nextchar(); while (x >= 0 && x != '\n');
       lineno++;
@@ -650,7 +645,7 @@ static const char *class_matcher[] = {
   "2", "FL_BOX", // was FL_TEXT
   "62","FL_TIMER",
   "24","Fl_Value_Slider",
-  0};
+  nullptr};
 
 
 /**
@@ -712,13 +707,13 @@ static void forms_end(Fl_Group *g, int flip) {
 void Project_Reader::read_fdesign() {
   int fdesign_magic = atoi(read_word());
   fdesign_flip = (fdesign_magic < 13000);
-  Fl_Widget_Type *window = 0;
-  Fl_Widget_Type *group = 0;
-  Fl_Widget_Type *widget = 0;
-  if (!Fl_Type::current) {
-    Fl_Type *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
+  Widget_Node *window = nullptr;
+  Widget_Node *group = nullptr;
+  Widget_Node *widget = nullptr;
+  if (!Fluid.proj.tree.current) {
+    Node *t = add_new_widget_from_file("Function", Strategy::FROM_FILE_AS_LAST_CHILD);
     t->name("create_the_forms()");
-    Fl_Type::current = t;
+    Fluid.proj.tree.current = t;
   }
   for (;;) {
     const char *name;
@@ -727,33 +722,33 @@ void Project_Reader::read_fdesign() {
 
     if (!strcmp(name,"Name")) {
 
-      window = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Window", Strategy::FROM_FILE_AS_LAST_CHILD);
+      window = (Widget_Node*)add_new_widget_from_file("Fl_Window", Strategy::FROM_FILE_AS_LAST_CHILD);
       window->name(value);
       window->label(value);
-      Fl_Type::current = widget = window;
+      Fluid.proj.tree.current = widget = window;
 
     } else if (!strcmp(name,"class")) {
 
       if (!strcmp(value,"FL_BEGIN_GROUP")) {
-        group = widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Group", Strategy::FROM_FILE_AS_LAST_CHILD);
-        Fl_Type::current = group;
+        group = widget = (Widget_Node*)add_new_widget_from_file("Fl_Group", Strategy::FROM_FILE_AS_LAST_CHILD);
+        Fluid.proj.tree.current = group;
       } else if (!strcmp(value,"FL_END_GROUP")) {
         if (group) {
           Fl_Group* g = (Fl_Group*)(group->o);
           g->begin();
           forms_end(g, fdesign_flip);
-          Fl_Group::current(0);
+          Fl_Group::current(nullptr);
         }
-        group = widget = 0;
-        Fl_Type::current = window;
+        group = widget = nullptr;
+        Fluid.proj.tree.current = window;
       } else {
         for (int i = 0; class_matcher[i]; i += 2)
           if (!strcmp(value,class_matcher[i])) {
             value = class_matcher[i+1]; break;}
-        widget = (Fl_Widget_Type*)add_new_widget_from_file(value, Strategy::FROM_FILE_AS_LAST_CHILD);
+        widget = (Widget_Node*)add_new_widget_from_file(value, Strategy::FROM_FILE_AS_LAST_CHILD);
         if (!widget) {
           printf("class %s not found, using Fl_Button\n", value);
-          widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Button", Strategy::FROM_FILE_AS_LAST_CHILD);
+          widget = (Widget_Node*)add_new_widget_from_file("Fl_Button", Strategy::FROM_FILE_AS_LAST_CHILD);
         }
       }
 

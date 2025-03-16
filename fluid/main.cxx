@@ -15,9 +15,9 @@
 //
 
 #include "main.h"
-#include "app/fluid.h"
+#include "Fluid.h"
 
 int main(int argc,char **argv) {
-  return fluid_main(argc, argv);
+  return Fluid.run(argc, argv);
 }
 

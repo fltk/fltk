@@ -1,5 +1,5 @@
 //
-// Widget type code for the Fast Light Tool Kit (FLTK).
+// Formula Int Input widget code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -209,7 +209,7 @@ int Formula_Input::handle(int event) {
 }
 
 /** Set the list of the available variables
- \param vars array of variables, last entry `has name_` set to `NULL`
+ \param vars array of variables, last entry `has name_` set to `nullptr`
  \param user_data is forwarded to the Variable callback */
 void Formula_Input::variables(Formula_Input_Vars *vars, void *user_data) {
   vars_ = vars;

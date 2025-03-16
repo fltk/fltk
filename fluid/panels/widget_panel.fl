@@ -25,26 +25,76 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include "app/undo.h"} {private global
+decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {public global
 }
 
-decl {\#include "nodes/Fl_Widget_Type.h"} {private global
+decl {\#include "panels/widget_panel/Grid_Tab.h"} {public global
 }
 
-decl {\#include "nodes/Fl_Grid_Type.h"} {private global
+decl {\#include "widgets/Formula_Input.h"} {public global
 }
 
-decl {\#include "widgets/Formula_Input.h"} {selected public global
+decl {class Fl_Flex;} {public global
+}
+
+decl {\#include "Fluid.h"} {private global
+}
+
+decl {\#include "app/Snap_Action.h"} {private global
+}
+
+decl {\#include "app/Image_Asset.h"} {private global
+}
+
+decl {\#include "proj/undo.h"} {private global
+}
+
+decl {\#include "nodes/Window_Node.h"} {private global
+}
+
+decl {\#include "nodes/Grid_Node.h"} {private global
+}
+
+decl {\#include <FL/Fl_Spinner.H>} {private global
 }
 
 decl {\#include <FL/Fl_Grid.H>} {private global
 }
 
-decl {extern void set_modflag(int mf, int mfc=-1);} {private local
+decl {\#include <FL/Fl_Flex.H>} {private global
+}
+
+decl {\#include <FL/fl_ask.H>} {private global
+}
+
+decl {\#include <FL/Fl_Menu_Item.H>} {private global
+}
+
+decl {\#define ZERO_ENTRY 1000} {private global
+}
+
+decl {extern const char* when_symbol_name(int n);
+extern void set_whenmenu(int n);
+extern void redraw_browser();
+const char *c_check(const char *c, int type=0);
+extern Fl_Color fl_show_colormap(Fl_Color oldcol);
+extern void labelcolor_common(Fl_Color c);
+extern void color_common(Fl_Color c);
+extern void color2_common(Fl_Color c);
+extern void textcolor_common(Fl_Color c);
+extern int widget_i;
+extern fld::widget::Formula_Input_Vars widget_vars[];} {private global
+}
+
+decl {extern int numselected;
+extern Fl_Menu_Item boxmenu[];} {private global
+}
+
+decl {extern int haderror;} {private global
 }
 
 Function {make_image_panel()} {
-  comment {Create a panel for editing widget image data} open
+  comment {Create a panel for editing widget image data}
 } {
   Fl_Window image_panel_window {
     label {Image Options}
@@ -87,14 +137,14 @@ Function {make_image_panel()} {
         Fl_Input image_panel_imagew {
           label {Width:}
           callback {if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->value(current_widget->scale_image_w_);
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_image_w_ = o->value();
         Fl_Image *img = wt->o->image();
         if (img) {
@@ -109,7 +159,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this width in pixel units} xywh {75 75 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -117,14 +167,14 @@ Function {make_image_panel()} {
         Fl_Input image_panel_imageh {
           label {Height:}
           callback {if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->value(current_widget->scale_image_h_);
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_image_h_ = o->value();
         Fl_Image *img = wt->o->image();
         if (img) {
@@ -139,7 +189,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this height in pixel units} xywh {135 75 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -165,12 +215,40 @@ Function {make_image_panel()} {
       }
       Fl_Check_Button {} {
         label {convert to raw pixel data}
-        callback compress_image_cb
+        callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    o->activate();
+    o->value(!current_widget->compress_image_);
+  } else {
+    o->deactivate();
+  }
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->compress_image_ = !o->value();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
         tooltip {if unchecked, keep the image in its original format and store the data as is; if checked, convert the image and store it as uncompressed RGB or grayscale pixel data} xywh {75 100 170 20} down_box DOWN_BOX labelsize 11
       }
       Fl_Check_Button {} {
         label {bind to widget}
-        callback bind_image_cb
+        callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    o->activate();
+    o->value(current_widget->bind_image_);
+  } else {
+    o->deactivate();
+  }
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->bind_image_ = o->value();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
         tooltip {bind the image to the widget, so it will be deleted automatically} xywh {75 120 170 20} down_box DOWN_BOX labelsize 11 hotspot
       }
     }
@@ -209,14 +287,14 @@ Function {make_image_panel()} {
         Fl_Input image_panel_deimagew {
           label {Width:}
           callback {if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->value(current_widget->scale_deimage_w_);
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_deimage_w_ = o->value();
         Fl_Image *img = wt->o->deimage();
         if (img) {
@@ -231,7 +309,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this width in pixel units} xywh {75 215 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -239,14 +317,14 @@ Function {make_image_panel()} {
         Fl_Input image_panel_deimageh {
           label {Height:}
           callback {if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->value(current_widget->scale_deimage_h_);
     }
   } else {
     int mod = 0;
-    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+    for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
       if (t->selected && t->is_widget()) {
-        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        Widget_Node* wt = ((Widget_Node*)t);
         wt->scale_deimage_h_ = o->value();
         Fl_Image *img = wt->o->deimage();
         if (img) {
@@ -261,7 +339,7 @@ Function {make_image_panel()} {
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this height in pixel units} xywh {135 215 55 20} labelsize 11 align 5 textsize 11
           class {fld::widget::Formula_Input}
@@ -287,12 +365,40 @@ Function {make_image_panel()} {
       }
       Fl_Check_Button {} {
         label {convert to raw pixel data}
-        callback compress_deimage_cb
+        callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    o->activate();
+    o->value(!current_widget->compress_deimage_);
+  } else {
+    o->deactivate();
+  }
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->compress_deimage_ = !o->value();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
         tooltip {if unchecked, keep the image in its original format and store the data as is; if checked, convert the image and store it as uncompressed RGB or grayscale pixel data} xywh {75 240 170 20} down_box DOWN_BOX labelsize 11
       }
       Fl_Check_Button {} {
         label {bind to widget}
-        callback bind_deimage_cb
+        callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    o->activate();
+    o->value(current_widget->bind_deimage_);
+  } else {
+    o->deactivate();
+  }
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->bind_deimage_ = o->value();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
         tooltip {bind the image to the widget, so it will be deleted automatically} xywh {75 260 170 20} down_box DOWN_BOX labelsize 11
       }
     }
@@ -305,7 +411,7 @@ Function {make_image_panel()} {
   }
 }
 
-Function {run_image_panel()} {open return_type void
+Function {run_image_panel()} {return_type void
 } {
   code {if (!image_panel_window)
   make_image_panel();
@@ -324,7 +430,30 @@ if (g)
 Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
 if (img) {
   img->release();
-  image_panel_data->user_data(NULL);
+  image_panel_data->user_data(nullptr);
+}} {}
+}
+
+Function {flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int))} {return_type void
+} {
+  code {if (v == LOAD) {
+  if (current_widget->is_a(Type::Flex)) {
+    load_margin((Fl_Flex*)current_widget->o, i);
+  }
+} else {
+  int mod = 0;
+  int new_value = (int)i->value();
+  for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+    if (o->selected && o->is_a(Type::Flex)) {
+      Flex_Node* q = (Flex_Node*)o;
+      Fl_Flex* w = (Fl_Flex*)q->o;
+      if (update_margin(w, new_value)) {
+        w->layout();
+        mod = 1;
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
 }} {}
 }
 
@@ -343,7 +472,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group wp_gui_tab {
         label GUI
-        callback propagate_load open
+        callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -369,12 +498,40 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_image_input {
-            callback image_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    o->activate();
+    o->value(((Widget_Node*)current_widget)->image_name());
+  } else o->deactivate();
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->image_name(o->value());
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The active image for the widget.} xywh {95 65 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
-            callback image_browse_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window))
+    o->activate();
+  else
+    o->deactivate();
+} else {
+  int mod = 0;
+  Image_Asset *image_asset = ui_find_image(widget_image_input->value());
+  if (image_asset) {
+    widget_image_input->value(image_asset->filename());
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->image_name(image_asset->filename());
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}}
             tooltip {Click to choose the active image.} xywh {295 65 89 20} labelsize 11 align 256
           }
           Fl_Button {} {
@@ -391,12 +548,40 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_deimage_input {
-            callback inactive_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    o->activate();
+    o->value(((Widget_Node*)current_widget)->inactive_name());
+  } else o->deactivate();
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->inactive_name(o->value());
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The inactive image for the widget.} xywh {95 90 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
-            callback inactive_browse_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_widget() && !current_widget->is_a(Type::Window))
+    o->activate();
+  else
+    o->deactivate();
+} else {
+  int mod = 0;
+  Image_Asset *image_asset = ui_find_image(widget_deimage_input->value());
+  if (image_asset) {
+    widget_deimage_input->value(image_asset->filename());
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      q->inactive_name(image_asset->filename());
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+}}
             tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
           }
         }
@@ -568,12 +753,38 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
         }
         Fl_Group {} {
           label {Position:}
-          callback position_group_cb open
+          callback position_group_cb
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_x_input {
             label {X:}
-            callback x_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_true_widget()) {
+    o->value(((Widget_Node *)current_widget)->o->x());
+    o->activate();
+  } else o->deactivate();
+} else {
+  Fluid.proj.undo.checkpoint();
+  widget_i = 0;
+  int mod = 0;
+  int v = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      Fl_Widget *w = q->o;
+      o->variables(widget_vars, q);
+      v = o->value();
+      w->resize(v, w->y(), w->w(), w->h());
+      if (w->window()) w->window()->redraw();
+      widget_i++;
+      mod = 1;
+    }
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    o->value(v);    // change the displayed value to the result of the last
+                    // calculation. Keep the formula if it was not used.
+  }
+}}
             tooltip {The X position of the widget as a number or formula.
 Formulas can be simple math, including the variables
 x, px, sx, cx, and i} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
@@ -581,7 +792,32 @@ x, px, sx, cx, and i} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Input widget_y_input {
             label {Y:}
-            callback y_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_true_widget()) {
+    o->value(((Widget_Node *)current_widget)->o->y());
+    o->activate();
+  } else o->deactivate();
+} else {
+  Fluid.proj.undo.checkpoint();
+  widget_i = 0;
+  int mod = 0;
+  int v = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      Fl_Widget *w = q->o;
+      o->variables(widget_vars, q);
+      v = o->value();
+      w->resize(w->x(), v, w->w(), w->h());
+      if (w->window()) w->window()->redraw();
+      widget_i++;
+      mod = 1;
+    }
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    o->value(v);
+  }
+}}
             tooltip {The Y position of the widget as a number or formula.
 Formulas can be simple math, including the variables
 y, py, sy, cy, and i} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
@@ -589,7 +825,32 @@ y, py, sy, cy, and i} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Input widget_w_input {
             label {Width:}
-            callback w_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_true_widget()) {
+    o->value(((Widget_Node *)current_widget)->o->w());
+    o->activate();
+  } else o->deactivate();
+} else {
+  Fluid.proj.undo.checkpoint();
+  widget_i = 0;
+  int mod = 0;
+  int v = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      Fl_Widget *w = q->o;
+      o->variables(widget_vars, q);
+      v = o->value();
+      w->resize(w->x(), w->y(), v, w->h());
+      if (w->window()) w->window()->redraw();
+      widget_i++;
+      mod = 1;
+    }
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    o->value(v);
+  }
+}}
             tooltip {The width of the widget as a number or formula.
 Formulas can be simple math, including the variables
 w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
@@ -597,7 +858,32 @@ w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Input widget_h_input {
             label {Height:}
-            callback h_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_true_widget()) {
+    o->value(((Widget_Node *)current_widget)->o->h());
+    o->activate();
+  } else o->deactivate();
+} else {
+  Fluid.proj.undo.checkpoint();
+  widget_i = 0;
+  int mod = 0;
+  int v = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      Fl_Widget *w = q->o;
+      o->variables(widget_vars, q);
+      v = o->value();
+      w->resize(w->x(), w->y(), w->w(), v);
+      if (w->window()) w->window()->redraw();
+      widget_i++;
+      mod = 1;
+    }
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    o->value(v);
+  }
+}}
             tooltip {The height of the widget as a number or formula.
 Formulas can be simple math, including the variables
 h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
@@ -605,7 +891,25 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Choice {} {
             label {Children:}
-            callback wc_relative_cb open
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Widget_Class)) {
+    o->show();
+    o->value(((Widget_Class_Node *)current_widget)->wc_relative);
+  } else {
+    o->hide();
+  }
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Widget_Class)) {
+      Widget_Class_Node *t = (Widget_Class_Node *)q;
+      t->wc_relative = o->value();
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {When instantiating a widget class, the children can either be fixed in their original position, automatically be repositioned, or both repsositioned and resized to fit the container.} xywh {335 150 64 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
             MenuItem {} {
@@ -627,18 +931,84 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group wp_gui_flexp {
           label {Flex Parent:}
-          callback flex_size_group_cb
+          callback {if (v == LOAD) {
+  if (Flex_Node::parent_is_flex(current_widget)) {
+    o->show();
+    propagate_load(o, v);
+  } else {
+    o->hide();
+  }
+}}
           comment {This group is only visible if the parent is an Fl_Flex widget}
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input widget_flex_size {
             label {Size:}
-            callback flex_size_cb
+            callback {if (v == LOAD) {
+  if (Flex_Node::parent_is_flex(current_widget)) {
+    o->value(Flex_Node::size(current_widget));
+  }
+} else {
+  int mod = 0;
+  int new_size = (int)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (Flex_Node::parent_is_flex(q)) {
+      Fl_Widget* w = (Fl_Widget*)q->o;
+      Fl_Flex* f = (Fl_Flex*)((Flex_Node*)q->parent)->o;
+      int was_fixed = f->fixed(w);
+      if (new_size==0) {
+        if (was_fixed) {
+          f->fixed(w, 0);
+          f->layout();
+          widget_flex_fixed->value(0);
+          mod = 1;
+        }
+      } else {
+        int old_size = Flex_Node::size(q);
+        if (old_size!=new_size || !was_fixed) {
+          f->fixed(w, new_size);
+          f->layout();
+          widget_flex_fixed->value(1);
+          mod = 1;
+        }
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Check_Button widget_flex_fixed {
             label fixed
-            callback flex_fixed_cb
+            callback {if (v == LOAD) {
+  if (Flex_Node::parent_is_flex(current_widget)) {
+    o->value(Flex_Node::is_fixed(current_widget));
+  }
+} else {
+  int mod = 0;
+  int new_fixed = (int)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (Flex_Node::parent_is_flex(q)) {
+      Fl_Widget* w = q->o;
+      Fl_Flex* f = (Fl_Flex*)((Flex_Node*)q->parent)->o;
+      int was_fixed = f->fixed(w);
+      if (new_fixed==0) {
+        if (was_fixed) {
+          f->fixed(w, 0);
+          f->layout();
+          mod = 1;
+        }
+      } else {
+        if (!was_fixed) {
+          f->fixed(w, Flex_Node::size(q));
+          f->layout();
+          mod = 1;
+        }
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {If checked, the size of the widget stays fixed.} xywh {155 150 55 20} down_box DOWN_BOX labelsize 11
           }
           Fl_Box {} {
@@ -647,32 +1017,169 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group wp_gui_values {
           label {Values:}
-          callback values_group_cb open
+          callback {if (v == LOAD) {
+  if (   current_widget->is_a(Type::Flex)
+      || current_widget->is_a(Type::Grid)
+      || current_widget->is_a(Type::Window))
+  {
+    o->hide();
+  } else {
+    o->show();
+    propagate_load(o, v);
+  }
+}} open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Value_Input {} {
             label {Size:}
-            callback slider_size_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Slider)) {o->deactivate(); return;}
+  o->activate();
+  o->value(((Fl_Slider*)(current_widget->o))->slider_size());
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  double n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Slider)) {
+      ((Fl_Slider*)(q->o))->slider_size(n);
+      q->o->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Minimum:}
-            callback min_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Valuator_)) {
+    o->activate();
+    o->value(((Fl_Valuator*)(current_widget->o))->minimum());
+  } else if (current_widget->is_a(Type::Spinner)) {
+    o->activate();
+    o->value(((Fl_Spinner*)(current_widget->o))->minimum());
+  } else {
+    o->deactivate();
+    return;
+  }
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  double n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Valuator_)) {
+      ((Fl_Valuator*)(q->o))->minimum(n);
+      q->o->redraw();
+      mod = 1;
+    } else if (q->is_a(Type::Spinner)) {
+      ((Fl_Spinner*)(q->o))->minimum(n);
+      q->o->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The minimum value of the widget.} xywh {155 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Maximum:}
-            callback max_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Valuator_)) {
+    o->activate();
+    o->value(((Fl_Valuator*)(current_widget->o))->maximum());
+  } else if (current_widget->is_a(Type::Spinner)) {
+    o->activate();
+    o->value(((Fl_Spinner*)(current_widget->o))->maximum());
+  } else {
+    o->deactivate();
+    return;
+  }
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  double n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Valuator_)) {
+      ((Fl_Valuator*)(q->o))->maximum(n);
+      q->o->redraw();
+      mod = 1;
+    } else if (q->is_a(Type::Spinner)) {
+      ((Fl_Spinner*)(q->o))->maximum(n);
+      q->o->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The maximum value of the widget.} xywh {215 185 55 20} labelsize 11 align 5 value 1 textsize 11
           }
           Fl_Value_Input {} {
             label {Step:}
-            callback step_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Valuator_)) {
+    o->activate();
+    o->value(((Fl_Valuator*)(current_widget->o))->step());
+  } else if (current_widget->is_a(Type::Spinner)) {
+    o->activate();
+    o->value(((Fl_Spinner*)(current_widget->o))->step());
+  } else {
+    o->deactivate();
+    return;
+  }
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  double n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Valuator_)) {
+      ((Fl_Valuator*)(q->o))->step(n);
+      q->o->redraw();
+      mod = 1;
+    } else if (q->is_a(Type::Spinner)) {
+      ((Fl_Spinner*)(q->o))->step(n);
+      q->o->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The resolution of the widget value.} xywh {275 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Value:}
-            callback value_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Valuator_)) {
+    o->activate();
+    o->value(((Fl_Valuator*)(current_widget->o))->value());
+  } else if (current_widget->is_button()) {
+    o->activate();
+    o->value(((Fl_Button*)(current_widget->o))->value());
+  } else if (current_widget->is_a(Type::Spinner)) {
+    o->activate();
+    o->value(((Fl_Spinner*)(current_widget->o))->value());
+  } else
+    o->deactivate();
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  double n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Valuator_)) {
+      ((Fl_Valuator*)(q->o))->value(n);
+      mod = 1;
+    } else if (q->is_button()) {
+      ((Fl_Button*)(q->o))->value(n != 0);
+      if (q->is_a(Type::Menu_Item)) q->redraw();
+      mod = 1;
+    } else if (q->is_a(Type::Spinner)) {
+      ((Fl_Spinner*)(q->o))->value(n);
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The current widget value.} xywh {335 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Box {} {
@@ -681,33 +1188,128 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group wp_gui_margins {
           label {Margins:}
-          callback flex_margin_group_cb
+          callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Flex)) {
+    o->show();
+    propagate_load(o, v);
+  } else {
+    o->hide();
+  }
+}}
           comment {This group is only visible for Fl_Flex widgets}
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input {} {
             label {Left:}
-            callback flex_margin_left_cb
+            callback {flex_margin_cb(o, v, 
+  [](Fl_Flex *w, Fl_Value_Input* i) -> void
+  {
+    int v;
+    w->margin(&v, nullptr, nullptr, nullptr);
+    i->value((double)v);
+  }, 
+  [](Fl_Flex *w, int new_value) -> int
+  {
+    int l, t, r, b;
+    w->margin(&l, &t, &r, &b);
+    if (new_value!=l) {
+      w->margin(new_value, t, r, b);
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+);}
             tooltip {Left margin in group.} xywh {95 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Top:}
-            callback flex_margin_top_cb
+            callback {flex_margin_cb(o, v,
+  [](Fl_Flex *w, Fl_Value_Input* i) -> void
+  {
+    int v;
+    w->margin(nullptr, &v, nullptr, nullptr);
+    i->value((double)v);
+  },
+  [](Fl_Flex *w, int new_value)
+  {
+    int l, t, r, b;
+    w->margin(&l, &t, &r, &b);
+    if (new_value!=t) {
+      w->margin(l, new_value, r, b);
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+);}
             tooltip {Top margin in group.} xywh {155 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Right:}
-            callback flex_margin_right_cb
+            callback {flex_margin_cb(o, v, 
+  [](Fl_Flex *w, Fl_Value_Input* i) -> void
+  {
+    int v;
+    w->margin(nullptr, nullptr, &v, nullptr);
+    i->value((double)v);
+  },
+  [](Fl_Flex *w, int new_value) -> int
+  {
+    int l, t, r, b;
+    w->margin(&l, &t, &r, &b);
+    if (new_value!=r) {
+      w->margin(l, t, new_value, b);
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+);}
             tooltip {Right margin in group.} xywh {215 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Bottom:}
-            callback flex_margin_bottom_cb
+            callback {flex_margin_cb(o, v, 
+  [](Fl_Flex *w, Fl_Value_Input* i) -> void
+  {
+    int v;
+    w->margin(nullptr, nullptr, nullptr, &v);
+    i->value((double)v);
+  },
+  [](Fl_Flex *w, int new_value) -> int
+  {
+    int l, t, r, b;
+    w->margin(&l, &t, &r, &b);
+    if (new_value!=b) {
+      w->margin(l, t, r, new_value);
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+);}
             tooltip {Bottom margin in group.} xywh {275 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Gap:}
-            callback flex_margin_gap_cb
+            callback {flex_margin_cb(o, v, 
+  [](Fl_Flex *w, Fl_Value_Input* o) -> void
+  {
+    int v = w->gap();
+    o->value((double)v);
+  }, 
+  [](Fl_Flex *w, int new_value) -> int
+  {
+    int g = w->gap();
+    if (new_value!=g) {
+      w->gap(new_value);
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+);}
             tooltip {Gap between children.} xywh {335 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Box {} {
@@ -716,35 +1318,126 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group wp_gui_sizerange {
           label {Size Range:}
-          callback size_range_group_cb open
+          callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Window)) {
+    o->show();
+    propagate_load(o, v);
+  } else {
+    o->hide();
+  }
+}}
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input {} {
             label {Minimum Size:}
-            callback min_w_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) return;
+  o->value(((Window_Node*)current_widget)->sr_min_w);
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  int n = (int)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      ((Window_Node*)q)->sr_min_w = n;
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Value_Input {} {
-            callback min_h_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) return;
+  o->value(((Window_Node*)current_widget)->sr_min_h);
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  int n = (int)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      ((Window_Node*)q)->sr_min_h = n;
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The minimum value of the widget.} xywh {155 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Button {} {
             label set
-            callback set_min_size_cb
+            callback {if (v == LOAD) {
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      Window_Node *win = (Window_Node*)q;
+      win->sr_min_w = win->o->w();
+      win->sr_min_h = win->o->h();
+      mod = 1;
+    }
+  }
+  propagate_load(the_panel, LOAD);
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             xywh {215 185 25 20} labelsize 11
           }
           Fl_Value_Input {} {
             label {Maximum Size:}
-            callback max_w_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) return;
+  o->value(((Window_Node*)current_widget)->sr_max_w);
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  int n = (int)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      ((Window_Node*)q)->sr_max_w = n;
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The maximum value of the widget.} xywh {245 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Value_Input {} {
-            callback max_h_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) return;
+  o->value(((Window_Node*)current_widget)->sr_max_h);
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  int n = (int)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      ((Window_Node*)q)->sr_max_h = n;
+      mod = 1;
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The resolution of the widget value.} xywh {305 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Button {} {
             label set
-            callback set_max_size_cb
+            callback {if (v == LOAD) {
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      Window_Node *win = (Window_Node*)q;
+      win->sr_max_w = win->o->w();
+      win->sr_max_h = win->o->h();
+      mod = 1;
+    }
+  }
+  propagate_load(the_panel, LOAD);
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             xywh {365 185 25 20} labelsize 11
           }
           Fl_Box {} {
@@ -753,11 +1446,51 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         }
         Fl_Group {} {
           label {Shortcut:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 210 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Button wp_gui_shortcut {
-            callback shortcut_in_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_button())
+    o->value( ((Fl_Button*)(current_widget->o))->shortcut() );
+  else if (current_widget->is_a(Type::Input))
+    o->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
+  else if (current_widget->is_a(Type::Value_Input))
+    o->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
+  else if (current_widget->is_a(Type::Text_Display))
+    o->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
+  else {
+    o->hide();
+    o->parent()->hide();
+    return;
+  }
+  //i->default_value( i->value() ); // enable the "undo" capability of the shortcut button
+  o->show();
+  o->parent()->show();
+  o->redraw();
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets())
+    if (q->is_button()) {
+      Fl_Button* b = (Fl_Button*)(q->o);
+      if (b->shortcut() != (int)o->value()) mod = 1;
+      b->shortcut(o->value());
+      if (q->is_a(Type::Menu_Item)) q->redraw();
+    } else if (q->is_a(Type::Input)) {
+      Fl_Input_* b = (Fl_Input_*)(q->o);
+      if (b->shortcut() != (int)o->value()) mod = 1;
+      b->shortcut(o->value());
+    } else if (q->is_a(Type::Value_Input)) {
+      Fl_Value_Input* b = (Fl_Value_Input*)(q->o);
+      if (b->shortcut() != (int)o->value()) mod = 1;
+      b->shortcut(o->value());
+    } else if (q->is_a(Type::Text_Display)) {
+      Fl_Text_Display* b = (Fl_Text_Display*)(q->o);
+      if (b->shortcut() != (int)o->value()) mod = 1;
+      b->shortcut(o->value());
+    }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             comment {This is a special button that grabs keystrokes directly}
             tooltip {The shortcut key for the widget.
 Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 12 labelsize 11 when 1
@@ -772,22 +1505,67 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
         } {
           Fl_Input {} {
             label {:}
-            callback xclass_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Window)) {
+    o->show();
+    o->parent()->show();
+    o->value(((Window_Node *)current_widget)->xclass);
+  } else {
+    o->hide();
+    o->parent()->hide(); // hides the "X Class:" label as well
+  }
+} else {
+  int mod = 0;
+  Fluid.proj.undo.checkpoint();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Window)) {
+      mod = 1;
+      Window_Node *wt = (Window_Node *)q;
+      storestring(o->value(), wt->xclass);
+      ((Fl_Window*)(wt->o))->xclass(wt->xclass);
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The X resource class.} xywh {95 235 95 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Light_Button {} {
             label Border
-            callback border_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
+  o->show();
+  o->value(((Fl_Window*)(current_widget->o))->border());
+} else {
+  Fluid.proj.undo.checkpoint();
+  ((Fl_Window*)(current_widget->o))->border(o->value());
+  Fluid.proj.set_modflag(1);
+}}
             tooltip {Add a border around the window.} xywh {195 235 60 20} selection_color 1 labelsize 11
           }
           Fl_Light_Button {} {
             label Modal
-            callback modal_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
+  o->show();
+  o->value(((Window_Node *)current_widget)->modal);
+} else {
+  Fluid.proj.undo.checkpoint();
+  ((Window_Node *)current_widget)->modal = o->value();
+  Fluid.proj.set_modflag(1);
+}}
             tooltip {Make the window modal.} xywh {260 235 55 20} selection_color 1 labelsize 11
           }
           Fl_Light_Button {} {
             label Nonmodal
-            callback non_modal_cb
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
+  o->show();
+  o->value(((Window_Node *)current_widget)->non_modal);
+} else {
+  Fluid.proj.undo.checkpoint();
+  ((Window_Node *)current_widget)->non_modal = o->value();
+  Fluid.proj.set_modflag(1);
+}}
             tooltip {Make the window non-modal.} xywh {320 235 75 20} selection_color 1 labelsize 11 align 148
           }
         }
@@ -798,22 +1576,96 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
         } {
           Fl_Light_Button {} {
             label Visible
-            callback visible_cb
+            callback {if (v == LOAD) {
+  o->value(current_widget->o->visible());
+  if (current_widget->is_a(Type::Window)) o->deactivate();
+  else o->activate();
+} else {
+  int mod = 0;
+  int n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (!mod) {
+      mod = 1;
+      Fluid.proj.undo.checkpoint();
+    }
+    n ? q->o->show() : q->o->hide();
+    q->redraw();
+    if (n && q->parent && q->parent->type_name()) {
+      if (q->parent->is_a(Type::Tabs)) {
+        ((Fl_Tabs *)q->o->parent())->value(q->o);
+      } else if (q->parent->is_a(Type::Wizard)) {
+        ((Fl_Wizard *)q->o->parent())->value(q->o);
+      }
+    }
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
             tooltip {Show the widget.} xywh {95 260 60 20} selection_color 1 labelsize 11
           }
           Fl_Light_Button {} {
             label Active
-            callback active_cb
+            callback {if (v == LOAD) {
+  o->value(current_widget->o->active());
+  if (current_widget->is_a(Type::Window)) o->deactivate();
+  else o->activate();
+} else {
+  int mod = 0;
+  int n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (!mod) {
+      mod = 1;
+      Fluid.proj.undo.checkpoint();
+    }
+    n ? q->o->activate() : q->o->deactivate();
+    q->redraw();
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {Activate the widget.} xywh {160 260 60 20} selection_color 1 labelsize 11
           }
           Fl_Light_Button {} {
             label Resizable
-            callback resizable_cb
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;}
+  if (numselected > 1) {o->deactivate(); return;}
+  o->activate();
+  o->value(current_widget->resizable());
+} else {
+  Fluid.proj.undo.checkpoint();
+  current_widget->resizable(o->value());
+  Fluid.proj.set_modflag(1);
+}}
             tooltip {Make the widget resizable.} xywh {225 260 75 20} selection_color 1 labelsize 11 when 1
           }
           Fl_Light_Button {} {
             label Hotspot
-            callback hotspot_cb
+            callback {if (v == LOAD) {
+  if (numselected > 1) {o->deactivate(); return;}
+  if (current_widget->is_a(Type::Menu_Item)) o->label("divider");
+  else o->label("hotspot");
+  o->activate();
+  o->value(current_widget->hotspot());
+} else {
+  Fluid.proj.undo.checkpoint();
+  current_widget->hotspot(o->value());
+  if (current_widget->is_a(Type::Menu_Item)) {
+    current_widget->redraw();
+    return;
+  }
+  if (o->value()) {
+    Node *p = current_widget->parent;
+    if (!p || !p->is_widget()) return;
+    while (!p->is_a(Type::Window)) p = p->parent;
+    for (Node *q = p->next; q && q->level > p->level; q = q->next) {
+      if (q->is_widget() && q != current_widget)
+        ((Widget_Node*)q)->hotspot(0);
+    }
+  }
+  Fluid.proj.set_modflag(1);
+}}
             tooltip {Center the window under this widget.} xywh {305 260 70 20} selection_color 1 labelsize 11 when 1
           }
           Fl_Box {} {
@@ -822,7 +1674,21 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
         }
         Fl_Input wp_gui_tooltip {
           label {Tooltip:}
-          callback tooltip_cb
+          callback {if (v == LOAD) {
+  if (current_widget->is_widget()) {
+    o->activate();
+    o->value(((Widget_Node*)current_widget)->tooltip());
+  } else {
+    o->deactivate();
+  }
+} else {
+  int mod = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->tooltip(o->value());
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
           tooltip {The tooltip text for the widget.
 Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize 11
         }
@@ -841,22 +1707,69 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {99 40 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
-            callback labelfont_cb open
+            callback {if (v == LOAD) {
+  int n = current_widget->o->labelfont();
+  if (n > 15) n = 0;
+  o->value(n);
+} else {
+  int mod = 0;
+  int n = o->value();
+  if (n <= 0) n = Fluid.proj.layout->labelfont;
+  if (n <= 0) n = FL_HELVETICA;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->o->labelfont(n);
+    q->redraw();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}} open
             tooltip {The style of the label text.} xywh {99 40 148 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
           Fl_Value_Input {} {
-            callback labelsize_cb
+            callback {int n;
+if (v == LOAD) {
+  n = current_widget->o->labelsize();
+} else {
+  int mod = 0;
+  n = int(o->value());
+  if (n <= 0) n = Fluid.proj.layout->labelsize;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->o->labelsize(n);
+    q->redraw();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}
+o->value(n);}
             tooltip {The size of the label text.} xywh {247 40 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
           }
           Fl_Button w_labelcolor {
             label {Label Color}
-            callback labelcolor_cb
+            callback {Fl_Color c = current_widget->o->labelcolor();
+if (v != LOAD) {
+  Fl_Color d = fl_show_colormap(c);
+  if (d == c) return;
+  c = d;
+  labelcolor_common(c);
+}
+o->color(c);
+o->labelcolor(fl_contrast(FL_BLACK,c));
+o->redraw();}
             tooltip {The color of the label text.} xywh {296 40 90 20} labelsize 11
           }
           Fl_Menu_Button {} {
-            callback labelcolor_menu_cb open
+            callback {Fl_Color c = current_widget->o->labelcolor();
+if (v != LOAD) {
+  Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+  if (d == c) return;
+  c = d;
+  labelcolor_common(c);
+  w_labelcolor->color(c); 
+  w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c)); 
+  w_labelcolor->redraw();
+}} open
             xywh {386 40 18 20}
             code0 {extern Fl_Menu_Item colormenu[];}
             code1 {o->menu(colormenu);}
@@ -868,18 +1781,62 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {99 65 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
-            callback box_cb open
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
+  int n = current_widget->o->box(); 
+  if (!n) n = ZERO_ENTRY;
+  for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
+    if (boxmenu[j].argument() == n) {o->value(j); break;}
+} else {
+  int mod = 0;
+  int m = o->value();
+  int n = int(boxmenu[m].argument());
+  if (!n) return; // should not happen
+  if (n == ZERO_ENTRY) n = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->o->box((Fl_Boxtype)n);
+    q->redraw();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}} open
             tooltip {The "up" box of the widget.} xywh {100 65 196 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
           Fl_Button w_color {
             label Color
-            callback color_cb
+            callback {Fl_Color c = current_widget->o->color();
+if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {
+    o->deactivate();
+  } else {
+    o->activate();
+  }
+} else {
+  Fl_Color d = fl_show_colormap(c);
+  if (d == c) return;
+  c = d;
+  color_common(c);
+}
+o->color(c);
+o->labelcolor(fl_contrast(FL_BLACK,c));
+o->redraw();}
             tooltip {The background color of the widget.} xywh {296 65 90 20} labelsize 11
           }
           Fl_Menu_Button {} {
-            callback color_menu_cb open
+            callback {Fl_Color c = current_widget->o->color();
+if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
+} else {
+  Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+  if (d == c) return;
+  c = d;
+  color_common(c);
+  w_color->color(c);
+  w_color->labelcolor(fl_contrast(FL_BLACK,c));
+  w_color->redraw();
+}} open
             xywh {386 65 18 20}
             code0 {extern Fl_Menu_Item colormenu[];}
             code1 {o->menu(colormenu);}
@@ -891,18 +1848,83 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {99 90 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
-            callback down_box_cb open
+            callback {if (v == LOAD) {
+  int n;
+  if (current_widget->is_a(Type::Button))
+    n = ((Fl_Button*)(current_widget->o))->down_box();
+  else if (current_widget->is_a(Type::Input_Choice))
+    n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
+  else if (current_widget->is_a(Type::Menu_Manager_))
+    n = ((Fl_Menu_*)(current_widget->o))->down_box();
+  else {
+    o->deactivate(); return;
+  }
+  o->activate();
+  if (!n) n = ZERO_ENTRY;
+  for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
+    if (boxmenu[j].argument() == n) {o->value(j); break;}
+} else {
+  int mod = 0;
+  int m = o->value();
+  int n = int(boxmenu[m].argument());
+  if (!n) return; // should not happen
+  if (n == ZERO_ENTRY) n = 0;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Button)) {
+      ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
+      if (((Fl_Button*)(q->o))->value()) q->redraw();
+    } else if (q->is_a(Type::Input_Choice)) {
+      ((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
+    } else if (q->is_a(Type::Menu_Manager_)) {
+      ((Fl_Menu_*)(q->o))->down_box((Fl_Boxtype)n);
+    }
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}} open
             tooltip {The "down" box of the widget.} xywh {99 90 197 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
           Fl_Button w_selectcolor {
             label {Select Color}
-            callback color2_cb
+            callback {Fl_Color c = current_widget->o->selection_color();
+if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {
+    o->deactivate();
+    return;
+  } else {
+    o->activate();
+  }
+} else {
+  Fl_Color d = fl_show_colormap(c);
+  if (d == c) return;
+  c = d;
+  color2_common(c);
+}
+o->color(c);
+o->labelcolor(fl_contrast(FL_BLACK,c));
+o->redraw();}
             tooltip {The selection color of the widget.} xywh {296 90 90 20} labelsize 11
           }
           Fl_Menu_Button {} {
-            callback color2_menu_cb open
+            callback {Fl_Color c = current_widget->o->selection_color();
+if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {
+    o->deactivate();
+    return;
+  } else {
+    o->activate();
+  }
+} else {
+  Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+  if (d == c) return;
+  c = d;
+  color2_common(c);
+  w_selectcolor->color(c);
+  w_selectcolor->labelcolor(fl_contrast(FL_BLACK,c));
+  w_selectcolor->redraw();
+}} open
             xywh {386 90 18 20}
             code0 {extern Fl_Menu_Item colormenu[];}
             code1 {o->menu(colormenu);}
@@ -914,22 +1936,86 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {99 115 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
-            callback textfont_cb open
+            callback {Fl_Font n; int s; Fl_Color c;
+if (v == LOAD) {
+  if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
+  o->activate();
+  if (n > 15) n = FL_HELVETICA;
+  o->value(n);
+} else {
+  int mod = 0;
+  n = (Fl_Font)o->value();
+  if (n <= 0) n = Fluid.proj.layout->textfont;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->textstuff(1,n,s,c);
+    q->o->redraw();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}} open
             tooltip {The value text style.} xywh {99 115 148 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
           Fl_Value_Input {} {
-            callback textsize_cb
+            callback {Fl_Font n; int s; Fl_Color c;
+if (v == LOAD) {
+  if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
+  o->activate();
+} else {
+  int mod = 0;
+  s = int(o->value());
+  if (s <= 0) s = Fluid.proj.layout->textsize;
+  if (s <= 0) s = Fluid.proj.layout->labelsize;
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->textstuff(2,n,s,c);
+    q->o->redraw();
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}
+o->value(s);}
             tooltip {The value text size.} xywh {247 115 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
           }
           Fl_Button w_textcolor {
             label {Text Color}
-            callback textcolor_cb
+            callback {Fl_Font n; int s; Fl_Color c;
+if (v == LOAD) {
+  if (!current_widget->textstuff(0,n,s,c)) {
+    o->deactivate();
+    return;
+  }
+  o->activate();
+} else {
+  c = o->color();
+  Fl_Color d = fl_show_colormap(c);
+  if (d == c) return;
+  c = d;
+  textcolor_common(c);
+}
+o->color(c);
+o->labelcolor(fl_contrast(FL_BLACK,c));
+o->redraw();}
             tooltip {The value text color.} xywh {296 115 90 20} labelsize 11
           }
           Fl_Menu_Button {} {
-            callback textcolor_menu_cb open
+            callback {Fl_Font n; int s; Fl_Color c;
+if (v == LOAD) {
+  if (!current_widget->textstuff(0,n,s,c)) {
+    o->deactivate();
+    return;
+  }
+  o->activate();
+} else {
+  c = o->color();
+  Fl_Color d = (Fl_Color)(o->mvalue()->argument());
+  if (d == c) return;
+  c = d;
+  textcolor_common(c);
+  w_textcolor->color(c);
+  w_textcolor->labelcolor(fl_contrast(FL_BLACK,c));
+  w_textcolor->redraw();
+}} open
             xywh {386 115 18 20}
             code0 {extern Fl_Menu_Item colormenu[];}
             code1 {o->menu(colormenu);}
@@ -942,17 +2028,89 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
         } {
           Fl_Value_Input {} {
             label {Horizontal:}
-            callback h_label_margin_cb
+            callback {int s;
+if (v == LOAD) {
+  if (!current_widget->is_true_widget()) {
+    o->deactivate();
+    o->value(0);
+  } else {
+    o->activate();
+    o->value(((Widget_Node*)current_widget)->o->horizontal_label_margin());
+  }
+} else {
+  int mod = 0;
+  s = int(o->value());
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      if (q->o->horizontal_label_margin() != s) {
+        q->o->horizontal_label_margin(s);
+        if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+          q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {Spacing between label and the horizontally aligned side of the widget.} xywh {99 150 55 20} labelsize 11 align 5 minimum -127 maximum 128 step 1 textsize 11
           }
           Fl_Value_Input {} {
             label {Vertical:}
-            callback v_label_margin_cb
+            callback {int s;
+if (v == LOAD) {
+  if (!current_widget->is_true_widget()) {
+    o->deactivate();
+    o->value(0);
+  } else {
+    o->activate();
+    o->value(((Widget_Node*)current_widget)->o->vertical_label_margin());
+  }
+} else {
+  int mod = 0;
+  s = int(o->value());
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      if (q->o->vertical_label_margin() != s) {
+        q->o->vertical_label_margin(s);
+        if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+          q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {Spacing between label and the vertically aligned side of the widget.} xywh {159 150 55 20} labelsize 11 align 5 minimum -127 maximum 127 step 1 textsize 11
           }
           Fl_Value_Input {} {
-            label {Text to Image:}
-            callback image_spacing_cb
+            label {Image Gap:}
+            callback {int s;
+if (v == LOAD) {
+  if (!current_widget->is_true_widget()) {
+    o->deactivate();
+    o->value(0);
+  } else {
+    o->activate();
+    o->value(((Widget_Node*)current_widget)->o->label_image_spacing());
+  }
+} else {
+  int mod = 0;
+  s = int(o->value());
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_true_widget()) {
+      if (q->o->label_image_spacing() != s) {
+        q->o->label_image_spacing(s);
+        if (!(q->o->align() & FL_ALIGN_INSIDE) && q->o->window())
+          q->o->window()->damage(FL_DAMAGE_EXPOSE); // outside labels
+        q->o->redraw();
+        mod = 1;
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {Gap between label image and text in pixels} xywh {219 150 55 20} labelsize 11 align 5 maximum 255 step 1 textsize 11
           }
           Fl_Box {} {
@@ -961,7 +2119,33 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
         }
         Fl_Light_Button {} {
           label Compact
-          callback compact_cb
+          callback {if (v == LOAD) {
+  uchar n;
+  if (current_widget->is_a(Type::Button) && !current_widget->is_a(Type::Menu_Item)) {
+    n = ((Fl_Button*)(current_widget->o))->compact();
+    o->value(n);
+    o->show();
+  } else {
+    o->hide();
+  }
+} else {
+  int mod = 0;
+  uchar n = (uchar)o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Button) && !q->is_a(Type::Menu_Item)) {
+      uchar v = ((Fl_Button*)(q->o))->compact();
+      if (n != v) {
+        if (!mod) {
+          mod = 1;
+          Fluid.proj.undo.checkpoint();
+        }
+        ((Fl_Button*)(q->o))->compact(n);
+        q->redraw();
+      }
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
           tooltip {use compact box types for closely set buttons} xywh {99 175 90 20} selection_color 1 labelsize 11
         }
         Fl_Box {} {
@@ -970,7 +2154,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group wp_cpp_tab {
         label {C++}
-        callback propagate_load open
+        callback propagate_load
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group wp_cpp_class {
@@ -980,25 +2164,120 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
         } {
           Fl_Input {} {
             user_data 4
-            callback subclass_cb
+            callback {if (v == LOAD) {
+    if (current_widget->is_a(Type::Menu_Item)) {
+      o->deactivate(); 
+    } else {
+      o->activate();
+      o->value(current_widget->subclass());
+    }
+  } else {
+    int mod = 0;
+    const char *c = o->value();
+    for (Widget_Node *t: Fluid.proj.tree.all_selected_widgets()) {
+      t->subclass(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }}
             tooltip {The widget subclass.} xywh {95 40 172 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           }
           Fl_Choice {} {
-            callback subtype_cb open
+            callback {static Fl_Menu_Item empty_type_menu[] = {
+    {"Normal",0,nullptr,(void*)nullptr},
+    {nullptr}};
+
+  if (v == LOAD) {
+    Fl_Menu_Item* m = current_widget->subtypes();
+    if (!m) {
+      o->menu(empty_type_menu);
+      o->value(0);
+      o->deactivate();
+    } else {
+      o->menu(m);
+      int j;
+      for (j = 0;; j++) {
+        if (!m[j].text) {j = 0; break;}
+        if (current_widget->is_a(Type::Spinner)) {
+          if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
+        } else {
+          if (m[j].argument() == current_widget->o->type()) break;
+        }
+      }
+      o->value(j);
+      o->activate();
+    }
+    o->redraw();
+  } else {
+    int mod = 0;
+    int n = int(o->mvalue()->argument());
+    Fl_Menu_Item* m = current_widget->subtypes();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->subtypes()==m) {
+        if (q->is_a(Type::Spinner))
+          ((Fl_Spinner*)q->o)->type(n);
+        else if (q->is_a(Type::Flex))
+          ((Flex_Node*)q)->change_subtype_to(n);
+        else
+          q->o->type(n);
+        q->redraw();
+        mod = 1;
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }} open
             tooltip {The widget subtype.} xywh {267 40 138 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
           } {}
         }
         Fl_Group wp_cpp_name {
           label {Name:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 65 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback name_cb
+            callback {if (v == LOAD) {
+    static char buf[1024];
+    if (numselected != 1) {
+      snprintf(buf, sizeof(buf), "Widget Properties (%d widgets)", numselected);
+      o->hide();
+    } else {
+      o->value(current_widget->name());
+      o->show();
+      snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
+    }
+
+    the_panel->label(buf);
+  } else {
+    if (numselected == 1) {
+      current_widget->name(o->value());
+      // I don't update window title, as it probably is being closed
+      // and wm2 (a window manager) barfs if you retitle and then
+      // hide a window:
+      // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
+    }
+  }}
             tooltip {The name of the widget.} xywh {95 65 235 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Choice {} {
-            callback name_public_member_cb open
+            callback {if (v == LOAD) {
+  o->value(current_widget->public_);
+  if (current_widget->is_in_class()) o->show(); else o->hide();
+} else {
+  int mod = 0;
+  for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
+    if (w->is_in_class()) {
+      w->public_ = o->value();
+    } else {
+      // if this is not in a class, it can be only private or public
+      w->public_ = (o->value()>0);
+    }
+    mod = 1;
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}} open
             tooltip {Change member access attribute.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
           } {
             MenuItem {} {
@@ -1036,22 +2315,35 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
         Fl_Input {v_input[0]} {
           label {Extra Code:}
           user_data 0
-          callback v_input_cb
+          callback {int n = fl_int(o->user_data());
+  if (v == LOAD) {
+    o->value(current_widget->extra_code(n));
+  } else {
+    int mod = 0;
+    const char *c = o->value();
+    const char *d = c_check(c&&c[0]=='\#' ? c+1 : c);
+    if (d) {fl_message("Error in %s: %s",o->label(),d); haderror = 1; return;}
+    for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
+      w->extra_code(n,c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }}
           tooltip {Extra initialization code for the widget.} xywh {95 90 310 20} labelfont 1 labelsize 11 textfont 4 textsize 11
         }
         Fl_Input {v_input[1]} {
           user_data 1
-          callback v_input_cb
+          callback {cb_v_input(o, v);}
           tooltip {Extra initialization code for the widget.} xywh {95 110 310 20} labelsize 11 textfont 4 textsize 11
         }
         Fl_Input {v_input[2]} {
           user_data 2
-          callback v_input_cb
+          callback {cb_v_input(o, v);}
           tooltip {Extra initialization code for the widget.} xywh {95 130 310 20} labelsize 11 textfont 4 textsize 11
         }
         Fl_Input {v_input[3]} {
           user_data 3
-          callback v_input_cb
+          callback {cb_v_input(o, v);}
           tooltip {Extra initialization code for the widget.} xywh {95 150 310 20} labelsize 11 textfont 4 textsize 11
         }
         Fl_Tile {} {
@@ -1064,9 +2356,21 @@ wCallback->do_callback(wCallback, v);} open
           } {
             Fl_Text_Editor wComment {
               label {Comment:}
+              callback {if (v == LOAD) {
+    const char *cmttext = current_widget->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod = 0;
+    char *c = o->buffer()->text();
+    for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+      n->comment(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+    free(c);
+  }}
               tooltip {Write a comment that will appear in the source code and in the widget tree overview.} xywh {95 175 310 45} box DOWN_BOX labelfont 1 labelsize 11 align 4 when 1 textfont 6 textsize 11 textcolor 59 resizable
               code0 {wComment->buffer(new Fl_Text_Buffer());}
-              code1 {wComment->callback((Fl_Callback*)comment_cb);}
             }
           }
           Fl_Group {} {open
@@ -1074,7 +2378,25 @@ wCallback->do_callback(wCallback, v);} open
           } {
             Fl_Text_Editor wCallback {
               label {Callback:}
-              callback callback_cb
+              callback {if (v == LOAD) {
+    const char *cbtext = current_widget->callback();
+    o->buffer()->text( cbtext ? cbtext : "" );
+  } else {
+    int mod = 0;
+    char *c = o->buffer()->text();
+    const char *d = c_check(c);
+    if (d) {
+      fl_message("Error in callback: %s",d);
+      if (o->window()) o->window()->make_current();
+      haderror = 1;
+    }
+    for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+      n->callback(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+    free(c);
+  }}
               tooltip {The callback function or code for the widget. Use the variable name 'o' to access the Widget pointer and 'v' to access the user value.} xywh {95 225 310 80} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
               code0 {\#include "widgets/Code_Editor.h"}
               class {fld::widget::Code_Editor}
@@ -1087,12 +2409,48 @@ wCallback->do_callback(wCallback, v);} open
           xywh {95 310 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback user_data_cb
+            callback {if (v == LOAD) {
+  o->value(current_widget->user_data());
+} else {
+  int mod = 0;
+  const char *c = o->value();
+  const char *d = c_check(c);
+  if (d) {fl_message("Error in user_data: %s",d); haderror = 1; return;}
+  for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+    n->user_data(c);
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
             tooltip {The user data to pass into the callback code.} xywh {95 310 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           }
           Fl_Menu_Button {} {
             label When
-            callback when_cb open
+            callback {if (v == LOAD) {
+  if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
+  int n = current_widget->o->when();
+  set_whenmenu(n);
+  w_when_box->copy_label(when_symbol_name(n));
+} else {
+  int mod = 0;
+  int n = 0;
+  if (o->mvalue() && ((o->mvalue()->flags & FL_MENU_TOGGLE) == 0) ) {
+    n = (int)o->mvalue()->argument();
+    set_whenmenu(n);
+  } else {
+    if (whenmenu[0].value()) n |= FL_WHEN_CHANGED;
+    if (whenmenu[1].value()) n |= FL_WHEN_NOT_CHANGED;
+    if (whenmenu[2].value()) n |= FL_WHEN_RELEASE;
+    if (whenmenu[3].value()) n |= FL_WHEN_ENTER_KEY;
+    if (whenmenu[4].value()) n |= FL_WHEN_CLOSED;
+  }
+  w_when_box->copy_label(when_symbol_name(n));
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    q->o->when(n);
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}} open
             tooltip {When to call the callback function.} xywh {260 310 145 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1 textsize 11
             code0 {extern Fl_Menu_Item whenmenu[];}
             code1 {o->menu(whenmenu);}
@@ -1104,7 +2462,28 @@ wCallback->do_callback(wCallback, v);} open
           xywh {95 332 310 26} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input_Choice {} {
-            callback user_data_type_cb open
+            callback {static const char *dflt = "void*";
+if (v == LOAD) {
+  const char *c = current_widget->user_data_type();
+  if (!c) c = dflt;
+  o->value(c);
+} else {
+  int mod = 0;
+  const char *c = o->value();
+  const char *d = c_check(c);
+  if (!*c) o->value(dflt);
+  else if (!strcmp(c,dflt)) c = nullptr;
+  if (!d) {
+    if (c && *c && c[strlen(c)-1] != '*' && strcmp(c,"long"))
+      d = "must be pointer or long";
+  }
+  if (d) {fl_message("Error in type: %s",d); haderror = 1; return;}
+  for (Node *q: Fluid.proj.tree.all_selected_nodes()) {
+    q->user_data_type(c);
+    mod = 1;
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}} open
             tooltip {The type of the user data.} xywh {95 335 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           } {
             MenuItem {} {
@@ -1122,720 +2501,18 @@ wCallback->do_callback(wCallback, v);} open
           }
         }
       }
-      Fl_Group widget_tab_grid_child {
-        label {Grid Child}
-        callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 hide
-      } {
-        Fl_Group {} {
-          label {Location:}
-          callback propagate_load open
-          xywh {95 60 315 20} box FLAT_BOX labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_row_input {
-            label {Row:}
-            callback grid_set_row_cb
-            xywh {95 60 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {135 60 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_row_cb
-              xywh {135 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_row_cb
-              xywh {150 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Input widget_grid_col_input {
-            label {Column:}
-            callback grid_set_col_cb
-            xywh {175 60 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {215 60 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_col_cb
-              xywh {215 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_col_cb
-              xywh {230 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            xywh {395 60 1 20} hide resizable
-          }
-          Fl_Box widget_grid_transient {
-            label TRANSIENT
-            callback {if (v==LOAD) {
-  Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
-  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
-//  Fl_Grid::Cell *cell = g->cell(child);
-//  Fl_Grid::Cell *tcell = g->transient_cell(child);
-  widget_grid_transient->hide();
-  widget_grid_unlinked->hide();
-  if (g->transient_cell(child)) {
-    widget_grid_transient->show();
-  } else if (!g->cell(child)) {
-    widget_grid_unlinked->show();
-  }
-}}
-            xywh {250 60 80 20} labelsize 11 labelcolor 1
-          }
-          Fl_Box widget_grid_unlinked {
-            label UNLINKED
-            xywh {250 60 80 20} labelsize 11 labelcolor 1 hide
-          }
-        }
-        Fl_Group wp_gridc_align {
-          label {Align:}
-          callback propagate_load open
-          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Choice {} {
-            label Horizontal
-            callback grid_align_horizontal_cb open
-            xywh {95 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
-          } {
-            MenuItem GRID_LEFT {
-              label GRID_LEFT
-              user_data {(fl_intptr_t)FL_GRID_LEFT} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_CENTER
-              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_RIGHT
-              user_data {(fl_intptr_t)FL_GRID_RIGHT} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_FILL
-              user_data {(fl_intptr_t)FL_GRID_HORIZONTAL} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-          }
-          Fl_Choice {} {
-            label Vertical
-            callback grid_align_vertical_cb open
-            xywh {215 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
-          } {
-            MenuItem {} {
-              label GRID_TOP
-              user_data {(fl_intptr_t)FL_GRID_TOP} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_CENTER
-              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_BOTTOM
-              user_data {(fl_intptr_t)FL_GRID_BOTTOM} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-            MenuItem {} {
-              label GRID_FILL
-              user_data {(fl_intptr_t)FL_GRID_VERTICAL} user_data_type long
-              xywh {10 10 31 20} labelsize 11
-            }
-          }
-          Fl_Box {} {
-            xywh {395 100 1 20} hide resizable
-          }
-        }
-        Fl_Group wp_gridc_size {
-          label {Min. Size:}
-          callback propagate_load open
-          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input {} {
-            label {Width:}
-            callback grid_set_min_wdt_cb
-            xywh {95 135 55 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Input {} {
-            label {Height:}
-            callback grid_set_min_hgt_cb
-            xywh {155 135 55 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Box {} {
-            xywh {395 135 1 20} hide resizable
-          }
-        }
-        Fl_Group {} {
-          label {Span:}
-          callback propagate_load open
-          xywh {95 170 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_rowspan_input {
-            label {Row Span:}
-            callback grid_set_rowspan_cb
-            xywh {95 170 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {135 170 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_rowspan_cb
-              xywh {135 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_rowspan_cb
-              xywh {150 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Input widget_grid_colspan_input {
-            label {Col. Span:}
-            callback grid_set_colspan_cb
-            xywh {175 170 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {215 170 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback grid_dec_colspan_cb
-              xywh {215 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback grid_inc_colspan_cb
-              xywh {230 170 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            xywh {395 170 1 20} hide resizable
-          }
-        }
-        Fl_Box {} {
-          xywh {95 350 300 5} labelsize 11 hide resizable
-        }
-      }
       Fl_Group widget_tab_grid {
         label Grid
-        callback propagate_load open
+        callback {o->callback((Fl_Callback*)propagate_load);} open
         xywh {10 30 400 330} labelsize 11 hide
-      } {
-        Fl_Group {} {
-          label {Grid Layout:}
-          callback propagate_load open
-          xywh {95 60 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_rows {
-            label {Rows:}
-            callback {// grid_rows_cb
-Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-if (v == LOAD) {
-  o->value(grid->rows());
-} else {
-  int m = o->value(), old_m = grid->rows();
-  if (m < 1) {
-    m = 1;
-    o->value(m);
-  }
-  if (m < old_m) {
-    // TODO: verify that this will not unlink existings cells
-    // Offer a dialog with "delete children", "unlink cells", "cancel"
-  }
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->layout(m, grid->cols());
-    grid->need_layout(true);
-    set_modflag(1);
-    widget_tab_grid->do_callback(widget_tab_grid, LOAD);
-  }
-}}
-            tooltip {Number of horizontal rows in the Grid group} xywh {95 60 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {135 60 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback {if (v != LOAD) {
-  widget_grid_rows->value( widget_grid_rows->value()-1 );
-  widget_grid_rows->do_callback();
-}}
-              xywh {135 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback {if (v != LOAD) {
-  widget_grid_rows->value( widget_grid_rows->value()+1 );
-  widget_grid_rows->do_callback();
-}}
-              xywh {150 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Input widget_grid_cols {
-            label {Columns:}
-            callback {// grid_rows_cb
-Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-if (v == LOAD) {
-  o->value(grid->cols());
-} else {
-  int m = o->value(), old_m = grid->cols();
-  if (m < 1) {
-    m = 1;
-    o->value(m);
-  }
-  if (m < old_m) {
-    // TODO: verify that this will not unlink existings cells
-    // Offer a dialog with "delete children", "unlink cells", "cancel"
-  }
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->layout(grid->rows(), m);
-    grid->need_layout(true);
-    set_modflag(1);
-    widget_tab_grid->do_callback(widget_tab_grid, LOAD);
-  }
-}}
-            tooltip {Number of vertical columns in the Grid group} xywh {175 60 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {215 60 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback {if (v != LOAD) {
-  widget_grid_cols->value( widget_grid_cols->value()-1 );
-  widget_grid_cols->do_callback();
-}}
-              xywh {215 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback {if (v != LOAD) {
-  widget_grid_cols->value( widget_grid_cols->value()+1 );
-  widget_grid_cols->do_callback();
-}}
-              xywh {230 60 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            xywh {396 60 0 20} resizable
-          }
-        }
-        Fl_Group wp_grid_margin {
-          label {Margins:}
-          callback propagate_load open
-          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Value_Input {} {
-            label {Left:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int m = 0;
-if (v == LOAD) {
-  grid->margin(&m, NULL, NULL, NULL);
-  o->value(m);
-} else {
-  int m = (int)o->value(), old_m;
-  grid->margin(&old_m, NULL, NULL, NULL);
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->margin(m, -1, -1, -1);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-            tooltip {Left margin in group.} xywh {95 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Top:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int m = 0;
-if (v == LOAD) {
-  grid->margin(NULL, &m, NULL, NULL);
-  o->value(m);
-} else {
-  int m = (int)o->value(), old_m;
-  grid->margin(NULL, &old_m, NULL, NULL);
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->margin(-1, m, -1, -1);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-            tooltip {Top margin in group.} xywh {155 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Right:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int m = 0;
-if (v == LOAD) {
-  grid->margin(NULL, NULL, &m, NULL);
-  o->value(m);
-} else {
-  int m = (int)o->value(), old_m;
-  grid->margin(NULL, NULL, &old_m, NULL);
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->margin(-1, -1, m, -1);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-            tooltip {Right margin in group.} xywh {215 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Bottom:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int m = 0;
-if (v == LOAD) {
-  grid->margin(NULL, NULL, NULL, &m);
-  o->value(m);
-} else {
-  int m = (int)o->value(), old_m;
-  grid->margin(NULL, NULL, NULL, &old_m);
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->margin(-1, -1, -1, m);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-            tooltip {Bottom margin in group.} xywh {275 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Box {} {
-            xywh {396 100 0 20} resizable
-          }
-        }
-        Fl_Group wp_grid_gaps {
-          label {Gaps:}
-          callback propagate_load open
-          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Value_Input {} {
-            label {Row:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-if (v == LOAD) {
-  int m = 0;
-  grid->gap(&m, NULL);
-  o->value(m);
-} else {
-  int m = (int)o->value(), old_m, m2;
-  grid->gap(&old_m, &m2);
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->gap(m, m2);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-            tooltip {Gap between children.} xywh {95 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Value_Input {} {
-            label {Col:}
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-if (v == LOAD) {
-  int m = 0;
-  grid->gap(NULL, &m);
-  o->value(m);
-} else {
-  int m = (int)o->value(), old_m, m2;
-  grid->gap(&m2, &old_m);
-  if (m != old_m) {
-    undo_checkpoint();
-    grid->gap(m2, m);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-            tooltip {Gap between children.} xywh {155 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
-          }
-          Fl_Box {} {
-            xywh {396 135 0 20} resizable
-          }
-        }
-        Fl_Group {} {
-          label {Row:}
-          callback {if (v == LOAD) {
-  Fl_Grid *grid = Fl_Grid_Type::selected();
-  if (grid)
-    o->activate();
-  else
-    o->deactivate();
-  propagate_load(o, v);
-}} open
-          xywh {95 175 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_curr_row {
-            label Index
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int r = o->value(), old_r = r;
-if (r < 0) r = 0;
-if (r >= grid->rows()) r = grid->rows()-1;
-if (r != old_r) o->value(r);
-if (v == LOAD) {
-  // will automatically propagate
-} else {
-  widget_grid_curr_row_attributes->do_callback(widget_grid_curr_row_attributes, LOAD);
-}}
-            xywh {95 175 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {
-            callback propagate_load open
-            xywh {135 175 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback {if (v != LOAD) {
-  widget_grid_curr_row->value( widget_grid_curr_row->value()-1 );
-  widget_grid_curr_row->do_callback();
-}}
-              xywh {135 175 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback {if (v != LOAD) {
-  widget_grid_curr_row->value( widget_grid_curr_row->value()+1 );
-  widget_grid_curr_row->do_callback();
-}}
-              xywh {150 175 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            label {:}
-            xywh {165 175 15 20} labelsize 11
-          }
-          Fl_Group widget_grid_curr_row_attributes {
-            callback propagate_load open
-            xywh {180 175 175 20}
-          } {
-            Fl_Input {} {
-              label {Height:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int r = widget_grid_curr_row->value();
-if (v == LOAD) {
-  o->value(grid->row_height(r));
-} else {
-  int h = o->value(), old_h = grid->row_height(r);
-  if (h < 0) h = 0;
-  if (h != old_h) {
-    undo_checkpoint();
-    grid->row_height(r, h);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-              xywh {180 175 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
-            }
-            Fl_Input {} {
-              label {Weight:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int r = widget_grid_curr_row->value();
-if (v == LOAD) {
-  o->value(grid->row_weight(r));
-} else {
-  int h = o->value(), old_h = grid->row_weight(r);
-  if (h < 0) h = 0;
-  if (h != old_h) {
-    undo_checkpoint();
-    grid->row_weight(r, h);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-              xywh {240 175 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
-            }
-            Fl_Input {} {
-              label {Gap:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int r = widget_grid_curr_row->value();
-if (v == LOAD) {
-  o->value(grid->row_gap(r));
-} else {
-  int h = o->value(), old_h = grid->row_gap(r);
-  if (h < -1) h = -1;
-  if (h != old_h) {
-    undo_checkpoint();
-    grid->row_gap(r, h);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-              xywh {300 175 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
-            }
-          }
-          Fl_Box {} {
-            xywh {400 175 1 20} hide resizable
-          }
-        }
-        Fl_Group {} {
-          label {Column:}
-          callback propagate_load open
-          xywh {95 210 315 20} labelfont 1 labelsize 11 align 4
-        } {
-          Fl_Input widget_grid_curr_col {
-            label Index
-            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int c = o->value(), old_c = c;
-if (c < 0) c = 0;
-if (c >= grid->cols()) c = grid->cols()-1;
-if (c != old_c) o->value(c);
-if (v == LOAD) {
-  // will automatically propagate
-} else {
-  widget_grid_curr_col_attributes->do_callback(widget_grid_curr_col_attributes, LOAD);
-}}
-            xywh {95 210 40 20} labelsize 11 align 5 textsize 11
-            class {fld::widget::Formula_Input}
-          }
-          Fl_Group {} {open
-            xywh {135 210 30 20}
-          } {
-            Fl_Button {} {
-              label {-}
-              callback {if (v != LOAD) {
-  widget_grid_curr_col->value( widget_grid_curr_col->value()-1 );
-  widget_grid_curr_col->do_callback();
-}}
-              xywh {135 210 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-            Fl_Button {} {
-              label {+}
-              callback {if (v != LOAD) {
-  widget_grid_curr_col->value( widget_grid_curr_col->value()+1 );
-  widget_grid_curr_col->do_callback();
-}}
-              xywh {150 210 15 20} labelsize 11
-              code0 {o->clear_visible_focus();} compact 1
-            }
-          }
-          Fl_Box {} {
-            label {:}
-            xywh {165 210 15 20} labelsize 11
-          }
-          Fl_Group widget_grid_curr_col_attributes {
-            callback propagate_load open
-            xywh {180 210 175 20}
-          } {
-            Fl_Input {} {
-              label {Width:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int c = widget_grid_curr_col->value();
-if (v == LOAD) {
-  o->value(grid->col_width(c));
-} else {
-  int h = o->value(), old_h = grid->col_width(c);
-  if (h < 0) h = 0;
-  if (h != old_h) {
-    undo_checkpoint();
-    grid->col_width(c, h);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-              xywh {180 210 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
-            }
-            Fl_Input {} {
-              label {Weight:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int c = widget_grid_curr_col->value();
-if (v == LOAD) {
-  o->value(grid->col_weight(c));
-} else {
-  int h = o->value(), old_h = grid->col_weight(c);
-  if (h < 0) h = 0;
-  if (h != old_h) {
-    undo_checkpoint();
-    grid->col_weight(c, h);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-              xywh {240 210 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
-            }
-            Fl_Input {} {
-              label {Gap:}
-              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
-if (!grid) return;
-int c = widget_grid_curr_col->value();
-if (v == LOAD) {
-  o->value(grid->col_gap(c));
-} else {
-  int h = o->value(), old_h = grid->col_gap(c);
-  if (h < -1) h = -1;
-  if (h != old_h) {
-    undo_checkpoint();
-    grid->col_gap(c, h);
-    grid->need_layout(true);
-    set_modflag(1);
-  }
-}}
-              xywh {300 210 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
-            }
-          }
-          Fl_Box {} {
-            xywh {400 210 1 20} hide resizable
-          }
-        }
-        Fl_Box {} {
-          xywh {95 350 300 5} labelsize 11 hide resizable
-        }
-      }
+        class Grid_Tab
+      } {}
+      Fl_Group widget_tab_grid_child {
+        label {Grid Child}
+        callback {o->callback((Fl_Callback*)propagate_load);} open
+        xywh {10 30 400 330} labelsize 11 hide
+        class Grid_Child_Tab
+      } {}
     }
     Fl_Tabs widget_tabs_repo {
       xywh {10 10 400 350} hide

@@ -20,16 +20,19 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include "app/fluid.h"} {private local
+decl {\#include "Fluid.h"} {private local
 }
 
-decl {\#include "app/project.h"} {private local
+decl {\#include "Project.h"} {private local
 }
 
 decl {\#include "io/Project_Reader.h"} {private local
 }
 
 decl {\#include "io/Project_Writer.h"} {private local
+}
+
+decl {\#include "io/String_Writer.h"} {private local
 }
 
 decl {\#include <FL/Fl_Tabs.H>} {private local
@@ -41,22 +44,22 @@ decl {\#include <FL/Fl_Button.H>} {private local
 decl {\#include "../src/flstring.h"} {selected private local
 }
 
-decl {char *cv_source_filename = NULL;} {private local
+decl {char *cv_source_filename = nullptr;} {private local
 }
 
-decl {char *cv_header_filename = NULL;} {private local
+decl {char *cv_header_filename = nullptr;} {private local
 }
 
-decl {char *cv_design_filename = NULL;} {private local
+decl {char *cv_design_filename = nullptr;} {private local
 }
 
 decl {int cv_code_choice;} {public local
 }
 
-decl {extern void select_only(Fl_Type *o);} {private global
+decl {extern void select_only(Node *o);} {private global
 }
 
-decl {extern void reveal_in_browser(Fl_Type *t);} {private global
+decl {extern void reveal_in_browser(Node *t);} {private global
 }
 
 Function {update_codeview_position()} {
@@ -72,29 +75,29 @@ file.} open return_type void
     return;
   if (cv_autoposition->value()==0)
     return;
-  if (codeview_panel && codeview_panel->visible() && Fl_Type::current) {
+  if (codeview_panel && codeview_panel->visible() && Fluid.proj.tree.current) {
     int pos0 = 0, pos1 = 0;
     if (cv_source->visible_r()) {
       switch (cv_code_choice) {
         case 0: // prolog: not yet (include statements)
-          pos0 = Fl_Type::current->code1_start;
-          pos1 = Fl_Type::current->code2_end;
+          pos0 = Fluid.proj.tree.current->code1_start;
+          pos1 = Fluid.proj.tree.current->code2_end;
           break;
         case 1: // static: callbacks, menu declarations
-          pos0 = Fl_Type::current->code_static_start;
-          pos1 = Fl_Type::current->code_static_end;
+          pos0 = Fluid.proj.tree.current->code_static_start;
+          pos1 = Fluid.proj.tree.current->code_static_end;
           break;
         case 2: // code: entire implementation block including children
-          pos0 = Fl_Type::current->code1_start;
-          pos1 = Fl_Type::current->code2_end;
+          pos0 = Fluid.proj.tree.current->code1_start;
+          pos1 = Fluid.proj.tree.current->code2_end;
           break;
         case 3: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->code1_start;
-          pos1 = Fl_Type::current->code1_end;
+          pos0 = Fluid.proj.tree.current->code1_start;
+          pos1 = Fluid.proj.tree.current->code1_end;
           break;
         case 4: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->code2_start;
-          pos1 = Fl_Type::current->code2_end;
+          pos0 = Fluid.proj.tree.current->code2_start;
+          pos1 = Fluid.proj.tree.current->code2_end;
           break;
       }
       if (pos0>=0) {
@@ -109,20 +112,20 @@ file.} open return_type void
       switch (cv_code_choice) {
         case 0: // prolog: not yet (include statements)
         case 1: // static: callbacks, menu declarations
-          pos0 = Fl_Type::current->header_static_start;
-          pos1 = Fl_Type::current->header_static_end;
+          pos0 = Fluid.proj.tree.current->header_static_start;
+          pos1 = Fluid.proj.tree.current->header_static_end;
           break;
         case 2: // code: entire implementation block including children
-          pos0 = Fl_Type::current->header1_start;
-          pos1 = Fl_Type::current->header2_end;
+          pos0 = Fluid.proj.tree.current->header1_start;
+          pos1 = Fluid.proj.tree.current->header2_end;
           break;
         case 3: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->header1_start;
-          pos1 = Fl_Type::current->header1_end;
+          pos0 = Fluid.proj.tree.current->header1_start;
+          pos1 = Fluid.proj.tree.current->header1_end;
           break;
         case 4: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->header2_start;
-          pos1 = Fl_Type::current->header2_end;
+          pos0 = Fluid.proj.tree.current->header2_start;
+          pos1 = Fluid.proj.tree.current->header2_end;
           break;
       }
       if (pos0>=0) {
@@ -138,16 +141,16 @@ file.} open return_type void
         case 0: // prolog: not yet (include statements)
         case 1: // static: callbacks, menu declarations
         case 2: // code: entire implementation block including children
-          pos0 = Fl_Type::current->proj1_start;
-          pos1 = Fl_Type::current->proj2_end;
+          pos0 = Fluid.proj.tree.current->proj1_start;
+          pos1 = Fluid.proj.tree.current->proj2_end;
           break;
         case 3: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->proj1_start;
-          pos1 = Fl_Type::current->proj1_end;
+          pos0 = Fluid.proj.tree.current->proj1_start;
+          pos1 = Fluid.proj.tree.current->proj1_end;
           break;
         case 4: // code1: all implementation code before the children
-          pos0 = Fl_Type::current->proj2_start;
-          pos1 = Fl_Type::current->proj2_end;
+          pos0 = Fluid.proj.tree.current->proj2_start;
+          pos1 = Fluid.proj.tree.current->proj2_end;
           break;
       }
       if (pos0>=0) {
@@ -179,43 +182,43 @@ and load those into the Code Viewer widgets.} open return_type void
 
   if (!cv_source_filename) {
     cv_source_filename = (char*)malloc(FL_PATH_MAX);
-    fl_strlcpy(cv_source_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcpy(cv_source_filename, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(cv_source_filename, "codeview_tmp.cxx", FL_PATH_MAX);
   }
   if (!cv_header_filename) {
     cv_header_filename = (char*)malloc(FL_PATH_MAX);
-    fl_strlcpy(cv_header_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcpy(cv_header_filename, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(cv_header_filename, "codeview_tmp.h", FL_PATH_MAX);
   }
   if (!cv_design_filename) {
     cv_design_filename = (char*)malloc(FL_PATH_MAX);
-    fl_strlcpy(cv_design_filename, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcpy(cv_design_filename, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(cv_design_filename, "codeview_tmp.fl", FL_PATH_MAX);
   }
 
   if (cv_project->visible_r()) {
-    fld::io::write_file(cv_design_filename, false, true);
+    fld::io::write_file(Fluid.proj, cv_design_filename, false, true);
     int top = cv_project->top_line();
     cv_project->buffer()->loadfile(cv_design_filename);
     cv_project->scroll(top, 0);
   } else if (cv_strings->visible_r()) {
     static const char *exts[] = { ".txt", ".po", ".msg" };
     char fn[FL_PATH_MAX+1];
-    fl_strlcpy(fn, get_tmpdir().c_str(), FL_PATH_MAX);
+    fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(fn, "strings", FL_PATH_MAX);
-    fl_filename_setext(fn, FL_PATH_MAX, exts[g_project.i18n_type]);
-    write_strings(fn);
+    fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n_type)]);
+    fld::io::write_strings(Fluid.proj, fn);
     int top = cv_strings->top_line();
     cv_strings->buffer()->loadfile(fn);
     cv_strings->scroll(top, 0);
   } else if (cv_source->visible_r() || cv_header->visible_r()) {
-    std::string code_file_name_bak = g_project.code_file_name;
-    g_project.code_file_name = cv_source_filename;
-    std::string header_file_name_bak = g_project.header_file_name;
-    g_project.header_file_name = cv_header_filename;
+    std::string code_file_name_bak = Fluid.proj.code_file_name;
+    Fluid.proj.code_file_name = cv_source_filename;
+    std::string header_file_name_bak = Fluid.proj.header_file_name;
+    Fluid.proj.header_file_name = cv_header_filename;
 
     // generate the code and load the files
-    fld::io::Code_Writer f;
+    fld::io::Code_Writer f(Fluid.proj);
     // generate files
     if (f.write_code(cv_source_filename, cv_header_filename, true))
     {
@@ -231,8 +234,8 @@ and load those into the Code Viewer widgets.} open return_type void
       update_codeview_position();
     }
 
-    g_project.code_file_name = code_file_name_bak;
-    g_project.header_file_name = header_file_name_bak;
+    Fluid.proj.code_file_name = code_file_name_bak;
+    Fluid.proj.header_file_name = header_file_name_bak;
   }} {}
 }
 
@@ -260,7 +263,7 @@ The state is stored in the app preferences.
   code {if (!codeview_panel) {
     make_codeview();
     codeview_panel->callback((Fl_Callback*)toggle_codeview_cb);
-    Fl_Preferences svp(fluid_prefs, "codeview");
+    Fl_Preferences svp(Fluid.preferences, "codeview");
     int autorefresh;
     svp.get("autorefresh", autorefresh, 1);
     cv_autorefresh->value(autorefresh);
@@ -272,15 +275,15 @@ The state is stored in the app preferences.
     if (tab>=0 && tab<cv_tab->children()) cv_tab->value(cv_tab->child(tab));
     svp.get("code_choice", cv_code_choice, 2);
     cv_code_choice_w->value(cv_code_choice_w->find_item_with_argument(cv_code_choice));
-    if (!position_window(codeview_panel,"codeview_pos", 0, 320, 120, 550, 500)) return;
+    if (!Fluid.position_window(codeview_panel,"codeview_pos", 0, 320, 120, 550, 500)) return;
   }
 
   if (codeview_panel->visible()) {
     codeview_panel->hide();
-    codeview_item->label("Show Code View");
+    Fluid.codeview_item->label("Show Code View");
   } else {
     codeview_panel->show();
-    codeview_item->label("Hide Code View");
+    Fluid.codeview_item->label("Hide Code View");
     update_codeview_cb(0,0);
   }} {}
 }
@@ -354,7 +357,7 @@ Function {make_codeview()} {open
       }
       Fl_Input cv_find_text {
         label {Find:}
-        callback {Fl_Text_Display *e = NULL;
+        callback {Fl_Text_Display *e = nullptr;
 if (cv_source->visible_r()) {
   e = cv_source;
 } else if (cv_header->visible_r()) {
@@ -376,7 +379,7 @@ if (e) {
       }
       Fl_Button {} {
         label {<<}
-        callback {Fl_Text_Display *e = NULL;
+        callback {Fl_Text_Display *e = nullptr;
 if (cv_source->visible_r()) {
   e = cv_source;
 } else if (cv_header->visible_r()) {
@@ -402,7 +405,7 @@ if (e) {
       }
       Fl_Button {} {
         label {>>}
-        callback {Fl_Text_Display *e = NULL;
+        callback {Fl_Text_Display *e = nullptr;
 if (cv_source->visible_r()) {
   e = cv_source;
 } else if (cv_header->visible_r()) {
@@ -429,13 +432,13 @@ if (e) {
       Fl_Button {} {
         label Reveal
         callback {if (codeview_panel && codeview_panel->visible()) {
-  Fl_Type *node = NULL;
+  Node *node = nullptr;
   if (cv_source->visible_r())
-    node = Fl_Type::find_in_text(0, cv_source->insert_position());
+    node = Fluid.proj.tree.find_in_text(0, cv_source->insert_position());
   else if (cv_header->visible_r())
-    node = Fl_Type::find_in_text(1, cv_header->insert_position());
+    node = Fluid.proj.tree.find_in_text(1, cv_header->insert_position());
   else if (cv_project->visible_r())
-    node = Fl_Type::find_in_text(2, cv_project->insert_position());
+    node = Fluid.proj.tree.find_in_text(2, cv_project->insert_position());
   if (node) {
     select_only(node);
     reveal_in_browser(node);

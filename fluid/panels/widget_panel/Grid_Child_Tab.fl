@@ -1,0 +1,397 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0500
+header_name {.h}
+code_name {.cxx}
+decl {\#include "widgets/Formula_Input.h"} {public global
+}
+
+decl {\#include "Fluid.h"} {private global
+}
+
+decl {\#include "proj/undo.h"} {private global
+}
+
+decl {\#include "nodes/Grid_Node.h"} {private global
+}
+
+decl {extern Grid_Child_Tab *widget_tab_grid_child;} {private global
+}
+
+widget_class Grid_Child_Tab {
+  label Grid
+  callback propagate_load open
+  xywh {480 287 400 330} labelsize 11 resizable visible position_relative_rescale
+} {
+  Fl_Group {} {
+    label {Location:}
+    callback propagate_load open
+    xywh {85 30 315 20} box FLAT_BOX labelfont 1 labelsize 11 align 4
+  } {
+    Fl_Input widget_grid_row_input {
+      label {Row:}
+      callback {grid_child_cb(o, v, 8);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
+      xywh {85 30 40 20} labelsize 11 align 5 textsize 11
+      class {fld::widget::Formula_Input}
+    }
+    Fl_Group {} {open
+      xywh {125 30 30 20}
+    } {
+      Fl_Button {} {
+        label {-}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_row_input, v, 0x0100 + 8);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {125 30 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+      Fl_Button {} {
+        label {+}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_row_input, v, 0x0200 + 8);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {140 30 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+    }
+    Fl_Input widget_grid_col_input {
+      label {Column:}
+      callback {grid_child_cb(o, v, 9);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
+      xywh {165 30 40 20} labelsize 11 align 5 textsize 11
+      class {fld::widget::Formula_Input}
+    }
+    Fl_Group {} {open
+      xywh {205 30 30 20}
+    } {
+      Fl_Button {} {
+        label {-}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_col_input, v, 0x0100 + 9);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {205 30 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+      Fl_Button {} {
+        label {+}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_col_input, v, 0x0200 + 9);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {220 30 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+    }
+    Fl_Box {} {
+      xywh {385 30 1 20} hide resizable
+    }
+    Fl_Box widget_grid_transient {
+      label TRANSIENT
+      callback {if (v==LOAD) {
+  Fl_Widget *child = ((Widget_Node*)current_widget)->o;
+  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
+//  Fl_Grid::Cell *cell = g->cell(child);
+//  Fl_Grid::Cell *tcell = g->transient_cell(child);
+  widget_grid_transient->hide();
+  widget_grid_unlinked->hide();
+  if (g->transient_cell(child)) {
+    widget_grid_transient->show();
+  } else if (!g->cell(child)) {
+    widget_grid_unlinked->show();
+  }
+}}
+      xywh {240 30 80 20} labelsize 11 labelcolor 1
+    }
+    Fl_Box widget_grid_unlinked {
+      label UNLINKED
+      xywh {240 30 80 20} labelsize 11 labelcolor 1 hide
+    }
+  }
+  Fl_Group wp_gridc_align {
+    label {Align:}
+    callback propagate_load
+    xywh {85 70 315 20} labelfont 1 labelsize 11 align 4
+  } {
+    Fl_Choice {} {
+      label Horizontal
+      callback {if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(Type::Grid))
+  {
+    return;
+  }
+  int mask = (FL_GRID_LEFT | FL_GRID_RIGHT | FL_GRID_HORIZONTAL);
+  Fl_Grid *g = ((Fl_Grid*)((Widget_Node*)current_widget->parent)->o);
+  if (v == LOAD) {
+    int a = FL_GRID_FILL & mask;
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      a = cell->align() & mask;
+    }
+    const Fl_Menu_Item *mi = o->find_item_with_argument(a);
+    if (mi) o->value(mi);
+  } else {
+    Fluid.proj.undo.checkpoint();
+    int v = FL_GRID_FILL & mask, old_v = FL_GRID_FILL & mask;
+    const Fl_Menu_Item *mi = o->mvalue();
+    if (mi) v = (int)mi->argument();
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      old_v = cell->align() & mask;
+      if (old_v != v) {
+        cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
+        g->need_layout(true);
+        g->redraw();
+        Fluid.proj.set_modflag(1);
+      }
+    }
+  }} open
+      xywh {85 70 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+    } {
+      MenuItem GRID_LEFT {
+        label GRID_LEFT
+        user_data {(fl_intptr_t)FL_GRID_LEFT} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+      MenuItem {} {
+        label GRID_CENTER
+        user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+      MenuItem {} {
+        label GRID_RIGHT
+        user_data {(fl_intptr_t)FL_GRID_RIGHT} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+      MenuItem {} {
+        label GRID_FILL
+        user_data {(fl_intptr_t)FL_GRID_HORIZONTAL} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+    }
+    Fl_Choice {} {
+      label Vertical
+      callback {if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(Type::Grid))
+  {
+    return;
+  }
+  int mask = (FL_GRID_TOP | FL_GRID_BOTTOM | FL_GRID_VERTICAL);
+  Fl_Grid *g = ((Fl_Grid*)((Widget_Node*)current_widget->parent)->o);
+  if (v == LOAD) {
+    int a = FL_GRID_FILL & mask;
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      a = cell->align() & mask;
+    }
+    const Fl_Menu_Item *mi = o->find_item_with_argument(a);
+    if (mi) o->value(mi);
+  } else {
+    Fluid.proj.undo.checkpoint();
+    int v = FL_GRID_FILL & mask, old_v = FL_GRID_FILL & mask;
+    const Fl_Menu_Item *mi = o->mvalue();
+    if (mi) v = (int)mi->argument();
+    Fl_Grid::Cell *cell = g->cell(current_widget->o);
+    if (cell) {
+      old_v = cell->align() & mask;
+      if (old_v != v) {
+        cell->align((Fl_Grid_Align)(v | (cell->align() & ~mask)));
+        g->need_layout(true);
+        g->redraw();
+        Fluid.proj.set_modflag(1);
+      }
+    }
+  }} open selected
+      xywh {205 70 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+    } {
+      MenuItem {} {
+        label GRID_TOP
+        user_data {(fl_intptr_t)FL_GRID_TOP} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+      MenuItem {} {
+        label GRID_CENTER
+        user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+      MenuItem {} {
+        label GRID_BOTTOM
+        user_data {(fl_intptr_t)FL_GRID_BOTTOM} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+      MenuItem {} {
+        label GRID_FILL
+        user_data {(fl_intptr_t)FL_GRID_VERTICAL} user_data_type long
+        xywh {20 20 31 20} labelsize 11
+      }
+    }
+    Fl_Box {} {
+      xywh {385 70 1 20} hide resizable
+    }
+  }
+  Fl_Group wp_gridc_size {
+    label {Min. Size:}
+    callback propagate_load
+    xywh {85 105 315 20} labelfont 1 labelsize 11 align 4
+  } {
+    Fl_Input {} {
+      label {Width:}
+      callback {grid_child_cb(o, v, 12);}
+      xywh {85 105 55 20} labelsize 11 align 5 textsize 11
+      class {fld::widget::Formula_Input}
+    }
+    Fl_Input {} {
+      label {Height:}
+      callback {grid_child_cb(o, v, 13);}
+      xywh {145 105 55 20} labelsize 11 align 5 textsize 11
+      class {fld::widget::Formula_Input}
+    }
+    Fl_Box {} {
+      xywh {385 105 1 20} hide resizable
+    }
+  }
+  Fl_Group {} {
+    label {Span:}
+    callback propagate_load
+    xywh {85 140 315 20} labelfont 1 labelsize 11 align 4
+  } {
+    Fl_Input widget_grid_rowspan_input {
+      label {Row Span:}
+      callback {grid_child_cb(o, v, 10);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
+      xywh {85 140 40 20} labelsize 11 align 5 textsize 11
+      class {fld::widget::Formula_Input}
+    }
+    Fl_Group {} {open
+      xywh {125 140 30 20}
+    } {
+      Fl_Button {} {
+        label {-}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_rowspan_input, v, 0x0100 + 10);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {125 140 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+      Fl_Button {} {
+        label {+}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_rowspan_input, v, 0x0200 + 10);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {140 140 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+    }
+    Fl_Input widget_grid_colspan_input {
+      label {Col. Span:}
+      callback {grid_child_cb(o, v, 11);
+  if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
+      xywh {165 140 40 20} labelsize 11 align 5 textsize 11
+      class {fld::widget::Formula_Input}
+    }
+    Fl_Group {} {open
+      xywh {205 140 30 20}
+    } {
+      Fl_Button {} {
+        label {-}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_colspan_input, v, 0x0100 + 11);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {205 140 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+      Fl_Button {} {
+        label {+}
+        callback {if (v!=LOAD) {
+    grid_child_cb(widget_grid_colspan_input, v, 0x0200 + 11);
+    widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
+  }}
+        xywh {220 140 15 20} labelsize 11
+        code0 {o->clear_visible_focus();} compact 1
+      }
+    }
+    Fl_Box {} {
+      xywh {385 140 1 20} hide resizable
+    }
+  }
+  Fl_Box {} {
+    xywh {85 320 300 5} labelsize 11 hide resizable
+  }
+  Function {grid_child_cb(fld::widget::Formula_Input* i, void* v, int what)} {open return_type void
+  } {
+    code {if (   !current_widget
+      || !current_widget->parent
+      || !current_widget->parent->is_a(Type::Grid))
+  {
+    return;
+  }
+  Fl_Widget *child = ((Widget_Node*)current_widget)->o;
+  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Widget_Node*)current_widget->parent)->o);
+  Fl_Grid::Cell *cell = g->any_cell(child);
+  if (v == LOAD) {
+    int v = -1;
+    if (cell) {
+      switch (what & 0x00ff) {
+        case 8: v = cell->row(); break;
+        case 9: v = cell->col(); break;
+        case 10: v = cell->rowspan(); break;
+        case 11: v = cell->colspan(); break;
+        case 12: cell->minimum_size(&v, nullptr); break;
+        case 13: cell->minimum_size(nullptr, &v); break;
+      }
+    }
+    i->value(v);
+  } else {
+    Fluid.proj.undo.checkpoint();
+    int v2 = -2, old_v = -2, v = i->value();
+    if (i==widget_grid_row_input) v2 = widget_grid_col_input->value();
+    if (i==widget_grid_col_input) v2 = widget_grid_row_input->value();
+    Fl_Grid::Cell *new_cell = nullptr;
+    if (cell) {
+      switch (what & 0x00ff) {
+        case 8: old_v = cell->row(); v2 = cell->col(); break;
+        case 9: old_v = cell->col(); v2 = cell->row(); break;
+        case 10: old_v = cell->rowspan(); break;
+        case 11: old_v = cell->colspan(); break;
+        case 12: cell->minimum_size(&old_v, &v2); break;
+        case 13: cell->minimum_size(&v2, &old_v); break;
+      }
+    }
+    switch (what & 0xff00) {
+      case 0x0100: v--; break;
+      case 0x0200: v++; break;
+    }
+    if (old_v != v) {
+      switch (what & 0x00ff) {
+        case 8:
+          if (v2 == -1 && v >= 0) v2 = 0;
+          g->move_cell(current_widget->o, v, v2, 2); i->value(v);
+          break;
+        case 9:
+          if (v2 == -1 && v >= 0) v2 = 0;
+          g->move_cell(current_widget->o, v2, v, 2); i->value(v);
+          break;
+        case 10: if (cell && cell->row()+v<=g->rows() && v>0) cell->rowspan(v);
+          break;
+        case 11: if (cell && cell->col()+v<=g->cols() && v>0) cell->colspan(v);
+          break;
+        case 12: if (cell && v>=0) cell->minimum_size(v, v2);
+          break;
+        case 13: if (cell && v>=0) cell->minimum_size(v2, v);
+          break;
+      }
+      if (!cell && new_cell)
+        new_cell->minimum_size(20, 20);
+      g->need_layout(true);
+      Fluid.proj.set_modflag(1);
+    }
+  }} {}
+  }
+}

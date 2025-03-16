@@ -18,11 +18,11 @@
 
 #include "tools/autodoc.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "nodes/factory.h"
-#include "nodes/Fl_Widget_Type.h"
-#include "nodes/Fl_Window_Type.h"
+#include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
 #include "panels/widget_panel.h"
 #include "panels/function_panel.h"
 #include "panels/settings_panel.h"
@@ -232,7 +232,7 @@ void blend_alpha_bottom(const Fl_RGB_Image *img, int dy) {
  created in FLTK resolution, even if the screen uses a higher resolution.
 
  \param[in] filename the snapshot will be written to this file in png format
- \param[in] w draw a bounding box around all widgets in the NULL terminated list
+ \param[in] w draw a bounding box around all widgets in the nullptr terminated list
  \param[in] frame add a margin around the bounding box
  \param[in] blend add another margin around the bounding box that fades to full transparency
  \param[in] scale scale everything by this factor before saving it
@@ -342,7 +342,7 @@ int fl_snapshot(const char *filename, Fl_Widget *w1, Fl_Widget *w2,
                 const Fl_Rect &blend,
                 double scale)
 {
-  Fl_Widget *ww[3] = { w1, w2, NULL };
+  Fl_Widget *ww[3] = { w1, w2, nullptr };
   return fl_snapshot(filename, ww, frame, blend, scale);
 }
 
@@ -363,7 +363,7 @@ int fl_snapshot(const char *filename, Fl_Widget *w,
                 const Fl_Rect &blend,
                 double scale)
 {
-  Fl_Widget *ww[2] = { w, NULL };
+  Fl_Widget *ww[2] = { w, nullptr };
   return fl_snapshot(filename, ww, frame, blend, scale);
 }
 
@@ -383,27 +383,27 @@ void run_autodoc(const std::string &target_dir) {
 //  Fl::scheme("gtk+");
 
   // Create a silly project that contains all widgets that we want to document
-  new_project(false);
+  Fluid.new_project(false);
 
-  /*Fl_Type *t_func = */ add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
-  Fl_Window_Type *t_win = (Fl_Window_Type*)add_new_widget_from_user("Fl_Window", Strategy::AS_LAST_CHILD, false);
+  /*Node *t_func = */ add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
+  Window_Node *t_win = (Window_Node*)add_new_widget_from_user("Fl_Window", Strategy::AS_LAST_CHILD, false);
   t_win->label("My Main Window");
-  Fl_Widget_Type *t_grp = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Group", Strategy::AS_LAST_CHILD, false);
+  Widget_Node *t_grp = (Widget_Node*)add_new_widget_from_user("Fl_Group", Strategy::AS_LAST_CHILD, false);
   t_grp->public_ = 0;
-  Fl_Widget_Type *t_btn = (Fl_Widget_Type*)add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Widget_Node *t_btn = (Widget_Node*)add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
   t_btn->comment("Don't press this button!");
   t_btn->name("emergency_btn");
   ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
-  Fl_Type *t_sldr = add_new_widget_from_user("Fl_Slider", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_inp = add_new_widget_from_user("Fl_Input", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_flx = add_new_widget_from_user("Fl_Flex", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_flxc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Node *t_sldr = add_new_widget_from_user("Fl_Slider", Strategy::AS_LAST_CHILD, false);
+  Node *t_inp = add_new_widget_from_user("Fl_Input", Strategy::AS_LAST_CHILD, false);
+  Node *t_flx = add_new_widget_from_user("Fl_Flex", Strategy::AS_LAST_CHILD, false);
+  Node *t_flxc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
   select_only(t_grp);
-  Fl_Type *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
-  Fl_Type *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Node *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
+  Node *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
-  g_project.update_settings_dialog();
+  Fluid.proj.update_settings_dialog();
 
   // TODO: FLUID overview
 
@@ -417,9 +417,9 @@ void run_autodoc(const std::string &target_dir) {
   // explain menubar?
   // explain widget browser
   // explain widget browser entry
-  main_window->size(350, 320);
-  fl_snapshot((target_dir + "main_window.png").c_str(), main_window, win_margin, win_blend);
-  fl_snapshot((target_dir + "main_menubar.png").c_str(), main_menubar, row_margin, row_blend);
+  Fluid.main_window->size(350, 320);
+  fl_snapshot((target_dir + "Fluid.main_window.png").c_str(), Fluid.main_window, win_margin, win_blend);
+  fl_snapshot((target_dir + "main_menubar.png").c_str(), Fluid.main_menubar, row_margin, row_blend);
   fl_snapshot((target_dir + "main_browser.png").c_str(), widget_browser, FL_SNAP_AREA_CLEAR,
               Fl_Rect(0, 30, FL_SNAP_TO_WINDOW, 100), row_blend, 2.0);
 
@@ -453,7 +453,7 @@ void run_autodoc(const std::string &target_dir) {
   codeview_panel->show();
   Fl::wait(0.2);
   Fl::flush();
-  update_codeview_cb(NULL, NULL); // must be visible on screen for this to work
+  update_codeview_cb(nullptr, nullptr); // must be visible on screen for this to work
   cv_tab->value(cv_source_tab);
   codeview_panel->redraw();
   Fl::flush();
@@ -487,41 +487,41 @@ void run_autodoc(const std::string &target_dir) {
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
 
-  // -- ID_Function
+  // -- Type::Function
   Fl_Window *adoc_function_panel = make_function_panel();
   f_name_input->value("count_trees(const char *forest_name)");
   f_return_type_input->value("unsigned int");
   fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
   adoc_function_panel->hide();
 
-  // -- ID_Code
+  // -- Type::Code
   Fl_Window *adoc_code_panel = make_code_panel();
   code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
   adoc_code_panel->hide();
 
-  // -- ID_CodeBlock
+  // -- Type::CodeBlock
   Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
   code_before_input->value("if (test())");
   code_after_input->value("// test widgets added...");
   fl_snapshot((target_dir + "codeblock_panel.png").c_str(), adoc_codeblock_panel, win_margin, win_blend);
   adoc_codeblock_panel->hide();
 
-  // -- ID_Decl
+  // -- Type::Decl
   Fl_Window *adoc_decl_panel = make_decl_panel();
   decl_class_choice->hide();
   decl_input->buffer()->text("const char *damage = \"'tis but a scratch\";");
   fl_snapshot((target_dir + "decl_panel.png").c_str(), adoc_decl_panel, win_margin, win_blend);
   adoc_decl_panel->hide();
 
-  // -- ID_DeclBlock
+  // -- Type::DeclBlock
   Fl_Window *adoc_declblock_panel = make_declblock_panel();
   declblock_before_input->value("#ifdef NDEBUG");
   declblock_after_input->value("#endif // NDEBUG");
   fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
   adoc_declblock_panel->hide();
 
-  // -- ID_Class
+  // -- Type::Class
   Fl_Window *adoc_class_panel = make_class_panel();
   decl_class_choice->hide();
   c_name_input->value("Zoo_Giraffe");
@@ -529,15 +529,15 @@ void run_autodoc(const std::string &target_dir) {
   fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
   adoc_class_panel->hide();
 
-  // -- ID_Widget_Class is handled like Fl_Window_Type
+  // -- Type::Widget_Class is handled like Window_Node
 
-  // -- ID_Comment
+  // -- Type::Comment
   Fl_Window *adoc_comment_panel = make_comment_panel();
   comment_input->buffer()->text("Make sure that the giraffe gets enough hay,\nbut the monkey can't reach it.");
   fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
   adoc_comment_panel->hide();
 
-  // -- ID_Data
+  // -- Type::Data
   Fl_Window *adoc_data_panel = make_data_panel();
   data_class_choice->hide();
   data_input->value("emulated_ROM");

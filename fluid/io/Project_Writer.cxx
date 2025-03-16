@@ -1,12 +1,12 @@
 //
-// Fluid file routines for the Fast Light Tool Kit (FLTK).
+// Fluid Project File Writer code for the Fast Light Tool Kit (FLTK).
 //
 // You may find the basic read_* and write_* routines to
 // be useful for other programs.  I have used them many times.
 // They are somewhat similar to tcl, using matching { and }
 // to quote strings.
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,11 +21,11 @@
 
 #include "io/Project_Writer.h"
 
-#include "app/fluid.h"
-#include "app/project.h"
+#include "Fluid.h"
+#include "Project.h"
 #include "app/shell_command.h"
-#include "app/undo.h"
-#include "app/Fd_Snap_Action.h"
+#include "proj/undo.h"
+#include "app/Snap_Action.h"
 
 /// \defgroup flfile .fl Project File Operations
 /// \{
@@ -42,18 +42,16 @@ using namespace fld::io;
     is used to implement copy and paste.
  \return 0 if the operation failed, 1 if it succeeded
  */
-int fld::io::write_file(const char *filename, int selected_only, bool to_codeview) {
-  Project_Writer out;
+int fld::io::write_file(Project &proj, const char *filename, int selected_only, bool to_codeview) {
+  Project_Writer out(proj);
   return out.write_project(filename, selected_only, to_codeview);
 }
 
 // ---- Project_Writer ---------------------------------------------- MARK: -
 
 /** \brief Construct local project writer. */
-Project_Writer::Project_Writer()
-: fout(NULL),
-  needspace(0),
-  write_codeview_(false)
+Project_Writer::Project_Writer(Project &proj)
+: proj_(proj)
 {
 }
 
@@ -64,8 +62,8 @@ Project_Writer::~Project_Writer()
 
 /**
  Open the .fl design file for writing.
- If the filename is NULL, associate stdout instead.
- \param[in] s the filename or NULL for stdout
+ If the filename is nullptr, associate stdout instead.
+ \param[in] s the filename or nullptr for stdout
  \return 1 if successful. 0 if the operation failed
  */
 int Project_Writer::open_write(const char *s) {
@@ -102,55 +100,55 @@ int Project_Writer::close_write() {
  */
 int Project_Writer::write_project(const char *filename, int selected_only, bool sv) {
   write_codeview_ = sv;
-  undo_suspend();
+  proj_.undo.suspend();
   if (!open_write(filename)) {
-    undo_resume();
+    proj_.undo.resume();
     return 0;
   }
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
                "version %.4f",FL_VERSION);
-  if(!g_project.include_H_from_C)
+  if(!proj_.include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
-  if(g_project.use_FL_COMMAND)
+  if(proj_.use_FL_COMMAND)
     write_string("\nuse_FL_COMMAND");
-  if (g_project.utf8_in_src)
+  if (proj_.utf8_in_src)
     write_string("\nutf8_in_src");
-  if (g_project.avoid_early_includes)
+  if (proj_.avoid_early_includes)
     write_string("\navoid_early_includes");
-  if (g_project.i18n_type) {
-    write_string("\ni18n_type %d", g_project.i18n_type);
-    switch (g_project.i18n_type) {
-      case FD_I18N_NONE:
+  if ((proj_.i18n_type != fld::I18n_Type::NONE)) {
+    write_string("\ni18n_type %d", static_cast<int>(proj_.i18n_type));
+    switch (proj_.i18n_type) {
+      case fld::I18n_Type::NONE:
         break;
-      case FD_I18N_GNU : /* GNU gettext */
-        write_string("\ni18n_include"); write_word(g_project.i18n_gnu_include.c_str());
-        write_string("\ni18n_conditional"); write_word(g_project.i18n_gnu_conditional.c_str());
-        write_string("\ni18n_gnu_function"); write_word(g_project.i18n_gnu_function.c_str());
-        write_string("\ni18n_gnu_static_function"); write_word(g_project.i18n_gnu_static_function.c_str());
+      case fld::I18n_Type::GNU : /* GNU gettext */
+        write_string("\ni18n_include"); write_word(proj_.i18n_gnu_include.c_str());
+        write_string("\ni18n_conditional"); write_word(proj_.i18n_gnu_conditional.c_str());
+        write_string("\ni18n_gnu_function"); write_word(proj_.i18n_gnu_function.c_str());
+        write_string("\ni18n_gnu_static_function"); write_word(proj_.i18n_gnu_static_function.c_str());
         break;
-      case FD_I18N_POSIX : /* POSIX catgets */
-        write_string("\ni18n_include"); write_word(g_project.i18n_pos_include.c_str());
-        write_string("\ni18n_conditional"); write_word(g_project.i18n_pos_conditional.c_str());
-        if (!g_project.i18n_pos_file.empty()) {
+      case fld::I18n_Type::POSIX : /* POSIX catgets */
+        write_string("\ni18n_include"); write_word(proj_.i18n_pos_include.c_str());
+        write_string("\ni18n_conditional"); write_word(proj_.i18n_pos_conditional.c_str());
+        if (!proj_.i18n_pos_file.empty()) {
           write_string("\ni18n_pos_file");
-          write_word(g_project.i18n_pos_file.c_str());
+          write_word(proj_.i18n_pos_file.c_str());
         }
-        write_string("\ni18n_pos_set"); write_word(g_project.i18n_pos_set.c_str());
+        write_string("\ni18n_pos_set"); write_word(proj_.i18n_pos_set.c_str());
         break;
     }
   }
 
   if (!selected_only) {
-    write_string("\nheader_name"); write_word(g_project.header_file_name.c_str());
-    write_string("\ncode_name"); write_word(g_project.code_file_name.c_str());
-    g_layout_list.write(this);
+    write_string("\nheader_name"); write_word(proj_.header_file_name.c_str());
+    write_string("\ncode_name"); write_word(proj_.code_file_name.c_str());
+    Fluid.layout_list.write(this);
     if (g_shell_config)
       g_shell_config->write(this);
-    if (g_project.write_mergeback_data)
-      write_string("\nmergeback %d", g_project.write_mergeback_data);
+    if (proj_.write_mergeback_data)
+      write_string("\nmergeback %d", proj_.write_mergeback_data);
   }
 
-  for (Fl_Type *p = Fl_Type::first; p;) {
+  for (Node *p = proj_.tree.first; p;) {
     if (!selected_only || p->selected) {
       p->write(*this);
       write_string("\n");
@@ -161,7 +159,7 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     }
   }
   int ret = close_write();
-  undo_resume();
+  proj_.undo.resume();
   return ret;
 }
 

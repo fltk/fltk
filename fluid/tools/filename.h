@@ -1,5 +1,5 @@
 /*
- * Filename header file for the Fast Light Tool Kit (FLTK).
+ * Filename handling header file for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 1998-2025 by Bill Spitzak and others.
  *
@@ -27,7 +27,8 @@ std::string fl_filename_shortened(const std::string &filename, int maxchars);
 
 namespace fld {
 
-using filename = std::string;
+extern std::string end_with_slash(const std::string &fn);
+extern std::string fix_separators(const std::string &fn);
 
 } // namespace fld
 

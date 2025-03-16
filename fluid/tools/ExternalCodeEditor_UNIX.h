@@ -7,7 +7,7 @@
 #ifndef _EXTCODEEDITOR_H
 #define _EXTCODEEDITOR_H
 
-#include "app/fluid.h"
+#include "Fluid.h"
 
 #include <FL/Fl.H>
 
@@ -42,7 +42,7 @@ public:
   ExternalCodeEditor();
   ~ExternalCodeEditor();
   int is_editing();
-  int reap_editor(pid_t *pid_reaped=NULL);
+  int reap_editor(pid_t *pid_reaped=nullptr);
   void close_editor();
   const char *filename() { return filename_; }
   int open_editor(const char *editor_cmd, const char *code);

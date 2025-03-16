@@ -398,7 +398,7 @@ void Fl_Tabs::take_focus(Fl_Widget *o) {
  \return 0 if o is invalid or was deleted by the callback and must no longer be used
  */
 int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
-  // chaeck if o is valid
+  // check if o is valid
   if ( o == NULL )
     return 0;
 

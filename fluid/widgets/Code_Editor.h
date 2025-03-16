@@ -1,6 +1,5 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
-// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -17,6 +16,8 @@
 
 #ifndef FLUID_WIDGETS_CODE_EDITOR_H
 #define FLUID_WIDGETS_CODE_EDITOR_H
+
+// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 
 //
 // Include necessary headers...
@@ -49,7 +50,7 @@ class Code_Editor : public Fl_Text_Editor {
   static int auto_indent(int, Code_Editor* e);
 
 public:
-  Code_Editor(int X, int Y, int W, int H, const char *L=0);
+  Code_Editor(int X, int Y, int W, int H, const char *L=nullptr);
   ~Code_Editor();
   void textsize(Fl_Fontsize s);
 

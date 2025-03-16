@@ -1,5 +1,5 @@
 //
-// Widget Browser code for the Fast Light Tool Kit (FLTK).
+// Widget Tree Browser code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -19,20 +19,20 @@
 
 #include <FL/Fl_Browser_.H>
 
-class Fl_Type;
+class Node;
 
 namespace fld {
 namespace widget {
 
 class Node_Browser : public Fl_Browser_
 {
-  friend class Fl_Type;
+  friend class Node;
 
   static void callback_stub(Fl_Widget *o, void *) {
     ((Node_Browser *)o)->callback();
   }
 
-  Fl_Type* pushedtitle { nullptr };
+  Node* pushedtitle { nullptr };
   int saved_h_scroll_ { 0 };
   int saved_v_scroll_ { 0 };
 
@@ -55,7 +55,7 @@ public:
   void restore_scroll_position();
   void rebuild();
   void new_list() { Fl_Browser_::new_list(); }
-  void display(Fl_Type *);
+  void display(Node *);
   void load_prefs();
   void save_prefs();
 
@@ -78,11 +78,11 @@ public:
 
 extern void redraw_browser();
 extern Fl_Widget *make_widget_browser(int x,int y,int w,int h);
-extern void redraw_widget_browser(Fl_Type *caller);
-extern void select(Fl_Type *o, int v);
-extern void select_only(Fl_Type *o);
+extern void redraw_widget_browser(Node *caller);
+extern void select(Node *o, int v);
+extern void select_only(Node *o);
 extern void deselect();
-extern void reveal_in_browser(Fl_Type *t);
+extern void reveal_in_browser(Node *t);
 
 extern fld::widget::Node_Browser *widget_browser;
 

@@ -1,6 +1,5 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
-// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
 // Copyright 1998-2025 by Bill Spitzak and others.
 //
@@ -14,6 +13,8 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 
 //
 // Include necessary headers...
@@ -230,11 +231,11 @@ Code_Editor::Code_Editor(int X, int Y, int W, int H, const char *L) :
  */
 Code_Editor::~Code_Editor() {
   Fl_Text_Buffer *buf = mStyleBuffer;
-  mStyleBuffer = 0;
+  mStyleBuffer = nullptr;
   delete buf;
 
   buf = mBuffer;
-  buffer(0);
+  buffer(nullptr);
   delete buf;
 }
 

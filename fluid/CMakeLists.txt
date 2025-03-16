@@ -23,32 +23,41 @@ set(TARGETS fluid)
 # program fluid properly
 
 set(CPPFILES
-  app/align_widget.cxx
-  app/Fd_Snap_Action.cxx
-  app/fluid.cxx
-  app/Fluid_Image.cxx
-  app/mergeback.cxx
-  app/project.cxx
+  Fluid.cxx
+  Project.cxx
+  app/args.cxx
+  app/Snap_Action.cxx
+  app/Image_Asset.cxx
+  app/history.cxx
+  app/Menu.cxx
   app/shell_command.cxx
-  app/undo.cxx
+  app/templates.cxx
   io/Code_Writer.cxx
   io/Project_Writer.cxx
   io/Project_Reader.cxx
+  io/String_Writer.cxx
+  nodes/Tree.cxx
+  nodes/Button_Node.cxx
+  nodes/Function_Node.cxx
+  nodes/Grid_Node.cxx
+  nodes/Group_Node.cxx
+  nodes/Menu_Node.cxx
+  nodes/Node.cxx
+  nodes/Widget_Node.cxx
+  nodes/Window_Node.cxx
+  nodes/callbacks.cxx
   nodes/factory.cxx
-  nodes/Fl_Button_Type.cxx
-  nodes/Fl_Function_Type.cxx
-  nodes/Fl_Grid_Type.cxx
-  nodes/Fl_Group_Type.cxx
-  nodes/Fl_Menu_Type.cxx
-  nodes/Fl_Type.cxx
-  nodes/Fl_Widget_Type.cxx
-  nodes/Fl_Window_Type.cxx
   panels/about_panel.cxx
   panels/codeview_panel.cxx
   panels/function_panel.cxx
   panels/settings_panel.cxx
   panels/template_panel.cxx
   panels/widget_panel.cxx
+  panels/widget_panel/Grid_Tab.cxx
+  panels/widget_panel/Grid_Child_Tab.cxx
+  proj/align_widget.cxx
+  proj/mergeback.cxx
+  proj/undo.cxx
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
   tools/filename.cxx
@@ -64,32 +73,41 @@ set(CPPFILES
 # List header files in Apple's Xcode IDE
 
 set(HEADERFILES
-  app/align_widget.h
-  app/Fd_Snap_Action.h
-  app/fluid.h
-  app/Fluid_Image.h
-  app/project.h
-  app/mergeback.h
+  Fluid.h
+  Project.h
+  app/args.h
+  app/Snap_Action.h
+  app/Image_Asset.h
+  app/history.h
+  app/Menu.h
   app/shell_command.h
-  app/undo.h
+  app/templates.h
   io/Code_Writer.h
   io/Project_Writer.h
   io/Project_Reader.h
+  io/String_Writer.h
+  nodes/Tree.h
+  nodes/Button_Node.h
+  nodes/Function_Node.h
+  nodes/Grid_Node.h
+  nodes/Group_Node.h
+  nodes/Menu_Node.h
+  nodes/Node.h
+  nodes/Widget_Node.h
+  nodes/Window_Node.h
+  nodes/callbacks.h
   nodes/factory.h
-  nodes/Fl_Button_Type.h
-  nodes/Fl_Function_Type.h
-  nodes/Fl_Grid_Type.h
-  nodes/Fl_Group_Type.h
-  nodes/Fl_Menu_Type.h
-  nodes/Fl_Type.h
-  nodes/Fl_Widget_Type.h
-  nodes/Fl_Window_Type.h
   panels/about_panel.h
   panels/codeview_panel.h
   panels/function_panel.h
   panels/settings_panel.h
   panels/template_panel.h
   panels/widget_panel.h
+  panels/widget_panel/Grid_Tab.h
+  panels/widget_panel/Grid_Child_Tab.h
+  proj/align_widget.h
+  proj/mergeback.h
+  proj/undo.h
   rsrcs/comments.h
   rsrcs/pixmaps.h
   tools/autodoc.h
@@ -237,3 +255,16 @@ if(UNIX)
     )
   endforeach()
 endif(UNIX)
+
+# Additional warnings during development
+
+if(APPLE)
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    target_compile_options(fluid-lib PRIVATE
+      -Wall -Wextra -Wpedantic -Werror
+      -Wno-zero-as-null-pointer-constant
+      -Wno-missing-field-initializers
+      -Wno-unused-parameter
+    )
+  endif()
+endif(APPLE)

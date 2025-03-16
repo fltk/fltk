@@ -293,7 +293,7 @@ Note: the hierarchical dependency is implemented twice and somewhat conflicting
 
 The list of known Types and their inheritance is:
 
-  Fl_Type (note: can't be written)
+  Node (note: can't be written)
    +-- Function
    +-- code
    +-- codeblock
@@ -315,7 +315,7 @@ The list of known Types and their inheritance is:
    |    |    +-- Fl_Tile
    |    |    +-- Fl_Wizard
    |    |    +-- Fl_Grid
-   |    +-- Fl_Menu_Type (note: can't be written)
+   |    +-- Menu_Node (note: can't be written)
    |    |    +-- Fl_Menu_Button
    |    |    +-- Fl_Choice
    |    |    +-- Fl_Input_Choice
@@ -373,7 +373,7 @@ are stored as "parent_properties { ...list... }". If a node encounters this
 property tag, it must ask its parent to interpret the contents of that list.
 See Fl_Grid for an example.
 
-Type Fl_Type <word>
+Type Node <word>
 
   "uid" <4-digit-hex> : since Oct 2023, optional, a unique id for this node
       within the project file
@@ -392,12 +392,12 @@ Type "Function" <word> : function signature
   “C” : if set, function is extern “C”
   “return_type” <word> : C or C++ type descriptor, can start with “virtual”
       and/or “static” to further define the function.
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type codeblock <word> : C++ code, for example "if (test())"
 
   "after" <word> : C++ code or comment following the closing '}'
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type "decl" <word> : C++ code to declare a variable or class member
 
@@ -405,7 +405,7 @@ Type "decl" <word> : C++ code to declare a variable or class member
       defaults to "private"
   none or "local" or "global": for declaration in the code body
       defaults to "global"
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type "data" <word> : C++ variable name
 
@@ -418,21 +418,21 @@ Type "declblock" <word> : C++ code
 
   none or "public" or "protected" : defaults to private (obsolete)
   "map" <word> : integer value, default is 2 (CODE_IN_SOURCE),
-      see Fl_DeclBlock_Type::write_map_
+      see DeclBlock_Node::write_map_
   "after" <word> : C++ code or comment following the block
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type "comment" <word> : comment text
 
   "in_source" or "not_in_source": default to in_source
   "in_header" or "not_in_header": default to in_header
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type "class" <word> <word> : prefix, class name
 
   none or "private" or "protected" : defaults to public
   ":" <word> : name of super class
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type "Fl_Widget" <word> : C++ variable name
 
@@ -487,7 +487,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "shortcut" <word> : integer
   "code0" or "code1" or "code2" or "code3" <word> : C++ extra code lines
   "extra_code" <word> : C++ extra code lines
-  ... : inherits more from Fl_Type
+  ... : inherits more from Node
 
 Type "Fl_Button" <word> : C++ variable name
 
