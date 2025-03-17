@@ -19,6 +19,7 @@
 
 #include <FL/fl_attr.h>
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string>
 
