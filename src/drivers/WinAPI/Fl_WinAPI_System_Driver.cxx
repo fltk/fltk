@@ -1,7 +1,7 @@
 //
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,6 @@
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
-#include <FL/fl_string_functions.h>  // fl_strdup()
 #include <FL/filename.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
@@ -39,6 +38,7 @@
 #include <direct.h>
 #include <io.h>
 #include <fcntl.h>
+#include <string>
 
 // We must define _WIN32_IE at least to 0x0500 before inclusion of 'shlobj.h' to enable
 // the declaration of SHGFP_TYPE_CURRENT for some older versions of MinGW, notably
@@ -63,6 +63,18 @@ typedef RPC_STATUS (WINAPI *uuid_func)(UUID __RPC_FAR *Uuid);
 #ifdef __CYGWIN__
 #  include <mntent.h>
 #endif
+
+// Optional helper function to debug Fl_WinAPI_System_Driver::home_directory_name()
+#ifndef DEBUG_HOME_DIRECTORY_NAME
+#define DEBUG_HOME_DIRECTORY_NAME 0
+#endif
+#if DEBUG_HOME_DIRECTORY_NAME
+static void print_env(const char *ev) {
+  const char *val = getenv(ev);
+  printf("%-30.30s = \"%s\"\n", ev, val ? val : "<null>");
+  fflush(stdout);
+}
+#endif // DEBUG_HOME_DIRECTORY_NAME
 
 static inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
@@ -985,41 +997,64 @@ int Fl_WinAPI_System_Driver::file_type(const char *filename)
   return filetype;
 }
 
+// Note: the result is cached in a static variable
 const char *Fl_WinAPI_System_Driver::home_directory_name()
 {
-  static char *home = NULL;
-  if (home)
-    return home;
-  // Various ways to retrieve the HOME path.
-  if (!home) {
+  static std::string home;
+  if (!home.empty())
+    return home.c_str();
+
+#if (DEBUG_HOME_DIRECTORY_NAME)
+  print_env("HOMEDRIVE");
+  print_env("HOMEPATH");
+  print_env("UserProfile");
+  print_env("HOME");
+#endif
+
+  // Implement various ways to retrieve the HOME path.
+  // Note, from `man getenv`:
+  //  "The implementation of getenv() is not required to be reentrant.
+  //   The string pointed to by the return value of getenv() may be statically
+  //   allocated, and can be modified by a subsequent call to getenv()...".
+  // Tests show that this is the case in some MinGW implementations.
+
+  if (home.empty()) {
     const char *home_drive = getenv("HOMEDRIVE");
-    const char *home_path = getenv("HOMEPATH");
-    if (home_path && home_drive) {
-      int n = strlen(home_drive) + strlen(home_path) + 2;
-      home = (char *)::malloc(n);
-      ::strncpy(home, home_drive, n);
-      ::strncat(home, home_path, n);
-    }
-  }
-  if (!home) {
+    if (home_drive) {
+      home = home_drive; // copy *before* calling getenv() again, see above
+      const char *home_path = getenv("HOMEPATH");
+      if (home_path) {
+        home.append(home_path);
+      } else {
+        home.clear(); // reset
+      } // home_path
+    } // home_drive
+  } // empty()
+
+  if (home.empty()) {
     const char *h = getenv("UserProfile");
     if (h)
-      home = ::strdup(h);
+      home = h;
   }
-  if (!home) {
+
+  if (home.empty()) {
     const char *h = getenv("HOME");
     if (h)
-      home = ::strdup(h);
+      home = h;
   }
-  if (!home) {
-    home = ::strdup("~/"); // last resort
+  if (home.empty()) {
+    home = "~/"; // last resort
   }
   // Make path canonical.
-  for (char *s = home; *s; s++) {
-    if (*s == '\\')
-      *s = '/';
+  for (char& c : home) {
+    if (c == '\\')
+      c = '/';
   }
-  return home;
+#if (DEBUG_HOME_DIRECTORY_NAME)
+  printf("home_directory_name() returns \"%s\"\n", home.c_str());
+  fflush(stdout);
+#endif
+  return home.c_str();
 }
 
 void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
