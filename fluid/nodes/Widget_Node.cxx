@@ -46,6 +46,9 @@
 #undef max
 #include <algorithm>
 
+using namespace fld;
+using namespace fld::proj;
+
 // Make an Widget_Node subclass instance.
 // It figures out the automatic size and parent of the new widget,
 // creates the Fl_Widget (by calling the virtual function _make),
@@ -1468,7 +1471,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     f.write_c(", %s", ut);
     if (use_v) f.write_c(" v");
     f.write_c(") {\n");
-    // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
+    f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
     f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
@@ -1479,7 +1482,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
       if (*p != '#' && *p) f.write_c(";");
     }
     f.write_c("\n");
-    // Matt: disabled f.tag(FD_TAG_WIDGET_CALLBACK, get_uid());
+    f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
     f.write_c("}\n");
     if (k) {
       f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);

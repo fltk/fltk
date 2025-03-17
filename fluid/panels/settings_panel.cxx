@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -2666,17 +2666,14 @@ Fl_Double_Window* make_settings_window() {
           o->labelfont(1);
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
         } // Fl_Box* o
-        { // // Matt: disabled
-          w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
+        { w_proj_mergeback = new Fl_Check_Button(100, 283, 220, 20, "generate MergeBack data");
           w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
 "o be merged back into the project file. Checking this option will generate add"
 "itional data in code and project files.");
           w_proj_mergeback->down_box(FL_DOWN_BOX);
           w_proj_mergeback->labelsize(11);
           w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
-          w_proj_mergeback->hide();
         } // Fl_Check_Button* w_proj_mergeback
         { Fl_Box* o = new Fl_Box(100, 530, 220, 10);
           o->hide();

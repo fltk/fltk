@@ -792,6 +792,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_widget_panel.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_setting_dialog.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_codeview_panel.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/page_mergeback.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_tutorial.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/page_appendices.dox
                          

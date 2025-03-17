@@ -187,7 +187,7 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
           xywh {0 0 100 20}
         }
         MenuItem {} {
-          label {flip flops} selected
+          label {flip flops}
           xywh {0 0 100 20}
         }
         MenuItem {} {
@@ -203,7 +203,7 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
           xywh {35 112 100 24} type Radio down_box ROUND_DOWN_BOX
         }
         Fl_Round_Button wRight {
-          label {right side}
+          label {right side} selected
           xywh {35 136 100 24} type Radio down_box ROUND_DOWN_BOX
         }
         Fl_Box {} {

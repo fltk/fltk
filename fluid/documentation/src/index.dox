@@ -96,6 +96,8 @@
  - \ref setting_i18n
  - \ref setting_user
 
+ \subpage page_mergeback
+
  \subpage page_tutorial
  - \ref fluid_hello_world_tutorial
  - \ref fluid_1of7guis_tutorial
