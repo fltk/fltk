@@ -1656,6 +1656,7 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // important after screen removal
   Fl_Wayland_Screen_Driver::output *output, *mainscreen = NULL;
   wl_list_for_each(output, &outputs, link) {
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;

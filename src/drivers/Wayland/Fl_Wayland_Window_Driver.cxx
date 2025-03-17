@@ -693,8 +693,6 @@ void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *w
       Fl::add_timeout(0, (Fl_Timeout_Handler)delayed_rescale, window->fl_win);
     }
   }
-  if (window->fl_win->as_gl_window())
-    wl_surface_set_buffer_scale(window->wl_surface, output->wld_scale);
 }
 
 
@@ -710,8 +708,6 @@ static void surface_enter(void *data, struct wl_surface *wl_surface,
   if (output == NULL)
     return;
 
-  Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
-  float pre_scale = Fl::screen_scale(win_driver->screen_num()) * win_driver->wld_scale();
   bool list_was_empty = wl_list_empty(&window->outputs);
   struct Fl_Wayland_Window_Driver::surface_output *surface_output =
   (struct Fl_Wayland_Window_Driver::surface_output*)malloc(
@@ -723,7 +719,7 @@ static void surface_enter(void *data, struct wl_surface *wl_surface,
   wl_list_insert(e, &surface_output->link);
 //printf("window %p enters screen id=%d length=%d\n", window->fl_win, output->id, wl_list_length(&window->outputs));
   if (list_was_empty && !window->fl_win->parent()) {
-    change_scale(output, window, pre_scale);
+    change_scale(output, window, 0);
   }
 }
 
