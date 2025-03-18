@@ -1718,9 +1718,10 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
 
 
 void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
-  if (!border()) pWindow->resize(X, Y, W, H);
-  xdg_toplevel_unset_fullscreen(xdg_toplevel());
+  pWindow->hide();
   pWindow->_clear_fullscreen();
+  pWindow->resize(X, Y, W, H);
+  pWindow->show();
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
