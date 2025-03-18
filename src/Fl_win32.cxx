@@ -2342,6 +2342,8 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
 
   if (!im_enabled)
     flImmAssociateContextEx((HWND)x->xid, 0, 0);
+  
+  if (w->fullscreen_active()) Fl::handle(FL_FULLSCREEN, w);
 }
 
 

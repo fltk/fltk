@@ -397,6 +397,7 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
                                Fl_Wayland_Graphics_Driver::p_surface_frame_listener, xid);
     }
     wl_egl_window_resize(egl_window, W, H, 0, 0);
+    wl_surface_set_buffer_scale(xid->wl_surface, s);
   }
   /* CONTROL_LEAKING_SUB_GL_WINDOWS
   if (Fl_Wayland_Window_Driver::driver(pWindow)->subRect()) {

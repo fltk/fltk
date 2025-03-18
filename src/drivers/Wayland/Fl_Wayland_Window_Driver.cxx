@@ -1603,6 +1603,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
       previous_floatingtitle = NULL;
     }
   }
+  if (pWindow->fullscreen_active()) Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
 

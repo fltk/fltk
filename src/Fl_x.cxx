@@ -2474,8 +2474,8 @@ void Fl_X11_Window_Driver::fullscreen_on() {
     show();
     /* We want to grab the window, not a widget, so we cannot use Fl::grab */
     XGrabKeyboard(fl_display, fl_xid(pWindow), 1, GrabModeAsync, GrabModeAsync, fl_event_time);
-    Fl::handle(FL_FULLSCREEN, pWindow);
   }
+  Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
 void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
@@ -2487,8 +2487,8 @@ void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     hide();
     resize(X,Y,W,H);
     show();
-    Fl::handle(FL_FULLSCREEN, pWindow);
   }
+  Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
 
@@ -2819,7 +2819,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   if (win->fullscreen_active() && !Fl_X11_Screen_Driver::ewmh_supported()) {
     XGrabKeyboard(fl_display, xp->xid, 1, GrabModeAsync, GrabModeAsync, fl_event_time);
   }
-
+  if (win->fullscreen_active()) Fl::handle(FL_FULLSCREEN, win);
 }
 
 ////////////////////////////////////////////////////////////////
