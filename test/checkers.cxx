@@ -4,7 +4,7 @@
 // Hours of fun: the FLTK checkers game!
 // Based on a very old algorithm, but it still works!
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -616,8 +616,43 @@ node* undomove() {
 
 const char _usermoves[] =
 "B1D1F1H1A2C2E2G2??B3D3F3H3A4C4E4G4??B5D5F5H5A6C6E6G6??B7D7F7H7A8C8E8G8??";
-#define usermoves(x,y) _usermoves[2*((x)-5)+(y)-1]
 
+// #define usermoves(x,y) _usermoves[2*((x)-5)+(y)-1]
+
+// Note: the macro above would cause out-of-bounds access to _usermoves[].
+// The *workaround* chosen here is to check bounds and return '?' instead.
+// Note also that this is NOT a proper solution of the underlying problem,
+// but it removes access to undefined memory. `Address Sanitizer` finds this
+// issue and terminates the program whereas `valgrind` doesn't find it.
+//
+// Test scenario: The issue happens when you try to drag a piece when another
+// one *must* jump, according to the rules.
+//
+// Just in case someone feels inclined to find and fix the real issue:
+// Example (script from using VT100 mode, which does NOT crash):
+// Black's move? E6 F5
+// Black moves from E6 to F5 (+20).
+// White moves from D3 to E4 (+14).
+// Black's move? G6 H5             <-- try this in GUI mode w/o the fix below
+// Valid moves are:
+// F5 D3	- Black jumps from F5 to D3, E4 removed (-14).
+//
+// Hint for further debugging: enable the printf/fflush statements below and
+// set a breakpoint inside the `if` condition below in a debugger. Then take
+// a look at the stack trace when the breakpoint is hit. Good luck! ;-)
+// Albrecht.
+
+int usermoves(int x, int y) {
+  int idx = 2 * (x - 5) + y - 1;
+  if (idx < 0 || idx > (int)sizeof(_usermoves) - 1) { // out of bounds
+    // printf("usermoves(%3d, %3d): index = %3d is out of bounds, returning '?'\n", x, y, idx);
+    // fflush(stdout);
+    return '?';
+  }
+  return _usermoves[idx];
+}
+
+#ifdef VT100
 void dumpnode(node *n, int help) {
   int x = n->from;
   int y = n->to;
@@ -636,6 +671,7 @@ void dumpnode(node *n, int help) {
   }
   printf(" (%+d).\n",n->value);
 }
+#endif // VT100
 
 int abortflag;
 
