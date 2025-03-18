@@ -403,7 +403,7 @@ set(FLTK_USE_STD 1) # always ON since FLTK 1.5.0, option will be
 
 # find X11 libraries and headers
 set(PATH_TO_XLIBS)
-if((NOT APPLE OR FLTK_BACKEND_X11) AND NOT WIN32 AND NOT FLTK_BACKEND_WAYLAND)
+if(FLTK_BACKEND_X11)
   include(FindX11)
   if(X11_FOUND)
     set(FLTK_USE_X11 1)
