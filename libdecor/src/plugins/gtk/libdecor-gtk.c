@@ -759,7 +759,8 @@ redraw_scale(struct libdecor_frame_gtk *frame_gtk,
 	}
 	if (scale != cmpnt->scale) {
 		cmpnt->scale = scale;
-		if ((cmpnt->type != SHADOW) || is_border_surfaces_showing(frame_gtk)) {
+		if ((frame_gtk->decoration_type != DECORATION_TYPE_NONE) &&
+		    ((cmpnt->type != SHADOW) || is_border_surfaces_showing(frame_gtk))) {
 			draw_border_component(frame_gtk, cmpnt, cmpnt->type);
 			return true;
 		}
