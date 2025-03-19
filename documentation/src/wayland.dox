@@ -336,17 +336,22 @@ accessible from this object.
 For example, when \c interface equals \c "wl_compositor", the value returned by
 \c wl_registry_bind() is stored as member \c wl_compositor of the
 \c Fl_Wayland_Screen_Driver object.
-\c registry_handle_global() also identifies whether the Mutter, Weston, or KWin compositor is connected
-and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
+Function \c registry_handle_global() also identifies whether the Mutter, Weston, or KWin compositor
+is connected and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
+Other compositors (e.g., \c sway, \c labwc) are not specifically identified by FLTK and
+store value \c unspecified in member variable \c compositor.
 
 Wayland calls \c registry_handle_global() with its parameter \c interface equals to
-"wl_output" once for each screen connected to the system. Each time, an object of type
-<tt>struct wl_output</tt> is created, to which a 4-member listener is associated by function
+\c "wl_output" once for each screen connected to the system. Each time, a pointer to a Wayland object
+of type <tt>struct wl_output</tt> is obtained by a call to \c wl_registry_bind() and an FLTK
+record of type \ref wayland-output "Fl_Wayland_Screen_Driver::output" is created.
+This FLTK record is added to the end of the linked list of known screens that starts
+at member \c outputs of the \c Fl_Wayland_Screen_Driver object.
+A 4-member listener is associated to the <tt>struct wl_output</tt> by function
 \c wl_output_add_listener(). The 3rd member of this 4-function listener, \c output_done(),
 runs after all initialization steps of the screen have completed and turns to \c true
-member \c done of a record of type
-\c struct \ref wayland-output "Fl_Wayland_Screen_Driver::output" associated to the
-screen. Function \c sync_done() mentioned above therefore also calls \c wl_display_dispatch()
+member \c done of the record of type \c Fl_Wayland_Screen_Driver::output.
+Function \c sync_done() mentioned above therefore also calls \c wl_display_dispatch()
 until the \c done member of all \c Fl_Wayland_Screen_Driver::output records are \c true.
 Overall, after return from function \c sync_done(), FLTK has been made aware of all
 optional protocols and features of its connected Wayland compositor, and has initialized
@@ -356,16 +361,15 @@ Finally, function \c wl_display_get_fd() is called to obtain the file descriptor
 and a call to Fl::add_fd() makes FLTK listen to this descriptor in \c FL_READ mode and associates
 function \c wayland_socket_callback() from file \c Fl_Wayland_Screen_Driver.cxx with it.
 This function calls \c wl_display_dispatch() which reads and interprets data available from the
-file descriptor, and calls corresponding listeners.
-The \c wl_display_dispatch() call is repeated as long as data are available for reading.
+file descriptor, and calls corresponding listeners. Function \c wayland_socket_callback() repeats
+the \c wl_display_dispatch() call as long as data are available for reading.
 
 The event loop is run by function \c Fl_Unix_System_Driver::wait() which is used by both
 the Wayland and X11 FLTK backends. Among various tasks, this function waits for data arriving
-on the file descriptors FLTK is listening. Overall, the event loop of the Wayland backend
-is nearly exactly the same as that used by the X11 backend. The Wayland backend differs
-only in the callback function handling data read from the Wayland connection socket,
-and in overridden functions \c Fl_Wayland_Screen_Driver::poll_or_select_with_delay() and
-\c Fl_Wayland_Screen_Driver::poll_or_select().
+on the file descriptors FLTK is listening. Overall, the Wayland backend's event loop differs
+from that of the X11 backend only in the callback function handling data read from the Wayland
+connection socket and in overridden functions \c Fl_Wayland_Screen_Driver::poll_or_select_with_delay()
+and \c Fl_Wayland_Screen_Driver::poll_or_select().
 
 
 \section wayland-surface Wayland windows and surfaces
@@ -1410,8 +1414,10 @@ gives access, the Wayland way, to the linked list of displays in the system.
 struct Fl_Wayland_Screen_Driver::output { // one record for each display
   uint32_t id; // an identifier of the display
   int x, y; // logical position of the top-left of display
-  int width; // nber of horizontal pixels
-  int height; // nber of vertical pixels
+  int pixel_width; // in pixels
+  int pixel_height; // in pixels
+  int width; // in pixels, account for fractional scaling
+  int height; // in pixels, account for fractional scaling
   float dpi; // at this point, always 96.
   struct wl_output *wl_output; // the Wayland object for this display
   int wld_scale; // Wayland scale factor
