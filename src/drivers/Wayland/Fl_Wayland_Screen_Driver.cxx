@@ -1566,6 +1566,10 @@ static const struct xdg_surface_listener xdg_surface_listener = {
 static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
                                              int& Wfullscreen, int& Hfullscreen,
                                              int& Wworkarea, int& Hworkarea) {
+  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::unspecified) {
+    Wfullscreen = 0;
+    return false;
+  }
   bool found_workarea = false;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   struct wl_surface *wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
