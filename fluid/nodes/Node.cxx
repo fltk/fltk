@@ -696,7 +696,6 @@ void Node::add(Node *anchor, Strategy strategy) {
     Fluid.proj.tree.first = this;
   }
 
-#if 0
   { // make sure that we have no duplicate uid's
     Node *tp = this;
     do {
@@ -704,7 +703,6 @@ void Node::add(Node *anchor, Strategy strategy) {
       tp = tp->next;
     } while (tp!=end && tp!=nullptr);
   }
-#endif
 
   // Give the widgets in our tree a chance to update themselves
   for (Node *t = this; t && t!=end->next; t = t->next) {
@@ -1274,11 +1272,14 @@ unsigned short Node::set_uid(unsigned short suggested_uid) {
     suggested_uid = (unsigned short)rand();
   for (;;) {
     Node *tp = Fluid.proj.tree.first;
-    for ( ; tp; tp = tp->next)
-      if (tp!=this && tp->uid_==suggested_uid)
+    for ( ; tp; tp = tp->next) {
+      if (tp!=this && tp->uid_==suggested_uid) {
         break;
-    if (tp==nullptr)
+      }
+    }
+    if (tp==nullptr) {
       break;
+    }
     suggested_uid = (unsigned short)rand();
   }
   uid_ = suggested_uid;
