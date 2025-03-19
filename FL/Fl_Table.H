@@ -22,17 +22,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scroll.H>
 
-// EXPERIMENTAL
-// We use either std::vector or the private class Fl_Int_Vector
-// depending on the build option FLTK_OPTION_STD or --enable-use_std.
-// This option allows to use std::string and std::vector in FLTK 1.4.x
-
-#if (FLTK_USE_STD)
 #include <vector>
-typedef std::vector<int> Fl_Int_Vector;
-#else
-class Fl_Int_Vector; // private class declared in src/Fl_Int_Vector.H
-#endif
 
 /**
   A table of widgets or other content.
@@ -167,8 +157,8 @@ private:
   };
   unsigned int flags_;
 
-  Fl_Int_Vector *_colwidths;            // column widths in pixels
-  Fl_Int_Vector *_rowheights;           // row heights in pixels
+  std::vector<int> *_colwidths;         // column widths in pixels
+  std::vector<int> *_rowheights;        // row heights in pixels
 
   // number of columns and rows == size of corresponding vectors
   int col_size();                       // size of the column widths vector

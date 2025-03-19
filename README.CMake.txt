@@ -248,13 +248,12 @@ FLTK_OPTION_PRINT_SUPPORT - default ON
     is somewhat smaller. This option makes sense only on the Unix/Linux
     platform or on macOS when FLTK_BACKEND_X11 is ON.
 
-FLTK_OPTION_STD - default OFF
-    This option allows FLTK to use some specific features of modern C++
-    like std::string in the public API of FLTK 1.4.x. Users turning this
-    option ON can benefit from some new functions and methods that return
-    std::string or use std::string as input parameters.
-    Note: This option will be removed in the next minor (1.5.0) or major
-    release which will use std::string and other modern C++ features.
+FLTK_OPTION_STD - removed in FLTK 1.5
+    This option allowed FLTK 1.4 to use some specific C++11 features like
+    std::string in the public API of FLTK 1.4.x.
+    This option has been removed in FLTK 1.5 which uses std::string
+    and other C++11 features by default.
+    You may safely remove this CMake option from your configuration.
 
 FLTK_OPTION_SVG - default ON
     FLTK has a built-in SVG library and can create (write) SVG image files.
@@ -826,9 +825,9 @@ and the shared library (fltk-shared) is libfltk.so.1.4.0 (in FLTK 1.4.0) with
 additional system specific links.
 
 Note: since FLTK 1.5.0 the library fltk_cairo is no longer necessary and
-must be removed from CMake files of user projects. fltk_cairo was an
-empty library solely for backwards compatibility in FLTK 1.4 and has been
-removed from FLTK 1.5.
+must be removed from CMake files of user projects. fltk_cairo was an empty
+library solely for backwards compatibility in FLTK 1.4 and has been removed
+from FLTK 1.5.
 
 
  3.2  Library Aliases

@@ -30,7 +30,7 @@
 /*
  * FLTK_HAVE_CAIRO
  *
- * Do we have the Fl_Cairo_Window support?
+ * Do we have Fl_Cairo_Window support?
 */
 
 #cmakedefine FLTK_HAVE_CAIRO 1
@@ -83,19 +83,6 @@
  */
 
 #cmakedefine FLTK_USE_WAYLAND 1
-
-
-/*
- * FLTK_USE_STD
- *
- * May we use std::string and std::vector for the current build?
- *
- * This is a build configuration option which allows FLTK to add some
- * features based on std::string and std::vector in FLTK 1.4.x
- *
- */
-
-#cmakedefine01 FLTK_USE_STD
 
 
 /*

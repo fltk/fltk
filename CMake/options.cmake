@@ -387,19 +387,6 @@ if(WIN32)
 endif(WIN32)
 
 #######################################################################
-# FLTK_OPTION_STD: temporary option in 1.4, always on in 1.5.
-#                  FIXME: remove this obsolete option entirely ...
-#                  after the source code has been fixed.
-#######################################################################
-
-option(FLTK_OPTION_STD
-      "Use std:: (obsolete since 1.5.0, ignored: always ON)"
-      ON)
-
-set(FLTK_USE_STD 1) # always ON since FLTK 1.5.0, option will be
-                    # removed as soon as the code has been updated
-
-#######################################################################
 
 # find X11 libraries and headers
 set(PATH_TO_XLIBS)

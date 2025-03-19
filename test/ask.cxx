@@ -4,7 +4,7 @@
 // This also demonstrates how to trap attempts by the user to
 // close the last window by overriding Fl::exit
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,6 @@
 void rename_button(Fl_Widget *o, void *v) {
   int what = fl_int(v);
   int ret = 0;
-#if (FLTK_USE_STD)
   std::string input;
   if (what == 0) {
     fl_message_icon_label("§");
@@ -48,22 +47,6 @@ void rename_button(Fl_Widget *o, void *v) {
     o->copy_label(input.c_str());
     o->redraw();
   }
-#else
-  const char *input;
-  if (what == 0) {
-    fl_message_icon_label("§");
-    input = fl_input("Input (no size limit, use ctrl/j for newline):", o->label());
-    if (!input) ret = 1;
-  } else {
-    fl_message_icon_label("€");
-    input = fl_password(20, "Enter password (max. 20 characters):", o->label());
-    if (!input) ret = 1;
-  }
-  if (ret == 0) {
-    o->copy_label(input);
-    o->redraw();
-  }
-#endif // FLTK_USE_STD
 }
 
 void window_callback(Fl_Widget *win, void *) {

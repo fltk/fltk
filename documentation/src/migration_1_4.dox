@@ -368,7 +368,7 @@ OPTION_USE_GL                        | FLTK_BUILD_GL
 OPTION_USE_KDIALOG                   | FLTK_USE_KDIALOG
 OPTION_USE_PANGO                     | FLTK_USE_PANGO
 OPTION_USE_POLL                      | FLTK_USE_POLL
-OPTION_USE_STD                       | FLTK_OPTION_STD
+OPTION_USE_STD                       | FLTK_OPTION_STD  [1]
 OPTION_USE_SVG                       | FLTK_OPTION_SVG
 OPTION_USE_SYSTEM_LIBDECOR           | FLTK_USE_SYSTEM_LIBDECOR
 OPTION_USE_SYSTEM_LIBJPEG            | FLTK_USE_SYSTEM_LIBJPEG
@@ -382,6 +382,9 @@ OPTION_USE_XFT                       | FLTK_USE_XFT
 OPTION_USE_XINERAMA                  | FLTK_USE_XINERAMA
 OPTION_USE_XRENDER                   | FLTK_USE_XRENDER
 OPTION_WAYLAND_ONLY                  | FLTK_BACKEND_X11=OFF
+
+------------------------------------------------
+[1] Note: obsolete and therefore removed in 1.5
 
 
 \section migration_1_4_windows_font New FL_HELVETICA Font on Windows

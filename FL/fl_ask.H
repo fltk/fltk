@@ -1,7 +1,7 @@
 //
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,9 +24,7 @@
 #include <FL/Enumerations.H>
 #include <FL/fl_attr.h>
 
-#if (FLTK_USE_STD)
 #include <string>
-#endif
 
 class Fl_Widget;
 
@@ -76,12 +74,11 @@ FL_EXPORT const char *fl_input(int maxchar, const char *label, const char *deflt
 FL_EXPORT const char *fl_password(int maxchar, const char *label, const char *deflt = 0, ...)
     __fl_attr((__format__(__printf__, 2, 4)));
 
-// since FLTK 1.4.0 -- only with option FLTK_USE_STD
+// since FLTK 1.4.0 -- optional
+// since FLTK 1.5.0 -- always
 
 // - fl_input_str()    with limited input size, returns std::string
 // - fl_password_str() with limited input size, returns std::string
-
-#if (FLTK_USE_STD)
 
 FL_EXPORT std::string fl_input_str(int maxchar, const char *label, const char *deflt = 0, ...)
     __fl_attr((__format__(__printf__, 2, 4)));
@@ -94,8 +91,6 @@ FL_EXPORT std::string fl_password_str(int maxchar, const char *label, const char
 
 FL_EXPORT std::string fl_password_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
     __fl_attr((__format__(__printf__, 3, 5)));
-
-#endif
 
 FL_EXPORT Fl_Widget *fl_message_icon();
 extern FL_EXPORT Fl_Font fl_message_font_;

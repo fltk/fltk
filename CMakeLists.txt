@@ -353,12 +353,6 @@ endif()
 
 message("")
 
-if(FLTK_USE_STD)
-  fl_summary("Use std::"                    "Yes - obsolete: always enabled since FLTK 1.5.0")
-else()
-  fl_summary("Use std::"                    "No - *should* always be enabled since FLTK 1.5.0 !!")
-endif()
-
 fl_summary(   "CMAKE_CXX_STANDARD"          "${CMAKE_CXX_STANDARD}")
 fl_summary_yn("CMAKE_CXX_STANDARD_REQUIRED" CMAKE_CXX_STANDARD_REQUIRED)
 fl_summary_yn("CMAKE_CXX_EXTENSIONS"        CMAKE_CXX_EXTENSIONS)

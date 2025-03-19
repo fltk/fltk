@@ -3,7 +3,7 @@
 //
 // Copyright 2002 by Greg Ercolano.
 // Copyright (c) 2004 O'ksi'D
-// Copyright 2023 by Bill Spitzak and others.
+// Copyright 2023-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,16 +19,6 @@
 #include <FL/Fl_Table.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-
-// EXPERIMENTAL
-// We use either std::vector or the private class Fl_Int_Vector
-// depending on the build option FLTK_OPTION_STD or equivalent.
-// This option allows to use std::string and maybe std::vector
-// already in FLTK 1.4.x
-
-#if (!FLTK_USE_STD)
-#include "Fl_Int_Vector.H"      // Note: MUST NOT be included in Fl_Table.H
-#endif
 
 #include <sys/types.h>
 #include <string.h>             // memcpy
@@ -155,13 +145,8 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   _scrollbar_size   = 0;
   flags_            = 0;        // TABCELLNAV off
 
-#if (FLTK_USE_STDXX)
   _colwidths        = new std::vector<int>;  // column widths in pixels
   _rowheights       = new std::vector<int>;  // row heights in pixels
-#else
-  _colwidths        = new Fl_Int_Vector();  // column widths in pixels
-  _rowheights       = new Fl_Int_Vector();  // row heights in pixels
-#endif
 
   box(FL_THIN_DOWN_FRAME);
 
@@ -237,13 +222,7 @@ void Fl_Table::row_height(int row, int height) {
   // Add row heights, even if none yet
   int now_size = row_size();
   if (row >= now_size) {
-#if (FLTK_USE_STD)
     _rowheights->resize(row, height);
-#else
-    _rowheights->size(row);
-    while (now_size < row)
-      (*_rowheights)[now_size++] = height;
-#endif // FLTK_USE_STD
   }
   (*_rowheights)[row] = height;
   table_resized();
@@ -270,13 +249,7 @@ void Fl_Table::col_width(int col, int width)
   // Add column widths, even if none yet
   int now_size = col_size();
   if ( col >= now_size ) {
-#if (FLTK_USE_STD)
     _colwidths->resize(col+1, width);
-#else
-    _colwidths->size(col+1);
-    while (now_size < col)
-      (*_colwidths)[now_size++] = width;
-#endif
   }
   (*_colwidths)[col] = width;
   table_resized();
@@ -690,14 +663,8 @@ void Fl_Table::rows(int val) {
   int default_h = row_size() > 0 ? _rowheights->back() : 25;
   int now_size = row_size();
 
-#if (FLTK_USE_STD)
   if (now_size != val)
     _rowheights->resize(val, default_h);      // enlarge or shrink as needed
-#else
-  _rowheights->size(val);                     // enlarge or shrink as needed
-  while (now_size < val)
-    (*_rowheights)[now_size++] = default_h;   // fill new
-#endif
 
   table_resized();
 
@@ -718,14 +685,8 @@ void Fl_Table::cols(int val) {
   int default_w = col_size() > 0 ? (*_colwidths)[col_size()-1] : 80;
   int now_size = col_size();
 
-#if (FLTK_USE_STD)
   if (now_size != val)
     _colwidths->resize(val, default_w);       // enlarge or shrink as needed
-#else
-  _colwidths->size(val);                      // enlarge or shrink as needed
-  while (now_size < val)
-    (*_colwidths)[now_size++] = default_w;    // fill new
-#endif
 
   table_resized();
   redraw();

@@ -346,9 +346,6 @@ const char *fl_input(int maxchar, const char *fmt, const char *defstr, ...) {
 }
 
 
-
-#if (FLTK_USE_STD)
-
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
   Like fl_input(), but this method has the additional argument \p maxchar
@@ -412,7 +409,6 @@ std::string fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) 
   return (r == NULL) ? std::string("") : std::string(r);
 }
 
-#endif // FLTK_USE_STD
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
@@ -460,7 +456,6 @@ const char *fl_password(int maxchar, const char *fmt, const char *defstr, ...) {
   return r;
 }
 
-#if (FLTK_USE_STD)
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
@@ -509,8 +504,6 @@ std::string fl_password_str(int maxchar, const char *fmt, const char *defstr, ..
   va_end(ap);
   return (r == NULL) ? std::string("") : std::string(r);
 }
-
-#endif // FLTK_USE_STD
 
 
 /** Sets the preferred position for the message box used in

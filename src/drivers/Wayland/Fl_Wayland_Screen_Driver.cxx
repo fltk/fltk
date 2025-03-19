@@ -26,12 +26,7 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/filename.H>
-#if FLTK_USE_STD
-#  include <vector>
-   typedef std::vector<int> Fl_Int_Vector;
-#else
-#  include "../../Fl_Int_Vector.H"
-#endif
+#include <vector>
 #include "../../print_button.h"
 #include <dlfcn.h>
 #include <linux/input.h>
@@ -90,7 +85,7 @@ struct pointer_output {
 */
 
 
-static Fl_Int_Vector key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
+static std::vector<int> key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
 static struct wl_surface *gtk_shell_surface = NULL;
 
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
@@ -520,7 +515,7 @@ static void wl_keyboard_keymap(void *data, struct wl_keyboard *wl_keyboard,
 }
 
 
-static int search_int_vector(Fl_Int_Vector& v, int val) {
+static int search_int_vector(std::vector<int>& v, int val) {
   for (unsigned pos = 0; pos < v.size(); pos++) {
     if (v[pos] == val) return pos;
   }
@@ -528,15 +523,10 @@ static int search_int_vector(Fl_Int_Vector& v, int val) {
 }
 
 
-static void remove_int_vector(Fl_Int_Vector& v, int val) {
+static void remove_int_vector(std::vector<int>& v, int val) {
   int pos = search_int_vector(v, val);
   if (pos < 0) return;
-#if FLTK_USE_STD
   v.erase(v.begin()+pos);
-#else
-  int last = v.pop_back();
-  if (last != val) v[pos] = last;
-#endif
 }
 
 
@@ -567,11 +557,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
   struct Fl_Wayland_Screen_Driver::seat *seat =
     (struct Fl_Wayland_Screen_Driver::seat*)data;
 //fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are: ", Fl_Wayland_Window_Driver::surface_to_window(surface));
-#if FLTK_USE_STD
   key_vector.clear();
-#else
-  key_vector.size(0);
-#endif
   // Replace wl_array_for_each(p, keys) rejected by C++
   for (uint32_t *p = (uint32_t *)(keys)->data;
       (const char *) p < ((const char *) (keys)->data + (keys)->size);
@@ -864,11 +850,7 @@ static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   if (!win && Fl::focus()) win = Fl::focus()->top_window();
   if (win) Fl::handle(FL_UNFOCUS, win);
-#if FLTK_USE_STD
   key_vector.clear();
-#else
-  key_vector.size(0);
-#endif
 }
 
 
