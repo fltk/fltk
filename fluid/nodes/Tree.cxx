@@ -99,7 +99,7 @@ Node *Tree::find_by_uid(unsigned short uid) {
 }
 
 
-/** Find a type node by using the codeview text positions.
+/** Find a node by using the codeview text positions.
 
  \param[in] text_type 0=source file, 1=header, 2=.fl project file
  \param[in] crsr cursor position in text
