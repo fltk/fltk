@@ -16,6 +16,23 @@
 #
 
 #######################################################################
+# Prevent building in the source tree - don't pollute the sources
+#######################################################################
+
+if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+  message("")
+  message(STATUS "=======================================================================")
+  message(STATUS " NOTE: In-source builds of FLTK are disabled to prevent writing to the")
+  message(STATUS " NOTE: source tree. Please create a subfolder (e.g. 'build') and use")
+  message(STATUS " NOTE: `cmake ..` inside it or use for instance `cmake . -B build`.")
+  message(STATUS " NOTE: CMake will, however, create CMakeCache.txt and CMakeFiles/* .")
+  message(STATUS " NOTE: You must delete CMakeCache.txt and CMakeFiles/* manually.")
+  message(STATUS "=======================================================================")
+  message("")
+  message(FATAL_ERROR "*** In-source builds are disabled, please read notes above! ***")
+endif()
+
+#######################################################################
 # Set CMake minimum version first: must be set before `project()`
 #######################################################################
 
