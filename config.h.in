@@ -369,3 +369,9 @@
  */
 
 #cmakedefine01 HAVE_PRIMARY_SELECTION
+
+/*
+ * Do we want to use the "XDG TOPLEVEL DRAG" Wayland protocol?
+ */
+ 
+#cmakedefine01 HAVE_XDG_TOPLEVEL_DRAG

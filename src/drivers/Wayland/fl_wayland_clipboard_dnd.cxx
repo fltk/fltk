@@ -25,6 +25,8 @@
 #  include "Fl_Wayland_Window_Driver.H"
 #  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
+#  include "../../Fl_Dockable_Group_Driver.H"
+#  include "../../flstring.h" // includes <string.h>
 #if HAVE_PRIMARY_SELECTION
 #  include "primary-selection-client-protocol.h"
 #endif
@@ -98,6 +100,8 @@ static Fl_Window *fl_dnd_target_window = 0;
 static wl_surface *fl_dnd_target_surface = 0;
 static bool doing_dnd = false; // true when DnD is in action
 static wl_surface *dnd_icon = NULL; // non null when DnD uses text as cursor
+wl_surface **Fl_Wayland_Screen_Driver::fl_dnd_icon = &dnd_icon;
+//static wl_cursor* save_cursor = NULL; // non null when DnD uses "dnd-copy" cursor
 
 
 static void data_source_handle_cancelled(void *data, struct wl_data_source *source) {
@@ -183,6 +187,9 @@ static const struct wl_data_source_listener data_source_listener = {
   .dnd_finished = data_source_handle_dnd_finished,
   .action = data_source_handle_action,
 };
+
+
+const struct wl_data_source_listener *Fl_Wayland_Screen_Driver::p_data_source_listener = &data_source_listener;
 
 
 static struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen_from_text(const char *text,
@@ -284,6 +291,8 @@ static std::map<const char * const, type_prio_struct, compare_utf8> clipboard_mi
   {"UTF8_STRING",             {Fl::clipboard_plain_text,  2} },
   {"text/plain",              {Fl::clipboard_plain_text,  3} },
   {wld_plain_text_clipboard,  {Fl::clipboard_plain_text,  3} },
+  {Fl_Wayland_Screen_Driver::xdg_toplevel_drag_pseudo_mime,
+                              {Fl_Wayland_Screen_Driver::xdg_toplevel_drag_pseudo_mime,  1} },
 };
 
 // map: for each FLTK-clipboard-type, give current preferred mime-type and priority
@@ -292,6 +301,8 @@ static std::map<const char * const, mime_prio_struct> clipboard_kinds_map  {
 //  FLTK-clipboard-type        current mime-type   current highest priority
   {Fl::clipboard_image,       {NULL,               0} },
   {Fl::clipboard_plain_text,  {NULL,               0} },
+  {Fl_Wayland_Screen_Driver::xdg_toplevel_drag_pseudo_mime,
+                              {NULL,               0} },
 };
 
 
@@ -463,7 +474,8 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
     Fl::e_x_root = Fl::e_x + fl_dnd_target_window->x();
     Fl::e_y_root = Fl::e_y + fl_dnd_target_window->y();
     ret = Fl::handle(FL_DND_DRAG, fl_dnd_target_window);
-    if (Fl::belowmouse()) Fl::belowmouse()->take_focus();
+    if (Fl::belowmouse() && Fl::clipboard_contains(Fl::clipboard_plain_text))
+      Fl::belowmouse()->take_focus();
   }
   uint32_t supported_actions =  ret && (Fl::pushed() || !doing_dnd) ?
     WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY : WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;

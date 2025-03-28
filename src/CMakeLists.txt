@@ -47,6 +47,7 @@ set(CPPFILES
   Fl_Counter.cxx
   Fl_Device.cxx
   Fl_Dial.cxx
+  Fl_Dockable_Group.cxx
   Fl_Double_Window.cxx
   Fl_File_Browser.cxx
   Fl_File_Chooser.cxx
@@ -310,6 +311,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Unix/Fl_Unix_Screen_Driver.cxx
     drivers/Wayland/Fl_Wayland_Screen_Driver.cxx
     drivers/Wayland/Fl_Wayland_Window_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Dockable_Group_Driver.cxx
     drivers/Unix/Fl_Unix_System_Driver.cxx
     drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx
@@ -828,6 +830,19 @@ if(UNIX AND FLTK_USE_WAYLAND)
     )
     list(APPEND STATIC_FILES "xdg-activation-protocol.c")
     list(APPEND SHARED_FILES "xdg-activation-protocol.c")
+  endif()
+
+  if(HAVE_XDG_TOPLEVEL_DRAG)
+    set(INFILE ${PROTOCOLS}/staging/xdg-toplevel-drag/xdg-toplevel-drag-v1.xml)
+    add_custom_command(
+      OUTPUT xdg-toplevel-drag-protocol.c xdg-toplevel-drag-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} xdg-toplevel-drag-protocol.c
+      COMMAND wayland-scanner client-header ${INFILE} xdg-toplevel-drag-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "xdg-toplevel-drag-protocol.c")
+    list(APPEND SHARED_FILES "xdg-toplevel-drag-protocol.c")
   endif()
 
   if(NOT USE_SYSTEM_LIBDECOR)
