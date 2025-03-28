@@ -93,8 +93,8 @@ protected:
   void _Init(const Fl_Tree_Prefs &prefs, Fl_Tree *tree);
   void show_widgets();
   void hide_widgets();
-  void draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_Prefs &prefs);
-  void draw_horizontal_connector(int x1, int x2, int y, const Fl_Tree_Prefs &prefs);
+  virtual void draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_Prefs &prefs);
+  virtual void draw_horizontal_connector(int x1, int x2, int y, const Fl_Tree_Prefs &prefs);
   void recalc_tree();
   int calc_item_height(const Fl_Tree_Prefs &prefs) const;
   Fl_Color drawfgcolor() const;

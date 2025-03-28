@@ -705,7 +705,8 @@ int Fl_Tree_Item::swap_children(Fl_Tree_Item *a, Fl_Tree_Item *b) {
   return(0);
 }
 
-/// Internal: Horizontal connector line based on preference settings.
+/// Horizontal connector line based on preference settings.
+/// This method can be overridden to implement custom connection line drawing.
 /// \param[in] x1 The left hand X position of the horizontal connector
 /// \param[in] x2 The right hand X position of the horizontal connector
 /// \param[in] y  The vertical position of the horizontal connector
@@ -730,7 +731,8 @@ void Fl_Tree_Item::draw_horizontal_connector(int x1, int x2, int y, const Fl_Tre
   }
 }
 
-/// Internal: Vertical connector line based on preference settings.
+/// Vertical connector line based on preference settings.
+/// This method can be overridden to implement custom connection line drawing.
 /// \param[in] x     The x position of the vertical connector
 /// \param[in] y1    The top of the vertical connector
 /// \param[in] y2    The bottom of the vertical connector
