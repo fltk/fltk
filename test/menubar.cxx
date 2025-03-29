@@ -240,7 +240,7 @@ class Dynamic_Choice: public Fl_Choice {
 public:
   Dynamic_Choice(int x, int y, int w, int h, const char *label=nullptr)
   : Fl_Choice(x, y, w, h, label) { }
-  int handle(int event) {
+  int handle(int event) override {
     static int flip_flop = 0;
     if (event == FL_BEFORE_MENU) {
       // The following line is legal because we used `copy()` to create a
