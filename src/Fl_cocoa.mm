@@ -686,7 +686,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   }
   return self;
 }
-- (Fl_Window *)getFl_Window;
+- (Fl_Window *)getFl_Window
 {
   return w;
 }
@@ -1525,13 +1525,13 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl::handle(FL_HIDE, window);
   fl_unlock_function();
 }
-- (void)windowWillEnterFullScreen:(NSNotification *)notif;
+- (void)windowWillEnterFullScreen:(NSNotification *)notif
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   window->_set_fullscreen();
 }
-- (void)windowWillExitFullScreen:(NSNotification *)notif;
+- (void)windowWillExitFullScreen:(NSNotification *)notif
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
@@ -3251,7 +3251,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
 
   w->set_visible();
   if ( w->border() || (!w->modal() && !w->tooltip_window() &&
-                       w->user_data() != &Fl_Screen_Driver::transient_scale_display) ) Fl::handle(FL_FOCUS, w);
+                       w->user_data() != (void*)&Fl_Screen_Driver::transient_scale_display) ) Fl::handle(FL_FOCUS, w);
   [cw setDelegate:[FLWindowDelegate singleInstance]];
   if (show_iconic()) {
     show_iconic(0);
@@ -4747,7 +4747,7 @@ static CGImageRef capture_decorated_window_SCK(NSWindow *nswin) {
       }
       win = Fl::next_window(win);
     }
-    CGWindowID target_id = [nswin windowNumber];
+    CGWindowID target_id = (CGWindowID)[nswin windowNumber];
     NSRect r = [nswin frame];
     int W = r.size.width, H = r.size.height;
     [SCShareableContent getCurrentProcessShareableContentWithCompletionHandler: // macOS 14.4
@@ -4791,7 +4791,7 @@ static CGImageRef capture_decorated_window_SCK(NSWindow *nswin) {
     while (!capture_err && !capture) CFRunLoopRun();
     if (capture_err) return NULL;
     // ScreenCaptureKit bug cont'd: restore modified styleMasks.
-    for (int i = 0, count = [xid_array count]; i < count; i++) {
+    for (int i = 0, count = (int)[xid_array count]; i < count; i++) {
       NSUInteger mask;
       [(NSData*)[mask_array objectAtIndex:i] getBytes:&mask length:sizeof(NSUInteger)];
       NSWindow *xid = (NSWindow*)[xid_array objectAtIndex:i];

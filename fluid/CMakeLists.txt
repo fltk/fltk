@@ -255,16 +255,3 @@ if(UNIX)
     )
   endforeach()
 endif(UNIX)
-
-# Additional warnings during development
-
-if(APPLE)
-  if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    target_compile_options(fluid-lib PRIVATE
-      -Wall -Wextra -Wpedantic -Werror
-      -Wno-zero-as-null-pointer-constant
-      -Wno-missing-field-initializers
-      -Wno-unused-parameter
-    )
-  endif()
-endif(APPLE)
