@@ -26,7 +26,7 @@
 #include <stdio.h>
 
 
-#define DEBUG
+// #define DEBUG
 
 float     Fl_Tooltip::delay_ = 1.0f;
 float     Fl_Tooltip::hidedelay_ = 12.0f;
@@ -161,16 +161,16 @@ static void tooltip_hide_timeout(void*) {
 /**
   Use this method to temporarily change the tooltip text before it is displayed.
 
-  When FLTK sends an FL_TOOLTIP_EVENT to the widget under the mouse pointer,
-  you can handle this event to modify the tooltip text dynamically. The
-  provided text will be copied into a local buffer. To apply the override,
+  When FLTK sends an FL_BEFORE_TOOLTIP event to the widget under the mouse
+  pointer, you can handle this event to modify the tooltip text dynamically.
+  The provided text will be copied into a local buffer. To apply the override,
   the event handler must return 1.
 
  To disable the tooltip for the current event, set the override text to nullptr
  or an empty string ("") and return 1.
 
  \param[in] new_text a C string that will be copied into a buffer
- \return always 1, so this call can finish the FL_TOOLTIP_EVENT handling.
+ \return always 1, so this call can finish the FL_BEFORE_TOOLTIP event handling.
 
  \see void Fl_Widget::tooltip(const char *text).
  
@@ -198,7 +198,7 @@ void Fl_Tooltip::tooltip_timeout_(void*) {
   recursion = 1;
   if (!top_win_iconified_()) {   // no tooltip if top win iconified (STR #3157)
     if (Fl_Tooltip::current()) {
-      if (Fl_Tooltip::current()->handle(FL_TOOLTIP_EVENT))
+      if (Fl_Tooltip::current()->handle(FL_BEFORE_TOOLTIP))
         tip = Fl_Tooltip::override_text_;
     }
     if (!tip || !*tip) {
@@ -394,7 +394,7 @@ void Fl_Tooltip::set_enter_exit_once_() {
   the child’s tooltip to an empty string ("").
 
   Tooltips can be updated dynamically before they are displayed. When a tooltip
-  is about to be shown, FLTK sends an `FL_TOOLTIP_EVENT` to the widget’s
+  is about to be shown, FLTK sends an `FL_BEFORE_TOOLTIP` event to the widget’s
   `handle()` method. Developers can override the tooltip text temporarily
   using `Fl_Tooltip::override_text(const char* new_text)` and returning 1 from
   `handle()` to apply the change.

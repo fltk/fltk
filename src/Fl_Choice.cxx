@@ -195,6 +195,7 @@ int Fl_Choice::handle(int e) {
   J1:
     if (Fl::scheme()
         || fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) != textcolor()) {
+      handle(FL_BEFORE_MENU);
       v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
       if (wp.deleted()) return 1;
     } else {
@@ -202,6 +203,7 @@ int Fl_Choice::handle(int e) {
       // temporarily override the color() of this widget...
       Fl_Color c = color();
       color(FL_BACKGROUND2_COLOR);
+      handle(FL_BEFORE_MENU);
       v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
       if (wp.deleted()) return 1;
       color(c);

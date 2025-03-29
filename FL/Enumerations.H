@@ -418,7 +418,11 @@ enum Fl_Event { // events
   /** A tooltip is about to pop up for this widget. The mouse coordinates are
    available in Fl::event_x() and Fl::event_y(). Change the widget tooltip
    as needed. */
-  FL_TOOLTIP_EVENT      = 28
+  FL_BEFORE_TOOLTIP     = 28,
+  /** Triggered just before a menu is displayed. Widgets derived from Fl_Menu_
+   receive this event right before the menu appears, providing an opportunity
+   to update menu item states and activation. */
+  FL_BEFORE_MENU        = 29
   // DEV NOTE: Keep this list in sync with FL/names.h
 };
 

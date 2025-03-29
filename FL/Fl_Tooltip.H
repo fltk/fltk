@@ -95,7 +95,7 @@ public:
   static void wrap_width(int v) { wrap_width_ = v; }
   /** Returns the window that is used for tooltips */
   static Fl_Window* current_window(void);
-  /** \brief Temporarily Override Tooltip Text during an FL_TOOLTIP_EVENT. */
+  /** \brief Temporarily Override Tooltip Text during an FL_BEFORE_TOOLTIP event. */
   static int override_text(const char *new_text);
 
   // These should not be public, but Fl_Widget::tooltip() needs them...

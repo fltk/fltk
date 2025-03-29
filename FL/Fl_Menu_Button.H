@@ -52,6 +52,10 @@
     is done instead, along with any userdata configured for it.
     The callback can determine which item was picked using
     value(), mvalue(), item_pathname(), etc.
+
+  FLTK triggers an `FL_BEFORE_MENU` event for this widget right before
+  displaying the menu. This event provides an opportunity to update menu
+  item states and activation.
 */
 class FL_EXPORT Fl_Menu_Button : public Fl_Menu_ {
 protected:

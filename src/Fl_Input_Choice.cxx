@@ -54,6 +54,10 @@
       - 1: the user picked a different item in the choice menu
       - 0: the user typed or pasted directly into the input field
 
+  FLTK triggers an `FL_BEFORE_MENU` event for this widget right before
+  displaying the menu. This event provides an opportunity to update menu
+  item states and activation.
+ 
   \par Example Use of Fl_Input_Choice
   \code
   #include <stdio.h>
@@ -152,6 +156,7 @@ void Fl_Input_Choice::InputMenuButton::draw() {
 
 // Make pulldown menu appear under entire width of widget
 const Fl_Menu_Item* Fl_Input_Choice::InputMenuButton::popup() {
+  handle(FL_BEFORE_MENU);
   menu_end();
   redraw();
   Fl_Widget_Tracker mb(this);

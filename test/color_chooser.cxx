@@ -90,7 +90,7 @@ public:
   Image_Box(int x, int y, int w, int h, const char *label = nullptr)
   : Fl_Box(x, y, w, h, label) { }
   int handle(int event) {
-    if (event == FL_TOOLTIP_EVENT) {
+    if (event == FL_BEFORE_TOOLTIP) {
       const char *color_name_lut[] = { "blue", "green", "black", "red" };
       int quadrant = (Fl::event_x() < x()+w()/2) + 2*(Fl::event_y() < y()+h()/2);
       char buf[80];

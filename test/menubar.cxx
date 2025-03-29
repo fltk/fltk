@@ -210,7 +210,7 @@ void menu_location_cb(Fl_Widget* w, void* data)
   if (((Fl_Choice*)w)->value() == 1) { // switch to system menu bar
     menubar->hide();
     const Fl_Menu_Item *menu = menubar->menu();
-    smenubar = new  Fl_Sys_Menu_Bar(0,0,0,30);
+    smenubar = new Fl_Sys_Menu_Bar(0,0,0,30);
     smenubar->menu(menu);
     smenubar->callback(test_cb);
     }
@@ -236,6 +236,30 @@ void about_cb(Fl_Widget*, void*) {
   fl_message("The menubar test app.");
 }
 
+class Dynamic_Choice: public Fl_Choice {
+public:
+  Dynamic_Choice(int x, int y, int w, int h, const char *label=nullptr)
+  : Fl_Choice(x, y, w, h, label) { }
+  int handle(int event) {
+    static int flip_flop = 0;
+    if (event == FL_BEFORE_MENU) {
+      // The following line is legal because we used `copy()` to create a
+      // writable copy of the menu array when creating this Choice.
+      Fl_Menu_Item *mi = const_cast<Fl_Menu_Item*>(menu());
+      if (flip_flop == 1) {
+        mi[7].flags |= FL_MENU_INACTIVE;
+        mi[8].flags &= ~FL_MENU_INACTIVE;
+        flip_flop = 0;
+      } else {
+        mi[7].flags &= ~FL_MENU_INACTIVE;
+        mi[8].flags |= FL_MENU_INACTIVE;
+        flip_flop = 1;
+      }
+    }
+    return Fl_Choice::handle(event);
+  }
+};
+
 int main(int argc, char **argv) {
   for (int i=0; i<99; i++) {
     char buf[100];
@@ -256,7 +280,10 @@ int main(int argc, char **argv) {
   mb1.tooltip("this is a menu button");
   mb1.callback(test_cb);
   menus[1] = &mb1;
-  Fl_Choice ch(300,100,80,25,"&choice:"); ch.menu(pulldown);
+  Dynamic_Choice ch(300,100,80,25,"&choice:");
+  ch.copy(pulldown);
+  ch.add("Flip");
+  ch.add("Flop");
   ch.tooltip("this is a choice menu");
   ch.callback(test_cb);
   menus[2] = &ch;
