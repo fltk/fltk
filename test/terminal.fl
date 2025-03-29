@@ -452,8 +452,7 @@ const char *test[] = {
 };
 
 if (reset) { index = 0; return 0; }
-return show_test(test, index);} {selected
-    }
+return show_test(test, index);} {}
   }
   Function {test_esc_rgbcolors(bool reset)} {
     comment {--- 0020: Test RGB Colors} return_type {static int}
@@ -1373,7 +1372,7 @@ for ( int t=0; t<count; t++ )
   }
   Function {do_command(const char *cmd)} {
     comment {Run the command, output appends to terminal
-} return_type void
+} open return_type void
   } {
     code {// Run command in pipe, return output to tty
 // TODO: This should probably be reimplemented as a thread.
@@ -1420,13 +1419,14 @@ while (1) {
   Fl::wait(0.05);
   SSIZE_T bytes = READ(fd, s, sizeof(s));                // shout in uppercase so windows can hear us
   if (bytes == -1 && errno == EAGAIN) continue;          // no data yet
-  else if (bytes > 0) G_tty->append(s, bytes);           // write block to terminal, handles utf8
+  else if (bytes > 0) G_tty->append(s, (int)bytes);      // write block to terminal, handles utf8
   else break;                                            // pipe closed
 }
 
 PCLOSE(fp);
 G_tty->append_ascii("\\033[33;2m<<END_OF_OUTPUT>>\\033[0m\\n");
-G_tty->redraw();} {}
+G_tty->redraw();} {selected
+    }
   }
   decl {////// GUI LAYOUT //////} {private local
   }
