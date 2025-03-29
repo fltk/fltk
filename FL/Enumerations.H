@@ -414,7 +414,11 @@ enum Fl_Event { // events
   /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_ZOOM_EVENT         = 27
+  FL_ZOOM_EVENT         = 27,
+  /** A tooltip is about to pop up for this widget. The mouse coordinates are
+   available in Fl::event_x() and Fl::event_y(). Change the widget tooltip
+   as needed. */
+  FL_TOOLTIP_EVENT      = 28
   // DEV NOTE: Keep this list in sync with FL/names.h
 };
 

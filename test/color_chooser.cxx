@@ -21,6 +21,7 @@
 #include <FL/fl_show_colormap.H>
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_Image.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 
@@ -84,6 +85,22 @@ void cb2(Fl_Widget *, void *v) {
   bx->parent()->redraw();
 }
 
+class Image_Box: public Fl_Box {
+public:
+  Image_Box(int x, int y, int w, int h, const char *label = nullptr)
+  : Fl_Box(x, y, w, h, label) { }
+  int handle(int event) {
+    if (event == FL_TOOLTIP_EVENT) {
+      const char *color_name_lut[] = { "blue", "green", "black", "red" };
+      int quadrant = (Fl::event_x() < x()+w()/2) + 2*(Fl::event_y() < y()+h()/2);
+      char buf[80];
+      ::snprintf(buf, 79, "Color %s at x=%d, y=%d", color_name_lut[quadrant], Fl::event_x(), Fl::event_y());
+      return Fl_Tooltip::override_text(buf);
+    }
+    return Fl_Box::handle(event);
+  }
+};
+
 int main(int argc, char ** argv) {
   Fl::set_color(fullcolor_cell,145,159,170);
   Fl_Window window(400,400);
@@ -98,7 +115,8 @@ int main(int argc, char ** argv) {
   b1.callback(cb1,&box);
   Fl_Button b2(120,120,180,30,"fl_color_chooser()");
   b2.callback(cb2,&box);
-  Fl_Box image_box(160,190,width,height,0);
+  Image_Box image_box(160,190,width,height,0);
+  image_box.tooltip("Image Box");
   make_image();
   (new Fl_RGB_Image(image, width, height))->label(&image_box);
   Fl_Box b(160,310,120,30,"Example of fl_draw_image()");
