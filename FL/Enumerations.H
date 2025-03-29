@@ -36,6 +36,7 @@
 #  include "fl_types.h"
 #  include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
 
+// Keep the following comment in sync with the values below for searching
 // Current FLTK version: 1.4.2
 
 /** \name Version Numbers
@@ -152,11 +153,15 @@
   This is done to prevent users from defining an illegal ABI version.
 
   Rule: FL_MAJOR_VERSION * 10000 + FL_MINOR_VERSION * 100
-          <= FL_ABI_VERSION <= FL_API_VERSION.
+          <= FL_ABI_VERSION <= FL_API_VERSION + 1.
 
-  Example (FLTK 1.3.4):
+  Since FLTK 1.4.2+ (Git commits after release 1.4.2) FL_ABI_VERSION is
+  allowed to be one higher than FL_API_VERSION so ABI changes in Git
+  targeted at the *next* release (e.g. 1.4.3) can be used.
 
-    10300 <= FL_ABI_VERSION <= 10304
+  Example: Commits after release FLTK 1.4.2 (before release 1.4.3):
+
+    10400 <= FL_ABI_VERSION <= 10403
 
   Note: configure + CMake can be used to define FL_ABI_VERSION, but they
   do not check validity. This is done here.
@@ -167,10 +172,10 @@
 # undef FL_ABI_VERSION
 # define FL_ABI_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100)
 
-#elif FL_ABI_VERSION > FL_API_VERSION
+#elif FL_ABI_VERSION > FL_API_VERSION + 1
 
 # undef FL_ABI_VERSION
-# define FL_ABI_VERSION FL_API_VERSION
+# define FL_ABI_VERSION FL_API_VERSION + 1
 
 #endif
 
