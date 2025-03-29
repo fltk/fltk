@@ -85,16 +85,24 @@ void cb2(Fl_Widget *, void *v) {
   bx->parent()->redraw();
 }
 
-class Image_Box: public Fl_Box {
+class Sample_Box: public Fl_Box {
 public:
-  Image_Box(int x, int y, int w, int h, const char *label = nullptr)
+  Sample_Box(int x, int y, int w, int h, const char *label = nullptr)
   : Fl_Box(x, y, w, h, label) { }
   int handle(int event)  override {
     if (event == FL_BEFORE_TOOLTIP) {
-      const char *color_name_lut[] = { "blue", "green", "black", "red" };
-      int quadrant = (Fl::event_x() < x()+w()/2) + 2*(Fl::event_y() < y()+h()/2);
-      char buf[80];
-      ::snprintf(buf, 79, "Color %s at x=%d, y=%d", color_name_lut[quadrant], Fl::event_x(), Fl::event_y());
+      char buf[128];
+      uchar r, g, b;
+      Fl::get_color(color(), r, g, b);
+      if ((color()&255) && (color()!=16)) {
+        ::snprintf(buf, 127,
+                   "Background color is:\n"
+                   "palette no. %d = r:%d, g:%d, b:%d", color(), r, g, b);
+      } else {
+        ::snprintf(buf, 127, 
+                   "Background color is:\n"
+                   "r:%d, g:%d, b:%d", r, g, b);
+      }
       return Fl_Tooltip::override_text(buf);
     }
     return Fl_Box::handle(event);
@@ -104,7 +112,8 @@ public:
 int main(int argc, char ** argv) {
   Fl::set_color(fullcolor_cell,145,159,170);
   Fl_Window window(400,400);
-  Fl_Box box(30,30,340,340);
+  Sample_Box box(30,30,340,340);
+  box.tooltip("Show RGB values");
   box.box(FL_THIN_DOWN_BOX);
   c = fullcolor_cell;
   box.color(c);
@@ -115,8 +124,7 @@ int main(int argc, char ** argv) {
   b1.callback(cb1,&box);
   Fl_Button b2(120,120,180,30,"fl_color_chooser()");
   b2.callback(cb2,&box);
-  Image_Box image_box(160,190,width,height,0);
-  image_box.tooltip("Image Box");
+  Fl_Box image_box(160,190,width,height,0);
   make_image();
   (new Fl_RGB_Image(image, width, height))->label(&image_box);
   Fl_Box b(160,310,120,30,"Example of fl_draw_image()");
