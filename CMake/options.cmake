@@ -739,11 +739,11 @@ if(FLTK_USE_PTHREADS)
 
   include(FindThreads)
 
-  if(CMAKE_HAVE_THREADS_LIBRARY)
+  if(Threads_FOUND)
     add_definitions("-D_THREAD_SAFE -D_REENTRANT")
     set(USE_THREADS 1)
     set(FLTK_THREADS_FOUND TRUE)
-  endif(CMAKE_HAVE_THREADS_LIBRARY)
+  endif(Threads_FOUND)
 
   if(CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
     set(HAVE_PTHREAD 1)
