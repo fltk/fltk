@@ -37,16 +37,12 @@ if(GENERATE_DOCS)
 
   # create required variables
 
-  execute_process(COMMAND date "+%Y"
-    OUTPUT_VARIABLE YEAR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
+  string(TIMESTAMP YEAR "%Y" UTC)
   # note: current locale is used for abbreviated month
-  execute_process(COMMAND date "+%b %d, %Y"
-    OUTPUT_VARIABLE CURRENT_DATE
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+  string(TIMESTAMP CURRENT_DATE "%b %d, %Y" UTC)
+  string(TIMESTAMP PDF_DATE "D:%Y%m%d%H%M%SZ" UTC)
+  string(TIMESTAMP TODAY "%B %d, %Y" UTC)
+  string(REPLACE " 0" " " TODAY "${TODAY}")
 
   # Find "short" doxygen version if it was built from Git
   # Note: this is still needed in CMake 3.15 but later CMake versions
@@ -77,6 +73,8 @@ if(GENERATE_DOCS)
   if(0) # debug
     fl_debug_var(YEAR)
     fl_debug_var(CURRENT_DATE)
+    fl_debug_var(PDF_DATE)
+    fl_debug_var(TODAY)
     fl_debug_var(FLTK_GIT_REVISION)
     fl_debug_var(DOXYGEN_FOUND)
     fl_debug_var(DOXYGEN_EXECUTABLE)
@@ -179,11 +177,17 @@ if(FLTK_BUILD_PDF_DOCS)
     COMMENT "Converting ${DOXYFILE} to doxygen version ${DOXYGEN_VERSION_SHORT}" VERBATIM
   )
 
-  # generate LaTeX title fltk-title.tex
+  # generate LaTeX title fltk-title.tex and make_pdf script
 
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/fltk-title.tex.in
     ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
+    @ONLY
+  )
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf.in
+    ${CMAKE_CURRENT_BINARY_DIR}/make_pdf
     @ONLY
   )
 
@@ -196,7 +200,7 @@ if(FLTK_BUILD_PDF_DOCS)
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_pdf
     COMMAND cp -f latex/refman.pdf fltk.pdf
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
