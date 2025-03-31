@@ -26,10 +26,15 @@
 #
 # Used in: Makefile and CMakeLists.txt
 
+run_pdflatex() {
+  pdflatex --interaction=nonstopmode \
+    "\pdfinfo{/CreationDate(@PDF_DATE@)/ModDate(@PDF_DATE@)}\input{refman.tex}"
+}
+
 ( cd latex
-  pdflatex --interaction=nonstopmode refman.tex
+  run_pdflatex
   makeindex refman.idx
-  pdflatex --interaction=nonstopmode refman.tex
+  run_pdflatex
   latex_count=5
   while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log \
 	  && [ $latex_count -gt 0 ]
