@@ -61,7 +61,19 @@ void test_cb(Fl_Widget* w, void*) {
     G_tty->printf("%s\n", m->label());
 }
 
-void quit_cb(Fl_Widget*, void*) {exit(0);}
+void quit_cb(Fl_Widget*, void*) {
+  switch (Fl::callback_reason()) {
+    case FL_REASON_SELECTED:
+      exit(0);
+    case FL_REASON_GOT_FOCUS:
+      G_tty->printf("Selecting this menu item will quit this application!\n");
+      break;
+    case FL_REASON_LOST_FOCUS:
+      G_tty->printf("Risk of quitting averted.\n");
+      break;
+    default: break;
+  }
+}
 
 Fl_Menu_Item hugemenu[100];
 
@@ -70,7 +82,7 @@ Fl_Menu_Item menutable[] = {
   {"&File",0,0,0,FL_SUBMENU},
     {"&Open",   FL_ALT+'o', 0, 0, FL_MENU_INACTIVE},
     {"&Close",  0,      0},
-    {"&Quit",   FL_ALT+'q', quit_cb, 0, FL_MENU_DIVIDER},
+    {"&Quit",   FL_ALT+'q', quit_cb, 0, FL_MENU_DIVIDER|FL_MENU_CHATTY},
 
 #if (OVERRIDE_SCALING_SHORTCUTS)
     {"CTRL/0",  FL_COMMAND+'0', 0},

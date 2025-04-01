@@ -146,6 +146,7 @@ class menuwindow : public window_with_items {
 public:
   menutitle* title;
   int handle(int) FL_OVERRIDE;
+  void hide() override;
   int itemheight;       // zero == menubar
   int numitems;
   int selected;
@@ -480,6 +481,11 @@ menuwindow::~menuwindow() {
   delete title;
 }
 
+void menuwindow::hide() {
+  set_selected(-1);
+  window_with_items::hide();
+}
+
 void menuwindow::position(int X, int Y) {
   if (title) {title->position(X, title->y()+Y-y());}
   Fl_Menu_Window::position(X, Y);
@@ -592,7 +598,20 @@ void menuwindow::draw() {
 }
 
 void menuwindow::set_selected(int n) {
-  if (n != selected) {selected = n; damage(FL_DAMAGE_CHILD);}
+  if (n != selected) {
+    if ((selected!=-1) && (menu)) {
+      const Fl_Menu_Item *mi = menu->next(selected);
+      if ((mi) && (mi->callback_) && (mi->flags & FL_MENU_CHATTY))
+        mi->do_callback(this, FL_REASON_LOST_FOCUS);
+    }
+    selected = n;
+    if ((selected!=-1) && (menu)) {
+      const Fl_Menu_Item *mi = menu->next(selected);
+      if ((mi) && (mi->callback_) && (mi->flags & FL_MENU_CHATTY))
+        mi->do_callback(this, FL_REASON_GOT_FOCUS);
+    }
+    damage(FL_DAMAGE_CHILD);
+  }
 }
 
 ////////////////////////////////////////////////////////////////

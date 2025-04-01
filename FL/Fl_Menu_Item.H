@@ -34,7 +34,8 @@ enum { // values for flags:
   FL_SUBMENU_POINTER = 0x20,       ///< Indicates user_data() is a pointer to another menu array
   FL_SUBMENU         = 0x40,       ///< Item is a submenu to other items
   FL_MENU_DIVIDER    = 0x80,       ///< Creates divider line below this item. Also ends a group of radio buttons
-  FL_MENU_HORIZONTAL = 0x100       ///< ??? -- reserved, internal (do not use)
+  FL_MENU_HORIZONTAL = 0x100,      ///< reserved, do not use
+  FL_MENU_CHATTY     = 0x200       ///< Menu Item receives additional callbacks
   ///< Note: \b ALL other bits in \p flags are reserved: do not use them for your own purposes!
 };
 
@@ -67,7 +68,8 @@ class Fl_Menu_;
    FL_SUBMENU_POINTER = 0x20,       // Indicates user_data() is a pointer to another menu array
    FL_SUBMENU         = 0x40,       // This item is a submenu to other items
    FL_MENU_DIVIDER    = 0x80,       // Creates divider line below this item. Also ends a group of radio buttons.
-   FL_MENU_HORIZONTAL = 0x100       // ??? -- reserved, internal (do not use)
+   FL_MENU_HORIZONTAL = 0x100       // reserved, do not use
+   FL_MENU_CHATTY     = 0x200       ///< Menu Item receives additional callbacks
   };
   \endcode
 
@@ -120,6 +122,16 @@ class Fl_Menu_;
     variants copies the entire menu to internal storage. Using the
     memory of a static menu array after that would access unused (but not
     released) memory and thus have no effect.
+
+  When a menu item is selected by the user and a callback is set, the callback
+  will be called with FL_REASON_SELECTED. The Fl_Widget pointer is set to the
+  widget that opened the menu, a copy of the menu item's user data. If no menu
+  item callback is set, the callback of the managing widget is called instead.
+
+  If the FL_MENU_CHATTY flag is set, the menu item callback may be called for
+  additional reasons. When a menu item is highlighted, the callback is called
+  with FL_REASON_GOT_FOCUS. If it is no longer highlighted,
+  FL_REASON_LOST_FOCUS is sent.
 */
 struct FL_EXPORT Fl_Menu_Item {
   const char *text;         ///< menu item text, returned by label()
@@ -490,14 +502,18 @@ struct FL_EXPORT Fl_Menu_Item {
     The callback is called with the stored user_data() as its second argument.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o) const {Fl::callback_reason_=FL_REASON_SELECTED; callback_(o, user_data_);}
+  void do_callback(Fl_Widget* o, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) const {
+    Fl::callback_reason_ = reason; callback_(o, user_data_);
+  }
 
   /**
     Calls the Fl_Menu_Item item's callback, and provides the Fl_Widget argument.
     This call overrides the callback's second argument with the given value \p arg.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o,void* arg) const {Fl::callback_reason_=FL_REASON_SELECTED; callback_(o, arg);}
+  void do_callback(Fl_Widget* o, void* arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) const {
+    Fl::callback_reason_ = reason; callback_(o, arg);
+  }
 
   /**
     Calls the Fl_Menu_Item item's callback, and provides the Fl_Widget argument.
@@ -506,7 +522,9 @@ struct FL_EXPORT Fl_Menu_Item {
     the callback.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o,long arg) const {Fl::callback_reason_=FL_REASON_SELECTED; callback_(o, (void*)(fl_intptr_t)arg);}
+  void do_callback(Fl_Widget* o, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) const {
+    Fl::callback_reason_ = FL_REASON_SELECTED; callback_(o, (void*)(fl_intptr_t)arg);
+  }
 
   /** Back compatibility only.
     \deprecated

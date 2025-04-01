@@ -401,8 +401,11 @@ const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
     value_ = v;
     if (when()&(FL_WHEN_CHANGED|FL_WHEN_RELEASE)) {
       if (changed() || when()&FL_WHEN_NOT_CHANGED) {
-        if (value_ && value_->callback_) value_->do_callback((Fl_Widget*)this);
-        else do_callback();
+        if (value_ && value_->callback_) {
+          value_->do_callback((Fl_Widget*)this, value_->user_data(), FL_REASON_SELECTED);
+        } else {
+          do_callback(FL_REASON_SELECTED);
+        }
       }
     }
   }

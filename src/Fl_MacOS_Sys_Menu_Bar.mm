@@ -167,7 +167,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 {
   fl_lock_function();
   Fl_Menu_Item *item = (Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
-  if ( item && item->callback() ) item->do_callback(NULL);
+  if ( item && item->callback() ) item->do_callback(NULL, FL_REASON_SELECTED);
   fl_unlock_function();
 }
 - (void) setKeyEquivalentModifierMask:(int)value
