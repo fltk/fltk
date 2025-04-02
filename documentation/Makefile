@@ -85,7 +85,7 @@ debug_git_rev:
 
 clean:
 	$(RM) Doxyfile Doxybook
-	$(RM) copyright.dox generated.dox
+	$(RM) copyright.dox generated.dox make_pdf
 	$(RM) fltk.pdf refman.pdf src/fltk-title.tex src/fltk-book.tex.in src/fltk-book.tex
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
@@ -211,7 +211,7 @@ html:	$(HTMLFILES) Doxyfile
 pdf:	refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
 
-refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
+refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex make_pdf
 	-$(RMDIR) latex
 	echo "Generating PDF documentation ..."
 	"$(DOXYDOC)" Doxybook
@@ -226,6 +226,7 @@ make_pdf: make_pdf.in
 
 src/fltk-title.tex: src/fltk-title.tex.in
 	echo "Generating $@ ..."
+	TODAY=`LC_ALL=C date '+%B %e, %Y'`; \
 	sed -e"s/@FLTK_GIT_REVISION@/$(FLTK_GIT_REVISION)/g" \
 	    -e"s/@TODAY@/$$TODAY/g" \
 	    < $< > $@
@@ -238,7 +239,6 @@ src/fltk-book.tex: src/fltk-book.tex.in
 	echo "Generating $@ ..."
 	DOXY_VERSION=`"$(DOXYDOC)" --version|cut -f1 -d' '`; \
 	YEAR=`date +%Y`; \
-	TODAY=`LC_ALL=C date +%B %e, %Y`; \
 	sed -e"s/@YEAR@/$$YEAR/g" \
 	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
 	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
