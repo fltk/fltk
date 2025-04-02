@@ -27,6 +27,7 @@ fluid.z
 generated.dox
 html
 latex
+make_pdf
 sudoku.0
 sudoku.6
 sudoku.z
