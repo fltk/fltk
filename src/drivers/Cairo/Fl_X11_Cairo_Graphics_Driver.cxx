@@ -50,11 +50,7 @@ void Fl_X11_Cairo_Graphics_Driver::scale(float f) {
 
 void Fl_X11_Cairo_Graphics_Driver::copy_offscreen(int x, int y, int w, int h,
                                                   Fl_Offscreen pixmap, int srcx, int srcy) {
-  cairo_matrix_t mat;
-  if (cairo_) cairo_get_matrix(cairo_, &mat);
-  else cairo_matrix_init_identity(&mat);
-  XCopyArea(fl_display, pixmap, fl_window, (GC)Fl_Graphics_Driver::default_driver().gc(), int(srcx*scale()), int(srcy*scale()), int(w*scale()), int(h*scale()),
-            int(x*scale()) + mat.x0, int(y*scale()) + mat.y0);
+  XCopyArea(fl_display, pixmap, fl_window, (GC)Fl_Graphics_Driver::default_driver().gc(), int(srcx*scale()), int(srcy*scale()), int(w*scale()), int(h*scale()), int(x*scale()), int(y*scale()));
 }
 
 
