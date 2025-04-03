@@ -70,7 +70,7 @@ int main(int, char**) {
 #  define srand48(x) (srand((x)))
 #elif defined __APPLE__
 #  define drand48() (((float) rand())/((float) RAND_MAX))
-#  define srand48(x) (srand((x)))
+#  define srand48(x) (srand((int)(x)))
 #endif
 
 typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF,

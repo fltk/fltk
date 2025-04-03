@@ -117,16 +117,20 @@ function(fl_debug_target name)
   ###       INTERFACE_LOCATION)
   ### endif()
 
-  list(APPEND _props
+  if(NOT _type STREQUAL "INTERFACE_LIBRARY" OR CMAKE_VERSION VERSION_GREATER_EQUAL "3.19")
+    # Before 3.19: "INTERFACE_LIBRARY targets may only have whitelisted properties"
+    list(APPEND _props
       INCLUDE_DIRECTORIES
       LINK_DIRECTORIES
       LINK_LIBRARIES
-      COMPILE_DEFINITIONS
-      INTERFACE_COMPILE_DEFINITIONS
-      INTERFACE_COMPILE_FEATURES
-      INTERFACE_INCLUDE_DIRECTORIES
-      INTERFACE_LINK_DIRECTORIES
-      INTERFACE_LINK_LIBRARIES)
+      COMPILE_DEFINITIONS)
+  endif()
+
+  list(APPEND _props
+    INTERFACE_COMPILE_DEFINITIONS
+    INTERFACE_INCLUDE_DIRECTORIES
+    INTERFACE_LINK_DIRECTORIES
+    INTERFACE_LINK_LIBRARIES)
 
   foreach(prop ${_props})
     get_target_property(${prop} ${name} ${prop})

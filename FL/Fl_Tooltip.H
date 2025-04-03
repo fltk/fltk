@@ -95,6 +95,8 @@ public:
   static void wrap_width(int v) { wrap_width_ = v; }
   /** Returns the window that is used for tooltips */
   static Fl_Window* current_window(void);
+  /** \brief Temporarily Override Tooltip Text during an FL_BEFORE_TOOLTIP event. */
+  static int override_text(const char *new_text);
 
   // These should not be public, but Fl_Widget::tooltip() needs them...
   // fabien: made it private with only a friend function access
@@ -104,20 +106,22 @@ private:
   static void enter_(Fl_Widget* w);
   static void exit_(Fl_Widget *w);
   static void set_enter_exit_once_();
+  static void tooltip_timeout_(void*);
 
 private:
-  static float delay_; //!< delay before a tooltip is shown
-  static float hidedelay_; //!< delay until tooltip is closed again
-  static float hoverdelay_; //!< delay between tooltips
+  static float delay_;          //!< delay before a tooltip is shown
+  static float hidedelay_;      //!< delay until tooltip is closed again
+  static float hoverdelay_;     //!< delay between tooltips
   static Fl_Color color_;
   static Fl_Color textcolor_;
   static Fl_Font font_;
   static Fl_Fontsize size_;
-  static Fl_Widget* widget_; //!< Keeps track of the current target widget
+  static Fl_Widget* widget_;    //!< Keeps track of the current target widget
   static int margin_width_;     //!< distance around tooltip text left+right
   static int margin_height_;    //!< distance around tooltip text top+bottom
   static int wrap_width_;       //!< maximum width of tooltip text before it word wraps
   static const int draw_symbols_; // 1 = draw @-symbols in tooltips, 0 = no
+  static char *override_text_;  //!< a copy of the last text for an overridden tooltip
 };
 
 #endif

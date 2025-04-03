@@ -385,7 +385,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f, floa
   Fl_Window *win = Fl::first_window();
   while (win) {
     if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen) &&
-        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+        win->user_data() != (void*)&Fl_Screen_Driver::transient_scale_display) {
       count++;
     }
     win = Fl::next_window(win);
@@ -396,7 +396,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f, floa
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
     if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen) &&
-        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+        win->user_data() != (void*)&Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
     win = Fl::next_window(win);

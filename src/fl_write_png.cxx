@@ -1,7 +1,7 @@
 //
 // Fl_PNG_Image support functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2005-2021 by Bill Spitzak and others.
+// Copyright 2005-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,9 +18,16 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/fl_string_functions.h>
-#include <FL/fl_utf8.h> // fl_fopen()
+#include <FL/fl_utf8.h>               // fl_fopen()
 #include <stdio.h>
-#include <time.h> // hack to restore "configure --enable-x11" on macOS ≥ 11
+
+// FIXME: see original commit 2db94dcb4c5bf2ef3fa92f1cd6a41f3f90105361
+// ... about building X11 backend on macOS ≥ 11:
+// "The error happens only if png.h is included without time.h having
+//  been included before. The fix is to #include time.h before png.h.
+//  A better fix than his hack is desirable."
+
+#include <time.h>
 
 // PNG library include files
 

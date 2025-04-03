@@ -45,6 +45,11 @@ The default ABI version is always the lowest version (e.g. 10400). All
 following examples are written for FLTK 1.4.1, hence we use "10401" for
 the version number.
 
+Note: Since FLTK 1.4.3 (Git branch-1.4 after release 1.4.2) the highest
+selectable ABI version is FL_API_VERSION + 1 so you can use ABI features
+designated for the *next* FLTK release when using FLTK from Git with new
+ABI features included for the next release.
+
 
 How to select the ABI version with CMake
 ----------------------------------------

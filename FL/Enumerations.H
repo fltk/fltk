@@ -153,11 +153,15 @@
   This is done to prevent users from defining an illegal ABI version.
 
   Rule: FL_MAJOR_VERSION * 10000 + FL_MINOR_VERSION * 100
-          <= FL_ABI_VERSION <= FL_API_VERSION.
+          <= FL_ABI_VERSION <= FL_API_VERSION + 1.
 
-  Example (FLTK 1.3.4):
+  Since FLTK 1.4.2+ (Git commits after release 1.4.2) FL_ABI_VERSION is
+  allowed to be one higher than FL_API_VERSION so ABI changes in Git
+  targeted at the *next* release (e.g. 1.4.3) can be used.
 
-    10300 <= FL_ABI_VERSION <= 10304
+  Example: Commits after release FLTK 1.4.2 (before release 1.4.3):
+
+    10400 <= FL_ABI_VERSION <= 10403
 
   Note: configure + CMake can be used to define FL_ABI_VERSION, but they
   do not check validity. This is done here.
@@ -168,10 +172,10 @@
 # undef FL_ABI_VERSION
 # define FL_ABI_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100)
 
-#elif FL_ABI_VERSION > FL_API_VERSION
+#elif FL_ABI_VERSION > FL_API_VERSION + 1
 
 # undef FL_ABI_VERSION
-# define FL_ABI_VERSION FL_API_VERSION
+# define FL_ABI_VERSION FL_API_VERSION + 1
 
 #endif
 
@@ -410,7 +414,15 @@ enum Fl_Event { // events
   /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_ZOOM_EVENT         = 27
+  FL_ZOOM_EVENT         = 27,
+  /** A tooltip is about to pop up for this widget. The mouse coordinates are
+   available in Fl::event_x() and Fl::event_y(). Change the widget tooltip
+   as needed. */
+  FL_BEFORE_TOOLTIP     = 28,
+  /** Triggered just before a menu is displayed. Widgets derived from Fl_Menu_
+   receive this event right before the menu appears, providing an opportunity
+   to update menu item states and activation. */
+  FL_BEFORE_MENU        = 29
   // DEV NOTE: Keep this list in sync with FL/names.h
 };
 

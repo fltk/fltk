@@ -49,6 +49,7 @@ int Fl_Menu_Bar::handle(int event) {
   case FL_PUSH:
     v = 0;
   J1:
+    handle(FL_BEFORE_MENU);
     v = menu()->pulldown(x(), y(), w(), h(), v, this, 0, 1);
     picked(v);
     return 1;
@@ -71,6 +72,7 @@ Fl_Menu_Bar::Fl_Menu_Bar(int X, int Y, int W, int H,const char *l)
 
 void Fl_Menu_Bar::play_menu(const Fl_Menu_Item *v) {
   if (v) {
+    handle(FL_BEFORE_MENU);
     v = menu()->pulldown(x(), y(), w(), h(), v, this, 0, 1);
     picked(v);
   }

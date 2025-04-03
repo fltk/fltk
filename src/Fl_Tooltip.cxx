@@ -25,6 +25,9 @@
 
 #include <stdio.h>
 
+
+// #define DEBUG
+
 float     Fl_Tooltip::delay_ = 1.0f;
 float     Fl_Tooltip::hidedelay_ = 12.0f;
 float     Fl_Tooltip::hoverdelay_ = 0.2f;
@@ -38,6 +41,7 @@ int       Fl_Tooltip::margin_width_ = 3;
 int       Fl_Tooltip::margin_height_ = 3;
 int       Fl_Tooltip::wrap_width_ = 400;
 const int Fl_Tooltip::draw_symbols_ = 1;
+char     *Fl_Tooltip::override_text_ = nullptr;
 
 static const char* tip;
 
@@ -154,14 +158,49 @@ static void tooltip_hide_timeout(void*) {
   recent_tooltip = 0;
 }
 
-static void tooltip_timeout(void*) {
+/**
+  Use this method to temporarily change the tooltip text before it is displayed.
+
+  When FLTK sends an FL_BEFORE_TOOLTIP event to the widget under the mouse
+  pointer, you can handle this event to modify the tooltip text dynamically.
+  The provided text will be copied into a local buffer. To apply the override,
+  the event handler must return 1.
+
+ To disable the tooltip for the current event, set the override text to nullptr
+ or an empty string ("") and return 1.
+
+ \param[in] new_text a C string that will be copied into a buffer
+ \return always 1, so this call can finish the FL_BEFORE_TOOLTIP event handling.
+
+ \see void Fl_Widget::tooltip(const char *text).
+ 
+ \see `test/color_chooser.cxx` for a usage example.
+*/
+int Fl_Tooltip::override_text(const char *new_text) {
+  if (new_text != override_text_) {
+    if (window && window->label()==override_text_)
+      ((Fl_Widget *) window)->label(nullptr);
+    if (override_text_)
+      ::free(override_text_);
+    override_text_ = nullptr;
+    if (new_text)
+      override_text_ = ::strdup(new_text);
+  }
+  return 1;
+}
+
+void Fl_Tooltip::tooltip_timeout_(void*) {
 #ifdef DEBUG
-  puts("tooltip_timeout();");
+  puts("tooltip_timeout_();");
 #endif // DEBUG
 
   if (recursion) return;
   recursion = 1;
   if (!top_win_iconified_()) {   // no tooltip if top win iconified (STR #3157)
+    if (Fl_Tooltip::current()) {
+      if (Fl_Tooltip::current()->handle(FL_BEFORE_TOOLTIP))
+        tip = Fl_Tooltip::override_text_;
+    }
     if (!tip || !*tip) {
       if (window) window->hide();
       Fl::remove_timeout(tooltip_hide_timeout);
@@ -253,7 +292,7 @@ void Fl_Tooltip::exit_(Fl_Widget *w) {
 
   if (!widget_ || (w && w == window)) return;
   widget_ = 0;
-  Fl::remove_timeout(tooltip_timeout);
+  Fl::remove_timeout(tooltip_timeout_);
   Fl::remove_timeout(recent_timeout);
   if (window && window->visible()) {
     window->hide();
@@ -298,7 +337,7 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
   }
   // do nothing if it is the same:
   if (wid==widget_ /*&& x==X && y==currentTooltipY && w==W && h==currentTooltipH*/ && t==tip) return;
-  Fl::remove_timeout(tooltip_timeout);
+  Fl::remove_timeout(tooltip_timeout_);
   Fl::remove_timeout(recent_timeout);
   // remember it:
   widget_ = wid; currentTooltipY = y; currentTooltipH = h; tip = t;
@@ -308,7 +347,7 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
       window->hide();
       Fl::remove_timeout(tooltip_hide_timeout);
     }
-    Fl::add_timeout(Fl_Tooltip::hoverdelay(), tooltip_timeout);
+    Fl::add_timeout(Fl_Tooltip::hoverdelay(), tooltip_timeout_);
   } else if (Fl_Tooltip::delay() < .1) {
     // possible fix for the Windows titlebar, it seems to want the
     // window to be destroyed, moving it messes up the parenting:
@@ -316,13 +355,13 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
       window->hide();
       Fl::remove_timeout(tooltip_hide_timeout);
     }
-    tooltip_timeout(0);
+    tooltip_timeout_(nullptr);
   } else {
     if (window && window->visible()) {
       window->hide();
       Fl::remove_timeout(tooltip_hide_timeout);
     }
-    Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout);
+    Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout_);
   }
 
 #ifdef DEBUG
@@ -341,19 +380,25 @@ void Fl_Tooltip::set_enter_exit_once_() {
 }
 
 /**
-  Sets the current tooltip text.
+  Sets the Tooltip Text for a Widget.
 
-  Sets a string of text to display in a popup tooltip window when the user
-  hovers the mouse over the widget. The string is <I>not</I> copied, so
-  make sure any formatted string is stored in a static, global,
-  or allocated buffer. If you want a copy made and managed for you,
-  use the copy_tooltip() method, which will manage the tooltip string
-  automatically.
+  Assigns a tooltip string that appears in a popup when the user hovers over
+  the widget. The provided string is not copied. The caller must eensure it
+  remains valid by storing it in a static, global, or dynamically allocated
+  buffer. If you need the tooltip string to be copied and managed automatically,
+  use copy_tooltip().
 
-  If no tooltip is set, the tooltip of the parent is inherited. Setting a
-  tooltip for a group and setting no tooltip for a child will show the
-  group's tooltip instead. To avoid this behavior, you can set the child's
-  tooltip to an empty string ("").
+  By default, a widget inherits the tooltip of its parent if none is explicitly
+  set. If you assign a tooltip to a group but not to its child widgets, the
+  child widgets will display the group’s tooltip. To prevent inheritance, set
+  the child’s tooltip to an empty string ("").
+
+  Tooltips can be updated dynamically before they are displayed. When a tooltip
+  is about to be shown, FLTK sends an `FL_BEFORE_TOOLTIP` event to the widget’s
+  `handle()` method. Developers can override the tooltip text temporarily
+  using `Fl_Tooltip::override_text(const char* new_text)` and returning 1 from
+  `handle()` to apply the change.
+
   \param[in] text New tooltip text (no copy is made)
   \see copy_tooltip(const char*), tooltip()
 */

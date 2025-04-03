@@ -441,6 +441,7 @@ void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {
 
 extern void fl_clipboard_notify_retarget(HWND wnd);
 extern void fl_update_clipboard(void);
+extern char fl_i_own_selection[2];
 
 void Fl_WinAPI_Window_Driver::hide() {
   Fl_X* ip = Fl_X::flx(pWindow);
@@ -474,6 +475,8 @@ void Fl_WinAPI_Window_Driver::hide() {
 
   // Issue #569: undo RegisterDragDrop()
   RevokeDragDrop((HWND)ip->xid);
+  
+  fl_i_own_selection[1] = 0; // issue #1233
 
   // make sure any custom icons get freed
   // icons(NULL, 0); // free_icons() is called by the Fl_Window destructor

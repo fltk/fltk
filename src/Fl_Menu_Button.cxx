@@ -59,6 +59,7 @@ void Fl_Menu_Button::draw() {
   \see Fl_Menu_::menu_end()
 */
 const Fl_Menu_Item* Fl_Menu_Button::popup() {
+  handle(FL_BEFORE_MENU);
   menu_end();
   const Fl_Menu_Item* m;
   pressed_menu_button_ = this;
