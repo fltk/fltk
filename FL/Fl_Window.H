@@ -379,6 +379,7 @@ public:
 
   static void default_icon(const Fl_RGB_Image*);
   static void default_icons(const Fl_RGB_Image*[], int);
+  static void use_default_icon();
   void icon(const Fl_RGB_Image*);
   void icons(const Fl_RGB_Image*[], int);
 
