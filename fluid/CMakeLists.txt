@@ -121,6 +121,8 @@ set(HEADERFILES
   widgets/Node_Browser.h
 )
 
+set(MAIN_FILES main.cxx main.h)
+
 # Add ExternalCodeEditor: platform specific files
 
 if(WIN32)
@@ -137,8 +139,7 @@ source_group(
   FILES
     ${CPPFILES}
     ${HEADERFILES}
-    main.cxx
-    main.h
+    ${MAIN_FILES}
     CMakeLists.txt
 )
 
@@ -147,7 +148,7 @@ source_group(
 
 add_library(fluid-lib OBJECT EXCLUDE_FROM_ALL)
 target_sources(fluid-lib PRIVATE ${CPPFILES} ${HEADERFILES})
-target_include_directories(fluid-lib PRIVATE .)
+target_include_directories(fluid-lib PUBLIC .)
 target_link_libraries(fluid-lib PUBLIC fltk::images)
 
 # Build targets
@@ -158,7 +159,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 
   set(ICON_NAME fluid.icns)
   set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable(fluid MACOSX_BUNDLE main.cxx main.h ${ICON_PATH})
+  add_executable(fluid MACOSX_BUNDLE ${MAIN_FILES} ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -175,11 +176,10 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 else()
 
   # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
-  add_executable(fluid WIN32 main.cxx main.h)
+  add_executable(fluid WIN32 ${MAIN_FILES})
 
 endif()
 
-target_include_directories(fluid PRIVATE .)
 target_link_libraries(fluid PRIVATE fluid-lib)
 
 # Build the console app on Windows
@@ -187,8 +187,7 @@ target_link_libraries(fluid PRIVATE fluid-lib)
 
 if(WIN32)
   list(APPEND TARGETS fluid-cmd)
-  add_executable(fluid-cmd main.cxx main.h)
-  target_include_directories(fluid-cmd PRIVATE .)
+  add_executable(fluid-cmd ${MAIN_FILES})
   target_link_libraries(fluid-cmd PRIVATE fluid-lib)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()
