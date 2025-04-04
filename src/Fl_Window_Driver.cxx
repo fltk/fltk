@@ -43,6 +43,7 @@ Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
   wait_for_expose_value = 0;
   other_xid = 0;
   screen_num_ = 0;
+  win_gravity_ = WIN_GRAVITY_STATIC;
 }
 
 
