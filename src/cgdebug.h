@@ -1,7 +1,7 @@
 //
-// OS X Core Graphics debugging help for the Fast Light Tool Kit (FLTK).
+// macOS Core Graphics debugging help for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,22 +14,22 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// This file allows easier debugging of Mac OS X Core Graphics
+// This file allows easier debugging of macOS Core Graphics
 // code. This file is normally not included into any FLTK builds,
 // but since it has proven to be tremendously useful in debugging
 // the FLTK port to "Quartz", I decided to add this file in case
 // more bugs show up.
 //
-// This header is activated by adding the following
-// line to "config.h"
+// This header is activated by adding the following line to "config.h"
+//
 //   #include "src/cgdebug.h"
 //
-// Running "./configure" will remove this line from "config.h".
+// Running "cmake" will remove this line from "config.h".
 //
-// When used erreanously, Core Graphics prints warnings to
+// When used erroneously, Core Graphics prints warnings to
 // stderr. This is helpful, however it is not possible to
 // associate a line number or source file with the warning message.
-// This headr file outputs a trace of CG calls, interweaveing
+// This header file outputs a trace of CG calls, interweaving
 // them with CG warnings.
 //
 // Matthias
@@ -196,5 +196,4 @@ inline void dbgCGContextRestoreGState(CGContextRef context)
   fprintf(stderr, "\n"); }
 
 
-#endif
-
+#endif // CGDEBUG
