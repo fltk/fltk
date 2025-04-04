@@ -92,6 +92,9 @@ struct libdecor_plugin_interface {
 	int (* dispatch)(struct libdecor_plugin *plugin,
 			 int timeout);
 
+	void (* set_handle_application_cursor)(struct libdecor_plugin *plugin,
+					       bool handle_cursor);
+
 	struct libdecor_frame * (* frame_new)(struct libdecor_plugin *plugin);
 	void (* frame_free)(struct libdecor_plugin *plugin,
 			    struct libdecor_frame *frame);

@@ -149,6 +149,7 @@ struct seat {
 	struct wl_cursor *cursor_left_ptr;
 
 	struct wl_surface *pointer_focus;
+	struct libdecor_frame_cairo *pointer_focus_frame;
 
 	int pointer_x, pointer_y;
 
@@ -279,6 +280,8 @@ struct libdecor_plugin_cairo {
 	int cursor_size;
 
 	PangoFontDescription *font;
+
+	bool handle_cursor;
 };
 
 static const char *libdecor_cairo_proxy_tag = "libdecor-cairo";
@@ -538,6 +541,16 @@ libdecor_plugin_cairo_dispatch(struct libdecor_plugin *plugin,
 	}
 }
 
+static void
+libdecor_plugin_cairo_set_handle_application_cursor(struct libdecor_plugin *plugin,
+						    bool handle_cursor)
+{
+	struct libdecor_plugin_cairo *plugin_cairo =
+		(struct libdecor_plugin_cairo *) plugin;
+
+	plugin_cairo->handle_cursor = handle_cursor;
+}
+
 static struct libdecor_frame *
 libdecor_plugin_cairo_frame_new(struct libdecor_plugin *plugin)
 {
@@ -685,9 +698,12 @@ libdecor_plugin_cairo_frame_free(struct libdecor_plugin *plugin,
 	struct seat *seat;
 
 	wl_list_for_each(seat, &plugin_cairo->seat_list, link) {
-		if (seat->pointer_focus != NULL &&
-		    wl_surface_get_user_data(seat->pointer_focus) == frame_cairo)
-			seat->pointer_focus = NULL;
+		if (seat->pointer_focus) {
+		    if (wl_surface_get_user_data(seat->pointer_focus) == frame_cairo)
+			    seat->pointer_focus = NULL;
+		    if (seat->pointer_focus_frame == frame_cairo)
+			    seat->pointer_focus_frame = NULL;
+		}
 	}
 
 	free_border_component(&frame_cairo->title_bar.title);
@@ -812,6 +828,10 @@ update_component_focus(struct libdecor_frame_cairo *frame_cairo,
 	static struct border_component *focus_component;
 
 	border_component = get_component_for_surface(frame_cairo, surface);
+	if (!border_component) {
+		focus_component = NULL;
+		goto out;
+	}
 
 	focus_component = border_component;
 	wl_list_for_each(child_component, &border_component->child_components, link) {
@@ -830,6 +850,7 @@ update_component_focus(struct libdecor_frame_cairo *frame_cairo,
 		}
 	}
 
+out:
 	if (frame_cairo->grab)
 		frame_cairo->active = frame_cairo->grab;
 	else
@@ -1882,6 +1903,8 @@ static struct libdecor_plugin_interface cairo_plugin_iface = {
 	.get_fd = libdecor_plugin_cairo_get_fd,
 	.dispatch = libdecor_plugin_cairo_dispatch,
 
+	.set_handle_application_cursor = libdecor_plugin_cairo_set_handle_application_cursor,
+
 	.frame_new = libdecor_plugin_cairo_frame_new,
 	.frame_free = libdecor_plugin_cairo_frame_free,
 	.frame_commit = libdecor_plugin_cairo_frame_commit,
@@ -2109,8 +2132,14 @@ update_local_cursor(struct seat *seat)
 		return false;
 	}
 
-	if (!own_surface(seat->pointer_focus))
-		return false;
+	if (!own_surface(seat->pointer_focus)) {
+		if (seat->plugin_cairo->handle_cursor) {
+			seat->current_cursor = seat->cursor_left_ptr;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	struct libdecor_frame_cairo *frame_cairo =
 			wl_surface_get_user_data(seat->pointer_focus);
@@ -2195,7 +2224,7 @@ synthesize_pointer_enter(struct seat *seat)
 	struct libdecor_frame_cairo *frame_cairo;
 
 	surface = seat->pointer_focus;
-	if (!surface)
+	if (!surface || !own_surface(surface))
 		return;
 
 	frame_cairo = wl_surface_get_user_data(surface);
@@ -2222,7 +2251,7 @@ synthesize_pointer_leave(struct seat *seat)
 	struct libdecor_frame_cairo *frame_cairo;
 
 	surface = seat->pointer_focus;
-	if (!surface)
+	if (!surface || !own_surface(surface))
 		return;
 
 	frame_cairo = wl_surface_get_user_data(surface);
@@ -2247,12 +2276,20 @@ pointer_enter(void *data,
 	      wl_fixed_t surface_y)
 {
 	struct seat *seat = data;
+	struct libdecor_frame_cairo *frame_cairo = NULL;
 
 	if (!surface)
 		return;
 
-	if (!own_surface(surface))
-		return;
+	if (!own_surface(surface)) {
+		struct seat *seat = wl_pointer_get_user_data(wl_pointer);
+		struct libdecor_plugin_cairo *plugin_cairo = seat->plugin_cairo;
+
+		if (!plugin_cairo->handle_cursor)
+			return;
+	} else {
+		frame_cairo = wl_surface_get_user_data(surface);
+	}
 
 	ensure_cursor_surface(seat);
 
@@ -2260,6 +2297,7 @@ pointer_enter(void *data,
 	seat->pointer_y = wl_fixed_to_int(surface_y);
 	seat->serial = serial;
 	seat->pointer_focus = surface;
+	seat->pointer_focus_frame = frame_cairo;
 
 	if (seat->grabbed)
 		return;
@@ -2283,6 +2321,7 @@ pointer_leave(void *data,
 
 	synthesize_pointer_leave(seat);
 	seat->pointer_focus = NULL;
+	seat->pointer_focus_frame = NULL;
 }
 
 static void
@@ -2293,7 +2332,6 @@ pointer_motion(void *data,
 	       wl_fixed_t surface_y)
 {
 	struct seat *seat = data;
-	struct libdecor_frame_cairo *frame_cairo;
 
 	seat->pointer_x = wl_fixed_to_int(surface_x);
 	seat->pointer_y = wl_fixed_to_int(surface_y);
@@ -2301,12 +2339,10 @@ pointer_motion(void *data,
 	if (seat->grabbed)
 		return;
 
-	if (!seat->pointer_focus)
+	if (!seat->pointer_focus_frame)
 		return;
 
-	frame_cairo = wl_surface_get_user_data(seat->pointer_focus);
-
-	sync_active_component(frame_cairo, seat);
+	sync_active_component(seat->pointer_focus_frame, seat);
 }
 
 static void

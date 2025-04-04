@@ -168,6 +168,15 @@ struct libdecor_frame_interface {
 			       const char *seat_name,
 			       void *user_data);
 
+	/**
+	 * The recommended client region bounds for the window.
+	 * This will be followed by a configure event.
+	 */
+	void (* bounds)(struct libdecor_frame *frame,
+			int width,
+			int height,
+			void *user_data);
+
 	/* Reserved */
 	void (* reserved0)(void);
 	void (* reserved1)(void);
@@ -178,7 +187,6 @@ struct libdecor_frame_interface {
 	void (* reserved6)(void);
 	void (* reserved7)(void);
 	void (* reserved8)(void);
-	void (* reserved9)(void);
 };
 
 /**
@@ -542,6 +550,14 @@ libdecor_frame_get_xdg_toplevel(struct libdecor_frame *frame);
  */
 enum libdecor_wm_capabilities
 libdecor_frame_get_wm_capabilities(struct libdecor_frame *frame);
+
+/**
+ * Tell libdecor to set the default pointer cursor when the pointer is over an
+ * application surface. The default false.
+ */
+void
+libdecor_set_handle_application_cursor(struct libdecor *context,
+				       bool handle_cursor);
 
 /**
  * Create a new content surface state.

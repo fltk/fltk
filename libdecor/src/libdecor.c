@@ -451,11 +451,28 @@ xdg_toplevel_close(void *user_data,
 
 #ifdef HAVE_XDG_SHELL_V6
 static void
-xdg_toplevel_configure_bounds(void *data,
+xdg_toplevel_configure_bounds(void *user_data,
 			      struct xdg_toplevel *xdg_toplevel,
 			      int32_t width,
 			      int32_t height)
 {
+	struct libdecor_frame *frame = user_data;
+	struct libdecor_frame_private *frame_priv = frame->priv;
+	struct libdecor *context = frame_priv->context;
+	struct libdecor_plugin *plugin = context->plugin;
+	int left = 0, top = 0, right = 0, bottom = 0;
+
+	if (frame_has_visible_client_side_decoration(frame) &&
+	    plugin->priv->iface->frame_get_border_size) {
+		plugin->priv->iface->frame_get_border_size(plugin, frame, NULL,
+							   &left, &right, &top, &bottom);
+	}
+
+	width -= left + right;
+	height -= top + bottom;
+	if (frame_priv->iface->bounds) {
+		frame_priv->iface->bounds(frame, width, height, frame_priv->user_data);
+	}
 }
 
 static void
@@ -1259,6 +1276,16 @@ LIBDECOR_EXPORT struct xdg_toplevel *
 libdecor_frame_get_xdg_toplevel(struct libdecor_frame *frame)
 {
 	return frame->priv->xdg_toplevel;
+}
+
+LIBDECOR_EXPORT void
+libdecor_set_handle_application_cursor(struct libdecor *context,
+				       bool handle_cursor)
+{
+	struct libdecor_plugin *plugin = context->plugin;
+
+	plugin->priv->iface->set_handle_application_cursor(plugin,
+							   handle_cursor);
 }
 
 LIBDECOR_EXPORT int

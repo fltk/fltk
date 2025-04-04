@@ -61,6 +61,12 @@ libdecor_plugin_dummy_frame_new(struct libdecor_plugin *plugin)
 }
 
 static void
+libdecor_plugin_dummy_set_handle_application_cursor(struct libdecor_plugin *plugin,
+						    bool handle_cursor)
+{
+}
+
+static void
 libdecor_plugin_dummy_frame_free(struct libdecor_plugin *plugin,
 				 struct libdecor_frame *frame)
 {
@@ -96,6 +102,8 @@ libdecor_plugin_dummy_frame_popup_ungrab(struct libdecor_plugin *plugin,
 
 static struct libdecor_plugin_interface dummy_plugin_iface = {
 	.destroy = libdecor_plugin_dummy_destroy,
+
+	.set_handle_application_cursor = libdecor_plugin_dummy_set_handle_application_cursor,
 
 	.frame_new = libdecor_plugin_dummy_frame_new,
 	.frame_free = libdecor_plugin_dummy_frame_free,
