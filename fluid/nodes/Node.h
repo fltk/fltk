@@ -39,7 +39,7 @@ class Project_Writer;
  Declare where a new type is placed and how to create it.
 
  Placement can be as the first or last child of the anchor, or right after the
- anchor. In most cases, the anchor is the last selected type node.
+ anchor. In most cases, the anchor is the last selected node.
 
  If the source is FROM_USER, widgets may be created with default titles and
  labels. Type created FROM_FILE will start with no label, so the label is set
