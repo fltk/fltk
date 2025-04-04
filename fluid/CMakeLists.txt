@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -91,6 +91,8 @@ set(HEADERFILES
   widget_panel.h
 )
 
+set(MAIN_FILES fluid.cxx fluid.h)
+
 # Add ExternalCodeEditor: platform specific files
 
 if(WIN32)
@@ -108,6 +110,7 @@ source_group("Header Files" FILES ${HEADERFILES})
 
 add_library(fluid-lib OBJECT EXCLUDE_FROM_ALL)
 target_sources(fluid-lib PRIVATE ${CPPFILES} ${HEADERFILES})
+target_include_directories(fluid-lib PUBLIC .)
 target_link_libraries(fluid-lib PUBLIC fltk::images)
 
 # Build targets
@@ -118,7 +121,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 
   set(ICON_NAME fluid.icns)
   set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable(fluid MACOSX_BUNDLE fluid.cxx fluid.h ${ICON_PATH})
+  add_executable(fluid MACOSX_BUNDLE ${MAIN_FILES} ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -135,7 +138,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
 else()
 
   # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
-  add_executable(fluid WIN32 fluid.cxx fluid.h)
+  add_executable(fluid WIN32 ${MAIN_FILES})
 
 endif()
 
@@ -146,7 +149,7 @@ target_link_libraries(fluid PRIVATE fluid-lib)
 
 if(WIN32)
   list(APPEND TARGETS fluid-cmd)
-  add_executable(fluid-cmd fluid.cxx fluid.h)
+  add_executable(fluid-cmd ${MAIN_FILES})
   target_link_libraries(fluid-cmd PRIVATE fluid-lib)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()
