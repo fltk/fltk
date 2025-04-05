@@ -498,7 +498,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   BOOL isdir = NO;
   [[NSFileManager defaultManager] fileExistsAtPath:filename isDirectory:&isdir];
   if (isdir) return YES;
-  if ( fl_filename_match([filename fileSystemRepresentation], filter_pattern[ [nspopup indexOfSelectedItem] ]) ) return YES;
+  if ( fl_filename_match([filename fileSystemRepresentation], filter_pattern[([nspopup indexOfSelectedItem])]) ) return YES;
   return NO;
 }
 - (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url
