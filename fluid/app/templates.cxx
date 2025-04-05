@@ -13,7 +13,7 @@
 //
 //     https://www.fltk.org/bugs.php
 //
-
+#include <errno.h>		// strerror(errno)
 #include "app/templates.h"
 
 #include "Fluid.h"

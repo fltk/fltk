@@ -20,6 +20,7 @@
 // Include necessary headers...
 //
 
+#include <stdlib.h>
 #include "widgets/Code_Editor.h"
 
 using namespace fld;
