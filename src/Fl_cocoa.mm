@@ -2758,7 +2758,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     NSData *data = [pboard dataForType:UTF8_pasteboard_type];
     DragData = (char *)malloc([data length] + 1);
     [data getBytes:DragData length:[data length]];
-    DragData[[data length]] = 0;
+    DragData[([data length])] = 0;
     Fl_Screen_Driver::convert_crlf(DragData, strlen(DragData));
   }
   else {
