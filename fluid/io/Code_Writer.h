@@ -17,6 +17,8 @@
 #ifndef FLUID_IO_CODE_WRITER_H
 #define FLUID_IO_CODE_WRITER_H
 
+#include "proj/mergeback.h"
+
 #include <FL/fl_attr.h>
 
 #include <stdarg.h>
@@ -114,7 +116,7 @@ public:
   int write_code(const char *cfile, const char *hfile, bool to_codeview=false);
   void write_public(int state); // writes pubic:/private: as needed
 
-  void tag(int type, unsigned short uid);
+  void tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_type, unsigned short uid);
 
   static unsigned long block_crc(const void *data, int n=-1, unsigned long in_crc=0, bool *inout_line_start=nullptr);
 };

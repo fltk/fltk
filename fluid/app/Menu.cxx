@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 
+#include "proj/mergeback.h"
 #include "proj/undo.h"
 #include "app/templates.h"
 #include "nodes/Node.h"
@@ -52,6 +53,7 @@ void help_cb(Fl_Widget *, void *) {
   Fluid.show_help("fluid.html");
 }
 static void save_template_cb(Fl_Widget *, void *) { fld::app::save_template(); }
+void mergeback_cb(Fl_Widget *, void *);
 
 void manual_cb(Fl_Widget *, void *) {
   Fluid.show_help("index.html");
@@ -99,7 +101,7 @@ Fl_Menu_Item Application::main_menu[] = {
   {"Save As &Template...", 0, save_template_cb, nullptr, FL_MENU_DIVIDER},
   {"&Print...", FL_COMMAND+'p', menu_file_print_cb},
   {"Write &Code", FL_COMMAND+FL_SHIFT+'c', write_cb, nullptr},
-// Matt: disabled {"MergeBack Code", FL_COMMAND+FL_SHIFT+'m', mergeback_cb, 0},
+  {"MergeBack Code", FL_COMMAND+FL_SHIFT+'m', mergeback_cb, 0},
   {"&Write Strings", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, nullptr, FL_MENU_DIVIDER},
   {Fluid.history.relpath[0], FL_COMMAND+'1', menu_file_open_history_cb, Fluid.history.abspath[0]},
   {Fluid.history.relpath[1], FL_COMMAND+'2', menu_file_open_history_cb, Fluid.history.abspath[1]},
