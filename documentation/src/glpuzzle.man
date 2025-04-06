@@ -3,29 +3,28 @@
 glpuzzle \- the fltk glpuzzle game
 .sp
 .SH SYNOPSIS
-\fIglpuzzle\fR is a FLTK-based version of the game of glpuzzle, a
-sliding pieces game whose object is to move the gray piece out of the
-box at the bottom.
+\fIglpuzzle\fR is an FLTK-based version of the game "glpuzzle," a
+sliding block puzzle where the objective is to move the gray piece
+out of the box at the bottom.
 .LP
-At the start of a new game, glpuzzle fills in a standard placement of
-pieces. You can move individual pieces around by clicking and dragging
-with the left mouse button until the gray piece can be slided out at
-the bottom of the box.
+At the start of a new game, \fIglpuzzle\fR sets up a standard arrangement
+of pieces. You can move individual pieces by clicking and dragging
+them with the left mouse button until the gray piece can slide out
+through the bottom of the box.
 .LP
-Hit the 'D' key to delete a selected piece to simplify the game.
+Press the 'D' key to delete a selected piece, simplifying the game.
 .LP
-Hit the 'S' key to watch the puzzle being solved automatically.
-Hit the 'S' key again to stop solving.
+Press the 'S' key to watch the puzzle being solved automatically.
+Press 'S' again to stop the solving process.
 .LP
-Hit the 'R' key to reset the puzzle to its starting position.
+Press the 'R' key to reset the puzzle to its initial state.
 .LP
-Clicking with the left mouse button on a free part of the box and
-dragging the mouse starts spinning the box. Click anywhere else to
-stop the spinning.
+Click and drag the left mouse button on an empty area of the box
+to start spinning it. Click anywhere else to stop the spinning.
 .LP
-Hit the spacebar or 'N' key to reposition the game to the normal view.
+Press the spacebar or the 'N' key to return to the top-down camera view.
 .LP
-Click with the right mouse button to open a menu.
+Click with the right mouse button to open the popup menu.
 .SH SEE ALSO
 fltk(3)
 .br
