@@ -25,6 +25,9 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include <stdlib.h>    // free()} {selected private global
+}
+
 decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {public global
 }
 
@@ -472,7 +475,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group wp_gui_tab {
         label GUI
-        callback propagate_load open selected
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {

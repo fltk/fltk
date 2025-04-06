@@ -20,6 +20,9 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include <stdlib.h>    // malloc()} {selected private local
+}
+
 decl {\#include "Fluid.h"} {private local
 }
 
@@ -41,7 +44,7 @@ decl {\#include <FL/Fl_Tabs.H>} {private local
 decl {\#include <FL/Fl_Button.H>} {private local
 }
 
-decl {\#include "../src/flstring.h"} {selected private local
+decl {\#include "../src/flstring.h"} {private local
 }
 
 decl {char *cv_source_filename = nullptr;} {private local
