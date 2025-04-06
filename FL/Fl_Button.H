@@ -158,7 +158,7 @@ public:
 
     \param[in] b down box type
    */
-  void down_box(Fl_Boxtype b) {down_box_ = b;}
+  void down_box(Fl_Boxtype b) {down_box_ = (uchar)b;}
 
   /// (for backwards compatibility)
   void shortcut(const char *s) {shortcut(fl_old_shortcut(s));}
