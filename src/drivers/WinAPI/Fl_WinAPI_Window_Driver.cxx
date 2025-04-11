@@ -1,7 +1,7 @@
 //
 // Definition of Windows window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,6 +50,7 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 
 Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 {
+  Fl::remove_timeout(resize_after_screen_change, pWindow);
   if (shape_data_) {
     delete shape_data_->effective_bitmap_;
     delete shape_data_;
@@ -475,7 +476,7 @@ void Fl_WinAPI_Window_Driver::hide() {
 
   // Issue #569: undo RegisterDragDrop()
   RevokeDragDrop((HWND)ip->xid);
-  
+
   fl_i_own_selection[1] = 0; // issue #1233
 
   // make sure any custom icons get freed

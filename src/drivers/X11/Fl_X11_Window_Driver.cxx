@@ -58,6 +58,7 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 
 Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
 {
+  Fl::remove_timeout(resize_after_screen_change, pWindow);
   if (shape_data_) {
     delete shape_data_->effective_bitmap_;
     delete shape_data_;
