@@ -31,9 +31,10 @@
 #define BREAK_ON_FIRST break
 //#define BREAK_ON_FIRST
 
-void align_widget_cb(Fl_Widget*, long how)
+void align_widget_cb(Fl_Widget*, void *user_data)
 {
   const int max = 32768, min = -32768;
+  int how = (int)(fl_intptr_t)(user_data);
   int left, right, top, bot, wdt, hgt, n;
   Node *o;
   int changed = 0;

@@ -198,7 +198,7 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {
-        label General open
+        label General open selected
         scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
       } {
         Fl_Group {} {
@@ -207,7 +207,7 @@ Function {make_settings_window()} {open
         } {
           Fl_Choice scheme_choice {
             label {Scheme: }
-            callback {Fluid.set_scheme(o->text(o->value()));} open selected
+            callback {Fluid.set_scheme(o->text(o->value()));} open
             xywh {120 78 120 25} down_box BORDER_BOX labelfont 1 labelsize 11
             code0 {Fluid.init_scheme();}
             class Fl_Scheme_Choice
@@ -602,19 +602,19 @@ Fluid.layout_list.update_dialogs();}
         } {
           Fl_Button {preset_choice[0]} {
             label Application
-            user_data 0 user_data_type long
+            user_data 0
             callback edit_layout_preset_cb
             xywh {85 107 78 20} type Radio value 1 selection_color 45 labelsize 11 compact 1
           }
           Fl_Button {preset_choice[1]} {
             label Dialog
-            user_data 1 user_data_type long
+            user_data 1
             callback edit_layout_preset_cb
             xywh {163 107 79 20} type Radio selection_color 45 labelsize 11 compact 1
           }
           Fl_Button {preset_choice[2]} {
             label Toolbox
-            user_data 2 user_data_type long
+            user_data 2
             callback edit_layout_preset_cb
             xywh {242 107 78 20} type Radio selection_color 45 labelsize 11 compact 1
           }

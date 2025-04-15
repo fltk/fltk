@@ -140,11 +140,11 @@ void select_layout_preset_cb(Fl_Widget *, void *user_data) {
   Fluid.layout_list.update_dialogs();
 }
 
-void edit_layout_preset_cb(Fl_Button *w, long user_data) {
+void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
   int index = (int)w->argument();
   assert(index >= 0);
   assert(index < 3);
-  if (user_data == (long)(fl_intptr_t)LOAD) {
+  if (user_data == LOAD) {
     w->value(Fluid.layout_list.current_preset() == index);
   } else {
     Fluid.layout_list.current_preset(index);

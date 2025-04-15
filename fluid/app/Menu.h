@@ -23,7 +23,7 @@ extern void exit_cb(class Fl_Widget *,void *); // TODO: remove this
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);
 extern void menu_file_save_cb(Fl_Widget *, void *arg);
 extern void menu_file_open_history_cb(Fl_Widget *, void *v);
-extern void align_widget_cb(Fl_Widget *, long);
+extern void align_widget_cb(Fl_Widget *, void*);
 
 #endif // FLUID_APP_MENU_H
 
