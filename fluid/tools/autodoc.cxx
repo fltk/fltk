@@ -27,13 +27,13 @@
 #include "panels/function_panel.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
+#include "widgets/App_Menu_Bar.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Enumerations.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_PNG_Image.H>
-#include <FL/Fl_Menu_Bar.H>
 
 extern Fl_Double_Window *settings_window;
 

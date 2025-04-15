@@ -50,6 +50,9 @@ namespace fld {
 namespace app {
 class Layout_List;
 }
+namespace widget {
+class App_Menu_Bar;
+}
 
 /**
  Indicate the storage location for tools like layout suites and shell macros.
@@ -117,7 +120,7 @@ public: // Member Variables
   // TODO: make this into a class: app::GUI
   Fl_Window *main_window { nullptr };
   static Fl_Menu_Item main_menu[];
-  Fl_Menu_Bar *main_menubar { nullptr };
+  fld::widget::App_Menu_Bar *main_menubar { nullptr };
   Fl_Menu_Item *save_item { nullptr };
   Fl_Menu_Item *history_item { nullptr };
   Fl_Menu_Item *widgetbin_item { nullptr };

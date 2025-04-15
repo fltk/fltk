@@ -36,6 +36,7 @@
 #include "panels/about_panel.h"
 #include "rsrcs/pixmaps.h"
 #include "tools/autodoc.h"
+#include "widgets/App_Menu_Bar.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
@@ -44,7 +45,6 @@
 #include <FL/platform.H> // for fl_open_callback
 #endif
 #include <FL/Fl_Help_Dialog.H>
-#include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Printer.H>
@@ -1157,7 +1157,7 @@ void Application::make_main_window() {
     o->box(FL_FLAT_BOX);
     o->tooltip("Double-click to view or change an item.");
     main_window->resizable(o);
-    main_menubar = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
+    main_menubar = new fld::widget::App_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
     main_menubar->menu(main_menu);
     // quick access to all dynamic menu items
     save_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_save_cb);

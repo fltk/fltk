@@ -102,9 +102,9 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "panels/settings_panel.h"
+#include "widgets/App_Menu_Bar.h"
 
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_message.H>
 #include <FL/fl_string_functions.h>
 

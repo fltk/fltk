@@ -22,9 +22,9 @@
 #include "nodes/Group_Node.h"
 #include "nodes/Window_Node.h"
 #include "panels/settings_panel.h"
+#include "widgets/App_Menu_Bar.h"
 
 #include <FL/fl_draw.H>
-#include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_string_functions.h>
 
 #include <math.h>

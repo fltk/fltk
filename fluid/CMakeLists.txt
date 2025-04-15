@@ -61,6 +61,7 @@ set(CPPFILES
   rsrcs/pixmaps.cxx
   tools/autodoc.cxx
   tools/filename.cxx
+  widgets/App_Menu_Bar.cxx
   widgets/Code_Editor.cxx
   widgets/Code_Viewer.cxx
   widgets/Text_Viewer.cxx
@@ -112,6 +113,7 @@ set(HEADERFILES
   rsrcs/pixmaps.h
   tools/autodoc.h
   tools/filename.h
+  widgets/App_Menu_Bar.h
   widgets/Code_Editor.h
   widgets/Code_Viewer.h
   widgets/Text_Viewer.h
