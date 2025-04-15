@@ -1597,7 +1597,7 @@ Node *typename_to_prototype(const char *inName)
 }
 
 /**
- Create and add a new type node to the widget tree.
+ Create and add a new node to the widget tree.
 
  This is used by the .fl file reader. New types are always created as
  the last child of the first compatible parent. New widgets have a default
@@ -1605,7 +1605,7 @@ Node *typename_to_prototype(const char *inName)
 
  \param[in] inName a C string that described the type we want
  \param[in] strategy add after current or as last child
- \return the type node that was created or nullptr
+ \return the node that was created or nullptr
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Node*, int)
  add_new_widget_from_user(const char*, int)

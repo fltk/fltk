@@ -35,6 +35,9 @@
 
 #include <zlib.h>
 
+using namespace fld;
+using namespace fld::io;
+using namespace fld::proj;
 
 /// Set a current class, so that the code of the children is generated correctly.
 Class_Node *current_class = nullptr;
@@ -682,9 +685,9 @@ void Code_Node::write_code1(fld::io::Code_Writer& f) {
   if ( handle_editor_changes() == 1 ) {
     Fluid.main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
-  // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
+  f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::CODE, 0);
   f.write_c_indented(name(), 0, '\n');
-  // Matt: disabled f.tag(FD_TAG_CODE, get_uid());
+  f.tag(Mergeback::Tag::CODE, Mergeback::Tag::GENERIC, get_uid());
 }
 
 /**

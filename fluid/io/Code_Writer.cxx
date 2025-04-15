@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "proj/mergeback.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Function_Node.h"
 
@@ -28,6 +29,7 @@
 
 using namespace fld;
 using namespace fld::io;
+using namespace fld::proj;
 
 /**
  Return true if c can be in a C identifier.
@@ -103,11 +105,11 @@ const char* Code_Writer::unique_id(void* o, const char* type, const char* name, 
  \return pointer to a static string
  */
 const char *Code_Writer::indent(int set) {
-  static const char* spaces = "                                ";
+  static const char* spaces = "                                                                ";
   int i = set * 2;
-  if (i>32) i = 32;
+  if (i>64) i = 64;
   if (i<0) i = 0;
-  return spaces+32-i;
+  return spaces+64-i;
 }
 
 /**
@@ -774,9 +776,10 @@ Code_Writer::~Code_Writer()
  \param[in] type FD_TAG_GENERIC, FD_TAG_CODE, FD_TAG_MENU_CALLBACK, or FD_TAG_WIDGET_CALLBACK
  \param[in] uid the unique id of the current type
  */
-void Code_Writer::tag(int type, unsigned short uid) {
-  if (proj_.write_mergeback_data)
-    fprintf(code_file, "//~fl~%d~%04x~%08x~~\n", type, (int)uid, (unsigned int)block_crc_);
+void Code_Writer::tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_type, unsigned short uid) {
+  if (proj_.write_mergeback_data) {
+    Mergeback::print_tag(code_file, prev_type, next_type, uid, (uint32_t)block_crc_);
+  }
   block_crc_ = crc32(0, nullptr, 0);
 }
 

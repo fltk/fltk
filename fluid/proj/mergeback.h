@@ -14,34 +14,37 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// Matt: disabled
-#if 0
-
-#ifndef _FLUID_MERGEBACK_H
-#define _FLUID_MERGEBACK_H
+#ifndef FLUID_PROJ_MERGEBACK_H
+#define FLUID_PROJ_MERGEBACK_H
 
 #include <FL/fl_attr.h>
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string>
 
-const int FD_TAG_GENERIC = 0;
-const int FD_TAG_CODE = 1;
-const int FD_TAG_MENU_CALLBACK = 2;
-const int FD_TAG_WIDGET_CALLBACK = 3;
-const int FD_TAG_LAST = 3;
+namespace fld {
 
-const int FD_MERGEBACK_ANALYSE = 0;
-const int FD_MERGEBACK_INTERACTIVE = 1;
-const int FD_MERGEBACK_APPLY = 2;
-const int FD_MERGEBACK_APPLY_IF_SAFE = 3;
+class Project;
+
+namespace proj {
+
 
 /** Class that implements the MergeBack functionality.
  \see merge_back(const std::string &s, int task)
  */
-class Fd_Mergeback
+class Mergeback
 {
+  public:
+  enum class Tag {
+    GENERIC = 0, CODE, MENU_CALLBACK, WIDGET_CALLBACK, UNUSED_
+  };
+  enum class Task {
+    ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE = 3
+  };
 protected:
+  /// Apply mergeback for this project.
+  Project &proj_;
   /// Pointer to the C++ code file.
   FILE *code;
   /// Current line number in the C++ code file.
@@ -64,18 +67,26 @@ protected:
   int apply_callback(long block_end, long block_start, unsigned long code_crc, int uid);
   int apply_code(long block_end, long block_start, unsigned long code_crc, int uid);
 
+  static uint32_t decode_trichar32(const char *text);
+  static void print_trichar32(FILE *out, uint32_t value);
+
+  static const char *find_mergeback_tag(const char *line);
+  static bool read_tag(const char *tag, Tag *prev_type, uint16_t *uid, uint32_t *crc);
+
 public:
-  Fd_Mergeback();
-  ~Fd_Mergeback();
-  int merge_back(const std::string &s, const std::string &p, int task);
+  Mergeback(Project &proj);
+  ~Mergeback();
+  int merge_back(const std::string &s, const std::string &p, Task task);
   int ask_user_to_merge(const std::string &s, const std::string &p);
   int analyse();
   int apply();
+  static void print_tag(FILE *out, Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc);
 };
 
 extern int merge_back(const std::string &s, const std::string &p, int task);
 
+} // namespace proj
+} // namespace fld
 
-#endif // _FLUID_MERGEBACK_H
+#endif // FLUID_PROJ_MERGEBACK_H
 
-#endif

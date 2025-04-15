@@ -34,7 +34,7 @@ snap {
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -191,7 +191,7 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {FLUID Settings} open
-    xywh {392 362 340 580} type Double align 80 resizable size_range {340 580 0 0} visible
+    xywh {504 366 340 580} type Double align 80 resizable size_range {340 580 0 0} visible
   } {
     Fl_Tabs w_settings_tabs {
       callback {propagate_load(o, v);} open
@@ -428,7 +428,7 @@ or just ".ext" to set extension.}
         }
         Fl_Box {} {
           label {Experimental: }
-          xywh {100 283 0 20} labelfont 1 labelsize 11 align 4 hide
+          xywh {100 283 0 20} labelfont 1 labelsize 11 align 4
         }
         Fl_Check_Button w_proj_mergeback {
           label {generate MergeBack data}
@@ -440,8 +440,7 @@ or just ".ext" to set extension.}
     Fluid.proj.write_mergeback_data = o->value();
   }
 }}
-          comment {// Matt: disabled}
-          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11 hide
+          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11
         }
         Fl_Box {} {
           xywh {100 530 220 10} hide resizable
