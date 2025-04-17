@@ -15,12 +15,88 @@
 #
 
 # Targets that will be built: fluid and fluid-cmd (Windows)
-set(TARGETS fluid)
 
-# Source files for 'fluid-lib' = all source files except the main files
-# (main.cxx and main.h)
-# Note: macOS (Xcode) needs at least one source file (main.cxx) to link the main
-# program fluid properly
+# Targets that will be built: fluid, fluid-shared, and fluid-cmd (Windows only)
+set(TARGETS "")
+
+# Defaults to be used and potentially modified later
+
+set(BACKEND_APPLE FALSE)        # FIXME: should be global, e.g. FLTK_BACKEND_APPLE
+set(ICON_NAME "")
+set(ICON_PATH "")
+set(SUFFIX "UNIX")              # suffix for platform specific source files
+
+# platform specific settings
+
+if(APPLE AND NOT FLTK_BACKEND_X11)    # macOS "native"
+  set(BACKEND_APPLE TRUE)
+  set(ICON_NAME fluid.icns)
+  set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
+elseif(WIN32)
+  set(SUFFIX "WIN32")
+endif()
+
+# This macro is used to avoid duplicate code to create executable programs.
+# This must be a macro because it changes at least one global variable: TARGETS.
+# This macro also uses some (local) variables defined above.
+# In the future this might be converted to a function to avoid side effects.
+
+macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME)
+
+  if(ICON_PATH)
+    list(APPEND SOURCES ${ICON_PATH}) # macOS only
+  endif()
+
+  # message(STATUS "[fluid] make_target ${TARGET} ${GUI} ${SOURCES} ${LIBS} ${EXPORT_NAME}")
+
+  # Options WIN32 and MACOSX_BUNDLE build a Windows GUI program or macOS bundle,
+  # respectively. Both options are ignored on other platforms.
+
+  if(${GUI})
+    add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
+  else()
+    add_executable(${TARGET} ${SOURCES})
+  endif(${GUI})
+
+  list(APPEND TARGETS ${TARGET})
+
+  if(BACKEND_APPLE)
+
+    # set bundle properties
+    set_target_properties(${TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET}.plist")
+    set_target_properties(${TARGET} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+    set_target_properties(${TARGET} PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.${TARGET}")
+
+    # install command line tool
+    install(PROGRAMS $<TARGET_FILE:${TARGET}>
+            DESTINATION ${FLTK_BINDIR})
+
+    # create macOS bundle wrapper script
+
+    set(WRAPPER "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${TARGET}")
+    add_custom_command(
+      TARGET ${TARGET} POST_BUILD
+      COMMAND cp ${FLTK_SOURCE_DIR}/CMake/macOS-bundle-wrapper.in ${WRAPPER}
+      COMMAND chmod u+x,g+x,o+x ${WRAPPER}
+      BYPRODUCTS ${WRAPPER}
+      VERBATIM
+    )
+    unset(WRAPPER)
+
+  endif(BACKEND_APPLE)
+
+  target_link_libraries(${TARGET} PRIVATE ${LIBS})
+  set_target_properties(${TARGET} PROPERTIES EXPORT_NAME ${EXPORT_NAME})
+
+endmacro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME)
+
+
+# Main source and header files used for the executable because macOS (Xcode)
+# needs at least one source file (main.cxx) to link the main program properly
+
+set(MAIN_FILES main.cxx main.h)
+
+# Source files for 'fluid-lib': all source files except ${MAIN_FILES}
 
 set(CPPFILES
   Fluid.cxx
@@ -59,6 +135,7 @@ set(CPPFILES
   proj/mergeback.cxx
   proj/undo.cxx
   rsrcs/pixmaps.cxx
+  tools/ExternalCodeEditor_${SUFFIX}.cxx
   tools/autodoc.cxx
   tools/filename.cxx
   widgets/App_Menu_Bar.cxx
@@ -111,6 +188,7 @@ set(HEADERFILES
   proj/undo.h
   rsrcs/comments.h
   rsrcs/pixmaps.h
+  tools/ExternalCodeEditor_${SUFFIX}.h
   tools/autodoc.h
   tools/filename.h
   widgets/App_Menu_Bar.h
@@ -122,18 +200,6 @@ set(HEADERFILES
   widgets/Style_Parser.h
   widgets/Node_Browser.h
 )
-
-set(MAIN_FILES main.cxx main.h)
-
-# Add ExternalCodeEditor: platform specific files
-
-if(WIN32)
-  list(APPEND CPPFILES tools/ExternalCodeEditor_WIN32.cxx)
-  list(APPEND HEADERFILES tools/ExternalCodeEditor_WIN32.h)
-else()
-  list(APPEND CPPFILES tools/ExternalCodeEditor_UNIX.cxx)
-  list(APPEND HEADERFILES tools/ExternalCodeEditor_UNIX.h)
-endif(WIN32)
 
 source_group(
   TREE
@@ -155,46 +221,48 @@ target_link_libraries(fluid-lib PUBLIC fltk::images)
 
 # Build targets
 
-if(APPLE AND NOT FLTK_BACKEND_X11)
-
-  # macOS
-
-  set(ICON_NAME fluid.icns)
-  set(ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable(fluid MACOSX_BUNDLE ${MAIN_FILES} ${ICON_PATH})
-
-  # create macOS bundle wrapper script
-
-  set(WRAPPER "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/fluid")
-  add_custom_command(
-    TARGET fluid POST_BUILD
-    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/macOS-bundle-wrapper.in ${WRAPPER}
-    COMMAND chmod u+x,g+x,o+x ${WRAPPER}
-    BYPRODUCTS ${WRAPPER}
-    VERBATIM
-  )
-  unset(WRAPPER)
-
-else()
-
-  # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
-  add_executable(fluid WIN32 ${MAIN_FILES})
-
-endif()
-
-target_link_libraries(fluid PRIVATE fluid-lib)
+make_target(fluid TRUE "${MAIN_FILES}" fluid-lib fluid)
 
 # Build the console app on Windows
 # This is done for all Windows targets, even if cross-compiling.
 
 if(WIN32)
-  list(APPEND TARGETS fluid-cmd)
-  add_executable(fluid-cmd ${MAIN_FILES})
-  target_link_libraries(fluid-cmd PRIVATE fluid-lib)
+  make_target(fluid-cmd FALSE "${MAIN_FILES}" fluid-lib fluid-cmd)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()
   set(FLTK_FLUID_EXECUTABLE fltk::fluid)
 endif()
+
+# Add the "shared" executable (linked against the shared FLTK libs).
+# Note 1: only the GUI version is built as "shared" executable.
+# Note 2: For MSVC we need the special object library 'call_main'.
+
+if(FLTK_BUILD_SHARED_LIBS)
+
+  add_library(fluid-lib-shared OBJECT EXCLUDE_FROM_ALL)
+  target_sources(fluid-lib-shared PRIVATE ${CPPFILES} ${HEADERFILES})
+  target_include_directories(fluid-lib-shared PUBLIC .)
+  if(MSVC)
+    target_link_libraries(fluid-lib-shared PUBLIC fltk::fltk-shared)
+  else()
+    target_link_libraries(fluid-lib-shared PUBLIC fltk::images-shared)
+  endif(MSVC)
+
+  if(MSVC)
+    make_target(fluid-shared TRUE "${MAIN_FILES}" "fluid-lib-shared;call_main" fluid-shared)
+  else()
+    make_target(fluid-shared TRUE "${MAIN_FILES}" fluid-lib-shared fluid-shared)
+  endif()
+
+  # experimental
+  # if(NOT WIN32)
+  #   set(FLTK_FLUID_EXECUTABLE fltk::fluid-shared)
+  #   message(STATUS "** experimental ** FLTK_FLUID_EXECUTABLE = ${FLTK_FLUID_EXECUTABLE}")
+  # endif()
+
+endif(FLTK_BUILD_SHARED_LIBS)
+
+# export the variable FLTK_FLUID_EXECUTABLE to the parent scope
 
 set(FLTK_FLUID_EXECUTABLE "${FLTK_FLUID_EXECUTABLE}" PARENT_SCOPE)
 
@@ -204,30 +272,8 @@ foreach(tgt ${TARGETS})
   add_executable(fltk::${tgt} ALIAS ${tgt})
 endforeach()
 
-# Install fluid GUI and commandline tool
-
-if(APPLE AND NOT FLTK_BACKEND_X11)
-
-  # On macOS, fluid will be installed twice:
-  # - The bundled version of Fluid goes into the destination folder ${FLTK_BINDIR}.
-  # - The binary without bundle goes into ${FLTK_BINDIR} as well.
-  # The command line tool is the same executable as the one included in the bundle.
-  # Note:
-  #   Both the bundle and the commandline tool are currently installed side by side.
-  #   This may be changed in the future.
-
-  # Set bundle properties
-  set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fluid.plist")
-  set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
-  set_target_properties(fluid PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.fluid")
-
-  # Install command line tool
-  install(PROGRAMS $<TARGET_FILE:fluid>
-          DESTINATION ${FLTK_BINDIR})
-
-endif(APPLE AND NOT FLTK_BACKEND_X11)
-
 # Install the GUI and (on Windows only) the commandline tool 'fluid-cmd'
+# message(STATUS "Fluid: INSTALL TARGETS: ${TARGETS}")
 
 install(TARGETS ${TARGETS}
         EXPORT  FLTK-Targets

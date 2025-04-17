@@ -2,7 +2,7 @@
 # Installation support for building the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -103,29 +103,51 @@ install(PROGRAMS
   DESTINATION ${FLTK_BINDIR}
 )
 
-if(UNIX OR MSYS OR MINGW)
-  macro(INSTALL_MAN FILE LEVEL)
-    install(FILES
-      ${CMAKE_CURRENT_SOURCE_DIR}/documentation/src/${FILE}.man
-      DESTINATION ${FLTK_MANDIR}/man${LEVEL}
-      RENAME ${FILE}.${LEVEL}
-    )
-  endmacro(INSTALL_MAN FILE LEVEL)
+# Install man pages of fluid and fltk-options
 
-  if(FLTK_BUILD_FLUID)
-    INSTALL_MAN (fluid 1)
-  endif(FLTK_BUILD_FLUID)
-  if(FLTK_BUILD_FLTK_OPTIONS)
-    INSTALL_MAN (fltk-options 1)
-  endif(FLTK_BUILD_FLTK_OPTIONS)
-  INSTALL_MAN (fltk-config 1)
-  INSTALL_MAN (fltk 3)
+macro(INSTALL_MAN FILE LEVEL)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/documentation/src/${FILE}.man
+    DESTINATION ${FLTK_MANDIR}/man${LEVEL}
+    RENAME ${FILE}.${LEVEL}
+  )
+endmacro(INSTALL_MAN FILE LEVEL)
 
-  if(FLTK_BUILD_TEST AND FLTK_BUILD_FLUID)
-    # Don't (!) install man pages of games (GitHub issue #23)
-    # INSTALL_MAN (blocks 6)
-    # INSTALL_MAN (checkers 6)
-    # INSTALL_MAN (sudoku 6)
+if(FLTK_BUILD_FLUID)
+  INSTALL_MAN (fluid 1)
+endif(FLTK_BUILD_FLUID)
+if(FLTK_BUILD_FLTK_OPTIONS)
+  INSTALL_MAN (fltk-options 1)
+endif(FLTK_BUILD_FLTK_OPTIONS)
+INSTALL_MAN (fltk-config 1)
+INSTALL_MAN (fltk 3)
+
+# Install the games
+
+if(FLTK_BUILD_TEST) # "OR FLTK_BUILD_GAMES" (not yet implemented)
+
+  set(games_ blocks checkers sudoku)
+  if(FLTK_USE_GL)
+    list(APPEND games_ glpuzzle)
   endif()
 
-endif(UNIX OR MSYS OR MINGW)
+  foreach(game_ ${games_})
+    if(FLTK_BUILD_SHARED_LIBS)
+      set(tgt_ "${game_}-shared")
+      set_target_properties(${tgt_} PROPERTIES RUNTIME_OUTPUT_NAME ${game_})
+    else()
+      set(tgt_ ${game_})
+    endif()
+    install(TARGETS ${tgt_}
+            EXPORT  FLTK-Targets
+            RUNTIME DESTINATION ${FLTK_BINDIR}
+            LIBRARY DESTINATION ${FLTK_LIBDIR}
+            ARCHIVE DESTINATION ${FLTK_LIBDIR}
+            BUNDLE  DESTINATION ${FLTK_BINDIR} # macOS: bundles
+    )
+    # install man page
+    INSTALL_MAN (${game_} 6)
+  endforeach()
+  unset(game_)
+  unset(games_)
+endif()
