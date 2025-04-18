@@ -1,7 +1,7 @@
 //
 // Definition of Wayland window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2024 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,11 +65,7 @@ private:
 public:
   inline Fl_Cursor standard_cursor() { return standard_cursor_; };
   bool in_handle_configure; // distinguish OS and user window resize
-  // --- support for screen-specific scaling factors
-  struct type_for_resize_window_between_screens {
-    int screen;
-    bool busy;
-  };
+
   struct surface_output { // for linked list of displays where a surface maps
     struct Fl_Wayland_Screen_Driver::output *output;
     struct wl_list link;
@@ -80,7 +76,6 @@ public:
     int hotx, hoty;
   };
   static void delete_cursor(struct custom_cursor *custom, bool delete_rgb = true);
-  static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
@@ -98,7 +93,6 @@ public:
   static inline Fl_Wayland_Window_Driver* driver(const Fl_Window *w) {
     return (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);
   }
-  static void resize_after_screen_change(void *data);
   static Fl_Wayland_Plugin *gl_plugin();
 
   // --- window data
