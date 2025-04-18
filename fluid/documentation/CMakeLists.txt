@@ -15,6 +15,7 @@
 #
 
 set(DOCS)
+set(GIT_REVISION "")
 set(YEAR "")
 set(CURRENT_DATE "")
 
@@ -26,19 +27,16 @@ if(FLTK_BUILD_FLUID_DOCS OR FLTK_BUILD_PDF_DOCS)
 
   # create required variables
 
-  execute_process(COMMAND date "+%Y"
-    OUTPUT_VARIABLE YEAR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+  string(TIMESTAMP YEAR "%Y" UTC)
 
   # note: current locale is used for abbreviated month
-  execute_process(COMMAND date "+%b %d, %Y"
-    OUTPUT_VARIABLE CURRENT_DATE
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+  string(TIMESTAMP CURRENT_DATE "%b %d, %Y" UTC)
+  string(TIMESTAMP PDF_DATE "D:%Y%m%d%H%M%SZ" UTC)
+  string(TIMESTAMP TODAY "%B %d, %Y" UTC)
+  string(REPLACE " 0" " " TODAY "${TODAY}")
 
   # Find "short" doxygen version if it was built from Git
-  # Note: this is still needed in CMake 3.12.0 but later CMake versions
+  # Note: this is still needed in CMake 3.15 but later CMake versions
   #       (notably 3.25) remove the Git revision in 'DOXYGEN_VERSION'.
   # Todo: Find the "first good" CMake version and remove this redundant
   #       code once we require this as our minimal version and replace the
@@ -144,6 +142,8 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
 
   # convert Doxybook to current doxygen version
 
+  set(DOXY_VERSION "${DOXYGEN_VERSION_SHORT}") #
+
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -164,6 +164,12 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
     @ONLY
   )
 
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf.in
+    ${CMAKE_CURRENT_BINARY_DIR}/make_pdf
+    @ONLY
+  )
+
   # generate fluid.pdf
 
   add_custom_command(
@@ -173,7 +179,7 @@ if(FLTK_BUILD_PDF_DOCS AND FLTK_BUILD_FLUID_DOCS)
             ${CMAKE_CURRENT_BINARY_DIR}/fluid-title.tex
             ${CMAKE_CURRENT_BINARY_DIR}/fluid-book.tex
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_pdf
     COMMAND cp -f latex/refman.pdf fluid.pdf
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
             ${CMAKE_CURRENT_BINARY_DIR}/fluid-title.tex
