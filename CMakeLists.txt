@@ -36,7 +36,7 @@ cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 # define the FLTK project and version
 #######################################################################
 
-project(FLTK VERSION 1.4.2)
+project(FLTK VERSION 1.4.3)
 
 #######################################################################
 # include macro and function definitions for general usage
