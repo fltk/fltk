@@ -22,7 +22,7 @@
 #include <FL/filename.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
-#include "../../Fl_String.H"
+#include <FL/Fl_String.H>
 #include "../../flstring.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -1046,9 +1046,9 @@ const char *Fl_WinAPI_System_Driver::home_directory_name()
     home = "~/"; // last resort
   }
   // Make path canonical.
-  for (int i = 0; i < home.size(); ++i) {
-    if (home[i] == '\\')
-      home[i] = '/';
+  for (char& c : home) {
+    if (c == '\\')
+      c = '/';
   }
 #if (DEBUG_HOME_DIRECTORY_NAME)
   printf("home_directory_name() returns \"%s\"\n", home.c_str());
