@@ -614,7 +614,7 @@ endif(FLTK_OPTION_SVG)
 
 # FIXME: GLU libs have already been searched in resources.cmake
 
-set(HAVE_GL LIB_GL OR LIB_MesaGL)
+set(HAVE_GL LIB_GL OR LIB_OpenGL OR LIB_MesaGL)
 set(FLTK_USE_GL FALSE)
 
 if(HAVE_GL)
@@ -628,7 +628,7 @@ if(FLTK_BUILD_GL)
   if(FLTK_BACKEND_WAYLAND)
     pkg_check_modules(WLD_EGL IMPORTED_TARGET wayland-egl)
     pkg_check_modules(PKG_EGL IMPORTED_TARGET egl)
-    pkg_check_modules(PKG_GL  IMPORTED_TARGET gl)
+    pkg_search_module(PKG_GL  IMPORTED_TARGET gl opengl)
     pkg_check_modules(PKG_GLU IMPORTED_TARGET glu)
 
     if(NOT (WLD_EGL_FOUND AND PKG_EGL_FOUND AND PKG_GL_FOUND AND PKG_GLU_FOUND))
@@ -651,7 +651,8 @@ if(FLTK_BUILD_GL)
     unset(HAVE_GL_GLU_H CACHE)
     find_file(HAVE_GL_GLU_H GL/glu.h PATHS ${X11_INCLUDE_DIR})
   else()
-    find_package(OpenGL)
+    find_package(OpenGL COMPONENTS OpenGL)
+    set(OPENGL_LIBRARIES -lGLU -lOpenGL)
     if(APPLE)
       set(HAVE_GL_GLU_H ${HAVE_OPENGL_GLU_H})
     endif(APPLE)
