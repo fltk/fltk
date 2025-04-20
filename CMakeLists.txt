@@ -334,6 +334,7 @@ if(FLTK_BACKEND_WAYLAND)
   else()
     fl_summary("" "Libdecor = Bundled")
   endif()
+  fl_summary_yn("Use DBUS" DBUS_FOUND)
 endif(FLTK_BACKEND_WAYLAND)
 
 message("")
