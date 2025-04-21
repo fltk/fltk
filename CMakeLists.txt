@@ -120,6 +120,52 @@ endif()
 add_subdirectory(src)
 
 #######################################################################
+# MSVC only: build a special object library for shared libs
+#######################################################################
+
+# When linking programs against the shared FLTK libraries we need to
+# compile and link with fl_call_main.c, but this must not be compiled
+# with macro FL_DLL, whereas all the other source file(s) *must* be
+# compiled with macro FL_DLL to link against the shared libs.
+# The latter is ensured by CMake properties of the shared libraries.
+#
+# Solution: build an extra object library with just this one file and
+# link all the "shared" executables additionally against this object
+# library to resolve the symbol 'WinMain()'.
+#
+# The object library is called 'call_main' and is available for fluid,
+# fltk-options, and all test programs that link against shared FLTK
+# libraries when using MSVC (Microsoft Visual Studio).
+#
+#  ;-)  I *love* Visual Studio  ;-)
+
+if(FLTK_BUILD_SHARED_LIBS AND MSVC)
+  add_library(call_main OBJECT EXCLUDE_FROM_ALL src/fl_call_main.c)
+endif()
+
+#######################################################################
+# set CMAKE_INSTALL_RPATH for shared libraries on macOS before
+# building executables. This assumes standard install locations like
+#  - prefix/bin   executable (path part 2) or bundle (path part 3)
+#  - prefix/lib   shared library
+# These RPATH settings are effective when executables and shared libs
+# are *installed*, they don't affect executables in the build folder.
+# Affected executables (when linked against the shared FLTK libs):
+#  - fluid
+#  - fltk-options
+#  - test/* (e.g. games)
+# Note: Path part 1 ("@loader_path") is used to find shared libraries
+#       in the same folder as the executable file (everywhere).
+#######################################################################
+
+if(FLTK_BUILD_SHARED_LIBS AND APPLE AND NOT FLTK_BACKEND_X11)
+  set(CMAKE_INSTALL_RPATH
+      @loader_path
+      @loader_path/../lib
+      @loader_path/../../../../lib)
+endif()
+
+#######################################################################
 # build fluid (optional)
 #######################################################################
 
