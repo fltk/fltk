@@ -2,7 +2,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2023 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,6 +60,11 @@ protected:
   uchar *mask_bitmap_;
   uchar **mask_bitmap() FL_OVERRIDE {return &mask_bitmap_;}
   POINT *long_point;
+#if FL_ABI_VERSION >= 10403     // Issue #1214
+  // empty
+#else
+  bool is_solid_;
+#endif
   int style_;
 public:
   Fl_GDI_Graphics_Driver();

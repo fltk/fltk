@@ -1,7 +1,7 @@
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -58,6 +58,11 @@ void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, int width, char* das
   DeleteObject(oldpen);
   DeleteObject(fl_current_xmap->pen);
   fl_current_xmap->pen = newpen;
+#if FL_ABI_VERSION >= 10403     // Issue #1214
+  // empty
+#else
+  is_solid_ = ((style & 0xff) == FL_SOLID && (!dashes || !*dashes));
+#endif
   style_ = style;
 }
 
