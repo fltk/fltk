@@ -78,6 +78,23 @@ include(CMake/resources.cmake)
 include(CMake/options.cmake)
 
 #######################################################################
+# Disable automatic code signing on macOS when using Xcode.
+# This *MUST* be done after including CMake/options.cmake.
+# Users can still enable code signing if they have a valid certificate.
+# Details about code signing are beyond the scope of this document.
+#######################################################################
+# FIXME: some of the conditions below may be redundant, and the code
+# below should be improved in a later version.
+#######################################################################
+
+if(APPLE) # AND NOT FLTK_BACKEND_X11 AND CMAKE_GENERATOR STREQUAL "Xcode")
+  if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED)
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED OFF CACHE BOOL
+        "Allow Code Signing when using Xcode")
+  endif()
+endif()
+
+#######################################################################
 # print (debug) several build variables and options
 #######################################################################
 
