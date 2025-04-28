@@ -1,3 +1,42 @@
+Changes in FLTK 1.4.3                                   Released: Apr 28 2025
+
+  FLTK 1.4.3 is a maintenance release with improvements and fixes backported
+  from the current development branch 1.5 (master).
+
+  Bug Fixes
+
+  - Fix "Windows: Clipboard gets stuck when text is copied while window is hidden" (#1233)
+  - Fix "Minor drawing artifact at scale 200% under X11 session" (#1243)
+  - Fix a comparison that's always true
+  - Fix handling of menu windows taller than their screen
+  - Fix potential buffer overflow on Windows when loading fonts (#1221)
+  - Windows: fix "heap-use-after-free" in home_directory_name()
+  - Fix out-of-bounds access in test/checkers.cxx
+  - macOS: Fix error "two consecutive '[' tokens on g++ with objcpp files" (#1246)
+
+  Other Improvements
+
+  - Update man pages of games (demo programs), add glpuzzle man page
+
+  CMake And Other Build Procedure Improvements
+
+  - options.cmake: Check Threads_FOUND, not CMAKE_HAVE_THREADS_LIBRARY
+  - Check CMake version for some properties in fl_debug_target()
+  - Use CMake's built-in timestamp formatting (#1242)
+  - Simplify fluid build
+  - CI for Wayland: update required development packages for Wayland builds
+  - Update fltk-config.in (minor comment changes only)
+  - Fully support using own shared libraries internally (#1238)
+  - macOS: disable automatic code signing when using Xcode
+  - Update version numbers to 1.4.3
+
+  ABI changes (FL_ABI_VERSION >= 10403)
+
+  - Allow FL_ABI_VERSION = FL_API_VERSION + 1
+  - Fl_Tree_Item: Changed two connector methods to virtual
+  - Fix "Windows: dotted lines may be drawn solid when GUI is rescaled" (#1214)
+
+
 Changes in FLTK 1.4.2                                   Released: Feb 23 2025
 
   Bug Fixes and other Improvements
