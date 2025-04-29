@@ -1,4 +1,4 @@
-Changes in FLTK 1.4.3                                   Released: Apr 28 2025
+Changes in FLTK 1.4.3                                   Released: Apr 29 2025
 
   FLTK 1.4.3 is a maintenance release with improvements and fixes backported
   from the current development branch 1.5 (master).
