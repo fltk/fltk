@@ -15,33 +15,34 @@ this is often useful to know when programming.
 
 \section enumerations_versions Version Numbers
 
-The FLTK version number is stored in a number of compile-time constants:
+The FLTK version number is stored in a number of compile-time constants.
+Assuming FLTK version 1.2.3, this would be:
 
-  - FL_MAJOR_VERSION - The major release number, currently  1
-  - FL_MINOR_VERSION - The minor release number, currently  4
-  - FL_PATCH_VERSION - The patch release number, currently  1
+  - FL_MAJOR_VERSION - The major release number =  1
+  - FL_MINOR_VERSION - The minor release number =  2
+  - FL_PATCH_VERSION - The patch release number =  3
   - FL_VERSION - \b [Deprecated] A combined floating-point version number for
-      the major, minor, and patch release numbers, currently 1.0400
+      the major, minor, and patch release numbers = 1.0203
   - FL_API_VERSION - A combined integer version number for the major, minor,
-      and patch release numbers, currently 10400 (use this instead of
+      and patch release numbers = 10203 (use this instead of
       FL_VERSION, if possible)
   - FL_ABI_VERSION - A combined integer version number for the application
       binary interface (ABI) major, minor, and patch release numbers,
-      currently 10400 (default)
+      would be 10200 (default), see note below.
 
   \note The ABI version (FL_ABI_VERSION) is usually constant throughout one
-        major/minor release version, for instance 10300 if FL_API_VERSION is 10304.
+        major/minor release version, for instance 10200 if FL_API_VERSION is 10203.
         Hence the ABI is constant if only the patch version is changed.
-        You can change this with configure or CMake though if you want the
-        latest enhancements (called "ABI features", see CHANGES).
+        You can change this with CMake though if you want the latest enhancements
+        (called "ABI features").\n
+        See CHANGES.txt, README.CMake.txt, and README.abi-version.txt.
 
 \section enumerations_events Events
 
 Events are identified by an \ref Fl_Event enumeration value.  The
 following events are currently defined:
 
-  - FL_NO_EVENT - No event (or an event fltk does not
-    understand) occurred (0).
+  - FL_NO_EVENT - No event (or an event FLTK does not understand) occurred (0).
   - FL_PUSH - A mouse button was pushed.
   - FL_RELEASE - A mouse button was released.
   - FL_ENTER - The mouse pointer entered a widget.
@@ -57,15 +58,13 @@ following events are currently defined:
   - FL_ACTIVATE - The widget has been activated.
   - FL_HIDE - The widget has been hidden.
   - FL_SHOW - The widget has been shown.
-  - FL_PASTE - The widget should paste the contents of the
-    clipboard.
+  - FL_PASTE - The widget should paste the contents of the clipboard.
   - FL_SELECTIONCLEAR - The widget should clear any selections
      made for the clipboard.
   - FL_MOUSEWHEEL - The horizontal or vertical mousewheel was turned.
   - FL_DND_ENTER - The mouse pointer entered a widget dragging data.
   - FL_DND_DRAG - The mouse pointer was moved dragging data.
-  - FL_DND_LEAVE - The mouse pointer left a widget still dragging
-    data.
+  - FL_DND_LEAVE - The mouse pointer left a widget still dragging data.
   - FL_DND_RELEASE - Dragged data is about to be dropped.
   - FL_SCREEN_CONFIGURATION_CHANGED - The screen configuration (number, positions) was changed.
   - FL_FULLSCREEN - The fullscreen state of the window has changed.
