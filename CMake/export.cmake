@@ -150,7 +150,7 @@ else(IS_ABSOLUTE "${FLTK_DOCDIR}")
   set(PREFIX_DOC "${CMAKE_INSTALL_PREFIX}/${FLTK_DOCDIR}/fltk")
 endif(IS_ABSOLUTE "${FLTK_DOCDIR}")
 
-set(CONFIG_H_IN configh.cmake.in)
+set(CONFIG_H_IN config.h.in)
 set(CONFIG_H config.h)
 
 # generate config.h
