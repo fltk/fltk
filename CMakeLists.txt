@@ -1,5 +1,5 @@
 #
-# Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
+# Main CMakeLists.txt to build the FLTK project using CMake
 # Originally written by Michael Surette
 #
 # Copyright 1998-2025 by Bill Spitzak and others.
@@ -130,6 +130,12 @@ include(CMake/resources.cmake)
 # options
 #######################################################################
 include(CMake/options.cmake)
+
+#######################################################################
+# generate version numbers and config headers
+#######################################################################
+
+include(CMake/gen_config.cmake)
 
 #######################################################################
 # Disable automatic code signing on macOS when using Xcode.
@@ -266,12 +272,6 @@ include(CMake/variables.cmake)
 
 include(CMake/export.cmake)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/fl_config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/FL/fl_config.h
-  @ONLY
-)
-
 #######################################################################
 # options to build test/demo and example programs
 #######################################################################
@@ -364,29 +364,31 @@ feature_summary(WHAT ALL DESCRIPTION "Configuration Summary for ${_descr} --\n")
 
 # FLTK specific build configuration and options (see macros in fl_summary.cmake)
 
-#                "title"               dir  build (bool)             option to set
-fl_summary_build("Static libraries"    lib  TRUE                     "n/a")
-fl_summary_build("Shared libraries"    lib  FLTK_BUILD_SHARED_LIBS   FLTK_BUILD_SHARED_LIBS)
-fl_summary_build("The forms library"   lib  FLTK_BUILD_FORMS         FLTK_BUILD_FORMS)
-fl_summary_build("The OpenGL library"  lib  FLTK_USE_GL              FLTK_BUILD_GL)
-fl_summary_build("fluid"               bin  FLTK_BUILD_FLUID         FLTK_BUILD_FLUID)
-fl_summary_build("fltk-options"        bin  FLTK_BUILD_FLTK_OPTIONS  FLTK_BUILD_FLTK_OPTIONS)
+#                "title"               dir    build (bool)              option to set
+fl_summary_build("Static libraries"    lib    TRUE                      "n/a")
+fl_summary_build("Shared libraries"    lib    FLTK_BUILD_SHARED_LIBS    FLTK_BUILD_SHARED_LIBS)
+fl_summary_build("The forms library"   lib    FLTK_BUILD_FORMS          FLTK_BUILD_FORMS)
+fl_summary_build("The OpenGL library"  lib    FLTK_USE_GL               FLTK_BUILD_GL)
+fl_summary_build("fluid"               bin    FLTK_BUILD_FLUID          FLTK_BUILD_FLUID)
+fl_summary_build("fltk-options"        bin    FLTK_BUILD_FLTK_OPTIONS   FLTK_BUILD_FLTK_OPTIONS)
 
 fl_summary_build("Test programs"     bin/test      FLTK_BUILD_TEST      FLTK_BUILD_TEST)
 fl_summary_build("Example programs"  bin/examples  FLTK_BUILD_EXAMPLES  FLTK_BUILD_EXAMPLES)
 
 message(STATUS "")
 
-if(CMAKE_BUILD_TYPE STREQUAL "")
-  fl_summary("Build configuration" "<unspecified>")
-else()
-  fl_summary("Build configuration" "${CMAKE_BUILD_TYPE}")
-endif()
+fl_summary("FLTK Library (API) version"   "${FLTK_VERSION}")
+fl_summary("ABI version (FL_ABI_VERSION)" "${FL_ABI_VERSION}")
 
-fl_summary("Installation prefix" "${CMAKE_INSTALL_PREFIX}")
+if(CMAKE_BUILD_TYPE STREQUAL "")
+  fl_summary("Build configuration"        "<unspecified>")
+else()
+  fl_summary("Build configuration"        "${CMAKE_BUILD_TYPE}")
+endif()
+fl_summary("Installation prefix"          "${CMAKE_INSTALL_PREFIX}")
 
 message("")
-#                "title"           name  system library if used
+#                "title"             name  system library if used
 fl_summary_image("Bundled Libraries" JPEG  LIB_jpeg)
 fl_summary_image(""                  PNG   LIB_png)
 fl_summary_image(""                  ZLIB  LIB_zlib)

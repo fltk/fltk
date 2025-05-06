@@ -1,4 +1,4 @@
-README.CMake.txt - Building and using FLTK with CMake
+README.CMake.txt - Building and Using FLTK with CMake
 ------------------------------------------------------
 
 
@@ -67,6 +67,8 @@ VC++ and MinGW on Windows, or do some cross-compiling you must use out-of-tree
 builds exclusively. In-tree builds will gum up the works by putting a
 CMakeCache.txt file in the source root.
 
+FLTK does not allow in-tree builds since version 1.5.0 for safety reasons.
+
 More information on CMake can be found on its web site https://www.cmake.org.
 
 
@@ -112,18 +114,34 @@ them explicitly.
  2.2.1  CMake Specific Configuration Options
 ---------------------------------------------
 
-There are only three CMake options that you may want to specify:
+There are only four CMake options that you typically want to specify.
+Each option has a specific ":type" setting which is kind of optional
+but should usually be specified in scripts.
 
-CMAKE_BUILD_TYPE
+-G "Generator"
+    This specifies the build system you want to use. In most cases the
+    platform specific default can be used, but you may want to use
+    another generator, e.g. "Ninja" on Unix-like platforms (Linux) where
+    "Unix Makefiles" is the default. On Windows the default is
+    "Visual Studio xxxx ..." if it is installed, on macOS it is
+    "Unix Makefiles" like on other Unix-like platforms but you can use
+    "Xcode" if you like. Other build systems (generators) may be available
+    on your platform, but these are out of the scope of this document.
+    The command `cmake --help` outputs a list of available generators.
+
+-D CMAKE_BUILD_TYPE:STRING=...
     This specifies what kind of build this is i.e. Release, Debug...
     Platform specific compile/link flags/options are automatically selected
-    by CMake depending on this value.
+    by CMake depending on this value. Some generators, notably IDE systems
+    (e.g. Visual Studio on Windows, Xcode on macOS) ignore this option. You
+    can specify the build type at build time with these generators.
 
-CMAKE_INSTALL_PREFIX
+-D CMAKE_INSTALL_PREFIX:PATH=...
     Where everything will go on install. Defaults are /usr/local for Unix
     and C:\Program Files\FLTK for Windows.
 
-CMAKE_OSX_ARCHITECTURES (macOS only, ignored on other platforms)
+-D CMAKE_OSX_ARCHITECTURES:STRING=...
+    This is macOS specific and ignored on other platforms.
     Set this to either "arm64", "x86_64", or a list of both "arm64;x86_64".
     The latter will build "universal apps" on macOS, whereas the former
     will either build Intel (x86_64) or Apple Silicon aka M1 (arm64) apps.
@@ -148,22 +166,30 @@ FLTK_ABI_VERSION - default EMPTY
     build in the form 1xxyy for FLTK 1.x.y (xx and yy with leading zeroes).
     The default ABI version is 1xx00 (the stable ABI throughout all patch
     releases of one minor FLTK version). The highest ABI version you may
-    choose is 1xxyy for FLTK 1.x.y (again with leading zeroes).
-    Please see README.abi-version.txt for more information about which
-    ABI version to select.
+    choose is 1xxyy + 1 for FLTK 1.x.y (again with leading zeroes), i.e.
+
+        1xx00 <= FL_ABI_VERSION <= FL_API_VERSION + 1
+
+    since FLTK 1.4.2. In prior versions the highest ABI version that
+    could be set was the same as FL_API_VERSION. The option to set the ABI
+    version one greater than the current API version allows to build FLTK
+    from Git or from a snapshot with the latest ABI features designated
+    for the next higher version as long as the API version is the old
+    version of the latest release.
+    Please see README.abi-version.txt for more details.
 
 FLTK_ARCHFLAGS - default EMPTY
     Extra "architecture" flags used as C and C++ compiler flags.
     These flags are also "exported" to fltk-config.
 
-FLTK_BACKEND_WAYLAND - default ON (only Unix/Linux)
+FLTK_BACKEND_WAYLAND - default ON (only Unix/Linux, not on macOS)
     Enable the Wayland backend for all window operations, Cairo for all
-    graphics and Pango for text drawing (Linux+FreeBSD only). Resulting FLTK
-    apps use Wayland when a Wayland compositor is available at runtime,
-    and use X11 for their window operations otherwise (unless FLTK_BACKEND_X11
+    graphics, and Pango for text drawing (Linux+FreeBSD only). Resulting FLTK
+    apps use Wayland when a Wayland compositor is available at runtime, and
+    use X11 for their window operations otherwise (unless FLTK_BACKEND_X11
     is OFF), but keep using Cairo and Pango - see README.Wayland.txt.
-    If FLTK_BACKEND_X11 has been turned OFF and there is no Wayland compositor
-    at runtime, then FLTK programs fail to start.
+    If FLTK_BACKEND_X11 has been turned OFF and there is no Wayland
+    compositor at runtime, then FLTK programs fail to start.
 
 FLTK_BACKEND_X11 - default ON on Unix/Linux, OFF elsewhere (Windows, macOS).
     Enable or disable the X11 backend on platforms that support it.
@@ -189,10 +215,10 @@ FLTK_BUILD_FLTK_OPTIONS - default ON
 FLTK_BUILD_FLUID - default ON
     Build the Fast Light User-Interface Designer ("fluid").
 
-FLTK_BUILD_FORMS - default ON
-    Build the (X)Forms compatibility library. This option is ON by default
-    for backwards compatibility but can safely be turned OFF if you don't
-    need (X)Forms compatibility.
+FLTK_BUILD_FORMS - default OFF since 1.5.0, ON in prior versions
+    Build the (X)Forms compatibility library. This option is OFF by default
+    because most FLTK software doesn't need it. You can turn this option
+    on for backwards compatibility if you need (X)Forms compatibility.
 
 FLTK_BUILD_GL - default ON
     Build the OpenGL support library fltk_gl (fltk::gl) and enable OpenGL
@@ -200,20 +226,22 @@ FLTK_BUILD_GL - default ON
 
 FLTK_BUILD_SHARED_LIBS - default OFF
     Normally FLTK is built as static libraries which makes more portable
-    binaries. If you want to use shared libraries, this will build them too.
-    You can use shared FLTK libs in your own CMake projects by appending
-    "-shared" to FLTK target names as described in section 3.1 and 3.2.
+    binaries. If you want to use shared libraries, setting this option ON
+    will build them too. You can use shared FLTK libs in your own CMake
+    projects by appending "-shared" to FLTK target names as described in
+    sections 3.1 and 3.2.
 
 FLTK_BUILD_TEST - default ON in top-level build, OFF in sub-build
     Build the test and demo programs in the 'test' directory. The default
-    is ON if the FLTK build is in a top-level project so all test and demo
-    programs are built. If FLTK is built as a subproject only the Library
+    is ON if FLTK is built in a top-level project so all test and demo
+    programs are built. If FLTK is built as a subproject only the library
     and the tools (fluid and fltk-config) are built by default.
 
 FLTK_GRAPHICS_CAIRO - default OFF (Unix/Linux: X11 + Wayland only).
     Make all drawing operations use the Cairo library (rather than Xlib),
     producing antialiased graphics (X11 platform: implies FLTK_USE_PANGO).
-    When using Wayland this option is ignored (Wayland uses Cairo).
+    When using Wayland this option is always ON (Wayland uses Cairo for
+    drawing).
 
 FLTK_GRAPHICS_GDIPLUS - default ON (Windows only).
     Make FLTK use GDI+ to draw oblique lines and curves resulting in
@@ -226,7 +254,8 @@ FLTK_MSVC_RUNTIME_DLL - default ON (Windows: Visual Studio, NMake, clang).
     If this variable is defined on other platforms it is silently ignored.
 
 FLTK_OPTION_CAIRO_EXT - default OFF
-    Enable extended libcairo support - see README.Cairo.txt.
+    Enable extended libcairo support. Setting this to ON is not recommended,
+    see README.Cairo.txt.
 
 FLTK_OPTION_CAIRO_WINDOW - default OFF
     Enable support of class Fl_Cairo_Window (all platforms, requires the
@@ -271,7 +300,7 @@ FLTK_USE_PANGO - default OFF (see note below)
     unicode-defined scripts and gives FLTK limited support of right-to-left
     scripts. This option makes sense only under X11 or Wayland, and also
     requires Xft.
-    This option is ignored (always enabled) if Wayland or FLTK_GRAPHICS_CAIRO
+    This option is ignored (always ON) if Wayland or FLTK_GRAPHICS_CAIRO
     is ON.
 
 FLTK_USE_POLL - default OFF
@@ -290,9 +319,9 @@ FLTK_USE_SYSTEM_LIBDECOR - default ON (Wayland only)
 FLTK_USE_SYSTEM_LIBJPEG - default ON (macOS and Windows: OFF)
 FLTK_USE_SYSTEM_LIBPNG  - default ON (macOS and Windows: OFF)
 FLTK_USE_SYSTEM_ZLIB    - default ON (macOS and Windows: OFF)
-    FLTK has built in jpeg, zlib, and png libraries. These options let you
+    FLTK has built-in jpeg, zlib, and png libraries. These options let you
     use system libraries instead, unless CMake can't find them. If you set
-    any of these options to OFF, then the built in library will be used.
+    any of these options to OFF, then the built-in library will be used.
     The default is ON on Linux/Unix platforms but OFF on Windows and macOS
     because of potential incompatibilities on Windows and macOS whereas
     the system libraries can typically be used on Linux/Unix.
@@ -318,29 +347,36 @@ FLTK_BUILD_HTML_DOCS - default ON
 FLTK_BUILD_PDF_DOCS  - default ON
     These options can be used to enable HTML documentation generation with
     doxygen. If these are ON the build targets 'html', 'pdf', and 'docs'
-    are generated but must be built explicitly. Technically the build targets
+    are generated but must be built explicitly. The target 'docs' is a
+    shortcut for 'html' and 'docs'. Technically the CMake build targets
     are generated but excluded from 'ALL'.
-    You can safely leave these two options ON if you want to save build time
-    because the docs are not built automatically.
+    You can safely leave these two options ON if you want to save build
+    time because the docs are not built automatically. This may change
+    in a future release.
 
 FLTK_BUILD_FLUID_DOCS - default OFF
-    If this option is ON, the FLUID user documentation will be built. If
-    FLTK_BUILD_PDF_DOCS is ON, the FLUID documentation will be generated
-    in PDF form. To generate the screen shots used in the handbook,
-    the CMake build mode must be set to "Debug".
+    If this option is ON, the FLUID user documentation can be built (target
+    'fluid_docs'). If FLTK_BUILD_PDF_DOCS (see above) is ON, the FLUID
+    documentation can also be created in PDF form (target 'fluid_pdf').
+    To generate the screen shots used in the handbook, the CMake build
+    type must be set to "Debug".
+    You can safely set these two options ON if you want to save build
+    time because the docs are not built automatically. This may change
+    in a future release.
 
 FLTK_INCLUDE_DRIVER_DOCS - default OFF
-    This option adds driver documentation to HTML and PDF docs (if ON). This
-    option is marked as "advanced" since it is only useful for FLTK developers
-    and advanced users. It is only used if at least one of the documentation
-    options above is ON as well.
+    This option adds driver documentation to HTML and PDF docs (if ON).
+    This option is marked as "advanced" since it is only useful for FLTK
+    developers and advanced users. It is only used if at least one of the
+    documentation options above is ON as well.
 
-FLTK_INSTALL_HTML_DOCS - default OFF
+FLTK_INSTALL_HTML_DOCS  - default OFF
 FLTK_INSTALL_FLUID_DOCS - default OFF
-FLTK_INSTALL_PDF_DOCS  - default OFF
-    If these options are ON then the HTML, FLUID, and/or PDF docs are installed
-    when the 'install' target is executed, e.g. with `make install'. You
-    need to select above options FLTK_BUILD_*_DOCS as well.
+FLTK_INSTALL_PDF_DOCS   - default OFF
+    If these options are ON then the HTML, FLUID, and/or PDF docs are
+    installed when the 'install' target is executed, e.g. `make install'.
+    You need to select above options FLTK_BUILD_*_DOCS as well and build
+    the documentation manually (this may be improved in a later version).
 
 
  2.2.4  Special Options
@@ -477,9 +513,10 @@ Some flags can be changed during the 'make' command, such as:
 
 which builds in verbose mode, so you can see all the compile/link commands.
 
-Hint: if you intend to build several different versions of FLTK, e.g. a Debug
-and a Release version, or multiple libraries with different ABI versions or
-options, then use subdirectories in the build directory, like this:
+Hint: if you intend to build several different versions of FLTK, e.g.
+a Debug and a Release version, or multiple libraries with different ABI
+versions or options, or cross-compile for another platform we recommend
+to use subdirectories in the build folder, like this:
 
     mkdir build
     cd build

@@ -1,9 +1,9 @@
 #
-# Export CMake file to build the FLTK project using CMake (www.cmake.org)
+# Export CMake file to build the FLTK project using CMake
 #
 # Originally written by Michael Surette
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -135,31 +135,6 @@ else(CMAKE_VERSION VERSION_LESS 3.19)
                     GROUP_READ GROUP_EXECUTE
                     WORLD_READ WORLD_EXECUTE)
 endif(CMAKE_VERSION VERSION_LESS 3.19)
-
-# prepare some variables for config.h
-
-if(IS_ABSOLUTE "${FLTK_DATADIR}")
-  set(PREFIX_DATA "${FLTK_DATADIR}/fltk")
-else(IS_ABSOLUTE "${FLTK_DATADIR}")
-  set(PREFIX_DATA "${CMAKE_INSTALL_PREFIX}/${FLTK_DATADIR}/fltk")
-endif(IS_ABSOLUTE "${FLTK_DATADIR}")
-
-if(IS_ABSOLUTE "${FLTK_DOCDIR}")
-  set(PREFIX_DOC "${FLTK_DOCDIR}/fltk")
-else(IS_ABSOLUTE "${FLTK_DOCDIR}")
-  set(PREFIX_DOC "${CMAKE_INSTALL_PREFIX}/${FLTK_DOCDIR}/fltk")
-endif(IS_ABSOLUTE "${FLTK_DOCDIR}")
-
-set(CONFIG_H_IN config.h.in)
-set(CONFIG_H config.h)
-
-# generate config.h
-
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_H_IN}"
-  "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_H}"
-  @ONLY
-)
 
 if(FLTK_INSTALL_LINKS)
   # Set PREFIX_INCLUDE to the proper value.

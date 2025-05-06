@@ -797,6 +797,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/fltk-options.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox \
+                         @CMAKE_CURRENT_BINARY_DIR@/../FL/fl_config.h \
                          @FLTK_SOURCE_DIR@/FL \
                          @FLTK_SOURCE_DIR@/src \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/enumerations.dox \
