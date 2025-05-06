@@ -75,8 +75,8 @@ or
 
     sudo make install           # from the build folder (with make)
 
-Other commands (e.g. `make or `ninja`) may be used as well after the initial
-cmake command, depending on the CMake generator you used.
+Other commands (e.g. `make` or `ninja`) may be used as well after the
+initial cmake command, depending on the CMake generator you used.
 
 For more info on using CMake to build FLTK please see README.CMake.txt.
 
@@ -152,10 +152,10 @@ further information on how to report a bug:
 
 ## Trademarks
 
-Microsoft and Windows are registered trademarks of Microsoft Corporation.
-UNIX is a registered trademark of the X/Open Group, Inc.
-OpenGL is a registered trademark of Silicon Graphics, Inc.
-macOS is a registered trademark of Apple Computers, Inc.
+- Microsoft and Windows are registered trademarks of Microsoft Corporation
+- UNIX is a registered trademark of the X/Open Group, Inc.
+- OpenGL is a registered trademark of Silicon Graphics, Inc.
+- macOS is a registered trademark of Apple Computers, Inc.
 
 ## Copyright
 
