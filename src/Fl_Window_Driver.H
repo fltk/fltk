@@ -58,6 +58,8 @@ private:
 protected:
   Fl_Window *pWindow;
   int screen_num_; // number of screen where window is mapped
+  int win_gravity_;
+
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
@@ -69,6 +71,24 @@ public:
   int screen_num();
   void screen_num(int n) { screen_num_ = n; }
 
+  // Window gravity
+  enum WIN_GRAVITY {
+    WIN_GRAVITY_UNMAP = 0,
+    WIN_GRAVITY_NORTHWEST = 1,
+    WIN_GRAVITY_NORTH = 2,
+    WIN_GRAVITY_NORTHEAST = 3,
+    WIN_GRAVITY_WEST = 4,
+    WIN_GRAVITY_CENTER = 5,
+    WIN_GRAVITY_EAST = 6,
+    WIN_GRAVITY_SOUTHWEST = 7,
+    WIN_GRAVITY_SOUTH = 8,
+    WIN_GRAVITY_SOUTHEAST = 9,
+    WIN_GRAVITY_STATIC = 10,
+  };
+  /**
+    Sets the desired window gravity.  Almost certainly only useful in X11.
+  */
+  virtual void win_gravity(int g) { win_gravity_ = g; }
 
   // --- frequently used accessors to public window data
   /** returns the x coordinate of the window. */
