@@ -2,27 +2,27 @@
 
 /**
 
- \cond FL_HTML_INDEX
+\cond FL_HTML_INDEX
 
- \mainpage FLUID User Manual
+\mainpage FLUID User Manual
 
 
- <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
- <TR>
-   <TD><CENTER>
-     \image html fluid-128.png
-     \image latex fluid-128.png  "" width=3cm
-   </CENTER></TD>
-   <TD><CENTER>
-     <B>FLUID 1.5.0 User Manual</B>
+<TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TR>
+  <TD><CENTER>
+    \image html fluid-128.png
+    \image latex fluid-128.png  "" width=3cm
+  </CENTER></TD>
+  <TD><CENTER>
+    <B>FLUID \include{doc} version.dox User Manual</B>
 
-     By F.&nbsp;Costantini, M.&nbsp;Melcher,
-     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
+    By F.&nbsp;Costantini, M.&nbsp;Melcher,
+    A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
-     Copyright © 1998 - 2025 by Bill Spitzak and others.
-   </CENTER></TD>
- </TR>
- </TABLE>
+    \include{doc} copyright.dox
+  </CENTER></TD>
+</TR>
+</TABLE>
 
  <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
  <TR>

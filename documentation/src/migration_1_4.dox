@@ -430,8 +430,8 @@ This code will load the old font 'Arial' on Windows:
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="license.html">
-    Software License
+    <a class="el" href="migration_1_5.html">
+    Migrating Code from FLTK 1.4 to 1.5
     [Next]
     </a>
   </td>

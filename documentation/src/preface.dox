@@ -2,7 +2,8 @@
 
  \page preface Preface
 
-This manual describes the Fast Light Tool Kit ("FLTK") version 1.5.0,
+This manual describes the Fast Light Tool Kit ("FLTK")
+\include{doc} version.dox,
 a C++ Graphical User Interface ("GUI") toolkit for UNIX, Microsoft Windows,
 and Apple macOS.
 

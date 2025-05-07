@@ -805,6 +805,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/forms.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/osissues.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/migration_1_4.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/migration_1_5.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/development.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/license.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/examples.dox \

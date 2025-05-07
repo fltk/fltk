@@ -8,7 +8,7 @@
     \image latex FL200.png "" width=5cm
   </CENTER></TD>
   <TD><CENTER>
-    <B>FLTK 1.5.0 Programming Manual</B>
+    <B>FLTK \include{doc} version.dox Programming Manual</B>
 
     By F.&nbsp;Costantini, M.&nbsp;Melcher,
     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
@@ -17,6 +17,7 @@
   </CENTER></TD>
 </TR>
 </TABLE>
+
 <TABLE CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
 <TR>
   <TD style="text-align: center;">
@@ -87,6 +88,8 @@
         - \subpage osissues
 
         - \subpage migration_1_4
+
+        - \subpage migration_1_5
 
         - \subpage license
 

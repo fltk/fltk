@@ -56,6 +56,13 @@ if(GENERATE_DOCS)
     string(REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION})
   endif(DOXYGEN_FOUND)
 
+  # configure version.dox (includes the bare FLTK version number)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/version.dox.in
+    ${CMAKE_CURRENT_BINARY_DIR}/version.dox
+    @ONLY
+  )
+
   # configure copyright.dox (includes current year)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/copyright.dox.in
