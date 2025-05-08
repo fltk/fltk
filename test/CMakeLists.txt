@@ -54,22 +54,44 @@ endif(WIN32)
 # w/o OpenGL as well. These demos show an alternate GUI or a warning
 # when built w/o OpenGL.
 #
-# Note: use "${GLDEMO_LIBS}" for their library parameter
-#        or "${GLDEMO_SHARED}" to build with shared FLTK libraries
+# For building with Visual Studio (MSVC) we also include the special
+# object library 'call_main' when linking with the shared libraries.
+# Setting the correct library variants as CMake variables may appear
+# confusing but simplifies the build instructions below (makes them
+# platform independent).
+#
+# Note that all CMake variables for libraries can be "CMake lists"
+# and must therefore be quoted when used in fl_create_example().
+#######################################################################
 
 if(OPENGL_FOUND)
   set(GLDEMO_LIBS fltk::gl)
   if(MSVC)
-    set(GLDEMO_SHARED fltk::fltk-shared)
+    set(GLDEMO_SHARED "call_main;fltk::fltk-shared")
   else()
     set(GLDEMO_SHARED fltk::gl-shared)
   endif()
 else()
+  # build w/o OpenGL libraries
   set(GLDEMO_LIBS fltk::fltk)
-  set(GLDEMO_SHARED fltk::fltk-shared)
+  if(MSVC)
+    set(GLDEMO_SHARED "call_main;fltk::fltk-shared")
+  else()
+    set(GLDEMO_SHARED "fltk::fltk-shared")
+  endif()
 endif()
 
-# Similar approach for the 'forms' demo (shared lib not supported)
+# set FLTK_SHARED and IMAGES_SHARED depending on the platform (MSVC or ...)
+
+if(MSVC)
+  set(FLTK_SHARED "call_main;fltk::fltk-shared")
+  set(IMAGES_SHARED "${FLTK_SHARED}")
+else()
+  set(FLTK_SHARED "fltk::fltk-shared")
+  set(IMAGES_SHARED "fltk::images-shared")
+endif()
+
+# similar for the 'forms' demo (shared lib not supported)
 
 if(FLTK_BUILD_FORMS)
   set(FORMS_LIBS fltk::forms)
@@ -173,11 +195,11 @@ fl_create_example(valuators valuators.fl fltk::fltk)
 fl_create_example(windowfocus windowfocus.cxx fltk::fltk)
 fl_create_example(wizard wizard.cxx fltk::fltk)
 
-# games
+# games w/o shared libs
 
 if(NOT FLTK_BUILD_SHARED_LIBS)
   fl_create_example(blocks "blocks.cxx;blocks.plist;blocks.icns" "fltk::fltk;${AUDIOLIBS}")
-  fl_create_example(checkers "checkers.cxx;checkers_pieces.fl;checkers.icns" fltk::images)
+  fl_create_example(checkers "checkers.cxx;checkers.plist;checkers_pieces.fl;checkers.icns" fltk::images)
   fl_create_example(sudoku "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "fltk::images;${AUDIOLIBS}")
 endif()
 
@@ -275,47 +297,27 @@ if(CMAKE_CXX_COMPILER_ID IN_LIST _compilers)
 endif() # GNU or Clang (-Wshadow test)
 unset(_compilers)
 
-# Build some of the demo programs linked against the shared FLTK lib(s).
+#########################################################################
+# Build some of the demo programs linked against the shared FLTK lib(s)
+#########################################################################
 
 if(FLTK_BUILD_SHARED_LIBS)
 
-  if(MSVC) # MS Visual C++ aka. Visual Studio
+  fl_create_example(cairo_test-shared cairo_test.cxx "${FLTK_SHARED}")
+  fl_create_example(hello-shared hello.cxx "${FLTK_SHARED}")
+  fl_create_example(pixmap_browser-shared pixmap_browser.cxx "${IMAGES_SHARED}")
+  fl_create_example(unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED}")
 
-    # We need to link with fl_call_main.c which is available as an object
-    # library 'call_main' when built with MSVC (see main CMakeLists.txt).
+  # Games
+  fl_create_example(blocks-shared "blocks.cxx;blocks.plist;blocks.icns" "${FLTK_SHARED};${AUDIOLIBS}")
+  fl_create_example(checkers-shared "checkers.cxx;checkers.plist;checkers_pieces.fl;checkers.icns" "${IMAGES_SHARED}")
+  fl_create_example(sudoku-shared "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "${IMAGES_SHARED};${AUDIOLIBS}")
 
-    fl_create_example(hello-shared hello.cxx "call_main;fltk::fltk-shared")
-    fl_create_example(pixmap_browser-shared pixmap_browser.cxx "call_main;fltk::fltk-shared")
-    fl_create_example(unittests-shared "${UNITTEST_SRCS}" "call_main;${GLDEMO_SHARED}")
-
-    # Games
-    fl_create_example(blocks-shared "blocks.cxx;blocks.plist;blocks.icns" "call_main;fltk::fltk-shared;${AUDIOLIBS}")
-    fl_create_example(checkers-shared "checkers.cxx;checkers_pieces.fl;checkers.icns" "call_main;fltk::fltk-shared")
-    fl_create_example(sudoku-shared "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "call_main;fltk::fltk-shared;${AUDIOLIBS}")
-
-    if(OPENGL_FOUND)
-      fl_create_example(glpuzzle-shared glpuzzle.cxx "call_main;${GLDEMO_SHARED}")
-      fl_create_example(shape-shared shape.cxx "call_main;${GLDEMO_SHARED}")
-    endif(OPENGL_FOUND)
-
-  else() # not MSVC
-
-    fl_create_example(cairo_test-shared cairo_test.cxx fltk::fltk-shared)
-    fl_create_example(hello-shared hello.cxx fltk::fltk-shared)
-    fl_create_example(pixmap_browser-shared pixmap_browser.cxx fltk::images-shared)
-    fl_create_example(unittests-shared "${UNITTEST_SRCS}" "${GLDEMO_SHARED}")
-
-    # Games
-    fl_create_example(blocks-shared "blocks.cxx;blocks.plist;blocks.icns" "fltk::fltk-shared;${AUDIOLIBS}")
-    fl_create_example(checkers-shared "checkers.cxx;checkers_pieces.fl;checkers.icns" fltk::images-shared)
-    fl_create_example(sudoku-shared "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "fltk::images-shared;${AUDIOLIBS}")
-
-    if(OPENGL_FOUND)
-      fl_create_example(glpuzzle-shared glpuzzle.cxx "${GLDEMO_SHARED}")
-      fl_create_example(shape-shared shape.cxx "${GLDEMO_SHARED}")
-    endif(OPENGL_FOUND)
-
-  endif(MSVC) # (not MSVC)
+  # demo programs that can't be built w/o OpenGL
+  if(OPENGL_FOUND)
+    fl_create_example(glpuzzle-shared glpuzzle.cxx "${GLDEMO_SHARED}")
+    fl_create_example(shape-shared shape.cxx "${GLDEMO_SHARED}")
+  endif(OPENGL_FOUND)
 
 endif(FLTK_BUILD_SHARED_LIBS)
 
