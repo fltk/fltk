@@ -1012,8 +1012,10 @@ private:
   void display_modified(void);
   void display_modified_clear(void);
   void clear_char_at_disp(int drow, int dcol);
+protected:
   const Utf8Char* utf8_char_at_disp(int drow, int dcol) const;
   const Utf8Char* utf8_char_at_glob(int grow, int gcol) const;
+private:
   void repeat_char(char c, int rep);
   void utf8_cache_clear(void);
   void utf8_cache_flush(void);
