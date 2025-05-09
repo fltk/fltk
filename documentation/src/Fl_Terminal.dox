@@ -194,10 +194,10 @@ into the history, all without moving memory around.
 In fact the only time screen memory is moved around is during these infrequent
 operations:
 
-- during scrolling "down"
-- character insert/delete operations within a line
-- changing the display size
-- changing the history size
+- during "scroll down" escape sequences, e.g. ESC[\#T
+- character insert/delete operations within a line, e.g. ESC[\#@, ESC[\#P
+- changing the display size e.g. Fl_Terminal::resize()
+- changing the history size e.g. Fl_Terminal::history_lines()
 
 So a class "RingBuffer" is defined to manage the ring, and accessing its various
 parts, either as the entire entity ring, just the history, or just the display.
