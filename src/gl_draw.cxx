@@ -40,6 +40,7 @@
 #include <FL/math.h> // for ceil()
 #include "Fl_Gl_Window_Driver.H"
 #include <FL/Fl_Image_Surface.H>
+#include "Fl_Scalable_Graphics_Driver.H" // Fl_Font_Descriptor
 #if HAVE_GL_GLU_H
 #  include <FL/glu.h>  // for gluUnProject()
 #endif

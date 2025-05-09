@@ -17,6 +17,7 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
+#include "../../Fl_Scalable_Graphics_Driver.H"
 #include <wayland-cursor.h>
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"

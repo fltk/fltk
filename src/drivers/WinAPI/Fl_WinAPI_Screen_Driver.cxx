@@ -20,7 +20,6 @@
 #include "../GDI/Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_RGB_Image.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>

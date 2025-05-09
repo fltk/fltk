@@ -1,7 +1,7 @@
 //
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2023 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,6 +19,7 @@
 */
 #include <config.h> // for HAVE_GL
 #include <FL/Fl_Graphics_Driver.H>
+#include "Fl_Scalable_Graphics_Driver.H" // Fl_Fontdesc
 /** Points to the driver that currently receives all graphics requests */
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver;
 

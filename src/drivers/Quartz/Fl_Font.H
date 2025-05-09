@@ -24,6 +24,7 @@
 
 #include <config.h>
 #include "Fl_Quartz_Graphics_Driver.H"
+#include "../../Fl_Scalable_Graphics_Driver.H" // Fl_Font_Descriptor
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Quartz_Font_Descriptor : public Fl_Font_Descriptor {

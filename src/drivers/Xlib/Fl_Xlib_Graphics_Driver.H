@@ -24,6 +24,7 @@
 
 #include <config.h>
 #include <FL/Fl_Graphics_Driver.H>
+#include "../../Fl_Scalable_Graphics_Driver.H"
 #include <FL/platform.H>
 
 #if HAVE_X11_XREGION_H

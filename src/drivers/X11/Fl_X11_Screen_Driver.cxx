@@ -18,6 +18,7 @@
 #include <config.h>
 #include "Fl_X11_Screen_Driver.H"
 #include "Fl_X11_Window_Driver.H"
+#include "../../Fl_Scalable_Graphics_Driver.H"
 #include "../Posix/Fl_Posix_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>

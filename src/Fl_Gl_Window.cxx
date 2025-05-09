@@ -24,6 +24,7 @@ extern int fl_gl_load_plugin;
 #include "Fl_Gl_Window_Driver.H"
 #include "Fl_Window_Driver.H"
 #include <FL/Fl_Graphics_Driver.H>
+#include "Fl_Scalable_Graphics_Driver.H" // Fl_Fontdesc
 #include <FL/fl_utf8.h>
 #include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H"

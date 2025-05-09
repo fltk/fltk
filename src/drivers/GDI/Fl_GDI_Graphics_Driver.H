@@ -23,7 +23,7 @@
 #ifndef FL_GDI_GRAPHICS_DRIVER_H
 #define FL_GDI_GRAPHICS_DRIVER_H
 
-#include <FL/Fl_Graphics_Driver.H>
+#include "../../Fl_Scalable_Graphics_Driver.H"
 #include <windows.h>
 #include <stdlib.h>
 #include <config.h>

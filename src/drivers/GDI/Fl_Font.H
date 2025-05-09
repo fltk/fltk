@@ -23,6 +23,7 @@
 #define FL_FONT_
 
 #include <config.h>
+#include "../../Fl_Scalable_Graphics_Driver.H"
 
 class Fl_GDI_Font_Descriptor : public Fl_Font_Descriptor {
 public:
