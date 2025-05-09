@@ -20,7 +20,7 @@
 #include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Screen_Driver.H"
 #include "Fl_X11_Gl_Window_Driver.H"
-#include "Fl_Scalable_Graphics_Driver.H" // Fl_Font_Descriptor
+#include "../../Fl_Scalable_Graphics_Driver.H" // Fl_Font_Descriptor
 #include <GL/glx.h>
 #if ! (USE_XFT || FLTK_USE_CAIRO)
 #  include "../Xlib/Fl_Font.H"
