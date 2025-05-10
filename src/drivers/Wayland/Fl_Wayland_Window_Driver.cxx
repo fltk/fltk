@@ -1817,7 +1817,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
   int is_a_move = (X != x() || Y != y());
   bool true_rescale = Fl_Window::is_a_rescale();
-  float f = Fl::screen_scale(pWindow->screen_num());
+  float f = fl_win ? Fl::screen_scale(pWindow->screen_num()) : 1;
   if (fl_win && fl_win->buffer) {
     int scale = wld_scale();
     int stride = cairo_format_stride_for_width(
