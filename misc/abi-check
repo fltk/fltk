@@ -1,0 +1,258 @@
+#!/bin/bash
+#
+# This script checks ABI compatibility of the current branch against
+# a prior release (git tag) of the same branch.
+#
+# We recommend to execute this script in an empty, temporary directory.
+# See below for details why this is useful.
+#
+# Requirements:
+#
+# CMake, a POSIX shell (bash), abi-checker, and perl (for abi checker).
+# This script has been tested only on Linux. After the check it *tries*
+# to open the compatibility report with the standard browser (xdg-open).
+#
+# Usage:
+#
+# $ /path-to/abi-check  FLTK_DIR  MINOR_VERSION  P1  P2
+#
+# Parameters:
+#
+# FLTK_DIR        Where the FLTK source files are (must be a git checkout).
+#                 This must be a "clean" working copy: this script checks
+#                 out the prior version (release tag) and the tip of the
+#                 branch (in this order). The last checkout is left in place.
+#
+# MINOR_VERSION   FLTK major.minor version, e.g. 1.3, 1.4, or 1.5.
+#
+# P1              First FLTK patch version to compare (prior release)
+#
+# P2              Current version (tip) of the development branch. This
+#                 version must be given as well. If the version in git has
+#                 not yet been updated you can enter the "next" version.
+#                 This is typically the case if you check the current branch
+#                 for ABI issues *before* preparation of the next release.
+#
+# Examples:
+#
+# /path-to/abi-check  /path-to/fltk-1.3  1.3  10  11
+# /path-to/abi-check  /path-to/fltk-1.4  1.4   3   4
+#
+# The latter checks ABI compatibility of git tag "release-1.4.3" and the
+# HEAD of the selected development branch (see below) as version 1.4.4. This
+# can be done even if the version number in 'branch-1.4' is still 1.4.3.
+#
+# This is typically used to check ABI compatibility of a development branch
+# against the latest release of the same branch, but can also be used to test
+# any prior version of the branch against the current tip of the branch.
+#
+# The script uses `cmake --build` and `cmake --install` for simplicity, but
+# you can select any CMake generator you like, as long as the script can
+# be executed by a POSIX shell and `cmake --install` works for the given
+# generator (not tested for Xcode and Visual Studio).
+# "Installing" the build ensures that all header files including generated
+# ones are present where `abi-compliance-checker.pl` expects them to be.
+#
+# This script is known to work with FLTK versions since 1.3.6. Older versions
+# may not compile, build, or install correctly with current compilers.
+#
+# Warning: this script does NOT check runtime errors, e.g. when checking out
+# git versions, or when building and installing FLTK libs. Please check the
+# logs that are displayed and/or stored in `logs` for errors.
+#
+# Error checks may be added in a later version of this script.
+#
+# ------------------------------------------------------------------------------
+#
+# Some variables are "constants" in this script and need to be edited for
+# use in other build environments. The variables that need to be edited for
+# your build environment are documented below:
+#
+# ABI_PATH        Directory of ABI checker ("abi-compliance-checker.pl"); can
+#                 be empty (default) if the ABI checker is in the user's PATH.
+#                 If the path is given it must have a trailing slash ('/').
+#
+# ABI_CHECKER     Name of the ABI checker executable (script). The default
+#                 ("abi-compliance-checker.pl") should be correct.
+#
+# GENERATOR       CMake generator, e.g. "Ninja", "Unix Makefiles" (see CMake docs).
+#
+# PARALLEL        Number of parallel build jobs, recommended for "Unix Makefiles".
+#                 Use CMake syntax "--parallel=N" if needed.
+#                 Ninja uses the number of available cores if not specified.
+#
+# CMAKE_WARNINGS  Should be empty; "-Wno-dev" suppresses "developer warnings".
+#
+# CXX_FLAGS       Can be used to suppress compiler warnings (not recommended).
+#
+# CXX_STANDARD    Default: "11" (C++11); can be set to "98" (C++98) for 1.3.
+#
+# This script creates several subdirectories in the current working directory
+# (referred as $PWD below). The files created by the script can be deleted
+# after the check.
+#
+# Both FLTK versions ($VER) will be built in $PWD/build/$VER and installed in
+# $PWD/bin/$VER, resp.. These folders are cleared before build/installation
+# but left as-is after the abi-check. They must be deleted manually.
+#
+# Example: Folders created for ABI check of FLTK 1.4.2 vs 1.4.3:
+#
+# .   (current dir: $PWD)
+# ├── bin
+# │   ├── 1.4.2
+# │   └── 1.4.3
+# ├── build
+# │   ├── 1.4.2
+# │   └── 1.4.3
+# ├── compat_reports
+# │   └── fltk
+# ├── logs
+# │   └── fltk
+# └── xml
+#     ├── fltk-1.4.2.xml
+#     └── fltk-1.4.3.xml
+#
+# -----------------------------------------------------
+# Edit the following "constants" for your environment,
+# see above for documentation:
+# -----------------------------------------------------
+#
+      ABI_PATH=""
+   ABI_CHECKER="abi-compliance-checker.pl"
+     GENERATOR="Ninja"
+      PARALLEL=""
+CMAKE_WARNINGS=""
+     CXX_FLAGS=""
+  CXX_STANDARD="11"
+
+# -----------------------------------------------------
+# End of constants, no need to edit anything below.
+# -----------------------------------------------------
+
+# Define derived variables
+
+   ABI_CHECKER="$ABI_PATH$ABI_CHECKER"
+    SOURCE_DIR="$1"
+      BASE_DIR="$PWD"
+  BASE_VERSION="$2"
+     BUILD_DIR="$BASE_DIR/build"
+        PREFIX="$BASE_DIR/bin"
+
+# CMake options -- in parts depending on the development branch.
+#
+# This could be simplified if the script was written only for the current
+# FLTK version but for now (work in progress) it is written to be used for
+# other FLTK versions (branches) as well, just in case older branches need
+# a new release. It is intended that developers can use the latest script
+# from the 'master' branch in older branches (1.3.6 and higher) as well.
+#
+# Default values are set first for FLTK 1.5 (master).
+
+  BUILD_SHARED="-D FLTK_BUILD_SHARED_LIBS=ON"
+   BUILD_CAIRO="-D FLTK_OPTION_CAIRO_WINDOW=ON"
+   BUILD_FORMS="-D FLTK_BUILD_FORMS=ON"
+   BUILD_FLUID="-D FLTK_BUILD_FLUID=OFF"
+ BUILD_OPTIONS="-D FLTK_BUILD_FLTK_OPTIONS=OFF"
+
+# Version dependent options are set or overriden here:
+
+if test v$BASE_VERSION = v1.5; then
+    BASE_BRANCH="master"
+elif test v$BASE_VERSION = v1.4; then
+    BASE_BRANCH="branch-1.4"
+else # 1.3: some old option names, some options are not present
+    BASE_BRANCH="branch-1.3"
+  BUILD_SHARED="-D OPTION_BUILD_SHARED_LIBS=ON"
+   BUILD_CAIRO="-D OPTION_CAIRO=ON"
+   BUILD_FORMS=""
+   BUILD_FLUID=""
+ BUILD_OPTIONS=""
+fi
+
+V1=$BASE_VERSION.$3
+V2=$BASE_VERSION.$4
+
+# define a common function for both builds
+
+build_and_install() {
+
+  REL="$1"
+  VER="$2"
+  XML="xml/fltk-$VER.xml"
+
+  # generate XML file for ABI checker
+
+  echo
+  echo "--------  Creating XML file $XML for abi-checker  --------"
+  echo
+
+cat > $XML << EOF
+<version>
+    $VER
+</version>
+<headers>
+    $PREFIX/$VER/include/FL/
+</headers>
+<skip_headers>
+    win32.H
+    mac.H
+</skip_headers>
+<libs>
+    $PREFIX/$VER/lib/
+</libs>
+EOF
+
+  pushd $SOURCE_DIR
+
+  echo
+  echo "--------  Checking out Git tag/branch $REL for $VER in $PWD  --------"
+  echo
+
+  git checkout $REL
+
+  echo
+  echo "--------  Configuring FLTK $VER in $BUILD_DIR/$VER --------"
+  echo
+
+  cmake $CMAKE_WARNINGS \
+    -S . -B $BUILD_DIR/$VER \
+    -G "$GENERATOR" \
+    -D CMAKE_BUILD_TYPE=Debug \
+    -D CMAKE_CXX_FLAGS_INIT="$CXX_FLAGS" \
+    -D CMAKE_INSTALL_PREFIX=$PREFIX/$VER \
+    -D FLTK_BUILD_EXAMPLES=OFF \
+    -D FLTK_BUILD_TEST=OFF \
+    -D CMAKE_CXX_STANDARD=$CXX_STANDARD \
+    $BUILD_SHARED $BUILD_FLUID $BUILD_OPTIONS $BUILD_FORMS $BUILD_CAIRO
+
+  echo
+  echo "--------  Building FLTK $VER in $BUILD_DIR/$VER  --------"
+  echo
+
+  cmake --build $BUILD_DIR/$VER $PARALLEL
+
+  echo
+  echo "--------  Installing FLTK $VER in $PREFIX/$VER  --------"
+  echo
+
+  rm -rf $PREFIX/$VER
+  cmake --install $BUILD_DIR/$VER
+
+  popd
+}
+
+# create subdirectory 'xml' if it doesn't exist
+
+[[ ! -d xml ]] && mkdir xml
+[[ ! -d compat_reports ]] && mkdir compat_reports
+
+build_and_install release-$V1 $V1
+
+build_and_install $BASE_BRANCH $V2
+
+$ABI_CHECKER \
+  -lib fltk \
+  -old xml/fltk-${V1}.xml \
+  -new xml/fltk-${V2}.xml
+
+xdg-open compat_reports/fltk/${V1}_to_${V2}/compat_report.html

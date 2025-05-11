@@ -51,37 +51,48 @@ designated for the *next* FLTK release when using FLTK from Git with new
 ABI features included for the next release.
 
 
-How to select the ABI version with CMake
+How to Select the ABI Version with CMake
 ----------------------------------------
 
-    Use CMake to build the Makefile's and run 'make' or use any other CMake
-    generator of your choice. To select the ABI version use one of the CMake
-    configuration tools (cmake-gui or ccmake), or run CMake with these or
-    similar commands:
+Use CMake to build the Makefile's and run 'make' or use any other CMake
+generator of your choice. To select the ABI version use one of the CMake
+configuration tools (cmake-gui or ccmake), or run CMake with these or
+similar commands:
 
-        cd /path/to/fltk
-        cmake . -B build [-G <GENERATOR>] -D FLTK_ABI_VERSION:STRING=10401
+    cd /path/to/fltk
+    cmake . -B build [-G <GENERATOR>] -D FLTK_ABI_VERSION:STRING=10401
 
-    The optional part '[-G <GENERATOR>]' can be used to select a particular
-    build tool that is not the default for the build platform, for instance
-    '-G Ninja'. Further CMake options can be appended.
+The optional part '[-G <GENERATOR>]' can be used to select a particular
+build tool that is not the default for the build platform, for instance
+'-G Ninja'. Further CMake options can be appended.
 
-    Then execute
+Then execute
 
-        cmake --build build
+    cmake --build build
 
-    or the selected build tool (-G <GENERATOR>), e.g. `make`.
+or the selected build tool (-G <GENERATOR>), e.g. `make`.
 
-    For more information on how to use CMake with FLTK see README.CMake.txt.
+For more information on how to use CMake with FLTK see README.CMake.txt.
 
 
 General Note on CMake
 ---------------------
 
-    CMake generates FL/fl_config.h in the build tree. You may run
-    'make install' to install the FLTK library including all headers in
-    the chosen installation directory (set CMAKE_INSTALL_PREFIX to do this),
-    although this is not necessary.
+CMake generates FL/fl_config.h in the build tree. You may run
+'make install' to install the FLTK library including all headers in
+the chosen installation directory (set CMAKE_INSTALL_PREFIX to do this),
+although this is not necessary.
 
-    The FLTK team recommends to use the FLTK library directly from the
-    build folder. See README.CMake.txt for more information.
+The FLTK team recommends to use the FLTK library directly from the
+build folder. See README.CMake.txt for more information.
+
+
+Checking FLTK Branches for ABI Breaking Issues
+----------------------------------------------
+
+Please see 'misc/abi-compliance-checker.txt' for further information on
+how to check a branch, for instance 1.4.x, for ABI breaking changes.
+
+Since FLTK 1.5 there is a convenient script for doing this with a single
+command in 'misc/abi-check'. This can be done easily during development
+to find and fix potential ABI breaking changes early.

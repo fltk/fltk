@@ -1,120 +1,79 @@
 ============================================================================
- How to use `abi-compliance-checker' to test FLTK ABI compatibility (Linux)
+How to use `abi-compliance-checker' to test FLTK ABI compatibility on Linux
 ============================================================================
 
-This howto uses directories in /git/ as example directories. Please
-adjust versions and directory names as appropriate on your system.
+This howto explains how to execute the script 'misc/abi-check' to check
+two FLTK releases of the same branch for ABI incompatibilities on Linux.
+Other platforms may work as well, but then you will likely need to change
+the script documented below or do the required steps manually.
 
-In this howto we compare FLTK 1.3.4-1 (last 1.3.x release as of Jan 02, 2019)
-with the current version (1.3.5) before it will be released.
+The important point is that you build two different FLTK versions with
+identical build options and *with* shared libraries.
 
-For documentation on its usage please refer to:
+For documentation on abi-compliance-checker please refer to:
 
     https://lvc.github.io/abi-compliance-checker/
+
+You need `perl` and everything required to build FLTK installed on your
+system before you continue.
 
 
 (1) Download 'abi-compliance-checker' from GitHub:
 
-    $ cd /git
+    $ cd /path/to/dev
     $ git clone https://github.com/lvc/abi-compliance-checker.git
 
-    Download directory: /git/abi-compliance-checker/
+    Record the path '/path/to/dev/abi-compliance-checker' for later. You
+    may add it to your PATH, or you may "install" abi-compliance-checker
+    on your system. The latter is untested and not covered by this document.
 
 
-(2) Use two different Git checkout (working) directories to build libs,
-    for instance (as used in this example):
+(2) There are chances that you can use the script 'misc/abi-check' directly
+    from the FLTK checkout (branch `master`). There are some variables in
+    the script that may need to be edited though. Please check the docs in
+    the script for these variables, particularly some paths and the CMake
+    generator you use to build (default and recommended is "Ninja").
 
-    (new) /git/fltk-1.3         current  version = 1.3.5
-    (old) /git/fltk-1.3.4-1     previous version = 1.3.4-1      [1]
+    If this doesn't work for you, please copy the script 'misc/abi-check'
+    (new since FLTK 1.5) to a place of your choice (maybe in your PATH),
+    and edit the variables for your build environment, as documented in
+    the script. It is not recommended to edit it in place to avoid checking
+    it into the repository or causing conflicts when pulling changes.
 
-    [1] The second working directory can be created from the first
-        git working tree ( /git/fltk-1.3 ) with these commands:
-
-        $ cd /git/fltk-1.3
-        $ git worktree add /git/fltk-1.3.4-1 release-1.3.4-1
-
-        This creates the worktree in /git/fltk-1.3.4-1 and checks the
-        tag 'release-1.3.4-1' out.
-
-
-(3) Create two xml descriptions to test library compatibility in
-    an arbitrary working directory (here: /git/workdir):
-
---- fltk-1.3.4-1.xml ---
-<version>
-    1.3.4-1
-</version>
-
-<headers>
-    /git/fltk-1.3.4-1/FL/
-</headers>
-
-<skip_headers>
-    win32.H
-    mac.H
-</skip_headers>
-
-<libs>
-    /git/fltk-1.3.4-1/src/
-    /git/fltk-1.3.4-1/cairo/
-</libs>
---- end of file ---
-
---- fltk-1.3.5.xml ---
-<version>
-    1.3.5
-</version>
-
-<headers>
-    /git/fltk-1.3/FL/
-</headers>
-
-<skip_headers>
-    win32.H
-    mac.H
-</skip_headers>
-
-<libs>
-    /git/fltk-1.3/src/
-    /git/fltk-1.3/cairo/
-</libs>
---- end of file ---
+    You need to do this only once and can keep the edited version, but
+    please check for updates in git (branch 'master') and update your file
+    if there are relevant changes.
 
 
-(4) Configure and build both libraries with the same options.
-    You *must* include '--enable-cairo' to build and compare the
-    Cairo libs and '--enable-shared' to build the shared libs:
+(3) Change your directory (cd) to an empty working directory (recommended)
+    and execute the (maybe copied and edited) script 'abi-check' as
+    documented at the top of that script.
 
-    $ make clean
-    $ ./configure --enable-cairo --enable-shared --enable-debug
-    $ make
+    Example:
 
-    Note: you must *not* use '--with-abiversion' because we need to
-    build the default ABI version.
+    $ /path/to/abi-check /path/to/fltk-1.4  1.4  2  3
 
+    This would compare the binary versions of git tag 'release-1.4.2'
+    with the tip of 'branch-1.4', assuming version number 1.4.3.
 
-(5) Run `abi-compliance-checker.pl':
+    The latter is required and is used to distinguish the different
+    build folders and for the ABI compatibility report.
 
-    $ cd /git/workdir
-    $ /git/abi-compliance-checker/abi-compliance-checker.pl \
-        -lib fltk -old fltk-1.3.4-1.xml -new fltk-1.3.5.xml
-        Preparing, please wait ...
-        Using GCC 7 (x86_64-linux-gnu, target: x86_64)
-        WARNING: May not work properly with GCC 4.8.[0-2], 6.* and higher
-        due to bug #78040 in GCC. Please try other GCC versions with the
-        help of --gcc-path=PATH option or create ABI dumps by ABI Dumper
-        tool instead to avoid using GCC. Test selected GCC version first
-        by -test option.
-        ------------------------------------------------------------------
-        --> ignore warning (but run `abi-compliance-checker.pl -test')
-        ------------------------------------------------------------------
-        Checking header(s) 1.3.4-1 ...
+    Note: the working copy checked out at '/path/to/fltk-1.4' must be
+    "clean", i.e. there must not be changed files. The script checks
+    out the two requested versions and builds and installs them under
+    the current working directory. The FLTK working copy is left with
+    the tip of the branch (in this example `branch-1.4`) checked out.
+    For FLTK 1.5 this would be `master`.
+
+    If all goes well you'll see CMake configuration and build and install
+    logs and the log of the ABI checker tool, ending with something like:
+
+        ...
+        Checking header(s) 1.4.2 ...
         WARNING: can't find 'ctags' program
-        Checking header(s) 1.3.5 ...
+        Checking header(s) 1.4.3 ...
         WARNING: can't find 'ctags' program
-        ------------------------------------------------------------------
-        --> ignore warning (or install 'ctags' and repeat)
-        ------------------------------------------------------------------
         Comparing ABIs ...
         Comparing APIs ...
         Creating compatibility report ...
@@ -122,26 +81,39 @@ For documentation on its usage please refer to:
         Source compatibility: 100%
         Total binary compatibility problems: 0, warnings: 0
         Total source compatibility problems: 0, warnings: 1
-        Report: compat_reports/fltk/1.3.4-1_to_1.3.5/compat_report.html
+        Report: compat_reports/fltk/1.4.2_to_1.4.3/compat_report.html
+
+    You can safely ignore the "ctags" warnings if you don't have `ctags`
+    installed.
+
+    The script will try to open the above mentioned report automatically
+    with the default browser (by using `xdg-open`) which may or may not
+    work on your system. If it doesn't, please open the report manually
+    with your browser.
+
+    In the example above the only warning ("warnings: 1") is obviously
+    caused by the changed FLTK patch version (1.4.2 -> 1.4.3) and can
+    be ignored.
+
+    If there are errors and other warnings, then the report should be
+    checked thoroughly. Maybe there are ABI breaking changes that
+    must be fixed by putting the according code under ABI guards as
+    documented in 'README.abi-version.txt', or there may be one or more
+    commits that must be reverted to prevent ABI breaking changes.
 
 
-(6) Check the generated report (last line above) with a browser:
-
-    $ firefox compat_reports/fltk/1.3.4-1_to_1.3.5/compat_report.html
-
-
-(7) You may want to remove the additional worktree created above with:
-
-    $ cd /git/fltk-1.3
-    $ git worktree remove --force /git/fltk-1.3.4-1
+(4) You may want to remove the entire working directory for this ABI check
+    when you're done with the checks.
 
 
-(8) Done.
+Using this script from time to time is very convenient and can help to
+find ABI issues early, i.e. before the branch is ready to be prepared
+for the next release.
+
+All FLTK devs and users are encouraged to do this and to report issues
+as soon as possible.
 
 
-Note 1: The report as given above issued 100% ABI compatibility. The only
-        warning was the different patch version number.
-
-Note 2: There are other recommended methods to use abi-compliance-checker
-        together with abi-dumper, but this is not (yet) covered here (see
-        abi-compliance-checker documentation).
+Note: There are other recommended methods to use abi-compliance-checker
+      together with `abi-dumper` but this is not covered by this document
+      (see abi-compliance-checker documentation: link above).

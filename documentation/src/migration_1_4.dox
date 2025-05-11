@@ -339,10 +339,10 @@ some of the "old" names have been introduced in early 1.4.0 development.
 
 Old Option Name (FLTK 1.3.x)         | New Option Name (FLTK 1.4.x)
 -------------------------------------|------------------------------------
+  none (built always)                | FLTK_BUILD_FORMS
 FLTK_BUILD_EXAMPLES                  | FLTK_BUILD_EXAMPLES
 FLTK_BUILD_FLTK_OPTIONS              | FLTK_BUILD_FLTK_OPTIONS
 FLTK_BUILD_FLUID                     | FLTK_BUILD_FLUID
-FLTK_BUILD_FORMS                     | FLTK_BUILD_FORMS
 FLTK_BUILD_TEST                      | FLTK_BUILD_TEST
 FLTK_MSVC_RUNTIME_DLL                | FLTK_MSVC_RUNTIME_DLL
 OPTION_ABI_VERSION                   | FLTK_ABI_VERSION
