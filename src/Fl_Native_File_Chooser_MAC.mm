@@ -417,9 +417,12 @@ int Fl_Quartz_Native_File_Chooser_Driver::get_saveas_basename(void) {
     const char *d = [[[[_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
     int l = (int)strlen(d) + 1;
     if (strcmp(d, "/") == 0) l = 1;
-    int lu = strlen(UNLIKELYPREFIX);
-    // Remove UNLIKELYPREFIX between directory and filename parts
-    if (memcmp(q+l, UNLIKELYPREFIX, lu) == 0) memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
+    int lu = (int)strlen(UNLIKELYPREFIX);
+    int ln = (int)strlen(q+l);
+    if (ln >= lu) {
+      // Remove UNLIKELYPREFIX between directory and filename parts
+      if (memcmp(q+l, UNLIKELYPREFIX, lu) == 0) memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
+    }
   }
   set_single_pathname( q );
   free(q);
