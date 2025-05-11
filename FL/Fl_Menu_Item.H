@@ -523,7 +523,7 @@ struct FL_EXPORT Fl_Menu_Item {
     You must first check that callback() is non-zero before calling this.
   */
   void do_callback(Fl_Widget* o, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) const {
-    Fl::callback_reason_ = FL_REASON_SELECTED; callback_(o, (void*)(fl_intptr_t)arg);
+    Fl::callback_reason_ = reason; callback_(o, (void*)(fl_intptr_t)arg);
   }
 
   /** Back compatibility only.
