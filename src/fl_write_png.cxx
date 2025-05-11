@@ -158,6 +158,10 @@ int fl_write_png(const char *filename, const char *pixels, int w, int h, int d, 
                PNG_FILTER_TYPE_DEFAULT);
   png_set_sRGB(pptr, iptr, PNG_sRGB_INTENT_PERCEPTUAL);
 
+  double dpi = 300.0;
+  int dots_per_meter = (int)(dpi / (2.54 / 100.0));
+  png_set_pHYs(pptr, iptr, dots_per_meter, dots_per_meter, PNG_RESOLUTION_METER);
+
   png_write_info(pptr, iptr);
 
   for (int i = 0; i < h; i++, ptr += ld) {
