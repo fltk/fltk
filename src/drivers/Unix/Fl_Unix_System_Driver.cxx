@@ -803,7 +803,7 @@ double Fl_Unix_System_Driver::wait(double time_to_wait)
   } else {
     // do flush first so that user sees the display:
     Fl::flush();
-    if (Fl::idle) // 'idle' may have been set within flush()
+    if (Fl::idle()) // 'idle_' may have been set within flush()
       time_to_wait = 0.0;
     else {
       Fl_Timeout::elapse_timeouts();

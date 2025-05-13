@@ -580,7 +580,7 @@ void fl_trigger_clipboard_notify(int source) {
 ////////////////////////////////////////////////////////////////
 // idle/wait/run/check/ready:
 
-void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
+void (*Fl::idle_)(); // see Fl::add_idle.cxx for the add/remove functions
 
 /*
   Private, undocumented method to run idle callbacks.
@@ -611,9 +611,9 @@ void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
 */
 void Fl::run_idle() {
   static char in_idle;
-  if (Fl::idle && !in_idle) {
+  if (Fl::idle_ && !in_idle) {
     in_idle = 1;
-    Fl::idle();
+    Fl::idle_(); // call the idle callback stored in Fl::idle_ == Fl::idle()
     in_idle = 0;
   }
 }

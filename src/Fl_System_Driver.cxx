@@ -1,7 +1,7 @@
 //
 // A base class for platform specific system calls.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -360,9 +360,10 @@ double Fl_System_Driver::wait(double time_to_wait) {
   Fl::run_checks();
   Fl::run_idle();
 
-  // the idle function may turn off idle, we can then wait,
-  // or it leaves Fl::idle active and we set time_to_wait to 0
-  if (Fl::idle) {
+  // The idle function may turn off idle() if *all* idle callbacks
+  // are removed from the callback queue (ring), we can then wait.
+  // Or it leaves Fl::idle() active and we set time_to_wait to 0.
+  if (Fl::idle()) {
     time_to_wait = 0.0;
   } else {
     // limit time by next timer interval

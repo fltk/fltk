@@ -865,7 +865,7 @@ double Fl_Darwin_System_Driver::wait(double time_to_wait)
   Fl::flush();
   if (fl_mac_os_version < 101100) NSEnableScreenUpdates(); // deprecated 10.11
 #pragma clang diagnostic pop
-  if (Fl::idle) // 'idle' may have been set within flush()
+  if (Fl::idle()) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   int retval = do_queued_events(time_to_wait);
 

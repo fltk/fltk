@@ -170,7 +170,7 @@ inline void fl_add_timeout(long msec, void (*cb)(void*), void* v) {
 inline void fl_remove_timeout(int) {}
 
 // type of callback is different!
-inline void fl_set_idle_callback(void (*cb)()) {Fl::set_idle(cb);}
+inline void fl_set_idle_callback(void (*cb)()) {Fl::add_idle(cb);}
 
 FL_EXPORT Fl_Widget* fl_do_forms(void);
 FL_EXPORT Fl_Widget* fl_check_forms();

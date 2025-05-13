@@ -99,10 +99,17 @@ typedef void (*Fl_Timeout_Handler)(void *data);
 /** Signature of some wakeup callback functions passed as parameters */
 typedef void (*Fl_Awake_Handler)(void *data);
 
-/** Signature of add_idle callback functions passed as parameters */
+/** Signature of add_idle callback function passed as parameter.
+  This signature allows an idle callback to use one parameter as an
+  arbitrary `data` value.
+*/
 typedef void (*Fl_Idle_Handler)(void *data);
 
-/** Signature of set_idle callback functions passed as parameters */
+/** Signature of add_idle callback function passed as parameter.
+  This signature allows an idle callback without parameters.
+  When the callback is called it is called with an additional
+  parameter (set to nullptr) which is not used by the callback.
+*/
 typedef void (*Fl_Old_Idle_Handler)();
 
 /** Signature of add_fd functions passed as parameters */
@@ -312,6 +319,8 @@ public:
    */
   static void option(Fl_Option opt, bool val);
 
+private:
+
   /**
     The currently executing idle callback function: DO NOT USE THIS DIRECTLY!
 
@@ -319,7 +328,22 @@ public:
     idle callback functions to be called.
     \see add_idle(), remove_idle()
   */
-  static void (*idle)();
+  static void (*idle_)();
+
+public:
+  /**
+    Returns whether at least one idle callback is currently set.
+
+    \c true means that at least one callback is currently queued, but
+    not necessarily active. While a callback is being executed, it is
+    also counted as "set" unless (i.e. before) it removes itself from
+    the idle callback queue (ring).
+
+    \return  whether an idle callback is currently set
+    \retval true  At least one idle callback is currently set.
+    \retval false No idle callback is currently set.
+   */
+  static bool idle() { return (idle_ != nullptr); }
 
 #ifndef FL_DOXYGEN
 private:
@@ -491,9 +515,10 @@ public:
   static long ticks_since(Fl_Timestamp& then);
   static long ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
 
-  // private
+private:
   static void run_idle();
   static void run_checks();
+public:
   static void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0); // platform dependent
   static void add_fd(int fd, Fl_FD_Handler cb, void* = 0); // platform dependent
   /** Removes a file descriptor handler. */
@@ -504,6 +529,7 @@ public:
   static void add_idle(Fl_Idle_Handler cb, void* data = 0);
   static int  has_idle(Fl_Idle_Handler cb, void* data = 0);
   static void remove_idle(Fl_Idle_Handler cb, void* data = 0);
+  static void add_idle(Fl_Old_Idle_Handler cb);
   /** If true then flush() will do something. */
   static int damage() {return damage_;}
   static void redraw();
@@ -1292,12 +1318,18 @@ public:
   static int event_button5() {return e_state & FL_BUTTON5;}
   /**   @} */
 
+private:
   /**
-    Sets an idle callback.
+    Sets an idle callback (internal use only).
 
-    \deprecated This method is obsolete - use the add_idle() method instead.
+    This method is now private and is used to store the idle callback.
+    The old, public set_idle() method was deprecated since 1.3.x and
+    is no longer available in FLTK 1.5.
+
+    See documentation: use Fl::add_idle() instead.
   */
-  static void set_idle(Fl_Old_Idle_Handler cb) {idle = cb;}
+  static void set_idle_(Fl_Old_Idle_Handler cb) {idle_ = cb;}
+public:
   /** See grab(Fl_Window*) */
   static void grab(Fl_Window& win) {grab(&win);}
   /** Releases the current grabbed window, equals grab(0).

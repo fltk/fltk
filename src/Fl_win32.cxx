@@ -396,7 +396,7 @@ double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
     }
   }
 
-  if (Fl::idle || Fl::damage())
+  if (Fl::idle() || Fl::damage())
     time_to_wait = 0.0;
 
   // if there are no more windows and this timer is set
