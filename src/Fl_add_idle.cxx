@@ -68,6 +68,7 @@ static void call_idle() {
   FLTK will not recursively call the idle callback.
 
   \param[in] cb   your idle callback
+  \param[in] data an arbitrary data value provided to your callback
 */
 void Fl::add_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = freelist;
