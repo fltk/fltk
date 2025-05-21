@@ -42,12 +42,6 @@
 #include "xdg-shell-client-protocol.h"
 #include "xdg-decoration-client-protocol.h"
 
-#ifdef HAVE_XDG_SHELL_V6
-#define XDG_WM_BASE_VER 6
-#else
-#define XDG_WM_BASE_VER 2
-#endif
-
 struct libdecor {
 	int ref_count;
 
@@ -403,9 +397,23 @@ parse_states(struct wl_array *states)
 		case XDG_TOPLEVEL_STATE_RESIZING:
 			pending_state |= LIBDECOR_WINDOW_STATE_RESIZING;
 			break;
-#ifdef HAVE_XDG_SHELL_V6
+#ifdef XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION
 		case XDG_TOPLEVEL_STATE_SUSPENDED:
 			pending_state |= LIBDECOR_WINDOW_STATE_SUSPENDED;
+			break;
+#endif
+#ifdef XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT_SINCE_VERSION
+		case XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT:
+			pending_state |= LIBDECOR_WINDOW_STATE_CONSTRAINED_LEFT;
+			break;
+		case XDG_TOPLEVEL_STATE_CONSTRAINED_RIGHT:
+			pending_state |= LIBDECOR_WINDOW_STATE_CONSTRAINED_RIGHT;
+			break;
+		case XDG_TOPLEVEL_STATE_CONSTRAINED_TOP:
+			pending_state |= LIBDECOR_WINDOW_STATE_CONSTRAINED_TOP;
+			break;
+		case XDG_TOPLEVEL_STATE_CONSTRAINED_BOTTOM:
+			pending_state |= LIBDECOR_WINDOW_STATE_CONSTRAINED_BOTTOM;
 			break;
 #endif
 		default:
@@ -449,7 +457,7 @@ xdg_toplevel_close(void *user_data,
 	frame_priv->iface->close(frame, frame_priv->user_data);
 }
 
-#ifdef HAVE_XDG_SHELL_V6
+#ifdef XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION
 static void
 xdg_toplevel_configure_bounds(void *user_data,
 			      struct xdg_toplevel *xdg_toplevel,
@@ -474,7 +482,9 @@ xdg_toplevel_configure_bounds(void *user_data,
 		frame_priv->iface->bounds(frame, width, height, frame_priv->user_data);
 	}
 }
+#endif
 
+#ifdef XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION
 static void
 xdg_toplevel_wm_capabilities(void *user_data,
 			     struct xdg_toplevel *xdg_toplevel,
@@ -510,8 +520,10 @@ xdg_toplevel_wm_capabilities(void *user_data,
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
 	xdg_toplevel_configure,
 	xdg_toplevel_close,
-#ifdef HAVE_XDG_SHELL_V6
+#ifdef XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION
 	xdg_toplevel_configure_bounds,
+#endif
+#ifdef XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION
 	xdg_toplevel_wm_capabilities,
 #endif
 };
@@ -724,6 +736,10 @@ libdecor_frame_set_visibility(struct libdecor_frame *frame,
 						     ? ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE
 						     : ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
 	}
+
+	if (frame_priv->content_width <= 0 ||
+	    frame_priv->content_height <= 0)
+		return;
 
 	/* enable/disable decorations that are managed by a plugin */
 	if (frame_has_visible_client_side_decoration(frame)) {
@@ -1357,10 +1373,26 @@ init_xdg_wm_base(struct libdecor *context,
 		 uint32_t id,
 		 uint32_t version)
 {
+	uint32_t desired_version = 2;
+
+	/* Find the required version for the available features. */
+#ifdef XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT_SINCE_VERSION
+	desired_version = MAX(desired_version, XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT_SINCE_VERSION);
+#endif
+#ifdef XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION
+	desired_version = MAX(desired_version, XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION);
+#endif
+#ifdef XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION
+	desired_version = MAX(desired_version, XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION);
+#endif
+#ifdef XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION
+	desired_version = MAX(desired_version, XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION);
+#endif
+
 	context->xdg_wm_base = wl_registry_bind(context->wl_registry,
 						id,
 						&xdg_wm_base_interface,
-						MIN(version,XDG_WM_BASE_VER));
+						MIN(version, desired_version));
 	xdg_wm_base_add_listener(context->xdg_wm_base,
 				 &xdg_wm_base_listener,
 				 context);

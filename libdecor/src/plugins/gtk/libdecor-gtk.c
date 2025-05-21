@@ -3010,6 +3010,7 @@ libdecor_plugin_description = {
 	.constructor = libdecor_plugin_new,
 	.conflicting_symbols = {
 		"png_free",
+		"gdk_get_use_xshm",
 		NULL,
 	},
 };

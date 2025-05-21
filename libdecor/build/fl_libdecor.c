@@ -17,11 +17,6 @@
 /* Improvements to libdecor.c without modifying libdecor.c itself */
 #if ! USE_SYSTEM_LIBDECOR
 
-#include "xdg-shell-client-protocol.h"
-#ifdef XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION
-#  define HAVE_XDG_SHELL_V6 1
-#endif
-
 #include <dlfcn.h>
 #include <stdlib.h>
 static void *dlopen_corrected(const char *, int);
