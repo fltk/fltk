@@ -151,9 +151,9 @@ DOC_TEMPDIR="share/doc/fltk"
 ### echo "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 
 echo Exporting $fltk_version to $TEMP_DIR/...
-rm -rf /tmp/fltk-$version
-mkdir /tmp/fltk-$version
-git archive --format=tar HEAD | $TAR -C /tmp/fltk-$version -x --
+rm -rf $TEMP_DIR
+mkdir  $TEMP_DIR
+git archive --format=tar HEAD | $TAR -C $TEMP_DIR -x --
 
 if test $# != 0 -a "x$1" != "xsnapshot"; then
 
@@ -168,19 +168,9 @@ if test $# != 0 -a "x$1" != "xsnapshot"; then
   cp $DOC_DIR/fluid/documentation/fluid.pdf $TEMP_DIR/$DOC_TEMPDIR/
 fi
 
-echo Applying version number...
-cd /tmp/fltk-$version
+# Change directory to working directory
 
-sed -e '1,$s/@FLTK_VERSION@/'$version'/' \
-    -e '1,$s#^Source:.*#Source: '$fileurl'#' \
-    <fltk.spec.in >fltk.spec
-
-# Debug:
-### echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-### echo "$ egrep --color -1 'Source:|$version|$git_rev' fltk.spec"
-### echo "··································································"
-### egrep --color -1 "Source:|$version|$git_rev" fltk.spec
-### echo "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+cd $TEMP_DIR
 
 # Write git revision file with full git revision
 # which will be stored in the distribution tarball
@@ -222,19 +212,20 @@ echo "Removing distribution directory..."
 
 rm -rf fltk-$version
 
-# Create releases.txt and sha256sums.txt
+# Create releases.txt, md5sums.txt, and sha256sums.txt
 
-OUT="`pwd`/fltk-$fileversion-releases.txt"
-SHA="`pwd`/fltk-$fileversion-sha256sums.txt"
+OUTF="`pwd`/fltk-$fileversion-releases.txt"
+MD5F="`pwd`/fltk-$fileversion-md5sums.txt"
+SHAF="`pwd`/fltk-$fileversion-sha256sums.txt"
 
 echo
-echo "Creating Release Info in $OUT and $SHA"
+echo "Creating Release Info in $OUTF and $SHAF"
 
-echo "" > $OUT
-echo "github $fltk_version $fileversion" >> $OUT
-echo "" >> $OUT
-rm -f $SHA
-touch $SHA
+echo "" > $OUTF
+echo "github $fltk_version $fileversion" >> $OUTF
+echo "" >> $OUTF
+rm -f $SHAF
+touch $SHAF
 
 # make sure the order is source, html, pdf, fluid-html, fluid-pdf and gz, bz2
 
@@ -246,10 +237,13 @@ for f in source docs-html docs-pdf fluid-docs-html fluid-docs-pdf; do
       # (a) releases file:
       MD5=`md5sum $FILE | cut -f1 -d' '`
       SIZ=`wc -c  $FILE | cut -f1 -d' '`
-      echo "$MD5 $FILE $SIZ" >> $OUT
+      echo "$MD5 $FILE $SIZ" >> $OUTF
 
-      # (b) sha256sum file
-      sha256sum $FILE >> $SHA
+      # (b) md5sum file
+      md5sum $FILE >> $MD5F
+
+      # (c) sha256sum file
+      sha256sum $FILE >> $SHAF
     fi
   done
 done
@@ -259,31 +253,36 @@ done
 FILE="fltk-$fileversion-sha256sums.txt"
 MD5=`md5sum $FILE | cut -f1 -d' '`
 SIZ=`wc -c  $FILE | cut -f1 -d' '`
-echo "$MD5 $FILE $SIZ" >> $OUT
+echo "$MD5 $FILE $SIZ" >> $OUTF
 
 echo
 echo "Done!"
 echo
 echo "================================================================================"
 echo
-echo "$OUT:"
+echo "$OUTF:"
 echo
-echo "--- copy the contents of this file to the top of data/releases.dat:"
-cat $OUT
-echo "--- end of file ---"
+echo "--- snip --- copy the contents of this file to the top of data/releases.dat:"
+cat $OUTF
+echo "--- snip --- end of file ---"
 
 echo
-echo "$SHA:"
+echo "MD5 sums: $MD5F:"
 echo
-cat $SHA
+cat $MD5F
+
+echo
+echo "SHA256 sums: $SHAF:"
+echo
+cat $SHAF
 
 if test "x$3" = "xtag"; then
   echo
   echo "================================================================================"
   echo "Don't forget to push the Git tag if the result is OK"
-  echo "(assuming your remote Git repository is 'origin'):"
+  echo "(assuming your remote Git repository is 'upstream'):"
   echo
-  echo "Use: \$ git push origin release-$version"
+  echo "Use: \$ git push upstream release-$version"
   echo
   echo "If test results are not OK you can delete the tag before pushing:"
   echo
