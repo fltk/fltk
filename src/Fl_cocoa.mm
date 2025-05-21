@@ -2514,6 +2514,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {
   //NSLog(@"performKeyEquivalent:");
+  /* The condition below is always false (and therefore the return statement doesn't run)
+   for the FLTK library unless it contains class Fl_Native_Input with which FLTK windows
+   may contain subviews inside their contentView. When such subview has focus, the condition
+   below becomes true.
+   */
+  if ([[self window] firstResponder] != self) {
+    return NO;
+  }
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
   BOOL handled;
