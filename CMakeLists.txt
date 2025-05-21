@@ -350,6 +350,18 @@ if(FLTK_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
 endif(FLTK_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
 
 #######################################################################
+# Configure CPack only if this is the top level project.
+# The logic may be extended if including CPack is made optional.
+# Currently it is included unconditionally for testing purposes.
+#######################################################################
+
+if(FLTK_IS_TOPLEVEL)
+
+  add_subdirectory(package)
+
+endif()
+
+#######################################################################
 # Output Build Configuration Summary
 #######################################################################
 
