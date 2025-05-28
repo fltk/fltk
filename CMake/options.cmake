@@ -276,27 +276,40 @@ set(HAVE_LIBJPEG 1)
 if(UNIX)
   option(FLTK_INSTALL_LINKS "create backwards compatibility links" OFF)
   list(APPEND FLTK_LDLIBS -lm)
+
   if(NOT APPLE)
     option(FLTK_BACKEND_WAYLAND "support the Wayland backend" ON)
   endif(NOT APPLE)
+
+  # Check Wayland requirements and set the result variable FLTK_USE_WAYLAND.
+  # FLTK_USE_WAYLAND *must* be used *everywhere* else after these checks.
+
   if(FLTK_BACKEND_WAYLAND)
+    message(STATUS "Checking Wayland requirements ...")
+    set(FLTK_USE_WAYLAND FALSE) # assume Wayland not OK ...
+
     if(NOT PKG_CONFIG_FOUND)
-      message(FATAL_ERROR "Option FLTK_BACKEND_WAYLAND requires availability of pkg-config on the build machine.")
-    endif(NOT PKG_CONFIG_FOUND)
+      message(FATAL_ERROR "Option FLTK_BACKEND_WAYLAND requires pkg-config on the build host.")
+    endif()
+
     pkg_check_modules(WLDCLIENT IMPORTED_TARGET wayland-client>=1.18)
     pkg_check_modules(WLDCURSOR IMPORTED_TARGET wayland-cursor)
     pkg_check_modules(WLDPROTO IMPORTED_TARGET wayland-protocols>=1.15)
     pkg_check_modules(XKBCOMMON IMPORTED_TARGET xkbcommon)
-    if(NOT(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND))
-      message(STATUS "Not all software modules 'wayland-client>=1.18 wayland-cursor wayland-protocols>=1.15 xkbcommon' are present")
-      message(STATUS "Consequently, FLTK_BACKEND_WAYLAND is turned off.")
-      unset(FLTK_BACKEND_WAYLAND CACHE)
-      set(FLTK_BACKEND_WAYLAND 0)
-    endif(NOT(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND))
+
+    if(WLDCLIENT_FOUND AND WLDCURSOR_FOUND AND WLDPROTO_FOUND AND XKBCOMMON_FOUND)
+      set(FLTK_USE_WAYLAND TRUE) # OK, Wayland can be used
+      message(STATUS "Checking Wayland requirements: OK")
+    else()
+      message(NOTICE "Checking Wayland requirements FAILED!")
+      message(NOTICE "  Not all required software modules for Wayland are present.")
+      message(NOTICE "  The Wayland backend was requested but can't be built.")
+      message(NOTICE "  Please check Wayland requirements (see above) or")
+      message(NOTICE "  set FLTK_BACKEND_WAYLAND=OFF to silence this warning.")
+    endif()
   endif(FLTK_BACKEND_WAYLAND)
 
-  if(FLTK_BACKEND_WAYLAND)
-    set(FLTK_USE_WAYLAND 1)
+  if(FLTK_USE_WAYLAND)
     if(FLTK_BACKEND_X11)
       include(FindX11)
     endif()
@@ -373,7 +386,7 @@ if(UNIX)
       endif(NOT LINUX_INPUT_H)
     endif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
 
-  endif(FLTK_BACKEND_WAYLAND)
+  endif(FLTK_USE_WAYLAND)
 endif(UNIX)
 
 if(WIN32)
@@ -625,7 +638,7 @@ if(HAVE_GL)
 endif()
 
 if(FLTK_BUILD_GL)
-  if(FLTK_BACKEND_WAYLAND)
+  if(FLTK_USE_WAYLAND)
     pkg_check_modules(WLD_EGL IMPORTED_TARGET wayland-egl)
     pkg_check_modules(PKG_EGL IMPORTED_TARGET egl)
     pkg_check_modules(PKG_GL  IMPORTED_TARGET gl)
@@ -636,7 +649,7 @@ if(FLTK_BUILD_GL)
       message(FATAL_ERROR "*** Aborting ***")
     endif()
 
-  endif(FLTK_BACKEND_WAYLAND)
+  endif(FLTK_USE_WAYLAND)
 
   if(FLTK_BACKEND_X11)
     set(OPENGL_FOUND TRUE)
@@ -689,7 +702,7 @@ if(OPENGL_FOUND)
     list(APPEND GLLIBS -lglu32 -lopengl32)
   elseif(APPLE AND NOT FLTK_BACKEND_X11)
     list(APPEND GLLIBS "-framework OpenGL")
-  elseif(FLTK_BACKEND_WAYLAND)
+  elseif(FLTK_USE_WAYLAND)
     foreach(_lib WLD_EGL PKG_EGL PKG_GLU PKG_GL)
       list(APPEND GLLIBS ${${_lib}_LDFLAGS})
     endforeach(_lib )
@@ -824,9 +837,9 @@ endif(FLTK_USE_XCURSOR)
 #######################################################################
 if(X11_Xft_FOUND)
   option(FLTK_USE_PANGO "use lib Pango" OFF)
-  if(NOT FLTK_BACKEND_WAYLAND)
+  if(NOT FLTK_USE_WAYLAND)
     option(FLTK_GRAPHICS_CAIRO "all drawing to X11 windows uses Cairo" OFF)
-  endif(NOT FLTK_BACKEND_WAYLAND)
+  endif(NOT FLTK_USE_WAYLAND)
   if(NOT FLTK_GRAPHICS_CAIRO)
     option(FLTK_USE_XFT "use lib Xft" ON)
   endif()
@@ -886,14 +899,14 @@ if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 
   endif((PANGOXFT_FOUND OR NOT USE_PANGOXFT) AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
 
-  if(USE_PANGO AND (FLTK_GRAPHICS_CAIRO OR FLTK_BACKEND_WAYLAND))
+  if(USE_PANGO AND (FLTK_GRAPHICS_CAIRO OR FLTK_USE_WAYLAND))
     set(FLTK_USE_CAIRO 1)
     # fl_debug_var(FLTK_USE_CAIRO)
   endif()
 
 endif((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 
-if(FLTK_BACKEND_WAYLAND)
+if(FLTK_USE_WAYLAND)
 
   # Note: Disable FLTK_USE_LIBDECOR_GTK to get cairo titlebars rather than GTK
   if(FLTK_USE_LIBDECOR_GTK AND NOT USE_SYSTEM_LIBDECOR)

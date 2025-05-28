@@ -215,7 +215,7 @@ endif(FLTK_USE_X11 AND NOT FLTK_OPTION_PRINT_SUPPORT)
 
 set(DRIVER_FILES)
 
-if(FLTK_USE_X11 AND NOT FLTK_BACKEND_WAYLAND)
+if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
 
   # X11 (including APPLE with X11)
 
@@ -290,7 +290,7 @@ if(FLTK_USE_X11 AND NOT FLTK_BACKEND_WAYLAND)
    )
  endif(FLTK_USE_CAIRO)
 
-elseif(FLTK_BACKEND_WAYLAND)
+elseif(FLTK_USE_WAYLAND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_CURRENT_BINARY_DIR}")
   set(DRIVER_FILES
     drivers/Posix/Fl_Posix_System_Driver.cxx
@@ -407,7 +407,7 @@ else()
     drivers/GDI/Fl_GDI_Image_Surface_Driver.H
   )
 
-endif(FLTK_USE_X11 AND NOT FLTK_BACKEND_WAYLAND)
+endif(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
 
 source_group("Header Files" FILES ${HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
@@ -457,7 +457,7 @@ set(GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
-if(FLTK_BACKEND_WAYLAND)
+if(FLTK_USE_WAYLAND)
   set(GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx)
   set(GL_DRIVER_HEADER_FILES drivers/Wayland/Fl_Wayland_Gl_Window_Driver.H)
   if(FLTK_USE_X11)
@@ -473,7 +473,7 @@ elseif(APPLE)
 elseif(WIN32)
   set(GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx)
   set(GL_DRIVER_HEADER_FILES drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.H)
-endif(FLTK_BACKEND_WAYLAND)
+endif(FLTK_USE_WAYLAND)
 
 set(GL_DRIVER_HEADER_FILES ${GL_DRIVER_FILES}
   drivers/OpenGL/Fl_OpenGL_Display_Device.H
@@ -531,7 +531,7 @@ if(FLTK_USE_X11)
   endif(NOT USE_XFT)
 endif(FLTK_USE_X11)
 
-if(FLTK_BACKEND_WAYLAND)
+if(FLTK_USE_WAYLAND)
   pkg_check_modules(DBUS IMPORTED_TARGET dbus-1)
   set(IDIRS "${CMAKE_CURRENT_BINARY_DIR}")
   set(CDEFS "_GNU_SOURCE;HAVE_MEMFD_CREATE;HAVE_MKOSTEMP;HAVE_POSIX_FALLOCATE")
@@ -593,7 +593,7 @@ if(FLTK_BACKEND_WAYLAND)
       ../libdecor/src/plugins/common/libdecor-cairo-blur.c
     )
   endif(NOT USE_SYSTEM_LIBDECOR)
-endif(FLTK_BACKEND_WAYLAND)
+endif(FLTK_USE_WAYLAND)
 
 if(WIN32)
   list(APPEND CFILES
@@ -734,7 +734,7 @@ if(USE_XFT)
   endif(LIB_fontconfig)
 endif(USE_XFT)
 
-if(UNIX AND FLTK_BACKEND_WAYLAND)
+if(UNIX AND FLTK_USE_WAYLAND)
   pkg_get_variable(PROTOCOLS wayland-protocols pkgdatadir)
   # replace "//" with "/"
   string(REPLACE "//" "/" PROTOCOLS ${PROTOCOLS})
@@ -813,7 +813,7 @@ if(UNIX AND FLTK_BACKEND_WAYLAND)
     append_optional_libs(PkgConfig::DBUS)
   endif()
 
-endif(UNIX AND FLTK_BACKEND_WAYLAND)
+endif(UNIX AND FLTK_USE_WAYLAND)
 
 list(REMOVE_DUPLICATES OPTIONAL_LIBS)
 list(REMOVE_DUPLICATES OPTIONAL_INCLUDES)
