@@ -1371,7 +1371,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   if ( !(parent_win->fullscreen_active() &&
         Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
         ((!Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) ||
-          Fl_Window_Driver::menu_bartitle(pWindow)))
+          Fl_Window_Driver::menu_bartitle(pWindow)) && pWindow->y() < 10)
      ) {
     // Condition above is only to bypass Mutter bug for fullscreen windows (see #1061)
     constraint |= (XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X | XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y);
