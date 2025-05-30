@@ -39,7 +39,7 @@ class Fl_Grid::Col {
     weight_ = 50;
     gap_    = -1;
   }
-  ~Col() {};
+  ~Col() {}
 };
 
 // private class Row for row management
@@ -63,7 +63,7 @@ class Fl_Grid::Row {
 
   ~Row() {
     free_cells();
-  };
+  }
 
   // Fl_Grid::Row::free_cells() - free all cells of a row
 

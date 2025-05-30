@@ -1,7 +1,7 @@
 //
 // Declaration of class Fl_PDF_File_Surface for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2024 by Bill Spitzak and others.
+// Copyright 2024-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,7 +54,7 @@ public:
    */
   int begin_job(const char* defaultfilename, char **perr = NULL);
   /** Don't use for this class */
-  int begin_job(int, int *, int *, char **) FL_OVERRIDE {return 1;}
+  int begin_job(int, int *, int *, char **) override {return 1;}
   /** Prepare to draw to a PDF document identified by its pathname.
    \param pathname Path name for the PDF document
    \param format The paper format for the PDF document
@@ -67,23 +67,23 @@ public:
                 enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
                 enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT,
                 char **perr = NULL);
-  int printable_rect(int *w, int *h) FL_OVERRIDE { return platform_surface_->printable_rect(w,h); }
-  void margins(int *left, int *top, int *right, int *bottom) FL_OVERRIDE {
+  int printable_rect(int *w, int *h) override { return platform_surface_->printable_rect(w,h); }
+  void margins(int *left, int *top, int *right, int *bottom) override {
     platform_surface_->margins(left,top,right,bottom);
   }
-  void origin(int x, int y) FL_OVERRIDE {platform_surface_->origin(x, y);}
-  void origin(int *x, int *y) FL_OVERRIDE {platform_surface_->origin(x, y);}
-  void scale(float s_x, float s_y = 0) FL_OVERRIDE {platform_surface_->scale(s_x, s_y);}
-  void rotate(float angle) FL_OVERRIDE {platform_surface_->rotate(angle);}
-  void translate(int x, int y) FL_OVERRIDE {platform_surface_->translate(x, y);}
-  void untranslate() FL_OVERRIDE {platform_surface_->untranslate();};
-  int begin_page(void) FL_OVERRIDE {return platform_surface_->begin_page();}
-  int end_page(void) FL_OVERRIDE {return platform_surface_->end_page();}
-  void end_job(void) FL_OVERRIDE {return platform_surface_->end_job();}
+  void origin(int x, int y) override {platform_surface_->origin(x, y);}
+  void origin(int *x, int *y) override {platform_surface_->origin(x, y);}
+  void scale(float s_x, float s_y = 0) override {platform_surface_->scale(s_x, s_y);}
+  void rotate(float angle) override {platform_surface_->rotate(angle);}
+  void translate(int x, int y) override {platform_surface_->translate(x, y);}
+  void untranslate() override {platform_surface_->untranslate();}
+  int begin_page(void) override {return platform_surface_->begin_page();}
+  int end_page(void) override {return platform_surface_->end_page();}
+  void end_job(void) override {return platform_surface_->end_job();}
   /** Returns the name of the PDF document */
   inline const char *pdf_filename() { return *out_filename_; }
-  void set_current() FL_OVERRIDE { if (platform_surface_) platform_surface_->set_current(); }
-  bool is_current() FL_OVERRIDE { return surface() == platform_surface_; }
+  void set_current() override { if (platform_surface_) platform_surface_->set_current(); }
+  bool is_current() override { return surface() == platform_surface_; }
 };
 
 #endif // PDF_FILE_SURFACE_H

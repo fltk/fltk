@@ -63,7 +63,7 @@ private:
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
   bool is_popup_window_;
 public:
-  inline Fl_Cursor standard_cursor() { return standard_cursor_; };
+  inline Fl_Cursor standard_cursor() { return standard_cursor_; }
   bool in_handle_configure; // distinguish OS and user window resize
 
   struct surface_output { // for linked list of displays where a surface maps
@@ -78,7 +78,7 @@ public:
   static void delete_cursor(struct custom_cursor *custom, bool delete_rgb = true);
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
-  void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
+  void shape_alpha_(Fl_Image* img, int offset) override;
   FL_EXPORT int wld_scale(); // used by class Fl_Wayland_Gl_Window_Driver
   cairo_rectangle_int_t *subRect() { return subRect_; } // getter
   void subRect(cairo_rectangle_int_t *r); // setter
@@ -96,49 +96,49 @@ public:
   static Fl_Wayland_Plugin *gl_plugin();
 
   // --- window data
-  int decorated_w() FL_OVERRIDE;
-  int decorated_h() FL_OVERRIDE;
-  const Fl_Image* shape() FL_OVERRIDE;
+  int decorated_w() override;
+  int decorated_h() override;
+  const Fl_Image* shape() override;
 
   // --- window management
-  void makeWindow() FL_OVERRIDE;
-  void take_focus() FL_OVERRIDE;
-  void flush() FL_OVERRIDE;
-  void flush_overlay() FL_OVERRIDE;
-  void draw_end() FL_OVERRIDE;
-  void make_current() FL_OVERRIDE;
-  void show() FL_OVERRIDE;
-  void resize(int X,int Y,int W,int H) FL_OVERRIDE;
-  void label(const char *name, const char *mininame) FL_OVERRIDE;
-  void hide() FL_OVERRIDE;
-  void map() FL_OVERRIDE;
-  void unmap() FL_OVERRIDE;
-  void fullscreen_on() FL_OVERRIDE;
-  void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
-  void maximize() FL_OVERRIDE;
-  void un_maximize() FL_OVERRIDE;
-  void use_border() FL_OVERRIDE;
-  void size_range() FL_OVERRIDE;
-  void iconize() FL_OVERRIDE;
-  void decoration_sizes(int *top, int *left,  int *right, int *bottom) FL_OVERRIDE;
+  void makeWindow() override;
+  void take_focus() override;
+  void flush() override;
+  void flush_overlay() override;
+  void draw_end() override;
+  void make_current() override;
+  void show() override;
+  void resize(int X,int Y,int W,int H) override;
+  void label(const char *name, const char *mininame) override;
+  void hide() override;
+  void map() override;
+  void unmap() override;
+  void fullscreen_on() override;
+  void fullscreen_off(int X, int Y, int W, int H) override;
+  void maximize() override;
+  void un_maximize() override;
+  void use_border() override;
+  void size_range() override;
+  void iconize() override;
+  void decoration_sizes(int *top, int *left,  int *right, int *bottom) override;
   // --- window cursor stuff
-  int set_cursor(Fl_Cursor) FL_OVERRIDE;
-  int set_cursor(const Fl_RGB_Image*, int, int) FL_OVERRIDE;
+  int set_cursor(Fl_Cursor) override;
+  int set_cursor(const Fl_RGB_Image*, int, int) override;
   int set_cursor_4args(const Fl_RGB_Image*, int, int, bool);
 
-  void shape(const Fl_Image* img) FL_OVERRIDE;
+  void shape(const Fl_Image* img) override;
   void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,
-                                    Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
+                                    Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) override;
   int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
-             void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
-  void wait_for_expose() FL_OVERRIDE;
+             void (*draw_area)(void*, int,int,int,int), void* data) override;
+  void wait_for_expose() override;
   // menu-related stuff
-  void reposition_menu_window(int x, int y) FL_OVERRIDE;
-  void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) FL_OVERRIDE;
+  void reposition_menu_window(int x, int y) override;
+  void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) override;
   static bool new_popup; // to support tall menu buttons
   bool process_menu_or_tooltip(struct wld_window *);
   static Fl_Window *previous_floatingtitle; // to support floating menuwindow w/ title
-  void allow_expand_outside_parent() FL_OVERRIDE { can_expand_outside_parent_ = true; }
+  void allow_expand_outside_parent() override { can_expand_outside_parent_ = true; }
 };
 
 

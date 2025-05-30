@@ -1164,7 +1164,7 @@ public:
 class Fd_Snap_Left_Window_Edge : public Fd_Snap_Left {
 public:
   void check(Snap_Data &d) override { clr(); check_x_(d, d.bx, 0); }
-  void draw(Snap_Data &d) override { draw_left_brace(d.win->o); };
+  void draw(Snap_Data &d) override { draw_left_brace(d.win->o); }
 };
 Fd_Snap_Left_Window_Edge snap_left_window_edge;
 
@@ -1174,7 +1174,7 @@ Fd_Snap_Left_Window_Edge snap_left_window_edge;
 class Fd_Snap_Right_Window_Edge : public Fd_Snap_Right {
 public:
   void check(Snap_Data &d) override { clr(); check_x_(d, d.br, d.win->o->w()); }
-  void draw(Snap_Data &d) override { draw_right_brace(d.win->o); };
+  void draw(Snap_Data &d) override { draw_right_brace(d.win->o); }
 };
 Fd_Snap_Right_Window_Edge snap_right_window_edge;
 
@@ -1184,7 +1184,7 @@ Fd_Snap_Right_Window_Edge snap_right_window_edge;
 class Fd_Snap_Top_Window_Edge : public Fd_Snap_Top {
 public:
   void check(Snap_Data &d) override { clr(); check_y_(d, d.by, 0); }
-  void draw(Snap_Data &d) override { draw_top_brace(d.win->o); };
+  void draw(Snap_Data &d) override { draw_top_brace(d.win->o); }
 };
 Fd_Snap_Top_Window_Edge snap_top_window_edge;
 
@@ -1194,7 +1194,7 @@ Fd_Snap_Top_Window_Edge snap_top_window_edge;
 class Fd_Snap_Bottom_Window_Edge : public Fd_Snap_Bottom {
 public:
   void check(Snap_Data &d) override { clr(); check_y_(d, d.bt, d.win->o->h()); }
-  void draw(Snap_Data &d) override { draw_bottom_brace(d.win->o); };
+  void draw(Snap_Data &d) override { draw_bottom_brace(d.win->o); }
 };
 Fd_Snap_Bottom_Window_Edge snap_bottom_window_edge;
 
@@ -1209,7 +1209,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_h_arrow(d.bx, (d.by+d.bt)/2, 0);
-  };
+  }
 };
 Fd_Snap_Left_Window_Margin snap_left_window_margin;
 
@@ -1221,7 +1221,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_h_arrow(d.br, (d.by+d.bt)/2, d.win->o->w()-1);
-  };
+  }
 };
 Fd_Snap_Right_Window_Margin snap_right_window_margin;
 
@@ -1233,7 +1233,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_v_arrow((d.bx+d.br)/2, d.by, 0);
-  };
+  }
 };
 Fd_Snap_Top_Window_Margin snap_top_window_margin;
 
@@ -1245,7 +1245,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_v_arrow((d.bx+d.br)/2, d.bt, d.win->o->h()-1);
-  };
+  }
 };
 Fd_Snap_Bottom_Window_Margin snap_bottom_window_margin;
 
@@ -1262,7 +1262,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_left_brace(parent(d));
-  };
+  }
 };
 Fd_Snap_Left_Group_Edge snap_left_group_edge;
 
@@ -1274,7 +1274,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_right_brace(parent(d));
-  };
+  }
 };
 Fd_Snap_Right_Group_Edge snap_right_group_edge;
 
@@ -1286,7 +1286,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_top_brace(parent(d));
-  };
+  }
 };
 Fd_Snap_Top_Group_Edge snap_top_group_edge;
 
@@ -1298,7 +1298,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_bottom_brace(parent(d));
-  };
+  }
 };
 Fd_Snap_Bottom_Group_Edge snap_bottom_group_edge;
 
@@ -1315,7 +1315,7 @@ public:
   void draw(Snap_Data &d) override {
     draw_left_brace(parent(d));
     draw_h_arrow(d.bx, (d.by+d.bt)/2, parent(d)->x());
-  };
+  }
 };
 Fd_Snap_Left_Group_Margin snap_left_group_margin;
 
@@ -1328,7 +1328,7 @@ public:
   void draw(Snap_Data &d) override {
     draw_right_brace(parent(d));
     draw_h_arrow(d.br, (d.by+d.bt)/2, parent(d)->x()+parent(d)->w()-1);
-  };
+  }
 };
 Fd_Snap_Right_Group_Margin snap_right_group_margin;
 
@@ -1341,7 +1341,7 @@ public:
   void draw(Snap_Data &d) override {
     draw_top_brace(parent(d));
     draw_v_arrow((d.bx+d.br)/2, d.by, parent(d)->y());
-  };
+  }
 };
 Fd_Snap_Top_Group_Margin snap_top_group_margin;
 
@@ -1354,7 +1354,7 @@ public:
   void draw(Snap_Data &d) override {
     draw_bottom_brace(parent(d));
     draw_v_arrow((d.bx+d.br)/2, d.bt, parent(d)->y()+parent(d)->h()-1);
-  };
+  }
 };
 Fd_Snap_Bottom_Group_Margin snap_bottom_group_margin;
 
@@ -1425,7 +1425,7 @@ public:
   void draw(Snap_Data &d) override {
     auto layout = Fluid.proj.layout;
     draw_grid(nearest_x, nearest_y, layout->window_grid_x, layout->window_grid_y);
-  };
+  }
 };
 Fd_Snap_Window_Grid snap_window_grid;
 
@@ -1446,7 +1446,7 @@ public:
   void draw(Snap_Data &d) override {
     auto layout = Fluid.proj.layout;
     draw_grid(nearest_x, nearest_y, layout->group_grid_x, layout->group_grid_y);
-  };
+  }
 };
 Fd_Snap_Group_Grid snap_group_grid;
 
@@ -1500,7 +1500,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_left_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Left_Same snap_siblings_left_same;
 
@@ -1516,7 +1516,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_right_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Left snap_siblings_left;
 
@@ -1528,7 +1528,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_right_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Right_Same snap_siblings_right_same;
 
@@ -1541,7 +1541,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_left_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Right snap_siblings_right;
 
@@ -1553,7 +1553,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_top_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Top_Same snap_siblings_top_same;
 
@@ -1566,7 +1566,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_bottom_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Top snap_siblings_top;
 
@@ -1578,7 +1578,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_bottom_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Bottom_Same snap_siblings_bottom_same;
 
@@ -1591,7 +1591,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     if (best_match) draw_top_brace(best_match);
-  };
+  }
 };
 Fd_Snap_Siblings_Bottom snap_siblings_bottom;
 
@@ -1624,7 +1624,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_width(d.bx, d.bt+7, d.br, 0);
-  };
+  }
 };
 Fd_Snap_Widget_Ideal_Width snap_widget_ideal_width;
 
@@ -1651,7 +1651,7 @@ public:
   }
   void draw(Snap_Data &d) override {
     draw_height(d.br+7, d.by, d.bt, 0);
-  };
+  }
 };
 Fd_Snap_Widget_Ideal_Height snap_widget_ideal_height;
 

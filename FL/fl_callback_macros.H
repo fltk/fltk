@@ -1,7 +1,7 @@
 /*
  * Macros for easy callbacks for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 2023 by Bill Spitzak and others.
+ * Copyright 2023-2025 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -211,7 +211,7 @@
         static void cb(Fl_Widget *w, void *user_data) {
           Fl_Callback_User_Data_92 *d = (Fl_Callback_User_Data_92*)user_data;
           hello_2_args_cb(d->p0_, d->p1_);
-        };
+        }
         Fl_Callback_User_Data_92(const char * p0, int p1)
         : p0_(p0),
           p1_(p1)
@@ -235,9 +235,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         FUNC(d->p0_, d->p1_, d->p2_, d->p3_, d->p4_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1, TYPE2 p2, TYPE3 p3, TYPE4 p4) \
-      : p0_(p0), p1_(p1), p2_(p2), p3_(p3), p4_(p4) { }; \
+      : p0_(p0), p1_(p1), p2_(p2), p3_(p3), p4_(p4) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1, VALUE2, VALUE3, VALUE4), true); \
   } while(0)
@@ -250,9 +250,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         FUNC(d->p0_, d->p1_, d->p2_, d->p3_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1, TYPE2 p2, TYPE3 p3) \
-      : p0_(p0), p1_(p1), p2_(p2), p3_(p3) { }; \
+      : p0_(p0), p1_(p1), p2_(p2), p3_(p3) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1, VALUE2, VALUE3), true); \
   } while(0)
@@ -265,9 +265,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         FUNC(d->p0_, d->p1_, d->p2_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1, TYPE2 p2) \
-      : p0_(p0), p1_(p1), p2_(p2) { }; \
+      : p0_(p0), p1_(p1), p2_(p2) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1, VALUE2), true); \
   } while(0)
@@ -280,9 +280,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         FUNC(d->p0_, d->p1_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1) \
-      : p0_(p0), p1_(p1) { }; \
+      : p0_(p0), p1_(p1) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1), true); \
   } while(0)
@@ -308,8 +308,8 @@
     public: \
       static void cb(Fl_Widget *w, void *user_data) { \
         FUNC(); \
-      }; \
-      _FL_CBD_CLASS_NAME() { }; \
+      } \
+      _FL_CBD_CLASS_NAME() { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(), true); \
   } while(0)
@@ -341,7 +341,7 @@
       static void cb(Fl_Widget *w, void *user_data) {
         Fl_Callback_User_Data_73 *d = (Fl_Callback_User_Data_73*)user_data;
         d->self_->resize(d->p0_, d->p1_, d->p2_, d->p3_);
-      };
+      }
       Fl_Callback_User_Data_73(MyWindow *self, int p0, int p1, int p2, int p3)
       : self_(self), p0_(p0), p1_(p1), p2_(p2), p3_(p3) { }
     };
@@ -366,9 +366,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         d->self_->METHOD(d->p0_, d->p1_, d->p2_, d->p3_, d->p4_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(CLASS *self, TYPE0 p0, TYPE1 p1, TYPE2 p2, TYPE3 p3, TYPE4 p4) \
-      : self_(self), p0_(p0), p1_(p1), p2_(p2), p3_(p3), p4_(p4) { }; \
+      : self_(self), p0_(p0), p1_(p1), p2_(p2), p3_(p3), p4_(p4) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(SELF, VALUE0, VALUE1, VALUE2, VALUE3, VALUE4), true); \
   } while(0)
@@ -382,9 +382,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         d->self_->METHOD(d->p0_, d->p1_, d->p2_, d->p3_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(CLASS *self, TYPE0 p0, TYPE1 p1, TYPE2 p2, TYPE3 p3) \
-      : self_(self), p0_(p0), p1_(p1), p2_(p2), p3_(p3) { }; \
+      : self_(self), p0_(p0), p1_(p1), p2_(p2), p3_(p3) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(SELF, VALUE0, VALUE1, VALUE2, VALUE3), true); \
   } while(0)
@@ -398,9 +398,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         d->self_->METHOD(d->p0_, d->p1_, d->p2_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(CLASS *self, TYPE0 p0, TYPE1 p1, TYPE2 p2) \
-      : self_(self), p0_(p0), p1_(p1), p2_(p2) { }; \
+      : self_(self), p0_(p0), p1_(p1), p2_(p2) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(SELF, VALUE0, VALUE1, VALUE2), true); \
   } while(0)
@@ -414,9 +414,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         d->self_->METHOD(d->p0_, d->p1_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(CLASS *self, TYPE0 p0, TYPE1 p1) \
-      : self_(self), p0_(p0), p1_(p1) { }; \
+      : self_(self), p0_(p0), p1_(p1) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(SELF, VALUE0, VALUE1), true); \
   } while(0)
@@ -430,9 +430,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         d->self_->METHOD(d->p0_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(CLASS *self, TYPE0 p0) \
-      : self_(self), p0_(p0) { }; \
+      : self_(self), p0_(p0) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(SELF, VALUE0), true); \
   } while(0)
@@ -445,9 +445,9 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         d->self_->METHOD(); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(CLASS *self) \
-      : self_(self) { }; \
+      : self_(self) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(SELF), true); \
   } while(0)
@@ -478,12 +478,12 @@
       // lambda style function
       static void fn(const char * text, int number ) {
         fl_message("We received the message %s with %d!", text, number);
-      };
+      }
       // FLTK style callback
       static void cb(Fl_Widget *w, void *user_data) {
         Fl_Callback_User_Data_133 *d = (Fl_Callback_User_Data_133*)user_data;
         fn(d->p0_, d->p1_);
-      };
+      }
       // class constructor
       Fl_Callback_User_Data_133(const char * p0, int p1)
       : p0_(p0),                  // copy parameter 0
@@ -509,13 +509,13 @@
     public: \
       TYPE0 p0_; TYPE1 p1_; TYPE2 p2_; TYPE3 p3_; TYPE4 p4_; \
       static void fn(TYPE0 NAME0, TYPE1 NAME1, TYPE2 NAME2, TYPE3 NAME3, TYPE4 NAME4) \
-        LAMBDA; \
+        LAMBDA \
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         _FL_CBD_CLASS_NAME::fn(d->p0_, d->p1_, d->p2_, d->p3_, d->p4_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1, TYPE2 p2, TYPE3 p3, TYPE4 p4) \
-      : p0_(p0), p1_(p1), p2_(p2), p3_(p3), p4_(p4) { }; \
+      : p0_(p0), p1_(p1), p2_(p2), p3_(p3), p4_(p4) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1, VALUE2, VALUE3, VALUE4), true); \
   } while(0)
@@ -526,13 +526,13 @@
     public: \
       TYPE0 p0_; TYPE1 p1_; TYPE2 p2_; TYPE3 p3_; \
       static void fn(TYPE0 NAME0, TYPE1 NAME1, TYPE2 NAME2, TYPE3 NAME3) \
-        LAMBDA; \
+        LAMBDA \
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         _FL_CBD_CLASS_NAME::fn(d->p0_, d->p1_, d->p2_, d->p3_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1, TYPE2 p2, TYPE3 p3) \
-      : p0_(p0), p1_(p1), p2_(p2), p3_(p3) { }; \
+      : p0_(p0), p1_(p1), p2_(p2), p3_(p3) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1, VALUE2, VALUE3), true); \
   } while(0)
@@ -543,13 +543,13 @@
     public: \
       TYPE0 p0_; TYPE1 p1_; TYPE2 p2_; \
       static void fn(TYPE0 NAME0, TYPE1 NAME1, TYPE2 NAME2) \
-        LAMBDA; \
+        LAMBDA \
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         _FL_CBD_CLASS_NAME::fn(d->p0_, d->p1_, d->p2_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1, TYPE2 p2) \
-      : p0_(p0), p1_(p1), p2_(p2) { }; \
+      : p0_(p0), p1_(p1), p2_(p2) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1, VALUE2), true); \
   } while(0)
@@ -560,13 +560,13 @@
     public: \
       TYPE0 p0_; TYPE1 p1_; \
       static void fn(TYPE0 NAME0, TYPE1 NAME1) \
-        LAMBDA; \
+        LAMBDA \
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         _FL_CBD_CLASS_NAME::fn(d->p0_, d->p1_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1) \
-      : p0_(p0), p1_(p1) { }; \
+      : p0_(p0), p1_(p1) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1), true); \
   } while(0)
@@ -577,13 +577,13 @@
     public: \
       TYPE0 p0_; \
       static void fn(TYPE0 NAME0) \
-        LAMBDA; \
+        LAMBDA \
       static void cb(Fl_Widget *w, void *user_data) { \
         _FL_CBD_CLASS_NAME *d = (_FL_CBD_CLASS_NAME*)user_data; \
         _FL_CBD_CLASS_NAME::fn(d->p0_); \
-      }; \
+      } \
       _FL_CBD_CLASS_NAME(TYPE0 p0) \
-      : p0_(p0) { }; \
+      : p0_(p0) { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0), true); \
   } while(0)
@@ -593,11 +593,11 @@
     class _FL_CBD_CLASS_NAME : public Fl_Callback_User_Data { \
     public: \
     static void fn() \
-      LAMBDA; \
+      LAMBDA \
     static void cb(Fl_Widget *w, void *user_data) { \
       _FL_CBD_CLASS_NAME::fn(); \
-    }; \
-    _FL_CBD_CLASS_NAME() { }; \
+    } \
+    _FL_CBD_CLASS_NAME() { } \
     }; \
     WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(), true); \
   } while(0)
