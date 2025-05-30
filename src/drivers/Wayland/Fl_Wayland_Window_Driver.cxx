@@ -1170,12 +1170,13 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
     // make selected item visible, if there's one
     Fl_Window_Driver::scroll_to_selected_item(window->fl_win);
   }
-  if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(window->fl_win) &&
-    y < Fl_Window_Driver::current_menu_button->y()) {
+  if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(window->fl_win)) {
+    int X, Y;
+    Fl_Window_Driver::current_menu_button->top_window_offset(X, Y);
+    if (y < Y) {
       Fl_Window *win = window->fl_win;
-      int Y = win->y();
-      win->Fl_Widget::resize(win->x(), Y - win->h() - Fl_Window_Driver::current_menu_button->h(),
-                             win->w(), win->h());
+      win->Fl_Widget::resize(win->x(), Y - win->h(), win->w(), win->h());
+    }
   }
 }
 
@@ -1334,12 +1335,12 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   //xdg_positioner_get_version(positioner) <== gives 1 under Debian and Sway
   int popup_x, popup_y;
   if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
-    xdg_positioner_set_anchor_rect(positioner,
-                                   Fl_Window_Driver::current_menu_button->x() * f,
-                                   Fl_Window_Driver::current_menu_button->y() * f,
+    int X, Y;
+    Fl_Window_Driver::current_menu_button->top_window_offset(X, Y);
+    xdg_positioner_set_anchor_rect(positioner, X * f, Y * f,
                                    Fl_Window_Driver::current_menu_button->w() * f,
                                    Fl_Window_Driver::current_menu_button->h() * f);
-    popup_x = Fl_Window_Driver::current_menu_button->x() * f;
+    popup_x = X * f;
     popup_y = 0;
     if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active())
       libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y,
