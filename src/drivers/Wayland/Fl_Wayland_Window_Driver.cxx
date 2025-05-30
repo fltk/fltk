@@ -1170,6 +1170,13 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
     // make selected item visible, if there's one
     Fl_Window_Driver::scroll_to_selected_item(window->fl_win);
   }
+  if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(window->fl_win) &&
+    y < Fl_Window_Driver::current_menu_button->y()) {
+      Fl_Window *win = window->fl_win;
+      int Y = win->y();
+      win->Fl_Widget::resize(win->x(), Y - win->h() - Fl_Window_Driver::current_menu_button->h(),
+                             win->w(), win->h());
+  }
 }
 
 
