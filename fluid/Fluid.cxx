@@ -320,7 +320,7 @@ void Application::create_tmpdir() {
   tmpdir_create_called = true;
 
   char buf[128];
-#if _WIN32
+#ifdef _WIN32
   // The usual temp file locations on Windows are
   //    %system%\Windows\Temp
   //    %userprofiles%\AppData\Local
