@@ -18,6 +18,7 @@
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Rect.H>
 #include <FL/fl_draw.H>
+#include "Fl_Window_Driver.H"
 
 
 Fl_Menu_Button* Fl_Menu_Button::pressed_menu_button_ = NULL;
@@ -68,7 +69,9 @@ const Fl_Menu_Item* Fl_Menu_Button::popup() {
   if (!box() || type()) {
     m = menu()->popup(Fl::event_x(), Fl::event_y(), label(), mvalue(), this);
   } else {
+    Fl_Window_Driver::current_menu_button = this;
     m = menu()->pulldown(x(), y(), w(), h(), 0, this);
+    Fl_Window_Driver::current_menu_button = NULL;
   }
   picked(m);
   pressed_menu_button_ = 0;

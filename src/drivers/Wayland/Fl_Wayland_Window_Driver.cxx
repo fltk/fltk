@@ -30,6 +30,7 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Image_Surface.H>
+#include <FL/Fl_Menu_Button.H>
 #include <string.h>
 #include <math.h> // for ceil()
 #include <sys/types.h> // for pid_t
@@ -1325,7 +1326,18 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
   //xdg_positioner_get_version(positioner) <== gives 1 under Debian and Sway
   int popup_x, popup_y;
-  if (Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow)) {
+  if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
+    xdg_positioner_set_anchor_rect(positioner,
+                                   Fl_Window_Driver::current_menu_button->x() * f,
+                                   Fl_Window_Driver::current_menu_button->y() * f,
+                                   Fl_Window_Driver::current_menu_button->w() * f,
+                                   Fl_Window_Driver::current_menu_button->h() * f);
+    popup_x = Fl_Window_Driver::current_menu_button->x() * f;
+    popup_y = 0;
+    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active())
+      libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y,
+                                          &popup_x, &popup_y);
+  } else if (Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow)) {
     xdg_positioner_set_anchor_rect(positioner, 0, 0,
                                    Fl_Window_Driver::menu_title(pWindow)->w() * f,
                                    Fl_Window_Driver::menu_title(pWindow)->h() * f);
@@ -1344,7 +1356,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
       // prevent first popup from going above the permissible source window
       popup_y = fl_max(popup_y, - pWindow->h() * f);
     }
-    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED)
+    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active())
       libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y,
                                           &popup_x, &popup_y);
     xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
@@ -1371,11 +1383,12 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   if ( !(parent_win->fullscreen_active() &&
         Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
         ((!Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) ||
-          Fl_Window_Driver::menu_bartitle(pWindow)) && pWindow->y() < 10)
+          Fl_Window_Driver::menu_bartitle(pWindow)) && pWindow->y() < 10 && !Fl_Window_Driver::current_menu_button)
      ) {
     // Condition above is only to bypass Mutter bug for fullscreen windows (see #1061)
     constraint |= (XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X | XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y);
-    if (Fl_Window_Driver::menu_bartitle(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
+    if ((Fl_Window_Driver::current_menu_button || Fl_Window_Driver::menu_bartitle(pWindow)) &&
+         !Fl_Window_Driver::menu_leftorigin(pWindow)) {
       constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
     }
     xdg_positioner_set_constraint_adjustment(positioner, constraint);
