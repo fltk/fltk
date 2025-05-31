@@ -31,6 +31,7 @@
 
 extern void fl_throw_focus(Fl_Widget *o);
 
+Fl_Menu_Button *Fl_Window_Driver::current_menu_button = NULL;
 
 /**
  Create a new Window Driver.

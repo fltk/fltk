@@ -206,6 +206,8 @@ public:
   static int *menu_offset_y(Fl_Window*);
   static bool is_floating_title(Fl_Window *);
   static void scroll_to_selected_item(Fl_Window *);
+  // non-NULL when an Fl_Menu_Button is being pulled down
+  static class Fl_Menu_Button *current_menu_button;
 
   virtual fl_uintptr_t os_id() { return 0; }
   virtual void allow_expand_outside_parent() {}
