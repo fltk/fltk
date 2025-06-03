@@ -24,7 +24,6 @@
 #  if USE_POLL
 
 #    include <poll.h>
-static pollfd *pollfds = 0;
 
 #  else
 #    if HAVE_SYS_SELECT_H
@@ -52,7 +51,9 @@ static pollfd *pollfds = 0;
 
 class Fl_Unix_Screen_Driver : public Fl_Screen_Driver {
 public:
-#  if !USE_POLL
+#  if USE_POLL
+  static pollfd *pollfds;
+#  else
   static fd_set fdsets[3];
 #  endif
   static int maxfd;

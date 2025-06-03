@@ -18,7 +18,9 @@
 #include <sys/time.h>
 #include "Fl_Unix_Screen_Driver.H"
 
-#if !USE_POLL
+#if USE_POLL
+pollfd *Fl_Unix_Screen_Driver::pollfds = NULL;
+#else
 fd_set Fl_Unix_Screen_Driver::fdsets[3];
 #endif
 int Fl_Unix_Screen_Driver::maxfd = 0;

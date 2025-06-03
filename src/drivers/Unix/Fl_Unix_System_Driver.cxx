@@ -723,18 +723,18 @@ void Fl_Unix_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), vo
 #  if USE_POLL
     pollfd *tpoll;
 
-    if (!pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
-    else tpoll = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
+    if (!Fl_Unix_Screen_Driver::pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
+    else tpoll = (pollfd*)realloc(Fl_Unix_Screen_Driver::pollfds, fd_array_size*sizeof(pollfd));
 
     if (!tpoll) return;
-    pollfds = tpoll;
+    Fl_Unix_Screen_Driver::pollfds = tpoll;
 #  endif
   }
   Fl_Unix_Screen_Driver::fd[i].cb = cb;
   Fl_Unix_Screen_Driver::fd[i].arg = v;
 #  if USE_POLL
-  pollfds[i].fd = n;
-  pollfds[i].events = events;
+  Fl_Unix_Screen_Driver::pollfds[i].fd = n;
+  Fl_Unix_Screen_Driver::pollfds[i].events = events;
 #  else
   Fl_Unix_Screen_Driver::fd[i].fd = n;
   Fl_Unix_Screen_Driver::fd[i].events = events;
@@ -756,10 +756,10 @@ void Fl_Unix_System_Driver::remove_fd(int n, int events) {
 # endif
   for (i=j=0; i<Fl_Unix_Screen_Driver::nfds; i++) {
 #  if USE_POLL
-    if (pollfds[i].fd == n) {
-      int e = pollfds[i].events & ~events;
+    if (Fl_Unix_Screen_Driver::pollfds[i].fd == n) {
+      int e = Fl_Unix_Screen_Driver::pollfds[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
-      pollfds[j].events = e;
+      Fl_Unix_Screen_Driver::pollfds[j].events = e;
     }
 #  else
     if (Fl_Unix_Screen_Driver::fd[i].fd == n) {
@@ -773,7 +773,7 @@ void Fl_Unix_System_Driver::remove_fd(int n, int events) {
     if (j<i) {
       Fl_Unix_Screen_Driver::fd[j] = Fl_Unix_Screen_Driver::fd[i];
 #  if USE_POLL
-      pollfds[j] = pollfds[i];
+      Fl_Unix_Screen_Driver::pollfds[j] = Fl_Unix_Screen_Driver::pollfds[i];
 #  endif
     }
     j++;
