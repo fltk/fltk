@@ -4730,7 +4730,7 @@ int Fl_Cocoa_Window_Driver::decorated_h()
   return h() + bt/s;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0 && defined(__BLOCKS__)
 
 // Requires -weak_framework ScreenCaptureKit and used by FLTK for macOS ≥ 15.0
 static CGImageRef capture_decorated_window_SCK(NSWindow *nswin) {
@@ -4815,7 +4815,7 @@ CGImageRef Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(NSWindow *nswin
   // usable with 10.5 and above
   CGImageRef img = NULL;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_15_0 && defined(__BLOCKS__)
   if (fl_mac_os_version >= 150000)
       img = capture_decorated_window_SCK(nswin);
   else
