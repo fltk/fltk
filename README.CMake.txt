@@ -288,6 +288,9 @@ FLTK_OPTION_SVG - default ON
     FLTK has a built-in SVG library and can create (write) SVG image files.
     Turning this option off disables SVG (read and write) support.
 
+FLTK_USE_DBUS - default ON (Wayland only).
+    Meaningful only under Wayland. Allows FLTK to detect the current cursor theme.
+
 FLTK_USE_LIBDECOR_GTK - default ON (Wayland only).
     Meaningful only under Wayland and if FLTK_USE_SYSTEM_LIBDECOR is 'OFF'.
     Allows to use libdecor's GTK plugin to draw window titlebars. Otherwise
