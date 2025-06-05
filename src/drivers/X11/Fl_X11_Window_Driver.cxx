@@ -58,7 +58,9 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 
 Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
 {
+#if USE_XFT || FLTK_USE_CAIRO
   Fl::remove_timeout(resize_after_screen_change, pWindow);
+#endif
   if (shape_data_) {
     delete shape_data_->effective_bitmap_;
     delete shape_data_;
