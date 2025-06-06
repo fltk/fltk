@@ -206,11 +206,33 @@ static void jpeg_unprotected_mem_src(j_decompress_ptr cinfo, const unsigned char
 }
 #endif // HAVE_LIBJPEG
 
+// The following struct is used to control reading an image file and some
+// error conditions. It *must* be allocated on the heap (not as a local/stack
+// variable) because otherwise the macOS/clang optimizer would optimize it
+// away for some unknown reason. See GitHub Issue #1207.
+// This struct also includes `FILE *fp` which had been allocated on the heap
+// previously for a similar reason (gcc: [-Wclobbered]).
+
+struct load_stat {
+  FILE *fp;                             // file pointer if reading from disk
+  int max_finish_decompress_err;        // count errors and give up after a while
+  int max_destroy_decompress_err;       // ... to avoid recursion and deadlock
+
+  load_stat() {         // c'tor
+    fp = nullptr;
+    max_finish_decompress_err  = 5;
+    max_destroy_decompress_err = 5;
+  }
+  ~load_stat() {        // d'tor
+    if (fp)
+      fclose(fp);
+  }
+};
 
 /*
  This method reads JPEG image data and creates an RGB or grayscale image.
- To avoid code duplication, we set filename if we want to read form a file or
- data to read from memory instead. Sharename can be set if the image is
+ To avoid code duplication, we set filename if we want to read from a file
+ or data to read from memory instead. Sharename can be set if the image is
  supposed to be added to the Fl_Shared_Image list.
  */
 void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const unsigned char *data, int data_length)
@@ -220,18 +242,7 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   fl_jpeg_error_mgr       jerr;     // Error handler info
   JSAMPROW                row;      // Sample row pointer
 
-  // The following variables are pointers allocating some private space that
-  // is not reset by 'setjmp()'. At least under macOS, it's necessay to make
-  // these variables volatile to avoid errors occurring when compiled with -O1 (issue #1207).
-  volatile char* max_finish_decompress_err;      // count errors and give up after a while
-  volatile char* max_destroy_decompress_err;     // to avoid recursion and deadlock
-
-  // Note: The file pointer fp must not be an automatic (stack) variable
-  // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
-  // Hence the actual 'fp' is allocated with operator new.
-
-  FILE** fp = new FILE*;   // always allocate file pointer
-  *fp = NULL;
+  struct load_stat *lstat = new load_stat();
 
   // Clear data...
   alloc_array = 0;
@@ -239,15 +250,15 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
 
   // Open the image file if we read from the file system
   if (filename) {
-    if ((*fp = fl_fopen(filename, "rb")) == NULL) {
+    if ((lstat->fp = fl_fopen(filename, "rb")) == NULL) {
       ld(ERR_FILE_ACCESS);
-      delete fp;
+      delete lstat;
       return;
     }
   } else {
     if (data==0L) {
       ld(ERR_FILE_ACCESS);
-      delete fp;
+      delete lstat;
       return;
     }
   }
@@ -257,12 +268,6 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   jerr.pub_.error_exit     = fl_jpeg_error_handler;
   jerr.pub_.output_message = fl_jpeg_output_handler;
 
-  // Setup error loop variables
-  max_finish_decompress_err = (char*)malloc(1);   // allocate space on the frame for error counters
-  max_destroy_decompress_err = (char*)malloc(1);  // otherwise, the variables are reset on the longjmp
-  *max_finish_decompress_err=10;
-  *max_destroy_decompress_err=10;
-
   if (setjmp(jerr.errhand_))
   {
     // JPEG error handling...
@@ -270,15 +275,13 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
     if (filename) name = filename;
     else if (sharename) name = sharename;
     Fl::warning("JPEG file \"%s\" is too large or contains errors!\n", name);
+
     // if any of the cleanup routines hits another error, we would end up
     // in a loop. So instead, we decrement max_err for some upper cleanup limit.
-    if ( ((*max_finish_decompress_err)-- > 0) && array)
+    if ( ((lstat->max_finish_decompress_err)-- > 0) && array)
       jpeg_finish_decompress(&dinfo);
-    if ( (*max_destroy_decompress_err)-- > 0)
+    if ( (lstat->max_destroy_decompress_err)-- > 0)
       jpeg_destroy_decompress(&dinfo);
-
-    if (*fp)
-      fclose(*fp);
 
     w(0);
     h(0);
@@ -290,17 +293,14 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
       alloc_array = 0;
     }
 
-    free((void*)max_destroy_decompress_err);
-    free((void*)max_finish_decompress_err);
-
     ld(ERR_FORMAT);
-    delete fp;
+    delete lstat;
     return;
   }
 
   jpeg_create_decompress(&dinfo);
-  if (*fp) {
-    jpeg_stdio_src(&dinfo, *fp);
+  if (lstat->fp) {
+    jpeg_stdio_src(&dinfo, lstat->fp);
   } else {
     if (data_length==-1)
       jpeg_unprotected_mem_src(&dinfo, data);
@@ -336,16 +336,11 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   jpeg_finish_decompress(&dinfo);
   jpeg_destroy_decompress(&dinfo);
 
-  free((void*)max_destroy_decompress_err);
-  free((void*)max_finish_decompress_err);
-
-  if (*fp)
-    fclose(*fp);
+  delete lstat;
 
   if (sharename && w() && h()) {
     Fl_Shared_Image *si = new Fl_Shared_Image(sharename, this);
     si->add();
   }
-  delete fp;
 #endif // HAVE_LIBJPEG
 }
