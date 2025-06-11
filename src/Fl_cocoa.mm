@@ -4778,6 +4778,7 @@ static CGImageRef capture_decorated_window_SCK(NSWindow *nswin) {
       int s = (int)[filter pointPixelScale];
       SCStreamConfiguration *config = [[[SCStreamConfiguration alloc] init] autorelease];
       [config setIgnoreShadowsSingleWindow:YES];
+      [config setIgnoreShadowsDisplay:YES]; // necessary with macOS 26 Tahoe
       [config setShowsCursor:NO];
       [config setWidth:W*s];
       [config setHeight:H*s];
