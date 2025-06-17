@@ -361,7 +361,7 @@ public:
   ///                0: hides collapse icons.
   ///
   inline void showcollapse(int val) {
-    _showcollapse = val;
+    _showcollapse = (char)val;
   }
   /// Get the default sort order value
   inline Fl_Tree_Sort sortorder() const {

@@ -483,14 +483,14 @@ protected:
       else                        bgcolor(defaultbgcolor_);
     }
     int  onoff(bool flag, Attrib a) { return (flag ? (attrib_ | a) : (attrib_ & ~a)); }
-    void sgr_bold(bool val)      { attrib_ = onoff(val, Fl_Terminal::BOLD);      } // e.g. ESC[1m
-    void sgr_dim(bool val)       { attrib_ = onoff(val, Fl_Terminal::DIM);       } // e.g. ESC[2m
-    void sgr_italic(bool val)    { attrib_ = onoff(val, Fl_Terminal::ITALIC);    } // e.g. ESC[3m
-    void sgr_underline(bool val) { attrib_ = onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[3m
-    void sgr_dbl_under(bool val) { attrib_ = onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[21m (TODO!)
-    void sgr_blink(bool val)     { (void)val; /* NOT IMPLEMENTED */              } // e.g. ESC[5m
-    void sgr_inverse(bool val)   { attrib_ = onoff(val, Fl_Terminal::INVERSE);   } // e.g. ESC[7m
-    void sgr_strike(bool val)    { attrib_ = onoff(val, Fl_Terminal::STRIKEOUT); } // e.g. ESC[9m
+    void sgr_bold(bool val)      { attrib_ = (uchar)onoff(val, Fl_Terminal::BOLD);      } // e.g. ESC[1m
+    void sgr_dim(bool val)       { attrib_ = (uchar)onoff(val, Fl_Terminal::DIM);       } // e.g. ESC[2m
+    void sgr_italic(bool val)    { attrib_ = (uchar)onoff(val, Fl_Terminal::ITALIC);    } // e.g. ESC[3m
+    void sgr_underline(bool val) { attrib_ = (uchar)onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[3m
+    void sgr_dbl_under(bool val) { attrib_ = (uchar)onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[21m (TODO!)
+    void sgr_blink(bool val)     { (void)val; /* NOT IMPLEMENTED */                     } // e.g. ESC[5m
+    void sgr_inverse(bool val)   { attrib_ = (uchar)onoff(val, Fl_Terminal::INVERSE);   } // e.g. ESC[7m
+    void sgr_strike(bool val)    { attrib_ = (uchar)onoff(val, Fl_Terminal::STRIKEOUT); } // e.g. ESC[9m
   };
 
 protected:
