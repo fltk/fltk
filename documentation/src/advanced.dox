@@ -161,50 +161,6 @@ with calls to Fl::lock() and Fl::unlock():
 To trigger a refresh of the GUI from a worker thread, the
 worker code should call Fl::awake()
 
-<H3>Using Fl::awake thread messages</H3>
-You can send messages from worker threads to the \p main() thread
-using Fl::awake(void* message).
-If using this thread message interface, your \p main() might
-look like this:
-
-\code
-    int main(int argc, char **argv) {
-      /* Create your windows and widgets here */
-
-      Fl::lock(); /* "start" the FLTK lock mechanism */
-
-      /* show your window */
-      main_win->show(argc, argv);
-
-      /* start your worker threads */
-      ... start threads ...
-
-      /* Run the FLTK loop and process thread messages */
-      while (Fl::wait() > 0) {
-        if ((next_message = Fl::thread_message()) != NULL) {
-          /* process your data, update widgets, etc. */
-          ...
-        }
-      }
-
-      /* terminate any pending worker threads */
-      ... stop threads ...
-
-      return 0;
-    }
-\endcode
-
-Your worker threads can send messages to the \p main() thread
-using Fl::awake(void* message):
-
-\code
-    void *msg;       // "msg" is a pointer to your message
-    Fl::awake(msg);  // send "msg" to main thread
-\endcode
-
-A message can be anything you like. The \p main() thread can retrieve
-the message by calling Fl::thread_message().
-
 <H3>Using Fl::awake callback messages</H3>
 You can also request that the \p main() thread call a function on behalf of
 the worker thread by using Fl::awake(Fl_Awake_Handler cb, void* userdata).
@@ -245,19 +201,11 @@ consumed the data, thereby allowing the
 worker thread to re-use or update \p userdata.
 
 \warning
-The mechanisms used to deliver Fl::awake(void* message)
-and Fl::awake(Fl_Awake_Handler cb, void* userdata) events to the
-\p main() thread can interact in unexpected ways on some platforms.
-Therefore, for reliable operation, it is advised that a program use
-either Fl::awake(Fl_Awake_Handler cb, void* userdata) or
-Fl::awake(void* message), but that they never be intermixed. Calling
-Fl::awake() with no parameters should be safe in either case.
-\par
-If you have to choose between using the Fl::awake(void* message)
-and Fl::awake(Fl_Awake_Handler cb, void* userdata) mechanisms and
-don't know which to choose, then try the
-Fl::awake(Fl_Awake_Handler cb, void* userdata) method first as it
-tends to be more powerful in general.
+The Fl::awake(void* message) call has been deprecated because the API was not
+sufficient to ensure the deliver of all message or the order of messages. The 
+cal still exists for back compatibility, but should be repleaced with a call
+to Fl::awake(), Fl::awake(handler, user_data), 
+or Fl::awake_once(handler, user_data).
 
 \section advanced_multithreading_lockless FLTK multithreaded "lockless programming"
 

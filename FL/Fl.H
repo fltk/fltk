@@ -346,12 +346,6 @@ public:
   static bool idle() { return (idle_ != nullptr); }
 
 #ifndef FL_DOXYGEN
-private:
-  static Fl_Awake_Handler *awake_ring_;
-  static void **awake_data_;
-  static int awake_ring_size_;
-  static int awake_ring_head_;
-  static int awake_ring_tail_;
 public:
   static const char* scheme_;
   static Fl_Image* scheme_bg_;
@@ -360,10 +354,6 @@ public:
   static int scrollbar_size_;
   static int menu_linespacing_; // STR #2927
 #endif
-
-
-  static int add_awake_handler_(Fl_Awake_Handler, void*);
-  static int get_awake_handler_(Fl_Awake_Handler&, void*&);
 
 public:
 
@@ -1366,23 +1356,22 @@ public:
     cut/paste shortcut.
   */
   static int  dnd_text_ops() { return option(OPTION_DND_TEXT); }
+
+  // --- FLTK Multithreading support functions ---
   /** \defgroup fl_multithread Multithreading support functions
         fl multithreading support functions declared in <FL/Fl.H>
    @{ */
-
-  // Multithreading support:
+  // Thread locking:
   static int lock();
   static void unlock();
-  static void awake(void* message = 0);
-  /** See void awake(void* message=0). */
-  static int awake(Fl_Awake_Handler cb, void* message = 0);
-  /**
-    The thread_message() method returns the last message
-    that was sent from a child by the awake() method.
-
-    See also: \ref advanced_multithreading
-  */
-  static void* thread_message(); // platform dependent
+  // Thread wakup and defered calls:
+  static void awake();
+  FL_DEPRECATED("since 1.5.0 - use Fl::awake() or Fl::awake(handler, user_data) instead",
+  static void awake(void* message));
+  static int awake(Fl_Awake_Handler handler, void* user_data=nullptr);
+  static int awake_once(Fl_Awake_Handler handler, void* user_data=nullptr);
+  FL_DEPRECATED("since 1.5.0 - use Fl::awake() or Fl::awake(handler, user_data) instead",
+  static void* thread_message()); // platform dependent
   /** @} */
 
   /** \defgroup fl_del_widget Safe widget deletion support functions

@@ -63,8 +63,20 @@ protected:
   // implement once for each platform
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
-  static bool awake_ring_empty();
   int filename_relative_(char *to, int tolen, const char *from, const char *base, bool case_sensitive);
+
+  // -- Awake handler stuff --
+public:
+  static Fl_Awake_Handler *awake_ring_;
+  static void **awake_data_;
+  static int awake_ring_size_;
+  static int awake_ring_head_;
+  static int awake_ring_tail_;
+  static bool awake_pending_;
+  static int push_awake_handler(Fl_Awake_Handler, void*, bool once);
+  static int pop_awake_handler(Fl_Awake_Handler&, void*&);
+  static bool awake_ring_empty();
+
 public:
   virtual ~Fl_System_Driver();
   static int command_key;

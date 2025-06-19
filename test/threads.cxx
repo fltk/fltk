@@ -87,10 +87,8 @@ extern "C" void* prime_func(void* p)
       Fl::unlock();
 
       // Send a message to the main thread, at which point it will
-      // process any pending redraws for our browser widget.  The
-      // message we pass here isn't used for anything, so we could also
-      // just pass NULL.
-      Fl::awake(p);
+      // process any pending redraws for our browser widget.  
+      Fl::awake();
       if (n>10000 && !proud) {
         proud = 1;
         Fl::awake(magic_number_cb, value);

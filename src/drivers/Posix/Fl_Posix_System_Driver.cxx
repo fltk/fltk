@@ -387,7 +387,7 @@ static void thread_awake_cb(int fd, void*) {
   }
   Fl_Awake_Handler func;
   void *data;
-  while (Fl::get_awake_handler_(func, data)==0) {
+  while (Fl_System_Driver::pop_awake_handler(func, data)==0) {
     (*func)(data);
   }
 }
