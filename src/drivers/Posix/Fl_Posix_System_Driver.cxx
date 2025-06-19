@@ -321,6 +321,8 @@ int Fl_Posix_System_Driver::close_fd(int fd) { return close(fd); }
 #  include <unistd.h>
 #  include <fcntl.h>
 #  include <pthread.h>
+#  include <sys/ioctl.h>
+#  include <mutex> // for std::mutex (since C++11)
 
 // Pipe for thread messaging via Fl::awake()...
 static int thread_filedes[2];
@@ -368,13 +370,25 @@ static void unlock_function_rec() {
 }
 #  endif // HAVE_PTHREAD_MUTEX_RECURSIVE
 
+// -- Start of "awake" implementation --
+static void* thread_message_ = nullptr;
+static std::mutex pipe_mutex;
+
 void Fl_Posix_System_Driver::awake(void* msg) {
+  thread_message_ = msg;
   if (thread_filedes[1]) {
-    if (write(thread_filedes[1], &msg, sizeof(void*))==0) { /* ignore */ }
+    pipe_mutex.lock();
+    int avail = 0;
+    ioctl(thread_filedes[0], FIONREAD, &avail);
+    if (avail == 0) {
+      // Only write to the pipe if there is no data wainting to avoid overflow.
+      char dummy = 0;
+      if (write(thread_filedes[1], &dummy, 1)==0) { /* ignore */ }
+    }
+    pipe_mutex.unlock();
   }
 }
 
-static void* thread_message_;
 void* Fl_Posix_System_Driver::thread_message() {
   void* r = thread_message_;
   thread_message_ = 0;
@@ -382,8 +396,11 @@ void* Fl_Posix_System_Driver::thread_message() {
 }
 
 static void thread_awake_cb(int fd, void*) {
-  if (read(fd, &thread_message_, sizeof(void*))==0) {
-    /* This should never happen */
+  if (thread_filedes[1]) {
+    pipe_mutex.lock();
+    char dummy = 0;
+    if (read(fd, &dummy, 1)==0) { /* This should never happen */ }
+    pipe_mutex.unlock();
   }
   Fl_Awake_Handler func;
   void *data;
@@ -391,6 +408,7 @@ static void thread_awake_cb(int fd, void*) {
     (*func)(data);
   }
 }
+// -- End of "awake" implementation --
 
 // These pointers are in Fl_x.cxx:
 extern void (*fl_lock_function)();
