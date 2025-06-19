@@ -350,7 +350,7 @@ MSG fl_msg;
 static void process_awake_handler_requests(void) {
   Fl_Awake_Handler func;
   void *data;
-  while (Fl::pop_awake_handler(func, data) == 0) {
+  while (Fl_WinAPI_System_Driver::pop_awake_handler(func, data) == 0) {
     func(data);
   }
 }
