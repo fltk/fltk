@@ -50,6 +50,7 @@ public:
   int open_write(const char *s);
   int close_write();
   int write_project(const char *filename, int selected_only, bool codeview);
+  void NewFunction();
   void write_word(const char *);
   void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_indent(int n);

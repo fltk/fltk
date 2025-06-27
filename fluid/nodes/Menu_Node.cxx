@@ -485,10 +485,10 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
   write_comment_inline_c(f, " ");
   f.write_c(" {");
   if (label() && label()[0])
-    switch (Fluid.proj.i18n_type) {
+    switch (Fluid.proj.i18n.type) {
       case fld::I18n_Type::GNU:
         // we will call i18n when the menu is instantiated for the first time
-        f.write_c("%s(", Fluid.proj.i18n_gnu_static_function.c_str());
+        f.write_c("%s(", Fluid.proj.i18n.gnu_static_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
@@ -591,16 +591,16 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
       f.write_c("%sml->labela = (char*)", f.indent());
       image->write_inline(f);
       f.write_c(";\n");
-      if (Fluid.proj.i18n_type==fld::I18n_Type::NONE) {
+      if (Fluid.proj.i18n.type==fld::I18n_Type::NONE) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
-      } else if (Fluid.proj.i18n_type==fld::I18n_Type::GNU) {
+      } else if (Fluid.proj.i18n.type==fld::I18n_Type::GNU) {
         f.write_c("%sml->labelb = %s(o->label());\n",
-                f.indent(), Fluid.proj.i18n_gnu_function.c_str());
-      } else if (Fluid.proj.i18n_type==fld::I18n_Type::POSIX) {
+                f.indent(), Fluid.proj.i18n.gnu_function.c_str());
+      } else if (Fluid.proj.i18n.type==fld::I18n_Type::POSIX) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
                   f.indent(),
-                  Fluid.proj.i18n_pos_file.empty() ? "_catalog" : Fluid.proj.i18n_pos_file.c_str(),
-                  Fluid.proj.i18n_pos_set.c_str(), msgnum());
+                  Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
+                  Fluid.proj.i18n.posix_set.c_str(), msgnum());
       }
       f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
       f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
@@ -609,21 +609,21 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
       image->write_code(f, 0, "o");
     }
   }
-  if ((Fluid.proj.i18n_type != fld::I18n_Type::NONE) && label() && label()[0]) {
+  if ((Fluid.proj.i18n.type != fld::I18n_Type::NONE) && label() && label()[0]) {
     Fl_Labeltype t = o->labeltype();
     if (image) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
-      if (Fluid.proj.i18n_type==fld::I18n_Type::GNU) {
+      if (Fluid.proj.i18n.type==fld::I18n_Type::GNU) {
         f.write_c("%so->label(%s(o->label()));\n",
-                f.indent(), Fluid.proj.i18n_gnu_function.c_str());
-      } else if (Fluid.proj.i18n_type==fld::I18n_Type::POSIX) {
+                f.indent(), Fluid.proj.i18n.gnu_function.c_str());
+      } else if (Fluid.proj.i18n.type==fld::I18n_Type::POSIX) {
         f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
                   f.indent(),
-                  Fluid.proj.i18n_pos_file.empty() ? "_catalog" : Fluid.proj.i18n_pos_file.c_str(),
-                  Fluid.proj.i18n_pos_set.c_str(), msgnum());
+                  Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
+                  Fluid.proj.i18n.posix_set.c_str(), msgnum());
       }
     }
   }

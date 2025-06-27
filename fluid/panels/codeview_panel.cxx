@@ -180,7 +180,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       char fn[FL_PATH_MAX+1];
       fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
       fl_strlcat(fn, "strings", FL_PATH_MAX);
-      fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n_type)]);
+      fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n.type)]);
       fld::io::write_strings(Fluid.proj, fn);
       int top = cv_strings->top_line();
       cv_strings->buffer()->loadfile(fn);

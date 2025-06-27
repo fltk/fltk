@@ -648,14 +648,14 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
     }
   }
   std::string loc_include, loc_conditional;
-  if (proj_.i18n_type==fld::I18n_Type::GNU) {
-    loc_include = proj_.i18n_gnu_include;
-    loc_conditional = proj_.i18n_gnu_conditional;
+  if (proj_.i18n.type==fld::I18n_Type::GNU) {
+    loc_include = proj_.i18n.gnu_include;
+    loc_conditional = proj_.i18n.gnu_conditional;
   } else {
-    loc_include = proj_.i18n_pos_include;
-    loc_conditional = proj_.i18n_pos_conditional;
+    loc_include = proj_.i18n.posix_include;
+    loc_conditional = proj_.i18n.posix_conditional;
   }
-  if ((proj_.i18n_type != fld::I18n_Type::NONE) && !loc_include.empty()) {
+  if ((proj_.i18n.type != fld::I18n_Type::NONE) && !loc_include.empty()) {
     int conditional = !loc_conditional.empty();
     if (conditional) {
       write_c("#ifdef %s\n", loc_conditional.c_str());
@@ -665,9 +665,9 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       write_c("#%sinclude \"%s\"\n", indent(), loc_include.c_str());
     else
       write_c("#%sinclude %s\n", indent(), loc_include.c_str());
-    if (proj_.i18n_type == fld::I18n_Type::POSIX) {
-      if (!proj_.i18n_pos_file.empty()) {
-        write_c("extern nl_catd %s;\n", proj_.i18n_pos_file.c_str());
+    if (proj_.i18n.type == fld::I18n_Type::POSIX) {
+      if (!proj_.i18n.posix_file.empty()) {
+        write_c("extern nl_catd %s;\n", proj_.i18n.posix_file.c_str());
       } else {
         write_c("// Initialize I18N stuff now for menus...\n");
         write_c("#%sinclude <locale.h>\n", indent());
@@ -677,14 +677,14 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
     }
     if (conditional) {
       write_c("#else\n");
-      if (proj_.i18n_type == fld::I18n_Type::GNU) {
-        if (!proj_.i18n_gnu_function.empty()) {
-          write_c("#%sifndef %s\n", indent(), proj_.i18n_gnu_function.c_str());
-          write_c("#%sdefine %s(text) text\n", indent_plus(1), proj_.i18n_gnu_function.c_str());
+      if (proj_.i18n.type == fld::I18n_Type::GNU) {
+        if (!proj_.i18n.gnu_function.empty()) {
+          write_c("#%sifndef %s\n", indent(), proj_.i18n.gnu_function.c_str());
+          write_c("#%sdefine %s(text) text\n", indent_plus(1), proj_.i18n.gnu_function.c_str());
           write_c("#%sendif\n", indent());
         }
       }
-      if (proj_.i18n_type == fld::I18n_Type::POSIX) {
+      if (proj_.i18n.type == fld::I18n_Type::POSIX) {
         write_c("#%sifndef catgets\n", indent());
         write_c("#%sdefine catgets(catalog, set, msgid, text) text\n", indent_plus(1));
         write_c("#%sendif\n", indent());
@@ -692,9 +692,9 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       indentation--;
       write_c("#endif\n");
     }
-    if (proj_.i18n_type == fld::I18n_Type::GNU && proj_.i18n_gnu_static_function[0]) {
-      write_c("#ifndef %s\n", proj_.i18n_gnu_static_function.c_str());
-      write_c("#%sdefine %s(text) text\n", indent_plus(1), proj_.i18n_gnu_static_function.c_str());
+    if (proj_.i18n.type == fld::I18n_Type::GNU && proj_.i18n.gnu_static_function[0]) {
+      write_c("#ifndef %s\n", proj_.i18n.gnu_static_function.c_str());
+      write_c("#%sdefine %s(text) text\n", indent_plus(1), proj_.i18n.gnu_static_function.c_str());
       write_c("#endif\n");
     }
   }

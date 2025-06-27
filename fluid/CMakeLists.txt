@@ -132,6 +132,7 @@ set(CPPFILES
   panels/widget_panel/Grid_Tab.cxx
   panels/widget_panel/Grid_Child_Tab.cxx
   proj/align_widget.cxx
+  proj/i18n.cxx
   proj/mergeback.cxx
   proj/undo.cxx
   rsrcs/pixmaps.cxx
@@ -185,6 +186,7 @@ set(HEADERFILES
   panels/widget_panel/Grid_Child_Tab.h
   proj/align_widget.h
   proj/mergeback.h
+  proj/i18n.h
   proj/undo.h
   rsrcs/comments.h
   rsrcs/pixmaps.h

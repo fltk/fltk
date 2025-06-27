@@ -44,17 +44,7 @@ Project::~Project() {
  */
 void Project::reset() {
   ::delete_all();
-  i18n_type = fld::I18n_Type::NONE;
-
-  i18n_gnu_include = "<libintl.h>";
-  i18n_gnu_conditional = "";
-  i18n_gnu_function = "gettext";
-  i18n_gnu_static_function = "gettext_noop";
-
-  i18n_pos_include = "<nl_types.h>";
-  i18n_pos_conditional = "";
-  i18n_pos_file = "";
-  i18n_pos_set = "1";
+  i18n.reset();
 
   include_H_from_C = 1;
   use_FL_COMMAND = 0;
@@ -167,7 +157,7 @@ std::string Project::stringsfile_path() const {
  \return the file name without path
  */
 std::string Project::stringsfile_name() const {
-  switch (i18n_type) {
+  switch (i18n.type) {
     default: return fl_filename_setext_str(fl_filename_name(proj_filename), ".txt");
     case fld::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
     case fld::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");

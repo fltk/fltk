@@ -261,38 +261,8 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
         proj_.avoid_early_includes=1;
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_type")) {
-        proj_.i18n_type = static_cast<fld::I18n_Type>(atoi(read_word()));
-        goto CONTINUE;
-      }
-      if (!strcmp(c,"i18n_gnu_function")) {
-        proj_.i18n_gnu_function = read_word();
-        goto CONTINUE;
-      }
-      if (!strcmp(c,"i18n_gnu_static_function")) {
-        proj_.i18n_gnu_static_function = read_word();
-        goto CONTINUE;
-      }
-      if (!strcmp(c,"i18n_pos_file")) {
-        proj_.i18n_pos_file = read_word();
-        goto CONTINUE;
-      }
-      if (!strcmp(c,"i18n_pos_set")) {
-        proj_.i18n_pos_set = read_word();
-        goto CONTINUE;
-      }
-      if (!strcmp(c,"i18n_include")) {
-        if (proj_.i18n_type == fld::I18n_Type::GNU)
-          proj_.i18n_gnu_include = read_word();
-        else if (proj_.i18n_type == fld::I18n_Type::POSIX)
-          proj_.i18n_pos_include = read_word();
-        goto CONTINUE;
-      }
-      if (!strcmp(c,"i18n_conditional")) {
-        if (proj_.i18n_type == fld::I18n_Type::GNU)
-          proj_.i18n_gnu_conditional = read_word();
-        else if (proj_.i18n_type == fld::I18n_Type::POSIX)
-          proj_.i18n_pos_conditional = read_word();
+      if (strncmp(c, "i18n_", 5) == 0) {
+        proj_.i18n.read(*this, c);
         goto CONTINUE;
       }
       if (!strcmp(c,"header_name")) {

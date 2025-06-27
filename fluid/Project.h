@@ -19,6 +19,7 @@
 #define FLUID_PROJECT_H
 
 #include "proj/undo.h"
+#include "proj/i18n.h"
 #include "nodes/Tree.h"
 
 #include <string>
@@ -34,16 +35,6 @@ namespace app {
 } // namespace app
 
 /**
- Enumeration of available internationalization types.
- */
-enum class I18n_Type {
-  NONE = 0, ///< No i18n, all strings are litearals
-  GNU,      ///< GNU gettext internationalization
-  POSIX     ///< Posix catgets internationalization
-};
-
-
-/**
  Data and settings for a FLUID project file.
  */
 class Project
@@ -55,29 +46,8 @@ public: // Member Variables
   // Manage the node tree of the project.
   node::Tree tree { *this };
 
-  /// One of the available internationalization types.
-  fld::I18n_Type i18n_type = I18n_Type::NONE;
-  /// Include file for GNU i18n, writes an #include statement into the source
-  /// file. This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
-  std::string i18n_gnu_include = "<libintl.h>";
-  // Optional name of a macro for conditional i18n compilation.
-  std::string i18n_gnu_conditional = "";
-  /// For the gettext/intl.h options, this is the function that translates text
-  /// at runtime. This is usually "gettext" or "_".
-  std::string i18n_gnu_function = "gettext";
-  /// For the gettext/intl.h options, this is the function that marks the translation
-  /// of text at initialisation time. This is usually "gettext_noop" or "N_".
-  std::string i18n_gnu_static_function = "gettext_noop";
-
-  /// Include file for Posix i18n, write a #include statement into the source
-  /// file. This is usually `<nl_types.h>` for Posix catgets.
-  std::string i18n_pos_include = "<nl_types.h>";
-  // Optional name of a macro for conditional i18n compilation.
-  std::string i18n_pos_conditional = "";
-  /// Name of the nl_catd database
-  std::string i18n_pos_file = "";
-  /// Message set ID for the catalog.
-  std::string i18n_pos_set = "1";
+  // Project internationalization.
+  proj::I18n i18n { *this };
 
   /// If set, generate code to include the header file form the c++ file
   int include_H_from_C = 1;
