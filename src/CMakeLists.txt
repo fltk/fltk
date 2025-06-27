@@ -846,6 +846,7 @@ endif()
 fl_add_library(fltk_images STATIC "${IMGCPPFILES}")
 target_link_libraries(fltk_images PUBLIC  fltk::fltk)
 target_link_libraries(fltk_images PRIVATE ${FLTK_IMAGE_LIBRARIES})
+target_include_directories(fltk_images PRIVATE ${FLTK_IMAGE_INCLUDE_DIRECTORIES})
 
 if(FLTK_USE_BUNDLED_JPEG)
   target_include_directories(fltk_images PUBLIC
