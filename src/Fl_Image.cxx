@@ -464,41 +464,94 @@ void Fl_RGB_Image::uncache() {
   Fl_Graphics_Driver::default_driver().uncache(this, id_, mask_);
 }
 
-Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
+
+/**
+ Optimize the simple copy where the width and height are the same,
+ or when we are copying an empty image.
+ */
+Fl_RGB_Image *Fl_RGB_Image::copy_optimize_(int W, int H) const {
   Fl_RGB_Image  *new_image;     // New RGB image
   uchar         *new_array;     // New array for image data
-
-  // Optimize the simple copy where the width and height are the same,
-  // or when we are copying an empty image...
-  if ((W == data_w() && H == data_h()) ||
-      !w() || !h() || !d() || !array) {
-    if (array) {
-      // Make a copy of the image data and return a new Fl_RGB_Image...
-      new_array = new uchar[((long)W) * H * d()];
-      if (ld() && (ld() != W*d())) {
-        const uchar *src = array;
-        uchar *dst = new_array;
-        int dy, dh = H, wd = W*d(), wld = ld();
-        for (dy=0; dy<dh; dy++) {
-          memcpy(dst, src, wd);
-          src += wld;
-          dst += wd;
-        }
-      } else {
-        memcpy(new_array, array, ((long)W) * H * d());
+  if (array) {
+    // Make a copy of the image data and return a new Fl_RGB_Image...
+    new_array = new uchar[((long)W) * H * d()];
+    if (ld() && (ld() != W*d())) {
+      const uchar *src = array;
+      uchar *dst = new_array;
+      int dy, dh = H, wd = W*d(), wld = ld();
+      for (dy=0; dy<dh; dy++) {
+        memcpy(dst, src, wd);
+        src += wld;
+        dst += wd;
       }
-      new_image = new Fl_RGB_Image(new_array, W, H, d());
-      new_image->alloc_array = 1;
     } else {
-      new_image = new Fl_RGB_Image(array, W, H, d(), ld());
+      memcpy(new_array, array, ((long)W) * H * d());
     }
-    return new_image;
+    new_image = new Fl_RGB_Image(new_array, W, H, d());
+    new_image->alloc_array = 1;
+  } else {
+    new_image = new Fl_RGB_Image(array, W, H, d(), ld());
   }
-  if (W <= 0 || H <= 0) return 0;
+  return new_image;
+}
 
-  // OK, need to resize the image data; allocate memory and create new image
+/**
+ Create a scaled up or down copy of this image using nearest neighbor.
+ */
+Fl_RGB_Image *Fl_RGB_Image::copy_nearest_neighbor_(int W, int H) const {
   uchar         *new_ptr;       // Pointer into new array
   const uchar   *old_ptr;       // Pointer into old array
+  int           dx, dy,         // Destination coordinates
+                line_d;         // stride from line to line
+
+  // Allocate memory for the new image...
+  uchar  *new_array = new uchar [((long)W) * H * d()];
+  Fl_RGB_Image  *new_image = new Fl_RGB_Image(new_array, W, H, d());
+  new_image->alloc_array = 1;
+
+  line_d = ld() ? ld() : data_w() * d();
+
+  int         c,              // Channel number
+              sy,             // Source coordinate
+              xerr, yerr,     // X & Y errors
+              xmod, ymod,     // X & Y moduli
+              xstep, ystep;   // X & Y step increments
+
+  // Figure out Bresenham step/modulus values...
+  xmod   = data_w() % W;
+  xstep  = (data_w() / W) * d();
+  ymod   = data_h() % H;
+  ystep  = data_h() / H;
+
+    // Scale the image using a nearest-neighbor algorithm...
+  for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
+    for (dx = W, xerr = W, old_ptr = array + ((long)sy) * line_d; dx > 0; dx --) {
+      for (c = 0; c < d(); c ++) {
+        *new_ptr++ = old_ptr[c];
+      }
+      old_ptr += xstep;
+      xerr    -= xmod;
+      if (xerr <= 0) {
+        xerr    += W;
+        old_ptr += d();
+      }
+    }
+    sy   += ystep;
+    yerr -= ymod;
+    if (yerr <= 0) {
+      yerr += H;
+      sy ++;
+    }
+  }
+  return new_image;
+}
+
+
+Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(int W, int H) const {
+  Fl_RGB_Image  *new_image;     // New RGB image
+  uchar         *new_array;     // New array for image data
+  // OK, need to resize the image data; allocate memory and create new image
+  uchar         *new_ptr;       // Pointer into new array
   int           dx, dy,         // Destination coordinates
                 line_d;         // stride from line to line
 
@@ -509,107 +562,199 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
 
   line_d = ld() ? ld() : data_w() * d();
 
-  if (Fl_Image::RGB_scaling() == FL_RGB_SCALING_NEAREST) {
 
-    int         c,              // Channel number
-                sy,             // Source coordinate
-                xerr, yerr,     // X & Y errors
-                xmod, ymod,     // X & Y moduli
-                xstep, ystep;   // X & Y step increments
+  // Bilinear scaling (FL_RGB_SCALING_BILINEAR)
+  const float xscale = (data_w() - 1) / (float) W;
+  const float yscale = (data_h() - 1) / (float) H;
+  for (dy = 0; dy < H; dy++) {
+    float oldy = dy * yscale;
+    if (oldy >= data_h())
+      oldy = float(data_h() - 1);
+    const float yfract = oldy - (unsigned) oldy;
 
-    // Figure out Bresenham step/modulus values...
-    xmod   = data_w() % W;
-    xstep  = (data_w() / W) * d();
-    ymod   = data_h() % H;
-    ystep  = data_h() / H;
+    for (dx = 0; dx < W; dx++) {
+      new_ptr = new_array + ((long)dy) * W * d() + dx * d();
 
-    // Scale the image using a nearest-neighbor algorithm...
-    for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-      for (dx = W, xerr = W, old_ptr = array + ((long)sy) * line_d; dx > 0; dx --) {
-        for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
+      float oldx = dx * xscale;
+      if (oldx >= data_w())
+        oldx = float(data_w() - 1);
+      const float xfract = oldx - (unsigned) oldx;
 
-        old_ptr += xstep;
-        xerr    -= xmod;
+      const unsigned leftx = (unsigned)oldx;
+      const unsigned lefty = (unsigned)oldy;
+      const unsigned rightx = (unsigned)(oldx + 1 >= data_w() ? oldx : oldx + 1);
+      const unsigned righty = (unsigned)oldy;
+      const unsigned dleftx = (unsigned)oldx;
+      const unsigned dlefty = (unsigned)(oldy + 1 >= data_h() ? oldy : oldy + 1);
+      const unsigned drightx = (unsigned)rightx;
+      const unsigned drighty = (unsigned)dlefty;
 
-        if (xerr <= 0) {
-          xerr    += W;
-          old_ptr += d();
+      uchar left[4], right[4], downleft[4], downright[4];
+      memcpy(left, array + ((long)lefty) * line_d + leftx * d(), d());
+      memcpy(right, array + ((long)righty) * line_d + rightx * d(), d());
+      memcpy(downleft, array + ((long)dlefty) * line_d + dleftx * d(), d());
+      memcpy(downright, array + ((long)drighty) * line_d + drightx * d(), d());
+
+      int i;
+      if (d() == 4) {
+        for (i = 0; i < 3; i++) {
+          left[i] = (uchar)(left[i] * left[3] / 255.0f);
+          right[i] = (uchar)(right[i] * right[3] / 255.0f);
+          downleft[i] = (uchar)(downleft[i] * downleft[3] / 255.0f);
+          downright[i] = (uchar)(downright[i] * downright[3] / 255.0f);
         }
       }
 
-      sy   += ystep;
-      yerr -= ymod;
-      if (yerr <= 0) {
-        yerr += H;
-        sy ++;
+      const float leftf = 1 - xfract;
+      const float rightf = xfract;
+      const float upf = 1 - yfract;
+      const float downf = yfract;
+
+      for (i = 0; i < d(); i++) {
+        new_ptr[i] = (uchar)((left[i] * leftf +
+                              right[i] * rightf) * upf +
+                             (downleft[i] * leftf +
+                              downright[i] * rightf) * downf);
       }
-    }
-  } else {
-    // Bilinear scaling (FL_RGB_SCALING_BILINEAR)
-    const float xscale = (data_w() - 1) / (float) W;
-    const float yscale = (data_h() - 1) / (float) H;
-    for (dy = 0; dy < H; dy++) {
-      float oldy = dy * yscale;
-      if (oldy >= data_h())
-        oldy = float(data_h() - 1);
-      const float yfract = oldy - (unsigned) oldy;
 
-      for (dx = 0; dx < W; dx++) {
-        new_ptr = new_array + ((long)dy) * W * d() + dx * d();
-
-        float oldx = dx * xscale;
-        if (oldx >= data_w())
-          oldx = float(data_w() - 1);
-        const float xfract = oldx - (unsigned) oldx;
-
-        const unsigned leftx = (unsigned)oldx;
-        const unsigned lefty = (unsigned)oldy;
-        const unsigned rightx = (unsigned)(oldx + 1 >= data_w() ? oldx : oldx + 1);
-        const unsigned righty = (unsigned)oldy;
-        const unsigned dleftx = (unsigned)oldx;
-        const unsigned dlefty = (unsigned)(oldy + 1 >= data_h() ? oldy : oldy + 1);
-        const unsigned drightx = (unsigned)rightx;
-        const unsigned drighty = (unsigned)dlefty;
-
-        uchar left[4], right[4], downleft[4], downright[4];
-        memcpy(left, array + ((long)lefty) * line_d + leftx * d(), d());
-        memcpy(right, array + ((long)righty) * line_d + rightx * d(), d());
-        memcpy(downleft, array + ((long)dlefty) * line_d + dleftx * d(), d());
-        memcpy(downright, array + ((long)drighty) * line_d + drightx * d(), d());
-
-        int i;
-        if (d() == 4) {
-          for (i = 0; i < 3; i++) {
-            left[i] = (uchar)(left[i] * left[3] / 255.0f);
-            right[i] = (uchar)(right[i] * right[3] / 255.0f);
-            downleft[i] = (uchar)(downleft[i] * downleft[3] / 255.0f);
-            downright[i] = (uchar)(downright[i] * downright[3] / 255.0f);
-          }
-        }
-
-        const float leftf = 1 - xfract;
-        const float rightf = xfract;
-        const float upf = 1 - yfract;
-        const float downf = yfract;
-
-        for (i = 0; i < d(); i++) {
-          new_ptr[i] = (uchar)((left[i] * leftf +
-                   right[i] * rightf) * upf +
-                   (downleft[i] * leftf +
-                   downright[i] * rightf) * downf);
-        }
-
-        if (d() == 4 && new_ptr[3]) {
-          for (i = 0; i < 3; i++) {
-            new_ptr[i] = (uchar)(new_ptr[i] / (new_ptr[3] / 255.0f));
-          }
+      if (d() == 4 && new_ptr[3]) {
+        for (i = 0; i < 3; i++) {
+          new_ptr[i] = (uchar)(new_ptr[i] / (new_ptr[3] / 255.0f));
         }
       }
     }
   }
-
   return new_image;
 }
+
+/**
+ */
+Fl_RGB_Image *Fl_RGB_Image::copy_scale_down_2h_() const {
+  int W = data_w()/2;
+  int H = data_h();
+  int D = d();
+  int LD = ld() ? ld() : data_w()*D;
+  if ((W==0) || (H==0) || (D==0)) return nullptr;
+  uchar *data = (uchar*)malloc(W*H*D);
+  uchar *dst = data;
+  for (int y = 0; y < H; y++) {
+    const uchar *src = array + y*LD;
+    switch (D) {
+      case 1:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)src[0]) + ((unsigned)src[1]) ) >> 1 ));
+          src += 2;
+        }
+        break;
+      case 2:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)src[0]) + ((unsigned)src[2]) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)src[1]) + ((unsigned)src[3]) ) >> 1 ));
+          src += 4;
+        }
+        break;
+      case 3:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)src[0]) + ((unsigned)src[3]) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)src[1]) + ((unsigned)src[4]) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)src[2]) + ((unsigned)src[5]) ) >> 1 ));
+          src += 6;
+        }
+        break;
+      case 4:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)src[0]) + ((unsigned)src[4]) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)src[1]) + ((unsigned)src[5]) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)src[2]) + ((unsigned)src[6]) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)src[3]) + ((unsigned)src[7]) ) >> 1 ));
+          src += 8;
+        }
+        break;
+    }
+  }
+  return new Fl_RGB_Image(data, W, H, D);
+}
+
+Fl_RGB_Image *Fl_RGB_Image::copy_scale_down_2v_() const {
+  int W = data_w();
+  int H = data_h()/2;
+  int D = d();
+  int LD = ld() ? ld() : data_w()*D;
+  if ((W==0) || (H==0) || (D==0)) return nullptr;
+  uchar *data = (uchar*)malloc(W*H*D);
+  uchar *dst = data;
+  for (int y = 0; y < H; y++) {
+    const uchar *s0 = array + 2*y*LD;
+    const uchar *s1 = s0 + LD;
+    switch (D) {
+      case 1:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+        }
+        break;
+      case 2:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+        }
+        break;
+      case 3:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+        }
+        break;
+      case 4:
+        for (int x=0; x<W; ++x) {
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+          *dst++ = ((uchar) ( ( ((unsigned)*s0++) + ((unsigned)*s1++) ) >> 1 ));
+        }
+        break;
+    }
+  }
+  return new Fl_RGB_Image(data, W, H, D);
+}
+
+
+Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
+  // Optimize the simple copy where the width and height are the same,
+  // or when we are copying an empty image...
+  if ((W == data_w() && H == data_h()) || !w() || !h() || !d() || !array) {
+    return copy_optimize_(W, H);
+  }
+  // Negative scaling returns no image
+  if (W <= 0 || H <= 0) return nullptr;
+  if (Fl_Image::RGB_scaling() == FL_RGB_SCALING_NEAREST) {
+    return copy_nearest_neighbor_(W, H);
+  } else {
+    // Bilinear scaling only scales down between 100% and 50%. If our image is
+    // much larger, divide it by two in either direction first. This is not
+    // perfect, but relatively fast.
+    const Fl_RGB_Image *img = this;
+    while ((img->data_w() > 2*W) || (img->data_h() > 2*H)) {
+      // Coarse scaling horizontally
+      if (img->data_w()>2*W) {
+        const Fl_RGB_Image *scaled_img = img->copy_scale_down_2h_();
+        if (img != this) delete img;
+        img = scaled_img;
+      }
+      // Coarse scaling vertically
+      if (img->data_h()>2*H) {
+        const Fl_RGB_Image *scaled_img = img->copy_scale_down_2v_();
+        if (img != this) delete img;
+        img = scaled_img;
+      }
+    }
+    // Fine scaling the smaller image
+    Fl_RGB_Image *fine_scaled_img = img->copy_bilinear_(W, H);
+    if (img != this) delete img;
+    return fine_scaled_img;
+  }
+}
+
 
 void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   // Don't average an empty image...

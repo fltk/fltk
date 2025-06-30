@@ -354,6 +354,12 @@ private:
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
   int cache_w_, cache_h_; // size of image when cached
+
+  Fl_RGB_Image *copy_scale_down_2h_() const;
+  Fl_RGB_Image *copy_scale_down_2v_() const;
+  Fl_RGB_Image *copy_bilinear_(int W, int H) const;
+  Fl_RGB_Image *copy_nearest_neighbor_(int W, int H) const;
+  Fl_RGB_Image *copy_optimize_(int W, int H) const;
 public:
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);
