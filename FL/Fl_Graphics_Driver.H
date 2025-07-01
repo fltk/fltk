@@ -57,11 +57,7 @@ typedef struct _PangoFontDescription PangoFontDescription;
 // See issue #1139: "FL_REGION_STACK_SIZE could be increased"
 // and issue #1140: "Fix static array allocation".
 
-#if FL_ABI_VERSION >= 10401
-# define FL_REGION_STACK_SIZE 64
-#else
-# define FL_REGION_STACK_SIZE 10
-#endif
+#define FL_REGION_STACK_SIZE 64
 
 #define FL_MATRIX_STACK_SIZE 32
 

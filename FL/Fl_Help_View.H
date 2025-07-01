@@ -225,11 +225,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
                 atargets_;              ///< Allocated targets
   Fl_Help_Target *targets_;             ///< Targets
 
-#if FL_ABI_VERSION >= 10401
+  // FIXME: do we really need this size?
   char          directory_[2 * FL_PATH_MAX + 15]; ///< Directory for current file
-#else
-  char          directory_[FL_PATH_MAX]; ///< Directory for current file
-#endif
 
   char          filename_[FL_PATH_MAX]; ///< Current filename
   int           topline_,               ///< Top line in document
