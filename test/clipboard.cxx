@@ -1,7 +1,7 @@
 //
 // Clipboard display test application for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,7 +21,9 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Tabs.H>
+#include <FL/Fl_Flex.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
@@ -38,10 +40,13 @@
 /* Displays and follows the content of the clipboard with either image or text data
  */
 
-Fl_Box *image_box;
-Fl_Box *image_size;
-Fl_Text_Display *display;
-Fl_RGB_Image *cl_img = 0; // image from clipboard
+Fl_Box          *image_box;   // to view an image
+Fl_Box          *image_size;  // to view image size
+Fl_Text_Display *display;     // to view clipboard text
+Fl_Flex         *flex;        // flexible button layout
+Fl_Button       *save;        // save PNG
+Fl_Check_Button *wrap;        // wrap mode
+Fl_RGB_Image    *cl_img;      // image from clipboard
 
 inline int fl_min(int a, int b) {
   return (a < b ? a : b);
@@ -87,9 +92,27 @@ class clipboard_viewer : public Fl_Tabs {
 public:
   clipboard_viewer(int x, int y, int w, int h)
     : Fl_Tabs(x, y, w, h) {}
+
+  void layout() {             // re-arrange buttons depending on tab
+    if (value() == display) { // text
+      save->hide();
+      wrap->show();
+    } else {                  // image
+      save->show();
+      wrap->hide();
+    }
+    flex->layout();
+  }
+
   int handle(int event) FL_OVERRIDE {
-    if (event != FL_PASTE)
-      return Fl_Tabs::handle(event);
+    if (event != FL_PASTE) {
+      auto val = value();
+      int ret = Fl_Tabs::handle(event);
+      if (value() != val) {   // tabs have been changed
+        layout();             // re-arrange buttons
+      }
+      return ret;
+    }
     if (strcmp(Fl::event_clipboard_type(), Fl::clipboard_image) == 0) { // an image is being pasted
       cl_img = (Fl_RGB_Image *)Fl::event_clipboard();                   // get it as an Fl_RGB_Image object
       if (!cl_img)
@@ -140,6 +163,7 @@ public:
       value(display);
       display->redraw();
     }
+    layout();
     return 1;
   }
 };
@@ -174,6 +198,18 @@ void save_cb(Fl_Widget *wid, clipboard_viewer *tabs) {
   }
 }
 
+// "wrap mode" callback (switch wrapping on/off)
+void wrap_cb(Fl_Widget *w, void *d) {
+  auto display = (Fl_Text_Display *)d;
+  auto wrap    = (Fl_Check_Button *)w;
+  if (wrap->value()) {
+    display->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+  } else {
+    display->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+  }
+  display->redraw();
+}
+
 // called after clipboard was changed or at application activation
 void clip_callback(int source, void *data) {
   if (source == 1)
@@ -195,17 +231,31 @@ int main(int argc, char **argv) {
   display = new Fl_Text_Display(5, 30, 490, 460, Fl::clipboard_plain_text); // will display the text form
   display->buffer(buffer);
   display->selection_color(TAB_COLOR);
-  display->textfont(FL_COURIER);          // use fixed font for text display
+  display->textfont(FL_COURIER);        // use fixed font for text display
   tabs->end();
   tabs->resizable(display);
 
-  Fl_Group *g2 = new Fl_Group(10, 510, 330, 25);
-  Fl_Button *refresh = new Fl_Button(10, 510, 200, 25, "Refresh from clipboard");
+  flex = new Fl_Flex(0, 510, 550, 25);  // flexible button layout
+  flex->type(Fl_Flex::HORIZONTAL);
+  flex->margin(10, 0, 10, 0);           // margins: left, top, right, bottom
+  flex->gap(10);
+
+  auto refresh = new Fl_Button(0, 0, 0, 0, "Refresh from clipboard");
+  flex->fixed(refresh, 200);
   refresh->callback((Fl_Callback *)cb, tabs);
-  Fl_Button *save = new Fl_Button(220, 510, 100, 25, "Save PNG");
+
+  save = new Fl_Button(0, 0, 0, 0 , "Save PNG");
+  flex->fixed(save, 120);
   save->callback((Fl_Callback *)save_cb, tabs);
-  g2->end();
-  g2->resizable(NULL);
+
+  wrap = new Fl_Check_Button(0, 0, 0, 0 , "wrap mode");
+  flex->fixed(wrap, 120);
+  wrap->callback((Fl_Callback *)wrap_cb, display);
+  wrap->box(FL_UP_BOX);
+  wrap->visible_focus(0);
+  wrap->value(0);
+
+  flex->end();
   win->end();
   win->resizable(tabs);
   win->show(argc, argv);
