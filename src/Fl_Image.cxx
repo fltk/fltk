@@ -734,24 +734,32 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
     // much larger, divide it by two in either direction first. This is not
     // perfect, but relatively fast.
     const Fl_RGB_Image *img = this;
-    while ((img->data_w() > 2*W) || (img->data_h() > 2*H)) {
+    while ((img->data_w() >= 2*W) || (img->data_h() >= 2*H)) {
       // Coarse scaling horizontally
-      if (img->data_w()>2*W) {
+      if (img->data_w()>=2*W) {
         const Fl_RGB_Image *scaled_img = img->copy_scale_down_2h_();
         if (img != this) delete img;
         img = scaled_img;
       }
       // Coarse scaling vertically
-      if (img->data_h()>2*H) {
+      if (img->data_h()>=2*H) {
         const Fl_RGB_Image *scaled_img = img->copy_scale_down_2v_();
         if (img != this) delete img;
         img = scaled_img;
       }
     }
     // Fine scaling the smaller image
-    Fl_RGB_Image *fine_scaled_img = img->copy_bilinear_(W, H);
-    if (img != this) delete img;
-    return fine_scaled_img;
+    if ((img->data_w() != W) || (img->data_h() != H)) {
+      Fl_RGB_Image *fine_scaled_img = img->copy_bilinear_(W, H);
+      if (img != this) delete img;
+      return fine_scaled_img;
+    } else {
+      if (img == this) { // this should not happen, but just in case
+        return copy();
+      } else {
+        return (Fl_Image*)img;
+      }
+    }
   }
 }
 
