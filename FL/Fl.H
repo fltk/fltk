@@ -1322,10 +1322,6 @@ private:
 public:
   /** See grab(Fl_Window*) */
   static void grab(Fl_Window& win) {grab(&win);}
-  /** Releases the current grabbed window, equals grab(0).
-  \deprecated Use Fl::grab(0) instead.
-  \see grab(Fl_Window*) */
-  static void release() {grab(0);}
 
   // Visible focus methods...
   /**

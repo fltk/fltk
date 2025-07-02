@@ -26,6 +26,23 @@
 
 #include <string>
 
+// Note to FLTK developers: fl_ask() had been deprecated since FLTK 1.1.7
+// (released Jan 17, 2006 !) but was still available in FLTK 1.4.x.
+// FLTK 1.5 disables it by using an *undocumented* preprocessor macro.
+// This allows us to restore it (as a last resort) if there are too many
+// complaints that fl_ask() is missing. If users don't complain, the
+// conditional implementation of fl_ask() should be removed in FLTK 1.6.
+
+#ifndef FL_DOXYGEN
+
+// undocumented feature: include fl_ask() if requested; see comment above.
+
+#ifndef FLTK_INCLUDE_FL_ASK
+#define FLTK_INCLUDE_FL_ASK 0  // set this to 1 to include fl_ask()
+#endif
+
+#endif // FL_DOXYGEN
+
 class Fl_Widget;
 
 /** Defines the different system beeps available.
@@ -48,11 +65,15 @@ FL_EXPORT void fl_beep(int type = FL_BEEP_DEFAULT);
 FL_EXPORT void fl_message(const char *, ...) __fl_attr((__format__(__printf__, 1, 2)));
 FL_EXPORT void fl_alert(const char *, ...) __fl_attr((__format__(__printf__, 1, 2)));
 
+#if FLTK_INCLUDE_FL_ASK
+
 // fl_ask() is deprecated since it uses "Yes" and "No" for the buttons,
 // which does not conform to the current FLTK Human Interface Guidelines.
 // Use fl_choice() or fl_choice_n() with the appropriate verbs instead.
 
 FL_EXPORT int fl_ask(const char *, ...) __fl_attr((__format__(__printf__, 1, 2), __deprecated__));
+
+#endif // FLTK_INCLUDE_FL_ASK
 
 FL_EXPORT int fl_choice(const char *q, const char *b0, const char *b1, const char *b2, ...)
     __fl_attr((__format__(__printf__, 1, 5)));

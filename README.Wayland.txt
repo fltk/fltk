@@ -91,7 +91,7 @@ Option 1: Set target property 'ENABLE_EXPORTS' on all executable
 
           set_target_properties(myprog PROPERTIES ENABLE_EXPORTS TRUE)
 
-Option 2: Set CMake policy CMP0065 to 'OLD' (i.e. pre-3.4 behavior)
+Option 2: Set CMake policy CMP0065 to 'OLD' (i.e. pre-3.4 behavior).
           This is a quick solution but discouraged because setting
           CMake policies to 'OLD' is "deprecated by definition".
           CMake may issue warnings or ignore this in the future.

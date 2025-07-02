@@ -189,15 +189,11 @@ In addition, the system may provide clipping when updating windows
 which may be more complex than a simple rectangle.
 
 void fl_push_clip(int x, int y, int w, int h) <br>
-void fl_clip(int x, int y, int w, int h)
 
 \par
 Intersect the current clip region with a rectangle and push this new
 region onto the stack.
 
-\par
-The \p %fl_clip() version is deprecated and
-will be removed from future releases.
 
 void fl_push_no_clip()
 

@@ -1,7 +1,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,7 +21,7 @@
 
 // These routines from fl_draw.H are used by the standard boxtypes
 // and thus are always linked into an fltk program.
-// Also all fl_clip routines, since they are always linked in so
+// Also all fl_*_clip routines, since they are always linked in so
 // that minimal update works.
 
 #include <FL/platform.H>

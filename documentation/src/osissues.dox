@@ -160,10 +160,8 @@ periodically so that FLTK redraws its windows.
 \par
 This function will call the callback functions. It will not
 return until they complete. In particular, if a callback pops up
-a modal window by calling
-fl_ask(),
-for instance, it will not return until the modal function
-returns.
+a modal window by calling fl_choice(), for instance, it will not
+return until the modal function returns.
 
 \subsection osissues_drawing_xlib Drawing using Xlib
 

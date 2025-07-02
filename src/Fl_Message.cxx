@@ -24,7 +24,7 @@
   \file Fl_Message.cxx - Base class for common dialogs.
 
   This is the base class for all common FLTK dialog windows used in
-  fl_message(), fl_ask(), fl_choice(), fl_input(), and fl_password().
+  fl_message(), fl_choice(), fl_input(), and fl_password().
 
   \note <b>Internal use only. This class may be changed as required
     without notice.</b>\n
@@ -46,7 +46,7 @@
 #include <FL/Fl.H>
 #include "flstring.h"
 #include <FL/fl_ask.H>
-#include "Fl_Message.h"     // intentionally "hidden" in src/...
+#include "Fl_Message.h"               // intentionally "hidden" in src/...
 #include "FL/fl_string_functions.h"   // fl_strdup()
 
 #include <FL/Fl_Window.H>
@@ -403,8 +403,8 @@ int Fl_Message::innards(const char *fmt, va_list ap, const char *b0, const char 
 /**
   Gets the default icon container (Fl_Box) used in common dialogs.
 
-  Many common dialogs like fl_message(), fl_alert(), fl_ask(),
-  fl_choice(), fl_input(), and fl_password() display an icon.
+  Many common dialogs like fl_message(), fl_alert(),  fl_choice(),
+  fl_input(), and fl_password() display an icon.
 
   You can use this method to get the icon box (Fl_Box) and modify
   the icon's box type, font, fontsize etc.
@@ -514,7 +514,7 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
 /** Sets the title of the dialog window used in many common dialogs.
 
   This window \p title will be used in the next call of one of the
-  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  common dialogs like fl_message(), fl_alert(), fl_choice(),
   fl_input(), fl_password().
 
   The \p title string is copied internally, so that you can use a
@@ -537,7 +537,7 @@ void Fl_Message::message_title(const char *title) {
 /** Sets the default title of the dialog window used in many common dialogs.
 
   This window \p title will be used in all subsequent calls of one of the
-  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  common dialogs like fl_message(), fl_alert(), fl_choice(),
   fl_input(), fl_password(), unless a specific title has been set
   with fl_message_title(const char *title).
 

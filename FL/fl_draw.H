@@ -89,17 +89,6 @@ inline void fl_push_clip(int x, int y, int w, int h) {
   fl_graphics_driver->push_clip(x, y, w, h);
 }
 /**
-  Intersect the current clip region with a rectangle and push this
-  new region onto the stack (deprecated).
-  \param[in] x,y,w,h position and size
-  \deprecated
-    Please use fl_push_clip(int x, int y, int w, int h) instead.
-    fl_clip(int, int, int, int) will be removed in FLTK 1.5.
-*/
-inline void fl_clip(int x, int y, int w, int h) {
-  fl_graphics_driver->push_clip(x, y, w, h);
-}
-/**
   Push an empty clip region onto the stack so nothing will be clipped.
 */
 inline void fl_push_no_clip() {

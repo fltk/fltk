@@ -1,7 +1,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -119,7 +119,7 @@ class FL_EXPORT Fl_Widget {
   Fl_Label label_;
   unsigned int flags_;
   Fl_Color color_;
-  Fl_Color color2_;
+  Fl_Color selection_color_;
   uchar type_;
   uchar damage_;
   uchar box_;
@@ -470,7 +470,7 @@ public:
       \return the current selection color
       \see selection_color(Fl_Color), color(Fl_Color, Fl_Color)
    */
-  Fl_Color selection_color() const {return color2_;}
+  Fl_Color selection_color() const {return selection_color_;}
 
   /** Sets the selection color.
       The selection color is defined for Forms compatibility and is usually
@@ -480,7 +480,7 @@ public:
       \param[in] a the new selection color
       \see selection_color(), color(Fl_Color, Fl_Color)
    */
-  void selection_color(Fl_Color a) {color2_ = a;}
+  void selection_color(Fl_Color a) {selection_color_ = a;}
 
   /** Sets the background and selection color of the widget.
 
@@ -489,7 +489,7 @@ public:
       \param[in] sel selection color
       \see color(unsigned), selection_color(unsigned)
    */
-  void color(Fl_Color bg, Fl_Color sel) {color_=bg; color2_=sel;}
+  void color(Fl_Color bg, Fl_Color sel) {color_ = bg; selection_color_ = sel;}
 
   /** Gets the current label text.
       \return a pointer to the current label text
@@ -1246,16 +1246,6 @@ public:
   /** Returns non zero if MAC_USE_ACCENTS_MENU flag is set, 0 otherwise.
    */
   int use_accents_menu() { return flags() & MAC_USE_ACCENTS_MENU; }
-
-  /** For back compatibility only.
-      \deprecated Use selection_color() instead.
-  */
-  Fl_Color color2() const {return (Fl_Color)color2_;}
-
-  /** For back compatibility only.
-      \deprecated Use selection_color(unsigned) instead.
-  */
-  void color2(unsigned a) {color2_ = a;}
 
   /** Sets whether the widget's label uses '&' to indicate shortcuts.
    By default, all objects of classes Fl_Menu_ (and derivatives), Fl_Button (and derivatives),

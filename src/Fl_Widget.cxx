@@ -1,7 +1,7 @@
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -110,28 +110,28 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   x_ = X; y_ = Y; w_ = W; h_ = H;
 
-  label_.value   = L;
-  label_.image   = 0;
-  label_.deimage = 0;
-  label_.type    = FL_NORMAL_LABEL;
-  label_.font    = FL_HELVETICA;
-  label_.size    = FL_NORMAL_SIZE;
-  label_.color   = FL_FOREGROUND_COLOR;
-  label_.align_  = FL_ALIGN_CENTER;
+  label_.value     = L;
+  label_.image     = 0;
+  label_.deimage   = 0;
+  label_.type      = FL_NORMAL_LABEL;
+  label_.font      = FL_HELVETICA;
+  label_.size      = FL_NORMAL_SIZE;
+  label_.color     = FL_FOREGROUND_COLOR;
+  label_.align_    = FL_ALIGN_CENTER;
   label_.h_margin_ = label_.v_margin_ = 0;
-  label_.spacing = 0;
-  tooltip_       = 0;
-  callback_      = default_callback;
-  user_data_     = 0;
-  type_          = 0;
-  flags_         = VISIBLE_FOCUS;
-  damage_        = 0;
-  box_           = FL_NO_BOX;
-  color_         = FL_GRAY;
-  color2_        = FL_GRAY;
-  when_          = FL_WHEN_RELEASE;
+  label_.spacing   = 0;
+  tooltip_         = 0;
+  callback_        = default_callback;
+  user_data_       = 0;
+  type_            = 0;
+  flags_           = VISIBLE_FOCUS;
+  damage_          = 0;
+  box_             = FL_NO_BOX;
+  color_           = FL_GRAY;
+  selection_color_ = FL_GRAY;
+  when_            = FL_WHEN_RELEASE;
 
-  parent_ = 0;
+  parent_ = nullptr;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
 }
 

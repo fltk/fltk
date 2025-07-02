@@ -458,15 +458,12 @@ event by returning 1. FLTK will then remove the event and wait for further event
 from the host. If the widget's handle function returns 0, FLTK may redistribute
 the event based on a few rules.
 
-Most events are sent directly to the \p handle() method
-of the Fl_Window that the window system says they
-belong to.  The window (actually the Fl_Group that
-Fl_Window is a subclass of) is responsible for sending
-the events on to any child widgets.  To make the
-Fl_Group code somewhat easier, FLTK sends some events
-(\p FL_DRAG, \p FL_RELEASE, \p FL_KEYBOARD,
-\p FL_SHORTCUT, \p FL_UNFOCUS, and \p FL_LEAVE)
-directly to leaf widgets. These procedures
+Most events are sent directly to the \p handle() method of the Fl_Window that
+the window system says they belong to. The window (actually the Fl_Group that
+Fl_Window is a subclass of) is responsible for sending the events on to any
+child widgets. To make the Fl_Group code somewhat easier, FLTK sends some
+events (\p FL_DRAG, \p FL_RELEASE, \p FL_KEYBOARD, \p FL_SHORTCUT,
+\p FL_UNFOCUS, and \p FL_LEAVE) directly to leaf widgets. These procedures
 control those leaf widgets:
 
 \li Fl::add_handler()
@@ -475,7 +472,6 @@ control those leaf widgets:
 \li Fl::grab()
 \li Fl::modal()
 \li Fl::pushed()
-\li Fl::release() (deprecated, see Fl::grab(0))
 \li Fl_Widget::take_focus()
 
 FLTK propagates events along the widget hierarchy depending on the kind of event

@@ -244,13 +244,6 @@ public:
 
   // back compatibility functions:
 
-  /**
-    \deprecated This is for backwards compatibility only. You should use
-    \e W->%take_focus() instead.
-    \sa Fl_Widget::take_focus();
-  */
-  void focus(Fl_Widget* W) {W->take_focus();}
-
   /** This is for forms compatibility only */
   Fl_Widget* & _ddfdesign_kludge() {return resizable_;}
 

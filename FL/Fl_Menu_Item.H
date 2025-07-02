@@ -528,30 +528,6 @@ struct FL_EXPORT Fl_Menu_Item {
     Fl::callback_reason_ = reason; callback_(o, (void*)(fl_intptr_t)arg);
   }
 
-  /** Back compatibility only.
-    \deprecated
-      Please use Fl_Menu_Item::value() instead.
-      This method will be removed in FLTK 1.5.0 or later.
-    \see value()
-  */
-  inline int checked() const {return value();}
-
-  /** Back compatibility only.
-    \deprecated
-      Please use Fl_Menu_Item::set() instead.
-      This method will be removed in FLTK 1.5.0 or later.
-    \see set()
-  */
-  inline void check() {set();}
-
-  /** Back compatibility only.
-    \deprecated
-      Please use Fl_Menu_Item::clear() instead.
-      This method will be removed in FLTK 1.5.0 or later.
-    \see clear()
-  */
-  inline void uncheck() {clear();}
-
   int insert(int,const char*,int,Fl_Callback*,void* =0, int =0);
   int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
 

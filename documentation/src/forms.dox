@@ -7,22 +7,21 @@ This appendix describes the Forms compatibility included with FLTK.
 
 \note The Forms compatibility library is deprecated, no longer actively
   maintained since FLTK 1.3.0, and likely to be removed completely
-  in FLTK 1.5.
+  in FLTK 1.6. Building it was optional (ON) in FLTK 1.4.
 
-Since FLTK 1.4 building the Forms compatibility library \c fltk_forms
-(configure/Makefiles) or \c fltk::forms (CMake) can be disabled with
-one of these commands:
+Since FLTK 1.5 building the Forms compatibility library \c fltk_forms
+(aka \c fltk::forms) is disabled by default and can be enabled by one
+of the following commands:
   \code
-    - ./configure --disable-forms ...
-    - cmake -D FLTK_BUILD_FORMS:BOOL=OFF ...
-    - cmake-gui ...
+    - cmake -D FLTK_BUILD_FORMS:BOOL=ON ...
+    - cmake-gui ... (edit option FLTK_BUILD_FORMS)
   \endcode
 
-Fluid can still import Forms and XForms designer (.fd) files but w/o
+Fluid can still \b import Forms and XForms designer (.fd) files but w/o
 any guarantees for working results. Manual fixes may be necessary.
 
-In the next minor or major release (1.5 or higher) the Forms compatibility
-library will not be built by default or will be removed entirely.
+In the next minor or major release (1.6 or higher) the Forms compatibility
+library may be removed entirely.
 
 
 \section forms_importing Importing Forms Layout Files
@@ -48,15 +47,14 @@ Take a look at <FL/forms.H> to see how it works, but the basic trick
 is lots of inline functions. Most of the XForms demo programs work
 without changes.
 
-You will also have to compile your Forms or XForms program using a
-C++ compiler.  The FLTK library does not provide C bindings or header
-files.
+You will also have to compile your Forms or XForms program using a C++
+compiler. The FLTK library does not provide C bindings or header files.
 
 Although FLTK was designed to be compatible with the GL Forms
 library (version 0.3 or so), XForms has bloated severely and its
 interface is X-specific.  Therefore, XForms compatibility is no longer
-a goal of FLTK.  Compatibility was limited to things that were free, or
-that would add code that would not be linked in if the feature is
+a goal of FLTK.  Compatibility was limited to things that were free,
+or that would add code that would not be linked in if the feature is
 unused, or that was not X-specific.
 
 To use any new features of FLTK, you should rewrite your code to not
