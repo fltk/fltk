@@ -27,14 +27,36 @@ file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 file(MAKE_DIRECTORY ${TESTFILE_PATH})
 
 #######################################################################
+#
 # Define additional example programs for testing, for instance:
 #   set(extra_tests issue-276 str-1895)
 # Use the source file test/'name'.cxx for each additional program.
-# These test programs will be built with image and GL libraries.
-# Leave the variable 'extra_tests' empty to disable extra test programs.
+# These test programs will be built with image and GL libraries. Leave
+# 'extra_tests' empty (default) to disable extra test programs.
+# Instead of adding the tests to the variable in the 'set' command you
+# can also add it with `list(APPEND extra_tests test1 test2)` etc..
+# See commented example at the end of this paragraph.
 
 set(extra_tests)
 
+# Uncomment the following statement to set the C++ standard for your
+# extra test(s), or add more such lines, using "TEST_cxx_standard" as
+# variable names (replace 'TEST' with your program name), and set the
+# variable to one of { 14, 17, 20, 23 } for C++14, C++17, ... resp..
+# The default is not to change the C++ standard, i.e. compile with
+# C++11 or whatever the user chose to build the FLTK library.
+
+# set(TEST_cxx_standard 20)
+
+# Example code (do not uncomment these examples):
+#------------------------------------------------
+# set(extra_tests test1 test2 test3)
+# set(test2_cxx_standard 17)
+# set(test3_cxx_standard 20)
+#------------------------------------------------
+# This would build test1(.cxx) with default settings, test2 with C++17,
+# and test3 with C++20.
+#
 #######################################################################
 # audio libs for test apps
 if(WIN32)
@@ -225,11 +247,14 @@ SET (UNITTEST_SRCS
 )
 fl_create_example(unittests "${UNITTEST_SRCS}" "${GLDEMO_LIBS}")
 
-# Create additional test programs (used by developers for testing)
+# Additional test programs used by developers for testing (see above)
 
 if(extra_tests)
   foreach(name ${extra_tests})
     fl_create_example(${name} ${name}.cxx "fltk::images;${GLDEMO_LIBS}")
+    if(DEFINED ${name}_cxx_standard)
+      set_target_properties(${name} PROPERTIES CXX_STANDARD ${${name}_cxx_standard})
+    endif()
   endforeach()
 endif()
 
