@@ -414,51 +414,37 @@ Fl_Help_View::add_block(const char   *s,        // I - Pointer to start of block
 }
 
 
-/** Adds a new link to the list. */
-void Fl_Help_View::add_link(const char *n,      // I - Name of link
-                      int        xx,    // I - X position of link
-                      int        yy,    // I - Y position of link
-                      int        ww,    // I - Width of link text
-                      int        hh)    // I - Height of link text
+/** 
+ Add a new link and its postion on screen to the link list.
+ \param[in] link a filename, followed by a hash and a target. All parts are optional.
+ \param[in] xx, yy, ww, hh bounding box of the link text on screen
+ */
+void Fl_Help_View::add_link(const std::string &link, int xx, int yy, int ww, int hh)
 {
-  Fl_Help_Link  *temp;                  // New link
-  char          *target;                // Pointer to target name
+  auto new_link = std::make_shared<Link>(); // Create a new link storage object.
 
+  new_link->box = { xx, yy, ww, hh };
 
-  if (nlinks_ >= alinks_)
-  {
-    alinks_ += 16;
-
-    if (alinks_ == 16)
-      links_ = (Fl_Help_Link *)malloc(sizeof(Fl_Help_Link) * alinks_);
-    else
-      links_ = (Fl_Help_Link *)realloc(links_, sizeof(Fl_Help_Link) * alinks_);
+  size_t hash_pos = link.find('#'); // Find the hash character
+  if (hash_pos != std::string::npos) {
+    // If a '#' is found, split the link into filename and target
+    new_link->filename_ = link.substr(0, hash_pos);
+    new_link->target = link.substr(hash_pos + 1);
+  } else {
+    // No '#' found, use the whole link as filename
+    new_link->filename_ = link;
+    new_link->target.clear();
   }
 
-  temp = links_ + nlinks_;
-
-  temp->x       = xx;
-  temp->y       = yy;
-  temp->w       = xx + ww;
-  temp->h       = yy + hh;
-
-  strlcpy(temp->filename, n, sizeof(temp->filename));
-
-  if ((target = strrchr(temp->filename, '#')) != NULL)
-  {
-    *target++ = '\0';
-    strlcpy(temp->name, target, sizeof(temp->name));
-  }
-  else
-    temp->name[0] = '\0';
-
-  nlinks_ ++;
+  link_list_.push_back(new_link);  // Add the link to the list.
 }
 
-
-/** Adds a new target to the list. */
-void Fl_Help_View::add_target(const char *n,    // I - Name of target
-                              int        yy)    // I - Y position of target
+/** 
+ Adds a new target to the list. 
+ \param[in] n  Name of target (string)
+ \param[in] yy line number of traget position
+ */
+void Fl_Help_View::add_target(const std::string &n, int yy)
 {
   std::string target = to_lower(n); // Convert target name to lower case
   target_line_map_[target] = yy; // Store the target line in the map
@@ -494,11 +480,9 @@ Fl_Help_View::do_align(Fl_Help_Block *block,    // I - Block to add to
   if (line < 31)
     line ++;
 
-  while (l < nlinks_)
-  {
-    links_[l].x += offset;
-    links_[l].w += offset;
-    l ++;
+  while (l < (int)link_list_.size()) {
+    link_list_[l]->box.x( link_list_[l]->box.x() + offset);
+    l++;
   }
 
   return (line);
@@ -1245,7 +1229,7 @@ void Fl_Help_View::format() {
     // Reset state variables...
     done       = 1;
     nblocks_   = 0;
-    nlinks_    = 0;
+    link_list_.clear();
     target_line_map_.clear();
     size_      = 0;
     bgcolor_   = color();
@@ -2530,13 +2514,7 @@ Fl_Help_View::free_data() {
     blocks_  = 0;
   }
 
-  if (nlinks_) {
-    free(links_);
-
-    alinks_ = 0;
-    nlinks_ = 0;
-    links_  = 0;
-  }
+  link_list_.clear();
   target_line_map_.clear();
 } // free_data()
 
@@ -2810,68 +2788,65 @@ Fl_Help_View::get_length(const char *l) {       // I - Value
 }
 
 
-Fl_Help_Link *Fl_Help_View::find_link(int xx, int yy)
+std::shared_ptr<Fl_Help_View::Link> Fl_Help_View::find_link(int xx, int yy)
 {
-  int           i;
-  Fl_Help_Link  *linkp;
-  for (i = nlinks_, linkp = links_; i > 0; i --, linkp ++) {
-    if (xx >= linkp->x && xx < linkp->w &&
-        yy >= linkp->y && yy < linkp->h)
-      break;
+  for (auto &link : link_list_) {
+    if (link->box.contains(xx, yy)) {
+      return link;
+    }
   }
-  return i ? linkp : 0L;
+  return nullptr;
 }
 
-void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
+void Fl_Help_View::follow_link(std::shared_ptr<Link> linkp)
 {
   char          target[32];     // Current target
 
   clear_selection();
 
-  strlcpy(target, linkp->name, sizeof(target));
+  strlcpy(target, linkp->target.c_str(), sizeof(target));
 
   set_changed();
 
-  if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
+  if (strcmp(linkp->filename_.c_str(), filename_) != 0 && !linkp->filename_.empty())
   {
     char        dir[FL_PATH_MAX];       // Current directory
     char        temp[3 * FL_PATH_MAX],  // Temporary filename
                *tempptr;                // Pointer into temporary filename
 
 
-    if (strchr(directory_, ':') != NULL &&
-        strchr(linkp->filename, ':') == NULL)
+    if (strchr(directory_, ':') != NULL && strchr(linkp->filename_.c_str(), ':') == NULL)
     {
-      if (linkp->filename[0] == '/')
+      if (linkp->filename_[0] == '/')
       {
         strlcpy(temp, directory_, sizeof(temp));
         // the following search (strchr) will always succeed, see condition above!
         tempptr = skip_bytes(strchr(temp, ':'), 3);
         if ((tempptr = strrchr(tempptr, '/')) != NULL) {
-          strlcpy(tempptr, linkp->filename, sizeof(temp) - (tempptr - temp));
+          strlcpy(tempptr, linkp->filename_.c_str(), sizeof(temp) - (tempptr - temp));
         } else {
-          strlcat(temp, linkp->filename, sizeof(temp));
+          strlcat(temp, linkp->filename_.c_str(), sizeof(temp));
         }
       }
       else
-        snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
+        snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename_.c_str());
     }
-    else if (linkp->filename[0] != '/' && strchr(linkp->filename, ':') == NULL)
+    else if (linkp->filename_[0] != '/' && strchr(linkp->filename_.c_str(), ':') == NULL)
     {
       if (directory_[0])
-        snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
+        snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename_.c_str());
       else
       {
           fl_getcwd(dir, sizeof(dir));
-        snprintf(temp, sizeof(temp), "file:%s/%s", dir, linkp->filename);
+        snprintf(temp, sizeof(temp), "file:%s/%s", dir, linkp->filename_.c_str());
       }
     }
     else
-      strlcpy(temp, linkp->filename, sizeof(temp));
+      strlcpy(temp, linkp->filename_.c_str(), sizeof(temp));
 
-    if (linkp->name[0])
-      snprintf(temp + strlen(temp), sizeof(temp) - strlen(temp), "#%s",
-               linkp->name);
+    if (!linkp->target.empty()) {
+      snprintf(temp + strlen(temp), sizeof(temp) - strlen(temp), "#%s", linkp->target.c_str());
+    }
 
     load(temp);
   }
@@ -3118,7 +3093,7 @@ int Fl_Help_View::copy(int clipboard) {
 int                             // O - 1 if we handled it, 0 otherwise
 Fl_Help_View::handle(int event) // I - Event to handle
 {
-  static Fl_Help_Link *linkp;   // currently clicked link
+  static std::shared_ptr<Link> linkp = nullptr;   // currently clicked link
 
   int xx = Fl::event_x() - x() + leftline_;
   int yy = Fl::event_y() - y() + topline_;
@@ -3245,9 +3220,7 @@ Fl_Help_View::Fl_Help_View(int        xx,       // I - Left position
 
   link_         = (Fl_Help_Func *)0;
 
-  alinks_       = 0;
-  nlinks_       = 0;
-  links_        = (Fl_Help_Link *)0;
+  link_list_.clear();
 
   directory_[0] = '\0';
   filename_[0]  = '\0';

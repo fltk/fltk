@@ -35,6 +35,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 
 class Fl_Shared_Image;
 //
@@ -61,18 +62,6 @@ struct Fl_Help_Block {
   int           ol_num;         // item number in ordered list
 };
 
-//
-// Fl_Help_Link structure...
-//
-/** Definition of a link for the html viewer. */
-struct Fl_Help_Link {
-  char          filename[192],  ///< Reference filename
-                name[32];       ///< Link target (blank if none)
-  int           x,              ///< X offset of link text
-                y,              ///< Y offset of link text
-                w,              ///< Width of link text
-                h;              ///< Height of link text
-};
 
 /*
  * Fl_Help_View font stack opaque implementation
@@ -196,7 +185,15 @@ protected:
     but can't be changed for backwards compatibility. If you don't want a frame
     around the widget you can use FL_FLAT_BOX instead.
 */
-class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
+class FL_EXPORT Fl_Help_View : public Fl_Group 
+{
+  // Private class to hold a link with target and its position on screen.
+  class Link {
+  public:
+    std::string filename_;   // Filename part of a link
+    std::string target;   // Target part of a link
+    Fl_Rect box;          // Clickable rectangle that defines the link area
+  };
 
   enum { RIGHT = -1, CENTER, LEFT };    ///< Alignments
 
@@ -215,9 +212,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
 
   Fl_Help_Func  *link_;                 ///< Link transform function
 
-  int           nlinks_,                ///< Number of links
-                alinks_;                ///< Allocated links
-  Fl_Help_Link  *links_;                ///< Links
+  std::vector<std::shared_ptr<Link>> link_list_; ///< List of links for each line
 
   std::map<std::string, int> target_line_map_; ///< Map of targets for fast access
 
@@ -255,8 +250,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
   void popfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {fstack_.pop(f, s, c);}
 
   Fl_Help_Block *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
-  void          add_link(const char *n, int xx, int yy, int ww, int hh);
-  void          add_target(const char *n, int yy);
+  void          add_link(const std::string &link, int xx, int yy, int ww, int hh);
+  void          add_target(const std::string &n, int yy);
   int           do_align(Fl_Help_Block *block, int line, int xx, int a, int &l);
 protected:
   void          draw() override;
@@ -278,8 +273,8 @@ private:
   char          extend_selection();
   void          end_selection(int c=0);
   void          clear_global_selection();
-  Fl_Help_Link  *find_link(int, int);
-  void          follow_link(Fl_Help_Link*);
+  std::shared_ptr<Link> find_link(int, int);
+  void          follow_link(std::shared_ptr<Link>);
 
 public:
 
