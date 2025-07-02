@@ -197,7 +197,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
 
   enum { RIGHT = -1, CENTER, LEFT };    ///< Alignments
 
-  char          title_[1024];           ///< Title string
+  std::string title_;           ///< Title string
   Fl_Color      defcolor_,              ///< Default text color
                 bgcolor_,               ///< Background color
                 textcolor_,             ///< Text color
@@ -206,9 +206,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
   Fl_Fontsize  textsize_;               ///< Default font size
   const char    *value_;                ///< HTML text value
   Fl_Help_Font_Stack fstack_;           ///< font stack management
-  int           nblocks_,               ///< Number of blocks/paragraphs
-                ablocks_;               ///< Allocated blocks
-  Fl_Help_Block *blocks_;               ///< Blocks
+  std::vector<Fl_Help_Block> blocks_; ///< Blocks
 
   Fl_Help_Func  *link_;                 ///< Link transform function
 
@@ -216,10 +214,9 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
 
   std::map<std::string, int> target_line_map_; ///< Map of targets for fast access
 
-  // FIXME: do we really need this size?
-  char          directory_[2 * FL_PATH_MAX + 15]; ///< Directory for current file
+  std::string directory_; ///< Directory for current file
+  std::string filename_; ///< Current filename
 
-  char          filename_[FL_PATH_MAX]; ///< Current filename
   int           topline_,               ///< Top line in document
                 leftline_,              ///< Lefthand position
                 size_,                  ///< Total document length
@@ -287,7 +284,8 @@ public:
 
   const char *filename() const;
   const char *directory() const;
-  
+  const char *title() const;
+
   int           find(const char *s, int p = 0);
   void          link(Fl_Help_Func *fn);
   int           load(const char *f);
@@ -306,8 +304,6 @@ public:
   void          textsize(Fl_Fontsize s) { textsize_ = s; format(); }
   /** Gets the default text size. */
   Fl_Fontsize  textsize() const { return (textsize_); }
-  /** Returns the current document title, or NULL if there is no title. */
-  const char    *title() { return (title_); }
   void          topline(const char *n);
   void          topline(int);
   /** Returns the current top line in pixels. */

@@ -388,17 +388,9 @@ Fl_Help_View::add_block(const char   *s,        // I - Pointer to start of block
   // printf("add_block(s = %p, xx = %d, yy = %d, ww = %d, hh = %d, border = %d)\n",
   //        s, xx, yy, ww, hh, border);
 
-  if (nblocks_ >= ablocks_)
-  {
-    ablocks_ += 16;
+  blocks_.push_back(Fl_Help_Block()); // Add a new block to the vector
+  temp = &blocks_.back();
 
-    if (ablocks_ == 16)
-      blocks_ = (Fl_Help_Block *)malloc(sizeof(Fl_Help_Block) * ablocks_);
-    else
-      blocks_ = (Fl_Help_Block *)realloc(blocks_, sizeof(Fl_Help_Block) * ablocks_);
-  }
-
-  temp = blocks_ + nblocks_;
   memset(temp, 0, sizeof(Fl_Help_Block));
   temp->start   = s;
   temp->end     = s;
@@ -408,7 +400,6 @@ Fl_Help_View::add_block(const char   *s,        // I - Pointer to start of block
   temp->h       = hh;
   temp->border  = border;
   temp->bgcolor = bgcolor_;
-  nblocks_ ++;
 
   return (temp);
 }
@@ -564,7 +555,7 @@ Fl_Help_View::draw()
   fl_color(textcolor_);
 
   // Draw all visible blocks...
-  for (i = 0, block = blocks_; i < nblocks_; i ++, block ++)
+  for (i = 0, block = &blocks_[0]; i < blocks_.size(); i ++, block ++)
     if ((block->y + block->h) >= topline_ && block->y < (topline_ + h()))
     {
       line      = 0;
@@ -1098,7 +1089,7 @@ Fl_Help_View::find(const char *s,               // I - String to find
   if (p < 0 || p >= (int)strlen(value_)) p = 0;
 
   // Look for the string...
-  for (i = nblocks_, b = blocks_; i > 0; i--, b++) {
+  for (i = blocks_.size(), b = &blocks_[0]; i > 0; i--, b++) {
     if (b->end < (value_ + p))
       continue;
 
@@ -1228,7 +1219,7 @@ void Fl_Help_View::format() {
   {
     // Reset state variables...
     done       = 1;
-    nblocks_   = 0;
+    blocks_.clear();
     link_list_.clear();
     target_line_map_.clear();
     size_      = 0;
@@ -1238,7 +1229,7 @@ void Fl_Help_View::format() {
 
     tc = rc = bgcolor_;
 
-    strcpy(title_, "Untitled");
+    title_ = "Untitled";
 
     if (!value_)
       return;
@@ -1392,12 +1383,10 @@ void Fl_Help_View::format() {
         else if (buf.cmp("TITLE"))
         {
           // Copy the title in the document...
-          char *st;
-          for (st = title_;
-               *ptr != '<' && *ptr && st < (title_ + sizeof(title_) - 1);
-               *st++ = *ptr++) {/*empty*/}
-
-          *st = '\0';
+          title_.clear();
+          for ( ; *ptr != '<' && *ptr; ptr++) {
+            title_.push_back(*ptr);
+          }
           buf.clear();
         }
         else if (buf.cmp("A"))
@@ -1652,18 +1641,18 @@ void Fl_Help_View::format() {
           {
             yy = blocks_[row].y + blocks_[row].h;
 
-            for (cell = blocks_ + row + 1; cell <= block; cell ++)
+            for (cell = &blocks_[row + 1]; cell <= block; cell ++)
               if ((cell->y + cell->h) > yy)
                 yy = cell->y + cell->h;
 
-            block = blocks_ + row;
+            block = &blocks_[row];
 
             block->h = yy - block->y + 2;
 
             for (i = 0; i < column; i ++)
               if (cells[i])
               {
-                cell = blocks_ + cells[i];
+                cell = &blocks_[cells[i]];
                 cell->h = block->h;
               }
           }
@@ -1673,7 +1662,7 @@ void Fl_Help_View::format() {
           yy        = block->y + block->h - 4;
           hh        = 0;
           block     = add_block(start, xx, yy, hsize_, 0);
-          row       = (int) (block - blocks_);
+          row       = (int) (block - &blocks_[0]);
           needspace = 0;
           column    = 0;
           line      = 0;
@@ -1690,18 +1679,18 @@ void Fl_Help_View::format() {
           xx = blocks_[row].x;
           yy = blocks_[row].y + blocks_[row].h;
 
-          for (cell = blocks_ + row + 1; cell <= block; cell ++)
+          for (cell = &blocks_[row + 1]; cell <= block; cell ++)
             if ((cell->y + cell->h) > yy)
               yy = cell->y + cell->h;
 
-          block = blocks_ + row;
+          block = &blocks_[row];
 
           block->h = yy - block->y + 2;
 
           for (i = 0; i < column; i ++)
             if (cells[i])
             {
-              cell = blocks_ + cells[i];
+              cell = &blocks_[cells[i]];
               cell->h = block->h;
             }
 
@@ -1742,9 +1731,9 @@ void Fl_Help_View::format() {
           for (i = 0, ww = -6; i < colspan; i ++)
             ww += columns[column + i] + 6;
 
-          if (block->end == block->start && nblocks_ > 1)
+          if (block->end == block->start && blocks_.size() > 1)
           {
-            nblocks_ --;
+            blocks_.pop_back();
             block --;
           }
 
@@ -1758,7 +1747,7 @@ void Fl_Help_View::format() {
           newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? CENTER : LEFT);
           talign    = newalign;
 
-          cells[column] = (int) (block - blocks_);
+          cells[column] = (int) (block - &blocks_[0]);
 
           column += colspan;
 
@@ -2506,13 +2495,7 @@ Fl_Help_View::free_data() {
   }
 
   // Free all of the arrays...
-  if (nblocks_) {
-    free(blocks_);
-
-    ablocks_ = 0;
-    nblocks_ = 0;
-    blocks_  = 0;
-  }
+  blocks_ .clear();
 
   link_list_.clear();
   target_line_map_.clear();
@@ -2720,9 +2703,9 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
   Fl_Shared_Image *ip;                  // Image pointer...
 
   // See if the image can be found...
-  if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
+  if (strchr(directory_.c_str(), ':') != NULL && strchr(name, ':') == NULL) {
     if (name[0] == '/') {
-      strlcpy(temp, directory_, sizeof(temp));
+      strlcpy(temp, directory_.c_str(), sizeof(temp));
       // the following search (strchr) will always succeed, see condition above!
       tempptr = skip_bytes(strchr(temp, ':'), 3);
       if ((tempptr = strrchr(tempptr, '/')) != NULL) {
@@ -2731,14 +2714,15 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
         strlcat(temp, name, sizeof(temp));
       }
     } else {
-      snprintf(temp, sizeof(temp), "%s/%s", directory_, name);
+      snprintf(temp, sizeof(temp), "%s/%s", directory_.c_str(), name);
     }
 
     if (link_) localname = (*link_)(this, temp);
     else localname = temp;
   } else if (name[0] != '/' && strchr(name, ':') == NULL) {
-    if (directory_[0]) snprintf(temp, sizeof(temp), "%s/%s", directory_, name);
-    else {
+    if (!directory_.empty()) {
+      snprintf(temp, sizeof(temp), "%s/%s", directory_.c_str(), name);
+    } else {
       fl_getcwd(dir, sizeof(dir));
       snprintf(temp, sizeof(temp), "file:%s/%s", dir, name);
     }
@@ -2800,26 +2784,25 @@ std::shared_ptr<Fl_Help_View::Link> Fl_Help_View::find_link(int xx, int yy)
 
 void Fl_Help_View::follow_link(std::shared_ptr<Link> linkp)
 {
-  char          target[32];     // Current target
+  std::string target;     // Current target
 
   clear_selection();
 
-  strlcpy(target, linkp->target.c_str(), sizeof(target));
+  target = linkp->target;
 
   set_changed();
 
-  if (strcmp(linkp->filename_.c_str(), filename_) != 0 && !linkp->filename_.empty())
+  if (strcmp(linkp->filename_.c_str(), filename_.c_str()) != 0 && !linkp->filename_.empty())
   {
-    char        dir[FL_PATH_MAX];       // Current directory
     char        temp[3 * FL_PATH_MAX],  // Temporary filename
                *tempptr;                // Pointer into temporary filename
 
 
-    if (strchr(directory_, ':') != NULL && strchr(linkp->filename_.c_str(), ':') == NULL)
+    if (strchr(directory_.c_str(), ':') != NULL && strchr(linkp->filename_.c_str(), ':') == NULL)
     {
       if (linkp->filename_[0] == '/')
       {
-        strlcpy(temp, directory_, sizeof(temp));
+        strlcpy(temp, directory_.c_str(), sizeof(temp));
         // the following search (strchr) will always succeed, see condition above!
         tempptr = skip_bytes(strchr(temp, ':'), 3);
         if ((tempptr = strrchr(tempptr, '/')) != NULL) {
@@ -2829,15 +2812,16 @@ void Fl_Help_View::follow_link(std::shared_ptr<Link> linkp)
         }
       }
       else
-        snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename_.c_str());
+        snprintf(temp, sizeof(temp), "%s/%s", directory_.c_str(), linkp->filename_.c_str());
     }
     else if (linkp->filename_[0] != '/' && strchr(linkp->filename_.c_str(), ':') == NULL)
     {
-      if (directory_[0])
-        snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename_.c_str());
+      if (!directory_.empty())
+        snprintf(temp, sizeof(temp), "%s/%s", directory_.c_str(), linkp->filename_.c_str());
       else
       {
-          fl_getcwd(dir, sizeof(dir));
+        char dir[FL_PATH_MAX];       // Current directory
+        fl_getcwd(dir, sizeof(dir));
         snprintf(temp, sizeof(temp), "file:%s/%s", dir, linkp->filename_.c_str());
       }
     }
@@ -2850,8 +2834,8 @@ void Fl_Help_View::follow_link(std::shared_ptr<Link> linkp)
 
     load(temp);
   }
-  else if (target[0])
-    topline(target);
+  else if (!target.empty()) 
+    topline(target.c_str());
   else
     topline(0);
 
@@ -3216,16 +3200,14 @@ Fl_Help_View::Fl_Help_View(int        xx,       // I - Left position
   textsize_     = 12;
   value_        = NULL;
 
-  ablocks_      = 0;
-  nblocks_      = 0;
-  blocks_       = (Fl_Help_Block *)0;
+  blocks_.clear();
 
   link_         = (Fl_Help_Func *)0;
 
   link_list_.clear();
 
-  directory_[0] = '\0';
-  filename_[0]  = '\0';
+  directory_.clear();
+  filename_.clear();
 
   topline_      = 0;
   leftline_     = 0;
@@ -3271,10 +3253,10 @@ Fl_Help_View::~Fl_Help_View()
  \return nullptr if the filename is empty
  */
 const char *Fl_Help_View::filename() const { 
-  if (filename_[0]) 
-    return (filename_);
+  if (filename_.empty()) 
+    return nullptr;
   else 
-    return nullptr; 
+    return filename_.c_str(); 
 }
 
 
@@ -3287,10 +3269,23 @@ const char *Fl_Help_View::filename() const {
  \return nullptr if the directory name is empty
  */
 const char *Fl_Help_View::directory() const { 
-  if (directory_[0]) 
-    return (directory_);
+  if (directory_.empty()) 
+    return nullptr;
   else 
-    return nullptr; 
+    return directory_.c_str(); 
+}
+
+
+/** 
+ \brief Return the title of the current document.
+
+ Fl_Help_View remains the owner of the allocated memory. If the document
+ chages, the returned pointer will become stale. 
+
+ \return empty string if the directory name is empty
+ */
+const char *Fl_Help_View::title() const { 
+  return title_.c_str();
 }
 
 
@@ -3324,6 +3319,7 @@ void Fl_Help_View::link(Fl_Help_Func *fn) {
   link_ = fn; 
 }
 
+
 /** Loads the specified file.
 
  This method loads the specified file or URL. The filename may end in a
@@ -3347,11 +3343,10 @@ int Fl_Help_View::load(const char *f)
 {
   FILE          *fp;            // File to read from
   long          len;            // Length of file
-  char          *target;        // Target in file
-  char          *slash;         // Directory separator
-  const char    *localname;     // Local filename
-  char          error[2 * FL_PATH_MAX]; // Error buffer
-  char          newname[FL_PATH_MAX];   // New filename buffer
+  std::string target;        // Target in file
+  std::string localname;     // Local filename
+  std::string error; // Error buffer
+  std::string newname;   // New filename buffer
 
   // printf("load(%s)\n",f); fflush(stdout);
 
@@ -3366,37 +3361,41 @@ int Fl_Help_View::load(const char *f)
     if ( fl_open_uri(f, urimsg, sizeof(urimsg)) == 0 ) {
       clear_selection();
 
-      strlcpy(newname, f, sizeof(newname));
-      if ((target = strrchr(newname, '#')) != NULL)
-        *target++ = '\0';
+      newname = f;
+      size_t hash_pos = newname.find_last_of('#');
+      if (hash_pos != std::string::npos) {
+        target = newname.substr(hash_pos + 1);
+        newname.resize(hash_pos);
+      }
 
-      if (link_)
-        localname = (*link_)(this, newname);
-      else
-        localname = filename_;
-
-      if (!localname)
-        return (0);
+      if (link_) {
+        const char *n = (*link_)(this, newname.c_str());
+        if (n == nullptr)
+          return 0;
+        localname = n;
+      } else {
+        localname = newname;
+      }
 
       free_data();
 
-      strlcpy(filename_, newname, sizeof(filename_));
-      strlcpy(directory_, newname, sizeof(directory_));
+      filename_ = newname;
 
       // Note: We do not support Windows backslashes, since they are illegal
       //       in URLs...
-      if ((slash = strrchr(directory_, '/')) == NULL)
-        directory_[0] = '\0';
-      else if (slash > directory_ && slash[-1] != '/')
-        *slash = '\0';
+      directory_ = newname;
+      size_t slash_pos = directory_.find_last_of('/');
+      if (slash_pos == std::string::npos) {
+        directory_.clear();
+      } else if ((slash_pos > 0) && (directory_[slash_pos-1] != '/')) {
+        directory_.resize(slash_pos);
+      }
 
-      snprintf(error, sizeof(error),
-               "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
-               "<BODY><H1>Error</H1>"
-               "<P>Unable to follow the link \"%s\" - "
-               "%s.</P></BODY>",
-               f, urimsg);
-      value(error);
+      error = "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
+              "<BODY><H1>Error</H1>"
+              "<P>Unable to follow the link \""
+              + std::string(f) + "\" - " + std::string(urimsg) + ".</P></BODY>";
+      value(error.c_str());
       return -1;
     } else {
       return 0;
@@ -3405,35 +3404,42 @@ int Fl_Help_View::load(const char *f)
 
   clear_selection();
 
-  strlcpy(newname, f, sizeof(newname));
-  if ((target = strrchr(newname, '#')) != NULL)
-    *target++ = '\0';
+  newname = f;
+  size_t hash_pos = newname.find_last_of('#');
+  if (hash_pos != std::string::npos) {
+    target = newname.substr(hash_pos + 1);
+    newname.resize(hash_pos);
+  }
 
-  if (link_)
-    localname = (*link_)(this, newname);
-  else
-    localname = filename_;
-
-  if (!localname)
-    return -1;
+  if (link_) {
+    const char *n = (*link_)(this, newname.c_str());
+    if (n == nullptr)
+      return -1;
+    localname = n;
+  } else {
+    localname = newname;
+  }
 
   free_data();
 
-  strlcpy(filename_, newname, sizeof(filename_));
-  strlcpy(directory_, newname, sizeof(directory_));
+  filename_ = newname;
+  directory_ = newname;
 
   // Note: We do not support Windows backslashes, since they are illegal
   //       in URLs...
-  if ((slash = strrchr(directory_, '/')) == NULL)
-    directory_[0] = '\0';
-  else if (slash > directory_ && slash[-1] != '/')
-    *slash = '\0';
+  size_t slash_pos = directory_.find_last_of('/');
+  if (slash_pos == std::string::npos) {
+    directory_.clear();
+  } else if ((slash_pos > 0) && (directory_[slash_pos-1] != '/')) {
+    directory_.resize(slash_pos);
+  }
 
-  if (strncmp(localname, "file:", 5) == 0)
-    localname += 5;     // Adjust for local filename...
+  if (localname.find("file:") == 0) {
+    localname.erase(0, 5);     // Adjust for local filename...
+  }
 
   int ret = 0;
-  if ((fp = fl_fopen(localname, "rb")) != NULL)
+  if ((fp = fl_fopen(localname.c_str(), "rb")) != NULL)
   {
     fseek(fp, 0, SEEK_END);
     len = ftell(fp);
@@ -3445,13 +3451,11 @@ int Fl_Help_View::load(const char *f)
   }
   else
   {
-    snprintf(error, sizeof(error),
-             "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
-             "<BODY><H1>Error</H1>"
-             "<P>Unable to follow the link \"%s\" - "
-             "%s.</P></BODY>",
-             localname, strerror(errno));
-    value_ = fl_strdup(error);
+    error = "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
+            "<BODY><H1>Error</H1>"
+            "<P>Unable to follow the link \"" +localname + "\" - "
+            + strerror(errno) + ".</P></BODY>";
+    value_ = fl_strdup(error.c_str());
     ret = -1;
   }
 
@@ -3459,8 +3463,8 @@ int Fl_Help_View::load(const char *f)
   format();
   initial_load = 0;
 
-  if (target)
-    topline(target);
+  if (!target.empty())
+    topline(target.c_str());
   else
     topline(0);
 
@@ -3492,8 +3496,7 @@ void Fl_Help_View::resize(int xx, int yy, int ww, int hh)
  \brief Scroll the text to the given anchor.
  \param[in] anchor scroll to this named anchor
 */
-void
-Fl_Help_View::topline(const char *anchor)    // I - Target name
+void Fl_Help_View::topline(const char *anchor)
 {
   std::string target_name = to_lower(anchor); // Convert to lower case
   auto tl = target_line_map_.find(target_name);
@@ -3505,6 +3508,7 @@ Fl_Help_View::topline(const char *anchor)    // I - Target name
     topline(0);
   }
 }
+
 
 /** Scrolls the text to the indicated position, given a pixel line.
 
