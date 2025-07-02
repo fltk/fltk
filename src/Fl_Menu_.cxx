@@ -461,6 +461,12 @@ void Fl_Menu_::setonly(Fl_Menu_Item* item) {
   }
 }
 
+/**
+ \deprecated Please use Fl_Menu_Item::setonly(Fl_Menu_Item const* first) instead.
+ */
+void Fl_Menu_Item::setonly() { setonly(nullptr); }
+
+
 /** Turns the radio item "on" for the menu item and turns "off" adjacent radio items set.
  \note This method is dangerous if radio items are first in the menu.
  Make sure that \p first is set ciorrectly or use Fl_Menu_::setonly(Fl_Menu_Item*) instead.

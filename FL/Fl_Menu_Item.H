@@ -438,7 +438,9 @@ struct FL_EXPORT Fl_Menu_Item {
   /** Turns the check or radio item "off" for the menu item. */
   void clear() {flags &= ~FL_MENU_VALUE;}
 
-  void setonly(Fl_Menu_Item const* first = NULL);
+  FL_DEPRECATED("since 1.3 - use setonly(Fl_Menu_Item const* first) instead",
+  void setonly());
+  void setonly(Fl_Menu_Item const* first);
 
   /** Gets the visibility of an item. */
   int visible() const {return !(flags&FL_MENU_INVISIBLE);}
