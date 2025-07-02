@@ -3188,9 +3188,11 @@ Fl_Help_View::handle(int event) // I - Event to handle
   return (Fl_Group::handle(event));
 }
 
+
 /**
-  The constructor creates the Fl_Help_View widget at the specified
-  position and size.
+ \brief Creates the Fl_Help_View widget at the specified position and size.
+ \param[in] xx, yy, ww, hh Position and size of the widget
+ \param[in] l Label for the widget, can be NULL
 */
 Fl_Help_View::Fl_Help_View(int        xx,       // I - Left position
                            int        yy,       // I - Top position
@@ -3247,10 +3249,11 @@ Fl_Help_View::Fl_Help_View(int        xx,       // I - Left position
 }
 
 
-/** Destroys the Fl_Help_View widget.
+/** 
+ \brief Destroys the Fl_Help_View widget.
 
-  The destructor destroys the widget and frees all memory that has been
-  allocated for the current document.
+ The destructor destroys the widget and frees all memory that has been
+ allocated for the current document.
 */
 Fl_Help_View::~Fl_Help_View()
 {
@@ -3258,6 +3261,68 @@ Fl_Help_View::~Fl_Help_View()
   free_data();
 }
 
+
+/** 
+ \brief Return the current filename for the text in the buffer.
+
+ Fl_Help_View remains the owner of the allocated memory. If the filename
+ chages, the returned pointer will become stale. 
+
+ \return nullptr if the filename is empty
+ */
+const char *Fl_Help_View::filename() const { 
+  if (filename_[0]) 
+    return (filename_);
+  else 
+    return nullptr; 
+}
+
+
+/** 
+ \brief Return the current directory for the text in the buffer.
+
+ Fl_Help_View remains the owner of the allocated memory. If the directory
+ chages, the returned pointer will become stale. 
+
+ \return nullptr if the directory name is empty
+ */
+const char *Fl_Help_View::directory() const { 
+  if (directory_[0]) 
+    return (directory_);
+  else 
+    return nullptr; 
+}
+
+
+/**
+ \brief Set a callback function for following links.
+
+ This method assigns a callback function to use when a link is
+ followed or a file is loaded (via Fl_Help_View::load()) that
+ requires a different file or path.
+
+ The callback function receives a pointer to the Fl_Help_View
+ widget and the URI or full pathname for the file in question.
+ It must return a pathname that can be opened as a local file or NULL:
+
+ \code
+ const char *fn(Fl_Widget *w, const char *uri);
+ \endcode
+
+ The link function can be used to retrieve remote or virtual
+ documents, returning a temporary file that contains the actual
+ data. If the link function returns NULL, the value of
+ the Fl_Help_View widget will remain unchanged.
+
+ If the link callback cannot handle the URI scheme, it should
+ return the uri value unchanged or set the value() of the widget
+ before returning NULL.
+
+ \param[in] fn Pointer to the callback function
+*/
+void Fl_Help_View::link(Fl_Help_Func *fn) { 
+  link_ = fn; 
+}
 
 /** Loads the specified file.
 
@@ -3403,17 +3468,13 @@ int Fl_Help_View::load(const char *f)
 }
 
 
-/** Resizes the help widget. */
-
-void
-Fl_Help_View::resize(int xx,    // I - New left position
-                     int yy,    // I - New top position
-                     int ww,    // I - New width
-                     int hh)    // I - New height
+/** 
+ \brief Override the superclass's resize method.
+ \param[in] xx, yy, ww, hh New position and size of the widget
+ */
+void Fl_Help_View::resize(int xx, int yy, int ww, int hh)
 {
-  Fl_Boxtype            b = box() ? box() : FL_DOWN_BOX;
-                                        // Box to draw...
-
+  Fl_Boxtype b = box() ? box() : FL_DOWN_BOX; // Box to draw...
 
   Fl_Widget::resize(xx, yy, ww, hh);
 
@@ -3423,24 +3484,24 @@ Fl_Help_View::resize(int xx,    // I - New left position
   hscrollbar_.resize(x() + Fl::box_dx(b),
                      y() + h() - scrollsize - Fl::box_dh(b) + Fl::box_dy(b),
                      w() - scrollsize - Fl::box_dw(b), scrollsize);
-
   format();
 }
 
 
-/** Scrolls the text to the indicated position, given a named destination.
-
-  \param[in] n target name
+/** 
+ \brief Scroll the text to the given anchor.
+ \param[in] anchor scroll to this named anchor
 */
 void
-Fl_Help_View::topline(const char *n)    // I - Target name
+Fl_Help_View::topline(const char *anchor)    // I - Target name
 {
-  std::string target_name = to_lower(n); // Convert to lower case
+  std::string target_name = to_lower(anchor); // Convert to lower case
   auto tl = target_line_map_.find(target_name);
   if (tl != target_line_map_.end()) {
     // Found the target name, scroll to the line
     topline(tl->second);
   } else {
+    // Scroll to the top.
     topline(0);
   }
 }

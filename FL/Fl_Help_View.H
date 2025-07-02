@@ -253,8 +253,6 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
   void          add_link(const std::string &link, int xx, int yy, int ww, int hh);
   void          add_target(const std::string &n, int yy);
   int           do_align(Fl_Help_Block *block, int line, int xx, int a, int &l);
-protected:
-  void          draw() override;
 private:
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
@@ -264,8 +262,6 @@ private:
   Fl_Color      get_color(const char *n, Fl_Color c);
   Fl_Shared_Image *get_image(const char *name, int W, int H);
   int           get_length(const char *l);
-public:
-  int           handle(int) override;
 private:
 
   void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
@@ -276,44 +272,25 @@ private:
   std::shared_ptr<Link> find_link(int, int);
   void          follow_link(std::shared_ptr<Link>);
 
+protected:
+  void          draw() override;
+
 public:
 
   static const char *copy_menu_text;
 
   Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
-  ~Fl_Help_View();
-  /** Returns the current directory for the text in the buffer. */
-  const char    *directory() const { if (directory_[0]) return (directory_);
-                                        else return ((const char *)0); }
-  /** Returns the current filename for the text in the buffer. */
-  const char    *filename() const { if (filename_[0]) return (filename_);
-                                        else return ((const char *)0); }
+  ~Fl_Help_View() override;
+
+  int handle(int) override;
+  void resize(int,int,int,int) override;
+
+  const char *filename() const;
+  const char *directory() const;
+  
   int           find(const char *s, int p = 0);
-  /**
-    This method assigns a callback function to use when a link is
-    followed or a file is loaded (via Fl_Help_View::load()) that
-    requires a different file or path.
-
-    The callback function receives a pointer to the Fl_Help_View
-    widget and the URI or full pathname for the file in question.
-    It must return a pathname that can be opened as a local file or NULL:
-
-    \code
-    const char *fn(Fl_Widget *w, const char *uri);
-    \endcode
-
-    The link function can be used to retrieve remote or virtual
-    documents, returning a temporary file that contains the actual
-    data. If the link function returns NULL, the value of
-    the Fl_Help_View widget will remain unchanged.
-
-    If the link callback cannot handle the URI scheme, it should
-    return the uri value unchanged or set the value() of the widget
-    before returning NULL.
-  */
-  void          link(Fl_Help_Func *fn) { link_ = fn; }
+  void          link(Fl_Help_Func *fn);
   int           load(const char *f);
-  void          resize(int,int,int,int) override;
   /** Gets the size of the help view. */
   int           size() const { return (size_); }
   void          size(int W, int H) { Fl_Widget::size(W, H); }
