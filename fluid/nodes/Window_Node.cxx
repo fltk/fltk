@@ -267,8 +267,10 @@ void Window_Node::add_child(Node* cc, Node* before) {
 }
 
 void Window_Node::remove_child(Node* cc) {
-  Widget_Node* c = (Widget_Node*)cc;
-  ((Fl_Window*)o)->remove(c->o);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    ((Fl_Window*)o)->remove(c->o);
+  }
   o->redraw();
 }
 

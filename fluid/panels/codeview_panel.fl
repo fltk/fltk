@@ -20,7 +20,7 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <stdlib.h>    // malloc()} {selected private local
+decl {\#include <stdlib.h>    // malloc()} {private local
 }
 
 decl {\#include "Fluid.h"} {private local
@@ -209,7 +209,7 @@ and load those into the Code Viewer widgets.} open return_type void
     char fn[FL_PATH_MAX+1];
     fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(fn, "strings", FL_PATH_MAX);
-    fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n.i18n_type)]);
+    fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n.type)]);
     fld::io::write_strings(Fluid.proj, fn);
     int top = cv_strings->top_line();
     cv_strings->buffer()->loadfile(fn);
@@ -239,7 +239,8 @@ and load those into the Code Viewer widgets.} open return_type void
 
     Fluid.proj.code_file_name = code_file_name_bak;
     Fluid.proj.header_file_name = header_file_name_bak;
-  }} {}
+  }} {selected
+  }
 }
 
 Function {update_codeview_timer(void*)} {
