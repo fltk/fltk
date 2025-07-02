@@ -32,6 +32,10 @@
 #include "fl_draw.H"
 #include "filename.H"
 
+#include <map>
+#include <vector>
+#include <string>
+
 class Fl_Shared_Image;
 //
 // Fl_Help_Func type - link callback function for files...
@@ -122,12 +126,6 @@ protected:
   Fl_Help_Font_Style elts_[MAX_FL_HELP_FS_ELTS]; ///< font elements
 };
 
-/** Fl_Help_Target structure */
-
-struct Fl_Help_Target {
-  char          name[32];       ///< Target name
-  int           y;              ///< Y offset of target
-};
 
 /**
   The Fl_Help_View widget displays HTML text. Most HTML 2.0
@@ -221,9 +219,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
                 alinks_;                ///< Allocated links
   Fl_Help_Link  *links_;                ///< Links
 
-  int           ntargets_,              ///< Number of targets
-                atargets_;              ///< Allocated targets
-  Fl_Help_Target *targets_;             ///< Targets
+  std::map<std::string, int> target_line_map_; ///< Map of targets for fast access
 
   // FIXME: do we really need this size?
   char          directory_[2 * FL_PATH_MAX + 15]; ///< Directory for current file
@@ -261,10 +257,9 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
   Fl_Help_Block *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void          add_link(const char *n, int xx, int yy, int ww, int hh);
   void          add_target(const char *n, int yy);
-  static int    compare_targets(const Fl_Help_Target *t0, const Fl_Help_Target *t1);
   int           do_align(Fl_Help_Block *block, int line, int xx, int a, int &l);
 protected:
-  void          draw() FL_OVERRIDE;
+  void          draw() override;
 private:
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
@@ -275,7 +270,7 @@ private:
   Fl_Shared_Image *get_image(const char *name, int W, int H);
   int           get_length(const char *l);
 public:
-  int           handle(int) FL_OVERRIDE;
+  int           handle(int) override;
 private:
 
   void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
@@ -323,7 +318,7 @@ public:
   */
   void          link(Fl_Help_Func *fn) { link_ = fn; }
   int           load(const char *f);
-  void          resize(int,int,int,int) FL_OVERRIDE;
+  void          resize(int,int,int,int) override;
   /** Gets the size of the help view. */
   int           size() const { return (size_); }
   void          size(int W, int H) { Fl_Widget::size(W, H); }

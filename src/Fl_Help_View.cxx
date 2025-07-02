@@ -84,6 +84,15 @@ static int      quote_char(const char *);
 static void     scrollbar_callback(Fl_Widget *s, void *);
 static void     hscrollbar_callback(Fl_Widget *s, void *);
 
+static std::string to_lower(const std::string &str) {
+  std::string lower_str;
+  lower_str.reserve(str.size());
+  for (char c : str) {
+    lower_str += fl_tolower(c);
+  }
+  return lower_str;
+}
+
 // This function skips 'n' bytes *within* a string, i.e. it checks
 // for a NUL byte as string terminator.
 // If a NUL byte is found before 'n' bytes have been scanned it returns
@@ -451,34 +460,10 @@ void Fl_Help_View::add_link(const char *n,      // I - Name of link
 void Fl_Help_View::add_target(const char *n,    // I - Name of target
                               int        yy)    // I - Y position of target
 {
-  Fl_Help_Target        *temp;                  // New target
-
-
-  if (ntargets_ >= atargets_)
-  {
-    atargets_ += 16;
-
-    if (atargets_ == 16)
-      targets_ = (Fl_Help_Target *)malloc(sizeof(Fl_Help_Target) * atargets_);
-    else
-      targets_ = (Fl_Help_Target *)realloc(targets_, sizeof(Fl_Help_Target) * atargets_);
-  }
-
-  temp = targets_ + ntargets_;
-
-  temp->y = yy;
-  strlcpy(temp->name, n, sizeof(temp->name));
-
-  ntargets_ ++;
+  std::string target = to_lower(n); // Convert target name to lower case
+  target_line_map_[target] = yy; // Store the target line in the map
 }
 
-/** Compares two targets.*/
-int                                                     // O - Result of comparison
-Fl_Help_View::compare_targets(const Fl_Help_Target *t0, // I - First target
-                             const Fl_Help_Target *t1)  // I - Second target
-{
-  return (strcasecmp(t0->name, t1->name));
-}
 
 /** Computes the alignment for a line in a block.*/
 int                                             // O - New line
@@ -1261,7 +1246,7 @@ void Fl_Help_View::format() {
     done       = 1;
     nblocks_   = 0;
     nlinks_    = 0;
-    ntargets_  = 0;
+    target_line_map_.clear();
     size_      = 0;
     bgcolor_   = color();
     textcolor_ = textcolor();
@@ -1992,10 +1977,6 @@ void Fl_Help_View::format() {
 
 //  printf("margins.depth_=%d\n", margins.depth_);
 
-  if (ntargets_ > 1)
-    qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
-          (compare_func_t)compare_targets);
-
   int dx = Fl::box_dw(b) - Fl::box_dx(b);
   int dy = Fl::box_dh(b) - Fl::box_dy(b);
   int ss = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
@@ -2556,14 +2537,7 @@ Fl_Help_View::free_data() {
     nlinks_ = 0;
     links_  = 0;
   }
-
-  if (ntargets_) {
-    free(targets_);
-
-    atargets_ = 0;
-    ntargets_ = 0;
-    targets_  = 0;
-  }
+  target_line_map_.clear();
 } // free_data()
 
 /** Gets an alignment attribute. */
@@ -3275,10 +3249,6 @@ Fl_Help_View::Fl_Help_View(int        xx,       // I - Left position
   nlinks_       = 0;
   links_        = (Fl_Help_Link *)0;
 
-  atargets_     = 0;
-  ntargets_     = 0;
-  targets_      = (Fl_Help_Target *)0;
-
   directory_[0] = '\0';
   filename_[0]  = '\0';
 
@@ -3492,22 +3462,15 @@ Fl_Help_View::resize(int xx,    // I - New left position
 void
 Fl_Help_View::topline(const char *n)    // I - Target name
 {
-  Fl_Help_Target key,                   // Target name key
-                *target;                // Pointer to matching target
-
-
-  if (ntargets_ == 0)
-    return;
-
-  strlcpy(key.name, n, sizeof(key.name));
-
-  target = (Fl_Help_Target *)bsearch(&key, targets_, ntargets_, sizeof(Fl_Help_Target),
-                                 (compare_func_t)compare_targets);
-
-  if (target != NULL)
-    topline(target->y);
+  std::string target_name = to_lower(n); // Convert to lower case
+  auto tl = target_line_map_.find(target_name);
+  if (tl != target_line_map_.end()) {
+    // Found the target name, scroll to the line
+    topline(tl->second);
+  } else {
+    topline(0);
+  }
 }
-
 
 /** Scrolls the text to the indicated position, given a pixel line.
 
