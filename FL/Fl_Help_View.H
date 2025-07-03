@@ -3,7 +3,7 @@
 //
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
-// Copyright 2011-2024 by Bill Spitzak and others.
+// Copyright 2011-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,15 +16,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/* \file
-   Fl_Help_View widget . */
-
 #ifndef Fl_Help_View_H
 #define Fl_Help_View_H
 
-//
-// Include necessary header files...
-//
+// FLTK header files
 
 #include "Fl.H"
 #include "Fl_Group.H"
@@ -32,93 +27,23 @@
 #include "fl_draw.H"
 #include "filename.H"
 
+// C++ header files
+
 #include <map>
 #include <vector>
 #include <string>
 #include <memory>
 
-class Fl_Shared_Image;
-//
-// Fl_Help_Func type - link callback function for files...
-//
+// Forward declarations
 
+class Fl_Shared_Image;
 typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
 
-//
-// Fl_Help_Block structure...
-//
-
-struct Fl_Help_Block {
-  const char    *start,         // Start of text
-                *end;           // End of text
-  uchar         border;         // Draw border?
-  Fl_Color      bgcolor;        // Background color
-  int           x,              // Indentation/starting X coordinate
-                y,              // Starting Y coordinate
-                w,              // Width
-                h;              // Height
-  int           line[32];       // Left starting position for each line
-  int           ol;             // is ordered list <OL> element
-  int           ol_num;         // item number in ordered list
-};
-
-
-/*
- * Fl_Help_View font stack opaque implementation
- */
-
-/** Fl_Help_View font stack element definition. */
-struct FL_EXPORT Fl_Help_Font_Style {
-  Fl_Font      f;  ///< Font
-  Fl_Fontsize  s;  ///< Font Size
-  Fl_Color     c;  ///< Font Color
-  void get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor) {afont=f; asize=s; acolor=c;} ///< Gets current font attributes
-  void set(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor) {f=afont; s=asize; c=acolor;} ///< Sets current font attributes
-  Fl_Help_Font_Style(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor) {set(afont, asize, acolor);}
-  Fl_Help_Font_Style(){} // For in table use
-};
-
-/** Fl_Help_View font stack definition. */
-const size_t MAX_FL_HELP_FS_ELTS = 100;
-
-struct FL_EXPORT Fl_Help_Font_Stack {
-  /** font stack construction, initialize attributes. */
-  Fl_Help_Font_Stack() {
-    nfonts_ = 0;
-  }
-
-  void init(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
-    nfonts_ = 0;
-    elts_[nfonts_].set(f, s, c);
-    fl_font(f, s);
-    fl_color(c);
-  }
-  /** Gets the top (current) element on the stack. */
-  void top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { elts_[nfonts_].get(f, s, c); }
-  /** Pushes the font style triplet on the stack, also calls fl_font() & fl_color() adequately */
-  void push(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
-    if (nfonts_ <  MAX_FL_HELP_FS_ELTS-1) nfonts_ ++;
-    elts_[nfonts_].set(f, s, c);
-    fl_font(f, s); fl_color(c);
-  }
-  /** Pops from the stack the font style triplet and calls fl_font() & fl_color() adequately */
-  void pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {
-    if (nfonts_ > 0) nfonts_ --;
-    top(f, s, c);
-    fl_font(f, s); fl_color(c);
-  }
-  /** Gets the current count of font style elements in the stack. */
-  size_t count() const {return nfonts_;} // Gets the current number of fonts in the stack
-
-protected:
-  size_t nfonts_;               ///< current number of fonts in stack
-  Fl_Help_Font_Style elts_[MAX_FL_HELP_FS_ELTS]; ///< font elements
-};
-
-
 /**
-  The Fl_Help_View widget displays HTML text. Most HTML 2.0
-  elements are supported, as well as a primitive implementation of tables.
+  \brief A widget to display formatted text, formatted in a subset of HTML.
+
+  The Fl_Help_View widget displays HTML text. Most HTML 2.0 elements are 
+  supported, as well as a primitive implementation of tables.
   GIF, JPEG, and PNG images are displayed inline.
 
   Supported HTML tags:
@@ -187,7 +112,24 @@ protected:
 */
 class FL_EXPORT Fl_Help_View : public Fl_Group 
 {
-  // Private class to hold a link with target and its position on screen.
+private: // classes, structs, and types
+
+  /** Private struct to describe blocks of text. */
+  struct Text_Block {
+    const char    *start,         // Start of text
+                  *end;           // End of text
+    uchar         border;         // Draw border?
+    Fl_Color      bgcolor;        // Background color
+    int           x,              // Indentation/starting X coordinate
+                  y,              // Starting Y coordinate
+                  w,              // Width
+                  h;              // Height
+    int           line[32];       // Left starting position for each line
+    int           ol;             // is ordered list <OL> element
+    int           ol_num;         // item number in ordered list
+  };
+
+  /** Private class to hold a link with target and its position on screen. */
   class Link {
   public:
     std::string filename_;   // Filename part of a link
@@ -195,7 +137,31 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
     Fl_Rect box;          // Clickable rectangle that defines the link area
   };
 
+  /** Private font stack element definition. */
+  struct Font_Style {
+    Fl_Font      f;  ///< Font
+    Fl_Fontsize  s;  ///< Font Size
+    Fl_Color     c;  ///< Font Color
+    void get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor);
+    void set(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
+    Font_Style(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
+    Font_Style() = default; ///< Default constructor
+  };
+
+  /** Private class to hold font information on a stack. */
+  struct Font_Stack {
+    void init(Fl_Font f, Fl_Fontsize s, Fl_Color c);
+    void top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
+    void push(Fl_Font f, Fl_Fontsize s, Fl_Color c);
+    void pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
+    size_t count() const;
+  protected:
+    std::vector<Font_Style> elts_; ///< font elements
+  };
+
   enum { RIGHT = -1, CENTER, LEFT };    ///< Alignments
+
+private: // data members
 
   std::string title_;           ///< Title string
   Fl_Color      defcolor_,              ///< Default text color
@@ -205,8 +171,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
   Fl_Font       textfont_;              ///< Default font for text
   Fl_Fontsize  textsize_;               ///< Default font size
   const char    *value_;                ///< HTML text value
-  Fl_Help_Font_Stack fstack_;           ///< font stack management
-  std::vector<Fl_Help_Block> blocks_; ///< Blocks
+  Font_Stack fstack_;           ///< font stack management
+  std::vector<Text_Block> blocks_; ///< Blocks
 
   Fl_Help_Func  *link_;                 ///< Link transform function
 
@@ -240,17 +206,17 @@ class FL_EXPORT Fl_Help_View : public Fl_Group
   static Fl_Color hv_selection_color_;
   static Fl_Color hv_selection_text_color_;
 
+private: // methods
 
   void initfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { f = textfont_; s = textsize_; c = textcolor_; fstack_.init(f, s, c); }
   void pushfont(Fl_Font f, Fl_Fontsize s) {fstack_.push(f, s, textcolor_);}
   void pushfont(Fl_Font f, Fl_Fontsize s, Fl_Color c) {fstack_.push(f, s, c);}
   void popfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {fstack_.pop(f, s, c);}
 
-  Fl_Help_Block *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
+  Text_Block *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void          add_link(const std::string &link, int xx, int yy, int ww, int hh);
   void          add_target(const std::string &n, int yy);
-  int           do_align(Fl_Help_Block *block, int line, int xx, int a, int &l);
-private:
+  int           do_align(Text_Block *block, int line, int xx, int a, int &l);
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
   void          free_data();
@@ -259,7 +225,6 @@ private:
   Fl_Color      get_color(const char *n, Fl_Color c);
   Fl_Shared_Image *get_image(const char *name, int W, int H);
   int           get_length(const char *l);
-private:
 
   void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
   char          begin_selection();
@@ -270,6 +235,7 @@ private:
   void          follow_link(std::shared_ptr<Link>);
 
 protected:
+
   void          draw() override;
 
 public:
@@ -316,45 +282,9 @@ public:
   const char    *value() const { return (value_); }
   void          clear_selection();
   void          select_all();
-  /**
-    Gets the current size of the scrollbars' troughs, in pixels.
-
-    If this value is zero (default), this widget will use the
-    Fl::scrollbar_size() value as the scrollbar's width.
-
-    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
-    \see Fl::scrollbar_size(int)
-  */
-  int scrollbar_size() const {
-      return(scrollbar_size_);
-  }
-  /**
-    Sets the pixel size of the scrollbars' troughs to \p newSize, in pixels.
-
-    Normally you should not need this method, and should use
-    Fl::scrollbar_size(int) instead to manage the size of ALL
-    your widgets' scrollbars. This ensures your application
-    has a consistent UI, is the default behavior, and is normally
-    what you want.
-
-    Only use THIS method if you really need to override the global
-    scrollbar size. The need for this should be rare.
-
-    Setting \p newSize to the special value of 0 causes the widget to
-    track the global Fl::scrollbar_size(), which is the default.
-
-    \param[in] newSize Sets the scrollbar size in pixels.\n
-                    If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
-    \see Fl::scrollbar_size()
-  */
-  void scrollbar_size(int newSize) {
-      scrollbar_size_ = newSize;
-  }
-
-  // Check if the user selected text in this view.
+  int scrollbar_size() const;
+  void scrollbar_size(int newSize);
   int text_selected();
-
-  // If text is selected in this view, copy it to a clipboard.
   int copy(int clipboard=1);
 };
 
