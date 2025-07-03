@@ -1085,7 +1085,7 @@ corresponding text via function \c xkb_state_key_get_utf8() which is put in \c F
 Then, a few calls to functions whose name begin with \c xkb_compose_ are necessary to support
 dead and compose keys. Finally a call to \c Fl::handle() sends an \c FL_KEYDOWN or \c FL_KEYUP event to
 the appropriate \c Fl_Window. Also, function \c wl_keyboard_key() uses global variable
-<tt>Fl_Int_Vector key_vector</tt> to record all currently pressed keys. This is the base of the
+<tt>std::vector<int> key_vector</tt> to record all currently pressed keys. This is the base of the
 implementation of \c Fl_Wayland_Screen_Driver::event_key(int).
 
 5) Function \c wl_keyboard_modifiers() runs when a modifier key (e.g., shift, control) is pressed or
