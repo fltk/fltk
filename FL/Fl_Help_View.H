@@ -42,7 +42,7 @@ typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
 /**
   \brief A widget to display formatted text, formatted in a subset of HTML.
 
-  The Fl_Help_View widget displays HTML text. Most HTML 2.0 elements are 
+  The Fl_Help_View widget displays HTML text. Most HTML 2.0 elements are
   supported, as well as a primitive implementation of tables.
   GIF, JPEG, and PNG images are displayed inline.
 
@@ -110,7 +110,7 @@ typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
     but can't be changed for backwards compatibility. If you don't want a frame
     around the widget you can use FL_FLAT_BOX instead.
 */
-class FL_EXPORT Fl_Help_View : public Fl_Group 
+class FL_EXPORT Fl_Help_View : public Fl_Group
 {
 private: // classes, structs, and types
 
@@ -159,7 +159,7 @@ private: // classes, structs, and types
     std::vector<Font_Style> elts_; ///< font elements
   };
 
-  enum { RIGHT = -1, CENTER, LEFT };    ///< Alignments
+  enum class Align { RIGHT = -1, CENTER, LEFT };    ///< Alignments
 
 private: // data members
 
@@ -216,11 +216,11 @@ private: // methods
   Text_Block *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void          add_link(const std::string &link, int xx, int yy, int ww, int hh);
   void          add_target(const std::string &n, int yy);
-  int           do_align(Text_Block *block, int line, int xx, int a, int &l);
+  int           do_align(Text_Block *block, int line, int xx, Align a, int &l);
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
   void          free_data();
-  int           get_align(const char *p, int a);
+  Align         get_align(const char *p, Align a);
   const char    *get_attr(const char *p, const char *n, char *buf, int bufsize);
   Fl_Color      get_color(const char *n, Fl_Color c);
   Fl_Shared_Image *get_image(const char *name, int W, int H);
@@ -255,30 +255,20 @@ public:
   int           find(const char *s, int p = 0);
   void          link(Fl_Help_Func *fn);
   int           load(const char *f);
-  /** Gets the size of the help view. */
   int           size() const { return (size_); }
   void          size(int W, int H) { Fl_Widget::size(W, H); }
-  /** Sets the default text color. */
   void          textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
-  /** Returns the current default text color. */
   Fl_Color      textcolor() const { return (defcolor_); }
-  /** Sets the default text font. */
   void          textfont(Fl_Font f) { textfont_ = f; format(); }
-  /** Returns the current default text font. */
   Fl_Font       textfont() const { return (textfont_); }
-  /** Sets the default text size. */
   void          textsize(Fl_Fontsize s) { textsize_ = s; format(); }
-  /** Gets the default text size. */
   Fl_Fontsize  textsize() const { return (textsize_); }
   void          topline(const char *n);
   void          topline(int);
-  /** Returns the current top line in pixels. */
   int           topline() const { return (topline_); }
   void          leftline(int);
-  /** Gets the left position in pixels. */
   int           leftline() const { return (leftline_); }
   void          value(const char *val);
-  /** Returns the current buffer contents. */
   const char    *value() const { return (value_); }
   void          clear_selection();
   void          select_all();
