@@ -19,7 +19,9 @@
 #ifndef Fl_Help_View_H
 #define Fl_Help_View_H
 
+//
 // FLTK header files
+//
 
 #include "Fl.H"
 #include "Fl_Group.H"
@@ -27,17 +29,25 @@
 #include "fl_draw.H"
 #include "filename.H"
 
+//
 // C++ header files
+//
 
 #include <map>
 #include <vector>
 #include <string>
 #include <memory>
 
-// Forward declarations
+//
+// Forward declarations and typedefs
+//
 
 class Fl_Shared_Image;
 typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
+
+//
+// Class declaration
+//
 
 /**
   \brief A widget to display formatted text, formatted in a subset of HTML.
@@ -183,9 +193,9 @@ private: // data members
   std::string directory_; ///< Directory for current file
   std::string filename_; ///< Current filename
 
-  int           topline_,               ///< Top line in document
-                leftline_,              ///< Lefthand position
-                size_,                  ///< Total document length
+  int           topline_,               ///< Top line in document, measure in pixels
+                leftline_,              ///< Lefthand position in pixels
+                size_,                  ///< Total document height in pixels
                 hsize_,                 ///< Maximum document width
                 scrollbar_size_;        ///< Size for both scrollbars
   Fl_Scrollbar  scrollbar_,             ///< Vertical scrollbar for document
@@ -198,7 +208,7 @@ private: // data members
   static int    selection_drag_first_;
   static int    selection_drag_last_;
   static int    selected_;
-  static int    draw_mode_;
+  static int    draw_mode_; // 0 if drawing, 1 if mouse down, 2 if mouse dragged
   static int    mouse_x_;
   static int    mouse_y_;
   static int    current_pos_;
@@ -255,20 +265,45 @@ public:
   int           find(const char *s, int p = 0);
   void          link(Fl_Help_Func *fn);
   int           load(const char *f);
+
+  /** Return the document height in pixels. */
   int           size() const { return (size_); }
+
+  /** Changes the size of the widget. \see Fl_Widget::size(int, int) */
   void          size(int W, int H) { Fl_Widget::size(W, H); }
+
+  /** Set the default text color. */
   void          textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
+
+  /** Return the current default text color. */
   Fl_Color      textcolor() const { return (defcolor_); }
+
+  /** Set the default text font. */
   void          textfont(Fl_Font f) { textfont_ = f; format(); }
+
+  /** Return the default text font. */
   Fl_Font       textfont() const { return (textfont_); }
+
+  /** Set the default text size. */
   void          textsize(Fl_Fontsize s) { textsize_ = s; format(); }
+
+  /** Get the default text size. */
+
   Fl_Fontsize  textsize() const { return (textsize_); }
   void          topline(const char *n);
   void          topline(int);
+
+  /** Get the current top line in pixels. */
   int           topline() const { return (topline_); }
+
   void          leftline(int);
+
+  /** Get the left position in pixels. */
   int           leftline() const { return (leftline_); }
+
   void          value(const char *val);
+
+  //** Return a pointer to the internal text buffer. */
   const char    *value() const { return (value_); }
   void          clear_selection();
   void          select_all();

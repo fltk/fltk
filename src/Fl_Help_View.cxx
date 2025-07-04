@@ -18,9 +18,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-
 //
-// Include necessary header files...
+// FLTK header files
 //
 
 #include <FL/Fl_Help_View.H>
@@ -28,107 +27,41 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Menu_Item.H>
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include <FL/filename.H>                // fl_open_uri()
 #include <FL/fl_string_functions.h>     // fl_strdup()
 #include "flstring.h"
+
+//
+// System header files
+//
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <errno.h>
 #include <math.h>
 #include <string>
 
-#define MAX_COLUMNS     200
-
 //
-// Typedef the C API sort function type the only way I know how...
+// Debugging
 //
 
-extern "C"
-{
-  typedef int (*compare_func_t)(const void *, const void *);
-}
-
+// Debug: set to 1 for basic debugging, 2 for more, 0 for none
+#define DEBUG_EDIT_BUFFER 0
+#if (DEBUG_EDIT_BUFFER > 1)
+#define DEBUG_FUNCTION(L,F) \
+  printf("\n========\n  [%d] --- %s\n========\n", L, F); \
+  fflush(stdout);
+#else
+#define DEBUG_FUNCTION(L,F)
+#endif
 
 //
-// Local functions...
+// Constants
 //
 
-static int      quote_char(const char *);
-static void     scrollbar_callback(Fl_Widget *s, void *);
-static void     hscrollbar_callback(Fl_Widget *s, void *);
-
-// The following function is used to make anchors in a link (the part after
-// the '#') case insensitive. As it is, the function handles only ASCII
-// characters. Should it be extended to handle UTF-8 characters as well?
-//
-// UTF8 is allowed in anchors, but only when it is encoded between '%', so
-// `https://example.com/page#%C3%BCber` is valid, but
-// `https://example.com/page#über is *not*.
-//
-// But as with everything in HTML, nobody cares and everybody does what they
-// want anyway ;-) .
-
-static std::string to_lower(const std::string &str) {
-  std::string lower_str;
-  lower_str.reserve(str.size());
-  for (char c : str) {
-    lower_str += fl_tolower(c);
-  }
-  return lower_str;
-}
-
-// This function skips 'n' bytes *within* a string, i.e. it checks
-// for a NUL byte as string terminator.
-// If a NUL byte is found before 'n' bytes have been scanned it returns
-// a pointer to the end of the string (the NUL byte).
-// This avoids pure pointer arithmetic that would potentially overrun
-// the end of the string (buffer), see GitHub Issue #1196.
-//
-// Note: this should be rewritten and improved in FLTK 1.5.0 or later
-// by using std::string etc..
-
-static char *skip_bytes(const char *p, int n) {
-  for (int i = 0; i < n; ++i) {
-    if (*p == '\0') break;
-    ++p;
-  }
-  return const_cast<char *>(p);
-}
-
-
-/**
- \brief Check if a URL is starting with a scheme (e.g. ftp:).
- \param[in] url the URL to check.
- \return 0 if not found, otherwise the length of the scheme string including
-     the following '/' characters.
- */
-static size_t url_scheme(const std::string &url, bool skip_slashes=false)
-{
-  // First skip all ascii letters and digits
-  size_t pos = 0;
-  while ( (pos < url.size()) && ( isalnum(url[pos]) || (url[pos] == '+') || (url[pos] == '-') || (url[pos] == '.') )) {
-    pos++;
-  }
-  // Next, check for the ':' character
-  if ( (pos < url.size()) && (url[pos] == ':') ) {
-    pos++; // Skip the ':' character
-    if (skip_slashes) {
-      // If found, skip up to two '/' characters as well
-      if ( (pos < url.size()) && (url[pos] == '/') ) {
-        pos++; // Skip the first '/' character
-        if ( (pos < url.size()) && (url[pos] == '/') ) {
-          pos++; // Skip the second '/' character
-        }
-      }
-    }
-    return pos; // Return the length of the scheme including the following '/' characters
-  }
-  return 0; // No scheme found
-}
-
+static constexpr int MAX_COLUMNS = 200;
 
 //
 // global flag for image loading (see get_image).
@@ -137,9 +70,18 @@ static size_t url_scheme(const std::string &url, bool skip_slashes=false)
 static char initial_load = 0;
 
 //
-// Broken image...
+// Local functions declarations, implementations are at the end of the file
 //
 
+static int quote_char(const char *);
+static std::string to_lower(const std::string &str);
+static size_t url_scheme(const std::string &url, bool skip_slashes=false);
+
+//
+// Static data.
+//
+
+// Broken Image
 static const char * const broken_xpm[] =
                 {
                   "16 24 4 1",
@@ -185,10 +127,14 @@ static Fl_Menu_Item rmb_menu[] = {
   { nullptr }
 };
 
+//
+// Implementation
+//
 
-//
-// Simple margin stack for Fl_Help_View::format()...
-//
+
+// ---- Helper class to manage margins in Fl_Help_View
+
+// This is used to manage indentation levels for text blocks.
 class Margin_Stack
 {
   std::vector<int> margins_;
@@ -215,6 +161,46 @@ public:
   }
 };
 
+
+// ---- Helper class HV_Edit_Buffer to ease buffer management
+
+/* Note: Don't use Doxygen docs for this internal class.
+
+  Internal class to manage the Fl_Help_View edit buffer.
+  This is a subclass of Fl_String since FLTK 1.4.0 and std::string since 1.5.0.
+
+  This class is for internal use in this file. Its sole purpose is to
+  allow buffer management to avoid buffer overflows in stack variables
+  used to edit strings for formatting and drawing (STR #3275).
+*/
+class HV_Edit_Buffer : public std::string {
+public:
+  HV_Edit_Buffer() = default;
+
+  // Append one Unicode character (code point) to the buffer.
+  // The Unicode character \p ucs is converted to UTF-8 and appended to
+  // the buffer.
+  // \param[in]  ucs  Unicode character (code point) to be added
+  void add(int ucs){
+    int len;
+    char cbuf[6];
+    len = fl_utf8encode((unsigned int)ucs, cbuf); // always returns value >= 1
+    append(cbuf, len);
+  }
+
+  // case insensitive comparison of buffer contents with a string
+  int cmp(const char *str) {
+    return !strcasecmp(c_str(), str);
+  }
+
+  // string width of the entire buffer contents
+  int width() {
+    return (int)fl_width(c_str());
+  }
+};
+
+
+// ---- Implementation of Font_Style class methods
 
 /**
   \brief Constructs a Font_Style object with the specified font, size, and color.
@@ -251,12 +237,14 @@ void Fl_Help_View::Font_Style::set(Fl_Font afont, Fl_Fontsize asize, Fl_Color ac
 }
 
 
+// ---- Implementation of Font_Stack class methods
+
 /**
- \brief Initializes the font stack with a default font, size, and color.
- Clears the stack and pushes one element with a default font, size, and color.
- \param[in] f font to apply
- \param[in] s font size to apply
- \param[in] c color to apply
+  \brief Initializes the font stack with a default font, size, and color.
+  Clears the stack and pushes one element with a default font, size, and color.
+  \param[in] f font to apply
+  \param[in] s font size to apply
+  \param[in] c color to apply
  */
 void Fl_Help_View::Font_Stack::init(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
   elts_.clear();
@@ -277,11 +265,11 @@ void Fl_Help_View::Font_Stack::top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {
 
 
 /**
- \brief Push the font style triplet on the stack.
- Also calls fl_font() and fl_color() adequately
- \param[in] f font to apply
- \param[in] s font size to apply
- \param[in] c color to apply
+  \brief Push the font style triplet on the stack.
+  Also calls fl_font() and fl_color().
+  \param[in] f font to apply
+  \param[in] s font size to apply
+  \param[in] c color to apply
  */
 void Fl_Help_View::Font_Stack::push(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
   elts_.push_back(Font_Style(f, s, c));
@@ -292,8 +280,8 @@ void Fl_Help_View::Font_Stack::push(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
 
 /**
   \brief Pop style form the stack and apply new top style.
-  Pops from the stack the font style triplet and calls fl_font()
-  and fl_color() adequately
+  Pops the font style triplet from the stack and calls fl_font()
+  and fl_color().
   \param[out] f font to apply
   \param[out] s font size to apply
   \param[out] c color to apply
@@ -318,11 +306,9 @@ size_t Fl_Help_View::Font_Stack::count() const {
 }
 
 
-//
-// All the stuff needed to implement text selection in Fl_Help_View
-//
+// ---- Implementation of text selection in Fl_Help_View
 
-/* matt:
+/* TODO: matt:
   The selection code was implemented with binary compatibility within 1.4
   in mind. This means that I was limited to adding static variables
   only to not enlarge the Fl_Help_View class.
@@ -383,20 +369,25 @@ Fl_Color Fl_Help_View::hv_selection_text_color_;
  */
 void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
 {
-  if (selected_ && current_view_==this && current_pos_<selection_last_ && current_pos_>=selection_first_) {
-    Fl_Color c = fl_color();
-    fl_color(hv_selection_color_);
-    int w = (int)fl_width(t);
-    if (current_pos_+(int)strlen(t)<selection_last_)
-      w += (int)fl_width(' ');
-    fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
-    fl_color(hv_selection_text_color_);
-    fl_draw(t, x, y);
-    fl_color(c);
+  if (draw_mode_ == 0) {
+    if (selected_ && current_view_==this && current_pos_<selection_last_ && current_pos_>=selection_first_) {
+      Fl_Color c = fl_color();
+      fl_color(hv_selection_color_);
+      int w = (int)fl_width(t);
+      if (current_pos_+(int)strlen(t)<selection_last_)
+        w += (int)fl_width(' ');
+      fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
+      fl_color(hv_selection_text_color_);
+      fl_draw(t, x, y);
+      fl_color(c);
+    } else {
+      fl_draw(t, x, y);
+    }
   } else {
-    fl_draw(t, x, y);
-  }
-  if (draw_mode_) {
+    // If draw_mode_ is set, we don;t actually draw anything, but measure where
+    // text blocks are on screen during a selection process with the mouse.
+    // draw_mode_ is 1 if the mouse button is first pressed down, and 2 while
+    // the mouse is dragged.
     int w = (int)fl_width(t);
     if (mouse_x_>=x && mouse_x_<x+w) {
       if (mouse_y_>=y-fl_height()+fl_descent()&&mouse_y_<=y+fl_descent()) {
@@ -413,82 +404,6 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
     }
   }
 }
-
-
-// [Internal class HV_Edit_Buffer]
-
-// Debug: set to 1 for basic debugging, 2 for more, 0 for none
-#define DEBUG_EDIT_BUFFER 0
-
-#if (DEBUG_EDIT_BUFFER > 1)
-#define DEBUG_FUNCTION(L,F) \
-  printf("\n========\n  [%d] --- %s\n========\n", L, F); \
-  fflush(stdout);
-#else
-#define DEBUG_FUNCTION(L,F)
-#endif
-
-/* Note: Don't use Doxygen docs for this internal class.
-
-  Internal class to manage the Fl_Help_View edit buffer.
-  This is a subclass of Fl_String since FLTK 1.4.0 and std::string since 1.5.0.
-
-  This class is for internal use in this file. Its sole purpose is to
-  allow buffer management to avoid buffer overflows in stack variables
-  used to edit strings for formatting and drawing (STR #3275).
-*/
-
-class HV_Edit_Buffer : public std::string {
-public:
-  // use default constructor and destructor, none defined here
-
-  // append a Unicode character (Code Point) to the string
-  void add(int ucs);
-
-  // case insensitive comparison of buffer contents with a string
-  int cmp(const char *str) {
-    return !strcasecmp(c_str(), str);
-  }
-
-  // string width of the entire buffer contents
-  int width() {
-    return (int)fl_width(c_str());
-  }
-
-#if (DEBUG_EDIT_BUFFER)
-  void print(const char *text = "");
-#endif
-};
-
-/*
-  Append one Unicode character (code point) to the buffer.
-
-  The Unicode character \p ucs is converted to UTF-8 and appended to
-  the buffer.
-
-  \param[in]  ucs  Unicode character (code point) to be added
-*/
-void HV_Edit_Buffer::add(int ucs) {
-  int len;
-  char cbuf[6];
-  len = fl_utf8encode((unsigned int)ucs, cbuf);
-  if (len < 1) len = 1;
-  append(cbuf, len);
-} // add(int ucs)
-
-/*
-  Print the edit buffer (Debug only).
-*/
-#if (DEBUG_EDIT_BUFFER)
-void HV_Edit_Buffer::print(const char *text) {
-  printf("HV_Edit_Buffer::print(%s), capacity=%d, size=%d\n",
-         text, capacity(), size());
-  printf("    \"%s\"\n", c_str() && size() ? c_str() : "");
-  fflush(stdout);
-} // print()
-#endif
-
-// [End of internal class HV_Edit_Buffer]
 
 
 /**
@@ -1165,7 +1080,7 @@ void Fl_Help_View::draw()
 
 
 /**
- \brief Skips over HTML tags in a text.
+  \brief Skips over HTML tags in a text.
 
   In an html style text, set the character pointer p, skipping anything from a
   leading '<' up to and including the closing '>'. If the end of the buffer is
@@ -3233,8 +3148,8 @@ void Fl_Help_View::end_selection(int clipboard)
 
 
 /**
- \brief Check if the user selected text in this view.
- \return 1 if text is selected, 0 if no text is selected
+  \brief Check if the user selected text in this view.
+  \return 1 if text is selected, 0 if no text is selected
  */
 int Fl_Help_View::text_selected() {
   if (current_view_==this)
@@ -3245,9 +3160,9 @@ int Fl_Help_View::text_selected() {
 
 
 /**
- \brief If text is selected in this view, copy it to a clipboard.
- \param[in] clipboard for x11 only, 0=selection buffer, 1=clipboard, 2=both
- \return 1 if text is selected, 0 if no text is selected
+  \brief If text is selected in this view, copy it to a clipboard.
+  \param[in] clipboard for x11 only, 0=selection buffer, 1=clipboard, 2=both
+  \return 1 if text is selected, 0 if no text is selected
  */
 int Fl_Help_View::copy(int clipboard) {
   if (text_selected()) {
@@ -3263,7 +3178,7 @@ int Fl_Help_View::copy(int clipboard) {
   \brief Handles events in the widget.
   \param[in] event Event to handle.
   \return 1 if the event was handled, 0 otherwise.
-  */
+ */
 int Fl_Help_View::handle(int event)
 {
   static std::shared_ptr<Link> linkp = nullptr;   // currently clicked link
@@ -3401,13 +3316,18 @@ Fl_Help_View::Fl_Help_View(int xx, int yy, int ww, int hh, const char *l)
   scrollbar_.value(0, hh, 0, 1);
   scrollbar_.step(8.0);
   scrollbar_.show();
-  scrollbar_.callback(scrollbar_callback);
+  scrollbar_.callback( [](Fl_Widget *s, void *u) {
+      ((Fl_Help_View*)u)->topline((int)(((Fl_Scrollbar*)s)->value()));
+    }, this );
 
   hscrollbar_.value(0, ww, 0, 1);
   hscrollbar_.step(8.0);
   hscrollbar_.show();
-  hscrollbar_.callback(hscrollbar_callback);
   hscrollbar_.type(FL_HORIZONTAL);
+  hscrollbar_.callback( [](Fl_Widget *s, void *u) {
+      ((Fl_Help_View*)u)->leftline(int(((Fl_Scrollbar*)s)->value()));
+    }, this );
+
   end();
 
   resize(xx, yy, ww, hh);
@@ -3780,6 +3700,44 @@ void Fl_Help_View::value(const char *val)
 }
 
 
+/**
+  \brief Get the current size of the scrollbars' troughs, in pixels.
+
+  If this value is zero (default), this widget will use the
+  Fl::scrollbar_size() value as the scrollbar's width.
+
+  \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
+  \see Fl::scrollbar_size(int)
+*/
+int Fl_Help_View::scrollbar_size() const {
+    return(scrollbar_size_);
+}
+
+
+/**
+  \brief Set the pixel size of the scrollbars' troughs to \p newSize, in pixels.
+
+  Normally you should not need this method, and should use
+  Fl::scrollbar_size(int) instead to manage the size of ALL
+  your widgets' scrollbars. This ensures your application
+  has a consistent UI, is the default behavior, and is normally
+  what you want.
+
+  Only use THIS method if you really need to override the global
+  scrollbar size. The need for this should be rare.
+
+  Setting \p newSize to the special value of 0 causes the widget to
+  track the global Fl::scrollbar_size(), which is the default.
+
+  \param[in] newSize Sets the scrollbar size in pixels.\n
+      If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
+  \see Fl::scrollbar_size()
+*/
+void Fl_Help_View::scrollbar_size(int newSize) {
+    scrollbar_size_ = newSize;
+}
+
+
 /*
   \brief Returns the Unicode Code Point associated with a quoted character (aka "HTML Entity").
 
@@ -3942,115 +3900,53 @@ static int quote_char(const char *p) {
 }
 
 
-/**
-  \brief Get the current size of the scrollbars' troughs, in pixels.
+// The following function is used to make anchors in a link (the part after
+// the '#') case insensitive. As it is, the function handles only ASCII
+// characters. Should it be extended to handle UTF-8 characters as well?
+//
+// UTF8 is allowed in anchors, but only when it is encoded between '%', so
+// `https://example.com/page#%C3%BCber` is valid, but
+// `https://example.com/page#über is *not*.
+//
+// But as with everything in HTML, nobody cares and everybody does what they
+// want anyway ;-) .
 
-  If this value is zero (default), this widget will use the
-  Fl::scrollbar_size() value as the scrollbar's width.
-
-  \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
-  \see Fl::scrollbar_size(int)
-*/
-int Fl_Help_View::scrollbar_size() const {
-    return(scrollbar_size_);
+static std::string to_lower(const std::string &str) {
+  std::string lower_str;
+  lower_str.reserve(str.size());
+  for (char c : str) {
+    lower_str += fl_tolower(c);
+  }
+  return lower_str;
 }
 
 
 /**
-  \brief Set the pixel size of the scrollbars' troughs to \p newSize, in pixels.
-
-  Normally you should not need this method, and should use
-  Fl::scrollbar_size(int) instead to manage the size of ALL
-  your widgets' scrollbars. This ensures your application
-  has a consistent UI, is the default behavior, and is normally
-  what you want.
-
-  Only use THIS method if you really need to override the global
-  scrollbar size. The need for this should be rare.
-
-  Setting \p newSize to the special value of 0 causes the widget to
-  track the global Fl::scrollbar_size(), which is the default.
-
-  \param[in] newSize Sets the scrollbar size in pixels.\n
-      If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
-  \see Fl::scrollbar_size()
-*/
-void Fl_Help_View::scrollbar_size(int newSize) {
-    scrollbar_size_ = newSize;
-}
-
-
-/**
- \brief The vertical scrollbar callback.
+  \brief Check if a URL is starting with a scheme (e.g. ftp:).
+  \param[in] url the URL to check.
+  \return 0 if not found, otherwise the length of the scheme string including
+      the following '/' characters.
  */
-static void scrollbar_callback(Fl_Widget *s, void *)
+static size_t url_scheme(const std::string &url, bool skip_slashes)
 {
-  ((Fl_Help_View *)(s->parent()))->topline(int(((Fl_Scrollbar*)s)->value()));
+  // First skip all ascii letters and digits
+  size_t pos = 0;
+  while ( (pos < url.size()) && ( isalnum(url[pos]) || (url[pos] == '+') || (url[pos] == '-') || (url[pos] == '.') )) {
+    pos++;
+  }
+  // Next, check for the ':' character
+  if ( (pos < url.size()) && (url[pos] == ':') ) {
+    pos++; // Skip the ':' character
+    if (skip_slashes) {
+      // If found, skip up to two '/' characters as well
+      if ( (pos < url.size()) && (url[pos] == '/') ) {
+        pos++; // Skip the first '/' character
+        if ( (pos < url.size()) && (url[pos] == '/') ) {
+          pos++; // Skip the second '/' character
+        }
+      }
+    }
+    return pos; // Return the length of the scheme including the following '/' characters
+  }
+  return 0; // No scheme found
 }
-
-
-/**
- \brief The horizontal scrollbar callback.
- */
-static void hscrollbar_callback(Fl_Widget *s, void *)
-{
-  ((Fl_Help_View *)(s->parent()))->leftline(int(((Fl_Scrollbar*)s)->value()));
-}
-
-
-// Note: The CMP recommends that the Doxygen comment should be placed where
-// the implementation is. I decided to place the Doxygen comment here, because
-// the Fl_Help_View class is huge, and the header file should IMHO not be
-// cluttered with comments. Some implementations stay in the header to make
-// inlinig easier for the compiler.
-//  - Matt
-
-/**
-  \fn int Fl_Help_View::size() const
-  \brief Gets the size of the help view.
-*/
-
-/**
-  \fn void Fl_Help_View::textcolor(Fl_Color c)
-  \brief Sets the default text color.
-*/
-
-/**
-  \fn Fl_Color Fl_Help_View::textcolor() const
-  \brief Returns the current default text color.
-*/
-
-/**
-  \fn void Fl_Help_View::textfont(Fl_Font f)
-  \brief Sets the default text font.
-*/
-
-/**
-  \fn Fl_Font Fl_Help_View::textfont() const
-  \brief Returns the current default text font.
-*/
-
-/**
-  \fn void Fl_Help_View::textsize(Fl_Fontsize s)
-  \brief Sets the default text size.
-*/
-
-/**
-  \fn Fl_Fontsize Fl_Help_View::textsize() const
-  \brief Gets the default text size.
-*/
-
-/**
-  \fn int Fl_Help_View::topline() const
-  \brief Returns the current top line in pixels.
-*/
-
-/**
-  \fn int Fl_Help_View::leftline()
-  \brief Gets the left position in pixels.
-*/
-
-/**
-  \fn const char *Fl_Help_View::value() const
-  \brief Returns the current buffer contents.
-*/
