@@ -36,6 +36,9 @@ decl {\#include "flstring.h"} {private local
 decl {\#include <FL/fl_ask.H>} {private local
 }
 
+decl {\#include <FL/filename.H>} {public global
+}
+
 class FL_EXPORT Fl_Help_Dialog {open
 } {
   decl {int index_;} {private local
@@ -50,8 +53,8 @@ class FL_EXPORT Fl_Help_Dialog {open
   }
   Function {Fl_Help_Dialog()} {} {
     Fl_Window window_ {
-      label {Help Dialog} open
-      private xywh {398 64 530 385} type Double hide resizable size_range {260 150 0 0}
+      label {Help Dialog} selected
+      private xywh {495 250 530 385} type Double hide resizable size_range {260 150 0 0}
     } {
       Fl_Group {} {open
         xywh {10 10 511 25}
@@ -232,7 +235,7 @@ else
   } {
     code {view_->topline(n);} {}
   }
-  Function {topline(int n)} {selected return_type void
+  Function {topline(int n)} {return_type void
   } {
     code {view_->topline(n);} {}
   }

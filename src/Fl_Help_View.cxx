@@ -30,10 +30,12 @@
 #include <FL/fl_utf8.h>
 #include <FL/filename.H>                // fl_open_uri()
 #include <FL/fl_string_functions.h>     // fl_strdup()
+#include <FL/fl_draw.H>
+#include <FL/filename.H>
 #include "flstring.h"
 
 //
-// System header files
+// System and C++ header files
 //
 
 #include <stdio.h>
@@ -41,7 +43,10 @@
 #include <ctype.h>
 #include <errno.h>
 #include <math.h>
+#include <map>
+#include <vector>
 #include <string>
+#include <memory>
 
 //
 // Debugging

@@ -26,17 +26,6 @@
 #include "Fl.H"
 #include "Fl_Group.H"
 #include "Fl_Scrollbar.H"
-#include "fl_draw.H"
-#include "filename.H"
-
-//
-// C++ header files
-//
-
-#include <map>
-#include <vector>
-#include <string>
-#include <memory>
 
 //
 // Forward declarations and typedefs

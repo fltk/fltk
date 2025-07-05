@@ -26,6 +26,7 @@
 #ifndef Fl_Help_Dialog_H
 #define Fl_Help_Dialog_H
 #include <FL/Fl.H>
+#include <FL/filename.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
