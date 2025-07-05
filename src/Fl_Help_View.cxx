@@ -2911,7 +2911,6 @@ Fl_Help_View::Fl_Help_View(int xx, int yy, int ww, int hh, const char *l)
 {
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
 
-  title_[0]     = '\0';
   defcolor_     = FL_FOREGROUND_COLOR;
   bgcolor_      = FL_BACKGROUND_COLOR;
   textcolor_    = FL_FOREGROUND_COLOR;
@@ -2925,7 +2924,6 @@ Fl_Help_View::Fl_Help_View(int xx, int yy, int ww, int hh, const char *l)
   link_         = (Fl_Help_Func *)0;
 
   link_list_.clear();
-
   directory_.clear();
   filename_.clear();
 
