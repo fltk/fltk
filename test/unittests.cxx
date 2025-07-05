@@ -35,6 +35,7 @@
 #include <FL/fl_draw.H>               // fl_text_extents()
 #include <FL/fl_string_functions.h>   // fl_strdup()
 #include <FL/fl_ask.H>                // fl_message()
+#include <FL/filename.H>              // fl_filename_name
 #include <stdlib.h>                   // malloc, free
 
 class Ut_Main_Window *mainwin = NULL;
