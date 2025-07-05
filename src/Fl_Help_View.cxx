@@ -46,7 +46,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <memory>
 
 //
 // Debugging

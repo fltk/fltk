@@ -28,6 +28,12 @@
 #include "Fl_Scrollbar.H"
 
 //
+// System and C++ header files
+//
+
+#include <memory>
+
+//
 // Forward declarations and typedefs
 //
 
