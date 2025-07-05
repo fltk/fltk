@@ -15,38 +15,6 @@
 #     https://www.fltk.org/bugs.php
 #
 
-#######################################################################
-# Important implementation note for FLTK developers
-#######################################################################
-#
-# *FIXME* In the current version of FLTK's CMake build files we're
-# using 'include_directories()' to define directories that must be
-# used in compile commands (typically "-Idirectories").
-#
-# include_directories() is a global command that affects *all* source
-# files in the current directory and all subdirectories. This can lead
-# to conflicts and should be replaced with target_include_directories()
-# which can be applied to particular targets and source files only.
-#
-# This could remove some of these potential build conflicts, for
-# instance if the bundled image libs and Cairo or Pango are used
-# together (Pango depends on Cairo and Cairo depends on libpng).
-# However, this is not a proper solution!
-#
-# That said, order of "-I..." switches matters, and therefore the
-# bundled libraries (png, jpeg, zlib) *must* appear before any other
-# include_directories() statements that might introduce conflicts.
-# Currently 'resources.cmake' is included before this file and thus
-# 'include_directories(${FREETYPE_PATH})' is executed before this
-# file but this doesn't matter.
-#
-# This *MUST* be fixed using target_include_directories() as
-# appropriate but this would need a major rework.
-#
-# Albrecht-S April 6, 2022
-#
-#######################################################################
-
 set(DEBUG_OPTIONS_CMAKE 0)
 if(DEBUG_OPTIONS_CMAKE)
   message(STATUS "[** options.cmake **]")
@@ -181,9 +149,12 @@ if(FLTK_USE_BUNDLED_ZLIB)
   add_subdirectory(zlib)
 
   set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+  list(APPEND FLTK_IMAGE_INCLUDE_DIRECTORIES ${ZLIB_INCLUDE_DIR})
 
-  # FIXME - include_directories()
-  include_directories(${ZLIB_INCLUDE_DIR})
+else()
+
+  list(APPEND FLTK_IMAGE_LIBRARIES ${ZLIB_LIBRARIES})
+  list(APPEND FLTK_IMAGE_INCLUDE_DIRECTORIES ${ZLIB_INCLUDE_DIR})
 
 endif()
 
@@ -208,16 +179,13 @@ if(FLTK_USE_BUNDLED_PNG)
   set(HAVE_PNG_GET_VALID 1)
   set(HAVE_PNG_SET_TRNS_TO_ALPHA 1)
 
-  # *FIXME* include_directories()
-  include_directories(${FLTK_SOURCE_DIR}/png)
+  list(APPEND FLTK_IMAGE_INCLUDE_DIRECTORIES ${FLTK_SOURCE_DIR}/png)
 
 else() # use system libpng and zlib
 
   set(FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
   list(APPEND FLTK_IMAGE_LIBRARIES ${PNG_LIBRARIES})
-
-  # *FIXME* include_directories()
-  include_directories(${PNG_INCLUDE_DIRS})
+  list(APPEND FLTK_IMAGE_INCLUDE_DIRECTORIES ${PNG_INCLUDE_DIRS})
 
   set(_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
   list(APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
@@ -257,15 +225,14 @@ if(FLTK_USE_BUNDLED_JPEG)
 
   add_subdirectory(jpeg)
   set(FLTK_JPEG_LIBRARIES fltk::jpeg)
-  # list(APPEND FLTK_IMAGE_LIBRARIES fltk::jpeg)
 
-  # *FIXME* include_directories
-  include_directories(${FLTK_SOURCE_DIR}/jpeg)
+  list(APPEND FLTK_IMAGE_INCLUDE_DIRECTORIES ${FLTK_SOURCE_DIR}/jpeg)
 
 else()
 
   set(FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
   list(APPEND FLTK_IMAGE_LIBRARIES ${JPEG_LIBRARIES})
+  list(APPEND FLTK_IMAGE_INCLUDE_DIRECTORIES ${JPEG_INCLUDE_DIRS})
 
 endif()
 
@@ -420,10 +387,6 @@ if(APPLE AND FLTK_BACKEND_X11)
   if(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
     list(APPEND FLTK_CFLAGS "-D_LIBCPP_HAS_THREAD_API_PTHREAD")
   endif(NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0))
-  # FIXME: include_directories(!)
-  # FIXME: how can we implement "AFTER SYSTEM" ?
-  include_directories(AFTER SYSTEM /opt/X11/include/freetype2)
-  include_directories(AFTER SYSTEM /opt/X11/include) # for Xft.h
   if(PATH_TO_XLIBS)
     set(LDFLAGS "-L${PATH_TO_XLIBS} ${LDFLAGS}")
   endif(PATH_TO_XLIBS)
@@ -586,8 +549,7 @@ if(FLTK_OPTION_CAIRO_WINDOW OR FLTK_OPTION_CAIRO_EXT)
     set(PKG_CAIRO_INCLUDE_DIRS "${FLTK_CAIRO_DIR}/include")
     set(PKG_CAIRO_LIBRARY_DIRS "${FLTK_CAIRO_DIR}/lib/${_cairo_suffix}/")
 
-    # FIXME - include_directories()
-    include_directories(${PKG_CAIRO_INCLUDE_DIRS})
+    list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${PKG_CAIRO_INCLUDE_DIRS})
 
     set(FLTK_HAVE_CAIRO 1)
     if(FLTK_OPTION_CAIRO_EXT)
