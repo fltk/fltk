@@ -184,7 +184,7 @@ private: // data members
   std::string   title_;                 ///< Title string from <title> tag
   Font_Stack    fstack_;                ///< Font and style stack
   std::vector<Text_Block> blocks_;      ///< List of all text blocks on screen
-  std::vector<std::shared_ptr<Link>> link_list_;  ///< List of all clickable links and their position on screen
+  std::vector<std::shared_ptr<Link> > link_list_; ///< List of all clickable links and their position on screen
   std::map<std::string, int> target_line_map_;    ///< List of vertical position of all HTML Targets in a document
 
   int           topline_;               ///< Vertical offset of document, measure in pixels
