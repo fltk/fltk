@@ -606,7 +606,15 @@ int Fl_Help_View::do_align(
 
 
 /**
-  \brief Formats the help text.
+  \brief Formats the help text and lays out the HTML content for display.
+
+  This function parses the HTML-like text buffer, breaks it into blocks and lines,
+  computes positions and sizes for each text and image element, manages links and targets,
+  and sets up the scrolling and rendering parameters for the widget.
+
+  The main algorithm consists of an outer loop that may repeat if the computed content
+  exceeds the available width (to adjust hsize_), and an inner loop that parses the text,
+  handles tags, manages formatting state, and builds the layout structures.
 */
 void Fl_Help_View::format() {
   int           i;              // Looping var
@@ -3584,7 +3592,8 @@ void Fl_Help_View::select_all()
 {
   clear_selection();
   if (!value_) return;
-  selection_drag_last_ = selection_last_ = (int) strlen(value_);
+  selection_first_ = 0;
+  selection_last_ = (int) strlen(value_);
   selected_ = true;
 }
 
