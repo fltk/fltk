@@ -126,52 +126,50 @@ private: // classes, structs, and types
 
   /** Private struct to describe blocks of text. */
   struct Text_Block {
-    const char    *start,         // Start of text
-                  *end;           // End of text
-    uchar         border;         // Draw border?
-    Fl_Color      bgcolor;        // Background color
-    int           x,              // Indentation/starting X coordinate
-                  y,              // Starting Y coordinate
-                  w,              // Width
-                  h;              // Height
-    int           line[32];       // Left starting position for each line
-    int           ol;             // is ordered list <OL> element
-    int           ol_num;         // item number in ordered list
+    const char    *start;               // Start of text
+    const char    *end;                 // End of text
+    uchar         border;               // Draw border?
+    Fl_Color      bgcolor;              // Background color
+    int           x;                    // Indentation/starting X coordinate
+    int           y;                    // Starting Y coordinate
+    int           w;                    // Width
+    int           h;                    // Height
+    int           line[32];             // Left starting position for each line
+    int           ol;                   // is ordered list <OL> element
+    int           ol_num;               // item number in ordered list
   };
 
   /** Private class to hold a link with target and its position on screen. */
-  class Link {
-  public:
-    std::string filename_;   // Filename part of a link
-    std::string target;   // Target part of a link
-    Fl_Rect box;          // Clickable rectangle that defines the link area
+  struct Link {
+    std::string   filename_;            // Filename part of a link
+    std::string   target;               // Target part of a link
+    Fl_Rect       box;                  // Clickable rectangle that defines the link area
   };
 
   /** Private font stack element definition. */
   struct Font_Style {
-    Fl_Font      f;  ///< Font
-    Fl_Fontsize  s;  ///< Font Size
-    Fl_Color     c;  ///< Font Color
-    void get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor);
-    void set(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
+    Fl_Font       f;                    ///< Font
+    Fl_Fontsize   s;                    ///< Font Size
+    Fl_Color      c;                    ///< Font Color
     Font_Style(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
-    Font_Style() = default; ///< Default constructor
+    Font_Style() = default;             ///< Default constructor
+    void          get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor);
+    void          set(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
   };
 
   /** Private class to hold font information on a stack. */
   struct Font_Stack {
-    void init(Fl_Font f, Fl_Fontsize s, Fl_Color c);
-    void top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
-    void push(Fl_Font f, Fl_Fontsize s, Fl_Color c);
-    void pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
-    size_t count() const;
-  protected:
+    void          init(Fl_Font f, Fl_Fontsize s, Fl_Color c);
+    void          top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
+    void          push(Fl_Font f, Fl_Fontsize s, Fl_Color c);
+    void          pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
+    size_t        count() const;
+  private:
     std::vector<Font_Style> elts_;    ///< font elements
   };
 
   enum class Align { RIGHT = -1, CENTER, LEFT };  ///< Alignments
   enum class Mode { DRAW, PUSH, DRAG };           ///< Draw modes
-
 
 private: // data members
 
@@ -221,43 +219,57 @@ private: // data members
 
   // Callback
 
-  Fl_Help_Func  *link_;             ///< Link transform function
+  Fl_Help_Func  *link_;                 ///< Link transform function
 
   // Scrollbars
 
-  Fl_Scrollbar  scrollbar_;         ///< Vertical scrollbar for document
-  Fl_Scrollbar  hscrollbar_;        ///< Horizontal scrollbar
-  int           scrollbar_size_;    ///< Size for both scrollbars
+  Fl_Scrollbar  scrollbar_;             ///< Vertical scrollbar for document
+  Fl_Scrollbar  hscrollbar_;            ///< Horizontal scrollbar
+  int           scrollbar_size_;        ///< Size for both scrollbars
 
 private: // methods
 
-  void initfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { f = textfont_; s = textsize_; c = textcolor_; fstack_.init(f, s, c); }
-  void pushfont(Fl_Font f, Fl_Fontsize s) {fstack_.push(f, s, textcolor_);}
-  void pushfont(Fl_Font f, Fl_Fontsize s, Fl_Color c) {fstack_.push(f, s, c);}
-  void popfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {fstack_.pop(f, s, c);}
+  // HTML source and raw data, getter
 
-  Text_Block *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
+  void          free_data();
+  std::shared_ptr<Link> find_link(int, int);
+  void          follow_link(std::shared_ptr<Link>);
+
+  // HTML interpretation and formatting
+
+  Text_Block    *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void          add_link(const std::string &link, int xx, int yy, int ww, int hh);
   void          add_target(const std::string &n, int yy);
   int           do_align(Text_Block *block, int line, int xx, Align a, int &l);
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
-  void          free_data();
   Align         get_align(const char *p, Align a);
   const char    *get_attr(const char *p, const char *n, char *buf, int bufsize);
   Fl_Color      get_color(const char *n, Fl_Color c);
   Fl_Shared_Image *get_image(const char *name, int W, int H);
   int           get_length(const char *l);
 
+  // Font and font stack
+
+  /// Initialize the font stack with default values.
+  void          initfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { f = textfont_; s = textsize_; c = textcolor_; fstack_.init(f, s, c); }
+  /// Push the current font and size onto the stack.
+  void          pushfont(Fl_Font f, Fl_Fontsize s) {fstack_.push(f, s, textcolor_);}
+  /// Push the current font, size, and color onto the stack.
+  void          pushfont(Fl_Font f, Fl_Fontsize s, Fl_Color c) {fstack_.push(f, s, c);}
+  /// Get the current font, size, and color from the stack.
+  void          popfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {fstack_.pop(f, s, c);}
+
+  // Text selection
+
   void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
   char          begin_selection();
   char          extend_selection();
   void          end_selection();
-  void          clear_global_selection();
-  std::shared_ptr<Link> find_link(int, int);
-  void          follow_link(std::shared_ptr<Link>);
 
 protected:
+
+  // Widget management
 
   void          draw() override;
 
@@ -265,65 +277,64 @@ public:
 
   static const char *copy_menu_text;
 
+  // Widget management
+
   Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
   ~Fl_Help_View() override;
 
-  int handle(int) override;
-  void resize(int,int,int,int) override;
-
-  const char *filename() const;
-  const char *directory() const;
-  const char *title() const;
-
-  int           find(const char *s, int p = 0);
-  void          link(Fl_Help_Func *fn);
-  int           load(const char *f);
-
-  /** Return the document height in pixels. */
-  int           size() const { return (size_); }
-
+  int           handle(int) override;
+  void          resize(int,int,int,int) override;
   /** Changes the size of the widget. \see Fl_Widget::size(int, int) */
   void          size(int W, int H) { Fl_Widget::size(W, H); }
 
+  // HTML source and raw data
+
+  void          value(const char *val);
+  /** Return a pointer to the internal text buffer. */
+  const char    *value() const { return (value_); }
+  int           load(const char *f);
+  int           find(const char *s, int p = 0);
+  void          link(Fl_Help_Func *fn);
+
+  const char    *filename() const;
+  const char    *directory() const;
+  const char    *title() const;
+
+  // Rendering attributes
+
+  /** Return the document height in pixels. */
+  int           size() const { return (size_); }
   /** Set the default text color. */
   void          textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
-
   /** Return the current default text color. */
   Fl_Color      textcolor() const { return (defcolor_); }
-
   /** Set the default text font. */
   void          textfont(Fl_Font f) { textfont_ = f; format(); }
-
   /** Return the default text font. */
   Fl_Font       textfont() const { return (textfont_); }
-
   /** Set the default text size. */
   void          textsize(Fl_Fontsize s) { textsize_ = s; format(); }
-
   /** Get the default text size. */
-
-  Fl_Fontsize  textsize() const { return (textsize_); }
+  Fl_Fontsize   textsize() const { return (textsize_); }
   void          topline(const char *n);
   void          topline(int);
-
   /** Get the current top line in pixels. */
   int           topline() const { return (topline_); }
-
   void          leftline(int);
-
   /** Get the left position in pixels. */
   int           leftline() const { return (leftline_); }
 
-  void          value(const char *val);
+  // Text selection
 
-  //** Return a pointer to the internal text buffer. */
-  const char    *value() const { return (value_); }
   void          clear_selection();
   void          select_all();
+  int           text_selected();
+  int           copy(int clipboard=1);
+
+  // Scroll bars
+
   int scrollbar_size() const;
   void scrollbar_size(int newSize);
-  int text_selected();
-  int copy(int clipboard=1);
 };
 
 #endif // !Fl_Help_View_H
