@@ -340,20 +340,12 @@ size_t Fl_Help_View::Font_Stack::count() const {
 // We don't put the offscreen buffer in the help view class because
 // we'd need to include platform.H in the header...
 static Fl_Offscreen fl_help_view_buffer;
-int Fl_Help_View::selection_first_ = 0;
-int Fl_Help_View::selection_last_ = 0;
 int Fl_Help_View::selection_push_first_ = 0;
 int Fl_Help_View::selection_push_last_ = 0;
 int Fl_Help_View::selection_drag_first_ = 0;
 int Fl_Help_View::selection_drag_last_ = 0;
-int Fl_Help_View::selected_ = 0;
-int Fl_Help_View::draw_mode_ = 0;
-int Fl_Help_View::mouse_x_ = 0;
-int Fl_Help_View::mouse_y_ = 0;
+Fl_Help_View::Mode Fl_Help_View::draw_mode_ = Mode::DRAW;
 int Fl_Help_View::current_pos_ = 0;
-Fl_Help_View *Fl_Help_View::current_view_ = 0L;
-Fl_Color Fl_Help_View::hv_selection_color_;
-Fl_Color Fl_Help_View::hv_selection_text_color_;
 
 
 /**
@@ -369,34 +361,32 @@ Fl_Color Fl_Help_View::hv_selection_text_color_;
  */
 void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
 {
-  if (draw_mode_ == 0) {
-    if (selected_ && current_view_==this && current_pos_<selection_last_ && current_pos_>=selection_first_) {
+  if (draw_mode_ == Mode::DRAW) {
+    if (selected_ && current_pos_<selection_last_ && current_pos_>=selection_first_) {
       Fl_Color c = fl_color();
-      fl_color(hv_selection_color_);
+      fl_color(tmp_selection_color_);
       int w = (int)fl_width(t);
       if (current_pos_+(int)strlen(t)<selection_last_)
         w += (int)fl_width(' ');
       fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
-      fl_color(hv_selection_text_color_);
+      fl_color(selection_text_color_);
       fl_draw(t, x, y);
       fl_color(c);
     } else {
       fl_draw(t, x, y);
     }
   } else {
-    // If draw_mode_ is set, we don;t actually draw anything, but measure where
-    // text blocks are on screen during a selection process with the mouse.
-    // draw_mode_ is 1 if the mouse button is first pressed down, and 2 while
-    // the mouse is dragged.
+    // If draw_mode_ is not DRAW, we don't actually draw anything, but instead
+    // measure where text blocks are on screen during a mouse selection process.
     int w = (int)fl_width(t);
-    if (mouse_x_>=x && mouse_x_<x+w) {
-      if (mouse_y_>=y-fl_height()+fl_descent()&&mouse_y_<=y+fl_descent()) {
+    if ( (Fl::event_x() >= x) && (Fl::event_x() < x+w) ) {
+      if ( (Fl::event_y() >= y-fl_height()+fl_descent()) && (Fl::event_y() <= y+fl_descent()) ) {
         int f = (int) current_pos_;
         int l = (int) (f+strlen(t)); // use 'quote_char' to calculate the true length of the HTML string
-        if (draw_mode_==1) {
+        if (draw_mode_ == Mode::PUSH) {
           selection_push_first_ = f;
           selection_push_last_ = l;
-        } else {
+        } else { // Mode::DRAG
           selection_drag_first_ = f;
           selection_drag_last_ = l + entity_extra_length;
         }
@@ -591,9 +581,15 @@ void Fl_Help_View::draw()
   if (!value_)
     return;
 
-  if (current_view_ == this && selected_) {
-    hv_selection_color_      = FL_SELECTION_COLOR;
-    hv_selection_text_color_ = fl_contrast(textcolor_, FL_SELECTION_COLOR);
+  if (selected_) {
+    if (Fl::focus() == this) {
+      // If this widget has the focus, we use the selection color directly
+      tmp_selection_color_ = selection_color();
+    } else {
+      // Otherwise we blend the selection color with the background color
+      tmp_selection_color_ = fl_color_average(bgcolor_, selection_color(), 0.8f);
+    }
+    selection_text_color_ = fl_contrast(textcolor_, tmp_selection_color_);
   }
   current_pos_ = 0;
 
@@ -2931,8 +2927,10 @@ void Fl_Help_View::follow_link(std::shared_ptr<Link> linkp)
 */
 void Fl_Help_View::clear_selection()
 {
-  if (current_view_==this)
-    clear_global_selection();
+  selected_ = false;
+  selection_first_ = 0;
+  selection_last_ = 0;
+  redraw();
 }
 
 
@@ -2943,9 +2941,8 @@ void Fl_Help_View::select_all()
 {
   clear_global_selection();
   if (!value_) return;
-  current_view_ = this;
   selection_drag_last_ = selection_last_ = (int) strlen(value_);
-  selected_ = 1;
+  selected_ = true;
 }
 
 
@@ -2955,7 +2952,7 @@ void Fl_Help_View::clear_global_selection()
   selection_push_first_ = selection_push_last_ = 0;
   selection_drag_first_ = selection_drag_last_ = 0;
   selection_first_ = selection_last_ = 0;
-  selected_ = 0;
+  selected_ = false;
 }
 
 
@@ -2965,16 +2962,13 @@ char Fl_Help_View::begin_selection()
 
   if (!fl_help_view_buffer) fl_help_view_buffer = fl_create_offscreen(1, 1);
 
-  mouse_x_ = Fl::event_x();
-  mouse_y_ = Fl::event_y();
-  draw_mode_ = 1;
+  draw_mode_ = Mode::PUSH;
 
-    current_view_ = this;
     fl_begin_offscreen(fl_help_view_buffer);
     draw();
     fl_end_offscreen();
 
-  draw_mode_ = 0;
+  draw_mode_ = Mode::DRAW;
 
   if (selection_push_last_) return 1;
   else return 0;
@@ -2997,16 +2991,15 @@ char Fl_Help_View::extend_selection()
 
   int sf = selection_first_, sl = selection_last_;
 
-  selected_ = 1;
-  mouse_x_ = Fl::event_x();
-  mouse_y_ = Fl::event_y();
-  draw_mode_ = 2;
+  selected_ = true;
+
+  draw_mode_ = Mode::DRAG;
 
     fl_begin_offscreen(fl_help_view_buffer);
     draw();
     fl_end_offscreen();
 
-  draw_mode_ = 0;
+  draw_mode_ = Mode::DRAW;
 
   if (selection_push_first_ < selection_drag_first_) {
     selection_first_ = selection_push_first_;
@@ -3057,10 +3050,33 @@ static constexpr uint32_t CMD(char a, char b, char c, char d)
 }
 
 
-void Fl_Help_View::end_selection(int clipboard)
+void Fl_Help_View::end_selection()
 {
-  if (!selected_ || current_view_!=this)
-    return;
+  selection_push_first_ = 0;
+  selection_push_last_ = 0;
+  selection_drag_first_ = 0;
+  selection_drag_last_ = 0;
+}
+
+
+/**
+  \brief Check if the user selected text in this view.
+  \return 1 if text is selected, 0 if no text is selected
+ */
+int Fl_Help_View::text_selected() {
+  return selected_;
+}
+
+
+/**
+  \brief If text is selected in this view, copy it to a clipboard.
+  \param[in] clipboard for x11 only, 0=selection buffer, 1=clipboard, 2=both
+  \return 1 if text is selected, 0 if no text is selected
+ */
+int Fl_Help_View::copy(int clipboard) {
+  if (!selected_)
+    return 0;
+
   // convert the select part of our html text into some kind of somewhat readable UTF-8
   // and store it in the selection buffer
   int p = 0;
@@ -3144,33 +3160,7 @@ void Fl_Help_View::end_selection(int clipboard)
   Fl::copy(txt, (int) strlen(txt), clipboard);
   // printf("copy [%s]\n", txt);
   free(txt);
-}
-
-
-/**
-  \brief Check if the user selected text in this view.
-  \return 1 if text is selected, 0 if no text is selected
- */
-int Fl_Help_View::text_selected() {
-  if (current_view_==this)
-    return selected_;
-  else
-    return 0;
-}
-
-
-/**
-  \brief If text is selected in this view, copy it to a clipboard.
-  \param[in] clipboard for x11 only, 0=selection buffer, 1=clipboard, 2=both
-  \return 1 if text is selected, 0 if no text is selected
- */
-int Fl_Help_View::copy(int clipboard) {
-  if (text_selected()) {
-    end_selection(clipboard);
-    return 1;
-  } else {
-    return 0;
-  }
+  return 1;
 }
 
 
@@ -3189,11 +3179,14 @@ int Fl_Help_View::handle(int event)
   switch (event)
   {
     case FL_FOCUS:
-      redraw();
+      // Selection style changes, so ask for a redraw
+      if (selected_)
+        redraw();
       return 1;
     case FL_UNFOCUS:
-      clear_selection();
-      redraw();
+      // Selection style changes, so ask for a redraw
+      if (selected_)
+        redraw();
       return 1;
     case FL_ENTER :
       Fl_Group::handle(event);
@@ -3206,6 +3199,7 @@ int Fl_Help_View::handle(int event)
       else fl_cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_PUSH:
+      // RMB will pop up a menu
       if (Fl::event_button() == FL_RIGHT_MOUSE) {
         rmb_menu[0].label(copy_menu_text);
         if (text_selected())
@@ -3219,36 +3213,52 @@ int Fl_Help_View::handle(int event)
             copy();
             break;
         }
+        return 1;
       }
-      if (Fl_Group::handle(event)) return 1;
+      // Check if the scrollbars used up the event
+      if (Fl_Group::handle(event))
+        return 1;
+      // Check if the user clicked on a link
       linkp = find_link(xx, yy);
       if (linkp) {
         fl_cursor(FL_CURSOR_HAND);
         return 1;
       }
+      // If nothing else, the user cancels the current selection and might start a new one
       if (begin_selection()) {
+        selection_mode_ = Mode::PUSH;
         fl_cursor(FL_CURSOR_INSERT);
         return 1;
       }
+      // Nothing to do.
       fl_cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_DRAG:
+      // If we clicked on a link, check if this remains a click, or if the user drags the mouse
       if (linkp) {
         if (Fl::event_is_click()) {
           fl_cursor(FL_CURSOR_HAND);
         } else {
-          fl_cursor(FL_CURSOR_DEFAULT); // should be "FL_CURSOR_CANCEL" if we had it
+          // No longer just a click, so we cancel the link and start a drag selection
+          linkp = 0;
+          if (begin_selection()) {
+            selection_mode_ = Mode::PUSH;
+            fl_cursor(FL_CURSOR_INSERT);
+          }
         }
-        return 1;
       }
-      if (current_view_==this && selection_push_last_) {
-        if (extend_selection()) redraw();
+      // If the FL_PUSH started a selection, we extend the selection
+      if (selection_mode_ == Mode::PUSH) {
+        if (extend_selection())
+          redraw();
         fl_cursor(FL_CURSOR_INSERT);
         return 1;
       }
+      // Nothing to do.
       fl_cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_RELEASE:
+      // If we clicked on a link, follow it
       if (linkp) {
         if (Fl::event_is_click()) {
           follow_link(linkp);
@@ -3257,10 +3267,13 @@ int Fl_Help_View::handle(int event)
         linkp = 0;
         return 1;
       }
-      if (current_view_==this && selection_push_last_) {
+      // If in a selection process, end the selection.
+      if (selection_mode_ == Mode::PUSH) {
         end_selection();
+        selection_mode_ = Mode::DRAW;
         return 1;
       }
+      // Nothing to do.
       return 1;
     case FL_SHORTCUT: {
       int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT|FL_SHIFT);
@@ -3268,7 +3281,7 @@ int Fl_Help_View::handle(int event)
         switch ( Fl::event_key() ) {
           case 'a': select_all(); redraw(); return 1;
           case 'c':
-          case 'x': end_selection(1); return 1;
+          case 'x': copy(1); return 1;
         }
       }
       break; }
@@ -3311,6 +3324,12 @@ Fl_Help_View::Fl_Help_View(int xx, int yy, int ww, int hh, const char *l)
   leftline_     = 0;
   size_         = 0;
   hsize_        = 0;
+
+  selection_mode_ = Mode::DRAW;
+  selected_ = false;
+  selection_first_ = 0;
+  selection_last_ = 0;
+
   scrollbar_size_ = 0;
 
   scrollbar_.value(0, hh, 0, 1);

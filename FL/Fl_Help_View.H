@@ -166,55 +166,68 @@ private: // classes, structs, and types
     void pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c);
     size_t count() const;
   protected:
-    std::vector<Font_Style> elts_; ///< font elements
+    std::vector<Font_Style> elts_;    ///< font elements
   };
 
-  enum class Align { RIGHT = -1, CENTER, LEFT };    ///< Alignments
+  enum class Align { RIGHT = -1, CENTER, LEFT };  ///< Alignments
+  enum class Mode { DRAW, PUSH, DRAG };           ///< Draw modes
+
 
 private: // data members
 
-  std::string title_;           ///< Title string
-  Fl_Color      defcolor_,              ///< Default text color
-                bgcolor_,               ///< Background color
-                textcolor_,             ///< Text color
-                linkcolor_;             ///< Link color
-  Fl_Font       textfont_;              ///< Default font for text
-  Fl_Fontsize  textsize_;               ///< Default font size
-  const char    *value_;                ///< HTML text value
-  Font_Stack fstack_;           ///< font stack management
-  std::vector<Text_Block> blocks_; ///< Blocks
+  // HTML source and raw data
 
-  Fl_Help_Func  *link_;                 ///< Link transform function
+  const char    *value_;                ///< Copy of raw HTML text, as set by `value()` or `load()`
+  std::string   directory_;             ///< Directory for current document
+  std::string   filename_;              ///< Original file name from `load()`
 
-  std::vector<std::shared_ptr<Link>> link_list_; ///< List of links for each line
+  // HTML document data
 
-  std::map<std::string, int> target_line_map_; ///< Map of targets for fast access
+  std::string   title_;                 ///< Title string from <title> tag
+  Font_Stack    fstack_;                ///< Font and style stack
+  std::vector<Text_Block> blocks_;      ///< List of all text blocks on screen
+  std::vector<std::shared_ptr<Link>> link_list_;  ///< List of all clickable links and their position on screen
+  std::map<std::string, int> target_line_map_;    ///< List of vertical position of all HTML Targets in a document
 
-  std::string directory_; ///< Directory for current file
-  std::string filename_; ///< Current filename
+  int           topline_;               ///< Vertical offset of document, measure in pixels
+  int           leftline_;              ///< Horizontal offset of document, measure in pixels
+  int           size_;                  ///< Total document height in pixels
+  int           hsize_;                 ///< Maximum document width in pixels
 
-  int           topline_,               ///< Top line in document, measure in pixels
-                leftline_,              ///< Lefthand position in pixels
-                size_,                  ///< Total document height in pixels
-                hsize_,                 ///< Maximum document width
-                scrollbar_size_;        ///< Size for both scrollbars
-  Fl_Scrollbar  scrollbar_,             ///< Vertical scrollbar for document
-                hscrollbar_;            ///< Horizontal scrollbar
+  // Default visual attributes
 
-  static int    selection_first_;
-  static int    selection_last_;
-  static int    selection_push_first_;
-  static int    selection_push_last_;
-  static int    selection_drag_first_;
-  static int    selection_drag_last_;
-  static int    selected_;
-  static int    draw_mode_; // 0 if drawing, 1 if mouse down, 2 if mouse dragged
-  static int    mouse_x_;
-  static int    mouse_y_;
-  static int    current_pos_;
-  static Fl_Help_View *current_view_;
-  static Fl_Color hv_selection_color_;
-  static Fl_Color hv_selection_text_color_;
+  Fl_Color      defcolor_;              ///< Default text color, defaults to FL_FOREGROUND_COLOR
+  Fl_Color      bgcolor_;               ///< Background color, defaults to FL_BACKGROUND_COLOR
+  Fl_Color      textcolor_;             ///< Text color, defaults to FL_FOREGROUND_COLOR
+  Fl_Color      linkcolor_;             ///< Link color, FL_SELECTION_COLOR
+  Fl_Font       textfont_;              ///< Default font for text, FL_TIMES
+  Fl_Fontsize   textsize_;              ///< Default font size, defaults to 12, should be FL_NORMAL_SIZE
+
+  // Text selection and mouse handling
+
+  Mode          selection_mode_;        ///< Remember election mode between FL_PUSH, FL_DRAG, and FL_RELEASE
+  bool          selected_;              ///< True if there is text selected
+  int           selection_first_;       ///< First character of selection, offset in value_
+  int           selection_last_;        ///< Last character of selection, offset in value_
+  Fl_Color      tmp_selection_color_;   ///< Selection color during draw operation
+  Fl_Color      selection_text_color_;  ///< Selection text color during draw operation
+  // The following members are static because we need them only once during mouse events
+  static int    selection_push_first_;  ///< First character of selection during mouse down
+  static int    selection_push_last_;   ///< Last character of selection during mouse down
+  static int    selection_drag_first_;  ///< First character of selection during mouse drag
+  static int    selection_drag_last_;   ///< Last character of selection during mouse drag
+  static Mode   draw_mode_;             ///< Temporarily modify `draw()` method to measure selection start or end during `handle()`
+  static int    current_pos_;           ///< Temporarily store text offset while measuring during `handle()`
+
+  // Callback
+
+  Fl_Help_Func  *link_;             ///< Link transform function
+
+  // Scrollbars
+
+  Fl_Scrollbar  scrollbar_;         ///< Vertical scrollbar for document
+  Fl_Scrollbar  hscrollbar_;        ///< Horizontal scrollbar
+  int           scrollbar_size_;    ///< Size for both scrollbars
 
 private: // methods
 
@@ -239,7 +252,7 @@ private: // methods
   void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
   char          begin_selection();
   char          extend_selection();
-  void          end_selection(int c=0);
+  void          end_selection();
   void          clear_global_selection();
   std::shared_ptr<Link> find_link(int, int);
   void          follow_link(std::shared_ptr<Link>);
