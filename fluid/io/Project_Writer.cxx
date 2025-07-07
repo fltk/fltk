@@ -115,12 +115,13 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     write_string("\nutf8_in_src");
   if (proj_.avoid_early_includes)
     write_string("\navoid_early_includes");
-    
+
   proj_.i18n.write(*this);
 
   if (!selected_only) {
     write_string("\nheader_name"); write_word(proj_.header_file_name.c_str());
     write_string("\ncode_name"); write_word(proj_.code_file_name.c_str());
+    write_string("\ninclude_guard"); write_word(proj_.include_guard.c_str());
     Fluid.layout_list.write(this);
     if (g_shell_config)
       g_shell_config->write(this);

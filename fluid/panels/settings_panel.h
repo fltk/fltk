@@ -70,6 +70,7 @@ extern Fl_Group *w_settings_project_tab;
 extern Fl_Input *header_file_input;
 extern Fl_Input *code_file_input;
 extern Fl_Check_Button *include_H_from_C_button;
+extern Fl_Input *include_guard_input;
 extern Fl_Check_Button *use_FL_COMMAND_button;
 extern Fl_Check_Button *utf8_in_src_button;
 extern Fl_Check_Button *avoid_early_includes_button;

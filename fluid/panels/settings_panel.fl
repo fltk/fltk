@@ -2,6 +2,7 @@
 version 1.0500
 header_name {.h}
 code_name {.cxx}
+include_guard {}
 snap {
   ver 1
   current_suite FLTK
@@ -198,8 +199,8 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {
-        label General open
-        scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide resizable
+        label General open selected
+        scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -386,9 +387,28 @@ or just ".ext" to set extension.}
 }}
           tooltip {Include the header file from the code file.} xywh {100 162 220 20} down_box DOWN_BOX labelsize 11
         }
+        Fl_Input include_guard_input {
+          label {Include Guard:}
+          user_data 1 user_data_type {void*}
+          callback {if (v == LOAD) {
+  o->value(Fluid.proj.include_guard.c_str());
+} else {
+  if (strcmp(Fluid.proj.include_guard.c_str(), o->value())) {
+    Fluid.proj.include_guard = o->value();
+    Fluid.proj.set_modflag(1);
+  }
+}}
+          tooltip {Name of macro used as
+an include guard in header file:
+
+\#ifdef GUARD
+\#define GUARD
+...
+\#endif} xywh {100 182 220 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
+        }
         Fl_Box {} {
           label {Options: }
-          xywh {100 205 0 20} labelfont 1 labelsize 11 align 4
+          xywh {100 225 0 20} labelfont 1 labelsize 11 align 4
         }
         Fl_Check_Button use_FL_COMMAND_button {
           label {Menu shortcuts use FL_COMMAND}
@@ -400,7 +420,7 @@ or just ".ext" to set extension.}
     Fluid.proj.use_FL_COMMAND = o->value();
   }
 }}
-          tooltip {Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts} xywh {100 205 220 20} down_box DOWN_BOX labelsize 11
+          tooltip {Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts} xywh {100 225 220 20} down_box DOWN_BOX labelsize 11
         }
         Fl_Check_Button utf8_in_src_button {
           label {allow Unicode UTF-8 in source code}
@@ -412,7 +432,7 @@ or just ".ext" to set extension.}
     Fluid.proj.utf8_in_src = o->value();
   }
 }}
-          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {100 230 220 20} down_box DOWN_BOX labelsize 11
+          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {100 250 220 20} down_box DOWN_BOX labelsize 11
         }
         Fl_Check_Button avoid_early_includes_button {
           label {avoid early include of Fl.H}
@@ -424,11 +444,11 @@ or just ".ext" to set extension.}
     Fluid.proj.avoid_early_includes = o->value();
   }
 }}
-          tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {100 255 220 20} down_box DOWN_BOX labelsize 11
+          tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {100 275 220 20} down_box DOWN_BOX labelsize 11
         }
         Fl_Box {} {
           label {Experimental: }
-          xywh {100 283 0 20} labelfont 1 labelsize 11 align 4
+          xywh {100 303 0 20} labelfont 1 labelsize 11 align 4
         }
         Fl_Check_Button w_proj_mergeback {
           label {generate MergeBack data}
@@ -440,7 +460,7 @@ or just ".ext" to set extension.}
     Fluid.proj.write_mergeback_data = o->value();
   }
 }}
-          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 283 220 20} down_box DOWN_BOX labelsize 11
+          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {100 303 220 20} down_box DOWN_BOX labelsize 11
         }
         Fl_Box {} {
           xywh {100 530 220 10} hide resizable
@@ -1524,7 +1544,7 @@ if (v == LOAD) {
       Fl_Group w_settings_i18n_tab {
         label Locale
         callback {propagate_load(o, v);} open
-        scale_image {36 24} image {../icons/language_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
+        scale_image {36 24} image {../icons/language_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
       } {
         Fl_Group {} {
           callback propagate_load open
@@ -1586,7 +1606,7 @@ if (v == LOAD) {
   Fluid.proj.undo.checkpoint();
   Fluid.proj.i18n.gnu_function = o->value();
   Fluid.proj.set_modflag(1);
-}} selected
+}}
             tooltip {The function to call to translate labels and tooltips, usually "gettext" or "_"} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
           }
           Fl_Input i18n_gnu_static_function_input {

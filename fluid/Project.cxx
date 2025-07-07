@@ -54,6 +54,7 @@ void Project::reset() {
   code_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
+  include_guard = "";
   write_mergeback_data = 0;
 }
 

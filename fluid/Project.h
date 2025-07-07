@@ -69,6 +69,8 @@ public: // Member Variables
   std::string header_file_name = ".h";
   /// Hold the default extension for source code  files, or the entire filename if set via command line.
   std::string code_file_name = ".cxx";
+  /// Macro used in header file for #ifdef MACRO \n #defined MACRO \n ... \n #endif
+  std::string include_guard = "";
 
   /// Used as a counter to set the .fl project dir as the current directory.
   int in_project_dir { 0 };
@@ -101,7 +103,7 @@ public: // Methods
 
   void enter_project_dir();
   void leave_project_dir();
-  
+
   void set_filename(const char *c);
   void write_strings();
 

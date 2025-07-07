@@ -277,6 +277,11 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
         goto CONTINUE;
       }
 
+      if (!strcmp(c,"include_guard")) {
+        proj_.include_guard = read_word();
+        goto CONTINUE;
+      }
+
       if (!strcmp(c, "snap")) {
         Fluid.layout_list.read(this);
         goto CONTINUE;
