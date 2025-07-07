@@ -31,7 +31,7 @@
 // System and C++ header files
 //
 
-#include <memory>
+#include <memory>   // std::unique_ptr<>
 
 //
 // Forward declarations and typedefs
@@ -174,7 +174,7 @@ public:
 
   void          clear_selection();
   void          select_all();
-  int           text_selected();
+  int           text_selected() const;
   int           copy(int clipboard=1);
 
   // Scroll bars

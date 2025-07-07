@@ -117,6 +117,30 @@ public:
 
   private: // classes, structs, and types
 
+  /** Helper class to manage margins in Fl_Help_View. */
+  class Margin_Stack
+  {
+    std::vector<int> margins_;
+  public:
+    Margin_Stack() = default;
+    void clear();
+    int current() const;
+    int pop();
+    int push(int indent);
+  };
+
+  /** Internal class to manage the Fl_Help_View edit buffer.
+     This class is for internal use in this file. Its sole purpose is to
+     allow buffer management to avoid buffer overflows in stack variables
+     used to edit strings for formatting and drawing (STR #3275).
+   */
+  class Edit_Buffer : public std::string {
+  public:
+    void add(int ucs);
+    int cmp(const char *str);
+    int width() const;
+  };
+
   /** Private struct to describe blocks of text. */
   struct Text_Block {
     const char    *start;               // Start of text
@@ -315,7 +339,7 @@ public:
 
   void          clear_selection();
   void          select_all();
-  int           text_selected();
+  int           text_selected() const;
   int           copy(int clipboard=1);
 
   // Scroll bars
@@ -412,70 +436,51 @@ static Fl_Menu_Item rmb_menu[] = {
 
 // ---- Helper class to manage margins in Fl_Help_View
 
-// This is used to manage indentation levels for text blocks.
-class Margin_Stack
-{
-  std::vector<int> margins_;
+void Fl_Help_View::Impl::Margin_Stack::clear() {
+  margins_.clear();
+  margins_.push_back(4); // default margin
+}
 
-public:
-  Margin_Stack() = default;
-  void clear() {
-    margins_.clear();
-    margins_.push_back(4); // default margin
+int Fl_Help_View::Impl::Margin_Stack::current() const {
+  return margins_.back();
+}
+
+int Fl_Help_View::Impl::Margin_Stack::pop() {
+  if (margins_.size() > 1) {
+    margins_.pop_back();
   }
-  int current() {
-    return margins_.back();
-  }
-  int pop() {
-    if (margins_.size() > 1) {
-      margins_.pop_back();
-    }
-    return margins_.back();
-  }
-  int push(int indent) {
-    int xx = current() + indent;
-    margins_.push_back(xx);
-    return xx;
-  }
-};
+  return margins_.back();
+}
+
+int Fl_Help_View::Impl::Margin_Stack::push(int indent) {
+  int xx = current() + indent;
+  margins_.push_back(xx);
+  return xx;
+}
 
 
 // ---- Helper class HV_Edit_Buffer to ease buffer management
 
-/* Note: Don't use Doxygen docs for this internal class.
+// Append one Unicode character (code point) to the buffer.
+// The Unicode character \p ucs is converted to UTF-8 and appended to
+// the buffer.
+// \param[in]  ucs  Unicode character (code point) to be added
+void Fl_Help_View::Impl::Edit_Buffer::add(int ucs){
+  int len;
+  char cbuf[6];
+  len = fl_utf8encode((unsigned int)ucs, cbuf); // always returns value >= 1
+  append(cbuf, len);
+}
 
-  Internal class to manage the Fl_Help_View edit buffer.
-  This is a subclass of Fl_String since FLTK 1.4.0 and std::string since 1.5.0.
+// case insensitive comparison of buffer contents with a string
+int Fl_Help_View::Impl::Edit_Buffer::cmp(const char *str) {
+  return !strcasecmp(c_str(), str);
+}
 
-  This class is for internal use in this file. Its sole purpose is to
-  allow buffer management to avoid buffer overflows in stack variables
-  used to edit strings for formatting and drawing (STR #3275).
-*/
-class HV_Edit_Buffer : public std::string {
-public:
-  HV_Edit_Buffer() = default;
-
-  // Append one Unicode character (code point) to the buffer.
-  // The Unicode character \p ucs is converted to UTF-8 and appended to
-  // the buffer.
-  // \param[in]  ucs  Unicode character (code point) to be added
-  void add(int ucs){
-    int len;
-    char cbuf[6];
-    len = fl_utf8encode((unsigned int)ucs, cbuf); // always returns value >= 1
-    append(cbuf, len);
-  }
-
-  // case insensitive comparison of buffer contents with a string
-  int cmp(const char *str) {
-    return !strcasecmp(c_str(), str);
-  }
-
-  // string width of the entire buffer contents
-  int width() {
-    return (int)fl_width(c_str());
-  }
-};
+// string width of the entire buffer contents
+int Fl_Help_View::Impl::Edit_Buffer::width() const {
+  return (int)fl_width(c_str());
+}
 
 
 // ---- Implementation of Font_Style class methods
@@ -596,7 +601,7 @@ void Fl_Help_View::Impl::free_data() {
   if (value_) {
     const char  *ptr,           // Pointer into block
                 *attrs;         // Pointer to start of element attributes
-    HV_Edit_Buffer buf;         // Text buffer
+    Edit_Buffer buf;            // Text buffer
     char        attr[1024],     // Attribute buffer
                 wattr[1024],    // Width attribute buffer
                 hattr[1024];    // Height attribute buffer
@@ -889,7 +894,7 @@ void Fl_Help_View::Impl::format() {
   const char    *ptr,           // Pointer into block
                 *start,         // Pointer to start of element
                 *attrs;         // Pointer to start of element attributes
-  HV_Edit_Buffer buf;           // Text buffer
+  Edit_Buffer   buf;            // Text buffer
   char          attr[1024],     // Attribute buffer
                 wattr[1024],    // Width attribute buffer
                 hattr[1024],    // Height attribute buffer
@@ -1730,7 +1735,7 @@ void Fl_Help_View::Impl::format_table(
                 incell,                                 // In a table cell?
                 pre,                                    // <PRE> text?
                 needspace;                              // Need whitespace?
-  HV_Edit_Buffer buf;                                   // Text buffer
+  Edit_Buffer   buf;                                    // Text buffer
   char          attr[1024],                             // Other attribute
                 wattr[1024],                            // WIDTH attribute
                 hattr[1024];                            // HEIGHT attribute
@@ -2488,8 +2493,8 @@ void Fl_Help_View::Impl::hv_draw(const char *t, int x, int y, int entity_extra_l
         int f = (int) current_pos_;
         int l = (int) (f+strlen(t)); // use 'quote_char' to calculate the true length of the HTML string
         if (draw_mode_ == Mode::PUSH) {
-          selection_push_first_ = f;
-          selection_push_last_ = l;
+          selection_push_first_ = selection_drag_first_ = f;
+          selection_push_last_ = selection_drag_last_ = l;
         } else { // Mode::DRAG
           selection_drag_first_ = f;
           selection_drag_last_ = l + entity_extra_length;
@@ -2609,13 +2614,17 @@ void Fl_Help_View::draw() {
   impl_->draw();
 }
 
+/**
+  \brief Draws the Fl_Help_View widget.
+  \see Fl_Help_View::draw()
+ */
 void Fl_Help_View::Impl::draw()
 {
   int                   i;              // Looping var
-  const Text_Block   *block;         // Pointer to current block
+  const Text_Block      *block;         // Pointer to current block
   const char            *ptr,           // Pointer to text in block
                         *attrs;         // Pointer to start of element attributes
-  HV_Edit_Buffer        buf;            // Text buffer
+  Edit_Buffer           buf;            // Text buffer
   char                  attr[1024];     // Attribute buffer
   int                   xx, yy, ww, hh; // Current positions and sizes
   int                   line;           // Current line
@@ -3220,6 +3229,10 @@ int Fl_Help_View::handle(int event)
   return impl_->handle(event);
 }
 
+/**
+  \brief Handles events in the widget.
+  \see Fl_Help_View::handle(int event)
+ */
 int Fl_Help_View::Impl::handle(int event)
 {
   static std::shared_ptr<Link> linkp = nullptr;   // currently clicked link
@@ -3350,6 +3363,10 @@ void Fl_Help_View::resize(int xx, int yy, int ww, int hh)
   impl_->resize(xx, yy, ww, hh);
 }
 
+/**
+  \brief Override the superclass's resize method.
+  \see Fl_Help_View::resize(int xx, int yy, int ww, int hh)
+ */
 void Fl_Help_View::Impl::resize(int xx, int yy, int ww, int hh)
 {
   Fl_Boxtype b = view.box() ? view.box() : FL_DOWN_BOX; // Box to draw...
@@ -3383,6 +3400,10 @@ void Fl_Help_View::value(const char *val) {
   impl_->value(val);
 }
 
+/**
+  \brief Sets the current help text buffer to the string provided and reformats the text.
+  \see Fl_Help_View::value(const char *val)
+ */
 void Fl_Help_View::Impl::value(const char *val)
 {
   clear_selection();
@@ -3426,6 +3447,10 @@ int Fl_Help_View::load(const char *f) {
   return impl_->load(f);
 }
 
+/**
+  \brief Loads the specified file.
+  \see Fl_Help_View::load(const char *f)
+ */
 int Fl_Help_View::Impl::load(const char *f)
 {
   FILE          *fp;            // File to read from
@@ -3581,6 +3606,10 @@ int Fl_Help_View::find(const char *s, int p) {
   return impl_->find(s, p);
 }
 
+/**
+  \brief Finds the specified string \p s at starting position \p p.
+  \see Fl_Help_View::find(const char *s, int p)
+ */
 int Fl_Help_View::Impl::find(const char *s, int p)
 {
   int           i,                              // Looping var
@@ -3706,6 +3735,10 @@ void Fl_Help_View::link(Fl_Help_Func *fn) {
   impl_->link(fn);
 }
 
+/**
+  \brief Set a callback function for following links.
+  \see Fl_Help_View::link(Fl_Help_Func *fn)
+ */
 void Fl_Help_View::Impl::link(Fl_Help_Func *fn)
 {
   link_ = fn;
@@ -3724,6 +3757,10 @@ const char *Fl_Help_View::filename() const {
   return impl_->filename(); // Ensure the filename is up to date
 }
 
+/**
+  \brief Return the current filename for the text in the buffer.
+  \see Fl_Help_View::filename() const
+ */
 const char *Fl_Help_View::Impl::filename() const {
   if (filename_.empty())
     return nullptr;
@@ -3744,6 +3781,10 @@ const char *Fl_Help_View::directory() const {
   return impl_->directory(); // Ensure the directory is up to date
 }
 
+/**
+  \brief Return the current directory for the text in the buffer.
+  \see Fl_Help_View::directory() const
+ */
 const char *Fl_Help_View::Impl::directory() const {
   if (directory_.empty())
     return nullptr;
@@ -3764,6 +3805,10 @@ const char *Fl_Help_View::title() const {
   return impl_->title(); // Ensure the title is up to date
 }
 
+/**
+  \brief Return the title of the current document.
+  \see Fl_Help_View::title() const
+ */
 const char *Fl_Help_View::Impl::title() const
 {
   return title_.c_str();
@@ -3780,6 +3825,10 @@ void Fl_Help_View::topline(const char *anchor) {
   impl_->topline(anchor);
 }
 
+/**
+  \brief Scroll the text to the given anchor.
+  \see Fl_Help_View::topline(const char *anchor)
+ */
 void Fl_Help_View::Impl::topline(const char *anchor)
 {
   std::string target_name = to_lower(anchor); // Convert to lower case
@@ -3806,6 +3855,10 @@ void Fl_Help_View::topline(int top) {
   impl_->topline(top);
 }
 
+/**
+  \brief Scrolls the text to the indicated position, given a pixel line.
+  \see Fl_Help_View::topline(int top)
+ */
 void Fl_Help_View::Impl::topline(int top)
 {
   if (!value_)
@@ -3839,6 +3892,10 @@ void Fl_Help_View::leftline(int left) {
   impl_->leftline(left);
 }
 
+/**
+ \brief Scrolls the text to the indicated position, given a pixel column.
+ \see Fl_Help_View::leftline(int left)
+ */
 void Fl_Help_View::Impl::leftline(int left)
 {
   if (!value_)
@@ -3867,6 +3924,10 @@ void Fl_Help_View::clear_selection() {
   impl_->clear_selection();
 }
 
+/**
+  \brief Removes the current text selection.
+  \see Fl_Help_View::Impl::clear_selection()
+ */
 void Fl_Help_View::Impl::clear_selection()
 {
   selected_ = false;
@@ -3883,6 +3944,10 @@ void Fl_Help_View::select_all() {
   impl_->select_all();
 }
 
+/**
+  \brief Selects all the text in the view.
+  Fl_Help_View::Impl::select_all()
+ */
 void Fl_Help_View::Impl::select_all()
 {
   clear_selection();
@@ -3897,11 +3962,15 @@ void Fl_Help_View::Impl::select_all()
   \brief Check if the user selected text in this view.
   \return 1 if text is selected, 0 if no text is selected
  */
-int Fl_Help_View::text_selected() {
+int Fl_Help_View::text_selected() const {
   return impl_->text_selected();
 }
 
-int Fl_Help_View::Impl::text_selected()
+/**
+ \brief Check if the user selected text in this view.
+ \see Fl_Help_View::text_selected()
+ */
+int Fl_Help_View::Impl::text_selected() const
 {
   return selected_;
 }
@@ -3916,6 +3985,10 @@ int Fl_Help_View::copy(int clipboard) {
   return impl_->copy(clipboard);
 }
 
+/**
+  \brief If text is selected in this view, copy it to a clipboard.
+  \see Fl_Help_View::copy(int clipboard)
+ */
 int Fl_Help_View::Impl::copy(int clipboard)
 {
   if (!selected_)
@@ -4023,6 +4096,10 @@ int Fl_Help_View::scrollbar_size() const {
   return impl_->scrollbar_size();
 }
 
+/**
+  \brief Get the current size of the scrollbars' troughs, in pixels.
+  \see Fl_Help_View::scrollbar_size() const
+ */
 int Fl_Help_View::Impl::scrollbar_size() const {
   return(scrollbar_size_);
 }
@@ -4051,6 +4128,10 @@ void Fl_Help_View::scrollbar_size(int newSize) {
   impl_->scrollbar_size(newSize);
 }
 
+/**
+  \brief Set the pixel size of the scrollbars' troughs to \p newSize, in pixels.
+  \see Fl_Help_View::scrollbar_size(int)
+ */
 void Fl_Help_View::Impl::scrollbar_size(int newSize)
 {
     scrollbar_size_ = newSize;
