@@ -5,6 +5,7 @@
 //    Handles row-specific selection behavior.
 //
 // Copyright 2002 by Greg Ercolano.
+// Copyright 2009-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,31 +39,6 @@
 #define PRINTEVENT
 #endif
 
-// An STL-ish vector without templates (private to Fl_Table_Row)
-
-void Fl_Table_Row::CharVector::copy(char *newarr, int newsize) {
-  size(newsize);
-  memcpy(arr, newarr, newsize * sizeof(char));
-}
-
-Fl_Table_Row::CharVector::~CharVector() {       // DTOR
-  if (arr) free(arr);
-  arr = 0;
-}
-
-void Fl_Table_Row::CharVector::size(int count) {
-  if (count <= 0 ) {    // Same state as init() - (issue #296)
-    if ( arr ) free(arr);
-    arr   = 0;
-    _size = 0;
-    return;
-  }
-  if (count != _size) {
-    arr = (char*)realloc(arr, (unsigned)count * sizeof(char));
-    _size = count;
-  }
-}
-
 
 /**
   Checks to see if 'row' is selected.
@@ -89,18 +65,18 @@ void Fl_Table_Row::type(TableRowSelectMode val) {
   _selectmode = val;
   switch ( _selectmode ) {
     case SELECT_NONE: {
-      for ( int row=0; row<rows(); row++ ) {
-        _rowselect[row] = 0;
+      for (auto &sel : _rowselect) {
+        sel = 0;
       }
       redraw();
       break;
     }
     case SELECT_SINGLE: {
       int count = 0;
-      for ( int row=0; row<rows(); row++ ) {
-        if ( _rowselect[row] ) {
-          if ( ++count > 1 ) {  // only one allowed
-            _rowselect[row] = 0;
+      for (auto &sel : _rowselect) {
+        if (sel) {
+          if (++count > 1) {  // only one allowed
+            sel = 0;
           }
         }
       }
@@ -184,14 +160,14 @@ void Fl_Table_Row::select_all_rows(int flag) {
     case SELECT_MULTI: {
       char changed = 0;
       if ( flag == 2 ) {
-        for ( int row=0; row<(int)_rowselect.size(); row++ ) {
-          _rowselect[row] ^= 1;
+        for (auto &sel : _rowselect) {
+          sel ^= 1;
         }
         changed = 1;
       } else {
-        for ( int row=0; row<(int)_rowselect.size(); row++ ) {
-          changed |= (_rowselect[row] != flag)?1:0;
-          _rowselect[row] = flag;
+        for (auto &sel : _rowselect) {
+          changed |= (sel != flag) ? 1 : 0;
+          sel = flag;
         }
       }
       if ( changed ) {
@@ -203,9 +179,10 @@ void Fl_Table_Row::select_all_rows(int flag) {
 
 // Set number of rows
 void Fl_Table_Row::rows(int val) {
-  while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }   // enlarge
+  // Note: order of operations below matters, see PR #1187
+  if (val > (int)_rowselect.size()) { _rowselect.resize(val, 0); }  // enlarge
   Fl_Table::rows(val);
-  while ( val < (int)_rowselect.size() ) { _rowselect.pop_back(); }     // shrink
+  if (val < (int)_rowselect.size()) { _rowselect.resize(val); }     // shrink
 }
 
 // Handle events

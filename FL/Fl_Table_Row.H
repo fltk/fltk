@@ -1,15 +1,11 @@
 //
-
-#ifndef _FL_TABLE_ROW_H
-#define _FL_TABLE_ROW_H
-
-//
 // Fl_Table_Row -- A row oriented table widget for the Fast Light Tool Kit (FLTK).
 //
 //    A class specializing in a table of rows.
 //    Handles row-specific selection behavior.
 //
 // Copyright 2002 by Greg Ercolano.
+// Copyright 2009-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +18,13 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#ifndef _FL_TABLE_ROW_H
+#define _FL_TABLE_ROW_H
+
 #include <FL/Fl_Table.H>
+
+#include <stdint.h>
+#include <vector>
 
 /**
  A table with row selection capabilities.
@@ -49,55 +51,8 @@ public:
     SELECT_MULTI                // multiple row selection (default)
   };
 private:
-  // An STL-ish vector without templates
-  class FL_EXPORT CharVector {
-    char *arr;
-    int _size;
-    void init() {
-      arr = 0;
-      _size = 0;
-    }
-    void copy(char *newarr, int newsize);
-  public:
-    CharVector() {                              // CTOR
-      init();
-    }
-    ~CharVector();                              // DTOR
-    CharVector(CharVector&o) {                  // COPY CTOR
-      init();
-      copy(o.arr, o._size);
-    }
-    CharVector& operator=(CharVector&o) {       // ASSIGN
-      init();
-      copy(o.arr, o._size);
-      return(*this);
-    }
-    char operator[](int x) const {
-      return(arr[x]);
-    }
-    char& operator[](int x) {
-      return(arr[x]);
-    }
-    int size() {
-      return(_size);
-    }
-    void size(int count);
-    char pop_back() {
-      char tmp = arr[_size-1];
-      _size--;
-      return(tmp);
-    }
-    void push_back(char val) {
-      int x = _size;
-      size(_size+1);
-      arr[x] = val;
-    }
-    char back() {
-      return(arr[_size-1]);
-    }
-  };
 
-  CharVector _rowselect;                // selection flag for each row
+  std::vector<uint8_t> _rowselect; // selection flag for each row
 
   // handle() state variables.
   //    Put here instead of local statics in handle(), so more
