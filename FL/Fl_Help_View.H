@@ -26,8 +26,6 @@
 #include "Fl.H"
 #include "Fl_Group.H"
 #include "Fl_Scrollbar.H"
-#include <FL/fl_draw.H>   // this is no longer needed here, but external source code seems to rely on it
-#include <FL/filename.H>  // this is no longer needed here, but external source code seems to rely on it
 
 //
 // System and C++ header files
