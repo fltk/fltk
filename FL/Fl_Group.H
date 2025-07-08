@@ -72,7 +72,7 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
   Fl_Group& operator=(const Fl_Group&);
 
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
   void draw_child(Fl_Widget& widget) const;
   void draw_children();
   void draw_outside_label(const Fl_Widget& widget) const ;
@@ -85,7 +85,7 @@ protected:
 
 public:
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   void begin();
   void end();
   static Fl_Group *current();
@@ -119,7 +119,7 @@ public:
 
   Fl_Widget* const* array() const;
 
-  void resize(int,int,int,int) FL_OVERRIDE;
+  void resize(int,int,int,int) override;
   /**
     Creates a new Fl_Group widget using the given position, size,
     and label string. The default boxtype is FL_NO_BOX.
@@ -239,8 +239,8 @@ public:
   unsigned int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
-  Fl_Group* as_group() FL_OVERRIDE { return this; }
-  Fl_Group const* as_group() const FL_OVERRIDE { return this; }
+  Fl_Group* as_group() override { return this; }
+  Fl_Group const* as_group() const override { return this; }
 
   // back compatibility functions:
 

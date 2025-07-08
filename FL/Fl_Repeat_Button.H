@@ -31,7 +31,7 @@
 class FL_EXPORT Fl_Repeat_Button : public Fl_Button {
   static void repeat_callback(void *);
 public:
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   /**
     Creates a new Fl_Repeat_Button widget using the given
     position, size, and label string. The default boxtype is FL_UP_BOX.

@@ -237,7 +237,7 @@ protected:
   Fl_Scrollbar *hscrollbar;                     ///< child horizontal scrollbar widget
 
   // Fltk
-  int handle(int e) FL_OVERRIDE;        // fltk handle() FL_OVERRIDE
+  int handle(int e) override;        // fltk handle() override
 
   // Class maintenance
   void recalc_dimensions();
@@ -403,7 +403,7 @@ protected:
   }
 
   // draw() has to be protected per FLTK convention (was public in 1.3.x)
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
   Fl_Table(int X, int Y, int W, int H, const char *l=0);
@@ -730,7 +730,7 @@ public:
   void set_selection(int row_top, int col_left, int row_bot, int col_right);
   int move_cursor(int R, int C, int shiftselect);
   int move_cursor(int R, int C);
-  void resize(int X, int Y, int W, int H) FL_OVERRIDE; // fltk resize() FL_OVERRIDE
+  void resize(int X, int Y, int W, int H) override; // fltk resize() override
 
   // This crashes sortapp() during init.
   //  void box(Fl_Boxtype val) {

@@ -63,15 +63,15 @@ public:
   /**    The constructors create a new pixmap from the specified XPM data.  */
   explicit Fl_Pixmap(const uchar* const * D) : Fl_Image(-1,0,1), alloc_data(0), id_(0), mask_(0) {set_data((const char*const*)D); measure();}
   virtual ~Fl_Pixmap();
-  Fl_Image *copy(int W, int H) const FL_OVERRIDE;
+  Fl_Image *copy(int W, int H) const override;
   Fl_Image *copy() const { return Fl_Image::copy(); }
-  void color_average(Fl_Color c, float i) FL_OVERRIDE;
-  void desaturate() FL_OVERRIDE;
-  void draw(int X, int Y, int W, int H, int cx=0, int cy=0) FL_OVERRIDE;
+  void color_average(Fl_Color c, float i) override;
+  void desaturate() override;
+  void draw(int X, int Y, int W, int H, int cx=0, int cy=0) override;
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
-  void label(Fl_Widget*w) FL_OVERRIDE;
-  void label(Fl_Menu_Item*m) FL_OVERRIDE;
-  void uncache() FL_OVERRIDE;
+  void label(Fl_Widget*w) override;
+  void label(Fl_Menu_Item*m) override;
+  void uncache() override;
   int cache_w() {return cache_w_;}
   int cache_h() {return cache_h_;}
 };

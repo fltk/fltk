@@ -146,19 +146,19 @@ protected:      //  (STR#1895)
 
 protected:
 
-  int on_insert(Fl_Widget*, int) FL_OVERRIDE;
-  int on_move(int, int) FL_OVERRIDE;
+  int on_insert(Fl_Widget*, int) override;
+  int on_move(int, int) override;
   void fix_scrollbar_order();
   void bbox(int&,int&,int&,int&) const;
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
   Fl_Scrollbar scrollbar;
   Fl_Scrollbar hscrollbar;
 
-  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
-  int handle(int) FL_OVERRIDE;
+  void resize(int X, int Y, int W, int H) override;
+  int handle(int) override;
 
   Fl_Scroll(int X, int Y, int W, int H, const char *L = 0);
   virtual ~Fl_Scroll();
@@ -181,7 +181,7 @@ public:
   void clear();
 
   /* delete child n (by index) */
-  int delete_child(int n) FL_OVERRIDE;
+  int delete_child(int n) override;
 
   /**
     Gets the current size of the scrollbars' troughs, in pixels.

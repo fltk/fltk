@@ -30,9 +30,9 @@
 */
 class FL_EXPORT Fl_Return_Button : public Fl_Button {
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
 public:
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   /**
     Creates a new Fl_Return_Button widget using the given
     position, size, and label string. The default boxtype is FL_UP_BOX.

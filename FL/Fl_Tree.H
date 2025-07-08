@@ -312,14 +312,14 @@ protected:
   // undocmented draw_tree() dropped -- draw() does all the work now
 
   // draw() has to be protected per FLTK convention (was public in 1.3.x)
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
   ~Fl_Tree();
-  int handle(int e) FL_OVERRIDE;
+  int handle(int e) override;
   void show_self();
-  void resize(int,int,int,int) FL_OVERRIDE;
+  void resize(int,int,int,int) override;
 
   ///////////////////////
   // root methods

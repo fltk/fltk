@@ -30,13 +30,13 @@
 class FL_EXPORT Fl_Double_Window : public Fl_Window
 {
 public:
-  Fl_Double_Window *as_double_window() FL_OVERRIDE {return this; }
-  void show() FL_OVERRIDE;
+  Fl_Double_Window *as_double_window() override {return this; }
+  void show() override;
   /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  void resize(int,int,int,int) FL_OVERRIDE;
-  void hide() FL_OVERRIDE;
-  void flush() FL_OVERRIDE;
+  void resize(int,int,int,int) override;
+  void hide() override;
+  void flush() override;
   ~Fl_Double_Window();
 
   /**

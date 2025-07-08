@@ -95,7 +95,7 @@ class Fl_Sys_Menu_Bar_Driver;
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
   static Fl_Sys_Menu_Bar_Driver *driver();
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   /** Possible styles of the Window menu in the system menu bar */
   typedef enum {
@@ -110,8 +110,8 @@ public:
    */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
-  void update() FL_OVERRIDE;
-  void play_menu(const Fl_Menu_Item *) FL_OVERRIDE;
+  void update() override;
+  void play_menu(const Fl_Menu_Item *) override;
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   /** Adds a new menu item.
    \see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0)

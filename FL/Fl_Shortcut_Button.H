@@ -27,8 +27,8 @@ private:
 protected:
   Fl_Shortcut shortcut_value;
   void do_end_hot_callback();
-  int handle(int) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
+  int handle(int) override;
+  void draw() override;
 public:
   Fl_Shortcut_Button(int X,int Y,int W,int H, const char* l = 0);
   void value(Fl_Shortcut shortcut);

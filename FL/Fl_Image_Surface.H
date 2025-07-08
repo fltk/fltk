@@ -68,18 +68,18 @@ private:
   class Fl_Image_Surface_Driver *platform_surface;
   Fl_Offscreen get_offscreen_before_delete_();
 protected:
-  void translate(int x, int y) FL_OVERRIDE;
-  void untranslate() FL_OVERRIDE;
+  void translate(int x, int y) override;
+  void untranslate() override;
 public:
   Fl_Image_Surface(int w, int h, int high_res = 0, Fl_Offscreen off = 0);
   ~Fl_Image_Surface();
-  void set_current() FL_OVERRIDE;
-  bool is_current() FL_OVERRIDE;
+  void set_current() override;
+  bool is_current() override;
   Fl_RGB_Image *image();
   Fl_Shared_Image *highres_image();
-  void origin(int *x, int *y) FL_OVERRIDE;
-  void origin(int x, int y) FL_OVERRIDE;
-  int printable_rect(int *w, int *h) FL_OVERRIDE;
+  void origin(int *x, int *y) override;
+  void origin(int x, int y) override;
+  int printable_rect(int *w, int *h) override;
   Fl_Offscreen offscreen();
   void rescale();
   void mask(const Fl_RGB_Image *);
@@ -111,10 +111,10 @@ protected:
   static void copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst, uchar *dib_src,
                              int line_size, bool bottom_to_top);
   static Fl_RGB_Image *RGB3_to_RGB1(const Fl_RGB_Image *rgb3, int W, int H);
-  void set_current() FL_OVERRIDE = 0;
-  void translate(int x, int y) FL_OVERRIDE = 0;
-  void untranslate() FL_OVERRIDE = 0;
-  int printable_rect(int *w, int *h) FL_OVERRIDE;
+  void set_current() override = 0;
+  void translate(int x, int y) override = 0;
+  void untranslate() override = 0;
+  int printable_rect(int *w, int *h) override;
   virtual Fl_RGB_Image *image() = 0;
   virtual void mask(const Fl_RGB_Image *) {}
   /** Each platform implements this function its own way.

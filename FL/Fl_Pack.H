@@ -61,7 +61,7 @@ public:
   };
 
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
   Fl_Pack(int X, int Y, int W, int H, const char *L = 0);
@@ -92,7 +92,7 @@ public:
   */
   uchar horizontal() const {return type();}
 
-  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
+  void resize(int X, int Y, int W, int H) override;
   /** Deletes all child widgets with Fl_Group::clear().
   And  sets to NULL the resizable() widget. */
   void clear() { Fl_Group::clear(); resizable(NULL); }

@@ -68,11 +68,11 @@ protected:
   // these allow subclasses to put the slider in a smaller area:
   void draw(int, int, int, int);
   int handle(int, int, int, int, int);
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Fl_Slider(int X,int Y,int W,int H, const char *L = 0);
   Fl_Slider(uchar t,int X,int Y,int W,int H, const char *L);
 

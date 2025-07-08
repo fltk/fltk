@@ -73,17 +73,17 @@ class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   static int gl_plugin_linkage();
 protected:
   void draw_begin();
-  void draw() FL_OVERRIDE;
+  void draw() override;
   void draw_end();
 
 public:
-  void show() FL_OVERRIDE;
+  void show() override;
   /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  void flush() FL_OVERRIDE;
-  void hide() FL_OVERRIDE;
-  void resize(int,int,int,int) FL_OVERRIDE;
-  int handle(int) FL_OVERRIDE;
+  void flush() override;
+  void hide() override;
+  void resize(int,int,int,int) override;
+  int handle(int) override;
 
   /**
     Is turned off when FLTK creates a new context for this window or
@@ -213,8 +213,8 @@ public:
   void make_overlay_current();
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
-  Fl_Gl_Window* as_gl_window() FL_OVERRIDE { return this; }
-  Fl_Gl_Window const* as_gl_window() const FL_OVERRIDE { return this; }
+  Fl_Gl_Window* as_gl_window() override { return this; }
+  Fl_Gl_Window const* as_gl_window() const override { return this; }
 
   float pixels_per_unit();
   /** Gives the window width in OpenGL pixels.

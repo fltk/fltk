@@ -1041,9 +1041,9 @@ private:
   int  handle_selection(int e);
 public:
   // FLTK: draw(), resize(), handle()
-  void draw(void) FL_OVERRIDE;
-  void resize(int X,int Y,int W,int H) FL_OVERRIDE;
-  int  handle(int e) FL_OVERRIDE;
+  void draw(void) override;
+  void resize(int X,int Y,int W,int H) override;
+  int  handle(int e) override;
   const char* text(bool lines_below_cursor=false) const;
 
 protected:

@@ -59,7 +59,7 @@
 */
 class FL_EXPORT Fl_Menu_Button : public Fl_Menu_ {
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
   static Fl_Menu_Button* pressed_menu_button_;
 public:
   /**
@@ -76,7 +76,7 @@ public:
     POPUP23,  /**< pops up with the mouse 2nd or 3rd buttons. */
     POPUP123 /**< pops up with any mouse button. */
   };
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   const Fl_Menu_Item* popup();
   Fl_Menu_Button(int,int,int,int,const char * =0);
 };

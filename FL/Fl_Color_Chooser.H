@@ -36,10 +36,10 @@
 class FL_EXPORT Flcc_HueBox : public Fl_Widget {
   int px, py;
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
   int handle_key(int);
 public:
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Flcc_HueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
   px = py = 0;}
 };
@@ -48,10 +48,10 @@ public:
 class FL_EXPORT Flcc_ValueBox : public Fl_Widget {
   int py;
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
   int handle_key(int);
 public:
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Flcc_ValueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
   py = 0;}
 };
@@ -59,7 +59,7 @@ public:
 /** For internal use only */
 class FL_EXPORT Flcc_Value_Input : public Fl_Value_Input {
 public:
-  int format(char*) FL_OVERRIDE;
+  int format(char*) override;
   Flcc_Value_Input(int X, int Y, int W, int H) : Fl_Value_Input(X,Y,W,H) {}
 };
 
@@ -124,7 +124,7 @@ class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   static void mode_cb(Fl_Widget*, void*);
 public:
 
-  int handle(int e) FL_OVERRIDE;
+  int handle(int e) override;
 
   /**
    Returns which Fl_Color_Chooser variant is currently active

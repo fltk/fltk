@@ -54,13 +54,13 @@ class FL_EXPORT Fl_Counter : public Fl_Valuator {
 
 protected:
 
-  void draw() FL_OVERRIDE;
+  void draw() override;
   // compute widths of arrow boxes
   void arrow_widths(int &w1, int &w2);
 
 public:
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 
   Fl_Counter(int X, int Y, int W, int H, const char* L = 0);
   ~Fl_Counter();

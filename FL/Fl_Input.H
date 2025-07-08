@@ -255,12 +255,12 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
   int kf_copy_cut();
 
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
   int handle_key();
   int handle_rmb();
 
 public:
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Fl_Input(int,int,int,int,const char * = 0);
   static const char *cut_menu_text;
   static const char *copy_menu_text;

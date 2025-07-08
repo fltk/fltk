@@ -67,7 +67,7 @@ private:
   TableRowSelectMode _selectmode;
 
 protected:
-  int handle(int event) FL_OVERRIDE;
+  int handle(int event) override;
   int find_cell(TableContext context,           // find cell's x/y/w/h given r/c
                 int R, int C, int &X, int &Y, int &W, int &H) {
     return(Fl_Table::find_cell(context, R, C, X, Y, W, H));
@@ -94,7 +94,7 @@ public:
    */
   ~Fl_Table_Row() { }
 
-  void rows(int val) FL_OVERRIDE; // set number of rows
+  void rows(int val) override; // set number of rows
   int rows() {                          // get number of rows
     return(Fl_Table::rows());
   }
@@ -124,7 +124,7 @@ public:
    */
   void select_all_rows(int flag=1);     // all rows to a known state
 
-  void clear() FL_OVERRIDE {
+  void clear() override {
     rows(0);            // implies clearing selection
     cols(0);
     Fl_Table::clear();  // clear the table

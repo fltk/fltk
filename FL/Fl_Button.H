@@ -87,11 +87,11 @@ protected:
   static void key_release_timeout(void*);
   void simulate_key_action();
 
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 
   Fl_Button(int X, int Y, int W, int H, const char *L = 0);
 

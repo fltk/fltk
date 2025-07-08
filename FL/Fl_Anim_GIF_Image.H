@@ -83,7 +83,7 @@ public:
                     const size_t length, Fl_Widget *canvas = 0,
                     unsigned short flags = 0);
   Fl_Anim_GIF_Image();
-  ~Fl_Anim_GIF_Image() FL_OVERRIDE;
+  ~Fl_Anim_GIF_Image() override;
 
   // -- file handling
   bool load(const char *name, const unsigned char *imgdata=NULL, size_t imglength=0);
@@ -127,12 +127,12 @@ public:
   int frame_h(int frame) const;
 
   // -- overridden methods
-  void color_average(Fl_Color c, float i) FL_OVERRIDE;
-  Fl_Image *copy(int W, int H) const FL_OVERRIDE;
+  void color_average(Fl_Color c, float i) override;
+  Fl_Image *copy(int W, int H) const override;
   Fl_Image *copy() const { return Fl_Pixmap::copy(); }
-  void desaturate() FL_OVERRIDE;
-  void draw(int x, int y, int w, int h, int cx = 0, int cy = 0) FL_OVERRIDE;
-  void uncache() FL_OVERRIDE;
+  void desaturate() override;
+  void draw(int x, int y, int w, int h, int cx = 0, int cy = 0) override;
+  void uncache() override;
 
   // -- debugging and logging
   int debug() const;
@@ -167,8 +167,8 @@ protected:
   static void cb_animate(void *d);
   void scale_frame();
   void set_frame();
-  void on_frame_data(Fl_GIF_Image::GIF_FRAME &f) FL_OVERRIDE;
-  void on_extension_data(Fl_GIF_Image::GIF_FRAME &f) FL_OVERRIDE;
+  void on_frame_data(Fl_GIF_Image::GIF_FRAME &f) override;
+  void on_extension_data(Fl_GIF_Image::GIF_FRAME &f) override;
 
 private:
 

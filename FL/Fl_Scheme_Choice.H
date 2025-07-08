@@ -28,7 +28,7 @@ protected:
 
 public:
   Fl_Scheme_Choice(int X, int Y, int W, int H, const char *L = 0);
-  int handle(int event) FL_OVERRIDE;
+  int handle(int event) override;
 
   // set the current value according to the active scheme
   virtual void init_value();

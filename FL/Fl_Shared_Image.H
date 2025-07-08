@@ -145,22 +145,22 @@ public:
   */
   int original() { return original_; }
 
-  void  release() FL_OVERRIDE;
+  void  release() override;
   virtual void  reload();
 
-  Fl_Shared_Image *as_shared_image() FL_OVERRIDE {
+  Fl_Shared_Image *as_shared_image() override {
     return this;
   }
 
-  Fl_Image *copy(int W, int H) const FL_OVERRIDE;
+  Fl_Image *copy(int W, int H) const override;
   Fl_Image *copy() const;
   Fl_Image *copy();
 
-  void color_average(Fl_Color c, float i) FL_OVERRIDE;
-  void desaturate() FL_OVERRIDE;
-  void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0) FL_OVERRIDE;
+  void color_average(Fl_Color c, float i) override;
+  void desaturate() override;
+  void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0) override;
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
-  void uncache() FL_OVERRIDE;
+  void uncache() override;
 
   static Fl_Shared_Image *find(const char *name, int W = 0, int H = 0);
   static Fl_Shared_Image *get(const char *name, int W = 0, int H = 0);

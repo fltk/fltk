@@ -106,20 +106,20 @@ private:
 public:
   /** The constructor */
   Fl_Printer(void);
-  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL) FL_OVERRIDE;
-  int begin_page(void) FL_OVERRIDE;
-  int printable_rect(int *w, int *h) FL_OVERRIDE;
-  void margins(int *left, int *top, int *right, int *bottom) FL_OVERRIDE;
-  void origin(int *x, int *y) FL_OVERRIDE;
-  void origin(int x, int y) FL_OVERRIDE;
-  void scale(float scale_x, float scale_y = 0.) FL_OVERRIDE;
-  void rotate(float angle) FL_OVERRIDE;
-  void translate(int x, int y) FL_OVERRIDE;
-  void untranslate(void) FL_OVERRIDE;
-  int end_page (void) FL_OVERRIDE;
-  void end_job (void) FL_OVERRIDE;
-  void set_current(void) FL_OVERRIDE;
-  bool is_current() FL_OVERRIDE;
+  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL) override;
+  int begin_page(void) override;
+  int printable_rect(int *w, int *h) override;
+  void margins(int *left, int *top, int *right, int *bottom) override;
+  void origin(int *x, int *y) override;
+  void origin(int x, int y) override;
+  void scale(float scale_x, float scale_y = 0.) override;
+  void rotate(float angle) override;
+  void translate(int x, int y) override;
+  void untranslate(void) override;
+  int end_page (void) override;
+  void end_job (void) override;
+  void set_current(void) override;
+  bool is_current() override;
 
   /** \name These attributes are useful for the Linux/Unix platform only.
    \{

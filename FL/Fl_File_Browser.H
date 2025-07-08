@@ -42,11 +42,11 @@ class FL_EXPORT Fl_File_Browser : public Fl_Browser {
   const char    *pattern_;
   const char    *errmsg_;
 
-  int   full_height() const FL_OVERRIDE;
-  int   item_height(void *) const FL_OVERRIDE;
-  int   item_width(void *) const FL_OVERRIDE;
-  void  item_draw(void *, int, int, int, int) const FL_OVERRIDE;
-  int   incr_height() const FL_OVERRIDE { return (item_height(0) + linespacing()); }
+  int   full_height() const override;
+  int   item_height(void *) const override;
+  int   item_width(void *) const override;
+  void  item_draw(void *, int, int, int, int) const override;
+  int   incr_height() const override { return (item_height(0) + linespacing()); }
 
 public:
   enum { FILES, DIRECTORIES };

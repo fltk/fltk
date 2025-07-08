@@ -45,13 +45,13 @@ class FL_EXPORT Fl_Scrollbar : public Fl_Slider {
   static void timeout_cb(void*);
   void increment_cb();
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
   Fl_Scrollbar(int X,int Y,int W,int H, const char *L = 0);
   ~Fl_Scrollbar();
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 
   /**
     Gets the integer value (position) of the slider in the scrollbar.

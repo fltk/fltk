@@ -54,13 +54,13 @@ public:
   Fl_Bitmap(const uchar *bits, int bits_length, int W, int H);
   Fl_Bitmap(const char *bits, int bits_length, int W, int H);
   virtual ~Fl_Bitmap();
-  Fl_Image *copy(int W, int H) const FL_OVERRIDE;
+  Fl_Image *copy(int W, int H) const override;
   Fl_Image *copy() const { return Fl_Image::copy(); }
-  void draw(int X, int Y, int W, int H, int cx=0, int cy=0) FL_OVERRIDE;
+  void draw(int X, int Y, int W, int H, int cx=0, int cy=0) override;
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
-  void label(Fl_Widget*w) FL_OVERRIDE;
-  void label(Fl_Menu_Item*m) FL_OVERRIDE;
-  void uncache() FL_OVERRIDE;
+  void label(Fl_Widget*w) override;
+  void label(Fl_Menu_Item*m) override;
+  void uncache() override;
   int cache_w() {return cache_w_;}
   int cache_h() {return cache_h_;}
 };

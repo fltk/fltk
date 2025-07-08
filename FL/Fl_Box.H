@@ -33,7 +33,7 @@
 */
 class FL_EXPORT Fl_Box : public Fl_Widget {
 protected:
-  void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   /**
     Creates a new Fl_Box widget with the given coordinates, size, and label.
@@ -72,7 +72,7 @@ public:
   */
   Fl_Box(Fl_Boxtype B, int X, int Y, int W, int H, const char *L);
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 };
 
 #endif

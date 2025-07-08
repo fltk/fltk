@@ -266,9 +266,9 @@ protected:
   void handle_overflow_menu();
   void draw_overflow_menu_button();
 
-  int on_insert(Fl_Widget*, int) FL_OVERRIDE;
-  int on_move(int, int) FL_OVERRIDE;
-  void on_remove(int) FL_OVERRIDE;
+  int on_insert(Fl_Widget*, int) override;
+  int on_move(int, int) override;
+  void on_remove(int) override;
 
   virtual void redraw_tabs();
   virtual int tab_positions();  // allocate and calculate tab positions
@@ -279,17 +279,17 @@ protected:
   virtual int hit_overflow_menu(int event_x, int event_y);
   virtual int hit_tabs_area(int event_x, int event_y);
 
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
   Fl_Tabs(int X, int Y, int W, int H, const char *L = 0);
-  ~Fl_Tabs() FL_OVERRIDE;
+  ~Fl_Tabs() override;
 
-  void resize(int, int, int, int) FL_OVERRIDE;
-  void show() FL_OVERRIDE;
+  void resize(int, int, int, int) override;
+  void show() override;
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Fl_Widget *value();
   int value(Fl_Widget *);
 

@@ -41,7 +41,7 @@ class FL_EXPORT Fl_Progress : public Fl_Widget {
 
   protected:
 
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
   public:
 

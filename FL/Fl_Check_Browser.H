@@ -31,20 +31,20 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
 
 protected:
   /* required routines for Fl_Browser_ subclass: */
-  void *item_first() const FL_OVERRIDE;
-  void *item_next(void *) const FL_OVERRIDE;
-  void *item_prev(void *) const FL_OVERRIDE;
-  int item_height(void *) const FL_OVERRIDE;
-  int item_width(void *) const FL_OVERRIDE;
-  void item_draw(void *, int, int, int, int) const FL_OVERRIDE;
-  void item_select(void *, int) FL_OVERRIDE;
-  int item_selected(void *) const FL_OVERRIDE;
-  const char *item_text(void *item) const FL_OVERRIDE;
+  void *item_first() const override;
+  void *item_next(void *) const override;
+  void *item_prev(void *) const override;
+  int item_height(void *) const override;
+  int item_width(void *) const override;
+  void item_draw(void *, int, int, int, int) const override;
+  void item_select(void *, int) override;
+  int item_selected(void *) const override;
+  const char *item_text(void *item) const override;
 
 public:
-  void *item_at(int index) const FL_OVERRIDE;
+  void *item_at(int index) const override;
   void item_swap(int ia, int ib);
-  void item_swap(void *a, void *b) FL_OVERRIDE;
+  void item_swap(void *a, void *b) override;
 
   /* private data */
 
@@ -104,7 +104,7 @@ public:
   char *text(int item) const;     // returns pointer to internal buffer
 
 protected:
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 };
 
 #endif // Fl_Check_Browser_H

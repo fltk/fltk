@@ -206,7 +206,7 @@ protected:
   int leftedge() const; // x position after scrollbar & border
   void *find_item(int ypos); // item under mouse
 
-  void draw() FL_OVERRIDE;
+  void draw() override;
   Fl_Browser_(int X,int Y,int W,int H,const char *L=0);
 
 public:
@@ -232,8 +232,8 @@ public:
    */
   Fl_Scrollbar hscrollbar;
 
-  int handle(int event) FL_OVERRIDE;
-  void resize(int X,int Y,int W,int H) FL_OVERRIDE;
+  int handle(int event) override;
+  void resize(int X,int Y,int W,int H) override;
 
   int select(void *item,int val=1,int docallbacks=0);
   int select_only(void *item,int docallbacks=0);

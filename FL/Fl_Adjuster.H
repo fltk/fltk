@@ -43,9 +43,9 @@ class FL_EXPORT Fl_Adjuster : public Fl_Valuator {
   int ix;
   int soft_;
 protected:
-  void draw() FL_OVERRIDE;
-  int handle(int) FL_OVERRIDE;
-  void value_damage() FL_OVERRIDE;
+  void draw() override;
+  int handle(int) override;
+  void value_damage() override;
 public:
   Fl_Adjuster(int X,int Y,int W,int H,const char *l=0);
   /**

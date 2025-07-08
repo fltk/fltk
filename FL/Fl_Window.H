@@ -97,7 +97,7 @@ protected:
 
   /** Stores the last window that was made current. See current() const */
   static Fl_Window *current_;
-  void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
@@ -198,7 +198,7 @@ public:
   */
     virtual ~Fl_Window();
 
-  int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 
   /**
     Changes the size and position of the window.  If shown() is true,
@@ -216,7 +216,7 @@ public:
     dimensions. It is up to the application developer to verify window
     parameters after the resize request.
   */
-  void resize(int X,int Y,int W,int H) FL_OVERRIDE;
+  void resize(int X,int Y,int W,int H) override;
   /** Sets whether or not the window manager border is around the window.
   The default value is true. The macOS platform ignores requests to change the
   border state of a fullscreen or maximized window.
@@ -458,12 +458,12 @@ public:
 
     \see Fl_Window::show(int argc, char **argv)
   */
-  void show() FL_OVERRIDE;
+  void show() override;
   /**
     Removes the window from the screen.  If the window is already hidden or
     has not been shown then this does nothing and is harmless.
   */
-  void hide() FL_OVERRIDE;
+  void hide() override;
   /**
     Puts the window on the screen with show() and parses command-line arguments.
 
@@ -596,8 +596,8 @@ public:
   int decorated_h() const;
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
-  Fl_Window* as_window() FL_OVERRIDE { return this; }
-  Fl_Window const* as_window() const FL_OVERRIDE { return this; }
+  Fl_Window* as_window() override { return this; }
+  Fl_Window const* as_window() const override { return this; }
 
   /**
    Return non-null if this is an Fl_Overlay_Window object.

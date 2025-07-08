@@ -91,7 +91,7 @@ public:
   /** The destructor. */
   ~Fl_PostScript_File_Device();
   /** Don't use with this class. */
-  int begin_job(int pagecount, int* from, int* to, char **perr_message) FL_OVERRIDE;
+  int begin_job(int pagecount, int* from, int* to, char **perr_message) override;
   /** Begins the session where all graphics requests will go to a local PostScript file.
    Opens a file dialog to select an output PostScript file.
    This member function makes end_job() close the resulting PostScript file and display an
@@ -128,28 +128,28 @@ public:
     return begin_job(ps_output, pagecount, format, layout);
   }
 
-  int begin_page (void) FL_OVERRIDE;
-  int printable_rect(int *w, int *h) FL_OVERRIDE;
-  void margins(int *left, int *top, int *right, int *bottom) FL_OVERRIDE;
-  void origin(int *x, int *y) FL_OVERRIDE;
-  void origin(int x, int y) FL_OVERRIDE;
-  void scale (float scale_x, float scale_y = 0.) FL_OVERRIDE;
-  void rotate(float angle) FL_OVERRIDE;
-  void translate(int x, int y) FL_OVERRIDE;
-  void untranslate(void) FL_OVERRIDE;
-  int end_page (void) FL_OVERRIDE;
+  int begin_page (void) override;
+  int printable_rect(int *w, int *h) override;
+  void margins(int *left, int *top, int *right, int *bottom) override;
+  void origin(int *x, int *y) override;
+  void origin(int x, int y) override;
+  void scale (float scale_x, float scale_y = 0.) override;
+  void rotate(float angle) override;
+  void translate(int x, int y) override;
+  void untranslate(void) override;
+  int end_page (void) override;
   /** Completes all PostScript output.
    This also closes with \p fclose() the underlying file() unless close_command() was used to set another function.
    */
-  void end_job(void) FL_OVERRIDE;
+  void end_job(void) override;
   /** Label of the PostScript file chooser window */
   static const char *file_chooser_title;
   /** Returns the underlying FILE* receiving all PostScript data */
   FILE *file();
   /** Sets the function end_job() calls to close the file() */
   void close_command(Fl_PostScript_Close_Command cmd);
-  void set_current() FL_OVERRIDE;
-  void end_current() FL_OVERRIDE;
+  void set_current() override;
+  void end_current() override;
 };
 
 /** Encapsulated PostScript drawing surface.
@@ -198,13 +198,13 @@ public:
    with fl_alert().
    */
   ~Fl_EPS_File_Surface();
-  int printable_rect(int *w, int *h) FL_OVERRIDE;
+  int printable_rect(int *w, int *h) override;
   /** Returns the underlying FILE pointer */
   FILE *file();
-  void origin(int x, int y) FL_OVERRIDE;
-  void origin(int *px, int *py) FL_OVERRIDE;
-  void translate(int x, int y) FL_OVERRIDE;
-  void untranslate() FL_OVERRIDE;
+  void origin(int x, int y) override;
+  void origin(int *px, int *py) override;
+  void translate(int x, int y) override;
+  void untranslate() override;
   /** Completes all EPS output.
    The only operation possible with the Fl_EPS_File_Surface object after calling close() is its destruction.
    \return The status code of output operations to the FILE object. 0 indicates success. */

@@ -31,7 +31,7 @@
 */
 class FL_EXPORT Fl_Single_Window : public Fl_Window {
 public:
-  void show() FL_OVERRIDE;
+  void show() override;
   /** Same as Fl_Window::show(int argc, char **argv) */
   void show(int argc, char **argv) { Fl_Window::show(argc, argv);}
 
@@ -55,7 +55,7 @@ public:
   /**
     Same as Fl_Window::flush()
   */
-  void flush() FL_OVERRIDE { Fl_Window::flush(); }
+  void flush() override { Fl_Window::flush(); }
 };
 
 #endif
