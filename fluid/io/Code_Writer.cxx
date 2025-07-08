@@ -659,12 +659,12 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
         macro_name << '_';
       while (a < b) {
         ucs = fl_utf8decode(a, b, &len);
-        if ((ucs == '.') || (ucs == '_')) {
-          macro_name << '_';
-        } else if (ucs > 0x0000ffff) { // large unicode character
+        if (ucs > 0x0000ffff) { // large unicode character
           macro_name << "\\U" << std::setw(8) << std::setfill('0') << std::hex << ucs;
-        } else if ((ucs > 127) || !isalnum(ucs)) { // small unicode character or not an ASCI letter or digit
+        } else if (ucs > 127) { // small unicode character or not an ASCI letter or digit
           macro_name << "\\u" << std::setw(4) << std::setfill('0') << std::hex << ucs;
+        } else if (!isalnum(ucs)) {
+          macro_name << '_';
         } else {
           macro_name << (char)ucs;
         }
