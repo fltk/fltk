@@ -181,6 +181,11 @@ public:
 
   int scrollbar_size() const;
   void scrollbar_size(int newSize);
+  /// Return pointer to vertical scrollbar
+  Fl_Scrollbar  *scrollbar() { return &scrollbar_; }
+  /// Return pointer to horizontal scrollbar
+  Fl_Scrollbar  *hscrollbar() { return &hscrollbar_; }
+
 };
 
 #endif // !Fl_Help_View_H
