@@ -3,7 +3,7 @@
 # It serves two purposes:
 #
 # (1) Continuously building FLTK with one or more build systems.
-# (2) Generating current HTML documentation and putting it online.
+# (2) Generating current HTML and PDF documentation and putting it online.
 #
 # The HTML documentation will be viewable at:
 #
@@ -15,11 +15,13 @@
 #
 # Details of this script:
 #
-# use the official gcc image, based on debian
-# can use versions as well, like gcc:5.2
+# - use the official gcc or debian image
+# - can use versions as well, like gcc:5.2 or debian:trixie
+#
 # see https://hub.docker.com/_/gcc/
+#  or https://hub.docker.com/_/debian
 
-image: gcc
+image: debian:trixie
 
 stages:
   - build
@@ -34,13 +36,13 @@ build-cmake:
   # install the necessary build tools
   before_script:
     - date
-    - apt update && apt -y install cmake ninja-build
-    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
-    - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
-    - apt -y install libpango1.0-dev libcairo2-dev
+    - apt update && apt -y install build-essential cmake ninja-build git
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev libxcursor-dev libxinerama-dev libasound2-dev libcairo2-dev libpango1.0-dev
+    - apt -y install libwayland-dev wayland-protocols libxkbcommon-dev libdbus-1-dev libdecor-0-dev libgtk-3-dev
   script:
     - date
     - gcc --version
+    - git log -1
     - mkdir build && cd build
     - cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D FLTK_BUILD_EXAMPLES=ON -D FLTK_USE_PANGO=ON -D FLTK_OPTION_CAIRO_WINDOW=ON ..
     - date
@@ -58,15 +60,16 @@ pages:
   # install the necessary build tools
   before_script:
     - date
-    - apt update && apt -y install cmake ninja-build man doxygen-latex
-    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
-    - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
-    - apt -y install libpango1.0-dev libcairo2-dev
+    - apt update && apt -y install build-essential cmake ninja-build git man doxygen-latex
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev libxcursor-dev libxinerama-dev libasound2-dev libcairo2-dev libpango1.0-dev
+    - apt -y install libwayland-dev wayland-protocols libxkbcommon-dev libdbus-1-dev libdecor-0-dev libgtk-3-dev
   script:
     - date
     - pwd
+    - git log -1
+    - doxygen --version
     - mkdir build && cd build
-    - cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D FLTK_BUILD_TEST=OFF -D FLTK_USE_PANGO=ON -D FLTK_OPTION_CAIRO_WINDOW=ON ..
+    - cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D FLTK_OPTION_CAIRO_WINDOW=ON ..
     - date
     - time ninja html
     - time ninja pdf
@@ -80,4 +83,5 @@ pages:
   artifacts:
     paths:
       - public
-    expire_in: 8 days
+    # keep artifacts of the latest three weekly builds
+    expire_in: 20 days
