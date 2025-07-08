@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <errno.h>	// strerror(errno)
+#include <errno.h>      // strerror(errno)
 #include "Project.h"
 
 #include "io/String_Writer.h"

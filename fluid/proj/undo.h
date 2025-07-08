@@ -30,7 +30,7 @@ namespace proj {
 class Undo
 {
 public:
-  
+
   enum class OnceType {
     ALWAYS = 0,
     WINDOW_RESIZE

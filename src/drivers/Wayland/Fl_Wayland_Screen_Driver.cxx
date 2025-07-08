@@ -1607,7 +1607,7 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
 
 /* Implementation note about computing work area and about handling fractional scaling.
- 
+
  FLTK computes 2 pairs of (WxH) values for each display:
  1) (pixel_width x pixel_height) gives the size in pixel of a display. It's unchanged by
  any scaling applied by the compositor; it's assigned by function output_mode().
@@ -1615,7 +1615,7 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
  When the active scaling is non-fractional, these equations hold:
    pixel_width = width = wld_scale * configured-width-of-fullscreen-window
    pixel_height = height = wld_scale * configured-height-of-fullscreen-window
- 
+
  When fractional scaling is active, buffers received from client are scaled down
  by the compositor and mapped to screen. These equations hold:
    pixel_width < width = wld_scale * configured-width-of-fullscreen-window
@@ -1624,7 +1624,7 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
  One way for a client to discover that fractional scaling is active on a given display
  is to ask for a fullscreen window on that display, get its configured size and compare
  it to that display's pixel size. That's what function compute_full_and_maximized_areas() does.
- 
+
  One way for a client to discover the work area size of a display is to get the configured size
  of a maximized window on that display. FLTK didn't find a way to control in general
  on what display the compositor puts a maximized window. One procedure which works
@@ -1634,7 +1634,7 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
  display as the fullscreen one, giving the size of that display's work area.
  Therefore, FLTK computes an exact work area size only with MUTTER or when the system
  contains a single display. That's also done by function compute_full_and_maximized_areas().
- 
+
  The procedure to compute the work area size also reveals which display is primary:
  that with a work area vertically smaller than the display's pixel height. This allows
  to place the primary display as FLTK display #0. Again, FLTK guarantees to identify

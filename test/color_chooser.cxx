@@ -99,7 +99,7 @@ public:
                    "Background color is:\n"
                    "palette no. %d = r:%d, g:%d, b:%d", color(), r, g, b);
       } else {
-        ::snprintf(buf, 127, 
+        ::snprintf(buf, 127,
                    "Background color is:\n"
                    "r:%d, g:%d, b:%d", r, g, b);
       }

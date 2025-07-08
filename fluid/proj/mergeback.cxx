@@ -112,7 +112,7 @@ int merge_back(Project &proj, const std::string &s, const std::string &p, Mergeb
 }
 
 /** Allocate and initialize MergeBack class. */
-Mergeback::Mergeback(Project &proj) 
+Mergeback::Mergeback(Project &proj)
 : proj_(proj),
   code(nullptr),
   line_no(0),
@@ -608,13 +608,13 @@ int Mergeback::merge_back(const std::string &s, const std::string &p, Task task)
 /**
  \brief Merges back code files with the project file.
 
- This function flushes text widgets, checks if the project filename and 
- mergeback data are available, and then attempts to merge back the code 
- files with the project file. If MergeBack is not enabled, it displays 
+ This function flushes text widgets, checks if the project filename and
+ mergeback data are available, and then attempts to merge back the code
+ files with the project file. If MergeBack is not enabled, it displays
  a message to the user. It handles both batch and interactive modes.
 
- \return int - Returns 1 if the project filename is not available, 
-               0 if MergeBack is not enabled, 
+ \return int - Returns 1 if the project filename is not available,
+               0 if MergeBack is not enabled,
                or the result of the merge_back function.
  */
 int mergeback_code_files(Project &proj)

@@ -173,7 +173,7 @@ static void tooltip_hide_timeout(void*) {
  \return always 1, so this call can finish the FL_BEFORE_TOOLTIP event handling.
 
  \see void Fl_Widget::tooltip(const char *text).
- 
+
  \see `test/color_chooser.cxx` for a usage example.
 */
 int Fl_Tooltip::override_text(const char *new_text) {

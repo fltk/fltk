@@ -202,9 +202,9 @@ worker thread to re-use or update \p userdata.
 
 \warning
 The Fl::awake(void* message) call has been deprecated because the API was not
-sufficient to ensure the deliver of all message or the order of messages. The 
+sufficient to ensure the deliver of all message or the order of messages. The
 cal still exists for back compatibility, but should be repleaced with a call
-to Fl::awake(), Fl::awake(handler, user_data), 
+to Fl::awake(), Fl::awake(handler, user_data),
 or Fl::awake_once(handler, user_data).
 
 \section advanced_multithreading_lockless FLTK multithreaded "lockless programming"

@@ -89,7 +89,7 @@ public: // Member Variables
   app::History history;
   /// Command line arguments
   app::Args args;
-  /// List of available layouts 
+  /// List of available layouts
   app::Layout_List layout_list;
   /// Set, if Fluid runs in batch mode, and no user interface is activated.
   int batch_mode { 0 };             // fluid + any code generators (-u, -c, -cs)

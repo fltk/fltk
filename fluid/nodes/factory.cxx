@@ -16,7 +16,7 @@
 
 /**
 
- 
+
  \todo Verify the text
 
  Type classes for most of the fltk widgets.  Most of the work

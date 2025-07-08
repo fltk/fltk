@@ -1204,13 +1204,13 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         } {
           Fl_Value_Input {} {
             label {Left:}
-            callback {flex_margin_cb(o, v, 
+            callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
   {
     int v;
     w->margin(&v, nullptr, nullptr, nullptr);
     i->value((double)v);
-  }, 
+  },
   [](Fl_Flex *w, int new_value) -> int
   {
     int l, t, r, b;
@@ -1250,7 +1250,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Right:}
-            callback {flex_margin_cb(o, v, 
+            callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
   {
     int v;
@@ -1273,7 +1273,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Bottom:}
-            callback {flex_margin_cb(o, v, 
+            callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
   {
     int v;
@@ -1296,12 +1296,12 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Gap:}
-            callback {flex_margin_cb(o, v, 
+            callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* o) -> void
   {
     int v = w->gap();
     o->value((double)v);
-  }, 
+  },
   [](Fl_Flex *w, int new_value) -> int
   {
     int g = w->gap();
@@ -1769,8 +1769,8 @@ if (v != LOAD) {
   if (d == c) return;
   c = d;
   labelcolor_common(c);
-  w_labelcolor->color(c); 
-  w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c)); 
+  w_labelcolor->color(c);
+  w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c));
   w_labelcolor->redraw();
 }} open
             xywh {386 40 18 20}
@@ -1786,7 +1786,7 @@ if (v != LOAD) {
           Fl_Choice {} {
             callback {if (v == LOAD) {
   if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
-  int n = current_widget->o->box(); 
+  int n = current_widget->o->box();
   if (!n) n = ZERO_ENTRY;
   for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
     if (boxmenu[j].argument() == n) {o->value(j); break;}
@@ -2169,7 +2169,7 @@ if (v == LOAD) {
             user_data 4
             callback {if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {
-      o->deactivate(); 
+      o->deactivate();
     } else {
       o->activate();
       o->value(current_widget->subclass());

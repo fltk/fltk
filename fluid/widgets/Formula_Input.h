@@ -47,19 +47,19 @@ class Formula_Input : public Fl_Input
   int eval_var(uchar *&s) const;
   int eval(uchar *&s, int prio) const;
   int eval(const char *s) const;
-  
+
 public:
   Formula_Input(int x, int y, int w, int h, const char *l = nullptr);
 
   /** Return the text in the widget text field. */
   const char *text() const { return Fl_Input::value(); }
-  
+
   /** Set the text in the text field */
   void text(const char *v) { Fl_Input::value(v); }
-  
+
   int value() const;
   void value(int v);
-  
+
   /** Set the general callback for this widget. */
   void callback(Fl_Callback *cb) { user_callback_ = cb; }
 

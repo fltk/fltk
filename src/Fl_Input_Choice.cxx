@@ -57,7 +57,7 @@
   FLTK triggers an `FL_BEFORE_MENU` event for this widget right before
   displaying the menu. This event provides an opportunity to update menu
   item states and activation.
- 
+
   \par Example Use of Fl_Input_Choice
   \code
   #include <stdio.h>

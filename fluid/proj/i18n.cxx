@@ -63,7 +63,7 @@ void I18n::read(io::Project_Reader &f, const char *key) {
       gnu_conditional = f.read_word();
     } else if (type == fld::I18n_Type::POSIX) {
       posix_conditional = f.read_word();
-    }  
+    }
   }
 }
 

@@ -77,7 +77,7 @@ bool Fl_System_Driverawake_pending_ = false;
 #endif
 
 
-/** 
+/**
  \brief Adds an awake handler for use in awake().
 
  \internal Adds an awake handler for use in awake().
@@ -103,7 +103,7 @@ int Fl_System_Driver::push_awake_handler(Fl_Awake_Handler func, void *data, bool
   }
 
   // If we want to add the handler only once, go through the list of existing
-  // handlers and remove any handler with the same function pointer 
+  // handlers and remove any handler with the same function pointer
   // and data pointer.
   if (once) {
     int src = awake_ring_tail_;
@@ -144,9 +144,9 @@ int Fl_System_Driver::push_awake_handler(Fl_Awake_Handler func, void *data, bool
   return ret;
 }
 
-/** 
+/**
  \brief Gets the last stored awake handler for use in awake().
- \internal Used in the main event loop when an Awake message is received. 
+ \internal Used in the main event loop when an Awake message is received.
  */
 int Fl_System_Driver::pop_awake_handler(Fl_Awake_Handler &func, void *&data)
 {
@@ -168,7 +168,7 @@ int Fl_System_Driver::pop_awake_handler(Fl_Awake_Handler &func, void *&data)
 
 /**
  \brief Checks if the awake ring buffer is empty.
- \internal Used in the main event loop when an Awake message is received. 
+ \internal Used in the main event loop when an Awake message is received.
  */
 bool Fl_System_Driver::awake_ring_empty() {
   Fl::system_driver()->lock_ring();
@@ -180,9 +180,9 @@ bool Fl_System_Driver::awake_ring_empty() {
 /**
  \brief Notifies the main GUI thread from a worker thread.
 
- In FLTK, worker threads can update the UI, but all UI changes must be wrapped 
- between Fl::lock() and Fl::unlock(). After calling Fl::unlock(), the worker 
- thread should call Fl::awake() to signal the main thread that 
+ In FLTK, worker threads can update the UI, but all UI changes must be wrapped
+ between Fl::lock() and Fl::unlock(). After calling Fl::unlock(), the worker
+ thread should call Fl::awake() to signal the main thread that
  updates are pending.
 
  \note Worker threads must not create, show, or hide windows.
@@ -201,12 +201,12 @@ void Fl::awake() {
  \deprecated Use Fl::awake() or Fl::awake(Fl_Awake_Handler, void*) instead.
 
  This method is deprecated. The API can not ensure that Fl::thread_message()
- returns the messages sent by Fl::awake(void *v) complete and in the correct 
+ returns the messages sent by Fl::awake(void *v) complete and in the correct
  order.
 
  Use Fl::awake() instead if you do not need to send a specific message.
  Use Fl::awake(Fl_Awake_Handler, void*) or Fl::awake_once(Fl_Awake_Handler, void*)
- if you need to send a message to the main thread and ensure that all messages 
+ if you need to send a message to the main thread and ensure that all messages
  are processed in the order they were sent.
 
  \see \ref advanced_multithreading
@@ -225,16 +225,16 @@ void Fl::awake(void *v) {
  be run by the main thread, passing optional user data. The callback will be
  executed during the main thread's next event handling cycle.
 
- The queue holding the list of handlers is limited to 1024 entries. 
+ The queue holding the list of handlers is limited to 1024 entries.
  If the queue is full, the function will return -1 and the callback will not be
- scheduled. However the main thread will still be woken up to process any 
+ scheduled. However the main thread will still be woken up to process any
  other pending events.
 
  \note If user_data points to dynamically allocated memory, it is the
  responsibility of the caller to ensure that the memory is valid until the
  callback is executed. The callback will be executed during the main thread's
- next event handling cycle, but depending on the sytems load, this may take 
- several seconds. 
+ next event handling cycle, but depending on the sytems load, this may take
+ several seconds.
 
  \return 0 if the callback was successfully scheduled
  \return -1 if the queue is full.
@@ -273,15 +273,15 @@ int Fl::awake_once(Fl_Awake_Handler handler, void *user_data) {
 
 /**
  \brief Returns the last message sent by a child thread.
-  
- \deprecated Use Fl::awake(Fl_Awake_Handler, void*) or 
+
+ \deprecated Use Fl::awake(Fl_Awake_Handler, void*) or
  Fl::awake_once(Fl_Awake_Handler, void*) instead.
 
  The thread_message() method returns the last message
  that was sent from a child by the Fl::awake(void*) method.
 
  This method is deprecated. The API can not ensure that Fl::thread_message()
- returns the messages sent by Fl::awake(void *v) complete and in the correct 
+ returns the messages sent by Fl::awake(void *v) complete and in the correct
  order.
 
  \see \ref advanced_multithreading
@@ -300,14 +300,14 @@ void* Fl::thread_message() {
   The lock() method blocks the current thread until it
   can safely access FLTK widgets and data. Child threads should
   call this method prior to updating any widgets or accessing
-  data. The main thread must call Fl::lock() once before any windows are shown 
+  data. The main thread must call Fl::lock() once before any windows are shown
   to initialize the threading support in FLTK. The initial Fl::lock() call
   will return non-zero if threading is not available on the platform.
 
-  Child threads enclose calls to FLTK functions between Fl::lock() and 
+  Child threads enclose calls to FLTK functions between Fl::lock() and
   Fl::unlock() accessing FLTK. When a child thread has finshed accessing FLTK
   and wants the main thread to update the UI, it should call Fl::awake().
-  
+
   Child threads can never create, show, or hide windows.
 
   When the wait() method is waiting
@@ -327,10 +327,10 @@ int Fl::lock() {
   return Fl::system_driver()->lock();
 }
 
-/** 
+/**
  \brief Release the global UI lock set by Fl::lock().
 
-  The unlock() method releases the lock that was set using the lock() method. 
+  The unlock() method releases the lock that was set using the lock() method.
   Child threads should call this method as soon as they are finished
   accessing FLTK.
 

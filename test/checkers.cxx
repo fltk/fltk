@@ -635,7 +635,7 @@ const char _usermoves[] =
 // White moves from D3 to E4 (+14).
 // Black's move? G6 H5             <-- try this in GUI mode w/o the fix below
 // Valid moves are:
-// F5 D3	- Black jumps from F5 to D3, E4 removed (-14).
+// F5 D3        - Black jumps from F5 to D3, E4 removed (-14).
 //
 // Hint for further debugging: enable the printf/fflush statements below and
 // set a breakpoint inside the `if` condition below in a debugger. Then take

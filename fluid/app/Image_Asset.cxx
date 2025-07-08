@@ -44,23 +44,23 @@
 
 /**
  \brief A map of all image assets.
- \todo This is a global variable, but should be associated 
+ \todo This is a global variable, but should be associated
     with a project instead.
  */
 static std::map<std::string, Image_Asset*> image_asset_map;
 
 
-/** 
+/**
  \brief Write the contents of the image file as binary source code.
 
- Write the contents of the image file as C++ code, so the image is available in 
+ Write the contents of the image file as C++ code, so the image is available in
  the target app in the original binary format, for example:
  ```
  { 1, 2, 3, ...}
  ```
  \param f Write code to this C++ source code file
  \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read 
+ \return 0 if the file could not be opened or read
  */
 size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
@@ -86,7 +86,7 @@ size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt
 }
 
 
-/** 
+/**
  \brief Write the contents of the image file as text with escaped special characters.
 
  This function is only useful for writing out image formats that are ASCII text
@@ -94,7 +94,7 @@ size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt
 
  \param f Write code to this C++ source code file
  \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read 
+ \return 0 if the file could not be opened or read
  */
 size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
@@ -120,18 +120,18 @@ size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) 
 }
 
 
-/** 
+/**
  \brief Write the contents of the image file as uncompressed RGB.
 
  Write source code that generates the uncompressed RGB image data at compile
  time, and an initializer that creates the image at run time.
 
- \todo If the ld() value is not 0 and not d()*w(), the image data is not 
+ \todo If the ld() value is not 0 and not d()*w(), the image data is not
  written correctly. There is no check if the data is actually in RGB format.
 
  \param f Write code to this C++ source code file
  \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read 
+ \return 0 if the file could not be opened or read
  */
 void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
   // Write image data...
@@ -306,15 +306,15 @@ void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
  The generated code loads the image if it hasn't been loaded yet, and then
  returns a pointer to the image.
 
- \code 
+ \code
   static Fl_Image *'initializer_function_'() {
     static Fl_Image *image = 0L;
     if (!image)
       image = new 'type_name'('product of format and remaining args');
     return image;
   }
- \endcode  
- 
+ \endcode
+
  \param f Write the C++ code to this file.
  \param image_class Name of the Fl_Image class, for example Fl_GIF_Image.
  \param format Format string for additional parameters for the constructor.
@@ -341,7 +341,7 @@ void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_c
 
  The generated code will call the image initializer function and assign
  the resulting image to the widget.
- 
+
  \param f Write the C++ code to this file.
  \param bind If true, use bind_image() instead of image().
  \param var Name of the Fl_Widget or Fl_Menu_Item to attach the image to.
@@ -349,16 +349,16 @@ void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_c
  */
 void Image_Asset::write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive) {
   if (image_) {
-    f.write_c("%s%s->%s%s( %s() );\n", 
-      f.indent(), 
-      var, 
-      bind ? "bind_" : "", 
-      inactive ? "deimage" : "image", 
+    f.write_c("%s%s->%s%s( %s() );\n",
+      f.indent(),
+      var,
+      bind ? "bind_" : "",
+      inactive ? "deimage" : "image",
       initializer_function_.c_str());
     if (is_animated_gif_)
-      f.write_c("%s((Fl_Anim_GIF_Image*)(%s()))->canvas(%s, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n", 
-        f.indent(), 
-        initializer_function_.c_str(), 
+      f.write_c("%s((Fl_Anim_GIF_Image*)(%s()))->canvas(%s, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n",
+        f.indent(),
+        initializer_function_.c_str(),
         var);
   }
 }
@@ -485,8 +485,8 @@ void Image_Asset::dec_ref() {
  \brief Destructor for the Image_Asset class.
 
  This destructor removes the image asset from the global image asset map
- and releases the associated shared image if it exists. It ensures that 
- any resources associated with the Image_Asset are properly cleaned up 
+ and releases the associated shared image if it exists. It ensures that
+ any resources associated with the Image_Asset are properly cleaned up
  when the object is destroyed.
 */
 Image_Asset::~Image_Asset() {

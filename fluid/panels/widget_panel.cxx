@@ -1063,13 +1063,13 @@ static void cb_wp_gui_margins(Fl_Group* o, void* v) {
 }
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
-  flex_margin_cb(o, v, 
+  flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
       int v;
       w->margin(&v, nullptr, nullptr, nullptr);
       i->value((double)v);
-    }, 
+    },
     [](Fl_Flex *w, int new_value) -> int
     {
       int l, t, r, b;
@@ -1107,7 +1107,7 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
-  flex_margin_cb(o, v, 
+  flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
       int v;
@@ -1129,7 +1129,7 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
-  flex_margin_cb(o, v, 
+  flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
       int v;
@@ -1151,12 +1151,12 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
 }
 
 static void cb_Gap(Fl_Value_Input* o, void* v) {
-  flex_margin_cb(o, v, 
+  flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* o) -> void
     {
       int v = w->gap();
       o->value((double)v);
-    }, 
+    },
     [](Fl_Flex *w, int new_value) -> int
     {
       int g = w->gap();
@@ -1575,8 +1575,8 @@ static void cb_6(Fl_Menu_Button* o, void* v) {
     if (d == c) return;
     c = d;
     labelcolor_common(c);
-    w_labelcolor->color(c); 
-    w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c)); 
+    w_labelcolor->color(c);
+    w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_labelcolor->redraw();
   }
 }
@@ -1586,7 +1586,7 @@ Fl_Group *wp_style_box=(Fl_Group *)0;
 static void cb_7(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
-    int n = current_widget->o->box(); 
+    int n = current_widget->o->box();
     if (!n) n = ZERO_ENTRY;
     for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
       if (boxmenu[j].argument() == n) {o->value(j); break;}
@@ -1927,7 +1927,7 @@ Fl_Group *wp_cpp_class=(Fl_Group *)0;
 static void cb_e(Fl_Input* o, void* v) {
   if (v == LOAD) {
       if (current_widget->is_a(Type::Menu_Item)) {
-        o->deactivate(); 
+        o->deactivate();
       } else {
         o->activate();
         o->value(current_widget->subclass());

@@ -67,7 +67,7 @@ void menu_file_save_cb(Fl_Widget *, void *arg) { Fluid.save_project_file(arg); }
 static void menu_file_print_cb(Fl_Widget *, void *arg) { Fluid.print_snapshots(); }
 void menu_file_open_history_cb(Fl_Widget *, void *v) { Fluid.open_project_file(std::string((const char*)v)); }
 static void menu_layout_sync_resize_cb(Fl_Menu_ *m, void*) {
- if (m->mvalue()->value()) Fluid.proj.tree.allow_layout = 1; else Fluid.proj.tree.allow_layout = 0; 
+ if (m->mvalue()->value()) Fluid.proj.tree.allow_layout = 1; else Fluid.proj.tree.allow_layout = 0;
 }
 static void menu_file_revert_cb(Fl_Widget *, void *) { Fluid.revert_project(); }
 void exit_cb(Fl_Widget *,void *) { Fluid.quit(); }

@@ -33,7 +33,7 @@ _README.macOS.md - Building FLTK under Apple macOS_
 ## Introduction
 
 FLTK supports macOS version 10.3 Panther and above. At the time of writing (Feb. 2022),
-FLTK compiles and runs fine on the most recent macOS 12 Monterey for both Intel 
+FLTK compiles and runs fine on the most recent macOS 12 Monterey for both Intel
 processors and Apple Silicon.
 
 FLTK 1.5 supports the following build environments on the macOS
@@ -174,8 +174,8 @@ See README.CMake.txt
 <a name="build_cmake_make"></a>
 ## How to Build FLTK Using _CMake_ and _make_
 
-This option is best for users who like to develop their apps without using 
-Apple's Xcode IDE. Users should be comfortable with using `bash` or `tcsh` in 
+This option is best for users who like to develop their apps without using
+Apple's Xcode IDE. Users should be comfortable with using `bash` or `tcsh` in
 a terminal window.
 
 This option requires neither administrator rights, nor an Apple ID.
@@ -243,7 +243,7 @@ self-explanatory. Some more details can be found in
 <a name="bcm_build"></a>
 ### Building FLTK (CMake, make)
 
-Now this is easy if all the previous steps were successful. Stay in the root 
+Now this is easy if all the previous steps were successful. Stay in the root
 directory of your FLTK source code tree and type:
 
 ```bash
