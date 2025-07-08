@@ -1663,6 +1663,8 @@ void Fl_Help_View::Impl::format() {
     block->end = ptr;
     size_      = yy + hh;
   }
+  // Make sure that the last block will have the correct height.
+  if (hh > block->h) block->h = hh;
 
 //  printf("margins.depth_=%d\n", margins.depth_);
 
