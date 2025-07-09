@@ -1159,6 +1159,12 @@ static struct wl_output_listener output_listener = {
 };
 
 
+struct pair_bool {
+  bool found_gtk_shell;
+  bool found_wf_shell;
+};
+
+
 // Notice: adding use of unstable protocol "XDG output" would allow FLTK to be notified
 // in real time of changes to the relative location of multiple displays;
 // with the present code, that information is received at startup only.
@@ -1274,8 +1280,10 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     scr_driver->xdg_wm_base = (struct xdg_wm_base *)wl_registry_bind(wl_registry, id,
                                                         &xdg_wm_base_interface, 1);
     xdg_wm_base_add_listener(scr_driver->xdg_wm_base, &xdg_wm_base_listener, NULL);
+  } else if (strstr(interface, "wf_shell_manager")) {
+    ((pair_bool*)user_data)->found_wf_shell = true;
   } else if (strcmp(interface, "gtk_shell1") == 0) {
-    Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::MUTTER;
+    ((pair_bool*)user_data)->found_gtk_shell = true;
     //fprintf(stderr, "Running the Mutter compositor\n");
     scr_driver->seat->gtk_shell = (struct gtk_shell1*)wl_registry_bind(wl_registry, id,
                                   &gtk_shell1_interface, version);
@@ -1413,10 +1421,14 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   wl_list_init(&outputs);
 
   wl_registry = wl_display_get_registry(wl_display);
-  wl_registry_add_listener(wl_registry, &registry_listener, NULL);
+  struct pair_bool pair = {false, false};
+  wl_registry_add_listener(wl_registry, &registry_listener, &pair);
   struct wl_callback *registry_cb = wl_display_sync(wl_display);
   wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
   while (registry_cb) wl_display_dispatch(wl_display);
+  if (pair.found_gtk_shell) {
+    Fl_Wayland_Screen_Driver::compositor = (pair.found_wf_shell ? WAYFIRE : MUTTER);
+  }
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)wayland_socket_callback,
              wl_display);
   fl_create_print_window();
