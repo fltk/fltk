@@ -1426,7 +1426,7 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   struct wl_callback *registry_cb = wl_display_sync(wl_display);
   wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
   while (registry_cb) wl_display_dispatch(wl_display);
-  if (pair.found_gtk_shell) {
+  if (pair.found_gtk_shell || pair.found_wf_shell) {
     Fl_Wayland_Screen_Driver::compositor = (pair.found_wf_shell ? WAYFIRE : MUTTER);
   }
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)wayland_socket_callback,
