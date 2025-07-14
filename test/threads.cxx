@@ -20,7 +20,7 @@
 #  include <FL/Fl.H>
 #  include <FL/Fl_Double_Window.H>
 #  include <FL/Fl_Terminal.H>
-#  include <FL/Fl_Value_Output.H>
+#  include <FL/Fl_Output.H>
 #  include <FL/fl_ask.H>
 #  include "threads.h"
 #  include <stdio.h>
@@ -37,39 +37,45 @@ struct prime {
   int idx;                              // thread index: 0 or {1..6}
   int done;                             // set to 1 after it was worked on
   Fl_Terminal *terminal;                // widget to write output to
-  Fl_Value_Output *value;               // highest prime
+  unsigned long max_prime;              // highest prime found so far
+  Fl_Output *value;                     // highest prime output widget
   std::vector<unsigned long> primes;    // collected primes within time frame
 };
 
 Fl_Thread prime_thread;
 
 Fl_Terminal *tty1, *tty2;
-Fl_Value_Output *value1, *value2;
+Fl_Output *value1, *value2;
 int start2 = 3;
 
 void magic_number_cb(void *p) {
-  Fl_Value_Output *w = (Fl_Value_Output*)p;
+  Fl_Output *w = (Fl_Output*)p;
   w->labelcolor(FL_RED);
-  w->redraw_label();
+  w->parent()->redraw();
+  // if (w == value1) Fl::hide_all_windows(); // TEST: terminate early to measure time
 }
 
 // This is called indirectly by Fl::awake(update_handler, (void *)prime)
 // in the context of the main (FLTK GUI) thread.
 
 void update_handler(void *v) {
+  char max_buf[32];
   struct prime *pr = (struct prime *)v;
   for (auto n : pr->primes) {
-    pr->terminal->printf("prime: %10u\n", n);
-    if (n > pr->value->value())
-      pr->value->value(n);
+    pr->terminal->printf("prime: %10lu\n", n);
+    if (n > pr->max_prime)
+      pr->max_prime = n;
   }
+  snprintf(max_buf, sizeof(max_buf), "%9lu", pr->max_prime);
+  pr->value->value(max_buf);
   pr->done = 1;
 }
 
 extern "C" void* prime_func(void* p) {
   Fl_Terminal* terminal = (Fl_Terminal*)p;
-  Fl_Value_Output *value;
+  Fl_Output *value;
   unsigned long n;
+  unsigned long max_value = 0;
   int step;
   char proud = 0;
 
@@ -91,11 +97,12 @@ extern "C" void* prime_func(void* p) {
   // initialize alternate buffers (struct prime) to store primes
 
   struct prime pr[2];
-  pr[0].done     = 0;
-  pr[1].done     = 1;
-  pr[0].terminal = pr[1].terminal = terminal;
-  pr[0].idx      = pr[1].idx      = n/2 - 1;
-  pr[0].value    = pr[1].value    = value;
+  pr[0].idx       = pr[1].idx       = n/2 - 1;
+  pr[0].done      = 0;
+  pr[1].done      = 1;
+  pr[0].terminal  = pr[1].terminal  = terminal;
+  pr[0].max_prime = pr[1].max_prime = 0;
+  pr[0].value     = pr[1].value     = value;
   pr[0].primes.clear();
   pr[1].primes.clear();
   int pi = 0;   // prime buffer index
@@ -115,7 +122,10 @@ extern "C" void* prime_func(void* p) {
     int pp;
     int hn = (int)sqrt((double)n);
 
-    for (pp = 3; pp <= hn; pp += 2) if ( n%pp == 0 ) break;
+    for (pp = 3; pp <= hn; pp += 2) {
+      if (n % pp == 0)
+        break;
+    }
 
     if (pp > hn) { // n is a prime
 
@@ -133,9 +143,13 @@ extern "C" void* prime_func(void* p) {
         pr[pi].primes.clear();                  // clear primes
       }
 
+      if (n > max_value) {
+        pr[pi].max_prime = n;
+      }
+
       n += step;
 
-      if (n > 5*1000*1000 && !proud) {
+      if (n > 5 * 1000 * 1000 && !proud) {
         proud = 1;
         Fl::awake(magic_number_cb, value);
       }
@@ -151,21 +165,38 @@ extern "C" void* prime_func(void* p) {
   return 0L;
 }
 
+// close all windows when the user closes one of the windows
+
+void close_cb(Fl_Widget *w, void *v) {
+  Fl::hide_all_windows();
+  printf("Max prime number with 1 thread : %s\n", value1->value());
+  printf("Max prime number with 6 threads: %s\n", value2->value());
+  return;
+}
+
 int main(int argc, char **argv)
 {
   // First window: single thread
-  Fl_Double_Window* w = new Fl_Double_Window(300, 200, "Single Thread");
-  tty1 = new Fl_Terminal(0, 0, 300, 175);
+  Fl_Double_Window* w = new Fl_Double_Window(200, 200, "Single Thread");
+  tty1 = new Fl_Terminal(0, 0, 200, 175);
+  tty1->color(FL_BACKGROUND2_COLOR);
+  tty1->textcolor(FL_FOREGROUND_COLOR);
   w->resizable(tty1);
-  value1 = new Fl_Value_Output(100, 175, 200, 25, "Max Prime:");
+  value1 = new Fl_Output(100, 175, 98, 23, "Max Prime:");
+  value1->textfont(FL_COURIER);
+  w->callback(close_cb);
   w->end();
   w->show(argc, argv);
 
   // Second window: multiple threads
-  w = new Fl_Double_Window(300, 200, "Six Threads");
-  tty2 = new Fl_Terminal(0, 0, 300, 175);
+  w = new Fl_Double_Window(200, 200, "Six Threads");
+  tty2 = new Fl_Terminal(0, 0, 200, 175);
+  tty2->color(FL_BACKGROUND2_COLOR);
+  tty2->textcolor(FL_FOREGROUND_COLOR);
   w->resizable(tty2);
-  value2 = new Fl_Value_Output(100, 175, 200, 25, "Max Prime:");
+  value2 = new Fl_Output(100, 175, 98, 23, "Max Prime:");
+  value2->textfont(FL_COURIER);
+  w->callback(close_cb);
   w->end();
   w->show();
 
@@ -181,6 +212,7 @@ int main(int argc, char **argv)
   // Start threads...
 
   // One thread displaying in one terminal
+
   fl_create_thread(prime_thread, prime_func, tty1);
 
   // Six threads displaying in another terminal
