@@ -329,3 +329,6 @@ Fl_Toggle_Button::Fl_Toggle_Button(int X,int Y,int W,int H,const char *L)
  \param[in] v switch compact mode on (1) or off (0)
  */
 void Fl_Button::compact(uchar v) { compact_ = v; }
+
+/// (for backwards compatibility)
+void Fl_Button::shortcut(const char *s) {shortcut(fl_old_shortcut(s));}

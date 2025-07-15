@@ -33,7 +33,6 @@
                                          are set to zero.*/
 #define FL_HIDDEN_BUTTON        3   ///< for Forms compatibility
 
-extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
 
 class Fl_Widget_Tracker;
 
@@ -160,8 +159,7 @@ public:
    */
   void down_box(Fl_Boxtype b) {down_box_ = b;}
 
-  /// (for backwards compatibility)
-  void shortcut(const char *s) {shortcut(fl_old_shortcut(s));}
+  void shortcut(const char *s);
 
   /// (for backwards compatibility)
   Fl_Color down_color() const {return selection_color();}
