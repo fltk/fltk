@@ -2513,8 +2513,6 @@ threads.o: ../FL/Fl.H
 threads.o: ../FL/fl_ask.H
 threads.o: ../FL/fl_attr.h
 threads.o: ../FL/Fl_Bitmap.H
-threads.o: ../FL/Fl_Browser.H
-threads.o: ../FL/Fl_Browser_.H
 threads.o: ../FL/Fl_Cairo.H
 threads.o: ../FL/fl_casts.H
 threads.o: ../FL/fl_config.h
@@ -2522,12 +2520,14 @@ threads.o: ../FL/Fl_Double_Window.H
 threads.o: ../FL/Fl_Export.H
 threads.o: ../FL/Fl_Group.H
 threads.o: ../FL/Fl_Image.H
+threads.o: ../FL/Fl_Input.H
+threads.o: ../FL/Fl_Input_.H
+threads.o: ../FL/Fl_Output.H
+threads.o: ../FL/Fl_Rect.H
 threads.o: ../FL/Fl_Scrollbar.H
-threads.o: ../FL/Fl_Slider.H
+threads.o: ../FL/Fl_Terminal.H
 threads.o: ../FL/fl_types.h
 threads.o: ../FL/fl_utf8.h
-threads.o: ../FL/Fl_Valuator.H
-threads.o: ../FL/Fl_Value_Output.H
 threads.o: ../FL/Fl_Widget.H
 threads.o: ../FL/Fl_Window.H
 threads.o: ../FL/platform_types.h

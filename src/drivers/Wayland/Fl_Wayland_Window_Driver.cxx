@@ -1342,7 +1342,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active())
       libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y, &popup_x, &popup_y);
   } else if (Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow)) {
-  
+
     xdg_positioner_set_anchor_rect(positioner, 0, 0,
                                    Fl_Window_Driver::menu_title(pWindow)->w() * f,
                                    Fl_Window_Driver::menu_title(pWindow)->h() * f);

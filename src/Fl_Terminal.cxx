@@ -1086,7 +1086,7 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::u8c_disp_row(int drow) const
   //    on-screen.
   //    For walking the terminal lines in order, see examples
   //    for u8c_hist_use_row() and u8c_disp_row().
-  //    
+  //
   for (int row=0; row<ring_rows(); row++) {
       Utf8Char *u8c = u8c_ring_row(row);
       for (int col=0; col<ring_cols(); col++,u8c++) {
