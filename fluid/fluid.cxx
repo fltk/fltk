@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -285,7 +285,7 @@ static void create_tmpdir() {
   tmpdir_create_called = true;
 
   char buf[128];
-#if _WIN32
+#ifdef _WIN32
   // The usual temp file locations on Windows are
   //    %system%\Windows\Temp
   //    %userprofiles%\AppData\Local
