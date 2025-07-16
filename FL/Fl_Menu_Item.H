@@ -21,6 +21,7 @@
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Multi_Label.H>
 #include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
+#include <FL/fl_draw.H>
 
 // doxygen needs the following line to enable e.g. ::FL_MENU_TOGGLE to link to the enums
 /// @file
@@ -38,8 +39,6 @@ enum { // values for flags:
   FL_MENU_CHATTY     = 0x200       ///< Menu Item receives additional callbacks
   ///< Note: \b ALL other bits in \p flags are reserved: do not use them for your own purposes!
 };
-
-extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
 
 class Fl_Menu_;
 

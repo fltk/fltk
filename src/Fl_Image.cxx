@@ -24,8 +24,6 @@
 
 #include <stdlib.h>
 
-void fl_restore_clip(); // from fl_rect.cxx
-
 //
 // Base image class...
 //
