@@ -1,28 +1,47 @@
-Changes in FLTK 1.4.4                                   Released: XXX xx 2025
+Changes in FLTK 1.4.4                                   Released: Jul 20 2025
 
-  This is a maintenance release with improvements and fixes backported
-  from the current development branch 1.5 (master).
-
-  --- TBD, see `git shortlog release-1.4.3..` ---
+  This is a maintenance release with improvements and fixes
+  backported from the current development branch 1.5 (master).
 
 
   Bug Fixes
 
+  - #1114: Ensure minimum height of last block in Fl_Help_View
+  - Fix address sanitizer exception for macOS native file chooser
+  - Wayland: remove crash when resizing hidden subwindow
+  - Wayland: fix "A flag to set how menus should show up" (#1260)
+  - macOS: protect uses of __block by #if defined(__BLOCKS__) condition
+  - Fix "Selecting menus from the menubar under Wayland/fullscreen" (#1264)
+
+  Documentation Fixes and Improvements
+
+  - Fl_Terminal doc fixes, private->protected for utf8_char_at_*()
+  - Fl_Window::free_position() is no longer deprecated
 
   Other Improvements
 
+  - Set default DPI to 300 in fl_write_png
+  - #146: Add access to scrollbars widget in Fl_Help_View
+  - Improve Fl_Button event handling documentation (#1267)
+  - macOS: Fix in window titlebar capture to support macOS 26 Tahoe
+  - Fix usage of 'volatile' in src/Fl_JPEG_Image.cxx (#1207)
+  - Improve test/threads demo program (backported from 1.5)
 
   CMake And Other Build Procedure Improvements
 
+  - Restore use of build option FLTK_USE_POLL
+  - Add CMake build option FLTK_USE_DBUS to allow build w/o dbus (PR #1252)
 
-  ABI changes (FL_ABI_VERSION >= 10403)
+  ABI changes (FL_ABI_VERSION >= 10404)
 
+  - There are no ABI changes in this release.
 
 
 Changes in FLTK 1.4.3                                   Released: Apr 29 2025
 
   FLTK 1.4.3 is a maintenance release with improvements and fixes backported
   from the current development branch 1.5 (master).
+
 
   Bug Fixes
 
