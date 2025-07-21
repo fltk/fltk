@@ -177,15 +177,15 @@ public:
 
     Cell(int row, int col) {    // constructor
       Cell_();
-      row_ = row;
-      col_ = col;
+      row_ = (short)row;
+      col_ = (short)col;
     }
 
     Cell(Fl_Widget *w, int row, int col) {  // widget assignment
       Cell_();
       widget_ = w;
-      row_ = row;
-      col_ = col;
+      row_ = (short)row;
+      col_ = (short)col;
     }
 
     /**

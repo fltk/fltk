@@ -232,7 +232,7 @@ public:
   */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   /** Sets the box type used to surround the currently-selected items in the menus.  */
-  void down_box(Fl_Boxtype b) {down_box_ = b;}
+  void down_box(Fl_Boxtype b) {down_box_ = (uchar)b;}
 
   /** Get the box type for the menu popup windows.
    \return the box type, or FL_NO_BOX if Fl_Menu_::box() is to be used instead
