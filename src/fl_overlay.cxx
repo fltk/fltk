@@ -97,26 +97,26 @@ void fl_overlay_clear() {
  of the widget.
 
  Your event handle should look similar to this (also see `test/mandelbrot.cxx`):
- ```
+ \code
   int MyWidget::handle(int event) {
-    static int ix, iy;
     switch (event) {
       case FL_PUSH:
-        ix = Fl::event_x(); iy = Fl::event_y();
+        ix = Fl::event_x(); // ix defined as (private) class member
+        iy = Fl::event_y(); // iy defined as (private) class member
         return 1;
       case FL_DRAG:
-        this->make_current();
-        fl_overlay_rect(ix, iy, ix-Fl::event_x(), iy-Fl::event_y());
+        window()->make_current();
+        fl_overlay_rect(ix, iy, Fl::event_x() - ix, Fl::event_y() - iy);
         return 1;
       case FL_RELEASE:
-        this->make_current();
+        window()->make_current();
         fl_overlay_clear();
         // select the element under the rectangle
         return 1;
     }
     return MySuperWidget::handle(event);
   }
- ```
+ \endcode
 
  \note Between drawing an overlay rect and clearing it, the content of the
     widget must not change.
