@@ -119,7 +119,7 @@ int Fl::has_idle(Fl_Idle_Handler cb, void* data) {
   The given idle callback is only removed if \p data matches the
   value used when the idle callback was installed. If the idle
   callback wants to remove itself, the value provided by the \p data
-  variable can (and should) be used.
+  argument can (and should) be used.
 
   Example for a "one-shot" idle callback, i.e. one that removes itself
   when it is called for the first time.
@@ -147,6 +147,8 @@ int Fl::has_idle(Fl_Idle_Handler cb, void* data) {
     }
   \endcode
 
+  \param[in]  cb    idle callback in question
+  \param[in]  data  optional data. Default: zero / nullptr.
 */
 void Fl::remove_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = first;

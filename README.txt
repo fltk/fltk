@@ -164,10 +164,10 @@ Building FLTK under Microsoft Windows
     See README.Windows.txt and README.CMake.txt for more info.
 
 
-BUILDING HTML DOCUMENTATION
+Building HTML Documentation
 
     FLTK uses Doxygen for documentation, so you'll at least need doxygen
-    installed for creating html docs, and additionally LaTeX for creating
+    installed for creating HTML docs, and additionally LaTeX for creating
     PDF documentation.
 
     If you want to build the documentation, change directory to your build
@@ -185,7 +185,7 @@ BUILDING HTML DOCUMENTATION
     `ninja pdf`, respectively.
 
 
-INTERNET RESOURCES
+Internet Resources
 
     FLTK is available on the internet in a bunch of locations:
 
@@ -199,14 +199,14 @@ INTERNET RESOURCES
     the package manager of your (Linux, Unix, macOS) operating system.
 
 
-GENERAL QUESTIONS
+General Questions
 
     To join the FLTK mailing list, go to the following web page:
 
         https://groups.google.com/forum/#!forum/fltkgeneral
 
-    You can find detailed instructions on how you can register for the
-    mailing list (even w/o a Google account) at the bottom of this page:
+    Detailed instructions on how to register for the mailing list (even
+    without a Google account) can be found further down on this page:
 
         https://www.fltk.org/newsgroups.php
 
@@ -216,7 +216,7 @@ GENERAL QUESTIONS
         https://github.com/fltk/fltk/discussions/categories/q-a
 
 
-REPORTING BUGS
+Reporting Bugs
 
     If you are new to FLTK, or have general questions about how to use FLTK,
     or aren't sure if you found a bug, please ask first on the fltk.general
@@ -229,7 +229,7 @@ REPORTING BUGS
         https://github.com/fltk/fltk/discussions/categories/q-a
 
 
-    See also paragraph GENERAL QUESTIONS above for more info.
+    See also paragraph "General Questions" above for more info.
 
     If you are sure you found a bug, please see the following page for
     further information on how to report a bug:
@@ -237,15 +237,15 @@ REPORTING BUGS
         https://www.fltk.org/bugs.php
 
 
-TRADEMARKS
+Trademarks
 
-    Microsoft and Windows are registered trademarks of Microsoft Corporation.
-    UNIX is a registered trademark of the X/Open Group, Inc.
-    OpenGL is a registered trademark of Silicon Graphics, Inc.
-    macOS is a registered trademark of Apple Computers, Inc.
+    - Microsoft and Windows are registered trademarks of Microsoft Corporation.
+    - UNIX is a registered trademark of the X/Open Group, Inc.
+    - OpenGL is a registered trademark of Silicon Graphics, Inc.
+    - macOS is a registered trademark of Apple Computers, Inc.
 
 
-COPYRIGHT
+Copyright
 
     FLTK is copyright 1998-2025 by Bill Spitzak and others,
     see the CREDITS.txt file for more info.
