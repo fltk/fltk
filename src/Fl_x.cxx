@@ -202,6 +202,7 @@ static Atom fl_NET_WM_STATE;
 static Atom fl_NET_WM_STATE_FULLSCREEN;
 static Atom fl_NET_WM_STATE_MAXIMIZED_VERT;
 static Atom fl_NET_WM_STATE_MAXIMIZED_HORZ;
+static Atom fl_NET_WM_STATE_HIDDEN;
 static Atom fl_NET_WM_FULLSCREEN_MONITORS;
 Atom fl_NET_WORKAREA;
 static Atom fl_NET_WM_ICON;
@@ -602,6 +603,7 @@ void open_display_i(Display* d) {
   fl_NET_WM_STATE_FULLSCREEN = XInternAtom(d, "_NET_WM_STATE_FULLSCREEN", 0);
   fl_NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(d, "_NET_WM_STATE_MAXIMIZED_VERT", 0);
   fl_NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(d, "_NET_WM_STATE_MAXIMIZED_HORZ", 0);
+  fl_NET_WM_STATE_HIDDEN = XInternAtom(d, "_NET_WM_STATE_HIDDEN",  0);
   fl_NET_WM_FULLSCREEN_MONITORS = XInternAtom(d, "_NET_WM_FULLSCREEN_MONITORS", 0);
   fl_NET_WORKAREA       = XInternAtom(d, "_NET_WORKAREA",       0);
   fl_NET_WM_ICON        = XInternAtom(d, "_NET_WM_ICON",        0);
@@ -2125,6 +2127,7 @@ int fl_handle(const XEvent& thisevent)
     if (xevent.xproperty.atom == fl_NET_WM_STATE) {
       int fullscreen_state = 0;
       int maximize_state = 0;
+      int minimize_state = 0;
       if (xevent.xproperty.state != PropertyDelete) {
         unsigned long nitems;
         unsigned long *words = 0;
@@ -2135,6 +2138,9 @@ int fl_handle(const XEvent& thisevent)
             }
             if (words[item] == fl_NET_WM_STATE_MAXIMIZED_HORZ) {
               maximize_state = 1;
+            }
+            if (words[item] == fl_NET_WM_STATE_HIDDEN) {
+              minimize_state = 1;
             }
           }
         }
@@ -2148,6 +2154,13 @@ int fl_handle(const XEvent& thisevent)
       if (!window->fullscreen_active() && fullscreen_state) {
         window->_set_fullscreen();
         event = FL_FULLSCREEN;
+      }
+      if (!event) {
+        if (minimize_state) {
+          event = FL_HIDE;
+        } else if (!window->visible()) {
+          event = FL_SHOW;
+        }
       }
     }
     break;
