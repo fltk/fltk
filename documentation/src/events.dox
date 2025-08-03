@@ -301,15 +301,7 @@ This widget is no longer visible, due to
 \ref Fl_Widget::hide() "hide()"
 being called on it or one of its parents, or due to a parent window
 being minimized.
-Please note that although
-\ref Fl_Widget::visible() "visible()"
-may still return true for this widget after receiving this event,
-it is only truly visible if
-\ref Fl_Widget::visible() "visible()"
-is true for both it and all of its parents.
-(You can use
-\ref Fl_Widget::visible_r() "visible_r()"
-to check this).
+\see FL_HIDE
 
 \subsection events_fl_show FL_SHOW
 
