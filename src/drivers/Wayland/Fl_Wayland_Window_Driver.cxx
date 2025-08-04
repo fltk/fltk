@@ -581,7 +581,9 @@ void Fl_Wayland_Window_Driver::iconize() {
   struct wld_window *wl_win = (struct wld_window*)ip->xid;
   if (wl_win->kind == DECORATED) {
     libdecor_frame_set_minimized(wl_win->frame);
-    Fl::handle(FL_HIDE, pWindow);
+    if (xdg_toplevel_get_version(xdg_toplevel()) < 6) {
+      Fl::handle(FL_HIDE, pWindow);
+    }
   }
   else if (wl_win->kind == UNFRAMED && wl_win->xdg_toplevel) xdg_toplevel_set_minimized(wl_win->xdg_toplevel);
 }
@@ -961,10 +963,6 @@ static void handle_configure(struct libdecor_frame *frame,
   if (is_2nd_run) driver->wait_for_expose_value = 0;
 //fprintf(stderr, "handle_configure fl_win=%p size:%dx%d state=%x wait_for_expose_value=%d is_2nd_run=%d\n", window->fl_win, width,height,window_state,driver->wait_for_expose_value, is_2nd_run);
 
-/* We would like to do FL_HIDE when window is minimized but :
- "There is no way to know if the surface is currently minimized, nor is there any way to
- unset minimization on this surface. If you are looking to throttle redrawing when minimized,
- please instead use the wl_surface.frame event" */
   if (window_state & LIBDECOR_WINDOW_STATE_ACTIVE) {
     if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::WESTON) {
       // After click on titlebar, weston calls wl_keyboard_enter() for a
@@ -974,7 +972,11 @@ static void handle_configure(struct libdecor_frame *frame,
     if (!window->fl_win->border()) libdecor_frame_set_visibility(window->frame, false);
     else if (!libdecor_frame_is_visible(window->frame)) {
       libdecor_frame_set_visibility(window->frame, true);
+    } else if (!window->fl_win->visible()) {
+      Fl::handle(FL_SHOW, window->fl_win); // useful when un-minimizing
     }
+  } else if (window_state & LIBDECOR_WINDOW_STATE_SUSPENDED) { // window is minimized
+    Fl::handle(FL_HIDE, window->fl_win);
   }
 
   if (window->fl_win->border())
