@@ -670,7 +670,13 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   //
   int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window frame
   if (w < 0) w = - w;
-  Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
+  Window xid;
+  if (win && !allow_outside) {
+    if (win->as_double_window()) { // read from the window's offscreen buffer
+      xid = Fl_X11_Window_Driver::driver(win)->other_xid->offscreen();
+      win = NULL;
+    } else xid = fl_xid(win);
+  } else xid = fl_window;
 
   float s = allow_outside ? 1 : Fl_Surface_Device::surface()->driver()->scale();
   int Xs = Fl_Scalable_Graphics_Driver::floor(X, s);

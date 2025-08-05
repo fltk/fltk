@@ -417,6 +417,8 @@ void Fl_X11_Window_Driver::make_current() {
       cairo_save(cairo_);
     }
     ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+  } else if (other_xid) {
+    pWindow->damage(FL_DAMAGE_EXPOSE);
   }
   fl_graphics_driver->scale(scale);
 #elif USE_XFT
