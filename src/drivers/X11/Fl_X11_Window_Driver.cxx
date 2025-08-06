@@ -416,10 +416,10 @@ void Fl_X11_Window_Driver::make_current() {
       cairo_surface_destroy(s);
       cairo_save(cairo_);
     }
-    ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
   } else if (other_xid) {
     pWindow->damage(FL_DAMAGE_EXPOSE);
   }
+  if (cairo_) ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
   fl_graphics_driver->scale(scale);
 #elif USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
