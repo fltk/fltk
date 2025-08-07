@@ -1355,7 +1355,8 @@ static void wayland_socket_callback(int fd, struct wl_display *display) {
       if (err == EPROTO) {
         const struct wl_interface *interface;
         int code = wl_display_get_protocol_error(display, &interface, NULL);
-        Fl::fatal("Fatal error no %d in Wayland protocol: %s", code, interface->name);
+        Fl::fatal("Fatal error no %d in Wayland protocol: %s", code,
+                  (interface ? interface->name : "unknown") );
       } else {
         Fl::fatal("Fatal error while communicating with the Wayland server: %s",
                   strerror(errno));
