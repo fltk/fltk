@@ -683,6 +683,7 @@ int Fl_Wayland_Screen_Driver::compose(int& del) {
   // FL_Home FL_Left FL_Up FL_Right FL_Down FL_Page_Up FL_Page_Down FL_End
   // FL_Print FL_Insert FL_Menu FL_Help and more
   condition |= (Fl::e_keysym >= FL_Home && Fl::e_keysym <= FL_Help);
+  condition |= (Fl::e_keysym >= FL_F && Fl::e_keysym <= FL_F_Last);
   condition |= Fl::e_keysym == FL_Tab;
 //fprintf(stderr, "compose: condition=%d e_state=%x ascii=%d\n", condition, Fl::e_state, ascii);
   if (condition) { del = 0; return 0;}
