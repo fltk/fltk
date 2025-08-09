@@ -536,6 +536,8 @@ static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
   uint32_t keycode = key + 8;
   xkb_keysym_t sym = xkb_state_key_get_one_sym(xkb_state, keycode);
   if (sym == 0xfe20) sym = FL_Tab;
+  if (sym == 0xffeb) sym = FL_Meta_L; // repair value libxkb gives for FL_Meta_L
+  if (sym == 0xffec) sym = FL_Meta_R; // repair value libxkb gives for FL_Meta_R
   if (sym >= 'A' && sym <= 'Z') sym += 32; // replace uppercase by lowercase letter
   int for_key_vector = sym; // for support of Fl::event_key(int)
   // special processing for number keys == keycodes 10-19 :
@@ -682,9 +684,9 @@ int Fl_Wayland_Screen_Driver::compose(int& del) {
                 Fl::e_keysym == FL_Alt_Gr);
   // FL_Home FL_Left FL_Up FL_Right FL_Down FL_Page_Up FL_Page_Down FL_End
   // FL_Print FL_Insert FL_Menu FL_Help and more
-  condition |= (Fl::e_keysym >= FL_Home && Fl::e_keysym <= FL_Help);
+  condition |= (Fl::e_keysym >= FL_Home && Fl::e_keysym <= FL_Num_Lock);
   condition |= (Fl::e_keysym >= FL_F && Fl::e_keysym <= FL_F_Last);
-  condition |= Fl::e_keysym == FL_Tab;
+  condition |= Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Scroll_Lock || Fl::e_keysym == FL_Pause;
 //fprintf(stderr, "compose: condition=%d e_state=%x ascii=%d\n", condition, Fl::e_state, ascii);
   if (condition) { del = 0; return 0;}
 //fprintf(stderr, "compose: del=%d compose_state=%d next_marked_length=%d \n", del, Fl::compose_state, next_marked_length);
@@ -864,13 +866,15 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
     (struct Fl_Wayland_Screen_Driver::seat*)data;
   xkb_state_update_mask(seat->xkb_state, mods_depressed, mods_latched, mods_locked,
                         0, 0, group);
-  Fl::e_state &= ~(FL_SHIFT+FL_CTRL+FL_ALT+FL_CAPS_LOCK+FL_NUM_LOCK);
+  Fl::e_state &= ~(FL_SHIFT+FL_CTRL+FL_ALT+FL_META+FL_CAPS_LOCK+FL_NUM_LOCK);
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_SHIFT,
                                    XKB_STATE_MODS_DEPRESSED)) Fl::e_state |= FL_SHIFT;
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_CTRL,
                                    XKB_STATE_MODS_DEPRESSED)) Fl::e_state |= FL_CTRL;
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_ALT,
                                    XKB_STATE_MODS_DEPRESSED)) Fl::e_state |= FL_ALT;
+  if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_LOGO,
+                                   XKB_STATE_MODS_DEPRESSED)) Fl::e_state |= FL_META;
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_CAPS,
                                    XKB_STATE_MODS_LOCKED)) Fl::e_state |= FL_CAPS_LOCK;
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_NUM,
