@@ -184,7 +184,7 @@ int Fl_Tooltip::override_text(const char *new_text) {
       ::free(override_text_);
     override_text_ = nullptr;
     if (new_text)
-      override_text_ = ::strdup(new_text);
+      override_text_ = fl_strdup(new_text);
   }
   return 1;
 }
