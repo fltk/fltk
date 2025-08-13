@@ -235,12 +235,20 @@ void Project::leave_project_dir() {
 }
 
 /**
+ Alias for set_filename("").
+ Instead, change proj_filename into a std::string and add clear_filename().
+ */
+void Project::set_filename(std::nullptr_t) {
+  set_filename(std::string());
+}
+
+/**
  Set the filename of the current .fl design.
  \param[in] c the new absolute filename and path
  */
-void Project::set_filename(const char *c) {
+void Project::set_filename(const std::string &c) {
   if (proj_filename) free((void *)proj_filename);
-  proj_filename = c ? fl_strdup(c) : nullptr;
+  proj_filename = c.empty() ? nullptr : fl_strdup(c.c_str());
 
   if (proj_filename && !Fluid.batch_mode)
     Fluid.history.update(proj_filename);

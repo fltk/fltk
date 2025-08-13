@@ -148,7 +148,14 @@ int Application::run(int argc,char **argv) {
 
   make_main_window();
 
-  if (c) proj.set_filename(c);
+  if (c) {
+    if (batch_mode) {
+      proj.set_filename(c);
+    } else {
+      // In GUI mode, filenames must always be absolute.
+      proj.set_filename(fl_filename_absolute_str(c));
+    }
+  }
   if (!batch_mode) {
 #ifdef __APPLE__
     fl_open_callback(apple_open_cb);
@@ -564,24 +571,37 @@ bool Application::merge_project_file(const std::string &filename_arg) {
  If automatic, this overwrites an existing file. If interactive, if will
  verify with the user.
  \param[in] v if v is not nullptr, or no filename is set, open a filechooser.
+    if (v is (void*)2, don;t update the project filename ("save copy...")
  */
 void Application::save_project_file(void *v) {
   flush_text_widgets();
   Fl_Native_File_Chooser fnfc;
   const char *c = proj.proj_filename;
   if (v || !c || !*c) {
-    fnfc.title("Save To:");
+    fnfc.title("Save Project File As:");
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+#ifndef __APPLE__
+    fnfc.options(Fl_Native_File_Chooser::NEW_FOLDER);
+#else
+    // Apple file choosers always ask to confirm
+    fnfc.options(Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native_File_Chooser::SAVEAS_CONFIRM);
+#endif
     fnfc.filter("FLUID Files\t*.f[ld]");
+    if (!proj.projectfile_path().empty())
+      fnfc.directory(proj.projectfile_path().c_str());
+    if (!proj.projectfile_name().empty())
+      fnfc.preset_file(proj.projectfile_name().c_str());
+    fnfc.filter("Fluid Project\t*.fl\nAny\t*");
     if (fnfc.show() != 0) return;
     c = fnfc.filename();
+#ifndef __APPLE__
     if (!fl_access(c, 0)) {
       std::string basename = fl_filename_name_str(std::string(c));
       if (fl_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
                     "Replace", nullptr, basename.c_str()) == 0) return;
     }
-
+#endif
     if (v != (void *)2) proj.set_filename(c);
   }
   if (!fld::io::write_file(proj, c)) {

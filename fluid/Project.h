@@ -104,7 +104,8 @@ public: // Methods
   void enter_project_dir();
   void leave_project_dir();
 
-  void set_filename(const char *c);
+  void set_filename(std::nullptr_t);
+  void set_filename(const std::string &c);
   void write_strings();
 
   void set_modflag(int mf, int mfc = -1);
