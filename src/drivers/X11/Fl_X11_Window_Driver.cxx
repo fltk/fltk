@@ -434,6 +434,8 @@ void Fl_X11_Window_Driver::make_current() {
 
 void Fl_X11_Window_Driver::hide() {
   Fl_X* ip = Fl_X::flx(pWindow);
+  extern Fl_Window *fl_xmousewin;
+  fl_xmousewin = 0;
   if (hide_common()) return;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
 # if USE_XFT && ! FLTK_USE_CAIRO

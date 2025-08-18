@@ -196,6 +196,7 @@ static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
   return win;
 }
 
+static Fl_Window *need_leave = NULL;
 
 static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t serial,
         struct wl_surface *surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
@@ -217,6 +218,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
     }
   }
   if (!win) return;
+  //fprintf(stderr, "pointer_enter window=%p\n", win);
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
@@ -224,8 +226,9 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
   set_event_xy(win);
-  Fl::handle(FL_ENTER, win);
-  //fprintf(stderr, "pointer_enter window=%p\n", win);
+  need_leave = NULL;
+  win = Fl_Wayland_Window_Driver::surface_to_window(surface);
+  if (!win->parent()) Fl::handle(FL_ENTER, win);
   seat->pointer_focus = surface;
 }
 
@@ -237,11 +240,16 @@ static void pointer_leave(void *data, struct wl_pointer *wl_pointer,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   gtk_shell_surface = NULL;
   if (win) {
-    Fl::belowmouse(0);
+    //fprintf(stderr, "pointer_leave surface=%p window=%p\n", surface, win);
     set_event_xy(win);
-    Fl::handle(FL_LEAVE, win->top_window());
+    if (!win->parent()) {
+      need_leave = win;
+      wl_display_roundtrip(fl_wl_display()); // pointer_enter to new subwin will run
+      if (need_leave) { // we really leave the window: we don't enter a subwin of it
+        Fl::handle(FL_LEAVE, need_leave);
+      }
+    }
   }
-//fprintf(stderr, "pointer_leave surface=%p window=%p\n", surface, win);
 }
 
 
