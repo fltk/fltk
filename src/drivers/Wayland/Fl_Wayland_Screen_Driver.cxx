@@ -218,7 +218,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
     }
   }
   if (!win) return;
-  //fprintf(stderr, "pointer_enter window=%p\n", win);
+  //fprintf(stderr, "pointer_enter window=%p\n", Fl_Wayland_Window_Driver::surface_to_window(surface));
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
@@ -240,14 +240,12 @@ static void pointer_leave(void *data, struct wl_pointer *wl_pointer,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   gtk_shell_surface = NULL;
   if (win) {
-    //fprintf(stderr, "pointer_leave surface=%p window=%p\n", surface, win);
+    //fprintf(stderr, "pointer_leave window=%p [%s]\n", win, (win->parent()?"sub":"top"));
     set_event_xy(win);
-    if (!win->parent()) {
-      need_leave = win;
-      wl_display_roundtrip(fl_wl_display()); // pointer_enter to new subwin will run
-      if (need_leave) { // we really leave the window: we don't enter a subwin of it
-        Fl::handle(FL_LEAVE, need_leave);
-      }
+    need_leave = win->top_window(); // we leave a sub or toplevel window
+    wl_display_roundtrip(fl_wl_display()); // pointer_enter to other win, if applicable, will run
+    if (need_leave) { // we really left the sub-or-top win and did not enter another
+      Fl::handle(FL_LEAVE, need_leave);
     }
   }
 }
