@@ -910,16 +910,17 @@ static void handle_configure(struct libdecor_frame *frame,
   }
   window->state = window_state;
 
-  // Weston, KWin, and some versions of Mutter, on purpose, don't set the
+  // Weston, KWin, and some old versions of Mutter, on purpose, don't set the
   // window width x height when xdg_toplevel_configure runs twice
   // during resizable window creation
   // (see https://gitlab.freedesktop.org/wayland/wayland-protocols/-/issues/6).
   // Consequently, libdecor_configuration_get_content_size() may return false twice.
-  // In that case libdecor_frame_get_content_{width,height}() give the desired window size
+  // Weston and KWin, at least, don't change the window size asked by the client application
+  // which is available here in floating_{width,height}.
   if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height)) {
     if (is_2nd_run) {
-      width = libdecor_frame_get_content_width(frame);
-      height = libdecor_frame_get_content_height(frame);
+      width = window->floating_width;
+      height = window->floating_height;
       if (!driver->is_resizable()) {
         libdecor_frame_set_min_content_size(frame, width, height);
         libdecor_frame_set_max_content_size(frame, width, height);
