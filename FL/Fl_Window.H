@@ -207,7 +207,7 @@ public:
     false, the size and position are used when show() is called.
     See Fl_Group for the effect of resizing on the child widgets.
 
-    You can also call the Fl_Widget methods size(x,y) and position(w,h),
+    You can also call the Fl_Widget methods position(x, y) and size(w, h)
     which are inline wrappers for this virtual function.
 
     A top-level window can not force, but merely suggest a position and
