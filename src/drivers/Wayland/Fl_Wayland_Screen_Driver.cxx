@@ -833,7 +833,8 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
     Fl::handle(event, win);
   }
   if (event == FL_KEYDOWN && status == XKB_COMPOSE_NOTHING &&
-      !(sym >= FL_Shift_L && sym <= FL_Alt_R)) {
+      !(sym >= FL_Shift_L && sym <= FL_Alt_R) &&
+      !(sym >= FL_F && sym <= FL_F_Last)) {
     // Handling of key repeats :
     // Use serial argument rather than time to detect repeated keys because
     // serial value changes at each key up or down in all tested OS and compositors,
