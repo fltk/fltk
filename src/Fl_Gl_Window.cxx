@@ -118,6 +118,9 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 void Fl_Gl_Window::make_current() {
 //  puts("Fl_Gl_Window::make_current()");
 //  printf("make_current: context_=%p\n", context_);
+
+  if (!shown()) return;
+
   pGlWindowDriver->make_current_before();
   if (!context_) {
     mode_ &= ~NON_LOCAL_CONTEXT;
