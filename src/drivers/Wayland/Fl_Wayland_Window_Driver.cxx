@@ -1734,6 +1734,9 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
 void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->hide();
   pWindow->_clear_fullscreen();
+  // avoid being called with W=H=0 in suboptimal scenario of #1299
+  if (!W) W = w();
+  if (!H) H = h();
   pWindow->resize(X, Y, W, H);
   pWindow->show();
   Fl::handle(FL_FULLSCREEN, pWindow);
