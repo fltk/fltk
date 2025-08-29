@@ -1401,6 +1401,11 @@ static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
   }
   // Now all screens have been initialized
   scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
+  struct pair_bool *pair = (struct pair_bool*)wl_registry_get_user_data(scr_driver->wl_registry);
+  if (pair->found_gtk_shell || pair->found_wf_shell) {
+    Fl_Wayland_Screen_Driver::compositor = (pair->found_wf_shell ?
+                          Fl_Wayland_Screen_Driver::WAYFIRE : Fl_Wayland_Screen_Driver::MUTTER);
+  }
   if (scr_driver->seat) try_update_cursor(scr_driver->seat);
   if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL) scr_driver->init_workarea();
 }
@@ -1440,9 +1445,6 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   struct wl_callback *registry_cb = wl_display_sync(wl_display);
   wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
   while (registry_cb) wl_display_dispatch(wl_display);
-  if (pair.found_gtk_shell || pair.found_wf_shell) {
-    Fl_Wayland_Screen_Driver::compositor = (pair.found_wf_shell ? WAYFIRE : MUTTER);
-  }
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)wayland_socket_callback,
              wl_display);
   fl_create_print_window();
@@ -1615,6 +1617,8 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
     xdg_surface_destroy(xdg_surface2);
     wl_surface_destroy(wl_surface2);
     if (Wworkarea == Wfullscreen && Hworkarea < Hfullscreen && Hworkarea > Hfullscreen - 80)
+      found_workarea = true;
+    if (Hworkarea == Hfullscreen && Wworkarea < Wfullscreen && Wworkarea > Wfullscreen - 80)
       found_workarea = true;
   } else {
     Wworkarea = Wfullscreen;
