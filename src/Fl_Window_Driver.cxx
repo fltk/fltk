@@ -253,7 +253,11 @@ void Fl_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscr
   int mx, my;
   Fl_Screen_Driver *scr_driver = Fl::screen_driver();
   if (nscreen < 0) nscreen = scr_driver->get_mouse(mx, my);
-  scr_driver->screen_work_area(X, Y, W, H, nscreen);
+  Fl_Window *parent = Fl_Window_Driver::menu_parent();
+  if (parent && parent->fullscreen_active())
+    scr_driver->screen_xywh(X, Y, W, H, nscreen);
+  else
+    scr_driver->screen_work_area(X, Y, W, H, nscreen);
 }
 
 /** Returns  the platform-specific reference of the given window, or NULL if that window isn't shown.
