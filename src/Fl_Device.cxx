@@ -1,7 +1,7 @@
 //
 // implementation of classes Fl_Surface_Device and Fl_Display_Device for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2023 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,6 +46,11 @@
                   |
                   +- Fl_Posix_Printer_Driver: Fl_Printer uses that under Posix platforms
                   +- Fl_GTK_Printer_Driver: Fl_Printer uses that under Posix+GTK platforms
+              +- Fl_PDF_File_Surface: draw into a PDF file
+                  +- Fl_PDF_GDI_File_Surface: Windows-specific helper class interfacing FLTK with PDF operations
+                  +- Fl_PDF_Pango_File_Surface: Linux/Unix-specific helper class interfacing FLTK with PDF operations
+                  +- Fl_PDF_Cocoa_File_Surface: macOS-specific helper class interfacing FLTK with PDF operations
+
 
   +- Fl_Graphics_Driver -> directed to an Fl_Surface_Device object
       |
@@ -56,6 +61,7 @@
       +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
           +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
           +- Fl_GDI_Graphics_Driver: Windows-specific graphics driver
+              +- Fl_GDIplus_Graphics_Driver: overrides oblique lines, arcs and circles
               +- Fl_GDI_Printer_Graphics_Driver: overrides a few member functions especially for output to printer
       +- Fl_Cairo_Graphics_Driver: full FLTK drawing API based on Cairo and Pango
           +- Fl_Wayland_Graphics_Driver: Wayland-specific graphics driver
@@ -66,17 +72,22 @@
 */
 
 /** Make this surface the current drawing surface.
- This surface will receive all future graphics requests.
- \p Starting from FLTK 1.4.0, the preferred API to change the current drawing surface
- is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().
- \note It's recommended to use this function only as follows :
- \li The current drawing surface is the display;
- \li make current another surface, e.g., an Fl_Printer or an Fl_Image_Surface object,  calling set_current() on this object;
- \li draw to that surface;
- \li make the display current again with Fl_Display_Device::display_device()->set_current();  . Don't do any other call to set_current() before this one.
+  This surface will receive all future graphics requests.
 
- Other scenarios of drawing surface changes should be performed via Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().
- */
+  Since FLTK 1.4.0 the preferred API to change the current drawing surface
+  is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().
+
+  \note It is recommended to use this function only as follows :
+    - The current drawing surface is the display;
+    - make current another surface, e.g., an Fl_Printer or an Fl_Image_Surface object,
+      calling set_current() on this object;
+    - draw to that surface;
+    - make the display current again with Fl_Display_Device::display_device()->set_current();\n
+      don't do any other call to set_current() before this one.
+
+  Other scenarios of drawing surface changes should be performed via
+  Fl_Surface_Device::push_current() and Fl_Surface_Device::pop_current().
+*/
 void Fl_Surface_Device::set_current(void)
 {
   if (surface_) surface_->end_current();
@@ -154,3 +165,29 @@ Fl_Device_Plugin *Fl_Device_Plugin::opengl_plugin() {
   }
   return pi;
 }
+
+#if !defined(FL_NO_PRINT_SUPPORT)
+
+#include <FL/Fl_PDF_File_Surface.H>
+
+Fl_PDF_File_Surface::Fl_PDF_File_Surface() {
+  platform_surface_ = new_platform_pdf_surface_(&out_filename_);
+  driver(platform_surface_->driver());
+}
+
+
+Fl_PDF_File_Surface::~Fl_PDF_File_Surface() {
+  delete platform_surface_;
+}
+
+
+/** Localizable text of the "PDF document settings" dialog */
+const char * Fl_PDF_File_Surface::format_dialog_title = "PDF document settings";
+/** Localizable text of the "PDF document settings" dialog */
+const char * Fl_PDF_File_Surface::format_dialog_page_size = "Page Size:";
+/** Localizable text of the "PDF document settings" dialog */
+const char * Fl_PDF_File_Surface::format_dialog_default = "Set as default";
+/** Localizable text of the "PDF document settings" dialog */
+const char * Fl_PDF_File_Surface::format_dialog_orientation = "Orientation:";
+
+#endif // !defined(FL_NO_PRINT_SUPPORT)

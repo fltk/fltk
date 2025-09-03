@@ -17,7 +17,8 @@
 #include "Fd_Snap_Action.h"
 
 #include "Fl_Group_Type.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
+#include "shell_command.h"  // get and set Fl_String preferences
 #include "file.h"
 
 #include <FL/fl_draw.H>
@@ -29,7 +30,7 @@
 
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
-// INFO: how about a small tool box for quick preset selection and disabeling of individual snaps?
+// INFO: how about a small tool box for quick preset selection and disabling of individual snaps?
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
@@ -692,7 +693,7 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   Fl_String cs;
   int cp = 0;
-  prefs_list.get("current_suite", cs, "");
+  preferences_get(prefs_list, "current_suite", cs, "");
   prefs_list.get("current_preset", cp, 0);
   for (int i = 0; i < prefs_list.groups(); ++i) {
     Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(i));
@@ -920,8 +921,8 @@ static void draw_right_brace(const Fl_Widget *w);
 static void draw_top_brace(const Fl_Widget *w);
 static void draw_bottom_brace(const Fl_Widget *w);
 static void draw_grid(int x, int y, int dx, int dy);
-static void draw_width(int x, int y, int r, Fl_Align a);
-static void draw_height(int x, int y, int b, Fl_Align a);
+void draw_width(int x, int y, int r, Fl_Align a);
+void draw_height(int x, int y, int b, Fl_Align a);
 
 static int nearest(int x, int left, int grid, int right=0x7fff) {
   int grid_x = ((x-left+grid/2)/grid)*grid+left;
@@ -935,11 +936,11 @@ static bool in_window(Fd_Snap_Data &d) {
 }
 
 static bool in_group(Fd_Snap_Data &d) {
-  return (d.wgt && d.wgt->parent && d.wgt->parent->is_group() && d.wgt->parent != d.win);
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(ID_Group) && d.wgt->parent != d.win);
 }
 
 static bool in_tabs(Fd_Snap_Data &d) {
-  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(Fl_Type::ID_Tabs));
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(ID_Tabs));
 }
 
 static Fl_Group *parent(Fd_Snap_Data &d) {
@@ -1448,7 +1449,7 @@ public:
     clr();
     best_match = NULL;
     if (!d.wgt) return;
-    if (!d.wgt->parent->is_group()) return;
+    if (!d.wgt->parent->is_a(ID_Group)) return;
     int dsib_min = 1024;
     Fl_Group_Type *gt = (Fl_Group_Type*)d.wgt->parent;
     Fl_Group *g = (Fl_Group*)gt->o;
@@ -1733,7 +1734,7 @@ static void draw_bottom_brace(const Fl_Widget *w) {
   fl_xyline(x-2, y, x+w->w()+1);
 }
 
-static void draw_height(int x, int y, int b, Fl_Align a) {
+void draw_height(int x, int y, int b, Fl_Align a) {
   char buf[16];
   int h = b - y;
   sprintf(buf, "%d", h);
@@ -1767,7 +1768,7 @@ static void draw_height(int x, int y, int b, Fl_Align a) {
   fl_xyline(x - 4, b, x + 4);
 }
 
-static void draw_width(int x, int y, int r, Fl_Align a) {
+void draw_width(int x, int y, int r, Fl_Align a) {
   char buf[16];
   int w = r-x;
   sprintf(buf, "%d", w);

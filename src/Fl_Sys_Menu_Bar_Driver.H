@@ -48,6 +48,7 @@ public:
   virtual void replace(int index, const char *name) { bar->Fl_Menu_Bar::replace(index, name); }
   virtual void mode(int i, int fl) { bar->Fl_Menu_Bar::mode(i, fl); }
   virtual void create_window_menu() {}
+  virtual void play_menu(const Fl_Menu_Item *) {}
   static Fl_Sys_Menu_Bar::window_menu_style_enum window_menu_style() { return window_menu_style_; }
   static void window_menu_style(Fl_Sys_Menu_Bar::window_menu_style_enum style) { window_menu_style_ = style; }
 };

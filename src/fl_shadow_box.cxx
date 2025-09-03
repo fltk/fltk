@@ -32,11 +32,11 @@ static void fl_shadow_frame(int x, int y, int w, int h, Fl_Color c) {
 
 static void fl_shadow_box(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
-  fl_rectf(x+1,y+1,w-2-BW,h-2-BW);
+  fl_rectf(x,y,w-BW,h-BW);
   fl_shadow_frame(x,y,w,h,FL_GRAY0);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 Fl_Boxtype fl_define_FL_SHADOW_BOX() {
   fl_internal_boxtype(_FL_SHADOW_FRAME, fl_shadow_frame);
   fl_internal_boxtype(_FL_SHADOW_BOX, fl_shadow_box);

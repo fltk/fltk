@@ -1,0 +1,36 @@
+# data file for the Fltk User Interface Designer (fluid)
+ version 1.0400
+ header_name {.h}
+code_name {.cxx}
+ comment {
+1 of 7GUIs
+
+7GUIs was been created as a spin-off of the master’s
+thesis Comparison of Object-Oriented and Functional
+Programming for GUI Development by Eugen Kiss at the
+Human-Computer Interaction group of the Leibniz
+Universität Hannover in 2014.
+
+https://7guis.github.io/7guis/
+} {selected in_source not_in_header
+}
+
+Function {} {open
+} {
+Fl_Window {} {
+label Counter open
+xywh {486 292 194 55} type Double resizable visible
+} {
+Fl_Output counter_widget {
+xywh {15 15 80 22}
+code0 {counter_widget->value(0);}
+}
+Fl_Button {} {
+label Count
+callback {int i = counter_widget->ivalue();
+i++;
+counter_widget->value(i);}
+xywh {99 15 80 22}
+}
+}
+}

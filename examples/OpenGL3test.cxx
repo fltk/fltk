@@ -1,7 +1,7 @@
 //
 // Tiny OpenGL v3 demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,9 +25,7 @@
 #if defined(__APPLE__)
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
-#  if defined(_WIN32)
-#    define GLEW_STATIC 1
-#  endif
+// Note: GLEW_STATIC is defined by CMake if the static lib is linked
 #  include <GL/glew.h>
 #endif
 #include <FL/gl.h> // for gl_texture_reset()
@@ -132,7 +130,7 @@ public:
     else if ((!valid())) {
       glViewport(0, 0, pixel_w(), pixel_h());
     }
-    glClearColor(0.08, 0.8, 0.8, 1.0);
+    glClearColor(0.08f, 0.8f, 0.8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     if (shaderProgram) {
       GLfloat p[]={0,0};
@@ -172,7 +170,7 @@ public:
     if (retval) return retval;
 
     if (event == FL_PUSH && gl_version_major >= 3) {
-      static float factor = 1.1;
+      static float factor = 1.1f;
       GLfloat data[4];
       glGetBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(GLfloat), data);
       if (data[0] < -0.88 || data[0] > -0.5) factor = 1/factor;

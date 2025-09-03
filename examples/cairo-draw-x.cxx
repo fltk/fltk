@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 int main(int argc, char **argv) {
     fl_message_title("This program needs a Cairo enabled FLTK library");
     fl_message("Please configure FLTK with Cairo enabled (--enable-cairo or --enable-cairoext)\n"
-               "or one of the CMake options OPTION_CAIRO or OPTION_CAIROEXT, respectively.");
+               "or one of the CMake options FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT, respectively.");
     return 0;
 }
 #endif // (FLTK_HAVE_CAIRO)

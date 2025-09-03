@@ -1,0 +1,92 @@
+/**
+
+ \page page_appendices Appendices
+
+ \tableofcontents
+
+<!-- ---------------------------------------------------------------------- -->
+\section appendix_keyboard_shortcuts Keyboard Shortcuts
+
+On Apple computers, use the Apple Command key instead of Ctrl.
+
+| Key Combo | Function |
+| :-------: | :------- |
+| `F1` | open widget dialog |
+| `F2` | move widget earlier in tree |
+| `F3` | move widget later in tree |
+| `F7` | move widgets into group |
+| `F8` | ungroup widgets |
+| `Delete` | delete selected widgets |
+| `Ctrl-1..9` | load project from history |
+| `Ctrl-A` | select all |
+| `Shift-Ctrl-A` | select none |
+| `Alt-B` | show or hide Widget Bin |
+| `Ctrl-C` | copy widgets |
+| `Alt-C` | show or hide Code View window |
+| `Shift-Ctrl-C` | generate C++ code files |
+| `Ctrl-G` | grid setting dialog |
+| `Ctrl-I` | merge project file into current project |
+| `Ctrl-N` | start a new project, close the current project |
+| `Shift-Ctrl-N` | new project from template |
+| `Ctrl-O` | open project file |
+| `Shift-Ctrl-O` | toggle overlays |
+| `Ctrl-P` | print all visible project windows |
+| `Alt-P` | open FLUID settings dialog |
+| `Ctrl-Q` | quit FLUID |
+| `Ctrl-S` | save project |
+| `Shift-Ctrl-S` | save project with new name |
+| `Ctrl-U` | duplicate selected widgets |
+| `Ctrl-V` | paste last copied widgets |
+| `Shift-Ctrl-W` | write i18n translation file |
+| `Ctrl-X` | cut selected widgets |
+| `Alt-X` | show shell command settings |
+| `Ctrl-Z` | undo |
+| `Shift-Ctrl-Z` | redo |
+
+<!-- | `Alt-G` | rund last shell command again | -->
+
+
+| Action | Function in Layout Editor |
+| :----: | :------------------------ |
+| `left mouse button (LMB)` | select one widget |
+| `LMB-drag` | select multiple widgets with selection box |
+| `Shift-LMB` | extend widget selection |
+| `Shift-LMB-Drag` | toggle selection in selection box |
+| `Shift-LMB-Drag` | resize window proportionally |
+| `Tab` | select next widget |
+| `Shift-Tab` | select previous widget |
+| `Arrow` | move selected widgets by one unit |
+| `Shift-Arrow` | resize by one unit |
+| `Ctrl-Arrow` | move by grid units |
+| `Shift-Ctrl-Arrow` | resize by grid units |
+
+
+<!-- ---------------------------------------------------------------------- -->
+
+\section appendix_fileformat .fl File Format
+
+FLUID edits and saves its state in `.fl` project files. These files are text,
+and you can (with care) edit them in a text editor, perhaps to get some special
+effects. The `.fl` file format is described in detail in the file
+`fluid/README_fl.txt` which is part of the FLTK source code repository.
+
+<!-- ---------------------------------------------------------------------- -->
+
+\section appendix_licenses External Licenses
+
+FLUID uses graphical images based on the Zendesk Garden Stroke icon set:
+
+[https://github.com/zendeskgarden](https://github.com/zendeskgarden)
+Garden Stroke is licensed under the
+[Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
+
+FLUID includes templates based on 7GUIs:
+
+[7GUIs](https://7guis.github.io/7guis/) was created as a spin-off
+of the master’s thesis Comparison of Object-Oriented and Functional
+Programming for GUI Development by Eugen Kiss at the Human-Computer
+Interaction group of the Leibniz Universität Hannover in 2014.
+
+With kind permission by Prof. Dr. Michael Rohs.
+
+ */

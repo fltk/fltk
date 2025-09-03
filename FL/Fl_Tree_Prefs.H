@@ -298,6 +298,8 @@ public:
   inline Fl_Image *openicon() const {
     return(_openimage);
   }
+  inline int openicon_w() const { return _openimage ? _openimage->w() : 11; }
+  inline int openicon_h() const { return _openimage ? _openimage->h() : 11; }
   void openicon(Fl_Image *val);
   /// Gets the default 'close' icon
   ///     Returns the Fl_Image* of the icon, or 0 if none.
@@ -305,6 +307,8 @@ public:
   inline Fl_Image *closeicon() const {
     return(_closeimage);
   }
+  inline int closeicon_w() const { return _closeimage ? _closeimage->w() : 11; }
+  inline int closeicon_h() const { return _closeimage ? _closeimage->h() : 11; }
   void closeicon(Fl_Image *val);
   /// Gets the default 'user icon' (default is 0)
   inline Fl_Image *usericon() const {

@@ -82,6 +82,7 @@ enum libdecor_window_state {
 	LIBDECOR_WINDOW_STATE_TILED_TOP = 1 << 5,
 	LIBDECOR_WINDOW_STATE_TILED_BOTTOM = 1 << 6,
 	LIBDECOR_WINDOW_STATE_SUSPENDED = 1 << 7,
+	LIBDECOR_WINDOW_STATE_RESIZING = 1 << 8,
 };
 
 enum libdecor_resize_edge {
@@ -102,6 +103,13 @@ enum libdecor_capabilities {
 	LIBDECOR_ACTION_MINIMIZE = 1 << 2,
 	LIBDECOR_ACTION_FULLSCREEN = 1 << 3,
 	LIBDECOR_ACTION_CLOSE = 1 << 4,
+};
+
+enum libdecor_wm_capabilities {
+	LIBDECOR_WM_CAPABILITIES_WINDOW_MENU = 1 << 0,
+	LIBDECOR_WM_CAPABILITIES_MAXIMIZE = 1 << 1,
+	LIBDECOR_WM_CAPABILITIES_FULLSCREEN = 1 << 2,
+	LIBDECOR_WM_CAPABILITIES_MINIMIZE = 1 << 3
 };
 
 struct libdecor_interface {
@@ -185,7 +193,27 @@ libdecor_unref(struct libdecor *context);
  */
 struct libdecor *
 libdecor_new(struct wl_display *display,
-	     struct libdecor_interface *iface);
+	     const struct libdecor_interface *iface);
+
+/**
+ * Create a new libdecor context for the given wl_display and attach user data.
+ */
+struct libdecor *
+libdecor_new_with_user_data(struct wl_display *display,
+	     const struct libdecor_interface *iface,
+	     void *user_data);
+
+/**
+ * Get the user data associated with this libdecor context.
+ */
+void *
+libdecor_get_user_data(struct libdecor *context);
+
+/**
+ * Set the user data associated with this libdecor context.
+ */
+void
+libdecor_set_user_data(struct libdecor *context, void *user_data);
 
 /**
  * Get the file descriptor used by libdecor. This is similar to
@@ -218,7 +246,7 @@ libdecor_dispatch(struct libdecor *context,
 struct libdecor_frame *
 libdecor_decorate(struct libdecor *context,
 		  struct wl_surface *surface,
-		  struct libdecor_frame_interface *iface,
+		  const struct libdecor_frame_interface *iface,
 		  void *user_data);
 
 /**
@@ -233,6 +261,18 @@ libdecor_frame_ref(struct libdecor_frame *frame);
  */
 void
 libdecor_frame_unref(struct libdecor_frame *frame);
+
+/**
+ * Get the user data associated with this libdecor frame.
+ */
+void *
+libdecor_frame_get_user_data(struct libdecor_frame *frame);
+
+/**
+ * Set the user data associated with this libdecor frame.
+ */
+void
+libdecor_frame_set_user_data(struct libdecor_frame *frame, void *user_data);
 
 /**
  * Set the visibility of the frame.
@@ -496,6 +536,12 @@ libdecor_frame_get_xdg_surface(struct libdecor_frame *frame);
  */
 struct xdg_toplevel *
 libdecor_frame_get_xdg_toplevel(struct libdecor_frame *frame);
+
+/**
+ * Get the supported window manager capabilities for the window.
+ */
+enum libdecor_wm_capabilities
+libdecor_frame_get_wm_capabilities(struct libdecor_frame *frame);
 
 /**
  * Create a new content surface state.

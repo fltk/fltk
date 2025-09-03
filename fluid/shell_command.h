@@ -19,7 +19,7 @@
 
 #include "fluid.h"
 
-#include <FL/Fl_String.H>
+#include "../src/Fl_String.H"
 #include <FL/Enumerations.H>
 
 #include <stdio.h>
@@ -37,8 +37,14 @@
 
 struct Fl_Menu_Item;
 class Fl_Widget;
+class Fl_Preferences;
 
+char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, const Fl_String &defaultValue);
+char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value);
+
+void show_terminal_window();
 void run_shell_command(const Fl_String &cmd, int flags);
+bool shell_command_running(void);
 
 class Fl_Process {
 public:
@@ -74,7 +80,8 @@ protected:
 class Fd_Shell_Command {
 public:
   enum { ALWAYS, NEVER, MAC_ONLY, UX_ONLY, WIN_ONLY, MAC_AND_UX_ONLY, USER_ONLY, HOST_ONLY, ENV_ONLY }; // conditions
-  enum { SAVE_PROJECT = 1, SAVE_SOURCECODE = 2, SAVE_STRINGS = 4, SAVE_ALL = 7 }; // flags
+  enum { SAVE_PROJECT = 1, SAVE_SOURCECODE = 2, SAVE_STRINGS = 4, SAVE_ALL = 7,
+    DONT_SHOW_TERMINAL = 8, CLEAR_TERMINAL = 16, CLEAR_HISTORY = 32 }; // flags
   Fd_Shell_Command();
   Fd_Shell_Command(const Fd_Shell_Command *rhs);
   Fd_Shell_Command(const Fl_String &in_name);

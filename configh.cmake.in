@@ -2,7 +2,7 @@
 /*
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2021 by Bill Spitzak and others.
+ * Copyright 1998-2024 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -241,6 +241,22 @@
 #cmakedefine01 USE_POLL
 
 /*
+ * HAVE_SETENV:
+ *
+ * Whether or not POSIX setenv() is available from stdlib.h.
+ */
+
+#cmakedefine01 HAVE_SETENV
+
+/*
+ * HAVE_TRUNC:
+ *
+ * Whether or not POSIX trunc() is available from math.h.
+ */
+
+#cmakedefine01 HAVE_TRUNC
+
+/*
  * Do we have various image libraries?
  */
 
@@ -264,13 +280,6 @@
 #cmakedefine HAVE_PNG_GET_VALID 1
 #cmakedefine HAVE_PNG_SET_TRNS_TO_ALPHA 1
 
-/*
-* FLTK_USE_SVG
-*
-* Do we want FLTK to read and write SVG-formatted files ?
-*/
-
-#cmakedefine FLTK_USE_SVG 1
 
 /*
  * Do we have POSIX threading?
@@ -331,10 +340,3 @@
  */
 
 #cmakedefine FL_CFG_NO_FILESYSTEM_SUPPORT 1
-
-/*
- * Do we want class Fl_Native_File_Chooser to run kdialog when zenity is
- * unavailable and desktop is KDE?
- */
-
-#cmakedefine01 USE_KDIALOG

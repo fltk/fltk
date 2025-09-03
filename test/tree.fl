@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 header_name {.h}
 code_name {.cxx}
 decl {\#include <stdio.h>} {public global
@@ -36,9 +36,6 @@ decl {\#include <FL/Fl_Color_Chooser.H>} {public global
 }
 
 decl {\#include <FL/Fl_Text_Display.H>} {public global
-}
-
-decl {\#include <FL/Fl_Simple_Terminal.H>} {public global
 }
 
 decl {int G_cb_counter = 0;} {
@@ -526,17 +523,17 @@ tree->redraw();}
     "11 11 2 1",
     ".  c None",
     "@  c \#000000",
-    "...@.......",
-    "...@@......",
-    "...@@@.....",
-    "...@@@@....",
-    "...@@@@@...",
-    "...@@@@@@..",
-    "...@@@@@...",
-    "...@@@@....",
-    "...@@@.....",
-    "...@@......",
-    "...@......."
+    "...........",
+    "....@......",
+    "....@@.....",
+    "....@@@....",
+    "....@@@@...",
+    "....@@@@@..",
+    "....@@@@...",
+    "....@@@....",
+    "....@@.....",
+    "....@......",
+    "..........."
 \#endif
     };
 static Fl_Pixmap L_openpixmap(L_open_xpm);
@@ -566,13 +563,13 @@ static const char *L_close_xpm[] = {
     "...........",
     "...........",
     "...........",
-    "...........",
-    "@@@@@@@@@@@",
     ".@@@@@@@@@.",
     "..@@@@@@@..",
     "...@@@@@...",
     "....@@@....",
-    ".....@....."
+    ".....@.....",
+    "...........",
+    "..........."
 \#endif
     };
 static Fl_Pixmap L_closepixmap(L_close_xpm);
@@ -780,7 +777,7 @@ Fl::visible_focus(onoff);}
         }
       }
       Fl_Group {} {
-        label {Test Operations} open selected
+        label {Test Operations} open
         tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {350 435 330 125} box GTK_DOWN_BOX color 47 labelsize 12
       } {
         Fl_Group showitem_box {
@@ -1746,10 +1743,8 @@ helpwin->show();}
     Fl_Box resizer_box {
       xywh {0 263 15 14}
     }
-    Fl_Box tty {
-      label label
-      xywh {16 571 1014 149} box DOWN_BOX color 0
-      class Fl_Simple_Terminal
+    Fl_Terminal tty {selected
+      xywh {16 571 1014 149}
     }
   }
   code {// Initialize Tree

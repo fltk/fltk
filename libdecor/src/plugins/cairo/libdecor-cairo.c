@@ -39,7 +39,7 @@
 
 #include "libdecor-plugin.h"
 #include "utils.h"
-#include "cursor-settings.h"
+#include "desktop-settings.h"
 #include "os-compatibility.h"
 
 #include <cairo/cairo.h>
@@ -296,6 +296,9 @@ synthesize_pointer_leave(struct seat *seat);
 static bool
 own_proxy(struct wl_proxy *proxy)
 {
+	if (!proxy)
+		return false;
+
 	return (wl_proxy_get_tag(proxy) == &libdecor_cairo_proxy_tag);
 }
 
@@ -387,7 +390,11 @@ libdecor_plugin_cairo_destroy(struct libdecor_plugin *plugin)
 
 	wl_list_for_each_safe(output, output_tmp,
 			      &plugin_cairo->output_list, link) {
-		wl_output_destroy(output->wl_output);
+		if (wl_output_get_version (output->wl_output) >=
+		    WL_OUTPUT_RELEASE_SINCE_VERSION)
+			wl_output_release(output->wl_output);
+		else
+			wl_output_destroy(output->wl_output);
 		free(output);
 	}
 
@@ -590,7 +597,7 @@ create_shm_buffer(struct libdecor_plugin_cairo *plugin_cairo,
 	stride = buffer_width * 4;
 	size = stride * buffer_height;
 
-	fd = os_create_anonymous_file(size);
+	fd = libdecor_os_create_anonymous_file(size);
 	if (fd < 0) {
 		fprintf(stderr, "creating a buffer file for %d B failed: %s\n",
 			size, strerror(errno));
@@ -2067,10 +2074,10 @@ component_edge(const struct border_component *cmpnt,
 	       const int pointer_y,
 	       const int margin)
 {
-	const bool top = pointer_y < margin;
-	const bool bottom = pointer_y > (cmpnt->server.buffer->height - margin);
-	const bool left = pointer_x < margin;
-	const bool right = pointer_x > (cmpnt->server.buffer->width - margin);
+	const bool top = pointer_y < margin * 2;
+	const bool bottom = pointer_y > (cmpnt->server.buffer->height - margin * 2);
+	const bool left = pointer_x < margin * 2;
+	const bool right = pointer_x > (cmpnt->server.buffer->width - margin * 2);
 
 	if (top)
 		if (left)
@@ -2570,7 +2577,8 @@ init_wl_output(struct libdecor_plugin_cairo *plugin_cairo,
 	output->id = id;
 	output->wl_output =
 		wl_registry_bind(plugin_cairo->wl_registry,
-				 id, &wl_output_interface, 2);
+				 id, &wl_output_interface,
+				 MIN (version, 3));
 	wl_proxy_set_tag((struct wl_proxy *) output->wl_output,
 			 &libdecor_cairo_proxy_tag);
 	wl_output_add_listener(output->wl_output, &output_listener, output);

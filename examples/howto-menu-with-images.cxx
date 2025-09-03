@@ -1,10 +1,8 @@
 //
-// vim: autoindent tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=cpp
-//
-//     How to use Fl_Multi_Label to make menu items with images and labels.
+// How to use Fl_Multi_Label to make menu items with images and labels.
 //
 // Copyright 2017 Greg Ercolano.
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,6 +25,8 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/fl_message.H>
+
+#include <stdlib.h>   // free()
 
 // Document icon
 static const char *L_document_xpm[] = {
@@ -120,14 +120,20 @@ int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
 
   // Right side of label is text
   ml->typeb  = FL_NORMAL_LABEL;
-  ml->labelb = item->label();
+  ml->labelb = item->label();     // transfers "ownership" to ml
 
   // Assign multilabel to item.
-  // Note: There are two documented ways to achieve this. Both of them
-  // are supported, but one of them is commented out intentionally.
+  // There are three documented ways to achieve this. All of them are still
+  // supported but two of them are deprecated (see docs and comments below).
+  // The recommended way is to use Fl_Menu_Item::multi_label(Fl_Multi_Label *)
+  // which was added in FLTK 1.4.0 and sets the correct labeltype().
+  // All of these statements overwrite the old label (pointer) whose
+  // ownership has been "transferred" to the Fl_Multi_Label (correct).
+  // The old label is not released (as documented).
 
-  // item->label(FL_MULTI_LABEL, (const char *)ml);
-  ml->label(item);
+  // ml->label(item);                                 // deprecated (1.3.x)
+  // item->label(FL_MULTI_LABEL, (const char *)ml);   // deprecated (1.3.x)
+  item->multi_label(ml);                              // new since 1.4.0
 
   return i;
 }
@@ -151,29 +157,37 @@ void CreateMenuItems(Fl_Menu_* menu) {
   //    This shows why you need Fl_Multi_Label; the item->label()
   //    gets clobbered by the item->image() setting.
   //
+  // In the following lines 'menu->add(...)' assigns a duplicated label
+  // string which must be released prior to assigning an image to the label
+  // with 'item->image()'.
+  // This is "not nice" but it prevents memory leaks (see GitHub Issue #875).
+
   int i;
   Fl_Menu_Item *item;
 
   i = menu->add("Images/One", 0, Menu_CB, (void*)"One");
   item = (Fl_Menu_Item*)&(menu->menu()[i]);
-  item->image(L_document_pixmap);   // note: this clobbers the item's label()
+  free((void*)item->label());
+  item->image(L_document_pixmap);
 
   i = menu->add("Images/Two", 0, Menu_CB, (void*)"Two");
   item = (Fl_Menu_Item*)&(menu->menu()[i]);
+  free((void*)item->label());
   item->image(L_folder_pixmap);
 
   i = menu->add("Images/Three", 0, Menu_CB, (void*)"Three");
   item = (Fl_Menu_Item*)&(menu->menu()[i]);
+  free((void*)item->label());
   item->image(L_redx_pixmap);
 }
 
-int main() {
+int main(int argc, char **argv) {
   Fl_Double_Window *win = new Fl_Double_Window(400, 400, "Menu items with images");
   win->tooltip("Right click on window background\nfor popup menu");
 
   // Help message
   Fl_Box *box = new Fl_Box(100,100,200,200);
-  box->copy_label(win->tooltip());
+  box->label(win->tooltip()); // no need to copy_label() because it's static
   box->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
 
   // Menu bar
@@ -192,12 +206,11 @@ int main() {
 
   // TODO: Show complex labels with Fl_Multi_Label. From docs:
   //
-  //     "More complex labels might be constructed by setting labelb as another
+  //     "More complex labels can be constructed by setting labelb as another
   //     Fl_Multi_Label and thus chaining up a series of label elements."
-  //
 
   win->end();
   win->resizable(win);
-  win->show();
+  win->show(argc, argv);
   return Fl::run();
 }

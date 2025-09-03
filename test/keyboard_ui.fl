@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 header_name {.h}
 code_name {.cxx}
 Function {make_window()} {open
@@ -9,6 +9,14 @@ Function {make_window()} {open
     code0 {\#include "keyboard.h"}
     class MyWindow visible
   } {
+    Fl_Output key_output {
+      label {Fl::event_key():}
+      xywh {15 20 170 30} labelsize 9 align 5
+    }
+    Fl_Output text_output {
+      label {Fl::event_text():}
+      xywh {195 20 190 30} labelsize 9 align 5
+    }
     Fl_Button {} {
       label {Esc }
       user_data FL_Escape user_data_type {void*}
@@ -104,6 +112,28 @@ Function {make_window()} {open
       user_data FL_Pause user_data_type {void*}
       callback key_cb
       xywh {365 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label Help
+      user_data FL_Help user_data_type {void*}
+      callback key_cb
+      xywh {400 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {=}
+      user_data {FL_KP+'='} user_data_type {void*}
+      callback key_cb
+      xywh {420 70 20 20} labelsize 10
+    }
+    Fl_Dial roller_x {
+      label {x:}
+      callback wheel_cb
+      xywh {440 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
+    }
+    Fl_Dial roller_y {
+      label {y:}
+      callback wheel_cb
+      xywh {460 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
     }
     Fl_Button {} {
       label {`}
@@ -584,6 +614,10 @@ Function {make_window()} {open
       callback key_cb
       xywh {440 180 20 20} labelsize 10
     }
+    Fl_Box {} {
+      label {Fl::event_state():} selected
+      xywh {400 15 80 0} labelsize 9 align 5
+    }
     Fl_Button {} {
       label {shift }
       user_data FL_SHIFT user_data_type {void*}
@@ -651,14 +685,14 @@ Function {make_window()} {open
       xywh {440 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
     }
     Fl_Button {} {
-      label whl
-      user_data 0x800 user_data_type {void*}
+      label bck
+      user_data FL_BUTTON4 user_data_type {void*}
       callback shift_cb
       xywh {460 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
     }
     Fl_Button {} {
-      label {?}
-      user_data 0x1000 user_data_type {void*}
+      label fwd
+      user_data FL_BUTTON5 user_data_type {void*}
       callback shift_cb
       xywh {400 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
     }
@@ -679,40 +713,6 @@ Function {make_window()} {open
       user_data 0x8000 user_data_type {void*}
       callback shift_cb
       xywh {460 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
-    }
-    Fl_Output key_output {
-      label {Fl::event_key():}
-      xywh {15 20 170 30} labelsize 9 align 5
-    }
-    Fl_Box {} {
-      label {Fl::event_state():} selected
-      xywh {400 15 80 0} labelsize 9 align 5
-    }
-    Fl_Output text_output {
-      label {Fl::event_text():}
-      xywh {195 20 190 30} labelsize 9 align 5
-    }
-    Fl_Button {} {
-      label Help
-      user_data FL_Help user_data_type {void*}
-      callback key_cb
-      xywh {400 70 20 20} labelsize 8
-    }
-    Fl_Button {} {
-      label {=}
-      user_data {FL_KP+'='} user_data_type {void*}
-      callback key_cb
-      xywh {420 70 20 20} labelsize 10
-    }
-    Fl_Dial roller_x {
-      label {x:}
-      callback wheel_cb
-      xywh {440 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
-    }
-    Fl_Dial roller_y {
-      label {y:}
-      callback wheel_cb
-      xywh {460 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
     }
   }
 }

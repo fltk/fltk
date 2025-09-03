@@ -1,7 +1,7 @@
 //
 // Tiny OpenGL v3 + glut demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,12 +19,12 @@
 #  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED 1
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
-#  if defined(_WIN32)
-#    define GLEW_STATIC 1
-#  endif
+// Note: GLEW_STATIC is defined by CMake if the static lib is linked
 #  include <GL/glew.h>
 #endif
+
 #include <FL/glut.H>
+#include <FL/fl_ask.H>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -207,10 +207,14 @@ int main (int argc, char* argv[])
 #endif
   int gl_version_major;
   const char *glv = (const char*)glGetString(GL_VERSION);
-  fprintf(stderr, "OpenGL version %s supported\n", glv);
   sscanf(glv, "%d", &gl_version_major);
+  fprintf(stderr, "OpenGL version %s supported\n", glv);
   if (gl_version_major < 3) {
     fprintf(stderr, "\nThis platform does not support OpenGL V3\n\n");
+    fflush(stderr);
+    // ensure that users see a message on Windows w/o console output:
+    fl_alert("OpenGL version %s supported.\n"
+             "This platform does not support OpenGL V3!",glv);
     exit(1);
   }
   initShaders();

@@ -2,7 +2,7 @@
 // Declaration of classes Fl_Graphics_Driver, Fl_Scalable_Graphics_Driver,
 // and Fl_Font_Descriptor for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2023 by Bill Spitzak and others.
+// Copyright 2010-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -52,7 +52,17 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 struct Fl_Fontdesc;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-#define FL_REGION_STACK_SIZE 10
+// FIXME: The following constants are deprecated and will be removed in FLTK 1.5.0
+// in favor of dynamic clipping stack allocation. This needs C++11 features.
+// See issue #1139: "FL_REGION_STACK_SIZE could be increased"
+// and issue #1140: "Fix static array allocation".
+
+#if FL_ABI_VERSION >= 10401
+# define FL_REGION_STACK_SIZE 64
+#else
+# define FL_REGION_STACK_SIZE 10
+#endif
+
 #define FL_MATRIX_STACK_SIZE 32
 
 /**
@@ -85,6 +95,7 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   friend int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
+  friend FL_EXPORT int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
   friend FL_EXPORT void gl_start();
   /* ============== Implementation note about image drawing =========================
    A graphics driver can implement up to 6 virtual member functions to draw images:
@@ -137,6 +148,8 @@ private:
   virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
   // some platforms may need to reimplement this
   virtual void set_current_();
+  void draw_image_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
+  void draw_image_mono_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
 public:
   /** Creates the graphics driver that is used for core operations. */
@@ -315,6 +328,9 @@ public:
   virtual void arc(double x, double y, double r, double start, double end);
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
+  // To support fl_draw_circle(int x, int y, int d, Fl_Color color),
+  // the default implementation is most probably enough.
+  virtual void draw_circle(int x, int y, int d, Fl_Color c);
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   virtual void line_style(int style, int width=0, char* dashes=0);
   virtual void color(Fl_Color c);
@@ -380,7 +396,7 @@ public:
   Fl_Fontsize size; /**< font size */
   Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
   virtual FL_EXPORT ~Fl_Font_Descriptor() {}
-  short ascent, descent;
+  int ascent, descent;
   unsigned int listbase;// base of display list, 0 = none
 };
 
@@ -407,21 +423,23 @@ struct Fl_Fontdesc {
  In the future, it may also be used by other platforms.
  */
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
+  Fl_Fontsize fontsize_; // scale-independent font size value
 public:
   Fl_Scalable_Graphics_Driver();
-  // This function aims to compute accurately int(x * s) in
-  // presence of rounding errors existing with floating point numbers
-  // and that sometimes differ between 32 and 64 bits.
-  static inline int floor(int x, float s) { return int(x * s + 0.001f); }
+  static int floor(int x, float s);
   inline int floor(int x) { return Fl_Scalable_Graphics_Driver::floor(x, scale()); }
 protected:
   int line_width_;
+#if FL_ABI_VERSION >= 10403     // Issue #1214
+  bool is_solid_;
+#endif
   virtual Fl_Region scale_clip(float f);
   void unscale_clip(Fl_Region r);
   void point(int x, int y) FL_OVERRIDE;
   virtual void point_unscaled(float x, float y);
   void rect(int x, int y, int w, int h) FL_OVERRIDE;
   void rectf(int x, int y, int w, int h) FL_OVERRIDE;
+  virtual void rect_unscaled(int x, int y, int w, int h);
   virtual void rectf_unscaled(int x, int y, int w, int h);
   void line(int x, int y, int x1, int y1) FL_OVERRIDE;
   virtual void line_unscaled(int x, int y, int x1, int y1);
@@ -472,6 +490,7 @@ protected:
   virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
   void pie(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
   virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  void draw_circle(int x, int y, int d, Fl_Color c) FL_OVERRIDE;
   void line_style(int style, int width=0, char* dashes=0) FL_OVERRIDE;
   virtual void line_style_unscaled(int style, int width, char* dashes);
   void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono);

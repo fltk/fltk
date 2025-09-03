@@ -29,6 +29,6 @@
 #include <sys/types.h>
 
 int
-os_create_anonymous_file(off_t size);
+libdecor_os_create_anonymous_file(off_t size);
 
 #endif /* OS_COMPATIBILITY_H */

@@ -1,17 +1,8 @@
-/*
-** FLTK specific PNG lib configuration file -- see README.bundled-libs.txt
-**
-** This file must be generated on Linux in a libpng distribution using:
-**   $ ./configure --with-libpng-prefix=fltk_
-**   $ make
-** All lines including the 'fltk_' prefix must be upgraded with libpng.
-*/
-
 /* pnglibconf.h - library build configuration */
 
-/* libpng version 1.6.40 */
+/* libpng version 1.6.44 */
 
-/* Copyright (c) 2018-2023 Cosmin Truta */
+/* Copyright (c) 2018-2024 Cosmin Truta */
 /* Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson */
 
 /* This code is released under the libpng license. */
@@ -36,6 +27,7 @@
 #define PNG_COLORSPACE_SUPPORTED
 #define PNG_CONSOLE_IO_SUPPORTED
 #define PNG_CONVERT_tIME_SUPPORTED
+/*#undef PNG_DISABLE_ADLER32_CHECK_SUPPORTED*/
 #define PNG_EASY_ACCESS_SUPPORTED
 /*#undef PNG_ERROR_NUMBERS_SUPPORTED*/
 #define PNG_ERROR_TEXT_SUPPORTED
@@ -50,6 +42,10 @@
 #define PNG_INCH_CONVERSIONS_SUPPORTED
 #define PNG_INFO_IMAGE_SUPPORTED
 #define PNG_IO_STATE_SUPPORTED
+/*#undef PNG_MIPS_MMI_API_SUPPORTED*/
+/*#undef PNG_MIPS_MMI_CHECK_SUPPORTED*/
+/*#undef PNG_MIPS_MSA_API_SUPPORTED*/
+/*#undef PNG_MIPS_MSA_CHECK_SUPPORTED*/
 #define PNG_MNG_FEATURES_SUPPORTED
 #define PNG_POINTER_INDEXING_SUPPORTED
 /*#undef PNG_POWERPC_VSX_API_SUPPORTED*/
@@ -219,7 +215,7 @@
 #define PNG_USER_HEIGHT_MAX 1000000
 #define PNG_USER_WIDTH_MAX 1000000
 #define PNG_ZBUF_SIZE 8192
-#define PNG_ZLIB_VERNUM 0x1300
+#define PNG_ZLIB_VERNUM 0x1310
 #define PNG_Z_DEFAULT_COMPRESSION (-1)
 #define PNG_Z_DEFAULT_NOFILTER_STRATEGY 0
 #define PNG_Z_DEFAULT_STRATEGY 1

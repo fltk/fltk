@@ -40,7 +40,7 @@
   backwards compatibility with FLTK 1.3.x and earlier.
 
   \note The documentation is only visible if the CMake option
-    \c 'OPTION_INCLUDE_DRIVER_DOCUMENTATION' is enabled.
+    \c 'FLTK_INCLUDE_DRIVER_DOCS' is enabled.
 */
 
 #include <FL/Fl.H>
@@ -259,6 +259,14 @@ void Fl_Message::resizeform() {
   if (w > max_w)
     max_w = w;
 
+  // if the button horizontally overlap the icon, make sure that they are drawn
+  // below to icon by making the text part at least as tall as the icon.
+  if (w > message_w && text_height < icon_size) {
+    int pad_h = icon_size-text_height;
+    message_h += pad_h;
+    text_height += pad_h;
+  }
+
   message_w = max_w - 10 - icon_size;
 
   w = max_w + 20;
@@ -359,7 +367,7 @@ int Fl_Message::innards(const char *fmt, va_list ap, const char *b0, const char 
     window_->position(form_x_, form_y_);
     form_x_ = form_y_ = form_position_ = 0;
   } else if (enable_hotspot_)
-    window_->hotspot(button_[0]);
+    window_->hotspot(b0 ? button_[0] : button_[1]);
   else
     window_->free_position();
 
@@ -445,9 +453,18 @@ Fl_Box *Fl_Message::message_icon() {
 /**
   Does all Fl_Message window internals for messages with a text input field.
 
+  \param[in] fmt      printf style format used in the user function call
+  \param[in] ap       argument list provided by the user function call
+  \param[in] defstr   default string given by the user
+  \param[in] type     either FL_NORMAL_INPUT or FL_SECRET_INPUT (password)
+  \param[in] maxchar  max. number of allowed characters (not bytes)
+  \param[in] str      true: return type is string, false: internal buffer
+
+  \returns    pointer to string or NULL if cancel or escape were hit
+
   \see innards()
 */
-const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *defstr, uchar type, int maxchar) {
+const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *defstr, uchar type, int maxchar, bool str) {
   message_->position(60, 10);
   input_->type(type);
   input_->show();
@@ -465,7 +482,7 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
 
     int size = input_->size() + 1;
 
-    if (maxchar < 0) { // need to store the value in pre-allocated buffer
+    if (!str) { // need to store the value in pre-allocated buffer
 
       // The allocated input buffer starts with size 0 and is allocated
       // in multiples of 128 bytes >= size. If both the size and the pointer
@@ -485,7 +502,7 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
       input_buffer_[input_->size()] = '\0';
       return (input_buffer_);
 
-    } else { // new version: return value() which will be copied
+    } else { // string version: return value() which will be copied
 
       return input_->value();
     }

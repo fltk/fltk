@@ -1,7 +1,7 @@
 //
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -68,7 +68,8 @@ void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy
   draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, abs(D));
 }
 
-#if  USE_PANGO
+#if USE_PANGO
+
 
 static void destroy_BGRA(void *data) {
   delete[] (uchar*)data;
@@ -180,7 +181,8 @@ void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int Y
   }
 }
 
-#else // USE_PANGO
+
+#else // ! USE_PANGO
 
 //
 // Implementation of the /ASCII85Encode PostScript filter

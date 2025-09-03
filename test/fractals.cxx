@@ -5,7 +5,7 @@
 // demonstrate how to add FLTK controls to a GLUT program.   The GLUT
 // code is unchanged except for the end (search for FLTK to find changes).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -77,6 +77,7 @@ typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF,
                MOUNTAIN_MAT, WATER_MAT, LEAF_MAT, TREE_MAT, STEMANDLEAVES,
                AXES } DisplayLists;
 
+// Note: MAXLEVEL is the highest level, range is 0..MAXLEVEL
 #define MAXLEVEL 8
 
 int Rebuild = 1,        /* Rebuild display list in next display? */
@@ -146,11 +147,11 @@ float xzslope(float v1[3], float v2[3])
 /************************ MOUNTAIN STUFF ***********************/
 /***************************************************************/
 
-GLfloat DispFactor[MAXLEVEL];  /* Array of what to multiply random number
-                                  by for a given level to get midpoint
-                                  displacement  */
-GLfloat DispBias[MAXLEVEL];  /* Array of what to add to random number
-                                before multiplying it by DispFactor */
+GLfloat DispFactor[MAXLEVEL + 1]; /* Array of what to multiply random number
+                                     by for a given level to get midpoint
+                                     displacement  */
+GLfloat DispBias[MAXLEVEL + 1];   /* Array of what to add to random number
+                                     before multiplying it by DispFactor */
 
 #define NUMRANDS 191
 float RandTable[NUMRANDS];  /* hash table of random numbers so we can
@@ -233,9 +234,9 @@ void FMR(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3], int level)
 void FractalMountain(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3],
                      int pegged[3])
 {
-  GLfloat lengths[MAXLEVEL];
-  GLfloat fraction[8] = { 0.3f, 0.3f, 0.4f, 0.2f, 0.3f, 0.2f, 0.4f, 0.4f  };
-  GLfloat bias[8]     = { 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f  };
+  GLfloat lengths[MAXLEVEL + 1];
+  GLfloat fraction[8] = { 0.3f, 0.3f, 0.4f, 0.2f, 0.3f, 0.2f, 0.4f, 0.4f };
+  GLfloat bias[8]     = { 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f };
   int i;
   float avglen = (xzlength(v1, v2) +
                   xzlength(v2, v3) +
@@ -723,28 +724,28 @@ void MenuInit(void)
   int submenu3, submenu2, submenu1;
 
   submenu1 = glutCreateMenu(setlevel);
-  glutAddMenuEntry((char *)"0", 0);  glutAddMenuEntry((char *)"1", 1);
-  glutAddMenuEntry((char *)"2", 2);  glutAddMenuEntry((char *)"3", 3);
-  glutAddMenuEntry((char *)"4", 4);  glutAddMenuEntry((char *)"5", 5);
-  glutAddMenuEntry((char *)"6", 6);  glutAddMenuEntry((char *)"7", 7);
-  glutAddMenuEntry((char *)"8", 8);
+  glutAddMenuEntry("0", 0);  glutAddMenuEntry("1", 1);
+  glutAddMenuEntry("2", 2);  glutAddMenuEntry("3", 3);
+  glutAddMenuEntry("4", 4);  glutAddMenuEntry("5", 5);
+  glutAddMenuEntry("6", 6);  glutAddMenuEntry("7", 7);
+  glutAddMenuEntry("8", 8);
 
   submenu2 = glutCreateMenu(choosefract);
-  glutAddMenuEntry((char *)"Moutain", MOUNTAIN);
-  glutAddMenuEntry((char *)"Tree", TREE);
-  glutAddMenuEntry((char *)"Island", ISLAND);
+  glutAddMenuEntry("Moutain", MOUNTAIN);
+  glutAddMenuEntry("Tree", TREE);
+  glutAddMenuEntry("Island", ISLAND);
 
   submenu3 = glutCreateMenu(agvSwitchMoveMode);
-  glutAddMenuEntry((char *)"Flying", FLYING);
-  glutAddMenuEntry((char *)"Polar", POLAR);
+  glutAddMenuEntry("Flying", FLYING);
+  glutAddMenuEntry("Polar", POLAR);
 
   glutCreateMenu(handlemenu);
   glutAddSubMenu((char *)"Level", submenu1);
   glutAddSubMenu((char *)"Fractal", submenu2);
   glutAddSubMenu((char *)"Movement", submenu3);
-  glutAddMenuEntry((char *)"New Fractal",      MENU_RAND);
-  glutAddMenuEntry((char *)"Toggle Axes", MENU_AXES);
-  glutAddMenuEntry((char *)"Quit",             MENU_QUIT);
+  glutAddMenuEntry("New Fractal",      MENU_RAND);
+  glutAddMenuEntry("Toggle Axes", MENU_AXES);
+  glutAddMenuEntry("Quit",             MENU_QUIT);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 

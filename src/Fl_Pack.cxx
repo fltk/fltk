@@ -110,12 +110,18 @@ void Fl_Pack::draw() {
       }
       if (X != o->x() || Y != o->y() || W != o->w() || H != o->h()) {
         o->resize(X,Y,W,H);
+        // Clear all damage flags, but *set* FL_DAMAGE_ALL, even if the widget
+        // may be clipped by the parent and needs no redraw.
         o->clear_damage(FL_DAMAGE_ALL);
       }
       if (d&FL_DAMAGE_ALL) {
         draw_child(*o);
         draw_outside_label(*o);
-      } else update_child(*o);
+      } else {
+        update_child(*o);
+      }
+      // Make sure that all damage flags are cleared.
+      o->clear_damage();
       // child's draw() can change it's size, so use new size:
       current_position += (horizontal() ? o->w() : o->h());
       if (current_position > maximum_position)

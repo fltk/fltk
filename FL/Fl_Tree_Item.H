@@ -93,8 +93,13 @@ protected:
   void _Init(const Fl_Tree_Prefs &prefs, Fl_Tree *tree);
   void show_widgets();
   void hide_widgets();
+#if FL_ABI_VERSION >= 10403
+  virtual void draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_Prefs &prefs);
+  virtual void draw_horizontal_connector(int x1, int x2, int y, const Fl_Tree_Prefs &prefs);
+#else
   void draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_Prefs &prefs);
   void draw_horizontal_connector(int x1, int x2, int y, const Fl_Tree_Prefs &prefs);
+#endif
   void recalc_tree();
   int calc_item_height(const Fl_Tree_Prefs &prefs) const;
   Fl_Color drawfgcolor() const;
@@ -392,7 +397,16 @@ public:
   int is_visible() const {
     return(is_flag(VISIBLE));
   }
-  int visible_r() const;
+  /// See if item and all its parents are open() and visible().
+  /// Alias for is_visible_r().
+  /// \returns
+  ///    1 -- item and its parents are open() and visible()
+  ///    0 -- item (or one of its parents) are not visible or close()ed.
+  ///
+  int visible_r() const {
+    return(is_visible_r());
+  }
+  int is_visible_r() const;
 
   /// Set the item's user icon to an Fl_Image. Use '0' to disable.
   /// No internal copy is made, caller must manage icon's memory.

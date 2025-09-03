@@ -14,6 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#ifndef FL_DOXYGEN
 #include <config.h>
 #include <FL/Enumerations.H>
 
@@ -29,3 +30,4 @@ extern Fl_XColor fl_xmap[/*overlay*/][256];
 // mask & shifts to produce xcolor for truecolor visuals:
 extern unsigned char fl_redmask, fl_greenmask, fl_bluemask;
 extern int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
+#endif // FL_DOXYGEN

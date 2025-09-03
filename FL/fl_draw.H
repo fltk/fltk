@@ -223,8 +223,11 @@ inline void fl_point(int x, int y) {
   If you change this it is your responsibility to set it back to the default
   using \c fl_line_style(0).
 
-  \param[in] style A bitmask which is a bitwise-OR of a line style, a cap
-    style, and a join style. If you don't specify a dash type you
+  \image html  fl_line_style.png "fl_line_style() styles"
+  \image latex fl_line_style.png "fl_line_style() styles" width=12cm
+
+  \param[in] style A bitmask which is a bitwise-OR of \ref LineStyles "Line Styles",
+    a cap style, and a join style. If you don't specify a dash type you
     will get a solid line. If you don't specify a cap or join type
     you will get a system-defined default of whatever value is fastest.
   \param[in] width The thickness of the lines in pixels. Zero results in the
@@ -249,12 +252,18 @@ inline void fl_point(int x, int y) {
 inline void fl_line_style(int style, int width = 0, char *dashes = 0) {
   fl_graphics_driver->line_style(style, width, dashes);
 }
+
+/// \anchor LineStyles
+///
+///  \image html  fl_line_style.png "fl_line_style() styles"
+///  \image latex fl_line_style.png "fl_line_style() styles" width=12cm
+///
 enum {
-  FL_SOLID      = 0,      ///< line style: <tt>___________</tt>
-  FL_DASH       = 1,      ///< line style: <tt>_ _ _ _ _ _</tt>
-  FL_DOT        = 2,      ///< line style: <tt>. . . . . .</tt>
-  FL_DASHDOT    = 3,      ///< line style: <tt>_ . _ . _ .</tt>
-  FL_DASHDOTDOT = 4,      ///< line style: <tt>_ . . _ . .</tt>
+  FL_SOLID      = 0,      ///< line style: solid line
+  FL_DASH       = 1,      ///< line style: 75% dashed line
+  FL_DOT        = 2,      ///< line style: 50% pixel dotted
+  FL_DASHDOT    = 3,      ///< line style: dash / dot pattern
+  FL_DASHDOTDOT = 4,      ///< line style: dash / two dot pattern
 
   FL_CAP_FLAT   = 0x100,  ///< cap style: end is flat
   FL_CAP_ROUND  = 0x200,  ///< cap style: end is round
@@ -282,7 +291,7 @@ inline int fl_antialias() {
 // rectangles tweaked to exactly fill the pixel rectangle:
 
 /**
-  Draw a 1-pixel border \e inside the given bounding box.
+  Draw a border \e inside the given bounding box.
   This function is meant for quick drawing of simple boxes. The behavior is
   undefined for line widths that are not 1.
 */
@@ -291,7 +300,7 @@ inline void fl_rect(int x, int y, int w, int h) {
 }
 
 /**
- Draw a 1-pixel rounded border \e inside the given bounding box.
+ Draw a rounded border \e inside the given bounding box.
  The radius code is optimized for speed and works best for values between
  5 and 15 units.
  */
@@ -300,7 +309,7 @@ inline void fl_rounded_rect(int x, int y, int w, int h, int r) {
 }
 
 /**
-  Draw a 1-pixel border \e inside the given bounding box.
+  Draw a border \e inside the given bounding box.
   This is the same as fl_rect(int x, int y, int w, int h) but with
   Fl_Rect \p r as input argument.
 */
@@ -318,7 +327,9 @@ inline void fl_focus_rect(int x, int y, int w, int h) {
   fl_graphics_driver->focus_rect(x, y, w, h);
 }
 
-/** Draw with passed color a 1-pixel border \e inside the given bounding box. */
+/** Draw with passed color a border \e inside the given bounding box.
+ \warning The current color is changed to \p c upon return.
+*/
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   fl_rect(x, y, w, h);
@@ -337,7 +348,9 @@ inline void fl_rounded_rectf(int x, int y, int w, int h, int r) {
   fl_graphics_driver->rounded_rectf(x, y, w, h, r);
 }
 
-/** Color with passed color a rectangle that exactly fills the given bounding box. */
+/** Color with passed color a rectangle that exactly fills the given bounding box.
+ \warning The current color is changed to \p c upon return.
+*/
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   fl_rectf(x, y, w, h);
@@ -348,7 +361,9 @@ inline void fl_rectf(Fl_Rect r) {
   fl_graphics_driver->rectf(r.x(), r.y(), r.w(), r.h());
 }
 
-/** Color with passed color a rectangle that exactly fills the given bounding box. */
+/** Color with passed color a rectangle that exactly fills the given bounding box.
+ \warning The current color is changed to \p c upon return.
+*/
 inline void fl_rectf(Fl_Rect r, Fl_Color c) {
   fl_color(c);
   fl_rectf(r);
@@ -358,7 +373,8 @@ inline void fl_rectf(Fl_Rect r, Fl_Color c) {
   Color a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
   On screens with less than 24 bits of color this is done by drawing a
   solid-colored block using fl_draw_image() so that the correct color
-  shade is produced.
+  shade is produced. On other screens, the current color is changed
+  to \p fl_color(r,g,b) upon return.
 */
 inline void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   fl_graphics_driver->colored_rectf(x, y, w, h, r, g, b);
@@ -404,7 +420,7 @@ inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3
 
 // filled polygons
 /**
-  Fill a 3-sided polygon. The polygon must be convex.
+  Fill a 3-sided polygon.
 */
 inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
   fl_graphics_driver->polygon(x, y, x1, y1, x2, y2);
@@ -616,11 +632,17 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
 }
 /**
   Add a series of points to the current path on the arc of a circle.
+
+  The arc is drawn counter-clockwise from 3 o'clock. If \p end is less than
+  \p start then it draws the arc in a clockwise direction. To draw an arc across
+  the 3 o'clock line, \p start and \p end can be greater than 360 or less than 0.
+  For example, to draw a counter-clockwise arc from 6 to 12 o'clock, \p start
+  would be -90 deg, and \p end would be at +90 deg.
+
   You can get elliptical paths by using scale and rotate before calling fl_arc().
-  \param[in] x,y,r center and radius of circular arc
-  \param[in] start,end angles of start and end of arc measured in degrees
-    counter-clockwise from 3 o'clock. If \p end is less than \p start
-    then it draws the arc in a clockwise direction.
+
+  \param[in] x, y, r center and radius of circular arc
+  \param[in] start, end angles of start and end of arc measured in degrees
 
   \image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
   \image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
@@ -953,16 +975,56 @@ inline void fl_rtl_draw(const char *str, int n, int x, int y) {
   fl_graphics_driver->rtl_draw(str, n, x, y);
 }
 FL_EXPORT void fl_measure(const char *str, int &x, int &y, int draw_symbols = 1);
-FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h, Fl_Align align, Fl_Image *img = 0,
-                       int draw_symbols = 1);
+/**
+  Fancy string drawing function which is used to draw all the labels.
+
+  The string is formatted and aligned inside the passed box.
+  Handles '\\t' and '\\n', expands all other control characters to '^X',
+  and aligns inside or against the edges of the box.
+  See Fl_Widget::align() for values of \p align. The value FL_ALIGN_INSIDE
+  is ignored, as this function always prints inside the box.
+  If \p img is provided and is not \p NULL, the image is drawn above or
+  below the text as specified by the \p align value.
+  The \p draw_symbols argument specifies whether or not to look for symbol
+  names starting with the '\@' character'
+
+ \param[in] str UTF-8 string, can start and end with an '\@sym' symbol,
+            can contain '\\n'
+ \param[in] x,y,w,h bounding box
+ \param[in] align label and image alignment in bounding box
+ \param[in] img pointer to image
+ \param[in] draw_symbols if true, interprete leading and trailing '\@sym'
+            as graphical symbols
+ \param[in] spacing spacing between text and image
+ */
+FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h,
+                       Fl_Align align, Fl_Image *img = 0,
+                       int draw_symbols = 1, int spacing = 0);
+/**
+ The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
+ the addition of the \p callthis parameter, which is a pointer to a text drawing
+ function such as fl_draw(const char*, int, int, int) to do the real work.
+
+ \param[in] str UTF-8 string, can start and end with an '\@sym' symbol,
+ can contain '\\n'
+ \param[in] x,y,w,h bounding box
+ \param[in] align label and image alignment in bounding box
+ \param[in] callthis pointer to text drawing function
+ \param[in] img pointer to image
+ \param[in] draw_symbols if true, interprete leading and trailing '\@sym'
+ as graphical symbols
+ \param[in] spacing spacing between text and image
+ */
 FL_EXPORT void fl_draw(const char *str, int x, int y, int w, int h, Fl_Align align,
-                       void (*callthis)(const char *, int, int, int), Fl_Image *img = 0, int draw_symbols = 1);
+                       void (*callthis)(const char *, int, int, int),
+                       Fl_Image *img = 0, int draw_symbols = 1, int spacing = 0);
 
 // boxtypes:
 
 FL_EXPORT void fl_frame(const char *s, int x, int y, int w, int h);
 FL_EXPORT void fl_frame2(const char *s, int x, int y, int w, int h);
 FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
+FL_EXPORT void fl_draw_box_focus(Fl_Boxtype, int x, int y, int w, int h, Fl_Color, Fl_Color);
 
 // basic GUI objects (check marks, arrows, more to come ...):
 
@@ -973,7 +1035,11 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col);
 FL_EXPORT void fl_draw_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color color);
 
 // Draw a potentially small, filled circle
-FL_EXPORT void fl_draw_circle(int x0, int y0, int d, Fl_Color color);
+FL_EXPORT void fl_draw_circle(int x, int y, int d, Fl_Color color);
+
+// Draw the full "radio button" of a radio menu entry or radio button
+// This requires scheme specific handling (particularly gtk+ scheme)
+FL_EXPORT void fl_draw_radio(int x, int y, int d, Fl_Color color);
 
 // images:
 
@@ -1013,7 +1079,7 @@ FL_EXPORT void fl_draw_circle(int x0, int y0, int d, Fl_Color color);
   to 32 bits.
 */
 inline void fl_draw_image(const uchar *buf, int X, int Y, int W, int H, int D = 3, int L = 0) {
-  fl_graphics_driver->draw_image(buf, X, Y, W, H, D, L);
+  fl_graphics_driver->draw_image_general_(buf, X, Y, W, H, D, L);
 }
 
 /**
@@ -1021,7 +1087,7 @@ inline void fl_draw_image(const uchar *buf, int X, int Y, int W, int H, int D = 
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 */
 inline void fl_draw_image_mono(const uchar *buf, int X, int Y, int W, int H, int D = 1, int L = 0) {
-  fl_graphics_driver->draw_image_mono(buf, X, Y, W, H, D, L);
+  fl_graphics_driver->draw_image_mono_general_(buf, X, Y, W, H, D, L);
 }
 
 /**
@@ -1089,13 +1155,13 @@ FL_EXPORT Fl_RGB_Image *fl_capture_window(Fl_Window *win, int x, int y, int w, i
   The image is dithered on 8-bit displays so you won't lose color
   space for programs displaying both images and pixmaps.
 
-  \param[in] data pointer to XPM image data
-  \param[in] x,y  position of top-left corner
-  \param[in] bg   background color
+  \param[in] cdata  pointer to XPM image data
+  \param[in] x,y    position of top-left corner
+  \param[in] bg     background color
 
   \returns 0 if there was any error decoding the XPM data.
 */
-FL_EXPORT int fl_draw_pixmap(const char *const *data, int x, int y, Fl_Color bg = FL_GRAY);
+FL_EXPORT int fl_draw_pixmap(const char *const *cdata, int x, int y, Fl_Color bg = FL_GRAY);
 /**
   Draw XPM image data, with the top-left corner at the given position.
   \see fl_draw_pixmap(const char* const* data, int x, int y, Fl_Color bg)

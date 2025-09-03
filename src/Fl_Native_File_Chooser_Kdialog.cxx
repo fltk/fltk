@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget : KDE version
 //
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,16 +14,22 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "Fl_Native_File_Chooser_Kdialog.H"
 #include "Fl_Window_Driver.H"
+#include "Fl_System_Driver.H"
 #include "drivers/Unix/Fl_Unix_Screen_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
 
 /* Fl_Kdialog_Native_File_Chooser_Driver : file chooser based on the "kdialog" command */
 
@@ -67,7 +73,7 @@ static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
 }
 
 
-char *Fl_Kdialog_Native_File_Chooser_Driver::build_command() {
+void Fl_Kdialog_Native_File_Chooser_Driver::build_command(Fl_String& command) {
   const char *option;
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
@@ -86,25 +92,34 @@ char *Fl_Kdialog_Native_File_Chooser_Driver::build_command() {
     default:
       option = "--getopenfilename";
   }
-  const char *preset = ".";
-  if (_preset_file) preset = _preset_file;
-  else if (_directory) preset = _directory;
-  const int com_size = strlen(option) + strlen(preset) +
-    (_title?strlen(_title)+11:0) + (_parsedfilt?strlen(_parsedfilt):0) + 50;
-  char *command = new char[com_size];
-  strcpy(command, "kdialog ");
+
+  // Build preset
+  char preset[FL_PATH_MAX] = "";
+  if (_preset_file) {
+    if (_directory) strcpy(preset, _directory);
+    else Fl::system_driver()->getcwd(preset, FL_PATH_MAX);
+    strcat(preset, "/");
+    strcat(preset, _preset_file);
+  }
+
+  // Build command
+  command = "kdialog";
   if (_title) {
-    snprintf(command+strlen(command), com_size - strlen(command),
-             " --title '%s'", _title);
+    Fl_String quoted_title = _title; shell_quote(quoted_title);
+    command += " --title ";
+    command += quoted_title;
   }
-  snprintf(command+strlen(command), com_size - strlen(command),
-           " %s %s ", option, preset);
+  command += " ";
+  command += option;
+  command += " ";
+  command += preset;
   if (_parsedfilt) {
-    snprintf(command+strlen(command), com_size - strlen(command),
-             " \"%s\" ", _parsedfilt);
+    Fl_String quoted_filt = _parsedfilt; shell_quote(quoted_filt);     // NOTE: orig code used double quoting -erco 1/10/24
+    command += " ";
+    command += quoted_filt;
   }
-  strcat(command, "2> /dev/null"); // get rid of stderr output
-  return command;
+  command += " 2> /dev/null";   // get rid of stderr
+  // printf("command = %s\n", command.c_str());
 }
 
 
@@ -131,9 +146,10 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
       return retval;
   }
 
-  char *command = build_command();
-//puts(command);
-  FILE *pipe = popen(command, "r");
+  Fl_String command;
+  build_command(command);
+  //fprintf(stderr, "DEBUG: POPEN: %s\n", command.c_str());
+  FILE *pipe = popen(command.c_str(), "r");
   fnfc_pipe_struct data;
   data.all_files = NULL;
   if (pipe) {
@@ -169,7 +185,6 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
       }
     }
   }
-  delete[] command;
   if (!pipe) return -1;
   return (data.all_files == NULL ? 1 : 0);
 }
@@ -291,3 +306,21 @@ void Fl_Kdialog_Native_File_Chooser_Driver::title(const char *val)
 const char *Fl_Kdialog_Native_File_Chooser_Driver::title() const {
   return _title;
 }
+
+// Add shell quotes around string 's'.
+// Handles quoting embedded quotes.
+//
+void Fl_Kdialog_Native_File_Chooser_Driver::shell_quote(Fl_String& s) {
+  Fl_String out = "'";                          // leading quote
+  for (int t=0; t<s.size(); t++) {
+    if (s[t] == '\'') out += "'\"'\"'";         // quote any quotes
+    else              out += s[t];
+  }
+  out += "'";                                   // trailing quote
+  s = out;
+}
+
+/**
+\}
+\endcond
+*/

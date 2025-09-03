@@ -9,7 +9,7 @@
 // to a factory instance for every class (both the ones defined
 // here and ones in other files)
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,6 +26,7 @@
 
 #include "fluid.h"
 #include "Fl_Group_Type.h"
+#include "Fl_Grid_Type.h"
 #include "Fl_Menu_Type.h"
 #include "Fd_Snap_Action.h"
 #include "pixmaps.h"
@@ -48,7 +49,7 @@
 #include <FL/Fl_Progress.H>
 #include <FL/Fl_Roller.H>
 #include <FL/Fl_Scrollbar.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Editor.H>
@@ -842,37 +843,97 @@ public:
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
 
-// ---- Simple Terminal ----
+// ---- Terminal ----
 
-/**
- \brief Manage a simple terminal widget.
- */
-class Fl_Simple_Terminal_Type : public Fl_Text_Display_Type
-{
-  typedef Fl_Text_Display_Type super;
+/** Use this terminal instead of Fl_Terminal to capture resize actions. */
+class Fl_Terminal_Proxy : public Fl_Terminal {
 public:
-  const char *type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
-  const char *alt_type_name() FL_OVERRIDE { return "fltk::SimpleTerminal"; }
-  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
-    Fl_Widget *myo = 0L;
-    if (batch_mode) {
-      // The Fl_Simple_Terminal constructor attaches a buffer which in turn
-      // opens a connection to the display. In batch mode, we create the
-      // superclass Fl_Text_Display to avoid that.
-      myo = new Fl_Text_Display(x,y,w,h);
-    } else {
-      Fl_Simple_Terminal *term = new Fl_Simple_Terminal(x, y, w, h);
-      term->text("> ls -als");
-      myo = term;
-    }
-    return myo;
+  Fl_Terminal_Proxy(int x, int y, int w, int h, const char *l=NULL)
+  : Fl_Terminal(x, y, w, h, l) { }
+  void print_sample_text() {
+    clear_screen_home(false);
+    append("> ls -als");
   }
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Simple_Terminal_Type();}
-  ID id() const FL_OVERRIDE { return ID_Simple_Terminal; }
-  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Simple_Terminal) ? true : super::is_a(inID); }
+  void resize(int x, int y, int w, int h) FL_OVERRIDE {
+    Fl_Terminal::resize(x, y, w, h);
+    // After a resize, the top text vanishes, so make sure we redraw it.
+    print_sample_text();
+  }
 };
 
-static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
+/** Use this terminal in batch mode to avoid opening a DISPLAY connection. */
+class Fl_Batchmode_Terminal : public Fl_Group {
+public:
+  Fl_Font tfont_;
+  int tsize_;
+  Fl_Color tcolor_;
+  Fl_Batchmode_Terminal(int x, int y, int w, int h, const char *l=NULL)
+  : Fl_Group(x, y, w, h, l)
+  { // set the defaults that Fl_Terminal would set
+    box(FL_DOWN_BOX);
+    color(FL_FOREGROUND_COLOR);
+    selection_color(FL_BACKGROUND_COLOR);
+    labeltype(FL_NORMAL_LABEL);
+    labelfont(0);
+    labelsize(14);
+    labelcolor(FL_FOREGROUND_COLOR);
+    tfont_ = 4;
+    tcolor_ = 0xd0d0d000;
+    tsize_ = 14;
+    align(Fl_Align(FL_ALIGN_TOP));
+    when(FL_WHEN_RELEASE);
+    end();
+  }
+};
+
+/**
+ \brief Manage a terminal widget.
+ */
+class Fl_Terminal_Type : public Fl_Widget_Type
+{
+  typedef Fl_Widget_Type super;
+public:
+  const char *type_name() FL_OVERRIDE { return "Fl_Terminal"; }
+  // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
+  const char *alt_type_name() FL_OVERRIDE { return "Fl_Simple_Terminal"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    Fl_Widget *ret = NULL;
+    if (batch_mode) {
+      ret = new Fl_Batchmode_Terminal(x, y, w, h);
+    } else {
+      Fl_Terminal_Proxy *term = new Fl_Terminal_Proxy(x, y, w+100, h);
+      ret = term;
+    }
+    return ret;
+  }
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
+    if (batch_mode) {
+      Fl_Batchmode_Terminal *myo = (Fl_Batchmode_Terminal*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+      switch (w) {
+        case 4:
+        case 0: f = (Fl_Font)myo->tfont_; s = myo->tsize_; c = myo->tcolor_; break;
+        case 1: myo->tfont_ = f; break;
+        case 2: myo->tsize_ = s; break;
+        case 3: myo->tcolor_ = c; break;
+      }
+    } else {
+      Fl_Terminal_Proxy *myo = (Fl_Terminal_Proxy*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+      switch (w) {
+        case 4:
+        case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+        case 1: myo->textfont(f); myo->print_sample_text(); break;
+        case 2: myo->textsize(s); myo->print_sample_text(); break;
+        case 3: myo->textcolor(c); myo->print_sample_text(); break;
+      }
+    }
+    return 1;
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Terminal_Type();}
+  ID id() const FL_OVERRIDE { return ID_Terminal; }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Terminal) ? true : super::is_a(inID); }
+};
+
+static Fl_Terminal_Type Fl_Terminal_type;
 
 
 // ---- Other ---------------------------------------------------------- MARK: -
@@ -1025,6 +1086,7 @@ extern class Fl_Widget_Class_Type Fl_Widget_Class_type;
 extern class Fl_Group_Type Fl_Group_type;
 extern class Fl_Pack_Type Fl_Pack_type;
 extern class Fl_Flex_Type Fl_Flex_type;
+extern class Fl_Grid_Type Fl_Grid_type;
 extern class Fl_Tabs_Type Fl_Tabs_type;
 extern class Fl_Scroll_Type Fl_Scroll_type;
 extern class Fl_Table_Type Fl_Table_type;
@@ -1054,6 +1116,9 @@ extern void select_only(Fl_Type *);
  This is used to convert a type name into a pointer to the prototype.
  This list may contain types that are supported in .fl files, but not
  available in the *New* menu.
+
+ \note Make sure that this array stays synchronized to `Fl_Menu_Item New_Menu[]`
+    further down in this file.
  */
 static Fl_Type *known_types[] = {
   // functions
@@ -1075,6 +1140,7 @@ static Fl_Type *known_types[] = {
   (Fl_Type*)&Fl_Scroll_type,
   (Fl_Type*)&Fl_Tile_type,
   (Fl_Type*)&Fl_Wizard_type,
+  (Fl_Type*)&Fl_Grid_type,
   // buttons
   (Fl_Type*)&Fl_Button_type,
   (Fl_Type*)&Fl_Return_Button_type,
@@ -1099,7 +1165,7 @@ static Fl_Type *known_types[] = {
   (Fl_Type*)&Fl_Text_Editor_type,
   (Fl_Type*)&Fl_Text_Display_type,
   (Fl_Type*)&Fl_File_Input_type,
-  (Fl_Type*)&Fl_Simple_Terminal_type,
+  (Fl_Type*)&Fl_Terminal_type,
   // menus
   (Fl_Type*)&Fl_Menu_Bar_type,
   (Fl_Type*)&Fl_Menu_Button_type,
@@ -1140,17 +1206,19 @@ static Fl_Type *known_types[] = {
  \param[in] inPrototype pointer to one of the FL_..._type prototype; note the
     lower case 't' in type.
  \param[in] strategy add after current or as last child
+ \param[in] and_open if set to true, call open() on the widget after creating it
+ \return the newly created type or NULL
 
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
  add_new_widget_from_user(const char*, int)
  */
-Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
+Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy, bool and_open) {
   undo_checkpoint();
   undo_suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_widget() && !t->is_a(ID_Window)) {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
       bool changed = false;
 
@@ -1176,13 +1244,14 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
         wt->textstuff(2, f, s, c);
       }
 
-      if (changed && t->is_a(Fl_Type::ID_Menu_Item)) {
+      if (changed && t->is_a(ID_Menu_Item)) {
         Fl_Type * tt = t->parent;
-        while (tt && !tt->is_a(Fl_Type::ID_Menu_Manager_)) tt = tt->parent;
-        ((Fl_Menu_Manager_Type*)tt)->build_menu();
+        while (tt && !tt->is_a(ID_Menu_Manager_)) tt = tt->parent;
+        if (tt)
+          ((Fl_Menu_Manager_Type*)tt)->build_menu();
       }
     }
-    if (t->is_true_widget() && !t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_true_widget() && !t->is_a(ID_Window)) {
       // Resize and/or reposition new widget...
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
 
@@ -1191,22 +1260,24 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if ((t->parent && t->parent->is_a(Fl_Type::ID_Flex))) {
-        // Do not resize or layout the widget. Flex will need the widget size.
-      } else if (   wt->is_a(Fl_Type::ID_Group)
+      if ((t->parent && t->parent->is_a(ID_Flex))) {
+        if (Fl_Window_Type::popupx != 0x7FFFFFFF)
+          ((Fl_Flex_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+        t->parent->layout_widget();
+      } else if (   wt->is_a(ID_Group)
                  && wt->parent
-                 && wt->parent->is_a(Fl_Type::ID_Tabs)
+                 && wt->parent->is_a(ID_Tabs)
                  //&& (Fl_Window_Type::popupx == 0x7FFFFFFF)
                  && (layout->top_tabs_margin > 0)) {
         // If the widget is a group and the parent is tabs and the top tabs
         // margin is set (and the user is not requesting a specific position)
-        // then  prefit the group correctly to the Tabs container.
+        // then prefit the group correctly to the Tabs container.
         Fl_Widget *po = ((Fl_Tabs_Type*)wt->parent)->o;
         wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
                       po->w(), po->h() - layout->top_tabs_margin);
-      } else if (   wt->is_a(Fl_Type::ID_Menu_Bar)
+      } else if (   wt->is_a(ID_Menu_Bar)
                  && wt->parent
-                 && wt->parent->is_a(Fl_Type::ID_Window)
+                 && wt->parent->is_a(ID_Window)
                  && (wt->prev == wt->parent)) {
         // If this is the first child of a window, make the menu bar as wide as
         // the window and drop it at 0, 0. Otherwise just use the suggested size.
@@ -1223,8 +1294,15 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
           wt->o->size(w, h);
         }
       }
+      if (t->parent && t->parent->is_a(ID_Grid)) {
+        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
+          ((Fl_Grid_Type*)t->parent)->insert_child_at(((Fl_Widget_Type*)t)->o, Fl_Window_Type::popupx, Fl_Window_Type::popupy);
+        } else {
+          ((Fl_Grid_Type*)t->parent)->insert_child_at_next_free_cell(((Fl_Widget_Type*)t)->o);
+        }
+      }
     }
-    if (t->is_a(Fl_Type::ID_Window)) {
+    if (t->is_a(ID_Window)) {
       int x = 0, y = 0, w = 480, h = 320;
       Fl_Window_Type *wt = (Fl_Window_Type *)t;
       wt->ideal_size(w, h);
@@ -1241,7 +1319,8 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
     // make the new widget visible
     select_only(t);
     set_modflag(1);
-    t->open();
+    if (and_open)
+      t->open();
   } else {
     undo_current --;
     undo_last --;
@@ -1252,45 +1331,55 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
 
 /**
  Create and add a new widget to the widget tree.
+
  \param[in] inName find the right prototype by this name
  \param[in] strategy where to add the node
- \return the newly created node
+ \param[in] and_open if set to true, call open() on the widget after creating it
+ \return the newly created type or NULL
+
  \see add_new_widget_from_file(const char*, int)
  add_new_widget_from_user(Fl_Type*, int)
  add_new_widget_from_user(const char*, int)
  */
-Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy) {
+Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open) {
   Fl_Type *prototype = typename_to_prototype(inName);
   if (prototype)
-    return add_new_widget_from_user(prototype, strategy);
+    return add_new_widget_from_user(prototype, strategy, and_open);
   else
     return NULL;
 }
 
 /**
- Callback for all menu items.
+ Callback for all non-widget menu items.
  */
 static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_group())
-    t = ((Fl_Type*)v)->make(kAddAsLastChild);
+  if (Fl_Type::current && Fl_Type::current->can_have_children())
+    t = ((Fl_Type*)v)->make(Strategy::AS_LAST_CHILD);
   else
-    t = ((Fl_Type*)v)->make(kAddAfterCurrent);
+    t = ((Fl_Type*)v)->make(Strategy::AFTER_CURRENT);
   select_only(t);
 }
 
 /**
- Callback for all menu items.
+ Callback for all widget menu items.
+
+ \param[in] v cast to Fl_Type to get the prototype of the type that the user
+    wants to create.
  */
 static void cb(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
-  if (Fl_Type::current && Fl_Type::current->is_group())
-    t = add_new_widget_from_user((Fl_Type*)v, kAddAsLastChild);
+  if (Fl_Type::current && Fl_Type::current->can_have_children())
+    t = add_new_widget_from_user((Fl_Type*)v, Strategy::AS_LAST_CHILD);
   else
-    t = add_new_widget_from_user((Fl_Type*)v, kAddAfterCurrent);
+    t = add_new_widget_from_user((Fl_Type*)v, Strategy::AFTER_CURRENT);
   select_only(t);
 }
 
+/**
+ \note Make sure that this menu stays synchronized to `Fl_Type *known_types[]`
+    defined further up in this file.
+ */
 Fl_Menu_Item New_Menu[] = {
 {"Code",0,0,0,FL_SUBMENU},
   {"Function/Method",0,cbf,(void*)&Fl_Function_type},
@@ -1312,6 +1401,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Scroll_type},
   {0,0,cb,(void*)&Fl_Tile_type},
   {0,0,cb,(void*)&Fl_Wizard_type},
+  {0,0,cb,(void*)&Fl_Grid_type},
 {0},
 {"Buttons",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Button_type},
@@ -1339,7 +1429,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Text_Editor_type},
   {0,0,cb,(void*)&Fl_Text_Display_type},
   {0,0,cb,(void*)&Fl_File_Input_type},
-  {0,0,cb,(void*)&Fl_Simple_Terminal_type},
+  {0,0,cb,(void*)&Fl_Terminal_type},
 {0},
 {"Menus",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Menu_Bar_type},
@@ -1396,6 +1486,11 @@ static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
   }
 }
 
+/**
+ Create the labels and icons for the `New_Menu` array.
+
+ Names and icons are taken from the referenced prototypes.
+ */
 void fill_in_New_Menu() {
   for (unsigned i = 0; i < sizeof(New_Menu)/sizeof(*New_Menu); i++) {
     Fl_Menu_Item *m = New_Menu+i;
@@ -1448,12 +1543,10 @@ Fl_Type *typename_to_prototype(const char *inName)
  add_new_widget_from_user(const char*, int)
 */
 Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
-  reading_file = 1; // makes labels be null
   Fl_Type *prototype = typename_to_prototype(inName);
   if (!prototype)
     return NULL;
   Fl_Type *new_node = prototype->make(strategy);
-  reading_file = 0;
   return new_node;
 }
 

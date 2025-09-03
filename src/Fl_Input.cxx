@@ -1,7 +1,7 @@
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,11 +38,25 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Multiline_Output.H>
 #include <FL/Fl_Secret_Input.H>
+#include <FL/Fl_Menu_Item.H>
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
 
+/** [this text may be customized at run-time] */
+const char *Fl_Input::cut_menu_text = "Cut";
+/** [this text may be customized at run-time] */
+const char *Fl_Input::copy_menu_text = "Copy";
+/** [this text may be customized at run-time] */
+const char *Fl_Input::paste_menu_text = "Paste";
+
+static Fl_Menu_Item rmb_menu[] = {
+  { NULL, 0, NULL, (void*)1 },
+  { NULL, 0, NULL, (void*)2 },
+  { NULL, 0, NULL, (void*)3 },
+  { NULL }
+};
 
 void Fl_Input::draw() {
   if (input_type() == FL_HIDDEN_INPUT) return;
@@ -306,13 +320,30 @@ int Fl_Input::kf_copy_cut() {
   class. It handles compose key sequences and can also be used e.g. in
   Fl_Multiline_Input, Fl_Float_Input and several more derived classes.
 
-  The details are way too complicated to be documented here and can be
-  changed as required. If in doubt, please consult the source code.
+  The method first checks in Fl::compose if the keystroke is a text entry or
+  a control key. If it is text, the method inserts the composed characters into
+  the input field, taking into account the input type (e.g., numeric fields).
+
+  If the keystroke is a control key as determined by Fl::compose, the method
+  handles key combinations for Insert, Enter, and Tab depending on the
+  widget's input_type().
+
+  The method then checks for Ctrl key combinations, such as Ctrl-A, Ctrl-C,
+  Ctrl-V, Ctrl-X, and Ctrl-Z, which are commonly used for select all, copy,
+  paste, cut, and undo operations.
+
+  Finally, the method checks for ASCII control characters, such as Ctrl-H,
+  Ctrl-I, Ctrl-J, Ctrl-L, and Ctrl-M, which can be used to insert literal
+  control characters into the input field.
+
+  If none of the above cases match, the method returns 0, indicating that the
+  keystroke was not handled.
 
   \returns  1 if the keystroke is handled by us, 0 if not.
 */
 int Fl_Input::handle_key() {
 
+  // This is unicode safe: only character codes < 128 are queried
   char ascii = Fl::event_text()[0];
 
   int del;
@@ -440,8 +471,14 @@ int Fl_Input::handle_key() {
       if (mods==FL_COMMAND) return kf_copy_cut();               // Ctrl-X, Mac:Meta-X             (Standard/OSX-HIG)
       break;
     case 'z':
-      if (mods==FL_COMMAND && !shift) return kf_undo();         // Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
-      if (mods==FL_COMMAND && shift)  return kf_redo();         // Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
+      if (mods==FL_COMMAND && !shift) {                         // Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
+        if (!kf_undo()) fl_beep();
+        return 1;
+      }
+      if (mods==FL_COMMAND && shift) {                          // Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
+        if (!kf_redo()) fl_beep();
+        return 1;
+      }
       break;                                                    // handle other combos elsewhere
   }
 
@@ -460,6 +497,79 @@ int Fl_Input::handle_key() {
   }
 
   return 0;             // ignored
+}
+
+/** \internal
+ Simple function that determines if a character is a whitespace.
+ \todo This function is not UTF-8-aware.
+ */
+static int fltk__isspace(char c) {
+  return (c&128 || isspace(c));
+}
+
+/** Handle right mouse button down events.
+ \return 1
+ */
+int Fl_Input::handle_rmb() {
+  if (Fl::event_button() == FL_RIGHT_MOUSE) {
+    // on right mouse button, pop up a Cut/Copy/Paste menu
+    int newpos, oldpos = insert_position(), oldmark = mark();
+    Fl_Boxtype b = box();
+    Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+                            w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
+    newpos = insert_position();
+    if (   ((oldpos < newpos) && (oldmark > newpos))
+        || ((oldmark < newpos) && (oldpos > newpos))
+        || (type() == FL_SECRET_INPUT)) {
+      // if the user clicked inside an existing selection, keep
+      // the selection
+      insert_position(oldpos, oldmark);
+    } else {
+      if ((index(newpos) == 0) || (index(newpos) == '\n')) {
+        // if clicked to the right of the line or text end, clear the
+        // selection and set the cursor at the end of the line
+        insert_position(newpos, newpos);
+      } else if (fltk__isspace(index(newpos))) {
+        // if clicked into a whitespace, select the entire whitespace
+        oldpos = newpos;
+        while (oldpos > 0 && fltk__isspace(index(oldpos-1))) oldpos--;
+        oldmark = newpos+1;
+        while (oldmark < size() && fltk__isspace(index(oldmark))) oldmark++;
+        insert_position(oldpos, oldmark);
+      } else {
+        // if clicked on a word, select the entire word
+        insert_position(word_start(newpos), word_end(newpos));
+      }
+    }
+    // keep the menu labels current
+    rmb_menu[0].label(Fl_Input::cut_menu_text);
+    rmb_menu[1].label(Fl_Input::copy_menu_text);
+    rmb_menu[2].label(Fl_Input::paste_menu_text);
+    // give only the menu options that make sense
+    if (readonly()) {
+      rmb_menu[0].deactivate(); // cut
+      rmb_menu[2].deactivate(); // paste
+    } else {
+      rmb_menu[0].activate(); // cut
+      rmb_menu[2].activate(); // paste
+    }
+    // pop up the menu
+    fl_cursor(FL_CURSOR_DEFAULT);
+    const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
+    if (mi) switch (mi->argument()) {
+      case 1:
+        if (type() != FL_SECRET_INPUT) kf_copy_cut();
+        break;
+      case 2:
+        if (type() != FL_SECRET_INPUT) kf_copy();
+        break;
+      case 3:
+        kf_paste();
+        break;
+    }
+  }
+
+  return 1;
 }
 
 int Fl_Input::handle(int event) {
@@ -520,7 +630,7 @@ int Fl_Input::handle(int event) {
       //NOTREACHED
 
     case FL_PUSH:
-      if (Fl::dnd_text_ops()) {
+      if (Fl::dnd_text_ops() && (Fl::event_button() != FL_RIGHT_MOUSE)) {
         int oldpos = insert_position(), oldmark = mark();
         Fl_Boxtype b = box();
         Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
@@ -528,7 +638,7 @@ int Fl_Input::handle(int event) {
         newpos = insert_position();
         insert_position( oldpos, oldmark );
         if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
-           ( (newpos >= mark() && newpos < insert_position()) ||
+            ( (newpos >= mark() && newpos < insert_position()) ||
              (newpos >= insert_position() && newpos < mark()) ) ) {
           // user clicked in the selection, may be trying to drag
           drag_start = newpos;
@@ -541,6 +651,11 @@ int Fl_Input::handle(int event) {
         Fl::focus(this);
         handle(FL_FOCUS);
       }
+
+      if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        return handle_rmb();
+      }
+
       break;
 
     case FL_DRAG:
@@ -560,9 +675,11 @@ int Fl_Input::handle(int event) {
       break;
 
     case FL_RELEASE:
-      if (Fl::event_button() == 2) {
+      if (Fl::event_button() == FL_MIDDLE_MOUSE) {
         Fl::event_is_click(0); // stop double click from picking a word
         Fl::paste(*this, 0);
+      } else if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        return 1;
       } else if (!Fl::event_is_click()) {
         // copy drag-selected text to the clipboard.
         copy(0);

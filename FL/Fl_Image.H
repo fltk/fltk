@@ -259,7 +259,7 @@ public:
 
     \note Since FLTK 1.4.0 this method is 'const'. If you derive your own class
       from Fl_Image or any subclass your overridden methods of 'Fl_Image::copy() const'
-      and 'Fl_Image::copy(int, int) const' \b must also be 'const' for inheritage
+      and 'Fl_Image::copy(int, int) const' \b must also be 'const' for inheritance
       to work properly. This is different than in FLTK 1.3.x and earlier where these
       methods have not been 'const'.
   */
@@ -369,6 +369,8 @@ public:
   void label(Fl_Widget*w) FL_OVERRIDE;
   void label(Fl_Menu_Item*m) FL_OVERRIDE;
   void uncache() FL_OVERRIDE;
+  int cache_w() {return cache_w_;}
+  int cache_h() {return cache_h_;}
   /** Sets the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
 
    The image size in bytes of an Fl_RGB_Image object is the value of the product w() * h() * d().

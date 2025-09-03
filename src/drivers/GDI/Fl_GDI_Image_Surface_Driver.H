@@ -26,6 +26,12 @@ class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
 public:
   HWND pre_window;
   int _savedc;
+  void mask(const Fl_RGB_Image *) FL_OVERRIDE;
+  struct shape_data_type {
+    HBITMAP background;
+    uchar *vBits;
+    Fl_RGB_Image* mask;
+  } *shape_data_;
   Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_GDI_Image_Surface_Driver();
   void set_current() FL_OVERRIDE;

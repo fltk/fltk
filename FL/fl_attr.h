@@ -1,7 +1,7 @@
 /*
  * Function attribute declarations for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2023 by Bill Spitzak and others.
+ * Copyright 1998-2024 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -60,6 +60,19 @@
 
 
 #else /* FL_DOXYGEN */
+
+// If FL_NO_DEPRECATED is defined FLTK 1.4 can compile 1.3.x code without
+// issuing several "deprecated" warnings (1.3 "compatibility" mode).
+// FL_DEPRECATED will be defined as a no-op.
+
+// If FL_NO_DEPRECATED is not defined (default) FLTK 1.4 will issue several
+// "deprecated" warnings depending on the compiler in use: FL_DEPRECATED
+// will be defined according to the capabilities of the compiler (below).
+// The definition below this comment must match the one at the end of this file.
+
+#if defined(FL_NO_DEPRECATED)
+#define FL_DEPRECATED(msg, func) func
+#endif
 
 #ifdef __cplusplus
 
@@ -146,7 +159,7 @@
 
 // -- nothing yet --
 
-#endif // __clang__
+#endif /* __clang__ */
 
 
 /*
@@ -162,19 +175,19 @@
 #define __fl_attr(x) __attribute__ (x)
 #endif
 
-#if FL_GCC_VERSION > 40500 // gcc 4.5.0
+#if FL_GCC_VERSION > 40500 /* gcc 4.5.0 */
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated(msg)))
 #endif
-#endif // gcc 4.5.0
+#endif /* gcc 4.5.0 */
 
-#if FL_GCC_VERSION > 30100 // gcc 3.1.0
+#if FL_GCC_VERSION >= 30400 /* gcc 3.4.0 */
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated))
 #endif
-#endif // gcc 3.1.0
+#endif /* gcc 3.4.0 */
 
-#endif // __GNUC__
+#endif /* __GNUC__ */
 
 
 /*

@@ -134,9 +134,9 @@ and
 
 Back in the _CMake_ main window, click _Configure_, select _Xcode_ as the generator and
 click _Done_. _CMake_ will now analyse your system and find tools and dependencies. When
-done, the upper list field in _CMake_ will show CMAKE, FLTK, and OPTION. Open the OPTION
-field and find the entries OPTION_USE_SYSTEM_LIBJPEG and OPTION_USE_SYSTEM_LIBPNG,
-and disable both for maximum compatibility with other macOS installation.
+done, the upper list field in _CMake_ will show CMAKE and FLTK. Open the FLTK field and
+adjust options if you like. Note that the bundled image libraries are built by default.
+Further options are available under the CMAKE field.
 
 Finally, click _Generate_ to generate the _Xcode_ IDE file.
 
@@ -246,11 +246,11 @@ Now configure your FLTK installation:
 
 ```bash
 cmake -G "Unix Makefiles" \
-    -D OPTION_USE_SYSTEM_LIBJPEG=Off \
-    -D OPTION_USE_SYSTEM_ZLIB=Off \
-    -D OPTION_USE_SYSTEM_LIBPNG=Off \
+    -D CMAKE_BUILD_TYPE=Debug \
     ../..
 ```
+
+Replace 'Debug' with 'Release' if you want to build a release version.
 
 _CMake_ runs a number of tests to find external headers, libraries, and tools.
 The configuration summary should not show any errors. You can now continue to build FLTK.
@@ -358,7 +358,7 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 After a few minutes, we can now build and install all other tools from one simple command:
 
 ```bash
-brew install autoconf automake
+brew install autoconf
 ```
 
 Alternatively, _autoconf_ can be installed without _brew_ as follows :
@@ -382,7 +382,8 @@ You will need to clone the repository to check out the source code onto your mac
 has the great benefit that the source code can be updated later simply by telling _git_ to
 _pull_ the newest release.
 
-Weekly snapshots ("tarballs") can be downloaded from https://www.fltk.org/software.php .
+As an alternative weekly snapshots ("tarballs") can be downloaded from
+https://www.fltk.org/software.php .
 
 Start your terminal. If you have not set up a developer directory yet, I recommend to use
 `~/dev` and put all your projects there:
@@ -534,4 +535,3 @@ to the Info.plist file you have prepared.
 - Dec 28 2018 - Matt: complete rework for FLTK 1.4
 - Mar 01 2021 - Albrecht: minor updates, macOS Big Sur and Apple Silicon M1 (ARM)
 - Feb 23 2022 - Manolo: install autoconf without brew
-

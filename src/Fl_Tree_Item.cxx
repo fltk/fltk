@@ -9,6 +9,7 @@
 #include <FL/Fl_Tree_Prefs.H>
 #include <FL/Fl_Tree.H>
 #include <FL/fl_string_functions.h>
+#include "Fl_System_Driver.H"
 
 //////////////////////
 // Fl_Tree_Item.cxx
@@ -137,8 +138,8 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
 void Fl_Tree_Item::show_self(const char *indent) const {
   const char *thelabel = label() ? label() : "(NULL)";
   printf("%s-%s (%d children, this=%p, parent=%p, prev=%p, next=%p, depth=%d)\n",
-         indent,thelabel,children(),(void*)this, (void*)_parent,
-         _prev_sibling, _next_sibling, depth());
+         indent, thelabel, children(), (void*)this, (void*)_parent,
+         (void*)_prev_sibling, (void*)_next_sibling, depth());
   if ( children() ) {
     char *i2 = new char [strlen(indent)+3]; // 2 + nul byte
     strcpy(i2, indent);
@@ -399,6 +400,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs,
   \see Fl_Tree::insert()
 */
 Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos) {
+  (void) prefs;                 // quiet warnings unused params
   Fl_Tree_Item *item = new Fl_Tree_Item(_tree);
   item->label(new_label);
   item->_parent = this;
@@ -703,7 +705,8 @@ int Fl_Tree_Item::swap_children(Fl_Tree_Item *a, Fl_Tree_Item *b) {
   return(0);
 }
 
-/// Internal: Horizontal connector line based on preference settings.
+/// Horizontal connector line based on preference settings.
+/// This method can be overridden to implement custom connection line drawing.
 /// \param[in] x1 The left hand X position of the horizontal connector
 /// \param[in] x2 The right hand X position of the horizontal connector
 /// \param[in] y  The vertical position of the horizontal connector
@@ -713,13 +716,11 @@ void Fl_Tree_Item::draw_horizontal_connector(int x1, int x2, int y, const Fl_Tre
   fl_color(prefs.connectorcolor());
   switch ( prefs.connectorstyle() ) {
     case FL_TREE_CONNECTOR_SOLID:
-      y |= 1;                           // force alignment w/dot pattern
       fl_line(x1,y,x2,y);
       return;
     case FL_TREE_CONNECTOR_DOTTED:
     {
-      y  |= 1;                          // force alignment w/dot pattern
-      x1 |= 1;
+      x1 |= 1;                          // force alignment w/dot pattern
       for ( int xx=x1; xx<=x2; xx+=2 ) {
         fl_point(xx, y);
       }
@@ -730,7 +731,8 @@ void Fl_Tree_Item::draw_horizontal_connector(int x1, int x2, int y, const Fl_Tre
   }
 }
 
-/// Internal: Vertical connector line based on preference settings.
+/// Vertical connector line based on preference settings.
+/// This method can be overridden to implement custom connection line drawing.
 /// \param[in] x     The x position of the vertical connector
 /// \param[in] y1    The top of the vertical connector
 /// \param[in] y2    The bottom of the vertical connector
@@ -800,32 +802,11 @@ Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) 
          static_cast<const Fl_Tree_Item &>(*this).find_clicked(prefs, yonly)));
 }
 
-static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y, int W, int H) {
-  // Pasted from Fl_Widget::draw_focus(); we don't have access to this method
-  if (!Fl::visible_focus()) return;
-  switch (B) {
-    case FL_DOWN_BOX:
-    case FL_DOWN_FRAME:
-    case FL_THIN_DOWN_BOX:
-    case FL_THIN_DOWN_FRAME:
-      X ++;
-      Y ++;
-    default:
-      break;
-  }
-  X += Fl::box_dx(B);
-  Y += Fl::box_dy(B);
-  W -= Fl::box_dw(B)+1;
-  H -= Fl::box_dh(B)+1;
-  fl_color(fl_contrast(fg, bg));
-  fl_focus_rect(X, Y, W, H);
-}
-
 /// Return the item's 'visible' height. Takes into account the item's:
 ///    - visibility (if !is_visible(), returns 0)
 ///    - labelfont() height: if label() != NULL
 ///    - widget() height: if widget() != NULL
-///    - openicon() height (if not NULL)
+///    - openicon() height (if has children)
 ///    - usericon() height (if not NULL)
 /// Does NOT include Fl_Tree::linespacing();
 /// \returns maximum pixel height
@@ -842,8 +823,8 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
        H < widget()->h()) {
     H = widget()->h();
   }
-  if ( has_children() && prefs.openicon() && H<prefs.openicon()->h() )
-    H = prefs.openicon()->h();
+  if ( has_children() && H < prefs.openicon_h() )
+    H = prefs.openicon_h();
   if ( usericon() && H<usericon()->h() )
     H = usericon()->h();
   return(H);
@@ -1010,14 +991,14 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
   //   Note: calculate collapse icon's xywh for possible mouse click detection.
   //   We don't care about items clipped off the viewport; they won't get mouse events.
   //
-  int item_y_center = Y+(H/2);
-  _collapse_xywh[2] = prefs.openicon()->w();
+  int item_y_center = (Y+(H/2))|1;      // |1: force alignment w/dot pattern
+  _collapse_xywh[2] = prefs.openicon_w();
   int &icon_w = _collapse_xywh[2];
   _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
   int &icon_x = _collapse_xywh[0];
-  _collapse_xywh[1] = item_y_center - (prefs.openicon()->h()/2);
+  _collapse_xywh[1] = item_y_center - prefs.openicon_h()/2;
   int &icon_y = _collapse_xywh[1];
-  _collapse_xywh[3] = prefs.openicon()->h();
+  _collapse_xywh[3] = prefs.openicon_h();
 
   // Horizontal connector values
   //   Must calculate these even if(clipped) because 'draw children' code (below)
@@ -1084,10 +1065,8 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
       if ( (tree()->damage() & ~FL_DAMAGE_CHILD) || !render ) { // non-child damage?
         // Draw connectors
         if ( render && prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
-          // Horiz connector between center of icon and text
-          // if this is root, the connector should not dangle in thin air on the left
-          if (is_root()) draw_horizontal_connector(hconn_x_center, hconn_x2, item_y_center, prefs);
-          else           draw_horizontal_connector(hconn_x, hconn_x2, item_y_center, prefs);
+          // Horiz connector to center of icon
+          draw_horizontal_connector(hconn_x, hconn_x_center, item_y_center, prefs);
           // Small vertical line down to children
           if ( has_children() && is_open() )
             draw_vertical_connector(hconn_x_center, item_y_center, Y+H2, prefs);
@@ -1101,11 +1080,19 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
         if ( render && has_children() && prefs.showcollapse() ) {
           // Draw icon image
           if ( is_open() ) {
-            if ( active ) prefs.closeicon()->draw(icon_x,icon_y);
-            else          prefs.closedeicon()->draw(icon_x,icon_y);
+            if ( prefs.closeicon() ) {
+              if ( active ) prefs.closeicon()->draw(icon_x, icon_y);
+              else          prefs.closedeicon()->draw(icon_x, icon_y);
+            } else {
+              Fl::system_driver()->tree_draw_expando_button(icon_x, icon_y, false, active);
+            }
           } else {
-            if ( active ) prefs.openicon()->draw(icon_x,icon_y);
-            else          prefs.opendeicon()->draw(icon_x,icon_y);
+            if ( prefs.openicon() ) {
+              if ( active ) prefs.openicon()->draw(icon_x, icon_y);
+              else          prefs.opendeicon()->draw(icon_x, icon_y);
+            } else {
+              Fl::system_driver()->tree_draw_expando_button(icon_x, icon_y, true, active);
+            }
           }
         }
         // Draw user icon (if any)
@@ -1137,7 +1124,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
            Fl::visible_focus() &&
            Fl::focus() == tree() &&
            prefs.selectmode() != FL_TREE_SELECT_NONE ) {
-        draw_item_focus(FL_NO_BOX,fg,bg,label_x()+1,label_y()+1,label_w()-1,label_h()-1);
+        fl_draw_box_focus(FL_NO_BOX, label_x()+1, label_y()+1, label_w()-1, label_h()-1, fg, bg);
       }
     }                   // end drawthis
   }                     // end clipped
@@ -1159,11 +1146,34 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
       Y += prefs.openchild_marginbottom();              // offset below open child tree
     }
     if ( ! lastchild ) {
-      // Special 'clipped' calculation. (intentional variable shadowing)
-      int is_clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
-                       ((child_y_start > tree_bot) && (Y > tree_bot));
-      if (render && !is_clipped )
-        draw_vertical_connector(hconn_x, child_y_start, Y, prefs);
+      // Draw vertical connector between this item and the bottom of its children.
+      //
+      //           o Aaa            <- Item we're drawing has >20k children.
+      //   ytop →  :  :.. 0001
+      //           :  :.. 0002
+      //           :  :       } ~20k items
+      //           :  :.. 19998
+      //        ┌──:──:.. 19999 ──┐
+      //        │  :  :.. 20000   │
+      //        │  :  :.. 20001   │ <- visible screen
+      //        │  :  :.. 20002   │    area
+      //        └──:──:.. 20003 ──┘
+      //           :  :.. 20004
+      //           :
+      //   ybot →  :  ← we're drawing this long vertical connector
+      //           :
+      //           o Bbb
+      //
+      int ytop = child_y_start;
+      int ybot = Y;
+      int is_clipped = ((ytop < tree_top) && (ybot < tree_top)) ||   // completely off top of scrn? clip
+                       ((ytop > tree_bot) && (ybot > tree_bot));     // completely off bot of scrn? clip
+      if (render && !is_clipped ) {
+        // Clip vert line to within screen area
+        ytop = (ytop < tree_top) ? tree_top : ytop;
+        ybot = (ybot > tree_bot) ? tree_bot : ybot;
+        draw_vertical_connector(hconn_x, ytop, ybot, prefs);
+      }
     }
   }
 }
@@ -1206,11 +1216,13 @@ int Fl_Tree_Item::event_on_user_icon(const Fl_Tree_Prefs &prefs) const {
 
 /// Was event anywhere on the item?
 int Fl_Tree_Item::event_on_item(const Fl_Tree_Prefs &prefs) const {
-    return(event_inside(_xywh) ? 1 : 0);
+  (void) prefs;       // quiet warnings unused params
+  return(event_inside(_xywh) ? 1 : 0);
 }
 
 /// Was event on the label() of this item?
 int Fl_Tree_Item::event_on_label(const Fl_Tree_Prefs &prefs) const {
+  (void) prefs;       // quiet warnings unused params
   if ( is_visible() && is_active() ) {
     return(event_inside(_label_xywh) ? 1 : 0);
   } else {
@@ -1449,9 +1461,9 @@ Fl_Tree_Item *Fl_Tree_Item::prev_displayed(Fl_Tree_Prefs &prefs) {
 /// See if item and all its parents are open() and visible().
 /// \returns
 ///    1 -- item and its parents are open() and visible()
-///    0 -- item (or one of its parents) are invisible or close()ed.
+///    0 -- item or one of its parents are either not visible() or close()ed.
 ///
-int Fl_Tree_Item::visible_r() const {
+int Fl_Tree_Item::is_visible_r() const {
   if ( !visible() ) return(0);
   for (const Fl_Tree_Item *p=parent(); p; p=p->parent())// move up through parents
     if (!p->visible() || p->is_close()) return(0);      // any parent not visible or closed?

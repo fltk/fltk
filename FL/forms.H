@@ -1,7 +1,7 @@
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,7 +47,8 @@ typedef Fl_Window FL_FORM;
 #define FL_CANCEL       0
 #define FL_INVALID      0
 #define FL_IGNORE       -1
-//#define FL_CLOSE      -2 // this variable is never used in FLTK Forms. It is removed becaus it conflicts with the window FL_CLOSE event
+// #define FL_CLOSE     -2 // this variable is never used in FLTK Forms. It is removed
+                           // because it conflicts with the window FL_CLOSE event
 
 #define FL_LCOL         FL_BLACK
 #define FL_COL1         FL_GRAY

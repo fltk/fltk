@@ -2,22 +2,20 @@
 
  \page preface Preface
 
-This manual describes the Fast Light Tool Kit ("FLTK")
-version 1.4.0, a C++ Graphical User Interface
-("GUI") toolkit for UNIX, Microsoft Windows and Apple OS X.
+This manual describes the Fast Light Tool Kit ("FLTK") version 1.4.4,
+a C++ Graphical User Interface ("GUI") toolkit for UNIX, Microsoft Windows,
+and Apple macOS.
 
-Version 1.4.0 introduces support for a new windowing system
-under Linux/Unix: Wayland. FLTK applications under Linux/Unix
-run, unchanged, as Wayland or X11 clients depending on what's
-available at run-time.
+Version 1.4.0 introduced support for a new windowing system under
+Linux/Unix: Wayland. FLTK applications under Linux/Unix run unchanged
+as Wayland or X11 clients depending on availability at run-time.
 
 Each of the chapters in this manual is designed as a tutorial for
 using FLTK, while the appendices provide a convenient reference
-for all FLTK widgets, functions, and operating system
-interfaces.
+for all FLTK widgets, functions, and operating system interfaces.
 
 <B>This manual may be printed, modified, and/or used under
-the terms of the FLTK license provided in \ref license.</B>
+the terms of the FLTK license provided in: \ref license.</B>
 
 \section preface_organisation Organization
 
@@ -31,7 +29,6 @@ This manual is organized into the following chapters and appendices:
 \li \ref events
 \li \ref subclassing
 \li \ref opengl
-\li \ref fluid
 \li \ref fltk-options
 \li \ref advanced
 \li \ref unicode
@@ -47,7 +44,7 @@ This manual is organized into the following chapters and appendices:
 \section preface_conventions Conventions
 
 This manual was generated using Doxygen
-(see http://www.doxygen.org/)
+(see https://www.doxygen.org/)
 to process the source code itself, special comments in the code,
 and additional documentation files.
 In general, Doxygen recognizes and denotes the following entities as shown:
@@ -55,7 +52,7 @@ In general, Doxygen recognizes and denotes the following entities as shown:
 - methods, such as Fl_Widget::callback(Fl_Callback* cb, void* p),
 - functions, such as fl_draw(const char *str, int x, int y),
 - internal links, such as \ref preface_conventions,
-- external links, such as http://www.stack.nl/~dimitri/doxygen/
+- external links, such as https://www.fltk.org/.
 
 Other code samples and commands are shown in <tt>regular courier type</tt>.
 
@@ -69,16 +66,16 @@ The X Window System version 11.
 \par Xlib
 The X Window System interface library.
 
-\par MS Windows, <tt>WIN32</tt>
+\par Windows, <tt>WIN32</tt>
 The Microsoft Windows Application Programmer's Interface for Windows 2000,
 Windows XP, Windows Vista, Windows 7 and later Windows versions.
 FLTK uses the preprocessor definition <tt>_WIN32</tt> for the 32 bit
-and 64 bit MS Windows API.
+and 64 bit Windows API.
 
-\par OS X, <tt>__APPLE__</tt>
-The Apple desktop operating sytem OS X 10.0 and later. MacOS 8 and 9 support
+\par macOS (aka Mac OS X), <tt>__APPLE__</tt>
+The Apple desktop operating sytem macOS 10.0 and later. MacOS 8 and 9 support
 was dropped after FLTK 1.0.10. FLTK uses the preprocessor definition
-<tt>__APPLE__</tt> for OS X.
+<tt>\__APPLE__</tt> for macOS.
 
 \section preface_copyrights Copyrights and Trademarks
 
@@ -89,7 +86,7 @@ License with 4 exceptions, located in \ref license.
 UNIX is a registered trademark of the X Open Group, Inc.
 Microsoft and Windows are registered trademarks of Microsoft
 Corporation. OpenGL is a registered trademark of Silicon
-Graphics, Inc. Apple, Macintosh, MacOS, and Mac OS X are
+Graphics, Inc. Apple, Macintosh, MacOS, macOS, and Mac OS X are
 registered trademarks of Apple Computer, Inc.
 
 

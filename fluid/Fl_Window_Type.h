@@ -1,5 +1,5 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Window type header file for the Fast Light Tool Kit (FLTK).
 //
 // Type for creating all subclasses of Fl_Widget
 // This should have the widget pointer in it, but it is still in the
@@ -72,7 +72,7 @@ protected:
   Fl_Widget_Type *_make() FL_OVERRIDE {return 0;} // we don't call this
   Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return 0;}
   int recalc;           // set by fix_overlay()
-  void moveallchildren();
+  void moveallchildren(int key=0);
   ID id() const FL_OVERRIDE { return ID_Window; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Window) ? true : super::is_a(inID); }
   void open_();
@@ -113,8 +113,7 @@ public:
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
 
-  int is_parent() const FL_OVERRIDE {return 1;}
-  int is_group() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
 
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
@@ -149,7 +148,7 @@ public:
   const char *type_name() FL_OVERRIDE {return "widget_class";}
   ID id() const FL_OVERRIDE { return ID_Widget_Class; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_class() const FL_OVERRIDE {return 1;}

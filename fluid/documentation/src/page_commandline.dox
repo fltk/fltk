@@ -1,0 +1,124 @@
+/**
+
+ \page page_commandline Command Line
+
+ \tableofcontents
+
+ FLUID can be used in interactive and in command line mode. If launched with
+ `-c`, followed by a project filename, FLUID will convert the project file
+ into C++ source files without ever opening a window (or opening an X11 server
+ connection under Linux/X11). This makes FLUID a great command line tool
+ for build processes with complex project files that reference
+ external resources. For example, an image referenced by a `.fl` file can be
+ modified and recompiled into the application binary without the need to reload
+ it in an interactive FLUID session.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section commandline_options Command Line Options
+
+ To launch FLUID in interactive mode from the command line, you can give it an
+ optional name of a project file. If no name is given, it will launch with an
+ empty project, or with the last open project, if so selected in the
+ application setting dialog.
+
+ The ampersand `&` is optional on Linux machines and lets FLUID run in its
+ own new process, giving the shell back to the caller.
+
+ ```
+ fluid filename.fl &
+ ```
+
+If the file does not exist you will get an error pop-up, but if you dismiss it
+you will be editing a blank file of that name.
+
+FLUID understands all of the standard FLTK switches before the filename:
+
+```
+-display host:n.n
+-geometry WxH+X+Y
+-title windowtitle
+-name classname
+-iconic
+-fg color
+-bg color
+-bg2 color
+-scheme schemename
+```
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section commandline_passive Compile Tool Options
+
+FLUID can also be called as a command-line only tool to create
+the `.cxx` and `.h` file from a `.fl` file directly. To do this type:
+
+```
+fluid -c filename.fl
+```
+
+This is the same as the menu __File > Write Code...__ .
+It will read the `filename.fl` file and write
+`filename.cxx` and `filename.h`. Any leading
+directory on `filename.fl` will be stripped, so they are
+always written to the current directory. If there are any errors
+reading or writing the files, FLUID will print the error and
+exit with a non-zero code. You can use the following lines in a
+Makefile to automate the creation of the source and header
+files:
+
+```
+my_panels.h my_panels.cxx: my_panels.fl
+        fluid -c my_panels.fl
+```
+
+Most versions of "make" support rules that cause `.fl` files to be compiled:
+
+```
+.SUFFIXES: .fl .cxx .h
+.fl.h .fl.cxx:
+        fluid -c $<
+```
+
+Check `README.CMake.txt` for examples on how to integrate FLUID into the
+`CMake` build process.
+
+If you use
+
+\code
+fluid -cs filename.fl
+\endcode
+
+FLUID will also write the "strings" for internationalization into the file
+'filename.txt', 'filename.po', or 'filename.msg', depending on the chosen type
+of i18n (menu: 'File/Write Strings...').
+
+Finally there is another option which is useful for program developers
+who have many `.fl` files and want to upgrade them to the current FLUID
+version. FLUID will read the `filename.fl` file, save it, and exit
+immediately. This writes the file with current syntax and options and
+the current FLTK version in the header of the file. Use
+
+```
+fluid -u filename.fl
+```
+
+to 'upgrade' `filename.fl` . You may combine this with `-c` or `-cs`.
+
+\note All these commands overwrite existing files w/o warning. You should
+particularly take care when running `fluid -u` since this overwrites the
+original `.fl` project file.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section commandline_windows Windows Specifics
+
+ FLTK uses Linux-style forward slashes to separate path segments in file names.
+ When running on Windows, FLUID will understand Microsoft drive names and
+ backward slashes as path separators and convert them internally into
+ forward slashes.
+
+ Under Windows, binaries can only be defined either as command line tools, or
+ as interactive apps. FLTK generates two almost identical binaries under
+ Windows. `fluid.exe` is meant to be used in interactive mode, and
+ `fluid-cmd.exe` is generated for the command line. Both tools do exactly the
+ same thing, except `fluid-cmd.exe` can use stdio to output error messages.
+
+*/

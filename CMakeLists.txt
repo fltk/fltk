@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 #
 
 #######################################################################
-# Set CMake minimum version first: must be before `project()`
+# Set CMake minimum version first: must be set before `project()`
 #######################################################################
 
 # Minimum CMake version required by FLTK 1.4
@@ -25,97 +25,110 @@
 #         at least CMake 3.12.0
 # Note 2: Used in fluid since 05/2023,
 #         used for Windows (MSVC) shared lib builds much earlier
+# Note 3: More modern CMake features require 3.13...3.15 (Nov 2023)
 
-cmake_minimum_required (VERSION 3.12.0 FATAL_ERROR) # 05/2023
+cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
-#######################################################################
-
-# Use "legacy mode" of FindOpenGL (avoid CMake developer warning).
-# Note: we're using FindOpenGL with `OPENGL_LIBRARIES` and not (yet)
-# the `OpenGL::GL` target. This may be changed in the future.
-# See https://cmake.org/cmake/help/latest/policy/CMP0072.html
-# Update Feb 28, 2021: To avoid a warning about "OLD" policies we set
-# OpenGL_GL_PREFERENCE directly to "LEGACY" (other option: "GLVND").
-
-# if (POLICY CMP0072)
-#   cmake_policy (SET CMP0072 OLD)
-# endif ()
-
-set (OpenGL_GL_PREFERENCE LEGACY)
+# Since CMake 3.4: enable symbol export from all executable targets
+# cmake_policy(SET CMP0065 OLD)
 
 #######################################################################
 # define the FLTK project and version
 #######################################################################
 
-project (FLTK VERSION 1.4.0)
+project(FLTK VERSION 1.4.4)
 
 #######################################################################
 # include macro and function definitions for general usage
 #######################################################################
 
-include (CMake/fl_debug_var.cmake)
-include (CMake/fl_debug_pkg.cmake)
-include (CMake/fl_add_library.cmake)
-include (CMake/compatibility.cmake)
+include(CMake/fl_debug_var.cmake)
+include(CMake/fl_debug_pkg.cmake)
+include(CMake/fl_add_library.cmake)
 
-if (0)
-  fl_debug_var (FLTK_VERSION_MAJOR)
-  fl_debug_var (FLTK_VERSION_MINOR)
-  fl_debug_var (FLTK_VERSION_PATCH)
-  fl_debug_var (FLTK_VERSION)
-  fl_debug_var (CMAKE_VERSION)
-endif ()
+# right now we don't use compatibility functions
+# include(CMake/compatibility.cmake)
+
+if(0)
+  fl_debug_var(FLTK_VERSION_MAJOR)
+  fl_debug_var(FLTK_VERSION_MINOR)
+  fl_debug_var(FLTK_VERSION_PATCH)
+  fl_debug_var(FLTK_VERSION)
+  fl_debug_var(CMAKE_VERSION)
+endif()
+
+# Set FLTK_VERSION in the cache so user projects can access it,
+# for instance if FLTK is built as a subproject (FetchContent)
+
+set(FLTK_VERSION ${FLTK_VERSION} CACHE STRING "FLTK version" FORCE)
 
 #######################################################################
 # basic setup
 #######################################################################
-include (CMake/setup.cmake)
+include(CMake/setup.cmake)
 
 #######################################################################
 # check for headers, libraries and functions
 #######################################################################
-include (CMake/resources.cmake)
+include(CMake/resources.cmake)
 
 #######################################################################
 # options
 #######################################################################
-include (CMake/options.cmake)
+include(CMake/options.cmake)
+
+#######################################################################
+# Disable automatic code signing on macOS when using Xcode.
+# This *MUST* be done after including CMake/options.cmake.
+# Users can still enable code signing if they have a valid certificate.
+# Details about code signing are beyond the scope of this document.
+#######################################################################
+# FIXME: some of the conditions below may be redundant, and the code
+# below should be improved in a later version.
+#######################################################################
+
+if(APPLE) # AND NOT FLTK_BACKEND_X11 AND CMAKE_GENERATOR STREQUAL "Xcode")
+  if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED)
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED OFF CACHE BOOL
+        "Allow Code Signing when using Xcode")
+  endif()
+endif()
 
 #######################################################################
 # print (debug) several build variables and options
 #######################################################################
 
-set (debug_build 0) # set to 1 to show debug info
+set(debug_build 0) # set to 1 to show debug info
 
-if (debug_build)
-  message ("")
-  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set 'debug_build' to 0 to disable the following info:")
-  fl_debug_var (WIN32)
-  fl_debug_var (MINGW)
-  fl_debug_var (CYGWIN)
-  fl_debug_var (MSVC)
-  fl_debug_var (UNIX)
-  fl_debug_var (APPLE)
-  fl_debug_var (CMAKE_BUILD_TYPE)
-  fl_debug_var (CMAKE_SIZEOF_VOID_P)
-  fl_debug_var (OPTION_OPTIM)
-  fl_debug_var (CMAKE_C_FLAGS)
-  fl_debug_var (CMAKE_CXX_FLAGS)
-  fl_debug_var (CMAKE_EXE_LINKER_FLAGS)
-  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: end of debug_build info.")
-endif (debug_build)
+if(debug_build)
+  message("")
+  message(STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set 'debug_build' to 0 to disable the following info:")
+  fl_debug_var(WIN32)
+  fl_debug_var(MINGW)
+  fl_debug_var(CYGWIN)
+  fl_debug_var(MSVC)
+  fl_debug_var(UNIX)
+  fl_debug_var(APPLE)
+  fl_debug_var(CMAKE_BUILD_TYPE)
+  fl_debug_var(CMAKE_SIZEOF_VOID_P)
+  fl_debug_var(FLTK_OPTION_OPTIM)
+  fl_debug_var(CMAKE_C_FLAGS)
+  fl_debug_var(CMAKE_CXX_FLAGS)
+  fl_debug_var(CMAKE_EXE_LINKER_FLAGS)
+  message(STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: end of debug_build info.")
+endif(debug_build)
 
-unset (debug_build)
+unset(debug_build)
 
 #######################################################################
 # Build a dummy ("empty") Cairo library for backwards compatibility.
-# This should be removed some time after 1.4.0 was released, maybe
-# in FLTK 1.4.1, 1.4.2, 1.5.0, or whatever the next minor release is.
+# This should be removed in the next minor release after 1.4.x, likely
+# in FLTK 1.5.0.
 #######################################################################
 
-if (FLTK_HAVE_CAIRO)
-  add_subdirectory (cairo)
-endif ()
+if(FLTK_HAVE_CAIRO)
+  add_subdirectory(cairo)
+endif()
 
 #######################################################################
 # build the standard FLTK libraries
@@ -124,20 +137,75 @@ endif ()
 add_subdirectory(src)
 
 #######################################################################
-# build fluid
+# MSVC only: build a special object library for shared libs
 #######################################################################
 
-if (FLTK_BUILD_FLUID)
-  add_subdirectory (fluid)
-endif (FLTK_BUILD_FLUID)
+# When linking programs against the shared FLTK libraries we need to
+# compile and link with fl_call_main.c, but this must not be compiled
+# with macro FL_DLL, whereas all the other source file(s) *must* be
+# compiled with macro FL_DLL to link against the shared libs.
+# The latter is ensured by CMake properties of the shared libraries.
+#
+# Solution: build an extra object library with just this one file and
+# link all the "shared" executables additionally against this object
+# library to resolve the symbol 'WinMain()'.
+#
+# The object library is called 'call_main' and is available for fluid,
+# fltk-options, and all test programs that link against shared FLTK
+# libraries when using MSVC (Microsoft Visual Studio).
+#
+#  ;-)  I *love* Visual Studio  ;-)
+
+if(FLTK_BUILD_SHARED_LIBS AND MSVC)
+  add_library(call_main OBJECT EXCLUDE_FROM_ALL src/fl_call_main.c)
+endif()
+
+#######################################################################
+# set CMAKE_INSTALL_RPATH for shared libraries on macOS before
+# building executables. This assumes standard install locations like
+#  - prefix/bin   executable (path part 2) or bundle (path part 3)
+#  - prefix/lib   shared library
+# These RPATH settings are effective when executables and shared libs
+# are *installed*, they don't affect executables in the build folder.
+# Affected executables (when linked against the shared FLTK libs):
+#  - fluid
+#  - fltk-options
+#  - test/* (e.g. games)
+# Note: Path part 1 ("@loader_path") is used to find shared libraries
+#       in the same folder as the executable file (everywhere).
+#######################################################################
+
+if(FLTK_BUILD_SHARED_LIBS AND APPLE AND NOT FLTK_BACKEND_X11)
+  set(CMAKE_INSTALL_RPATH
+      @loader_path
+      @loader_path/../lib
+      @loader_path/../../../../lib)
+endif()
+
+#######################################################################
+# build fluid (optional)
+#######################################################################
+
+set(FLTK_FLUID_EXECUTABLE "")
+
+if(FLTK_BUILD_FLUID)
+  add_subdirectory(fluid)
+endif(FLTK_BUILD_FLUID)
+
+# Set FLTK_FLUID_EXECUTABLE in the cache for user projects.
+# This can be used if FLTK has been built as a subproject.
+
+set(FLTK_FLUID_EXECUTABLE
+    "${FLTK_FLUID_EXECUTABLE}" CACHE STRING
+    "FLTK's 'fluid' executable")
 
 #######################################################################
 # build fltk-options
 #######################################################################
 
-if (FLTK_BUILD_FLTK_OPTIONS)
-  add_subdirectory (fltk-options)
-endif (FLTK_BUILD_FLTK_OPTIONS)
+if(FLTK_BUILD_FLTK_OPTIONS)
+  add_subdirectory(fltk-options)
+endif(FLTK_BUILD_FLTK_OPTIONS)
 
 #######################################################################
 # variables shared by export and install
@@ -146,15 +214,15 @@ endif (FLTK_BUILD_FLTK_OPTIONS)
 # these two would only differ in paths, so common variables are set here
 #######################################################################
 
-include (CMake/variables.cmake)
+include(CMake/variables.cmake)
 
 #######################################################################
 # final config and export
 #######################################################################
 
-include (CMake/export.cmake)
+include(CMake/export.cmake)
 
-configure_file (
+configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/fl_config.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/FL/fl_config.h
   @ONLY
@@ -164,155 +232,180 @@ configure_file (
 # options to build test/demo and example programs
 #######################################################################
 
-if (FLTK_BUILD_TEST)
-  add_subdirectory (test)
-endif (FLTK_BUILD_TEST)
+if(FLTK_BUILD_TEST)
+  add_subdirectory(test)
+endif(FLTK_BUILD_TEST)
 
-if (FLTK_BUILD_EXAMPLES)
-  add_subdirectory (examples)
-endif (FLTK_BUILD_EXAMPLES)
+if(FLTK_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif(FLTK_BUILD_EXAMPLES)
+
+#######################################################################
+# Create and install version config file 'FLTKConfigVersion.cmake'
+#######################################################################
+
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(FLTKConfigVersion.cmake
+  # [VERSION requiredVersion]       # defaults to project version
+  COMPATIBILITY SameMinorVersion
+)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/FLTKConfigVersion.cmake
+  DESTINATION ${FLTK_CONFIG_PATH}
+)
 
 #######################################################################
 # installation
 #######################################################################
 
-include (CMake/install.cmake)
+include(CMake/install.cmake)
 
 #######################################################################
 # Generate Library Export Headers          *** EXPERIMENTAL *** WIP ***
 #######################################################################
 
 # Enable (1) or disable (0) generation of experimental headers (WIP)
-set (GENERATE_EXPORT_HEADERS 0)
+set(GENERATE_EXPORT_HEADERS 0)
 
-if (OPTION_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
+if(FLTK_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
 
-  include (GenerateExportHeader)
+  include(GenerateExportHeader)
 
-  generate_export_header (fltk_SHARED
+  generate_export_header(fltk_SHARED
     BASE_NAME fl
     EXPORT_FILE_NAME FL/fltk_export.h
     STATIC_DEFINE FL_STATIC_LIB
   )
 
-  if (NOT MSVC)
+  if(NOT MSVC)
 
     # Visual Studio builds only one shared lib (DLL)
 
-    generate_export_header (fltk_images_SHARED
+    generate_export_header(fltk_images_SHARED
       BASE_NAME fl_images
       EXPORT_FILE_NAME FL/fltk_images_export.h
       STATIC_DEFINE FL_STATIC_LIB
     )
 
-    generate_export_header (fltk_forms_SHARED
+    generate_export_header(fltk_forms_SHARED
       BASE_NAME fl_forms
       EXPORT_FILE_NAME FL/fltk_forms_export.h
       STATIC_DEFINE FL_STATIC_LIB
     )
 
-    generate_export_header (fltk_gl_SHARED
+    generate_export_header(fltk_gl_SHARED
       BASE_NAME fl_gl
       EXPORT_FILE_NAME FL/fltk_gl_export.h
       STATIC_DEFINE FL_STATIC_LIB
     )
 
-  endif (NOT MSVC)
+  endif(NOT MSVC)
 
-endif (OPTION_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
+endif(FLTK_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
 
 #######################################################################
-# Output Configuration Summary
+# Output Build Configuration Summary
 #######################################################################
 
-include (FeatureSummary)
+include(FeatureSummary)         # CMake Feature Summary
+include(CMake/fl_summary.cmake) # special FLTK summary macros
 
-message ("")
-set (_descr "${PROJECT_NAME} ${FLTK_VERSION} generated by CMake ${CMAKE_VERSION}")
-feature_summary (WHAT ALL DESCRIPTION "Configuration Summary for ${_descr} --\n")
+# CMake Feature Summary
 
-message (STATUS "Static libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
+message("")
+set(_descr "${PROJECT_NAME} ${FLTK_VERSION} generated by CMake ${CMAKE_VERSION}")
+feature_summary(WHAT ALL DESCRIPTION "Configuration Summary for ${_descr} --\n")
 
-if (OPTION_BUILD_SHARED_LIBS)
-  message (STATUS "Shared libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
-else ()
-  message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
-endif ()
+# FLTK specific build configuration and options (see macros in fl_summary.cmake)
 
-if (FLTK_BUILD_FLUID)
-  message (STATUS "FLUID            will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fluid")
-else ()
-  message (STATUS "FLUID            will not be built (set FLTK_BUILD_FLUID=ON to build)")
-endif ()
+#                "title"               dir  build (bool)             option to set
+fl_summary_build("Static libraries"    lib  TRUE                     "n/a")
+fl_summary_build("Shared libraries"    lib  FLTK_BUILD_SHARED_LIBS   FLTK_BUILD_SHARED_LIBS)
+fl_summary_build("The forms library"   lib  FLTK_BUILD_FORMS         FLTK_BUILD_FORMS)
+fl_summary_build("The OpenGL library"  lib  FLTK_USE_GL              FLTK_BUILD_GL)
+fl_summary_build("fluid"               bin  FLTK_BUILD_FLUID         FLTK_BUILD_FLUID)
+fl_summary_build("fltk-options"        bin  FLTK_BUILD_FLTK_OPTIONS  FLTK_BUILD_FLTK_OPTIONS)
 
-if (FLTK_BUILD_FLTK_OPTIONS)
-  message (STATUS "fltk-options     will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fltk-options")
-else ()
-  message (STATUS "fltk-options     will not be built (set FLTK_BUILD_FLTK_OPTIONS=ON to build)")
-endif ()
+fl_summary_build("Test programs"     bin/test      FLTK_BUILD_TEST      FLTK_BUILD_TEST)
+fl_summary_build("Example programs"  bin/examples  FLTK_BUILD_EXAMPLES  FLTK_BUILD_EXAMPLES)
 
-if (FLTK_BUILD_TEST)
-  message (STATUS "Test programs    will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/test")
-endif ()
+message(STATUS "")
 
-if (FLTK_BUILD_EXAMPLES)
-  message (STATUS "Example programs will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/examples")
-else ()
-  message (STATUS "Example programs will not be built (set FLTK_BUILD_EXAMPLES=ON to build)")
-endif ()
+if(CMAKE_BUILD_TYPE STREQUAL "")
+  fl_summary("Build configuration" "<unspecified>")
+else()
+  fl_summary("Build configuration" "${CMAKE_BUILD_TYPE}")
+endif()
 
-if (FLTK_USE_BUILTIN_JPEG)
-  message (STATUS "Image Libraries:         JPEG = Builtin")
-else ()
-  message (STATUS "Image Libraries:         JPEG = System")
-endif ()
+fl_summary("Installation prefix" "${CMAKE_INSTALL_PREFIX}")
 
-if (FLTK_USE_BUILTIN_PNG)
-  message (STATUS "                         PNG  = Builtin")
-else ()
-  message (STATUS "                         PNG  = System")
-endif ()
+message("")
+#                "title"           name  system library if used
+fl_summary_image("Bundled Libraries" JPEG  LIB_jpeg)
+fl_summary_image(""                  PNG   LIB_png)
+fl_summary_image(""                  ZLIB  LIB_zlib)
 
-if (FLTK_USE_BUILTIN_ZLIB)
-  message (STATUS "                         ZLIB = Builtin")
-else ()
-  message (STATUS "                         ZLIB = System")
-endif ()
+if(FLTK_BACKEND_WAYLAND)
+  if(USE_SYSTEM_LIBDECOR)
+    fl_summary("" "Libdecor = System: ${SYSTEM_LIBDECOR_LINK_LIBRARIES}")
+  else()
+    fl_summary("" "Libdecor = Bundled")
+  endif()
+  fl_summary_yn("Use DBUS" DBUS_FOUND)
+endif(FLTK_BACKEND_WAYLAND)
 
-if (UNIX AND NOT (APPLE AND NOT OPTION_APPLE_X11))
+message("")
 
-  if (OPTION_USE_WAYLAND)
-    message (STATUS "Use Wayland:             Yes (when available at run-time)")
-  else ()
-    message (STATUS "Use Wayland:             No (therefore, X11 is used)")
-  endif ()
+if(UNIX AND NOT (APPLE AND NOT FLTK_BACKEND_X11))
 
-  if (FLTK_USE_CAIRO)
-    message (STATUS "All drawing uses Cairo:  Yes")
-  else ()
-    message (STATUS "All drawing uses Cairo:  No")
-  endif ()
+  if(FLTK_BACKEND_WAYLAND)
+    if(FLTK_BACKEND_X11)
+      fl_summary("Use Wayland" "Yes (can also run as X11 client)")
+    else()
+      fl_summary("Use Wayland" "Yes (cannot run as X11 client)")
+    endif(FLTK_BACKEND_X11)
+  else()
+    fl_summary("Use Wayland" "No (X11 is used)")
+  endif(FLTK_BACKEND_WAYLAND)
 
-  if (USE_PANGO)
-    message (STATUS "Use Pango:               Yes")
-  else (USE_PANGO)
-    message (STATUS "Use Pango:               No")
-    if (USE_XFT)
-      message (STATUS "Use Xft:                 Yes")
-    else ()
-      message (STATUS "Use Xft:                 No")
-    endif (USE_XFT)
-  endif (USE_PANGO)
+  fl_summary_yn("All drawing uses Cairo" FLTK_USE_CAIRO)
 
-endif (UNIX AND NOT (APPLE AND NOT OPTION_APPLE_X11))
+  fl_summary_yn("Use Pango" USE_PANGO)
+  if(NOT USE_PANGO)
+    fl_summary_yn("Use Xft" USE_XFT)
+  endif()
 
-if (FLTK_HAVE_CAIROEXT)
-  message (STATUS "Fl_Cairo_Window support: Yes (extended)")
-elseif (FLTK_HAVE_CAIRO)
-  message (STATUS "Fl_Cairo_Window support: Yes (standard)")
-else ()
-  message (STATUS "Fl_Cairo_Window support: No")
-endif ()
+endif()
 
-message ("")
-message (STATUS "End of Configuration Summary --\n")
+set(title "Fl_Cairo_Window support")
+if(FLTK_HAVE_CAIROEXT)
+  fl_summary("${title}" "Yes (extended)")
+elseif(FLTK_HAVE_CAIRO)
+  fl_summary("${title}" "Yes (standard)")
+else()
+  fl_summary("${title}" "No")
+endif()
+
+fl_summary_yn("Use std::" FLTK_USE_STD)
+
+message("")
+message(STATUS "End of Configuration Summary --\n")
+
+# optional info for "modern CMake"
+
+if(0) # debug built library and fluid targets
+  message(STATUS "------------------------ TARGETS ------------------------")
+  foreach(tgt fltk fluid fluid-cmd options options-cmd images gl forms cairo jpeg png z)
+    if(TARGET fltk::${tgt})
+      message("Target: fltk::${tgt}")
+      # fl_debug_target(fltk::${tgt})
+    endif()
+    if(TARGET fltk::${tgt}-shared)
+      message("Target: fltk::${tgt}-shared")
+      # fl_debug_target(fltk::${tgt}-shared)
+    endif()
+  endforeach()
+  message(STATUS "---------------------------------------------------------")
+endif()

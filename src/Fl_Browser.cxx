@@ -1,7 +1,7 @@
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -208,7 +208,7 @@ FL_BLINE* Fl_Browser::_remove(int line) {
   cacheline = line-1;
   cache = ttt->prev;
   lines--;
-  full_height_ -= item_height(ttt);
+  full_height_ -= item_height(ttt) + linespacing();
   if (ttt->prev) ttt->prev->next = ttt->next;
   else first = ttt->next;
   if (ttt->next) ttt->next->prev = ttt->prev;
@@ -264,7 +264,7 @@ void Fl_Browser::insert(int line, FL_BLINE* item) {
   cacheline = line;
   cache = item;
   lines++;
-  full_height_ += item_height(item);
+  full_height_ += item_height(item) + linespacing();
   redraw_line(item);
 }
 
@@ -396,7 +396,7 @@ int Fl_Browser::item_height(void *item) const {
       char* ptr = str;
       if (ptr && *i++) str = strchr(str, column_char());
       else str = NULL;
-      if((!str && *ptr) || (str && ptr < str)) {
+      if((!str && *ptr) || (str && ptr < str) || hmax == 2) {
         fl_font(font, tsize); int hh = fl_height();
         if (hh > hmax) hmax = hh;
       }
@@ -489,7 +489,7 @@ int Fl_Browser::full_height() const {
        incr_height(), full_height()
 */
 int Fl_Browser::incr_height() const {
-  return textsize()+2;
+  return textsize() + 2 + linespacing();
 }
 
 /**
@@ -526,9 +526,9 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
     Fl_Color lcol = textcolor();
     Fl_Align talign = FL_ALIGN_LEFT;
     // check for all the @-lines recognized by XForms:
-    //#if defined(__GNUC__)
-    //#warning FIXME This maybe needs to be more UTF8 aware now...?
-    //#endif /*__GNUC__*/
+    // #if defined(__GNUC__)
+    // #warning FIXME This maybe needs to be more UTF-8 aware now...?
+    // #endif /*__GNUC__*/
     if ( format_char() ) {      // can be NULL
       while (*str == format_char() && *++str && *str != format_char()) {
         switch (*str++) {
@@ -620,9 +620,9 @@ void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
 
   FL_BLINE* l;
   for (l=first; l && line>1; l = l->next) {
-    line--; p += item_height(l);
+    line--; p += item_height(l) + linespacing();
   }
-  if (l && (pos == BOTTOM)) p += item_height (l);
+  if (l && (pos == BOTTOM)) p += item_height(l) + linespacing();
 
   int final = p, X, Y, W, H;
   bbox(X, Y, W, H);
@@ -670,7 +670,7 @@ void Fl_Browser::textsize(Fl_Fontsize newSize) {
   full_height_ = 0;
   if (lines == 0) return;
   for (FL_BLINE* itm=(FL_BLINE *)item_first(); itm; itm=(FL_BLINE *)item_next(itm)) {
-    full_height_ += item_height(itm);
+    full_height_ += item_height(itm) + linespacing();
   }
 }
 
@@ -769,7 +769,7 @@ void Fl_Browser::show(int line) {
   FL_BLINE* t = find_line(line);
   if (t->flags & NOTDISPLAYED) {
     t->flags &= ~NOTDISPLAYED;
-    full_height_ += item_height(t);
+    full_height_ += item_height(t) + linespacing();
     if (Fl_Browser_::displayed(t)) redraw();
   }
 }
@@ -786,7 +786,7 @@ void Fl_Browser::show(int line) {
 void Fl_Browser::hide(int line) {
   FL_BLINE* t = find_line(line);
   if (!(t->flags & NOTDISPLAYED)) {
-    full_height_ -= item_height(t);
+    full_height_ -= item_height(t) + linespacing();
     t->flags |= NOTDISPLAYED;
     if (Fl_Browser_::displayed(t)) redraw();
   }

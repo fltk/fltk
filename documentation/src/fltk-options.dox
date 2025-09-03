@@ -41,8 +41,8 @@ tool called fltk-options.
 `fltk-options` is a hybrid app that is part of FLTK and can be installed on
 the target system. It includes an up-to-date man page.
 
-\image html fluid-edit-global-fltk-settings.png "fltk-options Application"
-\image latex fluid-edit-global-fltk-settings.png "fltk-options Application" width=10cm
+\image html fltk-options.png "fltk-options Application"
+\image latex fltk-options.png "fltk-options Application" width=10cm
 
 When fltk-options is called without any command-line arguments, it opens in
 interactive mode and provides a user interface to view and alter all
@@ -67,9 +67,9 @@ A full list of options can be found in the manual at Fl::Fl_Option.
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="fluid.html">
+    <a class="el" href="opengl.html">
     [Prev]
-    Programming with FLUID
+    Using OpenGL
     </a>
   </td>
   <td width="10%" align="CENTER">

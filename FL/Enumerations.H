@@ -1,7 +1,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,6 +36,9 @@
 #  include "fl_types.h"
 #  include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
 
+// Keep the following comment in sync with the values below for searching
+// Current FLTK version: 1.4.4
+
 /** \name Version Numbers
 
     FLTK defines some constants to help the programmer to
@@ -62,8 +65,10 @@
    The patch version for this library.
 
    FLTK remains binary compatible between patches.
+
+   Version: 1.4.4
  */
-#define FL_PATCH_VERSION        0
+#define FL_PATCH_VERSION        4
 
 /**
     The FLTK version number as a \em double.
@@ -150,11 +155,15 @@
   This is done to prevent users from defining an illegal ABI version.
 
   Rule: FL_MAJOR_VERSION * 10000 + FL_MINOR_VERSION * 100
-          <= FL_ABI_VERSION <= FL_API_VERSION.
+          <= FL_ABI_VERSION <= FL_API_VERSION + 1.
 
-  Example (FLTK 1.3.4):
+  Since FLTK 1.4.2+ (Git commits after release 1.4.2) FL_ABI_VERSION is
+  allowed to be one higher than FL_API_VERSION so ABI changes in Git
+  targeted at the *next* release (e.g. 1.4.3) can be used.
 
-    10300 <= FL_ABI_VERSION <= 10304
+  Example: Commits after release FLTK 1.4.2 (before release 1.4.3):
+
+    10400 <= FL_ABI_VERSION <= 10403
 
   Note: configure + CMake can be used to define FL_ABI_VERSION, but they
   do not check validity. This is done here.
@@ -165,10 +174,10 @@
 # undef FL_ABI_VERSION
 # define FL_ABI_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100)
 
-#elif FL_ABI_VERSION > FL_API_VERSION
+#elif FL_ABI_VERSION > FL_API_VERSION + 1
 
 # undef FL_ABI_VERSION
-# define FL_ABI_VERSION FL_API_VERSION
+# define FL_ABI_VERSION FL_API_VERSION + 1
 
 #endif
 
@@ -407,8 +416,8 @@ enum Fl_Event { // events
   /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_ZOOM_EVENT = 27
-// DEV NOTE: Keep this list in sync with FL/names.h
+  FL_ZOOM_EVENT         = 27
+  // DEV NOTE: Keep this list in sync with FL/names.h
 };
 
 /** \name When Conditions */
@@ -499,7 +508,7 @@ enum Fl_Callback_Reason {
 #define FL_Menu         0xff67  ///< The menu key.
 #define FL_Help         0xff68  ///< The 'help' key on Mac keyboards
 #define FL_Num_Lock     0xff7f  ///< The num lock key.
-#define FL_KP           0xff80  ///< One of the keypad numbers; use FL_KP + n' for digit n.
+#define FL_KP           0xff80  ///< One of the keypad numbers; use FL_KP + 'n' for digit n.
 #define FL_KP_Enter     0xff8d  ///< The enter key on the keypad, same as Fl_KP+'\\r'.
 #define FL_KP_Last      0xffbd  ///< The last keypad key; use to range-check keypad.
 #define FL_F            0xffbd  ///< One of the function keys; use FL_F + n for function key n.
@@ -514,6 +523,7 @@ enum Fl_Callback_Reason {
 #define FL_Alt_L        0xffe9  ///< The left alt key.
 #define FL_Alt_R        0xffea  ///< The right alt key.
 #define FL_Delete       0xffff  ///< The delete key.
+#define FL_Alt_Gr       0xfe03  ///< The AltGr key on some international keyboards.
 
 // These use the Private Use Area (PUA) of the Basic Multilingual Plane
 // of Unicode. Guaranteed not to conflict with a proper Unicode character.
@@ -547,9 +557,11 @@ enum Fl_Callback_Reason {
 
 /**@{*/
 
-#define FL_LEFT_MOUSE   1       ///< The left mouse button
-#define FL_MIDDLE_MOUSE 2       ///< The middle mouse button
-#define FL_RIGHT_MOUSE  3       ///< The right mouse button
+#define FL_LEFT_MOUSE     1       ///< The left mouse button
+#define FL_MIDDLE_MOUSE   2       ///< The middle mouse button
+#define FL_RIGHT_MOUSE    3       ///< The right mouse button
+#define FL_BACK_MOUSE     4       ///< The back mouse button (side button 1)
+#define FL_FORWARD_MOUSE  5       ///< The forward mouse button (side button 2)
 
 /**@}*/          // group: Mouse Buttons
 
@@ -561,8 +573,8 @@ enum Fl_Callback_Reason {
 
 /**@{*/          // group: Event States
 
-// FIXME: it would be nice to have the modifiers in the upper 8 bit so that
-//        a unicode key (24bit) can be sent as an unsigned with the modifiers.
+// FIXME: it would be nice to have the modifiers in the upper 8 bits so that
+//        a unicode key (21 bits) can be sent as an unsigned with the modifiers.
 
 #define FL_SHIFT        0x00010000      ///< One of the shift keys is down
 #define FL_CAPS_LOCK    0x00020000      ///< The caps lock is on
@@ -574,14 +586,20 @@ enum Fl_Callback_Reason {
                                         // correct for XFree86
 #define FL_SCROLL_LOCK  0x00800000      ///< The scroll lock is on
                                         // correct for XFree86
-#define FL_BUTTON1      0x01000000      ///< Mouse button 1 is pushed
-#define FL_BUTTON2      0x02000000      ///< Mouse button 2 is pushed
-#define FL_BUTTON3      0x04000000      ///< Mouse button 3 is pushed
-#define FL_BUTTONS      0x7f000000      ///< Any mouse button is pushed
-#define FL_BUTTON(n)    (0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
+// Mouse buttons
 
-#define FL_KEY_MASK 0x0000ffff          ///< All keys are 16 bit for now
-                                        //   FIXME: Unicode needs 24 bits!
+#define FL_BUTTON1      0x01000000        ///< Mouse button 1 is pushed (L)
+#define FL_BUTTON2      0x02000000        ///< Mouse button 2 is pushed (M)
+#define FL_BUTTON3      0x04000000        ///< Mouse button 3 is pushed (R)
+#define FL_BUTTON4      0x08000000        ///< Mouse button 4 is pushed (BACK)
+#define FL_BUTTON5      0x10000000        ///< Mouse button 5 is pushed (FORWARD)
+#define FL_BUTTONS      0x1f000000        ///< Bitmask: any mouse button (1-5) is pushed
+
+#define FL_BUTTON(n)   (0x00800000<<(n))  ///< Mouse button n (n = 1..5) is pushed,
+                                          ///< *undefined* if n outside 1..5
+
+#define FL_KEY_MASK     0x0000ffff      ///< All keys are 16 bit for now
+                                        //   FIXME: Unicode needs 21 bits!
 
 /**@}*/          // group: Event States
 
@@ -693,7 +711,8 @@ enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxty
   _FL_OXY_ROUND_DOWN_BOX,       ///< oxy version of FL_ROUND_DOWN_BOX, use FL_OXY_ROUND_DOWN_BOX
   _FL_OXY_BUTTON_UP_BOX,        ///< FL_OXY_BUTTON_UP_BOX (new boxtype ?), use FL_OXY_BUTTON_UP_BOX
   _FL_OXY_BUTTON_DOWN_BOX,      ///< FL_OXY_BUTTON_DOWN_BOX (new boxtype ?), use FL_OXY_BUTTON_DOWN_BOX
-  FL_FREE_BOXTYPE               ///< the first free box type for creation of new box types
+  FL_FREE_BOXTYPE,              ///< the first free box type for creation of new box types
+  FL_MAX_BOXTYPE = 255          ///< highest legal index for a box type
 };
 
 #ifndef FL_DOXYGEN
@@ -1159,19 +1178,22 @@ FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
   with fl_contrast_mode(FL_CONTRAST_CUSTOM).
   Example:
   \code
-    Fl_Color my_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context) {
+    Fl_Color my_contrast(Fl_Color fg, Fl_Color bg, int context, int size) {
       // calculate contrast and ...
       return color;
     }
     // call this early in your main() program:
     fl_contrast_function(my_contrast);
     fl_contrast_mode(FL_CONTRAST_CUSTOM);
+    fl_contrast_level(50); // optional, must be called after fl_contrast_mode()
   \endcode
 
-  \see fl_contrast(Fl_Color, Fl_Color, Fl_Fontsize, int)
+  For parameters and types see fl_contrast(Fl_Color, Fl_Color, int, int).
+
+  \see fl_contrast(Fl_Color, Fl_Color, int, int)
   \see fl_contrast_mode(int)
 */
-typedef Fl_Color (Fl_Contrast_Function)(Fl_Color, Fl_Color, Fl_Fontsize, int);
+typedef Fl_Color (Fl_Contrast_Function)(Fl_Color, Fl_Color, int, int);
 
 FL_EXPORT void fl_contrast_function(Fl_Contrast_Function *f);
 
@@ -1193,7 +1215,7 @@ FL_EXPORT int fl_contrast_level();
 FL_EXPORT void fl_contrast_mode(int mode);
 FL_EXPORT int fl_contrast_mode();
 
-FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs = 0, int context = 0);
+FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, int context = 0, int size = 0);
 
 FL_EXPORT double fl_lightness(Fl_Color color);
 FL_EXPORT double fl_luminance(Fl_Color color);

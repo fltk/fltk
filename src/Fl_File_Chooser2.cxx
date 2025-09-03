@@ -2,7 +2,7 @@
 // More Fl_File_Chooser routines.
 //
 // Copyright 1999-2007 by Michael Sweet.
-// Copyright 2008-2020 by Bill Spitzak and others.
+// Copyright 2008-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -148,39 +148,32 @@
 */
 /** @} */
 
-/** \fn Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type, const char *title)
+/** \fn Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)
   The constructor creates the Fl_File_Chooser dialog shown.
-  The pathname argument can be a directory name or a
+
+  - The \p pathname argument can be a directory name or a
   complete file name (in which case the corresponding file is highlighted
   in the list and in the filename input field.)
 
-  The pattern argument can be a NULL
+  - The \p pattern argument can be a NULL
   string or "*" to list all files, or it can be a
   series of descriptions and filter strings separated by tab
   characters (\\t). The format of filters is either
   "Description text (patterns)" or just "patterns". A file chooser
   that provides filters for HTML and image files might look like:
-
   \code
   "HTML Files (*.html)\tImage Files (*.{bmp,gif,jpg,png})"
   \endcode
-
   The file chooser will automatically add the "All Files (*)"
   pattern to the end of the string you pass if you do not provide
   one. The first filter in the string is the default filter.
-
+  \p
   See the FLTK documentation on fl_filename_match()
   for the kinds of pattern strings that are supported.
 
-  The type argument can be one of the following:
+  - The \p type_val argument can be one of the Fl_File_Chooser::Type values.
 
-  \li \c SINGLE - allows the user to select a single, existing file.
-  \li \c MULTI - allows the user to select one or more existing files.
-  \li \c CREATE - allows the user to select a single, existing file or
-         specify a new filename.
-  \li \c DIRECTORY - allows the user to select a single, existing directory.
-
-  The title argument is used to set the title bar text for the
+  - The \p title argument is used to set the title bar text for the
   Fl_File_Chooser window.
 */
 
@@ -801,7 +794,8 @@ Fl_File_Chooser::fileNameCB()
   if (dirIsRelative) {
     fl_filename_absolute(pathname, sizeof(pathname), filename);
     value(pathname);
-    fileName->mark(fileName->insert_position()); // no selection after expansion
+    int flen = (int)strlen(pathname);
+    fileName->insert_position(flen, flen); // no selection after expansion
   } else if (filename != pathname) {
     // Finally, make sure that we have a writable copy...
     strlcpy(pathname, filename, sizeof(pathname));
@@ -1321,7 +1315,7 @@ Fl_File_Chooser::update_preview()
     window->cursor(FL_CURSOR_DEFAULT);
     Fl::check();
 
-    // Scan the buffer for printable UTF8 chars...
+    // Scan the buffer for printable UTF-8 chars...
     for (ptr = preview_text_; *ptr; ptr++) {
       uchar c = uchar(*ptr);
       if ( (c&0x80)==0 ) {
@@ -1425,8 +1419,8 @@ Fl_File_Chooser::update_preview()
  \code
  // Get list of filenames user selected from a MULTI chooser
  for ( int t=1; t<=chooser->count(); t++ ) {
- const char *filename = chooser->value(t);
- ...
+     const char *filename = chooser->value(t);
+     ...
  }
  \endcode
  */
@@ -1473,6 +1467,21 @@ Fl_File_Chooser::value(int f)   // I - File number
 
 
 /** Sets the current value of the selected file.
+
+  If a relative path is provided in \c filename it is converted to
+  an absolute path.
+
+  If \c NULL or an empty string is provided, the working directory is
+  changed to the user's current directory and the filename is set to "".
+
+  After assigning the filename the entire string (if any) is selected, i.e.
+  - insert_position() is 0 (zero)
+  - mark() is strlen(\<expanded filename>).
+
+  \note The selection of the entire string may not always be desired but
+    it is kept for backwards compatibility.
+
+  \param[in] filename   relative or absolute filename, may be NULL or ""
  */
 void
 Fl_File_Chooser::value(const char *filename)
@@ -1556,6 +1565,14 @@ void Fl_File_Chooser::show()
   fl_cursor(FL_CURSOR_DEFAULT);
   fileName->take_focus();
   if (!Fl::system_driver()->dot_file_hidden()) showHiddenButton->hide();
+}
+
+void Fl_File_Chooser::hide() {
+  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+  Fl_Shared_Image *oldimage = (Fl_Shared_Image*)previewBox->image();
+  if (oldimage) oldimage->release();
+  previewBox->image(NULL);
+  window->hide();
 }
 
 void Fl_File_Chooser::showHidden(int value)

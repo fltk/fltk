@@ -1,0 +1,377 @@
+/**
+
+ \page page_main_window Main Application Window
+
+ \tableofcontents
+
+ \image html main_window.png "Main Application Window"
+ \image latex main_window.png "Main Application Window" width=5cm
+
+ A FLUID project is a hierarchy of nodes. Each node holds information to
+ generate C++ source code which in turn generates the user interface that
+ is created in the layout editor windows. Projects usually define one or more
+ functions. These functions can generate one or more
+ FLTK windows and all the widgets that go inside those windows.
+
+ The FLUID Main Window is split into three parts. The title bar shows the
+ status of the source and project files. The menu bar provides a wealth of
+ menu items for all major actions in FLUID. The biggest part of the
+ app window is the widget browser, a tree structure that lists every code
+ node and widget in the project.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_titlebar Title Bar
+
+ \image html main_titlebar.png
+ \image latex main_titlebar.png "Title Bar" width=5cm
+
+ The title bar shows the status of the project file, _function_panel.fl_ in this
+ case, followed by an asterisk if the project was changed after it was saved.
+ If the asterisk shows, FLUID will ask the user to save changes before closing
+ the project, loading another project, or starting a new one. Pressing `Ctrl-S`
+ will save the project and make the asterisk disappear.
+
+ The _.cxx_ in the title bar reflects the status of header and source files
+ in relation to the project. A trailing asterisk indicates that the project and code
+ files differ. Pressing `Ctrl-Shift-C` to write the code files will make this
+ asterisk go away.
+
+ \note FLUID currently supports only one open project at a time.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_menubar Application Menu Bar
+
+ \image html main_menubar.png
+ \image latex main_menubar.png "Main Menu" width=5cm
+
+ The menu bar is the true control center of FLUID. All actions start here.
+
+ The *File* menu offers the common file operation for FLUID projects. Projects
+ can be loaded, merged, and saved. *Print* will print a snapshot of all open
+ project windows.
+ The *New From Template* item opens a dialog that provides access to a small
+ number of sample projects. More projects can be added using *Save as Template*.
+
+ Use *Write Code* to write the header and source code files, and *Write Strings*
+ to write the translation file if one of the internationalization options
+ is active.
+
+ The *Edit* menu is mainly used to manipulate widgets within the widget tree.
+ The bottom entries toggle various dialogs and pop up the settings panel.
+
+ The *New* menu holds a list of all widgets that can be used in FLUID. They
+ are grouped by functionality, very similarly to the widget bin. New widgets are
+ added inside or right after the selected widget. If the parent widget is not
+ compatible, FLUID tries to find another location for the widget. If that also
+ fails, FLUID will pop up a dialog, describing the required parent type.
+
+ The *Layout* menu is used to adjust the position and size of widgets in
+ relation to each other.
+
+ The *Shell* menu gives quick access to user definable shell scripts. Note that
+ scripts can be stored inside `.fl` project files.
+
+ \see \ref main_menu_items
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_widget_browser Widget Tree View
+
+ \image html main_browser.png
+ \image latex main_browser.png "Widget Browser" width=5cm
+
+ Widgets are stored in a hierarchy. You can open and close a level by clicking
+ the "triangle" at the left of a widget. The leftmost widgets are the
+ \e parents, and all the widgets listed below them are their \e children.
+ Parents don't have to have any children.
+
+ The top level of the hierarchy is composed of \e functions and
+ \e classes. Each of these will produce a single C++ public function
+ or class in the output <tt>.cxx</tt> file. Calling the function or
+ instantiating the class will create all of the child widgets.
+
+ The second level of the hierarchy contains the \e windows.
+ Each of these produces an instance of class Fl_Window.
+
+ Below that are either \e widgets (subclasses of Fl_Widget) or
+ \e groups of widgets (including other groups). Plain groups are for
+ layout, navigation, and resize purposes. <i>Tab groups</i> provide the
+ well-known file-card tab interface.
+
+ Widgets are shown in the browser by either their \e name (such
+ as "Button emergency_btn" in the example), or by their \e type
+ and \e label (such as "Double_Window "My Main Window"").
+
+ You \e select widgets by clicking on their names, which highlights
+ them (you can also select widgets from any displayed window). You can
+ select many widgets by dragging the mouse across them, or by using
+ Shift+Click to toggle them on and off. To select no widgets, click in
+ the blank area under the last widget. Note that hidden children may
+ be selected even when there is no visual indication of this.
+
+ You \e open widgets by double-clicking on them, or (to open several
+ widgets you have picked) by typing the F1 key. A control panel will appear
+ so you can change the widget(s).
+
+ Nodes are moved within their group using
+ `F2` and `F3`. They can be grouped and ungrouped with `F7` and `F8`, and
+ relocated by selecting them and using cut, copy, and paste.
+
+ Every line in the browser has the same basic format. The level of indentation
+ reflects the depth of a node within the tree.
+
+ The triangle appears only in front of nodes that can have children. If it is
+ white, the group has no children. If it is black, there is at least one child.
+ If the triangle points to the right, the children are hidden in the tree view.
+ Click the triangle to reveal all children.
+
+ The icon to the right is a small representation of the base type of the node.
+ Widgets are gray, windows have a blue title bar, and functional nodes are
+ green. If the widget is static or private, a padlock icon will appear in the
+ bottom right corner of the type icon.
+
+ The content of text fields depends on the node type. If a comment is set, it
+ appears in green over the text. Widgets combine their type (bold black) and
+ label text (red), or their C++ name in black (not bold).
+
+ All colors and font styles can be customized in the User tab of the
+ Settings panel.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section main_menu_items The Main Menu
+
+The "New" menu of the main menu bar is duplicated as a pop-up menu on any
+layout editor window. The shortcuts for all the menu items work in any
+window. The menu items are:
+
+__File > New (Ctrl+n)__: Close the current project and start a new, empty project.
+
+__File > Open... (Ctrl+o)__: Discard the current editing session and read in a
+different `.fl` project file. You are asked for confirmation if you have
+changed the current file.
+
+FLUID can also read `.fd` files produced by the Forms and XForms "fdesign"
+programs. It is best to _File > Merge_ them instead of opening them. FLUID does
+not understand everything in a `.fd` file, and will print a warning message on
+the controlling terminal for all data it does not understand. You will probably
+need to edit the resulting setup to fix these errors. Be careful not to save
+the file without changing the name, as FLUID will write over the `.fd` file
+with its own format, which fdesign cannot read!
+
+__File > Insert... (Ctrl+i)__: Insert the contents of another `.fl` file
+without changing the name of the current `.fl` file. All the functions (even if
+they have the same names as the current ones) are added, and you will have to
+use cut/paste to put the widgets where you want.
+
+__File > Save (Ctrl+s)__: Write the current data to the `.fl` file. If the
+file is unnamed then FLUID will ask for a filename.
+
+__File > Save As... (Ctrl+Shift+S)__: Ask for a new filename and
+save the file.
+
+__File > Save A Copy...__: Save a copy of the `.fl` data to a different file.
+
+__File > Revert...__: Revert the `.fl` data to the previously saved state.
+
+__File > New From Template...__: Create a new user interface design from a
+previously saved template. This can be useful for including a predefined
+enterprise copyright message for projects, or for managing boilerplate code
+for repeating project code.
+
+__File > Save As Template...__: Save the current project as a starting point
+for future projects.
+
+__File > Print... (Ctrl-P)__: Generate a printout containing all currently
+open windows within your project.
+
+__File > Write Code (Ctrl+Shift+C)__: Write the GUI layout as a `.cxx` and
+`.h` file. These are exactly the same as the files you get when you run
+FLUID with the `-c` switch.
+
+The output file names are the same as the `.fl` file, with the leading directory
+and trailing ".fl" stripped, and ".h" or ".cxx" appended.
+
+__File > Write Strings (Ctrl+Shift+W)__: Write a message file for all of the
+text labels and tooltips defined in the current file.
+
+The output file name is the same as the `.fl` file, with the leading directory
+and trailing ".fl" stripped, and ".txt", ".po", or ".msg" appended depending on
+the \ref setting_i18n "Internationalization Mode".
+
+__File > Quit (Ctrl+q)__: Exit FLUID. You are asked for confirmation if you
+have changed the current file.
+
+__Edit > Undo (Ctrl+z)__ and __Redo (Shift+Ctrl+z)__: FLUID saves the project
+state for undo and redo operations after every major change.
+
+__Edit > Cut (Ctrl+x)__: Delete the selected widgets and all of their children.
+These are saved to a "clipboard" file and can be pasted back into any
+FLUID window.
+
+__Edit > Copy (Ctrl+c)__: Copy the selected widgets and all of their children
+to the "clipboard" file.
+
+__Edit > Paste (Ctrl+v)__: Paste the widgets from the clipboard file.
+
+If the widget is a window, it is added to whatever function
+is selected, or contained in the current selection.
+
+If the widget is a normal widget, it is added to whatever
+window or group is selected. If none is, it is added to the
+window or group that is the parent of the current selection.
+
+To avoid confusion, it is best to select exactly one widget
+before doing a paste.
+
+Cut/paste is the only way to change the parent of a
+widget.
+
+__Edit > Duplicate (Ctrl-u)__: Duplicate all currently selected widgets and
+insert the duplicates after the last selected widget.
+
+__Edit > Delete__: Delete all selected widgets.
+
+__Edit > Select All (Ctrl+a)__: Select all widgets in the same group as the
+current selection.
+
+If they are all selected already then this selects all
+widgets in that group's parent. Repeatedly typing `Ctrl+a` will
+select larger and larger groups of widgets until everything is
+selected.
+
+__Edit > Properties... (F1 or double click)__: Display the current widget in
+the widgets panel. If the widget is a window and it is not visible then the
+window is shown instead.
+
+__Edit > Sort__: Sort the selected widgets into left to right, top to bottom
+order. You need to do this to make navigation keys in FLTK work correctly.
+You may then fine-tune the sorting with "Earlier" and "Later". This does not
+affect the positions of windows or functions.
+
+__Edit > Earlier (F2)__: Move all of the selected widgets one earlier in order
+among the children of their parent (if possible). This will affect navigation
+order, and if the widgets overlap it will affect how they draw, as the later
+widget is drawn on top of the earlier one. You can also use this to reorder
+functions, classes, and windows within functions.
+
+__Edit > Later (F3)__: Move all of the selected widgets one later in order
+among the children of their parent (if possible).
+
+__Edit > Group (F7)__: Create a new Fl_Group and make all the currently
+selected widgets children of that group.
+
+__Edit > Ungroup (F8)__: Move the selected children of a group out of the
+group and up one level in the hierarchy. If all children of a group are
+selected and moved, the remaining empty group is deleted.
+
+__Edit > Show or Hide Overlays (Ctrl+Shift+O)__: Toggle the display of the
+red overlays off, without changing the selection. This makes it easier to see
+box borders and how the layout looks. The overlays will be forced back on if
+you change the selection.
+
+__Edit > Show or Hide Guides (Ctrl+Shift+G)__: Guides can be used to arrange a
+widget layout easily and consistently. They indicate preferred widget
+positions and sizes with user definable margins, grids, and gap sizes. See
+the "Layout" tab in the "Settings" dialog, \ref setting_layout.
+
+This menu item enables and disables guides and the snapping action when dragging
+widgets and their borders.
+
+__Edit > Show or Hide Restricted (Ctrl+Shift+R)__: The behavior of overlapping
+widgets in FLTK is undefined. By activating this button, a hatch pattern is
+shown, highlighting areas where restricted or undefined behavior may occur.
+
+__Edit > Show or Hide Widget Bin (Alt+B)__: The widget bin provides quick
+access to all widget types supported by FLUID. Layouts can be created by
+clicking on elements in the widget bin, or by dragging them from the bin to
+their position within the layout. This button shows or hides the widget bin.
+
+__Edit > Show or Hide Code View (Alt+C)__: Shows or hide
+the source code preview window. Any changes to the layout or code in the layout
+editor can be previewed and verified immediately in the Code View window.
+
+__Edit > Settings... (Alt+p)__: Open the application and project settings
+dialog: \ref page_setting_dialog
+
+__New > Code > Function__: Create a new C function. You will be asked for a
+name for the function. This name should be a legal C++ function
+template, without the return type. You can pass arguments which
+can be referred to by code you type into the individual widgets.
+
+If the function contains any unnamed windows, it will be
+declared as returning an Fl_Window pointer. The unnamed window
+will be returned from it (more than one unnamed window is
+useless). If the function contains only named windows, it will
+be declared as returning nothing (\c void ).
+
+It is possible to make the <tt>.cxx</tt> output be a
+self-contained program that can be compiled and executed. This
+is done by deleting the function name so
+\p main(argc,argv) is used. The function will call
+\p show() on all the windows it creates and then call
+\p Fl::run(). This can also be used to test resize
+behavior or other parts of the user interface.
+
+You can change the function name by double-clicking on the
+function.
+
+\see \ref functional_function
+
+__New > Group > Window__: Create a new Fl_Window widget. The window is added
+to the currently selected function, or to the function containing the currently
+selected item. The window will appear, sized to 480x320. You can resize it to
+whatever size you require.
+
+The widget panel will also appear and is described later in
+this chapter.
+
+__New > ...__: All other items on the New menu are subclasses of
+`Fl_Widget`. Creating them will add them to the
+currently selected group or window, or the group or window
+containing the currently selected widget. The initial
+dimensions and position are chosen by copying the current
+widget, if possible.
+
+When you create the widget you will get the widget's control
+panel, which is described later in this chapter.
+
+__Layout > Align > ...__: Align all selected widgets to the first widget in
+the selection.
+
+__Layout > Space Evenly > ...__: Space all selected widgets evenly inside the
+selected space. Widgets will be sorted from first to last.
+
+__Layout > Make Same Size > ...__: Make all selected widgets the same size as
+the first selected widget.
+
+__Layout > Center in Group > ...__: Center all selected widgets relative to
+their parent widget
+
+__Layout > Synchronized Resize__: If unchecked, groups and windows can be
+resized without resizing their children. If set, the layout of the children
+is changed according to their `resize()` settings. Try __Live Resize__ to
+verify the effects before permanently modifying the layout.
+
+__Layout > Grid and Size Settings... (Ctrl+g)__: Display the grid settings
+panel. See \ref setting_layout .
+
+This panel controls dimensions that all widgets snap to when you move
+and resize them, and for the "snap" which is how far a widget has to be
+dragged from its original position to actually change.
+
+Layout preferences are defined using margins to parent groups and windows, gaps
+between widget, and/or by overlaying a grid over a group or window. A layout
+comes as a suite of three presets, one for the main application window, one
+for dialog boxes, and one for toolboxes.
+
+FLUID comes with two included layout suites. `FLTK` was used to design FLUID and
+other included apps, and `Grid` is a more rigid grid layout. Users can add
+more suites, import and export them, and include them into their `.fl`
+project files.
+
+__Shell > Customize... (Alt+x)__: Displays the shell command settings panel.
+Shell commands are commonly used to run a 'make' script to compile the FLUID
+output. See \ref setting_shell .
+
+__Help > About FLUID__: Pops up a panel showing the version of FLUID.
+
+*/

@@ -118,6 +118,8 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   label_.size    = FL_NORMAL_SIZE;
   label_.color   = FL_FOREGROUND_COLOR;
   label_.align_  = FL_ALIGN_CENTER;
+  label_.h_margin_ = label_.v_margin_ = 0;
+  label_.spacing = 0;
   tooltip_       = 0;
   callback_      = default_callback;
   user_data_     = 0;
@@ -213,25 +215,7 @@ Fl_Widget::~Fl_Widget() {
 void Fl_Widget::draw_focus(Fl_Boxtype bt, int X, int Y, int W, int H, Fl_Color bg) const {
   if (!Fl::visible_focus()) return;
   if (!visible_focus()) return;
-  switch (bt) {
-    case FL_DOWN_BOX:
-    case FL_DOWN_FRAME:
-    case FL_THIN_DOWN_BOX:
-    case FL_THIN_DOWN_FRAME:
-      X ++;
-      Y ++;
-    default:
-      break;
-  }
-  X += Fl::box_dx(bt);
-  Y += Fl::box_dy(bt);
-  W -= Fl::box_dw(bt)+1;
-  H -= Fl::box_dh(bt)+1;
-
-  Fl_Color savecolor = fl_color();
-  fl_color(fl_contrast(FL_BLACK, bg));
-  fl_focus_rect(X, Y, W, H);
-  fl_color(savecolor);
+  fl_draw_box_focus(bt, X, Y, W, H, FL_BLACK, bg);
 }
 
 void Fl_Widget::activate() {

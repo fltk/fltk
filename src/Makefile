@@ -1,7 +1,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -45,6 +45,7 @@ CPPFILES = \
 	Fl_File_Input.cxx \
 	Fl_Flex.cxx \
 	Fl_Graphics_Driver.cxx \
+	Fl_Grid.cxx \
 	Fl_Group.cxx \
 	Fl_Help_View.cxx \
 	Fl_Image.cxx \
@@ -83,7 +84,6 @@ CPPFILES = \
 	Fl_Scrollbar.cxx \
 	Fl_Shared_Image.cxx \
 	Fl_Shortcut_Button.cxx \
-	Fl_Simple_Terminal.cxx \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
 	Fl_Spinner.cxx \
@@ -93,6 +93,7 @@ CPPFILES = \
 	Fl_Table.cxx \
 	Fl_Table_Row.cxx \
 	Fl_Tabs.cxx \
+	Fl_Terminal.cxx \
 	Fl_Text_Buffer.cxx \
 	Fl_Text_Display.cxx \
 	Fl_Text_Editor.cxx \
@@ -240,9 +241,11 @@ IMGCPPFILES = \
 	Fl_PNM_Image.cxx \
 	Fl_Image_Reader.cxx \
 	Fl_SVG_Image.cxx \
+	nanosvg.cxx \
 	drivers/SVG/Fl_SVG_File_Surface.cxx
 
-CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
+CFILES = flstring.c numericsort.c vsnprintf.c
+CFILES_WIN = fl_call_main.c
 
 UTF8CFILES = \
 	xutf8/case.c \
@@ -329,7 +332,7 @@ WLX11CPPFILES = \
 	fl_dnd_x.cxx \
 	Fl_get_key.cxx
 
-      
+
 #   fl_dnd_x.cxx  Fl_Native_File_Chooser_GTK.cxx
 
 # This C file is used under condition: BUILD_X11
@@ -339,6 +342,7 @@ XLIBCFILES = \
 
 # These C files are used under condition: BUILD_X11 AND NOT BUILD_XFT
 XLIBXCFILES = \
+        xutf8/utf8Input.c \
         xutf8/utf8Utils.c \
         xutf8/utf8Wrap.c
 
@@ -350,7 +354,7 @@ XLIBFONTFILES = \
 XLIBXFTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
 	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-	
+
 # This C file is used under condition: BUILD_WAYLAND
 WLCFILES = \
         xutf8/keysym2Ucs.c \
@@ -423,12 +427,13 @@ CFILES_WAYLANDX11 = $(WLCFILES)
 EXTRA_OBJECTS_WAYLAND =  ../libdecor/build/fl_libdecor.o ../libdecor/build/libdecor-cairo-blur.o \
   ../libdecor/build/fl_libdecor-plugins.o \
   xdg-decoration-protocol.o xdg-shell-protocol.o text-input-protocol.o \
-  ../libdecor/build/cursor-settings.o ../libdecor/build/os-compatibility.o
+  gtk-shell-protocol.o \
+  ../libdecor/build/desktop-settings.o ../libdecor/build/os-compatibility.o
 EXTRA_OBJECTS_WAYLANDX11 = $(EXTRA_OBJECTS_WAYLAND)
 EXTRA_CXXFLAGS_WAYLAND = -I.
 EXTRA_CXXFLAGS_WAYLANDX11 = $(EXTRA_CXXFLAGS_WAYLAND)
 
-CFILES_WIN = $(GDICFILES)
+CFILES_WIN += $(GDICFILES)
 
 CFILES += $(CFILES_$(BUILD))
 CXXFLAGS += $(EXTRA_CXXFLAGS_$(BUILD))
@@ -453,7 +458,7 @@ $(LIBNAME): $(OBJECTS)
 
 libfltk.so.$(FL_DSO_VERSION): $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(OBJECTS) $(LDLIBS) $(CAIROLIBS)
+	$(DSOCOMMAND) $@ $(OBJECTS) $(LDFLAGS) $(LDLIBS) $(CAIROLIBS)
 	$(RM) libfltk.so
 	$(LN) libfltk.so.$(FL_DSO_VERSION) libfltk.so
 
@@ -469,7 +474,7 @@ libfltk.$(FL_DSO_VERSION).dylib: $(OBJECTS)
 		-install_name $(libdir)/$@ \
 		-current_version $(FL_VERSION) \
 		-compatibility_version $(FL_DSO_VERSION).0 \
-		$(OBJECTS) $(LDLIBS) $(CAIROLIBS)
+		$(OBJECTS) $(LDFLAGS) $(LDLIBS) $(CAIROLIBS)
 	$(RM) libfltk.dylib
 	$(LN) libfltk.$(FL_DSO_VERSION).dylib libfltk.dylib
 
@@ -489,7 +494,7 @@ $(FLLIBNAME): $(FLOBJECTS)
 
 libfltk_forms.so.$(FL_DSO_VERSION): $(FLOBJECTS) libfltk.so.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk $(LDLIBS)
+	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk $(LDFLAGS) $(LDLIBS)
 	$(RM) libfltk_forms.so
 	$(LN) libfltk_forms.so.$(FL_DSO_VERSION) libfltk_forms.so
 
@@ -505,7 +510,7 @@ libfltk_forms.$(FL_DSO_VERSION).dylib: $(FLOBJECTS) libfltk.$(FL_DSO_VERSION).dy
 		-install_name $(libdir)/$@ \
 		-current_version $(FL_VERSION) \
 		-compatibility_version $(FL_ABI_VERSION) \
-		$(FLOBJECTS) -L. $(LDLIBS) -lfltk
+		$(FLOBJECTS) -L. $(LDFLAGS) $(LDLIBS) -lfltk
 	$(RM) libfltk_forms.dylib
 	$(LN) libfltk_forms.$(FL_DSO_VERSION).dylib libfltk_forms.dylib
 
@@ -525,7 +530,7 @@ $(GLLIBNAME): $(GLOBJECTS)
 
 libfltk_gl.so.$(FL_DSO_VERSION): $(GLOBJECTS) libfltk.so.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk $(LDLIBS) $(GLDLIBS)
+	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk $(LDFLAGS) $(LDLIBS) $(GLDLIBS)
 	$(RM) libfltk_gl.so
 	$(LN) libfltk_gl.so.$(FL_DSO_VERSION) libfltk_gl.so
 
@@ -561,7 +566,7 @@ $(IMGLIBNAME): $(IMGOBJECTS)
 
 libfltk_images.so.$(FL_DSO_VERSION): $(IMGOBJECTS) libfltk.so.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk $(LDLIBS)
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk $(LDFLAGS) $(LDLIBS)
 	$(RM) libfltk_images.so
 	$(LN) libfltk_images.so.$(FL_DSO_VERSION) libfltk_images.so
 
@@ -577,7 +582,7 @@ libfltk_images.$(FL_DSO_VERSION).dylib: $(IMGOBJECTS) libfltk.$(FL_DSO_VERSION).
 		-install_name $(libdir)/$@ \
 		-current_version $(FL_VERSION) \
 		-compatibility_version $(FL_ABI_VERSION) \
-		$(IMGOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lfltk
+		$(IMGOBJECTS)  -L. $(LDFLAGS) $(LDLIBS) $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.dylib
 	$(LN) libfltk_images.$(FL_DSO_VERSION).dylib libfltk_images.dylib
 
@@ -848,248 +853,248 @@ install: $(LIBNAME) $(DSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
 	$(IMGLIBNAME) $(IMGDSONAME)
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
-	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
-	$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)
-	$(INSTALL_LIB) $(LIBNAME) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(FLLIBNAME) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(IMGLIBNAME) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBBASENAME)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(FLLIBBASENAME)
+	-$(INSTALL_DIR) "$(DESTDIR)$(libdir)"
+	-$(INSTALL_DIR) "$(DESTDIR)$(bindir)"
+	$(RM) "$(DESTDIR)$(libdir)/$(LIBBASENAME)"
+	$(INSTALL_LIB) $(LIBNAME) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(FLLIBNAME) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(IMGLIBNAME) "$(DESTDIR)$(libdir)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/$(LIBBASENAME)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/$(FLLIBBASENAME)"
 	if test x$(GLLIBNAME) != x; then \
-		$(INSTALL_LIB) $(GLLIBNAME) $(DESTDIR)$(libdir); \
-		$(RANLIB) $(DESTDIR)$(libdir)/$(GLLIBBASENAME); \
+		$(INSTALL_LIB) $(GLLIBNAME) "$(DESTDIR)$(libdir)"; \
+		$(RANLIB) "$(DESTDIR)$(libdir)/$(GLLIBBASENAME)"; \
 	fi
-	$(RANLIB) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME)
+	$(RANLIB) "$(DESTDIR)$(libdir)/$(IMGLIBBASENAME)"
 	if test x$(DSONAME) = xlibfltk.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\
-		$(INSTALL_LIB) libfltk.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk.so;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk.so*;\
+		$(INSTALL_LIB) libfltk.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk.so";\
 	fi
 	if test x$(DSONAME) = xlibfltk.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.sl*;\
-		$(INSTALL_LIB) libfltk.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk.sl;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk.sl*;\
+		$(INSTALL_LIB) libfltk.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk.sl";\
 	fi
 	if test x$(DSONAME) = xlibfltk.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.*dylib;\
-		$(INSTALL_LIB) libfltk.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir)/libfltk.dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk.*dylib;\
+		$(INSTALL_LIB) libfltk.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)/libfltk.dylib";\
 	fi
 	if test x$(DSONAME) = xlibfltk_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\
-		$(INSTALL_LIB) libfltk_s.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_s.a";\
+		$(INSTALL_LIB) libfltk_s.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(DSONAME) = xcygfltknox-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\
-		$(INSTALL_LIB) $(DSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
-		$(INSTALL_LIB) libfltk.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(DSONAME)";\
+		$(INSTALL_LIB) $(DSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk.dll.a";\
+		$(INSTALL_LIB) libfltk.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(DSONAME) = xmgwfltknox-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\
-		$(INSTALL_LIB) $(DSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
-		$(INSTALL_LIB) libfltk.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(DSONAME)";\
+		$(INSTALL_LIB) $(DSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk.dll.a";\
+		$(INSTALL_LIB) libfltk.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
-		$(INSTALL_LIB) libfltk_forms.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_forms.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_forms.so;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_forms.so*;\
+		$(INSTALL_LIB) libfltk_forms.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_forms.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk_forms.so";\
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.sl*;\
-		$(INSTALL_LIB) libfltk_forms.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_forms.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_forms.sl;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_forms.sl*;\
+		$(INSTALL_LIB) libfltk_forms.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_forms.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk_forms.sl";\
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.*dylib;\
-		$(INSTALL_LIB) libfltk_forms.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_forms.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir)/libfltk_forms.dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_forms.*dylib;\
+		$(INSTALL_LIB) libfltk_forms.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_forms.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)/libfltk_forms.dylib";\
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
-		$(INSTALL_LIB) libfltk_forms_s.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms_s.a";\
+		$(INSTALL_LIB) libfltk_forms_s.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(FLDSONAME) = xcygfltknox_forms-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
-		$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
-		$(INSTALL_LIB) libfltk_forms.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(FLDSONAME)";\
+		$(INSTALL_LIB) $(FLDSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms.dll.a";\
+		$(INSTALL_LIB) libfltk_forms.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(FLDSONAME) = xmgwfltknox_forms-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
-		$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
-		$(INSTALL_LIB) libfltk_forms.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(FLDSONAME)";\
+		$(INSTALL_LIB) $(FLDSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms.dll.a";\
+		$(INSTALL_LIB) libfltk_forms.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\
-		$(INSTALL_LIB) libfltk_gl.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_gl.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_gl.so;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_gl.so*;\
+		$(INSTALL_LIB) libfltk_gl.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_gl.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk_gl.so";\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.sl*;\
-		$(INSTALL_LIB) libfltk_gl.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_gl.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_gl.sl;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_gl.sl*;\
+		$(INSTALL_LIB) libfltk_gl.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_gl.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk_gl.sl";\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.*dylib;\
-		$(INSTALL_LIB) libfltk_gl.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_gl.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir)/libfltk_gl.dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_gl.*dylib;\
+		$(INSTALL_LIB) libfltk_gl.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_gl.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)/libfltk_gl.dylib";\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\
-		$(INSTALL_LIB) libfltk_gl_s.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl_s.a";\
+		$(INSTALL_LIB) libfltk_gl_s.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(GLDSONAME) = xcygfltknox_gl-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\
-		$(INSTALL_LIB) $(GLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
-		$(INSTALL_LIB) libfltk_gl.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(GLDSONAME)";\
+		$(INSTALL_LIB) $(GLDSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl.dll.a";\
+		$(INSTALL_LIB) libfltk_gl.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(GLDSONAME) = xmgwfltknox_gl-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\
-		$(INSTALL_LIB) $(GLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
-		$(INSTALL_LIB) libfltk_gl.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(GLDSONAME)";\
+		$(INSTALL_LIB) $(GLDSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl.dll.a";\
+		$(INSTALL_LIB) libfltk_gl.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\
-		$(INSTALL_LIB) libfltk_images.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_images.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_images.so;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_images.so*;\
+		$(INSTALL_LIB) libfltk_images.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_images.so.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk_images.so";\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.sl*;\
-		$(INSTALL_LIB) libfltk_images.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_images.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_images.sl;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_images.sl*;\
+		$(INSTALL_LIB) libfltk_images.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_images.sl.$(FL_DSO_VERSION) "$(DESTDIR)$(libdir)/libfltk_images.sl";\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.*dylib;\
-		$(INSTALL_LIB) libfltk_images.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_images.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir)/libfltk_images.dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_images.*dylib;\
+		$(INSTALL_LIB) libfltk_images.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)"; \
+		$(LN) libfltk_images.$(FL_DSO_VERSION).dylib "$(DESTDIR)$(libdir)/libfltk_images.dylib";\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\
-		$(INSTALL_LIB) libfltk_images_s.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images_s.a";\
+		$(INSTALL_LIB) libfltk_images_s.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(IMGDSONAME) = xcygfltknox_images-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(INSTALL_LIB) $(IMGDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
-		$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(IMGDSONAME)"; \
+		$(INSTALL_LIB) $(IMGDSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images.dll.a";\
+		$(INSTALL_LIB) libfltk_images.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 	if test x$(IMGDSONAME) = xmgwfltknox_images-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(INSTALL_LIB) $(IMGDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
-		$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \
+		$(RM) "$(DESTDIR)$(bindir)/$(IMGDSONAME)"; \
+		$(INSTALL_LIB) $(IMGDSONAME) "$(DESTDIR)$(bindir)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images.dll.a";\
+		$(INSTALL_LIB) libfltk_images.dll.a "$(DESTDIR)$(libdir)"; \
 	fi
 
 
 uninstall:
 	echo "Uninstalling libraries..."
-	$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)
+	$(RM) "$(DESTDIR)$(libdir)/$(LIBBASENAME)"
 	if test x$(DSONAME) = xlibfltk.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk.so*;\
 	fi
 	if test x$(DSONAME) = xlibfltk.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.sl*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk.sl*;\
 	fi
 	if test x$(DSONAME) = xlibfltk.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.*dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk.*dylib;\
 	fi
 	if test x$(DSONAME) = xlibfltk_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_s.a";\
 	fi
 	if test x$(DSONAME) = xcygfltknox-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(DSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk.dll.a";\
 	fi
 	if test x$(DSONAME) = xcygfltk-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(DSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk.dll.a";\
 	fi
 	if test x$(DSONAME) = xmgwfltknox-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(DSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk.dll.a";\
 	fi
-	$(RM) $(DESTDIR)$(libdir)/$(FLLIBBASENAME);
+	$(RM) "$(DESTDIR)$(libdir)/$(FLLIBBASENAME)";
 	if test x$(FLDSONAME) = xlibfltk_forms.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_forms.so*;\
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.sl*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_forms.sl*;\
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.*dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_forms.*dylib;\
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms_s.a";\
 	fi
 	if test x$(FLDSONAME) = xcygfltknox_forms-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(FLDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms.dll.a";\
 	fi
 	if test x$(FLDSONAME) = xcygfltk_forms-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(FLDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms.dll.a";\
 	fi
 	if test x$(FLDSONAME) = xmgwfltknox_forms-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(FLDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_forms.dll.a";\
 	fi
 	if test x$(GLLIBNAME) != x; then\
-		$(RM) $(DESTDIR)$(libdir)/$(GLLIBBASENAME);\
+		$(RM) "$(DESTDIR)$(libdir)/$(GLLIBBASENAME)";\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_gl.so*;\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.sl*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_gl.sl*;\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.*dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_gl.*dylib;\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl_s.a";\
 	fi
 	if test x$(GLDSONAME) = xcygfltknox_gl-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(GLDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl.dll.a";\
 	fi
 	if test x$(GLDSONAME) = xcygfltk_gl-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(GLDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl.dll.a";\
 	fi
 	if test x$(GLDSONAME) = xmgwfltknox_gl-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(GLDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_gl.dll.a";\
 	fi
 	if test x$(IMGLIBNAME) != x; then\
-		$(RM) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME);\
+		$(RM) "$(DESTDIR)$(libdir)/$(IMGLIBBASENAME)";\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.so.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_images.so*;\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.sl.$(FL_DSO_VERSION); then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.sl*;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_images.sl*;\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.$(FL_DSO_VERSION).dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.*dylib;\
+		$(RM) "$(DESTDIR)$(libdir)"/libfltk_images.*dylib;\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images_s.a";\
 	fi
 	if test x$(IMGDSONAME) = xcygfltknox_images-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(IMGDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images.dll.a";\
 	fi
 	if test x$(IMGDSONAME) = xcygfltk_images-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(IMGDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images.dll.a";\
 	fi
 	if test x$(IMGDSONAME) = xmgwfltknox_images-$(FL_DSO_VERSION).dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(RM) "$(DESTDIR)$(bindir)/$(IMGDSONAME)"; \
+		$(RM) "$(DESTDIR)$(libdir)/libfltk_images.dll.a";\
 	fi

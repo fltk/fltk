@@ -1,7 +1,7 @@
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,12 +49,12 @@ public:
   char *ps_filename_;
   int nPages;
   double pw_, ph_;
-  uchar bg_r, bg_g, bg_b;
 
   Fl_PostScript_Graphics_Driver();
   ~Fl_PostScript_Graphics_Driver();
   void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;}
   FILE * file() {return output;}
+  inline void set_cairo(cairo_t *cr) { cairo_ = cr; }
   void page(double pw, double ph, int media = 0);
   void page(int format);
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
@@ -81,10 +81,10 @@ public:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
   virtual int has_feature(driver_feature feature_mask) FL_OVERRIDE { return feature_mask & PRINTER; }
   // draw image classes without caching them
-  void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
-  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
-  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+    void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
+    void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+    void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+    void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
 };
 
 #else // ! USE_PANGO

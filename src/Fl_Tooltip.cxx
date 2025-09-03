@@ -1,7 +1,7 @@
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,6 +20,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_string_functions.h>
 #include "Fl_System_Driver.H"
+#include "Fl_Window_Driver.H"
+#include "Fl_Screen_Driver.H"
 
 #include <stdio.h>
 
@@ -50,6 +52,7 @@ public:
   Fl_TooltipBox() : Fl_Menu_Window(0, 0) {
     set_override();
     set_tooltip_window();
+    Fl_Window_Driver::driver(this)->set_popup_window();
     end();
   }
   void draw() FL_OVERRIDE;
@@ -89,22 +92,27 @@ void Fl_TooltipBox::layout() {
   hh += (Fl_Tooltip::margin_height() * 2);
 
   // find position on the screen of the widget:
-  int ox = Fl::event_x_root();
-  int oy = currentTooltipY + currentTooltipH+2;
-  for (Fl_Widget* p = Fl_Tooltip::current(); p; p = p->window()) {
-    oy += p->y();
-  }
-  int scr_x, scr_y, scr_w, scr_h;
-  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
-  if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
-  if (ox < scr_x) ox = scr_x;
+  int ox = Fl::event_x_root(), oy;
   if (currentTooltipH > 30) {
     oy = Fl::event_y_root()+13;
-    if (oy+hh > scr_y+scr_h) oy -= 23+hh;
   } else {
-    if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
+    oy = currentTooltipY + currentTooltipH+2;
+    for (Fl_Widget* p = Fl_Tooltip::current(); p; p = p->window()) {
+      oy += p->y();
+    }
   }
-  if (oy < scr_y) oy = scr_y;
+  if (Fl::screen_driver()->screen_boundaries_known()) {
+    int scr_x, scr_y, scr_w, scr_h;
+    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+    if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
+    if (ox < scr_x) ox = scr_x;
+    if (currentTooltipH > 30) {
+      if (oy+hh > scr_y+scr_h) oy -= 23+hh;
+    } else {
+      if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
+    }
+    if (oy < scr_y) oy = scr_y;
+  }
 
   resize(ox, oy, ww, hh);
 }

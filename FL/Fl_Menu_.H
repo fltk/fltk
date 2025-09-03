@@ -1,7 +1,7 @@
 //
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,6 +60,7 @@ protected:
 
   uchar alloc;                  // flag indicates if menu_ is a dynamic copy (=1) or not (=0)
   uchar down_box_;
+  Fl_Boxtype menu_box_;
   Fl_Font textfont_;
   Fl_Fontsize textsize_;
   Fl_Color textcolor_;
@@ -150,29 +151,63 @@ public:
   int clear_submenu(int index);
   void replace(int,const char *);
   void remove(int);
-  /** Changes the shortcut of item \p i to \p s. */
+  /** Change the shortcut of item \p i to \p s. */
   void shortcut(int i, int s) {menu_[i].shortcut(s);}
-  /** Sets the flags of item i.  For a list of the flags, see Fl_Menu_Item.  */
+  /** Set the flags of item i.  For a list of the flags, see Fl_Menu_Item.  */
   void mode(int i,int fl) {menu_[i].flags = fl;}
-  /** Gets the flags of item i.  For a list of the flags, see Fl_Menu_Item.  */
+  /** Get the flags of item i.  For a list of the flags, see Fl_Menu_Item.  */
   int  mode(int i) const {return menu_[i].flags;}
 
-  /** Returns a pointer to the last menu item that was picked.  */
+  /** Return a pointer to the last menu item that was picked.  */
   const Fl_Menu_Item *mvalue() const {return value_;}
-  /** Returns a pointer to the menu item that was picked before the current one was picked.
-   This call gives devs additional details how a user changed a choice in the Fl_Choice widget.
-   */
+
+  /** Return a pointer to the menu item that was picked before the current one was picked.
+    This call gives developers additional details how a user changed a choice in the Fl_Choice widget.
+  */
   const Fl_Menu_Item *prev_mvalue() const {return prev_value_;}
-  /** Returns the index into menu() of the last item chosen by the user.  It is zero initially. */
-  int value() const {return value_ ? (int)(value_-menu_) : -1;}
+  // Return the index into the menu() of the last item chosen by the user or -1.
+  int value() const;
+  // Set the internal value_ of the menu to the given Fl_Menu_Item.
   int value(const Fl_Menu_Item*);
   /**
-    The value is the index into menu() of the last item chosen by
-    the user.  It is zero initially.  You can set it as an integer, or set
-    it with a pointer to a menu item.  The set routines return non-zero if
-    the new value is different than the old one.
+    Set the value of the menu to index \c i.
+
+    The \e value of the menu is the index into the menu() of the last
+    item chosen by the user or -1.
+
+    It is \c -1 initially (if no item has been chosen) or if the chosen
+    menu item is part of a submenu addressed by an FL_SUBMENU_POINTER.
+
+    \note All menu items are located in a contiguous array of Fl_Menu_Item's
+      unless an item has the FL_SUBMENU_POINTER flag which redirects the
+      submenu to an independent submenu array. This submenu array is not
+      counted in the size() of the menu, and menu items in this submenu can't
+      return a valid index into the \b main menu. Therefore menu items that
+      are located in such a submenu return -1 when value() is called.
+      This may be changed in a future version.
+
+    You can set the value as an integer or with a pointer to a menu item.
+    The integer value is restricted to the main menu array (0..size()-1)
+    whereas the menu item can be any menu item, even one in a detached
+    submenu (see note about FL_SUBMENU_POINTER above).
+
+    \param[in] i  Index of the menu item in the main menu array.\n
+                  Values outside 0..size()-1 are ignored (return 0).
+
+    \return   Whether the new value is different than the old one.
+    \retval 0 The value didn't change.
+    \retval 1 The value was changed.
+
+    \see int value(const Fl_Menu_Item*)
+    \see int value()
+    \see const Fl_Menu_Item *mvalue()
   */
-  int value(int i) {return value(menu_+i);}
+  int value(int i) {
+    if (!menu_ || i < 0 || i >= size())
+      return 0;
+    return value(menu_ + i);
+  }
+
   /** Returns the title of the last item chosen.  */
   const char *text() const {return value_ ? value_->text : 0;}
   /** Returns the title of item i.  */
@@ -193,13 +228,21 @@ public:
 
   /**
     This box type is used to surround the currently-selected items in the
-    menus.  If this is FL_NO_BOX then it acts like
-    FL_THIN_UP_BOX and selection_color() acts like
-    FL_WHITE, for back compatibility.
+    menus.
   */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   /** Sets the box type used to surround the currently-selected items in the menus.  */
   void down_box(Fl_Boxtype b) {down_box_ = b;}
+
+  /** Get the box type for the menu popup windows.
+   \return the box type, or FL_NO_BOX if Fl_Menu_::box() is to be used instead
+   */
+  Fl_Boxtype menu_box() const { return menu_box_; }
+  /** Set the box type for the menu popup windows.
+   If menu_box set to FL_NO_BOX, the menu window will use Fl_Menu_::box() instead.
+   \param[in] b new box type or FL_NO_BOX
+   */
+  void menu_box(Fl_Boxtype b) { menu_box_ = b; }
 
   /** For back compatibility, same as selection_color() */
   Fl_Color down_color() const {return selection_color();}

@@ -8,10 +8,10 @@ to change source code. We also explain how code can be made compatible
 so it can be compiled by both FLTK 1.3.x and 1.4.x.
 
 If you need to migrate your code from prior FLTK versions to FLTK 1.4,
-then you should first consult the relevant appendices in the FLTK 1.3
-online documentation or by downloading the FLTK 1.3 documentation.
-See https://www.fltk.org/doc-1.3/index.html and/or
-https://www.fltk.org/software.php , respectively.
+please consult the relevant appendices in the FLTK 1.3 online documentation
+or by downloading the FLTK 1.3 documentation.
+See https://www.fltk.org/doc-1.3/migration_1_3.html and/or
+https://www.fltk.org/software.php, respectively.
 
 
 \section migration_1_4_headers Changes in Header Files
@@ -20,34 +20,34 @@ We strive to include only necessary header files in the public headers
 of the FLTK library to reduce dependencies and hence compile times.
 
 We try to avoid including system header files as far as possible. Known
-exceptions are \<stdio.h> where file system structures and functions are
-visible in the public API, for instance \p FILE*, and sometimes essential
-header files like \<stdlib.h> and/or \<stddef.h>. Some required system
-headers \b may be included in platform specific header files like
-\<FL/platform.H> or \<FL/platform_types.h>.
+exceptions are \c \<stdio.h> where file system structures and functions are
+visible in the public API, for instance \c FILE*, and sometimes essential
+header files like \c \<stdlib.h> and/or \c \<stddef.h>. Some required
+system headers \b may be included in platform specific header files like
+\c \<FL/platform.H> or \c \<FL/platform_types.h>.
 
 In earlier versions (1.3.x) some of the public FLTK headers included some
 not strictly required system headers by accident.
 
-The consequence for building user programs with FLTK 1.4 is that if you
+The consequence for building user programs with FLTK 1.4 is: if you
 require a system or FLTK header in your user program that you don't
-\e \#include explicitly but which has been included by FLTK 1.3.x your
-FLTK 1.3 program may issue compiler errors or warnings about missing header
-files or missing declarations when compiled with FLTK 1.4.
+\c \#include explicitly but which has been included by FLTK 1.3.x your
+FLTK 1.3 program may issue compiler errors or warnings about missing
+header files or missing declarations when compiled with FLTK 1.4.
 
 This is not a fault of FLTK 1.4 but a fault of the source code that did
 not include all required headers.
 
-In FLTK 1.4 inclusion of \<FL/Fl.H> is no longer a strict requirement as
-it was required and documented in FLTK 1.3.x. In FLTK 1.4 you may still
-need to '\#include \<FL/Fl.H>' if you are using enumerations or methods
+In FLTK 1.4 inclusion of \c \<FL/Fl.H> is no longer a strict requirement
+as it was required and documented in FLTK 1.3.x. In FLTK 1.4 you may still
+need to \c '\#include \c \<FL/Fl.H>' if you are using enumerations or methods
 of class \c Fl like Fl::run() but there are exceptions where this header
-is included by other FLTK headers, like Fl_Window.H and other subclasses.
+is included by other FLTK headers, like \c Fl_Window.H and other subclasses.
 
 Suggested solution: include all FLTK and system header files your source
 code requires explicitly and don't rely on FLTK headers to include a
 particular header file. If you want your code to be as much as possible
-compatible with FLTK 1.3.x, then you should \c '\#include \<FL/Fl.H>'
+compatible with FLTK 1.3.x, then you should \c '\#include \c \<FL/Fl.H>'
 as required by 1.3.x.
 
 You don't need to include headers of base classes - this is done by all
@@ -94,7 +94,7 @@ change your program to use these new constants instead of those without the
 \p "_L" suffix. For more information see the documentation of Fl_Preferences.
 
 
-\section migration_1_4_add_timeout Fl::add_timeout and friends
+\section migration_1_4_timeout Fl::add_timeout and friends
 
 Since FLTK 1.4.0 internal timeout handling has been unified across platforms.
 This ensures equal timeout handling, improved accuracy of Fl::repeat_timeout(),
@@ -180,6 +180,239 @@ Code example in header file:
 Note the \p 'const' attribute \b and the \p FL_OVERRIDE macro.
 
 
+\section migration_1_4_x11_compat Using X11 specific code with a "hybrid" FLTK library
+
+Read this section if your FLTK 1.3 program uses X11 specific code with platform
+specific guards like
+\code
+  #if defined(WIN32)
+    // Windows specific code here
+  #elif defined(__APPLE__)
+    // macOS specific code here
+  #else
+    // X11 specific code here
+  #endif
+\endcode
+
+or similar.
+
+You may skip this section if you don't use platform (X11) specific code.
+
+FLTK 1.4 introduced Wayland support on Unix-like systems that support Wayland
+at runtime. The default build selects the Wayland runtime if it exists at
+program startup and falls back to using X11 if Wayland is not supported.
+On all currently known Wayland-enabled systems X11 programs are still supported
+by using "XWayland" which must be installed and enabled on the system. This is
+usually the case (as of this writing in November 2024).
+
+Since using the Wayland runtime is the default you may get runtime errors
+if your program uses X11 specific code with the Wayland runtime.
+
+There are two solutions:
+
+ -# Change the conditional code shown above everywhere in your program. This
+    is the best and recommended long-term solution but may require some work.
+ -# Disable the Wayland backend (runtime) for your program. This can be a
+    short-term solution for quick "porting" success.
+
+Details about solution 1 are beyond the scope of this documentation but here's
+an example how such code can be rewritten in FLTK 1.4 for all platforms. This
+code is now in test/fltk-versions.cxx but may be changed in the future. Change
+this as you need.
+
+  \code
+    static const char *get_platform() {
+    #if defined(_WIN32)
+      return "Windows";
+    #elif defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
+    # if defined(FLTK_USE_X11)
+      if (fl_x11_display())
+        return "Unix/Linux (X11)";
+    # endif
+    # if defined(FLTK_USE_WAYLAND)
+      if (fl_wl_display())
+        return "Unix/Linux (Wayland)";
+    # endif
+      return "X11 or Wayland (backend unknown or display not opened)";
+    #elif defined(__APPLE__)
+      return "macOS (native)";
+    #endif
+      return "platform unknown, unsupported, or display not opened";
+    }
+  \endcode
+
+
+Solution 2 is described in chapter 2.1 of README.Wayland.txt. Please read this
+chapter if you need to support X11 specific code w/o the Wayland runtime.
+
+Excerpt from README.Wayland.txt:
+
+  It is possible to force a program linked to a Wayland-enabled FLTK library
+  to use X11 in all situations by putting this declaration somewhere in the
+  source code:
+
+  \code
+      FL_EXPORT bool fl_disable_wayland = true;
+  \endcode
+
+Please note that you may need to do more to link and run your program
+successfully, depending on the build system.
+
+Additional info can be found in chapter \ref osissues_wl_x11_hybrid.
+
+
+\section migration_1_4_modern_cmake Modern CMake
+
+FLTK 1.4.0 supports "modern" CMake rather than old or "classic" CMake
+which was used in FLTK 1.3.x. Modern CMake was introduced in CMake 3.0
+(~ 2014) and further developed in later CMake versions. FLTK 1.4.0 requires
+at least CMake 3.15 (~ 2019) as of Febrary 2024.
+
+There are a lot of advantages that motivated this transition (mentioning
+only some):
+
+  - easier to use for projects using FLTK
+  - better structure
+  - uses CMake targets rather than variables
+  - embeddable in user projects via FetchContent() etc.
+  - embeddable in user projects via add_subdirectory()
+  - better coexistence with main projects if built as a subproject
+
+Note that CMake targets can provide all required build flags and build
+dependencies which is the main advantage for user projects. For instance,
+instead of linking both fltk and fltk_images you need only fltk_images
+and fltk is linked in automatically.
+
+Unfortunately there is one drawback you may encounter: Several CMake build
+option names have been changed, compared to FLTK 1.3.x. This is due to the
+fact that CMake cache variables are shared between the main (aka superbuild)
+project and all subprojects. Therefore all FLTK options are now prefixed
+with FLTK_.
+
+This feature is now CMake standard and very common in newer projects. The
+CMake developers recommend strongly to use modern CMake.
+
+We took the opportunity to redesign all CMake related options and target
+names for FLTK 1.4.0 to avoid changing these names later. Note that CMake
+support in 1.3.x was only experimental and the one in FLTK 1.4 (Git) up to
+the official release was beta state by definition. We apologize for all
+inconveniencies, hope that this is one of the rare exceptions in FLTK
+development, and that the new names are now stable as usual.
+
+
+Changes in Detail:
+
+Since FLTK 1.4.0 CMake target names are "namespaced", i.e. they are created
+with the prefix 'fltk::' and the old prefix 'fltk_' has been stripped off
+as far as the CMakeLists.txt file of user projects is concerned. The known
+filenames on disk did not change though.
+
+The shared library target names use the common suffix "-shared" rather
+than "_SHARED".
+
+The library 'fltk_cairo' is no longer used. Its functionality has been included
+in libfltk. FLTK 1.4.0 creates a dummy (empty) libfltk_cairo for backwards
+compatibility only. Please remove fltk_cairo from your projects and use only
+'fltk::fltk' and/or the other libraries instead.
+
+For more information and documentation of all options please refer to the
+file README.CMake.txt in the FLTK root directory.
+
+
+Old and New Library Targets:
+
+Library         | Old Target   | New Target      | Shared Library Target
+----------------|--------------|-----------------|-----------------------
+fltk            | fltk         | fltk::fltk      | fltk::fltk-shared
+fltk_forms      | fltk_forms   | fltk::forms     | fltk::forms-shared
+fltk_gl         | fltk_gl      | fltk::gl        | fltk::gl-shared
+fltk_images     | fltk_images  | fltk::images    | fltk::images-shared
+fltk_jpeg       | fltk_jpeg    | fltk::jpeg      | fltk::jpeg-shared
+fltk_png        | fltk_png     | fltk::png       | fltk::png-shared
+fltk_z          | fltk_z       | fltk::z         | fltk::z-shared
+fluid           | fluid        | fltk::fluid     | n/a
+
+For project developers used to the old (1.3.x) names the following table can
+assist to find the new option names. This table is ordered alphabetically
+by the old option name. Note that some option names did not change and
+some of the "old" names have been introduced in early 1.4.0 development.
+
+Old Option Name (FLTK 1.3.x)         | New Option Name (FLTK 1.4.x)
+-------------------------------------|------------------------------------
+FLTK_BUILD_EXAMPLES                  | FLTK_BUILD_EXAMPLES
+FLTK_BUILD_FLTK_OPTIONS              | FLTK_BUILD_FLTK_OPTIONS
+FLTK_BUILD_FLUID                     | FLTK_BUILD_FLUID
+FLTK_BUILD_FORMS                     | FLTK_BUILD_FORMS
+FLTK_BUILD_TEST                      | FLTK_BUILD_TEST
+FLTK_MSVC_RUNTIME_DLL                | FLTK_MSVC_RUNTIME_DLL
+OPTION_ABI_VERSION                   | FLTK_ABI_VERSION
+OPTION_ALLOW_GTK_PLUGIN              | FLTK_USE_LIBDECOR_GTK
+OPTION_APPLE_X11                     | FLTK_BACKEND_X11
+OPTION_ARCHFLAGS                     | FLTK_ARCHFLAGS
+OPTION_BUILD_HTML_DOCUMENTATION      | FLTK_BUILD_HTML_DOCS
+OPTION_BUILD_PDF_DOCUMENTATION       | FLTK_BUILD_PDF_DOCS
+OPTION_BUILD_SHARED_LIBS             | FLTK_BUILD_SHARED_LIBS
+OPTION_CAIRO                         | FLTK_OPTION_CAIRO_WINDOW
+OPTION_CAIROEXT                      | FLTK_OPTION_CAIRO_EXT
+OPTION_CREATE_LINKS                  | FLTK_INSTALL_LINKS
+OPTION_FILESYSTEM_SUPPORT            | FLTK_OPTION_FILESYSTEM_SUPPORT
+OPTION_INCLUDE_DRIVER_DOCUMENTATION  | FLTK_INCLUDE_DRIVER_DOCS
+OPTION_INSTALL_HTML_DOCUMENTATION    | FLTK_INSTALL_HTML_DOCS
+OPTION_INSTALL_PDF_DOCUMENTATION     | FLTK_INSTALL_PDF_DOCS
+OPTION_LARGE_FILE                    | FLTK_OPTION_LARGE_FILE
+OPTION_OPTIM                         | FLTK_OPTION_OPTIM
+OPTION_PRINT_SUPPORT                 | FLTK_OPTION_PRINT_SUPPORT
+OPTION_USE_CAIRO                     | FLTK_GRAPHICS_CAIRO
+OPTION_USE_GDIPLUS                   | FLTK_GRAPHICS_GDIPLUS
+OPTION_USE_GL                        | FLTK_BUILD_GL
+OPTION_USE_KDIALOG                   | FLTK_USE_KDIALOG
+OPTION_USE_PANGO                     | FLTK_USE_PANGO
+OPTION_USE_POLL                      | FLTK_USE_POLL
+OPTION_USE_STD                       | FLTK_OPTION_STD
+OPTION_USE_SVG                       | FLTK_OPTION_SVG
+OPTION_USE_SYSTEM_LIBDECOR           | FLTK_USE_SYSTEM_LIBDECOR
+OPTION_USE_SYSTEM_LIBJPEG            | FLTK_USE_SYSTEM_LIBJPEG
+OPTION_USE_SYSTEM_LIBPNG             | FLTK_USE_SYSTEM_LIBPNG
+OPTION_USE_SYSTEM_ZLIB               | FLTK_USE_SYSTEM_ZLIB
+OPTION_USE_THREADS                   | FLTK_USE_PTHREADS
+OPTION_USE_WAYLAND                   | FLTK_BACKEND_WAYLAND
+OPTION_USE_XCURSOR                   | FLTK_USE_XCURSOR
+OPTION_USE_XFIXES                    | FLTK_USE_XFIXES
+OPTION_USE_XFT                       | FLTK_USE_XFT
+OPTION_USE_XINERAMA                  | FLTK_USE_XINERAMA
+OPTION_USE_XRENDER                   | FLTK_USE_XRENDER
+OPTION_WAYLAND_ONLY                  | FLTK_BACKEND_X11=OFF
+
+
+\section migration_1_4_windows_font New FL_HELVETICA Font on Windows
+
+In FLTK releases before 1.4.2 the Windows font name used for the FLTK font
+'FL_HELVETICA' and its variants was named 'Arial'. It turned out that this
+was a very old font used in early Windows versions and had been replaced with
+the newer font name 'Microsoft Sans Serif'. This font has many more UTF-8
+capable glyphs (characters) and is almost 100% compatible with the previously
+used font 'Arial'. It is supported by Microsoft since Windows XP, our oldest
+currently (partially) supported Windows platform.
+
+This new font is used since FLTK 1.4.2.
+
+We don't expect any issues with this much better font but if you really want
+strict backwards compatibility with FLTK 1.3.x or early 1.4.0/1.4.1 versions
+you can apply a tiny patch at the beginning of your program.
+
+This code will load the old font 'Arial' on Windows:
+
+\code
+#ifdef _WIN32
+  // reset Windows fonts to pre-1.4.2 state
+  Fl::set_font(FL_HELVETICA,     " Arial");
+  Fl::set_font(FL_HELVETICA + 1, "BArial");
+  Fl::set_font(FL_HELVETICA + 2, "IArial");
+  Fl::set_font(FL_HELVETICA + 3, "PArial");
+#endif
+\endcode
+
+
 \htmlonly
 <hr>
 <table summary="navigation bar" width="100%" border="0">
@@ -194,8 +427,8 @@ Note the \p 'const' attribute \b and the \p FL_OVERRIDE macro.
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="development.html">
-    Developer Information
+    <a class="el" href="license.html">
+    Software License
     [Next]
     </a>
   </td>

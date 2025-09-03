@@ -257,10 +257,14 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
 protected:
   void draw() FL_OVERRIDE;
   int handle_key();
+  int handle_rmb();
 
 public:
   int handle(int) FL_OVERRIDE;
   Fl_Input(int,int,int,int,const char * = 0);
+  static const char *cut_menu_text;
+  static const char *copy_menu_text;
+  static const char *paste_menu_text;
 };
 
 #endif

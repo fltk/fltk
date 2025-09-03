@@ -1,7 +1,7 @@
 #
 # PNG library CMake configuration for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -34,6 +34,13 @@ set(PNG_SRCS
 )
 
 #######################################################################
+# Note: This file is used only if we build the bundled PNG library,
+#  and if we do this we MUST also build and use the *bundled* ZLIB,
+#  hence we also link against the bundled ZLIB. Therefore there's
+#  no need to check which ZLIB version to use in this context.
+#######################################################################
+
+#######################################################################
 # Build some files on ARM (e.g. Apple M1 systems)
 #######################################################################
 
@@ -42,60 +49,93 @@ set(PNG_SRCS
 # compile these files even if this results in some warnings.
 # This includes all non-macOS platforms.
 
-if (CMAKE_OSX_ARCHITECTURES)
+if(CMAKE_OSX_ARCHITECTURES)
   string(REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
-else ()
-  set (is_arm TRUE)
-endif ()
+else()
+  set(is_arm TRUE)
+endif()
 
-if (is_arm)
-  LIST (APPEND PNG_SRCS
-    arm/arm_init.c
-    arm/filter_neon_intrinsics.c
-    arm/palette_neon_intrinsics.c
+if(is_arm)
+  list(APPEND PNG_SRCS
+       arm/arm_init.c
+       arm/filter_neon_intrinsics.c
+       arm/palette_neon_intrinsics.c
   )
-endif ()
+endif()
 
-unset (is_arm)
+unset(is_arm)
 
 #######################################################################
-# Build some files on ppc64
-# We compile these files whatever the architecture resulting in void code
-# on non-ppc64 architectures.
+# Build some files on ppc64.
+# We compile these files whatever the architecture resulting in
+# void code on non-ppc64 architectures.
 #######################################################################
 
-LIST (APPEND PNG_SRCS
-  powerpc/powerpc_init.c
-  powerpc/filter_vsx_intrinsics.c
+list(APPEND PNG_SRCS
+     powerpc/powerpc_init.c
+     powerpc/filter_vsx_intrinsics.c
+)
+
+#######################################################################
+# Set common variables for static and shared builds
+#######################################################################
+
+set(compile_defs
+      HAVE_PNG_H=1
+      HAVE_PNG_GET_VALID=1
+      HAVE_PNG_SET_TRNS_TO_ALPHA=1
+)
+
+set(include_dirs
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:include>
 )
 
 #######################################################################
 # Build the static library
 #######################################################################
 
-FL_ADD_LIBRARY (fltk_png STATIC "${PNG_SRCS}")
-target_link_libraries (fltk_png ${FLTK_ZLIB_LIBRARIES})
+fl_add_library(fltk_png STATIC "${PNG_SRCS}")
+set(target     fltk_png)
+
+target_link_libraries     (${target} PUBLIC fltk::z)
+target_compile_definitions(${target} PUBLIC ${compile_defs})
+target_include_directories(${target} PUBLIC ${include_dirs})
+
+list(APPEND FLTK_IMAGE_LIBRARIES fltk::png)
+
+# Propagate to parent scope (modified by fl_add_library and here)
+set(FLTK_LIBRARIES       ${FLTK_LIBRARIES}       PARENT_SCOPE)
+set(FLTK_IMAGE_LIBRARIES ${FLTK_IMAGE_LIBRARIES} PARENT_SCOPE)
 
 #######################################################################
 # Build the shared library (optional)
 #######################################################################
 
-if (OPTION_BUILD_SHARED_LIBS)
+if(FLTK_BUILD_SHARED_LIBS)
 
-  FL_ADD_LIBRARY (fltk_png SHARED "${PNG_SRCS}")
+  # ensure to export all symbols for Windows DLL's
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
-  if (FLTK_USE_BUILTIN_ZLIB)
-    target_link_libraries (fltk_png_SHARED fltk_z)
-  else()
-    target_link_libraries (fltk_png_SHARED ${FLTK_ZLIB_LIBRARIES})
-  endif ()
+  fl_add_library(fltk_png SHARED "${PNG_SRCS}")
+  set(target     fltk_png-shared)
 
-endif ()
+  target_link_libraries     (${target} PUBLIC fltk::z-shared)
+  target_compile_definitions(${target} PUBLIC ${compile_defs})
+  target_include_directories(${target} PUBLIC ${include_dirs})
+
+  list(APPEND FLTK_IMAGE_LIBRARIES_SHARED fltk::png-shared)
+
+  # Propagate to parent scope (modified by fl_add_library and here)
+  set(FLTK_LIBRARIES_SHARED       ${FLTK_LIBRARIES_SHARED}       PARENT_SCOPE)
+  set(FLTK_IMAGE_LIBRARIES_SHARED ${FLTK_IMAGE_LIBRARIES_SHARED} PARENT_SCOPE)
+
+endif()
 
 #######################################################################
 # Install the library headers
 #######################################################################
 
-install (FILES png.h pngconf.h pnglibconf.h pngprefix.h
-         DESTINATION ${FLTK_INCLUDEDIR}/FL/images
+install(FILES png.h pngconf.h pnglibconf.h pngprefix.h
+        DESTINATION ${FLTK_INCLUDEDIR}/FL/images
 )

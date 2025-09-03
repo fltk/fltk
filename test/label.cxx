@@ -32,6 +32,7 @@ Fl_Box *text;
 Fl_Input *input;
 Fl_Hor_Value_Slider *fonts;
 Fl_Hor_Value_Slider *sizes;
+Fl_Hor_Value_Slider *h_margin, *v_margin, *img_spacing;
 Fl_Double_Window *window;
 Fl_Pixmap *img;
 
@@ -61,6 +62,21 @@ void image_cb(Fl_Widget *,void *) {
 
 void font_cb(Fl_Widget *,void *) {
   text->labelfont(int(fonts->value()));
+  window->redraw();
+}
+
+void h_margin_cb(Fl_Widget *,void *) {
+  text->horizontal_label_margin(int(h_margin->value()));
+  window->redraw();
+}
+
+void v_margin_cb(Fl_Widget *,void *) {
+  text->vertical_label_margin(int(v_margin->value()));
+  window->redraw();
+}
+
+void spacing_cb(Fl_Widget *,void *) {
+  text->label_image_spacing(int(img_spacing->value()));
   window->redraw();
 }
 
@@ -114,9 +130,9 @@ Fl_Menu_Item choices[] = {
 int main(int argc, char **argv) {
   img = new Fl_Pixmap(blast_xpm);
 
-  window = new Fl_Double_Window(440,420);
+  window = new Fl_Double_Window(440,495);
 
-  input = new Fl_Input(70,375,350,25,"Label:");
+  input = new Fl_Input(70,435,350,25,"Label:");
   input->static_value("The quick brown fox jumped over the lazy dog.");
   input->when(FL_WHEN_CHANGED);
   input->callback(input_cb);
@@ -135,6 +151,31 @@ int main(int argc, char **argv) {
   fonts->step(1);
   fonts->value(0);
   fonts->callback(font_cb);
+
+  Fl_Box *margin = new Fl_Box(0, 380, 70, 25, "Margins");
+  margin->box(FL_FLAT_BOX);
+  margin->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
+
+  h_margin = new Fl_Hor_Value_Slider(70+50,380,125,25,"Hor:");
+  h_margin->align(FL_ALIGN_LEFT);
+  h_margin->bounds(-25,25);
+  h_margin->step(1);
+  h_margin->value(0);
+  h_margin->callback(h_margin_cb);
+
+  v_margin = new Fl_Hor_Value_Slider(70+175+50,380,125,25,"Vert:");
+  v_margin->align(FL_ALIGN_LEFT);
+  v_margin->bounds(-25,25);
+  v_margin->step(1);
+  v_margin->value(0);
+  v_margin->callback(v_margin_cb);
+
+  img_spacing = new Fl_Hor_Value_Slider(70+50,405,125,25,"Image:");
+  img_spacing->align(FL_ALIGN_LEFT);
+  img_spacing->bounds(0,50);
+  img_spacing->step(1);
+  img_spacing->value(0);
+  img_spacing->callback(spacing_cb);
 
   Fl_Group *g = new Fl_Group(70,275,350,50);
   imageb = new Fl_Toggle_Button(70,275,50,25,"image");

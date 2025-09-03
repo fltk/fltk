@@ -159,10 +159,16 @@ fl_check_images(const char *name,               // I - Filename
 
   // Check svg or xml signature
 
+  while (count && isspace(buf[0])) { buf++; count--; }
   if ((count >= 5 &&
        (memcmp(buf, "<?xml", 5) == 0 ||
-        memcmp(buf, "<svg", 4) == 0)))
-    return new Fl_SVG_Image(name);
+        memcmp(buf, "<svg", 4) == 0  ||
+        memcmp(buf, "<!--", 4) == 0))) {
+    Fl_SVG_Image *image = new Fl_SVG_Image(name);
+    if (image->w() && image->h())
+      return image;
+    delete image;
+  }
 #endif // FLTK_USE_SVG
 
   // unknown image format

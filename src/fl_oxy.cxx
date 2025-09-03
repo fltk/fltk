@@ -2,7 +2,7 @@
 // "Oxy" Scheme drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2011 by Dmitrij K. aka "kdiman"
-// Copyright 2012-2022 by Bill Spitzak and others.
+// Copyright 2012-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,58 +20,74 @@
 #include <FL/Fl_Rect.H>
 #include "fl_oxy.h"
 
-// Status of this scheme (to-do list):
+// Note:
 //
-// This scheme works but is not yet perfect:
-//
-// (1) Drawing on the X11 platform (w/o Cairo) can be asymmetric for some "arrows"
-// (2) Arrows are not always centered perfectly
+// Drawing on the X11 platform w/o Cairo can be asymmetric for some "arrows"
 
 #define GROFF 0.45f // gradients offset
 
-// Draw a single arrow
-static void single_arrow(Fl_Rect bb, Fl_Orientation o, Fl_Color col) {
+#ifndef DEBUG_OXY_ARROW
+#define DEBUG_OXY_ARROW 0   // 0 = off, 1 = cross at center position of arrows
+#endif
 
-  fl_color(col);
-  fl_line_style(FL_SOLID, 1);
-  fl_push_matrix();
+// Draw a single arrow
+
+static void single_arrow(Fl_Rect bb, Fl_Orientation o, Fl_Color col) {
 
   int x1 = bb.x();
   int y1 = bb.y();
   int w1 = bb.w();
   int h1 = bb.h();
 
-  int dx = w1 / 3;
-  if (h1 < w1) dx = h1 / 3;
-  if (dx > 4) dx = 4;
-  else if (dx < 2) dx = 2;
-
   float angle = int(o) * 45.0f;
 
-  int tx = x1 + (w1 + 1)/2;
-  int ty = y1 + (h1 + 1)/2;
+  // calculate arrow size
+  int dx = (w1 - 3) / 2;
+  if (h1 < w1) dx = (h1 - 3) / 2;
+  if (dx > 4) dx = 4;
+  else if (dx < 2) dx = 2;
+  // dx = (dx + 1) & (-2);  // should be even ? not required
 
-  const int lw = 2;       // arrow line width: n means n+1 pixels
+  int tx = x1 + w1/2;
+  int ty = y1 + h1/2;
 
-  if (o & 1)              // up or down arrow
-    fl_translate(tx, ty - (lw+1)/2);
-  else                    // left or right arrow
-    fl_translate(tx - lw/2 + 1, ty);
+  const int lw = 2;         // arrow line width: n+1 pixels (must be even)
+  const int dw = 1;         // half the line width
 
-  fl_rotate(angle);
+  fl_color(col);
+  fl_line_style(FL_SOLID, 1);
+  fl_push_matrix();
 
-  int x0 = -(dx)/2;
+  fl_translate(tx, ty);     // move to center
+  fl_rotate(angle);         // rotate by given angle
+
+  // DEBUG: Draw a two-colored cross at the center of the arrow box
+  // This can be used to debug or adjust array alignment (centering)
+
+#if (DEBUG_OXY_ARROW)                   // draw a cross at the center
+  int ll;                               // line length
+  fl_color(FL_BLUE);                    // "horizontal" line
+  ll = (o&2) ? h1/2 - 1 : w1/2 - 1;     // line length
+  fl_begin_line();
+  fl_vertex(-ll, 0); fl_vertex(ll, 0);
+  fl_end_line();
+  fl_color(0x22882200);                 // "vertical" line
+  ll = (o&2) ? w1/2 - 1 : h1/2 - 1;     // line length
+  fl_begin_line();
+  fl_vertex(0, -ll); fl_vertex(0, ll);
+  fl_end_line();
+  fl_color(col);                        // back to original color
+#endif
+
+  // Draw the "arrow", similar to '>' at the center of the box
 
   fl_begin_complex_polygon();
-
-  fl_vertex(x0,          -dx);
-  fl_vertex(x0 + dx,      0);
-  fl_vertex(x0,           dx);
-
-  fl_vertex(x0 + lw,      dx);
-  fl_vertex(x0 + lw + dx, 0);
-  fl_vertex(x0 + lw,     -dx);
-
+  fl_vertex(-dx + dw,      -dx);
+  fl_vertex(  0 + dw,        0);
+  fl_vertex(-dx + dw,       dx);
+  fl_vertex(-dx + dw + lw,  dx);
+  fl_vertex(  0 + dw + lw,   0);
+  fl_vertex(-dx + dw + lw, -dx);
   fl_end_complex_polygon();
 
   fl_pop_matrix();
@@ -97,14 +113,12 @@ void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
       switch (int(o)) {
         case FL_ORIENT_DOWN:
         case FL_ORIENT_UP:
-          bb.y(bb.y() - 2);           // shift upwards
           bb.h(bb.h() - 4);           // reduce size
           single_arrow(bb, o, col);
           bb.y(bb.y() + 4);           // shift down
           single_arrow(bb, o, col);
           break;
         default:
-          bb.x(bb.x() - 2);           // shift left
           bb.w(bb.w() - 4);           // reduce size
           single_arrow(bb, o, col);
           bb.x(bb.x() + 4);           // shift right
@@ -115,10 +129,10 @@ void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
 
     case FL_ARROW_CHOICE:
 
-      bb.y(bb.y() - 2);               // shift upwards
-      bb.h(bb.h() - 4);               // reduce size
+      bb.y(bb.y() - 1);               // shift upwards
+      bb.h(bb.h() - 4);               // reduce height
       single_arrow(bb, FL_ORIENT_UP, col);
-      bb.y(bb.y() + 4);               // shift down
+      bb.y(bb.y() + 6);               // shift down
       single_arrow(bb, FL_ORIENT_DOWN, col);
       break;
 
@@ -213,12 +227,14 @@ static void _oxy_rounded_box_(int x, int y, int w, int h, Fl_Color bg) {
   fl_color(bg);
   if (w > h) {
     fl_pie(x, y, h, h, 90.0, 270.0);          // right half of circle
-    fl_rectf(x + h / 2, y, w - h, h);         // rectangle between left and right half-circle
+    fl_rectf(x + h / 2, y, w - h + 1, h);     // rectangle between left and right half-circle
     fl_pie(x + w - h, y, h, h, 0.0, 90.0);    // top-left quarter of circle
     fl_pie(x + w - h, y, h, h, 270.0, 360.0); // bottom-left quarter of circle
+  } else if (w == h) {
+    fl_pie(x, y, w, w, 0.0, 360.0);
   } else {
     fl_pie(x, y, w, w, 0.0, 180.0);           // top half of circle
-    fl_rectf(x, y + w / 2, w, h - w);         // rectangle between top and bottom half-circle
+    fl_rectf(x, y + w / 2, w, h - w + 1);     // rectangle between top and bottom half-circle
     fl_pie(x, y + h - w, w, w, 180.0, 360.0); // bottom half of circle
   }
 }
@@ -502,7 +518,8 @@ void round_down_box(int x, int y, int w, int h, Fl_Color col) {
 }
 
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F *);
+extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 
 Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
 
@@ -514,8 +531,8 @@ Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
   fl_internal_boxtype(_FL_OXY_THIN_DOWN_BOX, thin_down_box);
   fl_internal_boxtype(_FL_OXY_THIN_UP_FRAME, thin_up_frame);
   fl_internal_boxtype(_FL_OXY_THIN_DOWN_FRAME, thin_down_frame);
-  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box);
-  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box);
+  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box, fl_round_focus);
+  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box, fl_round_focus);
   fl_internal_boxtype(_FL_OXY_BUTTON_UP_BOX, button_up_box);
   fl_internal_boxtype(_FL_OXY_BUTTON_DOWN_BOX, button_down_box);
 

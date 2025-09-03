@@ -52,12 +52,22 @@ can run FLTK-based apps as Wayland clients or as X11 clients.
 The choice between running an app as a Wayland or an X11 client is done as follows,
 when the app runs function \c fl_open_display() (that function can be called explicitly by the app
 or implicitly by FLTK, for example the first time an Fl_Window is show()'n) :
+- if the app contains a global boolean variable named \ref fl_disable_wayland and this
+variable is true, X11 is used;
 - if environment variable FLTK_BACKEND is not defined, Wayland is used if a Wayland compositor
   is available, otherwise X11 is used;
 - if $FLTK_BACKEND equals "wayland", the library makes the app a Wayland client, and stops
   with error if no Wayland compositor is available;
 - if $FLTK_BACKEND equals "x11", the library makes the app an X11 client even if a Wayland
   compositor is available.
+
+The first condition listed above is meant to facilitate conversion of code written for
+FLTK 1.3.x and containing X11-specific code; add this single statement anywhere in the
+app's source code:
+\code
+  FL_EXPORT bool fl_disable_wayland = true;
+\endcode
+and the app will always run as an X11 client.
 
 After function \c fl_open_display() has been called, exactly one of the functions \c fl_wl_display()
 and \c fl_x11_display() returns a non-NULL value.
@@ -257,6 +267,10 @@ code will be called before the first \c show() of a window.
 
 \par
 This may call Fl::abort() if there is an error opening the display.
+
+void fl_x11_use_display(Display *d)
+\par
+Directs FLTK to use a pre-established X11 connection.
 
 void fl_close_display()
 
@@ -954,7 +968,7 @@ internally in the same way.
 
 \subsection osissues_mac_files Mac File System Specifics
 
-\par Resource Forks
+\par Resource Forks (OS X pre 10.6)
 
 FLTK does not access the resource fork of an application.
 However, a minimal resource fork must be created for OS X
@@ -1034,7 +1048,7 @@ cannot call any FLTK functions.
 FLTK Wayland apps automatically scale according to the Wayland-defined, integer-valued
 scale factor. On a HiDPI display, it's enough to set this factor to 2 for
 any FLTK app to be drawn using twice as many pixels and thus to be as readable
-as it is on a regular display. With the gnome desktop, that is achieved in the
+as it is on a regular display. With the gnome and KDE-plasma desktops, that is achieved in the
 "Displays" section of the "Settings" application, selecting 200 % for the "Scale" parameter.
 In addition to this, FLTK apps can also be scaled up or down typing ctrl/+/-/0/
 and with the \c FLTK_SCALING_FACTOR environment variable.

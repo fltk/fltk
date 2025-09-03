@@ -60,8 +60,8 @@
  Fl_Button *btn2 = new Fl_Button(10, 40, 100, 20, "Hello");
  FL_FUNCTION_CALLBACK_5(btn2,
    fl_message,
-   const char *, text, "Hello\n%d %d %d %d",
-   int, a, 1,  int, b, 2,  int, c, 3,  int, d, 4
+   const char *, "Hello\n%d %d %d %d",
+   int, 1,  int, 2,  int, 3,  int, 4
  );
  \endcode
 
@@ -153,7 +153,7 @@
  ...
  Fl_Button *btn = new Fl_Button(10, 10, 100, 20, "Test");
  FL_INLINE_CALLBACK_1(btn,
-   Fl_String, name, btn->label(),
+   const char *, name, btn->label(),
    {
      fl_message("Greetings from the %s button", name);
    }

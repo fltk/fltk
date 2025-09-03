@@ -1,7 +1,7 @@
 #
 # Top-level Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 
 include makeinclude
 
-DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) $(FLUIDDIR) fltk-options test \
+DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) $(FLUIDDIR) fltk-options $(TESTDIR) \
        documentation
 
 all: makeinclude fltk-config
@@ -25,10 +25,15 @@ all: makeinclude fltk-config
 		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
 	done
 
+# Build test programs (and 'all') if FLTK was configured with '--disable-test'
+test: all
+	echo "=== making test ===";\
+	(cd test; $(MAKE) $(MFLAGS)) || exit 1
+
 install: makeinclude
-	-mkdir -p $(DESTDIR)$(bindir)
-	$(RM) $(DESTDIR)$(bindir)/fltk-config
-	$(INSTALL_SCRIPT) fltk-config $(DESTDIR)$(bindir)
+	-mkdir -p "$(DESTDIR)$(bindir)"
+	$(RM) "$(DESTDIR)$(bindir)/fltk-config"
+	$(INSTALL_SCRIPT) fltk-config "$(DESTDIR)$(bindir)"
 	for dir in FL $(DIRS); do\
 		echo "=== installing $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || exit 1;\
@@ -41,7 +46,7 @@ install-desktop: makeinclude
 	cd test; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 
 uninstall: makeinclude
-	$(RM) $(DESTDIR)$(bindir)/fltk-config
+	$(RM) "$(DESTDIR)$(bindir)/fltk-config"
 	for dir in FL $(DIRS); do\
 		echo "=== uninstalling $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || exit 1;\

@@ -148,7 +148,7 @@ os_resize_anonymous_file(int fd, off_t size)
  * XDG_RUNTIME_DIR.
  */
 int
-os_create_anonymous_file(off_t size)
+libdecor_os_create_anonymous_file(off_t size)
 {
 	static const char template[] = "/libdecor-shared-XXXXXX";
 	const char *path;

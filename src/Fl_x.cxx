@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -200,6 +200,8 @@ static Atom fl_NET_WM_ICON_NAME;                // utf8 aware window icon name
 static Atom fl_NET_SUPPORTING_WM_CHECK;
 static Atom fl_NET_WM_STATE;
 static Atom fl_NET_WM_STATE_FULLSCREEN;
+static Atom fl_NET_WM_STATE_MAXIMIZED_VERT;
+static Atom fl_NET_WM_STATE_MAXIMIZED_HORZ;
 static Atom fl_NET_WM_FULLSCREEN_MONITORS;
 Atom fl_NET_WORKAREA;
 static Atom fl_NET_WM_ICON;
@@ -528,8 +530,14 @@ void Fl_X11_Screen_Driver::disable_im() {
   xim_deactivate();
 }
 
+static void delayed_create_print_window(void *) {
+  Fl::remove_check(delayed_create_print_window);
+  fl_create_print_window();
+}
+
 void Fl_X11_Screen_Driver::open_display_platform() {
-  if (fl_display) return;
+  static Display *d = NULL;
+  if (d) return;
 
   setlocale(LC_CTYPE, "");
   XSetLocaleModifiers("");
@@ -537,7 +545,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   XSetIOErrorHandler(io_error_handler);
   XSetErrorHandler(xerror_handler);
 
-  Display *d = XOpenDisplay(0);
+  d = (fl_display ? fl_display : XOpenDisplay(0));
   if (!d) {
     Fl::fatal("Can't open display: %s", XDisplayName(0)); // does not return
     return; // silence static code analyzer
@@ -547,7 +555,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   // the unique GC used by all X windows
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
-  fl_create_print_window();
+  Fl::add_check(delayed_create_print_window);
 }
 
 
@@ -572,7 +580,6 @@ void open_display_i(Display* d) {
   fl_XdndStatus         = XInternAtom(d, "XdndStatus",          0);
   fl_XdndActionCopy     = XInternAtom(d, "XdndActionCopy",      0);
   fl_XdndFinished       = XInternAtom(d, "XdndFinished",        0);
-  fl_XdndEnter          = XInternAtom(d, "XdndEnter",           0);
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
   fl_Xatextplainutf     = XInternAtom(d, "text/plain;charset=UTF-8",0);
   fl_Xatextplainutf2    = XInternAtom(d, "text/plain;charset=utf-8",0); // Firefox/Thunderbird needs this - See STR#2930
@@ -590,6 +597,8 @@ void open_display_i(Display* d) {
   fl_NET_SUPPORTING_WM_CHECK = XInternAtom(d, "_NET_SUPPORTING_WM_CHECK", 0);
   fl_NET_WM_STATE       = XInternAtom(d, "_NET_WM_STATE",       0);
   fl_NET_WM_STATE_FULLSCREEN = XInternAtom(d, "_NET_WM_STATE_FULLSCREEN", 0);
+  fl_NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(d, "_NET_WM_STATE_MAXIMIZED_VERT", 0);
+  fl_NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(d, "_NET_WM_STATE_MAXIMIZED_HORZ", 0);
   fl_NET_WM_FULLSCREEN_MONITORS = XInternAtom(d, "_NET_WM_FULLSCREEN_MONITORS", 0);
   fl_NET_WORKAREA       = XInternAtom(d, "_NET_WORKAREA",       0);
   fl_NET_WM_ICON        = XInternAtom(d, "_NET_WM_ICON",        0);
@@ -963,6 +972,41 @@ char fl_key_vector[32]; // used by Fl::get_key()
 static int px, py;
 static ulong ptime;
 
+// Citation from XButtonEvent and XKeyEvent docs:
+//  "The state member is set to indicate the logical state of the pointer buttons
+//   and modifier keys just prior to the event, which is the bitwise inclusive OR
+//   of one or more of the button or modifier key masks:
+//   Button1Mask, Button2Mask, Button3Mask, Button4Mask, Button5Mask,
+//   ShiftMask, LockMask, ControlMask,
+//   Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, and Mod5Mask."
+//
+// Actual values in Debian Bookworm as of July 2024 (pseudo code):
+//   static int states[] = {
+//     ShiftMask, LockMask, ControlMask,                                 // 1<<0 .. 1<<2
+//     Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, Mod5Mask,                 // 1<<3 .. 1<<7
+//     Button1Mask, Button2Mask, Button3Mask, Button4Mask, Button5Mask   // 1<<8 .. 1<<12
+//   };
+//
+// Note: some more (undefined?) state bits *may* be set if the user uses a keyboard
+// other than the primary one (the top-most in keyboard settings). Therefore we must
+// take care not to use these undefined bits (found by accident).
+// These undefined bits are ignored and not set in Fl::event_state(), otherwise we
+// might overwrite other valid bits (since FLTK 1.4.0, Sep 2024 or later).
+// See definition of FL_BUTTONS in FL/Enumerations.H:
+// there are only five "sticky" mouse buttons as of Sep 27, 2024.
+
+static unsigned int xbutton_state = 0; // extended button state (back, forward)
+
+// Define the state bits we're interested in for Fl::event_state().
+// Note that we ignore Button4Mask and Button5Mask (vertical scroll wheel).
+// X11 doesn't define masks for Button6 and Button7 (horizontal scroll wheel)
+// and any higher button numbers.
+
+static const unsigned int event_state_mask =
+  ShiftMask | LockMask | ControlMask |
+  Mod1Mask | Mod2Mask | Mod3Mask | Mod4Mask | Mod5Mask |
+  Button1Mask | Button2Mask | Button3Mask;
+
 static void set_event_xy(Fl_Window *win) {
 #  if FLTK_CONSOLIDATE_MOTION
   send_motion = 0;
@@ -975,7 +1019,7 @@ static void set_event_xy(Fl_Window *win) {
   Fl::e_x       = fl_xevent->xbutton.x/s;
   Fl::e_y_root  = fl_xevent->xbutton.y_root/s;
   Fl::e_y       = fl_xevent->xbutton.y/s;
-  Fl::e_state   = fl_xevent->xbutton.state << 16;
+  Fl::e_state   = ((fl_xevent->xbutton.state & event_state_mask) << 16) | xbutton_state;
   fl_event_time = fl_xevent->xbutton.time;
 #  ifdef __sgi
   // get the meta key off PC keyboards:
@@ -1200,7 +1244,7 @@ static void react_to_screen_reconfiguration() {
     float new_scale = Fl::screen_driver()->scale(0);
     for (int screen = 0; screen < Fl::screen_count(); screen++) {
       Fl::screen_driver()->scale(screen, 1);
-      Fl::screen_driver()->rescale_all_windows_from_screen(screen, new_scale);
+      Fl::screen_driver()->rescale_all_windows_from_screen(screen, new_scale, 1);
     }
   }
   delete[] scales;
@@ -1210,26 +1254,45 @@ static void react_to_screen_reconfiguration() {
 
 #if USE_XFT
 static void after_display_rescale(float *p_current_xft_dpi) {
-  FILE *pipe = popen("xrdb -query", "r");
-  if (!pipe) return;
-  char line[100];
-  while (fgets(line, sizeof(line), pipe) != NULL) {
-    if (memcmp(line, "Xft.dpi:", 8)) continue;
-    float dpi;
-    if (sscanf(line+8, "%f", &dpi) == 1) {
-      //fprintf(stderr," previous=%g dpi=%g \n", *p_current_xft_dpi, dpi);
-      if (fabs(dpi - *p_current_xft_dpi) > 0.01) {
-        *p_current_xft_dpi = dpi;
-        float f = dpi/96.;
-        for (int i = 0; i < Fl::screen_count(); i++)
-          Fl::screen_driver()->rescale_all_windows_from_screen(i, f);
-      }
+  Display *new_dpy = XOpenDisplay(XDisplayString(fl_display));
+  if (!new_dpy) return;
+  char *s = XGetDefault(new_dpy, "Xft", "dpi");
+  float dpi;
+  if (s && sscanf(s, "%f", &dpi) == 1) {
+    //printf("%s previous=%g dpi=%g \n", s, *p_current_xft_dpi, dpi);
+    if (fabs(dpi - *p_current_xft_dpi) > 0.1) {
+      *p_current_xft_dpi = dpi;
+      float f = dpi / 96.;
+      for (int i = 0; i < Fl::screen_count(); i++)
+        Fl::screen_driver()->rescale_all_windows_from_screen(i, f, f);
     }
-    break;
   }
-  pclose(pipe);
+  XCloseDisplay(new_dpy);
 }
 #endif // USE_XFT
+
+
+static Window *xid_vector = NULL; // list of FLTK-created xid's (see issue #935)
+static int xid_vector_size = 0;
+static int xid_vector_count = 0;
+
+static void add_xid_vector(Window xid) {
+  if (xid_vector_count >= xid_vector_size) {
+    xid_vector_size += 10;
+    xid_vector = (Window*)realloc(xid_vector, xid_vector_size * sizeof(Window));
+  }
+  xid_vector[xid_vector_count++] = xid;
+}
+
+static bool remove_xid_vector(Window xid) {
+  for (int pos = xid_vector_count - 1; pos >= 0; pos--) {
+    if (xid_vector[pos] == xid) {
+      if (pos != --xid_vector_count) xid_vector[pos] = xid_vector[xid_vector_count];
+      return true;
+    }
+  }
+  return false;
+}
 
 int fl_handle(const XEvent& thisevent)
 {
@@ -1237,9 +1300,23 @@ int fl_handle(const XEvent& thisevent)
   fl_xevent = &thisevent;
   Window xid = xevent.xany.window;
 
+  // For each DestroyNotify event, determine whether an FLTK-created window
+  // is being destroyed (see issue #935).
+  bool xid_is_from_fltk_win = false;
+  if (xevent.type == DestroyNotify) {
+    xid_is_from_fltk_win = remove_xid_vector(xid);
+  }
+
+  // The following if statement is limited to cases when event DestroyNotify
+  // concerns a non-FLTK window. Thus, the possibly slow call to XOpenIM()
+  // is not performed when an FLTK-created window is closed. This fixes issue #935.
   if (Fl_X11_Screen_Driver::xim_ic && xevent.type == DestroyNotify &&
-        xid != Fl_X11_Screen_Driver::xim_win && !fl_find(xid))
+        xid != Fl_X11_Screen_Driver::xim_win && !fl_find(xid) && !xid_is_from_fltk_win)
   {
+// When using menus or tooltips: xid is a just hidden top-level FLTK win, xim_win is non-FLTK;
+// after XIM crash: xid is non-FLTK.
+// Trigger XIM crash under Debian: kill process containing "ibus-daemon"
+// Restart XIM after triggered crash: "ibus-daemon --panel disable --xim &"
     XIM xim_im;
     xim_im = XOpenIM(fl_display, NULL, NULL, NULL);
     if (!xim_im) {
@@ -1428,13 +1505,19 @@ int fl_handle(const XEvent& thisevent)
     }
     Fl::e_number = old_event;
     // Detect if this paste is due to Xdnd by the property name (I use
-    // XA_SECONDARY for that) and send an XdndFinished message. It is not
-    // clear if this has to be delayed until now or if it can be done
-    // immediately after calling XConvertSelection.
-    if (fl_xevent->xselection.property == XA_SECONDARY &&
-        fl_dnd_source_window) {
-      fl_sendClientMessage(fl_dnd_source_window, fl_XdndFinished,
-                           fl_xevent->xselection.requestor);
+    // XA_SECONDARY for that) and send an XdndFinished message.
+    // This has to be delayed until now rather than sending it immediately
+    // after calling XConvertSelection because we need to send the success
+    // status (retval) and the performed action to the sender - at least
+    // since XDND protocol version 5 (see docs).
+    // [FIXME: is the condition below really correct?]
+
+    if (fl_xevent->xselection.property == XA_SECONDARY && fl_dnd_source_window) {
+      fl_sendClientMessage(fl_dnd_source_window,            // send to window
+                           fl_XdndFinished,                 // XdndFinished message
+                           fl_xevent->xselection.requestor, // data.l[0] target window
+                           retval ? 1 : 0,                  // data.l[1] Bit 0: 1 = success
+                           retval ? fl_dnd_action : None);  // data.l[2] action performed
       fl_dnd_source_window = 0; // don't send a second time
     }
     return 1;
@@ -1543,6 +1626,35 @@ int fl_handle(const XEvent& thisevent)
     if ((Atom)(data[0]) == WM_DELETE_WINDOW) {
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
+      /*
+       Excerpt from the XDND protocol at https://www.freedesktop.org/wiki/Specifications/XDND/ :
+       - data.l[0] contains the XID of the source window.
+       - data.l[1]:
+           Bit 0 is set if the source supports more than three data types.
+           The high byte contains the protocol version to use (minimum of the source's and
+           target's highest supported versions). The rest of the bits are reserved for future use.
+       - data.l[2,3,4] contain the first three types that the source supports. Unused slots are set
+           to None. The ordering is arbitrary.
+
+       If the Source supports more than three data types, bit 0 of data.l[1] is set. This tells the
+         Target to check the property XdndTypeList on the Source window for the list of available
+         types. This property should contain all the available types.
+
+       BUT wayland gnome apps (e.g., gnome-text-editor) set bit 0 of data.l[1]
+       even though their source supports 2 data types (UTF8 text + a gnome-specific type)
+       and put None (==0) in each of data.l[2,3,4].
+       The same gnome apps run in X11 mode (GDK_BACKEND=x11) clear bit 0 of data.l[1]
+       and support only UTF8 text announced in data.l[2].
+       FLTK wayland apps set bit 0 of data.l[1] and support only UTF8 text.
+
+       Overall, the correct procedure is
+       if (bit 0 of data.l[1] is set) {
+         get the XdndTypeList property
+         use all the data types it returns which can be in any number ≥ 1
+       } else {
+         the source supports 1, 2 or 3 data types available at data.l[2,3,4]
+       }
+       */
 #if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
 #endif // FLTK_CONSOLIDATE_MOTION
@@ -1557,7 +1669,7 @@ int fl_handle(const XEvent& thisevent)
         XGetWindowProperty(fl_display, fl_dnd_source_window, fl_XdndTypeList,
                            0, 0x8000000L, False, XA_ATOM, &actual, &format,
                            &count, &remaining, &cm_buffer);
-        if (actual != XA_ATOM || format != 32 || (count<4 && count!=1) || !cm_buffer) {
+        if (actual != XA_ATOM || format != 32 || count <= 0 || !cm_buffer) {
           if ( cm_buffer ) { XFree(cm_buffer); cm_buffer = 0; }
           goto FAILED;
         }
@@ -1916,26 +2028,56 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_is_click = 0; }
     break;
 
-  case ButtonPress:
-    Fl::e_keysym = FL_Button + xevent.xbutton.button;
+  // Mouse button "press" event:
+  // ---------------------------
+  // X11 uses special conventions for mouse "button" numbers:
+  //  1-3:  standard mouse buttons left, middle, right in this order
+  //  4-5:  scroll wheel up, down    - not reflected in Fl::event_state()
+  //  6-7:  scroll wheel left, right - not reflected in Fl::event_state()
+  //  8-9:  side buttons back, forward - mapped to 4-5, see below
+  // Since X11 pseudo button numbers 4-7 are useless for Fl::event_state() we map
+  // real button numbers 8 and 9 to 4 and 5, respectively in FLTK's button numbers
+  // and in the event state (Fl::event_state()).
+  // Variable `xbutton_state` is used internally to store the status of the extra
+  // mouse buttons 4 (back) and 5 (forward) since X11 doesn't keep their status.
+
+  case ButtonPress: {
+    int mb = xevent.xbutton.button; // mouse button
+    if (mb < 1 || mb > 9) return 0; // unknown or unsupported button, ignore
+
+    // FIXME(?): here we set some event related variables although we *might*
+    // ignore an event sent by X because we don't know or want it. This may lead to
+    // inconsistencies in Fl::event_key(), Fl::event_state() and more (see set_event_xy).
+    // For now we ignore this fact though, it's likely that it never happens.
+    // Albrecht, Sep 27, 2024
+
+    Fl::e_keysym = 0;       // init: not used (zero) for scroll wheel events
     set_event_xy(window);
     Fl::e_dx = Fl::e_dy = 0;
-    if (xevent.xbutton.button == Button4 && !Fl::event_shift()) {
-      Fl::e_dy = -1; // Up
+
+    if (mb == Button4 && !Fl::event_shift()) {
+      Fl::e_dy = -1;                            // up
       event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == Button5 && !Fl::event_shift()) {
-      Fl::e_dy = +1; // Down
+    } else if (mb == Button5 && !Fl::event_shift()) {
+      Fl::e_dy = +1;                            // down
       event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == 6 || (xevent.xbutton.button == Button4 && Fl::event_shift())) {
-        Fl::e_dx = -1; // Left
-        event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == 7 || (xevent.xbutton.button == Button5 && Fl::event_shift())) {
-        Fl::e_dx = +1; // Right
-        event = FL_MOUSEWHEEL;
-    } else {
-      Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
+    } else if (mb == 6 || (mb == Button4 && Fl::event_shift())) {
+      Fl::e_dx = -1;                            // left
+      event = FL_MOUSEWHEEL;
+    } else if (mb == 7 || (mb == Button5 && Fl::event_shift())) {
+      Fl::e_dx = +1;                            // right
+      event = FL_MOUSEWHEEL;
+    } else if (mb < 4 || mb > 7) {              // real mouse *buttons*, not scroll wheel
+      if (mb > 7)                               // 8 = back, 9 = forward
+        mb -= 4;                                // map to 4 and 5, resp.
+      Fl::e_keysym = FL_Button + mb;
+      Fl::e_state |= (FL_BUTTON1 << (mb-1));    // set button state
+      if (mb == 4) xbutton_state |= FL_BUTTON4; // save extra button state internally
+      if (mb == 5) xbutton_state |= FL_BUTTON5; // save extra button state internally
       event = FL_PUSH;
       checkdouble();
+    } else { // unknown button or shift combination
+      return 0;
     }
 
 #if FLTK_CONSOLIDATE_MOTION
@@ -1943,10 +2085,43 @@ int fl_handle(const XEvent& thisevent)
 #endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     break;
+  } // ButtonPress
+
+  // Mouse button release event: for details see ButtonPress above
+
+  case ButtonRelease: {
+    int mb = xevent.xbutton.button; // mouse button
+    switch (mb) {                   // figure out which real button this is
+      case 1:                       // left
+      case 2:                       // middle
+      case 3:                       // right
+        break;                      // continue
+      case 8:                       // side button 1 (back)
+      case 9:                       // side button 2 (forward)
+        mb -= 4;                    // map to 4 and 5, respectively
+        break;                      // continue
+      default:                      // unknown button or scroll wheel:
+        return 0;                   // don't send FL_RELEASE event
+    }
+    Fl::e_keysym = FL_Button + mb;  // == FL_BUTTON1 .. FL_BUTTON5
+    set_event_xy(window);
+
+    Fl::e_state &= ~(FL_BUTTON1 << (mb-1));
+    if (mb == 4) xbutton_state &= ~FL_BUTTON4; // clear internal button state
+    if (mb == 5) xbutton_state &= ~FL_BUTTON5; // clear internal button state
+    event = FL_RELEASE;
+
+#if FLTK_CONSOLIDATE_MOTION
+    fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
+    in_a_window = true;
+    break;
+  } // ButtonRelease
 
   case PropertyNotify:
     if (xevent.xproperty.atom == fl_NET_WM_STATE) {
       int fullscreen_state = 0;
+      int maximize_state = 0;
       if (xevent.xproperty.state != PropertyDelete) {
         unsigned long nitems;
         unsigned long *words = 0;
@@ -1955,10 +2130,14 @@ int fl_handle(const XEvent& thisevent)
             if (words[item] == fl_NET_WM_STATE_FULLSCREEN) {
               fullscreen_state = 1;
             }
+            if (words[item] == fl_NET_WM_STATE_MAXIMIZED_HORZ) {
+              maximize_state = 1;
+            }
           }
         }
         if ( words ) { XFree(words); words = 0; }
       }
+      Fl_Window_Driver::driver(window)->is_maximized(maximize_state);
       if (window->fullscreen_active() && !fullscreen_state) {
         window->_clear_fullscreen();
         event = FL_FULLSCREEN;
@@ -1980,20 +2159,6 @@ int fl_handle(const XEvent& thisevent)
     event = FL_MOVE;
     break;
 #  endif
-
-  case ButtonRelease:
-    Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy(window);
-    Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
-    if (xevent.xbutton.button == Button4 ||
-        xevent.xbutton.button == Button5) return 0;
-    event = FL_RELEASE;
-
-#if FLTK_CONSOLIDATE_MOTION
-    fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
-    in_a_window = true;
-    break;
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
@@ -2059,8 +2224,11 @@ int fl_handle(const XEvent& thisevent)
         // resize_after_screen_change() works also if called here, but calling it
         // a second later gives a more pleasant user experience when moving windows between distinct screens
         Fl::add_timeout(1, Fl_X11_Window_Driver::resize_after_screen_change, window);
-      }
-      wd->screen_num(num);
+      } else if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy)
+        wd->screen_num(num);
+    } else if (Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy) {
+      Fl::remove_timeout(Fl_X11_Window_Driver::resize_after_screen_change, window);
+      Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy = false;
     }
 #else // ! USE_XFT
     Fl_Window_Driver::driver(window)->screen_num( Fl::screen_num(X, Y, W, H) );
@@ -2144,6 +2312,10 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
   if (is_a_move && resize_from_program) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
+    if (pWindow->as_double_window() && pWindow->parent()) {
+      if (W < 1) W = 1;
+      if (H < 1) H = 1;
+    }
     pWindow->Fl_Group::resize(X,Y,W,H);
     if (shown()) {
 #if FLTK_USE_CAIRO
@@ -2168,7 +2340,7 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
   if (resize_from_program && shown()) {
     float s = Fl::screen_driver()->scale(screen_num());
     if (is_a_resize) {
-      if (!pWindow->resizable()) pWindow->size_range(w(),h(),w(),h());
+      if (!is_resizable()) pWindow->size_range(w(),h(),w(),h());
       if (is_a_move) {
         XMoveResizeWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s), W>0 ? W*s : 1, H>0 ? H*s : 1);
       } else {
@@ -2267,8 +2439,10 @@ void Fl_X11_Window_Driver::activate_window() {
     prev = x->xid;
   }
 
-  send_wm_event(w, fl_NET_ACTIVE_WINDOW, 1 /* application */,
-                0 /* timestamp */, prev /* previously active window */);
+  send_wm_event(w, fl_NET_ACTIVE_WINDOW,
+                1,              // source: 1 = application
+                fl_event_time,  // time of client's last user activity (STR 3396)
+                prev);          // previously active window
 }
 
 /* Change an existing window to fullscreen */
@@ -2314,6 +2488,26 @@ void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   }
 }
 
+
+void Fl_X11_Window_Driver::maximize() {
+  if (Fl_X11_Screen_Driver::ewmh_supported()) {
+    send_wm_event(fl_xid(pWindow), fl_NET_WM_STATE, _NET_WM_STATE_ADD,
+                  fl_NET_WM_STATE_MAXIMIZED_VERT, fl_NET_WM_STATE_MAXIMIZED_HORZ);
+  } else {
+    Fl_Window_Driver::maximize();
+  }
+}
+
+void Fl_X11_Window_Driver::un_maximize() {
+  if (Fl_X11_Screen_Driver::ewmh_supported()) {
+    send_wm_event(fl_xid(pWindow), fl_NET_WM_STATE, _NET_WM_STATE_REMOVE,
+                  fl_NET_WM_STATE_MAXIMIZED_VERT, fl_NET_WM_STATE_MAXIMIZED_HORZ);
+  } else {
+    Fl_Window_Driver::un_maximize();
+  }
+}
+
+
 ////////////////////////////////////////////////////////////////
 
 // A subclass of Fl_Window may call this to associate an X window it
@@ -2322,6 +2516,7 @@ void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 void fl_fix_focus(); // in Fl.cxx
 
 Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
+  if (!win->parent()) add_xid_vector(winxid); // store xid's of top-level FLTK windows
   Fl_X *xp = new Fl_X;
   xp->xid = winxid;
   Fl_Window_Driver::driver(win)->other_xid = 0;
@@ -2564,17 +2759,17 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     }
 
     // Make it receptive to DnD:
-    long version = 4;
+    Atom version = 5; // max. XDND protocol version we understand
     XChangeProperty(fl_display, xp->xid, fl_XdndAware,
                     XA_ATOM, sizeof(int)*8, 0, (unsigned char*)&version, 1);
 
     XWMHints *hints = XAllocWMHints();
     hints->input = True;
     hints->flags = InputHint;
-    if (Fl_Window::show_iconic_) {
+    if (Fl_Window::show_next_window_iconic()) {
       hints->flags |= StateHint;
       hints->initial_state = IconicState;
-      Fl_Window::show_iconic_ = 0;
+      Fl_Window::show_next_window_iconic(0);
       showit = 0;
     }
     if (Fl_X11_Window_Driver::driver(win)->icon_ &&
@@ -2635,13 +2830,15 @@ void Fl_X11_Window_Driver::sendxjunk() {
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
   float s = Fl::screen_driver()->scale(screen_num());
 
-  hints->min_width  = s * minw();
-  hints->min_height = s * minh();
-  hints->max_width  = s * maxw();
-  hints->max_height = s * maxh();
+  int minw, minh, maxw, maxh, dw, dh, aspect;
+  pWindow->get_size_range(&minw, &minh, &maxw, &maxh, &dw, &dh, &aspect);
+  hints->min_width  = s * minw;
+  hints->min_height = s * minh;
+  hints->max_width  = s * maxw;
+  hints->max_height = s * maxh;
   if (int(s) == s) { // use win size increment value only if scale is an integer. Is it possible to do better?
-    hints->width_inc  = s * dw();
-    hints->height_inc = s * dh();
+    hints->width_inc  = s * dw;
+    hints->height_inc = s * dh;
   } else {
     hints->width_inc  = 0;
     hints->height_inc = 0;
@@ -2667,7 +2864,7 @@ void Fl_X11_Window_Driver::sendxjunk() {
       if (hints->max_height < hints->min_height) hints->max_height = Fl::h()*s;
     }
     if (hints->width_inc && hints->height_inc) hints->flags |= PResizeInc;
-    if (aspect()) {
+    if (aspect) {
       // stupid X!  It could insist that the corner go on the
       // straight line between min and max...
       hints->min_aspect.x = hints->max_aspect.x = hints->min_width;

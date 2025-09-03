@@ -34,7 +34,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-extern Fl_Class_Type *current_class;
+extern class Fl_Class_Type *current_class;
 
 int has_toplevel_function(const char *rtype, const char *sig);
 
@@ -60,7 +60,7 @@ public:
   const char *title() FL_OVERRIDE {
     return name() ? name() : "main()";
   }
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Function; }
@@ -89,7 +89,6 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "code";}
   int is_code_block() const FL_OVERRIDE {return 0;}
-  int is_code() const FL_OVERRIDE {return 1;}
   ID id() const FL_OVERRIDE { return ID_Code; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Code) ? true : super::is_a(inID); }
   int is_public() const FL_OVERRIDE { return -1; }
@@ -114,7 +113,7 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "codeblock";}
   int is_code_block() const FL_OVERRIDE {return 1;}
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE { return -1; }
   ID id() const FL_OVERRIDE { return ID_CodeBlock; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_CodeBlock) ? true : super::is_a(inID); }
@@ -173,20 +172,28 @@ public:
 class Fl_DeclBlock_Type : public Fl_Type
 {
   typedef Fl_Type super;
-  const char* after;
-  char public_;
+  enum {
+    CODE_IN_HEADER = 1,
+    CODE_IN_SOURCE = 2,
+    STATIC_IN_HEADER = 4,
+    STATIC_IN_SOURCE = 8
+  };
+  const char* after; ///< code after all children of this block
+  int write_map_;     ///< see enum above
 
 public:
   Fl_DeclBlock_Type();
   ~Fl_DeclBlock_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_static_after(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "declblock";}
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_DeclBlock; }
@@ -199,7 +206,6 @@ class Fl_Comment_Type : public Fl_Type
 {
   typedef Fl_Type super;
   char in_c_, in_h_, style_;
-  char title_buf[64];
 
 public:
   Fl_Comment_Type();
@@ -208,7 +214,6 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "comment";}
-  const char *title() FL_OVERRIDE; // string for browser
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
@@ -237,7 +242,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "class";}
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_class() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
@@ -249,7 +254,6 @@ public:
   // class prefix attribute access
   void prefix(const char* p);
   const char*  prefix() const {return class_prefix;}
-  int has_function(const char*, const char*) const;
 };
 
 #endif // _FLUID_FL_FUNCTION_TYPE_H

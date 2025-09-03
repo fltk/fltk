@@ -55,7 +55,7 @@ const char *svg_logo =
 int main(int argc, char **argv) {
 #ifndef FLTK_USE_SVG
     fl_message("You need to build FLTK with 'configure --enable-svg'\n"
-               "or CMake option 'OPTION_USE_SVG'\n"
+               "or CMake option 'FLTK_OPTION_SVG'\n"
                "to use this example.");
     return(1);
 #else

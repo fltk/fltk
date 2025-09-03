@@ -1,27 +1,346 @@
-Changes in FLTK 1.4.0                            Released: ??? ?? 2022
+Changes in FLTK 1.4.4                                   Released: Jul 20 2025
+
+  This is a maintenance release with improvements and fixes
+  backported from the current development branch 1.5 (master).
+
+
+  Bug Fixes
+
+  - #1114: Ensure minimum height of last block in Fl_Help_View
+  - Fix address sanitizer exception for macOS native file chooser
+  - Wayland: remove crash when resizing hidden subwindow
+  - Wayland: fix "A flag to set how menus should show up" (#1260)
+  - macOS: protect uses of __block by #if defined(__BLOCKS__) condition
+  - Fix "Selecting menus from the menubar under Wayland/fullscreen" (#1264)
+
+  Documentation Fixes and Improvements
+
+  - Fl_Terminal doc fixes, private->protected for utf8_char_at_*()
+  - Fl_Window::free_position() is no longer deprecated
+
+  Other Improvements
+
+  - Set default DPI to 300 in fl_write_png
+  - #146: Add access to scrollbars widget in Fl_Help_View
+  - Improve Fl_Button event handling documentation (#1267)
+  - macOS: Fix in window titlebar capture to support macOS 26 Tahoe
+  - Fix usage of 'volatile' in src/Fl_JPEG_Image.cxx (#1207)
+  - Improve test/threads demo program (backported from 1.5)
+
+  CMake And Other Build Procedure Improvements
+
+  - Restore use of build option FLTK_USE_POLL
+  - Add CMake build option FLTK_USE_DBUS to allow build w/o dbus (PR #1252)
+
+  ABI changes (FL_ABI_VERSION >= 10404)
+
+  - There are no ABI changes in this release.
+
+
+Changes in FLTK 1.4.3                                   Released: Apr 29 2025
+
+  FLTK 1.4.3 is a maintenance release with improvements and fixes backported
+  from the current development branch 1.5 (master).
+
+
+  Bug Fixes
+
+  - Fix "Windows: Clipboard gets stuck when text is copied while window is hidden" (#1233)
+  - Fix "Minor drawing artifact at scale 200% under X11 session" (#1243)
+  - Fix a comparison that's always true
+  - Fix handling of menu windows taller than their screen
+  - Fix potential buffer overflow on Windows when loading fonts (#1221)
+  - Windows: fix "heap-use-after-free" in home_directory_name()
+  - Fix out-of-bounds access in test/checkers.cxx
+  - macOS: Fix error "two consecutive '[' tokens on g++ with objcpp files" (#1246)
+
+  Other Improvements
+
+  - Update man pages of games (demo programs), add glpuzzle man page
+
+  CMake And Other Build Procedure Improvements
+
+  - options.cmake: Check Threads_FOUND, not CMAKE_HAVE_THREADS_LIBRARY
+  - Check CMake version for some properties in fl_debug_target()
+  - Use CMake's built-in timestamp formatting (#1242)
+  - Simplify fluid build
+  - CI for Wayland: update required development packages for Wayland builds
+  - Update fltk-config.in (minor comment changes only)
+  - Fully support using own shared libraries internally (#1238)
+  - macOS: disable automatic code signing when using Xcode
+  - Update version numbers to 1.4.3
+
+  ABI changes (FL_ABI_VERSION >= 10403)
+
+  - Allow FL_ABI_VERSION = FL_API_VERSION + 1
+  - Fl_Tree_Item: Changed two connector methods to virtual
+  - Fix "Windows: dotted lines may be drawn solid when GUI is rescaled" (#1214)
+
+
+Changes in FLTK 1.4.2                                   Released: Feb 23 2025
+
+  Bug Fixes and other Improvements
+
+  - Fix Help View 'find' method (#1119)
+  - Fix possibly uncleared damage flag of Fl_Pack (#1172)
+  - Fix integer overflow in image interpolation (#73)
+  - Fix "Fl_Text_Editor::wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0)
+    hurts scrolling" (#1186)
+  - Use C locale when writing float values to SVG images
+  - Fix return value of Fl_Table_Row::row_selected(int) (PR #1187)
+  - Fix Fl_Table_Row inconsistencies, final part (#1187)
+  - Fix potential buffer overflow in Fl_Help_View (#1196)
+  - Improve fullscreen window handling (#1192 and more)
+  - Fix "Fl_RGB_Image::draw() seg faults when offset is too big" (#1211)
+
+  Platform Specific Fixes and Build Procedure Improvements
+
+  - CMake/Windows/MSYS2: Correctly detect ucrt64 environment (PR #1167)
+  - CMake: make "optional" dependencies 'PUBLIC' (#1173)
+  - CMake: check INTERFACE_LINK_LIBRARIES for empty value
+  - CMake: fix include directories of bundled image libs
+  - macOS: Fix crash if Escape is pressed while Help submenu is open (#1170)
+  - macOS: Don't capture the cursor in capture_decorated_window_SCK()
+  - macOS: Fix "Full screen broken on macOS in FLTK 1.3.10 (regression)" (#1192)
+  - macOS: add support of showing window to multi-screen fullscreen state
+  - fix "macOS Sonoma/Sequoia not capturing OpenGL 1 text on macOS"  (#1197)
+  - Remove incorrect use of Fl_Window::current() in Fl_Quartz_Image_Surface_Driver
+  - Make Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle() return a depth-4 image
+  - macOS: Fix "Fl_JPEG_Image infinite longjmp loop on Mac release builds" (#1207)
+  - Windows: replace "Arial" by "Microsoft Sans Serif" fonts for 'FL_HELVETICA'
+  - fltk-config: fix "Check bundled image libraries in source tree"
+  - fltk-config: reorder include dirs of bundled image libs
+  - Fix "fltk-config reports dep on gtk3 when it does not exist" (#1201)
+
+  Wayland related Improvements and Fixes
+
+  - Fix a border case in member function Fl_Wayland_Window_Driver::resize()
+  - Make draw to image and draw to clipboard behave equally in X11 and Wayland
+  - Fix Fl_{Wayland|Xlib}_{Copy|Image}_Surface_Driver::set_current()
+  - Fix handling of key repeats
+  - Improve member function Fl_Wayland_Screen_Driver::insertion_point_location()
+  - Fix "Redrawing of a surface may fail if a subsurface is being moved" (#1191)
+  - Update bundled libdecor to last upstream version (21 Jan 2025)
+
+  Fixes and Improvements in Fluid:
+
+  - Improve filename list in main menu
+  - Improve path handling on Windows
+  - Minor fix and docs
+  - Rename Strategy constants to comply with CMP
+  - Fix file history text
+
+  Documentation Improvements
+
+  - Document how screen work areas are computed across platforms (#1180)
+  - Remove duplication and typo in documentation of Fl::copy()
+  - Improve and reorder Fl_Tabs documentation
+  - Document issues with Fl_Scroll as children of Fl_Tabs (#1175)
+  - Improve documentation of Fl_Box constructors (#1194)
+
+  Other Changes
+
+  - Fix typos and compiler warnings
+  - Add Fl_Valuator destructor
+  - test/utf8: Change default font under Windows for "Unicode Display Test"
+  - test/editor: ensure buffer termination, update documentation accordingly
+
+
+Changes in FLTK 1.4.1                                   Released: Dec 12 2024
+
+  FLTK 1.4.1 is a maintenance release with bug fixes and improvements.
+
+  Bug Fixes
+
+  - Fix rounding issues with Fl_RGB_Image::draw() + window scaling (#1128)
+  - Fix fullscreen regression on macOS( #1129)
+  - Fix fl_draw_image sometimes crashes when window is scaled (#1134)
+  - Fix: Can't control scale of Fl_Copy_Surface dimensions on Linux (#1135)
+  - Improve output of 'fltk-options -h' and 'fltk-options -L*'
+  - Windows: Fix rescale bug while window is maximized or fullscreen
+  - Fix graphical glitches on 101 DPI screen (#1138)
+  - Fix changed flag for radio buttons (#1146)
+  - Fix Fl_Scroll with real *_BOX draws over scrollbars at non-default scales (#1149)
+  - Fix drawing bugs on Windows at very large scales (#1144)
+  - Fix button down state when triggered by shortcut (#1145)
+  - Give access to some Fl_Text_Display member variables (#1153)
+  - Fix: Mouse hover + Enter key selects inactive menu items (#1159)
+  - Fix hang/infinite loop on submenu with all inactive/invisible items (#1158)
+  - Fix triggering callback for inactive menu items (#1159)
+  - Fix inconsistencies with Tab/Backspace handling in menus (#1157)
+  - Fix Fl_Menu_Item::measure() width calculation (#1164)
+  - Fix drawing issue for checkbox buttons with bad box type (#1130)
+  - Fix: Window can be moved while menu is open (#1166)
+
+  Image libraries
+
+  - Update bundled libpng to version 1.6.44
+
+  Fixes and Improvements in Fluid:
+
+  - Fix autodocs file leak and memory leak
+  - Fix autodoc image memory allocation
+  - Fix project modflags when adding shell commands
+  - Avoid generating undo on spurious relayout events (#1152)
+  - Minor improvements to buffer handling (#1152)
+  - Clear cached browser values and cached pointers (#1152)
+  - Fix default settings tab
+  - Avoid trailing spaces in empty comment lines (#1161)
+  - Command line arguments '-v' and '--version' show fltk version
+  - Command line argument '--help' shows brief usage information
+
+  Optional ABI changes: these require configure or CMake option
+    to define FL_ABI_VERSION = 10401
+
+  - Increase clipping stack size from 10 to 64 entries (#1139)
+  - Fix potential (likely false positive) compiler warning in Fl_Help_View
+
+  Documentation Improvements
+
+  - Update build instructions in README.Unix.txt (#67)
+  - Update README.Windows.txt
+  - Update README.CMake.txt for cross-building (#1154)
+  - Document that fl_scroll() doesn't work OK with non-integral scaling factors
+  - Add details about fl_override_scale() and clip
+  - Clarify use of Fl_Tabs::client_area()
+  - Fix Makefile example in chapter "FLTK Basics"
+
+  Improvements and minor Fixes in Test and Demo Programs
+
+  - MSVC: Fix array allocation in test/fltk-versions (#1131)
+  - Enable building the CubeView demo w/o requiring '<config.h>'
+  - Use a constant frame rate (25 fps) in test/cube demo
+  - Add comment linking source code to related information in issue #1149
+  - Improve timer statistics in test/cube demo
+  - glpuzzle: fix timer and trackball max speed, make smoother animation at 72fps
+
+  Technical Details and Build Procedure Improvements
+
+  - Fix FL_EXPORT qualifiers
+  - Fix compiler warnings
+  - Remove unnecessary friend declaration
+  - Restore building with configure --disable-print (#1147)
+  - macOS: Improve procedure to construct best link command
+  - Fix: Building with FLTK_BUILD_GL=0 fails on systems without opengl installed (#1151)
+  - Don't link to libgtk when using package libdecor-0-dev
+  - Update makesrcdist for releases on GitHub (1.4.1 and higher)
+  - Update CHANGES.txt for release 1.4.1
+
+
+Changes in FLTK 1.4.0                                   Released: Nov 17 2024
+
+  Bug Fixes:
+
+  - Windows: Fix "fullscreen_off does not correctly preserve window size" (#1116)
+  - Fix rounding issues with Fl_RGB_Image::draw() + Fl_Copy_Surface (#1120, #1124)
+  - Windows: Fix "Keyboard shortcut (alt+letter) does not work in input widget" (#1122)
+  - macOS: Fix Alt-modifier handling in Fl_Shorcut_Button
+  - Windows: Fix flicker/animation when transitioning from fullscreen to maximized
+  - Wayland: protect against rounding errors in copy_region()
+
+  Documentation and other Improvements:
+
+  - Revert gtk+ specific "chevron style" arrow drawing (#1117)
+  - Update CREDITS.txt
+  - Improve 'test/fltk-versions' demo program
+
+
+Changes in FLTK 1.4.0 RC3                               Released: Nov 08 2024
+
+  Bug Fixes:
+
+  - Windows: "Fullscreen doesn't always pick the correct display" (#1097)
+  - macOS: "Mixing native fullscreen button with Fl_Window::fullscreen()" (#1098)
+  - Wayland: Issue in maximization of a borderless window (#1099)
+  - macOS: "Merge All Windows" fails if focused window is borderless (#1100)
+  - macOS: Fl_Window::fullscreen() doesn't work for unfocused tabbed window (#1101)
+  - Fl_Tile resizing for "sudden" size changes (#1102)
+  - macOS: Weak linking error with latest SDK 15 (#1103, #1105)
+  - X11: test/checkers drawing artifacts when window is scaled (#1109)
+  - X11: test/curve "points" mode not drawn correctly (#1110)
+  - X11: test/gl_overlay stale overlay rendering (#1111)
+  - fl_draw_image() with horizontal flip reads out of bounds (#1112)
+  - macOS: Very minor high DPI rounding issue with fl_rect (#1113)
+  - macOS: Prevent changing window border if window is fullscreen or maximized
+  - Mac/XQuartz: Restore Fl_Widget_Surface::draw_decorated_window()
+
+  Other Improvements:
+
+  - Improve member function Fl_Wayland_Graphics_Driver::copy_offscreen()
+  - Make Fl_Window::flush() public for consistency with subclasses
+  - Improve UI layout of 'fltk-options'
+  - Fix compiler warnings
+  - Improve and clarify documentation, including README.CMake.txt
+
+
+Changes in FLTK 1.4.0 RC2                               Released: Oct 27 2024
+
+  - Add range check to Fl_Group::child(int)
+  - Fix Windows Ctrl character handling for scaling shortcuts
+  - Fluid: Add missing code for Fl_Grid and Fl_Flex live preview (#1092)
+  - Enhance documentation
+  - Mention HighDPI support in 'ANNOUNCEMENT'
+  - Update CHANGES.txt
+
+
+Changes in FLTK 1.4.0 RC1                               Released: Oct 20 2024
 
   General Information about this Release
 
-  - FLTK 1.4.0 is based on FLTK 1.3.4 (released Nov 15 2016),
-    see CHANGES_1.3.txt for more information.
+  - FLTK 1.4.0 is based on FLTK 1.3.4 (released Nov 15 2016).
+    Later updates have partially been backported to 1.3.x releases, see
+    CHANGES_1.3.txt for more information.
 
   - CMake is the primary supported build system in FLTK 1.4.0 and later.
-    CMake can be used to generate Makefiles, IDE project files, and
-    several other build systems by using different "generators" provided
+    CMake can be used to generate Makefiles, IDE project files, and files
+    for several other build systems by using different "generators" provided
     by CMake (for instance Ninja, CodeBlocks, Eclipse, KDevelop3, Xcode, etc.).
-    See README.CMake.txt for more information.
+    FLTK uses "Modern CMake" since release 1.4.0 which simplifies user
+    project build systems significantly.
+    See README.CMake.txt and documentation chapter "Migrating Code from
+    FLTK 1.3 to 1.4" for more information.
 
-  - autoconf/configure is still supported by the FLTK team for backwards
-    compatibility with older systems that lack CMake support.
+  - autoconf/configure is still supported by the FLTK Team for backwards
+    compatibility with older systems that lack CMake support. Support of
+    autoconf/configure will be dropped in FLTK 1.5.0.
 
   - FLTK 1.4 introduces a new platform, Wayland, available for recent Linux
-    distributions and FreeBSD. More information in README.Wayland.txt
+    distributions and FreeBSD. For details see README.Wayland.txt.
 
   New Features and Extensions
 
+  - fltk-config allows to compile multiple files with more compiler and linker
+    options given on the commandline.
+  - fl_contrast() functionality has been improved, adding a new contrast
+    calculation method based on human contrast perception. This new function
+    is now the default but the old, less accurate, contrast function can be
+    chosen as an option.
+  - Timeout handling has been unified across platforms (#379), see documentation
+    in chapter "Migrating Code from FLTK 1.3 to 1.4".
+  - New Fl::remove_next_timeout(...) to remove only one timeout (#992).
+  - New fltk-options executable, improved Fl::option documentation.
+  - New function `Fl_Window::get_size_range()` (#981).
+  - New FL_DEPRECATED macro to flag deprecated functions and methods.
+  - Enable suppression of "deprecated" warnings by macro FL_NO_DEPRECATE.
+  - New animated GIF images support (Fl_Anim_GIF_Image class) (#375).
+  - GIF and BMP files can now be "read" from memory, i.e. they can be included
+    in source code (use their new constructors).
+  - New Fl_Scheme_Choice widget can be used to easily switch schemes in apps.
+  - A new scheme named "oxy" has been added (STR 2675, STR 3477).
+  - Drawing "Arrows" has been unified in all core widgets.
+  - Drawing "Radio Buttons" has been unified in all core widgets.
+  - Drawing "Check Marks" has been unified in all core widgets.
+  - New methods Fl_Group::on_insert/on_remove/on_move (#527) can be used in
+    derived classes to detect addition or removal of children.
+  - FLTK widgets can now be used in OpenGL 3 windows.
+  - The new convenience function Fl::hide_all_windows() can be used to close
+    all open windows, for instance to exit the running program.
+  - Windows platform: optionally use GDI+ to antialias oblique lines and curves.
+  - Windows: The new function Fl::args_to_utf8() can be used to convert
+    "wide character" commandline arguments to UTF-8.
   - X11 and Wayland platforms: Added support of HiDPI displays. FLTK apps
     detect the current display scaling factor and use it to scale all windows.
-  - MSWindows platform: FLTK applications detect the display scaling factor and
+  - Windows platform: FLTK applications detect the display scaling factor and
     automatically scale their GUI accordingly. This effectively renders WIN32
     FLTK apps "per-monitor DPI-aware" whereas they were "DPI-unaware" before.
   - Dynamical GUI rescaling: it is possible on all platforms to rescale all
@@ -34,7 +353,21 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     This supports desktops mixing screens with distinct resolutions.
     In addition, use environment variable FLTK_SCALING_FACTOR to further adjust
     the starting scaling factor of all FLTK apps.
+  - Note: On some platforms and with some international keyboard layouts you may
+    need to set Fl::option(OPTION_SIMPLE_ZOOM_SHORTCUT) to be able to use one or
+    more of the scaling shortcuts above with or without pressing the Shift key.
+    The new executable `fltk-options` can be used to set this option either
+    system wide or for a single user.
+  - New horizontal and vertical label margins.
+  - Fluid got a lot of UI and functional improvements and the Fluid docs have
+    been reworked and put in an own "Fluid User Manual" (HTML and PDF).
+    Fluid supports the new Fl_Flex and Fl_Grid widgets.
+    For more details please see the manual.
+  - New Fl_Grid class to layout multiple columns and rows of widgets.
   - New Fl_Flex class to layout one row or one column of widgets.
+  - New Fl_Terminal widget supporting Unicode/UTF-8, ANSI/xterm escape codes
+    with full RGB color control.
+  - New Fl_Copy_Surface to copy drawings to the clipboard.
   - New Fl::keyboard_screen_scaling(0) call stops recognition of ctrl/+/-/0/
     keystrokes as scaling all windows of a screen.
   - New member function Fl_Image::scale(int width, int height) to set
@@ -46,16 +379,23 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     Fl_Widget::bind_deimage(Fl_Image *img) to bind an image to a widget, that is,
     to set an image to be used as part of the widget label and also
     to be deleted when the widget is deleted.
+  - New member function Fl_Menu_::menu_end() to ensure that the menu is fully
+    constructed in its final location after dynamic modifications. This is
+    called automatically before the menu is shown.
   - New Fl_SVG_Image class: gives support of scalable vector graphics images
     to FLTK using the nanosvg software.
   - New Fl_ICO_Image class to read Windows .ico icon files.
-  - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
-    graphics to SVG or EPS files, respectively.
-  - Fl_Button now supports a compact flag that visually groups closely set 
+  - New classes Fl_PDF_File_Surface, Fl_SVG_File_Surface and Fl_EPS_File_Surface
+    to save any FLTK graphics to PDF, SVG or EPS files, respectively.
+  - New member functions Fl_Window::maximize(), Fl_Window::un_maximize() and
+    Fl_Window::maximize_active() to programmatically manage window maximization.
+  - Fl_Button now supports a compact flag that visually groups closely set
     buttons into keypads.
   - Fl_Tabs widget now supports close buttons for individual tabs.
   - Fl_Tabs widget now supports four different modes for handling an
     overflowing number of tabs.
+  - Mouse buttons 4 + 5 (aka "side buttons") are now supported (#1076, #1068).
+    These are typically used as "back" and "forward" functions, e.g. in browsers.
   - Windows platform: added support for using a manifest to set the
     application's level of DPI awareness (issue #309).
   - class Fl_Native_File_Chooser on the X11/Wayland platform relies on external
@@ -92,10 +432,14 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - New member functions Fl_Paged_Device::begin_job() and begin_page()
     replace start_job() and start_page(). The start_... names are maintained
     for API compatibility.
+  - Fl_Gl_Window can now contain FLTK widgets that are drawn on top of the
+    OpenGL scene.
   - OpenGL draws text using textures on all platforms, when the necessary
     hardware support is present (a backup mechanism is available in absence
     of this support). Thus, all text drawable in Fl_Window's can be drawn
     in Fl_Gl_Window's (STR#3450).
+  - New member function Fl_Menu_Bar::play_menu(const char *title) to
+    programmatically open a menu of a menubar.
   - New member functions Fl::program_should_quit(void),
     and Fl::program_should_quit(int) to support detection by the library
     of a request to terminate cleanly the program.
@@ -127,38 +471,57 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     receiving graphics commands.
   - New macros for easy function and method callbacks with multiple
     type safe arguments (see FL_METHOD_CALLBACK_1 etc.) .
+  - The value box size of Fl_Value_Slider is now user settable (STR 3222).
+  - The new header file FL/fl_config.h replaces FL/abi-version.h and
+    includes some more build configuration settings. This file is always
+    included automatically.
+  - Nested (aka recursive) common dialogs are now possible (STR 3242, #282).
+
+  Removed Features
+
+  - X11 platform: Support of XDBE, the configure option '--enable-xdbe'
+    and the CMake option 'OPTION_USE_XDBE' have been removed because XDBE
+    was unreliable and rarely supported by X servers. Double buffering
+    support in Fl_Double_Window is not affected.
+  - Hardware "overlay" support has been removed. This was rarely implemented
+    and should not affect user code because overlay support is simulated.
 
   New Configuration Options (ABI Version)
 
+  - Add --without-fluid configure option (#725) if Fluid is not needed.
   - X11 platform: Added support for drawing text with the pango library
     which allows to draw most scripts supported by Unicode, including CJK
     and right-to-left scripts. FLTK now outputs PostScript that draws
     those scripts in vectorial form. The corresponding CMake option is
-    OPTION_USE_PANGO. The corresponding configure option is --enable-pango.
-    This option is OFF by default.
+    FLTK_USE_PANGO. The corresponding configure option is --enable-pango.
+    This option is OFF by default when the build is only for X11 and ON
+    when Wayland support is built as well.
   - Configure option --enable-wayland allows to build the FLTK library for
     the new Wayland platform while remaining compatible with X11. The
-    corresponding CMake option is OPTION_USE_WAYLAND. This option is ON by default.
+    corresponding CMake option is FLTK_BACKEND_WAYLAND. This option is ON by default.
   - Configure options --enable-wayland --disable-x11 used together allow to
     build FLTK for the Wayland backend only (no x11 backend). Under CMake, the
-    equivalent is to set both OPTION_USE_WAYLAND and OPTION_WAYLAND_ONLY.
+    equivalent option is to set FLTK_BACKEND_WAYLAND=ON and FLTK_BACKEND_X11=OFF.
   - The new configure option --disable-gdiplus removes the possibility to draw
     antialiased lines and curves on the Windows platform. The corresponding CMake
-    option is OPTION_USE_GDIPLUS.
+    option is FLTK_GRAPHICS_GDIPLUS.
   - The library can be built without support for reading SVG images or writing
     graphics in SVG format using the --disable-svg configure option
-    or turning off OPTION_USE_SVG in CMake.
+    or turning off FLTK_OPTION_SVG in CMake.
   - The library can be built without support for PostScript, thus reducing
     its size, using the --disable-print configure option or turning off
-    OPTION_PRINT_SUPPORT in CMake. That makes classes Fl_PostScript_File_Device,
+    FLTK_OPTION_PRINT_SUPPORT in CMake. That makes classes Fl_PostScript_File_Device,
     Fl_EPS_File_Surface and Fl_Printer (under X11 platform only) ineffective.
   - FLTK's ABI version can be configured with 'configure' and CMake.
     See documentation in README.abi-version.txt.
+  - Building the 'Forms' compatibility library 'fltk_forms' is now optional,
+    default is ON. This may be turned to OFF in a later FLTK release.
+  - CMake/Windows/MSVC: New option to select MSVC Runtime when linking apps.
 
   Bundled libraries
 
   - Bundled image libraries have been upgraded to newer versions.
-    For details see README.bundled-libs.txt.
+    For details see documentation/src/bundled-libs.dox or online docs.
 
   1.4.0 ABI FEATURES
 
@@ -167,12 +530,16 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
 
   Other Improvements
 
-  - (add new items here)
-  - Reported support of macOS 14.0 "Sonoma".
-  - Added support for macOS 13.0 "Ventura".
-  - Added support for macOS 12.0 "Monterey".
-  - Added support for macOS 11.0 "Big Sur" and for building for
-    the arm64 architecture.
+  - Fl_Image::copy() is now 'const', including all derived classes.
+    Note: This may require code changes in classes derived from Fl_Image,
+    see documentation in chapter "Migrating Code from FLTK 1.3 to 1.4".
+  - Fl_Native_File_Chooser can now use kdialog, zenity, and/or GTK3 native
+    file choosers on Linux.
+  - Contrast of check marks and radio buttons has been improved (#443).
+  - Improve X11 (16-bit) clipping of lines and rectangles.
+  - Added support of macOS 15.0 "Sequoia", 14.0 "Sonoma",
+    13.0 "Ventura", 12.0 "Monterey", and 11.0 "Big Sur".
+  - Added macOS support for the arm64 architecture since 11.0 (Big Sur).
   - Added support for macOS 10.15 "Catalina"
   - Added support for macOS 10.14 "Mojave": all drawing to windows is done
     through "layer-backed views" when the app is linked to SDK 10.14.
@@ -181,6 +548,10 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     widget (issue #270).
   - Fixed X11 copy-paste and drag-and-drop target selection (issue #182).
     This fix has been backported to 1.3.6 as well.
+  - The user can now copy standard dialog text to the clipboard by
+    hitting Ctrl/C (#388).
+  - The selected color in Fl_Color_Chooser can now be copied to the
+    clipboard by hitting Ctrl/C.
   - Add optional argument to Fl_Printer::begin_job() to receive
     a string describing the error when an error occurs.
   - Fix Windows-specific bug when the program tries to enlarge a
@@ -191,9 +562,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Fix Fl::add_timeout() in draw() under Linux (STR 3188)
   - Improved documentation for '@' symbols in labels (STR #2940).
   - Fl_Roller can now be controlled via the mouse wheel (STR #3120).
+  - Handle Shift + mousewheel event as horizontal scrolling (STR 3521).
   - Tooltips hide by themselves after 12 seconds (STR #2584).
-  - Added widget visibility indicator to Fluid (STR #2669).
-  - Improved shell script support in FLUID
   - Improved constructor for creating Fl_Preferences files with flags for the
     correct locale and for overwriting existing files.
   - Added Fl_Input_::append() method (STR #2953).
@@ -217,13 +587,16 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     documentations to make clear that the leading underscore must not be
     used in user code, although the enum documentation still contains
     leading underscores for technical reasons (internal use).
+  - Boxtypes can now be configured to draw their own custom focus box.
   - The blocks demo program got a new keyboard shortcut (ALT+SHIFT+H) to
     reset the user's high score. It is now slower than before in higher
     levels, hence you can expect higher scores (due to a bug fix in the
     timer code). You can use the '+' key to increase the level at all times.
   - Some methods of Fl_Tabs are now virtual and/or protected for easier
     subclassing without code duplication (STR #3211 and others).
-    To be continued...
+  - Fl_Tabs now has an option to delete tabs by the user (UI), and tab
+    overflow has been largely improved with several options.
+  - glutAddMenuEntry() now has a *const* label argument (STR #3323)
   - Separated Fl_Input_Choice.H and Fl_Input_Choice.cxx (STR #2750, #2752).
   - Separated Fl_Spinner.H and Fl_Spinner.cxx (STR #2776).
   - New method Fl_Spinner::wrap(int) allows to set wrap mode at bounds if
@@ -232,12 +605,16 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     keyboard focus (STR #2989).
   - Renamed test/help.cxx demo program to test/help_dialog.cxx to avoid
     name conflict with CMake's auto-generated target 'help'.
+  - Fl_Menu_Bar: left and right arrow keys now wrap to the menu at the
+    other end of the menubar when pressed in the first (resp. last) menu.
+  - Previously "public" members Fl::awake_ring_*_ are now "private" (#559).
+  - The test/clipboard demo program can now save PNG images.
+  - New virtual int Fl_Group::delete_child(int n) (STR 3218).
   - Many documentation fixes, clarifications, and enhancements.
 
 
   Bug Fixes
 
-  - (add new items here)
   - Fixed all Pixmaps to be '*const' (STR #3108).
   - Fixed Fl_Text_Editor selection range after paste (STR #3248).
   - Fixed crash for very small Fl_Color_Chooser (STR #3490).
@@ -245,14 +622,12 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Fixed pulldown menu position when at the bottom of the screen (STR #2880).
   - Fixed missing item handling in Fl_Check_Browser (STR #3480).
   - Fixed Delete key in Fl_Input deleting entire widgets in Fluid (STR #2841).
-  - Reorganized Fluid Template feature (STR #3336).
-  - Updated Fluid documentation and image (STR #3328).
   - Duplicating Widget Class in Fluid no longer crashes (STR #3445).
+  - Fixed 'fluid.app' on case sensitive macOS (was: 'Fluid.app').
   - Fl_Check_Browser::add(item) now accepts NULL (STR #3498).
   - Interface to set maximum width of spinner text field (STR #3386).
   - Fl_Text_Display no longer wiggles (STR #2531).
   - Fixed Help_View return value (STR #3430).
-  - Fix 'fluid.app' on case sensitive macOS (was: Fluid.app).
   - Fix FL_PUSH event handling of Fl_Check_Browser (STR #3004).
   - Fix a potential crash when a program exits before it opens a window
     (Windows only, STR #3484).

@@ -43,6 +43,17 @@ static void move_tab_cb(Fl_Widget *, void *data);
 static void merge_all_windows_cb(Fl_Widget *, void *data);
 #endif
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_13
+const NSInteger NSControlStateValueOn = NSOnState;
+const NSInteger NSControlStateValueOff = NSOffState;
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+const NSUInteger NSEventModifierFlagCommand = NSCommandKeyMask;
+const NSUInteger NSEventModifierFlagOption = NSAlternateKeyMask;
+const NSUInteger NSEventModifierFlagControl = NSControlKeyMask;
+const NSUInteger NSEventModifierFlagShift = NSShiftKeyMask;
+#endif
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::draw() {
   bar->deactivate(); // prevent Fl_Sys_Menu_Bar object from receiving events
@@ -114,7 +125,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   menu->picked(item);
   Fl::flush();
   if ( item->flags & FL_MENU_TOGGLE ) { // update the menu toggle symbol
-    [self setState:(item->value() ? NSOnState : NSOffState)];
+    [self setState:(item->value() ? NSControlStateValueOn : NSControlStateValueOff)];
   }
   else if ( item->flags & FL_MENU_RADIO ) {     // update the menu radio symbols
     NSMenu* this_menu = [self menu];
@@ -136,7 +147,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
     }
     for(int i =  from; i <= to; i++) {
       NSMenuItem *nsitem = [this_menu itemAtIndex:i];
-      [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
+      [nsitem setState:(nsitem != self ? NSControlStateValueOff : NSControlStateValueOn)];
     }
   }
 }
@@ -162,10 +173,10 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 - (void) setKeyEquivalentModifierMask:(int)value
 {
   NSUInteger macMod = 0;
-  if ( value & FL_META ) macMod = NSCommandKeyMask;
-  if ( value & FL_SHIFT || isupper(value) ) macMod |= NSShiftKeyMask;
-  if ( value & FL_ALT ) macMod |= NSAlternateKeyMask;
-  if ( value & FL_CTRL ) macMod |= NSControlKeyMask;
+  if ( value & FL_META ) macMod = NSEventModifierFlagCommand;
+  if ( value & FL_SHIFT || (value > 0 && value < 127 && isupper(value)) ) macMod |= NSEventModifierFlagShift;
+  if ( value & FL_ALT ) macMod |= NSEventModifierFlagOption;
+  if ( value & FL_CTRL ) macMod |= NSEventModifierFlagControl;
   [super setKeyEquivalentModifierMask:macMod];
 }
 - (void) setFltkShortcut:(int)key
@@ -309,11 +320,11 @@ static void setMenuFlags( NSMenu* mh, int miCnt, const Fl_Menu_Item *m )
   if ( m->flags & FL_MENU_TOGGLE )
   {
     NSMenuItem *menuItem = [mh itemAtIndex:miCnt];
-    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSOnState : NSOffState)];
+    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSControlStateValueOn : NSControlStateValueOff)];
   }
   else if ( m->flags & FL_MENU_RADIO ) {
     NSMenuItem *menuItem = [mh itemAtIndex:miCnt];
-    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSOnState : NSOffState)];
+    [menuItem setState:(m->flags & FL_MENU_VALUE ? NSControlStateValueOn : NSControlStateValueOff)];
   }
 }
 
@@ -367,7 +378,9 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
       mm = mm->next(0);
       continue;
     }
-    miCnt = [FLMenuItem addNewItem:mm menu:submenu action:selector];
+    miCnt = [FLMenuItem addNewItem:mm menu:submenu
+                            action:( (mm->flags & (FL_SUBMENU+FL_SUBMENU_POINTER) && !mm->callback()) ? nil : selector)
+            ];
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
     if (mitem && (mm->flags & FL_MENU_INACTIVE || mitem->flags & FL_MENU_INACTIVE)) {
@@ -435,6 +448,8 @@ static int process_sys_menu_shortcuts(int event)
 
 Fl_MacOS_Sys_Menu_Bar_Driver::Fl_MacOS_Sys_Menu_Bar_Driver() : Fl_Sys_Menu_Bar_Driver()
 {
+  window_menu_items = NULL;
+  first_window_menu_item = 0;
   Fl::add_handler(process_sys_menu_shortcuts);
 }
 
@@ -578,16 +593,19 @@ static void move_tab_cb(Fl_Widget *, void *data)
 
 static void merge_all_windows_cb(Fl_Widget *, void *)
 {
-    Fl_Window *first = Fl::first_window();
-    if (first) {
-        [(NSWindow*)fl_xid(first) mergeAllWindows:nil];
-      }
+  Fl_Window *first = Fl::first_window();
+  while (first && (first->parent() || !first->border()))
+    first = Fl::next_window(first);
+  if (first) {
+    [(NSWindow*)fl_xid(first) mergeAllWindows:nil];
+  }
 }
 
 #endif
 
 
 static bool window_menu_installed = false;
+static int window_menu_items_count = 0;
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
 {
@@ -610,61 +628,81 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
     fl_open_display();
     new Fl_Sys_Menu_Bar(0,0,0,0);
   }
-  rank = fl_sys_menu_bar->Fl_Menu_::insert(rank, "Window", 0, NULL, 0, FL_SUBMENU);
+  if (!window_menu_items_count) {
+    window_menu_items_count = 6;
+    window_menu_items = (Fl_Menu_Item*)calloc(window_menu_items_count, sizeof(Fl_Menu_Item));
+  }
+  rank = fl_sys_menu_bar->Fl_Menu_::insert(rank, "Window", 0, NULL, window_menu_items, FL_SUBMENU_POINTER);
   localized_Window = NSLocalizedString(@"Window", nil);
-
-  fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Minimize", FL_COMMAND+'m', minimize_win_cb, 0, FL_MENU_DIVIDER);
+  window_menu_items[0].label("Minimize");
+  window_menu_items[0].callback(minimize_win_cb);
+  window_menu_items[0].shortcut(FL_COMMAND+'m');
+  window_menu_items[0].flags = FL_MENU_DIVIDER;
+  first_window_menu_item = 1;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
   if (fl_mac_os_version >= 101200 && window_menu_style() != Fl_Sys_Menu_Bar::tabbing_mode_none) {
-    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Show Previous Tab", FL_SHIFT+FL_CTRL+0x9, previous_tab_cb, 0, 0);
-    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Show Next Tab", FL_CTRL+0x9, next_tab_cb, 0, 0);
-    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Move Tab To New Window", 0, move_tab_cb, 0, 0);
-    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Merge All Windows", 0, merge_all_windows_cb, 0, FL_MENU_DIVIDER);
+    window_menu_items[1].label("Show Previous Tab");
+    window_menu_items[1].callback(previous_tab_cb);
+    window_menu_items[1].shortcut(FL_SHIFT+FL_CTRL+0x9);
+    window_menu_items[2].label("Show Next Tab");
+    window_menu_items[2].callback(next_tab_cb);
+    window_menu_items[2].shortcut(FL_CTRL+0x9);
+    window_menu_items[3].label("Move Tab To New Window");
+    window_menu_items[3].callback(move_tab_cb);
+    window_menu_items[4].label("Merge All Windows");
+    window_menu_items[4].callback(merge_all_windows_cb);
+    window_menu_items[4].flags = FL_MENU_DIVIDER;
+    first_window_menu_item = 5;
   }
 #endif
-  ((Fl_Menu_Item*)fl_sys_menu_bar->menu()+rank)->user_data(&window_menu_style_);
+  fl_sys_menu_bar->menu_end();
   fl_sys_menu_bar->update();
 }
 
-int Fl_MacOS_Sys_Menu_Bar_Driver::find_first_window()
-{
-  int count = bar->size(), i;
-  for (i = 0; i < count; i++) {
-    if (bar->menu()[i].user_data() == &window_menu_style_) break;
-  }
-  return i < count ? i : -1;
-}
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
 {
   if (!window_menu_style() || !win->label()) return;
-  int index = find_first_window();
-  if (index < 0) return;
-  while ((bar->menu()+index+1)->label()) index++;
+  int index = window_menu_items->size() - 1;
+  if (index >= window_menu_items_count - 1) {
+    window_menu_items_count += 5;
+    window_menu_items = (Fl_Menu_Item*)realloc(window_menu_items,
+                                    window_menu_items_count * sizeof(Fl_Menu_Item));
+    Fl_Menu_Item *item = (Fl_Menu_Item*)fl_sys_menu_bar->find_item("Window");
+    item->user_data(window_menu_items);
+  }
   const char *p = win->iconlabel() ? win->iconlabel() : win->label();
-  int index2 = bar->Fl_Menu_::insert(index+1, p, 0, window_menu_cb, win, FL_MENU_RADIO);
-  setonly((Fl_Menu_Item*)bar->menu()+index2);
+  window_menu_items[index].label(p);
+  window_menu_items[index].callback(window_menu_cb);
+  window_menu_items[index].user_data(win);
+  window_menu_items[index].flags = FL_MENU_RADIO;
+  window_menu_items[index+1].label(NULL);
+  window_menu_items[index].setonly();
+  fl_sys_menu_bar->update();
 }
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
 {
   if (!window_menu_style()) return;
-  int index = find_first_window() + 1;
+  int index = first_window_menu_item;
   if (index < 1) return;
   while (true) {
-    Fl_Menu_Item *item = (Fl_Menu_Item*)bar->menu() + index;
+    Fl_Menu_Item *item = window_menu_items + index;
     if (!item->label()) return;
     if (item->user_data() == win) {
       bool doit = item->value();
-      remove(index);
+      int count = window_menu_items->size();
+      if (count - index - 1 > 0) memmove(item, item + 1, (count - index - 1)*sizeof(Fl_Menu_Item));
+      memset(window_menu_items + count - 2, 0, sizeof(Fl_Menu_Item));
       if (doit) { // select Fl::first_window() in Window menu
-        item = (Fl_Menu_Item*)bar->menu() + find_first_window() + 1;
+        item = window_menu_items + first_window_menu_item;
         while (item->label() && item->user_data() != Fl::first_window()) item++;
         if (item->label()) {
           ((Fl_Window*)item->user_data())->show();
-          setonly(item);
+          item->setonly();
         }
       }
+      bar->update();
       break;
     }
     index++;
@@ -674,13 +712,14 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
 void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
 {
   if (!window_menu_style()) return;
-  int index = find_first_window() + 1;
+  int index = first_window_menu_item;
   if (index < 1) return;
   while (true) {
-    Fl_Menu_Item *item = (Fl_Menu_Item*)bar->menu() + index;
+    Fl_Menu_Item *item = window_menu_items + index;
     if (!item->label()) return;
     if (item->user_data() == win) {
-      replace(index, win->iconlabel() ? win->iconlabel() : win->label());
+      item->label(win->iconlabel() ? win->iconlabel() : win->label());
+      bar->update();
       return;
     }
     index++;
@@ -689,6 +728,42 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
 
 void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut) {
   Fl_Sys_Menu_Bar::about(cb, user_data);
+}
+
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::play_menu(const Fl_Menu_Item *item) {
+  // Use the accessibility interface to programmatically open a menu of the system menubar
+  CFArrayRef children = NULL;
+  CFIndex count = 0;
+  AXUIElementRef element;
+  char *label = remove_ampersand(item->label());
+  NSString *mac_name = NSLocalizedString([NSString stringWithUTF8String:label], nil);
+  free(label);
+  AXUIElementRef appElement = AXUIElementCreateApplication(getpid());
+  AXUIElementRef menu_bar = NULL;
+  AXError error = AXUIElementCopyAttributeValue(appElement, kAXMenuBarAttribute,
+                                                (CFTypeRef *)&menu_bar);
+  if (!error) error = AXUIElementGetAttributeValueCount(menu_bar, kAXChildrenAttribute, &count);
+  if (!error) error = AXUIElementCopyAttributeValues(menu_bar, kAXChildrenAttribute, 0, count,
+                                                     &children);
+  if (!error) {
+    NSEnumerator *enumerator = [(NSArray*)children objectEnumerator];
+    [enumerator nextObject]; // skip Apple menu
+    [enumerator nextObject]; // skip application menu
+    bool need_more = true;
+    while (need_more && (element = (AXUIElementRef)[enumerator nextObject]) != nil) {
+      CFTypeRef title = NULL;
+      need_more = ( AXUIElementCopyAttributeValue(element, kAXTitleAttribute, &title) == 0 );
+      if (need_more && [(NSString*)title isEqualToString:mac_name]) {
+        AXUIElementPerformAction(element, kAXPressAction);
+        need_more = false;
+      }
+      if (title) CFRelease(title);
+    }
+  }
+  if (menu_bar) CFRelease(menu_bar);
+  if (children) CFRelease(children);
+  CFRelease(appElement);
 }
 
 #endif /* __APPLE__ */

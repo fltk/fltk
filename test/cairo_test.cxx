@@ -27,7 +27,7 @@
 #define DEF_WIDTH 0.03
 
 // This demo program can be used in 3 modes. All 3 modes require configure
-// option --enable-cairo or CMake OPTION_CAIRO.
+// option --enable-cairo or CMake FLTK_OPTION_CAIRO_WINDOW.
 //
 // 1) using class Fl_Cairo_Window useful when all the content of a window
 //    is drawn with Cairo.
@@ -39,7 +39,7 @@
 // or
 // 3) showing how to use "cairo extended use".
 //    This is achieved when FLTK was built with one more option
-//    (configure --enable-cairoext or CMake OPTION_CAIROEXT)
+//    (configure --enable-cairoext or CMake FLTK_OPTION_CAIRO_EXT)
 //    which defines the preprocessor variable FLTK_HAVE_CAIROEXT.
 //    If Fl::cairo_autolink_context(true); is called at the beginning
 //    of main(), any overridden draw() function gets access to an adequate
@@ -212,7 +212,7 @@ int main(int argc, char **argv) {
   fl_message_title("This program needs a Cairo enabled FLTK library");
   fl_message(
     "Please configure FLTK with Cairo enabled (--enable-cairo or --enable-cairoext)\n"
-    "or one of the CMake options OPTION_CAIRO or OPTION_CAIROEXT, respectively.");
+    "or one of the CMake options FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT, respectively.");
   return 0;
 }
 #endif // (FLTK_HAVE_CAIRO)

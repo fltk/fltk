@@ -64,10 +64,7 @@ public:
   const char *latin1_to_local(const char *t, int n) FL_OVERRIDE;
   const char *local_to_mac_roman(const char *t, int n) FL_OVERRIDE;
   const char *mac_roman_to_local(const char *t, int n) FL_OVERRIDE;
-  Fl_Pixmap *tree_openpixmap() FL_OVERRIDE;
-  static const char * const tree_open_xpm_darwin[]; // used by tree_openpixmap()
-  Fl_Pixmap *tree_closepixmap() FL_OVERRIDE;
-  static const char * const tree_close_xpm_darwin[]; // used by tree_closepixmap()
+  void tree_draw_expando_button(int x, int y, bool state, bool active) FL_OVERRIDE;
   int tree_connector_style() FL_OVERRIDE;
   const char *filename_name(const char *buf) FL_OVERRIDE;
   void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0) FL_OVERRIDE;

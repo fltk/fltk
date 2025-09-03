@@ -35,7 +35,7 @@ these will operate on the new current drawing surface;
 Fl_Surface_Device::pop_current().
 </ol>
 
-\section drawing_DrawingUnit What Drawing Units Do FLTK Drawing Functions Use?
+\section drawing_DrawingUnit What Units Do FLTK Functions Use?
 
 Before version 1.4 all graphical quantities used by FLTK were in pixel units:
 a window of width 500 units was 500 pixels wide, a line of length 10 units was
@@ -54,8 +54,11 @@ a twice higher DPI. If the first screen's scale factor is set to 1 and that of t
 second screen to 2, the GUI of any FLTK app appears equally sized on the two screens.
 
 FLTK uses several units to measure graphical elements:
-<ul><li>All data visible by the public API (e.g., window widths, line lengths, font sizes,
-clipping regions) are in <b>FLTK units</b> which are both system- and DPI-independent.
+<ul><li>All quantities used by the public FLTK API to measure graphical elements
+(e.g., window widths, line lengths, font sizes, clipping regions, image widths and heights)
+are in <b>FLTK units</b> except if it's explicitly documented another unit is used.
+FLTK units are both platform- and DPI-independent. An example of FLTK API using
+another unit is Fl_Gl_Window::pixel_w().
 <li>Just before drawing to a screen, the library internally multiplies all quantities
 expressed in FLTK units by the current value of the scale factor
 for the screen in use and obtains quantities in <b>drawing units</b>.
@@ -96,8 +99,9 @@ image type, the platform and some hardware features. The most common
 case for Fl_RGB_Image's is that FLTK uses a scaled drawing system feature that directly
 maps image data to screen pixels. An important feature of FLTK for image drawing
 is the Fl_Image::scale() member function, new in FLTK version 1.4. This function
-controls the image drawing size (in FLTK units) independently from the size
-of the image data. An image with large enough data size can thus be drawn at the
+controls the image drawing size (in FLTK units, given by Fl_Image::w() and Fl_Image::h())
+independently from the size of the image data (given by Fl_Image::data_w() and
+Fl_Image::data_h()). An image with large enough data size can thus be drawn at the
 full resolution of the screen even when the screen area covered by the image grows
 following the GUI scale factor.
 
@@ -121,6 +125,7 @@ header file. FLTK provides the following types of drawing functions:
 \li \ref drawing_boxes
 \li \ref drawing_clipping
 \li \ref drawing_colors
+\li \ref drawing_contrast
 \li \ref drawing_lines
 \li \ref drawing_fast
 \li \ref drawing_complex
@@ -366,26 +371,78 @@ button->color(0xffffff00);                  // RGB: white
 If TrueColor is not available, any RGB colors will be set to
 the nearest entry in the colormap.
 
+
+\subsection drawing_contrast Color Contrast
+
+Although these are not real "drawing" functions, creating readable contrast is
+essential in a good GUI design. FLTK tries to help with this by providing
+fl_contrast() and related functions.
+
+The basic function is Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, int context, int size);
+
+The parameters \c context and \c size are optional and reserved for future use
+(since FLTK 1.4.0).
+
+The return value can be used to substitute the foreground color \c fg used for drawing
+(usually the "text" or "label" color) on a particular background color \c bg with
+either black (FL_BLACK) or white (FL_WHITE). This is useful if the background color
+is not known or can be changed by the user or a system "theme".
+
+FLTK calculates the contrast between \c fg and \c bg and returns the same color
+(\c fg) if the contrast is considered sufficient or one of FL_BLACK or FL_WHITE
+if the contrast of the given foreground color would be insufficient. Then
+either FL_BLACK or FL_WHITE is chosen, whichever has the higher contrast with
+the background color.
+
+Example, may be used in a widget's draw() method:
+
+  \code
+    Fl_Color bg = color();          // background color of the widget
+    Fl_Color fg = FL_BLUE;          // the chosen foreground (drawing) color
+    fl_color(fl_contrast(fg, bg));  // set the drawing color
+    fl_rect(..);                    // draw a rectangle with sufficient contrast
+  \endcode
+
+FLTK 1.4.0 introduced a new contrast algorithm which is superior to the one
+used up to FLTK 1.3.x. You can use
+
+  fl_contrast_mode(FL_CONTRAST_LEGACY);
+
+early in your program to select the old behavior if you really need strict backwards
+compatibility. This is discouraged because the new algorithm is much better with
+regard to human contrast perception. The default mode since FLTK 1.4.0 is
+
+  fl_contrast_mode(FL_CONTRAST_CIELAB);
+
+For more info please see the linked documentation of these functions.
+
+Additionally the old and new contrast calculations can be fine tuned with the new
+function (since 1.4.0)
+
+  fl_contrast_level(int level);
+
+This is not recommended but can be useful for some border cases. Please refer to
+the documentation of fl_contrast_level().
+
+Finally, developers can define their own contrast calculation function with
+
+  void fl_contrast_function(Fl_Contrast_Function *f);
+
+Please see the documentation for details.
+
+
 \subsection drawing_lines Line Dashes and Thickness
 
-FLTK supports drawing of lines with different styles and
-widths. Full functionality is not available under Windows 95, 98,
-and Me due to the reduced drawing functionality these operating
-systems provide.
+FLTK supports drawing of lines with different styles and widths.
 
-void fl_line_style(int style, int width, char* dashes)
+  void fl_line_style(int style, int width, char* dashes)
+
+  \image html  fl_line_style.png "fl_line_style() styles"
+  \image latex fl_line_style.png "fl_line_style() styles" width=12cm
 
 \par
 Set how to draw lines (the "pen").  If you change this it is your
-responsibility to set it back to the default with
-\p fl_line_style(0).
-
-\par
-\b Note:
-Because of how line styles are implemented on MS Windows systems, you
-\e must set the line style \e after setting the drawing color.
-If you set the
-color after the line style you will lose the line style settings!
+responsibility to set it back to the default with \p fl_line_style(0).
 
 \par
 \p style is a bitmask which is a bitwise-OR of the following
@@ -394,17 +451,17 @@ line. If you don't specify a cap or join type you will get a
 system-defined default of whatever value is fastest.
 
 \par
-\li <tt>FL_SOLID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------</tt>
-\li <tt>FL_DASH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - - - -</tt>
-\li <tt>FL_DOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......</tt>
-\li <tt>FL_DASHDOT&nbsp;&nbsp;&nbsp; - . - .</tt>
-\li <tt>FL_DASHDOTDOT - .. -</tt>
-\li <tt>FL_CAP_FLAT</tt>
-\li <tt>FL_CAP_ROUND</tt>
-\li <tt>FL_CAP_SQUARE</tt> (extends past end point 1/2 line width)
-\li <tt>FL_JOIN_MITER</tt> (pointed)
-\li <tt>FL_JOIN_ROUND</tt>
-\li <tt>FL_JOIN_BEVEL</tt> (flat)
+\li <tt>FL_SOLID</tt> solid line
+\li <tt>FL_DASH</tt>  75% dashed line
+\li <tt>FL_DOT</tt> 50% pixel dotted
+\li <tt>FL_DASHDOT</tt> dash / dot pattern
+\li <tt>FL_DASHDOTDOT</tt> dash / two dot pattern
+\li <tt>FL_CAP_FLAT</tt> end is flat
+\li <tt>FL_CAP_ROUND</tt> end is round
+\li <tt>FL_CAP_SQUARE</tt> extends past end point 1/2 line width
+\li <tt>FL_JOIN_MITER</tt> line join extends to a point
+\li <tt>FL_JOIN_ROUND</tt> line join is rounded
+\li <tt>FL_JOIN_BEVEL</tt> line join is flat (tidied)
 
 \par
 \p width is the number of \ref drawing_DrawingUnit "FLTK units" thick to draw the lines.
@@ -419,10 +476,18 @@ terminated with a zero-length entry. A \p NULL pointer or a zero-length
 array results in a solid line. Odd array sizes are not supported and
 result in undefined behavior.
 
+<!--
 \par
-\b Note:
-The dashes array does not work under Windows 95, 98, or Me, since those
-operating systems do not support complex line styles.
+\b Notes:
+-->
+\note
+- Full functionality is not available under Windows 95, 98, and Me due to
+  the reduced drawing functionality these operating systems provide.
+- Because of how line styles are implemented on Windows systems, you \e must
+  set the line style \e after setting the drawing color. If you set the
+  color after the line style you will lose the line style settings!
+- The dashes array does not work under Windows 95, 98, or Me, since those
+  operating systems do not support complex line styles.
 
 
 \subsection drawing_fast Drawing Fast Shapes
@@ -507,7 +572,7 @@ void fl_pie(int x, int y, int w, int h, double a1, double a2)
 \par
 Draw ellipse sections using integer coordinates. These
 functions match the rather limited circle drawing code provided
-by X and MS Windows. The advantage over using
+by X and Windows. The advantage over using
 \ref drawing_fl_arc "fl_arc()"
 with floating point
 coordinates is that they are faster because they often use the
@@ -551,11 +616,10 @@ with 2-D linear transformations. The functionality matches that
 found in the Adobe&reg; PostScript&tm; language. The
 exact pixels that are filled are less defined than for the fast
 drawing functions so that FLTK can take advantage of drawing
-hardware. On both X and MS Windows the transformed vertices are
-rounded to integers before drawing the line segments: this
-severely limits the accuracy of these functions for complex
-graphics, so use OpenGL when greater accuracy and/or performance
-is required.
+hardware. On both X and Windows the transformed vertices are
+rounded to integers before drawing the line segments: this severely
+limits the accuracy of these functions for complex graphics, so use
+OpenGL when greater accuracy and/or performance is required.
 
 void fl_load_matrix(double a,double b,double c,double d,double x,double y)
 void fl_load_identity()
@@ -711,7 +775,7 @@ void fl_rtl_draw(const char *str, int n, int x, int y)
 \par
 Draw a UTF-8 string of length n bytes right to left starting at the given x, y location.
 
-void fl_draw(const char* str, int x, int y, int w, int h, Fl_Align align, Fl_Image* img, int draw_symbols)
+void fl_draw(const char* str, int x, int y, int w, int h, Fl_Align align, Fl_Image* img, int draw_symbols, int spacing)
 
 \par
 Fancy string drawing function which is used to draw all the
@@ -721,7 +785,7 @@ characters to ^X, and aligns inside or against the edges of the
 box described by \p x, \p y, \p w and \p h.
 See Fl_Widget::align() for values for \p align.
 The value \p FL_ALIGN_INSIDE is ignored, as this function always
-prints inside the box.
+prints inside the box. Parameter \p spacing controls the space between text and image.
 
 \par
 If \p img is provided and is not \p NULL, the
@@ -859,7 +923,7 @@ requires 4 bytes to store a Unicode character.
 
 FLTK can draw accurately any Unicode-supported script for which the system
 contains relevant fonts. Under X11 platforms, this requires
-to build the library with the OPTION_USE_PANGO CMake option turned On
+to build the library with the FLTK_USE_PANGO CMake option turned On
 (or with configure --enable-pango).
 
 Plain text drawing starting at a user-given coordinate
@@ -1089,12 +1153,15 @@ FLTK also provides several image classes based on the three
 standard image types for common file formats:
 
 \li Fl_GIF_Image
+\li Fl_Anim_GIF_Image
 \li Fl_JPEG_Image
 \li Fl_PNG_Image
 \li Fl_PNM_Image
 \li Fl_XBM_Image
 \li Fl_XPM_Image
 \li Fl_SVG_Image
+\li Fl_BMP_Image
+\li Fl_ICO_Image
 
 Each of these image classes loads a named file of the
 corresponding format. The Fl_Shared_Image class
@@ -1105,8 +1172,8 @@ Finally, FLTK provides a special image class called Fl_Tiled_Image to
 tile another image object in the specified area. This class can be
 used to tile a background image in a Fl_Group widget, for example.
 
-virtual void Fl_Image::copy() <br>
-virtual Fl_Image* Fl_Image::copy(int w, int h)
+virtual Fl_Image* Fl_Image::copy() <br>
+virtual Fl_Image* Fl_Image::copy(int W, int H) const
 
 \par
 The \p copy() method creates a copy of the image. The second form

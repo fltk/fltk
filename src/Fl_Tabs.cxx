@@ -31,6 +31,7 @@
 #include <stdlib.h>
 
 #define BORDER 2
+#define OV_BORDER 2
 #define EXTRASPACE 10
 #define SELECTION_BORDER 5
 #define EXTRAGAP 2
@@ -72,6 +73,12 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
   Fl_Group::resize(X, Y, W, H);
 }
 
+/** Ensure proper placement of selected tab. */
+void Fl_Tabs::show() {
+  Fl::damage(FL_DAMAGE_SCROLL);
+  Fl_Group::show();
+}
+
 /** Calculate tab positions and widths.
 
   This protected method calculates the horizontal display positions and
@@ -109,9 +116,9 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
         were documented as 1 based index and 0 if there were no children. This
         was actually never the case. It always returned a 0 based index and
         the (useless) value of also 0 if there were no children. The current
-        version return -1 if there are no children.
+        version returns -1 if there are no children.
 
-  \note For this method to work, only on single child should be selected.
+  \note For this method to work, only a single child should be selected.
         Calling the method \ref value() before calling \ref tab_positions()
         will ensure that exactly one child is selected and return a pointer
         to that child.
@@ -244,8 +251,8 @@ int Fl_Tabs::tab_positions() {
   negative and the tabs should be placed at the bottom.
 
   \returns Vertical space that can be used for the tabs.
-  \retval  > 0  To put the tabs at the top of the widget.
-  \retval  < 0  To put the tabs on the bottom.
+  \retval  >0  To put the tabs at the top of the widget.
+  \retval  <0  To put the tabs on the bottom.
   \retval Full height, if children() == 0.
 */
 int Fl_Tabs::tab_height() {
@@ -330,7 +337,7 @@ int Fl_Tabs::hit_overflow_menu(int event_x, int event_y) {
   if (!has_overflow_menu)
     return 0;
   int H = tab_height();
-  if (event_x < x()+w()-abs(H))
+  if (event_x < x()+w()-abs(H)+OV_BORDER)
     return 0;
   if (H >= 0) {
     if (event_y > y()+H)
@@ -356,7 +363,7 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
     if (event_y < y()+h()+H)
       return 0;
   }
-  if (has_overflow_menu && event_x > x()+w()-abs(H))
+  if (has_overflow_menu && event_x > x()+w()-abs(H)+OV_BORDER)
     return 0;
   return 1;
 }
@@ -367,11 +374,49 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
 void Fl_Tabs::check_overflow_menu() {
   int nc = children();
   int H = tab_height(); if (H < 0) H = -H;
-  if (tab_pos[nc] > w()-H) {
+  if (tab_pos[nc] > w()-H+OV_BORDER) {
     has_overflow_menu = 1;
   } else {
     has_overflow_menu = 0;
   }
+}
+
+/**
+ Take keyboard focus if o is not NULL.
+ \param[in] o selected tab
+ */
+void Fl_Tabs::take_focus(Fl_Widget *o) {
+  if (o && Fl::visible_focus() && Fl::focus()!=this) {
+    Fl::focus(this);
+    redraw_tabs();
+  }
+}
+
+/**
+ Set tab o as selected and call callbacks if needed.
+ \param[in] o the newly selected tab
+ \return 0 if o is invalid or was deleted by the callback and must no longer be used
+ */
+int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
+  // chaeck if o is valid
+  if ( o == NULL )
+    return 0;
+
+  // set the new tab value
+  int tab_changed = value(o);
+  if ( tab_changed )
+    set_changed();
+
+  // do we need to call the callback?
+  if ( tab_changed || ( when() & (FL_WHEN_NOT_CHANGED) ) ) {
+    Fl_Widget_Tracker wp(o);          // we want to know if the widget lives on
+    do_callback(FL_REASON_SELECTED);  // this may delete the tab
+    if (wp.deleted()) return 0;       // if it did, return 0
+  }
+
+  // if o is still valid, do remaining tasks
+  Fl_Tooltip::current(o);
+  return 1;
 }
 
 /**
@@ -384,7 +429,7 @@ void Fl_Tabs::check_overflow_menu() {
  The menu is then presented until the user selects an item or cancels.
  The chosen tab is then selected and made visible.
 
- The menu item array is the deleted.
+ The menu item array is then deleted.
  */
 void Fl_Tabs::handle_overflow_menu() {
   int nc = children();
@@ -395,7 +440,7 @@ void Fl_Tabs::handle_overflow_menu() {
   // count visible children
   for (i = 0; i < nc; i++) {
     if (tab_pos[i]+tab_offset < 0) fv = i;
-    if (tab_pos[i]+tab_width[i]+tab_offset <= w()-H) lv = i;
+    if (tab_pos[i]+tab_width[i]+tab_offset <= w()-H+OV_BORDER) lv = i;
   }
 
   // create a menu with all children
@@ -413,9 +458,13 @@ void Fl_Tabs::handle_overflow_menu() {
   }
 
   // show the menu and handle the selection
-  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (tab_height()>0)?(y()+H):(y()+h()));
-  if (m)
-    value((Fl_Widget*)m->user_data());
+  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H+OV_BORDER, (tab_height()>0)?(y()+H):(y()+h()-OV_BORDER));
+  if (m) {
+    Fl_Widget *o = (Fl_Widget*)m->user_data();
+    push(0);
+    take_focus(o);
+    maybe_do_callback(o);
+  }
 
   // delete the menu until we need it next time
   if (overflow_menu) {
@@ -431,16 +480,27 @@ void Fl_Tabs::draw_overflow_menu_button() {
   int H = tab_height();
   int X, Y;
   if (H > 0) {
-    X = x() + w() - H;
-    Y = y();
+    X = x() + w() - H + OV_BORDER;
+    if (OV_BORDER > 0)
+      fl_rectf(X, y(), H - OV_BORDER, OV_BORDER, color());
+    Y = y() + OV_BORDER;
   } else {
     H = -H;
-    X = x() + w() - H;
-    Y = y() + h() - H - 1;
+    X = x() + w() - H + OV_BORDER;
+    Y = y() + h() - H;
+    if (OV_BORDER > 0)
+      fl_rectf(X, Y + H - OV_BORDER, H - OV_BORDER, OV_BORDER, color());
   }
-  fl_draw_box(box(), X, Y, H, H, color());
+  H -= OV_BORDER;
+  draw_box(box(), X, Y, H, H, color());
   Fl_Rect r(X, Y, H, H);
-  fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_contrast(FL_BLACK, color()));
+  // labelcolor() is historically used to contrast selectioncolor() and is
+  // useless her, so we fall back to contrast the background color on the
+  // gray ramp.
+  Fl_Color arrow_color = fl_contrast(FL_GRAY_RAMP+0, color());
+  if (!active_r())
+    arrow_color = fl_inactive(arrow_color);
+  fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, arrow_color);
 }
 
 /**
@@ -468,6 +528,7 @@ int Fl_Tabs::handle(int event) {
   static int initial_x = 0;
   static int initial_tab_offset = 0;
   static int forward_motion_to_group = 0;
+  static Fl_Widget *o_push_drag = NULL;
   Fl_Widget *o;
   int i;
 
@@ -503,18 +564,22 @@ int Fl_Tabs::handle(int event) {
     }
     /* FALLTHROUGH */
   case FL_DRAG:
+      o_push_drag = which(Fl::event_x(), Fl::event_y());
   case FL_RELEASE:
     if (forward_motion_to_group) {
       return Fl_Group::handle(event);
     }
     o = which(Fl::event_x(), Fl::event_y());
+    if (event == FL_RELEASE && o != o_push_drag) { // see issue #1075
+      return 1;
+    }
     if ( (overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN) ) {
       if (tab_pos[children()] < w() && tab_offset == 0) {
         // fall through
       } else if (!Fl::event_is_click()) {
         tab_offset = initial_tab_offset + Fl::event_x() - initial_x;
         int m = 0;
-        if (overflow_type == OVERFLOW_PULLDOWN) m = abs(tab_height());
+        if (overflow_type == OVERFLOW_PULLDOWN) m = abs(tab_height()) - OV_BORDER;
         if (tab_offset > 0) {
           initial_tab_offset -= tab_offset;
           tab_offset = 0;
@@ -531,25 +596,12 @@ int Fl_Tabs::handle(int event) {
     }
     if (event == FL_RELEASE) {
       push(0);
-      if (o && Fl::visible_focus() && Fl::focus()!=this) {
-        Fl::focus(this);
-        redraw_tabs();
-      }
+      take_focus(o);
       if (o && (o->when() & FL_WHEN_CLOSED) && hit_close(o, Fl::event_x(), Fl::event_y())) {
         o->do_callback(FL_REASON_CLOSED);
         return 1; // o may be deleted at this point
       }
-      if (o &&                              // Released on a tab and..
-          (value(o) ||                      // tab changed value or..
-           (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
-          )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
-         ) {
-        Fl_Widget_Tracker wp(o);
-        set_changed();
-        do_callback(FL_REASON_SELECTED);
-        if (wp.deleted()) return 1;
-      }
-      Fl_Tooltip::current(o);
+      maybe_do_callback(o);
     } else {
       push(o);
     }
@@ -678,7 +730,7 @@ Fl_Widget* Fl_Tabs::value() {
   return v;
 }
 
-/** Sets the widget to become the current visible widget/tab.
+/** Sets the widget to become the currently visible widget/tab.
 
   The Fl_Tabs::value() method allows you to set a particular child widget of
   the Fl_Tabs container to be the currently visible widget. If the specified
@@ -704,16 +756,15 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
       o->hide();
     }
   }
-  // make sure that the selected tab is visible
+  // always make sure that the selected tab is visible
   if (   (selected >= 0)
-      && (ret == 1)
       && ( (overflow_type == OVERFLOW_DRAG)
         || (overflow_type == OVERFLOW_PULLDOWN) ) ) {
     int m = MARGIN;
-    if ( (selected == 0) || (selected == children()-1) ) m = 0;
+    if ( (selected == 0) || (selected == children()-1) ) m = BORDER;
     int mr = m;
-    if (overflow_type == OVERFLOW_PULLDOWN) mr += abs(tab_height());
     tab_positions();
+    if (overflow_type == OVERFLOW_PULLDOWN) mr += abs(tab_height() - OV_BORDER);
     if (tab_pos[selected]+tab_width[selected]+tab_offset+mr > w()) {
       tab_offset = w() - tab_pos[selected] - tab_width[selected] - mr;
     } else if (tab_pos[selected]+tab_offset-m < 0) {
@@ -734,14 +785,16 @@ void Fl_Tabs::draw() {
   //  FL_DAMAGE_EXPOSE  : this is set if some setting in a widget changed
   //                      Fl_Tabs uses this to indicate that the tabs area needs a full redraw
   //  FL_DAMAGE_SCROLL  : this is used as a custom flag in various widgets
-  //                      Fl_Tabs honors this flag for back compatibly as FL_DAMAGE_EXPOSE
-  //  FL_DAMAGE_ALL     : just redraw everything
+  //                      Fl_Tabs uses FL_DAMAGE_EXPOSE to indicate that the
+  //                      tabs bar needs repositioning and teh tabs must be
+  //                      redrawn
+  //  FL_DAMAGE_ALL     : just recalculate and redraw everything
 
   // Anatomy of tabs on top:
-  //  +------+             +---+  <<-- selected tabs start at y()
-  //  | text | +------+    | V |   <-- other tabs are offset down by BORDER
-  //  |      | | text |    +---+   <-- the pulldown button width equals H
-  // ++      +-----------------+   <-- tab_height() to tab_height + Fl::box_dx(box())
+  //  +------+                    <<-- selected tabs start at y()
+  //  | text | +------+    +---+   <-- other tabs are offset down by BORDER
+  //  |      | | text |    | ▼ |   <-- the pulldown button width equals H - OV_BORDER
+  // ++      +-------------+---+   <-- tab_height() to tab_height + Fl::box_dx(box())
   // +-------------------------+   <-- tab_height + SELECTION_BORDER
   // |                         |
   //   ↑____↑ this area within the SELECTION_BORDER is called "stem"
@@ -797,6 +850,13 @@ void Fl_Tabs::draw() {
     child_area_h = h() - tabs_h;
     clipped_child_area_y = y();
     clipped_child_area_h = h() - tabs_h - selection_border_h;
+  }
+
+  // ---- recalculate the tabs so that the selected tab is visible
+  if (damage() & (FL_DAMAGE_ALL|FL_DAMAGE_SCROLL)) {
+    Fl_Widget *selected_tab = value();
+    if (selected_tab)
+      value(selected_tab);
   }
 
   // ---- draw the tabs and the selection border
@@ -956,7 +1016,10 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
     // Draw the "close" button if requested
     if ( (o->when() & FL_WHEN_CLOSED) && !(flags & 1) ) {
       int sz = labelsize()/2, sy = (H - sz)/2;
-      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + yofs/2 + sy, sz, sz, o->labelcolor());
+      Fl_Color close_color = fl_contrast(FL_GRAY_RAMP+0, bc);
+      if (!active_r())
+        close_color = fl_inactive(close_color);
+      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + yofs/2 + sy, sz, sz, close_color);
       wc = sz + EXTRAGAP;
     }
 
@@ -978,7 +1041,10 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
     // Draw the "close" button if requested
     if ( (o->when() & FL_WHEN_CLOSED) && (x1+W < x2) ) {
       int sz = labelsize()/2, sy = (H - sz)/2;
-      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + h() - H -yofs/2 + sy, sz, sz, o->labelcolor());
+      Fl_Color close_color = fl_contrast(FL_GRAY_RAMP+0, bc);
+      if (!active_r())
+        close_color = fl_inactive(close_color);
+      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + h() - H -yofs/2 + sy, sz, sz, close_color);
       wc = sz + EXTRAGAP;
     }
 
@@ -1050,6 +1116,10 @@ Fl_Tabs::~Fl_Tabs() {
   \p tabh is ignored.
 
   \note Children should always use the same positions and sizes.
+
+  \note This function requires access to the display drivers to determine the
+  selected font height. If `client_area` is invoked before the first window is
+  displayed, ensure that `fl_open_display()` is called beforehand.
 
   \p tabh can be one of
   \li    0: calculate label size, tabs on top
@@ -1136,7 +1206,7 @@ void Fl_Tabs::handle_overflow(int ov) {
   overflow_type = ov;
   tab_offset = 0;
   has_overflow_menu = 0;
-  damage(FL_DAMAGE_EXPOSE);
+  damage(FL_DAMAGE_SCROLL);
   redraw();
 }
 

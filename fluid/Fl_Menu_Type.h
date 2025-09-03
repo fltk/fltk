@@ -35,6 +35,7 @@
 extern Fl_Menu_Item dummymenu[];
 extern Fl_Menu_Item button_type_menu[];
 extern Fl_Menu_Item menu_item_type_menu[];
+extern Fl_Menu_Item menu_bar_type_menu[];
 
 /**
  \brief Manage all types on menu items.
@@ -50,6 +51,7 @@ public:
   const char* type_name() FL_OVERRIDE {return "MenuItem";}
   const char* alt_type_name() FL_OVERRIDE {return "fltk::Item";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
+  Fl_Type* make(int flags, Strategy strategy);
   int is_button() const FL_OVERRIDE {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return 0;}
   Fl_Widget_Type* _make() FL_OVERRIDE {return 0;}
@@ -104,7 +106,7 @@ public:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return 0;}
   const char* type_name() FL_OVERRIDE {return "Submenu";}
   const char* alt_type_name() FL_OVERRIDE {return "fltk::ItemGroup";}
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int is_button() const FL_OVERRIDE {return 0;} // disable shortcut
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
   // changes to submenu must propagate up so build_menu is called
@@ -132,7 +134,7 @@ public:
     w = layout->textsize_not_null() * 6 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   int menusize;
   virtual void build_menu() = 0;
   Fl_Menu_Manager_Type() : Fl_Widget_Type() {menusize = 0;}
@@ -204,7 +206,7 @@ class Fl_Menu_Base_Type : public Fl_Menu_Manager_Type
     return 1;
   }
 public:
-  int is_parent() const FL_OVERRIDE {return 1;}
+  int can_have_children() const FL_OVERRIDE {return 1;}
   void build_menu() FL_OVERRIDE;
   ~Fl_Menu_Base_Type() {
     if (menusize) delete[] (Fl_Menu_Item*)(((Fl_Menu_*)o)->menu());
@@ -261,13 +263,24 @@ public:
 class Fl_Menu_Bar_Type : public Fl_Menu_Base_Type
 {
   typedef Fl_Menu_Base_Type super;
+  Fl_Menu_Item *subtypes() FL_OVERRIDE {return menu_bar_type_menu;}
 public:
+  Fl_Menu_Bar_Type();
+  ~Fl_Menu_Bar_Type() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "Fl_Menu_Bar";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::MenuBar";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Bar_Type();}
+  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+//  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Menu_Bar; }
   bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Bar) ? true : super::is_a(inID); }
+  bool is_sys_menu_bar();
+  const char *sys_menubar_name();
+  const char *sys_menubar_proxy_name();
+protected:
+  char *_proxy_name;
 };
 
 

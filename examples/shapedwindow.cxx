@@ -1,7 +1,7 @@
 //
 // shapedwindow example source file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -93,7 +93,8 @@ int main(int argc, char **argv) {
   Fl_RGB_Image *img = prepare_shape(dim);
   win->shape(img);
   dragbox *box = new dragbox(0, 0, win->w(), win->h());
-  box->image(new Fl_Tiled_Image(new Fl_Pixmap((const char * const *)tile_xpm)));
+  Fl_Pixmap *pxm = new Fl_Pixmap((const char * const *)tile_xpm);
+  box->bind_image(new Fl_Tiled_Image(pxm)); // Fl_Tiled_Image will be auto-released
   Fl_Group *g = new Fl_Group(10, 20, 80, 20);
   g->box(FL_NO_BOX);
   Fl_Button *b = new Fl_Button(10, 20, 80, 20, "Close");
@@ -113,7 +114,11 @@ int main(int argc, char **argv) {
   win->end();
   win->resizable(win);
   win->show(argc, argv);
-  Fl::run();
+  // Test for memory leaks: this is not necessary, it's just for demonstration.
+  // Memory checkers like Address Sanitizer or Valgrind would flag leaks.
+  int ret = Fl::run();
   delete win;
-  return 0;
+  delete pxm;
+  delete img;
+  return ret;
 }

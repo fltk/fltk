@@ -28,10 +28,6 @@ typedef struct _PangoLayout  PangoLayout;
 typedef struct _PangoContext PangoContext;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-struct flCairoRegion {
-  int count;
-  struct _cairo_rectangle *rects;
-}; // a region is the union of a series of rectangles
 
 class Fl_Cairo_Font_Descriptor : public Fl_Font_Descriptor {
 public:
@@ -53,6 +49,7 @@ protected:
   cairo_t *cairo_;
   PangoContext *pango_context_;
   PangoLayout *pango_layout_;
+  static Fl_Font font_count_;
 public:
   Fl_Cairo_Graphics_Driver();
   ~Fl_Cairo_Graphics_Driver() FL_OVERRIDE;
@@ -68,6 +65,8 @@ public:
   cairo_t *cr() { return cairo_; }
   PangoLayout *pango_layout() {return pango_layout_;}
   void set_cairo(cairo_t *c, float f = 0);
+  static cairo_pattern_t *calc_cairo_mask(const Fl_RGB_Image *rgb);
+  static const char *clean_utf8(const char* str, int &n);
 
   void check_status(void);
 
@@ -80,6 +79,7 @@ public:
 
   float scale_x;
   float scale_y;
+  int wld_scale;
   float angle;
   int left_margin;
   int top_margin;
@@ -125,7 +125,6 @@ public:
   void restore_clip() FL_OVERRIDE;
   int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
 
-  void begin_points() FL_OVERRIDE;
   void begin_line() FL_OVERRIDE;
   void begin_loop() FL_OVERRIDE;
   void begin_polygon() FL_OVERRIDE;
@@ -152,18 +151,18 @@ public:
   void ps_translate(int, int);
   void ps_untranslate();
 
-  void draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy);
+  void draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy, int cache_w, int cache_h);
   void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) FL_OVERRIDE;
   void draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   void cache(Fl_RGB_Image *rgb) FL_OVERRIDE;
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) FL_OVERRIDE;
-  void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   static cairo_pattern_t *bitmap_to_pattern(Fl_Bitmap *bm, bool complement,
                                             cairo_surface_t **p_surface);
   void cache(Fl_Bitmap *img) FL_OVERRIDE;
   void delete_bitmask(fl_uintptr_t bm) FL_OVERRIDE;
   void cache(Fl_Pixmap *pxm) FL_OVERRIDE;
-  void draw_pixmap(Fl_Pixmap *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_fixed(Fl_Pixmap *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   void uncache_pixmap(fl_uintptr_t p) FL_OVERRIDE;
 
   void font(Fl_Font fnum, Fl_Fontsize s) FL_OVERRIDE;
@@ -189,7 +188,6 @@ public:
   Fl_Region XRectangleRegion(int x, int y, int w, int h) FL_OVERRIDE;
   void XDestroyRegion(Fl_Region r) FL_OVERRIDE;
   void add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) FL_OVERRIDE;
-  void cache_size(Fl_Image *img, int &width, int &height) FL_OVERRIDE;
   char can_do_alpha_blending() FL_OVERRIDE;
   float override_scale() FL_OVERRIDE;
   void restore_scale(float) FL_OVERRIDE;

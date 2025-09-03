@@ -25,15 +25,19 @@
 
 # Build dummy fltk_cairo library
 
-set (cairo_SRCS cairo_dummy.c)
+set(cairo_SRCS cairo_dummy.c)
 
-FL_ADD_LIBRARY (fltk_cairo STATIC "${cairo_SRCS}")
+fl_add_library(fltk_cairo STATIC "${cairo_SRCS}")
+target_link_libraries(fltk_cairo PUBLIC fltk::fltk)
 
-# Build shared dummy library (optional)
+# Build shared dummy library(optional)
 
-if (OPTION_BUILD_SHARED_LIBS)
+if(FLTK_BUILD_SHARED_LIBS)
 
-  FL_ADD_LIBRARY (fltk_cairo SHARED "${cairo_SRCS}")
-  target_link_libraries (fltk_cairo_SHARED fltk_SHARED)
+  fl_add_library(fltk_cairo SHARED "${cairo_SRCS}")
+  target_link_libraries(fltk_cairo-shared PUBLIC fltk::fltk-shared)
 
-endif (OPTION_BUILD_SHARED_LIBS)
+endif(FLTK_BUILD_SHARED_LIBS)
+
+set(FLTK_LIBRARIES ${FLTK_LIBRARIES} PARENT_SCOPE)
+set(FLTK_LIBRARIES_SHARED ${FLTK_LIBRARIES_SHARED} PARENT_SCOPE)

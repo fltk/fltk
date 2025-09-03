@@ -20,7 +20,7 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
   3   How to Build FLTK Using GCC
     3.1   Downloading and Unpacking
     3.2   Configuration and Build Systems
-    3.3   Configuring FLTK with autoconf and configure
+    3.3   Configuring FLTK with autoconf and configure (deprecated)
     3.4   Building FLTK
     3.5   Testing FLTK
     3.6   Installing FLTK
@@ -31,6 +31,13 @@ README.Unix.txt - Building FLTK on Unix/Linux Systems
 
 [*] TODO: we still need to write these chapters
 
+
+-------------------------------------------------------------------
+  Note: usage of autotools, configure, and the included Makefiles
+  to build the FLTK library is deprecated since FLTK 1.4 and will
+  be removed in the next minor version (1.5).
+  Please consider using CMake instead, see README.CMake.txt.
+-------------------------------------------------------------------
 
 
  1  Introduction
@@ -66,7 +73,7 @@ See https://www.fltk.org/bugs.php for how to do this.
 All Linux distributions based on Debian are similar and use the `apt`
 package manager.
 
-  - Ubuntu Linux can be downloaded from https://ubuntu.com/
+  - Ubuntu Linux can be downloaded from https://ubuntu.com/download/desktop
   - Debian Linux can be downloaded from https://www.debian.org/
   - Linux Mint   can be downloaded from https://www.linuxmint.com/
 
@@ -160,7 +167,7 @@ and x*** (X Window System) are installed.
 
 Now install and configure pkgsrc. The current version can be downloaded here:
 
-  http://www.pkgsrc.org/
+  https://www.pkgsrc.org/
 
 To use the current stable version of FLTK, simply install it from pkgsrc:
 
@@ -284,11 +291,9 @@ dev directory. Change the following instructions to fit your preferences.
   cd
   mkdir dev
   cd dev
-  mv ~/Downloads/fltk-1.3.xxxx.tar.gz .
-  tar xvfz fltk-1.3.xxxx.tar.gz
-  cd fltk-1.3.xxxx
-
-Note: current development version is 1.4.0 (1.4.x).
+  mv ~/Downloads/fltk-1.x.y-source.tar.gz .
+  tar xvzf fltk-1.x.y-source.tar.gz
+  cd fltk-1.x.y
 
 
  3.2  Configuration and Build Systems
@@ -298,23 +303,38 @@ The following paragraphs describe the "classic" build system with autoconf,
 configure, and make that has been used to build FLTK up to version 1.3.x
 and can still be used with FLTK 1.4.x.
 
-However, the FLTK team recommend using CMake which is the preferred build
-system since FLTK 1.4.0 used for all platforms (including Windows). CMake
-is used instead of autoconf and configure to create the build system of your
-choice, for instance Makefiles, Ninja build files, Visual Studio projects, etc.
+However, the FLTK team recommend to use CMake which is the preferred build
+system generator since FLTK 1.4 used for all platforms (including Windows).
+CMake can be used to create the build system of your choice, for instance
+Makefiles, Ninja build files, Xcode or Visual Studio IDE projects etc..
+
+-------------------------------------------------------------------
+  Note: usage of autotools, configure, and the included Makefiles
+  to build the FLTK library is deprecated since FLTK 1.4 and will
+  be removed in the next minor version (1.5).
+  Please consider using CMake instead, see README.CMake.txt.
+-------------------------------------------------------------------
 
 Please see README.CMake.txt for how to build FLTK and your application
 programs using CMake. You can stop reading here if you do this.
 
-You can, of course, build FLTK with CMake and your own application(s) with
-your existing and well-known build system.
+You can, of course, build FLTK with CMake and your own application(s)
+with your existing and well-known build system.
 
-If you like the "classic" build system more, continue reading the following
-chapters ...
+If you like the "classic" build system more, continue reading the
+following chapters but please be aware that configure support will
+be removed in FLTK 1.5.
 
 
- 3.3  Configuring FLTK with autoconf and configure
----------------------------------------------------
+ 3.3  Configuring FLTK with autoconf and configure (deprecated)
+----------------------------------------------------------------
+
+-------------------------------------------------------------------
+  Note: usage of autotools, configure, and the included Makefiles
+  to build the FLTK library is deprecated since FLTK 1.4 and will
+  be removed in the next minor version (1.5).
+  Please consider using CMake instead, see README.CMake.txt.
+-------------------------------------------------------------------
 
 If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type:
@@ -406,12 +426,13 @@ source file is:
 
   fltk-config --compile myProgram.cxx
 
-`fltk-config --compile` can not be used to build a program from multiple source
-files but you can use it in a Makefile to get the required compiler and linker
-flags.
+Since version 1.4.0 `fltk-config --compile` can also be used to build a program
+from multiple source files. See the official docs in chapter "FLTK Basics" and
+section "Compiling Multiple Source Files with 'fltk-config'":
+https://www.fltk.org/doc-1.4/basics.html#basics_fltk_config2
 
-"fltk-config" and "fluid" will be installed in "/usr/local/bin/" by default. I
-recommend that you add it to the command search path.
+"fltk-config" and "fluid" will be installed in "/usr/local/bin/" by default.
+We recommend that you add it to the command search path.
 
 
 
@@ -421,8 +442,7 @@ recommend that you add it to the command search path.
 Code::Blocks is a free and popular C++ IDE in the Linux world. It also runs on
 macOS and Windows. Configured correctly, it can also cross-compile between
 these platforms. This chapter focuses on creating a new FLTK project for Linux,
-assuming that FLTK 1.3 was previously built and installed in its default
-location from the command line.
+assuming that FLTK was previously built and installed in its default location.
 
 If not done yet, install Code::Blocks as described in the "Prerequisites"
 chapter above, or download it from their web site. This description is based

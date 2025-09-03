@@ -1,0 +1,514 @@
+// vim:syntax=doxygen
+/**
+
+\page Fl_Terminal_Tech_Docs Fl_Terminal Technical Documentation
+
+This chapter covers the vt100/xterm style "escape codes" used by
+Fl_Terminal for cursor positioning, text colors, and other display
+screen control features such as full or partial screen clearing,
+up/down scrolling, character insert/delete, etc.
+
+\section Fl_Terminal_escape_codes The Escape Codes Fl_Terminal Supports
+
+These are the escape codes Fl_Terminal actually supports, and is not
+the 'complete' list that e.g. xterm supports. Most of the important stuff
+has been implemented, but esoteric features (such as scroll regions) has not.
+
+Features will be added as the widget matures.
+
+\code{.unparsed}
+│    --------------------------------------------------------
+│    --- The CSI (Control Sequence Introducer, or "ESC[") ---
+│    --------------------------------------------------------
+│
+│    ESC[#@ - (ICH) Insert blank Chars (default=1)
+│    ESC[#A - (CUU) Cursor Up, no scroll/wrap
+│    ESC[#B - (CUD) Cursor Down, no scroll/wrap
+│    ESC[#C - (CUF) Cursor Forward, no wrap
+│    ESC[#D - (CUB) Cursor Back, no wrap
+│    ESC[#E - (CNL) Cursor Next Line (crlf) xterm, !gnome
+│    ESC[#F - (CPL) Cursor Preceding Line: move to sol and up # lines
+│    ESC[#G - (CHA) Cursor Horizontal Absolute positioning
+│      │
+│      ├── ESC[G   - move to column 1 (start of line, sol)
+│      └── ESC[#G  - move to column #
+│
+│    ESC[#H - (CUP) Cursor Position (#'s are 1 based)
+│      │
+│      ├── ESC[H    - go to row #1
+│      ├── ESC[#H   - go to (row #) (default=1)
+│      └── ESC[#;#H - go to (row# ; col#)
+│
+│    ESC[#I - (CHT) Cursor Horizontal Tab: tab forward
+│      │
+│      └── ESC[#I - tab # times (default 1)
+│
+│    ESC[#J - (ED) Erase in Display
+│      │
+│      ├── ESC[0J - clear to end of display (default)
+│      ├── ESC[1J - clear to start of display
+│      ├── ESC[2J - clear all lines
+│      └── ESC[3J - clear screen history
+│
+│    ESC[#K - (EL) Erase in line
+│      │
+│      ├── ESC[0K - clear to end of line (default)
+│      ├── ESC[1K - clear to start of line
+│      └── ESC[2K - clear current line
+│
+│    ESC[#L - (IL)  Insert # Lines (default=1)
+│    ESC[#M - (DL)  Delete # Lines (default=1)
+│    ESC[#P - (DCH) Delete # Chars (default=1)
+│    ESC[#S - (SU)  Scroll Up # lines (default=1)
+│    ESC[#T - (SD)  Scroll Down # lines (default=1)
+│    ESC[#X - (ECH) Erase Characters (default=1)
+│
+│    ESC[#Z - (CBT) Cursor Backwards Tab
+│      │
+│      └── ESC[#Z - backwards tab # times (default=1)
+│
+│    ESC[#a - (HPR) move cursor relative [columns] (default=[row,col+1]) (NOT IMPLEMENTED)
+│    ESC[#b - (REP) repeat prev graphics char # times                    (NOT IMPLEMENTED)
+│    ESC[#d - (VPA) Line Position Absolute [row]                         (NOT IMPLEMENTED)
+│    ESC[#e - (LPA) Line Position Relative [row]                         (NOT IMPLEMENTED)
+│    ESC[#f - (CUP) cursor position (#'s 1 based), same as ESC[H
+│
+│    ESC[#g - (TBC)Tabulation Clear
+│      │
+│      ├── ESC[0g - Clear tabstop at cursor
+│      └── ESC[3g - Clear all tabstops
+│
+│    ESC[#m - (SGR) Set Graphic Rendition
+│      │
+│      │    *** Attribute Enable ***
+│      │
+│      ├──  ESC[0m - reset: normal attribs/default fg/bg color  (VT100)
+│      ├──  ESC[1m - bold                                       (VT100)
+│      ├──  ESC[2m - dim
+│      ├──  ESC[3m - italic
+│      ├──  ESC[4m - underline                                  (VT100)
+│      ├──  ESC[5m - blink (NOT IMPLEMENTED)                    (VT100)
+│      ├──  ESC[6m - (unused)
+│      ├──  ESC[7m - inverse                                    (VT100)
+│      ├──  ESC[8m - (unused)
+│      ├──  ESC[9m - strikeout
+│      ├──  ESC[21m - doubly underline (Currently this just does single underline)
+│      │
+│      │    *** Attribute Disable ***
+│      │
+│      ├──  ESC[22m - disable bold/dim
+│      ├──  ESC[23m - disable italic
+│      ├──  ESC[24m - disable underline
+│      ├──  ESC[25m - disable blink (NOT IMPLEMENTED)
+│      ├──  ESC[26m - (unused)
+│      ├──  ESC[27m - disable inverse
+│      ├──  ESC[28m - disable hidden
+│      ├──  ESC[29m - disable strikeout
+│      │
+│      │    *** Foreground Text "8 Color" ***
+│      │
+│      ├──  ESC[30m - fg Black
+│      ├──  ESC[31m - fg Red
+│      ├──  ESC[32m - fg Green
+│      ├──  ESC[33m - fg Yellow
+│      ├──  ESC[34m - fg Blue
+│      ├──  ESC[35m - fg Magenta
+│      ├──  ESC[36m - fg Cyan
+│      ├──  ESC[37m - fg White
+│      ├──  ESC[39m - fg default
+│      │
+│      │    *** Background Text "8 Color" ***
+│      │
+│      ├──  ESC[40m - bg Black
+│      ├──  ESC[41m - bg Red
+│      ├──  ESC[42m - bg Green
+│      ├──  ESC[43m - bg Yellow
+│      ├──  ESC[44m - bg Blue
+│      ├──  ESC[45m - bg Magenta
+│      ├──  ESC[46m - bg Cyan
+│      ├──  ESC[47m - bg White
+│      ├──  ESC[49m - bg default
+│      │
+│      │    *** Special RGB Color ***
+│      │
+│      └──  ESC [ 38 ; Red ; Grn ; Blue m   - where Red,Grn,Blu are decimal (0-255)
+│
+│    ESC[s     - save cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
+│    ESC[u     - rest cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
+│
+│    ESC[>#q   - (DECSCA)  Set Cursor style (block/line/blink..) (NOT IMPLEMENTED)
+│    ESC[#;#r  - (DECSTBM) Set scroll Region top;bot             (NOT IMPLEMENTED)
+│    ESC[#..$t - (DECRARA)                                       (NOT IMPLEMENTED)
+│
+│    ------------------------
+│    --- C1 Control Codes ---
+│    ------------------------
+│
+│    <ESC>c    - (RIS) Reset term to Initial State
+│    <ESC>D    - (IND) Index: move cursor down a line, scroll if at bottom
+│    <ESC>E    - (NEL) Next Line: basically do a crlf, scroll if at bottom
+│    <ESC>H    - (HTS) Horizontal Tab Set: set a tabstop
+│    <ESC>M    - (RI)  Reverse Index (up w/scroll)
+│
+│ NOTE: Acronyms in parens are Digital Equipment Corporation's names these VT features.
+│
+\endcode
+
+\section external_escape_codes Useful Terminal Escape Code Documentation
+
+Useful links for reference:
+
+  - https://vt100.net/docs/vt100-ug/chapter3.html
+  - https://www.xfree86.org/current/ctlseqs.html
+  - https://www.x.org/docs/xterm/ctlseqs.pdf
+  - https://gist.github.com/justinmk/a5102f9a0c1810437885a04a07ef0a91  <-- alphabetic!
+  - https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+
+\section Fl_Terminal_design Fl_Terminal Design Document
+
+When I started this project, I identified the key concepts needed to
+implement Fl_Terminal:
+
+- Draw and manage multiline Unicode text in FLTK
+- Allow per-character colors and attributes
+- Efficient screen buffer to handle "scrollback history"
+- Efficient scrolling with vertical scrollbar for even large screen history
+- Mouse selection for copy/paste
+- Escape code management to implement VT100 style / ANSI escape codes.
+
+A class was created for each character, since characters can be either ASCII
+or Utf8 encoded byte sequences. This class is called Utf8Char, and handles
+the character, its fg and bg color, and any attributes like dim, bold, italic, etc.
+
+For managing the screen, after various experiments, I decided a ring buffer
+was the best way to manage things, the ring split in two:
+
+- 'screen history' which is where lines scrolled off the top are saved
+- 'display screen' displayed to the user at all times, and where the cursor lives
+
+Scrolling the display, either by scrollbar or by new text causing the display
+to scroll up one line, would simply change an 'offset' index# of where in the
+ring buffer the top of the screen is, automatically moving the top line
+into the history, all without moving memory around.
+
+In fact the only time screen memory is moved around is during these infrequent
+operations:
+
+- during "scroll down" escape sequences, e.g. ESC[\#T
+- character insert/delete operations within a line, e.g. ESC[\#@, ESC[\#P
+- changing the display size e.g. Fl_Terminal::resize()
+- changing the history size e.g. Fl_Terminal::history_lines()
+
+So a class "RingBuffer" is defined to manage the ring, and accessing its various
+parts, either as the entire entity ring, just the history, or just the display.
+
+These three concepts, "ring", "history" and "display" are given abbreviated
+names in the RingBuffer class's API:
+
+     ┌─────────────────────────────────────────┬──────────────────────────────┐
+     │  NOTE: Abbreviations "hist" and "disp"  │                              │
+     ├─────────────────────────────────────────┘                              │
+     │                                                                        │
+     │  "history" may be abbreviated as "hist", and "display" as "disp" in    │
+     │  both this text and the source code. 4 character names are used so     │
+     │  they line up cleanly in the source, e.g.                              │
+     │                                                                        │
+     │      ring_rows()     ring_cols()                                       │
+     │      hist_rows()     hist_cols()                                       │
+     │      disp_rows()     disp_cols()                                       │
+     │      └─┬┘ └─┬┘       └─┬┘ └─┬┘                                         │
+     │        └────┴──────────┴────┴───────── 4 characters                    │
+     │                                                                        │
+     └────────────────────────────────────────────────────────────────────────┘
+
+These concepts were able to fit into C++ classes:
+
+Utf8Char
+--------
+Each character on the screen is a "Utf8Char" which can manage
+the UTF-8 encoding of any character as one or more bytes. Also
+in that class is a byte for an attribute (underline, bold, etc),
+and two integers for fg/bg color.
+
+RingBuffer
+----------
+The RingBuffer class keeps track of the buffer itself, a single
+array of Utf8Chars called "ring_chars" whose width is ring_cols()
+and whose height is ring_rows().
+
+The "top" part of the ring is the history, whose width is hist_cols()
+and whose height is hist_rows(). hist_use_rows() is used to define
+what part of the history is currently in use.
+
+The "bottom" part of the ring is the display, whose width is disp_cols()
+and whose height is disp_rows().
+
+An index number called "offset" points to where in the ring buffer
+the top of the ring currently is. This index changes each time the
+screen is scrolled, and affects both where the top of the display is,
+and where the top of the history is.
+
+The memory layout of the Utf8Char character array is:
+
+        ring_chars[]:
+                      ___________________   _ _
+                     |                   |   ʌ
+                     |                   |   |
+                     |                   |   |
+                     |   H i s t o r y   |   |  hist_rows
+                     |                   |   |
+                     |                   |   |
+                     |___________________|  _v_
+                     |                   |   ʌ
+                     |                   |   |
+                     |   D i s p l a y   |   |  disp_rows
+                     |                   |   |
+                     |___________________|  _v_
+
+                     |<----------------->|
+                           ring_cols
+                           hist_cols
+                           disp_cols
+
+So it's basically a single continuous array of Utf8Char instances
+where any character can generally be accessed by index# using the formula:
+
+        ring_chars[ (row*ring_cols)+col ]
+
+..where 'row' is the desired row, 'col' is the desired column,
+and 'ring_cols' is how many columns "wide" the buffer is.
+
+The "offset" index affects that formula as an extra row offset,
+and the resulting index is then clamped within the range of the
+ring buffer using modulus.
+
+Methods are used to allow direct access to the characters
+in the buffer that automatically handle the offset and modulus
+formulas, namely:
+
+        u8c_ring_row(row,col)   // access the entire ring by row/col
+        u8c_hist_row(row,col)   // access just the history buffer
+        u8c_disp_row(row,col)   // access just the display buffer
+
+A key concept is the use of the simple 'offset' index integer
+to allow the starting point of the history and display to be
+moved around to implement 'text scrolling', such as when
+crlf at the screen bottom causes a 'scroll up'.
+
+This is simply an "index offset" integer applied to the
+hist and disp indexes when drawing the display. So after
+scrolling two lines up, the offset is just increased by 2,
+redefining where the top of the history and display are, e.g.
+
+          Offset is 0:           2    Offset now 2:
+         ┌───────────────────┐ ──┐   ┌───────────────────┐
+         │                   │   │   │   D i s p l a y   │
+         │                   │   └─> ├───────────────────┤
+         │                   │       │                   │
+         │   H i s t o r y   │       │                   │
+         │                   │       │   H i s t o r y   │
+         │                   │   2   │                   │
+         ├───────────────────┤ ──┐   │                   │
+         │                   │   │   │                   │
+         │                   │   └─> ├───────────────────┤
+         │   D i s p l a y   │       │                   │
+         │                   │       │    D i s p l a y  │
+         │                   │       │                   │
+         └───────────────────┘       └───────────────────┘
+
+This 'offset' trivially implements "text scrolling", avoiding having
+to physically move memory around. Just the 'offset' changes, the
+text remains where it is in memory.
+
+This also makes it appear the top line in the display is 'scrolled up'
+into the bottom of the scrollback 'history'.
+
+If the offset exceeds the size of the ring buffer, it simply wraps
+around back to the beginning of the buffer with a modulo.
+
+Indexes into the display and history are also modulo their respective
+rows, e.g.
+
+    act_ring_index = (hist_rows + disp_row + offset - scrollbar_pos) % ring_rows;
+
+This way indexes for ranges can run beyond the bottom of the ring,
+and automatically wrap around the ring, e.g.
+
+                        ┌───────────────────┐
+                  ┌─> 2 │                   │
+                  │   3 │   D i s p l a y   │
+                  │   4 │                   │
+                  │     ├───────────────────┤  <-- offset points here
+                  │     │                   │
+            disp  │     │                   │
+            index ┤     │   H i s t o r y   │
+            wraps │     │                   │
+                  │     │                   │
+                  │     │                   │
+                  │     ├───────────────────┤
+                  │   0 │   D i s p l a y   │
+                  │   1 └───────────────────┘  <- ring_rows points to end of ring
+                  └── 2 :                   :
+                      3 :                   :
+       disp_row(5) -> 4 :...................:
+
+The dotted lines show where the display would be if not for the fact
+it extends beyond the bottom of the ring buffer (due to the current offset),
+and therefore wraps up to the top of the ring.
+
+So to find a particular row in the display, in this case a 5 line display
+whose lines lie between 0 and 4, some simple math calculates the row position
+into the ring:
+
+       act_ring_index = (histrows      // the display exists AFTER the history, so offset the hist_rows
+                         + offset      // include the scroll 'offset'
+                         + disp_row    // add the desired row relative to the top of the display (0..disp_rows)
+                        ) % ring_rows; // make sure the resulting index is within the ring buffer (0..ring_rows)
+
+An additional bit of math makes sure if a negative result occurs, that
+negative value works relative to the end of the ring, e.g.
+
+       if (act_ring_index < 0) act_ring_index = ring_rows + act_ring_index;
+
+This guarantees the act_ring_index is within the ring buffer's address space,
+with all offsets applied.
+
+The math that implements this can be found in the u8c_xxxx_row() methods,
+where "xxxx" is one of the concept regions "ring", "hist" or "disp":
+
+       Utf8Char *u8c;
+       u8c = u8c_ring_row(rrow);    // address within ring, rrow can be 0..(ring_rows-1)
+       u8c = u8c_hist_row(hrow);    // address within hist, hrow can be 0..(hist_rows-1)
+       u8c = u8c_disp_row(drow);    // address within disp, drow can be 0..(disp_rows-1)
+
+The small bit of math is only involved whenever a new row address is needed,
+so in a display that's 80x25, to walk all the characters in the screen, the
+math above would only be called 25 times, once for each row, and each column
+in the row is just a simple integer offset:
+
+         for ( int row=0; row<disp_rows(); row++ ) {    // walk rows: disp_rows = 25
+           Utf8Char *u8c = u8c_disp_row(row);           // get first char in display 'row'
+           for ( int col=0; col<disp_cols(); col++ ) {  // walk cols: disp_cols = 80
+             u8c[col].do_something();                   // work with the char at row/col
+           }
+         }
+
+So to recap, the concepts here are:
+
+- The ring buffer itself, a linear array that is conceptually
+  split into a 2 dimensional array of rows and columns whose
+  height and width are:
+
+          ring_rows -- how many rows in the entire ring buffer
+          ring_cols -- how many columns in the ring buffer
+          nchars    -- total chars in ring, e.g. (ring_rows * ring_cols)
+
+- The "history" within the ring. For simplicity this is thought of
+  as starting relative to the top of the ring buffer, occupying
+  ring buffer rows:
+
+          0 .. hist_rows()-1
+
+- The "display", or "disp", within the ring, just after the "history".
+  It occupies the ring buffer rows:
+
+          hist_rows() .. hist_rows()+disp_rows()-1
+
+  ..or similarly:
+
+          (hist_rows)..(ring_rows-1)
+
+  The following convenience methods provide access to the
+  start and end indexes within the ring buffer for each entity:
+
+          // Entire ring
+          ring_srow()  -- start row index of the ring buffer (always 0)
+          ring_erow()  -- end row index of the ring buffer
+
+          // "history" part of ring
+          hist_srow()  -- start row index of the screen history
+          hist_erow()  -- end row index of the screen history
+
+          // "display" part of ring
+          disp_srow()  -- start row index of the display
+          disp_erow()  -- end row index of the display
+
+  The values returned by these are as described above.
+  For the hist_xxx() and disp_xxx() methods the 'offset' included into
+  the forumula. (For this reason hist_srow() won't always be zero
+  the way ring_srow() is, due to the 'offset')
+
+  The values returned by these methods can all be passed to the
+  u8c_ring_row() function to access the actual character buffer's contents.
+
+- An "offset" used to move the "history" and "display" around within
+  the ring buffer to implement the "text scrolling" concept. The offset
+  is applied when new characters are added to the buffer, and during
+  drawing to find where the display actually is within the ring.
+
+- The "scrollbar", which only is used when redrawing the screen the user sees,
+  and is simply an additional offset to all the above, where a scrollbar
+  value of zero (the scrollbar tab at the bottom) shows the display rows,
+  and as the scrollbar values increase as the user moves the scrollbar
+  tab upwards, +1 per line, this is subtracted from the normal starting
+  index to let the user work their way backwards into the scrollback history.
+  Again, negative numbers wrap around within the ring buffer automatically.
+
+The ring buffer allows new content to simply be appended to the ring buffer,
+and the index# for the start of the display and start of scrollback history are
+simply incremented. So the next time the display is "drawn", it starts at
+a different position in the ring.
+
+This makes scrolling content at high speed trivial, without memory moves.
+It also makes the concept of "scrolling" with the scrollbar simple as well,
+simply being an extra index offset applied during drawing.
+
+Mouse Selection
+---------------
+
+Dragging the mouse across the screen should highlight the text, allowing the user
+to extend the selection either beyond or before the point started. Extending the
+drag to the top of the screen should automatically 'scroll up' to select more
+lines in the scrollback history, or below the bottom to do the opposite.
+
+The mouse selection is implemented as a class to keep track of the start/end
+row/col positions of the selection, and other details such as a flag indicating
+if a selection has been made, what color the fg/bg text should appear when
+text is selected, and methods that allow setting and extending the selection,
+clearing the selection, and "scrolling" the selection, to ensure the row/col
+indexes adjust correctly to track when the screen or scrollbar is scrolled.
+
+
+Redraw Timer
+------------
+
+Knowing when to redraw is tricky with a terminal, because sometimes high volumes
+of input will come in asynchronously, so in that case we need to determine when
+to redraw the screen to show the new content; too quickly will cause the screen
+to spend more time redrawing itself, preventing new input from being added. Too
+slowly, the user won't see new information appear in a timely manner.
+
+To solve this, a rate timer is used to prevent too many redraws:
+
+- When new data comes in, a 1/10 sec timer is started and a modify flag is set.
+
+- redraw() is NOT called yet, allowing more data to continue to arrive quickly
+
+- When the 1/10th second timer fires, the callback checks the modify flag:
+
+     - if set, calls redraw(), resets the modify to 0, and calls
+       Fl::repeat_timeout() to repeat the callback in another 1/10th sec.
+
+     - if clear, no new data came in, so DISABLE the timer, done.
+
+In this way, redraws don't happen more than 10x per second, and redraw() is called
+only when there's new content to see.
+
+The redraw rate can be set by the user application using the Fl_Terminal::redraw_rate(),
+0.10 being the default.
+
+Some terminal operations necessarily call redraw() directly, such as interactive mouse
+selection, or during user scrolling the terminal's scrollbar, where it's important there's
+no delay in what the user sees while interacting directly with the widget.
+
+*/

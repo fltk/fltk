@@ -1,7 +1,7 @@
 //
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,10 +19,10 @@
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
-#include <FL/fl_string_functions.h>  // fl_strdup()
 #include <FL/filename.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
+#include "../../Fl_String.H"
 #include "../../flstring.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -63,6 +63,18 @@ typedef RPC_STATUS (WINAPI *uuid_func)(UUID __RPC_FAR *Uuid);
 #ifdef __CYGWIN__
 #  include <mntent.h>
 #endif
+
+// Optional helper function to debug Fl_WinAPI_System_Driver::home_directory_name()
+#ifndef DEBUG_HOME_DIRECTORY_NAME
+#define DEBUG_HOME_DIRECTORY_NAME 0
+#endif
+#if DEBUG_HOME_DIRECTORY_NAME
+static void print_env(const char *ev) {
+  const char *val = getenv(ev);
+  printf("%-30.30s = \"%s\"\n", ev, val ? val : "<null>");
+  fflush(stdout);
+}
+#endif // DEBUG_HOME_DIRECTORY_NAME
 
 static inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
@@ -299,6 +311,56 @@ int Fl_WinAPI_System_Driver::rename(const char *fnam, const char *newnam) {
   return _wrename(wbuf, wbuf1);
 }
 
+// See Fl::args_to_utf8()
+int Fl_WinAPI_System_Driver::args_to_utf8(int argc, char ** &argv) {
+  int i;
+
+  // Convert the command line arguments to UTF-8
+  LPWSTR *wideArgv = CommandLineToArgvW(GetCommandLineW(), &argc);
+  argv = (char **)malloc((argc + 1) * sizeof(char *));
+  for (i = 0; i < argc; i++) {
+    // find the required size of the buffer
+    int u8size = WideCharToMultiByte(CP_UTF8,     // CodePage
+                                  0,              // dwFlags
+                                  wideArgv[i],    // lpWideCharStr
+                                  -1,             // cchWideChar
+                                  NULL,           // lpMultiByteStr
+                                  0,              // cbMultiByte
+                                  NULL,           // lpDefaultChar
+                                  NULL);          // lpUsedDefaultChar
+    if (u8size > 0) {
+      char *strbuf = (char*)::malloc(u8size);
+      int ret = WideCharToMultiByte(CP_UTF8,        // CodePage
+                                    0,              // dwFlags
+                                    wideArgv[i],    // lpWideCharStr
+                                    -1,             // cchWideChar
+                                    strbuf,         // lpMultiByteStr
+                                    u8size,         // cbMultiByte
+                                    NULL,           // lpDefaultChar
+                                    NULL);          // lpUsedDefaultChar
+
+      if (ret) {
+        argv[i] = strbuf;
+      } else {
+        argv[i] = _strdup("");
+        ::free(strbuf);
+      }
+    } else {
+      argv[i] = _strdup("");
+    }
+  }
+  argv[argc] = NULL; // required NULL pointer at end of list
+
+  // Free the wide character string array
+  LocalFree(wideArgv);
+
+  // Note: the allocated memory or argv[] will not be free'd by the system
+  // on exit. This does not constitute a memory leak.
+
+  return argc;
+}
+
+
 // Two Windows-specific functions fl_utf8_to_locale() and fl_locale_to_utf8()
 // from file fl_utf8.cxx are put here for API compatibility
 
@@ -518,7 +580,7 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *fr
     switch (*a) {
       case '~': // a home directory name
         if (e <= a+1) { // current user's directory
-          value = getenv("HOME");
+          value = home_directory_name();
         }
         break;
       case '$':         /* an environment variable */
@@ -549,90 +611,101 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *fr
 
 int                                                     // O - 0 if no change, 1 if changed
 Fl_WinAPI_System_Driver::filename_relative(char *to,    // O - Relative filename
-                                    int        tolen,   // I - Size of "to" buffer
-                                    const char *from,   // I - Absolute filename
-                                    const char *base)   // I - Find path relative to this path
+                                           int        tolen,   // I - Size of "to" buffer
+                                           const char *dest_dir,   // I - Absolute filename
+                                           const char *base_dir)   // I - Find path relative to this path
 {
-  char          *newslash;              // Directory separator
-  const char    *slash;                 // Directory separator
-  char          *cwd = 0L, *cwd_buf = 0L;
-  if (base) cwd = cwd_buf = fl_strdup(base);
+  // Find the relative path from base_dir to dest_dir.
+  // Both paths must be absolute and well formed (contain no /../ and /./ segments).
 
-  // return if "from" is not an absolute path
-  if (from[0] == '\0' ||
-      (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
-       !isdirsep(from[2]))) {
-        strlcpy(to, from, tolen);
-        if (cwd_buf) free(cwd_buf);
-        return 0;
-      }
-
-  // return if "cwd" is not an absolute path
-  if (!cwd || cwd[0] == '\0' ||
-      (!isdirsep(*cwd) && !isalpha(*cwd) && cwd[1] != ':' &&
-       !isdirsep(cwd[2]))) {
-        strlcpy(to, from, tolen);
-        if (cwd_buf) free(cwd_buf);
-        return 0;
-      }
-
-  // convert all backslashes into forward slashes
-  for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
-    *newslash = '/';
-
-  // test for the exact same string and return "." if so
-  if (!strcasecmp(from, cwd)) {
-    strlcpy(to, ".", tolen);
-    free(cwd_buf);
-    return (1);
-  }
-
-  // test for the same drive. Return the absolute path if not
-  if (tolower(*from & 255) != tolower(*cwd & 255)) {
-    // Not the same drive...
-    strlcpy(to, from, tolen);
-    free(cwd_buf);
+  // return if any of the pointers is NULL
+  if (!to || !dest_dir || !base_dir) {
     return 0;
   }
 
-  // compare the path name without the drive prefix
-  from += 2; cwd += 2;
-
-  // compare both path names until we find a difference
-  for (slash = from, newslash = cwd;
-       *slash != '\0' && *newslash != '\0';
-       slash ++, newslash ++)
-    if (isdirsep(*slash) && isdirsep(*newslash)) continue;
-    else if (tolower(*slash & 255) != tolower(*newslash & 255)) break;
-
-  // skip over trailing slashes
-  if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
-      &&(newslash==cwd || !isdirsep(newslash[-1])) )
-    newslash--;
-
-  // now go back to the first character of the first differing paths segment
-  while (!isdirsep(*slash) && slash > from) slash --;
-  if (isdirsep(*slash)) slash ++;
-
-  // do the same for the current dir
-  if (isdirsep(*newslash)) newslash --;
-  if (*newslash != '\0')
-    while (!isdirsep(*newslash) && newslash > cwd) newslash --;
-
-  // prepare the destination buffer
-  to[0]         = '\0';
-  to[tolen - 1] = '\0';
-
-  // now add a "previous dir" sequence for every following slash in the cwd
-  while (*newslash != '\0') {
-    if (isdirsep(*newslash)) strlcat(to, "../", tolen);
-    newslash ++;
+  // if there is a drive letter, make sure both paths use the same drive
+  if (   (unsigned)base_dir[0] < 128 && isalpha(base_dir[0]) && base_dir[1] == ':'
+      && (unsigned)dest_dir[0] < 128 && isalpha(dest_dir[0]) && dest_dir[1] == ':') {
+    if (tolower(base_dir[0]) != tolower(dest_dir[0])) {
+      strlcpy(to, dest_dir, tolen);
+      return 0;
+    }
+    // same drive, so skip to the start of the path
+    base_dir += 2;
+    dest_dir += 2;
   }
 
-  // finally add the differing path from "from"
-  strlcat(to, slash, tolen);
+  // return if `base_dir` or `dest_dir` is not an absolute path
+  if (!isdirsep(*base_dir) || !isdirsep(*dest_dir)) {
+    strlcpy(to, dest_dir, tolen);
+    return 0;
+  }
 
-  free(cwd_buf);
+  const char *base_i = base_dir; // iterator through the base directory string
+  const char *base_s = base_dir; // pointer to the last dir separator found
+  const char *dest_i = dest_dir; // iterator through the destination directory
+  const char *dest_s = dest_dir; // pointer to the last dir separator found
+
+  // compare both path names until we find a difference
+  for (;;) {
+#if 0 // case sensitive
+    base_i++;
+    dest_i++;
+    char b = *base_i, d = *dest_i;
+#else // case insensitive
+    base_i += fl_utf8len1(*base_i);
+    int b = fl_tolower(fl_utf8decode(base_i, NULL, NULL));
+    dest_i += fl_utf8len1(*dest_i);
+    int d = fl_tolower(fl_utf8decode(dest_i, NULL, NULL));
+#endif
+    int b0 = (b == 0) || (isdirsep(b));
+    int d0 = (d == 0) || (isdirsep(d));
+    if (b0 && d0) {
+      base_s = base_i;
+      dest_s = dest_i;
+    }
+    if (b == 0 || d == 0)
+      break;
+    if (b != d)
+      break;
+  }
+  // base_s and dest_s point at the last separator we found
+  // base_i and dest_i point at the first character that differs
+
+  // test for the exact same string and return "." if so
+  if (   (base_i[0] == 0 || (isdirsep(base_i[0]) && base_i[1] == 0))
+      && (dest_i[0] == 0 || (isdirsep(dest_i[0]) && dest_i[1] == 0))) {
+    strlcpy(to, ".", tolen);
+    return 0;
+  }
+
+  // prepare the destination buffer
+  to[0] = '\0';
+  to[tolen - 1] = '\0';
+
+  // count the directory segments remaining in `base_dir`
+  int n_up = 0;
+  for (;;) {
+    char b = *base_s++;
+    if (b == 0)
+      break;
+    if (isdirsep(b) && *base_s)
+      n_up++;
+  }
+
+  // now add a "previous dir" sequence for every following slash in the cwd
+  if (n_up > 0)
+    strlcat(to, "..", tolen);
+  for (; n_up > 1; --n_up)
+    strlcat(to, "/..", tolen);
+
+  // finally add the differing path from "from"
+  if (*dest_s) {
+    if (n_up)
+      strlcat(to, "/", tolen);
+    strlcat(to, dest_s + 1, tolen);
+  }
+
   return 1;
 }
 
@@ -924,11 +997,64 @@ int Fl_WinAPI_System_Driver::file_type(const char *filename)
   return filetype;
 }
 
+// Note: the result is cached in a static variable
 const char *Fl_WinAPI_System_Driver::home_directory_name()
 {
-  const char *h = getenv("HOME");
-  if (!h) h = getenv("UserProfile");
-  return h;
+  static Fl_String home;
+  if (!home.empty())
+    return home.c_str();
+
+#if (DEBUG_HOME_DIRECTORY_NAME)
+  print_env("HOMEDRIVE");
+  print_env("HOMEPATH");
+  print_env("UserProfile");
+  print_env("HOME");
+#endif
+
+  // Implement various ways to retrieve the HOME path.
+  // Note, from `man getenv`:
+  //  "The implementation of getenv() is not required to be reentrant.
+  //   The string pointed to by the return value of getenv() may be statically
+  //   allocated, and can be modified by a subsequent call to getenv()...".
+  // Tests show that this is the case in some MinGW implementations.
+
+  if (home.empty()) {
+    const char *home_drive = getenv("HOMEDRIVE");
+    if (home_drive) {
+      home = home_drive; // copy *before* calling getenv() again, see above
+      const char *home_path = getenv("HOMEPATH");
+      if (home_path) {
+        home.append(home_path);
+      } else {
+        home.clear(); // reset
+      } // home_path
+    } // home_drive
+  } // empty()
+
+  if (home.empty()) {
+    const char *h = getenv("UserProfile");
+    if (h)
+      home = h;
+  }
+
+  if (home.empty()) {
+    const char *h = getenv("HOME");
+    if (h)
+      home = h;
+  }
+  if (home.empty()) {
+    home = "~/"; // last resort
+  }
+  // Make path canonical.
+  for (int i = 0; i < home.size(); ++i) {
+    if (home[i] == '\\')
+      home[i] = '/';
+  }
+#if (DEBUG_HOME_DIRECTORY_NAME)
+  printf("home_directory_name() returns \"%s\"\n", home.c_str());
+  fflush(stdout);
+#endif
+  return home.c_str();
 }
 
 void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {

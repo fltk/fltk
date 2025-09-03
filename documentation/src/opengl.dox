@@ -39,34 +39,7 @@ To make a subclass of Fl_Gl_Window, you must provide:
 
 If your subclass provides static controls in the window, they
 must be redrawn whenever the \p FL_DAMAGE_ALL bit is set
-in the value returned by \p damage(). For double-buffered
-windows you will need to surround the drawing code with the
-following code to make sure that both buffers are redrawn:
-
-\code
-#ifndef MESA
-glDrawBuffer(GL_FRONT_AND_BACK);
-#endif // !MESA
-... draw stuff here ...
-#ifndef MESA
-glDrawBuffer(GL_BACK);
-#endif // !MESA
-\endcode
-
-<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
-<TR>
-        <TD><B>Note:</B>
-
-        If you are using the Mesa graphics library, the call
-        to \p glDrawBuffer() is not required and will slow
-        down drawing considerably. The preprocessor instructions
-        shown above will optimize your code based upon the
-        graphics library used.
-
-        </TD>
-
-</TR>
-</TABLE></CENTER>
+in the value returned by \p damage().
 
 \subsection opengl_defining Defining the Subclass
 
@@ -164,9 +137,7 @@ loading functions by doing:
 Your main program can now create one of your windows by doing
 <tt>new MyWindow(...)</tt>.
 
-You can also use your new window class in
-\ref fluid "FLUID"
-by:
+You can also use your new window class in FLUID by:
 
 -# Putting your class definition in a \p MyWindow.H file.
 -# Creating a Fl_Box widget in FLUID.
@@ -670,8 +641,8 @@ Link with libGLEW.so (with X11 or Wayland), libglew32.a (with MinGW) or glew32.l
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="fluid.html">
-    Programming with FLUID
+    <a class="el" href="fltk-options.html">
+    FLTK Runtime Options
     [Next]
     </a>
   </td>

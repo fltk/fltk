@@ -1,7 +1,7 @@
 //
 // Idle routine support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -61,6 +61,9 @@ static void call_idle() {
   Fl::check(), and Fl::ready().
 
   FLTK will not recursively call the idle callback.
+
+  \param[in] cb   your idle callback
+  \param[in] data an arbitrary data value provided to your callback
 */
 void Fl::add_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = freelist;
@@ -81,6 +84,16 @@ void Fl::add_idle(Fl_Idle_Handler cb, void* data) {
 
 /**
   Returns true if the specified idle callback is currently installed.
+
+  An idle callback matches the request only if \p data matches the \p data
+  argument when the callback was installed. There is no "wildcard" search.
+
+  \param[in]  cb    idle callback in question
+  \param[in]  data  optional data. Default: zero / nullptr.
+
+  \returns    Whether the given callback \p cb is queued with \p data.
+  \retval  1  The callback is currently in the callback queue.
+  \retval  0  The callback is not queued, or \p data doesn't match.
 */
 int Fl::has_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = first;
@@ -93,6 +106,40 @@ int Fl::has_idle(Fl_Idle_Handler cb, void* data) {
 
 /**
   Removes the specified idle callback, if it is installed.
+
+  The given idle callback is only removed if \p data matches the
+  value used when the idle callback was installed. If the idle
+  callback wants to remove itself, the value provided by the \p data
+  argument can (and should) be used.
+
+  Example for a "one-shot" idle callback, i.e. one that removes itself
+  when it is called for the first time.
+  \code
+    #include <FL/Fl.H>
+    #include <FL/Fl_Double_Window.H>
+    #include <FL/Fl_Button.H>
+    void idle1(void *data) {
+      printf("idle1 called with data %4d\n", fl_int(data));
+      fflush(stdout);
+      // ... do something ...
+      Fl::remove_idle(idle1, data);
+    }
+    void quit_cb(Fl_Widget *w, void *v) {
+      w->window()->hide();
+    }
+    int main(int argc, char **argv) {
+      Fl_Double_Window *window = new Fl_Double_Window(200, 100);
+      Fl_Button *button = new Fl_Button(20, 20, 160, 60, "Quit");
+      button->callback(quit_cb);
+      window->end();
+      window->show(argc, argv);
+      Fl::add_idle(idle1, (void *)1234);
+      return Fl::run();
+    }
+  \endcode
+
+  \param[in]  cb    idle callback in question
+  \param[in]  data  optional data. Default: zero / NULL.
 */
 void Fl::remove_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = first;

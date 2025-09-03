@@ -1,12 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 header_name {.h}
 code_name {.cxx}
-snap {
-  ver 1
-  current_suite FLTK
-  current_preset 0
-}
 comment {README FIRST
 - - - - - - -
 This fluid (.fl) file demonstrates how to create a complete

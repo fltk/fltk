@@ -24,11 +24,13 @@
 
 #include "fluid.h"
 #include "Fl_Window_Type.h"
-#include "alignment_panel.h"
 #include "file.h"
 #include "code.h"
 #include "Fluid_Image.h"
 #include "custom_widgets.h"
+#include "mergeback.h"
+#include "undo.h"
+#include "widget_browser.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
@@ -51,9 +53,6 @@ Fl_Menu_Item menu_item_type_menu[] = {
   {"Toggle",0,0,(void*)FL_MENU_BOX},
   {"Radio",0,0,(void*)FL_MENU_RADIO},
   {0}};
-
-static char submenuflag;
-static uchar menuitemtype = 0;
 
 static void delete_dependents(Fl_Menu_Item *m) {
   if (!m)
@@ -87,7 +86,7 @@ void Fl_Input_Choice_Type::build_menu() {
   int n = 0;
   Fl_Type* q;
   for (q = next; q && q->level > level; q = q->next) {
-    if (q->is_parent()) n++; // space for null at end of submenu
+    if (q->can_have_children()) n++; // space for null at end of submenu
     n++;
   }
   if (!n) {
@@ -134,7 +133,7 @@ void Fl_Input_Choice_Type::build_menu() {
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());
-      if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
+      if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
         (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
@@ -151,29 +150,112 @@ void Fl_Input_Choice_Type::build_menu() {
  \return new Menu Item node
  */
 Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
-  // Find the current menu item:
-  Fl_Type* q = Fl_Type::current;
-  Fl_Type* p = q;
-  if (p) {
-    if ( (force_parent && q->is_a(ID_Menu_Item)) || !q->is_parent()) p = p->parent;
+  return Fl_Menu_Item_Type::make(0, strategy);
+}
+
+/**
+ Create an add a specific Menu Item node.
+ \param[in] flags set to 0, FL_MENU_RADIO, FL_MENU_TOGGLE, or FL_SUBMENU
+ \param[in] strategy add after current or as last child
+ \return new Menu Item node
+ */
+Fl_Type* Fl_Menu_Item_Type::make(int flags, Strategy strategy) {
+  // Find a good insert position based on the current marked node
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
   }
-  force_parent = 0;
-  if (!p || !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
-    fl_message("Please select a menu to add to");
+  if (!p) {
+    fl_message("Please select a menu widget or a menu item");
     return 0;
   }
   if (!o) {
     o = new Fl_Button(0,0,100,20); // create template widget
   }
 
-  Fl_Menu_Item_Type* t = submenuflag ? new Fl_Submenu_Type() : new Fl_Menu_Item_Type();
+  Fl_Menu_Item_Type* t = NULL;
+  if (flags==FL_SUBMENU) {
+    t = new Fl_Submenu_Type();
+  } else {
+    t = new Fl_Menu_Item_Type();
+  }
   t->o = new Fl_Button(0,0,100,20);
-  t->o->type(menuitemtype);
+  t->o->type(flags);
   t->factory = this;
-  t->add(p, strategy);
-  if (!reading_file) t->label(submenuflag ? "submenu" : "item");
+  t->add(anchor, strategy);
+  if (strategy.source() == Strategy::FROM_USER) {
+    if (flags==FL_SUBMENU) {
+      t->label("submenu");
+    } else {
+      t->label("item");
+    }
+  }
   return t;
 }
+
+void group_selected_menuitems() {
+  // The group will be created in the parent group of the current menuitem
+  if (!Fl_Type::current->is_a(ID_Menu_Item)) {
+    return;
+  }
+  Fl_Menu_Item_Type *q = static_cast<Fl_Menu_Item_Type*>(Fl_Type::current);
+  Fl_Type *qq = Fl_Type::current->parent;
+  if (!qq || !(qq->is_a(ID_Menu_Manager_) || qq->is_a(ID_Submenu))) {
+    fl_message("Can't create a new submenu here.");
+    return;
+  }
+  undo_checkpoint();
+  undo_suspend();
+  Fl_Widget_Type *n = (Fl_Widget_Type*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != n->level || t == n || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Fl_Type *nxt = t->remove();
+    t->add(n, Strategy::AS_LAST_CHILD);
+    t = nxt;
+  }
+  widget_browser->rebuild();
+  undo_resume();
+  set_modflag(1);
+}
+
+void ungroup_selected_menuitems() {
+  // Find the submenu
+  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  int q_level = q->level;
+  if (!qq || !qq->is_a(ID_Submenu)) {
+    fl_message("Only menu items inside a submenu can be ungrouped.");
+    return;
+  }
+  undo_checkpoint();
+  undo_suspend();
+  Fl_Type::current = qq;
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != q_level || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Fl_Type *nxt = t->remove();
+    t->insert(qq);
+    t = nxt;
+  }
+  if (!qq->next || (qq->next->level <= qq->level)) {
+    qq->remove();
+    delete qq;   // qq has no children that need to be delete
+  }
+  Fl_Type::current = q;
+  widget_browser->rebuild();
+  undo_resume();
+  set_modflag(1);
+}
+
 
 /**
  Create and add a new Checkbox Menu Item node.
@@ -181,10 +263,7 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
  \return new node
  */
 Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
-    menuitemtype = FL_MENU_TOGGLE;
-    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
-    menuitemtype = 0;
-    return t;
+  return Fl_Menu_Item_Type::make(FL_MENU_TOGGLE, strategy);
 }
 
 /**
@@ -193,10 +272,7 @@ Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
  \return new node
  */
 Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
-    menuitemtype = FL_MENU_RADIO;
-    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
-    menuitemtype = 0;
-    return t;
+  return Fl_Menu_Item_Type::make(FL_MENU_RADIO, strategy);
 }
 
 /**
@@ -205,10 +281,7 @@ Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
  \return new node
  */
 Fl_Type *Fl_Submenu_Type::make(Strategy strategy) {
-  submenuflag = 1;
-  Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
-  submenuflag = 0;
-  return t;
+  return Fl_Menu_Item_Type::make(FL_SUBMENU, strategy);
 }
 
 Fl_Menu_Item_Type Fl_Menu_Item_type;
@@ -234,7 +307,7 @@ const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
     // be sure to count the {0} that ends a submenu:
     if (t->level > t->next->level) i += (t->level - t->next->level);
     // detect empty submenu:
-    else if (t->level == t->next->level && t->is_parent()) i++;
+    else if (t->level == t->next->level && t->can_have_children()) i++;
     t = t->prev;
     i++;
   }
@@ -277,6 +350,7 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
     f.write_c(", %s", ut);
     if (use_v) f.write_c(" v");
     f.write_c(") {\n");
+    // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
     f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
@@ -286,20 +360,52 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
       // statement...
       if (*p != '#' && *p) f.write_c(";");
     }
-    f.write_c("\n}\n");
+    f.write_c("\n");
+    // Matt: disabled f.tag(FD_TAG_MENU_CALLBACK, get_uid());
+    f.write_c("}\n");
+
+    // If the menu item is part of a Class or Widget Class, FLUID generates
+    // a dummy static callback which retrieves a pointer to the class and then
+    // calls the original callback from within the class context.
+    // k is the name of the enclosing class (or classes)
     if (k) {
+      // Implement the callback as a static member function
       f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
-      f.write_c("%s((%s*)(o", f.indent(1), k);
+      // Find the Fl_Menu_ container for this menu item
       Fl_Type* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
-      Fl_Type *q = 0;
-      // Go up one more level for Fl_Input_Choice, as these are groups themselves
-      if (t && t->is_a(Fl_Type::ID_Input_Choice))
-        f.write_c("->parent()");
-      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
-        f.write_c("->parent()");
-      if (!q || !q->is_a(Fl_Type::ID_Widget_Class))
-        f.write_c("->user_data()");
-      f.write_c("))->%s_i(o,v);\n}\n", cn);
+      if (t) {
+        Fl_Widget_Type *tw = (t->is_widget()) ? static_cast<Fl_Widget_Type*>(t) : NULL;
+        Fl_Type *q = NULL;
+        // Generate code to call the callback
+        if (tw->is_a(ID_Menu_Bar) && ((Fl_Menu_Bar_Type*)tw)->is_sys_menu_bar()) {
+          // Fl_Sys_Menu_Bar removes itself from any parent on macOS, so we
+          // wrapped it in a class and remeber the parent class in a new
+          // class memeber variable.
+          Fl_Menu_Bar_Type *tmb = (Fl_Menu_Bar_Type*)tw;
+          f.write_c("%s%s* sys_menu_bar = ((%s*)o);\n", f.indent(1),
+                    tmb->sys_menubar_proxy_name(), tmb->sys_menubar_proxy_name());
+          f.write_c("%s%s* parent_class = ((%s*)sys_menu_bar->_parent_class);\n",
+                    f.indent(1), k, k);
+          f.write_c("%sparent_class->%s_i(o,v);\n}\n",
+                    f.indent(1), cn);
+        } else {
+          f.write_c("%s((%s*)(o", f.indent(1), k);
+          // The class pointer is in the user_data field of the top widget
+          if (t && t->is_a(ID_Input_Choice)) {
+            // Go up one more level for Fl_Input_Choice, as these are groups themselves
+            f.write_c("->parent()");
+          }
+          // Now generate code to find the topmost widget in this class
+          for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
+            f.write_c("->parent()");
+          // user_data is cast into a pointer to the
+          if (!q || !q->is_a(ID_Widget_Class))
+            f.write_c("->user_data()");
+          f.write_c("))->%s_i(o,v);\n}\n", cn);
+        }
+      } else {
+        f.write_c("#error Enclosing Fl_Menu_* not found\n");
+      }
     }
   }
   if (image) {
@@ -320,7 +426,7 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
   Fl_Type* t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
   for (Fl_Type* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
     ((Fl_Menu_Item_Type*)q)->write_item(f);
-    int thislevel = q->level; if (q->is_parent()) thislevel++;
+    int thislevel = q->level; if (q->can_have_children()) thislevel++;
     int nextlevel =
       (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : t->level+1;
     while (thislevel > nextlevel) {f.write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
@@ -354,7 +460,7 @@ int Fl_Menu_Item_Type::flags() {
   if (((Fl_Button*)o)->value()) i |= FL_MENU_VALUE;
   if (!o->active()) i |= FL_MENU_INACTIVE;
   if (!o->visible()) i |= FL_MENU_INVISIBLE;
-  if (is_parent()) {
+  if (can_have_children()) {
     if (user_data() == NULL) i |= FL_SUBMENU;
     else i |= FL_SUBMENU_POINTER;
   }
@@ -378,14 +484,14 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
   f.write_c(" {");
   if (label() && label()[0])
     switch (g_project.i18n_type) {
-      case 1:
+      case FD_I18N_GNU:
         // we will call i18n when the menu is instantiated for the first time
         f.write_c("%s(", g_project.i18n_gnu_static_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
-      case 2:
-        // fall through: strings can't be translated before a catalog is choosen
+      case FD_I18N_POSIX:
+        // fall through: strings can't be translated before a catalog is chosen
       default:
         f.write_cstring(label());
     }
@@ -393,14 +499,20 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
     f.write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
     int s = ((Fl_Button*)o)->shortcut();
-    if (g_project.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-      f.write_c(", ");
-      if (s & FL_COMMAND) f.write_c("FL_COMMAND|");
-      if (s & FL_CONTROL) f.write_c("FL_CONTROL|");
-      f.write_c("0x%x, ", s & ~(FL_CTRL|FL_META));
+    f.write_c(", ");
+    if (g_project.use_FL_COMMAND) {
+      if (s & FL_CTRL) { f.write_c("FL_CONTROL|"); s &= ~FL_CTRL; }
+      if (s & FL_META) { f.write_c("FL_COMMAND|"); s &= ~FL_META; }
     } else {
-      f.write_c(", 0x%x, ", s);
+      if (s & FL_CTRL) { f.write_c("FL_CTRL|"); s &= ~FL_CTRL; }
+      if (s & FL_META) { f.write_c("FL_META|"); s &= ~FL_META; }
     }
+    if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
+    if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
+    if ((s < 127) && isprint(s))
+      f.write_c("'%c', ", s);
+    else
+      f.write_c("0x%x, ", s);
   } else {
     f.write_c(", 0, ");
   }
@@ -477,15 +589,16 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
       f.write_c("%sml->labela = (char*)", f.indent());
       image->write_inline(f);
       f.write_c(";\n");
-      if (g_project.i18n_type==0) {
+      if (g_project.i18n_type==FD_I18N_NONE) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
-      } else if (g_project.i18n_type==1) {
+      } else if (g_project.i18n_type==FD_I18N_GNU) {
         f.write_c("%sml->labelb = %s(o->label());\n",
                 f.indent(), g_project.i18n_gnu_function.c_str());
-      } else if (g_project.i18n_type==2) {
+      } else if (g_project.i18n_type==FD_I18N_POSIX) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                f.indent(), g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
-                g_project.i18n_pos_set.c_str(), msgnum());
+                  f.indent(),
+                  g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
+                  g_project.i18n_pos_set.c_str(), msgnum());
       }
       f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
       f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
@@ -501,13 +614,14 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
-      if (g_project.i18n_type==1) {
+      if (g_project.i18n_type==FD_I18N_GNU) {
         f.write_c("%so->label(%s(o->label()));\n",
                 f.indent(), g_project.i18n_gnu_function.c_str());
-      } else if (g_project.i18n_type==2) {
+      } else if (g_project.i18n_type==FD_I18N_POSIX) {
         f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                f.indent(), g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
-                g_project.i18n_pos_set.c_str(), msgnum());
+                  f.indent(),
+                  g_project.i18n_pos_file.empty() ? "_catalog" : g_project.i18n_pos_file.c_str(),
+                  g_project.i18n_pos_set.c_str(), msgnum());
       }
     }
   }
@@ -538,7 +652,7 @@ void Fl_Menu_Base_Type::build_menu() {
   int n = 0;
   Fl_Type* q;
   for (q = next; q && q->level > level; q = q->next) {
-    if (q->is_parent()) n++; // space for null at end of submenu
+    if (q->can_have_children()) n++; // space for null at end of submenu
     n++;
   }
   if (!n) {
@@ -585,7 +699,7 @@ void Fl_Menu_Base_Type::build_menu() {
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());
-      if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
+      if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
         (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
@@ -689,26 +803,96 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
 
 Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 
+Fl_Menu_Item menu_bar_type_menu[] = {
+  {"Fl_Menu_Bar",0,0,(void*)0},
+  {"Fl_Sys_Menu_Bar",0,0,(void*)1},
+  {0}};
+
+Fl_Menu_Bar_Type::Fl_Menu_Bar_Type()
+: _proxy_name(NULL)
+{
+}
+
+Fl_Menu_Bar_Type::~Fl_Menu_Bar_Type() {
+  if (_proxy_name)
+    ::free(_proxy_name);
+}
+
+/**
+ \brief Return true if this is an Fl_Sys_Menu_Bar.
+ This test fails if subclass() is the name of a class that the user may have
+ derived from Fl_Sys_Menu_Bar.
+ */
+bool Fl_Menu_Bar_Type::is_sys_menu_bar() {
+  if (o->type()==1) return true;
+  return ( subclass() && (strcmp(subclass(), "Fl_Sys_Menu_Bar")==0) );
+}
+
+const char *Fl_Menu_Bar_Type::sys_menubar_name() {
+  if (subclass())
+    return subclass();
+  else
+    return "Fl_Sys_Menu_Bar";
+}
+
+const char *Fl_Menu_Bar_Type::sys_menubar_proxy_name() {
+  if (!_proxy_name)
+    _proxy_name = (char*)::malloc(128);
+  ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name());
+  return _proxy_name;
+}
+
+
+void Fl_Menu_Bar_Type::write_static(Fd_Code_Writer& f) {
+  super::write_static(f);
+  if (is_sys_menu_bar()) {
+    f.write_h_once("#include <FL/Fl_Sys_Menu_Bar.H>");
+    if (is_in_class()) {
+      // Make room for a pointer to the enclosing class.
+      f.write_c_once( // must be less than 1024 bytes!
+                     "\nclass %s: public %s {\n"
+                     "public:\n"
+                     "  %s(int x, int y, int w, int h, const char *l=NULL)\n"
+                     "  : %s(x, y, w, h, l) { }\n"
+                     "  void *_parent_class;\n"
+                     "};\n",
+                     sys_menubar_proxy_name(), sys_menubar_name(),
+                     sys_menubar_proxy_name(), sys_menubar_name()
+                     );
+    }
+  }
+}
+
+void Fl_Menu_Bar_Type::write_code1(Fd_Code_Writer& f) {
+  super::write_code1(f);
+  if (is_sys_menu_bar() && is_in_class()) {
+    f.write_c("%s((%s*)%s)->_parent_class = (void*)this;\n",
+              f.indent(), sys_menubar_proxy_name(), name() ? name() : "o");
+  }
+}
+
+//void Fl_Menu_Bar_Type::write_code2(Fd_Code_Writer& f) {
+//  super::write_code2(f);
+//}
+
 ////////////////////////////////////////////////////////////////
 // Shortcut entry item in panel:
-
-
 void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
       i->value( ((Fl_Button*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Fl_Type::ID_Input))
+    else if (current_widget->is_a(ID_Input))
       i->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Fl_Type::ID_Value_Input))
+    else if (current_widget->is_a(ID_Value_Input))
       i->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Fl_Type::ID_Text_Display))
+    else if (current_widget->is_a(ID_Text_Display))
       i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
       i->parent()->hide();
       return;
     }
-    i->default_value( i->value() ); // enable the "undo" capability of the shortcut button
+    //i->default_value( i->value() ); // enable the "undo" capability of the shortcut button
     i->show();
     i->parent()->show();
     i->redraw();
@@ -719,16 +903,16 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-        if (o->is_a(Fl_Type::ID_Menu_Item)) ((Fl_Widget_Type*)o)->redraw();
-      } else if (o->selected && o->is_a(Fl_Type::ID_Input)) {
+        if (o->is_a(ID_Menu_Item)) ((Fl_Widget_Type*)o)->redraw();
+      } else if (o->selected && o->is_a(ID_Input)) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-      } else if (o->selected && o->is_a(Fl_Type::ID_Value_Input)) {
+      } else if (o->selected && o->is_a(ID_Value_Input)) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-      } else if (o->selected && o->is_a(Fl_Type::ID_Text_Display)) {
+      } else if (o->selected && o->is_a(ID_Text_Display)) {
         Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());

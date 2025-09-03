@@ -789,11 +789,11 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/coordinates.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/resize.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/editor.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/Fl_Terminal.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/drawing.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/events.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/subclassing.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/opengl.dox \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/fluid.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/fltk-options.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox \
@@ -873,7 +873,8 @@ EXCLUDE_PATTERNS       = */src/*_win32.cxx \
                          */src/*_mac.cxx \
                          */src/*_x.cxx \
                          */src/xdg* \
-                         */src/text-input*
+                         */src/text-input* \
+                         */src/*-client-protocol.h
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

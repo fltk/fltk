@@ -1,5 +1,5 @@
 /* XPM */
-static char * const fltk_xpm[] = {
+static const char * const fltk_xpm[] = {
 "229 70 152 2",
 "  	c None",
 ". 	c #000066",

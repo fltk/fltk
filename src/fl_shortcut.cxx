@@ -77,6 +77,7 @@ int Fl::test_shortcut(unsigned int shortcut) {
   // kludge so that Ctrl+'_' works (as opposed to Ctrl+'^_'):
   if ((shift&FL_CTRL) && key >= 0x3f && key <= 0x5F
       && firstChar==(key^0x40)) return 1; // firstChar should be within a-z
+
   return 0;
 }
 

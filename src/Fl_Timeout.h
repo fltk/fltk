@@ -2,7 +2,7 @@
 // Header for timeout support functions for the Fast Light Tool Kit (FLTK).
 //
 // Author: Albrecht Schlosser
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,7 @@
   - Fl::repeat_timeout()
   - Fl::has_timeout()
   - Fl::remove_timeout()
+  - Fl::remove_next_timeout()
 
   and related methods of class Fl_Timeout.
 */
@@ -49,6 +50,7 @@
   - Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
   - Fl::has_timeout(Fl_Timeout_Handler cb, void *data)
   - Fl::remove_timeout(Fl_Timeout_Handler cb, void *data)
+  - Fl::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **data_return)
 
 */
 class Fl_Timeout {
@@ -106,6 +108,7 @@ public:
   static void add_timeout(double time, Fl_Timeout_Handler cb, void *data);
   static void repeat_timeout(double time, Fl_Timeout_Handler cb, void *data);
   static void remove_timeout(Fl_Timeout_Handler cb, void *data);
+  static int remove_next_timeout(Fl_Timeout_Handler cb, void *data = NULL, void **data_return = NULL);
 
   // Elapse timeouts, i.e. calculate new delay time of all timers.
   // This does not call the timer callbacks.

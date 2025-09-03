@@ -74,9 +74,6 @@
  See class Fl_PostScript_File_Device for a description of how text and transparent images appear in print.
  <li>If the GTK library is available at run-time, class Fl_Printer runs GTK's printer dialog which allows to set
  printer, paper size and orientation.
- <li>Under the KDE desktop, Fl_Printer runs the <tt>kdialog</tt> command to create KDE-styled file dialogs if
- that command is available at run-time, unless FLTK was built with CMake and option OPTION_USE_KDIALOG turned off.
- In that case, Fl_Printer attempts to run the GTK dialog.
  <li>If the GTK library is not available, or if Fl::option(Fl::OPTION_PRINTER_USES_GTK) has been turned off,
  class Fl_Printer runs FLTK's print dialog.
  <ul>

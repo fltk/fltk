@@ -1,7 +1,7 @@
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,11 +14,11 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// Emulation of Glut using fltk.
+// Emulation of Glut using FLTK.
 
 // GLUT is Copyright (c) Mark J. Kilgard, 1994, 1995, 1996.
-// "This program is freely distributable without licensing fees  and is
-// provided without guarantee or warrantee expressed or  implied. This
+// "This program is freely distributable without licensing fees and is
+// provided without guarantee or warrantee expressed or implied. This
 // program is -not- in the public domain."
 
 // Although I have copied the GLUT API, none of my code is based on
@@ -35,6 +35,7 @@ static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
 static void (*glut_idle_func)() = 0; // global glut idle function
 
+// The current GLUT window, may be NULL. See also STR #3458.
 Fl_Glut_Window *glut_window;
 int glut_menu;
 void (*glut_menustate_function)(int);
@@ -61,7 +62,8 @@ void Fl_Glut_Window::draw() {
 }
 
 void glutSwapBuffers() {
-  if (!indraw) glut_window->swap_buffers();
+  if (!indraw && glut_window)
+    glut_window->swap_buffers();
 }
 
 void Fl_Glut_Window::draw_overlay() {
@@ -389,12 +391,12 @@ void glutRemoveMenuItem(int item) {
 int glutGet(GLenum type) {
   switch (type) {
   case GLUT_RETURN_ZERO: return 0;
-  case GLUT_WINDOW_X: return glut_window->x();
-  case GLUT_WINDOW_Y: return glut_window->y();
-  case GLUT_WINDOW_WIDTH: return glut_window->pixel_w();
-  case GLUT_WINDOW_HEIGHT: return glut_window->pixel_h();
+  case GLUT_WINDOW_X: return glut_window ? glut_window->x() : 0;
+  case GLUT_WINDOW_Y: return glut_window ? glut_window->y() : 0;
+  case GLUT_WINDOW_WIDTH: return glut_window ? glut_window->pixel_w() : 0;
+  case GLUT_WINDOW_HEIGHT: return glut_window ? glut_window->pixel_h() : 0;
   case GLUT_WINDOW_PARENT:
-    if (glut_window->parent())
+    if (glut_window && glut_window->parent())
       return ((Fl_Glut_Window *)(glut_window->parent()))->number;
     else
       return 0;
@@ -432,11 +434,11 @@ int glutGet(GLenum type) {
 
 int glutLayerGet(GLenum type) {
   switch (type) {
-  case GLUT_OVERLAY_POSSIBLE: return glut_window->can_do_overlay();
+  case GLUT_OVERLAY_POSSIBLE: return glut_window ? glut_window->can_do_overlay() : 0;
 //case GLUT_LAYER_IN_USE:
 //case GLUT_HAS_OVERLAY:
   case GLUT_TRANSPARENT_INDEX: return 0; // true for SGI
-  case GLUT_NORMAL_DAMAGED: return glut_window->damage();
+  case GLUT_NORMAL_DAMAGED: return glut_window ? glut_window->damage() : 0;
   case GLUT_OVERLAY_DAMAGED: return 1; // kind of works...
   default: return 0;
   }

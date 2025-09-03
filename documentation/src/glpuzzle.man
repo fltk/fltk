@@ -1,0 +1,33 @@
+.TH glpuzzle 6 "FLTK glpuzzle" "03 March 2025"
+.SH NAME
+glpuzzle \- the fltk glpuzzle game
+.sp
+.SH SYNOPSIS
+\fIglpuzzle\fR is an FLTK-based version of the game "glpuzzle," a
+sliding block puzzle where the objective is to move the gray piece
+out of the box at the bottom.
+.LP
+At the start of a new game, \fIglpuzzle\fR sets up a standard arrangement
+of pieces. You can move individual pieces by clicking and dragging
+them with the left mouse button until the gray piece can slide out
+through the bottom of the box.
+.LP
+Press the 'D' key to delete a selected piece, simplifying the game.
+.LP
+Press the 'S' key to watch the puzzle being solved automatically.
+Press 'S' again to stop the solving process.
+.LP
+Press the 'R' key to reset the puzzle to its initial state.
+.LP
+Click and drag the left mouse button on an empty area of the box
+to start spinning it. Click anywhere else to stop the spinning.
+.LP
+Press the spacebar or the 'N' key to return to the top-down camera view.
+.LP
+Click with the right mouse button to open the popup menu.
+.SH SEE ALSO
+fltk(3)
+.br
+FLTK Web Site, https://www.fltk.org/
+.SH AUTHOR
+Bill Spitzak and others, original author unknown (OpenGL).

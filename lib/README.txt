@@ -12,7 +12,7 @@ in the 'lib' subdirectory of the build tree. We strongly recommend to
 build with CMake outside the source tree ("out-of-tree") as described
 in README.CMake.txt in the root folder of the FLTK distribution.
 
-If FLTK is built out-of-tree as recommende this folder will not be touched.
+If FLTK is built out-of-tree as recommended this folder will not be touched.
 
 
 Building FLTK with configure + make

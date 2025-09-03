@@ -17,7 +17,14 @@
 #ifndef FL_KDIALOG_NATIVE_FILE_CHOOSER_H
 #define FL_KDIALOG_NATIVE_FILE_CHOOSER_H 1
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 #include <FL/Fl_Native_File_Chooser.H>
+#include "Fl_String.H"
 
 class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
   friend class Fl_Native_File_Chooser;
@@ -39,7 +46,7 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   int count() const FL_OVERRIDE;
   const char *filename() const FL_OVERRIDE;
   const char *filename(int i) const FL_OVERRIDE;
-  virtual char *build_command();
+  virtual void build_command(Fl_String& command);
   int show() FL_OVERRIDE;
   char *parse_filter(const char *f);
   const char *filter() const FL_OVERRIDE;
@@ -51,6 +58,12 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   const char *directory() const FL_OVERRIDE;
   void title(const char *val) FL_OVERRIDE;
   const char *title() const FL_OVERRIDE;
+  void shell_quote(Fl_String& s);
 };
+
+/**
+\}
+\endcond
+*/
 
 #endif // FL_KDIALOG_NATIVE_FILE_CHOOSER_H

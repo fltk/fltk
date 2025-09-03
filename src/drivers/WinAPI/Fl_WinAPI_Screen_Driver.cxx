@@ -39,7 +39,7 @@ extern const char *fl_bg2;
 #endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
-  // Define MS Windows specific accelerators...
+  // Define Windows specific accelerators...
   { 'y',          FL_CTRL,                  Fl_Text_Editor::kf_redo       ,0},
   { 0,            0,                        0                             ,0}
 };
@@ -48,6 +48,7 @@ static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
 Fl_WinAPI_Screen_Driver::Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
   text_editor_extra_key_bindings =  extra_bindings;
   for (int i = 0; i < MAX_SCREENS; i++) scale_of_screen[i] = 1;
+  scaling_capability = SYSTEMWIDE_APP_SCALING;
 }
 
 int Fl_WinAPI_Screen_Driver::visual(int flags)
@@ -331,7 +332,11 @@ void Fl_WinAPI_Screen_Driver::get_system_colors()
 
 int Fl_WinAPI_Screen_Driver::compose(int &del) {
   unsigned char ascii = (unsigned char)Fl::e_text[0];
-  int condition = (Fl::e_state & (FL_ALT | FL_META)) && !(ascii & 128) ;
+  /* WARNING: The [AltGr] key on international keyboards sets FL_CTRL.
+   2nd line in condition below asks [AltGr] key (a.k.a. VK_RMENU) not to be down.
+   */
+  int condition = (Fl::e_state & (FL_ALT | FL_META  | FL_CTRL)) && !(ascii & 128) &&
+    !( (Fl::e_state & FL_CTRL) && (GetAsyncKeyState(VK_RMENU) >> 15) );
   if (condition) { // this stuff is to be treated as a function key
     del = 0;
     return 0;
@@ -481,4 +486,9 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
     }
   }
   return screen;
+}
+
+
+float Fl_WinAPI_Screen_Driver::base_scale(int numscreen) {
+  return float(dpi[numscreen][0] / 96.);
 }

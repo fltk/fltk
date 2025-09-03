@@ -34,6 +34,10 @@ Fl_Sys_Menu_Bar::Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l)
     if (fl_sys_menu_bar) delete fl_sys_menu_bar;
     fl_sys_menu_bar = this;
     driver()->bar = this;
+    // Remove macOS menubar from its parent Fl_Group so it's activated
+    // by system menu shortcuts
+    Fl_Group *p = parent();
+    if (p) p->remove(this);
   }
 }
 
@@ -236,6 +240,12 @@ void Fl_Sys_Menu_Bar::create_window_menu() {
     fl_open_display();
     fl_sys_menu_bar->driver()->create_window_menu();
   }
+}
+
+void Fl_Sys_Menu_Bar::play_menu(const Fl_Menu_Item *item) {
+  Fl_Sys_Menu_Bar_Driver *dr = driver();
+  if (dr) dr->play_menu(item);
+  else Fl_Menu_Bar::play_menu(item);
 }
 
 #if !defined(FL_DOXYGEN)

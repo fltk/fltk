@@ -1,7 +1,7 @@
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,9 +17,10 @@
 #ifndef Fl_Menu_Item_H
 #define Fl_Menu_Item_H
 
-#  include "Fl_Widget.H"
-#  include "Fl_Image.H"
-#  include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
+#include <FL/Fl_Widget.H>
+#include <FL/Fl_Image.H>
+#include <FL/Fl_Multi_Label.H>
+#include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
 
 // doxygen needs the following line to enable e.g. ::FL_MENU_TOGGLE to link to the enums
 /// @file
@@ -33,8 +34,8 @@ enum { // values for flags:
   FL_SUBMENU_POINTER = 0x20,       ///< Indicates user_data() is a pointer to another menu array
   FL_SUBMENU         = 0x40,       ///< Item is a submenu to other items
   FL_MENU_DIVIDER    = 0x80,       ///< Creates divider line below this item. Also ends a group of radio buttons
-  FL_MENU_HORIZONTAL = 0x100,      ///< ??? -- reserved, internal (do not use)
-  FL_MENU_RESERVED   = 0xffffff00  ///< These bits are reserved for internal or future usage (do not use)
+  FL_MENU_HORIZONTAL = 0x100       ///< ??? -- reserved, internal (do not use)
+  ///< Note: \b ALL other bits in \p flags are reserved: do not use them for your own purposes!
 };
 
 extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
@@ -66,10 +67,19 @@ class Fl_Menu_;
    FL_SUBMENU_POINTER = 0x20,       // Indicates user_data() is a pointer to another menu array
    FL_SUBMENU         = 0x40,       // This item is a submenu to other items
    FL_MENU_DIVIDER    = 0x80,       // Creates divider line below this item. Also ends a group of radio buttons.
-   FL_MENU_HORIZONTAL = 0x100,      // ??? -- reserved, internal (do not use)
-   FL_MENU_RESERVED   = 0xffffff00  // These bits are reserved for internal or future usage (do not use)
+   FL_MENU_HORIZONTAL = 0x100       // ??? -- reserved, internal (do not use)
   };
   \endcode
+
+  \note \b All other bits in \p flags are reserved for FLTK usage, do not use any bits of the
+    \p flags variable for your own purposes. Even \b undocumented bits can be used for internal
+    purposes in this or any future FLTK version.
+
+  Some \p flags bits may be changed during runtime by user code, particularly if you need to change
+  the value of a menu item (ON/OFF) or make it active or inactive. Such changes must be done with
+  caution so they don't affect other (maybe undocumented) bits, i.e. you need to make proper bit
+  operations to set or clear only these particular bits.
+
   Typically menu items are statically defined; for example:
   \code
   Fl_Menu_Item popup[] = {
@@ -141,19 +151,100 @@ struct FL_EXPORT Fl_Menu_Item {
 
   // methods on menu items:
   /**
-    Returns the title of the item.
+    Returns the title (label) of the menu item.
+
     A NULL here indicates the end of the menu (or of a submenu).
     A '&' in the item will print an underscore under the next letter,
-    and if the menu is popped up that letter will be a "shortcut" to pick
-    that item.  To get a real '&' put two in a row.
+    and if the menu is popped up that letter will be a "shortcut" to
+    pick that item. To get a real '&' put two in a row.
+
+    The returned value depends on the labeltype() that has been used
+    to store the label.
+
+    \returns  A pointer to the label cast to (const char *)
+
+    \retval (a)   A pointer to text (const char *)
+    \retval (b)   A pointer to an image (Fl_Image *)
+    \retval (c)   A pointer to a "multi label" (Fl_Multi_Label *)
+    \retval NULL  End of menu or submenu
+
+    \see Fl_Menu_Item::label(const char *)
+    \see Fl_Menu_Item::label(Fl_Labeltype, const char *)
+    \see Fl_Menu_Item::image_label(const Fl_Image *)
+    \see Fl_Menu_Item::multi_label(const Fl_Multi_Label *)
+    \see Fl_Multi_Label::label(Fl_Menu_Item *)
   */
-  const char* label() const {return text;}
+  const char* label() const { return text; }
 
-  /**    See const char* Fl_Menu_Item::label() const   */
-  void label(const char* a) {text=a;}
+  /**
+    Sets the title (label) of the menu item.
 
-  /**    See const char* Fl_Menu_Item::label() const   */
-  void label(Fl_Labeltype a,const char* b) {labeltype_ = a; text = b;}
+    \note This does \b not change the labeltype() for backwards compatibility.
+      Take care to assign the correct labeltype() if you assign different
+      label types to the same menu item sequentially.
+
+    The default labeltype() is FL_NORMAL_LABEL.
+
+    \see label(Fl_Labeltype, const char*)
+    \see const char* Fl_Menu_Item::label() const
+  */
+  void label(const char* a) { text = a; }
+
+  /**
+    Sets the title (label) and the label type of the menu item.
+
+    The default Fl_Labeltype when using Fl_Menu_Item::label(const char* a)
+    is FL_NORMAL_LABEL but you can set any other label type, for instance
+    FL_EMBOSSED_LABEL.
+
+    Special labeltypes are:
+
+      - FL_ICON_LABEL:  draws the icon (Fl_Image) associated with the text
+      - FL_IMAGE_LABEL: draws the image (Fl_Image) associated with the text
+      - FL_MULTI_LABEL: draws multiple parts side by side, see Fl_Multi_Label
+
+    \see const char* Fl_Menu_Item::label() const
+  */
+  void label(Fl_Labeltype a, const char* b) {
+    labeltype_ = a;
+    text = b;
+  }
+
+  /**
+    Sets the title (label()) and labeltype() to an Fl_Multi_Label.
+
+    This sets the labeltype() to \_FL_MULTI_LABEL (note the leading
+    underscore).
+
+    \see const char* Fl_Menu_Item::label() const
+
+    \since 1.4.0
+
+    \internal Overloading Fl_Menu_Item::image() would lead to ambiguities
+      when used like `item->label(0)`, hence we need our own method name.
+      Otherwise existing programs might not compile w/o error (e.g. fluid).
+  */
+  void multi_label(const Fl_Multi_Label *ml) {
+    label(FL_MULTI_LABEL, (const char *)ml);
+  }
+
+  /**
+    Sets the title (label()) to an icon or image.
+
+    This sets the labeltype() to \_FL_IMAGE_LABEL (note the leading
+    underscore).
+
+    \see const char* Fl_Menu_Item::label() const
+
+    \since 1.4.0
+
+    \internal Overloading Fl_Menu_Item::image() would lead to ambiguities
+      when used like `item->label(0)`, hence we need our own method name.
+      Otherwise existing programs might not compile w/o error (e.g. fluid).
+  */
+  void image_label(const Fl_Image *image) {
+    label(FL_IMAGE_LABEL, (const char *)image);
+  }
 
   /**
     Returns the menu item's labeltype.
@@ -236,7 +327,9 @@ struct FL_EXPORT Fl_Menu_Item {
     This method does not set the userdata() argument.
     \see Fl_Callback_p Fl_MenuItem::callback() const
    */
-  void callback(Fl_Callback0*c) {callback_=(Fl_Callback*)c;}
+  void callback(Fl_Callback0 *c) {
+    callback_ = (Fl_Callback *)(void *)c;
+  }
 
   /**
     Sets the menu item's callback function and userdata() argument.
@@ -244,7 +337,10 @@ struct FL_EXPORT Fl_Menu_Item {
     for the menu item's callback function.
     \see Fl_Callback_p Fl_MenuItem::callback() const
    */
-  void callback(Fl_Callback1*c, long p=0) {callback_=(Fl_Callback*)c; user_data_=(void*)(fl_intptr_t)p;}
+  void callback(Fl_Callback1 *c, long p = 0) {
+    callback_ = (Fl_Callback *)(void *)c;
+    user_data_ = (void *)(fl_intptr_t)p;
+  }
 
   /**
     Gets the user_data() argument that is sent to the callback function.

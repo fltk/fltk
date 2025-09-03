@@ -30,6 +30,7 @@
 // The above comments were checked in as r2, and much has changed since then;
 // transparency added, color cube not required, etc.      -erco Oct 20 2013
 
+#include <config.h>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
 #include <FL/platform.H>
@@ -216,7 +217,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     } // for Y
   }
 
-  fl_draw_image(buffer, x, y, w, h, 4);
+  fl_graphics_driver->draw_image(buffer, x, y, w, h, 4);
 
   delete[] buffer;
   return 1;

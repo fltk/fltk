@@ -4,7 +4,7 @@
 // This also demonstrates how to trap attempts by the user to
 // close the last window by overriding Fl::exit
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,8 @@
 void rename_button(Fl_Widget *o, void *v) {
   int what = fl_int(v);
   int ret = 0;
-  Fl_String input;
+#if (FLTK_USE_STD)
+  std::string input;
   if (what == 0) {
     fl_message_icon_label("§");
     input = fl_input_str(ret, 0, "Input (no size limit, use ctrl/j for newline):", o->label());
@@ -47,6 +48,22 @@ void rename_button(Fl_Widget *o, void *v) {
     o->copy_label(input.c_str());
     o->redraw();
   }
+#else
+  const char *input;
+  if (what == 0) {
+    fl_message_icon_label("§");
+    input = fl_input("Input (no size limit, use ctrl/j for newline):", o->label());
+    if (!input) ret = 1;
+  } else {
+    fl_message_icon_label("€");
+    input = fl_password(20, "Enter password (max. 20 characters):", o->label());
+    if (!input) ret = 1;
+  }
+  if (ret == 0) {
+    o->copy_label(input);
+    o->redraw();
+  }
+#endif // FLTK_USE_STD
 }
 
 void window_callback(Fl_Widget *win, void *) {
@@ -73,10 +90,11 @@ void window_callback(Fl_Widget *win, void *) {
   "Close" button will reactivate the popups (only possible if "recursive"
   dialogs are enabled, see below).
 
-  Note 1: This dialog box had been blocked in FLTK 1.3.x if another common
-  dialog was already open because the window used was a static (i.e. permanently
-  allocated) Fl_Window instance. This has been fixed in FLTK 1.4.0.
-  See STR #334 (sic !) and also STR #2751 ("Limit input field characters").
+  Note 1: This dialog box had been blocked in FLTK 1.3 if another common
+  dialog was already open because the used window was a static (i.e.
+  permanently allocated) Fl_Window instance. This has been fixed in FLTK 1.4.
+  See STR #334 ("technical change : remove statics in fl_ask") and also
+  STR #2751 ("Limit input field characters").
 */
 void timer_cb(void *) {
 
@@ -115,10 +133,10 @@ void timer_cb(void *) {
   // pop up a message:
   stop |= fl_choice(
           "Timeout. Click the 'Close' button or press Escape.\n"
-          "Note: this message had been blocked in FLTK 1.3.x\n"
+          "Note: this message had been blocked in FLTK 1.3\n"
           "and earlier if another message window was open.\n"
           "This message should pop up every 5 seconds (max. 10 times)\n"
-          "in FLTK 1.4.0 and later until stopped by clicking the button\n"
+          "in FLTK 1.4 and later until stopped by clicking the button\n"
           "below or by pressing the Enter (Return) key.\n",
           "Close", "Stop these funny popups", NULL);
 }

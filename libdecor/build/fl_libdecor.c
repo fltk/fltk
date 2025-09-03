@@ -1,7 +1,7 @@
 //
 // Interface with the libdecor library for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,21 +15,28 @@
 //
 
 /* Improvements to libdecor.c without modifying libdecor.c itself */
+#if ! USE_SYSTEM_LIBDECOR
 
 #include "xdg-shell-client-protocol.h"
 #ifdef XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION
 #  define HAVE_XDG_SHELL_V6 1
 #endif
 
-#define libdecor_frame_set_minimized libdecor_frame_set_minimized_orig
-#define libdecor_new libdecor_new_orig
 #include <dlfcn.h>
+#include <stdlib.h>
 static void *dlopen_corrected(const char *, int);
 #define dlopen(A, B) dlopen_corrected(A, B)
+#include "fl_libdecor.h"
+#undef libdecor_new
+#define libdecor_new libdecor_new_orig
+#undef libdecor_frame_set_minimized
+#define libdecor_frame_set_minimized libdecor_frame_set_minimized_orig
 #include "../src/libdecor.c"
 #undef dlopen
 #undef libdecor_frame_set_minimized
 #undef libdecor_new
+#define libdecor_new fl_libdecor_new
+#define libdecor_frame_set_minimized fl_libdecor_frame_set_minimized
 
 extern bool fl_libdecor_using_weston(void);
 extern const struct libdecor_plugin_description *fl_libdecor_plugin_description;
@@ -56,7 +63,7 @@ static void *dlopen_corrected(const char *filename, int flags) {
 }
 
 
-LIBDECOR_EXPORT void libdecor_frame_set_minimized(struct libdecor_frame *frame)
+void fl_libdecor_frame_set_minimized(struct libdecor_frame *frame)
 {
   static bool done = false;
   static bool using_weston = false;
@@ -95,15 +102,15 @@ LIBDECOR_EXPORT void libdecor_frame_set_minimized(struct libdecor_frame *frame)
     * if FLTK was built with package libgtk-3-dev, the GTK plugin is used
     * if FLTK was built without package libgtk-3-dev, the Cairo plugin is used
  
- If FLTK was built with OPTION_USE_SYSTEM_LIBDECOR turned ON, the present modification
+ If FLTK was built with FLTK_USE_SYSTEM_LIBDECOR turned ON, the present modification
  isn't compiled, so the plugin-searching algorithm of libdecor_new() in libdecor-0.so is used.
  This corresponds to step 1) above and to use no titlebar is no plugin is found.
  
  N.B.: only the system package is built with a meaningful value of -DLIBDECOR_PLUGIN_DIR=
- so a plugin may be loaded that way only if FLTK was built with OPTION_USE_SYSTEM_LIBDECOR turned ON.
+ so a plugin may be loaded that way only if FLTK was built with FLTK_USE_SYSTEM_LIBDECOR turned ON.
  
  */
-LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, struct libdecor_interface *iface)
+struct libdecor *fl_libdecor_new(struct wl_display *wl_display, const struct libdecor_interface *iface)
 {
   struct libdecor *context;
   context = zalloc(sizeof *context);
@@ -120,9 +127,24 @@ LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, str
     // no plug-in was found by dlopen(), use built-in plugin instead
     // defined in the source code of the built-in plugin:  libdecor-cairo.c or libdecor-gtk.c
     extern const struct libdecor_plugin_description libdecor_plugin_description;
+#if HAVE_GTK
+    bool gdk_caution = false;
+    if (getenv("GDK_BACKEND") && strcmp(getenv("GDK_BACKEND"), "x11") == 0) {
+      // Environment variable GDK_BACKEND=x11 makes the .constructor below fail
+      // for the built-in GTK plugin and then FLTK crashes (#1029).
+      // Temporarily unset GDK_BACKEND to prevent that.
+      gdk_caution = true;
+      unsetenv("GDK_BACKEND");
+    }
+#endif
     context->plugin = libdecor_plugin_description.constructor(context);
-  }
+#if HAVE_GTK
+    if (gdk_caution) putenv("GDK_BACKEND=x11");
+#endif
+ }
 
   wl_display_flush(wl_display);
   return context;
 }
+
+#endif //! USE_SYSTEM_LIBDECOR

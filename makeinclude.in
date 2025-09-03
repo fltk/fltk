@@ -1,7 +1,7 @@
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -27,7 +27,7 @@ FLTK_VERSION		= @FLTK_VERSION@
 # FLTK configuration options: BUILD = { WIN | OSX | X11 | XFT | CAIROXLIB | WAYLANDX11 | WAYLAND }
 
 BUILD		= @BUILD@
-UNAME            = @UNAME@
+UNAME           = @UNAME@
 
 # Standard configure variables
 
@@ -88,6 +88,9 @@ FLLIBBASENAME	= @FLLIBBASENAME@
 GLLIBBASENAME	= @GLLIBBASENAME@
 IMGLIBBASENAME	= @IMGLIBBASENAME@
 CAIROLIBBASENAME= @CAIROLIBBASENAME@
+
+# Test programs (optional, --disable-test):
+TESTDIR		= @TESTDIR@
 
 # libraries to link with:
 AUDIOLIBS	= @AUDIOLIBS@

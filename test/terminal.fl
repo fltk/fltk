@@ -1,0 +1,2136 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0401
+utf8_in_src
+header_name {.h}
+code_name {.cxx}
+comment {DEVELOPER README
+
+APPLICATION
+-----------
+The Application class encompasses the entire application,
+and has the widget hierarchy declared by main_window().
+
+SELF TESTS
+----------
+The "self tests" are all named test_xxx(), and are static
+functions because they were designed that way originally
+(testterm.cxx), so they remain static.
+
+They only need access to the global G_tty to access the
+terminal for printing, and handle their own state
+information.
+
+To add /new/ tests:
+1. Create the test function similar to existing test_xxx().
+2. Add the function's name to the NextEscapeTest() function's
+This makes the new test become part of the self tests.
+
+NextEscapeTest() keeps track of the last test shown as
+a static value internally, and the integer argument
+tells it how to advance to the next test, either fwd or back.
+
+The tests themselves may keep state information, so that
+a single test might have several pages. The return value
+determines whether to recall the test again, or if it's
+on the last page.
+
+} {in_source not_in_header
+}
+
+decl {\#include <stdio.h>} {public global
+}
+
+decl {\#include <stdlib.h> // rand()} {private global
+}
+
+decl {\#include <errno.h>} {public global
+}
+
+decl {\#include <FL/Fl_Window.H>} {public global
+}
+
+decl {\#include <FL/Fl_Terminal.H>} {public global
+}
+
+decl {\#include <FL/Fl_Scheme_Choice.H>} {public global
+}
+
+decl {\#include <FL/fl_ask.H>} {public global
+}
+
+decl {\#include <fcntl.h>} {public global
+}
+
+decl {\#ifdef _WIN32} {public global
+}
+
+decl {\#include <io.h> // _read()} {public global
+}
+
+decl {\#else} {public global
+}
+
+decl {\#include <unistd.h> // read()} {public global
+}
+
+decl {\#endif} {public global
+}
+
+decl {MyTerminal *G_tty;} {
+  comment {Global access to tty} private global
+}
+
+decl {Application *G_app;} {
+  comment {Global access to application} private global
+}
+
+decl {////// TERMINAL RING BUFFER DEBUG CLASS //////} {private local
+}
+
+class MyTerminal {
+  comment {Fl_Terminal derived class that can access ring buffer internals for debugging} open : {public Fl_Terminal}
+} {
+  decl {Fl_Double_Window *ring_debug_win;} {private local
+  }
+  decl {Fl_Terminal *debug_tty;} {private local
+  }
+  decl {bool interactivecursor;} {private local
+  }
+  Function {MyTerminal(int X,int Y,int W,int H, const char *L=0):Fl_Terminal(X,Y,W,H,L)} {
+    comment CTOR open
+  } {
+    code {ring_debug_win = 0;
+debug_tty = 0;
+interactivecursor = false;} {}
+  }
+  Function {show_ring_debug_window()} {return_type void
+  } {
+    code {// Show the internal ring debug window
+if (!ring_debug_win) {
+  ring_debug_win = new Fl_Double_Window(1250,800,"Fl_Terminal Ring Buffer");
+  ring_debug_win->resizable(ring_debug_win);
+  ring_debug_win->callback(debug_winquit_callback, (void*)this);
+  debug_tty = new Fl_Terminal(0,0,ring_debug_win->w(),ring_debug_win->h());
+  debug_tty->textsize(7);
+  debug_tty->redraw_style(NO_REDRAW);
+  debug_tty->display_columns(400);
+  ring_debug_win->end();
+}
+ring_debug_win->show();
+// Start timer to update ring debug updates
+Fl::add_timeout(.5, ring_debug_timer_callback, (void*)this);} {}
+  }
+  Function {interactive_cursor(bool val)} {
+    comment {Enable/disable interactive cursor movement in test app} return_type void
+  } {
+    code {interactivecursor = val;} {}
+  }
+  Function {debug_winquit_callback2()} {return_type void
+  } {
+    code {// Hide debug window, disable its update timer
+ring_debug_win->hide();
+Fl::remove_timeout(ring_debug_timer_callback, (void*)this);} {}
+  }
+  Function {debug_winquit_callback(Fl_Widget*,void *userdata)} {return_type {static void}
+  } {
+    code {MyTerminal *o = (MyTerminal*)userdata;
+o->debug_winquit_callback2();} {}
+  }
+  Function {horiz_bracket(int w)} {
+    comment {Print a graphic horizontally oriented bracket of width w} return_type void
+  } {
+    code {debug_tty->append("┏");
+for (int t=0; t<w-2; t++) { debug_tty->print_char("━"); }
+debug_tty->append("┓");} {}
+  }
+  Function {update_ring()} {open return_type void
+  } {
+    code {// Handle updating the ring debug window's contents
+int m1,m2,m3,m4;
+get_selection(m1,m2,m3,m4);
+
+// These reference the Fl_Terminal base class protected members
+int x = 5;
+debug_tty->append("\\033c");  // reset terminal (clear screen, history, home)
+debug_tty->append("\\033[s"); // save cursor
+debug_tty->printf("\\033[%dC \\033[7m   Ring Index   \\033[0m\\n", x);
+debug_tty->printf("\\033[%dC   ring_rows(): %-3d  Mouse Selection (srow,scol,erow,ecol)\\n", x, ring_rows());
+debug_tty->printf("\\033[%dC   ring_cols(): %-3d            \\033[7m(%d,%d,%d,%d)\\033[0m\\n", x, ring_cols(), m1,m2,m3,m4);
+debug_tty->printf("\\033[%dC      offset(): %-3d  currentstyle->charflags=%02x\\n", x, offset(), (unsigned int)current_style().charflags()); // charflags(): show XTERM flags if any
+debug_tty->printf("\\033[%dC ", x);
+horiz_bracket(disp_cols());
+debug_tty->printf("\\033[u"); // recall cursor
+
+x += disp_cols() + 11;
+debug_tty->printf("\\033[%dC \\033[7m   History Index   \\033[0m\\n",  x);
+debug_tty->printf("\\033[%dC   hist_rows(): %d hist_srow()=%d\\n",   x, hist_rows(), hist_srow());
+debug_tty->printf("\\033[%dC   hist_cols(): %d hist_erow()=%d\\n",   x, hist_cols(), hist_erow());
+debug_tty->printf("\\033[%dC    hist_use(): %d\\n",                  x, hist_use());
+debug_tty->printf("\\033[%dC ", x);
+horiz_bracket(disp_cols());
+debug_tty->append("\\033[u"); // recall cursor
+
+x += disp_cols() + 11;
+debug_tty->printf("\\033[%dC \\033[7m   Display Index   \\033[0m\\n", x);
+debug_tty->printf("\\033[%dC   disp_rows(): %d disp_srow()=%d\\n",  x, disp_rows(), disp_srow());
+debug_tty->printf("\\033[%dC   disp_cols(): %d disp_erow()=%d\\n",  x, disp_cols(), disp_erow());
+debug_tty->append("\\n");
+debug_tty->printf("\\033[%dC ", x);
+horiz_bracket(disp_cols());
+debug_tty->append("\\n");
+
+{
+  for ( int row=0; row<ring_rows(); row++ ) {
+    // SHOW RING
+    Utf8Char *u8c = u8c_ring_row(row);
+    debug_tty->printf("%3d R[", row);
+    for ( int col=0; col<ring_cols(); col++,u8c++ ) {
+      // Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
+      debug_tty->textattrib(u8c->attrib());
+      debug_tty->textfgcolor(u8c->fgcolor());
+      debug_tty->textbgcolor(u8c->bgcolor());
+      debug_tty->print_char(u8c->text_utf8()); // print the char in current style
+    }
+    debug_tty->append("\\033[0m"); // restore default fg/bg/attrib
+    debug_tty->append("]    ");
+    // SHOW HISTORY
+    if ( row < hist_rows() ) {
+      u8c = u8c_ring_row(hist_srow() + row);
+      debug_tty->printf("%3d H[", row);
+      for ( int col=0; col<hist_cols(); col++,u8c++ ) {
+        // Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
+        debug_tty->textattrib(u8c->attrib());
+        debug_tty->textfgcolor(u8c->fgcolor());
+        debug_tty->textbgcolor(u8c->bgcolor());
+        debug_tty->print_char(u8c->text_utf8()); // print the char in current style
+      }
+      debug_tty->append("\\033[0m"); // restore default fg/bg/attrib
+      debug_tty->printf("]    ");
+    } else {
+      debug_tty->append("     ");
+      for ( int col=0; col<hist_cols(); col++ ) { debug_tty->append(" "); }
+      debug_tty->append("     ");
+    }
+    // SHOW DISPLAY
+    if ( row < disp_rows() ) {
+      u8c = u8c_ring_row(disp_srow() + row);
+      debug_tty->printf("%3d D[", row);
+      for ( int col=0; col<disp_cols(); col++,u8c++ ) {
+        // Get Utf8Char's attrib,fg,bg and make that 'current' to draw the char in that style
+        debug_tty->textattrib(u8c->attrib());
+        debug_tty->textfgcolor(u8c->fgcolor());
+        debug_tty->textbgcolor(u8c->bgcolor());
+        debug_tty->print_char(u8c->text_utf8()); // print the char in current style
+      }
+      debug_tty->append("\\033[0m"); // restore default fg/bg/attrib
+      debug_tty->append("]\\033[K\\n");
+    } else {
+      debug_tty->append("\\033[K\\n");
+    }
+  }
+}
+debug_tty->printf("--- END\\033[0J\\n");  // clear eos} {}
+  }
+  Function {ring_debug_timer_callback2()} {open return_type void
+  } {
+    code {// Update the ring debug window
+update_ring();
+
+// Redraw after all changes have been made
+ring_debug_win->redraw();
+Fl::repeat_timeout(.10, ring_debug_timer_callback, (void*)this);} {}
+  }
+  Function {ring_debug_timer_callback(void* userdata)} {return_type {static void}
+  } {
+    code {MyTerminal *o = (MyTerminal*)userdata;
+o->ring_debug_timer_callback2();} {}
+  }
+  Function {handle(int e) FL_OVERRIDE} {
+    comment {Event handler} return_type int
+  } {
+    code {switch (e) {
+  case FL_KEYBOARD: {
+    if (interactivecursor) {
+      switch (Fl::event_key()) {
+          case FL_Up:    cursor_up(1,true);   redraw(); return 1;
+          case FL_Down:  cursor_down(1,true); redraw(); return 1;
+          case FL_Left:  cursor_left();       redraw(); return 1;
+          case FL_Right: cursor_right();      redraw(); return 1;
+      }
+    }
+    break;
+  }
+}
+return Fl_Terminal::handle(e);} {}
+  }
+}
+
+decl {////// APPLICATION CLASS //////} {private local
+}
+
+class Application {open
+} {
+  decl {int G_lines;} {
+    comment {Line counter for +50 line test
+} private local
+  }
+  Function {Application()} {
+    comment {// Ctor}
+  } {
+    code {// CTOR
+G_lines = 1;
+make_window();
+
+// Do widget init in make_window()'s extra 'Code' section, not here.} {}
+  }
+  Function {show(int argc=0, char **argv=0)} {
+    comment {Show the app window
+} return_type void
+  } {
+    code {if (argv) win->show(argc,argv);
+else      win->show();} {}
+  }
+  Function {AppendTty(const char *s)} {
+    comment {Append text to Fl_Terminal (and stdout if radio button set)
+} return_type void
+  } {
+    code {// Append to Fl_Terminal
+G_tty->append(s);
+
+// Send to stdout too?
+if (G_app->stdout_radio->value()) {
+    printf("%s", s);
+    fflush(stdout);
+}} {}
+  }
+  decl {////// ESC SELF TESTS //////} {private local
+  }
+  Function {NextEscapeTest(int dir)} {
+    comment {Advance/Reverse thru escape code tests} open return_type {static void}
+  } {
+    code {// *** ADD NEW TESTS HERE ***
+typedef int (TestFunc)(bool);
+static int testret = 1;     // last test return value
+static int testnum = 0;
+static TestFunc *tests[] = {
+  test_firstpage,
+  test_esc_attr,
+  test_esc_rgbcolors,
+  test_esc_fgbg_colors,
+  test_esc_curpos,
+  test_esc_tabstops,
+  test_esc_insert_char,
+  test_esc_clear_test,
+  test_esc_delete_row,
+  test_esc_insert_row,
+  test_esc_scrolling
+  // ^^^ INSERT NEW TEST FUNCS ABOVE THIS LINE ^^^
+};
+
+int numtests = sizeof(tests) / sizeof(TestFunc*);
+testnum += (dir * testret);                        // advance testnum only if last test isn't recall
+if (testnum >= numtests) testnum = 0;
+if (testnum < 0) testnum = numtests-1;
+if (dir == 10000) {                                // 1000: special case to reset all tests, run first test
+  testnum = 0;                                     // run first test
+  for ( int i=0; i<numtests; i++ ) tests[i](true); // reset all tests
+}
+
+/*** NO: THIS SCREWS UP DELETE CURRENT LINE TESTS
+// If cursor floating, do a crlf first
+if (G_tty->cursor_col()!=0) G_tty->append("\\n");
+****/
+
+// Run test, save return value
+testret = tests[testnum](false);
+G_tty->redraw();} {}
+  }
+  Function {show_test(const char **test, int &index)} {
+    comment {Show test in test[] starting at 'index', returns 0 or 1
+} return_type {static int}
+  } {
+    code {// Show test in test[] starting at 'index'.
+//    'index' is adjusted to point to next test.
+// Returns number to add to parent test index:
+//    0 - test shown, call here again for next page in this test
+//    1 - test shown, move on to next test for next time
+//
+while (test[index]) {
+  G_app->AppendTty(test[index++]);
+  if (strncmp(test[index-1], "--->", 4) == 0 ) {
+    if (test[index] == NULL) { index = 0; return 1; } // rewind, tell parent to move to next test
+    else                     { return 0; }            // tell parent to call us again for next test
+  }
+}
+index = 0;
+return 1;           // hit end of test, reset} {}
+  }
+  Function {test_firstpage(bool reset)} {
+    comment {--- 0000: Test unicode alignment} return_type {static int}
+  } {
+    code {(void) reset;  // unused arg: quiets compiler warnings
+G_app->AppendTty(
+  "\\033[0m\\033[H\\033[2J\\033[3J"    // color/attr reset, home, cls, clear history
+  "hello.\\nLine one\\nLine two\\n"
+  "\\033[0;0;2m          Dim text:\\033[31m red\\033[32m grn\\033[33m yel"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+  "\\033[0;0;0m       Normal text:\\033[31m red\\033[32m grn\\033[33m yel"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+  "\\033[0;0;1m         Bold text:\\033[31m red\\033[32m grn\\033[33m yel"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+  "\\033[0;1;3m  Bold Italic text:\\033[31m red\\033[32m grn\\033[33m yel"
+                              "\\033[34m blu\\033[35m mag\\033[36m cyn\\033[37m wht\\n"
+  "\\033[0m\\n"
+  //                             Language                           Language
+  //                             Alignment                          Alignment
+  //                             <----->                            <---->
+  "Here's some utf8:             ||| AAA                            || AAA\\n"
+  "╳╳ ██ ▏▏┌─┬┐ ┏━┳┓ ╔═╦╗ ██████ ||| AAA Hell Yeah Jim  - English   || AAA\\n"
+  "╳╳ ██ ▏▏│ ││ ┃ ┃┃ ║ ║║ ██  ██ ||| AAA Первый рабочий - Russian   || AAA\\n"
+  "╳╳ ██ ▏▏├─┼┤ ┣━╋┫ ╠═╬╣ ██  ██ ||| AAA テキスト処理法 - Japanese  || AAA\\n"
+  "╳╳ ██ ▏▏└─┴┘ ┗━┻┛ ╚═╩╝ ██████ ||| AAA 香港增补字符集 - Chinese   || AAA\\n"
+  "                              ||| AAA                            || AAA\\n"
+  "underbar: ______              ||| AAA                            || AAA\\n"
+  " overbar: ‾‾‾‾‾‾              ||| AAA                            || AAA\\n"
+  "\\n"
+  "\\033[23X >> KEYBOARD KEYS: Arrow keys move cursor   <<\\n"
+  "\\033[23X >>     's'=speed test    'c'=colorbars     <<\\n"
+  "\\033[23X >>     'e'=next esc test 'E'=prev esc test <<\\n"
+  "\\033[23X >>     'q'=quit                            <<\\n"
+  "\\033[23X >>                                         <<\\n"
+  "\\033[23X >>                                         <<\\n"
+  "\\n"
+  "Some floating text. >X<\\b\\033[D"); // put cursor between > < using BS and cursor_left
+return 1;  // tell parent to move to next test} {}
+  }
+  Function {test_esc_attr(bool reset)} {
+    comment {--- 0010: Test attributes} open return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 10
+  "\\033[H\\033[2J" "ESC TEST 0010: Attributes\\n",
+  "  \\033[0;2m Some Dim text [█]\\033[0m   \\033[0m Normal text      [█]\\033[0m  \\033[0;1m Some Bold text [█]\\033[0m\\n"
+  "  \\033[2;3m Dim italic    [█]\\033[0m   \\033[3m Normal italic    [█]\\033[0m  \\033[1;3m Bold italic    [█]\\033[0m\\n"
+  "  \\033[2;4m Dim underline [█]\\033[0m   \\033[4m Normal underline [█]\\033[0m  \\033[1;4m Bold underline [█]\\033[0m\\n"
+  "  \\033[2;5m Dim blinking  [█]\\033[0m   \\033[5m Normal blinking  [█]\\033[0m  \\033[1;5m Bold blinking  [█]\\033[0m\\n"
+  "  \\033[2;7m Dim inverse   [█]\\033[0m   \\033[7m Normal inverse   [█]\\033[0m  \\033[1;7m Bold inverse   [█]\\033[0m\\n"
+  "  \\033[2;9m Dim strikeout [█]\\033[0m   \\033[9m Normal strikeout [█]\\033[0m  \\033[1;9m Bold strikeout [█]\\033[0m\\n"
+  "\\n"
+  "Xterm Colors With Attributes\\n"
+  "  \\033[2;3m(Dim+Bold attributes should affect brightness of all xterm colors)\\033[0m\\n"
+  "  \\033[2;30m Dim Blk(30)   [█]\\033[0m   \\033[30m Normal Blk(30)   [█]\\033[0m  \\033[1;30m Bold Blk(30)   [█]\\033[0m\\n"
+  "  \\033[2;31m Dim Red(31)   [█]\\033[0m   \\033[31m Normal Red(31)   [█]\\033[0m  \\033[1;31m Bold Red(31)   [█]\\033[0m\\n"
+  "  \\033[2;32m Dim Grn(32)   [█]\\033[0m   \\033[32m Normal Grn(32)   [█]\\033[0m  \\033[1;32m Bold Grn(32)   [█]\\033[0m\\n"
+  "  \\033[2;33m Dim Yel(33)   [█]\\033[0m   \\033[33m Normal Yel(33)   [█]\\033[0m  \\033[1;33m Bold Yel(33)   [█]\\033[0m\\n"
+  "  \\033[2;34m Dim Blu(34)   [█]\\033[0m   \\033[34m Normal Blu(34)   [█]\\033[0m  \\033[1;34m Bold Blu(34)   [█]\\033[0m\\n"
+  "  \\033[2;35m Dim Mag(35)   [█]\\033[0m   \\033[35m Normal Mag(35)   [█]\\033[0m  \\033[1;35m Bold Mag(35)   [█]\\033[0m\\n"
+  "  \\033[2;36m Dim Cyn(36)   [█]\\033[0m   \\033[36m Normal Cyn(36)   [█]\\033[0m  \\033[1;36m Bold Cyn(36)   [█]\\033[0m\\n"
+  "  \\033[2;37m Dim ---(37)   [█]\\033[0m   \\033[37m Normal ---(37)   [█]\\033[0m  \\033[1;37m Bold ---(37)   [█]\\033[0m\\n"
+  "  \\033[2;38m Dim ---(38)   [█]\\033[0m   \\033[38m Normal ---(38)   [█]\\033[0m  \\033[1;38m Bold ---(38)   [█]\\033[0m\\n"
+  "  \\033[2;39m Dim Def(39)   [█]\\033[0m   \\033[39m Normal Def(39)   [█]\\033[0m  \\033[1;39m Bold Def(39)   [█]\\033[0m\\n"
+  "\\n"
+  "Xterm Fg/Bg Colors With Attributes\\n"
+  // walk fg colors 30..36, bg reset (49+0)
+  "  Fg Bold:\\033[1;49;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m "
+           " \\033[00;1;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m\\n"
+  "  Fg Norm:\\033[0;49;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m "
+           " \\033[00;0;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m\\n"
+  "  Fg  Dim:\\033[2;49;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m "
+           " \\033[00;2;30m█ Def █\\033[31m█ Red █\\033[32m█ Grn █\\033[33m█ Yel █\\033[34m█ Blu █\\033[35m█ Mag █\\033[36m█ Cyn █\\033[0m\\n"
+  "\\n"
+  // walk bg colors 40..46, fg reset (39+0)
+  "  Bg Bold:\\033[1;39;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m "
+           " \\033[00;1;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m\\n"
+  "  Bg Norm:\\033[0;39;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m "
+           " \\033[00;0;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m\\n"
+  "  Bg  Dim:\\033[2;39;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m "
+           " \\033[00;2;40m█ Def █\\033[41m█ Red █\\033[42m█ Grn █\\033[43m█ Yel █\\033[44m█ Blu █\\033[45m█ Mag █\\033[46m█ Cyn █\\033[0m\\n"
+  "\\n",
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {selected
+    }
+  }
+  Function {test_esc_rgbcolors(bool reset)} {
+    comment {--- 0020: Test RGB Colors} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 20
+  "\\033[2J\\033[H" "ESC TEST 0020: RGB Colors\\n",
+  "\\033[0m\\n",      // NORMAL
+  "\\tNormal Grayscale: \\033[38;2;32;32;32mXXX"    "\\033[38;2;64;64;64mXXX"    "\\033[38;2;96;96;96mXXX"    "\\033[38;2;128;128;128mXXX",
+                      "\\033[38;2;160;160;160mXXX" "\\033[38;2;192;192;192mXXX" "\\033[38;2;224;224;224mXXX" "\\033[38;2;255;255;255mXXX",
+                      "\\033[38;2;255;0;0m\\n", // change to Red for next row
+  "\\tNormal  RedScale: \\033[38;2;32;0;0mXXX"      "\\033[38;2;64;0;0mXXX"      "\\033[38;2;96;0;0mXXX"      "\\033[38;2;128;0;0mXXX",
+                      "\\033[38;2;160;0;0mXXX"     "\\033[38;2;192;0;0mXXX"     "\\033[38;2;224;0;0mXXX"     "\\033[38;2;255;0;0mXXX",
+                      "\\033[38;2;0;255;0m\\n", // change to Grn for next row
+  "\\tNormal  GrnScale: \\033[38;2;0;32;0mXXX"      "\\033[38;2;0;64;0mXXX"      "\\033[38;2;0;96;0mXXX"      "\\033[38;2;0;128;0mXXX",
+                      "\\033[38;2;0;160;0mXXX"     "\\033[38;2;0;192;0mXXX"     "\\033[38;2;0;224;0mXXX"     "\\033[38;2;0;255;0mXXX",
+                      "\\033[38;2;0;0;255m\\n", // change to Blu for next row
+  "\\tNormal  BluScale: \\033[38;2;0;0;32mXXX"    "\\033[38;2;0;0;64mXXX"       "\\033[38;2;0;0;96mXXX"      "\\033[38;2;0;0;128mXXX",
+                      "\\033[38;2;0;0;160mXXX"    "\\033[38;2;0;0;192mXXX"      "\\033[38;2;0;0;224mXXX"     "\\033[38;2;0;0;255mXXX",
+                      "\\n",
+    "\\033[0;3m\\n",     // ITALIC
+  "\\tItalic Grayscale: \\033[38;2;32;32;32mXXX"    "\\033[38;2;64;64;64mXXX"    "\\033[38;2;96;96;96mXXX"    "\\033[38;2;128;128;128mXXX",
+                      "\\033[38;2;160;160;160mXXX" "\\033[38;2;192;192;192mXXX" "\\033[38;2;224;224;224mXXX" "\\033[38;2;255;255;255mXXX",
+                      "\\033[38;2;255;0;0m\\n", // change to Red for next row
+  "\\tItalic  RedScale: \\033[38;2;32;0;0mXXX"      "\\033[38;2;64;0;0mXXX"      "\\033[38;2;96;0;0mXXX"      "\\033[38;2;128;0;0mXXX",
+                      "\\033[38;2;160;0;0mXXX"     "\\033[38;2;192;0;0mXXX"     "\\033[38;2;224;0;0mXXX"     "\\033[38;2;255;0;0mXXX",
+                      "\\033[38;2;0;255;0m\\n", // change to Grn for next row
+  "\\tItalic  GrnScale: \\033[38;2;0;32;0mXXX"      "\\033[38;2;0;64;0mXXX"      "\\033[38;2;0;96;0mXXX"      "\\033[38;2;0;128;0mXXX",
+                      "\\033[38;2;0;160;0mXXX"     "\\033[38;2;0;192;0mXXX"     "\\033[38;2;0;224;0mXXX"     "\\033[38;2;0;255;0mXXX",
+                      "\\033[38;2;0;0;255m\\n", // change to Blu for next row
+  "\\tItalic  BluScale: \\033[38;2;0;0;32mXXX"     "\\033[38;2;0;0;64mXXX"      "\\033[38;2;0;0;96mXXX"      "\\033[38;2;0;0;128mXXX",
+                      "\\033[38;2;0;0;160mXXX"     "\\033[38;2;0;0;192mXXX"     "\\033[38;2;0;0;224mXXX"     "\\033[38;2;0;0;255mXXX",
+                      "\\n",
+    "\\033[0;4m\\n",     // UNDERLINE
+  "\\tUnderl Grayscale: \\033[38;2;32;32;32mXXX"    "\\033[38;2;64;64;64mXXX"    "\\033[38;2;96;96;96mXXX"    "\\033[38;2;128;128;128mXXX",
+                      "\\033[38;2;160;160;160mXXX" "\\033[38;2;192;192;192mXXX" "\\033[38;2;224;224;224mXXX" "\\033[38;2;255;255;255mXXX",
+                      "\\033[38;2;255;0;0m\\n", // change to Red for next row
+  "\\tUnderl  RedScale: \\033[38;2;32;0;0mXXX"      "\\033[38;2;64;0;0mXXX"      "\\033[38;2;96;0;0mXXX"      "\\033[38;2;128;0;0mXXX",
+                      "\\033[38;2;160;0;0mXXX"     "\\033[38;2;192;0;0mXXX"     "\\033[38;2;224;0;0mXXX"     "\\033[38;2;255;0;0mXXX",
+                      "\\033[38;2;0;255;0m\\n", // change to Grn for next row
+  "\\tUnderl  GrnScale: \\033[38;2;0;32;0mXXX"      "\\033[38;2;0;64;0mXXX"      "\\033[38;2;0;96;0mXXX"      "\\033[38;2;0;128;0mXXX",
+                      "\\033[38;2;0;160;0mXXX"     "\\033[38;2;0;192;0mXXX"     "\\033[38;2;0;224;0mXXX"     "\\033[38;2;0;255;0mXXX",
+                      "\\033[38;2;0;0;255m\\n", // change to Blu for next row
+  "\\tUnderl  BluScale: \\033[38;2;0;0;32mXXX"    "\\033[38;2;0;0;64mXXX"       "\\033[38;2;0;0;96mXXX"      "\\033[38;2;0;0;128mXXX",
+                      "\\033[38;2;0;0;160mXXX"    "\\033[38;2;0;0;192mXXX"      "\\033[38;2;0;0;224mXXX"     "\\033[38;2;0;0;255mXXX",
+                      "\\n",
+    "\\033[0;7m\\n",     // INVERSE
+  "\\tInvers Grayscale: \\033[7;38;2;32;32;32mXXX"  "\\033[38;2;64;64;64mXXX"    "\\033[38;2;96;96;96mXXX"    "\\033[38;2;128;128;128mXXX",
+                      "\\033[38;2;160;160;160mXXX" "\\033[38;2;192;192;192mXXX" "\\033[38;2;224;224;224mXXX" "\\033[38;2;255;255;255mXXX",
+                      "\\033[38;2;255;0;0m\\n", // change to Red for next row
+  "\\tInvers  RedScale: \\033[38;2;32;0;0mXXX"      "\\033[38;2;64;0;0mXXX"      "\\033[38;2;96;0;0mXXX"      "\\033[38;2;128;0;0mXXX",
+                      "\\033[38;2;160;0;0mXXX"     "\\033[38;2;192;0;0mXXX"     "\\033[38;2;224;0;0mXXX"     "\\033[38;2;255;0;0mXXX",
+                      "\\033[38;2;0;255;0m\\n", // change to Grn for next row
+  "\\tInvers  GrnScale: \\033[38;2;0;32;0mXXX"      "\\033[38;2;0;64;0mXXX"      "\\033[38;2;0;96;0mXXX"      "\\033[38;2;0;128;0mXXX",
+                      "\\033[38;2;0;160;0mXXX"     "\\033[38;2;0;192;0mXXX"     "\\033[38;2;0;224;0mXXX"     "\\033[38;2;0;255;0mXXX",
+                      "\\033[38;2;0;0;255m\\n", // change to Blu for next row
+  "\\tInvers  BluScale: \\033[38;2;0;0;32mXXX"     "\\033[38;2;0;0;64mXXX"      "\\033[38;2;0;0;96mXXX"      "\\033[38;2;0;0;128mXXX",
+                      "\\033[38;2;0;0;160mXXX"     "\\033[38;2;0;0;192mXXX"     "\\033[38;2;0;0;224mXXX"     "\\033[38;2;0;0;255mXXX",
+  "\\033[0m\\n\\n",
+  "---> Hit 'e' for next test: ",
+  // Screen 21
+  "\\033[2J\\033[H" "ESC TEST 0021: RGB Color Ramps\\n",
+  "\\n",
+  "Red: ",
+  "\\033[48;2;0;0;0m.\\033[48;2;1;0;0m.\\033[48;2;2;0;0m.\\033[48;2;3;0;0m.\\033[48;2;4;0;0m.\\033[48;2;5;0;0m.\\033[48;2;6;0;0m.\\033[48;2;7;0;0m.",
+  "\\033[48;2;8;0;0m.\\033[48;2;9;0;0m.\\033[48;2;10;0;0m.\\033[48;2;11;0;0m.\\033[48;2;12;0;0m.\\033[48;2;13;0;0m.\\033[48;2;14;0;0m.\\033[48;2;15;0;0m.",
+  "\\033[48;2;16;0;0m.\\033[48;2;17;0;0m.\\033[48;2;18;0;0m.\\033[48;2;19;0;0m.\\033[48;2;20;0;0m.\\033[48;2;21;0;0m.\\033[48;2;22;0;0m.\\033[48;2;23;0;0m.",
+  "\\033[48;2;24;0;0m.\\033[48;2;25;0;0m.\\033[48;2;26;0;0m.\\033[48;2;27;0;0m.\\033[48;2;28;0;0m.\\033[48;2;29;0;0m.\\033[48;2;30;0;0m.\\033[48;2;31;0;0m.",
+  "\\033[48;2;32;0;0m.\\033[48;2;33;0;0m.\\033[48;2;34;0;0m.\\033[48;2;35;0;0m.\\033[48;2;36;0;0m.\\033[48;2;37;0;0m.\\033[48;2;38;0;0m.\\033[48;2;39;0;0m.",
+  "\\033[48;2;40;0;0m.\\033[48;2;41;0;0m.\\033[48;2;42;0;0m.\\033[48;2;43;0;0m.\\033[48;2;44;0;0m.\\033[48;2;45;0;0m.\\033[48;2;46;0;0m.\\033[48;2;47;0;0m.",
+  "\\033[48;2;48;0;0m.\\033[48;2;49;0;0m.\\033[48;2;50;0;0m.\\033[48;2;51;0;0m.\\033[48;2;52;0;0m.\\033[48;2;53;0;0m.\\033[48;2;54;0;0m.\\033[48;2;55;0;0m.",
+  "\\033[48;2;56;0;0m.\\033[48;2;57;0;0m.\\033[48;2;58;0;0m.\\033[48;2;59;0;0m.\\033[48;2;60;0;0m.\\033[48;2;61;0;0m.\\033[48;2;62;0;0m.\\033[48;2;63;0;0m.",
+  "\\033[48;2;64;0;0m.\\033[48;2;65;0;0m.\\033[48;2;66;0;0m.\\033[48;2;67;0;0m.\\033[48;2;68;0;0m.\\033[48;2;69;0;0m.\\033[48;2;70;0;0m.\\033[48;2;71;0;0m.",
+  "\\033[48;2;72;0;0m.\\033[48;2;73;0;0m.\\033[48;2;74;0;0m.\\033[48;2;75;0;0m.\\033[48;2;76;0;0m.\\033[48;2;77;0;0m.\\033[48;2;78;0;0m.\\033[48;2;79;0;0m.",
+  "\\033[48;2;80;0;0m.\\033[48;2;81;0;0m.\\033[48;2;82;0;0m.\\033[48;2;83;0;0m.\\033[48;2;84;0;0m.\\033[48;2;85;0;0m.\\033[48;2;86;0;0m.\\033[48;2;87;0;0m.",
+  "\\033[48;2;88;0;0m.\\033[48;2;89;0;0m.\\033[48;2;90;0;0m.\\033[48;2;91;0;0m.\\033[48;2;92;0;0m.\\033[48;2;93;0;0m.\\033[48;2;94;0;0m.\\033[48;2;95;0;0m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;96;0;0m.\\033[48;2;97;0;0m.\\033[48;2;98;0;0m.\\033[48;2;99;0;0m.\\033[48;2;100;0;0m.\\033[48;2;101;0;0m.\\033[48;2;102;0;0m.\\033[48;2;103;0;0m.",
+  "\\033[48;2;104;0;0m.\\033[48;2;105;0;0m.\\033[48;2;106;0;0m.\\033[48;2;107;0;0m.\\033[48;2;108;0;0m.\\033[48;2;109;0;0m.\\033[48;2;110;0;0m.\\033[48;2;111;0;0m.",
+  "\\033[48;2;112;0;0m.\\033[48;2;113;0;0m.\\033[48;2;114;0;0m.\\033[48;2;115;0;0m.\\033[48;2;116;0;0m.\\033[48;2;117;0;0m.\\033[48;2;118;0;0m.\\033[48;2;119;0;0m.",
+  "\\033[48;2;120;0;0m.\\033[48;2;121;0;0m.\\033[48;2;122;0;0m.\\033[48;2;123;0;0m.\\033[48;2;124;0;0m.\\033[48;2;125;0;0m.\\033[48;2;126;0;0m.\\033[48;2;127;0;0m.",
+  "\\033[48;2;128;0;0m.\\033[48;2;129;0;0m.\\033[48;2;130;0;0m.\\033[48;2;131;0;0m.\\033[48;2;132;0;0m.\\033[48;2;133;0;0m.\\033[48;2;134;0;0m.\\033[48;2;135;0;0m.",
+  "\\033[48;2;136;0;0m.\\033[48;2;137;0;0m.\\033[48;2;138;0;0m.\\033[48;2;139;0;0m.\\033[48;2;140;0;0m.\\033[48;2;141;0;0m.\\033[48;2;142;0;0m.\\033[48;2;143;0;0m.",
+  "\\033[48;2;144;0;0m.\\033[48;2;145;0;0m.\\033[48;2;146;0;0m.\\033[48;2;147;0;0m.\\033[48;2;148;0;0m.\\033[48;2;149;0;0m.\\033[48;2;150;0;0m.\\033[48;2;151;0;0m.",
+  "\\033[48;2;152;0;0m.\\033[48;2;153;0;0m.\\033[48;2;154;0;0m.\\033[48;2;155;0;0m.\\033[48;2;156;0;0m.\\033[48;2;157;0;0m.\\033[48;2;158;0;0m.\\033[48;2;159;0;0m.",
+  "\\033[48;2;160;0;0m.\\033[48;2;161;0;0m.\\033[48;2;162;0;0m.\\033[48;2;163;0;0m.\\033[48;2;164;0;0m.\\033[48;2;165;0;0m.\\033[48;2;166;0;0m.\\033[48;2;167;0;0m.",
+  "\\033[48;2;168;0;0m.\\033[48;2;169;0;0m.\\033[48;2;170;0;0m.\\033[48;2;171;0;0m.\\033[48;2;172;0;0m.\\033[48;2;173;0;0m.\\033[48;2;174;0;0m.\\033[48;2;175;0;0m.",
+  "\\033[48;2;176;0;0m.\\033[48;2;177;0;0m.\\033[48;2;178;0;0m.\\033[48;2;179;0;0m.\\033[48;2;180;0;0m.\\033[48;2;181;0;0m.\\033[48;2;182;0;0m.\\033[48;2;183;0;0m.",
+  "\\033[48;2;184;0;0m.\\033[48;2;185;0;0m.\\033[48;2;186;0;0m.\\033[48;2;187;0;0m.\\033[48;2;188;0;0m.\\033[48;2;189;0;0m.\\033[48;2;190;0;0m.\\033[48;2;191;0;0m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;192;0;0m.\\033[48;2;193;0;0m.\\033[48;2;194;0;0m.\\033[48;2;195;0;0m.\\033[48;2;196;0;0m.\\033[48;2;197;0;0m.\\033[48;2;198;0;0m.\\033[48;2;199;0;0m.",
+  "\\033[48;2;200;0;0m.\\033[48;2;201;0;0m.\\033[48;2;202;0;0m.\\033[48;2;203;0;0m.\\033[48;2;204;0;0m.\\033[48;2;205;0;0m.\\033[48;2;206;0;0m.\\033[48;2;207;0;0m.",
+  "\\033[48;2;208;0;0m.\\033[48;2;209;0;0m.\\033[48;2;210;0;0m.\\033[48;2;211;0;0m.\\033[48;2;212;0;0m.\\033[48;2;213;0;0m.\\033[48;2;214;0;0m.\\033[48;2;215;0;0m.",
+  "\\033[48;2;216;0;0m.\\033[48;2;217;0;0m.\\033[48;2;218;0;0m.\\033[48;2;219;0;0m.\\033[48;2;220;0;0m.\\033[48;2;221;0;0m.\\033[48;2;222;0;0m.\\033[48;2;223;0;0m.",
+  "\\033[48;2;224;0;0m.\\033[48;2;225;0;0m.\\033[48;2;226;0;0m.\\033[48;2;227;0;0m.\\033[48;2;228;0;0m.\\033[48;2;229;0;0m.\\033[48;2;230;0;0m.\\033[48;2;231;0;0m.",
+  "\\033[48;2;232;0;0m.\\033[48;2;233;0;0m.\\033[48;2;234;0;0m.\\033[48;2;235;0;0m.\\033[48;2;236;0;0m.\\033[48;2;237;0;0m.\\033[48;2;238;0;0m.\\033[48;2;239;0;0m.",
+  "\\033[48;2;240;0;0m.\\033[48;2;241;0;0m.\\033[48;2;242;0;0m.\\033[48;2;243;0;0m.\\033[48;2;244;0;0m.\\033[48;2;245;0;0m.\\033[48;2;246;0;0m.\\033[48;2;247;0;0m.",
+  "\\033[48;2;248;0;0m.\\033[48;2;249;0;0m.\\033[48;2;250;0;0m.\\033[48;2;251;0;0m.\\033[48;2;252;0;0m.\\033[48;2;253;0;0m.\\033[48;2;254;0;0m.\\033[48;2;255;0;0m.",
+  "\\033[0m\\n",
+  "\\n",
+  "Grn: ",
+  "\\033[48;2;0;0;0m.\\033[48;2;0;1;0m.\\033[48;2;0;2;0m.\\033[48;2;0;3;0m.\\033[48;2;0;4;0m.\\033[48;2;0;5;0m.\\033[48;2;0;6;0m.\\033[48;2;0;7;0m.",
+  "\\033[48;2;0;8;0m.\\033[48;2;0;9;0m.\\033[48;2;0;10;0m.\\033[48;2;0;11;0m.\\033[48;2;0;12;0m.\\033[48;2;0;13;0m.\\033[48;2;0;14;0m.\\033[48;2;0;15;0m.",
+  "\\033[48;2;0;16;0m.\\033[48;2;0;17;0m.\\033[48;2;0;18;0m.\\033[48;2;0;19;0m.\\033[48;2;0;20;0m.\\033[48;2;0;21;0m.\\033[48;2;0;22;0m.\\033[48;2;0;23;0m.",
+  "\\033[48;2;0;24;0m.\\033[48;2;0;25;0m.\\033[48;2;0;26;0m.\\033[48;2;0;27;0m.\\033[48;2;0;28;0m.\\033[48;2;0;29;0m.\\033[48;2;0;30;0m.\\033[48;2;0;31;0m.",
+  "\\033[48;2;0;32;0m.\\033[48;2;0;33;0m.\\033[48;2;0;34;0m.\\033[48;2;0;35;0m.\\033[48;2;0;36;0m.\\033[48;2;0;37;0m.\\033[48;2;0;38;0m.\\033[48;2;0;39;0m.",
+  "\\033[48;2;0;40;0m.\\033[48;2;0;41;0m.\\033[48;2;0;42;0m.\\033[48;2;0;43;0m.\\033[48;2;0;44;0m.\\033[48;2;0;45;0m.\\033[48;2;0;46;0m.\\033[48;2;0;47;0m.",
+  "\\033[48;2;0;48;0m.\\033[48;2;0;49;0m.\\033[48;2;0;50;0m.\\033[48;2;0;51;0m.\\033[48;2;0;52;0m.\\033[48;2;0;53;0m.\\033[48;2;0;54;0m.\\033[48;2;0;55;0m.",
+  "\\033[48;2;0;56;0m.\\033[48;2;0;57;0m.\\033[48;2;0;58;0m.\\033[48;2;0;59;0m.\\033[48;2;0;60;0m.\\033[48;2;0;61;0m.\\033[48;2;0;62;0m.\\033[48;2;0;63;0m.",
+  "\\033[48;2;0;64;0m.\\033[48;2;0;65;0m.\\033[48;2;0;66;0m.\\033[48;2;0;67;0m.\\033[48;2;0;68;0m.\\033[48;2;0;69;0m.\\033[48;2;0;70;0m.\\033[48;2;0;71;0m.",
+  "\\033[48;2;0;72;0m.\\033[48;2;0;73;0m.\\033[48;2;0;74;0m.\\033[48;2;0;75;0m.\\033[48;2;0;76;0m.\\033[48;2;0;77;0m.\\033[48;2;0;78;0m.\\033[48;2;0;79;0m.",
+  "\\033[48;2;0;80;0m.\\033[48;2;0;81;0m.\\033[48;2;0;82;0m.\\033[48;2;0;83;0m.\\033[48;2;0;84;0m.\\033[48;2;0;85;0m.\\033[48;2;0;86;0m.\\033[48;2;0;87;0m.",
+  "\\033[48;2;0;88;0m.\\033[48;2;0;89;0m.\\033[48;2;0;90;0m.\\033[48;2;0;91;0m.\\033[48;2;0;92;0m.\\033[48;2;0;93;0m.\\033[48;2;0;94;0m.\\033[48;2;0;95;0m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;0;96;0m.\\033[48;2;0;97;0m.\\033[48;2;0;98;0m.\\033[48;2;0;99;0m.\\033[48;2;0;100;0m.\\033[48;2;0;101;0m.\\033[48;2;0;102;0m.\\033[48;2;0;103;0m.",
+  "\\033[48;2;0;104;0m.\\033[48;2;0;105;0m.\\033[48;2;0;106;0m.\\033[48;2;0;107;0m.\\033[48;2;0;108;0m.\\033[48;2;0;109;0m.\\033[48;2;0;110;0m.\\033[48;2;0;111;0m.",
+  "\\033[48;2;0;112;0m.\\033[48;2;0;113;0m.\\033[48;2;0;114;0m.\\033[48;2;0;115;0m.\\033[48;2;0;116;0m.\\033[48;2;0;117;0m.\\033[48;2;0;118;0m.\\033[48;2;0;119;0m.",
+  "\\033[48;2;0;120;0m.\\033[48;2;0;121;0m.\\033[48;2;0;122;0m.\\033[48;2;0;123;0m.\\033[48;2;0;124;0m.\\033[48;2;0;125;0m.\\033[48;2;0;126;0m.\\033[48;2;0;127;0m.",
+  "\\033[48;2;0;128;0m.\\033[48;2;0;129;0m.\\033[48;2;0;130;0m.\\033[48;2;0;131;0m.\\033[48;2;0;132;0m.\\033[48;2;0;133;0m.\\033[48;2;0;134;0m.\\033[48;2;0;135;0m.",
+  "\\033[48;2;0;136;0m.\\033[48;2;0;137;0m.\\033[48;2;0;138;0m.\\033[48;2;0;139;0m.\\033[48;2;0;140;0m.\\033[48;2;0;141;0m.\\033[48;2;0;142;0m.\\033[48;2;0;143;0m.",
+  "\\033[48;2;0;144;0m.\\033[48;2;0;145;0m.\\033[48;2;0;146;0m.\\033[48;2;0;147;0m.\\033[48;2;0;148;0m.\\033[48;2;0;149;0m.\\033[48;2;0;150;0m.\\033[48;2;0;151;0m.",
+  "\\033[48;2;0;152;0m.\\033[48;2;0;153;0m.\\033[48;2;0;154;0m.\\033[48;2;0;155;0m.\\033[48;2;0;156;0m.\\033[48;2;0;157;0m.\\033[48;2;0;158;0m.\\033[48;2;0;159;0m.",
+  "\\033[48;2;0;160;0m.\\033[48;2;0;161;0m.\\033[48;2;0;162;0m.\\033[48;2;0;163;0m.\\033[48;2;0;164;0m.\\033[48;2;0;165;0m.\\033[48;2;0;166;0m.\\033[48;2;0;167;0m.",
+  "\\033[48;2;0;168;0m.\\033[48;2;0;169;0m.\\033[48;2;0;170;0m.\\033[48;2;0;171;0m.\\033[48;2;0;172;0m.\\033[48;2;0;173;0m.\\033[48;2;0;174;0m.\\033[48;2;0;175;0m.",
+  "\\033[48;2;0;176;0m.\\033[48;2;0;177;0m.\\033[48;2;0;178;0m.\\033[48;2;0;179;0m.\\033[48;2;0;180;0m.\\033[48;2;0;181;0m.\\033[48;2;0;182;0m.\\033[48;2;0;183;0m.",
+  "\\033[48;2;0;184;0m.\\033[48;2;0;185;0m.\\033[48;2;0;186;0m.\\033[48;2;0;187;0m.\\033[48;2;0;188;0m.\\033[48;2;0;189;0m.\\033[48;2;0;190;0m.\\033[48;2;0;191;0m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;0;192;0m.\\033[48;2;0;193;0m.\\033[48;2;0;194;0m.\\033[48;2;0;195;0m.\\033[48;2;0;196;0m.\\033[48;2;0;197;0m.\\033[48;2;0;198;0m.\\033[48;2;0;199;0m.",
+  "\\033[48;2;0;200;0m.\\033[48;2;0;201;0m.\\033[48;2;0;202;0m.\\033[48;2;0;203;0m.\\033[48;2;0;204;0m.\\033[48;2;0;205;0m.\\033[48;2;0;206;0m.\\033[48;2;0;207;0m.",
+  "\\033[48;2;0;208;0m.\\033[48;2;0;209;0m.\\033[48;2;0;210;0m.\\033[48;2;0;211;0m.\\033[48;2;0;212;0m.\\033[48;2;0;213;0m.\\033[48;2;0;214;0m.\\033[48;2;0;215;0m.",
+  "\\033[48;2;0;216;0m.\\033[48;2;0;217;0m.\\033[48;2;0;218;0m.\\033[48;2;0;219;0m.\\033[48;2;0;220;0m.\\033[48;2;0;221;0m.\\033[48;2;0;222;0m.\\033[48;2;0;223;0m.",
+  "\\033[48;2;0;224;0m.\\033[48;2;0;225;0m.\\033[48;2;0;226;0m.\\033[48;2;0;227;0m.\\033[48;2;0;228;0m.\\033[48;2;0;229;0m.\\033[48;2;0;230;0m.\\033[48;2;0;231;0m.",
+  "\\033[48;2;0;232;0m.\\033[48;2;0;233;0m.\\033[48;2;0;234;0m.\\033[48;2;0;235;0m.\\033[48;2;0;236;0m.\\033[48;2;0;237;0m.\\033[48;2;0;238;0m.\\033[48;2;0;239;0m.",
+  "\\033[48;2;0;240;0m.\\033[48;2;0;241;0m.\\033[48;2;0;242;0m.\\033[48;2;0;243;0m.\\033[48;2;0;244;0m.\\033[48;2;0;245;0m.\\033[48;2;0;246;0m.\\033[48;2;0;247;0m.",
+  "\\033[48;2;0;248;0m.\\033[48;2;0;249;0m.\\033[48;2;0;250;0m.\\033[48;2;0;251;0m.\\033[48;2;0;252;0m.\\033[48;2;0;253;0m.\\033[48;2;0;254;0m.\\033[48;2;0;255;0m.",
+  "\\033[0m\\n",
+  "\\n",
+  "Blu: ",
+  "\\033[48;2;0;0;0m.\\033[48;2;0;0;1m.\\033[48;2;0;0;2m.\\033[48;2;0;0;3m.\\033[48;2;0;0;4m.\\033[48;2;0;0;5m.\\033[48;2;0;0;6m.\\033[48;2;0;0;7m.",
+  "\\033[48;2;0;0;8m.\\033[48;2;0;0;9m.\\033[48;2;0;0;10m.\\033[48;2;0;0;11m.\\033[48;2;0;0;12m.\\033[48;2;0;0;13m.\\033[48;2;0;0;14m.\\033[48;2;0;0;15m.",
+  "\\033[48;2;0;0;16m.\\033[48;2;0;0;17m.\\033[48;2;0;0;18m.\\033[48;2;0;0;19m.\\033[48;2;0;0;20m.\\033[48;2;0;0;21m.\\033[48;2;0;0;22m.\\033[48;2;0;0;23m.",
+  "\\033[48;2;0;0;24m.\\033[48;2;0;0;25m.\\033[48;2;0;0;26m.\\033[48;2;0;0;27m.\\033[48;2;0;0;28m.\\033[48;2;0;0;29m.\\033[48;2;0;0;30m.\\033[48;2;0;0;31m.",
+  "\\033[48;2;0;0;32m.\\033[48;2;0;0;33m.\\033[48;2;0;0;34m.\\033[48;2;0;0;35m.\\033[48;2;0;0;36m.\\033[48;2;0;0;37m.\\033[48;2;0;0;38m.\\033[48;2;0;0;39m.",
+  "\\033[48;2;0;0;40m.\\033[48;2;0;0;41m.\\033[48;2;0;0;42m.\\033[48;2;0;0;43m.\\033[48;2;0;0;44m.\\033[48;2;0;0;45m.\\033[48;2;0;0;46m.\\033[48;2;0;0;47m.",
+  "\\033[48;2;0;0;48m.\\033[48;2;0;0;49m.\\033[48;2;0;0;50m.\\033[48;2;0;0;51m.\\033[48;2;0;0;52m.\\033[48;2;0;0;53m.\\033[48;2;0;0;54m.\\033[48;2;0;0;55m.",
+  "\\033[48;2;0;0;56m.\\033[48;2;0;0;57m.\\033[48;2;0;0;58m.\\033[48;2;0;0;59m.\\033[48;2;0;0;60m.\\033[48;2;0;0;61m.\\033[48;2;0;0;62m.\\033[48;2;0;0;63m.",
+  "\\033[48;2;0;0;64m.\\033[48;2;0;0;65m.\\033[48;2;0;0;66m.\\033[48;2;0;0;67m.\\033[48;2;0;0;68m.\\033[48;2;0;0;69m.\\033[48;2;0;0;70m.\\033[48;2;0;0;71m.",
+  "\\033[48;2;0;0;72m.\\033[48;2;0;0;73m.\\033[48;2;0;0;74m.\\033[48;2;0;0;75m.\\033[48;2;0;0;76m.\\033[48;2;0;0;77m.\\033[48;2;0;0;78m.\\033[48;2;0;0;79m.",
+  "\\033[48;2;0;0;80m.\\033[48;2;0;0;81m.\\033[48;2;0;0;82m.\\033[48;2;0;0;83m.\\033[48;2;0;0;84m.\\033[48;2;0;0;85m.\\033[48;2;0;0;86m.\\033[48;2;0;0;87m.",
+  "\\033[48;2;0;0;88m.\\033[48;2;0;0;89m.\\033[48;2;0;0;90m.\\033[48;2;0;0;91m.\\033[48;2;0;0;92m.\\033[48;2;0;0;93m.\\033[48;2;0;0;94m.\\033[48;2;0;0;95m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;0;0;96m.\\033[48;2;0;0;97m.\\033[48;2;0;0;98m.\\033[48;2;0;0;99m.\\033[48;2;0;0;100m.\\033[48;2;0;0;101m.\\033[48;2;0;0;102m.\\033[48;2;0;0;103m.",
+  "\\033[48;2;0;0;104m.\\033[48;2;0;0;105m.\\033[48;2;0;0;106m.\\033[48;2;0;0;107m.\\033[48;2;0;0;108m.\\033[48;2;0;0;109m.\\033[48;2;0;0;110m.\\033[48;2;0;0;111m.",
+  "\\033[48;2;0;0;112m.\\033[48;2;0;0;113m.\\033[48;2;0;0;114m.\\033[48;2;0;0;115m.\\033[48;2;0;0;116m.\\033[48;2;0;0;117m.\\033[48;2;0;0;118m.\\033[48;2;0;0;119m.",
+  "\\033[48;2;0;0;120m.\\033[48;2;0;0;121m.\\033[48;2;0;0;122m.\\033[48;2;0;0;123m.\\033[48;2;0;0;124m.\\033[48;2;0;0;125m.\\033[48;2;0;0;126m.\\033[48;2;0;0;127m.",
+  "\\033[48;2;0;0;128m.\\033[48;2;0;0;129m.\\033[48;2;0;0;130m.\\033[48;2;0;0;131m.\\033[48;2;0;0;132m.\\033[48;2;0;0;133m.\\033[48;2;0;0;134m.\\033[48;2;0;0;135m.",
+  "\\033[48;2;0;0;136m.\\033[48;2;0;0;137m.\\033[48;2;0;0;138m.\\033[48;2;0;0;139m.\\033[48;2;0;0;140m.\\033[48;2;0;0;141m.\\033[48;2;0;0;142m.\\033[48;2;0;0;143m.",
+  "\\033[48;2;0;0;144m.\\033[48;2;0;0;145m.\\033[48;2;0;0;146m.\\033[48;2;0;0;147m.\\033[48;2;0;0;148m.\\033[48;2;0;0;149m.\\033[48;2;0;0;150m.\\033[48;2;0;0;151m.",
+  "\\033[48;2;0;0;152m.\\033[48;2;0;0;153m.\\033[48;2;0;0;154m.\\033[48;2;0;0;155m.\\033[48;2;0;0;156m.\\033[48;2;0;0;157m.\\033[48;2;0;0;158m.\\033[48;2;0;0;159m.",
+  "\\033[48;2;0;0;160m.\\033[48;2;0;0;161m.\\033[48;2;0;0;162m.\\033[48;2;0;0;163m.\\033[48;2;0;0;164m.\\033[48;2;0;0;165m.\\033[48;2;0;0;166m.\\033[48;2;0;0;167m.",
+  "\\033[48;2;0;0;168m.\\033[48;2;0;0;169m.\\033[48;2;0;0;170m.\\033[48;2;0;0;171m.\\033[48;2;0;0;172m.\\033[48;2;0;0;173m.\\033[48;2;0;0;174m.\\033[48;2;0;0;175m.",
+  "\\033[48;2;0;0;176m.\\033[48;2;0;0;177m.\\033[48;2;0;0;178m.\\033[48;2;0;0;179m.\\033[48;2;0;0;180m.\\033[48;2;0;0;181m.\\033[48;2;0;0;182m.\\033[48;2;0;0;183m.",
+  "\\033[48;2;0;0;184m.\\033[48;2;0;0;185m.\\033[48;2;0;0;186m.\\033[48;2;0;0;187m.\\033[48;2;0;0;188m.\\033[48;2;0;0;189m.\\033[48;2;0;0;190m.\\033[48;2;0;0;191m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;0;0;192m.\\033[48;2;0;0;193m.\\033[48;2;0;0;194m.\\033[48;2;0;0;195m.\\033[48;2;0;0;196m.\\033[48;2;0;0;197m.\\033[48;2;0;0;198m.\\033[48;2;0;0;199m.",
+  "\\033[48;2;0;0;200m.\\033[48;2;0;0;201m.\\033[48;2;0;0;202m.\\033[48;2;0;0;203m.\\033[48;2;0;0;204m.\\033[48;2;0;0;205m.\\033[48;2;0;0;206m.\\033[48;2;0;0;207m.",
+  "\\033[48;2;0;0;208m.\\033[48;2;0;0;209m.\\033[48;2;0;0;210m.\\033[48;2;0;0;211m.\\033[48;2;0;0;212m.\\033[48;2;0;0;213m.\\033[48;2;0;0;214m.\\033[48;2;0;0;215m.",
+  "\\033[48;2;0;0;216m.\\033[48;2;0;0;217m.\\033[48;2;0;0;218m.\\033[48;2;0;0;219m.\\033[48;2;0;0;220m.\\033[48;2;0;0;221m.\\033[48;2;0;0;222m.\\033[48;2;0;0;223m.",
+  "\\033[48;2;0;0;224m.\\033[48;2;0;0;225m.\\033[48;2;0;0;226m.\\033[48;2;0;0;227m.\\033[48;2;0;0;228m.\\033[48;2;0;0;229m.\\033[48;2;0;0;230m.\\033[48;2;0;0;231m.",
+  "\\033[48;2;0;0;232m.\\033[48;2;0;0;233m.\\033[48;2;0;0;234m.\\033[48;2;0;0;235m.\\033[48;2;0;0;236m.\\033[48;2;0;0;237m.\\033[48;2;0;0;238m.\\033[48;2;0;0;239m.",
+  "\\033[48;2;0;0;240m.\\033[48;2;0;0;241m.\\033[48;2;0;0;242m.\\033[48;2;0;0;243m.\\033[48;2;0;0;244m.\\033[48;2;0;0;245m.\\033[48;2;0;0;246m.\\033[48;2;0;0;247m.",
+  "\\033[48;2;0;0;248m.\\033[48;2;0;0;249m.\\033[48;2;0;0;250m.\\033[48;2;0;0;251m.\\033[48;2;0;0;252m.\\033[48;2;0;0;253m.\\033[48;2;0;0;254m.\\033[48;2;0;0;255m.",
+  "\\033[0m\\n     ",
+  "\\n",
+  /**
+     For generating an HSV hue ramp, see:
+     https://en.wikipedia.org/wiki/HSL_and_HSV\#/media/File:HSV-RGB-comparison.svg
+     Basically:
+
+    255 :  RRRRRRR                            RRRRRRRR
+        :         R                          R
+        :          R                        R
+        :           R         RED          R
+        :            R                    R
+        :             R                  R
+        :              R                R
+      0 :               RRRRRRRRRRRRRRRR
+        :..|......|......|......|......|......|......|
+           0     60     120    180    240    300    360
+
+
+
+    255 :         GGGGGGGGGGGGGG
+        :        G              G
+        :       G                G
+        :      G                  G
+        :     G       GREEN        G
+        :    G                      G
+        :   G                        G
+      0 :  G                          GGGGGGGGGGGGGGGG
+        :..|......|......|......|......|......|......|
+           0     60     120    180    240    300    360
+
+
+    255 :                       BBBBBBBBBBBBBBB
+        :                      B               B
+        :                     B                 B
+        :                    B       BLUE        B
+        :                   B                     B
+        :                  B                       B
+        :                 B                         B
+      0 :  GBBBBBBBBBBBBBB                           B
+        :..|......|......|......|......|......|......|
+           0     60     120    180    240    300    360
+    Here's some perl code that generates the Hue ramp:
+    $count = 0;
+    for ($t=0; $t<256;$t+=2) { printf("\\\\033[48;2;%03d;%03d;%03dm ",255,$t,0);     if ((++$count % 8) == 0) { printf("\\n"); } }
+    for ($t=0; $t<256;$t+=2) { printf("\\\\033[48;2;%03d;%03d;%03dm ",255-$t,255,0); if ((++$count % 8) == 0) { printf("\\n"); } }
+    for ($t=0; $t<256;$t+=2) { printf("\\\\033[48;2;%03d;%03d;%03dm ",0,255,$t);     if ((++$count % 8) == 0) { printf("\\n"); } }
+    for ($t=0; $t<256;$t+=2) { printf("\\\\033[48;2;%03d;%03d;%03dm ",0,255-$t,255); if ((++$count % 8) == 0) { printf("\\n"); } }
+    for ($t=0; $t<256;$t+=2) { printf("\\\\033[48;2;%03d;%03d;%03dm ",$t,0,255);     if ((++$count % 8) == 0) { printf("\\n"); } }
+    for ($t=0; $t<256;$t+=2) { printf("\\\\033[48;2;%03d;%03d;%03dm ",255,0,255-$t); if ((++$count % 8) == 0) { printf("\\n"); } }
+**/
+  "Hue: ",
+  "\\033[48;2;255;000;000m.\\033[48;2;255;001;000m.\\033[48;2;255;002;000m.\\033[48;2;255;003;000m.\\033[48;2;255;004;000m.\\033[48;2;255;005;000m.\\033[48;2;255;006;000m.\\033[48;2;255;007;000m.",
+  "\\033[48;2;255;008;000m.\\033[48;2;255;009;000m.\\033[48;2;255;010;000m.\\033[48;2;255;011;000m.\\033[48;2;255;012;000m.\\033[48;2;255;013;000m.\\033[48;2;255;014;000m.\\033[48;2;255;015;000m.",
+  "\\033[48;2;255;016;000m.\\033[48;2;255;017;000m.\\033[48;2;255;018;000m.\\033[48;2;255;019;000m.\\033[48;2;255;020;000m.\\033[48;2;255;021;000m.\\033[48;2;255;022;000m.\\033[48;2;255;023;000m.",
+  "\\033[48;2;255;024;000m.\\033[48;2;255;025;000m.\\033[48;2;255;026;000m.\\033[48;2;255;027;000m.\\033[48;2;255;028;000m.\\033[48;2;255;029;000m.\\033[48;2;255;030;000m.\\033[48;2;255;031;000m.",
+  "\\033[48;2;255;032;000m.\\033[48;2;255;033;000m.\\033[48;2;255;034;000m.\\033[48;2;255;035;000m.\\033[48;2;255;036;000m.\\033[48;2;255;037;000m.\\033[48;2;255;038;000m.\\033[48;2;255;039;000m.",
+  "\\033[48;2;255;040;000m.\\033[48;2;255;041;000m.\\033[48;2;255;042;000m.\\033[48;2;255;043;000m.\\033[48;2;255;044;000m.\\033[48;2;255;045;000m.\\033[48;2;255;046;000m.\\033[48;2;255;047;000m.",
+  "\\033[48;2;255;048;000m.\\033[48;2;255;049;000m.\\033[48;2;255;050;000m.\\033[48;2;255;051;000m.\\033[48;2;255;052;000m.\\033[48;2;255;053;000m.\\033[48;2;255;054;000m.\\033[48;2;255;055;000m.",
+  "\\033[48;2;255;056;000m.\\033[48;2;255;057;000m.\\033[48;2;255;058;000m.\\033[48;2;255;059;000m.\\033[48;2;255;060;000m.\\033[48;2;255;061;000m.\\033[48;2;255;062;000m.\\033[48;2;255;063;000m.",
+  "\\033[48;2;255;064;000m.\\033[48;2;255;065;000m.\\033[48;2;255;066;000m.\\033[48;2;255;067;000m.\\033[48;2;255;068;000m.\\033[48;2;255;069;000m.\\033[48;2;255;070;000m.\\033[48;2;255;071;000m.",
+  "\\033[48;2;255;072;000m.\\033[48;2;255;073;000m.\\033[48;2;255;074;000m.\\033[48;2;255;075;000m.\\033[48;2;255;076;000m.\\033[48;2;255;077;000m.\\033[48;2;255;078;000m.\\033[48;2;255;079;000m.",
+  "\\033[48;2;255;080;000m.\\033[48;2;255;081;000m.\\033[48;2;255;082;000m.\\033[48;2;255;083;000m.\\033[48;2;255;084;000m.\\033[48;2;255;085;000m.\\033[48;2;255;086;000m.\\033[48;2;255;087;000m.",
+  "\\033[48;2;255;088;000m.\\033[48;2;255;089;000m.\\033[48;2;255;090;000m.\\033[48;2;255;091;000m.\\033[48;2;255;092;000m.\\033[48;2;255;093;000m.\\033[48;2;255;094;000m.\\033[48;2;255;095;000m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;255;096;000m.\\033[48;2;255;097;000m.\\033[48;2;255;098;000m.\\033[48;2;255;099;000m.\\033[48;2;255;100;000m.\\033[48;2;255;101;000m.\\033[48;2;255;102;000m.\\033[48;2;255;103;000m.",
+  "\\033[48;2;255;104;000m.\\033[48;2;255;105;000m.\\033[48;2;255;106;000m.\\033[48;2;255;107;000m.\\033[48;2;255;108;000m.\\033[48;2;255;109;000m.\\033[48;2;255;110;000m.\\033[48;2;255;111;000m.",
+  "\\033[48;2;255;112;000m.\\033[48;2;255;113;000m.\\033[48;2;255;114;000m.\\033[48;2;255;115;000m.\\033[48;2;255;116;000m.\\033[48;2;255;117;000m.\\033[48;2;255;118;000m.\\033[48;2;255;119;000m.",
+  "\\033[48;2;255;120;000m.\\033[48;2;255;121;000m.\\033[48;2;255;122;000m.\\033[48;2;255;123;000m.\\033[48;2;255;124;000m.\\033[48;2;255;125;000m.\\033[48;2;255;126;000m.\\033[48;2;255;127;000m.",
+  "\\033[48;2;255;128;000m.\\033[48;2;255;129;000m.\\033[48;2;255;130;000m.\\033[48;2;255;131;000m.\\033[48;2;255;132;000m.\\033[48;2;255;133;000m.\\033[48;2;255;134;000m.\\033[48;2;255;135;000m.",
+  "\\033[48;2;255;136;000m.\\033[48;2;255;137;000m.\\033[48;2;255;138;000m.\\033[48;2;255;139;000m.\\033[48;2;255;140;000m.\\033[48;2;255;141;000m.\\033[48;2;255;142;000m.\\033[48;2;255;143;000m.",
+  "\\033[48;2;255;144;000m.\\033[48;2;255;145;000m.\\033[48;2;255;146;000m.\\033[48;2;255;147;000m.\\033[48;2;255;148;000m.\\033[48;2;255;149;000m.\\033[48;2;255;150;000m.\\033[48;2;255;151;000m.",
+  "\\033[48;2;255;152;000m.\\033[48;2;255;153;000m.\\033[48;2;255;154;000m.\\033[48;2;255;155;000m.\\033[48;2;255;156;000m.\\033[48;2;255;157;000m.\\033[48;2;255;158;000m.\\033[48;2;255;159;000m.",
+  "\\033[48;2;255;160;000m.\\033[48;2;255;161;000m.\\033[48;2;255;162;000m.\\033[48;2;255;163;000m.\\033[48;2;255;164;000m.\\033[48;2;255;165;000m.\\033[48;2;255;166;000m.\\033[48;2;255;167;000m.",
+  "\\033[48;2;255;168;000m.\\033[48;2;255;169;000m.\\033[48;2;255;170;000m.\\033[48;2;255;171;000m.\\033[48;2;255;172;000m.\\033[48;2;255;173;000m.\\033[48;2;255;174;000m.\\033[48;2;255;175;000m.",
+  "\\033[48;2;255;176;000m.\\033[48;2;255;177;000m.\\033[48;2;255;178;000m.\\033[48;2;255;179;000m.\\033[48;2;255;180;000m.\\033[48;2;255;181;000m.\\033[48;2;255;182;000m.\\033[48;2;255;183;000m.",
+  "\\033[48;2;255;184;000m.\\033[48;2;255;185;000m.\\033[48;2;255;186;000m.\\033[48;2;255;187;000m.\\033[48;2;255;188;000m.\\033[48;2;255;189;000m.\\033[48;2;255;190;000m.\\033[48;2;255;191;000m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;255;192;000m.\\033[48;2;255;193;000m.\\033[48;2;255;194;000m.\\033[48;2;255;195;000m.\\033[48;2;255;196;000m.\\033[48;2;255;197;000m.\\033[48;2;255;198;000m.\\033[48;2;255;199;000m.",
+  "\\033[48;2;255;200;000m.\\033[48;2;255;201;000m.\\033[48;2;255;202;000m.\\033[48;2;255;203;000m.\\033[48;2;255;204;000m.\\033[48;2;255;205;000m.\\033[48;2;255;206;000m.\\033[48;2;255;207;000m.",
+  "\\033[48;2;255;208;000m.\\033[48;2;255;209;000m.\\033[48;2;255;210;000m.\\033[48;2;255;211;000m.\\033[48;2;255;212;000m.\\033[48;2;255;213;000m.\\033[48;2;255;214;000m.\\033[48;2;255;215;000m.",
+  "\\033[48;2;255;216;000m.\\033[48;2;255;217;000m.\\033[48;2;255;218;000m.\\033[48;2;255;219;000m.\\033[48;2;255;220;000m.\\033[48;2;255;221;000m.\\033[48;2;255;222;000m.\\033[48;2;255;223;000m.",
+  "\\033[48;2;255;224;000m.\\033[48;2;255;225;000m.\\033[48;2;255;226;000m.\\033[48;2;255;227;000m.\\033[48;2;255;228;000m.\\033[48;2;255;229;000m.\\033[48;2;255;230;000m.\\033[48;2;255;231;000m.",
+  "\\033[48;2;255;232;000m.\\033[48;2;255;233;000m.\\033[48;2;255;234;000m.\\033[48;2;255;235;000m.\\033[48;2;255;236;000m.\\033[48;2;255;237;000m.\\033[48;2;255;238;000m.\\033[48;2;255;239;000m.",
+  "\\033[48;2;255;240;000m.\\033[48;2;255;241;000m.\\033[48;2;255;242;000m.\\033[48;2;255;243;000m.\\033[48;2;255;244;000m.\\033[48;2;255;245;000m.\\033[48;2;255;246;000m.\\033[48;2;255;247;000m.",
+  "\\033[48;2;255;248;000m.\\033[48;2;255;249;000m.\\033[48;2;255;250;000m.\\033[48;2;255;251;000m.\\033[48;2;255;252;000m.\\033[48;2;255;253;000m.\\033[48;2;255;254;000m.\\033[48;2;255;255;000m.",
+  "\\033[48;2;255;255;000m.\\033[48;2;254;255;000m.\\033[48;2;253;255;000m.\\033[48;2;252;255;000m.\\033[48;2;251;255;000m.\\033[48;2;250;255;000m.\\033[48;2;249;255;000m.\\033[48;2;248;255;000m.",
+  "\\033[48;2;247;255;000m.\\033[48;2;246;255;000m.\\033[48;2;245;255;000m.\\033[48;2;244;255;000m.\\033[48;2;243;255;000m.\\033[48;2;242;255;000m.\\033[48;2;241;255;000m.\\033[48;2;240;255;000m.",
+  "\\033[48;2;239;255;000m.\\033[48;2;238;255;000m.\\033[48;2;237;255;000m.\\033[48;2;236;255;000m.\\033[48;2;235;255;000m.\\033[48;2;234;255;000m.\\033[48;2;233;255;000m.\\033[48;2;232;255;000m.",
+  "\\033[48;2;231;255;000m.\\033[48;2;230;255;000m.\\033[48;2;229;255;000m.\\033[48;2;228;255;000m.\\033[48;2;227;255;000m.\\033[48;2;226;255;000m.\\033[48;2;225;255;000m.\\033[48;2;224;255;000m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;223;255;000m.\\033[48;2;222;255;000m.\\033[48;2;221;255;000m.\\033[48;2;220;255;000m.\\033[48;2;219;255;000m.\\033[48;2;218;255;000m.\\033[48;2;217;255;000m.\\033[48;2;216;255;000m.",
+  "\\033[48;2;215;255;000m.\\033[48;2;214;255;000m.\\033[48;2;213;255;000m.\\033[48;2;212;255;000m.\\033[48;2;211;255;000m.\\033[48;2;210;255;000m.\\033[48;2;209;255;000m.\\033[48;2;208;255;000m.",
+  "\\033[48;2;207;255;000m.\\033[48;2;206;255;000m.\\033[48;2;205;255;000m.\\033[48;2;204;255;000m.\\033[48;2;203;255;000m.\\033[48;2;202;255;000m.\\033[48;2;201;255;000m.\\033[48;2;200;255;000m.",
+  "\\033[48;2;199;255;000m.\\033[48;2;198;255;000m.\\033[48;2;197;255;000m.\\033[48;2;196;255;000m.\\033[48;2;195;255;000m.\\033[48;2;194;255;000m.\\033[48;2;193;255;000m.\\033[48;2;192;255;000m.",
+  "\\033[48;2;191;255;000m.\\033[48;2;190;255;000m.\\033[48;2;189;255;000m.\\033[48;2;188;255;000m.\\033[48;2;187;255;000m.\\033[48;2;186;255;000m.\\033[48;2;185;255;000m.\\033[48;2;184;255;000m.",
+  "\\033[48;2;183;255;000m.\\033[48;2;182;255;000m.\\033[48;2;181;255;000m.\\033[48;2;180;255;000m.\\033[48;2;179;255;000m.\\033[48;2;178;255;000m.\\033[48;2;177;255;000m.\\033[48;2;176;255;000m.",
+  "\\033[48;2;175;255;000m.\\033[48;2;174;255;000m.\\033[48;2;173;255;000m.\\033[48;2;172;255;000m.\\033[48;2;171;255;000m.\\033[48;2;170;255;000m.\\033[48;2;169;255;000m.\\033[48;2;168;255;000m.",
+  "\\033[48;2;167;255;000m.\\033[48;2;166;255;000m.\\033[48;2;165;255;000m.\\033[48;2;164;255;000m.\\033[48;2;163;255;000m.\\033[48;2;162;255;000m.\\033[48;2;161;255;000m.\\033[48;2;160;255;000m.",
+  "\\033[48;2;159;255;000m.\\033[48;2;158;255;000m.\\033[48;2;157;255;000m.\\033[48;2;156;255;000m.\\033[48;2;155;255;000m.\\033[48;2;154;255;000m.\\033[48;2;153;255;000m.\\033[48;2;152;255;000m.",
+  "\\033[48;2;151;255;000m.\\033[48;2;150;255;000m.\\033[48;2;149;255;000m.\\033[48;2;148;255;000m.\\033[48;2;147;255;000m.\\033[48;2;146;255;000m.\\033[48;2;145;255;000m.\\033[48;2;144;255;000m.",
+  "\\033[48;2;143;255;000m.\\033[48;2;142;255;000m.\\033[48;2;141;255;000m.\\033[48;2;140;255;000m.\\033[48;2;139;255;000m.\\033[48;2;138;255;000m.\\033[48;2;137;255;000m.\\033[48;2;136;255;000m.",
+  "\\033[48;2;135;255;000m.\\033[48;2;134;255;000m.\\033[48;2;133;255;000m.\\033[48;2;132;255;000m.\\033[48;2;131;255;000m.\\033[48;2;130;255;000m.\\033[48;2;129;255;000m.\\033[48;2;128;255;000m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;127;255;000m.\\033[48;2;126;255;000m.\\033[48;2;125;255;000m.\\033[48;2;124;255;000m.\\033[48;2;123;255;000m.\\033[48;2;122;255;000m.\\033[48;2;121;255;000m.\\033[48;2;120;255;000m.",
+  "\\033[48;2;119;255;000m.\\033[48;2;118;255;000m.\\033[48;2;117;255;000m.\\033[48;2;116;255;000m.\\033[48;2;115;255;000m.\\033[48;2;114;255;000m.\\033[48;2;113;255;000m.\\033[48;2;112;255;000m.",
+  "\\033[48;2;111;255;000m.\\033[48;2;110;255;000m.\\033[48;2;109;255;000m.\\033[48;2;108;255;000m.\\033[48;2;107;255;000m.\\033[48;2;106;255;000m.\\033[48;2;105;255;000m.\\033[48;2;104;255;000m.",
+  "\\033[48;2;103;255;000m.\\033[48;2;102;255;000m.\\033[48;2;101;255;000m.\\033[48;2;100;255;000m.\\033[48;2;099;255;000m.\\033[48;2;098;255;000m.\\033[48;2;097;255;000m.\\033[48;2;096;255;000m.",
+  "\\033[48;2;095;255;000m.\\033[48;2;094;255;000m.\\033[48;2;093;255;000m.\\033[48;2;092;255;000m.\\033[48;2;091;255;000m.\\033[48;2;090;255;000m.\\033[48;2;089;255;000m.\\033[48;2;088;255;000m.",
+  "\\033[48;2;087;255;000m.\\033[48;2;086;255;000m.\\033[48;2;085;255;000m.\\033[48;2;084;255;000m.\\033[48;2;083;255;000m.\\033[48;2;082;255;000m.\\033[48;2;081;255;000m.\\033[48;2;080;255;000m.",
+  "\\033[48;2;079;255;000m.\\033[48;2;078;255;000m.\\033[48;2;077;255;000m.\\033[48;2;076;255;000m.\\033[48;2;075;255;000m.\\033[48;2;074;255;000m.\\033[48;2;073;255;000m.\\033[48;2;072;255;000m.",
+  "\\033[48;2;071;255;000m.\\033[48;2;070;255;000m.\\033[48;2;069;255;000m.\\033[48;2;068;255;000m.\\033[48;2;067;255;000m.\\033[48;2;066;255;000m.\\033[48;2;065;255;000m.\\033[48;2;064;255;000m.",
+  "\\033[48;2;063;255;000m.\\033[48;2;062;255;000m.\\033[48;2;061;255;000m.\\033[48;2;060;255;000m.\\033[48;2;059;255;000m.\\033[48;2;058;255;000m.\\033[48;2;057;255;000m.\\033[48;2;056;255;000m.",
+  "\\033[48;2;055;255;000m.\\033[48;2;054;255;000m.\\033[48;2;053;255;000m.\\033[48;2;052;255;000m.\\033[48;2;051;255;000m.\\033[48;2;050;255;000m.\\033[48;2;049;255;000m.\\033[48;2;048;255;000m.",
+  "\\033[48;2;047;255;000m.\\033[48;2;046;255;000m.\\033[48;2;045;255;000m.\\033[48;2;044;255;000m.\\033[48;2;043;255;000m.\\033[48;2;042;255;000m.\\033[48;2;041;255;000m.\\033[48;2;040;255;000m.",
+  "\\033[48;2;039;255;000m.\\033[48;2;038;255;000m.\\033[48;2;037;255;000m.\\033[48;2;036;255;000m.\\033[48;2;035;255;000m.\\033[48;2;034;255;000m.\\033[48;2;033;255;000m.\\033[48;2;032;255;000m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;031;255;000m.\\033[48;2;030;255;000m.\\033[48;2;029;255;000m.\\033[48;2;028;255;000m.\\033[48;2;027;255;000m.\\033[48;2;026;255;000m.\\033[48;2;025;255;000m.\\033[48;2;024;255;000m.",
+  "\\033[48;2;023;255;000m.\\033[48;2;022;255;000m.\\033[48;2;021;255;000m.\\033[48;2;020;255;000m.\\033[48;2;019;255;000m.\\033[48;2;018;255;000m.\\033[48;2;017;255;000m.\\033[48;2;016;255;000m.",
+  "\\033[48;2;015;255;000m.\\033[48;2;014;255;000m.\\033[48;2;013;255;000m.\\033[48;2;012;255;000m.\\033[48;2;011;255;000m.\\033[48;2;010;255;000m.\\033[48;2;009;255;000m.\\033[48;2;008;255;000m.",
+  "\\033[48;2;007;255;000m.\\033[48;2;006;255;000m.\\033[48;2;005;255;000m.\\033[48;2;004;255;000m.\\033[48;2;003;255;000m.\\033[48;2;002;255;000m.\\033[48;2;001;255;000m.\\033[48;2;000;255;000m.",
+  "\\033[48;2;000;255;000m.\\033[48;2;000;255;001m.\\033[48;2;000;255;002m.\\033[48;2;000;255;003m.\\033[48;2;000;255;004m.\\033[48;2;000;255;005m.\\033[48;2;000;255;006m.\\033[48;2;000;255;007m.",
+  "\\033[48;2;000;255;008m.\\033[48;2;000;255;009m.\\033[48;2;000;255;010m.\\033[48;2;000;255;011m.\\033[48;2;000;255;012m.\\033[48;2;000;255;013m.\\033[48;2;000;255;014m.\\033[48;2;000;255;015m.",
+  "\\033[48;2;000;255;016m.\\033[48;2;000;255;017m.\\033[48;2;000;255;018m.\\033[48;2;000;255;019m.\\033[48;2;000;255;020m.\\033[48;2;000;255;021m.\\033[48;2;000;255;022m.\\033[48;2;000;255;023m.",
+  "\\033[48;2;000;255;024m.\\033[48;2;000;255;025m.\\033[48;2;000;255;026m.\\033[48;2;000;255;027m.\\033[48;2;000;255;028m.\\033[48;2;000;255;029m.\\033[48;2;000;255;030m.\\033[48;2;000;255;031m.",
+  "\\033[48;2;000;255;032m.\\033[48;2;000;255;033m.\\033[48;2;000;255;034m.\\033[48;2;000;255;035m.\\033[48;2;000;255;036m.\\033[48;2;000;255;037m.\\033[48;2;000;255;038m.\\033[48;2;000;255;039m.",
+  "\\033[48;2;000;255;040m.\\033[48;2;000;255;041m.\\033[48;2;000;255;042m.\\033[48;2;000;255;043m.\\033[48;2;000;255;044m.\\033[48;2;000;255;045m.\\033[48;2;000;255;046m.\\033[48;2;000;255;047m.",
+  "\\033[48;2;000;255;048m.\\033[48;2;000;255;049m.\\033[48;2;000;255;050m.\\033[48;2;000;255;051m.\\033[48;2;000;255;052m.\\033[48;2;000;255;053m.\\033[48;2;000;255;054m.\\033[48;2;000;255;055m.",
+  "\\033[48;2;000;255;056m.\\033[48;2;000;255;057m.\\033[48;2;000;255;058m.\\033[48;2;000;255;059m.\\033[48;2;000;255;060m.\\033[48;2;000;255;061m.\\033[48;2;000;255;062m.\\033[48;2;000;255;063m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;000;255;064m.\\033[48;2;000;255;065m.\\033[48;2;000;255;066m.\\033[48;2;000;255;067m.\\033[48;2;000;255;068m.\\033[48;2;000;255;069m.\\033[48;2;000;255;070m.\\033[48;2;000;255;071m.",
+  "\\033[48;2;000;255;072m.\\033[48;2;000;255;073m.\\033[48;2;000;255;074m.\\033[48;2;000;255;075m.\\033[48;2;000;255;076m.\\033[48;2;000;255;077m.\\033[48;2;000;255;078m.\\033[48;2;000;255;079m.",
+  "\\033[48;2;000;255;080m.\\033[48;2;000;255;081m.\\033[48;2;000;255;082m.\\033[48;2;000;255;083m.\\033[48;2;000;255;084m.\\033[48;2;000;255;085m.\\033[48;2;000;255;086m.\\033[48;2;000;255;087m.",
+  "\\033[48;2;000;255;088m.\\033[48;2;000;255;089m.\\033[48;2;000;255;090m.\\033[48;2;000;255;091m.\\033[48;2;000;255;092m.\\033[48;2;000;255;093m.\\033[48;2;000;255;094m.\\033[48;2;000;255;095m.",
+  "\\033[48;2;000;255;096m.\\033[48;2;000;255;097m.\\033[48;2;000;255;098m.\\033[48;2;000;255;099m.\\033[48;2;000;255;100m.\\033[48;2;000;255;101m.\\033[48;2;000;255;102m.\\033[48;2;000;255;103m.",
+  "\\033[48;2;000;255;104m.\\033[48;2;000;255;105m.\\033[48;2;000;255;106m.\\033[48;2;000;255;107m.\\033[48;2;000;255;108m.\\033[48;2;000;255;109m.\\033[48;2;000;255;110m.\\033[48;2;000;255;111m.",
+  "\\033[48;2;000;255;112m.\\033[48;2;000;255;113m.\\033[48;2;000;255;114m.\\033[48;2;000;255;115m.\\033[48;2;000;255;116m.\\033[48;2;000;255;117m.\\033[48;2;000;255;118m.\\033[48;2;000;255;119m.",
+  "\\033[48;2;000;255;120m.\\033[48;2;000;255;121m.\\033[48;2;000;255;122m.\\033[48;2;000;255;123m.\\033[48;2;000;255;124m.\\033[48;2;000;255;125m.\\033[48;2;000;255;126m.\\033[48;2;000;255;127m.",
+  "\\033[48;2;000;255;128m.\\033[48;2;000;255;129m.\\033[48;2;000;255;130m.\\033[48;2;000;255;131m.\\033[48;2;000;255;132m.\\033[48;2;000;255;133m.\\033[48;2;000;255;134m.\\033[48;2;000;255;135m.",
+  "\\033[48;2;000;255;136m.\\033[48;2;000;255;137m.\\033[48;2;000;255;138m.\\033[48;2;000;255;139m.\\033[48;2;000;255;140m.\\033[48;2;000;255;141m.\\033[48;2;000;255;142m.\\033[48;2;000;255;143m.",
+  "\\033[48;2;000;255;144m.\\033[48;2;000;255;145m.\\033[48;2;000;255;146m.\\033[48;2;000;255;147m.\\033[48;2;000;255;148m.\\033[48;2;000;255;149m.\\033[48;2;000;255;150m.\\033[48;2;000;255;151m.",
+  "\\033[48;2;000;255;152m.\\033[48;2;000;255;153m.\\033[48;2;000;255;154m.\\033[48;2;000;255;155m.\\033[48;2;000;255;156m.\\033[48;2;000;255;157m.\\033[48;2;000;255;158m.\\033[48;2;000;255;159m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;000;255;160m.\\033[48;2;000;255;161m.\\033[48;2;000;255;162m.\\033[48;2;000;255;163m.\\033[48;2;000;255;164m.\\033[48;2;000;255;165m.\\033[48;2;000;255;166m.\\033[48;2;000;255;167m.",
+  "\\033[48;2;000;255;168m.\\033[48;2;000;255;169m.\\033[48;2;000;255;170m.\\033[48;2;000;255;171m.\\033[48;2;000;255;172m.\\033[48;2;000;255;173m.\\033[48;2;000;255;174m.\\033[48;2;000;255;175m.",
+  "\\033[48;2;000;255;176m.\\033[48;2;000;255;177m.\\033[48;2;000;255;178m.\\033[48;2;000;255;179m.\\033[48;2;000;255;180m.\\033[48;2;000;255;181m.\\033[48;2;000;255;182m.\\033[48;2;000;255;183m.",
+  "\\033[48;2;000;255;184m.\\033[48;2;000;255;185m.\\033[48;2;000;255;186m.\\033[48;2;000;255;187m.\\033[48;2;000;255;188m.\\033[48;2;000;255;189m.\\033[48;2;000;255;190m.\\033[48;2;000;255;191m.",
+  "\\033[48;2;000;255;192m.\\033[48;2;000;255;193m.\\033[48;2;000;255;194m.\\033[48;2;000;255;195m.\\033[48;2;000;255;196m.\\033[48;2;000;255;197m.\\033[48;2;000;255;198m.\\033[48;2;000;255;199m.",
+  "\\033[48;2;000;255;200m.\\033[48;2;000;255;201m.\\033[48;2;000;255;202m.\\033[48;2;000;255;203m.\\033[48;2;000;255;204m.\\033[48;2;000;255;205m.\\033[48;2;000;255;206m.\\033[48;2;000;255;207m.",
+  "\\033[48;2;000;255;208m.\\033[48;2;000;255;209m.\\033[48;2;000;255;210m.\\033[48;2;000;255;211m.\\033[48;2;000;255;212m.\\033[48;2;000;255;213m.\\033[48;2;000;255;214m.\\033[48;2;000;255;215m.",
+  "\\033[48;2;000;255;216m.\\033[48;2;000;255;217m.\\033[48;2;000;255;218m.\\033[48;2;000;255;219m.\\033[48;2;000;255;220m.\\033[48;2;000;255;221m.\\033[48;2;000;255;222m.\\033[48;2;000;255;223m.",
+  "\\033[48;2;000;255;224m.\\033[48;2;000;255;225m.\\033[48;2;000;255;226m.\\033[48;2;000;255;227m.\\033[48;2;000;255;228m.\\033[48;2;000;255;229m.\\033[48;2;000;255;230m.\\033[48;2;000;255;231m.",
+  "\\033[48;2;000;255;232m.\\033[48;2;000;255;233m.\\033[48;2;000;255;234m.\\033[48;2;000;255;235m.\\033[48;2;000;255;236m.\\033[48;2;000;255;237m.\\033[48;2;000;255;238m.\\033[48;2;000;255;239m.",
+  "\\033[48;2;000;255;240m.\\033[48;2;000;255;241m.\\033[48;2;000;255;242m.\\033[48;2;000;255;243m.\\033[48;2;000;255;244m.\\033[48;2;000;255;245m.\\033[48;2;000;255;246m.\\033[48;2;000;255;247m.",
+  "\\033[48;2;000;255;248m.\\033[48;2;000;255;249m.\\033[48;2;000;255;250m.\\033[48;2;000;255;251m.\\033[48;2;000;255;252m.\\033[48;2;000;255;253m.\\033[48;2;000;255;254m.\\033[48;2;000;255;255m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;000;255;255m.\\033[48;2;000;254;255m.\\033[48;2;000;253;255m.\\033[48;2;000;252;255m.\\033[48;2;000;251;255m.\\033[48;2;000;250;255m.\\033[48;2;000;249;255m.\\033[48;2;000;248;255m.",
+  "\\033[48;2;000;247;255m.\\033[48;2;000;246;255m.\\033[48;2;000;245;255m.\\033[48;2;000;244;255m.\\033[48;2;000;243;255m.\\033[48;2;000;242;255m.\\033[48;2;000;241;255m.\\033[48;2;000;240;255m.",
+  "\\033[48;2;000;239;255m.\\033[48;2;000;238;255m.\\033[48;2;000;237;255m.\\033[48;2;000;236;255m.\\033[48;2;000;235;255m.\\033[48;2;000;234;255m.\\033[48;2;000;233;255m.\\033[48;2;000;232;255m.",
+  "\\033[48;2;000;231;255m.\\033[48;2;000;230;255m.\\033[48;2;000;229;255m.\\033[48;2;000;228;255m.\\033[48;2;000;227;255m.\\033[48;2;000;226;255m.\\033[48;2;000;225;255m.\\033[48;2;000;224;255m.",
+  "\\033[48;2;000;223;255m.\\033[48;2;000;222;255m.\\033[48;2;000;221;255m.\\033[48;2;000;220;255m.\\033[48;2;000;219;255m.\\033[48;2;000;218;255m.\\033[48;2;000;217;255m.\\033[48;2;000;216;255m.",
+  "\\033[48;2;000;215;255m.\\033[48;2;000;214;255m.\\033[48;2;000;213;255m.\\033[48;2;000;212;255m.\\033[48;2;000;211;255m.\\033[48;2;000;210;255m.\\033[48;2;000;209;255m.\\033[48;2;000;208;255m.",
+  "\\033[48;2;000;207;255m.\\033[48;2;000;206;255m.\\033[48;2;000;205;255m.\\033[48;2;000;204;255m.\\033[48;2;000;203;255m.\\033[48;2;000;202;255m.\\033[48;2;000;201;255m.\\033[48;2;000;200;255m.",
+  "\\033[48;2;000;199;255m.\\033[48;2;000;198;255m.\\033[48;2;000;197;255m.\\033[48;2;000;196;255m.\\033[48;2;000;195;255m.\\033[48;2;000;194;255m.\\033[48;2;000;193;255m.\\033[48;2;000;192;255m.",
+  "\\033[48;2;000;191;255m.\\033[48;2;000;190;255m.\\033[48;2;000;189;255m.\\033[48;2;000;188;255m.\\033[48;2;000;187;255m.\\033[48;2;000;186;255m.\\033[48;2;000;185;255m.\\033[48;2;000;184;255m.",
+  "\\033[48;2;000;183;255m.\\033[48;2;000;182;255m.\\033[48;2;000;181;255m.\\033[48;2;000;180;255m.\\033[48;2;000;179;255m.\\033[48;2;000;178;255m.\\033[48;2;000;177;255m.\\033[48;2;000;176;255m.",
+  "\\033[48;2;000;175;255m.\\033[48;2;000;174;255m.\\033[48;2;000;173;255m.\\033[48;2;000;172;255m.\\033[48;2;000;171;255m.\\033[48;2;000;170;255m.\\033[48;2;000;169;255m.\\033[48;2;000;168;255m.",
+  "\\033[48;2;000;167;255m.\\033[48;2;000;166;255m.\\033[48;2;000;165;255m.\\033[48;2;000;164;255m.\\033[48;2;000;163;255m.\\033[48;2;000;162;255m.\\033[48;2;000;161;255m.\\033[48;2;000;160;255m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;000;159;255m.\\033[48;2;000;158;255m.\\033[48;2;000;157;255m.\\033[48;2;000;156;255m.\\033[48;2;000;155;255m.\\033[48;2;000;154;255m.\\033[48;2;000;153;255m.\\033[48;2;000;152;255m.",
+  "\\033[48;2;000;151;255m.\\033[48;2;000;150;255m.\\033[48;2;000;149;255m.\\033[48;2;000;148;255m.\\033[48;2;000;147;255m.\\033[48;2;000;146;255m.\\033[48;2;000;145;255m.\\033[48;2;000;144;255m.",
+  "\\033[48;2;000;143;255m.\\033[48;2;000;142;255m.\\033[48;2;000;141;255m.\\033[48;2;000;140;255m.\\033[48;2;000;139;255m.\\033[48;2;000;138;255m.\\033[48;2;000;137;255m.\\033[48;2;000;136;255m.",
+  "\\033[48;2;000;135;255m.\\033[48;2;000;134;255m.\\033[48;2;000;133;255m.\\033[48;2;000;132;255m.\\033[48;2;000;131;255m.\\033[48;2;000;130;255m.\\033[48;2;000;129;255m.\\033[48;2;000;128;255m.",
+  "\\033[48;2;000;127;255m.\\033[48;2;000;126;255m.\\033[48;2;000;125;255m.\\033[48;2;000;124;255m.\\033[48;2;000;123;255m.\\033[48;2;000;122;255m.\\033[48;2;000;121;255m.\\033[48;2;000;120;255m.",
+  "\\033[48;2;000;119;255m.\\033[48;2;000;118;255m.\\033[48;2;000;117;255m.\\033[48;2;000;116;255m.\\033[48;2;000;115;255m.\\033[48;2;000;114;255m.\\033[48;2;000;113;255m.\\033[48;2;000;112;255m.",
+  "\\033[48;2;000;111;255m.\\033[48;2;000;110;255m.\\033[48;2;000;109;255m.\\033[48;2;000;108;255m.\\033[48;2;000;107;255m.\\033[48;2;000;106;255m.\\033[48;2;000;105;255m.\\033[48;2;000;104;255m.",
+  "\\033[48;2;000;103;255m.\\033[48;2;000;102;255m.\\033[48;2;000;101;255m.\\033[48;2;000;100;255m.\\033[48;2;000;099;255m.\\033[48;2;000;098;255m.\\033[48;2;000;097;255m.\\033[48;2;000;096;255m.",
+  "\\033[48;2;000;095;255m.\\033[48;2;000;094;255m.\\033[48;2;000;093;255m.\\033[48;2;000;092;255m.\\033[48;2;000;091;255m.\\033[48;2;000;090;255m.\\033[48;2;000;089;255m.\\033[48;2;000;088;255m.",
+  "\\033[48;2;000;087;255m.\\033[48;2;000;086;255m.\\033[48;2;000;085;255m.\\033[48;2;000;084;255m.\\033[48;2;000;083;255m.\\033[48;2;000;082;255m.\\033[48;2;000;081;255m.\\033[48;2;000;080;255m.",
+  "\\033[48;2;000;079;255m.\\033[48;2;000;078;255m.\\033[48;2;000;077;255m.\\033[48;2;000;076;255m.\\033[48;2;000;075;255m.\\033[48;2;000;074;255m.\\033[48;2;000;073;255m.\\033[48;2;000;072;255m.",
+  "\\033[48;2;000;071;255m.\\033[48;2;000;070;255m.\\033[48;2;000;069;255m.\\033[48;2;000;068;255m.\\033[48;2;000;067;255m.\\033[48;2;000;066;255m.\\033[48;2;000;065;255m.\\033[48;2;000;064;255m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;000;063;255m.\\033[48;2;000;062;255m.\\033[48;2;000;061;255m.\\033[48;2;000;060;255m.\\033[48;2;000;059;255m.\\033[48;2;000;058;255m.\\033[48;2;000;057;255m.\\033[48;2;000;056;255m.",
+  "\\033[48;2;000;055;255m.\\033[48;2;000;054;255m.\\033[48;2;000;053;255m.\\033[48;2;000;052;255m.\\033[48;2;000;051;255m.\\033[48;2;000;050;255m.\\033[48;2;000;049;255m.\\033[48;2;000;048;255m.",
+  "\\033[48;2;000;047;255m.\\033[48;2;000;046;255m.\\033[48;2;000;045;255m.\\033[48;2;000;044;255m.\\033[48;2;000;043;255m.\\033[48;2;000;042;255m.\\033[48;2;000;041;255m.\\033[48;2;000;040;255m.",
+  "\\033[48;2;000;039;255m.\\033[48;2;000;038;255m.\\033[48;2;000;037;255m.\\033[48;2;000;036;255m.\\033[48;2;000;035;255m.\\033[48;2;000;034;255m.\\033[48;2;000;033;255m.\\033[48;2;000;032;255m.",
+  "\\033[48;2;000;031;255m.\\033[48;2;000;030;255m.\\033[48;2;000;029;255m.\\033[48;2;000;028;255m.\\033[48;2;000;027;255m.\\033[48;2;000;026;255m.\\033[48;2;000;025;255m.\\033[48;2;000;024;255m.",
+  "\\033[48;2;000;023;255m.\\033[48;2;000;022;255m.\\033[48;2;000;021;255m.\\033[48;2;000;020;255m.\\033[48;2;000;019;255m.\\033[48;2;000;018;255m.\\033[48;2;000;017;255m.\\033[48;2;000;016;255m.",
+  "\\033[48;2;000;015;255m.\\033[48;2;000;014;255m.\\033[48;2;000;013;255m.\\033[48;2;000;012;255m.\\033[48;2;000;011;255m.\\033[48;2;000;010;255m.\\033[48;2;000;009;255m.\\033[48;2;000;008;255m.",
+  "\\033[48;2;000;007;255m.\\033[48;2;000;006;255m.\\033[48;2;000;005;255m.\\033[48;2;000;004;255m.\\033[48;2;000;003;255m.\\033[48;2;000;002;255m.\\033[48;2;000;001;255m.\\033[48;2;000;000;255m.",
+  "\\033[48;2;000;000;255m.\\033[48;2;001;000;255m.\\033[48;2;002;000;255m.\\033[48;2;003;000;255m.\\033[48;2;004;000;255m.\\033[48;2;005;000;255m.\\033[48;2;006;000;255m.\\033[48;2;007;000;255m.",
+  "\\033[48;2;008;000;255m.\\033[48;2;009;000;255m.\\033[48;2;010;000;255m.\\033[48;2;011;000;255m.\\033[48;2;012;000;255m.\\033[48;2;013;000;255m.\\033[48;2;014;000;255m.\\033[48;2;015;000;255m.",
+  "\\033[48;2;016;000;255m.\\033[48;2;017;000;255m.\\033[48;2;018;000;255m.\\033[48;2;019;000;255m.\\033[48;2;020;000;255m.\\033[48;2;021;000;255m.\\033[48;2;022;000;255m.\\033[48;2;023;000;255m.",
+  "\\033[48;2;024;000;255m.\\033[48;2;025;000;255m.\\033[48;2;026;000;255m.\\033[48;2;027;000;255m.\\033[48;2;028;000;255m.\\033[48;2;029;000;255m.\\033[48;2;030;000;255m.\\033[48;2;031;000;255m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;032;000;255m.\\033[48;2;033;000;255m.\\033[48;2;034;000;255m.\\033[48;2;035;000;255m.\\033[48;2;036;000;255m.\\033[48;2;037;000;255m.\\033[48;2;038;000;255m.\\033[48;2;039;000;255m.",
+  "\\033[48;2;040;000;255m.\\033[48;2;041;000;255m.\\033[48;2;042;000;255m.\\033[48;2;043;000;255m.\\033[48;2;044;000;255m.\\033[48;2;045;000;255m.\\033[48;2;046;000;255m.\\033[48;2;047;000;255m.",
+  "\\033[48;2;048;000;255m.\\033[48;2;049;000;255m.\\033[48;2;050;000;255m.\\033[48;2;051;000;255m.\\033[48;2;052;000;255m.\\033[48;2;053;000;255m.\\033[48;2;054;000;255m.\\033[48;2;055;000;255m.",
+  "\\033[48;2;056;000;255m.\\033[48;2;057;000;255m.\\033[48;2;058;000;255m.\\033[48;2;059;000;255m.\\033[48;2;060;000;255m.\\033[48;2;061;000;255m.\\033[48;2;062;000;255m.\\033[48;2;063;000;255m.",
+  "\\033[48;2;064;000;255m.\\033[48;2;065;000;255m.\\033[48;2;066;000;255m.\\033[48;2;067;000;255m.\\033[48;2;068;000;255m.\\033[48;2;069;000;255m.\\033[48;2;070;000;255m.\\033[48;2;071;000;255m.",
+  "\\033[48;2;072;000;255m.\\033[48;2;073;000;255m.\\033[48;2;074;000;255m.\\033[48;2;075;000;255m.\\033[48;2;076;000;255m.\\033[48;2;077;000;255m.\\033[48;2;078;000;255m.\\033[48;2;079;000;255m.",
+  "\\033[48;2;080;000;255m.\\033[48;2;081;000;255m.\\033[48;2;082;000;255m.\\033[48;2;083;000;255m.\\033[48;2;084;000;255m.\\033[48;2;085;000;255m.\\033[48;2;086;000;255m.\\033[48;2;087;000;255m.",
+  "\\033[48;2;088;000;255m.\\033[48;2;089;000;255m.\\033[48;2;090;000;255m.\\033[48;2;091;000;255m.\\033[48;2;092;000;255m.\\033[48;2;093;000;255m.\\033[48;2;094;000;255m.\\033[48;2;095;000;255m.",
+  "\\033[48;2;096;000;255m.\\033[48;2;097;000;255m.\\033[48;2;098;000;255m.\\033[48;2;099;000;255m.\\033[48;2;100;000;255m.\\033[48;2;101;000;255m.\\033[48;2;102;000;255m.\\033[48;2;103;000;255m.",
+  "\\033[48;2;104;000;255m.\\033[48;2;105;000;255m.\\033[48;2;106;000;255m.\\033[48;2;107;000;255m.\\033[48;2;108;000;255m.\\033[48;2;109;000;255m.\\033[48;2;110;000;255m.\\033[48;2;111;000;255m.",
+  "\\033[48;2;112;000;255m.\\033[48;2;113;000;255m.\\033[48;2;114;000;255m.\\033[48;2;115;000;255m.\\033[48;2;116;000;255m.\\033[48;2;117;000;255m.\\033[48;2;118;000;255m.\\033[48;2;119;000;255m.",
+  "\\033[48;2;120;000;255m.\\033[48;2;121;000;255m.\\033[48;2;122;000;255m.\\033[48;2;123;000;255m.\\033[48;2;124;000;255m.\\033[48;2;125;000;255m.\\033[48;2;126;000;255m.\\033[48;2;127;000;255m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;128;000;255m.\\033[48;2;129;000;255m.\\033[48;2;130;000;255m.\\033[48;2;131;000;255m.\\033[48;2;132;000;255m.\\033[48;2;133;000;255m.\\033[48;2;134;000;255m.\\033[48;2;135;000;255m.",
+  "\\033[48;2;136;000;255m.\\033[48;2;137;000;255m.\\033[48;2;138;000;255m.\\033[48;2;139;000;255m.\\033[48;2;140;000;255m.\\033[48;2;141;000;255m.\\033[48;2;142;000;255m.\\033[48;2;143;000;255m.",
+  "\\033[48;2;144;000;255m.\\033[48;2;145;000;255m.\\033[48;2;146;000;255m.\\033[48;2;147;000;255m.\\033[48;2;148;000;255m.\\033[48;2;149;000;255m.\\033[48;2;150;000;255m.\\033[48;2;151;000;255m.",
+  "\\033[48;2;152;000;255m.\\033[48;2;153;000;255m.\\033[48;2;154;000;255m.\\033[48;2;155;000;255m.\\033[48;2;156;000;255m.\\033[48;2;157;000;255m.\\033[48;2;158;000;255m.\\033[48;2;159;000;255m.",
+  "\\033[48;2;160;000;255m.\\033[48;2;161;000;255m.\\033[48;2;162;000;255m.\\033[48;2;163;000;255m.\\033[48;2;164;000;255m.\\033[48;2;165;000;255m.\\033[48;2;166;000;255m.\\033[48;2;167;000;255m.",
+  "\\033[48;2;168;000;255m.\\033[48;2;169;000;255m.\\033[48;2;170;000;255m.\\033[48;2;171;000;255m.\\033[48;2;172;000;255m.\\033[48;2;173;000;255m.\\033[48;2;174;000;255m.\\033[48;2;175;000;255m.",
+  "\\033[48;2;176;000;255m.\\033[48;2;177;000;255m.\\033[48;2;178;000;255m.\\033[48;2;179;000;255m.\\033[48;2;180;000;255m.\\033[48;2;181;000;255m.\\033[48;2;182;000;255m.\\033[48;2;183;000;255m.",
+  "\\033[48;2;184;000;255m.\\033[48;2;185;000;255m.\\033[48;2;186;000;255m.\\033[48;2;187;000;255m.\\033[48;2;188;000;255m.\\033[48;2;189;000;255m.\\033[48;2;190;000;255m.\\033[48;2;191;000;255m.",
+  "\\033[48;2;192;000;255m.\\033[48;2;193;000;255m.\\033[48;2;194;000;255m.\\033[48;2;195;000;255m.\\033[48;2;196;000;255m.\\033[48;2;197;000;255m.\\033[48;2;198;000;255m.\\033[48;2;199;000;255m.",
+  "\\033[48;2;200;000;255m.\\033[48;2;201;000;255m.\\033[48;2;202;000;255m.\\033[48;2;203;000;255m.\\033[48;2;204;000;255m.\\033[48;2;205;000;255m.\\033[48;2;206;000;255m.\\033[48;2;207;000;255m.",
+  "\\033[48;2;208;000;255m.\\033[48;2;209;000;255m.\\033[48;2;210;000;255m.\\033[48;2;211;000;255m.\\033[48;2;212;000;255m.\\033[48;2;213;000;255m.\\033[48;2;214;000;255m.\\033[48;2;215;000;255m.",
+  "\\033[48;2;216;000;255m.\\033[48;2;217;000;255m.\\033[48;2;218;000;255m.\\033[48;2;219;000;255m.\\033[48;2;220;000;255m.\\033[48;2;221;000;255m.\\033[48;2;222;000;255m.\\033[48;2;223;000;255m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;224;000;255m.\\033[48;2;225;000;255m.\\033[48;2;226;000;255m.\\033[48;2;227;000;255m.\\033[48;2;228;000;255m.\\033[48;2;229;000;255m.\\033[48;2;230;000;255m.\\033[48;2;231;000;255m.",
+  "\\033[48;2;232;000;255m.\\033[48;2;233;000;255m.\\033[48;2;234;000;255m.\\033[48;2;235;000;255m.\\033[48;2;236;000;255m.\\033[48;2;237;000;255m.\\033[48;2;238;000;255m.\\033[48;2;239;000;255m.",
+  "\\033[48;2;240;000;255m.\\033[48;2;241;000;255m.\\033[48;2;242;000;255m.\\033[48;2;243;000;255m.\\033[48;2;244;000;255m.\\033[48;2;245;000;255m.\\033[48;2;246;000;255m.\\033[48;2;247;000;255m.",
+  "\\033[48;2;248;000;255m.\\033[48;2;249;000;255m.\\033[48;2;250;000;255m.\\033[48;2;251;000;255m.\\033[48;2;252;000;255m.\\033[48;2;253;000;255m.\\033[48;2;254;000;255m.\\033[48;2;255;000;255m.",
+  "\\033[48;2;255;000;255m.\\033[48;2;255;000;254m.\\033[48;2;255;000;253m.\\033[48;2;255;000;252m.\\033[48;2;255;000;251m.\\033[48;2;255;000;250m.\\033[48;2;255;000;249m.\\033[48;2;255;000;248m.",
+  "\\033[48;2;255;000;247m.\\033[48;2;255;000;246m.\\033[48;2;255;000;245m.\\033[48;2;255;000;244m.\\033[48;2;255;000;243m.\\033[48;2;255;000;242m.\\033[48;2;255;000;241m.\\033[48;2;255;000;240m.",
+  "\\033[48;2;255;000;239m.\\033[48;2;255;000;238m.\\033[48;2;255;000;237m.\\033[48;2;255;000;236m.\\033[48;2;255;000;235m.\\033[48;2;255;000;234m.\\033[48;2;255;000;233m.\\033[48;2;255;000;232m.",
+  "\\033[48;2;255;000;231m.\\033[48;2;255;000;230m.\\033[48;2;255;000;229m.\\033[48;2;255;000;228m.\\033[48;2;255;000;227m.\\033[48;2;255;000;226m.\\033[48;2;255;000;225m.\\033[48;2;255;000;224m.",
+  "\\033[48;2;255;000;223m.\\033[48;2;255;000;222m.\\033[48;2;255;000;221m.\\033[48;2;255;000;220m.\\033[48;2;255;000;219m.\\033[48;2;255;000;218m.\\033[48;2;255;000;217m.\\033[48;2;255;000;216m.",
+  "\\033[48;2;255;000;215m.\\033[48;2;255;000;214m.\\033[48;2;255;000;213m.\\033[48;2;255;000;212m.\\033[48;2;255;000;211m.\\033[48;2;255;000;210m.\\033[48;2;255;000;209m.\\033[48;2;255;000;208m.",
+  "\\033[48;2;255;000;207m.\\033[48;2;255;000;206m.\\033[48;2;255;000;205m.\\033[48;2;255;000;204m.\\033[48;2;255;000;203m.\\033[48;2;255;000;202m.\\033[48;2;255;000;201m.\\033[48;2;255;000;200m.",
+  "\\033[48;2;255;000;199m.\\033[48;2;255;000;198m.\\033[48;2;255;000;197m.\\033[48;2;255;000;196m.\\033[48;2;255;000;195m.\\033[48;2;255;000;194m.\\033[48;2;255;000;193m.\\033[48;2;255;000;192m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;255;000;191m.\\033[48;2;255;000;190m.\\033[48;2;255;000;189m.\\033[48;2;255;000;188m.\\033[48;2;255;000;187m.\\033[48;2;255;000;186m.\\033[48;2;255;000;185m.\\033[48;2;255;000;184m.",
+  "\\033[48;2;255;000;183m.\\033[48;2;255;000;182m.\\033[48;2;255;000;181m.\\033[48;2;255;000;180m.\\033[48;2;255;000;179m.\\033[48;2;255;000;178m.\\033[48;2;255;000;177m.\\033[48;2;255;000;176m.",
+  "\\033[48;2;255;000;175m.\\033[48;2;255;000;174m.\\033[48;2;255;000;173m.\\033[48;2;255;000;172m.\\033[48;2;255;000;171m.\\033[48;2;255;000;170m.\\033[48;2;255;000;169m.\\033[48;2;255;000;168m.",
+  "\\033[48;2;255;000;167m.\\033[48;2;255;000;166m.\\033[48;2;255;000;165m.\\033[48;2;255;000;164m.\\033[48;2;255;000;163m.\\033[48;2;255;000;162m.\\033[48;2;255;000;161m.\\033[48;2;255;000;160m.",
+  "\\033[48;2;255;000;159m.\\033[48;2;255;000;158m.\\033[48;2;255;000;157m.\\033[48;2;255;000;156m.\\033[48;2;255;000;155m.\\033[48;2;255;000;154m.\\033[48;2;255;000;153m.\\033[48;2;255;000;152m.",
+  "\\033[48;2;255;000;151m.\\033[48;2;255;000;150m.\\033[48;2;255;000;149m.\\033[48;2;255;000;148m.\\033[48;2;255;000;147m.\\033[48;2;255;000;146m.\\033[48;2;255;000;145m.\\033[48;2;255;000;144m.",
+  "\\033[48;2;255;000;143m.\\033[48;2;255;000;142m.\\033[48;2;255;000;141m.\\033[48;2;255;000;140m.\\033[48;2;255;000;139m.\\033[48;2;255;000;138m.\\033[48;2;255;000;137m.\\033[48;2;255;000;136m.",
+  "\\033[48;2;255;000;135m.\\033[48;2;255;000;134m.\\033[48;2;255;000;133m.\\033[48;2;255;000;132m.\\033[48;2;255;000;131m.\\033[48;2;255;000;130m.\\033[48;2;255;000;129m.\\033[48;2;255;000;128m.",
+  "\\033[48;2;255;000;127m.\\033[48;2;255;000;126m.\\033[48;2;255;000;125m.\\033[48;2;255;000;124m.\\033[48;2;255;000;123m.\\033[48;2;255;000;122m.\\033[48;2;255;000;121m.\\033[48;2;255;000;120m.",
+  "\\033[48;2;255;000;119m.\\033[48;2;255;000;118m.\\033[48;2;255;000;117m.\\033[48;2;255;000;116m.\\033[48;2;255;000;115m.\\033[48;2;255;000;114m.\\033[48;2;255;000;113m.\\033[48;2;255;000;112m.",
+  "\\033[48;2;255;000;111m.\\033[48;2;255;000;110m.\\033[48;2;255;000;109m.\\033[48;2;255;000;108m.\\033[48;2;255;000;107m.\\033[48;2;255;000;106m.\\033[48;2;255;000;105m.\\033[48;2;255;000;104m.",
+  "\\033[48;2;255;000;103m.\\033[48;2;255;000;102m.\\033[48;2;255;000;101m.\\033[48;2;255;000;100m.\\033[48;2;255;000;099m.\\033[48;2;255;000;098m.\\033[48;2;255;000;097m.\\033[48;2;255;000;096m.",
+  "\\033[0m\\n     ",
+  "\\033[48;2;255;000;095m.\\033[48;2;255;000;094m.\\033[48;2;255;000;093m.\\033[48;2;255;000;092m.\\033[48;2;255;000;091m.\\033[48;2;255;000;090m.\\033[48;2;255;000;089m.\\033[48;2;255;000;088m.",
+  "\\033[48;2;255;000;087m.\\033[48;2;255;000;086m.\\033[48;2;255;000;085m.\\033[48;2;255;000;084m.\\033[48;2;255;000;083m.\\033[48;2;255;000;082m.\\033[48;2;255;000;081m.\\033[48;2;255;000;080m.",
+  "\\033[48;2;255;000;079m.\\033[48;2;255;000;078m.\\033[48;2;255;000;077m.\\033[48;2;255;000;076m.\\033[48;2;255;000;075m.\\033[48;2;255;000;074m.\\033[48;2;255;000;073m.\\033[48;2;255;000;072m.",
+  "\\033[48;2;255;000;071m.\\033[48;2;255;000;070m.\\033[48;2;255;000;069m.\\033[48;2;255;000;068m.\\033[48;2;255;000;067m.\\033[48;2;255;000;066m.\\033[48;2;255;000;065m.\\033[48;2;255;000;064m.",
+  "\\033[48;2;255;000;063m.\\033[48;2;255;000;062m.\\033[48;2;255;000;061m.\\033[48;2;255;000;060m.\\033[48;2;255;000;059m.\\033[48;2;255;000;058m.\\033[48;2;255;000;057m.\\033[48;2;255;000;056m.",
+  "\\033[48;2;255;000;055m.\\033[48;2;255;000;054m.\\033[48;2;255;000;053m.\\033[48;2;255;000;052m.\\033[48;2;255;000;051m.\\033[48;2;255;000;050m.\\033[48;2;255;000;049m.\\033[48;2;255;000;048m.",
+  "\\033[48;2;255;000;047m.\\033[48;2;255;000;046m.\\033[48;2;255;000;045m.\\033[48;2;255;000;044m.\\033[48;2;255;000;043m.\\033[48;2;255;000;042m.\\033[48;2;255;000;041m.\\033[48;2;255;000;040m.",
+  "\\033[48;2;255;000;039m.\\033[48;2;255;000;038m.\\033[48;2;255;000;037m.\\033[48;2;255;000;036m.\\033[48;2;255;000;035m.\\033[48;2;255;000;034m.\\033[48;2;255;000;033m.\\033[48;2;255;000;032m.",
+  "\\033[48;2;255;000;031m.\\033[48;2;255;000;030m.\\033[48;2;255;000;029m.\\033[48;2;255;000;028m.\\033[48;2;255;000;027m.\\033[48;2;255;000;026m.\\033[48;2;255;000;025m.\\033[48;2;255;000;024m.",
+  "\\033[48;2;255;000;023m.\\033[48;2;255;000;022m.\\033[48;2;255;000;021m.\\033[48;2;255;000;020m.\\033[48;2;255;000;019m.\\033[48;2;255;000;018m.\\033[48;2;255;000;017m.\\033[48;2;255;000;016m.",
+  "\\033[48;2;255;000;015m.\\033[48;2;255;000;014m.\\033[48;2;255;000;013m.\\033[48;2;255;000;012m.\\033[48;2;255;000;011m.\\033[48;2;255;000;010m.\\033[48;2;255;000;009m.\\033[48;2;255;000;008m.",
+  "\\033[48;2;255;000;007m.\\033[48;2;255;000;006m.\\033[48;2;255;000;005m.\\033[48;2;255;000;004m.\\033[48;2;255;000;003m.\\033[48;2;255;000;002m.\\033[48;2;255;000;001m.\\033[48;2;255;000;000m.",
+
+  "\\033[0m\\n",
+  "\\n",
+  "---> Hit 'e' for next test: ",
+  "\\033[2J\\033[H" "ESC TEST 0023: FG/BG Specific Reset\\n",
+  "\\n",
+  "Test fg reset: \\033[31mThis is red on norm bg\\033[39m, This is ESC[39m reset (norm fg on norm bg).\\033[m\\n",
+  "Test bg reset: \\033[41mThis is norm fg on red bg\\033[49m, This is ESC[49m reset (norm fg on norm bg).\\033[m\\n",
+  "\\n",
+  "Test fg/bg with fg reset: \\033[32;44mThis is grn on blu\\033[39m, This is ESC[39m reset (norm fg on blu).\\033[m\\n",
+  "Test fg/bg with bg reset: \\033[32;44mThis is grn on blu\\033[49m, This is ESC[49m reset (grn on norm bg).\\033[m\\n",
+  "\\n",
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_fgbg_colors(bool reset)} {
+    comment {--- 0030: Test FG/BG Colors} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 30
+  "\\033[2J\\033[H" "ESC TEST 0030: FG/BG Colors\\n",
+  "\\n",
+  "  Foreground Colors:\\n",
+  "  \\033[2;31m"   "  Dim Red text   \\033[0m  \\033[0;32m"   "  Dim Grn text  \\033[0m  \\033[2;33m"   "  Dim Yel text   \\033[0m\\n",
+  "  \\033[2;34m"   "  Dim Blu text   \\033[0m  \\033[0;35m"   "  Dim Mag text  \\033[0m  \\033[2;36m"   "  Dim Cyn text   \\033[0m"
+  "  \\033[2;37m"   "  Dim Wht text   \\033[0m\\n",
+  "  \\033[0;31m"   "  Nor Red text   \\033[0m  \\033[0;32m"   "  Nor Grn text  \\033[0m  \\033[2;33m"   "  Nor Yel text   \\033[0m\\n",
+  "  \\033[0;34m"   "  Nor Blu text   \\033[0m  \\033[0;35m"   "  Nor Mag text  \\033[0m  \\033[0;36m"   "  Nor Cyn text   \\033[0m"
+  "  \\033[0;37m"   "  Nor Wht text   \\033[0m\\n",
+  "  \\033[1;31m"   "  Bold Red text  \\033[0m  \\033[1;32m"   "  Bold Grn text \\033[0m  \\033[1;33m"   "  Bold Yel text  \\033[0m\\n",
+  "  \\033[1;34m"   "  Bold Blu text  \\033[0m  \\033[1;35m"   "  Bold Mag      \\033[0m  \\033[1;36m"   "  Bold Cyn text  \\033[0m"
+  "  \\033[1;37m"   "  Bold Wht text  \\033[0m\\n",
+  "\\n",
+  "  Background Colors:\\n",
+  "  \\033[2;37;41m""  Dim Red bg     \\033[0m  \\033[2;37;42m""  Dim Grn bg    \\033[0m  \\033[2;37;43m""  Dim Yel bg     \\033[0m\\n",
+  "  \\033[2;37;44m""  Dim Blu bg     \\033[0m  \\033[2;37;45m""  Dim Mag bg    \\033[0m  \\033[2;37;46m""  Dim Cyn bg     \\033[0m"
+  "  \\033[2;37;47m""  Dim Wht bg     \\033[0m\\n",
+  "  \\033[0;37;41m""  Nor Red bg     \\033[0m  \\033[0;37;42m""  Nor Grn bg    \\033[0m  \\033[0;37;43m""  Nor Yel bg     \\033[0m\\n",
+  "  \\033[0;37;44m""  Nor Blu bg     \\033[0m  \\033[0;37;45m""  Nor Mag bg    \\033[0m  \\033[0;37;46m""  Nor Cyn bg     \\033[0m"
+  "  \\033[0;37;47m""  Nor Wht bg     \\033[0m\\n",
+  "  \\033[1;37;41m""  Bold Red bg    \\033[0m  \\033[1;37;42m""  Bold Grn bg   \\033[0m  \\033[1;37;43m""  Bold Yel bg    \\033[0m\\n",
+  "  \\033[1;37;44m""  Bold Blu bg    \\033[0m  \\033[1;37;45m""  Bold Mag bg   \\033[0m  \\033[1;37;46m""  Bold Cyn bg    \\033[0m"
+  "  \\033[1;37;47m""  Bold Wht bg    \\033[0m\\n",
+  "\\n",
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_curpos(bool reset)} {
+    comment {--- 0040: Test Cursor Positioning} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 40
+  "\\033[2J\\033[H" "ESC TEST 0040: Cursor Positioning\\n",
+  "2:\\n",
+  "3:       10   15   20   25   30   35   40   45   50   55   60   65   70\\n",
+  "4:       |----:----|----:----|----:----|----:----|----:----|----:----|\\n",
+  "5:\\n",
+  "6:\\n",
+  "7:\\n",
+  "\\033[5;10H" "X",    "\\033[5;15H" "X",    "\\033[5;20H" "X",
+  "\\033[5;40H" "X",    "\\033[5;45H" "X",    "\\033[5;50H" "X",
+  "\\033[6;10H" "|",    "\\033[6;15H" "|",    "\\033[6;20H" "|",
+  "\\033[6;40H" "|",    "\\033[6;45H" "|",    "\\033[6;50H" "|",
+  "\\033[7;10H" "10,5", "\\033[7;15H" "15,5", "\\033[7;20H" "20,5",
+  "\\033[7;40H" "40,5", "\\033[7;45H" "45,5", "\\033[7;50H" "50,5",
+  "\\033[8H\\n",
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_tabstops(bool reset)} {
+    comment {--- 0050: Tabstops: Default Tabstops} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 50
+  //    We use <ESC>c to reset the terminal to default tabstops.
+  "\\033c" "ESC TEST 0050: Tabs: Default Tabstops\\n",
+  "        A       B       C       D       E       F       G       H       I\\n",
+  "        |       |       |       |       |       |       |       |       |\\n",
+  "\\tA\\tB\\tC\\tD-\\tE--\\tF-----\\tG------\\tH-------I\\n",
+  "\\t\\tB\\t\\tD\\t\\tF\\t\\tH-------I\\n",
+  "---> Hit 'e' for next test: ",
+  //    We use <ESC>c to reset the terminal to default tabstops.
+  //    Should also clear screen and home cursor..
+  "\\033c" "ESC TEST 0051: Tabs: Change Tabstops\\n",
+  "\\n",
+  "        8       16      24      32      40      48      56      64      72\\n",
+  "--------|-------|-------|-------|-------|-------|-------|-------|-------|\\n",
+  "\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\n",
+  "\\n",
+  "Setting new tabstops..\\033[3g\\n",
+  ".\\033HT..\\033HT...\\033HT....\\033HT.....\\033HT......\\033HT.......\\033HT........\\033HT.........\\033HT\\n",
+  "-|--|---|----|-----|------|-------|--------|---------|\\n",
+  "\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\n",
+  "---> Hit 'e' for next test: ",
+  "\\033c" "ESC TEST 0052: Tabs: Default Tabstops Again\\n",
+  "\\n",
+  "Back to normal tabstops:\\n",
+  "        8       16      24      32      40      48      56      64      72\\n",
+  "--------|-------|-------|-------|-------|-------|-------|-------|-------|\\n",
+  "\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\tX\\n",
+  "\\n",
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_insert_char(bool reset)} {
+    comment {--- 0060: Insert Char} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 60
+  "\\033[2J\\033[HESC TEST 0060: Insert Char (ESC[@)\\n",
+  "\\n",
+  "      10>       20>       30>       40>       50>       60>       70>       80>\\n",
+  "4:34567890123456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "5:34567890123456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "6:34567890123456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "\\033[s\\033[5;29H\\033[1;31m>\\033[0m\\033[u", // save curs, movcur, bold/red, '>', norm, recall curs
+  "\\n",
+  "---> Hit 'e' to test INSERT 1 char  at row/col 5/30 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[@\\033[8H",
+  "---> Hit 'e' to test INSERT 1 char  at row/col 5/30 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[@\\033[8H",
+  "---> Hit 'e' to test INSERT 4 chars at row/col 5/30 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[4@\\033[8H",
+  "---> Hit 'e' to test INSERT 4 chars at row/col 5/30 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[4@\\033[8H",
+  "---> Hit 'e' to test DELETE 1 chars at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[P\\033[8H",
+  "---> Hit 'e' to test DELETE 1 chars at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[P\\033[8H",
+  "---> Hit 'e' to test DELETE 2 chars at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[2P\\033[8H",
+  "---> Hit 'e' to test DELETE 4 chars at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[4P\\033[8H",
+  "---> Hit 'e' to test DELETE 1 char  at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[P\\033[8H",
+  "---> Hit 'e' to test DELETE 1 char  at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[P\\033[8H",
+  "---> Hit 'e' to test DELETE 1 *EXTRA* char at row/col 5/20 (right of '>'): \\033[K",
+  "\\033[5;30H\\033[P\\033[8H",
+  "---> Hit 'e' for next test: \\033[K",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_clear_test(bool reset)} {
+    comment {--- 0070: Clear Test ESC[K / ESC[K} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 70
+  "\\033[2J\\033[H" "ESC TEST 0070: Clear Test (ESC[K / ESC[J)\\n",
+  "2:    10>       20>       30>       40>       50>       60>       70>       80>\\n",
+  "3:34567890123456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "4:3456789012345678901234 ERASE EOL->XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\n",
+  "5:YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY<-ERASE SOL 012345678901234567890123456789\\n",
+  "6:34567890123456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "7:FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\\n",
+  "8:34567890123456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "9:3456789012345678901234 ERASE EOD->ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "0:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "1:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "2:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "3:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "4:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "5:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "6:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "7:ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\\n",
+  "\\n",
+  "---> Hit 'e' to test ERASE EOL (should make X's disappear): ",
+  "\\033[4;37H\\033[K\\n",     // ERASE EOL
+  "\\033[19H",
+  "---> Hit 'e' to test ERASE SOL (should make Y's disappear): ",
+  "\\033[5;37H\\033[1K\\n",    // ERASE SOL
+  "\\033[19H",
+  "---> Hit 'e' to test ERASE LINE (should make F's disappear): ",
+  "\\033[7;37H\\033[2K\\n",    // ERASE LINE
+  "\\033[19H",
+  "---> Hit 'e' to test ERASE EOD (should make Z's disappear): ",
+  "\\033[9;37H\\033[0J\\n",    // ERASE EOD
+  "\\033[19H",
+  "---> Hit 'e' for next test: ",
+    // Screen 71
+  "\\033[2J\\033[H" "ESC TEST 0071: Clear Test (ESC[K / ESC[J)\\n",
+  "2:       |         |         |         |         |         |\\n",
+  "3:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\n",
+  "4:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\n",
+  "5:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\n",
+  "6:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX<-- ERASE SOD 567890123456789\\n",
+  "7:3456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "8:3456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "9:3456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "\\033[19H",
+  "---> Hit 'e' to test ERASE SOD (should make X's disappear): ",
+  "\\033[6;40H\\033[1J\\n",    // ERASE SOD
+  "\\033[19H",
+  "---> Hit 'e' for next test: \\033[K",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_delete_row(bool reset)} {
+    comment {--- 0080: Delete Row - ESC[M} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 80
+  "\\033[2J\\033[H" "ESC TEST 0080: Delete Row (ESC[M)\\n",
+  "02:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "03:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "04:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "05:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "06:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "07:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "08:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "09:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "10:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "\\n",
+  "24:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "25:456789012345678901234567890123456789012345678901234567890123456789",
+  "\\033[12H",                       // to prompt row
+  "---> Hit 'e' to test [1/4] DELETE LINE 3 with ESC[M: \\033[K",
+  "\\033[2K",                        // clear prompt
+  "\\033[3H",                        // move to line 3
+  "\\033[M",                         // delete line 3
+  "\\033[12H",                       // back to line 12H for prompt
+  //"\\033[2K\\033[3H\\033[M",         // clear prompt, to row 3, delete row
+  //"\\033[12H",                       // to prompt row
+  "---> Hit 'e' to test [2/4] DELETE 3 MORE LINES with ESC[3M: \\033[K",
+  "\\033[2K\\033[3H\\033[3M",        // clear prompt, to row 3, delete 3 rows
+  "\\033[12H",                       // to prompt row
+  "---> Hit 'e' to test [3/4] DELETE 3 MORE LINES with ESC[3M: \\033[K",
+  "\\033[2K\\033[3H\\033[3M",        // clear prompt, to row 3, delete 3 rows
+  "\\033[12H",                       // to prompt row
+  "---> Hit 'e' to test [4/4] DELETE 3 MORE LINES with ESC[3M: \\033[K",
+  "\\033[2K\\033[3H\\033[3M",        // clear prompt, to row 3, delete 3 rows
+  "\\033[12H",                       // to prompt row
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_insert_row(bool reset)} {
+    comment {--- 0085: Insert Row - ESC[L} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 71
+  "\\033[2J\\033[H" "ESC TEST 0085: Insert Row (ESC[L)\\n",
+  "2:3456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "3:3456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "4:3456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "\\033[24H",
+  "24:456789012345678901234567890123456789012345678901234567890123456789\\n",
+  "25:456789012345678901234567890123456789012345678901234567890123456789",
+  "\\033[12H",
+  "---> Hit 'e' to test [1/3] INSERT 1 ROW AT LINE 3 with ESC[L: \\033[K",
+  "\\033[2K\\033[3H\\033[L",         // clear prompt, to row 3, insert row
+  "\\033[12H",                     // to prompt row 17
+  "---> Hit 'e' to test [2/3] INSERT 3 ROWS AT LINE 3 with ESC[3L: \\033[K",
+  "\\033[2K\\033[3H\\033[3L",        // clear prompt, to row 3, insert 3 rows
+  "\\033[12H",                     // to prompt row 17
+  "---> Hit 'e' for next test: ",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  Function {test_esc_scrolling(bool reset)} {
+    comment {--- 0090: Scrolling Up/Down - <ESC>[S / <ESC>M} return_type {static int}
+  } {
+    code {static int index = 0;
+const char *test[] = {
+  // Screen 90
+  "\\033[2J\\033[H" "ESC TEST 0090: Scrolling up/down\\n",
+  "Line 2   🡅\\n",
+  "Line 3  [A]\\n",
+  "Line 4          🡅\\n",
+  "Line 5         [B]\\n",
+  "Line 6\\n",
+  "Line 7\\n",
+  "Line 8\\n",
+  "Line 9\\n",
+  "Line 10\\n",
+  "Line 11\\n",
+  "Line 12\\n",
+  // Do this weird thing so the lines still appear in order in our code
+  "\\033[200H\\033[10ABottom Line -10",
+  "\\033[200H\\033[9ABottom Line -9",
+  "\\033[200H\\033[8ABottom Line -8",
+  "\\033[200H\\033[7ABottom Line -7",
+  "\\033[200H\\033[6ABottom Line -6",
+  "\\033[200H\\033[5ABottom Line -5          [D]",
+  "\\033[200H\\033[4ABottom Line -4           🡇",
+  "\\033[200H\\033[3ABottom Line -3",
+  "\\033[200H\\033[2ABottom Line -2     [C]",
+  "\\033[200H\\033[1ABottom Line -1      🡇",
+  "\\033[200H"     "Bottom Line 0",
+  "\\033[15H",                      // Line 15
+  "---> Hit 'e' to SCROLL UP 1 with <ESC>[S so top line at position [A]: \\033[K",
+  "\\033[H\\033[S\\033[14H",          // Line 14 because up one line
+  "---> Hit 'e' to SCROLL UP 2 with <ESC>[2S so top line at position [B]: \\033[K",
+  "\\033[H\\033[2S\\033[12H",         // Line 12 because up two more lines
+  "---> Hit 'e' to SCROLL DOWN 1 with <ESC>M at screen top: \\033[K",
+  "\\033[H\\033M\\033[13H",           // Line 13 because down 1 line
+  "---> Hit 'e' to SCROLL DOWN 2 with 2x<ESC>M: \\033[K",
+  "\\033[H\\033M\\033M\\033[15H",      // Line 15 because down 2 lines
+  "---> Hit 'e' to SCROLL DOWN 1 with <ESC>M for bottom line at posn [C]: \\033[K",
+  "\\033[H\\033M\\033[16H",           // Line 16 because down 1 lines
+  "---> Hit 'e' to SCROLL DOWN 3 with 3x<ESC>M for bottom line at posn [D]: \\033[K",
+  "\\033[H\\033M\\033M\\033M\\033[19H", // Line 18 because down 3 lines
+  //TODO Other ESC commands to scroll up/down?
+  "---> Hit 'e' for next test: \\033[K",
+  // Screen 100
+  "\\033[2J\\033[HESC TEST 0091: Cursor Save/Restore Test\\n",
+  "\\n",
+  "     Cursor positon at 'A' was saved with ESC[s.\\n",
+  "\\033[12;39H>\\033[1;31m\\033[s""A""\\033[0m<\\033[20H",
+  "---> Hit 'e' to recall cursor position and change 'A' to 'B': \\033[K",
+  "\\033[u\\033[1;32m""B\\033[0m\\033[20H",
+  "---> Hit 'e' for next test: \\033[K",
+  NULL
+};
+if (reset) { index = 0; return 0; }
+return show_test(test, index);} {}
+  }
+  decl {////// OTHER SELF TESTS //////} {private local
+  }
+  Function {show_file(const char *filename)} {
+    comment {Show the specified file in the terminal
+} return_type void
+  } {
+    code {// If cursor floating, do a crlf first
+if (G_tty->cursor_col()!=0) G_tty->append("\\n");
+
+char s[1024];
+FILE *fp = fopen(filename, "r");
+if ( fp == NULL ) {
+  snprintf(s, sizeof(s), "\\033[1;31m%s: %s\\033[0m\\n", filename, strerror(errno));
+  s[1023] = 0;
+  G_tty->append_utf8(s);
+  return;
+}
+while ( fgets(s, sizeof(s)-1, fp) ) {
+  s[1023] = 0;
+  G_tty->append(s);                // append line to display
+}
+// Last line in file? Done
+fclose(fp);
+fp = NULL;} {}
+  }
+  Function {speed_test()} {
+    comment {Run full screen random character update} return_type void
+  } {
+    code {// 50 iters of WxH random chars (no scrolling)
+
+// First, switch redraw style to none, so we can handle redraws()
+G_tty->redraw_style(Fl_Terminal::NO_REDRAW);
+
+// Clear screen, do 50 iterations of random chars
+G_tty->append("\\033[H");                           // home
+int rows = G_tty->display_rows();
+int cols = G_tty->display_columns();
+for (int i=0; i<50; i++ ) {
+  for ( int row=0; row<rows; row++ ) {
+    for ( int col=0; col<cols; col++ ) {
+      char c = ' ' + (rand() % 0x50);              // random ASCII characters
+      G_tty->textfgcolor_xterm(rand() % 8);        // random fg uchar color for each char
+      G_tty->plot_char(c, row, col);
+    }
+  }
+  G_tty->redraw();
+  Fl::wait(0.005);
+}
+// leave test with white on black
+G_tty->append("\\033[c");                           // reset terminal
+// back to rate limited
+G_tty->redraw_style(Fl_Terminal::RATE_LIMITED);
+// Show the Unicode alignment page
+test_firstpage(false);} {}
+  }
+  Function {show_colorbars()} {
+    comment {Show colorbars in terminal
+} open return_type void
+  } {
+    code {// If cursor floating, do a crlf first
+if (G_tty->cursor_col()!=0) G_tty->append("\\n");
+
+Fl_Color fgsave = G_tty->textfgcolor();
+Fl_Color bgsave = G_tty->textbgcolor();
+
+// ECR-1-1978
+//                      grey       yellow      cyan         green      magenta      red         blue
+Fl_Color bars1[] = { 0xc0c0c000, 0xbfc03700, 0x2ac0bf00, 0x25c03300, 0xbe00bb00, 0xbd051800, 0x1600ba00 };
+Fl_Color bars2[] = { 0x1600ba00, 0x11111100, 0xbe00bb00, 0x11111100, 0x2ac0bf00, 0x11111100, 0xc0c0c000 };
+Fl_Color boxes[] = { 0x05214a00, 0xffffff00, 0x32006700, 0x11111100, 0x03030300, 0x11111100, 0x1d1d1d00, 0x11111100 };
+//                       -I       100% wht       Q+                  superblack     black     4% black
+//                                                                   \\________________________________/
+//                                                                                  pluge
+const char *bar = "███████████";
+const char *box1= "██████████████";
+const char *box2= "█████████████";
+const char *pluge = "███";
+G_tty->append("\\033[2J\\033[H");
+// Print 75% bars: bars1[]
+{
+  for ( int y=0; y<16; y++ ) {
+    for ( int i=0; i<7; i++ ) {
+      G_tty->textfgcolor(bars1[i]);
+      G_tty->append(bar);
+    }
+    G_tty->append("\\n");
+  }
+}
+// Print strip: bars2[]
+{
+  for ( int y=0; y<2; y++ ) {
+    for ( int i=0; i<7; i++ ) {
+      G_tty->textfgcolor(bars2[i]);
+      G_tty->append(bar);
+    }
+    G_tty->append("\\n");
+  }
+}
+// Bottom boxes
+{
+  for ( int y=0; y<7; y++ ) {
+    for ( int i=0; i<8; i++ ) {
+      G_tty->textfgcolor(boxes[i]);
+      if      ( i < 3 ) G_tty->append(box1);
+      else if ( i < 4 ) G_tty->append(box2);
+      else if ( i < 7 ) G_tty->append(pluge);
+      else              G_tty->append(box2);
+    }
+    if ( y < 6 ) G_tty->append("\\n");
+  }
+}
+// Restore fg/bg colors
+G_tty->textfgcolor(fgsave);
+G_tty->textbgcolor(bgsave);} {}
+  }
+  Function {unicode_alignment()} {
+    comment {Show unicode alignment test
+} return_type void
+  } {
+    code {test_firstpage(true);} {}
+  }
+  Function {add_lines(int count)} {
+    comment {Add specified number of test lines to tty} return_type void
+  } {
+    code {// If cursor floating, do a crlf first
+if (G_tty->cursor_col()!=0) G_tty->append("\\n");
+for ( int t=0; t<count; t++ )
+  G_tty->printf("Line %04d -- AAA BBB CCC DDD\\n", G_lines++);} {}
+  }
+  Function {do_command(const char *cmd)} {
+    comment {Run the command, output appends to terminal
+} return_type void
+  } {
+    code {// Run command in pipe, return output to tty
+// TODO: This should probably be reimplemented as a thread.
+//       Also, I doubt this will work well on Windows.
+//       If it's a real problem, open a file and 'tail' it ourselves instead.
+//
+\#ifdef _WIN32
+\#define POPEN(a,b)  _popen(a,b)    // effin windows
+\#define PCLOSE(a)   _pclose(a)
+\#define READ(a,b,c) _read(a,b,c)
+\#define FILENO(a)   _fileno(a)
+\#define SSIZE_T     int
+\#else
+\#define POPEN(a,b)  popen(a,b)
+\#define PCLOSE(a)   pclose(a)
+\#define READ(a,b,c) read(a,b,c)
+\#define FILENO(a)   fileno(a)
+\#define SSIZE_T     ssize_t
+\#endif
+
+// If cursor floating, do a crlf first
+if (G_tty->cursor_col()!=0) G_tty->append("\\n");
+
+FILE *fp = POPEN(cmd, "r");
+char s[4096];
+if ( fp == NULL ) {
+  sprintf(s, "\\033[0;31mCan't execute '%.200s': %s\\033[0m\\n", cmd, strerror(errno));
+  G_tty->append_utf8(s);
+  return;
+}
+
+int fd = FILENO(fp);
+\#ifndef _WIN32
+// Non-blocking IO keeps interface "alive" during slow commands.
+// Too bad Microsoft's implementation of the C library read() call
+// is so poor it doesn't properly support non-blocking IO or fcntl().
+//
+fcntl(fd, F_SETFL, O_NONBLOCK);
+\#endif
+
+// Read in byte blocks
+G_tty->append(NULL);                                     // (clears utf8 cache)
+while (1) {
+  Fl::wait(0.05);
+  SSIZE_T bytes = READ(fd, s, sizeof(s));                // shout in uppercase so windows can hear us
+  if (bytes == -1 && errno == EAGAIN) continue;          // no data yet
+  else if (bytes > 0) G_tty->append(s, bytes);           // write block to terminal, handles utf8
+  else break;                                            // pipe closed
+}
+
+PCLOSE(fp);
+G_tty->append_ascii("\\033[33;2m<<END_OF_OUTPUT>>\\033[0m\\n");
+G_tty->redraw();} {}
+  }
+  decl {////// GUI LAYOUT //////} {private local
+  }
+  Function {parse_color(const char *val_str, Fl_Color &col)} {
+    comment {Parse color in 'val_str', returns 0 and color in 'col', or -1 on error} return_type int
+  } {
+    code {unsigned long ival;
+if (sscanf(val_str, "\#%lx", &ival) == 1 ) { col = Fl_Color(ival); return 0; }
+if (sscanf(val_str, "%lu",  &ival) == 1 ) { col = Fl_Color(ival); return 0; }
+
+fl_alert("Illegal color value '%s'\\n(can be e.g. '12' or '\#0c', etc)", val_str);
+return -1;} {}
+  }
+  Function {update_inputs()} {
+    comment {Resync the inputs with widget's values} open return_type void
+  } {
+    code {// Scroll History
+scrollhistory_input->value( G_tty->history_rows() );
+
+// Redraw rate
+redraw_rate_spinner->value( G_tty->redraw_rate() );
+
+// Font Size
+fontsize_input->value( G_tty->textsize() );
+
+// Scrollbar Size
+scrollbarsize_input->range(0, 80);
+scrollbarsize_input->step(1);
+scrollbarsize_input->value( G_tty->scrollbar_size() );
+
+// show_unknown() enable/disable
+showunknown_radio->value( G_tty->show_unknown() ? 1 : 0 );
+
+// ansi() enable/disable
+ansi_radio->value(tty ->ansi() ? 1 : 0 );
+
+// box() choice
+switch ( G_tty->box() ) {
+  case FL_UP_FRAME:        box_choice->value(0);  break;
+  case FL_DOWN_FRAME:      box_choice->value(1);  break;
+  case FL_THIN_UP_FRAME:   box_choice->value(2);  break;
+  case FL_THIN_DOWN_FRAME: box_choice->value(3);  break;
+  case FL_ENGRAVED_FRAME:  box_choice->value(4);  break;
+  case FL_EMBOSSED_FRAME:  box_choice->value(5);  break;
+  case FL_BORDER_FRAME:    box_choice->value(6);  break;
+  // ---
+  case FL_UP_BOX:          box_choice->value(7);  break;
+  case FL_DOWN_BOX:        box_choice->value(8);  break;
+  case FL_FLAT_BOX:        box_choice->value(9);  break;
+  case FL_THIN_UP_BOX:     box_choice->value(10); break;
+  case FL_THIN_DOWN_BOX:   box_choice->value(11); break;
+  case FL_BORDER_BOX:      box_choice->value(12); break;
+  case FL_NO_BOX:          box_choice->value(13); break;
+  default:                 box_choice->value(1);  break;
+}
+
+// color()
+{
+  char s[80];
+  sprintf(s, "\#%08x", G_tty->color());  color_input->value(s);
+}
+
+// textcolor()
+{
+  char s[80];
+  sprintf(s, "\#%08x", G_tty->textcolor());  textcolor_input->value(s);
+}
+
+
+// textfg/bgcolor()
+{
+  char s[80];
+  sprintf(s, "\#%08x", G_tty->textfgcolor());  textfgcolor_input->value(s);
+  sprintf(s, "\#%08x", G_tty->textbgcolor());  textbgcolor_input->value(s);
+  // defaults
+  sprintf(s, "\#%08x", G_tty->textfgcolor_default());  textfgcolor_default_input->value(s);
+  sprintf(s, "\#%08x", G_tty->textbgcolor_default());  textbgcolor_default_input->value(s);
+}
+
+// TODO: current_style().charflags()
+
+// cursorfg/bg color
+{
+  char s[80];
+  sprintf(s, "\#%08x", G_tty->cursorfgcolor()); cursorfgcolor_input->value(s);
+  sprintf(s, "\#%08x", G_tty->cursorbgcolor()); cursorbgcolor_input->value(s);
+}
+
+// Margins
+{
+  int lt  = G_tty->margin_left();
+  int rt  = G_tty->margin_right();
+  int top = G_tty->margin_top();
+  int bot = G_tty->margin_bottom();
+  char s[100];
+  sprintf(s, "%d, %d, %d, %d", lt,rt,top,bot);
+  margins_input->value(s);
+}
+
+// selectionfg/bgcolor()
+{
+  char s[80];
+  sprintf(s, "\#%08x", G_tty->selectionfgcolor());  selectionfgcolor_input->value(s);
+  sprintf(s, "\#%08x", G_tty->selectionbgcolor());  selectionbgcolor_input->value(s);
+}
+
+// output_translate()
+{
+  int out = G_tty->output_translate();
+  outflags_lf_to_crlf->value((out&Fl_Terminal::LF_TO_CRLF) ? 1 : 0);
+  outflags_lf_to_cr->value(  (out&Fl_Terminal::LF_TO_CR)   ? 1 : 0);
+  outflags_cr_to_lf->value(  (out&Fl_Terminal::CR_TO_LF)   ? 1 : 0);
+}} {}
+  }
+  Function {handle_output_translate(void)} {
+    comment {Handle the output_translation() flags} open return_type void
+  } {
+    code {// Handle combining output_translate() flags..
+int out = 0;
+if ( outflags_lf_to_crlf->value() ) out |= Fl_Terminal::LF_TO_CRLF;
+if ( outflags_lf_to_cr->value()   ) out |= Fl_Terminal::LF_TO_CR;
+if ( outflags_cr_to_lf->value()   ) out |= Fl_Terminal::CR_TO_LF;
+G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
+  }
+  Function {make_window()} {open
+  } {
+    Fl_Window win {
+      label {Fl_Terminal Test}
+      callback {exit(0);} open
+      xywh {831 66 897 838} type Double size_range {897 330 0 0} visible
+    } {
+      Fl_Spinner scrollhistory_input {
+        label {Scroll History}
+        callback {int val = int(scrollhistory_input->value() + .5);
+G_tty->history_rows(val);}
+        tooltip {Scrollback history size.
+10,000 max.} xywh {109 10 115 20} labelsize 10 minimum 0 maximum 10000 textsize 10
+      }
+      Fl_Spinner fontsize_input {
+        label {Font Size}
+        callback {int val = int(fontsize_input->value() + .5);
+G_tty->textsize(val);}
+        xywh {109 38 115 20} labelsize 10 textsize 10
+      }
+      Fl_Spinner scrollbarsize_input {
+        label {Scrollbar Size}
+        callback {int val = int(scrollbarsize_input->value() + .5);
+G_tty->scrollbar_size(val); G_tty->redraw();}
+        tooltip {Size of scrollbar width in pixels} xywh {109 67 115 20} labelsize 10 textsize 10
+      }
+      Fl_Spinner redraw_rate_spinner {
+        label {Min Redraw Time}
+        callback {float rate = float(redraw_rate_spinner->value());
+//printf("Setting redraw rate to %.2f\\n", rate);
+G_tty->redraw_rate(rate);}
+        tooltip {Minimum time between redraws
+Default is 0.10 secs.} xywh {109 94 115 20} type Float labelsize 10 minimum 0.05 maximum 5 step 0.1 textsize 10
+      }
+      Fl_Choice scheme_widget {
+        label scheme open
+        tooltip Scheme xywh {109 120 115 20} down_box BORDER_BOX labelsize 10 textsize 10
+        class Fl_Scheme_Choice
+      } {}
+      Fl_Choice box_choice {
+        label {box()} open
+        tooltip {The border box for the Fl_Terminal} xywh {109 147 115 20} down_box BORDER_BOX labelsize 10 textsize 10
+      } {
+        MenuItem {} {
+          label FL_UP_FRAME
+          user_data FL_UP_FRAME user_data_type long
+          callback {G_tty->box(FL_UP_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_DOWN_FRAME
+          user_data FL_DOWN_FRAME user_data_type long
+          callback {G_tty->box(FL_DOWN_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_THIN_UP_FRAME
+          user_data FL_THIN_UP_FRAME user_data_type long
+          callback {G_tty->box(FL_THIN_UP_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_THIN_DOWN_FRAME
+          user_data FL_THIN_DOWN_FRAME user_data_type long
+          callback {G_tty->box(FL_THIN_DOWN_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_ENGRAVED_FRAME
+          user_data FL_ENGRAVED_FRAME user_data_type long
+          callback {G_tty->box(FL_ENGRAVED_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_EMBOSSED_FRAME
+          user_data FL_EMBOSSED_FRAME user_data_type long
+          callback {G_tty->box(FL_EMBOSSED_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_BORDER_FRAME
+          user_data FL_BORDER_FRAME user_data_type long
+          callback {G_tty->box(FL_BORDER_FRAME); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8 divider
+        }
+        MenuItem {} {
+          label FL_UP_BOX
+          user_data FL_UP_BOX user_data_type long
+          callback {G_tty->box(FL_UP_BOX); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_DOWN_BOX
+          callback {G_tty->box(FL_DOWN_BOX); G_tty->redraw();}
+          xywh {20 20 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_FLAT_BOX
+          callback {G_tty->box(FL_FLAT_BOX);
+G_tty->redraw();}
+          xywh {30 30 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_THIN_UP_BOX
+          callback {G_tty->box(FL_THIN_UP_BOX); G_tty->redraw();}
+          xywh {40 40 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_THIN_DOWN_BOX
+          callback {G_tty->box(FL_THIN_DOWN_BOX); G_tty->redraw();}
+          xywh {50 50 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_BORDER_BOX
+          callback {G_tty->box(FL_BORDER_BOX); G_tty->redraw();}
+          xywh {0 0 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label FL_NO_BOX
+          callback {G_tty->box(FL_NO_BOX); G_tty->redraw();}
+          xywh {10 10 100 20} labelsize 8
+        }
+      }
+      Fl_Box {} {
+        label {Lt, Rt, Top, Bot}
+        xywh {110 172 114 15} labelsize 10
+      }
+      Fl_Input margins_input {
+        label Margins
+        callback {int lt,rt,top,bot;
+const char *val = margins_input->value();
+if (sscanf(val, "%d,%d,%d,%d",&lt,&rt,&top,&bot)!=4) {
+  fl_alert("Margins: expected four comma separated integers");
+  return;
+}
+G_tty->margin_left(lt);
+G_tty->margin_right(rt);
+G_tty->margin_top(top);
+G_tty->margin_bottom(bot);
+G_tty->redraw();}
+        xywh {110 187 114 20} labelsize 10 when 28 textsize 10
+      }
+      Fl_Check_Button outflags_lf_to_crlf {
+        label LF_TO_CRLF
+        callback {handle_output_translate();}
+        tooltip {Line-feed (\\n) performs carriage-return and line-feed (CRLF)} xywh {333 7 77 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Check_Button outflags_lf_to_cr {
+        label LF_TO_CR
+        callback {handle_output_translate();}
+        tooltip {Line-feed (\\n) performs carriage-return (\\r)} xywh {432 7 70 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Check_Button outflags_cr_to_lf {
+        label CR_TO_LF
+        callback {handle_output_translate();}
+        tooltip {Carriage-return (\\r) performs line-feed (\\n)} xywh {528 7 70 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Check_Button showunknown_radio {
+        label {show_unknown()}
+        callback {G_tty->show_unknown(showunknown_radio->value() ? true : false);
+G_tty->redraw();}
+        tooltip {Shows  unknown escape sequences/unprintable chars as "¿" character} xywh {331 31 105 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Check_Button interactivecursor_radio {
+        label {Interactive Cursor}
+        callback {bool val = interactivecursor_radio->value() ? true : false;
+G_tty->interactive_cursor(val);}
+        tooltip {Allow Up/Dn/Lt/Rt keys to move cursor
+when terminal has focus} xywh {473 31 125 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Check_Button ansi_radio {
+        label {ansi()}
+        callback {G_tty->ansi(ansi_radio->value() ? true : false);}
+        tooltip {Handle ANSI/xterm escape sequences} xywh {331 55 95 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Check_Button stdout_radio {
+        label {Echo tests to stdout}
+        tooltip {Also send test output to stdout} xywh {473 55 125 24} down_box DOWN_BOX labelsize 9
+      }
+      Fl_Input textcolor_input {
+        label {textcolor()}
+        callback {Fl_Color c;
+if (parse_color(textcolor_input->value(), c) == -1 ) return;
+G_tty->textcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The widget's text color. Has the effect of simultaneously setting:
+> textfgcolor()
+>textfgcolor_default()
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 79 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input textfgcolor_input {
+        label {textfgcolor()}
+        callback {Fl_Color c;
+if (parse_color(textfgcolor_input->value(), c) == -1 ) return;
+G_tty->textfgcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The text foreground color.
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 103 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input textfgcolor_default_input {
+        label {textfgcolor_default()}
+        callback {Fl_Color c;
+if (parse_color(textfgcolor_default_input->value(), c) == -1 ) return;
+G_tty->textfgcolor_default(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The text foreground default color.
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 127 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input cursorfgcolor_input {
+        label {cursorfgcolor()}
+        callback {Fl_Color c;
+if (parse_color(cursorfgcolor_input->value(), c) == -1 ) return;
+G_tty->cursorfgcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {Foreground color for text under the cursor.} xywh {333 151 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input selectionfgcolor_input {
+        label {selectionfgcolor()}
+        callback {Fl_Color c;
+if (parse_color(selectionfgcolor_input->value(), c) == -1 ) return;
+G_tty->selectionfgcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The mouse selection foreground color.
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 175 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input color_input {
+        label {color()}
+        callback {Fl_Color c;
+if (parse_color(color_input->value(), c) == -1 ) return;
+G_tty->color(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The widget's background color().
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 79 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input textbgcolor_input {
+        label {textbgcolor()}
+        callback {Fl_Color c;
+if (parse_color(textbgcolor_input->value(), c) == -1 ) return;
+G_tty->textbgcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The text background color.
+Refer to the docs for the special value 0xffffffff.
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 103 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input textbgcolor_default_input {
+        label {textbgcolor_default()}
+        callback {Fl_Color c;
+if (parse_color(textbgcolor_default_input->value(), c) == -1 ) return;
+G_tty->textbgcolor_default(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The text background default color.
+Refer to the docs for the special value 0xffffffff.
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 127 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input cursorbgcolor_input {
+        label {cursorbgcolor()}
+        callback {Fl_Color c;
+if (parse_color(cursorbgcolor_input->value(), c) == -1 ) return;
+G_tty->cursorbgcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {Background color for the cursor.
+This is the cursor block's color} xywh {521 151 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input selectionbgcolor_input {
+        label {selectionbgcolor()}
+        callback {Fl_Color c;
+if (parse_color(selectionbgcolor_input->value(), c) == -1 ) return;
+G_tty->selectionbgcolor(c);
+update_inputs();
+//DEBUG ::printf("IVAL is %08lx\\n",ival);
+G_tty->redraw();}
+        tooltip {The mouse selection background color.
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 175 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Choice {} {
+        label {Terminal Color} open
+        tooltip {The (XTERM) colors can be influenced by Dim/Bold, whereas the (RGB) colors are not.} xywh {379 206 180 20} down_box BORDER_BOX labelsize 9 textsize 9
+      } {
+        MenuItem {} {
+          label {White on DarkAmber (XTERM)}
+          callback {G_tty->color(0x30200000);        // amber widget bg color
+G_tty->textfgcolor_xterm(7);     // XTERM_WHITE (influenced by Dim/Bold)
+G_tty->textbgcolor(0xffffffff);  // "see through" color
+
+update_inputs();
+add_lines(5);}
+          tooltip {Sets text fg to XTERM White, text bg to "see through", and widget's color() to amber. Text fg can be influenced by Dim/Bold.} xywh {10 10 100 20} labelsize 9
+        }
+        MenuItem {} {
+          label {White on Black (XTERM)}
+          callback {G_tty->textfgcolor_xterm(7);        // XTERM WHITE (influenced by Dim/Bold)
+G_tty->textbgcolor(0xffffffff);
+G_tty->color(0x00000000);
+update_inputs();
+add_lines(5);}
+          tooltip {Sets text fg to XTERM White, text bg to "see through", and widget's color() to black. Text fg can be influenced by Dim/Bold.} xywh {20 20 100 20} labelsize 9 divider
+        }
+        MenuItem {} {
+          label {White on DarkAmber (RGB)}
+          callback {G_tty->color(0x30200000);        // amber widget bg color
+G_tty->textfgcolor(0xd0d0d000);
+G_tty->textbgcolor(0xffffffff);  // "see through" color
+update_inputs();
+add_lines(5);}
+          xywh {20 20 100 20} labelsize 9
+        }
+        MenuItem {} {
+          label {White on Black (RGB)}
+          callback {G_tty->textfgcolor(0xd0d0d000);
+G_tty->textbgcolor(0xffffffff);
+G_tty->color(0x00000000);
+update_inputs();
+add_lines(5);}
+          xywh {30 30 100 20} labelsize 9
+        }
+        MenuItem {} {
+          label {Black on White (RGB)}
+          callback {G_tty->textfgcolor(0x00000000);
+G_tty->textbgcolor(0xd0d0d000);
+G_tty->color(0xd0d0d000);
+update_inputs();
+add_lines(5);}
+          xywh {20 20 100 20} labelsize 9
+        }
+        MenuItem {} {
+          label {Green on Dark Green (RGB)}
+          callback {G_tty->textfgcolor(0x00d04000);
+G_tty->textbgcolor(0x00200800);
+G_tty->color(0x00200800);
+update_inputs();
+add_lines(5);}
+          xywh {30 30 100 20} labelsize 9
+        }
+        MenuItem {} {
+          label {Orange on Dark Orange (RGB)}
+          callback {G_tty->textfgcolor(0xd0704000);
+G_tty->textbgcolor(0x20100000);
+G_tty->color(0x20100000);
+update_inputs();
+add_lines(5);}
+          xywh {40 40 100 20} labelsize 9
+        }
+      }
+      Fl_Group {} {
+        label {Terminal Ops} open
+        xywh {608 21 152 210} box ENGRAVED_FRAME labelsize 11
+      } {
+        Fl_Button {} {
+          label {Reset Terminal
+API}
+          callback {G_tty->reset_terminal();
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Reset terminal using reset_terminal()
+Clears: screen, history, sets default tabstops, etc.} xywh {616 26 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Reset Terminal
+ANSI}
+          callback {G_tty->append("\\033c"); // reset terminal
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Reset terminal using ESC[c
+Clears: screen, history, sets default tabstops, etc.} xywh {686 26 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Home Cursor
+API}
+          callback {G_tty->cursor_home();
+G_tty->redraw();}
+          tooltip {Moves cursor to home position (top/left) using cursor_home()} xywh {616 54 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Home Cursor
+ANSI}
+          callback {G_tty->append("\\033[H");
+G_tty->redraw();}
+          tooltip {Moves cursor to home position (top/left) using ESC[H} xywh {686 54 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear History
+API}
+          callback {G_tty->clear_history();
+G_tty->redraw();}
+          tooltip {Clear scrollback history using clear_history()} xywh {616 82 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear History
+ANSI}
+          callback {G_tty->append("\\033[3J"); // clr history
+G_tty->redraw();}
+          tooltip {Clear scrollback history using ESC[3J} xywh {686 82 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear Screen
+API}
+          callback {G_tty->clear();
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Clear terminal screen using clear().
+Moves what was on the screen to the scroll history.} xywh {616 110 64 24} labelsize 8
+        }
+        Fl_Button {} {
+          label {Clear Screen
+ANSI}
+          callback {G_tty->append("\\033[H\\033[2J"); // home, cls
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+          tooltip {Clear terminal screen using ESC[H + ESC[2J
+Moves what was on the screen to the scroll history.} xywh {686 110 64 24} labelsize 8
+        }
+        Fl_Group {} {open
+          xywh {616 138 134 24} box FLAT_BOX color 45
+        } {
+          Fl_Button {} {
+            label {Clear Screen
+To Color}
+            callback {Fl_Color c;
+if (parse_color(clear_color_input->value(), c) == -1 ) return;
+G_tty->clear(c);
+G_tty->redraw();
+// Reset the 'Add +50' line counter to 1
+G_lines = 1;}
+            tooltip {Clear terminal screen to specific color
+Moves what was on the screen to the scroll history.} xywh {616 138 64 24} labelsize 8
+          }
+          Fl_Input clear_color_input {
+            tooltip {The color used by "Clear Screen To Color" button
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#ff000000, etc)} xywh {686 138 64 24} labelsize 9 when 28 textfont 4 textsize 9
+            code0 {clear_color_input->value("\#ff000000");}
+          }
+        }
+        Fl_Button {} {
+          label {Speed Test}
+          callback {speed_test();}
+          tooltip {Runs a full screen random chars/colors
+Shortcut: S} xywh {640 168 90 25} shortcut 0x73 labelsize 11
+        }
+        Fl_Button {} {
+          label {Ring Debug}
+          callback {// Force scroll history to be small so we can see entire ring w/out scrolling
+if (scrollhistory_input->value() > 35) {
+    scrollhistory_input->value(35);
+    scrollhistory_input->do_callback();
+}
+
+// Show debug window
+G_tty->show_ring_debug_window();}
+          tooltip {Show the Fl_Terminal raw ring buffer contents.
+(Warning: This slows the UI and uses continuous cpu until closed)} xywh {640 198 90 25} labelsize 11
+        }
+      }
+      Fl_Group {} {
+        label {Terminal Tests}
+        xywh {767 21 115 210} box ENGRAVED_FRAME labelsize 11
+      } {
+        Fl_Button {} {
+          label {Unicode
+Alignment}
+          callback {unicode_alignment();}
+          tooltip {Show a Unicode screen alignment test
+Checks that troublesome Unicode chars don't cause misalignment} xywh {778 31 90 30} labelsize 9
+        }
+        Fl_Button {} {
+          label {+50 Lines}
+          callback {add_lines(50);}
+          tooltip {Add 50 lines of text to terminal.
+Tests screen history, scrollup} xywh {778 66 90 30} labelsize 9
+        }
+        Fl_Button {} {
+          label {Color Bars}
+          callback {show_colorbars();}
+          tooltip {Show colorbar test
+Tests API for setting colors
+Does *NOT* use ESC codes} xywh {778 101 90 30} labelsize 11
+        }
+        Fl_Box {} {
+          label {Self Tests}
+          xywh {782 173 90 15} labelsize 10
+        }
+        Fl_Button {} {
+          label {@<<}
+          callback {NextEscapeTest(-1);}
+          comment {Move to previous test}
+          tooltip {Reverse through the ESC code self tests
+Shortcut: SHIFT+E} xywh {778 191 40 30} shortcut 0x10065 labelsize 11
+        }
+        Fl_Button {} {
+          label {@>>}
+          callback {NextEscapeTest(1);}
+          comment {Move to next test}
+          tooltip {Advance through the ESC code self tests
+Shortcut: 'e'} xywh {828 191 40 30} shortcut 0x65 labelsize 11
+        }
+      }
+      Fl_Input showfile_input {
+        label {Show File}
+        callback {showfile_input->deactivate(); // causes focus loss?
+command_input->deactivate();
+win->redraw();
+Fl::wait(.01);
+show_file(showfile_input->value());
+showfile_input->activate();
+command_input->activate();
+Fl::focus(showfile_input); // return focus
+win->redraw();}
+        tooltip {Type in the pathname of a file to cat to the screen} xywh {109 238 773 25} labelsize 12 when 10 textfont 4
+      }
+      Fl_Input command_input {
+        label Command
+        callback {showfile_input->deactivate();
+command_input->deactivate(); // causes focus loss?
+win->redraw();
+Fl::wait(.01);
+do_command(command_input->value());
+showfile_input->activate();
+command_input->activate();
+Fl::focus(command_input); // return focus
+win->redraw();}
+        tooltip {Command to run.
+Hit ENTER to run command.
+The command's stdout will appear in terminal.} xywh {109 269 773 25} labelsize 12 when 12 textfont 4
+      }
+      Fl_Terminal tty {
+        xywh {10 302 872 524}
+        class MyTerminal
+      }
+    }
+    code {// CTOR
+G_tty = tty;              // global access
+G_tty->color(0x30200000); // dark orange (makes true black easy to see)
+G_tty->textsize(12);      // smaller text (RGB demo needs this)
+win->resizable(tty);
+command_input->when(FL_WHEN_ENTER_KEY_ALWAYS);
+command_input->take_focus();   // ensure command prompt has keyboard focus on startup
+
+\#ifdef _WIN32
+showfile_input->value("c:\\\\Windows\\\\system.ini");
+command_input->value("dir c:\\\\windows");
+\#else
+showfile_input->value("/etc/login.defs");
+command_input->value("ls -la --color && ping google.com -c 5");
+\#endif
+
+// Sync input vals with widget's current values
+update_inputs();} {}
+  }
+}
+
+decl {////// MAIN //////} {private local
+}
+
+Function {} {open
+} {
+  code {G_tty = NULL;
+Application app;        // sets G_tty
+G_app = &app;
+app.show(argc, argv);
+// Run the "firstpage" test
+app.test_firstpage(false);} {}
+}

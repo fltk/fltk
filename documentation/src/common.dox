@@ -130,7 +130,15 @@ with FLTK:
 
 \li Fl_Double_Window - A double-buffered window on the screen.
 
+\li Fl_Flex - A flexible container of one row or column of widgets.
+    Fl_Flex widgets may be nested, but see also Fl_Grid.
+
 \li Fl_Gl_Window - An OpenGL window on the screen.
+
+\li Fl_Grid - A flexible container of one or more rows and columns of widgets
+    arranged in a "grid" with auto-layout features. Fl_Grid widgets can be nested
+    with other Fl_Grid or many Fl_Group type widgets. Nesting with other self-resizing
+    containers like Fl_Pack and Fl_Tile is not recommended but \b may work.
 
 \li Fl_Group - The base container class; can be used to group
     any widgets together.
@@ -150,8 +158,7 @@ with FLTK:
 \section common_sizeposition Setting the Size and Position of Widgets
 
 The size and position of widgets is usually set when you create them.
-You can access them with the \p x(), \p y(), \p w(), and \p h()
-methods.
+You can access them with the \p x(), \p y(), \p w(), and \p h() methods.
 
 You can change the size and position by using the \p position(),
 \p resize(), and \p size() methods:
@@ -168,17 +175,12 @@ widget's parent.
 
 \section common_colors Colors
 
-FLTK stores the colors of widgets as an 32-bit unsigned
-number that is either an index into a color palette of 256
-colors or a 24-bit RGB color. The color palette is \e not
-the X or MS Windows colormap, but instead is an internal table with
-fixed contents.
+FLTK stores the colors of widgets as a 32-bit unsigned number that is
+either an index into a color palette of 256 colors (0 \<= color \<= 255)
+or a 24-bit RGB color (color > 255). The color palette is \e not the
+X or Windows colormap, but instead is an internal table with fixed contents.
 
-See the
-\ref drawing_colors
-section of
-\ref drawing
-for implementation details.
+See the \ref drawing_colors section of \ref drawing for implementation details.
 
 There are symbols for naming some of the more common colors:
 
@@ -426,9 +428,9 @@ The following standard label types are included:
     the widget's align() flag. FL_MULTI_LABEL was designed to be used with
     Fl_Menu_Item's to support icons or small images, typically left of the
     menu text.\n
-    As of this writing (FLTK 1.4.0, Sep 2017) Fl_Menu_Items support only
-    one label part (text \b or image), but using Fl_Multi_Label as the
-    label can extend this to more than one part.
+    As of this writing (FLTK 1.4.0) Fl_Menu_Items support only one label
+    part (text \b or image), but using Fl_Multi_Label as the label can extend
+    this to more than one part.
 
   \see class Fl_Multi_Label, Fl_Widget::align()
 

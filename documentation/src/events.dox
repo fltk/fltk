@@ -23,7 +23,7 @@ This static information remains valid until the next event
 is read from the window system, so it is ok to look at it outside
 of the
 \p handle()
-method.
+method, for instance in a callback.
 
 Event numbers can be converted to their actual names using the \ref fl_eventnames[] array
 defined in \#include &lt;FL/names.h&gt;; see next chapter for details.
@@ -35,6 +35,40 @@ Fl_Widget::handle()
 method to accept and process specific events.
 
 \section events_mouse Mouse Events
+
+Classic mice provide two or three buttons:
+  - a primary (left) button, typically used to point and click on objects
+  - a secondary (right) button, typically used to open special menus etc.
+  - a middle button for other special events.
+
+The primary and secondary mouse buttons can usually be inverted by system
+setup functions for left handed usage. FLTK always sends the mouse button
+number according to the "logical" mouse button, i.e. such a setup is
+transparent for application programmers.
+
+The middle button was later replaced by a scroll wheel to allow scrolling
+text or other objects in a window or widget vertically. Pushing the scroll
+wheel down acts like pushing the middle mouse button.
+
+If the scroll wheel is used to scroll while the Shift key is held, the
+scrolling direction is horizontal rather than vertical.
+
+Some mice may even have a "scroll ball" or similar (touch) feature. These
+mice support horizontal and vertical scrolling simultaneously.
+
+Newer mice add even more buttons, called "side buttons":
+  - a "back" button, typically used to "go back", e.g. in browsers
+  - a "forward" button, typically used to "go forward", e.g. in browsers
+
+FLTK handles up to five buttons since version 1.3.10 across all supported
+platforms. Note that Windows doesn't support more than five buttons
+whereas other platforms may support more. FLTK ignores other buttons as
+long as they send "mouse button" events.
+
+Some gaming mice with five or more buttons may send their button clicks
+as keyboard events which will be handled like normal text input by FLTK.
+This has not been tested though.
+
 
 \subsection events_fl_push FL_PUSH
 
@@ -63,7 +97,7 @@ another widget.
 
 \subsection events_fl_drag FL_DRAG
 
-The mouse has moved with a button held down. The current
+The mouse has moved with at least one button held down. The current
 button state is in
 Fl::event_state().
 The mouse position is in
@@ -74,6 +108,22 @@ Fl::event_y().
 In order to receive \p FL_DRAG events, the widget must
 return non-zero when handling \p FL_PUSH.
 
+Moving the mouse keeps sending FL_DRAG events as long as at least one
+button is held down. If any buttons are pushed and released during the
+drag operation FLTK sends FL_PUSH and FL_RELEASE events even while dragging.
+The current button status can be found in Fl::event_state() and in
+Fl::event_buttons().
+
+When the last button has been released FLTK sends FL_MOVE events again.
+Note: The button released last need not necessarily be the one that
+started the drag operation.
+
+Since FLTK 1.4.0 dragging is supported for all five supported mouse buttons,
+for instance the user can drag the mouse while the "back" button is held down.
+Warning: This may or may not be compatible with other applications for
+drag-and-drop operations \b between applications and lead to unexpected behavior.
+
+
 \subsection events_fl_release FL_RELEASE
 
 A mouse button has been released. You can find out what button by calling
@@ -81,6 +131,7 @@ Fl::event_button().
 
 In order to receive the \p FL_RELEASE event, the widget must
 return non-zero when handling \p FL_PUSH.
+
 
 \subsection events_fl_move FL_MOVE
 
@@ -92,14 +143,17 @@ widget.
 In order to receive \p FL_MOVE events, the widget must
 return non-zero when handling \p FL_ENTER.
 
+
 \subsection events_fl_mousewheel FL_MOUSEWHEEL
 
 The user has moved the mouse wheel. The
 Fl::event_dx()
 and
 Fl::event_dy()
-methods can be used to find the amount to scroll horizontally and
-vertically.
+methods can be used to find the amount to scroll horizontally (dx) and
+vertically (dy). On mice with a single scroll wheel holding the Shift key
+on the keyboard while scrolling sends horizontal scroll events.
+
 
 \section events_focus Focus Events
 
@@ -189,6 +243,34 @@ to not to ignore any keystrokes!
 You can also make "global" shortcuts by using Fl::add_handler().
 A global shortcut will work no matter what windows are displayed
 or which one has the focus.
+
+Since version 1.4, FLTK has 3 default global shortcuts (\c Ctrl/+/-/0/
+ [\c Cmd/+/-/0/ under macOS]) that change the value of the GUI scaling
+factor. \c Ctrl+ zooms-in all app windows of the focussed display
+(all displays under macOS);
+\c Ctrl- zooms-out these windows; \c Ctrl 0 restores the initial value of the
+scaling factor. If any window of the display is fullscreen or maximized,
+scaling shortcuts have no effect. It's possible to deactivate FLTK's default
+scaling shortcuts with function Fl::keyboard_screen_scaling().
+
+Option Fl::OPTION_SIMPLE_ZOOM_SHORTCUT can
+facilitate the typing necessary to trigger the zoom-in operation
+with those keyboard layouts where character '+' is located in
+the shifted position of its key: when this option is On
+it's not necessary to press also the Shift key to zoom-in.
+
+These scaling shortcuts are installed when the FLTK
+library opens the display. They have a lower priority than any shortcut
+defined in any menu and than any user-provided event handler
+(see Fl::add_handler()) installed after FLTK opened the display.
+Therefore, if a menu item of an FLTK app is given FL_COMMAND+'+'
+as shortcut, that item's callback rather than FLTK's default zooming-in
+routine is triggered when \c Ctrl+ (\c Cmd+ under macOS) is pressed.
+
+FLTK sends the \ref FL_ZOOM_EVENT when the scaling factor value changes, to which a
+callback can be associated with Fl::add_handler().
+By default, FLTK displays the new scaling factor value in a yellow, transient window.
+This can be changed with option Fl::OPTION_SHOW_SCALING.
 
 \section events_widget Widget Events
 
@@ -314,8 +396,14 @@ The mouse has moved out of the widget.
 \subsection events_fl_dnd_release FL_DND_RELEASE
 
 The user has released the mouse button dropping data into
-the widget. If the widget returns 1, it will receive the data in
-the immediately following \p FL_PASTE event.
+the widget. When the receiving widget's handle() method gets the FL_DND_RELEASE
+event, it should return 1 to accept the dragged data. Processing of this event must not
+use code that would make unrelated events be sent to the application
+(opening a dialog window for example) or that
+would communicate with the dragging process. The next
+event received by the handle() method will then be an FL_PASTE event.
+The handle() method should process this FL_PASTE event rapidly to prevent the dragging
+process from failing with a timeout error.
 
 \section events_fl_misc Other events
 

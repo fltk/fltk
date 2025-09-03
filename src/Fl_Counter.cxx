@@ -62,7 +62,7 @@ void Fl_Counter::arrow_widths(int &w1, int &w2) {
     w2 = w() * 17/100;
   }
   // limit arrow box sizes to reserve more space for the text box
-  if (w1 > 18) w1 = 18;
+  if (w1 > 13) w1 = 13;
   if (w2 > 24) w2 = 24;
 }
 
@@ -196,6 +196,9 @@ int Fl_Counter::handle(int event) {
       if (wp.deleted()) return 1;
       redraw();
     }
+    return 1;
+  case FL_MOUSEWHEEL:
+    handle_drag(clamp(increment(value(),(Fl::event_dy() - Fl::event_dx()) / 2 )));
     return 1;
   case FL_KEYBOARD :
     switch (Fl::event_key()) {

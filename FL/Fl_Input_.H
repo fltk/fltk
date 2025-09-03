@@ -239,6 +239,12 @@ public:
   int value(const char*, int);
 
   /* Changes the widget text. */
+  int value(int value);
+
+  /* Changes the widget text. */
+  int value(double value);
+
+  /* Changes the widget text. */
   int static_value(const char*);
 
   /* Changes the widget text. */
@@ -255,6 +261,10 @@ public:
       \see Fl_Input_::value(const char*)
   */
   const char* value() const {return value_;}
+
+  int ivalue() const;
+
+  double dvalue() const;
 
   /* Returns the Unicode character at index \p i. */
   unsigned int index(int i) const;
@@ -294,7 +304,7 @@ public:
     \see insert_position(int, int)
   */
   int insert_position() const { return position_; }
-  FL_DEPRECATED("in 1.4.0 - use insert_position() instead",
+  FL_DEPRECATED("since 1.4.0 - use insert_position() instead",
   int position() const ) { return insert_position(); }
 
   /** Gets the current selection mark.
@@ -303,7 +313,7 @@ public:
 
   /* Sets the index for the cursor and mark. */
   int insert_position(int p, int m);
-  FL_DEPRECATED("in 1.4.0 - use insert_position(p, m) or Fl_Widget::position(x, y) instead",
+  FL_DEPRECATED("since 1.4.0 - use insert_position(p, m) or Fl_Widget::position(x, y) instead",
   int position(int p, int m)) { return insert_position(p, m); }
 
   /** Sets the cursor position and mark.
@@ -313,7 +323,7 @@ public:
     \see insert_position(int, int), insert_position(), mark(int)
   */
   int insert_position(int p) { return insert_position(p, p); }
-  FL_DEPRECATED("in 1.4.0 - use insert_position(p) instead",
+  FL_DEPRECATED("since 1.4.0 - use insert_position(p) instead",
   int position(int p)) { return insert_position(p); }
 
   /** Sets the current selection mark.

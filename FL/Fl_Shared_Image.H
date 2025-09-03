@@ -1,7 +1,7 @@
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +22,7 @@
 
 #  include "Fl_Image.H"
 
+#undef SHIM_DEBUG
 
 /** Test function (typedef) for adding new shared image formats.
 
@@ -120,8 +121,13 @@ protected:
   virtual ~Fl_Shared_Image();
   void add();
   void update();
+  Fl_Shared_Image *copy_(int W, int H) const;
 
 public:
+#ifdef SHIM_DEBUG
+  static void print_pool();
+#endif
+
   /** Returns the filename of the shared image */
   const char    *name() { return name_; }
 
@@ -147,9 +153,9 @@ public:
   }
 
   Fl_Image *copy(int W, int H) const FL_OVERRIDE;
-  Fl_Image *copy() const {
-    return Fl_Image::copy();
-  }
+  Fl_Image *copy() const;
+  Fl_Image *copy();
+
   void color_average(Fl_Color c, float i) FL_OVERRIDE;
   void desaturate() FL_OVERRIDE;
   void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0) FL_OVERRIDE;

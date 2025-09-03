@@ -2,7 +2,7 @@
 /*
  * Build configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2021 by Bill Spitzak and others.
+ * Copyright 1998-2024 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,7 @@
 #define _FL_fl_config_h_
 
 /*
- * FL_ABI_VERSION (ABI version):
+ * FL_ABI_VERSION (ABI version)
  *
  * define FL_ABI_VERSION: 1xxyy for 1.x.y (xx,yy with leading zero)
 */
@@ -44,6 +44,15 @@
 */
 
 #cmakedefine FLTK_HAVE_CAIROEXT 1
+
+
+/*
+ * FLTK_HAVE_FORMS
+ *
+ * Do we have the Forms compatibility library available?
+*/
+
+#cmakedefine FLTK_HAVE_FORMS 1
 
 
 /*
@@ -74,5 +83,29 @@
  */
 
 #cmakedefine FLTK_USE_WAYLAND 1
+
+
+/*
+ * FLTK_USE_STD
+ *
+ * May we use std::string and std::vector for the current build?
+ *
+ * This is a build configuration option which allows FLTK to add some
+ * features based on std::string and std::vector in FLTK 1.4.x
+ *
+ */
+
+#cmakedefine01 FLTK_USE_STD
+
+
+/*
+ * FLTK_USE_SVG
+ *
+ * Do we want FLTK to read and write SVG-formatted files ?
+ *
+ */
+
+#cmakedefine01 FLTK_USE_SVG
+
 
 #endif /* _FL_fl_config_h_ */

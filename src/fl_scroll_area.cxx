@@ -32,6 +32,12 @@
   The contents of the rectangular area is first shifted by \p dx
   and \p dy pixels. The \p draw_area callback is then called for
   every newly exposed rectangular area.
+ \warning With FLTK 1.4 and above, it's recommended to put graphical elements in an Fl_Scroll
+ widget rather than use function fl_scroll() to update those elements. That's because fl_scroll()
+ may not produce a pixel-accurate result when the GUI scaling factor value is not a multiple of 100%.
+ Alternatively, use fl_scroll() when the scaling factor value is a multiple of 100% and perform a
+ full redraw of the graphical elements otherwise. Statement <tt>float s = Fl::screen_scale(win->screen_num());</tt>
+ gives the current scaling factor value given Fl_Window *win.
   */
 void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
                void (*draw_area)(void*, int,int,int,int), void* data)

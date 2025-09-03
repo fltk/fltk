@@ -89,15 +89,20 @@ The following file contains the full Mac OS Roman character set:
   MacRoman_utf-8.txt    UTF-8 encoding, suitable for FLTK 1.3 and greater
                         (use cp1252.txt with FLTK 1.1 on Mac OS instead)
 
+
 Other developer support files:
 ================================================================================
 
-  doxystar.cxx          Use this to reformat doxygen comments (test only).
+- doxystar.cxx          Use this to reformat doxygen comments (test only).
 
         Compile with:   g++ -o doxystar doxystar.cxx
 
         Usage:          cat file | doxystar
 
-  DO NOT USE this for current code development!
+        DO NOT USE this for current code development!
 
-  It is intended for testing of future code reformatting !
+        It is intended for testing of future code reformatting !
+
+
+- fromdos.c             Strip <cr> (^M) from text files.
+                        See source code and comments for how to use it.

@@ -55,7 +55,7 @@ int Widget_Bin_Button::handle(int inEvent)
         // fake a drag outside of the widget
         Fl::e_x = x()-1;
         Fl_Button::handle(inEvent);
-        // fake a buttton release
+        // fake a button release
         Fl_Button::handle(FL_RELEASE);
         // make it into a dnd event
         const char *type_name = (const char*)user_data();
@@ -110,8 +110,8 @@ int Widget_Bin_Window_Button::handle(int inEvent)
         // create a new window here
         Fl_Type *prototype = typename_to_prototype((char*)user_data());
         if (prototype) {
-          Fl_Type *new_type = add_new_widget_from_user(prototype, kAddAfterCurrent);
-          if (new_type && new_type->is_a(Fl_Type::ID_Window)) {
+          Fl_Type *new_type = add_new_widget_from_user(prototype, Strategy::AFTER_CURRENT);
+          if (new_type && new_type->is_a(ID_Window)) {
             Fl_Window_Type *new_window = (Fl_Window_Type*)new_type;
             Fl_Window *w = (Fl_Window *)new_window->o;
             w->position(Fl::event_x_root(), Fl::event_y_root());
@@ -142,6 +142,7 @@ vars_(0L),
 vars_user_data_(0L)
 {
   Fl_Input::callback((Fl_Callback*)callback_handler_cb);
+  text("0");
 }
 
 void Fluid_Coord_Input::callback_handler_cb(Fluid_Coord_Input *This, void *v) {
@@ -156,7 +157,7 @@ void Fluid_Coord_Input::callback_handler(void *v) {
 }
 
 /**
- Get the value of a variable.
+ \brief Get the value of a variable.
  Collects all consecutive ASCII letters into a variable name, scans the
  Variable list for that name, and then calls the corresponding callback from
  the Variable array.
@@ -291,4 +292,20 @@ void Fluid_Coord_Input::value(int v) {
   char buf[32];
   fl_snprintf(buf, sizeof(buf), "%d", v);
   text(buf);
+}
+
+/**
+ Allow vertical mouse dragging and mouse wheel to interactively change the value.
+ */
+int Fluid_Coord_Input::handle(int event) {
+  switch (event) {
+    case FL_MOUSEWHEEL:
+      if (Fl::event_dy()) {
+        value( value() - Fl::event_dy() );
+        set_changed();
+        do_callback(FL_REASON_CHANGED);
+      }
+      return 1;
+  }
+  return Fl_Input::handle(event);
 }

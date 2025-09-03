@@ -20,7 +20,7 @@
 #include "fluid.h"
 #include "Fl_Window_Type.h"
 
-#include <FL/Fl_String.H>
+#include "../src/Fl_String.H"
 
 struct Fl_Menu_Item;
 
@@ -88,7 +88,7 @@ public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
   Fd_Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
-  Fd_Tool_Store storage_;                 ///< storage location (see FD_STORE_INTERNAL, etc.)
+  Fd_Tool_Store storage_;       ///< storage location (see FD_STORE_INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
@@ -176,6 +176,7 @@ protected:
 public:
   int ex, ey, dx, dy, type, mask;
   Fd_Snap_Action() : ex(0x7fff), ey(0x7fff), dx(128), dy(128), type(0), mask(0) { }
+  virtual ~Fd_Snap_Action() { }
   virtual void check(Fd_Snap_Data &d) = 0;
   virtual void draw(Fd_Snap_Data &d) { }
   virtual bool matches(Fd_Snap_Data &d);

@@ -41,7 +41,6 @@ public:
     struct wl_list link; // links all buffers from the same wl_shm_pool
     struct wl_buffer *wl_buffer;
     void *data;
-    struct wl_callback *cb;
     struct wl_shm_pool *shm_pool;
     bool draw_buffer_needs_commit;
     bool in_use; // true while being committed
@@ -49,17 +48,23 @@ public:
   };
   struct wld_shm_pool_data { // one record attached to each wl_shm_pool object
     char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool
-    int pool_size; // size of encapsulated memory
+    size_t pool_size; // size of encapsulated memory
     struct wl_list buffers; // to list of fl_wld_buffer's from this pool
   };
   static const uint32_t wld_format;
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) FL_OVERRIDE;
+  static struct wl_shm_pool *current_pool;
+  static FL_EXPORT const struct wl_callback_listener *p_surface_frame_listener;
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc,
+                      int srcx, int srcy) FL_OVERRIDE;
+  void cache_size(Fl_Image *img, int &width, int &height) FL_OVERRIDE;
   static struct wld_buffer *create_wld_buffer(int width, int height, bool with_shm = true);
   static void create_shm_buffer(wld_buffer *buffer);
   static void buffer_release(struct wld_window *window);
-  static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
-  static void cairo_init(struct draw_buffer *buffer, int width, int height, int stride, cairo_format_t format);
-  static struct draw_buffer *offscreen_buffer(Fl_Offscreen);
+  static void buffer_commit(struct wld_window *window, cairo_region_t *r = NULL);
+  static void cairo_init(struct draw_buffer *buffer, int width, int height, int stride,
+                         cairo_format_t format);
+  // used by class Fl_Wayland_Gl_Window_Driver
+  static FL_EXPORT struct draw_buffer *offscreen_buffer(Fl_Offscreen);
   static const cairo_user_data_key_t key;
   static Fl_Image_Surface *custom_offscreen(int w, int h, struct wld_buffer **buffer);
 };

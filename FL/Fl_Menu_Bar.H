@@ -61,7 +61,7 @@
 
   Typing the shortcut() of any of the menu items will cause
   callbacks exactly the same as when you pick the item with the mouse.
-*/
+ */
 class FL_EXPORT Fl_Menu_Bar : public Fl_Menu_ {
   friend class Fl_Sys_Menu_Bar_Driver;
 protected:
@@ -91,6 +91,11 @@ public:
    This is useful when the menu bar can be an Fl_Sys_Menu_Bar object.
    */
   virtual void update() {}
+  /**
+   Opens the 1st level submenu of the menubar corresponding to \c item.
+   \since 1.4.0
+   */
+  virtual void play_menu(const Fl_Menu_Item *item);
 };
 
 #endif

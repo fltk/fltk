@@ -62,7 +62,23 @@ public:
   void save_scroll_position();
   void restore_scroll_position();
   void rebuild();
+  void new_list() { Fl_Browser_::new_list(); }
   void display(Fl_Type *);
+  void load_prefs();
+  void save_prefs();
+
+  static Fl_Color label_color;
+  static Fl_Font label_font;
+  static Fl_Color class_color;
+  static Fl_Font class_font;
+  static Fl_Color func_color;
+  static Fl_Font func_font;
+  static Fl_Color name_color;
+  static Fl_Font name_font;
+  static Fl_Color code_color;
+  static Fl_Font code_font;
+  static Fl_Color comment_color;
+  static Fl_Font comment_font;
 };
 
 #endif // _FLUID_WIDGET_BROWSER_H

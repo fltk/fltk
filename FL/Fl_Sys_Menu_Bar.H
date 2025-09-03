@@ -111,6 +111,7 @@ public:
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
   void update() FL_OVERRIDE;
+  void play_menu(const Fl_Menu_Item *) FL_OVERRIDE;
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   /** Adds a new menu item.
    \see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0)

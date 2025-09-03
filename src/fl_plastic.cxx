@@ -348,8 +348,8 @@ static void down_round(int x, int y, int w, int h, Fl_Color c) {
 }
 
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
-
+extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 
 Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
   fl_internal_boxtype(_FL_PLASTIC_UP_BOX, up_box);
@@ -358,8 +358,8 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
   fl_internal_boxtype(_FL_PLASTIC_DOWN_FRAME, down_frame);
   fl_internal_boxtype(_FL_PLASTIC_THIN_UP_BOX, thin_up_box);
   fl_internal_boxtype(_FL_PLASTIC_THIN_DOWN_BOX, down_box);
-  fl_internal_boxtype(_FL_PLASTIC_ROUND_UP_BOX, up_round);
-  fl_internal_boxtype(_FL_PLASTIC_ROUND_DOWN_BOX, down_round);
+  fl_internal_boxtype(_FL_PLASTIC_ROUND_UP_BOX, up_round, fl_round_focus);
+  fl_internal_boxtype(_FL_PLASTIC_ROUND_DOWN_BOX, down_round, fl_round_focus);
 
   return _FL_PLASTIC_UP_BOX;
 }

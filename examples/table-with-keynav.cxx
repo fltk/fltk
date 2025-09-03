@@ -149,7 +149,7 @@ void RowSelect_CB(Fl_Widget *w, void*) {
 }
 int main() {
     Fl::option(Fl::OPTION_ARROW_FOCUS, 0);              // disable arrow focus nav (we want arrows to control cells)
-    Fl_Double_Window win(862, 312, "table-with-keynav");
+    Fl_Double_Window win(862, 312, "Table With Keynav");
     win.begin();
         // Create table
         G_table = new MyTable(10, 30, win.w()-20, win.h()-70, "Times Table");

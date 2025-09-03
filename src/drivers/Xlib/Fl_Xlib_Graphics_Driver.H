@@ -141,9 +141,11 @@ protected:
   void transformed_vertex0(float x, float y) FL_OVERRIDE;
   void fixloop() FL_OVERRIDE;
   void focus_rect(int x, int y, int w, int h) FL_OVERRIDE;
+  void rect_unscaled(int x, int y, int w, int h) FL_OVERRIDE;
   void rectf_unscaled(int x, int y, int w, int h) FL_OVERRIDE;
   void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) FL_OVERRIDE;
   void line_unscaled(int x, int y, int x1, int y1) FL_OVERRIDE;
+  void line_unscaled(int x, int y, int x1, int y1, int x2, int y2) FL_OVERRIDE;
   void xyline_unscaled(int x, int y, int x1) FL_OVERRIDE;
   void *change_pen_width(int lwidth) FL_OVERRIDE;
   void reset_pen_width(void *data) FL_OVERRIDE;

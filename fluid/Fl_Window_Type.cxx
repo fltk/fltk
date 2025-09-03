@@ -5,7 +5,7 @@
 // for interacting with the overlay, which allows the user to
 // select, move, and resize the children widgets.
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,10 +21,11 @@
 #include "Fl_Window_Type.h"
 
 #include "Fl_Group_Type.h"
+#include "Fl_Grid_Type.h"
 #include "fluid.h"
 #include "widget_browser.h"
 #include "undo.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 #include "file.h"
 #include "code.h"
 #include "widget_panel.h"
@@ -39,11 +40,16 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Tooltip.H>
 #include "../src/flstring.h"
 
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+extern Fl_Window *the_panel;
+extern void draw_width(int x, int y, int r, Fl_Align a);
+extern void draw_height(int x, int y, int b, Fl_Align a);
 
 extern Fl_Preferences   fluid_prefs;
 
@@ -67,19 +73,19 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
     c->value(g_project.i18n_type);
   } else {
     undo_checkpoint();
-    g_project.i18n_type = c->value();
+    g_project.i18n_type = static_cast<Fd_I18n_Type>(c->value());
     set_modflag(1);
   }
   switch (g_project.i18n_type) {
-  case 0 : /* None */
+  case FD_I18N_NONE : /* None */
       i18n_gnu_group->hide();
       i18n_posix_group->hide();
       break;
-  case 1 : /* GNU gettext */
+  case FD_I18N_GNU : /* GNU gettext */
       i18n_gnu_group->show();
       i18n_posix_group->hide();
       break;
-  case 2 : /* POSIX cat */
+  case FD_I18N_POSIX : /* POSIX cat */
       i18n_gnu_group->hide();
       i18n_posix_group->show();
       break;
@@ -102,7 +108,7 @@ void show_settings_cb(Fl_Widget *, void *) {
 
 Fl_Menu_Item window_type_menu[] = {
   {"Single",0,0,(void*)FL_WINDOW},
-  {"Double",0,0,(void*)(FL_WINDOW+1)},
+  {"Double",0,0,(void*)(FL_DOUBLE_WINDOW)},
   {0}};
 
 static int overlays_invisible;
@@ -136,6 +142,13 @@ void Overlay_Window::close_cb(Overlay_Window *self, void*) {
   self->hide();
 }
 
+// Use this when drawing flat boxes while editing, so users can see the outline,
+// even if the group and its parent have the same color.
+static void fd_flat_box_ghosted(int x, int y, int w, int h, Fl_Color c) {
+  fl_rectf(x, y, w, h, Fl::box_color(c));
+  fl_rect(x, y, w, h, Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, c, .1f)));
+}
+
 void Overlay_Window::draw() {
   const int CHECKSIZE = 8;
   // see if box is clear or a frame or rounded:
@@ -149,7 +162,14 @@ void Overlay_Window::draw() {
         fl_rectf(X,Y,CHECKSIZE,CHECKSIZE);
       }
   }
-  Fl_Overlay_Window::draw();
+  if (show_ghosted_outline) {
+    Fl_Box_Draw_F *old_flat_box = Fl::get_boxtype(FL_FLAT_BOX);
+    Fl::set_boxtype(FL_FLAT_BOX, fd_flat_box_ghosted, 0, 0, 0, 0);
+    Fl_Overlay_Window::draw();
+    Fl::set_boxtype(FL_FLAT_BOX, old_flat_box, 0, 0, 0, 0);
+  } else {
+    Fl_Overlay_Window::draw();
+  }
 }
 
 extern Fl_Window *main_window;
@@ -203,12 +223,17 @@ int Overlay_Window::handle(int e) {
 
 /**
  Make and add a new Window node.
- \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
+ \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  \return new node
  */
 Fl_Type *Fl_Window_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
+  while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   if (!p) {
     fl_message("Please select a function");
     return 0;
@@ -225,7 +250,7 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   w->size_range(10, 10);
   w->window = myo;
   myo->o = w;
-  myo->add(p, strategy);
+  myo->add(anchor, strategy);
   myo->modal = 0;
   myo->non_modal = 0;
   return myo;
@@ -302,7 +327,7 @@ uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
 }
 
 void Fl_Window_Type::ideal_size(int &w, int &h) {
-  w = 480, h = 320;
+  w = 480; h = 320;
   if (main_window) {
     int sx, sy, sw, sh;
     Fl_Window *win = main_window;
@@ -318,7 +343,7 @@ void Fl_Window_Type::ideal_size(int &w, int &h) {
 
 void modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
+    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->modal);
   } else {
@@ -330,7 +355,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
 
 void non_modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
+    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->non_modal);
   } else {
@@ -342,7 +367,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
 
 void border_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
+    if (!current_widget->is_a(ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window*)(current_widget->o))->border());
   } else {
@@ -354,7 +379,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
 
 void xclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Fl_Type::ID_Window)) {
+    if (current_widget->is_a(ID_Window)) {
       i->show();
       i->parent()->show();
       i->value(((Fl_Window_Type *)current_widget)->xclass);
@@ -366,7 +391,7 @@ void xclass_cb(Fl_Input* i, void* v) {
     int mod = 0;
     undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_a(Fl_Type::ID_Window)) {
+      if (o->selected && o->is_a(ID_Window)) {
         mod = 1;
         Fl_Window_Type *wt = (Fl_Window_Type *)o;
         storestring(i->value(), wt->xclass);
@@ -388,7 +413,19 @@ Fl_Window_Type Fl_Window_type;
 
 // Resize from window manager...
 void Overlay_Window::resize(int X,int Y,int W,int H) {
-  Fl_Widget* t = resizable(); resizable(0);
+  // Make sure we don't create undo checkpoints if the window does not actually change.
+  // Some WMs seem to send spurious resize events.
+  if (X!=x() || Y!=y() || W!=w() || H!=h()) {
+    // Set a checkpoint on the first resize event, ignore further resizes until
+    // a different type of checkpoint is triggered.
+    if (undo_checkpoint_once(kUndoWindowResize))
+      set_modflag(1);
+  }
+
+  Fl_Widget* t = resizable();
+  if (Fl_Type::allow_layout == 0) {
+    resizable(0);
+  }
 
   // do not set the mod flag if the window was not resized. In FLUID, all
   // windows are opened without a given x/y position, so modifying x/y
@@ -530,7 +567,7 @@ void Fl_Window_Type::draw_out_of_bounds() {
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
   for (Fl_Type *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
-    if (q->is_group() && !q->is_a(ID_Scroll)) {
+    if (q->is_a(ID_Group) && !q->is_a(ID_Scroll)) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
       draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
     }
@@ -616,25 +653,25 @@ void Fl_Window_Type::draw_overlay() {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
+      if (show_guides) {
+        // If we are in a drag operation, and the parent is a grid, show the grid overlay
+        if (drag && q->parent && q->parent->is_a(ID_Grid)) {
+          Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Fl_Grid_Type*)q->parent)->o);
+          grid->draw_overlay();
+        }
+      }
       if (!show_guides || !drag || numselected != 1) {
-        if (Fl_Flex_Type::parent_is_flex(q) && !Fl_Flex_Type::is_fixed(q)) {
-          if (((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o)->horizontal()) {
-            int yh = y + (t-y)/2;
-            fl_begin_loop();
-            fl_vertex(x+2, yh); fl_vertex(x+12, yh+5); fl_vertex(x+12, yh-5);
-            fl_end_loop();
-            fl_begin_loop();
-            fl_vertex(r-3, yh); fl_vertex(r-13, yh+5); fl_vertex(r-13, yh-5);
-            fl_end_loop();
+        if (Fl_Flex_Type::parent_is_flex(q) && Fl_Flex_Type::is_fixed(q)) {
+          Fl_Flex *flex = ((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o);
+          Fl_Widget *wgt = myo->o;
+          if (flex->horizontal()) {
+            draw_width(wgt->x(), wgt->y()+15, wgt->x()+wgt->w(), FL_ALIGN_CENTER);
           } else {
-            int xh = x + (r-x)/2;
-            fl_begin_loop();
-            fl_vertex(xh, y+2); fl_vertex(xh+5, y+12); fl_vertex(xh-5, y+12);
-            fl_end_loop();
-            fl_begin_loop();
-            fl_vertex(xh, t-3); fl_vertex(xh+5, t-13); fl_vertex(xh-5, t-13);
-            fl_end_loop();
+            draw_height(wgt->x()+15, wgt->y(), wgt->y()+wgt->h(), FL_ALIGN_CENTER);
           }
+        } else if (q->is_a(ID_Grid)) {
+          Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Fl_Grid_Type*)q)->o);
+          grid->draw_overlay();
         }
         fl_rect(x,y,r-x,t-y);
       }
@@ -665,9 +702,7 @@ void Fl_Window_Type::draw_overlay() {
 
   // Draw selection box + resize handles...
   // draw box including all labels
-  fl_line_style(FL_DOT);
-  fl_rect(mybx,myby,mybr-mybx,mybt-myby);
-  fl_line_style(FL_SOLID);
+  fl_focus_rect(mybx,myby,mybr-mybx,mybt-myby); // issue #816
   // draw box excluding labels
   fl_rect(mysx,mysy,mysr-mysx,myst-mysy);
   fl_rectf(mysx,mysy,5,5);
@@ -679,8 +714,6 @@ void Fl_Window_Type::draw_overlay() {
     Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Fl_Widget_Type*)selection, this};
     Fd_Snap_Action::draw_all(data);
   }
-
-  // TODO: for invisible boxes (NONE, FLAT, etc.) draw a faint outline when dragging
 }
 
 extern Fl_Menu_Item Main_Menu[];
@@ -699,17 +732,17 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
   Fl_Widget_Type * prev_parent = 0;
   if( !s || !s->selected || !s->is_widget()) return;
   for (Fl_Type *i=s; i && i->parent; i=i->parent) {
-    if (i->is_group() && prev_parent) {
-      if (i->is_a(Fl_Type::ID_Tabs)) {
+    if (i->is_a(ID_Group) && prev_parent) {
+      if (i->is_a(ID_Tabs)) {
         ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
         return;
       }
-      if (i->is_a(Fl_Type::ID_Wizard)) {
+      if (i->is_a(ID_Wizard)) {
         ((Fl_Wizard*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
         return;
       }
     }
-    if (i->is_group() && s->is_widget())
+    if (i->is_a(ID_Group) && s->is_widget())
       prev_parent = (Fl_Widget_Type*)i;
   }
 }
@@ -717,7 +750,7 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
 // do that for every window (when selected set changes):
 void redraw_overlays() {
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
-    if (o->is_a(Fl_Type::ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
+    if (o->is_a(ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
 }
 
 void toggle_overlays(Fl_Widget *,void *) {
@@ -732,7 +765,7 @@ void toggle_overlays(Fl_Widget *,void *) {
   }
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
-    if (o->is_a(Fl_Type::ID_Window)) {
+    if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -755,7 +788,7 @@ void toggle_guides(Fl_Widget *,void *) {
     guides_button->value(show_guides);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
-    if (o->is_a(Fl_Type::ID_Window)) {
+    if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -787,9 +820,23 @@ void toggle_restricted(Fl_Widget *,void *) {
     restricted_button->value(show_restricted);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
-    if (o->is_a(Fl_Type::ID_Window)) {
+    if (o->is_a(ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
+    }
+  }
+}
+
+/**
+ \brief User changes settings to show low contrast groups with a ghosted outline.
+ */
+void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
+  show_ghosted_outline = !show_ghosted_outline;
+  fluid_prefs.set("show_ghosted_outline", show_ghosted_outline);
+  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+    if (o->is_a(ID_Window)) {
+      Fl_Widget_Type* w = (Fl_Widget_Type*)o;
+      ((Overlay_Window*)(w->o))->redraw();
     }
   }
 }
@@ -811,9 +858,24 @@ extern void fix_group_size(Fl_Type *t);
 extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Item New_Menu[];
 
-// move the selected children according to current dx,dy,drag state:
-void Fl_Window_Type::moveallchildren()
+/**
+ Move the selected children according to current dx, dy, drag state.
+
+ This is somewhat of a do-all function that received many additions when new
+ widget types were added. In the default case, moving a group will simply move
+ all descendants with it. When resizing, children are resized to fit within
+ the group.
+
+ This is not ideal for widgets that are moved or resized within a group that
+ manages the layout of its children. We must create a more universal way to
+ modify move events per widget type.
+
+ \param[in] key if key is not 0, it contains the code of the keypress that
+      caused this call. This must only be set when handle FL_KEYBOARD events.
+ */
+void Fl_Window_Type::moveallchildren(int key)
 {
+  bool update_widget_panel = false;
   undo_checkpoint();
   Fl_Type *i;
   for (i=next; i && i->level>level;) {
@@ -821,26 +883,66 @@ void Fl_Window_Type::moveallchildren()
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
-      myo->o->resize(x,y,r-x,t-y);
+      if (myo->is_a(ID_Flex) || myo->is_a(ID_Grid)) {
+        // Flex and Grid need to be able to layout their children.
+        allow_layout++;
+        myo->o->resize(x,y,r-x,t-y);
+        allow_layout--;
+      } else {
+        // Other groups are resized without affecting their children, however
+        // they move their children if the entire widget is moved.
+        myo->o->resize(x,y,r-x,t-y);
+      }
       if (Fl_Flex_Type::parent_is_flex(myo)) {
+        // If the border of a Flex child is move, give that child a fixed size
+        // so that the user request is reflected.
         Fl_Flex_Type* ft = (Fl_Flex_Type*)myo->parent;
         Fl_Flex* f = (Fl_Flex*)ft->o;
-        if (f->horizontal()) {
-          if (myo->o->w()!=ow) {
-            f->fixed(myo->o, myo->o->w());
-            f->layout();
-          }
+        if (key) {
+          ft->keyboard_move_child(myo, key);
+        } else if (drag & FD_DRAG) {
+          ft->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
         } else {
-          if (myo->o->h()!=oh) {
-            f->fixed(myo->o, myo->o->h());
-            f->layout();
+          if (f->horizontal()) {
+            if (myo->o->w()!=ow) {
+              f->fixed(myo->o, myo->o->w());
+              f->layout();
+            }
+          } else {
+            if (myo->o->h()!=oh) {
+              f->fixed(myo->o, myo->o->h());
+              f->layout();
+            }
           }
         }
+        // relayout the Flex parent
+        allow_layout++;
+        f->layout();
+        allow_layout--;
+      } else if (myo->parent && myo->parent->is_a(ID_Grid)) {
+        Fl_Grid_Type* gt = (Fl_Grid_Type*)myo->parent;
+        Fl_Grid* g = (Fl_Grid*)gt->o;
+        if (key) {
+          gt->keyboard_move_child(myo, key);
+        } else {
+          if (drag & FD_DRAG) {
+            gt->insert_child_at(myo->o, Fl::event_x(), Fl::event_y());
+          } else {
+            gt->child_resized(myo);
+          }
+        }
+        allow_layout++;
+        g->layout();
+        allow_layout--;
+        update_widget_panel = true;
+      } else if (myo->parent && myo->parent->is_a(ID_Group)) {
+        Fl_Group_Type* gt = (Fl_Group_Type*)myo->parent;
+        ((Fl_Group*)gt->o)->init_sizes();
       }
       // move all the children, whether selected or not:
       Fl_Type* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_true_widget() && !myo->is_a(ID_Flex)) {
+        if (p->is_true_widget() && !myo->is_a(ID_Flex) && !myo->is_a(ID_Grid)) {
           Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);
@@ -860,6 +962,9 @@ void Fl_Window_Type::moveallchildren()
   dx = dy = 0;
 
   update_xywh();
+  if (update_widget_panel && the_panel && the_panel->visible()) {
+    propagate_load(the_panel, LOAD);
+  }
 }
 
 int Fl_Window_Type::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)
@@ -876,7 +981,7 @@ int Fl_Window_Type::handle(int event) {
       // find the innermost item clicked on:
       selection = this;
       for (Fl_Type* i=next; i && i->level>level; i=i->next)
-        if (i->is_group()) {
+        if (i->is_a(ID_Group)) {
           Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
           if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
             selection = myo;
@@ -968,10 +1073,10 @@ int Fl_Window_Type::handle(int event) {
       {
         Fl_Type *cc = Fl_Type::current;
         Fl_Type::current = Fl_Type::current_dnd;
-        add_new_widget_from_user(prototype, kAddAsLastChild);
+        add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
         Fl_Type::current = cc;
       } else {
-        add_new_widget_from_user(prototype, kAddAsLastChild);
+        add_new_widget_from_user(prototype, Strategy::AS_LAST_CHILD);
       }
       popupx = 0x7FFFFFFF;
       popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
@@ -1126,7 +1231,7 @@ int Fl_Window_Type::handle(int event) {
         dx *= x_step;
         dy *= y_step;
       }
-      moveallchildren();
+      moveallchildren(Fl::event_key());
       drag = 0;
       return 1;
 
@@ -1270,8 +1375,13 @@ Fl_Widget_Class_Type *current_widget_class = 0;
  \return new node
  */
 Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
+  while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();
   myo->name("UserInterface");
 
@@ -1286,7 +1396,7 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   w->size_range(10, 10);
   w->window = myo;
   myo->o = w;
-  myo->add(p, strategy);
+  myo->add(anchor, strategy);
   myo->modal = 0;
   myo->non_modal = 0;
   myo->wc_relative = 0;
@@ -1431,7 +1541,7 @@ void Fl_Widget_Class_Type::write_code2(Fd_Code_Writer& f) {
 // live mode support
 
 Fl_Widget *Fl_Window_Type::enter_live_mode(int) {
-  Fl_Window *win = new Fl_Window(o->x(), o->y(), o->w(), o->h());
+  Fl_Window *win = new Fl_Window(10, 10, o->w(), o->h());
   return propagate_live_mode(win);
 }
 
@@ -1442,6 +1552,9 @@ void Fl_Window_Type::leave_live_mode() {
  copy all properties from the edit widget to the live widget
  */
 void Fl_Window_Type::copy_properties() {
+  Fl_Window *self = static_cast<Fl_Window*>(o);
+  Fl_Window *live = static_cast<Fl_Window*>(live_widget);
+  if (self->resizable() == self)
+    live->resizable(live);
   Fl_Widget_Type::copy_properties();
-  /// \todo copy resizing constraints over
 }

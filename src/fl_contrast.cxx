@@ -1,7 +1,7 @@
 //
 // Color contrast functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,6 +24,10 @@
 #include <FL/Fl.H>
 #include <math.h>
 
+#ifndef DEBUG_CONTRAST_LEGACY
+#define DEBUG_CONTRAST_LEGACY 0
+#endif // DEBUG_CONTRAST_LEGACY
+
 // Initial values of global/static variables defined by fl_contrast_* functions.
 
 // This defines the default contrast mode since FLTK 1.4.0
@@ -31,15 +35,19 @@ static int fl_contrast_mode_ = FL_CONTRAST_CIELAB;
 
 // This defines the default contrast level per contrast mode
 static int fl_contrast_level_[10] = {
-  0, 50, 55, 0, 0, 0, 0, 0, 0, 0
+         0,                     // 0 = FL_CONTRAST_NONE
+        50,                     // 1 = FL_CONTRAST_LEGACY
+        39,                     // 2 = FL_CONTRAST_CIELAB
+         0,                     // 3 = FL_CONTRAST_CUSTOM
+         0                      // 4-9 = not yet defined
 };
 
 // There is no default custom contrast function
 static Fl_Contrast_Function *fl_contrast_function_ = 0;
 
 
-// The following function is (and must be!) the same as Fl::get_color()
-// but can be inlined. We need this additional implementation because all contrast
+// The following function is (and must be!) the same as Fl::get_color() but
+// can be inlined. We need this additional implementation because all contrast
 // related functions have been moved from fl_color.cxx to fl_contrast.cxx
 // or have been directly implemented in fl_contrast.cxx (new functions).
 // Inlining will hopefully prevent an extra function call.
@@ -131,12 +139,13 @@ double fl_lightness(Fl_Color color) {
 
   This can be used to tune the legacy fl_contrast() function to achieve
   slightly better results. The default value is defined per contrast mode
-  (see below). Values between 50 and 70 are recommended but you can raise
-  it up to 100. Lower values than 50 are probably not useful.
+  (see below). Values between 50 and 70 may be useful for the legacy contrast
+  mode but you can raise it up to 100. Lower values than 50 are probably not
+  useful.
 
   The contrast \p level affects not only the legacy (1.3.x) fl_contrast()
   function but also the new CIELAB contrast mode which is the default since
-  FLTK 1.4.0.
+  FLTK 1.4.0. See default value below.
 
   Other contrast modes are currently not affected by the contrast level.
 
@@ -149,7 +158,7 @@ double fl_lightness(Fl_Color color) {
 
   The default contrast level is
     - 50 in mode FL_CONTRAST_LEGACY (compatible with FLTK 1.3.x)
-    - 55 in mode FL_CONTRAST_CIELAB
+    - 39 in mode FL_CONTRAST_CIELAB (similar threshold as in FLTK 1.3.x)
     -  0 (undefined) for all other modes
 
   See the description of fl_contrast_mode(int mode) for more information about
@@ -158,7 +167,7 @@ double fl_lightness(Fl_Color color) {
   Example:
   \code
     fl_contrast_mode(FL_CONTRAST_LEGACY);
-    fl_contrast_level(65);
+    fl_contrast_level(60);
   \endcode
 
   A \p level greater than 50 (probably best in the range 50 to 70) may achieve
@@ -200,7 +209,7 @@ int fl_contrast_level() {
 
   - FL_CONTRAST_NONE   (not recommended: returns the foreground color)
   - FL_CONTRAST_LEGACY (same as in FLTK 1.3.x)
-  - FL_CONTRAST_CIELAB (default since FLTK 1.4.0)
+  - FL_CONTRAST_CIELAB (better, this is the default since FLTK 1.4.0)
   - FL_CONTRAST_CUSTOM (you must define your own contrast algorithm)
 
   If you set FL_CONTRAST_CUSTOM you must also register your custom
@@ -219,11 +228,23 @@ int fl_contrast_level() {
     in higher contrast, i.e. the algorithm switches "earlier" to
     black or white mode.
 
-  - FL_CONTRAST_CIELAB: defaut level is 55 which appears to be a good
+  - FL_CONTRAST_CIELAB: defaut level is 39 which appears to be a good
     value. The higher the level is, the more contrast is to be expected.
-    Values in the range below 55 accept lower contrast and values above
-    55 switch "earlier" to black or white. Values between 45 and 65 may
+    Values in the range below 39 accept lower contrast and values above
+    39 switch "earlier" to black or white. Values between 36 and 46 may
     yield usable contrast experience.
+
+  \note The goal of fl_contrast() is to achieve a "sufficient" contrast
+    between text and background. Level 39 in CIELAB mode means that the
+    accepted contrast is about 39% of the lightness difference between
+    both colors. This can be perceived as very low contrast in some cases,
+    but the text should at least be readable. Note that the highest possible
+    contrast value on a medium gray background is 50% (either black or white).
+    Bill Spitzak wrote on May 16, 2024 in fltk.general in thread "FLTK 1.4
+    Menu Bar Style": <i>"I would certainly aim for a function that does not
+    alter  color combinations where it is physically possible to read the
+    text, even if squinting is needed."</i>\n
+    See https://groups.google.com/g/fltkgeneral/c/EkWI4HTHSLA/m/rsZunZ1vAwAJ
 
   \param[in]  mode  if invalid, FL_CONTRAST_CIELAB will be selected
 
@@ -261,15 +282,16 @@ int fl_contrast_mode() {
 
   Your custom contrast function must provide the signature
   \code
-    Fl_Color my_contrast_function(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context)
+    Fl_Color my_contrast_function(Fl_Color fg, Fl_Color bg, int context, int size)
   \endcode
 
   The arguments are the same as for the full fl_contrast() function since FLTK 1.4.
-  You can use the supplied fontsize \p fs to modify the result. Depending on the
-  caller the \p fs parameter can be 0 (default) or a valid fontsize.
+  You can use the supplied \p size to modify the result. Depending on the
+  caller the \p size parameter can be 0 (default) or a valid size. In the context
+  of text, i.e. \p context == 0, the \p size parameter is the fontsize.
 
   The \p context parameter is not yet used and will always be 0 unless included in
-  a call to fl_contrast(). The value 0 should be interpreted as text.
+  a call to fl_contrast(). The value 0 must be interpreted as text.
   In the future the \p context argument will be used to supply a different context
   than text (small icons, large icons, etc.). The exact usage is not yet specified.
 
@@ -301,10 +323,10 @@ void fl_contrast_function(Fl_Contrast_Function *f) {
   \param[in] fs,context   fontsize and context (unused)
   \return                 contrasting color
 */
-static Fl_Color fl_contrast_legacy(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context) {
+static Fl_Color fl_contrast_legacy(Fl_Color fg, Fl_Color bg, int context, int size) {
 
-  (void) fs;      // currently ignored
   (void) context; // currently ignored
+  (void) size;    // currently ignored
 
   // internal static variables, recalculated only if fl_contrast_level() is changed
 
@@ -338,6 +360,18 @@ static Fl_Color fl_contrast_legacy(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
 
   int lc = lfg - lbg;                   // calculated contrast (-255 .. 255)
 
+#if DEBUG_CONTRAST_LEGACY
+
+  const char *rv = "?";                 // return value as text (init)
+  if (lc > tc || lc < -tc) rv = "fg";   // sufficient contrast
+  else if (lbg > tbw) rv = "BLACK";     // light background
+  else rv = "WHITE";                    // dark background
+
+  printf("fl_contrast_legacy: lfg %4d (%7.2f)  lbg %4d (%7.2f)  lc %4d (%7.2f)  => %s\n",
+        lfg, lfg/255.*100, lbg, lbg/255.*100, lc, lc/255.*100, rv);
+
+#endif // DEBUG_CONTRAST_LEGACY
+
   // Compare and return the contrasting color...
 
   if (lc > tc || lc < -tc) return fg;   // sufficient contrast
@@ -358,13 +392,13 @@ static Fl_Color fl_contrast_legacy(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
   \param[in] fs,context   unused: fontsize and context
   \return                 contrasting color
 */
-static Fl_Color fl_contrast_cielab(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context) {
+static Fl_Color fl_contrast_cielab(Fl_Color fg, Fl_Color bg, int context, int size) {
 
-  (void) fs;              // currently ignored
-  (void) context;         // currently ignored
+  (void) context; // currently ignored
+  (void) size;    // currently ignored
 
   double tc  = (double)fl_contrast_level(); // sufficient contrast threshold
-  double tbw = 55.;                         // black/white threshold
+  double tbw = 50.;                         // black/white threshold
 
   // Compute the perceived lightness L* (Lstar) and the contrast
 
@@ -401,15 +435,16 @@ static Fl_Color fl_contrast_cielab(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
   You can change the behavior of fl_contrast() in several ways:
 
   - Change the "level" (sensitivity) for contrast calculation, see fl_contrast_level().
-    Valid levels are 0 - 100, the default "medium" value is 50. If you raise the level
-    above 50 the overall contrast will generally be higher, i.e. the required contrast
-    to return the foreground color is raised and therefore the calculated color will
-    switch "earlier" to either black or white.
+    Valid levels are 0 - 100, the default "medium" value depends on the contrast mode.
+    If you raise the level above the default value the overall contrast will generally
+    be higher, i.e. the required contrast to return the foreground color is raised and
+    therefore the calculated color switches "earlier" to either black or white.
     In other words, using the following values:
-    -   0 will always use the foreground color
-    -  50 will use the default, unmodified algorithm
+    - 0 always uses the foreground color
+    - the default, unmodified algorithm allows a sufficient contrast such that the text
+      is readable
     - 100 will always use black or white
-    - values larger than 50 may yield slightly better results.
+
     Changing the \p level is particularly useful and intended for the "legacy mode"
     to improve the results partially. Values slightly above 50 (50 - 70) will likely
     return the best results (50 is the default, as used in FLTK 1.3.x).
@@ -434,25 +469,33 @@ static Fl_Color fl_contrast_cielab(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
     to use the new default function:
 
   - FL_CONTRAST_CIELAB, based on the CIELAB (L*a*b*) color model. This function
-    is superior regarding the visual contrast perception but may be slower.
+    is superior regarding the human contrast perception but may be slightly
+    slower - which should not matter on a modern CPU. The default contrast
+    level in this mode is 39 which results in a very similar experience as the
+    old contrast function but avoids unreadable border cases.
     <b>This is the default since FLTK 1.4.0.</b>
 
   - FL_CONTRAST_CUSTOM, your own contrast calculation function.
 
   In the future we \b may provide even more (and superior) contrast algorithms.
 
-  The new parameters \p fs and \p context (since 1.4.0) are defined for future
-  extensions and are currently not used. Default values are 0.
+  The new parameters \p context and \p size (since 1.4.0) are defined for
+  future extensions and are currently not used. Default values are 0.
+  - The \p context is intended to differentiate text and other kinds
+    of objects, e.g. radio buttons, check marks, or icon types.
+  - The \p size parameter is an unspecified (object) size that may be used to
+    calculate the required contrast. In text mode this must be the font size.
+    Rule: the larger the object (font), the lower the required contrast.
 
   \note These new optional parameters must be provided in the custom contrast
   function which is the reason why they are added now. In the future we may use
-  the fontsize to adjust the calculated contrast, and users defining their own
-  contrast functions may use them in their functions.
+  the (font) size to adjust the calculated contrast, and users defining their
+  own contrast functions may use them in their functions.
 
-  \param[in]  fg  foreground (text) color
-  \param[in]  bg  background color
-  \param[in]  fs  font size (optional, default = 0 == undefined)
-  \param[in]  context  graphical context (optional, default = 0 == text)
+  \param[in]  fg      foreground (text) color
+  \param[in]  bg      background color
+  \param[in]  context graphical context (optional, default = 0 == text)
+  \param[in]  size    unspecified size (optional, default = 0 == undefined)
 
   \return     contrasting color: \p fg, \p FL_BLACK, or \p FL_WHITE
 
@@ -460,21 +503,21 @@ static Fl_Color fl_contrast_cielab(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int
   \see fl_contrast_mode(int)
   \see fl_contrast_function()
 */
-Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context) {
+Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, int context, int size) {
 
   switch (fl_contrast_mode_) {
 
     case FL_CONTRAST_LEGACY:
-      return fl_contrast_legacy(fg, bg, fs, context);
+      return fl_contrast_legacy(fg, bg, context, size);
 
     case FL_CONTRAST_CUSTOM:
       if (fl_contrast_function_)
-        return (fl_contrast_function_)(fg, bg, fs, context);
+        return (fl_contrast_function_)(fg, bg, context, size);
 
       // FALLTHROUGH
 
     case FL_CONTRAST_CIELAB:
-      return fl_contrast_cielab(fg, bg, fs, context);
+      return fl_contrast_cielab(fg, bg, context, size);
 
     default: // unknown (none): return fg
       break;

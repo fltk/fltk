@@ -2,7 +2,7 @@
 // Definition of X11 window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -77,7 +77,7 @@ private:
 #if FLTK_USE_CAIRO
   cairo_t *cairo_;
 #endif // FLTK_USE_CAIRO
-  void decorated_win_size(int &w, int &h);
+  bool decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
@@ -113,6 +113,8 @@ public:
   void unmap() FL_OVERRIDE;
   void fullscreen_on() FL_OVERRIDE;
   void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
+  void maximize() FL_OVERRIDE;
+  void un_maximize() FL_OVERRIDE;
   void use_border() FL_OVERRIDE;
   void size_range() FL_OVERRIDE;
   void iconize() FL_OVERRIDE;

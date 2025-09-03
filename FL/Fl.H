@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -87,6 +87,9 @@ typedef void (Fl_Label_Measure_F)(const Fl_Label *label, int &width, int &height
 
 /** Signature of some box drawing functions passed as parameters */
 typedef void (Fl_Box_Draw_F)(int x, int y, int w, int h, Fl_Color color);
+
+/** Signature of box focus frame drawing functions */
+typedef void (Fl_Box_Draw_Focus_F)(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
 
 /** Signature of timeout callback functions passed as parameters.
   Please see Fl::add_timeout() for details.
@@ -266,6 +269,13 @@ public:
      /// if the GTK library is available on the platform (linux/unix only).
      /// When switched off, GTK file dialogs aren't used even if the GTK library is available.
     OPTION_FNFC_USES_GTK,
+    /// Meaningful for the Wayland/X11 platform only. When switched on, the library uses a Zenity-based file dialog.
+    /// When switched off (default), no zenity-based file dialog is used.
+    OPTION_FNFC_USES_ZENITY,
+    /// Meaningful for the Wayland/X11 platform only.
+    /// When switched on, the library uses a kdialog-based file dialog if command 'kdialog' is available on the running system.
+    /// When switched off (default), no kdialog-based file dialog is used.
+    OPTION_FNFC_USES_KDIALOG,
     /// When switched on (default), Fl_Printer runs the GTK printer dialog
     /// if the GTK library is available on the platform (linux/unix only).
     /// When switched off, the GTK printer dialog isn't used even if the GTK library is available.
@@ -274,9 +284,12 @@ public:
     /// value.
     /// When switched off, no such window gets displayed.
     OPTION_SHOW_SCALING,
-    /// Meaningful for the Wayland/X11 platform only. When switched on (default), the library uses a Zenity-based file dialog.
-    /// When switched off, the GTK file dialog is used instead.
-    OPTION_FNFC_USES_ZENITY,
+    /// When switched on and when the keyboard in use has '+' in the shifted position of its key,
+    /// pressing that key and ctrl triggers the zoom-in operation.
+    /// When switched off (default), the zoom-in operation requires that also the shift key is pressed.
+    /// Under macOS, this option has no effect because the OS itself generates ⌘= followed
+    /// by ⌘+ when pressing ⌘ and the '=|+' key without pressing shift.
+    OPTION_SIMPLE_ZOOM_SHORTCUT,
       // don't change this, leave it always as the last element
       /// For internal use only.
     OPTION_LAST
@@ -466,17 +479,17 @@ public:
   static void repeat_timeout(double t, Fl_Timeout_Handler cb, void *data = 0);
   static int  has_timeout(Fl_Timeout_Handler cb, void *data = 0);
   static void remove_timeout(Fl_Timeout_Handler cb, void *data = 0);
+  static int remove_next_timeout(Fl_Timeout_Handler cb, void *data = 0, void **data_return = 0);
 
   static void add_check(Fl_Timeout_Handler, void* = 0);
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
 
-  static Fl_Timestamp now();
+  static Fl_Timestamp now(double offset = 0);
   static double seconds_since(Fl_Timestamp& then);
   static double seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
   static long ticks_since(Fl_Timestamp& then);
   static long ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
-  static const Fl_Timestamp distant_past();
 
   // private
   static void run_idle();
@@ -692,34 +705,51 @@ public:
     This returns garbage if the most recent event was not a FL_PUSH or FL_RELEASE event.
     \retval FL_LEFT_MOUSE
     \retval FL_MIDDLE_MOUSE
-    \retval FL_RIGHT_MOUSE.
-    \see Fl::event_buttons()
+    \retval FL_RIGHT_MOUSE
+    \retval FL_BACK_MOUSE
+    \retval FL_FORWARD_MOUSE
+    \see Fl::event_buttons(), Fl::event_state()
   */
-  static int event_button()     {return e_keysym-FL_Button;}
+  static int event_button() { return e_keysym - FL_Button; }
   /**
     Returns the keyboard and mouse button states of the last event.
 
     This is a bitfield of what shift states were on and what mouse buttons
     were held down during the most recent event.
 
-    The legal event state bits are:
+    \note FLTK platforms differ in what Fl::event_state() returns when it is called
+      while a modifier key or mouse button is being pressed or released.
 
-    - FL_SHIFT
-    - FL_CAPS_LOCK
-    - FL_CTRL
-    - FL_ALT
-    - FL_NUM_LOCK
-    - FL_META
-    - FL_SCROLL_LOCK
-    - FL_BUTTON1
-    - FL_BUTTON2
-    - FL_BUTTON3
+  - Under X11 and Wayland, Fl::event_state() indicates the state of the modifier keys and
+    mouse buttons just \b prior to the event. Thus, during the \c FL_KEYDOWN event generated
+    when pressing the shift key, for example, the \c FL_SHIFT bit of event_state() is 0 and
+    becomes 1 only at the next event which can be any other event, including e.g. \c FL_MOVE.
+  - Under other platforms the reported state of modifier keys or mouse buttons includes that
+    of the key or button being pressed or released.
+  - Fl::event_state() returns the same value under all platforms when it's called while a
+    non-modifier key (e.g. a letter or function key) is being pressed or released.
+  - X servers do not agree on shift states, and \c FL_NUM_LOCK, \c FL_META, and \c FL_SCROLL_LOCK
+    may not work.
+  - The values were selected to match the XFree86 server on Linux.
 
-    X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and
-    FL_SCROLL_LOCK may not work. The values were selected to match the
-    XFree86 server on Linux. In addition there is a bug in the way X works
-    so that the shift state is not correctly reported until the first event
-    <I>after</I> the shift key is pressed or released.
+  \note This inconsistency \b may be fixed (on X11 and Wayland) in a later release.
+
+  The legal event state bits are:
+
+    | Device   | State Bit      | Key or Button           | Since  |
+    |----------|----------------|-------------------------|--------|
+    | Keyboard | FL_SHIFT       | Shift                   |        |
+    | Keyboard | FL_CAPS_LOCK   | Caps Lock               |        |
+    | Keyboard | FL_CTRL        | Ctrl                    |        |
+    | Keyboard | FL_ALT         | Alt                     |        |
+    | Keyboard | FL_NUM_LOCK    | Num Lock                |        |
+    | Keyboard | FL_META        | Meta, e.g. "Windows"    |        |
+    | Keyboard | FL_SCROLL_LOCK | Scroll Lock             |        |
+    | Mouse    | FL_BUTTON1     | left button             |        |
+    | Mouse    | FL_BUTTON2     | middle button           |        |
+    | Mouse    | FL_BUTTON3     | right button            |        |
+    | Mouse    | FL_BUTTON4     | side button 1 (back)    | 1.3.10 |
+    | Mouse    | FL_BUTTON5     | side button 2 (forward) | 1.3.10 |
   */
   static int event_state()      {return e_state;}
 
@@ -852,7 +882,9 @@ public:
   /** Gets the current Fl::focus() widget. \sa Fl::focus(Fl_Widget*) */
   static Fl_Widget* focus()     {return focus_;}
   static void focus(Fl_Widget*);
-  static void add_handler(Fl_Event_Handler h);
+  static void add_handler(Fl_Event_Handler ha);
+  static void add_handler(Fl_Event_Handler ha, Fl_Event_Handler before);
+  static Fl_Event_Handler last_handler();
   static void remove_handler(Fl_Event_Handler h);
   static void add_system_handler(Fl_System_Handler h, void *data);
   static void remove_system_handler(Fl_System_Handler h);
@@ -864,22 +896,6 @@ public:
   /** \defgroup  fl_clipboard  Selection & Clipboard functions
         FLTK global copy/cut/paste functions declared in <FL/Fl.H>
    @{ */
-  // cut/paste:
-  /**
-  Copies the data pointed to by \p stuff to the selection buffer
-  (\p destination is 0), the clipboard (\p destination is 1), or
-  both (\p destination is 2). Copying to both is only relevant on X11,
-  on other platforms it maps to the clipboard (1).
-  \p len is the number of relevant bytes in \p stuff.
-  \p type is always Fl::clipboard_plain_text.
-  The selection buffer is used for
-  middle-mouse pastes and for drag-and-drop selections. The
-  clipboard is used for traditional copy/cut/paste operations.
-
-   \note This function is, at present, intended only to copy UTF-8 encoded textual data.
-   To copy graphical data, use the Fl_Copy_Surface class. The \p type argument may allow
-   in the future to copy other kinds of data.
-  */
 
   /**
     Copies data to the selection buffer, the clipboard, or both.
@@ -895,7 +911,7 @@ public:
     (\p destination = 0) is mapped to the clipboard, i.e. on platforms other than X11
     all \p destinations are equivalent and the data is always copied to the clipboard.
 
-    \note Please see Fl::section_to_clipboard() to enable duplication of the
+    \note Please see Fl::selection_to_clipboard() to enable duplication of the
       selection buffer to the clipboard on X11, i.e. if \p destination = 0
       (selection buffer) \b and Fl::selection_to_clipboard() is enabled, then
       the data is copied to both the selection buffer and the clipboard.
@@ -1033,7 +1049,12 @@ public:
   */
   static void remove_clipboard_notify(Fl_Clipboard_Notify_Handler h);
   /** Returns non 0 if the clipboard contains data matching \p type.
-   \p type can be Fl::clipboard_plain_text or Fl::clipboard_image.
+   The clipboard can contain both text and image data;  in that situation this function
+   returns non 0 to both requests.
+   This function is \e not meant to check whether the clipboard is empty.
+   This function does not allow to query the selection buffer because FLTK
+   allows to copy/paste non-textual data only from/to the clipboard.
+   \param type can be Fl::clipboard_plain_text or Fl::clipboard_image.
    */
   static int clipboard_contains(const char *type);
   /**  Denotes plain textual data
@@ -1074,11 +1095,8 @@ public:
  can be set to a value FLTK will multiply to the OS-given value.
  The 2 variants of functions Fl::screen_scale() allow to programmatically get and set
  scaling factor values. The scaling factor value can be further changed at runtime
- by typing ctrl-/+/-/0/ (cmd-/+/-/0/ under macOS). FLTK sends the
- \ref FL_ZOOM_EVENT when the factor value is changed, to which a
- callback can be associated with Fl::add_handler().
- By default, FLTK displays the new scaling factor value in a yellow, transient window.
- This can be changed with option Fl::OPTION_SHOW_SCALING.
+ by typing \c Ctrl/+/-/0/ (\c Cmd/+/-/0/ under macOS).
+ See \ref events_fl_shortcut for more details about these shortcuts.
      @{ */
   static int x(); // via screen driver
   static int y(); // via screen driver
@@ -1202,7 +1220,9 @@ public:
 
   // boxtypes:
   static Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);
-  static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar);
+  static void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,
+                          uchar, uchar, uchar, uchar,
+                          Fl_Box_Draw_Focus_F* =NULL);
   static void set_boxtype(Fl_Boxtype, Fl_Boxtype from);
   static int box_dx(Fl_Boxtype);
   static int box_dy(Fl_Boxtype);
@@ -1242,24 +1262,34 @@ public:
     time of the event. During an FL_RELEASE event, the state
     of the released button will be 0. To find out, which button
     caused an FL_RELEASE event, you can use Fl::event_button() instead.
-    \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | [FL_BUTTON3] }
+    \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | ... | [FL_BUTTON5] }
   */
-  static int event_buttons() {return e_state&0x7f000000;}
+  static int event_buttons() {return e_state & FL_BUTTONS;}
   /**
     Returns non-zero if mouse button 1 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button1() {return e_state&FL_BUTTON1;}
+  static int event_button1() {return e_state & FL_BUTTON1;}
   /**
-    Returns non-zero if button 2 is currently held down.
+    Returns non-zero if mouse button 2 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button2() {return e_state&FL_BUTTON2;}
+  static int event_button2() {return e_state & FL_BUTTON2;}
   /**
-    Returns non-zero if button 3 is currently held down.
+    Returns non-zero if mouse button 3 is currently held down.
     For more details, see Fl::event_buttons().
   */
-  static int event_button3() {return e_state&FL_BUTTON3;}
+  static int event_button3() {return e_state & FL_BUTTON3;}
+  /**
+    Returns non-zero if mouse button 4 is currently held down.
+    For more details, see Fl::event_buttons().
+  */
+  static int event_button4() {return e_state & FL_BUTTON4;}
+  /**
+    Returns non-zero if mouse button 5 is currently held down.
+    For more details, see Fl::event_buttons().
+  */
+  static int event_button5() {return e_state & FL_BUTTON5;}
   /**   @} */
 
   /**
@@ -1394,6 +1424,9 @@ public:
 
   static int system(const char *command);
 
+  // Convert Windows commandline arguments to UTF-8 (documented in src/Fl.cxx)
+  static int args_to_utf8(int argc, char ** &argv);
+
 #ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo Support Functions and Classes
       @{
@@ -1466,8 +1499,8 @@ public:
     \endcode
 
     If you configure FLTK with \c '--enable-cairo' or CMake option
-    \c 'OPTION_CAIRO' (i.e. without \c '--enable-cairoext' or CMake option
-    \c 'OPTION_CAIROEXT') or if you don't enable the \c 'autolink' Cairo
+    \c 'FLTK_OPTION_CAIRO_WINDOW' (i.e. without \c '--enable-cairoext' or CMake option
+    \c 'FLTK_OPTION_CAIRO_EXT') or if you don't enable the \c 'autolink' Cairo
     context you may do the equivalent to use Cairo drawings in an
     overridden draw() method of derived classes by using
     \code
@@ -1481,7 +1514,7 @@ public:
   */
   static void cairo_flush(cairo_t *c) {
     // flush Cairo drawings: necessary at least for Windows
-    cairo_surface_t *s = cairo_get_target(Fl::cairo_cc());
+    cairo_surface_t *s = cairo_get_target(c);
     cairo_surface_flush(s);
   }
 

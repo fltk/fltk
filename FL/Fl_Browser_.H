@@ -96,6 +96,7 @@ class FL_EXPORT Fl_Browser_ : public Fl_Group {
   void *redraw1,*redraw2; // minimal update pointers
   void* max_width_item; // which item has max_width_
   int scrollbar_size_;  // size of scrollbar trough
+  int linespacing_;
 
   void update_top();
 
@@ -245,11 +246,11 @@ public:
     \see position(), hposition()
   */
   int vposition() const { return position_; }
-  FL_DEPRECATED("in 1.4.0 - use vposition() instead",
+  FL_DEPRECATED("since 1.4.0 - use vposition() instead",
   int position() const) { return vposition(); }
 
   void vposition(int pos); // scroll to here
-  FL_DEPRECATED("in 1.4.0 - use vposition(pos) instead",
+  FL_DEPRECATED("since 1.4.0 - use vposition(pos) instead",
   void position(int pos)) { return vposition(pos); }
   void position(int x, int y) { Fl_Group::position(x, y); }
 
@@ -400,6 +401,17 @@ public:
   */
   void scrollbar_left() { scrollbar.align(FL_ALIGN_LEFT); }
   void sort(int flags=0);
+
+  /**
+   Add some space between browser lines.
+   \param[in] pixels number of additional pixels between lines.
+   */
+  void linespacing(int pixels) { linespacing_ = pixels; }
+
+  /** Return the height of additional spacing between browser lines.
+   \return spacing height in pixel units.
+   */
+  int linespacing() const { return linespacing_; }
 };
 
 #endif

@@ -26,13 +26,19 @@
 
 /** Returns the X11 Display in use */
 extern Display *fl_x11_display();
+/** Have FLTK use a pre-established X11 connection.
+ This function must be called before FLTK attempts to open its own X11 connection,
+ that is, as long as fl_x11_display() returns NULL.
+ \param d the X11 Display* value representing a valid, pre-established X11 connection
+ */
+extern void fl_x11_use_display(Display *d);
 /** Returns the Window reference for the given Fl_Window, or zero if not \c shown().  */
 extern Window fl_x11_xid(const Fl_Window *win);
 /** Returns the Fl_Window corresponding to the given Window reference.  */
 extern Fl_Window *fl_x11_find(Window xid);
 /** Returns the X11-specific currently active graphics context.  */
 extern GC fl_x11_gc();
-/** Returns the Cairo-specific currently active graphics context (OPTION_USE_CAIRO=On) */
+/** Returns the Cairo-specific currently active graphics context (FLTK_GRAPHICS_CAIRO=On) */
 extern cairo_t* fl_cairo_gc();
 #else // ! FL_DOXYGEN
 
@@ -58,6 +64,7 @@ extern GLXContext fl_x11_glcontext(GLContext rc);
 // constant info about the X server connection:
 extern FL_EXPORT Display *fl_display;
 extern FL_EXPORT Display *fl_x11_display();
+extern FL_EXPORT void fl_x11_use_display(Display *);
 extern FL_EXPORT Window fl_x11_xid(const Fl_Window *win);
 extern FL_EXPORT Fl_Window *fl_x11_find(Window);
 extern FL_EXPORT int fl_screen;

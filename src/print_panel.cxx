@@ -118,6 +118,7 @@ static const Fl_Menu_Item menu_print_page_size[] = {
   {"B5", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
   {"Com10", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
   {"DL", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"Tabloid", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

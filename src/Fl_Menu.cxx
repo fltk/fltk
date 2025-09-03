@@ -1,7 +1,7 @@
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -115,6 +115,7 @@ protected:
     Fl_Menu_Window(X, Y, W, H, 0) {
       menu = m;
       set_menu_window();
+      Fl_Window_Driver::driver(this)->set_popup_window();
       end();
       set_modal();
       clear_border();
@@ -183,14 +184,8 @@ Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
 }
 
 static menuwindow *to_menuwindow(Fl_Window *win) {
-  if (!win->menu_window()) return NULL;
+  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return NULL;
   return ((window_with_items*)win)->as_menuwindow();
-}
-
-/** Returns whether win is a menutitle window */
-bool Fl_Window_Driver::is_menutitle(Fl_Window *win) {
-  if (!win->menu_window()) return false;
-  return (((window_with_items*)win)->as_menuwindow() == NULL);
 }
 
 /** Accessor to the "origin" member variable of class menuwindow.
@@ -233,7 +228,7 @@ int *Fl_Window_Driver::menu_offset_y(Fl_Window *win) {
 
 /** Returns whether win is a non-menubar menutitle */
 bool Fl_Window_Driver::is_floating_title(Fl_Window *win) {
-  if (!win->menu_window()) return false;
+  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return false;
   Fl_Window *mwin = ((window_with_items*)win)->as_menuwindow();
   return !mwin && !((menutitle*)win)->in_menubar;
 }
@@ -266,11 +261,12 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   l.font    = labelsize_ || labelfont_ ? labelfont_ : (m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
   l.color   = FL_FOREGROUND_COLOR; // this makes no difference?
+  l.h_margin_ = l.v_margin_ = l.spacing = 0;
   fl_draw_shortcut = 1;
   int w = 0; int h = 0;
   l.measure(w, hp ? *hp : h);
   fl_draw_shortcut = 0;
-  if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += FL_NORMAL_SIZE;
+  if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += FL_NORMAL_SIZE + 4;
   return w;
 }
 
@@ -285,22 +281,12 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.font    = labelsize_ || labelfont_ ? labelfont_ : (m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
   l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_FOREGROUND_COLOR);
+  l.h_margin_ = l.v_margin_ = l.spacing = 0;
   if (!active()) l.color = fl_inactive((Fl_Color)l.color);
-  Fl_Color color = m ? m->color() : FL_GRAY;
   if (selected) {
     Fl_Color r = m ? m->selection_color() : FL_SELECTION_COLOR;
     Fl_Boxtype b = m && m->down_box() ? m->down_box() : FL_FLAT_BOX;
-    if (fl_contrast(r,color)!=r) { // back compatibility boxtypes
-      if (selected == 2) { // menu title
-        r = color;
-        b = m ? m->box() : FL_UP_BOX;
-      } else {
-        r = (Fl_Color)(FL_COLOR_CUBE-1); // white
-        l.color = fl_contrast((Fl_Color)labelcolor_, r);
-      }
-    } else {
-      l.color = fl_contrast((Fl_Color)labelcolor_, r);
-    }
+    l.color = fl_contrast((Fl_Color)labelcolor_, r);
     if (selected == 2) { // menu title
       fl_draw_box(b, x, y, w, h, r);
       x += 3;
@@ -314,45 +300,26 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
     int d = (h - FL_NORMAL_SIZE + 1) / 2;
     int W = h - 2 * d;
 
+    Fl_Color check_color = labelcolor_;
+    if (Fl::is_scheme("gtk+"))
+      check_color = FL_SELECTION_COLOR;
+    check_color = fl_contrast(check_color, FL_BACKGROUND2_COLOR);
+
     if (flags & FL_MENU_RADIO) {
+
       fl_draw_box(FL_ROUND_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
         int tW = (W - Fl::box_dw(FL_ROUND_DOWN_BOX)) / 2 + 1;
         if ((W - tW) & 1) tW++; // Make sure difference is even to center
         int td = (W - tW) / 2;
-        if (Fl::is_scheme("gtk+")) {
-          fl_color(FL_SELECTION_COLOR);
-          tW --;
-          fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
-          fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
-        } else {
-          fl_color(labelcolor_);
-        }
+        fl_draw_radio(x + td + 1, y + d + td - 1, tW + 2, check_color);
+      } // FL_MENU_RADIO && value()
 
-        fl_draw_circle(x + td + 2, y + d + td, tW, fl_color());
+    } else { // FL_MENU_TOGGLE && ! FL_MENU_RADIO
 
-        if (Fl::is_scheme("gtk+")) {
-          fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
-          fl_arc(x + td + 2, y + d + td, tW + 1, tW + 1, 60.0, 180.0);
-        }
-      }
-    } else {
       fl_draw_box(FL_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
-        if (Fl::is_scheme("gtk+")) {
-          fl_color(FL_SELECTION_COLOR);
-        } else {
-          fl_color(labelcolor_);
-        }
-        int tx = x + 5;
-        int tw = W - 6;
-        int d1 = tw/3;
-        int d2 = tw-d1;
-        int ty = y + d + (W+d2)/2-d1-2;
-        for (int n = 0; n < 3; n++, ty++) {
-          fl_line(tx, ty, tx+d1, ty+d1);
-          fl_line(tx+d1, ty+d1, tx+tw-1, ty+d1-d2+1);
-        }
+        fl_draw_check(Fl_Rect(x+3, y+d+1, W-2, W-2), check_color);
       }
     }
     x += W + 3;
@@ -379,16 +346,19 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   menubartitle = menubar_title;
   origin = NULL;
   offset_y = 0;
-
-  Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h);
+  int n = (Wp > 0 ? Fl::screen_num(X, Y) : -1);
+  Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h, n);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
 
   if (m) m = m->first(); // find the first item that needs to be rendered
   drawn_selected = -1;
   if (button) {
-    box(button->box());
-    // don't force a box type, but make sure that the background is redrawn
-    if (box() == FL_NO_BOX) box(FL_FLAT_BOX);
+    Fl_Boxtype b = button->menu_box();
+    if (b==FL_NO_BOX)
+      b = button->box();
+    if (b==FL_NO_BOX)
+      b = FL_FLAT_BOX;
+    box(b);
   } else {
     box(FL_UP_BOX);
   }
@@ -522,9 +492,12 @@ void menuwindow::autoscroll(int n) {
   int Y = y()+Fl::box_dx(box())+2+n*itemheight;
 
   int xx, ww;
-  Fl_Window_Driver::driver(this)->menu_window_area(xx, scr_y, ww, scr_h);
-  if (Y <= scr_y) Y = scr_y-Y+10;
-  else {
+  Fl_Window_Driver::driver(this)->menu_window_area(xx, scr_y, ww, scr_h, this->screen_num());
+  if (n==0 && Y <= scr_y + itemheight) {
+    Y = scr_y - Y + 10;
+  } else if (Y <= scr_y + itemheight) {
+    Y = scr_y - Y + 10 + itemheight;
+  } else {
     Y = Y+itemheight-scr_h-scr_y;
     if (Y < 0) return;
     Y = -Y-10;
@@ -557,11 +530,12 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   if (m->submenu()) {
 
     // calculate the bounding box of the submenu pointer (arrow)
-    int sz = (hh-2) & -2;
-    int x1 = xx + ww - sz - 2;
-    int y1 = yy + (hh-sz)/2 + 1;
+    int sz = ((hh-2) & (-2)) + 1 ;  // must be odd for better centering
+    if (sz > 13) sz = 13;           // limit arrow size
+    int x1 = xx + ww - sz - 2;      // left border
+    int y1 = yy + (hh-sz)/2 + 1;    // top border
 
-    // draw an arrow whose style dependends on the active scheme
+    // draw an arrow whose style depends on the active scheme
     fl_draw_arrow(Fl_Rect(x1, y1, sz, sz), FL_ARROW_SINGLE, FL_ORIENT_RIGHT, fl_color());
 
   } else if (m->shortcut_) {
@@ -724,31 +698,44 @@ static void setitem(int m, int n) {
 }
 
 static int forward(int menu) { // go to next item in menu menu if possible
-  menustate &pp = *p;
-  // Fl_Menu_Button can generate menu=-1. This line fixes it and selectes the first item.
-  if (menu==-1)
+  // `menu` is -1 if no item is currently selected, so use the first menu
+  if (menu < 0)
     menu = 0;
+  menustate &pp = *p;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
-  while (++item < m.numitems) {
-    const Fl_Menu_Item* m1 = m.menu->next(item);
-    if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
+  bool wrapped = false;
+  do {
+    while (++item < m.numitems) {
+      const Fl_Menu_Item* m1 = m.menu->next(item);
+      if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
+    }
+    if (wrapped) break;
+    item = -1;
+    wrapped = true;
   }
+  while (Fl::event_key() != FL_Down);
   return 0;
 }
 
 static int backward(int menu) { // previous item in menu menu if possible
-  // `menu` is -1 if no item is currently selected, we return 0
-  if (menu<0)
-    return 0;
+  // `menu` is -1 if no item is currently selected, so use the first menu
+  if (menu < 0)
+    menu = 0;
   menustate &pp = *p;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
-  if (item < 0) item = m.numitems;
-  while (--item >= 0) {
-    const Fl_Menu_Item* m1 = m.menu->next(item);
-    if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
+  bool wrapped = false;
+  do {
+    while (--item >= 0) {
+      const Fl_Menu_Item* m1 = m.menu->next(item);
+      if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
+    }
+    if (wrapped) break;
+    item = m.numitems;
+    wrapped = true;
   }
+  while (Fl::event_key() != FL_Up);
   return 0;
 }
 
@@ -816,10 +803,7 @@ int menuwindow::handle_part1(int e) {
     switch (Fl::event_key()) {
     case FL_BackSpace:
     BACKTAB:
-      if (!backward(pp.menu_number)) {
-        pp.item_number = -1;
-        backward(pp.menu_number);
-      }
+      backward(pp.menu_number);
       return 1;
     case FL_Up:
       if (pp.menubar && pp.menu_number == 0) {
@@ -832,18 +816,17 @@ int menuwindow::handle_part1(int e) {
       return 1;
     case FL_Tab:
       if (Fl::event_shift()) goto BACKTAB;
+      if (pp.menubar && pp.menu_number == 0) goto RIGHT;
     case FL_Down:
       if (pp.menu_number || !pp.menubar) {
-        if (!forward(pp.menu_number) && Fl::event_key()==FL_Tab) {
-          pp.item_number = -1;
-          forward(pp.menu_number);
-        }
+        forward(pp.menu_number);
       } else if (pp.menu_number < pp.nummenus-1) {
         forward(pp.menu_number+1);
       }
       return 1;
     case FL_Right:
-      if (pp.menubar && (pp.menu_number<=0 || (pp.menu_number==1 && pp.nummenus==2)))
+    RIGHT:
+      if (pp.menubar && (pp.menu_number<=0 || (pp.menu_number == pp.nummenus-1)))
         forward(0);
       else if (pp.menu_number < pp.nummenus-1) forward(pp.menu_number+1);
       return 1;
@@ -855,6 +838,20 @@ int menuwindow::handle_part1(int e) {
     case FL_Enter:
     case FL_KP_Enter:
     case ' ':
+      // if the current item is a submenu with no callback,
+      // simulate FL_Right to enter the submenu
+      if (   pp.current_item
+          && (!pp.menubar || pp.menu_number > 0)
+          && pp.current_item->activevisible()
+          && pp.current_item->submenu()
+          && !pp.current_item->callback_)
+      {
+        goto RIGHT;
+      }
+      // Ignore keypresses over inactive items, mark KEYBOARD event as used.
+      if (pp.current_item && !pp.current_item->activevisible())
+        return 1;
+      // Mark the menu 'done' which will trigger the callback
       pp.state = DONE_STATE;
       return 1;
     case FL_Escape:
@@ -918,8 +915,7 @@ int menuwindow::handle_part1(int e) {
           return 0;
         }
       }
-      if (my == 0 && item > 0) setitem(mymenu, item - 1);
-      else setitem(mymenu, item);
+      setitem(mymenu, item);
       if (e == FL_PUSH) {
         if (pp.current_item && pp.current_item->submenu() // this is a menu title
             && item != pp.p[mymenu]->selected // and it is not already on
@@ -944,8 +940,9 @@ int menuwindow::handle_part1(int e) {
         pp.p[pp.menu_number]->redraw();
       } else
 #endif
-      // do nothing if they try to pick inactive items
-      if (!pp.current_item || pp.current_item->activevisible())
+      // do nothing if they try to pick an inactive item, or a submenu with no callback
+      if (!pp.current_item || (pp.current_item->activevisible() &&
+         (!pp.current_item->submenu() || pp.current_item->callback_ || (pp.menubar && pp.menu_number <= 0))))
         pp.state = DONE_STATE;
     }
     return 1;
@@ -990,10 +987,14 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     Y += Fl::event_y_root()-Fl::event_y();
     menuwindow::parent_ = Fl::first_window();
   }
+
   int XX, YY, WW;
   Fl::screen_xywh(XX, YY, WW, menuwindow::display_height_, menuwindow::parent_->screen_num());
   menuwindow mw(this, X, Y, W, H, initial_item, title, menubar);
   Fl::grab(mw);
+  // If we grab the mouse pointer, we should also make sure that it is visible.
+  if (menuwindow::parent_)
+    menuwindow::parent_->cursor(FL_CURSOR_DEFAULT);
   menustate pp; p = &pp;
   pp.p[0] = &mw;
   pp.nummenus = 1;
@@ -1016,7 +1017,13 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     }
   }
   initial_item = pp.current_item;
-  if (initial_item) goto STARTUP;
+  if (initial_item) {
+    if (menubar && !initial_item->activevisible()) { // pointing at inactive item
+      Fl::grab(0);
+      return NULL;
+    }
+    goto STARTUP;
+  }
 
   // the main loop: runs until p.state goes to DONE_STATE or the menu
   // widget is deleted (e.g. from a timer callback, see STR #3503):
@@ -1175,6 +1182,10 @@ const Fl_Menu_Item* Fl_Menu_Item::popup(
   return pulldown(X, Y, 0, 0, picked, menu_button, title ? &dummy : 0);
 }
 
+static bool is_special_labeltype(uchar t) {
+  return t == _FL_MULTI_LABEL || t == _FL_ICON_LABEL || t == _FL_IMAGE_LABEL;
+}
+
 /**
   Search only the top level menu for a shortcut.
   Either &x in the label or the shortcut fields are used.
@@ -1192,7 +1203,13 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt)
   if (m) for (int ii = 0; m->text; m = next_visible_or_not(m), ii++) {
     if (m->active()) {
       if (Fl::test_shortcut(m->shortcut_)
-         || Fl_Widget::test_shortcut(m->text, require_alt)) {
+         || (!is_special_labeltype(m->labeltype_) && Fl_Widget::test_shortcut(m->text, require_alt))
+         || (m->labeltype_ == _FL_MULTI_LABEL
+             && !is_special_labeltype(((Fl_Multi_Label*)m->text)->typea)
+             && Fl_Widget::test_shortcut(((Fl_Multi_Label*)m->text)->labela, require_alt))
+         || (m->labeltype_ == _FL_MULTI_LABEL
+             && !is_special_labeltype(((Fl_Multi_Label*)m->text)->typeb)
+             && Fl_Widget::test_shortcut(((Fl_Multi_Label*)m->text)->labelb, require_alt))) {
         if (ip) *ip=ii;
         return m;
       }

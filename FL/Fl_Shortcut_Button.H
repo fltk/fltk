@@ -33,9 +33,12 @@ public:
   Fl_Shortcut_Button(int X,int Y,int W,int H, const char* l = 0);
   void value(Fl_Shortcut shortcut);
   Fl_Shortcut value();
+#if 0
+  // Default shortcut settings are disabled until successful review of the UI
   void default_value(Fl_Shortcut shortcut);
   Fl_Shortcut default_value();
   void default_clear();
+#endif
 };
 
 #endif // Fl_Shortcut_Button_H

@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,7 @@
 #include <FL/Fl_Table.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Value_Slider.H>
+#include <FL/Fl_Terminal.H>
 
 //
 // Test new 1.3.x global vs. local scrollbar sizing
@@ -80,12 +81,15 @@ static const char *phonetics[] = {
 class Ut_Scrollbar_Size_Test : public Fl_Group {
     Fl_Browser      *brow_a, *brow_b, *brow_c;
     Fl_Tree         *tree_a, *tree_b, *tree_c;
-    Ut_Table         *table_a,*table_b,*table_c;
+    Ut_Table        *table_a,*table_b,*table_c;
     Fl_Text_Display *text_a, *text_b, *text_c;
+    Fl_Terminal     *term_a, *term_b, *term_c;
 
     Fl_Browser *makebrowser(int X,int Y,int W,int H,const char*L=0) {
         Fl_Browser *b = new Fl_Browser(X,Y,W,H,L);
         b->type(FL_MULTI_BROWSER);
+        b->labelsize(10);
+        b->textsize(10);
         b->align(FL_ALIGN_TOP);
         for (int t=0; phonetics[t]; t++ ) {
           b->add(phonetics[t]);
@@ -95,6 +99,8 @@ class Ut_Scrollbar_Size_Test : public Fl_Group {
     }
     Fl_Tree *maketree(int X,int Y,int W,int H,const char*L=0) {
         Fl_Tree *b = new Fl_Tree(X,Y,W,H,L);
+        b->labelsize(10);
+        b->item_labelsize(10);
         b->type(FL_TREE_SELECT_MULTI);
         b->align(FL_ALIGN_TOP);
         for (int t=0; phonetics[t]; t++ ) {
@@ -105,6 +111,7 @@ class Ut_Scrollbar_Size_Test : public Fl_Group {
     }
     Ut_Table *maketable(int X,int Y,int W,int H,const char*L=0) {
         Ut_Table *mta = new Ut_Table(X,Y,W,H,L);
+        mta->labelsize(10);
         mta->align(FL_ALIGN_TOP);
         mta->end();
         return(mta);
@@ -112,12 +119,23 @@ class Ut_Scrollbar_Size_Test : public Fl_Group {
     Fl_Text_Display *maketextdisplay(int X,int Y,int W,int H,const char*L=0) {
         Fl_Text_Display *dpy = new Fl_Text_Display(X,Y,W,H,L);
         Fl_Text_Buffer  *buf = new Fl_Text_Buffer();
+        dpy->labelsize(10);
+        dpy->textsize(10);
         dpy->buffer(buf);
         for (int t=0; phonetics[t]; t++ ) {
           buf->printf("%s\n", phonetics[t]);
           if ( phonetics[t][0] == 'C' ) buf->printf("Long entry will show h-bar\n");
         }
         return(dpy);
+    }
+    Fl_Terminal *maketerm(int X,int Y,int W,int H,const char*L=0) {
+        Fl_Terminal *term = new Fl_Terminal(X,Y,W,H,L);
+        term->labelsize(8);
+        term->textsize(8);
+        term->end();
+        term->display_columns(40); // force wider than normal to show hscroll
+        term->printf("Long entry will show h-bar\n");
+        return(term);
     }
     void slide_cb2(Fl_Value_Slider *in) {
         const char *label = in->label();
@@ -128,6 +146,7 @@ class Ut_Scrollbar_Size_Test : public Fl_Group {
             tree_a->scrollbar_size(val);
             table_a->scrollbar_size(val);
             text_a->scrollbar_size(val);
+            term_a->scrollbar_size(val);
         } else {
             Fl::scrollbar_size(val);
         }
@@ -148,35 +167,44 @@ public:
       begin();
         //      _____________    _______________
         //     |_____________|  |_______________|
-        //                                                ---   -----  <-- tgrpy
-        //       brow_a      brow_b      brow_c            | 14   |
-        //     ----------  ----------  ----------         ---     |    <-- browy
-        //     |        |  |        |  |        |          |browh |
-        //     |        |  |        |  |        |          |      |
-        //     ----------  ----------  ----------         ---   tgrph
-        //                                                 |      |
-        //       tree_a      tree_b      tree_c            | 20   |
-        //     ----------  ----------  ----------         ---     |    <-- treey
-        //     |        |  |        |  |        |          |treeh |
-        //     |        |  |        |  |        |          |      |
-        //     ----------  ----------  ----------         ---     |
-        //                                                 |      |
-        //      table_a     table_b     table_c            | 20   |
-        //     ----------  ----------  ----------         ---     |    <-- tabley
-        //     |        |  |        |  |        |          |tableh|
-        //     |        |  |        |  |        |          |      |
-        //     ----------  ----------  ----------         ---  ------
+        //                                                ---     -----  <-- tgrpy
+        //       brow_a      brow_b      brow_c            ↕ 14     ↑
+        //     ----------  ----------  ----------         ---       |    <-- browy
+        //     |        |  |        |  |        |          ↑ browh  |
+        //     |        |  |        |  |        |          ↓        |
+        //     ----------  ----------  ----------         ---     tgrph
+        //                                                 ↑        |
+        //       tree_a      tree_b      tree_c            ↓ 20     |
+        //     ----------  ----------  ----------         ---       |    <-- treey
+        //     |        |  |        |  |        |          ↑ treeh  |
+        //     |        |  |        |  |        |          ↓        |
+        //     ----------  ----------  ----------         ---       |
+        //                                                 ↑        |
+        //      table_a     table_b     table_c            ↓ 20     |
+        //     ----------  ----------  ----------         ---       |    <-- tabley
+        //     |        |  |        |  |        |          ↑ tableh |
+        //     |        |  |        |  |        |          ↓        |
+        //     ----------  ----------  ----------         ---       |
+        //                                                 ↑        |
+        //      term_a      term_b      term_c             ↓ 20     |
+        //     ----------  ----------  ----------         ---       |    <-- termy
+        //     |        |  |        |  |        |          ↑ termh  |
+        //     |        |  |        |  |        |          ↓        ↓
+        //     ----------  ----------  ----------         ---     ------
         //  etc..
         int tgrpy = Y+30;
-        int tgrph = H-130;
+        int tgrph = H-30;
+        int ysep  = 20;                 // y separation between widgets
         int browy = tgrpy+14;
-        int browh = tgrph/3 - 20;
-        int treey = browy + browh + 20;
+        int browh = tgrph/5 - 20;       // 5: number of widgets vertically
+        int treey = browy + browh + ysep;
         int treeh = browh;
-        int tabley = treey + treeh + 20;
+        int tabley = treey + treeh + ysep;
         int tableh = browh;
-        int texty = tabley + tableh + 20;
+        int texty = tabley + tableh + ysep;
         int texth = browh;
+        int termy = texty + texth + ysep;
+        // int termh = texth; // unused but left because it's documented above
         brow_a = makebrowser(X+ 10,browy,100,browh,"Browser A");
         brow_b = makebrowser(X+120,browy,100,browh,"Browser B");
         brow_c = makebrowser(X+230,browy,100,browh,"Browser C");
@@ -189,6 +217,9 @@ public:
         text_a = maketextdisplay(X+ 10,texty,100,texth,"Text Display A");
         text_b = maketextdisplay(X+120,texty,100,texth,"Text Display B");
         text_c = maketextdisplay(X+230,texty,100,texth,"Text Display C");
+        term_a = maketerm(X+ 10,termy,100,texth,"Term A");
+        term_b = maketerm(X+120,termy,100,texth,"Term B");
+        term_c = maketerm(X+230,termy,100,texth,"Term C");
         Fl_Value_Slider *slide_glob = new Fl_Value_Slider(X+100,Y,100,18,"Global Scroll Size");
         slide_glob->value(16);
         slide_glob->type(FL_HORIZONTAL);
@@ -206,8 +237,10 @@ public:
         slide_browa->callback(slide_cb, (void*)this);
         slide_browa->labelsize(12);
         int msgbox_x = brow_c->x() + brow_c->w() + 20;
+        int msgbox_y = tgrpy;
         int msgbox_w = W-(msgbox_x-X);
-        Fl_Box *msgbox = new Fl_Box(msgbox_x,browy,msgbox_w,H-Y-48);
+        int msgbox_h = tgrph;
+        Fl_Box *msgbox = new Fl_Box(msgbox_x,msgbox_y,msgbox_w,msgbox_h);
         msgbox->label("\nVerify global scrollbar sizing and per-widget scrollbar sizing. "
                       "Scrollbar's size should change interactively as size sliders are changed. "
                       "Changing 'Global Scroll Size' should affect all scrollbars AS LONG AS the "

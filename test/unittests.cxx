@@ -29,7 +29,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Help_View.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>               // fl_text_extents()
@@ -181,7 +181,7 @@ int Ut_Suite::num_failed_ = 0;
 const char *Ut_Suite::red = "\033[31m";
 const char *Ut_Suite::green = "\033[32m";
 const char *Ut_Suite::normal = "\033[0m";
-Fl_Simple_Terminal *Ut_Suite::tty = NULL;
+Fl_Terminal *Ut_Suite::tty = NULL;
 
 /** Switch the user of color escape sequnces in the log text. */
 void Ut_Suite::color(int v) {
@@ -421,6 +421,7 @@ static int arg(int argc, char** argv, int& i) {
 // registered tests to the browser widget.
 int main(int argc, char** argv) {
   int i;
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   if ( Fl::args(argc,argv,i,arg) == 0 ) {   // unsupported argument found
     static const char *msg =
       "usage: %s <switches>\n"
@@ -454,6 +455,7 @@ int main(int argc, char** argv) {
   browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
   browser->when(FL_WHEN_CHANGED);
   browser->callback(ui_browser_cb);
+  browser->linespacing(2);
 
   int n = UnitTest::num_tests();
   for (i=0; i<n; i++) {

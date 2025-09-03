@@ -8,9 +8,9 @@
     \image latex FL200.png "" width=5cm
   </CENTER></TD>
   <TD><CENTER>
-    <B>FLTK 1.4.0 Programming Manual</B>
+    <B>FLTK 1.4.4 Programming Manual</B>
 
-    By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+    By F.&nbsp;Costantini, M.&nbsp;Melcher,
     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
     \include{doc} copyright.dox
@@ -66,11 +66,6 @@
     \subpage subclassing
 
     \subpage opengl
-
-    \subpage fluid
-        - \ref fluid_widget_attributes
-        - \ref fluid_selecting_moving
-        - \ref fluid_images
 
     \subpage fltk-options
 

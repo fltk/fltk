@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -88,6 +88,12 @@ void fl_cleanup_dc_list(void);
 
 #if defined(__GNUC__)
 # include <wchar.h>
+#endif
+
+// old versions of MinGW lack definition of GET_XBUTTON_WPARAM:
+
+#ifndef GET_XBUTTON_WPARAM
+#define GET_XBUTTON_WPARAM(wParam) (HIWORD(wParam))
 #endif
 
 static bool is_dpi_aware = false;
@@ -474,6 +480,10 @@ int Fl_WinAPI_System_Driver::ready() {
   return select(0, &fdt[0], &fdt[1], &fdt[2], &t);
 }
 
+static void delayed_create_print_window(void *) {
+  Fl::remove_check(delayed_create_print_window);
+  fl_create_print_window();
+}
 
 void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
@@ -517,9 +527,19 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
   }
   OleInitialize(0L);
   get_imm_module();
-  fl_create_print_window();
+  Fl::add_check(delayed_create_print_window);
 }
 
+
+void Fl_WinAPI_Screen_Driver::update_scaling_capability() {
+  scaling_capability = SYSTEMWIDE_APP_SCALING;
+  for (int ns = 1; ns < screen_count(); ns++) {
+    if (scale(ns) != scale(0)) {
+      scaling_capability = PER_SCREEN_APP_SCALING;
+      break;
+    }
+  }
+}
 
 void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
   typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
@@ -544,6 +564,7 @@ void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
     scale(ns, dpiX / 96.f);
     // fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
   }
+  update_scaling_capability();
 }
 
 
@@ -1029,9 +1050,12 @@ static int mouse_event(Fl_Window *window, int what, int button,
   if (wParam & MK_SHIFT) state |= FL_SHIFT;
   if (wParam & MK_CONTROL) state |= FL_CTRL;
 #endif
-  if (wParam & MK_LBUTTON) state |= FL_BUTTON1;
-  if (wParam & MK_MBUTTON) state |= FL_BUTTON2;
-  if (wParam & MK_RBUTTON) state |= FL_BUTTON3;
+  if (wParam & MK_LBUTTON)  state |= FL_BUTTON1;  // left
+  if (wParam & MK_MBUTTON)  state |= FL_BUTTON2;  // right
+  if (wParam & MK_RBUTTON)  state |= FL_BUTTON3;  // middle
+  if (wParam & MK_XBUTTON1) state |= FL_BUTTON4;  // side button 1 (back)
+  if (wParam & MK_XBUTTON2) state |= FL_BUTTON5;  // side button 2 (forward)
+
   Fl::e_state = state;
 
   switch (what) {
@@ -1132,7 +1156,7 @@ static const struct {
   {VK_LAUNCH_MAIL,      FL_Mail},
 #endif
   {0xba,        ';'},
-  {0xbb,        '='},
+  {0xbb,        '='},   // 0xbb == VK_OEM_PLUS (see #1086)
   {0xbc,        ','},
   {0xbd,        '-'},
   {0xbe,        '.'},
@@ -1198,15 +1222,30 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_DPICHANGED: { // 0x02E0, after display re-scaling and followed by WM_DISPLAYCHANGE
         if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
-          RECT r;
+          RECT r, *lParam_rect = (RECT*)lParam;
           Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-          int ns = Fl_Window_Driver::driver(window)->screen_num();
-          sd->dpi[ns][0] = sd->dpi[ns][1] = HIWORD(wParam);
-          float f = HIWORD(wParam) / 96.f;
-          GetClientRect(hWnd, &r);
-          float old_f = float(r.right) / window->w();
-          Fl::screen_driver()->scale(ns, f);
-          Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
+          int centerX = (lParam_rect->left + lParam_rect->right)/2;
+          int centerY = (lParam_rect->top + lParam_rect->bottom)/2;
+          int ns = sd->screen_num_unscaled(centerX, centerY);
+          int old_ns = Fl_Window_Driver::driver(window)->screen_num();
+          if (sd->dpi[ns][0] != HIWORD(wParam) && ns == old_ns) { // change DPI of a screen
+            sd->dpi[ns][0] = sd->dpi[ns][1] = HIWORD(wParam);
+            float f = HIWORD(wParam) / 96.f;
+            GetClientRect(hWnd, &r);
+            float old_f = float(r.right) / window->w();
+            Fl::screen_driver()->scale(ns, f);
+            Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
+            sd->update_scaling_capability();
+          } else if (ns != old_ns) {
+            // jump window with Windows+Shift+L|R-arrow to other screen with other DPI
+            float scale = Fl::screen_driver()->scale(ns);
+            int bt, bx, by;
+            Fl_WinAPI_Window_Driver *wdr = (Fl_WinAPI_Window_Driver*)Fl_Window_Driver::driver(window);
+            wdr->border_width_title_bar_height(bx, by, bt);
+            window->position(int(round(lParam_rect->left/scale)),
+                                        int(round((lParam_rect->top + bt)/scale)));
+            wdr->resize_after_scale_change(ns, scale, scale);
+          }
         }
         return 0;
       }
@@ -1317,6 +1356,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       case WM_RBUTTONUP:
         mouse_event(window, 2, 3, wParam, lParam);
         return 0;
+      case WM_XBUTTONDOWN: {
+        int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 4 : 5;
+        mouse_event(window, 0, xbutton, wParam, lParam);
+        return 0;
+      }
+      case WM_XBUTTONDBLCLK: {
+        int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 4 : 5;
+        mouse_event(window, 1, xbutton, wParam, lParam);
+        return 0;
+      }
+      case WM_XBUTTONUP: {
+        int xbutton = GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? 4 : 5;
+        mouse_event(window, 2, xbutton, wParam, lParam);
+        return 0;
+      }
 
       case WM_MOUSEMOVE:
 #ifdef USE_TRACK_MOUSE
@@ -1352,6 +1406,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         break;
 
       case WM_KILLFOCUS:
+        if (Fl::grab() && (Fl::grab() != window) && Fl::grab()->menu_window()) {
+          // simulate click at remote location (see issue #1166)
+          mouse_event(Fl::grab(), 0, 1, MK_LBUTTON, MAKELPARAM(100000, 0));
+        }
         Fl::handle(FL_UNFOCUS, window);
         Fl::flush(); // it never returns to main loop when deactivated...
         break;
@@ -1409,6 +1467,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       case WM_SYSKEYUP:
         // save the keysym until we figure out the characters:
         Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam, lParam & (1 << 24));
+        // Kludge to allow recognizing ctrl+'-' on keyboards with digits in uppercase positions (e.g. French)
+        if (Fl::e_keysym == '6' && (VkKeyScanA('-') & 0xff) == '6') {
+          Fl::e_keysym = '-';
+        }
         // See if TranslateMessage turned it into a WM_*CHAR message:
         if (PeekMessageW(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE)) {
           uMsg = fl_msg.message;
@@ -1515,6 +1577,47 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
         }
         Fl::e_text = buffer;
+
+        // Kludge to process the +-containing key in cross-platform way when used with Ctrl
+/* Table of how Windows processes the '+'-containing key by keyboard layout
+  key  virtual
+content  key    keyboard layout
+  =|+   0xbb    US/UK/Fr/Arabic/Chinese/Hebrew/Brazil/Russian/Vietnam/Japan/Korean/Persian
+  +|*   0xbb    German/Spanish/Italy/Greek/Portugal
+  +|?   0xbb    Swedish/Finish/Norway
+  +|±   0xbb    Dutch
+  1|+   '1'     Swiss/Luxemburg
+  3|+   '3'     Hungarian
+  4|+   '4'     Turkish
+*/
+        if ((Fl::e_state & FL_CTRL) && !(GetAsyncKeyState(VK_MENU) >> 15)) {
+          // extra processing necessary only when Ctrl is down and Alt is up
+          int vk_plus_key = (VkKeyScanA('+') & 0xff); // virtual key of '+'-containing key
+          bool plus_shift_pos = ((VkKeyScanA('+') & 0x100) != 0); // true means '+' in shifted position
+          int plus_other_char;  // the other char on same key as '+'
+          if (plus_shift_pos) plus_other_char = ms2fltk(vk_plus_key, 0);
+          else if ((VkKeyScanA('*') & 0xff) == vk_plus_key) plus_other_char = '*'; // German
+          else if ((VkKeyScanA('?') & 0xff) == vk_plus_key) plus_other_char = '?'; // Swedish
+          else if ((VkKeyScanW(L'±') & 0xff) == vk_plus_key) plus_other_char = L'±'; // Dutch
+          else plus_other_char = '='; // fallback
+//fprintf(stderr, "plus_shift_pos=%d plus_other_char='%c' vk+=0x%x\n", plus_shift_pos,
+//        plus_other_char, vk_plus_key);
+          if ( (vk_plus_key == 0xbb && Fl::e_keysym == '=') || // the '+'-containing key is down
+                (plus_shift_pos && Fl::e_keysym == plus_other_char) ) {
+            Fl::e_keysym = (plus_shift_pos ? plus_other_char : '+');
+            static char plus_other_char_utf8[4];
+            int lutf8 = fl_utf8encode(plus_other_char, plus_other_char_utf8);
+            plus_other_char_utf8[lutf8] = 0;
+            if (plus_shift_pos) {
+              Fl::e_text = ( (Fl::e_state & FL_SHIFT) ? (char*)"+" : plus_other_char_utf8 );
+            } else {
+              Fl::e_text = ( (Fl::e_state & FL_SHIFT) ? plus_other_char_utf8 : (char*)"+" );
+            }
+            Fl::e_length = (int)strlen(Fl::e_text);
+          }
+        }
+        // end of processing of the +-containing key
+
         if (lParam & (1 << 31)) { // key up events.
           if (Fl::handle(FL_KEYUP, window))
             return 0;
@@ -1572,6 +1675,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_SIZE:
         if (!window->parent()) {
+          Fl_Window_Driver::driver(window)->is_maximized(wParam == SIZE_MAXIMIZED);
           if (wParam == SIZE_MINIMIZED || wParam == SIZE_MAXHIDE) {
             Fl::handle(FL_HIDE, window);
           } else {
@@ -1599,7 +1703,16 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
         Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
         int olds = wd->screen_num();
-        int news = sd->screen_num_unscaled(nx + int(window->w() * scale / 2), ny + int(window->h() * scale / 2));
+        // Issue #1097: when a fullscreen window is restored to its size, it receives first a WM_MOVE
+        // and then a WM_SIZE, so it still has its fullscreen size at the WM_MOVE event, which defeats
+        // using window->w()|h() to compute the center of the (small) window. We detect this situation
+        // with condition: !window->fullscreen_active() && *wd->no_fullscreen_w()
+        // and use *wd->no_fullscreen_w()|h() instead of window->w()|h().
+        int trueW = window->w(), trueH = window->h();
+        if (!window->fullscreen_active() && *wd->no_fullscreen_w()) {
+          trueW = *wd->no_fullscreen_w(); trueH = *wd->no_fullscreen_h();
+        }
+        int news = sd->screen_num_unscaled(nx + int(trueW * scale / 2), ny + int(trueH * scale / 2));
         if (news == -1)
           news = olds;
         float s = sd->scale(news);
@@ -1607,16 +1720,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         //             sd->scale(olds),news, s,
         //             Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);
         // fflush(LOG);
-        if (olds != news && !window->parent()) {
-          if (s != sd->scale(olds) &&
-              !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
-              window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
-            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
-            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
-            Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+        if (!window->parent()) {
+          if (olds != news) {
+            if (s != sd->scale(olds) &&
+                !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
+                window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
+              Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
+              Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
+              Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+            }
+            else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
+              wd->screen_num(news);
+          } else if (Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+            Fl::remove_timeout(Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = false;
           }
-          else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
-            wd->screen_num(news);
         }
         window->position(int(round(nx/scale)), int(round(ny/scale)));
         break;
@@ -1725,6 +1843,8 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
 
   int fallback = 1;
   float s = Fl::screen_driver()->scale(screen_num());
+  int minw, minh, maxw, maxh;
+  pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
   if (!w->parent()) {
     if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
@@ -1769,7 +1889,7 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
         yoff = by + bt;
         dx = W - int(w->w() * s);
         dy = H - int(w->h() * s);
-        if (maxw() != minw() || maxh() != minh())
+        if (maxw != minw || maxh != minh)
           ret = 2;
         else
           ret = 1;
@@ -1780,7 +1900,7 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
   // This is the original (pre 1.1.7) routine to calculate window border sizes.
   if (fallback) {
     if (w->border() && !w->parent()) {
-      if (maxw() != minw() || maxh() != minh()) {
+      if (maxw != minw || maxh != minh) {
         ret = 2;
         bx = GetSystemMetrics(SM_CXSIZEFRAME);
         by = GetSystemMetrics(SM_CYSIZEFRAME);
@@ -1845,8 +1965,27 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
 
 ////////////////////////////////////////////////////////////////
 
+static void delayed_fullscreen(Fl_Window *win) {
+  Fl::remove_check((Fl_Timeout_Handler)delayed_fullscreen, win);
+  win->fullscreen_off();
+  win->fullscreen();
+}
+
+
+static void delayed_maximize(Fl_Window *win) {
+  Fl::remove_check((Fl_Timeout_Handler)delayed_maximize, win);
+  win->un_maximize();
+  win->maximize();
+}
+
+
 void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
 //fprintf(stderr, "resize w()=%d W=%d h()=%d H=%d\n",pWindow->w(), W,pWindow->h(), H);
+  if (Fl_Window::is_a_rescale() && pWindow->fullscreen_active()) {
+    Fl::add_check((Fl_Timeout_Handler)delayed_fullscreen, pWindow);
+  } else if (Fl_Window::is_a_rescale() && pWindow->maximize_active()) {
+    Fl::add_check((Fl_Timeout_Handler)delayed_maximize, pWindow);
+  }
   UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
   int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
   int resize_from_program = (pWindow != resize_bug_fix);
@@ -2110,9 +2249,9 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
       parent = fl_xid(w);
       if (!w->visible())
         showit = 0;
-//      https://www.fltk.org/str.php?L1115+P0+S-2+C0+I0+O0+E0+V1.+Q
+//      https://www.fltk.org/str.php?L1115
 //      Mike added the code below to fix issues with tooltips that unfortunately
-//      he does not specify in detail. After extensive testing, I can'tt see
+//      he does not specify in detail. After extensive testing, I can't see
 //      how this fixes things, but I do see how a window opened by a timer will
 //      link that window to the current popup, which is wrong.
 //      Matt, Apr 30th, 2023
@@ -2173,7 +2312,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   if (!fl_clipboard_notify_empty() && clipboard_wnd == NULL)
     fl_clipboard_notify_target((HWND)x->xid);
 
-  wait_for_expose_value = 1;
+  wait_for_expose_value = ((wp == 0 || hp == 0) && !w->border() && !w->parent() ? 0 : 1); // issue #985
   if (show_iconic()) {
     showit = 0;
     show_iconic(0);
@@ -2220,16 +2359,18 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax) {
   hd *= 2;
   hd += td;
 
+  int minw, minh, maxw, maxh;
+  pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
   float s = Fl::screen_driver()->scale(screen_num());
-  minmax->ptMinTrackSize.x = LONG(s * minw()) + wd;
-  minmax->ptMinTrackSize.y = LONG(s * minh()) + hd;
-  if (maxw()) {
-    minmax->ptMaxTrackSize.x = LONG(s * maxw()) + wd;
-    minmax->ptMaxSize.x = LONG(s * maxw()) + wd;
+  minmax->ptMinTrackSize.x = LONG(s * minw) + wd;
+  minmax->ptMinTrackSize.y = LONG(s * minh) + hd;
+  if (maxw) {
+    minmax->ptMaxTrackSize.x = LONG(s * maxw) + wd;
+    minmax->ptMaxSize.x = LONG(s * maxw) + wd;
   }
-  if (maxh()) {
-    minmax->ptMaxTrackSize.y = LONG(s * maxh()) + hd;
-    minmax->ptMaxSize.y = LONG(s * maxh()) + hd;
+  if (maxh) {
+    minmax->ptMaxTrackSize.y = LONG(s * maxh) + hd;
+    minmax->ptMaxSize.y = LONG(s * maxh) + hd;
   }
 }
 

@@ -8,6 +8,10 @@ adjust versions and directory names as appropriate on your system.
 In this howto we compare FLTK 1.3.4-1 (last 1.3.x release as of Jan 02, 2019)
 with the current version (1.3.5) before it will be released.
 
+For documentation on its usage please refer to:
+
+    https://lvc.github.io/abi-compliance-checker/
+
 
 (1) Download 'abi-compliance-checker' from GitHub:
 

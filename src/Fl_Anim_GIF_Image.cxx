@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <math.h> // lround()
+#include <math.h> // round()
 
 #include <FL/Fl_Anim_GIF_Image.H>
 
@@ -199,10 +199,10 @@ void Fl_Anim_GIF_Image::FrameInfo::copy(const FrameInfo& fi) {
     double scale_factor_x = (double)canvas_w / (double)fi.canvas_w;
     double scale_factor_y = (double)canvas_h / (double)fi.canvas_h;
     if (fi.optimize_mem) {
-      frames[i].x = (unsigned short)lround(fi.frames[i].x * scale_factor_x);
-      frames[i].y = (unsigned short)lround(fi.frames[i].y * scale_factor_y);
-      int new_w = (int)lround(fi.frames[i].w * scale_factor_x);
-      int new_h = (int)lround(fi.frames[i].h * scale_factor_y);
+      frames[i].x = (unsigned short)round(fi.frames[i].x * scale_factor_x);
+      frames[i].y = (unsigned short)round(fi.frames[i].y * scale_factor_y);
+      int new_w = (int)round(fi.frames[i].w * scale_factor_x);
+      int new_h = (int)round(fi.frames[i].h * scale_factor_y);
       frames[i].w = new_w;
       frames[i].h = new_h;
     }
@@ -266,6 +266,7 @@ void Fl_Anim_GIF_Image::FrameInfo::dispose(int frame) {
 bool Fl_Anim_GIF_Image::FrameInfo::load(const char *name, const unsigned char *data, size_t length) {
   // decode using FLTK
   valid = false;
+  anim->ld(0);
   if (data) {
     anim->Fl_GIF_Image::load(name, data, length, true); // calls on_frame_data() for each frame
   } else {
@@ -403,10 +404,10 @@ void Fl_Anim_GIF_Image::FrameInfo::resize(int W, int H) {
   double scale_factor_y = (double)H / (double)canvas_h;
   for (int i=0; i < frames_size; i++) {
     if (optimize_mem) {
-      frames[i].x = (unsigned short)lround(frames[i].x * scale_factor_x);
-      frames[i].y = (unsigned short)lround(frames[i].y * scale_factor_y);
-      int new_w = (int)lround(frames[i].w * scale_factor_x);
-      int new_h = (int)lround(frames[i].h * scale_factor_y);
+      frames[i].x = (unsigned short)round(frames[i].x * scale_factor_x);
+      frames[i].y = (unsigned short)round(frames[i].y * scale_factor_y);
+      int new_w = (int)round(frames[i].w * scale_factor_x);
+      int new_h = (int)round(frames[i].h * scale_factor_y);
       frames[i].w = new_w;
       frames[i].h = new_h;
     }
@@ -506,7 +507,7 @@ bool Fl_Anim_GIF_Image::loop = true;
 
 /** Load an animated GIF image from a file.
 
- This constructor creates an animated image form a GIF-formatted file.
+ This constructor creates an animated image from a GIF-formatted file.
  Optionally it applies the \ref canvas() method after successful load.
  If \ref DONT_START is not specified in the \p flags parameter it calls
  \ref start() after successful load.
@@ -550,7 +551,7 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *filename,
 
 /** Load an animated GIF image from memory.
 
- This constructor creates an animated image form a GIF-formatted block in
+ This constructor creates an animated image from a GIF-formatted block in
  memory. Optionally it applies the \ref canvas() method after successful load.
  If \ref DONT_START is not specified in the \p flags parameter it calls
  \ref start() after successful load.
@@ -1040,8 +1041,16 @@ bool Fl_GIF_Image::is_animated(const char *name) {
 bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =NULL */, size_t imglength /* =0 */) {
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
-  free(name_);
-  name_ = name ? fl_strdup(name) : 0;
+  if (name_ != name) {
+    if (name_) {
+      ::free(name_);
+    }
+    if (name) {
+      name_ = fl_strdup(name);
+    } else {
+      name_  = NULL;
+    }
+  }
 
   // as load() can be called multiple times
   // we have to replicate the actions of the pixmap destructor here
@@ -1054,7 +1063,7 @@ bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =
   w(0);
   h(0);
 
-  if (name_) {
+  if (name_ || imgdata) {
     fi_->load(name, imgdata, imglength);
   }
 
@@ -1154,7 +1163,7 @@ Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(int w, int h) {
  \param[in] scale rescale factor in relation to current size
  */
 Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(double scale) {
-  return resize((int)lround((double)w() * scale), (int)lround((double)h() * scale));
+  return resize((int)round((double)w() * scale), (int)round((double)h() * scale));
 }
 
 

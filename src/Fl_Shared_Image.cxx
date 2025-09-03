@@ -1,7 +1,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -48,17 +48,25 @@ extern "C" {
 }
 
 
-/** Returns the Fl_Shared_Image* array */
+/**
+ Returns the Fl_Shared_Image* array.
+
+ \return a pointer to an array of shared image pointers, sorted by name and size
+ \see Fl_Shared_Image::num_images()
+ */
 Fl_Shared_Image **Fl_Shared_Image::images() {
   return images_;
 }
 
+/**
+ Number of shared images in their various cached sizes.
 
-/** Returns the total number of shared images in the array. */
+ \return number of entries in the array
+ \see Fl_Shared_Image::images()
+ */
 int Fl_Shared_Image::num_images() {
   return num_images_;
 }
-
 
 /**
   Compares two shared images.
@@ -69,28 +77,16 @@ int Fl_Shared_Image::num_images() {
     -# Image width
     -# Image height
 
-  A special case is considered if the width of one of the images is zero
-  and the other image is marked \p original. In this case the images match,
-  i.e. the comparison returns success (0).
+  Binary search in a sorted array works only if we search for the same
+  parameters that were also used for sorting. No special cases are possible
+  here.
 
-  An image is marked \p original if it was directly loaded from a file or
-  from memory as opposed to copied and resized images.
+  Fl_Shared_Image::find() requires a search for an element with a matching name
+  and the original_ flags set. This is not implemented via binary search, but
+  by a simple run of the array inside Fl_Shared_Image::find().
 
-  This comparison is used in Fl_Shared_Image::find() to find an image that
-  matches the requested one or to find the position where a new image
-  should be entered into the sorted list of shared images.
-
-  It is usually used in two steps:
-
-    -# search with exact width and height
-    -# if not found, search again with width = 0 (and height = 0)
-
-  The first step will only return a match if the image exists with the
-  same width and height. The second step will match if there is an image
-  marked \p original with the same name, regardless of width and height.
-
+  \param[in] i0, i1 image pointer pointer for sorting
   \returns      Whether the images match or their relative sort order (see text).
-
   \retval       0       the images match
   \retval       <0      Image \p i0 is \e less than image \p i1
   \retval       >0      Image \p i0 is \e greater than image \p i1
@@ -99,14 +95,14 @@ int
 Fl_Shared_Image::compare(Fl_Shared_Image **i0,          // I - First image
                          Fl_Shared_Image **i1) {        // I - Second image
   int i = strcmp((*i0)->name(), (*i1)->name());
-
-  if (i) return i;
-  else if (((*i0)->data_w() == 0 && (*i1)->original_) ||
-           ((*i1)->data_w() == 0 && (*i0)->original_)) return 0;
-  else if ((*i0)->data_w() != (*i1)->data_w()) return (*i0)->data_w() - (*i1)->data_w();
-  else return (*i0)->data_h() - (*i1)->data_h();
+  if (i) {
+    return i;
+  } else if ((*i0)->data_w() != (*i1)->data_w()) {
+    return (*i0)->data_w() - (*i1)->data_w();
+  } else {
+    return (*i0)->data_h() - (*i1)->data_h();
+  }
 }
-
 
 /**
   Creates an empty shared image.
@@ -130,9 +126,12 @@ Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
 
   The constructors are protected and cannot be used directly
   from a program. Use the get() method instead.
+
+  \param[in] n filename or pool name of the image, must be unique among shared images
+  \param[in] img the image that is made available using the name
 */
-Fl_Shared_Image::Fl_Shared_Image(const char *n,         // I - Filename
-                                 Fl_Image   *img)       // I - Image
+Fl_Shared_Image::Fl_Shared_Image(const char *n,
+                                 Fl_Image   *img)
   : Fl_Image(0,0,0) {
   name_ = new char[strlen(n) + 1];
   strcpy((char *)name_, n);
@@ -146,14 +145,15 @@ Fl_Shared_Image::Fl_Shared_Image(const char *n,         // I - Filename
   else update();
 }
 
-
 /**
-  Adds a shared image to the image cache.
+  Adds a shared image to the image pool.
 
-  This \b protected method adds an image to the cache, an ordered list
-  of shared images. The cache is searched for a matching image whenever
+  This \b protected method adds an image to the pool, an ordered list
+  of shared images. The pool is searched for a matching image whenever
   one is requested, for instance with Fl_Shared_Image::get() or
   Fl_Shared_Image::find().
+
+ This method does not increase or decrease reference counts!
 */
 void
 Fl_Shared_Image::add() {
@@ -182,11 +182,11 @@ Fl_Shared_Image::add() {
   }
 }
 
+/**
+ Update the dimensions of the shared images.
 
-//
-// 'Fl_Shared_Image::update()' - Update the dimensions of the shared images.
-//
-
+ Internal method to synchronize shared image data with the actual image data.
+ */
 void
 Fl_Shared_Image::update() {
   if (image_) {
@@ -211,7 +211,6 @@ Fl_Shared_Image::~Fl_Shared_Image() {
   if (alloc_image_) delete image_;
 }
 
-
 /**
   Releases and possibly destroys (if refcount <= 0) a shared image.
 
@@ -220,21 +219,40 @@ Fl_Shared_Image::~Fl_Shared_Image() {
 */
 void Fl_Shared_Image::release() {
   int   i;      // Looping var...
+  Fl_Shared_Image *the_original = NULL;
 
+#ifdef SHIM_DEBUG
+  printf("----> Fl_Shared_Image::release() %d %s %d %d\n", original_, name_, w(), h());
+  print_pool();
+#endif
+
+  if (refcount_ <= 0) return; // assert(refcount_>0);
   refcount_ --;
   if (refcount_ > 0) return;
 
-  for (i = 0; i < num_images_; i ++)
+  // If this image is not the original, find the original image and make sure
+  // to delete its reference counter as well at the end of this method.
+  if (!original()) {
+    Fl_Shared_Image *o = find(name());
+    if (o) {
+      if (o->original() && o!=this && o->refcount_>1)
+        the_original = o; // mark to release later
+      o->release(); // release from find() operation
+    }
+  }
+
+  for (i = 0; i < num_images_; i ++) {
     if (images_[i] == this) {
       num_images_ --;
 
       if (i < num_images_) {
         memmove(images_ + i, images_ + i + 1,
-               (num_images_ - i) * sizeof(Fl_Shared_Image *));
+                (num_images_ - i) * sizeof(Fl_Shared_Image *));
       }
 
       break;
     }
+  }
 
   delete this;
 
@@ -244,8 +262,16 @@ void Fl_Shared_Image::release() {
     images_       = 0;
     alloc_images_ = 0;
   }
-}
+#ifdef SHIM_DEBUG
+  printf("<---- Fl_Shared_Image::release() %d %s %d %d\n", original_, name_, w(), h());
+  print_pool();
+  printf("\n");
+#endif
 
+  // Release one reference count in the original image as well.
+  if (the_original)
+    the_original->release();
+}
 
 /** Reloads the shared image from disk. */
 void Fl_Shared_Image::reload() {
@@ -294,15 +320,19 @@ void Fl_Shared_Image::reload() {
   }
 }
 
+/**
+ Create a resized copy of the image and wrap it into the share image class.
 
-//
-// 'Fl_Shared_Image::copy()' - Copy and resize a shared image...
-//
-// Note: intentionally no doxygen docs here.
-// For doxygen docs see Fl_Image::copy().
+ This function is usually followed by a call to `returned_image->add() to add
+ the image to the pool, and `this->refcounter_++` to make sure that the original
+ shared image keeps a reference to the copy. Don't call this function if
+ an image of the given size is already in the pool.
 
-Fl_Image *
-Fl_Shared_Image::copy(int W, int H) const {
+ \param[in] W, H new image size
+ \return a new shared image pointer that is not yet in the pool
+ */
+Fl_Shared_Image *
+Fl_Shared_Image::copy_(int W, int H) const {
   Fl_Image              *temp_image;    // New image file
   Fl_Shared_Image       *temp_shared;   // New shared image
 
@@ -325,25 +355,80 @@ Fl_Shared_Image::copy(int W, int H) const {
   return temp_shared;
 }
 
+/**
+ Return a shared image of this image with the requested size.
 
-//
-// 'Fl_Shared_Image::color_average()' - Blend colors...
-//
+ This is the same as calling `Fl_Shared_Image::get(this->name(), W, H)`.
 
+ If a shared image of the desired size already exists in the shared image
+ pool, the existing image is returned and no copy is made. But the reference
+ counter is incremented. When the image is no longer used, call
+ `Fl_Shared_Image::release()`.
+
+ To get a copy of the image data, call `this->image()->copy(W, H)` instead.
+
+ \param[in] W, H size of requested image
+ \return pointer to an `Fl_Shared_Image` that can be safely cast, or NULL if
+      the image can't be found and can't be created.
+ */
+Fl_Image *Fl_Shared_Image::copy(int W, int H) const {
+  if (name_) // should always be set
+    return Fl_Shared_Image::get(name_, W, H);
+  else
+    return NULL;
+}
+
+/**
+ Increments the reference counter and returns a pointer to itself.
+
+ When the image is no longer used, call `Fl_Shared_Image::release()`.
+
+ To get a copy of the image data, call `this->image()->copy()` instead.
+
+ \return pointer to an `Fl_Shared_Image` that can be safely cast
+ */
+Fl_Image *Fl_Shared_Image::copy() {
+  refcount_++;
+  return this;
+}
+
+Fl_Image *Fl_Shared_Image::copy() const {
+  if (name_) // should always be set
+    return Fl_Shared_Image::get(name_);
+  else
+    return NULL;
+}
+
+/**
+ Averages the colors in the image with the provided FLTK color value.
+
+ This method changes the pixel data of this specific image.
+
+ \note It does not change any of the resized copies of this image, nor does it
+ necessarily apply the color changes if this image is resized later.
+
+ \param[in] c blend with this color
+ \param[in] i blend fraction
+ \see Fl_Image::color_average(Fl_Color c, float i)
+ */
 void
-Fl_Shared_Image::color_average(Fl_Color c,      // I - Color to blend with
-                               float    i) {    // I - Blend fraction
+Fl_Shared_Image::color_average(Fl_Color c, float i) {
   if (!image_) return;
 
   image_->color_average(c, i);
   update();
 }
 
+/**
+ Convert the image to gray scale.
 
-//
-// 'Fl_Shared_Image::desaturate()' - Convert the image to grayscale...
-//
+ This method changes the pixel data of this specific image.
 
+ \note It does not change any of the resized copies of this image, nor does it
+ necessarily apply the color changes if this image is resized later.
+
+ \see Fl_Image::desaturate()
+ */
 void
 Fl_Shared_Image::desaturate() {
   if (!image_) return;
@@ -352,9 +437,12 @@ Fl_Shared_Image::desaturate() {
   update();
 }
 
-//
-// 'Fl_Shared_Image::draw()' - Draw a shared image...
-//
+/**
+ Draw this image to the current graphics context.
+
+ \param[in] X, Y, W, H draw at this position and size
+ \param[in] cx, cy image origin
+ */
 void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
   if (!image_) {
     Fl_Image::draw(X, Y, W, H, cx, cy);
@@ -367,19 +455,15 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
   image_->scale(width, height, 0, 1);
 }
 
+/**
+ Remove the cached device specific image data.
 
-
-
-//
-// 'Fl_Shared_Image::uncache()' - Uncache the shared image...
-//
-
+ \see Fl_Image::uncache()
+ */
 void Fl_Shared_Image::uncache()
 {
   if (image_) image_->uncache();
 }
-
-
 
 /** Finds a shared image from its name and size specifications.
 
@@ -394,33 +478,66 @@ void Fl_Shared_Image::uncache()
   In either case the refcount of the returned image is increased.
   The found image should be released with Fl_Shared_Image::release()
   when no longer needed.
+
+  An image is marked \p original if it was directly loaded from a file or
+  from memory as opposed to copied and resized images.
+
+  This comparison is used in Fl_Shared_Image::find() to find an image that
+  matches the requested one or to find the position where a new image
+  should be entered into the sorted list of shared images.
+
+  It is used in two steps by Fl_Shared_Image::add():
+
+  -# search with exact width and height
+  -# if not found, search again with width = 0 (and height = 0)
+
+  The first step will only return a match if the image exists with the
+  same width and height. The second step will match if there is an image
+  marked \p original with the same name, regardless of width and height.
 */
 Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
-  Fl_Shared_Image       *key,           // Image key
-                        **match;        // Matching image
-
   if (num_images_) {
-    key = new Fl_Shared_Image();
-    key->name_ = new char[strlen(name) + 1];
-    strcpy((char *)key->name_, name);
-    key->w(W);
-    key->h(H);
+    if (W) {
+      Fl_Shared_Image *key;     // Image key
+      Fl_Shared_Image **match;  // Matching image
 
-    match = (Fl_Shared_Image **)bsearch(&key, images_, num_images_,
-                                        sizeof(Fl_Shared_Image *),
-                                        (compare_func_t)compare);
+      key = new Fl_Shared_Image();
+      key->name_ = new char[strlen(name) + 1];
+      strcpy((char *)key->name_, name);
+      key->w(W);
+      key->h(H);
 
-    delete key;
+      match = (Fl_Shared_Image **)bsearch(&key, images_, num_images_,
+                                          sizeof(Fl_Shared_Image *),
+                                          (compare_func_t)compare);
 
-    if (match) {
-      (*match)->refcount_ ++;
-      return *match;
+      delete key;
+
+      if (match) {
+        (*match)->refcount_ ++;
+        return *match;
+      }
+    } else {
+      // if no width was given we need to find the original. The list is sorted
+      // by name, width, and height, but we need to find the item by name with
+      // the original_ flags set, no matter how wide, so binary search does not
+      // work here.
+      int i;
+      for (i = 0; i < num_images_; ++i) {
+        // If there are thousands of images and running the array becomes
+        // inefficient, we can hand implement a binary search by name, and then
+        // search back and forth from that location for the member with the
+        // original_ flag set.
+        Fl_Shared_Image *img = images_[i];
+        if (img->original_ && img->name_ && (strcmp(img->name_, name) == 0)) {
+          img->refcount_++;
+          return img;
+        }
+      }
     }
   }
-
-  return 0;
+  return NULL;
 }
-
 
 /**
   Find or load an image that can be shared by multiple widgets.
@@ -451,6 +568,8 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
 
   \param name name of the image
   \param W, H desired size
+  \return the image at the requested size, or NULL if the image could not be
+        found or generated
 
   \see Fl_Shared_Image::find(const char *name, int W, int H)
   \see Fl_Shared_Image::release()
@@ -458,24 +577,42 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
   \see Fl_PNG_Image::Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int maxsize)
 */
 Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
-  Fl_Shared_Image       *temp;          // Image
+  Fl_Shared_Image *temp;
+  bool temp_referenced = false;
 
-  if ((temp = find(name, W, H)) != NULL) return temp;
+  // Find an image by the requested size
+  // ::find() increments the ref count for us
+  if ((temp = find(name, W, H)) != NULL)
+    return temp;
 
-  if ((temp = find(name)) == NULL) {
+  // Find the original image, size does not matter
+  temp = find(name);
+  if (temp) {
+    temp_referenced = true;
+  } else {
+    // No original found, so we generate it by loading the file
     temp = new Fl_Shared_Image(name);
-
+    // We can't load the file or create the image, so return fail
     if (!temp->image_) {
       delete temp;
       return NULL;
     }
-
+    // Add the new image to the pool, refcount is already at 1
     temp->add();
   }
 
+  // At this point, temp is an original image
+  // But if the size is wrong, generate a resized copy
   if ((temp->w() != W || temp->h() != H) && W && H) {
-    temp = (Fl_Shared_Image *)temp->copy(W, H);
-    temp->add();
+    // Generate a copy with the new size, the copy gets refcount 1
+    Fl_Shared_Image *new_temp = temp->copy_(W, H);
+    if (!new_temp) return NULL;
+    // Also increment the refcount of the original image
+    if (!temp_referenced)
+      temp->refcount_++;
+    // add the newly created image to the pool and return it
+    new_temp->add();
+    return new_temp;
   }
 
   return temp;
@@ -496,7 +633,6 @@ Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
   shared->add();
   return shared;
 }
-
 
 /** Adds a shared image handler, which is basically a test function
   for adding new image formats.
@@ -540,7 +676,6 @@ void Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
   num_handlers_ ++;
 }
 
-
 /** Removes a shared image handler. */
 void Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
   int   i;                              // Looping var...
@@ -561,3 +696,22 @@ void Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
            (num_handlers_ - i) * sizeof(Fl_Shared_Handler ));
   }
 }
+
+#ifdef SHIM_DEBUG
+/**
+ Print the contents of the shared image pool.
+ */
+void Fl_Shared_Image::print_pool() {
+  printf("Fl_Shared_Image: %d images stored in a pool of %d\n", num_images_, alloc_images_);
+  for (int i=0; i<num_images_; i++) {
+    Fl_Shared_Image *img = images_[i];
+    printf("%3d: %3d(%c) %4dx%4d: %s\n",
+           i,
+           img->refcount_,
+           img->original_ ? 'O' : '_',
+           img->w(), img->h(),
+           img->name()
+           );
+  }
+}
+#endif

@@ -8,8 +8,9 @@ Contents
  1   Introduction
 
  2   Wayland Support for FLTK
-   2.1    Configuration
-   2.2    Known Limitations
+   2.1    Disabling Wayland for Backwards Compatibility
+   2.2    Configuration
+   2.3    Known Limitations
 
  3   Platform Specific Notes
    3.1    Debian and Derivatives (like Ubuntu, Mint, RaspberryPiOS)
@@ -49,17 +50,71 @@ X11 is used at run time as follows:
   compositor is available;
 - if $FLTK_BACKEND has another value, the library stops with error.
 
-Alternatively, it is possible to force a program linked to a Wayland-enabled
-FLTK library to use X11 in all situations by putting this declaration somewhere
-in the source code :
-  FL_EXPORT bool fl_disable_wayland = true;
-FLTK source code and also X11-specific source code conceived for FLTK 1.3
-should run with a Wayland-enabled, FLTK 1.4 library with that single change only.
-
 On pure Wayland systems without the X11 headers and libraries, FLTK can be built
 with its Wayland backend only (see below).
 
- 2.1 Configuration
+
+ 2.1 Disabling Wayland for Backwards Compatibility
+---------------------------------------------------
+
+Programs using X11 specific functions may need to disable the automatic
+detection of Wayland at runtime so they fall back to X11 only.
+
+It is possible to force a program linked to a Wayland-enabled FLTK library
+to use X11 in all situations by putting this declaration somewhere in the
+source code:
+
+  FL_EXPORT bool fl_disable_wayland = true;
+
+FLTK source code and also X11-specific source code conceived for FLTK 1.3
+should run with a Wayland-enabled FLTK 1.4 library with this single change.
+
+
+Note 1: this may require some linker flags to enable exporting symbols
+from *executable* programs which FLTK uses to "read" the global symbol
+'fl_disable_wayland'. For GNU `ld` or any GNU compiler this would
+be "-rdynamic".
+
+
+Note 2: When building a user project with CMake 3.4 or higher, i.e. using
+
+  cmake_minimum_required (VERSION 3.4)
+
+or any higher (minimum) CMake version users need to use at least one of
+the following techniques:
+
+Option 1: Set target property 'ENABLE_EXPORTS' on all executable
+          targets that require to disable the Wayland backend.
+          This is the preferred solution because it works per target.
+
+          CMake example:
+
+          set_target_properties(myprog PROPERTIES ENABLE_EXPORTS TRUE)
+
+Option 2: Set CMake policy CMP0065 to 'OLD' (i.e. pre-3.4 behavior)
+          This is a quick solution but discouraged because setting
+          CMake policies to 'OLD' is "deprecated by definition".
+          CMake may issue warnings or ignore this in the future.
+
+          CMake code:
+
+          cmake_policy(SET CMP0065 OLD)
+
+Option 3: Set CMake variable 'CMAKE_ENABLE_EXPORTS' to 'TRUE'.
+          Note: use this to be compatible with CMake < 3.27.
+
+Option 4: Set CMake variable 'CMAKE_EXECUTABLE_ENABLE_EXPORTS' to 'TRUE'.
+          Note: new in CMake 3.27, ignored in older versions.
+
+Options 3 and 4 can be used as quick solutions like option 2 but these
+options affect all targets that are created while the CMake variable is
+set. As said above, option 1 should be preferred.
+
+This applies to the FLTK test and demo programs as well, hence we use
+option 1 in our build system.
+
+
+ 2.2 Configuration
 ------------------
 
 On Linux and FreeBSD systems equipped with the adequate software packages
@@ -67,25 +122,26 @@ On Linux and FreeBSD systems equipped with the adequate software packages
 hybrid library. On systems lacking all or part of Wayland-required packages,
 the default building procedure produces a X11-based library.
 
-Use -DOPTION_USE_WAYLAND=OFF with CMake or "configure --disable-wayland" to build
-FLTK for the X11 library when the default would build for Wayland.
+Use "-D FLTK_BACKEND_WAYLAND=OFF" with CMake or "configure --disable-wayland"
+to build FLTK for the X11 library when the default would build for Wayland.
 
-CMake OPTION_WAYLAND_ONLY or "--disable-x11" configure argument can
+CMake option FLTK_BACKEND_X11=OFF or configure argument "--disable-x11" can
 be used to produce a Wayland-only library which can be useful, e.g., when
 cross-compiling for systems that lack X11 headers and libraries.
 
 The FLTK Wayland platform uses a library called libdecor which handles window decorations
-(i.e., titlebars, shade). Libdecor is bundled in the FLTK source code and FLTK uses by default
-this form of libdecor. CMake OPTION_USE_SYSTEM_LIBDECOR can be turned on to have FLTK
-use the system's version of libdecor which is available on recent Linux distributions (e.g.,
-Debian Bookworm or more recent in packages libdecor-0-0 and libdecor-0-plugin-1-cairo).
+(i.e., titlebars, shade). On very recent Linux distributions (e.g., Debian trixie)
+libdecor is available as Linux packages (libdecor-0-dev and libdecor-0-plugin-1-gtk).
+FLTK requires version 0.2.0 or more recent of these packages.
+When libdecor is not available or not recent enough, FLTK uses a copy of libdecor
+bundled in the FLTK source code.
 FLTK equipped with libdecor supports both the client-side decoration mode (CSD) and the
 server-side decoration mode (SSD) as determined by the active Wayland compositor.
 Mutter (gnome's Wayland compositor) and Weston use CSD mode, KWin and Sway use SSD mode.
 Furthermore, setting environment variable LIBDECOR_FORCE_CSD to 1 will make FLTK use CSD
 mode even if the compositor would have selected SSD mode.
 
- 2.2 Known Limitations
+ 2.3 Known Limitations
 ----------------------
 
 * A deliberate design trait of Wayland makes application windows ignorant of their exact
@@ -110,12 +166,16 @@ the app had the focus.
 * Narrow windows with a titlebar are silently forced to be wide enough
 for the titlebar to display window buttons and a few letters of the title.
 
-* Text input methods have been tested without any understanding of the writing systems,
-so feedback on this subject would be helpful.
+* Text input methods are known to work well for Chinese and Japanese.
+Feedback for other writing systems would be helpful.
 
 * Using OpenGL inside Wayland windows doesn't seem to work on RaspberryPi hardware,
 although it works inside X11 windows on the same hardware.
 
+* Drag-and-drop initiation from a subwindow doesn't work under the KDE/Plasma desktop.
+That is most probably a KWin bug because no such problem occurs with 3 other
+Wayland compositors (Mutter, Weston, Sway). A workaround is proposed in issue #997
+of the FLTK github repository (https://github.com/fltk/fltk/issues/997).
 
 3 Platform Specific Notes
 =========================
@@ -136,15 +196,17 @@ in section 2.1 of file README.Unix.txt :
 - libwayland-dev
 - wayland-protocols
 - libxkbcommon-dev
-- libxinerama-dev
-- libdbus-1-dev  <== recommended to query current cursor theme
-- libglew-dev    <== necessary to use OpenGL version 3 or above
-- cmake          <== if you plan to build with CMake
-- cmake-qt-gui   <== if you plan to use the GUI of CMake
+- libxinerama-dev <== except if option FLTK_BACKEND_X11=off is used
+- libdbus-1-dev   <== recommended to query current cursor theme
+- libglew-dev     <== necessary to use OpenGL version 3 or above
+- cmake           <== if you plan to build with CMake
+- cmake-qt-gui    <== if you plan to use the GUI of CMake
+- libdecor-0-dev  <== recommended if available and if in version ≥ 0.2.0
+- libgtk-3-dev    <== highly recommended if libdecor-0-dev is not installed
 
 These packages allow to run FLTK apps under the Gnome-Wayland desktop:
 - gnome-core
-- libgtk-3-dev   <== highly recommended, gives windows a Gnome-style titlebar
+- libdecor-0-plugin-1-gtk <== install if libdecor-0-dev is installed
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
@@ -167,11 +229,12 @@ package groups listed in section 2.2 of file README.Unix.txt :
 - libxkbcommon-devel
 - pango-devel
 - mesa-libGLU-devel
-- dbus-devel   <== recommended to query current cursor theme
-- gtk3-devel   <== highly recommended, gives windows a GTK-style titlebar
-- glew-devel   <== necessary to use OpenGL version 3 or above
-- cmake        <== if you plan to build with CMake
-- cmake-gui    <== if you plan to use the GUI of CMake
+- dbus-devel     <== recommended to query current cursor theme
+- libdecor-devel <== recommended, draws window titlebars
+- gtk3-devel     <== highly recommended if libdecor-devel is not installed
+- glew-devel     <== necessary to use OpenGL version 3 or above
+- cmake          <== if you plan to build with CMake
+- cmake-gui      <== if you plan to use the GUI of CMake
 
 Package installation command: sudo yum install <package-name ...>
 

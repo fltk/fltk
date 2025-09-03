@@ -82,6 +82,7 @@ public:
   int printable_rect(int *w, int *h) FL_OVERRIDE;
   Fl_Offscreen offscreen();
   void rescale();
+  void mask(const Fl_RGB_Image *);
 };
 
 
@@ -107,11 +108,15 @@ protected:
   int external_offscreen;
   Fl_Image_Surface_Driver(int w, int h, int /*high_res*/, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
   virtual ~Fl_Image_Surface_Driver() {}
+  static void copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst, uchar *dib_src,
+                             int line_size, bool bottom_to_top);
+  static Fl_RGB_Image *RGB3_to_RGB1(const Fl_RGB_Image *rgb3, int W, int H);
   void set_current() FL_OVERRIDE = 0;
   void translate(int x, int y) FL_OVERRIDE = 0;
   void untranslate() FL_OVERRIDE = 0;
   int printable_rect(int *w, int *h) FL_OVERRIDE;
   virtual Fl_RGB_Image *image() = 0;
+  virtual void mask(const Fl_RGB_Image *) {}
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Image_Surface_Driver for the plaform.

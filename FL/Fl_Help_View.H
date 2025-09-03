@@ -3,7 +3,7 @@
 //
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
-// Copyright 2011-2022 by Bill Spitzak and others.
+// Copyright 2011-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -225,7 +225,12 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
                 atargets_;              ///< Allocated targets
   Fl_Help_Target *targets_;             ///< Targets
 
-  char          directory_[FL_PATH_MAX];///< Directory for current file
+#if FL_ABI_VERSION >= 10401
+  char          directory_[2 * FL_PATH_MAX + 15]; ///< Directory for current file
+#else
+  char          directory_[FL_PATH_MAX]; ///< Directory for current file
+#endif
+
   char          filename_[FL_PATH_MAX]; ///< Current filename
   int           topline_,               ///< Top line in document
                 leftline_,              ///< Lefthand position
@@ -235,20 +240,20 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
   Fl_Scrollbar  scrollbar_,             ///< Vertical scrollbar for document
                 hscrollbar_;            ///< Horizontal scrollbar
 
-  static int    selection_first;
-  static int    selection_last;
-  static int    selection_push_first;
-  static int    selection_push_last;
-  static int    selection_drag_first;
-  static int    selection_drag_last;
-  static int    selected;
-  static int    draw_mode;
-  static int    mouse_x;
-  static int    mouse_y;
-  static int    current_pos;
-  static Fl_Help_View *current_view;
-  static Fl_Color hv_selection_color;
-  static Fl_Color hv_selection_text_color;
+  static int    selection_first_;
+  static int    selection_last_;
+  static int    selection_push_first_;
+  static int    selection_push_last_;
+  static int    selection_drag_first_;
+  static int    selection_drag_last_;
+  static int    selected_;
+  static int    draw_mode_;
+  static int    mouse_x_;
+  static int    mouse_y_;
+  static int    current_pos_;
+  static Fl_Help_View *current_view_;
+  static Fl_Color hv_selection_color_;
+  static Fl_Color hv_selection_text_color_;
 
 
   void initfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { f = textfont_; s = textsize_; c = textcolor_; fstack_.init(f, s, c); }
@@ -285,6 +290,8 @@ private:
   void          follow_link(Fl_Help_Link*);
 
 public:
+
+  static const char *copy_menu_text;
 
   Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
   ~Fl_Help_View();
@@ -383,6 +390,16 @@ public:
   void scrollbar_size(int newSize) {
       scrollbar_size_ = newSize;
   }
+  /// Return pointer to vertical scrollbar
+  Fl_Scrollbar  *scrollbar() { return &scrollbar_; }
+  /// Return pointer to horizontal scrollbar
+  Fl_Scrollbar  *hscrollbar() { return &hscrollbar_; }
+
+  // Check if the user selected text in this view.
+  int text_selected();
+
+  // If text is selected in this view, copy it to a clipboard.
+  int copy(int clipboard=1);
 };
 
 #endif // !Fl_Help_View_H

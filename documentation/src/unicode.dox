@@ -525,7 +525,7 @@ converts the strings to lower case Unicode as part of the comparison.
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="enumerations.html">
-    FLTK Enumerations
+    Constants and Enumerations
     [Next]
     </a>
   </td>

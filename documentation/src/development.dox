@@ -117,9 +117,14 @@ These comments will not be visible in the generated document.
 
 will be shown as:
 
-    The following text is a developer comment.
-    <!-- *** This *** is *** invisible *** -->
-    This will be visible again.
+  The following text is a developer comment.
+  <!-- *** This *** is *** invisible *** -->
+  This will be visible again.
+
+\note Since an unknown Doxygen version indentation by four or more bytes
+  is automatically displayed as if it was framed by \\code and \\endcode.
+  You need to take care that "normal" text is not indented that much to
+  avoid mis-interpretation and formatting as code.
 
 
 <H3>Different Headlines</H3>
@@ -131,29 +136,29 @@ there seems to be no difference in the font sizes of \<H3> and \<H4>
 in the pdf output, whereas the html output uses different font sizes.
 
 \code
-   <H1>Headline in big text (H1)</H1>
-   <H2>Headline in big text (H2)</H2>
-   <H3>Headline in big text (H3)</H3>
-   <H4>Headline in big text (H4)</H4>
+  <H1>Headline in big text (H1)</H1>
+  <H2>Headline in big text (H2)</H2>
+  <H3>Headline in big text (H3)</H3>
+  <H4>Headline in big text (H4)</H4>
 \endcode
 
-   <H1>Headline in big text (H1)</H1>
-   <H2>Headline in big text (H2)</H2>
-   <H3>Headline in big text (H3)</H3>
-   <H4>Headline in big text (H4)</H4>
+  <H1>Headline in big text (H1)</H1>
+  <H2>Headline in big text (H2)</H2>
+  <H3>Headline in big text (H3)</H3>
+  <H4>Headline in big text (H4)</H4>
 
 
 \section development_non_ascii Non-ASCII Characters
 
 \code
-    Doxygen understands many HTML quoting characters like
-    &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
+  Doxygen understands many HTML quoting characters like
+  &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
 \endcode
 
 This will appear in the document:
 
-    Doxygen understands many HTML quoting characters like
-    &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
+  Doxygen understands many HTML quoting characters like
+  &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
 
 For further informations about HTML quoting characters see
     <br> \b http://www.doxygen.org/manual/htmlcmds.html
@@ -190,18 +195,18 @@ links \b from normal (e.g. class) documentation \b to documentation sections
 
 This page has
   \code
-        \page development I - Developer Information
+    \page development Developer Information
   \endcode
 at its top.
 
 This section is
   \code
-        \section development_structure Document Structure
+    \section development_structure Document Structure
   \endcode
 
 The following section is
   \code
-        \section development_links Creating Links
+    \section development_links Creating Links
   \endcode
 
 
@@ -307,7 +312,9 @@ Each introduction (tutorial) page ends with navigation elements. These
 elements must only be included in the html documentation, therefore
 they must be separated with \\htmlonly and \\endhtmlonly.
 
-The following code gives the navigation bar at the bottom of this page:
+The following code creates the navigation bar at the bottom of the
+\ref basics HTML page as an example of all pages in the "FLTK Programming Manual"
+section. Note that \b this \b page is one of the appendices w/o navigation bar.
 
 \verbatim
 \htmlonly
@@ -315,17 +322,17 @@ The following code gives the navigation bar at the bottom of this page:
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="migration_1_4.html">
+    <a class="el" href="intro.html">
     [Prev]
-    Migrating Code from FLTK 1.3 to 1.4
+    Introduction to FLTK
     </a>
   </td>
   <td width="10%" align="CENTER">
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="license.html">
-    Software License
+    <a class="el" href="common.html">
+    Common Widgets and Attributes
     [Next]
     </a>
   </td>
@@ -333,29 +340,5 @@ The following code gives the navigation bar at the bottom of this page:
 </table>
 \endhtmlonly
 \endverbatim
-
-
-\htmlonly
-<hr>
-<table summary="navigation bar" width="100%" border="0">
-<tr>
-  <td width="45%" align="LEFT">
-    <a class="el" href="migration_1_4.html">
-    [Prev]
-    Migrating Code from FLTK 1.3 to 1.4
-    </a>
-  </td>
-  <td width="10%" align="CENTER">
-    <a class="el" href="index.html">[Index]</a>
-  </td>
-  <td width="45%" align="RIGHT">
-    <a class="el" href="license.html">
-    Software License
-    [Next]
-    </a>
-  </td>
-</tr>
-</table>
-\endhtmlonly
 
 */

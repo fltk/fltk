@@ -96,6 +96,12 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #ifndef MAC_OS_VERSION_13_0
 #define MAC_OS_VERSION_13_0 130000
 #endif
+#ifndef MAC_OS_VERSION_14_0
+#define MAC_OS_VERSION_14_0 140000
+#endif
+#ifndef MAC_OS_VERSION_15_0
+#define MAC_OS_VERSION_15_0 150000
+#endif
 
 
 #ifndef NSINTEGER_DEFINED // appears with 10.5 in NSObjCRuntime.h
@@ -158,7 +164,7 @@ extern FLWindow *fl_mac_xid(const Fl_Window *win);
 extern Fl_Window *fl_mac_find(FLWindow *);
 class Fl_Gl_Window;
 
-/** The version number of the running Mac OS X (e.g., 100604 for 10.6.4, 101300 for 10.13).
+/** The version number of the running Mac OS X (e.g., 100604 for 10.6.4, 101300 for 10.13, 140102 for 14.1.2).
  FLTK initializes this global variable before main() begins running. If
  the value is needed in a static initializer, a previous call to Fl::system_driver()
  makes sure \ref fl_mac_os_version has been initialized.

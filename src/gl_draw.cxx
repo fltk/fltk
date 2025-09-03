@@ -510,6 +510,11 @@ void Fl_Gl_Window_Driver::draw_string_legacy(const char* str, int n)
 /** draws a utf8 string using an OpenGL texture */
 void Fl_Gl_Window_Driver::draw_string_with_texture(const char* str, int n)
 {
+  // Check if the raster pos is valid.
+  // If it's not, then drawing it results in undefined behaviour (#1006, #1007).
+  GLint valid;
+  glGetIntegerv(GL_CURRENT_RASTER_POSITION_VALID, &valid);
+  if (!valid) return;
   Fl_Gl_Window *gwin = Fl_Window::current()->as_gl_window();
   gl_scale = (gwin ? gwin->pixels_per_unit() : 1);
   if (!gl_fifo) gl_fifo = new gl_texture_fifo();

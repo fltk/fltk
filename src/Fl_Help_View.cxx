@@ -5,7 +5,7 @@
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2023 by Bill Spitzak and others.
+// Copyright 2011-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,8 +50,9 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Int_Vector.H>
-#include <FL/Fl_String.H>
+#include <FL/Fl_Menu_Item.H>
+#include "Fl_Int_Vector.H"
+#include "Fl_String.H"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,6 +83,24 @@ extern "C"
 static int      quote_char(const char *);
 static void     scrollbar_callback(Fl_Widget *s, void *);
 static void     hscrollbar_callback(Fl_Widget *s, void *);
+
+// This function skips 'n' bytes *within* a string, i.e. it checks
+// for a NUL byte as string terminator.
+// If a NUL byte is found before 'n' bytes have been scanned it returns
+// a pointer to the end of the string (the NUL byte).
+// This avoids pure pointer arithmetic that would potentially overrun
+// the end of the string (buffer), see GitHub Issue #1196.
+//
+// Note: this should be rewritten and improved in FLTK 1.5.0 or later
+// by using std::string etc..
+
+static char *skip_bytes(const char *p, int n) {
+  for (int i = 0; i < n; ++i) {
+    if (*p == '\0') break;
+    ++p;
+  }
+  return const_cast<char *>(p);
+}
 
 //
 // global flag for image loading (see get_image).
@@ -129,6 +148,14 @@ static const char * const broken_xpm[] =
                 };
 
 static Fl_Pixmap broken_image(broken_xpm);
+
+/** [this text may be customized at run-time] */
+const char *Fl_Help_View::copy_menu_text = "Copy";
+
+static Fl_Menu_Item rmb_menu[] = {
+  { NULL, 0, NULL, (void*)1 },  // Copy
+  { NULL }
+};
 
 //
 // Simple margin stack for Fl_Help_View::format()...
@@ -210,51 +237,51 @@ img->draw()
 // We don't put the offscreen buffer in the help view class because
 // we'd need to include platform.H in the header...
 static Fl_Offscreen fl_help_view_buffer;
-int Fl_Help_View::selection_first = 0;
-int Fl_Help_View::selection_last = 0;
-int Fl_Help_View::selection_push_first = 0;
-int Fl_Help_View::selection_push_last = 0;
-int Fl_Help_View::selection_drag_first = 0;
-int Fl_Help_View::selection_drag_last = 0;
-int Fl_Help_View::selected = 0;
-int Fl_Help_View::draw_mode = 0;
-int Fl_Help_View::mouse_x = 0;
-int Fl_Help_View::mouse_y = 0;
-int Fl_Help_View::current_pos = 0;
-Fl_Help_View *Fl_Help_View::current_view = 0L;
-Fl_Color Fl_Help_View::hv_selection_color;
-Fl_Color Fl_Help_View::hv_selection_text_color;
+int Fl_Help_View::selection_first_ = 0;
+int Fl_Help_View::selection_last_ = 0;
+int Fl_Help_View::selection_push_first_ = 0;
+int Fl_Help_View::selection_push_last_ = 0;
+int Fl_Help_View::selection_drag_first_ = 0;
+int Fl_Help_View::selection_drag_last_ = 0;
+int Fl_Help_View::selected_ = 0;
+int Fl_Help_View::draw_mode_ = 0;
+int Fl_Help_View::mouse_x_ = 0;
+int Fl_Help_View::mouse_y_ = 0;
+int Fl_Help_View::current_pos_ = 0;
+Fl_Help_View *Fl_Help_View::current_view_ = 0L;
+Fl_Color Fl_Help_View::hv_selection_color_;
+Fl_Color Fl_Help_View::hv_selection_text_color_;
 
 /*
  * This function must be optimized for speed!
  */
 void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
 {
-  if (selected && current_view==this && current_pos<selection_last && current_pos>=selection_first) {
+  if (selected_ && current_view_==this && current_pos_<selection_last_ && current_pos_>=selection_first_) {
     Fl_Color c = fl_color();
-    fl_color(hv_selection_color);
+    fl_color(hv_selection_color_);
     int w = (int)fl_width(t);
-    if (current_pos+(int)strlen(t)<selection_last)
+    if (current_pos_+(int)strlen(t)<selection_last_)
       w += (int)fl_width(' ');
     fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
-    fl_color(hv_selection_text_color);
+    fl_color(hv_selection_text_color_);
     fl_draw(t, x, y);
     fl_color(c);
   } else {
     fl_draw(t, x, y);
   }
-  if (draw_mode) {
+  if (draw_mode_) {
     int w = (int)fl_width(t);
-    if (mouse_x>=x && mouse_x<x+w) {
-      if (mouse_y>=y-fl_height()+fl_descent()&&mouse_y<=y+fl_descent()) {
-        int f = (int) current_pos;
+    if (mouse_x_>=x && mouse_x_<x+w) {
+      if (mouse_y_>=y-fl_height()+fl_descent()&&mouse_y_<=y+fl_descent()) {
+        int f = (int) current_pos_;
         int l = (int) (f+strlen(t)); // use 'quote_char' to calculate the true length of the HTML string
-        if (draw_mode==1) {
-          selection_push_first = f;
-          selection_push_last = l;
+        if (draw_mode_==1) {
+          selection_push_first_ = f;
+          selection_push_last_ = l;
         } else {
-          selection_drag_first = f;
-          selection_drag_last = l + entity_extra_length;
+          selection_drag_first_ = f;
+          selection_drag_last_ = l + entity_extra_length;
         }
       }
     }
@@ -556,11 +583,11 @@ Fl_Help_View::draw()
   if (!value_)
     return;
 
-  if (current_view == this && selected) {
-    hv_selection_color      = FL_SELECTION_COLOR;
-    hv_selection_text_color = fl_contrast(textcolor_, FL_SELECTION_COLOR);
+  if (current_view_ == this && selected_) {
+    hv_selection_color_      = FL_SELECTION_COLOR;
+    hv_selection_text_color_ = fl_contrast(textcolor_, FL_SELECTION_COLOR);
   }
-  current_pos = 0;
+  current_pos_ = 0;
 
   // Clip the drawing to the inside of the box...
   fl_push_clip(x() + Fl::box_dx(b), y() + Fl::box_dy(b),
@@ -613,7 +640,7 @@ Fl_Help_View::draw()
               fl_xyline(xx + x() - leftline_, yy + y() + 1,
                         xx + x() - leftline_ + ww + xtra_ww);
             }
-            current_pos = (int) (ptr-value_);
+            current_pos_ = (int) (ptr-value_);
 
             xx += ww;
             if ((fsize + 2) > hh)
@@ -631,7 +658,7 @@ Fl_Help_View::draw()
                 if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
                                          xx + x() - leftline_ + buf.width());
                 buf.clear();
-                current_pos = (int) (ptr-value_);
+                current_pos_ = (int) (ptr-value_);
                 if (line < 31)
                   line ++;
                 xx = block->line[line];
@@ -662,7 +689,7 @@ Fl_Help_View::draw()
               if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
                                        xx + x() - leftline_ + ww);
               xx += ww;
-              current_pos = (int) (ptr-value_);
+              current_pos_ = (int) (ptr-value_);
             }
 
             needspace = 0;
@@ -673,7 +700,7 @@ Fl_Help_View::draw()
 
             while (isspace((*ptr)&255))
               ptr ++;
-            current_pos = (int) (ptr-value_);
+            current_pos_ = (int) (ptr-value_);
           }
         }
 
@@ -705,7 +732,7 @@ Fl_Help_View::draw()
             ptr ++;
 
           // end of command reached, set the supposed start of printed eord here
-          current_pos = (int) (ptr-value_);
+          current_pos_ = (int) (ptr-value_);
           if (buf.cmp("HEAD"))
             head = 1;
           else if (buf.cmp("BR"))
@@ -964,7 +991,7 @@ Fl_Help_View::draw()
           needspace = 0;
 
           ptr ++;
-          current_pos = (int) (ptr-value_);
+          current_pos_ = (int) (ptr-value_);
         }
         else if (isspace((*ptr)&255))
         {
@@ -982,7 +1009,7 @@ Fl_Help_View::draw()
           }
 
           ptr ++;
-          if (!pre) current_pos = (int) (ptr-value_);
+          if (!pre) current_pos_ = (int) (ptr-value_);
           needspace = 1;
         }
         else if (*ptr == '&') // process html entity
@@ -1036,13 +1063,34 @@ Fl_Help_View::draw()
         hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
         if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
                                  xx + x() - leftline_ + ww);
-        current_pos = (int) (ptr-value_);
+        current_pos_ = (int) (ptr-value_);
       }
     }
 
   fl_pop_clip();
 } // draw()
 
+// In an html style text, set the character pointer p, skipping anything from a
+// leading '<' up to and including the closing '>'. If the end of the buffer is
+// reached, the function returns `end`.
+// No need to handle UTF-8 here.
+//
+// \param[in] p pointer to html text, UTF-8 characters possible
+// \param[in] end pointer to the end of the text (need nut be NUL)
+// \return new pointer to text after skipping over '<...>' blocks, or `end`
+//    if NUL was found or a '<...>' block was not closed.
+static const char *vanilla(const char *p, const char *end) {
+  if (*p == '\0' || p >= end) return end;
+  for (;;) {
+    if (*p != '<') {
+      return p;
+    } else {
+      while (*p && p < end && *p != '>') p++;
+    }
+    p++;
+    if (*p == '\0' || p >= end) return end;
+  }
+}
 
 /** Finds the specified string \p s at starting position \p p.
 
@@ -1056,10 +1104,6 @@ Fl_Help_View::draw()
   - ASCII characters (7-bit, \< 0x80) are compared case insensitive
   - every newline (LF, '\\n') in value() is treated like a single space
   - all other strings are compared as-is (byte by byte)
-
-  \todo complex HTML entities for Unicode code points \> 0x80 are currently treated
-    like one byte (not character!) and do not (yet) match correctly ("<" matches "&lt;"
-    but "€" doesn't match "&euro;", and "ü" doesn't match "&uuml;")
 
   \param[in]  s   search string in UTF-8 encoding
   \param[in]  p   starting position for search (0,...), Default = 0
@@ -1089,22 +1133,33 @@ Fl_Help_View::find(const char *s,               // I - String to find
     if (b->end < (value_ + p))
       continue;
 
-    if (b->start < (value_ + p)) bp = value_ + p;
-    else bp = b->start;
+    if (b->start < (value_ + p))
+      bp = value_ + p;
+    else
+      bp = b->start;
 
-    for (sp = s, bs = bp; *sp && *bp && bp < b->end; bp++) {
-      if (*bp == '<') {
-        // skip to end of element...
-        while (*bp && bp < b->end && *bp != '>') bp++;
-        // no match, so reset to start of search...
-        sp = s;
-        bs = bp + 1;
-        continue;
-      } else if (*bp == '&') {
+    bp = vanilla(bp, b->end);
+    if (bp == b->end)
+      continue;
+
+    for (sp = s, bs = bp; *sp && *bp && bp < b->end; ) {
+      bool is_html_entity = false;
+      if (*bp == '&') {
         // decode HTML entity...
-        if ((c = quote_char(bp + 1)) < 0) c = '&';      // *FIXME* UTF-8, see below
-        else bp = strchr(bp + 1, ';') + 1;
-      } else c = *bp;
+        if ((c = quote_char(bp + 1)) < 0) {
+          c = '&';
+        } else {
+          const char *entity_end = strchr(bp + 1, ';');
+          if (entity_end) {
+            is_html_entity = true; // c contains the unicode character
+            bp = entity_end;
+          } else {
+            c = '&';
+          }
+        }
+      } else {
+        c = *bp;
+      }
 
       if (c == '\n') c = ' '; // treat newline as a single space
 
@@ -1116,12 +1171,28 @@ Fl_Help_View::find(const char *s,               // I - String to find
       // For instance: "&euro;" == 0x20ac -> 0xe2 0x82 0xac (UTF-8: 3 bytes).
       // Hint: use fl_utf8encode() [see below]
 
-      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) sp++;
-      else if (*sp == c) sp++;
-      else { // No match, so reset to start of search...
+      int utf_len = 1;
+      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) {
+        // Check for ASCII case insensitive match.
+        //printf("%ld text match %c/%c\n", bp-value_, *sp, c);
+        sp++;
+        bp = vanilla(bp+1, b->end);
+      } else if (is_html_entity && fl_utf8decode(sp, NULL, &utf_len) == (unsigned int)c ) {
+        // Check if a &lt; entity ini html matches a UTF-8 character in the
+        // search string.
+        //printf("%ld unicode match 0x%02X 0x%02X\n", bp-value_, *sp, c);
+        sp += utf_len;
+        bp = vanilla(bp+1, b->end);
+      } else if (*sp == c) {
+        // Check if UTF-8 bytes in html and the search string match.
+        //printf("%ld binary match %c/%c\n", bp-value_, *sp, c);
+        sp++;
+        bp = vanilla(bp+1, b->end);
+      } else {
+        // No match, so reset to start of search... .
+        //printf("reset search (%c/%c)\n", *sp, c);
         sp = s;
-        bp = bs;
-        bs++;
+        bp = bs = vanilla(bs+1, b->end);
       }
     }
 
@@ -1518,7 +1589,7 @@ void Fl_Help_View::format() {
 
           if (buf.cmp("LI")) {
             block->ol = 0;
-            if (OL_num.back()>=0) {
+            if (OL_num.size() && OL_num.back()>=0) {
               block->ol = 1;
               block->ol_num = (int)OL_num.back();
               int nnum = OL_num.pop_back() + 1;
@@ -1554,7 +1625,7 @@ void Fl_Help_View::format() {
 
           if (buf.cmp("/OL") ||
               buf.cmp("/UL")) {
-            OL_num.pop_back();
+            if (OL_num.size()) OL_num.pop_back();
           }
 
           if (buf.cmp("/UL") ||
@@ -1918,6 +1989,9 @@ void Fl_Help_View::format() {
     block->end = ptr;
     size_      = yy + hh;
   }
+  
+  // Make sure that the last block will have the correct height.
+  if (hh > block->h) block->h = hh;
 
 //  printf("margins.depth_=%d\n", margins.depth_);
 
@@ -2692,7 +2766,7 @@ Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char    *localname;             // Local filename
   char          dir[FL_PATH_MAX];       // Current directory
-  char          temp[2 * FL_PATH_MAX],  // Temporary filename
+  char          temp[3 * FL_PATH_MAX],  // Temporary filename
                 *tempptr;               // Pointer into temporary name
   Fl_Shared_Image *ip;                  // Image pointer...
 
@@ -2700,8 +2774,9 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
   if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
     if (name[0] == '/') {
       strlcpy(temp, directory_, sizeof(temp));
-
-      if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL) {
+      // the following search (strchr) will always succeed, see condition above!
+      tempptr = skip_bytes(strchr(temp, ':'), 3);
+      if ((tempptr = strrchr(tempptr, '/')) != NULL) {
         strlcpy(tempptr, name, sizeof(temp) - (tempptr - temp));
       } else {
         strlcat(temp, name, sizeof(temp));
@@ -2789,8 +2864,8 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
   {
     char        dir[FL_PATH_MAX];       // Current directory
-    char        temp[2 * FL_PATH_MAX],  // Temporary filename
-              *tempptr; // Pointer into temporary filename
+    char        temp[3 * FL_PATH_MAX],  // Temporary filename
+               *tempptr;                // Pointer into temporary filename
 
 
     if (strchr(directory_, ':') != NULL &&
@@ -2799,10 +2874,13 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
       if (linkp->filename[0] == '/')
       {
         strlcpy(temp, directory_, sizeof(temp));
-        if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-          strlcpy(tempptr, linkp->filename, sizeof(temp));
-        else
+        // the following search (strchr) will always succeed, see condition above!
+        tempptr = skip_bytes(strchr(temp, ':'), 3);
+        if ((tempptr = strrchr(tempptr, '/')) != NULL) {
+          strlcpy(tempptr, linkp->filename, sizeof(temp) - (tempptr - temp));
+        } else {
           strlcat(temp, linkp->filename, sizeof(temp));
+        }
       }
       else
         snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
@@ -2837,7 +2915,7 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
 /** Removes the current text selection. */
 void Fl_Help_View::clear_selection()
 {
-  if (current_view==this)
+  if (current_view_==this)
     clear_global_selection();
 }
 /** Selects all the text in the view. */
@@ -2845,18 +2923,18 @@ void Fl_Help_View::select_all()
 {
   clear_global_selection();
   if (!value_) return;
-  current_view = this;
-  selection_drag_last = selection_last = (int) strlen(value_);
-  selected = 1;
+  current_view_ = this;
+  selection_drag_last_ = selection_last_ = (int) strlen(value_);
+  selected_ = 1;
 }
 
 void Fl_Help_View::clear_global_selection()
 {
-  if (selected) redraw();
-  selection_push_first = selection_push_last = 0;
-  selection_drag_first = selection_drag_last = 0;
-  selection_first = selection_last = 0;
-  selected = 0;
+  if (selected_) redraw();
+  selection_push_first_ = selection_push_last_ = 0;
+  selection_drag_first_ = selection_drag_last_ = 0;
+  selection_first_ = selection_last_ = 0;
+  selected_ = 0;
 }
 
 char Fl_Help_View::begin_selection()
@@ -2865,18 +2943,18 @@ char Fl_Help_View::begin_selection()
 
   if (!fl_help_view_buffer) fl_help_view_buffer = fl_create_offscreen(1, 1);
 
-  mouse_x = Fl::event_x();
-  mouse_y = Fl::event_y();
-  draw_mode = 1;
+  mouse_x_ = Fl::event_x();
+  mouse_y_ = Fl::event_y();
+  draw_mode_ = 1;
 
-    current_view = this;
+    current_view_ = this;
     fl_begin_offscreen(fl_help_view_buffer);
     draw();
     fl_end_offscreen();
 
-  draw_mode = 0;
+  draw_mode_ = 0;
 
-  if (selection_push_last) return 1;
+  if (selection_push_last_) return 1;
   else return 0;
 }
 
@@ -2885,38 +2963,44 @@ char Fl_Help_View::extend_selection()
   if (Fl::event_is_click())
     return 0;
 
-//  printf("old selection_first=%d, selection_last=%d\n",
-//         selection_first, selection_last);
+  // Give this widget the focus during the selection process. This will
+  // deselect other text selection and make sure, we receive the Copy
+  // keyboard shortcut.
+  if (Fl::focus()!=this)
+    Fl::focus(this);
 
-  int sf = selection_first, sl = selection_last;
+//  printf("old selection_first_=%d, selection_last_=%d\n",
+//         selection_first_, selection_last_);
 
-  selected = 1;
-  mouse_x = Fl::event_x();
-  mouse_y = Fl::event_y();
-  draw_mode = 2;
+  int sf = selection_first_, sl = selection_last_;
+
+  selected_ = 1;
+  mouse_x_ = Fl::event_x();
+  mouse_y_ = Fl::event_y();
+  draw_mode_ = 2;
 
     fl_begin_offscreen(fl_help_view_buffer);
     draw();
     fl_end_offscreen();
 
-  draw_mode = 0;
+  draw_mode_ = 0;
 
-  if (selection_push_first < selection_drag_first) {
-    selection_first = selection_push_first;
+  if (selection_push_first_ < selection_drag_first_) {
+    selection_first_ = selection_push_first_;
   } else {
-    selection_first = selection_drag_first;
+    selection_first_ = selection_drag_first_;
   }
 
-  if (selection_push_last > selection_drag_last) {
-    selection_last = selection_push_last;
+  if (selection_push_last_ > selection_drag_last_) {
+    selection_last_ = selection_push_last_;
   } else {
-    selection_last = selection_drag_last;
+    selection_last_ = selection_drag_last_;
   }
 
-//  printf("new selection_first=%d, selection_last=%d\n",
-//         selection_first, selection_last);
+//  printf("new selection_first_=%d, selection_last_=%d\n",
+//         selection_first_, selection_last_);
 
-  if (sf!=selection_first || sl!=selection_last) {
+  if (sf!=selection_first_ || sl!=selection_last_) {
 //    puts("REDRAW!!!\n");
     return 1;
   } else {
@@ -2947,7 +3031,7 @@ static unsigned int command(const char *cmd)
 
 void Fl_Help_View::end_selection(int clipboard)
 {
-  if (!selected || current_view!=this)
+  if (!selected_ || current_view_!=this)
     return;
   // convert the select part of our html text into some kind of somewhat readable UTF-8
   // and store it in the selection buffer
@@ -2995,7 +3079,7 @@ void Fl_Help_View::end_selection(int clipboard)
         case CMD('d','d', 0 , 0 ): src = "\n - "; break;
       }
       int n = (int) (s-value_);
-      if (src && n>selection_first && n<=selection_last) {
+      if (src && n>selection_first_ && n<=selection_last_) {
         while (*src) {
           *d++ = *src++;
         }
@@ -3016,7 +3100,7 @@ void Fl_Help_View::end_selection(int clipboard)
       }
     }
     int n = (int) (s2-value_);
-    if (n>selection_first && n<=selection_last) {
+    if (n>selection_first_ && n<=selection_last_) {
       if (!pre && c < 256 && isspace(c)) c = ' ';
       if (p != ' ' || c != ' ') {
         if (s2 != s) { // c was an HTML entity
@@ -3026,12 +3110,37 @@ void Fl_Help_View::end_selection(int clipboard)
       }
       p = c;
     }
-    if (n>selection_last) break; // stop parsing html after end of selection
+    if (n>selection_last_) break; // stop parsing html after end of selection
   }
   *d = 0;
   Fl::copy(txt, (int) strlen(txt), clipboard);
   // printf("copy [%s]\n", txt);
   free(txt);
+}
+
+/**
+ \brief Check if the user selected text in this view.
+ \return 1 if text is selected, 0 if no text is selected
+ */
+int Fl_Help_View::text_selected() {
+  if (current_view_==this)
+    return selected_;
+  else
+    return 0;
+}
+
+/**
+ \brief If text is selected in this view, copy it to a clipboard.
+ \param[in] clipboard for x11 only, 0=selection buffer, 1=clipboard, 2=both
+ \return 1 if text is selected, 0 if no text is selected
+ */
+int Fl_Help_View::copy(int clipboard) {
+  if (text_selected()) {
+    end_selection(clipboard);
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 /** Handles events in the widget. */
@@ -3063,6 +3172,20 @@ Fl_Help_View::handle(int event) // I - Event to handle
       else fl_cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_PUSH:
+      if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        rmb_menu[0].label(copy_menu_text);
+        if (text_selected())
+          rmb_menu[0].activate();
+        else
+          rmb_menu[0].deactivate();
+        fl_cursor(FL_CURSOR_DEFAULT);
+        const Fl_Menu_Item *mi = rmb_menu->popup(Fl::event_x(), Fl::event_y());
+        if (mi) switch (mi->argument()) {
+          case 1:
+            copy();
+            break;
+        }
+      }
       if (Fl_Group::handle(event)) return 1;
       linkp = find_link(xx, yy);
       if (linkp) {
@@ -3084,7 +3207,7 @@ Fl_Help_View::handle(int event) // I - Event to handle
         }
         return 1;
       }
-      if (current_view==this && selection_push_last) {
+      if (current_view_==this && selection_push_last_) {
         if (extend_selection()) redraw();
         fl_cursor(FL_CURSOR_INSERT);
         return 1;
@@ -3100,7 +3223,7 @@ Fl_Help_View::handle(int event) // I - Event to handle
         linkp = 0;
         return 1;
       }
-      if (current_view==this && selection_push_last) {
+      if (current_view_==this && selection_push_last_) {
         end_selection();
         return 1;
       }
@@ -3206,7 +3329,7 @@ Fl_Help_View::~Fl_Help_View()
  requested page in an external browser.
 
  In all other cases, the URL is interpreted as a filename. The file is read and
- displayed in this borwser. Note that MSWindows style backslashes are not
+ displayed in this browser. Note that Windows style backslashes are not
  supported in the file name.
 
  \param[in] f filename or URL
@@ -3564,6 +3687,7 @@ quote_char(const char *p) {     // I - Quoted string
     { "micro;",  6, 181 },
     { "middot;", 7, 183 },
     { "nbsp;",   5, ' ' },
+    { "ndash;",  6, 0x2013 },
     { "not;",    4, 172 },
     { "Ntilde;", 7, 209 },
     { "ntilde;", 7, 241 },

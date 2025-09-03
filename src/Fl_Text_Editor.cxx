@@ -132,7 +132,7 @@ static struct {
   { FL_Page_Down, FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
 //{ FL_Clear,     0,                        Fl_Text_Editor::delete_to_eol },
   { 'z',          FL_CTRL,                  Fl_Text_Editor::kf_undo       },
-  { 'z',          FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_redo       }, // MSWindows screen driver also defines Ctrl-Y
+  { 'z',          FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_redo       }, // Windows screen driver also defines Ctrl-Y
   { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo       }, // Emacs
   { '?',          FL_CTRL,                  Fl_Text_Editor::kf_redo       }, // Emacs
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },
@@ -233,7 +233,7 @@ static void kill_selection(Fl_Text_Editor* e) {
 */
 int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   // FIXME: this function is a mess! Fix this!
-  if (!c || (!isprint(c) && c != '\t')) return 0;
+  if (!c || (!(c > 0 && c < 127 && isprint(c)) && c != '\t')) return 0;
   char s[2] = "\0";
   s[0] = (char)c;
   kill_selection(e);
@@ -310,10 +310,10 @@ int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
   Fl::copy("", 0, 0);
   switch (c) {
   case FL_Home:
-      e->insert_position(e->buffer()->line_start(e->insert_position()));
+      e->insert_position(e->line_start(e->insert_position()));
       break;
     case FL_End:
-      e->insert_position(e->buffer()->line_end(e->insert_position()));
+      e->insert_position(e->line_end(e->insert_position(), false));
       break;
     case FL_Left:
       e->move_left();
@@ -663,7 +663,13 @@ int Fl_Text_Editor::handle_key() {
   Key_Func f;
   f = bound_key_function(key, state, global_key_bindings);
   if (!f) f = bound_key_function(key, state, key_bindings);
-  if (f) return f(key, this);
+  if (f == kf_undo || f == kf_redo) {
+    // never propagate undo and redo up to another widget
+    if (!f(key, this)) fl_beep();
+    return 1;
+  } else if (f){
+    return f(key, this);
+  }
   if (default_key_function_ && !state) return default_key_function_(c, this);
   return 0;
 }
@@ -741,6 +747,25 @@ int Fl_Text_Editor::handle(int event) {
         if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
         return 1;
       }
+
+      if (Fl::event_button() == FL_RIGHT_MOUSE) {
+        if (active_r() && window()) {
+          if (Fl::event_inside(text_area.x, text_area.y, text_area.w,
+                               text_area.h)) window()->cursor(FL_CURSOR_INSERT);
+          else window()->cursor(FL_CURSOR_DEFAULT);
+        }
+        if (Fl::focus() != this) {
+          Fl::focus(this);
+          handle(FL_FOCUS);
+        }
+        switch (handle_rmb(0)) {
+          case 1: kf_cut(0, this); break;
+          case 2: kf_copy(0, this); break;
+          case 3: kf_paste(0, this); break;
+        }
+        return 1;
+      }
+
       break;
 
     case FL_SHORTCUT:

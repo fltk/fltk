@@ -28,7 +28,7 @@
 # Example for package "cairo":
 #
 #  pkg_check_modules (CAIRO cairo)
-#  fl_debug_pkg (CAIRO cairo)
+#  fl_debug_pkg(CAIRO cairo)
 #
 # The first command searches for pkg 'cairo' and stores the results
 # in CMake variables with prefix 'CAIRO_'.
@@ -38,32 +38,32 @@
 #
 #######################################################################
 
-macro (fl_debug_pkg PREFIX NAME)
+macro(fl_debug_pkg PREFIX NAME)
   message("")
   message(STATUS "Results of pkg_check_modules(${PREFIX}, ${NAME}):")
-  fl_debug_var (${PREFIX}_FOUND)
-  if (${PREFIX}_FOUND)
+  fl_debug_var(${PREFIX}_FOUND)
+  if(${PREFIX}_FOUND)
 
-    fl_debug_var (${PREFIX}_INCLUDE_DIRS)
-    fl_debug_var (${PREFIX}_CFLAGS)
-    fl_debug_var (${PREFIX}_LIBRARIES)
-    fl_debug_var (${PREFIX}_LINK_LIBRARIES)
-    fl_debug_var (${PREFIX}_LIBRARY_DIRS)
-    fl_debug_var (${PREFIX}_LDFLAGS)
-    fl_debug_var (${PREFIX}_LDFLAGS_OTHER)
-    fl_debug_var (${PREFIX}_CFLAGS_OTHER)
+    fl_debug_var(${PREFIX}_INCLUDE_DIRS)
+    fl_debug_var(${PREFIX}_CFLAGS)
+    fl_debug_var(${PREFIX}_LIBRARIES)
+    fl_debug_var(${PREFIX}_LINK_LIBRARIES)
+    fl_debug_var(${PREFIX}_LIBRARY_DIRS)
+    fl_debug_var(${PREFIX}_LDFLAGS)
+    fl_debug_var(${PREFIX}_LDFLAGS_OTHER)
+    fl_debug_var(${PREFIX}_CFLAGS_OTHER)
 
-    fl_debug_var (${PREFIX}_STATIC_INCLUDE_DIRS)
-    fl_debug_var (${PREFIX}_STATIC_CFLAGS)
-    fl_debug_var (${PREFIX}_STATIC_LIBRARIES)
-    fl_debug_var (${PREFIX}_STATIC_LINK_LIBRARIES)
-    fl_debug_var (${PREFIX}_STATIC_LIBRARY_DIRS)
+    fl_debug_var(${PREFIX}_STATIC_INCLUDE_DIRS)
+    fl_debug_var(${PREFIX}_STATIC_CFLAGS)
+    fl_debug_var(${PREFIX}_STATIC_LIBRARIES)
+    fl_debug_var(${PREFIX}_STATIC_LINK_LIBRARIES)
+    fl_debug_var(${PREFIX}_STATIC_LIBRARY_DIRS)
 
-    fl_debug_var (${PREFIX}_VERSION)
-    fl_debug_var (${PREFIX}_PREFIX)
-    fl_debug_var (${PREFIX}_INCLUDEDIR)
-    fl_debug_var (${PREFIX}_LIBDIR)
+    fl_debug_var(${PREFIX}_VERSION)
+    fl_debug_var(${PREFIX}_PREFIX)
+    fl_debug_var(${PREFIX}_INCLUDEDIR)
+    fl_debug_var(${PREFIX}_LIBDIR)
 
-  endif ()
+  endif()
   message("")
-endmacro (fl_debug_pkg)
+endmacro(fl_debug_pkg)

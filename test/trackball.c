@@ -66,6 +66,7 @@
  */
 static float tb_project_to_sphere(float, float, float);
 static void normalize_quat(float [4]);
+static float max_velocity = 0.1f;
 
 void
 vzero(float *v)
@@ -192,8 +193,8 @@ trackball(float q[4], float p1x, float p1y, float p2x, float p2y)
     /*
      * Avoid problems with out-of-control values...
      */
-    if (t > 1.0) t = 1.0;
-    if (t < -1.0) t = -1.0;
+    if (t > max_velocity) t = max_velocity;
+    if (t < -max_velocity) t = -max_velocity;
     phi = float(2.0 * asin(t));
 
     axis_to_quat(a,phi,q);

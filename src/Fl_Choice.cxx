@@ -1,7 +1,7 @@
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,9 +36,7 @@ void Fl_Choice::draw() {
 
   // Arrow area
   int H = h() - 2 * dy;
-  int W = Fl::is_scheme("gtk+")    ? 20 :                       // gtk+  -- fixed size
-          Fl::is_scheme("gleam")   ? 20                         // gleam -- fixed size
-                                   : ((H > 20) ? 20 : H);       // else: shrink if H<20
+  int W = 20;
   int X = x() + w() - W - dx;
   int Y = y() + dy;
 
@@ -76,14 +74,15 @@ void Fl_Choice::draw() {
         Fl::is_scheme("gleam") ||
         Fl::is_scheme("oxy")) {
       // draw the divider
-      int x1 = x() + w() - 20 - dx;
-      int y1 = y() + h() / 2;
+      int x1 = x() + w() - W - 2 * dx;
+      int y1 = y() + dy;
+      int y2 = y() + h() - dy;
 
       fl_color(fl_darker(color()));
-      fl_yxline(x1, y1 - 8, y1 + 8);
+      fl_yxline(x1, y1, y2);
 
       fl_color(fl_lighter(color()));
-      fl_yxline(x1 + 1, y1 - 8, y1 + 8);
+      fl_yxline(x1 + 1, y1, y2);
     }
   } else { // Default scheme ("None")
     // Draw arrow box
@@ -114,6 +113,7 @@ void Fl_Choice::draw() {
       l.font = m.labelsize_ || m.labelfont_ ? m.labelfont_ : textfont();
       l.size = m.labelsize_ ? m.labelsize_ : textsize();
       l.color= m.labelcolor_ ? m.labelcolor_ : textcolor();
+      l.h_margin_ = l.v_margin_ = l.spacing = 0;
       if (!m.active()) l.color = fl_inactive((Fl_Color)l.color);
       fl_draw_shortcut = 2; // hack value to make '&' disappear
       l.draw(xx+3, yy, ww>6 ? ww-6 : 0, hh, FL_ALIGN_LEFT);

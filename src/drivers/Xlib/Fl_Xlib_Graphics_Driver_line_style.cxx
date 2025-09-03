@@ -1,7 +1,7 @@
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@ void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, int width, char* da
 
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the Windows dash patterns on X
-  char buf[7];
+  char buf[7] = {0};
   if (!ndashes && (style&0xff)) {
     int w = width ? width : 1;
     char dash, dot, gap;

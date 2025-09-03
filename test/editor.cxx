@@ -1,9 +1,10 @@
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
-// This program is described in Chapter 4 of the FLTK Programmer's Guide.
+// This program is described in chapter "Designing a Simple Text Editor"
+// of the FLTK Programmer's Guide.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,45 +17,678 @@
 //     https://www.fltk.org/bugs.php
 //
 
-//
-// Include necessary headers...
-//
+// Enable tutorial code for each chapter by adjusting this macro to match
+// the chapter number.
+#define TUTORIAL_CHAPTER 10
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
+// ---- Tutorial Chapter 1 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 1
 
-#include <FL/Fl.H>
-#include <FL/platform.H> // for fl_open_callback
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/fl_ask.H>
-#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl.H>
+
+Fl_Double_Window *app_window = NULL;
+
+void tut1_build_app_window() {
+  app_window = new Fl_Double_Window(640, 480, "FLTK Editor");
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 1
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 2 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 2
+
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Return_Button.H>
+#include <FL/fl_ask.H>
+#include <FL/filename.H>
+#include <FL/fl_string_functions.h>
+
+Fl_Menu_Bar *app_menu_bar = NULL;
+bool text_changed = false;
+char app_filename[FL_PATH_MAX] = "";
+
+void update_title() {
+  const char *fname = NULL;
+  if (app_filename[0])
+    fname = fl_filename_name(app_filename);
+  if (fname) {
+    char buf[FL_PATH_MAX + 3];
+    buf[FL_PATH_MAX + 2] = '\0';   // ensure that the buffer is always terminated
+    if (text_changed) {
+      snprintf(buf, FL_PATH_MAX+2, "%s *", fname);
+    } else {
+      snprintf(buf, FL_PATH_MAX+2, "%s", fname);
+    }
+    app_window->copy_label(buf);
+  } else {
+    app_window->label("FLTK Editor");
+  }
+}
+
+void set_changed(bool v) {
+  if (v != text_changed) {
+    text_changed = v;
+    update_title();
+  }
+}
+
+void set_filename(const char *new_filename) {
+  if (new_filename) {
+    fl_strlcpy(app_filename, new_filename, FL_PATH_MAX);
+  } else {
+    app_filename[0] = 0;
+  }
+  update_title();
+}
+
+#if TUTORIAL_CHAPTER < 4
+void menu_quit_callback(Fl_Widget *, void *) {
+  if (text_changed) {
+    int c = fl_choice("Changes in your text have not been saved.\n"
+                      "Do you want to quit the editor anyway?",
+                      "Quit", "Cancel", NULL);
+    if (c == 1) return;
+  }
+  Fl::hide_all_windows();
+}
+#else
+void menu_quit_callback(Fl_Widget *, void *);
+#endif
+
+void tut2_build_app_menu_bar() {
+  app_window->begin();
+  app_menu_bar = new Fl_Menu_Bar(0, 0, app_window->w(), 25);
+  app_menu_bar->add("File/Quit Editor", FL_COMMAND|'q', menu_quit_callback);
+  app_window->callback(menu_quit_callback);
+  app_window->end();
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 2
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 3 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 3
+
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Editor.H>
-#include <FL/filename.H>
 
-int                changed = 0;
-char               filename[FL_PATH_MAX] = "";
-char               title[FL_PATH_MAX];
-Fl_Text_Buffer     *textbuf = 0;
+Fl_Text_Editor *app_editor = NULL;
+Fl_Text_Editor *app_split_editor = NULL; // for later
+Fl_Text_Buffer *app_text_buffer = NULL;
 
-// width of line number display, if enabled
-const int line_num_width = 75;
+void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*, void*) {
+  if (n_inserted || n_deleted)
+    set_changed(true);
+}
 
-// #define DEV_TEST             // uncomment this line ...
-// ... to enable additional test features for developers,
-// particularly to test Fl_Text_Display and/or Fl_Text_Editor.
+void menu_new_callback(Fl_Widget*, void*) {
+  if (text_changed) {
+    int c = fl_choice("Changes in your text have not been saved.\n"
+                      "Do you want to start a new text anyway?",
+                      "New", "Cancel", NULL);
+    if (c == 1) return;
+  }
+  app_text_buffer->text("");
+  set_filename(NULL);
+  set_changed(false);
+}
+
+void tut3_build_main_editor() {
+  app_window->begin();
+  app_text_buffer = new Fl_Text_Buffer();
+  app_text_buffer->add_modify_callback(text_changed_callback, NULL);
+  app_editor = new Fl_Text_Editor(0, app_menu_bar->h(),
+    app_window->w(), app_window->h() - app_menu_bar->h());
+  app_editor->buffer(app_text_buffer);
+  app_editor->textfont(FL_COURIER);
+  app_window->resizable(app_editor);
+  app_window->end();
+  // find the Quit menu and insert the New menu there
+  int ix = app_menu_bar->find_index(menu_quit_callback);
+  app_menu_bar->insert(ix, "New", FL_COMMAND+'n', menu_new_callback);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 3
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+// ---- Tutorial Chapter 4 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 4
+
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/platform.H>
+#include <errno.h>
+
+void menu_save_as_callback(Fl_Widget*, void*) {
+  Fl_Native_File_Chooser file_chooser;
+  file_chooser.title("Save File As...");
+  file_chooser.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  if (app_filename[0]) {
+    char temp_filename[FL_PATH_MAX];
+    fl_strlcpy(temp_filename, app_filename, FL_PATH_MAX);
+    const char *name = fl_filename_name(temp_filename);
+    if (name) {
+      file_chooser.preset_file(name);
+      temp_filename[name - temp_filename] = 0;
+      file_chooser.directory(temp_filename);
+    }
+  }
+  if (file_chooser.show() == 0) {
+    if (app_text_buffer->savefile(file_chooser.filename()) == 0) {
+      set_filename(file_chooser.filename());
+      set_changed(false);
+    } else {
+      fl_alert("Failed to save file\n%s\n%s",
+               file_chooser.filename(),
+               strerror(errno));
+    }
+  }
+}
+
+void menu_save_callback(Fl_Widget*, void*) {
+  if (!app_filename[0]) {
+    menu_save_as_callback(NULL, NULL);
+  } else {
+    if (app_text_buffer->savefile(app_filename) == 0) {
+      set_changed(false);
+    } else {
+      fl_alert("Failed to save file\n%s\n%s",
+               app_filename,
+               strerror(errno));
+    }
+  }
+}
+
+void menu_quit_callback(Fl_Widget *, void *) {
+  if (text_changed) {
+      int r = fl_choice("The current file has not been saved.\n"
+                        "Would you like to save it now?",
+                        "Cancel", "Save", "Don't Save");
+      if (r == 0)   // cancel
+        return;
+      if (r == 1) { // save
+        menu_save_callback(NULL, NULL);
+        return;
+      }
+  }
+  Fl::hide_all_windows();
+}
+
+void load(const char *filename) {
+  if (app_text_buffer->loadfile(filename) == 0) {
+    set_filename(filename);
+    set_changed(false);
+  } else {
+    fl_alert("Failed to load file\n%s\n%s",
+             filename,
+             strerror(errno));
+  }
+}
+
+void menu_open_callback(Fl_Widget*, void*) {
+  if (text_changed) {
+    int r = fl_choice("The current file has not been saved.\n"
+                      "Would you like to save it now?",
+                      "Cancel", "Save", "Don't Save");
+    if (r == 0) // cancel
+      return;
+    if (r == 1) // save
+      menu_save_callback(NULL, NULL);
+  }
+  Fl_Native_File_Chooser file_chooser;
+  file_chooser.title("Open File...");
+  file_chooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  if (app_filename[0]) {
+    char temp_filename[FL_PATH_MAX];
+    fl_strlcpy(temp_filename, app_filename, FL_PATH_MAX);
+    const char *name = fl_filename_name(temp_filename);
+    if (name) {
+      file_chooser.preset_file(name);
+      temp_filename[name - temp_filename] = 0;
+      file_chooser.directory(temp_filename);
+    }
+  }
+  if (file_chooser.show() == 0)
+    load(file_chooser.filename());
+}
+
+void tut4_add_file_support() {
+  int ix = app_menu_bar->find_index(menu_quit_callback);
+  app_menu_bar->insert(ix, "Open", FL_COMMAND+'o', menu_open_callback, NULL, FL_MENU_DIVIDER);
+  app_menu_bar->insert(ix+1, "Save", FL_COMMAND+'s', menu_save_callback);
+  app_menu_bar->insert(ix+2, "Save as...", FL_COMMAND+'S', menu_save_as_callback, NULL, FL_MENU_DIVIDER);
+}
+
+int args_handler(int argc, char **argv, int &i) {
+  if (argv && argv[i] && argv[i][0]!='-') {
+    load(argv[i]);
+    i++;
+    return 1;
+  }
+  return 0;
+}
+
+int tut4_handle_commandline_and_run(int &argc, char **argv) {
+  int i = 0;
+  Fl::args_to_utf8(argc, argv);
+  Fl::args(argc, argv, i, args_handler);
+  fl_open_callback(load);
+  app_window->show(argc, argv);
+  return Fl::run();
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 4
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
+
+#endif
+// ---- Tutorial Chapter 5 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 5
+
+void menu_undo_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_undo(0, (Fl_Text_Editor*)e);
+}
+
+void menu_redo_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_redo(0, (Fl_Text_Editor*)e);
+}
+
+void menu_cut_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_cut(0, (Fl_Text_Editor*)e);
+}
+
+void menu_copy_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_copy(0, (Fl_Text_Editor*)e);
+}
+
+void menu_paste_callback(Fl_Widget*, void* v) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_paste(0, (Fl_Text_Editor*)e);
+}
+
+void menu_delete_callback(Fl_Widget*, void*) {
+  Fl_Widget *e = Fl::focus();
+  if (e && (e == app_editor || e == app_split_editor))
+    Fl_Text_Editor::kf_delete(0, (Fl_Text_Editor*)e);
+}
+
+void tut5_cut_copy_paste() {
+  app_menu_bar->add("Edit/Undo",   FL_COMMAND+'z', menu_undo_callback);
+  app_menu_bar->add("Edit/Redo",   FL_COMMAND+'Z', menu_redo_callback, NULL, FL_MENU_DIVIDER);
+  app_menu_bar->add("Edit/Cut",    FL_COMMAND+'x', menu_cut_callback);
+  app_menu_bar->add("Edit/Copy",   FL_COMMAND+'c', menu_copy_callback);
+  app_menu_bar->add("Edit/Paste",  FL_COMMAND+'v', menu_paste_callback);
+  app_menu_bar->add("Edit/Delete", 0,              menu_delete_callback);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 5
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
+
+#endif
+// ---- Tutorial Chapter 6 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 6
+
+char last_find_text[1024] = "";
+
+bool find_next(const char *needle) {
+  Fl_Text_Editor *editor = app_editor;
+  Fl_Widget *e = Fl::focus();
+  if (e && e == app_split_editor)
+    editor = app_split_editor;
+  int pos = editor->insert_position();
+  int found = app_text_buffer->search_forward(pos, needle, &pos);
+  if (found) {
+    app_text_buffer->select(pos, pos + (int)strlen(needle));
+    editor->insert_position(pos + (int)strlen(needle));
+    editor->show_insert_position();
+    return true;
+  } else {
+    fl_alert("No further occurrences of '%s' found!", needle);
+    return false;
+  }
+}
+
+void menu_find_callback(Fl_Widget*, void* v) {
+  const char *find_text = fl_input("Find in text:", last_find_text);
+  if (find_text) {
+    fl_strlcpy(last_find_text, find_text, sizeof(last_find_text));
+    find_next(find_text);
+  }
+}
+
+void menu_find_next_callback(Fl_Widget*, void* v) {
+  if (last_find_text[0]) {
+    find_next(last_find_text);
+  } else {
+    menu_find_callback(NULL, NULL);
+  }
+}
+
+void tut6_implement_find() {
+  app_menu_bar->add("Find/Find...",   FL_COMMAND+'f', menu_find_callback);
+  app_menu_bar->add("Find/Find Next", FL_COMMAND+'g', menu_find_next_callback, NULL, FL_MENU_DIVIDER);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 6
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
+
+#endif
+// ---- Tutorial Chapter 7 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 7
+
+#include <FL/Fl_Flex.H>
+
+char last_replace_text[1024] = "";
+
+void replace_selection(const char *new_text) {
+  Fl_Text_Editor *editor = app_editor;
+  Fl_Widget *e = Fl::focus();
+  if (e && e == app_split_editor)
+    editor = app_split_editor;
+  int start, end;
+  if (app_text_buffer->selection_position(&start, &end)) {
+    app_text_buffer->remove_selection();
+    app_text_buffer->insert(start, new_text);
+    app_text_buffer->select(start, start + (int)strlen(new_text));
+    editor->insert_position(start + (int)strlen(new_text));
+    editor->show_insert_position();
+  }
+}
+
+class Replace_Dialog : public Fl_Double_Window {
+  Fl_Input *find_text_input;
+  Fl_Input *replace_text_input;
+  Fl_Button *find_next_button;
+  Fl_Button *replace_and_find_button;
+  Fl_Button *close_button;
+public:
+  Replace_Dialog(const char *label);
+  void show() FL_OVERRIDE;
+private:
+  static void find_next_callback(Fl_Widget*, void*);
+  static void replace_and_find_callback(Fl_Widget*, void*);
+  static void close_callback(Fl_Widget*, void*);
+};
+
+Replace_Dialog *replace_dialog = NULL;
+
+Replace_Dialog::Replace_Dialog(const char *label)
+: Fl_Double_Window(430, 110, label)
+{
+  find_text_input = new Fl_Input(100, 10, 320, 25, "Find:");
+  replace_text_input = new Fl_Input(100, 40, 320, 25, "Replace:");
+  Fl_Flex* button_field = new Fl_Flex(100, 70, w()-100, 40);
+  button_field->type(Fl_Flex::HORIZONTAL);
+  button_field->margin(0, 5, 10, 10);
+  button_field->gap(10);
+  find_next_button = new Fl_Button(0, 0, 0, 0, "Next");
+  find_next_button->callback(find_next_callback, this);
+  replace_and_find_button = new Fl_Button(0, 0, 0, 0, "Replace");
+  replace_and_find_button->callback(replace_and_find_callback, this);
+  close_button = new Fl_Button(0, 0, 0, 0, "Close");
+  close_button->callback(close_callback, this);
+  button_field->end();
+  set_non_modal();
+}
+
+void Replace_Dialog::show() {
+  find_text_input->value(last_find_text);
+  replace_text_input->value(last_replace_text);
+  Fl_Double_Window::show();
+}
+
+void Replace_Dialog::find_next_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  fl_strlcpy(last_find_text, dlg->find_text_input->value(), sizeof(last_find_text));
+  fl_strlcpy(last_replace_text, dlg->replace_text_input->value(), sizeof(last_replace_text));
+  if (last_find_text[0])
+    find_next(last_find_text);
+}
+
+void Replace_Dialog::replace_and_find_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  replace_selection(dlg->replace_text_input->value());
+  find_next_callback(NULL, my_dialog);
+}
+
+void Replace_Dialog::close_callback(Fl_Widget*, void* my_dialog) {
+  Replace_Dialog *dlg = static_cast<Replace_Dialog*>(my_dialog);
+  dlg->hide();
+}
+
+void menu_replace_callback(Fl_Widget*, void*) {
+  if (!replace_dialog)
+    replace_dialog = new Replace_Dialog("Find and Replace");
+  replace_dialog->show();
+}
+
+void menu_replace_next_callback(Fl_Widget*, void*) {
+  if (!last_find_text[0]) {
+    menu_replace_callback(NULL, NULL);
+  } else {
+    replace_selection(last_replace_text);
+    find_next(last_find_text);
+  }
+}
+
+void tut7_implement_replace() {
+  app_menu_bar->add("Find/Replace...",   FL_COMMAND+'r', menu_replace_callback);
+  app_menu_bar->add("Find/Replace Next", FL_COMMAND+'t', menu_replace_next_callback);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 7
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  tut7_implement_replace();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
+
+#endif
+// ---- Tutorial Chapter 8 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 8
+
+#include <FL/Fl_Menu_Item.H>
+
+void menu_linenumbers_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* linenumber_item = menu->mvalue();
+  if (linenumber_item->value()) {
+    app_editor->linenumber_width(40);
+  } else {
+    app_editor->linenumber_width(0);
+  }
+  app_editor->redraw();
+  if (app_split_editor) {
+    if (linenumber_item->value()) {
+      app_split_editor->linenumber_width(40);
+    } else {
+      app_split_editor->linenumber_width(0);
+    }
+    app_split_editor->redraw();
+  }
+}
+
+void menu_wordwrap_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* wordwrap_item = menu->mvalue();
+  if (wordwrap_item->value()) {
+    app_editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+  } else {
+    app_editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+  }
+  app_editor->redraw();
+  if (app_split_editor) {
+    if (wordwrap_item->value()) {
+      app_split_editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+    } else {
+      app_split_editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+    }
+    app_split_editor->redraw();
+  }
+}
+
+void tut8_editor_features() {
+  app_menu_bar->add("Window/Line Numbers", FL_COMMAND+'l', menu_linenumbers_callback, NULL, FL_MENU_TOGGLE);
+  app_menu_bar->add("Window/Word Wrap", 0, menu_wordwrap_callback, NULL, FL_MENU_TOGGLE);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 8
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  tut7_implement_replace();
+  tut8_editor_features();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
+
+#endif
+// ---- Tutorial Chapter 9 -----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 9
+
+#include <FL/Fl_Tile.H>
+
+Fl_Tile *app_tile = NULL;
+
+void menu_split_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* splitview_item = menu->mvalue();
+  if (splitview_item->value()) {
+    int h_split = app_tile->h()/2;
+    app_editor->size(app_tile->w(), h_split);
+    app_split_editor->resize(app_tile->x(), app_tile->y() + h_split,
+                             app_tile->w(), app_tile->h() - h_split);
+    app_split_editor->show();
+  } else {
+    app_editor->size(app_tile->w(), app_tile->h());
+    app_split_editor->resize(app_tile->x(), app_tile->y()+app_tile->h(),
+                             app_tile->w(), 0);
+    app_split_editor->hide();
+  }
+  app_tile->resizable(app_editor);
+  app_tile->init_sizes();
+  app_tile->redraw();
+}
+
+void tut9_split_editor() {
+  app_window->begin();
+  app_tile = new Fl_Tile(app_editor->x(), app_editor->y(),
+                         app_editor->w(), app_editor->h());
+  app_window->remove(app_editor);
+  app_tile->add(app_editor);
+  app_split_editor = new Fl_Text_Editor(app_tile->x(), app_tile->y()+app_tile->h(),
+                                        app_tile->w(), 0);
+  app_split_editor->buffer(app_text_buffer);
+  app_split_editor->textfont(FL_COURIER);
+  app_split_editor->hide();
+  app_tile->end();
+  app_tile->size_range(0, 25, 25);
+  app_tile->size_range(1, 25, 25);
+  app_tile->init_sizes();
+  app_window->end();
+  app_window->resizable(app_tile);
+  app_tile->resizable(app_editor);
+  app_menu_bar->add("Window/Split", FL_COMMAND+'i', menu_split_callback, NULL, FL_MENU_TOGGLE);
+}
+
+#endif
+#if TUTORIAL_CHAPTER == 9
+
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  tut7_implement_replace();
+  tut8_editor_features();
+  tut9_split_editor();
+  return tut4_handle_commandline_and_run(argc, argv);
+}
+
+#endif
+// ---- Tutorial Chapter 10 ----------------------------------------------------
+#if TUTORIAL_CHAPTER >= 10
+
+#include <ctype.h>
+#include <stdlib.h>
+
+Fl_Text_Buffer *app_style_buffer = NULL;
 
 // Syntax highlighting stuff...
 #define TS 14 // default editor textsize
-Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
                    styletable[] = {     // Style table
 #ifdef TESTING_ATTRIBUTES
@@ -305,17 +939,17 @@ style_parse(const char *text,
 
 void
 style_init(void) {
-  char *style = new char[textbuf->length() + 1];
-  char *text = textbuf->text();
+  char *style = new char[app_text_buffer->length() + 1];
+  char *text = app_text_buffer->text();
 
-  memset(style, 'A', textbuf->length());
-  style[textbuf->length()] = '\0';
+  memset(style, 'A', app_text_buffer->length());
+  style[app_text_buffer->length()] = '\0';
 
-  if (!stylebuf) stylebuf = new Fl_Text_Buffer(textbuf->length());
+  if (!app_style_buffer) app_style_buffer = new Fl_Text_Buffer(app_text_buffer->length());
 
-  style_parse(text, style, textbuf->length());
+  style_parse(text, style, app_text_buffer->length());
 
-  stylebuf->text(style);
+  app_style_buffer->text(style);
   delete[] style;
   free(text);
 }
@@ -350,7 +984,7 @@ style_update(int        pos,            // I - Position of update
 
   // If this is just a selection change, just unselect the style buffer...
   if (nInserted == 0 && nDeleted == 0) {
-    stylebuf->unselect();
+    app_style_buffer->unselect();
     return;
   }
 
@@ -361,27 +995,27 @@ style_update(int        pos,            // I - Position of update
     memset(style, 'A', nInserted);
     style[nInserted] = '\0';
 
-    stylebuf->replace(pos, pos + nDeleted, style);
+    app_style_buffer->replace(pos, pos + nDeleted, style);
     delete[] style;
   } else {
     // Just delete characters in the style buffer...
-    stylebuf->remove(pos, pos + nDeleted);
+    app_style_buffer->remove(pos, pos + nDeleted);
   }
 
   // Select the area that was just updated to avoid unnecessary
   // callbacks...
-  stylebuf->select(pos, pos + nInserted - nDeleted);
+  app_style_buffer->select(pos, pos + nInserted - nDeleted);
 
   // Re-parse the changed region; we do this by parsing from the
   // beginning of the previous line of the changed region to the end of
   // the line of the changed region...  Then we check the last
   // style character and keep updating if we have a multi-line
   // comment character...
-  start = textbuf->line_start(pos);
-//  if (start > 0) start = textbuf->line_start(start - 1);
-  end   = textbuf->line_end(pos + nInserted);
-  text  = textbuf->text_range(start, end);
-  style = stylebuf->text_range(start, end);
+  start = app_text_buffer->line_start(pos);
+//  if (start > 0) start = app_text_buffer->line_start(start - 1);
+  end   = app_text_buffer->line_end(pos + nInserted);
+  text  = app_text_buffer->text_range(start, end);
+  style = app_style_buffer->text_range(start, end);
   if (start==end)
     last = 0;
   else
@@ -395,7 +1029,7 @@ style_update(int        pos,            // I - Position of update
 //  printf("new style = \"%s\", new last='%c'...\n",
 //         style, style[end - start - 1]);
 
-  stylebuf->replace(start, end, style);
+  app_style_buffer->replace(start, end, style);
   ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
 
   if (start==end || last != style[end - start - 1]) {
@@ -406,13 +1040,13 @@ style_update(int        pos,            // I - Position of update
     free(text);
     free(style);
 
-    end   = textbuf->length();
-    text  = textbuf->text_range(start, end);
-    style = stylebuf->text_range(start, end);
+    end   = app_text_buffer->length();
+    text  = app_text_buffer->text_range(start, end);
+    style = app_style_buffer->text_range(start, end);
 
     style_parse(text, style, end - start);
 
-    stylebuf->replace(start, end, style);
+    app_style_buffer->replace(start, end, style);
     ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
   }
 
@@ -420,559 +1054,51 @@ style_update(int        pos,            // I - Position of update
   free(style);
 }
 
-// Editor window functions and class...
-void save_cb();
-void saveas_cb();
-void find2_cb(Fl_Widget*, void*);
-void replall_cb(Fl_Widget*, void*);
-void replace2_cb(Fl_Widget*, void*);
-void replcan_cb(Fl_Widget*, void*);
-
-class EditorWindow : public Fl_Double_Window {
-  public:
-    EditorWindow(int w, int h, const char* t);
-    ~EditorWindow();
-
-    Fl_Window          *replace_dlg;
-    Fl_Input           *replace_find;
-    Fl_Input           *replace_with;
-    Fl_Button          *replace_all;
-    Fl_Return_Button   *replace_next;
-    Fl_Button          *replace_cancel;
-
-#ifdef DEV_TEST
-
-    Fl_Button           *plus;          // increase width
-    Fl_Button           *minus;         // decrease width
-    Fl_Button           *vscroll;       // toggle vert. scrollbar left/right
-    Fl_Button           *hscroll;       // toggle hor.  scrollbar top/bottom
-    Fl_Button           *lnum;          // toggle line number display
-    Fl_Button           *wrap;          // toggle wrap mode
-
-#endif // DEV_TEST
-
-    int                 wrap_mode;
-    int                 line_numbers;
-
-    Fl_Text_Editor     *editor;
-    char               search[256];
-};
-
-EditorWindow::EditorWindow(int w, int h, const char* t) : Fl_Double_Window(w, h, t) {
-  replace_dlg = new Fl_Window(300, 105, "Replace");
-    replace_find = new Fl_Input(80, 10, 210, 25, "Find:");
-    replace_find->align(FL_ALIGN_LEFT);
-
-    replace_with = new Fl_Input(80, 40, 210, 25, "Replace:");
-    replace_with->align(FL_ALIGN_LEFT);
-
-    replace_all = new Fl_Button(10, 70, 90, 25, "Replace All");
-    replace_all->callback((Fl_Callback *)replall_cb, this);
-
-    replace_next = new Fl_Return_Button(105, 70, 120, 25, "Replace Next");
-    replace_next->callback((Fl_Callback *)replace2_cb, this);
-
-    replace_cancel = new Fl_Button(230, 70, 60, 25, "Cancel");
-    replace_cancel->callback((Fl_Callback *)replcan_cb, this);
-  replace_dlg->end();
-  replace_dlg->set_non_modal();
-  editor = 0;
-  *search = (char)0;
-  wrap_mode = 0;
-  line_numbers = 0;
-}
-
-EditorWindow::~EditorWindow() {
-  delete replace_dlg;
-}
-
-#ifdef DEV_TEST
-
-void resize_cb(Fl_Widget *b, void *v) {
-  Fl_Window *w = b->window();
-  int dw = (int)(long)v;
-
-  const int fac = 16;   // factor
-  const int num = 1;    // loop count
-
-  dw *= fac;
-
-  for (int i=0; i<num; i++) {
-    w->resize(w->x(), w->y(), w->w()+dw, w->h());
-  }
-}
-
-void scroll_cb(Fl_Widget *b, void *v) {
-  EditorWindow *ew = (EditorWindow*)b->parent();
-  Fl_Text_Editor *ed = ew->editor;
-  int n = (int)(long)v;
-  int align = ed->scrollbar_align();
-
-  switch(n) {
-    case 1:                     // vscroll
-      if (align & FL_ALIGN_LEFT) {
-        align &= ~FL_ALIGN_LEFT;
-        align |= FL_ALIGN_RIGHT;
-      } else {
-        align &= ~FL_ALIGN_RIGHT;
-        align |= FL_ALIGN_LEFT;
-      }
-      break;
-    case 2:                     // hscroll
-      if (align & FL_ALIGN_TOP) {
-        align &= ~FL_ALIGN_TOP;
-        align |= FL_ALIGN_BOTTOM;
-      } else {
-        align &= ~FL_ALIGN_BOTTOM;
-        align |= FL_ALIGN_TOP;
-      }
-      break;
-    default:
-      break;
-  }
-  ed->scrollbar_align(align);
-  ed->resize(ed->x(),ed->y(),ed->w(),ed->h());
-  ed->redraw();
-}
-
-void wrap_cb(Fl_Widget *w, void* v) {
-  EditorWindow* ew = (EditorWindow*)v;
-  Fl_Text_Editor *ed = (Fl_Text_Editor*)ew->editor;
-  ew->wrap_mode = 1 - ew->wrap_mode;
-  if (ew->wrap_mode)
-    ed->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
-  else
-    ed->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
-  ew->redraw();
-}
-
-void lnum_cb(Fl_Widget *w, void* v) {
-  EditorWindow* ew = (EditorWindow*)v;
-  Fl_Text_Editor *ed = (Fl_Text_Editor*)ew->editor;
-  ew->line_numbers = 1 - ew->line_numbers;
-  if (ew->line_numbers) {
-    ed->linenumber_width(line_num_width);       // enable
-    ed->linenumber_size(ed->textsize());
+void menu_syntaxhighlight_callback(Fl_Widget* w, void*) {
+  Fl_Menu_Bar* menu = static_cast<Fl_Menu_Bar*>(w);
+  const Fl_Menu_Item* syntaxt_item = menu->mvalue();
+  if (syntaxt_item->value()) {
+    style_init();
+    app_editor->highlight_data(app_style_buffer, styletable,
+                               sizeof(styletable) / sizeof(styletable[0]),
+                               'A', style_unfinished_cb, 0);
+    app_text_buffer->add_modify_callback(style_update, app_editor);
   } else {
-    ed->linenumber_width(0);                    // disable
+    app_text_buffer->remove_modify_callback(style_update, app_editor);
+    app_editor->highlight_data(NULL, NULL, 0, 'A', NULL, 0);
   }
-  ew->redraw();
-}
-
-#endif // DEV_TEST
-
-int check_save(void) {
-  if (!changed) return 1;
-
-  int r = fl_choice("The current file has not been saved.\n"
-                    "Would you like to save it now?",
-                    "Cancel", "Save", "Don't Save");
-
-  if (r == 1) {
-    save_cb(); // Save the file...
-    return !changed;
-  }
-
-  return (r == 2) ? 1 : 0;
-}
-
-int loading = 0;
-void load_file(const char *newfile, int ipos) {
-  loading = 1;
-  int insert = (ipos != -1);
-  changed = insert;
-  if (!insert) strcpy(filename, "");
-  int r;
-  if (!insert) r = textbuf->loadfile(newfile);
-  else r = textbuf->insertfile(newfile, ipos);
-  changed = changed || textbuf->input_file_was_transcoded;
-  if (r)
-    fl_alert("Error reading from file \'%s\':\n%s.", newfile, strerror(errno));
-  else
-    if (!insert) strcpy(filename, newfile);
-  loading = 0;
-  textbuf->call_modify_callbacks();
-}
-
-void save_file(const char *newfile) {
-  if (textbuf->savefile(newfile))
-    fl_alert("Error writing to file \'%s\':\n%s.", newfile, strerror(errno));
-  else
-    strcpy(filename, newfile);
-  changed = 0;
-  textbuf->call_modify_callbacks();
-}
-
-void copy_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_copy(0, e->editor);
-}
-
-void cut_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_cut(0, e->editor);
-}
-
-void delete_cb(Fl_Widget*, void*) {
-  textbuf->remove_selection();
-}
-
-void linenumbers_cb(Fl_Widget *w, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Menu_Bar* m = (Fl_Menu_Bar*)w;
-  const Fl_Menu_Item* i = m->mvalue();
-  if ( i->value() ) {
-    e->editor->linenumber_width(line_num_width);        // enable
-    e->editor->linenumber_size(e->editor->textsize());
-  } else {
-    e->editor->linenumber_width(0);     // disable
-  }
-  e->line_numbers = (i->value()?1:0);
-  e->redraw();
-}
-
-void wordwrap_cb(Fl_Widget *w, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Menu_Bar* m = (Fl_Menu_Bar*)w;
-  const Fl_Menu_Item* i = m->mvalue();
-  if ( i->value() )
-    e->editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
-  else
-    e->editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
-  e->wrap_mode = (i->value()?1:0);
-  e->redraw();
-}
-
-void find_cb(Fl_Widget* w, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  const char *val;
-
-  val = fl_input("Search String:", e->search);
-  if (val != NULL) {
-    // User entered a string - go find it!
-    strcpy(e->search, val);
-    find2_cb(w, v);
-  }
-}
-
-void find2_cb(Fl_Widget* w, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  if (e->search[0] == '\0') {
-    // Search string is blank; get a new one...
-    find_cb(w, v);
-    return;
-  }
-
-  int pos = e->editor->insert_position();
-  int found = textbuf->search_forward(pos, e->search, &pos);
-  if (found) {
-    // Found a match; select and update the position...
-    textbuf->select(pos, pos + (int)strlen(e->search));
-    e->editor->insert_position(pos + (int)strlen(e->search));
-    e->editor->show_insert_position();
-  }
-  else fl_alert("No occurrences of \'%s\' found!", e->search);
-}
-
-void set_title(Fl_Window* w) {
-  if (filename[0] == '\0') strcpy(title, "Untitled");
-  else {
-    char *slash;
-    slash = strrchr(filename, '/');
-#ifdef _WIN32
-    if (slash == NULL) slash = strrchr(filename, '\\');
-#endif
-    if (slash != NULL) strcpy(title, slash + 1);
-    else strcpy(title, filename);
-  }
-
-  if (changed) strcat(title, " (modified)");
-
-  w->label(title);
-}
-
-void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
-  if ((nInserted || nDeleted) && !loading) changed = 1;
-  EditorWindow *w = (EditorWindow *)v;
-  set_title(w);
-  if (loading) w->editor->show_insert_position();
-}
-
-void new_cb(Fl_Widget*, void*) {
-  if (!check_save()) return;
-
-  filename[0] = '\0';
-  textbuf->select(0, textbuf->length());
-  textbuf->remove_selection();
-  changed = 0;
-  textbuf->call_modify_callbacks();
-}
-
-void open_cb(Fl_Widget*, void*) {
-  if (!check_save()) return;
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Open file");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  if ( fnfc.show() ) return;
-  load_file(fnfc.filename(), -1);
-
-}
-
-void insert_cb(Fl_Widget*, void *v) {
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Insert file");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  if ( fnfc.show() ) return;
-  EditorWindow *w = (EditorWindow *)v;
-  load_file(fnfc.filename(), w->editor->insert_position());
-}
-
-void paste_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_paste(0, e->editor);
-}
-
-int num_windows = 0;
-
-void close_cb(Fl_Widget*, void* v) {
-  EditorWindow* w = (EditorWindow*)v;
-
-  if (num_windows == 1) {
-    if (!check_save())
-      return;
-  }
-
-  w->hide();
-  w->editor->buffer(0);
-  textbuf->remove_modify_callback(style_update, w->editor);
-  textbuf->remove_modify_callback(changed_cb, w);
-  Fl::delete_widget(w);
-
-  num_windows--;
-  if (!num_windows) exit(0);
-}
-
-void quit_cb(Fl_Widget*, void*) {
-  if (changed && !check_save())
-    return;
-
-  exit(0);
-}
-
-void replace_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  e->replace_dlg->show();
-}
-
-void replace2_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  const char *find = e->replace_find->value();
-  const char *replace = e->replace_with->value();
-
-  if (find[0] == '\0') {
-    // Search string is blank; get a new one...
-    e->replace_dlg->show();
-    return;
-  }
-
-  e->replace_dlg->hide();
-
-  int pos = e->editor->insert_position();
-  int found = textbuf->search_forward(pos, find, &pos);
-
-  if (found) {
-    // Found a match; update the position and replace text...
-    textbuf->select(pos, pos + (int)strlen(find));
-    textbuf->remove_selection();
-    textbuf->insert(pos, replace);
-    textbuf->select(pos, pos + (int)strlen(replace));
-    e->editor->insert_position(pos + (int)strlen(replace));
-    e->editor->show_insert_position();
-  }
-  else fl_alert("No occurrences of \'%s\' found!", find);
-}
-
-void replall_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  const char *find = e->replace_find->value();
-  const char *replace = e->replace_with->value();
-
-  find = e->replace_find->value();
-  if (find[0] == '\0') {
-    // Search string is blank; get a new one...
-    e->replace_dlg->show();
-    return;
-  }
-
-  e->replace_dlg->hide();
-
-  e->editor->insert_position(0);
-  int times = 0;
-
-  // Loop through the whole string
-  for (int found = 1; found;) {
-    int pos = e->editor->insert_position();
-    found = textbuf->search_forward(pos, find, &pos);
-
-    if (found) {
-      // Found a match; update the position and replace text...
-      textbuf->select(pos, pos + (int)strlen(find));
-      textbuf->remove_selection();
-      textbuf->insert(pos, replace);
-      e->editor->insert_position(pos + (int)strlen(replace));
-      e->editor->show_insert_position();
-      times++;
+  app_editor->redraw();
+  if (app_split_editor) {
+    if (syntaxt_item->value()) {
+      app_split_editor->highlight_data(app_style_buffer, styletable,
+                                 sizeof(styletable) / sizeof(styletable[0]),
+                                 'A', style_unfinished_cb, 0);
+    } else {
+      app_split_editor->highlight_data(NULL, NULL, 0, 'A', NULL, 0);
     }
+    app_split_editor->redraw();
   }
-
-  if (times) fl_message("Replaced %d occurrences.", times);
-  else fl_alert("No occurrences of \'%s\' found!", find);
 }
 
-void replcan_cb(Fl_Widget*, void* v) {
-  EditorWindow* e = (EditorWindow*)v;
-  e->replace_dlg->hide();
+void tut10_syntax_highlighting() {
+  app_menu_bar->add("Window/Syntax Highlighting", 0, menu_syntaxhighlight_callback, NULL, FL_MENU_TOGGLE);
 }
 
-void save_cb() {
-  if (filename[0] == '\0') {
-    // No filename - get one!
-    saveas_cb();
-    return;
-  }
-  else save_file(filename);
-}
-
-void saveas_cb() {
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Save File As?");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  if ( fnfc.show() ) return;
-  save_file(fnfc.filename());
-}
-
-Fl_Window* new_view();
-
-void view_cb(Fl_Widget*, void*) {
-  Fl_Window* w = new_view();
-  w->show();
-}
-
-Fl_Menu_Item menuitems[] = {
-  { "&File",              0, 0, 0, FL_SUBMENU },
-    { "&New File",        0, (Fl_Callback *)new_cb },
-    { "&Open File...",    FL_COMMAND + 'o', (Fl_Callback *)open_cb },
-    { "&Insert File...",  FL_COMMAND + 'i', (Fl_Callback *)insert_cb, 0, FL_MENU_DIVIDER },
-    { "&Save File",       FL_COMMAND + 's', (Fl_Callback *)save_cb },
-    { "Save File &As...", FL_COMMAND + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
-    { "New &View",        FL_ALT
-#ifdef __APPLE__
-      + FL_COMMAND
 #endif
-      + 'v', (Fl_Callback *)view_cb, 0 },
-    { "&Close View",      FL_COMMAND + 'w', (Fl_Callback *)close_cb, 0, FL_MENU_DIVIDER },
-    { "E&xit",            FL_COMMAND + 'q', (Fl_Callback *)quit_cb, 0 },
-    { 0 },
+#if TUTORIAL_CHAPTER == 10
 
-  { "&Edit", 0, 0, 0, FL_SUBMENU },
-    { "Cu&t",             FL_COMMAND + 'x', (Fl_Callback *)cut_cb },
-    { "&Copy",            FL_COMMAND + 'c', (Fl_Callback *)copy_cb },
-    { "&Paste",           FL_COMMAND + 'v', (Fl_Callback *)paste_cb },
-    { "&Delete",          0, (Fl_Callback *)delete_cb },
-    { "Preferences",      0, 0, 0, FL_SUBMENU },
-      { "Line Numbers",   FL_COMMAND + 'l', (Fl_Callback *)linenumbers_cb, 0, FL_MENU_TOGGLE },
-      { "Word Wrap",      0,                (Fl_Callback *)wordwrap_cb, 0, FL_MENU_TOGGLE },
-      { 0 },
-    { 0 },
-
-  { "&Search", 0, 0, 0, FL_SUBMENU },
-    { "&Find...",         FL_COMMAND + 'f', (Fl_Callback *)find_cb },
-    { "F&ind Again",      FL_COMMAND + 'g', find2_cb },
-    { "&Replace...",      FL_COMMAND + 'r', replace_cb },
-    { "Re&place Again",   FL_COMMAND + 't', replace2_cb },
-    { 0 },
-
-  { 0 }
-};
-
-Fl_Window* new_view() {
-#ifdef DEV_TEST
-  EditorWindow* w = new EditorWindow(660, 500, title);
-#else
-  EditorWindow* w = new EditorWindow(660, 400, title);
-#endif // DEV_TEST
-
-    w->begin();
-    Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 660, 30);
-    m->copy(menuitems, w);
-    w->editor = new Fl_Text_Editor(0, 30, 660, 370);
-    w->editor->textfont(FL_COURIER);
-    w->editor->textsize(TS);
-  //w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 250);
-    w->editor->buffer(textbuf);
-    w->editor->highlight_data(stylebuf, styletable,
-                              sizeof(styletable) / sizeof(styletable[0]),
-                              'A', style_unfinished_cb, 0);
-
-#ifdef DEV_TEST
-
-    w->minus = new Fl_Button(60, 410, 120, 30, "&-");
-    w->minus->labelsize(20);
-    w->minus->labelfont(FL_BOLD);
-    w->minus->callback(resize_cb,(void *)(-1));
-
-    w->plus = new Fl_Button(60, 450, 120, 30, "&+");
-    w->plus->labelsize(20);
-    w->plus->labelfont(FL_BOLD);
-    w->plus->callback(resize_cb,(void *)1);
-
-    w->vscroll = new Fl_Button(220, 410, 120, 30, "&vscroll");
-    w->vscroll->labelsize(16);
-    w->vscroll->callback(scroll_cb,(void *)1);
-
-    w->hscroll = new Fl_Button(220, 450, 120, 30, "&hscroll");
-    w->hscroll->labelsize(16);
-    w->hscroll->callback(scroll_cb,(void *)2);
-
-    w->lnum = new Fl_Button(380, 410, 120, 30, "&line #");
-    w->lnum->labelsize(16);
-    w->lnum->callback(lnum_cb,(void *)w);
-
-    w->wrap = new Fl_Button(380, 450, 120, 30, "&wrap");
-    w->wrap->labelsize(16);
-    w->wrap->callback(wrap_cb,(void *)w);
-
-#endif // DEV_TEST
-
-  w->end();
-  w->resizable(w->editor);
-  w->size_range(300,200);
-  w->callback((Fl_Callback *)close_cb, w);
-
-  textbuf->add_modify_callback(style_update, w->editor);
-  textbuf->add_modify_callback(changed_cb, w);
-  textbuf->call_modify_callbacks();
-  num_windows++;
-  return w;
+int main (int argc, char **argv) {
+  tut1_build_app_window();
+  tut2_build_app_menu_bar();
+  tut3_build_main_editor();
+  tut4_add_file_support();
+  tut5_cut_copy_paste();
+  tut6_implement_find();
+  tut7_implement_replace();
+  tut8_editor_features();
+  tut9_split_editor();
+  tut10_syntax_highlighting();
+  return tut4_handle_commandline_and_run(argc, argv);
 }
 
-void cb(const char *fname) {
-  load_file(fname, -1);
-}
-
-int main(int argc, char **argv) {
-  textbuf = new Fl_Text_Buffer;
-//textbuf->transcoding_warning_action = NULL;
-  style_init();
-  fl_open_callback(cb);
-
-  Fl_Window* window = new_view();
-
-  window->show(1, argv);
-  //window->wait_for_expose();
-#ifndef __APPLE__
-  if (argc > 1) load_file(argv[1], -1);
 #endif
-
-  return Fl::run();
-}

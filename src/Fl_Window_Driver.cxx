@@ -2,7 +2,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,7 @@
 
 extern void fl_throw_focus(Fl_Widget *o);
 
+Fl_Menu_Button *Fl_Window_Driver::current_menu_button = NULL;
 
 /**
  Create a new Window Driver.
@@ -50,19 +51,7 @@ Fl_Window_Driver::~Fl_Window_Driver() {
   // empty
 }
 
-// accessors to Fl_Window's size_range stuff
-
-int Fl_Window_Driver::minw() {return pWindow->minw_;}
-int Fl_Window_Driver::minh() {return pWindow->minh_;}
-int Fl_Window_Driver::maxw() {return pWindow->maxw_;}
-int Fl_Window_Driver::maxh() {return pWindow->maxh_;}
-int Fl_Window_Driver::dw() {return pWindow->dw_;}
-int Fl_Window_Driver::dh() {return pWindow->dh_;}
-int Fl_Window_Driver::aspect() {return pWindow->aspect_;}
-unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set_;}
-
-// other Fl_Window accessors
-
+// accessors to Fl_Window private stuff
 int Fl_Window_Driver::force_position() {return pWindow->force_position(); }
 void Fl_Window_Driver::force_position(int c) { pWindow->force_position(c); }
 void Fl_Window_Driver::x(int X) {pWindow->x(X); }
@@ -244,13 +233,20 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
     if (Y+H/2 < sY) Y = sY-H/2+d;
     else if (Y+H/2 > sY+sH-1) Y = sY+sH-1-H/2-d;
   }
+  size_range(); // adjust the OS-level boundary size values for the window (#880)
   is_a_rescale_ = true;
   pWindow->resize(X, Y, W, H);
   is_a_rescale_ = false;
 }
 
 void Fl_Window_Driver::reposition_menu_window(int x, int y) {
-  if (y != pWindow->y() || x != pWindow->x()) pWindow->Fl_Widget::position(x, y);
+  if (y != pWindow->y() || x != pWindow->x()) {
+    int ns = pWindow->screen_num();
+    pWindow->Fl_Widget::position(x, y);
+    Fl::check();
+    // the window move may erroneously change the window's screen number; reset it
+    if (pWindow->screen_num() != ns) screen_num(ns);
+  }
 }
 
 void Fl_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscreen) {
@@ -284,6 +280,34 @@ Fl_Window *Fl_Window_Driver::find(fl_uintptr_t xid) {
     }
   }
   return 0;
+}
+
+
+void Fl_Window_Driver::maximize() {
+  *no_fullscreen_x() = x();
+  *no_fullscreen_y() = y();
+  *no_fullscreen_w() = w();
+  *no_fullscreen_h() = h();
+  int X,Y,W,H;
+  Fl::screen_work_area(X, Y, W, H, screen_num());
+  int width = decorated_w();
+  int height = decorated_h();
+  int dw = (width - w());
+  int dh = (height - h() - dw);
+  bool need_hide_show = maximize_needs_hide();
+  if (need_hide_show) hide(); // pb may occur in subwindow without this
+  pWindow->resize(X + dw/2, Y + dh + dw/2, W - dw, H - dh - dw);
+  if (need_hide_show) show();
+}
+
+
+void Fl_Window_Driver::un_maximize() {
+  pWindow->resize(*no_fullscreen_x(), *no_fullscreen_y(),
+         *no_fullscreen_w(), *no_fullscreen_h());
+  *no_fullscreen_x() = 0;
+  *no_fullscreen_y() = 0;
+  *no_fullscreen_w() = 0;
+  *no_fullscreen_h() = 0;
 }
 
 /**

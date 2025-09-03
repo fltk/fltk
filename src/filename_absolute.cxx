@@ -22,13 +22,12 @@
 
 #include <FL/filename.H>
 #include <FL/Fl.H>
-#include <FL/Fl_String.H>
 #include <FL/fl_string_functions.h>
 #include "Fl_System_Driver.H"
 #include <stdlib.h>
 #include "flstring.h"
 
-static inline int isdirsep(char c) {return c == '/';}
+static inline int isdirsep(int c) {return c == '/';}
 
 /** Makes a filename absolute from a relative filename to the current working directory.
     \code
@@ -124,22 +123,51 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, c
 
 
 /** Makes a filename relative to the current working directory.
-    \code
-    #include <FL/filename.H>
-    [..]
-    fl_chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
-    [..]
-    char out[FL_PATH_MAX];
-    fl_filename_relative(out, sizeof(out), "/var/tmp/somedir/foo.txt");  // out="foo.txt",    return=1
-    fl_filename_relative(out, sizeof(out), "/var/tmp/foo.txt");          // out="../foo.txt", return=1
-    fl_filename_relative(out, sizeof(out), "foo.txt");                   // out="foo.txt",    return=0 (no change)
-    fl_filename_relative(out, sizeof(out), "./foo.txt");                 // out="./foo.txt",  return=0 (no change)
-    fl_filename_relative(out, sizeof(out), "../foo.txt");                // out="../foo.txt", return=0 (no change)
-    \endcode
-    \param[out] to resulting relative filename
-    \param[in]  tolen size of the relative filename buffer
-    \param[in]  from absolute filename
-    \return 0 if no change, non zero otherwise
+
+  Return the \a from path made relative to the working directory, similar to
+  C++17 `std::filesystem::path::lexically_relative`. This function can also be
+  called with a fourth argument for a user supplied \a base directory path
+
+  These conversions are purely lexical. They do not check that the paths exist,
+  do not follow symlinks, and do not access the filesystem at all.
+
+  Path arguments must be absolute (start at the root directory) and must not
+  contain `.` or `..` segments, or double separators. A single trailing
+  separator is ok.
+
+  On Windows, path arguments must start with a drive name, e.g. `c:\`.
+  Windows network paths and other special paths starting
+  with a double separator are not supported (`\\cloud\drive\path`,
+  `\\?\`, etc.) . Separators can be `\` and `/` and will be preserved.
+  Newly created separators are alway the forward slash `/`.
+
+  On Windows and macOS, the path segment tests are case insensitive.
+
+  If the path can not be generated, \a from path is copied into the \a to
+  buffer and 0 is returned.
+
+  \code
+  #include <FL/filename.H>
+  [..]
+  fl_chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
+  [..]
+  char out[FL_PATH_MAX];
+  fl_filename_relative(out, sizeof(out), "/var/tmp/somedir/foo.txt");  // out="foo.txt",    return=1
+  fl_filename_relative(out, sizeof(out), "/var/tmp/foo.txt");          // out="../foo.txt", return=1
+  fl_filename_relative(out, sizeof(out), "foo.txt");                   // out="foo.txt",    return=0 (no change)
+  fl_filename_relative(out, sizeof(out), "./foo.txt");                 // out="./foo.txt",  return=0 (no change)
+  fl_filename_relative(out, sizeof(out), "../foo.txt");                // out="../foo.txt", return=0 (no change)
+  \endcode
+
+  \param[out] to resulting relative filename
+  \param[in]  tolen size of the relative filename buffer
+  \param[in]  from absolute filename
+  \return 0 if no change, non zero otherwise
+  \see fl_filename_relative(char *to, int tolen, const char *from, const char *base)
+  <!-- FIXME: added in 1.5 or higher ...
+    \see fl_filename_relative(const std::string &from, const std::string &base)
+    \see fl_filename_relative(const std::string &from)
+  -->
  */
 int fl_filename_relative(char *to, int tolen, const char *from)
 {
@@ -154,11 +182,13 @@ int fl_filename_relative(char *to, int tolen, const char *from)
 
 
 /** Makes a filename relative to any other directory.
- \param[out] to resulting relative filename
+
+ \param[out] to resulting relative filepath
  \param[in]  tolen size of the relative filename buffer
- \param[in]  from absolute filename
- \param[in]  base generate filename relative to this absolute filename
+ \param[in]  from absolute filepath
+ \param[in]  base generate filepath relative to this absolute filepath
  \return 0 if no change, non zero otherwise
+ \see fl_filename_relative(char *to, int tolen, const char *from)
  */
 int fl_filename_relative(char *to, int tolen, const char *from, const char *base) {
   return Fl::system_driver()->filename_relative(to, tolen, from, base);
@@ -171,70 +201,82 @@ int fl_filename_relative(char *to, int tolen, const char *from, const char *base
  \{
  */
 
-int Fl_System_Driver::filename_relative(char *to, int tolen, const char *from, const char *base)
+int Fl_System_Driver::filename_relative(char *to, int tolen, const char *dest_dir, const char *base_dir)
 {
-  char          *newslash;              // Directory separator
-  const char    *slash;                 // Directory separator
-  char          *cwd = 0L, *cwd_buf = 0L;
-  if (base) cwd = cwd_buf = fl_strdup(base);
+  // Find the relative path from base_dir to dest_dir.
+  // Both paths must be absolute and well formed (contain no /../ and /./ segments).
+  const char *base_i = base_dir;    // iterator through the base directory string
+  const char *base_s = base_dir;    // pointer to the last dir separator found
+  const char *dest_i = dest_dir;    // iterator through the destination directory
+  const char *dest_s = dest_dir;    // pointer to the last dir separator found
 
-  // return if "from" is not an absolute path
-  if (from[0] == '\0' || !isdirsep(*from)) {
-    strlcpy(to, from, tolen);
-    if (cwd_buf) free(cwd_buf);
+  // return if any of the pointers is NULL
+  if (!to || !dest_dir || !base_dir) {
     return 0;
   }
 
-  // return if "cwd" is not an absolute path
-  if (!cwd || cwd[0] == '\0' || !isdirsep(*cwd)) {
-    strlcpy(to, from, tolen);
-    if (cwd_buf) free(cwd_buf);
+  // return if `base_dir` or `dest_dir` is not an absolute path
+  if (!isdirsep(*base_dir) || !isdirsep(*dest_dir)) {
+    strlcpy(to, dest_dir, tolen);
     return 0;
-  }
-
-  // test for the exact same string and return "." if so
-  if (!strcmp(from, cwd)) {
-    strlcpy(to, ".", tolen);
-    free(cwd_buf);
-    return (1);
   }
 
   // compare both path names until we find a difference
-  for (slash = from, newslash = cwd;
-       *slash != '\0' && *newslash != '\0';
-       slash ++, newslash ++)
-    if (isdirsep(*slash) && isdirsep(*newslash)) continue;
-    else if (*slash != *newslash) break;
+  for (;;) {
+#ifndef __APPLE__ // case sensitive
+    base_i++;
+    dest_i++;
+    char b = *base_i, d = *dest_i;
+#else // case insensitive
+    base_i += fl_utf8len1(*base_i);
+    int b = fl_tolower(fl_utf8decode(base_i, NULL, NULL));
+    dest_i += fl_utf8len1(*dest_i);
+    int d = fl_tolower(fl_utf8decode(dest_i, NULL, NULL));
+#endif
+    int b0 = (b==0) || (isdirsep(b));
+    int d0 = (d==0) || (isdirsep(d));
+    if (b0 && d0) {
+      base_s = base_i;
+      dest_s = dest_i;
+    }
+    if (b==0 || d==0) break;
+    if (b!=d) break;
+  }
+  // base_s and dest_s point at the last separator we found
+  // base_i and dest_i point at the first character that differs
 
-  // skip over trailing slashes
-  if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
-      &&(newslash==cwd || !isdirsep(newslash[-1])) )
-    newslash--;
-
-  // now go back to the first character of the first differing paths segment
-  while (!isdirsep(*slash) && slash > from) slash --;
-  if (isdirsep(*slash)) slash ++;
-
-  // do the same for the current dir
-  if (isdirsep(*newslash)) newslash --;
-  if (*newslash != '\0')
-    while (!isdirsep(*newslash) && newslash > cwd) newslash --;
+  // test for the exact same string and return "." if so
+  if (   (base_i[0] == 0 || (isdirsep(base_i[0]) && base_i[1] == 0))
+      && (dest_i[0] == 0 || (isdirsep(dest_i[0]) && dest_i[1] == 0))) {
+    strlcpy(to, ".", tolen);
+    return 0;
+  }
 
   // prepare the destination buffer
   to[0]         = '\0';
   to[tolen - 1] = '\0';
 
-  // now add a "previous dir" sequence for every following slash in the cwd
-  while (*newslash != '\0') {
-    if (isdirsep(*newslash)) strlcat(to, "../", tolen);
-
-    newslash ++;
+  // count the directory segments remaining in `base_dir`
+  int n_up = 0;
+  for (;;) {
+    char b = *base_s++;
+    if (b==0) break;
+    if (isdirsep(b) && *base_s) n_up++;
   }
 
-  // finally add the differing path from "from"
-  strlcat(to, slash, tolen);
+  // now add a "previous dir" sequence for every following slash in the cwd
+  if (n_up>0)
+    strlcat(to, "..", tolen);
+  for (; n_up>1; --n_up)
+    strlcat(to, "/..", tolen);
 
-  free(cwd_buf);
+  // finally add the differing path from "from"
+  if (*dest_s) {
+    if (n_up)
+      strlcat(to, "/", tolen);
+    strlcat(to, dest_s+1, tolen);
+  }
+
   return 1;
 }
 
@@ -243,6 +285,10 @@ int Fl_System_Driver::filename_relative(char *to, int tolen, const char *from, c
  \endcond
  */
 
+// FIXME: '0 &&' => We can't do that in 1.4.x, enable this block in 1.5 or higher.
+// There would be too many naming conflicts with fluid's usage of these functions.
+
+#if (0 && FLTK_USE_STD)
 
 /**
  Return a new string that contains the name part of the filename.
@@ -250,8 +296,8 @@ int Fl_System_Driver::filename_relative(char *to, int tolen, const char *from, c
  \return the name part of a filename
  \see fl_filename_name(const char *filename)
  */
-Fl_String fl_filename_name(const Fl_String &filename) {
-  return Fl_String(fl_filename_name(filename.c_str()));
+std::string fl_filename_name(const std::string &filename) {
+  return std::string(fl_filename_name(filename.c_str()));
 }
 
 /**
@@ -260,13 +306,13 @@ Fl_String fl_filename_name(const Fl_String &filename) {
  \return the path part of a filename without the name
  \see fl_filename_name(const char *filename)
  */
-Fl_String fl_filename_path(const Fl_String &filename) {
+std::string fl_filename_path(const std::string &filename) {
   const char *base = filename.c_str();
   const char *name = fl_filename_name(base);
   if (name) {
-    return Fl_String(base, (int)(name-base));
+    return std::string(base, (int)(name-base));
   } else {
-    return Fl_String();
+    return std::string();
   }
 }
 
@@ -277,8 +323,8 @@ Fl_String fl_filename_path(const Fl_String &filename) {
     string if the filename has no extension
  \see fl_filename_ext(const char *buf)
  */
-Fl_String fl_filename_ext(const Fl_String &filename) {
-  return Fl_String(fl_filename_ext(filename.c_str()));
+std::string fl_filename_ext(const std::string &filename) {
+  return std::string(fl_filename_ext(filename.c_str()));
 }
 
 /**
@@ -288,11 +334,11 @@ Fl_String fl_filename_ext(const Fl_String &filename) {
  \return the new filename
  \see fl_filename_setext(char *to, int tolen, const char *ext)
  */
-Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_extension) {
+std::string fl_filename_setext(const std::string &filename, const std::string &new_extension) {
   char buffer[FL_PATH_MAX];
   fl_strlcpy(buffer, filename.c_str(), FL_PATH_MAX);
   fl_filename_setext(buffer, FL_PATH_MAX, new_extension.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -301,10 +347,10 @@ Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_ext
  \return the new, expanded filename
  \see fl_filename_expand(char *to, int tolen, const char *from)
 */
-Fl_String fl_filename_expand(const Fl_String &from) {
+std::string fl_filename_expand(const std::string &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_expand(buffer, FL_PATH_MAX, from.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -313,10 +359,10 @@ Fl_String fl_filename_expand(const Fl_String &from) {
  \return the new, absolute filename
  \see fl_filename_absolute(char *to, int tolen, const char *from)
  */
-Fl_String fl_filename_absolute(const Fl_String &from) {
+std::string fl_filename_absolute(const std::string &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -327,10 +373,10 @@ Fl_String fl_filename_absolute(const Fl_String &from) {
  \return the new, absolute filename
  \see fl_filename_absolute(char *to, int tolen, const char *from, const char *base)
  */
-Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base) {
+std::string fl_filename_absolute(const std::string &from, const std::string &base) {
   char buffer[FL_PATH_MAX];
   fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -339,10 +385,10 @@ Fl_String fl_filename_absolute(const Fl_String &from, const Fl_String &base) {
  \return the new, relative filename
  \see fl_filename_relative(char *to, int tolen, const char *from)
  */
-Fl_String fl_filename_relative(const Fl_String &from) {
+std::string fl_filename_relative(const std::string &from) {
   char buffer[FL_PATH_MAX];
   fl_filename_relative(buffer, FL_PATH_MAX, from.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /**
@@ -352,19 +398,20 @@ Fl_String fl_filename_relative(const Fl_String &from) {
  \return the new, relative filename
  \see fl_filename_relative(char *to, int tolen, const char *from, const char *base)
  */
-Fl_String fl_filename_relative(const Fl_String &from, const Fl_String &base) {
+std::string fl_filename_relative(const std::string &from, const std::string &base) {
   char buffer[FL_PATH_MAX];
   fl_filename_relative(buffer, FL_PATH_MAX, from.c_str(), base.c_str());
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
 /** Cross-platform function to get the current working directory
- as a UTF-8 encoded value in an Fl_String.
+ as a UTF-8 encoded value in an std::string.
  \return the CWD encoded as UTF-8
  */
-Fl_String fl_getcwd() {
+std::string fl_getcwd() {
   char buffer[FL_PATH_MAX];
   fl_getcwd(buffer, FL_PATH_MAX);
-  return Fl_String(buffer);
+  return std::string(buffer);
 }
 
+#endif // FLTK_USE_STD

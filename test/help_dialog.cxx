@@ -47,6 +47,7 @@ main(int  argc,                 // I - Number of command-line arguments
   Fl_GIF_Image::animate = true; // create animated shared .GIF images
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
   int i;
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
   const char *fname = (i < argc) ? argv[i] : "help_dialog.html";
 

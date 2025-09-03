@@ -22,11 +22,11 @@
 
 #include <stdarg.h>
 
-class Fl_Simple_Terminal;
+class Fl_Terminal;
 
 // WINDOW/WIDGET SIZES
 const int UT_MAINWIN_W  = 700;                                // main window w()
-const int UT_MAINWIN_H  = 400;                                // main window h()
+const int UT_MAINWIN_H  = 600;                                // main window h()
 const int UT_BROWSER_X  = 10;                                 // browser x()
 const int UT_BROWSER_Y  = 25;                                 // browser y()
 const int UT_BROWSER_W  = 150;                                // browser w()
@@ -153,7 +153,7 @@ public:
   static const char *red;
   static const char *green;
   static const char *normal;
-  static Fl_Simple_Terminal *tty;
+  static Fl_Terminal *tty;
 };
 
 #define UT_CONCAT_(prefix, suffix) prefix##suffix

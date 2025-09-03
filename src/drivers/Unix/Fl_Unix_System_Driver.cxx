@@ -2,7 +2,7 @@
 // Definition of Unix/Linux system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +21,7 @@
 #include <FL/fl_string_functions.h>  // fl_strdup
 #include <FL/platform.H>
 #include "../../flstring.h"
+#include "../../Fl_String.H"
 #include "../../Fl_Timeout.h"
 
 #include <locale.h>
@@ -116,7 +117,13 @@ int Fl_Unix_System_Driver::clocale_vsscanf(const char *input, const char *format
 #else
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
+#if defined(__hpux)
+  // HP-UX 11.11 provides:
+  //   int vsscanf(char *s, const char *format, va_list ap);
+  int retval = vsscanf((char*)input, format, args);
+#else  // defined(__hpux)
   int retval = vsscanf(input, format, args);
+#endif  // defined(__hpux)
   setlocale(LC_NUMERIC, saved_locale);
 #endif
   return retval;
@@ -268,10 +275,10 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
   // http://publib.boulder.ibm.com/infocenter/pseries/v5r3/topic/com.ibm.aix.basetechref/doc/basetrf1/mntctl.htm
   int res = -1, len;
   char *list = NULL, *name;
-  struct vmount *vp;
 
   // We always have the root filesystem
-  add("/", icon);
+  browser->add("/", icon);
+  num_files++;
   // Get the required buffer size for the vmount structures
   res = mntctl(MCTL_QUERY, sizeof(len), (char *) &len);
   if (!res) {
@@ -285,13 +292,15 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
       if (0 >= res) {
         res = -1;
       } else {
-        for (int i = 0, vp = (struct vmount *) list; i < res; ++i) {
+        struct vmount *vp = (struct vmount *) list;
+        for (int i = 0; i < res; ++i) {
           name = (char *) vp + vp->vmt_data[VMT_STUB].vmt_off;
           strlcpy(filename, name, lname);
           // Skip the already added root filesystem
           if (strcmp("/", filename) != 0) {
             strlcat(filename, "/", lname);
             browser->add(filename, icon);
+            num_files++;
           }
           vp = (struct vmount *) ((char *) vp + vp->vmt_length);
         }
@@ -310,6 +319,7 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
 
   // We always have the root filesystem
   browser->add("/", icon);
+  num_files++;
 #  ifdef HAVE_PTHREAD
   // Lock mutex for thread safety
   if (!pthread_mutex_lock(&getvfsstat_mutex)) {
@@ -323,6 +333,7 @@ int Fl_Unix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser
         if (strcmp("/", filename) != 0) {
           strlcat(filename, "/", lname);
           browser->add(filename, icon);
+          num_files++;
         }
       }
     } else {
@@ -443,6 +454,8 @@ void Fl_Unix_System_Driver::newUUID(char *uuidBuffer)
 }
 
 /*
+ Create a buffer that holds the absolute file path and name of the preferences
+ file for the given root, vendor, and application name.
  Note: `prefs` can be NULL!
  */
 char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
@@ -450,33 +463,10 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
                                                  const char *vendor,
                                                  const char *application)
 {
-  static char *filename = 0L;
-  if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
-  const char *home = "";
-  int pref_type = root & Fl_Preferences::ROOT_MASK;
-  switch (pref_type) {
-    case Fl_Preferences::USER:
-      home = getenv("HOME");
-      // make sure that $HOME is set to an existing directory
-      if ((home == NULL) || (home[0] == 0) || (::access(home, F_OK) == -1)) {
-        struct passwd *pw = getpwuid(getuid());
-        if (pw)
-          home = pw->pw_dir;
-      }
-      if ((home == 0L) || (home[0] == 0) || (::access(home, F_OK) == -1))
-        return NULL;
-      strlcpy(filename, home, FL_PATH_MAX);
-      if (filename[strlen(filename) - 1] != '/')
-        strlcat(filename, "/", FL_PATH_MAX);
-      strlcat(filename, ".fltk/", FL_PATH_MAX);
-      break;
-    case Fl_Preferences::SYSTEM:
-      strcpy(filename, "/etc/fltk/");
-      break;
-    default:              // MEMORY
-      filename[0] = '\0'; // empty string
-      break;
-  }
+  // Create a static buffer for our filename
+  static char *buffer = 0L;
+  if (!buffer) buffer = (char*)::calloc(1, FL_PATH_MAX);
+  buffer[0] = '\0';
 
   // Make sure that the parameters are not NULL
   if ( (vendor==NULL) || (vendor[0]==0) )
@@ -484,46 +474,115 @@ char *Fl_Unix_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
   if ( (application==NULL) || (application[0]==0) )
     application = "unknown";
 
-  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
-           "%s/%s.prefs", vendor, application);
-
-  // If this is not the USER path (i.e. SYSTEM or MEMORY), we are done
-  if ((pref_type) != Fl_Preferences::USER)
-    return filename;
-
-  // If the legacy file exists, we are also done
-  if (::access(filename, F_OK)==0)
-    return filename;
-
-  // This is USER mode, and there is no legacy file. Create an XDG conforming path.
-  // Check $XDG_CONFIG_HOME, and if it isn't set, default to $HOME/.config
-  const char *xdg = getenv("XDG_CONFIG_HOME");
-  if (xdg==NULL) {
-    xdg = "~/.config";
+  // Dispatch to the various path creators for the requested root.
+  char *prefs_path = NULL;
+  int pref_type = root & Fl_Preferences::ROOT_MASK;
+  switch (pref_type) {
+    case Fl_Preferences::USER:
+      prefs_path = preference_user_rootnode(vendor, application, buffer);
+      break;
+    case Fl_Preferences::SYSTEM:
+      prefs_path = preference_system_rootnode(vendor, application, buffer);
+      break;
+    case Fl_Preferences::MEMORY:
+    default:
+      prefs_path = preference_memory_rootnode(vendor, application, buffer);
+      break;
   }
-  filename[0] = 0;
-  if (strncmp(xdg, "~/", 2)==0) {
-    strlcpy(filename, home, FL_PATH_MAX);
-    strlcat(filename, "/", FL_PATH_MAX);
-    strlcat(filename, xdg+2, FL_PATH_MAX);
-  } else if (strncmp(xdg, "$HOME/", 6)==0) {
-    strlcpy(filename, home, FL_PATH_MAX);
-    strlcat(filename, "/", FL_PATH_MAX);
-    strlcat(filename, xdg+6, FL_PATH_MAX);
-  } else if (strncmp(xdg, "${HOME}/", 8)==0) {
-    strlcpy(filename, home, FL_PATH_MAX);
-    strlcat(filename, "/", FL_PATH_MAX);
-    strlcat(filename, xdg+8, FL_PATH_MAX);
+
+  return prefs_path;
+}
+
+/*
+ Memory based preferences are never saved to any file, so the path is
+ just an empty string.
+ */
+char *Fl_Unix_System_Driver::preference_memory_rootnode(
+    const char * /*vendor*/,
+    const char * /*application*/,
+    char *buffer)
+{
+  buffer[0] = 0;
+  return buffer;
+}
+
+/*
+ The path and file name for system preferences on Unix type
+ systems is `/etc/fltk/{vendor}/{application}.prefs`.
+ */
+char *Fl_Unix_System_Driver::preference_system_rootnode(
+    const char *vendor,
+    const char *application,
+    char *buffer)
+{
+  snprintf(buffer, FL_PATH_MAX, "/etc/fltk/%s/%s.prefs", vendor, application);
+  return buffer;
+}
+
+/*
+ The user path changed between FLTK 1.3 and 1.4. It is now calculated
+ using XDG guidelines. It is `$XDG_CONFIG_HOME/{vendor}/{application}.prefs`
+ if `$XDG_CONFIG_HOME` is set, and `$HOME/.config/{vendor}/{application}.prefs`
+ if `$XDG_CONFIG_HOME` is not set or empty.
+
+ For compatibility with 1.3 preferences, this function checks
+
+ 1. Does the XDG based top level folder '{vendor}' exist? If yes, use it.
+ 2. If not: does the old location $HOME/.fltk/{vendor} exist? If yes, use it.
+ 3. If neither: fall back to (1.) and use the XDG based folder (create it and
+    the prefs file below it).
+ */
+char *Fl_Unix_System_Driver::preference_user_rootnode(
+    const char *vendor,
+    const char *application,
+    char *buffer)
+{
+  // Find the path to the user's home directory.
+  Fl_String home_path = getenv("HOME");
+  if (home_path.empty()) {
+    struct passwd *pw = getpwuid(getuid());
+    if (pw)
+      home_path = pw->pw_dir;
+  }
+
+  // 1: Generate the 1.4 path for this vendor and application.
+  Fl_String prefs_path_14 = getenv("XDG_CONFIG_HOME");
+  if (prefs_path_14.empty()) {
+    prefs_path_14 = home_path + "/.config";
   } else {
-    strlcpy(filename, xdg, FL_PATH_MAX);
+    if (prefs_path_14[prefs_path_14.size()-1]!='/')
+      prefs_path_14.append('/');
+    if (prefs_path_14.find("~/")==0) // starts with "~"
+      prefs_path_14.replace(0, 1, home_path);
+    int h_env = prefs_path_14.find("${HOME}");
+    if (h_env!=prefs_path_14.npos)
+      prefs_path_14.replace(h_env, 7, home_path);
+    h_env = prefs_path_14.find("$HOME/");
+    if (h_env!=prefs_path_14.npos)
+      prefs_path_14.replace(h_env, 5, home_path);
   }
-  strlcat(filename, "/", FL_PATH_MAX);
-  strlcat(filename, vendor, FL_PATH_MAX);
-  strlcat(filename, "/", FL_PATH_MAX);
-  strlcat(filename, application, FL_PATH_MAX);
-  strlcat(filename, ".prefs", FL_PATH_MAX);
+  if (prefs_path_14[prefs_path_14.size()-1]!='/')
+    prefs_path_14.append('/');
+  prefs_path_14.append(vendor);
 
-  return filename;
+  // 2: If this base path does not exist, try the 1.3 path
+  if (::access(prefs_path_14.c_str(), F_OK) == -1) {
+    Fl_String prefs_path_13 = home_path + "/.fltk/" + vendor;
+    if (::access(prefs_path_13.c_str(), F_OK) == 0) {
+      prefs_path_13.append('/');
+      prefs_path_13.append(application);
+      prefs_path_13.append(".prefs");
+      strlcpy(buffer, prefs_path_13.c_str(), FL_PATH_MAX);
+      return buffer;
+    }
+  }
+
+  // 3: neither path exists, return the 1.4 file path and name
+  prefs_path_14.append('/');
+  prefs_path_14.append(application);
+  prefs_path_14.append(".prefs");
+  strlcpy(buffer, prefs_path_14.c_str(), FL_PATH_MAX);
+  return buffer;
 }
 
 //
@@ -662,18 +721,18 @@ void Fl_Unix_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), vo
 #  if USE_POLL
     pollfd *tpoll;
 
-    if (!pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
-    else tpoll = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
+    if (!Fl_Unix_Screen_Driver::pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
+    else tpoll = (pollfd*)realloc(Fl_Unix_Screen_Driver::pollfds, fd_array_size*sizeof(pollfd));
 
     if (!tpoll) return;
-    pollfds = tpoll;
+    Fl_Unix_Screen_Driver::pollfds = tpoll;
 #  endif
   }
   Fl_Unix_Screen_Driver::fd[i].cb = cb;
   Fl_Unix_Screen_Driver::fd[i].arg = v;
 #  if USE_POLL
-  pollfds[i].fd = n;
-  pollfds[i].events = events;
+  Fl_Unix_Screen_Driver::pollfds[i].fd = n;
+  Fl_Unix_Screen_Driver::pollfds[i].events = events;
 #  else
   Fl_Unix_Screen_Driver::fd[i].fd = n;
   Fl_Unix_Screen_Driver::fd[i].events = events;
@@ -695,10 +754,10 @@ void Fl_Unix_System_Driver::remove_fd(int n, int events) {
 # endif
   for (i=j=0; i<Fl_Unix_Screen_Driver::nfds; i++) {
 #  if USE_POLL
-    if (pollfds[i].fd == n) {
-      int e = pollfds[i].events & ~events;
+    if (Fl_Unix_Screen_Driver::pollfds[i].fd == n) {
+      int e = Fl_Unix_Screen_Driver::pollfds[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
-      pollfds[j].events = e;
+      Fl_Unix_Screen_Driver::pollfds[j].events = e;
     }
 #  else
     if (Fl_Unix_Screen_Driver::fd[i].fd == n) {
@@ -712,7 +771,7 @@ void Fl_Unix_System_Driver::remove_fd(int n, int events) {
     if (j<i) {
       Fl_Unix_Screen_Driver::fd[j] = Fl_Unix_Screen_Driver::fd[i];
 #  if USE_POLL
-      pollfds[j] = pollfds[i];
+      Fl_Unix_Screen_Driver::pollfds[j] = Fl_Unix_Screen_Driver::pollfds[i];
 #  endif
     }
     j++;

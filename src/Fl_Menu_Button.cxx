@@ -18,6 +18,7 @@
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Rect.H>
 #include <FL/fl_draw.H>
+#include "Fl_Window_Driver.H"
 
 
 Fl_Menu_Button* Fl_Menu_Button::pressed_menu_button_ = NULL;
@@ -41,7 +42,7 @@ void Fl_Menu_Button::draw() {
 
   // draw the arrow (choice button)
 
-  Fl_Color arrow_color = active_r() ? FL_DARK3 : fl_inactive(FL_DARK3);
+  Fl_Color arrow_color = active_r() ? labelcolor() : fl_inactive(labelcolor());
   fl_draw_arrow(Fl_Rect(ax, ay, aw, ah), FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrow_color);
 }
 
@@ -67,7 +68,9 @@ const Fl_Menu_Item* Fl_Menu_Button::popup() {
   if (!box() || type()) {
     m = menu()->popup(Fl::event_x(), Fl::event_y(), label(), mvalue(), this);
   } else {
+    Fl_Window_Driver::current_menu_button = this;
     m = menu()->pulldown(x(), y(), w(), h(), 0, this);
+    Fl_Window_Driver::current_menu_button = NULL;
   }
   picked(m);
   pressed_menu_button_ = 0;

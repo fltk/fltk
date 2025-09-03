@@ -383,7 +383,7 @@ int Fl_Tree::handle(int e) {
     case FL_PUSH: {             // clicked on tree
       last_my = Fl::event_y();  // save for dragging direction..
       if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
-      Fl_Tree_Item *item = _root->find_clicked(_prefs, 0);
+      Fl_Tree_Item *item = find_clicked(0);
       // Tell FL_DRAG what was pushed
       _lastpushed = item ? item->event_on_collapse_icon(_prefs) ? PUSHED_OPEN_CLOSE  // open/close icon clicked
                          : item->event_on_user_icon(_prefs)     ? PUSHED_USER_ICON   // usericon clicked
@@ -470,7 +470,7 @@ int Fl_Tree::handle(int e) {
       //    During drag, only interested in left-mouse operations.
       //
       if ( Fl::event_button() != FL_LEFT_MOUSE ) break;
-      Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
+      Fl_Tree_Item *item = find_clicked(1);     // item we're on, vertically
       if ( !item ) break;                       // not near item? ignore drag event
       ret |= 1;                                 // acknowledge event
       if (_prefs.selectmode() != FL_TREE_SELECT_SINGLE_DRAGGABLE)
@@ -505,7 +505,7 @@ int Fl_Tree::handle(int e) {
     case FL_RELEASE:
       if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
           Fl::event_button() == FL_LEFT_MOUSE) {
-        Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item mouse is over (vertically)
+        Fl_Tree_Item *item = find_clicked(1);                // item mouse is over (vertically)
         if (item &&                                          // mouse over valid item?
             _lastselect &&                                   // item being dragged is valid?
             item != _lastselect) {                           // item we're over not same as drag item?
@@ -676,8 +676,8 @@ void Fl_Tree::calc_tree() {
   int W = _tiw;
   // Adjust root's X/W if connectors off
   if (_prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE) {
-    X -= _prefs.openicon()->w();
-    W += _prefs.openicon()->w();
+    X -= _prefs.openicon_w();
+    W += _prefs.openicon_w();
   }
   int xmax = 0, render = 0, ytop = Y;
   fl_font(_prefs.labelfont(), _prefs.labelsize());
@@ -718,8 +718,8 @@ void Fl_Tree::draw() {
     int W = _tiw - X + _tix;
     // Adjust root's X/W if connectors off
     if (_prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE) {
-      X -= _prefs.openicon()->w();
-      W += _prefs.openicon()->w();
+      X -= _prefs.openicon_w();
+      W += _prefs.openicon_w();
     }
     // Draw entire tree, starting with root
     fl_push_clip(_tix,_tiy,_tiw,_tih);
@@ -748,7 +748,7 @@ void Fl_Tree::draw() {
   if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&         // drag mode?
       Fl::pushed() == this) {                                           // item clicked is the one we're drawing?
 
-    Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
+    Fl_Tree_Item *item = find_clicked(1);                // item we're on, vertically
     if (item &&                                          // we're over a valid item?
         item != _item_focus) {                           // item doesn't have keyboard focus?
       // Are we dropping above or below the target item?
@@ -1228,7 +1228,7 @@ Fl_Tree_Item* Fl_Tree::last_visible() {
 Fl_Tree_Item* Fl_Tree::last_visible_item() {
   Fl_Tree_Item *item = last();
   while ( item ) {
-    if ( item->visible() ) {
+    if ( item->visible_r() ) {
       if ( item == _root && !showroot() ) {
         return(0);
       } else {

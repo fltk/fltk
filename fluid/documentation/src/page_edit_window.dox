@@ -1,0 +1,179 @@
+/**
+
+ \page page_edit_window Layout Editor Window
+
+ \tableofcontents
+
+ \image html edit_window.png "Layout Editor Window"
+ \image latex edit_window.png "Layout Editor Window" width=7cm
+
+ The Layout Editor window is used to interactively add groups and widgets, and
+ resize and align them. The editor window already looks very much like the
+ final product that will be built by the FLUID generated C++ source code.
+
+ To create a user interface, first add a function to the project tree by either
+ clicking the Function icon in the widget bin, or by selecting __New* > Code >
+ Function/Method__ from the main menu.
+
+ Now just drag the Window icon from the widget bin onto the desktop. FLUID
+ will generate code that instantiates this window when the function is called.
+ The return value of the function is a pointer to that window, unless changed
+ in the Function Panel. Widgets can be added to the window by dragging them from
+ the widget bin. If a widget is dropped on a group, it will automatically
+ become a child of that group.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section edit_selection Selecting and Moving Widgets
+
+ To move or resize a widget, it must be selected first by clicking on it.
+ Multiple widgets can be selected by holding down the Shift key when clicking
+ on them, or by dragging a selection box around widgets. Widgets can also be
+ selected in the widget browser the main window. Shift-click will select a
+ range of widgets, Ctrl-click will add widgets to the selection.
+
+ \image html edit_select_multiple.png
+ \image latex edit_select_multiple.png "Select Multiple Widgets" width=5cm
+
+ Menu items are selected by clicking on the menu button and selecting it from
+ the popup menu. Multiple menu items can only be selected in the widget browser
+ in the main application window.
+
+ Once selected, widgets can be moved by clicking and dragging the center
+ of the selection box. The outer edges allow resizing in one direction, and
+ dragging the corners resizes widgets horizontally and vertically.
+
+ Widgets can also be repositioned with the arrow keys. Without a shift key,
+ the selection moves by a single pixel. With the Meta key held down, they
+ move by the amount indicated in the *Gap* field in the *Widget* section of
+ the *Layout* setting panel.
+
+ Holding down the Shift key resizes a selected widget by moving the bottom
+ right corner of the widget. Holding Shift and Meta while pressing arrow keys
+ resizes by the amount in the *Widget* *Gap* layout setting.
+
+ Children of groups that reposition their contained widgets may behave
+ differently. Pressing the arrow keys on children of `Fl_Grid` will move
+ the widget from grid cell to grid cell instead. Resizing a child of `Fl_Flex`
+ will also mark the child size as `fixed`.
+
+ The tab and shift+tab keys "navigate" the selection. Tab or shift+tab move to
+ the next or previous widgets in the hierarchy. If the navigation does not seem
+ to work you probably need to "Sort" the widgets. This is important if you have
+ input fields, as FLTK uses the same rules when using tab keys
+ to move between input fields.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section edit_layout Layout Helpers
+
+ \image html edit_overlap.png
+ \image latex edit_overlap.png "Overlapping Widgets" width=5cm
+
+ In FLTK, the behavior of overlapping children of a group is undefined. If
+ enabled in the settings, FLUID will show overlapping widgets in a group
+ with a green hash pattern.
+
+ \image html edit_outside.png
+ \image latex edit_outside.png "Out Of Bounds" width=5cm
+
+ The behavior of widgets that reach outside the bounds of their parent group
+ is also undefined. They may be visible, but confuse the user when they don't
+ react to mouse clicks or don't redraw as expected. Outside widgets are marked
+ with a red hash pattern.
+
+ Note that `Fl_Tile` requires that all children exactly fill the area of the
+ tile group to function properly. The hash patterns are great helpers to align
+ children correctly.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section edit_snap Layout Alignment
+
+ FLUID layouts are a handful of rules that help creating a clean and consistent
+ user interface. When repositioning widgets, the mouse pointer snaps to the
+ closest position based on those rules. A guide line is drawn for the rule that was
+ applied. Guides and snaps can be disabled with `Ctrl-Shift-G` or via the
+ *Edit* > *Hide Guides* menu.
+
+ \image html edit_snap_group.png
+ \image latex edit_snap_group.png "Snap To Group" width=5cm
+
+ If a horizontal or vertical outline snaps to the group, the
+ border of that group will highlight. If the outline snaps to the margin
+ of the parent window or group, an additional arrow is drawn.
+
+ Children of `Fl_Tabs` use the top and bottom margin from the *Tabs*
+ section. If all children use this rule, the margin height will also be the
+ height of all tabs.
+
+ \image html edit_snap_sibling.png
+ \image latex edit_snap_sibling.png "Snap To Sibling" width=5cm
+
+ The selection can also snap to the outline of other widgets in the same group,
+ or to the outline plus the Widget Gap. The outline that triggers the snap
+ action is highlighted.
+
+ Note that only the first snap guide found is drawn for horizontal and vertical
+ movement. Multiple rules may apply, but are not highlighted.
+
+ \image html edit_snap_size.png
+ \image latex edit_snap_size.png "Snap To Size" width=7cm
+
+ Widget size rules define a minimum size and an increment value that may
+ be applied multiple times to the size. For example, with a minimum width of 25
+ and an increment of 10, the widget will snap horizontally to 25, 35, 45,
+ 55, etc. .
+
+ \image html edit_snap_grid.png
+ \image latex edit_snap_grid.png "Snap To Grid" width=5cm
+
+ The grid rule is the easiest to explain. All corners of a selection snap to
+ a fixed grid. If the selected widgets are children of a window, they will snap
+ to the window grid. If they are in a group, they snap to the group grid.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section edit_resize Live Resize
+
+ \image html edit_select_group.png
+ \image latex edit_select_group.png "Selected Group" width=9cm
+
+ The Resizable system within FLTK is smart, but not always obvious. When
+ constructing a sophisticated GUI, it is helpful to organize widgets into
+ multiple levels of nested groups. Sometimes, incorporating an invisible
+ resizable box can improve the behavior of a group. FLUID offers a Live Resize
+ feature, allowing designers to experiment with resizing at each level within
+ the hierarchy independently.
+
+ To test the resizing behavior of a group, begin by selecting it:
+
+ \image html edit_live_resize.png
+ \image latex edit_live_resize.png "Live Resize" width=7cm
+
+ Click on *Live Resize* in the widget panel. FLUID will generate a new window
+ with all the resizing attributes inherited from the original design. This
+ enables the designer to thoroughly test the behavior and limitations,
+ making adjustments until they are satisfied. This streamlined process makes
+ it significantly easier to address resizing behavior at a higher level,
+ particularly once the lower levels are behaving as intended.
+
+ In the example above, the radio buttons are not fixed to the left side of
+ the group and the text snippet "of the bed" does not stay aligned
+ to "right side". To fix this, a thin hidden box could be added to the right
+ edge of the group that holds the radio button which is then marked `resizable`.
+
+ <!-- ---------------------------------------------------------------------- -->
+ \section edit_limits Limitations
+
+ Almost all FLTK widgets can be edited with FLUID. Notable exceptions include
+
+ - FLUID does not support an `Fl_Window` inside another `Fl_Window`
+ - widgets inside `Fl_Scroll` can not be created in the hidden areas of the
+   scrollable rectangle. It is recommended to organize the children in
+   a separate Widget Class that is derived from `Fl_Scroll` and then inserted
+   as a single custom widget.
+ - children of `Fl_Pack` are not automatically reorganized to fit the packing
+   group. Again, a Widget Class is recommended here.
+ - if children of `Fl_Grid` are again some kind of group, their internal layout
+   may not follow changes in the grid widgets. It's best to complete the grid
+   first, then add children to the grid cells, size them correctly, and
+   then finally lay out the grid cell children.
+
+*/

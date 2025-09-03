@@ -38,30 +38,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 // ---- Fl_Group_Type -------------------------------------------------- MARK: -
 
 Fl_Group_Type Fl_Group_type;    // the "factory"
 
-// Override group's resize behavior to do nothing to children:
-void igroup::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
+/**
+ Override group's resize behavior to do nothing to children by default.
+ \param[in] X, Y, W, H new size
+ */
+void Fl_Group_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Group::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   redraw();
 }
 
 /**
- Create and add a new Group node.
- \param[in] strategy add after current or as last child
- \return new Group node
+ Override draw() to make groups with no box or flat box background visible.
  */
-Fl_Type *Fl_Group_Type::make(Strategy strategy) {
-  return Fl_Widget_Type::make(strategy);
+void Fl_Group_Proxy::draw() {
+  if (show_ghosted_outline && (box() == FL_NO_BOX)) {
+    fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+  }
+  Fl_Group::draw();
 }
+
 
 /**
  \brief Enlarge the group size, so all children fit within.
  */
 void fix_group_size(Fl_Type *tt) {
-  if (!tt || !tt->is_group()) return;
+  if (!tt || !tt->is_a(ID_Group)) return;
   Fl_Group_Type* t = (Fl_Group_Type*)tt;
   int X = t->o->x();
   int Y = t->o->y();
@@ -79,58 +89,95 @@ void fix_group_size(Fl_Type *tt) {
   t->o->resize(X,Y,R-X,B-Y);
 }
 
+extern void group_selected_menuitems();
+
 void group_cb(Fl_Widget *, void *) {
-  // Find the current widget:
-  Fl_Type *qq = Fl_Type::current;
-  while (qq && !qq->is_true_widget()) qq = qq->parent;
-  if (!qq || qq->level < 1 || (qq->level == 1 && qq->is_a(Fl_Type::ID_Widget_Class))) {
-    fl_message("Please select widgets to group");
+  if (!Fl_Type::current) {
+    fl_message("No widgets selected.");
+    return;
+  }
+  if (!Fl_Type::current->is_widget()) {
+    fl_message("Only widgets and menu items can be grouped.");
+    return;
+  }
+  if (Fl_Type::current->is_a(ID_Menu_Item)) {
+    group_selected_menuitems();
+    return;
+  }
+  // The group will be created in the parent group of the current widget
+  Fl_Type *qq = Fl_Type::current->parent;
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  while (qq && !qq->is_a(ID_Group)) {
+    qq = qq->parent;
+  }
+  if (!qq) {
+    fl_message("Can't create a new group here.");
     return;
   }
   undo_checkpoint();
   undo_suspend();
-  Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
-  force_parent = 1;
-  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(kAddAsLastChild));
+  Fl_Type::current = qq;
+  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(Strategy::AS_LAST_CHILD));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
-  for (Fl_Type *t = Fl_Type::first; t;) {
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
     if (t->level != n->level || t == n || !t->selected) {
-      t = t->next; continue;}
+      t = t->next;
+      continue;
+    }
     Fl_Type *nxt = t->remove();
-    t->add(n, kAddAsLastChild);
+    t->add(n, Strategy::AS_LAST_CHILD);
     t = nxt;
   }
   fix_group_size(n);
+  Fl_Type::current = q;
+  n->layout_widget();
   widget_browser->rebuild();
   undo_resume();
   set_modflag(1);
 }
 
+extern void ungroup_selected_menuitems();
+
 void ungroup_cb(Fl_Widget *, void *) {
-  // Find the group:
-  Fl_Type *q = Fl_Type::current;
-  while (q && !q->is_true_widget()) q = q->parent;
-  if (q) q = q->parent;
-  if (!q || q->level < 1 || (q->level == 1 && q->is_a(Fl_Type::ID_Widget_Class))) {
-    fl_message("Please select widgets in a group");
+  if (!Fl_Type::current) {
+    fl_message("No widgets selected.");
     return;
   }
-  Fl_Type* n;
-  for (n = q->next; n && n->level > q->level; n = n->next) {
-    if (n->level == q->level+1 && !n->selected) {
-      fl_message("Please select all widgets in group");
-      return;
-    }
+  if (!Fl_Type::current->is_widget()) {
+    fl_message("Only widgets and menu items can be ungrouped.");
+    return;
+  }
+  if (Fl_Type::current->is_a(ID_Menu_Item)) {
+    ungroup_selected_menuitems();
+    return;
+  }
+
+  Fl_Widget_Type *q = static_cast<Fl_Widget_Type*>(Fl_Type::current);
+  int q_level = q->level;
+  Fl_Type *qq = Fl_Type::current->parent;
+  while (qq && !qq->is_true_widget()) qq = qq->parent;
+  if (!qq || !qq->is_a(ID_Group)) {
+    fl_message("Only menu widgets inside a group can be ungrouped.");
+    return;
   }
   undo_checkpoint();
   undo_suspend();
-  for (n = q->next; n && n->level > q->level;) {
-    Fl_Type *nxt = n->remove();
-    n->insert(q);
-    n = nxt;
+  Fl_Type::current = qq;
+  for (Fl_Type *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != q_level || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Fl_Type *nxt = t->remove();
+    t->insert(qq);
+    t = nxt;
   }
-  delete q;
+  if (!qq->next || (qq->next->level <= qq->level)) {
+    qq->remove();
+    delete qq;   // qq has no children that need to be delete
+  }
+  Fl_Type::current = q;
   widget_browser->rebuild();
   undo_resume();
   set_modflag(1);
@@ -238,10 +285,33 @@ Fl_Menu_Item flex_type_menu[] = {
 
 Fl_Flex_Type Fl_Flex_type;      // the "factory"
 
+/**
+ Override flex's resize behavior to do nothing to children by default.
+
+ \param[in] X, Y, W, H new size
+ */
+void Fl_Flex_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Flex::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
+  redraw();
+}
+
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Flex_Proxy::draw() {
+  if (show_ghosted_outline && (box() == FL_NO_BOX)) {
+    fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+  }
+  Fl_Flex::draw();
+}
+
 Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
   Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(grp);
-  suspend_auto_layout = 0;
   Fl_Flex *d = grp, *s =(Fl_Flex*)o;
   int nc = s->children(), nd = d->children();
   if (nc>nd) nc = nd;
@@ -262,6 +332,20 @@ void Fl_Flex_Type::copy_properties()
   s->margin(&lm, &tm, &rm, &bm);
   d->margin(lm, tm, rm, bm);
   d->gap( s->gap() );
+}
+
+void Fl_Flex_Type::copy_properties_for_children() {
+  Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
+  for (int i=0; i<s->children(); i++) {
+    if (s->fixed(s->child(i)) && i<d->children()) {
+      if (s->horizontal()) {
+        d->fixed(d->child(i), d->child(i)->w());
+      } else {
+        d->fixed(d->child(i), d->child(i)->h());
+      }
+    }
+  }
+  d->layout();
 }
 
 void Fl_Flex_Type::write_properties(Fd_Project_Writer &f)
@@ -320,20 +404,20 @@ void Fl_Flex_Type::read_property(Fd_Project_Reader &f, const char *c)
 
 void Fl_Flex_Type::postprocess_read()
 {
-  if (fixedSizeTupleSize==0) return;
   Fl_Flex* flex = (Fl_Flex*)o;
-  for (int i=0; i<fixedSizeTupleSize; i++) {
-    int ix = fixedSizeTuple[2*i];
-    int size = fixedSizeTuple[2*i+1];
-    if (ix>=0 && ix<flex->children()) {
-      Fl_Widget *ci = flex->child(ix);
-      flex->fixed(ci, size);
+  if (fixedSizeTupleSize>0) {
+    for (int i=0; i<fixedSizeTupleSize; i++) {
+      int ix = fixedSizeTuple[2*i];
+      int size = fixedSizeTuple[2*i+1];
+      if (ix>=0 && ix<flex->children()) {
+        Fl_Widget *ci = flex->child(ix);
+        flex->fixed(ci, size);
+      }
     }
+    fixedSizeTupleSize = 0;
+    delete[] fixedSizeTuple;
+    fixedSizeTuple = NULL;
   }
-  fixedSizeTupleSize = 0;
-  delete[] fixedSizeTuple;
-  fixedSizeTuple = NULL;
-  flex->layout();
   suspend_auto_layout = 0;
 }
 
@@ -355,23 +439,30 @@ void Fl_Flex_Type::write_code2(Fd_Code_Writer& f) {
   Fl_Group_Type::write_code2(f);
 }
 
-void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
-  Fl_Group_Type::add_child(a, b);
-  if (!suspend_auto_layout)
-    ((Fl_Flex*)o)->layout();
-}
-
-void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
-  Fl_Group_Type::move_child(a, b);
-  if (!suspend_auto_layout)
-    ((Fl_Flex*)o)->layout();
-}
+//void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
+//  Fl_Group_Type::add_child(a, b);
+//  if (!suspend_auto_layout)
+//    ((Fl_Flex*)o)->layout();
+//}
+//
+//void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
+//  Fl_Group_Type::move_child(a, b);
+//  if (!suspend_auto_layout)
+//    ((Fl_Flex*)o)->layout();
+//}
 
 void Fl_Flex_Type::remove_child(Fl_Type* a) {
   if (a->is_widget())
     ((Fl_Flex*)o)->fixed(((Fl_Widget_Type*)a)->o, 0);
   Fl_Group_Type::remove_child(a);
+//  ((Fl_Flex*)o)->layout();
+  layout_widget();
+}
+
+void Fl_Flex_Type::layout_widget() {
+  allow_layout++;
   ((Fl_Flex*)o)->layout();
+  allow_layout--;
 }
 
 // Change from HORIZONTAL to VERTICAL or back.
@@ -416,6 +507,66 @@ int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
   return (t->is_widget()
           && t->parent
           && t->parent->is_a(ID_Flex));
+}
+
+/**
+ Insert a widget in the child list so that it moves as close as possible the position.
+
+ \param[in] child any widget in the tree but this, may already be a child of
+      this and will be relocated if so
+ \param[in] x, y pixel coordinates relative to the top left of the window
+ */
+void Fl_Flex_Type::insert_child_at(Fl_Widget *child, int x, int y) {
+  Fl_Flex *flex = (Fl_Flex*)o;
+  // find the insertion point closest to x, y
+  int d = flex->w() + flex->h(), di = -1;
+  if (flex->horizontal()) {
+    int i, dx;
+    for (i=0; i<flex->children(); i++) {
+      dx = x - flex->child(i)->x();
+      if (dx < 0) dx = -dx;
+      if (dx < d) { d = dx; di = i; }
+    }
+    dx = x - (flex->x()+flex->w());
+    if (dx < 0) dx = -dx;
+    if (dx < d) { d = dx; di = i; }
+  } else {
+    int i, dy;
+    for (i=0; i<flex->children(); i++) {
+      dy = y - flex->child(i)->y();
+      if (dy < 0) dy = -dy;
+      if (dy < d) { d = dy; di = i; }
+    }
+    dy = y - (flex->y()+flex->h());
+    if (dy < 0) dy = -dy;
+    if (dy < d) { d = dy; di = i; }
+  }
+  if (di > -1) {
+    flex->insert(*child, di);
+  }
+}
+
+/** Move children around using the keyboard.
+ \param[in] child pointer to the child type
+ \param[in] key code of the last keypress when handling a FL_KEYBOARD event.
+ */
+void Fl_Flex_Type::keyboard_move_child(Fl_Widget_Type *child, int key) {
+  Fl_Flex *flex = ((Fl_Flex*)o);
+  int ix = flex->find(child->o);
+  if (ix == flex->children()) return;
+  if (flex->horizontal()) {
+    if (key==FL_Right) {
+      flex->insert(*child->o, ix+2);
+    } else if (key==FL_Left) {
+      if (ix > 0) flex->insert(*child->o, ix-1);
+    }
+  } else {
+    if (key==FL_Down) {
+      flex->insert(*child->o, ix+2);
+    } else if (key==FL_Up) {
+      if (ix > 0) flex->insert(*child->o, ix-1);
+    }
+  }
 }
 
 int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
@@ -569,9 +720,23 @@ Fl_Tabs_Type Fl_Tabs_type;      // the "factory"
 const char tabs_type_name[] = "Fl_Tabs";
 
 // Override group's resize behavior to do nothing to children:
-void itabs::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
+void Fl_Tabs_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Tabs::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   redraw();
+}
+
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Tabs_Proxy::draw() {
+  if (show_ghosted_outline && (box() == FL_NO_BOX)) {
+    fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+  }
+  Fl_Tabs::draw();
 }
 
 // This is called when user clicks on a widget in the window.  See
@@ -605,10 +770,13 @@ void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
 }
 
 Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
-  Fl_Tabs *grp = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
-  propagate_live_mode(grp);
-  grp->value(((Fl_Tabs*)o)->value());
-  return grp;
+  Fl_Tabs *original = static_cast<Fl_Tabs*>(o);
+  Fl_Tabs *clone = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
+  propagate_live_mode(clone);
+  int tab_index = original->find(original->value());
+  if ((tab_index>=0) && (tab_index<clone->children()))
+    clone->value(clone->child(tab_index));
+  return clone;
 }
 
 // ---- Fl_Scroll_Type ------------------------------------------------- MARK: -
@@ -659,7 +827,22 @@ Fl_Wizard_Type Fl_Wizard_type;  // the "factory"
 const char wizard_type_name[] = "Fl_Wizard";
 
 // Override group's resize behavior to do nothing to children:
-void iwizard::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
+void Fl_Wizard_Proxy::resize(int X, int Y, int W, int H) {
+  if (Fl_Type::allow_layout > 0) {
+    Fl_Wizard::resize(X, Y, W, H);
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   redraw();
 }
+
+/**
+ Override draw() to make groups with no box or flat box background visible.
+ */
+void Fl_Wizard_Proxy::draw() {
+  if (show_ghosted_outline && (box() == FL_NO_BOX)) {
+    fl_rect(x(), y(), w(), h(), Fl::box_color(fl_color_average(FL_FOREGROUND_COLOR, color(), .1f)));
+  }
+  Fl_Wizard::draw();
+}
+

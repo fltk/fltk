@@ -1,7 +1,7 @@
 //
 // Classes Fl_PostScript_File_Device and Fl_PostScript_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,11 +21,17 @@
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include "Fl_PostScript_Graphics_Driver.H"
+#include <FL/Fl_PDF_File_Surface.H>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "../../Fl_System_Driver.H"
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Return_Button.H>
 #include <FL/fl_string_functions.h>
+#include <FL/fl_callback_macros.H>
 #include <FL/platform.H>
 #include <stdarg.h>
 #include <time.h>
@@ -33,6 +39,8 @@
 #include <FL/math.h> // for M_PI
 #include <pango/pangocairo.h>
 #include <cairo/cairo-ps.h>
+#include <cairo/cairo-pdf.h>
+#include <FL/Fl_Preferences.H>
 #  if ! PANGO_VERSION_CHECK(1,10,0)
 #    error "Requires Pango 1.10 or higher"
 #  endif
@@ -145,12 +153,12 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   //lang_level_ = 3;
   lang_level_ = 2;
   mask = 0;
-#endif
-  ps_filename_ = NULL;
-  scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
   clip_ = NULL;
-  what = NONE;
+  scale_x = scale_y = 1.;
+#endif
+  ps_filename_ = NULL;
+  nPages = 0;
 }
 
 /** \brief The destructor. */
@@ -1462,6 +1470,30 @@ void Fl_PostScript_Graphics_Driver::ps_untranslate(void)
   fprintf(output, "GR GR\n");
 }
 
+#if defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
+
+Fl_Paged_Device *Fl_PDF_File_Surface::new_platform_pdf_surface_(const char ***pfname) {
+  *pfname = NULL;
+  return new Fl_PostScript_File_Device;
+}
+
+int Fl_PDF_File_Surface::begin_job(const char* defaultfilename,
+                                char **perr_message) {
+  if (perr_message) {
+    *perr_message = strdup("Class Fl_PDF_File_Surface requires PANGO to be usable.");
+  }
+  return 2;
+}
+
+int Fl_PDF_File_Surface::begin_document(const char* defaultfilename,
+                                     enum Fl_Paged_Device::Page_Format format,
+                                     enum Fl_Paged_Device::Page_Layout layout,
+                                     char **perr_message) {
+  return begin_job(NULL, perr_message);
+}
+
+#endif // defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
+
 # else // USE_PANGO
 
 /* Cairo-based implementation of the PostScript graphics driver */
@@ -1540,6 +1572,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   pango_layout_set_font_description(pango_layout_, pfd);
   int pwidth, pheight;
   cairo_save(cairo_);
+  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_layout_get_size(pango_layout_, &pwidth, &pheight);
   if (pwidth > 0) {
@@ -1551,6 +1584,232 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   }
   cairo_restore(cairo_);
   check_status();
+}
+
+
+// =======================================================
+
+
+class Fl_PDF_Pango_File_Surface : public Fl_PostScript_File_Device
+{
+public:
+  char *doc_fname;
+  Fl_PDF_Pango_File_Surface();
+  ~Fl_PDF_Pango_File_Surface() { if (doc_fname) free(doc_fname); }
+  int begin_job(const char *defaultname,
+                char **perr_message = NULL);
+  int begin_job(int, int*, int *, char **) FL_OVERRIDE {return 1;} // don't use
+  int begin_document(const char* outname,
+                     enum Fl_Paged_Device::Page_Format format,
+                     enum Fl_Paged_Device::Page_Layout layout,
+                     char **perr_message);
+  int begin_page() FL_OVERRIDE;
+  void end_job() FL_OVERRIDE;
+};
+
+
+Fl_PDF_Pango_File_Surface::Fl_PDF_Pango_File_Surface() {
+  doc_fname = NULL;
+  driver()->output = NULL;
+}
+
+
+static Fl_Paged_Device::Page_Format menu_to_size[] = {Fl_Paged_Device::A3, Fl_Paged_Device::A4,
+  Fl_Paged_Device::A5, Fl_Paged_Device::B4, Fl_Paged_Device::B5, Fl_Paged_Device::EXECUTIVE,
+  Fl_Paged_Device::LEGAL, Fl_Paged_Device::LETTER, Fl_Paged_Device::TABLOID
+};
+static int size_count = sizeof(menu_to_size) / sizeof(menu_to_size[0]);
+
+
+static int update_format_layout(int rank, Fl_Paged_Device::Page_Layout layout,
+                                bool &need_set_default_psize) {
+  int status = -1;
+  Fl_Window *modal = new Fl_Window(510, 90, Fl_PDF_File_Surface::format_dialog_title);
+  modal->begin();
+  Fl_Choice *psize = new Fl_Choice(140, 10, 110, 30, Fl_PDF_File_Surface::format_dialog_page_size);
+  psize->when(FL_WHEN_CHANGED);
+  for (int i = 0; i < size_count; i++) {
+    psize->add(Fl_Paged_Device::page_formats[menu_to_size[i]].name);
+  }
+  psize->value(rank);
+  Fl_Check_Button *default_size = new Fl_Check_Button(psize->x(), psize->y() + psize->h(),
+                          psize->w(), psize->h(), Fl_PDF_File_Surface::format_dialog_default);
+  default_size->value(1);
+  default_size->user_data(&need_set_default_psize);
+  FL_INLINE_CALLBACK_2(psize, Fl_Choice*, choice, psize,
+                       Fl_Check_Button*, check_but, default_size,
+                       {
+                        if (check_but->value() && choice->mvalue() && choice->prev_mvalue() &&
+                            choice->prev_mvalue() != choice->mvalue()) {
+                          check_but->value(0);
+                        }
+                       });
+  FL_INLINE_CALLBACK_2( modal, Fl_Window*, win, modal,
+                       Fl_Check_Button*, check_but, default_size,
+                       {
+                        *((bool*)check_but->user_data()) = check_but->value();
+                        win->hide();
+                       } );
+  Fl_Choice *orientation = new Fl_Choice(psize->x() + psize->w() + 120, psize->y(), 130, psize->h(),
+                                         Fl_PDF_File_Surface::format_dialog_orientation);
+  orientation->add("PORTRAIT|LANDSCAPE");
+  orientation->value(layout == Fl_Paged_Device::PORTRAIT ? 0 : 1);
+  Fl_Return_Button *ok = new Fl_Return_Button(orientation->x() + orientation->w() - 55,
+                                              psize->y() + psize->h() + 10, 55, 30, fl_ok);
+  FL_INLINE_CALLBACK_4( ok, Fl_Widget*, b, ok,
+                       int*, pstatus, &status,
+                       Fl_Choice*, psize, psize,
+                       Fl_Choice*, orientation, orientation,
+                       {
+    *pstatus = menu_to_size[psize->value()] + 0x100 * orientation->value();
+    b->window()->do_callback();
+                       } );
+  Fl_Button *cancel = new Fl_Button(ok->x() - 90, psize->y() + psize->h() + 10, 70, 30, fl_cancel);
+  FL_INLINE_CALLBACK_1( cancel, Fl_Widget*, wid, cancel, { wid->window()->do_callback(); } );
+  modal->end();
+  modal->set_modal();
+  modal->show();
+  while (modal->shown()) Fl::wait();
+  delete modal;
+  return status;
+}
+
+
+int Fl_PDF_Pango_File_Surface::begin_job(const char *defaultname, char **perr_message) {
+  static Page_Layout layout = PORTRAIT;
+
+  Fl_Preferences print_prefs(Fl_Preferences::CORE_USER, "fltk.org", "printers");
+  char *pref_format;
+  print_prefs.get("PDF/page_size", pref_format, "A4");
+  int rank = 1; // corresponds to A4
+  for (int i = 0; i < size_count; i++) {
+    if (strcmp(pref_format, Fl_Paged_Device::page_formats[menu_to_size[i]].name) == 0) {
+      rank = i;
+      break;
+    }
+  }
+  bool need_set_default_psize;
+  int status = update_format_layout(rank, layout, need_set_default_psize);
+  if (status == -1) return 1;
+  Page_Format format = (Page_Format)(status & 0xFF);
+  if (need_set_default_psize) print_prefs.set("PDF/page_size", Fl_Paged_Device::page_formats[format].name);
+
+  Fl_Native_File_Chooser ch(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  ch.preset_file(defaultname);
+  ch.filter("*.pdf");
+  ch.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM);
+  int retval = ch.show();
+  if (retval) return (retval == -1 ? 2 : 1);
+
+  layout = (Page_Layout)(status & 0x100);
+  return begin_document(ch.filename(), format, layout, perr_message);
+}
+
+
+int Fl_PDF_Pango_File_Surface::begin_document(const char* outfname,
+                                           enum Fl_Paged_Device::Page_Format format,
+                                           enum Fl_Paged_Device::Page_Layout layout,
+                                           char **perr_message) {
+  int w = page_formats[format].width;
+  int h = page_formats[format].height;
+  if (layout == LANDSCAPE) {
+    int tmp = w;
+    w = h;
+    h = tmp;
+  }
+  Fl_PostScript_Graphics_Driver *dr = driver();
+  dr->output = fopen(outfname, "w");
+  cairo_status_t status = CAIRO_STATUS_WRITE_ERROR;
+  cairo_surface_t* cs = NULL;
+  if (dr->output) {
+    cs = cairo_pdf_surface_create_for_stream ( (cairo_write_func_t)write_to_cairo_stream,
+                                              dr->output, w, h);
+    status = cairo_surface_status(cs);
+  }
+  if (status != CAIRO_STATUS_SUCCESS) {
+    if (perr_message) {
+      const char *mess = cairo_status_to_string(status);
+      size_t l = strlen(mess) + strlen(outfname) + 100;
+      *perr_message = new char[l];
+      snprintf(*perr_message, l, "Error '%s' while attempting to create %s.", mess, outfname);
+    }
+    if (cs) cairo_surface_destroy(cs);
+    return 2;
+  }
+  cairo_pdf_surface_restrict_to_version(cs, CAIRO_PDF_VERSION_1_4);
+  cairo_t *cr = cairo_create(cs);
+  cairo_surface_destroy(cs);
+  dr->set_cairo(cr);
+  dr->pw_ = w;
+  dr->ph_ = h;
+  if (format == Fl_Paged_Device::A4) {
+    dr->left_margin = 18;
+    dr->top_margin = 18;
+  }
+  else {
+    dr->left_margin = 12;
+    dr->top_margin = 12;
+  }
+  doc_fname = strdup(outfname);
+  return 0;
+}
+
+
+int Fl_PDF_Pango_File_Surface::begin_page(void)
+{
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  Fl_Surface_Device::push_current(this);
+  cairo_save(ps->cr());
+  cairo_translate(ps->cr(), ps->left_margin, ps->top_margin);
+  cairo_set_line_width(ps->cr(), 1);
+  cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
+  cairo_save(ps->cr());
+  cairo_save(ps->cr());
+  ps->check_status();
+  x_offset = 0;
+  y_offset = 0;
+  ps->scale_x = ps->scale_y = 1.;
+  ps->angle = 0;
+  return 0;
+}
+
+
+void Fl_PDF_Pango_File_Surface::end_job() {
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  int error = 0;
+  cairo_surface_t *s = cairo_get_target(ps->cr());
+  cairo_surface_finish(s);
+  error = cairo_surface_status(s);
+  int err2 = fclose(ps->output);
+  ps->output = NULL;
+  if (!error) error = err2;
+  cairo_destroy(ps->cr());
+  while (ps->clip_){
+    Fl_PostScript_Graphics_Driver::Clip * c= ps->clip_;
+    ps->clip_= ps->clip_->prev;
+    delete c;
+  }
+  if (error) fl_alert ("Error during PostScript data output.");
+}
+
+
+Fl_Paged_Device *Fl_PDF_File_Surface::new_platform_pdf_surface_(const char ***pfname) {
+  Fl_PDF_Pango_File_Surface *surf = new Fl_PDF_Pango_File_Surface();
+  *pfname = (const char**)&surf->doc_fname;
+  return surf;
+}
+
+int Fl_PDF_File_Surface::begin_job(const char* defaultfilename,
+                                char **perr_message) {
+  return ((Fl_PDF_Pango_File_Surface*)platform_surface_)->begin_job(defaultfilename, perr_message);
+}
+
+
+int Fl_PDF_File_Surface::begin_document(const char* defaultfilename,
+                                     enum Fl_Paged_Device::Page_Format format,
+                                     enum Fl_Paged_Device::Page_Layout layout,
+                                     char **perr_message) {
+  return ((Fl_PDF_Pango_File_Surface*)platform_surface_)->begin_document(defaultfilename, format, layout, perr_message);
 }
 
 #endif // USE_PANGO
@@ -1646,6 +1905,7 @@ int Fl_PostScript_File_Device::begin_page (void)
   char feature[200];
   snprintf(feature, 200, "%%%%PageOrientation: %s", ps->pw_ > ps->ph_ ? "Landscape" : "Portrait");
   cairo_ps_surface_dsc_comment(cairo_get_target(ps->cr()), feature);
+  cairo_save(ps->cr());
   if (ps->pw_ > ps->ph_) {
     cairo_translate(ps->cr(), 0, ps->pw_);
     cairo_rotate(ps->cr(), -M_PI/2);
@@ -1653,7 +1913,6 @@ int Fl_PostScript_File_Device::begin_page (void)
   cairo_translate(ps->cr(), ps->left_margin, ps->top_margin);
   cairo_set_line_width(ps->cr(), 1);
   cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
-  cairo_save(ps->cr());
   cairo_save(ps->cr());
   cairo_save(ps->cr());
   ps->check_status();
@@ -1750,9 +2009,9 @@ Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Co
     if (s != 1) {
       ps->clocale_printf("GR GR GS %f %f SC GS\n", s, s);
     }
+    Fl::get_color(background, ps->bg_r, ps->bg_g, ps->bg_b);
 #endif
     ps->scale_x = ps->scale_y = s;
-    Fl::get_color(background, ps->bg_r, ps->bg_g, ps->bg_b);
   }
 }
 

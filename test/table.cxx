@@ -10,7 +10,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Table_Row.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 
 #include <stdio.h>
 #include <string.h>
@@ -19,7 +19,7 @@
 #define TERMINAL_HEIGHT 120
 
 // Globals
-Fl_Simple_Terminal *G_tty = 0;
+Fl_Terminal *G_tty = 0;
 
 // Simple demonstration class to derive from Fl_Table_Row
 class DemoTable : public Fl_Table_Row
@@ -349,7 +349,7 @@ int main(int argc, char **argv)
 {
     Fl_Window win(900, 730+TERMINAL_HEIGHT);
 
-    G_tty = new Fl_Simple_Terminal(0,730,win.w(),TERMINAL_HEIGHT);
+    G_tty = new Fl_Terminal(0,730,win.w(),TERMINAL_HEIGHT);
 
     G_table = new DemoTable(20, 20, 860, 460, "Demo");
     G_table->selection_color(FL_YELLOW);

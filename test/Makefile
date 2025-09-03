@@ -1,7 +1,7 @@
 #
-# Test/example program Makefile for the Fast Light Tool Kit (FLTK).
+# Test/demo program Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2023 by Bill Spitzak and others.
+# Copyright 1998-2024 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@ CPPUNITTEST = \
 	unittest_viewport.cxx \
 	unittest_scrollbarsize.cxx \
 	unittest_schemes.cxx \
-	unittest_simple_terminal.cxx \
+	unittest_terminal.cxx \
 	unittest_core.cxx
 
 OBJUNITTEST = \
@@ -75,6 +75,11 @@ CPPFILES =\
 	fullscreen.cxx \
 	gl_overlay.cxx \
 	glpuzzle.cxx \
+	glut_test.cxx \
+	grid_alignment \
+	grid_buttons \
+	grid_dialog \
+	grid_login \
 	hello.cxx \
 	help_dialog.cxx \
 	icon.cxx \
@@ -86,6 +91,7 @@ CPPFILES =\
 	keyboard.cxx \
 	label.cxx \
 	line_style.cxx \
+	line_style_docs.cxx \
 	list_visuals.cxx \
 	mandelbrot.cxx \
 	menubar.cxx \
@@ -121,6 +127,7 @@ CPPFILES =\
 	symbols.cxx \
 	table.cxx \
 	tabs.cxx \
+	terminal.cxx \
 	threads.cxx \
 	tile.cxx \
 	tiled_image.cxx \
@@ -129,6 +136,7 @@ CPPFILES =\
 	utf8.cxx \
 	valuators.cxx \
 	windowfocus.cxx \
+	wizard.cxx \
 	$(CPPUNITTEST)
 
 ALL =	\
@@ -160,6 +168,10 @@ ALL =	\
 	fltk-versions$(EXEEXT) \
 	fonts$(EXEEXT) \
 	forms$(EXEEXT) \
+	grid_alignment$(EXEEXT) \
+	grid_buttons$(EXEEXT) \
+	grid_dialog$(EXEEXT) \
+	grid_login$(EXEEXT) \
 	hello$(EXEEXT) \
 	help_dialog$(EXEEXT) \
 	icon$(EXEEXT) \
@@ -169,6 +181,7 @@ ALL =	\
 	input_choice$(EXEEXT) \
 	label$(EXEEXT) \
 	line_style$(EXEEXT) \
+	line_style_docs$(EXEEXT) \
 	list_visuals$(EXEEXT) \
 	menubar$(EXEEXT) \
 	message$(EXEEXT) \
@@ -204,7 +217,8 @@ ALL =	\
 	tiled_image$(EXEEXT) \
 	twowin$(EXEEXT) \
 	utf8$(EXEEXT) \
-	windowfocus$(EXEEXT)
+	windowfocus$(EXEEXT) \
+	wizard$(EXEEXT)
 
 ALLFLUID = \
 	checkers$(EXEEXT) \
@@ -216,6 +230,7 @@ ALLFLUID = \
 	radio$(EXEEXT) \
 	resize$(EXEEXT) \
 	tabs$(EXEEXT) \
+	terminal$(EXEEXT) \
 	tree$(EXEEXT) \
 	valuators$(EXEEXT) \
 	CubeView$(EXEEXT)
@@ -226,6 +241,7 @@ GLALL = \
 	fullscreen$(EXEEXT) \
 	gl_overlay$(EXEEXT) \
 	glpuzzle$(EXEEXT) \
+	glut_test$(EXEEXT) \
 	shape$(EXEEXT) \
 	unittests$(EXEEXT)
 
@@ -260,65 +276,66 @@ clean:
 	$(RM) radio.cxx radio.h
 	$(RM) resize.cxx resize.h
 	$(RM) tabs.cxx tabs.h
+	$(RM) terminal.cxx terminal.h
 	$(RM) tree.cxx tree.h
 	$(RM) valuators.cxx valuators.h
 
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
-	-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples
+	-$(INSTALL_DIR) "$(DESTDIR)$(docdir)/examples"
 	for file in *.h *.cxx *.fl demo.menu; do \
-		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples; \
+		$(INSTALL_DATA) $$file "$(DESTDIR)$(docdir)/examples"; \
 	done
-	-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples/pixmaps
+	-$(INSTALL_DIR) "$(DESTDIR)$(docdir)/examples/pixmaps"
 	for file in pixmaps/*.xbm pixmaps/*.xpm; do \
-		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples/pixmaps; \
+		$(INSTALL_DATA) $$file "$(DESTDIR)$(docdir)/examples/pixmaps"; \
 	done
 
 install-linux:
 	echo Installing games to $(DESTDIR)$(bindir)...
-	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
+	-$(INSTALL_DIR) "$(DESTDIR)$(bindir)"
+	-$(INSTALL_DIR) "$(DESTDIR)$(datadir)/applications"
+	-$(INSTALL_DIR) "$(DESTDIR)$(datadir)/icons/hicolor/32x32/apps"
+	-$(INSTALL_DIR) "$(DESTDIR)$(datadir)/icons/hicolor/128x128/apps"
 	for game in blocks checkers sudoku; do \
-		$(INSTALL_BIN) $$game $(DESTDIR)$(bindir); \
-		$(INSTALL_DATA) desktop/$$game.desktop  $(DESTDIR)/usr/share/applications; \
-		$(INSTALL_DATA) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(INSTALL_DATA) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(INSTALL_BIN) $$game "$(DESTDIR)$(bindir)"; \
+		$(INSTALL_DATA) desktop/$$game.desktop "$(DESTDIR)$(datadir)/applications"; \
+		$(INSTALL_DATA) desktop/$$game-32.png "$(DESTDIR)$(datadir)/icons/hicolor/32x32/apps/$$game.png"; \
+		$(INSTALL_DATA) desktop/$$game-128.png "$(DESTDIR)$(datadir)/icons/hicolor/128x128/apps/$$game.png"; \
 	done
 
 install-osx:
 	echo Installing games in $(DESTDIR)/Applications...
 	for game in blocks checkers sudoku; do \
-		if test ! -d $(DESTDIR)/Applications/$$game.app; then \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app; \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents; \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
-			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+		if test ! -d "$(DESTDIR)/Applications/$$game.app"; then \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app"; \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app/Contents"; \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app/Contents/MacOS"; \
+			$(INSTALL_DIR) "$(DESTDIR)/Applications/$$game.app/Contents/Resources"; \
 		fi; \
-		$(INSTALL_DATA) $$game.app/Contents/Info.plist $(DESTDIR)/Applications/$$game.app/Contents; \
-		$(INSTALL_BIN) $$game.app/Contents/MacOS/$$game $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
-		$(INSTALL_DATA) $$game.app/Contents/Resources/$$game.icns $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+		$(INSTALL_DATA) $$game.app/Contents/Info.plist "$(DESTDIR)/Applications/$$game.app/Contents"; \
+		$(INSTALL_BIN) $$game.app/Contents/MacOS/$$game "$(DESTDIR)/Applications/$$game.app/Contents/MacOS"; \
+		$(INSTALL_DATA) $$game.app/Contents/Resources/$$game.icns "$(DESTDIR)/Applications/$$game.app/Contents/Resources"; \
 	done
 
 uninstall:
 	echo "Removing examples programs from $(DESTDIR)$(docdir)/examples..."
-	-$(RMDIR) $(DESTDIR)$(docdir)/examples
+	-$(RMDIR) "$(DESTDIR)$(docdir)/examples"
 
 uninstall-linux:
 	echo Removing games from $(DESTDIR)$(bindir)...
 	for game in blocks checkers sudoku; do \
-		$(RM) $(DESTDIR)$(bindir)/$$game; \
-		$(RM) $(DESTDIR)/usr/share/applications/$$game.desktop; \
-		$(RM) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(RM) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(RM) "$(DESTDIR)$(bindir)/$$game"; \
+		$(RM) "$(DESTDIR)$(datadir)/applications/$$game.desktop"; \
+		$(RM) "$(DESTDIR)$(datadir)/icons/hicolor/32x32/apps/$$game.png"; \
+		$(RM) "$(DESTDIR)$(datadir)/icons/hicolor/128x128/apps/$$game.png"; \
 	done
 
 uninstall-osx:
 	echo Removing games from $(DESTDIR)/Applications...
-	$(RMDIR) $(DESTDIR)/Applications/blocks.app
-	$(RMDIR) $(DESTDIR)/Applications/checkers.app
-	$(RMDIR) $(DESTDIR)/Applications/sudoku.app
+	$(RMDIR) "$(DESTDIR)/Applications/blocks.app"
+	$(RMDIR) "$(DESTDIR)/Applications/checkers.app"
+	$(RMDIR) "$(DESTDIR)/Applications/sudoku.app"
 
 # FLUID file rules
 .fl.cxx .fl.h:
@@ -435,6 +452,14 @@ forms$(EXEEXT): forms.o
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ forms.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
+grid_alignment$(EXEEXT): grid_alignment.o
+
+grid_buttons$(EXEEXT): grid_buttons.o
+
+grid_dialog$(EXEEXT): grid_dialog.o
+
+grid_login$(EXEEXT): grid_login.o
+
 hello$(EXEEXT): hello.o
 
 help_dialog$(EXEEXT): help_dialog.o $(IMGLIBNAME)
@@ -470,6 +495,8 @@ label$(EXEEXT): label.o
 	$(OSX_ONLY) ../fltk-config --post $@
 
 line_style$(EXEEXT): line_style.o
+
+line_style_docs$(EXEEXT): line_style_docs.o
 
 list_visuals$(EXEEXT): list_visuals.o
 
@@ -604,6 +631,9 @@ table$(EXEEXT): table.o
 tabs$(EXEEXT): tabs.o
 tabs.cxx:	tabs.fl ../fluid/fluid$(EXEEXT)
 
+terminal$(EXEEXT): terminal.o
+terminal.cxx:	terminal.fl ../fluid/fluid$(EXEEXT)
+
 threads$(EXEEXT): threads.o
 # This ensures that we have this dependency even if threads are not
 # enabled in the current tree...
@@ -659,6 +689,11 @@ glpuzzle$(EXEEXT): glpuzzle.o
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+glut_test$(EXEEXT): glut_test.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ glut_test.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 unittests$(EXEEXT): $(OBJUNITTEST)

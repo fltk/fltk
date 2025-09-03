@@ -2,7 +2,7 @@
 // Definition of the part of the screen driver shared by X11 and Wayland platforms
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,15 +24,23 @@
 #  if USE_POLL
 
 #    include <poll.h>
-static pollfd *pollfds = 0;
 
 #  else
 #    if HAVE_SYS_SELECT_H
 #      include <sys/select.h>
 #    endif /* HAVE_SYS_SELECT_H */
 
-// The following #define is only needed for HP-UX 9.x and earlier:
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
+// NetBSD before version 3.0 declares select() in "unistd.h" (#944):
+// https://man.netbsd.org/NetBSD-2.1/select.2
+
+#    if defined(__NetBSD__)
+#      include <sys/param.h>  // For '__NetBSD_Version__' definition
+#      if defined(__NetBSD_Version__) && (__NetBSD_Version__ < 300000000)
+#        include <sys/types.h>
+#        include <sys/time.h>
+#        include <unistd.h>
+#      endif  // __NetBSD_Version__
+#    endif  // __NetBSD__
 
 #    define POLLIN 1
 #    define POLLOUT 4
@@ -43,7 +51,11 @@ static pollfd *pollfds = 0;
 
 class Fl_Unix_Screen_Driver : public Fl_Screen_Driver {
 public:
+#  if USE_POLL
+  static pollfd *pollfds;
+#else
   static fd_set fdsets[3];
+#  endif
   static int maxfd;
   static int nfds;
   static struct FD {

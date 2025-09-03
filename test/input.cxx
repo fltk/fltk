@@ -26,12 +26,12 @@
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 
 #define TERMINAL_HEIGHT 120
 
 // Globals
-Fl_Simple_Terminal *G_tty = 0;
+Fl_Terminal *G_tty = 0;
 
 void cb(Fl_Widget *ob) {
   G_tty->printf("Callback for %s '%s'\n",ob->label(),((Fl_Input*)ob)->value());
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
   Fl::args(argc, argv);
   Fl::get_system_colors();
   Fl_Window *window = new Fl_Window(400,420+TERMINAL_HEIGHT);
-  G_tty = new Fl_Simple_Terminal(0,420,window->w(),TERMINAL_HEIGHT);
+  G_tty = new Fl_Terminal(0,420,window->w(),TERMINAL_HEIGHT);
 
   int y = 10;
   input[0] = new Fl_Input(70,y,300,30,"Normal:"); y += 35;

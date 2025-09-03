@@ -1,7 +1,7 @@
 //
 // Multi-label widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,10 +60,63 @@ Fl_Labeltype fl_define_FL_MULTI_LABEL() {
   return _FL_MULTI_LABEL;
 }
 
+/**
+  Associate an Fl_Multi_Label with an Fl_Widget.
+
+  This method uses Fl_Widget::label(Fl_Labeltype, const char *) internally
+  to set the \e label of the widget, i.e. it stores a \e pointer to the
+  Fl_Multi_Label object (\e this).
+  An existing label that has been set using Fl_Widget::copy_label() will be
+  released prior to the assignment of the new label.
+
+  This sets the type of the widget's label to \_FL_MULTI_LABEL - note the
+  leading underscore ('_').
+
+  There is no way to use a method like Fl_Widget::copy_label() that transfers
+  ownership of the Fl_Multi_Label and its linked objects (images, text, and
+  chained Fl_Multi_Label's) to the widget.
+
+  The Fl_Multi_Label and all linked images, text labels, or chained Fl_Multi_Label
+  objects must exist during the lifetime of the widget and will not be released
+  when the widget is destroyed.
+
+  \note The user's code is responsible for releasing the Fl_Multi_Label and
+    all linked objects (images, text, chained Fl_Multi_Label's) after the
+    widget has been deleted. This may cause memory leaks if Fl_Multi_Label
+    is used and reassigned w/o releasing the objects assigned to it.
+*/
 void Fl_Multi_Label::label(Fl_Widget* o) {
   o->label(FL_MULTI_LABEL, (const char*)this); // calls fl_define_FL_MULTI_LABEL()
 }
 
+/**
+  Associate an Fl_Multi_Label with an Fl_Menu_Item.
+
+  This uses Fl_Menu_Item::label(Fl_Labeltype a, const char *b) internally to
+  set the \e label and the label type of the menu item, i.e. it stores a
+  \e pointer to the Fl_Multi_Label object (\e this).
+  An existing label (pointer) will be overwritten.
+
+  This sets the type of the menu item's label to \_FL_MULTI_LABEL - note the
+  leading underscore ('_').
+
+  There is no way to use a method like Fl_Widget::copy_label() that transfers
+  ownership of the Fl_Multi_Label and its linked objects (images, text, and
+  chained Fl_Multi_Label's) to the menu item.
+
+  The Fl_Multi_Label and all linked images, text labels, or chained
+  Fl_Multi_Label objects must exist during the lifetime of the menu and
+  will not be released when the menu item is destroyed.
+
+  \note The user's code is responsible for releasing the Fl_Multi_Label and
+    all linked objects (images, text, chained Fl_Multi_Label's) after the
+    menu has been deleted. This may cause memory leaks if Fl_Multi_Label
+    is used and reassigned w/o releasing the objects assigned to it.
+
+  \deprecated since 1.4.0: please use Fl_Menu_Item::label(Fl_Multi_Label *)
+
+  \see Fl_Menu_Item::label(Fl_Multi_Label *)
+*/
 void Fl_Multi_Label::label(Fl_Menu_Item* o) {
   o->label(FL_MULTI_LABEL, (const char*)this); // calls fl_define_FL_MULTI_LABEL()
 }

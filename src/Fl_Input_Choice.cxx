@@ -5,7 +5,7 @@
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -125,7 +125,6 @@
 */
 
 /** Constructor for private menu button. */
-
 Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const char*l)
                                  :Fl_Menu_Button(x,y,w,h,l)
 {
@@ -133,14 +132,22 @@ Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const 
 }
 
 /** Draws the private menu button. */
-
 void Fl_Input_Choice::InputMenuButton::draw() {
-  draw_box();
-  fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-  Fl_Rect ab(this);
-  ab.inset(1);
-  fl_draw_arrow(ab, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_color());
-  if (Fl::focus() == this) draw_focus();
+  if (!box()) return;
+
+  // Draw box for default scheme only
+  //    For all other schemes, let parent group's box show through
+  //
+  if (!Fl::scheme())
+    draw_box(pressed_menu_button_ == this ? fl_down(box()) : box(), color());
+  if (Fl::focus() == this) {
+    int woff = Fl::scheme() ? 2 : 1;   // helps center focus box
+    draw_focus(FL_UP_BOX, x(), y(), w()+woff, h(), color());
+  }
+
+  // draw the arrow (choice button)
+  Fl_Color arrow_color = active_r() ? labelcolor() : fl_inactive(labelcolor());
+  fl_draw_arrow(Fl_Rect(x(), y(), w(), h()), FL_ARROW_CHOICE, FL_ORIENT_NONE, arrow_color);
 }
 
 // Make pulldown menu appear under entire width of widget
@@ -239,7 +246,6 @@ void Fl_Input_Choice::inp_cb(Fl_Widget*, void *data) {
     if (o->when() & FL_WHEN_NOT_CHANGED)
       o->do_callback(FL_REASON_RESELECTED);
   }
-
   if (wp.deleted()) return;
 
   if (o->callback() != default_callback)
@@ -252,7 +258,7 @@ void Fl_Input_Choice::inp_cb(Fl_Widget*, void *data) {
 
   Inherited destructor destroys the widget and any values associated with it.
 */
-Fl_Input_Choice::Fl_Input_Choice (int X, int Y, int W, int H, const char *L)
+Fl_Input_Choice::Fl_Input_Choice(int X, int Y, int W, int H, const char *L)
 : Fl_Group(X,Y,W,H,L) {
   Fl_Group::box(FL_DOWN_BOX);
   align(FL_ALIGN_LEFT);                                 // default like Fl_Input
@@ -337,4 +343,64 @@ int Fl_Input_Choice::update_menubutton() {
     }
   }
   return 0;             // not found
+}
+
+void Fl_Input_Choice::draw() {
+  // This is copied from Fl_Choice::draw() and customized
+  Fl_Boxtype btype = Fl::scheme() ? FL_UP_BOX           // non-default uses up box
+                                  : FL_DOWN_BOX;        // default scheme uses down box
+  int dx = Fl::box_dx(btype);
+  int dy = Fl::box_dy(btype);
+
+  // From "original" code: modify the box color *only* for the default scheme.
+  // This is weird (why?). I believe we should either make sure that the text
+  // color contrasts well when the text is rendered *or* we should do this for
+  // *all* schemes. Anyway, adapting the old code... (Albrecht)
+  //
+  Fl_Color box_color = color();
+  if (!Fl::scheme()) {            // default scheme only, see comment above
+    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor())
+      box_color = FL_BACKGROUND2_COLOR;
+    else
+      box_color = fl_lighter(color());
+  }
+
+  // Draw the widget box
+  draw_box(btype, box_color);
+
+  // Draw menu button
+  draw_child(*menu_);
+
+  // Draw vertical divider lines for: gtk+, gleam, oxy
+  //
+  // Scheme:            Box or divider line
+  // ----------------------------------------
+  // Default (None):    Arrow box (FL_UP_BOX)
+  // gtk+, gleam, oxy:  Divider line
+  // else:              Nothing - Fl_Group::box() shows through
+  //
+  int woff = 0;
+  if (Fl::is_scheme("gtk+") ||
+      Fl::is_scheme("gleam") ||
+      Fl::is_scheme("oxy")) {
+    // draw the vertical divider line
+    int x1 = menu_x() - dx;
+    int y1 = y() + dy;
+    int y2 = y() + h() - dy;
+
+    fl_color(fl_darker(color()));
+    fl_yxline(x1+0, y1, y2);
+
+    fl_color(fl_lighter(color()));
+    fl_yxline(x1+1, y1, y2);
+    woff = 2;           // prevent Fl_Input from overdrawing divider
+  }
+
+  // Draw the input field
+  fl_push_clip(inp_x(), inp_y(), inp_w() - woff, inp_h());
+    draw_child(*inp_);
+  fl_pop_clip();
+
+  // Widget's label
+  draw_label();
 }

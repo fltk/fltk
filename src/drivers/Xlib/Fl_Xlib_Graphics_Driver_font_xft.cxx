@@ -18,6 +18,9 @@
 
 #include "../../flstring.h"
 #include "Fl_Xlib_Graphics_Driver.H"
+#if USE_PANGO
+#  include "../Cairo/Fl_Cairo_Graphics_Driver.H"
+#endif
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>  // fl_strdup()
@@ -1208,6 +1211,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
   double l = width_unscaled(str, n);
   pango_matrix_rotate(&mat, angle); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
+  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
   pango_layout_set_text(playout_, str, n);
   int w, h;
   pango_layout_get_pixel_size(playout_, &w, &h);
@@ -1263,6 +1267,7 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   }
   const char *old = 0;
   if (!str2) old = pango_layout_get_text(playout_);
+  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
   if (!old || (int)strlen(old) != n || memcmp(str, old, n)) // do not re-set text if equal to text already in layout
         pango_layout_set_text(playout_, str, n);
   if (str2) free(str2);
@@ -1335,6 +1340,7 @@ double Fl_Xlib_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
   if (!playout_) context();
   int width, height;
   pango_layout_set_font_description(playout_, pfd_array[font_]);
+  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
   pango_layout_set_text(playout_, str, n);
   pango_layout_get_pixel_size(playout_, &width, &height);
   return (double)width;
@@ -1343,6 +1349,7 @@ double Fl_Xlib_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
 void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h) {
   if (!playout_) context();
   pango_layout_set_font_description(playout_, pfd_array[font_]);
+  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
   pango_layout_set_text(playout_, str, n);
   int y_correction;
   fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, descent_unscaled(), height_unscaled(), y_correction);

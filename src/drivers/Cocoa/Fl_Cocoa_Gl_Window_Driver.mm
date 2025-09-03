@@ -106,7 +106,7 @@ static NSOpenGLPixelFormat* mode_to_NSOpenGLPixelFormat(int m, const int *alistp
     }
     if (m & FL_STEREO) {
       //list[n++] = AGL_STEREO;
-      attribs[n++] = NSOpenGLPFAStereo;
+      attribs[n++] = 6/*NSOpenGLPFAStereo*/;
     }
     if ((m & FL_MULTISAMPLE) && fl_mac_os_version >= 100400) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -165,7 +165,7 @@ Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 }
 
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_VERSION_12_0
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #  define NSOpenGLContextParameterSurfaceOpacity NSOpenGLCPSurfaceOpacity
 #endif
 
@@ -187,7 +187,7 @@ static NSOpenGLContext *create_GLcontext_for_window(
   if (shared_ctx && !context) context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:nil];
   if (context) {
     NSView *view = [fl_xid(window) contentView];
-    if (fl_mac_os_version >= 100700) {
+    if (view && fl_mac_os_version >= 100700) {
       //replaces  [view setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
       typedef void (*bestResolutionIMP)(id, SEL, BOOL);
       static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
@@ -217,18 +217,18 @@ GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const 
 }
 
 void Fl_Cocoa_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
-  if (context != cached_context || w != cached_window) {
-    cached_context = context;
+  NSOpenGLContext *current_context = [NSOpenGLContext currentContext];
+  if (context != current_context || w != cached_window) {
     cached_window = w;
     [(NSOpenGLContext*)context makeCurrentContext];
   }
 }
 
 void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
-  if (cached_context == context) {
-    cached_context = 0;
+  NSOpenGLContext *current_context = [NSOpenGLContext currentContext];
+  if (current_context == context) {
     cached_window = 0;
-    [[NSOpenGLContext currentContext] clearDrawable];
+    [current_context clearDrawable];
   }
   [(NSOpenGLContext*)context release];
   del_context(context);
@@ -242,7 +242,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
 void Fl_Cocoa_Gl_Window_Driver::make_overlay_current() {
   // this is not very useful, but unfortunately, Apple decided
   // that front buffer drawing can no longer (OS X 10.4) be supported on their platforms.
-  pWindow->make_current();
+  if (pWindow->shown()) pWindow->make_current();
 }
 
 void Fl_Cocoa_Gl_Window_Driver::redraw_overlay() {
@@ -270,7 +270,7 @@ void Fl_Cocoa_Gl_Window_Driver::after_show() {
       [shared_gl1_ctxt retain];
     }
     [view addSubview:gl1view];
-  #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
+  #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
       [gl1view setWantsBestResolutionOpenGLSurface:YES];
     }
@@ -355,13 +355,30 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#  define NSOpenGLContextParameterSwapInterval NSOpenGLCPSwapInterval
+#endif
+
+void Fl_Cocoa_Gl_Window_Driver::swap_interval(int n) {
+  GLint interval = (GLint)n;
+  NSOpenGLContext* ctx = (NSOpenGLContext*)pWindow->context();
+  if (ctx)
+    [ctx setValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
+}
+
+int Fl_Cocoa_Gl_Window_Driver::swap_interval() const {
+  GLint interval = (GLint)-1;
+  NSOpenGLContext* ctx = (NSOpenGLContext*)pWindow->context();
+  if (ctx)
+    [ctx getValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
+  return interval;
+}
+
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
   if (pWindow->shown()) apply_scissor();
   [(NSOpenGLContext*)pWindow->context() update];
-  [(NSOpenGLContext*)pWindow->context() flushBuffer];
   if (gl1ctxt) {
     [gl1ctxt update];
-    [gl1ctxt flushBuffer];
   }
 }
 
@@ -435,6 +452,23 @@ static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWid
   return newimg;
 }
 
+
+static Fl_RGB_Image *cgimage_to_rgb4(CGImageRef img) {
+  int w = (int)CGImageGetWidth(img);
+  int h = (int)CGImageGetHeight(img);
+  CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+  uchar *rgba = new uchar[4 * w * h];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, w, h, 8, 4 * w, cspace,
+                                             kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(cspace);
+  CGContextDrawImage(auxgc, CGRectMake(0, 0, w, h), img);
+  CGContextRelease(auxgc);
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(rgba, w, h, 4);
+  rgb->alloc_array = 1;
+  return rgb;
+}
+
+
 Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h)
 {
   Fl_Gl_Window* glw = pWindow;
@@ -442,6 +476,20 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   if (factor != 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  if (fl_mac_os_version >= 100500) {
+    NSWindow *nswin = (NSWindow*)fl_mac_xid(pWindow);
+    CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(nswin);
+    int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
+    bt *= (factor / Fl_Graphics_Driver::default_driver().scale());
+    CGRect cgr = CGRectMake(x, y + bt, w, h); // add vertical offset to bypass titlebar
+    CGImageRef cgimg = CGImageCreateWithImageInRect(img_full, cgr); // 10.4
+    CGImageRelease(img_full);
+    Fl_RGB_Image *rgb = cgimage_to_rgb4(cgimg);
+    CGImageRelease(cgimg);
+    return rgb;
+  }
+#endif
   [(NSOpenGLContext*)glw->context() makeCurrentContext];
 // to capture also the overlay and for directGL demo
   [(NSOpenGLContext*)glw->context() flushBuffer];

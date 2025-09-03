@@ -22,12 +22,9 @@
 
 #include "Fl_System_Driver.H"
 #include <FL/Fl.H>
-#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Image.H>
 #include <FL/Fl_Tree_Prefs.H>
-
-// INTERNAL: BUILT IN OPEN/STOW XPMS
-//    These can be replaced via prefs.openicon()/closeicon()
-//
+#include <FL/fl_draw.H>
 
 /**
  \cond DriverDev
@@ -35,61 +32,16 @@
  \{
  */
 
-const char * const Fl_System_Driver::tree_open_xpm[] = {
-  "11 11 3 1",
-  ".    c #fefefe",
-  "#    c #444444",
-  "@    c #000000",
-  "###########",
-  "#.........#",
-  "#.........#",
-  "#....@....#",
-  "#....@....#",
-  "#..@@@@@..#",
-  "#....@....#",
-  "#....@....#",
-  "#.........#",
-  "#.........#",
-  "###########"
-};
-
-const char * const Fl_System_Driver::tree_close_xpm[] = {
-"11 11 3 1",
-".      c #fefefe",
-"#      c #444444",
-"@      c #000000",
-"###########",
-"#.........#",
-"#.........#",
-"#.........#",
-"#.........#",
-"#..@@@@@..#",
-"#.........#",
-"#.........#",
-"#.........#",
-"#.........#",
-"###########"
-};
-
-
-/**
- Return the address of a pixmap that show a plus in a box.
-
- This pixmap is used to indicate a brach of a tree that is closed and
- can be opened by clicking it.
-
- Other platforms may use other symbols which can be reimplemented in the
- driver. Notably, Apple Mac systems mark a closed branch with a triangle
- pointing to the right, and an open branch with a triangle pointing down.
- */
-Fl_Pixmap *Fl_System_Driver::tree_openpixmap() {
-  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_open_xpm);
-  return pixmap;
-}
-
-Fl_Pixmap *Fl_System_Driver::tree_closepixmap() {
-  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_close_xpm);
-  return pixmap;
+// Draw non-OS specific Fl_Tree open/close icons
+//    ┌───┐   ┌───┐
+//    │ + │   │ - │
+//    └───┘   └───┘
+void Fl_System_Driver::tree_draw_expando_button(int x, int y, bool state, bool active) {
+  fl_rectf(x, y, 11, 11, active ? FL_BACKGROUND2_COLOR : fl_inactive(FL_BACKGROUND2_COLOR)); // fill
+  fl_rect(x, y, 11, 11, FL_INACTIVE_COLOR);             // outline
+  fl_color(active ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR);
+  fl_line(x + 3, y + 5, x + 7, y + 5);                  // horiz line
+  if (state) fl_line(x + 5, y + 3, x + 5, y + 7);       // vert line
 }
 
 int Fl_System_Driver::tree_connector_style() {
@@ -109,7 +61,7 @@ int Fl_System_Driver::tree_connector_style() {
 /// \param[in] val -- The new image, or zero to use the default [+] icon.
 ///
 void Fl_Tree_Prefs::openicon(Fl_Image *val) {
-  _openimage = val ? val : Fl::system_driver()->tree_openpixmap();
+  _openimage = val ? val : 0;
   // Update deactivated version of icon..
   if ( _opendeimage ) delete _opendeimage;
   if ( _openimage ) {
@@ -126,7 +78,7 @@ void Fl_Tree_Prefs::openicon(Fl_Image *val) {
 /// \param[in] val -- The new image, or zero to use the default [-] icon.
 ///
 void Fl_Tree_Prefs::closeicon(Fl_Image *val) {
-  _closeimage = val ? val : Fl::system_driver()->tree_closepixmap();
+  _closeimage = val ? val : 0;
   // Update deactivated version of icon..
   if ( _closedeimage ) delete _closedeimage;
   if ( _closeimage ) {
@@ -151,15 +103,13 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _linespacing            = 0;
   _labelfgcolor           = FL_FOREGROUND_COLOR;
   _labelbgcolor           = 0xffffffff;         // we use this as 'transparent'
-  _connectorcolor         = Fl_Color(43);
+  _connectorcolor         = FL_INACTIVE_COLOR;
   _connectorstyle         = (Fl_Tree_Connector)Fl::system_driver()->tree_connector_style();
-  _openimage              = Fl::system_driver()->tree_openpixmap();
-  _closeimage             = Fl::system_driver()->tree_closepixmap();
+  _openimage              = 0;
+  _closeimage             = 0;
   _userimage              = 0;
-  _opendeimage = _openimage->copy();
-  _opendeimage->inactive();
-  _closedeimage = _closeimage->copy();
-  _closedeimage->inactive();
+  _opendeimage            = 0;
+  _closedeimage           = 0;
   _userdeimage            = 0;
   _showcollapse           = 1;
   _showroot               = 1;

@@ -32,7 +32,7 @@ fl_normal_label(const Fl_Label* o, int X, int Y, int W, int H, Fl_Align align)
 {
   fl_font(o->font, o->size);
   fl_color((Fl_Color)o->color);
-  fl_draw(o->value, X, Y, W, H, align, o->image);
+  fl_draw(o->value, X, Y, W, H, align, o->image, 1, o->spacing);
 }
 
 void
@@ -44,11 +44,11 @@ fl_normal_measure(const Fl_Label* o, int& W, int& H) {
     if (o->align_ & FL_ALIGN_IMAGE_BACKDROP) {          // backdrop: ignore
       // ignore backdrop image for calculation
     } else if (o->align_ & FL_ALIGN_IMAGE_NEXT_TO_TEXT) { // text and image side by side
-      W += iw;
+      W += iw + o->spacing;
       if (ih > H) H = ih;
     } else {
       if (iw > W) W = iw;
-      H += ih;
+      H += ih + o->spacing;
     }
   }
 }
@@ -82,6 +82,16 @@ void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m)
 /** Draws a label with arbitrary alignment in an arbitrary box. */
 void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
   if (!value && !image) return;
+  switch (align&(FL_ALIGN_TOP|FL_ALIGN_BOTTOM)) {
+    case 0: Y += v_margin_; H -= 2*v_margin_; break;
+    case FL_ALIGN_TOP: Y += v_margin_; H -= v_margin_; break;
+    case FL_ALIGN_BOTTOM: H -= v_margin_; break;
+  }
+  switch (align&(FL_ALIGN_LEFT|FL_ALIGN_RIGHT)) {
+    case 0: X += h_margin_; W -= 2*h_margin_; break;
+    case FL_ALIGN_LEFT: X += h_margin_; W -= h_margin_; break;
+    case FL_ALIGN_RIGHT: W -= h_margin_; break;
+  }
   table[type](this, X, Y, W, H, align);
 }
 /**
@@ -95,6 +105,7 @@ void Fl_Label::measure(int& W, int& H) const {
     return;
   }
 
+//  if (W > 0) W -= h_margin_;
   Fl_Label_Measure_F* f = ::measure[type]; if (!f) f = fl_normal_measure;
   f(this, W, H);
 }

@@ -2,7 +2,7 @@
 // FLTK native OS file chooser widget for macOS
 //
 // Copyright 2004 Greg Ercolano.
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,6 +28,17 @@
 #include <FL/fl_string_functions.h>
 #define MAXFILTERS      80
 #import <Cocoa/Cocoa.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_11_0
+#  import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_9
+const NSInteger NSModalResponseOK = NSFileHandlingPanelOKButton;
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+const NSUInteger NSControlSizeRegular = NSRegularControlSize;
+#endif
 
 class Fl_Quartz_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
 private:
@@ -406,9 +417,12 @@ int Fl_Quartz_Native_File_Chooser_Driver::get_saveas_basename(void) {
     const char *d = [[[[_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
     int l = (int)strlen(d) + 1;
     if (strcmp(d, "/") == 0) l = 1;
-    int lu = strlen(UNLIKELYPREFIX);
-    // Remove UNLIKELYPREFIX between directory and filename parts
-    if (memcmp(q+l, UNLIKELYPREFIX, lu) == 0) memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
+    int lu = (int)strlen(UNLIKELYPREFIX);
+    int ln = (int)strlen(q+l);
+    if (ln >= lu) {
+      // Remove UNLIKELYPREFIX between directory and filename parts
+      if (memcmp(q+l, UNLIKELYPREFIX, lu) == 0) memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
+    }
   }
   set_single_pathname( q );
   free(q);
@@ -487,7 +501,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   BOOL isdir = NO;
   [[NSFileManager defaultManager] fileExistsAtPath:filename isDirectory:&isdir];
   if (isdir) return YES;
-  if ( fl_filename_match([filename fileSystemRepresentation], filter_pattern[ [nspopup indexOfSelectedItem] ]) ) return YES;
+  if ( fl_filename_match([filename fileSystemRepresentation], filter_pattern[([nspopup indexOfSelectedItem])]) ) return YES;
   return NO;
 }
 - (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url
@@ -505,6 +519,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   BOOL saveas_confirm;
 }
 - (NSString *)panel:(id)sender userEnteredFilename:(NSString *)filename confirmed:(BOOL)okFlag;
+- (void)control_allowed_types:(const char *)p;
 - (void)changedPopup:(id)sender;
 - (void)panel:(NSSavePanel*)p;
 - (void)option:(BOOL)o;
@@ -516,6 +531,21 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   // User has clicked save, and no overwrite confirmation should occur.
   // To get the latter, we need to change the name we return (hence the prefix):
   return [@ UNLIKELYPREFIX stringByAppendingString:filename];
+}
+- (void)control_allowed_types:(const char *)p
+{
+  NSString *ext = [NSString stringWithUTF8String:p];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_11_0
+  if (@available(macOS 11.0, *)) {
+      UTType *type = [UTType typeWithFilenameExtension:ext]; // 11.0 + framework UniformTypeIdentifiers
+      [dialog setAllowedContentTypes:[NSArray arrayWithObject:type]]; // 11.0
+  }
+  else
+#endif
+  if (fl_mac_os_version >= 100900) {
+    [dialog performSelector:@selector(setAllowedFileTypes:)
+                 withObject:[NSArray arrayWithObject:ext]];
+  }
 }
 - (void)changedPopup:(id)sender
 // runs when the save panel popup menu changes output file type
@@ -537,7 +567,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   NSString *ns = [NSString stringWithFormat:@"%@.%@",
                   [[dialog performSelector:@selector(nameFieldStringValue)] stringByDeletingPathExtension],
                   [NSString stringWithUTF8String:p]];
-  if (fl_mac_os_version >= 100900) [dialog setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
+  [self control_allowed_types:p];
   free(s);
   [dialog performSelector:@selector(setNameFieldStringValue:) withObject:ns];
 }
@@ -562,7 +592,11 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 @end
 @implementation FLHiddenFilesAction
 - (void)action {
-  [panel setShowsHiddenFiles:[button intValue]];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 100600) {
+    [panel setShowsHiddenFiles:[button intValue]]; // 10.6
+  }
+#endif
 }
 @end
 
@@ -599,18 +633,18 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
     popup = [[[NSPopUpButton alloc ] initWithFrame:rectpop pullsDown:NO] autorelease];
     [view addSubview:box];
     [view addSubview:popup];
-    [box setBorderType:NSNoBorder];
     NSString *nstitle = [[NSString alloc] initWithUTF8String:title];
     [box setTitle:nstitle];
+    [box setTitlePosition:NSBelowTop];
     [nstitle release];
-    NSFont *font = [NSFont controlContentFontOfSize:NSRegularControlSize];
+    NSFont *font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
     [box setTitleFont:font];
     [box sizeToFit];
     // horizontally move box to fit the locale-dependent width of its title
     NSRect r=[box frame];
-    NSPoint o = r.origin;
-    o.x = rectpop.origin.x - r.size.width + 15;
-    [box setFrameOrigin:o];
+    r.origin.x = rectpop.origin.x - r.size.width;
+    r.origin.y = rectpop.origin.y + (rectpop.size.height - r.size.height) / 2;
+    [box setFrame:r];
     CFStringRef tab = CFSTR("\n");
     CFStringRef tmp_cfs;
     tmp_cfs = CFStringCreateWithCString(NULL, filter, kCFStringEncodingUTF8);
@@ -675,12 +709,15 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
   }
   else
 #endif
-  {
-    retval = [(id)_panel runModalForDirectory:dir file:fname];
+  { // the deprecation warning can be ignored because runs only for macOS < 10.6
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    retval = [_panel runModalForDirectory:dir file:fname]; // deprecated in 10.6
+#pragma clang diagnostic pop
   }
   [dir release];
   [preset release];
-  return (retval == NSFileHandlingPanelOKButton ? 1 : 0);
+  return (retval == NSModalResponseOK ? 1 : 0);
 }
 
 // POST BROWSER
@@ -770,7 +807,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
           do q++; while (*q==' ' || *q=='{');
           p = fl_strdup(q);
           q = strchr(p, ','); if (q) *q = 0;
-          [_panel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
+          [saveDelegate control_allowed_types:p];
           free(p);
         }
       }

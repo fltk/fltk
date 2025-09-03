@@ -136,7 +136,7 @@ void Less_CB(Fl_Widget *w, void *d) {
 }
 
 int main(int argc, char **argv) {
-  Fl_Double_Window *win = new Fl_Double_Window(500, 400, "Simple Table");
+  Fl_Double_Window *win = new Fl_Double_Window(500, 400, "Table With Right Column Stretch Fit");
   MyTable *table = new MyTable(10,10,win->w()-20,340);
   Fl_Button more(10, 360,100,25,"+ Row"); more.callback(More_CB, (void*)table);
   Fl_Button less(220,360,100,25,"- Row"); less.callback(Less_CB, (void*)table);

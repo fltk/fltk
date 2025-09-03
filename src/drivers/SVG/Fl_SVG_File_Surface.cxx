@@ -18,18 +18,20 @@
 
 #include <config.h>
 #include <FL/Fl_SVG_File_Surface.H>
-#if FLTK_USE_SVG
+#ifdef FLTK_USE_SVG
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include <FL/math.h>
 #include <FL/Fl_Widget_Surface.H>
 #include <FL/Fl_Graphics_Driver.H>
+#include "../../Fl_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/fl_string_functions.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 extern "C" {
 #if defined(HAVE_LIBPNG)
@@ -71,6 +73,7 @@ public:
   ~Fl_SVG_Graphics_Driver();
   FILE* file() {return out_;}
 protected:
+  int clocale_printf(const char *format, ...);
   void rect(int x, int y, int w, int h) FL_OVERRIDE;
   void rectf(int x, int y, int w, int h) FL_OVERRIDE;
   virtual void compute_dasharray(float s, char *dashes=0);
@@ -152,6 +155,27 @@ Fl_SVG_Graphics_Driver::~Fl_SVG_Graphics_Driver()
   if (last_rgb_name_) free(last_rgb_name_);
 }
 
+
+int Fl_SVG_Graphics_Driver::clocale_printf(const char *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int retval = Fl::system_driver()->clocale_vprintf(out_, format, args);
+  va_end(args);
+  return retval;
+}
+
+
+static int clocale_fprintf(FILE *f, const char *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int retval = Fl::system_driver()->clocale_vprintf(f, format, args);
+  va_end(args);
+  return retval;
+}
+
+
 void Fl_SVG_Graphics_Driver::rect(int x, int y, int w, int h) {
   fprintf(out_, "<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" "
           "fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" stroke-dasharray=\"%s\""
@@ -159,7 +183,7 @@ void Fl_SVG_Graphics_Driver::rect(int x, int y, int w, int h) {
 }
 
 void Fl_SVG_Graphics_Driver::rectf(int x, int y, int w, int h) {
-  fprintf(out_, "<rect x=\"%.3f\" y=\"%.3f\" width=\"%d\" height=\"%d\" "
+  clocale_fprintf(out_, "<rect x=\"%.3f\" y=\"%.3f\" width=\"%d\" height=\"%d\" "
           "fill=\"rgb(%u,%u,%u)\" />\n", x-.5, y-.5, w, h, red_, green_, blue_);
 }
 
@@ -329,7 +353,7 @@ Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f, int (*closef)(FI
           "<svg width=\"%dpx\" height=\"%dpx\" viewBox=\"0 0 %d %d\"\n"
           "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n", sw, sh, sw, sh);
   width_ = w; height_ = h;
-  fprintf(f, "<g transform=\"scale(%f)\">\n", s);
+  clocale_fprintf(f, "<g transform=\"scale(%f)\">\n", s);
   fputs("<g transform=\"translate(0,0)\">\n", f);
 }
 
@@ -475,7 +499,7 @@ void Fl_SVG_Graphics_Driver::define_rgb_png(Fl_RGB_Image *rgb, const char *name,
   float f = rgb->data_w() > rgb->data_h() ? float(rgb->w()) / rgb->data_w(): float(rgb->h()) / rgb->data_h();
   if (name) fprintf(out_, "<defs><image id=\"%s\" ", name);
   else fprintf(out_, "<image x=\"%d\" y=\"%d\" ", x, y);
-  fprintf(out_, "width=\"%f\" height=\"%f\" href=\"data:image/png;base64,\n", f*rgb->data_w(), f*rgb->data_h());
+  clocale_printf("width=\"%f\" height=\"%f\" href=\"data:image/png;base64,\n", f*rgb->data_w(), f*rgb->data_h());
   // Transforms the image into a stream of bytes in PNG format,
   // base64-encode this byte stream, and outputs the result to the svg FILE.
   svg_base64_t svg_base64_data;
@@ -564,7 +588,7 @@ void Fl_SVG_Graphics_Driver::define_rgb_jpeg(Fl_RGB_Image *rgb, const char *name
   float f = rgb->data_w() > rgb->data_h() ? float(rgb->w()) / rgb->data_w(): float(rgb->h()) / rgb->data_h();
   if (name) fprintf(out_, "<defs><image id=\"%s\" ", name);
   else fprintf(out_, "<image x=\"%d\" y=\"%d\" ", x, y);
-  fprintf(out_, "width=\"%f\" height=\"%f\" href=\"data:image/jpeg;base64,\n", f*rgb->data_w(), f*rgb->data_h());
+  clocale_printf("width=\"%f\" height=\"%f\" href=\"data:image/jpeg;base64,\n", f*rgb->data_w(), f*rgb->data_h());
   // Transforms the image into a stream of bytes in JPEG format,
   // base64-encode this byte stream, and outputs the result to the svg FILE.
   jpeg_compress_struct cinfo;
@@ -856,7 +880,7 @@ void Fl_SVG_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2
 
 void Fl_SVG_Graphics_Driver::end_points() {
   for (int i=0; i<n; i++) {
-    fprintf(out_, "<path d=\"M %f %f L %f %f\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" />\n",
+    clocale_printf("<path d=\"M %f %f L %f %f\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" />\n",
             xpoint[i].x, xpoint[i].y, xpoint[i].x, xpoint[i].y, red_, green_, blue_, width_);
   }
 }
@@ -867,9 +891,9 @@ void Fl_SVG_Graphics_Driver::end_line() {
     return;
   }
   if (n<=1) return;
-  fprintf(out_, "<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
+  clocale_printf("<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    fprintf(out_, " L %f %f", xpoint[i].x, xpoint[i].y);
+    clocale_printf(" L %f %f", xpoint[i].x, xpoint[i].y);
   fprintf(out_, "\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" stroke-dasharray=\"%s\" stroke-linecap=\"%s\" stroke-linejoin=\"%s\" />\n",
           red_, green_, blue_, width_, dasharray_, linecap_, linejoin_);
 }
@@ -881,9 +905,9 @@ void Fl_SVG_Graphics_Driver::end_polygon() {
     return;
   }
   if (n<=1) return;
-  fprintf(out_, "<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
+  clocale_printf("<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    fprintf(out_, " L %f %f", xpoint[i].x, xpoint[i].y);
+    clocale_printf(" L %f %f", xpoint[i].x, xpoint[i].y);
   fprintf(out_, " z\" fill=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
 }
 
@@ -896,7 +920,7 @@ void Fl_SVG_Graphics_Driver::circle(double x, double y, double r) {
   int w = (int)rint(xt+rx)-llx;
   int lly = (int)rint(yt-ry);
   int h = (int)rint(yt+ry)-lly;
-  fprintf(out_, "<circle cx=\"%g\" cy=\"%g\" r=\"%g\"", xt, yt, (w+h)*0.25f);
+  clocale_printf("<circle cx=\"%g\" cy=\"%g\" r=\"%g\"", xt, yt, (w+h)*0.25f);
   if (what == POLYGON)
     fprintf(out_, " fill");
   else
@@ -911,9 +935,9 @@ void Fl_SVG_Graphics_Driver::end_complex_polygon() {
     return;
   }
   if (n<=1) return;
-  fprintf(out_, "<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
+  clocale_printf("<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    fprintf(out_, " L %f %f", xpoint[i].x, xpoint[i].y);
+    clocale_printf(" L %f %f", xpoint[i].x, xpoint[i].y);
   fprintf(out_, " z\" fill=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
 }
 
@@ -952,22 +976,22 @@ void Fl_SVG_Graphics_Driver::arc_pie(char AorP, int x, int y, int w, int h, doub
     sx = sy = float(2*r);
     stroke_width /= sx;
   }
-  fprintf(out_, "<g transform=\"translate(%f,%f) scale(%f,%f)\">\n", cx, cy, sx, sy);
+  clocale_printf("<g transform=\"translate(%f,%f) scale(%f,%f)\">\n", cx, cy, sx, sy);
   if (AorP == 'A') compute_dasharray((sx+sy)/2, user_dash_array_);
   if (full) {
     fprintf(out_, "<circle cx=\"0\" cy=\"0\" r=\"0.5\" style=\"fill");
     if (AorP == 'A')
-      fprintf(out_, ":none;stroke-width:%f;stroke-linecap:%s;stroke-dasharray:%s;stroke", stroke_width, linecap_, dasharray_);
+      clocale_printf(":none;stroke-width:%f;stroke-linecap:%s;stroke-dasharray:%s;stroke", stroke_width, linecap_, dasharray_);
   } else {
     double x1 = 0.5*cos(a1), y1 = 0.5 * sin(a1);
     double x2 = 0.5*cos(a2), y2 = 0.5 * sin(a2);
     int fA = fabs(a2-a1) > M_PI ? 1 : 0;
     if (AorP == 'A')
-      fprintf(out_, "<path d=\"M %f,%f A 0.5,0.5 0 %d,0 %f,%f\" "
+      clocale_printf("<path d=\"M %f,%f A 0.5,0.5 0 %d,0 %f,%f\" "
               "style=\"fill:none;stroke-width:%f;stroke-linecap:%s;stroke-dasharray:%s;stroke",
               x1, y1, fA, x2, y2, stroke_width, linecap_, dasharray_);
     else
-      fprintf(out_, "<path d=\"M 0,0 L %f,%f A 0.5,0.5 0 %d,0 %f,%f z\" style=\"fill",
+      clocale_printf("<path d=\"M 0,0 L %f,%f A 0.5,0.5 0 %d,0 %f,%f z\" style=\"fill",
               x1, y1, fA, x2, y2);
   }
   fprintf(out_, ":rgb(%u,%u,%u)\"/>\n</g>\n", red_, green_, blue_);

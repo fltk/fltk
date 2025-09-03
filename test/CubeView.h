@@ -1,7 +1,7 @@
 //
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,7 +17,16 @@
 #ifndef CUBEVIEW_H
 #define CUBEVIEW_H 1
 
+// Note: The CubeView demo program can only be built if
+//  (1) '<config.h>' can be included (FLTK build) *or*
+//  (2) 'HAVE_GL' has been defined prior to including this header.
+
+// Define 'HAVE_GL=1' on the compiler commandline to build
+// this program w/o 'config.h' (needs FLTK lib with GL).
+
+#ifndef HAVE_GL
 #include <config.h>
+#endif
 
 // Note to editor: the following code can and should be copied
 // to the fluid tutorial in 'documentation/src/fluid.dox'

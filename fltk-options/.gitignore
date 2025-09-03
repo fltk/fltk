@@ -1,7 +1,0 @@
-#
-# Files to be ignored by Git (do not commit)
-#
-
-fltk-options
-fltk-options-shared
-fltk-options.app

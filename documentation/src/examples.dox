@@ -36,86 +36,87 @@ you build FLTK, unlike those in the 'test' directory shown below.
 <td> \ref examples_checkers        </td>
 </tr>
 <tr>
+<td> \ref examples_clipboard       </td>
 <td> \ref examples_clock           </td>
 <td> \ref examples_colbrowser      </td>
 <td> \ref examples_color_chooser   </td>
 <td> \ref examples_cube            </td>
 <td> \ref examples_CubeView        </td>
-<td> \ref examples_cursor          </td>
 </tr>
 <tr>
+<td> \ref examples_cursor          </td>
 <td> \ref examples_curve           </td>
 <td> \ref examples_demo            </td>
 <td> \ref examples_device          </td>
 <td> \ref examples_doublebuffer    </td>
 <td> \ref examples_editor          </td>
-<td> \ref examples_fast_slow       </td>
 </tr>
 <tr>
+<td> \ref examples_fast_slow       </td>
 <td> \ref examples_file_chooser    </td>
 <td> \ref examples_fluid           </td>
 <td> \ref examples_fonts           </td>
 <td> \ref examples_forms           </td>
 <td> \ref examples_fractals        </td>
-<td> \ref examples_fullscreen      </td>
 </tr>
 <tr>
+<td> \ref examples_fullscreen      </td>
 <td> \ref examples_gl_overlay      </td>
 <td> \ref examples_glpuzzle        </td>
 <td> \ref examples_hello           </td>
 <td> \ref examples_help_dialog     </td>
 <td> \ref examples_icon            </td>
-<td> \ref examples_iconize         </td>
 </tr>
 <tr>
+<td> \ref examples_iconize         </td>
 <td> \ref examples_image           </td>
 <td> \ref examples_inactive        </td>
 <td> \ref examples_input           </td>
 <td> \ref examples_input_choice    </td>
 <td> \ref examples_keyboard        </td>
-<td> \ref examples_label           </td>
 </tr>
 <tr>
+<td> \ref examples_label           </td>
 <td> \ref examples_line_style      </td>
 <td> \ref examples_list_visuals    </td>
 <td> \ref examples_mandelbrot      </td>
 <td> \ref examples_menubar         </td>
 <td> \ref examples_message         </td>
-<td> \ref examples_minimum         </td>
 </tr>
 <tr>
+<td> \ref examples_minimum         </td>
 <td> \ref examples_native-filechooser </td>
 <td> \ref examples_navigation      </td>
 <td> \ref examples_offscreen       </td>
 <td> \ref examples_output          </td>
 <td> \ref examples_overlay         </td>
-<td> \ref examples_pack            </td>
 </tr>
 <tr>
+<td> \ref examples_pack            </td>
 <td> \ref examples_pixmap          </td>
 <td> \ref examples_pixmap_browser  </td>
 <td> \ref examples_preferences     </td>
 <td> \ref examples_radio           </td>
 <td> \ref examples_resize          </td>
-<td> \ref examples_resizebox       </td>
 </tr>
 <tr>
+<td> \ref examples_resizebox       </td>
 <td> \ref examples_rotated_text    </td>
 <td> \ref examples_scroll          </td>
 <td> \ref examples_shape           </td>
 <td> \ref examples_subwindow       </td>
 <td> \ref examples_sudoku          </td>
-<td> \ref examples_symbols         </td>
 </tr>
 <tr>
+<td> \ref examples_symbols         </td>
 <td> \ref examples_table           </td>
 <td> \ref examples_tabs            </td>
 <td> \ref examples_threads         </td>
 <td> \ref examples_tile            </td>
 <td> \ref examples_tiled_image     </td>
-<td> \ref examples_tree            </td>
 </tr>
 <tr>
+<td> \ref examples_tree            </td>
 <td> \ref examples_twowin          </td>
 <td> \ref examples_unittests       </td>
 <td> \ref examples_utf8            </td>
@@ -204,7 +205,8 @@ The \c button test is a simple demo of push-buttons and callbacks.
 
 \par
 \c cairo_test shows a sample of drawing with Cairo in an Fl_Cairo_Window.
-This program can only be built if FLTK was configured with Cairo support.
+This program can only be built completely if FLTK was configured with Cairo
+support. It displays a message box if Cairo support was not included.
 
 
 \subsection examples_checkers checkers
@@ -215,6 +217,16 @@ how to convert a VT100 text-terminal based program into a neat
 application with a graphical UI. Check out the code that drags the
 pieces, and how the pieces are drawn by layering. Then tell me
 how to beat the computer at Checkers.
+
+
+\subsection examples_clipboard clipboard
+
+\par
+The \c clipboard demo can be used to view the contents of the
+system clipboard, either text or image contents. Currently an
+image is preferred if the clipboard contains both formats.
+Images can be stored as PNG files so screenshots can be
+stored on disk with this little FLTK demo program.
 
 
 \subsection examples_clock clock
@@ -252,7 +264,7 @@ and shows OpenGL text.
 \subsection examples_CubeView CubeView
 
 \par
-\c CubeView shows how to create a UI containing OpenGL with Fluid.
+\c CubeView shows how to create a UI containing OpenGL with FLUID.
 
 
 \subsection examples_cursor cursor
@@ -273,9 +285,8 @@ on few systems (some version of Irix for example).
 \subsection examples_demo demo
 
 \par
-This tool allows quick access to all programs in the \c test directory.
-\c demo is based on the visuals of the IrixGL demo program. The menu
-tree can be changed by editing <tt>test/demo.menu</tt>.
+This tool allows quick access to most programs in the \c test directory.
+The menu tree can be changed by editing <tt>test/demo.menu</tt>.
 
 
 \subsection examples_device device
@@ -283,9 +294,9 @@ tree can be changed by editing <tt>test/demo.menu</tt>.
 \par
 Exercises the Fl_Image_Surface, Fl_Copy_Surface, and Fl_Printer classes to draw to an
 Fl_Image object, copy graphical data to the clipboard, and for print support.
-\note The clipboard.cxx program of the 'examples' directory is a clipboard watching
+\note The clipboard.cxx program of the 'test' directory is a clipboard watching
 application that continuously displays the textual or graphical content of the system
-clipboard (a.k.a pasteboard on Mac OS X) exercising Fl::paste().
+clipboard (a.k.a pasteboard on macOS) exercising Fl::paste().
 
 
 \subsection examples_doublebuffer doublebuffer
@@ -307,6 +318,7 @@ and derived classes are rather light weight, however
 Fl_Text_Editor is a complete port of <i>nedit</i> (with permission).
 The \c editor test is almost a full application, showing custom
 syntax highlighting and dialog creation.
+See chapter \ref editor for a tutorial about creating this program.
 
 
 \subsection examples_fast_slow fast_slow
@@ -577,7 +589,7 @@ come in handy. They remember any kind of data between program launches.
 \subsection examples_radio radio
 
 \par
-The \c radio tool was created entirely with <i>fluid</i>. It
+The \c radio tool was created entirely with <i>FLUID</i>. It
 shows some of the available button types and tests radio
 button behavior.
 
@@ -658,7 +670,7 @@ The \c table demo shows the features of the Fl_Table widget.
 \subsection examples_tabs tabs
 
 \par
-The \c tabs tool was created with <i>fluid</i>. It tests
+The \c tabs tool was created with <i>FLUID</i>. It tests
 correct hiding and redisplaying of tabs, navigation across tabs,
 resize behavior, and no unneeded redrawing of invisible widgets.
 
@@ -733,13 +745,13 @@ font draws each of the Unicode code points ranging between U+0020 and U+FFFF.
 while the focus stays in the original window.
 
 
-\subsection examples_fluid fluid
+\subsection examples_fluid FLUID
 
 \par
-\c fluid is not only a big test program, but also a very
-useful visual UI designer. Many parts of \c fluid were
-created using \c fluid. See the \link fluid Fluid Tutorial \endlink
-for more details.
+\c FLUID is not only a big test program, but also a very
+useful visual UI designer. Many parts of \c FLUID were
+created using \c FLUID. Check out the FLUID User Manual and
+the tutorials that come with it at https://www.fltk.org/documentation.php .
 
 
 
@@ -795,7 +807,7 @@ image drawing example:
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="faq.html">
+    <a class="el" href="FAQ.html">
     Frequently Asked Questions
     [Next]
     </a>

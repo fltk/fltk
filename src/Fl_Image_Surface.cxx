@@ -38,7 +38,7 @@
 Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL) {
   platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, high_res, off);
   platform_surface->image_surface_ = this;
-  if (platform_surface) driver(platform_surface->driver());
+  driver(platform_surface->driver());
 }
 
 
@@ -90,15 +90,63 @@ int Fl_Image_Surface_Driver::printable_rect(int *w, int *h) {
   return 0;
 }
 
+// used by the Windows and X11(no Cairo) platforms
+void Fl_Image_Surface_Driver::copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst,
+                                             uchar *dib_src, int line_size,
+                                             bool bottom_to_top) {
+  int w = mask->data_w(), h = mask->data_h();
+  for (int i = 0; i < h; i++) {
+    const uchar* alpha = (const uchar*)mask->array +
+      (bottom_to_top ? (h-i-1) : i) * w;
+    uchar *src = dib_src + i * line_size;
+    uchar *dst = dib_dst + i * line_size;
+    for (int j = 0; j < w; j++) {
+      // mix src and dst into dst weighted by mask pixel's value
+      uchar u = *alpha++, v = 255 - u;
+      *dst = ((*dst) * v + (*src) * u)/255;
+      dst++; src++;
+      *dst = ((*dst) * v + (*src) * u)/255;
+      dst++; src++;
+      *dst = ((*dst) * v + (*src) * u)/255;
+      dst++; src++;
+    }
+  }
+}
+
+
+Fl_RGB_Image *Fl_Image_Surface_Driver::RGB3_to_RGB1(const Fl_RGB_Image *rgb3, int W, int H) {
+  bool need_copy = false;
+  if (W != rgb3->data_w() || H != rgb3->data_h()) {
+    rgb3 = (Fl_RGB_Image*)rgb3->copy(W, H);
+    need_copy = true;
+  }
+  uchar *data = new uchar[W * H];
+  int i, j, ld = rgb3->ld();
+  if (!ld) ld = 3 * W;
+  uchar *p = data;
+  for (i = 0; i < H; i++) {
+    const uchar* alpha = rgb3->array + i * ld;
+    for (j = 0; j < W; j++) {
+      *p++ = (*alpha + *(alpha+1) + *(alpha+2)) / 3;
+      alpha += 3;
+    }
+  }
+  Fl_RGB_Image *rgb1 = new Fl_RGB_Image(data, W, H, 1);
+  rgb1->alloc_array = 1;
+  if (need_copy) delete rgb3;
+  return rgb1;
+}
+
 /**
  \}
  \endcond
  */
 
-/** Returns a depth 3 image made of all drawings sent to the Fl_Image_Surface object.
+/** Returns a depth-3 image made of all drawings sent to the Fl_Image_Surface object.
+ The returned object contains its own copy of the RGB data;
+ the caller is responsible for deleting it.
 
- The returned object contains its own copy of the RGB data.
- The caller is responsible for deleting the image.
+ \see Fl_Image_Surface::mask(Fl_RGB_Image*)
  */
 Fl_RGB_Image *Fl_Image_Surface::image() {
   bool need_push = (Fl_Surface_Device::surface() != platform_surface);
@@ -149,6 +197,68 @@ void Fl_Image_Surface::rescale() {
   rgb->draw(0,0);
   Fl_Surface_Device::pop_current();
   delete rgb;
+}
+
+
+/** Defines a mask applied to drawings made after use of this function.
+ The mask is an Fl_RGB_Image made of a white scene drawn on a solid black
+ background; the drawable part of the image surface is reduced to the white areas of the mask
+ after this member function gets called. If necessary, the \p mask image is internally
+ replaced by a copy resized to the surface's pixel size.
+ Overall, the image returned by Fl_Image_Surface::image() contains all drawings made
+ until the mask() method assigned a mask, at which point subsequent drawing operations
+ to the image surface were passed through the white areas of the mask.
+ On some platforms, shades of gray in the mask image control the blending of
+ foreground and background pixels; mask pixels closer in color to white produce image pixels
+ closer to the image surface pixel, those closer to black produce image pixels closer to what the
+ image surface pixel was before the call to mask().
+
+ The mask is easily constructed using an Fl_Image_Surface object,
+ drawing white areas on a black background there, and calling Fl_Image_Surface::image().
+ \param mask A depth-3 image determining the drawable areas of the image surface.
+ The \p mask object is not used after return from this member function.
+ \note
+ - The image surface must not be the current drawing surface when this function
+ gets called.
+ - The mask can have any size but is best when it has the size of the image surface.
+ - It's possible to use several masks in succession on the same image surface provided
+ member function Fl_Image_Surface::image() is called between successive calls to
+ Fl_Image_Surface::mask(const Fl_RGB_Image*).
+
+ Example of procedure to construct a masked image:
+ \code
+ int W = …, H = …; // width and height of the image under construction
+ Fl_Image_Surface *surf = new Fl_Image_Surface(W, H, 1);
+ // first, construct the mask
+ Fl_Surface_Device::push_current(surf);
+ fl_color(FL_BLACK); // draw a black background
+ fl_rectf(0, 0, W, H);
+ fl_color(FL_WHITE); // next, draw in white what the mask should not filter out
+ fl_pie(0, 0, W, H, 0, 360); // here, an ellipse with axes lengths WxH
+ Fl_RGB_Image *mask = surf->image(); // get the mask
+ // second, draw the image background
+ fl_color(FL_YELLOW); // here, draw a yellow background
+ fl_rectf(0, 0, W, H);
+ // third, apply the mask
+ Fl_Surface_Device::pop_current();
+ surf->mask(mask);
+ delete mask; // the mask image can be safely deleted at this point
+ Fl_Surface_Device::push_current(surf);
+ // fourth, draw the image foreground, part of which will be filtered out by the mask
+ surf->draw(widget, 0, 0); // here the foreground is a drawn widget
+ // fifth, get the final result, masked_image, as a depth-3 Fl_RGB_Image
+ Fl_RGB_Image *masked_image = surf->image();
+ // Only the part of the foreground, here a drawn widget, that has not been
+ // filtered out by the mask, here the white ellipse, is in masked_image;
+ // the background, here solid yellow, shows up in the remaining areas of masked_image.
+ Fl_Surface_Device::pop_current();
+ delete surf;
+ \endcode
+
+ \since 1.4.0
+ */
+void Fl_Image_Surface::mask(const Fl_RGB_Image *mask) {
+  platform_surface->mask(mask);
 }
 
 

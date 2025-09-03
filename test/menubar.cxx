@@ -31,14 +31,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_string_functions.h>
 
 #define TERMINAL_HEIGHT 120
 
+// Set the macro below to 1 to test shortcuts usually used for screen scaling.
+// This should normally be set to 0, enable only for testing!
+// Note: screen scaling does not work with ctrl/+/-/0 if enabled (1)!
+#define OVERRIDE_SCALING_SHORTCUTS 0
+
 // Globals
-Fl_Simple_Terminal *G_tty = 0;
+Fl_Terminal *G_tty = 0;
 
 void window_cb(Fl_Widget* w, void*) {
   puts("window callback called");       // end of program, so stdout instead of G_tty
@@ -66,6 +71,14 @@ Fl_Menu_Item menutable[] = {
     {"&Open",   FL_ALT+'o', 0, 0, FL_MENU_INACTIVE},
     {"&Close",  0,      0},
     {"&Quit",   FL_ALT+'q', quit_cb, 0, FL_MENU_DIVIDER},
+
+#if (OVERRIDE_SCALING_SHORTCUTS)
+    {"CTRL/0",  FL_COMMAND+'0', 0},
+    {"CTRL/-",  FL_COMMAND+'-', 0},
+    {"CTRL/+",  FL_COMMAND+'+', 0},
+    {"CTRL/=",  FL_COMMAND+'=', 0},
+#endif
+
     {"shortcut",'a'},
     {"shortcut",FL_SHIFT+'a'},
     {"shortcut",FL_CTRL+'a'},
@@ -202,8 +215,7 @@ void menu_location_cb(Fl_Widget* w, void* data)
     smenubar->callback(test_cb);
     }
   else { // switch to window menu bar
-    menubar->menu(smenubar->menu());
-    smenubar->clear();
+    menubar->copy(smenubar->menu());
     delete smenubar;
     menubar->show();
     }
@@ -225,7 +237,6 @@ void about_cb(Fl_Widget*, void*) {
 }
 
 int main(int argc, char **argv) {
-  //Fl::set_color(Fl_Color(15),0,0,128);
   for (int i=0; i<99; i++) {
     char buf[100];
     snprintf(buf, 100,"item %d",i);
@@ -235,7 +246,7 @@ int main(int argc, char **argv) {
 
   Fl_Scheme_Choice scheme_choice(300, 50, 100, 25, "&scheme");
 
-  G_tty = new Fl_Simple_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);
+  G_tty = new Fl_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);
 
   window.callback(window_cb);
   Fl_Menu_Bar menubar(0,0,WIDTH,30); menubar.menu(menutable);
@@ -251,7 +262,6 @@ int main(int argc, char **argv) {
   menus[2] = &ch;
   Fl_Menu_Button mb(0,0,WIDTH,400,"&popup");
   mb.type(Fl_Menu_Button::POPUP3);
-  mb.box(FL_NO_BOX);
   mb.menu(menutable);
   mb.remove(1); // delete the "File" submenu
   mb.callback(test_cb);

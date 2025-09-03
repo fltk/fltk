@@ -9,11 +9,11 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.fltk.fltk-options</string>
 	<key>CFBundleVersion</key>
-	<string>1.4.0</string>
+	<string>1.4.4</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2023 by Bill Spitzak and others</string>
+	<string>Copyright 2023-2025 by Bill Spitzak and others</string>
 	<key>CFAppleHelpAnchor</key>
 	<string>help</string>
 	<key>CFBundleName</key>
@@ -25,9 +25,9 @@
 	<key>CFBundleIconFile</key>
 	<string>fltk-options.icns</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4.0</string>
+	<string>1.4.4</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.4.0, Copyright 2023 by Bill Spitzak and others</string>
+	<string>1.4.4, Copyright 2023-2025 by Bill Spitzak and others</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>

@@ -51,7 +51,8 @@
 struct libdecor {
 	int ref_count;
 
-	struct libdecor_interface *iface;
+	const struct libdecor_interface *iface;
+	void *user_data;
 
 	struct libdecor_plugin *plugin;
 	bool plugin_ready;
@@ -100,7 +101,7 @@ struct libdecor_frame_private {
 
 	struct wl_surface *wl_surface;
 
-	struct libdecor_frame_interface *iface;
+	const struct libdecor_frame_interface *iface;
 	void *user_data;
 
 	struct xdg_surface *xdg_surface;
@@ -123,9 +124,12 @@ struct libdecor_frame_private {
 
 	enum libdecor_window_state window_state;
 
+	bool has_decoration_mode;
 	enum zxdg_toplevel_decoration_v1_mode decoration_mode;
 
 	enum libdecor_capabilities capabilities;
+
+	enum libdecor_wm_capabilities wm_capabilities;
 
 	/* original limits for interactive resize */
 	struct libdecor_limits interactive_limits;
@@ -396,6 +400,9 @@ parse_states(struct wl_array *states)
 		case XDG_TOPLEVEL_STATE_TILED_BOTTOM:
 			pending_state |= LIBDECOR_WINDOW_STATE_TILED_BOTTOM;
 			break;
+		case XDG_TOPLEVEL_STATE_RESIZING:
+			pending_state |= LIBDECOR_WINDOW_STATE_RESIZING;
+			break;
 #ifdef HAVE_XDG_SHELL_V6
 		case XDG_TOPLEVEL_STATE_SUSPENDED:
 			pending_state |= LIBDECOR_WINDOW_STATE_SUSPENDED;
@@ -452,10 +459,34 @@ xdg_toplevel_configure_bounds(void *data,
 }
 
 static void
-xdg_toplevel_wm_capabilities(void *data,
+xdg_toplevel_wm_capabilities(void *user_data,
 			     struct xdg_toplevel *xdg_toplevel,
 			     struct wl_array *capabilities)
 {
+	struct libdecor_frame *frame = user_data;
+	struct libdecor_frame_private *frame_priv = frame->priv;
+	enum xdg_toplevel_wm_capabilities *wm_cap;
+
+	frame_priv->wm_capabilities = 0;
+
+	wl_array_for_each(wm_cap, capabilities) {
+		switch (*wm_cap) {
+		case XDG_TOPLEVEL_WM_CAPABILITIES_WINDOW_MENU:
+			frame_priv->wm_capabilities |= LIBDECOR_WM_CAPABILITIES_WINDOW_MENU;
+			break;
+		case XDG_TOPLEVEL_WM_CAPABILITIES_MAXIMIZE:
+			frame_priv->wm_capabilities |= LIBDECOR_WM_CAPABILITIES_MAXIMIZE;
+			break;
+		case XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN:
+			frame_priv->wm_capabilities |= LIBDECOR_WM_CAPABILITIES_FULLSCREEN;
+			break;
+		case XDG_TOPLEVEL_WM_CAPABILITIES_MINIMIZE:
+			frame_priv->wm_capabilities |= LIBDECOR_WM_CAPABILITIES_MINIMIZE;
+			break;
+		default:
+			break;
+		}
+	}
 }
 #endif
 
@@ -474,7 +505,13 @@ toplevel_decoration_configure(
 		struct zxdg_toplevel_decoration_v1 *zxdg_toplevel_decoration_v1,
 		uint32_t mode)
 {
-	((struct libdecor_frame_private *)(data))->decoration_mode = mode;
+	struct libdecor_frame_private *frame_priv = (struct libdecor_frame_private *)data;
+	/* Ignore any _configure calls after the first, they will be
+	 * from our set_mode call. */
+	if (!frame_priv->has_decoration_mode) {
+		frame_priv->has_decoration_mode = true;
+		frame_priv->decoration_mode = mode;
+	}
 }
 
 static const struct zxdg_toplevel_decoration_v1_listener
@@ -546,7 +583,7 @@ init_shell_surface(struct libdecor_frame *frame)
 LIBDECOR_EXPORT struct libdecor_frame *
 libdecor_decorate(struct libdecor *context,
 		  struct wl_surface *wl_surface,
-		  struct libdecor_frame_interface *iface,
+		  const struct libdecor_frame_interface *iface,
 		  void *user_data)
 {
 	struct libdecor_plugin *plugin = context->plugin;
@@ -569,6 +606,10 @@ libdecor_decorate(struct libdecor *context,
 	frame_priv->wl_surface = wl_surface;
 	frame_priv->iface = iface;
 	frame_priv->user_data = user_data;
+	frame_priv->wm_capabilities = LIBDECOR_WM_CAPABILITIES_WINDOW_MENU |
+				      LIBDECOR_WM_CAPABILITIES_MAXIMIZE |
+				      LIBDECOR_WM_CAPABILITIES_FULLSCREEN |
+				      LIBDECOR_WM_CAPABILITIES_MINIMIZE;
 
 	wl_list_insert(&context->frames, &frame->link);
 
@@ -606,9 +647,9 @@ libdecor_frame_unref(struct libdecor_frame *frame)
 		struct libdecor_plugin *plugin = context->plugin;
 
 		if (context->decoration_manager && frame_priv->toplevel_decoration) {
-        		zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
-        		frame_priv->toplevel_decoration = NULL;
-        	}
+			zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
+			frame_priv->toplevel_decoration = NULL;
+		}
 
 		wl_list_remove(&frame->link);
 
@@ -628,6 +669,18 @@ libdecor_frame_unref(struct libdecor_frame *frame)
 	}
 }
 
+LIBDECOR_EXPORT void *
+libdecor_frame_get_user_data(struct libdecor_frame *frame)
+{
+	return frame->priv->user_data;
+}
+
+LIBDECOR_EXPORT void
+libdecor_frame_set_user_data(struct libdecor_frame *frame, void *user_data)
+{
+	frame->priv->user_data = user_data;
+}
+
 LIBDECOR_EXPORT void
 libdecor_frame_set_visibility(struct libdecor_frame *frame,
 			      bool visible)
@@ -638,24 +691,21 @@ libdecor_frame_set_visibility(struct libdecor_frame *frame,
 
 	frame_priv->visible = visible;
 
-	/* enable/disable decorations that are managed by the compositor,
-	 * only xdg-decoration version 2 and above allows to toggle decoration */
+	/* enable/disable decorations that are managed by the compositor.
+	 * Note that, as of xdg_decoration v1, this is just a hint and there is
+	 * no reliable way of disabling all decorations. In practice this should
+	 * work but per spec this is not guaranteed.
+	 *
+	 * See also: https://gitlab.freedesktop.org/wayland/wayland-protocols/-/merge_requests/17
+	 */
 	if (context->decoration_manager &&
-	    zxdg_decoration_manager_v1_get_version(context->decoration_manager) > 1) {
-		if (frame_priv->visible &&
-		    frame_priv->toplevel_decoration == NULL) {
-			/* - request to SHOW decorations
-			 * - decorations are NOT HANDLED
-			 * => create new decorations for already mapped surface */
-			libdecor_frame_create_xdg_decoration(frame_priv);
-		} else if (!frame_priv->visible &&
-			 frame_priv->toplevel_decoration != NULL) {
-			/* - request to HIDE decorations
-			 * - decorations are HANDLED
-			 * => destroy decorations */
-			zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
-			frame_priv->toplevel_decoration = NULL;
-		}
+	    frame_priv->toplevel_decoration &&
+	    frame_priv->has_decoration_mode &&
+	    frame_priv->decoration_mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE) {
+		zxdg_toplevel_decoration_v1_set_mode(frame_priv->toplevel_decoration,
+						     frame->priv->visible
+						     ? ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE
+						     : ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
 	}
 
 	/* enable/disable decorations that are managed by a plugin */
@@ -1235,6 +1285,14 @@ libdecor_frame_get_window_state(struct libdecor_frame *frame)
 	return frame_priv->window_state;
 }
 
+LIBDECOR_EXPORT enum libdecor_wm_capabilities
+libdecor_frame_get_wm_capabilities(struct libdecor_frame *frame)
+{
+	struct libdecor_frame_private *frame_priv = frame->priv;
+
+	return frame_priv->wm_capabilities;
+}
+
 LIBDECOR_EXPORT int
 libdecor_plugin_init(struct libdecor_plugin *plugin,
 		     struct libdecor *context,
@@ -1624,6 +1682,18 @@ retry_next:
 	return 0;
 }
 
+LIBDECOR_EXPORT void *
+libdecor_get_user_data(struct libdecor *context)
+{
+	return context->user_data;
+}
+
+LIBDECOR_EXPORT void
+libdecor_set_user_data(struct libdecor *context, void *user_data)
+{
+	context->user_data = user_data;
+}
+
 LIBDECOR_EXPORT int
 libdecor_get_fd(struct libdecor *context)
 {
@@ -1701,7 +1771,15 @@ libdecor_unref(struct libdecor *context)
 
 LIBDECOR_EXPORT struct libdecor *
 libdecor_new(struct wl_display *wl_display,
-	     struct libdecor_interface *iface)
+	     const struct libdecor_interface *iface)
+{
+	return libdecor_new_with_user_data(wl_display, iface, NULL);
+}
+
+LIBDECOR_EXPORT struct libdecor *
+libdecor_new_with_user_data(struct wl_display *wl_display,
+	     const struct libdecor_interface *iface,
+	     void *user_data)
 {
 	struct libdecor *context;
 
@@ -1709,6 +1787,7 @@ libdecor_new(struct wl_display *wl_display,
 
 	context->ref_count = 1;
 	context->iface = iface;
+	context->user_data = user_data;
 	context->wl_display = wl_display;
 	context->wl_registry = wl_display_get_registry(wl_display);
 	wl_registry_add_listener(context->wl_registry,

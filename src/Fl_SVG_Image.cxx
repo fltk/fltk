@@ -1,7 +1,7 @@
 //
 // SVG image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2017-2022 by Bill Spitzak and others.
+// Copyright 2017-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,27 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if !defined(HAVE_LONG_LONG)
-static double strtoll(const char *str, char **endptr, int base) {
-  return (double)strtol(str, endptr, base);
-}
-#endif
-
-#ifdef _MSC_VER
-#pragma warning (push)                  // Save #pragma warning status
-#pragma warning (disable: 4244)         // Switch off conversion warnings
-#endif
-
-#define NANOSVG_ALL_COLOR_KEYWORDS      // Include full list of color keywords.
-#define NANOSVG_IMPLEMENTATION          // Expands implementation
 #include "../nanosvg/nanosvg.h"
-
-#define NANOSVGRAST_IMPLEMENTATION      // Expands implementation
 #include "../nanosvg/nanosvgrast.h"
-
-#ifdef _MSC_VER
-#pragma warning (pop)                  // Restore #pragma warning status
-#endif
 
 #if defined(HAVE_LIBZ)
 #include <zlib.h>

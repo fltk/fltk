@@ -1,7 +1,7 @@
 //
 // Printing support for Windows for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,19 +15,24 @@
 //
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
+#include <FL/Fl_PDF_File_Surface.H>
 #include <FL/Fl_Paged_Device.H>
 #include <FL/Fl_Printer.H>
+#include <FL/Fl_Native_File_Chooser.H>
 #include <FL/fl_ask.H>
 #include <FL/math.h>
 #include <FL/fl_draw.H>
+#include <FL/platform.H> // for fl_win32_xid()
+#include <FL/fl_string_functions.h>  // fl_strdup()
 #include <commdlg.h>
+#include <winspool.h> // DocumentProperties(), OpenPrinter(), ClosePrinter()
 
 extern HWND fl_window;
 
 /** Support for printing on the Windows platform */
 class Fl_WinAPI_Printer_Driver : public Fl_Paged_Device {
   friend class Fl_Printer;
-private:
+protected:
   int   abortPrint;
   PRINTDLG      pd;
   HDC           hPr;
@@ -80,6 +85,171 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
   // thus the logical unit is the point (= 1/72 inch)
   SetWindowExtEx(prHDC, 720, 720, NULL);
   SetViewportExtEx(prHDC, 10*GetDeviceCaps(prHDC, LOGPIXELSX), 10*GetDeviceCaps(prHDC, LOGPIXELSY), NULL);
+}
+
+
+class Fl_PDF_GDI_File_Surface : public Fl_WinAPI_Printer_Driver
+{
+private:
+  static LPSTR pdf_printer_name_;
+public:
+  char *doc_fname;
+  Fl_PDF_GDI_File_Surface();
+  ~Fl_PDF_GDI_File_Surface() { if (doc_fname) free(doc_fname); }
+  int begin_job(const char *defaultname,
+                char **perr_message = NULL);
+  int begin_job(int, int*, int *, char **) FL_OVERRIDE {return 1;} // don't use
+  int begin_document(const char* outname,
+                     enum Fl_Paged_Device::Page_Format format,
+                     enum Fl_Paged_Device::Page_Layout layout,
+                     char **perr_message);
+  void end_job() FL_OVERRIDE;
+};
+
+LPSTR Fl_PDF_GDI_File_Surface::pdf_printer_name_ = _strdup("Microsoft Print to PDF");
+
+Fl_PDF_GDI_File_Surface::Fl_PDF_GDI_File_Surface() {
+  driver(new Fl_GDI_Graphics_Driver());
+  doc_fname = NULL;
+}
+
+Fl_Paged_Device *Fl_PDF_File_Surface::new_platform_pdf_surface_(const char ***pfname) {
+  Fl_PDF_GDI_File_Surface *surf = new Fl_PDF_GDI_File_Surface();
+  *pfname = (const char**)&surf->doc_fname;
+  return surf;
+}
+
+int Fl_PDF_File_Surface::begin_job(const char* defaultfilename,
+                                char **perr_message) {
+  return ((Fl_PDF_GDI_File_Surface*)platform_surface_)->begin_job(defaultfilename, perr_message);
+}
+
+int Fl_PDF_File_Surface::begin_document(const char* defaultfilename,
+                                     enum Fl_Paged_Device::Page_Format format,
+                                     enum Fl_Paged_Device::Page_Layout layout,
+                                     char **perr_message) {
+  return ((Fl_PDF_GDI_File_Surface*)platform_surface_)->begin_document(defaultfilename, format, layout, perr_message);
+}
+
+
+int Fl_PDF_GDI_File_Surface::begin_job(const char *defaultfname, char **perr_message) {
+  int err = 0;
+  abortPrint = FALSE;
+
+  HANDLE hPr2;
+  err = OpenPrinterA(pdf_printer_name_, &hPr2, NULL);
+  if (err == 0) {
+    if (perr_message) {
+      int l = 240;
+      *perr_message = new char[l];
+      snprintf(*perr_message, l,
+               "Class Fl_PDF_File_Surface requires printer '%s' available in Windows 10+.",
+               pdf_printer_name_);
+    }
+    return 1;
+  }
+  HWND hwndOwner = fl_win32_xid(Fl::first_window());
+  LONG count = DocumentPropertiesA(hwndOwner, hPr2, pdf_printer_name_, NULL, NULL, 0);
+  if (count <= 0) { ClosePrinter(hPr2); return 1; }
+  char *buffer = new char[count];
+  DEVMODEA *pDevMode = (DEVMODEA*)buffer;
+  memset(buffer, 0, count);
+  pDevMode->dmSize = (WORD)count;
+  count = DocumentPropertiesA(hwndOwner, hPr2, pdf_printer_name_, pDevMode, NULL, DM_OUT_BUFFER | DM_IN_PROMPT);
+  ClosePrinter(hPr2);
+  if (count == IDCANCEL || count < 0) { delete[] buffer; return 1; }
+
+  Fl_Native_File_Chooser fnfc;
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fnfc.filter("PDF\t*.pdf\n");
+  if (defaultfname && strlen(defaultfname) > 0) fnfc.preset_file(defaultfname);
+  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM);
+  if (fnfc.show() == 0) this->hPr = CreateDCA(NULL, pdf_printer_name_, NULL, pDevMode);
+  delete[] buffer;
+  if (!this->hPr) return 1;
+  DOCINFOW     di;
+  wchar_t        docName [256];
+  wchar_t        outName [256];
+  fl_utf8towc("FLTK", 4, docName, 256);
+  fl_utf8towc(fnfc.filename(), (unsigned int)strlen(fnfc.filename()), outName, 256);
+  memset(&di, 0, sizeof(DOCINFOW));
+  di.cbSize = sizeof(DOCINFOW);
+  di.lpszDocName = (LPCWSTR)docName;
+  di.lpszOutput = (LPCWSTR)outName;
+  err = StartDocW(this->hPr, &di);
+  if (err <= 0) {
+    DWORD dw = GetLastError();
+    DeleteDC(this->hPr);
+    this->hPr = NULL;
+    if (dw != ERROR_CANCELLED) {
+      if (perr_message)  {
+        int l = 40;
+        *perr_message = new char[l];
+        snprintf(*perr_message, l, "Error %lu in StartDoc() call", dw);
+      }
+      return 2;
+    }
+    return 1;
+  }
+  x_offset = 0;
+  y_offset = 0;
+  WIN_SetupPrinterDeviceContext(this->hPr);
+  driver()->gc(this->hPr);
+  doc_fname = fl_strdup(fnfc.filename());
+  return 0;
+}
+
+
+int Fl_PDF_GDI_File_Surface::begin_document(const char* outfname,
+                                     enum Fl_Paged_Device::Page_Format format,
+                                     enum Fl_Paged_Device::Page_Layout layout,
+                                     char **perr_message) {
+  int err = 0;
+  abortPrint = FALSE;
+
+  DEVMODEA inDevMode;
+  memset(&inDevMode, 0, sizeof(DEVMODEA)); inDevMode.dmSize = sizeof(DEVMODEA);
+  inDevMode.dmOrientation = (layout == PORTRAIT ? DMORIENT_PORTRAIT : DMORIENT_LANDSCAPE);
+  inDevMode.dmPaperSize = (format == A4 ? DMPAPER_A4 : DMPAPER_LETTER);
+  inDevMode.dmFields = DM_ORIENTATION | DM_PAPERSIZE ;
+
+  this->hPr = CreateDCA(NULL, pdf_printer_name_, NULL, &inDevMode);
+  if (!this->hPr) {
+    if (perr_message)  {
+      int l = 150;
+      *perr_message = new char[l];
+      snprintf(*perr_message, l, "Class Fl_PDF_File_Surface requires printer '%s'.",
+               pdf_printer_name_);
+    }
+    return 2;
+  }
+  DOCINFOW     di;
+  wchar_t  docName[256];
+  wchar_t  outName[256];
+  fl_utf8towc("FLTK", 4, docName, 256);
+  memset(&di, 0, sizeof(DOCINFOW));
+  di.cbSize = sizeof(DOCINFOW);
+  di.lpszDocName = (LPCWSTR)docName;
+  di.lpszOutput = (LPCWSTR)outName;
+  fl_utf8towc(outfname, (unsigned int)strlen(outfname), outName, 256);
+  err = StartDocW(hPr, &di);
+  if (err <= 0) {
+    DWORD dw = GetLastError();
+    DeleteDC(this->hPr);
+    this->hPr = NULL;
+    if (perr_message) {
+      int l = 50;
+      *perr_message = new char[l];
+      snprintf(*perr_message, l, "Error %lu in StartDoc() call", dw);
+    }
+    return 2;
+  }
+  x_offset = 0;
+  y_offset = 0;
+  WIN_SetupPrinterDeviceContext(this->hPr);
+  driver()->gc(this->hPr);
+  doc_fname = fl_strdup(outfname);
+  return 0;
 }
 
 
@@ -154,6 +324,19 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
     driver()->gc(hPr);
   }
   return err;
+}
+
+void Fl_PDF_GDI_File_Surface::end_job(void)
+{
+  if (hPr != NULL) {
+    if (! abortPrint) {
+      if (EndDoc (hPr) <= 0) {
+        fl_message ("Error in EndDoc() call");
+      }
+      DeleteDC (hPr);
+    }
+    hPr = NULL;
+  }
 }
 
 void Fl_WinAPI_Printer_Driver::end_job (void)
@@ -234,6 +417,7 @@ int Fl_WinAPI_Printer_Driver::begin_page (void)
     WIN_SetupPrinterDeviceContext (hPr);
     prerr = StartPage (hPr);
     if (prerr < 0) {
+      Fl_Surface_Device::pop_current();
       fl_alert ("StartPage error %d", prerr);
       rsult = 1;
     }
@@ -330,3 +514,5 @@ void Fl_WinAPI_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
 }
+
+

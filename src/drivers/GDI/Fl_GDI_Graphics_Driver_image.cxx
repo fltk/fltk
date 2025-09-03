@@ -1,7 +1,7 @@
 //
 // Windows image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -128,43 +128,44 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   if (w<=0 || h<=0) return;
   if (buf) buf += (x-X)*delta + (y-Y)*linedelta;
 
-  static U32 bmibuffer[256+12];
-  BITMAPINFO &bmi = *((BITMAPINFO*)bmibuffer);
-  if (!bmi.bmiHeader.biSize) {
-    bmi.bmiHeader.biSize = sizeof(bmi)-4; // does it use this to determine type?
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    bmi.bmiHeader.biXPelsPerMeter = 0;
-    bmi.bmiHeader.biYPelsPerMeter = 0;
-    bmi.bmiHeader.biClrUsed = 0;
-    bmi.bmiHeader.biClrImportant = 0;
+  // bmibuffer: BITMAPINFOHEADER + 256 colors (RGBQUAD) + 1 (rounding effects ?)
+  static U32 bmibuffer[sizeof(BITMAPINFOHEADER)/4 + 257];
+  BITMAPINFO *bmi = (BITMAPINFO*)bmibuffer;
+  if (!bmi->bmiHeader.biSize) {
+    bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi->bmiHeader.biPlanes = 1;
+    bmi->bmiHeader.biCompression = BI_RGB;
+    bmi->bmiHeader.biXPelsPerMeter = 0;
+    bmi->bmiHeader.biYPelsPerMeter = 0;
+    bmi->bmiHeader.biClrUsed = 0;
+    bmi->bmiHeader.biClrImportant = 0;
   }
 #if USE_COLORMAP
   if (indexed) {
     for (short i=0; i<256; i++) {
-      *((short*)(bmi.bmiColors)+i) = i;
+      *((short*)(bmi->bmiColors)+i) = i;
     }
   } else
 #endif
   if (depth<3) {
-    RGBQUAD *bmi_colors = &bmi.bmiColors[0];    // suppress warning (STR #3199)
+    RGBQUAD *bmi_colors = &(bmi->bmiColors[0]); // use pointer to suppress warning (STR #3199)
     for (int i=0; i<256; i++) {
-      bmi_colors[i].rgbBlue = (uchar)i;         // bmi.bmiColors[i]...
+      bmi_colors[i].rgbBlue = (uchar)i;     // = bmi->bmiColors[i]
       bmi_colors[i].rgbGreen = (uchar)i;
       bmi_colors[i].rgbRed = (uchar)i;
       bmi_colors[i].rgbReserved = (uchar)0; // must be zero
     }
   }
-  bmi.bmiHeader.biWidth = w;
+  bmi->bmiHeader.biWidth = w;
 #if USE_COLORMAP
-  bmi.bmiHeader.biBitCount = indexed ? 8 : depth*8;
+  bmi->bmiHeader.biBitCount = indexed ? 8 : depth*8;
   int pixelsize = indexed ? 1 : depth;
 #else
-  bmi.bmiHeader.biBitCount = depth*8;
+  bmi->bmiHeader.biBitCount = depth*8;
   int pixelsize = depth;
 #endif
   if (depth==2) { // special case: gray with alpha
-    bmi.bmiHeader.biBitCount = 32;
+    bmi->bmiHeader.biBitCount = 32;
     pixelsize = 4;
   }
   int linesize = (pixelsize*w+3)&~3;
@@ -172,18 +173,20 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   static U32* buffer;
   static long buffer_size;
   int blocking = h;
-  {int size = linesize*h;
-  // when printing, don't limit buffer size not to get a crash in StretchDIBits
-  if (size > MAXBUFFER && !fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
-    size = MAXBUFFER;
-    blocking = MAXBUFFER/linesize;
+  {
+    int size = linesize * h;
+    // when printing, don't limit buffer size not to get a crash in StretchDIBits
+    if (size > MAXBUFFER && !fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
+      size = MAXBUFFER;
+      blocking = MAXBUFFER / linesize;
+    }
+    if (size > buffer_size) {
+      delete[] buffer;
+      buffer_size = size;
+      buffer = new U32[(size + 3) / 4];
+    }
   }
-  if (size > buffer_size) {
-    delete[] buffer;
-    buffer_size = size;
-    buffer = new U32[(size+3)/4];
-  }}
-  bmi.bmiHeader.biHeight = blocking;
+  bmi->bmiHeader.biHeight = blocking;
   static U32* line_buffer;
   if (!buf) {
     int size = W*delta;
@@ -212,7 +215,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
           monodither(to, from, w, delta);
         else
           dither(to, from, w, delta);
-        to += w;
       } else
 #endif
       {
@@ -251,13 +253,14 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
             break;
         }
       }
-    }
+    } // for (k = 0; j<h && k<blocking ...)
+
     if (fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
       StretchDIBits(gc, x, y+j-k, w, k, 0, 0, w, k,
                     (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
-                    &bmi,
+                    bmi,
 #if USE_COLORMAP
                     indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
 #else
@@ -271,15 +274,15 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     else {
       SetDIBitsToDevice(gc, x, y+j-k, w, k, 0, 0, 0, k,
                         (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
-                        &bmi,
+                        bmi,
 #if USE_COLORMAP
                         indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
 #else
                         DIB_RGB_COLORS
 #endif
                         );
-      }
-  }
+    }
+  } // for (int j=0; j<h; )
 }
 
 void Fl_GDI_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
@@ -619,7 +622,7 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if ( (rgb->d() % 2) == 0 ) {
     alpha_blend_(this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
-    SetStretchBltMode(gc_, HALFTONE);
+    SetStretchBltMode(gc_, (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR ? HALFTONE : BLACKONWHITE));
     StretchBlt(gc_, this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
@@ -735,7 +738,7 @@ void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int
  this color value in need_pixmap_bg_color. As a result, the transparent areas of the image
  are correcty handled by the printing operation. Variable need_pixmap_bg_color is ultimately
  reset to 0.
- Fl_GDI_Graphics_Driver::make_unused_color_() which does the color computation mentionned
+ Fl_GDI_Graphics_Driver::make_unused_color_() which does the color computation mentioned
  above is implemented in file src/fl_draw_pixmap.cxx
  */
 void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {

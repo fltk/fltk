@@ -19,7 +19,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_String.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_callback_macros.H>
 
@@ -34,8 +33,8 @@ void hello_0_args_cb() {
   fl_message("Hello with 0 arguments");
 }
 
-void hello_2_args_cb(Fl_String &text, int number) {
-  fl_message("Hello with 2 arguments,\n\"%s\" and '%d'", text.c_str(), number);
+void hello_2_args_cb(const char *text, int number) {
+  fl_message("Hello with 2 arguments,\n\"%s\" and '%d'", text, number);
 }
 
 void hello_4_args_cb(int a1, int a2, int a3, int a4) {
@@ -89,7 +88,7 @@ int main(int argc, char ** argv) {
   FL_FUNCTION_CALLBACK_0(func_cb_btn_0, hello_0_args_cb);
 
   Fl_Button *func_cb_btn_2 = new Fl_Button(10, 60, 180, 25, "2 args");
-  FL_FUNCTION_CALLBACK_2(func_cb_btn_2, hello_2_args_cb, Fl_String, "FLTK", int, 2);
+  FL_FUNCTION_CALLBACK_2(func_cb_btn_2, hello_2_args_cb, const char *, "FLTK", int, 2);
 
   Fl_Button *func_cb_btn_4 = new Fl_Button(10, 90, 180, 25, "4 args");
   FL_FUNCTION_CALLBACK_4(func_cb_btn_4, hello_4_args_cb, int, 1, int, 2, int, 3, int, 4);

@@ -1,7 +1,7 @@
 //
 // Class Fl_X11_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,10 +20,7 @@
 #include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Screen_Driver.H"
 #include "Fl_X11_Gl_Window_Driver.H"
-#  include <GL/glx.h>
-#  if ! defined(GLX_VERSION_1_3)
-#    typedef void *GLXFBConfig;
-#  endif
+#include <GL/glx.h>
 #if ! USE_XFT
 #  include "../Xlib/Fl_Font.H"
 #endif
@@ -35,12 +32,10 @@ class Fl_X11_Gl_Choice : public Fl_Gl_Choice {
 private:
   XVisualInfo *vis; /* the visual to use */
   Colormap colormap; /* a colormap for that visual */
-  GLXFBConfig best_fb;
 public:
   Fl_X11_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : Fl_Gl_Choice(m, alistp, n) {
     vis = NULL;
     colormap = 0;
-    best_fb = NULL;
   }
 };
 
@@ -120,53 +115,6 @@ Fl_Font_Descriptor** Fl_X11_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum
 #endif
 
 
-static XVisualInfo *gl3_getvisual(const int *blist, GLXFBConfig *pbestFB)
-{
-  int glx_major, glx_minor;
-
-  // FBConfigs were added in GLX version 1.3.
-  if ( !glXQueryVersion(fl_display, &glx_major, &glx_minor) ||
-      ( ( glx_major == 1 ) && ( glx_minor < 3 ) ) || ( glx_major < 1 ) ) {
-    return NULL;
-  }
-
-  //printf( "Getting matching framebuffer configs\n" );
-  int fbcount;
-  GLXFBConfig* fbc = glXChooseFBConfig(fl_display, DefaultScreen(fl_display), blist, &fbcount);
-  if (!fbc) {
-    //printf( "Failed to retrieve a framebuffer config\n" );
-    return NULL;
-  }
-  //printf( "Found %d matching FB configs.\n", fbcount );
-
-  // Pick the FB config/visual with the most samples per pixel
-  int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
-  for (int i = 0; i < fbcount; ++i)
-  {
-    XVisualInfo *vi = glXGetVisualFromFBConfig( fl_display, fbc[i] );
-    if (vi) {
-      int samp_buf, samples;
-      glXGetFBConfigAttrib(fl_display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
-      glXGetFBConfigAttrib(fl_display, fbc[i], GLX_SAMPLES       , &samples );
-      /*printf( "  Matching fbconfig %d, visual ID 0x%2lx: SAMPLE_BUFFERS = %d, SAMPLES = %d\n",
-             i, vi -> visualid, samp_buf, samples );*/
-      if ( best_fbc < 0 || (samp_buf && samples > best_num_samp) )
-        best_fbc = i, best_num_samp = samples;
-      if ( worst_fbc < 0 || !samp_buf || samples < worst_num_samp )
-        worst_fbc = i, worst_num_samp = samples;
-    }
-    XFree(vi);
-  }
-
-  GLXFBConfig bestFbc = fbc[ best_fbc ];
-  // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
-  XFree(fbc);
-  // Get a visual
-  XVisualInfo *vi = glXGetVisualFromFBConfig(fl_display, bestFbc);
-  *pbestFB = bestFbc;
-  return vi;
-}
-
 Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_X11_Gl_Choice *g = (Fl_X11_Gl_Choice*)Fl_Gl_Window_Driver::find_begin(m, alistp);
@@ -222,26 +170,18 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
   }
 
   fl_open_display();
-  XVisualInfo *visp = NULL;
-  GLXFBConfig best_fb = NULL;
-  if (m & FL_OPENGL3) {
-    visp = gl3_getvisual((const int *)blist, &best_fb);
-  }
+  XVisualInfo *visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
   if (!visp) {
-    visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
-    if (!visp) {
-#     if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
-        if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE, 0);
-#     endif
+#   if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
+      if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE, 0);
+#   endif
       return 0;
-    }
   }
 
   g = new Fl_X11_Gl_Choice(m, alistp, first);
   first = g;
 
   g->vis = visp;
-  g->best_fb = best_fb;
 
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
       visp->visualid == fl_visual->visualid &&
@@ -253,84 +193,32 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
   return g;
 }
 
-static bool ctxErrorOccurred = false;
-static int ctxErrorHandler( Display *, XErrorEvent * )
-{
-  ctxErrorOccurred = true;
-  return 0;
-}
 
 GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window,
                                                      const Fl_Gl_Choice* g) {
   (void)window;
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
-
-  typedef GLContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLContext, Bool, const int*);
-  // It is not necessary to create or make current to a context before calling glXGetProcAddressARB
-  static glXCreateContextAttribsARBProc glXCreateContextAttribsARB =
-#if defined(HAVE_GLXGETPROCADDRESSARB)
-    (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
-#else
-  NULL;
-#endif
-
-  GLContext ctx = 0;
-  // Check for the GLX_ARB_create_context extension string and the function.
-  // If either is not present, use GLX 1.3 context creation method.
-  const char *glxExts = glXQueryExtensionsString(fl_display, fl_screen);
-  if (((Fl_X11_Gl_Choice*)g)->best_fb && strstr(glxExts, "GLX_ARB_create_context") && glXCreateContextAttribsARB ) {
-    int context_attribs[] =
-    {
-      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-      GLX_CONTEXT_MINOR_VERSION_ARB, 2,
-      //GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-      GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
-      None
-    };
-    ctxErrorOccurred = false;
-    XErrorHandler oldHandler = XSetErrorHandler(&ctxErrorHandler);
-    ctx = glXCreateContextAttribsARB(fl_display, ((Fl_X11_Gl_Choice*)g)->best_fb, shared_ctx, true, context_attribs);
-    XSync(fl_display, false); // Sync to ensure any errors generated are processed.
-    if (ctxErrorOccurred) ctx = 0;
-    if (!ctx) { // if did not work, try again asking for core profile
-      ctxErrorOccurred = false;
-      context_attribs[5] = GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
-      ctx = glXCreateContextAttribsARB(fl_display, ((Fl_X11_Gl_Choice*)g)->best_fb, shared_ctx, true, context_attribs);
-      if (ctxErrorOccurred) ctx = 0;
-    }
-    XSetErrorHandler(oldHandler);
-  }
-  if (!ctx) { // use OpenGL 1-style context creation
-    ctx = glXCreateContext(fl_display, ((Fl_X11_Gl_Choice*)g)->vis, (GLXContext)shared_ctx, true);
-  }
+  // use OpenGL 1-style context creation
+  GLContext ctx = glXCreateContext(fl_display, ((Fl_X11_Gl_Choice*)g)->vis, (GLXContext)shared_ctx, true);
   if (ctx)
     add_context(ctx);
 //glXMakeCurrent(fl_display, fl_xid(window), ctx);printf("%s\n", glGetString(GL_VERSION));
   return ctx;
 }
 
-/* This is no longer used
-GLContext Fl_X11_Gl_Window_Driver::create_gl_context(XVisualInfo *vis) {
-  GLContext shared_ctx = 0;
-  if (context_list && nContext) shared_ctx = context_list[0];
-  GLContext context = glXCreateContext(fl_display, vis, (GLXContext)shared_ctx, 1);
-  if (context)
-    add_context(context);
-  return context;
-}*/
 
 void Fl_X11_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
-  if (context != cached_context || w != cached_window) {
-    cached_context = context;
+  GLContext current_context = glXGetCurrentContext();
+  if (context != current_context || w != cached_window) {
     cached_window = w;
     glXMakeCurrent(fl_display, fl_xid(w), (GLXContext)context);
   }
 }
 
 void Fl_X11_Gl_Window_Driver::delete_gl_context(GLContext context) {
-  if (cached_context == context) {
-    cached_context = 0;
+  GLContext current_context = glXGetCurrentContext();
+  if (current_context == context) {
     cached_window = 0;
     glXMakeCurrent(fl_display, 0, 0);
   }
@@ -388,16 +276,129 @@ int Fl_X11_Gl_Window_Driver::mode_(int m, const int *a) {
 }
 
 void Fl_X11_Gl_Window_Driver::swap_buffers() {
+  if (!fl_xid(pWindow)) // window not shown
+    return;
+  if (overlay()) {
+    int wo = pWindow->pixel_w(), ho = pWindow->pixel_h();
+    GLint matrixmode;
+    GLfloat pos[4];
+    glGetIntegerv(GL_MATRIX_MODE, &matrixmode);
+    glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);       // save original glRasterPos
+    glMatrixMode(GL_PROJECTION);                        // save proj/model matrices
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glScalef(2.0f/wo, 2.0f/ho, 1.0f);
+    glTranslatef(-wo/2.0f, -ho/2.0f, 0.0f);         // set transform so 0,0 is bottom/left of Gl_Window
+    glRasterPos2i(0,0);                             // set glRasterPos to bottom left corner
+    {
+      // Emulate overlay by doing copypixels
+      glReadBuffer(GL_BACK);
+      glDrawBuffer(GL_FRONT);
+      glCopyPixels(0, 0, wo, ho, GL_COLOR);         // copy GL_BACK to GL_FRONT
+    }
+    glPopMatrix(); // GL_MODELVIEW                  // restore model/proj matrices
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(matrixmode);
+    glRasterPos3f(pos[0], pos[1], pos[2]);              // restore original glRasterPos
+  } else
   glXSwapBuffers(fl_display, fl_xid(pWindow));
 }
 
+char Fl_X11_Gl_Window_Driver::swap_type() {
+  return copy;
+}
 
-char Fl_X11_Gl_Window_Driver::swap_type() {return copy;}
+
+// Start of swap_interval implementation in the three possibel ways for X11
+
+// -1 = not yet initialized, 0 = none found, 1 = GLX, 2 = MESA, 3 = SGI
+static signed char swap_interval_type = -1;
+
+typedef void (*Fl_GLX_Set_Swap_Iterval_Proc) (Display *dpy, GLXDrawable drawable, int interval);
+typedef int (*Fl_MESA_Set_Swap_Iterval_Proc) (unsigned int interval);
+typedef int (*Fl_MESA_Get_Swap_Iterval_Proc) ();
+typedef int (*Fl_SGI_Set_Swap_Iterval_Proc) (int interval);
+
+static union {
+  Fl_GLX_Set_Swap_Iterval_Proc EXT;
+  Fl_MESA_Set_Swap_Iterval_Proc MESA;
+  Fl_SGI_Set_Swap_Iterval_Proc SGI;
+} fl_glXSwapInterval = { NULL };
+
+static Fl_MESA_Get_Swap_Iterval_Proc fl_glXGetSwapIntervalMESA = NULL;
+
+static void init_swap_interval() {
+  if (swap_interval_type != -1) return;
+  int major = 1, minor = 0;
+  glXQueryVersion(fl_display, &major, &minor);
+  swap_interval_type = 0;
+  const char *extensions = glXQueryExtensionsString(fl_display, fl_screen);
+  if (strstr(extensions, "GLX_EXT_swap_control") && ((major > 1) || (minor >= 3))) {
+    fl_glXSwapInterval.EXT = (Fl_GLX_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+    swap_interval_type = 1;
+  } else if (strstr(extensions, "GLX_MESA_swap_control")) {
+    fl_glXSwapInterval.MESA = (Fl_MESA_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalMESA");
+    fl_glXGetSwapIntervalMESA = (Fl_MESA_Get_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXGetSwapIntervalMESA");
+    swap_interval_type = 2;
+  } else if (strstr(extensions, "GLX_SGI_swap_control")) {
+    fl_glXSwapInterval.SGI = (Fl_SGI_Set_Swap_Iterval_Proc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
+    swap_interval_type = 3;
+  }
+}
+
+void Fl_X11_Gl_Window_Driver::swap_interval(int interval) {
+  if (!fl_xid(pWindow))
+    return;
+  if (swap_interval_type == -1)
+    init_swap_interval();
+  switch (swap_interval_type) {
+    case 1:
+      if (fl_glXSwapInterval.EXT)
+        fl_glXSwapInterval.EXT(fl_display, fl_xid(pWindow), interval);
+      break;
+    case 2:
+      if (fl_glXSwapInterval.MESA)
+        fl_glXSwapInterval.MESA((unsigned int)interval);
+      break;
+    case 3:
+      if (fl_glXSwapInterval.SGI)
+        fl_glXSwapInterval.SGI(interval);
+      break;
+  }
+}
+
+int Fl_X11_Gl_Window_Driver::swap_interval() const {
+  if (!fl_xid(pWindow))
+    return -1;
+  if (swap_interval_type == -1)
+    init_swap_interval();
+  int interval = -1;
+  switch (swap_interval_type) {
+    case 1: {
+      unsigned int val = 0;
+      glXQueryDrawable(fl_display, fl_xid(pWindow), 0x20F1 /*GLX_SWAP_INTERVAL_EXT*/, &val);
+      interval = (int)val;
+      break; }
+    case 2:
+      if (fl_glXGetSwapIntervalMESA)
+        interval = fl_glXGetSwapIntervalMESA();
+      break;
+    case 3:
+      // not available
+      break;
+  }
+  return interval;
+}
+
+// end of swap_interval implementation
 
 void Fl_X11_Gl_Window_Driver::waitGL() {
   glXWaitGL();
 }
-
 
 void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
   Fl_Gl_Window_Driver::gl_visual(c);

@@ -110,6 +110,10 @@ public:
   virtual int rmdir(const char*) {return -1;}
   virtual int rename(const char* /*f*/, const char * /*n*/) {return -1;}
 
+  // Windows commandline argument conversion to UTF-8.
+  // Default implementation: no-op, overridden only on Windows
+  virtual int args_to_utf8(int argc, char ** &argv) { return argc; }
+
   // the default implementation of these utf8... functions should be enough
   virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
   virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
@@ -124,9 +128,9 @@ public:
   virtual int filename_list(const char * /*d*/, dirent ***,
                             int (* /*sort*/)(struct dirent **, struct dirent **),
                             char *errmsg=NULL, int errmsg_sz=0) {
-                              (void)errmsg; (void)errmsg_sz;
-                              return -1;
-                            }
+    (void)errmsg; (void)errmsg_sz;
+    return -1;
+  }
   // the default implementation of filename_expand() may be enough
   virtual int filename_expand(char *to, int tolen, const char *from);
   // to implement
@@ -196,12 +200,8 @@ public:
   // the implementations of local_to_mac_roman() and mac_roman_to_local() are in fl_encoding_mac_roman.cxx
   virtual const char *local_to_mac_roman(const char *t, int n);
   virtual const char *mac_roman_to_local(const char *t, int n);
-  // the default implementations of tree_openpixmap() and tree_closepixmap() are
-  // in Fl_Tree_Prefs.cxx and can be enough
-  virtual Fl_Pixmap *tree_openpixmap();
-  virtual Fl_Pixmap *tree_closepixmap();
-  static const char *const tree_open_xpm[]; // used by tree_openpixmap()
-  static const char * const tree_close_xpm[]; // used by tree_closepixmap()
+  // draw default tree view expando button
+  virtual void tree_draw_expando_button(int x, int y, bool state, bool active);
   // the default implementation of tree_connector_style() is in Fl_Tree_Prefs.cxx and can be enough
   virtual int tree_connector_style();
   virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);

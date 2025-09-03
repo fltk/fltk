@@ -24,7 +24,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
+extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
 
 
 static void gtk_color(Fl_Color c) {
@@ -174,8 +174,11 @@ static void draw(int which, int x,int y,int w,int h, int inset)
   void (*f)(int,int,int,int,double,double);
   f = (which==FILL) ? fl_pie : fl_arc_i;
   if (which >= CLOSED) {
-    f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
-    f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
+    if (w == h) f(x, y, d, d, 0, 360);
+    else {
+      f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
+      f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
+    }
   } else if (which == UPPER_LEFT) {
     f(x+w-d, y, d, d, 45, w<=h ? 180 : 90);
     f(x, y+h-d, d, d, w<=h ? 180 : 90, 225);
@@ -280,6 +283,8 @@ static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
 
 #endif
 
+extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+
 Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
   fl_internal_boxtype(_FL_GTK_UP_BOX, gtk_up_box);
   fl_internal_boxtype(_FL_GTK_DOWN_BOX, gtk_down_box);
@@ -289,8 +294,8 @@ Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
   fl_internal_boxtype(_FL_GTK_THIN_DOWN_BOX, gtk_thin_down_box);
   fl_internal_boxtype(_FL_GTK_THIN_UP_FRAME, gtk_thin_up_frame);
   fl_internal_boxtype(_FL_GTK_THIN_DOWN_FRAME, gtk_thin_down_frame);
-  fl_internal_boxtype(_FL_GTK_ROUND_UP_BOX, gtk_round_up_box);
-  fl_internal_boxtype(_FL_GTK_ROUND_DOWN_BOX, gtk_round_down_box);
+  fl_internal_boxtype(_FL_GTK_ROUND_UP_BOX, gtk_round_up_box, fl_round_focus);
+  fl_internal_boxtype(_FL_GTK_ROUND_DOWN_BOX, gtk_round_down_box, fl_round_focus);
 
   return _FL_GTK_UP_BOX;
 }

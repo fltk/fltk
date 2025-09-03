@@ -35,6 +35,7 @@
 #    include <strings.h>
 #  endif /* HAVE_STRINGS_H */
 #  include <ctype.h>
+#  include <FL/fl_string_functions.h>
 
 /*
  * Apparently Unixware defines "index" to strchr (!) rather than
@@ -81,7 +82,8 @@ FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t);
 #    define strlcat fl_strlcat
 #  endif /* !HAVE_STRLCAT */
 
-FL_EXPORT extern size_t fl_strlcpy(char *, const char *, size_t);
+/* promoted to <FL/fl_string_functions.h> */
+/* FL_EXPORT extern size_t fl_strlcpy(char *, const char *, size_t); */
 #  ifndef HAVE_STRLCPY
 #    define strlcpy fl_strlcpy
 #  endif /* !HAVE_STRLCPY */

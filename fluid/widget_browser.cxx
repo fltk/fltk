@@ -1,7 +1,7 @@
 //
 // Widget Browser code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -41,6 +41,21 @@
 /// Global access to the widget browser.
 Widget_Browser *widget_browser = NULL;
 
+// ---- static variables
+
+Fl_Color Widget_Browser::label_color    = 72;
+Fl_Font Widget_Browser::label_font      = FL_HELVETICA;
+Fl_Color Widget_Browser::class_color    = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::class_font      = FL_HELVETICA_BOLD;
+Fl_Color Widget_Browser::func_color     = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::func_font       = FL_HELVETICA;
+Fl_Color Widget_Browser::name_color     = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::name_font       = FL_HELVETICA;
+Fl_Color Widget_Browser::code_color     = FL_FOREGROUND_COLOR;
+Fl_Font Widget_Browser::code_font       = FL_HELVETICA;
+Fl_Color Widget_Browser::comment_color  = FL_DARK_GREEN;
+Fl_Font Widget_Browser::comment_font    = FL_HELVETICA;
+
 // ---- global functions
 
 /**
@@ -58,7 +73,7 @@ Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
 }
 
 /**
- Make sure thet the caller is visible in the widget browser.
+ Make sure that the caller is visible in the widget browser.
  \param[in] caller scroll the browser in y so that caller
  is visible (may be NULL)
  */
@@ -99,18 +114,18 @@ void deselect() {
  Make sure that the given item is visible in the browser by opening
  all parent groups and moving the item into the visible space.
 
- \param[in] t show this ite
+ \param[in] t show this item
  */
 void reveal_in_browser(Fl_Type *t) {
   Fl_Type *p = t->parent;
   if (p) {
     for (;;) {
-      if (!p->open_)
-        p->open_ = 1;
+      if (p->folded_)
+        p->folded_ = 0;
       if (!p->parent) break;
       p = p->parent;
     }
-    fixvisible(p);
+    update_visibility_flag(p);
   }
   widget_browser->display(t);
   widget_browser->redraw();
@@ -128,9 +143,10 @@ void reveal_in_browser(Fl_Type *t) {
  \param[out] p return the resulting string in this buffer, terminated with
     a NUL byte
  \param[in] str copy this string; utf8 aware
- \param[in] maxl maximum number of letter to copy until we print
-    the elipsis (...)
+ \param[in] maxl maximum number of letters to copy until we print
+    the ellipsis (...)
  \param[in] quote if set, the resulting string is embedded in double quotes
+ \param[in] trunc_lf if set, truncates at first newline
  \returns pointer to end of string (before terminating null byte).
  \note the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
     or (4 * (maxl+1) + 3) bytes if quoted, e.g. "123..." because each UTF-8
@@ -139,13 +155,29 @@ void reveal_in_browser(Fl_Type *t) {
     This supports Unicode code points up to U+10FFFF (standard as of 10/2016).
     Sanity checks for illegal UTF-8 sequences are included.
  */
-static char *copy_trunc(char *p, const char *str, int maxl, int quote)
+static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc_lf)
 {
   int size = 0;                         // truncated string size in characters
   int bs;                               // size of UTF-8 character in bytes
+  if (!p) return NULL;                  // bad buffer
+  if (!str) {                           // no input string
+    if (quote) { *p++='"'; *p++='"'; }
+    *p = 0;
+    return p;
+  }
   const char *end = str + strlen(str);  // end of input string
   if (quote) *p++ = '"';                // opening quote
   while (size < maxl) {                 // maximum <maxl> characters
+    if (*str == '\n') {
+      if (trunc_lf) {                   // handle trunc at \n
+        if (quote) *p++ = '"';          // closing quote
+        *p = 0;
+        return p;
+      }
+      *p++ = '\\'; *p++ = 'n';
+      str++; size+=2;
+      continue;
+    }
     if (!(*str & (-32))) break;         // end of string (0 or control char)
     bs = fl_utf8len(*str);              // size of next character
     if (bs <= 0) break;                 // some error - leave
@@ -153,7 +185,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
     while (bs--) *p++ = *str++;         // copy that character into the buffer
     size++;                             // count copied characters
   }
-  if (*str) {                           // string was truncated
+  if (*str && *str!='\n') {             // string was truncated
     strcpy(p,"..."); p += 3;
   }
   if (quote) *p++ = '"';                // closing quote
@@ -172,7 +204,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
 
  \param[in] X, Y, W, H position and size of widget
  \param[in] l optional label
- \todo It would be nice to be able to grab one or more nodes and mmove them
+ \todo It would be nice to be able to grab one or more nodes and move them
     within the hierarchy.
  */
 Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l) :
@@ -252,7 +284,7 @@ int Widget_Browser::item_height(void *l) const {
  \return height in FLTK units
  */
 int Widget_Browser::incr_height() const {
-  return textsize()+5;
+  return textsize() + 5 + linespacing();
 }
 
 /**
@@ -280,7 +312,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
 
-  char buf[340]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
+  char buf[500]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
   // calculate the horizontal start position of this item
   // 3 is the edge of the browser
@@ -297,12 +329,12 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // line inside this browser line
   int comment_incr = 0;
   if (show_comments && l->comment()) {
-    copy_trunc(buf, l->comment(), 80, 0);
+    // -- comment
+    copy_trunc(buf, l->comment(), 80, 0, 1);
     comment_incr = textsize()-1;
-    Fl_Color comment_color = fl_color_average(FL_DARK_GREEN, FL_BLACK, 0.9f);
     if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
-    else fl_color(fl_contrast(comment_color, color()));
-    fl_font(textfont()+FL_ITALIC, textsize()-2);
+    else fl_color(comment_color);
+    fl_font(comment_font, textsize()-2);
     fl_draw(buf, X, Y+12);
     Y += comment_incr/2;
     comment_incr -= comment_incr/2;
@@ -312,10 +344,10 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   else fl_color(FL_FOREGROUND_COLOR);
 
   // Width=10: Draw the triangle that indicates possible children
-  if (l->is_parent()) {
+  if (l->can_have_children()) {
     X = X - 18 - 13;
     if (!l->next || l->next->level <= l->level) {
-      if (l->open_!=(l==pushedtitle)) {
+      if (l->folded_==(l==pushedtitle)) {
         // an outlined triangle to the right indicates closed item, no children
         fl_loop(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
@@ -323,7 +355,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
         fl_loop(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     } else {
-      if (l->open_!=(l==pushedtitle)) {
+      if (l->folded_==(l==pushedtitle)) {
         // a filled triangle to the right indicates closed item, with children
         fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
@@ -345,11 +377,11 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   if (   l->is_widget()
-      && !l->is_a(Fl_Type::ID_Window)
+      && !l->is_a(ID_Window)
       && ((Fl_Widget_Type*)l)->o
       && !((Fl_Widget_Type*)l)->o->visible()
-      && (!l->parent || (   !l->parent->is_a(Fl_Type::ID_Tabs)
-                         && !l->parent->is_a(Fl_Type::ID_Wizard) ) )
+      && (!l->parent || (   !l->parent->is_a(ID_Tabs)
+                         && !l->parent->is_a(ID_Wizard) ) )
       )
   {
     invisible_pixmap->draw(X - 17, Y);
@@ -360,20 +392,49 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (l->is_widget() || l->is_class()) {
     const char* c = subclassname(l);
     if (!strncmp(c,"Fl_",3)) c += 3;
-    fl_font(textfont(), textsize());
+    // -- class
+    fl_font(class_font, textsize());
+    if (l->new_selected) fl_color(fl_contrast(class_color, FL_SELECTION_COLOR));
+    else fl_color(class_color);
     fl_draw(c, X, Y+13);
     X += int(fl_width(c)+fl_width('n'));
     c = l->name();
     if (c) {
-      fl_font(textfont()|FL_BOLD, textsize());
+      // -- name
+      fl_font(name_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(name_color, FL_SELECTION_COLOR));
+      else fl_color(name_color);
       fl_draw(c, X, Y+13);
     } else if ((c = l->label())) {
-      copy_trunc(buf, c, 20, 1); // quoted string
+      // -- label
+      fl_font(label_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(label_color, FL_SELECTION_COLOR));
+      else fl_color(label_color);
+      copy_trunc(buf, c, 32, 1, 0); // quoted string
       fl_draw(buf, X, Y+13);
     }
   } else {
-    copy_trunc(buf, l->title(), 55, 0);
-    fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
+    if (l->is_code_block() && (l->level==0 || l->parent->is_class())) {
+      // -- function names
+      fl_font(func_font, textsize());
+      if (l->new_selected) fl_color(fl_contrast(func_color, FL_SELECTION_COLOR));
+      else fl_color(func_color);
+      copy_trunc(buf, l->title(), 55, 0, 0);
+    } else {
+      if (l->is_a(ID_Comment)) {
+        // -- comment (in main line, not above entry)
+        fl_font(comment_font, textsize());
+        if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
+        else fl_color(comment_color);
+        copy_trunc(buf, l->title(), 55, 0, 0);
+      } else {
+        // -- code
+        fl_font(code_font, textsize());
+        if (l->new_selected) fl_color(fl_contrast(code_color, FL_SELECTION_COLOR));
+        else fl_color(code_color);
+        copy_trunc(buf, l->title(), 55, 0, 1);
+      }
+    }
     fl_draw(buf, X, Y+13);
   }
 
@@ -392,7 +453,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
  */
 int Widget_Browser::item_width(void *v) const {
 
-  char buf[340]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
+  char buf[500]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
   Fl_Type *l = (Fl_Type *)v;
 
@@ -410,11 +471,11 @@ int Widget_Browser::item_width(void *v) const {
       fl_font(textfont()|FL_BOLD, textsize());
       W += int(fl_width(c));
     } else if (l->label()) {
-      copy_trunc(buf, l->label(), 20, 1); // quoted string
+      copy_trunc(buf, l->label(), 32, 1, 0); // quoted string
       W += int(fl_width(buf));
     }
   } else {
-    copy_trunc(buf, l->title(), 55, 0);
+    copy_trunc(buf, l->title(), 55, 0, 0);
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     W += int(fl_width(buf));
   }
@@ -423,7 +484,7 @@ int Widget_Browser::item_width(void *v) const {
 }
 
 /**
- Callback to tell the FLuid UI when the list of selected items changed.
+ Callback to tell the Fluid UI when the list of selected items changed.
  */
 void Widget_Browser::callback() {
   selection_changed((Fl_Type*)selection());
@@ -453,7 +514,7 @@ int Widget_Browser::handle(int e) {
     l = (Fl_Type*)find_item(Fl::event_y());
     if (l) {
       X += 3 + 12*l->level - hposition();
-      if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) {
+      if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) {
         title = pushedtitle = l;
         redraw_line(l);
         return 1;
@@ -465,7 +526,7 @@ int Widget_Browser::handle(int e) {
     l = (Fl_Type*)find_item(Fl::event_y());
     if (l) {
       X += 3 + 12*l->level - hposition();
-      if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) ;
+      if (l->can_have_children() && Fl::event_x()>X && Fl::event_x()<X+13) ;
       else l = 0;
     }
     if (l != pushedtitle) {
@@ -484,15 +545,15 @@ int Widget_Browser::handle(int e) {
     l = pushedtitle;
     title = pushedtitle = 0;
     if (l) {
-      if (l->open_) {
-        l->open_ = 0;
+      if (!l->folded_) {
+        l->folded_ = 1;
         for (Fl_Type*k = l->next; k&&k->level>l->level; k = k->next)
           k->visible = 0;
       } else {
-        l->open_ = 1;
+        l->folded_ = 0;
         for (Fl_Type*k=l->next; k&&k->level>l->level;) {
           k->visible = 1;
-          if (k->is_parent() && !k->open_) {
+          if (k->can_have_children() && k->folded_) {
             Fl_Type *j;
             for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
             k = j;
@@ -508,7 +569,7 @@ int Widget_Browser::handle(int e) {
 }
 
 /**
- Save the current scrollbar postion during rebuild.
+ Save the current scrollbar position during rebuild.
  */
 void Widget_Browser::save_scroll_position() {
   saved_h_scroll_ = hposition();
@@ -516,7 +577,7 @@ void Widget_Browser::save_scroll_position() {
 }
 
 /**
- Restore the previous scrollbar postion after rebuild.
+ Restore the previous scrollbar position after rebuild.
  */
 void Widget_Browser::restore_scroll_position() {
   hposition(saved_h_scroll_);
@@ -552,15 +613,15 @@ void Widget_Browser::display(Fl_Type *inNode) {
   Fl_Type *p=Fl_Type::first;
   for ( ; p && p!=inNode; p=p->next) {
     if (p->visible)
-      nodeV += item_height(p);
+      nodeV += item_height(p) + linespacing();
   }
   if (p) {
     int xx, yy, ww, hh;
     bbox(xx, yy, ww, hh);
     int frame_top = xx-x();
     int frame_bottom = frame_top + hh;
-    int node_height = item_height(inNode);
-    int margin_height = 2 * item_quick_height(inNode);
+    int node_height = item_height(inNode) + linespacing();
+    int margin_height = 2 * (item_quick_height(inNode) + linespacing());
     if (margin_height>hh/2) margin_height = hh/2;
     // is the inNode above the current scroll position?
     if (nodeV<currentV+margin_height)
@@ -574,3 +635,35 @@ void Widget_Browser::display(Fl_Type *inNode) {
     vposition(newV);
 }
 
+void Widget_Browser::load_prefs() {
+  int c;
+  Fl_Preferences p(fluid_prefs, "widget_browser");
+  p.get("label_color",  c, 72); label_color = c;
+  p.get("label_font",   c, FL_HELVETICA); label_font = c;
+  p.get("class_color",  c, FL_FOREGROUND_COLOR); class_color = c;
+  p.get("class_font",   c, FL_HELVETICA_BOLD); class_font = c;
+  p.get("func_color",   c, FL_FOREGROUND_COLOR); func_color = c;
+  p.get("func_font",    c, FL_HELVETICA); func_font = c;
+  p.get("name_color",   c, FL_FOREGROUND_COLOR); name_color = c;
+  p.get("name_font",    c, FL_HELVETICA); name_font = c;
+  p.get("code_color",   c, FL_FOREGROUND_COLOR); code_color = c;
+  p.get("code_font",    c, FL_HELVETICA); code_font = c;
+  p.get("comment_color",c, FL_DARK_GREEN); comment_color = c;
+  p.get("comment_font", c, FL_HELVETICA); comment_font = c;
+}
+
+void Widget_Browser::save_prefs() {
+  Fl_Preferences p(fluid_prefs, "widget_browser");
+  p.set("label_color",    (int)label_color);
+  p.set("label_font",     (int)label_font);
+  p.set("class_color",    (int)class_color);
+  p.set("class_font",     (int)class_font);
+  p.set("func_color",     (int)func_color);
+  p.set("func_font",      (int)func_font);
+  p.set("name_color",     (int)name_color);
+  p.set("name_font",      (int)name_font);
+  p.set("code_color",     (int)code_color);
+  p.set("code_font",      (int)code_font);
+  p.set("comment_color",  (int)comment_color);
+  p.set("comment_font",   (int)comment_font);
+}

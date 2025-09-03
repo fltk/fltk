@@ -36,7 +36,7 @@
 #include <FL/Fl_PNM_Image.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Simple_Terminal.H>
+#include <FL/Fl_Terminal.H>
 
 #include <stdio.h>
 #include <string.h>
@@ -55,7 +55,7 @@ Fl_Input                *filter;
 Fl_File_Browser         *files;
 Fl_File_Chooser         *fc;
 Fl_Shared_Image         *image = 0;
-Fl_Simple_Terminal      *tty = 0;
+Fl_Terminal             *tty = 0;
 
 // for choosing extra groups
 Fl_Choice *ch_extra;
@@ -109,8 +109,9 @@ main(int  argc,         // I - Number of command-line arguments
   // Make the main window...
   window = new Fl_Double_Window(400, 215+TERMINAL_HEIGHT, "File Chooser Test");
 
-  tty = new Fl_Simple_Terminal(0,215,window->w(),TERMINAL_HEIGHT);
+  tty = new Fl_Terminal(0,215,window->w(),TERMINAL_HEIGHT);
   tty->ansi(true);
+  tty->display_columns(100);  // at least 100 cols wide, even tho actual window smaller
 
   // Group: limit resizing to filter input (not browse button)
   grp = new Fl_Group(0,10,400,25);

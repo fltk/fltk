@@ -161,6 +161,43 @@ void Fl_Gl_Window::swap_buffers() {
   pGlWindowDriver->swap_buffers();
 }
 
+/**
+ Sets the rate at which the GL windows swaps buffers.
+ This method can be called after the OpenGL context was created, typically
+ within the user overridden `Fl_Gl_Window::draw()` method that will be
+ overridden by the user.
+ \note This method depends highly on the underlying OpenGL contexts and driver
+    implementation. Most driver seem to accept only 0 and 1 to swap buffer
+    asynchronously or in sync with the vertical blank.
+ \param[in] frames set the number of vertical frame blanks between OpenGL
+    buffer swaps
+ */
+void Fl_Gl_Window::swap_interval(int frames) {
+  pGlWindowDriver->swap_interval(frames);
+}
+
+/**
+ Gets the rate at which the GL windows swaps buffers.
+ This method can be called after the OpenGL context was created, typically
+ within the user overridden `Fl_Gl_Window::draw()` method that will be
+ overridden by the user.
+ \note This method depends highly on the underlying OpenGL contexts and driver
+    implementation. Some drivers return no information, most drivers don't
+    support intervals with multiple frames and return only 0 or 1.
+ \note Some drivers have the ability to set the swap interval but no way
+    to query it, hence this method may return -1 even though the interval was
+    set correctly. Conversely a return value greater zero does not guarantee
+    that the driver actually honors the setting.
+ \return an integer greater zero if vertical blanking is taken into account
+    when swapping OpenGL buffers
+ \return 0 if the vertical blanking is ignored
+ \return -1 if the information can not be retrieved
+ */
+int Fl_Gl_Window::swap_interval() const {
+  return pGlWindowDriver->swap_interval();
+}
+
+
 void Fl_Gl_Window::flush() {
   if (!shown()) return;
   uchar save_valid = valid_f_ & 1;
@@ -499,7 +536,6 @@ float Fl_Gl_Window::pixels_per_unit() {
  */
 
 int Fl_Gl_Window_Driver::copy = COPY;
-GLContext Fl_Gl_Window_Driver::cached_context = NULL;
 Fl_Window* Fl_Gl_Window_Driver::cached_window = NULL;
 float Fl_Gl_Window_Driver::gl_scale = 1; // scaling factor between FLTK and GL drawing units: GL = FLTK * gl_scale
 

@@ -64,7 +64,13 @@
 
 // FEATURE: Fd_Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
-// FEATURE: ad the files ./fluid.prefs and ./fluid.user.prefs as tool locations
+// FEATURE: add the files ./fluid.prefs and ./fluid.user.prefs as tool locations
+// FEATURE: interpret compiler output, for example: clang, and highlight errors and warnings
+//          `.../shell_command.cxx:71:2: error: test`
+//          `71 | #error test`
+//          `clang++: error: no such file or directory: '.../shell_command.o'`
+//          would make the error message clickable in the shell window and could select the widget,
+//          open the matching editor in the widget panel, and highlight the line in SourceView.
 
 /*
  Some ideas:
@@ -72,7 +78,7 @@
  default shell is in $SHELL on linux and macOS
 
  On macOS, we can write Apple Scripts:
- 
+
  #!/usr/bin/env osascript
  say "@BASENAME@"
 
@@ -85,13 +91,15 @@
       build workspace document 1
     end tell
   EOD
+
+  powershell -c "$wshell = New-Object -ComObject wscript.shell; $wshell.SendKeys('^{ESCAPE}')
  */
 
 #include "shell_command.h"
 
 #include "fluid.h"
 #include "file.h"
-#include "alignment_panel.h"
+#include "settings_panel.h"
 
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
@@ -102,6 +110,46 @@
 
 static Fl_String fltk_config_cmd;
 static Fl_Process s_proc;
+
+/**
+ See if shell command is running (public)
+ */
+bool shell_command_running() {
+  return s_proc.desc() ? true : false;
+}
+
+/**
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0).
+
+ \param[in] prefs preference group
+ \param[in] key name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used
+ */
+char preferences_get(Fl_Preferences &prefs, const char *key, Fl_String &value, const Fl_String &defaultValue) {
+  char *v = NULL;
+  char ret = prefs.get(key, v, defaultValue.c_str());
+  value = v;
+  ::free(v);
+  return ret;
+}
+
+/**
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preference file.
+
+ \param[in] prefs preference group
+ \param[in] entry name of entry
+ \param[in] value set this entry to value (stops at the first nul character).
+ \return 0 if setting the value failed
+ */
+char preferences_set(Fl_Preferences &prefs, const char *key, const Fl_String &value) {
+  return prefs.set(key, value.c_str());
+}
 
 
 /** \class Fl_Process
@@ -248,6 +296,7 @@ void Fl_Process::clean_close(HANDLE& h) {
 
 #endif
 
+
 /**
  Prepare FLUID for running a shell command according to the command flags.
 
@@ -264,7 +313,7 @@ static bool prepare_shell_command(int flags)  {
     save_cb(0, 0);
   }
   if (flags & Fd_Shell_Command::SAVE_SOURCECODE) {
-    write_code_files();
+    write_code_files(true);
   }
   if (flags & Fd_Shell_Command::SAVE_STRINGS) {
     write_strings_cb(0, 0);
@@ -341,6 +390,22 @@ static void expand_macros(Fl_String &cmd) {
 }
 
 /**
+ Show the terminal window where it was last positioned.
+ */
+void show_terminal_window() {
+  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+  int x, y, w, h;
+  pos.get("x", x, -1);
+  pos.get("y", y, 0);
+  pos.get("w", w, 640);
+  pos.get("h", h, 480);
+  if (x!=-1) {
+    shell_run_window->resize(x, y, w, h);
+  }
+  shell_run_window->show();
+}
+
+/**
  Prepare for and run a shell command.
 
  \param[in] cmd the command that is sent to `/bin/sh -c ...` or `cmd.exe` on Windows machines
@@ -357,20 +422,18 @@ void run_shell_command(const Fl_String &cmd, int flags) {
   Fl_String expanded_cmd = cmd;
   expand_macros(expanded_cmd);
 
-  if (!shell_run_window->visible()) {
-    Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
-    int x, y, w, h;
-    pos.get("x", x, -1);
-    pos.get("y", y, 0);
-    pos.get("w", w, 640);
-    pos.get("h", h, 480);
-    if (x!=-1) {
-      shell_run_window->resize(x, y, w, h);
-    }
-    shell_run_window->show();
+  if (   ((flags & Fd_Shell_Command::DONT_SHOW_TERMINAL) == 0)
+      && (!shell_run_window->visible()))
+  {
+    show_terminal_window();
   }
 
   // Show the output window and clear things...
+  if (flags & Fd_Shell_Command::CLEAR_TERMINAL)
+    shell_run_terminal->printf("\033[2J\033[H");
+  if (flags & Fd_Shell_Command::CLEAR_HISTORY)
+    shell_run_terminal->printf("\033[3J");
+  shell_run_terminal->scrollbar->value(0);
   shell_run_terminal->printf("\033[0;32m%s\033[0m\n", expanded_cmd.c_str());
   shell_run_window->label(expanded_cmd.c_str());
 
@@ -532,26 +595,26 @@ bool Fd_Shell_Command::is_active() {
 
 void Fd_Shell_Command::read(Fl_Preferences &prefs) {
   int tmp;
-  prefs.get("name", name, "<unnamed>");
-  prefs.get("label", label, "<no label>");
+  preferences_get(prefs, "name", name, "<unnamed>");
+  preferences_get(prefs, "label", label, "<no label>");
   prefs.get("shortcut", tmp, 0);
   shortcut = (Fl_Shortcut)tmp;
   prefs.get("storage", tmp, -1);
   if (tmp != -1) storage = (Fd_Tool_Store)tmp;
   prefs.get("condition", condition, ALWAYS);
-  prefs.get("condition_data", condition_data, "");
-  prefs.get("command", command, "");
+  preferences_get(prefs, "condition_data", condition_data, "");
+  preferences_get(prefs, "command", command, "");
   prefs.get("flags", flags, 0);
 }
 
 void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
-  prefs.set("name", name);
-  prefs.set("label", label);
+  preferences_set(prefs, "name", name);
+  preferences_set(prefs, "label", label);
   if (shortcut != 0) prefs.set("shortcut", (int)shortcut);
   if (save_location) prefs.set("storage", (int)storage);
   if (condition != ALWAYS) prefs.set("condition", condition);
-  if (!condition_data.empty()) prefs.set("condition_data", condition_data);
-  if (!command.empty()) prefs.set("command", command);
+  if (!condition_data.empty()) preferences_set(prefs, "condition_data", condition_data);
+  if (!command.empty()) preferences_set(prefs, "command", command);
   if (flags != 0) prefs.set("flags", flags);
 }
 
@@ -667,7 +730,7 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, Fd_Tool_Store storage) {
       cmd->name = "Sample Shell Command";
       cmd->label = "Sample Shell Command";
       cmd->shortcut = FL_ALT+'g';
-      fluid_prefs.get("shell_command", cmd->command, "echo \"Sample Shell Command\"");
+      preferences_get(fluid_prefs, "shell_command", cmd->command, "echo \"Sample Shell Command\"");
       fluid_prefs.get("shell_savefl", save_fl, 1);
       fluid_prefs.get("shell_writecode", save_code, 1);
       fluid_prefs.get("shell_writemsgs", save_strings, 0);
@@ -752,7 +815,7 @@ void Fd_Shell_Command_List::write(Fd_Project_Writer *out) {
 void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
   if (list_size == list_capacity) {
     list_capacity += 16;
-    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command**));
+    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command*));
   }
   list[list_size++] = cmd;
 }
@@ -766,7 +829,7 @@ void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
 void Fd_Shell_Command_List::insert(int index, Fd_Shell_Command *cmd) {
   if (list_size == list_capacity) {
     list_capacity += 16;
-    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command**));
+    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command*));
   }
   ::memmove(list+index+1, list+index, (list_size-index)*sizeof(Fd_Shell_Command**));
   list_size++;

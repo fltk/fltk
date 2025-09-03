@@ -1,7 +1,7 @@
 //
 // Definition of the part of the Screen interface shared by X11/Wayland
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,9 +15,14 @@
 //
 
 #include <config.h>
+#include <sys/time.h>
 #include "Fl_Unix_Screen_Driver.H"
 
+#if USE_POLL
+pollfd *Fl_Unix_Screen_Driver::pollfds = 0;
+#else
 fd_set Fl_Unix_Screen_Driver::fdsets[3];
+#endif
 int Fl_Unix_Screen_Driver::maxfd = 0;
 int Fl_Unix_Screen_Driver::nfds = 0;
 Fl_Unix_Screen_Driver::FD *Fl_Unix_Screen_Driver::fd = NULL;

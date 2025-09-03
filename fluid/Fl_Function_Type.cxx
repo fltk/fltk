@@ -24,11 +24,16 @@
 #include "code.h"
 #include "function_panel.h"
 #include "comments.h"
+#include "mergeback.h"
+#include "undo.h"
 
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_ask.H>
 #include "../src/flstring.h"
+
+#include <zlib.h>
+
 
 /// Set a current class, so that the code of the children is generated correctly.
 Fl_Class_Type *current_class = NULL;
@@ -45,7 +50,7 @@ Fl_Class_Type *current_class = NULL;
 int has_toplevel_function(const char *rtype, const char *sig) {
   Fl_Type *child;
   for (child = Fl_Type::first; child; child = child->next) {
-    if (!child->is_in_class() && child->is_a(Fl_Type::ID_Function)) {
+    if (!child->is_in_class() && child->is_a(ID_Function)) {
       const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
@@ -157,7 +162,7 @@ const char *_c_check(const char * & c, int type) {
  \note This function checks every conceivable line of code, which is not
     always wanted. It can't differentiate characters in comments, and the
     user may well intend to leave a curly bracket open
-    (i.e. namesapece { ... } ). We should make this option user selectable.
+    (i.e. namespace { ... } ). We should make this option user selectable.
  */
 const char *c_check(const char *c, int type) {
   return _c_check(c,type);
@@ -197,16 +202,22 @@ Fl_Function_Type::~Fl_Function_Type() {
 
 /**
  Create a new function for the widget tree.
- \param[in] strategy new function add after current or as last child
+ \param[in] strategy add new function after current or as last child
  \return the new node
  */
 Fl_Type *Fl_Function_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_Function_Type *o = new Fl_Function_Type();
   o->name("make_window()");
   o->return_type = 0;
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
   o->cdecl_ = 0;
@@ -299,10 +310,9 @@ void Fl_Function_Type::open() {
     // - alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     // - copy dialog data to target variables
     int mod = 0;
@@ -327,10 +337,10 @@ void Fl_Function_Type::open() {
     }
     c = f_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -348,6 +358,51 @@ BREAK2:
 int Fl_Function_Type::is_public() const {
   return public_;
 }
+
+static bool fd_isspace(int c) {
+  return (c>0 && c<128 && isspace(c));
+}
+
+// code duplication: see int is_id(char c) in code.cxx
+static bool fd_iskeyword(int c) {
+  return (c>0 && c<128 && (isalnum(c) || c=='_'));
+}
+
+// remove all function default parameters and `override` keyword
+static void clean_function_for_implementation(char *out, const char *function_name) {
+  char *sptr = out;
+  const char *nptr = function_name;
+  int skips=0,skipc=0;
+  int nc=0,plevel=0;
+  bool arglist_done = false;
+  for (;*nptr; nc++,nptr++) {
+    if (arglist_done && fd_isspace(nptr[0])) {
+      // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
+      if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
+      else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
+    }
+    if (!skips && *nptr=='(') plevel++;
+    else if (!skips && *nptr==')') { plevel--; if (plevel==0) arglist_done = true; }
+    if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
+      skips = skips ? 0 : 1;
+    else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
+      skipc = skipc ? 0 : 1;
+    if(!skips && !skipc && plevel==1 && *nptr =='=' && !(nc && *(nptr-1)=='\'') ) { // ignore '=' case
+      while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
+        if ( *nptr=='"' &&  *(nptr-1)!='\\' )
+          skips = skips ? 0 : 1;
+        else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
+          skipc = skipc ? 0 : 1;
+        if (!skips && !skipc && *nptr=='(') plevel++;
+        else if (!skips && *nptr==')') plevel--;
+      }
+      if (*nptr==')') if (--plevel==0) arglist_done = true;
+    }
+    if (sptr < (out + 1024 - 1)) *sptr++ = *nptr;
+  }
+  *sptr = '\0';
+}
+
 
 /**
  Write the code for the source and the header file.
@@ -398,9 +453,9 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
 
     const char* k = class_name(0);
     if (k) {
+      f.write_public(public_);
       if (havechildren)
         write_comment_c(f);
-      f.write_public(public_);
       if (name()[0] == '~')
         constructor = 1;
       else {
@@ -435,33 +490,10 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
       } else {
         f.write_h("%s;\n", s);
       }
-      // skip all function default param. init in body:
-      int skips=0,skipc=0;
-      int nc=0,plevel=0;
-      for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-        if (!skips && *nptr=='(') plevel++;
-        else if (!skips && *nptr==')') plevel--;
-        if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
-          skips = skips ? 0 : 1;
-        else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
-          skipc = skipc ? 0 : 1;
-        if(!skips && !skipc && plevel==1 && *nptr =='=' &&
-           !(nc && *(nptr-1)=='\'') ) // ignore '=' case
-          while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
-            if ( *nptr=='"' &&  *(nptr-1)!='\\' )
-              skips = skips ? 0 : 1;
-            else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
-              skipc = skipc ? 0 : 1;
-            if (!skips && !skipc && *nptr=='(') plevel++;
-            else if (!skips && *nptr==')') plevel--;
-          }
-
-        if (sptr < (s + sizeof(s) - 1)) *sptr++ = *nptr;
-      }
-      *sptr = '\0';
-
-      if (havechildren)
+      if (havechildren) {
+        clean_function_for_implementation(s, name());
         f.write_c("%s::%s {\n", k, s);
+      }
     } else {
       if (havechildren)
         write_comment_c(f);
@@ -478,34 +510,11 @@ void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
       }
 
       // write everything but the default parameters (if any)
-      char s[1024], *sptr;
-      char *nptr;
-      int skips=0,skipc=0;
-      int nc=0,plevel=0;
-      for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-        if (!skips && *nptr=='(') plevel++;
-        else if (!skips && *nptr==')') plevel--;
-        if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') )
-          skips = skips ? 0 : 1;
-        else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
-          skipc = skipc ? 0 : 1;
-        if(!skips && !skipc && plevel==1 && *nptr =='=' &&
-           !(nc && *(nptr-1)=='\'') ) // ignore '=' case
-          while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
-            if ( *nptr=='"' &&  *(nptr-1)!='\\' )
-              skips = skips ? 0 : 1;
-            else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
-              skipc = skipc ? 0 : 1;
-            if (!skips && !skipc && *nptr=='(') plevel++;
-            else if (!skips && *nptr==')') plevel--;
-          }
-
-        if (sptr < (s + sizeof(s) - 1)) *sptr++ = *nptr;
-      }
-      *sptr = '\0';
-
-      if (havechildren)
+      char s[1024];
+      if (havechildren) {
+        clean_function_for_implementation(s, name());
         f.write_c("%s%s %s {\n", rtype, star, s);
+      }
     }
   }
 
@@ -587,15 +596,21 @@ Fl_Code_Type::Fl_Code_Type() :
  \return new Code node
  */
 Fl_Type *Fl_Code_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_code_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   if (!p) {
     fl_message("Please select a function");
     return 0;
   }
   Fl_Code_Type *o = new Fl_Code_Type();
   o->name("printf(\"Hello, World!\\n\");");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -608,6 +623,7 @@ void Fl_Code_Type::open() {
   if ( G_use_external_editor && G_external_editor_command[0] ) {
     const char *cmd = G_external_editor_command;
     const char *code = name();
+    if (!code) code = "";
     if ( editor_.open_editor(cmd, code) == 0 )
       return;   // return if editor opened ok, fall thru to built-in if not
   }
@@ -630,10 +646,9 @@ void Fl_Code_Type::open() {
     message = c_check(c);
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) { free(c); goto BREAK2; } // Cancel Dialog
-      //if (v==1) { }                       // Ignore Error
-      if (v==2) { free(c); continue; }    // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     name(c);
     free(c);
@@ -665,8 +680,9 @@ void Fl_Code_Type::write_code1(Fd_Code_Writer& f) {
   if ( handle_editor_changes() == 1 ) {
     main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
-
+  // Matt: disabled f.tag(FD_TAG_GENERIC, 0);
   f.write_c_indented(name(), 0, '\n');
+  // Matt: disabled f.tag(FD_TAG_CODE, get_uid());
 }
 
 /**
@@ -748,8 +764,14 @@ Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
  \return new CodeBlock
  */
 Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_code_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   if (!p) {
     fl_message("Please select a function");
     return 0;
@@ -757,7 +779,7 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   Fl_CodeBlock_Type *o = new Fl_CodeBlock_Type();
   o->name("if (test())");
   o->after = 0;
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -776,7 +798,7 @@ void Fl_CodeBlock_Type::write_properties(Fd_Project_Writer &f) {
 }
 
 /**
- Read the node specifc properties.
+ Read the node specific properties.
  */
 void Fl_CodeBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"after")) {
@@ -811,10 +833,9 @@ void Fl_CodeBlock_Type::open() {
     // alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     // write to variables
     name(code_before_input->value());
@@ -885,13 +906,19 @@ int Fl_Decl_Type::is_public() const
  \return new Declaration node
  */
 Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_Decl_Type *o = new Fl_Decl_Type();
   o->public_ = 0;
   o->static_ = 1;
   o->name("int x;");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -938,7 +965,7 @@ void Fl_Decl_Type::read_property(Fd_Project_Reader &f, const char *c) {
  */
 void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
-  decl_input->value(name());
+  decl_input->buffer()->text(name());
   if (is_in_class()) {
     decl_class_choice->value(public_);
     decl_class_choice->show();
@@ -961,16 +988,15 @@ void Fl_Decl_Type::open() {
       else if (!w) Fl::wait();
     }
     // check values
-    const char*c = decl_input->value();
+    const char*c = decl_input->buffer()->text();
     while (isspace(*c)) c++;
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     // alert user
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
     // copy vlaues
     name(c);
@@ -991,10 +1017,10 @@ void Fl_Decl_Type::open() {
     }
     c = decl_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -1017,6 +1043,7 @@ void Fl_Decl_Type::write_code1(Fd_Code_Writer& f) {
                         || (!strncmp(c,"typedef",7) && isspace(c[7]))
                         || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
                         || (!strncmp(c,"struct",6) && isspace(c[6]))
+                        || (!strncmp(c,"enum",4) && isspace(c[4]))
                         ) ) {
     f.write_public(public_);
     write_comment_h(f, f.indent(1));
@@ -1107,15 +1134,21 @@ Fl_Data_Type::~Fl_Data_Type() {
  \return new inline data node
  */
 Fl_Type *Fl_Data_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_Data_Type *o = new Fl_Data_Type();
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = 0;
   o->text_mode_ = 0;
   o->name("myInlineData");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1131,8 +1164,11 @@ void Fl_Data_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("filename");
     f.write_word(filename_);
   }
-  if (text_mode_) {
+  if (text_mode_ == 1) {
     f.write_string("textmode");
+  }
+  if (text_mode_ == 2) {
+    f.write_string("compressed");
   }
 }
 
@@ -1144,6 +1180,8 @@ void Fl_Data_Type::read_property(Fd_Project_Reader &f, const char *c) {
     storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
     text_mode_ = 1;
+  } else if (!strcmp(c,"compressed")) {
+    text_mode_ = 2;
   } else {
     Fl_Decl_Type::read_property(f, c);
   }
@@ -1207,12 +1245,12 @@ void Fl_Data_Type::open() {
     if (n==q) {
     OOPS:
       int v = fl_choice("%s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing",
+                        "Continue Editing", "Ignore Error", NULL,
                         "Variable name must be a C identifier");
-      if (v==0) { free(s); goto BREAK2; } // Cancel Dialog
-      //if (v==1) { }                       // Ignore Error
-      if (v==2) { free(s); continue; }    // Continue Editing
+      if (v==0) { free(s); continue; }    // Continue Editing
+      //if (v==1) { }                     // Ignore Error and close dialog
     }
+    undo_checkpoint();
     name(n);
     free(s);
     // store flags
@@ -1232,6 +1270,8 @@ void Fl_Data_Type::open() {
       }
     }
     text_mode_ = data_mode->value();
+    if (text_mode_ < 0) text_mode_ = 0;
+    if (text_mode_ > 2) text_mode_ = 2;
     // store the filename
     c = data_filename->value();
     if (filename_ && strcmp(filename_, data_filename->value()))
@@ -1243,13 +1283,14 @@ void Fl_Data_Type::open() {
     // store the comment
     c = data_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
+    set_modflag(1);
     break;
   }
 BREAK2:
@@ -1266,8 +1307,9 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
   const char *fn = filename_;
   char *data = 0;
   int nData = -1;
+  int uncompressedDataSize = 0;
   // path should be set correctly already
-  if (filename_ && !f.write_sourceview) {
+  if (filename_ && !f.write_codeview) {
     enter_project_dir();
     FILE *f = fl_fopen(filename_, "rb");
     leave_project_dir();
@@ -1280,6 +1322,15 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
       if (nData) {
         data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* use default */ }
+        if (text_mode_ == 2) {
+          uncompressedDataSize = nData;
+          uLong nzData = compressBound(nData);
+          Bytef *zdata = (Bytef*)::malloc(nzData);
+          if (compress(zdata, &nzData, (Bytef*)data, nData) != Z_OK) { /* error */ }
+          ::free(data);
+          data = (char*)zdata;
+          nData = (int)nzData;
+        }
       }
       fclose(f);
     }
@@ -1288,13 +1339,22 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
   }
   if (is_in_class()) {
     f.write_public(public_);
-    if (text_mode_) {
+    if (text_mode_ == 1) {
       f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
       f.write_c("\n");
       write_comment_c(f);
       f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cstring(data, nData);
+    } else if (text_mode_ == 2) {
+      f.write_h("%sstatic int %s_size;\n", f.indent(1), c);
+      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+      f.write_c("\n");
+      write_comment_c(f);
+      f.write_c("int %s::%s_size = %d;\n", class_name(1), c, uncompressedDataSize);
+      f.write_c("unsigned char %s::%s[%d] = /* data compressed and inlined from %s */\n", class_name(1), c, nData, fn);
+      if (message) f.write_c("#error %s %s\n", message, fn);
+      f.write_cdata(data, nData);
     } else {
       f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
@@ -1308,13 +1368,22 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        if (text_mode_) {
+        if (text_mode_ == 1) {
           f.write_h("extern const char *%s;\n", c);
           f.write_c("\n");
           write_comment_c(f);
           f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cstring(data, nData);
+        } else if (text_mode_ == 2) {
+          f.write_h("extern int %s_size;\n", c);
+          f.write_h("extern unsigned char %s[%d];\n", c, nData);
+          f.write_c("\n");
+          write_comment_c(f);
+          f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+          f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+          if (message) f.write_c("#error %s %s\n", message, fn);
+          f.write_cdata(data, nData);
         } else {
           f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
@@ -1327,7 +1396,7 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
       } else {
         write_comment_h(f);
         f.write_h("#error Unsupported declaration loading inline data %s\n", fn);
-        if (text_mode_)
+        if (text_mode_ == 1)
           f.write_h("const char *%s = \"abc...\";\n", c);
         else
           f.write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
@@ -1337,10 +1406,16 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
       write_comment_c(f);
       if (static_)
         f.write_c("static ");
-      if (text_mode_) {
+      if (text_mode_ == 1) {
         f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cstring(data, nData);
+      } else if (text_mode_ == 2) {
+        f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+        if (static_) f.write_c("static ");
+        f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+        if (message) f.write_c("#error %s %s\n", message, fn);
+        f.write_cdata(data, nData);
       } else {
         f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
         if (message) f.write_c("#error %s %s\n", message, fn);
@@ -1350,8 +1425,8 @@ void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
     }
   }
   // if we are in interactive mode, we pop up a warning dialog
-  // giving the error: (batch_mode && !write_sourceview) ???
-  if (message && !f.write_sourceview) {
+  // giving the error: (batch_mode && !write_codeview) ???
+  if (message && !f.write_codeview) {
     if (batch_mode)
       fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn);
     else
@@ -1378,7 +1453,8 @@ Fl_DeclBlock_Type Fl_DeclBlock_type;
  */
 Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
   Fl_Type(),
-  after(NULL)
+  after(NULL),
+  write_map_(CODE_IN_SOURCE)
 { }
 
 /**
@@ -1386,27 +1462,34 @@ Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
  */
 Fl_DeclBlock_Type::~Fl_DeclBlock_Type() {
   if (after)
-    free((void*)after);
+    ::free((void*)after);
 }
 
 /**
  Return 1 if this block is public.
  */
-int Fl_DeclBlock_Type::is_public() const {return public_;}
+int Fl_DeclBlock_Type::is_public() const {
+  return ((write_map_&CODE_IN_HEADER) != 0);
+}
 
 /**
  Create a new declaration block.
  \param[in] strategy add after current or as last child
- \return new Declaration Blocknode
+ \return new Declaration Block node
  */
 Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
   o->name("#if 1");
-  o->public_ = 0;
+  o->write_map_ = CODE_IN_SOURCE;
   o->after = fl_strdup("#endif");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1418,10 +1501,11 @@ Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
  */
 void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
   Fl_Type::write_properties(f);
-  switch (public_) {
-    case 1: f.write_string("public"); break;
-    case 2: f.write_string("protected"); break;
-  }
+  // deprecated
+  if (is_public()) f.write_string("public");
+  // new way to map declaration block to various parts of the generated code
+  if (write_map_ != CODE_IN_SOURCE)
+    f.write_string("map %d", write_map_);
   f.write_string("after");
   f.write_word(after);
 }
@@ -1431,9 +1515,11 @@ void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
  */
 void Fl_DeclBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if(!strcmp(c,"public")) {
-    public_ = 1;
+    write_map_ |= CODE_IN_HEADER;
   } else if(!strcmp(c,"protected")) {
-    public_ = 2;
+    //
+  } else if(!strcmp(c,"map")) {
+    write_map_ = (int)atol(f.read_word());
   } else  if (!strcmp(c,"after")) {
     storestring(f.read_word(),after);
   } else {
@@ -1445,10 +1531,18 @@ void Fl_DeclBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
  Open the declblock_panel to edit this node.
  */
 void Fl_DeclBlock_Type::open() {
+  // build dialog box
   if (!declblock_panel) make_declblock_panel();
-  decl_before_input->value(name());
-  declblock_public_choice->value((public_>0));
-  decl_after_input->value(after);
+  // preset all values
+  declblock_before_input->value(name());
+  declblock_after_input->value(after);
+  declblock_static_header->value(write_map_ & STATIC_IN_HEADER);
+  declblock_static_source->value(write_map_ & STATIC_IN_SOURCE);
+  declblock_code_header->value(write_map_ & CODE_IN_HEADER);
+  declblock_code_source->value(write_map_ & CODE_IN_SOURCE);
+  const char *c = comment();
+  declblock_comment_input->buffer()->text(c?c:"");
+  // show modal dialog and loop until satisfied
   declblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -1458,31 +1552,107 @@ void Fl_DeclBlock_Type::open() {
       else if (w == declblock_panel_ok) break;
       else if (!w) Fl::wait();
     }
-    const char* a = decl_before_input->value();
+    // verify user input
+    const char* a = declblock_before_input->value();
     while (isspace(*a)) a++;
-    const char* b = decl_after_input->value();
+    const char* b = declblock_after_input->value();
     while (isspace(*b)) b++;
     message = c_check(a&&a[0]=='#' ? a+1 : a);
     if (!message)
       message = c_check(b&&b[0]=='#' ? b+1 : b);
     if (message) {
       int v = fl_choice("Potential syntax error detected: %s",
-                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
-      if (v==0) goto BREAK2;  // Cancel Dialog
-      //if (v==1) { }           // Ignore Error
-      if (v==2) continue;     // Continue Editing
+                        "Continue Editing", "Ignore Error", NULL, message);
+      if (v==0) continue;     // Continue Editing
+      //if (v==1) { }         // Ignore Error and close dialog
     }
+    // store user choices in data structure
     name(a);
     storestring(b, after);
-    if (public_ != declblock_public_choice->value()) {
-      set_modflag(1);
-      public_ = declblock_public_choice->value();
-      redraw_browser();
+    if (write_map_ & STATIC_IN_HEADER) {
+      if (declblock_static_header->value()==0) {
+        write_map_ &= ~STATIC_IN_HEADER;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_static_header->value()) {
+        write_map_ |= STATIC_IN_HEADER;
+        set_modflag(1);
+      }
     }
+    if (write_map_ & STATIC_IN_SOURCE) {
+      if (declblock_static_source->value()==0) {
+        write_map_ &= ~STATIC_IN_SOURCE;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_static_source->value()) {
+        write_map_ |= STATIC_IN_SOURCE;
+        set_modflag(1);
+      }
+    }
+    if (write_map_ & CODE_IN_HEADER) {
+      if (declblock_code_header->value()==0) {
+        write_map_ &= ~CODE_IN_HEADER;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_code_header->value()) {
+        write_map_ |= CODE_IN_HEADER;
+        set_modflag(1);
+      }
+    }
+    if (write_map_ & CODE_IN_SOURCE) {
+      if (declblock_code_source->value()==0) {
+        write_map_ &= ~CODE_IN_SOURCE;
+        set_modflag(1);
+      }
+    } else {
+      if (declblock_code_source->value()) {
+        write_map_ |= CODE_IN_SOURCE;
+        set_modflag(1);
+      }
+    }
+    c = declblock_comment_input->buffer()->text();
+    if (c && *c) {
+      if (!comment() || strcmp(c, comment())) { set_modflag(1); redraw_browser(); }
+      comment(c);
+    } else {
+      if (comment()) { set_modflag(1); redraw_browser(); }
+      comment(0);
+    }
+    if (c) free((void*)c);
     break;
   }
 BREAK2:
   declblock_panel->hide();
+}
+
+/**
+ Write the \b before static code to the source file, and to the header file if declared public.
+ The before code is stored in the name() field.
+ */
+void Fl_DeclBlock_Type::write_static(Fd_Code_Writer& f) {
+  const char* c = name();
+  if (c && *c) {
+    if (write_map_ & STATIC_IN_HEADER)
+      f.write_h("%s\n", c);
+    if (write_map_ & STATIC_IN_SOURCE)
+      f.write_c("%s\n", c);
+  }
+}
+
+/**
+ Write the \b after static code to the source file, and to the header file if declared public.
+ */
+void Fl_DeclBlock_Type::write_static_after(Fd_Code_Writer& f) {
+  const char* c = after;
+  if (c && *c) {
+    if (write_map_ & STATIC_IN_HEADER)
+      f.write_h("%s\n", c);
+    if (write_map_ & STATIC_IN_SOURCE)
+      f.write_c("%s\n", c);
+  }
 }
 
 /**
@@ -1491,9 +1661,12 @@ BREAK2:
  */
 void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
-  if (public_)
-    f.write_h("%s\n", c);
-  f.write_c("%s\n", c);
+  if (c && *c) {
+    if (write_map_ & CODE_IN_HEADER)
+      f.write_h("%s\n", c);
+    if (write_map_ & CODE_IN_SOURCE)
+      f.write_c("%s\n", c);
+  }
 }
 
 /**
@@ -1501,9 +1674,12 @@ void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
  */
 void Fl_DeclBlock_Type::write_code2(Fd_Code_Writer& f) {
   const char* c = after;
-  if (public_)
-    f.write_h("%s\n", c);
-  f.write_c("%s\n", c);
+  if (c && *c) {
+    if (write_map_ & CODE_IN_HEADER)
+      f.write_h("%s\n", c);
+    if (write_map_ & CODE_IN_SOURCE)
+      f.write_c("%s\n", c);
+  }
 }
 
 // ---- Fl_Comment_Type declaration
@@ -1534,16 +1710,21 @@ Fl_Comment_Type::Fl_Comment_Type() :
  \return new Comment node
  */
 Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_code_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_Comment_Type *o = new Fl_Comment_Type();
   o->in_c_ = 1;
   o->in_h_ = 1;
   o->style_ = 0;
   o->name("my comment");
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
-  o->title_buf[0] = 0;
   return o;
 }
 
@@ -1713,32 +1894,7 @@ void Fl_Comment_Type::open() {
     break;
   }
 BREAK2:
-  title_buf[0] = 0;
   comment_panel->hide();
-}
-
-/**
- Create a title for the Widget Browser by extracting the first 50 characters of the comment.
- */
-const char *Fl_Comment_Type::title() {
-  const char* n = name();
-  if (!n || !*n) return type_name();
-  if (title_buf[0]==0) {
-    const char *s = n;
-    char *d = title_buf;
-    int i = 50;
-    while (--i > 0) {
-      char n = *s++;
-      if (n==0) break;
-      if (n=='\r') { *d++ = '\\'; *d++ = 'r'; i--; }
-      else if (n=='\n') { *d++ = '\\'; *d++ = 'n'; i--; }
-      else if (n<32) { *d++ = '^'; *d++ = 'A'+n; i--; }
-      else *d++ = n;
-    }
-    if (i<=0) { *d++ = '.'; *d++ = '.'; *d++ = '.'; }
-    *d++ = 0;
-  }
-  return title_buf;
 }
 
 /**
@@ -1834,14 +1990,20 @@ void Fl_Class_Type::prefix(const char*p) {
  \return new Class node
  */
 Fl_Type *Fl_Class_Type::make(Strategy strategy) {
-  Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Type *anchor = Fl_Type::current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
+    p = p->parent;
+  while (p && !p->is_decl_block()) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
   Fl_Class_Type *o = new Fl_Class_Type();
   o->name("UserInterface");
   o->class_prefix = NULL;
   o->subclass_of = NULL;
   o->public_ = 1;
-  o->add(p, strategy);
+  o->add(anchor, strategy);
   o->factory = this;
   return o;
 }
@@ -1940,10 +2102,10 @@ void Fl_Class_Type::open() {
     }
     c = c_comment_input->buffer()->text();
     if (c && *c) {
-      if (!comment() || strcmp(c, comment())) redraw_browser();
+      if (!comment() || strcmp(c, comment()))  { set_modflag(1); redraw_browser(); }
       comment(c);
     } else {
-      if (comment()) redraw_browser();
+      if (comment())  { set_modflag(1); redraw_browser(); }
       comment(0);
     }
     if (c) free((void*)c);
@@ -1981,10 +2143,10 @@ void Fl_Class_Type::write_code2(Fd_Code_Writer& f) {
 /**
  Return 1 if this class contains a function with the given signature.
  */
-int Fl_Class_Type::has_function(const char *rtype, const char *sig) const {
+int Fl_Type::has_function(const char *rtype, const char *sig) const {
   Fl_Type *child;
   for (child = next; child && child->level > level; child = child->next) {
-    if (child->level == level+1 && child->is_a(Fl_Type::ID_Function)) {
+    if (child->level == level+1 && child->is_a(ID_Function)) {
       const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
       if (fn->has_signature(rtype, sig))
         return 1;

@@ -292,13 +292,9 @@ Fl_Widget *fl_message_icon() {
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
-  This version of fl_input() is deprecated. The return value points
-  to an internal allocated string that may be changed later. You must
-  copy the string immediately after return from this method - at least
+  Returns the string in an internally allocated buffer that may be changed later.
+  You \b must copy the string immediately after return from this method - at least
   before the next execution of the event loop.
-
-  \deprecated Please use
-  fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) instead.
 
   \code #include <FL/fl_ask.H> \endcode
 
@@ -313,10 +309,45 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
   va_list ap;
   va_start(ap, defstr);
-  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, -1);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, 0, false);
   va_end(ap);
   return r;
 }
+
+
+/** Shows an input dialog displaying the \p fmt message with variable arguments.
+
+  This is the same as const char *fl_input(const char *fmt, const char *defstr, ...)
+  except that it has an additional parameter to limit the number of characters
+  the user can input.
+
+  Returns the string in an internally allocated buffer that may be changed later.
+  You \b must copy the string immediately after return from this method - at least
+  before the next execution of the event loop.
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] maxchar maximum number of characters the user can input (UTF-8 aware)
+  \param[in] fmt can be used as an sprintf-like format and variables for the message text
+  \param[in] defstr defines the default returned string if no text is entered
+
+  \return the user string input if OK was pushed
+  \retval NULL if Cancel was pushed or the window was closed by the user
+*/
+const char *fl_input(int maxchar, const char *fmt, const char *defstr, ...) {
+
+  Fl_Message msg("?");
+  if (maxchar < 0) maxchar = 0;
+  va_list ap;
+  va_start(ap, defstr);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar, false);
+  va_end(ap);
+  return r;
+}
+
+
+
+#if (FLTK_USE_STD)
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
@@ -326,7 +357,7 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
   in the string is larger than \p maxchar.
 
   Other than the deprecated fl_input() method w/o the \p maxchar argument, this one
-  returns the string in an Fl_String object that must be released after use. This
+  returns the string in an std::string object that must be released after use. This
   can be a local/automatic variable.
 
   The \p ret variable is set to 0 if the user clicked OK, and to a negative
@@ -338,7 +369,7 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
   Example:
   \code
     { int ret;
-      Fl_String str = fl_input_str(ret, 0, "Enter text:", "");
+      std::string str = fl_input_str(ret, 0, "Enter text:", "");
       if (ret < 0)
         printf("Text input was canceled.\n");
       else
@@ -356,38 +387,37 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
 
   \since 1.4.0
 */
-Fl_String fl_input_str(int &ret, int maxchar, const char *fmt, const char *defstr, ...) {
+std::string fl_input_str(int &ret, int maxchar, const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
   if (maxchar < 0) maxchar = 0;
   va_list ap;
   va_start(ap, defstr);
-  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar, true);
   va_end(ap);
   ret = (r == NULL) ? -1 : 0;
-  return Fl_String(r);
+  return (r == NULL) ? std::string("") : std::string(r);
 }
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
  \note No information is given if the user canceled the dialog or clicked OK.
  \see fl_input_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
  */
-Fl_String fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
+std::string fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
   if (maxchar < 0) maxchar = 0;
   va_list ap;
   va_start(ap, defstr);
-  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar, true);
   va_end(ap);
-  return Fl_String(r);
+  return (r == NULL) ? std::string("") : std::string(r);
 }
+
+#endif // FLTK_USE_STD
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
   Like fl_input() except the input text is not shown,
   '*' or similar replacement characters are displayed instead.
-
-  \deprecated Please use
-  fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) instead.
 
   \code #include <FL/fl_ask.H> \endcode
 
@@ -401,18 +431,44 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
   va_list ap;
   va_start(ap, defstr);
-  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, 0, false);
   va_end(ap);
   return r;
 }
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
+  Like fl_input() except the input text is not shown,
+  '*' or similar replacement characters are displayed instead.
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] maxchar  input lenght limit in chars, 0 = no limit
+  \param[in] fmt can be used as an sprintf-like format and variables for the message text
+  \param[in] defstr defines the default returned string if no text is entered
+
+  \return the user string input if OK was pushed
+  \retval NULL if Cancel was pushed or the window was closed by the user
+*/
+const char *fl_password(int maxchar, const char *fmt, const char *defstr, ...) {
+  Fl_Message msg("?");
+  if (maxchar < 0) maxchar = 0;
+  va_list ap;
+  va_start(ap, defstr);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar, false);
+  va_end(ap);
+  return r;
+}
+
+#if (FLTK_USE_STD)
+
+/** Shows an input dialog displaying the \p fmt message with variable arguments.
+
   Like fl_input_str() except the input text is not shown,
   '*' or similar replacement characters are displayed instead.
 
-  Other than the deprecated fl_password() method w/o the \p maxchar argument, this
-  one returns the string in an Fl_String object that must be released after use.
+  Other than the fl_password() method w/o the \p maxchar argument, this one
+  returns the string in an std::string object that must be released after use.
   This can be a local/automatic variable.
 
   For an example see fl_input_str()
@@ -429,30 +485,32 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 
   \since 1.4.0
 */
-Fl_String fl_password_str(int &ret, int maxchar, const char *fmt, const char *defstr, ...) {
+std::string fl_password_str(int &ret, int maxchar, const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
   if (maxchar < 0) maxchar = 0;
   va_list ap;
   va_start(ap, defstr);
-  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar, true);
   va_end(ap);
   ret = (r == NULL) ? -1 : 0;
-  return Fl_String(r);
+  return (r == NULL) ? std::string("") : std::string(r);
 }
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
  \note No information is given if the user canceled the dialog or clicked OK.
  \see fl_password_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
  */
-Fl_String fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) {
+std::string fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
   if (maxchar < 0) maxchar = 0;
   va_list ap;
   va_start(ap, defstr);
-  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar, true);
   va_end(ap);
-  return Fl_String(r);
+  return (r == NULL) ? std::string("") : std::string(r);
 }
+
+#endif // FLTK_USE_STD
 
 
 /** Sets the preferred position for the message box used in

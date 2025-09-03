@@ -30,6 +30,8 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   int mode_(int m, const int *a) FL_OVERRIDE;
   void make_current_after() FL_OVERRIDE;
   void swap_buffers() FL_OVERRIDE;
+  void swap_interval(int) FL_OVERRIDE;
+  int swap_interval() const FL_OVERRIDE;
   void invalidate() FL_OVERRIDE {}
   int flush_begin(char& valid_f) FL_OVERRIDE;
   Fl_Gl_Choice *find(int m, const int *alistp) FL_OVERRIDE;

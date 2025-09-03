@@ -312,6 +312,7 @@ const char* ExternalCodeEditor::tmp_filename() {
  \return -1 on error (posts dialog with reason)
  */
 static int save_file(const char *filename, const char *code) {
+  if ( code == 0 ) code = "";   // NULL? write an empty file
   int fd = open(filename, O_WRONLY|O_CREAT, 0666);
   if ( fd == -1 ) {
     fl_alert("ERROR: open() '%s': %s", filename, strerror(errno));
@@ -460,6 +461,7 @@ int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
  Open external editor using 'editor_cmd' to edit 'code'.
 
  'code' contains multiline code to be edited as a temp file.
+ 'code' can be NULL -- edits an empty file if so.
 
  \return 0 if succeeds
  \return -1 if can't open editor (already open, etc),

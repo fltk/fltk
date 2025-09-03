@@ -333,6 +333,7 @@ void create_the_forms() {
 
 int main(int argc, char **argv) {
   Fl::scheme(NULL);
+  Fl::args_to_utf8(argc, argv); // for MSYS2/MinGW
   Fl::args(argc, argv);
   Fl::get_system_colors();
   create_the_forms();

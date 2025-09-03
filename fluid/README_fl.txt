@@ -33,7 +33,7 @@ Line Endings
 ------------
 
 Although FLUID writes all line endings as '\n', readers should tolerate '\r\n'
-MSWindows line endings as well. Except for the Header, the FLUID reader does not
+Windows line endings as well. Except for the Header, the FLUID reader does not
 differentiate between a line ending and a space character outside of a 'word'.
 
 
@@ -42,7 +42,7 @@ Unicode
 
 FLUID does not handle UTF-8 characters in any special manner (unescaped),
 but stores and reads them verbatim, making UTF-8 character sequences perfectly
-legal in .fl files. FLUID can translate UTF-8 into escape sequence when writing
+legal in .fl files. FLUID can translate UTF-8 into escape sequences when writing
 source code files.
 
 
@@ -63,7 +63,7 @@ case-sensitive.
 Simple Words that are composed of 'a'-'z', 'A'-'Z', '0'-'9', and '_' only are
 written verbatim, followed by a space or newline.
 
-All other character sequences are bracketed between between ‘{‘ and ‘}’ without
+All other character sequences are bracketed between ‘{‘ and ‘}’ without
 padding spaces. For example, an empty word with no characters is written
 as '{}', and ".hello" is written as '{.hello}'.
 
@@ -117,7 +117,7 @@ followed by a newline, followed by
 
   version <float v>
 
-wehere 'v' is the version number as in FL_VERSION (major*1.0 + minor * 0.01
+where 'v' is the version number as in FL_VERSION (major*1.0 + minor * 0.01
 + patch * 0.0001). So for FLTK 1.3.4, 'v' would be 1.0304
 
 Note: the version number corresponds not so much to the version of FLUID, but
@@ -137,8 +137,8 @@ Note: fdesign files (.fd) start with the text "Magic:". FLUID can read these
 Options
 -------
 
-Options are usually comprised of a Word, two Words, or a Word and a String. If
-an Option is missing, a default value is assumed.
+Options are usually comprised of a Word, two Words, or a Word and a String.
+If an Option is missing, a default value is assumed.
 
   "Magic:" : used by fdesign, not written by FLUID
 
@@ -155,6 +155,8 @@ an Option is missing, a default value is assumed.
 
   "i18n_type" <word> : integer 0=default=none, 1=gettext, 2=catgets
 
+--- the following list is valid until June 2023
+
   "i18n_function" <word> : function name, e.g. “gettext”
 
   "i18n_static_function" <word> : function name, e.g. “gettext_noop”
@@ -163,20 +165,32 @@ an Option is missing, a default value is assumed.
 
   "i18n_set" <word> : string
 
+--- the following list is valid from June 2023
+
+  "i18n_gnu_function" <word> : function name, e.g. “gettext”
+
+  "i18n_gnu_static_function" <word> : function name, e.g. “gettext_noop”
+
+  "i18n_pos_file" <word> : file name
+
+  "i18n_pos_set" <word> : string
+
+--- end of June 2023 changes
+
   "i18n_include" <word> : file name, e.g. “<libintl.h>”
 
   "i18n_conditional" <word> : string
 
-  "header_name" <word> : can be the full filename, or just the
-      extension e.g. “.h” in which case FLUID will use the same filename
-      as the .fl file.
+  "header_name" <word> : can be the full filename or just the extension,
+      e.g. “.h” in which case FLUID will use the same filename as the .fl file.
 
-  "code_name" <word> : can be the full filename, or just the
-      extension e.g. “.cxx”
+  "code_name" <word> : can be the full filename or just the extension,
+      e.g. “.cxx”.
 
-  "snap" <word> : starting in V1.4 since May 2023, the 'snap' keyword can be
+  "snap" <word> : starting in V1.4 from May 2023, the 'snap' keyword can be
       used to store the selected layout and preset and include more suites
-      of presets. The format looks like this:
+      of presets. The following block can be skipped by reading it as a
+      single word. The format looks like this:
 
       snap {                         optional snap Word since 5.2023
         ver 1                        version of following data
@@ -195,6 +209,22 @@ an Option is missing, a default value is assumed.
   "gridx" <word> : ignored
 
   "gridy" <word> : ignored
+
+  "shell_commands" <word> : starting in V1.4 from Sep 2023, the 'shell_commands'
+      keyword can be used to store user configurable shell commands in a project
+      file. The following block can be skipped by reading it as a single word.
+
+      shell_commands {
+        command {
+          name <string>
+          label <string>
+          shortcut <int>          (optional if not 0)
+          condition <int>         (optional if not 0, see Fd_Shell_Command enum)
+          condition_data <string> (optional if not "")
+          command <string>        (optional, but usually there)
+          flags <int>             (optional if not 0, see Fd_Shell_Command 2nd enum)
+        }                         (repeat as needed)
+      }
 
 Note: There is no keyword that marks the end of the Options section. The
       Option list ends when a Word is not in the Options list and it is in
@@ -281,8 +311,10 @@ The list of known Types and their inheritance is:
    |    |    +-- Fl_Table
    |    |    +-- Fl_Tabs
    |    |    +-- Fl_Scroll
+   |    |    +-- Fl_Terminal
    |    |    +-- Fl_Tile
    |    |    +-- Fl_Wizard
+   |    |    +-- Fl_Grid
    |    +-- Fl_Menu_Type (note: can't be written)
    |    |    +-- Fl_Menu_Button
    |    |    +-- Fl_Choice
@@ -307,7 +339,6 @@ The list of known Types and their inheritance is:
    |    +-- Fl_File_Input
    |    +-- Fl_Text_Display
    |    +-- Fl_Text_Editor
-   |    |    +-- Fl_Simple_Terminal
    |    +-- Fl_Clock
    |    +-- Fl_Help_View
    |    +-- Fl_Progress
@@ -337,9 +368,15 @@ mutually exclusive.
 Note: It is possible that the same property by name has different arguments
       when used in a different Type.
 
+Every node can have properties that it holds for its parent. Parent properties
+are stored as "parent_properties { ...list... }". If a node encounters this
+property tag, it must ask its parent to interpret the contents of that list.
+See Fl_Grid for an example.
 
 Type Fl_Type <word>
 
+  "uid" <4-digit-hex> : since Oct 2023, optional, a unique id for this node
+      within the project file
   “label” <word> : text
   “user_data” <word> : a value or an expression
   “user_data_type” <word> : usually “void*” or “long”
@@ -374,11 +411,14 @@ Type "data" <word> : C++ variable name
 
   "filename" <word> : name or path as entered by user, forward slashes
   "textmode" : defaults to binary mode
+  "compressed" : defaults to not compressed
   ... : inherits more from decl
 
 Type "declblock" <word> : C++ code
 
-  none or "public" or "protected" : defaults to private
+  none or "public" or "protected" : defaults to private (obsolete)
+  "map" <word> : integer value, default is 2 (CODE_IN_SOURCE),
+      see Fl_DeclBlock_Type::write_map_
   "after" <word> : C++ code or comment following the block
   ... : inherits more from Fl_Type
 
@@ -399,9 +439,11 @@ Type "Fl_Widget" <word> : C++ variable name
   none or "private" or "protected" : default is public
   "xywh" <word> : "{%d %d %d %d}" x, y, w, h
   "tooltip" <word> : tooltip text
+  "scale_image <word>: "{%d %d}" width, height, default is 0, 0
   "image" <word> : image name
   "compress_image" <word> : integer (1.4 and up, only if `image` is set)
   "bind_image" <word> : integer (1.4 and up)
+  "scale_deimage <word>: "{%d %d}" width, height, default is 0, 0
   "deimage" <word> : deactivated image name
   "compress_deimage" <word> : integer (1.4 and up, only if `deimage` is set)
   "bind_deimage" <word> : integer (1.4 and up)
@@ -424,6 +466,9 @@ Type "Fl_Widget" <word> : C++ variable name
   "labelsize" <word> : integer
   "labelcolor" <word> : integer, color index
   "align" <word> : integer, see Fl_Align
+  "h_label_margin" <word> : integer, horizontal label margin
+  "v_label_margin" <word> : integer, vertical label margin
+  "image_spacing" <word> : integer, see Fl_Widget::label_image_spacing()
   "when" <word> : integer, see Fl_When
   "minimum" <word> : (is_valuator(), is_spinner()) double
   "maximum" <word> : (is_valuator(), is_spinner()) double
@@ -469,9 +514,28 @@ Type "Fl_Window" <word> : C++ variable name
       min_w, min_h, max_w, max_h
   "xywh" <word> : this Word is written with printf as "{%d %d %d %d}",
       x, y, w, h. This as actually read in the Fl_Widget Type, but here
-      it ensures that window is not created as a subwindow.
+      it ensures that the window is not created as a subwindow.
   ... : inherits more from Fl_Widget (not Fl_Group)
 
+Type "Fl_Grid" <word> : C++ variable name
+
+  "dimensions" <word> : {int rows, int cols}
+  "margin" <word> : {int left, int top, int right, int bottom}
+  "gap" <word> : {int row gap, int col gap}
+  "rowheights" <word> : {int h, ...*rows}
+  "rowweights" <word> : {int h, ...*rows}
+  "rowgaps" <word> : {int h, ...*rows}
+  "colwidths" <word> : {int h, ...*cols}
+  "colweights" <word> : {int h, ...*cols}
+  "colgaps" <word> : {int h, ...*cols}
+
+  Fl_Grid can also produce parent properties in their children
+
+  "location" <word> : {int row, int col}
+  "colspan" <int>"
+  "rowspan" <int>
+  "align" <int> : see Fl_Grid_Align enum
+  "min_size" <word> : {int width, int height}
 
 Please report errors and omissions to the fltk.coredev or fltk.general
 Google group. Thank you.

@@ -1,7 +1,12 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 comment {//
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
@@ -20,27 +25,325 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include "undo.h"} {private global
+}
+
 decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
+decl {\#include "Fl_Grid_Type.h"} {private global
+}
+
+decl {\#include <FL/Fl_Grid.H>} {private global
+}
+
 decl {\#include "custom_widgets.h"} {public global
+}
+
+decl {extern void set_modflag(int mf, int mfc=-1);} {private local
+}
+
+Function {make_image_panel()} {
+  comment {Create a panel for editing widget image data} open
+} {
+  Fl_Window image_panel_window {
+    label {Image Options}
+    callback {propagate_load(o, v);} open
+    xywh {527 684 260 332} type Double modal visible
+  } {
+    Fl_Group image_panel_imagegroup {
+      callback propagate_load open
+      xywh {10 15 235 125}
+    } {
+      Fl_Box {} {
+        label { ---- Active Image ----}
+        xywh {75 15 170 20} labelfont 1 labelsize 11 align 20
+      }
+      Fl_Box image_panel_data {
+        label {... x ... pixels, ...}
+        callback {if (v == LOAD) {
+  Fl_Shared_Image *img = Fl_Shared_Image::get(widget_image_input->value());
+  o->user_data(img);
+  if (img) {
+    char buf[256];
+    snprintf(buf, 255, "%d x %d pixels, %d channels", img->data_w(), img->data_h(), img->d());
+    o->copy_label(buf);
+    image_panel_imagegroup->activate();
+  } else if (widget_image_input->value() && widget_image_input->value()[0]) {
+    o->label("Can't load image");
+    image_panel_imagegroup->activate();
+  } else {
+    o->label("... x ... pixels, ...");
+    image_panel_imagegroup->deactivate();
+  }
+}}
+        xywh {75 35 170 20} labelsize 11 align 20
+        code0 {\#include <FL/Fl_Shared_Image.H>}
+      }
+      Fl_Group {} {
+        callback propagate_load open
+        xywh {75 75 170 20}
+      } {
+        Fl_Input image_panel_imagew {
+          label {Width:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_image_w_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_image_w_ = o->value();
+        Fl_Image *img = wt->o->image();
+        if (img) {
+          int iw = wt->scale_image_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_image_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this width in pixel units} xywh {75 75 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Input image_panel_imageh {
+          label {Height:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_image_h_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_image_h_ = o->value();
+        Fl_Image *img = wt->o->image();
+        if (img) {
+          int iw = wt->scale_image_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_image_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this height in pixel units} xywh {135 75 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Button {} {
+          label Reset
+          callback {if (v != LOAD) {
+  image_panel_imagew->value(0);
+  image_panel_imageh->value(0);
+  image_panel_imagew->do_callback();
+  image_panel_imageh->do_callback();
+}}
+          tooltip {Reset scale to original size} xywh {195 75 50 20} labelsize 11
+        }
+      }
+      Fl_Box {} {
+        label {Scale:}
+        xywh {10 75 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Box {} {
+        label {Storage:}
+        xywh {10 100 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Check_Button {} {
+        label {convert to raw pixel data}
+        callback compress_image_cb
+        tooltip {if unchecked, keep the image in its original format and store the data as is; if checked, convert the image and store it as uncompressed RGB or grayscale pixel data} xywh {75 100 170 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Check_Button {} {
+        label {bind to widget}
+        callback bind_image_cb
+        tooltip {bind the image to the widget, so it will be deleted automatically} xywh {75 120 170 20} down_box DOWN_BOX labelsize 11 hotspot
+      }
+    }
+    Fl_Group image_panel_deimagegroup {
+      callback propagate_load open
+      xywh {10 155 235 125}
+    } {
+      Fl_Box {} {
+        label { ---- Inactive Image ----}
+        xywh {75 155 170 20} labelfont 1 labelsize 11 align 20
+      }
+      Fl_Box image_panel_dedata {
+        label {... x ... pixels, ...}
+        callback {if (v == LOAD) {
+  Fl_Shared_Image *img = Fl_Shared_Image::get(widget_deimage_input->value());
+  o->user_data(img);
+  if (img) {
+    char buf[256];
+    snprintf(buf, 255, "%d x %d pixels, %d channels", img->data_w(), img->data_h(), img->d());
+    o->copy_label(buf);
+    image_panel_deimagegroup->activate();
+  } else if (widget_deimage_input->value() && widget_deimage_input->value()[0]) {
+    o->label("Can't load image");
+    image_panel_deimagegroup->activate();
+  } else {
+    o->label("... x ... pixels, ...");
+    image_panel_deimagegroup->deactivate();
+  }
+}}
+        xywh {75 175 170 20} labelsize 11 align 20
+      }
+      Fl_Group {} {
+        callback propagate_load open
+        xywh {75 215 170 20}
+      } {
+        Fl_Input image_panel_deimagew {
+          label {Width:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_deimage_w_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_deimage_w_ = o->value();
+        Fl_Image *img = wt->o->deimage();
+        if (img) {
+          int iw = wt->scale_deimage_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_deimage_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this width in pixel units} xywh {75 215 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Input image_panel_deimageh {
+          label {Height:}
+          callback {if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_a(ID_Window)) {
+      o->value(current_widget->scale_deimage_h_);
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+      if (t->selected && t->is_widget()) {
+        Fl_Widget_Type* wt = ((Fl_Widget_Type*)t);
+        wt->scale_deimage_h_ = o->value();
+        Fl_Image *img = wt->o->deimage();
+        if (img) {
+          int iw = wt->scale_deimage_w_;
+          if (iw<=0) iw = img->data_w();
+          int ih = wt->scale_deimage_h_;
+          if (ih<=0) ih = img->data_w();
+          img->scale(iw, ih, 0, 1);
+          wt->o->redraw();
+          if (wt->o->parent()) wt->o->parent()->redraw();
+        }
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }}
+          tooltip {Scale image to this height in pixel units} xywh {135 215 55 20} labelsize 11 align 5 textsize 11
+          class Fluid_Coord_Input
+        }
+        Fl_Button {} {
+          label Reset
+          callback {if (v != LOAD) {
+  image_panel_deimagew->value(0);
+  image_panel_deimageh->value(0);
+  image_panel_deimagew->do_callback();
+  image_panel_deimageh->do_callback();
+}}
+          tooltip {Reset scale to original size} xywh {195 215 50 20} labelsize 11
+        }
+      }
+      Fl_Box {} {
+        label {Scale:}
+        xywh {10 215 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Box {} {
+        label {Storage:}
+        xywh {10 240 60 20} labelfont 1 labelsize 11 align 24
+      }
+      Fl_Check_Button {} {
+        label {convert to raw pixel data}
+        callback compress_deimage_cb
+        tooltip {if unchecked, keep the image in its original format and store the data as is; if checked, convert the image and store it as uncompressed RGB or grayscale pixel data} xywh {75 240 170 20} down_box DOWN_BOX labelsize 11
+      }
+      Fl_Check_Button {} {
+        label {bind to widget}
+        callback bind_deimage_cb
+        tooltip {bind the image to the widget, so it will be deleted automatically} xywh {75 260 170 20} down_box DOWN_BOX labelsize 11
+      }
+    }
+    Fl_Button image_panel_close {
+      label Close
+      callback {if (v != LOAD)
+  image_panel_window->hide();}
+      xywh {165 295 80 20} labelsize 11
+    }
+  }
+}
+
+Function {run_image_panel()} {open return_type void
+} {
+  code {if (!image_panel_window)
+  make_image_panel();
+
+image_panel_window->do_callback(image_panel_window, LOAD);
+
+Fl::pushed(0);
+Fl_Window *g = Fl::grab();
+if (g) Fl::grab(0);
+image_panel_window->show();
+while (image_panel_window->shown())
+  Fl::wait();
+if (g)
+  Fl::grab(g);
+
+Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
+if (img) {
+  img->release();
+  image_panel_data->user_data(NULL);
+}} {}
 }
 
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
-    comment {Use a Double Window to avoid flickering.} open
-    xywh {566 244 420 400} type Double labelsize 11 align 80 resizable hotspot
+    comment {Use a Double Window to avoid flickering.} open selected
+    xywh {372 208 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
-    Fl_Tabs {} {
+    Fl_Tabs widget_tabs {
       callback {propagate_load((Fl_Group *)o,v);} open
       xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
+      code0 {o->show();}
     } {
-      Fl_Group {} {
+      Fl_Group wp_gui_tab {
         label GUI
-        callback propagate_load open selected
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -48,7 +351,7 @@ Function {make_widget_panel()} {
           callback propagate_load open
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input wp_gui_label {
             callback label_cb
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
@@ -65,27 +368,21 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           callback propagate_load open
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input widget_image_input {
             callback image_cb
             tooltip {The active image for the widget.} xywh {95 65 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
             callback image_browse_cb
-            tooltip {Click to choose the active image.} xywh {295 65 69 20} labelsize 11
+            tooltip {Click to choose the active image.} xywh {295 65 89 20} labelsize 11 align 256
           }
           Fl_Button {} {
-            callback compress_image_cb
-            tooltip {store image uncompressed as RGBA data
-or compressed in the original file format} xywh {364 65 20 20} type Toggle
-            code0 {o->image(compressed_pixmap);}
-            code3 {\#include "pixmaps.h"}
-          }
-          Fl_Button {} {
-            callback bind_image_cb
-            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 65 20 20} type Toggle
-            code0 {o->image(bind_pixmap);}
-            code3 {\#include "pixmaps.h"}
+            label {...}
+            callback {if (v != LOAD) {
+  run_image_panel();
+}}
+            tooltip {more image options} bind_image 1 xywh {384 65 20 20}
           }
         }
         Fl_Group {} {
@@ -93,33 +390,20 @@ or compressed in the original file format} xywh {364 65 20 20} type Toggle
           callback propagate_load open
           xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
+          Fl_Input widget_deimage_input {
             callback inactive_cb
             tooltip {The inactive image for the widget.} xywh {95 90 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
             callback inactive_browse_cb
-            tooltip {Click to choose the inactive image.} xywh {295 90 69 20} labelsize 11
-          }
-          Fl_Button {} {
-            callback compress_deimage_cb
-            tooltip {store image uncompressed as RGBA data
-or compressed in the original file format} xywh {364 90 20 20} type Toggle
-            code0 {o->image(compressed_pixmap);}
-            code3 {\#include "pixmaps.h"}
-          }
-          Fl_Button {} {
-            callback bind_deimage_cb
-            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
-            code0 {o->image(bind_pixmap);}
-            code3 {\#include "pixmaps.h"}
+            tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_alignment {
           label {Alignment:}
-          callback propagate_load
-          xywh {95 115 310 20} labelfont 1 labelsize 11 align 4
+          callback propagate_load open
+          xywh {95 115 312 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Button {} {
             label Clip
@@ -158,128 +442,128 @@ or compressed in the original file format} xywh {364 90 20 20} type Toggle
             tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Choice {} {
-            callback align_text_image_cb open
-            xywh {172 115 110 20} down_box BORDER_BOX labelsize 11 textsize 11
+            callback align_text_image_cb
+            xywh {172 115 116 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Image Alignment   }
               user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {145 145 100 20} labelfont 2 labelsize 11 deactivate
+              xywh {145 145 100 20} labelfont 2 labelsize 10 deactivate
             }
             MenuItem {} {
               label {image over text}
               user_data {(fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT}
-              xywh {25 25 100 20} labelsize 11
+              xywh {25 25 100 20} labelsize 9
             }
             MenuItem {} {
               label {text over image}
               user_data {(fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE}
-              xywh {15 15 100 20} labelsize 11
+              xywh {15 15 100 20} labelsize 9
             }
             MenuItem {} {
               label {text next to image}
               user_data {(fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE}
-              xywh {35 35 100 20} labelsize 11
+              xywh {35 35 100 20} labelsize 9
             }
             MenuItem {} {
               label {image next to text}
               user_data {(fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT}
-              xywh {45 45 100 20} labelsize 11
+              xywh {45 45 100 20} labelsize 9
             }
             MenuItem {} {
               label {image is backdrop}
               user_data {(fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP}
-              xywh {55 55 100 20} labelsize 11
+              xywh {55 55 100 20} labelsize 9
             }
           }
           Fl_Choice {} {
-            callback align_position_cb open
-            xywh {288 115 85 20} down_box BORDER_BOX labelsize 11 textsize 11
+            callback align_position_cb
+            xywh {293 115 86 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Inside && Outside   }
               user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {135 135 100 20} labelfont 2 labelsize 11 deactivate
+              xywh {135 135 100 20} labelfont 2 labelsize 10 deactivate
             }
             MenuItem {} {
               label {top left}
               user_data {(fl_intptr_t)FL_ALIGN_TOP_LEFT}
-              xywh {45 45 100 20} labelsize 11
+              xywh {45 45 100 20} labelsize 9
             }
             MenuItem {} {
               label top
               user_data {(fl_intptr_t)FL_ALIGN_TOP}
-              xywh {55 55 100 20} labelsize 11
+              xywh {55 55 100 20} labelsize 9
             }
             MenuItem {} {
               label {top right}
               user_data {(fl_intptr_t)FL_ALIGN_TOP_RIGHT}
-              xywh {65 65 100 20} labelsize 11
+              xywh {65 65 100 20} labelsize 9
             }
             MenuItem {} {
               label left
               user_data {(fl_intptr_t)FL_ALIGN_LEFT}
-              xywh {75 75 100 20} labelsize 11
+              xywh {75 75 100 20} labelsize 9
             }
             MenuItem {} {
               label center
               user_data {(fl_intptr_t)FL_ALIGN_CENTER}
-              xywh {35 35 100 20} labelsize 11
+              xywh {35 35 100 20} labelsize 9
             }
             MenuItem {} {
               label right
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT}
-              xywh {85 85 100 20} labelsize 11
+              xywh {85 85 100 20} labelsize 9
             }
             MenuItem {} {
               label {bottom left}
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_LEFT}
-              xywh {95 95 100 20} labelsize 11
+              xywh {95 95 100 20} labelsize 9
             }
             MenuItem {} {
               label bottom
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM}
-              xywh {105 105 100 20} labelsize 11
+              xywh {105 105 100 20} labelsize 9
             }
             MenuItem {} {
               label {bottom right}
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT}
-              xywh {115 115 100 20} labelsize 11
+              xywh {115 115 100 20} labelsize 9
             }
             MenuItem {} {
               label {   Outside Alignment   }
               user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {125 125 100 20} labelfont 2 labelsize 11 deactivate
+              xywh {125 125 100 20} labelfont 2 labelsize 10 deactivate
             }
             MenuItem {} {
               label {left top}
               user_data {(fl_intptr_t)FL_ALIGN_LEFT_TOP}
-              xywh {135 135 100 20} labelsize 11
+              xywh {135 135 100 20} labelsize 9
             }
             MenuItem {} {
               label {right top}
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT_TOP}
-              xywh {145 145 100 20} labelsize 11
+              xywh {145 145 100 20} labelsize 9
             }
             MenuItem {} {
               label {left bottom}
               user_data {(fl_intptr_t)FL_ALIGN_LEFT_BOTTOM}
-              xywh {155 155 100 20} labelsize 11
+              xywh {155 155 100 20} labelsize 9
             }
             MenuItem {} {
               label {right bottom}
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM}
-              xywh {45 45 100 20} labelsize 11
+              xywh {45 45 100 20} labelsize 9
             }
           }
           Fl_Button {} {
             label {@-3square}
             user_data {(fl_intptr_t)FL_ALIGN_INSIDE}
             callback align_cb
-            tooltip {Show the label inside the widget.} xywh {378 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
+            tooltip {Show the label inside the widget.} xywh {384 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
           }
           Fl_Box {} {
-            xywh {404 115 0 20} labelsize 11 resizable
+            xywh {406 115 1 20} labelsize 11 resizable
           }
         }
         Fl_Group {} {
@@ -341,9 +625,10 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {399 150 1 20} hide resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_flexp {
           label {Flex Parent:}
-          callback flex_size_group_cb open
+          callback flex_size_group_cb
+          comment {This group is only visible if the parent is an Fl_Flex widget}
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input widget_flex_size {
@@ -360,7 +645,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {398 150 1 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_values {
           label {Values:}
           callback values_group_cb open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
@@ -394,9 +679,10 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {395 185 0 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_margins {
           label {Margins:}
-          callback flex_margin_group_cb open
+          callback flex_margin_group_cb
+          comment {This group is only visible for Fl_Flex widgets}
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input {} {
@@ -428,7 +714,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {395 185 0 20} resizable
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_sizerange {
           label {Size Range:}
           callback size_range_group_cb open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
@@ -470,7 +756,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           callback propagate_load open
           xywh {95 210 310 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Button {} {
+          Fl_Button wp_gui_shortcut {
             callback shortcut_in_cb
             comment {This is a special button that grabs keystrokes directly}
             tooltip {The shortcut key for the widget.
@@ -479,9 +765,9 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             class Fl_Shortcut_Button
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_xclass {
           label {X Class:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 235 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -505,7 +791,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             tooltip {Make the window non-modal.} xywh {320 235 75 20} selection_color 1 labelsize 11 align 148
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_gui_attributes {
           label {Attributes:}
           callback propagate_load
           xywh {95 260 305 20} labelfont 1 labelsize 11 align 4
@@ -534,7 +820,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             xywh {395 260 0 20} labelsize 11 resizable
           }
         }
-        Fl_Input {} {
+        Fl_Input wp_gui_tooltip {
           label {Tooltip:}
           callback tooltip_cb
           tooltip {The tooltip text for the widget.
@@ -544,19 +830,19 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {95 305 300 5} hide resizable
         }
       }
-      Fl_Group {} {
+      Fl_Group wp_style_tab {
         label Style
         callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
-        Fl_Group {} {
+        Fl_Group wp_style_label {
           label {Label Font:}
           callback propagate_load open
-          xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
+          xywh {99 40 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback labelfont_cb open
-            tooltip {The style of the label text.} xywh {95 40 152 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            tooltip {The style of the label text.} xywh {99 40 148 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
@@ -576,14 +862,14 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_style_box {
           label {Box:}
           callback propagate_load open
-          xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
+          xywh {99 65 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback box_cb open
-            tooltip {The "up" box of the widget.} xywh {95 65 201 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            tooltip {The "up" box of the widget.} xywh {100 65 196 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
@@ -599,14 +885,14 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_style_downbox {
           label {Down Box:}
           callback propagate_load open
-          xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
+          xywh {99 90 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback down_box_cb open
-            tooltip {The "down" box of the widget.} xywh {95 90 201 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 labelcolor 45 textsize 11 resizable
+            tooltip {The "down" box of the widget.} xywh {99 90 197 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
@@ -622,14 +908,14 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_style_text {
           label {Text Font:}
           callback propagate_load open
-          xywh {95 115 309 20} labelfont 1 labelsize 11 align 4
+          xywh {99 115 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback textfont_cb open
-            tooltip {The value text style.} xywh {95 115 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            tooltip {The value text style.} xywh {99 115 148 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
@@ -649,21 +935,45 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             code1 {o->menu(colormenu);}
           } {}
         }
-        Fl_Box {} {
-          xywh {95 165 300 40} labelsize 11 resizable
+        Fl_Group {} {
+          label {Label Margin:}
+          callback propagate_load open
+          xywh {99 150 242 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Horizontal:}
+            callback h_label_margin_cb
+            tooltip {Spacing between label and the horizontally aligned side of the widget.} xywh {99 150 55 20} labelsize 11 align 5 minimum -127 maximum 128 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Vertical:}
+            callback v_label_margin_cb
+            tooltip {Spacing between label and the vertically aligned side of the widget.} xywh {159 150 55 20} labelsize 11 align 5 minimum -127 maximum 127 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Text to Image:}
+            callback image_spacing_cb
+            tooltip {Gap between label image and text in pixels} xywh {219 150 55 20} labelsize 11 align 5 maximum 255 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {281 150 60 20} labelsize 11 hide resizable
+          }
         }
         Fl_Light_Button {} {
           label Compact
           callback compact_cb
-          tooltip {use compact box types for closely set buttons} xywh {95 140 90 20} selection_color 1 labelsize 11
+          tooltip {use compact box types for closely set buttons} xywh {99 175 90 20} selection_color 1 labelsize 11
+        }
+        Fl_Box {} {
+          xywh {195 205 40 40} labelsize 11 resizable
         }
       }
-      Fl_Group {} {
+      Fl_Group wp_cpp_tab {
         label {C++}
         callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
-        Fl_Group {} {
+        Fl_Group wp_cpp_class {
           label {Class:}
           callback propagate_load open
           xywh {95 40 310 20} labelfont 1 labelsize 11 align 4
@@ -678,9 +988,9 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
             tooltip {The widget subtype.} xywh {267 40 138 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
           } {}
         }
-        Fl_Group {} {
+        Fl_Group wp_cpp_name {
           label {Name:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 65 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -771,7 +1081,7 @@ wCallback->do_callback(wCallback, v);} open
             }
           }
         }
-        Fl_Group {} {
+        Fl_Group wp_cpp_callback {
           label {User Data:}
           callback propagate_load open
           xywh {95 310 310 20} labelfont 1 labelsize 11 align 4
@@ -812,19 +1122,741 @@ wCallback->do_callback(wCallback, v);} open
           }
         }
       }
+      Fl_Group widget_tab_grid_child {
+        label {Grid Child}
+        callback propagate_load open
+        xywh {10 30 400 330} labelsize 11 hide
+      } {
+        Fl_Group {} {
+          label {Location:}
+          callback propagate_load open
+          xywh {95 60 315 20} box FLAT_BOX labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input widget_grid_row_input {
+            label {Row:}
+            callback grid_set_row_cb
+            xywh {95 60 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {135 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback grid_dec_row_cb
+              xywh {135 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback grid_inc_row_cb
+              xywh {150 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Input widget_grid_col_input {
+            label {Column:}
+            callback grid_set_col_cb
+            xywh {175 60 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {215 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback grid_dec_col_cb
+              xywh {215 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback grid_inc_col_cb
+              xywh {230 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Box {} {
+            xywh {395 60 1 20} hide resizable
+          }
+          Fl_Box widget_grid_transient {
+            label TRANSIENT
+            callback {if (v==LOAD) {
+  Fl_Widget *child = ((Fl_Widget_Type*)current_widget)->o;
+  Fl_Grid_Proxy *g = ((Fl_Grid_Proxy*)((Fl_Widget_Type*)current_widget->parent)->o);
+//  Fl_Grid::Cell *cell = g->cell(child);
+//  Fl_Grid::Cell *tcell = g->transient_cell(child);
+  widget_grid_transient->hide();
+  widget_grid_unlinked->hide();
+  if (g->transient_cell(child)) {
+    widget_grid_transient->show();
+  } else if (!g->cell(child)) {
+    widget_grid_unlinked->show();
+  }
+}}
+            xywh {250 60 80 20} labelsize 11 labelcolor 1
+          }
+          Fl_Box widget_grid_unlinked {
+            label UNLINKED
+            xywh {250 60 80 20} labelsize 11 labelcolor 1 hide
+          }
+        }
+        Fl_Group wp_gridc_align {
+          label {Align:}
+          callback propagate_load open
+          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Choice {} {
+            label Horizontal
+            callback grid_align_horizontal_cb open
+            xywh {95 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+          } {
+            MenuItem GRID_LEFT {
+              label GRID_LEFT
+              user_data {(fl_intptr_t)FL_GRID_LEFT} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_CENTER
+              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_RIGHT
+              user_data {(fl_intptr_t)FL_GRID_RIGHT} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_FILL
+              user_data {(fl_intptr_t)FL_GRID_HORIZONTAL} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+          }
+          Fl_Choice {} {
+            label Vertical
+            callback grid_align_vertical_cb open
+            xywh {215 100 115 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+          } {
+            MenuItem {} {
+              label GRID_TOP
+              user_data {(fl_intptr_t)FL_GRID_TOP} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_CENTER
+              user_data {(fl_intptr_t)FL_GRID_CENTER} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_BOTTOM
+              user_data {(fl_intptr_t)FL_GRID_BOTTOM} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+            MenuItem {} {
+              label GRID_FILL
+              user_data {(fl_intptr_t)FL_GRID_VERTICAL} user_data_type long
+              xywh {10 10 31 20} labelsize 11
+            }
+          }
+          Fl_Box {} {
+            xywh {395 100 1 20} hide resizable
+          }
+        }
+        Fl_Group wp_gridc_size {
+          label {Min. Size:}
+          callback propagate_load open
+          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input {} {
+            label {Width:}
+            callback grid_set_min_wdt_cb
+            xywh {95 135 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Input {} {
+            label {Height:}
+            callback grid_set_min_hgt_cb
+            xywh {155 135 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Box {} {
+            xywh {395 135 1 20} hide resizable
+          }
+        }
+        Fl_Group {} {
+          label {Span:}
+          callback propagate_load open
+          xywh {95 170 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input widget_grid_rowspan_input {
+            label {Row Span:}
+            callback grid_set_rowspan_cb
+            xywh {95 170 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {135 170 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback grid_dec_rowspan_cb
+              xywh {135 170 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback grid_inc_rowspan_cb
+              xywh {150 170 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Input widget_grid_colspan_input {
+            label {Col. Span:}
+            callback grid_set_colspan_cb
+            xywh {175 170 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {215 170 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback grid_dec_colspan_cb
+              xywh {215 170 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback grid_inc_colspan_cb
+              xywh {230 170 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Box {} {
+            xywh {395 170 1 20} hide resizable
+          }
+        }
+        Fl_Box {} {
+          xywh {95 350 300 5} labelsize 11 hide resizable
+        }
+      }
+      Fl_Group widget_tab_grid {
+        label Grid
+        callback propagate_load open
+        xywh {10 30 400 330} labelsize 11 hide
+      } {
+        Fl_Group {} {
+          label {Grid Layout:}
+          callback propagate_load open
+          xywh {95 60 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input widget_grid_rows {
+            label {Rows:}
+            callback {// grid_rows_cb
+Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+if (v == LOAD) {
+  o->value(grid->rows());
+} else {
+  int m = o->value(), old_m = grid->rows();
+  if (m < 1) {
+    m = 1;
+    o->value(m);
+  }
+  if (m < old_m) {
+    // TODO: verify that this will not unlink existings cells
+    // Offer a dialog with "delete children", "unlink cells", "cancel"
+  }
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->layout(m, grid->cols());
+    grid->need_layout(true);
+    set_modflag(1);
+    widget_tab_grid->do_callback(widget_tab_grid, LOAD);
+  }
+}}
+            tooltip {Number of horizontal rows in the Grid group} xywh {95 60 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {135 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_rows->value( widget_grid_rows->value()-1 );
+  widget_grid_rows->do_callback();
+}}
+              xywh {135 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_rows->value( widget_grid_rows->value()+1 );
+  widget_grid_rows->do_callback();
+}}
+              xywh {150 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Input widget_grid_cols {
+            label {Columns:}
+            callback {// grid_rows_cb
+Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+if (v == LOAD) {
+  o->value(grid->cols());
+} else {
+  int m = o->value(), old_m = grid->cols();
+  if (m < 1) {
+    m = 1;
+    o->value(m);
+  }
+  if (m < old_m) {
+    // TODO: verify that this will not unlink existings cells
+    // Offer a dialog with "delete children", "unlink cells", "cancel"
+  }
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->layout(grid->rows(), m);
+    grid->need_layout(true);
+    set_modflag(1);
+    widget_tab_grid->do_callback(widget_tab_grid, LOAD);
+  }
+}}
+            tooltip {Number of vertical columns in the Grid group} xywh {175 60 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {215 60 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_cols->value( widget_grid_cols->value()-1 );
+  widget_grid_cols->do_callback();
+}}
+              xywh {215 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_cols->value( widget_grid_cols->value()+1 );
+  widget_grid_cols->do_callback();
+}}
+              xywh {230 60 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Box {} {
+            xywh {396 60 0 20} resizable
+          }
+        }
+        Fl_Group wp_grid_margin {
+          label {Margins:}
+          callback propagate_load open
+          xywh {95 100 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Left:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(&m, NULL, NULL, NULL);
+  o->value(m);
+} else {
+  int m = (int)o->value(), old_m;
+  grid->margin(&old_m, NULL, NULL, NULL);
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->margin(m, -1, -1, -1);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Left margin in group.} xywh {95 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Top:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(NULL, &m, NULL, NULL);
+  o->value(m);
+} else {
+  int m = (int)o->value(), old_m;
+  grid->margin(NULL, &old_m, NULL, NULL);
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->margin(-1, m, -1, -1);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Top margin in group.} xywh {155 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Right:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(NULL, NULL, &m, NULL);
+  o->value(m);
+} else {
+  int m = (int)o->value(), old_m;
+  grid->margin(NULL, NULL, &old_m, NULL);
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->margin(-1, -1, m, -1);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Right margin in group.} xywh {215 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Bottom:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int m = 0;
+if (v == LOAD) {
+  grid->margin(NULL, NULL, NULL, &m);
+  o->value(m);
+} else {
+  int m = (int)o->value(), old_m;
+  grid->margin(NULL, NULL, NULL, &old_m);
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->margin(-1, -1, -1, m);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Bottom margin in group.} xywh {275 100 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {396 100 0 20} resizable
+          }
+        }
+        Fl_Group wp_grid_gaps {
+          label {Gaps:}
+          callback propagate_load open
+          xywh {95 135 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Value_Input {} {
+            label {Row:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+if (v == LOAD) {
+  int m = 0;
+  grid->gap(&m, NULL);
+  o->value(m);
+} else {
+  int m = (int)o->value(), old_m, m2;
+  grid->gap(&old_m, &m2);
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->gap(m, m2);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Gap between children.} xywh {95 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Col:}
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+if (v == LOAD) {
+  int m = 0;
+  grid->gap(NULL, &m);
+  o->value(m);
+} else {
+  int m = (int)o->value(), old_m, m2;
+  grid->gap(&m2, &old_m);
+  if (m != old_m) {
+    undo_checkpoint();
+    grid->gap(m2, m);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+            tooltip {Gap between children.} xywh {155 135 55 20} labelsize 11 align 5 maximum 1000 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {396 135 0 20} resizable
+          }
+        }
+        Fl_Group {} {
+          label {Row:}
+          callback {if (v == LOAD) {
+  Fl_Grid *grid = Fl_Grid_Type::selected();
+  if (grid)
+    o->activate();
+  else
+    o->deactivate();
+  propagate_load(o, v);
+}} open
+          xywh {95 175 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input widget_grid_curr_row {
+            label Index
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = o->value(), old_r = r;
+if (r < 0) r = 0;
+if (r >= grid->rows()) r = grid->rows()-1;
+if (r != old_r) o->value(r);
+if (v == LOAD) {
+  // will automatically propagate
+} else {
+  widget_grid_curr_row_attributes->do_callback(widget_grid_curr_row_attributes, LOAD);
+}}
+            xywh {95 175 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {
+            callback propagate_load open
+            xywh {135 175 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_curr_row->value( widget_grid_curr_row->value()-1 );
+  widget_grid_curr_row->do_callback();
+}}
+              xywh {135 175 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_curr_row->value( widget_grid_curr_row->value()+1 );
+  widget_grid_curr_row->do_callback();
+}}
+              xywh {150 175 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Box {} {
+            label {:}
+            xywh {165 175 15 20} labelsize 11
+          }
+          Fl_Group widget_grid_curr_row_attributes {
+            callback propagate_load open
+            xywh {180 175 175 20}
+          } {
+            Fl_Input {} {
+              label {Height:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = widget_grid_curr_row->value();
+if (v == LOAD) {
+  o->value(grid->row_height(r));
+} else {
+  int h = o->value(), old_h = grid->row_height(r);
+  if (h < 0) h = 0;
+  if (h != old_h) {
+    undo_checkpoint();
+    grid->row_height(r, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {180 175 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Weight:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = widget_grid_curr_row->value();
+if (v == LOAD) {
+  o->value(grid->row_weight(r));
+} else {
+  int h = o->value(), old_h = grid->row_weight(r);
+  if (h < 0) h = 0;
+  if (h != old_h) {
+    undo_checkpoint();
+    grid->row_weight(r, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {240 175 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Gap:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int r = widget_grid_curr_row->value();
+if (v == LOAD) {
+  o->value(grid->row_gap(r));
+} else {
+  int h = o->value(), old_h = grid->row_gap(r);
+  if (h < -1) h = -1;
+  if (h != old_h) {
+    undo_checkpoint();
+    grid->row_gap(r, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {300 175 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+          }
+          Fl_Box {} {
+            xywh {400 175 1 20} hide resizable
+          }
+        }
+        Fl_Group {} {
+          label {Column:}
+          callback propagate_load open
+          xywh {95 210 315 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Input widget_grid_curr_col {
+            label Index
+            callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = o->value(), old_c = c;
+if (c < 0) c = 0;
+if (c >= grid->cols()) c = grid->cols()-1;
+if (c != old_c) o->value(c);
+if (v == LOAD) {
+  // will automatically propagate
+} else {
+  widget_grid_curr_col_attributes->do_callback(widget_grid_curr_col_attributes, LOAD);
+}}
+            xywh {95 210 40 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
+          }
+          Fl_Group {} {open
+            xywh {135 210 30 20}
+          } {
+            Fl_Button {} {
+              label {-}
+              callback {if (v != LOAD) {
+  widget_grid_curr_col->value( widget_grid_curr_col->value()-1 );
+  widget_grid_curr_col->do_callback();
+}}
+              xywh {135 210 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+            Fl_Button {} {
+              label {+}
+              callback {if (v != LOAD) {
+  widget_grid_curr_col->value( widget_grid_curr_col->value()+1 );
+  widget_grid_curr_col->do_callback();
+}}
+              xywh {150 210 15 20} labelsize 11
+              code0 {o->clear_visible_focus();} compact 1
+            }
+          }
+          Fl_Box {} {
+            label {:}
+            xywh {165 210 15 20} labelsize 11
+          }
+          Fl_Group widget_grid_curr_col_attributes {
+            callback propagate_load open
+            xywh {180 210 175 20}
+          } {
+            Fl_Input {} {
+              label {Width:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = widget_grid_curr_col->value();
+if (v == LOAD) {
+  o->value(grid->col_width(c));
+} else {
+  int h = o->value(), old_h = grid->col_width(c);
+  if (h < 0) h = 0;
+  if (h != old_h) {
+    undo_checkpoint();
+    grid->col_width(c, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {180 210 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Weight:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = widget_grid_curr_col->value();
+if (v == LOAD) {
+  o->value(grid->col_weight(c));
+} else {
+  int h = o->value(), old_h = grid->col_weight(c);
+  if (h < 0) h = 0;
+  if (h != old_h) {
+    undo_checkpoint();
+    grid->col_weight(c, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {240 210 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+            Fl_Input {} {
+              label {Gap:}
+              callback {Fl_Grid *grid = Fl_Grid_Type::selected();
+if (!grid) return;
+int c = widget_grid_curr_col->value();
+if (v == LOAD) {
+  o->value(grid->col_gap(c));
+} else {
+  int h = o->value(), old_h = grid->col_gap(c);
+  if (h < -1) h = -1;
+  if (h != old_h) {
+    undo_checkpoint();
+    grid->col_gap(c, h);
+    grid->need_layout(true);
+    set_modflag(1);
+  }
+}}
+              xywh {300 210 55 20} labelsize 11 align 5 textsize 11
+              class Fluid_Coord_Input
+            }
+          }
+          Fl_Box {} {
+            xywh {400 210 1 20} hide resizable
+          }
+        }
+        Fl_Box {} {
+          xywh {95 350 300 5} labelsize 11 hide resizable
+        }
+      }
     }
-    Fl_Group {} {open
+    Fl_Tabs widget_tabs_repo {
+      xywh {10 10 400 350} hide
+      code0 {o->hide();}
+    } {
+      Fl_Group {} {open
+        xywh {10 30 400 330} resizable
+      } {}
+    }
+    Fl_Group {} {
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Button wLiveMode {
         label {Live &Resize}
         callback live_mode_cb
-        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 11
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
       Fl_Button overlay_button {
         label {Hide &Overlays}
         callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 11
+        tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
       Fl_Box {} {
         comment {Hidden resizable box}

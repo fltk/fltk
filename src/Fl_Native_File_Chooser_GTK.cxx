@@ -17,10 +17,8 @@
 
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
-#if USE_KDIALOG
-#  include "Fl_Native_File_Chooser_Zenity.H"
-#  include "Fl_Native_File_Chooser_Kdialog.H"
-#endif
+#include "Fl_Native_File_Chooser_Zenity.H"
+#include "Fl_Native_File_Chooser_Kdialog.H"
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <FL/platform.H>
@@ -576,7 +574,7 @@ static void update_preview_cb(GtkFileChooser *file_chooser, GtkImage* gtkimg)
       img->scale(width, height);
       width = img->w(), height = img->h();
     }
-    Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
+    Fl_Image_Surface *surf = new Fl_Image_Surface(width, height);
     Fl_Surface_Device::push_current(surf);
     fl_color(FL_WHITE);
     fl_rectf(0, 0, width, height);
@@ -931,42 +929,39 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   // otherwise, use FLTK file chooser.
   platform_fnfc = NULL;
   fl_open_display();
-  if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
-#if USE_KDIALOG
-    if (Fl::option(Fl::OPTION_FNFC_USES_ZENITY)&& val != BROWSE_MULTI_DIRECTORY) {
-      if (!Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity) {
-        // First Time here, try to find zenity
-        FILE *pipe = popen("zenity --version 2> /dev/null", "r");
-        if (pipe) {
-          char *p, line[100] = "";
-          p = fgets(line, sizeof(line), pipe);
-          if (p && strlen(line) > 0) Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity = true;
-          pclose(pipe);
-        }
-        Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity = true;
+  if (Fl::option(Fl::OPTION_FNFC_USES_ZENITY)&& val != BROWSE_MULTI_DIRECTORY) {
+    if (!Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity) {
+      // First Time here, try to find zenity
+      FILE *pipe = popen("zenity --version 2> /dev/null", "r");
+      if (pipe) {
+        char *p, line[100] = "";
+        p = fgets(line, sizeof(line), pipe);
+        if (p && strlen(line) > 0) Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity = true;
+        pclose(pipe);
       }
-      // if we found zenity, we will use the Fl_Zenity_Native_File_Chooser_Driver
-      if (Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity) platform_fnfc = new Fl_Zenity_Native_File_Chooser_Driver(val);
+      Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity = true;
     }
-    const char *desktop = getenv("XDG_CURRENT_DESKTOP");
-    if (!platform_fnfc && desktop && strcmp(desktop, "KDE") == 0 && val != BROWSE_MULTI_DIRECTORY) {
-      if (!Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog) {
-        // First Time here, try to find kdialog
-        FILE *pipe = popen("kdialog -v 2> /dev/null", "r");
-        if (pipe) {
-          char *p, line[100] = "";
-          p = fgets(line, sizeof(line), pipe);
-          if (p && strlen(line) > 0) Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog = true;
-          pclose(pipe);
-        }
-        Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog = true;
+    // if we found zenity, we will use the Fl_Zenity_Native_File_Chooser_Driver
+    if (Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity) platform_fnfc = new Fl_Zenity_Native_File_Chooser_Driver(val);
+  }
+  if (!platform_fnfc && Fl::option(Fl::OPTION_FNFC_USES_KDIALOG) && val != BROWSE_MULTI_DIRECTORY) {
+    if (!Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog) {
+      // First Time here, try to find kdialog
+      FILE *pipe = popen("kdialog -v 2> /dev/null", "r");
+      if (pipe) {
+        char *p, line[100] = "";
+        p = fgets(line, sizeof(line), pipe);
+        if (p && strlen(line) > 0) Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog = true;
+        pclose(pipe);
       }
-      // if we found kdialog, we will use the Fl_Kdialog_Native_File_Chooser_Driver
-      if (Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog) platform_fnfc = new Fl_Kdialog_Native_File_Chooser_Driver(val);
+      Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog = true;
     }
-#endif // USE_KDIALOG
+    // if we found kdialog, we will use the Fl_Kdialog_Native_File_Chooser_Driver
+    if (Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog) platform_fnfc = new Fl_Kdialog_Native_File_Chooser_Driver(val);
+  }
 #if HAVE_DLSYM && HAVE_DLFCN_H
-    if (!platform_fnfc) {
+  if (!platform_fnfc) {
+    if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
       if ( Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs == 0) {
         // First Time here, try to find the GTK libs if they are installed
         Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs();
@@ -975,7 +970,8 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
       // if we found all the GTK functions we need, we will use the GtkFileChooserDialog
       if (Fl_GTK_Native_File_Chooser_Driver::did_find_GTK_libs) platform_fnfc = new Fl_GTK_Native_File_Chooser_Driver(val);
     }
-#endif // HAVE_DLSYM && HAVE_DLFCN_H
   }
+#endif // HAVE_DLSYM && HAVE_DLFCN_H
+
   if (!platform_fnfc) platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
 }

@@ -133,12 +133,28 @@ void fl_overlay_clear() {
  \see fl_overlay_clear()
  */
 void fl_overlay_rect(int x, int y, int w, int h) {
-  if (w < 0) {x += w; w = -w;} else if (!w) w = 1;
-  if (h < 0) {y += h; h = -h;} else if (!h) h = 1;
+  // If there is already another overlay rect, erase it now
   if (pw > 0) {
     if (x==px && y==py && w==pw && h==ph) return;
     erase_current_rect();
   }
+  // Width and hight must be positive, swap with coordinates if needed
+  if (w < 0) {x += w; w = -w;}
+  if (h < 0) {y += h; h = -h;}
+  // Clip the overlay to the window rect, or reading the background will fail
+  Fl_Window *win = Fl_Window::current();
+  if (win) {
+    int d;
+    d = -x; if (d>0) { x += d; w -= d; }
+    d = (x+w)-win->w(); if (d>0) { w -= d; }
+    d = -y; if (d>0) { y += d; h -= d; }
+    d = (y+h)-win->h(); if (d>0) { h -= d; }
+  }
+  //
+  if (w<1) w = 1;
+  if (h<1) h = 1;
+  // Store the rect in global variables so we can erase it later
   px = x; py = y; pw = w; ph = h;
+  // Draw it
   draw_current_rect();
 }

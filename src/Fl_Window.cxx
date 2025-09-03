@@ -1,7 +1,7 @@
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,7 @@
 
 char *Fl_Window::default_xclass_ = 0L;
 
-char Fl_Window::show_iconic_ = 0;
+char Fl_Window::show_next_window_iconic_ = 0;
 
 Fl_Window *Fl_Window::current_;
 
@@ -526,6 +526,7 @@ void Fl_Window::draw_backdrop() {
     l1.image = image();
     if (!active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
     l1.type = labeltype();
+    l1.h_margin_ = l1.v_margin_ = l1.spacing = 0;
     l1.draw(0,0,w(),h(),align());
   }
 }
@@ -592,8 +593,9 @@ int Fl_Window::handle(int ev)
           // unmap because when the parent window is remapped we don't
           // want to reappear.
           if (visible()) {
-            Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
-            if (p->type() >= FL_WINDOW) break; // don't do the unmap
+            Fl_Widget* p = parent();
+            for (; p && p->visible(); p = p->parent()) { /* empty*/ }
+            if (p && p->as_window()) break; // don't do the unmap
           }
           pWindowDriver->unmap();
         }
@@ -605,7 +607,7 @@ int Fl_Window::handle(int ev)
 }
 
 /**
-  Sets the allowable range the user can resize this window to.
+  Sets the allowable range to which the user can resize this window.
 
   We recommend to call size_range() if you have a resizable() widget
   in a main window, and to call it after setting the resizable() and
@@ -674,6 +676,33 @@ void Fl_Window::size_range(int minWidth, int minHeight,
   aspect_         = aspectRatio;
   size_range_set_ = 1;
   pWindowDriver->size_range();  // platform specific stuff
+}
+
+/**
+  Gets the allowable range to which the user can resize this window.
+
+  \param[out] minWidth, minHeight, maxWidth, maxHeight, deltaX, deltaY, aspectRatio
+    are all pointers to integers that will receive the current respective value
+    during the call. Every pointer can be NULL if that value is not needed.
+
+  \retval 0 if size range not set
+  \retval 1 if the size range was explicitly set by a call to Fl_Window::size_range()
+            or has been calculated
+  \see Fl_Window::size_range(int minWidth, int minHeight, int maxWidth, int maxHeight, int deltaX, int deltaY, int aspectRatio)
+
+  \since 1.4.0
+*/
+uchar Fl_Window::get_size_range(int *minWidth, int *minHeight,
+                                int *maxWidth, int *maxHeight,
+                                int *deltaX, int *deltaY, int *aspectRatio) {
+  if (minWidth) *minWidth = minw_;
+  if (minHeight) *minHeight = minh_;
+  if (maxWidth) *maxWidth = maxw_;
+  if (maxHeight) *maxHeight = maxh_;
+  if (deltaX) *deltaX = dw_;
+  if (deltaY) *deltaY = dh_;
+  if (aspectRatio) *aspectRatio = aspect_;
+  return size_range_set_;
 }
 
 /**
@@ -754,6 +783,8 @@ void Fl_Window::size_range(int minWidth, int minHeight,
 
   If this is not what you want, please use Fl_Window::size_range()
   explicitly so you can set any appropriate range.
+
+  \since 1.4.0
 */
 void Fl_Window::default_size_range() {
 
@@ -773,7 +804,7 @@ void Fl_Window::default_size_range() {
 
   // Clip the resizable() widget to the window
 
-  int L = r->x();
+  int L = (r == this ? 0 : r->x());
   int R = L + r->w();
   if (R < 0 || L > w()) R = L; // outside the window
   else {
@@ -782,7 +813,7 @@ void Fl_Window::default_size_range() {
   }
   int rw = R - L;
 
-  int T = r->y();
+  int T = (r == this ? 0 : r->y());
   int B = T + r->h();
   if (B < 0 || T > h()) B = T; // outside the window
   else {
@@ -833,6 +864,8 @@ void Fl_Window::default_size_range() {
   \retval  3  the window is resizable in both directions (w and h)
 
   \see default_size_range()
+
+  \since 1.4.0
 */
 int Fl_Window::is_resizable() {
   default_size_range();
@@ -842,27 +875,59 @@ int Fl_Window::is_resizable() {
   return ret;
 }
 
-/** The number of the screen containing the mapped window */
+/** The number of the screen containing the mapped window.
+
+  This method returns the screen number (0 .. n) of the window
+  if it is shown, otherwise the result value is undefined.
+
+  \note The return value is undefined before the window is shown and
+    if the window has been hidden after it was previously shown.
+
+  To position a window on a particular screen, use
+  Fl_Window::screen_num(int) \b before you show() it.
+
+  \return screen number of the window if it is shown
+
+  \see Fl_Window::screen_num(int)
+
+  \since 1.4.0
+ */
 int Fl_Window::screen_num() {
   return pWindowDriver->screen_num();
 }
 
 /** Set the number of the screen where to map the window.
- Call this and set also the window's desired position before show()'ing the window.
- This can be necessary when a system has several screens with
- distinct scaling factor values because the window's x() and y() may not suffice to
- uniquely identify one screen.
- To see that, consider a system with two screens where the screen at left is A pixel-wide
- and has a scale factor of 1 whereas the screen at right has a scale factor of 2.
- For the sake of simplicity, consider only
- the X coordinates of windows. FLTK coordinates translate directly to pixel coordinates on the
- left screen, whereas FLTK coordinates multiplied by 2 correspond to pixel coordinates
- on the right screen. Consequently, FLTK coordinates between A/2 + 1 and A-1 can map to both
- screens.  Both window coordinates and screen number are necessary to uniquely identify
- where a window is to be mapped.
- */
+
+  Call this and set also the window's desired x/y position before show()'ing
+  the window. This can be necessary if a system has several screens with
+  distinct scaling factors because the window's x() and y() may not suffice
+  to uniquely identify one screen.
+
+  Consider a system with two screens where the left screen is A pixels wide and
+  has a scaling factor of 1 whereas the right screen has a scaling factor of 2.
+  For the sake of simplicity, consider only the X coordinate of the window.
+  FLTK coordinates translate directly to pixel coordinates on the left screen,
+  whereas FLTK coordinates multiplied by 2 correspond to pixel coordinates
+  on the right screen. Consequently, FLTK coordinates between A/2 + 1 and A-1
+  can map to both screens. Therefore both the window coordinates and the screen
+  number are necessary to uniquely identify where a window is to be mapped.
+
+  The valid range of \p screen_num is 0 .. Fl::screen_count() - 1.
+
+  This method does nothing if
+  - the window is already shown() or
+  - the given screen number is out of range.
+
+  \param[in] screen_num screen number where the window is to be mapped
+
+  \see Fl_Window::screen_num()
+  \see Fl::screen_count()
+
+  \since 1.4.0
+*/
 void Fl_Window::screen_num(int screen_num) {
-  if (!shown() && screen_num >= 0 && screen_num < Fl::screen_count()) pWindowDriver->screen_num(screen_num);
+  if (!shown() && screen_num >= 0 && screen_num < Fl::screen_count())
+    pWindowDriver->screen_num(screen_num);
 }
 
 /** Assigns a non-rectangular shape to the window.
@@ -908,17 +973,74 @@ void Fl_Window::shape(const Fl_Image* img) {pWindowDriver->shape(img);}
  */
 void Fl_Window::shape(const Fl_Image& img) {pWindowDriver->shape(&img);}
 
-/** Returns the image controlling the window shape or NULL */
+/** Returns the image controlling the window shape or NULL.
+
+  \since 1.4.0
+*/
 const Fl_Image* Fl_Window::shape() {return pWindowDriver->shape();}
 
-/** Returns true when a window is being rescaled */
+/** Returns true when a window is being rescaled.
+
+  \since 1.4.0
+*/
 bool Fl_Window::is_a_rescale() {return Fl_Window_Driver::is_a_rescale_;}
 
 /** Returns a platform-specific identification of a shown window, or 0 if not shown.
- \note This identification may differ from the platform-specific reference of an
- Fl_Window object used by functions fl_x11_xid(), fl_mac_xid(), fl_x11_find(), and fl_mac_find().
- \li X11 platform: the window's XID.
- \li macOS platform: The window number of the window’s window device.
- \li other platforms: 0.
- */
+
+  \note This identification may differ from the platform-specific reference
+        of an Fl_Window object used by functions fl_x11_xid(), fl_mac_xid(),
+        fl_x11_find(), and fl_mac_find().
+
+  - X11 platform: the window's XID.
+  - macOS platform: The window number of the window’s window device.
+  - other platforms: 0.
+
+  \since 1.4.0
+*/
 fl_uintptr_t Fl_Window::os_id() { return pWindowDriver->os_id();}
+
+/**
+  Maximizes a top-level window to its current screen.
+
+  This function is effective only with a show()'n, resizable, top-level window.
+  Bordered and borderless windows can be used.
+  Fullscreen windows can't be used.
+
+  \see Fl_Window::un_maximize(), Fl_Window::maximize_active()
+
+  \since 1.4.0
+*/
+void Fl_Window::maximize() {
+  if (!shown() || parent() || !is_resizable() || maximize_active() || fullscreen_active())
+    return;
+  set_flag(MAXIMIZED);
+  pWindowDriver->maximize();
+}
+
+/**
+  Returns a previously maximized top-level window to its previous size.
+  \see Fl_Window::maximize()
+
+  \since 1.4.0
+*/
+void Fl_Window::un_maximize() {
+  if (!shown() || parent() || !is_resizable() || !maximize_active() || fullscreen_active()) return;
+  clear_flag(MAXIMIZED);
+  pWindowDriver->un_maximize();
+}
+
+void Fl_Window::is_maximized_(bool b) {
+  if (b) set_flag(MAXIMIZED);
+  else clear_flag(MAXIMIZED);
+}
+
+/** Allow this subwindow to expand outside the area of its parent window.
+
+  This is presently implemented only for the Wayland platform to help
+  support window docking.
+
+  \since 1.4.0
+*/
+void Fl_Window::allow_expand_outside_parent() {
+  if (parent()) pWindowDriver->allow_expand_outside_parent();
+}

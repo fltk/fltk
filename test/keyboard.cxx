@@ -1,7 +1,7 @@
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2024 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,13 +38,16 @@ void key_cb(Fl_Button*, void*) {}
 void shift_cb(Fl_Button*, void*) {}
 void wheel_cb(Fl_Dial*, void*) {}
 
-// this is used to stop Esc from exiting the program:
+// This is used to stop Esc from exiting the program.
+// Other keystrokes like zoom keys (ctrl/+/-/0) must pass though.
 int handle(int e) {
-  return (e == FL_SHORTCUT); // eat all keystrokes
+  if (e == FL_SHORTCUT && Fl::event_key() == FL_Escape)
+    return 1;
+  return 0;
 }
 
 int MyWindow::handle(int msg) {
-  if (msg==FL_MOUSEWHEEL) {
+  if (msg == FL_MOUSEWHEEL) {
     roller_x->value( roller_x->value() + Fl::e_dx * roller_x->step() );
     roller_y->value( roller_y->value() + Fl::e_dy * roller_y->step() );
     return 1;
@@ -52,38 +55,42 @@ int MyWindow::handle(int msg) {
   return 0;
 }
 
-struct keycode_table{int n; const char* text;} table[] = {
-  {FL_Escape, "FL_Escape"},
-  {FL_BackSpace, "FL_BackSpace"},
-  {FL_Tab, "FL_Tab"},
-  {FL_Iso_Key, "FL_Iso_Key"},
-  {FL_Enter, "FL_Enter"},
-  {FL_Print, "FL_Print"},
-  {FL_Scroll_Lock, "FL_Scroll_Lock"},
-  {FL_Pause, "FL_Pause"},
-  {FL_Insert, "FL_Insert"},
-  {FL_Home, "FL_Home"},
-  {FL_Page_Up, "FL_Page_Up"},
-  {FL_Delete, "FL_Delete"},
-  {FL_End, "FL_End"},
-  {FL_Page_Down, "FL_Page_Down"},
-  {FL_Left, "FL_Left"},
-  {FL_Up, "FL_Up"},
-  {FL_Right, "FL_Right"},
-  {FL_Down, "FL_Down"},
-  {FL_Shift_L, "FL_Shift_L"},
-  {FL_Shift_R, "FL_Shift_R"},
-  {FL_Control_L, "FL_Control_L"},
-  {FL_Control_R, "FL_Control_R"},
-  {FL_Caps_Lock, "FL_Caps_Lock"},
-  {FL_Alt_L, "FL_Alt_L"},
-  {FL_Alt_R, "FL_Alt_R"},
-  {FL_Meta_L, "FL_Meta_L"},
-  {FL_Meta_R, "FL_Meta_R"},
-  {FL_Menu, "FL_Menu"},
-  {FL_Help, "FL_Help"},
-  {FL_Num_Lock, "FL_Num_Lock"},
-  {FL_KP_Enter, "FL_KP_Enter"}
+struct keycode_table {
+  int n;                // key code
+  const char* text;     // key name
+} key_table[] = {
+  { FL_Escape,          "FL_Escape"},
+  { FL_BackSpace,       "FL_BackSpace"},
+  { FL_Tab,             "FL_Tab"},
+  { FL_Iso_Key,         "FL_Iso_Key"},
+  { FL_Enter,           "FL_Enter"},
+  { FL_Print,           "FL_Print"},
+  { FL_Scroll_Lock,     "FL_Scroll_Lock"},
+  { FL_Pause,           "FL_Pause"},
+  { FL_Insert,          "FL_Insert"},
+  { FL_Home,            "FL_Home"},
+  { FL_Page_Up,         "FL_Page_Up"},
+  { FL_Delete,          "FL_Delete"},
+  { FL_End,             "FL_End"},
+  { FL_Page_Down,       "FL_Page_Down"},
+  { FL_Left,            "FL_Left"},
+  { FL_Up,              "FL_Up"},
+  { FL_Right,           "FL_Right"},
+  { FL_Down,            "FL_Down"},
+  { FL_Shift_L,         "FL_Shift_L"},
+  { FL_Shift_R,         "FL_Shift_R"},
+  { FL_Control_L,       "FL_Control_L"},
+  { FL_Control_R,       "FL_Control_R"},
+  { FL_Caps_Lock,       "FL_Caps_Lock"},
+  { FL_Alt_L,           "FL_Alt_L"},
+  { FL_Alt_R,           "FL_Alt_R"},
+  { FL_Meta_L,          "FL_Meta_L"},
+  { FL_Meta_R,          "FL_Meta_R"},
+  { FL_Menu,            "FL_Menu"},
+  { FL_Help,            "FL_Help"},
+  { FL_Num_Lock,        "FL_Num_Lock"},
+  { FL_KP_Enter,        "FL_KP_Enter"},
+  { FL_Alt_Gr,          "FL_Alt_Gr"}
 };
 
 int main(int argc, char** argv) {
@@ -133,8 +140,8 @@ int main(int argc, char** argv) {
       snprintf(buffer, sizeof(buffer), "FL_Button+%d", k-FL_Button);
     } else {
       snprintf(buffer, sizeof(buffer), "0x%04x", k);
-      for (int i = 0; i < int(sizeof(table)/sizeof(*table)); i++)
-        if (table[i].n == k) {keyname = table[i].text; break;}
+      for (int i = 0; i < int(sizeof(key_table)/sizeof(*key_table)); i++)
+        if (key_table[i].n == k) {keyname = key_table[i].text; break;}
     }
     if (strcmp(key_output->value(), keyname))
       key_output->value(keyname);
