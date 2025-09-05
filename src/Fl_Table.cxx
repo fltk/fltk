@@ -3,7 +3,7 @@
 //
 // Copyright 2002 by Greg Ercolano.
 // Copyright (c) 2004 O'ksi'D
-// Copyright 2023 by Bill Spitzak and others.
+// Copyright 2023-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1246,7 +1246,11 @@ int Fl_Table::is_selected(int r, int c) {
   \param[in] row_bot   Returns the bottom row of selection area
   \param[in] col_right Returns the right column of selection area
 */
+#if FL_ABI_VERSION >= 10405 // Issue #1305
+void Fl_Table::get_selection(int& row_top, int& col_left, int& row_bot, int& col_right) const {
+#else
 void Fl_Table::get_selection(int& row_top, int& col_left, int& row_bot, int& col_right) {
+#endif
   if (select_col > current_col) {
     col_left  = current_col;
     col_right = select_col;
