@@ -1474,8 +1474,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       if (!item->label()) break;
       if (item->user_data() == window) {
         if (!item->value()) {
-          item->setonly();
-          fl_sys_menu_bar->update();
+          Fl_MacOS_Sys_Menu_Bar_Driver::driver()->setonly(item);
         }
         break;
       }

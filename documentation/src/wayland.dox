@@ -132,7 +132,6 @@ The public C API to Wayland, xkb, EGL and libdecor libraries are obtained with
 #include <xkbcommon/xkbcommon-compose.h>
 #include <linux/input.h> // for BTN_LEFT, BTN_RIGHT, BTN_MIDDLE
 #include "../../../libdecor/src/libdecor.h"
-#include "../../../libdecor/src/libdecor-plugin.h"
 #if HAVE_GL
 #  include <wayland-egl.h>
 #  include <EGL/egl.h>
