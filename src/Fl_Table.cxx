@@ -1206,8 +1206,11 @@ int Fl_Table::is_selected(int r, int c) {
   \param[in] col_left  Returns the left column of selection area
   \param[in] row_bot   Returns the bottom row of selection area
   \param[in] col_right Returns the right column of selection area
+
+  \internal
+    This method is 'const' since FLTK 1.5 (and 1.4.5 ABI), see issue #1305
 */
-void Fl_Table::get_selection(int& row_top, int& col_left, int& row_bot, int& col_right) {
+void Fl_Table::get_selection(int& row_top, int& col_left, int& row_bot, int& col_right) const {
   if (select_col > current_col) {
     col_left  = current_col;
     col_right = select_col;

@@ -726,7 +726,7 @@ public:
     return(row_position());
   }
   int is_selected(int r, int c);                // selected cell
-  void get_selection(int &row_top, int &col_left, int &row_bot, int &col_right);
+  void get_selection(int &row_top, int &col_left, int &row_bot, int &col_right) const;
   void set_selection(int row_top, int col_left, int row_bot, int col_right);
   int move_cursor(int R, int C, int shiftselect);
   int move_cursor(int R, int C);
