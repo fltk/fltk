@@ -3689,8 +3689,12 @@ void Fl_Cocoa_Window_Driver::make_current()
   } else
 #endif
   {
+// ignore deprecation warning of "graphicsContextWithWindow" because used only with 10.13 or before
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSGraphicsContext *nsgc = (through_drawRect ? [NSGraphicsContext currentContext] :
       [NSGraphicsContext graphicsContextWithWindow:fl_window]);
+#pragma clang diagnostic pop
     static SEL gc_sel = fl_mac_os_version >= 101000 ? @selector(CGContext) : @selector(graphicsPort);
     gc = (CGContextRef)[nsgc performSelector:gc_sel];
   }
