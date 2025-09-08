@@ -17,11 +17,9 @@
 /*
   General information on directory structure and file handling.
 
-  The "classic" autotools/make system creates executables in their source
-  folders, i.e. fluid/fluid, test/demo and test/xyz, resp.. The menu file is
-  in folder test/, as is the main demo(.exe) program. In the following text
-  and directory lists all test and demo executables are represented by "demo"
-  and the fluid executable by "fluid", no matter what OS (under Windows: *.exe).
+  In the following text and directory lists all test and demo executables are
+  represented by "demo" and the fluid executable by "fluid", no matter what OS
+  (under Windows: *.exe).
 
   The CMake build system generates all executables in the build tree and copies
   the supporting test data files to the build tree as well. This structure is
@@ -33,29 +31,23 @@
   The overall structure, relative to the FLTK source dir (fltk) and the build
   tree (build):
 
-  (1) Autotools / Make:
-
-    fltk/fluid              fluid (../fluid/fluid)
-    fltk/test               demo, demo.menu, working directory, data files
-    fltk/test/images        images for help_dialog(.html)
-
-  (2) CMake + make (e.g. Unix)
+  (1) CMake + make (e.g. Unix)
 
     build/bin               fluid
     build/bin/test          test and demo programs
     build/data              demo.menu, working directory, data files
     build/data/images       images for help_dialog(.html)
 
-  (3) CMake + Visual Studio (TYPE == build type: Debug, Release, ...)
+  (2) CMake + Visual Studio (TYPE == build type: Debug, Release, ...)
 
     build/bin/TYPE          fluid
     build/bin/test/TYPE     test and demo programs
     build/data              demo.menu, working directory, data files
     build/data/images       images for help_dialog(.html)
 
-  (4) macOS                 The setup is similar to Windows and Linux:
-                            Makefiles: like (1) or (2)
-                            Xcode: like (3), i.e. similar to VS layout
+  (3) macOS                 The setup is similar to Windows and Linux:
+                            Makefiles: like (1)
+                            Xcode: like (2), i.e. similar to VS layout
 
   The built executable 'demo' can also be executed with the menu filename
   as commandline argument. In this case all the support (data) files are

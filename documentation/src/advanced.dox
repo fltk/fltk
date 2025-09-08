@@ -97,13 +97,10 @@ with multithreaded programming issues; see the discussion of
 
 
 To incorporate the locking mechanism in the library,
-FLTK must be compiled with
-\p --enable-threads set during the \p configure
-process. IDE-based versions of FLTK are automatically compiled with
+FLTK must be compiled with FLTK_USE_PTHREADS=On
+set during the build process. This is the default since version 1.3.
+IDE-based versions of FLTK are automatically compiled with
 the locking mechanism incorporated if possible.
-Since version 1.3, the
-\p configure script that builds the FLTK
-library also sets \p --enable-threads by default.
 
 \section advanced_multithreading_lock_example Simple multithreaded examples using Fl::lock
 

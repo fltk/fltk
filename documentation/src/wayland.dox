@@ -198,9 +198,8 @@ Fl_Image_Surface_Driver::newImageSurfaceDriver().</tt>
 
 In special situations, such as with embedded systems equipped with the Wayland software but lacking
 the X11 library, it's possible to build the FLTK library such as it contains only the Wayland backend.
-This is achieved building FLTK with <tt>cmake -DFLTK_BACKEND_X11=OFF</tt> or with
-<tt>configure --disable-x11</tt>. In that case, FL/fl_config.h does not define
-\c FLTK_USE_X11.
+This is achieved building FLTK with <tt>cmake -DFLTK_BACKEND_X11=OFF</tt>.
+In that case, FL/fl_config.h does not define \c FLTK_USE_X11.
 
 The rest of this chapter describes what happens when the Wayland leg has been chosen.
 

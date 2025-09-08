@@ -919,8 +919,7 @@ requires 4 bytes to store a Unicode character.
 
 FLTK can draw accurately any Unicode-supported script for which the system
 contains relevant fonts. Under X11 platforms, this requires
-to build the library with the FLTK_USE_PANGO CMake option turned On
-(or with configure --enable-pango).
+to build the library with the FLTK_USE_PANGO CMake option turned On.
 
 Plain text drawing starting at a user-given coordinate
 is well supported by FLTK, including for right-to-left scripts.
