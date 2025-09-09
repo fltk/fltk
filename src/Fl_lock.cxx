@@ -76,6 +76,11 @@ bool Fl_System_Driverawake_pending_ = false;
 
 #endif
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
 
 /**
  \brief Adds an awake handler for use in awake().
@@ -176,6 +181,11 @@ bool Fl_System_Driver::awake_ring_empty() {
   Fl::system_driver()->unlock_ring();
   return retval;
 }
+
+/**
+ \}
+ \endcond
+ */
 
 /**
  \brief Notifies the main GUI thread from a worker thread.
