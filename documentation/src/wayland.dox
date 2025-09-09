@@ -19,11 +19,9 @@ This chapter describes how the Wayland backend of FLTK works from a developer's 
 
 Wayland usage involves communication via a Unix domain socket between a client
 application and another process called the Wayland compositor which creates,
-moves, resizes and draws windows on the display.
-Diverse Wayland compositors exist. They can follow rather diverse logics.
-For example, FreeBSD offers Sway which is a tiling compositor where the display is
-always entirely filled with whatever resizable windows are mapped at any given
-time. Compositors follow either the
+moves and resizes windows and displays their graphical content.
+Diverse Wayland compositors exist which follow diverse strategies to size, decorate
+and position windows on the screens. Compositors follow either the
 client-side decoration (CSD) rule where client apps draw window titlebars, or the
 server-side decoration (SSD) rule where the compositor draws titlebars. FLTK supports both
 CSD and SSD compositors. It uses a library called \c libdecor charged of determining whether
@@ -31,12 +29,15 @@ a CSD or a SSD compositor is active, and of drawing titlebars in the first case.
 
 Wayland is divided in various protocols that a given compositor may or may not support,
 although they all support the \c core protocol. Each protocol adds functionality
-not available in the core protocol.
+not available in the core protocol and determines a well defined API the client must follow
+to gain such functionality.
 <a href=https://wayland.app/protocols/>Wayland Explorer</a> lists
-all protocols. The core protocol allows a client app
+all protocols and details their APIs.
+Wayland compositors evolve in time by supporting more protocols or newly defined protocols.
+The core protocol allows a client app
 to discover what protocols the connected compositor supports. Protocols can be stable,
 which means they have a defined API that will not change but can be expanded, or unstable.
-For example, mapping a window on a display is not done by the core protocol but by the
+For example, mapping a window on a screen is not done by the core protocol but by the
 <tt>xdg shell</tt> protocol which is stable. The names of symbols used by unstable
 protocols always begin with letter 'z'. For example, FLTK uses unstable protocol
 <a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>
@@ -51,8 +52,8 @@ Wayland differs noticeably from X11 in that rendering is left to clients: Waylan
 no drawing API. Instead, Wayland provides objects of type <tt>struct wl_buffer</tt> which
 encapsulate a memory array of pixel values shared between the client and the compositor.
 The client app is expected to draw to that memory buffer with whatever means it chooses,
-and to instruct the compositor to map those pixels to the display when the drawing
-is complete. The Wayland platform of FLTK draws with the Cairo library to \c Fl_Window's
+and to instruct the compositor to map those pixels to the screen when the buffer is
+ready for display. The Wayland platform of FLTK draws with the Cairo library to \c Fl_Window's
 and \c Fl_Image_Surface's, and with OpenGL to \c Fl_Gl_Window's.
 
 Wayland differs also from X11 in that the position of a window in the display is
@@ -67,14 +68,15 @@ FLTK uses also popups for the small, yellow windows that display
 the new scale factor value when it's changed: these are created as short-lived popups
 centered above \c Fl::first_window().
 
-Wayland uses a trick of its own to handle lists of linked records. It defines type
+Wayland offers a means to handle lists of linked records. It defines type
 <tt>struct wl_list</tt> and a few macros (\c wl_list_init(), \c wl_list_for_each(), \c wl_list_insert(),
-\c wl_list_for_each_safe(), \c wl_list_remove()) to manage linked lists. Records put in these
-lists must contain a member variable of type <tt>struct wl_list</tt> used to link records together
+\c wl_list_for_each_safe(), \c wl_list_remove()) to manage linked lists. Memory records put in these
+lists must have the same type and contain a member variable of type <tt>struct wl_list</tt> used
+to link records together
 and often named 'link'. Access to such a list is possible memorizing a value of type
 <tt>struct wl_list</tt> computed by macro \c wl_list_init().
 Macro <tt>wl_list_for_each(arg1, arg2, arg3)</tt> allows to run through all list elements with:
-- \c arg1 is a pointer variable of the type of elements of the linked list;
+- \c arg1 is a pointer variable to the type of elements of the linked list;
 - \c arg2 is the address of a variable of type <tt>struct wl_list</tt> identifying the targeted list;
 - \c arg3 is the name of the member variable of these elements used to link them together.
 
@@ -93,9 +95,10 @@ Overall, and ignoring for now OpenGL usage, FLTK interacts with Wayland as follo
 a  callback function called \c wayland_socket_callback to the socket connecting the client
 and the compositor.
 - Client to compositor: FLTK calls C functions of the \c libwayland-client.so,
-\c libwayland-cursor.so and \c libxkbcommon.so shared libraries and of the
-libdecor library. These send suitable messages to the compositor writing to the socket.
+\c libwayland-cursor.so, \c libxkbcommon.so and \c libdecor.so shared libraries.
 The names of these functions begin with \c wl_, \c xkb_ or \c libdecor_.
+Functions from the first 2 of these libraries instruct the compositor to perform
+various operations sending it data via the socket.
 - Compositor to client: the callback function \c wayland_socket_callback runs when there are
 data to read in the socket; it calls \c wl_display_dispatch() which interprets the read data
 and calls corresponding listeners.
@@ -117,9 +120,9 @@ Classes \c Fl_Wayland_Window_Driver, \c Fl_Wayland_Screen_Driver, \c Fl_Wayland_
 contain all the Wayland-specific code of the FLTK library.
 This code is located at \c src/drivers/Wayland/ in the FLTK source tree.
 A single C++ source file generally contains all the code of a given class.
-The code related to copy, paste and drag-and-drop operations, however,
-is gathered in file \c fl_wayland_clipboard_dnd.cxx and contains a few
-member functions of class \c Fl_Wayland_Screen_Driver.
+The code for class \c Fl_Wayland_Screen_Driver, however, is split in two source files,
+\c Fl_Wayland_Screen_Driver.cxx and \c fl_wayland_clipboard_dnd.cxx that contains
+all code related to copy, paste and drag-and-drop.
 Furthermore, class \c Fl_Unix_System_Driver is used by both the Wayland and the X11
 FLTK platforms. File FL/fl_config.h defines preprocessor variables
 \c FLTK_USE_WAYLAND and \c FLTK_USE_CAIRO.
@@ -131,7 +134,7 @@ The public C API to Wayland, xkb, EGL and libdecor libraries are obtained with
 #include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-compose.h>
 #include <linux/input.h> // for BTN_LEFT, BTN_RIGHT, BTN_MIDDLE
-#include "../../../libdecor/src/libdecor.h"
+#include "../../../libdecor/build/fl_libdecor.h"
 #if HAVE_GL
 #  include <wayland-egl.h>
 #  include <EGL/egl.h>
@@ -144,7 +147,8 @@ and FreeBSD systems for FLTK to use Wayland. Wayland protocols are packaged as X
 accompanied by a utility program, \c wayland-scanner, able to generate a header file and a
 necessary glue C source file from a given XML file. For example, for FLTK to use the
 <a href=https://wayland.app/protocols/xdg-shell>XDG shell</a> protocol, these commands are
-run at build time to generate a .c file (\c xdg-shell-protocol.c) that will be compiled into
+run at build time to generate, using file \c xdg-shell.xml, a .c file (\c xdg-shell-protocol.c)
+that will be compiled into
 \c libfltk and a header file (\c xdg-shell-client-protocol.h) that the FLTK code will include:
 \code
 PROTOCOLS=`pkg-config --variable=pkgdatadir wayland-protocols`
@@ -164,7 +168,7 @@ and to choose between these possibilities at run-time, without any change to the
 application. The Wayland/X11 hybrid is essentially a version of the FLTK library containing both all
 Wayland-specific <u>and</u> all X11-specific code. That's reflected in file
 FL/fl_config.h which defines both \c FLTK_USE_WAYLAND and \c FLTK_USE_X11.
-This creates the constraint that Wayland and X11 cannot
+This creates the constraint that FLTK's Wayland-specific and X11-specific source code cannot
 use the same type name for different purposes or the same symbol name.
 That is why function <tt>fl_xid(const Fl_Window*)</tt> is deprecated in FLTK 1.4 and replaced by
 \c fl_wl_xid() for Wayland and \c fl_x11_xid() for X11. Also, global variable
@@ -207,8 +211,9 @@ The rest of this chapter describes what happens when the Wayland leg has been ch
 \section wayland-listeners Listeners
 
 A Wayland 'listener' is a small array of pointers to FLTK-defined callback functions
-associated to a Wayland-defined object, usually right after creation of this object,
-by a call to a specific Wayland function named following the form \c wl_XXX_add_listener().
+associated to a Wayland-defined object.
+A call to a specific Wayland function with a name of the form \c wl_XXX_add_listener
+associates the Wayland object and its listener, usually right after creation of this object.
 After defined events have occurred, the Wayland compositor sends appropriate commands
 to the client through the socket; the event loop detects the availability of data in the
 socket and calls function \c wayland_socket_callback(); this function calls the appropriate
@@ -307,9 +312,9 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 \endcode
 Each time Wayland calls \c registry_handle_global(), \c interface and \c version give the name
 and version of a component or feature of the Wayland system.
-Here is the list of the \c interface value for all protocols and system features FLTK uses:
+Here is the list of the \c interface value for all protocols and system features relevant for FLTK:
 <table>
- <tr><th>interface  </th><th> use</th> </tr>
+ <tr><th>Interface  </th><th>How FLTK uses this interface</th> </tr>
  <tr><td>wl_compositor </td><td> create wl_surface objects </td> </tr>
  <tr><td>wl_subcompositor </td><td>create subwindows </td> </tr>
  <tr><td>wl_shm </td><td> create buffers and buffer factories</td> </tr>
@@ -317,9 +322,9 @@ Here is the list of the \c interface value for all protocols and system features
  <tr><td>wl_data_device </td><td> support of copy/paste/drag-n-drop</td> </tr>
  <tr><td>wl_output </td><td>received once for each display </td> </tr>
  <tr><td>xdg_wm_base </td><td>create mapped windows </td> </tr>
- <tr><td>gtk_shell1 </td><td>signals Mutter is in use + titlebar gestures</td> </tr>
- <tr><td>weston_desktop_shell </td><td> signals Weston is in use</td></tr>
- <tr><td>org_kde_plasma_shell </td><td> signals KDE/Plasma is in use</td></tr>
+ <tr><td>gtk_shell1 </td><td>indicates Mutter is in use + titlebar gestures</td> </tr>
+ <tr><td>weston_desktop_shell </td><td> indicates Weston is in use</td></tr>
+ <tr><td>org_kde_plasma_shell </td><td> indicates KDE/Plasma is in use</td></tr>
  <tr><td>zwp_text_input_manager_v3 </td><td>interface with Text Input Methods </td></tr>
  <tr><td>zxdg_decoration_manager_v1 </td><td>select between CSD and SSD modes </td></tr>
 </table>
@@ -334,7 +339,7 @@ accessible from this object.
 For example, when \c interface equals \c "wl_compositor", the value returned by
 \c wl_registry_bind() is stored as member \c wl_compositor of the
 \c Fl_Wayland_Screen_Driver object.
-Function \c registry_handle_global() also identifies whether the Mutter, Weston, or KWin compositor
+Function \c registry_handle_global() also identifies whether the Mutter, Weston, KWin or Wayfire compositor
 is connected and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
 Other compositors (e.g., \c sway, \c labwc) are not specifically identified by FLTK and
 store value \c unspecified in member variable \c compositor.
@@ -470,7 +475,7 @@ being positioned beyond the screen borders under the assumption that the positio
 toplevel window inside a screen is known. While this assumption holds for other
 platforms, it does not for the Wayland platform. The FLTK code for the Wayland platform
 therefore modifies the algorithm that FLTK uses to compute the position of menu windows.
-The key information used by this algorithm is obtained by member function
+The key information used by this algorithm is obtained by virtual member function
 \c Fl_Window_Driver::menu_window_area which computes the coordinates of the rectangle where
 menu windows are allowed to be positioned. Under other platforms, this function just returns
 the origin and size of the work area of the screen in use.
@@ -723,7 +728,7 @@ which, provided member variable \c draw_buffer_needs_commit is true, calls
 Wayland buffer in its new, more advanced, state.
 
 An example of progressive drawing is given by FLTK's mandelbrot test app.
-When set to fullscreen, this app can be seen to progressively fill its window from
+When maximized, this app can be seen to progressively fill its window from
 top to bottom by blocks of lines, each block appearing when the compositor is ready to map
 a new buffer. When the compositor is not ready, the app does not block but continues
 computing and drawing in memory but not on display more lines of the desired Mandelbrot
@@ -894,7 +899,7 @@ the next value above that is a multiple of 100% (e.g., 175% --> 200%), and downs
 to the desired fractional scale value at the compositing stage.
 Seen from FLTK, everything runs with <tt>wld_scale</tt> having an integer value (1, 2, 3 or 4).
 
-Some gnome versions may natively support fractional scaling. Others require to use these commands
+Recent gnome versions natively support fractional scaling. Older ones require to use these commands
 to make them accept/refuse fractional scaling:
 \code
 gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
@@ -963,7 +968,7 @@ member function \c pointer_button() runs this code
   }
 \endcode
 which ensures that what \c gnome-tweaks has assigned to middle-click events is executed.
-At this point, FLTK obeys what \c libdecor decides for right-click (display the window
+At this point in time, FLTK obeys what \c libdecor decides for right-click (display the window
 menu) and double-click (maximize the window) events on titlebars which may diverge
 from \c gnome-tweaks settings.
 
@@ -1091,7 +1096,7 @@ released. Calls to functions \c xkb_state_update_mask() and \c xkb_state_mod_nam
 to set \c Fl::e_state adequately.
 
 6) Function \c wl_keyboard_repeat_info() does not run, for now, because this would require version 4 of
-the <tt>wl_keyboard</tt> object which is at version 2 in all tested Wayland compositors.
+the <tt>wl_keyboard</tt> object which has earlier versions in all tested Wayland compositors.
 
 
 \section wayland-text-input Support of text input methods
@@ -1116,7 +1121,7 @@ surface.
 3-4) Functions \c text_input_preedit_string() and \c text_input_commit_string() are called when the
 text input method prepares the client app to later insert 'marked' text or regular text, respectively.
 Complex text input often begins by inserting temporary text which is said to be 'marked' before
-replacing it with the text that will stay in the document. FLTK underlines marked text
+replacing it with the text that will stay in the document. FLTK underlines or selects marked text
 to distinguish it from regular text.
 
 5) Function \c text_input_done() runs when it's time to send either regular or marked text
@@ -1157,7 +1162,7 @@ Desktop. As of late 2023, libdecor contains two titlebar-drawing plugins:
 - \c libdecor-gtk intended for the Gnome desktop;
 - \c libdecor-cairo for other situations.
 
-On recent Linux distributions, FLTK uses the system \c libdecor shared library
+On recent Linux distributions, FLTK uses the system \c libdecor-0.so shared library
 available via packages \c libdecor-0-dev and \c libdecor-0-plugin-1-gtk.
 On earlier Linux versions, or if CMake option \c FLTK_USE_SYSTEM_LIBDECOR is set
 to OFF, FLTK bundles the most recent source code of \c libdecor and its plugins.
@@ -1182,9 +1187,8 @@ this directory is searched for a potential \c libdecor plugin in the form of a s
 if one is found, FLTK and \c libdecor load it and use it.
 
 The \c libdecor source code bundled in FLTK is identical to that of the \c libdecor repository.
-Nevertheless, FLTK uses this code with some minor changes. For example, except if
-\c FLTK_USE_SYSTEM_LIBDECOR
-is 1, FLTK needs to modify function \c libdecor_new() charged of loading the plugin, to make it use
+Nevertheless, FLTK uses this code with some minor changes. For example, when \c FLTK_USE_SYSTEM_LIBDECOR
+is 0, FLTK needs to modify function \c libdecor_new() charged of loading the plugin, to make it use
 the plugin code that is included in libfltk if none is found as a dynamic library. This is done as
 follows in file \c libdecor/build/fl_libdecor.c:
 \code
@@ -1459,6 +1463,7 @@ struct Fl_Wayland_Screen_Driver::seat {
   struct xkb_compose_state *xkb_compose_state;
   char *name;
   struct zwp_text_input_v3 *text_input;
+  struct gtk_shell1 *gtk_shell;
 };
 \endcode
 
@@ -1466,7 +1471,7 @@ struct Fl_Wayland_Screen_Driver::seat {
 \section wayland-doc Documentation resources
 
 
-<table summary="Wayland Documentation" width="100%" border="1">
+<table summary="Wayland Documentation"  border="1">
 <tr>
   <td>
     <a href=https://wayland-book.com/>The Wayland book</a>
@@ -1480,7 +1485,7 @@ struct Fl_Wayland_Screen_Driver::seat {
   <td>
     <a href=https://wayland.app/protocols/>Wayland Explorer</a>
   </td>
-  <td>Documentation of all Wayland protocols, both stable and unstable. A language-independent syntax is used which makes function names usable from C or C++ not always obvious. Some useful functions seem undocumented here for an unclear reason.
+  <td>Documentation of all Wayland protocols, both stable and unstable.
   <td>
 </tr>
 
