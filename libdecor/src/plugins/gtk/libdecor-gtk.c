@@ -924,6 +924,11 @@ ensure_title_bar_surfaces(struct libdecor_frame_gtk *frame_gtk)
 	frame_gtk->headerbar.opaque = false;
 	ensure_component(frame_gtk, &frame_gtk->headerbar);
 
+	if (frame_gtk->shadow.wl_surface) {
+		wl_subsurface_place_above(frame_gtk->headerbar.wl_subsurface,
+					  frame_gtk->shadow.wl_surface);
+	}
+
 	/* create an offscreen window with a header bar */
 	/* TODO: This should only be done once at frame consutrction, but then
 	 *       the window and headerbar would not change style (e.g. backdrop)
@@ -1761,6 +1766,8 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 					  int *top,
 					  int *bottom)
 {
+	struct libdecor_frame_gtk *frame_gtk =
+		(struct libdecor_frame_gtk *) frame;
 	enum libdecor_window_state window_state;
 
 	if (configuration) {
@@ -1778,17 +1785,22 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 	if (bottom)
 		*bottom = 0;
 	if (top) {
-		GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
 		enum decoration_type type = window_state_to_decoration_type(window_state);
 
-		/* avoid warnings after decoration has been turned off */
-		if (GTK_IS_WIDGET(header) && (type != DECORATION_TYPE_NONE)) {
-			/* Redraw title bar to ensure size will be up-to-date */
-			if (configuration && type == DECORATION_TYPE_TITLE_ONLY)
-				draw_title_bar((struct libdecor_frame_gtk *) frame);
-			*top = gtk_widget_get_allocated_height(header);
-		} else {
+		switch (type) {
+		case DECORATION_TYPE_NONE:
 			*top = 0;
+			break;
+		case DECORATION_TYPE_ALL:
+			ensure_border_surfaces(frame_gtk);
+			//draw_border(frame_gtk);
+			G_GNUC_FALLTHROUGH;
+		case DECORATION_TYPE_TITLE_ONLY:
+			if (!frame_gtk->header)
+				ensure_title_bar_surfaces(frame_gtk);
+			gtk_widget_show_all(frame_gtk->window);
+			gtk_widget_get_preferred_height(frame_gtk->header, NULL, top);
+			break;
 		}
 	}
 
