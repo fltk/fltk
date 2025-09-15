@@ -245,8 +245,6 @@ static void pointer_leave(void *data, struct wl_pointer *wl_pointer,
     need_leave = win->top_window(); // we leave a sub or toplevel window
     wl_display_roundtrip(fl_wl_display()); // pointer_enter to other win, if applicable, will run
     if (need_leave) { // we really left the sub-or-top win and did not enter another
-      extern Fl_Window *fl_xmousewin;
-      fl_xmousewin = 0;
       Fl::handle(FL_LEAVE, need_leave);
     }
   }

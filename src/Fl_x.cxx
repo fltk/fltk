@@ -103,8 +103,8 @@ extern int fl_send_system_handlers(void *e);
 
 #if FLTK_CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
-extern Fl_Window* fl_xmousewin;
 #endif
+extern Fl_Window* fl_xmousewin;
 
 static bool in_a_window; // true if in any of our windows, even destroyed ones
 static void do_queued_events() {
@@ -2199,9 +2199,9 @@ int fl_handle(const XEvent& thisevent)
     if (xevent.xcrossing.detail == NotifyInferior) break;
     set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
-#if FLTK_CONSOLIDATE_MOTION
+//#if FLTK_CONSOLIDATE_MOTION // this needs to be commented out in 1.4 and above (see #1295)
     fl_xmousewin = 0;
-#endif // FLTK_CONSOLIDATE_MOTION
+//#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = false; // make do_queued_events produce FL_LEAVE event
     return 0;
 
