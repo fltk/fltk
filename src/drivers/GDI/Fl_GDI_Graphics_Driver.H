@@ -79,6 +79,7 @@ public:
   static HBITMAP calc_HBITMAP_mask(Fl_RGB_Image *mask);
   void delete_bitmask(fl_uintptr_t bm) FL_OVERRIDE;
   HBITMAP create_alphamask(int w, int h, int d, int ld, const uchar *array);
+  void draw(const char *str, int n, int x, int y) FL_OVERRIDE;
   void draw_unscaled(const char* str, int n, int x, int y) FL_OVERRIDE;
   void draw_unscaled(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
   void rtl_draw_unscaled(const char* str, int n, int x, int y) FL_OVERRIDE;
