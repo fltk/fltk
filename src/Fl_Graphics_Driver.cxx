@@ -970,7 +970,8 @@ int Fl_Scalable_Graphics_Driver::descent() {
 void Fl_Scalable_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Region r2 = scale_clip(scale());
-  draw_unscaled(str, n, floor(x), floor(y));
+  int offset = (scale() == 1 ? 0 : -1); // for issue #1308
+  draw_unscaled(str, n, floor(x), floor(y + offset));
   unscale_clip(r2);
 }
 

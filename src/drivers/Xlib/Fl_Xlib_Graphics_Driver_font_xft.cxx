@@ -118,14 +118,6 @@ static void correct_extents (float s, int &dx, int &dy, int &w, int &h) {
   }
 }
 
-void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
-  if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  Fl_Region r2 = scale_clip(scale());
-  int offset = (scale() == 1 ? 0 : -1); // for issue #1308
-  draw_unscaled(str, n, floor(x), floor(y + offset));
-  unscale_clip(r2);
-}
-
 
 #if ! USE_PANGO
 
