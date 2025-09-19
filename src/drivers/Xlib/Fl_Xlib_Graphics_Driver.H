@@ -122,6 +122,7 @@ public:
   // --- bitmap stuff
   static unsigned long create_bitmask(int w, int h, const uchar *array); // NOT virtual
   void delete_bitmask(fl_uintptr_t bm) FL_OVERRIDE;
+  void draw(const char *str, int n, int x, int y) FL_OVERRIDE;
   void draw_unscaled(const char* str, int n, int x, int y) FL_OVERRIDE;
   void draw_unscaled(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
   void rtl_draw_unscaled(const char* str, int n, int x, int y) FL_OVERRIDE;
