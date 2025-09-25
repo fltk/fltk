@@ -1517,6 +1517,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
     wait_for_expose_value = 0;
     pWindow->border(0);
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
+    if (can_expand_outside_parent_) parent->covered = true; // for #1307
 
   } else { // a window without decoration
     new_window->kind = UNFRAMED;
@@ -1956,7 +1957,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         wl_callback_destroy(fl_win->frame_cb);
         fl_win->frame_cb = NULL;
       }
-      if (parent_xid->buffer) Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
+      if (parent_xid->buffer && !parent_xid->frame_cb) {
+        Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
+      }
     } else {
       if (!(parent && parent->damage()) && !parent_xid->frame_cb) {
         // use the frame callback mechanism and memorize current X,Y,W,H values
