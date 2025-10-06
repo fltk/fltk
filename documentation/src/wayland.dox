@@ -317,7 +317,7 @@ Here is the list of the \c interface value for all protocols and system features
  <tr><th>Interface  </th><th>How FLTK uses this interface</th> </tr>
  <tr><td>wl_compositor </td><td> create wl_surface objects </td> </tr>
  <tr><td>wl_subcompositor </td><td>create subwindows </td> </tr>
- <tr><td>wl_shm </td><td> create buffers and buffer factories</td> </tr>
+ <tr><td>wl_shm </td><td> create shared memory pools and buffers</td> </tr>
  <tr><td>wl_seat </td><td> create the unique "seat"</td> </tr>
  <tr><td>wl_data_device </td><td> support of copy/paste/drag-n-drop</td> </tr>
  <tr><td>wl_output </td><td>received once for each display </td> </tr>
@@ -735,21 +735,26 @@ computing and drawing in memory but not on display more lines of the desired Man
 graph.
 
 
-\section wayland-buffer-factory Buffer factories
+\section wayland-buffer-factory Buffer factory
 
 Wayland names <em>buffer factory</em> a software procedure that constructs objects of type
-<tt>struct wl_buffer</tt> for use by a client application.
-FLTK creates a \c wl_buffer object each time an Fl_Window is mapped on a display or resized.
-That's done by member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer()
-which follows this 3-step procedure to create a "buffer factory" for FLTK and to construct
-Wayland buffers from it:
+<tt>struct wl_buffer</tt>, that is, Wayland buffers, for use by a client application.
+FLTK creates a \c wl_buffer object each time a non-GL Fl_Window is mapped on a display or resized.
+FLTK triggers the creation of a Wayland buffer as follows:
+<pre>Fl::flush() calls, if the window is damaged:
+  \e Fl_Wayland_Window_Driver::flush() calls, if the window's \c frame_cb is NULL:
+    \e Fl_Wayland_Graphics_Driver::buffer_commit() calls, if the window's \c buffer->wl_buffer is NULL:
+      \e Fl_Wayland_Graphics_Driver::create_shm_buffer() creates a Wayland buffer.</pre>
+Member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer()
+follows this 3-step procedure to create one or more <em>shared memory pools</em> and to
+construct Wayland buffers from them:
 - Libdecor function <tt>libdecor_os_create_anonymous_file(off_t size)</tt> creates an adequate file
 and mmap's it. This file lives in RAM because it is created by function \c memfd_create().
 FLTK sets this file size to 10 MB unless the size of the buffer to be created
 is larger; in that case the anonymous file is sized to twice the buffer size.
 - Wayland function \c wl_shm_create_pool() shares this mmap'ed memory with the
-Wayland compositor and returns an object of type <tt>struct wl_shm_pool</tt> which
-encapsulates this memory. A record of type
+Wayland compositor and returns an object of type <tt>struct wl_shm_pool</tt>, a shared memory pool,
+which encapsulates this memory. A record of type
 <tt>struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data</tt> is created and associated to
 the newly created \c wl_shm_pool by \c wl_shm_pool_set_user_data(). This record stores
 the starting address (\c pool_memory) and size (\c pool_size) of the pool's encapsulated
