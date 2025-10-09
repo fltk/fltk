@@ -1,5 +1,3 @@
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -77,7 +75,10 @@ void Fl_Tree_Item::_Init(const Fl_Tree_Prefs &prefs, Fl_Tree *tree) {
 }
 
 /// Constructor.
-/// Makes a new instance of Fl_Tree_Item for \p 'tree'.
+/// Makes a new instance of Fl_Tree_Item for \p 'tree' with an empty label ("").
+/// It's up to you to set the label() of the item before adding it to the tree
+/// so that it draws the item's name, and helps methods like Fl_Tree::find_item(path)
+/// find the item by name.
 ///
 /// This must be used instead of the older, deprecated Fl_Tree_Item(Fl_Tree_Prefs)
 /// constructor for proper horizontal scrollbar calculation.
@@ -865,8 +866,7 @@ Fl_Color Fl_Tree_Item::drawbgcolor() const {
 /// \code
 /// class MyTreeItem : public Fl_Tree_Item {
 /// public:
-///     MyTreeItem() { }
-///     ~MyTreeItem() { }
+///     MyTreeItem(Fl_Tree *tree_val) : Fl_Tree_Item(tree_val) { }
 ///     // DRAW OUR CUSTOM CONTENT FOR THE ITEM
 ///     int draw_item_content(int render) {
 ///       // Our item's dimensions + text content
@@ -893,21 +893,23 @@ Fl_Color Fl_Tree_Item::drawbgcolor() const {
 /// using any of the fl_draw.H functions, as long as it's
 /// within the label's xywh area.
 ///
-/// To add instances of your custom item to the tree, you can use:
+/// To add instances of your custom item to the tree, you can use, e.g.:
 ///
 /// \code
 ///     // Example #1: using add()
-///     MyTreeItem *bart = new MyTreeItem(..);  // class derived from Fl_Tree_Item
-///     tree->add("/Simpsons/Bart", bart);      // Add item as /Simpsons/Bart
+///     MyTreeItem *item = new MyTreeItem(tree);  // class derived from Fl_Tree_Item
+///     item->label("Bart");
+///     tree->add("/Simpsons/.", item);           // Adds custom item as "/Simpsons/Bart"
 /// \endcode
 ///
 /// ..or you can insert or replace existing items:
 ///
 /// \code
 ///     // Example #2: using replace()
-///     MyTreeItem *marge = new MyTreeItem(..); // class derived from Fl_Tree_Item
-///     item = tree->add("/Simpsons/Marge");    // create item
-///     item->replace(mi);                      // replace it with our own
+///     MyTreeItem *marge = new MyTreeItem(tree); // class derived from Fl_Tree_Item
+///     marge->label("Marge");
+///     Fl_Tree_Item *item = tree->add("/Simpsons/Marge"); // create default item
+///     item->replace(marge);                              // replace default item with custom item
 /// \endcode
 ///
 /// \param[in] render Whether we should render content (1), or just tally
