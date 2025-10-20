@@ -1452,7 +1452,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
 
   new_window->wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
-  //Fl::warning("makeWindow:%p wayland-scale=%d user-scale=%.2f\n", pWindow, new_window->scale, Fl::screen_scale(0));
+//printf("makeWindow:%p %s %s\n", pWindow, pWindow->parent()?"SUB":"", pWindow->as_gl_window()?"GL":"");
   wl_surface_add_listener(new_window->wl_surface, &surface_listener, new_window);
 
   if (!shape()) { // rectangular FLTK windows are opaque
@@ -1841,9 +1841,14 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
   Fl_Window *parent = this->parent() ? pWindow->window() : NULL;
   struct wld_window *parent_xid = parent ? fl_wl_xid(parent) : NULL;
-  // When moving or resizing a subwindow independently from its parent, skip the move/resize
-  // operation if the parent window is being redrawn, in line with the frame callback mechanism.
-  if (depth == 1 && fl_win && parent_xid && parent_xid->frame_cb && is_a_move) {
+//printf("resize[%p] %dx%d is_a_resize=%d is_a_move=%d depth=%d parent_xid->frame_cb=%p\n", pWindow,W,H,is_a_resize,is_a_move,depth, (parent_xid?parent_xid->frame_cb:0) );
+  if (depth == 1 && fl_win && parent_xid && parent_xid->frame_cb && can_expand_outside_parent_) {
+    // When moving or resizing a subwindow independently from its parent while the parent window
+    // is being redrawn, the processing depends on whether the moved/resize window
+    // is a draggable-subwindow. For a draggable subwindow having can_expand_outside_parent_ != 0,
+    // skip the X,Y,W,H tuple to process only tuples received when parent window is ready.
+    // This smoothes the movement of the draggable subwindow.
+    // Process regular subwindows normally.
     depth--;
     return;
   }
@@ -1917,13 +1922,19 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
         wl_surface_commit(parent_xid->wl_surface);
       }
-    } else if (is_a_move && !parent_xid->frame_cb) {
-      // Use the frame callback mechanism applied to the object's parent window
-      parent_xid->frame_cb = wl_surface_frame(parent_xid->wl_surface);
-      wl_callback_add_listener(parent_xid->frame_cb,
-                               Fl_Wayland_Graphics_Driver::p_surface_frame_listener, parent_xid);
+    } else if (parent_xid->buffer && is_a_move) {
       if (fl_win->subsurface) wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
-      wl_surface_commit(parent_xid->wl_surface);
+      if (!parent_xid->buffer->wl_buffer || parent_xid->buffer->draw_buffer_needs_commit) {
+        if (!parent_xid->frame_cb) Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
+      } else {
+        if (!parent_xid->frame_cb) {
+          // Use the frame callback mechanism applied to the object's parent window
+          parent_xid->frame_cb = wl_surface_frame(parent_xid->wl_surface);
+          wl_callback_add_listener(parent_xid->frame_cb,
+                                   Fl_Wayland_Graphics_Driver::p_surface_frame_listener, parent_xid);
+        }
+        wl_surface_commit(parent_xid->wl_surface);
+      }
     }
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
   }

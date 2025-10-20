@@ -149,7 +149,6 @@ struct wld_window {
   struct wl_callback *frame_cb;
   struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer;
   struct xdg_surface *xdg_surface;
-  enum Fl_Wayland_Window_Driver::kind kind;
   union { // for each value of kind
     struct libdecor_frame *frame;
     struct wl_subsurface *subsurface;
@@ -158,6 +157,7 @@ struct wld_window {
   };
   // non-null when using custom cursor
   struct Fl_Wayland_Window_Driver::custom_cursor *custom_cursor;
+  enum Fl_Wayland_Window_Driver::kind kind;
   int configured_width;
   int configured_height;
   int floating_width;

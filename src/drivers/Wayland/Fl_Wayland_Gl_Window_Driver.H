@@ -38,6 +38,7 @@ private:
   int mode_(int m, const int *a) FL_OVERRIDE;
   void swap_buffers() FL_OVERRIDE;
   void resize(int is_a_resize, int w, int h) FL_OVERRIDE;
+  void after_resize() FL_OVERRIDE;
   char swap_type() FL_OVERRIDE;
   void swap_interval(int) FL_OVERRIDE;
   int swap_interval() const FL_OVERRIDE;
