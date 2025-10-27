@@ -76,6 +76,7 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) :
   if (egl_display == EGL_NO_DISPLAY) init();
   egl_window = NULL;
   egl_surface = NULL;
+  need_swap = false;
 }
 
 
@@ -300,6 +301,23 @@ int Fl_Wayland_Gl_Window_Driver::mode_(int m, const int *a) {
 }
 
 
+void Fl_Wayland_Gl_Window_Driver::surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
+  Fl_Wayland_Gl_Window_Driver *gl_dr = (Fl_Wayland_Gl_Window_Driver *)data;
+  wl_callback_destroy(cb);
+  struct wld_window *window = fl_wl_xid(gl_dr->pWindow);
+  window->frame_cb = NULL;
+  if (gl_dr->need_swap) {
+    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, gl_dr->egl_surface);
+    gl_dr->need_swap = false;
+  }
+}
+
+
+static const struct wl_callback_listener surface_frame_listener = {
+  .done = Fl_Wayland_Gl_Window_Driver::surface_frame_done,
+};
+
+
 void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   if (overlay()) {
     static bool overlay_buffer = true;
@@ -333,14 +351,21 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   }
 
   if (egl_surface) {
-    if (pWindow->parent()) { // issue #967
+    Fl_Window *parent = pWindow->parent() ? pWindow->window() : NULL;
+    struct wld_window *parent_xid = parent ? fl_wl_xid(parent) : NULL;
+    if (parent_xid) { // issue #967
       struct wld_window *xid = fl_wl_xid(pWindow);
-      if (xid->frame_cb) return;
-      xid->frame_cb = wl_surface_frame(xid->wl_surface);
-      wl_callback_add_listener(xid->frame_cb, Fl_Wayland_Graphics_Driver::p_surface_frame_listener,
-                               xid);
+      if (xid->frame_cb) {
+        need_swap = true;
+        return;
+      }
+      if (!parent_xid->frame_cb) {
+        xid->frame_cb = wl_surface_frame(xid->wl_surface);
+        wl_callback_add_listener(xid->frame_cb, &surface_frame_listener, this);
+      }
     }
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+    need_swap = false;
   }
 }
 
@@ -405,13 +430,6 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   }*/
 }
 
-void Fl_Wayland_Gl_Window_Driver::after_resize() {
-  Fl_Window *parent = (pWindow->parent() ? pWindow->window() : NULL);
-  struct wld_window *xid = (parent ? fl_wl_xid(parent) : NULL);
-  if (xid && !xid->frame_cb) {
-    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
-  }
-}
 
 char Fl_Wayland_Gl_Window_Driver::swap_type() {
   return copy;

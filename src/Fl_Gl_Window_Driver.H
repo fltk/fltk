@@ -67,7 +67,6 @@ public:
   virtual void make_current_after() {}
   virtual void swap_buffers() {}
   virtual void resize(int /*is_a_resize*/, int /*w*/, int /*h*/) {}
-  virtual void after_resize() {}
   virtual char swap_type();
   virtual void swap_interval(int) { }
   virtual int swap_interval() const { return -1; }

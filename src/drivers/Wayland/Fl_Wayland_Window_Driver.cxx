@@ -1911,6 +1911,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       if (fl_win->subsurface) wl_subsurface_set_position(fl_win->subsurface, X * f, Y * f);
       if (!parent_xid->buffer->wl_buffer || parent_xid->buffer->draw_buffer_needs_commit) {
         if (!parent_xid->frame_cb) Fl_Wayland_Graphics_Driver::buffer_commit(parent_xid);
+        else wl_surface_commit(parent_xid->wl_surface);
       } else {
         if (!parent_xid->frame_cb) {
           // Use the frame callback mechanism applied to the object's parent window

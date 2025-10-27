@@ -32,13 +32,13 @@ private:
   static EGLDisplay egl_display;
   struct wl_egl_window *egl_window;
   EGLSurface egl_surface;
+  bool need_swap;
   Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win);
   float pixels_per_unit() FL_OVERRIDE;
   void make_current_before() FL_OVERRIDE;
   int mode_(int m, const int *a) FL_OVERRIDE;
   void swap_buffers() FL_OVERRIDE;
   void resize(int is_a_resize, int w, int h) FL_OVERRIDE;
-  void after_resize() FL_OVERRIDE;
   char swap_type() FL_OVERRIDE;
   void swap_interval(int) FL_OVERRIDE;
   int swap_interval() const FL_OVERRIDE;
@@ -52,6 +52,7 @@ private:
   void gl_visual(Fl_Gl_Choice *c) FL_OVERRIDE;
   void init();
 public:
+  static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
   //virtual bool need_scissor() { return true; } // CONTROL_LEAKING_SUB_GL_WINDOWS
   //void apply_scissor(); // CONTROL_LEAKING_SUB_GL_WINDOWS
 };

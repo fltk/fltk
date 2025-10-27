@@ -299,7 +299,6 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (is_a_resize) valid(0);
   pGlWindowDriver->resize(is_a_resize, W, H);
   Fl_Window::resize(X,Y,W,H);
-  if (is_a_resize) pGlWindowDriver->after_resize();
 }
 
 /**
