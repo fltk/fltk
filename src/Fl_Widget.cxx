@@ -23,6 +23,97 @@
 #include <stdlib.h>
 #include "flstring.h"
 
+/*
+ The Fl_Widget::type_ property is primarily used as a subtype field to further
+ define the specific use of a widget. Most widgets use values between 0
+ (as a default) and 32, sometimes as enumerations, but also with individual
+ bits set for different purposes.
+
+ There are two notable exceptions:
+
+ Fl_Window and derived classes use values including and above 0xf0 to indicate
+ Fl_Window as a base class. This pattern is used reliably across the core code,
+ making type_ function as a global type identifier rather than just a subtype.
+
+ FL_RESERVED_TYPE = 100 also reflects this intention. The associated comment
+ implies that values >= 100 can be used globally, effectively replacing runtime
+ type information that was not always available in C++98. However, this is
+ used only once for FL_RADIO_BUTTON and is not implemented as expected for a
+ global type system. The original intention was likely to implement
+ select_one behavior for radio buttons within groups.
+
+  Known types are:
+    - FL_RESERVED_TYPE = 100
+    - for Fl_Button:
+      - FL_NORMAL_BUTTON = 0
+      - FL_TOGGLE_BUTTON = 1
+      - FL_RADIO_BUTTON = 100 + 2
+      - FL_HIDDEN_BUTTON = 3
+    - for Fl_Browser:
+      - FL_NORMAL_BROWSER = 0
+      - FL_SELECT_BROWSER = 1
+      - FL_HOLD_BROWSER = 2
+      - FL_MULTI_BROWSER = 3
+    - for Fl_Chart:
+      - FL_BAR_CHART = 0
+      - FL_HORBAR_CHART = 1
+      - FL_LINE_CHART = 2
+      - FL_FILL_CHART = 3
+      - FL_SPIKE_CHART = 4
+      - FL_PIE_CHART = 5
+      - FL_SPECIALPIE_CHART = 6
+    - for Fl_Clock:
+      - FL_SQUARE_CLOCK = 0
+      - FL_ROUND_CLOCK = 1
+    - for Fl_Counter;
+      - FL_NORMAL_COUNTER = 0
+      - FL_SIMPLE_COUNTER = 1
+    - for Fl_Dial:
+      - FL_NORMAL_DIAL = 0
+      - FL_LINE_DIAL = 1
+      - FL_FILL_DIAL = 2
+    - for Fl_Flex:
+      - Fl_Flex::VERTICAL = 0
+      - Fl_Flex::HORIZONTAL = 1
+    - for Fl_Valuator:
+      - FL_VERTICAL = 0
+      - FL_HORIZONTAL = 1
+    - for Fl_Input:
+      - FL_NORMAL_INPUT = 0
+      - FL_FLOAT_INPUT = 1
+      - FL_INT_INPUT = 2
+      - FL_HIDDEN_INPUT = 3
+      - FL_MULTILINE_INPUT = 4
+      - FL_SECRET_INPUT = 5
+      - FL_INPUT_TYPE = 7, mask for the above list
+      - FL_INPUT_READONLY = 8, used as a bit for the above list
+      - FL_INPUT_WRAP = 16, used as a bit for the above list
+    - for Fl_Menu_Button:
+      - 0: all mouse buttons pop up the menu
+      - bits 0..2: indicates the mouse buttons that pop up the menu
+      - POPUP1 = 1, used as a bit field
+      - POPUP2 = 2, used as a bit field
+      - POPUP3 = 4, used as a bit field
+    - for Fl_Pack:
+      - Fl_Pack::VERTICAL = 0
+      - Fl_Pack::HORIZONTAL = 1
+    - for Fl_Scroll:
+      - Fl_Scroll::HORIZONTAL = 1
+      - Fl_Scroll::VERTICAL = 2
+      - Fl_Scroll::BOTH = 3
+      - Fl_Scroll::ALWAYS_ON = 4 is used as a bit for the previous enum values
+    - for Fl_Scroll_Bar:
+      - FL_VERT_SLIDER = 0
+      - FL_HOR_SLIDER = 1
+      - FL_VERT_FILL_SLIDER = 2
+      - FL_HOR_FILL_SLIDER = 3
+      - FL_VERT_NICE_SLIDER = 4
+      - FL_HOR_NICE_SLIDER = 5
+    - for Windows:
+      - FL_WINDOW = 0xF0
+      - FL_DOUBLE_WINDOW = 0xF1
+ */
+
 
 ////////////////////////////////////////////////////////////////
 // for compatibility with Forms, all widgets without callbacks are

@@ -347,6 +347,8 @@ public:
       Returns the widget type value, which gives some information about the derived widget class
       to which the object belongs. Noticeably, the condition <tt>type() >= FL_WINDOW</tt> indicates
       a widget is an Fl_Window or derived object.
+
+      \note Known values for type_ are listed at the top of src/Fl_Widget.cxx .
    */
   uchar type() const {return type_;}
 
