@@ -240,8 +240,8 @@ public:
 
   virtual Node* click_test(int,int) { return nullptr; }
 
-  virtual void add_child(Node*, Node* beforethis) { }
-  virtual void move_child(Node*, Node* beforethis) { }
+  virtual void add_child(Node *, Node *beforethis) { (void)beforethis; }
+  virtual void move_child(Node *, Node *beforethis) { (void)beforethis; }
   virtual void remove_child(Node*) { }
 
   /** Give widgets a chance to arrange their children after all children were added.

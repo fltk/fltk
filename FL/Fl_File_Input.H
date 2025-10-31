@@ -66,7 +66,7 @@ public:
   /** Gets the box type used for the navigation bar. */
   Fl_Boxtype    down_box() const { return (Fl_Boxtype)down_box_; }
   /** Sets the box type to use for the navigation bar.  */
-  void          down_box(Fl_Boxtype b) { down_box_ = b; }
+  void          down_box(Fl_Boxtype b) { down_box_ = (uchar)b; }
 
   /**
     Gets the current error color.
