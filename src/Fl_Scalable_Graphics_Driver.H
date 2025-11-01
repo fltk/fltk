@@ -43,6 +43,7 @@ public:
   static int floor(int x, float s);
   inline int floor(int x) { return Fl_Scalable_Graphics_Driver::floor(x, scale()); }
 protected:
+  int line_style_;
   int line_width_;
   bool is_solid_;
   Fl_Scalable_Graphics_Driver();

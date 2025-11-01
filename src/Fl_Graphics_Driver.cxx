@@ -799,6 +799,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 }
 
 Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver() {
+  line_style_ = 0;
   line_width_ = 0;
   fontsize_ = -1;
   is_solid_ = true;
@@ -850,7 +851,7 @@ void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1) {
   float s = scale(); int s_int = int(s);
   int xx = (x < x1 ? x : x1);
   int xx1 = (x < x1 ? x1 : x);
-  if (s != s_int && line_width_ <= s_int) {
+  if ( (s != s_int) && (line_width_ <= s_int) && !(line_style_ & FL_UNIFORM_WIDTH) ) {
     int lwidth = this->floor((y+1)) - this->floor(y);
     bool need_change_width = (lwidth != s_int && is_solid_);
     void *data = NULL;
@@ -870,7 +871,7 @@ void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1) {
   float s = scale();  int s_int = int(s);
   int yy = (y < y1 ? y : y1);
   int yy1 = (y < y1 ? y1 : y);
-  if (s != s_int && line_width_ <= s_int) {
+  if ( (s != s_int) && (line_width_ <= s_int) && !(line_style_ & FL_UNIFORM_WIDTH)) {
     int lwidth = (this->floor((x+1)) - this->floor(x));
     bool need_change_width = (lwidth != s_int && is_solid_);
     void *data = NULL;
@@ -1051,6 +1052,7 @@ void Fl_Scalable_Graphics_Driver::draw_circle(int x0, int y0, int d, Fl_Color c)
 
 
 void Fl_Scalable_Graphics_Driver::line_style(int style, int width, char* dashes) {
+  line_style_ = style;
   if (width == 0) line_width_ = int(scale() < 2 ? 0 : scale());
   else line_width_ = int(width>0 ? width*scale() : -width*scale());
   is_solid_ = ((style & 0xff) == FL_SOLID && (!dashes || !*dashes));
