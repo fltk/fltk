@@ -23,7 +23,7 @@
 // Preprocessor macro FLTK_HAVE_CAIRO_EXT is defined only for "CAIRO_EXT".
 // Both macros are defined in 'FL/fl_config.h'.
 
-#include <FL/Fl.H> // includes <FL/fl_config.h>
+#include "Fl_Private.H" // includes <FL/fl_config.h>
 
 #ifdef FLTK_HAVE_CAIRO
 
@@ -61,7 +61,53 @@
 
 // static initialization
 
-Fl_Cairo_State Fl::cairo_state_; ///< current Cairo context information
+Fl_Cairo_State Fl::Private::cairo_state_; ///< current Cairo context information
+
+/** When FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true,
+  any current window dc is linked to a current Cairo context.
+  This is not the default, because it may not be necessary
+  to add Cairo support to all fltk supported windows.
+  When you wish to associate a Cairo context in this mode,
+  you need to call explicitly in your draw() overridden method,
+  Fl::cairo_make_current(Fl_Window*). This will create a Cairo context
+  only for this Window.
+  Still in custom Cairo application it is possible to handle
+  completely this process automatically by setting \p alink to true.
+  In this last case, you don't need anymore to call Fl::cairo_make_current().
+  You can use Fl::cairo_cc() to get the current Cairo context anytime.
+
+  \note Only available if built with CMake option FLTK_OPTION_CAIRO_WINDOW=ON.
+*/
+void Fl::cairo_autolink_context(bool alink) {
+  Private::cairo_state_.autolink(alink);
+}
+
+/**
+  Gets the current autolink mode for Cairo support.
+  \retval false if no Cairo context autolink is made for each window.
+  \retval true if any fltk window is attached a Cairo context when it
+  is current. \see void cairo_autolink_context(bool alink)
+
+  \note Only available if built with CMake option FLTK_OPTION_CAIRO_EXT=ON.
+  */
+bool Fl::cairo_autolink_context() {
+  return Private::cairo_state_.autolink();
+}
+
+/** Gets the current Cairo context linked with a fltk window. */
+cairo_t *Fl::cairo_cc() {
+  return Private::cairo_state_.cc();
+}
+
+/** Sets the current Cairo context to \p c.
+  Set \p own to true if you want fltk to handle this cc deletion.
+
+  \note Only available if built with CMake option FLTK_OPTION_CAIRO_WINDOW=ON.
+*/
+void Fl::cairo_cc(cairo_t *c, bool own=false) {
+  Private::cairo_state_.cc(c, own);
+}
+
 
 // Fl_Cairo_State
 
@@ -131,10 +177,10 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
 #endif
 
 #if defined(FLTK_USE_X11)
-  cairo_ctxt = Fl::cairo_make_current(0, wi->w() * scale, wi->h() * scale);
+  cairo_ctxt = Fl::Private::cairo_make_current(0, wi->w() * scale, wi->h() * scale);
 #else
   // on macOS, scaling is done before by Fl_Window::make_current(), on Windows, the size is not used
-  cairo_ctxt = Fl::cairo_make_current(fl_gc, wi->w(), wi->h());
+  cairo_ctxt = Fl::Private::cairo_make_current(fl_gc, wi->w(), wi->h());
 #endif
 
 #if !defined(USE_MAC_OS)
@@ -169,7 +215,7 @@ static cairo_surface_t *cairo_create_surface(void *gc, int W, int H) {
 
   \note Only available if CMake FLTK_OPTION_CAIRO_WINDOW is enabled.
 */
-cairo_t *Fl::cairo_make_current(void *gc) {
+cairo_t *Fl::Private::cairo_make_current(void *gc) {
   int W = 0, H = 0;
 #if defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
   // FIXME X11 get W,H
@@ -211,7 +257,7 @@ cairo_t *Fl::cairo_make_current(void *gc) {
 
   \note Only available if CMake FLTK_OPTION_CAIRO_WINDOW is enabled.
 */
-cairo_t *Fl::cairo_make_current(void *gc, int W, int H) {
+cairo_t *Fl::Private::cairo_make_current(void *gc, int W, int H) {
   if (gc == Fl::cairo_state_.gc() &&
       fl_window == (Window)Fl::cairo_state_.window() &&
       cairo_state_.cc() != 0) // no need to create a cc, just return that one

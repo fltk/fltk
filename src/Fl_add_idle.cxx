@@ -18,7 +18,7 @@
 // Replaces the older set_idle() call which has been renamed to set_idle_(),
 // is now private in class Fl::, and is used to implement this.
 
-#include <FL/Fl.H>
+#include "Fl_Private.H"
 
 struct idle_cb {
   void (*cb)(void*);
@@ -83,7 +83,7 @@ void Fl::add_idle(Fl_Idle_Handler cb, void* data) {
   } else {
     first = last = p;
     p->next = p;
-    set_idle_(call_idle);
+    Private::set_idle_(call_idle);
   }
 }
 
@@ -161,7 +161,7 @@ void Fl::remove_idle(Fl_Idle_Handler cb, void* data) {
   }
   if (l == p) { // only one
     first = last = 0;
-    set_idle_(0);
+    Private::set_idle_(0);
   } else {
     last = l;
     first = l->next = p->next;

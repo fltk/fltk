@@ -189,10 +189,16 @@ if(FLTK_HAVE_CAIRO) # FLTK_OPTION_CAIRO_WINDOW or FLTK_OPTION_CAIRO_EXT
   list(APPEND CPPFILES Fl_Cairo.cxx)
 endif()
 
-# find all header files in source directory <FL/...>
+# find all header files in includes directory <FL/...>
 file(GLOB
   HEADER_FILES
   "../FL/*.[hH]"
+)
+
+# find all private header files in source directory "src/..."
+file(GLOB
+  PRIVATE_HEADER_FILES
+  "*.[hH]"
 )
 
 # add generated header files in build directory
@@ -409,6 +415,7 @@ else()
 endif(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
 
 source_group("Header Files" FILES ${HEADER_FILES})
+source_group("Private Header Files" FILES ${PRIVATE_HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
 source_group("Driver Header Files" FILES ${DRIVER_HEADER_FILES})
 
@@ -622,7 +629,7 @@ endif()
 # prepare source files for shared and static FLTK libraries
 
 set(SHARED_FILES ${CPPFILES} ${MMFILES} ${CFILES} ${PSFILES})
-list(APPEND SHARED_FILES ${HEADER_FILES} ${DRIVER_HEADER_FILES})
+list(APPEND SHARED_FILES ${HEADER_FILES} ${PRIVATE_HEADER_FILES} ${DRIVER_HEADER_FILES})
 
 set(STATIC_FILES ${SHARED_FILES})
 
