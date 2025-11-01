@@ -60,10 +60,34 @@ static int Toupper(int ucs) {
 }
 
 /**
-  Returns the byte length of the UTF-8 sequence with first byte \p c,
-  or -1 if \p c is not valid.
+  Returns the byte length of the UTF-8 sequence, or -1.
 
-  This function is helpful for finding faulty UTF-8 sequences.
+  This function is helpful for finding faulty UTF-8 style encodings. It does
+  not check for undefined Unicode values.
+
+  Example:
+  \code{.cpp}
+  #include <FL/fl_utf8.h>
+
+  char utf8_string[] = "Hello 世界";
+  char *p = utf8_string;
+
+  while (*p) {
+    int len = fl_utf8len(*p);
+    if (len == -1) {
+      printf("Invalid UTF-8 byte: 0x%02x\n", (unsigned char)*p);
+      p++;  // Skip invalid byte
+    } else {
+      printf("Character uses %d bytes\n", len);
+      p += len;  // Move to next character
+    }
+  }
+  \endcode
+
+  \param[in] c the first character in a UTF- sequence
+  \return the number of bytes in that sequence, or -1 if c is not a valid
+    character for UTF-8 style encoding.
+
   \see fl_utf8len1
 */
 int fl_utf8len(char c)
@@ -89,12 +113,30 @@ int fl_utf8len(char c)
 
 
 /**
-  Returns the byte length of the UTF-8 sequence with first byte \p c,
-  or 1 if \p c is not valid.
+  Returns the byte length of a UTF-8 sequence, or -1.
 
   This function can be used to scan faulty UTF-8 sequences, albeit
   ignoring invalid codes.
-  \see fl_utf8len
+
+  Example:
+  \code
+  #include <FL/fl_utf8.h>
+
+  char mixed_string[] = "Hello \xFF\x80 world"; // Contains invalid UTF-8
+  char *p = mixed_string;
+
+  while (*p) {
+    int len = fl_utf8len1(*p);
+    printf("Byte 0x%02x uses %d byte(s)\n", (unsigned char)*p, len);
+    p += len;  // Always advances by at least 1, even for invalid bytes
+  }
+  \endcode
+
+  \param[in] c the first character in a UTF- sequence
+  \return the number of bytes in that sequence, or 1 if c is not a recognized
+    character for UTF-8 style encoding, so a loop can continue to scan a string.
+
+  \see fl_utf8len  \see fl_utf8len
 */
 int fl_utf8len1(char c)
 {
@@ -120,9 +162,20 @@ int fl_utf8len1(char c)
 
 /**
  Return the length in bytes of a UTF-8 string.
+
+ An illegal UTF-8 character is counted as 1.
+
+ Example:
+ \code
+ #include <FL/fl_utf8.h>
+
+ return fl_utf8strlen("über", 1); // returns 2, the ü is encoded 0xC3, 0xBC
+ \endcode
+
  \param[in] text encoded in UTF-8
  \param[in] len number of Unicode characters, -1 to test until the end of text
  \return number of bytes that make up the Unicode string
+
  \see fl_utf_nb_char(const unsigned char *buf, int len)
  */
 int fl_utf8strlen(const char *text, int len)
@@ -140,7 +193,24 @@ int fl_utf8strlen(const char *text, int len)
 
 
 /**
-  Returns the number of Unicode chars in the UTF-8 string.
+ Returns the number of Unicode chars in the UTF-8 string.
+
+ An illegal UTF-8 character is counted as 1.
+
+ Example:
+ \code
+ #include <FL/fl_utf8.h>
+
+ const char *str = "äöü"; // strlen(str) is 6
+ return fl_utf_nb_char(str, strlen(str)); // returns 3
+ \endcode
+
+ \param[in] buf text encoded in UTF-8
+ \param[in] len number of bytes to check. This code does not check for the
+    trailing NUL character of "C" style strings. -1 is *not* valid here.
+ \return number of characters in that sequence. If a trailing UTF-8 sequence
+    is not complete, the entire character is still counted.
+
  \see fl_utf8strlen(const char *text, int len)
 */
 int
@@ -163,12 +233,25 @@ fl_utf_nb_char(
 /**
   UTF-8 aware strncasecmp - converts to lower case Unicode and tests.
 
+  Characters are extracted as Unicode, the converted to their lower case
+  version, and the compared numerically. This does not take language specific
+  collation sequences into account. The limitations of `fl_tolower()` apply.
+
+  \code
+  #include <FL/fl_utf8.h>
+
+  return fl_utf_strncasecmp("über", "Über"); // returns 0
+  return fl_utf_strncasecmp("Meier", "Müller"); // returns a negative value
+  \endcode
+
   \param s1, s2 the UTF-8 strings to compare
   \param n the maximum number of UTF-8 characters to compare
   \return result of comparison
   \retval 0 if the strings are equal
   \retval >0 if s1 is greater than s2
   \retval <0 if s1 is less than s2
+
+  \see fl_tolower().
 */
 int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
 {
@@ -197,6 +280,8 @@ int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
   \retval 0 if the strings are equal
   \retval 1 if s1 is greater than s2
   \retval -1 if s1 is less than s2
+
+  \see fl_utf_strncasecmp(const char *s1, const char *s2, int n)
 */
 int fl_utf_strcasecmp(const char *s1, const char *s2)
 {
@@ -205,6 +290,20 @@ int fl_utf_strcasecmp(const char *s1, const char *s2)
 
 /**
   Returns the Unicode lower case value of \p ucs.
+
+  This is a relatively naive algorithm, good enough for basic Unicode string
+  handling. If the conversion code can't call a system native function, FLTK
+  will use lookup tables that are limited to the character range
+  from 0x0 to 0xffff. Characters with a higher value are not converted.
+
+  Perfect per-language character handling is a project larger than
+  FLTK itself.
+
+  \param[in] ucs Unicode 32 bit character
+  \return lower case version of that character in Unicode 32, or the same code
+      if there is no lower case version.
+
+  \see fl_toupper(unsigned int ucs), fl_utf8decode(), fl_utf8encode()
 */
 int fl_tolower(unsigned int ucs)
 {
@@ -213,6 +312,12 @@ int fl_tolower(unsigned int ucs)
 
 /**
   Returns the Unicode upper case value of \p ucs.
+
+  \param[in] ucs Unicode 32 bit character
+  \return upper case version of that character in Unicode 32, or the same code
+      if there is no upper case version.
+
+  \see fl_tolower(unsigned int ucs), fl_utf8decode(), fl_utf8encode()
 */
 int fl_toupper(unsigned int ucs)
 {
@@ -221,7 +326,27 @@ int fl_toupper(unsigned int ucs)
 
 /**
   Converts the string \p str to its lower case equivalent into buf.
-  Warning: to be safe buf length must be at least 3 * len [for 16-bit Unicode]
+
+  The destination buffer `buf` must be provided by the caller. The `buf` length
+  should be at least `3 * len` for 16-bit Unicode.
+
+  Example:
+  \code
+  #include <FL/fl_utf8.h>
+
+  const char *str = "ÇA VA?";
+  auto src_len = strlen(str)
+  char *buf = malloc(src_len*3 + 1);
+  puts(fl_utf_tolower(str, src_len, buf));
+  // should print "ça va?"
+  \endcode
+
+  \param[in] str UTF-8 string that will be converted
+  \param[in] len number of *bytes* to convert, must not be -1
+  \param[out] buf write the conversion result into this buffer
+  \return number of characters converted
+
+  \see fl_utf_toupper(), fl_tolower(unsigned int ucs)
 */
 int fl_utf_tolower(const unsigned char *str, int len, char *buf)
 {
@@ -250,7 +375,16 @@ int fl_utf_tolower(const unsigned char *str, int len, char *buf)
 
 /**
   Converts the string \p str to its upper case equivalent into buf.
-  Warning: to be safe buf length must be at least 3 * len [for 16-bit Unicode]
+
+  The destination buffer `buf` must be provided by the caller. The `buf` length
+  should be at least `3 * len` for 16-bit Unicode.
+
+  \param[in] str UTF-8 string that will be converted
+  \param[in] len number of *bytes* to convert, must not be -1
+  \param[out] buf write the conversion result into this buffer
+  \return number of characters converted
+
+  \see fl_utf_tolower(), fl_tolower(unsigned int ucs)
 */
 int fl_utf_toupper(const unsigned char *str, int len, char *buf)
 {
@@ -289,6 +423,12 @@ int fl_utf_toupper(const unsigned char *str, int len, char *buf)
   - http://unicode.org/glossary/#base_character
   - http://unicode.org/glossary/#nonspacing_mark
   - http://unicode.org/glossary/#combining_character
+
+  \param[in] ucs 32 bit Unicode character
+  \return 0 if this is a spacing character, or any other value if not
+
+  \note This function has not been verified. It's not working for ASCII
+    characters
 */
 unsigned int fl_nonspacing(unsigned int ucs)
 {
@@ -298,6 +438,17 @@ unsigned int fl_nonspacing(unsigned int ucs)
 
 /**
   Converts UTF-8 string \p s to a local multi-byte character string.
+
+  On Linux and macOS, this returns the same string. On Windows machines,
+  this function will convert the string to UTF-16, and the to the current
+  encoding using `wcstombs()`.
+
+  \param[in] s a UTF-8 encode string
+  \return a string that matches the current locale of the host machine. This
+  is a pointer to an internal buffer that changes size as needed.
+
+  \note Do not deallocate the returned pointer. This function is not
+      thread safe.
 */
 char * fl_utf2mbcs(const char *s)
 {
@@ -324,10 +475,20 @@ char * fl_utf2mbcs(const char *s)
   place. The next call to fl_getenv() or any other environment changes may
   overwrite the string.
 
+  Example:
+  \code
+  #include <FL/fl_utf8.h>
+
+  fl_putenv("cœur=frère")
+  return fl_getenv("cœur");  // return UTF-8 value on all platforms
+  \endcode
+
   \note This function is not thread-safe.
 
   \param[in] v the UTF-8 encoded environment variable
   \return  the environment variable in UTF-8 encoding, or NULL in case of error.
+
+  \see fl_putenv(const char* var)
 */
 
 char *fl_getenv(const char* v) {
@@ -360,8 +521,9 @@ char *fl_getenv(const char* v) {
 
   \param[in] var the UTF-8 encoded environment variable \p 'name=value'
   \return  0 on success, non-zero in case of error.
-*/
 
+  \see fl_getenv(const char* var)
+*/
 int fl_putenv(const char* var) {
   return Fl::system_driver()->putenv(var);
 }
@@ -371,6 +533,15 @@ int fl_putenv(const char* var) {
 
   This function is especially useful on the Windows platform where the
   standard open() function fails with UTF-8 encoded non-ASCII filenames.
+
+  \code
+  #include <FL/fl_utf8.h>
+
+  void test() {
+    int fd = fl_open("¡Peligro!", O_RDWR);
+    if (fd != -1) fl_close_fd(fd);
+  }
+  \endcode
 
   \param[in] fname  the UTF-8 encoded filename
   \param[in] oflags other arguments are as in the standard open() function
@@ -390,7 +561,6 @@ int fl_open(const char* fname, int oflags, ...) {
 /** Cross-platform function to close a file descriptor.
  \return 0 in case of success, or -1 in case of error.
  */
-
 int fl_close_fd(int fd) {
   return Fl::system_driver()->close_fd(fd);
 }
@@ -409,6 +579,8 @@ int fl_close_fd(int fd) {
                          Setting \p oflags to zero opens the file for reading.
 
   \return  a file descriptor upon successful completion, or -1 in case of error.
+
+  \see fl_open(), fl_fopen()
 */
 int fl_open_ext(const char* fname, int binary, int oflags, ...) {
   int pmode;
@@ -424,9 +596,20 @@ int fl_open_ext(const char* fname, int binary, int oflags, ...) {
 
   This function is especially useful on the Windows platform where the
   standard fopen() function fails with UTF-8 encoded non-ASCII filenames.
+
+  \code
+  #include <FL/fl_utf8.h>
+
+  void test() {
+    FILE *f = fl_fopen("¡Peligro!", "rw");
+    if (f) fl_fclose(f);
+  }
+  \endcode
+
   \param f  the UTF-8 encoded filename
   \param mode  same as the second argument of the standard fopen() function
   \return  a FILE pointer upon successful completion, or NULL in case of error.
+
   \sa fl_open().
 */
 FILE *fl_fopen(const char* f, const char *mode) {
@@ -440,15 +623,31 @@ FILE *fl_fopen(const char* f, const char *mode) {
 
   On platforms other than Windows this function calls system() directly.
 
+  \code
+  #include <FL/fl_utf8.h>
+
+  fl_system("echo \"Hauptstraße 2\""");
+  \endcode
+
   \param[in] cmd the UTF-8 encoded command string
   \return the return value of _wsystem() on Windows or system() on other platforms.
 */
-
 int fl_system(const char* cmd)
 {
   return Fl::system_driver()->system(cmd);
 }
 
+/**
+ Calls `execvp` on all platforms.
+
+ On Windows, this converts the file and all arguments in argv into Windows
+ multibyte characters and calls `_wexecvp`.
+
+ \param[in] file path to the new process
+ \param[in] argv array of command line arguments, last array member must
+    be a `nullptr`.
+  \return the result of `execvp` call.
+ */
 int fl_execvp(const char *file, char *const *argv)
 {
   return Fl::system_driver()->execvp(file, argv);
@@ -494,9 +693,11 @@ int fl_access(const char* f, int mode) {
   This function is especially useful on the Windows platform where the
   standard stat() function fails with UTF-8 encoded non-ASCII filenames.
 
-  \param[in] f the UTF-8 encoded filename
-  \param     b the stat struct to populate
-  \return    the return value of _wstat() on Windows or stat() on other platforms.
+  \param[in]  f the UTF-8 encoded filename
+  \param[out] b the stat struct to populate
+  \return     the return value of _wstat() on Windows or stat() on other platforms.
+
+  \note the contents of `struct stat` is returned unchanged in the host format.
 */
 int fl_stat(const char* f, struct stat *b) {
   return Fl::system_driver()->flstat(f, b);
@@ -634,6 +835,9 @@ char fl_make_path( const char *path ) {
 
   This function strips the filename from the given \p path and creates
   a path in the file system by recursively creating all directories.
+
+  \param[in] path path to a file, ending in a file name. The separator between
+      the path and the filename must be the forward slash.
 */
 void fl_make_path_for_file( const char *path ) {
   const char *s = strrchr( path, '/' );
