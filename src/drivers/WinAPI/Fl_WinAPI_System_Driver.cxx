@@ -190,7 +190,7 @@ char *Fl_WinAPI_System_Driver::utf2mbcs(const char *utf8) {
   unsigned len = (unsigned)strlen(utf8);
 
   unsigned wn = fl_utf8toUtf16(utf8, len, NULL, 0) + 7; // Query length
-  mbwbuf = (wchar_t *)realloc(mbwbuf, sizeof(wchar_t) * (wn+1));
+  mbwbuf = (wchar_t *)realloc(mbwbuf, sizeof(wchar_t) * wn);
   len = fl_utf8toUtf16(utf8, len, (unsigned short *)mbwbuf, wn); // Convert string
   mbwbuf[len] = 0;
 
