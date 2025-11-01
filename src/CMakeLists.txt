@@ -202,6 +202,12 @@ file(GLOB
   "*.[hH]"
 )
 
+# find all private header files in source directory "src/..."
+file(GLOB
+  PRIVATE_HEADER_FILES
+  "*.[hH]"
+)
+
 # add generated header files in build directory
 list(APPEND HEADER_FILES
   ${CMAKE_CURRENT_BINARY_DIR}/../FL/fl_config.h

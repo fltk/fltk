@@ -109,7 +109,6 @@ FL_EXPORT extern bool idle();
 FL_EXPORT extern const char* scheme_;
 FL_EXPORT extern Fl_Image* scheme_bg_;
 
-//FL_EXPORT extern int e_original_keysym; // late addition
 FL_EXPORT extern int scrollbar_size_;
 FL_EXPORT extern int menu_linespacing_; // STR #2927
 #endif
