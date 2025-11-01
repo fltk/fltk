@@ -894,8 +894,10 @@ static unsigned short cp1252[32] = {
 };
 #endif
 
-/** Decode a single UTF-8 encoded character starting at \e p. The
-  resulting Unicode value (in the range 0-0x10ffff) is returned,
+/**
+  Decode a single UTF-8 encoded character starting at \e p.
+
+  The resulting Unicode value (in the range 0-0x10ffff) is returned,
   and \e len is set to the number of bytes in the UTF-8 encoding
   (adding \e len to \e p will point at the next character).
 
@@ -924,6 +926,11 @@ static unsigned short cp1252[32] = {
   Direct testing for the 1-byte case (as shown above) will also
   speed up the scanning of strings where the majority of characters
   are ASCII.
+
+  \param[in] p pointer to a UTF-8 encoded character
+  \param[in] end if set, points after the last character that may be read
+  \param[out] len if set, returns the length of the input UTF-8 sequence
+  \return 32 bit Unicode character, or Unicode REPLACEMENT CHARACTER
 */
 unsigned fl_utf8decode(const char* p, const char* end, int* len)
 {
@@ -1004,18 +1011,20 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   is returned unchanged. Any UTF-8 errors are treated as though each
   byte of the error is an individual character.
 
-  \e start is the start of the string and is used to limit the
-  backwards search for the start of a UTF-8 character.
-
-  \e end is the end of the string and is assumed to be a break
-  between characters. It is assumed to be greater than p.
-
   This function is for moving a pointer that was jumped to the
   middle of a string, such as when doing a binary search for
   a position. You should use either this or fl_utf8back() depending
   on which direction your algorithm can handle the pointer
   moving. Do not use this to scan strings, use fl_utf8decode()
   instead.
+
+  \param[in] p points somewhere into a UTF-8 encoded string, need not be on
+      a UTF-8 sequence start or end.
+  \param[in] start is the start of the string and is used to limit the
+      backwards search for the start of a UTF-8 character.
+  \param[in] end is the end of the string and is assumed to be a break
+      between characters. It is assumed to be greater than p.
+  \return pointer to the start of a UTF-8 sequence or pointer to terminating NUL.
 */
 const char* fl_utf8fwd(const char* p, const char* start, const char* end)
 {
@@ -1040,13 +1049,14 @@ const char* fl_utf8fwd(const char* p, const char* start, const char* end)
   is returned unchanged. Any UTF-8 errors are treated as though each
   byte of the error is an individual character.
 
-  \e start is the start of the string and is used to limit the
-  backwards search for the start of a UTF-8 character.
-
-  \e end is the end of the string and is assumed to be a break
-  between characters. It is assumed to be greater than p.
-
-  If you wish to decrement a UTF-8 pointer, pass p-1 to this.
+  \param[in] p points somewhere into a UTF-8 encoded string, need not be on
+      a UTF-8 sequence start or end. If you wish to decrement a UTF-8 pointer,
+      pass p-1 to this.
+  \param[in] start is the start of the string and is used to limit the
+      backwards search for the start of a UTF-8 character.
+  \param[in] end is the end of the string and is assumed to be a break
+      between characters. It is assumed to be greater than p.
+  \return pointer to the start of a UTF-8 sequence.
 */
 const char* fl_utf8back(const char* p, const char* start, const char* end)
 {
@@ -1067,6 +1077,9 @@ const char* fl_utf8back(const char* p, const char* start, const char* end)
 
 /** Returns number of bytes that utf8encode() will use to encode the
   character \p ucs.
+
+  \param[in] 32 bit Unicode character
+  \return number of bytes for UTF-8 encoded sequence.
 */
 int fl_utf8bytes(unsigned ucs) {
   if (ucs < 0x000080U) {
@@ -1097,6 +1110,11 @@ int fl_utf8bytes(unsigned ucs) {
   0xffff). However I encode these as though they are legal, so that
   utf8encode/fl_utf8decode will be the identity for all codes between 0
   and 0x10ffff.
+
+  \param[in] ucs 32 bit Unicode character
+  \param[out] a buffer of at least four bytes to receive the UTF-8 byte
+      sequence. No terminating NUL is added.
+  \return number of bytes in UTF-8 sequence.
 */
 int fl_utf8encode(unsigned ucs, char* buf) {
   if (ucs < 0x000080U) {
@@ -1129,29 +1147,27 @@ int fl_utf8encode(unsigned ucs, char* buf) {
 /** Convert a single 32-bit Unicode codepoint into an array of 16-bit
   characters. These are used by some system calls, especially on Windows.
 
-  \p ucs is the value to convert.
-
-  \p dst points at an array to write, and \p dstlen is the number of
-  locations in this array. At most \p dstlen words will be
-  written, and a 0 terminating word will be added if \p dstlen is
-  large enough. Thus this function will never overwrite the buffer
-  and will attempt return a zero-terminated string if space permits.
-  If \p dstlen is zero then \p dst can be set to NULL and no data
-  is written, but the length is returned.
-
-  The return value is the number of 16-bit words that \e would be written
-  to \p dst if it is large enough, not counting any terminating
-  zero.
-
-  If the return value is greater than \p dstlen it indicates truncation,
-  you should then allocate a new array of size return+1 and call this again.
-
   Unicode characters in the range 0x10000 to 0x10ffff are converted to
   "surrogate pairs" which take two words each (in UTF-16 encoding).
   Typically, setting \p dstlen to 2 will ensure that any valid Unicode
   value can be converted, and setting \p dstlen to 3 or more will allow
   a NULL terminated sequence to be returned.
-*/
+
+  \param[in] ucs is the value to convert.
+  \param[out] dst points at an array to write, and
+  \param[in] dstlen is the number of
+      locations in this array. At most \p dstlen words will be
+      written, and a 0 terminating word will be added if \p dstlen is
+      large enough. Thus this function will never overwrite the buffer
+      and will attempt return a zero-terminated string if space permits.
+      If \p dstlen is zero then \p dst can be set to NULL and no data
+      is written, but the length is returned.
+  \return The return value is the number of 16-bit words that \e would be
+      written to \p dst if it is large enough, not counting any terminating
+      zero. If the return value is greater than \p dstlen it indicates
+      truncation, you should then allocate a new array of size return+1
+      and call this again.
+  */
 unsigned fl_ucs_to_Utf16(const unsigned ucs, unsigned short *dst, const unsigned dstlen)
 {
   /* The rule for direct conversion from UCS to UTF16 is:
@@ -1196,22 +1212,6 @@ unsigned fl_ucs_to_Utf16(const unsigned ucs, unsigned short *dst, const unsigned
 /** Convert a UTF-8 sequence into an array of 16-bit characters. These
   are used by some system calls, especially on Windows.
 
-  \p src points at the UTF-8, and \p srclen is the number of bytes to
-  convert.
-
-  \p dst points at an array to write, and \p dstlen is the number of
-  locations in this array. At most \p dstlen-1 words will be
-  written there, plus a 0 terminating word. Thus this function
-  will never overwrite the buffer and will always return a
-  zero-terminated string. If \p dstlen is zero then \p dst can be
-  null and no data is written, but the length is returned.
-
-  The return value is the number of 16-bit words that \e would be written
-  to \p dst if it were long enough, not counting the terminating
-  zero. If the return value is greater or equal to \p dstlen it
-  indicates truncation, you can then allocate a new array of size
-  return+1 and call this again.
-
   Errors in the UTF-8 are converted as though each byte in the
   erroneous string is in the Microsoft CP1252 encoding. This allows
   ISO-8859-1 text mistakenly identified as UTF-8 to be printed
@@ -1220,6 +1220,21 @@ unsigned fl_ucs_to_Utf16(const unsigned ucs, unsigned short *dst, const unsigned
   Unicode characters in the range 0x10000 to 0x10ffff are converted to
   "surrogate pairs" which take two words each (this is called UTF-16
   encoding).
+
+  \param[in] src points at the UTF-8, and
+  \param[in] srclen is the number of bytes to convert.
+  \param[out] dst points at an array to write, and
+  \param[in] dstlen is the number of
+      locations in this array. At most \p dstlen-1 words will be
+      written there, plus a 0 terminating word. Thus this function
+      will never overwrite the buffer and will always return a
+      zero-terminated string. If \p dstlen is zero then \p dst can be
+      null and no data is written, but the length is returned.
+  \return The return value is the number of 16-bit words that \e would be
+      written to \p dst if it were long enough, not counting the terminating
+      zero. If the return value is greater or equal to \p dstlen it
+      indicates truncation, you can then allocate a new array of size
+      return+1 and call this again.
 */
 unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
                         unsigned short* dst, unsigned dstlen)
@@ -1268,16 +1283,16 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
   fl_utf8decode() does. This allows ISO-8859-1 text mistakenly identified
   as UTF-8 to be printed correctly (and possibly CP1252 on Windows).
 
-  \p src points at the UTF-8 sequence, and \p srclen is the number of
-  bytes to convert.
-
-  Up to \p dstlen bytes are written to \p dst, including a null
-  terminator. The return value is the number of bytes that would be
-  written, not counting the null terminator. If greater or equal to
-  \p dstlen then if you malloc a new array of size n+1 you will have
-  the space needed for the entire string. If \p dstlen is zero then
-  nothing is written and this call just measures the storage space
-  needed.
+  \param[in] src points at the UTF-8 sequence, and
+  \param[in] srclen is the number of bytes to convert.
+  \param[out] dst Up to \p dstlen bytes are written to \p dst, including a null
+      terminator. The return value is the number of bytes that would be
+      written, not counting the null terminator. If greater or equal to...
+  \param[in] dstlen then if you malloc a new array of size n+1 you will have
+      the space needed for the entire string. If \p dstlen is zero then
+      nothing is written and this call just measures the storage space
+      needed.
+  \return number of characters converted.
 */
 unsigned fl_utf8toa(const char* src, unsigned srclen,
                     char* dst, unsigned dstlen)
@@ -1320,19 +1335,18 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
   instead. This would translate the codes in the range 0x80-0x9f
   to different characters. Currently it does not do this.
 
-  Up to \p dstlen bytes are written to \p dst, including a null
-  terminator. The return value is the number of bytes that would be
-  written, not counting the null terminator. If greater or equal to
-  \p dstlen then if you malloc a new array of size n+1 you will have
-  the space needed for the entire string. If \p dstlen is zero then
-  nothing is written and this call just measures the storage space
-  needed.
-
-  \p srclen is the number of bytes in \p src to convert.
-
-  If the return value equals \p srclen then this indicates that
-  no conversion is necessary, as only ASCII characters are in the
-  string.
+  \param[out] dst Up to \p dstlen bytes are written to \p dst, including a null
+      terminator. The return value is the number of bytes that would be
+      written, not counting the null terminator. If greater or equal to...
+  \param[in] dstlen then if you malloc a new array of size n+1 you will have
+      the space needed for the entire string. If \p dstlen is zero then
+      nothing is written and this call just measures the storage space
+      needed.
+  \param[in] src pointer to ISO-8859-1 string.
+  \param[in] srclen is the number of bytes in \p src to convert.
+  \return Number of bytes written. If the return value equals \p srclen then
+      this indicates that no conversion is necessary, as only ASCII characters
+      are in the string.
 */
 unsigned fl_utf8froma(char* dst, unsigned dstlen,
                       const char* src, unsigned srclen) {
@@ -1384,6 +1398,10 @@ unsigned fl_utf8froma(char* dst, unsigned dstlen,
   if it is UTF-8 or in the locale encoding. My hope is that if
   this is done we will be able to cleanly transition to a locale-less
   encoding.
+
+  \param[in] src pointer to string of unknown encoding
+  \param[in] srclen number of bytes to compare, must not be -1
+  \return 0 if this is probably not a UTF-8 encode string
 */
 int fl_utf8test(const char* src, unsigned srclen) {
   int ret = 1;
@@ -1455,19 +1473,6 @@ int fl_wcwidth(const char* src) {
   on Windows where it is equivalent to fl_utf8toUtf16 and returns
   UTF-16.
 
-  \p src points at the UTF-8, and \p srclen is the number of bytes to
-  convert.
-
-  \p dst points at an array to write, and \p dstlen is the number of
-  locations in this array. At most \p dstlen-1 wchar_t will be
-  written there, plus a 0 terminating wchar_t.
-
-  The return value is the number of wchar_t that \e would be written
-  to \p dst if it were long enough, not counting the terminating
-  zero. If the return value is greater or equal to \p dstlen it
-  indicates truncation, you can then allocate a new array of size
-  return+1 and call this again.
-
   Notice that sizeof(wchar_t) is 2 on Windows and is 4 on Linux
   and most other systems. Where wchar_t is 16 bits, Unicode
   characters in the range 0x10000 to 0x10ffff are converted to
@@ -1475,8 +1480,19 @@ int fl_wcwidth(const char* src) {
   encoding). If wchar_t is 32 bits this rather nasty problem is
   avoided.
 
-  Note that Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
+  \note Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
   layer (cygwin1.dll, --enable-cygwin), either native (GDI) or X11.
+
+  \param[in] src points at the UTF-8, and
+  \param[in] srclen is the number of bytes to convert.
+  \param[out] dst points at an array to write, and \p dstlen is the number of
+      locations in this array. At most \p dstlen-1 wchar_t will be
+      written there, plus a 0 terminating wchar_t.
+  \return The return value is the number of wchar_t that \e would be written
+      to \p dst if it were long enough, not counting the terminating
+      zero. If the return value is greater or equal to \p dstlen it
+      indicates truncation, you can then allocate a new array of size
+      return+1 and call this again.
 */
 unsigned fl_utf8towc(const char* src, unsigned srclen,
                      wchar_t* dst, unsigned dstlen)
@@ -1511,6 +1527,12 @@ unsigned fl_utf8towc(const char* src, unsigned srclen,
   On Windows "surrogate pairs" are converted to a single character
   and UTF-8 encoded (as 4 bytes). Mismatched halves of surrogate
   pairs are converted as though they are individual characters.
+
+  \param[out] dst a destination buffer provided by the caller
+  \param[in] dstlen size of dst buffer
+  \param[in] src pointer to Windows wide char string
+  \param[in] srclen number of characters to convert
+  \return number of bytes written, not including the terminating NUL
 */
 unsigned fl_utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen)
 {
@@ -1522,7 +1544,7 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned 
   is used. If true the fl_utf8to_mb and fl_utf8from_mb don't do anything
   useful.
 
-  <i>It is highly recommended that you change your system so this
+  \note <i>It is highly recommended that you change your system so this
   does return true.</i> On Windows this is done by setting the
   "codepage" to CP_UTF8.  On Unix this is done by setting $LC_CTYPE
   to a string containing the letters "utf" or "UTF" in it, or by
