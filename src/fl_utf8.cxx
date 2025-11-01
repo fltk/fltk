@@ -69,17 +69,26 @@ static int Toupper(int ucs) {
   \code{.cpp}
   #include <FL/fl_utf8.h>
 
-  char utf8_string[] = "Hello 世界";
-  char *p = utf8_string;
-
-  while (*p) {
-    int len = fl_utf8len(*p);
-    if (len == -1) {
-      printf("Invalid UTF-8 byte: 0x%02x\n", (unsigned char)*p);
-      p++;  // Skip invalid byte
-    } else {
-      printf("Character uses %d bytes\n", len);
-      p += len;  // Move to next character
+  bool test(const char *str) {
+    if (str == nullptr) return true;
+    const char *src = str;
+    for (int p = 0; ; p++) {
+      if (src == 0) return true;
+      int len = fl_utf8len(*src);
+      if (len == -1) {
+        printf("Invalid UTF-8 character start: 0x%02x\n", (unsigned char)*src);
+        return false;
+      } else {
+        while (len > 0) {
+          if (*src == 0) {
+            printf("Interrupted UTF-8 sequence at %d\n", (int)(src-str));
+            return false;
+          }
+          src++;
+          len--;
+        }
+        printf("Character %d at %d uses %d bytes\n", p, (int)(src-str), len);
+      }
     }
   }
   \endcode
@@ -113,10 +122,11 @@ int fl_utf8len(char c)
 
 
 /**
-  Returns the byte length of a UTF-8 sequence, or -1.
+ Returns the byte length of the UTF-8 sequence with first byte \p c,
+ or -1 if \p c is not valid.
 
-  This function can be used to scan faulty UTF-8 sequences, albeit
-  ignoring invalid codes.
+ This function can be used to scan faulty UTF-8 sequences, albeit
+ ignoring invalid codes.
 
   Example:
   \code
@@ -132,7 +142,7 @@ int fl_utf8len(char c)
   }
   \endcode
 
-  \param[in] c the first character in a UTF- sequence
+  \param[in] c the first character in a UTF-8 sequence
   \return the number of bytes in that sequence, or 1 if c is not a recognized
     character for UTF-8 style encoding, so a loop can continue to scan a string.
 
