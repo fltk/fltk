@@ -22,10 +22,10 @@
 #define Fl_core_function_types_H
 
 
-#include <FL/fl_config.h> // build configuration
-#include <FL/Fl_Export.H>
-#include <FL/platform_types.h> // for FL_SOCKET
-#include <FL/Enumerations.H>
+#include <FL/fl_config.h>             // build configuration
+#include <FL/Fl_Export.H>             // for FL_EXPORT
+#include <FL/platform_types.h>        // for FL_SOCKET
+#include <FL/Enumerations.H>          // for Fl_Align, Fl_Color, etc.
 
 class Fl_Window;
 struct Fl_Label;
@@ -33,7 +33,7 @@ struct Fl_Label;
 
 /** \defgroup  callback_functions  Callback Function Typedefs
 
-  \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.
+  \brief Typedefs defined in <FL/core/function_types.H> for callback or handler functions passed as function parameters.
 
   FLTK uses callback functions as parameters for some function calls, e.g. to
   set up global event handlers (Fl::add_handler()), to add a timeout handler
@@ -49,6 +49,10 @@ struct Fl_Label;
   @{
 */
 
+//
+// Drawing and Rendering Function Types
+//
+
 /** Signature of some label drawing functions passed as parameters */
 typedef void (Fl_Label_Draw_F)(const Fl_Label *label, int x, int y, int w, int h, Fl_Align align);
 
@@ -61,35 +65,59 @@ typedef void (Fl_Box_Draw_F)(int x, int y, int w, int h, Fl_Color color);
 /** Signature of box focus frame drawing functions */
 typedef void (Fl_Box_Draw_Focus_F)(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
 
+//
+// Timer and Scheduling Function Types
+//
+
 /** Signature of timeout callback functions passed as parameters.
-  Please see Fl::add_timeout() for details.
+    Please see Fl::add_timeout() for details.
 */
 typedef void (*Fl_Timeout_Handler)(void *data);
 
 /** Signature of some wakeup callback functions passed as parameters */
 typedef void (*Fl_Awake_Handler)(void *data);
 
+//
+// Idle Processing Function Types
+//
+
 /** Signature of add_idle callback function passed as parameter.
-  This signature allows an idle callback to use one parameter as an
-  arbitrary `data` value.
+    This signature allows an idle callback to use one parameter as an
+    arbitrary `data` value.
 */
 typedef void (*Fl_Idle_Handler)(void *data);
 
 /** Signature of add_idle callback function passed as parameter.
-  This signature allows an idle callback without parameters.
-  When the callback is called it is called with an additional
-  parameter (set to nullptr) which is not used by the callback.
+    This signature allows an idle callback without parameters.
+    When the callback is called it is called with an additional
+    parameter (set to nullptr) which is not used by the callback.
 */
 typedef void (*Fl_Old_Idle_Handler)();
 
+//
+// File Descriptor and I/O Function Types
+//
+
 /** Signature of add_fd functions passed as parameters */
 typedef void (*Fl_FD_Handler)(FL_SOCKET fd, void *data);
+
+//
+// Event Handling Function Types
+//
 
 /** Signature of add_handler functions passed as parameters */
 typedef int (*Fl_Event_Handler)(int event);
 
 /** Signature of add_system_handler functions passed as parameters */
 typedef int (*Fl_System_Handler)(void *event, void *data);
+
+/** Signature of event_dispatch functions passed as parameters.
+    \see Fl::event_dispatch(Fl_Event_Dispatch) */
+typedef int (*Fl_Event_Dispatch)(int event, Fl_Window *w);
+
+//
+// Application Lifecycle Function Types
+//
 
 /** Signature of set_abort functions passed as parameters */
 typedef void (*Fl_Abort_Handler)(const char *format,...);
@@ -100,9 +128,9 @@ typedef void (*Fl_Atclose_Handler)(Fl_Window *window, void *data);
 /** Signature of args functions passed as parameters */
 typedef int (*Fl_Args_Handler)(int argc, char **argv, int &i);
 
-/** Signature of event_dispatch functions passed as parameters.
-    \see Fl::event_dispatch(Fl_Event_Dispatch) */
-typedef int (*Fl_Event_Dispatch)(int event, Fl_Window *w);
+//
+// Clipboard and Data Transfer Function Types
+//
 
 /** Signature of add_clipboard_notify functions passed as parameters */
 typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);

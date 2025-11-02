@@ -173,8 +173,10 @@ void Fl::default_atclose(Fl_Window* window, void* v) {
   window->hide();
   Fl_Widget::default_callback(window, v); // put on Fl::read_queue()
 }
+
 /** Back compatibility: default window callback handler \see Fl::set_atclose() */
-void (*Fl::atclose)(Fl_Window*, void*) = default_atclose;
+void (*Fl::atclose)(Fl_Window*, void*) = Fl::default_atclose;
+
 /** Back compatibility: Sets the default callback v for win to call on close event */
 void Fl_Window::default_callback(Fl_Window* win, void* v) {
   Fl::atclose(win, v);

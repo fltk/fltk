@@ -29,31 +29,48 @@ class Fl_Widget;
 
 namespace Fl {
 
-// Event variables should be private, but would harm back compatibility.
+//
+// Event Variables (Internal)
+// Note: These variables should be private, but would harm back compatibility.
+//
 
 #ifndef FL_DOXYGEN
-FL_EXPORT extern int e_number;
-FL_EXPORT extern int e_x;
-FL_EXPORT extern int e_y;
-FL_EXPORT extern int e_x_root;
-FL_EXPORT extern int e_y_root;
-FL_EXPORT extern int e_dx;
-FL_EXPORT extern int e_dy;
-FL_EXPORT extern int e_state;
-FL_EXPORT extern int e_clicks;
-FL_EXPORT extern int e_is_click;
-FL_EXPORT extern int e_keysym;
-FL_EXPORT extern char* e_text;
-FL_EXPORT extern int e_length;
-FL_EXPORT extern void *e_clipboard_data;
-FL_EXPORT extern const char *e_clipboard_type;
-FL_EXPORT extern int e_original_keysym; // late addition
 
-FL_EXPORT extern Fl_Event_Dispatch e_dispatch;
-FL_EXPORT extern Fl_Callback_Reason callback_reason_;
-FL_EXPORT extern Fl_Widget* belowmouse_;
-FL_EXPORT extern Fl_Widget* pushed_;
-FL_EXPORT extern Fl_Widget* focus_;
+// Core event information
+FL_EXPORT extern int                e_number;           ///< Current event type
+FL_EXPORT extern int                e_state;            ///< Keyboard/mouse button states
+
+// Mouse position and movement
+FL_EXPORT extern int                e_x;                ///< Mouse X position (window relative)
+FL_EXPORT extern int                e_y;                ///< Mouse Y position (window relative)
+FL_EXPORT extern int                e_x_root;           ///< Mouse X position (screen absolute)
+FL_EXPORT extern int                e_y_root;           ///< Mouse Y position (screen absolute)
+FL_EXPORT extern int                e_dx;               ///< Mouse wheel horizontal delta
+FL_EXPORT extern int                e_dy;               ///< Mouse wheel vertical delta
+
+// Mouse click handling
+FL_EXPORT extern int                e_clicks;           ///< Number of consecutive clicks
+FL_EXPORT extern int                e_is_click;         ///< True if event qualifies as click
+
+// Keyboard event data
+FL_EXPORT extern int                e_keysym;           ///< Key symbol for current event
+FL_EXPORT extern int                e_original_keysym;  ///< Original key before NumLock translation
+FL_EXPORT extern char*              e_text;             ///< Text associated with key event
+FL_EXPORT extern int                e_length;           ///< Length of text in e_text
+
+// Clipboard data (for paste events)
+FL_EXPORT extern void*              e_clipboard_data;   ///< Pasted data pointer
+FL_EXPORT extern const char*        e_clipboard_type;   ///< Type of pasted data
+
+// Event handling infrastructure
+FL_EXPORT extern Fl_Event_Dispatch  e_dispatch;         ///< Custom event dispatcher
+FL_EXPORT extern Fl_Callback_Reason callback_reason_;   ///< Reason for current callback
+
+// Widget state tracking
+FL_EXPORT extern Fl_Widget*         belowmouse_;        ///< Widget under mouse cursor
+FL_EXPORT extern Fl_Widget*         pushed_;            ///< Widget receiving drag events
+FL_EXPORT extern Fl_Widget*         focus_;             ///< Widget with keyboard focus
+
 #endif // FL_DOXYGEN
 
 
@@ -62,26 +79,32 @@ FL_EXPORT extern Fl_Widget* focus_;
       @{
 */
 
-// event information:
+//
+// Event Information Functions
+//
 
 /**
   Returns the last event that was processed. This can be used
   to determine if a callback is being done in response to a
   keypress, mouse click, etc.
 */
-FL_EXPORT inline int event()            {return e_number;}
+FL_EXPORT inline int event()                    { return e_number; }
+
+//
+// Mouse Position Functions
+//
 
 /**
   Returns the mouse position of the event relative to the Fl_Window
   it was passed to.
 */
-FL_EXPORT inline int event_x()  {return e_x;}
+FL_EXPORT inline int event_x()                  { return e_x; }
 
 /**
   Returns the mouse position of the event relative to the Fl_Window
   it was passed to.
 */
-FL_EXPORT inline int event_y()  {return e_y;}
+FL_EXPORT inline int event_y()                  { return e_y; }
 
 /**
   Returns the mouse position on the screen of the event.  To find the
@@ -89,7 +112,7 @@ FL_EXPORT inline int event_y()  {return e_y;}
   difference between event_x_root(),event_y_root() and
   event_x(),event_y().
 */
-FL_EXPORT inline int event_x_root()     {return e_x_root;}
+FL_EXPORT inline int event_x_root()             { return e_x_root; }
 
 /**
   Returns the mouse position on the screen of the event.  To find the
@@ -97,19 +120,27 @@ FL_EXPORT inline int event_x_root()     {return e_x_root;}
   difference between event_x_root(),event_y_root() and
   event_x(),event_y().
 */
-FL_EXPORT inline int event_y_root()     {return e_y_root;}
+FL_EXPORT inline int event_y_root()             { return e_y_root; }
+
+//
+// Mouse Wheel Functions
+//
 
 /**
   Returns the current horizontal mouse scrolling associated with the
   FL_MOUSEWHEEL event. Right is positive.
 */
-FL_EXPORT inline int event_dx() {return e_dx;}
+FL_EXPORT inline int event_dx()                 { return e_dx; }
 
 /**
   Returns the current vertical mouse scrolling associated with the
   FL_MOUSEWHEEL event. Down is positive.
 */
-FL_EXPORT inline int event_dy() {return e_dy;}
+FL_EXPORT inline int event_dy()                 { return e_dy; }
+
+//
+// Mouse Query Functions
+//
 
 /**
   Return where the mouse is on the screen by doing a round-trip query to
@@ -121,6 +152,10 @@ FL_EXPORT inline int event_dy() {return e_dy;}
 */
 FL_EXPORT extern void get_mouse(int &,int &);
 
+//
+// Mouse Click Functions
+//
+
 /**
   Returns non zero if we had a double click event.
   \retval Non-zero if the most recent FL_PUSH or FL_KEYBOARD was a "double click".
@@ -129,7 +164,7 @@ FL_EXPORT extern void get_mouse(int &,int &);
   again while event_is_click() is true.
 
  */
-FL_EXPORT inline int event_clicks()     {return e_clicks;}
+FL_EXPORT inline int event_clicks()             { return e_clicks; }
 
 /**
   Manually sets the number returned by Fl::event_clicks().
@@ -138,7 +173,8 @@ FL_EXPORT inline int event_clicks()     {return e_clicks;}
   \param[in] i corresponds to no double-click if 0, i+1 mouse clicks otherwise
   \see int event_clicks()
 */
-FL_EXPORT inline void event_clicks(int i) {e_clicks = i;}
+FL_EXPORT inline void event_clicks(int i)       { e_clicks = i; }
+
 /**
   Returns non-zero if the mouse has not moved far enough
   and not enough time has passed since the last FL_PUSH or
@@ -146,7 +182,7 @@ FL_EXPORT inline void event_clicks(int i) {e_clicks = i;}
   "click".  You can test this on FL_DRAG, FL_RELEASE,
   and FL_MOVE events.
 */
-FL_EXPORT inline int event_is_click()   {return e_is_click;}
+FL_EXPORT inline int event_is_click()           { return e_is_click; }
 
 /**
  Clears the value returned by Fl::event_is_click().
@@ -154,7 +190,11 @@ FL_EXPORT inline int event_is_click()   {return e_is_click;}
  click from being counted as a double-click or to make a popup menu
  pick an item with a single click.  Don't pass non-zero to this.
 */
-FL_EXPORT inline void event_is_click(int i) {e_is_click = i;}
+FL_EXPORT inline void event_is_click(int i)     { e_is_click = i; }
+
+//
+// Mouse Button Functions
+//
 
 /**
   Gets which particular mouse button caused the current event.
@@ -167,7 +207,11 @@ FL_EXPORT inline void event_is_click(int i) {e_is_click = i;}
   \retval FL_FORWARD_MOUSE
   \see Fl::event_buttons(), Fl::event_state()
 */
-FL_EXPORT inline int event_button() { return e_keysym - FL_Button; }
+FL_EXPORT inline int event_button()             { return e_keysym - FL_Button; }
+
+//
+// Event State Functions
+//
 
 /**
   Returns the keyboard and mouse button states of the last event.
@@ -209,14 +253,18 @@ FL_EXPORT inline int event_button() { return e_keysym - FL_Button; }
     | Mouse    | FL_BUTTON4     | side button 1 (back)    | 1.3.10 |
     | Mouse    | FL_BUTTON5     | side button 2 (forward) | 1.3.10 |
 */
-FL_EXPORT inline int event_state()      {return e_state;}
+FL_EXPORT inline int event_state()              { return e_state; }
 
 /** Returns non-zero if any of the passed event state bits are turned on.
 
   Use \p mask to pass the event states you're interested in.
   The legal event state bits are defined in Fl::event_state().
 */
-FL_EXPORT inline int event_state(int mask) {return e_state&mask;}
+FL_EXPORT inline int event_state(int mask)      { return e_state & mask; }
+
+//
+// Keyboard Event Functions
+//
 
 /**
   Gets which key on the keyboard was last pushed.
@@ -229,7 +277,7 @@ FL_EXPORT inline int event_state(int mask) {return e_state&mask;}
   \returns an integer 'key code', or 0 if the last event was not a key press or release.
   \see int event_key(int), event_text(), compose(int&).
 */
-FL_EXPORT inline int event_key()        {return e_keysym;}
+FL_EXPORT inline int event_key()                { return e_keysym; }
 
 /**
   Returns the keycode of the last key event, regardless of the NumLock state.
@@ -239,7 +287,7 @@ FL_EXPORT inline int event_key()        {return e_keysym;}
   event_key() returns the translated key code, whereas
   event_original_key() returns the keycode before NumLock translation.
 */
-FL_EXPORT inline int event_original_key(){return e_original_keysym;}
+FL_EXPORT inline int event_original_key()       { return e_original_keysym; }
 
 /**
   Returns true if the given \p key was held
@@ -289,6 +337,10 @@ FL_EXPORT extern int event_key(int key);
 */
 FL_EXPORT extern int get_key(int key); // platform dependent
 
+//
+// Text and Clipboard Functions
+//
+
 /**
   Returns the text associated with the current event, including FL_PASTE or FL_DND_RELEASE events.
   This can be used in response to FL_KEYUP, FL_KEYDOWN, FL_PASTE, and FL_DND_RELEASE.
@@ -303,7 +355,7 @@ FL_EXPORT extern int get_key(int key); // platform dependent
 
   \returns A NULL terminated text string equivalent of the last keystroke.
  */
-FL_EXPORT inline const char* event_text() {return e_text;}
+FL_EXPORT inline const char* event_text()       { return e_text; }
 
 /**
   Returns the length of the text in Fl::event_text(). There
@@ -311,7 +363,7 @@ FL_EXPORT inline const char* event_text() {return e_text;}
   be a nul before that if the keystroke translates to a nul character or
   you paste a nul character.
 */
-FL_EXPORT inline int event_length() {return e_length;}
+FL_EXPORT inline int event_length()             { return e_length; }
 
 /**  Denotes plain textual data
  */
@@ -324,13 +376,17 @@ FL_EXPORT extern char const * const clipboard_image;
 /** During an FL_PASTE event of non-textual data, returns a pointer to the pasted data.
  The returned data is an Fl_RGB_Image * when the result of Fl::event_clipboard_type() is Fl::clipboard_image.
  */
-FL_EXPORT inline void *event_clipboard() { return e_clipboard_data; }
+FL_EXPORT inline void *event_clipboard()        { return e_clipboard_data; }
 
 /** Returns the type of the pasted data during an FL_PASTE event.
  This type can be Fl::clipboard_plain_text or Fl::clipboard_image.
  */
-FL_EXPORT inline const char *event_clipboard_type() {return e_clipboard_type; }
+FL_EXPORT inline const char *event_clipboard_type() { return e_clipboard_type; }
 
+
+//
+// Advanced Event Functions
+//
 
 FL_EXPORT extern int compose(int &del);
 FL_EXPORT extern void compose_reset();
@@ -341,20 +397,27 @@ FL_EXPORT extern int test_shortcut(Fl_Shortcut);
 FL_EXPORT extern void enable_im();
 FL_EXPORT extern void disable_im();
 
-// event destinations:
+//
+// Event Handling and Widget Management
+//
+
 FL_EXPORT extern int handle(int, Fl_Window*);
 FL_EXPORT extern int handle_(int, Fl_Window*);
+
 /**  Gets the widget that is below the mouse.
      \see  belowmouse(Fl_Widget*) */
-FL_EXPORT inline Fl_Widget* belowmouse() {return belowmouse_;}
+FL_EXPORT inline Fl_Widget* belowmouse()        { return belowmouse_; }
 FL_EXPORT extern void belowmouse(Fl_Widget*);
+
 /** Gets the widget that is being pushed.
     \see void pushed(Fl_Widget*) */
-FL_EXPORT inline Fl_Widget* pushed()    {return pushed_;}
+FL_EXPORT inline Fl_Widget* pushed()            { return pushed_; }
 FL_EXPORT extern void pushed(Fl_Widget*);
+
 /** Gets the current Fl::focus() widget. \sa Fl::focus(Fl_Widget*) */
-FL_EXPORT inline Fl_Widget* focus()     {return focus_;}
+FL_EXPORT inline Fl_Widget* focus()             { return focus_; }
 FL_EXPORT extern void focus(Fl_Widget*);
+
 FL_EXPORT extern void add_handler(Fl_Event_Handler ha);
 FL_EXPORT extern void add_handler(Fl_Event_Handler ha, Fl_Event_Handler before);
 FL_EXPORT extern Fl_Event_Handler last_handler();
@@ -365,14 +428,25 @@ FL_EXPORT extern void event_dispatch(Fl_Event_Dispatch d);
 FL_EXPORT extern Fl_Event_Dispatch event_dispatch();
 FL_EXPORT extern Fl_Callback_Reason callback_reason();
 
+//
+// Convenience State Check Functions
+//
+
 /** Returns non-zero if the Shift key is pressed. */
-FL_EXPORT inline int event_shift() {return e_state&FL_SHIFT;}
+FL_EXPORT inline int event_shift()              { return e_state & FL_SHIFT; }
+
 /** Returns non-zero if the Control key is pressed. */
-FL_EXPORT inline int event_ctrl() {return e_state&FL_CTRL;}
+FL_EXPORT inline int event_ctrl()               { return e_state & FL_CTRL; }
+
 /** Returns non-zero if the FL_COMMAND key is pressed, either FL_CTRL or on OSX FL_META. */
-FL_EXPORT inline int event_command() {return e_state&FL_COMMAND;}
+FL_EXPORT inline int event_command()            { return e_state & FL_COMMAND; }
+
 /** Returns non-zero if the Alt key is pressed. */
-FL_EXPORT inline int event_alt() {return e_state&FL_ALT;}
+FL_EXPORT inline int event_alt()                { return e_state & FL_ALT; }
+
+//
+// Mouse Button State Functions
+//
 
 /**
   Returns the mouse buttons state bits; if non-zero, then at least one
@@ -382,37 +456,37 @@ FL_EXPORT inline int event_alt() {return e_state&FL_ALT;}
   caused an FL_RELEASE event, you can use Fl::event_button() instead.
   \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | ... | [FL_BUTTON5] }
 */
-FL_EXPORT inline int event_buttons() {return e_state & FL_BUTTONS;}
+FL_EXPORT inline int event_buttons()            { return e_state & FL_BUTTONS; }
 
 /**
   Returns non-zero if mouse button 1 is currently held down.
   For more details, see Fl::event_buttons().
 */
-FL_EXPORT inline int event_button1() {return e_state & FL_BUTTON1;}
+FL_EXPORT inline int event_button1()            { return e_state & FL_BUTTON1; }
 
 /**
   Returns non-zero if mouse button 2 is currently held down.
   For more details, see Fl::event_buttons().
 */
-FL_EXPORT inline int event_button2() {return e_state & FL_BUTTON2;}
+FL_EXPORT inline int event_button2()            { return e_state & FL_BUTTON2; }
 
 /**
   Returns non-zero if mouse button 3 is currently held down.
   For more details, see Fl::event_buttons().
 */
-FL_EXPORT inline int event_button3() {return e_state & FL_BUTTON3;}
+FL_EXPORT inline int event_button3()            { return e_state & FL_BUTTON3; }
 
 /**
   Returns non-zero if mouse button 4 is currently held down.
   For more details, see Fl::event_buttons().
 */
-FL_EXPORT inline int event_button4() {return e_state & FL_BUTTON4;}
+FL_EXPORT inline int event_button4()            { return e_state & FL_BUTTON4; }
 
 /**
   Returns non-zero if mouse button 5 is currently held down.
   For more details, see Fl::event_buttons().
 */
-FL_EXPORT inline int event_button5() {return e_state & FL_BUTTON5;}
+FL_EXPORT inline int event_button5()            { return e_state & FL_BUTTON5; }
 
 /**   @} */
 
