@@ -22,6 +22,7 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Gl_Window_Driver.H"
+#include "../Posix/Fl_Posix_System_Driver.H"
 #ifdef FLTK_USE_X11
 #  include "../X11/Fl_X11_Gl_Window_Driver.H"
 #endif
@@ -469,6 +470,12 @@ void Fl_Wayland_Gl_Window_Driver::swap_interval(int interval) {
 int Fl_Wayland_Gl_Window_Driver::swap_interval() const {
   return swap_interval_;
 }
+
+
+void* Fl_Wayland_Gl_Window_Driver::GetProcAddress(const char *procName) {
+  return Fl_Posix_System_Driver::dlopen_or_dlsym(NULL, procName);
+}
+
 
 FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc) { return (EGLContext)rc; }
 

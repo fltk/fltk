@@ -51,6 +51,7 @@ private:
   void gl_start() FL_OVERRIDE;
   void gl_visual(Fl_Gl_Choice *c) FL_OVERRIDE;
   void init();
+  void* GetProcAddress(const char *procName) FL_OVERRIDE;
 public:
   static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
   //virtual bool need_scissor() { return true; } // CONTROL_LEAKING_SUB_GL_WINDOWS
