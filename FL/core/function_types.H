@@ -33,7 +33,7 @@ struct Fl_Label;
 
 /** \defgroup  callback_functions  Callback Function Typedefs
 
-  \brief Typedefs defined in <FL/core/function_types.H> for callback or handler functions passed as function parameters.
+  \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.
 
   FLTK uses callback functions as parameters for some function calls, e.g. to
   set up global event handlers (Fl::add_handler()), to add a timeout handler
