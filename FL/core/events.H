@@ -29,7 +29,6 @@ class Fl_Widget;
 
 namespace Fl {
 
-<<<<<<< HEAD
 //
 // Event Variables (Internal)
 // Note: These variables should be private, but would harm back compatibility.
@@ -72,33 +71,8 @@ FL_EXPORT extern Fl_Widget*         belowmouse_;        ///< Widget under mouse 
 FL_EXPORT extern Fl_Widget*         pushed_;            ///< Widget receiving drag events
 FL_EXPORT extern Fl_Widget*         focus_;             ///< Widget with keyboard focus
 
-=======
 // Event variables should be private, but would harm back compatibility.
 
-#ifndef FL_DOXYGEN
-FL_EXPORT extern int e_number;
-FL_EXPORT extern int e_x;
-FL_EXPORT extern int e_y;
-FL_EXPORT extern int e_x_root;
-FL_EXPORT extern int e_y_root;
-FL_EXPORT extern int e_dx;
-FL_EXPORT extern int e_dy;
-FL_EXPORT extern int e_state;
-FL_EXPORT extern int e_clicks;
-FL_EXPORT extern int e_is_click;
-FL_EXPORT extern int e_keysym;
-FL_EXPORT extern char* e_text;
-FL_EXPORT extern int e_length;
-FL_EXPORT extern void *e_clipboard_data;
-FL_EXPORT extern const char *e_clipboard_type;
-FL_EXPORT extern int e_original_keysym; // late addition
-
-FL_EXPORT extern Fl_Event_Dispatch e_dispatch;
-FL_EXPORT extern Fl_Callback_Reason callback_reason_;
-FL_EXPORT extern Fl_Widget* belowmouse_;
-FL_EXPORT extern Fl_Widget* pushed_;
-FL_EXPORT extern Fl_Widget* focus_;
->>>>>>> 41cf42d9e (Untangle Fl namespace into themed headers.)
 #endif // FL_DOXYGEN
 
 
