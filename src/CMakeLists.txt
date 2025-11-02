@@ -193,6 +193,7 @@ endif()
 file(GLOB
   HEADER_FILES
   "../FL/*.[hH]"
+  "../FL/core/*.[hH]"
 )
 
 # find all private header files in source directory "src/..."

@@ -19,30 +19,34 @@
 */
 
 #ifndef Fl_H
-#  define Fl_H
+#define Fl_H
 
-#include <FL/fl_config.h> // build configuration
-#include <FL/Fl_Export.H>
-#include <FL/platform_types.h> // for FL_SOCKET
-#include <FL/fl_casts.H>       // experimental
+#include <FL/fl_config.h>             // build configuration
+#include <FL/Fl_Export.H>             // for FL_EXPORT
+#include <FL/platform_types.h>        // for FL_SOCKET
+#include <FL/fl_casts.H>              // type casting
+#include <FL/core/function_types.H>   // widget callbacks and services
+#include <FL/core/events.H>           // global event handling
+#include <FL/core/options.H>          // system and application setting
+#include <FL/Fl_Widget_Tracker.H>     // historically included here
 
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
 
-#  include "fl_utf8.h"
-#  include "Enumerations.H"
-#  ifndef Fl_Object
-#    define Fl_Object Fl_Widget /**< for back compatibility - use Fl_Widget! */
-#  endif
+#include "fl_utf8.h"
+#include "Enumerations.H"
+#ifndef Fl_Object
+#  define Fl_Object Fl_Widget /**< for back compatibility - use Fl_Widget! */
+#endif
 
-#  ifdef check
-#    undef check
-#  endif
+#ifdef check
+#  undef check
+#endif
 
-#  ifdef BSD
-#    undef BSD
-#  endif
+#ifdef BSD
+#  undef BSD
+#endif
 
 #include <string.h> // FIXME: Fl::is_scheme(): strcmp needs string.h
 
@@ -60,84 +64,6 @@ extern FL_EXPORT const char* fl_local_alt;   ///< string pointer used in shortcu
 extern FL_EXPORT const char* fl_local_ctrl;  ///< string pointer used in shortcuts, you can change it to another language
 extern FL_EXPORT const char* fl_local_meta;  ///< string pointer used in shortcuts, you can change it to another language
 extern FL_EXPORT const char* fl_local_shift; ///< string pointer used in shortcuts, you can change it to another language
-
-/** \defgroup  callback_functions  Callback Function Typedefs
-
-  \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.
-
-  FLTK uses callback functions as parameters for some function calls, e.g. to
-  set up global event handlers (Fl::add_handler()), to add a timeout handler
-  (Fl::add_timeout()), and many more.
-
-  The typedefs defined in this group describe the function parameters used to set
-  up or clear the callback functions and should also be referenced to define the
-  callback function to handle such events in the user's code.
-
-  \see  Fl::add_handler(), Fl::add_timeout(), Fl::repeat_timeout(),
-        Fl::remove_timeout() and others
-
-  @{
-*/
-
-/** Signature of some label drawing functions passed as parameters */
-typedef void (Fl_Label_Draw_F)(const Fl_Label *label, int x, int y, int w, int h, Fl_Align align);
-
-/** Signature of some label measurement functions passed as parameters */
-typedef void (Fl_Label_Measure_F)(const Fl_Label *label, int &width, int &height);
-
-/** Signature of some box drawing functions passed as parameters */
-typedef void (Fl_Box_Draw_F)(int x, int y, int w, int h, Fl_Color color);
-
-/** Signature of box focus frame drawing functions */
-typedef void (Fl_Box_Draw_Focus_F)(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
-
-/** Signature of timeout callback functions passed as parameters.
-  Please see Fl::add_timeout() for details.
-*/
-typedef void (*Fl_Timeout_Handler)(void *data);
-
-/** Signature of some wakeup callback functions passed as parameters */
-typedef void (*Fl_Awake_Handler)(void *data);
-
-/** Signature of add_idle callback function passed as parameter.
-  This signature allows an idle callback to use one parameter as an
-  arbitrary `data` value.
-*/
-typedef void (*Fl_Idle_Handler)(void *data);
-
-/** Signature of add_idle callback function passed as parameter.
-  This signature allows an idle callback without parameters.
-  When the callback is called it is called with an additional
-  parameter (set to nullptr) which is not used by the callback.
-*/
-typedef void (*Fl_Old_Idle_Handler)();
-
-/** Signature of add_fd functions passed as parameters */
-typedef void (*Fl_FD_Handler)(FL_SOCKET fd, void *data);
-
-/** Signature of add_handler functions passed as parameters */
-typedef int (*Fl_Event_Handler)(int event);
-
-/** Signature of add_system_handler functions passed as parameters */
-typedef int (*Fl_System_Handler)(void *event, void *data);
-
-/** Signature of set_abort functions passed as parameters */
-typedef void (*Fl_Abort_Handler)(const char *format,...);
-
-/** Signature of set_atclose functions passed as parameters */
-typedef void (*Fl_Atclose_Handler)(Fl_Window *window, void *data);
-
-/** Signature of args functions passed as parameters */
-typedef int (*Fl_Args_Handler)(int argc, char **argv, int &i);
-
-/** Signature of event_dispatch functions passed as parameters.
-    \see Fl::event_dispatch(Fl_Event_Dispatch) */
-typedef int (*Fl_Event_Dispatch)(int event, Fl_Window *w);
-
-/** Signature of add_clipboard_notify functions passed as parameters */
-typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
-
-/** @} */ /* group callback_functions */
 
 
 /**
@@ -163,26 +89,6 @@ FL_EXPORT extern void box_border_radius_max(int R);
 // should be private:
 
 #ifndef FL_DOXYGEN
-FL_EXPORT extern int e_number;
-FL_EXPORT extern int e_x;
-FL_EXPORT extern int e_y;
-FL_EXPORT extern int e_x_root;
-FL_EXPORT extern int e_y_root;
-FL_EXPORT extern int e_dx;
-FL_EXPORT extern int e_dy;
-FL_EXPORT extern int e_state;
-FL_EXPORT extern int e_clicks;
-FL_EXPORT extern int e_is_click;
-FL_EXPORT extern int e_keysym;
-FL_EXPORT extern char* e_text;
-FL_EXPORT extern int e_length;
-FL_EXPORT extern void *e_clipboard_data;
-FL_EXPORT extern const char *e_clipboard_type;
-FL_EXPORT extern Fl_Event_Dispatch e_dispatch;
-FL_EXPORT extern Fl_Callback_Reason callback_reason_;
-FL_EXPORT extern Fl_Widget* belowmouse_;
-FL_EXPORT extern Fl_Widget* pushed_;
-FL_EXPORT extern Fl_Widget* focus_;
 FL_EXPORT extern int damage_;
 FL_EXPORT extern Fl_Widget* selection_owner_;
 FL_EXPORT extern Fl_Window* modal_;
@@ -197,94 +103,13 @@ FL_EXPORT extern void call_screen_init(); // recompute screen number and dimensi
 */
 FL_EXPORT inline void damage(int d) {damage_ = d;}
 
-/** Enumerator for global FLTK options.
-    These options can be set system wide, per user, or for the running
-    application only.
-    \see Fl::option(Fl_Option, bool)
-    \see Fl::option(Fl_Option)
-*/
-typedef enum {
-    /// When switched on, moving the text cursor beyond the start or end of
-    /// a text in a text widget will change focus to the next text widget.
-    /// (This is considered 'old' behavior)
-    ///
-    /// When switched off (default), the cursor will stop at the end of the text.
-    /// Pressing Tab or Ctrl-Tab will advance the keyboard focus.
-    ///
-    /// See also: Fl_Input_::tab_nav()
-    ///
-  OPTION_ARROW_FOCUS = 0,
-    // When switched on, FLTK will use the file chooser dialog that comes
-    // with your operating system whenever possible. When switched off, FLTK
-    // will present its own file chooser.
-    // \todo implement me
-  // OPTION_NATIVE_FILECHOOSER,
-    // When Filechooser Preview is enabled, the FLTK or native file chooser
-    // will show a preview of a selected file (if possible) before the user
-    // decides to choose the file.
-    // \todo implement me
-  //OPTION_FILECHOOSER_PREVIEW,
-    /// If visible focus is switched on (default), FLTK will draw a dotted rectangle
-    /// inside the widget that will receive the next keystroke. If switched
-    /// off, no such indicator will be drawn and keyboard navigation
-    /// is disabled.
-  OPTION_VISIBLE_FOCUS,
-    /// If text drag-and-drop is enabled (default), the user can select and drag text
-    /// from any text widget. If disabled, no dragging is possible, however
-    /// dropping text from other applications still works.
-  OPTION_DND_TEXT,
-    /// If tooltips are enabled (default), hovering the mouse over a widget with a
-    /// tooltip text will open a little tooltip window until the mouse leaves
-    /// the widget. If disabled, no tooltip is shown.
-  OPTION_SHOW_TOOLTIPS,
-    /// When switched on (default), Fl_Native_File_Chooser runs GTK file dialogs
-    /// if the GTK library is available on the platform (linux/unix only).
-    /// When switched off, GTK file dialogs aren't used even if the GTK library is available.
-  OPTION_FNFC_USES_GTK,
-    /// Meaningful for the Wayland/X11 platform only. When switched on, the library uses a Zenity-based file dialog.
-    /// When switched off (default), no zenity-based file dialog is used.
-  OPTION_FNFC_USES_ZENITY,
-    /// Meaningful for the Wayland/X11 platform only.
-    /// When switched on, the library uses a kdialog-based file dialog if command 'kdialog' is available on the running system.
-    /// When switched off (default), no kdialog-based file dialog is used.
-  OPTION_FNFC_USES_KDIALOG,
-    /// When switched on (default), Fl_Printer runs the GTK printer dialog
-    /// if the GTK library is available on the platform (linux/unix only).
-    /// When switched off, the GTK printer dialog isn't used even if the GTK library is available.
-  OPTION_PRINTER_USES_GTK,
-    /// When switched on (default), the library shows in a transient yellow window the zoom factor
-    /// value.
-    /// When switched off, no such window gets displayed.
-  OPTION_SHOW_SCALING,
-    /// When switched on and when the keyboard in use has '+' in the shifted position of its key,
-    /// pressing that key and ctrl triggers the zoom-in operation.
-    /// When switched off (default), the zoom-in operation requires that also the shift key is pressed.
-    /// Under macOS, this option has no effect because the OS itself generates ⌘= followed
-    /// by ⌘+ when pressing ⌘ and the '=|+' key without pressing shift.
-  OPTION_SIMPLE_ZOOM_SHORTCUT,
-    // don't change this, leave it always as the last element
-    /// For internal use only.
-  OPTION_LAST
-} Fl_Option;
-
-/*
- Return a global setting for all FLTK applications, possibly overridden
- by a setting specifically for this application.
- */
-FL_EXPORT extern bool option(Fl_Option opt);
-
-/*
- Override an option while the application is running.
- */
-FL_EXPORT extern void option(Fl_Option opt, bool val);
-
 FL_EXPORT extern bool idle();
 
 #ifndef FL_DOXYGEN
 FL_EXPORT extern const char* scheme_;
 FL_EXPORT extern Fl_Image* scheme_bg_;
 
-FL_EXPORT extern int e_original_keysym; // late addition
+//FL_EXPORT extern int e_original_keysym; // late addition
 FL_EXPORT extern int scrollbar_size_;
 FL_EXPORT extern int menu_linespacing_; // STR #2927
 #endif
@@ -557,316 +382,6 @@ FL_EXPORT extern void grab(Fl_Window*); // platform dependent
 
 /** @} */
 
-/** \defgroup fl_events Events handling functions
-      Fl class events handling API declared in <FL/Fl.H>
-      @{
-*/
-
-// event information:
-
-/**
-  Returns the last event that was processed. This can be used
-  to determine if a callback is being done in response to a
-  keypress, mouse click, etc.
-*/
-FL_EXPORT inline int event()            {return e_number;}
-
-/**
-  Returns the mouse position of the event relative to the Fl_Window
-  it was passed to.
-*/
-FL_EXPORT inline int event_x()  {return e_x;}
-
-/**
-  Returns the mouse position of the event relative to the Fl_Window
-  it was passed to.
-*/
-FL_EXPORT inline int event_y()  {return e_y;}
-
-/**
-  Returns the mouse position on the screen of the event.  To find the
-  absolute position of an Fl_Window on the screen, use the
-  difference between event_x_root(),event_y_root() and
-  event_x(),event_y().
-*/
-FL_EXPORT inline int event_x_root()     {return e_x_root;}
-
-/**
-  Returns the mouse position on the screen of the event.  To find the
-  absolute position of an Fl_Window on the screen, use the
-  difference between event_x_root(),event_y_root() and
-  event_x(),event_y().
-*/
-FL_EXPORT inline int event_y_root()     {return e_y_root;}
-
-/**
-  Returns the current horizontal mouse scrolling associated with the
-  FL_MOUSEWHEEL event. Right is positive.
-*/
-FL_EXPORT inline int event_dx() {return e_dx;}
-
-/**
-  Returns the current vertical mouse scrolling associated with the
-  FL_MOUSEWHEEL event. Down is positive.
-*/
-FL_EXPORT inline int event_dy() {return e_dy;}
-
-/**
-  Return where the mouse is on the screen by doing a round-trip query to
-  the server.  You should use Fl::event_x_root() and
-  Fl::event_y_root() if possible, but this is necessary if you are
-  not sure if a mouse event has been processed recently (such as to
-  position your first window).  If the display is not open, this will
-  open it.
-*/
-FL_EXPORT extern void get_mouse(int &,int &);
-
-/**
-  Returns non zero if we had a double click event.
-  \retval Non-zero if the most recent FL_PUSH or FL_KEYBOARD was a "double click".
-  \retval  N-1 for  N clicks.
-  A double click is counted if the same button is pressed
-  again while event_is_click() is true.
-
- */
-FL_EXPORT inline int event_clicks()     {return e_clicks;}
-
-/**
-  Manually sets the number returned by Fl::event_clicks().
-  This can be used to set it to zero so that
-  later code does not think an item was double-clicked.
-  \param[in] i corresponds to no double-click if 0, i+1 mouse clicks otherwise
-  \see int event_clicks()
-*/
-FL_EXPORT inline void event_clicks(int i) {e_clicks = i;}
-/**
-  Returns non-zero if the mouse has not moved far enough
-  and not enough time has passed since the last FL_PUSH or
-  FL_KEYBOARD event for it to be considered a "drag" rather than a
-  "click".  You can test this on FL_DRAG, FL_RELEASE,
-  and FL_MOVE events.
-*/
-FL_EXPORT inline int event_is_click()   {return e_is_click;}
-
-/**
- Clears the value returned by Fl::event_is_click().
- Useful to prevent the <I>next</I>
- click from being counted as a double-click or to make a popup menu
- pick an item with a single click.  Don't pass non-zero to this.
-*/
-FL_EXPORT inline void event_is_click(int i) {e_is_click = i;}
-
-/**
-  Gets which particular mouse button caused the current event.
-
-  This returns garbage if the most recent event was not a FL_PUSH or FL_RELEASE event.
-  \retval FL_LEFT_MOUSE
-  \retval FL_MIDDLE_MOUSE
-  \retval FL_RIGHT_MOUSE
-  \retval FL_BACK_MOUSE
-  \retval FL_FORWARD_MOUSE
-  \see Fl::event_buttons(), Fl::event_state()
-*/
-FL_EXPORT inline int event_button() { return e_keysym - FL_Button; }
-
-/**
-  Returns the keyboard and mouse button states of the last event.
-
-  This is a bitfield of what shift states were on and what mouse buttons
-  were held down during the most recent event.
-
-  \note FLTK platforms differ in what Fl::event_state() returns when it is called
-    while a modifier key or mouse button is being pressed or released.
-
-  - Under X11 and Wayland, Fl::event_state() indicates the state of the modifier keys and
-    mouse buttons just \b prior to the event. Thus, during the \c FL_KEYDOWN event generated
-    when pressing the shift key, for example, the \c FL_SHIFT bit of event_state() is 0 and
-    becomes 1 only at the next event which can be any other event, including e.g. \c FL_MOVE.
-  - Under other platforms the reported state of modifier keys or mouse buttons includes that
-    of the key or button being pressed or released.
-  - Fl::event_state() returns the same value under all platforms when it's called while a
-    non-modifier key (e.g. a letter or function key) is being pressed or released.
-  - X servers do not agree on shift states, and \c FL_NUM_LOCK, \c FL_META, and \c FL_SCROLL_LOCK
-    may not work.
-  - The values were selected to match the XFree86 server on Linux.
-
-  \note This inconsistency \b may be fixed (on X11 and Wayland) in a later release.
-
-  The legal event state bits are:
-
-    | Device   | State Bit      | Key or Button           | Since  |
-    |----------|----------------|-------------------------|--------|
-    | Keyboard | FL_SHIFT       | Shift                   |        |
-    | Keyboard | FL_CAPS_LOCK   | Caps Lock               |        |
-    | Keyboard | FL_CTRL        | Ctrl                    |        |
-    | Keyboard | FL_ALT         | Alt                     |        |
-    | Keyboard | FL_NUM_LOCK    | Num Lock                |        |
-    | Keyboard | FL_META        | Meta, e.g. "Windows"    |        |
-    | Keyboard | FL_SCROLL_LOCK | Scroll Lock             |        |
-    | Mouse    | FL_BUTTON1     | left button             |        |
-    | Mouse    | FL_BUTTON2     | middle button           |        |
-    | Mouse    | FL_BUTTON3     | right button            |        |
-    | Mouse    | FL_BUTTON4     | side button 1 (back)    | 1.3.10 |
-    | Mouse    | FL_BUTTON5     | side button 2 (forward) | 1.3.10 |
-*/
-FL_EXPORT inline int event_state()      {return e_state;}
-
-/** Returns non-zero if any of the passed event state bits are turned on.
-
-  Use \p mask to pass the event states you're interested in.
-  The legal event state bits are defined in Fl::event_state().
-*/
-FL_EXPORT inline int event_state(int mask) {return e_state&mask;}
-
-/**
-  Gets which key on the keyboard was last pushed.
-
-  The returned integer 'key code' is not necessarily a text
-  equivalent for the keystroke. For instance: if someone presses '5' on the
-  numeric keypad with numlock on, Fl::event_key() may return the 'key code'
-  for this key, and NOT the character '5'. To always get the '5', use Fl::event_text() instead.
-
-  \returns an integer 'key code', or 0 if the last event was not a key press or release.
-  \see int event_key(int), event_text(), compose(int&).
-*/
-FL_EXPORT inline int event_key()        {return e_keysym;}
-
-/**
-  Returns the keycode of the last key event, regardless of the NumLock state.
-
-  If NumLock is deactivated, FLTK translates events from the
-  numeric keypad into the corresponding arrow key events.
-  event_key() returns the translated key code, whereas
-  event_original_key() returns the keycode before NumLock translation.
-*/
-FL_EXPORT inline int event_original_key(){return e_original_keysym;}
-
-/**
-  Returns true if the given \p key was held
-  down (or pressed) <I>during</I> the last event.  This is constant until
-  the next event is read from the server.
-
-  Fl::get_key(int) returns true if the given key is held down <I>now</I>.
-  Under X this requires a round-trip to the server and is <I>much</I>
-  slower than Fl::event_key(int).
-
-  Keys are identified by the <I>unshifted</I> values. FLTK defines a
-  set of symbols that should work on most modern machines for every key
-  on the keyboard:
-
-  \li All keys on the main keyboard producing a printable ASCII
-      character use the value of that ASCII character (as though shift,
-      ctrl, and caps lock were not on). The space bar is 32.
-  \li All keys on the numeric keypad producing a printable ASCII
-      character use the value of that ASCII character plus FL_KP
-      (e.g., FL_KP + '4', FL_KP + '/').
-      The highest possible value is FL_KP_Last so you can
-      range-check to see if something is  on the keypad.
-  \li All numbered function keys use the number on the function key plus
-      FL_F.  The highest possible number is FL_F_Last, so you
-      can range-check a value.
-  \li Buttons on the mouse are considered keys, and use the button
-      number (where the left button is 1) plus FL_Button.
-  \li All other keys on the keypad have a symbol: FL_Escape,
-      FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause,
-      FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
-      FL_Left, FL_Up, FL_Right, FL_Down, FL_Iso_Key, FL_Shift_L, FL_Shift_R,
-      FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
-      FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter.  Be
-      careful not to confuse these with the very similar, but all-caps,
-      symbols used by Fl::event_state().
-
-  On X Fl::get_key(FL_Button+n) does not work.
-
-  On Windows Fl::get_key(FL_KP_Enter) and Fl::event_key(FL_KP_Enter) do not work.
-*/
-FL_EXPORT extern int event_key(int key);
-
-/**
-  Returns true if the given \p key is held down <I>now</I>.
-  Under X this requires a round-trip to the server and is <I>much</I>
-  slower than Fl::event_key(int). \see event_key(int)
-*/
-FL_EXPORT extern int get_key(int key); // platform dependent
-
-/**
-  Returns the text associated with the current event, including FL_PASTE or FL_DND_RELEASE events.
-  This can be used in response to FL_KEYUP, FL_KEYDOWN, FL_PASTE, and FL_DND_RELEASE.
-
-  When responding to FL_KEYUP/FL_KEYDOWN, use this function instead of Fl::event_key()
-  to get the text equivalent of keystrokes suitable for inserting into strings
-  and text widgets.
-
-  The returned string is guaranteed to be NULL terminated.
-  However, see Fl::event_length() for the actual length of the string,
-  in case the string itself contains NULLs that are part of the text data.
-
-  \returns A NULL terminated text string equivalent of the last keystroke.
- */
-FL_EXPORT inline const char* event_text() {return e_text;}
-
-/**
-  Returns the length of the text in Fl::event_text(). There
-  will always be a nul at this position in the text. However there may
-  be a nul before that if the keystroke translates to a nul character or
-  you paste a nul character.
-*/
-FL_EXPORT inline int event_length() {return e_length;}
-
-/**  Denotes plain textual data
- */
-FL_EXPORT extern char const * const clipboard_plain_text;
-
-/**  Denotes image data
- */
-FL_EXPORT extern char const * const clipboard_image;
-
-/** During an FL_PASTE event of non-textual data, returns a pointer to the pasted data.
- The returned data is an Fl_RGB_Image * when the result of Fl::event_clipboard_type() is Fl::clipboard_image.
- */
-FL_EXPORT inline void *event_clipboard() { return e_clipboard_data; }
-
-/** Returns the type of the pasted data during an FL_PASTE event.
- This type can be Fl::clipboard_plain_text or Fl::clipboard_image.
- */
-FL_EXPORT inline const char *event_clipboard_type() {return e_clipboard_type; }
-
-
-FL_EXPORT extern int compose(int &del);
-FL_EXPORT extern void compose_reset();
-FL_EXPORT extern int event_inside(int,int,int,int);
-FL_EXPORT extern int event_inside(const Fl_Widget*);
-FL_EXPORT extern int test_shortcut(Fl_Shortcut);
-
-FL_EXPORT extern void enable_im();
-FL_EXPORT extern void disable_im();
-
-// event destinations:
-FL_EXPORT extern int handle(int, Fl_Window*);
-FL_EXPORT extern int handle_(int, Fl_Window*);
-/**  Gets the widget that is below the mouse.
-     \see  belowmouse(Fl_Widget*) */
-FL_EXPORT inline Fl_Widget* belowmouse() {return belowmouse_;}
-FL_EXPORT extern void belowmouse(Fl_Widget*);
-/** Gets the widget that is being pushed.
-    \see void pushed(Fl_Widget*) */
-FL_EXPORT inline Fl_Widget* pushed()    {return pushed_;}
-FL_EXPORT extern void pushed(Fl_Widget*);
-/** Gets the current Fl::focus() widget. \sa Fl::focus(Fl_Widget*) */
-FL_EXPORT inline Fl_Widget* focus()     {return focus_;}
-FL_EXPORT extern void focus(Fl_Widget*);
-FL_EXPORT extern void add_handler(Fl_Event_Handler ha);
-FL_EXPORT extern void add_handler(Fl_Event_Handler ha, Fl_Event_Handler before);
-FL_EXPORT extern Fl_Event_Handler last_handler();
-FL_EXPORT extern void remove_handler(Fl_Event_Handler h);
-FL_EXPORT extern void add_system_handler(Fl_System_Handler h, void *data);
-FL_EXPORT extern void remove_system_handler(Fl_System_Handler h);
-FL_EXPORT extern void event_dispatch(Fl_Event_Dispatch d);
-FL_EXPORT extern Fl_Event_Dispatch event_dispatch();
-FL_EXPORT extern Fl_Callback_Reason callback_reason();
-
-/** @} */
-
 /** \defgroup  fl_clipboard  Selection & Clipboard functions
       FLTK global copy/cut/paste functions declared in <FL/Fl.H>
  @{ */
@@ -1059,7 +574,6 @@ FL_EXPORT extern void keyboard_screen_scaling(int value);
 
 /**   @} */
 
-
 /** \defgroup  fl_attributes  Color & Font functions
       fl global color, font functions.
  These functions are declared in <FL/Fl.H> or <FL/fl_draw.H>.
@@ -1193,94 +707,8 @@ FL_EXPORT inline void set_atclose(Fl_Atclose_Handler f) {atclose = f;}
 
 /**   @} */
 
-/** \addtogroup fl_events
-  @{ */
-
-/** Returns non-zero if the Shift key is pressed. */
-FL_EXPORT inline int event_shift() {return e_state&FL_SHIFT;}
-/** Returns non-zero if the Control key is pressed. */
-FL_EXPORT inline int event_ctrl() {return e_state&FL_CTRL;}
-/** Returns non-zero if the FL_COMMAND key is pressed, either FL_CTRL or on OSX FL_META. */
-FL_EXPORT inline int event_command() {return e_state&FL_COMMAND;}
-/** Returns non-zero if the Alt key is pressed. */
-FL_EXPORT inline int event_alt() {return e_state&FL_ALT;}
-
-/**
-  Returns the mouse buttons state bits; if non-zero, then at least one
-  button is pressed now.  This function returns the button state at the
-  time of the event. During an FL_RELEASE event, the state
-  of the released button will be 0. To find out, which button
-  caused an FL_RELEASE event, you can use Fl::event_button() instead.
-  \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | ... | [FL_BUTTON5] }
-*/
-FL_EXPORT inline int event_buttons() {return e_state & FL_BUTTONS;}
-
-/**
-  Returns non-zero if mouse button 1 is currently held down.
-  For more details, see Fl::event_buttons().
-*/
-FL_EXPORT inline int event_button1() {return e_state & FL_BUTTON1;}
-
-/**
-  Returns non-zero if mouse button 2 is currently held down.
-  For more details, see Fl::event_buttons().
-*/
-FL_EXPORT inline int event_button2() {return e_state & FL_BUTTON2;}
-
-/**
-  Returns non-zero if mouse button 3 is currently held down.
-  For more details, see Fl::event_buttons().
-*/
-FL_EXPORT inline int event_button3() {return e_state & FL_BUTTON3;}
-
-/**
-  Returns non-zero if mouse button 4 is currently held down.
-  For more details, see Fl::event_buttons().
-*/
-FL_EXPORT inline int event_button4() {return e_state & FL_BUTTON4;}
-
-/**
-  Returns non-zero if mouse button 5 is currently held down.
-  For more details, see Fl::event_buttons().
-*/
-FL_EXPORT inline int event_button5() {return e_state & FL_BUTTON5;}
-
-/**   @} */
-
 /** See grab(Fl_Window*) */
 FL_EXPORT inline void grab(Fl_Window& win) {grab(&win);}
-
-// Visible focus methods...
-/**
-  Gets or sets the visible keyboard focus on buttons and other
-  non-text widgets. The default mode is to enable keyboard focus
-  for all widgets.
-*/
-FL_EXPORT inline void visible_focus(int v) { option(OPTION_VISIBLE_FOCUS, (v!=0)); }
-
-/**
-  Gets or sets the visible keyboard focus on buttons and other
-  non-text widgets. The default mode is to enable keyboard focus
-  for all widgets.
-*/
-FL_EXPORT inline int  visible_focus() { return option(OPTION_VISIBLE_FOCUS); }
-
-// Drag-n-drop text operation methods...
-/**
-  Sets whether drag and drop text operations are supported.
-  This specifically affects whether selected text can
-  be dragged from text fields or dragged within a text field as a
-  cut/paste shortcut.
-*/
-FL_EXPORT inline void dnd_text_ops(int v) { option(OPTION_DND_TEXT, (v!=0)); }
-
-/**
-  Gets whether drag and drop text operations are
-  supported. This returns whether selected text can
-  be dragged from text fields or dragged within a text field as a
-  cut/paste shortcut.
-*/
-FL_EXPORT inline int  dnd_text_ops() { return option(OPTION_DND_TEXT); }
 
 // --- FLTK Multithreading support functions ---
 
@@ -1299,45 +727,6 @@ FL_EXPORT extern int awake(Fl_Awake_Handler handler, void* user_data=nullptr);
 FL_EXPORT extern int awake_once(Fl_Awake_Handler handler, void* user_data=nullptr);
 FL_DEPRECATED("since 1.5.0 - use Fl::awake() or Fl::awake(handler, user_data) instead",
 FL_EXPORT extern void* thread_message()); // platform dependent
-
-/** @} */
-
-/** \defgroup fl_del_widget Safe widget deletion support functions
-
-  These functions, declared in <FL/Fl.H>, support deletion of widgets inside callbacks.
-
-  Fl::delete_widget() should be called when deleting widgets
-  or complete widget trees (Fl_Group, Fl_Window, ...) inside
-  callbacks.
-
-  The other functions are intended for internal use. The preferred
-  way to use them is by using the helper class Fl_Widget_Tracker.
-
-  The following is to show how it works ...
-
-  There are three groups of related methods:
-
-    -# scheduled widget deletion
-      - Fl::delete_widget() schedules widgets for deletion
-      - Fl::do_widget_deletion() deletes all scheduled widgets
-    -# widget watch list ("smart pointers")
-      - Fl::watch_widget_pointer() adds a widget pointer to the watch list
-      - Fl::release_widget_pointer() removes a widget pointer from the watch list
-      - Fl::clear_widget_pointer() clears a widget pointer \e in the watch list
-    -# the class Fl_Widget_Tracker:
-      - the constructor calls Fl::watch_widget_pointer()
-      - the destructor calls Fl::release_widget_pointer()
-      - the access methods can be used to test, if a widget has been deleted
-        \see Fl_Widget_Tracker.
-
- @{ */
-
-// Widget deletion:
-FL_EXPORT extern void delete_widget(Fl_Widget *w);
-FL_EXPORT extern void do_widget_deletion();
-FL_EXPORT extern void watch_widget_pointer(Fl_Widget *&w);
-FL_EXPORT extern void release_widget_pointer(Fl_Widget *&w);
-FL_EXPORT extern void clear_widget_pointer(Fl_Widget const *w);
 
 /** @} */
 
@@ -1411,91 +800,10 @@ FL_EXPORT extern void cairo_flush(cairo_t *c) {
 
 } // namespace Fl
 
-/**
-  This class should be used to control safe widget deletion.
 
-  You can use an Fl_Widget_Tracker object to watch another widget, if you
-  need to know whether this widget has been deleted during a callback.
-
-  This simplifies the use of the "safe widget deletion" methods
-  Fl::watch_widget_pointer() and Fl::release_widget_pointer() and
-  makes their use more reliable, because the destructor automatically
-  releases the widget pointer from the widget watch list.
-
-  Fl_Widget_Tracker is intended to be used as an automatic (local/stack)
-  variable, such that its destructor is called when the object's
-  scope is left. This ensures that no stale widget pointers are
-  left in the widget watch list (see example below).
-
-  You can also create Fl_Widget_Tracker objects with \c new, but then it
-  is your responsibility to delete the object (and thus remove the
-  widget pointer from the watch list) when it is no longer needed.
-
-  Example:
-
-  \code
-  int MyClass::handle (int event) {
-
-    if (...) {
-      Fl_Widget_Tracker wp(this);           // watch myself
-      do_callback();                        // call the callback
-
-      if (wp.deleted()) return 1;           // exit, if deleted
-
-      // Now we are sure that the widget has not been deleted,
-      // and it is safe to access the widget:
-
-      box(FL_FLAT_BOX);
-      color(FL_WHITE);
-      redraw();
-    }
-  }
-  \endcode
-
-*/
-class FL_EXPORT Fl_Widget_Tracker {
-
-  Fl_Widget* wp_;
-
-public:
-
-  Fl_Widget_Tracker(Fl_Widget *wi);
-  ~Fl_Widget_Tracker();
-
-  /**
-    Returns a pointer to the watched widget.
-
-    This pointer is \c NULL, if the widget has been deleted.
-  */
-  Fl_Widget *widget() {return wp_;}
-
-  /**
-    Returns 1, if the watched widget has been deleted.
-
-    This is a convenience method. You can also use something like
-
-    <tt>  if (wp.widget() == 0) // ...</tt>
-
-    where \p wp is an Fl_Widget_Tracker object.
-  */
-  int deleted() {return wp_ == 0;}
-
-  /**
-    Returns 1, if the watched widget exists (has not been deleted).
-
-    This is a convenience method. You can also use something like
-
-    <tt>  if (wp.widget() != 0) // ...</tt>
-
-    where \p wp is an Fl_Widget_Tracker object.
-  */
-  int exists()  {return wp_ != 0;}
-
-};
-
- /** \defgroup  fl_unicode  Unicode and UTF-8 functions
-        fl global Unicode and UTF-8 handling functions declared in <FL/fl_utf8.h>
-     @{ */
- /** @} */
+/** \defgroup  fl_unicode  Unicode and UTF-8 functions
+      fl global Unicode and UTF-8 handling functions declared in <FL/fl_utf8.h>
+   @{ */
+/** @} */
 
 #endif // !Fl_H
