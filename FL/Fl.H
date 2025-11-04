@@ -28,6 +28,7 @@
 #include <FL/core/function_types.H>   // widget callbacks and services
 #include <FL/core/events.H>           // global event handling
 #include <FL/core/options.H>          // system and application setting
+#include <FL/core/pen_events.H>       // pen and tablet events
 #include <FL/Fl_Widget_Tracker.H>     // historically included here
 
 #ifdef FLTK_HAVE_CAIRO
