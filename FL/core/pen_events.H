@@ -59,6 +59,8 @@ namespace Pen {
  If a bit is clear, the corresponding event value will not be set.
  */
 enum Features : uint32_t {
+  /// Return this if this implementation of FLTK does not support pens and tablets.
+  NONE             = 0x0000,
   /// Set if FLTK supports tablets and pens on this platform
   SUPPORTED        = 0x0001,
   /// Set if the system found a pen and/or tablet device
@@ -362,43 +364,65 @@ FL_EXPORT extern State event_trigger();
 } // namespace Fl
 
 /**
- * \brief Bitwise OR operator for Features enum.
- * \param lhs Left-hand side feature flags
- * \param rhs Right-hand side feature flags
- * \return Combined feature flags
+ \brief Bitwise OR operator for Features enum.
+ \param lhs Left-hand side feature flags
+ \param rhs Right-hand side feature flags
+ \return Combined feature flags
  */
 inline constexpr Fl::Pen::Features operator|(Fl::Pen::Features lhs, Fl::Pen::Features rhs) {
   return static_cast<Fl::Pen::Features>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
 }
 
 /**
- * \brief Bitwise AND operator for Features enum.
- * \param lhs Left-hand side feature flags
- * \param rhs Right-hand side feature flags
- * \return Intersection of feature flags
+ \brief Bitwise AND operator for Features enum.
+ \param lhs Left-hand side feature flags
+ \param rhs Right-hand side feature flags
+ \return Intersection of feature flags
  */
 inline constexpr Fl::Pen::Features operator&(Fl::Pen::Features lhs, Fl::Pen::Features rhs) {
   return static_cast<Fl::Pen::Features>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
 }
 
 /**
- * \brief Bitwise OR operator for State enum.
- * \param lhs Left-hand side state flags
- * \param rhs Right-hand side state flags
- * \return Combined state flags
+ \brief Bitwise OR assignment operator for Features enum.
+ \param lhs Left-hand side feature flags (modified in place)
+ \param rhs Right-hand side feature flags
+ \return Reference to modified lhs
+ */
+inline Fl::Pen::Features& operator|=(Fl::Pen::Features& lhs, Fl::Pen::Features rhs) {
+  lhs = lhs | rhs;
+  return lhs;
+}
+
+/**
+ \brief Bitwise OR operator for State enum.
+ \param lhs Left-hand side state flags
+ \param rhs Right-hand side state flags
+ \return Combined state flags
  */
 inline constexpr Fl::Pen::State operator|(Fl::Pen::State lhs, Fl::Pen::State rhs) {
   return static_cast<Fl::Pen::State>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
 }
 
 /**
- * \brief Bitwise AND operator for State enum.
- * \param lhs Left-hand side state flags
- * \param rhs Right-hand side state flags
- * \return Intersection of state flags
+ \brief Bitwise AND operator for State enum.
+ \param lhs Left-hand side state flags
+ \param rhs Right-hand side state flags
+ \return Intersection of state flags
  */
 inline constexpr Fl::Pen::State operator&(Fl::Pen::State lhs, Fl::Pen::State rhs) {
   return static_cast<Fl::Pen::State>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+/**
+ \brief Bitwise OR assignment operator for State enum.
+ \param lhs Left-hand side state flags (modified in place)
+ \param rhs Right-hand side state flags
+ \return Reference to modified lhs
+ */
+inline Fl::Pen::State& operator|=(Fl::Pen::State& lhs, Fl::Pen::State rhs) {
+  lhs = lhs | rhs;
+  return lhs;
 }
 
 #endif // !Fl_core_pen_events_H

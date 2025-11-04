@@ -241,6 +241,7 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     drivers/X11/fl_X11_platform_init.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_x.cxx
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
@@ -317,6 +318,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
   )
@@ -369,6 +371,7 @@ elseif(APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_get_key_mac.cxx
     drivers/Darwin/fl_macOS_platform_init.cxx
   )
@@ -403,6 +406,7 @@ else()
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_win32.cxx
     fl_dnd_win32.cxx
     Fl_Native_File_Chooser_WIN32.cxx
