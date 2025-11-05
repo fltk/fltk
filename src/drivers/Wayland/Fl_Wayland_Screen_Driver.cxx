@@ -221,6 +221,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
     }
   }
   if (!win) return;
+  seat->pointer_focus = surface;
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
@@ -228,9 +229,9 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
   set_event_xy(win);
+  // Caution: with an Fl_Tooltip this call can hide the window being entered (#1317)
   Fl::handle(FL_ENTER, win);
   //fprintf(stderr, "pointer_enter window=%p\n", win);
-  seat->pointer_focus = surface;
 }
 
 
