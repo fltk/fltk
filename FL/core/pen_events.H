@@ -55,34 +55,33 @@ namespace Pen {
  */
 
 /**
- \brief Bitfield of available pen features.
- If a bit is clear, the corresponding event value will not be set.
+ \brief Bitfield of traits.
+ This is used in Fl::Pen::driver_traits() and Fl::Pen::pen_traits().
  */
-enum Features : uint32_t {
-  /// Return this if this implementation of FLTK does not support pens and tablets.
-  NONE             = 0x0000,
+enum class Trait : uint32_t {
   /// Set if FLTK supports tablets and pens on this platform
-  SUPPORTED        = 0x0001,
-  /// Set if the system found a pen and/or tablet device
-  AVAILABLE        = 0x0002,
+  DRIVER_AVAILABLE  = 0x0001,
+  /// Set after the system detected a pen, stylus, or tablet. This bit may not be
+  /// set until a pen is brought into proximity of the tablet.
+  DETECTED          = 0x0002,
   /// If set, this is a digitizer for a display; if clear, this is a standalone tablet
-  DISPLAY          = 0x0004,
-  /// Every pen has its own ID, so users can distinguish multiple pens
-  DEVICE_ID        = 0x0008,
+  DISPLAY           = 0x0004,
+  /// Driver provides different device IDs for different pens
+  DEVICE_ID         = 0x0008,
   /// Pen may have an eraser tip
-  ERASER_TIP       = 0x0010,
+  ERASER            = 0x0010,
   /// Pen returns a pressure value
-  PRESSURE         = 0x0020,
-  /// Pen returns a tangential pressure value
-  TANGENTIAL_PRESSURE = 0x0040,
+  PRESSURE          = 0x0020,
+  /// Pen returns a barrel pressure value (tangential pressure)
+  BARREL_PRESSURE   = 0x0040,
   /// Pen returns tilt in X direction
-  TILT_X           = 0x0080,
+  TILT_X            = 0x0080,
   /// Pen returns tilt in Y direction
-  TILT_Y           = 0x0100,
+  TILT_Y            = 0x0100,
   /// Pen returns a twist value
-  TWIST            = 0x0200,
+  TWIST             = 0x0200,
   /// Pen returns a proximity value
-  PROXIMITY        = 0x0400,
+  PROXIMITY         = 0x0400,
 };
 
 
@@ -90,34 +89,36 @@ enum Features : uint32_t {
  \brief Bitfield of pen state flags.
  \see event_state(), event_trigger()
  */
-enum State : uint32_t {
-  /// Barrel button 0 is pressed
-  BUTTON_0 = 0x0001,
-  /// Barrel button 1 is pressed
-  BUTTON_1 = 0x0002,
-  /// Barrel button 2 is pressed
-  BUTTON_2 = 0x0004,
-  /// Barrel button 3 is pressed
-  BUTTON_3 = 0x0008,
+enum class State : uint32_t {
   /// The tip hovers over the surface but does not touch it
-  TIP_HOVERS = 0x0010,
+  TIP_HOVERS        = 0x0001,
   /// The tip touches the surface
-  TIP_DOWN = 0x0020,
-  /// The tip was pressed down enough to be seen as a mouse event
-  TIP_PUSHED = 0x0040,
+  TIP_DOWN          = 0x0002,
   /// The eraser hovers over the surface but does not touch it
-  ERASER_HOVERS = 0x0080,
+  ERASER_HOVERS     = 0x0004,
   /// The eraser touches the surface
-  ERASER_DOWN = 0x0100,
-  /// The eraser was pressed down enough to be seen as a mouse event
-  ERASER_PUSHED = 0x0200,
+  ERASER_DOWN       = 0x0008,
+  /// Barrel button 0, usually the lower button on a pen, is pressed
+  BUTTON0           = 0x0100,
+  /// Barrel button 1, usually the upper button on a pen, is pressed
+  BUTTON1           = 0x0200,
+  /// Barrel button 2 is pressed
+  BUTTON2           = 0x0400,
+  /// Barrel button 3 is pressed
+  BUTTON3           = 0x0800,
 };
 
 /**
  \brief List of pen events.
  These events extend the standard Fl_Event enumeration.
+ \see enum Fl_Event
  */
-typedef enum {
+enum Event {
+  /**
+   A pen was detected for the first time for this subscriber.
+   */
+  DETECTED = 0x1000,
+
   /**
    User changed to a different pen (event_id() > 0) or the pen or tablet
    was disconnected (event_id() == -1). Pen IDs, if supported, are assigned by
@@ -125,7 +126,7 @@ typedef enum {
 
    Return 1 to receive ENTER and LEAVE events.
    */
-  ID_CHANGED,
+  CHANGED,
 
   /**
    Pen entered the widget area, either by moving in x/y, or by
@@ -141,7 +142,7 @@ typedef enum {
   /**
    Pen went from hovering to touching the surface.
    event_trigger() returns TIP_DOWN  or ERASER_DOWN.
-   Return 1 to receive DRAW and DRAG events.
+   Return 1 to receive DRAW events.
    */
   TOUCH,
 
@@ -151,55 +152,57 @@ typedef enum {
   */
   LIFT,
 
-  /**
-   Pen was pushed hard enough to cause an FL_PUSH or FL_RELEASE mouse event.
-   Return 1 to suppress the mouse event.
-   */
-  PUSH,
-  /** Pen pressure released. See PUSH */
-  RELEASE,
-
   /** Pen moved without touching the surface. */
   MOVE,
 
-  /** Pen moved while lightly touching the surface. */
+  /** Pen moved while touching the surface. */
   DRAW,
-
-  /** Pen moved while pressed down. */
-  DRAG,
 
   /**
    A pen button was pushed.
-   event_trigger() returns BUTTON_0, BUTTON_1, BUTTON_2, or BUTTON_3.
+   event_trigger() returns BUTTON0, BUTTON1, BUTTON2, or BUTTON3.
    */
   BUTTON_PUSH,
 
   /**
    A pen button was released.
-   event_trigger() returns BUTTON_0, BUTTON_1, BUTTON_2, or BUTTON_3.
+   event_trigger() returns BUTTON0, BUTTON1, BUTTON2, or BUTTON3.
    */
   BUTTON_RELEASE
 
-} Event;
+};
 
 /**
- \brief Query features supported by the pen/tablet device.
- \return a bitfield of supported features
+ \brief Query the traits supported by the pen/tablet driver.
+
+ This function returns a bitfield of traits that are supported by the FLTK driver
+ for this platform. If a trait is not supported, the corresponding event value
+ will not return a useful value. Note that even if the FLTK driver support a
+ trait, the underlying pen device or driver may not. Fl::Pen will return a
+ known default for those event values.
+
+ The bitfield returned is static.
+
+ \return a bitfield of supported traits
+ \see pen_traits()
  */
-FL_EXPORT extern Features features();
+FL_EXPORT extern Trait driver_traits();
+
+/**
+ \brief Query traits of the current pen or stylus.
+ The value returned by this function may change when pens change or when more
+ information becomes known about the currently used pen.
+ \param[in] window must be a mapped (shown, visible) window
+ \return a bitfield of supported traits
+ */
+FL_EXPORT extern Trait pen_traits(Fl_Window *window);
 
 /**
  \brief Receive pen events when the pen is inside this widget, or all events.
-
  Multiple widgets can subscribe to pen events.
-
- Only one widget can subscribe to *all* pen events. Expect a lot of events
- flowing in as the user is moving the stylus.
-
  \param widget Widget to subscribe to pen events
- \param outside_events If true, receive events even when pen is outside widget
  */
-FL_EXPORT extern void subscribe(Fl_Widget* widget, bool outside_events = false);
+FL_EXPORT extern void subscribe(Fl_Widget* widget);
 
 /**
  \brief Stop receiving pen events for this widget.
@@ -211,7 +214,7 @@ FL_EXPORT extern void unsubscribe(Fl_Widget* widget);
 /**
  \brief Grab all pen events, including those outside the widget, until released.
  Send all pen events exclusively to this widget to allow consistent drawing,
- even when the user crosses the edge of the window.
+ even when the pen leaves the widget area.
  \param widget Widget that will receive all pen events
  */
 FL_EXPORT extern void grab(Fl_Widget* widget);
@@ -225,68 +228,70 @@ FL_EXPORT extern void release();
 /// @{
 
 /**
- * \brief Returns the pen x and y position inside the handling widget as doubles.
- *
- * These functions provide high-precision pen coordinates relative to the widget
- * that received the pen event. For integer coordinates, use Fl::event_x() and
- * Fl::event_y() instead.
- *
- * \return Pen position as floating-point coordinate
- * \see Fl::event_x(), Fl::event_y()
+ \brief Returns the pen x and y position inside the handling widget as doubles.
+ These functions provide high-precision pen coordinates relative to the widget
+ that received the pen event. For integer coordinates, use Fl::event_x() and
+ Fl::event_y() instead.
+ \return Pen position as floating-point coordinate, defaults to 0.0
+ \see Fl::event_x(), Fl::event_y()
  */
 FL_EXPORT extern double event_x();
-/** \brief Returns pen Y coordinate in widget space. \see event_x() */
+/** \brief Returns pen Y coordinate in widget space, see event_x(). */
 FL_EXPORT extern double event_y();
 
 /**
- * \brief Returns the pen x and y position in global coordinates as doubles.
- *
- * For integer coordinates, use Fl::event_x_root() and Fl::event_y_root().
- *
- * \return Pen position as floating-point coordinate in screen space
- * \see Fl::event_x_root(), Fl::event_y_root()
+ \brief Returns the pen x and y position in global coordinates as doubles.
+ For integer coordinates, use Fl::event_x_root() and Fl::event_y_root().
+ \return Pen position as floating-point coordinate in screen space, defaults to 0.0
+ \see Fl::event_x_root(), Fl::event_y_root()
  */
 FL_EXPORT extern double event_x_root();
-/** \brief Returns pen Y coordinate in screen space. \see event_x_root() */
+/** \brief Returns pen Y coordinate in screen space, see event_x_root(). */
 FL_EXPORT extern double event_y_root();
 
 /**
- * \brief Returns the ID of the pen used in the last event.
- * \return Unique pen identifier, or -1 if pen was removed
- * \see Features::DEVICE_ID
+ \brief Returns the ID of the pen used in the last event.
+ \return Unique pen identifier, or -1 if pen was removed, defaults to 0
+ \see Trait::DEVICE_ID
  */
 FL_EXPORT extern int event_id();
 
 /**
- * \brief Returns the pressure of the tip or eraser on the surface between 0 and 1.
- * \return Pressure value from 0.0 (no pressure) to 1.0 (maximum pressure)
- * \see Features::PRESSURE, Features::TANGENTIAL_PRESSURE
+ \brief Returns the pressure between the tip or eraser and the surface.
+ \return pressure value from 0.0 (no pressure) to 1.0 (maximum pressure),
+      defaults to 1.0.
+ \see Trait::PRESSURE
  */
 FL_EXPORT extern double event_pressure();
-/** \brief Returns tangential pressure. \see event_pressure() */
-FL_EXPORT extern double event_tangential_pressure();
 
 /**
- * \brief Returns the tilt of the pen in the x and y directions between -1 and 1.
- *
- * X-axis tilt (left/right): For -1, the pen tilts fully to the left, and the
- * tip points to the right; for +1, the pen tilts fully to the right. A value of
- * 0 indicates a vertical pen.
- *
- * Y-axis tilt (forward/back): For -1, the pen tilts away from the user, and the
- * tip points toward the user.
- *
- * \return Tilt value from -1.0 to +1.0
- * \see Features::TILT_X, Features::TILT_Y
+ \brief Returns barrel pressure or tangential pressure.
+ \return Pressure value from -1.0 to 1.0 , defaults to 0.0 .
+ \see Trait::BARREL_PRESSURE
+ */
+FL_EXPORT extern double event_barrel_pressure();
+
+/**
+ \brief Returns the tilt of the pen in the x and y directions between -1 and 1.
+
+ X-axis tilt returns -1.0 when the pen tilts all the way to the left, 0.0 when
+ it is perfectly vertical, and 1.0 all the way to the right. Most pens seem to
+ return a maximum range of -0.7 to 0.7.
+
+ Y-axis tilt returns -1.0 when the pen tilts away from the user, and 1.0 when
+ it tilts toward the user.
+
+ \return Tilt value from -1.0 to 1.0, defaults to 0.0
+ \see Trait::TILT_X, Trait::TILT_Y
  */
 FL_EXPORT extern double event_tilt_x();
-/** \brief Returns pen Y-axis tilt. \see event_tilt_x() */
+/** \brief Returns pen Y-axis tilt, see event_tilt_x() */
 FL_EXPORT extern double event_tilt_y();
 
 /**
- * \brief Returns the twist of the pen between -180 and +180 degrees.
- * \return Twist angle in degrees
- * \see Features::TWIST
+ * \brief Returns the pens axial rotation in degrees.
+ * \return Twist angle in degrees, defaults to 0.0 .
+ * \see Trait::TWIST
  */
 FL_EXPORT extern double event_twist();
 
@@ -295,8 +300,8 @@ FL_EXPORT extern double event_twist();
  *
  * A proximity of 0 is closest to the surface, 1 is farthest away.
  *
- * \return Proximity value from 0.0 (touching) to 1.0 (far away)
- * \see Features::PROXIMITY
+ * \return Proximity value from 0.0 (touching) to 1.0 (far away), defaults to 0.0 .
+ * \see Trait::PROXIMITY
  */
 FL_EXPORT extern double event_proximity();
 
@@ -308,21 +313,81 @@ FL_EXPORT extern State event_state();
 
 /**
  * \brief Returns the state change that triggered the event.
- * \return State flags that changed to trigger this event
+ * \return a state with one bit set for the action that triggered this event
  */
 FL_EXPORT extern State event_trigger();
-/// @}
+
+/** @} */ // group fl_pen_events
+
+/**
+ \brief Bitwise OR operator for Trait enum.
+ \param lhs Left-hand side trait flags
+ \param rhs Right-hand side trait flags
+ \return Combined trait flags
+ */
+inline constexpr Trait operator|(Trait lhs, Trait rhs) {
+  return static_cast<Trait>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+
+/**
+ \brief Bitwise AND operator for Trait enum.
+ \param lhs Left-hand side trait flags
+ \param rhs Right-hand side trait flags
+ \return Intersection of trait flags
+ */
+inline constexpr Trait operator&(Trait lhs, Trait rhs) {
+  return static_cast<Trait>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+/**
+ \brief Bitwise OR assignment operator for Trait enum.
+ \param lhs Left-hand side trait flags (modified in place)
+ \param rhs Right-hand side trait flags
+ \return Reference to modified lhs
+ */
+inline Trait& operator|=(Trait& lhs, Trait rhs) {
+  lhs = lhs | rhs;
+  return lhs;
+}
+
+/*
+ \brief Bitwise OR operator for State enum.
+ \param lhs Left-hand side state flags
+ \param rhs Right-hand side state flags
+ \return Combined state flags
+ */
+inline constexpr State operator|(State lhs, State rhs) {
+  return static_cast<State>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+
+/*
+ \brief Bitwise AND operator for State enum.
+ \param lhs Left-hand side state flags
+ \param rhs Right-hand side state flags
+ \return Intersection of state flags
+ */
+inline constexpr State operator&(State lhs, State rhs) {
+  return static_cast<State>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+/*
+ \brief Bitwise OR assignment operator for State enum.
+ \param lhs Left-hand side state flags (modified in place)
+ \param rhs Right-hand side state flags
+ \return Reference to modified lhs
+ */
+inline State& operator|=(State& lhs, State rhs) {
+  lhs = lhs | rhs;
+  return lhs;
+}
+
+} // namespace Pen
+
+} // namespace Fl
+
 
 /*
  Resources:
-
- https://github.com/Fuzzyzilla/octotablet
- https://wiki.libsdl.org/SDL3/CategoryPen
- https://developer-docs.wacom.com/docs/overview/sdks/sdk-for-ink/
- https://learn.microsoft.com/en-us/windows/win32/tablet/mobile-pc-and-tablet-pc-samples
-  WM_POINTER..., GetPointerInfo, GetPointerFramePenInfoHistory
- https://github.com/linuxwacom/input-wacom/wiki/Device-IDs
- https://wayland.freedesktop.org/libinput/doc/latest/tablet-support.html
 
  Windows:
  1. Legacy WinTab API (Win2k), Wintab32.dll, wintab.h
@@ -332,14 +397,6 @@ FL_EXPORT extern State event_trigger();
  3. Pointer Input / WM_POINTER API (Win8), WM_POINTERUPDATE, GetPointerPenInfo
     https://learn.microsoft.com/windows/win32/inputmsg/wm-pointerupdate
       return WTInfo(0, 0, NULL) > 0; // Wintab check
-
- macOS:
- 1. Pointer Events: NSEventSubtypeTabletPoint NSEventSubtypeTabletProximity
-    https://developer.apple.com/documentation/appkit/nsevent/eventtype/tabletpoint?utm_source=chatgpt.com&language=objc
- 2. AppKit
-    https://developer.apple.com/documentation/appkit/nspressureconfiguration?changes=_7&language=objc&utm_source=chatgpt.com
- 3. Wacom Device Kit API
-    https://developer.wacom.com/en-us/developer-dashboard/downloads
 
  Linux:
  1. Low-level: evdev, /dev/input/event*, libevdev,
@@ -352,77 +409,10 @@ FL_EXPORT extern State event_trigger();
     https://wayland.app/protocols/tablet-v2
 
  SDL3:
- https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_pen.h
- https://wiki.libsdl.org/SDL3/CategoryPen
+    https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_pen.h
+    https://wiki.libsdl.org/SDL3/CategoryPen
 
  */
 
-/** @} */ // group fl_pen_events
-
-} // namespace Pen
-
-} // namespace Fl
-
-/**
- \brief Bitwise OR operator for Features enum.
- \param lhs Left-hand side feature flags
- \param rhs Right-hand side feature flags
- \return Combined feature flags
- */
-inline constexpr Fl::Pen::Features operator|(Fl::Pen::Features lhs, Fl::Pen::Features rhs) {
-  return static_cast<Fl::Pen::Features>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
-}
-
-/**
- \brief Bitwise AND operator for Features enum.
- \param lhs Left-hand side feature flags
- \param rhs Right-hand side feature flags
- \return Intersection of feature flags
- */
-inline constexpr Fl::Pen::Features operator&(Fl::Pen::Features lhs, Fl::Pen::Features rhs) {
-  return static_cast<Fl::Pen::Features>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
-}
-
-/**
- \brief Bitwise OR assignment operator for Features enum.
- \param lhs Left-hand side feature flags (modified in place)
- \param rhs Right-hand side feature flags
- \return Reference to modified lhs
- */
-inline Fl::Pen::Features& operator|=(Fl::Pen::Features& lhs, Fl::Pen::Features rhs) {
-  lhs = lhs | rhs;
-  return lhs;
-}
-
-/**
- \brief Bitwise OR operator for State enum.
- \param lhs Left-hand side state flags
- \param rhs Right-hand side state flags
- \return Combined state flags
- */
-inline constexpr Fl::Pen::State operator|(Fl::Pen::State lhs, Fl::Pen::State rhs) {
-  return static_cast<Fl::Pen::State>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
-}
-
-/**
- \brief Bitwise AND operator for State enum.
- \param lhs Left-hand side state flags
- \param rhs Right-hand side state flags
- \return Intersection of state flags
- */
-inline constexpr Fl::Pen::State operator&(Fl::Pen::State lhs, Fl::Pen::State rhs) {
-  return static_cast<Fl::Pen::State>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
-}
-
-/**
- \brief Bitwise OR assignment operator for State enum.
- \param lhs Left-hand side state flags (modified in place)
- \param rhs Right-hand side state flags
- \return Reference to modified lhs
- */
-inline Fl::Pen::State& operator|=(Fl::Pen::State& lhs, Fl::Pen::State rhs) {
-  lhs = lhs | rhs;
-  return lhs;
-}
 
 #endif // !Fl_core_pen_events_H

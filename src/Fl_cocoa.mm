@@ -72,6 +72,9 @@ extern int fl_send_system_handlers(void *e);
 // converting cr lf converter function
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+extern bool fl_cocoa_tablet_handler(NSEvent *theEvent);
+#endif
 static void clipboard_check(void);
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins);
@@ -627,6 +630,10 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
            endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation;
 #endif
 - (BOOL)did_view_resolution_change;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+- (void)tabletProximity:(NSEvent *)theEvent;
+- (void)tabletPoint:(NSEvent *)theEvent;
+#endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r;
 - (void)reset_aux_bitmap;
@@ -1059,11 +1066,27 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 
   fl_lock_function();
 
+  // Handle tablet proximity and point subevents
+  if (   ([theEvent type] != NSEventTypeMouseEntered)  // does not have a subtype
+      && ([theEvent type] != NSEventTypeMouseExited) ) // does not have a subtype
+  {
+    if (   ([theEvent subtype] == NSEventSubtypeTabletPoint)
+        || ([theEvent subtype] == NSEventSubtypeTabletProximity) )
+    {
+      if (fl_cocoa_tablet_handler(theEvent)) {
+        fl_unlock_function();
+        return;
+      }
+      // else fall through into mouse event handling
+    }
+  }
+
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   if (!window || !window->shown() ) {
     fl_unlock_function();
     return;
   }
+
   NSPoint pos = [theEvent locationInWindow];
   float s = Fl::screen_driver()->scale(0);
   pos.x /= s; pos.y /= s;
@@ -1157,6 +1180,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 
   return;
 }
+
 
 @interface FLTextView : NSTextView // this subclass is only needed under OS X < 10.6
 {
@@ -2589,6 +2613,18 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (void)mouseExited:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
 }
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+- (void)tabletProximity:(NSEvent *)theEvent {
+  fl_lock_function();
+  fl_cocoa_tablet_handler(theEvent);
+  fl_unlock_function();
+}
+- (void)tabletPoint:(NSEvent *)theEvent {
+  fl_lock_function();
+  fl_cocoa_tablet_handler(theEvent);
+  fl_unlock_function();
+}
+#endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 - (void)updateTrackingAreas {
   if (fl_mac_os_version >= 100500) {

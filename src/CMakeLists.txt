@@ -371,7 +371,6 @@ elseif(APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
-    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_get_key_mac.cxx
     drivers/Darwin/fl_macOS_platform_init.cxx
   )
@@ -627,6 +626,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   set(MMFILES
     Fl_cocoa.mm
     drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
+    drivers/Cocoa/Fl_Cocoa_Pen_Events.mm
     Fl_Native_File_Chooser_MAC.mm
     Fl_MacOS_Sys_Menu_Bar.mm
   )

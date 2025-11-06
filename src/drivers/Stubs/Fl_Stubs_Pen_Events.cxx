@@ -35,29 +35,32 @@ namespace Pen {
 
 using namespace Fl::Pen;
 
-Features Fl::Pen::features() { return NONE; }
 
-void Fl::Pen::subscribe(Fl_Widget*, bool) { }
+Trait Fl::Pen::driver_traits() { return static_cast<Trait>(0); }
 
-void Fl::Pen::unsubscribe(Fl_Widget*) { }
+Trait Fl::Pen::pen_traits(Fl_Window *window) { return static_cast<Trait>(0); }
 
-void Fl::Pen::grab(Fl_Widget*) { }
+void Fl::Pen::subscribe(Fl_Widget* widget) { }
+
+void Fl::Pen::unsubscribe(Fl_Widget* widget) { }
+
+void Fl::Pen::grab(Fl_Widget* widget) { }
 
 void Fl::Pen::release() { }
 
-double Fl::Pen::event_x() { return static_cast<double>(Fl::event_x()); }
+double Fl::Pen::event_x() { return 0.0; }
 
-double Fl::Pen::event_y() { return static_cast<double>(Fl::event_y()); }
+double Fl::Pen::event_y() { return 0.0; }
 
-double Fl::Pen::event_x_root() { return static_cast<double>(Fl::event_x_root()); }
+double Fl::Pen::event_x_root() { return 0.0; }
 
-double Fl::Pen::event_y_root() { return static_cast<double>(Fl::event_y_root()); }
+double Fl::Pen::event_y_root() { return 0.0; }
 
-int Fl::Pen::event_id() { return -1; }
+int Fl::Pen::event_id() { return 0; }
 
-double Fl::Pen::event_pressure() { return 0.0; }
+double Fl::Pen::event_pressure() { return 1.0; }
 
-double Fl::Pen::event_tangential_pressure() { return 0.0; }
+double Fl::Pen::event_barrel_pressure() { return 0.0; }
 
 double Fl::Pen::event_tilt_x() { return 0.0; }
 
@@ -67,7 +70,6 @@ double Fl::Pen::event_twist() { return 0.0; }
 
 double Fl::Pen::event_proximity() { return 0.0; }
 
-State Fl::Pen::event_state() { return static_cast<State>(0); }
+State Fl::Pen::event_state();
 
-State Fl::Pen::event_trigger() { return static_cast<State>(0); }
-
+State Fl::Pen::event_trigger();
