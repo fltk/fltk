@@ -1568,14 +1568,6 @@ static const struct xdg_toplevel_listener xdg_toplevel_listener = {
   .configure = xdg_toplevel_configure,
 };
 
-static void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, uint32_t serial)
-{
-  xdg_surface_ack_configure(xdg_surface, serial);
-}
-
-static const struct xdg_surface_listener xdg_surface_listener = {
-    .configure = xdg_surface_configure,
-};
 
 static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
                                              int& Wfullscreen, int& Hfullscreen,
@@ -1589,12 +1581,11 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   struct wl_surface *wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
   wl_surface_set_opaque_region(wl_surface, NULL);
   struct xdg_surface *xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface);
-  xdg_surface_add_listener(xdg_surface, &xdg_surface_listener, NULL);
   struct xdg_toplevel *xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
   struct configure_s data = {0, 0, 0};
   xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &data);
   xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
-  wl_surface_commit(wl_surface);
+  wl_surface_commit(wl_surface); // necessary under KWin
   while (data.state != XDG_TOPLEVEL_STATE_FULLSCREEN)
     wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   Wfullscreen = data.W;
@@ -1608,7 +1599,7 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
     xdg_toplevel_add_listener(xdg_toplevel2, &xdg_toplevel_listener, &data2);
     xdg_toplevel_set_parent(xdg_toplevel2, xdg_toplevel);
     xdg_toplevel_set_maximized(xdg_toplevel2);
-    wl_surface_commit(wl_surface2);
+    wl_surface_commit(wl_surface2); // necessary under KWin
     while (data2.state != XDG_TOPLEVEL_STATE_MAXIMIZED)
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
     Wworkarea = data2.W;
