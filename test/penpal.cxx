@@ -21,8 +21,10 @@
 // A second application window is itself yet another canvas.
 
 // We can test if the events are delivered to the right receiver, if the
-// mouse and pen offsets are correct. The pen implementation will also react
-// to pen pressure and angles.
+// mouse and pen offsets are correct. The pen implementation also reacts
+// to pen pressure and angles. If handle() returns 1 when receiving
+// Fl::Pen::ENTER, the event handler should not send any mouse events until
+// Fl::Pen::LEAVE.
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -37,7 +39,7 @@ class CanvasInterface {
   bool first_draw_ { true };
   Fl_Offscreen offscreen_ { 0 };
   Fl_Color color_ { 1 };
-  enum { NONE, HOVER, DRAW } overlay_ { NONE };
+  enum { NONE, HOVER, DRAW, PEN_HOVER, PEN_DRAW } overlay_ { NONE };
   int ov_x_ { 0 };
   int ov_y_ { 0 };
 public:
@@ -49,10 +51,32 @@ public:
   int cv_handle(int event);
   void cv_draw();
   void cv_paint();
+  void cv_pen_paint();
 };
 
 int CanvasInterface::cv_handle(int event) {
   switch (event) {
+    // Event handling for pen events:
+    case Fl::Pen::ENTER:
+      color_++;
+      if (color_ > 6) color_ = 1;
+      /* fall through */
+    case Fl::Pen::HOVER:
+      overlay_ = PEN_HOVER;
+      ov_x_ = Fl::event_x();
+      ov_y_ = Fl::event_y();
+      widget_->redraw();
+      return 1;
+    case Fl::Pen::TOUCH: /* fall through */
+    case Fl::Pen::DRAW:
+      overlay_ = PEN_DRAW;
+      ov_x_ = Fl::event_x();
+      ov_y_ = Fl::event_y();
+      cv_paint();
+      widget_->redraw();
+      return 1;
+    case Fl::Pen::LIFT: return 1;
+    case Fl::Pen::LEAVE: overlay_ = NONE; widget_->redraw(); return 1;
     // Event handling for mouse events:
     case FL_ENTER:
       color_++;
@@ -74,7 +98,6 @@ int CanvasInterface::cv_handle(int event) {
       return 1;
     case FL_RELEASE: return 1;
     case FL_LEAVE: overlay_ = NONE; widget_->redraw(); return 1;
-
   }
   return 0;
 }
@@ -90,15 +113,26 @@ void CanvasInterface::cv_draw() {
   }
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   fl_copy_offscreen(dx, dy, widget_->w(), widget_->h(), offscreen_, 0, 0);
+
+  // Preset values for overlay
+  int r = 10;
+  if (overlay_ == PEN_DRAW)
+    r = static_cast<int>(32.0 * Fl::Pen::event_pressure());
+  fl_color(FL_BLACK);
   switch (overlay_) {
     case NONE: break;
+    case PEN_HOVER:
+      fl_color(FL_RED);
+      /* fall through */
     case HOVER:
-      fl_color(FL_BLACK);
       fl_xyline(ov_x_-10, ov_y_, ov_x_+10);
       fl_yxline(ov_x_, ov_y_-10, ov_y_+10);
       break;
+    case PEN_DRAW:
+      fl_color(FL_RED);
+      /* fall through */
     case DRAW:
-      fl_arc(ov_x_-10, ov_y_-10, 20, 20, 0, 360);
+      fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
       break;
       break;
   }
@@ -110,6 +144,16 @@ void CanvasInterface::cv_paint() {
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   fl_begin_offscreen(offscreen_);
   fl_draw_circle(Fl::event_x()-dx-12, Fl::event_y()-dy-12, 24, color_);
+  fl_end_offscreen();
+}
+
+void CanvasInterface::cv_pen_paint() {
+  if (!offscreen_)
+    return;
+  int r = static_cast<int>(32.0 * Fl::Pen::event_pressure());
+  int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
+  fl_begin_offscreen(offscreen_);
+  fl_draw_circle(Fl::event_x()-dx-r, Fl::event_y()-dy-r, 2*r, color_);
   fl_end_offscreen();
 }
 

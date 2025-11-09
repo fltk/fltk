@@ -86,7 +86,7 @@ std::map<int, const char*> fl_eventnames = {
   { Fl::Pen::LEAVE, "Fl::Pen::LEAVE" },
   { Fl::Pen::TOUCH, "Fl::Pen::TOUCH" },
   { Fl::Pen::LIFT, "Fl::Pen::LIFT" },
-  { Fl::Pen::MOVE, "Fl::Pen::MOVE" },
+  { Fl::Pen::HOVER, "Fl::Pen::HOVER" },
   { Fl::Pen::DRAW, "Fl::Pen::DRAW" },
   { Fl::Pen::BUTTON_PUSH, "Fl::Pen::BUTTON_PUSH" },
   { Fl::Pen::BUTTON_RELEASE, "Fl::Pen::BUTTON_RELEASE" }

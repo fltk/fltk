@@ -156,7 +156,7 @@ enum Event {
   LIFT,
 
   /** Pen moved without touching the surface. */
-  MOVE,
+  HOVER,
 
   /** Pen moved while touching the surface. */
   DRAW,
