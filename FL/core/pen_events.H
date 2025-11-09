@@ -136,7 +136,10 @@ enum Event {
    */
   ENTER,
 
-  /** Pen left the widget area. */
+  /**
+   \brief Pen left the widget area.
+   No event values are set.
+   */
   LEAVE,
 
   /**
@@ -199,7 +202,8 @@ FL_EXPORT extern Trait pen_traits(Fl_Window *window);
 
 /**
  \brief Receive pen events when the pen is inside this widget, or all events.
- Multiple widgets can subscribe to pen events.
+ Multiple widgets can subscribe to pen events, but every widget must only
+ subscribe once.
  \param widget Widget to subscribe to pen events
  */
 FL_EXPORT extern void subscribe(Fl_Widget* widget);

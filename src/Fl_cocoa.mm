@@ -73,7 +73,8 @@ extern int fl_send_system_handlers(void *e);
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
-extern bool fl_cocoa_tablet_handler(NSEvent *theEvent);
+static bool cocoaTabletHandler(NSEvent *theEvent, bool lock);
+extern bool fl_cocoa_tablet_handler(NSEvent*, Fl_Window*);
 #endif
 static void clipboard_check(void);
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
@@ -1056,6 +1057,16 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
 #endif
 }
 
+
+static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
+{
+  if (lock) fl_lock_function();
+  auto theWindow = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
+  auto ret = fl_cocoa_tablet_handler(theEvent, theWindow);
+  if (lock) fl_unlock_function();
+  return ret;
+}
+
 /*
  * Cocoa Mouse Button Handler
  */
@@ -1073,7 +1084,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     if (   ([theEvent subtype] == NSEventSubtypeTabletPoint)
         || ([theEvent subtype] == NSEventSubtypeTabletProximity) )
     {
-      if (fl_cocoa_tablet_handler(theEvent)) {
+      if (cocoaTabletHandler(theEvent, false)) {
         fl_unlock_function();
         return;
       }
@@ -2615,14 +2626,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
 - (void)tabletProximity:(NSEvent *)theEvent {
-  fl_lock_function();
-  fl_cocoa_tablet_handler(theEvent);
-  fl_unlock_function();
+  cocoaTabletHandler(theEvent, true);
 }
 - (void)tabletPoint:(NSEvent *)theEvent {
-  fl_lock_function();
-  fl_cocoa_tablet_handler(theEvent);
-  fl_unlock_function();
+  cocoaTabletHandler(theEvent, true);
 }
 #endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
