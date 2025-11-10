@@ -361,7 +361,7 @@ public:
 
   void size_range(int minw, int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0);
 
-  uchar get_size_range(int *minw, int *minh, int *maxw=NULL, int *maxh=NULL, int *dw=NULL, int *dh=NULL, int *aspect=NULL);
+  uchar get_size_range(int *minw, int *minh, int *maxw=NULL, int *maxh=NULL, int *dw=NULL, int *dh=NULL, int *aspect=NULL) const;
 
   /** See void Fl_Window::label(const char*)   */
   const char* label() const     {return Fl_Widget::label();}
@@ -431,7 +431,8 @@ public:
     ). You can tell if a window is iconified with (w->shown()
     && !w->visible()).
   */
-  int shown() {return flx_ != 0;}
+  int shown() const { return flx_ != 0; }
+
   /**
     Puts the window on the screen. This has the side
     effect of opening the display, if not done before.
@@ -611,12 +612,12 @@ public:
 
   void shape(const Fl_Image* img);
   void shape(const Fl_Image& b);
-  const Fl_Image *shape();
+  const Fl_Image *shape() const;
   void draw_backdrop();
-  int screen_num();
+  int screen_num() const;
   void screen_num(int screen_num);
   static bool is_a_rescale();
-  fl_uintptr_t os_id();
+  fl_uintptr_t os_id() const;
 
   /**
     Sets a static flag whether the next window should be opened iconified.

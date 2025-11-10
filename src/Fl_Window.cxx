@@ -694,7 +694,7 @@ void Fl_Window::size_range(int minWidth, int minHeight,
 */
 uchar Fl_Window::get_size_range(int *minWidth, int *minHeight,
                                 int *maxWidth, int *maxHeight,
-                                int *deltaX, int *deltaY, int *aspectRatio) {
+                                int *deltaX, int *deltaY, int *aspectRatio) const {
   if (minWidth) *minWidth = minw_;
   if (minHeight) *minHeight = minh_;
   if (maxWidth) *maxWidth = maxw_;
@@ -892,7 +892,7 @@ int Fl_Window::is_resizable() {
 
   \since 1.4.0
  */
-int Fl_Window::screen_num() {
+int Fl_Window::screen_num() const {
   return pWindowDriver->screen_num();
 }
 
@@ -977,7 +977,7 @@ void Fl_Window::shape(const Fl_Image& img) {pWindowDriver->shape(&img);}
 
   \since 1.4.0
 */
-const Fl_Image* Fl_Window::shape() {return pWindowDriver->shape();}
+const Fl_Image* Fl_Window::shape() const {return pWindowDriver->shape();}
 
 /** Returns true when a window is being rescaled.
 
@@ -997,7 +997,7 @@ bool Fl_Window::is_a_rescale() {return Fl_Window_Driver::is_a_rescale_;}
 
   \since 1.4.0
 */
-fl_uintptr_t Fl_Window::os_id() { return pWindowDriver->os_id();}
+fl_uintptr_t Fl_Window::os_id() const { return pWindowDriver->os_id(); }
 
 /**
   Maximizes a top-level window to its current screen.
