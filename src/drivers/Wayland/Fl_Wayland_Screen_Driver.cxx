@@ -1590,8 +1590,7 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
     wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   Wfullscreen = data.W;
   Hfullscreen = data.H;
-  if (Wfullscreen && Hfullscreen && (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER ||
-                                     wl_list_length(&scr_driver->outputs) == 1)) {
+  if (Wfullscreen && Hfullscreen && wl_list_length(&scr_driver->outputs) == 1) {
     struct wl_surface *wl_surface2 = wl_compositor_create_surface(scr_driver->wl_compositor);
     struct xdg_surface *xdg_surface2 = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface2);
     struct xdg_toplevel *xdg_toplevel2 = xdg_surface_get_toplevel(xdg_surface2);
@@ -1648,30 +1647,20 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
  One way for a client to discover the work area size of a display is to get the configured size
  of a maximized window on that display. FLTK didn't find a way to control in general
- on what display the compositor puts a maximized window. One procedure which works
- under Mutter or with a single display was found. In this procedure, we create first a fullscreen
- window on a given display and then we create a maximized window made a child of the
- fullscreen one. Under mutter, this puts reliably the maximized window on the same
- display as the fullscreen one, giving the size of that display's work area.
- Therefore, FLTK computes an exact work area size only with MUTTER or when the system
- contains a single display. That's also done by function compute_full_and_maximized_areas().
-
- The procedure to compute the work area size also reveals which display is primary:
- that with a work area vertically smaller than the display's pixel height. This allows
- to place the primary display as FLTK display #0. Again, FLTK guarantees to identify
- the primary display only under MUTTER.
+ on what display the compositor puts a maximized window. Therefore, FLTK computes an exact
+ work area size only when the system contains a single display. We create first a fullscreen
+ window on the display and then we create a maximized window made a child of the
+ fullscreen one and record its configured size. That's also done by function
+ compute_full_and_maximized_areas().
  */
 
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // important after screen removal
-  Fl_Wayland_Screen_Driver::output *output, *mainscreen = NULL;
+  Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
     bool found_workarea = compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea);
-    if (found_workarea && !mainscreen) {
-      mainscreen = output;
-    } else found_workarea = false;
     if (Wfullscreen && Hfullscreen) { // skip sway which puts 0 there
       output->width = Wfullscreen * output->wld_scale; // pixels
       output->height = Hfullscreen * output->wld_scale; // pixels
@@ -1681,18 +1670,6 @@ void Fl_Wayland_Screen_Driver::init_workarea()
         workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
         workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
       }
-    }
-  }
-  if (mainscreen) { // put mainscreen first in list of screens
-    wl_list_remove(&mainscreen->link);
-    wl_list_insert(&outputs, &mainscreen->link);
-  } else {
-    wl_list_for_each(output, &outputs, link) { // find first screen in list
-      workarea_xywh[0] = output->x; // pixels
-      workarea_xywh[1] = output->y; // pixels
-      workarea_xywh[2] = output->width; // pixels
-      workarea_xywh[3] = output->height; // pixels
-      break;
     }
   }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
