@@ -17,9 +17,11 @@
 // Note: this file contains platform specific code and will therefore
 // not be processed by doxygen (see Doxyfile.in).
 
-#  ifndef FLTK_CONSOLIDATE_MOTION
+// Default for FLTK_CONSOLIDATE_MOTION is 0 (OFF) since FLTK 1.4.0
+
+#ifndef FLTK_CONSOLIDATE_MOTION
 #  define FLTK_CONSOLIDATE_MOTION 0
-#  endif
+#endif
 
 /**** Define this if your keyboard lacks a backspace key... ****/
 /* #define BACKSPACE_HACK 1 */
@@ -95,16 +97,14 @@ static bool have_xfixes = false;
 #  endif /* USE_POLL */
 
 extern Fl_Widget *fl_selection_requestor;
+extern Fl_Window *fl_xmousewin;
 
 static void open_display_i(Display *d); // open display (internal)
-
-
 extern int fl_send_system_handlers(void *e);
 
 #if FLTK_CONSOLIDATE_MOTION
-static Fl_Window* send_motion;
+static Fl_Window *send_motion;
 #endif
-extern Fl_Window* fl_xmousewin;
 
 static bool in_a_window; // true if in any of our windows, even destroyed ones
 static void do_queued_events() {
@@ -117,7 +117,9 @@ static void do_queued_events() {
     fl_handle(xevent);
   }
   // we send FL_LEAVE only if the mouse did not enter some other window:
-  if (!in_a_window) Fl::handle(FL_LEAVE, 0);
+  if (!in_a_window) {
+    Fl::handle(FL_LEAVE, 0);
+  }
 #if FLTK_CONSOLIDATE_MOTION
   else if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
@@ -126,10 +128,10 @@ static void do_queued_events() {
 #endif
 }
 
-
 // This is never called with time_to_wait < 0.0:
 // It should return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.
+
 int Fl_X11_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
   // OpenGL and other broken libraries call XEventsQueued
   // unnecessarily and thus cause the file descriptor to not be ready,
@@ -327,7 +329,6 @@ extern "C" {
     return 0;
   }
 }
-
 
 #if !(USE_XFT || FLTK_USE_CAIRO)
 extern char *fl_get_font_xfld(int fnum, int size);
@@ -1013,9 +1014,9 @@ static const unsigned int event_state_mask =
   Button1Mask | Button2Mask | Button3Mask;
 
 static void set_event_xy(Fl_Window *win) {
-#  if FLTK_CONSOLIDATE_MOTION
+#if FLTK_CONSOLIDATE_MOTION
   send_motion = 0;
-#  endif
+#endif
   float s = 1;
 #if USE_XFT || FLTK_USE_CAIRO
   s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
@@ -1026,10 +1027,10 @@ static void set_event_xy(Fl_Window *win) {
   Fl::e_y       = fl_xevent->xbutton.y/s;
   Fl::e_state   = ((fl_xevent->xbutton.state & event_state_mask) << 16) | xbutton_state;
   fl_event_time = fl_xevent->xbutton.time;
-#  ifdef __sgi
+#ifdef __sgi
   // get the meta key off PC keyboards:
   if (fl_key_vector[18]&0x18) Fl::e_state |= FL_META;
-#  endif
+#endif
   // turn off is_click if enough time or mouse movement has passed:
   if (abs(Fl::e_x_root-px)+abs(Fl::e_y_root-py) > 3 ||
       fl_event_time >= ptime+1000)
@@ -1660,9 +1661,7 @@ int fl_handle(const XEvent& thisevent)
          the source supports 1, 2 or 3 data types available at data.l[2,3,4]
        }
        */
-#if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
       in_a_window = true;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
@@ -1712,9 +1711,7 @@ int fl_handle(const XEvent& thisevent)
       break;
 
     } else if (message == fl_XdndPosition) {
-#if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
       in_a_window = true;
       fl_dnd_source_window = data[0];
       float s = 1;
@@ -1749,9 +1746,7 @@ int fl_handle(const XEvent& thisevent)
       break;
 
     } else if (message == fl_XdndDrop) {
-#if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
       in_a_window = true;
       fl_dnd_source_window = data[0];
       fl_event_time = data[2];
@@ -2085,9 +2080,7 @@ int fl_handle(const XEvent& thisevent)
       return 0;
     }
 
-#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     break;
   } // ButtonPress
@@ -2116,9 +2109,7 @@ int fl_handle(const XEvent& thisevent)
     if (mb == 5) xbutton_state &= ~FL_BUTTON5; // clear internal button state
     event = FL_RELEASE;
 
-#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     break;
   } // ButtonRelease
@@ -2168,13 +2159,15 @@ int fl_handle(const XEvent& thisevent)
   case MotionNotify:
     set_event_xy(window);
     in_a_window = true;
-#  if FLTK_CONSOLIDATE_MOTION
-    send_motion = fl_xmousewin = window;
+    fl_xmousewin = window;
+
+#if FLTK_CONSOLIDATE_MOTION
+    send_motion = window;
     return 0;
-#  else
+#endif // FLTK_CONSOLIDATE_MOTION
+
     event = FL_MOVE;
     break;
-#  endif
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
@@ -2183,9 +2176,7 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
 
-#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
-#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     { XIMStyles *xim_styles = NULL;
       if(!Fl_X11_Screen_Driver::xim_im || XGetIMValues(Fl_X11_Screen_Driver::xim_im, XNQueryInputStyle, &xim_styles, NULL, NULL)) {
@@ -2199,9 +2190,7 @@ int fl_handle(const XEvent& thisevent)
     if (xevent.xcrossing.detail == NotifyInferior) break;
     set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
-//#if FLTK_CONSOLIDATE_MOTION // this needs to be commented out in 1.4 and above (see #1295)
     fl_xmousewin = 0;
-//#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = false; // make do_queued_events produce FL_LEAVE event
     return 0;
 
