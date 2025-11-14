@@ -131,7 +131,8 @@ Features will be added as the widget matures.
 │      │
 │      │    *** Special RGB Color ***
 │      │
-│      └──  ESC [ 38 ; Red ; Grn ; Blue m   - where Red,Grn,Blu are decimal (0-255)
+│      ├──  ESC [ 38 ; 2; Red ; Grn ; Blue m   - Foreground 8-bit Red,Grn,Blu values (in decimal 0-255)
+│      └──  ESC [ 48 ; 2; Red ; Grn ; Blue m   - Background 8-bit Red,Grn,Blu values (in decimal 0-255)
 │
 │    ESC[s     - save cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
 │    ESC[u     - rest cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
