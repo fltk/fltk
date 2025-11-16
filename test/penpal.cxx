@@ -189,9 +189,8 @@ public:
 };
 
 
-int main(int argc, char **argv) {
-  Fl::Pen::State s = Fl::Pen::State::BUTTON0 | Fl::Pen::State::BUTTON2;
-
+int main(int argc, char **argv)
+{
   auto window = new Fl_Window(100, 100, 640, 220);
 
   auto canvas_widget_0 = new CanvasWidget( 10, 10, 200, 200, "CV1");

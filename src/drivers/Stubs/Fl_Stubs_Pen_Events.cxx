@@ -70,6 +70,6 @@ double Fl::Pen::event_twist() { return 0.0; }
 
 double Fl::Pen::event_proximity() { return 0.0; }
 
-State Fl::Pen::event_state();
+State Fl::Pen::event_state() { return Fl::Pen::State::NONE; }
 
-State Fl::Pen::event_trigger();
+State Fl::Pen::event_trigger() { return Fl::Pen::State::NONE; }
