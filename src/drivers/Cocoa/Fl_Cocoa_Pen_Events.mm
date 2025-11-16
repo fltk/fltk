@@ -91,6 +91,24 @@ static std::shared_ptr<Subscriber> pushed_;
 static std::shared_ptr<Subscriber> below_pen_;
 static NSPointingDeviceType device_type_ { NSPointingDeviceTypePen };
 
+// The trait list keeps track of traits for every pen ID that appears while
+// handling events.
+// AppKit does not tell us what traits are available per pen or tablet, so
+// we use the first 5 motion events to discover event values that are not
+// the default value, and enter that knowledge into the traits database.
+typedef std::map<int, Fl::Pen::Trait> TraitList;
+static TraitList trait_list_;
+static int trait_countdown_ { 5 };
+static int current_pen_id_ { -1 };
+static Fl::Pen::Trait current_pen_trait_ { Fl::Pen::Trait::DRIVER_AVAILABLE };
+static Fl::Pen::Trait driver_traits_ {
+  Fl::Pen::Trait::DRIVER_AVAILABLE | Fl::Pen::Trait::PEN_ID |
+  Fl::Pen::Trait::ERASER | Fl::Pen::Trait::PRESSURE |
+  Fl::Pen::Trait::BARREL_PRESSURE | Fl::Pen::Trait::TILT_X |
+  Fl::Pen::Trait::TILT_Y | Fl::Pen::Trait::TWIST
+  // Notably missing: PROXIMITY
+};
+
 struct EventData {
   double x { 0.0 };
   double y { 0.0 };
@@ -101,7 +119,7 @@ struct EventData {
   double pressure { 1.0 };
   double barrel_pressure { 0.0 };
   double twist { 0.0 };
-  int device_id { 0 };
+  int pen_id { 0 };
   Fl::Pen::State state { (Fl::Pen::State)0 };
   Fl::Pen::State trigger { (Fl::Pen::State)0 };
 };
@@ -125,14 +143,20 @@ struct EventData e;
 using namespace Fl::Pen;
 
 
-// TODO: implement this
+// Return a bit for everything that AppKit could return.
 Trait Fl::Pen::driver_traits() {
-  return Trait::DRIVER_AVAILABLE /* | and more!  */ ;
+  return driver_traits_;
 }
 
-// TODO: implement this
-Trait Fl::Pen::pen_traits(Fl_Window *window) {
-  return Trait::DRIVER_AVAILABLE /* | and more as we discover them!  */ ;
+Trait Fl::Pen::pen_traits(int pen_id) {
+  auto it = trait_list_.find(pen_id);
+  if (pen_id == 0)
+    return current_pen_trait_;
+  if (it == trait_list_.end()) {
+    return Trait::DRIVER_AVAILABLE;
+  } else {
+    return it->second;
+  }
 }
 
 void Fl::Pen::subscribe(Fl_Widget* widget) {
@@ -157,7 +181,7 @@ double Fl::Pen::event_x_root() { return e.rx; }
 
 double Fl::Pen::event_y_root() { return e.ry; }
 
-int Fl::Pen::event_id() { return e.device_id; }
+int Fl::Pen::event_pen_id() { return e.pen_id; }
 
 double Fl::Pen::event_pressure() { return e.pressure; }
 
@@ -258,6 +282,19 @@ static int pen_send(Fl_Widget *w, int event, State trigger, bool &copied) {
 }
 
 /*
+ Send an event to all subscribers.
+ */
+static int pen_send_all(int event, State trigger) {
+  bool copied = false;
+  // use local value because handler may still change ev values
+  for (auto &it: subscriber_list_) {
+    auto w = it.second->widget();
+    if (w)
+      pen_send(w, event, trigger, copied);
+  }
+}
+
+/*
  Convert the NSEvent button number to Fl::Pen::State,
  */
 static State button_to_trigger(NSInteger button, bool down)
@@ -281,7 +318,6 @@ static State button_to_trigger(NSInteger button, bool down)
  Handle events coming from Cocoa.
  TODO: clickCount: store in Fl::event_clicks()
  capabilityMask is useless, because it is vendor defined
- TODO: enteringProximity: TabletProximityType and Subtype
  */
 bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
 {
@@ -325,11 +361,7 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     // TODO: verify actual values: root coordinates may be used for popup windows
     ev.rx = ev.x*s + eventWindow->x();
     ev.ry = ev.y*s + eventWindow->y();
-    if (is_proximity) {
-      // untested: use pointingDeviceID or pointingDeviceSerialNumber instead?
-      ev.device_id = (int)[event vendorID];
-      device_type_ = [event pointingDeviceType];
-    } else {
+    if (!is_proximity) {
       // Get the pressure data.
       ev.pressure = [event pressure];
       ev.barrel_pressure = [event tangentialPressure];
@@ -339,6 +371,7 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
       ev.tilt_y =  tilt.y;
       // Other stuff
       ev.twist = [event rotation]; // TODO: untested
+      // ev.proximity = [event proximity]; // not supported in AppKit
     }
     if (device_type_ == NSPointingDeviceTypeEraser) {
       if ([event buttonMask] & 1)
@@ -357,12 +390,52 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     if ([event buttonMask] & 0x0010) ev.state |= State::BUTTON3;
     // printf("0x%08x\n", [event buttonMask]);
   }
+  if (is_proximity) {
+    ev.pen_id = (int)[event vendorID];
+    device_type_ = [event pointingDeviceType];
+  }
+  if (type == NSEventTypeTabletProximity) {
+    if ([event isEnteringProximity]) {
+      // Check if this is the first time we see this pen, or if the pen changed
+      if (current_pen_id_ != ev.pen_id) {
+        current_pen_id_ = ev.pen_id;
+        auto it = trait_list_.find(current_pen_id_);
+        if (it == trait_list_.end()) { // not found, create a new entry
+          trait_list_[current_pen_id_] = Trait::DRIVER_AVAILABLE;
+          trait_countdown_ = 5;
+          pen_send_all(Fl::Pen::DETECTED, State::NONE);
+          // printf("IN RANGE, NEW PEN\n");
+        } else {
+          pen_send_all(Fl::Pen::CHANGED, State::NONE);
+          // printf("IN RANGE, CHANGED PEN\n");
+        }
+        trait_list_[0] = trait_list_[current_pen_id_];  // set current pen traits
+      } else {
+        pen_send_all(Fl::Pen::IN_RANGE, State::NONE);
+        // printf("IN RANGE\n");
+      }
+    } else {
+      pen_send_all(Fl::Pen::OUT_OF_RANGE, State::NONE);
+      // printf("OUT OF RANGE\n");
+    }
+  }
 
   Fl_Widget *receiver = nullptr;
   bool pushed = false;
   bool event_data_copied = false;
 
   if (has_position) {
+    if (trait_countdown_) {
+      trait_countdown_--;
+      if (ev.tilt_x != 0.0) current_pen_trait_ |= Trait::TILT_X;
+      if (ev.tilt_y != 0.0) current_pen_trait_ |= Trait::TILT_Y;
+      if (ev.pressure != 1.0) current_pen_trait_ |= Trait::PRESSURE;
+      if (ev.barrel_pressure != 0.0) current_pen_trait_ |= Trait::BARREL_PRESSURE;
+      if (ev.pen_id != 0) current_pen_trait_ |= Trait::PEN_ID;
+      if (ev.twist != 0.0) current_pen_trait_ |= Trait::TWIST;
+      //if (ev.proximity != 0) current_pen_trait_ |= Trait::PROXIMITY;
+      trait_list_[current_pen_id_] = current_pen_trait_;
+    }
     fl_xmousewin = eventWindow;
     if (pushed_ && pushed_->widget() && (Fl::pushed() == pushed_->widget())) {
       receiver = pushed_->widget();
@@ -381,7 +454,8 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
         }
         below_pen_ = nullptr;
         if (bpen_now) {
-          if (pen_send(bpen_now, Fl::Pen::ENTER, State::NONE, event_data_copied)) {
+          State state = (device_type_ == NSPointingDeviceTypeEraser) ? State::ERASER_HOVERS : State::TIP_HOVERS;
+          if (pen_send(bpen_now, Fl::Pen::ENTER, state, event_data_copied)) {
             below_pen_ = subscriber_list_[bpen_now];
             Fl::belowmouse(bpen_now);
           }
@@ -393,7 +467,7 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
         return 0;
     }
   } else {
-    // TODO: handle non-position events (proximity)
+    // Anything to do here?
   }
 
   if (!receiver)

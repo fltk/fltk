@@ -44,12 +44,12 @@ namespace Pen {
  drawing directly onto a screen.
 
  To receive pen input, call Fl::Pen::subscribe() for one or more widgets. The
- widget will receive a Fl::Pen::ENTER event when the stylus enters the widget.
- By returning 1 to pen events, the user can ask for more detailed events.
+ widget will receive a Fl::Pen::ENTER event when the stylus enters the widget
+ area. By returning 1 to Fl::Pen::ENTER, all further pen events are sent to
+ this widget, and no mouse events are generated until Fl::Pen::LEAVE.
 
- Returning 0 form the event handler indicates that the event was not handled.
- FLTK may convert the tablet event into a mouse event and resend it to
- the relevant widget.
+ Returning 0 Fl::Pen::ENTER tells FLTK to supress further pen events until
+ Fl::Pen::LEAVE, and convert them into mouse events instead.
 
  @{
  */
@@ -59,6 +59,8 @@ namespace Pen {
  This is used in Fl::Pen::driver_traits() and Fl::Pen::pen_traits().
  */
 enum class Trait : uint32_t {
+  /// No bits set
+  NONE              = 0x0000,
   /// Set if FLTK supports tablets and pens on this platform
   DRIVER_AVAILABLE  = 0x0001,
   /// Set after the system detected a pen, stylus, or tablet. This bit may not be
@@ -67,7 +69,7 @@ enum class Trait : uint32_t {
   /// If set, this is a digitizer for a display; if clear, this is a standalone tablet
   DISPLAY           = 0x0004,
   /// Driver provides different device IDs for different pens
-  DEVICE_ID         = 0x0008,
+  PEN_ID            = 0x0008,
   /// Pen may have an eraser tip
   ERASER            = 0x0010,
   /// Pen returns a pressure value
@@ -143,7 +145,7 @@ enum class State : uint32_t {
   ANY_DOWN          = BUTTON0 | BUTTON1 | BUTTON2 | BUTTON3 | TIP_DOWN | ERASER_DOWN,
 };
 
-/*
+/**
  \brief Bitwise OR operator for State enum.
  \param lhs Left-hand side state flags
  \param rhs Right-hand side state flags
@@ -153,7 +155,7 @@ inline constexpr State operator|(State lhs, State rhs) {
   return static_cast<State>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
 }
 
-/*
+/**
  \brief Bitwise AND operator for State enum.
  \param lhs Left-hand side state flags
  \param rhs Right-hand side state flags
@@ -163,7 +165,7 @@ inline constexpr State operator&(State lhs, State rhs) {
   return static_cast<State>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
 }
 
-/*
+/**
  \brief Bitwise OR assignment operator for State enum.
  \param lhs Left-hand side state flags (modified in place)
  \param rhs Right-hand side state flags
@@ -182,37 +184,47 @@ inline State& operator|=(State& lhs, State rhs) {
  */
 enum Event {
   /**
-   A pen was detected for the first time for this subscriber.
+   Pen entered the proximity of the tablet with a new pen.
    */
   DETECTED = 0x1000,
 
   /**
+   Pen entered the proximity of the tablet with a known, but changed pen.
    User changed to a different pen (event_id() > 0) or the pen or tablet
    was disconnected (event_id() == -1). Pen IDs, if supported, are assigned by
    the tablet manufacturer.
-
-   Return 1 to receive ENTER and LEAVE events.
    */
   CHANGED,
+
+  /**
+   Pen entered the proximity of the tablet with a known pen.
+   */
+  IN_RANGE,
+
+  /**
+   Pen left the proximity of the tablet.
+   */
+  OUT_OF_RANGE,
 
   /**
    Pen entered the widget area, either by moving in x/y, or by
    a proximity change (pen gets closer to the surface).
    event_trigger() returns 0, TIP_HOVERS, or ERASER_HOVERS.
-   Return 1 to receive MOVE events.
    */
   ENTER,
 
   /**
-   \brief Pen left the widget area.
-   No event values are set.
+   If no button is pressed, indicates that the pen left the widget area.
+   While any pen button is held down, or the pen touches the surface,
+   Fl::pushed() is set, and the pushed widgets receives DRAG events, even
+   if the pen leaves the widget area. If all buttons are released outside the
+   widget area, a LEAVE event is sent as well as LIFT or BUTTON_RELEASE.
    */
   LEAVE,
 
   /**
    Pen went from hovering to touching the surface.
-   event_trigger() returns TIP_DOWN  or ERASER_DOWN.
-   Return 1 to receive DRAW events.
+   event_trigger() returns TIP_DOWN or ERASER_DOWN.
    */
   TOUCH,
 
@@ -222,10 +234,10 @@ enum Event {
   */
   LIFT,
 
-  /** Pen moved without touching the surface. */
+  /** Pen moved without touching the surface and no button is pressed. */
   HOVER,
 
-  /** Pen moved while touching the surface. */
+  /** Pen moved while touching the surface, or any button is pressed. */
   DRAW,
 
   /**
@@ -259,16 +271,37 @@ enum Event {
 FL_EXPORT extern Trait driver_traits();
 
 /**
+ \brief Return true if the corresponding bit is set in the driver traits.
+ \param[in] bits check for one or more trait bits
+ \return true if any bit is set
+ */
+inline bool driver_traits(Trait bits) {
+  return ((driver_traits() & bits) != Trait::NONE);
+}
+
+/**
  \brief Query traits of the current pen or stylus.
  The value returned by this function may change when pens change or when more
  information becomes known about the currently used pen.
- \param[in] window must be a mapped (shown, visible) window
+ \param[in] pen_id a now pen ID as returned from event_pen_id(),
+    or 0 for the current pen
  \return a bitfield of supported traits
  */
-FL_EXPORT extern Trait pen_traits(Fl_Window *window);
+FL_EXPORT extern Trait pen_traits(int pen_id = 0);
 
 /**
- \brief Receive pen events when the pen is inside this widget, or all events.
+ \brief Return true if the corresponding bit is set in the pen traits.
+ \param[in] bits check for one or more trait bits
+ \param[in] pen_id a now pen ID as returned from event_pen_id(),
+  or 0 for the current pen
+ \return true if any bit is set
+ */
+inline bool pen_traits(Trait bits, int pen_id = 0) {
+  return ((pen_traits() & bits) != Trait::NONE);
+}
+
+/**
+ \brief Receive a Pen::ENTER event when the pen moves inside this widget.
  Multiple widgets can subscribe to pen events, but every widget must only
  subscribe once.
  \param widget Widget to subscribe to pen events
@@ -276,7 +309,7 @@ FL_EXPORT extern Trait pen_traits(Fl_Window *window);
 FL_EXPORT extern void subscribe(Fl_Widget* widget);
 
 /**
- \brief Stop receiving pen events for this widget.
+ \brief Stop receiving Pen::ENTER for this widget.
  Deleting a widget will automatically unsubscribe it.
  \param widget Widget to unsubscribe from pen events
  */
@@ -291,7 +324,7 @@ FL_EXPORT extern void unsubscribe(Fl_Widget* widget);
 FL_EXPORT extern void grab(Fl_Widget* widget);
 
 /**
- * \brief Release pen event handling after grab().
+ \brief Release pen event handling after grab().
  */
 FL_EXPORT extern void release();
 
@@ -323,9 +356,9 @@ FL_EXPORT extern double event_y_root();
 /**
  \brief Returns the ID of the pen used in the last event.
  \return Unique pen identifier, or -1 if pen was removed, defaults to 0
- \see Trait::DEVICE_ID
+ \see Trait::PEN_ID
  */
-FL_EXPORT extern int event_id();
+FL_EXPORT extern int event_pen_id();
 
 /**
  \brief Returns the pressure between the tip or eraser and the surface.
@@ -360,39 +393,38 @@ FL_EXPORT extern double event_tilt_x();
 FL_EXPORT extern double event_tilt_y();
 
 /**
- * \brief Returns the pens axial rotation in degrees.
- * \return Twist angle in degrees, defaults to 0.0 .
- * \see Trait::TWIST
+ \brief Returns the pens axial rotation in degrees.
+ \return Twist angle in degrees, defaults to 0.0 .
+ \see Trait::TWIST
  */
 FL_EXPORT extern double event_twist();
 
 /**
- * \brief Returns the proximity of the pen to the surface between 0 and 1.
- *
- * A proximity of 0 is closest to the surface, 1 is farthest away.
- *
- * \return Proximity value from 0.0 (touching) to 1.0 (far away), defaults to 0.0 .
- * \see Trait::PROXIMITY
+ \brief Returns the proximity of the pen to the surface between 0 and 1.
+ A proximity of 0 is closest to the surface, 1 is farthest away.
+ \return Proximity value from 0.0 (touching) to 1.0 (far away), defaults to 0.0 .
+ \see Trait::PROXIMITY
  */
 FL_EXPORT extern double event_proximity();
 
 /**
- * \brief Returns the state of the various buttons and tips.
- * \return Current state flags (combination of State values)
+ \brief Returns the state of the various buttons and tips.
+ \return Current state flags (combination of State values)
  */
 FL_EXPORT extern State event_state();
 
 /**
- * \brief Return true if the corresponding bit is set in the event state.
- * \return true if any bit is set
+ \brief Return true if the corresponding bit is set in the event state.
+ \param[in] bits check for one or more event state bits
+ \return true if any bit is set
  */
 inline bool event_state(State bits) {
   return ((event_state() & bits) != State::NONE);
 }
 
 /**
- * \brief Returns the state change that triggered the event.
- * \return a state with one bit set for the action that triggered this event
+ \brief Returns the state change that triggered the event.
+ \return a state with one bit set for the action that triggered this event
  */
 FL_EXPORT extern State event_trigger();
 
@@ -429,7 +461,6 @@ FL_EXPORT extern State event_trigger();
  SDL3:
     https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_pen.h
     https://wiki.libsdl.org/SDL3/CategoryPen
-
  */
 
 

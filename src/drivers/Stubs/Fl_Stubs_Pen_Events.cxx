@@ -36,9 +36,9 @@ namespace Pen {
 using namespace Fl::Pen;
 
 
-Trait Fl::Pen::driver_traits() { return static_cast<Trait>(0); }
+Trait Fl::Pen::driver_traits() { return Trait::NONE; }
 
-Trait Fl::Pen::pen_traits(Fl_Window *window) { return static_cast<Trait>(0); }
+Trait Fl::Pen::pen_traits(int pen_id) { return Trait::NONE; }
 
 void Fl::Pen::subscribe(Fl_Widget* widget) { }
 
@@ -56,7 +56,7 @@ double Fl::Pen::event_x_root() { return 0.0; }
 
 double Fl::Pen::event_y_root() { return 0.0; }
 
-int Fl::Pen::event_id() { return 0; }
+int Fl::Pen::event_pen_id() { return 0; }
 
 double Fl::Pen::event_pressure() { return 1.0; }
 

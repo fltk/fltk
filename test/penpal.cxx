@@ -33,6 +33,11 @@
 #include <FL/fl_draw.H>
 #include <FL/names.h>
 
+//
+// The canvas interface implements incremental drawing and handles draw events.
+// It also implement pressure sensitive drawing with a pen or stylus.
+// And it implements an overlay plane that visualizes pen event data.
+//
 class CanvasInterface {
   Fl_Widget *widget_ { nullptr };
   bool in_window_ { false };
@@ -54,31 +59,45 @@ public:
   void cv_pen_paint();
 };
 
+//
+// Handle mouse and pen events.
+//
 int CanvasInterface::cv_handle(int event)
 {
   switch (event)
   {
     // Event handling for pen events:
-    case Fl::Pen::ENTER:
+    case Fl::Pen::ENTER: // Return 1 to receive all pen events and suppress mouse events
+      // Pen entered the widget area.
       color_++;
       if (color_ > 6) color_ = 1;
       /* fall through */
     case Fl::Pen::HOVER:
+      // Pen move over the surface without touching it.
       overlay_ = PEN_HOVER;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
       widget_->redraw();
       return 1;
-    case Fl::Pen::TOUCH: /* fall through */
+    case Fl::Pen::TOUCH:
+      // Pen tip or eraser just touched the surface.
+      /* fall through */
     case Fl::Pen::DRAW:
+      // Pen is dragged over the surface, or hovers with a button pressed.
       overlay_ = PEN_DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
       cv_pen_paint();
       widget_->redraw();
       return 1;
-    case Fl::Pen::LIFT: return 1;
-    case Fl::Pen::LEAVE: overlay_ = NONE; widget_->redraw(); return 1;
+    case Fl::Pen::LIFT:
+      // Pen was just lifted from the surface and is now hovering
+      return 1;
+    case Fl::Pen::LEAVE:
+      // The pen left the drawing area.
+      overlay_ = NONE;
+      widget_->redraw();
+      return 1;
 
     // Event handling for mouse events:
     case FL_ENTER:
@@ -91,7 +110,8 @@ int CanvasInterface::cv_handle(int event)
       ov_y_ = Fl::event_y();
       widget_->redraw();
       return 1;
-    case FL_PUSH: /* fall through */
+    case FL_PUSH:
+      /* fall through */
     case FL_DRAG:
       overlay_ = DRAW;
       ov_x_ = Fl::event_x();
@@ -99,13 +119,21 @@ int CanvasInterface::cv_handle(int event)
       cv_paint();
       widget_->redraw();
       return 1;
-    case FL_RELEASE: return 1;
-    case FL_LEAVE: overlay_ = NONE; widget_->redraw(); return 1;
+    case FL_RELEASE:
+      return 1;
+    case FL_LEAVE:
+      overlay_ = NONE;
+      widget_->redraw();
+      return 1;
   }
   return 0;
 }
 
-void CanvasInterface::cv_draw() {
+//
+// Canvas drawing copies the offscreen bitmap and then draws the overlays.
+//
+void CanvasInterface::cv_draw()
+{
   if (first_draw_) {
     first_draw_ = false;
     offscreen_ = fl_create_offscreen(widget_->w(), widget_->h());
@@ -138,11 +166,14 @@ void CanvasInterface::cv_draw() {
       fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
       fl_arc(ov_x_-r/2-40*Fl::Pen::event_tilt_x(),
              ov_y_-r/2-40*Fl::Pen::event_tilt_y(), r, r, 0, 360);
-      printf("%d\n", Fl::Pen::event_id());
+      // printf("%d\n", Fl::Pen::event_pen_id());
       break;
   }
 }
 
+//
+// Paint a circle with mouse events.
+//
 void CanvasInterface::cv_paint() {
   if (!offscreen_)
     return;
@@ -152,6 +183,10 @@ void CanvasInterface::cv_paint() {
   fl_end_offscreen();
 }
 
+//
+// Paint a circle with pen events. If the eraser is touching the surface,
+// draw a white circle.
+//
 void CanvasInterface::cv_pen_paint() {
   if (!offscreen_)
     return;
@@ -164,6 +199,9 @@ void CanvasInterface::cv_pen_paint() {
 }
 
 
+//
+// A drawing canvas, based on a minimal widget.
+//
 class CanvasWidget : public Fl_Widget, CanvasInterface {
 public:
   CanvasWidget(int x, int y, int w, int h, const char *l=nullptr)
@@ -176,6 +214,10 @@ public:
   void draw() override { return cv_draw(); }
 };
 
+//
+// A drawing canvas based on a window. Can be used as a standalone window
+// and also as a subwindow inside another window.
+//
 class CanvasWindow : public Fl_Window, CanvasInterface {
 public:
   CanvasWindow(int x, int y, int w, int h, const char *l=nullptr)
@@ -188,23 +230,34 @@ public:
   void draw() override { return cv_draw(); }
 };
 
-
+//
+// Main app entry point
+//
 int main(int argc, char **argv)
 {
+  // Create our main app window
   auto window = new Fl_Window(100, 100, 640, 220);
 
+  // One testing canvas is just a regular child widget of the window
   auto canvas_widget_0 = new CanvasWidget( 10, 10, 200, 200, "CV1");
+
+  // The second canvas is inside a group
   auto cv1_group = new Fl_Group(215, 5, 210, 210);
   cv1_group->box(FL_FRAME_BOX);
   auto canvas_widget_1 = new CanvasWidget(220, 10, 200, 200, "CV2");
   cv1_group->end();
+
+  // The third canvas is a window inside a window, so we can verify
+  // that pen coordinates are calculated correctly.
   auto canvas_widget_2 = new CanvasWindow(430, 10, 200, 200, "CV3");
   canvas_widget_2->end();
 
   window->end();
 
+  // A fourth canvas is a top level window by itself.
   auto cv_window = new CanvasWindow(100, 380, 200, 200, "CV Window");
 
+  // All canvases subscribe to pen events.
   Fl::Pen::subscribe(canvas_widget_0);
   Fl::Pen::subscribe(canvas_widget_1);
   Fl::Pen::subscribe(canvas_widget_2);
