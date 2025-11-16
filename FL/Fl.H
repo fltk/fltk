@@ -28,6 +28,7 @@
 #include <FL/core/function_types.H>   // widget callbacks and services
 #include <FL/core/events.H>           // global event handling
 #include <FL/core/options.H>          // system and application setting
+#include <FL/core/pen_events.H>       // pen and tablet events
 #include <FL/Fl_Widget_Tracker.H>     // historically included here
 
 #ifdef FLTK_HAVE_CAIRO
@@ -109,7 +110,6 @@ FL_EXPORT extern bool idle();
 FL_EXPORT extern const char* scheme_;
 FL_EXPORT extern Fl_Image* scheme_bg_;
 
-//FL_EXPORT extern int e_original_keysym; // late addition
 FL_EXPORT extern int scrollbar_size_;
 FL_EXPORT extern int menu_linespacing_; // STR #2927
 #endif

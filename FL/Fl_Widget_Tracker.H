@@ -76,7 +76,18 @@ class FL_EXPORT Fl_Widget_Tracker {
 public:
 
   Fl_Widget_Tracker(Fl_Widget *wi);
+  // Rule of five. Note that we *can* implement these when we refactor widget
+  // tracking with a C++11 map or unordered_map, for example.
+  Fl_Widget_Tracker(const Fl_Widget_Tracker&) = delete;
+  Fl_Widget_Tracker(Fl_Widget_Tracker&&) = delete;
+  Fl_Widget_Tracker& operator=(const Fl_Widget_Tracker&) = delete;
+  Fl_Widget_Tracker& operator=(Fl_Widget_Tracker&&) = delete;
   ~Fl_Widget_Tracker();
+
+  /**
+   Clear the widget pointer.
+   */
+  void clear() { wp_ = nullptr; }
 
   /**
     Returns a pointer to the watched widget.
@@ -88,13 +99,13 @@ public:
     Check if the widget was deleted since the tracker was created.
     \return 1 if the watched widget has been deleted, otherwise 0
   */
-  int deleted() {return wp_ == 0;}
+  int deleted() {return wp_ == nullptr;}
 
   /**
     Check if the widget exists and was not deleted since the tracker was created.
     \return 1 if the watched widget exists, otherwise 0
   */
-  int exists() { return wp_ != 0; }
+  int exists() { return wp_ != nullptr; }
 
 };
 
