@@ -1,7 +1,7 @@
 //
-// Hello, World! program for the Fast Light Tool Kit (FLTK).
+// Penpal pen/stylus/tablet test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,8 +54,10 @@ public:
   void cv_pen_paint();
 };
 
-int CanvasInterface::cv_handle(int event) {
-  switch (event) {
+int CanvasInterface::cv_handle(int event)
+{
+  switch (event)
+  {
     // Event handling for pen events:
     case Fl::Pen::ENTER:
       color_++;
@@ -72,11 +74,12 @@ int CanvasInterface::cv_handle(int event) {
       overlay_ = PEN_DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
-      cv_paint();
+      cv_pen_paint();
       widget_->redraw();
       return 1;
     case Fl::Pen::LIFT: return 1;
     case Fl::Pen::LEAVE: overlay_ = NONE; widget_->redraw(); return 1;
+
     // Event handling for mouse events:
     case FL_ENTER:
       color_++;
@@ -133,7 +136,9 @@ void CanvasInterface::cv_draw() {
       /* fall through */
     case DRAW:
       fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
-      break;
+      fl_arc(ov_x_-r/2-40*Fl::Pen::event_tilt_x(),
+             ov_y_-r/2-40*Fl::Pen::event_tilt_y(), r, r, 0, 360);
+      printf("%d\n", Fl::Pen::event_id());
       break;
   }
 }
@@ -152,8 +157,9 @@ void CanvasInterface::cv_pen_paint() {
     return;
   int r = static_cast<int>(32.0 * Fl::Pen::event_pressure());
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
+  Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
   fl_begin_offscreen(offscreen_);
-  fl_draw_circle(Fl::event_x()-dx-r, Fl::event_y()-dy-r, 2*r, color_);
+  fl_draw_circle(Fl::event_x()-dx-r, Fl::event_y()-dy-r, 2*r, cc);
   fl_end_offscreen();
 }
 
@@ -198,7 +204,7 @@ int main(int argc, char **argv) {
 
   window->end();
 
-  auto cv_window = new CanvasWindow(100, 380, 200, 200);
+  auto cv_window = new CanvasWindow(100, 380, 200, 200, "CV Window");
 
   Fl::Pen::subscribe(canvas_widget_0);
   Fl::Pen::subscribe(canvas_widget_1);

@@ -84,12 +84,45 @@ enum class Trait : uint32_t {
   PROXIMITY         = 0x0400,
 };
 
+/**
+ \brief Bitwise OR operator for Trait enum.
+ \param lhs Left-hand side trait flags
+ \param rhs Right-hand side trait flags
+ \return Combined trait flags
+ */
+inline constexpr Trait operator|(Trait lhs, Trait rhs) {
+  return static_cast<Trait>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+
+/**
+ \brief Bitwise AND operator for Trait enum.
+ \param lhs Left-hand side trait flags
+ \param rhs Right-hand side trait flags
+ \return Intersection of trait flags
+ */
+inline constexpr Trait operator&(Trait lhs, Trait rhs) {
+  return static_cast<Trait>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+/**
+ \brief Bitwise OR assignment operator for Trait enum.
+ \param lhs Left-hand side trait flags (modified in place)
+ \param rhs Right-hand side trait flags
+ \return Reference to modified lhs
+ */
+inline Trait& operator|=(Trait& lhs, Trait rhs) {
+  lhs = lhs | rhs;
+  return lhs;
+}
+
 
 /**
  \brief Bitfield of pen state flags.
  \see event_state(), event_trigger()
  */
 enum class State : uint32_t {
+  /// No button pressed
+  NONE              = 0x0000,
   /// The tip hovers over the surface but does not touch it
   TIP_HOVERS        = 0x0001,
   /// The tip touches the surface
@@ -106,7 +139,41 @@ enum class State : uint32_t {
   BUTTON2           = 0x0400,
   /// Barrel button 3 is pressed
   BUTTON3           = 0x0800,
+  /// Mask for all buttons, tip, and eraser down
+  ANY_DOWN          = BUTTON0 | BUTTON1 | BUTTON2 | BUTTON3 | TIP_DOWN | ERASER_DOWN,
 };
+
+/*
+ \brief Bitwise OR operator for State enum.
+ \param lhs Left-hand side state flags
+ \param rhs Right-hand side state flags
+ \return Combined state flags
+ */
+inline constexpr State operator|(State lhs, State rhs) {
+  return static_cast<State>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+
+/*
+ \brief Bitwise AND operator for State enum.
+ \param lhs Left-hand side state flags
+ \param rhs Right-hand side state flags
+ \return Intersection of state flags
+ */
+inline constexpr State operator&(State lhs, State rhs) {
+  return static_cast<State>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
+/*
+ \brief Bitwise OR assignment operator for State enum.
+ \param lhs Left-hand side state flags (modified in place)
+ \param rhs Right-hand side state flags
+ \return Reference to modified lhs
+ */
+inline State& operator|=(State& lhs, State rhs) {
+  lhs = lhs | rhs;
+  return lhs;
+}
+
 
 /**
  \brief List of pen events.
@@ -316,6 +383,14 @@ FL_EXPORT extern double event_proximity();
 FL_EXPORT extern State event_state();
 
 /**
+ * \brief Return true if the corresponding bit is set in the event state.
+ * \return true if any bit is set
+ */
+inline bool event_state(State bits) {
+  return ((event_state() & bits) != State::NONE);
+}
+
+/**
  * \brief Returns the state change that triggered the event.
  * \return a state with one bit set for the action that triggered this event
  */
@@ -323,67 +398,6 @@ FL_EXPORT extern State event_trigger();
 
 /** @} */ // group fl_pen_events
 
-/**
- \brief Bitwise OR operator for Trait enum.
- \param lhs Left-hand side trait flags
- \param rhs Right-hand side trait flags
- \return Combined trait flags
- */
-inline constexpr Trait operator|(Trait lhs, Trait rhs) {
-  return static_cast<Trait>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
-}
-
-/**
- \brief Bitwise AND operator for Trait enum.
- \param lhs Left-hand side trait flags
- \param rhs Right-hand side trait flags
- \return Intersection of trait flags
- */
-inline constexpr Trait operator&(Trait lhs, Trait rhs) {
-  return static_cast<Trait>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
-}
-
-/**
- \brief Bitwise OR assignment operator for Trait enum.
- \param lhs Left-hand side trait flags (modified in place)
- \param rhs Right-hand side trait flags
- \return Reference to modified lhs
- */
-inline Trait& operator|=(Trait& lhs, Trait rhs) {
-  lhs = lhs | rhs;
-  return lhs;
-}
-
-/*
- \brief Bitwise OR operator for State enum.
- \param lhs Left-hand side state flags
- \param rhs Right-hand side state flags
- \return Combined state flags
- */
-inline constexpr State operator|(State lhs, State rhs) {
-  return static_cast<State>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
-}
-
-/*
- \brief Bitwise AND operator for State enum.
- \param lhs Left-hand side state flags
- \param rhs Right-hand side state flags
- \return Intersection of state flags
- */
-inline constexpr State operator&(State lhs, State rhs) {
-  return static_cast<State>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
-}
-
-/*
- \brief Bitwise OR assignment operator for State enum.
- \param lhs Left-hand side state flags (modified in place)
- \param rhs Right-hand side state flags
- \return Reference to modified lhs
- */
-inline State& operator|=(State& lhs, State rhs) {
-  lhs = lhs | rhs;
-  return lhs;
-}
 
 } // namespace Pen
 
