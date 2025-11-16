@@ -190,7 +190,7 @@ void CanvasInterface::cv_paint() {
 void CanvasInterface::cv_pen_paint() {
   if (!offscreen_)
     return;
-  int r = static_cast<int>(32.0 * Fl::Pen::event_pressure());
+  int r = static_cast<int>(32.0 * (Fl::Pen::event_pressure()*Fl::Pen::event_pressure()));
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
   fl_begin_offscreen(offscreen_);
