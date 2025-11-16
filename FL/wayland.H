@@ -34,7 +34,8 @@ extern FL_EXPORT struct wl_surface *fl_wl_surface(struct wld_window *xid);
 extern FL_EXPORT struct wld_window *fl_wl_xid(const Fl_Window *win);
 /** Returns the Fl_Window corresponding to a given the platform-specific window reference */
 extern FL_EXPORT Fl_Window *fl_wl_find(struct wld_window *);
-/** Returns the cairo context associated to the current window or Fl_Image_Surface */
+/** Returns the cairo context associated to the current window or Fl_Image_Surface.
+ Usable both when the Wayland/X11 hybrid FLTK library runs as a Wayland client and when it runs as an X11 client. */
 extern FL_EXPORT cairo_t *fl_wl_gc();
 /** Returns the wl_compositor of the current Wayland session.
  This allows, for example, to create a wl_surface with
