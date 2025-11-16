@@ -21,7 +21,7 @@
  */
 
 #include "Fl_System_Driver.H"
-#include <FL/Fl.H>
+#include "Fl_Private.H"
 #include "Fl_Timeout.h"
 #include <FL/Fl_File_Icon.H>
 #include <FL/fl_utf8.h>
@@ -357,8 +357,8 @@ double Fl_System_Driver::wait(double time_to_wait) {
   Fl::do_widget_deletion();
 
   Fl_Timeout::do_timeouts();
-  Fl::run_checks();
-  Fl::run_idle();
+  Fl::Private::run_checks();
+  Fl::Private::run_idle();
 
   // The idle function may turn off idle() if *all* idle callbacks
   // are removed from the callback queue (ring), we can then wait.

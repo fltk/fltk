@@ -18,7 +18,7 @@
   Implementation of the member functions of class Fl.
 */
 
-#include <FL/Fl.H>
+#include "Fl_Private.H"
 #include <FL/platform.H>
 #include "Fl_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
@@ -71,10 +71,10 @@ void            *Fl::e_clipboard_data = NULL;
 Fl_Event_Dispatch Fl::e_dispatch = 0;
 Fl_Callback_Reason Fl::callback_reason_ = FL_REASON_UNKNOWN;
 
-unsigned char   Fl::options_[] = { 0, 0 };
-unsigned char   Fl::options_read_ = 0;
+unsigned char   Fl::Private::options_[] = { 0, 0 };
+unsigned char   Fl::Private::options_read_ = 0;
 
-int             Fl::selection_to_clipboard_ = 0;
+int             Fl::Private::selection_to_clipboard_ = 0;
 
 Fl_Window       *fl_xfocus = NULL; // which window X thinks has focus
 Fl_Window       *fl_xmousewin;     // which window X thinks has FL_ENTER
@@ -86,6 +86,45 @@ Fl_Window       *Fl::modal_;       // topmost modal() window
 char const * const Fl::clipboard_plain_text = "text/plain";
 char const * const Fl::clipboard_image = "image";
 
+/**
+  Copies selections on X11 directly to the clipboard if enabled.
+
+  This method can be called on all platforms. Other platforms than X11 are
+  not affected by this feature.
+
+  If this is switched on (\p mode = 1), Fl::copy() copies all data to the
+  clipboard regardless of its \p destination argument. If the destination is 0
+  (selection buffer) data is copied to both the selection buffer and the clipboard.
+
+  Drag and drop is also affected since drag-and-drop data is copied to the selection
+  buffer.
+
+  You can use this to make the experience of data selection and copying more like
+  that on other platforms (Windows, macOS, and even Wayland).
+
+  The default operation mode is the standard X11 behavior (disabled).
+
+  \note This feature is experimental and enabling it may have unexpected side effects.
+    It is your own responsibility if you enable it.
+
+  \since 1.4.0
+
+  \param[in]  mode  1 = enable selection_to_clipboard, 0 = disable selection_to_clipboard
+
+  \see copy(const char *, int, int, const char *)
+*/
+void Fl::selection_to_clipboard(int mode) {
+  Private::selection_to_clipboard_ = mode ? 1 : 0;
+}
+
+/**
+  \brief Returns the current selection_to_clipboard mode.
+
+  \see void selection_to_clipboard(int)
+*/
+int Fl::selection_to_clipboard() {
+  return Private::selection_to_clipboard_;
+}
 
 //
 // Drivers
@@ -500,7 +539,7 @@ int Fl::has_check(Fl_Timeout_Handler cb, void *argp) {
   return 0;
 }
 
-void Fl::run_checks()
+void Fl::Private::run_checks()
 {
   // checks are a bit messy so that add/remove and wait may be called
   // from inside them without causing an infinite loop:
@@ -580,7 +619,23 @@ void fl_trigger_clipboard_notify(int source) {
 ////////////////////////////////////////////////////////////////
 // idle/wait/run/check/ready:
 
-void (*Fl::idle_)(); // see Fl::add_idle.cxx for the add/remove functions
+void (*Fl::Private::idle_)(); // see Fl::add_idle.cxx for the add/remove functions
+
+/**
+  Returns whether at least one idle callback is currently set.
+
+  \c true means that at least one callback is currently queued, but
+  not necessarily active. While a callback is being executed, it is
+  also counted as "set" unless (i.e. before) it removes itself from
+  the idle callback queue (ring).
+
+  \return  whether an idle callback is currently set
+  \retval true  At least one idle callback is currently set.
+  \retval false No idle callback is currently set.
+ */
+bool Fl::idle() {
+  return (Private::idle_ != nullptr);
+}
 
 /*
   Private, undocumented method to run idle callbacks.
@@ -598,7 +653,7 @@ void (*Fl::idle_)(); // see Fl::add_idle.cxx for the add/remove functions
   the first idle callback and appends it to the end of the list of idle
   callbacks. For details see static function call_idle() in Fl_add_idle.cxx.
 
-  If it is NULL then no idle callbacks are active and Fl::run_idle() returns
+  If it is NULL then no idle callbacks are active and Fl::Private::run_idle() returns
   immediately.
 
   Note: idle callbacks can be queued in nested FLTK event loops like
@@ -609,11 +664,11 @@ void (*Fl::idle_)(); // see Fl::add_idle.cxx for the add/remove functions
   if an event (timeout or button click etc.) handler calls Fl::add_idle()
   or even in Fl::flush() if a draw() method calls Fl::add_idle().
 */
-void Fl::run_idle() {
+void Fl::Private::run_idle() {
   static char in_idle;
-  if (Fl::idle_ && !in_idle) {
+  if (Fl::Private::idle_ && !in_idle) {
     in_idle = 1;
-    Fl::idle_(); // call the idle callback stored in Fl::idle_ == Fl::idle()
+    Fl::Private::idle_(); // call the idle callback stored in Fl::Private::idle_ == Fl::idle()
     in_idle = 0;
   }
 }
@@ -733,7 +788,27 @@ void Fl::hide_all_windows() {
   }
 }
 
-int Fl::program_should_quit_ = 0;
+int Fl::Private::program_should_quit_ = 0;
+
+/** Returns non-zero when a request for program termination was received and accepted.
+  On the MacOS platform, the "Quit xxx" item of the application menu is such a request,
+  that is considered accepted when all windows are closed. On other platforms, this function
+  returns 0 until \p Fl::program_should_quit(1) is called.
+  \version 1.4.0
+ */
+int Fl::program_should_quit() {
+  return Private::program_should_quit_;
+}
+
+/** Indicate to the FLTK library whether a program termination request was received and accepted.
+  A program may set this to 1, for example, while performing a platform-independent command asking the program to cleanly
+  terminate, similarly to the "Quit xxx" item of the application menu under MacOS.
+  \version 1.4.0
+ */
+void Fl::program_should_quit(int should_i) {
+  Private::program_should_quit_ = should_i;
+}
+
 
 ////////////////////////////////////////////////////////////////
 // Window list management:
@@ -2046,74 +2121,74 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
  */
 bool Fl::option(Fl_Option opt)
 {
-  if (!options_read_) {
+  if (!Private::options_read_) {
     int tmp;
     { // first, read the system wide preferences
       Fl_Preferences prefs(Fl_Preferences::CORE_SYSTEM, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
       opt_prefs.get("ArrowFocus", tmp, 0);                      // default: off
-      options_[OPTION_ARROW_FOCUS] = tmp;
+      Private::options_[OPTION_ARROW_FOCUS] = tmp;
       //opt_prefs.get("NativeFilechooser", tmp, 1);             // default: on
-      //options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      //Private::options_[OPTION_NATIVE_FILECHOOSER] = tmp;
       //opt_prefs.get("FilechooserPreview", tmp, 1);            // default: on
-      //options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
+      //Private::options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
       opt_prefs.get("VisibleFocus", tmp, 1);                    // default: on
-      options_[OPTION_VISIBLE_FOCUS] = tmp;
+      Private::options_[OPTION_VISIBLE_FOCUS] = tmp;
       opt_prefs.get("DNDText", tmp, 1);                         // default: on
-      options_[OPTION_DND_TEXT] = tmp;
+      Private::options_[OPTION_DND_TEXT] = tmp;
       opt_prefs.get("ShowTooltips", tmp, 1);                    // default: on
-      options_[OPTION_SHOW_TOOLTIPS] = tmp;
+      Private::options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, 1);                     // default: on
-      options_[OPTION_FNFC_USES_GTK] = tmp;
+      Private::options_[OPTION_FNFC_USES_GTK] = tmp;
       opt_prefs.get("PrintUsesGTK", tmp, 1);                     // default: on
-      options_[OPTION_PRINTER_USES_GTK] = tmp;
+      Private::options_[OPTION_PRINTER_USES_GTK] = tmp;
 
       opt_prefs.get("ShowZoomFactor", tmp, 1);                  // default: on
-      options_[OPTION_SHOW_SCALING] = tmp;
+      Private::options_[OPTION_SHOW_SCALING] = tmp;
       opt_prefs.get("UseZenity", tmp, 0);                       // default: off
-      options_[OPTION_FNFC_USES_ZENITY] = tmp;
+      Private::options_[OPTION_FNFC_USES_ZENITY] = tmp;
       opt_prefs.get("UseKdialog", tmp, 0);                      // default: off
-      options_[OPTION_FNFC_USES_KDIALOG] = tmp;
+      Private::options_[OPTION_FNFC_USES_KDIALOG] = tmp;
       opt_prefs.get("SimpleZoomShortcut", tmp, 0);              // default: off
-      options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
+      Private::options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
       Fl_Preferences prefs(Fl_Preferences::CORE_USER, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
       opt_prefs.get("ArrowFocus", tmp, -1);
-      if (tmp >= 0) options_[OPTION_ARROW_FOCUS] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_ARROW_FOCUS] = tmp;
       //opt_prefs.get("NativeFilechooser", tmp, -1);
-      //if (tmp >= 0) options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      //if (tmp >= 0) Private::options_[OPTION_NATIVE_FILECHOOSER] = tmp;
       //opt_prefs.get("FilechooserPreview", tmp, -1);
-      //if (tmp >= 0) options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
+      //if (tmp >= 0) Private::options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
       opt_prefs.get("VisibleFocus", tmp, -1);
-      if (tmp >= 0) options_[OPTION_VISIBLE_FOCUS] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_VISIBLE_FOCUS] = tmp;
       opt_prefs.get("DNDText", tmp, -1);
-      if (tmp >= 0) options_[OPTION_DND_TEXT] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_DND_TEXT] = tmp;
       opt_prefs.get("ShowTooltips", tmp, -1);
-      if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, -1);
-      if (tmp >= 0) options_[OPTION_FNFC_USES_GTK] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_FNFC_USES_GTK] = tmp;
       opt_prefs.get("PrintUsesGTK", tmp, -1);
-      if (tmp >= 0) options_[OPTION_PRINTER_USES_GTK] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_PRINTER_USES_GTK] = tmp;
 
       opt_prefs.get("ShowZoomFactor", tmp, -1);
-      if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_SHOW_SCALING] = tmp;
       opt_prefs.get("UseZenity", tmp, -1);
-      if (tmp >= 0) options_[OPTION_FNFC_USES_ZENITY] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_FNFC_USES_ZENITY] = tmp;
       opt_prefs.get("UseKdialog", tmp, -1);
-      if (tmp >= 0) options_[OPTION_FNFC_USES_KDIALOG] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_FNFC_USES_KDIALOG] = tmp;
       opt_prefs.get("SimpleZoomShortcut", tmp, -1);
-      if (tmp >= 0) options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
+      if (tmp >= 0) Private::options_[OPTION_SIMPLE_ZOOM_SHORTCUT] = tmp;
     }
     { // now, if the developer has registered this app, we could ask for per-application preferences
     }
-    options_read_ = 1;
+    Private::options_read_ = 1;
   }
   if (opt<0 || opt>=OPTION_LAST)
     return false;
-  return (bool)(options_[opt]!=0);
+  return (bool)(Private::options_[opt]!=0);
 }
 
 /**
@@ -2142,11 +2217,11 @@ void Fl::option(Fl_Option opt, bool val)
 {
   if (opt<0 || opt>=OPTION_LAST)
     return;
-  if (!options_read_) {
+  if (!Private::options_read_) {
     // make sure that the options_ array is filled in
     option(opt);
   }
-  options_[opt] = val;
+  Private::options_[opt] = val;
 }
 
 
@@ -2169,9 +2244,50 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker()
   Fl::release_widget_pointer(wp_); // remove pointer from watch list
 }
 
-int Fl::use_high_res_GL_ = 0;
+int Fl::Private::use_high_res_GL_ = 0;
 
-int Fl::draw_GL_text_with_textures_ = 1;
+/**  sets whether GL windows should be drawn at high resolution on Apple
+  computers with retina displays
+  \version 1.3.4
+ */
+void Fl::use_high_res_GL(int val) {
+  Private::use_high_res_GL_ = val;
+}
+
+/**  returns whether GL windows should be drawn at high resolution on Apple
+  computers with retina displays.
+  Default is no.
+  \version 1.3.4
+ */
+int Fl::use_high_res_GL() {
+  return Private::use_high_res_GL_;
+}
+
+int Fl::Private::draw_GL_text_with_textures_ = 1;
+
+/**  sets whether OpenGL uses textures to draw all text.
+ By default, FLTK draws OpenGL text using textures, if the necessary
+  hardware support is available. Call \p Fl::draw_GL_text_with_textures(0)
+  once in your program before the first call to gl_font() to have FLTK
+  draw instead OpenGL text using a legacy, platform-dependent procedure.
+  It's recommended not to deactivate textures under the MacOS platform
+  because the MacOS legacy procedure is extremely rudimentary.
+  \param val use 0 to prevent FLTK from drawing GL text with textures
+  \see gl_texture_pile_height(int max)
+  \version 1.4.0
+  */
+void Fl::draw_GL_text_with_textures(int val) {
+  Private::draw_GL_text_with_textures_ = val;
+}
+
+/**  returns whether whether OpenGL uses textures to draw all text.
+  Default is yes.
+  \see draw_GL_text_with_textures(int val)
+  \version 1.4.0
+  */
+int Fl::draw_GL_text_with_textures() {
+  return Private::draw_GL_text_with_textures_;
+}
 
 int Fl::dnd()
 {
