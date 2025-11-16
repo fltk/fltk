@@ -2444,6 +2444,11 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
  to be effective for files dropped on the application icon at launch time.
  It can also be called at any point to change the function used to open dropped files.
  A call with a NULL argument, after a previous call, makes the app ignore files dropped later.
+ 
+ Use of this function also requires the application bundle's \c Info.plist file
+ to declare what file types are allowed to be dropped on the icon. File \c README.macOS.md
+ describes how to do that in its section
+ <i>Make an Application Launchable by Dropping Files on its Icon</i>.
  */
 void fl_open_callback(void (*cb)(const char *))
 {

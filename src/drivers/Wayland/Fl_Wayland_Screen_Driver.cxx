@@ -219,6 +219,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   }
   if (!win) return;
   //fprintf(stderr, "pointer_enter window=%p\n", Fl_Wayland_Window_Driver::surface_to_window(surface));
+  seat->pointer_focus = surface;
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
@@ -228,8 +229,8 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   set_event_xy(win);
   need_leave = NULL;
   win = Fl_Wayland_Window_Driver::surface_to_window(surface);
+  // Caution: with an Fl_Tooltip this call can hide the window being entered (#1317)
   if (!win->parent()) Fl::handle(FL_ENTER, win);
-  seat->pointer_focus = surface;
 }
 
 
@@ -1552,27 +1553,21 @@ void Fl_Wayland_Screen_Driver::close_display() {
 }
 
 
-struct pair_s { int W, H; };
-static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel,
+struct configure_s { int W, H; uint32_t state; };
+
+static void xdg_toplevel_configure(void *v, struct xdg_toplevel *xdg_toplevel,
                                    int32_t width, int32_t height, struct wl_array *states)
 {
-  struct pair_s *pair = (struct pair_s*)data;
-  pair->W = width;
-  pair->H = height;
+  struct configure_s *data = (struct configure_s*)v;
+  data->W = width;
+  data->H = height;
+  data->state = (states ? *(uint32_t *)(states->data) : 0);
 }
 
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
   .configure = xdg_toplevel_configure,
 };
 
-static void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, uint32_t serial)
-{
-  xdg_surface_ack_configure(xdg_surface, serial);
-}
-
-static const struct xdg_surface_listener xdg_surface_listener = {
-    .configure = xdg_surface_configure,
-};
 
 static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *output,
                                              int& Wfullscreen, int& Hfullscreen,
@@ -1586,33 +1581,28 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   struct wl_surface *wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
   wl_surface_set_opaque_region(wl_surface, NULL);
   struct xdg_surface *xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface);
-  xdg_surface_add_listener(xdg_surface, &xdg_surface_listener, NULL);
   struct xdg_toplevel *xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
-  struct pair_s pair = {0, -1};
-  xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &pair);
+  struct configure_s data = {0, 0, 0};
+  xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, &data);
   xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
-  wl_surface_commit(wl_surface);
-  while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-  pair.H = -1;
-  xdg_toplevel_set_fullscreen(xdg_toplevel, output->wl_output);
-  wl_surface_commit(wl_surface);
-  while (pair.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-  Wfullscreen = pair.W;
-  Hfullscreen = pair.H;
-  if (Wfullscreen && Hfullscreen && (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER ||
-                                     wl_list_length(&scr_driver->outputs) == 1)) {
+  wl_surface_commit(wl_surface); // necessary under KWin
+  while (data.state != XDG_TOPLEVEL_STATE_FULLSCREEN)
+    wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  Wfullscreen = data.W;
+  Hfullscreen = data.H;
+  if (Wfullscreen && Hfullscreen && wl_list_length(&scr_driver->outputs) == 1) {
     struct wl_surface *wl_surface2 = wl_compositor_create_surface(scr_driver->wl_compositor);
     struct xdg_surface *xdg_surface2 = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface2);
     struct xdg_toplevel *xdg_toplevel2 = xdg_surface_get_toplevel(xdg_surface2);
-    struct pair_s pair2 = {0, -1};
-    xdg_toplevel_add_listener(xdg_toplevel2, &xdg_toplevel_listener, &pair2);
+    struct configure_s data2 = {0, 0, 0};
+    xdg_toplevel_add_listener(xdg_toplevel2, &xdg_toplevel_listener, &data2);
     xdg_toplevel_set_parent(xdg_toplevel2, xdg_toplevel);
     xdg_toplevel_set_maximized(xdg_toplevel2);
-    pair2.H = -1;
-    wl_surface_commit(wl_surface2);
-    while (pair2.H < 0) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-    Wworkarea = pair2.W;
-    Hworkarea = pair2.H;
+    wl_surface_commit(wl_surface2); // necessary under KWin
+    while (data2.state != XDG_TOPLEVEL_STATE_MAXIMIZED)
+      wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+    Wworkarea = data2.W;
+    Hworkarea = data2.H;
     xdg_toplevel_destroy(xdg_toplevel2);
     xdg_surface_destroy(xdg_surface2);
     wl_surface_destroy(wl_surface2);
@@ -1657,30 +1647,20 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
  One way for a client to discover the work area size of a display is to get the configured size
  of a maximized window on that display. FLTK didn't find a way to control in general
- on what display the compositor puts a maximized window. One procedure which works
- under Mutter or with a single display was found. In this procedure, we create first a fullscreen
- window on a given display and then we create a maximized window made a child of the
- fullscreen one. Under mutter, this puts reliably the maximized window on the same
- display as the fullscreen one, giving the size of that display's work area.
- Therefore, FLTK computes an exact work area size only with MUTTER or when the system
- contains a single display. That's also done by function compute_full_and_maximized_areas().
-
- The procedure to compute the work area size also reveals which display is primary:
- that with a work area vertically smaller than the display's pixel height. This allows
- to place the primary display as FLTK display #0. Again, FLTK guarantees to identify
- the primary display only under MUTTER.
+ on what display the compositor puts a maximized window. Therefore, FLTK computes an exact
+ work area size only when the system contains a single display. We create first a fullscreen
+ window on the display and then we create a maximized window made a child of the
+ fullscreen one and record its configured size. That's also done by function
+ compute_full_and_maximized_areas().
  */
 
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // important after screen removal
-  Fl_Wayland_Screen_Driver::output *output, *mainscreen = NULL;
+  Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
     bool found_workarea = compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea);
-    if (found_workarea && !mainscreen) {
-      mainscreen = output;
-    } else found_workarea = false;
     if (Wfullscreen && Hfullscreen) { // skip sway which puts 0 there
       output->width = Wfullscreen * output->wld_scale; // pixels
       output->height = Hfullscreen * output->wld_scale; // pixels
@@ -1690,18 +1670,6 @@ void Fl_Wayland_Screen_Driver::init_workarea()
         workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
         workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
       }
-    }
-  }
-  if (mainscreen) { // put mainscreen first in list of screens
-    wl_list_remove(&mainscreen->link);
-    wl_list_insert(&outputs, &mainscreen->link);
-  } else {
-    wl_list_for_each(output, &outputs, link) { // find first screen in list
-      workarea_xywh[0] = output->x; // pixels
-      workarea_xywh[1] = output->y; // pixels
-      workarea_xywh[2] = output->width; // pixels
-      workarea_xywh[3] = output->height; // pixels
-      break;
     }
   }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);

@@ -315,8 +315,10 @@ declare several extensions.
 - Call function <a href=https://www.fltk.org/doc-1.5/group__group__macosx.html#ga0702a54934d10f5b72157137cf291296>fl\_open\_callback()</a> at the beginning of your main() function to set
 what function will be called when a file is dropped on the application icon.
 
-- In Xcode, set the "Info.plist File" build setting of your target application
-to the Info.plist file you have prepared.
+- In Xcode, set the `Info.plist File` build setting of your target application
+to the *Info.plist* file you have prepared. Alternatively, use CMake's 
+`set_target_properties` function and `MACOSX_BUNDLE_INFO_PLIST` property 
+to have CMake put your *Info.plist* file in the resulting macOS application bundle.
 
 - Rebuild your application.
 

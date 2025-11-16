@@ -23,10 +23,13 @@
    [..]
    const char *out;
    out = fl_filename_ext("/some/path/foo.txt");        // result: ".txt"
-   out = fl_filename_ext("/some/path/foo");            // result: NULL
+   out = fl_filename_ext("/some/path/foo");            // result: ""
    \endcode
    \param[in] buf the filename to be parsed
-   \return a pointer to the extension (including '.') if any or NULL otherwise
+   \return a pointer to the extension (including '.') if one was found,
+            or a pointer to the terminating NUL character (effectively a pointer
+            to an empty string) if no extension was found.
+    \see fl_filename_ext_str(const std::string &filename)
  */
 const char *fl_filename_ext(const char *buf) {
   return Fl::system_driver()->filename_ext(buf);

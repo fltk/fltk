@@ -43,11 +43,6 @@ extern "C" {
 /* F2: comes from FLTK2 */
 /* OD: comes from OksiD */
 
-/**
-  Return the number of bytes needed to encode the given UCS4 character in UTF-8.
-  \param [in] ucs UCS4 encoded character
-  \return number of bytes required
- */
 FL_EXPORT int fl_utf8bytes(unsigned ucs);
 
 /* OD: returns the byte length of the first UTF-8 char sequence (returns -1 if not valid) */

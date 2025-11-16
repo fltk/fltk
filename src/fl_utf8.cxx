@@ -1088,7 +1088,7 @@ const char* fl_utf8back(const char* p, const char* start, const char* end)
 /** Returns number of bytes that utf8encode() will use to encode the
   character \p ucs.
 
-  \param[in] 32 bit Unicode character
+  \param[in] ucs 32-bit Unicode character
   \return number of bytes for UTF-8 encoded sequence.
 */
 int fl_utf8bytes(unsigned ucs) {
@@ -1121,8 +1121,8 @@ int fl_utf8bytes(unsigned ucs) {
   utf8encode/fl_utf8decode will be the identity for all codes between 0
   and 0x10ffff.
 
-  \param[in] ucs 32 bit Unicode character
-  \param[out] a buffer of at least four bytes to receive the UTF-8 byte
+  \param[in] ucs 32-bit Unicode character
+  \param[out] buf a buffer of at least four bytes to receive the UTF-8 byte
       sequence. No terminating NUL is added.
   \return number of bytes in UTF-8 sequence.
 */
@@ -1495,8 +1495,8 @@ int fl_wcwidth(const char* src) {
 
   \param[in] src points at the UTF-8, and
   \param[in] srclen is the number of bytes to convert.
-  \param[out] dst points at an array to write, and \p dstlen is the number of
-      locations in this array. At most \p dstlen-1 wchar_t will be
+  \param[out] dst points at an array to write, and
+  \param[in] dstlen is the number of locations in this array. At most \p dstlen-1 wchar_t will be
       written there, plus a 0 terminating wchar_t.
   \return The return value is the number of wchar_t that \e would be written
       to \p dst if it were long enough, not counting the terminating

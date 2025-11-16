@@ -191,7 +191,6 @@ Under Ubuntu, the Wayland platform requires version 20.04 (focal fossa) or more 
 
 These packages are necessary to build the FLTK library, in addition to those listed
 in section 2.1 of file README.Unix.txt :
-- make
 - libpango1.0-dev
 - libwayland-dev
 - wayland-protocols
@@ -199,8 +198,6 @@ in section 2.1 of file README.Unix.txt :
 - libxinerama-dev <== except if option FLTK_BACKEND_X11=off is used
 - libdbus-1-dev   <== recommended to query current cursor theme
 - libglew-dev     <== necessary to use OpenGL version 3 or above
-- cmake           <== if you plan to build with CMake
-- cmake-qt-gui    <== if you plan to use the GUI of CMake
 - libdecor-0-dev  <== recommended if available and if in version ≥ 0.2.0
 - libgtk-3-dev    <== highly recommended if libdecor-0-dev is not installed
 
@@ -210,7 +207,6 @@ These packages allow to run FLTK apps under the Gnome-Wayland desktop:
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
-- plasma-workspace-wayland
 
 Package installation command: sudo apt-get install <package-name ...>
 
@@ -233,8 +229,6 @@ package groups listed in section 2.2 of file README.Unix.txt :
 - libdecor-devel <== recommended, draws window titlebars
 - gtk3-devel     <== highly recommended if libdecor-devel is not installed
 - glew-devel     <== necessary to use OpenGL version 3 or above
-- cmake          <== if you plan to build with CMake
-- cmake-gui      <== if you plan to use the GUI of CMake
 
 Package installation command: sudo yum install <package-name ...>
 

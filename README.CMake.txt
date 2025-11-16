@@ -237,11 +237,12 @@ FLTK_BUILD_TEST - default ON in top-level build, OFF in sub-build
     programs are built. If FLTK is built as a subproject only the library
     and the tools (fluid and fltk-config) are built by default.
 
-FLTK_GRAPHICS_CAIRO - default OFF (Unix/Linux: X11 + Wayland only).
+FLTK_GRAPHICS_CAIRO - meaningful when building for Wayland, X11 or both.
+    Default: ON when FLTK_BACKEND_WAYLAND is ON (explicitly or by default),
+             OFF otherwise.
     Make all drawing operations use the Cairo library (rather than Xlib),
-    producing antialiased graphics (X11 platform: implies FLTK_USE_PANGO).
-    When using Wayland this option is always ON (Wayland uses Cairo for
-    drawing).
+    producing antialiased graphics. When using Wayland this option is
+    always ON. Implies FLTK_USE_PANGO.
 
 FLTK_GRAPHICS_GDIPLUS - default ON (Windows only).
     Make FLTK use GDI+ to draw oblique lines and curves resulting in
