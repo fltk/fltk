@@ -167,12 +167,6 @@ void Fl::Pen::unsubscribe(Fl_Widget* widget) {
   subscriber_list_.remove(widget);
 }
 
-// TODO: implement this - do we really need this interface?
-void Fl::Pen::grab(Fl_Widget* widget) {
-}
-
-void Fl::Pen::release() { grab(nullptr); }
-
 double Fl::Pen::event_x() { return e.x; }
 
 double Fl::Pen::event_y() { return e.y; }
@@ -318,6 +312,7 @@ static State button_to_trigger(NSInteger button, bool down)
  Handle events coming from Cocoa.
  TODO: clickCount: store in Fl::event_clicks()
  capabilityMask is useless, because it is vendor defined
+ If a modal window is open, AppKit will send window specific events only there.
  */
 bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
 {
@@ -359,8 +354,8 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     ev.x = pt.x/s;
     ev.y = eventWindow->h() - pt.y/s;
     // TODO: verify actual values: root coordinates may be used for popup windows
-    ev.rx = ev.x*s + eventWindow->x();
-    ev.ry = ev.y*s + eventWindow->y();
+    ev.rx = ev.x + eventWindow->x();
+    ev.ry = ev.y + eventWindow->y();
     if (!is_proximity) {
       // Get the pressure data.
       ev.pressure = [event pressure];
@@ -439,10 +434,12 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     fl_xmousewin = eventWindow;
     if (pushed_ && pushed_->widget() && (Fl::pushed() == pushed_->widget())) {
       receiver = pushed_->widget();
-      // TODO: check Fl::grab(), clear dnd_flag?
+      if (Fl::grab() && (Fl::grab() != receiver->top_window()))
+        return 0;
       pushed = true;
     } else {
-      // TODO: check Fl::modal() and Fl::grab()
+      if (Fl::grab() && (Fl::grab() != eventWindow))
+        return 0;
       auto bpen = below_pen_ ? below_pen_->widget() : nullptr;
       auto bmouse = Fl::belowmouse();
       auto bpen_old = bmouse && (bmouse == bpen) ? bpen : nullptr;

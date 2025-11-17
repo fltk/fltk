@@ -29,9 +29,15 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Menu_Item.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_message.H>
 #include <FL/names.h>
+
+extern Fl_Menu_Item app_menu[];
+Fl_Widget *cv1 { nullptr };
+Fl_Window *cvwin { nullptr };
 
 //
 // The canvas interface implements incremental drawing and handles draw events.
@@ -59,6 +65,11 @@ public:
   void cv_pen_paint();
 };
 
+int popup_app_menu() {
+  auto mi = app_menu->popup(Fl::event_x(), Fl::event_y(), "Tests");
+  if (mi) mi->do_callback((Fl_Widget*)mi);
+}
+
 //
 // Handle mouse and pen events.
 //
@@ -81,9 +92,12 @@ int CanvasInterface::cv_handle(int event)
       return 1;
     case Fl::Pen::TOUCH:
       // Pen tip or eraser just touched the surface.
+      if (Fl::event_state(FL_CTRL) || Fl::event_button() == FL_RIGHT_MOUSE)
+        return popup_app_menu();
       /* fall through */
     case Fl::Pen::DRAW:
       // Pen is dragged over the surface, or hovers with a button pressed.
+      printf("Pen x/y-root: %d %d\n", Fl::event_x_root(), Fl::event_y_root());
       overlay_ = PEN_DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -111,8 +125,11 @@ int CanvasInterface::cv_handle(int event)
       widget_->redraw();
       return 1;
     case FL_PUSH:
+      if (Fl::event_state(FL_CTRL) || Fl::event_button() == FL_RIGHT_MOUSE)
+        return popup_app_menu();
       /* fall through */
     case FL_DRAG:
+      printf("Mouse x/y-root: %d %d\n", Fl::event_x_root(), Fl::event_y_root());
       overlay_ = DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -230,32 +247,58 @@ public:
   void draw() override { return cv_draw(); }
 };
 
+
+Fl_Menu_Item app_menu[] = {
+  { "with modal window", 0, [](Fl_Widget*, void*) {
+    fl_message("None of the canvas areas should receive\n"
+            "pen events while this window is open.");
+  } },
+  { "with non-modal window", 0, [](Fl_Widget*, void*) {
+    auto w = new Fl_Window(400, 32, "Toolbox");
+    w->set_non_modal();
+    w->show();
+  } },
+  { "unsubscribe middle canvas", 0, [](Fl_Widget*, void*) {
+    Fl::Pen::unsubscribe(cv1);
+  } },
+  { "delete middle canvas", 0, [](Fl_Widget*, void*) {
+    if (cv1) { cv1->top_window()->redraw(); delete cv1; cv1 = nullptr; }
+  } },
+  { "canvas window grab", 0, [](Fl_Widget*, void*) {
+    Fl::grab(cvwin);
+  } },
+  { "canvas window release", 0, [](Fl_Widget*, void*) {
+    Fl::grab(nullptr);
+  } },
+  { nullptr }
+};
+
 //
 // Main app entry point
 //
 int main(int argc, char **argv)
 {
   // Create our main app window
-  auto window = new Fl_Window(100, 100, 640, 220);
+  auto window = new Fl_Window(100, 100, 640, 220, "FLTK Pen/Stylus/Tablet test, Ctrl-Tap for menu");
 
   // One testing canvas is just a regular child widget of the window
-  auto canvas_widget_0 = new CanvasWidget( 10, 10, 200, 200, "CV1");
+  auto canvas_widget_0 = new CanvasWidget( 10, 10, 200, 200, "CV0");
 
   // The second canvas is inside a group
   auto cv1_group = new Fl_Group(215, 5, 210, 210);
   cv1_group->box(FL_FRAME_BOX);
-  auto canvas_widget_1 = new CanvasWidget(220, 10, 200, 200, "CV2");
+  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 10, 200, 200, "CV1");
   cv1_group->end();
 
   // The third canvas is a window inside a window, so we can verify
   // that pen coordinates are calculated correctly.
-  auto canvas_widget_2 = new CanvasWindow(430, 10, 200, 200, "CV3");
+  auto canvas_widget_2 = new CanvasWindow(430, 10, 200, 200, "CV2");
   canvas_widget_2->end();
 
   window->end();
 
   // A fourth canvas is a top level window by itself.
-  auto cv_window = new CanvasWindow(100, 380, 200, 200, "CV Window");
+  auto cv_window = cvwin = new CanvasWindow(100, 380, 200, 200, "Canvas Window");
 
   // All canvases subscribe to pen events.
   Fl::Pen::subscribe(canvas_widget_0);

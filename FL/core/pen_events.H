@@ -315,19 +315,6 @@ FL_EXPORT extern void subscribe(Fl_Widget* widget);
  */
 FL_EXPORT extern void unsubscribe(Fl_Widget* widget);
 
-/**
- \brief Grab all pen events, including those outside the widget, until released.
- Send all pen events exclusively to this widget to allow consistent drawing,
- even when the pen leaves the widget area.
- \param widget Widget that will receive all pen events
- */
-FL_EXPORT extern void grab(Fl_Widget* widget);
-
-/**
- \brief Release pen event handling after grab().
- */
-FL_EXPORT extern void release();
-
 /// \name Query values during event handling
 /// @{
 
