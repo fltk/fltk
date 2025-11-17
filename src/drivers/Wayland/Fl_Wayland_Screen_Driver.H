@@ -97,7 +97,7 @@ public:
   static compositor_name compositor; // identifies the used Wayland compositor
   static const struct wl_data_source_listener *p_data_source_listener;
   static struct wl_surface **fl_dnd_icon;
-  static const char *xdg_toplevel_drag_pseudo_mime;
+  static const char * const xdg_toplevel_drag_pseudo_mime;
 
 // static member functions
   static void insertion_point_location(int x, int y, int height);

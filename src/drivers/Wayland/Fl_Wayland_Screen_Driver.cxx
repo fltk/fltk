@@ -14,6 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include <config.h> // for HAVE_XDG_DIALOG and HAVE_XDG_TOPLEVEL_DRAG
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
@@ -110,7 +111,7 @@ static struct wl_surface *gtk_shell_surface = NULL;
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
   Fl_Wayland_Screen_Driver::unspecified;
 
-const char *Fl_Wayland_Screen_Driver::xdg_toplevel_drag_pseudo_mime = "xdg_toplevel_drag/fltk";
+const char * const Fl_Wayland_Screen_Driver::xdg_toplevel_drag_pseudo_mime = "xdg_toplevel_drag/fltk";
 
 extern "C" {
   bool fl_libdecor_using_weston(void) {
@@ -1456,7 +1457,6 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strcmp(interface, xdg_toplevel_drag_manager_v1_interface.name) == 0) {
     scr_driver->xdg_toplevel_drag = (struct xdg_toplevel_drag_manager_v1 *)
       wl_registry_bind(wl_registry, id, &xdg_toplevel_drag_manager_v1_interface, 1);
-//printf("scr_driver->xdg_toplevel_drag=%p version=%d\n",scr_driver->xdg_toplevel_drag,version);
 #endif // HAVE_XDG_TOPLEVEL_DRAG
   }
 }
