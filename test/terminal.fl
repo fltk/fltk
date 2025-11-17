@@ -3,6 +3,7 @@ version 1.0500
 utf8_in_src
 header_name {.h}
 code_name {.cxx}
+include_guard {}
 comment {DEVELOPER README
 
 APPLICATION
@@ -1425,8 +1426,7 @@ while (1) {
 
 PCLOSE(fp);
 G_tty->append_ascii("\\033[33;2m<<END_OF_OUTPUT>>\\033[0m\\n");
-G_tty->redraw();} {selected
-    }
+G_tty->redraw();} {}
   }
   decl {////// GUI LAYOUT //////} {private local
   }
@@ -1445,6 +1445,7 @@ return -1;} {}
   } {
     code {// Scroll History
 scrollhistory_input->value( G_tty->history_rows() );
+display_columns_input->value( G_tty->display_columns() );
 
 // Redraw rate
 redraw_rate_spinner->value( G_tty->redraw_rate() );
@@ -1556,7 +1557,7 @@ G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
     Fl_Window win {
       label {Fl_Terminal Test}
       callback {exit(0);} open
-      xywh {831 66 897 838} type Double size_range {897 330 0 0} visible
+      xywh {800 79 897 838} type Double size_range {897 330 0 0} visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1565,17 +1566,23 @@ G_tty->history_rows(val);}
         tooltip {Scrollback history size.
 10,000 max.} xywh {109 10 115 20} labelsize 10 minimum 0 maximum 10000 textsize 10
       }
+      Fl_Spinner display_columns_input {
+        label {display_columns()}
+        callback {int val = int(display_columns_input->value() + .5);
+G_tty->display_columns(val);}
+        tooltip {Display width in columns of text characters.} xywh {109 33 115 20} labelsize 10 minimum 0 maximum 10000 textsize 10
+      }
       Fl_Spinner fontsize_input {
         label {Font Size}
         callback {int val = int(fontsize_input->value() + .5);
 G_tty->textsize(val);}
-        xywh {109 38 115 20} labelsize 10 textsize 10
+        xywh {109 56 115 20} labelsize 10 textsize 10
       }
       Fl_Spinner scrollbarsize_input {
         label {Scrollbar Size}
         callback {int val = int(scrollbarsize_input->value() + .5);
 G_tty->scrollbar_size(val); G_tty->redraw();}
-        tooltip {Size of scrollbar width in pixels} xywh {109 67 115 20} labelsize 10 textsize 10
+        tooltip {Size of scrollbar width in pixels} xywh {109 79 115 20} labelsize 10 textsize 10
       }
       Fl_Spinner redraw_rate_spinner {
         label {Min Redraw Time}
@@ -1583,16 +1590,16 @@ G_tty->scrollbar_size(val); G_tty->redraw();}
 //printf("Setting redraw rate to %.2f\\n", rate);
 G_tty->redraw_rate(rate);}
         tooltip {Minimum time between redraws
-Default is 0.10 secs.} xywh {109 94 115 20} type Float labelsize 10 minimum 0.05 maximum 5 step 0.1 textsize 10
+Default is 0.10 secs.} xywh {109 103 115 20} type Float labelsize 10 minimum 0.05 maximum 5 step 0.1 textsize 10
       }
       Fl_Choice scheme_widget {
         label scheme open
-        tooltip Scheme xywh {109 120 115 20} down_box BORDER_BOX labelsize 10 textsize 10
+        tooltip Scheme xywh {109 126 115 20} down_box BORDER_BOX labelsize 10 textsize 10
         class Fl_Scheme_Choice
       } {}
       Fl_Choice box_choice {
         label {box()} open
-        tooltip {The border box for the Fl_Terminal} xywh {109 147 115 20} down_box BORDER_BOX labelsize 10 textsize 10
+        tooltip {The border box for the Fl_Terminal} xywh {109 149 115 20} down_box BORDER_BOX labelsize 10 textsize 10
       } {
         MenuItem {} {
           label FL_UP_FRAME
@@ -1676,7 +1683,7 @@ G_tty->redraw();}
       }
       Fl_Box {} {
         label {Lt, Rt, Top, Bot}
-        xywh {110 172 114 15} labelsize 10
+        xywh {110 176 114 15} labelsize 10
       }
       Fl_Input margins_input {
         label Margins
@@ -1691,7 +1698,7 @@ G_tty->margin_right(rt);
 G_tty->margin_top(top);
 G_tty->margin_bottom(bot);
 G_tty->redraw();}
-        xywh {110 187 114 20} labelsize 10 when 28 textsize 10
+        xywh {110 191 114 20} labelsize 10 when 28 textsize 10
       }
       Fl_Check_Button outflags_lf_to_crlf {
         label LF_TO_CRLF
@@ -2026,7 +2033,7 @@ G_tty->show_ring_debug_window();}
         }
       }
       Fl_Group {} {
-        label {Terminal Tests}
+        label {Terminal Tests} open
         xywh {767 21 115 210} box ENGRAVED_FRAME labelsize 11
       } {
         Fl_Button {} {
@@ -2047,7 +2054,7 @@ Tests screen history, scrollup} xywh {778 66 90 30} labelsize 9
           callback {show_colorbars();}
           tooltip {Show colorbar test
 Tests API for setting colors
-Does *NOT* use ESC codes} xywh {778 101 90 30} labelsize 11
+Does *NOT* use ESC codes} xywh {778 101 90 30} shortcut 0x63 labelsize 11
         }
         Fl_Box {} {
           label {Self Tests}
@@ -2106,6 +2113,7 @@ G_tty = tty;              // global access
 G_tty->color(0x30200000); // dark orange (makes true black easy to see)
 G_tty->textsize(12);      // smaller text (RGB demo needs this)
 win->resizable(tty);
+
 command_input->when(FL_WHEN_ENTER_KEY_ALWAYS);
 command_input->take_focus();   // ensure command prompt has keyboard focus on startup
 
@@ -2118,7 +2126,8 @@ command_input->value("ls -la --color && ping google.com -c 5");
 \#endif
 
 // Sync input vals with widget's current values
-update_inputs();} {}
+update_inputs();} {selected
+    }
   }
 }
 
