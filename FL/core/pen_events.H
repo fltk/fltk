@@ -32,12 +32,13 @@ class Fl_Widget;
 
 namespace Fl {
 
+/** FLTK Pen/Stylus/Tablet input driver API. */
 namespace Pen {
 
 /**
  \defgroup fl_pen_events Pen and tablet event handling
  \ingroup fl_events
- \brief The Fl::Pen namespace API, declared in <FL/core/pen_events.H>
+ \brief This chapter documents the Fl::Pen namespace API, declared in <FL/core/pen_events.H>
 
  The FL::Pen namespace contains everything needed to work with a pen type input
  device, either in connection with an external tablet, or as a stylus for
@@ -48,8 +49,11 @@ namespace Pen {
  area. By returning 1 to Fl::Pen::ENTER, all further pen events are sent to
  this widget, and no mouse events are generated until Fl::Pen::LEAVE.
 
- Returning 0 Fl::Pen::ENTER tells FLTK to supress further pen events until
+ Returning 0 Fl::Pen::ENTER tells FLTK to suppress further pen events until
  Fl::Pen::LEAVE, and convert them into mouse events instead.
+
+ Pen events also set Fl::event_x(), Fl::event_y(), Fl::event_x_root(),
+ Fl::event_y_root(), Fl::event_is_click(), and Fl::event_clicks().
 
  @{
  */
