@@ -630,6 +630,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
     Fl_Native_File_Chooser_MAC.mm
     Fl_MacOS_Sys_Menu_Bar.mm
   )
+  source_group("ObjC Source Files" FILES ${MMFILES})
 else()
   set(MMFILES)
 endif()

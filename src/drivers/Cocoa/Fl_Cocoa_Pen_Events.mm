@@ -297,6 +297,7 @@ static int pen_send_all(int event, State trigger) {
     if (w)
       pen_send(w, event, trigger, copied);
   }
+  return 1;
 }
 
 /*
@@ -484,7 +485,6 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
   if (!receiver)
     return 0;
 
-  int ret = 0;
   if (is_down) {
     if (!pushed) {
       pushed_ = subscriber_list_[receiver];
@@ -499,9 +499,9 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
         Fl::e_clicks++;
       else
         Fl::e_clicks = 0;
-      ret = pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
+      pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
     } else {
-      ret = pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
+      pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
     }
   } else if (is_up) {
     if ( (ev.state & State::ANY_DOWN) == State::NONE ) {
@@ -510,18 +510,18 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     }
     State trigger = button_to_trigger([event buttonNumber], true);
     if ([event buttonNumber] == 0)
-      ret = pen_send(receiver, Fl::Pen::LIFT, trigger, event_data_copied);
+      pen_send(receiver, Fl::Pen::LIFT, trigger, event_data_copied);
     else
-      ret = pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
+      pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
   } else if (is_motion) {
     if (  Fl::e_is_click &&
          ( (fabs((int)ev.x - Fl::e_x_down) > 5) ||
            (fabs((int)ev.y - Fl::e_y_down) > 5) ) )
       Fl::e_is_click = 0;
     if (pushed) {
-      ret = pen_send(receiver, Fl::Pen::DRAW, State::NONE, event_data_copied);
+      pen_send(receiver, Fl::Pen::DRAW, State::NONE, event_data_copied);
     } else {
-      ret = pen_send(receiver, Fl::Pen::HOVER, State::NONE, event_data_copied);
+      pen_send(receiver, Fl::Pen::HOVER, State::NONE, event_data_copied);
     }
   }
   // Always return 1 because at this point, we capture pen events and don't
