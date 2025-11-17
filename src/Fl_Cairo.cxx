@@ -104,7 +104,7 @@ cairo_t *Fl::cairo_cc() {
 
   \note Only available if built with CMake option FLTK_OPTION_CAIRO_WINDOW=ON.
 */
-void Fl::cairo_cc(cairo_t *c, bool own=false) {
+void Fl::cairo_cc(cairo_t *c, bool own /* = false */) {
   Private::cairo_state_.cc(c, own);
 }
 
@@ -153,22 +153,22 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
     if (!xid->buffer)
       return NULL; // this may happen with GL windows
     cairo_ctxt = xid->buffer->draw_buffer.cairo_;
-    cairo_state_.cc(cairo_ctxt, false);
+    Fl::Private::cairo_state_.cc(cairo_ctxt, false);
     return cairo_ctxt;
   }
 #endif
 
   if (fl_gc == 0) {  // means remove current cc
     Fl::cairo_cc(0); // destroy any previous cc
-    cairo_state_.window(0);
+    Fl::Private::cairo_state_.window(0);
     return 0;
   }
 
   // don't re-create a context if it's the same gc/window combination
-  if (fl_gc == Fl::cairo_state_.gc() && fl_xid(wi) == (Window)Fl::cairo_state_.window())
+  if (fl_gc == Fl::Private::cairo_state_.gc() && fl_xid(wi) == (Window)Fl::Private::cairo_state_.window())
     return Fl::cairo_cc();
 
-  cairo_state_.window((void *)fl_xid(wi));
+  Fl::Private::cairo_state_.window((void *)fl_xid(wi));
 
   // Scale the Cairo context appropriately. This is platform dependent
 
@@ -240,8 +240,8 @@ cairo_t *Fl::Private::cairo_make_current(void *gc) {
     cairo_state_.gc(0); // keep track for next time
     return 0;
   }
-  if (gc == Fl::cairo_state_.gc() &&
-      fl_window == (Window)Fl::cairo_state_.window() &&
+  if (gc == Fl::Private::cairo_state_.gc() &&
+      fl_window == (Window)Fl::Private::cairo_state_.window() &&
       cairo_state_.cc() != 0)
     return Fl::cairo_cc();
   cairo_state_.gc(fl_gc); // keep track for next time
@@ -258,8 +258,8 @@ cairo_t *Fl::Private::cairo_make_current(void *gc) {
   \note Only available if CMake FLTK_OPTION_CAIRO_WINDOW is enabled.
 */
 cairo_t *Fl::Private::cairo_make_current(void *gc, int W, int H) {
-  if (gc == Fl::cairo_state_.gc() &&
-      fl_window == (Window)Fl::cairo_state_.window() &&
+  if (gc == Fl::Private::cairo_state_.gc() &&
+      fl_window == (Window)Fl::Private::cairo_state_.window() &&
       cairo_state_.cc() != 0) // no need to create a cc, just return that one
     return cairo_state_.cc();
 
@@ -284,9 +284,49 @@ cairo_t *Fl::Private::cairo_make_current(void *gc, int W, int H) {
   return c;
 }
 
+/** Flush Cairo drawings on Cairo context \p c.
+  This is \b required on Windows if you use the Cairo context provided
+  by the "Cairo autolink" option. Call this when all your drawings on
+  the Cairo context are finished. This is maybe not necessary on other
+  platforms than Windows but it does no harm if you call it always.
+
+  You don't need to use this if you use an Fl_Cairo_Window which does
+  this automatically after the draw callback returns.
+
+  Code example for "Cairo autolink" mode:
+
+  In the overridden draw() method of your subclass of Fl_Window or any
+  widget:
+  \code
+    cairo_t *cc = Fl::cairo_cc();   // get the "autolink" Cairo context
+    // ... your Cairo drawings are here ...
+    Fl::cairo_flush(cc);            // flush Cairo drawings to the device
+  \endcode
+
+  If you configure FLTK with CMake option
+  \c 'FLTK_OPTION_CAIRO_WINDOW' (i.e. without CMake option
+  \c 'FLTK_OPTION_CAIRO_EXT') or if you don't enable the \c 'autolink' Cairo
+  context you may do the equivalent to use Cairo drawings in an
+  overridden draw() method of derived classes by using
+  \code
+    // get the  Cairo context for the \c window
+    cairo_t *cc = Fl::cairo_make_current(window);
+    // ... your Cairo drawings are here ...
+    Fl::cairo_flush(cc); // flush Cairo drawings to the device
+  \endcode
+  \see Fl::cairo_autolink_context(bool)
+  \see Fl::cairo_make_current(Fl_Window*);
+*/
+FL_EXPORT extern void Fl::cairo_flush(cairo_t *c) {
+  // flush Cairo drawings: necessary at least for Windows
+  cairo_surface_t *s = cairo_get_target(c);
+  cairo_surface_flush(s);
+}
+
 // Silence compiler warning if none of the Cairo options has been selected
 
 #else
+
 FL_EXPORT int fltk_cairo_dummy() {
   return 1;
 }

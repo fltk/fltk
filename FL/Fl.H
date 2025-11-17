@@ -749,50 +749,11 @@ FL_EXPORT extern int args_to_utf8(int argc, char ** &argv);
 // Cairo support API
 
 FL_EXPORT extern cairo_t *cairo_make_current(Fl_Window *w);
-
 FL_EXPORT extern void cairo_autolink_context(bool alink);
 FL_EXPORT extern bool cairo_autolink_context();
 FL_EXPORT extern cairo_t *cairo_cc();
 FL_EXPORT extern void cairo_cc(cairo_t *c, bool own=false);
-
-/** Flush Cairo drawings on Cairo context \p c.
-  This is \b required on Windows if you use the Cairo context provided
-  by the "Cairo autolink" option. Call this when all your drawings on
-  the Cairo context are finished. This is maybe not necessary on other
-  platforms than Windows but it does no harm if you call it always.
-
-  You don't need to use this if you use an Fl_Cairo_Window which does
-  this automatically after the draw callback returns.
-
-  Code example for "Cairo autolink" mode:
-
-  In the overridden draw() method of your subclass of Fl_Window or any
-  widget:
-  \code
-    cairo_t *cc = Fl::cairo_cc();   // get the "autolink" Cairo context
-    // ... your Cairo drawings are here ...
-    Fl::cairo_flush(cc);            // flush Cairo drawings to the device
-  \endcode
-
-  If you configure FLTK with CMake option
-  \c 'FLTK_OPTION_CAIRO_WINDOW' (i.e. without CMake option
-  \c 'FLTK_OPTION_CAIRO_EXT') or if you don't enable the \c 'autolink' Cairo
-  context you may do the equivalent to use Cairo drawings in an
-  overridden draw() method of derived classes by using
-  \code
-    // get the  Cairo context for the \c window
-    cairo_t *cc = Fl::cairo_make_current(window);
-    // ... your Cairo drawings are here ...
-    Fl::cairo_flush(cc); // flush Cairo drawings to the device
-  \endcode
-  \see Fl::cairo_autolink_context(bool)
-  \see Fl::cairo_make_current(Fl_Window*);
-*/
-FL_EXPORT extern void cairo_flush(cairo_t *c) {
-  // flush Cairo drawings: necessary at least for Windows
-  cairo_surface_t *s = cairo_get_target(c);
-  cairo_surface_flush(s);
-}
+FL_EXPORT extern void cairo_flush(cairo_t *c);
 
 /** @} */
 

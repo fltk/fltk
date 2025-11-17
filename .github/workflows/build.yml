@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: install prerequisites
-      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglew-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxft-dev libxinerama-dev
+      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglew-dev libglu1-mesa-dev libcairo2-dev libx11-dev libxcursor-dev libxft-dev libxinerama-dev
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -36,7 +36,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D FLTK_BACKEND_WAYLAND=OFF -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
+      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D FLTK_BACKEND_WAYLAND=OFF -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -57,7 +57,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install prerequisites
-      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev
+      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libcairo2-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -72,7 +72,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
+      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
