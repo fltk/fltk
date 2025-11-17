@@ -44,6 +44,8 @@ void Fl::Pen::subscribe(Fl_Widget* widget) { }
 
 void Fl::Pen::unsubscribe(Fl_Widget* widget) { }
 
+void Fl::Pen::release() { }
+
 double Fl::Pen::event_x() { return 0.0; }
 
 double Fl::Pen::event_y() { return 0.0; }

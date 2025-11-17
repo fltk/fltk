@@ -130,6 +130,10 @@ static struct EventData ev;
 
 namespace Fl {
 
+// Global mouse position at mouse down event
+extern int e_x_down;
+extern int e_y_down;
+
 namespace Pen {
 
 // The event data that is made available to the user during event handling
@@ -160,11 +164,18 @@ Trait Fl::Pen::pen_traits(int pen_id) {
 }
 
 void Fl::Pen::subscribe(Fl_Widget* widget) {
+  if (widget == nullptr) return;
   subscriber_list_.add(widget);
 }
 
 void Fl::Pen::unsubscribe(Fl_Widget* widget) {
+  if (widget == nullptr) return;
   subscriber_list_.remove(widget);
+}
+
+void Fl::Pen::release() {
+  pushed_ = nullptr;
+  below_pen_ = nullptr;
 }
 
 double Fl::Pen::event_x() { return e.x; }
@@ -353,7 +364,6 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     double s = Fl::screen_driver()->scale(0);
     ev.x = pt.x/s;
     ev.y = eventWindow->h() - pt.y/s;
-    // TODO: verify actual values: root coordinates may be used for popup windows
     ev.rx = ev.x + eventWindow->x();
     ev.ry = ev.y + eventWindow->y();
     if (!is_proximity) {
@@ -436,9 +446,13 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
       receiver = pushed_->widget();
       if (Fl::grab() && (Fl::grab() != receiver->top_window()))
         return 0;
+      if (Fl::modal() && (Fl::modal() != receiver->top_window()))
+        return 0;
       pushed = true;
     } else {
       if (Fl::grab() && (Fl::grab() != eventWindow))
+        return 0;
+      if (Fl::modal() && (Fl::modal() != eventWindow))
         return 0;
       auto bpen = below_pen_ ? below_pen_->widget() : nullptr;
       auto bmouse = Fl::belowmouse();
@@ -477,10 +491,18 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
       Fl::pushed(receiver);
     }
     State trigger = button_to_trigger([event buttonNumber], true);
-    if ([event buttonNumber] == 0)
+    if ([event buttonNumber] == 0) {
+      Fl::e_is_click = 1;
+      Fl::e_x_down = (int)ev.x;
+      Fl::e_y_down = (int)ev.y;
+      if ([event clickCount] > 1)
+        Fl::e_clicks++;
+      else
+        Fl::e_clicks = 0;
       ret = pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
-    else
+    } else {
       ret = pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
+    }
   } else if (is_up) {
     if ( (ev.state & State::ANY_DOWN) == State::NONE ) {
       Fl::pushed(nullptr);
@@ -492,6 +514,10 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     else
       ret = pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
   } else if (is_motion) {
+    if (  Fl::e_is_click &&
+         ( (fabs((int)ev.x - Fl::e_x_down) > 5) ||
+           (fabs((int)ev.y - Fl::e_y_down) > 5) ) )
+      Fl::e_is_click = 0;
     if (pushed) {
       ret = pen_send(receiver, Fl::Pen::DRAW, State::NONE, event_data_copied);
     } else {

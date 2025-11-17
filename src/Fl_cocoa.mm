@@ -1067,13 +1067,18 @@ static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
   return ret;
 }
 
+namespace Fl {
+// Global mouse position at mouse down event
+int e_x_down { 0 };
+int e_y_down { 0 };
+};
+
 /*
  * Cocoa Mouse Button Handler
  */
 static void cocoaMouseHandler(NSEvent *theEvent)
 {
   static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2, FL_Button+4, FL_Button+5 };
-  static int px, py;
 
   fl_lock_function();
 
@@ -1130,7 +1135,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSEventTypeOtherMouseDown:
       sendEvent = FL_PUSH;
       Fl::e_is_click = 1;
-      px = (int)pos.x; py = (int)pos.y;
+      Fl::e_x_down = (int)pos.x;
+      Fl::e_y_down = (int)pos.y;
       if ([theEvent clickCount] > 1)
         Fl::e_clicks++;
       else
@@ -1155,7 +1161,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSEventTypeOtherMouseDragged: {
       if ( !sendEvent ) {
         sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
-        if (fabs(pos.x-px)>5 || fabs(pos.y-py)>5)
+        if ( (fabs(pos.x - Fl::e_x_down) > 5) ||
+             (fabs(pos.y - Fl::e_y_down) > 5))
           Fl::e_is_click = 0;
       }
       mods_to_e_state( mods );
@@ -1882,7 +1889,7 @@ void Fl_Darwin_System_Driver::open_callback(void (*cb)(const char *)) {
     // still needed for the system menu.
     [[NSApp keyWindow] sendEvent:theEvent];
     return;
-    }
+  }
   [NSApp sendEvent:theEvent];
 }
 @end

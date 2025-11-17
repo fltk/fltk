@@ -315,6 +315,13 @@ FL_EXPORT extern void subscribe(Fl_Widget* widget);
  */
 FL_EXPORT extern void unsubscribe(Fl_Widget* widget);
 
+/**
+ Clear the "pushed" state and forward pen events as mouse events.
+ Call this if another window is popped up during pen event handling, so
+ mouse event handling can resume normal.
+ */
+FL_EXPORT extern void release();
+
 /// \name Query values during event handling
 /// @{
 

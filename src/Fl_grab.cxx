@@ -27,5 +27,6 @@
 
 void Fl::grab(Fl_Window *win)
 {
+  Fl::Pen::release();
   screen_driver()->grab(win);
 }

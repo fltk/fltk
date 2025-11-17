@@ -36,6 +36,7 @@
 #include <FL/names.h>
 
 extern Fl_Menu_Item app_menu[];
+extern int popup_app_menu();
 Fl_Widget *cv1 { nullptr };
 Fl_Window *cvwin { nullptr };
 
@@ -65,10 +66,6 @@ public:
   void cv_pen_paint();
 };
 
-int popup_app_menu() {
-  auto mi = app_menu->popup(Fl::event_x(), Fl::event_y(), "Tests");
-  if (mi) mi->do_callback((Fl_Widget*)mi);
-}
 
 //
 // Handle mouse and pen events.
@@ -92,12 +89,11 @@ int CanvasInterface::cv_handle(int event)
       return 1;
     case Fl::Pen::TOUCH:
       // Pen tip or eraser just touched the surface.
-      if (Fl::event_state(FL_CTRL) || Fl::event_button() == FL_RIGHT_MOUSE)
+      if (Fl::event_state(FL_CTRL) || Fl::Pen::event_state(Fl::Pen::State::BUTTON0))
         return popup_app_menu();
       /* fall through */
     case Fl::Pen::DRAW:
       // Pen is dragged over the surface, or hovers with a button pressed.
-      printf("Pen x/y-root: %d %d\n", Fl::event_x_root(), Fl::event_y_root());
       overlay_ = PEN_DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -129,7 +125,6 @@ int CanvasInterface::cv_handle(int event)
         return popup_app_menu();
       /* fall through */
     case FL_DRAG:
-      printf("Mouse x/y-root: %d %d\n", Fl::event_x_root(), Fl::event_y_root());
       overlay_ = DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -183,7 +178,6 @@ void CanvasInterface::cv_draw()
       fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
       fl_arc(ov_x_-r/2-40*Fl::Pen::event_tilt_x(),
              ov_y_-r/2-40*Fl::Pen::event_tilt_y(), r, r, 0, 360);
-      // printf("%d\n", Fl::Pen::event_pen_id());
       break;
   }
 }
@@ -247,7 +241,7 @@ public:
   void draw() override { return cv_draw(); }
 };
 
-
+// A popup menu with a few test tasks.
 Fl_Menu_Item app_menu[] = {
   { "with modal window", 0, [](Fl_Widget*, void*) {
     fl_message("None of the canvas areas should receive\n"
@@ -259,19 +253,25 @@ Fl_Menu_Item app_menu[] = {
     w->show();
   } },
   { "unsubscribe middle canvas", 0, [](Fl_Widget*, void*) {
-    Fl::Pen::unsubscribe(cv1);
+    if (cv1) Fl::Pen::unsubscribe(cv1);
+  } },
+  { "resubscribe middle canvas", 0, [](Fl_Widget*, void*) {
+    if (cv1) Fl::Pen::subscribe(cv1);
   } },
   { "delete middle canvas", 0, [](Fl_Widget*, void*) {
     if (cv1) { cv1->top_window()->redraw(); delete cv1; cv1 = nullptr; }
   } },
-  { "canvas window grab", 0, [](Fl_Widget*, void*) {
-    Fl::grab(cvwin);
-  } },
-  { "canvas window release", 0, [](Fl_Widget*, void*) {
-    Fl::grab(nullptr);
-  } },
   { nullptr }
 };
+
+//
+// Show the menu and run the callback.
+//
+int popup_app_menu() {
+  auto mi = app_menu->popup(Fl::event_x(), Fl::event_y(), "Tests");
+  if (mi) mi->do_callback((Fl_Widget*)mi);
+  return 1;
+}
 
 //
 // Main app entry point
