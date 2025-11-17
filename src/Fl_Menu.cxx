@@ -886,7 +886,8 @@ int menuwindow::handle_part1(int e) {
         int item; const Fl_Menu_Item* m = mw.menu->find_shortcut(&item);
         if (m) {
           setitem(m, mymenu, item);
-          if (!m->submenu()) pp.state = DONE_STATE;
+          if (!m->submenu())
+            pp.state = DONE_STATE;
           return 1;
         }
       }

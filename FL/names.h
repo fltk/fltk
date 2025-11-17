@@ -24,6 +24,9 @@
 #ifndef FL_NAMES_H
 #define FL_NAMES_H
 
+#include <FL/Fl.H>  // for event constants
+#include <map>
+
 /** \defgroup fl_events Events handling functions
     @{
  */
@@ -43,42 +46,52 @@
   }
   \endcode
  */
-const char * const fl_eventnames[] =
-{
-  "FL_NO_EVENT",
-  "FL_PUSH",
-  "FL_RELEASE",
-  "FL_ENTER",
-  "FL_LEAVE",
-  "FL_DRAG",
-  "FL_FOCUS",
-  "FL_UNFOCUS",
-  "FL_KEYDOWN",
-  "FL_KEYUP",
-  "FL_CLOSE",
-  "FL_MOVE",
-  "FL_SHORTCUT",
-  "FL_DEACTIVATE",
-  "FL_ACTIVATE",
-  "FL_HIDE",
-  "FL_SHOW",
-  "FL_PASTE",
-  "FL_SELECTIONCLEAR",
-  "FL_MOUSEWHEEL",
-  "FL_DND_ENTER",
-  "FL_DND_DRAG",
-  "FL_DND_LEAVE",
-  "FL_DND_RELEASE",
-  "FL_SCREEN_CONFIGURATION_CHANGED",
-  "FL_FULLSCREEN",
-  "FL_ZOOM_GESTURE",
-  "FL_ZOOM_EVENT",
-  "FL_BEFORE_TOOLTIP",
-  "FL_BEFORE_MENU",
-  "FL_EVENT_30", // not yet defined, just in case it /will/ be defined ...
-  "FL_EVENT_31", // not yet defined, just in case it /will/ be defined ...
-  "FL_EVENT_32"  // not yet defined, just in case it /will/ be defined ...
+std::map<int, const char*> fl_eventnames = {
+  { FL_NO_EVENT, "FL_NO_EVENT" },
+  { FL_PUSH, "FL_PUSH" },
+  { FL_RELEASE, "FL_RELEASE" },
+  { FL_ENTER, "FL_ENTER" },
+  { FL_LEAVE, "FL_LEAVE" },
+  { FL_DRAG, "FL_DRAG" },
+  { FL_FOCUS, "FL_FOCUS" },
+  { FL_UNFOCUS, "FL_UNFOCUS" },
+  { FL_KEYDOWN, "FL_KEYDOWN" },
+  { FL_KEYUP, "FL_KEYUP" },
+  { FL_CLOSE, "FL_CLOSE" },
+  { FL_MOVE, "FL_MOVE" },
+  { FL_SHORTCUT, "FL_SHORTCUT" },
+  { FL_DEACTIVATE, "FL_DEACTIVATE" },
+  { FL_ACTIVATE, "FL_ACTIVATE" },
+  { FL_HIDE, "FL_HIDE" },
+  { FL_SHOW, "FL_SHOW" },
+  { FL_PASTE, "FL_PASTE" },
+  { FL_SELECTIONCLEAR, "FL_SELECTIONCLEAR" },
+  { FL_MOUSEWHEEL, "FL_MOUSEWHEEL" },
+  { FL_DND_ENTER, "FL_DND_ENTER" },
+  { FL_DND_DRAG, "FL_DND_DRAG" },
+  { FL_DND_LEAVE, "FL_DND_LEAVE" },
+  { FL_DND_RELEASE, "FL_DND_RELEASE" },
+  { FL_SCREEN_CONFIGURATION_CHANGED, "FL_SCREEN_CONFIGURATION_CHANGED" },
+  { FL_FULLSCREEN, "FL_FULLSCREEN" },
+  { FL_ZOOM_GESTURE, "FL_ZOOM_GESTURE" },
+  { FL_ZOOM_EVENT, "FL_ZOOM_EVENT" },
+  { FL_BEFORE_TOOLTIP, "FL_BEFORE_TOOLTIP" },
+  { FL_BEFORE_MENU, "FL_BEFORE_MENU" },
+  { /*FL_EVENT_*/ 30, "FL_EVENT_30" }, // not yet defined, just in case it /will/ be defined ...
+  { /*FL_EVENT_*/ 31, "FL_EVENT_31" }, // not yet defined, just in case it /will/ be defined ...
+  { /*FL_EVENT_*/ 32, "FL_EVENT_32" },  // not yet defined, just in case it /will/ be defined ...
+  { Fl::Pen::DETECTED, "Fl::Pen::DETECTED" },
+  { Fl::Pen::CHANGED, "Fl::Pen::CHANGED" },
+  { Fl::Pen::ENTER, "Fl::Pen::ENTER" },
+  { Fl::Pen::LEAVE, "Fl::Pen::LEAVE" },
+  { Fl::Pen::TOUCH, "Fl::Pen::TOUCH" },
+  { Fl::Pen::LIFT, "Fl::Pen::LIFT" },
+  { Fl::Pen::HOVER, "Fl::Pen::HOVER" },
+  { Fl::Pen::DRAW, "Fl::Pen::DRAW" },
+  { Fl::Pen::BUTTON_PUSH, "Fl::Pen::BUTTON_PUSH" },
+  { Fl::Pen::BUTTON_RELEASE, "Fl::Pen::BUTTON_RELEASE" }
 };
+
 
 /**
   This is an array of font names you can use to convert font numbers into names.

@@ -202,6 +202,12 @@ file(GLOB
   "*.[hH]"
 )
 
+# find all private header files in source directory "src/..."
+file(GLOB
+  PRIVATE_HEADER_FILES
+  "*.[hH]"
+)
+
 # add generated header files in build directory
 list(APPEND HEADER_FILES
   ${CMAKE_CURRENT_BINARY_DIR}/../FL/fl_config.h
@@ -235,6 +241,7 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     drivers/X11/fl_X11_platform_init.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_x.cxx
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
@@ -311,6 +318,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
   )
@@ -397,6 +405,7 @@ else()
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
+    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
     Fl_win32.cxx
     fl_dnd_win32.cxx
     Fl_Native_File_Chooser_WIN32.cxx
@@ -617,6 +626,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   set(MMFILES
     Fl_cocoa.mm
     drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
+    drivers/Cocoa/Fl_Cocoa_Pen_Events.mm
     Fl_Native_File_Chooser_MAC.mm
     Fl_MacOS_Sys_Menu_Bar.mm
   )

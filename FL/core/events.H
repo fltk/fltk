@@ -71,6 +71,8 @@ FL_EXPORT extern Fl_Widget*         belowmouse_;        ///< Widget under mouse 
 FL_EXPORT extern Fl_Widget*         pushed_;            ///< Widget receiving drag events
 FL_EXPORT extern Fl_Widget*         focus_;             ///< Widget with keyboard focus
 
+// Event variables should be private, but would harm back compatibility.
+
 #endif // FL_DOXYGEN
 
 
