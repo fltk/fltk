@@ -3463,6 +3463,7 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   scrollbar = new Fl_Scrollbar(x(), y(), scrollbar_actual_size(), h());  // tmp xywh (changed later) **
   scrollbar->type(FL_VERTICAL);
   scrollbar->value(0);
+  scrollbar->linesize(3);       // consistent w/Fl_Text_Display -erco 11/17/25
   scrollbar->callback(scrollbar_cb, (void*)this);
 
   hscrollbar = new Fl_Scrollbar(x(), y(), w(), scrollbar_actual_size());  // tmp xywh (changed later) **
