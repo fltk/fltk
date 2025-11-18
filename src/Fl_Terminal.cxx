@@ -3474,6 +3474,7 @@ void Fl_Terminal::init_(int X,int Y,int W,int H,const char*L,int rows,int cols,i
   hscrollbar_style_ = SCROLLBAR_AUTO;
 
   resizable(0);
+  clip_children(1);           // clips scrollbars within box()
   Fl_Group::color(FL_BLACK);  // black bg by default
   update_screen(true);        // update internal vars after setting screen size/font
   clear_screen_home();        // clear screen, home cursor
@@ -3723,42 +3724,42 @@ void Fl_Terminal::draw_buff(int Y) const {
   followed by the terminal's screen contents.
 */
 void Fl_Terminal::draw(void) {
-  int cx = x() + Fl::box_dx(box());
-  int cy = y() + Fl::box_dy(box());
-  int cw = w() - Fl::box_dw(box());
-  int ch = h() - Fl::box_dh(box());
-  fl_push_clip(cx,cy,cw,ch);
-  {
-    // First time shown? Force deferred font size calculations here (issue 837)
-    if (fontsize_defer_) {
-      fontsize_defer_ = false;    // clear flag
-      current_style_->update();   // do deferred update here
-      update_screen(true);        // update fonts
-    }
-    // Detect if Fl::scrollbar_size() was changed in size, recalc if so
-    if (scrollbar_size_ == 0 &&
-        ((scrollbar->visible() && scrollbar->w() != Fl::scrollbar_size()) ||
-         (hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size()))) {
-      update_scrollbar();
-    }
-    // Draw group first, terminal last
-    Fl_Group::draw();
-    // Draw that little square between the scrollbars:
-    if (scrollbar->visible() && hscrollbar->visible()) {
+  // First time shown? Force deferred font size calculations here (issue 837)
+  if (fontsize_defer_) {
+    fontsize_defer_ = false;    // clear flag
+    current_style_->update();   // do deferred update here
+    update_screen(true);        // update fonts
+  }
+  // Detect if Fl::scrollbar_size() was changed in size, recalc if so
+  if (scrollbar_size_ == 0 &&
+      ((scrollbar->visible() && scrollbar->w() != Fl::scrollbar_size()) ||
+       (hscrollbar->visible() && hscrollbar->h() != Fl::scrollbar_size()))) {
+    update_scrollbar();
+  }
+  // Draw group first, terminal last
+  Fl_Group::draw();
+  // Draw that little square between the scrollbars:
+  if (scrollbar->visible() && hscrollbar->visible()) {
+    int cx = x() + Fl::box_dx(box());
+    int cy = y() + Fl::box_dy(box());
+    int cw = w() - Fl::box_dw(box());
+    int ch = h() - Fl::box_dh(box());
+    fl_push_clip(cx,cy,cw,ch);
+    {
       fl_color(parent()->color());
       fl_rectf(scrollbar->x(), hscrollbar->y(), scrollbar_actual_size(), scrollbar_actual_size());
     }
-    if (is_frame(box())) {
-      // Is box() a frame? Fill area inside frame with rectf().
-      //    FL_XXX_FRAME types allow Fl_Terminal to have a /flat/ background.
-      //    FL_XXX_BOX types inherit Fl::scheme() which can provide unwanted gradients.
-      //
-      fl_color(Fl_Group::color());
-      // Draw flat field (inside border drawn by Fl_Group::draw() above)
-      fl_rectf(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
-    }
+    fl_pop_clip();
   }
-  fl_pop_clip();
+  if (is_frame(box())) {
+    // Is box() a frame? Fill area inside frame with rectf().
+    //    FL_XXX_FRAME types allow Fl_Terminal to have a /flat/ background.
+    //    FL_XXX_BOX types inherit Fl::scheme() which can provide unwanted gradients.
+    //
+    fl_color(Fl_Group::color());
+    // Draw flat field (inside border drawn by Fl_Group::draw() above)
+    fl_rectf(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
+  }
 
   //DEBUG  fl_color(0x80000000);     // dark red box inside margins
   //DEBUG  fl_rect(scrn_);
