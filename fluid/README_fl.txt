@@ -483,6 +483,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "resizable" : default fixed
   "hotspot" : make a Widget a hotspot
   "divider" : add a divider under a menu item
+  "headline" : menu item headline flag
   "class" <word> : superclass
   "shortcut" <word> : integer
   "code0" or "code1" or "code2" or "code3" <word> : C++ extra code lines
