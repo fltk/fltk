@@ -2,6 +2,7 @@
 version 1.0500
 header_name {.h}
 code_name {.cxx}
+include_guard {}
 snap {
   ver 1
   current_suite FLTK
@@ -25,7 +26,7 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <stdlib.h>    // free()} {selected private global
+decl {\#include <stdlib.h>    // free()} {private global
 }
 
 decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {public global
@@ -630,13 +631,13 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
             tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Choice {} {
-            callback align_text_image_cb
+            callback align_text_image_cb open
             xywh {172 115 116 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Image Alignment   }
-              user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {145 145 100 20} labelfont 2 labelsize 10 deactivate
+              user_data {(fl_intptr_t)-1} selected
+              xywh {145 145 100 20} labelfont 1 labelsize 10 headline
             }
             MenuItem {} {
               label {image over text}
@@ -665,13 +666,13 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
             }
           }
           Fl_Choice {} {
-            callback align_position_cb
+            callback align_position_cb open
             xywh {293 115 86 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Inside && Outside   }
-              user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {135 135 100 20} labelfont 2 labelsize 10 deactivate
+              user_data {(fl_intptr_t)-1}
+              xywh {135 135 100 20} labelfont 1 labelsize 10 headline
             }
             MenuItem {} {
               label {top left}
@@ -720,8 +721,8 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
             }
             MenuItem {} {
               label {   Outside Alignment   }
-              user_data {(fl_intptr_t)0xFFFFFFFF}
-              xywh {125 125 100 20} labelfont 2 labelsize 10 deactivate
+              user_data {(fl_intptr_t)-1}
+              xywh {125 125 100 20} labelfont 1 labelsize 10 headline
             }
             MenuItem {} {
               label {left top}
@@ -756,7 +757,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
         }
         Fl_Group {} {
           label {Position:}
-          callback position_group_cb
+          callback position_group_cb open
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_x_input {
@@ -1574,7 +1575,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
         }
         Fl_Group wp_gui_attributes {
           label {Attributes:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 260 305 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Light_Button {} {
@@ -1632,9 +1633,12 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
           Fl_Light_Button {} {
             label Resizable
             callback {if (v == LOAD) {
-  if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;}
+  if (current_widget->is_a(Type::Menu_Item)) {
+    o->hide(); 
+    return;
+  }
   if (numselected > 1) {o->deactivate(); return;}
-  o->activate();
+  o->show();
   o->value(current_widget->resizable());
 } else {
   Fluid.proj.undo.checkpoint();
@@ -1642,6 +1646,33 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
   Fluid.proj.set_modflag(1);
 }}
             tooltip {Make the widget resizable.} xywh {225 260 75 20} selection_color 1 labelsize 11 when 1
+          }
+          Fl_Light_Button {} {
+            label Headline
+            callback {if (v == LOAD) {
+  if (!current_widget->is_a(Type::Menu_Item)) {
+    o->hide(); 
+    return;
+  }
+  o->show();
+  o->value(current_widget->menu_headline());
+} else {
+  int mod = 0;
+  int n = o->value();
+  for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+    if (q->is_a(Type::Menu_Item)) {
+      if (!mod) {
+        mod = 1;
+        Fluid.proj.undo.checkpoint();
+      }
+      q->menu_headline(n);
+      q->redraw();
+    }
+  }
+  if (mod) Fluid.proj.set_modflag(1);
+}}
+            tooltip {Make a menu item the headline of a menu
+unselectable, but not grayed out} xywh {225 260 75 20} selection_color 1 labelsize 11 when 1 hide
           }
           Fl_Light_Button {} {
             label Hotspot
@@ -1672,7 +1703,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
             tooltip {Center the window under this widget.} xywh {305 260 70 20} selection_color 1 labelsize 11 when 1
           }
           Fl_Box {} {
-            xywh {395 260 0 20} labelsize 11 resizable
+            xywh {395 260 0 20} labelsize 11
           }
         }
         Fl_Input wp_gui_tooltip {

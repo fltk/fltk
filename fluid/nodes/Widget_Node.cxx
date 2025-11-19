@@ -2007,6 +2007,7 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
   if (!o->active()) f.write_string("deactivate");
   if (resizable()) f.write_string("resizable");
   if (hotspot()) f.write_string(is_a(Type::Menu_Item) ? "divider" : "hotspot");
+  if (menu_headline()) f.write_string("headline");
   for (int n=0; n < NUM_EXTRA_CODE; n++) if (extra_code(n)) {
     f.write_indent(level+1);
     f.write_string("code%d",n);
@@ -2179,6 +2180,8 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     resizable(1);
   } else if (!strcmp(c,"hotspot") || !strcmp(c, "divider")) {
     hotspot(1);
+  } else if (!strcmp(c,"headline")) {
+    menu_headline(true);
   } else if (!strcmp(c,"class")) {
     subclass(f.read_word());
   } else if (!strcmp(c,"shortcut")) {

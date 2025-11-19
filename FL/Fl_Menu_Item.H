@@ -36,8 +36,10 @@ enum { // values for flags:
   FL_SUBMENU         = 0x40,       ///< Item is a submenu to other items
   FL_MENU_DIVIDER    = 0x80,       ///< Creates divider line below this item. Also ends a group of radio buttons
   FL_MENU_HORIZONTAL = 0x100,      ///< reserved, do not use
-  FL_MENU_CHATTY     = 0x200       ///< Menu Item receives additional callbacks
-  ///< Note: \b ALL other bits in \p flags are reserved: do not use them for your own purposes!
+  FL_MENU_CHATTY     = 0x200,      ///< Menu Item receives additional callbacks
+  FL_MENU_HEADLINE   = 0x400,      ///< Mark menu item as a headline
+  ///<
+  ///< Note: All other bits in `flags` are reserved: do not use them for your own purposes!
 };
 
 class Fl_Menu_;
@@ -460,8 +462,28 @@ struct FL_EXPORT Fl_Menu_Item {
     the menu item to appear grayed-out.
   */
   void deactivate() {flags |= FL_MENU_INACTIVE;}
+
   /** Returns non 0 if FL_INACTIVE and FL_INVISIBLE are cleared, 0 otherwise. */
   int activevisible() const {return !(flags & (FL_MENU_INACTIVE|FL_MENU_INVISIBLE));}
+
+  /** Returns non-0 if the menu item can be selected.
+   Return 0 if the menu is hidden, inactive, or a headline.
+   */
+  int selectable() const {return !(flags & (FL_MENU_INACTIVE|FL_MENU_INVISIBLE|FL_MENU_HEADLINE));}
+
+  /**
+   Set menu item as a headline.
+   A menu item can be designated as a headline. Headline items  are not selectable,
+   but they are also not grayed out. To visually distinguish them, add
+   indentation and apply bold or italic styling.
+   */
+  void headline(bool yes) {
+    if (yes) flags |= FL_MENU_HEADLINE; else flags &= ~FL_MENU_HEADLINE;
+  }
+  /**
+   Return non 0 if this menu item is used as a headline.
+   */
+  int headline() const { return (flags & FL_MENU_HEADLINE); }
 
   // compatibility for FLUID so it can set the image of a menu item...
 

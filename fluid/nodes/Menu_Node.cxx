@@ -128,7 +128,7 @@ void Input_Choice_Node::build_menu() {
       }
       m->shortcut(((Fl_Button*)(i->o))->shortcut());
       m->callback(nullptr,(void*)i);
-      m->flags = i->flags();
+      m->flags = i->flags() & ~FL_MENU_HEADLINE;
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());
@@ -467,6 +467,7 @@ int Menu_Item_Node::flags() {
     else i |= FL_SUBMENU_POINTER;
   }
   if (hotspot()) i |= FL_MENU_DIVIDER;
+  if (menu_headline()) i |= FL_MENU_HEADLINE;
   return i;
 }
 
@@ -697,7 +698,7 @@ void Menu_Base_Node::build_menu() {
       }
       m->shortcut(((Fl_Button*)(i->o))->shortcut());
       m->callback(nullptr,(void*)i);
-      m->flags = i->flags() | i->o->type();
+      m->flags = (i->flags() | i->o->type())  & ~FL_MENU_HEADLINE;
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());

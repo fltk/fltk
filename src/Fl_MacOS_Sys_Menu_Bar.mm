@@ -229,6 +229,14 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:title
                                                 action:selector
                                          keyEquivalent:@""];
+  if (mitem->labelfont() & FL_BOLD) {
+    NSFont *boldFont = [NSFont boldSystemFontOfSize:[NSFont systemFontSize]];
+    NSAttributedString *attributed =
+    [ [ [NSAttributedString alloc] initWithString:title
+                                       attributes:@{ NSFontAttributeName: boldFont }]
+      autorelease];
+    item.attributedTitle = attributed;
+  }
   // >= 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
   NSInteger index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
   [item setTag:index];
@@ -369,6 +377,14 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     cnt = (int)[mh numberOfItems];
     cnt--;
     menuItem = [mh itemAtIndex:cnt];
+    if (mitem->labelfont() & FL_BOLD) {
+      NSFont *boldFont = [NSFont boldSystemFontOfSize:[NSFont systemFontSize]];
+      NSAttributedString *attributed =
+      [ [ [NSAttributedString alloc] initWithString:title
+                                         attributes:@{ NSFontAttributeName: boldFont }]
+        autorelease];
+      menuItem.attributedTitle = attributed;
+    }
     [menuItem setSubmenu:submenu];
     [submenu release];
   } else submenu = mh;

@@ -51,6 +51,8 @@ class Widget_Node : public Node
   const char *inactive_name_;
   uchar hotspot_;
 
+  bool menu_headline_ { false };
+
 protected:
 
   /// This variable is set for visible windows in batch mode.
@@ -97,10 +99,14 @@ public:
   void image_name(const char *);
   const char *inactive_name() const {return inactive_name_;}
   void inactive_name(const char *);
+  // Note: hotspot is misused by menu items to indicate a divider
   uchar hotspot() const {return hotspot_;}
   void hotspot(uchar v) {hotspot_ = v;}
   uchar resizable() const;
   void resizable(uchar v);
+
+  bool menu_headline() const { return menu_headline_; }
+  void menu_headline(bool v) { menu_headline_ = v; }
 
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();

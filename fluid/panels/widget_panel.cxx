@@ -620,7 +620,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
 Fl_Group *wp_gui_alignment=(Fl_Group *)0;
 
 Fl_Menu_Item menu_[] = {
- {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+ {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)-1), 1024, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
  {"image over text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"text over image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"text next to image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
@@ -630,7 +630,7 @@ Fl_Menu_Item menu_[] = {
 };
 
 Fl_Menu_Item menu_1[] = {
- {"   Inside && Outside   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+ {"   Inside && Outside   ", 0,  0, (void*)((fl_intptr_t)-1), 1024, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
  {"top left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"top right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
@@ -640,7 +640,7 @@ Fl_Menu_Item menu_1[] = {
  {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
- {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 10, 0},
+ {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)-1), 1024, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
  {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
  {"left bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 9, 0},
@@ -1454,14 +1454,42 @@ static void cb_Active(Fl_Light_Button* o, void* v) {
 
 static void cb_Resizable(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;}
+    if (current_widget->is_a(Type::Menu_Item)) {
+      o->hide(); 
+      return;
+    }
     if (numselected > 1) {o->deactivate(); return;}
-    o->activate();
+    o->show();
     o->value(current_widget->resizable());
   } else {
     Fluid.proj.undo.checkpoint();
     current_widget->resizable(o->value());
     Fluid.proj.set_modflag(1);
+  }
+}
+
+static void cb_Headline(Fl_Light_Button* o, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_a(Type::Menu_Item)) {
+      o->hide(); 
+      return;
+    }
+    o->show();
+    o->value(current_widget->menu_headline());
+  } else {
+    int mod = 0;
+    int n = o->value();
+    for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
+      if (q->is_a(Type::Menu_Item)) {
+        if (!mod) {
+          mod = 1;
+          Fluid.proj.undo.checkpoint();
+        }
+        q->menu_headline(n);
+        q->redraw();
+      }
+    }
+    if (mod) Fluid.proj.set_modflag(1);
   }
 }
 
@@ -2735,6 +2763,14 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Resizable);
             o->when(FL_WHEN_CHANGED);
           } // Fl_Light_Button* o
+          { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Headline");
+            o->tooltip("Make a menu item the headline of a menu\nunselectable, but not grayed out");
+            o->selection_color((Fl_Color)1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_Headline);
+            o->when(FL_WHEN_CHANGED);
+            o->hide();
+          } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(305, 260, 70, 20, "Hotspot");
             o->tooltip("Center the window under this widget.");
             o->selection_color((Fl_Color)1);
@@ -2744,7 +2780,6 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Light_Button* o
           { Fl_Box* o = new Fl_Box(395, 260, 0, 20);
             o->labelsize(11);
-            Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           wp_gui_attributes->end();
         } // Fl_Group* wp_gui_attributes

@@ -727,7 +727,10 @@ static int forward(int menu) { // go to next item in menu menu if possible
   do {
     while (++item < m.numitems) {
       const Fl_Menu_Item* m1 = m.menu->next(item);
-      if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
+      if (m1->selectable()) {
+        setitem(m1, menu, item);
+        return 1;
+      }
     }
     if (wrapped) break;
     item = -1;
@@ -748,7 +751,10 @@ static int backward(int menu) { // previous item in menu menu if possible
   do {
     while (--item >= 0) {
       const Fl_Menu_Item* m1 = m.menu->next(item);
-      if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
+      if (m1->selectable()) {
+        setitem(m1, menu, item);
+        return 1;
+      }
     }
     if (wrapped) break;
     item = m.numitems;
@@ -868,7 +874,7 @@ int menuwindow::handle_part1(int e) {
         goto RIGHT;
       }
       // Ignore keypresses over inactive items, mark KEYBOARD event as used.
-      if (pp.current_item && !pp.current_item->activevisible())
+      if (pp.current_item && !pp.current_item->selectable())
         return 1;
       // Mark the menu 'done' which will trigger the callback
       pp.state = DONE_STATE;
@@ -961,7 +967,7 @@ int menuwindow::handle_part1(int e) {
       } else
 #endif
       // do nothing if they try to pick an inactive item, or a submenu with no callback
-      if (!pp.current_item || (pp.current_item->activevisible() &&
+      if (!pp.current_item || (pp.current_item->selectable() &&
          (!pp.current_item->submenu() || pp.current_item->callback_ || (pp.menubar && pp.menu_number <= 0))))
         pp.state = DONE_STATE;
     }
@@ -1038,7 +1044,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   }
   initial_item = pp.current_item;
   if (initial_item) {
-    if (menubar && !initial_item->activevisible()) { // pointing at inactive item
+    if (menubar && !initial_item->selectable()) { // pointing at inactive item
       Fl::grab(0);
       return NULL;
     }
@@ -1085,7 +1091,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   STARTUP:
     menuwindow& cw = *pp.p[pp.menu_number];
     const Fl_Menu_Item* m = pp.current_item;
-    if (!m->activevisible()) { // pointing at inactive item
+    if (!m->selectable()) { // pointing at inactive item
       cw.set_selected(-1);
       initial_item = 0; // turn off startup code
       continue;
