@@ -111,6 +111,12 @@ class menuwindow;
 // utility class covering both menuwindow and menutitle
 class window_with_items : public Fl_Menu_Window {
 protected:
+  /*
+   Create a window that can hold menu items. The implementation is in the
+   derived class menuwindow and menutitle.
+   \param X, Y, W, H position and size of the window
+   \param m saved in member variable `menu`, used in `class menuwindow`
+   */
   window_with_items(int X, int Y, int W, int H, const Fl_Menu_Item *m) :
     Fl_Menu_Window(X, Y, W, H, 0) {
       menu = m;
@@ -121,54 +127,100 @@ protected:
       clear_border();
     }
 public:
+  // Store a pointer to the first item in the menu array.
   const Fl_Menu_Item* menu;
+  // Use this to check this is a Fl_Menu_Window or a derived window class.
   virtual menuwindow* as_menuwindow() { return NULL; }
 };
 
 // tiny window for title of menu:
 class menutitle : public window_with_items {
+  // Implement the class specifc drawing code
   void draw() FL_OVERRIDE;
 public:
+  /*
+   Create a window that hold the title of another menu.
+   \param X, Y, W, H position and size of the window
+   \param m saved in member variable `menu`, used in `class menuwindow`
+   \param menubar if set, this title is part of a horizontal menu bar,
+      if clear, this is a floating menu title
+   */
   menutitle(int X, int Y, int W, int H, const Fl_Menu_Item*, bool menubar = false);
+  // If set, title is part of a menubar.
   bool in_menubar;
 };
 
-// each vertical menu has one of these:
+/*
+ A window that renders the menu items from an array and handles all events.
+ The event handler runs in its own loop inside `Fl_Menu_Item::pulldown`.
+ The `struct menustate` holds up to 20 menu windows simultaneously.
+ */
 class menuwindow : public window_with_items {
+  // For tricky direct access
   friend class Fl_Window_Driver;
+  // Fl_Menu_Item::pulldown does some direct manipulations
   friend struct Fl_Menu_Item;
-  void draw() FL_OVERRIDE;
+  // Draw this window, either entirely, or just the selected and deselect items.
+  void draw() override;
+  // Draw a single menu item in this window
   void drawentry(const Fl_Menu_Item*, int i, int erase);
+  // Main event handler
   int handle_part1(int);
+  // Kludge to avoid abandoned window on macOS
   int handle_part2(int e, int ret);
+  // All open menu windows are positioned relative to this window
   static Fl_Window *parent_;
+  // Helper to store the height of the screen that contains the menu windows
   static int display_height_;
 public:
+  // Optional title for menubar windows and floating menus
   menutitle* title;
-  int handle(int) FL_OVERRIDE;
+  // Override to handle all incoming events
+  int handle(int) override;
+  // Override to fixup the current selection
   void hide() override;
+  // Height of the tallest menu item in the array.
   int itemheight;       // zero == menubar
+  // Number of visible menu items.
   int numitems;
+  // Index of selected item, or -1 if none is selected.
   int selected;
-  int drawn_selected;   // last redraw has this selected
+  // Remember the last item we drew selected, so we can redraw it unselected
+  // when the selection changes. -1 if none.
+  int drawn_selected;
+  // Width of the shortcut column, using the longest shortcut text width.
   int shortcutWidth;
+  // Create our menu window
   menuwindow(const Fl_Menu_Item* m, int X, int Y, int W, int H,
              const Fl_Menu_Item* picked, const Fl_Menu_Item* title,
              int menubar = 0, int menubar_title = 0, int right_edge = 0);
+  // Destructor
   ~menuwindow();
+  // Change the index of the selected item, -1 for none. Trigger chatty callbacks
+  // and marks the window area of the newly selected item for redraw.
   void set_selected(int);
+  // Find the index to the item under the given mouse coordinates.
   int find_selected(int mx, int my);
+  // Calculate the horizontal position of an item by index for horizontal
+  // menus inside a menubar.
   int titlex(int);
-  void autoscroll(int);
+  // Scroll so item i is visible on screen. This may move the entire window..
+  void autoscroll(int i);
+  // Also reposition the title (relative to the parent_ window?)
   void position(int x, int y);
+  // return 1, if the given root coordinates are inside the window
   int is_inside(int x, int y);
+  // Fake runtime type information
   menuwindow* as_menuwindow() FL_OVERRIDE { return this; }
+  // (if set, this is part of a menubar?)
   int menubartitle;
+  // In a cascading window, this points to the menu window that opened this menu.
   menuwindow *origin;
+  // Used by the window driver
   int offset_y;
 };
 
-Fl_Window *menuwindow::parent_ = NULL;
+Fl_Window *menuwindow::parent_ = nullptr;
 int menuwindow::display_height_ = 0;
 
 /**
@@ -178,14 +230,18 @@ int menuwindow::display_height_ = 0;
  */
 
 /** The Fl_Window from which currently displayed popups originate.
- Optionally, gives also the height of the display containing this window */
+ Optionally, gives also the height of the display containing this window.
+ \parmm[out]display_height return the height of the display here.
+ \return pointe to the owning window
+ */
 Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
   if (display_height) *display_height = menuwindow::display_height_;
   return menuwindow::parent_;
 }
 
+/* Cast to menuwindow if win is of claa menuwindow and the driver is initialized. */
 static menuwindow *to_menuwindow(Fl_Window *win) {
-  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return NULL;
+  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return nullptr;
   return ((window_with_items*)win)->as_menuwindow();
 }
 
@@ -247,11 +303,16 @@ void Fl_Window_Driver::scroll_to_selected_item(Fl_Window *win) {
  \endcond
  */
 
+// Global variable that tells the label draw call if `&x` Alt-key shortcuts must be rendered.
 extern char fl_draw_shortcut;
 
 /**
-  Measures width of label, including effect of & characters.
-  Optionally, can get height if hp is not NULL.
+ Measures width of label, including effect of & characters.
+ Optionally, can get height if hp is not NULL.
+ \param[out] hp return the height of the label
+ \param[in] m for this menu item
+ \return width of the label without shortcut text, but including checkbox
+    for radio and check items.
 */
 int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   Fl_Label l;
@@ -271,7 +332,13 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   return w;
 }
 
-/** Draws the menu item in bounding box x,y,w,h, optionally selects the item. */
+/**
+ Draws the menu item in the bounding box selected or unselected.
+ This does not draw the shortcut: see menuwindow::drawentry().
+ \param[in] x, y, w, h bounding box for the menu item
+ \param[in] m draw the background, label, and checkbox of this item
+ \param[in] selected 0 = draw unselected, 1 = draw selected, 2 = draw menu title
+ */
 void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
                         int selected) const {
   Fl_Label l;
@@ -332,11 +399,28 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   fl_draw_shortcut = 0;
 }
 
+/*
+ Construct a menu title window holding a single line of text.
+ \param[in] X, Y, W, H position and size
+ \param[in] L pointer to menu item that hold the label text
+ \param[in] inbar true if this is part of an Fl_Menu_Bar
+ */
 menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L, bool inbar) :
   window_with_items(X, Y, W, H, L) {
   in_menubar = inbar;
 }
 
+/*
+ Construct a menu window that can render a list of menu items.
+ \param[in] m pointer to the first menu item in the array
+ \param[in] X, Y position relative to parent_
+ \param[in] Wp, Hp initial minimum size
+ \param[in] picked pointer to the currently picked menu item, can be nullptr
+ \param[in] t pointer to the menutitle window
+ \param[in] menubar set if part of an Fl_Menu_Bar menu(?)
+ \param[in] menubar_title set if top level of Fl_Menu_Bar(?)
+ \param[in] right_edge maximum right edge of menu on current screen(?), not used
+ */
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
                        const Fl_Menu_Item* picked, const Fl_Menu_Item* t,
                        int menubar, int menubar_title, int right_edge)
@@ -476,23 +560,29 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   }
 }
 
+/* Destroy this window. */
 menuwindow::~menuwindow() {
   hide();
   delete title;
 }
 
+/* Fixup the selection and hide this window */
 void menuwindow::hide() {
   set_selected(-1);
   window_with_items::hide();
 }
 
+/* Set the position of this menu and its title window. */
 void menuwindow::position(int X, int Y) {
   if (title) {title->position(X, title->y()+Y-y());}
   Fl_Menu_Window::position(X, Y);
   // x(X); y(Y); // don't wait for response from X
 }
 
-// scroll so item i is visible on screen
+/* Scroll so item i is visible on screen.
+ May scroll or move the window.
+ \param[in] n index into visible menu items
+ */
 void menuwindow::autoscroll(int n) {
   int scr_y, scr_h;
   int Y = y()+Fl::box_dx(box())+2+n*itemheight;
@@ -514,6 +604,11 @@ void menuwindow::autoscroll(int n) {
 
 ////////////////////////////////////////////////////////////////
 
+/* Draw one menu item.
+ \param[in] m pointer to the item
+ \param[in] n index into the visible item list
+ \param[in] eraseit if set, redraw the unselected background
+ */
 void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   if (!m) return; // this happens if -1 is selected item and redrawn
 
@@ -571,10 +666,14 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   }
 }
 
+/* Draw the contents of the menutitle window. */
 void menutitle::draw() {
   menu->draw(0, 0, w(), h(), button, 2);
 }
 
+/* Draw the menuwindow. If the damage flags are FL_DAMAGE_CHILD, only redraw
+ the old selected and the newly selected items.
+ */
 void menuwindow::draw() {
   if (damage() != FL_DAMAGE_CHILD) {    // complete redraw
     if ( box() != FL_FLAT_BOX && ( Fl::is_scheme( "gtk+" ) ||
@@ -597,6 +696,9 @@ void menuwindow::draw() {
   drawn_selected = selected;
 }
 
+/* Set a new selected item.
+ \param[in] n index into visible item list
+ */
 void menuwindow::set_selected(int n) {
   if (n != selected) {
     if ((selected!=-1) && (menu)) {
@@ -616,6 +718,10 @@ void menuwindow::set_selected(int n) {
 
 ////////////////////////////////////////////////////////////////
 
+/* Find the item at the give pixel position.
+ \param[in] mx, my position in pixels
+ \return index of item that is under the pixel, or -1 for none
+ */
 int menuwindow::find_selected(int mx, int my) {
   if (!menu || !menu->text) return -1;
   mx -= x();
@@ -637,7 +743,9 @@ int menuwindow::find_selected(int mx, int my) {
   return n;
 }
 
-// return horizontal position for item n in a menubar:
+/* Return horizontal position for item n in a menubar.
+ \return position in window in pixels.
+ */
 int menuwindow::titlex(int n) {
   const Fl_Menu_Item* m;
   int xx = 3;
@@ -645,7 +753,9 @@ int menuwindow::titlex(int n) {
   return xx;
 }
 
-// return 1, if the given root coordinates are inside the window
+/* Check if mouse is positions over the window.
+ \return 1, if the given root coordinates are inside the window
+ */
 int menuwindow::is_inside(int mx, int my) {
   if ( mx < x_root() || mx >= x_root() + w() ||
        my < y_root() || my >= y_root() + h()) {
@@ -654,7 +764,7 @@ int menuwindow::is_inside(int mx, int my) {
   if (itemheight == 0 && find_selected(mx, my) == -1) {
     // in the menubar but out from any menu header
     return 0;
-    }
+  }
   return 1;
 }
 
@@ -680,20 +790,26 @@ int menuwindow::is_inside(int mx, int my) {
 #define DONE_STATE 2    // exit the popup, the current item was picked
 #define MENU_PUSH_STATE 3 // mouse has been pushed on a menu title
 
+/*
+ This class is a singleton that handles the current cascade of menu windows.
+ */
 struct menustate {
   const Fl_Menu_Item* current_item; // what mouse is pointing at
   int menu_number; // which menu it is in
   int item_number; // which item in that menu, -1 if none
   menuwindow* p[20]; // pointers to menus
-  int nummenus;
+  int nummenus; // number of open menuwindows
   int menubar; // if true p[0] is a menubar
-  int state;
+  int state; // INITIAL_STATE, etc. See above
   menuwindow* fakemenu; // kludge for buttons in menubar
   int is_inside(int mx, int my);
 };
+// Global state of menu windows and popup windows.
 static menustate* p=0;
 
-// return 1 if the coordinates are inside any of the menuwindows
+/* Find out if any menu window is under the mouse.
+ \return 1 if the coordinates are inside any of the menuwindows
+ */
 int menustate::is_inside(int mx, int my) {
   int i;
   for (i=nummenus-1; i>=0; i--) {
@@ -703,12 +819,21 @@ int menustate::is_inside(int mx, int my) {
   return 0;
 }
 
+/* Remember this item in the state machine.
+ \param[in] i current menu item
+ \param[in] m index into menu window array
+ \param[in] n index into visible item in that menu window
+ */
 static inline void setitem(const Fl_Menu_Item* i, int m, int n) {
   p->current_item = i;
   p->menu_number = m;
   p->item_number = n;
 }
 
+/* Find and store a mneu item in the state machine.
+ \param[in] m index into menu window array
+ \param[in] n index into visible item in that menu window
+ */
 static void setitem(int m, int n) {
   menustate &pp = *p;
   pp.current_item = (n >= 0) ? pp.p[m]->menu->next(n) : 0;
@@ -716,6 +841,11 @@ static void setitem(int m, int n) {
   pp.item_number = n;
 }
 
+/* Go down to the next selectable menu item.
+ If the event button is FL_Down, increment once, else go to the bottom of the menu.
+ \param[in] menu index into menu window list
+ \return 1 if an item was found, 0 if the menu wrapped
+ */
 static int forward(int menu) { // go to next item in menu menu if possible
   // `menu` is -1 if no item is currently selected, so use the first menu
   if (menu < 0)
@@ -740,6 +870,11 @@ static int forward(int menu) { // go to next item in menu menu if possible
   return 0;
 }
 
+/* Go up to the previous selectable menu item.
+ If the event button is FL_Up, decrement once, else go to the top of the menu.
+ \param[in] menu index into menu window list
+ \return 1 if an item was found, 0 if the menu wrapped
+ */
 static int backward(int menu) { // previous item in menu menu if possible
   // `menu` is -1 if no item is currently selected, so use the first menu
   if (menu < 0)
@@ -764,6 +899,10 @@ static int backward(int menu) { // previous item in menu menu if possible
   return 0;
 }
 
+/* Handle events sent to the window.
+ \param[in] e event number
+ \return 1 if the event was used
+ */
 int menuwindow::handle(int e) {
   /* In FLTK 1.3.4, the equivalent of handle_part2() is called for the Mac OS and X11 platforms
    and "svn blame" shows it is here to fix STR #449.
@@ -821,6 +960,10 @@ int menuwindow::handle_part2(int e, int ret) {
   return ret;
 }
 
+/* Window event handling implementation.
+ \param[in] e event number
+ \return 1 if the event was used
+ */
 int menuwindow::handle_part1(int e) {
   menustate &pp = *p;
   switch (e) {
