@@ -287,7 +287,7 @@ inline bool driver_traits(Trait bits) {
  \brief Query traits of the current pen or stylus.
  The value returned by this function may change when pens change or when more
  information becomes known about the currently used pen.
- \param[in] pen_id a now pen ID as returned from event_pen_id(),
+ \param[in] pen_id a know pen ID as returned from event_pen_id(),
     or 0 for the current pen
  \return a bitfield of supported traits
  */
@@ -296,7 +296,7 @@ FL_EXPORT extern Trait pen_traits(int pen_id = 0);
 /**
  \brief Return true if the corresponding bit is set in the pen traits.
  \param[in] bits check for one or more trait bits
- \param[in] pen_id a now pen ID as returned from event_pen_id(),
+ \param[in] pen_id a know pen ID as returned from event_pen_id(),
   or 0 for the current pen
  \return true if any bit is set
  */
@@ -305,10 +305,10 @@ inline bool pen_traits(Trait bits, int pen_id = 0) {
 }
 
 /**
- \brief Receive a Pen::ENTER event when the pen moves inside this widget.
- Multiple widgets can subscribe to pen events, but every widget must only
- subscribe once.
- \param widget Widget to subscribe to pen events
+ \brief Receives a Pen::ENTER event when the pen enters this widget.
+ Multiple widgets may subscribe to pen events. Additional subscription
+ requests for the same widget are ignored.
+ \param widget The widget subscribing to pen events.
  */
 FL_EXPORT extern void subscribe(Fl_Widget* widget);
 
@@ -391,8 +391,13 @@ FL_EXPORT extern double event_tilt_x();
 FL_EXPORT extern double event_tilt_y();
 
 /**
- \brief Returns the pens axial rotation in degrees.
- \return Twist angle in degrees, defaults to 0.0 .
+ \brief Returns the pen's axial rotation in degrees.
+ The twist angle is reported in degrees, with:
+  - 0° : pen’s “top” (the button side) facing upward
+  - +180° : twisted halfway clockwise, looking at the end of the pen toward the tip
+  - –180° → twisted half way counter clockwise
+ So the full range is usually –180° to +180°.
+ \return Twist angle in degrees, defaults to 0.0.
  \see Trait::TWIST
  */
 FL_EXPORT extern double event_twist();
@@ -412,7 +417,7 @@ FL_EXPORT extern double event_proximity();
 FL_EXPORT extern State event_state();
 
 /**
- \brief Return true if the corresponding bit is set in the event state.
+ \brief Return true if any of the bits are set in the event state.
  \param[in] bits check for one or more event state bits
  \return true if any bit is set
  */

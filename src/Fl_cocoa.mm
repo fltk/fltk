@@ -1068,10 +1068,12 @@ static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
 }
 
 namespace Fl {
+namespace Private {
 // Global mouse position at mouse down event
 int e_x_down { 0 };
 int e_y_down { 0 };
-};
+}; // namespace Private
+}; // namespace Fl
 
 /*
  * Cocoa Mouse Button Handler
@@ -1135,8 +1137,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSEventTypeOtherMouseDown:
       sendEvent = FL_PUSH;
       Fl::e_is_click = 1;
-      Fl::e_x_down = (int)pos.x;
-      Fl::e_y_down = (int)pos.y;
+      Fl::Private::e_x_down = (int)pos.x;
+      Fl::Private::e_y_down = (int)pos.y;
       if ([theEvent clickCount] > 1)
         Fl::e_clicks++;
       else
@@ -1161,8 +1163,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSEventTypeOtherMouseDragged: {
       if ( !sendEvent ) {
         sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
-        if ( (fabs(pos.x - Fl::e_x_down) > 5) ||
-             (fabs(pos.y - Fl::e_y_down) > 5))
+        if ( (fabs(pos.x - Fl::Private::e_x_down) > 5) ||
+             (fabs(pos.y - Fl::Private::e_y_down) > 5))
           Fl::e_is_click = 0;
       }
       mods_to_e_state( mods );

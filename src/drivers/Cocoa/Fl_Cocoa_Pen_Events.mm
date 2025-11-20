@@ -76,7 +76,7 @@ public:
       return it->second;
     }
   }
-  /* Remove a subscriber form the list. */
+  /* Remove a subscriber from the list. */
   void remove(Fl_Widget *w) {
     auto it = find(w);
     if (it != end()) {
@@ -130,15 +130,15 @@ static struct EventData ev;
 
 namespace Fl {
 
+namespace Private {
 // Global mouse position at mouse down event
 extern int e_x_down;
 extern int e_y_down;
+}; // namespace Private
 
 namespace Pen {
-
 // The event data that is made available to the user during event handling
 struct EventData e;
-
 } // namespace Pen
 
 } // namespace Fl
@@ -303,8 +303,7 @@ static int pen_send_all(int event, State trigger) {
 /*
  Convert the NSEvent button number to Fl::Pen::State,
  */
-static State button_to_trigger(NSInteger button, bool down)
-{
+static State button_to_trigger(NSInteger button, bool down) {
   switch (button) {
     case 0:
       if ( (ev.state & (State::ERASER_DOWN | State::ERASER_HOVERS)) != State::NONE ) {
@@ -326,8 +325,7 @@ static State button_to_trigger(NSInteger button, bool down)
  capabilityMask is useless, because it is vendor defined
  If a modal window is open, AppKit will send window specific events only there.
  */
-bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
-{
+bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
   // Quick access to the main type.
   auto type = [event type];
 
@@ -493,8 +491,8 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
     State trigger = button_to_trigger([event buttonNumber], true);
     if ([event buttonNumber] == 0) {
       Fl::e_is_click = 1;
-      Fl::e_x_down = (int)ev.x;
-      Fl::e_y_down = (int)ev.y;
+      Fl::Private::e_x_down = (int)ev.x;
+      Fl::Private::e_y_down = (int)ev.y;
       if ([event clickCount] > 1)
         Fl::e_clicks++;
       else
@@ -515,8 +513,8 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow)
       pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
   } else if (is_motion) {
     if (  Fl::e_is_click &&
-         ( (fabs((int)ev.x - Fl::e_x_down) > 5) ||
-           (fabs((int)ev.y - Fl::e_y_down) > 5) ) )
+         ( (fabs((int)ev.x - Fl::Private::e_x_down) > 5) ||
+           (fabs((int)ev.y - Fl::Private::e_y_down) > 5) ) )
       Fl::e_is_click = 0;
     if (pushed) {
       pen_send(receiver, Fl::Pen::DRAW, State::NONE, event_data_copied);

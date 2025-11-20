@@ -42,7 +42,7 @@ Fl_Window *cvwin { nullptr };
 
 //
 // The canvas interface implements incremental drawing and handles draw events.
-// It also implement pressure sensitive drawing with a pen or stylus.
+// It also implements pressure sensitive drawing with a pen or stylus.
 // And it implements an overlay plane that visualizes pen event data.
 //
 class CanvasInterface {
