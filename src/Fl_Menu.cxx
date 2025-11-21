@@ -398,6 +398,7 @@ int Menu_State::handle_shortcut() {
       return 1;
     }
   }
+  return 0;
 }
 
 //
