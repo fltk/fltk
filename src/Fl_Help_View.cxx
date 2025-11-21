@@ -886,7 +886,7 @@ int Fl_Help_View::Impl::do_align(
 void Fl_Help_View::Impl::format() {
   int           i;              // Looping var
   int           done;           // Are we done yet?
-  Text_Block *block,         // Current block
+  Text_Block    *block = nullptr, // Current block
                 *cell;          // Current table cell
   int           cells[MAX_COLUMNS],
                                 // Cells in the current row...
@@ -899,7 +899,7 @@ void Fl_Help_View::Impl::format() {
                 wattr[1024],    // Width attribute buffer
                 hattr[1024],    // Height attribute buffer
                 linkdest[1024]; // Link destination
-  int           xx, yy, ww, hh; // Size of current text fragment
+  int           xx, yy, ww, hh = 0; // Size of current text fragment
   int           line;           // Current line in block
   int           links;          // Links for current line
   Fl_Font       font;

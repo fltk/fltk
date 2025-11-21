@@ -201,7 +201,7 @@ void fl_draw(
   char *linebuf = NULL;       // Pointer to a buffer managed by expand_text_
   const char* p;              // Scratch pointer into text, multiple use
   const char* e;              // Scratch pointer into text, multiple use
-  int buflen;                 // Number of bytes copied into linebuf
+  int buflen = 0;             // Number of bytes copied into linebuf
                               // by expand_text_
   char symbol[2][255];        // Copy of symbol text at start and end of str
   int symwidth[2];            // Width and height of symbols (always square)
@@ -211,7 +211,7 @@ void fl_draw(
   int imgvert = ((align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)==0); // True if image is
                               // above or below text
   int lines;                  // Number of text lines including '\n' and wrapping
-  double width;               // width of the longest text line
+  double width = 0.0;         // width of the longest text line
   int height = fl_height();   // Height of a line of text
 
 

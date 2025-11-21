@@ -423,12 +423,12 @@ int Menu_Window::display_height_ = 0;
  */
 Menu_Window::Menu_Window(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
                          const Fl_Menu_Item* picked, const Fl_Menu_Item* t,
-                         int menubar, int menubar_title, int right_edge)
+                         int menubar, int mb_title, int right_edge)
 : Menu_Window_Basetype(X, Y, Wp, Hp, m)
 {
   int scr_x, scr_y, scr_w, scr_h;
   int tx = X, ty = Y;
-  menubar_title = menubar_title;
+  menubar_title = mb_title;
   int n = (Wp > 0 ? Fl::screen_num(X, Y) : -1);
   Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h, n);
   if (!right_edge || right_edge > scr_x+scr_w)

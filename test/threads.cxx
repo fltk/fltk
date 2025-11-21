@@ -97,7 +97,7 @@ extern "C" void* prime_func(void* p) {
   // initialize alternate buffers (struct prime) to store primes
 
   struct prime pr[2];
-  pr[0].idx       = pr[1].idx       = n/2 - 1;
+  pr[0].idx       = pr[1].idx       = ((int)n/2 - 1);
   pr[0].done      = 0;
   pr[1].done      = 1;
   pr[0].terminal  = pr[1].terminal  = terminal;

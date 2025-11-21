@@ -59,7 +59,9 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
   int malloc_size = INITIALLINES;
   char buffer[MAXSIZE+20];
   int i = 0;
-  int W,H,ncolors,chars_per_pixel;
+  int W = 0, H = 0;
+  int ncolors = 0;
+  int chars_per_pixel = 0;
   while (fgets(buffer,MAXSIZE+20,f)) {
     if (buffer[0] != '\"') continue;
     char *myp = buffer;
