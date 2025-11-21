@@ -228,12 +228,11 @@ void menu_location_cb(Fl_Widget* w, void* data)
     smenubar = new Fl_Sys_Menu_Bar(0,0,0,30);
     smenubar->menu(menu);
     smenubar->callback(test_cb);
-    }
-  else { // switch to window menu bar
+  } else { // switch to window menu bar
     menubar->copy(smenubar->menu());
     delete smenubar;
     menubar->show();
-    }
+  }
 }
 #endif // HAS_MAC_APP_MENU
 
