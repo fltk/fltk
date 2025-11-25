@@ -191,24 +191,25 @@ Under Ubuntu, the Wayland platform requires version 20.04 (focal fossa) or more 
 
 These packages are necessary to build the FLTK library, in addition to those listed
 in section 2.1 of file README.Unix.txt :
-- libpango1.0-dev
-- libwayland-dev
-- wayland-protocols
-- libxkbcommon-dev
-- libxinerama-dev <== except if option FLTK_BACKEND_X11=off is used
-- libdbus-1-dev   <== recommended to query current cursor theme
-- libglew-dev     <== necessary to use OpenGL version 3 or above
-- libdecor-0-dev  <== recommended if available and if in version ≥ 0.2.0
-- libgtk-3-dev    <== highly recommended if libdecor-0-dev is not installed
+
+  sudo apt-get install libpango1.0-dev
+  sudo apt-get install libwayland-dev
+  sudo apt-get install wayland-protocols
+  sudo apt-get install libxkbcommon-dev
+  sudo apt-get install libxinerama-dev  # except if option FLTK_BACKEND_X11=off is used
+  sudo apt-get install libdbus-1-dev    # recommended to query current cursor theme
+  sudo apt-get install libglew-dev      # necessary to use OpenGL version 3 or above
+  sudo apt-get install libdecor-0-dev   # recommended if available and if in version ≥ 0.2.0
+  sudo apt-get install libgtk-3-dev     # highly recommended if libdecor-0-dev is not installed
 
 These packages allow to run FLTK apps under the Gnome-Wayland desktop:
-- gnome-core
-- libdecor-0-plugin-1-gtk <== install if libdecor-0-dev is installed
+
+  sudo apt-get install gnome-core
+  sudo apt-get install libdecor-0-plugin-1-gtk  # install if libdecor-0-dev is installed
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
-- kde-plasma-desktop
 
-Package installation command: sudo apt-get install <package-name ...>
+  sudo apt-get install kde-plasma-desktop
 
 
 3.2 Fedora
@@ -219,16 +220,16 @@ The Wayland platform is known to work with Fedora version 35 or more recent.
 These packages are necessary to build the FLTK library, in addition to
 package groups listed in section 2.2 of file README.Unix.txt :
 
-- wayland-devel
-- wayland-protocols-devel
-- cairo-devel
-- libxkbcommon-devel
-- pango-devel
-- mesa-libGLU-devel
-- dbus-devel     <== recommended to query current cursor theme
-- libdecor-devel <== recommended, draws window titlebars
-- gtk3-devel     <== highly recommended if libdecor-devel is not installed
-- glew-devel     <== necessary to use OpenGL version 3 or above
+  sudo yum install wayland-devel
+  sudo yum install wayland-protocols-devel
+  sudo yum install cairo-devel
+  sudo yum install libxkbcommon-devel
+  sudo yum install pango-devel
+  sudo yum install mesa-libGLU-devel
+  sudo yum install dbus-devel     # recommended to query current cursor theme
+  sudo yum install libdecor-devel # recommended, draws window titlebars
+  sudo yum install gtk3-devel     # highly recommended if libdecor-devel is not installed
+  sudo yum install glew-devel     # necessary to use OpenGL version 3 or above
 
 Package installation command: sudo yum install <package-name ...>
 
@@ -240,6 +241,6 @@ The Wayland platform is known to work with FreeBSD version 13.1 and the Sway com
 
 These packages are necessary to build the FLTK library and use the Sway compositor:
 
-git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu evdev-proto
+  git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu evdev-proto
 
 Package installation command: sudo pkg install <package-name ...>
