@@ -145,6 +145,13 @@ struct Menu_State
 
   // handle all mouse events from the menu windows
   int handle_mouse_events(int e);
+
+  // create a submenu based on the selected menu item m
+  bool create_submenu(const Fl_Rect &r, Menu_Window& cw, const Fl_Menu_Item *m,
+                      const Fl_Menu_Item *initial_item, bool menubar);
+
+  // delete all menu windows beyond the selected one
+  void delete_unused_menus(Menu_Window& cw, const Fl_Menu_Item* m);
 };
 
 // Global state of menu windows and popup windows.
@@ -623,6 +630,92 @@ int Menu_State::handle_mouse_events(int e) {
       return 1;
   }
   return 0;
+}
+
+/* Create a submenu based on the selected menu item m.
+  \param[in] r suggested rectangle for new menu window
+  \param[in] cw window of menu window with currently selected item
+  \param[in] m currently selected menu item
+  \param[in] initial_item if set, the new menu is aligned so that this item
+      is close to m, or under the mouse
+  \param[in] menubar if set, the menu list is part of a menubar, so the window
+      at 0 is a horizontal menu item list
+  \return true if the menu list was update to show the initial_item
+*/
+bool Menu_State::create_submenu(const Fl_Rect &r, Menu_Window& cw, const Fl_Menu_Item *m,
+                                const Fl_Menu_Item *initial_item, bool menubar) {
+  const Fl_Menu_Item* title = m;
+  const Fl_Menu_Item* menutable;
+  if (m->flags&FL_SUBMENU)
+    menutable = m+1;
+  else
+    menutable = (Fl_Menu_Item*)(m)->user_data_;
+  // figure out where new menu goes:
+  int nX, nY;
+  if (!current_menu_ix && in_menubar) {      // menu off a menubar:
+    nX = cw.x() + cw.titlex(current_item_ix);
+    nY = cw.y() + cw.h();
+    initial_item = 0;
+  } else {
+    nX = cw.x() + cw.w();
+    nY = cw.y() + current_item_ix * cw.item_height;
+    title = 0;
+  }
+  if (initial_item) { // bring up submenu containing initial item:
+    Menu_Window* n = new Menu_Window(menutable, r.x(), r.y(), r.w(), r.h(), initial_item, title, false, false, cw.x());
+    menu_window[num_menus++] = n;
+    if (num_menus >= 2)
+      menu_window[num_menus-1]->origin = menu_window[num_menus-2];
+    // move all earlier menus to line up with this new one:
+    if (n->selected>=0) {
+      int dy = n->y()-nY;
+      int dx = n->x()-nX;
+      int waX, waY, waW, waH;
+      Fl_Window_Driver::driver(n)->menu_window_area(waX, waY, waW, waH, Fl::screen_num(r.x(), r.y()));
+      for (menu_index_t menu = 0; menu <= current_menu_ix; menu++) {
+        Menu_Window* tt = menu_window[menu];
+        int nx = tt->x()+dx; if (nx < waX) {nx = waX; dx = -tt->x() + waX;}
+        int ny = tt->y()+dy; if (ny < waY) {ny = waY; dy = -tt->y() + waY;}
+        tt->position(nx, ny);
+      }
+      menu_state->set_current_item(num_menus-1, n->selected);
+      return true;
+    }
+  } else if (num_menus > current_menu_ix+1 &&
+             menu_window[current_menu_ix+1]->menu == menutable) {
+    // the menu is already up:
+    while (num_menus > current_menu_ix+2) delete menu_window[--num_menus];
+    menu_window[num_menus-1]->set_selected(-1);
+  } else {
+    // delete all the old menus and create new one:
+    while (num_menus > current_menu_ix+1) delete menu_window[--num_menus];
+    menu_window[num_menus++] = new Menu_Window(menutable, nX, nY,
+        title?1:0, 0, nullptr, title, false, (bool)menubar,
+        (title ? 0 : cw.x()) );
+    if (num_menus >= 2 && menu_window[num_menus-2]->item_height) {
+      menu_window[num_menus-1]->origin = menu_window[num_menus-2];
+    }
+  }
+  return false;
+}
+
+/* Delete all menu windows beyond the selected one.
+  This deletes menus in the list that are beyond the selected menu window w.
+  It also fakes a menubar button entry by only showing the title of an emty menu.
+  \param[in] cw the selected menu window
+  \param[in] m the selected menu item within the menu window
+*/
+void Menu_State::delete_unused_menus(Menu_Window& cw, const Fl_Menu_Item* m) {
+  while (num_menus > current_menu_ix+1)
+    delete menu_window[--num_menus];
+  if (in_menubar && (current_menu_ix == 0)) {
+    // kludge so "menubar buttons" turn "on" by using menu title:
+    menubar_button_helper = new Menu_Window(nullptr,
+        cw.x()+cw.titlex(current_item_ix),
+        cw.y()+cw.h(), 0, 0,
+        nullptr, m, false, true);
+    menubar_button_helper->title->show();
+  }
 }
 
 //
@@ -1420,69 +1513,10 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 
     if (m==initial_item) initial_item=0; // stop the startup code if item found
     if (m->submenu()) {
-      const Fl_Menu_Item* title = m;
-      const Fl_Menu_Item* menutable;
-      if (m->flags&FL_SUBMENU)
-        menutable = m+1;
-      else
-        menutable = (Fl_Menu_Item*)(m)->user_data_;
-      // figure out where new menu goes:
-      int nX, nY;
-      if (!pp.current_menu_ix && pp.in_menubar) {      // menu off a menubar:
-        nX = cw.x() + cw.titlex(pp.current_item_ix);
-        nY = cw.y() + cw.h();
-        initial_item = 0;
-      } else {
-        nX = cw.x() + cw.w();
-        nY = cw.y() + pp.current_item_ix * cw.item_height;
-        title = 0;
-      }
-      if (initial_item) { // bring up submenu containing initial item:
-        Menu_Window* n = new Menu_Window(menutable,X,Y,W,H,initial_item,title,false,false,cw.x());
-        pp.menu_window[pp.num_menus++] = n;
-        if (pp.num_menus >= 2)
-          pp.menu_window[pp.num_menus-1]->origin = pp.menu_window[pp.num_menus-2];
-        // move all earlier menus to line up with this new one:
-        if (n->selected>=0) {
-          int dy = n->y()-nY;
-          int dx = n->x()-nX;
-          int waX, waY, waW, waH;
-          Fl_Window_Driver::driver(n)->menu_window_area(waX, waY, waW, waH, Fl::screen_num(X, Y));
-          for (menu_index_t menu = 0; menu <= pp.current_menu_ix; menu++) {
-            Menu_Window* tt = pp.menu_window[menu];
-            int nx = tt->x()+dx; if (nx < waX) {nx = waX; dx = -tt->x() + waX;}
-            int ny = tt->y()+dy; if (ny < waY) {ny = waY; dy = -tt->y() + waY;}
-            tt->position(nx, ny);
-          }
-          menu_state->set_current_item(pp.num_menus-1, n->selected);
-          goto STARTUP;
-        }
-      } else if (pp.num_menus > pp.current_menu_ix+1 &&
-                 pp.menu_window[pp.current_menu_ix+1]->menu == menutable) {
-        // the menu is already up:
-        while (pp.num_menus > pp.current_menu_ix+2) delete pp.menu_window[--pp.num_menus];
-        pp.menu_window[pp.num_menus-1]->set_selected(-1);
-      } else {
-        // delete all the old menus and create new one:
-        while (pp.num_menus > pp.current_menu_ix+1) delete pp.menu_window[--pp.num_menus];
-        pp.menu_window[pp.num_menus++] = new Menu_Window(menutable, nX, nY,
-                                          title?1:0, 0, nullptr, title, false, (bool)menubar,
-                                            (title ? 0 : cw.x()) );
-        if (pp.num_menus >= 2 && pp.menu_window[pp.num_menus-2]->item_height) {
-          pp.menu_window[pp.num_menus-1]->origin = pp.menu_window[pp.num_menus-2];
-        }
-      }
+      if (pp.create_submenu(Fl_Rect { X, Y, W, H }, cw, m, initial_item, menubar))
+        goto STARTUP;
     } else { // !m->submenu():
-      while (pp.num_menus > pp.current_menu_ix+1)
-        delete pp.menu_window[--pp.num_menus];
-      if (!pp.current_menu_ix && pp.in_menubar) {
-        // kludge so "menubar buttons" turn "on" by using menu title:
-        pp.menubar_button_helper = new Menu_Window(nullptr,
-                                  cw.x()+cw.titlex(pp.current_item_ix),
-                                  cw.y()+cw.h(), 0, 0,
-                                  nullptr, m, false, true);
-        pp.menubar_button_helper->title->show();
-      }
+      pp.delete_unused_menus(cw, m);
     }
   }
   const Fl_Menu_Item* m = (pbutton && wp.deleted()) ? NULL : pp.current_item;
