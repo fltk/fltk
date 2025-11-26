@@ -95,16 +95,18 @@ int Fl_Slider::scrollvalue(int pos, int size, int first, int total) {
 // right (top) the left (bottom) edge is not all the way over, a
 // position on the widget itself covers a wider range than 0-1,
 // actually it ranges from 0 to 1/(1-size).
-
-void Fl_Slider::draw_bg(int X, int Y, int W, int H) {
+// S is the size of the slider knob
+void Fl_Slider::draw_bg(int X, int Y, int W, int H, int S) {
   fl_push_clip(X, Y, W, H);
   draw_box();
   fl_pop_clip();
 
   Fl_Color black = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
   if (type() == FL_VERT_NICE_SLIDER) {
+    if (ticks()) draw_ticks(Fl_Rect { X, Y+S/2, W, H-S}, S);
     draw_box(FL_THIN_DOWN_BOX, X+W/2-2, Y, 4, H, black);
   } else if (type() == FL_HOR_NICE_SLIDER) {
+    if (ticks()) draw_ticks(Fl_Rect { X+S/2, Y, W-S, H}, S);
     draw_box(FL_THIN_DOWN_BOX, X, Y+H/2-2, W, 4, black);
   }
 }
@@ -114,12 +116,9 @@ void Fl_Slider::draw(int X, int Y, int W, int H) {
   double val;
   if (minimum() == maximum())
     val = 0.5;
-  else {
-    val = (value()-minimum())/(maximum()-minimum());
-    if (val > 1.0) val = 1.0;
-    else if (val < 0.0) val = 0.0;
-  }
-
+  else
+    val = value_to_position(value());
+  
   int ww = (horizontal() ? W : H);
   int xx, S;
   if (type()==FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
@@ -146,7 +145,7 @@ void Fl_Slider::draw(int X, int Y, int W, int H) {
     wsl = W;
   }
 
-  draw_bg(X, Y, W, H);
+  draw_bg(X, Y, W, H, S);
 
   Fl_Boxtype box1 = slider();
   if (!box1) {box1 = (Fl_Boxtype)(box()&-2); if (!box1) box1 = FL_UP_BOX;}
@@ -216,6 +215,39 @@ void Fl_Slider::draw() {
        h()-Fl::box_dh(box()));
 }
 
+/** Draw tick marks.
+ \param[in] r motion range of the slider
+ \param[in] S size of the slider, horizontal or vertical
+ */
+void Fl_Slider::draw_ticks(const Fl_Rect& r, int /*S*/ /*, int min_spacing*/)
+{
+  if ((ticks() == TICKS_NONE) || (num_ticks() == 0)) return;
+
+  Fl_Color black = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
+  fl_color(black);
+  int n = num_ticks();
+  double nd = (double)(n-1);
+  for (int i=0; i<n; i++) {
+    double v = i / nd;
+    if (scale() == LOG_SCALE) {
+      v = position_to_value(1.0-v);
+      v = (v - minimum()) / (maximum()-minimum());
+    }
+    if (horizontal()) {
+      int y1, y2;
+      if (ticks() & TICKS_ABOVE) y1 = r.y();   else y1 = r.y() + r.h()/2;
+      if (ticks() & TICKS_BELOW) y2 = r.b()-1; else y2 = r.y() + r.h()/2;
+      fl_yxline(r.r()-v*(r.w()-1)-1, y1, y2);
+    } else {
+      int x1, x2;
+      if (ticks() & TICKS_LEFT)  x1 = r.x();   else x1 = r.x() + r.w()/2;
+      if (ticks() & TICKS_RIGHT) x2 = r.r()-1; else x2 = r.x() + r.w()/2;
+      fl_xyline(x1, r.b()-v*(r.h()-1)-1, x2);
+    }
+  }
+}
+
+
 int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
   // Fl_Widget_Tracker wp(this);
   switch (event) {
@@ -230,11 +262,8 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
     double val;
     if (minimum() == maximum())
       val = 0.5;
-    else {
-      val = (value()-minimum())/(maximum()-minimum());
-      if (val > 1.0) val = 1.0;
-      else if (val < 0.0) val = 0.0;
-    }
+    else
+      val = value_to_position(value());
 
     int ww = (horizontal() ? W : H);
     int mx = (horizontal() ? Fl::event_x()-X : Fl::event_y()-Y);
@@ -279,7 +308,9 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
         xx = ww-S;
         offcenter = mx-xx; if (offcenter > S) offcenter = S;
       }
-      v = round(xx*(maximum()-minimum())/(ww-S) + minimum());
+      // Convert position back to value using the appropriate scale
+      double pos = (ww-S) > 0 ? double(xx) / double(ww-S) : 0.0;
+      v = round(position_to_value(pos));
       // make sure a click outside the sliderbar moves it:
       if (event == FL_PUSH && v == value()) {
         offcenter = S/2;
@@ -346,6 +377,7 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
   }
 }
 
+
 int Fl_Slider::handle(int event) {
   if (event == FL_PUSH && Fl::visible_focus()) {
     Fl::focus(this);
@@ -392,4 +424,64 @@ Fl_Nice_Slider::Fl_Nice_Slider(int X,int Y,int W,int H,const char *L)
 : Fl_Slider(X,Y,W,H,L) {
   type(FL_VERT_NICE_SLIDER);
   box(FL_FLAT_BOX);
+}
+
+/**
+  Converts a value to a normalized position (0.0 to 1.0) based on the current scale type.
+  For linear scale, this is a simple linear interpolation.
+  For logarithmic scale, this uses logarithmic interpolation.
+  \param[in] val The value to convert.
+  \return A normalized position between 0.0 and 1.0.
+*/
+double Fl_Slider::value_to_position(double val) const {
+  if (minimum() == maximum()) return 0.5;
+
+  if (scale_type_ == LOG_SCALE) {
+    // For logarithmic scale, both min and max must be positive
+    if (minimum() <= 0 || maximum() <= 0 || val <= 0) {
+      // Fall back to linear if values are not suitable for log scale
+      double pos = (val - minimum()) / (maximum() - minimum());
+      if (pos > 1.0) pos = 1.0;
+      else if (pos < 0.0) pos = 0.0;
+      return pos;
+    }
+    double log_min = log(minimum());
+    double log_max = log(maximum());
+    double log_val = log(val);
+    double pos = (log_val - log_min) / (log_max - log_min);
+    if (pos > 1.0) pos = 1.0;
+    else if (pos < 0.0) pos = 0.0;
+    return pos;
+  } else {
+    // Linear scale
+    double pos = (val - minimum()) / (maximum() - minimum());
+    if (pos > 1.0) pos = 1.0;
+    else if (pos < 0.0) pos = 0.0;
+    return pos;
+  }
+}
+
+/**
+  Converts a normalized position (0.0 to 1.0) to a value based on the current scale type.
+  For linear scale, this is a simple linear interpolation.
+  For logarithmic scale, this uses exponential interpolation.
+  \param[in] pos The normalized position to convert.
+  \return The corresponding value.
+*/
+double Fl_Slider::position_to_value(double pos) const {
+  if (minimum() == maximum()) return minimum();
+
+  if (scale_type_ == LOG_SCALE) {
+    // For logarithmic scale, both min and max must be positive
+    if (minimum() <= 0 || maximum() <= 0) {
+      // Fall back to linear if values are not suitable for log scale
+      return pos * (maximum() - minimum()) + minimum();
+    }
+    double log_min = log(minimum());
+    double log_max = log(maximum());
+    return exp(pos * (log_max - log_min) + log_min);
+  } else {
+    // Linear scale
+    return pos * (maximum() - minimum()) + minimum();
+  }
 }
