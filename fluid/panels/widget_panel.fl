@@ -490,7 +490,7 @@ Function {make_widget_panel()} {uid da36
     } {
       Fl_Tabs widget_tabs {uid 0fc3
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);} open
+  propagate_load((Fl_Group *)o,v);} open selected
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
@@ -651,7 +651,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
             }
             Fl_Choice {} {uid c707
-              callback align_text_image_cb open
+              callback align_text_image_cb
               xywh {172 115 116 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
               MenuItem {} {uid 2c5e
@@ -686,7 +686,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               }
             }
             Fl_Choice {} {uid 779c
-              callback align_position_cb open
+              callback align_position_cb
               xywh {293 115 86 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
               MenuItem {} {uid 3f2e
@@ -1051,7 +1051,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
     o->show();
     propagate_load(o, v);
   }
-}} open
+}}
             xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Value_Input {} {uid 191e
@@ -1595,7 +1595,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
           }
           Fl_Group wp_gui_attributes {uid e632
             label {Attributes:}
-            callback propagate_load open
+            callback propagate_load
             xywh {95 260 305 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Light_Button {} {uid 8701
@@ -1727,7 +1727,7 @@ unselectable, but not grayed out} xywh {225 260 75 20} selection_color 1 labelsi
               tooltip {Center the window under this widget.} xywh {305 260 70 20} selection_color 1 labelsize 11 when 1
             }
             Fl_Box {} {uid 7c05
-              xywh {395 260 0 20} labelsize 11
+              xywh {395 260 0 20} labelsize 11 resizable
             }
           }
           Fl_Input wp_gui_tooltip {uid 3b2e

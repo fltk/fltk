@@ -3379,6 +3379,7 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Light_Button* o
             { Fl_Box* o = new Fl_Box(395, 260, 0, 20);
               o->labelsize(11);
+              Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_attributes->end();
           } // Fl_Group* wp_gui_attributes
