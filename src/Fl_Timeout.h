@@ -109,6 +109,7 @@ public:
   static void repeat_timeout(double time, Fl_Timeout_Handler cb, void *data);
   static void remove_timeout(Fl_Timeout_Handler cb, void *data);
   static int remove_next_timeout(Fl_Timeout_Handler cb, void *data = NULL, void **data_return = NULL);
+  static std::vector<Fl::TimeoutData> timeout_list();
 
   // Elapse timeouts, i.e. calculate new delay time of all timers.
   // This does not call the timer callbacks.

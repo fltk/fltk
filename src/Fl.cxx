@@ -448,6 +448,14 @@ int Fl::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **data_retur
   return Fl_Timeout::remove_next_timeout(cb, data, data_return);
 }
 
+/**
+  Return a list of all currently running timeouts.
+  \return a vector with all relevant timeout data
+*/
+std::vector<Fl::TimeoutData> Fl::timeout_list() {
+  return Fl_Timeout::timeout_list();
+}
+
 
 ////////////////////////////////////////////////////////////////
 // Checks are just stored in a list. They are called in the reverse

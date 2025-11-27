@@ -344,6 +344,17 @@ int Fl_Timeout::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **da
   return ret;
 }
 
+std::vector<Fl::TimeoutData> Fl_Timeout::timeout_list() {
+  std::vector<Fl::TimeoutData> v;
+  const Fl_Timeout *t = first_timeout;
+  while (t) {
+    v.push_back( { t->time, t->callback, t->data } );
+    t = t->next;
+  }
+  return v;
+}
+
+
 /**
   Remove the timeout from the active timer queue and push it onto
   the stack of currently running callbacks.
