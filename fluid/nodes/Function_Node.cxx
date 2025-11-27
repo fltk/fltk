@@ -35,6 +35,8 @@
 
 #include <zlib.h>
 
+extern void open_panel();
+
 using namespace fld;
 using namespace fld::io;
 using namespace fld::proj;
@@ -1120,9 +1122,7 @@ Data_Node Data_Node::prototype;
  Constructor.
  */
 Data_Node::Data_Node() :
-  Decl_Node(),
-  filename_(nullptr),
-  text_mode_(0)
+  Decl_Node()
 { }
 
 /**
@@ -1151,7 +1151,7 @@ Node *Data_Node::make(Strategy strategy) {
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = nullptr;
-  o->text_mode_ = 0;
+  o->output_format_ = 0;
   o->name("myInlineData");
   o->add(anchor, strategy);
   o->factory = this;
@@ -1169,10 +1169,10 @@ void Data_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("filename");
     f.write_word(filename_);
   }
-  if (text_mode_ == 1) {
+  if (output_format_ == 1) {
     f.write_string("textmode");
   }
-  if (text_mode_ == 2) {
+  if (output_format_ == 2) {
     f.write_string("compressed");
   }
 }
@@ -1184,9 +1184,9 @@ void Data_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"filename")) {
     storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
-    text_mode_ = 1;
+    output_format_ = 1;
   } else if (!strcmp(c,"compressed")) {
-    text_mode_ = 2;
+    output_format_ = 2;
   } else {
     Decl_Node::read_property(f, c);
   }
@@ -1196,110 +1196,7 @@ void Data_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the data_panel to edit this node.
  */
 void Data_Node::open() {
-  if (!data_panel) make_data_panel();
-  data_input->value(name());
-  if (is_in_class()) {
-    data_class_choice->value(public_);
-    data_class_choice->show();
-    data_choice->hide();
-  } else {
-    data_choice->value((public_&1)|((static_&1)<<1));
-    data_choice->show();
-    data_class_choice->hide();
-  }
-  data_mode->value(text_mode_);
-  data_filename->value(filename_?filename_:"");
-  const char *c = comment();
-  data_comment_input->buffer()->text(c?c:"");
-  data_panel->show();
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == data_panel_cancel) goto BREAK2;
-      else if (w == data_panel_ok) break;
-      else if (w == data_filebrowser) {
-        Fluid.proj.enter_project_dir();
-        const char *fn = fl_file_chooser("Load Inline Data", nullptr, data_filename->value(), 1);
-        Fluid.proj.leave_project_dir();
-        if (fn) {
-          if (strcmp(fn, data_filename->value()))
-            Fluid.proj.set_modflag(1);
-          data_filename->value(fn);
-        }
-      }
-      else if (!w) Fl::wait();
-    }
-    // store the variable name:
-    const char*c = data_input->value();
-    char *s = fl_strdup(c), *p = s, *q, *n;
-    for (;;++p) { // remove leading spaces
-      if (!isspace((unsigned char)(*p))) break;
-    }
-    n = p;
-    if ( (!isalpha((unsigned char)(*p))) && ((*p)!='_') && ((*p)!=':') ) goto OOPS;
-    ++p;
-    for (;;++p) {
-      if ( (!isalnum((unsigned char)(*p))) && ((*p)!='_') && ((*p)!=':') ) break;
-    }
-    q = p;
-    for (;;++q) {
-      if (!*q) break;
-      if (!isspace((unsigned char)(*q))) goto OOPS;
-    }
-    *p = 0; // remove trailing spaces
-    if (n==q) {
-    OOPS:
-      int v = fl_choice("%s",
-                        "Continue Editing", "Ignore Error", nullptr,
-                        "Variable name must be a C identifier");
-      if (v==0) { free(s); continue; }    // Continue Editing
-      //if (v==1) { }                     // Ignore Error and close dialog
-    }
-    Fluid.proj.undo.checkpoint();
-    name(n);
-    free(s);
-    // store flags
-    if (is_in_class()) {
-      if (public_!=data_class_choice->value()) {
-        Fluid.proj.set_modflag(1);
-        public_ = data_class_choice->value();
-      }
-    } else {
-      if (public_!=(data_choice->value()&1)) {
-        Fluid.proj.set_modflag(1);
-        public_ = (data_choice->value()&1);
-      }
-      if (static_!=((data_choice->value()>>1)&1)) {
-        Fluid.proj.set_modflag(1);
-        static_ = ((data_choice->value()>>1)&1);
-      }
-    }
-    text_mode_ = data_mode->value();
-    if (text_mode_ < 0) text_mode_ = 0;
-    if (text_mode_ > 2) text_mode_ = 2;
-    // store the filename
-    c = data_filename->value();
-    if (filename_ && strcmp(filename_, data_filename->value()))
-      Fluid.proj.set_modflag(1);
-    else if (!filename_ && *c)
-      Fluid.proj.set_modflag(1);
-    if (filename_) { free((void*)filename_); filename_ = nullptr; }
-    if (c && *c) filename_ = fl_strdup(c);
-    // store the comment
-    c = data_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    Fluid.proj.set_modflag(1);
-    break;
-  }
-BREAK2:
-  data_panel->hide();
+  open_panel();
 }
 
 /**
@@ -1327,7 +1224,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       if (nData) {
         data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* use default */ }
-        if (text_mode_ == 2) {
+        if (output_format_ == 2) {
           uncompressedDataSize = nData;
           uLong nzData = compressBound(nData);
           Bytef *zdata = (Bytef*)::malloc(nzData);
@@ -1344,14 +1241,14 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
   }
   if (is_in_class()) {
     f.write_public(public_);
-    if (text_mode_ == 1) {
+    if (output_format_ == 1) {
       f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
       f.write_c("\n");
       write_comment_c(f);
       f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cstring(data, nData);
-    } else if (text_mode_ == 2) {
+    } else if (output_format_ == 2) {
       f.write_h("%sstatic int %s_size;\n", f.indent(1), c);
       f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
@@ -1373,14 +1270,14 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        if (text_mode_ == 1) {
+        if (output_format_ == 1) {
           f.write_h("extern const char *%s;\n", c);
           f.write_c("\n");
           write_comment_c(f);
           f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cstring(data, nData);
-        } else if (text_mode_ == 2) {
+        } else if (output_format_ == 2) {
           f.write_h("extern int %s_size;\n", c);
           f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
@@ -1401,7 +1298,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       } else {
         write_comment_h(f);
         f.write_h("#error Unsupported declaration loading inline data %s\n", fn);
-        if (text_mode_ == 1)
+        if (output_format_ == 1)
           f.write_h("const char *%s = \"abc...\";\n", c);
         else
           f.write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
@@ -1411,11 +1308,11 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       write_comment_c(f);
       if (static_)
         f.write_c("static ");
-      if (text_mode_ == 1) {
+      if (output_format_ == 1) {
         f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cstring(data, nData);
-      } else if (text_mode_ == 2) {
+      } else if (output_format_ == 2) {
         f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
         if (static_) f.write_c("static ");
         f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
@@ -1439,6 +1336,11 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
   }
   if (data) free(data);
 }
+
+void Data_Node::filename(const char* fn) {
+  storestring(fn, filename_);
+}
+
 
 // ---- DeclBlock_Node declaration
 

@@ -43,6 +43,8 @@ extern Fl_Button *image_panel_close;
 Fl_Double_Window* make_image_panel();
 void run_image_panel();
 void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int));
+#include <FL/Fl_Wizard.H>
+extern Fl_Wizard *tabs_wizard;
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs *widget_tabs;
 extern Fl_Group *wp_gui_tab;
@@ -105,6 +107,10 @@ extern Fl_Menu_Item whenmenu[];
 extern Fl_Box *w_when_box;
 extern Grid_Tab *widget_tab_grid;
 extern Grid_Child_Tab *widget_tab_grid_child;
+extern Fl_Tabs *data_tabs;
+extern Fl_Group *data_tabs_data;
+extern Fl_Choice *data_mode_2;
+extern Fl_Input *wp_data_filename;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
@@ -119,4 +125,7 @@ extern Fl_Menu_Item menu_Children[];
 extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
 extern Fl_Menu_Item menu_4[];
+extern Fl_Menu_Item menu_5[];
+extern Fl_Menu_Item menu_6[];
+extern Fl_Menu_Item menu_data_mode_2[];
 #endif

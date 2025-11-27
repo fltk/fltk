@@ -135,7 +135,7 @@ public:
   typedef Node super;
   static Decl_Node prototype;
 protected:
-  char public_;
+  char public_; // public = 0, private = 1, protected = 2
   char static_;
 
 public:
@@ -150,6 +150,10 @@ public:
   int is_public() const override;
   Type type() const override { return Type::Decl; }
   bool is_a(Type inType) const override { return (inType==Type::Decl) ? true : super::is_a(inType); }
+  char visibility() { return public_; }
+  void visibility(char v) { public_ = v; }
+  char output_file() { return (public_&1)|((static_&1)<<1); }
+  void output_file(char f) { public_ = (f&1); static_ = ((f>>1)&1); }
 };
 
 // ---- Data_Node declaration
@@ -160,8 +164,8 @@ public:
   typedef Decl_Node super;
   static Data_Node prototype;
 private:
-  const char *filename_;
-  int text_mode_;
+  const char *filename_ { nullptr };
+  int output_format_ { 0 };
 
 public:
   Data_Node();
@@ -175,6 +179,10 @@ public:
   void read_property(fld::io::Project_Reader &f, const char *) override;
   Type type() const override { return Type::Data; }
   bool is_a(Type inType) const override { return (inType==Type::Data) ? true : super::is_a(inType); }
+  void filename(const char* fn);
+  const char* filename() { return filename_; }
+  int output_format() { return output_format_; }
+  void output_format(int fmt) { output_format_ = fmt; }
 };
 
 // ---- DeclBlock_Node declaration

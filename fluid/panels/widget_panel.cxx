@@ -24,16 +24,17 @@
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
+#include "nodes/Function_Node.h"
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Flex.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_File_Chooser.H>
 #define ZERO_ENTRY 1000
 extern const char* when_symbol_name(int n);
 extern void set_whenmenu(int n);
 extern void redraw_browser();
-const char *c_check(const char *c, int type=0);
 extern Fl_Color fl_show_colormap(Fl_Color oldcol);
 extern void labelcolor_common(Fl_Color c);
 extern void color_common(Fl_Color c);
@@ -45,10 +46,21 @@ extern int numselected;
 extern Fl_Menu_Item boxmenu[];
 extern int haderror;
 
+/**
+ Allow widget navigation on text fields with Tab.
+*/
+static int use_tab_navigation(int, Fl_Text_Editor*) {
+//ﬂ ▼ ------------------------ code --~-~~~=~~-==~~-~-=~~~-= ▼ ﬂ//
+  return 0;
+//ﬂ ▲ ----------~-~--=-=--~-----------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
+}
+
 Fl_Double_Window *image_panel_window=(Fl_Double_Window *)0;
 
 static void cb_image_panel_window(Fl_Double_Window* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=--=~~=~=~~--==-=~~- ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=~=~-~----=-----------~~----=--~=~~-~-----= ▲ ﬂ//
 }
 
 Fl_Group *image_panel_imagegroup=(Fl_Group *)0;
@@ -56,6 +68,7 @@ Fl_Group *image_panel_imagegroup=(Fl_Group *)0;
 Fl_Box *image_panel_data=(Fl_Box *)0;
 
 static void cb_image_panel_data(Fl_Box* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~--~-~~-~-~~~----~= ▼ ﬂ//
   if (v == LOAD) {
     Fl_Shared_Image *img = Fl_Shared_Image::get(widget_image_input->value());
     o->user_data(img);
@@ -72,11 +85,13 @@ static void cb_image_panel_data(Fl_Box* o, void* v) {
       image_panel_imagegroup->deactivate();
     }
   }
+//ﬂ ▲ ----------=~~==~-~~~~------------~=--~~~-~~=--~-=--=-= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_imagew=(fld::widget::Formula_Input *)0;
 
 static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--~=---~-~=-=~~~-~~- ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
         o->value(current_widget->scale_image_w_);
@@ -102,11 +117,13 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------=~=-=-~~-==-----------~-~-=-=~~-~=~~-~=~~-~- ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_imageh=(fld::widget::Formula_Input *)0;
 
 static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=-~~-=-=~~~--~----= ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
         o->value(current_widget->scale_image_h_);
@@ -132,18 +149,22 @@ static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------~=-=-==~=--~----------~~-==-=-=~-=~=~---=~~= ▲ ﬂ//
 }
 
 static void cb_Reset(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback --~-=~=-=-=-=~~--~-~-- ▼ ﬂ//
   if (v != LOAD) {
     image_panel_imagew->value(0);
     image_panel_imageh->value(0);
     image_panel_imagew->do_callback();
     image_panel_imageh->do_callback();
   }
+//ﬂ ▲ ----------~=--~-=~~=-~-----------~=--==-~=-~~=~=-=~~~= ▲ ﬂ//
 }
 
 static void cb_convert(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~=-=-~-~--=---~-=~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
@@ -159,9 +180,11 @@ static void cb_convert(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~==-~-~~~~------------~~=~~~=~~=-~~==-=-=~ ▲ ﬂ//
 }
 
 static void cb_bind(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~~-=~=~---~--~~~~~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
@@ -177,6 +200,7 @@ static void cb_bind(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~-=-~-==~-~-------------==-~=~~=~=~----~~=~ ▲ ﬂ//
 }
 
 Fl_Group *image_panel_deimagegroup=(Fl_Group *)0;
@@ -184,6 +208,7 @@ Fl_Group *image_panel_deimagegroup=(Fl_Group *)0;
 Fl_Box *image_panel_dedata=(Fl_Box *)0;
 
 static void cb_image_panel_dedata(Fl_Box* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~---~=~~-~-=---~=~~==- ▼ ﬂ//
   if (v == LOAD) {
     Fl_Shared_Image *img = Fl_Shared_Image::get(widget_deimage_input->value());
     o->user_data(img);
@@ -200,11 +225,13 @@ static void cb_image_panel_dedata(Fl_Box* o, void* v) {
       image_panel_deimagegroup->deactivate();
     }
   }
+//ﬂ ▲ ----------=~~==-~~~-~~------------~~=-~~=-=-=~=~--=--~ ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_deimagew=(fld::widget::Formula_Input *)0;
 
 static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--=~=~=~=~-=~--=~~=- ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
         o->value(current_widget->scale_deimage_w_);
@@ -230,11 +257,13 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------=~~~-=~~~-=-----------~-~-~~--~~-=-==~~==-~= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_deimageh=(fld::widget::Formula_Input *)0;
 
 static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-=---~-~~-=-=~-~--- ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
         o->value(current_widget->scale_deimage_h_);
@@ -260,18 +289,22 @@ static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------=~-~=-~~~~-~-----------~~~~==~~~~=~~=-=~-=~- ▲ ﬂ//
 }
 
 static void cb_Reset1(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~~=~=~~~=--~~=~-=~= ▼ ﬂ//
   if (v != LOAD) {
     image_panel_deimagew->value(0);
     image_panel_deimageh->value(0);
     image_panel_deimagew->do_callback();
     image_panel_deimageh->do_callback();
   }
+//ﬂ ▲ ----------~=~~~=-~~~~~-----------~=-~~-~~==-~=-~---=-= ▲ ﬂ//
 }
 
 static void cb_convert1(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==--~~-~~=~-==~-~-- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
@@ -287,9 +320,11 @@ static void cb_convert1(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~-~~=---=------------~------~~~-~-=~~--~-=~ ▲ ﬂ//
 }
 
 static void cb_bind1(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---=--~-=--~-~~~-=-=~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
@@ -305,13 +340,16 @@ static void cb_bind1(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=-~-----~-=----------~--==~--=~-=~~-~=~---= ▲ ﬂ//
 }
 
 Fl_Button *image_panel_close=(Fl_Button *)0;
 
 static void cb_image_panel_close(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-=~-~--~---=~-=---=- ▼ ﬂ//
   if (v != LOAD)
     image_panel_window->hide();
+//ﬂ ▲ ----------=~=~~=-=--~=----------~--==~-=~~~=~=~~-==~=- ▲ ﬂ//
 }
 
 /**
@@ -482,6 +520,7 @@ Fl_Double_Window* make_image_panel() {
 }
 
 void run_image_panel() {
+//ﬂ ▼ ------------------------ code ----~=----~-=-~=~=~~~==~ ▼ ﬂ//
   if (!image_panel_window)
     make_image_panel();
 
@@ -501,9 +540,11 @@ void run_image_panel() {
     img->release();
     image_panel_data->user_data(nullptr);
   }
+//ﬂ ▲ ----------~-=-=~=~=~=~----------~-=~~==~=-=-=~--=~--=~ ▲ ﬂ//
 }
 
 void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int)) {
+//ﬂ ▼ ------------------------ code ------=--~--~=-~-~~~~~-= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Flex)) {
       load_margin((Fl_Flex*)current_widget->o, i);
@@ -523,12 +564,24 @@ void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~-~~=--=~~-~-----------~~--~~~=~=-~==~~==-~~ ▲ ﬂ//
+}
+
+Fl_Wizard *tabs_wizard=(Fl_Wizard *)0;
+
+static void cb_tabs_wizard(Fl_Wizard* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=-~=-~~---~-=-~~~-~ ▼ ﬂ//
+  propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------=~-~=-~----~----------~--~-==~~-=-=~=-~=~~=- ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
 
 static void cb_widget_tabs(Fl_Tabs* o, void* v) {
-  propagate_load((Fl_Group *)o,v);
+//ﬂ ▼ ---------------------- callback --~-~~=~~==----==--~-~ ▼ ﬂ//
+  if (current_widget)
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------~=--=~=~--~~----------~-~~~~-==--==--~~--~=~ ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_tab=(Fl_Group *)0;
@@ -538,6 +591,7 @@ Fl_Input *wp_gui_label=(Fl_Input *)0;
 Fl_Input *widget_image_input=(Fl_Input *)0;
 
 static void cb_widget_image_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~-------=~=~~==~-=~~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
@@ -551,9 +605,11 @@ static void cb_widget_image_input(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=--~-~~-~-~----------~~=-~~--=~~~~~-~=-~=~= ▲ ﬂ//
 }
 
 static void cb_Browse(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~-=~~=~~-=--~=--~-~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window))
       o->activate();
@@ -571,17 +627,21 @@ static void cb_Browse(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~-~-=~~~~~=------------~=~=~==~-~--~~=-=~=~ ▲ ﬂ//
 }
 
 static void cb_(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~~-~-=-=-~-----=--- ▼ ﬂ//
   if (v != LOAD) {
     run_image_panel();
   }
+//ﬂ ▲ ----------=~~=-=~~~=~=----------~~-~~--~~-=~--=-=~~=~- ▲ ﬂ//
 }
 
 Fl_Input *widget_deimage_input=(Fl_Input *)0;
 
 static void cb_widget_deimage_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-~=-=-------~-~~-=~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
@@ -595,9 +655,11 @@ static void cb_widget_deimage_input(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~=---~-~=~-----------~-~--=~~~~~-~-~=-~-=~ ▲ ﬂ//
 }
 
 static void cb_Browse1(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-=~=~~-~=~~-=~~---~~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window))
       o->activate();
@@ -615,6 +677,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~---~~=~~=~-----------~~~-~-~~=-=~==-~--~-- ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_alignment=(Fl_Group *)0;
@@ -651,6 +714,7 @@ Fl_Menu_Item menu_1[] = {
 fld::widget::Formula_Input *widget_x_input=(fld::widget::Formula_Input *)0;
 
 static void cb_widget_x_input(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~=--~=~~-~---=-=-=- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_true_widget()) {
       o->value(((Widget_Node *)current_widget)->o->x());
@@ -678,11 +742,13 @@ static void cb_widget_x_input(fld::widget::Formula_Input* o, void* v) {
                       // calculation. Keep the formula if it was not used.
     }
   }
+//ﬂ ▲ ----------~=~=~~~=-~-=----------~~=~=--~~~-=~=~-=~~==- ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *widget_y_input=(fld::widget::Formula_Input *)0;
 
 static void cb_widget_y_input(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--~=--~-~=-~=~~~=~~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_true_widget()) {
       o->value(((Widget_Node *)current_widget)->o->y());
@@ -709,11 +775,13 @@ static void cb_widget_y_input(fld::widget::Formula_Input* o, void* v) {
       o->value(v);
     }
   }
+//ﬂ ▲ ----------~==-~==~~~=~----------~~=~--~~=~-~---=~-=-~= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *widget_w_input=(fld::widget::Formula_Input *)0;
 
 static void cb_widget_w_input(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---=~~--~==-=-~-=-~-=~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_true_widget()) {
       o->value(((Widget_Node *)current_widget)->o->w());
@@ -740,11 +808,13 @@ static void cb_widget_w_input(fld::widget::Formula_Input* o, void* v) {
       o->value(v);
     }
   }
+//ﬂ ▲ ----------~==--~~-=-=-----------~--~-==-~~~~~==-=--=-= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *widget_h_input=(fld::widget::Formula_Input *)0;
 
 static void cb_widget_h_input(fld::widget::Formula_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=-==~--~=-~--=----- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_true_widget()) {
       o->value(((Widget_Node *)current_widget)->o->h());
@@ -771,9 +841,11 @@ static void cb_widget_h_input(fld::widget::Formula_Input* o, void* v) {
       o->value(v);
     }
   }
+//ﬂ ▲ ----------=~=--==~~--~------------~~~=-=~-=~-~=---~~~~ ▲ ﬂ//
 }
 
 static void cb_Children(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---=-=-~=-~=~=~-~=~-~- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Widget_Class)) {
       o->show();
@@ -793,6 +865,7 @@ static void cb_Children(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~-=~=~~--~----------~~=~=~~=~=-=-=~=~-~=-= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Children[] = {
@@ -805,6 +878,7 @@ Fl_Menu_Item menu_Children[] = {
 Fl_Group *wp_gui_flexp=(Fl_Group *)0;
 
 static void cb_wp_gui_flexp(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~~~~-=~~-~-~----~-= ▼ ﬂ//
   if (v == LOAD) {
     if (Flex_Node::parent_is_flex(current_widget)) {
       o->show();
@@ -813,11 +887,13 @@ static void cb_wp_gui_flexp(Fl_Group* o, void* v) {
       o->hide();
     }
   }
+//ﬂ ▲ ----------~=~--=~~-~~~------------=-~=-~-==-~~~-~-=~~~ ▲ ﬂ//
 }
 
 Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
 
 static void cb_widget_flex_size(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~-~=~~=-~=~~-~--~-= ▼ ﬂ//
   if (v == LOAD) {
     if (Flex_Node::parent_is_flex(current_widget)) {
       o->value(Flex_Node::size(current_widget));
@@ -850,11 +926,13 @@ static void cb_widget_flex_size(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~=~=--=-=~----------~~~=~~--~=-~--~==--~~~ ▲ ﬂ//
 }
 
 Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
 
 static void cb_widget_flex_fixed(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==--~--~~-~=~-=~=~- ▼ ﬂ//
   if (v == LOAD) {
     if (Flex_Node::parent_is_flex(current_widget)) {
       o->value(Flex_Node::is_fixed(current_widget));
@@ -884,11 +962,13 @@ static void cb_widget_flex_fixed(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~----=~~=~-----------~--~=---~~~=~~-~~-~--= ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_values=(Fl_Group *)0;
 
 static void cb_wp_gui_values(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~=~-=-==~--~=~==-~- ▼ ﬂ//
   if (v == LOAD) {
     if (   current_widget->is_a(Type::Flex)
         || current_widget->is_a(Type::Grid)
@@ -900,9 +980,11 @@ static void cb_wp_gui_values(Fl_Group* o, void* v) {
       propagate_load(o, v);
     }
   }
+//ﬂ ▲ ----------~=~~=~-~-~------------~-=--~=~~~-~-==--=~--~ ▲ ﬂ//
 }
 
 static void cb_Size(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~-~~-=~=~-~~---==--~ ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Slider)) {o->deactivate(); return;}
     o->activate();
@@ -920,9 +1002,11 @@ static void cb_Size(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=-~-=-=~~~=-----------~~---~=-=~=-~=--~-=~~ ▲ ﬂ//
 }
 
 static void cb_Minimum(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=~~-=-=-=~=~==-~~~- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Valuator_)) {
       o->activate();
@@ -951,9 +1035,11 @@ static void cb_Minimum(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~=~~=--~~~~----------~~~-~~-=~~-==-~~-==--= ▲ ﬂ//
 }
 
 static void cb_Maximum(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-=~=-=-~-=-~-~=---= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Valuator_)) {
       o->activate();
@@ -982,9 +1068,11 @@ static void cb_Maximum(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~--~==--~=~----------~-=~-==~~~~--~=--=-==~ ▲ ﬂ//
 }
 
 static void cb_Step(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~-=~-~=~~~~~-~=--~~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Valuator_)) {
       o->activate();
@@ -1013,9 +1101,11 @@ static void cb_Step(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~==-=-~=-~----------~-~~=~~~~=~--~~---=-=- ▲ ﬂ//
 }
 
 static void cb_Value(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=-=-~--~-~-~-~~=-~~~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Valuator_)) {
       o->activate();
@@ -1047,11 +1137,13 @@ static void cb_Value(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~---~---------------~-=-~==-~~~=~~~--~-~-~ ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_margins=(Fl_Group *)0;
 
 static void cb_wp_gui_margins(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~~==--~-~=~~--==~~- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Flex)) {
       o->show();
@@ -1060,9 +1152,11 @@ static void cb_wp_gui_margins(Fl_Group* o, void* v) {
       o->hide();
     }
   }
+//ﬂ ▲ ----------~==~=~=~~-~~----------~~-=---~~==~~=-=---=~= ▲ ﬂ//
 }
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~~-~~--=-=--=--~--~ ▼ ﬂ//
   flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
@@ -1082,9 +1176,11 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
       }
     }
   );
+//ﬂ ▲ ----------~=--~==~~=-=----------~~----=-~--==-----~~~= ▲ ﬂ//
 }
 
 static void cb_Top(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~---~--=~-=~-=~=~=~=~- ▼ ﬂ//
   flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
@@ -1104,9 +1200,11 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
       }
     }
   );
+//ﬂ ▲ ----------=~=-~~~~~=-~---------------~~-=-~=--~=---~~~ ▲ ﬂ//
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~-~-~--~-~-~=~--==- ▼ ﬂ//
   flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
@@ -1126,9 +1224,11 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
       }
     }
   );
+//ﬂ ▲ ----------~==~=~~=~--=------------~~=----~=-=-~==-=~=~ ▲ ﬂ//
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=~~~--=~-~~--~=-~-= ▼ ﬂ//
   flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* i) -> void
     {
@@ -1148,9 +1248,11 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
       }
     }
   );
+//ﬂ ▲ ----------~=~~-~~~=-------------~~-~--=-----=~~-~=-=-~ ▲ ﬂ//
 }
 
 static void cb_Gap(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~---~~-=~~-=~-~-=~-- ▼ ﬂ//
   flex_margin_cb(o, v,
     [](Fl_Flex *w, Fl_Value_Input* o) -> void
     {
@@ -1168,11 +1270,13 @@ static void cb_Gap(Fl_Value_Input* o, void* v) {
       }
     }
   );
+//ﬂ ▲ ----------=~-==~~==-~~----------~~=-~=~-=~---==~=~~=-= ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_sizerange=(Fl_Group *)0;
 
 static void cb_wp_gui_sizerange(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==-=~--=-=~-~-~-=-~ ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Window)) {
       o->show();
@@ -1181,9 +1285,11 @@ static void cb_wp_gui_sizerange(Fl_Group* o, void* v) {
       o->hide();
     }
   }
+//ﬂ ▲ ----------~=--~-=-~=~~----------~~~~~~~=----=-~--=-~-~ ▲ ﬂ//
 }
 
 static void cb_Minimum1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~=-~-~==~~-~~~-~--= ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) return;
     o->value(((Window_Node*)current_widget)->sr_min_w);
@@ -1199,9 +1305,11 @@ static void cb_Minimum1(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~=-=-=~~~~----------~~~--=~-=-=-~-~==~~~-- ▲ ﬂ//
 }
 
 static void cb_1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-=~~=~-=-~==-=~-=-= ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) return;
     o->value(((Window_Node*)current_widget)->sr_min_h);
@@ -1217,9 +1325,11 @@ static void cb_1(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~-~=~~~~-~------------~=~==--~------~-=-~- ▲ ﬂ//
 }
 
 static void cb_set(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=~=-~-=-=~-~~-~~~-=- ▼ ﬂ//
   if (v == LOAD) {
   } else {
     int mod = 0;
@@ -1235,9 +1345,11 @@ static void cb_set(Fl_Button* o, void* v) {
     propagate_load(the_panel, LOAD);
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~=-=-==~-~-----------~~~=~~--~-~-==~-~--=- ▲ ﬂ//
 }
 
 static void cb_Maximum1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~-=~=-~--=~=~-~=~=~ ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) return;
     o->value(((Window_Node*)current_widget)->sr_max_w);
@@ -1253,9 +1365,11 @@ static void cb_Maximum1(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~---~--~-~=----------~~~==~-=-==~=-=~~~--=~ ▲ ﬂ//
 }
 
 static void cb_2(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~~~=~==-~~~=-~=-~~~~ ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) return;
     o->value(((Window_Node*)current_widget)->sr_max_h);
@@ -1271,9 +1385,11 @@ static void cb_2(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~~-~=----~------------~-=-~~--~-=~-~~=~==- ▲ ﬂ//
 }
 
 static void cb_set1(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~=~~~~~~==-=--==-~~ ▼ ﬂ//
   if (v == LOAD) {
   } else {
     int mod = 0;
@@ -1289,11 +1405,13 @@ static void cb_set1(Fl_Button* o, void* v) {
     propagate_load(the_panel, LOAD);
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~==-=~--~==----------------=-~~=~-~=-~=~~=~- ▲ ﬂ//
 }
 
 Fl_Shortcut_Button *wp_gui_shortcut=(Fl_Shortcut_Button *)0;
 
 static void cb_wp_gui_shortcut(Fl_Shortcut_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=---=~-~--=-~~~=-~~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_button())
       o->value( ((Fl_Button*)(current_widget->o))->shortcut() );
@@ -1335,11 +1453,13 @@ static void cb_wp_gui_shortcut(Fl_Shortcut_Button* o, void* v) {
       }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~==-~~~~~~------------~-----~=~=--~~-=-=-~~- ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_xclass=(Fl_Group *)0;
 
 static void cb_3(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~-~~=~~~-~~-~~~~-= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Window)) {
       o->show();
@@ -1362,9 +1482,11 @@ static void cb_3(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~=~=-=~~------------~-=-=-=~-=~~~=~==~--=- ▲ ﬂ//
 }
 
 static void cb_Border(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=~-=~~-~~-=-~--~~-= ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
     o->show();
@@ -1374,9 +1496,11 @@ static void cb_Border(Fl_Light_Button* o, void* v) {
     ((Fl_Window*)(current_widget->o))->border(o->value());
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~-=~~~=~~--------------~--~---~-=-~~=-=-=~ ▲ ﬂ//
 }
 
 static void cb_Modal(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~---~~~=~==~-=-=~=-=-- ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
     o->show();
@@ -1386,9 +1510,11 @@ static void cb_Modal(Fl_Light_Button* o, void* v) {
     ((Window_Node *)current_widget)->modal = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~-=-=-=----------------=-~=----~~=~~-=-=-= ▲ ﬂ//
 }
 
 static void cb_Nonmodal(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~-~~=~=~=---~-=~~~- ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
     o->show();
@@ -1398,11 +1524,13 @@ static void cb_Nonmodal(Fl_Light_Button* o, void* v) {
     ((Window_Node *)current_widget)->non_modal = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~==-=-~~=~-=----------~-~-~=~--~~-=-=-~=~~=- ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_attributes=(Fl_Group *)0;
 
 static void cb_Visible(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~~=-~-~==--~=-~~=-=- ▼ ﬂ//
   if (v == LOAD) {
     o->value(current_widget->o->visible());
     if (current_widget->is_a(Type::Window)) o->deactivate();
@@ -1430,9 +1558,11 @@ static void cb_Visible(Fl_Light_Button* o, void* v) {
       redraw_browser();
     }
   }
+//ﬂ ▲ ----------=~--~~-=---~----------~-=~~~=-----~-~~~==~~- ▲ ﬂ//
 }
 
 static void cb_Active(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~--~--=~=~~--~-=~~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(current_widget->o->active());
     if (current_widget->is_a(Type::Window)) o->deactivate();
@@ -1450,9 +1580,11 @@ static void cb_Active(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~~-=--=~-~----------~~~~--=~--~=~=-==---~- ▲ ﬂ//
 }
 
 static void cb_Resizable(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-=~-==~=~~----=-=~= ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {
       o->hide(); 
@@ -1466,9 +1598,11 @@ static void cb_Resizable(Fl_Light_Button* o, void* v) {
     current_widget->resizable(o->value());
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~-~~----~=~------------=~=-~=--~~~~~=~-~=-~ ▲ ﬂ//
 }
 
 static void cb_Headline(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~--~=~-=~-=~--=~~---- ▼ ﬂ//
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Menu_Item)) {
       o->hide(); 
@@ -1491,9 +1625,11 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~-~-=~-==-----------~--~~-=-~=--=--=-~=-~= ▲ ﬂ//
 }
 
 static void cb_Hotspot(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-~-=~=-=~-~-=~=~~-= ▼ ﬂ//
   if (v == LOAD) {
     if (numselected > 1) {o->deactivate(); return;}
     if (current_widget->is_a(Type::Menu_Item)) o->label("divider");
@@ -1518,11 +1654,13 @@ static void cb_Hotspot(Fl_Light_Button* o, void* v) {
     }
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~-=~--~~=-~----------~~----~-~~~=---=~-=~~~ ▲ ﬂ//
 }
 
 Fl_Input *wp_gui_tooltip=(Fl_Input *)0;
 
 static void cb_wp_gui_tooltip(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-~~--=--=--=-=~=-=- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_widget()) {
       o->activate();
@@ -1538,6 +1676,7 @@ static void cb_wp_gui_tooltip(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~~=--==-~=----------~---=~--~--=~~-----=~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_style_tab=(Fl_Group *)0;
@@ -1545,6 +1684,7 @@ Fl_Group *wp_style_tab=(Fl_Group *)0;
 Fl_Group *wp_style_label=(Fl_Group *)0;
 
 static void cb_4(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-~=-----~-=~-~=-~~- ▼ ﬂ//
   if (v == LOAD) {
     int n = current_widget->o->labelfont();
     if (n > 15) n = 0;
@@ -1561,9 +1701,11 @@ static void cb_4(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=----=~=-=------------~--~~--=-=~~~-----~-= ▲ ﬂ//
 }
 
 static void cb_5(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-=~=~----~=~--=~-~~= ▼ ﬂ//
   int n;
   if (v == LOAD) {
     n = current_widget->o->labelsize();
@@ -1579,11 +1721,13 @@ static void cb_5(Fl_Value_Input* o, void* v) {
     if (mod) Fluid.proj.set_modflag(1);
   }
   o->value(n);
+//ﬂ ▲ ----------~=~~-=~----------------~-=~=-~-~=-~==-~-~=~~ ▲ ﬂ//
 }
 
 Fl_Button *w_labelcolor=(Fl_Button *)0;
 
 static void cb_w_labelcolor(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~~----=~-~-~=~=~-~ ▼ ﬂ//
   Fl_Color c = current_widget->o->labelcolor();
   if (v != LOAD) {
     Fl_Color d = fl_show_colormap(c);
@@ -1594,9 +1738,11 @@ static void cb_w_labelcolor(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
+//ﬂ ▲ ----------=~--=~~-~~~------------~=-~=-~=~~~~~-=--~~=~ ▲ ﬂ//
 }
 
 static void cb_6(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=~~-=~~~-=~=-=~--=~ ▼ ﬂ//
   Fl_Color c = current_widget->o->labelcolor();
   if (v != LOAD) {
     Fl_Color d = (Fl_Color)(o->mvalue()->argument());
@@ -1607,11 +1753,13 @@ static void cb_6(Fl_Menu_Button* o, void* v) {
     w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_labelcolor->redraw();
   }
+//ﬂ ▲ ----------~=~-=~~~-~=~----------~~=-=-=-~~--~=-~~~-=~= ▲ ﬂ//
 }
 
 Fl_Group *wp_style_box=(Fl_Group *)0;
 
 static void cb_7(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~--~-~~=--~~=-=---=- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
     int n = current_widget->o->box();
@@ -1631,11 +1779,13 @@ static void cb_7(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~=~--=~~-~----------~~~~--~--=--=~=~~--=-~ ▲ ﬂ//
 }
 
 Fl_Button *w_color=(Fl_Button *)0;
 
 static void cb_w_color(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=---~=~--~~-=~--~~~- ▼ ﬂ//
   Fl_Color c = current_widget->o->color();
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {
@@ -1652,9 +1802,11 @@ static void cb_w_color(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
+//ﬂ ▲ ----------=~~=~=~==-=~------------=-~=~---~-~-=-=~~--= ▲ ﬂ//
 }
 
 static void cb_8(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~-~~==--==--=~-=--= ▼ ﬂ//
   Fl_Color c = current_widget->o->color();
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
@@ -1667,11 +1819,13 @@ static void cb_8(Fl_Menu_Button* o, void* v) {
     w_color->labelcolor(fl_contrast(FL_BLACK,c));
     w_color->redraw();
   }
+//ﬂ ▲ ----------~==~-=--=~~-------------~~-==-~--~~-=-~=~~~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_style_downbox=(Fl_Group *)0;
 
 static void cb_9(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=----~-~-~==-=--=~= ▼ ﬂ//
   if (v == LOAD) {
     int n;
     if (current_widget->is_a(Type::Button))
@@ -1706,11 +1860,13 @@ static void cb_9(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=--~--==~-=------------=~---~~~=-=-~=~=~~-= ▲ ﬂ//
 }
 
 Fl_Button *w_selectcolor=(Fl_Button *)0;
 
 static void cb_w_selectcolor(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~~-=~~-=--~~~~-=~~~ ▼ ﬂ//
   Fl_Color c = current_widget->o->selection_color();
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {
@@ -1728,9 +1884,11 @@ static void cb_w_selectcolor(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
+//ﬂ ▲ ----------=~-~-~-=~~-~----------~--~=~-~~--=-=-~~==-=- ▲ ﬂ//
 }
 
 static void cb_a(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=~~-~-~-~~~~=--~~=~ ▼ ﬂ//
   Fl_Color c = current_widget->o->selection_color();
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {
@@ -1748,11 +1906,13 @@ static void cb_a(Fl_Menu_Button* o, void* v) {
     w_selectcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_selectcolor->redraw();
   }
+//ﬂ ▲ ----------=~~=~~-==~-------------~=-~-=-~~~-=~-=-=-~~= ▲ ﬂ//
 }
 
 Fl_Group *wp_style_text=(Fl_Group *)0;
 
 static void cb_b(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -----==-=-~=----~~~-~~ ▼ ﬂ//
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
     if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
@@ -1770,9 +1930,11 @@ static void cb_b(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~--~~=--=----------------~==~~~-=--~~~~~~=~ ▲ ﬂ//
 }
 
 static void cb_c(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--=~-~-=~=~~-~~==~-= ▼ ﬂ//
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
     if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
@@ -1790,11 +1952,13 @@ static void cb_c(Fl_Value_Input* o, void* v) {
     if (mod) Fluid.proj.set_modflag(1);
   }
   o->value(s);
+//ﬂ ▲ ----------=~--~~-~=~~~-----------~=-=----=~==-=~=~=-~~ ▲ ﬂ//
 }
 
 Fl_Button *w_textcolor=(Fl_Button *)0;
 
 static void cb_w_textcolor(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~==~-=~-=~-~--~~~=-- ▼ ﬂ//
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
     if (!current_widget->textstuff(0,n,s,c)) {
@@ -1812,9 +1976,11 @@ static void cb_w_textcolor(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
+//ﬂ ▲ ----------=~~==~-~~=~-----------~~-~---=-~=-=--==~~==- ▲ ﬂ//
 }
 
 static void cb_d(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~=~~~~=--~~--~~=~~=~ ▼ ﬂ//
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
     if (!current_widget->textstuff(0,n,s,c)) {
@@ -1832,9 +1998,11 @@ static void cb_d(Fl_Menu_Button* o, void* v) {
     w_textcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_textcolor->redraw();
   }
+//ﬂ ▲ ----------~=---==~~=~-----------~~~~-=~==---=~-~=-~==~ ▲ ﬂ//
 }
 
 static void cb_Horizontal(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=~==~=~-=~-=-=-~==~ ▼ ﬂ//
   int s;
   if (v == LOAD) {
     if (!current_widget->is_true_widget()) {
@@ -1860,9 +2028,11 @@ static void cb_Horizontal(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=-=-~=~~~~=-----------~~---=---~=-=~=---=-~ ▲ ﬂ//
 }
 
 static void cb_Vertical(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--~~=-----=~-~=-=~~~- ▼ ﬂ//
   int s;
   if (v == LOAD) {
     if (!current_widget->is_true_widget()) {
@@ -1888,9 +2058,11 @@ static void cb_Vertical(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~----=~-~-~----------~~~~=-~-=---~-~~=-~~-- ▲ ﬂ//
 }
 
 static void cb_Image(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~~=~--~~--~--==-=~-= ▼ ﬂ//
   int s;
   if (v == LOAD) {
     if (!current_widget->is_true_widget()) {
@@ -1916,9 +2088,11 @@ static void cb_Image(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=-=~=----~-----------~--=~~=-~--=-=~~=--~=- ▲ ﬂ//
 }
 
 static void cb_Compact(Fl_Light_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-=~-~-==~=-~~=--=-= ▼ ﬂ//
   if (v == LOAD) {
     uchar n;
     if (current_widget->is_a(Type::Button) && !current_widget->is_a(Type::Menu_Item)) {
@@ -1946,6 +2120,7 @@ static void cb_Compact(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=-~=-=--=~-----------~~=~-~~~=-~--=~=-~~-~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_cpp_tab=(Fl_Group *)0;
@@ -1953,6 +2128,7 @@ Fl_Group *wp_cpp_tab=(Fl_Group *)0;
 Fl_Group *wp_cpp_class=(Fl_Group *)0;
 
 static void cb_e(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~--~--~-~-~=-~~-~~ ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_a(Type::Menu_Item)) {
         o->deactivate();
@@ -1969,9 +2145,11 @@ static void cb_e(Fl_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------~=~---=~~-~~----------~~~-~~=~~~~=~---~~--~- ▲ ﬂ//
 }
 
 static void cb_f(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~---=--=-=~=-=-~-~~~~ ▼ ﬂ//
   static Fl_Menu_Item empty_type_menu[] = {
       {"Normal",0,nullptr,(void*)nullptr},
       {nullptr}};
@@ -2015,11 +2193,13 @@ static void cb_f(Fl_Choice* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------~=---=~-~==~-------------~-==--~~-=--~=-~-~= ▲ ﬂ//
 }
 
 Fl_Group *wp_cpp_name=(Fl_Group *)0;
 
 static void cb_10(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~-~-=-~~==-=-~=-~~= ▼ ﬂ//
   if (v == LOAD) {
       static char buf[1024];
       if (numselected != 1) {
@@ -2041,9 +2221,11 @@ static void cb_10(Fl_Input* o, void* v) {
         // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
       }
     }
+//ﬂ ▲ ----------~=~=-~~---=~----------~~=-~-~~~=~-=----~~--~ ▲ ﬂ//
 }
 
 static void cb_11(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~-~=~-~~=~~=-~-~~~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(current_widget->public_);
     if (current_widget->is_in_class()) o->show(); else o->hide();
@@ -2063,6 +2245,7 @@ static void cb_11(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
+//ﬂ ▲ ----------~=-~--=-=~=~----------~--~=-~~~=-==--=~-~==- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_2[] = {
@@ -2079,6 +2262,7 @@ Fl_Menu_Item menu_3[] = {
 };
 
 static void cb_v_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==~=~-~~==-=--~~--= ▼ ﬂ//
   int n = fl_int(o->user_data());
     if (v == LOAD) {
       o->value(current_widget->extra_code(n));
@@ -2093,30 +2277,40 @@ static void cb_v_input(Fl_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
+//ﬂ ▲ ----------~=~=~--~=~=~----------~--~~~~~~==--~=-~~~-~- ▲ ﬂ//
 }
 
 static void cb_v_input1(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~==~-~~=~~=~~-~~=--~ ▼ ﬂ//
   cb_v_input(o, v);
+//ﬂ ▲ ----------=~~~~~=-=-~~----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
 }
 
 static void cb_v_input2(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~--=-~~~~-=-~-=-=~--~ ▼ ﬂ//
   cb_v_input(o, v);
+//ﬂ ▲ ----------~==-=~~=-~------------~-~-~=~~-------=-=-=-= ▲ ﬂ//
 }
 
 Fl_Input *v_input[4]={(Fl_Input *)0};
 
 static void cb_v_input3(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~----~-~=~~--~--~~~~=~ ▼ ﬂ//
   cb_v_input(o, v);
+//ﬂ ▲ ----------~=~-=~~-=-~-----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
 }
 
 static void cb_12(Fl_Tile*, void* v) {
+//ﬂ ▼ ---------------------- callback -~-----~=-~==~=--~-==~ ▼ ﬂ//
   wComment->do_callback(wComment, v);
   wCallback->do_callback(wCallback, v);
+//ﬂ ▲ ----------=~-=~==~~=-=-----------~~--~-=--~=-=~~-~=~=~ ▲ ﬂ//
 }
 
 Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
 
 static void cb_wComment(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ----~~=~~--==--=~----~ ▼ ﬂ//
   if (v == LOAD) {
       const char *cmttext = current_widget->comment();
       o->buffer()->text( cmttext ? cmttext : "" );
@@ -2130,11 +2324,13 @@ static void cb_wComment(Fl_Text_Editor* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
       free(c);
     }
+//ﬂ ▲ ----------=~---==---=~----------~~-~--=~~~-~~==~~=~~~- ▲ ﬂ//
 }
 
 fld::widget::Code_Editor *wCallback=(fld::widget::Code_Editor *)0;
 
 static void cb_wCallback(fld::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--~-~-~~-=~~-~=~=-~~= ▼ ﬂ//
   if (v == LOAD) {
       const char *cbtext = current_widget->callback();
       o->buffer()->text( cbtext ? cbtext : "" );
@@ -2154,11 +2350,13 @@ static void cb_wCallback(fld::widget::Code_Editor* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
       free(c);
     }
+//ﬂ ▲ ----------=~=~=~-~-~~=-----------~=-~~-~~=-=~--~~--=~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_cpp_callback=(Fl_Group *)0;
 
 static void cb_13(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=~-~----==~-=~~=~-= ▼ ﬂ//
   if (v == LOAD) {
     o->value(current_widget->user_data());
   } else {
@@ -2172,9 +2370,11 @@ static void cb_13(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~----=~-==~----------~-~=-~=~-~~---=-~~-~-- ▲ ﬂ//
 }
 
 static void cb_When(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=--==-~-=~=~~==-~-~- ▼ ﬂ//
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
     int n = current_widget->o->when();
@@ -2200,9 +2400,11 @@ static void cb_When(Fl_Menu_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~~~=~-~-~------------~-=~==--=~~-=-=~~--~~ ▲ ﬂ//
 }
 
 static void cb_14(Fl_Input_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~---~-~~~~=~~-~~=~~~~ ▼ ﬂ//
   static const char *dflt = "void*";
   if (v == LOAD) {
     const char *c = current_widget->user_data_type();
@@ -2225,6 +2427,7 @@ static void cb_14(Fl_Input_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~~=-~-=~~~--------------=~~-~-~~~~-=~-~=-- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_4[] = {
@@ -2238,13 +2441,213 @@ Fl_Box *w_when_box=(Fl_Box *)0;
 Grid_Tab *widget_tab_grid=(Grid_Tab *)0;
 
 static void cb_widget_tab_grid(Grid_Tab* o, void*) {
+//ﬂ ▼ ---------------------- callback -~--=~~~~~=-~~=-=~-~~- ▼ ﬂ//
   o->callback((Fl_Callback*)propagate_load);
+//ﬂ ▲ ----------=~=--~---~-=----------~~~==-=--~-~-=~~=-~=-= ▲ ﬂ//
 }
 
 Grid_Child_Tab *widget_tab_grid_child=(Grid_Child_Tab *)0;
 
 static void cb_widget_tab_grid_child(Grid_Child_Tab* o, void*) {
+//ﬂ ▼ ---------------------- callback -~-==-=~~~~~~==~~--~-~ ▼ ﬂ//
   o->callback((Fl_Callback*)propagate_load);
+//ﬂ ▲ ----------=~~~---=~~~=----------~~~==-=--~-~-=~~=-~=-= ▲ ﬂ//
+}
+
+Fl_Tabs *data_tabs=(Fl_Tabs *)0;
+
+static void cb_data_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-==~-~-~-~-=-~~-~==- ▼ ﬂ//
+  if (current_node && current_node->is_a(Type::Data))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------=~=~=-~=~-~~----------~-=~=~~=--~--==~=-=~=- ▲ ﬂ//
+}
+
+Fl_Group *data_tabs_data=(Fl_Group *)0;
+
+static void cb_15(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~-==-=~-==-~-~-~~-= ▼ ﬂ//
+  Data_Node* nd = (Data_Node*)current_node;
+  if (v == LOAD) {
+    if (!nd->is_in_class()) {
+      o->value(nd->output_file());
+      o->show(); 
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    if (!nd->is_in_class()) {
+      if (nd->output_file() != o->value()) {
+        nd->output_file(o->value());
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~-~---~~-=~-----------~~==~-~--~-~~~~~~~-~= ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_5[] = {
+ {"in source file only", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"in header file only", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"\"static\" in source file", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"in source and \"extern\" in header", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+static void cb_16(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~-=--~~-=--=~~~=-=- ▼ ﬂ//
+  Data_Node* nd = (Data_Node*)current_node;
+  if (v == LOAD) {
+    if (nd->is_in_class()) {
+      o->value(nd->visibility());
+      o->show(); 
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    if (nd->is_in_class()) {
+      if (nd->visibility() != o->value()) {
+        nd->visibility(o->value());
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~~=-=--~=-~----------~----=~~--=~--=~-==-=~ ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_6[] = {
+ {"private", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Choice *data_mode_2=(Fl_Choice *)0;
+
+static void cb_data_mode_2(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~---~~-----~=~=-~-~ ▼ ﬂ//
+  Data_Node* nd = (Data_Node*)current_node;
+  if (v == LOAD) {
+    o->value(nd->output_format());
+  } else {
+    int mod = 0;
+    if (nd->output_format() != o->value()) {
+      nd->output_format( o->value() );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------=~-~---=-~~------------~-~=~~-~~-~~--~---~~= ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_data_mode_2[] = {
+ {"binary: unsigned char[]", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"text: const char*", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"compressed: unsigned char[]", 0,  0, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+static void cb_Name(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=~=~~-~-~=-~~=~=~=~ ▼ ﬂ//
+  Data_Node* nd = (Data_Node*)current_node;
+  if (v == LOAD) {
+    o->value( nd->name() );
+    the_panel->label("Inline Data Properties");
+  } else {
+    int mod;
+    const char *nn = nd->name();
+    if (   (nn && (strcmp(nn, o->value()) == 0))
+        || (!nn && (strcmp("", o->value()) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->name( o->value() );
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------=~=-=-~--~=------------~-~~=-==~=-~==~-=-~~- ▲ ﬂ//
+}
+
+Fl_Input *wp_data_filename=(Fl_Input *)0;
+
+static void cb_wp_data_filename(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~~~~~~-=~~=~-==--- ▼ ﬂ//
+  Data_Node* nd = (Data_Node*)current_node;
+  if (v == LOAD) {
+    const char *fn = nd->filename();
+    o->value( fn ? fn : "" );
+  } else {
+    int mod;
+    const char *c = o->value();
+    const char *fn = nd->filename();
+    if (   (fn && (strcmp(fn, c) == 0))
+        || (!fn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->filename(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------=~~=-=-~~--------------~--~--=-----~~~--~~=- ▲ ﬂ//
+}
+
+static void cb_fileopen(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=-~~~=~~--~=-=~-=~- ▼ ﬂ//
+  if (v == LOAD) {
+  } else {
+    Data_Node* nd = (Data_Node*)current_node;
+    Fluid.proj.enter_project_dir();
+    const char *fn = fl_file_chooser("Load Inline Data", 
+      nullptr, wp_data_filename->value(), 1);
+    Fluid.proj.leave_project_dir();
+    if (fn) {
+      if (strcmp(fn, wp_data_filename->value())) {
+        Fluid.proj.set_modflag(1);
+        wp_data_filename->value(fn);
+        wp_data_filename->do_callback();
+      }
+    }
+  }
+//ﬂ ▲ ----------~=-=-~~~~-=~------------~-~~=-~--~~-~-~~~~-= ▲ ﬂ//
+}
+
+static void cb_Comment(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=---~~~-=-~=-=-~-=~ ▼ ﬂ//
+  Data_Node* nd = (Data_Node*)current_node;
+  if (v == LOAD) {
+    const char *cmttext = nd->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->comment();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->comment(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------~=~~~~~=~~~~-----------~~=~=-=-~--=-=~---=-~ ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
@@ -2264,944 +2667,1044 @@ Fl_Double_Window* make_widget_panel() {
     o->labelsize(11);
     o->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     o->hotspot(o);
-    { Fl_Tabs* o = widget_tabs = new Fl_Tabs(10, 10, 400, 350);
-      widget_tabs->selection_color((Fl_Color)12);
-      widget_tabs->labelsize(11);
-      widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
-      widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
-      widget_tabs->when(FL_WHEN_NEVER);
-      { wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
-        wp_gui_tab->labelsize(11);
-        wp_gui_tab->callback((Fl_Callback*)propagate_load);
-        wp_gui_tab->when(FL_WHEN_NEVER);
-        { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { wp_gui_label = new Fl_Input(95, 40, 190, 20);
-            wp_gui_label->tooltip("The label text for the widget.\nUse Ctrl-J for newlines.");
-            wp_gui_label->labelfont(1);
-            wp_gui_label->labelsize(11);
-            wp_gui_label->textsize(11);
-            wp_gui_label->callback((Fl_Callback*)label_cb);
-            wp_gui_label->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
-            Fl_Group::current()->resizable(wp_gui_label);
-          } // Fl_Input* wp_gui_label
-          { Fl_Choice* o = new Fl_Choice(285, 40, 119, 20);
-            o->tooltip("The label style for the widget.");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
+    { tabs_wizard = new Fl_Wizard(10, 10, 400, 350);
+      tabs_wizard->box(FL_NO_BOX);
+      tabs_wizard->labelsize(11);
+      tabs_wizard->callback((Fl_Callback*)cb_tabs_wizard);
+      { Fl_Tabs* o = widget_tabs = new Fl_Tabs(10, 10, 400, 350);
+        widget_tabs->selection_color((Fl_Color)12);
+        widget_tabs->labelsize(11);
+        widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
+        widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
+        widget_tabs->when(FL_WHEN_NEVER);
+        widget_tabs->hide();
+        { wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
+          wp_gui_tab->labelsize(11);
+          wp_gui_tab->callback((Fl_Callback*)propagate_load);
+          wp_gui_tab->when(FL_WHEN_NEVER);
+          { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
             o->labelfont(1);
             o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)labeltype_cb);
-            o->menu(labeltypemenu);
-          } // Fl_Choice* o
-          o->end();
-        } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 65, 309, 20, "Image:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_image_input = new Fl_Input(95, 65, 200, 20);
-            widget_image_input->tooltip("The active image for the widget.");
-            widget_image_input->labelfont(1);
-            widget_image_input->labelsize(11);
-            widget_image_input->textsize(11);
-            widget_image_input->callback((Fl_Callback*)cb_widget_image_input);
-            Fl_Group::current()->resizable(widget_image_input);
-          } // Fl_Input* widget_image_input
-          { Fl_Button* o = new Fl_Button(295, 65, 89, 20, "Browse...");
-            o->tooltip("Click to choose the active image.");
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { wp_gui_label = new Fl_Input(95, 40, 190, 20);
+              wp_gui_label->tooltip("The label text for the widget.\nUse Ctrl-J for newlines.");
+              wp_gui_label->labelfont(1);
+              wp_gui_label->labelsize(11);
+              wp_gui_label->textsize(11);
+              wp_gui_label->callback((Fl_Callback*)label_cb);
+              wp_gui_label->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
+              Fl_Group::current()->resizable(wp_gui_label);
+            } // Fl_Input* wp_gui_label
+            { Fl_Choice* o = new Fl_Choice(285, 40, 119, 20);
+              o->tooltip("The label style for the widget.");
+              o->box(FL_THIN_UP_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)labeltype_cb);
+              o->menu(labeltypemenu);
+            } // Fl_Choice* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Group* o = new Fl_Group(95, 65, 309, 20, "Image:");
+            o->labelfont(1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Browse);
-            o->align(Fl_Align(256));
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(384, 65, 20, 20, "...");
-            o->tooltip("more image options");
-            o->callback((Fl_Callback*)cb_);
-          } // Fl_Button* o
-          o->end();
-        } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 90, 309, 20, "Inactive:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_deimage_input = new Fl_Input(95, 90, 200, 20);
-            widget_deimage_input->tooltip("The inactive image for the widget.");
-            widget_deimage_input->labelfont(1);
-            widget_deimage_input->labelsize(11);
-            widget_deimage_input->textsize(11);
-            widget_deimage_input->callback((Fl_Callback*)cb_widget_deimage_input);
-            Fl_Group::current()->resizable(widget_deimage_input);
-          } // Fl_Input* widget_deimage_input
-          { Fl_Button* o = new Fl_Button(295, 90, 89, 20, "Browse...");
-            o->tooltip("Click to choose the inactive image.");
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { widget_image_input = new Fl_Input(95, 65, 200, 20);
+              widget_image_input->tooltip("The active image for the widget.");
+              widget_image_input->labelfont(1);
+              widget_image_input->labelsize(11);
+              widget_image_input->textsize(11);
+              widget_image_input->callback((Fl_Callback*)cb_widget_image_input);
+              Fl_Group::current()->resizable(widget_image_input);
+            } // Fl_Input* widget_image_input
+            { Fl_Button* o = new Fl_Button(295, 65, 89, 20, "Browse...");
+              o->tooltip("Click to choose the active image.");
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Browse);
+              o->align(Fl_Align(256));
+            } // Fl_Button* o
+            { Fl_Button* o = new Fl_Button(384, 65, 20, 20, "...");
+              o->tooltip("more image options");
+              o->callback((Fl_Callback*)cb_);
+            } // Fl_Button* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Group* o = new Fl_Group(95, 90, 309, 20, "Inactive:");
+            o->labelfont(1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Browse1);
-          } // Fl_Button* o
-          o->end();
-        } // Fl_Group* o
-        { wp_gui_alignment = new Fl_Group(95, 115, 312, 20, "Alignment:");
-          wp_gui_alignment->labelfont(1);
-          wp_gui_alignment->labelsize(11);
-          wp_gui_alignment->callback((Fl_Callback*)propagate_load);
-          wp_gui_alignment->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Button* o = new Fl_Button(95, 115, 30, 20, "Clip");
-            o->tooltip("Clip the label to the inside of the widget.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { widget_deimage_input = new Fl_Input(95, 90, 200, 20);
+              widget_deimage_input->tooltip("The inactive image for the widget.");
+              widget_deimage_input->labelfont(1);
+              widget_deimage_input->labelsize(11);
+              widget_deimage_input->textsize(11);
+              widget_deimage_input->callback((Fl_Callback*)cb_widget_deimage_input);
+              Fl_Group::current()->resizable(widget_deimage_input);
+            } // Fl_Input* widget_deimage_input
+            { Fl_Button* o = new Fl_Button(295, 90, 89, 20, "Browse...");
+              o->tooltip("Click to choose the inactive image.");
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Browse1);
+            } // Fl_Button* o
+            o->end();
+          } // Fl_Group* o
+          { wp_gui_alignment = new Fl_Group(95, 115, 312, 20, "Alignment:");
+            wp_gui_alignment->labelfont(1);
+            wp_gui_alignment->labelsize(11);
+            wp_gui_alignment->callback((Fl_Callback*)propagate_load);
+            wp_gui_alignment->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Button* o = new Fl_Button(95, 115, 30, 20, "Clip");
+              o->tooltip("Clip the label to the inside of the widget.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_CLIP));
+              o->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
+            } // Fl_Button* o
+            { Fl_Button* o = new Fl_Button(130, 115, 38, 20, "Wrap");
+              o->tooltip("Wrap the label text.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_WRAP));
+            } // Fl_Button* o
+            { Fl_Button* o = new Fl_Button(278, 115, 20, 20, "@-1<-");
+              o->tooltip("Left-align the label.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->labelcolor(FL_INACTIVE_COLOR);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_LEFT));
+              o->hide();
+            } // Fl_Button* o
+            { Fl_Button* o = new Fl_Button(303, 115, 20, 20, "@-1->");
+              o->tooltip("Right-align the label.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->labelcolor(FL_INACTIVE_COLOR);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_RIGHT));
+              o->hide();
+            } // Fl_Button* o
+            { Fl_Button* o = new Fl_Button(328, 115, 20, 20, "@-18");
+              o->tooltip("Top-align the label.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->labelcolor(FL_INACTIVE_COLOR);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_TOP));
+              o->hide();
+            } // Fl_Button* o
+            { Fl_Button* o = new Fl_Button(353, 115, 20, 20, "@-12");
+              o->tooltip("Bottom-align the label.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->labelcolor(FL_INACTIVE_COLOR);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM));
+              o->hide();
+            } // Fl_Button* o
+            { Fl_Choice* o = new Fl_Choice(172, 115, 116, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)align_text_image_cb);
+              o->menu(menu_);
+            } // Fl_Choice* o
+            { Fl_Choice* o = new Fl_Choice(293, 115, 86, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)align_position_cb);
+              o->menu(menu_1);
+            } // Fl_Choice* o
+            { Fl_Button* o = new Fl_Button(384, 115, 20, 20, "@-3square");
+              o->tooltip("Show the label inside the widget.");
+              o->type(1);
+              o->selection_color(FL_INACTIVE_COLOR);
+              o->labelsize(11);
+              o->labelcolor(FL_INACTIVE_COLOR);
+              o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_INSIDE));
+            } // Fl_Button* o
+            { Fl_Box* o = new Fl_Box(406, 115, 1, 20);
+              o->labelsize(11);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            wp_gui_alignment->end();
+          } // Fl_Group* wp_gui_alignment
+          { Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Position:");
+            o->labelfont(1);
             o->labelsize(11);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_CLIP));
-            o->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(130, 115, 38, 20, "Wrap");
-            o->tooltip("Wrap the label text.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_WRAP));
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(278, 115, 20, 20, "@-1<-");
-            o->tooltip("Left-align the label.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
-            o->labelsize(11);
-            o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_LEFT));
-            o->hide();
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(303, 115, 20, 20, "@-1->");
-            o->tooltip("Right-align the label.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
-            o->labelsize(11);
-            o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_RIGHT));
-            o->hide();
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(328, 115, 20, 20, "@-18");
-            o->tooltip("Top-align the label.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
-            o->labelsize(11);
-            o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_TOP));
-            o->hide();
-          } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(353, 115, 20, 20, "@-12");
-            o->tooltip("Bottom-align the label.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
-            o->labelsize(11);
-            o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM));
-            o->hide();
-          } // Fl_Button* o
-          { Fl_Choice* o = new Fl_Choice(172, 115, 116, 20);
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)align_text_image_cb);
-            o->menu(menu_);
-          } // Fl_Choice* o
-          { Fl_Choice* o = new Fl_Choice(293, 115, 86, 20);
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)align_position_cb);
-            o->menu(menu_1);
-          } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(384, 115, 20, 20, "@-3square");
-            o->tooltip("Show the label inside the widget.");
-            o->type(1);
-            o->selection_color(FL_INACTIVE_COLOR);
-            o->labelsize(11);
-            o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_INSIDE));
-          } // Fl_Button* o
-          { Fl_Box* o = new Fl_Box(406, 115, 1, 20);
-            o->labelsize(11);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          wp_gui_alignment->end();
-        } // Fl_Group* wp_gui_alignment
-        { Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Position:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)position_group_cb);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_x_input = new fld::widget::Formula_Input(95, 150, 55, 20, "X:");
-            widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple "
+            o->callback((Fl_Callback*)position_group_cb);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { widget_x_input = new fld::widget::Formula_Input(95, 150, 55, 20, "X:");
+              widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple "
 "math, including the variables\nx, px, sx, cx, and i");
-            widget_x_input->box(FL_DOWN_BOX);
-            widget_x_input->color(FL_BACKGROUND2_COLOR);
-            widget_x_input->selection_color(FL_SELECTION_COLOR);
-            widget_x_input->labeltype(FL_NORMAL_LABEL);
-            widget_x_input->labelfont(0);
-            widget_x_input->labelsize(11);
-            widget_x_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_x_input->textsize(11);
-            widget_x_input->callback((Fl_Callback*)cb_widget_x_input);
-            widget_x_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_x_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_x_input
-          { widget_y_input = new fld::widget::Formula_Input(155, 150, 55, 20, "Y:");
-            widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple "
+              widget_x_input->box(FL_DOWN_BOX);
+              widget_x_input->color(FL_BACKGROUND2_COLOR);
+              widget_x_input->selection_color(FL_SELECTION_COLOR);
+              widget_x_input->labeltype(FL_NORMAL_LABEL);
+              widget_x_input->labelfont(0);
+              widget_x_input->labelsize(11);
+              widget_x_input->labelcolor(FL_FOREGROUND_COLOR);
+              widget_x_input->textsize(11);
+              widget_x_input->callback((Fl_Callback*)cb_widget_x_input);
+              widget_x_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+              widget_x_input->when(FL_WHEN_RELEASE);
+            } // fld::widget::Formula_Input* widget_x_input
+            { widget_y_input = new fld::widget::Formula_Input(155, 150, 55, 20, "Y:");
+              widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple "
 "math, including the variables\ny, py, sy, cy, and i");
-            widget_y_input->box(FL_DOWN_BOX);
-            widget_y_input->color(FL_BACKGROUND2_COLOR);
-            widget_y_input->selection_color(FL_SELECTION_COLOR);
-            widget_y_input->labeltype(FL_NORMAL_LABEL);
-            widget_y_input->labelfont(0);
-            widget_y_input->labelsize(11);
-            widget_y_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_y_input->textsize(11);
-            widget_y_input->callback((Fl_Callback*)cb_widget_y_input);
-            widget_y_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_y_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_y_input
-          { widget_w_input = new fld::widget::Formula_Input(215, 150, 55, 20, "Width:");
-            widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,"
+              widget_y_input->box(FL_DOWN_BOX);
+              widget_y_input->color(FL_BACKGROUND2_COLOR);
+              widget_y_input->selection_color(FL_SELECTION_COLOR);
+              widget_y_input->labeltype(FL_NORMAL_LABEL);
+              widget_y_input->labelfont(0);
+              widget_y_input->labelsize(11);
+              widget_y_input->labelcolor(FL_FOREGROUND_COLOR);
+              widget_y_input->textsize(11);
+              widget_y_input->callback((Fl_Callback*)cb_widget_y_input);
+              widget_y_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+              widget_y_input->when(FL_WHEN_RELEASE);
+            } // fld::widget::Formula_Input* widget_y_input
+            { widget_w_input = new fld::widget::Formula_Input(215, 150, 55, 20, "Width:");
+              widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,"
 " including the variables\nw, pw, sw, cw, and i");
-            widget_w_input->box(FL_DOWN_BOX);
-            widget_w_input->color(FL_BACKGROUND2_COLOR);
-            widget_w_input->selection_color(FL_SELECTION_COLOR);
-            widget_w_input->labeltype(FL_NORMAL_LABEL);
-            widget_w_input->labelfont(0);
-            widget_w_input->labelsize(11);
-            widget_w_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_w_input->textsize(11);
-            widget_w_input->callback((Fl_Callback*)cb_widget_w_input);
-            widget_w_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_w_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_w_input
-          { widget_h_input = new fld::widget::Formula_Input(275, 150, 55, 20, "Height:");
-            widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math"
+              widget_w_input->box(FL_DOWN_BOX);
+              widget_w_input->color(FL_BACKGROUND2_COLOR);
+              widget_w_input->selection_color(FL_SELECTION_COLOR);
+              widget_w_input->labeltype(FL_NORMAL_LABEL);
+              widget_w_input->labelfont(0);
+              widget_w_input->labelsize(11);
+              widget_w_input->labelcolor(FL_FOREGROUND_COLOR);
+              widget_w_input->textsize(11);
+              widget_w_input->callback((Fl_Callback*)cb_widget_w_input);
+              widget_w_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+              widget_w_input->when(FL_WHEN_RELEASE);
+            } // fld::widget::Formula_Input* widget_w_input
+            { widget_h_input = new fld::widget::Formula_Input(275, 150, 55, 20, "Height:");
+              widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math"
 ", including the variables\nh, ph, sh, ch, and i");
-            widget_h_input->box(FL_DOWN_BOX);
-            widget_h_input->color(FL_BACKGROUND2_COLOR);
-            widget_h_input->selection_color(FL_SELECTION_COLOR);
-            widget_h_input->labeltype(FL_NORMAL_LABEL);
-            widget_h_input->labelfont(0);
-            widget_h_input->labelsize(11);
-            widget_h_input->labelcolor(FL_FOREGROUND_COLOR);
-            widget_h_input->textsize(11);
-            widget_h_input->callback((Fl_Callback*)cb_widget_h_input);
-            widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            widget_h_input->when(FL_WHEN_RELEASE);
-          } // fld::widget::Formula_Input* widget_h_input
-          { Fl_Choice* o = new Fl_Choice(335, 150, 64, 20, "Children:");
-            o->tooltip("When instantiating a widget class, the children can either be fixed in their "
+              widget_h_input->box(FL_DOWN_BOX);
+              widget_h_input->color(FL_BACKGROUND2_COLOR);
+              widget_h_input->selection_color(FL_SELECTION_COLOR);
+              widget_h_input->labeltype(FL_NORMAL_LABEL);
+              widget_h_input->labelfont(0);
+              widget_h_input->labelsize(11);
+              widget_h_input->labelcolor(FL_FOREGROUND_COLOR);
+              widget_h_input->textsize(11);
+              widget_h_input->callback((Fl_Callback*)cb_widget_h_input);
+              widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+              widget_h_input->when(FL_WHEN_RELEASE);
+            } // fld::widget::Formula_Input* widget_h_input
+            { Fl_Choice* o = new Fl_Choice(335, 150, 64, 20, "Children:");
+              o->tooltip("When instantiating a widget class, the children can either be fixed in their "
 "original position, automatically be repositioned, or both repsositioned and re"
 "sized to fit the container.");
-            o->down_box(FL_BORDER_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Children);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+              o->menu(menu_Children);
+            } // Fl_Choice* o
+            { Fl_Box* o = new Fl_Box(399, 150, 1, 20);
+              o->hide();
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            o->end();
+          } // Fl_Group* o
+          { // This group is only visible if the parent is an Fl_Flex widget
+            wp_gui_flexp = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
+            wp_gui_flexp->labelfont(1);
+            wp_gui_flexp->labelsize(11);
+            wp_gui_flexp->callback((Fl_Callback*)cb_wp_gui_flexp);
+            wp_gui_flexp->align(Fl_Align(FL_ALIGN_LEFT));
+            wp_gui_flexp->hide();
+            { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
+              widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
+              widget_flex_size->labelsize(11);
+              widget_flex_size->textsize(11);
+              widget_flex_size->callback((Fl_Callback*)cb_widget_flex_size);
+              widget_flex_size->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* widget_flex_size
+            { widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
+              widget_flex_fixed->tooltip("If checked, the size of the widget stays fixed.");
+              widget_flex_fixed->down_box(FL_DOWN_BOX);
+              widget_flex_fixed->labelsize(11);
+              widget_flex_fixed->callback((Fl_Callback*)cb_widget_flex_fixed);
+            } // Fl_Check_Button* widget_flex_fixed
+            { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            wp_gui_flexp->end();
+          } // Fl_Group* wp_gui_flexp
+          { wp_gui_values = new Fl_Group(95, 185, 300, 20, "Values:");
+            wp_gui_values->labelfont(1);
+            wp_gui_values->labelsize(11);
+            wp_gui_values->callback((Fl_Callback*)cb_wp_gui_values);
+            wp_gui_values->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
+              o->tooltip("The size of the slider.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Size);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Minimum:");
+              o->tooltip("The minimum value of the widget.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Minimum);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Maximum:");
+              o->tooltip("The maximum value of the widget.");
+              o->labelsize(11);
+              o->value(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Maximum);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Step:");
+              o->tooltip("The resolution of the widget value.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Step);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Value:");
+              o->tooltip("The current widget value.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Value);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            wp_gui_values->end();
+          } // Fl_Group* wp_gui_values
+          { // This group is only visible for Fl_Flex widgets
+            wp_gui_margins = new Fl_Group(95, 185, 300, 20, "Margins:");
+            wp_gui_margins->labelfont(1);
+            wp_gui_margins->labelsize(11);
+            wp_gui_margins->callback((Fl_Callback*)cb_wp_gui_margins);
+            wp_gui_margins->align(Fl_Align(FL_ALIGN_LEFT));
+            wp_gui_margins->hide();
+            { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
+              o->tooltip("Left margin in group.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Left);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
+              o->tooltip("Top margin in group.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Top);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
+              o->tooltip("Right margin in group.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Right);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
+              o->tooltip("Bottom margin in group.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Bottom);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
+              o->tooltip("Gap between children.");
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Gap);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            wp_gui_margins->end();
+          } // Fl_Group* wp_gui_margins
+          { wp_gui_sizerange = new Fl_Group(95, 185, 300, 20, "Size Range:");
+            wp_gui_sizerange->labelfont(1);
+            wp_gui_sizerange->labelsize(11);
+            wp_gui_sizerange->callback((Fl_Callback*)cb_wp_gui_sizerange);
+            wp_gui_sizerange->align(Fl_Align(FL_ALIGN_LEFT));
+            wp_gui_sizerange->hide();
+            { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");
+              o->tooltip("The size of the slider.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Minimum1);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20);
+              o->tooltip("The minimum value of the widget.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_1);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Button* o = new Fl_Button(215, 185, 25, 20, "set");
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_set);
+            } // Fl_Button* o
+            { Fl_Value_Input* o = new Fl_Value_Input(245, 185, 55, 20, "Maximum Size:");
+              o->tooltip("The maximum value of the widget.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Maximum1);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(305, 185, 55, 20);
+              o->tooltip("The resolution of the widget value.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_2);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Button* o = new Fl_Button(365, 185, 25, 20, "set");
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_set1);
+            } // Fl_Button* o
+            { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            wp_gui_sizerange->end();
+          } // Fl_Group* wp_gui_sizerange
+          { Fl_Group* o = new Fl_Group(95, 210, 310, 20, "Shortcut:");
+            o->labelfont(1);
             o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Children);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-            o->menu(menu_Children);
-          } // Fl_Choice* o
-          { Fl_Box* o = new Fl_Box(399, 150, 1, 20);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { // This is a special button that grabs keystrokes directly
+              wp_gui_shortcut = new Fl_Shortcut_Button(95, 210, 310, 20);
+              wp_gui_shortcut->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
+              wp_gui_shortcut->box(FL_DOWN_BOX);
+              wp_gui_shortcut->color(FL_BACKGROUND2_COLOR);
+              wp_gui_shortcut->selection_color((Fl_Color)12);
+              wp_gui_shortcut->labeltype(FL_NORMAL_LABEL);
+              wp_gui_shortcut->labelfont(0);
+              wp_gui_shortcut->labelsize(11);
+              wp_gui_shortcut->labelcolor(FL_FOREGROUND_COLOR);
+              wp_gui_shortcut->callback((Fl_Callback*)cb_wp_gui_shortcut);
+              wp_gui_shortcut->align(Fl_Align(FL_ALIGN_CENTER));
+              wp_gui_shortcut->when(FL_WHEN_CHANGED);
+            } // Fl_Shortcut_Button* wp_gui_shortcut
+            o->end();
+          } // Fl_Group* o
+          { wp_gui_xclass = new Fl_Group(95, 235, 300, 20, "X Class:");
+            wp_gui_xclass->labelfont(1);
+            wp_gui_xclass->labelsize(11);
+            wp_gui_xclass->callback((Fl_Callback*)propagate_load);
+            wp_gui_xclass->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Input* o = new Fl_Input(95, 235, 95, 20, ":");
+              o->tooltip("The X resource class.");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_3);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Input* o
+            { Fl_Light_Button* o = new Fl_Light_Button(195, 235, 60, 20, "Border");
+              o->tooltip("Add a border around the window.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Border);
+            } // Fl_Light_Button* o
+            { Fl_Light_Button* o = new Fl_Light_Button(260, 235, 55, 20, "Modal");
+              o->tooltip("Make the window modal.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Modal);
+            } // Fl_Light_Button* o
+            { Fl_Light_Button* o = new Fl_Light_Button(320, 235, 75, 20, "Nonmodal");
+              o->tooltip("Make the window non-modal.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Nonmodal);
+              o->align(Fl_Align(132|FL_ALIGN_INSIDE));
+            } // Fl_Light_Button* o
+            wp_gui_xclass->end();
+          } // Fl_Group* wp_gui_xclass
+          { wp_gui_attributes = new Fl_Group(95, 260, 305, 20, "Attributes:");
+            wp_gui_attributes->labelfont(1);
+            wp_gui_attributes->labelsize(11);
+            wp_gui_attributes->callback((Fl_Callback*)propagate_load);
+            wp_gui_attributes->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Light_Button* o = new Fl_Light_Button(95, 260, 60, 20, "Visible");
+              o->tooltip("Show the widget.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Visible);
+            } // Fl_Light_Button* o
+            { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
+              o->tooltip("Activate the widget.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Active);
+            } // Fl_Light_Button* o
+            { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Resizable");
+              o->tooltip("Make the widget resizable.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Resizable);
+              o->when(FL_WHEN_CHANGED);
+            } // Fl_Light_Button* o
+            { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Headline");
+              o->tooltip("Make a menu item the headline of a menu\nunselectable, but not grayed out");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Headline);
+              o->when(FL_WHEN_CHANGED);
+              o->hide();
+            } // Fl_Light_Button* o
+            { Fl_Light_Button* o = new Fl_Light_Button(305, 260, 70, 20, "Hotspot");
+              o->tooltip("Center the window under this widget.");
+              o->selection_color((Fl_Color)1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_Hotspot);
+              o->when(FL_WHEN_CHANGED);
+            } // Fl_Light_Button* o
+            { Fl_Box* o = new Fl_Box(395, 260, 0, 20);
+              o->labelsize(11);
+            } // Fl_Box* o
+            wp_gui_attributes->end();
+          } // Fl_Group* wp_gui_attributes
+          { wp_gui_tooltip = new Fl_Input(95, 285, 310, 20, "Tooltip:");
+            wp_gui_tooltip->tooltip("The tooltip text for the widget.\nUse Ctrl-J for newlines.");
+            wp_gui_tooltip->labelfont(1);
+            wp_gui_tooltip->labelsize(11);
+            wp_gui_tooltip->textsize(11);
+            wp_gui_tooltip->callback((Fl_Callback*)cb_wp_gui_tooltip);
+          } // Fl_Input* wp_gui_tooltip
+          { Fl_Box* o = new Fl_Box(95, 305, 300, 5);
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
-        { // This group is only visible if the parent is an Fl_Flex widget
-          wp_gui_flexp = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
-          wp_gui_flexp->labelfont(1);
-          wp_gui_flexp->labelsize(11);
-          wp_gui_flexp->callback((Fl_Callback*)cb_wp_gui_flexp);
-          wp_gui_flexp->align(Fl_Align(FL_ALIGN_LEFT));
-          wp_gui_flexp->hide();
-          { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
-            widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
-            widget_flex_size->labelsize(11);
-            widget_flex_size->textsize(11);
-            widget_flex_size->callback((Fl_Callback*)cb_widget_flex_size);
-            widget_flex_size->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* widget_flex_size
-          { widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
-            widget_flex_fixed->tooltip("If checked, the size of the widget stays fixed.");
-            widget_flex_fixed->down_box(FL_DOWN_BOX);
-            widget_flex_fixed->labelsize(11);
-            widget_flex_fixed->callback((Fl_Callback*)cb_widget_flex_fixed);
-          } // Fl_Check_Button* widget_flex_fixed
-          { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
+          wp_gui_tab->end();
+          Fl_Group::current()->resizable(wp_gui_tab);
+        } // Fl_Group* wp_gui_tab
+        { wp_style_tab = new Fl_Group(10, 30, 400, 330, "Style");
+          wp_style_tab->labelsize(11);
+          wp_style_tab->callback((Fl_Callback*)propagate_load);
+          wp_style_tab->when(FL_WHEN_NEVER);
+          wp_style_tab->hide();
+          { wp_style_label = new Fl_Group(99, 40, 305, 20, "Label Font:");
+            wp_style_label->labelfont(1);
+            wp_style_label->labelsize(11);
+            wp_style_label->callback((Fl_Callback*)propagate_load);
+            wp_style_label->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Choice* o = new Fl_Choice(99, 40, 148, 20);
+              o->tooltip("The style of the label text.");
+              o->box(FL_THIN_UP_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_4);
+              Fl_Group::current()->resizable(o);
+              o->menu(fontmenu);
+            } // Fl_Choice* o
+            { Fl_Value_Input* o = new Fl_Value_Input(247, 40, 49, 20);
+              o->tooltip("The size of the label text.");
+              o->labelsize(11);
+              o->maximum(100);
+              o->step(1);
+              o->value(14);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_5);
+            } // Fl_Value_Input* o
+            { w_labelcolor = new Fl_Button(296, 40, 90, 20, "Label Color");
+              w_labelcolor->tooltip("The color of the label text.");
+              w_labelcolor->labelsize(11);
+              w_labelcolor->callback((Fl_Callback*)cb_w_labelcolor);
+            } // Fl_Button* w_labelcolor
+            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 40, 18, 20);
+              o->callback((Fl_Callback*)cb_6);
+              o->menu(colormenu);
+            } // Fl_Menu_Button* o
+            wp_style_label->end();
+          } // Fl_Group* wp_style_label
+          { wp_style_box = new Fl_Group(99, 65, 305, 20, "Box:");
+            wp_style_box->labelfont(1);
+            wp_style_box->labelsize(11);
+            wp_style_box->callback((Fl_Callback*)propagate_load);
+            wp_style_box->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Choice* o = new Fl_Choice(100, 65, 196, 20);
+              o->tooltip("The \"up\" box of the widget.");
+              o->box(FL_THIN_UP_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_7);
+              Fl_Group::current()->resizable(o);
+              o->menu(boxmenu);
+            } // Fl_Choice* o
+            { w_color = new Fl_Button(296, 65, 90, 20, "Color");
+              w_color->tooltip("The background color of the widget.");
+              w_color->labelsize(11);
+              w_color->callback((Fl_Callback*)cb_w_color);
+            } // Fl_Button* w_color
+            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 65, 18, 20);
+              o->callback((Fl_Callback*)cb_8);
+              o->menu(colormenu);
+            } // Fl_Menu_Button* o
+            wp_style_box->end();
+          } // Fl_Group* wp_style_box
+          { wp_style_downbox = new Fl_Group(99, 90, 305, 20, "Down Box:");
+            wp_style_downbox->labelfont(1);
+            wp_style_downbox->labelsize(11);
+            wp_style_downbox->callback((Fl_Callback*)propagate_load);
+            wp_style_downbox->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Choice* o = new Fl_Choice(99, 90, 197, 20);
+              o->tooltip("The \"down\" box of the widget.");
+              o->box(FL_THIN_UP_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_9);
+              Fl_Group::current()->resizable(o);
+              o->menu(boxmenu);
+            } // Fl_Choice* o
+            { w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
+              w_selectcolor->tooltip("The selection color of the widget.");
+              w_selectcolor->labelsize(11);
+              w_selectcolor->callback((Fl_Callback*)cb_w_selectcolor);
+            } // Fl_Button* w_selectcolor
+            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 90, 18, 20);
+              o->callback((Fl_Callback*)cb_a);
+              o->menu(colormenu);
+            } // Fl_Menu_Button* o
+            wp_style_downbox->end();
+          } // Fl_Group* wp_style_downbox
+          { wp_style_text = new Fl_Group(99, 115, 305, 20, "Text Font:");
+            wp_style_text->labelfont(1);
+            wp_style_text->labelsize(11);
+            wp_style_text->callback((Fl_Callback*)propagate_load);
+            wp_style_text->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Choice* o = new Fl_Choice(99, 115, 148, 20);
+              o->tooltip("The value text style.");
+              o->box(FL_DOWN_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_b);
+              Fl_Group::current()->resizable(o);
+              o->menu(fontmenu);
+            } // Fl_Choice* o
+            { Fl_Value_Input* o = new Fl_Value_Input(247, 115, 49, 20);
+              o->tooltip("The value text size.");
+              o->labelsize(11);
+              o->maximum(100);
+              o->step(1);
+              o->value(14);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_c);
+            } // Fl_Value_Input* o
+            { w_textcolor = new Fl_Button(296, 115, 90, 20, "Text Color");
+              w_textcolor->tooltip("The value text color.");
+              w_textcolor->labelsize(11);
+              w_textcolor->callback((Fl_Callback*)cb_w_textcolor);
+            } // Fl_Button* w_textcolor
+            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 115, 18, 20);
+              o->callback((Fl_Callback*)cb_d);
+              o->menu(colormenu);
+            } // Fl_Menu_Button* o
+            wp_style_text->end();
+          } // Fl_Group* wp_style_text
+          { Fl_Group* o = new Fl_Group(99, 150, 242, 20, "Label Margin:");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Value_Input* o = new Fl_Value_Input(99, 150, 55, 20, "Horizontal:");
+              o->tooltip("Spacing between label and the horizontally aligned side of the widget.");
+              o->labelsize(11);
+              o->minimum(-127);
+              o->maximum(128);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Horizontal);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(159, 150, 55, 20, "Vertical:");
+              o->tooltip("Spacing between label and the vertically aligned side of the widget.");
+              o->labelsize(11);
+              o->minimum(-127);
+              o->maximum(127);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Vertical);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Image Gap:");
+              o->tooltip("Gap between label image and text in pixels");
+              o->labelsize(11);
+              o->maximum(255);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_Image);
+              o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            } // Fl_Value_Input* o
+            { Fl_Box* o = new Fl_Box(281, 150, 60, 20);
+              o->labelsize(11);
+              o->hide();
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Light_Button* o = new Fl_Light_Button(99, 175, 90, 20, "Compact");
+            o->tooltip("use compact box types for closely set buttons");
+            o->selection_color((Fl_Color)1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_Compact);
+          } // Fl_Light_Button* o
+          { Fl_Box* o = new Fl_Box(195, 205, 40, 40);
+            o->labelsize(11);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
-          wp_gui_flexp->end();
-        } // Fl_Group* wp_gui_flexp
-        { wp_gui_values = new Fl_Group(95, 185, 300, 20, "Values:");
-          wp_gui_values->labelfont(1);
-          wp_gui_values->labelsize(11);
-          wp_gui_values->callback((Fl_Callback*)cb_wp_gui_values);
-          wp_gui_values->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
-            o->tooltip("The size of the slider.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Size);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Minimum:");
-            o->tooltip("The minimum value of the widget.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Minimum);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Maximum:");
-            o->tooltip("The maximum value of the widget.");
-            o->labelsize(11);
-            o->value(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Maximum);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Step:");
-            o->tooltip("The resolution of the widget value.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Step);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Value:");
-            o->tooltip("The current widget value.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Value);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          wp_gui_values->end();
-        } // Fl_Group* wp_gui_values
-        { // This group is only visible for Fl_Flex widgets
-          wp_gui_margins = new Fl_Group(95, 185, 300, 20, "Margins:");
-          wp_gui_margins->labelfont(1);
-          wp_gui_margins->labelsize(11);
-          wp_gui_margins->callback((Fl_Callback*)cb_wp_gui_margins);
-          wp_gui_margins->align(Fl_Align(FL_ALIGN_LEFT));
-          wp_gui_margins->hide();
-          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
-            o->tooltip("Left margin in group.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Left);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
-            o->tooltip("Top margin in group.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Top);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
-            o->tooltip("Right margin in group.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Right);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
-            o->tooltip("Bottom margin in group.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Bottom);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
-            o->tooltip("Gap between children.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Gap);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          wp_gui_margins->end();
-        } // Fl_Group* wp_gui_margins
-        { wp_gui_sizerange = new Fl_Group(95, 185, 300, 20, "Size Range:");
-          wp_gui_sizerange->labelfont(1);
-          wp_gui_sizerange->labelsize(11);
-          wp_gui_sizerange->callback((Fl_Callback*)cb_wp_gui_sizerange);
-          wp_gui_sizerange->align(Fl_Align(FL_ALIGN_LEFT));
-          wp_gui_sizerange->hide();
-          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");
-            o->tooltip("The size of the slider.");
-            o->labelsize(11);
-            o->maximum(2048);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Minimum1);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20);
-            o->tooltip("The minimum value of the widget.");
-            o->labelsize(11);
-            o->maximum(2048);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_1);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Button* o = new Fl_Button(215, 185, 25, 20, "set");
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_set);
-          } // Fl_Button* o
-          { Fl_Value_Input* o = new Fl_Value_Input(245, 185, 55, 20, "Maximum Size:");
-            o->tooltip("The maximum value of the widget.");
-            o->labelsize(11);
-            o->maximum(2048);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Maximum1);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(305, 185, 55, 20);
-            o->tooltip("The resolution of the widget value.");
-            o->labelsize(11);
-            o->maximum(2048);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_2);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Button* o = new Fl_Button(365, 185, 25, 20, "set");
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_set1);
-          } // Fl_Button* o
-          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          wp_gui_sizerange->end();
-        } // Fl_Group* wp_gui_sizerange
-        { Fl_Group* o = new Fl_Group(95, 210, 310, 20, "Shortcut:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { // This is a special button that grabs keystrokes directly
-            wp_gui_shortcut = new Fl_Shortcut_Button(95, 210, 310, 20);
-            wp_gui_shortcut->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
-            wp_gui_shortcut->box(FL_DOWN_BOX);
-            wp_gui_shortcut->color(FL_BACKGROUND2_COLOR);
-            wp_gui_shortcut->selection_color((Fl_Color)12);
-            wp_gui_shortcut->labeltype(FL_NORMAL_LABEL);
-            wp_gui_shortcut->labelfont(0);
-            wp_gui_shortcut->labelsize(11);
-            wp_gui_shortcut->labelcolor(FL_FOREGROUND_COLOR);
-            wp_gui_shortcut->callback((Fl_Callback*)cb_wp_gui_shortcut);
-            wp_gui_shortcut->align(Fl_Align(FL_ALIGN_CENTER));
-            wp_gui_shortcut->when(FL_WHEN_CHANGED);
-          } // Fl_Shortcut_Button* wp_gui_shortcut
-          o->end();
-        } // Fl_Group* o
-        { wp_gui_xclass = new Fl_Group(95, 235, 300, 20, "X Class:");
-          wp_gui_xclass->labelfont(1);
-          wp_gui_xclass->labelsize(11);
-          wp_gui_xclass->callback((Fl_Callback*)propagate_load);
-          wp_gui_xclass->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 235, 95, 20, ":");
-            o->tooltip("The X resource class.");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_3);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Input* o
-          { Fl_Light_Button* o = new Fl_Light_Button(195, 235, 60, 20, "Border");
-            o->tooltip("Add a border around the window.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Border);
-          } // Fl_Light_Button* o
-          { Fl_Light_Button* o = new Fl_Light_Button(260, 235, 55, 20, "Modal");
-            o->tooltip("Make the window modal.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Modal);
-          } // Fl_Light_Button* o
-          { Fl_Light_Button* o = new Fl_Light_Button(320, 235, 75, 20, "Nonmodal");
-            o->tooltip("Make the window non-modal.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Nonmodal);
-            o->align(Fl_Align(132|FL_ALIGN_INSIDE));
-          } // Fl_Light_Button* o
-          wp_gui_xclass->end();
-        } // Fl_Group* wp_gui_xclass
-        { wp_gui_attributes = new Fl_Group(95, 260, 305, 20, "Attributes:");
-          wp_gui_attributes->labelfont(1);
-          wp_gui_attributes->labelsize(11);
-          wp_gui_attributes->callback((Fl_Callback*)propagate_load);
-          wp_gui_attributes->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Light_Button* o = new Fl_Light_Button(95, 260, 60, 20, "Visible");
-            o->tooltip("Show the widget.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Visible);
-          } // Fl_Light_Button* o
-          { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
-            o->tooltip("Activate the widget.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Active);
-          } // Fl_Light_Button* o
-          { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Resizable");
-            o->tooltip("Make the widget resizable.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Resizable);
-            o->when(FL_WHEN_CHANGED);
-          } // Fl_Light_Button* o
-          { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Headline");
-            o->tooltip("Make a menu item the headline of a menu\nunselectable, but not grayed out");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Headline);
-            o->when(FL_WHEN_CHANGED);
-            o->hide();
-          } // Fl_Light_Button* o
-          { Fl_Light_Button* o = new Fl_Light_Button(305, 260, 70, 20, "Hotspot");
-            o->tooltip("Center the window under this widget.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Hotspot);
-            o->when(FL_WHEN_CHANGED);
-          } // Fl_Light_Button* o
-          { Fl_Box* o = new Fl_Box(395, 260, 0, 20);
-            o->labelsize(11);
-          } // Fl_Box* o
-          wp_gui_attributes->end();
-        } // Fl_Group* wp_gui_attributes
-        { wp_gui_tooltip = new Fl_Input(95, 285, 310, 20, "Tooltip:");
-          wp_gui_tooltip->tooltip("The tooltip text for the widget.\nUse Ctrl-J for newlines.");
-          wp_gui_tooltip->labelfont(1);
-          wp_gui_tooltip->labelsize(11);
-          wp_gui_tooltip->textsize(11);
-          wp_gui_tooltip->callback((Fl_Callback*)cb_wp_gui_tooltip);
-        } // Fl_Input* wp_gui_tooltip
-        { Fl_Box* o = new Fl_Box(95, 305, 300, 5);
-          o->hide();
-          Fl_Group::current()->resizable(o);
-        } // Fl_Box* o
-        wp_gui_tab->end();
-        Fl_Group::current()->resizable(wp_gui_tab);
-      } // Fl_Group* wp_gui_tab
-      { wp_style_tab = new Fl_Group(10, 30, 400, 330, "Style");
-        wp_style_tab->labelsize(11);
-        wp_style_tab->callback((Fl_Callback*)propagate_load);
-        wp_style_tab->when(FL_WHEN_NEVER);
-        wp_style_tab->hide();
-        { wp_style_label = new Fl_Group(99, 40, 305, 20, "Label Font:");
-          wp_style_label->labelfont(1);
-          wp_style_label->labelsize(11);
-          wp_style_label->callback((Fl_Callback*)propagate_load);
-          wp_style_label->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(99, 40, 148, 20);
-            o->tooltip("The style of the label text.");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_4);
-            Fl_Group::current()->resizable(o);
-            o->menu(fontmenu);
-          } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(247, 40, 49, 20);
-            o->tooltip("The size of the label text.");
-            o->labelsize(11);
-            o->maximum(100);
-            o->step(1);
-            o->value(14);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_5);
-          } // Fl_Value_Input* o
-          { w_labelcolor = new Fl_Button(296, 40, 90, 20, "Label Color");
-            w_labelcolor->tooltip("The color of the label text.");
-            w_labelcolor->labelsize(11);
-            w_labelcolor->callback((Fl_Callback*)cb_w_labelcolor);
-          } // Fl_Button* w_labelcolor
-          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 40, 18, 20);
-            o->callback((Fl_Callback*)cb_6);
-            o->menu(colormenu);
-          } // Fl_Menu_Button* o
-          wp_style_label->end();
-        } // Fl_Group* wp_style_label
-        { wp_style_box = new Fl_Group(99, 65, 305, 20, "Box:");
-          wp_style_box->labelfont(1);
-          wp_style_box->labelsize(11);
-          wp_style_box->callback((Fl_Callback*)propagate_load);
-          wp_style_box->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(100, 65, 196, 20);
-            o->tooltip("The \"up\" box of the widget.");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_7);
-            Fl_Group::current()->resizable(o);
-            o->menu(boxmenu);
-          } // Fl_Choice* o
-          { w_color = new Fl_Button(296, 65, 90, 20, "Color");
-            w_color->tooltip("The background color of the widget.");
-            w_color->labelsize(11);
-            w_color->callback((Fl_Callback*)cb_w_color);
-          } // Fl_Button* w_color
-          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 65, 18, 20);
-            o->callback((Fl_Callback*)cb_8);
-            o->menu(colormenu);
-          } // Fl_Menu_Button* o
-          wp_style_box->end();
-        } // Fl_Group* wp_style_box
-        { wp_style_downbox = new Fl_Group(99, 90, 305, 20, "Down Box:");
-          wp_style_downbox->labelfont(1);
-          wp_style_downbox->labelsize(11);
-          wp_style_downbox->callback((Fl_Callback*)propagate_load);
-          wp_style_downbox->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(99, 90, 197, 20);
-            o->tooltip("The \"down\" box of the widget.");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_9);
-            Fl_Group::current()->resizable(o);
-            o->menu(boxmenu);
-          } // Fl_Choice* o
-          { w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
-            w_selectcolor->tooltip("The selection color of the widget.");
-            w_selectcolor->labelsize(11);
-            w_selectcolor->callback((Fl_Callback*)cb_w_selectcolor);
-          } // Fl_Button* w_selectcolor
-          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 90, 18, 20);
-            o->callback((Fl_Callback*)cb_a);
-            o->menu(colormenu);
-          } // Fl_Menu_Button* o
-          wp_style_downbox->end();
-        } // Fl_Group* wp_style_downbox
-        { wp_style_text = new Fl_Group(99, 115, 305, 20, "Text Font:");
-          wp_style_text->labelfont(1);
-          wp_style_text->labelsize(11);
-          wp_style_text->callback((Fl_Callback*)propagate_load);
-          wp_style_text->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(99, 115, 148, 20);
-            o->tooltip("The value text style.");
-            o->box(FL_DOWN_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_b);
-            Fl_Group::current()->resizable(o);
-            o->menu(fontmenu);
-          } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(247, 115, 49, 20);
-            o->tooltip("The value text size.");
-            o->labelsize(11);
-            o->maximum(100);
-            o->step(1);
-            o->value(14);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_c);
-          } // Fl_Value_Input* o
-          { w_textcolor = new Fl_Button(296, 115, 90, 20, "Text Color");
-            w_textcolor->tooltip("The value text color.");
-            w_textcolor->labelsize(11);
-            w_textcolor->callback((Fl_Callback*)cb_w_textcolor);
-          } // Fl_Button* w_textcolor
-          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 115, 18, 20);
-            o->callback((Fl_Callback*)cb_d);
-            o->menu(colormenu);
-          } // Fl_Menu_Button* o
-          wp_style_text->end();
-        } // Fl_Group* wp_style_text
-        { Fl_Group* o = new Fl_Group(99, 150, 242, 20, "Label Margin:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Value_Input* o = new Fl_Value_Input(99, 150, 55, 20, "Horizontal:");
-            o->tooltip("Spacing between label and the horizontally aligned side of the widget.");
-            o->labelsize(11);
-            o->minimum(-127);
-            o->maximum(128);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Horizontal);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(159, 150, 55, 20, "Vertical:");
-            o->tooltip("Spacing between label and the vertically aligned side of the widget.");
-            o->labelsize(11);
-            o->minimum(-127);
-            o->maximum(127);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Vertical);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Image Gap:");
-            o->tooltip("Gap between label image and text in pixels");
-            o->labelsize(11);
-            o->maximum(255);
-            o->step(1);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Image);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
-          { Fl_Box* o = new Fl_Box(281, 150, 60, 20);
-            o->labelsize(11);
-            o->hide();
-            Fl_Group::current()->resizable(o);
-          } // Fl_Box* o
-          o->end();
-        } // Fl_Group* o
-        { Fl_Light_Button* o = new Fl_Light_Button(99, 175, 90, 20, "Compact");
-          o->tooltip("use compact box types for closely set buttons");
-          o->selection_color((Fl_Color)1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_Compact);
-        } // Fl_Light_Button* o
-        { Fl_Box* o = new Fl_Box(195, 205, 40, 40);
-          o->labelsize(11);
-          Fl_Group::current()->resizable(o);
-        } // Fl_Box* o
-        wp_style_tab->end();
-      } // Fl_Group* wp_style_tab
-      { wp_cpp_tab = new Fl_Group(10, 30, 400, 330, "C++");
-        wp_cpp_tab->labelsize(11);
-        wp_cpp_tab->callback((Fl_Callback*)propagate_load);
-        wp_cpp_tab->when(FL_WHEN_NEVER);
-        wp_cpp_tab->hide();
-        { wp_cpp_class = new Fl_Group(95, 40, 310, 20, "Class:");
-          wp_cpp_class->labelfont(1);
-          wp_cpp_class->labelsize(11);
-          wp_cpp_class->callback((Fl_Callback*)propagate_load);
-          wp_cpp_class->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 40, 172, 20);
-            o->tooltip("The widget subclass.");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textfont(4);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_e, (void*)(4));
-            Fl_Group::current()->resizable(o);
-          } // Fl_Input* o
-          { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
-            o->tooltip("The widget subtype.");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_f);
-          } // Fl_Choice* o
-          wp_cpp_class->end();
-        } // Fl_Group* wp_cpp_class
-        { wp_cpp_name = new Fl_Group(95, 65, 310, 20, "Name:");
-          wp_cpp_name->labelfont(1);
-          wp_cpp_name->labelsize(11);
-          wp_cpp_name->callback((Fl_Callback*)propagate_load);
-          wp_cpp_name->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 65, 235, 20);
-            o->tooltip("The name of the widget.");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_10);
-            Fl_Group::current()->resizable(o);
-          } // Fl_Input* o
-          { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
-            o->tooltip("Change member access attribute.");
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_11);
-            o->when(FL_WHEN_CHANGED);
-            o->menu(menu_2);
-          } // Fl_Choice* o
-          { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
-            o->tooltip("Change widget accessibility.");
-            o->down_box(FL_BORDER_BOX);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)name_public_cb);
-            o->when(FL_WHEN_CHANGED);
-            o->hide();
-            o->menu(menu_3);
-          } // Fl_Choice* o
-          wp_cpp_name->end();
-        } // Fl_Group* wp_cpp_name
-        { v_input[0] = new Fl_Input(95, 90, 310, 20, "Extra Code:");
-          v_input[0]->tooltip("Extra initialization code for the widget.");
-          v_input[0]->labelfont(1);
-          v_input[0]->labelsize(11);
-          v_input[0]->textfont(4);
-          v_input[0]->textsize(11);
-          v_input[0]->callback((Fl_Callback*)cb_v_input, (void*)(0));
-        } // Fl_Input* v_input[0]
-        { v_input[1] = new Fl_Input(95, 110, 310, 20);
-          v_input[1]->tooltip("Extra initialization code for the widget.");
-          v_input[1]->labelsize(11);
-          v_input[1]->textfont(4);
-          v_input[1]->textsize(11);
-          v_input[1]->callback((Fl_Callback*)cb_v_input1, (void*)(1));
-        } // Fl_Input* v_input[1]
-        { v_input[2] = new Fl_Input(95, 130, 310, 20);
-          v_input[2]->tooltip("Extra initialization code for the widget.");
-          v_input[2]->labelsize(11);
-          v_input[2]->textfont(4);
-          v_input[2]->textsize(11);
-          v_input[2]->callback((Fl_Callback*)cb_v_input2, (void*)(2));
-        } // Fl_Input* v_input[2]
-        { v_input[3] = new Fl_Input(95, 150, 310, 20);
-          v_input[3]->tooltip("Extra initialization code for the widget.");
-          v_input[3]->labelsize(11);
-          v_input[3]->textfont(4);
-          v_input[3]->textsize(11);
-          v_input[3]->callback((Fl_Callback*)cb_v_input3, (void*)(3));
-        } // Fl_Input* v_input[3]
-        { Fl_Tile* o = new Fl_Tile(95, 175, 310, 130);
-          o->callback((Fl_Callback*)cb_12);
-          { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
-            o->box(FL_FLAT_BOX);
-            { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
-              wComment->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
+          wp_style_tab->end();
+        } // Fl_Group* wp_style_tab
+        { wp_cpp_tab = new Fl_Group(10, 30, 400, 330, "C++");
+          wp_cpp_tab->labelsize(11);
+          wp_cpp_tab->callback((Fl_Callback*)propagate_load);
+          wp_cpp_tab->when(FL_WHEN_NEVER);
+          wp_cpp_tab->hide();
+          { wp_cpp_class = new Fl_Group(95, 40, 310, 20, "Class:");
+            wp_cpp_class->labelfont(1);
+            wp_cpp_class->labelsize(11);
+            wp_cpp_class->callback((Fl_Callback*)propagate_load);
+            wp_cpp_class->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Input* o = new Fl_Input(95, 40, 172, 20);
+              o->tooltip("The widget subclass.");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textfont(4);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_e, (void*)(4));
+              Fl_Group::current()->resizable(o);
+            } // Fl_Input* o
+            { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
+              o->tooltip("The widget subtype.");
+              o->box(FL_THIN_UP_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_f);
+            } // Fl_Choice* o
+            wp_cpp_class->end();
+          } // Fl_Group* wp_cpp_class
+          { wp_cpp_name = new Fl_Group(95, 65, 310, 20, "Name:");
+            wp_cpp_name->labelfont(1);
+            wp_cpp_name->labelsize(11);
+            wp_cpp_name->callback((Fl_Callback*)propagate_load);
+            wp_cpp_name->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Input* o = new Fl_Input(95, 65, 235, 20);
+              o->tooltip("The name of the widget.");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_10);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Input* o
+            { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+              o->tooltip("Change member access attribute.");
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_11);
+              o->when(FL_WHEN_CHANGED);
+              o->menu(menu_2);
+            } // Fl_Choice* o
+            { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+              o->tooltip("Change widget accessibility.");
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)name_public_cb);
+              o->when(FL_WHEN_CHANGED);
+              o->hide();
+              o->menu(menu_3);
+            } // Fl_Choice* o
+            wp_cpp_name->end();
+          } // Fl_Group* wp_cpp_name
+          { v_input[0] = new Fl_Input(95, 90, 310, 20, "Extra Code:");
+            v_input[0]->tooltip("Extra initialization code for the widget.");
+            v_input[0]->labelfont(1);
+            v_input[0]->labelsize(11);
+            v_input[0]->textfont(4);
+            v_input[0]->textsize(11);
+            v_input[0]->callback((Fl_Callback*)cb_v_input, (void*)(0));
+          } // Fl_Input* v_input[0]
+          { v_input[1] = new Fl_Input(95, 110, 310, 20);
+            v_input[1]->tooltip("Extra initialization code for the widget.");
+            v_input[1]->labelsize(11);
+            v_input[1]->textfont(4);
+            v_input[1]->textsize(11);
+            v_input[1]->callback((Fl_Callback*)cb_v_input1, (void*)(1));
+          } // Fl_Input* v_input[1]
+          { v_input[2] = new Fl_Input(95, 130, 310, 20);
+            v_input[2]->tooltip("Extra initialization code for the widget.");
+            v_input[2]->labelsize(11);
+            v_input[2]->textfont(4);
+            v_input[2]->textsize(11);
+            v_input[2]->callback((Fl_Callback*)cb_v_input2, (void*)(2));
+          } // Fl_Input* v_input[2]
+          { v_input[3] = new Fl_Input(95, 150, 310, 20);
+            v_input[3]->tooltip("Extra initialization code for the widget.");
+            v_input[3]->labelsize(11);
+            v_input[3]->textfont(4);
+            v_input[3]->textsize(11);
+            v_input[3]->callback((Fl_Callback*)cb_v_input3, (void*)(3));
+          } // Fl_Input* v_input[3]
+          { Fl_Tile* o = new Fl_Tile(95, 175, 310, 130);
+            o->callback((Fl_Callback*)cb_12);
+            { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
+              o->box(FL_FLAT_BOX);
+              { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
+                wComment->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
 "erview.");
-              wComment->box(FL_DOWN_BOX);
-              wComment->labelfont(1);
-              wComment->labelsize(11);
-              wComment->textfont(6);
-              wComment->textsize(11);
-              wComment->textcolor((Fl_Color)59);
-              wComment->callback((Fl_Callback*)cb_wComment);
-              wComment->align(Fl_Align(FL_ALIGN_LEFT));
-              wComment->when(FL_WHEN_CHANGED);
-              Fl_Group::current()->resizable(wComment);
-              wComment->buffer(new Fl_Text_Buffer());
-            } // Fl_Text_Editor* wComment
-            o->end();
-          } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(95, 223, 310, 82);
-            o->box(FL_FLAT_BOX);
-            { wCallback = new fld::widget::Code_Editor(95, 225, 310, 80, "Callback:");
-              wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
+                wComment->box(FL_DOWN_BOX);
+                wComment->labelfont(1);
+                wComment->labelsize(11);
+                wComment->textfont(6);
+                wComment->textsize(11);
+                wComment->textcolor((Fl_Color)59);
+                wComment->callback((Fl_Callback*)cb_wComment);
+                wComment->align(Fl_Align(FL_ALIGN_LEFT));
+                wComment->when(FL_WHEN_CHANGED);
+                Fl_Group::current()->resizable(wComment);
+                wComment->buffer(new Fl_Text_Buffer());
+              } // Fl_Text_Editor* wComment
+              o->end();
+            } // Fl_Group* o
+            { Fl_Group* o = new Fl_Group(95, 223, 310, 82);
+              o->box(FL_FLAT_BOX);
+              { wCallback = new fld::widget::Code_Editor(95, 225, 310, 80, "Callback:");
+                wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
 "access the Widget pointer and \'v\' to access the user value.");
-              wCallback->box(FL_DOWN_BOX);
-              wCallback->color(FL_BACKGROUND2_COLOR);
-              wCallback->selection_color(FL_SELECTION_COLOR);
-              wCallback->labeltype(FL_NORMAL_LABEL);
-              wCallback->labelfont(1);
-              wCallback->labelsize(11);
-              wCallback->labelcolor(FL_FOREGROUND_COLOR);
-              wCallback->textfont(4);
-              wCallback->textsize(11);
-              wCallback->callback((Fl_Callback*)cb_wCallback);
-              wCallback->align(Fl_Align(FL_ALIGN_LEFT));
-              wCallback->when(FL_WHEN_RELEASE);
-              Fl_Group::current()->resizable(wCallback);
-            } // fld::widget::Code_Editor* wCallback
+                wCallback->box(FL_DOWN_BOX);
+                wCallback->color(FL_BACKGROUND2_COLOR);
+                wCallback->selection_color(FL_SELECTION_COLOR);
+                wCallback->labeltype(FL_NORMAL_LABEL);
+                wCallback->labelfont(1);
+                wCallback->labelsize(11);
+                wCallback->labelcolor(FL_FOREGROUND_COLOR);
+                wCallback->textfont(4);
+                wCallback->textsize(11);
+                wCallback->callback((Fl_Callback*)cb_wCallback);
+                wCallback->align(Fl_Align(FL_ALIGN_LEFT));
+                wCallback->when(FL_WHEN_RELEASE);
+                Fl_Group::current()->resizable(wCallback);
+              } // fld::widget::Code_Editor* wCallback
+              o->end();
+            } // Fl_Group* o
+            o->end();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Tile* o
+          { wp_cpp_callback = new Fl_Group(95, 310, 310, 20, "User Data:");
+            wp_cpp_callback->labelfont(1);
+            wp_cpp_callback->labelsize(11);
+            wp_cpp_callback->callback((Fl_Callback*)propagate_load);
+            wp_cpp_callback->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Input* o = new Fl_Input(95, 310, 158, 20);
+              o->tooltip("The user data to pass into the callback code.");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textfont(4);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_13);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Input* o
+            { Fl_Menu_Button* o = new Fl_Menu_Button(260, 310, 145, 20, "When");
+              o->tooltip("When to call the callback function.");
+              o->box(FL_THIN_UP_BOX);
+              o->down_box(FL_BORDER_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_When);
+              o->when(FL_WHEN_CHANGED);
+              o->menu(whenmenu);
+            } // Fl_Menu_Button* o
+            wp_cpp_callback->end();
+          } // Fl_Group* wp_cpp_callback
+          { Fl_Group* o = new Fl_Group(95, 332, 310, 26, "Type:");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Input_Choice* o = new Fl_Input_Choice(95, 335, 158, 20);
+              o->tooltip("The type of the user data.");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->textfont(4);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_14);
+              Fl_Group::current()->resizable(o);
+              o->menu(menu_4);
+            } // Fl_Input_Choice* o
+            { w_when_box = new Fl_Box(260, 332, 145, 26, "FL_WHEN_NEVER");
+              w_when_box->box(FL_FLAT_BOX);
+              w_when_box->selection_color((Fl_Color)1);
+              w_when_box->labelsize(8);
+              w_when_box->align(Fl_Align(193|FL_ALIGN_INSIDE));
+            } // Fl_Box* w_when_box
             o->end();
           } // Fl_Group* o
-          o->end();
-          Fl_Group::current()->resizable(o);
-        } // Fl_Tile* o
-        { wp_cpp_callback = new Fl_Group(95, 310, 310, 20, "User Data:");
-          wp_cpp_callback->labelfont(1);
-          wp_cpp_callback->labelsize(11);
-          wp_cpp_callback->callback((Fl_Callback*)propagate_load);
-          wp_cpp_callback->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 310, 158, 20);
-            o->tooltip("The user data to pass into the callback code.");
+          wp_cpp_tab->end();
+        } // Fl_Group* wp_cpp_tab
+        { widget_tab_grid = new Grid_Tab(10, 30, 400, 330, "Grid");
+          widget_tab_grid->box(FL_NO_BOX);
+          widget_tab_grid->color(FL_BACKGROUND_COLOR);
+          widget_tab_grid->selection_color(FL_BACKGROUND_COLOR);
+          widget_tab_grid->labeltype(FL_NORMAL_LABEL);
+          widget_tab_grid->labelfont(0);
+          widget_tab_grid->labelsize(11);
+          widget_tab_grid->labelcolor(FL_FOREGROUND_COLOR);
+          widget_tab_grid->callback((Fl_Callback*)cb_widget_tab_grid);
+          widget_tab_grid->align(Fl_Align(FL_ALIGN_TOP));
+          widget_tab_grid->when(FL_WHEN_RELEASE);
+          widget_tab_grid->hide();
+          widget_tab_grid->end();
+        } // Grid_Tab* widget_tab_grid
+        { widget_tab_grid_child = new Grid_Child_Tab(10, 30, 400, 330, "Grid Child");
+          widget_tab_grid_child->box(FL_NO_BOX);
+          widget_tab_grid_child->color(FL_BACKGROUND_COLOR);
+          widget_tab_grid_child->selection_color(FL_BACKGROUND_COLOR);
+          widget_tab_grid_child->labeltype(FL_NORMAL_LABEL);
+          widget_tab_grid_child->labelfont(0);
+          widget_tab_grid_child->labelsize(11);
+          widget_tab_grid_child->labelcolor(FL_FOREGROUND_COLOR);
+          widget_tab_grid_child->callback((Fl_Callback*)cb_widget_tab_grid_child);
+          widget_tab_grid_child->align(Fl_Align(FL_ALIGN_TOP));
+          widget_tab_grid_child->when(FL_WHEN_RELEASE);
+          widget_tab_grid_child->hide();
+          widget_tab_grid_child->end();
+        } // Grid_Child_Tab* widget_tab_grid_child
+        o->show();
+        widget_tabs->end();
+      } // Fl_Tabs* widget_tabs
+      { data_tabs = new Fl_Tabs(10, 10, 400, 350);
+        data_tabs->selection_color((Fl_Color)12);
+        data_tabs->labelsize(11);
+        data_tabs->labelcolor(FL_WHITE);
+        data_tabs->callback((Fl_Callback*)cb_data_tabs);
+        { data_tabs_data = new Fl_Group(10, 30, 400, 330, "Inline Data");
+          data_tabs_data->labelsize(11);
+          data_tabs_data->callback((Fl_Callback*)propagate_load);
+          { Fl_Group* o = new Fl_Group(95, 49, 310, 21, "Visibility:");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Choice* o = new Fl_Choice(95, 50, 210, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_15);
+              o->menu(menu_5);
+            } // Fl_Choice* o
+            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_16);
+              o->menu(menu_6);
+            } // Fl_Choice* o
+            { Fl_Box* o = new Fl_Box(363, 49, 42, 20);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Group* o = new Fl_Group(95, 75, 310, 20, "Output: ");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { data_mode_2 = new Fl_Choice(95, 75, 210, 20);
+              data_mode_2->tooltip("text mode generates a \"const char*\" and a trailing NUL, compressed mode use"
+"s zlib to generate a binary block");
+              data_mode_2->down_box(FL_BORDER_BOX);
+              data_mode_2->labelsize(11);
+              data_mode_2->textsize(11);
+              data_mode_2->callback((Fl_Callback*)cb_data_mode_2);
+              data_mode_2->menu(menu_data_mode_2);
+            } // Fl_Choice* data_mode_2
+            { Fl_Box* o = new Fl_Box(363, 75, 42, 20);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Input* o = new Fl_Input(95, 100, 310, 20, "Name:");
+            o->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode "
+"and \"const char*\" in text mode.");
             o->labelfont(1);
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_13);
-            Fl_Group::current()->resizable(o);
+            o->callback((Fl_Callback*)cb_Name);
+            o->align(Fl_Align(132));
           } // Fl_Input* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(260, 310, 145, 20, "When");
-            o->tooltip("When to call the callback function.");
-            o->box(FL_THIN_UP_BOX);
-            o->down_box(FL_BORDER_BOX);
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_When);
-            o->when(FL_WHEN_CHANGED);
-            o->menu(whenmenu);
-          } // Fl_Menu_Button* o
-          wp_cpp_callback->end();
-        } // Fl_Group* wp_cpp_callback
-        { Fl_Group* o = new Fl_Group(95, 332, 310, 26, "Type:");
-          o->labelfont(1);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input_Choice* o = new Fl_Input_Choice(95, 335, 158, 20);
-            o->tooltip("The type of the user data.");
+          { wp_data_filename = new Fl_Input(95, 125, 270, 20, "Filename:");
+            wp_data_filename->tooltip("Name and path of file that will be inlined.");
+            wp_data_filename->labelfont(1);
+            wp_data_filename->labelsize(11);
+            wp_data_filename->textfont(4);
+            wp_data_filename->textsize(11);
+            wp_data_filename->callback((Fl_Callback*)cb_wp_data_filename);
+            wp_data_filename->align(Fl_Align(132));
+          } // Fl_Input* wp_data_filename
+          { Fl_Button* o = new Fl_Button(365, 125, 40, 20, "@fileopen");
+            o->labelcolor((Fl_Color)134);
+            o->callback((Fl_Callback*)cb_fileopen);
+          } // Fl_Button* o
+          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 150, 310, 105, "Comment:");
+            o->tooltip("Declaration comment in Doxygen format");
+            o->box(FL_DOWN_BOX);
             o->labelfont(1);
             o->labelsize(11);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_14);
+            o->callback((Fl_Callback*)cb_Comment);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
-            o->menu(menu_4);
-          } // Fl_Input_Choice* o
-          { w_when_box = new Fl_Box(260, 332, 145, 26, "FL_WHEN_NEVER");
-            w_when_box->box(FL_FLAT_BOX);
-            w_when_box->selection_color((Fl_Color)1);
-            w_when_box->labelsize(8);
-            w_when_box->align(Fl_Align(193|FL_ALIGN_INSIDE));
-          } // Fl_Box* w_when_box
-          o->end();
-        } // Fl_Group* o
-        wp_cpp_tab->end();
-      } // Fl_Group* wp_cpp_tab
-      { widget_tab_grid = new Grid_Tab(10, 30, 400, 330, "Grid");
-        widget_tab_grid->box(FL_NO_BOX);
-        widget_tab_grid->color(FL_BACKGROUND_COLOR);
-        widget_tab_grid->selection_color(FL_BACKGROUND_COLOR);
-        widget_tab_grid->labeltype(FL_NORMAL_LABEL);
-        widget_tab_grid->labelfont(0);
-        widget_tab_grid->labelsize(11);
-        widget_tab_grid->labelcolor(FL_FOREGROUND_COLOR);
-        widget_tab_grid->callback((Fl_Callback*)cb_widget_tab_grid);
-        widget_tab_grid->align(Fl_Align(FL_ALIGN_TOP));
-        widget_tab_grid->when(FL_WHEN_RELEASE);
-        widget_tab_grid->hide();
-        widget_tab_grid->end();
-      } // Grid_Tab* widget_tab_grid
-      { widget_tab_grid_child = new Grid_Child_Tab(10, 30, 400, 330, "Grid Child");
-        widget_tab_grid_child->box(FL_NO_BOX);
-        widget_tab_grid_child->color(FL_BACKGROUND_COLOR);
-        widget_tab_grid_child->selection_color(FL_BACKGROUND_COLOR);
-        widget_tab_grid_child->labeltype(FL_NORMAL_LABEL);
-        widget_tab_grid_child->labelfont(0);
-        widget_tab_grid_child->labelsize(11);
-        widget_tab_grid_child->labelcolor(FL_FOREGROUND_COLOR);
-        widget_tab_grid_child->callback((Fl_Callback*)cb_widget_tab_grid_child);
-        widget_tab_grid_child->align(Fl_Align(FL_ALIGN_TOP));
-        widget_tab_grid_child->when(FL_WHEN_RELEASE);
-        widget_tab_grid_child->hide();
-        widget_tab_grid_child->end();
-      } // Grid_Child_Tab* widget_tab_grid_child
-      o->show();
-      widget_tabs->end();
-      Fl_Group::current()->resizable(widget_tabs);
-    } // Fl_Tabs* widget_tabs
+            o->buffer(new Fl_Text_Buffer());
+            o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+          } // Fl_Text_Editor* o
+          data_tabs_data->end();
+          Fl_Group::current()->resizable(data_tabs_data);
+        } // Fl_Group* data_tabs_data
+        data_tabs->end();
+        Fl_Group::current()->resizable(data_tabs);
+      } // Fl_Tabs* data_tabs
+      tabs_wizard->end();
+      Fl_Group::current()->resizable(tabs_wizard);
+    } // Fl_Wizard* tabs_wizard
     { Fl_Tabs* o = widget_tabs_repo = new Fl_Tabs(10, 10, 400, 350);
       widget_tabs_repo->hide();
       { Fl_Group* o = new Fl_Group(10, 30, 400, 330);

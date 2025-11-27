@@ -2,6 +2,7 @@
 version 1.0500
 header_name {.h}
 code_name {.cxx}
+include_guard {}
 decl {\#include "widgets/Formula_Input.h"} {public global
 }
 

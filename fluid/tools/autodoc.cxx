@@ -401,6 +401,7 @@ void run_autodoc(const std::string &target_dir) {
   select_only(t_grp);
   Node *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
   Node *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Node *t_data = add_new_widget_from_user("Data", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -537,15 +538,6 @@ void run_autodoc(const std::string &target_dir) {
   fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
   adoc_comment_panel->hide();
 
-  // -- Type::Data
-  Fl_Window *adoc_data_panel = make_data_panel();
-  data_class_choice->hide();
-  data_input->value("emulated_ROM");
-  data_filename->value("./ROM.bin");
-  fl_snapshot((target_dir + "data_panel.png").c_str(), adoc_data_panel, win_margin, win_blend);
-  adoc_data_panel->hide();
-
-
   // ---- widget dialog
   t_win->open(); // open the window
   t_win->open(); // open the panel
@@ -608,6 +600,11 @@ void run_autodoc(const std::string &target_dir) {
   select_only(t_grdc);
   widget_tabs->value(widget_tab_grid_child);
   fl_snapshot((target_dir + "wp_gridc_tab.png").c_str(), widget_tab_grid_child, tab_margin, row_blend);
+
+  // -- Type::Data
+  select_only(t_data);
+  fl_snapshot((target_dir + "data_panel.png").c_str(), data_tabs_data, tab_margin, row_blend);
+
 }
 
 
