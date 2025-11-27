@@ -2677,7 +2677,6 @@ Fl_Double_Window* make_widget_panel() {
         widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
         widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
         widget_tabs->when(FL_WHEN_NEVER);
-        widget_tabs->hide();
         { wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
           wp_gui_tab->labelsize(11);
           wp_gui_tab->callback((Fl_Callback*)propagate_load);
@@ -3614,6 +3613,7 @@ Fl_Double_Window* make_widget_panel() {
         data_tabs->labelsize(11);
         data_tabs->labelcolor(FL_WHITE);
         data_tabs->callback((Fl_Callback*)cb_data_tabs);
+        data_tabs->hide();
         { data_tabs_data = new Fl_Group(10, 30, 400, 330, "Inline Data");
           data_tabs_data->labelsize(11);
           data_tabs_data->callback((Fl_Callback*)propagate_load);

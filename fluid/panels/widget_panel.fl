@@ -491,7 +491,7 @@ Function {make_widget_panel()} {uid da36
       Fl_Tabs widget_tabs {uid 0fc3
         callback {if (current_widget)
   propagate_load((Fl_Group *)o,v);} open
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 hide
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
         Fl_Group wp_gui_tab {uid 431e
@@ -505,7 +505,7 @@ Function {make_widget_panel()} {uid da36
             xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Input wp_gui_label {uid 9244
-              callback label_cb
+              callback label_cb selected
               tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
             }
@@ -2571,11 +2571,11 @@ if (v == LOAD) {
       Fl_Tabs data_tabs {uid fb93
         callback {if (current_node && current_node->is_a(Type::Data))
   propagate_load((Fl_Group *)o,v);} open
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 resizable
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
       } {
         Fl_Group data_tabs_data {uid 6888
           label {Inline Data}
-          callback propagate_load open selected
+          callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
           Fl_Group {} {uid 189f
