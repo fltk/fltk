@@ -1737,7 +1737,7 @@ void Comment_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  add their own presets which are stored per user in a separate
  preferences database.
  */
-static void load_comments_preset(Fl_Preferences &menu) {
+void load_comments_preset(Fl_Preferences &menu) {
   static const char * const predefined_comment[] = {
     "GNU Public License v3/GPL Header",  "GNU Public License v3/GPL Footer",
     "GNU Public License v3/LGPL Header", "GNU Public License v3/LGPL Footer",
@@ -1757,119 +1757,7 @@ static void load_comments_preset(Fl_Preferences &menu) {
  Open the comment_panel to edit this node.
  */
 void Comment_Node::open() {
-  if (!comment_panel) make_comment_panel();
-  const char *text = name();
-  {
-    int i=0, n=0, version = 0;
-    Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
-    comment_predefined->clear();
-    comment_predefined->add("_Edit/Add current comment...");
-    comment_predefined->add("_Edit/Remove last selection...");
-    menu.get("version", version, -1);
-    if (version < 10400) load_comments_preset(menu);
-    menu.get("n", n, 0);
-    for (i=0;i<n;i++) {
-      char *text;
-      menu.get(Fl_Preferences::Name(i), text, "");
-      comment_predefined->add(text);
-      free(text);
-    }
-  }
-  comment_input->buffer()->text( text ? text : "" );
-  comment_in_source->value(in_c_);
-  comment_in_header->value(in_h_);
-  comment_panel->show();
-  char itempath[FL_PATH_MAX]; itempath[0] = 0;
-  int last_selected_item = 0;
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == comment_panel_cancel) goto BREAK2;
-      else if (w == comment_panel_ok) break;
-      else if (w == comment_predefined) {
-        if (comment_predefined->value()==1) {
-          // add the current comment to the database
-          const char *xname = fl_input(
-                                       "Please enter a name to reference the current\ncomment in your database.\n\n"
-                                       "Use forward slashes '/' to create submenus.",
-                                       "My Comment");
-          if (xname) {
-            char *name = fl_strdup(xname);
-            for (char*s=name;*s;s++) if (*s==':') *s = ';';
-            int n;
-            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
-            db.set(name, comment_input->buffer()->text());
-            Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
-            menu.get("n", n, 0);
-            menu.set(Fl_Preferences::Name(n), name);
-            menu.set("n", ++n);
-            comment_predefined->add(name);
-            free(name);
-          }
-        } else if (comment_predefined->value()==2) {
-          // remove the last selected comment from the database
-          if (itempath[0]==0 || last_selected_item==0) {
-            fl_message("Please select an entry from this menu first.");
-          } else if (fl_choice("Are you sure that you want to delete the entry\n"
-                               "\"%s\"\nfrom the database?", "Cancel", "Delete",
-                               nullptr, itempath)) {
-            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
-            db.deleteEntry(itempath);
-            comment_predefined->remove(last_selected_item);
-            Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
-            int i, n;
-            for (i=4, n=0; i<comment_predefined->size(); i++) {
-              const Fl_Menu_Item *mi = comment_predefined->menu()+i;
-              if (comment_predefined->item_pathname(itempath, 255, mi)==0) {
-                if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
-                if (itempath[0]) menu.set(Fl_Preferences::Name(n++), itempath);
-              }
-            }
-            menu.set("n", n);
-          }
-        } else {
-          // load the selected comment from the database
-          if (comment_predefined->item_pathname(itempath, 255)==0) {
-            if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
-            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
-            char *text;
-            db.get(itempath, text, "(no text found in data base)");
-            comment_input->buffer()->text(text);
-            free(text);
-            last_selected_item = comment_predefined->value();
-          }
-        }
-      }
-      else if (w == comment_load) {
-        // load a comment from disk
-        fl_file_chooser_ok_label("Use File");
-        const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
-        fl_file_chooser_ok_label(nullptr);
-        if (fname) {
-          if (comment_input->buffer()->loadfile(fname)) {
-            fl_alert("Error loading file\n%s", fname);
-          }
-        }
-      }
-      else if (!w) Fl::wait();
-    }
-    char*c = comment_input->buffer()->text();
-    name(c);
-    free(c);
-    int mod = 0;
-    if (in_c_ != comment_in_source->value()) {
-      in_c_ = comment_in_source->value();
-      mod = 1;
-    }
-    if (in_h_ != comment_in_header->value()) {
-      in_h_ = comment_in_header->value();
-      mod = 1;
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-    break;
-  }
-BREAK2:
-  comment_panel->hide();
+  open_panel();
 }
 
 /**

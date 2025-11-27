@@ -111,6 +111,13 @@ extern Fl_Tabs *data_tabs;
 extern Fl_Group *data_tabs_data;
 extern Fl_Choice *data_mode_2;
 extern Fl_Input *wp_data_filename;
+extern Fl_Tabs *comment_tabs;
+extern Fl_Group *commet_tabs_comment;
+extern Fl_Text_Editor *comment_tabs_name;
+extern void load_comments_preset(Fl_Preferences &menu);
+#include <FL/fl_string_functions.h>
+extern Fl_Menu_Button *comment_predefined_2;
+extern Fl_Button *comment_load_2;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;

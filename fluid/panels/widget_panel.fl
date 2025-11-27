@@ -1657,9 +1657,13 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
     o->hide(); 
     return;
   }
-  if (numselected > 1) {o->deactivate(); return;}
   o->show();
   o->value(current_widget->resizable());
+  if (numselected > 1) {
+    o->deactivate(); 
+    return;
+  }
+  o->activate(); 
 } else {
   Fluid.proj.undo.checkpoint();
   current_widget->resizable(o->value());
@@ -2570,8 +2574,8 @@ if (v == LOAD) {
       }
       Fl_Tabs data_tabs {uid fb93
         callback {if (current_node && current_node->is_a(Type::Data))
-  propagate_load((Fl_Group *)o,v);} open
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
+  propagate_load((Fl_Group *)o,v);}
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group data_tabs_data {uid 6888
           label {Inline Data}
@@ -2584,7 +2588,8 @@ if (v == LOAD) {
             xywh {95 49 310 21} labelfont 1 labelsize 11 align 4
           } {
             Fl_Choice {} {uid 9057
-              callback {Data_Node* nd = (Data_Node*)current_node;
+              callback {if (!current_node || !current_node->is_a(Type::Data)) return;
+Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   if (!nd->is_in_class()) {
     o->value(nd->output_file());
@@ -2625,7 +2630,8 @@ if (v == LOAD) {
               }
             }
             Fl_Choice {} {uid e831
-              callback {Data_Node* nd = (Data_Node*)current_node;
+              callback {if (!current_node || !current_node->is_a(Type::Data)) return;
+Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   if (nd->is_in_class()) {
     o->value(nd->visibility());
@@ -2671,7 +2677,8 @@ if (v == LOAD) {
             xywh {95 75 310 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Choice data_mode_2 {uid 910a
-              callback {Data_Node* nd = (Data_Node*)current_node;
+              callback {if (!current_node || !current_node->is_a(Type::Data)) return;
+Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   o->value(nd->output_format());
 } else {
@@ -2723,7 +2730,8 @@ if (v == LOAD) {
           }
           Fl_Input {} {uid 379b
             label {Name:}
-            callback {Data_Node* nd = (Data_Node*)current_node;
+            callback {if (!current_node || !current_node->is_a(Type::Data)) return;
+Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   o->value( nd->name() );
   the_panel->label("Inline Data Properties");
@@ -2744,7 +2752,8 @@ if (v == LOAD) {
           }
           Fl_Input wp_data_filename {uid f009
             label {Filename:}
-            callback {Data_Node* nd = (Data_Node*)current_node;
+            callback {if (!current_node || !current_node->is_a(Type::Data)) return;
+Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   const char *fn = nd->filename();
   o->value( fn ? fn : "" );
@@ -2768,7 +2777,6 @@ if (v == LOAD) {
             label {@fileopen}
             callback {if (v == LOAD) {
 } else {
-  Data_Node* nd = (Data_Node*)current_node;
   Fluid.proj.enter_project_dir();
   const char *fn = fl_file_chooser("Load Inline Data", 
     nullptr, wp_data_filename->value(), 1);
@@ -2785,7 +2793,8 @@ if (v == LOAD) {
           }
           Fl_Text_Editor {} {uid 5312
             label {Comment:}
-            callback {Data_Node* nd = (Data_Node*)current_node;
+            callback {if (!current_node || !current_node->is_a(Type::Data)) return;
+Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   const char *cmttext = nd->comment();
   o->buffer()->text( cmttext ? cmttext : "" );
@@ -2810,33 +2819,215 @@ if (v == LOAD) {
           }
         }
       }
+      Fl_Tabs comment_tabs {uid c546
+        callback {if (current_node && current_node->is_a(Type::Comment))
+  propagate_load((Fl_Group *)o,v);}
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
+      } {
+        Fl_Group commet_tabs_comment {uid 32ad
+          label Comment
+          callback propagate_load open
+          xywh {10 30 400 330} labelsize 11 resizable
+        } {
+          Fl_Text_Editor comment_tabs_name {uid d107
+            label {Comment:}
+            callback {if (!current_node || !current_node->is_a(Type::Comment)) return;
+Comment_Node* nd = (Comment_Node*)current_node;
+if (v == LOAD) {
+  the_panel->label("Comment Properties");
+  const char *cmttext = nd->name();
+  o->buffer()->text( cmttext ? cmttext : "" );
+} else {
+  int mod;
+  char *c = o->buffer()->text();
+  const char *nn = nd->name();
+  if (   (nn && (strcmp(nn, c) == 0))
+      || (!nn && (strcmp("", c) == 0)) )
+  {
+    mod = 0;
+  } else {
+    nd->name(c);
+    mod = 1;
+  }
+  free(c);  
+  if (mod) Fluid.proj.set_modflag(1);
+}}
+            xywh {95 45 310 235} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 textcolor 58 resizable
+            code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+            code1 {o->buffer(new Fl_Text_Buffer());}
+          }
+          Fl_Group {} {uid 9bbe
+            callback propagate_load open
+            xywh {95 285 310 65}
+          } {
+            Fl_Menu_Button comment_predefined_2 {uid 0281
+              label Predefined
+              callback {if (!current_node || !current_node->is_a(Type::Comment)) return;
+Comment_Node* nd = (Comment_Node*)current_node;
+ static char itempath[255];
+static int last_selected_item { 0 };
+ if (v == LOAD) {
+  int i=0, n=0, version = 0;
+  Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
+  o->clear();
+  o->add("_Edit/Add current comment...");
+  o->add("_Edit/Remove last selection...");
+  menu.get("version", version, -1);
+  if (version < 10400) load_comments_preset(menu);
+  menu.get("n", n, 0);
+  for (i=0;i<n;i++) {
+    char *text;
+    menu.get(Fl_Preferences::Name(i), text, "");
+    o->add(text);
+    free(text);
+  }
+} else {
+  if (o->value()==1) {
+    // add the current comment to the database
+    const char *xname = fl_input(
+      "Please enter a name to reference the current\\ncomment in your database.\\n\\n"
+      "Use forward slashes '/' to create submenus.",
+      "My Comment");
+    if (xname) {
+      char *name = fl_strdup(xname);
+      for (char*s=name;*s;s++) if (*s==':') *s = ';';
+      int n;
+      Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
+      db.set(name, comment_tabs_name->buffer()->text());
+      Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
+      menu.get("n", n, 0);
+      menu.set(Fl_Preferences::Name(n), name);
+      menu.set("n", ++n);
+      o->add(name);
+      free(name);
     }
-    Fl_Tabs widget_tabs_repo {uid c546 open
+  } else if (o->value()==2) {
+    // remove the last selected comment from the database
+    if (itempath[0]==0 || last_selected_item==0) {
+      fl_message("Please select an entry from this menu first.");
+    } else if (fl_choice("Are you sure that you want to delete the entry\\n"
+                         "\\"%s\\"\\nfrom the database?", "Cancel", "Delete",
+                         nullptr, itempath)) {
+      Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
+      db.deleteEntry(itempath);
+      o->remove(last_selected_item);
+      Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
+      int i, n;
+      for (i=4, n=0; i<o->size(); i++) {
+        const Fl_Menu_Item *mi = o->menu()+i;
+        if (o->item_pathname(itempath, 255, mi)==0) {
+          if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
+          if (itempath[0]) menu.set(Fl_Preferences::Name(n++), itempath);
+        }
+      }
+      menu.set("n", n);
+    }
+  } else {
+    // load the selected comment from the database
+    if (o->item_pathname(itempath, 255)==0) {
+      if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
+      Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
+      char *text;
+      db.get(itempath, text, "(no text found in data base)");
+      comment_tabs_name->buffer()->text(text);
+      comment_tabs_name->do_callback();
+      free(text);
+      last_selected_item = o->value();
+    }
+   }
+}} open
+              xywh {95 285 90 20} labelsize 11 textsize 11
+              code0 {extern void load_comments_preset(Fl_Preferences &menu);}
+              code1 {\#include <FL/fl_string_functions.h>}
+            } {}
+            Fl_Button comment_load_2 {uid ec8d
+              label {Import...}
+              callback {// load a comment from disk
+if (v == LOAD) {
+} else {
+  fl_file_chooser_ok_label("Load");
+  const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
+  fl_file_chooser_ok_label(nullptr);
+  if (fname) {
+    if (comment_tabs_name->buffer()->loadfile(fname)) {
+      fl_alert("Error loading file\\n%s", fname);
+    }
+    comment_tabs_name->do_callback();
+  }
+}}
+              xywh {190 285 90 20} labelsize 11
+            }
+            Fl_Check_Button {} {uid 1684
+              label {output to header file}
+              callback {if (!current_node || !current_node->is_a(Type::Comment)) return;
+Comment_Node* nd = (Comment_Node*)current_node;
+
+if (v == LOAD) {
+  o->value(nd->in_h());
+} else {
+  int mod = 0;
+  if (nd->in_h() != o->value()) {
+    nd->in_h( o->value() );
+    mod = 1;
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+  }
+}}
+              tooltip {Put the comment into the header (.h) file.} xywh {95 310 120 20} down_box DOWN_BOX labelsize 11 when 1
+            }
+            Fl_Check_Button {} {uid 5454
+              label {output to source file}
+              callback {if (!current_node || !current_node->is_a(Type::Comment)) return;
+Comment_Node* nd = (Comment_Node*)current_node;
+
+if (v == LOAD) {
+  o->value(nd->in_c());
+} else {
+  int mod = 0;
+  if (nd->in_c() != o->value()) {
+    nd->in_c( o->value() );
+    mod = 1;
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+  }
+}}
+              tooltip {Put the comment into the source (.cxx) file.} xywh {95 330 120 20} down_box DOWN_BOX labelsize 11 when 1
+            }
+            Fl_Box {} {uid 7a18
+              xywh {404 285 1 65} labelsize 11 resizable
+            }
+          }
+        }
+      }
+    }
+    Fl_Tabs widget_tabs_repo {uid d304 open
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
-      Fl_Group {} {uid 32ad
+      Fl_Group {} {uid b1b3
         xywh {10 30 400 330} resizable
       } {}
     }
-    Fl_Group {} {uid d107
+    Fl_Group {} {uid 983b
       xywh {10 370 400 20} labelsize 11
     } {
-      Fl_Button wLiveMode {uid 9bbe
+      Fl_Button wLiveMode {uid 1d75
         label {Live &Resize}
         callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
-      Fl_Button overlay_button {uid 0281
+      Fl_Button overlay_button {uid 3088
         label {Hide &Overlays}
         callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
-      Fl_Box {} {uid ec8d
+      Fl_Box {} {uid 9a5f
         comment {Hidden resizable box}
         xywh {258 370 72 20} labelsize 11 hide resizable
       }
-      Fl_Return_Button {} {uid 1684
+      Fl_Return_Button {} {uid 1d0f
         label Close
         callback ok_cb
         xywh {330 370 80 20} labelsize 11

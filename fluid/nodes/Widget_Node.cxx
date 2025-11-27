@@ -1193,12 +1193,18 @@ void overlay_cb(Fl_Button*o,void *v) {
 
 void leave_live_mode_cb(Fl_Widget*, void*);
 
-void live_mode_cb(Fl_Button*o,void *) {
+void live_mode_cb(Fl_Button* o, void *) {
   /// \todo live mode should end gracefully when the application quits
   ///       or when the user closes the live widget
   static Node *live_type = nullptr;
   static Fl_Widget *live_widget = nullptr;
   static Fl_Window *live_window = nullptr;
+
+  if (!current_widget) {
+    o->value(0);
+    return;
+  }
+
   // if 'o' is 0, we must quit live mode
   if (!o) {
     o = wLiveMode;
@@ -1267,6 +1273,10 @@ void load_panel() {
     if (Fluid.proj.tree.current->is_a(Type::Data)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(data_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Comment)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(comment_tabs);
       numselected = 1;
     } else {
       current_node = nullptr;

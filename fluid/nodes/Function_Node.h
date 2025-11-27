@@ -243,6 +243,10 @@ public:
   int is_public() const override { return 1; }
   Type type() const override { return Type::Comment; }
   bool is_a(Type inType) const override { return (inType==Type::Comment) ? true : super::is_a(inType); }
+  bool in_h() { return in_h_; }
+  void in_h(bool v) { in_h_ = v; }
+  bool in_c() { return in_c_; }
+  void in_c(bool v) { in_c_ = v; }
 };
 
 // ---- Class_Node declaration

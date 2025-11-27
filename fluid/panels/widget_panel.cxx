@@ -1590,15 +1590,19 @@ static void cb_Resizable(Fl_Light_Button* o, void* v) {
       o->hide(); 
       return;
     }
-    if (numselected > 1) {o->deactivate(); return;}
     o->show();
     o->value(current_widget->resizable());
+    if (numselected > 1) {
+      o->deactivate(); 
+      return;
+    }
+    o->activate(); 
   } else {
     Fluid.proj.undo.checkpoint();
     current_widget->resizable(o->value());
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-~~----~=~------------=~=-~=--~~~~~=~-~=-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-~~----~=~------------~-~=~=~--=~--=-~~=~- ▲ ﬂ//
 }
 
 static void cb_Headline(Fl_Light_Button* o, void* v) {
@@ -2467,6 +2471,7 @@ Fl_Group *data_tabs_data=(Fl_Group *)0;
 
 static void cb_15(Fl_Choice* o, void* v) {
 //ﬂ ▼ ---------------------- callback --~~-==-=~-==-~-~-~~-= ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Data)) return;
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     if (!nd->is_in_class()) {
@@ -2488,7 +2493,7 @@ static void cb_15(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~-~---~~-=~-----------~~==~-~--~-~~~~~~~-~= ▲ ﬂ//
+//ﬂ ▲ ----------=~-~---~~-=~-----------~--~~~-~==~~=-==-~-=- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_5[] = {
@@ -2501,6 +2506,7 @@ Fl_Menu_Item menu_5[] = {
 
 static void cb_16(Fl_Choice* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-=~-=--~~-=--=~~~=-=- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Data)) return;
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     if (nd->is_in_class()) {
@@ -2522,7 +2528,7 @@ static void cb_16(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~~=-=--~=-~----------~----=~~--=~--=~-==-=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~=-=--~=-~-----------~-=-~~~~~~=~=~=-~-=-- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_6[] = {
@@ -2536,6 +2542,7 @@ Fl_Choice *data_mode_2=(Fl_Choice *)0;
 
 static void cb_data_mode_2(Fl_Choice* o, void* v) {
 //ﬂ ▼ ---------------------- callback --~~---~~-----~=~=-~-~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Data)) return;
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     o->value(nd->output_format());
@@ -2549,7 +2556,7 @@ static void cb_data_mode_2(Fl_Choice* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-~---=-~~------------~-~=~~-~~-~~--~---~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~-~---=-~~-----------~--~=--~=-~=-=~=--~-~- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_data_mode_2[] = {
@@ -2564,6 +2571,7 @@ Fl_Menu_Item menu_data_mode_2[] = {
 
 static void cb_Name(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-=-~==-~-~-=~-~-=~-~- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Data)) return;
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     o->value( nd->name() );
@@ -2581,13 +2589,14 @@ static void cb_Name(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~~~~=~~~~-----------~-~~=-==~=-~==~-=-~~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~~~~~=~~~~----------~~-~--~--==--=~~-==--= ▲ ﬂ//
 }
 
 Fl_Input *wp_data_filename=(Fl_Input *)0;
 
 static void cb_wp_data_filename(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-~=~~~~~~-=~~=~-==--- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Data)) return;
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     const char *fn = nd->filename();
@@ -2606,14 +2615,13 @@ static void cb_wp_data_filename(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~=~-----~-~-----------~--~--=-----~~~--~~=- ▲ ﬂ//
+//ﬂ ▲ ----------=~=~-----~-~-----------~-=~-=~-=~~~--=~~-~~= ▲ ﬂ//
 }
 
 static void cb_fileopen(Fl_Button*, void* v) {
 //ﬂ ▼ ---------------------- callback ~--=-~~~=~~--~=-=~-=~- ▼ ﬂ//
   if (v == LOAD) {
   } else {
-    Data_Node* nd = (Data_Node*)current_node;
     Fluid.proj.enter_project_dir();
     const char *fn = fl_file_chooser("Load Inline Data", 
       nullptr, wp_data_filename->value(), 1);
@@ -2626,11 +2634,12 @@ static void cb_fileopen(Fl_Button*, void* v) {
       }
     }
   }
-//ﬂ ▲ ----------~=-=~-=-=~=-------------~-~~=-~--~~-~-~~~~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~-=-=~=-----------~-=~~=---~=~--~~~~~~~= ▲ ﬂ//
 }
 
 static void cb_Comment(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~--=---~~~-=-~=-=-~-=~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Data)) return;
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     const char *cmttext = nd->comment();
@@ -2650,7 +2659,187 @@ static void cb_Comment(Fl_Text_Editor* o, void* v) {
     free(c);  
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==--~-=~-~------------~~=~=-=-~--=-=~---=-~ ▲ ﬂ//
+//ﬂ ▲ ----------~==--~-=~-~-----------~-~--==---=~=-=~~----- ▲ ﬂ//
+}
+
+Fl_Tabs *comment_tabs=(Fl_Tabs *)0;
+
+static void cb_comment_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~~~~==~~=~~~~--~~~~ ▼ ﬂ//
+  if (current_node && current_node->is_a(Type::Comment))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------=~-=~-=---~=----------~--~=-~=---=~-~=~~=-~~ ▲ ﬂ//
+}
+
+Fl_Group *commet_tabs_comment=(Fl_Group *)0;
+
+Fl_Text_Editor *comment_tabs_name=(Fl_Text_Editor *)0;
+
+static void cb_comment_tabs_name(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~=-==-~=~~~~~==~~~~= ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  Comment_Node* nd = (Comment_Node*)current_node;
+  if (v == LOAD) {
+    the_panel->label("Comment Properties");
+    const char *cmttext = nd->name();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->name();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->name(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------=~=----=--=~-----------~--~~~~~-=~-------=-~ ▲ ﬂ//
+}
+
+Fl_Menu_Button *comment_predefined_2=(Fl_Menu_Button *)0;
+
+static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-=~=~=-=--=~==-~--- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  Comment_Node* nd = (Comment_Node*)current_node;
+   static char itempath[255];
+  static int last_selected_item { 0 };
+   if (v == LOAD) {
+    int i=0, n=0, version = 0;
+    Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
+    o->clear();
+    o->add("_Edit/Add current comment...");
+    o->add("_Edit/Remove last selection...");
+    menu.get("version", version, -1);
+    if (version < 10400) load_comments_preset(menu);
+    menu.get("n", n, 0);
+    for (i=0;i<n;i++) {
+      char *text;
+      menu.get(Fl_Preferences::Name(i), text, "");
+      o->add(text);
+      free(text);
+    }
+  } else {
+    if (o->value()==1) {
+      // add the current comment to the database
+      const char *xname = fl_input(
+        "Please enter a name to reference the current\ncomment in your database.\n\n"
+        "Use forward slashes '/' to create submenus.",
+        "My Comment");
+      if (xname) {
+        char *name = fl_strdup(xname);
+        for (char*s=name;*s;s++) if (*s==':') *s = ';';
+        int n;
+        Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
+        db.set(name, comment_tabs_name->buffer()->text());
+        Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
+        menu.get("n", n, 0);
+        menu.set(Fl_Preferences::Name(n), name);
+        menu.set("n", ++n);
+        o->add(name);
+        free(name);
+      }
+    } else if (o->value()==2) {
+      // remove the last selected comment from the database
+      if (itempath[0]==0 || last_selected_item==0) {
+        fl_message("Please select an entry from this menu first.");
+      } else if (fl_choice("Are you sure that you want to delete the entry\n"
+                           "\"%s\"\nfrom the database?", "Cancel", "Delete",
+                           nullptr, itempath)) {
+        Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
+        db.deleteEntry(itempath);
+        o->remove(last_selected_item);
+        Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
+        int i, n;
+        for (i=4, n=0; i<o->size(); i++) {
+          const Fl_Menu_Item *mi = o->menu()+i;
+          if (o->item_pathname(itempath, 255, mi)==0) {
+            if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
+            if (itempath[0]) menu.set(Fl_Preferences::Name(n++), itempath);
+          }
+        }
+        menu.set("n", n);
+      }
+    } else {
+      // load the selected comment from the database
+      if (o->item_pathname(itempath, 255)==0) {
+        if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
+        Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
+        char *text;
+        db.get(itempath, text, "(no text found in data base)");
+        comment_tabs_name->buffer()->text(text);
+        comment_tabs_name->do_callback();
+        free(text);
+        last_selected_item = o->value();
+      }
+     }
+  }
+//ﬂ ▲ ----------~=---~~----~-----------~=~-~~-----~=~=--~=~~ ▲ ﬂ//
+}
+
+Fl_Button *comment_load_2=(Fl_Button *)0;
+
+static void cb_comment_load_2(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=-~~=--~~--~~=~---- ▼ ﬂ//
+  // load a comment from disk
+  if (v == LOAD) {
+  } else {
+    fl_file_chooser_ok_label("Load");
+    const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
+    fl_file_chooser_ok_label(nullptr);
+    if (fname) {
+      if (comment_tabs_name->buffer()->loadfile(fname)) {
+        fl_alert("Error loading file\n%s", fname);
+      }
+      comment_tabs_name->do_callback();
+    }
+  }
+//ﬂ ▲ ----------=~~=~=~--~=-------------~-~--~-==~~-~~=~~=-= ▲ ﬂ//
+}
+
+static void cb_output(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~=-~~~~=-------~~=- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  Comment_Node* nd = (Comment_Node*)current_node;
+
+  if (v == LOAD) {
+    o->value(nd->in_h());
+  } else {
+    int mod = 0;
+    if (nd->in_h() != o->value()) {
+      nd->in_h( o->value() );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------~=-~~~~----=-----------~-~=~=-~--~~=~~=~-~~- ▲ ﬂ//
+}
+
+static void cb_output1(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---=~-~-=~=--~~~~-=~-= ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  Comment_Node* nd = (Comment_Node*)current_node;
+
+  if (v == LOAD) {
+    o->value(nd->in_c());
+  } else {
+    int mod = 0;
+    if (nd->in_c() != o->value()) {
+      nd->in_c( o->value() );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------~==-~--~~--=----------~~~---~-~--~-=-==~-==~ ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
@@ -3703,8 +3892,66 @@ Fl_Double_Window* make_widget_panel() {
           Fl_Group::current()->resizable(data_tabs_data);
         } // Fl_Group* data_tabs_data
         data_tabs->end();
-        Fl_Group::current()->resizable(data_tabs);
       } // Fl_Tabs* data_tabs
+      { comment_tabs = new Fl_Tabs(10, 10, 400, 350);
+        comment_tabs->selection_color((Fl_Color)12);
+        comment_tabs->labelsize(11);
+        comment_tabs->labelcolor(FL_WHITE);
+        comment_tabs->callback((Fl_Callback*)cb_comment_tabs);
+        comment_tabs->hide();
+        { commet_tabs_comment = new Fl_Group(10, 30, 400, 330, "Comment");
+          commet_tabs_comment->labelsize(11);
+          commet_tabs_comment->callback((Fl_Callback*)propagate_load);
+          { Fl_Text_Editor* o = comment_tabs_name = new Fl_Text_Editor(95, 45, 310, 235, "Comment:");
+            comment_tabs_name->box(FL_DOWN_BOX);
+            comment_tabs_name->labelfont(1);
+            comment_tabs_name->labelsize(11);
+            comment_tabs_name->textfont(4);
+            comment_tabs_name->textsize(11);
+            comment_tabs_name->textcolor((Fl_Color)58);
+            comment_tabs_name->callback((Fl_Callback*)cb_comment_tabs_name);
+            comment_tabs_name->align(Fl_Align(FL_ALIGN_LEFT));
+            Fl_Group::current()->resizable(comment_tabs_name);
+            o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
+            o->buffer(new Fl_Text_Buffer());
+          } // Fl_Text_Editor* comment_tabs_name
+          { Fl_Group* o = new Fl_Group(95, 285, 310, 65);
+            o->callback((Fl_Callback*)propagate_load);
+            { comment_predefined_2 = new Fl_Menu_Button(95, 285, 90, 20, "Predefined");
+              comment_predefined_2->labelsize(11);
+              comment_predefined_2->textsize(11);
+              comment_predefined_2->callback((Fl_Callback*)cb_comment_predefined_2);
+            } // Fl_Menu_Button* comment_predefined_2
+            { comment_load_2 = new Fl_Button(190, 285, 90, 20, "Import...");
+              comment_load_2->labelsize(11);
+              comment_load_2->callback((Fl_Callback*)cb_comment_load_2);
+            } // Fl_Button* comment_load_2
+            { Fl_Check_Button* o = new Fl_Check_Button(95, 310, 120, 20, "output to header file");
+              o->tooltip("Put the comment into the header (.h) file.");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_output);
+              o->when(FL_WHEN_CHANGED);
+            } // Fl_Check_Button* o
+            { Fl_Check_Button* o = new Fl_Check_Button(95, 330, 120, 20, "output to source file");
+              o->tooltip("Put the comment into the source (.cxx) file.");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_output1);
+              o->when(FL_WHEN_CHANGED);
+            } // Fl_Check_Button* o
+            { Fl_Box* o = new Fl_Box(404, 285, 1, 65);
+              o->labelsize(11);
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            o->end();
+          } // Fl_Group* o
+          commet_tabs_comment->end();
+          Fl_Group::current()->resizable(commet_tabs_comment);
+        } // Fl_Group* commet_tabs_comment
+        comment_tabs->end();
+        Fl_Group::current()->resizable(comment_tabs);
+      } // Fl_Tabs* comment_tabs
       tabs_wizard->end();
       Fl_Group::current()->resizable(tabs_wizard);
     } // Fl_Wizard* tabs_wizard
