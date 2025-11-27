@@ -21,6 +21,7 @@
 #include "Fl_WinAPI_System_Driver.H"
 #include "Fl_WinAPI_Window_Driver.H"
 #include "../GDI/Fl_GDI_Image_Surface_Driver.H"
+#include "../Base/Fl_Base_Pen_Events.H"
 
 
 Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
@@ -81,3 +82,10 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 {
   return new Fl_GDI_Image_Surface_Driver(w, h, high_res, off);
 }
+
+namespace FL {
+namespace Pen{
+Driver default_driver;
+Driver& driver { default_driver };
+} // namespace Pen
+} // namespace FL

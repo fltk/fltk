@@ -14,81 +14,17 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "src/drivers/Base/Fl_Base_Pen_Events.H"
 
-#include <config.h>
-#include <FL/platform.H>
-#include <FL/core/pen_events.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Tooltip.H>
-#include <FL/Fl_Widget_Tracker.H>
 #include "../../Fl_Screen_Driver.H"
 
 #import <Cocoa/Cocoa.h>
 
-#include <map>
-#include <memory>
 
 extern Fl_Window *fl_xmousewin;
 
-/*
- Widgets and windows must subscribe to pen events. This is to reduce the amount
- of events sent into the widget hierarchy.
-
- Usually there is a pretty small number of subscribers, so looping through the
- subscriber list should not be an issue.
-
- All subscribers track their widget. If a widget is deleted while subscribed,
- including during event handling, the driver will remove the subscription.
- There is no need to explicitly unsubscribe.
- */
-class Subscriber : public Fl_Widget_Tracker {
-public:
-  Subscriber(Fl_Widget *w) : Fl_Widget_Tracker(w) { }
-};
-
-
-/*
- Manage a list of subscribers.
- */
-class SubscriberList : public std::map<Fl_Widget*, std::shared_ptr<Subscriber>> {
-public:
-  SubscriberList() = default;
-  /* Remove subscribers that have a nullptr as a widget */
-  void cleanup() {
-    for (auto it = begin(); it != end(); ) {
-      if (!it->second->widget()) {
-        it = erase(it);
-      } else {
-        ++it;
-      }
-    }
-  }
-  /* Add a new subscriber, or return an existing one. */
-  std::shared_ptr<Subscriber> add(Fl_Widget *w) {
-    cleanup();
-    auto it = find(w);
-    if (it == end()) {
-      auto sub = std::make_shared<Subscriber>(w);
-      insert(std::make_pair(w, sub));
-      return sub;
-    } else {
-      return it->second;
-    }
-  }
-  /* Remove a subscriber from the list. */
-  void remove(Fl_Widget *w) {
-    auto it = find(w);
-    if (it != end()) {
-      it->second->clear();
-      erase(it);
-    }
-  }
-};
-
-static SubscriberList subscriber_list_;
-static std::shared_ptr<Subscriber> pushed_;
-static std::shared_ptr<Subscriber> below_pen_;
 static NSPointingDeviceType device_type_ { NSPointingDeviceTypePen };
 
 // The trait list keeps track of traits for every pen ID that appears while
@@ -109,36 +45,44 @@ static Fl::Pen::Trait driver_traits_ {
   // Notably missing: PROXIMITY
 };
 
-struct EventData {
-  double x { 0.0 };
-  double y { 0.0 };
-  double rx { 0.0 };
-  double ry { 0.0 };
-  double tilt_x { 0.0 };
-  double tilt_y { 0.0 };
-  double pressure { 1.0 };
-  double barrel_pressure { 0.0 };
-  double twist { 0.0 };
-  int pen_id { 0 };
-  Fl::Pen::State state { (Fl::Pen::State)0 };
-  Fl::Pen::State trigger { (Fl::Pen::State)0 };
-};
-
 // Temporary storage of event data for the driver;
-static struct EventData ev;
+static Fl::Pen::EventData ev;
 
 
 namespace Fl {
 
 namespace Private {
+
 // Global mouse position at mouse down event
 extern int e_x_down;
 extern int e_y_down;
+
 }; // namespace Private
 
 namespace Pen {
-// The event data that is made available to the user during event handling
-struct EventData e;
+
+class Cocoa_Driver : public Driver {
+public:
+  Cocoa_Driver() = default;
+  //virtual void subscribe(Fl_Widget* widget) override;
+  //virtual void unsubscribe(Fl_Widget* widget) override;
+  //virtual void release() override;
+  virtual Trait traits() override { return driver_traits_; }
+  virtual Trait pen_traits(int pen_id) override {
+    auto it = trait_list_.find(pen_id);
+    if (pen_id == 0)
+      return current_pen_trait_;
+    if (it == trait_list_.end()) {
+      return Trait::DRIVER_AVAILABLE;
+    } else {
+      return it->second;
+    }
+  }
+};
+
+Cocoa_Driver cocoa_driver;
+Driver& driver { cocoa_driver };
+
 } // namespace Pen
 
 } // namespace Fl
@@ -147,65 +91,7 @@ struct EventData e;
 using namespace Fl::Pen;
 
 
-// Return a bit for everything that AppKit could return.
-Trait Fl::Pen::driver_traits() {
-  return driver_traits_;
-}
-
-Trait Fl::Pen::pen_traits(int pen_id) {
-  auto it = trait_list_.find(pen_id);
-  if (pen_id == 0)
-    return current_pen_trait_;
-  if (it == trait_list_.end()) {
-    return Trait::DRIVER_AVAILABLE;
-  } else {
-    return it->second;
-  }
-}
-
-void Fl::Pen::subscribe(Fl_Widget* widget) {
-  if (widget == nullptr) return;
-  subscriber_list_.add(widget);
-}
-
-void Fl::Pen::unsubscribe(Fl_Widget* widget) {
-  if (widget == nullptr) return;
-  subscriber_list_.remove(widget);
-}
-
-void Fl::Pen::release() {
-  pushed_ = nullptr;
-  below_pen_ = nullptr;
-}
-
-double Fl::Pen::event_x() { return e.x; }
-
-double Fl::Pen::event_y() { return e.y; }
-
-double Fl::Pen::event_x_root() { return e.rx; }
-
-double Fl::Pen::event_y_root() { return e.ry; }
-
-int Fl::Pen::event_pen_id() { return e.pen_id; }
-
-double Fl::Pen::event_pressure() { return e.pressure; }
-
-double Fl::Pen::event_barrel_pressure() { return e.barrel_pressure; }
-
-double Fl::Pen::event_tilt_x() { return e.tilt_x; }
-
-double Fl::Pen::event_tilt_y() { return e.tilt_y; }
-
-double Fl::Pen::event_twist() { return e.twist; }
-
-// Not supported in AppKit NSEvent
-double Fl::Pen::event_proximity() { return 0.0; }
-
-State Fl::Pen::event_state() { return e.state; }
-
-State Fl::Pen::event_trigger() { return e.trigger; }
-
-/**
+/*
  Copy the event state.
  */
 static void copy_state() {
@@ -218,7 +104,7 @@ static void copy_state() {
   Fl::e_y_root = (int)ev.ry;
 }
 
-/**
+/*
  Offset coordinates for subwindows and subsubwindows.
  */
 static void offset_subwindow_event(Fl_Widget *w, double &x, double &y) {
@@ -321,8 +207,7 @@ static State button_to_trigger(NSInteger button, bool down) {
 
 /*
  Handle events coming from Cocoa.
- TODO: clickCount: store in Fl::event_clicks()
- capabilityMask is useless, because it is vendor defined
+ `capabilityMask` is useless, because it is vendor defined
  If a modal window is open, AppKit will send window specific events only there.
  */
 bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
@@ -477,7 +362,7 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
         return 0;
     }
   } else {
-    // Anything to do here?
+    // Proximity events were handled earlier.
   }
 
   if (!receiver)

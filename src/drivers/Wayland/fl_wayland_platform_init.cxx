@@ -21,6 +21,7 @@
 #include "../Unix/Fl_Unix_System_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
+#include "../Base/Fl_Base_Pen_Events.H"
 #ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
 #  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
@@ -143,3 +144,11 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 #endif
   return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
 }
+
+namespace FL {
+namespace Pen{
+Driver default_driver;
+Driver& driver { default_driver };
+} // namespace Pen
+} // namespace FL
+

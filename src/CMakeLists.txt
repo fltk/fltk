@@ -241,7 +241,7 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     drivers/X11/fl_X11_platform_init.cxx
-    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
+    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_x.cxx
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
@@ -291,6 +291,7 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.H
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.H
     drivers/Unix/Fl_Unix_System_Driver.H
+    drivers/Base/Fl_Base_Pen_Events.H
  )
  if(FLTK_USE_CAIRO)
    set(DRIVER_HEADER_FILES ${DRIVER_HEADER_FILES}
@@ -318,7 +319,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
+    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
   )
@@ -350,6 +351,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.H
     drivers/Wayland/Fl_Wayland_Image_Surface_Driver.H
     drivers/Unix/Fl_Unix_System_Driver.H
+    drivers/Base/Fl_Base_Pen_Events.H
   )
 
 elseif(APPLE)
@@ -371,6 +373,7 @@ elseif(APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
+    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_get_key_mac.cxx
     drivers/Darwin/fl_macOS_platform_init.cxx
   )
@@ -384,6 +387,7 @@ elseif(APPLE)
     drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H
     drivers/Quartz/Fl_Font.H
     drivers/Quartz/Fl_Quartz_Image_Surface_Driver.H
+    drivers/Base/Fl_Base_Pen_Events.H
   )
 
 else()
@@ -405,7 +409,7 @@ else()
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
-    drivers/Stubs/Fl_Stubs_Pen_Events.cxx
+    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_win32.cxx
     fl_dnd_win32.cxx
     Fl_Native_File_Chooser_WIN32.cxx
@@ -420,6 +424,7 @@ else()
     drivers/GDI/Fl_Font.H
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.H
     drivers/GDI/Fl_GDI_Image_Surface_Driver.H
+    drivers/Base/Fl_Base_Pen_Events.H
   )
 
 endif(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
