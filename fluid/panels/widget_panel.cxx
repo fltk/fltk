@@ -2556,11 +2556,14 @@ Fl_Menu_Item menu_data_mode_2[] = {
  {"binary: unsigned char[]", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"text: const char*", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"compressed: unsigned char[]", 0,  0, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"binary: std::vector<uint8_t>", 0,  0, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"text: std::string", 0,  0, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"compressed: std::vector<uint8_t>", 0,  0, (void*)(5), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
 static void cb_Name(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~--=~=~~-~-~=-~~=~=~=~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback ~-=-~==-~-~-=~-~-=~-~- ▼ ﬂ//
   Data_Node* nd = (Data_Node*)current_node;
   if (v == LOAD) {
     o->value( nd->name() );
@@ -2578,7 +2581,7 @@ static void cb_Name(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~=-=-~--~=------------~-~~=-==~=-~==~-=-~~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~~~~~=~~~~-----------~-~~=-==~=-~==~-=-~~- ▲ ﬂ//
 }
 
 Fl_Input *wp_data_filename=(Fl_Input *)0;
@@ -2603,7 +2606,7 @@ static void cb_wp_data_filename(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~=-=-~~--------------~--~--=-----~~~--~~=- ▲ ﬂ//
+//ﬂ ▲ ----------=~=~-----~-~-----------~--~--=-----~~~--~~=- ▲ ﬂ//
 }
 
 static void cb_fileopen(Fl_Button*, void* v) {
@@ -2623,7 +2626,7 @@ static void cb_fileopen(Fl_Button*, void* v) {
       }
     }
   }
-//ﬂ ▲ ----------~=-=-~~~~-=~------------~-~~=-~--~~-~-~~~~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~-=-=~=-------------~-~~=-~--~~-~-~~~~-= ▲ ﬂ//
 }
 
 static void cb_Comment(Fl_Text_Editor* o, void* v) {
@@ -2647,7 +2650,7 @@ static void cb_Comment(Fl_Text_Editor* o, void* v) {
     free(c);  
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~~~~=~~~~-----------~~=~=-=-~--=-=~---=-~ ▲ ﬂ//
+//ﬂ ▲ ----------~==--~-=~-~------------~~=~=-=-~--=-=~---=-~ ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;

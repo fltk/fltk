@@ -505,7 +505,7 @@ Function {make_widget_panel()} {uid da36
             xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Input wp_gui_label {uid 9244
-              callback label_cb selected
+              callback label_cb
               tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
             }
@@ -2683,7 +2683,7 @@ if (v == LOAD) {
   if (mod) {
     Fluid.proj.set_modflag(1);
   }
-}}
+}} open
               tooltip {text mode generates a "const char*" and a trailing NUL, compressed mode uses zlib to generate a binary block} xywh {95 75 210 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
               MenuItem {} {uid 9b11
@@ -2701,12 +2701,27 @@ if (v == LOAD) {
                 user_data 2 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
+              MenuItem {} {uid a350
+                label {binary: std::vector<uint8_t>}
+                user_data 3 user_data_type long
+                xywh {10 10 100 20} labelsize 11
+              }
+              MenuItem {} {uid da8d
+                label {text: std::string}
+                user_data 4 user_data_type long
+                xywh {10 10 100 20} labelsize 11
+              }
+              MenuItem {} {uid e850
+                label {compressed: std::vector<uint8_t>}
+                user_data 5 user_data_type long
+                xywh {10 10 100 20} labelsize 11
+              }
             }
-            Fl_Box {} {uid a350
+            Fl_Box {} {uid 42d7
               xywh {363 75 42 20} resizable
             }
           }
-          Fl_Input {} {uid da8d
+          Fl_Input {} {uid 379b
             label {Name:}
             callback {Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
@@ -2727,7 +2742,7 @@ if (v == LOAD) {
 }}
             tooltip {Inline Data variables are declared "const unsigned char []" in binary mode and "const char*" in text mode.} xywh {95 100 310 20} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11
           }
-          Fl_Input wp_data_filename {uid e850
+          Fl_Input wp_data_filename {uid f009
             label {Filename:}
             callback {Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
@@ -2749,7 +2764,7 @@ if (v == LOAD) {
 }}
             tooltip {Name and path of file that will be inlined.} xywh {95 125 270 20} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11
           }
-          Fl_Button {} {uid 42d7
+          Fl_Button {} {uid 457d
             label {@fileopen}
             callback {if (v == LOAD) {
 } else {
@@ -2768,7 +2783,7 @@ if (v == LOAD) {
 }}
             xywh {365 125 40 20} labelcolor 134
           }
-          Fl_Text_Editor {} {uid 379b
+          Fl_Text_Editor {} {uid 5312
             label {Comment:}
             callback {Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
@@ -2796,32 +2811,32 @@ if (v == LOAD) {
         }
       }
     }
-    Fl_Tabs widget_tabs_repo {uid f009 open
+    Fl_Tabs widget_tabs_repo {uid c546 open
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
-      Fl_Group {} {uid 457d
+      Fl_Group {} {uid 32ad
         xywh {10 30 400 330} resizable
       } {}
     }
-    Fl_Group {} {uid 5312
+    Fl_Group {} {uid d107
       xywh {10 370 400 20} labelsize 11
     } {
-      Fl_Button wLiveMode {uid c546
+      Fl_Button wLiveMode {uid 9bbe
         label {Live &Resize}
         callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
-      Fl_Button overlay_button {uid 32ad
+      Fl_Button overlay_button {uid 0281
         label {Hide &Overlays}
         callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
-      Fl_Box {} {uid d107
+      Fl_Box {} {uid ec8d
         comment {Hidden resizable box}
         xywh {258 370 72 20} labelsize 11 hide resizable
       }
-      Fl_Return_Button {} {uid 9bbe
+      Fl_Return_Button {} {uid 1684
         label Close
         callback ok_cb
         xywh {330 370 80 20} labelsize 11

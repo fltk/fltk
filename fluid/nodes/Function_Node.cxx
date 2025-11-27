@@ -1169,11 +1169,12 @@ void Data_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("filename");
     f.write_word(filename_);
   }
-  if (output_format_ == 1) {
-    f.write_string("textmode");
-  }
-  if (output_format_ == 2) {
-    f.write_string("compressed");
+  switch (output_format_) {
+    case 1: f.write_string("textmode"); break;
+    case 2: f.write_string("compressed"); break;
+    case 3: f.write_string("std_binary"); break;
+    case 4: f.write_string("std_textmode"); break;
+    case 5: f.write_string("std_compressed"); break;
   }
 }
 
@@ -1187,6 +1188,12 @@ void Data_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     output_format_ = 1;
   } else if (!strcmp(c,"compressed")) {
     output_format_ = 2;
+  } else if (!strcmp(c,"std_binary")) {
+    output_format_ = 3;
+  } else if (!strcmp(c,"std_textmode")) {
+    output_format_ = 4;
+  } else if (!strcmp(c,"std_compressed")) {
+    output_format_ = 5;
   } else {
     Decl_Node::read_property(f, c);
   }
@@ -1224,7 +1231,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       if (nData) {
         data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* use default */ }
-        if (output_format_ == 2) {
+        if ((output_format_ == 2) || (output_format_ == 5)) {
           uncompressedDataSize = nData;
           uLong nzData = compressBound(nData);
           Bytef *zdata = (Bytef*)::malloc(nzData);
@@ -1241,27 +1248,47 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
   }
   if (is_in_class()) {
     f.write_public(public_);
-    if (output_format_ == 1) {
-      f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
+    if ((output_format_ == 1) || (output_format_ == 4)) {
       f.write_c("\n");
       write_comment_c(f);
-      f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      if (output_format_ == 1) {
+        f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
+        f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      } else {
+        f.write_h_once("#include <string>");
+        f.write_h("%sstatic const std::string %s;\n", f.indent(1), c);
+        f.write_c("const std::string %s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      }
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cstring(data, nData);
-    } else if (output_format_ == 2) {
+    } else if ((output_format_ == 2) || (output_format_ == 5)) {
       f.write_h("%sstatic int %s_size;\n", f.indent(1), c);
-      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
       write_comment_c(f);
       f.write_c("int %s::%s_size = %d;\n", class_name(1), c, uncompressedDataSize);
-      f.write_c("unsigned char %s::%s[%d] = /* data compressed and inlined from %s */\n", class_name(1), c, nData, fn);
+      if (output_format_ == 2) {
+        f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+        f.write_c("unsigned char %s::%s[%d] = /* data compressed and inlined from %s */\n", class_name(1), c, nData, fn);
+      } else {
+        f.write_h_once("#include <stdint.h>");
+        f.write_h_once("#include <vector>");
+        f.write_h("%sstatic std::vector<uint8_t> %s;\n", f.indent(1), c);
+        f.write_c("std::vector<uint8_t> %s::%s = /* data compressed and inlined from %s */\n", class_name(1), c, fn);
+      }
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cdata(data, nData);
     } else {
-      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
       write_comment_c(f);
-      f.write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
+      if (output_format_ == 0) {
+        f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+        f.write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
+      } else {
+        f.write_h_once("#include <stdint.h>");
+        f.write_h_once("#include <vector>");
+        f.write_h("%sstatic std::vector<uint8_t> %s;\n", f.indent(1), c);
+        f.write_c("std::vector<uint8_t> %s::%s = /* data inlined from %s */\n", class_name(1), c, fn);
+      }
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cdata(data, nData);
     }
@@ -1270,27 +1297,47 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        if (output_format_ == 1) {
-          f.write_h("extern const char *%s;\n", c);
+        if ((output_format_ == 1) || (output_format_ == 4)) {
           f.write_c("\n");
           write_comment_c(f);
-          f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+          if (output_format_ == 1) {
+            f.write_h("extern const char *%s;\n", c);
+            f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+          } else {
+            f.write_h_once("#include <string>");
+            f.write_h("extern const std::string %s;\n", c);
+            f.write_c("const std::string %s = /* text inlined from %s */\n", c, fn);
+          }
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cstring(data, nData);
-        } else if (output_format_ == 2) {
+        } else if ((output_format_ == 2) || (output_format_ == 5)) {
           f.write_h("extern int %s_size;\n", c);
-          f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
           write_comment_c(f);
           f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
-          f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+          if (output_format_ == 2) {
+            f.write_h("extern unsigned char %s[%d];\n", c, nData);
+            f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+          } else {
+            f.write_h_once("#include <stdint.h>");
+            f.write_h_once("#include <vector>");
+            f.write_h("extern std::vector<uint8_t> %s;\n", c);
+            f.write_c("std::vector<uint8_t> %s = /* data compressed and inlined from %s */\n", c, fn);
+          }
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cdata(data, nData);
         } else {
-          f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
           write_comment_c(f);
-          f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+          if (output_format_ == 0) {
+            f.write_h("extern unsigned char %s[%d];\n", c, nData);
+            f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+          } else {
+            f.write_h_once("#include <stdint.h>");
+            f.write_h_once("#include <vector>");
+            f.write_h("extern std::vector<uint8_t> %s;\n", c);
+            f.write_c("std::vector<uint8_t> %s = /* data inlined from %s */\n", c, fn);
+          }
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cdata(data, nData);
         }
@@ -1306,20 +1353,41 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
     } else {
       f.write_c("\n");
       write_comment_c(f);
-      if (static_)
-        f.write_c("static ");
-      if (output_format_ == 1) {
-        f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+      if ((output_format_ == 1) || (output_format_ == 4)) {
+        if (output_format_ == 1) {
+          if (static_) f.write_c("static ");
+          f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+        } else {
+          f.write_c_once("#include <string>");
+          if (static_) f.write_c("static ");
+          f.write_c("const std::string %s = /* text inlined from %s */\n", c, fn);
+        }
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cstring(data, nData);
-      } else if (output_format_ == 2) {
-        f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+      } else if ((output_format_ == 2) || (output_format_ == 5)) {
         if (static_) f.write_c("static ");
-        f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+        f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+        if (output_format_ == 2) {
+          if (static_) f.write_c("static ");
+          f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+        } else {
+          f.write_c_once("#include <stdint.h>");
+          f.write_c_once("#include <vector>");
+          if (static_) f.write_c("static ");
+          f.write_c("std::vector<uint8_t> %s = /* data compressed and inlined from %s */\n", c, fn);
+        }
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cdata(data, nData);
       } else {
-        f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+        if (output_format_ == 0) {
+          if (static_) f.write_c("static ");
+          f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+        } else {
+          f.write_c_once("#include <stdint.h>");
+          f.write_c_once("#include <vector>");
+          if (static_) f.write_c("static ");
+          f.write_c("std::vector<uint8_t> %s = /* data inlined from %s */\n", c, fn);
+        }
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cdata(data, nData);
       }

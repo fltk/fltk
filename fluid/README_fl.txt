@@ -412,6 +412,7 @@ Type "data" <word> : C++ variable name
   "filename" <word> : name or path as entered by user, forward slashes
   "textmode" : defaults to binary mode
   "compressed" : defaults to not compressed
+  "std_binary", "std_textmode", "std_compressed"
   ... : inherits more from decl
 
 Type "declblock" <word> : C++ code
