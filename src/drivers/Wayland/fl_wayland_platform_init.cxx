@@ -145,10 +145,10 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
   return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
 }
 
-namespace FL {
-namespace Pen{
+namespace Fl {
+namespace Pen {
 Driver default_driver;
 Driver& driver { default_driver };
 } // namespace Pen
-} // namespace FL
+} // namespace Fl
 
