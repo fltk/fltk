@@ -280,6 +280,10 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::Class) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
+  const char* base_class_name() { return subclass_of; }
+  void base_class_name(const char* name) { storestring(name, subclass_of); }
+  char visibility() { return public_; }
+  void visibility(char v) { public_ = v; }
 
   // class prefix attribute access
   void prefix(const char* p);

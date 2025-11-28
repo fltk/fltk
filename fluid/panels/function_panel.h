@@ -75,14 +75,6 @@ extern Fl_Button *decl_panel_cancel;
 Fl_Double_Window* make_decl_panel();
 extern Fl_Menu_Item menu_decl_choice[];
 extern Fl_Menu_Item menu_decl_class_choice[];
-extern Fl_Double_Window *class_panel;
-extern Fl_Light_Button *c_public_button;
-extern Fl_Input *c_name_input;
-extern Fl_Input *c_subclass_input;
-extern Fl_Text_Editor *c_comment_input;
-extern Fl_Return_Button *c_panel_ok;
-extern Fl_Button *c_panel_cancel;
-Fl_Double_Window* make_class_panel();
 void type_make_cb(Fl_Widget*,void*d);
 #include <FL/Fl_Window.H>
 extern Fl_Window *widgetbin_panel;

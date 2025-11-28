@@ -405,6 +405,7 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_data = add_new_widget_from_user("Data", Strategy::AS_LAST_CHILD, false);
   Node *t_comment = add_new_widget_from_user("Comment", Strategy::AS_LAST_CHILD, false);
   t_comment->name("All work and no play make Jack a dull boy.");
+  Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -526,12 +527,8 @@ void run_autodoc(const std::string &target_dir) {
   adoc_declblock_panel->hide();
 
   // -- Type::Class
-  Fl_Window *adoc_class_panel = make_class_panel();
-  decl_class_choice->hide();
-  c_name_input->value("Zoo_Giraffe");
-  c_subclass_input->value("Zoo_Animal");
-  fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
-  adoc_class_panel->hide();
+  select_only(t_class);
+  fl_snapshot((target_dir + "class_panel.png").c_str(), class_tabs_main, tab_margin, row_blend);
 
   // -- Type::Widget_Class is handled like Window_Node
 

@@ -432,7 +432,7 @@ Type "comment" <word> : comment text
 Type "class" <word> <word> : prefix, class name
 
   none or "private" or "protected" : defaults to public
-  ":" <word> : name of super class
+  ":" <word> : name of base class
   ... : inherits more from Node
 
 Type "Fl_Widget" <word> : C++ variable name

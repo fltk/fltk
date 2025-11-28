@@ -1907,75 +1907,7 @@ void Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the class_panel to edit the class name and superclass name.
  */
 void Class_Node::open() {
-  if (!class_panel) make_class_panel();
-  char fullname[FL_PATH_MAX]="";
-  if (prefix() && strlen(prefix()))
-    sprintf(fullname,"%s %s",prefix(),name());
-  else
-    strcpy(fullname, name());
-  c_name_input->value(fullname);
-  c_subclass_input->value(subclass_of);
-  c_public_button->value(public_);
-  const char *c = comment();
-  c_comment_input->buffer()->text(c?c:"");
-  class_panel->show();
-  const char* message = nullptr;
-
-  char *na=nullptr,*pr=nullptr,*p=nullptr; // name and prefix substrings
-
-  for (;;) { // repeat as long as there are errors
-    // we don;t give the option to ignore this error here because code depends
-    // on this being a C++ identifier
-    if (message) fl_alert("%s", message);
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == c_panel_cancel) goto BREAK2;
-      else if (w == c_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    const char*c = c_name_input->value();
-    char *s = fl_strdup(c);
-    size_t len = strlen(s);
-    if (!*s) goto OOPS;
-    p = (char*) (s+len-1);
-    while (p>=s && isspace(*p)) *(p--)='\0';
-    if (p<s) goto OOPS;
-    while (p>=s && is_id(*p)) p--;
-    if ( (p<s && !is_id(*(p+1))) || !*(p+1) ) {
-    OOPS: message = "class name must be C++ identifier";
-      free((void*)s);
-      continue;
-    }
-    na=p+1; // now we have the name
-    if(p>s) *p--='\0';
-    while (p>=s && isspace(*p)) *(p--)='\0';
-    while (p>=s && is_id(*p))   p--;
-    if (p<s)                    p++;
-    if (is_id(*p) && p<na)      pr=p; // prefix detected
-    c = c_subclass_input->value();
-    message = c_check(c);
-    if (message) { free((void*)s);continue;}
-    name(na);
-    prefix(pr);
-    free((void*)s);
-    storestring(c, subclass_of);
-    if (public_ != c_public_button->value()) {
-      public_ = c_public_button->value();
-      Fluid.proj.set_modflag(1);
-    }
-    c = c_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    break;
-  }
-BREAK2:
-  class_panel->hide();
+  open_panel();
 }
 
 /**
