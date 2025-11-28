@@ -634,6 +634,8 @@ void Code_Node::open() {
     if ( editor_.open_editor(cmd, code) == 0 )
       return;   // return if editor opened ok, fall thru to built-in if not
   }
+  open_panel();
+#if 0
   // Use built-in code editor..
   if (!code_panel) make_code_panel();
   const char *text = name();
@@ -666,6 +668,7 @@ void Code_Node::open() {
   code_input_scroll_col = code_input->scroll_col();
 BREAK2:
   code_panel->hide();
+#endif
 }
 
 /**

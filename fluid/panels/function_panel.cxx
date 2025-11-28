@@ -144,64 +144,6 @@ Fl_Double_Window* make_function_panel() {
   return function_panel;
 }
 
-Fl_Double_Window *code_panel=(Fl_Double_Window *)0;
-
-static void cb_code_panel(Fl_Double_Window*, void*) {
-  if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
-    return; // ignore Escape
-  code_panel->hide(); // otherwise hide..;
-}
-
-fld::widget::Code_Editor *code_input=(fld::widget::Code_Editor *)0;
-
-Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
-
-Fl_Button *code_panel_cancel=(Fl_Button *)0;
-
-Fl_Double_Window* make_code_panel() {
-  { Fl_Double_Window* o = code_panel = new Fl_Double_Window(540, 180, "Code Properties");
-    code_panel->labelsize(11);
-    code_panel->callback((Fl_Callback*)cb_code_panel);
-    { fld::widget::Code_Editor* o = code_input = new fld::widget::Code_Editor(10, 10, 520, 130);
-      code_input->box(FL_DOWN_BOX);
-      code_input->color(FL_BACKGROUND2_COLOR);
-      code_input->selection_color(FL_SELECTION_COLOR);
-      code_input->labeltype(FL_NORMAL_LABEL);
-      code_input->labelfont(0);
-      code_input->labelsize(11);
-      code_input->labelcolor(FL_FOREGROUND_COLOR);
-      code_input->textfont(4);
-      code_input->textsize(11);
-      code_input->align(Fl_Align(FL_ALIGN_TOP));
-      code_input->when(FL_WHEN_RELEASE);
-      Fl_Group::current()->resizable(code_input);
-      o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
-    } // fld::widget::Code_Editor* code_input
-    { Fl_Group* o = new Fl_Group(10, 150, 520, 20);
-      o->labelsize(11);
-      { code_panel_ok = new Fl_Return_Button(400, 150, 60, 20, "OK");
-        code_panel_ok->labelsize(11);
-        code_panel_ok->window()->hotspot(code_panel_ok);
-      } // Fl_Return_Button* code_panel_ok
-      { code_panel_cancel = new Fl_Button(470, 150, 60, 20, "Cancel");
-        code_panel_cancel->labelsize(11);
-      } // Fl_Button* code_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 150, 380, 20);
-        o->labelsize(11);
-        Fl_Group::current()->resizable(o);
-      } // Fl_Box* o
-      o->end();
-    } // Fl_Group* o
-    code_panel->set_modal();
-    o->size_range(200, 150);
-    code_panel->end();
-  } // Fl_Double_Window* code_panel
-  // Enable line numbers
-  code_input->linenumber_width(60);
-  code_input->linenumber_size(code_input->Fl_Text_Display::textsize());
-  return code_panel;
-}
-
 void type_make_cb(Fl_Widget*,void*d) {
   const char *type_name = (const char*)d;
   if (Fluid.proj.tree.current && Fluid.proj.tree.current->can_have_children())

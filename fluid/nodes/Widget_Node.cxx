@@ -1284,15 +1284,19 @@ void load_panel() {
       numselected = 1;
     } else if (Fluid.proj.tree.current->is_a(Type::DeclBlock)) {
       current_node = Fluid.proj.tree.current;
-      tabs_wizard->value(declblock_tabs_main);
+      tabs_wizard->value(declblock_tabs);
       numselected = 1;
     } else if (Fluid.proj.tree.current->is_a(Type::Decl)) {
       current_node = Fluid.proj.tree.current;
-      tabs_wizard->value(decl_tabs_main);
+      tabs_wizard->value(decl_tabs);
       numselected = 1;
     } else if (Fluid.proj.tree.current->is_a(Type::CodeBlock)) {
       current_node = Fluid.proj.tree.current;
-      tabs_wizard->value(codeblock_tabs_main);
+      tabs_wizard->value(codeblock_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Code)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(code_tabs);
       numselected = 1;
     } else {
       current_node = nullptr;

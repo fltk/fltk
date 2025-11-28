@@ -408,6 +408,8 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
   Node *t_decl = add_new_widget_from_user("Decl", Strategy::AS_LAST_CHILD, false);
   t_decl->name("const char *damage = \"'tis but a scratch\";");
+  Node *t_code = add_new_widget_from_user("Code", Strategy::AS_LAST_CHILD, false);
+  t_code->name("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
   Node *t_codeblock = add_new_widget_from_user("CodeBlock", Strategy::AFTER_CURRENT, false);
 
@@ -504,10 +506,8 @@ void run_autodoc(const std::string &target_dir) {
   adoc_function_panel->hide();
 
   // -- Type::Code
-  Fl_Window *adoc_code_panel = make_code_panel();
-  code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
-  fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
-  adoc_code_panel->hide();
+  select_only(t_code);
+  fl_snapshot((target_dir + "code_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
   // -- Type::CodeBlock
   select_only(t_codeblock);

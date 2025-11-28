@@ -40,12 +40,6 @@ extern Fl_Button *f_panel_cancel;
 Fl_Double_Window* make_function_panel();
 extern Fl_Menu_Item menu_f_public_member_choice[];
 extern Fl_Menu_Item menu_f_public_choice[];
-extern Fl_Double_Window *code_panel;
-#include "widgets/Code_Editor.h"
-extern fld::widget::Code_Editor *code_input;
-extern Fl_Return_Button *code_panel_ok;
-extern Fl_Button *code_panel_cancel;
-Fl_Double_Window* make_code_panel();
 void type_make_cb(Fl_Widget*,void*d);
 #include <FL/Fl_Window.H>
 extern Fl_Window *widgetbin_panel;

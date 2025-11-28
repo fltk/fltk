@@ -79,11 +79,11 @@ class Code_Node : public Node
 public:
   typedef Node super;
   static Code_Node prototype;
-private:
-  ExternalCodeEditor editor_;
   int cursor_position_;
   int code_input_scroll_row;
   int code_input_scroll_col;
+private:
+  ExternalCodeEditor editor_;
 public:
   Code_Node();
   Node *make(Strategy strategy) override;

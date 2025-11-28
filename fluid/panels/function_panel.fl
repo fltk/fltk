@@ -140,43 +140,6 @@ Function {make_function_panel()} {open
   }
 }
 
-Function {make_code_panel()} {open
-} {
-  Fl_Window code_panel {
-    label {Code Properties}
-    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
-  return; // ignore Escape
-code_panel->hide(); // otherwise hide..}
-    xywh {539 567 540 180} type Double labelsize 11 hide resizable
-    code0 {o->size_range(200, 150);} modal
-  } {
-    Fl_Text_Editor code_input {
-      xywh {10 10 520 130} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
-      code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
-      code1 {\#include "widgets/Code_Editor.h"}
-      class {fld::widget::Code_Editor}
-    }
-    Fl_Group {} {open
-      xywh {10 150 520 20} labelsize 11
-    } {
-      Fl_Return_Button code_panel_ok {
-        label OK
-        xywh {400 150 60 20} labelsize 11 hotspot
-      }
-      Fl_Button code_panel_cancel {
-        label Cancel
-        xywh {470 150 60 20} labelsize 11
-      }
-      Fl_Box {} {
-        xywh {10 150 380 20} labelsize 11 resizable
-      }
-    }
-  }
-  code {// Enable line numbers
-code_input->linenumber_width(60);
-code_input->linenumber_size(code_input->Fl_Text_Display::textsize());} {}
-}
-
 Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
 } {
   code {const char *type_name = (const char*)d;
