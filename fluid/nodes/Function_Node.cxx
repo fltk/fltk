@@ -971,70 +971,7 @@ void Decl_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the decl_panel to edit this node.
  */
 void Decl_Node::open() {
-  if (!decl_panel) make_decl_panel();
-  decl_input->buffer()->text(name());
-  if (is_in_class()) {
-    decl_class_choice->value(public_);
-    decl_class_choice->show();
-    decl_choice->hide();
-  } else {
-    decl_choice->value((public_&1)|((static_&1)<<1));
-    decl_choice->show();
-    decl_class_choice->hide();
-  }
-  const char *c = comment();
-  decl_comment_input->buffer()->text(c?c:"");
-  decl_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    // event loop
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == decl_panel_cancel) goto BREAK2;
-      else if (w == decl_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // check values
-    const char*c = decl_input->buffer()->text();
-    while (isspace(*c)) c++;
-    message = c_check(c&&c[0]=='#' ? c+1 : c);
-    // alert user
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // copy vlaues
-    name(c);
-    if (is_in_class()) {
-      if (public_!=decl_class_choice->value()) {
-        Fluid.proj.set_modflag(1);
-        public_ = decl_class_choice->value();
-      }
-    } else {
-      if (public_!=(decl_choice->value()&1)) {
-        Fluid.proj.set_modflag(1);
-        public_ = (decl_choice->value()&1);
-      }
-      if (static_!=((decl_choice->value()>>1)&1)) {
-        Fluid.proj.set_modflag(1);
-        static_ = ((decl_choice->value()>>1)&1);
-      }
-    }
-    c = decl_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    break;
-  }
-BREAK2:
-  decl_panel->hide();
+  open_panel();
 }
 
 /**

@@ -406,6 +406,7 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_comment = add_new_widget_from_user("Comment", Strategy::AS_LAST_CHILD, false);
   t_comment->name("All work and no play make Jack a dull boy.");
   Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
+  Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -520,11 +521,8 @@ void run_autodoc(const std::string &target_dir) {
   adoc_decl_panel->hide();
 
   // -- Type::DeclBlock
-  Fl_Window *adoc_declblock_panel = make_declblock_panel();
-  declblock_before_input->value("#ifdef NDEBUG");
-  declblock_after_input->value("#endif // NDEBUG");
-  fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
-  adoc_declblock_panel->hide();
+  select_only(t_declblock);
+  fl_snapshot((target_dir + "declblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
   // -- Type::Class
   select_only(t_class);

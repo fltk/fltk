@@ -122,6 +122,8 @@ extern Fl_Tabs *class_tabs;
 extern Fl_Group *class_tabs_main;
 extern Fl_Tabs *declblock_tabs;
 extern Fl_Group *declblock_tabs_main;
+extern Fl_Tabs *decl_tabs;
+extern Fl_Group *decl_tabs_main;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
@@ -140,4 +142,6 @@ extern Fl_Menu_Item menu_5[];
 extern Fl_Menu_Item menu_6[];
 extern Fl_Menu_Item menu_data_mode_2[];
 extern Fl_Menu_Item menu_7[];
+extern Fl_Menu_Item menu_8[];
+extern Fl_Menu_Item menu_9[];
 #endif

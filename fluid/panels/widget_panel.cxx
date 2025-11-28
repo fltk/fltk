@@ -3177,6 +3177,153 @@ static void cb_Comment2(Fl_Text_Editor* o, void* v) {
 //ﬂ ▲ ----------=~~~-~-~-=------------~----~-~=~--=---=--=-- ▲ ﬂ//
 }
 
+Fl_Tabs *decl_tabs=(Fl_Tabs *)0;
+
+static void cb_decl_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~--~=~~~-~--=~--=~=~ ▼ ﬂ//
+  if (current_node && current_node->is_a(Type::Decl))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------~=--=-=-~--~----------~~-~=~~~~==~--~--=--=~ ▲ ﬂ//
+}
+
+Fl_Group *decl_tabs_main=(Fl_Group *)0;
+
+static void cb_18(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~-~-=--~--=~=-~=-=- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  Decl_Node* nd = (Decl_Node*)current_node;
+
+  if (v == LOAD) {
+    if (!nd->is_in_class()) {
+      o->value(nd->output_file());
+      o->show(); 
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    if (!nd->is_in_class()) {
+      if (nd->output_file() != o->value()) {
+        nd->output_file(o->value());
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~=~=~-==-~=-----------~-~~-~~~=~=~--~---~=- ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_8[] = {
+ {"in source file only", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"in header file only", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"\"static\" in source file", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"in source and \"extern\" in header", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+static void cb_19(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~=~-=-~~=-=~=~~=-~- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  Decl_Node* nd = (Decl_Node*)current_node;
+
+  if (v == LOAD) {
+    if (nd->is_in_class()) {
+      o->value(nd->visibility());
+      o->show(); 
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    if (nd->is_in_class()) {
+      if (nd->visibility() != o->value()) {
+        nd->visibility(o->value());
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------~=-~--=--~----------------~=~-~--~=~~=-=-~=~ ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_9[] = {
+ {"private", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+static void cb_1a(Fl_Tile* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=-=-=~=~--~-~--~=--= ▼ ﬂ//
+  propagate_load(o, v);
+//ﬂ ▲ ----------=~--=--=~=~=-----------~~----=--~=~~-~-----= ▲ ﬂ//
+}
+
+static void cb_Declaration(fld::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---==--~~-=-=-~=----=- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  Decl_Node* nd = (Decl_Node*)current_node;
+
+  if (v == LOAD) {
+    the_panel->label("Declaration Properties");
+    const char *cmttext = nd->name();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->name();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->name(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~----~=-==-----------~~-~~-=---=-~--~=-~-=~ ▲ ﬂ//
+}
+
+static void cb_Comment3(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~~=~--=~--==-=----- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  Decl_Node* nd = (Decl_Node*)current_node;
+
+  if (v == LOAD) {
+    const char *cmttext = nd->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->comment();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->comment(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~-=~=~~=~~------------~=~=~-=-~--~=-~=~=~-~ ▲ ﬂ//
+}
+
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
 
 Fl_Button *wLiveMode=(Fl_Button *)0;
@@ -4367,6 +4514,7 @@ Fl_Double_Window* make_widget_panel() {
         declblock_tabs->labelsize(11);
         declblock_tabs->labelcolor(FL_WHITE);
         declblock_tabs->callback((Fl_Callback*)cb_declblock_tabs);
+        declblock_tabs->hide();
         { declblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration Block");
           declblock_tabs_main->labelsize(11);
           declblock_tabs_main->callback((Fl_Callback*)propagate_load);
@@ -4440,8 +4588,102 @@ Fl_Double_Window* make_widget_panel() {
           Fl_Group::current()->resizable(declblock_tabs_main);
         } // Fl_Group* declblock_tabs_main
         declblock_tabs->end();
-        Fl_Group::current()->resizable(declblock_tabs);
       } // Fl_Tabs* declblock_tabs
+      { decl_tabs = new Fl_Tabs(10, 10, 400, 350);
+        decl_tabs->selection_color((Fl_Color)12);
+        decl_tabs->labelsize(11);
+        decl_tabs->labelcolor(FL_WHITE);
+        decl_tabs->callback((Fl_Callback*)cb_decl_tabs);
+        { decl_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration Block");
+          decl_tabs_main->labelsize(11);
+          decl_tabs_main->callback((Fl_Callback*)propagate_load);
+          { Fl_Group* o = new Fl_Group(15, 50, 390, 20);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Box* o = new Fl_Box(404, 50, 1, 20);
+              o->hide();
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            { Fl_Box* o = new Fl_Box(95, 50, 1, 20, "Visibility:");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->align(Fl_Align(FL_ALIGN_LEFT));
+            } // Fl_Box* o
+            { Fl_Choice* o = new Fl_Choice(95, 50, 185, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_18);
+              o->menu(menu_8);
+            } // Fl_Choice* o
+            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_19);
+              o->menu(menu_9);
+            } // Fl_Choice* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Tile* o = new Fl_Tile(15, 75, 390, 210);
+            o->callback((Fl_Callback*)cb_1a);
+            { Fl_Group* o = new Fl_Group(15, 75, 390, 105);
+              o->box(FL_FLAT_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)propagate_load);
+              o->align(Fl_Align(FL_ALIGN_LEFT));
+              { fld::widget::Code_Editor* o = new fld::widget::Code_Editor(95, 75, 310, 100, "Declaration:");
+                o->tooltip("This can be any declaration, like \"int x;\", an external symbol like \"exter"
+"n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo"
+"\" or \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list"
+";\".");
+                o->box(FL_DOWN_FRAME);
+                o->color(FL_BACKGROUND2_COLOR);
+                o->selection_color(FL_SELECTION_COLOR);
+                o->labeltype(FL_NORMAL_LABEL);
+                o->labelfont(1);
+                o->labelsize(11);
+                o->labelcolor(FL_FOREGROUND_COLOR);
+                o->callback((Fl_Callback*)cb_Declaration);
+                o->align(Fl_Align(132));
+                o->when(FL_WHEN_RELEASE);
+                Fl_Group::current()->resizable(o);
+                o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+              } // fld::widget::Code_Editor* o
+              o->end();
+            } // Fl_Group* o
+            { Fl_Group* o = new Fl_Group(15, 180, 390, 105);
+              o->box(FL_FLAT_BOX);
+              o->callback((Fl_Callback*)propagate_load);
+              { Fl_Text_Editor* o = new Fl_Text_Editor(95, 185, 310, 100, "Comment:");
+                o->tooltip("Declaration comment in Doxygen format");
+                o->box(FL_DOWN_BOX);
+                o->labelfont(1);
+                o->labelsize(11);
+                o->textfont(4);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_Comment3);
+                o->align(Fl_Align(FL_ALIGN_LEFT));
+                Fl_Group::current()->resizable(o);
+                o->buffer(new Fl_Text_Buffer());
+                o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+              } // Fl_Text_Editor* o
+              o->end();
+            } // Fl_Group* o
+            o->size_range(0, 25, 55);
+            o->size_range(1, 25, 55);
+            o->end();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Tile* o
+          decl_tabs_main->end();
+          Fl_Group::current()->resizable(decl_tabs_main);
+        } // Fl_Group* decl_tabs_main
+        decl_tabs->end();
+        Fl_Group::current()->resizable(decl_tabs);
+      } // Fl_Tabs* decl_tabs
       tabs_wizard->end();
       Fl_Group::current()->resizable(tabs_wizard);
     } // Fl_Wizard* tabs_wizard

@@ -30,6 +30,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Tile.H>
 #include <FL/Fl_Table.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/fl_message.H>
@@ -815,6 +816,15 @@ void Scroll_Node::copy_properties() {
 Tile_Node Tile_Node::prototype;      // the "factory"
 
 const char tile_type_name[] = "Fl_Tile";
+
+// live mode support
+Fl_Widget* Tile_Node::enter_live_mode(int) {
+  Fl_Group *grp = new Fl_Tile(o->x(), o->y(), o->w(), o->h());
+  return propagate_live_mode(grp);
+}
+
+void Tile_Node::leave_live_mode() {
+}
 
 void Tile_Node::copy_properties() {
   Group_Node::copy_properties();

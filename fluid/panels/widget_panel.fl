@@ -481,7 +481,7 @@ Function {make_widget_panel()} {uid da36
 } {
   Fl_Window {} {uid 42e9
     comment {Use a Double Window to avoid flickering.} open
-    xywh {390 218 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {485 255 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Wizard tabs_wizard {uid 9a81
@@ -2574,7 +2574,7 @@ if (v == LOAD) {
       }
       Fl_Tabs data_tabs {uid fb93
         callback {if (current_node && current_node->is_a(Type::Data))
-  propagate_load((Fl_Group *)o,v);}
+  propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group data_tabs_data {uid 6888
@@ -2827,7 +2827,7 @@ if (v == LOAD) {
       }
       Fl_Tabs comment_tabs {uid c546
         callback {if (current_node && current_node->is_a(Type::Comment))
-  propagate_load((Fl_Group *)o,v);}
+  propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group comment_tabs_comment {uid 32ad
@@ -3012,7 +3012,7 @@ if (v == LOAD) {
       }
       Fl_Tabs class_tabs {uid d304
         callback {if (current_node && current_node->is_a(Type::Class))
-  propagate_load((Fl_Group *)o,v);} open
+  propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group class_tabs_main {uid b1b3
@@ -3170,8 +3170,8 @@ if (v == LOAD) {
       }
       Fl_Tabs declblock_tabs {uid 4a2d
         callback {if (current_node && current_node->is_a(Type::DeclBlock))
-  propagate_load((Fl_Group *)o,v);} open
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 resizable
+  propagate_load((Fl_Group *)o,v);}
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group declblock_tabs_main {uid 7533
           label {Declaration Block}
@@ -3363,33 +3363,218 @@ if (v == LOAD) {
           }
         }
       }
+      Fl_Tabs decl_tabs {uid 0b51
+        callback {if (current_node && current_node->is_a(Type::Decl))
+  propagate_load((Fl_Group *)o,v);} open
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 resizable
+      } {
+        Fl_Group decl_tabs_main {uid 97b3
+          label {Declaration Block}
+          callback propagate_load open
+          xywh {10 30 400 330} labelsize 11 resizable
+        } {
+          Fl_Group {} {uid ca98
+            callback propagate_load open
+            xywh {15 50 390 20} labelfont 1 labelsize 11 align 4
+          } {
+            Fl_Box {} {uid 3280
+              xywh {404 50 1 20} hide resizable
+            }
+            Fl_Box {} {uid c13d
+              label {Visibility:}
+              xywh {95 50 1 20} labelfont 1 labelsize 11 align 4
+            }
+            Fl_Choice {} {uid ff2e
+              callback {if (!current_node || !current_node->is_a(Type::Decl)) return;
+Decl_Node* nd = (Decl_Node*)current_node;
+
+if (v == LOAD) {
+  if (!nd->is_in_class()) {
+    o->value(nd->output_file());
+    o->show(); 
+  } else {
+    o->hide();
+  }
+} else {
+  int mod = 0;
+  if (!nd->is_in_class()) {
+    if (nd->output_file() != o->value()) {
+      nd->output_file(o->value());
+      mod = 1;
     }
-    Fl_Tabs widget_tabs_repo {uid 0b51 open
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
+              xywh {95 50 185 20} down_box BORDER_BOX labelsize 11 textsize 11
+            } {
+              MenuItem {} {uid c19a
+                label {in source file only}
+                xywh {10 10 100 20} labelsize 11
+              }
+              MenuItem {} {uid cfe8
+                label {in header file only}
+                xywh {10 10 100 20} labelsize 11
+              }
+              MenuItem {} {uid c0e7
+                label {"static" in source file}
+                xywh {10 10 100 20} labelsize 11
+              }
+              MenuItem {} {uid 4a0a
+                label {in source and "extern" in header}
+                xywh {10 10 100 20} labelsize 11
+              }
+            }
+            Fl_Choice {} {uid 1148
+              callback {if (!current_node || !current_node->is_a(Type::Decl)) return;
+Decl_Node* nd = (Decl_Node*)current_node;
+
+if (v == LOAD) {
+  if (nd->is_in_class()) {
+    o->value(nd->visibility());
+    o->show(); 
+  } else {
+    o->hide();
+  }
+} else {
+  int mod = 0;
+  if (nd->is_in_class()) {
+    if (nd->visibility() != o->value()) {
+      nd->visibility(o->value());
+      mod = 1;
+    }
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
+              xywh {95 50 75 20} down_box BORDER_BOX labelsize 11 textsize 11
+            } {
+              MenuItem {} {uid 8a96
+                label private
+                xywh {20 20 100 20} labelsize 11
+              }
+              MenuItem {} {uid 1fc9
+                label public
+                xywh {20 20 100 20} labelsize 11
+              }
+              MenuItem {} {uid d881
+                label protected
+                xywh {20 20 100 20} labelsize 11
+              }
+            }
+          }
+          Fl_Tile {} {uid 8b36
+            callback {propagate_load(o, v);} open
+            xywh {15 75 390 210} resizable
+            code0 {o->size_range(0, 25, 55);}
+            code1 {o->size_range(1, 25, 55);}
+          } {
+            Fl_Group {} {uid 4b86
+              callback propagate_load open
+              xywh {15 75 390 105} box FLAT_BOX labelfont 1 labelsize 11 align 4
+            } {
+              Fl_Text_Editor {} {uid 81a5
+                label {Declaration:}
+                callback {if (!current_node || !current_node->is_a(Type::Decl)) return;
+Decl_Node* nd = (Decl_Node*)current_node;
+
+if (v == LOAD) {
+  the_panel->label("Declaration Properties");
+  const char *cmttext = nd->name();
+  o->buffer()->text( cmttext ? cmttext : "" );
+} else {
+  int mod;
+  char *c = o->buffer()->text();
+  const char *nn = nd->name();
+  if (   (nn && (strcmp(nn, c) == 0))
+      || (!nn && (strcmp("", c) == 0)) )
+  {
+    mod = 0;
+  } else {
+    nd->name(c);
+    mod = 1;
+  }
+  free(c);  
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}} selected
+                tooltip {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".} xywh {95 75 310 100} labelfont 1 labelsize 11 align 132 resizable
+                code0 {\#include "widgets/Code_Editor.h"}
+                code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+                class {fld::widget::Code_Editor}
+              }
+            }
+            Fl_Group {} {uid 1d47
+              callback propagate_load open
+              xywh {15 180 390 105} box FLAT_BOX
+            } {
+              Fl_Text_Editor {} {uid ccfa
+                label {Comment:}
+                callback {if (!current_node || !current_node->is_a(Type::Decl)) return;
+Decl_Node* nd = (Decl_Node*)current_node;
+
+if (v == LOAD) {
+  const char *cmttext = nd->comment();
+  o->buffer()->text( cmttext ? cmttext : "" );
+} else {
+  int mod;
+  char *c = o->buffer()->text();
+  const char *nn = nd->comment();
+  if (   (nn && (strcmp(nn, c) == 0))
+      || (!nn && (strcmp("", c) == 0)) )
+  {
+    mod = 0;
+  } else {
+    nd->comment(c);
+    mod = 1;
+  }
+  free(c);  
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
+                tooltip {Declaration comment in Doxygen format} xywh {95 185 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+                code0 {o->buffer(new Fl_Text_Buffer());}
+                code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+              }
+            }
+          }
+        }
+      }
+    }
+    Fl_Tabs widget_tabs_repo {uid 860c open
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
-      Fl_Group {} {uid 97b3
+      Fl_Group {} {uid df8b
         xywh {10 30 400 330} resizable
       } {}
     }
-    Fl_Group {} {uid ca98
+    Fl_Group {} {uid 31d1
       xywh {10 370 400 20} labelsize 11
     } {
-      Fl_Button wLiveMode {uid 3280
+      Fl_Button wLiveMode {uid fd14
         label {Live &Resize}
         callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
-      Fl_Button overlay_button {uid c13d
+      Fl_Button overlay_button {uid 7354
         label {Hide &Overlays}
         callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
-      Fl_Box {} {uid ff2e
+      Fl_Box {} {uid 9b63
         comment {Hidden resizable box}
         xywh {258 370 72 20} labelsize 11 hide resizable
       }
-      Fl_Return_Button {} {uid c19a
+      Fl_Return_Button {} {uid 7b16
         label Close
         callback ok_cb
         xywh {330 370 80 20} labelsize 11
