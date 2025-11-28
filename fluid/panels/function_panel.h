@@ -83,16 +83,6 @@ extern Fl_Text_Editor *c_comment_input;
 extern Fl_Return_Button *c_panel_ok;
 extern Fl_Button *c_panel_cancel;
 Fl_Double_Window* make_class_panel();
-extern Fl_Double_Window *comment_panel;
-extern Fl_Text_Editor *comment_input;
-extern Fl_Return_Button *comment_panel_ok;
-extern Fl_Button *comment_panel_cancel;
-extern Fl_Light_Button *comment_in_source;
-extern Fl_Light_Button *comment_in_header;
-#include <FL/Fl_Menu_Button.H>
-extern Fl_Menu_Button *comment_predefined;
-extern Fl_Button *comment_load;
-Fl_Double_Window* make_comment_panel();
 void type_make_cb(Fl_Widget*,void*d);
 #include <FL/Fl_Window.H>
 extern Fl_Window *widgetbin_panel;

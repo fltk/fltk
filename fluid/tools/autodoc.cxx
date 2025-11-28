@@ -23,6 +23,7 @@
 #include "nodes/factory.h"
 #include "nodes/Widget_Node.h"
 #include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 #include "panels/widget_panel.h"
 #include "panels/function_panel.h"
 #include "panels/settings_panel.h"
@@ -402,6 +403,8 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
   Node *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
   Node *t_data = add_new_widget_from_user("Data", Strategy::AS_LAST_CHILD, false);
+  Node *t_comment = add_new_widget_from_user("Comment", Strategy::AS_LAST_CHILD, false);
+  t_comment->name("All work and no play make Jack a dull boy.");
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -533,10 +536,8 @@ void run_autodoc(const std::string &target_dir) {
   // -- Type::Widget_Class is handled like Window_Node
 
   // -- Type::Comment
-  Fl_Window *adoc_comment_panel = make_comment_panel();
-  comment_input->buffer()->text("Make sure that the giraffe gets enough hay,\nbut the monkey can't reach it.");
-  fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
-  adoc_comment_panel->hide();
+  select_only(t_comment);
+  fl_snapshot((target_dir + "comment_panel.png").c_str(), comment_tabs_comment, tab_margin, row_blend);
 
   // ---- widget dialog
   t_win->open(); // open the window
