@@ -3324,6 +3324,96 @@ static void cb_Comment3(Fl_Text_Editor* o, void* v) {
 //ﬂ ▲ ----------=~-=~=~~=~~------------~=~=~-=-~--~=-~=~=~-~ ▲ ﬂ//
 }
 
+Fl_Tabs *codeblock_tabs=(Fl_Tabs *)0;
+
+static void cb_codeblock_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~~~--~~=-~~-~---~~ ▼ ﬂ//
+  if (current_node && current_node->is_a(Type::CodeBlock))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------=~--~~---~-=----------~-=-=--~-=-=---=---~=- ▲ ﬂ//
+}
+
+Fl_Group *codeblock_tabs_main=(Fl_Group *)0;
+
+static void cb_Start1(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~=-=~~=~=~-~==-~-=- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+  CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
+
+  if (v == LOAD) {
+    o->value( nd->name() );
+    the_panel->label("Code Block Properties");
+  } else {
+    int mod;
+    const char *nn = nd->name();
+    if (   (nn && (strcmp(nn, o->value()) == 0))
+        || (!nn && (strcmp("", o->value()) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->name( o->value() );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------~=~~--=~~--~-----------~~=~~=~-=~--=~-~=-~~- ▲ ﬂ//
+}
+
+static void cb_End1(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~~=~=-~=-~-=~~~=-=~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+  CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
+
+  if (v == LOAD) {
+    o->value( nd->end_code() );
+  } else {
+    int mod;
+    const char *nn = nd->end_code();
+    if (   (nn && (strcmp(nn, o->value()) == 0))
+        || (!nn && (strcmp("", o->value()) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->end_code( o->value() );
+      mod = 1;
+    }
+    Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------=~=~~=-=~--=----------~~~-~-=~~~-~~~~~~=-==- ▲ ﬂ//
+}
+
+static void cb_Comment4(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~=~=~=-~--=--==~~-=- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+  CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
+
+  if (v == LOAD) {
+    const char *cmttext = nd->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->comment();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->comment(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------~==~-~=-~--=----------~~=~-~=--=~=-=~~~=~--~ ▲ ﬂ//
+}
+
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
 
 Fl_Button *wLiveMode=(Fl_Button *)0;
@@ -4594,6 +4684,7 @@ Fl_Double_Window* make_widget_panel() {
         decl_tabs->labelsize(11);
         decl_tabs->labelcolor(FL_WHITE);
         decl_tabs->callback((Fl_Callback*)cb_decl_tabs);
+        decl_tabs->hide();
         { decl_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration Block");
           decl_tabs_main->labelsize(11);
           decl_tabs_main->callback((Fl_Callback*)propagate_load);
@@ -4684,6 +4775,48 @@ Fl_Double_Window* make_widget_panel() {
         decl_tabs->end();
         Fl_Group::current()->resizable(decl_tabs);
       } // Fl_Tabs* decl_tabs
+      { codeblock_tabs = new Fl_Tabs(10, 10, 400, 350);
+        codeblock_tabs->selection_color((Fl_Color)12);
+        codeblock_tabs->labelsize(11);
+        codeblock_tabs->labelcolor(FL_WHITE);
+        codeblock_tabs->callback((Fl_Callback*)cb_codeblock_tabs);
+        { codeblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Code Block");
+          codeblock_tabs_main->labelsize(11);
+          codeblock_tabs_main->callback((Fl_Callback*)propagate_load);
+          { Fl_Input* o = new Fl_Input(95, 50, 305, 20, "Start Code:");
+            o->tooltip("condition statement, `if (x==1)`, or empty");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Start1);
+          } // Fl_Input* o
+          { Fl_Input* o = new Fl_Input(95, 75, 305, 20, "End Code:");
+            o->tooltip("condition end: `while (x==1);`, or empty");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_End1);
+          } // Fl_Input* o
+          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 100, 305, 117, "Comment:");
+            o->tooltip("code block comment");
+            o->box(FL_DOWN_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Comment4);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            Fl_Group::current()->resizable(o);
+            o->buffer(new Fl_Text_Buffer());
+            o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+          } // Fl_Text_Editor* o
+          codeblock_tabs_main->end();
+          Fl_Group::current()->resizable(codeblock_tabs_main);
+        } // Fl_Group* codeblock_tabs_main
+        codeblock_tabs->end();
+      } // Fl_Tabs* codeblock_tabs
       tabs_wizard->end();
       Fl_Group::current()->resizable(tabs_wizard);
     } // Fl_Wizard* tabs_wizard

@@ -46,23 +46,6 @@ extern fld::widget::Code_Editor *code_input;
 extern Fl_Return_Button *code_panel_ok;
 extern Fl_Button *code_panel_cancel;
 Fl_Double_Window* make_code_panel();
-extern Fl_Double_Window *codeblock_panel;
-extern Fl_Input *code_before_input;
-extern Fl_Input *code_after_input;
-extern Fl_Return_Button *codeblock_panel_ok;
-extern Fl_Button *codeblock_panel_cancel;
-Fl_Double_Window* make_codeblock_panel();
-extern Fl_Double_Window *decl_panel;
-extern Fl_Choice *decl_choice;
-extern Fl_Choice *decl_class_choice;
-#include <FL/Fl_Tile.H>
-extern fld::widget::Code_Editor *decl_input;
-extern Fl_Text_Editor *decl_comment_input;
-extern Fl_Return_Button *decl_panel_ok;
-extern Fl_Button *decl_panel_cancel;
-Fl_Double_Window* make_decl_panel();
-extern Fl_Menu_Item menu_decl_choice[];
-extern Fl_Menu_Item menu_decl_class_choice[];
 void type_make_cb(Fl_Widget*,void*d);
 #include <FL/Fl_Window.H>
 extern Fl_Window *widgetbin_panel;

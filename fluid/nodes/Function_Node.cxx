@@ -819,38 +819,7 @@ void CodeBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the codeblock_panel.
  */
 void CodeBlock_Node::open() {
-  if (!codeblock_panel) make_codeblock_panel();
-  code_before_input->value(name());
-  code_after_input->value(after);
-  codeblock_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    // event loop
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == codeblock_panel_cancel) goto BREAK2;
-      else if (w == codeblock_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // check for syntax errors
-    message = c_check(code_before_input->value());
-    if (!message) {
-      message = c_check(code_after_input->value());
-    }
-    // alert user
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // write to variables
-    name(code_before_input->value());
-    storestring(code_after_input->value(), after);
-    break;
-  }
-BREAK2:
-  codeblock_panel->hide();
+  open_panel();
 }
 
 /**

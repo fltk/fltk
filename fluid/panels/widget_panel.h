@@ -124,6 +124,8 @@ extern Fl_Tabs *declblock_tabs;
 extern Fl_Group *declblock_tabs_main;
 extern Fl_Tabs *decl_tabs;
 extern Fl_Group *decl_tabs_main;
+extern Fl_Tabs *codeblock_tabs;
+extern Fl_Group *codeblock_tabs_main;
 extern Fl_Tabs *widget_tabs_repo;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;

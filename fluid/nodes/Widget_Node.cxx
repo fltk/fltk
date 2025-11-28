@@ -1290,6 +1290,10 @@ void load_panel() {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(decl_tabs_main);
       numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::CodeBlock)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(codeblock_tabs_main);
+      numselected = 1;
     } else {
       current_node = nullptr;
       if (Fluid.proj.tree.current->is_widget())

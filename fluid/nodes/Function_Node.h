@@ -125,6 +125,8 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::CodeBlock) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
+  const char *end_code() { return after; }
+  void end_code(const char *c) { storestring(c, after); }
 };
 
 // ---- Decl_Node declaration

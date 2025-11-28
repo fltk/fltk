@@ -406,7 +406,10 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_comment = add_new_widget_from_user("Comment", Strategy::AS_LAST_CHILD, false);
   t_comment->name("All work and no play make Jack a dull boy.");
   Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
+  Node *t_decl = add_new_widget_from_user("Decl", Strategy::AS_LAST_CHILD, false);
+  t_decl->name("const char *damage = \"'tis but a scratch\";");
   Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
+  Node *t_codeblock = add_new_widget_from_user("CodeBlock", Strategy::AFTER_CURRENT, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -507,18 +510,12 @@ void run_autodoc(const std::string &target_dir) {
   adoc_code_panel->hide();
 
   // -- Type::CodeBlock
-  Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
-  code_before_input->value("if (test())");
-  code_after_input->value("// test widgets added...");
-  fl_snapshot((target_dir + "codeblock_panel.png").c_str(), adoc_codeblock_panel, win_margin, win_blend);
-  adoc_codeblock_panel->hide();
+  select_only(t_codeblock);
+  fl_snapshot((target_dir + "codeblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
   // -- Type::Decl
-  Fl_Window *adoc_decl_panel = make_decl_panel();
-  decl_class_choice->hide();
-  decl_input->buffer()->text("const char *damage = \"'tis but a scratch\";");
-  fl_snapshot((target_dir + "decl_panel.png").c_str(), adoc_decl_panel, win_margin, win_blend);
-  adoc_decl_panel->hide();
+  select_only(t_decl);
+  fl_snapshot((target_dir + "decl_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
   // -- Type::DeclBlock
   select_only(t_declblock);

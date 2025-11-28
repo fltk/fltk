@@ -477,7 +477,7 @@ Function {flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex
 }
 
 Function {make_widget_panel()} {uid da36
-  comment {Create a panel that can be used with all known widgets} open
+  comment {Create a panel that can be used with all known widgets} open selected
 } {
   Fl_Window {} {uid 42e9
     comment {Use a Double Window to avoid flickering.} open
@@ -3170,7 +3170,7 @@ if (v == LOAD) {
       }
       Fl_Tabs declblock_tabs {uid 4a2d
         callback {if (current_node && current_node->is_a(Type::DeclBlock))
-  propagate_load((Fl_Group *)o,v);}
+  propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group declblock_tabs_main {uid 7533
@@ -3366,7 +3366,7 @@ if (v == LOAD) {
       Fl_Tabs decl_tabs {uid 0b51
         callback {if (current_node && current_node->is_a(Type::Decl))
   propagate_load((Fl_Group *)o,v);} open
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 resizable
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
       } {
         Fl_Group decl_tabs_main {uid 97b3
           label {Declaration Block}
@@ -3503,7 +3503,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-}} selected
+}}
                 tooltip {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".} xywh {95 75 310 100} labelfont 1 labelsize 11 align 132 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
@@ -3548,33 +3548,123 @@ if (v == LOAD) {
           }
         }
       }
+      Fl_Tabs codeblock_tabs {uid 860c
+        callback {if (current_node && current_node->is_a(Type::CodeBlock))
+  propagate_load((Fl_Group *)o,v);} open
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255
+      } {
+        Fl_Group codeblock_tabs_main {uid df8b
+          label {Code Block}
+          callback propagate_load open
+          xywh {10 30 400 330} labelsize 11 resizable
+        } {
+          Fl_Input {} {uid 31d1
+            label {Start Code:}
+            callback {if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
+
+if (v == LOAD) {
+  o->value( nd->name() );
+  the_panel->label("Code Block Properties");
+} else {
+  int mod;
+  const char *nn = nd->name();
+  if (   (nn && (strcmp(nn, o->value()) == 0))
+      || (!nn && (strcmp("", o->value()) == 0)) )
+  {
+    mod = 0;
+  } else {
+    nd->name( o->value() );
+    mod = 1;
+  }
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
+            tooltip {condition statement, `if (x==1)`, or empty} xywh {95 50 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input {} {uid fd14
+            label {End Code:}
+            callback {if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
+
+if (v == LOAD) {
+  o->value( nd->end_code() );
+} else {
+  int mod;
+  const char *nn = nd->end_code();
+  if (   (nn && (strcmp(nn, o->value()) == 0))
+      || (!nn && (strcmp("", o->value()) == 0)) )
+  {
+    mod = 0;
+  } else {
+    nd->end_code( o->value() );
+    mod = 1;
+  }
+  Fluid.proj.set_modflag(1);
+}}
+            tooltip {condition end: `while (x==1);`, or empty} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Text_Editor {} {uid 7354
+            label {Comment:}
+            callback {if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
+
+if (v == LOAD) {
+  const char *cmttext = nd->comment();
+  o->buffer()->text( cmttext ? cmttext : "" );
+} else {
+  int mod;
+  char *c = o->buffer()->text();
+  const char *nn = nd->comment();
+  if (   (nn && (strcmp(nn, c) == 0))
+      || (!nn && (strcmp("", c) == 0)) )
+  {
+    mod = 0;
+  } else {
+    nd->comment(c);
+    mod = 1;
+  }
+  free(c);  
+  if (mod) {
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
+            tooltip {code block comment} xywh {95 100 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+            code0 {o->buffer(new Fl_Text_Buffer());}
+            code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+          }
+        }
+      }
     }
-    Fl_Tabs widget_tabs_repo {uid 860c open
+    Fl_Tabs widget_tabs_repo {uid 9b63 open
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
-      Fl_Group {} {uid df8b
+      Fl_Group {} {uid 7b16
         xywh {10 30 400 330} resizable
       } {}
     }
-    Fl_Group {} {uid 31d1
+    Fl_Group {} {uid 9a40
       xywh {10 370 400 20} labelsize 11
     } {
-      Fl_Button wLiveMode {uid fd14
+      Fl_Button wLiveMode {uid e71b
         label {Live &Resize}
         callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
-      Fl_Button overlay_button {uid 7354
+      Fl_Button overlay_button {uid 9e73
         label {Hide &Overlays}
         callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
-      Fl_Box {} {uid 9b63
+      Fl_Box {} {uid 43d3
         comment {Hidden resizable box}
         xywh {258 370 72 20} labelsize 11 hide resizable
       }
-      Fl_Return_Button {} {uid 7b16
+      Fl_Return_Button {} {uid 2fbb
         label Close
         callback ok_cb
         xywh {330 370 80 20} labelsize 11
