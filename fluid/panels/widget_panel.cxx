@@ -2918,10 +2918,8 @@ static void cb_Attribute(Fl_Input* o, void* v) {
 //ﬂ ▲ ----------~=~~~---~-------------~--~~---~~~~=-~~-~=~~= ▲ ﬂ//
 }
 
-Fl_Input *c_name_input_2=(Fl_Input *)0;
-
-static void cb_c_name_input_2(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~~~-~~=--=~~~-~---~--- ▼ ﬂ//
+static void cb_Class(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~-~-~-~-~==-~-~==~~= ▼ ﬂ//
   if (!current_node || !current_node->is_a(Type::Class)) return;
   Class_Node* nd = (Class_Node*)current_node;
   if (v == LOAD) {
@@ -2946,10 +2944,8 @@ static void cb_c_name_input_2(Fl_Input* o, void* v) {
 //ﬂ ▲ ----------=~=~=--==~=-----------~-=~-~-=~~~-=~=---~-~~ ▲ ﬂ//
 }
 
-Fl_Input *c_subclass_input_2=(Fl_Input *)0;
-
-static void cb_c_subclass_input_2(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~--~~=-~~~~=-~~--~-~- ▼ ﬂ//
+static void cb_Base(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~=-=-~==~=~=-~==~=~ ▼ ﬂ//
   if (!current_node || !current_node->is_a(Type::Class)) return;
   Class_Node* nd = (Class_Node*)current_node;
   if (v == LOAD) {
@@ -2970,10 +2966,8 @@ static void cb_c_subclass_input_2(Fl_Input* o, void* v) {
 //ﬂ ▲ ----------~=~=~=-~-=~=-----------~=~~-~~-~-==~-~--=-~- ▲ ﬂ//
 }
 
-Fl_Text_Editor *c_comment_input_2=(Fl_Text_Editor *)0;
-
-static void cb_c_comment_input_2(Fl_Text_Editor* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~~~~~-~-=~~--=-=--=- ▼ ﬂ//
+static void cb_Comment1(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=~=-==----=~~-~~-=- ▼ ﬂ//
   if (!current_node || !current_node->is_a(Type::Class)) return;
   Class_Node* nd = (Class_Node*)current_node;
   if (v == LOAD) {
@@ -2998,6 +2992,189 @@ static void cb_c_comment_input_2(Fl_Text_Editor* o, void* v) {
     }
   }
 //ﬂ ▲ ----------~=----~=-~~~----------~--==~~-~=--=~=~=~~~=~ ▲ ﬂ//
+}
+
+Fl_Tabs *declblock_tabs=(Fl_Tabs *)0;
+
+static void cb_declblock_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--=~~=~~~~-==-~=~~=~ ▼ ﬂ//
+  if (current_node && current_node->is_a(Type::DeclBlock))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------~=-==---=-=--------------~-~=~~=-=-~=~----=~ ▲ ﬂ//
+}
+
+Fl_Group *declblock_tabs_main=(Fl_Group *)0;
+
+static void cb_Start(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~-~=----~=~==~~-~~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    o->value( nd->name() );
+    the_panel->label("Class Properties");
+  } else {
+    int mod;
+    const char *nn = nd->name();
+    if (   (nn && (strcmp(nn, o->value()) == 0))
+        || (!nn && (strcmp("", o->value()) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->name( o->value() );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------~==--~-~=-~~----------~~=-=~=---=-~=~=~~-=~- ▲ ﬂ//
+}
+
+static void cb_End(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~--~-----=-~~~~~=-~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    o->value( nd->end_code() );
+  } else {
+    int mod;
+    const char *nn = nd->end_code();
+    if (   (nn && (strcmp(nn, o->value()) == 0))
+        || (!nn && (strcmp("", o->value()) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->end_code( o->value() );
+      mod = 1;
+    }
+    Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------=~-~-=--~~-=------------=~-~---=~~-~=--~~=~- ▲ ﬂ//
+}
+
+static void cb_implementations(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=-~~=-==~=~--=-=~-= ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    bool f = ((nd->write_map() & DeclBlock_Node::CODE_IN_SOURCE) != 0);
+    o->value(f);
+  } else {
+    int mod = 0;
+    bool f = ((nd->write_map() & DeclBlock_Node::CODE_IN_SOURCE) != 0);
+    if (f != o->value()) {
+      if (o->value())
+        nd->write_map( nd->write_map() | DeclBlock_Node::CODE_IN_SOURCE );
+      else
+        nd->write_map( nd->write_map() & ~DeclBlock_Node::CODE_IN_SOURCE );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------=~-~-==~~-=-----------~-~~~---=----=-=~==--~ ▲ ﬂ//
+}
+
+static void cb_static(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=-~~=~~-~=~~=~==-=~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    bool f = ((nd->write_map() & DeclBlock_Node::STATIC_IN_SOURCE) != 0);
+    o->value(f);
+  } else {
+    int mod = 0;
+    bool f = ((nd->write_map() & DeclBlock_Node::STATIC_IN_SOURCE) != 0);
+    if (f != o->value()) {
+      if (o->value())
+        nd->write_map( nd->write_map() | DeclBlock_Node::STATIC_IN_SOURCE );
+      else
+        nd->write_map( nd->write_map() & ~DeclBlock_Node::STATIC_IN_SOURCE );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------=~-=-~--~--=--------------~==--=---==-=-=--= ▲ ﬂ//
+}
+
+static void cb_forward(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=~=-==~~--=--~~~-~~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    bool f = ((nd->write_map() & DeclBlock_Node::CODE_IN_HEADER) != 0);
+    o->value(f);
+  } else {
+    int mod = 0;
+    bool f = ((nd->write_map() & DeclBlock_Node::CODE_IN_HEADER) != 0);
+    if (f != o->value()) {
+      if (o->value())
+        nd->write_map( nd->write_map() | DeclBlock_Node::CODE_IN_HEADER );
+      else
+        nd->write_map( nd->write_map() & ~DeclBlock_Node::CODE_IN_HEADER );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------~==~-~-~~-=~-----------~=~-~~-=-=--=~=---=~- ▲ ﬂ//
+}
+
+static void cb_preprecessor(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~-=~=~~~=~==~-~-=~= ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    bool f = ((nd->write_map() & DeclBlock_Node::STATIC_IN_HEADER) != 0);
+    o->value(f);
+  } else {
+    int mod = 0;
+    bool f = ((nd->write_map() & DeclBlock_Node::STATIC_IN_HEADER) != 0);
+    if (f != o->value()) {
+      if (o->value())
+        nd->write_map( nd->write_map() | DeclBlock_Node::STATIC_IN_HEADER );
+      else
+        nd->write_map( nd->write_map() & ~DeclBlock_Node::STATIC_IN_HEADER );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------~=-=~~~~~--------------~=-~=-=~=-=~~~~-=-==~ ▲ ﬂ//
+}
+
+static void cb_Comment2(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~=~-=~-~=-==~~~=-~- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
+  if (v == LOAD) {
+    const char *cmttext = nd->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->comment();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->comment(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~~~-~-~-=------------~----~-~=~--=---=--=-- ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
@@ -4116,6 +4293,7 @@ Fl_Double_Window* make_widget_panel() {
         class_tabs->labelsize(11);
         class_tabs->labelcolor(FL_WHITE);
         class_tabs->callback((Fl_Callback*)cb_class_tabs);
+        class_tabs->hide();
         { class_tabs_main = new Fl_Group(10, 30, 400, 330, "Class");
           class_tabs_main->labelsize(11);
           class_tabs_main->callback((Fl_Callback*)propagate_load);
@@ -4150,41 +4328,120 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Attribute);
           } // Fl_Input* o
-          { c_name_input_2 = new Fl_Input(95, 75, 305, 20, "Class Name:");
-            c_name_input_2->tooltip("class name, must be one C++ keyword");
-            c_name_input_2->labelfont(1);
-            c_name_input_2->labelsize(11);
-            c_name_input_2->textfont(4);
-            c_name_input_2->textsize(11);
-            c_name_input_2->callback((Fl_Callback*)cb_c_name_input_2);
-          } // Fl_Input* c_name_input_2
-          { c_subclass_input_2 = new Fl_Input(95, 100, 305, 20, "Base Class:");
-            c_subclass_input_2->tooltip("visibility and name of base class or classes\ne.g. `public Fl_Widget`");
-            c_subclass_input_2->labelfont(1);
-            c_subclass_input_2->labelsize(11);
-            c_subclass_input_2->textfont(4);
-            c_subclass_input_2->textsize(11);
-            c_subclass_input_2->callback((Fl_Callback*)cb_c_subclass_input_2);
-          } // Fl_Input* c_subclass_input_2
-          { Fl_Text_Editor* o = c_comment_input_2 = new Fl_Text_Editor(95, 125, 305, 110, "Comment:");
-            c_comment_input_2->tooltip("class comment in Doxygen format");
-            c_comment_input_2->box(FL_DOWN_BOX);
-            c_comment_input_2->labelfont(1);
-            c_comment_input_2->labelsize(11);
-            c_comment_input_2->textfont(4);
-            c_comment_input_2->textsize(11);
-            c_comment_input_2->callback((Fl_Callback*)cb_c_comment_input_2);
-            c_comment_input_2->align(Fl_Align(FL_ALIGN_LEFT));
-            Fl_Group::current()->resizable(c_comment_input_2);
+          { Fl_Input* o = new Fl_Input(95, 75, 305, 20, "Class Name:");
+            o->tooltip("class name, must be one C++ keyword");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Class);
+          } // Fl_Input* o
+          { Fl_Input* o = new Fl_Input(95, 100, 305, 20, "Base Class:");
+            o->tooltip("visibility and name of base class or classes\ne.g. `public Fl_Widget`");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Base);
+          } // Fl_Input* o
+          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 125, 305, 110, "Comment:");
+            o->tooltip("class comment in Doxygen format");
+            o->box(FL_DOWN_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Comment1);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            Fl_Group::current()->resizable(o);
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
-          } // Fl_Text_Editor* c_comment_input_2
+          } // Fl_Text_Editor* o
           class_tabs_main->end();
           Fl_Group::current()->resizable(class_tabs_main);
         } // Fl_Group* class_tabs_main
         class_tabs->end();
-        Fl_Group::current()->resizable(class_tabs);
       } // Fl_Tabs* class_tabs
+      { declblock_tabs = new Fl_Tabs(10, 10, 400, 350);
+        declblock_tabs->selection_color((Fl_Color)12);
+        declblock_tabs->labelsize(11);
+        declblock_tabs->labelcolor(FL_WHITE);
+        declblock_tabs->callback((Fl_Callback*)cb_declblock_tabs);
+        { declblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration Block");
+          declblock_tabs_main->labelsize(11);
+          declblock_tabs_main->callback((Fl_Callback*)propagate_load);
+          { Fl_Input* o = new Fl_Input(95, 50, 305, 20, "Start Code:");
+            o->tooltip("#ifdef or similar conditional declaration block.");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Start);
+          } // Fl_Input* o
+          { Fl_Input* o = new Fl_Input(95, 75, 305, 20, "End Code:");
+            o->tooltip("#endif or similar declaration code block.");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_End);
+          } // Fl_Input* o
+          { Fl_Group* o = new Fl_Group(95, 100, 305, 120);
+            o->callback((Fl_Callback*)propagate_load);
+            { Fl_Box* o = new Fl_Box(95, 100, 270, 20, "Enclose code generated by children in source file:");
+              o->labelsize(11);
+              o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+            } // Fl_Box* o
+            { Fl_Check_Button* o = new Fl_Check_Button(105, 120, 260, 20, "implementations");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_implementations);
+            } // Fl_Check_Button* o
+            { Fl_Check_Button* o = new Fl_Check_Button(105, 140, 260, 20, "static initializations and callbacks");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_static);
+            } // Fl_Check_Button* o
+            { Fl_Box* o = new Fl_Box(95, 160, 270, 20, "Enclose code in header file:");
+              o->labelsize(11);
+              o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+            } // Fl_Box* o
+            { Fl_Check_Button* o = new Fl_Check_Button(105, 180, 260, 20, "forward declarations");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_forward);
+            } // Fl_Check_Button* o
+            { Fl_Check_Button* o = new Fl_Check_Button(105, 200, 260, 20, "preprecessor and callback declarations");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_preprecessor);
+            } // Fl_Check_Button* o
+            { Fl_Box* o = new Fl_Box(365, 100, 35, 120);
+              o->labelsize(11);
+              o->hide();
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 225, 305, 117, "Comment:");
+            o->tooltip("Declaration comment in Doxygen format");
+            o->box(FL_DOWN_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Comment2);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            Fl_Group::current()->resizable(o);
+            o->buffer(new Fl_Text_Buffer());
+            o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+          } // Fl_Text_Editor* o
+          declblock_tabs_main->end();
+          Fl_Group::current()->resizable(declblock_tabs_main);
+        } // Fl_Group* declblock_tabs_main
+        declblock_tabs->end();
+        Fl_Group::current()->resizable(declblock_tabs);
+      } // Fl_Tabs* declblock_tabs
       tabs_wizard->end();
       Fl_Group::current()->resizable(tabs_wizard);
     } // Fl_Wizard* tabs_wizard

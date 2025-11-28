@@ -192,15 +192,15 @@ class DeclBlock_Node : public Node
 public:
   typedef Node super;
   static DeclBlock_Node prototype;
-private:
   enum {
     CODE_IN_HEADER = 1,
     CODE_IN_SOURCE = 2,
     STATIC_IN_HEADER = 4,
     STATIC_IN_SOURCE = 8
   };
-  const char* after; ///< code after all children of this block
-  int write_map_;     ///< see enum above
+private:
+  const char* after { nullptr };      ///< code after all children of this block
+  int write_map_ { CODE_IN_SOURCE };  ///< see enum above
 
 public:
   DeclBlock_Node();
@@ -219,6 +219,10 @@ public:
   int is_public() const override;
   Type type() const override { return Type::DeclBlock; }
   bool is_a(Type inType) const override { return (inType==Type::DeclBlock) ? true : super::is_a(inType); }
+  const char *end_code() { return after; }
+  void end_code(const char *c) { storestring(c, after); }
+  int write_map() { return write_map_; }
+  void write_map(int v) { write_map_ = v; }
 };
 
 // ---- Comment_Node declaration

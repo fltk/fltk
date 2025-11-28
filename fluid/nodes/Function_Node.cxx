@@ -1426,10 +1426,8 @@ DeclBlock_Node DeclBlock_Node::prototype;
 /**
  Constructor.
  */
-DeclBlock_Node::DeclBlock_Node() :
-  Node(),
-  after(nullptr),
-  write_map_(CODE_IN_SOURCE)
+DeclBlock_Node::DeclBlock_Node()
+: Node()
 { }
 
 /**
@@ -1506,101 +1504,7 @@ void DeclBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the declblock_panel to edit this node.
  */
 void DeclBlock_Node::open() {
-  // build dialog box
-  if (!declblock_panel) make_declblock_panel();
-  // preset all values
-  declblock_before_input->value(name());
-  declblock_after_input->value(after);
-  declblock_static_header->value(write_map_ & STATIC_IN_HEADER);
-  declblock_static_source->value(write_map_ & STATIC_IN_SOURCE);
-  declblock_code_header->value(write_map_ & CODE_IN_HEADER);
-  declblock_code_source->value(write_map_ & CODE_IN_SOURCE);
-  const char *c = comment();
-  declblock_comment_input->buffer()->text(c?c:"");
-  // show modal dialog and loop until satisfied
-  declblock_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == declblock_panel_cancel) goto BREAK2;
-      else if (w == declblock_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // verify user input
-    const char* a = declblock_before_input->value();
-    while (isspace(*a)) a++;
-    const char* b = declblock_after_input->value();
-    while (isspace(*b)) b++;
-    message = c_check(a&&a[0]=='#' ? a+1 : a);
-    if (!message)
-      message = c_check(b&&b[0]=='#' ? b+1 : b);
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // store user choices in data structure
-    name(a);
-    storestring(b, after);
-    if (write_map_ & STATIC_IN_HEADER) {
-      if (declblock_static_header->value()==0) {
-        write_map_ &= ~STATIC_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_static_header->value()) {
-        write_map_ |= STATIC_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    if (write_map_ & STATIC_IN_SOURCE) {
-      if (declblock_static_source->value()==0) {
-        write_map_ &= ~STATIC_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_static_source->value()) {
-        write_map_ |= STATIC_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    if (write_map_ & CODE_IN_HEADER) {
-      if (declblock_code_header->value()==0) {
-        write_map_ &= ~CODE_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_code_header->value()) {
-        write_map_ |= CODE_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    if (write_map_ & CODE_IN_SOURCE) {
-      if (declblock_code_source->value()==0) {
-        write_map_ &= ~CODE_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_code_source->value()) {
-        write_map_ |= CODE_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    c = declblock_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment())) { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment()) { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    break;
-  }
-BREAK2:
-  declblock_panel->hide();
+  open_panel();
 }
 
 /**
