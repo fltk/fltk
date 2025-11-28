@@ -460,7 +460,7 @@ static void data_device_handle_enter(void *data, struct wl_data_device *data_dev
     Fl::handle(FL_DND_ENTER, fl_dnd_target_window);
     current_drag_offer = offer;
     fl_dnd_serial = serial;
-  }
+  } else fl_dnd_target_window = NULL; // we enter a non-FLTK window (titlebar, shade)
   uint32_t supported_actions = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
   uint32_t preferred_action = supported_actions;
   wl_data_offer_set_actions(offer, supported_actions, preferred_action);
