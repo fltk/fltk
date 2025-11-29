@@ -223,8 +223,10 @@ void Group_Node::add_child(Node* cc, Node* before) {
 // This is called when o is deleted.  If it is in the tab group make
 // sure it is not visible:
 void Group_Node::remove_child(Node* cc) {
-  Widget_Node* c = (Widget_Node*)cc;
-  ((Fl_Group*)o)->remove(c->o);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    ((Fl_Group*)o)->remove(c->o);
+  }
   o->redraw();
 }
 
