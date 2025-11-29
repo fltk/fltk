@@ -1657,6 +1657,7 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // important after screen removal
+  bool need_init_workarea = true;
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
@@ -1669,8 +1670,12 @@ void Fl_Wayland_Screen_Driver::init_workarea()
         workarea_xywh[1] = output->y; // pixels
         workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
         workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+        need_init_workarea = false;
       }
     }
+  }
+  if (need_init_workarea) {
+    screen_xywh(workarea_xywh[0], workarea_xywh[1], workarea_xywh[2], workarea_xywh[3], 0);
   }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
 }
