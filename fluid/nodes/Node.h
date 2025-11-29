@@ -307,6 +307,7 @@ public:
   int has_function(const char*, const char*) const;
 
   unsigned short set_uid(unsigned short suggested_uid=0);
+  unsigned short ensure_unique_uid() { return set_uid(uid_); }
   unsigned short get_uid() { return uid_; }
 };
 
