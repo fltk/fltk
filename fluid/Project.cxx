@@ -73,6 +73,7 @@ void Project::update_settings_dialog() {
  \return the path ending in '/'
  */
 std::string Project::projectfile_path() const {
+  if (!proj_filename) return std::string{};
   return end_with_slash(fl_filename_absolute_str(fl_filename_path_str(proj_filename), Fluid.launch_path()));
 }
 
@@ -81,6 +82,7 @@ std::string Project::projectfile_path() const {
  \return the file name without path
  */
 std::string Project::projectfile_name() const {
+  if (!proj_filename) return std::string{};
   return fl_filename_name(proj_filename);
 }
 
@@ -103,8 +105,10 @@ std::string Project::codefile_path() const {
 std::string Project::codefile_name() const {
   std::string name = fl_filename_name_str(code_file_name);
   if (name.empty()) {
+    if (!proj_filename) return std::string{};
     return fl_filename_setext_str(fl_filename_name(proj_filename), ".cxx");
   } else if (name[0] == '.') {
+    if (!proj_filename) return std::string{};
     return fl_filename_setext_str(fl_filename_name(proj_filename), code_file_name);
   } else {
     return name;
@@ -130,8 +134,10 @@ std::string Project::headerfile_path() const {
 std::string Project::headerfile_name() const {
   std::string name = fl_filename_name_str(header_file_name);
   if (name.empty()) {
+    if (!proj_filename) return std::string{};
     return fl_filename_setext_str(fl_filename_name_str(proj_filename), ".h");
   } else if (name[0] == '.') {
+    if (!proj_filename) return std::string{};
     return fl_filename_setext_str(fl_filename_name_str(proj_filename), header_file_name);
   } else {
     return name;
@@ -158,6 +164,7 @@ std::string Project::stringsfile_path() const {
  \return the file name without path
  */
 std::string Project::stringsfile_name() const {
+  if (!proj_filename) return std::string{};
   switch (i18n.type) {
     default: return fl_filename_setext_str(fl_filename_name(proj_filename), ".txt");
     case fld::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
@@ -170,6 +177,7 @@ std::string Project::stringsfile_name() const {
  \return the file name without path or extension
  */
 std::string Project::basename() const {
+  if (!proj_filename) return std::string{};
   return fl_filename_setext_str(fl_filename_name(proj_filename), "");
 }
 
