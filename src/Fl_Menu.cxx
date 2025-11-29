@@ -1499,12 +1499,16 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       pp.menubar_button_helper = nullptr;
     }
     initial_item = 0; // stop the startup code
+    if (pp.current_menu_ix < 0 || pp.current_menu_ix >= pp.num_menus) {
+      initial_item = 0; // turn off startup code
+      continue;
+    }
     pp.menu_window[pp.current_menu_ix]->autoscroll(pp.current_item_ix);
 
   STARTUP:
     Menu_Window& cw = *pp.menu_window[pp.current_menu_ix];
     const Fl_Menu_Item* m = pp.current_item;
-    if (!m->selectable()) { // pointing at inactive item
+    if (!m || !m->selectable()) { // pointing at inactive item
       cw.set_selected(-1);
       initial_item = 0; // turn off startup code
       continue;
