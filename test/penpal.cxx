@@ -219,6 +219,7 @@ public:
   : Fl_Widget(x, y, w, h, l), CanvasInterface(this) { }
   ~CanvasWidget() override { }
   int handle(int event) override {
+    // puts(fl_eventname_str(event).c_str());
     auto ret = cv_handle(event);
     return ret ? ret : Fl_Widget::handle(event);
   }

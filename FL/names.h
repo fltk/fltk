@@ -92,6 +92,20 @@ std::map<int, const char*> fl_eventnames = {
   { Fl::Pen::BUTTON_RELEASE, "Fl::Pen::BUTTON_RELEASE" }
 };
 
+/**
+ Return the C++ symbol of an Fl_Event as a string.
+ \param[in] event index as an integer
+ \return C++ symbol of event index as a string
+ */
+inline std::string fl_eventname_str(int event) {
+  auto it = fl_eventnames.find(event);
+  if (it == fl_eventnames.end()) {
+    return "FL_EVENT_" + std::to_string(event);
+  } else {
+    return it->second;
+  }
+}
+
 
 /**
   This is an array of font names you can use to convert font numbers into names.
@@ -131,6 +145,20 @@ const char * const fl_fontnames[] =
 };
 
 /**
+  Return the C++ symbol of an Fl_Font as a string.
+  \param[in] font index as an integer
+  \return C++ symbol of font index as a string
+*/
+inline std::string fl_fontname_str(int font) {
+  if ((font < 0) || (font >= FL_ZAPF_DINGBATS)) {
+    return "FL_FONT_" + std::to_string(font);
+  } else {
+    return fl_fontnames[font];
+  }
+}
+
+
+/**
  This is an array of callback reason names you can use to convert callback reasons into names.
 
  The array gets defined inline wherever your '\#include <FL/names.h>' appears.
@@ -155,6 +183,19 @@ const char * const fl_callback_reason_names[] =
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "FL_REASON_USER", "FL_REASON_USER+1", "FL_REASON_USER+2", "FL_REASON_USER+3",
 };
+
+/**
+  Return the C++ symbol of an Fl_Callback_Reason as a string.
+  \param[in] reason as an integer
+  \return C++ symbol of reason as a string
+*/
+inline std::string fl_callback_reason_str(int reason) {
+  if ((reason < 0) || (reason >= FL_REASON_USER+3) || (fl_callback_reason_names[reason] == nullptr)) {
+    return "FL_REASON_" + std::to_string(reason);
+  } else {
+    return fl_callback_reason_names[reason];
+  }
+}
 
 /** @} */
 
