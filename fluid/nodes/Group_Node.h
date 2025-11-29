@@ -229,6 +229,8 @@ public:
   Widget_Node *_make() override {return new Tile_Node();}
   Type type() const override { return Type::Tile; }
   bool is_a(Type inType) const override { return (inType==Type::Tile) ? true : super::is_a(inType); }
+  Fl_Widget *enter_live_mode(int top=0) override;
+  void leave_live_mode() override;
   void copy_properties() override;
 };
 

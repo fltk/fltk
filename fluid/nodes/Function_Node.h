@@ -48,8 +48,8 @@ public:
   typedef Node super;
   static Function_Node prototype;
 private:
-  const char* return_type;
-  char public_, cdecl_, constructor, havewidgets;
+  const char* return_type_;
+  char public_, declare_c_, constructor, havewidgets;
 public:
   Function_Node();
   ~Function_Node();
@@ -70,6 +70,12 @@ public:
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   int has_signature(const char *, const char*) const;
+  const char *return_type() { return return_type_; }
+  void return_type(const char *t) { storestring(t, return_type_); }
+  char visibility() { return public_; }
+  void visibility(char v) { public_ = v; }
+  char declare_c() { return declare_c_; }
+  void declare_c(char v) { declare_c_ = v; }
 };
 
 // ---- Code_Node declaration
@@ -79,11 +85,11 @@ class Code_Node : public Node
 public:
   typedef Node super;
   static Code_Node prototype;
-private:
-  ExternalCodeEditor editor_;
   int cursor_position_;
   int code_input_scroll_row;
   int code_input_scroll_col;
+private:
+  ExternalCodeEditor editor_;
 public:
   Code_Node();
   Node *make(Strategy strategy) override;
@@ -125,6 +131,8 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::CodeBlock) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
+  const char *end_code() { return after; }
+  void end_code(const char *c) { storestring(c, after); }
 };
 
 // ---- Decl_Node declaration
@@ -135,7 +143,7 @@ public:
   typedef Node super;
   static Decl_Node prototype;
 protected:
-  char public_;
+  char public_; // public = 0, private = 1, protected = 2
   char static_;
 
 public:
@@ -150,6 +158,10 @@ public:
   int is_public() const override;
   Type type() const override { return Type::Decl; }
   bool is_a(Type inType) const override { return (inType==Type::Decl) ? true : super::is_a(inType); }
+  char visibility() { return public_; }
+  void visibility(char v) { public_ = v; }
+  char output_file() { return (public_&1)|((static_&1)<<1); }
+  void output_file(char f) { public_ = (f&1); static_ = ((f>>1)&1); }
 };
 
 // ---- Data_Node declaration
@@ -160,8 +172,8 @@ public:
   typedef Decl_Node super;
   static Data_Node prototype;
 private:
-  const char *filename_;
-  int text_mode_;
+  const char *filename_ { nullptr };
+  int output_format_ { 0 };
 
 public:
   Data_Node();
@@ -175,6 +187,10 @@ public:
   void read_property(fld::io::Project_Reader &f, const char *) override;
   Type type() const override { return Type::Data; }
   bool is_a(Type inType) const override { return (inType==Type::Data) ? true : super::is_a(inType); }
+  void filename(const char* fn);
+  const char* filename() { return filename_; }
+  int output_format() { return output_format_; }
+  void output_format(int fmt) { output_format_ = fmt; }
 };
 
 // ---- DeclBlock_Node declaration
@@ -184,15 +200,15 @@ class DeclBlock_Node : public Node
 public:
   typedef Node super;
   static DeclBlock_Node prototype;
-private:
   enum {
     CODE_IN_HEADER = 1,
     CODE_IN_SOURCE = 2,
     STATIC_IN_HEADER = 4,
     STATIC_IN_SOURCE = 8
   };
-  const char* after; ///< code after all children of this block
-  int write_map_;     ///< see enum above
+private:
+  const char* after { nullptr };      ///< code after all children of this block
+  int write_map_ { CODE_IN_SOURCE };  ///< see enum above
 
 public:
   DeclBlock_Node();
@@ -211,6 +227,10 @@ public:
   int is_public() const override;
   Type type() const override { return Type::DeclBlock; }
   bool is_a(Type inType) const override { return (inType==Type::DeclBlock) ? true : super::is_a(inType); }
+  const char *end_code() { return after; }
+  void end_code(const char *c) { storestring(c, after); }
+  int write_map() { return write_map_; }
+  void write_map(int v) { write_map_ = v; }
 };
 
 // ---- Comment_Node declaration
@@ -235,6 +255,10 @@ public:
   int is_public() const override { return 1; }
   Type type() const override { return Type::Comment; }
   bool is_a(Type inType) const override { return (inType==Type::Comment) ? true : super::is_a(inType); }
+  bool in_h() { return in_h_; }
+  void in_h(bool v) { in_h_ = v; }
+  bool in_c() { return in_c_; }
+  void in_c(bool v) { in_c_ = v; }
 };
 
 // ---- Class_Node declaration
@@ -268,6 +292,10 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::Class) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
+  const char* base_class_name() { return subclass_of; }
+  void base_class_name(const char* name) { storestring(name, subclass_of); }
+  char visibility() { return public_; }
+  void visibility(char v) { public_ = v; }
 
   // class prefix attribute access
   void prefix(const char* p);

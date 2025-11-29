@@ -537,6 +537,8 @@ Node::~Node() {
   if (Fluid.proj.tree.last == this) Fluid.proj.tree.last = prev;
   if (Fluid.proj.tree.first == this) Fluid.proj.tree.first = next;
   if (Fluid.proj.tree.current == this) Fluid.proj.tree.current = nullptr;
+  if (current_widget == this) current_widget = nullptr;
+  if (current_node == this) current_node = nullptr;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
   if (label_) free((void*)label_);

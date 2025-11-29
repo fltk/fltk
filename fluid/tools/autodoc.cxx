@@ -23,6 +23,7 @@
 #include "nodes/factory.h"
 #include "nodes/Widget_Node.h"
 #include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 #include "panels/widget_panel.h"
 #include "panels/function_panel.h"
 #include "panels/settings_panel.h"
@@ -401,6 +402,17 @@ void run_autodoc(const std::string &target_dir) {
   select_only(t_grp);
   Node *t_grd = add_new_widget_from_user("Fl_Grid", Strategy::AS_LAST_CHILD, false);
   Node *t_grdc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
+  Node *t_data = add_new_widget_from_user("Data", Strategy::AS_LAST_CHILD, false);
+  Node *t_comment = add_new_widget_from_user("Comment", Strategy::AS_LAST_CHILD, false);
+  t_comment->name("All work and no play make Jack a dull boy.");
+  Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
+  Node *t_decl = add_new_widget_from_user("Decl", Strategy::AS_LAST_CHILD, false);
+  t_decl->name("const char *damage = \"'tis but a scratch\";");
+  Node *t_func = add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
+  Node *t_code = add_new_widget_from_user("Code", Strategy::AS_LAST_CHILD, false);
+  t_code->name("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
+  Node *t_codeblock = add_new_widget_from_user("CodeBlock", Strategy::AFTER_CURRENT, false);
+  Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -487,64 +499,39 @@ void run_autodoc(const std::string &target_dir) {
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
 
+  // Make sure we have a widget panel
+  t_win->open();
+  t_win->open();
+
   // -- Type::Function
-  Fl_Window *adoc_function_panel = make_function_panel();
-  f_name_input->value("count_trees(const char *forest_name)");
-  f_return_type_input->value("unsigned int");
-  fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
-  adoc_function_panel->hide();
+  select_only(t_func);
+  fl_snapshot((target_dir + "function_panel.png").c_str(), func_tabs_main, tab_margin, row_blend);
 
   // -- Type::Code
-  Fl_Window *adoc_code_panel = make_code_panel();
-  code_input->buffer()->text("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
-  fl_snapshot((target_dir + "code_panel.png").c_str(), adoc_code_panel, win_margin, win_blend);
-  adoc_code_panel->hide();
+  select_only(t_code);
+  fl_snapshot((target_dir + "code_panel.png").c_str(), code_tabs_main, tab_margin, row_blend);
 
   // -- Type::CodeBlock
-  Fl_Window *adoc_codeblock_panel = make_codeblock_panel();
-  code_before_input->value("if (test())");
-  code_after_input->value("// test widgets added...");
-  fl_snapshot((target_dir + "codeblock_panel.png").c_str(), adoc_codeblock_panel, win_margin, win_blend);
-  adoc_codeblock_panel->hide();
+  select_only(t_codeblock);
+  fl_snapshot((target_dir + "codeblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
   // -- Type::Decl
-  Fl_Window *adoc_decl_panel = make_decl_panel();
-  decl_class_choice->hide();
-  decl_input->buffer()->text("const char *damage = \"'tis but a scratch\";");
-  fl_snapshot((target_dir + "decl_panel.png").c_str(), adoc_decl_panel, win_margin, win_blend);
-  adoc_decl_panel->hide();
+  select_only(t_decl);
+  fl_snapshot((target_dir + "decl_panel.png").c_str(), decl_tabs_main, tab_margin, row_blend);
 
   // -- Type::DeclBlock
-  Fl_Window *adoc_declblock_panel = make_declblock_panel();
-  declblock_before_input->value("#ifdef NDEBUG");
-  declblock_after_input->value("#endif // NDEBUG");
-  fl_snapshot((target_dir + "declblock_panel.png").c_str(), adoc_declblock_panel, win_margin, win_blend);
-  adoc_declblock_panel->hide();
+  select_only(t_declblock);
+  fl_snapshot((target_dir + "declblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
   // -- Type::Class
-  Fl_Window *adoc_class_panel = make_class_panel();
-  decl_class_choice->hide();
-  c_name_input->value("Zoo_Giraffe");
-  c_subclass_input->value("Zoo_Animal");
-  fl_snapshot((target_dir + "class_panel.png").c_str(), adoc_class_panel, win_margin, win_blend);
-  adoc_class_panel->hide();
+  select_only(t_class);
+  fl_snapshot((target_dir + "class_panel.png").c_str(), class_tabs_main, tab_margin, row_blend);
 
   // -- Type::Widget_Class is handled like Window_Node
 
   // -- Type::Comment
-  Fl_Window *adoc_comment_panel = make_comment_panel();
-  comment_input->buffer()->text("Make sure that the giraffe gets enough hay,\nbut the monkey can't reach it.");
-  fl_snapshot((target_dir + "comment_panel.png").c_str(), adoc_comment_panel, win_margin, win_blend);
-  adoc_comment_panel->hide();
-
-  // -- Type::Data
-  Fl_Window *adoc_data_panel = make_data_panel();
-  data_class_choice->hide();
-  data_input->value("emulated_ROM");
-  data_filename->value("./ROM.bin");
-  fl_snapshot((target_dir + "data_panel.png").c_str(), adoc_data_panel, win_margin, win_blend);
-  adoc_data_panel->hide();
-
+  select_only(t_comment);
+  fl_snapshot((target_dir + "comment_panel.png").c_str(), comment_tabs_comment, tab_margin, row_blend);
 
   // ---- widget dialog
   t_win->open(); // open the window
@@ -608,6 +595,11 @@ void run_autodoc(const std::string &target_dir) {
   select_only(t_grdc);
   widget_tabs->value(widget_tab_grid_child);
   fl_snapshot((target_dir + "wp_gridc_tab.png").c_str(), widget_tab_grid_child, tab_margin, row_blend);
+
+  // -- Type::Data
+  select_only(t_data);
+  fl_snapshot((target_dir + "data_panel.png").c_str(), data_tabs_data, tab_margin, row_blend);
+
 }
 
 

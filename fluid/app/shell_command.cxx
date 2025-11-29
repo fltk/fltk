@@ -79,12 +79,12 @@
 
  On macOS, we can write Apple Scripts:
 
- #!/usr/bin/env osascript
- say "@BASENAME@"
+  #!/usr/bin/env osascript
+  say "@BASENAME@"
 
- osascript <<EOD
- say "spark"
- EOD
+  osascript <<EOD
+    say "spark"
+  EOD
 
   osascript <<EOD
     tell application "Xcode"

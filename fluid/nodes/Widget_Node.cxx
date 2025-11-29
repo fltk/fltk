@@ -321,6 +321,7 @@ Fl_Window *the_panel;
 // with any actual useful values for the argument.  I also use this to
 // initialized parts of the widget that are nyi by fluid.
 
+Node* current_node { nullptr };
 Widget_Node *current_widget; // one of the selected ones
 void* const LOAD = (void *)"LOAD"; // "magic" pointer to indicate that we need to load values into the dialog
 int numselected; // number selected
@@ -1192,12 +1193,18 @@ void overlay_cb(Fl_Button*o,void *v) {
 
 void leave_live_mode_cb(Fl_Widget*, void*);
 
-void live_mode_cb(Fl_Button*o,void *) {
+void live_mode_cb(Fl_Button* o, void *) {
   /// \todo live mode should end gracefully when the application quits
   ///       or when the user closes the live widget
   static Node *live_type = nullptr;
   static Fl_Widget *live_widget = nullptr;
   static Fl_Window *live_window = nullptr;
+
+  if (!current_widget) {
+    o->value(0);
+    return;
+  }
+
   // if 'o' is 0, we must quit live mode
   if (!o) {
     o = wLiveMode;
@@ -1263,29 +1270,67 @@ void load_panel() {
   numselected = 0;
   current_widget = nullptr;
   if (Fluid.proj.tree.current) {
-    if (Fluid.proj.tree.current->is_widget())
-      current_widget=(Widget_Node*)Fluid.proj.tree.current;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->is_widget() && o->selected) {
-        numselected++;
-        if (!current_widget) current_widget = (Widget_Node*)o;
+    if (Fluid.proj.tree.current->is_a(Type::Data)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(data_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Comment)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(comment_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Class)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(class_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::DeclBlock)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(declblock_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Decl)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(decl_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::CodeBlock)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(codeblock_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Code)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(code_tabs);
+      numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Function)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(func_tabs);
+      numselected = 1;
+    } else {
+      current_node = nullptr;
+      if (Fluid.proj.tree.current->is_widget())
+        current_widget=(Widget_Node*)Fluid.proj.tree.current;
+      for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+        if (o->is_widget() && o->selected) {
+          numselected++;
+          if (!current_widget) current_widget = (Widget_Node*)o;
+        }
       }
     }
   }
-  if (current_widget && current_widget->is_a(Type::Grid)) {
-    if (widget_tab_grid->parent()!=widget_tabs)
-      widget_tabs->add(widget_tab_grid);
-  } else {
-    if (widget_tab_grid->parent()==widget_tabs) {
-      widget_tabs_repo->add(widget_tab_grid);
+  if (current_widget) {
+    tabs_wizard->value(widget_tabs);
+    if (current_widget && current_widget->is_a(Type::Grid)) {
+      if (widget_tab_grid->parent()!=widget_tabs)
+        widget_tabs->add(widget_tab_grid);
+    } else {
+      if (widget_tab_grid->parent()==widget_tabs) {
+        widget_tabs_repo->add(widget_tab_grid);
+      }
     }
-  }
-  if (current_widget && current_widget->parent && current_widget->parent->is_a(Type::Grid)) {
-    if (widget_tab_grid_child->parent()!=widget_tabs)
-      widget_tabs->add(widget_tab_grid_child);
-  } else {
-    if (widget_tab_grid_child->parent()==widget_tabs) {
-      widget_tabs_repo->add(widget_tab_grid_child);
+    if (current_widget && current_widget->parent && current_widget->parent->is_a(Type::Grid)) {
+      if (widget_tab_grid_child->parent()!=widget_tabs)
+        widget_tabs->add(widget_tab_grid_child);
+    } else {
+      if (widget_tab_grid_child->parent()==widget_tabs) {
+        widget_tabs_repo->add(widget_tab_grid_child);
+      }
     }
   }
   if (numselected)
@@ -1297,7 +1342,7 @@ void load_panel() {
 extern Fl_Window *widgetbin_panel;
 
 // This is called when user double-clicks an item, open or update the panel:
-void Widget_Node::open() {
+void open_panel() {
   bool adjust_position = false;
   if (!the_panel) {
     the_panel = make_widget_panel();
@@ -1321,6 +1366,11 @@ void Widget_Node::open() {
       }
     }
   }
+}
+
+// This is called when user double-clicks an item, open or update the panel:
+void Widget_Node::open() {
+  open_panel();
 }
 
 extern void redraw_overlays();

@@ -30,6 +30,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Tile.H>
 #include <FL/Fl_Table.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/fl_message.H>
@@ -222,8 +223,10 @@ void Group_Node::add_child(Node* cc, Node* before) {
 // This is called when o is deleted.  If it is in the tab group make
 // sure it is not visible:
 void Group_Node::remove_child(Node* cc) {
-  Widget_Node* c = (Widget_Node*)cc;
-  ((Fl_Group*)o)->remove(c->o);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    ((Fl_Group*)o)->remove(c->o);
+  }
   o->redraw();
 }
 
@@ -764,10 +767,12 @@ void Tabs_Node::add_child(Node* c, Node* before) {
 }
 
 void Tabs_Node::remove_child(Node* cc) {
-  Widget_Node* c = (Widget_Node*)cc;
-  Fl_Tabs *t = (Fl_Tabs*)o;
-  if (t->value() == c->o) t->value(nullptr);
-  Group_Node::remove_child(c);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    Fl_Tabs *t = (Fl_Tabs*)o;
+    if (t->value() == c->o) t->value(nullptr);
+  }
+  Group_Node::remove_child(cc);
 }
 
 Fl_Widget *Tabs_Node::enter_live_mode(int) {
@@ -815,6 +820,15 @@ void Scroll_Node::copy_properties() {
 Tile_Node Tile_Node::prototype;      // the "factory"
 
 const char tile_type_name[] = "Fl_Tile";
+
+// live mode support
+Fl_Widget* Tile_Node::enter_live_mode(int) {
+  Fl_Group *grp = new Fl_Tile(o->x(), o->y(), o->w(), o->h());
+  return propagate_live_mode(grp);
+}
+
+void Tile_Node::leave_live_mode() {
+}
 
 void Tile_Node::copy_properties() {
   Group_Node::copy_properties();

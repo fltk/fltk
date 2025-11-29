@@ -29,7 +29,8 @@ class Widget_Node;
 class Image_Asset;
 
 extern void* const LOAD;
-extern Widget_Node *current_widget; // one of the selected ones
+extern Node* current_node; // one of the selected ones
+extern Widget_Node* current_widget; // one of the selected ones
 
 extern const char* subclassname(Node* l);
 extern int is_name(const char *c);

@@ -268,6 +268,21 @@ char *Fl_Text_Buffer::text() const {
 
 
 /*
+ This function copies verbose whatever is in front and after the gap into a
+ single buffer.
+ */
+std::string Fl_Text_Buffer::text_str() const {
+  std::string t;
+  if (mLength) {
+    t.reserve(mLength);
+    t.insert(0, mBuf, mGapStart);
+    t.insert(mGapStart, mBuf+mGapEnd, mLength - mGapStart);
+  }
+  return t;
+}
+
+
+/*
  Set the text buffer to a new string.
  */
 void Fl_Text_Buffer::text(const char *t)

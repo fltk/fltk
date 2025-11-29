@@ -35,6 +35,8 @@
 
 #include <zlib.h>
 
+extern void open_panel();
+
 using namespace fld;
 using namespace fld::io;
 using namespace fld::proj;
@@ -191,9 +193,9 @@ Function_Node Function_Node::prototype;
  */
 Function_Node::Function_Node() :
   Node(),
-  return_type(nullptr),
+  return_type_(nullptr),
   public_(0),
-  cdecl_(0),
+  declare_c_(0),
   constructor(0),
   havewidgets(0)
 { }
@@ -202,7 +204,7 @@ Function_Node::Function_Node() :
  Destructor.
  */
 Function_Node::~Function_Node() {
-  if (return_type) free((void*)return_type);
+  if (return_type_) free((void*)return_type_);
 }
 
 /**
@@ -221,11 +223,11 @@ Node *Function_Node::make(Strategy strategy) {
   }
   Function_Node *o = new Function_Node();
   o->name("make_window()");
-  o->return_type = nullptr;
+  o->return_type_ = nullptr;
   o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
-  o->cdecl_ = 0;
+  o->declare_c_ = 0;
   return o;
 }
 
@@ -241,10 +243,10 @@ void Function_Node::write_properties(fld::io::Project_Writer &f) {
     case 0: f.write_string("private"); break;
     case 2: f.write_string("protected"); break;
   }
-  if (cdecl_) f.write_string("C");
-  if (return_type) {
+  if (declare_c_) f.write_string("C");
+  if (return_type_) {
     f.write_string("return_type");
-    f.write_word(return_type);
+    f.write_word(return_type_);
   }
 }
 
@@ -258,9 +260,9 @@ void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
   } else if (!strcmp(c,"C")) {
-    cdecl_ = 1;
+    declare_c_ = 1;
   } else if (!strcmp(c,"return_type")) {
-    storestring(f.read_word(),return_type);
+    storestring(f.read_word(),return_type_);
   } else {
     Node::read_property(f, c);
   }
@@ -270,90 +272,7 @@ void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the function_panel dialog box to edit this function.
  */
 void Function_Node::open() {
-  // fill dialog box
-  if (!function_panel) make_function_panel();
-  f_return_type_input->value(return_type);
-  f_name_input->value(name());
-  if (is_in_class()) {
-    f_public_member_choice->value(public_);
-    f_public_member_choice->show();
-    f_public_choice->hide();
-    f_c_button->hide();
-  } else {
-    f_public_choice->value(public_);
-    f_public_choice->show();
-    f_public_member_choice->hide();
-    f_c_button->show();
-  }
-  f_c_button->value(cdecl_);
-  const char *c = comment();
-  f_comment_input->buffer()->text(c?c:"");
-  function_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    // - message loop until OK or cancel is pressed
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == f_panel_cancel) goto BREAK2;
-      else if (w == f_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // - check syntax
-    const char *c = f_name_input->value();
-    while (isspace(*c)) c++;
-    message = c_check(c);
-    if (!message) {
-      const char *d = c;
-      for (; *d != '('; d++) if (isspace(*d) || !*d) break;
-      if (*c && *d != '(')
-        message = "must be 'name(arguments)'";
-    }
-    if (!message) {
-      c = f_return_type_input->value();
-      message = c_check(c);
-    }
-    // - alert user
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // - copy dialog data to target variables
-    int mod = 0;
-    name(f_name_input->value());
-    storestring(f_return_type_input->value(), return_type);
-    if (is_in_class()) {
-      if (public_ != f_public_member_choice->value()) {
-        mod = 1;
-        public_ = f_public_member_choice->value();
-        redraw_browser();
-      }
-    } else {
-      if (public_ != f_public_choice->value()) {
-        mod = 1;
-        public_ = f_public_choice->value();
-        redraw_browser();
-      }
-    }
-    if (cdecl_ != f_c_button->value()) {
-      mod = 1;
-      cdecl_ = f_c_button->value();
-    }
-    c = f_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    if (mod) Fluid.proj.set_modflag(1);
-    break;
-  }
-BREAK2:
-  function_panel->hide();
+  open_panel();
 }
 
 /**
@@ -435,7 +354,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
     if (havechildren)
       f.write_c("int main(int argc, char **argv) {\n");
   } else {
-    const char* rtype = return_type;
+    const char* rtype = return_type_;
     const char* star = "";
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
@@ -503,7 +422,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
       if (havechildren)
         write_comment_c(f);
       if (public_==1) {
-        if (cdecl_)
+        if (declare_c_)
           f.write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
         else
           f.write_h("%s%s %s;\n", rtype, star, name());
@@ -547,7 +466,7 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
       f.write_c("%s%s->show(argc, argv);\n", f.indent(1), var);
     if (havechildren)
       f.write_c("%sreturn Fl::run();\n", f.indent(1));
-  } else if (havewidgets && !constructor && !return_type) {
+  } else if (havewidgets && !constructor && !return_type_) {
     f.write_c("%sreturn %s;\n", f.indent(1), var);
   }
   if (havechildren)
@@ -562,9 +481,9 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
  \return 1 if they match, 0 if not
  */
 int Function_Node::has_signature(const char *rtype, const char *sig) const {
-  if (rtype && !return_type) return 0;
+  if (rtype && !return_type_) return 0;
   if (!name()) return 0;
-  if ( (rtype==nullptr || strcmp(return_type, rtype)==0)
+  if ( (rtype==nullptr || strcmp(return_type_, rtype)==0)
       && fl_filename_match(name(), sig)) {
     return 1;
   }
@@ -632,38 +551,7 @@ void Code_Node::open() {
     if ( editor_.open_editor(cmd, code) == 0 )
       return;   // return if editor opened ok, fall thru to built-in if not
   }
-  // Use built-in code editor..
-  if (!code_panel) make_code_panel();
-  const char *text = name();
-  code_input->buffer()->text( text ? text : "" );
-  code_input->insert_position(cursor_position_);
-  code_input->scroll(code_input_scroll_row, code_input_scroll_col);
-  code_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == code_panel_cancel) goto BREAK2;
-      else if (w == code_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    char*c = code_input->buffer()->text();
-    message = c_check(c);
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    name(c);
-    free(c);
-    break;
-  }
-  cursor_position_ = code_input->insert_position();
-  code_input_scroll_row = code_input->scroll_row();
-  code_input_scroll_col = code_input->scroll_col();
-BREAK2:
-  code_panel->hide();
+  open_panel();
 }
 
 /**
@@ -817,38 +705,7 @@ void CodeBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the codeblock_panel.
  */
 void CodeBlock_Node::open() {
-  if (!codeblock_panel) make_codeblock_panel();
-  code_before_input->value(name());
-  code_after_input->value(after);
-  codeblock_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    // event loop
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == codeblock_panel_cancel) goto BREAK2;
-      else if (w == codeblock_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // check for syntax errors
-    message = c_check(code_before_input->value());
-    if (!message) {
-      message = c_check(code_after_input->value());
-    }
-    // alert user
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // write to variables
-    name(code_before_input->value());
-    storestring(code_after_input->value(), after);
-    break;
-  }
-BREAK2:
-  codeblock_panel->hide();
+  open_panel();
 }
 
 /**
@@ -969,70 +826,7 @@ void Decl_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the decl_panel to edit this node.
  */
 void Decl_Node::open() {
-  if (!decl_panel) make_decl_panel();
-  decl_input->buffer()->text(name());
-  if (is_in_class()) {
-    decl_class_choice->value(public_);
-    decl_class_choice->show();
-    decl_choice->hide();
-  } else {
-    decl_choice->value((public_&1)|((static_&1)<<1));
-    decl_choice->show();
-    decl_class_choice->hide();
-  }
-  const char *c = comment();
-  decl_comment_input->buffer()->text(c?c:"");
-  decl_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    // event loop
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == decl_panel_cancel) goto BREAK2;
-      else if (w == decl_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // check values
-    const char*c = decl_input->buffer()->text();
-    while (isspace(*c)) c++;
-    message = c_check(c&&c[0]=='#' ? c+1 : c);
-    // alert user
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // copy vlaues
-    name(c);
-    if (is_in_class()) {
-      if (public_!=decl_class_choice->value()) {
-        Fluid.proj.set_modflag(1);
-        public_ = decl_class_choice->value();
-      }
-    } else {
-      if (public_!=(decl_choice->value()&1)) {
-        Fluid.proj.set_modflag(1);
-        public_ = (decl_choice->value()&1);
-      }
-      if (static_!=((decl_choice->value()>>1)&1)) {
-        Fluid.proj.set_modflag(1);
-        static_ = ((decl_choice->value()>>1)&1);
-      }
-    }
-    c = decl_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    break;
-  }
-BREAK2:
-  decl_panel->hide();
+  open_panel();
 }
 
 /**
@@ -1120,9 +914,7 @@ Data_Node Data_Node::prototype;
  Constructor.
  */
 Data_Node::Data_Node() :
-  Decl_Node(),
-  filename_(nullptr),
-  text_mode_(0)
+  Decl_Node()
 { }
 
 /**
@@ -1151,7 +943,7 @@ Node *Data_Node::make(Strategy strategy) {
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = nullptr;
-  o->text_mode_ = 0;
+  o->output_format_ = 0;
   o->name("myInlineData");
   o->add(anchor, strategy);
   o->factory = this;
@@ -1169,11 +961,12 @@ void Data_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("filename");
     f.write_word(filename_);
   }
-  if (text_mode_ == 1) {
-    f.write_string("textmode");
-  }
-  if (text_mode_ == 2) {
-    f.write_string("compressed");
+  switch (output_format_) {
+    case 1: f.write_string("textmode"); break;
+    case 2: f.write_string("compressed"); break;
+    case 3: f.write_string("std_binary"); break;
+    case 4: f.write_string("std_textmode"); break;
+    case 5: f.write_string("std_compressed"); break;
   }
 }
 
@@ -1184,9 +977,15 @@ void Data_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"filename")) {
     storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
-    text_mode_ = 1;
+    output_format_ = 1;
   } else if (!strcmp(c,"compressed")) {
-    text_mode_ = 2;
+    output_format_ = 2;
+  } else if (!strcmp(c,"std_binary")) {
+    output_format_ = 3;
+  } else if (!strcmp(c,"std_textmode")) {
+    output_format_ = 4;
+  } else if (!strcmp(c,"std_compressed")) {
+    output_format_ = 5;
   } else {
     Decl_Node::read_property(f, c);
   }
@@ -1196,110 +995,7 @@ void Data_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the data_panel to edit this node.
  */
 void Data_Node::open() {
-  if (!data_panel) make_data_panel();
-  data_input->value(name());
-  if (is_in_class()) {
-    data_class_choice->value(public_);
-    data_class_choice->show();
-    data_choice->hide();
-  } else {
-    data_choice->value((public_&1)|((static_&1)<<1));
-    data_choice->show();
-    data_class_choice->hide();
-  }
-  data_mode->value(text_mode_);
-  data_filename->value(filename_?filename_:"");
-  const char *c = comment();
-  data_comment_input->buffer()->text(c?c:"");
-  data_panel->show();
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == data_panel_cancel) goto BREAK2;
-      else if (w == data_panel_ok) break;
-      else if (w == data_filebrowser) {
-        Fluid.proj.enter_project_dir();
-        const char *fn = fl_file_chooser("Load Inline Data", nullptr, data_filename->value(), 1);
-        Fluid.proj.leave_project_dir();
-        if (fn) {
-          if (strcmp(fn, data_filename->value()))
-            Fluid.proj.set_modflag(1);
-          data_filename->value(fn);
-        }
-      }
-      else if (!w) Fl::wait();
-    }
-    // store the variable name:
-    const char*c = data_input->value();
-    char *s = fl_strdup(c), *p = s, *q, *n;
-    for (;;++p) { // remove leading spaces
-      if (!isspace((unsigned char)(*p))) break;
-    }
-    n = p;
-    if ( (!isalpha((unsigned char)(*p))) && ((*p)!='_') && ((*p)!=':') ) goto OOPS;
-    ++p;
-    for (;;++p) {
-      if ( (!isalnum((unsigned char)(*p))) && ((*p)!='_') && ((*p)!=':') ) break;
-    }
-    q = p;
-    for (;;++q) {
-      if (!*q) break;
-      if (!isspace((unsigned char)(*q))) goto OOPS;
-    }
-    *p = 0; // remove trailing spaces
-    if (n==q) {
-    OOPS:
-      int v = fl_choice("%s",
-                        "Continue Editing", "Ignore Error", nullptr,
-                        "Variable name must be a C identifier");
-      if (v==0) { free(s); continue; }    // Continue Editing
-      //if (v==1) { }                     // Ignore Error and close dialog
-    }
-    Fluid.proj.undo.checkpoint();
-    name(n);
-    free(s);
-    // store flags
-    if (is_in_class()) {
-      if (public_!=data_class_choice->value()) {
-        Fluid.proj.set_modflag(1);
-        public_ = data_class_choice->value();
-      }
-    } else {
-      if (public_!=(data_choice->value()&1)) {
-        Fluid.proj.set_modflag(1);
-        public_ = (data_choice->value()&1);
-      }
-      if (static_!=((data_choice->value()>>1)&1)) {
-        Fluid.proj.set_modflag(1);
-        static_ = ((data_choice->value()>>1)&1);
-      }
-    }
-    text_mode_ = data_mode->value();
-    if (text_mode_ < 0) text_mode_ = 0;
-    if (text_mode_ > 2) text_mode_ = 2;
-    // store the filename
-    c = data_filename->value();
-    if (filename_ && strcmp(filename_, data_filename->value()))
-      Fluid.proj.set_modflag(1);
-    else if (!filename_ && *c)
-      Fluid.proj.set_modflag(1);
-    if (filename_) { free((void*)filename_); filename_ = nullptr; }
-    if (c && *c) filename_ = fl_strdup(c);
-    // store the comment
-    c = data_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    Fluid.proj.set_modflag(1);
-    break;
-  }
-BREAK2:
-  data_panel->hide();
+  open_panel();
 }
 
 /**
@@ -1327,7 +1023,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       if (nData) {
         data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* use default */ }
-        if (text_mode_ == 2) {
+        if ((output_format_ == 2) || (output_format_ == 5)) {
           uncompressedDataSize = nData;
           uLong nzData = compressBound(nData);
           Bytef *zdata = (Bytef*)::malloc(nzData);
@@ -1344,27 +1040,47 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
   }
   if (is_in_class()) {
     f.write_public(public_);
-    if (text_mode_ == 1) {
-      f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
+    if ((output_format_ == 1) || (output_format_ == 4)) {
       f.write_c("\n");
       write_comment_c(f);
-      f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      if (output_format_ == 1) {
+        f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
+        f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      } else {
+        f.write_h_once("#include <string>");
+        f.write_h("%sstatic const std::string %s;\n", f.indent(1), c);
+        f.write_c("const std::string %s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      }
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cstring(data, nData);
-    } else if (text_mode_ == 2) {
+    } else if ((output_format_ == 2) || (output_format_ == 5)) {
       f.write_h("%sstatic int %s_size;\n", f.indent(1), c);
-      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
       write_comment_c(f);
       f.write_c("int %s::%s_size = %d;\n", class_name(1), c, uncompressedDataSize);
-      f.write_c("unsigned char %s::%s[%d] = /* data compressed and inlined from %s */\n", class_name(1), c, nData, fn);
+      if (output_format_ == 2) {
+        f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+        f.write_c("unsigned char %s::%s[%d] = /* data compressed and inlined from %s */\n", class_name(1), c, nData, fn);
+      } else {
+        f.write_h_once("#include <stdint.h>");
+        f.write_h_once("#include <vector>");
+        f.write_h("%sstatic std::vector<uint8_t> %s;\n", f.indent(1), c);
+        f.write_c("std::vector<uint8_t> %s::%s = /* data compressed and inlined from %s */\n", class_name(1), c, fn);
+      }
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cdata(data, nData);
     } else {
-      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
       f.write_c("\n");
       write_comment_c(f);
-      f.write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
+      if (output_format_ == 0) {
+        f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+        f.write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
+      } else {
+        f.write_h_once("#include <stdint.h>");
+        f.write_h_once("#include <vector>");
+        f.write_h("%sstatic std::vector<uint8_t> %s;\n", f.indent(1), c);
+        f.write_c("std::vector<uint8_t> %s::%s = /* data inlined from %s */\n", class_name(1), c, fn);
+      }
       if (message) f.write_c("#error %s %s\n", message, fn);
       f.write_cdata(data, nData);
     }
@@ -1373,27 +1089,47 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        if (text_mode_ == 1) {
-          f.write_h("extern const char *%s;\n", c);
+        if ((output_format_ == 1) || (output_format_ == 4)) {
           f.write_c("\n");
           write_comment_c(f);
-          f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+          if (output_format_ == 1) {
+            f.write_h("extern const char *%s;\n", c);
+            f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+          } else {
+            f.write_h_once("#include <string>");
+            f.write_h("extern const std::string %s;\n", c);
+            f.write_c("const std::string %s = /* text inlined from %s */\n", c, fn);
+          }
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cstring(data, nData);
-        } else if (text_mode_ == 2) {
+        } else if ((output_format_ == 2) || (output_format_ == 5)) {
           f.write_h("extern int %s_size;\n", c);
-          f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
           write_comment_c(f);
           f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
-          f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+          if (output_format_ == 2) {
+            f.write_h("extern unsigned char %s[%d];\n", c, nData);
+            f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+          } else {
+            f.write_h_once("#include <stdint.h>");
+            f.write_h_once("#include <vector>");
+            f.write_h("extern std::vector<uint8_t> %s;\n", c);
+            f.write_c("std::vector<uint8_t> %s = /* data compressed and inlined from %s */\n", c, fn);
+          }
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cdata(data, nData);
         } else {
-          f.write_h("extern unsigned char %s[%d];\n", c, nData);
           f.write_c("\n");
           write_comment_c(f);
-          f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+          if (output_format_ == 0) {
+            f.write_h("extern unsigned char %s[%d];\n", c, nData);
+            f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+          } else {
+            f.write_h_once("#include <stdint.h>");
+            f.write_h_once("#include <vector>");
+            f.write_h("extern std::vector<uint8_t> %s;\n", c);
+            f.write_c("std::vector<uint8_t> %s = /* data inlined from %s */\n", c, fn);
+          }
           if (message) f.write_c("#error %s %s\n", message, fn);
           f.write_cdata(data, nData);
         }
@@ -1401,7 +1137,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       } else {
         write_comment_h(f);
         f.write_h("#error Unsupported declaration loading inline data %s\n", fn);
-        if (text_mode_ == 1)
+        if (output_format_ == 1)
           f.write_h("const char *%s = \"abc...\";\n", c);
         else
           f.write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
@@ -1409,20 +1145,41 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
     } else {
       f.write_c("\n");
       write_comment_c(f);
-      if (static_)
-        f.write_c("static ");
-      if (text_mode_ == 1) {
-        f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+      if ((output_format_ == 1) || (output_format_ == 4)) {
+        if (output_format_ == 1) {
+          if (static_) f.write_c("static ");
+          f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+        } else {
+          f.write_c_once("#include <string>");
+          if (static_) f.write_c("static ");
+          f.write_c("const std::string %s = /* text inlined from %s */\n", c, fn);
+        }
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cstring(data, nData);
-      } else if (text_mode_ == 2) {
-        f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+      } else if ((output_format_ == 2) || (output_format_ == 5)) {
         if (static_) f.write_c("static ");
-        f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+        f.write_c("int %s_size = %d;\n", c, uncompressedDataSize);
+        if (output_format_ == 2) {
+          if (static_) f.write_c("static ");
+          f.write_c("unsigned char %s[%d] = /* data compressed and inlined from %s */\n", c, nData, fn);
+        } else {
+          f.write_c_once("#include <stdint.h>");
+          f.write_c_once("#include <vector>");
+          if (static_) f.write_c("static ");
+          f.write_c("std::vector<uint8_t> %s = /* data compressed and inlined from %s */\n", c, fn);
+        }
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cdata(data, nData);
       } else {
-        f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+        if (output_format_ == 0) {
+          if (static_) f.write_c("static ");
+          f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+        } else {
+          f.write_c_once("#include <stdint.h>");
+          f.write_c_once("#include <vector>");
+          if (static_) f.write_c("static ");
+          f.write_c("std::vector<uint8_t> %s = /* data inlined from %s */\n", c, fn);
+        }
         if (message) f.write_c("#error %s %s\n", message, fn);
         f.write_cdata(data, nData);
       }
@@ -1440,6 +1197,11 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
   if (data) free(data);
 }
 
+void Data_Node::filename(const char* fn) {
+  storestring(fn, filename_);
+}
+
+
 // ---- DeclBlock_Node declaration
 
 /** \class DeclBlock_Node
@@ -1456,10 +1218,8 @@ DeclBlock_Node DeclBlock_Node::prototype;
 /**
  Constructor.
  */
-DeclBlock_Node::DeclBlock_Node() :
-  Node(),
-  after(nullptr),
-  write_map_(CODE_IN_SOURCE)
+DeclBlock_Node::DeclBlock_Node()
+: Node()
 { }
 
 /**
@@ -1536,101 +1296,7 @@ void DeclBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the declblock_panel to edit this node.
  */
 void DeclBlock_Node::open() {
-  // build dialog box
-  if (!declblock_panel) make_declblock_panel();
-  // preset all values
-  declblock_before_input->value(name());
-  declblock_after_input->value(after);
-  declblock_static_header->value(write_map_ & STATIC_IN_HEADER);
-  declblock_static_source->value(write_map_ & STATIC_IN_SOURCE);
-  declblock_code_header->value(write_map_ & CODE_IN_HEADER);
-  declblock_code_source->value(write_map_ & CODE_IN_SOURCE);
-  const char *c = comment();
-  declblock_comment_input->buffer()->text(c?c:"");
-  // show modal dialog and loop until satisfied
-  declblock_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == declblock_panel_cancel) goto BREAK2;
-      else if (w == declblock_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // verify user input
-    const char* a = declblock_before_input->value();
-    while (isspace(*a)) a++;
-    const char* b = declblock_after_input->value();
-    while (isspace(*b)) b++;
-    message = c_check(a&&a[0]=='#' ? a+1 : a);
-    if (!message)
-      message = c_check(b&&b[0]=='#' ? b+1 : b);
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // store user choices in data structure
-    name(a);
-    storestring(b, after);
-    if (write_map_ & STATIC_IN_HEADER) {
-      if (declblock_static_header->value()==0) {
-        write_map_ &= ~STATIC_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_static_header->value()) {
-        write_map_ |= STATIC_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    if (write_map_ & STATIC_IN_SOURCE) {
-      if (declblock_static_source->value()==0) {
-        write_map_ &= ~STATIC_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_static_source->value()) {
-        write_map_ |= STATIC_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    if (write_map_ & CODE_IN_HEADER) {
-      if (declblock_code_header->value()==0) {
-        write_map_ &= ~CODE_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_code_header->value()) {
-        write_map_ |= CODE_IN_HEADER;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    if (write_map_ & CODE_IN_SOURCE) {
-      if (declblock_code_source->value()==0) {
-        write_map_ &= ~CODE_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    } else {
-      if (declblock_code_source->value()) {
-        write_map_ |= CODE_IN_SOURCE;
-        Fluid.proj.set_modflag(1);
-      }
-    }
-    c = declblock_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment())) { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment()) { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    break;
-  }
-BREAK2:
-  declblock_panel->hide();
+  open_panel();
 }
 
 /**
@@ -1767,7 +1433,7 @@ void Comment_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  add their own presets which are stored per user in a separate
  preferences database.
  */
-static void load_comments_preset(Fl_Preferences &menu) {
+void load_comments_preset(Fl_Preferences &menu) {
   static const char * const predefined_comment[] = {
     "GNU Public License v3/GPL Header",  "GNU Public License v3/GPL Footer",
     "GNU Public License v3/LGPL Header", "GNU Public License v3/LGPL Footer",
@@ -1787,119 +1453,7 @@ static void load_comments_preset(Fl_Preferences &menu) {
  Open the comment_panel to edit this node.
  */
 void Comment_Node::open() {
-  if (!comment_panel) make_comment_panel();
-  const char *text = name();
-  {
-    int i=0, n=0, version = 0;
-    Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
-    comment_predefined->clear();
-    comment_predefined->add("_Edit/Add current comment...");
-    comment_predefined->add("_Edit/Remove last selection...");
-    menu.get("version", version, -1);
-    if (version < 10400) load_comments_preset(menu);
-    menu.get("n", n, 0);
-    for (i=0;i<n;i++) {
-      char *text;
-      menu.get(Fl_Preferences::Name(i), text, "");
-      comment_predefined->add(text);
-      free(text);
-    }
-  }
-  comment_input->buffer()->text( text ? text : "" );
-  comment_in_source->value(in_c_);
-  comment_in_header->value(in_h_);
-  comment_panel->show();
-  char itempath[FL_PATH_MAX]; itempath[0] = 0;
-  int last_selected_item = 0;
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == comment_panel_cancel) goto BREAK2;
-      else if (w == comment_panel_ok) break;
-      else if (w == comment_predefined) {
-        if (comment_predefined->value()==1) {
-          // add the current comment to the database
-          const char *xname = fl_input(
-                                       "Please enter a name to reference the current\ncomment in your database.\n\n"
-                                       "Use forward slashes '/' to create submenus.",
-                                       "My Comment");
-          if (xname) {
-            char *name = fl_strdup(xname);
-            for (char*s=name;*s;s++) if (*s==':') *s = ';';
-            int n;
-            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
-            db.set(name, comment_input->buffer()->text());
-            Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
-            menu.get("n", n, 0);
-            menu.set(Fl_Preferences::Name(n), name);
-            menu.set("n", ++n);
-            comment_predefined->add(name);
-            free(name);
-          }
-        } else if (comment_predefined->value()==2) {
-          // remove the last selected comment from the database
-          if (itempath[0]==0 || last_selected_item==0) {
-            fl_message("Please select an entry from this menu first.");
-          } else if (fl_choice("Are you sure that you want to delete the entry\n"
-                               "\"%s\"\nfrom the database?", "Cancel", "Delete",
-                               nullptr, itempath)) {
-            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
-            db.deleteEntry(itempath);
-            comment_predefined->remove(last_selected_item);
-            Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
-            int i, n;
-            for (i=4, n=0; i<comment_predefined->size(); i++) {
-              const Fl_Menu_Item *mi = comment_predefined->menu()+i;
-              if (comment_predefined->item_pathname(itempath, 255, mi)==0) {
-                if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
-                if (itempath[0]) menu.set(Fl_Preferences::Name(n++), itempath);
-              }
-            }
-            menu.set("n", n);
-          }
-        } else {
-          // load the selected comment from the database
-          if (comment_predefined->item_pathname(itempath, 255)==0) {
-            if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
-            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
-            char *text;
-            db.get(itempath, text, "(no text found in data base)");
-            comment_input->buffer()->text(text);
-            free(text);
-            last_selected_item = comment_predefined->value();
-          }
-        }
-      }
-      else if (w == comment_load) {
-        // load a comment from disk
-        fl_file_chooser_ok_label("Use File");
-        const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
-        fl_file_chooser_ok_label(nullptr);
-        if (fname) {
-          if (comment_input->buffer()->loadfile(fname)) {
-            fl_alert("Error loading file\n%s", fname);
-          }
-        }
-      }
-      else if (!w) Fl::wait();
-    }
-    char*c = comment_input->buffer()->text();
-    name(c);
-    free(c);
-    int mod = 0;
-    if (in_c_ != comment_in_source->value()) {
-      in_c_ = comment_in_source->value();
-      mod = 1;
-    }
-    if (in_h_ != comment_in_header->value()) {
-      in_h_ = comment_in_header->value();
-      mod = 1;
-    }
-    if (mod) Fluid.proj.set_modflag(1);
-    break;
-  }
-BREAK2:
-  comment_panel->hide();
+  open_panel();
 }
 
 /**
@@ -2049,75 +1603,7 @@ void Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the class_panel to edit the class name and superclass name.
  */
 void Class_Node::open() {
-  if (!class_panel) make_class_panel();
-  char fullname[FL_PATH_MAX]="";
-  if (prefix() && strlen(prefix()))
-    sprintf(fullname,"%s %s",prefix(),name());
-  else
-    strcpy(fullname, name());
-  c_name_input->value(fullname);
-  c_subclass_input->value(subclass_of);
-  c_public_button->value(public_);
-  const char *c = comment();
-  c_comment_input->buffer()->text(c?c:"");
-  class_panel->show();
-  const char* message = nullptr;
-
-  char *na=nullptr,*pr=nullptr,*p=nullptr; // name and prefix substrings
-
-  for (;;) { // repeat as long as there are errors
-    // we don;t give the option to ignore this error here because code depends
-    // on this being a C++ identifier
-    if (message) fl_alert("%s", message);
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == c_panel_cancel) goto BREAK2;
-      else if (w == c_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    const char*c = c_name_input->value();
-    char *s = fl_strdup(c);
-    size_t len = strlen(s);
-    if (!*s) goto OOPS;
-    p = (char*) (s+len-1);
-    while (p>=s && isspace(*p)) *(p--)='\0';
-    if (p<s) goto OOPS;
-    while (p>=s && is_id(*p)) p--;
-    if ( (p<s && !is_id(*(p+1))) || !*(p+1) ) {
-    OOPS: message = "class name must be C++ identifier";
-      free((void*)s);
-      continue;
-    }
-    na=p+1; // now we have the name
-    if(p>s) *p--='\0';
-    while (p>=s && isspace(*p)) *(p--)='\0';
-    while (p>=s && is_id(*p))   p--;
-    if (p<s)                    p++;
-    if (is_id(*p) && p<na)      pr=p; // prefix detected
-    c = c_subclass_input->value();
-    message = c_check(c);
-    if (message) { free((void*)s);continue;}
-    name(na);
-    prefix(pr);
-    free((void*)s);
-    storestring(c, subclass_of);
-    if (public_ != c_public_button->value()) {
-      public_ = c_public_button->value();
-      Fluid.proj.set_modflag(1);
-    }
-    c = c_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    break;
-  }
-BREAK2:
-  class_panel->hide();
+  open_panel();
 }
 
 /**
