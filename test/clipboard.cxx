@@ -59,7 +59,7 @@ public:
     : Fl_Box(FL_FLAT_BOX, x, y, w, h, 0) {
     align(FL_ALIGN_CENTER | FL_ALIGN_CLIP);
   }
-  void draw() FL_OVERRIDE {
+  void draw() override {
     draw_box();
     Fl_Image *img = image();
     if (img) { // draw the chess pattern below the box centered image
@@ -104,7 +104,7 @@ public:
     flex->layout();
   }
 
-  int handle(int event) FL_OVERRIDE {
+  int handle(int event) override {
     if (event != FL_PASTE) {
       auto val = value();
       int ret = Fl_Tabs::handle(event);
@@ -124,7 +124,7 @@ public:
 
 #if defined(_WIN32) && defined(DEBUG_CLIPBOARD_DATA)
 
-      OpenClipboard(NULL); //
+      OpenClipboard(nullptr); //
       char *p = title + strlen(title);
       int format = EnumClipboardFormats(0);
       if (format && format < CF_MAX) {
@@ -168,10 +168,10 @@ public:
   }
 };
 
-clipboard_viewer *tabs;
-
-// clipboard viewer callback
-void cb(Fl_Widget *wid, clipboard_viewer *tabs) {
+// clipboard viewer refresh callback:
+// 2nd argument must be `clipboard_viewer *`
+void refresh_cb(Fl_Widget *, void *v) {
+  auto tabs = (clipboard_viewer *)v;
   if (Fl::clipboard_contains(Fl::clipboard_image)) {
     Fl::paste(*tabs, 1, Fl::clipboard_image); // try to find image in the clipboard
     return;
@@ -181,7 +181,7 @@ void cb(Fl_Widget *wid, clipboard_viewer *tabs) {
 }
 
 // "Save PNG" callback
-void save_cb(Fl_Widget *wid, clipboard_viewer *tabs) {
+void save_cb(Fl_Widget *wid, void *) {
   if (cl_img && !cl_img->fail()) {
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Please select a .png file");
@@ -211,24 +211,26 @@ void wrap_cb(Fl_Widget *w, void *d) {
 }
 
 // called after clipboard was changed or at application activation
-void clip_callback(int source, void *data) {
+void clipboard_cb(int source, void *data) {
   if (source == 1)
-    cb(NULL, (clipboard_viewer *)data);
+    refresh_cb(nullptr, data);
 }
 
 int main(int argc, char **argv) {
   fl_register_images(); // required for the X11 platform to allow pasting of images
   Fl_Window *win = new Fl_Window(500, 550, "FLTK Clipboard Viewer");
-  tabs = new clipboard_viewer(0, 0, 500, 500);
+  auto tabs = new clipboard_viewer(0, 0, 500, 500);
   Fl_Group *g = new Fl_Group(5, 30, 490, 460, Fl::clipboard_image); // will display the image form
   g->box(FL_FLAT_BOX);
-  image_box = new chess(5, 30, 490, 450);
-  image_size = new Fl_Box(FL_NO_BOX, 5, 485, 490, 10, 0);
+  image_box = new chess(5, 30, 490, 440);
+  image_size = new Fl_Box(FL_NO_BOX, 5, 472, 490, 16, 0);
+  image_size->align(FL_ALIGN_CENTER | FL_ALIGN_CLIP);
   g->end();
+  g->resizable(image_box);
   g->selection_color(TAB_COLOR);
 
   Fl_Text_Buffer *buffer = new Fl_Text_Buffer();
-  display = new Fl_Text_Display(5, 30, 490, 460, Fl::clipboard_plain_text); // will display the text form
+  display = new Fl_Text_Display(5, 40, 490, 455, Fl::clipboard_plain_text); // will display the text form
   display->buffer(buffer);
   display->selection_color(TAB_COLOR);
   display->textfont(FL_COURIER);        // use fixed font for text display
@@ -242,15 +244,15 @@ int main(int argc, char **argv) {
 
   auto refresh = new Fl_Button(0, 0, 0, 0, "Refresh from clipboard");
   flex->fixed(refresh, 200);
-  refresh->callback((Fl_Callback *)cb, tabs);
+  refresh->callback(refresh_cb, (void *)tabs);
 
   save = new Fl_Button(0, 0, 0, 0 , "Save PNG");
   flex->fixed(save, 120);
-  save->callback((Fl_Callback *)save_cb, tabs);
+  save->callback(save_cb);
 
   wrap = new Fl_Check_Button(0, 0, 0, 0 , "wrap mode");
   flex->fixed(wrap, 120);
-  wrap->callback((Fl_Callback *)wrap_cb, display);
+  wrap->callback(wrap_cb, display);
   wrap->box(FL_UP_BOX);
   wrap->visible_focus(0);
   wrap->value(0);
@@ -258,6 +260,7 @@ int main(int argc, char **argv) {
   flex->end();
   win->end();
   win->resizable(tabs);
+  win->size_range(380, 300);
   win->show(argc, argv);
   // TEST: set another default background color
 #if (0)
@@ -266,8 +269,8 @@ int main(int argc, char **argv) {
     Fl::set_color(FL_BACKGROUND2_COLOR, 0xdd, 0xee, 0xff);
   }
 #endif
-  clip_callback(1, tabs);                         // use clipboard content at start
-  Fl::add_clipboard_notify(clip_callback, tabs);  // will update with new clipboard content
+  clipboard_cb(1, tabs);                          // use clipboard content at start
+  Fl::add_clipboard_notify(clipboard_cb, tabs);   // will update with new clipboard content
   Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR); // set bilinear image scaling method
   return Fl::run();
 }
