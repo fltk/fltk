@@ -49,7 +49,7 @@ public:
   static Function_Node prototype;
 private:
   const char* return_type_;
-  char public_, cdecl_, constructor, havewidgets;
+  char public_, declare_c_, constructor, havewidgets;
 public:
   Function_Node();
   ~Function_Node();
@@ -74,8 +74,8 @@ public:
   void return_type(const char *t) { storestring(t, return_type_); }
   char visibility() { return public_; }
   void visibility(char v) { public_ = v; }
-  char cdecl() { return cdecl_; }
-  void cdecl(char v) { cdecl_ = v; }
+  char declare_c() { return declare_c_; }
+  void declare_c(char v) { declare_c_ = v; }
 };
 
 // ---- Code_Node declaration

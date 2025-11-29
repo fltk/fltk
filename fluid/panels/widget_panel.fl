@@ -1650,16 +1650,16 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
               label Resizable
               callback {if (v == LOAD) {
   if (current_widget->is_a(Type::Menu_Item)) {
-    o->hide(); 
+    o->hide();
     return;
   }
   o->show();
   o->value(current_widget->resizable());
   if (numselected > 1) {
-    o->deactivate(); 
+    o->deactivate();
     return;
   }
-  o->activate(); 
+  o->activate();
 } else {
   Fluid.proj.undo.checkpoint();
   current_widget->resizable(o->value());
@@ -1671,7 +1671,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
               label Headline
               callback {if (v == LOAD) {
   if (!current_widget->is_a(Type::Menu_Item)) {
-    o->hide(); 
+    o->hide();
     return;
   }
   o->show();
@@ -2590,7 +2590,7 @@ Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   if (!nd->is_in_class()) {
     o->value(nd->output_file());
-    o->show(); 
+    o->show();
   } else {
     o->hide();
   }
@@ -2629,7 +2629,7 @@ Data_Node* nd = (Data_Node*)current_node;
 if (v == LOAD) {
   if (nd->is_in_class()) {
     o->value(nd->visibility());
-    o->show(); 
+    o->show();
   } else {
     o->hide();
   }
@@ -2759,7 +2759,7 @@ if (v == LOAD) {
             label {@fileopen}
             callback {if (v != LOAD) {
   Fluid.proj.enter_project_dir();
-  const char *fn = fl_file_chooser("Load Inline Data", 
+  const char *fn = fl_file_chooser("Load Inline Data",
     nullptr, wp_data_filename->value(), 1);
   Fluid.proj.leave_project_dir();
   if (fn) {
@@ -2790,7 +2790,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
             xywh {95 150 310 105} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
@@ -2827,7 +2827,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
             xywh {95 45 310 235} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 textcolor 58 resizable
             code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
@@ -2983,7 +2983,7 @@ if (v == LOAD) {
           Fl_Group {} {
             label {Visibility:}
             callback propagate_load
-            comment {This elemnt is hidden because we don't 
+            comment {This elemnt is hidden because we don't
 support a class inside a class at this point} open
             xywh {95 50 310 21} labelfont 1 labelsize 11 align 4 hide
           } {
@@ -2994,7 +2994,7 @@ Class_Node* nd = (Class_Node*)current_node;
 if (v == LOAD) {
   if (nd->is_in_class()) {
     o->value(nd->visibility());
-    o->activate(); 
+    o->activate();
   } else {
     o->deactivate();
   }
@@ -3101,7 +3101,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
             xywh {95 125 305 110} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
@@ -3271,7 +3271,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
             xywh {95 225 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
@@ -3307,7 +3307,7 @@ Decl_Node* nd = (Decl_Node*)current_node;
 if (v == LOAD) {
   if (!nd->is_in_class()) {
     o->value(nd->output_file());
-    o->show(); 
+    o->show();
   } else {
     o->hide();
   }
@@ -3346,7 +3346,7 @@ Decl_Node* nd = (Decl_Node*)current_node;
 if (v == LOAD) {
   if (nd->is_in_class()) {
     o->value(nd->visibility());
-    o->show(); 
+    o->show();
   } else {
     o->hide();
   }
@@ -3404,7 +3404,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
                 tooltip {a declaration: `int x;`, an external symbol: `extern int foo();`,
 a `\#` directive: `\#include <foo.h>`, a typedef `typedef char byte;`,
@@ -3436,7 +3436,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
                 xywh {95 185 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
                 code0 {o->buffer(new Fl_Text_Buffer());}
@@ -3512,7 +3512,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
             tooltip {code block comment} xywh {95 100 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
@@ -3553,7 +3553,7 @@ if (v == LOAD) {
   nd->cursor_position_ = o->insert_position();
   nd->code_input_scroll_row = o->scroll_row();
   nd->code_input_scroll_col = o->scroll_col();
-  free(c);  
+  free(c);
 }}
             xywh {15 40 390 315} box DOWN_BOX labelsize 11 when 15 textfont 4 textsize 11 resizable
             code1 {\#include "widgets/Code_Editor.h"}
@@ -3591,7 +3591,7 @@ Function_Node* nd = (Function_Node*)current_node;
 if (v == LOAD) {
   if (!nd->is_in_class()) {
     o->value(nd->visibility());
-    o->show(); 
+    o->show();
   } else {
     o->hide();
   }
@@ -3626,7 +3626,7 @@ Function_Node* nd = (Function_Node*)current_node;
 if (v == LOAD) {
   if (nd->is_in_class()) {
     o->value(nd->visibility());
-    o->show(); 
+    o->show();
   } else {
     o->hide();
   }
@@ -3660,10 +3660,10 @@ if (v == LOAD) {
 Function_Node* nd = (Function_Node*)current_node;
 
 if (v == LOAD) {
-  o->value(nd->cdecl());
+  o->value(nd->declare_c());
 } else {
-  if (nd->cdecl() != o->value()) {
-    nd->cdecl( o->value() );
+  if (nd->declare_c() != o->value()) {
+    nd->declare_c( o->value() );
     Fluid.proj.set_modflag(1);
   }
 }}
@@ -3682,8 +3682,8 @@ if (v == LOAD) {
               xywh {15 100 390 55} box FLAT_BOX labelfont 1 labelsize 11 align 4
             } {
               Fl_Text_Editor {} {
-                label {Function 
-Name and 
+                label {Function
+Name and
 Args:}
                 callback {if (!current_node || !current_node->is_a(Type::Function)) return;
 Function_Node* nd = (Function_Node*)current_node;
@@ -3702,7 +3702,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
                 tooltip {function name and args, or blank for `main(..)`} xywh {95 100 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
@@ -3731,7 +3731,7 @@ if (v == LOAD) {
     nd->return_type(c);
     Fluid.proj.set_modflag(1);
   }
-  free(c);  
+  free(c);
 }}
                 tooltip {return type, or blank to return outermost widget} xywh {95 160 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
@@ -3761,7 +3761,7 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);  
+  free(c);
 }}
                 xywh {95 220 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
                 code0 {o->buffer(new Fl_Text_Buffer());}

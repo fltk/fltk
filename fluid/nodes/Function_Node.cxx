@@ -195,7 +195,7 @@ Function_Node::Function_Node() :
   Node(),
   return_type_(nullptr),
   public_(0),
-  cdecl_(0),
+  declare_c_(0),
   constructor(0),
   havewidgets(0)
 { }
@@ -227,7 +227,7 @@ Node *Function_Node::make(Strategy strategy) {
   o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
-  o->cdecl_ = 0;
+  o->declare_c_ = 0;
   return o;
 }
 
@@ -243,7 +243,7 @@ void Function_Node::write_properties(fld::io::Project_Writer &f) {
     case 0: f.write_string("private"); break;
     case 2: f.write_string("protected"); break;
   }
-  if (cdecl_) f.write_string("C");
+  if (declare_c_) f.write_string("C");
   if (return_type_) {
     f.write_string("return_type");
     f.write_word(return_type_);
@@ -260,7 +260,7 @@ void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
   } else if (!strcmp(c,"C")) {
-    cdecl_ = 1;
+    declare_c_ = 1;
   } else if (!strcmp(c,"return_type")) {
     storestring(f.read_word(),return_type_);
   } else {
@@ -422,7 +422,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
       if (havechildren)
         write_comment_c(f);
       if (public_==1) {
-        if (cdecl_)
+        if (declare_c_)
           f.write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
         else
           f.write_h("%s%s %s;\n", rtype, star, name());

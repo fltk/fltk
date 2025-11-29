@@ -1470,16 +1470,16 @@ static void cb_Active(Fl_Light_Button* o, void* v) {
 static void cb_Resizable(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_a(Type::Menu_Item)) {
-      o->hide(); 
+      o->hide();
       return;
     }
     o->show();
     o->value(current_widget->resizable());
     if (numselected > 1) {
-      o->deactivate(); 
+      o->deactivate();
       return;
     }
-    o->activate(); 
+    o->activate();
   } else {
     Fluid.proj.undo.checkpoint();
     current_widget->resizable(o->value());
@@ -1490,7 +1490,7 @@ static void cb_Resizable(Fl_Light_Button* o, void* v) {
 static void cb_Headline(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
     if (!current_widget->is_a(Type::Menu_Item)) {
-      o->hide(); 
+      o->hide();
       return;
     }
     o->show();
@@ -2282,7 +2282,7 @@ static void cb_15(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (!nd->is_in_class()) {
       o->value(nd->output_file());
-      o->show(); 
+      o->show();
     } else {
       o->hide();
     }
@@ -2312,7 +2312,7 @@ static void cb_16(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (nd->is_in_class()) {
       o->value(nd->visibility());
-      o->show(); 
+      o->show();
     } else {
       o->hide();
     }
@@ -2401,7 +2401,7 @@ static void cb_wp_data_filename(Fl_Input* o, void* v) {
 static void cb_fileopen(Fl_Button*, void* v) {
   if (v != LOAD) {
     Fluid.proj.enter_project_dir();
-    const char *fn = fl_file_chooser("Load Inline Data", 
+    const char *fn = fl_file_chooser("Load Inline Data",
       nullptr, wp_data_filename->value(), 1);
     Fluid.proj.leave_project_dir();
     if (fn) {
@@ -2431,7 +2431,7 @@ static void cb_Comment(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -2464,7 +2464,7 @@ static void cb_comment_tabs_name(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -2609,7 +2609,7 @@ static void cb_18(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (nd->is_in_class()) {
       o->value(nd->visibility());
-      o->activate(); 
+      o->activate();
     } else {
       o->deactivate();
     }
@@ -2701,7 +2701,7 @@ static void cb_Comment1(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -2843,7 +2843,7 @@ static void cb_Comment2(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -2863,7 +2863,7 @@ static void cb_19(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (!nd->is_in_class()) {
       o->value(nd->output_file());
-      o->show(); 
+      o->show();
     } else {
       o->hide();
     }
@@ -2893,7 +2893,7 @@ static void cb_1a(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (nd->is_in_class()) {
       o->value(nd->visibility());
-      o->show(); 
+      o->show();
     } else {
       o->hide();
     }
@@ -2937,7 +2937,7 @@ static void cb_Declaration(fld::widget::Code_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -2958,7 +2958,7 @@ static void cb_Comment3(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -3024,7 +3024,7 @@ static void cb_Comment4(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -3060,7 +3060,7 @@ static void cb_1c(fld::widget::Code_Editor* o, void* v) {
     nd->cursor_position_ = o->insert_position();
     nd->code_input_scroll_row = o->scroll_row();
     nd->code_input_scroll_col = o->scroll_col();
-    free(c);  
+    free(c);
   }
 }
 
@@ -3080,7 +3080,7 @@ static void cb_1d(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (!nd->is_in_class()) {
       o->value(nd->visibility());
-      o->show(); 
+      o->show();
     } else {
       o->hide();
     }
@@ -3109,7 +3109,7 @@ static void cb_1e(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     if (nd->is_in_class()) {
       o->value(nd->visibility());
-      o->show(); 
+      o->show();
     } else {
       o->hide();
     }
@@ -3136,10 +3136,10 @@ static void cb_declare(Fl_Check_Button* o, void* v) {
   Function_Node* nd = (Function_Node*)current_node;
 
   if (v == LOAD) {
-    o->value(nd->cdecl());
+    o->value(nd->declare_c());
   } else {
-    if (nd->cdecl() != o->value()) {
-      nd->cdecl( o->value() );
+    if (nd->declare_c() != o->value()) {
+      nd->declare_c( o->value() );
       Fluid.proj.set_modflag(1);
     }
   }
@@ -3167,7 +3167,7 @@ static void cb_Function(fld::widget::Code_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -3187,7 +3187,7 @@ static void cb_Return(fld::widget::Code_Editor* o, void* v) {
       nd->return_type(c);
       Fluid.proj.set_modflag(1);
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -3208,7 +3208,7 @@ static void cb_Comment5(Fl_Text_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);  
+    free(c);
   }
 }
 
@@ -4331,7 +4331,7 @@ Fl_Double_Window* make_widget_panel() {
           class_tabs_main->labelsize(11);
           class_tabs_main->callback((Fl_Callback*)propagate_load);
           { /*
-             This elemnt is hidden because we don't 
+             This elemnt is hidden because we don't
              support a class inside a class at this point
              */
             Fl_Group* o = new Fl_Group(95, 50, 310, 21, "Visibility:");
@@ -4693,7 +4693,7 @@ o->linenumber_size(o->Fl_Text_Display::textsize());
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->align(Fl_Align(FL_ALIGN_LEFT));
-              { fld::widget::Code_Editor* o = new fld::widget::Code_Editor(95, 100, 310, 50, "Function \nName and \nArgs:");
+              { fld::widget::Code_Editor* o = new fld::widget::Code_Editor(95, 100, 310, 50, "Function\nName and\nArgs:");
                 o->tooltip("function name and args, or blank for `main(..)`");
                 o->box(FL_DOWN_FRAME);
                 o->color(FL_BACKGROUND2_COLOR);
