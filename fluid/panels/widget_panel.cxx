@@ -2572,7 +2572,7 @@ static void cb_output(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
     o->value(nd->in_h());
   } else {
-    if (nd->in_h() != o->value()) {
+    if (((int)nd->in_h()) != o->value()) {
       nd->in_h( o->value() );
       Fluid.proj.set_modflag(1);
     }
@@ -2586,7 +2586,7 @@ static void cb_output1(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
     o->value(nd->in_c());
   } else {
-    if (nd->in_c() != o->value()) {
+    if (((int)nd->in_c()) != o->value()) {
       nd->in_c( o->value() );
       Fluid.proj.set_modflag(1);
     }

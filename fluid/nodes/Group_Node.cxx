@@ -767,10 +767,12 @@ void Tabs_Node::add_child(Node* c, Node* before) {
 }
 
 void Tabs_Node::remove_child(Node* cc) {
-  Widget_Node* c = (Widget_Node*)cc;
-  Fl_Tabs *t = (Fl_Tabs*)o;
-  if (t->value() == c->o) t->value(nullptr);
-  Group_Node::remove_child(c);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    Fl_Tabs *t = (Fl_Tabs*)o;
+    if (t->value() == c->o) t->value(nullptr);
+  }
+  Group_Node::remove_child(cc);
 }
 
 Fl_Widget *Tabs_Node::enter_live_mode(int) {

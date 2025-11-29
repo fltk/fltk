@@ -2942,7 +2942,7 @@ Comment_Node* nd = (Comment_Node*)current_node;
 if (v == LOAD) {
   o->value(nd->in_h());
 } else {
-  if (nd->in_h() != o->value()) {
+  if (((int)nd->in_h()) != o->value()) {
     nd->in_h( o->value() );
     Fluid.proj.set_modflag(1);
   }
@@ -2957,7 +2957,7 @@ Comment_Node* nd = (Comment_Node*)current_node;
 if (v == LOAD) {
   o->value(nd->in_c());
 } else {
-  if (nd->in_c() != o->value()) {
+  if (((int)nd->in_c()) != o->value()) {
     nd->in_c( o->value() );
     Fluid.proj.set_modflag(1);
   }
