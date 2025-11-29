@@ -25,6 +25,7 @@
 #define FL_NAMES_H
 
 #include <FL/Fl.H>  // for event constants
+#include <string>
 #include <map>
 
 /** \defgroup fl_events Events handling functions
