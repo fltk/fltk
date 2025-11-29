@@ -1298,6 +1298,10 @@ void load_panel() {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(code_tabs);
       numselected = 1;
+    } else if (Fluid.proj.tree.current->is_a(Type::Function)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(func_tabs);
+      numselected = 1;
     } else {
       current_node = nullptr;
       if (Fluid.proj.tree.current->is_widget())

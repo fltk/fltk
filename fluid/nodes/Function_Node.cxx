@@ -193,7 +193,7 @@ Function_Node Function_Node::prototype;
  */
 Function_Node::Function_Node() :
   Node(),
-  return_type(nullptr),
+  return_type_(nullptr),
   public_(0),
   cdecl_(0),
   constructor(0),
@@ -204,7 +204,7 @@ Function_Node::Function_Node() :
  Destructor.
  */
 Function_Node::~Function_Node() {
-  if (return_type) free((void*)return_type);
+  if (return_type_) free((void*)return_type_);
 }
 
 /**
@@ -223,7 +223,7 @@ Node *Function_Node::make(Strategy strategy) {
   }
   Function_Node *o = new Function_Node();
   o->name("make_window()");
-  o->return_type = nullptr;
+  o->return_type_ = nullptr;
   o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
@@ -244,9 +244,9 @@ void Function_Node::write_properties(fld::io::Project_Writer &f) {
     case 2: f.write_string("protected"); break;
   }
   if (cdecl_) f.write_string("C");
-  if (return_type) {
+  if (return_type_) {
     f.write_string("return_type");
-    f.write_word(return_type);
+    f.write_word(return_type_);
   }
 }
 
@@ -262,7 +262,7 @@ void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"C")) {
     cdecl_ = 1;
   } else if (!strcmp(c,"return_type")) {
-    storestring(f.read_word(),return_type);
+    storestring(f.read_word(),return_type_);
   } else {
     Node::read_property(f, c);
   }
@@ -272,90 +272,7 @@ void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Open the function_panel dialog box to edit this function.
  */
 void Function_Node::open() {
-  // fill dialog box
-  if (!function_panel) make_function_panel();
-  f_return_type_input->value(return_type);
-  f_name_input->value(name());
-  if (is_in_class()) {
-    f_public_member_choice->value(public_);
-    f_public_member_choice->show();
-    f_public_choice->hide();
-    f_c_button->hide();
-  } else {
-    f_public_choice->value(public_);
-    f_public_choice->show();
-    f_public_member_choice->hide();
-    f_c_button->show();
-  }
-  f_c_button->value(cdecl_);
-  const char *c = comment();
-  f_comment_input->buffer()->text(c?c:"");
-  function_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    // - message loop until OK or cancel is pressed
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == f_panel_cancel) goto BREAK2;
-      else if (w == f_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    // - check syntax
-    const char *c = f_name_input->value();
-    while (isspace(*c)) c++;
-    message = c_check(c);
-    if (!message) {
-      const char *d = c;
-      for (; *d != '('; d++) if (isspace(*d) || !*d) break;
-      if (*c && *d != '(')
-        message = "must be 'name(arguments)'";
-    }
-    if (!message) {
-      c = f_return_type_input->value();
-      message = c_check(c);
-    }
-    // - alert user
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    // - copy dialog data to target variables
-    int mod = 0;
-    name(f_name_input->value());
-    storestring(f_return_type_input->value(), return_type);
-    if (is_in_class()) {
-      if (public_ != f_public_member_choice->value()) {
-        mod = 1;
-        public_ = f_public_member_choice->value();
-        redraw_browser();
-      }
-    } else {
-      if (public_ != f_public_choice->value()) {
-        mod = 1;
-        public_ = f_public_choice->value();
-        redraw_browser();
-      }
-    }
-    if (cdecl_ != f_c_button->value()) {
-      mod = 1;
-      cdecl_ = f_c_button->value();
-    }
-    c = f_comment_input->buffer()->text();
-    if (c && *c) {
-      if (!comment() || strcmp(c, comment()))  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(c);
-    } else {
-      if (comment())  { Fluid.proj.set_modflag(1); redraw_browser(); }
-      comment(nullptr);
-    }
-    if (c) free((void*)c);
-    if (mod) Fluid.proj.set_modflag(1);
-    break;
-  }
-BREAK2:
-  function_panel->hide();
+  open_panel();
 }
 
 /**
@@ -437,7 +354,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
     if (havechildren)
       f.write_c("int main(int argc, char **argv) {\n");
   } else {
-    const char* rtype = return_type;
+    const char* rtype = return_type_;
     const char* star = "";
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
@@ -549,7 +466,7 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
       f.write_c("%s%s->show(argc, argv);\n", f.indent(1), var);
     if (havechildren)
       f.write_c("%sreturn Fl::run();\n", f.indent(1));
-  } else if (havewidgets && !constructor && !return_type) {
+  } else if (havewidgets && !constructor && !return_type_) {
     f.write_c("%sreturn %s;\n", f.indent(1), var);
   }
   if (havechildren)
@@ -564,9 +481,9 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
  \return 1 if they match, 0 if not
  */
 int Function_Node::has_signature(const char *rtype, const char *sig) const {
-  if (rtype && !return_type) return 0;
+  if (rtype && !return_type_) return 0;
   if (!name()) return 0;
-  if ( (rtype==nullptr || strcmp(return_type, rtype)==0)
+  if ( (rtype==nullptr || strcmp(return_type_, rtype)==0)
       && fl_filename_match(name(), sig)) {
     return 1;
   }
@@ -635,40 +552,6 @@ void Code_Node::open() {
       return;   // return if editor opened ok, fall thru to built-in if not
   }
   open_panel();
-#if 0
-  // Use built-in code editor..
-  if (!code_panel) make_code_panel();
-  const char *text = name();
-  code_input->buffer()->text( text ? text : "" );
-  code_input->insert_position(cursor_position_);
-  code_input->scroll(code_input_scroll_row, code_input_scroll_col);
-  code_panel->show();
-  const char* message = nullptr;
-  for (;;) { // repeat as long as there are errors
-    for (;;) {
-      Fl_Widget* w = Fl::readqueue();
-      if (w == code_panel_cancel) goto BREAK2;
-      else if (w == code_panel_ok) break;
-      else if (!w) Fl::wait();
-    }
-    char*c = code_input->buffer()->text();
-    message = c_check(c);
-    if (message) {
-      int v = fl_choice("Potential syntax error detected: %s",
-                        "Continue Editing", "Ignore Error", nullptr, message);
-      if (v==0) continue;     // Continue Editing
-      //if (v==1) { }         // Ignore Error and close dialog
-    }
-    name(c);
-    free(c);
-    break;
-  }
-  cursor_position_ = code_input->insert_position();
-  code_input_scroll_row = code_input->scroll_row();
-  code_input_scroll_col = code_input->scroll_col();
-BREAK2:
-  code_panel->hide();
-#endif
 }
 
 /**

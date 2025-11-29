@@ -52,7 +52,7 @@ extern int haderror;
 static int use_tab_navigation(int, Fl_Text_Editor*) {
 //ﬂ ▼ ------------------------ code --~-~~~=~~-==~~-~-=~~~-= ▼ ﬂ//
   return 0;
-//ﬂ ▲ ----------~~------=~-~----------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
+//ﬂ ▲ ----------~~-~=~=-~-~~----------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
 }
 
 Fl_Double_Window *image_panel_window=(Fl_Double_Window *)0;
@@ -60,7 +60,7 @@ Fl_Double_Window *image_panel_window=(Fl_Double_Window *)0;
 static void cb_image_panel_window(Fl_Double_Window* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-=--=~~=~=~~--==-=~~- ▼ ﬂ//
   propagate_load(o, v);
-//ﬂ ▲ ----------~=~=~--=~--=-----------~~----=--~=~~-~-----= ▲ ﬂ//
+//ﬂ ▲ ----------~=~=-~-~-=~=-----------~~----=--~=~~-~-----= ▲ ﬂ//
 }
 
 Fl_Group *image_panel_imagegroup=(Fl_Group *)0;
@@ -85,7 +85,7 @@ static void cb_image_panel_data(Fl_Box* o, void* v) {
       image_panel_imagegroup->deactivate();
     }
   }
-//ﬂ ▲ ----------=~~-~=--=-~------------~=--~~~-~~=--~-=--=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~=~~=--~~=~-----------~=--~~~-~~=--~-=--=-= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_imagew=(fld::widget::Formula_Input *)0;
@@ -117,7 +117,7 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~=-=-==~=--~----------~-~-=-=~~-~=~~-~=~~-~- ▲ ﬂ//
+//ﬂ ▲ ----------=~-=--~~~-~~----------~-~-=-=~~-~=~~-~=~~-~- ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_imageh=(fld::widget::Formula_Input *)0;
@@ -149,7 +149,7 @@ static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~=--~-=~~=-~----------~~-==-=-=~-=~=~---=~~= ▲ ﬂ//
+//ﬂ ▲ ----------~==-=~=~~=-=----------~~-==-=-=~-=~=~---=~~= ▲ ﬂ//
 }
 
 static void cb_Reset(Fl_Button*, void* v) {
@@ -160,7 +160,7 @@ static void cb_Reset(Fl_Button*, void* v) {
     image_panel_imagew->do_callback();
     image_panel_imageh->do_callback();
   }
-//ﬂ ▲ ----------~==-~~~~---=-----------~=--==-~=-~~=~=-=~~~= ▲ ﬂ//
+//ﬂ ▲ ----------~=----~----=-----------~=--==-~=-~~=~=-=~~~= ▲ ﬂ//
 }
 
 static void cb_convert(Fl_Check_Button* o, void* v) {
@@ -180,7 +180,7 @@ static void cb_convert(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-=-~-==~-~------------~~=~~~=~~=-~~==-=-=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~-=-~-=-------------~~=~~~=~~=-~~==-=-=~ ▲ ﬂ//
 }
 
 static void cb_bind(Fl_Check_Button* o, void* v) {
@@ -200,7 +200,7 @@ static void cb_bind(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=--~~=~~==~-------------==-~=~~=~=~----~~=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~--=--~~-=-------------==-~=~~=~=~----~~=~ ▲ ﬂ//
 }
 
 Fl_Group *image_panel_deimagegroup=(Fl_Group *)0;
@@ -225,7 +225,7 @@ static void cb_image_panel_dedata(Fl_Box* o, void* v) {
       image_panel_deimagegroup->deactivate();
     }
   }
-//ﬂ ▲ ----------=~=~-~=~=-=-------------~~=-~~=-=-=~=~--=--~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=-~-=~=---------------~~=-~~=-=-=~=~--=--~ ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_deimagew=(fld::widget::Formula_Input *)0;
@@ -257,7 +257,7 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------=~-~=-~~~~-~----------~-~-~~--~~-=-==~~==-~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~==~~--~----------~-~-~~--~~-=-==~~==-~= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *image_panel_deimageh=(fld::widget::Formula_Input *)0;
@@ -289,7 +289,7 @@ static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~=~~~=-~~~~~-----------~~~~==~~~~=~~=-=~-=~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~--==-~==~-----------~~~~==~~~~=~~=-=~-=~- ▲ ﬂ//
 }
 
 static void cb_Reset1(Fl_Button*, void* v) {
@@ -300,7 +300,7 @@ static void cb_Reset1(Fl_Button*, void* v) {
     image_panel_deimagew->do_callback();
     image_panel_deimageh->do_callback();
   }
-//ﬂ ▲ ----------~==-~--~=--=-----------~=-~~-~~==-~=-~---=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~~-=~~---=-----------~=-~~-~~==-~=-~---=-= ▲ ﬂ//
 }
 
 static void cb_convert1(Fl_Check_Button* o, void* v) {
@@ -320,7 +320,7 @@ static void cb_convert1(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=-~-----~-=----------~------~~~-~-=~~--~-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~=~=-=---~----------~------~~~-~-=~~--~-=~ ▲ ﬂ//
 }
 
 static void cb_bind1(Fl_Check_Button* o, void* v) {
@@ -340,7 +340,7 @@ static void cb_bind1(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~=~~=-=--~=----------~--==~--=~-=~~-~=~---= ▲ ﬂ//
+//ﬂ ▲ ----------=~=~-=~~=~~-----------~--==~--=~-=~~-~=~---= ▲ ﬂ//
 }
 
 Fl_Button *image_panel_close=(Fl_Button *)0;
@@ -349,7 +349,7 @@ static void cb_image_panel_close(Fl_Button*, void* v) {
 //ﬂ ▼ ---------------------- callback ~~-=~-~--~---=~-=---=- ▼ ﬂ//
   if (v != LOAD)
     image_panel_window->hide();
-//ﬂ ▲ ----------~=~=---~=-=-----------~--==~-=~~~=~=~~-==~=- ▲ ﬂ//
+//ﬂ ▲ ----------=~~~--~==~-=----------~--==~-=~~~=~=~~-==~=- ▲ ﬂ//
 }
 
 /**
@@ -540,7 +540,7 @@ void run_image_panel() {
     img->release();
     image_panel_data->user_data(nullptr);
   }
-//ﬂ ▲ ----------~--~-=~--=-~----------~-=~~==~=-=-=~--=~--=~ ▲ ﬂ//
+//ﬂ ▲ ----------~-~----~~--=----------~-=~~==~=-=-=~--=~--=~ ▲ ﬂ//
 }
 
 void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int)) {
@@ -564,7 +564,7 @@ void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~~=-=---~=~=-----------~~--~~~=~=-~==~~==-~~ ▲ ﬂ//
+//ﬂ ▲ ----------~-~-=~-=-~~------------~~--~~~=~=-~==~~==-~~ ▲ ﬂ//
 }
 
 Fl_Wizard *tabs_wizard=(Fl_Wizard *)0;
@@ -572,7 +572,7 @@ Fl_Wizard *tabs_wizard=(Fl_Wizard *)0;
 static void cb_tabs_wizard(Fl_Wizard* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~-=-~=-~~---~-=-~~~-~ ▼ ﬂ//
   propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------~=--=~=~--~~----------~--~-==~~-=-=~=-~=~~=- ▲ ﬂ//
+//ﬂ ▲ ----------~=-~-==~=~------------~--~-==~~-=-=~=-~=~~=- ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs=(Fl_Tabs *)0;
@@ -581,7 +581,7 @@ static void cb_widget_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback --~-~~=~~==----==--~-~ ▼ ﬂ//
   if (current_widget)
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------~=-=-~-=~~~=----------~-~~~~-==--==--~~--~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~~=--==--=----------~-~~~~-==--==--~~--~=~ ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_tab=(Fl_Group *)0;
@@ -605,7 +605,7 @@ static void cb_widget_image_input(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-~-=~~~~~=----------~~=-~~--=~~~~~-~=-~=~= ▲ ﬂ//
+//ﬂ ▲ ----------=~-=-~~-~~~-----------~~=-~~--=~~~~~-~=-~=~= ▲ ﬂ//
 }
 
 static void cb_Browse(Fl_Button* o, void* v) {
@@ -627,7 +627,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~~=-=~~~=~=------------~=~=~==~-~--~~=-=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=~~~~-=-=~------------~=~=~==~-~--~~=-=~=~ ▲ ﬂ//
 }
 
 static void cb_(Fl_Button*, void* v) {
@@ -635,7 +635,7 @@ static void cb_(Fl_Button*, void* v) {
   if (v != LOAD) {
     run_image_panel();
   }
-//ﬂ ▲ ----------~=~-~==~-=~-----------~~-~~--~~-=~--=-=~~=~- ▲ ﬂ//
+//ﬂ ▲ ----------~=-----=-=-~----------~~-~~--~~-=~--=-=~~=~- ▲ ﬂ//
 }
 
 Fl_Input *widget_deimage_input=(Fl_Input *)0;
@@ -655,7 +655,7 @@ static void cb_widget_deimage_input(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~---~~=~~=~-----------~-~--=~~~~~-~-~=-~-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~-~~-~-~=~-----------~-~--=~~~~~-~-~=-~-=~ ▲ ﬂ//
 }
 
 static void cb_Browse1(Fl_Button* o, void* v) {
@@ -677,7 +677,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~~==~-~-==~-----------~~~-~-~~=-=~==-~--~-- ▲ ﬂ//
+//ﬂ ▲ ----------=~--~=--~-~~-----------~~~-~-~~=-=~==-~--~-- ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_alignment=(Fl_Group *)0;
@@ -742,7 +742,7 @@ static void cb_widget_x_input(fld::widget::Formula_Input* o, void* v) {
                       // calculation. Keep the formula if it was not used.
     }
   }
-//ﬂ ▲ ----------~==-~==~~~=~----------~~=~=--~~~-=~=~-=~~==- ▲ ﬂ//
+//ﬂ ▲ ----------=~~--=--=~-=----------~~=~=--~~~-=~=~-=~~==- ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *widget_y_input=(fld::widget::Formula_Input *)0;
@@ -775,7 +775,7 @@ static void cb_widget_y_input(fld::widget::Formula_Input* o, void* v) {
       o->value(v);
     }
   }
-//ﬂ ▲ ----------~==--~~-=-=-----------~~=~--~~=~-~---=~-=-~= ▲ ﬂ//
+//ﬂ ▲ ----------~==-~=-=~~------------~~=~--~~=~-~---=~-=-~= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *widget_w_input=(fld::widget::Formula_Input *)0;
@@ -808,7 +808,7 @@ static void cb_widget_w_input(fld::widget::Formula_Input* o, void* v) {
       o->value(v);
     }
   }
-//ﬂ ▲ ----------=~=--==~~--~----------~--~-==-~~~~~==-=--=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~=---~~=-~~----------~--~-==-~~~~~==-=--=-= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input *widget_h_input=(fld::widget::Formula_Input *)0;
@@ -841,7 +841,7 @@ static void cb_widget_h_input(fld::widget::Formula_Input* o, void* v) {
       o->value(v);
     }
   }
-//ﬂ ▲ ----------~=~-=~=~~--~------------~~~=-=~-=~-~=---~~~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~--~=~~-~-=------------~~~=-=~-=~-~=---~~~~ ▲ ﬂ//
 }
 
 static void cb_Children(Fl_Choice* o, void* v) {
@@ -865,7 +865,7 @@ static void cb_Children(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=---=~-=~~=----------~~=~=~~=~=-=-=~=~-~=-= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~~=-=--=~----------~~=~=~~=~=-=-=~=~-~=-= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Children[] = {
@@ -887,7 +887,7 @@ static void cb_wp_gui_flexp(Fl_Group* o, void* v) {
       o->hide();
     }
   }
-//ﬂ ▲ ----------~=~=~=--=-=~------------=-~=-~-==-~~~-~-=~~~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~-=-~=~==~------------=-~=-~-==-~~~-~-=~~~ ▲ ﬂ//
 }
 
 Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
@@ -926,7 +926,7 @@ static void cb_widget_flex_size(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~----=~~=~-----------~~~=~~--~=-~--~==--~~~ ▲ ﬂ//
+//ﬂ ▲ ----------~==--~~==-=-----------~~~=~~--~=-~--~==--~~~ ▲ ﬂ//
 }
 
 Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
@@ -962,7 +962,7 @@ static void cb_widget_flex_fixed(Fl_Check_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=---~~--~-=----------~--~=---~~~=~~-~~-~--= ▲ ﬂ//
+//ﬂ ▲ ----------~==-=~-~--------------~--~=---~~~=~~-~~-~--= ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_values=(Fl_Group *)0;
@@ -980,7 +980,7 @@ static void cb_wp_gui_values(Fl_Group* o, void* v) {
       propagate_load(o, v);
     }
   }
-//ﬂ ▲ ----------~=-~-=-=~~~=----------~-=--~=~~~-~-==--=~--~ ▲ ﬂ//
+//ﬂ ▲ ----------=~--~=-==~-=----------~-=--~=~~~-~-==--=~--~ ▲ ﬂ//
 }
 
 static void cb_Size(Fl_Value_Input* o, void* v) {
@@ -1002,7 +1002,7 @@ static void cb_Size(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~=~~=--~~~~-----------~~---~=-=~=-~=--~-=~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=~-~=~~=~=-----------~~---~=-=~=-~=--~-=~~ ▲ ﬂ//
 }
 
 static void cb_Minimum(Fl_Value_Input* o, void* v) {
@@ -1035,7 +1035,7 @@ static void cb_Minimum(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~--~==--~=~----------~~~-~~-=~~-==-~~-==--= ▲ ﬂ//
+//ﬂ ▲ ----------~=--~=-=~~~~----------~~~-~~-=~~-==-~~-==--= ▲ ﬂ//
 }
 
 static void cb_Maximum(Fl_Value_Input* o, void* v) {
@@ -1068,7 +1068,7 @@ static void cb_Maximum(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~==-=-~=-~----------~-=~-==~~~~--~=--=-==~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~~=--=---~----------~-=~-==~~~~--~=--=-==~ ▲ ﬂ//
 }
 
 static void cb_Step(Fl_Value_Input* o, void* v) {
@@ -1101,7 +1101,7 @@ static void cb_Step(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~---~---------------~-~~=~~~~=~--~~---=-=- ▲ ﬂ//
+//ﬂ ▲ ----------~==-~=-~-=~-----------~-~~=~~~~=~--~~---=-=- ▲ ﬂ//
 }
 
 static void cb_Value(Fl_Value_Input* o, void* v) {
@@ -1137,7 +1137,7 @@ static void cb_Value(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=-~~-~~~-=~----------~-=-~==-~~~=~~~--~-~-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~=~=--~--=----------~-=-~==-~~~=~~~--~-~-~ ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_margins=(Fl_Group *)0;
@@ -1152,7 +1152,7 @@ static void cb_wp_gui_margins(Fl_Group* o, void* v) {
       o->hide();
     }
   }
-//ﬂ ▲ ----------~=--~==~~=-=----------~~-=---~~==~~=-=---=~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~==~-~=~----------~~-=---~~==~~=-=---=~= ▲ ﬂ//
 }
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
@@ -1176,7 +1176,7 @@ static void cb_Left(Fl_Value_Input* o, void* v) {
       }
     }
   );
-//ﬂ ▲ ----------=~=-~~~~~=-~----------~~----=-~--==-----~~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~~=~~-~~-~----------~~----=-~--==-----~~~= ▲ ﬂ//
 }
 
 static void cb_Top(Fl_Value_Input* o, void* v) {
@@ -1200,7 +1200,7 @@ static void cb_Top(Fl_Value_Input* o, void* v) {
       }
     }
   );
-//ﬂ ▲ ----------~==~=~~=~--=---------------~~-=-~=--~=---~~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=-=~~-~~-----------------~~-=-~=--~=---~~~ ▲ ﬂ//
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
@@ -1224,7 +1224,7 @@ static void cb_Right(Fl_Value_Input* o, void* v) {
       }
     }
   );
-//ﬂ ▲ ----------~=~~-~~~=---------------~~=----~=-=-~==-=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~~-=~~=~--------------~~=----~=-=-~==-=~=~ ▲ ﬂ//
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
@@ -1248,7 +1248,7 @@ static void cb_Bottom(Fl_Value_Input* o, void* v) {
       }
     }
   );
-//ﬂ ▲ ----------=~-==~~==-~~----------~~-~--=-----=~~-~=-=-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-==~-==~~-----------~~-~--=-----=~~-~=-=-~ ▲ ﬂ//
 }
 
 static void cb_Gap(Fl_Value_Input* o, void* v) {
@@ -1270,7 +1270,7 @@ static void cb_Gap(Fl_Value_Input* o, void* v) {
       }
     }
   );
-//ﬂ ▲ ----------=~=~-=~-~-~~----------~~=-~=~-=~---==~=~~=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~-~~=~-~~~-----------~~=-~=~-=~---==~=~~=-= ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_sizerange=(Fl_Group *)0;
@@ -1285,7 +1285,7 @@ static void cb_wp_gui_sizerange(Fl_Group* o, void* v) {
       o->hide();
     }
   }
-//ﬂ ▲ ----------=~~=-=-=~~~~----------~~~~~~~=----=-~--=-~-~ ▲ ﬂ//
+//ﬂ ▲ ----------~==~~=~-~~-~----------~~~~~~~=----=-~--=-~-~ ▲ ﬂ//
 }
 
 static void cb_Minimum1(Fl_Value_Input* o, void* v) {
@@ -1305,7 +1305,7 @@ static void cb_Minimum1(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~-~=~~~~-~----------~~~--=~-=-=-~-~==~~~-- ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~~~==-------------~~~--=~-=-=-~-~==~~~-- ▲ ﬂ//
 }
 
 static void cb_1(Fl_Value_Input* o, void* v) {
@@ -1325,7 +1325,7 @@ static void cb_1(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~=-=-==~-~------------~=~==--~------~-=-~- ▲ ﬂ//
+//ﬂ ▲ ----------~==---=-=-=~------------~=~==--~------~-=-~- ▲ ﬂ//
 }
 
 static void cb_set(Fl_Button* o, void* v) {
@@ -1345,7 +1345,7 @@ static void cb_set(Fl_Button* o, void* v) {
     propagate_load(the_panel, LOAD);
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~---~--~-~=-----------~~~=~~--~-~-==~-~--=- ▲ ﬂ//
+//ﬂ ▲ ----------=~=~=-=~-=-~-----------~~~=~~--~-~-==~-~--=- ▲ ﬂ//
 }
 
 static void cb_Maximum1(Fl_Value_Input* o, void* v) {
@@ -1365,7 +1365,7 @@ static void cb_Maximum1(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~-~=----~----------~~~==~-=-==~=-=~~~--=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~-=-~~=~-~----------~~~==~-=-==~=-=~~~--=~ ▲ ﬂ//
 }
 
 static void cb_2(Fl_Value_Input* o, void* v) {
@@ -1385,7 +1385,7 @@ static void cb_2(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==-=~--~==-------------~-=-~~--~-=~-~~=~==- ▲ ﬂ//
+//ﬂ ▲ ----------~=~==~~-~~~-------------~-=-~~--~-=~-~~=~==- ▲ ﬂ//
 }
 
 static void cb_set1(Fl_Button* o, void* v) {
@@ -1405,7 +1405,7 @@ static void cb_set1(Fl_Button* o, void* v) {
     propagate_load(the_panel, LOAD);
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~~-=~~=------------------=-~~=~-~=-~=~~=~- ▲ ﬂ//
+//ﬂ ▲ ----------=~-~-=--~=-=---------------=-~~=~-~=-~=~~=~- ▲ ﬂ//
 }
 
 Fl_Shortcut_Button *wp_gui_shortcut=(Fl_Shortcut_Button *)0;
@@ -1453,7 +1453,7 @@ static void cb_wp_gui_shortcut(Fl_Shortcut_Button* o, void* v) {
       }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~--==~-~~=----------~-----~=~=--~~-=-=-~~- ▲ ﬂ//
+//ﬂ ▲ ----------=~~=~-~-=-------------~-----~=~=--~~-=-=-~~- ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_xclass=(Fl_Group *)0;
@@ -1482,7 +1482,7 @@ static void cb_3(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~-=~~~=~~-----------~-=-=-=~-=~~~=~==~--=- ▲ ﬂ//
+//ﬂ ▲ ----------=~-~-==~~==~----------~-=-=-=~-=~~~=~==~--=- ▲ ﬂ//
 }
 
 static void cb_Border(Fl_Light_Button* o, void* v) {
@@ -1496,7 +1496,7 @@ static void cb_Border(Fl_Light_Button* o, void* v) {
     ((Fl_Window*)(current_widget->o))->border(o->value());
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~-=-=-=----------------~--~---~-=-~~=-=-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~==~~-=~=~~--------------~--~---~-=-~~=-=-=~ ▲ ﬂ//
 }
 
 static void cb_Modal(Fl_Light_Button* o, void* v) {
@@ -1510,7 +1510,7 @@ static void cb_Modal(Fl_Light_Button* o, void* v) {
     ((Window_Node *)current_widget)->modal = o->value();
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==-=-~~=~-=-------------=-~=----~~=~~-=-=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~=~~--=~~-=-------------=-~=----~~=~~-=-=-= ▲ ﬂ//
 }
 
 static void cb_Nonmodal(Fl_Light_Button* o, void* v) {
@@ -1524,7 +1524,7 @@ static void cb_Nonmodal(Fl_Light_Button* o, void* v) {
     ((Window_Node *)current_widget)->non_modal = o->value();
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~=~~--~=~-----------~-~-~=~--~~-=-=-~=~~=- ▲ ﬂ//
+//ﬂ ▲ ----------~=-~~~---=------------~-~-~=~--~~-=-=-~=~~=- ▲ ﬂ//
 }
 
 Fl_Group *wp_gui_attributes=(Fl_Group *)0;
@@ -1558,7 +1558,7 @@ static void cb_Visible(Fl_Light_Button* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~~~-=--=~-~----------~-=~~~=-----~-~~~==~~- ▲ ﬂ//
+//ﬂ ▲ ----------~=---~-~~=-~----------~-=~~~=-----~-~~~==~~- ▲ ﬂ//
 }
 
 static void cb_Active(Fl_Light_Button* o, void* v) {
@@ -1580,7 +1580,7 @@ static void cb_Active(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-~~----~=~----------~~~~--=~--~=~=-==---~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~~-=~=-=~~----------~~~~--=~--~=~=-==---~- ▲ ﬂ//
 }
 
 static void cb_Resizable(Fl_Light_Button* o, void* v) {
@@ -1602,7 +1602,7 @@ static void cb_Resizable(Fl_Light_Button* o, void* v) {
     current_widget->resizable(o->value());
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~-~-=~-==-------------~-~=~=~--=~--=-~~=~- ▲ ﬂ//
+//ﬂ ▲ ----------~==~=~-~=~~=------------~-~=~=~--=~--=-~~=~- ▲ ﬂ//
 }
 
 static void cb_Headline(Fl_Light_Button* o, void* v) {
@@ -1629,7 +1629,7 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-=~--~~=-~----------~--~~-=-~=--=--=-~=-~= ▲ ﬂ//
+//ﬂ ▲ ----------~=~=-=---=-~----------~--~~-=-~=--=--=-~=-~= ▲ ﬂ//
 }
 
 static void cb_Hotspot(Fl_Light_Button* o, void* v) {
@@ -1658,7 +1658,7 @@ static void cb_Hotspot(Fl_Light_Button* o, void* v) {
     }
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==~~=----=-----------~~----~-~~~=---=~-=~~~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~~=~~=------------~~----~-~~~=---=~-=~~~ ▲ ﬂ//
 }
 
 Fl_Input *wp_gui_tooltip=(Fl_Input *)0;
@@ -1680,7 +1680,7 @@ static void cb_wp_gui_tooltip(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==-~=~~~~-=----------~---=~--~--=~~-----=~~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-=-=~=~-~-----------~---=~--~--=~~-----=~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_style_tab=(Fl_Group *)0;
@@ -1705,7 +1705,7 @@ static void cb_4(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~-=~----------------~--~~--=-=~~~-----~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=~----=-~-=-----------~--~~--=-=~~~-----~-= ▲ ﬂ//
 }
 
 static void cb_5(Fl_Value_Input* o, void* v) {
@@ -1725,7 +1725,7 @@ static void cb_5(Fl_Value_Input* o, void* v) {
     if (mod) Fluid.proj.set_modflag(1);
   }
   o->value(n);
-//ﬂ ▲ ----------=~--=~~-~~~------------~-=~=-~-~=-~==-~-~=~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=-=--==~=------------~-=~=-~-~=-~==-~-~=~~ ▲ ﬂ//
 }
 
 Fl_Button *w_labelcolor=(Fl_Button *)0;
@@ -1742,7 +1742,7 @@ static void cb_w_labelcolor(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
-//ﬂ ▲ ----------~=~-=~~~-~=~-----------~=-~=-~=~~~~~-=--~~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~==-=----=~------------~=-~=-~=~~~~~-=--~~=~ ▲ ﬂ//
 }
 
 static void cb_6(Fl_Menu_Button* o, void* v) {
@@ -1757,7 +1757,7 @@ static void cb_6(Fl_Menu_Button* o, void* v) {
     w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_labelcolor->redraw();
   }
-//ﬂ ▲ ----------=~~=-----=~=----------~~=-=-=-~~--~=-~~~-=~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~==~~=-~~~----------~~=-=-=-~~--~=-~~~-=~= ▲ ﬂ//
 }
 
 Fl_Group *wp_style_box=(Fl_Group *)0;
@@ -1783,7 +1783,7 @@ static void cb_7(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~=~=~==-=~----------~~~~--~--=--=~=~~--=-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~-=-~~~=~-----------~~~~--~--=--=~=~~--=-~ ▲ ﬂ//
 }
 
 Fl_Button *w_color=(Fl_Button *)0;
@@ -1806,7 +1806,7 @@ static void cb_w_color(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
-//ﬂ ▲ ----------~==~-=--=~~-------------=-~=~---~-~-=-=~~--= ▲ ﬂ//
+//ﬂ ▲ ----------~=~-~~--~~--------------=-~=~---~-~-=-=~~--= ▲ ﬂ//
 }
 
 static void cb_8(Fl_Menu_Button* o, void* v) {
@@ -1823,7 +1823,7 @@ static void cb_8(Fl_Menu_Button* o, void* v) {
     w_color->labelcolor(fl_contrast(FL_BLACK,c));
     w_color->redraw();
   }
-//ﬂ ▲ ----------~==~~=~~--=-------------~~-==-~--~~-=-~=~~~~ ▲ ﬂ//
+//ﬂ ▲ ----------~==~~~=~~--=------------~~-==-~--~~-=-~=~~~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_style_downbox=(Fl_Group *)0;
@@ -1864,7 +1864,7 @@ static void cb_9(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-~-~-=~~-~------------=~---~~~=-=-~=~=~~-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~~---=~~~-------------=~---~~~=-=-~=~=~~-= ▲ ﬂ//
 }
 
 Fl_Button *w_selectcolor=(Fl_Button *)0;
@@ -1888,7 +1888,7 @@ static void cb_w_selectcolor(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
-//ﬂ ▲ ----------=~~=~~-==~------------~--~=~-~~--=-=-~~==-=- ▲ ﬂ//
+//ﬂ ▲ ----------=~=--=~~=-=-----------~--~=~-~~--=-=-~~==-=- ▲ ﬂ//
 }
 
 static void cb_a(Fl_Menu_Button* o, void* v) {
@@ -1910,7 +1910,7 @@ static void cb_a(Fl_Menu_Button* o, void* v) {
     w_selectcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_selectcolor->redraw();
   }
-//ﬂ ▲ ----------~==~~---~--------------~=-~-=-~~~-=~-=-=-~~= ▲ ﬂ//
+//ﬂ ▲ ----------~=~==-~~=~=------------~=-~-=-~~~-=~-=-=-~~= ▲ ﬂ//
 }
 
 Fl_Group *wp_style_text=(Fl_Group *)0;
@@ -1934,7 +1934,7 @@ static void cb_b(Fl_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~--~~-~=~~~--------------~==~~~-=--~~~~~~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~~=-~-=~=---------------~==~~~-=--~~~~~~=~ ▲ ﬂ//
 }
 
 static void cb_c(Fl_Value_Input* o, void* v) {
@@ -1956,7 +1956,7 @@ static void cb_c(Fl_Value_Input* o, void* v) {
     if (mod) Fluid.proj.set_modflag(1);
   }
   o->value(s);
-//ﬂ ▲ ----------=~~==~-~~=~------------~=-=----=~==-=~=~=-~~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-~-=-~-=~------------~=-=----=~==-=~=~=-~~ ▲ ﬂ//
 }
 
 Fl_Button *w_textcolor=(Fl_Button *)0;
@@ -1980,7 +1980,7 @@ static void cb_w_textcolor(Fl_Button* o, void* v) {
   o->color(c);
   o->labelcolor(fl_contrast(FL_BLACK,c));
   o->redraw();
-//ﬂ ▲ ----------~=---==~~=~-----------~~-~---=-~=-=--==~~==- ▲ ﬂ//
+//ﬂ ▲ ----------~==-~~=-=~~=----------~~-~---=-~=-=--==~~==- ▲ ﬂ//
 }
 
 static void cb_d(Fl_Menu_Button* o, void* v) {
@@ -2002,7 +2002,7 @@ static void cb_d(Fl_Menu_Button* o, void* v) {
     w_textcolor->labelcolor(fl_contrast(FL_BLACK,c));
     w_textcolor->redraw();
   }
-//ﬂ ▲ ----------=~~--=-=~-~=----------~~~~-=~==---=~-~=-~==~ ▲ ﬂ//
+//ﬂ ▲ ----------=~--=--=-~=~----------~~~~-=~==---=~-~=-~==~ ▲ ﬂ//
 }
 
 static void cb_Horizontal(Fl_Value_Input* o, void* v) {
@@ -2032,7 +2032,7 @@ static void cb_Horizontal(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~----=~-~-~-----------~~---=---~=-=~=---=-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~~=~~~-~-----------~~---=---~=-=~=---=-~ ▲ ﬂ//
 }
 
 static void cb_Vertical(Fl_Value_Input* o, void* v) {
@@ -2062,7 +2062,7 @@ static void cb_Vertical(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=-=~=----~-----------~~~~=-~-=---~-~~=-~~-- ▲ ﬂ//
+//ﬂ ▲ ----------~=-=--~~-~~-----------~~~~=-~-=---~-~~=-~~-- ▲ ﬂ//
 }
 
 static void cb_Image(Fl_Value_Input* o, void* v) {
@@ -2092,7 +2092,7 @@ static void cb_Image(Fl_Value_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-~=---~-------------~--=~~=-~--=-=~~=--~=- ▲ ﬂ//
+//ﬂ ▲ ----------~=~==~~=-=~~----------~--=~~=-~--=-=~~=--~=- ▲ ﬂ//
 }
 
 static void cb_Compact(Fl_Light_Button* o, void* v) {
@@ -2124,7 +2124,7 @@ static void cb_Compact(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~~~~-=~-~----------~~=~-~~~=-~--=~=-~~-~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-~-=~=~-------------~~=~-~~~=-~--=~=-~~-~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_cpp_tab=(Fl_Group *)0;
@@ -2149,7 +2149,7 @@ static void cb_e(Fl_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~=---=~-~==~----------~~~-~~=~~~~=~---~~--~- ▲ ﬂ//
+//ﬂ ▲ ----------~=----~=~-------------~~~-~~=~~~~=~---~~--~- ▲ ﬂ//
 }
 
 static void cb_f(Fl_Choice* o, void* v) {
@@ -2197,7 +2197,7 @@ static void cb_f(Fl_Choice* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------=~-=~=~~~-=--------------~-==--~~-=--~=-~-~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~-=~=-=~~~-------------~-==--~~-=--~=-~-~= ▲ ﬂ//
 }
 
 Fl_Group *wp_cpp_name=(Fl_Group *)0;
@@ -2225,7 +2225,7 @@ static void cb_10(Fl_Input* o, void* v) {
         // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
       }
     }
-//ﬂ ▲ ----------~=-~--=-=~=~----------~~=-~-~~~=~-=----~~--~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-~~~~=~~-~----------~~=-~-~~~=~-=----~~--~ ▲ ﬂ//
 }
 
 static void cb_11(Fl_Choice* o, void* v) {
@@ -2249,7 +2249,7 @@ static void cb_11(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~~--~~=---~----------~--~=-~~~=-==--=~-~==- ▲ ﬂ//
+//ﬂ ▲ ----------~=~=~~=~---~----------~--~=-~~~=-==--=~-~==- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_2[] = {
@@ -2281,19 +2281,19 @@ static void cb_v_input(Fl_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------=~~~~~=-=-~~----------~--~~~~~~==--~=-~~~-~- ▲ ﬂ//
+//ﬂ ▲ ----------=~~=~-=~=--~----------~--~~~~~~==--~=-~~~-~- ▲ ﬂ//
 }
 
 static void cb_v_input1(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-~==~-~~=~~=~~-~~=--~ ▼ ﬂ//
   cb_v_input(o, v);
-//ﬂ ▲ ----------~==-=~~=-~------------~-~-~=~~-------=-=-=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~=----~=~=----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
 }
 
 static void cb_v_input2(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~--=-~~~~-=-~-=-=~--~ ▼ ﬂ//
   cb_v_input(o, v);
-//ﬂ ▲ ----------~=~-=~~-=-~-----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~=-=~--=-~----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
 }
 
 Fl_Input *v_input[4]={(Fl_Input *)0};
@@ -2301,14 +2301,14 @@ Fl_Input *v_input[4]={(Fl_Input *)0};
 static void cb_v_input3(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~----~-~=~~--~--~~~~=~ ▼ ﬂ//
   cb_v_input(o, v);
-//ﬂ ▲ ----------=~-=~==~~=-=----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~-=-~=--~-=----------~-~-~=~~-------=-=-=-= ▲ ﬂ//
 }
 
 static void cb_12(Fl_Tile*, void* v) {
 //ﬂ ▼ ---------------------- callback -~-----~=-~==~=--~-==~ ▼ ﬂ//
   wComment->do_callback(wComment, v);
   wCallback->do_callback(wCallback, v);
-//ﬂ ▲ ----------=~------=~~=-----------~~--~-=--~=-=~~-~=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=---~=~~=~=-----------~~--~-=--~=-=~~-~=~=~ ▲ ﬂ//
 }
 
 Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
@@ -2328,7 +2328,7 @@ static void cb_wComment(Fl_Text_Editor* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
       free(c);
     }
-//ﬂ ▲ ----------~=~-=~~~-~~=----------~~-~--=~~~-~~==~~=~~~- ▲ ﬂ//
+//ﬂ ▲ ----------~=-=-~=-~=------------~~-~--=~~~-~~==~~=~~~- ▲ ﬂ//
 }
 
 fld::widget::Code_Editor *wCallback=(fld::widget::Code_Editor *)0;
@@ -2354,7 +2354,7 @@ static void cb_wCallback(fld::widget::Code_Editor* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
       free(c);
     }
-//ﬂ ▲ ----------=~=~=~---=~~-----------~=-~~-~~=-=~--~~--=~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~~=-=~-~~~-----------~=-~~-~~=-=~--~~--=~~ ▲ ﬂ//
 }
 
 Fl_Group *wp_cpp_callback=(Fl_Group *)0;
@@ -2374,7 +2374,7 @@ static void cb_13(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~~~~=~-~-~-----------~-~=-~=~-~~---=-~~-~-- ▲ ﬂ//
+//ﬂ ▲ ----------=~~~=-~=~-=~----------~-~=-~=~-~~---=-~~-~-- ▲ ﬂ//
 }
 
 static void cb_When(Fl_Menu_Button* o, void* v) {
@@ -2404,7 +2404,7 @@ static void cb_When(Fl_Menu_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-~~=~=-=~~-----------~-=~==--=~~-=-=~~--~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-==-~~-~-=-----------~-=~==--=~~-=-=~~--~~ ▲ ﬂ//
 }
 
 static void cb_14(Fl_Input_Choice* o, void* v) {
@@ -2431,7 +2431,7 @@ static void cb_14(Fl_Input_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=--=-=~=-~=--------------=~~-~-~~~~-=~-~=-- ▲ ﬂ//
+//ﬂ ▲ ----------~=~=--~--~-=--------------=~~-~-~~~~-=~-~=-- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_4[] = {
@@ -2447,7 +2447,7 @@ Grid_Tab *widget_tab_grid=(Grid_Tab *)0;
 static void cb_widget_tab_grid(Grid_Tab* o, void*) {
 //ﬂ ▼ ---------------------- callback -~--=~~~~~=-~~=-=~-~~- ▼ ﬂ//
   o->callback((Fl_Callback*)propagate_load);
-//ﬂ ▲ ----------=~~~---=~~~=----------~~~==-=--~-~-=~~=-~=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~~~=~-------------~~~==-=--~-~-=~~=-~=-= ▲ ﬂ//
 }
 
 Grid_Child_Tab *widget_tab_grid_child=(Grid_Child_Tab *)0;
@@ -2455,7 +2455,7 @@ Grid_Child_Tab *widget_tab_grid_child=(Grid_Child_Tab *)0;
 static void cb_widget_tab_grid_child(Grid_Child_Tab* o, void*) {
 //ﬂ ▼ ---------------------- callback -~-==-=~~~~~~==~~--~-~ ▼ ﬂ//
   o->callback((Fl_Callback*)propagate_load);
-//ﬂ ▲ ----------=~=~=-~=~-~~----------~~~==-=--~-~-=~~=-~=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~=-=~--~-~----------~~~==-=--~-~-=~~=-~=-= ▲ ﬂ//
 }
 
 Fl_Tabs *data_tabs=(Fl_Tabs *)0;
@@ -2464,7 +2464,7 @@ static void cb_data_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~-==~-~-~-~-=-~~-~==- ▼ ﬂ//
   if (current_node && current_node->is_a(Type::Data))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------~=~=-=~--~------------~-=~=~~=--~--==~=-=~=- ▲ ﬂ//
+//ﬂ ▲ ----------~=--=~-=~-~=----------~-=~=~~=--~--==~=-=~=- ▲ ﬂ//
 }
 
 Fl_Group *data_tabs_data=(Fl_Group *)0;
@@ -2493,7 +2493,7 @@ static void cb_15(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~=~--~~-=-~-----------~--~~~-~==~~=-==-~-=- ▲ ﬂ//
+//ﬂ ▲ ----------=~-=-=~--~~=-----------~--~~~-~==~~=-==-~-=- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_5[] = {
@@ -2528,7 +2528,7 @@ static void cb_16(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=~~-~-=~-=~-----------~-=-~~~~~~=~=~=-~-=-- ▲ ﬂ//
+//ﬂ ▲ ----------=~-~=~~~=~=------------~-=-~~~~~~=~=~=-~-=-- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_6[] = {
@@ -2556,7 +2556,7 @@ static void cb_data_mode_2(Fl_Choice* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-~=--=~--~----------~--~=--~=-~=-=~=--~-~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~=~--~-==~----------~--~=--~=-~=-=~=--~-~- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_data_mode_2[] = {
@@ -2593,7 +2593,7 @@ static void cb_Name(Fl_Input* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~=~-----~-~------------~=-~-=~--~~~--~=~~-~ ▲ ﬂ//
+//ﬂ ▲ ----------~==---~~~=~~------------~=-~-=~--~~~--~=~~-~ ▲ ﬂ//
 }
 
 Fl_Input *wp_data_filename=(Fl_Input *)0;
@@ -2619,7 +2619,7 @@ static void cb_wp_data_filename(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=-=~-=-=~=------------~-=~-=~-=~~~--=~~-~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~=~-=---~-~-----------~-=~-=~-=~~~--=~~-~~= ▲ ﬂ//
 }
 
 static void cb_fileopen(Fl_Button*, void* v) {
@@ -2638,7 +2638,7 @@ static void cb_fileopen(Fl_Button*, void* v) {
       }
     }
   }
-//ﬂ ▲ ----------~==--~-=~-~-----------~-=~~=---~=~--~~~~~~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~~-=~~=--~----------~-=~~=---~=~--~~~~~~~= ▲ ﬂ//
 }
 
 static void cb_Comment(Fl_Text_Editor* o, void* v) {
@@ -2666,7 +2666,7 @@ static void cb_Comment(Fl_Text_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~-=~-=---~=----------~-~~=-----=~~--=~---~= ▲ ﬂ//
+//ﬂ ▲ ----------~==-~--==~-~----------~-~~=-----=~~--=~---~= ▲ ﬂ//
 }
 
 Fl_Tabs *comment_tabs=(Fl_Tabs *)0;
@@ -2675,7 +2675,7 @@ static void cb_comment_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback ---~~~~==~~=~~~~--~~~~ ▼ ﬂ//
   if (current_node && current_node->is_a(Type::Comment))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------~=~~-~~-=-=-----------~--~=-~=---=~-~=~~=-~~ ▲ ﬂ//
+//ﬂ ▲ ----------~==~---=~~~-----------~--~=-~=---=~-~=~~=-~~ ▲ ﬂ//
 }
 
 Fl_Group *comment_tabs_comment=(Fl_Group *)0;
@@ -2709,7 +2709,7 @@ static void cb_comment_tabs_name(Fl_Text_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~-~=-~==~~=-----------~=--=-~-~-~=~=~-~~-~= ▲ ﬂ//
+//ﬂ ▲ ----------~=~=~~-~---------------~=--=-~-~-~=~=~-~~-~= ▲ ﬂ//
 }
 
 Fl_Menu_Button *comment_predefined_2=(Fl_Menu_Button *)0;
@@ -2790,7 +2790,7 @@ static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
       }
      }
   }
-//ﬂ ▲ ----------=~~=~=~--~=------------~=~-~~-----~=~=--~=~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=~=--~~-~~-----------~=~-~~-----~=~=--~=~~ ▲ ﬂ//
 }
 
 Fl_Button *comment_load_2=(Fl_Button *)0;
@@ -2810,7 +2810,7 @@ static void cb_comment_load_2(Fl_Button*, void* v) {
       comment_tabs_name->do_callback();
     }
   }
-//ﬂ ▲ ----------~=-~~~~----=------------~-~--~-==~~-~~=~~=-= ▲ ﬂ//
+//ﬂ ▲ ----------=~--~~=-~~-=------------~-~--~-==~~-~~=~~=-= ▲ ﬂ//
 }
 
 static void cb_output(Fl_Check_Button* o, void* v) {
@@ -2830,7 +2830,7 @@ static void cb_output(Fl_Check_Button* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~==-~--~~--=-----------~-~=~=-~--~~=~~=~-~~- ▲ ﬂ//
+//ﬂ ▲ ----------=~~~-=--~~-=-----------~-~=~=-~--~~=~~=~-~~- ▲ ﬂ//
 }
 
 static void cb_output1(Fl_Check_Button* o, void* v) {
@@ -2850,7 +2850,7 @@ static void cb_output1(Fl_Check_Button* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~==~=---~~------------~~~---~-~--~-=-==~-==~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-==--==~~-----------~~~---~-~--~-=-==~-==~ ▲ ﬂ//
 }
 
 Fl_Tabs *class_tabs=(Fl_Tabs *)0;
@@ -2859,7 +2859,7 @@ static void cb_class_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~-----=-~-=~-~=-~---- ▼ ﬂ//
   if (current_node && current_node->is_a(Type::Class))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------=~~~--~=~=~~----------~-~~~~=~~~-==~-=~=~~-= ▲ ﬂ//
+//ﬂ ▲ ----------=~~=~==--==-----------~-~~~~=~~~-==~-=~=~~-= ▲ ﬂ//
 }
 
 Fl_Group *class_tabs_main=(Fl_Group *)0;
@@ -2888,7 +2888,7 @@ static void cb_17(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=~~--~--~-------------~-~-~~~-~---~~~=~~=-- ▲ ﬂ//
+//ﬂ ▲ ----------=~--~=~~=~~~-----------~-~-~~~-~---~~~=~~=-- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_7[] = {
@@ -2917,7 +2917,7 @@ static void cb_Attribute(Fl_Input* o, void* v) {
     }
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~=~=--==~=-----------~--~~---~~~~=-~~-~=~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~-~--=~=-~=----------~--~~---~~~~=-~~-~=~~= ▲ ﬂ//
 }
 
 static void cb_Class(Fl_Input* o, void* v) {
@@ -2944,7 +2944,7 @@ static void cb_Class(Fl_Input* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=~=~=-~-=~=----------~~~=-~-~=--==~~-=~-~~= ▲ ﬂ//
+//ﬂ ▲ ----------~=-=-=--=~~=----------~~~=-~-~=--==~~-=~-~~= ▲ ﬂ//
 }
 
 static void cb_Base(Fl_Input* o, void* v) {
@@ -2966,7 +2966,7 @@ static void cb_Base(Fl_Input* o, void* v) {
     }
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=----~=-~~~-----------~=~~-~~-~-==~-~--=-~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~-~-=-~~=~-----------~=~~-~~-~-==~-~--=-~- ▲ ﬂ//
 }
 
 static void cb_Comment1(Fl_Text_Editor* o, void* v) {
@@ -2994,7 +2994,7 @@ static void cb_Comment1(Fl_Text_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=-==---=-=-----------~--==~~-~=--=~=~=~~~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~==~=~~=-~-=----------~--==~~-~=--=~=~=~~~=~ ▲ ﬂ//
 }
 
 Fl_Tabs *declblock_tabs=(Fl_Tabs *)0;
@@ -3003,7 +3003,7 @@ static void cb_declblock_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~~--=~~=~~~~-==-~=~~=~ ▼ ﬂ//
   if (current_node && current_node->is_a(Type::DeclBlock))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------~==~~--=~=~~-------------~-~=~~=-=-~=~----=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-~--=~~~---------------~-~=~~=-=-~=~----=~ ▲ ﬂ//
 }
 
 Fl_Group *declblock_tabs_main=(Fl_Group *)0;
@@ -3032,7 +3032,7 @@ static void cb_Start(Fl_Input* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~-~-=--~~-=----------~----~~=---==~-~~---~- ▲ ﬂ//
+//ﬂ ▲ ----------~=--~--=-=------------~----~~=---==~-~~---~- ▲ ﬂ//
 }
 
 static void cb_End(Fl_Input* o, void* v) {
@@ -3054,7 +3054,7 @@ static void cb_End(Fl_Input* o, void* v) {
     }
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~~=~=~=~~------------=~-~---=~~-~=--~~=~- ▲ ﬂ//
+//ﬂ ▲ ----------=~--~=~~=-~~------------=~-~---=~~-~=--~~=~- ▲ ﬂ//
 }
 
 static void cb_implementations(Fl_Check_Button* o, void* v) {
@@ -3078,7 +3078,7 @@ static void cb_implementations(Fl_Check_Button* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-=-~--~--=----------~-~~~---=----=-=~==--~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~-~=~=~~----------~-~~~---=----=-=~==--~ ▲ ﬂ//
 }
 
 static void cb_static(Fl_Check_Button* o, void* v) {
@@ -3102,7 +3102,7 @@ static void cb_static(Fl_Check_Button* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~~=~=---~----------------~==--=---==-=-=--= ▲ ﬂ//
+//ﬂ ▲ ----------=~~=~-~=-~-~--------------~==--=---==-=-=--= ▲ ﬂ//
 }
 
 static void cb_forward(Fl_Check_Button* o, void* v) {
@@ -3126,7 +3126,7 @@ static void cb_forward(Fl_Check_Button* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=-=~~~~~--------------~=~-~~-=-=--=~=---=~- ▲ ﬂ//
+//ﬂ ▲ ----------~=-~-=---=-=-----------~=~-~~-=-=--=~=---=~- ▲ ﬂ//
 }
 
 static void cb_preprecessor(Fl_Check_Button* o, void* v) {
@@ -3150,7 +3150,7 @@ static void cb_preprecessor(Fl_Check_Button* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-~=-~~-==------------~=-~=-=~=-=~~~~-=-==~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~---~=~-~~-----------~=-~=-=~=-=~~~~-=-==~ ▲ ﬂ//
 }
 
 static void cb_Comment2(Fl_Text_Editor* o, void* v) {
@@ -3178,7 +3178,7 @@ static void cb_Comment2(Fl_Text_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=--=-=-~--~----------~----~-~=~--=---=--=-- ▲ ﬂ//
+//ﬂ ▲ ----------=~=-~=~~~~=~----------~----~-~=~--=---=--=-- ▲ ﬂ//
 }
 
 Fl_Tabs *decl_tabs=(Fl_Tabs *)0;
@@ -3187,7 +3187,7 @@ static void cb_decl_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback --~--~=~~~-~--=~--=~=~ ▼ ﬂ//
   if (current_node && current_node->is_a(Type::Decl))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------=~-~~~~=~=~~----------~~-~=~~~~==~--~--=--=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~~~~~~~~----------~~-~=~~~~==~--~--=--=~ ▲ ﬂ//
 }
 
 Fl_Group *decl_tabs_main=(Fl_Group *)0;
@@ -3217,7 +3217,7 @@ static void cb_18(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~-=--~=~~~------------~-~~-~~~=~=~--~---~=- ▲ ﬂ//
+//ﬂ ▲ ----------=~=~--=~~=~------------~-~~-~~~=~=~--~---~=- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_8[] = {
@@ -3253,7 +3253,7 @@ static void cb_19(Fl_Choice* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~--=-~-~-~=--------------~=~-~--~=~~=-=-~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~~--~~~---------------~=~-~--~=~~=-=-~=~ ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_9[] = {
@@ -3266,7 +3266,7 @@ Fl_Menu_Item menu_9[] = {
 static void cb_1a(Fl_Tile* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~=-=-=~=~--~-~--~=--= ▼ ﬂ//
   propagate_load(o, v);
-//ﬂ ▲ ----------~=-==-~=--~=-----------~~----=--~=~~-~-----= ▲ ﬂ//
+//ﬂ ▲ ----------=~-~=~~~~~=------------~~----=--~=~~-~-----= ▲ ﬂ//
 }
 
 static void cb_Declaration(fld::widget::Code_Editor* o, void* v) {
@@ -3296,7 +3296,7 @@ static void cb_Declaration(fld::widget::Code_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=-~~==---=~----------~~-~~-=---=-~--~=-~-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~==-=~~~~=~~----------~~-~~-=---=-~--~=-~-=~ ▲ ﬂ//
 }
 
 static void cb_Comment3(Fl_Text_Editor* o, void* v) {
@@ -3325,7 +3325,7 @@ static void cb_Comment3(Fl_Text_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~--~~---~-=-----------~=~=~-=-~--~=-~=~=~-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=~-~=-~-=~-----------~=~=~-=-~--~=-~=~=~-~ ▲ ﬂ//
 }
 
 Fl_Tabs *codeblock_tabs=(Fl_Tabs *)0;
@@ -3334,7 +3334,7 @@ static void cb_codeblock_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-~=~~~--~~=-~~-~---~~ ▼ ﬂ//
   if (current_node && current_node->is_a(Type::CodeBlock))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------=~=-=~~=-~~~----------~-=-=--~-=-=---=---~=- ▲ ﬂ//
+//ﬂ ▲ ----------~=~-=~~==~=-----------~-=-=--~-=-=---=---~=- ▲ ﬂ//
 }
 
 Fl_Group *codeblock_tabs_main=(Fl_Group *)0;
@@ -3363,7 +3363,7 @@ static void cb_Start1(Fl_Input* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~=~~=-=~--=-----------~~=~~=~-=~--=~-~=-~~- ▲ ﬂ//
+//ﬂ ▲ ----------=~=-~~--=-=~-----------~~=~~=~-=~--=~-~=-~~- ▲ ﬂ//
 }
 
 static void cb_End1(Fl_Input* o, void* v) {
@@ -3386,7 +3386,7 @@ static void cb_End1(Fl_Input* o, void* v) {
     }
     Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==~-~=-~--=----------~~~-~-=~~~-~~~~~~=-==- ▲ ﬂ//
+//ﬂ ▲ ----------~=~==--~--~-----------~~~-~-=~~~-~~~~~~=-==- ▲ ﬂ//
 }
 
 static void cb_Comment4(Fl_Text_Editor* o, void* v) {
@@ -3415,7 +3415,7 @@ static void cb_Comment4(Fl_Text_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~-~=-=--=~~----------~~=~-~=--=~=-=~~~=~--~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-~-~=----~----------~~=~-~=--=~=-=~~~=~--~ ▲ ﬂ//
 }
 
 Fl_Tabs *code_tabs=(Fl_Tabs *)0;
@@ -3424,7 +3424,7 @@ static void cb_code_tabs(Fl_Tabs* o, void* v) {
 //ﬂ ▼ ---------------------- callback ---~-=-~-==-~=-=~~=-~- ▼ ﬂ//
   if (current_node && current_node->is_a(Type::Code))
     propagate_load((Fl_Group *)o,v);
-//ﬂ ▲ ----------~==~=--=~-~=----------~~=~~~-=--~-=~--=~---= ▲ ﬂ//
+//ﬂ ▲ ----------=~=~=-=---~-----------~~=~~~-=--~-=~--=~---= ▲ ﬂ//
 }
 
 Fl_Group *code_tabs_main=(Fl_Group *)0;
@@ -3461,7 +3461,199 @@ static void cb_1b(fld::widget::Code_Editor* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------=~~=~~-=~~~~-------------~~~-=~~-=~=~--~~-~- ▲ ﬂ//
+//ﬂ ▲ ----------=~~-=~~=~=-~-------------~~~-=~~-=~=~--~~-~- ▲ ﬂ//
+}
+
+Fl_Tabs *func_tabs=(Fl_Tabs *)0;
+
+static void cb_func_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~~==~~-~~-~=~=-=~-- ▼ ﬂ//
+  if (current_node && current_node->is_a(Type::Function))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------~==~~-~~~-=~------------~-~=-~=~=~=~~~~~=--= ▲ ﬂ//
+}
+
+Fl_Group *func_tabs_main=(Fl_Group *)0;
+
+static void cb_1c(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~-----=---~~--~~~=~~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Function)) return;
+  Function_Node* nd = (Function_Node*)current_node;
+
+  if (v == LOAD) {
+    if (!nd->is_in_class()) {
+      o->value(nd->visibility());
+      o->show(); 
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    if (!nd->is_in_class()) {
+      if (nd->visibility() != o->value()) {
+        nd->visibility(o->value());
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~--~-=-~--=-------------~-=-=-~-~=-=-~=~-~~ ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_a[] = {
+ {"static", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"global", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"local", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+static void cb_1d(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~--=~--~=-~~=--~=~~-- ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Function)) return;
+  Function_Node* nd = (Function_Node*)current_node;
+
+  if (v == LOAD) {
+    if (nd->is_in_class()) {
+      o->value(nd->visibility());
+      o->show(); 
+    } else {
+      o->hide();
+    }
+  } else {
+    int mod = 0;
+    if (nd->is_in_class()) {
+      if (nd->visibility() != o->value()) {
+        nd->visibility(o->value());
+        mod = 1;
+      }
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~~--==--~-=----------~---~=~=~-~=~--~--~-~= ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_b[] = {
+ {"private", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+static void cb_declare(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-==-=-~=~~=~~~-==--~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Function)) return;
+  Function_Node* nd = (Function_Node*)current_node;
+
+  if (v == LOAD) {
+    o->value(nd->cdecl());
+  } else {
+    int mod = 0;
+    if (nd->cdecl() != o->value()) {
+      nd->cdecl( o->value() );
+      mod = 1;
+    }
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------~=----~==-~-----------~~=~~~=-~~-=~~-~=~=--- ▲ ﬂ//
+}
+
+static void cb_1e(Fl_Tile* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~-~==~~--==~-==~~=~~ ▼ ﬂ//
+  propagate_load(o, v);
+//ﬂ ▲ ----------~=-=~~-~~=~~-----------~~----=--~=~~-~-----= ▲ ﬂ//
+}
+
+static void cb_Function(fld::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=~=----~=~~-=~-==--~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Function)) return;
+  Function_Node* nd = (Function_Node*)current_node;
+
+  if (v == LOAD) {
+    the_panel->label("Function Properties");
+    const char *cmttext = nd->name();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->name();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->name(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------~==~~=~-~=-~----------~~~=~---~-~-=~~-=-=~-- ▲ ﬂ//
+}
+
+static void cb_Return(fld::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=--~-~=~=~~~---=~~=~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Function)) return;
+  Function_Node* nd = (Function_Node*)current_node;
+
+  if (v == LOAD) {
+    const char *cmttext = nd->return_type();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->return_type();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->return_type(c);
+      mod = 1;
+    }
+    free(c);  
+    Fluid.proj.set_modflag(1);
+  }
+//ﬂ ▲ ----------~==-=~~~~~~-----------~~-=~=-~=~-=--=--~--=~ ▲ ﬂ//
+}
+
+static void cb_Comment5(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ----=~--=~-==-~=-~=~=~ ▼ ﬂ//
+  if (!current_node || !current_node->is_a(Type::Function)) return;
+  Function_Node* nd = (Function_Node*)current_node;
+
+  if (v == LOAD) {
+    const char *cmttext = nd->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod;
+    char *c = o->buffer()->text();
+    const char *nn = nd->comment();
+    if (   (nn && (strcmp(nn, c) == 0))
+        || (!nn && (strcmp("", c) == 0)) )
+    {
+      mod = 0;
+    } else {
+      nd->comment(c);
+      mod = 1;
+    }
+    free(c);  
+    if (mod) {
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------~=~-~=~~~~-~-----------~~-=-=-~=-~=~~~---~=- ▲ ﬂ//
 }
 
 Fl_Tabs *widget_tabs_repo=(Fl_Tabs *)0;
@@ -4788,6 +4980,7 @@ Fl_Double_Window* make_widget_panel() {
                 o->labelfont(1);
                 o->labelsize(11);
                 o->labelcolor(FL_FOREGROUND_COLOR);
+                o->textsize(11);
                 o->callback((Fl_Callback*)cb_Declaration);
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
@@ -4823,7 +5016,6 @@ Fl_Double_Window* make_widget_panel() {
           Fl_Group::current()->resizable(decl_tabs_main);
         } // Fl_Group* decl_tabs_main
         decl_tabs->end();
-        Fl_Group::current()->resizable(decl_tabs);
       } // Fl_Tabs* decl_tabs
       { codeblock_tabs = new Fl_Tabs(10, 10, 400, 350);
         codeblock_tabs->selection_color((Fl_Color)12);
@@ -4873,6 +5065,7 @@ Fl_Double_Window* make_widget_panel() {
         code_tabs->labelsize(11);
         code_tabs->labelcolor(FL_WHITE);
         code_tabs->callback((Fl_Callback*)cb_code_tabs);
+        code_tabs->hide();
         { code_tabs_main = new Fl_Group(10, 30, 400, 330, "Code");
           code_tabs_main->labelsize(11);
           code_tabs_main->callback((Fl_Callback*)propagate_load);
@@ -4898,6 +5091,129 @@ o->linenumber_size(o->Fl_Text_Display::textsize());
         } // Fl_Group* code_tabs_main
         code_tabs->end();
       } // Fl_Tabs* code_tabs
+      { func_tabs = new Fl_Tabs(10, 10, 400, 350);
+        func_tabs->selection_color((Fl_Color)12);
+        func_tabs->labelsize(11);
+        func_tabs->labelcolor(FL_WHITE);
+        func_tabs->callback((Fl_Callback*)cb_func_tabs);
+        { func_tabs_main = new Fl_Group(10, 30, 400, 330, "Function");
+          func_tabs_main->labelsize(11);
+          func_tabs_main->callback((Fl_Callback*)propagate_load);
+          { Fl_Group* o = new Fl_Group(15, 50, 390, 45);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            { Fl_Box* o = new Fl_Box(404, 50, 1, 20);
+              o->hide();
+              Fl_Group::current()->resizable(o);
+            } // Fl_Box* o
+            { Fl_Box* o = new Fl_Box(95, 50, 1, 20, "Visibility:");
+              o->labelfont(1);
+              o->labelsize(11);
+              o->align(Fl_Align(FL_ALIGN_LEFT));
+            } // Fl_Box* o
+            { Fl_Choice* o = new Fl_Choice(95, 50, 80, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_1c);
+              o->menu(menu_a);
+            } // Fl_Choice* o
+            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+              o->down_box(FL_BORDER_BOX);
+              o->labelsize(11);
+              o->textsize(11);
+              o->callback((Fl_Callback*)cb_1d);
+              o->menu(menu_b);
+            } // Fl_Choice* o
+            { Fl_Check_Button* o = new Fl_Check_Button(95, 75, 90, 20, "declare \"C\"");
+              o->down_box(FL_DOWN_BOX);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)cb_declare);
+            } // Fl_Check_Button* o
+            o->end();
+          } // Fl_Group* o
+          { Fl_Tile* o = new Fl_Tile(15, 100, 390, 220);
+            o->callback((Fl_Callback*)cb_1e);
+            { Fl_Group* o = new Fl_Group(15, 100, 390, 55);
+              o->box(FL_FLAT_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)propagate_load);
+              o->align(Fl_Align(FL_ALIGN_LEFT));
+              { fld::widget::Code_Editor* o = new fld::widget::Code_Editor(95, 100, 310, 50, "Function \nName and \nArgs:");
+                o->tooltip("function name and args, blank for `main(..)`");
+                o->box(FL_DOWN_FRAME);
+                o->color(FL_BACKGROUND2_COLOR);
+                o->selection_color(FL_SELECTION_COLOR);
+                o->labeltype(FL_NORMAL_LABEL);
+                o->labelfont(1);
+                o->labelsize(11);
+                o->labelcolor(FL_FOREGROUND_COLOR);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_Function);
+                o->align(Fl_Align(132));
+                o->when(FL_WHEN_RELEASE);
+                Fl_Group::current()->resizable(o);
+                o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+              } // fld::widget::Code_Editor* o
+              o->end();
+            } // Fl_Group* o
+            { Fl_Group* o = new Fl_Group(15, 155, 390, 60);
+              o->box(FL_FLAT_BOX);
+              o->labelfont(1);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)propagate_load);
+              o->align(Fl_Align(FL_ALIGN_LEFT));
+              { fld::widget::Code_Editor* o = new fld::widget::Code_Editor(95, 160, 310, 50, "Return Type:");
+                o->tooltip("return type, blank to return outermost widget");
+                o->box(FL_DOWN_FRAME);
+                o->color(FL_BACKGROUND2_COLOR);
+                o->selection_color(FL_SELECTION_COLOR);
+                o->labeltype(FL_NORMAL_LABEL);
+                o->labelfont(1);
+                o->labelsize(11);
+                o->labelcolor(FL_FOREGROUND_COLOR);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_Return);
+                o->align(Fl_Align(132));
+                o->when(FL_WHEN_RELEASE);
+                Fl_Group::current()->resizable(o);
+                o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+              } // fld::widget::Code_Editor* o
+              o->end();
+            } // Fl_Group* o
+            { Fl_Group* o = new Fl_Group(15, 215, 390, 105);
+              o->box(FL_FLAT_BOX);
+              o->callback((Fl_Callback*)propagate_load);
+              { Fl_Text_Editor* o = new Fl_Text_Editor(95, 220, 310, 100, "Comment:");
+                o->tooltip("function comment in Doxygen format");
+                o->box(FL_DOWN_BOX);
+                o->labelfont(1);
+                o->labelsize(11);
+                o->textfont(4);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_Comment5);
+                o->align(Fl_Align(FL_ALIGN_LEFT));
+                Fl_Group::current()->resizable(o);
+                o->buffer(new Fl_Text_Buffer());
+                o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+              } // Fl_Text_Editor* o
+              o->end();
+            } // Fl_Group* o
+            o->size_range(0, 25, 50);
+            o->size_range(1, 25, 50);
+            o->size_range(2, 25, 50);
+            o->end();
+            Fl_Group::current()->resizable(o);
+          } // Fl_Tile* o
+          func_tabs_main->end();
+          Fl_Group::current()->resizable(func_tabs_main);
+        } // Fl_Group* func_tabs_main
+        func_tabs->end();
+        Fl_Group::current()->resizable(func_tabs);
+      } // Fl_Tabs* func_tabs
       tabs_wizard->end();
       Fl_Group::current()->resizable(tabs_wizard);
     } // Fl_Wizard* tabs_wizard

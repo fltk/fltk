@@ -408,10 +408,11 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
   Node *t_decl = add_new_widget_from_user("Decl", Strategy::AS_LAST_CHILD, false);
   t_decl->name("const char *damage = \"'tis but a scratch\";");
+  Node *t_func = add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
   Node *t_code = add_new_widget_from_user("Code", Strategy::AS_LAST_CHILD, false);
   t_code->name("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
-  Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
   Node *t_codeblock = add_new_widget_from_user("CodeBlock", Strategy::AFTER_CURRENT, false);
+  Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -498,16 +499,17 @@ void run_autodoc(const std::string &target_dir) {
   // ---- dialog types
   // list and show all non-widget types and their respective dialog boxes
 
+  // Make sure we have a widget panel
+  t_win->open();
+  t_win->open();
+
   // -- Type::Function
-  Fl_Window *adoc_function_panel = make_function_panel();
-  f_name_input->value("count_trees(const char *forest_name)");
-  f_return_type_input->value("unsigned int");
-  fl_snapshot((target_dir + "function_panel.png").c_str(), adoc_function_panel, win_margin, win_blend);
-  adoc_function_panel->hide();
+  select_only(t_func);
+  fl_snapshot((target_dir + "function_panel.png").c_str(), func_tabs_main, tab_margin, row_blend);
 
   // -- Type::Code
   select_only(t_code);
-  fl_snapshot((target_dir + "code_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
+  fl_snapshot((target_dir + "code_panel.png").c_str(), code_tabs_main, tab_margin, row_blend);
 
   // -- Type::CodeBlock
   select_only(t_codeblock);
@@ -515,7 +517,7 @@ void run_autodoc(const std::string &target_dir) {
 
   // -- Type::Decl
   select_only(t_decl);
-  fl_snapshot((target_dir + "decl_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
+  fl_snapshot((target_dir + "decl_panel.png").c_str(), decl_tabs_main, tab_margin, row_blend);
 
   // -- Type::DeclBlock
   select_only(t_declblock);

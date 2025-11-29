@@ -48,7 +48,7 @@ public:
   typedef Node super;
   static Function_Node prototype;
 private:
-  const char* return_type;
+  const char* return_type_;
   char public_, cdecl_, constructor, havewidgets;
 public:
   Function_Node();
@@ -70,6 +70,12 @@ public:
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   int has_signature(const char *, const char*) const;
+  const char *return_type() { return return_type_; }
+  void return_type(const char *t) { storestring(t, return_type_); }
+  char visibility() { return public_; }
+  void visibility(char v) { public_ = v; }
+  char cdecl() { return cdecl_; }
+  void cdecl(char v) { cdecl_ = v; }
 };
 
 // ---- Code_Node declaration
