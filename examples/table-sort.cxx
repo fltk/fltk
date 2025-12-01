@@ -39,8 +39,11 @@
 
 #ifdef _WIN32
 // WINDOWS
-#  define DIRCMD          "dir"
-static const char *G_header[] = { "Date", "Time", "", "Size", "Filename", "", "", "", "", "", 0 };
+   // DIR flags that simplify parsing:
+   //    /-C   -- disable 1000's separator in file sizes
+   //    /A-D  -- don't show directories
+#  define DIRCMD            "dir /-C /A-D"
+   static std::vector<std::string> G_header = { "Date", "Time", "Size", "Filename" };
 #  ifdef _MSC_VER
 #    define popen           _popen
 #    define pclose          _pclose
@@ -48,7 +51,7 @@ static const char *G_header[] = { "Date", "Time", "", "Size", "Filename", "", ""
 #else /* _WIN32 */
 // UNIX
 #  define DIRCMD          "ls -l"
-static const char *G_header[] = { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename", 0 };
+   static std::vector<std::string> G_header = { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename" };
 #endif /* _WIN32 */
 
 // Font face/sizes for header and rows
@@ -155,10 +158,10 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
         case CONTEXT_COL_HEADER:
             fl_push_clip(X,Y,W,H); {
                 fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_BACKGROUND_COLOR);
-                if ( C < 9 ) {
+                if ( C < G_header.size() ) {
                     fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
                     fl_color(FL_BLACK);
-                    fl_draw(G_header[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left
+                    fl_draw(G_header[C].c_str(), X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left
                     // Draw sort arrow
                     if ( C == sort_lastcol_ ) {
                         draw_sort_arrow(X,Y,W,H);
@@ -190,8 +193,8 @@ void MyTable::autowidth(int pad) {
     int w, h;
     // Initialize all column widths to header width
     fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
-    for ( int c=0; G_header[c]; c++ ) {
-        w=0; fl_measure(G_header[c], w, h, 0);                   // pixel width of header text
+    for ( int c=0; c<G_header.size(); c++ ) {
+        w=0; fl_measure(G_header[c].c_str(), w, h, 0);                   // pixel width of header text
         col_width(c, w+pad);
     }
     fl_font(ROW_FONTFACE, ROW_FONTSIZE);
@@ -224,7 +227,7 @@ void MyTable::load_command(const char *cmd) {
     for ( int line=0; fgets(s, sizeof(s)-1, fp); line++ ) {
 #ifdef _WIN32
         // WINDOWS
-        if ( line < 5 ) continue;    // skip DIR's 5 line header
+        if (s[0] == '\n' || s[0] == ' ') continue;  // ignore header/footer lines
 #else
         // UNIX
         if ( line==0 && strncmp(s,"total ",6)==0) continue;
@@ -236,6 +239,13 @@ void MyTable::load_command(const char *cmd) {
         char *ss;
         const char *delim = " \t\n";
         for(int t=0; (t==0)?(ss=strtok(s,delim)):(ss=strtok(NULL,delim)); t++) {
+#ifdef _WIN32
+            // DIR: Some systems show meridiem field, some don't (24hr time)
+            if (t==2 && (strcmp(ss,"AM")==0 || strcmp(ss,"PM")==0)) {
+                rc.back() = rc.back() + std::string(" ") + std::string(ss);
+		continue;
+            }
+#endif
             rc.push_back(ss);  // char* -> std::string
         }
         // Keep track of max # columns
@@ -244,12 +254,6 @@ void MyTable::load_command(const char *cmd) {
         }
     }
     pclose(fp);
-
-#ifdef _WIN32
-    // WINDOWS: Trim off DIR's 2 line footer
-    if ( rowdata_.size() > 2 )
-        { rowdata_.pop_back(); rowdata_.pop_back(); }
-#endif
 
     // How many rows we loaded
     rows((int)rowdata_.size());
