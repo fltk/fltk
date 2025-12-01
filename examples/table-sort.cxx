@@ -40,7 +40,7 @@
 #ifdef _WIN32
 // WINDOWS
 #  define DIRCMD          "dir"
-static const char *G_header[] = { "Date", "Time", "", "Size", "Filename", "", "", "", "", "", 0 };
+static const char *G_header[] = { "Date", "Time", "", "Size", "Filename", 0 };
 #  ifdef _MSC_VER
 #    define popen           _popen
 #    define pclose          _pclose
@@ -76,6 +76,9 @@ public:
                    *bp = ( _col < (int)b.cols.size() ) ? b.cols[_col].c_str() : "";
         if ( isdigit(*ap) && isdigit(*bp) ) {           // cheezy detection of numeric data
             // Numeric sort
+            // note: sscanf() will only read the "3" from "3,456", the "22"
+            // from "22:04", and the "2025" from "2025-11-30". but it would be
+            // more complicated if we wanted to sort variant columns so it's ok
             int av=0; sscanf(ap, "%d", &av);
             int bv=0; sscanf(bp, "%d", &bv);
             return( _reverse ? av < bv : bv < av );
@@ -155,7 +158,7 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
         case CONTEXT_COL_HEADER:
             fl_push_clip(X,Y,W,H); {
                 fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_BACKGROUND_COLOR);
-                if ( C < 9 ) {
+                {
                     fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
                     fl_color(FL_BLACK);
                     fl_draw(G_header[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left
@@ -236,7 +239,30 @@ void MyTable::load_command(const char *cmd) {
         char *ss;
         const char *delim = " \t\n";
         for(int t=0; (t==0)?(ss=strtok(s,delim)):(ss=strtok(NULL,delim)); t++) {
-            rc.push_back(ss);  // char* -> std::string
+// dir's output only produces 4 tokens a line although there are 5 columns
+// because for each output line for a file/directory, exactly one of columns 3
+// and 4 (<DIR> indicator and file size respectively) is solely whitespace.
+// therefore, when we read 2 values for a row and then strtok(), we will have
+// either "<DIR>" as the next token or get a numerical value of the file size
+#ifdef _WIN32
+            // special handling for the third column (rc will have size 2)
+            if (rc.size() == 2) {
+                // if <DIR> need to pad with empty string after push_back
+                if (strcmp(ss, "<DIR>") == 0) {
+                    rc.push_back(ss);
+                    rc.push_back("");
+                }
+                // otherwise need to pad with empty string *before* as this
+                // will be a numerical file size w/ delimiters like "4,096"
+                else {
+                    rc.push_back("");
+                    rc.push_back(ss);
+                }
+            }
+            // otherwise continue as usual
+            else
+#endif  // _WIN32
+                rc.push_back(ss);  // char* -> std::string
         }
         // Keep track of max # columns
         if ( (int)rc.size() > cols() ) {
@@ -246,9 +272,14 @@ void MyTable::load_command(const char *cmd) {
     pclose(fp);
 
 #ifdef _WIN32
-    // WINDOWS: Trim off DIR's 2 line footer
-    if ( rowdata_.size() > 2 )
-        { rowdata_.pop_back(); rowdata_.pop_back(); }
+    // WINDOWS: Trim off DIR's 2 line footer. Also need to reset cols() because
+    // the last line of the footer has *5* instead of *4* strtok() tokens so we
+    // will get an extra empty, headerless column in our table due to the extra
+    // "padding" we do when parsing the 3rd strtok() token for a line
+    if ( rowdata_.size() > 2 ) {
+        rowdata_.pop_back(); rowdata_.pop_back();
+        cols(rowdata_.back().cols.size());
+    }
 #endif
 
     // How many rows we loaded
