@@ -2,6 +2,7 @@
 // Fl_Anim_GIF_Image class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2016-2023 by Christian Grabner <wcout@gmx.net>.
+// Copyright 2024-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1195,21 +1196,24 @@ void Fl_Anim_GIF_Image::set_frame(int frame) {
   Fl_Widget* cv = canvas();
   if (cv) {
     Fl_Group* parent = cv->parent();
-    bool no_bg = (cv->box() == FL_NO_BOX);
+    bool no_bg = !Fl::box_bg(cv->box());
     bool outside = (!(cv->align() & FL_ALIGN_INSIDE) && !((cv->align() & FL_ALIGN_POSITION_MASK)==FL_ALIGN_CENTER));
-//    bool dispose =    (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND)
-//                   || (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS);
+    // bool dispose =    (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND)
+    //                || (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS);
     if (parent && (no_bg || outside))
       parent->redraw();
     else
       cv->redraw();
 
-// Note: the code below did not animate labels with a pixmap outside of the canvas
-//    canvas()->parent() &&
-//      (frame_ == 0 || (last_frame >= 0 && (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND  ||
-//                                           fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS))) &&
-//        (canvas()->box() == FL_NO_BOX || (canvas()->align() && !(canvas()->align() & FL_ALIGN_INSIDE)))      ?
-//      canvas()->parent()->redraw() : canvas()->redraw();
+    // Note: the code below did not animate labels with a pixmap outside of the canvas.
+    // Todo: Replace 'canvas()->box() == FL_NO_BOX' with '!Fl::box_bg(canvas()->box())'
+    //       if the code below is ever uncommented again. Maybe this would fix it?
+    //
+    // canvas()->parent() &&
+    //   (frame_ == 0 || (last_frame >= 0 && (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND  ||
+    //                                        fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS))) &&
+    //     (canvas()->box() == FL_NO_BOX || (canvas()->align() && !(canvas()->align() & FL_ALIGN_INSIDE)))      ?
+    //   canvas()->parent()->redraw() : canvas()->redraw();
 
   }
 }

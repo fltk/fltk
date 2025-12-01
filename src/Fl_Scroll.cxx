@@ -147,42 +147,27 @@ int Fl_Scroll::delete_child(int index) {
 }
 
 // Draw widget's background and children within a specific clip region
-//    So widget can just redraw damaged parts.
+// so widget can just redraw damaged parts.
 //
 void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   fl_push_clip(X,Y,W,H);
-  Fl_Scroll* s = (Fl_Scroll*)v;
-  // erase background as needed...
-  switch (s->box()) {
-    case FL_NO_BOX :
-    case FL_UP_FRAME :
-    case FL_DOWN_FRAME :
-    case FL_THIN_UP_FRAME :
-    case FL_THIN_DOWN_FRAME :
-    case FL_ENGRAVED_FRAME :
-    case FL_EMBOSSED_FRAME :
-    case FL_BORDER_FRAME :
-    case _FL_SHADOW_FRAME :
-    case _FL_ROUNDED_FRAME :
-    case _FL_OVAL_FRAME :
-    case _FL_PLASTIC_UP_FRAME :
-    case _FL_PLASTIC_DOWN_FRAME :
-        if (s->parent() == (Fl_Group *)s->window() && Fl::scheme_bg_) {
-          Fl::scheme_bg_->draw(X-(X%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w()),
-                               Y-(Y%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h()),
-                               W+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w(),
-                               H+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h());
-          break;
-        }
+  Fl_Scroll *s = (Fl_Scroll*)v;
 
-    default :
-      if (s->active_r())
-        fl_color(s->color());
-      else
-        fl_color(fl_inactive(s->color()));
-      fl_rectf(X,Y,W,H);
-      break;
+  // erase background as needed...
+  if (!Fl::box_bg(s->box()) && (s->parent() == (Fl_Group *)s->window() && Fl::scheme_bg_)) {
+    Fl::scheme_bg_->draw(X - (X%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w()),
+                         Y - (Y%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h()),
+                         W + ((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w(),
+                         H + ((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h());
+  } else {
+    if (s->active_r())
+      fl_color(s->color());
+    else
+      fl_color(fl_inactive(s->color()));
+    fl_rectf(X,Y,W,H);
   }
+
+  // draw visible children
   Fl_Widget*const* a = s->array();
   for (int i=s->children()-2; i--;) {
     Fl_Widget& o = **a++;

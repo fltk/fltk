@@ -1753,59 +1753,59 @@ void Fl_Widget::redraw() {
 }
 
 void Fl_Widget::redraw_label() {
-  if (window()) {
-    if (box() == FL_NO_BOX) {
-      // Widgets with the FL_NO_BOX boxtype need a parent to
-      // redraw, since it is responsible for redrawing the
-      // background...
-      int X = x() > 0 ? x() - 1 : 0;
-      int Y = y() > 0 ? y() - 1 : 0;
-      window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
-    }
+  if (!window())
+    return;
 
-    if (align() && !(align() & FL_ALIGN_INSIDE) && window()->shown()) {
-      // If the label is not inside the widget, compute the location of
-      // the label and redraw the window within that bounding box...
-      int W = 0, H = 0;
-      label_.measure(W, H);
-      W += 5; // Add a little to the size of the label to cover overflow
-      H += 5;
+  // Widgets without a solid background need a parent to redraw,
+  // since it is responsible for redrawing the background...
+  if (!Fl::box_bg(box())) {
+    int X = x() > 0 ? x() - 1 : 0;
+    int Y = y() > 0 ? y() - 1 : 0;
+    window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+  }
 
-      // FIXME:
-      // This assumes that measure() returns the correct outline, which it does
-      // not in all possible cases of alignment combined with image and symbols.
-      switch (align() & 0x0f) {
-        case FL_ALIGN_TOP_LEFT:
-          window()->damage(FL_DAMAGE_EXPOSE, x(), y()-H, W, H); break;
-        case FL_ALIGN_TOP:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+(w()-W)/2, y()-H, W, H); break;
-        case FL_ALIGN_TOP_RIGHT:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+w()-W, y()-H, W, H); break;
-        case FL_ALIGN_LEFT_TOP:
-          window()->damage(FL_DAMAGE_EXPOSE, x()-W, y(), W, H); break;
-        case FL_ALIGN_RIGHT_TOP:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y(), W, H); break;
-        case FL_ALIGN_LEFT:
-          window()->damage(FL_DAMAGE_EXPOSE, x()-W, y()+(h()-H)/2, W, H); break;
-        case FL_ALIGN_RIGHT:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y()+(h()-H)/2, W, H); break;
-        case FL_ALIGN_LEFT_BOTTOM:
-          window()->damage(FL_DAMAGE_EXPOSE, x()-W, y()+h()-H, W, H); break;
-        case FL_ALIGN_RIGHT_BOTTOM:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y()+h()-H, W, H); break;
-        case FL_ALIGN_BOTTOM_LEFT:
-          window()->damage(FL_DAMAGE_EXPOSE, x(), y()+h(), W, H); break;
-        case FL_ALIGN_BOTTOM:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+(w()-W)/2, y()+h(), W, H); break;
-        case FL_ALIGN_BOTTOM_RIGHT:
-          window()->damage(FL_DAMAGE_EXPOSE, x()+w()-W, y()+h(), W, H); break;
-        default:
-          window()->damage(FL_DAMAGE_ALL); break;
-      }
-    } else {
-      // The label is inside the widget, so just redraw the widget itself...
-      damage(FL_DAMAGE_ALL);
+  if (align() && !(align() & FL_ALIGN_INSIDE) && window()->shown()) {
+    // If the label is not inside the widget, compute the location of
+    // the label and redraw the window within that bounding box...
+    int W = 0, H = 0;
+    label_.measure(W, H);
+    W += 5; // Add a little to the size of the label to cover overflow
+    H += 5;
+
+    // FIXME:
+    // This assumes that measure() returns the correct outline, which it does
+    // not in all possible cases of alignment combined with image and symbols.
+    switch (align() & 0x0f) {
+      case FL_ALIGN_TOP_LEFT:
+        window()->damage(FL_DAMAGE_EXPOSE, x(), y()-H, W, H); break;
+      case FL_ALIGN_TOP:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+(w()-W)/2, y()-H, W, H); break;
+      case FL_ALIGN_TOP_RIGHT:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+w()-W, y()-H, W, H); break;
+      case FL_ALIGN_LEFT_TOP:
+        window()->damage(FL_DAMAGE_EXPOSE, x()-W, y(), W, H); break;
+      case FL_ALIGN_RIGHT_TOP:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y(), W, H); break;
+      case FL_ALIGN_LEFT:
+        window()->damage(FL_DAMAGE_EXPOSE, x()-W, y()+(h()-H)/2, W, H); break;
+      case FL_ALIGN_RIGHT:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y()+(h()-H)/2, W, H); break;
+      case FL_ALIGN_LEFT_BOTTOM:
+        window()->damage(FL_DAMAGE_EXPOSE, x()-W, y()+h()-H, W, H); break;
+      case FL_ALIGN_RIGHT_BOTTOM:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y()+h()-H, W, H); break;
+      case FL_ALIGN_BOTTOM_LEFT:
+        window()->damage(FL_DAMAGE_EXPOSE, x(), y()+h(), W, H); break;
+      case FL_ALIGN_BOTTOM:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+(w()-W)/2, y()+h(), W, H); break;
+      case FL_ALIGN_BOTTOM_RIGHT:
+        window()->damage(FL_DAMAGE_EXPOSE, x()+w()-W, y()+h(), W, H); break;
+      default:
+        window()->damage(FL_DAMAGE_ALL); break;
     }
+  } else {
+    // The label is inside the widget, so just redraw the widget itself...
+    damage(FL_DAMAGE_ALL);
   }
 }
 
@@ -2452,7 +2452,7 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
  to be effective for files dropped on the application icon at launch time.
  It can also be called at any point to change the function used to open dropped files.
  A call with a NULL argument, after a previous call, makes the app ignore files dropped later.
- 
+
  Use of this function also requires the application bundle's \c Info.plist file
  to declare what file types are allowed to be dropped on the icon. File \c README.macOS.md
  describes how to do that in its section
