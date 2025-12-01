@@ -689,6 +689,8 @@ FL_EXPORT extern int box_dy(Fl_Boxtype);
 FL_EXPORT extern int box_dw(Fl_Boxtype);
 FL_EXPORT extern int box_dh(Fl_Boxtype);
 
+FL_EXPORT extern bool box_bg(Fl_Boxtype);
+
 FL_EXPORT extern int draw_box_active();
 FL_EXPORT extern Fl_Color box_color(Fl_Color);
 FL_EXPORT extern void set_box_color(Fl_Color);

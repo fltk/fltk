@@ -1,7 +1,7 @@
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file. If this
@@ -150,28 +150,34 @@ int Fl_Button::handle(int event) {
       if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
       return 1;
     case FL_SHORTCUT:
-      if (!(shortcut() ?
-            Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
-      if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
+      if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut()))
+        return 0;
+      if (Fl::visible_focus() && handle(FL_FOCUS))
+        Fl::focus(this);
       goto triggered_by_keyboard;
-    case FL_FOCUS :
-    case FL_UNFOCUS :
+    case FL_FOCUS:
+    case FL_UNFOCUS:
       if (Fl::visible_focus()) {
-        if (box() == FL_NO_BOX) {
-          // Widgets with the FL_NO_BOX boxtype need a parent to
-          // redraw, since it is responsible for redrawing the
-          // background...
-          int X = x() > 0 ? x() - 1 : 0;
-          int Y = y() > 0 ? y() - 1 : 0;
-          if (window()) window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+        if (!Fl::box_bg(box())) {
+          // Widgets with boxtypes that don't draw the background need a parent
+          // to redraw, since it is responsible for drawing the background...
+          if (window()) {
+            int X = x() > 0 ? x() - 1 : 0;
+            int Y = y() > 0 ? y() - 1 : 0;
+            window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+          }
         } else {
-          if (box() && (fl_box(box())==box())) redraw();
-          else redraw_label();
+          if (box() && (fl_box(box()) == box())) // ? FIXME ?
+            redraw();
+          else
+            redraw_label();
         }
         return 1;
-      } else return 0;
+      } else {
+        return 0;
+      }
       /* NOTREACHED */
-    case FL_KEYBOARD :
+    case FL_KEYBOARD:
       if (Fl::focus() == this && Fl::event_key() == ' ' &&
           !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
       triggered_by_keyboard: // from FL_SHORTCUT
