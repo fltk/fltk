@@ -114,7 +114,7 @@ public:
         callback(event_callback, (void*)this);
     }
     ~MyTable() { }                              // Dtor
-    void load_command(const char *cmd);         // Load the output of a command into table
+    void fill_from_dircmd();                    // Load the output of DIRCMD into table
     void autowidth(int pad);                    // Automatically set column widths to data
     void resize_window();                       // Resize parent window to size of table
 };
@@ -219,10 +219,10 @@ void MyTable::resize_window() {
     window()->resize(window()->x(), window()->y(), width, window()->h());  // resize window to fit
 }
 
-// Load table with output of 'cmd'
-void MyTable::load_command(const char *cmd) {
+// Load table with output of DIRCMD
+void MyTable::fill_from_dircmd() {
     char s[512];
-    FILE *fp = popen(cmd, "r");
+    FILE *fp = popen(DIRCMD, "r");
     cols(0);
     for ( int line=0; fgets(s, sizeof(s)-1, fp); line++ ) {
 #ifdef _WIN32
@@ -323,7 +323,7 @@ int main() {
         table.col_header(1);
         table.col_resize(1);
         table.when(FL_WHEN_RELEASE);            // handle table events on release
-        table.load_command(DIRCMD);             // load table with a directory listing
+        table.fill_from_dircmd();               // load table with a directory listing
         table.row_height_all(18);               // height of all rows
         table.tooltip("Click on column headings to toggle column sorting");
         table.color(FL_WHITE);
