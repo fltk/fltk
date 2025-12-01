@@ -277,7 +277,8 @@ void MyTable::fill_from_dircmd() {
     // will get an extra empty, headerless column in our table due to the extra
     // "padding" we do when parsing the 3rd strtok() token for a line
     if ( rowdata_.size() > 2 ) {
-        rowdata_.pop_back(); rowdata_.pop_back();
+        rowdata_.pop_back();
+        rowdata_.pop_back();
         cols(rowdata_.back().cols.size());
     }
 #endif
