@@ -9,7 +9,7 @@
 //      but to demonstrate the complexities of an actual app.
 //
 // Copyright 2010 Greg Ercolano.
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 2011-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -158,7 +158,7 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
         case CONTEXT_COL_HEADER:
             fl_push_clip(X,Y,W,H); {
                 fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_BACKGROUND_COLOR);
-                if ( C < G_header.size() ) {
+                if ( C < (int)G_header.size() ) {
                     fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
                     fl_color(FL_BLACK);
                     fl_draw(G_header[C].c_str(), X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left
@@ -193,7 +193,7 @@ void MyTable::autowidth(int pad) {
     int w, h;
     // Initialize all column widths to header width
     fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
-    for ( int c=0; c<G_header.size(); c++ ) {
+    for ( int c = 0; c < (int)G_header.size(); c++ ) {
         w=0; fl_measure(G_header[c].c_str(), w, h, 0);                   // pixel width of header text
         col_width(c, w+pad);
     }
