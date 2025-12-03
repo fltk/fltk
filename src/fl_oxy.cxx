@@ -2,7 +2,7 @@
 // "Oxy" Scheme drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2011 by Dmitrij K. aka "kdiman"
-// Copyright 2012-2024 by Bill Spitzak and others.
+// Copyright 2012-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -256,7 +256,7 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
   int X, Y, W, H, X1, Y1;
 
   // draw bg
-  if (typebox != _FL_OXY_UP_FRAME && typebox != _FL_OXY_DOWN_FRAME) {
+  if (typebox != FL_OXY_UP_FRAME && typebox != FL_OXY_DOWN_FRAME) {
 
     X = x + 1;
     Y = y + 1;
@@ -264,24 +264,24 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
     H = h - 2;
 
     switch (typebox) {
-      case _FL_OXY_UP_BOX: {
+      case FL_OXY_UP_BOX: {
         _oxy_up_box_(X, Y, W, H, oxy_color(col));
         break;
       }
-      case _FL_OXY_DOWN_BOX: {
+      case FL_OXY_DOWN_BOX: {
         _oxy_down_box_(X, Y, W, H, oxy_color(col));
         break;
       }
-      case _FL_OXY_BUTTON_UP_BOX: {
+      case FL_OXY_BUTTON_UP_BOX: {
         _oxy_button_up_box_(X, Y, W, H, oxy_color(col));
         break;
       }
-      case _FL_OXY_BUTTON_DOWN_BOX: {
+      case FL_OXY_BUTTON_DOWN_BOX: {
         _oxy_button_down_box_(X, Y, W, H, oxy_color(col));
         break;
       }
-      case _FL_OXY_ROUND_UP_BOX:
-      case _FL_OXY_ROUND_DOWN_BOX:
+      case FL_OXY_ROUND_UP_BOX:
+      case FL_OXY_ROUND_DOWN_BOX:
         _oxy_rounded_box_(x, y, w, h, oxy_color(fl_color_average(col, FL_WHITE, 0.82f)));
         break;
       default: { break; }
@@ -290,31 +290,31 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
 
   Fl_Color leftline = col, topline = col, rightline = col, bottomline = col;
 
-  if (typebox == _FL_OXY_ROUND_UP_BOX || typebox == _FL_OXY_ROUND_DOWN_BOX) {
+  if (typebox == FL_OXY_ROUND_UP_BOX || typebox == FL_OXY_ROUND_DOWN_BOX) {
     leftline = fl_color_average(col, FL_WHITE, 0.88f);
     leftline = topline = rightline = bottomline = fl_color_average(leftline, FL_BLACK, 0.97f);
   }
 
-  else if (typebox == _FL_OXY_UP_BOX || typebox == _FL_OXY_UP_FRAME) {
+  else if (typebox == FL_OXY_UP_BOX || typebox == FL_OXY_UP_FRAME) {
     topline = fl_color_average(col, FL_BLACK, 0.95f);
     leftline = fl_color_average(col, FL_BLACK, 0.85f);
     rightline = leftline;
     bottomline = fl_color_average(col, FL_BLACK, 0.88f);
   }
 
-  else if (typebox == _FL_OXY_DOWN_BOX || typebox == _FL_OXY_DOWN_FRAME) {
+  else if (typebox == FL_OXY_DOWN_BOX || typebox == FL_OXY_DOWN_FRAME) {
     topline = fl_color_average(col, FL_BLACK, 0.88f);
     leftline = fl_color_average(col, FL_BLACK, 0.85f);
     rightline = leftline;
     bottomline = fl_color_average(col, FL_BLACK, 0.95f);
   }
 
-  else if (typebox == _FL_OXY_BUTTON_UP_BOX || typebox == _FL_OXY_BUTTON_DOWN_BOX) {
+  else if (typebox == FL_OXY_BUTTON_UP_BOX || typebox == FL_OXY_BUTTON_DOWN_BOX) {
     topline = leftline = rightline = bottomline = fl_color_average(col, FL_BLACK, 0.85f);
   }
 
   // draw border
-  if (typebox != _FL_OXY_ROUND_UP_BOX && typebox != _FL_OXY_ROUND_DOWN_BOX) {
+  if (typebox != FL_OXY_ROUND_UP_BOX && typebox != FL_OXY_ROUND_DOWN_BOX) {
     // bottom side
     fl_color(oxy_color(bottomline));
     fl_line(x + 1, y + h - 1, x + w - 2, y + h - 1);
@@ -332,24 +332,24 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
   // draw shadow
   if (is_shadow) {
 
-    if (typebox == _FL_OXY_ROUND_UP_BOX) {
+    if (typebox == FL_OXY_ROUND_UP_BOX) {
       topline = fl_color_average(col, FL_WHITE, 0.35f);
       bottomline = fl_color_average(col, FL_BLACK, 0.94f);
     }
 
-    else if (typebox == _FL_OXY_ROUND_DOWN_BOX) {
+    else if (typebox == FL_OXY_ROUND_DOWN_BOX) {
       topline = fl_color_average(col, FL_BLACK, 0.94f);
       bottomline = fl_color_average(col, FL_WHITE, 0.35f);
     }
 
-    else if (typebox == _FL_OXY_UP_BOX || typebox == _FL_OXY_UP_FRAME) {
+    else if (typebox == FL_OXY_UP_BOX || typebox == FL_OXY_UP_FRAME) {
       topline = fl_color_average(col, FL_WHITE, 0.35f);
       leftline = fl_color_average(col, FL_WHITE, 0.4f);
       rightline = leftline;
       bottomline = fl_color_average(col, FL_BLACK, 0.8f);
     }
 
-    else if (typebox == _FL_OXY_DOWN_BOX || typebox == _FL_OXY_DOWN_FRAME) {
+    else if (typebox == FL_OXY_DOWN_BOX || typebox == FL_OXY_DOWN_FRAME) {
       topline = fl_color_average(col, FL_BLACK, 0.8f);
       leftline = fl_color_average(col, FL_BLACK, 0.94f);
       rightline = leftline;
@@ -362,7 +362,7 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
     int yh2 = y + h - 2;
     int yh1 = y + h - 1;
 
-    if (typebox == _FL_OXY_UP_BOX || typebox == _FL_OXY_UP_FRAME) {
+    if (typebox == FL_OXY_UP_BOX || typebox == FL_OXY_UP_FRAME) {
       fl_color(oxy_color(topline));
       X = x + 1;
       Y = y + 1;
@@ -392,7 +392,7 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
       fl_line(X, Y, X1, Y1); // bottom line
     }
 
-    else if (typebox == _FL_OXY_DOWN_BOX || typebox == _FL_OXY_DOWN_FRAME) {
+    else if (typebox == FL_OXY_DOWN_BOX || typebox == FL_OXY_DOWN_FRAME) {
       fl_color(oxy_color(topline));
       X = x + 1;
       Y = y + 1;
@@ -422,7 +422,7 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
       fl_line(X, Y, X1, Y1); // bottom line
     }
 
-    else if (typebox == _FL_OXY_ROUND_UP_BOX || typebox == _FL_OXY_ROUND_DOWN_BOX) {
+    else if (typebox == FL_OXY_ROUND_UP_BOX || typebox == FL_OXY_ROUND_DOWN_BOX) {
 
       int Radius, smooth;
       int r_offset2; // quarter of smooth and half of smooth
@@ -452,12 +452,12 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
       fl_color(oxy_color(topline));
       fl_line(x + 1, yh1 - smooth - r_offset2, x + 1, y + r_offset2 + smooth);  // left side
       fl_arc(x + 1, y + 1, Radius, Radius, 90.0, 180.0);                        // left-top corner
-      if (typebox == _FL_OXY_ROUND_DOWN_BOX) {
+      if (typebox == FL_OXY_ROUND_DOWN_BOX) {
         fl_arc(x + 1, y + 1, Radius + 1, Radius + 1, 90.0, 180.0);
       }                                                                         // left-top corner (DOWN_BOX)
       fl_line(x + smooth + r_offset2, y + 1, xw1 - smooth - r_offset2, y + 1);  // top side
       fl_arc(xw1 - Radius, y + 1, Radius, Radius, 00.0, 90.0);                  // right-top corner
-      if (typebox == _FL_OXY_ROUND_DOWN_BOX) {
+      if (typebox == FL_OXY_ROUND_DOWN_BOX) {
         fl_arc(xw1 - Radius, y + 1, Radius + 1, Radius + 1, 00.0, 90.0);
       }                                                                         // right-top corner (DOWN_BOX)
       fl_line(xw2, y + smooth + r_offset2, xw2, yh1 - smooth - r_offset2);      // right side
@@ -465,12 +465,12 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
       fl_arc(xw1 - Radius, yh1 - Radius, Radius, Radius, 340.0, 360.0);         // right-bottom
       fl_color(oxy_color(bottomline));
       fl_arc(x + 1, yh1 - Radius, Radius, Radius, 200.0, 270.0);                // left-bottom corner
-      if (typebox == _FL_OXY_ROUND_UP_BOX) {
+      if (typebox == FL_OXY_ROUND_UP_BOX) {
         fl_arc(x + 1, yh1 - Radius, Radius + 1, Radius + 1, 200.0, 270.0);
       }                                                                         // left-bottom corner (UP_BOX)
       fl_line(xw1 - smooth - r_offset2, yh2, x + smooth + r_offset2, yh2);      // bottom side
       fl_arc(xw1 - Radius, yh1 - Radius, Radius, Radius, 270.0, 340.0);         // right-bottom corner
-      if (typebox == _FL_OXY_ROUND_UP_BOX) {
+      if (typebox == FL_OXY_ROUND_UP_BOX) {
         fl_arc(xw1 - Radius, yh1 - Radius, Radius + 1, Radius + 1, 270.0, 340.0);
       } // right-bottom corner
     }
@@ -480,61 +480,40 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
 } // end `static void oxy_draw(...)'
 
 
-void button_up_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_BUTTON_UP_BOX, true);
+void fl_oxy_button_up_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_BUTTON_UP_BOX, true);
 }
-void button_down_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_BUTTON_DOWN_BOX, true);
+void fl_oxy_button_down_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_BUTTON_DOWN_BOX, true);
 }
-void up_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_UP_BOX, true);
+void fl_oxy_up_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_UP_BOX, true);
 }
-void down_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_DOWN_BOX, true);
+void fl_oxy_down_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_DOWN_BOX, true);
 }
-void thin_up_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_UP_BOX, false);
+void fl_oxy_thin_up_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_UP_BOX, false);
 }
-void thin_down_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_DOWN_BOX, false);
+void fl_oxy_thin_down_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_DOWN_BOX, false);
 }
-void up_frame(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_UP_FRAME, true);
+void fl_oxy_up_frame(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_UP_FRAME, true);
 }
-void down_frame(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_DOWN_FRAME, true);
+void fl_oxy_down_frame(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_DOWN_FRAME, true);
 }
-void thin_up_frame(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_UP_FRAME, false);
+void fl_oxy_thin_up_frame(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_UP_FRAME, false);
 }
-void thin_down_frame(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_DOWN_FRAME, false);
+void fl_oxy_thin_down_frame(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_DOWN_FRAME, false);
 }
-void round_up_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_ROUND_UP_BOX, true);
+void fl_oxy_round_up_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_ROUND_UP_BOX, true);
 }
-void round_down_box(int x, int y, int w, int h, Fl_Color col) {
-  oxy_draw(x, y, w, h, col, _FL_OXY_ROUND_DOWN_BOX, true);
+void fl_oxy_round_down_box(int x, int y, int w, int h, Fl_Color col) {
+  oxy_draw(x, y, w, h, col, FL_OXY_ROUND_DOWN_BOX, true);
 }
 
-
-extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
-
-Fl_Boxtype fl_define_FL_OXY_UP_BOX() {
-
-  fl_internal_boxtype(_FL_OXY_UP_BOX, up_box);
-  fl_internal_boxtype(_FL_OXY_DOWN_BOX, down_box);
-  fl_internal_boxtype(_FL_OXY_UP_FRAME, up_frame);
-  fl_internal_boxtype(_FL_OXY_DOWN_FRAME, down_frame);
-  fl_internal_boxtype(_FL_OXY_THIN_UP_BOX, thin_up_box);
-  fl_internal_boxtype(_FL_OXY_THIN_DOWN_BOX, thin_down_box);
-  fl_internal_boxtype(_FL_OXY_THIN_UP_FRAME, thin_up_frame);
-  fl_internal_boxtype(_FL_OXY_THIN_DOWN_FRAME, thin_down_frame);
-  fl_internal_boxtype(_FL_OXY_ROUND_UP_BOX, round_up_box, fl_round_focus);
-  fl_internal_boxtype(_FL_OXY_ROUND_DOWN_BOX, round_down_box, fl_round_focus);
-  fl_internal_boxtype(_FL_OXY_BUTTON_UP_BOX, button_up_box);
-  fl_internal_boxtype(_FL_OXY_BUTTON_DOWN_BOX, button_down_box);
-
-  return _FL_OXY_UP_BOX;
-}

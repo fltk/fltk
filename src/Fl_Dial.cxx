@@ -37,7 +37,7 @@ void Fl_Dial::draw(int X, int Y, int W, int H) {
   double angle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
   if (type() == FL_FILL_DIAL) {
     // foo: draw this nicely in certain round box types
-    int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
+    int foo = (box() > FL_ROUND_UP_BOX && Fl::box_dx(box()));
     if (foo) {X--; Y--; W+=2; H+=2;}
     if (active_r()) fl_color(color());
     else fl_color(fl_inactive(color()));

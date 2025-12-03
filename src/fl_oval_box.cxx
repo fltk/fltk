@@ -1,7 +1,7 @@
 //
 // Oval box drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,22 +25,22 @@
 //  BW = box shadow width
 #define BW (Fl::box_shadow_width())
 
-static void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
   fl_pie(x, y, w, h, 0, 360);
 }
 
-static void fl_oval_frame(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_frame(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
   fl_arc(x, y, w, h, 0, 360);
 }
 
-static void fl_oval_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_box(int x, int y, int w, int h, Fl_Color c) {
   fl_oval_flat_box(x,y,w,h,c);
   fl_oval_frame(x,y,w,h,FL_BLACK);
 }
 
-static void fl_oval_shadow_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_oval_shadow_box(int x, int y, int w, int h, Fl_Color c) {
   fl_oval_flat_box(x+BW,y+BW,w,h,FL_DARK3);
   fl_oval_box(x,y,w,h,c);
 }
@@ -58,11 +58,3 @@ void fl_oval_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Co
   fl_color(savecolor);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
-Fl_Boxtype fl_define_FL_OVAL_BOX() {
-  fl_internal_boxtype(_FL_OSHADOW_BOX, fl_oval_shadow_box, fl_oval_focus);
-  fl_internal_boxtype(_FL_OVAL_FRAME, fl_oval_frame, fl_oval_focus);
-  fl_internal_boxtype(_FL_OFLAT_BOX, fl_oval_flat_box, fl_oval_focus);
-  fl_internal_boxtype(_FL_OVAL_BOX, fl_oval_box, fl_oval_focus);
-  return _FL_OVAL_BOX;
-}

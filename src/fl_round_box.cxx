@@ -1,7 +1,7 @@
 //
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -120,9 +120,3 @@ void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_C
   fl_color(savecolor);
 }
 
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
-Fl_Boxtype fl_define_FL_ROUND_UP_BOX() {
-  fl_internal_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, fl_round_focus);
-  fl_internal_boxtype(_FL_ROUND_UP_BOX, fl_round_up_box, fl_round_focus);
-  return _FL_ROUND_UP_BOX;
-}

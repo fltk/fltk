@@ -2258,10 +2258,10 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
 Fl_Menu_Item boxmenu1[] = {
   // these extra ones are for looking up fdesign saved strings:
   {"NO_FRAME",          0,nullptr,(void *)FL_NO_BOX},
-  {"ROUNDED3D_UPBOX",   0,nullptr,(void *)_FL_ROUND_UP_BOX},
-  {"ROUNDED3D_DOWNBOX", 0,nullptr,(void *)_FL_ROUND_DOWN_BOX},
-  {"OVAL3D_UPBOX",      0,nullptr,(void *)_FL_ROUND_UP_BOX},
-  {"OVAL3D_DOWNBOX",    0,nullptr,(void *)_FL_ROUND_DOWN_BOX},
+  {"ROUNDED3D_UPBOX",   0,nullptr,(void *)FL_ROUND_UP_BOX},
+  {"ROUNDED3D_DOWNBOX", 0,nullptr,(void *)FL_ROUND_DOWN_BOX},
+  {"OVAL3D_UPBOX",      0,nullptr,(void *)FL_ROUND_UP_BOX},
+  {"OVAL3D_DOWNBOX",    0,nullptr,(void *)FL_ROUND_DOWN_BOX},
   {"0",                 0,nullptr,(void *)ZERO_ENTRY},
   {"1",                 0,nullptr,(void *)FL_UP_BOX},
   {"2",                 0,nullptr,(void *)FL_DOWN_BOX},

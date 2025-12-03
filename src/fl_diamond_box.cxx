@@ -1,7 +1,7 @@
 //
 // Diamond box code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,7 @@
 
 extern const uchar* fl_gray_ramp();
 
-static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
+void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   w &= -2;
   h &= -2;
   int x1 = x+w/2;
@@ -42,7 +42,7 @@ static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   fl_color(g[(int)'A']); fl_loop(x, y1, x1, y, x+w, y1, x1, y+h);
 }
 
-static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
+void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   w &= -2;
   h &= -2;
   int x1 = x+w/2;
@@ -74,10 +74,4 @@ void fl_diamond_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl
   fl_loop(x,y1, x1,y, x+w,y1, x1,y+h);
   fl_line_style(FL_SOLID);
   fl_color(savecolor);
-}
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
-Fl_Boxtype fl_define_FL_DIAMOND_BOX() {
-  fl_internal_boxtype(_FL_DIAMOND_DOWN_BOX, fl_diamond_down_box, fl_diamond_focus);
-  fl_internal_boxtype(_FL_DIAMOND_UP_BOX, fl_diamond_up_box, fl_diamond_focus);
-  return _FL_DIAMOND_UP_BOX;
 }

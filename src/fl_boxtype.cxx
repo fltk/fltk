@@ -324,6 +324,62 @@ void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_rect(x, y, w, h);
 }
 
+void fl_rounded_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+void fl_round_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
+void fl_diamond_focus(Fl_Boxtype, int, int, int, int, Fl_Color, Fl_Color);
+
+void fl_shadow_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_shadow_box(int x, int y, int w, int h, Fl_Color c);
+void fl_rounded_box(int x, int y, int w, int h, Fl_Color c);
+void fl_rshadow_box(int x, int y, int w, int h, Fl_Color c);
+void fl_rounded_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_rflat_box(int x, int y, int w, int h, Fl_Color c);
+void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor);
+void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor);
+void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor);
+void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor);
+void fl_oval_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
+void fl_oval_shadow_box(int x, int y, int w, int h, Fl_Color c);
+void fl_oval_box(int x, int y, int w, int h, Fl_Color c);
+void fl_oval_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_up_round(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_down_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_down_box(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_down_round(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_up_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_plastic_thin_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_up_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_down_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_down_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_thin_up_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_thin_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_thin_down_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_thin_down_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_round_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gtk_round_down_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gleam_up_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_gleam_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gleam_thin_up_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gleam_down_frame(int x, int y, int w, int h, Fl_Color c);
+void fl_gleam_down_box(int x, int y, int w, int h, Fl_Color c);
+void fl_gleam_thin_down_box(int x, int y, int w, int h, Fl_Color c);
+void fl_oxy_button_up_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_button_down_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_up_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_down_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_thin_up_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_thin_down_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_up_frame(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_down_frame(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_thin_up_frame(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_thin_down_frame(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_round_up_box(int x, int y, int w, int h, Fl_Color col);
+void fl_oxy_round_down_box(int x, int y, int w, int h, Fl_Color col);
+
+
 // /////////////////////////////////////////////////////////////////////
 // Up to FLTK 1.4 the 6th element of the following struct was named 'set'
 // and could only be 0 or 1: whether the boxtype was "set" or not.
@@ -349,82 +405,82 @@ static struct {
   bool bg()  { return !(flags & 2); }
 } fl_box_table[FL_MAX_BOXTYPE+1] = {
   // must match list in Enumerations.H !!!
-  {fl_no_box,           0,0,0,0,3},     // FL_NO_BOX
-  {fl_flat_box,         0,0,0,0,1},     // FL_FLAT_BOX
-  {fl_up_box,           D1,D1,D2,D2,1}, // FL_UP_BOX
-  {fl_down_box,         D1,D1,D2,D2,1}, // FL_DOWN_BOX
-  {fl_up_frame,         D1,D1,D2,D2,3}, // FL_UP_FRAME
-  {fl_down_frame,       D1,D1,D2,D2,3}, // FL_DOWN_FRAME
-  {fl_thin_up_box,      1,1,2,2,1},     // FL_THIN_UP_BOX
-  {fl_thin_down_box,    1,1,2,2,1},     // FL_THIN_DOWN_BOX,
-  {fl_thin_up_frame,    1,1,2,2,3},     // FL_THIN_UP_FRAME,
-  {fl_thin_down_frame,  1,1,2,2,3},     // FL_THIN_DOWN_FRAME,
-  {fl_engraved_box,     2,2,4,4,1},     // FL_ENGRAVED_BOX,
-  {fl_embossed_box,     2,2,4,4,1},     // FL_EMBOSSED_BOX,
-  {fl_engraved_frame,   2,2,4,4,3},     // FL_ENGRAVED_FRAME
-  {fl_embossed_frame,   2,2,4,4,3},     // FL_EMBOSSED_FRAME
-  {fl_border_box,       1,1,2,2,1},     // FL_BORDER_BOX
-  {fl_border_box,       1,1,5,5,0},     // _FL_SHADOW_BOX
-  {fl_border_frame,     1,1,2,2,3},     // FL_BORDER_FRAME,
-  {fl_border_frame,     1,1,5,5,2},     // _FL_SHADOW_FRAME
-  {fl_border_box,       1,1,2,2,0},     // _FL_ROUNDED_BOX
-  {fl_border_box,       1,1,2,2,0},     // _FL_RSHADOW_BOX
-  {fl_border_frame,     1,1,2,2,2},     // _FL_ROUNDED_FRAME
-  {fl_flat_box,         0,0,0,0,0},     // _FL_RFLAT_BOX
-  {fl_up_box,           3,3,6,6,0},     // _FL_ROUND_UP_BOX
-  {fl_down_box,         3,3,6,6,0},     // _FL_ROUND_DOWN_BOX
-  {fl_up_box,           0,0,0,0,0},     // _FL_DIAMOND_UP_BOX
-  {fl_down_box,         0,0,0,0,0},     // _FL_DIAMOND_DOWN_BOX
-  {fl_border_box,       1,1,2,2,0},     // _FL_OVAL_BOX
-  {fl_border_box,       1,1,2,2,0},     // _FL_OVAL_SHADOW_BOX
-  {fl_border_frame,     1,1,2,2,2},     // _FL_OVAL_FRAME
-  {fl_flat_box,         0,0,0,0,0},     // _FL_OVAL_FLAT_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_PLASTIC_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_PLASTIC_DOWN_BOX
-  {fl_up_frame,         2,2,4,4,2},     // _FL_PLASTIC_UP_FRAME
-  {fl_down_frame,       2,2,4,4,2},     // _FL_PLASTIC_DOWN_FRAME
-  {fl_up_box,           2,2,4,4,0},     // _FL_PLASTIC_THIN_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_PLASTIC_THIN_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_PLASTIC_ROUND_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_PLASTIC_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_GTK_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_GTK_DOWN_BOX
-  {fl_up_frame,         2,2,4,4,2},     // _FL_GTK_UP_FRAME
-  {fl_down_frame,       2,2,4,4,2},     // _FL_GTK_DOWN_FRAME
-  {fl_up_frame,         1,1,2,2,2},     // _FL_GTK_THIN_UP_FRAME
-  {fl_down_frame,       1,1,2,2,2},     // _FL_GTK_THIN_DOWN_FRAME
-  {fl_up_box,           1,1,2,2,0},     // _FL_GTK_THIN_ROUND_UP_BOX
-  {fl_down_box,         1,1,2,2,0},     // _FL_GTK_THIN_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_GTK_ROUND_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_GTK_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_GLEAM_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_GLEAM_DOWN_BOX
-  {fl_up_frame,         2,2,4,4,2},     // _FL_GLEAM_UP_FRAME
-  {fl_down_frame,       2,2,4,4,2},     // _FL_GLEAM_DOWN_FRAME
-  {fl_up_box,           2,2,4,4,0},     // _FL_GLEAM_THIN_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_GLEAM_THIN_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_GLEAM_ROUND_UP_BOX
-  {fl_down_box,         2,2,4,4,0},     // _FL_GLEAM_ROUND_DOWN_BOX
-  {fl_up_box,           2,2,4,4,0},     // _FL_OXY_UP_BOX,
-  {fl_down_box,         2,2,4,4,0},     // _FL_OXY_DOWN_BOX,
-  {fl_up_frame,         2,2,4,4,2},     // _FL_OXY_UP_FRAME,
-  {fl_down_frame,       2,2,4,4,2},     // _FL_OXY_DOWN_FRAME,
-  {fl_thin_up_box,      1,1,2,2,0},     // _FL_OXY_THIN_UP_BOX,
-  {fl_thin_down_box,    1,1,2,2,0},     // _FL_OXY_THIN_DOWN_BOX,
-  {fl_thin_up_frame,    1,1,2,2,2},     // _FL_OXY_THIN_UP_FRAME,
-  {fl_thin_down_frame,  1,1,2,2,2},     // _FL_OXY_THIN_DOWN_FRAME,
-  {fl_up_box,           2,2,4,4,0},     // _FL_OXY_ROUND_UP_BOX,
-  {fl_down_box,         2,2,4,4,0},     // _FL_OXY_ROUND_DOWN_BOX,
-  {fl_up_box,           2,2,4,4,0},     // _FL_OXY_BUTTON_UP_BOX,
-  {fl_down_box,         2,2,4,4,0},     // _FL_OXY_BUTTON_DOWN_BOX,
-  {fl_up_box,           3,3,6,6,0},     // FL_FREE_BOX+0
-  {fl_down_box,         3,3,6,6,0},     // FL_FREE_BOX+1
-  {fl_up_box,           3,3,6,6,0},     // FL_FREE_BOX+2
-  {fl_down_box,         3,3,6,6,0},     // FL_FREE_BOX+3
-  {fl_up_box,           3,3,6,6,0},     // FL_FREE_BOX+4
-  {fl_down_box,         3,3,6,6,0},     // FL_FREE_BOX+5
-  {fl_up_box,           3,3,6,6,0},     // FL_FREE_BOX+6
-  {fl_down_box,         3,3,6,6,0}      // FL_FREE_BOX+7
+  { fl_no_box,              0, 0, 0, 0,  3 },   // FL_NO_BOX
+  { fl_flat_box,            0, 0, 0, 0,  1 },   // FL_FLAT_BOX
+  { fl_up_box,              D1, D1, D2, D2,  1 },  // FL_UP_BOX
+  { fl_down_box,            D1, D1, D2, D2,  1 },  // FL_DOWN_BOX
+  { fl_up_frame,            D1, D1, D2, D2,  3 },  // FL_UP_FRAME
+  { fl_down_frame,          D1, D1, D2, D2,  3 },  // FL_DOWN_FRAME
+  { fl_thin_up_box,         1, 1, 2, 2,  1 },   // FL_THIN_UP_BOX
+  { fl_thin_down_box,       1, 1, 2, 2,  1 },   // FL_THIN_DOWN_BOX,
+  { fl_thin_up_frame,       1, 1, 2, 2,  3 },   // FL_THIN_UP_FRAME,
+  { fl_thin_down_frame,     1, 1, 2, 2,  3 },   // FL_THIN_DOWN_FRAME,
+  { fl_engraved_box,        2, 2, 4, 4,  1 },   // FL_ENGRAVED_BOX,
+  { fl_embossed_box,        2, 2, 4, 4,  1 },   // FL_EMBOSSED_BOX,
+  { fl_engraved_frame,      2, 2, 4, 4,  3 },   // FL_ENGRAVED_FRAME
+  { fl_embossed_frame,      2, 2, 4, 4,  3 },   // FL_EMBOSSED_FRAME
+  { fl_border_box,          1, 1, 2, 2,  1 },   // FL_BORDER_BOX
+  { fl_shadow_box,          1, 1, 5, 5,  1 },   // FL_SHADOW_BOX
+  { fl_border_frame,        1, 1, 2, 2,  3 },   // FL_BORDER_FRAME,
+  { fl_shadow_frame,        1, 1, 5, 5,  3 },   // FL_SHADOW_FRAME
+  { fl_rounded_box,         1, 1, 2, 2,  1, fl_rounded_focus },   // FL_ROUNDED_BOX
+  { fl_rshadow_box,         1, 1, 2, 2,  1, fl_rounded_focus },   // FL_RSHADOW_BOX
+  { fl_rounded_frame,       1, 1, 2, 2,  3, fl_rounded_focus },   // FL_ROUNDED_FRAME
+  { fl_rflat_box,           0, 0, 0, 0,  1, fl_rounded_focus },   // FL_RFLAT_BOX
+  { fl_round_up_box,        3, 3, 6, 6,  1, fl_round_focus },     // FL_ROUND_UP_BOX
+  { fl_round_down_box,      3, 3, 6, 6,  1, fl_round_focus },     // FL_ROUND_DOWN_BOX
+  { fl_diamond_up_box,      0, 0, 0, 0,  1, fl_diamond_focus },   // FL_DIAMOND_UP_BOX
+  { fl_diamond_down_box,    0, 0, 0, 0,  1, fl_diamond_focus },   // FL_DIAMOND_DOWN_BOX
+  { fl_oval_box,            1, 1, 2, 2,  1, fl_oval_focus },      // FL_OVAL_BOX
+  { fl_oval_shadow_box,     1, 1, 2, 2,  1, fl_oval_focus },      // FL_OSHADOW_BOX
+  { fl_oval_frame,          1, 1, 2, 2,  2, fl_oval_focus },      // FL_OVAL_FRAME
+  { fl_oval_flat_box,       0, 0, 0, 0,  1, fl_oval_focus },      // FL_OFLAT_BOX
+  { fl_plastic_up_box,      2, 2, 4, 4,  1 },   // _FL_PLASTIC_UP_BOX
+  { fl_plastic_down_box,    2, 2, 4, 4,  1 },   // _FL_PLASTIC_DOWN_BOX
+  { fl_plastic_up_frame,    2, 2, 4, 4,  3 },   // _FL_PLASTIC_UP_FRAME
+  { fl_plastic_down_frame,  2, 2, 4, 4,  3 },   // _FL_PLASTIC_DOWN_FRAME
+  { fl_plastic_thin_up_box, 2, 2, 4, 4,  1 },   // _FL_PLASTIC_THIN_UP_BOX
+  { fl_plastic_down_box,    2, 2, 4, 4,  1 },   // _FL_PLASTIC_THIN_DOWN_BOX
+  { fl_plastic_up_round,    2, 2, 4, 4,  1, fl_round_focus },     // _FL_PLASTIC_ROUND_UP_BOX
+  { fl_plastic_down_round,  2, 2, 4, 4,  1, fl_round_focus },     // _FL_PLASTIC_ROUND_DOWN_BOX
+  { fl_gtk_up_box,          2, 2, 4, 4,  1 },   // _FL_GTK_UP_BOX
+  { fl_gtk_down_box,        2, 2, 4, 4,  1 },   // _FL_GTK_DOWN_BOX
+  { fl_gtk_up_frame,        2, 2, 4, 4,  3 },   // _FL_GTK_UP_FRAME
+  { fl_gtk_down_frame,      2, 2, 4, 4,  3 },   // _FL_GTK_DOWN_FRAME
+  { fl_gtk_thin_up_box,     1, 1, 2, 2,  3 },   // FL_GTK_THIN_UP_BOX
+  { fl_gtk_thin_down_box,   1, 1, 2, 2,  3 },   // FL_GTK_THIN_DOWN_BOX
+  { fl_gtk_thin_up_frame,   1, 1, 2, 2,  1 },   // FL_GTK_THIN_UP_FRAME
+  { fl_gtk_thin_down_frame, 1, 1, 2, 2,  1 },   // FL_GTK_THIN_DOWN_FRAME
+  { fl_gtk_round_up_box,    2, 2, 4, 4,  1, fl_round_focus },     // FL_GTK_ROUND_UP_BOX
+  { fl_gtk_round_down_box,  2, 2, 4, 4,  1, fl_round_focus },     // FL_GTK_ROUND_DOWN_BOX
+  { fl_gleam_up_box,        2, 2, 4, 4,  1 },   // _FL_GLEAM_UP_BOX
+  { fl_gleam_down_box,      2, 2, 4, 4,  1 },   // _FL_GLEAM_DOWN_BOX
+  { fl_gleam_up_frame,      2, 2, 4, 4,  3 },   // _FL_GLEAM_UP_FRAME
+  { fl_gleam_down_frame,    2, 2, 4, 4,  3 },   // _FL_GLEAM_DOWN_FRAME
+  { fl_gleam_thin_up_box,   2, 2, 4, 4,  1 },   // _FL_GLEAM_THIN_UP_BOX
+  { fl_gleam_thin_down_box, 2, 2, 4, 4,  1 },   // _FL_GLEAM_THIN_DOWN_BOX
+  { fl_gleam_up_box,        2, 2, 4, 4,  1 },   // _FL_GLEAM_ROUND_UP_BOX
+  { fl_gleam_down_box,      2, 2, 4, 4,  1 },   // _FL_GLEAM_ROUND_DOWN_BOX
+  { fl_oxy_up_box,          2, 2, 4, 4,  1 },   // _FL_OXY_UP_BOX,
+  { fl_oxy_down_box,        2, 2, 4, 4,  1 },   // _FL_OXY_DOWN_BOX,
+  { fl_oxy_up_frame,        2, 2, 4, 4,  3 },   // _FL_OXY_UP_FRAME,
+  { fl_oxy_down_frame,      2, 2, 4, 4,  3 },   // _FL_OXY_DOWN_FRAME,
+  { fl_oxy_thin_up_box,     1, 1, 2, 2,  1 },   // _FL_OXY_THIN_UP_BOX,
+  { fl_oxy_thin_down_box,   1, 1, 2, 2,  1 },   // _FL_OXY_THIN_DOWN_BOX,
+  { fl_oxy_thin_up_frame,   1, 1, 2, 2,  3 },   // _FL_OXY_THIN_UP_FRAME,
+  { fl_oxy_thin_down_frame, 1, 1, 2, 2,  3 },   // _FL_OXY_THIN_DOWN_FRAME,
+  { fl_oxy_round_up_box,    2, 2, 4, 4,  1, fl_round_focus },     // _FL_OXY_ROUND_UP_BOX,
+  { fl_oxy_round_down_box,  2, 2, 4, 4,  1, fl_round_focus },     // _FL_OXY_ROUND_DOWN_BOX,
+  { fl_oxy_button_up_box,   2, 2, 4, 4,  1 },   // _FL_OXY_BUTTON_UP_BOX,
+  { fl_oxy_button_down_box, 2, 2, 4, 4,  1 },   // _FL_OXY_BUTTON_DOWN_BOX,
+  { fl_up_box,              3, 3, 6, 6,  1 },   // FL_FREE_BOX+0
+  { fl_down_box,            3, 3, 6, 6,  1 },   // FL_FREE_BOX+1
+  { fl_up_box,              3, 3, 6, 6,  1 },   // FL_FREE_BOX+2
+  { fl_down_box,            3, 3, 6, 6,  1 },   // FL_FREE_BOX+3
+  { fl_up_box,              3, 3, 6, 6,  1 },   // FL_FREE_BOX+4
+  { fl_down_box,            3, 3, 6, 6,  1 },   // FL_FREE_BOX+5
+  { fl_up_box,              3, 3, 6, 6,  1 },   // FL_FREE_BOX+6
+  { fl_down_box,            3, 3, 6, 6,  1 }    // FL_FREE_BOX+7
 };
 
 /**
@@ -487,19 +543,10 @@ extern bool Fl::box_bg(Fl_Boxtype bt) {
   return fl_box_table[bt].bg();
 }
 
-/**
- Sets the drawing function for a given box type.
- \param[in] t box type
- \param[in] f box drawing function
- \param[in] ff optional box focus rectangle drawing function
+/*
+ Starting with FLTK version 1.5, this is no longer needed. Use Fl::set_boxtype().
+ void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f, Fl_Box_Draw_Focus_F* ff)
  */
-void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f, Fl_Box_Draw_Focus_F* ff) {
-  if (!fl_box_table[t].set()) {
-    fl_box_table[t].f      = f;
-    fl_box_table[t].ff     = ff;
-    fl_box_table[t].flags |= 1;
-  }
-}
 
 /** Gets the current box drawing function for the specified box type. */
 Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {

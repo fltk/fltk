@@ -4,7 +4,7 @@
 // These box types provide a cross between Aqua and KDE buttons; kindof
 // like translucent plastic buttons...
 //
-// Copyright 2001-2010 by Michael Sweet.
+// Copyright 2001-2025 by Michael Sweet.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -268,7 +268,7 @@ static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
 }
 
 
-static void up_frame(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_up_frame(int x, int y, int w, int h, Fl_Color c) {
   frame_rect(x, y, w, h - 1, "KLDIIJLM", c);
 }
 
@@ -290,10 +290,10 @@ static void narrow_thin_box(int x, int y, int w, int h, Fl_Color c) {
 }
 
 
-static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 #ifdef USE_OLD_PLASTIC_BOX
   shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
-  up_frame(x, y, w, h, c);
+  fl_plastic_up_frame(x, y, w, h, c);
 #else
   if (w > 4 && h > 4) {
     shade_rect(x + 1, y + 1, w - 2, h - 3, "RQOQSUWQ", c);
@@ -305,36 +305,36 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 }
 
 
-static void up_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_up_box(int x, int y, int w, int h, Fl_Color c) {
 #ifdef USE_OLD_PLASTIC_BOX
   shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
-  up_frame(x, y, w, h, c);
+  fl_plastic_up_frame(x, y, w, h, c);
 #else
   if (w > 8 && h > 8) {
     shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
     frame_rect(x, y, w, h - 1, "IJLM", c);
   } else {
-    thin_up_box(x, y, w, h, c);
+    fl_plastic_thin_up_box(x, y, w, h, c);
   }
 #endif // USE_OLD_PLASTIC_BOX
 }
 
 
-static void up_round(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_up_round(int x, int y, int w, int h, Fl_Color c) {
   shade_round(x, y, w, h, "RVQNOPQRSTUVWVQ", c);
   frame_round(x, y, w, h, "IJLM", c);
 }
 
 
-static void down_frame(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_down_frame(int x, int y, int w, int h, Fl_Color c) {
   frame_rect(x, y, w, h - 1, "LLLLTTRR", c);
 }
 
 
-static void down_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_down_box(int x, int y, int w, int h, Fl_Color c) {
   if (w > 6 && h > 6) {
     shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
-    down_frame(x, y, w, h, c);
+    fl_plastic_down_frame(x, y, w, h, c);
   }
   else {
     narrow_thin_box(x, y, w, h, c);
@@ -342,24 +342,8 @@ static void down_box(int x, int y, int w, int h, Fl_Color c) {
 }
 
 
-static void down_round(int x, int y, int w, int h, Fl_Color c) {
+void fl_plastic_down_round(int x, int y, int w, int h, Fl_Color c) {
   shade_round(x, y, w, h, "STUVWWWVT", c);
   frame_round(x, y, w, h, "IJLM", c);
 }
 
-
-extern void fl_round_focus(Fl_Boxtype bt, int x, int y, int w, int h, Fl_Color fg, Fl_Color bg);
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
-
-Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
-  fl_internal_boxtype(_FL_PLASTIC_UP_BOX, up_box);
-  fl_internal_boxtype(_FL_PLASTIC_DOWN_BOX, down_box);
-  fl_internal_boxtype(_FL_PLASTIC_UP_FRAME, up_frame);
-  fl_internal_boxtype(_FL_PLASTIC_DOWN_FRAME, down_frame);
-  fl_internal_boxtype(_FL_PLASTIC_THIN_UP_BOX, thin_up_box);
-  fl_internal_boxtype(_FL_PLASTIC_THIN_DOWN_BOX, down_box);
-  fl_internal_boxtype(_FL_PLASTIC_ROUND_UP_BOX, up_round, fl_round_focus);
-  fl_internal_boxtype(_FL_PLASTIC_ROUND_DOWN_BOX, down_round, fl_round_focus);
-
-  return _FL_PLASTIC_UP_BOX;
-}

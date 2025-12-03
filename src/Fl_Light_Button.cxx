@@ -60,8 +60,8 @@ void Fl_Light_Button::draw() {
     switch (down_box()) {
       case FL_DOWN_BOX :
       case FL_UP_BOX :
-      case _FL_PLASTIC_DOWN_BOX :
-      case _FL_PLASTIC_UP_BOX :
+      case FL_PLASTIC_DOWN_BOX :
+      case FL_PLASTIC_UP_BOX :
         // Check box...
         draw_box(down_box(), cx, cy, W, W, FL_BACKGROUND2_COLOR);
         if (value()) {
@@ -73,8 +73,8 @@ void Fl_Light_Button::draw() {
           fl_draw_check(Fl_Rect(cx, cy, cw, cw), check_color);
         }
         break;
-      case _FL_ROUND_DOWN_BOX :
-      case _FL_ROUND_UP_BOX :
+      case FL_ROUND_DOWN_BOX :
+      case FL_ROUND_UP_BOX :
         // Radio button...
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
         if (value()) {

@@ -1,7 +1,7 @@
 //
 // "Gleam" scheme box drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -136,44 +136,30 @@ static void frame_rect_down(int x, int y, int w, int h, Fl_Color bc, Fl_Color lc
 
 // Draw the different box types. These are the actual box drawing functions.
 
-static void up_frame(int x, int y, int w, int h, Fl_Color c) {
+void fl_gleam_up_frame(int x, int y, int w, int h, Fl_Color c) {
   frame_rect_up(x, y, w, h, c, fl_color_average(c, FL_WHITE, .25f), .55f, .05f);
 }
 
-static void up_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_gleam_up_box(int x, int y, int w, int h, Fl_Color c) {
   shade_rect_top_bottom_up(x, y, w, h, c, .15f);
   frame_rect_up(x, y, w, h, c, fl_color_average(c, FL_WHITE, .05f), .15f, .05f);
 }
 
-static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_gleam_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
   shade_rect_top_bottom_up(x, y, w, h, c, .25f);
   frame_rect_up(x, y, w, h, c, fl_color_average(c, FL_WHITE, .45f), .25f, .15f);
 }
 
-static void down_frame(int x, int y, int w, int h, Fl_Color c) {
+void fl_gleam_down_frame(int x, int y, int w, int h, Fl_Color c) {
   frame_rect_down(x, y, w, h, fl_darker(c), fl_darker(c), .25f, .95f);
 }
 
-static void down_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_gleam_down_box(int x, int y, int w, int h, Fl_Color c) {
   shade_rect_top_bottom_down(x, y, w, h, c, .65f);
   frame_rect_down(x, y, w, h, c, fl_color_average(c, FL_BLACK, .05f), .05f, .95f);
 }
 
-static void thin_down_box(int x, int y, int w, int h, Fl_Color c) {
+void fl_gleam_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
   shade_rect_top_bottom_down(x, y, w, h, c, .85f);
   frame_rect_down(x, y, w, h, c, fl_color_average(c, FL_BLACK, .45f), .35f, 0.85f);
-}
-
-extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*, Fl_Box_Draw_Focus_F* =NULL);
-
-Fl_Boxtype fl_define_FL_GLEAM_UP_BOX() {
-  fl_internal_boxtype(_FL_GLEAM_UP_BOX, up_box);
-  fl_internal_boxtype(_FL_GLEAM_DOWN_BOX, down_box);
-  fl_internal_boxtype(_FL_GLEAM_UP_FRAME, up_frame);
-  fl_internal_boxtype(_FL_GLEAM_DOWN_FRAME, down_frame);
-  fl_internal_boxtype(_FL_GLEAM_THIN_UP_BOX, thin_up_box);
-  fl_internal_boxtype(_FL_GLEAM_THIN_DOWN_BOX, thin_down_box);
-  fl_internal_boxtype(_FL_GLEAM_ROUND_UP_BOX, up_box);
-  fl_internal_boxtype(_FL_GLEAM_ROUND_DOWN_BOX, down_box);
-  return _FL_GLEAM_UP_BOX;
 }
