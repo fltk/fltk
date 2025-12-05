@@ -247,6 +247,20 @@ void Fl_Slider::draw_ticks(const Fl_Rect& r, int /*S*/ /*, int min_spacing*/)
   }
 }
 
+/**
+ Adds a sensible step value to the passed value.
+ The step size is not useful in logarithmic scales.
+ */
+double Fl_Slider::increment_lin_log(double v, int n, int range) {
+  if (scale() == Scale_Type::LOG_SCALE) {
+    double pos = value_to_position(v);
+    pos = pos + (n*4/(double)range);
+    return position_to_value(pos);
+  } else {
+    return increment(v, n);
+  }
+}
+
 
 int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
   // Fl_Widget_Tracker wp(this);
@@ -330,7 +344,7 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
           if (horizontal()) return 0;
           handle_push();
           if (wp.deleted()) return 1;
-          handle_drag(clamp(increment(value(),-1)));
+          handle_drag(clamp(increment_lin_log(value(), -1, H)));
           if (wp.deleted()) return 1;
           handle_release();
           return 1;
@@ -338,7 +352,7 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
           if (horizontal()) return 0;
           handle_push();
           if (wp.deleted()) return 1;
-          handle_drag(clamp(increment(value(),1)));
+          handle_drag(clamp(increment_lin_log(value(), 1, H)));
           if (wp.deleted()) return 1;
           handle_release();
           return 1;
@@ -346,7 +360,7 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
           if (!horizontal()) return 0;
           handle_push();
           if (wp.deleted()) return 1;
-          handle_drag(clamp(increment(value(),-1)));
+          handle_drag(clamp(increment_lin_log(value(), -1, W)));
           if (wp.deleted()) return 1;
           handle_release();
           return 1;
@@ -354,7 +368,7 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
           if (!horizontal()) return 0;
           handle_push();
           if (wp.deleted()) return 1;
-          handle_drag(clamp(increment(value(),1)));
+          handle_drag(clamp(increment_lin_log(value(), 1, W)));
           if (wp.deleted()) return 1;
           handle_release();
           return 1;

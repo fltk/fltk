@@ -102,6 +102,7 @@ protected:
   void draw_ticks(const Fl_Rect& r, int S);
   double value_to_position(double val) const;
   double position_to_value(double pos) const;
+  double increment_lin_log(double v, int n, int range);
 
 public:
 
