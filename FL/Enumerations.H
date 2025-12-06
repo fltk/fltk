@@ -107,7 +107,8 @@
     is ok to look at it outside of the handle() method.
 
     Event numbers can be converted to their actual names using the
-    \ref fl_eventnames[] array defined in \#include &lt;FL/names.h&gt;
+    fl_eventnames[] array (std::map since FLTK 1.5) defined
+    in \#include &lt;FL/names.h&gt;
 
     \see Fl::event_text(), Fl::event_key(), class Fl::
  */

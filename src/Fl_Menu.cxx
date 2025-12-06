@@ -1644,8 +1644,8 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 
 /** The Fl_Window from which currently displayed popups originate.
   Optionally, gives also the height of the display containing this window.
-  \parmm[out]display_height return the height of the display here.
-  \return pointe to the owning window
+  \param[out] display_height return the height of the display here.
+  \return pointer to the owning window
 */
 Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
   if (display_height) *display_height = Menu_Window::display_height_;
