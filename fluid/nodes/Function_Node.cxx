@@ -1514,8 +1514,7 @@ Class_Node Class_Node::prototype;
 Class_Node::Class_Node() :
   Node(),
   subclass_of(nullptr),
-  public_(1),
-  class_prefix(nullptr)
+  public_(1)
 { }
 
 /**
@@ -1524,8 +1523,6 @@ Class_Node::Class_Node() :
 Class_Node::~Class_Node() {
   if (subclass_of)
     free((void*)subclass_of);
-  if (class_prefix)
-    free((void*)class_prefix);
 }
 
 /**
@@ -1533,14 +1530,6 @@ Class_Node::~Class_Node() {
  */
 int Class_Node::is_public() const {
   return public_;
-}
-
-/**
- Set the prefixx string.
- */
-void Class_Node::prefix(const char*p) {
-  free((void*) class_prefix);
-  class_prefix=fl_strdup(p ? p : "" );
 }
 
 /**
@@ -1559,7 +1548,7 @@ Node *Class_Node::make(Strategy strategy) {
   }
   Class_Node *o = new Class_Node();
   o->name("UserInterface");
-  o->class_prefix = nullptr;
+  o->prefix("");
   o->subclass_of = nullptr;
   o->public_ = 1;
   o->add(anchor, strategy);
@@ -1615,8 +1604,8 @@ void Class_Node::write_code1(fld::io::Code_Writer& f) {
   write_public_state = 0;
   f.write_h("\n");
   write_comment_h(f);
-  if (prefix() && strlen(prefix()))
-    f.write_h("class %s %s ", prefix(), name());
+  if (!prefix().empty())
+    f.write_h("class %s %s ", prefix().c_str(), name());
   else
     f.write_h("class %s ", name());
   if (subclass_of) f.write_h(": %s ", subclass_of);

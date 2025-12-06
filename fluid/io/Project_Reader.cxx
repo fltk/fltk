@@ -320,11 +320,10 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
 
     c = read_word(1);
     // There can actually be two keywords here. The first one used to be a
-    // "prefix" in Fluid < 1.5.0, but is no longer supported. So if we still
-    // find the prefix in files, it will simply be prefixed to the name.
+    // "prefix", i.e. class attributes.
     if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
-      std::string tmp = std::string {t->name() } + " " + c;
-      t->name(tmp.c_str());
+      ((Class_Node*)t)->prefix( t->name() );
+      t->name( c );
       c = read_word(1);
     }
 

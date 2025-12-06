@@ -34,6 +34,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#include <string>
+
 extern class Class_Node *current_class;
 
 int has_toplevel_function(const char *rtype, const char *sig);
@@ -271,7 +273,7 @@ public:
 private:
   const char* subclass_of;
   char public_;
-  const char* class_prefix;
+  std::string prefix_;
 public:
   Class_Node();
   ~Class_Node();
@@ -298,8 +300,10 @@ public:
   void visibility(char v) { public_ = v; }
 
   // class prefix attribute access
-  void prefix(const char* p);
-  const char*  prefix() const {return class_prefix;}
+  /** Set the text between `class` and the class name */
+  void prefix(const std::string& p) { prefix_ = p; }
+  /** Get the text between `class` and the class name */
+  std::string prefix() const { return prefix_; }
 };
 
 #endif // FLUID_NODES_FUNCTION_NODE_H

@@ -889,9 +889,9 @@ void Node::write(fld::io::Project_Writer &f) {
   f.write_word(type_name());
 
   if (is_class()) {
-    const char * p =  ((Class_Node*)this)->prefix();
-    if (p &&  strlen(p))
-      f.write_word(p);
+    auto p = ((Class_Node*)this)->prefix();
+    if (!p.empty())
+      f.write_word(p.c_str());
   }
 
   f.write_word(name());

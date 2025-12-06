@@ -80,6 +80,9 @@ decl {\#include <FL/Fl_Menu_Item.H>} {private global
 decl {\#include <FL/Fl_File_Chooser.H>} {private global
 }
 
+decl {\#include <ctype.h>} {selected private global
+}
+
 decl {\#define ZERO_ENTRY 1000} {private global
 }
 
@@ -486,8 +489,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Tabs widget_tabs {
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);} selected
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
+  propagate_load((Fl_Group *)o,v);}
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 hide
         code0 {o->show();}
       } {
         Fl_Group wp_gui_tab {
@@ -2972,8 +2975,8 @@ if (v == LOAD) {
       }
       Fl_Tabs class_tabs {
         callback {if (current_node && current_node->is_a(Type::Class))
-  propagate_load((Fl_Group *)o,v);}
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
+  propagate_load((Fl_Group *)o,v);} open
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255
       } {
         Fl_Group class_tabs_main {
           label Class
@@ -3032,11 +3035,10 @@ if (v == LOAD) {
 Class_Node* nd = (Class_Node*)current_node;
 
 if (v == LOAD) {
-  o->value( nd->prefix() );
+  o->value( nd->prefix().c_str() );
 } else {
-  const char *nn = nd->prefix();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
+  auto nn = nd->prefix();
+  if (nn != o->value())
   {
     nd->prefix( o->value() );
     Fluid.proj.set_modflag(1);
@@ -3054,12 +3056,36 @@ if (v == LOAD) {
   o->value( nd->name() );
 } else {
   const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
+  char *nv = strdup( o->value() );
+  // There is an inconsistency in the project file reader, so this string
+  // must not coantain anything but alphanumeric and underscore characters.
+  char *s = (char*)nv;
+  char *d = (char*)nv;
+  while (*s) {
+    if (isalnum((unsigned char)*s) || *s == '_') {
+      *d++ = *s;
+    }
+    s++;
+  }
+  *d = 0;
+  // The class name must not be empty either
+  if (*nv == 0) {
+    free((void*)nv);
+    nv = strdup("MyClass");
+  }
+  // The class name may have changed, so update the widget
+  o->value( nv );
+  // Now copy the new name into the node if it changed
+  if (   ( nn && (strcmp(nn, nv) != 0))
+      || (!nn && (strcmp("", nv) != 0)) )
   {
-    nd->name( o->value() );
+    nd->name( nv );
     Fluid.proj.set_modflag(1);
     redraw_browser();
+  }
+  // Don't forget to clean up
+  if (nv) {
+    free((void*)nv);
   }
 }}
             tooltip {class name, must be a single C++ keyword} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
