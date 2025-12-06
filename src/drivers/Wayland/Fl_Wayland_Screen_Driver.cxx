@@ -1561,7 +1561,7 @@ static void xdg_toplevel_configure(void *v, struct xdg_toplevel *xdg_toplevel,
   struct configure_s *data = (struct configure_s*)v;
   data->W = width;
   data->H = height;
-  data->state = (states ? *(uint32_t *)(states->data) : 0);
+  data->state = (width && height && states ? *(uint32_t *)(states->data) : 0);
 }
 
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
