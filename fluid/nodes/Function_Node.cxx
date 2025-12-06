@@ -1513,7 +1513,6 @@ Class_Node Class_Node::prototype;
  */
 Class_Node::Class_Node() :
   Node(),
-  subclass_of(nullptr),
   public_(1)
 { }
 
@@ -1521,8 +1520,6 @@ Class_Node::Class_Node() :
  Destructor.
  */
 Class_Node::~Class_Node() {
-  if (subclass_of)
-    free((void*)subclass_of);
 }
 
 /**
@@ -1549,7 +1546,7 @@ Node *Class_Node::make(Strategy strategy) {
   Class_Node *o = new Class_Node();
   o->name("UserInterface");
   o->prefix("");
-  o->subclass_of = nullptr;
+  o->base_class("");
   o->public_ = 1;
   o->add(anchor, strategy);
   o->factory = this;
@@ -1563,9 +1560,9 @@ Node *Class_Node::make(Strategy strategy) {
  */
 void Class_Node::write_properties(fld::io::Project_Writer &f) {
   Node::write_properties(f);
-  if (subclass_of) {
+  if (!base_class().empty()) {
     f.write_string(":");
-    f.write_word(subclass_of);
+    f.write_word(base_class().c_str());
   }
   switch (public_) {
     case 0: f.write_string("private"); break;
@@ -1582,7 +1579,7 @@ void Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
   } else if (!strcmp(c,":")) {
-    storestring(f.read_word(), subclass_of);
+    base_class(f.read_word());
   } else {
     Node::read_property(f, c);
   }
@@ -1608,7 +1605,9 @@ void Class_Node::write_code1(fld::io::Code_Writer& f) {
     f.write_h("class %s %s ", prefix().c_str(), name());
   else
     f.write_h("class %s ", name());
-  if (subclass_of) f.write_h(": %s ", subclass_of);
+  if (!base_class().empty()) {
+    f.write_h(": %s ", base_class().c_str());
+  }
   f.write_h("{\n");
 }
 

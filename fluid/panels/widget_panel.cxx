@@ -2696,13 +2696,11 @@ static void cb_Base(Fl_Input* o, void* v) {
   Class_Node* nd = (Class_Node*)current_node;
 
   if (v == LOAD) {
-    o->value( nd->base_class_name() );
+    o->value( nd->base_class().c_str() );
   } else {
-    const char *nn = nd->base_class_name();
-    if (   ( nn && (strcmp(nn, o->value()) != 0))
-        || (!nn && (strcmp("", o->value()) != 0)) )
-    {
-      nd->base_class_name( o->value() );
+    auto nn = nd->base_class();
+    if (nn != o->value()) {
+      nd->base_class( o->value() );
       Fluid.proj.set_modflag(1);
     }
   }
@@ -3263,7 +3261,6 @@ Fl_Double_Window* make_widget_panel() {
         widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
         widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
         widget_tabs->when(FL_WHEN_NEVER);
-        widget_tabs->hide();
         { wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
           wp_gui_tab->labelsize(11);
           wp_gui_tab->callback((Fl_Callback*)propagate_load);
@@ -4351,6 +4348,7 @@ Fl_Double_Window* make_widget_panel() {
         class_tabs->labelsize(11);
         class_tabs->labelcolor(FL_WHITE);
         class_tabs->callback((Fl_Callback*)cb_class_tabs);
+        class_tabs->hide();
         { class_tabs_main = new Fl_Group(10, 30, 400, 330, "Class");
           class_tabs_main->labelsize(11);
           class_tabs_main->callback((Fl_Callback*)propagate_load);

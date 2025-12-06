@@ -22,6 +22,8 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 
+#include <string>
+
 class Node;
 class Group_Node;
 class Window_Node;
@@ -113,6 +115,7 @@ enum class Type {
 void update_visibility_flag(Node *p);
 void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
+int storestring(const std::string& n, std::string& p, int nostrip=0);
 
 void select_all_cb(Fl_Widget *,void *);
 void select_none_cb(Fl_Widget *,void *);

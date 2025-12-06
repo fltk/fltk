@@ -271,9 +271,9 @@ public:
   typedef Node super;
   static Class_Node prototype;
 private:
-  const char* subclass_of;
-  char public_;
+  std::string base_class_;
   std::string prefix_;
+  char public_;
 public:
   Class_Node();
   ~Class_Node();
@@ -294,16 +294,20 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::Class) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
-  const char* base_class_name() { return subclass_of; }
-  void base_class_name(const char* name) { storestring(name, subclass_of); }
+
+  /** Get base class access and name. */
+  std::string base_class() { return base_class_; }
+  /** Set base class access and name, i.e. `public Fl_Widget`. */
+  void base_class(const std::string& name) { storestring(name, base_class_); }
+
   char visibility() { return public_; }
   void visibility(char v) { public_ = v; }
 
   // class prefix attribute access
-  /** Set the text between `class` and the class name */
-  void prefix(const std::string& p) { prefix_ = p; }
   /** Get the text between `class` and the class name */
   std::string prefix() const { return prefix_; }
+  /** Set the text between `class` and the class name */
+  void prefix(const std::string& p) { prefix_ = p; }
 };
 
 #endif // FLUID_NODES_FUNCTION_NODE_H

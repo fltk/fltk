@@ -80,7 +80,7 @@ decl {\#include <FL/Fl_Menu_Item.H>} {private global
 decl {\#include <FL/Fl_File_Chooser.H>} {private global
 }
 
-decl {\#include <ctype.h>} {selected private global
+decl {\#include <ctype.h>} {private global
 }
 
 decl {\#define ZERO_ENTRY 1000} {private global
@@ -489,8 +489,8 @@ Function {make_widget_panel()} {
     } {
       Fl_Tabs widget_tabs {
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);}
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 hide
+  propagate_load((Fl_Group *)o,v);} selected
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
         Fl_Group wp_gui_tab {
@@ -2975,8 +2975,8 @@ if (v == LOAD) {
       }
       Fl_Tabs class_tabs {
         callback {if (current_node && current_node->is_a(Type::Class))
-  propagate_load((Fl_Group *)o,v);} open
-        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255
+  propagate_load((Fl_Group *)o,v);}
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group class_tabs_main {
           label Class
@@ -3096,13 +3096,11 @@ if (v == LOAD) {
 Class_Node* nd = (Class_Node*)current_node;
 
 if (v == LOAD) {
-  o->value( nd->base_class_name() );
+  o->value( nd->base_class().c_str() );
 } else {
-  const char *nn = nd->base_class_name();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
-  {
-    nd->base_class_name( o->value() );
+  auto nn = nd->base_class();
+  if (nn != o->value()) {
+    nd->base_class( o->value() );
     Fluid.proj.set_modflag(1);
   }
 }}
