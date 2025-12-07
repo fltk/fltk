@@ -1,0 +1,498 @@
+// vim:syntax=doxygen
+/**
+
+ \page cmp FLTK Code Management Plan (CMP)
+
+<br><br>
+<center><h2>*** WORK IN PROGRESS ***</h2></center>
+<br><br>
+
+\section cmp_intro CMP Coding Intro
+
+This document defines the coding standards that all FLTK developers must
+follow when developing source code and related documentation for the FLTK
+library. The purpose of defining formal standards is to organize and focus
+our development efforts, ensure that all developers communicate and develop
+software with a common vocabulary/style, and make it possible for us to
+generate and release a high-quality GUI toolkit which can be used with a
+high degree of confidence.
+
+Much of this file describes existing practices that have been used up
+through FLTK 1.1.x, however some new standards have been added for future
+code and releases.
+
+\section cmp_communication Communication
+
+The fltk.coredev mailing list/newsgroup are the primary means of communication between developers.
+All major design changes must be discussed prior to implementation.
+
+We use GitHub Issues to manage bugs.
+Please see the CMP section on Managing GitHub Issues for how developers should manage GitHub issues.
+
+It is wise for all developers to monitor these github related mailing list/newsgroups for bug and commit acitivity:
+
+ - fltk.commit — (nntp/web) All fltk developer commits on GitHub commit. Includes old pre-Oct 2018 SVN commits
+
+ - fltk.issues — (nntp/web) All new/current fltk bugs as GitHub Issues. See "Managing GitHub Issues"
+
+ - fltk.bugs   — (nntp/web) The "Old STR Bug Management System" activity (replaced by GitHub Issues). See "Managing Old STR's"
+
+To monitor these groups, either configure github to cc you on activity, or see the https://www.fltk.org/newsgroups.php page
+and use either the web interface or NNTP instructions. 
+
+\section cmp_goals Specific Goals
+
+The specific goals of the FLTK are as follows:
+
+ - Develop a C++ GUI toolkit based upon sound object-oriented design principles and experience.
+ - Minimize CPU usage (fast).
+ - Minimize memory usage (light).
+ - Support multiple operating systems and windowing environments, including UNIX/Linux, macOS,
+   Microsoft Windows, and X11, using the "native" graphics interfaces.
+ - Support OpenGL rendering in environments that provide it.
+ - Provide a graphical development environment for designing GUI interfaces, classes, and simple programs.
+ - Support UTF-8 text.
+ - Support printer rendering in environments that provide it.
+ - Support "schemes", "styles", "themes", "skinning", etc. to alter the appearance of widgets
+   in the toolkit easily and efficiently. The purpose is to allow applications to tailor their
+   appearance to the underlying OS or based upon personal/user preferences.
+ - Support newer C++ language features, such as templating via the Standard Template Library
+   ("STL"), and certain Standard C++ library interfaces, such as streams. However, FLTK will
+   not depend upon such features and interfaces to minimize portability issues.
+ - Support intelligent layout of widgets.
+
+Many of these goals are satisfied by FLTK 1.1.x, and many complex
+applications have been written using FLTK on a wide range of platforms
+and devices.
+
+\section cmp_practices_docs Documentation
+
+All widgets are documented using the Doxygen software; Doxygen comments
+are placed in the header file for the class comments and any inline
+methods, while non-inline methods should have their comments placed in
+the corresponding source file. The purpose of this separation is to place
+the comments near the implementation to reduce the possibility of the
+documentation getting out of sync with the code.
+
+All widgets must have a corresponding test program which exercises
+all widget functionality and can be used to generate image(s) for the
+documentation. Complex widgets must have a written tutorial, either as
+full text or an outline for later publication
+
+Starting with FLTK 1.3 Doxygen is used for HTML and PDF documentation.
+
+\section cmp_practices_cmake Build System (CMake)
+
+The FLTK build system uses CMake to tailor the library to the local operating
+system. Since FLTK 1.4 the primary and recommended build system is CMake. The
+older autoconf/configure builds are no longer supported as of FLTK 1.5.x.
+
+To improve portability, makefiles must not make use of the unique features
+offered by GNU make. See the Makefile Standards section for a description
+of the allowed make features and makefile guidelines.
+
+Additional GNU build programs such as GNU automake and GNU libtool must
+not be used. GNU automake produces non-portable makefiles which depend
+on GNU-specific extensions, and GNU libtool is not portable or reliable
+enough for FLTK.
+
+Note: Starting with FLTK 1.4.0 we do no longer bundle IDE files for
+Microsoft Windows (Visual Studio) and macOS (Xcode). IDE environments
+(project files) can be generated with CMake. See README.CMake.txt for more
+information about using CMake.
+
+\section cmp_coding_standards Coding Standards
+
+The following is a guide to the coding style that must be used when adding
+or modifying code in FLTK. Most of this should be obvious from looking at
+the code, but here it all is in one spot.
+
+\section cmp_coding_style General Coding Style
+
+The FLTK code basically follows the K&R coding style. While many of the
+developers are not entirely satisfied with this coding style, no one has
+volunteered to change all of the FLTK source code (currently about 54,000
+lines of code!) to a new style.
+
+The K&R coding style can be summarized with the following example code:
+
+\verbatim
+int function(int arg) {
+  if (arg != 10) {
+    printf("arg = %d\n", arg);
+    return (0);
+  } else {
+    return 1;
+  }
+}
+
+int function2(int arg) {
+  for (int i = 0; i < arg; i++) {
+    stuff();
+  }
+  while (something) {
+    stuff();
+  }
+  switch (arg) {
+    case 0:
+      stuff_here();
+      break;
+    case 1: {
+      int var;
+      stuff_here();
+      break;
+    }
+    case 2:
+      stuff();
+      /* FALLTHROUGH */
+    case 3: simple_stuff1(); break;
+    case 4: simple_stuff2(); break;
+    default:
+      break;
+  }
+  return (0);
+}
+\endverbatim
+
+To summarize:
+
+  - All curley braces must open on the same line as the enclosing statement, and close at the same level of indentation.
+  - Each block of code must be indented 2 spaces.
+  - <b>Tabs are not allowed in source files</b>, please use only spaces for indenting.
+  - A space follows all reserved words.
+  - A space precedes and follows all operators except prefix and postfix operators (++i, j--, et al).
+
+\section cmp_coding_standards_docs Source File Documentation
+
+Each source file must start with the standard FLTK header containing the
+description of the file, and FLTK copyright and license notice:
+
+\verbatim
+//
+// Some descriptive text for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2020 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file. If this
+// file is missing or damaged, see the license at:
+//
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
+//
+\endverbatim
+
+..or the equivalent comment block using the C or other comment delimiters appropriate for the source file language (shell, CMake, etc).
+
+\section cmp_coding_doxygen Doxygen Documentation (Comments)
+
+FLTK 1.3 and up uses Doxygen with the JavaDoc comment style to document all classes, structures, enumerations, methods, and functions. Doxygen comments are \b mandatory for all FLTK header and source files, and no FLTK release will be made without complete documentation of public APIs. Here is an example of the Doxygen comment style:
+
+\verbatim
+/**
+  The Foo class implements the Foo widget for FLTK.
+
+  This description text appears in the documentation for
+  the class and may include HTML tags as desired.
+*/
+
+class FL_EXPORT Foo : public Widget {
+  int private_data_;
+
+public:
+  /**
+    Creates a Foo widget with the given position and label.
+
+    This description text appears in the documentation for the
+    method's implementation.
+
+    References to parameters \p X, \p Y, \p W, \p H are
+    mentioned this way.
+
+    \param[in] X,Y,W,H Position and size of widget
+    \param[in] L Optional label (default is 0 for no label)
+  */
+  Foo(int X, int Y, int W, int H, const char *L = 0) {
+    ..implementation here..
+  }
+};
+\endverbatim
+
+Essentially, a comment starting with `/**` before the class or method defines the documentation for that class or method. These comments should appear in the header file for classes and inline methods and in the code file for non-inline methods.
+
+In addition to Doxygen comments, block comments must be used liberally in the code to describe what is being done. If what you are doing is not "intuitively obvious to a casual observer", add a comment! Remember, you're not the only one that has to read, maintain, and debug the code.
+
+<b>Never</b> use C++ comments in C code files or in header files that may be included from a C program. (Otherwise builds on strict platforms like SGI will fail). Normally, fltk C files have ".c" and ".h" file extensions, and C++ have ".cxx" and ".H". Currently there are a few exceptions; filename.H and Fl_Exports.H both get interpreted by C and C++, so you must use C style comments in those.
+
+\section cmp_general_recommendations General Developer Recommendations
+
+Most important rule: <b>Put Doxygen comments where the code's implementation is.</b>
+This means don't put the docs with the prototypes in the .H file, unless that's where the code is implemented.
+
+  - \p class, \p typedef, \p enum, and \p inline docs go in the headers
+
+  - Most other docs go in the source files
+
+  - For doxygen syntax in C++ files, use:
+  \verbatim
+  /** for standard doxygen comments */
+  ///< for short single line post-declaration doxygen comments
+  \endverbatim
+
+  - For doxygen syntax in C files, use:
+  \verbatim
+  /**  for standard doxygen comments */
+  /**< for short single line post-declaration doxygen comments */
+  \endverbatim
+
+  - Use `\p` for parameters citation in the description
+
+  - Use `\param[in] xxx` and `\param[out] xxx` for input/output parameters.
+
+  - Don't use doxygen tags between the `\\htmlonly` and `\\endhtmlonly` pair of tags.
+
+  - When commenting out code or writing non-doxygen comments, be sure not to accidentally use doxygen comment styles, or your comments will be published..! Beware doxygen recognizes other comment styles for itself:
+  \verbatim
+  /*! beware */
+  /*@ beware */
+  //! beware
+  //@ beware
+  \endverbatim
+
+  There may be others. For this reason, follow all non-doxygen comment leaders with a space to avoid accidental doxygen parsing:
+
+  \verbatim
+  /* safe from doxygen */
+  // safe from doxygen
+    ↑
+    Space immediately after comment characters
+  \endverbatim
+
+  Note: Several characters are 'special' within doxygen commments, and must be escaped with a backslash to appear in the docs correctly. Some of these are:
+
+  \verbatim
+  \<    -- disambiguates html tags
+  \>    -- ""
+  \&    -- ""
+  \@    -- disambiguates JavaDoc doxygen comments
+  \$    -- disambiguates environment variable expansions
+  \#    -- disambiguates references to documented entities
+  \%    -- prevents auto-linking
+  \\   -- escapes the escape character
+  \endverbatim
+
+  - Itemized lists can be specified two ways; both work, left is preferred:
+
+<table>
+  <tr><th> Preferred </th> <th> Old </th></tr>
+  <tr><td>
+  \verbatim
+  /**
+   Here's a bullet list:      
+
+   - Apples
+   - Oranges
+
+   Here's a numbered list:
+
+   -# First thing
+   -# Second thing
+
+ */
+  \endverbatim
+  </td><td>
+  \verbatim
+  /**
+   Here's a bullet list:      
+   <ul>
+     <li> Apples</li>
+     <li> Oranges</li>
+   </ul>
+   Here's a numbered list:
+   <ol>
+     <li> First thing</li>
+     <li> Second thing</li>
+   <ol>
+  */
+   \endverbatim
+  </td></tr>
+</table>
+
+\section cmp_temporary_code Documenting Temporary Code or Issues
+
+Temporary code and code that has a known issue MUST be documented in-line with the following (Doxygen) comment style:
+
+\verbatim
+  /** \todo this code is temporary */
+\endverbatim
+
+<b>`\todo`</b> items are listed by Doxygen making it easy to locate any code that has an outstanding issue or code that should be removed or commented out prior to a release.
+
+\section cmp_documenting_class_and_struct Documenting Classes and Structures
+
+Classes and structures start with a comment block that looks like the following:
+
+\verbatim
+/**
+  A brief description of the class/structure.
+
+  A complete description of the class/structure.
+*/
+class MyClass {
+  ...implementation...
+};
+\endverbatim
+
+\section cmp_documenting_enum Documenting Enumerations
+
+Enumerations start with a comment block that looks like the following:
+
+\verbatim
+/**
+  A brief description of the enumeration.
+
+  A complete description of the enumeration.
+*/
+enum MyEnum {
+  ...implementation...
+};
+\endverbatim
+
+Each enumeration value must be documented in-line next to the corresponding definition as follows:
+
+\verbatim
+/* C++ STYLE */
+enum MyEnum {
+  BLACK,    ///< The color black.
+  RED,      ///< The color red.
+  GREEN,    ///< The color green.
+  YELLOW,   ///< The color yellow.
+  BLUE      ///< The color blue.
+};
+\endverbatim
+
+If the enum is included in a C file, be sure to use C style commenting:
+
+\verbatim
+/* C STYLE */
+enum MyEnum {
+  BLACK,    /**< The color black. */
+  RED,      /**< The color red. */
+  GREEN,    /**< The color green. */
+  YELLOW,   /**< The color yellow. */
+  BLUE      /**< The color blue. */
+};
+\endverbatim
+
+\section cmp_documenting_functions_and_methods Documenting Functions and Methods
+
+Functions and methods start with a comment block that looks like the following:
+
+\verbatim
+/**
+  A brief description of the function/method.
+
+  A complete description of the function/method.
+  Optional passing mention of parameter \p a and \p out1.
+
+  Optional code example goes here if needed:
+  \code
+  ..code showing how to use it..
+  \endcode
+
+  \param[in] a Description of input variable a
+  \param[in] x,y Description of input variables x and y in one comment
+  \param[out] out1 Description of output variable out1
+  \param[out] out2 Description of output variable out2
+  \return 0 on success, -1 on error
+  \see other_func1(), other_func2()
+*/
+int my_function(int a, int x, int y, float &out1, float &out2) {
+  ...implementation...
+}
+\endverbatim
+
+Some details on the above:
+
+- <b>Parameters</b>
+
+  Use `\param` to document function/method parameters using either of the following formats, the latter being preferred:
+
+  \verbatim
+  \param var Some description
+  \param[in|out] var Some description.
+  \endverbatim
+
+  Mention of parameters in docs should use "`\p varname`". (Use `\p` instead of `\a`)
+
+  Note: Doxygen checks your `\param` variable names against the actual function signatures in your code.
+  It does NOT check `\p` names for consistency.
+
+- <b>Return Values</b>
+
+  Use `\return` to document return values. Omit this if there is no return value.
+
+- <b>Reference related methods</b>
+
+  Use `\see` to help the reader find related methods.
+  (Methods are sorted alphabetically by doxygen, so 'related' methods might not appear together)
+
+  Locate `\see` references below `\param[]` and `\return` as shown in the above example.
+
+- <b>Code examples</b>
+
+  Use `\code` and `\endcode` when code examples are needed.
+  Text within will be exempt from html and doxygen escape code parsing,
+  so you don't have to escape characters \<, \>, \&, etc. as you would normally.
+
+  Be careful not to embed C style comments within `\code` and `\endcode` or it
+  will break the outer doxygen comment block. (A good reason to always test
+  build the code base before commiting documentation-only mods)
+
+- <b>Where to put docs</b>
+
+  Function/method documentation must be placed next to the corresponding code.
+  (Rule: "Put the docs where the code implementation is.")
+  Comments for in-line functions and methods are placed in the header file where they're defined.
+
+<br><br>
+<center><h2>*** WORK IN PROGRESS ***</h2></center>
+<br><br>
+
+\section cmp_coding_source_files Source Files
+
+Each source file shall be placed a sub-directory corresponding to the software sub-system it belongs to ("fltk", "OpenGL", etc.) To remain compatible with case-insensitive filesystems, no two directory names shall differ only by the case of the letters in the name.
+
+Source files shall be documented and formatted as described in the Coding Standards section. To remain compatible with case-insensitive filesystems, no two filenames shall differ only by the case of the letters in the name.
+
+C source files shall have an extension of ".c". C++ source files shall have an extension of ".cxx". Header files shall have an extension of ".h" unless used for FLTK 1.x compatibility. FLTK 1.x compatibility headers shall have an extension of ".H".
+
+  <table>
+    <tr><th><center>
+      <b>Why use the ".cxx" extension?</b>
+    </center></th></tr><tr><td>
+      C++ source files can have any of the following extensions on various
+      platforms: ".C", ".cc", ".cpp", ".cxx". Only the ".cxx" extension is
+      universally recognized by C++ compilers as a C++ source file - ".C"
+      is not usable on macOS and Windows, ".cc" is not usable on Windows, and
+      ".cpp" is historically considered C preprocessor output on UNIX.
+      <p>
+      Since not all make programs handle C++ source files with the ".cxx"
+      extension, the FLTK build system explicitly defines makefile rules
+      for compiling C++ source files with an extension of ".cxx".
+    </td></tr>
+  </table>
+
+IDE/compiler support source files (project files, workspaces, makefiles, etc.) shall have extensions as required by the IDE/compiler tool.
+
+Header files must utilitize so-called "guard" definitions to prevent multiple inclusion. The guard definitions are named using the full path in the FLTK source tree, e.g.:
+
+    FL/Fl.H becomes _FL_Fl_H_
+    fluid/foo.h becomes _fluid_foo_h_
+
+Any non-alphanumeric (letters and numbers) characters are replaced with the underscore (_) character, and leading and trailing underscores are added to limit global namespace pollution.
+
+*/

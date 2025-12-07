@@ -2,6 +2,7 @@
 
 \page FLTK-devel Development of the FLTK library
 
+- \subpage cmp
 - \subpage wayland-devel
 - \subpage bundled-libs
 - \subpage development

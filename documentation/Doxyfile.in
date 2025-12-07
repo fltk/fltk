@@ -785,6 +785,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src/index.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/preface.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/intro.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/basics.dox \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/cmp.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/common.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/coordinates.dox \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/resize.dox \
