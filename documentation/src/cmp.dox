@@ -38,7 +38,7 @@ It is wise for all developers to monitor these github related mailing list/newsg
  - fltk.bugs   — (nntp/web) The "Old STR Bug Management System" activity (replaced by GitHub Issues). See "Managing Old STR's"
 
 To monitor these groups, either configure github to cc you on activity, or see the https://www.fltk.org/newsgroups.php page
-and use either the web interface or NNTP instructions. 
+and use either the web interface or NNTP instructions.
 
 \section cmp_goals Specific Goals
 
@@ -221,7 +221,7 @@ public:
 };
 \endverbatim
 
-Essentially, a comment starting with `/**` before the class or method defines the documentation for that class or method. These comments should appear in the header file for classes and inline methods and in the code file for non-inline methods.
+Essentially, a comment starting with `/\**` before the class or method defines the documentation for that class or method. These comments should appear in the header file for classes and inline methods and in the code file for non-inline methods.
 
 In addition to Doxygen comments, block comments must be used liberally in the code to describe what is being done. If what you are doing is not "intuitively obvious to a casual observer", add a comment! Remember, you're not the only one that has to read, maintain, and debug the code.
 
@@ -291,7 +291,7 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
   <tr><td>
   \verbatim
   /**
-   Here's a bullet list:      
+   Here's a bullet list:
 
    - Apples
    - Oranges
@@ -306,7 +306,7 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
   </td><td>
   \verbatim
   /**
-   Here's a bullet list:      
+   Here's a bullet list:
    <ul>
      <li> Apples</li>
      <li> Oranges</li>
@@ -426,7 +426,7 @@ Some details on the above:
   \param[in|out] var Some description.
   \endverbatim
 
-  Mention of parameters in docs should use "`\p varname`". (Use `\p` instead of `\a`)
+  Mention of parameters in docs should use `"\p varname"`. (Use `\p` instead of `\a`)
 
   Note: Doxygen checks your `\param` variable names against the actual function signatures in your code.
   It does NOT check `\p` names for consistency.
@@ -456,11 +456,345 @@ Some details on the above:
 
   Function/method documentation must be placed next to the corresponding code.
   (Rule: "Put the docs where the code implementation is.")
+
   Comments for in-line functions and methods are placed in the header file where they're defined.
 
-<br><br>
-<center><h2>*** WORK IN PROGRESS ***</h2></center>
-<br><br>
+\section cmp_documenting_members_and_variables Documenting Members and Variables
+
+Members and variables can be documented in one of two ways; in block comment form:
+
+\verbatim
+/**
+  A brief doxygen description of the member/variable.
+
+  A complete description of the member/variable.
+  More text goes here..
+*/
+int my_variable_;
+\endverbatim
+
+or in the preferred form as in-line comments as follows:
+
+\verbatim
+int my_variable1_;    ///< C++ file's brief doxygen description of the member/variable
+int my_variable2_;    /**< C file's brief doxygen description of the member/variable */
+\endverbatim
+
+\section cmp_methodology_algorithms Methodology, Algorithms, Etc.
+
+The goal of FLTK is to provide a robust GUI toolkit that is small, fast,
+and reliable.
+
+All public API functions and methods must be documented with
+the valid values for all input parameters - NULL pointers, number ranges,
+etc. - and no public API function may have undefined behaviors. Input
+validation should be performed only when the function or method is able
+to return an error to the caller.
+
+When solving a particular problem, whether you are writing a widget or adding
+functionality to the library, please consider the following guidelines:
+
+  -# Choose the small, simple, easy-to-test algorithm over a more complex, larger one that is harder to debug and maintain.
+  -# Choose the fastest algorithm that satisfies #1
+  -# Break complex solutions into smaller, more manageable pieces.
+  -# If functionality can be separated from the main part of the FLTK library, separate it. The idea is to keep the FLTK "core" as small as possible so that programs use memory proportionate to their complexity rather than starting big.
+  -# Choose a general-purpose solution over a single-purpose solution, i.e. don't limit your design to what you think something will be used for.
+  -# Don't rely on functionality available on a particular platform or compiler; this ties in with #5.
+
+\section cmp_portability C++ Portability
+
+Since FLTK is targeted at platforms which often lack complete ISO C++
+support or have limited memory, all C++ code in FLTK must use a subset
+of ISO C++. These restrictions shall be reviewed prior to each minor or
+major release of FLTK.
+
+\subsection cmp_fltk_1_1_x_restrictions FLTK 1.1.x Restrictions
+
+The following C++ features may be not used in FLTK 1.1.x code:
+
+  - Exceptions
+  - Namespaces
+  - Standard C++ headers and library
+  - Templates
+  - static_cast, dynamic_cast, const_cast
+
+\subsection cmp_fltk_1_3_x_restrictions FLTK 1.3.x Restrictions
+
+The following C++ features may be not used in FLTK 1.3.x code:
+
+  - Exceptions
+  - Namespaces
+  - Standard C++ headers and library
+  - Templates
+  - dynamic_cast
+
+\subsection cmp_fltk_1_4_x_restrictions FLTK 1.4.x Restrictions
+
+The following C++ features may be not used in FLTK 1.4.x code:
+
+  - Exceptions
+  - Namespaces
+  - Standard C++ headers and library
+  - Templates
+  - dynamic_cast
+
+The reinterpret_cast keyword may be used but is not mandatory.
+The static_cast and const_cast keywords should be used when casting pointers of different types.
+The dynamic_cast keyword must not be used since run-time typing features may not be available at all times.
+
+\subsection cmp_fltk_1_5_x_restrictions FLTK 1.5.x Restrictions
+
+\todo This needs to be populated with the new restrictions/allowed c++ features.
+
+\section cmp_struct_class_naming Structure/Class Naming
+
+\todo The following needs modification; AFAIK we don't use the `fltk`
+      namespace - I think that was an fltk2 thing - but we do recently
+      make some use of `Fl` namespace (matt's recent tablet commits)
+
+All public (exported) structures and classes must be placed in the
+"fltk" namespace and consist of capitalized words without the underscore,
+e.g. "fltk::SuperWidget".
+
+Private members of classes must end with a trailing underscore ("_")
+and have corresponding public access methods without the underscore as
+applicable, e.g. "text_size_" and "text_size()".
+
+\section cmp_constant_enum_naming Constant/Enumeration Naming
+
+\todo The following needs modification regarding "fltk" namespace
+      (this being an FLTK2 thing IIRC)
+
+Public enumerations and constant variables must be placed inside the "fltk"
+namespace and consist of UPPERCASE WORDS separated by the underscore ("_"),
+e.g. "ALIGN_LEFT", "COLOR_RED", etc. Enumeration type names consist of
+capitalized words without underscores, e.g. "MyEnum". #define constants
+are prohibited aside from the include guard definitions.
+
+\section cmp_preprocessor_variables Preprocessor Variables
+
+\todo In the following, references to `config.h` should be limited to 1.4.x
+      and back(?) and newer code to `fl_config.h`? I'm not sure when we
+      switched to fl_config.h, but that should maybe be mentioned somewhere in the CMP.
+
+File config.h and the C++ compilers define a few preprocessor variables
+that help organizing platform-specific code and control access to a few
+internal classes. Only code internal to the FLTK library can include the
+config.h header file. Thus, FLTK header files that are part of the public
+API must not, directly or indirectly, include config.h.
+
+  - `_WIN32` identifies the MS-Windows platform (both for the 32- and 64-bit versions).
+  Note: FLTK 1.3.x used WIN32 which had to be defined by the FLTK build system whereas
+  FLTK 1.4 uses `_WIN32` (with leading underscore) which should be defined by the
+  build tools (preprocessor, compiler) on the Windows platform.
+
+  <br>
+  - `__CYGWIN__` is defined when FLTK runs on Windows but uses Cygwin's POSIX
+  emulation features (cygwin1.dll).
+
+  <br>
+  - `__APPLE__` identifies the macOS platform.
+
+  \todo The following needs updating - I think Quartz stuff was Cocoa-ized?
+        Might need to at least refer to the FLTK versions for when quartz was
+        replaced w/cocoa.
+
+  <br>
+  - `__APPLE_QUARTZ__` is defined by config.h for the macOS platform.
+  At present, use of `__APPLE_QUARTZ__` is equivalent to using `__APPLE__`.
+  This may change in the future if other graphics systems than Quartz are
+  supported on the macOS platform.
+
+  \todo In the following, reference to `configure` and `config.h` should
+        perhaps be qualified with reference to 1.4.x and back?
+
+  <br>
+  - `USE_X11` is defined by config.h when Xlib is the graphics system used.
+  Thus, `USE_X11` is defined on all Unix and Linux platforms, and on Windows,
+  if `configure` used `--enable-cygwin` and `--enable-x11`.  Xlib-specific
+  code is also often delimited without reference to the `USE_X11` variable
+  (thus without the requirement to include config.h) as follows:
+  \verbatim
+  #if defined(WIN32)
+  #elif defined(__APPLE__)
+  #else
+  .. Xlib specific code ...
+  #endif
+  \endverbatim
+
+  \todo In the following, config.h. -> fl_config.h..
+
+  <br>
+  - `USE_XFT` is defined by `config.h` when `USE_X11` is defined.
+  It is set to 1 when the Xft library of scalable, anti-aliased fonts is
+  used, and to 0 otherwise.
+
+  <br>
+  - `FL_LIBRARY` is defined by all FLTK library build systems when the
+  FLTK library itself is compiled. Application program developers should
+  not define it when compiling their programs.
+
+  <br>
+  - `FL_DLL` is defined by the FLTK build system when building shared
+  libraries (DLL's) with Visual Studio. Application program developers
+  using Visual Studio and linking against the shared FLTK libraries (DLL's)
+  built with Visual Studio must define this macro when compiling their
+  source files. Note that this macro must be defined by the build system
+  (VS project setup/properties) or on the compiler command line so it is
+  "seen" by all included FLTK header files.
+
+  <br>
+  - `FL_INTERNALS` can be defined by application program developers to
+  access certain internal FLTK library classes (e.g., the `Fl_X` class)
+  if they need it. APIs to these internal classes are highly subject to
+  changes, though.
+
+  <br>
+  - `FL_DOXYGEN` is defined when the Doxygen program that builds the FLTK
+  documentation processes the source code. This variable has two major uses:
+  <br><br>
+   -# `#ifndef FL_DOXYGEN` / `#endif` allows to hide code from Doxygen.
+   -# The Doxygen program does not define the platform-specific variables
+   `__APPLE__` or `_WIN32` (even if it's run on macOS or Windows).
+   Thus, platform-specific (say, macOS-specific) code must be bracketed
+   as follows to be seen by Doxygen:
+   \verbatim
+   #if defined(__APPLE__) || defined(FL_DOXYGEN)
+   ... Doxygen-visible, macOS-specific code ...
+   #endif
+   \endverbatim
+
+  <br>
+  - `FL_ABI_VERSION` is used to allow developers to implement ABI breaking code
+  in Patch Releases. Normally set to the default ABI version for each minor
+  version (for instance 10400 for all 1.4.x releases), can be changed by
+  users or devs with configure or CMake to enable ABI breaking features
+  for testing or use by end users in static builds of FLTK.
+  <br><br>
+  Note: This preprocessor variable was named FLTK_ABI_VERSION in FLTK
+  1.3.x and was renamed to FL_ABI_VERSION since FLTK 1.4.0.
+  <br><br>
+  When set, the variable's value is expected to be the integer representation
+  of the FLTK version number, where the Minor and Patch numbers are padded
+  to two digits to allow for numbers 1 thru 99, e.g.
+  \verbatim
+  #define FL_ABI_VERSION 10401    // FLTK ABI version 1.4.1
+        ..'1' is the major version (no padding; avoids octal issues)
+        ..'04' is the minor version (2 digit padding)
+        ..'01' is the patch version (2 digit padding)
+  \endverbatim
+  ABI breaking features are by default '#ifdef'ed out with this variable
+  during patch releases, and are merged in by developers during the next
+  Minor Release.
+  <br><br>
+  Example: If the current patch release is 1.4.0, and the developer adds
+  an ABI-breaking fix to what will be the next 1.4.1 release, then the
+  new code would be implemented as:
+  \verbatim
+  #if FL_ABI_VERSION >= 10401  // FLTK 1.4.1, the next patch release #
+  ... new ABI breaking code ...
+  #else
+  ... old non-ABI breaking (default builds) ...
+  #endif
+  \endverbatim
+  This variable solves several issues:
+   - Allows ABI breaking code to be implemented at any time by developers.
+   - Gets fixes into Git sooner, so users can see, test and access it.
+   - Testing ABI features during Patch Releases increases the stability of Minor Releases.
+   - Prevents devs having to defer ABI breaking code to the small window of time preceding Minor Releases.
+
+\section cmp_miscellaneous_coding_practices Miscellaneous Coding Practices
+
+\todo In the following I had to use special unicode chars for the C comment
+      `∕* FALLTHROUGH *∕` because I couldn't figure out how to escape the
+      ascii equivalent in this context; escaping the asterisk wasn't working.
+      The use unicode looks right but is a problem if someone copy/pastes
+      this verbatim into source code. Open to suggs on how to properly escape this.
+      Unfortunately doxygen doesn't support html hex syntax, e.g. '`&#xx;`'
+
+\subsection cmp_use_of_fallthrough Using switch() ∕* FALLTHROUGH *∕
+
+When using switch/case statements, and your case statement does not end in
+break in order to fall through to the next case statement, a `∕* FALLTHROUGH *∕`
+comment should be added where the break statement would be.
+
+\subsection cmp_useful_vs_macros Useful Visual Studio C++ Macros (Windows)
+
+Here's a list of Visual Studio compiler macros that can be used to
+conditionalize code based on the Visual Studio version:
+
+        VERSION     MACRO            PRODUCT NAME
+        -------     ---------------- --------------------
+        MSVC++ 16.0 _MSC_VER == 1920 Visual Studio 2019
+        MSVC++ 15.0 _MSC_VER == 1910 Visual Studio 2017
+        MSVC++ 14.0 _MSC_VER == 1900 Visual Studio 2015
+        MSVC++ 12.0 _MSC_VER == 1800 Visual Studio 2013
+        MSVC++ 11.0 _MSC_VER == 1700 Visual Studio 2012
+        MSVC++ 10.0 _MSC_VER == 1600 Visual Studio 2010
+        MSVC++ 9.0  _MSC_VER == 1500 Visual Studio 2008
+        MSVC++ 8.0  _MSC_VER == 1400 Visual Studio 2005
+        MSVC++ 7.1  _MSC_VER == 1310 Visual Studio 2003
+        MSVC++ 7.0  _MSC_VER == 1300 Visual Studio 7
+        MSVC++ 6.0  _MSC_VER == 1200 Visual Studio 6
+        MSVC++ 5.0  _MSC_VER == 1100 Visual Studio 5
+
+Recommended usage:
+
+\verbatim
+  #if defined(_MSC_VER) && (_MSC_VER <= 1300)             /* VS7 and older */
+    ..
+  #else  /* _MSC_VER */
+    ..
+  #endif /* _MSC_VER */
+\endverbatim
+
+\subsection cmp_useful_xcode_macros Useful Xcode C++ Macros (macOS)
+
+Here's a list of operating system version compiler macros that can be
+used to conditionalize code based on the compile time version of the macOS
+operating system.
+
+These are made available from Apple's `AvailabilityMacros.h`. For more info
+on these and other macros, see Apple's "TechNote 2064".
+
+    VERSION     MACRO                   VALUE    PRODUCT NAME
+    -------     ---------------------   -----    --------------------
+    10.0        MAC_OS_X_VERSION_10_0    1000    Cheetah
+    10.1        MAC_OS_X_VERSION_10_1    1010    Puma
+    10.2        MAC_OS_X_VERSION_10_2    1020    Jaguar
+    10.3        MAC_OS_X_VERSION_10_3    1030    Panther
+    10.4        MAC_OS_X_VERSION_10_4    1040    Tiger
+    10.5        MAC_OS_X_VERSION_10_5    1050    Leopard
+    10.6        MAC_OS_X_VERSION_10_6    1060    Snow Leopard
+    10.7        MAC_OS_X_VERSION_10_7    1070    Lion
+    10.8        MAC_OS_X_VERSION_10_8    1080    Mountain Lion
+    10.9        MAC_OS_X_VERSION_10_9    1090    Mavericks
+    10.10       MAC_OS_X_VERSION_10_10 101000    Yosemite
+    10.11       MAC_OS_X_VERSION_10_11 101100    El Capitan
+    10.12       MAC_OS_X_VERSION_10_12 101200    Sierra
+    etc..
+
+Recommended usage:
+
+\verbatim
+#include <FL/platform.H> // defines the MAC_OS_X_VERSION_10_xx macros
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+if (fl_mac_os_version >= 100500) {
+  ..10.5 and newer..
+} else
+#else
+{
+  ..10.4 and older..
+}
+#endif
+\endverbatim
+
+This way, code compiled before and after macOS 10.5 will be able to run
+on computers running macOS versions before and after 10.5.
+
+\subsection cmp_useful_gnu_macros Useful GNU C++ Macros
+
+\todo To be done.
 
 \section cmp_coding_source_files Source Files
 
