@@ -81,26 +81,6 @@ full text or an outline for later publication
 
 Starting with FLTK 1.3 Doxygen is used for HTML and PDF documentation.
 
-\section cmp_practices_cmake Build System (CMake)
-
-The FLTK build system uses CMake to tailor the library to the local operating
-system. Since FLTK 1.4 the primary and recommended build system is CMake. The
-older autoconf/configure builds are no longer supported as of FLTK 1.5.x.
-
-To improve portability, makefiles must not make use of the unique features
-offered by GNU make. See the Makefile Standards section for a description
-of the allowed make features and makefile guidelines.
-
-Additional GNU build programs such as GNU automake and GNU libtool must
-not be used. GNU automake produces non-portable makefiles which depend
-on GNU-specific extensions, and GNU libtool is not portable or reliable
-enough for FLTK.
-
-Note: Starting with FLTK 1.4.0 we do no longer bundle IDE files for
-Microsoft Windows (Visual Studio) and macOS (Xcode). IDE environments
-(project files) can be generated with CMake. See README.CMake.txt for more
-information about using CMake.
-
 \section cmp_coding_standards Coding Standards
 
 The following is a guide to the coding style that must be used when adding
@@ -456,7 +436,6 @@ Some details on the above:
 
   Function/method documentation must be placed next to the corresponding code.
   (Rule: "Put the docs where the code implementation is.")
-
   Comments for in-line functions and methods are placed in the header file where they're defined.
 
 \section cmp_documenting_members_and_variables Documenting Members and Variables
@@ -483,9 +462,7 @@ int my_variable2_;    /**< C file's brief doxygen description of the member/vari
 \section cmp_methodology_algorithms Methodology, Algorithms, Etc.
 
 The goal of FLTK is to provide a robust GUI toolkit that is small, fast,
-and reliable.
-
-All public API functions and methods must be documented with
+and reliable. All public API functions and methods must be documented with
 the valid values for all input parameters - NULL pointers, number ranges,
 etc. - and no public API function may have undefined behaviors. Input
 validation should be performed only when the function or method is able
@@ -538,13 +515,31 @@ The following C++ features may be not used in FLTK 1.4.x code:
   - Templates
   - dynamic_cast
 
-The reinterpret_cast keyword may be used but is not mandatory.
-The static_cast and const_cast keywords should be used when casting pointers of different types.
-The dynamic_cast keyword must not be used since run-time typing features may not be available at all times.
+The `reinterpret_cast` keyword may be used but is not mandatory.
+
+The `static_cast` and `const_cast` keywords should be used when casting pointers of different types.
+
+The `dynamic_cast` keyword must not be used since run-time typing features may not be available at all times.
 
 \subsection cmp_fltk_1_5_x_restrictions FLTK 1.5.x Restrictions
 
 \todo This needs to be populated with the new restrictions/allowed c++ features.
+
+\subsection cmp_source_file_naming Source File Naming
+
+The current practice is to use an extension of ".c" for C source files,
+".h" for C header files, ".cxx" for C++ source files, and ".H" for C++
+header files in the "FL" directory (".h" otherwise.)
+
+\todo Mention of the "fltk" namespace below is I think fltk2 specific, needs changes for 1.x.x
+
+Function/Method/Variable Naming
+
+All public (exported) functions and variables must be placed in the
+"fltk" namespace. Except for constructor and destructor methods, the
+names consist of lowercase words separated by the underscore ("_"),
+e.g. "fltk::some_variable" and "text_color()". Private member variables
+of classes end with an extra underscore, e.g. "text_size_".
 
 \section cmp_struct_class_naming Structure/Class Naming
 
@@ -568,7 +563,7 @@ applicable, e.g. "text_size_" and "text_size()".
 Public enumerations and constant variables must be placed inside the "fltk"
 namespace and consist of UPPERCASE WORDS separated by the underscore ("_"),
 e.g. "ALIGN_LEFT", "COLOR_RED", etc. Enumeration type names consist of
-capitalized words without underscores, e.g. "MyEnum". #define constants
+capitalized words without underscores, e.g. "MyEnum". `#define` constants
 are prohibited aside from the include guard definitions.
 
 \section cmp_preprocessor_variables Preprocessor Variables
@@ -587,19 +582,17 @@ API must not, directly or indirectly, include config.h.
   Note: FLTK 1.3.x used WIN32 which had to be defined by the FLTK build system whereas
   FLTK 1.4 uses `_WIN32` (with leading underscore) which should be defined by the
   build tools (preprocessor, compiler) on the Windows platform.
-
-  <br>
+  <br><br>
   - `__CYGWIN__` is defined when FLTK runs on Windows but uses Cygwin's POSIX
   emulation features (cygwin1.dll).
-
-  <br>
+  <br><br>
   - `__APPLE__` identifies the macOS platform.
 
   \todo The following needs updating - I think Quartz stuff was Cocoa-ized?
         Might need to at least refer to the FLTK versions for when quartz was
         replaced w/cocoa.
 
-  <br>
+  <br><br>
   - `__APPLE_QUARTZ__` is defined by config.h for the macOS platform.
   At present, use of `__APPLE_QUARTZ__` is equivalent to using `__APPLE__`.
   This may change in the future if other graphics systems than Quartz are
@@ -608,7 +601,7 @@ API must not, directly or indirectly, include config.h.
   \todo In the following, reference to `configure` and `config.h` should
         perhaps be qualified with reference to 1.4.x and back?
 
-  <br>
+  <br><br>
   - `USE_X11` is defined by config.h when Xlib is the graphics system used.
   Thus, `USE_X11` is defined on all Unix and Linux platforms, and on Windows,
   if `configure` used `--enable-cygwin` and `--enable-x11`.  Xlib-specific
@@ -624,17 +617,15 @@ API must not, directly or indirectly, include config.h.
 
   \todo In the following, config.h. -> fl_config.h..
 
-  <br>
+  <br><br>
   - `USE_XFT` is defined by `config.h` when `USE_X11` is defined.
   It is set to 1 when the Xft library of scalable, anti-aliased fonts is
   used, and to 0 otherwise.
-
-  <br>
+  <br><br>
   - `FL_LIBRARY` is defined by all FLTK library build systems when the
   FLTK library itself is compiled. Application program developers should
   not define it when compiling their programs.
-
-  <br>
+  <br><br>
   - `FL_DLL` is defined by the FLTK build system when building shared
   libraries (DLL's) with Visual Studio. Application program developers
   using Visual Studio and linking against the shared FLTK libraries (DLL's)
@@ -642,14 +633,12 @@ API must not, directly or indirectly, include config.h.
   source files. Note that this macro must be defined by the build system
   (VS project setup/properties) or on the compiler command line so it is
   "seen" by all included FLTK header files.
-
-  <br>
+  <br><br>
   - `FL_INTERNALS` can be defined by application program developers to
   access certain internal FLTK library classes (e.g., the `Fl_X` class)
   if they need it. APIs to these internal classes are highly subject to
   changes, though.
-
-  <br>
+  <br><br>
   - `FL_DOXYGEN` is defined when the Doxygen program that builds the FLTK
   documentation processes the source code. This variable has two major uses:
   <br><br>
@@ -663,8 +652,7 @@ API must not, directly or indirectly, include config.h.
    ... Doxygen-visible, macOS-specific code ...
    #endif
    \endverbatim
-
-  <br>
+  <br><br>
   - `FL_ABI_VERSION` is used to allow developers to implement ABI breaking code
   in Patch Releases. Normally set to the default ABI version for each minor
   version (for instance 10400 for all 1.4.x releases), can be changed by
@@ -683,7 +671,7 @@ API must not, directly or indirectly, include config.h.
         ..'04' is the minor version (2 digit padding)
         ..'01' is the patch version (2 digit padding)
   \endverbatim
-  ABI breaking features are by default '#ifdef'ed out with this variable
+  ABI breaking features are by default '\#ifdef'ed out with this variable
   during patch releases, and are merged in by developers during the next
   Minor Release.
   <br><br>
@@ -741,11 +729,11 @@ conditionalize code based on the Visual Studio version:
 Recommended usage:
 
 \verbatim
-  #if defined(_MSC_VER) && (_MSC_VER <= 1300)             /* VS7 and older */
-    ..
-  #else  /* _MSC_VER */
-    ..
-  #endif /* _MSC_VER */
+#if defined(_MSC_VER) && (_MSC_VER <= 1300)             /* VS7 and older */
+  ..
+#else  /* _MSC_VER */
+  ..
+#endif /* _MSC_VER */
 \endverbatim
 
 \subsection cmp_useful_xcode_macros Useful Xcode C++ Macros (macOS)
@@ -828,5 +816,25 @@ Header files must utilitize so-called "guard" definitions to prevent multiple in
     fluid/foo.h becomes _fluid_foo_h_
 
 Any non-alphanumeric (letters and numbers) characters are replaced with the underscore (_) character, and leading and trailing underscores are added to limit global namespace pollution.
+
+\section cmp_practices_cmake Build System (CMake)
+
+The FLTK build system uses CMake to tailor the library to the local operating
+system. Since FLTK 1.4 the primary and recommended build system is CMake. The
+older autoconf/configure builds are no longer supported as of FLTK 1.5.x.
+
+To improve portability, makefiles must not make use of the unique features
+offered by GNU make. See the Makefile Standards section for a description
+of the allowed make features and makefile guidelines.
+
+Additional GNU build programs such as GNU automake and GNU libtool must
+not be used. GNU automake produces non-portable makefiles which depend
+on GNU-specific extensions, and GNU libtool is not portable or reliable
+enough for FLTK.
+
+Note: Starting with FLTK 1.4.0 we do no longer bundle IDE files for
+Microsoft Windows (Visual Studio) and macOS (Xcode). IDE environments
+(project files) can be generated with CMake. See README.CMake.txt for more
+information about using CMake.
 
 */
