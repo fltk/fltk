@@ -345,7 +345,7 @@
 #cmakedefine FL_CFG_NO_FILESYSTEM_SUPPORT 1
 
 /*
- * Can we use the "XDG TOPLEVEL DRAG" Wayland protocol?
+ * Can we use the "XDG dialog windows" Wayland protocol?
  */
 
 #cmakedefine01 HAVE_XDG_DIALOG
