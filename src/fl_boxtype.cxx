@@ -396,14 +396,17 @@ void fl_oxy_round_down_box(int x, int y, int w, int h, Fl_Color col);
 // See also Fl::box_bg() which returns true if bit 1 == zero.
 // /////////////////////////////////////////////////////////////////////
 
-static struct {
+typedef struct {
   Fl_Box_Draw_F *f;
   uchar dx, dy, dw, dh;
   int flags;
   Fl_Box_Draw_Focus_F *ff;
   bool set() { return flags & 1; }
   bool bg()  { return !(flags & 2); }
-} fl_box_table[FL_MAX_BOXTYPE+1] = {
+} boxtable_t;
+
+static boxtable_t fl_box_table[FL_MAX_BOXTYPE+1] = {
+
   // must match list in Enumerations.H !!!
   { fl_no_box,              0, 0, 0, 0,  3 },   // FL_NO_BOX
   { fl_flat_box,            0, 0, 0, 0,  1 },   // FL_FLAT_BOX
