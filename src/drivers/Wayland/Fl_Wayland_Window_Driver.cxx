@@ -23,6 +23,9 @@
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"
 #include "gtk-shell-client-protocol.h"
+#if HAVE_XDG_DIALOG
+#  include "xdg-dialog-client-protocol.h"
+#endif
 #include <pango/pangocairo.h>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Tooltip.H>
@@ -466,6 +469,12 @@ void Fl_Wayland_Window_Driver::hide() {
       wl_subsurface_destroy(wld_win->subsurface);
       wld_win->subsurface = NULL;
     }
+#if HAVE_XDG_DIALOG
+    if (wld_win->xdg_dialog) {
+      xdg_dialog_v1_destroy(wld_win->xdg_dialog);
+      wld_win->xdg_dialog = NULL;
+    }
+#endif
     if (wld_win->kind == DECORATED) {
       libdecor_frame_unref(wld_win->frame);
       wld_win->frame = NULL;
@@ -1553,23 +1562,30 @@ void Fl_Wayland_Window_Driver::makeWindow()
   if (pWindow->modal() || pWindow->non_modal()) {
     if (pWindow->modal()) Fl::modal_ = pWindow;
     if (new_window->kind == DECORATED && first_xid && first_xid->kind == DECORATED) {
-     if (first_xid->frame) libdecor_frame_set_parent(new_window->frame, first_xid->frame);
+      if (first_xid->frame) libdecor_frame_set_parent(new_window->frame, first_xid->frame);
     } else if (new_window->kind == UNFRAMED && new_window->xdg_toplevel && first_xid) {
       Fl_Wayland_Window_Driver *top_dr = Fl_Wayland_Window_Driver::driver(first_xid->fl_win);
       if (top_dr->xdg_toplevel()) xdg_toplevel_set_parent(new_window->xdg_toplevel,
                                                           top_dr->xdg_toplevel());
     }
-    if (scr_driver->seat->gtk_shell && pWindow->modal() &&
-        (new_window->kind == DECORATED || new_window->kind == UNFRAMED)) {
-      // Useful to position modal windows above their parent with "gnome-shell --version" ≤ 45.2,
-      // useless but harmless with "gnome-shell --version" ≥ 46.0.
-      struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(scr_driver->seat->gtk_shell,
-                                                                    new_window->wl_surface);
-      gtk_surface1_set_modal(gtk_surface);
-      if (gtk_surface1_get_version(gtk_surface) >= GTK_SURFACE1_RELEASE_SINCE_VERSION)
-        gtk_surface1_release(gtk_surface); // very necessary
-      else
-        gtk_surface1_destroy(gtk_surface);
+    if (new_window->kind == DECORATED || new_window->kind == UNFRAMED) {
+#if HAVE_XDG_DIALOG
+      if (scr_driver->xdg_wm_dialog) {
+        new_window->xdg_dialog = xdg_wm_dialog_v1_get_xdg_dialog(scr_driver->xdg_wm_dialog, xdg_toplevel());
+        if (pWindow->modal()) xdg_dialog_v1_set_modal(new_window->xdg_dialog);
+      } else
+#endif
+      if (scr_driver->seat->gtk_shell && pWindow->modal()) {
+        // Useful to position modal windows above their parent with "gnome-shell --version" ≤ 45.2,
+        // useless but harmless with "gnome-shell --version" ≥ 46.0.
+        struct gtk_surface1 *gtk_surface = gtk_shell1_get_gtk_surface(scr_driver->seat->gtk_shell,
+                                                                        new_window->wl_surface);
+        gtk_surface1_set_modal(gtk_surface);
+        if (gtk_surface1_get_version(gtk_surface) >= GTK_SURFACE1_RELEASE_SINCE_VERSION)
+          gtk_surface1_release(gtk_surface); // very necessary
+        else
+          gtk_surface1_destroy(gtk_surface);
+      }
     }
   }
 

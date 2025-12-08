@@ -821,6 +821,19 @@ if(UNIX AND FLTK_USE_WAYLAND)
   list(APPEND STATIC_FILES "text-input-protocol.c")
   list(APPEND SHARED_FILES "text-input-protocol.c")
 
+  if(HAVE_XDG_DIALOG)
+    set(INFILE ${PROTOCOLS}/staging/xdg-dialog/xdg-dialog-v1.xml)
+    add_custom_command(
+      OUTPUT xdg-dialog-protocol.c xdg-dialog-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} xdg-dialog-protocol.c
+      COMMAND wayland-scanner client-header ${INFILE} xdg-dialog-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "xdg-dialog-protocol.c")
+    list(APPEND SHARED_FILES "xdg-dialog-protocol.c")
+  endif()
+
   if(STOP_REQUIRED)
     message(FATAL_ERROR "*** Terminating: one or more required file(s) were not found. ***")
   endif()
