@@ -23,6 +23,7 @@
 #ifndef FL_WAYLAND_SCREEN_DRIVER_H
 #define FL_WAYLAND_SCREEN_DRIVER_H
 
+#include <config.h>
 #include "../Unix/Fl_Unix_Screen_Driver.H"
 #include <wayland-client.h>
 
@@ -106,6 +107,9 @@ public:
   struct libdecor *libdecor_context;
   struct xdg_wm_base *xdg_wm_base;
   struct zwp_text_input_manager_v3 *text_input_base;
+#if HAVE_XDG_DIALOG
+  struct xdg_wm_dialog_v1 *xdg_wm_dialog;
+#endif
 
 // constructor
   Fl_Wayland_Screen_Driver();

@@ -22,6 +22,7 @@
 #ifndef FL_WAYLAND_WINDOW_DRIVER_H
 #define FL_WAYLAND_WINDOW_DRIVER_H
 
+#include <config.h>
 #include "../../Fl_Window_Driver.H"
 #include <FL/Fl_Plugin.H>
 #include "Fl_Wayland_Screen_Driver.H"
@@ -157,6 +158,9 @@ struct wld_window {
   };
   // non-null when using custom cursor
   struct Fl_Wayland_Window_Driver::custom_cursor *custom_cursor;
+#if HAVE_XDG_DIALOG
+  struct xdg_dialog_v1 *xdg_dialog;
+#endif
   enum Fl_Wayland_Window_Driver::kind kind;
   int configured_width;
   int configured_height;
