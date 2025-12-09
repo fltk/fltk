@@ -396,7 +396,7 @@ void fl_oxy_round_down_box(int x, int y, int w, int h, Fl_Color col);
 // See also Fl::box_bg() which returns true if bit 1 == zero.
 // /////////////////////////////////////////////////////////////////////
 
-typedef struct {
+typedef struct BOXTABLE {
   Fl_Box_Draw_F *f;
   uchar dx, dy, dw, dh;
   int flags;
