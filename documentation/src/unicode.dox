@@ -2,513 +2,351 @@
 
  \page unicode Unicode and UTF-8 Support
 
-This chapter explains how FLTK handles international
-text via Unicode and UTF-8.
-
-Unicode support was added to FLTK starting with version 1.3.0 and is
-still incomplete but mostly functional. This chapter is Work in Progress,
-reflecting the current state of Unicode support.
-
-\section unicode_about About Unicode, ISO 10646 and UTF-8
-
-The summary of Unicode, ISO 10646 and UTF-8 given below is
-deliberately brief and provides just enough information for
-the rest of this chapter.
-
-For further information, please see:
-- https://unicode.org
-- https://iso.org
-- https://en.wikipedia.org/wiki/Unicode
-- https://www.cl.cam.ac.uk/~mgk25/unicode.html
-- https://tools.ietf.org/html/rfc3629
-
-
-\par The Unicode Standard
-
-The Unicode Standard was originally developed by a consortium of mainly
-US computer manufacturers and developers of multi-lingual software.
-It has now become a defacto standard for character encoding
-and is supported by most of the major computing companies in the world.
-
-Before Unicode, many different systems, on different platforms,
-had been developed for encoding characters for different languages,
-but no single encoding could satisfy all languages.
-Unicode provides access to over 130,000 characters
-used in all the major languages written today,
-and is independent of platform and language.
-
-Unicode also provides higher-level concepts needed for text processing
-and typographic publishing systems, such as algorithms for sorting and
-comparing text, composite character and text rendering, right-to-left
-and bi-directional text handling.
-
-\note There are currently no plans to add this extra functionality to FLTK.
-
-
-\par ISO 10646
-
-The International Organisation for Standardization (ISO) had also
-been trying to develop a single unified character set.
-Although both ISO and the Unicode Consortium continue to publish
-their own standards, they have agreed to coordinate their work so
-that specific versions of the Unicode and ISO 10646 standards are
-compatible with each other.
-
-The international standard ISO 10646 defines the
-<b>Universal Character Set</b> (UCS)
-which contains the characters required for almost all known languages.
-The standard also defines three different implementation levels specifying
-how these characters can be combined.
-
-\note There are currently no plans for handling the different implementation
-levels or the combining characters in FLTK.
-
-In UCS, characters have a unique numerical code and an official name,
-and are usually shown using 'U+' and the code in hexadecimal,
-e.g. U+0041 is the "Latin capital letter A".
-The UCS characters U+0000 to U+007F correspond to US-ASCII,
-and U+0000 to U+00FF correspond to ISO 8859-1 (Latin1).
-
-ISO 10646 was originally designed to handle a 31-bit character set
-from U+00000000 to U+7FFFFFFF, but the current idea is that 21 bits
-will be sufficient for all future needs, giving characters up to
-U+10FFFF.  The complete character set is sub-divided into \e planes.
-<i>Plane 0</i>, also known as the <b>Basic Multilingual Plane</b>
-(BMP), ranges from U+0000 to U+FFFD and consists of the most commonly
-used characters from previous encoding standards. Other planes
-contain characters for specialist applications.
-
-\todo FLTK 1.3 and later supports the full Unicode range (21 bits), but
-  there are a few exceptions, for instance binary shortcut values in menus
-  (\ref Fl_Shortcut) can only be used with characters from the BMP (16 bits).
-  This may be extended in a future FLTK version.
-
-The UCS also defines various methods of encoding characters as
-a sequence of bytes.
-UCS-2 encodes Unicode characters into two bytes,
-which is wasteful if you are only dealing with ASCII or Latin1 text,
-and insufficient if you need characters above U+00FFFF.
-UCS-4 uses four bytes, which lets it handle higher characters,
-but this is even more wasteful for ASCII or Latin1.
-
-\par UTF-8
-
-The Unicode standard defines various UCS Transformation Formats (UTF).
-UTF-16 and UTF-32 are based on units of two and four bytes.
-UCS characters requiring more than 16 bits are encoded using
-"surrogate pairs" in UTF-16.
-
-UTF-8 encodes all Unicode characters into variable length
-sequences of bytes. Unicode characters in the 7-bit ASCII
-range map to the same value and are represented as a single byte,
-making the transformation to Unicode quick and easy.
-
-All UCS characters above U+007F are encoded as a sequence of
-several bytes. The top bits of the first byte are set to show
-the length of the byte sequence, and subseqent bytes are
-always in the range 0x80 to 0xBF. This combination provides
-some level of synchronisation and error detection.
-
-\par
-
-<table summary="Unicode character byte sequences" align="center">
-<tr>
- <td>Unicode range</td>
- <td>Byte sequences</td>
-</tr>
-<tr>
- <td><tt>U+00000000 - U+0000007F</tt></td>
- <td><tt>0xxxxxxx</tt></td>
-</tr>
-<tr>
- <td><tt>U+00000080 - U+000007FF</tt></td>
- <td><tt>110xxxxx 10xxxxxx</tt></td>
-</tr>
-<tr>
- <td><tt>U+00000800 - U+0000FFFF</tt></td>
- <td><tt>1110xxxx 10xxxxxx 10xxxxxx</tt></td>
-</tr>
-<tr>
- <td><tt>U+00010000 - U+001FFFFF</tt></td>
- <td><tt>11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
-</tr>
-<tr>
- <td><tt>U+00200000 - U+03FFFFFF</tt></td>
- <td><tt>111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
-</tr>
-<tr>
- <td><tt>U+04000000 - U+7FFFFFFF</tt></td>
- <td><tt>1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
-</tr>
-</table>
-
-\note This table contains theoretical values outside the valid Unicode
-  range (<tt>U+000000 - U+10FFFF</tt>). Such values can only be returned by
-  conversion functions for illegal input values (see \ref unicode_illegals).
-
-
-\par
-
-Moving from ASCII encoding to Unicode will allow all new FLTK
-applications to be easily internationalized and used all over
-the world. By choosing UTF-8 encoding, FLTK remains largely
-source-code compatible to previous iterations of the library.
-
-\section unicode_in_fltk Unicode in FLTK
-
-\todo
-Work through the code and this documentation to harmonize
-the [<b>OksiD</b>] and [<b>fltk2</b>] functions.
-
-FLTK will be entirely converted to Unicode using UTF-8 encoding.
-If a different encoding is required by the underlying operating
-system, FLTK will convert the string as needed.
-
-It is important to note that the initial implementation of
-Unicode and UTF-8 in FLTK involves three important areas:
-
-- provision of Unicode character tables and some simple related functions;
-
-- conversion of char* variables and function parameters from single byte
-  per character representation to UTF-8 variable length sequences;
-
-- modifications to the display font interface to accept general
-  Unicode character or UCS code numbers instead of just ASCII or Latin1
-  characters.
-
-The current implementation of Unicode / UTF-8 in FLTK will impose
-the following limitations:
-
-- An implementation note in the [<b>OksiD</b>] code says that all functions
-  are LIMITED to 24 bit Unicode values, but also says that only 16 bits
-  are really used under linux and win32.
-  <b>[Can we verify this?]</b>
-
-- The [<b>fltk2</b>] %fl_utf8encode() and %fl_utf8decode() functions are
-  designed to handle Unicode characters in the range U+000000 to U+10FFFF
-  inclusive, which covers all UTF-16 characters, as specified in RFC 3629.
-  <i>Note that the user must first convert UTF-16 surrogate pairs to UCS.</i>
-
-- FLTK will only handle single characters, so composed characters
-  consisting of a base character and floating accent characters
-  will be treated as multiple characters.
-
-- FLTK will only compare or sort strings on a byte by byte basis
-  and not on a general Unicode character basis.
-
-- FLTK will not handle right-to-left or bi-directional text.
-
-  \todo
-  Verify 16/24 bit Unicode limit for different character sets?
-  OksiD's code appears limited to 16-bit whereas the FLTK2 code
-  appears to handle a wider set. What about illegal characters?
-  See comments in %fl_utf8fromwc() and %fl_utf8toUtf16().
-
-\section unicode_illegals Illegal Unicode and UTF-8 Sequences
-
-Three pre-processor variables are defined in the source code [1] that
-determine how %fl_utf8decode() handles illegal UTF-8 sequences:
-
-- if ERRORS_TO_CP1252 is set to 1 (the default), %fl_utf8decode() will
-  assume that a byte sequence starting with a byte in the range 0x80
-  to 0x9f represents a Microsoft CP1252 character, and will return
-  the value of an equivalent UCS character. Otherwise, it will be
-  processed as an illegal byte value as described below.
-
-- if STRICT_RFC3629 is set to 1 (not the default!) then UTF-8
-  sequences that correspond to illegal UCS values are treated as
-  errors.  Illegal UCS values include those above U+10FFFF, or
-  corresponding to UTF-16 surrogate pairs. Illegal byte values
-  are handled as described below.
-
-- if ERRORS_TO_ISO8859_1 is set to 1 (the default), the illegal
-  byte value is returned unchanged, otherwise 0xFFFD, the Unicode
-  REPLACEMENT CHARACTER, is returned instead.
-
-[1] Since FLTK 1.3.4 you may set these three pre-processor variables on
-    your compile command line with -D"variable=value" (value: 0 or 1)
-    to avoid editing the source code.
-
-%fl_utf8encode() is less strict, and only generates the UTF-8
-sequence for 0xFFFD, the Unicode REPLACEMENT CHARACTER, if it is
-asked to encode a UCS value above U+10FFFF.
-
-Many of the [<b>fltk2</b>] functions below use %fl_utf8decode() and
-%fl_utf8encode() in their own implementation, and are therefore
-somewhat protected from bad UTF-8 sequences.
-
-The [<b>OksiD</b>] %fl_utf8len() function assumes that the byte it is
-passed is the first byte in a UTF-8 sequence, and returns the length
-of the sequence. Trailing bytes in a UTF-8 sequence will return -1.
-
-- \b WARNING:
-  %fl_utf8len() can not distinguish between single
-  bytes representing Microsoft CP1252 characters 0x80-0x9f and
-  those forming part of a valid UTF-8 sequence. You are strongly
-  advised not to use %fl_utf8len() in your own code unless you
-  know that the byte sequence contains only valid UTF-8 sequences.
-
-- \b WARNING:
-  Some of the [OksiD] functions below still use %fl_utf8len() in
-  their implementations. These may need further validation.
-
-Please see the individual function description for further details
-about error handling and return values.
-
-\section unicode_fltk_calls FLTK Unicode and UTF-8 Functions
-
-This section provides a brief overview of the functions.
-For more details, consult the main text for each function via its link.
-
-int fl_utf8locale()
-  \b FLTK2
-  <br>
-\par
-\p %fl_utf8locale() returns true if the "locale" seems to indicate
-that UTF-8 encoding is used.
-\par
-<i>It is highly recommended that you change your system so this does return
-true!</i>
-
-
-int fl_utf8test(const char *src, unsigned len)
-  \b FLTK2
-  <br>
-\par
-\p %fl_utf8test() examines the first \p len bytes of \p src.
-It returns 0 if there are any illegal UTF-8 sequences;
-1 if \p src contains plain ASCII or if \p len is zero;
-or 2, 3 or 4 to indicate the range of Unicode characters found.
-
-
-int fl_utf_nb_char(const unsigned char *buf, int len)
-  \b OksiD
-  <br>
-\par
-Returns the number of UTF-8 characters in the first \p len bytes of \p buf.
-
-
-int fl_unichar_to_utf8_size(Fl_Unichar)
-  <br>
-int fl_utf8bytes(unsigned ucs)
-  <br>
-\par
-Returns the number of bytes needed to encode \p ucs in UTF-8.
-
-
-int fl_utf8len(char c)
-  \b OksiD
-  <br>
-\par
-If \p c is a valid first byte of a UTF-8 encoded character sequence,
-\p %fl_utf8len() will return the number of bytes in that sequence.
-It returns -1 if \p c is not a valid first byte.
-
-
-unsigned int fl_nonspacing(unsigned int ucs)
-  \b OksiD
-  <br>
-\par
-Returns true if \p ucs is a non-spacing character.
-
-
-const char* fl_utf8back(const char *p, const char *start, const char *end)
-  \b FLTK2
-  <br>
-const char* fl_utf8fwd(const char *p, const char *start, const char *end)
-  \b FLTK2
-  <br>
-\par
-If \p p already points to the start of a UTF-8 character sequence,
-these functions will return \p p.
-Otherwise \p %fl_utf8back() searches backwards from \p p
-and \p %fl_utf8fwd() searches forwards from \p p,
-within the \p start and \p end limits,
-looking for the start of a UTF-8 character.
-
-
-unsigned int fl_utf8decode(const char *p, const char *end, int *len)
-  \b FLTK2
-  <br>
-int fl_utf8encode(unsigned ucs, char *buf)
-  \b FLTK2
-  <br>
-\par
-\p %fl_utf8decode() attempts to decode the UTF-8 character that starts
-at \p p and may not extend past \p end.
-It returns the Unicode value, and the length of the UTF-8 character sequence
-is returned via the \p len argument.
-\p %fl_utf8encode() writes the UTF-8 encoding of \p ucs into \p buf
-and returns the number of bytes in the sequence.
-See the main documentation for the treatment of illegal Unicode
-and UTF-8 sequences.
-
-
-unsigned int fl_utf8froma(char *dst, unsigned dstlen, const char *src, unsigned srclen)
-  \b FLTK2
-  <br>
-unsigned int fl_utf8toa(const char *src, unsigned srclen, char *dst, unsigned dstlen)
-  \b FLTK2
-  <br>
-\par
-\p %fl_utf8froma() converts a character string containing single bytes
-per character (i.e. ASCII or ISO-8859-1) into UTF-8.
-If the \p src string contains only ASCII characters, the return value will
-be the same as \p srclen.
-\par
-\p %fl_utf8toa() converts a string containing UTF-8 characters into
-single byte characters. UTF-8 characters that do not correspond to ASCII
-or ISO-8859-1 characters below 0xFF are replaced with '?'.
-
-\par
-Both functions return the number of bytes that would be written, not
-counting the null terminator.
-\p dstlen provides a means of limiting the number of bytes written,
-so setting \p dstlen to zero is a means of measuring how much storage
-would be needed before doing the real conversion.
-
-
-char* fl_utf2mbcs(const char *src)
-  \b OksiD
-  <br>
-\par
-converts a UTF-8 string to a local multi-byte character string.
-<b>[More info required here!]</b>
-
-unsigned int fl_utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
-  \b FLTK2
-  <br>
-unsigned int fl_utf8towc(const char *src, unsigned srclen, wchar_t *dst, unsigned dstlen)
-  \b FLTK2
-  <br>
-unsigned int fl_utf8toUtf16(const char *src, unsigned srclen, unsigned short *dst, unsigned dstlen)
-  \b FLTK2
-  <br>
-\par
-These routines convert between UTF-8 and \p wchar_t or "wide character"
-strings.
-The difficulty lies in the fact that \p sizeof(wchar_t) is 2 on Windows
-and 4 on Linux and most other systems.
-Therefore some "wide characters" on Windows may be represented
-as "surrogate pairs" of more than one \p wchar_t.
-
-\par
-\p %fl_utf8fromwc() converts from a "wide character" string to UTF-8.
-Note that \p srclen is the number of \p wchar_t elements in the source
-string and on Windows this might be larger than the number of characters.
-\p dstlen specifies the maximum number of \b bytes to copy, including
-the null terminator.
-
-\par
-\p %fl_utf8towc() converts a UTF-8 string into a "wide character" string.
-Note that on Windows, some "wide characters" might result in "surrogate
-pairs" and therefore the return value might be more than the number of
-characters.
-\p dstlen specifies the maximum number of \b wchar_t elements to copy,
-including a zero terminating element.
-<b>[Is this all worded correctly?]</b>
-
-\par
-\p %fl_utf8toUtf16() converts a UTF-8 string into a "wide character"
-string using UTF-16 encoding to handle the "surrogate pairs" on Windows.
-\p dstlen specifies the maximum number of \b wchar_t elements to copy,
-including a zero terminating element.
-<b>[Is this all worded correctly?]</b>
-
-\par
-These routines all return the number of elements that would be required
-for a full conversion of the \p src string, including the zero terminator.
-Therefore setting \p dstlen to zero is a way of measuring how much storage
-would be needed before doing the real conversion.
-
-
-unsigned int fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen)
-  \b FLTK2
-  <br>
-unsigned int fl_utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen)
-  \b FLTK2
-  <br>
-\par
-These functions convert between UTF-8 and the locale-specific multi-byte
-encodings used on some systems for filenames, etc.
-If fl_utf8locale() returns true, these functions don't do anything useful.
-<b>[Is this all worded correctly?]</b>
-
-
-int fl_tolower(unsigned int ucs)
-  \b OksiD
-  <br>
-int fl_toupper(unsigned int ucs)
-  \b OksiD
-  <br>
-int fl_utf_tolower(const unsigned char *str, int len, char *buf)
-  \b OksiD
-  <br>
-int fl_utf_toupper(const unsigned char *str, int len, char *buf)
-  \b OksiD
-  <br>
-\par
-\p %fl_tolower() and \p %fl_toupper() convert a single Unicode character
-from upper to lower case, and vice versa.
-\p %fl_utf_tolower() and \p %fl_utf_toupper() convert a string of bytes,
-some of which may be multi-byte UTF-8 encodings of Unicode characters,
-from upper to lower case, and vice versa.
-\par
-Warning: to be safe, \p buf length must be at least \p 3*len
-[for 16-bit Unicode]
-
-
-int fl_utf_strcasecmp(const char *s1, const char *s2)
-  \b OksiD
-  <br>
-int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
-  \b OksiD
-  <br>
-\par
-\p %fl_utf_strcasecmp() is a UTF-8 aware string comparison function that
-converts the strings to lower case Unicode as part of the comparison.
-\p %flt_utf_strncasecmp() only compares the first \p n characters [bytes?]
-
-
-\section unicode_system_calls FLTK Unicode Versions of System Calls
-
-- int fl_access(const char* f, int mode)
-  \b OksiD
-- int fl_chmod(const char* f, int mode)
-  \b OksiD
-- int fl_execvp(const char* file, char* const* argv)
-  \b OksiD
-- FILE* fl_fopen(cont char* f, const char* mode)
-  \b OksiD
-- char* fl_getcwd(char* buf, int maxlen)
-  \b OksiD
-- char* fl_getenv(const char* name)
-  \b OksiD
-- char fl_make_path(const char* path)   - returns char ?
-  \b OksiD
-- void fl_make_path_for_file(const char* path)
-  \b OksiD
-- int fl_mkdir(const char* f, int mode)
-  \b OksiD
-- int fl_open(const  char* f, int o, ...)
-  \b OksiD
-- int fl_rename(const char* f, const char* t)
-  \b OksiD
-- int fl_rmdir(const char* f)
-  \b OksiD
-- int fl_stat(const char* path, struct stat* buffer)
-  \b OksiD
-- int fl_system(const char* f)
-  \b OksiD
-- int fl_unlink(const char* f)
-  \b OksiD
-
-\par TODO:
-
-\li more doc on unicode, add links
-\li write something about filename encoding on OS X...
-\li explain the fl_utf8_... commands
-\li explain issues with Fl_Preferences
+FLTK provides comprehensive Unicode support through UTF-8 encoding, allowing your applications to handle international text and be easily localized for users worldwide.
+
+\section unicode_overview Overview
+
+Starting with version 1.3.0, FLTK uses UTF-8 as its primary text encoding. This means:
+- All text in FLTK is expected to be UTF-8 encoded
+- Your application can display text in any language
+- File operations work correctly with international filenames
+- Most existing ASCII code continues to work unchanged
+
+\note Unicode support in FLTK is functional but still evolving. Some advanced features like bidirectional text and complex script shaping are not yet implemented.
+
+\section unicode_quick_start Quick Start
+
+For most applications, you simply need to ensure your text is UTF-8 encoded:
+
+\code
+// These all work automatically with UTF-8:
+Fl_Window window(400, 300, "Hello 世界");  // Mixed ASCII and Chinese
+button->label("Café");                      // Accented characters
+fl_fopen("документ.txt", "r");             // Cyrillic filename
+\endcode
+
+\section unicode_background What is Unicode and UTF-8?
+
+__Unicode__ is a standard that assigns a unique number to every character used in human languages - from Latin letters to Chinese characters to emoji. Each character has a "code point" like U+0041 for 'A' or U+4E2D for '中'.
+
+__UTF-8__ is a way to store Unicode characters as bytes. It's backward-compatible with ASCII and efficient for most text:
+- ASCII characters (like 'A') use 1 byte
+- European accented characters use 2 bytes
+- Most other characters (Chinese, Arabic, etc.) use 3 bytes
+- Rare characters and emoji may use 4 bytes
+
+FLTK chose UTF-8 because it works well with existing C string functions and doesn't break legacy ASCII code.
+
+\section unicode_functions Unicode Functions in FLTK
+
+\subsection unicode_validation Text Validation and Analysis
+
+Functions to check and analyze UTF-8 text:
+
+fl_utf8test() - Check if a string contains valid UTF-8
+\code
+const char* text = "Hello 世界";
+int result = fl_utf8test(text, strlen(text));
+// Returns: 0=invalid, 1=ASCII, 2=2-byte chars, 3=3-byte chars, 4=4-byte chars
+\endcode
+
+fl_utf8len() - Get the byte length of a UTF-8 character
+\code
+char ch = '\xE4';  // First byte of a 3-byte UTF-8 sequence
+int len = fl_utf8len(ch);  // Returns 3 (or -1 if invalid)
+\endcode
+
+fl_utf8locale() - Check if system uses UTF-8 encoding
+\code
+if (fl_utf8locale()) {
+    // System uses UTF-8, no conversion needed
+} else {
+    // May need to convert from local encoding
+}
+\endcode
+
+fl_utf_nb_char() - Count UTF-8 characters in a buffer
+\code
+const char* text = "Hello 世界";
+int char_count = fl_utf_nb_char((unsigned char*)text, strlen(text));
+// Returns 8 (number of characters, not bytes)
+\endcode
+
+fl_utf8bytes() / fl_unichar_to_utf8_size() - Get bytes needed for Unicode character
+\code
+unsigned int unicode_char = 0x4E2D;  // Chinese character '中'
+int bytes_needed = fl_utf8bytes(unicode_char);  // Returns 3
+\endcode
+
+fl_nonspacing() - Check if character is non-spacing (combining character)
+\code
+unsigned int accent = 0x0300;  // Combining grave accent
+if (fl_nonspacing(accent)) {
+    // This is a combining character, doesn't take visual space
+}
+\endcode
+
+\subsection unicode_conversion Text Conversion
+
+Functions to convert between encodings:
+
+fl_utf8decode() / fl_utf8encode() - Convert between UTF-8 and Unicode values
+\code
+// Decode UTF-8 to Unicode code point
+const char* utf8_char = "中";
+int len;
+unsigned int unicode = fl_utf8decode(utf8_char, utf8_char + 3, &len);
+// unicode = 0x4E2D, len = 3
+
+// Encode Unicode back to UTF-8
+char buffer[5];
+int bytes = fl_utf8encode(0x4E2D, buffer);  // Returns 3
+buffer[bytes] = '\0';  // Now buffer contains "中"
+\endcode
+
+fl_utf8froma() / fl_utf8toa() - Convert between UTF-8 and single-byte encodings
+\code
+// Convert ISO-8859-1 to UTF-8
+char utf8_buffer[200];
+fl_utf8froma(utf8_buffer, sizeof(utf8_buffer), "café", 4);
+
+// Convert UTF-8 to single-byte (non-representable chars become '?')
+char ascii_buffer[100];
+fl_utf8toa("café", 5, ascii_buffer, sizeof(ascii_buffer));
+\endcode
+
+fl_utf8fromwc() / fl_utf8towc() - Convert between UTF-8 and wide characters
+\code
+// Convert wide string to UTF-8
+wchar_t wide_text[] = L"Hello 世界";
+char utf8_buffer[100];
+fl_utf8fromwc(utf8_buffer, sizeof(utf8_buffer), wide_text, wcslen(wide_text));
+
+// Convert UTF-8 to wide string
+const char* utf8_text = "Hello 世界";
+wchar_t wide_buffer[50];
+fl_utf8towc(utf8_text, strlen(utf8_text), wide_buffer, 50);
+\endcode
+
+fl_utf8toUtf16() - Convert UTF-8 to UTF-16
+\code
+const char* utf8_text = "Hello 世界";
+unsigned short utf16_buffer[100];
+unsigned int result = fl_utf8toUtf16(utf8_text, strlen(utf8_text),
+                                    utf16_buffer, 100);
+// Converts to UTF-16, handling surrogate pairs on Windows
+\endcode
+
+fl_utf2mbcs() - Convert UTF-8 to local multibyte encoding
+\code
+const char* utf8_text = "Hello 世界";
+char* local_text = fl_utf2mbcs(utf8_text);
+// Converts to system's local encoding (Windows CP, etc.)
+// Remember to free the returned pointer
+free(local_text);
+\endcode
+
+fl_utf8from_mb() / fl_utf8to_mb() - Convert between UTF-8 and local multibyte
+\code
+// Convert from local multibyte to UTF-8
+char utf8_buffer[200];
+fl_utf8from_mb(utf8_buffer, sizeof(utf8_buffer), local_text, strlen(local_text));
+
+// Convert from UTF-8 to local multibyte
+char local_buffer[200];
+fl_utf8to_mb(utf8_text, strlen(utf8_text), local_buffer, sizeof(local_buffer));
+\endcode
+
+\subsection unicode_navigation Text Navigation
+
+Functions to move through UTF-8 text safely:
+
+fl_utf8back() / fl_utf8fwd() - Find character boundaries
+\code
+const char* text = "Café";
+const char* start = text;
+const char* end = text + strlen(text);
+const char* e_pos = text + 3;  // Points to 'é'
+
+// Move to previous character
+const char* c_pos = fl_utf8back(e_pos, start, end);  // Points to 'f'
+
+// Move to next character
+const char* next_pos = fl_utf8fwd(e_pos, start, end);  // Points after 'é'
+\endcode
+
+\subsection unicode_string_ops String Operations
+
+UTF-8 aware string functions:
+
+fl_utf8strlen() - Count UTF-8 characters (not bytes)
+\code
+const char* text = "Café";  // 5 bytes, 4 characters
+int chars = fl_utf8strlen(text);  // Returns 4
+int bytes = strlen(text);         // Returns 5
+\endcode
+
+fl_utf_strcasecmp() / fl_utf_strncasecmp() - Compare strings ignoring case
+\code
+int result = fl_utf_strcasecmp("Café", "CAFÉ");  // Returns 0 (equal)
+int result2 = fl_utf_strncasecmp("Café", "CAFÉ", 2);  // Compare first 2 chars
+\endcode
+
+fl_tolower() / fl_toupper() - Convert case for individual Unicode characters
+\code
+unsigned int lower_a = fl_tolower(0x41);   // 'A' -> 'a' (0x61)
+unsigned int upper_e = fl_toupper(0xE9);   // 'é' -> 'É' (0xC9)
+\endcode
+
+fl_utf_tolower() / fl_utf_toupper() - Convert case for UTF-8 strings
+\code
+const char* text = "Café";
+char lower_buffer[20];
+fl_utf_tolower((unsigned char*)text, strlen(text), lower_buffer);
+// lower_buffer now contains "café"
+\endcode
+
+\subsection unicode_file_ops File Operations
+
+Cross-platform file functions that handle UTF-8 filenames correctly:
+
+__Basic file operations:__
+\code
+// These work with international filenames on all platforms:
+FILE* f = fl_fopen("测试文件.txt", "r");        // Open file
+int fd = fl_open("документ.bin", O_RDONLY);     // Open with file descriptor
+int result = fl_stat("файл.dat", &stat_buf);   // Get file info
+\endcode
+
+__File access and properties:__
+\code
+fl_access("测试文件.txt", R_OK);           // Check if file is readable
+fl_chmod("文档.dat", 0644);               // Change file permissions
+fl_unlink("临时文件.tmp");                // Delete file
+fl_rename("旧名.txt", "新名.txt");        // Rename file
+\endcode
+
+__Directory operations:__
+\code
+fl_mkdir("新文件夹", 0755);               // Create directory
+fl_rmdir("旧文件夹");                     // Remove directory
+char current_dir[1024];
+fl_getcwd(current_dir, sizeof(current_dir));  // Get current directory
+\endcode
+
+__Path operations:__
+\code
+fl_make_path("新目录/子目录/深层目录");          // Create directory path
+fl_make_path_for_file("路径/到/新文件.txt");     // Create path for file
+\endcode
+
+__Process and system operations:__
+\code
+fl_execvp("程序名", argv);                     // Execute program
+fl_system("echo 'Hello 世界'");               // Execute system command
+char* value = fl_getenv("环境变量");           // Get environment variable
+\endcode
+
+\section unicode_best_practices Best Practices
+
+\subsection unicode_practices_files File Handling
+- Always use fl_fopen(), fl_open(), etc. for file operations with international names
+- Save source code files as UTF-8 with BOM if your editor requires it
+- Test with international filenames during development
+
+\subsection unicode_practices_strings String Processing
+- Use fl_utf8strlen() instead of strlen() for character counts
+- Use fl_utf8fwd()/fl_utf8back() when iterating through text character by character
+- Validate user input with fl_utf8test() if accepting external data
+- Be careful when truncating strings - use character boundaries, not arbitrary byte positions
+
+\subsection unicode_practices_display Display and UI
+- Test your interface with text in various languages (especially long German words or wide Asian characters)
+- Consider that text length varies greatly between languages when designing layouts
+- Ensure your chosen fonts support the characters you need to display
+
+\subsection unicode_practices_performance Performance Notes
+- ASCII text has no performance overhead compared to single-byte encodings
+- UTF-8 functions are optimized for common cases (ASCII and Western European text)
+- File operations may be slightly slower on Windows due to UTF-16 conversion
+
+\section unicode_troubleshooting Common Issues and Solutions
+
+\subsection unicode_problem_display "My international text shows up as question marks"
+__Solution:__ Ensure your text is UTF-8 encoded and your font supports the characters. If reading from files, verify they're saved as UTF-8.
+
+\subsection unicode_problem_files "File operations fail with international names"
+__Solution:__ Use FLTK's Unicode file functions instead of standard C functions:
+\code
+// Instead of:
+FILE* f = fopen("файл.txt", "r");  // May fail on Windows
+
+// Use:
+FILE* f = fl_fopen("файл.txt", "r");  // Works correctly
+\endcode
+
+\subsection unicode_problem_length "String length calculations are wrong"
+__Solution:__ Use UTF-8 aware functions:
+\code
+// Wrong - counts bytes, not characters:
+int len = strlen("Café");  // Returns 5
+
+// Correct - counts characters:
+int len = fl_utf8strlen("Café");  // Returns 4
+\endcode
+
+\subsection unicode_problem_truncation "Text gets corrupted when I truncate it"
+__Solution:__ Don't truncate UTF-8 strings at arbitrary byte positions:
+\code
+// Wrong - may cut in middle of character:
+char truncated[10];
+strncpy(truncated, utf8_text, 9);
+
+// Correct - find proper character boundary:
+const char* end = utf8_text;
+int char_count = 0;
+while (char_count < max_chars && *end) {
+    end = fl_utf8fwd(end, utf8_text, utf8_text + strlen(utf8_text));
+    char_count++;
+}
+int safe_length = end - utf8_text;
+\endcode
+
+\section unicode_error_handling Error Handling
+
+FLTK handles invalid UTF-8 sequences gracefully using configurable behavior:
+
+__Error handling modes (compile-time configuration):__
+- __ERRORS_TO_CP1252__ (default): Treats bytes 0x80-0x9F as CP1252 characters
+- __STRICT_RFC3629__: Strict UTF-8 validation according to RFC 3629
+- __ERRORS_TO_ISO8859_1__ (default): Invalid bytes returned as-is, otherwise returns Unicode replacement character (U+FFFD)
+
+\note You can configure these with compiler flags like -DERRORS_TO_CP1252=0
+
+This design allows FLTK to handle legacy text files that mix encodings, making it more robust in real-world scenarios.
+
+\section unicode_limitations Current Limitations
+
+FLTK's Unicode support covers most common use cases but has some limitations:
+
+__Text Processing:__
+- No automatic text normalization (combining characters are treated separately)
+- No complex script shaping (may affect some Arabic, Indic scripts)
+- No bidirectional text support (right-to-left languages like Arabic/Hebrew)
+
+__Character Range:__
+- Full Unicode range supported (U+000000 to U+10FFFF)
+- Some legacy APIs may be limited to 16-bit characters (Basic Multilingual Plane)
+
+__Sorting and Comparison:__
+- String comparison is byte-based, not linguistically correct
+- Use system locale functions for proper collation when needed for sorting
+
+__Composed Characters:__
+- Composed characters (base + combining accents) are treated as separate characters
+- No automatic character composition or decomposition
+
+Most applications won't encounter these limitations in practice. The Unicode support in FLTK is sufficient for displaying and processing international text in the majority of real-world scenarios.
 
 \htmlonly
 <hr>
