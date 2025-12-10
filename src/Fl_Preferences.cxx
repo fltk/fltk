@@ -2118,3 +2118,25 @@ int Fl_Plugin_Manager::loadAll(const char *dirpath, const char *pattern) {
   free(dir);
   return 0;
 }
+
+/**
+  Return a list of all plugin klasses that have been registered so far.
+  The returned strings can be used to crate a manager for the klass of
+  plugins, which in turn can be used to list plugins for that klass.
+  ```
+  auto kl = Fl_Plugin_Manager::klass_list();
+  for (auto &k: kl) {
+    Fl_Plugin_Manager m { k.c_str() };
+    std::cout << m.plugins() << "plugins have registered for klass" << k << std::endl;
+  }
+  ```
+  \return a copy of a vector of strings
+ */
+std::vector<std::string> Fl_Plugin_Manager::klass_list() {
+  Fl_Preferences p(0, "plugins");
+  std::vector<std::string> pm;
+  for (int i = 0; i < p.groups(); i++) {
+    pm.push_back(p.group(i));
+  }
+  return pm;
+}
