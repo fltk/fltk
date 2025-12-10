@@ -3,9 +3,7 @@
 
  \page cmp FLTK Code Management Plan (CMP)
 
-<br><br>
 <center><h2>*** WORK IN PROGRESS ***</h2></center>
-<br><br>
 
 \section cmp_intro CMP Coding Intro
 
@@ -136,11 +134,17 @@ int function2(int arg) {
 
 To summarize:
 
-  - All curley braces must open on the same line as the enclosing statement, and close at the same level of indentation.
+  - All curly braces must open on the same line as the enclosing statement, and close at the same level of indentation.
   - Each block of code must be indented 2 spaces.
   - <b>Tabs are not allowed in source files</b>, please use only spaces for indenting.
   - A space follows all reserved words.
   - A space precedes and follows all operators except prefix and postfix operators (++i, j--, et al).
+  - Trailing whitespace (spaces and tabs) must be removed before committing. Please check your
+    editor's documentation how to do this.
+
+\note Example Visual Studio Code: use <kbd>ctrl-k ctrl-x</kbd> before saving the file.
+      On macOS: use <kbd>cmd-k cmd-x</kbd> instead.
+
 
 \section cmp_coding_standards_docs Source File Documentation
 
@@ -264,13 +268,15 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
   \\   -- escapes the escape character
   \endverbatim
 
-  - Itemized lists can be specified two ways; both work, left is preferred:
+\htmlonly
+
+  Itemized lists can be specified two ways; both work, left is preferred:
 
 <table>
   <tr><th> Preferred </th> <th> Old </th></tr>
   <tr><td>
   \verbatim
-  /**
+
    Here's a bullet list:
 
    - Apples
@@ -281,11 +287,10 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
    -# First thing
    -# Second thing
 
- */
   \endverbatim
   </td><td>
   \verbatim
-  /**
+
    Here's a bullet list:
    <ul>
      <li> Apples</li>
@@ -295,11 +300,32 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
    <ol>
      <li> First thing</li>
      <li> Second thing</li>
-   <ol>
-  */
+   </ol>
+
    \endverbatim
   </td></tr>
 </table>
+
+\endhtmlonly
+
+\todo Find a way to describe itemized lists in PDF docs. The table above would
+  break Doxygen's PDF generation (pdflatex).
+
+  \verbatim
+
+   Here's a bullet list:
+
+   - Apples
+   - Oranges
+
+   Here's a numbered list:
+
+   -# First thing
+   -# Second thing
+
+  \endverbatim
+
+
 
 \section cmp_temporary_code Documenting Temporary Code or Issues
 
@@ -568,64 +594,61 @@ are prohibited aside from the include guard definitions.
 
 \section cmp_preprocessor_variables Preprocessor Variables
 
-\todo In the following, references to `config.h` should be limited to 1.4.x
-      and back(?) and newer code to `fl_config.h`? I'm not sure when we
-      switched to fl_config.h, but that should maybe be mentioned somewhere in the CMP.
-
-File config.h and the C++ compilers define a few preprocessor variables
+File \c config.h and the C++ compilers define a few preprocessor variables
 that help organizing platform-specific code and control access to a few
 internal classes. Only code internal to the FLTK library can include the
-config.h header file. Thus, FLTK header files that are part of the public
-API must not, directly or indirectly, include config.h.
+\c config.h header file. Thus, FLTK header files that are part of the public
+API must not, directly or indirectly, include \c config.h.
 
   - `_WIN32` identifies the MS-Windows platform (both for the 32- and 64-bit versions).
-  Note: FLTK 1.3.x used WIN32 which had to be defined by the FLTK build system whereas
-  FLTK 1.4 uses `_WIN32` (with leading underscore) which should be defined by the
-  build tools (preprocessor, compiler) on the Windows platform.
-  <br><br>
+  Note: FLTK 1.3.x and earlier used \c WIN32 which had to be defined by the FLTK build
+  system. FLTK 1.4.0 and later versions use \c `_WIN32` (with leading underscore) which
+  should be defined by the build tools (preprocessor, compiler) on the Windows platform.
+
   - `__CYGWIN__` is defined when FLTK runs on Windows but uses Cygwin's POSIX
-  emulation features (cygwin1.dll).
-  <br><br>
+  emulation features (cygwin1.dll). No longer officially supported but \b may work.
+
   - `__APPLE__` identifies the macOS platform.
 
-  \todo The following needs updating - I think Quartz stuff was Cocoa-ized?
-        Might need to at least refer to the FLTK versions for when quartz was
-        replaced w/cocoa.
+  - `FLTK_USE_X11` is defined by \c 'FL/fl_config.h' (since 1.4) when FLTK is built
+    for the Xlib (aka `X`) graphics system. Thus, `FLTK_USE_X11` is defined
+    - on Unix and Linux, if built for the X11 or the "hybrid" (X11 + Wayland) platform
+    - on Windows, if `configure` used `--enable-cygwin` \b and `--enable-x11`.\n
+      Note: FLTK 1.4 is the last minor FLTK version that supports `configure`.
+  - Note: Xlib-specific code was also often delimited without reference to the `FLTK_USE_X11`
+    macro (thus without the requirement to include \c FL/fl_config.h) as follows:
+  \code
+    #if defined(_WIN32)
+      // Windows specific code ...
+    #elif defined(__APPLE__)
+      // macOS specific code ...
+    #else
+      // Xlib specific code ...
+    #endif
+  \endcode
+    This \b must no longer be done because it could be ambiguous since the introduction of Wayland.
 
-  <br><br>
-  - `__APPLE_QUARTZ__` is defined by config.h for the macOS platform.
-  At present, use of `__APPLE_QUARTZ__` is equivalent to using `__APPLE__`.
-  This may change in the future if other graphics systems than Quartz are
-  supported on the macOS platform.
+  - `FLTK_USE_WAYLAND` is defined by \c 'FL/fl_config.h' (since 1.4) if FLTK is built with
+    Wayland support (either with or without X11 support). This is only possible on Linux, Unix,
+    or similar platforms.
 
-  \todo In the following, reference to `configure` and `config.h` should
-        perhaps be qualified with reference to 1.4.x and back?
+  - `USE_XFT` is defined by `config.h` if FLTK is built for X11 \b and CMake build option
+    \c FLTK_USE_XFT has been enabled (\c ON).
+    FLTK 1.4 and earlier: ... or the corresponding configure option `--use-xft`.
+    It is set to 1 when the Xft library of scalable, anti-aliased fonts is
+    used, and to 0 otherwise.
+    Note: This variable is \b not accessible by user code (not in the public interface).
+    It is considered an implementation detail.
 
-  <br><br>
-  - `USE_X11` is defined by config.h when Xlib is the graphics system used.
-  Thus, `USE_X11` is defined on all Unix and Linux platforms, and on Windows,
-  if `configure` used `--enable-cygwin` and `--enable-x11`.  Xlib-specific
-  code is also often delimited without reference to the `USE_X11` variable
-  (thus without the requirement to include config.h) as follows:
-  \verbatim
-  #if defined(WIN32)
-  #elif defined(__APPLE__)
-  #else
-  .. Xlib specific code ...
-  #endif
-  \endverbatim
+  - `FL_LIBRARY` is defined by all FLTK library build systems when the FLTK library
+    itself is compiled. Application program developers \b must \b not define
+    it when compiling their programs.
 
-  \todo In the following, config.h. -> fl_config.h..
+  - `FL_INTERNALS` can be defined by application program developers to access certain 
+    internal FLTK library classes (e.g., the `Fl_X` class) and some global variables
+    and definitions (macros) if they need it. APIs to these internal classes are highly
+    subject to changes, though.
 
-  <br><br>
-  - `USE_XFT` is defined by `config.h` when `USE_X11` is defined.
-  It is set to 1 when the Xft library of scalable, anti-aliased fonts is
-  used, and to 0 otherwise.
-  <br><br>
-  - `FL_LIBRARY` is defined by all FLTK library build systems when the
-  FLTK library itself is compiled. Application program developers should
-  not define it when compiling their programs.
-  <br><br>
   - `FL_DLL` is defined by the FLTK build system when building shared
   libraries (DLL's) with Visual Studio. Application program developers
   using Visual Studio and linking against the shared FLTK libraries (DLL's)
@@ -634,10 +657,6 @@ API must not, directly or indirectly, include config.h.
   (VS project setup/properties) or on the compiler command line so it is
   "seen" by all included FLTK header files.
   <br><br>
-  - `FL_INTERNALS` can be defined by application program developers to
-  access certain internal FLTK library classes (e.g., the `Fl_X` class)
-  if they need it. APIs to these internal classes are highly subject to
-  changes, though.
   <br><br>
   - `FL_DOXYGEN` is defined when the Doxygen program that builds the FLTK
   documentation processes the source code. This variable has two major uses:
@@ -693,129 +712,190 @@ API must not, directly or indirectly, include config.h.
 
 \section cmp_miscellaneous_coding_practices Miscellaneous Coding Practices
 
-\todo In the following I had to use special unicode chars for the C comment
-      `∕* FALLTHROUGH *∕` because I couldn't figure out how to escape the
-      ascii equivalent in this context; escaping the asterisk wasn't working.
-      The use unicode looks right but is a problem if someone copy/pastes
-      this verbatim into source code. Open to suggs on how to properly escape this.
-      Unfortunately doxygen doesn't support html hex syntax, e.g. '`&#xx;`'
 
-\subsection cmp_use_of_fallthrough Using switch() ∕* FALLTHROUGH *∕
+\subsection cmp_use_of_fallthrough Using switch() and 'FALLTHROUGH' Comments
 
 When using switch/case statements, and your case statement does not end in
-break in order to fall through to the next case statement, a `∕* FALLTHROUGH *∕`
+break in order to fall through to the next case statement, a
+\code
+  /* FALLTHROUGH */
+\endcode
 comment should be added where the break statement would be.
+
 
 \subsection cmp_useful_vs_macros Useful Visual Studio C++ Macros (Windows)
 
-Here's a list of Visual Studio compiler macros that can be used to
-conditionalize code based on the Visual Studio version:
+Here's a list of Visual Studio compiler macros for main Visual Studio versions
+that can be used to conditionalize code based on the Visual Studio version:
 
-        VERSION     MACRO            PRODUCT NAME
-        -------     ---------------- --------------------
-        MSVC++ 16.0 _MSC_VER == 1920 Visual Studio 2019
-        MSVC++ 15.0 _MSC_VER == 1910 Visual Studio 2017
-        MSVC++ 14.0 _MSC_VER == 1900 Visual Studio 2015
-        MSVC++ 12.0 _MSC_VER == 1800 Visual Studio 2013
-        MSVC++ 11.0 _MSC_VER == 1700 Visual Studio 2012
-        MSVC++ 10.0 _MSC_VER == 1600 Visual Studio 2010
-        MSVC++ 9.0  _MSC_VER == 1500 Visual Studio 2008
-        MSVC++ 8.0  _MSC_VER == 1400 Visual Studio 2005
-        MSVC++ 7.1  _MSC_VER == 1310 Visual Studio 2003
-        MSVC++ 7.0  _MSC_VER == 1300 Visual Studio 7
-        MSVC++ 6.0  _MSC_VER == 1200 Visual Studio 6
-        MSVC++ 5.0  _MSC_VER == 1100 Visual Studio 5
+Version |  Product Name        | _MSC_VER
+--------|----------------------|----------
+  17.0  |  Visual Studio 2022  |   1930
+  16.0  |  Visual Studio 2019  |   1920
+  15.0  |  Visual Studio 2017  |   1910
+  14.0  |  Visual Studio 2015  |   1900
+  12.0  |  Visual Studio 2013  |   1800
+  11.0  |  Visual Studio 2012  |   1700
+  10.0  |  Visual Studio 2010  |   1600
+   9.0  |  Visual Studio 2008  |   1500
+   8.0  |  Visual Studio 2005  |   1400
+   7.1  |  Visual Studio 2003  |   1310
+   7.0  |  Visual Studio 7     |   1300
+   6.0  |  Visual Studio 6     |   1200
+   5.0  |  Visual Studio 5     |   1100
+
+For details of other versions (patch releases like 15.8) see Microsoft docs.<br>
+https://learn.microsoft.com/en-us/cpp/overview/compiler-versions
 
 Recommended usage:
 
 \verbatim
-#if defined(_MSC_VER) && (_MSC_VER <= 1300)             /* VS7 and older */
+#if defined(_MSC_VER) && (_MSC_VER <= 1300)  /* VS7 and older */
   ..
 #else  /* _MSC_VER */
   ..
 #endif /* _MSC_VER */
 \endverbatim
 
-\subsection cmp_useful_xcode_macros Useful Xcode C++ Macros (macOS)
 
-Here's a list of operating system version compiler macros that can be
-used to conditionalize code based on the compile time version of the macOS
-operating system.
+\subsection cmp_useful_xcode_macros Useful macOS C++ Macros
 
-These are made available from Apple's `AvailabilityMacros.h`. For more info
-on these and other macros, see Apple's "TechNote 2064".
+These macOS macros may be used to write code compatible with different macOS
+versions. They are not necessary for standard FLTK user code but can be used
+if macOS specific code is needed for an application or inside the FLTK library.
 
-    VERSION     MACRO                   VALUE    PRODUCT NAME
-    -------     ---------------------   -----    --------------------
-    10.0        MAC_OS_X_VERSION_10_0    1000    Cheetah
-    10.1        MAC_OS_X_VERSION_10_1    1010    Puma
-    10.2        MAC_OS_X_VERSION_10_2    1020    Jaguar
-    10.3        MAC_OS_X_VERSION_10_3    1030    Panther
-    10.4        MAC_OS_X_VERSION_10_4    1040    Tiger
-    10.5        MAC_OS_X_VERSION_10_5    1050    Leopard
-    10.6        MAC_OS_X_VERSION_10_6    1060    Snow Leopard
-    10.7        MAC_OS_X_VERSION_10_7    1070    Lion
-    10.8        MAC_OS_X_VERSION_10_8    1080    Mountain Lion
-    10.9        MAC_OS_X_VERSION_10_9    1090    Mavericks
-    10.10       MAC_OS_X_VERSION_10_10 101000    Yosemite
-    10.11       MAC_OS_X_VERSION_10_11 101100    El Capitan
-    10.12       MAC_OS_X_VERSION_10_12 101200    Sierra
-    etc..
+Below is a list of operating system version compiler macros that can be
+used to conditionalize code based on the compile time (build host) and the
+runtime version of the macOS operating system.
 
-Recommended usage:
+These are made available by Apple's `AvailabilityVersions.h` inside the
+current / selected SDK.
 
-\verbatim
-#include <FL/platform.H> // defines the MAC_OS_X_VERSION_10_xx macros
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
-if (fl_mac_os_version >= 100500) {
-  ..10.5 and newer..
-} else
-#else
-{
-  ..10.4 and older..
-}
-#endif
-\endverbatim
+\b outdated: For more info on these and other macros, see Apple's "TechNote 2064".
+\todo Find current Apple / macOS docs for macOS version macros.
+
+  Version | Macro                  |  Value | Product Name  | Release
+  --------|------------------------|--------|---------------|--------
+  10.0    | MAC_OS_X_VERSION_10_0  |   1000 | Cheetah       | 2001
+  10.1    | MAC_OS_X_VERSION_10_1  |   1010 | Puma          | 2001
+  10.2    | MAC_OS_X_VERSION_10_2  |   1020 | Jaguar        | 2002
+  10.3    | MAC_OS_X_VERSION_10_3  |   1030 | Panther       | 2003
+  10.4    | MAC_OS_X_VERSION_10_4  |   1040 | Tiger         | 2005
+  10.5    | MAC_OS_X_VERSION_10_5  |   1050 | Leopard       | 2007
+  10.6    | MAC_OS_X_VERSION_10_6  |   1060 | Snow Leopard  | 2009
+  10.7    | MAC_OS_X_VERSION_10_7  |   1070 | Lion          | 2011
+  10.8    | MAC_OS_X_VERSION_10_8  |   1080 | Mountain Lion | 2012
+  10.9    | MAC_OS_X_VERSION_10_9  |   1090 | Mavericks     | 2013
+  10.10   | MAC_OS_X_VERSION_10_10 | 101000 | Yosemite      | 2014
+  10.11   | MAC_OS_X_VERSION_10_11 | 101100 | El Capitan    | 2015
+  10.12   | MAC_OS_X_VERSION_10_12 | 101200 | Sierra        | 2016
+  10.13   | MAC_OS_X_VERSION_10_13 | 101200 | High Sierra   | 2017
+  10.14   | MAC_OS_X_VERSION_10_14 | 101200 | Mojave        | 2018
+  10.15   | MAC_OS_X_VERSION_10_15 | 101200 | Catalina      | 2019
+  11.0    | MAC_OS_VERSION_11_0    | 110000 | Big Sur       | 2020
+  12.0    | MAC_OS_VERSION_12_0    | 120000 | Monterey      | 2021
+  13.0    | MAC_OS_VERSION_13_0    | 130000 | Ventura       | 2022
+  14.0    | MAC_OS_VERSION_14_0    | 140000 | Sonoma        | 2023
+  15.0    | MAC_OS_VERSION_15_0    | 150000 | Sequoia       | 2024
+  26.0    | MAC_OS_VERSION_26_0    | 260000 | Tahoe         | 2025
+
+Notes:
+ - The \c Value column is in decimal notation
+ - The macro name is MAC_OS_X_VERSION_* up to MacOS X 10.15 (Catalina)
+ - The macro name is MAC_OS_VERSION_* (without \c '_X') since macOS 11 (Big Sur)
+ - There \e is a gap in version numbers from 15 to 26 because newer versions of
+   macOS reflect the release year (+1), e.g. version 26 was released in 2025.
+ - The \c Release column (release year) has been included in this table for
+   reference. We may use the release date to decide whether we support a
+   particular macOS version.
+ - See README.macOS.md about which macOS versions FLTK supports.
+
+\b Note: \c MAC_OS_X_VERSION_MAX_ALLOWED is defined automatically by the build system and
+represents the highest macOS version the library has been built for. The default
+is the SDK version used to build the library. It can be modified by setting the
+CMake cache variable CMAKE_OSX_DEPLOYMENT_TARGET to a specific macOS version.
+
+Example:
+ - CMAKE_OSX_DEPLOYMENT_TARGET = 15.4
+ - -> MAC_OS_X_VERSION_MAX_ALLOWED = 150400
+
+Recommended usage and requirements (include files):
+
+\code
+  #define FL_INTERNALS 1        // required to define "internal" macros, define before:
+  #include <FL/platform.H>      // defines the MAC_OS_*VERSION_* macros (see table above)
+
+  #if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+  if (fl_mac_os_version >= 100500) {
+    // macOS 10.5 and newer..
+  } else
+  #else
+  {
+    // macOS 10.4 and older..
+  }
+  #endif
+\endcode
 
 This way, code compiled before and after macOS 10.5 will be able to run
-on computers running macOS versions before and after 10.5.
+on computers running macOS versions before and after 10.5. Modify version
+numbers as applicable for specific macOS versions.
+
 
 \subsection cmp_useful_gnu_macros Useful GNU C++ Macros
 
 \todo To be done.
 
+
 \section cmp_coding_source_files Source Files
 
-Each source file shall be placed a sub-directory corresponding to the software sub-system it belongs to ("fltk", "OpenGL", etc.) To remain compatible with case-insensitive filesystems, no two directory names shall differ only by the case of the letters in the name.
+Each source file shall be placed in a sub-directory corresponding to the software
+sub-system it belongs to ("fltk", "OpenGL", etc.).
 
-Source files shall be documented and formatted as described in the Coding Standards section. To remain compatible with case-insensitive filesystems, no two filenames shall differ only by the case of the letters in the name.
+\todo rework paragraph above, explain "sub-systems" and directory names
 
-C source files shall have an extension of ".c". C++ source files shall have an extension of ".cxx". Header files shall have an extension of ".h" unless used for FLTK 1.x compatibility. FLTK 1.x compatibility headers shall have an extension of ".H".
+Source files shall be documented and formatted as described in the Coding
+Standards section. To remain compatible with case-insensitive filesystems,
+no two filenames and/or directory names shall differ only by the case of the
+letters in the name.
 
-  <table>
-    <tr><th><center>
-      <b>Why use the ".cxx" extension?</b>
-    </center></th></tr><tr><td>
-      C++ source files can have any of the following extensions on various
-      platforms: ".C", ".cc", ".cpp", ".cxx". Only the ".cxx" extension is
-      universally recognized by C++ compilers as a C++ source file - ".C"
-      is not usable on macOS and Windows, ".cc" is not usable on Windows, and
-      ".cpp" is historically considered C preprocessor output on UNIX.
-      <p>
-      Since not all make programs handle C++ source files with the ".cxx"
-      extension, the FLTK build system explicitly defines makefile rules
-      for compiling C++ source files with an extension of ".cxx".
-    </td></tr>
-  </table>
+C source files shall have an extension of ".c". C++ source files shall have
+an extension of ".cxx". Header files shall have an extension of ".h". Public
+FLTK 1.x headers (i.e. those in or below the \c FL/ directory) shall have an
+extension of ".H", private headers in source directories shall have an
+extension of ".h".
 
-IDE/compiler support source files (project files, workspaces, makefiles, etc.) shall have extensions as required by the IDE/compiler tool.
+<table>
+  <tr><th>
+    <center><b>Why use the ".cxx" extension?</b></center>
+  </th></tr>
+  <tr><td>
+    C++ source files can have any of the following extensions on various
+    platforms: ".C", ".cc", ".cpp", ".cxx". Only the ".cxx" extension is
+    universally recognized by C++ compilers as a C++ source file - ".C"
+    is not usable on macOS and Windows, ".cc" is not usable on Windows, and
+    ".cpp" is historically considered C preprocessor output on UNIX.
+    <p>
+    Since not all make programs handle C++ source files with the ".cxx"
+    extension, the FLTK build system explicitly defines makefile rules
+    for compiling C++ source files with an extension of ".cxx".
+  </td></tr>
+</table>
 
-Header files must utilitize so-called "guard" definitions to prevent multiple inclusion. The guard definitions are named using the full path in the FLTK source tree, e.g.:
+IDE/compiler support source files (project files, workspaces, makefiles, etc.)
+shall have extensions as required by the IDE/compiler tool.
+\todo remove this paragraph in FLTK 1.5, remove this 'todo' in 1.4.
+
+Header files must utilitize so-called "guard" definitions to prevent multiple
+inclusion. The guard definitions are named using the full path in the FLTK
+source tree, e.g.:
 
     FL/Fl.H becomes _FL_Fl_H_
     fluid/foo.h becomes _fluid_foo_h_
 
-Any non-alphanumeric (letters and numbers) characters are replaced with the underscore (_) character, and leading and trailing underscores are added to limit global namespace pollution.
+Any non-alphanumeric (letters and numbers) characters are replaced with the
+underscore (_) character, and leading and trailing underscores are added to
+limit global namespace pollution.
+
 
 \section cmp_practices_cmake Build System (CMake)
 
@@ -823,12 +903,13 @@ The FLTK build system uses CMake to tailor the library to the local operating
 system. Since FLTK 1.4 the primary and recommended build system is CMake. The
 older autoconf/configure builds are no longer supported as of FLTK 1.5.x.
 
-To improve portability, makefiles must not make use of the unique features
+To improve portability, Makefiles must not make use of the unique features
 offered by GNU make. See the Makefile Standards section for a description
 of the allowed make features and makefile guidelines.
+\todo Remove this paragraph in 1.5,
 
 Additional GNU build programs such as GNU automake and GNU libtool must
-not be used. GNU automake produces non-portable makefiles which depend
+not be used. GNU automake produces non-portable Makefiles which depend
 on GNU-specific extensions, and GNU libtool is not portable or reliable
 enough for FLTK.
 

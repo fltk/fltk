@@ -114,7 +114,7 @@ them explicitly.
  2.2.1  CMake Specific Configuration Options
 ---------------------------------------------
 
-There are only four CMake options that you typically want to specify.
+There are only a few CMake options that you typically want to specify.
 Each option has a specific ":type" setting which is kind of optional
 but should usually be specified in scripts.
 
@@ -146,6 +146,14 @@ but should usually be specified in scripts.
     The latter will build "universal apps" on macOS, whereas the former
     will either build Intel (x86_64) or Apple Silicon aka M1 (arm64) apps.
     The default is to build for the host processor architecture.
+
+-D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=<macOS version> - default EMPTY
+    This is macOS specific and ignored on other platforms.
+    Set this to any macOS version that is supported by the SDK used to
+    build the FLTK library, e.g. '15.4' or '26.0', leave it empty, or
+    don't set it at all. This delimits the macOS version where the
+    programs built with this library can run.
+
 
 Note: the CMake variable BUILD_SHARED_LIBS is ignored by FLTK. FLTK builds
     static libs by default and can optionally build shared libs as well.
