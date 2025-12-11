@@ -157,6 +157,7 @@ wayland-scanner private-code $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell
 wayland-scanner client-header $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
 \endcode
 Similar operations are performed for FLTK to use protocols
+<a href=https://wayland.app/protocols/xdg-dialog-v1>XDG dialog windows</a>,
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>,
 <a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>
 and <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>.
@@ -323,6 +324,7 @@ Here is the list of the \c interface value for all protocols and system features
  <tr><td>wl_data_device </td><td> support of copy/paste/drag-n-drop</td> </tr>
  <tr><td>wl_output </td><td>received once for each display </td> </tr>
  <tr><td>xdg_wm_base </td><td>create mapped windows </td> </tr>
+ <tr><td>xdg_wm_dialog_v1 </td><td>create dialogs related to other windows</td> </tr>
  <tr><td>gtk_shell1 </td><td>indicates Mutter is in use + titlebar gestures</td> </tr>
  <tr><td>weston_desktop_shell </td><td> indicates Weston is in use</td></tr>
  <tr><td>org_kde_plasma_shell </td><td> indicates KDE/Plasma is in use</td></tr>
