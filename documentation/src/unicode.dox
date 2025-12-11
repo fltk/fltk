@@ -2,7 +2,9 @@
 
  \page unicode Unicode and UTF-8 Support
 
-FLTK provides comprehensive Unicode support through UTF-8 encoding, allowing your applications to handle international text and be easily localized for users worldwide.
+FLTK provides comprehensive Unicode support through UTF-8 encoding, allowing
+your applications to handle international text and be easily localized for
+users worldwide.
 
 \section unicode_overview Overview
 
@@ -10,9 +12,11 @@ Starting with version 1.3.0, FLTK uses UTF-8 as its primary text encoding. This 
 - All text in FLTK is expected to be UTF-8 encoded
 - Your application can display text in any language
 - File operations work correctly with international filenames
-- Most existing ASCII code continues to work unchanged
+- Most existing ASCII code continues work unchanged
 
-\note Unicode support in FLTK is functional but still evolving. Some advanced features like bidirectional text and complex script shaping are not yet implemented.
+\note Unicode support in FLTK is functional but still evolving. Some advanced
+features like bidirectional text and complex script shaping
+are not yet implemented.
 
 \section unicode_quick_start Quick Start
 
@@ -20,22 +24,34 @@ For most applications, you simply need to ensure your text is UTF-8 encoded:
 
 \code
 // These all work automatically with UTF-8:
-Fl_Window window(400, 300, "Hello 世界");  // Mixed ASCII and Chinese
+Fl_Window window(400, 300, "Hallo Römer");  // Mixed ASCII and German
 button->label("Café");                      // Accented characters
-fl_fopen("документ.txt", "r");             // Cyrillic filename
+fl_fopen("pièce.txt", "r");
 \endcode
+
+\note FLTK supports most Unicode character sets, including Chinese,
+Cyrillic, Greek, and many more. However the Doxygen-to-pdf pipeline does not
+easily support those. So I limited this document to German and French examples.
 
 \section unicode_background What is Unicode and UTF-8?
 
-__Unicode__ is a standard that assigns a unique number to every character used in human languages - from Latin letters to Chinese characters to emoji. Each character has a "code point" like U+0041 for 'A' or U+4E2D for '中'.
+__Unicode__ is a standard that assigns a unique number to every character used
+in human languages - from Latin letters to Chinese characters to emoji. Each
+character has a "code point" like U+0041 for 'A' or U+00DF for 'ß'.
 
-__UTF-8__ is a way to store Unicode characters as bytes. It's backward-compatible with ASCII and efficient for most text:
+Note that some characters may be composed of multiple consecutive codepoints.
+FLTK supports only a subset of the more complex Unicode concepts.
+
+__UTF-8__ is a way to store Unicode codepoints as a sequence of bytes,
+  called an octet. UTF-8 is backward-compatible with ASCII and efficient
+  for most text:
 - ASCII characters (like 'A') use 1 byte
 - European accented characters use 2 bytes
 - Most other characters (Chinese, Arabic, etc.) use 3 bytes
 - Rare characters and emoji may use 4 bytes
 
-FLTK chose UTF-8 because it works well with existing C string functions and doesn't break legacy ASCII code.
+FLTK chose UTF-8 because it works well with existing C string functions and
+doesn't break legacy ASCII code.
 
 \section unicode_functions Unicode Functions in FLTK
 
@@ -50,7 +66,7 @@ int result = fl_utf8test(text, strlen(text));
 // Returns: 0=invalid, 1=ASCII, 2=2-byte chars, 3=3-byte chars, 4=4-byte chars
 \endcode
 
-fl_utf8len() - Get the byte length of a UTF-8 character
+fl_utf8len() - Get the length in bytes of a UTF-8 octet
 \code
 char ch = '\xE4';  // First byte of a 3-byte UTF-8 sequence
 int len = fl_utf8len(ch);  // Returns 3 (or -1 if invalid)
@@ -65,32 +81,33 @@ if (fl_utf8locale()) {
 }
 \endcode
 
-fl_utf_nb_char() - Count UTF-8 characters in a buffer
+fl_utf_nb_char() - Count Unicode codepoints by decoding UTF-8 octets
 \code
-const char* text = "Hello 世界";
+const char* text = "Téléphone";
 int char_count = fl_utf_nb_char((unsigned char*)text, strlen(text));
-// Returns 8 (number of characters, not bytes)
+// Returns 9 (number of characters, not bytes)
 \endcode
 
-fl_utf8bytes() / fl_unichar_to_utf8_size() - Get bytes needed for Unicode character
+fl_utf8bytes() / fl_unichar_to_utf8_size() - Get number of bytes needed
+to create a UTF-8 octet for a Unicode codepoint
 \code
-unsigned int unicode_char = 0x4E2D;  // Chinese character '中'
+unsigned int unicode_char = 0x4E2D;  // Chinese character 'zhong'
 int bytes_needed = fl_utf8bytes(unicode_char);  // Returns 3
 \endcode
 
-fl_nonspacing() - Check if character is non-spacing (combining character)
-\code
-unsigned int accent = 0x0300;  // Combining grave accent
-if (fl_nonspacing(accent)) {
-    // This is a combining character, doesn't take visual space
-}
-\endcode
+fl_nonspacing() - Check if codepoint is non-spacing (combining character)
+
+Non-spacing codepoints typically combine this codepoint with the folowing
+codepoint into a single glyph. Don't line-break after a nonspacing codepoint.
+A more detailed description and links to the Unicode standard can be found
+in the fl_nonspacing() docs.
 
 \subsection unicode_conversion Text Conversion
 
 Functions to convert between encodings:
 
-fl_utf8decode() / fl_utf8encode() - Convert between UTF-8 and Unicode values
+fl_utf8decode() / fl_utf8encode() - Convert one UTF-8 octet into a Unicode
+codepoint or a Unicode codepoint into a UTF-8 octet.
 \code
 // Decode UTF-8 to Unicode code point
 const char* utf8_char = "中";
@@ -98,21 +115,22 @@ int len;
 unsigned int unicode = fl_utf8decode(utf8_char, utf8_char + 3, &len);
 // unicode = 0x4E2D, len = 3
 
-// Encode Unicode back to UTF-8
+// Encode Unicode codepoint to UTF-8
 char buffer[5];
 int bytes = fl_utf8encode(0x4E2D, buffer);  // Returns 3
 buffer[bytes] = '\0';  // Now buffer contains "中"
 \endcode
 
-fl_utf8froma() / fl_utf8toa() - Convert between UTF-8 and single-byte encodings
+fl_utf8froma() / fl_utf8toa() - Convert between UTF-8 and single-byte
+ISO-8859-1 encoding
 \code
 // Convert ISO-8859-1 to UTF-8
 char utf8_buffer[200];
 fl_utf8froma(utf8_buffer, sizeof(utf8_buffer), "café", 4);
 
-// Convert UTF-8 to single-byte (non-representable chars become '?')
-char ascii_buffer[100];
-fl_utf8toa("café", 5, ascii_buffer, sizeof(ascii_buffer));
+// Convert UTF-8 to ISO-8859-1 (non-representable chars become '?')
+char text_buffer[100];
+fl_utf8toa("café", 5, text_buffer, sizeof(text_buffer));
 \endcode
 
 fl_utf8fromwc() / fl_utf8towc() - Convert between UTF-8 and wide characters
@@ -161,17 +179,17 @@ fl_utf8to_mb(utf8_text, strlen(utf8_text), local_buffer, sizeof(local_buffer));
 
 Functions to move through UTF-8 text safely:
 
-fl_utf8back() / fl_utf8fwd() - Find character boundaries
+fl_utf8back() / fl_utf8fwd() - Find codepoint boundaries
 \code
 const char* text = "Café";
 const char* start = text;
 const char* end = text + strlen(text);
 const char* e_pos = text + 3;  // Points to 'é'
 
-// Move to previous character
+// Move to previous codepoint
 const char* c_pos = fl_utf8back(e_pos, start, end);  // Points to 'f'
 
-// Move to next character
+// Move to next codepoint
 const char* next_pos = fl_utf8fwd(e_pos, start, end);  // Points after 'é'
 \endcode
 
@@ -179,14 +197,16 @@ const char* next_pos = fl_utf8fwd(e_pos, start, end);  // Points after 'é'
 
 UTF-8 aware string functions:
 
-fl_utf8strlen() - Count UTF-8 characters (not bytes)
+fl_utf8strlen() - Count Unicode codepoints in a UTF-8 encoded text
 \code
 const char* text = "Café";  // 5 bytes, 4 characters
 int chars = fl_utf8strlen(text);  // Returns 4
 int bytes = strlen(text);         // Returns 5
 \endcode
 
-fl_utf_strcasecmp() / fl_utf_strncasecmp() - Compare strings ignoring case
+fl_utf_strcasecmp() / fl_utf_strncasecmp() - Compare strings ignoring case.
+Please note the list of limitations in FLTK's Unicode support at the bottom of
+this page.
 \code
 int result = fl_utf_strcasecmp("Café", "CAFÉ");  // Returns 0 (equal)
 int result2 = fl_utf_strncasecmp("Café", "CAFÉ", 2);  // Compare first 2 chars
@@ -208,61 +228,65 @@ fl_utf_tolower((unsigned char*)text, strlen(text), lower_buffer);
 
 \subsection unicode_file_ops File Operations
 
-Cross-platform file functions that handle UTF-8 filenames correctly:
+Cross-platform file functions that handle UTF-8 filenames:
 
 __Basic file operations:__
 \code
 // These work with international filenames on all platforms:
-FILE* f = fl_fopen("测试文件.txt", "r");        // Open file
-int fd = fl_open("документ.bin", O_RDONLY);     // Open with file descriptor
-int result = fl_stat("файл.dat", &stat_buf);   // Get file info
+FILE* f = fl_fopen("sœur.txt", "r");             // Open file
+int fd = fl_open("gummibär.bin", O_RDONLY);      // Open with file descriptor
+int result = fl_stat("français.dat", &stat_buf); // Get file info
 \endcode
 
 __File access and properties:__
 \code
-fl_access("测试文件.txt", R_OK);           // Check if file is readable
-fl_chmod("文档.dat", 0644);               // Change file permissions
-fl_unlink("临时文件.tmp");                // Delete file
-fl_rename("旧名.txt", "新名.txt");        // Rename file
+fl_access("château.txt", R_OK);           // Check if file is readable
+fl_chmod("fête.dat", 0644);               // Change file permissions
+fl_unlink("Küche.tmp");                   // Delete file
+fl_rename("Äpfel.txt", "Birnen.txt");     // Rename file
 \endcode
 
 __Directory operations:__
 \code
-fl_mkdir("新文件夹", 0755);               // Create directory
-fl_rmdir("旧文件夹");                     // Remove directory
+fl_mkdir("Straßen", 0755);                // Create directory
+fl_rmdir("éléphant");                     // Remove directory
 char current_dir[1024];
 fl_getcwd(current_dir, sizeof(current_dir));  // Get current directory
 \endcode
 
 __Path operations:__
 \code
-fl_make_path("新目录/子目录/深层目录");          // Create directory path
-fl_make_path_for_file("路径/到/新文件.txt");     // Create path for file
+fl_make_path("animaux/éléphant");          // Create directory path
+fl_make_path_for_file("Tiere/Mäuse/Stuart.txt"); // Create path for file
 \endcode
 
 __Process and system operations:__
 \code
-fl_execvp("程序名", argv);                     // Execute program
-fl_system("echo 'Hello 世界'");               // Execute system command
-char* value = fl_getenv("环境变量");           // Get environment variable
+fl_execvp("löschen", argv);                  // Execute program
+fl_system("echo 'Hallo Rüdiger!'");          // Execute system command
+char* value = fl_getenv("crème");            // Get environment variable
 \endcode
 
 \section unicode_best_practices Best Practices
 
 \subsection unicode_practices_files File Handling
-- Always use fl_fopen(), fl_open(), etc. for file operations with international names
-- Save source code files as UTF-8 with BOM if your editor requires it
+- Always use fl_fopen(), fl_open(), etc. for file operations with
+  international names
 - Test with international filenames during development
 
 \subsection unicode_practices_strings String Processing
 - Use fl_utf8strlen() instead of strlen() for character counts
-- Use fl_utf8fwd()/fl_utf8back() when iterating through text character by character
+- Use fl_utf8fwd()/fl_utf8back() when iterating through text character
+  by character
 - Validate user input with fl_utf8test() if accepting external data
-- Be careful when truncating strings - use character boundaries, not arbitrary byte positions
+- Be careful when truncating strings - use character boundaries,
+  not arbitrary byte positions
 
 \subsection unicode_practices_display Display and UI
-- Test your interface with text in various languages (especially long German words or wide Asian characters)
-- Consider that text length varies greatly between languages when designing layouts
+- Test your interface with text in various languages (especially long
+  German words or wide Asian characters)
+- Consider that text length varies greatly between languages when
+  designing layouts
 - Ensure your chosen fonts support the characters you need to display
 
 \subsection unicode_practices_performance Performance Notes
@@ -273,16 +297,17 @@ char* value = fl_getenv("环境变量");           // Get environment variable
 \section unicode_troubleshooting Common Issues and Solutions
 
 \subsection unicode_problem_display "My international text shows up as question marks"
-__Solution:__ Ensure your text is UTF-8 encoded and your font supports the characters. If reading from files, verify they're saved as UTF-8.
+__Solution:__ Ensure your text is UTF-8 encoded and your font supports
+  the characters. If reading from files, verify they're saved as UTF-8.
 
 \subsection unicode_problem_files "File operations fail with international names"
 __Solution:__ Use FLTK's Unicode file functions instead of standard C functions:
 \code
 // Instead of:
-FILE* f = fopen("файл.txt", "r");  // May fail on Windows
+FILE* f = fopen("Löwe.txt", "r");  // May fail on Windows
 
 // Use:
-FILE* f = fl_fopen("файл.txt", "r");  // Works correctly
+FILE* f = fl_fopen("Löwe.txt", "r");  // Works correctly
 \endcode
 
 \subsection unicode_problem_length "String length calculations are wrong"
@@ -317,13 +342,16 @@ int safe_length = end - utf8_text;
 FLTK handles invalid UTF-8 sequences gracefully using configurable behavior:
 
 __Error handling modes (compile-time configuration):__
-- __ERRORS_TO_CP1252__ (default): Treats bytes 0x80-0x9F as CP1252 characters
+- __ERRORS_TO_CP1252__ (default): Treats bytes 0x80-0x9F as
+  CP1252 characters
 - __STRICT_RFC3629__: Strict UTF-8 validation according to RFC 3629
-- __ERRORS_TO_ISO8859_1__ (default): Invalid bytes returned as-is, otherwise returns Unicode replacement character (U+FFFD)
+- __ERRORS_TO_ISO8859_1__ (default): Invalid bytes returned as-is,
+  otherwise returns Unicode replacement character (U+FFFD)
 
 \note You can configure these with compiler flags like -DERRORS_TO_CP1252=0
 
-This design allows FLTK to handle legacy text files that mix encodings, making it more robust in real-world scenarios.
+This design allows FLTK to handle legacy text files that mix encodings,
+making it more robust in real-world scenarios.
 
 \section unicode_limitations Current Limitations
 
@@ -346,7 +374,9 @@ __Composed Characters:__
 - Composed characters (base + combining accents) are treated as separate characters
 - No automatic character composition or decomposition
 
-Most applications won't encounter these limitations in practice. The Unicode support in FLTK is sufficient for displaying and processing international text in the majority of real-world scenarios.
+Most applications won't encounter these limitations in practice. The Unicode
+support in FLTK is sufficient for displaying and processing international
+text in the majority of real-world scenarios.
 
 \htmlonly
 <hr>
