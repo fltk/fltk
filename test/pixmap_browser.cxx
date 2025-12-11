@@ -28,6 +28,7 @@
 #include <locale.h>     // setlocale()..
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_message.H>
+#include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl_SVG_File_Surface.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
@@ -135,6 +136,17 @@ int arg(int, char **argv, int &i) {
   return 0;
 }
 
+void copy_cb(Fl_Widget *, void *) {
+  if (!img) return;
+  Fl_Copy_Surface *surface = new Fl_Copy_Surface(img->w(), img->h());
+  Fl_Box *tmp = new Fl_Box(FL_NO_BOX, 0, 0, img->w(), img->h(), "");
+  tmp->align(FL_ALIGN_IMAGE_BACKDROP);
+  tmp->image(img);
+  surface->draw(tmp);
+  delete tmp;
+  delete surface;
+}
+
 int main(int argc, char **argv) {
   int i = 1;
 
@@ -160,6 +172,8 @@ int main(int argc, char **argv) {
   print.callback(print_cb);
   Fl_Button svg(190,425,100,25,"save as SVG");
   svg.callback(svg_cb);
+  Fl_Button copy(100,425,80,25,"Copy");
+  copy.callback(copy_cb);
 
   window.show(argc,argv);
   if (animate)
