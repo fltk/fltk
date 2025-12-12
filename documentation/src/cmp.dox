@@ -30,13 +30,12 @@ Please see the CMP section on Managing GitHub Issues for how developers should m
 It is wise for all developers to monitor these github related mailing list/newsgroups for bug and commit acitivity:
 
  - fltk.commit — (nntp/web) All fltk developer commits on GitHub commit. Includes old pre-Oct 2018 SVN commits
-
  - fltk.issues — (nntp/web) All new/current fltk bugs as GitHub Issues. See "Managing GitHub Issues"
+ - fltk.bugs   — (nntp/web) The "Old STR Bug Management System" activity (replaced by GitHub Issues).
+   See "Managing Old STR's"
 
- - fltk.bugs   — (nntp/web) The "Old STR Bug Management System" activity (replaced by GitHub Issues). See "Managing Old STR's"
-
-To monitor these groups, either configure github to cc you on activity, or see the https://www.fltk.org/newsgroups.php page
-and use either the web interface or NNTP instructions.
+To monitor these groups, either configure github to cc you on activity, or see the
+https://www.fltk.org/newsgroups.php page and use either the web interface or NNTP instructions.
 
 \section cmp_goals Specific Goals
 
@@ -134,7 +133,8 @@ int function2(int arg) {
 
 To summarize:
 
-  - All curly braces must open on the same line as the enclosing statement, and close at the same level of indentation.
+  - All curly braces must open on the same line as the enclosing statement
+    and close at the same level of indentation.
   - Each block of code must be indented 2 spaces.
   - <b>Tabs are not allowed in source files</b>, please use only spaces for indenting.
   - A space follows all reserved words.
@@ -169,11 +169,16 @@ description of the file, and FLTK copyright and license notice:
 //
 \endverbatim
 
-..or the equivalent comment block using the C or other comment delimiters appropriate for the source file language (shell, CMake, etc).
+..or the equivalent comment block using the C or other comment delimiters
+appropriate for the source file language (shell, CMake, etc).
 
 \section cmp_coding_doxygen Doxygen Documentation (Comments)
 
-FLTK 1.3 and up uses Doxygen with the JavaDoc comment style to document all classes, structures, enumerations, methods, and functions. Doxygen comments are \b mandatory for all FLTK header and source files, and no FLTK release will be made without complete documentation of public APIs. Here is an example of the Doxygen comment style:
+FLTK 1.3 and up uses Doxygen with the JavaDoc comment style to document all
+classes, structures, enumerations, methods, and functions. Doxygen comments
+are \b mandatory for all FLTK header and source files, and no FLTK release
+will be made without complete documentation of public APIs. Here is an example
+of the Doxygen comment style:
 
 \verbatim
 /**
@@ -205,16 +210,38 @@ public:
 };
 \endverbatim
 
-Essentially, a comment starting with `/\**` before the class or method defines the documentation for that class or method. These comments should appear in the header file for classes and inline methods and in the code file for non-inline methods.
+<!-- Developer note: the spaces below inside doxygen comment delimiters
+     are used to avoid Doxygen errors like
+     "Reached end of file while still inside a (nested) comment".
+     If anybody finds a better way to escape these doxygen comment delimiters,
+     please feel free to change this (and to remove this note).
+     Another option would be to embed `&shy;` which would be invisible but
+     would be copied by potential copy-and-paste from the docs.
+     Note that this code should work at least with Doxygen 1.9.1 and later.
+     Albrecht-S Dec. 2025
+-->
 
-In addition to Doxygen comments, block comments must be used liberally in the code to describe what is being done. If what you are doing is not "intuitively obvious to a casual observer", add a comment! Remember, you're not the only one that has to read, maintain, and debug the code.
+Essentially, a comment starting with '/ **' and ending with '* /' (both w/o spaces)
+before the class or method defines the documentation for that class or method.
+These comments should appear in the header file for classes and inline methods
+and in the code file for non-inline methods.
 
-<b>Never</b> use C++ comments in C code files or in header files that may be included from a C program. (Otherwise builds on strict platforms like SGI will fail). Normally, fltk C files have ".c" and ".h" file extensions, and C++ have ".cxx" and ".H". Currently there are a few exceptions; filename.H and Fl_Exports.H both get interpreted by C and C++, so you must use C style comments in those.
+In addition to Doxygen comments, block comments must be used liberally in the code
+to describe what is being done. If what you are doing is not "intuitively obvious
+to a casual observer", add a comment! Remember, you're not the only one that has
+to read, maintain, and debug the code.
+
+<b>Never</b> use C++ comments in C code files or in header files that may be included
+from a C program. (Otherwise builds on strict platforms like SGI will fail).
+Normally, fltk C files have ".c" and ".h" file extensions, and C++ have ".cxx" and ".H".
+Currently there are a few exceptions; filename.H and Fl_Exports.H both get interpreted
+by C and C++, so you must use C style comments in those.
 
 \section cmp_general_recommendations General Developer Recommendations
 
 Most important rule: <b>Put Doxygen comments where the code's implementation is.</b>
-This means don't put the docs with the prototypes in the .H file, unless that's where the code is implemented.
+This means don't put the docs with the prototypes in the .H file, unless that's where
+the code is implemented.
 
   - \p class, \p typedef, \p enum, and \p inline docs go in the headers
 
@@ -238,15 +265,18 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
 
   - Don't use doxygen tags between the `\\htmlonly` and `\\endhtmlonly` pair of tags.
 
-  - When commenting out code or writing non-doxygen comments, be sure not to accidentally use doxygen comment styles, or your comments will be published..! Beware doxygen recognizes other comment styles for itself:
+  - When commenting out code or writing non-doxygen comments, be sure not to accidentally
+  use doxygen comment styles, or your comments will be published! Beware doxygen recognizes
+  other comment styles for itself:
   \verbatim
-  /*! beware */
-  /*@ beware */
-  //! beware
-  //@ beware
+    /*! beware */
+    /*@ beware */
+    //! beware
+    //@ beware
   \endverbatim
 
-  There may be others. For this reason, follow all non-doxygen comment leaders with a space to avoid accidental doxygen parsing:
+  There may be others. For this reason, follow all non-doxygen comment leaders with a
+  space to avoid accidental doxygen parsing:
 
   \verbatim
   /* safe from doxygen */
@@ -255,76 +285,52 @@ This means don't put the docs with the prototypes in the .H file, unless that's 
     Space immediately after comment characters
   \endverbatim
 
-  Note: Several characters are 'special' within doxygen commments, and must be escaped with a backslash to appear in the docs correctly. Some of these are:
+  Note: Several characters are 'special' within doxygen commments, and must be escaped
+    with a backslash to appear in the docs correctly. Some of these are:
 
   \verbatim
-  \<    -- disambiguates html tags
-  \>    -- ""
-  \&    -- ""
-  \@    -- disambiguates JavaDoc doxygen comments
-  \$    -- disambiguates environment variable expansions
-  \#    -- disambiguates references to documented entities
-  \%    -- prevents auto-linking
-  \\   -- escapes the escape character
+    \<    -- disambiguates html tags
+    \>    -- ""
+    \&    -- ""
+    \@    -- disambiguates JavaDoc doxygen comments
+    \$    -- disambiguates environment variable expansions
+    \#    -- disambiguates references to documented entities
+    \%    -- suppresses prevention of auto-linking (escapes a single '%' that prevents auto-linking)
+    \\    -- escapes the escape character
   \endverbatim
 
-\htmlonly
+  Itemized lists can be specified two ways; both work, the first is preferred:
 
-  Itemized lists can be specified two ways; both work, left is preferred:
+  \b Preferred:
 
-<table>
-  <tr><th> Preferred </th> <th> Old </th></tr>
-  <tr><td>
+  Here's a bullet list:
   \verbatim
-
-   Here's a bullet list:
-
    - Apples
    - Oranges
+  \endverbatim
 
-   Here's a numbered list:
-
+  Here's a numbered list:
+  \verbatim
    -# First thing
    -# Second thing
-
   \endverbatim
-  </td><td>
+
+  <b>Old (HTML) style.</b> Please use the style above instead.
+
+  Here's a bullet list:
   \verbatim
-
-   Here's a bullet list:
-   <ul>
-     <li> Apples</li>
-     <li> Oranges</li>
-   </ul>
-   Here's a numbered list:
-   <ol>
-     <li> First thing</li>
-     <li> Second thing</li>
-   </ol>
-
+  <ul>
+    <li> Apples</li>
+    <li> Oranges</li>
+  </ul>
+  \endverbatim
+  Here's a numbered list:
+  \verbatim
+  <ol>
+    <li> First thing</li>
+    <li> Second thing</li>
+  </ol>
    \endverbatim
-  </td></tr>
-</table>
-
-\endhtmlonly
-
-\todo Find a way to describe itemized lists in PDF docs. The table above would
-  break Doxygen's PDF generation (pdflatex).
-
-  \verbatim
-
-   Here's a bullet list:
-
-   - Apples
-   - Oranges
-
-   Here's a numbered list:
-
-   -# First thing
-   -# Second thing
-
-  \endverbatim
-
 
 
 \section cmp_temporary_code Documenting Temporary Code or Issues
@@ -456,7 +462,7 @@ Some details on the above:
 
   Be careful not to embed C style comments within `\code` and `\endcode` or it
   will break the outer doxygen comment block. (A good reason to always test
-  build the code base before commiting documentation-only mods)
+  build the code base before committing documentation-only mods.)
 
 - <b>Where to put docs</b>
 
@@ -644,7 +650,7 @@ API must not, directly or indirectly, include \c config.h.
     itself is compiled. Application program developers \b must \b not define
     it when compiling their programs.
 
-  - `FL_INTERNALS` can be defined by application program developers to access certain 
+  - `FL_INTERNALS` can be defined by application program developers to access certain
     internal FLTK library classes (e.g., the `Fl_X` class) and some global variables
     and definitions (macros) if they need it. APIs to these internal classes are highly
     subject to changes, though.
