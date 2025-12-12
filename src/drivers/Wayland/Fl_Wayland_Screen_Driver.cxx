@@ -1395,6 +1395,9 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
   text_input_base = NULL;
   reset_cursor();
   wl_registry = NULL;
+#if HAVE_XDG_DIALOG
+  xdg_wm_dialog = NULL;
+#endif
 }
 
 
