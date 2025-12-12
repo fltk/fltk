@@ -38,10 +38,10 @@ extern Fl_Double_Window *script_panel;
 extern Fl_Text_Editor *script_input;
 #include <FL/Fl_Group.H>
 extern void propagate_load(Fl_Group*, void*);
-#include <FL/Fl_Return_Button.H>
-extern Fl_Return_Button *script_panel_ok;
 #include <FL/Fl_Button.H>
 extern Fl_Button *script_panel_cancel;
+#include <FL/Fl_Return_Button.H>
+extern Fl_Return_Button *script_panel_ok;
 #include <FL/Fl_Box.H>
 Fl_Double_Window* make_script_panel();
 extern Fl_Double_Window *settings_window;
@@ -57,9 +57,9 @@ extern Fl_Check_Button *prevpos_button;
 extern Fl_Check_Button *show_comments_button;
 #include <FL/Fl_Spinner.H>
 extern Fl_Spinner *recent_spinner;
-extern Fl_Check_Button *use_external_editor_button;
 #include <FL/Fl_Input.H>
 extern Fl_Input *editor_command_input;
+extern Fl_Check_Button *use_external_editor_button;
 extern void toggle_guides_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *guides_button;
 extern void toggle_restricted_cb(Fl_Check_Button*, void*);
