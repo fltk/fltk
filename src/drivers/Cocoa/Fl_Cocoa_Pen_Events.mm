@@ -81,7 +81,7 @@ public:
 };
 
 Cocoa_Driver cocoa_driver;
-Driver& driver { cocoa_driver };
+Driver& driver = cocoa_driver;
 
 } // namespace Pen
 
