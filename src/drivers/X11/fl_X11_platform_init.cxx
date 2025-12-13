@@ -78,6 +78,6 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 namespace Fl {
 namespace Pen {
 Driver default_driver;
-Driver& driver { default_driver };
+Driver& driver = default_driver;
 } // namespace Pen
 } // namespace Fl
