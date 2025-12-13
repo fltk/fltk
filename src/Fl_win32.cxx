@@ -2190,9 +2190,11 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
     Fl_Window *hint = Fl::first_window();
     if (hint) {
       nscreen = Fl_Window_Driver::driver(hint->top_window())->screen_num();
-    } else {
+    } else if (Fl::screen_driver()->screen_count() > 1 ) {
       int mx, my;
       nscreen = Fl::screen_driver()->get_mouse(mx, my);
+      float s = Fl::screen_driver()->scale(nscreen);
+      w->position(mx/s, my/s); // put the new window on same screen as mouse
     }
   }
   Fl_Window_Driver::driver(w)->screen_num(nscreen);
