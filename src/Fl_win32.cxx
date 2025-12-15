@@ -2191,10 +2191,13 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
     if (hint) {
       nscreen = Fl_Window_Driver::driver(hint->top_window())->screen_num();
     } else if (Fl::screen_driver()->screen_count() > 1 ) {
-      int mx, my;
+      // put the new window on same screen as mouse
+      int mx, my, X, Y, W, H;
       nscreen = Fl::screen_driver()->get_mouse(mx, my);
-      float s = Fl::screen_driver()->scale(nscreen);
-      w->position(mx/s, my/s); // put the new window on same screen as mouse
+      Fl::screen_xywh(X, Y, W, H, nscreen);
+      if (mx + w->w() >= X + W) mx = X + W - w->w();
+      if (my + w->h() >= H + H) my = Y + H - w->h();
+      w->position(mx, my);
     }
   }
   Fl_Window_Driver::driver(w)->screen_num(nscreen);
