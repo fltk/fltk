@@ -2196,7 +2196,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
       nscreen = Fl::screen_driver()->get_mouse(mx, my);
       Fl::screen_xywh(X, Y, W, H, nscreen);
       if (mx + w->w() >= X + W) mx = X + W - w->w();
-      if (my + w->h() >= H + H) my = Y + H - w->h();
+      if (my + w->h() >= Y + H) my = Y + H - w->h();
       w->position(mx, my);
     }
   }
