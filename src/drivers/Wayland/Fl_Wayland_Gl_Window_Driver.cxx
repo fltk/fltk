@@ -131,7 +131,11 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
     EGL_NONE
   };
 
-  if (m & FL_DEPTH) config_attribs[11] = 1;
+  if (m & FL_DEPTH32)
+    config_attribs[11] = 32; // request at least 32 bits
+  else if (m & FL_DEPTH)
+    config_attribs[11] = 1; // accept any size
+
   if (m & FL_MULTISAMPLE) config_attribs[13] = 1;
   if (m & FL_STENCIL) config_attribs[15] = 1;
   if (m & FL_ALPHA) config_attribs[17] = (m & FL_RGB8) ? 8 : 1;

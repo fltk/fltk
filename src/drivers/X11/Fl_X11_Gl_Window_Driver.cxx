@@ -151,7 +151,9 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
     if (m & FL_DOUBLE) {
       list[n++] = GLX_DOUBLEBUFFER;
     }
-    if (m & FL_DEPTH) {
+    if (m & FL_DEPTH32) {
+      list[n++] = GLX_DEPTH_SIZE; list[n++] = 32;
+    } else if (m & FL_DEPTH) {
       list[n++] = GLX_DEPTH_SIZE; list[n++] = 1;
     }
     if (m & FL_STENCIL) {

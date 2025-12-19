@@ -94,7 +94,11 @@ static NSOpenGLPixelFormat* mode_to_NSOpenGLPixelFormat(int m, const int *alistp
       //list[n++] = AGL_DOUBLEBUFFER;
       attribs[n++] = NSOpenGLPFADoubleBuffer;
     }
-    if (m & FL_DEPTH) {
+    if (m & FL_DEPTH32) {
+      //list[n++] = AGL_DEPTH_SIZE; list[n++] = 32;
+      attribs[n++] = NSOpenGLPFADepthSize;
+      attribs[n++] = (NSOpenGLPixelFormatAttribute)32;
+    } else if (m & FL_DEPTH) {
       //list[n++] = AGL_DEPTH_SIZE; list[n++] = 24;
       attribs[n++] = NSOpenGLPFADepthSize;
       attribs[n++] = (NSOpenGLPixelFormatAttribute)24;

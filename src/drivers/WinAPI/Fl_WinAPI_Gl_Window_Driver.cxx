@@ -79,7 +79,10 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
     if ((m & FL_ACCUM) && !pfd.cAccumBits) continue;
     if ((!(m & FL_DOUBLE)) != (!(pfd.dwFlags & PFD_DOUBLEBUFFER))) continue;
     if ((!(m & FL_STEREO)) != (!(pfd.dwFlags & PFD_STEREO))) continue;
+    // Skipt his descriptor if we want a depth buffer, but this one has none
     if ((m & FL_DEPTH) && !pfd.cDepthBits) continue;
+    // Skipt his descriptor if we want a 32 bit depth buffer, but this one has less or none
+    if ((m & FL_DEPTH32) && pfd.cDepthBits < 32) continue;
     if ((m & FL_STENCIL) && !pfd.cStencilBits) continue;
 
 #if DEBUG_PFD

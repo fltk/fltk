@@ -150,7 +150,8 @@ public:
    - \c FL_DOUBLE - double buffered
    - \c FL_ACCUM - accumulation buffer
    - \c FL_ALPHA - alpha channel in color
-   - \c FL_DEPTH - depth buffer
+   - \c FL_DEPTH - any depth buffer (or set FL_DEPTH32 for at least 32 bits)
+   - \c FL_DEPTH32 - depth buffer with at least 32 bits
    - \c FL_STENCIL - stencil buffer
    - \c FL_MULTISAMPLE - multisample antialiasing
    - \c FL_OPENGL3 - use OpenGL version 3.0 or more.

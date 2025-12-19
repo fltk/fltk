@@ -1226,7 +1226,8 @@ enum Fl_Mode {
   FL_MULTISAMPLE= 128,
   FL_STEREO     = 256,
   FL_FAKE_SINGLE = 512, // Fake single buffered windows using double-buffer
-  FL_OPENGL3    = 1024
+  FL_OPENGL3    = 1024,
+  FL_DEPTH32    = 2048,
 };
 
 // image alpha blending
