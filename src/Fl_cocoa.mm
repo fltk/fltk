@@ -1681,6 +1681,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
    */
   fixup_window_levels();
 
+  Fl::handle(FL_APP_ACTIVATE, nullptr);
   fl_unlock_function();
 }
 - (void)applicationDidChangeScreenParameters:(NSNotification *)unused
@@ -1766,6 +1767,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       }
     }
   }
+  Fl::handle(FL_APP_DEACTIVATE, nullptr);
   fl_unlock_function();
 }
 - (void)applicationWillHide:(NSNotification *)notify

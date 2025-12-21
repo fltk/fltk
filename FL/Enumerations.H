@@ -337,7 +337,13 @@ enum Fl_Event { // events
   /** Triggered just before a menu is displayed. Widgets derived from Fl_Menu_
    receive this event right before the menu appears, providing an opportunity
    to update menu item states and activation. */
-  FL_BEFORE_MENU        = 29
+  FL_BEFORE_MENU        = 29,
+  /** Sent when the application is activate an becomes topmost and focused.
+   \see Fl::add_handler() */
+  FL_APP_ACTIVATE       = 30,
+  /** Sent when the application is sent to the background and deactivated.
+   \see Fl::add_handler() */
+  FL_APP_DEACTIVATE     = 31,
   // DEV NOTE: Keep this list in sync with FL/names.h
 };
 
