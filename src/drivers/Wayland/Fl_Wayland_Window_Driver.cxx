@@ -873,6 +873,26 @@ static void scan_subwindows(Fl_Group *g, void (*f)(Fl_Window *)) {
   }
 }
 
+// Generate FL_APP_ACTIVATE and FL_APP_DEACTIVATE events
+static bool app_has_active_window = false;
+
+// If a window is deactivated, check after a short delay if any other window has
+// become active. If not, send an FL_APP_DEACTIVATE event.
+static void deferred_check_app_deactivate(void*) {
+  if (!app_has_active_window) return;
+  app_has_active_window = false;
+  // Check all FLTK windows to see if any are still active
+  for (Fl_Window *w = Fl::first_window(); w; w = Fl::next_window(w)) {
+    if (w->visible_r()) {
+      struct wld_window* xid = fl_wl_xid(w);
+      if (xid && (xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+        app_has_active_window = true;
+        break;
+      }
+    }
+  }
+  if (!app_has_active_window) Fl::handle(FL_APP_DEACTIVATE, nullptr);
+}
 
 static void handle_configure(struct libdecor_frame *frame,
      struct libdecor_configuration *configuration, void *user_data)
@@ -973,9 +993,6 @@ static void handle_configure(struct libdecor_frame *frame,
   if (is_2nd_run) driver->wait_for_expose_value = 0;
 //fprintf(stderr, "handle_configure fl_win=%p size:%dx%d state=%x wait_for_expose_value=%d is_2nd_run=%d\n", window->fl_win, width,height,window_state,driver->wait_for_expose_value, is_2nd_run);
 
-  // Generate FL_APP_ACTIVATE and FL_APP_DEACTIVATE events
-  static bool app_has_active_window = false;
-
   // When no window is active, and one window gets activated, generate an FL_APP_ACTIVATE event
   if (window_state & LIBDECOR_WINDOW_STATE_ACTIVE) {
     if (!app_has_active_window) {
@@ -1001,18 +1018,7 @@ static void handle_configure(struct libdecor_frame *frame,
   // When a window gets deactivated and there are no other active windows,
   // generate an FL_APP_DEACTIVATE event
   if ( ((window_state & LIBDECOR_WINDOW_STATE_ACTIVE) == 0) && app_has_active_window) {
-    app_has_active_window = false;
-    // Check all FLTK windows to see if any are still active
-    for (Fl_Window *w = Fl::first_window(); w; w = Fl::next_window(w)) {
-      if (w != window->fl_win && w->shown()) {
-        struct wld_window* xid = fl_wl_xid(w);
-        if (xid && (xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
-          app_has_active_window = true;
-          break;
-        }
-      }
-    }
-    if (!app_has_active_window) Fl::handle(FL_APP_DEACTIVATE, nullptr);
+    Fl::add_timeout(0.1, deferred_check_app_deactivate, nullptr);
   }
 
   if (window->fl_win->border())
