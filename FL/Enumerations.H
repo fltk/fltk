@@ -339,9 +339,11 @@ enum Fl_Event { // events
    to update menu item states and activation. */
   FL_BEFORE_MENU        = 29,
   /** Sent when the application is activate an becomes topmost and focused.
+   Not supported on X11.
    \see Fl::add_handler() */
   FL_APP_ACTIVATE       = 30,
   /** Sent when the application is sent to the background and deactivated.
+   Not supported on X11.
    \see Fl::add_handler() */
   FL_APP_DEACTIVATE     = 31,
   // DEV NOTE: Keep this list in sync with FL/names.h
