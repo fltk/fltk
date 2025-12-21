@@ -28,14 +28,20 @@
 #include <winerror.h>
 
 
-#if 0 // Base the Windows driver on the existing Cocoa driver for now.
-
-#import <Cocoa/Cocoa.h>
-
-
 extern Fl_Window *fl_xmousewin;
 
-static NSPointingDeviceType device_type_ { NSPointingDeviceTypePen };
+static constexpr uint8_t _FL_PEN = 0; // internal use
+static constexpr uint8_t _FL_ERASER = 1; // internal use
+static uint8_t device_type_ = _FL_PEN;
+
+static int _e_x_down = 0;
+static int _e_y_down = 0;
+
+// Click counting state
+static DWORD last_click_time_ = 0;
+static int last_click_x_ = 0;
+static int last_click_y_ = 0;
+static  Fl::Pen::State last_click_trigger_ =  Fl::Pen::State::NONE;
 
 // The trait list keeps track of traits for every pen ID that appears while
 // handling events.
@@ -50,12 +56,10 @@ static Fl::Pen::Trait current_pen_trait_ { Fl::Pen::Trait::DRIVER_AVAILABLE };
 static Fl::Pen::Trait driver_traits_ {
   Fl::Pen::Trait::DRIVER_AVAILABLE | Fl::Pen::Trait::PEN_ID |
   Fl::Pen::Trait::ERASER | Fl::Pen::Trait::PRESSURE |
-  Fl::Pen::Trait::BARREL_PRESSURE | Fl::Pen::Trait::TILT_X |
+  Fl::Pen::Trait::TILT_X |
   Fl::Pen::Trait::TILT_Y | Fl::Pen::Trait::TWIST
-  // Notably missing: PROXIMITY
+  // Notably missing: PROXIMITY, BARREL_PRESSURE
 };
-
-#endif
 
 // Temporary storage of event data for the driver;
 static Fl::Pen::EventData ev;
@@ -79,17 +83,17 @@ public:
   //virtual void subscribe(Fl_Widget* widget) override;
   //virtual void unsubscribe(Fl_Widget* widget) override;
   //virtual void release() override;
-//   virtual Trait traits() override { return driver_traits_; }
-//   virtual Trait pen_traits(int pen_id) override {
-//     auto it = trait_list_.find(pen_id);
-//     if (pen_id == 0)
-//       return current_pen_trait_;
-//     if (it == trait_list_.end()) {
-//       return Trait::DRIVER_AVAILABLE;
-//     } else {
-//       return it->second;
-//     }
-//   }
+  virtual Trait traits() override { return driver_traits_; }
+  virtual Trait pen_traits(int pen_id) override {
+    auto it = trait_list_.find(pen_id);
+    if (pen_id == 0)
+      return current_pen_trait_;
+    if (it == trait_list_.end()) {
+      return Trait::DRIVER_AVAILABLE;
+    } else {
+      return it->second;
+    }
+  }
 };
 
 Windows_Driver windows_driver;
@@ -101,8 +105,6 @@ Driver& driver { windows_driver };
 
 
 using namespace Fl::Pen;
-
-#if 0
 
 /*
  Copy the event state.
@@ -118,27 +120,11 @@ static void copy_state() {
 }
 
 /*
- Offset coordinates for subwindows and subsubwindows.
- */
-static void offset_subwindow_event(Fl_Widget *w, double &x, double &y) {
-  Fl_Widget *p = w, *q;
-  while (p) {
-    q = p->parent();
-    if (p->as_window() && q) {
-      x -= p->x();
-      y -= p->y();
-    }
-    p = q;
-  };
-}
-
-/*
  Check if coordinates are within the widget box.
  Coordinates are in top_window space. We iterate up the hierarchy to ensure
  that we handle subwindows correctly.
  */
 static bool event_inside(Fl_Widget *w, double x, double y) {
-  offset_subwindow_event(w, x, y);
   if (w->as_window()) {
     return ((x >= 0) && (y >= 0) && (x < w->w()) && (y < w->h()));
   } else {
@@ -148,13 +134,13 @@ static bool event_inside(Fl_Widget *w, double x, double y) {
 
 /*
  Find the widget under the pen event.
- Search the subscriber list for widgets that are inside the same top window,
+ Search the subscriber list for widgets that are inside the same window,
  are visible, and are within the give coordinates. Subwindow aware.
  */
 static Fl_Widget *find_below_pen(Fl_Window *win, double x, double y) {
   for (auto &sub: subscriber_list_) {
     Fl_Widget *candidate = sub.second->widget();
-    if (candidate && (candidate->top_window() == win)) {
+    if (candidate && ((candidate == win) || (!candidate->as_window() && candidate->window() == win))) {
       if (candidate->visible() && event_inside(candidate, x, y)) {
         return candidate;
       }
@@ -175,11 +161,8 @@ static int pen_send(Fl_Widget *w, int event, State trigger, bool &copied) {
     copied = true;
   }
   // Copy the top_window coordinates again as they may change when w changes
-  e.x = ev.x;
-  e.y = ev.y;
-  offset_subwindow_event(w, e.x, e.y);
-  Fl::e_x = e.x;
-  Fl::e_y = e.y;
+  Fl::e_x = e.x = ev.x;
+  Fl::e_y = e.y = ev.y;
   // Send the event.
   e.trigger = trigger;
   return w->handle(event);
@@ -202,22 +185,30 @@ static int pen_send_all(int event, State trigger) {
 /*
  Convert the NSEvent button number to Fl::Pen::State,
  */
-static State button_to_trigger(NSInteger button, bool down) {
+static State button_to_trigger(POINTER_BUTTON_CHANGE_TYPE button, bool down) {
   switch (button) {
-    case 0:
+    case POINTER_CHANGE_FIRSTBUTTON_DOWN:
+    case POINTER_CHANGE_FIRSTBUTTON_UP:
       if ( (ev.state & (State::ERASER_DOWN | State::ERASER_HOVERS)) != State::NONE ) {
         return down ? State::ERASER_DOWN : State::ERASER_HOVERS;
       } else {
         return down ? State::TIP_DOWN : State::TIP_HOVERS;
       }
-    case 1: return State::BUTTON0;
-    case 2: return State::BUTTON1;
-    case 3: return State::BUTTON2;
-    case 4: return State::BUTTON3;
+    case POINTER_CHANGE_SECONDBUTTON_DOWN:
+    case POINTER_CHANGE_SECONDBUTTON_UP:
+      return State::BUTTON0;
+    case POINTER_CHANGE_THIRDBUTTON_DOWN:
+    case POINTER_CHANGE_THIRDBUTTON_UP:
+      return State::BUTTON1;
+    case POINTER_CHANGE_FOURTHBUTTON_DOWN:
+    case POINTER_CHANGE_FOURTHBUTTON_UP:
+      return State::BUTTON2;
+    case POINTER_CHANGE_FIFTHBUTTON_DOWN:
+    case POINTER_CHANGE_FIFTHBUTTON_UP:
+      return State::BUTTON3;
     default: return State::NONE;
   }
 }
-#endif
 
 /*
  Handle events coming from the Win32 API.
@@ -225,9 +216,6 @@ static State button_to_trigger(NSInteger button, bool down) {
  WM_POINTER (Windows 8 and up)
  https://learn.microsoft.com/en-us/windows/win32/inputmsg/messages-and-notifications-portal
  #if(WINVER >= 0x0602) ... #endif
- EnableMouseInPointer(FALSE);
- GET_X_LPARAM(lParam): the x (horizontal point) coordinate.
- GET_Y_LPARAM(lParam): the y (vertical point) coordinate.
     \return -1 if we did not handle the event and want the main event handler to call DefWindowProc()
     \return any other value that will then be return from WndProc() directly.
  */
@@ -237,7 +225,11 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
     return -1;
   }
 
-  Fl_Window *window = fl_find(msg.hwnd);  // can be nullptr
+  Fl_Window *eventWindow = fl_find(msg.hwnd);  // can be nullptr
+  bool is_proximity = false;
+  bool is_down = false;
+  bool is_up = false;
+  bool is_motion = false;
 
   switch (msg.message) {
     case WM_NCPOINTERDOWN: // pen pushed over window decoration, don't care
@@ -247,147 +239,131 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
       return -1; // let the system handle this forwarding this to DefWindowProc
 
     case WM_POINTERENTER: // pointer moved into window area from top or sides
-      // position
-      // GET_POINTERID_WPARAM(wParam): the pointer identifier.
-      // IS_POINTER_NEW_WPARAM(wParam): indicates whether this message is the first message generated by a new pointer entering detection range (hover).
-      // IS_POINTER_INRANGE_WPARAM(wParam): indicates whether this message was generated by a pointer that has not left detection range. This flag is always set for WM_POINTERENTER messages.
-      // IS_POINTER_INCONTACT_WPARAM(wParam): a flag that indicates whether this message was generated by a pointer that is in contact. This flag is not set for a pointer in detection range (hover).
-      puts("Windows message: WM_POINTERENTER"); break;
+      is_proximity = true;
+      break;
     case WM_POINTERLEAVE: // left window area to top or sides
-      // position
-      // GET_POINTERID_WPARAM(wParam): the pointer identifier.
-      // IS_POINTER_INRANGE_WPARAM(wParam): indicates whether this message was generated by a pointer that has not left detection range. This flag is not set when the pointer leaves the detection range of the window.
-      // IS_POINTER_INCONTACT_WPARAM(wParam): a flag that indicates whether this message was generated by a pointer that is in contact. This flag is not set for a pointer in detection range (hover).
-      puts("Windows message: WM_POINTERLEAVE"); break;
+      is_proximity = true;
+      break;
 
 
     case WM_POINTERDOWN:
-      puts("Windows message: WM_POINTERDOWN"); break;
-      // location
-      // GET_POINTERID_WPARAM(wParam): the pointer identifier.
-      // IS_POINTER_NEW_WPARAM(wParam): a flag that indicates whether this message represents the first input generated by a new pointer.
-      // IS_POINTER_INRANGE_WPARAM(wParam): a flag that indicates whether this message was generated by a pointer during its lifetime. This flag is not set on messages that indicate that the pointer has left detection range
-      // IS_POINTER_INCONTACT_WPARAM(wParam): a flag that indicates whether this message was generated by a pointer that is in contact with the window surface. This flag is not set on messages that indicate a hovering pointer.
-      // IS_POINTER_PRIMARY_WPARAM(wParam): indicates that this pointer has been designated as primary.
-      // IS_POINTER_FIRSTBUTTON_WPARAM(wParam): a flag that indicates whether there is a primary action.
-      // This is analogous to a mouse left button down.
-      // A touch pointer will have this set when it is in contact with the digitizer surface.
-      // A pen pointer will have this set when it is in contact with the digitizer surface with no buttons pressed.
-      // IS_POINTER_SECONDBUTTON_WPARAM(wParam): a flag that indicates whether there is a secondary action.
-      // This is analogous to a mouse right button down.
-      // A pen pointer will have this set when it is in contact with the digitizer surface with the pen barrel button pressed.
-      // IS_POINTER_THIRDBUTTON_WPARAM(wParam): a flag that indicates whether there are one or more tertiary actions based on the pointer type; applications that wish to respond to tertiary actions must retrieve information specific to the pointer type to determine which tertiary buttons are pressed. For example, an application can determine the buttons states of a pen by calling GetPointerPenInfo and examining the flags that specify button states.
-      // IS_POINTER_FOURTHBUTTON_WPARAM(wParam): a flag that indicates whether the specified pointer took fourth action. Applications that wish to respond to fourth actions must retrieve information specific to the pointer type to determine if the first extended mouse (XButton1) button is pressed.
-      // IS_POINTER_FIFTHBUTTON_WPARAM(wParam): a flag that indicates whether the specified pointer took fifth action. Applications that wish to respond to fifth actions must retrieve information specific to the pointer type to determine if the second extended mouse (XButton2) button is pressed.
-      // GetPointerInfo: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getpointerinfo
-      // GetKeyState: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getkeystate
+      is_down = true;
+      break;
     case WM_POINTERUP:
-      puts("Windows message: WM_POINTERUP"); break;
-
-    case WM_POINTERUPDATE: return false;
-      puts("Windows message: WM_POINTERUPDATE"); break;
+      is_up = true;
+      break;
+    case WM_POINTERUPDATE:
+      is_motion = true;
+      break;
 
     case WM_POINTERCAPTURECHANGED:
-      puts("Windows message: WM_POINTERCAPTURECHANGED"); break;
     case WM_TOUCHHITTESTING:
-      puts("Windows message: WM_TOUCHHITTESTING"); break;
     case WM_POINTERWHEEL:
-      puts("Windows message: WM_POINTERWHEEL"); break;
     case WM_POINTERHWHEEL:
-      puts("Windows message: WM_POINTERHWHEEL"); break;
     case DM_POINTERHITTEST:
-      puts("Windows message: DM_POINTERHITTEST"); break;
     case WM_POINTERROUTEDTO:
-      puts("Windows message: WM_POINTERROUTEDTO"); break;
     case WM_POINTERROUTEDAWAY:
-      puts("Windows message: WM_POINTERROUTEDAWAY"); break;
     case WM_POINTERROUTEDRELEASED:
-      puts("Windows message: WM_POINTERROUTEDRELEASED"); break;
     default:
-      printf("Windows message: msg=0x%04X wParam=0x%08X lParam=0x%08X\n",
-          msg.message, (unsigned)msg.wParam, (unsigned)msg.lParam);
+      // printf("Windows message: msg=0x%04X wParam=0x%08X lParam=0x%08X\n",
+      //     msg.message, (unsigned)msg.wParam, (unsigned)msg.lParam);
       return -1;
   }
-  printf("    msg=0x%04X wParam=0x%08X lParam=0x%08X\n",
-        msg.message, (unsigned)msg.wParam, (unsigned)msg.lParam);
-  return -1;
-}
+  // printf("    msg=0x%04X wParam=0x%08X lParam=0x%08X\n",
+  //       msg.message, (unsigned)msg.wParam, (unsigned)msg.lParam);
 
-#if 0
-  // Quick access to the main type.
-  auto type = [event type];
-
-  // There seems nothing useful here. Ignore for now.
-  if ((type == NSEventTypeMouseEntered) || (type == NSEventTypeMouseExited)) {
-    return false;
-  }
-
-  // Sort out tablet-only events and mouse plus tablet events.
-  bool is_mouse = ((type != NSEventTypeTabletPoint) && (type != NSEventTypeTabletProximity));
-
-  // Set the subtype if one is available. Only NSEventSubtypeTabletPoint and
-  // NSEventSubtypeTabletProximity matter in this context
-  NSEventSubtype subtype = is_mouse ? [event subtype] : NSEventSubtypeMouseEvent;
-
-  // Is this a change in proximity event?
-  bool is_proximity = ((type == NSEventTypeTabletProximity) || (subtype == NSEventSubtypeTabletProximity));
-
-  // Is this a pen pointer event?
-  bool is_point = ((type == NSEventTypeTabletPoint) || (subtype == NSEventSubtypeTabletPoint));
-
-  // Check if any of the pen down, move, drag, or up events was triggered.
-  bool is_down = ((type == NSEventTypeLeftMouseDown) || (type == NSEventTypeRightMouseDown) || (type == NSEventTypeOtherMouseDown));
-  bool is_up = ((type == NSEventTypeLeftMouseUp) || (type == NSEventTypeRightMouseUp) || (type == NSEventTypeOtherMouseUp));
-  bool is_drag = ((type == NSEventTypeLeftMouseDragged) || (type == NSEventTypeRightMouseDragged) || (type == NSEventTypeOtherMouseDragged));
-  bool is_motion = is_drag || (type == NSEventTypeMouseMoved);
-
-  // Find out if we can get the pen position
-  bool has_position = (eventWindow != nullptr) && (is_up || is_down || is_motion || is_proximity || is_point);
+  POINTER_PEN_INFO info;
+  BOOL has_position = GetPointerPenInfo(
+    GET_POINTERID_WPARAM(msg.wParam),
+    &info
+  );
+  // if (has_position && info.pointerInfo.ButtonChangeType!=0) {
+  //   printf("  pointerFlags: %08x [", (unsigned)info.pointerInfo.pointerFlags);
+  //   if (info.pointerInfo.pointerFlags & POINTER_FLAG_FIRSTBUTTON) printf(" 1ST");
+  //   if (info.pointerInfo.pointerFlags & POINTER_FLAG_SECONDBUTTON) printf(" 2ND");
+  //   if (info.pointerInfo.pointerFlags & POINTER_FLAG_THIRDBUTTON) printf(" 3RD");
+  //   if (info.pointerInfo.pointerFlags & POINTER_FLAG_FOURTHBUTTON) printf(" 4TH");
+  //   if (info.pointerInfo.pointerFlags & POINTER_FLAG_FIFTHBUTTON) printf(" 5TH");
+  //   printf(" ]\n  penFlags: %08x [", (unsigned)info.penFlags);
+  //   if (info.penFlags & PEN_FLAG_BARREL) printf(" BARREL");
+  //   if (info.penFlags & PEN_FLAG_INVERTED) printf(" INVERTED");
+  //   if (info.penFlags & PEN_FLAG_ERASER) printf(" ERASER");
+  //   printf(" ]\n  penMask: %08x  ButtonChangeType: %d\n",
+  //     (unsigned)info.penMask, info.pointerInfo.ButtonChangeType);
+  // }
 
   // Event has extended pen data set:
   if (has_position) {
     // Get the position data.
-    auto pt = [event locationInWindow];
     double s = Fl::screen_driver()->scale(0);
-    ev.x = pt.x/s;
-    ev.y = eventWindow->h() - pt.y/s;
-    ev.rx = ev.x + eventWindow->x();
-    ev.ry = ev.y + eventWindow->y();
+    double ex = info.pointerInfo.ptPixelLocation.x/s;
+    double ey = info.pointerInfo.ptPixelLocation.y/s;
+
+    // Go from global coordinates to event window coordinates
+    Fl_Widget *p = eventWindow;
+    while (p) {
+      if (p->as_window()) {
+        ex -= p->x();
+        ey -= p->y();
+      }
+      p = p->parent();
+    };
+    printf("pos: %d,%d (scale %.2f) to %.2f,%.2f %s\n",
+      info.pointerInfo.ptPixelLocation.x,
+      info.pointerInfo.ptPixelLocation.y,
+      s,
+      ex,
+      ey, eventWindow->label());
+
+    ev.x = ex; //info.pointerInfo.ptPixelLocation.x/s - eventWindow->x();
+    ev.y = ey; //info.pointerInfo.ptPixelLocation.y/s - eventWindow->y();
+    ev.rx = info.pointerInfo.ptPixelLocation.x/s;
+    ev.ry = info.pointerInfo.ptPixelLocation.y/s;
     if (!is_proximity) {
-      // Get the pressure data.
-      ev.pressure = [event pressure];
-      ev.barrel_pressure = [event tangentialPressure];
-      // Get the tilt
-      auto tilt = [event tilt];
-      ev.tilt_x = -tilt.x;
-      ev.tilt_y =  tilt.y;
-      // Other stuff
-      ev.twist = [event rotation]; // TODO: untested
-      // ev.proximity = [event proximity]; // not supported in AppKit
+      // Get the extended data.
+      if (info.penMask & PEN_MASK_PRESSURE)
+        ev.pressure = info.pressure / 1024.0;
+      if (info.penMask & PEN_MASK_TILT_X)
+        ev.tilt_x = -info.tiltX / 90.0;
+      if (info.penMask & PEN_MASK_TILT_Y)
+        ev.tilt_y = -info.tiltY / 90.0;
+      if (info.penMask & PEN_MASK_ROTATION)
+        ev.twist = info.rotation > 180 ? (info.rotation - 360) : info.rotation;
+      if (info.pointerInfo.pointerFlags & POINTER_FLAG_INCONTACT)
+        ev.proximity = 0.0;
+      else
+        ev.proximity = 1.0;
     }
-    if (device_type_ == NSPointingDeviceTypeEraser) {
-      if ([event buttonMask] & 1)
+    if (info.penFlags & PEN_FLAG_INVERTED) {
+      device_type_ = _FL_ERASER;
+      if (info.pointerInfo.pointerFlags & POINTER_FLAG_INCONTACT)
         ev.state = State::ERASER_DOWN;
       else
         ev.state = State::ERASER_HOVERS;
     } else {
-      if ([event buttonMask] & 1)
+      device_type_ = _FL_PEN;
+      if (info.pointerInfo.pointerFlags & POINTER_FLAG_INCONTACT)
         ev.state = State::TIP_DOWN;
       else
         ev.state = State::TIP_HOVERS;
     }
-    if ([event buttonMask] & 0x0002) ev.state |= State::BUTTON0;
-    if ([event buttonMask] & 0x0004) ev.state |= State::BUTTON1;
-    if ([event buttonMask] & 0x0008) ev.state |= State::BUTTON2;
-    if ([event buttonMask] & 0x0010) ev.state |= State::BUTTON3;
-    // printf("0x%08x\n", [event buttonMask]);
+    // Add pen barrel button states
+    // Note: POINTER_FLAG_FIRSTBUTTON is the pen tip
+    // PEN_FLAG_BARREL and POINTER_FLAG_SECONDBUTTON both indicate the primary barrel button
+    if ((info.penFlags & PEN_FLAG_BARREL) || (info.pointerInfo.pointerFlags & POINTER_FLAG_SECONDBUTTON))
+      ev.state |= State::BUTTON0;
+    // Note: the following code does not work very well with the Wayland driver
+    // More research is needed to find out how to get these button states reliably.
+    if (info.pointerInfo.pointerFlags & POINTER_FLAG_THIRDBUTTON)  ev.state |= State::BUTTON1;
+    if (info.pointerInfo.pointerFlags & POINTER_FLAG_FOURTHBUTTON) ev.state |= State::BUTTON2;
+    if (info.pointerInfo.pointerFlags & POINTER_FLAG_FIFTHBUTTON)  ev.state |= State::BUTTON3;
   }
+  // printf(" %08x\n", (unsigned)ev.state);
   if (is_proximity) {
-    ev.pen_id = (int)[event vendorID];
-    device_type_ = [event pointingDeviceType];
+    ev.pen_id = GET_POINTERID_WPARAM(msg.wParam);
   }
-  if (type == NSEventTypeTabletProximity) {
-    if ([event isEnteringProximity]) {
+  if ((msg.message == WM_POINTERENTER) || (msg.message == WM_POINTERLEAVE)) {
+    if (msg.message == WM_POINTERENTER) {
       // Check if this is the first time we see this pen, or if the pen changed
       if (current_pen_id_ != ev.pen_id) {
         current_pen_id_ = ev.pen_id;
@@ -432,15 +408,15 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
     if (pushed_ && pushed_->widget() && (Fl::pushed() == pushed_->widget())) {
       receiver = pushed_->widget();
       if (Fl::grab() && (Fl::grab() != receiver->top_window()))
-        return 0;
+        return -1;
       if (Fl::modal() && (Fl::modal() != receiver->top_window()))
-        return 0;
+        return -1;
       pushed = true;
     } else {
       if (Fl::grab() && (Fl::grab() != eventWindow))
-        return 0;
+        return -1;
       if (Fl::modal() && (Fl::modal() != eventWindow))
-        return 0;
+        return -1;
       auto bpen = below_pen_ ? below_pen_->widget() : nullptr;
       auto bmouse = Fl::belowmouse();
       auto bpen_old = bmouse && (bmouse == bpen) ? bpen : nullptr;
@@ -452,7 +428,7 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
         }
         below_pen_ = nullptr;
         if (bpen_now) {
-          State state = (device_type_ == NSPointingDeviceTypeEraser) ? State::ERASER_HOVERS : State::TIP_HOVERS;
+          State state = (device_type_ == _FL_ERASER) ? State::ERASER_HOVERS : State::TIP_HOVERS;
           if (pen_send(bpen_now, Fl::Pen::ENTER, state, event_data_copied)) {
             below_pen_ = subscriber_list_[bpen_now];
             Fl::belowmouse(bpen_now);
@@ -462,29 +438,47 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
 
       receiver = below_pen_ ? below_pen_->widget() : nullptr;
       if (!receiver)
-        return 0;
+        return -1;
     }
   } else {
     // Proximity events were handled earlier.
   }
 
   if (!receiver)
-    return 0;
+    return -1;
 
   if (is_down) {
     if (!pushed) {
       pushed_ = subscriber_list_[receiver];
       Fl::pushed(receiver);
     }
-    State trigger = button_to_trigger([event buttonNumber], true);
-    if ([event buttonNumber] == 0) {
+    State trigger = button_to_trigger(info.pointerInfo.ButtonChangeType, true);
+    if (msg.message == WM_POINTERDOWN) {
       Fl::e_is_click = 1;
-      Fl::Private::e_x_down = (int)ev.x;
-      Fl::Private::e_y_down = (int)ev.y;
-      if ([event clickCount] > 1)
+      _e_x_down = (int)ev.x;
+      _e_y_down = (int)ev.y;
+
+      // Implement click counting using Windows system metrics
+      DWORD current_time = GetMessageTime();
+      DWORD double_click_time = GetDoubleClickTime();
+      int double_click_dx = GetSystemMetrics(SM_CXDOUBLECLK) / 2;
+      int double_click_dy = GetSystemMetrics(SM_CYDOUBLECLK) / 2;
+
+      // Check if this is a multi-click: same trigger, within time and distance thresholds
+      if (trigger == last_click_trigger_ &&
+          (current_time - last_click_time_) < double_click_time &&
+          abs((int)ev.rx - last_click_x_) < double_click_dx &&
+          abs((int)ev.ry - last_click_y_) < double_click_dy) {
         Fl::e_clicks++;
-      else
+      } else {
         Fl::e_clicks = 0;
+      }
+
+      last_click_time_ = current_time;
+      last_click_x_ = (int)ev.rx;
+      last_click_y_ = (int)ev.ry;
+      last_click_trigger_ = trigger;
+
       pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
     } else {
       pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
@@ -494,15 +488,15 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
       Fl::pushed(nullptr);
       pushed_ = nullptr;
     }
-    State trigger = button_to_trigger([event buttonNumber], true);
-    if ([event buttonNumber] == 0)
+    State trigger = button_to_trigger(info.pointerInfo.ButtonChangeType, true);
+    if (info.pointerInfo.ButtonChangeType == 0)
       pen_send(receiver, Fl::Pen::LIFT, trigger, event_data_copied);
     else
       pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
   } else if (is_motion) {
     if (  Fl::e_is_click &&
-         ( (fabs((int)ev.x - Fl::Private::e_x_down) > 5) ||
-           (fabs((int)ev.y - Fl::Private::e_y_down) > 5) ) )
+         ( (fabs((int)ev.x - _e_x_down) > 5) ||
+           (fabs((int)ev.y - _e_y_down) > 5) ) )
       Fl::e_is_click = 0;
     if (pushed) {
       pen_send(receiver, Fl::Pen::DRAW, State::NONE, event_data_copied);
@@ -510,10 +504,9 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
       pen_send(receiver, Fl::Pen::HOVER, State::NONE, event_data_copied);
     }
   }
-  // Always return 1 because at this point, we capture pen events and don't
+  // Always return 0 because at this point, we capture pen events and don't
   // want mouse events anymore!
-  return 1;
+  return 0;
 }
 
 
-#endif
