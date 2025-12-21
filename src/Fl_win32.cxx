@@ -1466,7 +1466,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           if ((GetAsyncKeyState(VK_LWIN) | GetAsyncKeyState(VK_RWIN)) & ~1)
             state |= FL_META;
           Fl::e_state = state;
-          return 0;
+          Fl::handle(FL_APP_ACTIVATE, nullptr);
+        } else {
+          Fl::handle(FL_APP_DEACTIVATE, nullptr);
         }
         break;
 
