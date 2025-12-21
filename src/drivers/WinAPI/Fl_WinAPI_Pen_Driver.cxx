@@ -298,7 +298,6 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
     double s = Fl::screen_driver()->scale(0);
     double ex = info.pointerInfo.ptPixelLocation.x/s;
     double ey = info.pointerInfo.ptPixelLocation.y/s;
-
     // Go from global coordinates to event window coordinates
     Fl_Widget *p = eventWindow;
     while (p) {
@@ -308,15 +307,8 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
       }
       p = p->parent();
     };
-    printf("pos: %d,%d (scale %.2f) to %.2f,%.2f %s\n",
-      info.pointerInfo.ptPixelLocation.x,
-      info.pointerInfo.ptPixelLocation.y,
-      s,
-      ex,
-      ey, eventWindow->label());
-
-    ev.x = ex; //info.pointerInfo.ptPixelLocation.x/s - eventWindow->x();
-    ev.y = ey; //info.pointerInfo.ptPixelLocation.y/s - eventWindow->y();
+    ev.x = ex;
+    ev.y = ey;
     ev.rx = info.pointerInfo.ptPixelLocation.x/s;
     ev.ry = info.pointerInfo.ptPixelLocation.y/s;
     if (!is_proximity) {
