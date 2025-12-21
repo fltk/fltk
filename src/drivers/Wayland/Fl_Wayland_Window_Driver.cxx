@@ -973,7 +973,15 @@ static void handle_configure(struct libdecor_frame *frame,
   if (is_2nd_run) driver->wait_for_expose_value = 0;
 //fprintf(stderr, "handle_configure fl_win=%p size:%dx%d state=%x wait_for_expose_value=%d is_2nd_run=%d\n", window->fl_win, width,height,window_state,driver->wait_for_expose_value, is_2nd_run);
 
+  // Generate FL_APP_ACTIVATE and FL_APP_DEACTIVATE events
+  static bool app_has_actuve_window = false;
+
   if (window_state & LIBDECOR_WINDOW_STATE_ACTIVE) {
+    // When a window gets first activated, generate an FL_APP_ACTIVATE event
+    bool app_was_active = app_has_active_window;
+    app_has_active_window = true;
+    if (!app_was_active) Fl::handle(FL_APP_ACTIVATE);
+
     if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::WESTON) {
       // After click on titlebar, weston calls wl_keyboard_enter() for a
       // titlebar-related surface that FLTK can't identify, so we send FL_FOCUS here.
@@ -987,6 +995,25 @@ static void handle_configure(struct libdecor_frame *frame,
     }
   } else if (window_state & LIBDECOR_WINDOW_STATE_SUSPENDED) { // window is minimized
     Fl::handle(FL_HIDE, window->fl_win);
+  }
+
+  // When a window gets deactivated and there are no other active windows,
+  // generate an FL_APP_DEACTIVATE event
+  if ((window_state & LIBDECOR_WINDOW_STATE_ACTIVE) == 0) {
+    bool app_was_active = app_has_active_window;
+    app_has_active_window = false;
+    // Check all FLTK windows to see if any are still active
+    for (Fl_Window *w = Fl::first_window(); w; w = Fl::next_window(w)) {
+        if (w != window->fl_win && w->shown()) {
+            Fl_Wayland_Window_Driver *wd = Fl_Wayland_Window_Driver::driver(w);
+            struct wld_window* xid = fl_wl_xid(wd->pWindow);
+            if (xid && (xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+                app_has_active_window = true;
+                break;
+            }
+        }
+    }
+    if (app_was_active && !app_has_active_window) Fl::handle(FL_APP_DEACTIVATE);
   }
 
   if (window->fl_win->border())
@@ -1883,7 +1910,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     depth--;
     return;
   }
-  
+
   if (is_a_resize) {
     if (pWindow->as_overlay_window() && other_xid) {
       destroy_double_buffer();
