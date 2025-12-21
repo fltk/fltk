@@ -399,6 +399,7 @@ else()
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx
+    drivers/WinAPI/Fl_WinAPI_Pen_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx

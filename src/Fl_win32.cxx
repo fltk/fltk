@@ -1211,6 +1211,7 @@ static Fl_Window *resize_bug_fix;
 
 extern void fl_save_pen(void);
 extern void fl_restore_pen(void);
+extern LRESULT fl_win32_tablet_handler(MSG& msg);
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
@@ -1818,7 +1819,17 @@ content  key    keyboard layout
 
         return 0;
 
+      // case 0xc000: // WM_TABLET_QUERYSYSTEMGESTURESTATUS
+      //   if (fl_win32_tablet_handler(fl_msg))
+      //     return 0;
+      //   break;
+
+
       default:
+      { LRESULT ret = fl_win32_tablet_handler(fl_msg);
+        if (ret != -1)
+          return ret;
+      }
         if (Fl::handle(0, 0))
           return 0;
         break;
