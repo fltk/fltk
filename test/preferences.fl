@@ -7,6 +7,7 @@ i18n_gnu_function gettext
 i18n_gnu_static_function gettext_noop
 header_name {.h}
 code_name {.cxx}
+include_guard {}
 comment {About test/preferences:
 
 The preferences app shows two features of FLTK and FLUID.
@@ -184,6 +185,10 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
         }
         MenuItem {} {
           label sandals
+          callback {[](Fl_Widget*, void*)
+{
+  puts("The shoe is the sign!");
+}} selected
           xywh {0 0 100 20}
         }
         MenuItem {} {
@@ -203,7 +208,7 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
           xywh {35 112 100 24} type Radio down_box ROUND_DOWN_BOX
         }
         Fl_Round_Button wRight {
-          label {right side} selected
+          label {right side}
           xywh {35 136 100 24} type Radio down_box ROUND_DOWN_BOX
         }
         Fl_Box {} {
@@ -217,6 +222,15 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
       }
       Fl_Check_Button wShave {
         label shave
+        callback {[](Fl_Widget* w, void*)->void {
+  auto* btn = static_cast<Fl_Check_Button*>(w);
+  if (btn->value()) {
+    puts("Shave.");
+  } else {
+    puts("Don't shave.");
+  }
+}}
+        comment {// Testing lambdas for callbacks}
         xywh {25 212 105 24} down_box DOWN_BOX
       }
       Fl_Check_Button wBrush {

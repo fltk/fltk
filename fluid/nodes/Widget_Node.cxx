@@ -1499,7 +1499,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     if (strchr(c, '[') == nullptr) f.write_c("%s *%s=(%s *)0;\n", t, c, t);
     else f.write_c("%s *%s={(%s *)0};\n", t, c, t);
   }
-  if (callback() && !is_name(callback())) {
+  if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
@@ -1883,7 +1883,16 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
   const char* ud = user_data();
   if (class_name(1) && !parent->is_widget()) ud = "this";
   if (callback()) {
-    f.write_c("%s%s->callback((Fl_Callback*)%s", f.indent(), var, callback_name(f));
+    if (callback()[0] == '[') {
+      f.write_c("%s%s->callback(\n", f.indent(), var);
+      f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
+      f.write_c_indented(callback(), 1, 0);
+      f.write_c("\n");
+      f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
+      f.write_c("%s", f.indent_plus(1));
+    } else {
+      f.write_c("%s%s->callback((Fl_Callback*)%s", f.indent(), var, callback_name(f));
+    }
     if (ud)
       f.write_c(", (void*)(%s));\n", ud);
     else

@@ -329,7 +329,7 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     if (extra_code(n) && isdeclare(extra_code(n)))
       f.write_h_once("%s", extra_code(n));
   }
-  if (callback() && !is_name(callback())) {
+  if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
@@ -520,11 +520,20 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
     f.write_c(", 0, ");
   }
   if (callback()) {
-    const char* k = is_name(callback()) ? nullptr : class_name(1);
-    if (k) {
-      f.write_c(" (Fl_Callback*)%s::%s,", k, callback_name(f));
+    if (callback()[0] == '[') {
+      f.write_c("\n");
+      f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
+      f.write_c_indented(callback(), 1, 0);
+      f.write_c("\n");
+      f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
+      f.write_c("%s, ", f.indent_plus(1));
     } else {
-      f.write_c(" (Fl_Callback*)%s,", callback_name(f));
+      const char* k = is_name(callback()) ? nullptr : class_name(1);
+      if (k) {
+        f.write_c(" (Fl_Callback*)%s::%s,", k, callback_name(f));
+      } else {
+        f.write_c(" (Fl_Callback*)%s,", callback_name(f));
+      }
     }
   } else
     f.write_c(" 0,");
@@ -571,7 +580,7 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   }
 
   if (callback()) {
-    if (!is_name(callback()) && class_name(1)) {
+    if (!is_name(callback()) && (callback()[0] != '[') && class_name(1)) {
       const char* cn = callback_name(f);
       const char* ut = user_data_type() ? user_data_type() : "void*";
       f.write_public(0);

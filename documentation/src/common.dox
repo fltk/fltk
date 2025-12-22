@@ -552,11 +552,10 @@ int xyz_data;
 button->callback(xyz_callback, &xyz_data);
 \endcode
 
-\note You cannot delete a widget inside a callback, as the
-widget may still be accessed by FLTK after your callback
-is completed. Instead, use the Fl::delete_widget()
-method to mark your widget for deletion when it is safe
-to do so.
+It's also possible to use a non-capturing lambda function directly, for example:
+```
+button->callback( [](Fl_Widget*, void*) { puts("Hello"); } , nullptr );
+```
 
 Many programmers new to FLTK or C++ try to use a
 non-static class method instead of a static class method
