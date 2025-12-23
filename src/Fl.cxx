@@ -940,6 +940,7 @@ static handler_link *handlers = 0;
     Under X11, this event requires the libXrandr.so shared library to be
     loadable at run-time and the X server to implement the RandR extension.
   - \ref FL_ZOOM_EVENT events.
+  - \ref FL_APP_ACTIVATE and \ref FL_APP_DEACTIVATE events.
   - System events that FLTK does not recognize.  See fl_xevent.
   - \e Some other events when the widget FLTK selected returns
     zero from its handle() method.  Exactly which ones may change

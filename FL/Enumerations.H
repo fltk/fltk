@@ -338,7 +338,7 @@ enum Fl_Event { // events
    receive this event right before the menu appears, providing an opportunity
    to update menu item states and activation. */
   FL_BEFORE_MENU        = 29,
-  /** Sent when the application is activate an becomes topmost and focused.
+  /** Sent when the application is activated and becomes topmost and focused.
    Not supported on X11.
    \see Fl::add_handler() */
   FL_APP_ACTIVATE       = 30,
