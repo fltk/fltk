@@ -1,7 +1,7 @@
 //
-// Scheme implementation for the Fast Light Tool Kit (FLTK).
+// Fl_Scheme class implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -13,6 +13,18 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+/**
+  \file src/Fl_Scheme.cxx
+  \brief Implementation of the Fl_Scheme class.
+
+  This class is intentionally not fully documented and is subject to change
+  in future FLTK versions.
+
+  \note Do not rely on details of this class.
+
+  \since 1.4.0
+*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -41,8 +53,8 @@ int Fl_Scheme::alloc_size_     = 0;
   The list of scheme names is nul-terminated.
 
   \note
-    Currently (in FLTK 1.4.0) schemes can only be added to the list and
-    not removed from the list. This may change in a later version.
+    Currently (since FLTK 1.4.0) schemes can only be added and can't be
+    removed from the list. This may change in a later version.
 
   \return  List of currently known scheme names.
 */
@@ -68,7 +80,7 @@ const char **Fl_Scheme::names() {
 /**
   Add a scheme name to the list of known schemes.
 
-  This method is public in FLTK 1.4.0 because derived classes of Fl_Scheme
+  This method is public since FLTK 1.4.0 because derived classes of Fl_Scheme
   are not yet implemented. Thus, users implementing their own schemes can
   use this method to add the scheme name to the list of known schemes
   which is for instance used in Fl_Scheme::names().
@@ -76,7 +88,7 @@ const char **Fl_Scheme::names() {
   \note \b Attention!
     In a future version, when subclasses of Fl_Scheme will be implemented,
     this method will either be replaced by another \p protected method or
-    it will no longer do anything (kept only for ABI reasons).
+    it will no longer do anything (kept only for backwards compatibility).
 
   The new scheme name must consist of valid ASCII characters as described
   below:

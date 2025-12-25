@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,6 +32,7 @@
 #include <FL/Fl_Terminal.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Scheme.H>
 #include <FL/fl_draw.H>               // fl_text_extents()
 #include <FL/fl_string_functions.h>   // fl_strdup()
 #include <FL/fl_ask.H>                // fl_message()
@@ -468,6 +469,9 @@ int main(int argc, char** argv) {
       browser->add(t->label(), (void*)t);
     }
   }
+
+  // Set a more appropriate color average for the "plastic" scheme (since FLTK 1.5)
+  Fl_Scheme::plastic_color_average(45);
 
   mainwin->resizable(mainwin);
   mainwin->show(argc, argv);
