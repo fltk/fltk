@@ -1,7 +1,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2025 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -323,7 +323,7 @@ void Fl_Shared_Image::reload() {
 /**
  Create a resized copy of the image and wrap it into the share image class.
 
- This function is usually followed by a call to `returned_image->add() to add
+ This function is usually followed by a call to `returned_image->add()` to add
  the image to the pool, and `this->refcounter_++` to make sure that the original
  shared image keeps a reference to the copy. Don't call this function if
  an image of the given size is already in the pool.
