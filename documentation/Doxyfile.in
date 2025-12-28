@@ -229,7 +229,7 @@ TAB_SIZE               = 8
 # newlines (in the resulting output). You can put ^^ in the value part of an
 # alias to insert a newline as if a physical newline was in the original file.
 
-ALIASES                = code_international{1}="@if LATEX_SECTIONS^^@image latex \1 width=\\linewidth^^@endif^^@if HTML_SECTIONS^^@code"
+ALIASES                = code_international{1}="@if LATEX_SECTIONS^^@image latex \1 width=\linewidth^^@endif^^@if HTML_SECTIONS^^@code"
 ALIASES               += endcode_international="@endcode^^@endif"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).

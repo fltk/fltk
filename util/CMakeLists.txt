@@ -48,9 +48,9 @@ if(FLTK_BUILD_PDF_DOCS)
   # PDF documentation helper tool
   add_executable(code_snapshot
     code_snapshot.cxx
-    ../fluid/Widgets/Code_Viewer.cxx
-    ../fluid/Widgets/Code_Editor.cxx
-    ../fluid/Widgets/Style_Parser.cxx
+    ../fluid/widgets/Code_Viewer.cxx
+    ../fluid/widgets/Code_Editor.cxx
+    ../fluid/widgets/Style_Parser.cxx
   )
 
   target_link_libraries(code_snapshot PRIVATE fltk::images)

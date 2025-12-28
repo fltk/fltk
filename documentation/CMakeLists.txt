@@ -158,6 +158,8 @@ if(FLTK_BUILD_PDF_DOCS)
   set(DOXYFILE       "Doxybook")
   set(LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
 
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
   # configure Doxygen input file for PDF docs (Doxybook.in)
 
   configure_file(
