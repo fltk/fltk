@@ -20,6 +20,16 @@ are not yet implemented.
 
 \section unicode_quick_start Quick Start
 
+International code test for HTML and PDF:
+
+\code_international{"generated/unicode_about.png"}
+// This is a test
+// 日本語テストテキスト
+// 中文测试文本
+// Ελληνικό κείμενο δοκιμής
+\endcode_international
+
+
 For most applications, you simply need to ensure your text is UTF-8 encoded:
 
 \code

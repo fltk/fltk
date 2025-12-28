@@ -229,7 +229,8 @@ TAB_SIZE               = 8
 # newlines (in the resulting output). You can put ^^ in the value part of an
 # alias to insert a newline as if a physical newline was in the original file.
 
-ALIASES                =
+ALIASES                = code_international{1}="@if LATEX_SECTIONS^^@image latex \1 width=\\linewidth^^@endif^^@if HTML_SECTIONS^^@code"
+ALIASES               += endcode_international="@endcode^^@endif"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
@@ -639,7 +640,7 @@ GENERATE_DEPRECATEDLIST= YES
 # sections, marked by \if <section_label> ... \endif and \cond <section_label>
 # ... \endcond blocks.
 
-ENABLED_SECTIONS       = @DRIVER_DOCS@
+ENABLED_SECTIONS       = @DRIVER_DOCS@ @EXTRA_SECTIONS@
 
 # The MAX_INITIALIZER_LINES tag determines the maximum number of lines that the
 # initial value of a variable or macro / define can have for it to appear in the
@@ -920,7 +921,8 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = @CMAKE_CURRENT_SOURCE_DIR@/src
+IMAGE_PATH             = @CMAKE_CURRENT_SOURCE_DIR@/src \
+                         @CMAKE_CURRENT_BINARY_DIR@/generated
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

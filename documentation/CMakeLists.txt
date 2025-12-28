@@ -103,6 +103,7 @@ if(FLTK_BUILD_HTML_DOCS)
 
   set(GENERATE_HTML  YES)
   set(GENERATE_LATEX NO)
+  set(EXTRA_SECTIONS "HTML_SECTIONS")
   set(LATEX_HEADER   "")
   set(DOXYFILE       "Doxyfile")
   set(LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
@@ -152,6 +153,7 @@ if(FLTK_BUILD_PDF_DOCS)
 
   set(GENERATE_HTML  NO)
   set(GENERATE_LATEX YES)
+  set(EXTRA_SECTIONS "LATEX_SECTIONS")
   set(LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
   set(DOXYFILE       "Doxybook")
   set(LOGFILE        "${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}_error.log")
@@ -202,6 +204,7 @@ if(FLTK_BUILD_PDF_DOCS)
 
   add_custom_command(
     OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
+    COMMAND code_snapshot ${CMAKE_CURRENT_SOURCE_DIR}/src/unicode.dox
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_header
             ${DOXYGEN_EXECUTABLE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
@@ -220,6 +223,7 @@ if(FLTK_BUILD_PDF_DOCS)
   add_custom_target(pdf
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
   )
+  add_dependencies(pdf code_snapshot)
 
 endif(FLTK_BUILD_PDF_DOCS)
 

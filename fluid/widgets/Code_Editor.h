@@ -53,6 +53,7 @@ public:
   Code_Editor(int X, int Y, int W, int H, const char *L=nullptr);
   ~Code_Editor();
   void textsize(Fl_Fontsize s);
+  Fl_Fontsize textsize() const { return Fl_Text_Editor::textsize(); }
 
   /// access to protected member get_absolute_top_line_number()
   int top_line() { return get_absolute_top_line_number(); }

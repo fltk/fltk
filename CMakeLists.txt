@@ -258,6 +258,12 @@ if(FLTK_BUILD_FLTK_OPTIONS)
 endif(FLTK_BUILD_FLTK_OPTIONS)
 
 #######################################################################
+# build utilities
+#######################################################################
+
+add_subdirectory(util)
+
+#######################################################################
 # variables shared by export and install
 # export.cmake creates configuration files for direct use in a built but uninstalled FLTK
 # install.cmake creates these files for an installed FLTK
