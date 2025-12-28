@@ -86,7 +86,7 @@ public:
     NORMAL_CURSOR,    /**< I-beam */
     CARET_CURSOR,     /**< caret under the text */
     DIM_CURSOR,       /**< dim I-beam */
-    BLOCK_CURSOR,     /**< unfille box under the current character */
+    BLOCK_CURSOR,     /**< unfilled box under the current character */
     HEAVY_CURSOR,     /**< thick I-beam */
     SIMPLE_CURSOR    /**< as cursor as Fl_Input cursor */
   };

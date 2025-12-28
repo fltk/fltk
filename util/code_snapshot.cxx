@@ -24,8 +24,6 @@
 // PDF documentation instead of the code segments with UTF-8 characters.
 //
 
-#include <stdio.h>
-
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/filename.H>
@@ -37,9 +35,14 @@
 #include "../fluid/widgets/Code_Viewer.h"
 #include "../fluid/widgets/Style_Parser.h"
 
+#include <stdio.h>
+#include <algorithm>
+
+
 Fl_Window* window = nullptr;
 Fl_Group* group = nullptr;
 fld::widget::Code_Viewer* code_viewer = nullptr;
+int line_height = 10;
 
 void create_window() {
   window = new Fl_Window(1024, 100);
@@ -51,9 +54,19 @@ void create_window() {
   code_viewer->box(FL_FLAT_BOX);
   code_viewer->color(0xf7f7ff00);
   code_viewer->textsize(30);
+  //code_viewer->cursor_style(CARET_CURSOR);
 
   window->resizable(group);
   group->resizable(code_viewer);
+
+  // Make sure the display is opened.
+  Fl_Display_Device::display_device();
+
+  line_height = fl_height(code_viewer->textfont(), code_viewer->textsize());
+  line_height = std::max(line_height, fl_height(FL_COURIER, code_viewer->textsize()));
+  line_height = std::max(line_height, fl_height(FL_COURIER_BOLD, code_viewer->textsize()));
+  line_height = std::max(line_height, fl_height(FL_COURIER_ITALIC, code_viewer->textsize()));
+  line_height = std::max(line_height, fl_height(FL_COURIER_BOLD_ITALIC, code_viewer->textsize()));
 }
 
 void save_snapshot(const char* code, const char* filename)
@@ -64,7 +77,7 @@ void save_snapshot(const char* code, const char* filename)
   int n_lines = 1;
   for (const char* s=code; *s; ++s) if (*s == '\n') n_lines++;
   // 300 dpi for 7 inches = 2000 pixels
-  window->size(2100, 6 + 34*n_lines );
+  window->size(2100, (line_height * n_lines) + 18 );
 
   // Generate the Image Surface
   Fl_Image_Surface *srfc = new Fl_Image_Surface(window->w(), window->h());
