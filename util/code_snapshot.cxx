@@ -18,11 +18,20 @@
 //
 // Our documentation for the FLTK unicode contains international characters
 // to illustrate use of non ASCII characters in the GUI. To generate PDF
-// output, Doxygen uses LaTeX which can not easily handle UTF-8 characters in
+// output, Doxygen uses LaTeX which can not easily handle UTF-8 characters
 // beyond Western encoding. This tool generates PNG images from code segments
 // containing international characters so that they can be included in the
 // PDF documentation instead of the code segments with UTF-8 characters.
 //
+// Notes:
+// - This program is work in progress...
+// - The PDF generation process (CMake) calls it once for each source file
+//   that needs image generation. The loop over all commandline arguments is
+//   currently not necessary but kept for potential extensions.
+// - The program exits silently if no commandline is given.
+// - If the terminating "\endcode_international" line is missing or misspelled,
+//   the program reads the "code" until the end of the file is reached and
+//   terminates w/o error message. This could be improved...
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
@@ -54,7 +63,7 @@ void create_window() {
   code_viewer->box(FL_FLAT_BOX);
   code_viewer->color(0xf7f7ff00);
   code_viewer->textsize(30);
-  //code_viewer->cursor_style(CARET_CURSOR);
+  // code_viewer->cursor_style(CARET_CURSOR);
 
   window->resizable(group);
   group->resizable(code_viewer);
@@ -69,14 +78,13 @@ void create_window() {
   line_height = std::max(line_height, fl_height(FL_COURIER_BOLD_ITALIC, code_viewer->textsize()));
 }
 
-void save_snapshot(const char* code, const char* filename)
-{
-//  fprintf(stderr, "\\code\n%s\n\\endcode\n", code);
+void save_snapshot(const char* code, const char* filename) {
+  // fprintf(stderr, "\\code\n%s\n\\endcode\n", code);
 
   code_viewer->buffer()->text(code);
   int n_lines = 1;
   for (const char* s=code; *s; ++s) if (*s == '\n') n_lines++;
-  // 300 dpi for 7 inches = 2000 pixels
+  // 300 dpi for 7 inches = 2100 pixels
   window->size(2100, (line_height * n_lines) + 18 );
 
   // Generate the Image Surface
@@ -88,7 +96,7 @@ void save_snapshot(const char* code, const char* filename)
   fl_rect(0, 0, window->w(), window->h(), 0xccccff00);
   Fl_Image_Surface::pop_current();
 
-//  fprintf(stderr, "  Saving to \"%s\".\n", filename);
+  // fprintf(stderr, "  Saving to \"%s\".\n", filename);
 
   // Write the generated image
   Fl_RGB_Image *img = srfc->image();
@@ -102,25 +110,24 @@ void save_snapshot(const char* code, const char* filename)
 /**
   Main entry point for the PDF documentation helper tool.
 
-  The app scans the input file for the `\\code_international{"filename"}`
+  The app scans the input file for the `\code_international{"filename"}`
   directive, reads the following code segment until
-  `\\endcode_international`, and generates a PNG image file with the given
+  `\endcode_international`, and generates a PNG image file with the given
   filename containing the code segment rendered with FLTK's
   code rendering capabilities.
 
-  \param argc Argument count
-  \param argv a list of input files with documentation in Doxygen format
+  \param[in] argc Argument count
+  \param[in] argv a list of input files with documentation in Doxygen format
   \return Exit code (0 for success, non-zero for failure)
 */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   int ret = 0;
   char line[1024];
   char cwd[FL_PATH_MAX];
 
-//  fl_getcwd(cwd, FL_PATH_MAX-1);
-//  fprintf(stderr, "code_snapshot:\n");
-//  fprintf(stderr, "Working directory is \"%s\".\n", cwd);
+  // fl_getcwd(cwd, FL_PATH_MAX-1);
+  // fprintf(stderr, "code_snapshot:\n");
+  // fprintf(stderr, "Working directory is \"%s\".\n", cwd);
 
   create_window();
 
@@ -134,7 +141,7 @@ int main(int argc, char *argv[])
       break;
     }
 
-//    fprintf(stderr, "Reading \"%s\".\n", argv[i]);
+    // fprintf(stderr, "Reading \"%s\".\n", argv[i]);
 
     std::string code;
     std::string filename;
@@ -145,10 +152,11 @@ int main(int argc, char *argv[])
       if (in_code_block) {
         if (strstr(line, "\\endcode_international")) {
           if (!code.empty()) {
-            code.resize( code.size()-1 );
+            code.resize(code.size() - 1);
             save_snapshot(code.c_str(), filename.c_str());
           }
           in_code_block = false;
+          code = "";
         } else {
           code += line;
         }

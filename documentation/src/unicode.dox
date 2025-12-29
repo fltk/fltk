@@ -22,7 +22,7 @@ are not yet implemented.
 
 International code test for HTML and PDF:
 
-\code_international{"generated/unicode_about.png"}
+\code_international{"unicode_about.png"}
 // This is a test
 // 日本語テストテキスト
 // 中文测试文本
@@ -70,11 +70,11 @@ doesn't break legacy ASCII code.
 Functions to check and analyze UTF-8 text:
 
 fl_utf8test() - Check if a string contains valid UTF-8
-\code
+\code_international{"unicode_hello.png"}
 const char* text = "Hello 世界";
 int result = fl_utf8test(text, strlen(text));
 // Returns: 0=invalid, 1=ASCII, 2=2-byte chars, 3=3-byte chars, 4=4-byte chars
-\endcode
+\endcode_international
 
 fl_utf8len() - Get the length in bytes of a UTF-8 octet
 \code

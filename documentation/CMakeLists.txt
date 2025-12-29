@@ -202,11 +202,42 @@ if(FLTK_BUILD_PDF_DOCS)
     @ONLY
   )
 
-  # generate fltk.pdf
+  # Generate code snapshots (images with international characters).
+  # Note: File names (even from different folders) must be unique !
+
+  set(image_output_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+  set(_deps)
+  set(image_input_sources
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/unicode.dox
+      # ${CMAKE_CURRENT_SOURCE_DIR}/src/cmp.dox
+      # ${FLTK_SOURCE_DIR}/src/Fl.cxx # example source file
+  )
+
+  # Generate one custom command and one timestamp per input file
+  # so dependencies can be used to generate the images only if
+  # the source file was changes.
+  # Variable `_deps` is used to make the final PDF generation
+  # depend on all input files.
+
+  foreach(_infile ${image_input_sources})
+    get_filename_component(_name "${_infile}" NAME)
+    set(_timestamp ${image_output_dir}/${_name}.timestamp)
+    list(APPEND _deps ${_timestamp})
+    # create custom command
+    add_custom_command(
+      OUTPUT  ${_timestamp}
+      COMMAND touch ${_timestamp}
+      COMMAND code_snapshot ${_infile}
+      DEPENDS ${_infile}
+      WORKING_DIRECTORY ${image_output_dir}
+      COMMENT "Generating code snapshots (PNG) from '${_infile}'"
+    )
+  endforeach()
+
+  # Now generate the PDF file (fltk.pdf)
 
   add_custom_command(
     OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
-    COMMAND code_snapshot ${CMAKE_CURRENT_SOURCE_DIR}/src/unicode.dox
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_header
             ${DOXYGEN_EXECUTABLE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
@@ -214,8 +245,11 @@ if(FLTK_BUILD_PDF_DOCS)
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_pdf
     COMMAND cp -f latex/refman.pdf fltk.pdf
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
+            ${_deps} # source files processed to generate PNG's
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating PDF documentation" VERBATIM
   )
