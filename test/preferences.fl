@@ -186,9 +186,11 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
         MenuItem {} {
           label sandals
           callback {[](Fl_Widget*, void*)
+/* If this code generates an error, you are using an older version of Fluid */
+/* Support for lambda callbacks was added dec 12 2025 */
 {
   puts("The shoe is the sign!");
-}} selected
+}}
           xywh {0 0 100 20}
         }
         MenuItem {} {
@@ -223,6 +225,8 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
       Fl_Check_Button wShave {
         label shave
         callback {[](Fl_Widget* w, void*)->void {
+/* If this code generates an error, you are using an older version of Fluid */
+/* Support for lambda callbacks was added dec 12 2025 */
   auto* btn = static_cast<Fl_Check_Button*>(w);
   if (btn->value()) {
     puts("Shave.");
@@ -230,7 +234,7 @@ Fl_Input::paste_menu_text = gettext("Paste");} {}
     puts("Don't shave.");
   }
 }}
-        comment {// Testing lambdas for callbacks}
+        comment {// Testing lambdas for callbacks} selected
         xywh {25 212 105 24} down_box DOWN_BOX
       }
       Fl_Check_Button wBrush {

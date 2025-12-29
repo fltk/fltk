@@ -49,6 +49,22 @@ Fl_Pack::Fl_Pack(int X, int Y, int W, int H, const char *L)
   // type(VERTICAL); // already set like this
 }
 
+/** Draw a rectangular area as a background filler.
+  If the box type has a background (is not a frame), this will clip to the
+  rectangular area and draw the box. Otherwise, it will draw a rectangle
+  in widget color.
+  \param[in] rect fill this rectangle inside the widget bounds
+ */
+void Fl_Pack::draw_filler_(const Fl_Rect& rect) {
+  if (Fl::box_bg(box())) {
+    fl_push_clip(rect.x(), rect.y(), rect.w(), rect.h());
+    draw_box();
+    fl_pop_clip();
+  } else {
+    fl_rectf(rect.x(), rect.y(), rect.w(), rect.h(), color());
+  }
+}
+
 void Fl_Pack::draw() {
   int tx = x()+Fl::box_dx(box());
   int ty = y()+Fl::box_dy(box());
@@ -102,11 +118,10 @@ void Fl_Pack::draw() {
       }
       if (spacing_ && current_position>maximum_position && box() &&
         (X != o->x() || Y != o->y() || d&FL_DAMAGE_ALL)) {
-        fl_color(color());
         if (horizontal())
-          fl_rectf(maximum_position, ty, spacing_, th);
+          draw_filler_( { maximum_position, ty, spacing_, th } );
         else
-          fl_rectf(tx, maximum_position, tw, spacing_);
+          draw_filler_( { tx, maximum_position, tw, spacing_ } );
       }
       if (X != o->x() || Y != o->y() || W != o->w() || H != o->h()) {
         o->resize(X,Y,W,H);
@@ -132,14 +147,12 @@ void Fl_Pack::draw() {
 
   if (horizontal()) {
     if (maximum_position < tx+tw && box()) {
-      fl_color(color());
-      fl_rectf(maximum_position, ty, tx+tw-maximum_position, th);
+      draw_filler_( { maximum_position, ty, tx+tw-maximum_position, th } );
     }
     tw = maximum_position-tx;
   } else {
     if (maximum_position < ty+th && box()) {
-      fl_color(color());
-      fl_rectf(tx, maximum_position, tw, ty+th-maximum_position);
+      draw_filler_( { tx, maximum_position, tw, ty+th-maximum_position } );
     }
     th = maximum_position-ty;
   }
@@ -153,7 +166,13 @@ void Fl_Pack::draw() {
     d = FL_DAMAGE_ALL;
   }
   if (d&FL_DAMAGE_ALL) {
-    draw_box();
+    if (Fl::box_bg(box())) {
+      // Make sure that we only draw the frame part, because the children
+      // and fillers are already rendered at this point.
+      draw_box(fl_frame(box()), x(), y(), w(), h(), color());
+    } else {
+      draw_box();
+    }
     draw_label();
   }
 }
