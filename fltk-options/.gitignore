@@ -1,7 +1,6 @@
 #
 # Files to be ignored by Git (do not commit)
 #
-
-fltk-options
-fltk-options-shared
-fltk-options.app
+# Note: since FLTK 1.5 building FLTK in-source is no longer allowed.
+#   Therefore we don't need to "ignore" generated files anymore
+#   because generated files are stored in the build tree.

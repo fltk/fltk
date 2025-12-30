@@ -10,6 +10,7 @@
 *.log
 *.o
 **/.DS_Store
+TAGS
 
 # CMake build artifacts if built in source - forbidden since FLTK 1.5.0.
 # However, the following artifacts would be created by an attempt to
@@ -18,15 +19,14 @@
 **/CMakeCache.txt
 **/CMakeFiles/
 
-# VS Code (Visual Studio Code) Editor is a user generated folder
-# that must not be committed
+# VS Code (Visual Studio Code) Editor is a frequently used editor whose
+# configuration is stored in '.vscode' folders
 
 .vscode/
 
-# default build folder `build` and more ...
+# default build folder `build` and some more special files ...
 
 /build
-/TAGS
 
 # /FL - this should not happen, but anyway ...
 

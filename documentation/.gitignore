@@ -4,8 +4,3 @@
 # Note: since FLTK 1.5 building FLTK in-source is no longer allowed.
 #   Therefore we don't need to "ignore" generated files anymore
 #   because generated files are stored in the build tree.
-
-# /documentation/
-*.bck
-*.bak
-*.log
