@@ -49,7 +49,7 @@ FLTK 1.3 and later is officially supported on Windows (2000,) 2003,
 XP, and later.  Older Windows versions are not officially supported,
 but may still work.  The main reason is that the OS version needs
 to support UTF-8. FLTK 1.3 is known to work on Windows Vista, Windows 7,
-Windows 8/8.1, and Windows 10.
+Windows 8/8.1, Windows 10, and Windows 11.
 
 FLTK 1.4 and later versions may require Windows 10 or later.
 
