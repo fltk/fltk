@@ -28,7 +28,7 @@
   all FLTK widgets. It contains only static methods.
 
   \image html tooltip-options.png "Fl_Tooltip Options"
-  \image latex src/tooltip-options.png "Fl_Tooltip Options" width=6cm
+  \image latex tooltip-options.png "Fl_Tooltip Options" width=10cm
 
 */
 class FL_EXPORT Fl_Tooltip {

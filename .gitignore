@@ -4,54 +4,36 @@
 
 # Ignore everywhere, also in subdirectories
 
+*.bak
 *.bck
 *.exe
+*.log
 *.o
 **/.DS_Store
 
-# CMake build artifacts if built in source - strongly discouraged!
-# We may disallow this later...
+# CMake build artifacts if built in source - forbidden since FLTK 1.5.0.
+# However, the following artifacts would be created by an attempt to
+# execute `cmake` in-source:
 
-bin/
-**/cmake_install.cmake
 **/CMakeCache.txt
 **/CMakeFiles/
-cmake_uninstall.cmake
-FLTK.sln
-FLTK-Targets.cmake
-FLTKConfig.cmake
-etc/FLTKConfig.cmake
-/CMakeSettings.json
-/CppProperties.json
 
-# Visual Studio (MSVC) build artifacts
-
-*.tlog
-.vs/
-/out
-
-# VS Code (Visual Studio Code) Editor
+# VS Code (Visual Studio Code) Editor is a user generated folder
+# that must not be committed
 
 .vscode/
 
-# /
+# default build folder `build` and more ...
 
 /build
-/fltk-config
-/fltk.list
-/fltk.spec
 /TAGS
 
-# /FL
+# /FL - this should not happen, but anyway ...
 
 /FL/fl_config.h
 
-# /lib/
-
-/lib/lib*
-/lib/*.lib
-/lib/*.a
-
-# /misc/
+# executables manually built in /misc/
+# todo: maybe move the source files to folder /util/ ?
 
 /misc/doxystar
+/misc/fromdos

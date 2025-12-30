@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build docs for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2025 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -191,7 +191,7 @@ if(FLTK_BUILD_PDF_DOCS)
   # generate LaTeX title fltk-title.tex and make_pdf script
 
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/fltk-title.tex.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/fltk-title.tex.in
     ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
     @ONLY
   )
@@ -209,8 +209,8 @@ if(FLTK_BUILD_PDF_DOCS)
   set(_deps)
   set(image_input_sources
       ${CMAKE_CURRENT_SOURCE_DIR}/src/unicode.dox
-      # ${CMAKE_CURRENT_SOURCE_DIR}/src/cmp.dox
-      # ${FLTK_SOURCE_DIR}/src/Fl.cxx # example source file
+      # ${CMAKE_CURRENT_SOURCE_DIR}/src/cmp.dox   # more documentation files
+      # ${FLTK_SOURCE_DIR}/src/Fl.cxx             # example source file
   )
 
   # Generate one custom command and one timestamp per input file
