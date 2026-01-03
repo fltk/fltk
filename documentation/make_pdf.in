@@ -2,7 +2,7 @@
 #
 # Makefile helper script for the Fast Light Tool Kit (FLTK) documentation.
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -32,15 +32,19 @@ run_pdflatex() {
 }
 
 ( cd latex
+  echo "--- make_pdf --- `date` -   Running pdflatex ..."
   run_pdflatex
+  echo "--- make_pdf --- `date` -   Running makeindex ..."
   makeindex refman.idx
+  echo "--- make_pdf --- `date` -   Running pdflatex ..."
   run_pdflatex
   latex_count=5
   while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log \
 	  && [ $latex_count -gt 0 ]
     do
-      echo "Rerunning pdflatex ..."
+      echo "--- make_pdf --- `date` - Rerunning pdflatex, count = $latex_count ..."
       run_pdflatex
       latex_count=`expr $latex_count - 1`
     done
+    echo "--- make_pdf --- `date` - Done, count = $latex_count."
   cd ..) > pdfall.log 2>&1
