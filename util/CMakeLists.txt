@@ -24,8 +24,10 @@
 # cmap - colormap generation program
 #######################################################################
 
-# This program produces the contents of "fl_cmap.h"
-# It's used during the build process to generate src/fl_cmap.h
+# This program produces the contents of "src/fl_cmap.h".
+# It can be used to modify the built-in colormap in src/fl_cmap.h.
+# This utility must be built and executed manually. See instructions
+# in util/cmap.cxx .
 
 add_executable(cmap cmap.cxx)
 
@@ -72,5 +74,5 @@ endif(FLTK_BUILD_PDF_DOCS)
 # Install rules (if any tools need to be installed)
 #######################################################################
 
-# Currently no utilities are installed as they are build-time tools only
-# If you need to install any utilities, add install() commands here
+# Currently no utilities are installed as they are build-time tools only.
+# If you need to install any utilities, add install() commands here.
