@@ -20,13 +20,12 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "../../Fl_Screen_Driver.H"
-
+#include <math.h>
 #include <windows.h>
 #include <ole2.h>
 #include <shellapi.h>
 // Some versions of MinGW now require us to explicitly include winerror to get S_OK defined
 #include <winerror.h>
-
 
 extern Fl_Window *fl_xmousewin;
 
@@ -500,5 +499,3 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
   // want mouse events anymore!
   return 0;
 }
-
-
