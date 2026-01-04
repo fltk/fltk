@@ -458,18 +458,19 @@ option(FLTK_BUILD_SHARED_LIBS
 
 #######################################################################
 
-option(FLTK_OPTION_PRINT_SUPPORT      "allow print support"        ON)
-option(FLTK_OPTION_FILESYSTEM_SUPPORT "allow file system support"  ON)
+option(FLTK_OPTION_PRINT_SUPPORT      "allow print support"          ON)
+option(FLTK_OPTION_FILESYSTEM_SUPPORT "allow file system support"    ON)
 
-option(FLTK_BUILD_FORMS        "Build forms compatibility library" OFF)
-option(FLTK_BUILD_FLUID        "Build FLUID"                       ON)
-option(FLTK_BUILD_FLTK_OPTIONS "Build fltk-options"                ON)
-option(FLTK_BUILD_EXAMPLES     "Build example programs"            OFF)
+option(FLTK_BUILD_FORMS        "Build forms compatibility library"   OFF)
+option(FLTK_BUILD_FLUID        "Build FLUID"                         ON)
+option(FLTK_BUILD_FLTK_OPTIONS "Build fltk-options"                  ON)
+option(FLTK_BUILD_EXAMPLES     "Build example programs"              OFF)
+option(FLTK_BUILD_SCREENSHOTS  "Build screenshot programs for docs"  OFF)
 
 if(FLTK_IS_TOPLEVEL)
-  option(FLTK_BUILD_TEST       "Build test/demo programs"          ON)
+  option(FLTK_BUILD_TEST       "Build test/demo programs"            ON)
 else()
-  option(FLTK_BUILD_TEST       "Build test/demo programs"          OFF)
+  option(FLTK_BUILD_TEST       "Build test/demo programs"            OFF)
 endif()
 
 if(FLTK_BUILD_FORMS)

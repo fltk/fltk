@@ -232,6 +232,11 @@ FLTK_BUILD_GL - default ON
     Build the OpenGL support library fltk_gl (fltk::gl) and enable OpenGL
     support in user programs using fltk_gl.
 
+FLTK_BUILD_SCREENSHOTS - default OFF
+    Build the programs in the "screenshots" directory for developers
+    who want to create or modify screenshots for documentation.
+    Please see 'screenshots/README.txt' for details and instructions.
+
 FLTK_BUILD_SHARED_LIBS - default OFF
     Normally FLTK is built as static libraries which makes more portable
     binaries. If you want to use shared libraries, setting this option ON

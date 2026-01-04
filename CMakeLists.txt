@@ -282,13 +282,23 @@ include(CMake/export.cmake)
 # options to build test/demo and example programs
 #######################################################################
 
+# general test programs for FLTK development
+
 if(FLTK_BUILD_TEST)
   add_subdirectory(test)
 endif(FLTK_BUILD_TEST)
 
+# example programs for FLTK users
+
 if(FLTK_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif(FLTK_BUILD_EXAMPLES)
+
+# screenshot programs for FLTK developers
+
+if(FLTK_BUILD_SCREENSHOTS)
+  add_subdirectory(screenshots)
+endif(FLTK_BUILD_SCREENSHOTS)
 
 #######################################################################
 # Create and install version config file 'FLTKConfigVersion.cmake'
