@@ -23,6 +23,7 @@
 #ifndef FL_WINAPI_WINDOW_DRIVER_H
 #define FL_WINAPI_WINDOW_DRIVER_H
 
+#include <FL/Fl_Plugin.H>
 #include "../../Fl_Window_Driver.H"
 #include <windows.h>
 
@@ -71,11 +72,6 @@ public:
   struct icon_data *icon_;
   HCURSOR cursor;
   int custom_cursor;
-  struct type_for_resize_window_between_screens {
-    int screen;
-    bool busy;
-  };
-  static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
   void set_minmax(LPMINMAXINFO minmax);
   int fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by, DWORD style = 0, DWORD styleEx = 0);
   void make_fullscreen(int X, int Y, int W, int H);
@@ -120,7 +116,15 @@ public:
   void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
   int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                      void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
-  static void resize_after_screen_change(void *data);
+};
+
+
+class Fl_WinAPI_Plugin : public Fl_Plugin {
+public:
+  Fl_WinAPI_Plugin(const char *pluginName)  : Fl_Plugin(klass(), pluginName) { }
+  virtual const char *klass() { return "winapi.fltk.org"; }
+  virtual const char *name() = 0;
+  virtual void invalidate(Fl_Window*) = 0;
 };
 
 
