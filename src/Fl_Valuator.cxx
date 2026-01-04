@@ -1,7 +1,7 @@
 //
 // Valuator widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -175,7 +175,7 @@ int Fl_Valuator::format(char* buffer) {
   int i, c = 0;
   char temp[32];
   // output a number with many digits after the decimal point. This
-  // seems to be needed to get high precission
+  // seems to be needed to get high precision
   snprintf(temp, sizeof(temp), "%.12f", A/B);
   // strip all trailing 0's
   for (i=(int) strlen(temp)-1; i>0; i--) {
@@ -189,4 +189,17 @@ int Fl_Valuator::format(char* buffer) {
 
   // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
   return snprintf(buffer, 128, "%.*f", c, v);
+}
+
+/**
+  \brief C++11 API for Fl_Valuator::format(char* buffer).
+  Users can override either version to change the format of the text output
+  in the valuator.
+  \return the formatted text of the current value
+  \see Fl_Valuator::format(char* buffer)
+ */
+std::string Fl_Valuator::format_str() {
+  char buffer[129];
+  int size = format(buffer);
+  return std::string(buffer, size);
 }

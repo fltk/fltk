@@ -1,7 +1,7 @@
 //
 // Value output widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,11 +34,10 @@ void Fl_Value_Output::draw() {
     fl_color(color());
     fl_rectf(X, Y, W, H);
   }
-  char buf[128];
-  format(buf);
+  std::string buf = format_str();
   fl_color(active_r() ? textcolor() : fl_inactive(textcolor()));
   fl_font(textfont(), textsize());
-  fl_draw(buf,X,Y,W,H,FL_ALIGN_LEFT);
+  fl_draw(buf.c_str(),X,Y,W,H,FL_ALIGN_LEFT);
 }
 
 int Fl_Value_Output::handle(int event) {

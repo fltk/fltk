@@ -1,7 +1,7 @@
 //
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,6 +29,8 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Value_Input.H>
+
+#include <string>
 
 #ifndef FL_DOXYGEN
 
@@ -60,6 +62,7 @@ public:
 class FL_EXPORT Flcc_Value_Input : public Fl_Value_Input {
 public:
   int format(char*) override;
+  std::string format_str() override;
   Flcc_Value_Input(int X, int Y, int W, int H) : Fl_Value_Input(X,Y,W,H) {}
 };
 

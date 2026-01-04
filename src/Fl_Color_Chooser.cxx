@@ -1,7 +1,7 @@
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,6 +32,7 @@
 // The "hue box" can be a circle or rectilinear.
 // You get a circle by defining this:
 #define CIRCLE 1
+
 // And the "hue box" can auto-update when the value changes
 // you get this by defining this:
 #define UPDATE_HUE_BOX 1
@@ -98,11 +99,21 @@ static const Fl_Menu_Item mode_menu[] = {
 };
 
 #ifndef FL_DOXYGEN
+
 int Flcc_Value_Input::format(char* buf) {
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
   if (c->mode() == M_HEX) return snprintf(buf, 5,"0x%02X", int(value()));
   else return Fl_Valuator::format(buf);
 }
+
+// Note: although Flcc_Value_Input is marked private in the header files,
+// it nevertheless is publicly accessible, so implement this here just in case.
+std::string Flcc_Value_Input::format_str() {
+  char buffer[129];
+  int size = format(buffer);
+  return std::string(buffer, size);
+}
+
 #endif // !FL_DOXYGEN
 
 void Fl_Color_Chooser::set_valuators() {

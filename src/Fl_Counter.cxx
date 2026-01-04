@@ -1,7 +1,7 @@
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -102,8 +102,8 @@ void Fl_Counter::draw() {
   draw_box(tbt, tx, y(), tw, h(), FL_BACKGROUND2_COLOR);
   fl_font(textfont(), textsize());
   fl_color(active_r() ? textcolor() : fl_inactive(textcolor()));
-  char str[128]; format(str);
-  fl_draw(str, tx, y(), tw, h(), FL_ALIGN_CENTER);
+  std::string str = format_str();
+  fl_draw(str.c_str(), tx, y(), tw, h(), FL_ALIGN_CENTER);
   if (Fl::focus() == this) draw_focus(tbt, tx, y(), tw, h());
   if (!(damage()&FL_DAMAGE_ALL)) return; // only need to redraw text
 

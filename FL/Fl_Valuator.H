@@ -1,7 +1,7 @@
 //
 // Valuator header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,8 @@
 #ifndef Fl_Widget_H
 #include "Fl_Widget.H"
 #endif
+
+#include <string>
 
 // shared type() values for classes that work in both directions:
 #define FL_VERTICAL             0 ///< The valuator can work vertically
@@ -126,6 +128,7 @@ public:
   int value(double);
 
   virtual int format(char*);
+  virtual std::string format_str();
   double round(double); // round to nearest multiple of step
   double clamp(double); // keep in range
   double increment(double, int); // add n*step to value
