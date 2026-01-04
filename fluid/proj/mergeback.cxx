@@ -613,14 +613,15 @@ int Mergeback::merge_back(const std::string &s, const std::string &p, Task task)
  files with the project file. If MergeBack is not enabled, it displays
  a message to the user. It handles both batch and interactive modes.
 
- \return int - Returns 1 if the project filename is not available,
-               0 if MergeBack is not enabled,
-               or the result of the merge_back function.
+ \return 2 if mergeback is called recursively
+ \return 1 if the project filename is not available
+ \return 0 if MergeBack is not enabled, or the result of the merge_back function.
+ \see Mergeback::merge_back(const std::string &s, const std::string &p, Task task)
  */
 int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
 {
   static bool recursion_lock = false;
-  if (recursion_lock) return;
+  if (recursion_lock) return 2;
   recursion_lock = true;
 
   Fluid.flush_text_widgets();
