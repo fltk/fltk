@@ -86,29 +86,29 @@ enum class State {
 struct Menu_State
 {
   // menu item under the mouse pinter or selected by keyboard, or nullptr
-  const Fl_Menu_Item* current_item { nullptr };
+  const Fl_Menu_Item* current_item = nullptr;
 
   // index of the menu window that contains the current_item
-  menu_index_t current_menu_ix { 0 };
+  menu_index_t current_menu_ix = 0;
 
   // index of current_item within the menu window indicated by menu_number, -1 if none
-  item_index_t current_item_ix { -1 };
+  item_index_t current_item_ix = -1;
 
   // pointers to open menu windows
   Menu_Window* menu_window[20] { nullptr };
 
   // number of open menuwindows
-  menu_index_t num_menus { 0 };
+  menu_index_t num_menus = 0;
 
   // if true, pulldown is initiated by a menubar, and menu_window[0] holds the
   // horizontally arranged level 0 menu item list
-  bool in_menubar { false };
+  bool in_menubar = false;
 
   // State::INIT, etc. See above
-  State state { State::INIT };
+  State state = State::INIT;
 
   // simulate a button in the top level of a menubar
-  Menu_Window* menubar_button_helper { nullptr };
+  Menu_Window* menubar_button_helper = nullptr;
 
   // check if mouse coordinates are inside any of the menu windows
   bool is_inside(int mx, int my);
@@ -1506,6 +1506,10 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     pp.menu_window[pp.current_menu_ix]->autoscroll(pp.current_item_ix);
 
   STARTUP:
+    if (pp.current_menu_ix < 0 || pp.current_menu_ix >= pp.num_menus) {
+      initial_item = 0; // turn off startup code
+      continue;
+    }
     Menu_Window& cw = *pp.menu_window[pp.current_menu_ix];
     const Fl_Menu_Item* m = pp.current_item;
     if (!m || !m->selectable()) { // pointing at inactive item
