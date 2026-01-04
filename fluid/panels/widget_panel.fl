@@ -27,9 +27,6 @@ comment {//
 } {uid 901f in_source in_header
 }
 
-decl {\#include <stdlib.h>    // free()} {uid 053c private global
-}
-
 decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {uid c26d public global
 }
 
@@ -84,6 +81,12 @@ decl {\#include <FL/Fl_File_Chooser.H>} {uid 2160 private global
 decl {\#include <ctype.h>} {uid 43de private global
 }
 
+decl {\#include <stdlib.h>    // free()} {uid 053c private global
+}
+
+decl {\#include <functional>    // std::function} {uid 29a1 private global
+}
+
 decl {\#define ZERO_ENTRY 1000} {uid e18b private global
 }
 
@@ -110,6 +113,38 @@ Function {use_tab_navigation(int, Fl_Text_Editor*)} {uid 42b9
   comment {Allow widget navigation on text fields with Tab.} private return_type int
 } {
   code {return 0;} {uid 9a10
+  }
+}
+
+Function {update_current(Fl_Input* o, void *v,
+  std::function<std::string()> getter,
+  std::function<void(std::string)> setter)} {uid a6e0 open private return_type void
+} {
+  code {if (v == LOAD) {
+  o->value( getter().c_str() );
+} else {
+  std::string v = o->value();
+  if (v != getter()) {
+    setter(v);
+    Fluid.proj.set_modflag(1);
+  }
+}} {uid e438
+  }
+}
+
+Function {update_current(Fl_Text_Editor* o, void *v,
+  std::function<std::string()> getter,
+  std::function<void(std::string)> setter)} {uid 7c05 open private return_type void
+} {
+  code {if (v == LOAD) {
+  o->buffer()->text( getter().c_str() );
+} else {
+  std::string v = o->buffer()->text();
+  if (v != getter()) {
+    setter(v);
+    Fluid.proj.set_modflag(1);
+  }
+}} {uid c364
   }
 }
 
@@ -484,7 +519,7 @@ Function {make_widget_panel()} {uid 9310
 } {
   Fl_Window {} {uid 30ee
     comment {Use a Double Window to avoid flickering.} open
-    xywh {485 255 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {406 252 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Wizard tabs_wizard {uid 647f
@@ -493,7 +528,7 @@ Function {make_widget_panel()} {uid 9310
     } {
       Fl_Tabs widget_tabs {uid ce20
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);}
+  propagate_load((Fl_Group *)o,v);} selected
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
@@ -2746,21 +2781,11 @@ if (v == LOAD) {
             label {Filename:}
             callback {if (!current_node || !current_node->is_a(Type::Data)) return;
 Data_Node* nd = (Data_Node*)current_node;
-
-if (v == LOAD) {
-  const char *fn = nd->filename();
-  o->value( fn ? fn : "" );
-} else {
-  const char *c = o->value();
-  const char *fn = nd->filename();
-  if (   ( fn && (strcmp(fn, c) != 0))
-      || (!fn && (strcmp("", c) != 0)) )
-  {
-    nd->filename(c);
-    Fluid.proj.set_modflag(1);
-  }
-}}
-            tooltip {name and path of file that will be inlined} xywh {95 125 270 20} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11
+update_current(o, v,
+  [nd](){return nd->filename();},
+  [nd](std::string s){nd->filename(s);}
+);}
+            tooltip {name and path of file that will be inlined} xywh {95 125 270 20} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11 resizable
           }
           Fl_Button {} {uid a0fe
             label {@fileopen}
@@ -2799,7 +2824,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-            xywh {95 150 310 105} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+            xywh {95 150 310 105} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
           }
@@ -3171,15 +3196,10 @@ if (v == LOAD) {
             label {End Code:}
             callback {if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
- if (v == LOAD) {
-  o->value( nd->end_code().c_str() );
-} else {
-  std::string v = o->value();
-  if (v != nd->end_code()) {
-    nd->end_code( v );
-    Fluid.proj.set_modflag(1);
-  }
-}}
+update_current(o, v,
+  [nd](){return nd->end_code();},
+  [nd](std::string s){nd->end_code(s);}
+);}
             tooltip {`\#endif` or similar declaration code block} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
           Fl_Group {} {uid 9b63
