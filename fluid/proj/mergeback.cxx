@@ -685,9 +685,14 @@ void mergeback_on_load() {
   mergeback_code_files(Fluid.proj, Mergeback::QUIET);
 }
 
+static void deferred_mergeback_handler(void*) {
+  Fl::remove_idle(deferred_mergeback_handler);
+  mergeback_code_files(Fluid.proj, Mergeback::QUIET);
+}
+
 static int app_event_handler(int event) {
   if (event == FL_APP_ACTIVATE) {
-    mergeback_code_files(Fluid.proj, Mergeback::QUIET);
+    Fl::add_idle(deferred_mergeback_handler, nullptr);
   }
   return 0;
 }
