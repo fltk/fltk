@@ -208,8 +208,9 @@ public:
     STATIC_IN_HEADER = 4,
     STATIC_IN_SOURCE = 8
   };
+
 private:
-  const char* after { nullptr };      ///< code after all children of this block
+  std::string end_code_;                 ///< code after all children of this block
   int write_map_ { CODE_IN_SOURCE };  ///< see enum above
 
 public:
@@ -229,8 +230,8 @@ public:
   int is_public() const override;
   Type type() const override { return Type::DeclBlock; }
   bool is_a(Type inType) const override { return (inType==Type::DeclBlock) ? true : super::is_a(inType); }
-  const char *end_code() { return after; }
-  void end_code(const char *c) { storestring(c, after); }
+  std::string end_code() { return end_code_; }
+  void end_code(const std::string& p) { storestring(p, end_code_); }
   int write_map() { return write_map_; }
   void write_map(int v) { write_map_ = v; }
 };
@@ -242,6 +243,7 @@ class Comment_Node : public Node
 public:
   typedef Node super;
   static Comment_Node prototype;
+
 private:
   char in_c_, in_h_, style_;
 
@@ -270,17 +272,18 @@ class Class_Node : public Node
 public:
   typedef Node super;
   static Class_Node prototype;
+
 private:
   std::string base_class_;
   std::string prefix_;
   char public_;
+
 public:
   Class_Node();
   ~Class_Node();
   // state variables for output:
   char write_public_state; // true when public: has been printed
   Class_Node* parent_class; // save class if nested
-//
   Node *make(Strategy strategy) override;
   void write_code1(fld::io::Code_Writer& f) override;
   void write_code2(fld::io::Code_Writer& f) override;

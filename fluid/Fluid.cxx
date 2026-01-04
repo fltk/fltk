@@ -234,6 +234,7 @@ int Application::run(int argc,char **argv) {
   }
 #endif
 
+  start_auto_mergeback();
   Fl::run();
 
   proj.undo.clear();
@@ -507,7 +508,9 @@ bool Application::open_project_file(const std::string &filename_arg) {
 
   // clear the project and merge a file by the given name
   new_project(false);
-  return merge_project_file(new_filename);
+  bool success = merge_project_file(new_filename);
+  if (success) mergeback_on_load();
+  return success;
 }
 
 

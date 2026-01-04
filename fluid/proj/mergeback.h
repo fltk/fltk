@@ -35,13 +35,14 @@ namespace proj {
  */
 class Mergeback
 {
-  public:
+public:
   enum class Tag {
     GENERIC = 0, CODE, MENU_CALLBACK, WIDGET_CALLBACK, UNUSED_
   };
   enum class Task {
     ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE = 3
   };
+  enum Feedback { QUIET = 0, CHATTY = 1 };
 protected:
   /// Apply mergeback for this project.
   Project &proj_;
@@ -87,6 +88,9 @@ extern int merge_back(const std::string &s, const std::string &p, int task);
 
 } // namespace proj
 } // namespace fld
+
+extern void start_auto_mergeback();
+extern void mergeback_on_load();
 
 #endif // FLUID_PROJ_MERGEBACK_H
 
