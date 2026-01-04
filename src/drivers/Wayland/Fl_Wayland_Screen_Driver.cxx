@@ -1368,24 +1368,38 @@ static const struct wl_registry_listener registry_listener = {
 extern int fl_send_system_handlers(void *);
 
 
-static void wayland_socket_callback(int fd, struct wl_display *display) {
+static void wayland_socket_callback(int fd, struct wl_display *display)
+{
   if (fl_send_system_handlers(NULL)) return;
-  struct pollfd fds = (struct pollfd) { fd, POLLIN, 0 };
-  do {
-    if (wl_display_dispatch(display) == -1) {
-      int err = wl_display_get_error(display);
-      if (err == EPROTO) {
-        const struct wl_interface *interface;
-        int code = wl_display_get_protocol_error(display, &interface, NULL);
-        Fl::fatal("Fatal error no %d in Wayland protocol: %s", code,
-                  (interface ? interface->name : "unknown") );
-      } else {
-        Fl::fatal("Fatal error while communicating with the Wayland server: %s",
-                  strerror(errno));
-      }
-    }
+  if (wl_display_prepare_read(display) == -1) {
+    wl_display_dispatch_pending(display);
+    return;
   }
-  while (poll(&fds, 1, 0) > 0);
+  wl_display_flush(display);
+  struct pollfd fds = (struct pollfd) { fd, POLLIN, 0 };
+  if (poll(&fds, 1, 0) <= 0) {
+    wl_display_cancel_read(display);
+    return;
+  }
+  if (fds.revents & (POLLERR | POLLHUP)) {
+    wl_display_cancel_read(display);
+    goto fatal;
+  }
+  if (wl_display_read_events(display) == -1)
+    goto fatal;
+  if (wl_display_dispatch_pending(display) == -1)
+    goto fatal;
+  return;
+fatal:
+  if (wl_display_get_error(display) == EPROTO) {
+    const struct wl_interface *interface;
+    int code = wl_display_get_protocol_error(display, &interface, NULL);
+    Fl::fatal("Fatal error %d in Wayland protocol: %s",
+              code, (interface ? interface->name : "unknown") );
+  } else {
+    Fl::fatal("Fatal error while communicating with Wayland server: %s",
+              strerror(errno));
+  }
 }
 
 
