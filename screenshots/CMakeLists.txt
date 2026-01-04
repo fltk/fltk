@@ -18,12 +18,12 @@
 # Screenshot programs for FLTK documentation
 ########################################################################
 
-# The programs in this subdirectory are intended to be used by
+# The programs in this subdirectory are intended to be used by FLTK
 # developers to create screenshots for our Doxygen documentation.
 # See README.txt for more info.
 
 # These programs are not "installed" on target systems, they are only
-# built in the FLTK build tree.
+# built in the FLTK build tree (if FLTK_BUILD_SCREENSHOTS=ON).
 
 ########################################################################
 # Define a list of programs that will be built w/o extension.
@@ -61,7 +61,7 @@ foreach(_prog ${NAMES})
 
   set_target_properties(${_target} PROPERTIES
     OUTPUT_NAME ${_target}
-    EXCLUDE_FROM_ALL TRUE
+    EXCLUDE_FROM_ALL FALSE
   )
 
 endforeach()
