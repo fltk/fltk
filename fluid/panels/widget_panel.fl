@@ -528,7 +528,7 @@ Function {make_widget_panel()} {uid 9310
     } {
       Fl_Tabs widget_tabs {uid ce20
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);} selected
+  propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
@@ -3525,18 +3525,10 @@ if (v == LOAD) {
             label {End Code:}
             callback {if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
 CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
-
-if (v == LOAD) {
-  o->value( nd->end_code() );
-} else {
-  const char *nn = nd->end_code();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
-  {
-    nd->end_code( o->value() );
-    Fluid.proj.set_modflag(1);
-  }
-}}
+update_current(o, v,
+  [nd](){return nd->end_code();},
+  [nd](std::string s){nd->end_code(s);}
+);}
             tooltip {condition end: `while (x==1);`, or empty} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
           Fl_Text_Editor {} {uid 13f0
@@ -3578,13 +3570,12 @@ if (v == LOAD) {
           Fl_Text_Editor {} {uid ff87
             callback {if (!current_node || !current_node->is_a(Type::Code)) return;
 Code_Node* nd = (Code_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Code Editor");
   const char *cmttext = nd->name();
   o->buffer()->text( cmttext ? cmttext : "" );
-  o->insert_position(nd->cursor_position_);
-  o->scroll(nd->code_input_scroll_row, nd->code_input_scroll_col);
+  o->insert_position(nd->cursor_position());
+  o->scroll(nd->code_input_scroll_row(), nd->code_input_scroll_col());
 } else {
   char *c = o->buffer()->text();
   const char *nn = nd->name();
@@ -3595,9 +3586,9 @@ if (v == LOAD) {
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  nd->cursor_position_ = o->insert_position();
-  nd->code_input_scroll_row = o->scroll_row();
-  nd->code_input_scroll_col = o->scroll_col();
+  nd->save_editor_state(o->insert_position(),
+                        o->scroll_row(),
+                        o->scroll_col());
   free(c);
 }}
             xywh {15 40 390 315} box DOWN_BOX labelsize 11 when 15 textfont 4 textsize 11 resizable
@@ -3763,21 +3754,10 @@ if (v == LOAD) {
                 label {Return Type:}
                 callback {if (!current_node || !current_node->is_a(Type::Function)) return;
 Function_Node* nd = (Function_Node*)current_node;
-
-if (v == LOAD) {
-  const char *cmttext = nd->return_type();
-  o->buffer()->text( cmttext ? cmttext : "" );
-} else {
-  char *c = o->buffer()->text();
-  const char *nn = nd->return_type();
-  if (   ( nn && (strcmp(nn, c) != 0))
-      || (!nn && (strcmp("", c) != 0)) )
-  {
-    nd->return_type(c);
-    Fluid.proj.set_modflag(1);
-  }
-  free(c);
-}}
+update_current(o, v,
+  [nd](){return nd->return_type();},
+  [nd](std::string s){nd->return_type(s);}
+);}
                 tooltip {return type, or blank to return outermost widget} xywh {95 160 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}

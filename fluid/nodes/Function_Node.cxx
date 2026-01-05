@@ -189,25 +189,6 @@ const char *c_check(const char *c, int type) {
 Function_Node Function_Node::prototype;
 
 /**
- Create a new function.
- */
-Function_Node::Function_Node() :
-  Node(),
-  return_type_(nullptr),
-  public_(0),
-  declare_c_(0),
-  constructor(0),
-  havewidgets(0)
-{ }
-
-/**
- Destructor.
- */
-Function_Node::~Function_Node() {
-  if (return_type_) free((void*)return_type_);
-}
-
-/**
  Create a new function for the widget tree.
  \param[in] strategy add new function after current or as last child
  \return the new node
@@ -223,7 +204,7 @@ Node *Function_Node::make(Strategy strategy) {
   }
   Function_Node *o = new Function_Node();
   o->name("make_window()");
-  o->return_type_ = nullptr;
+  o->return_type_.clear();
   o->add(anchor, strategy);
   o->factory = this;
   o->public_ = 1;
@@ -244,9 +225,9 @@ void Function_Node::write_properties(fld::io::Project_Writer &f) {
     case 2: f.write_string("protected"); break;
   }
   if (declare_c_) f.write_string("C");
-  if (return_type_) {
+  if (!return_type().empty()) {
     f.write_string("return_type");
-    f.write_word(return_type_);
+    f.write_word(return_type().c_str());
   }
 }
 
@@ -262,7 +243,7 @@ void Function_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"C")) {
     declare_c_ = 1;
   } else if (!strcmp(c,"return_type")) {
-    storestring(f.read_word(),return_type_);
+    return_type(f.read_word());
   } else {
     Node::read_property(f, c);
   }
@@ -354,25 +335,37 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
     if (havechildren)
       f.write_c("int main(int argc, char **argv) {\n");
   } else {
-    const char* rtype = return_type_;
-    const char* star = "";
+    std::string rtype = return_type();
+    std::string star = "";
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
     int is_static = 0;
     int is_virtual = 0;
-    if (rtype) {
-      if (!strcmp(rtype,"static")) {is_static = 1; rtype = nullptr;}
-      else if (!strncmp(rtype, "static ",7)) {is_static = 1; rtype += 7;}
+    if (!rtype.empty()) {
+      if (rtype == "static") {
+        is_static = 1;
+        rtype.clear();
+      } else if (rtype.compare(0, 7, "static ")==0) {
+        is_static = 1;
+        rtype.erase(0, 7);
+      }
     }
-    if (rtype) {
-      if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = nullptr;}
-      else if (!strncmp(rtype, "virtual ",8)) {is_virtual = 1; rtype += 8;}
+    if (!rtype.empty()) {
+      if (rtype == "virtual") {
+        is_virtual = 1;
+        rtype.clear();
+      } else if (rtype.compare(0, 8, "virtual ")==0) {
+        is_virtual = 1;
+        rtype.erase(0, 8);
+      }
     }
-    if (!rtype) {
+    if (rtype.empty()) {
       if (havewidgets) {
         rtype = subclassname(child);
         star = "*";
-      } else rtype = "void";
+      } else {
+        rtype = "void";
+      }
     }
 
     const char* k = class_name(0);
@@ -390,9 +383,9 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
       if (is_static) f.write_h("static ");
       if (is_virtual) f.write_h("virtual ");
       if (!constructor) {
-        f.write_h("%s%s ", rtype, star);
+        f.write_h("%s%s ", rtype.c_str(), star.c_str());
         if (havechildren)
-          f.write_c("%s%s ", rtype, star);
+          f.write_c("%s%s ", rtype.c_str(), star.c_str());
       }
 
       // if this is a subclass, only f.write_h() the part before the ':'
@@ -423,9 +416,9 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
         write_comment_c(f);
       if (public_==1) {
         if (declare_c_)
-          f.write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
+          f.write_h("extern \"C\" { %s%s %s; }\n", rtype.c_str(), star.c_str(), name());
         else
-          f.write_h("%s%s %s;\n", rtype, star, name());
+          f.write_h("%s%s %s;\n", rtype.c_str(), star.c_str(), name());
       } else if (public_==2) {
         // write neither the prototype nor static, the function may be declared elsewhere
       } else {
@@ -437,7 +430,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
       char s[1024];
       if (havechildren) {
         clean_function_for_implementation(s, name());
-        f.write_c("%s%s %s {\n", rtype, star, s);
+        f.write_c("%s%s %s {\n", rtype.c_str(), star.c_str(), s);
       }
     }
   }
@@ -466,7 +459,7 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
       f.write_c("%s%s->show(argc, argv);\n", f.indent(1), var);
     if (havechildren)
       f.write_c("%sreturn Fl::run();\n", f.indent(1));
-  } else if (havewidgets && !constructor && !return_type_) {
+  } else if (havewidgets && !constructor && return_type().empty()) {
     f.write_c("%sreturn %s;\n", f.indent(1), var);
   }
   if (havechildren)
@@ -481,10 +474,11 @@ void Function_Node::write_code2(fld::io::Code_Writer& f) {
  \return 1 if they match, 0 if not
  */
 int Function_Node::has_signature(const char *rtype, const char *sig) const {
-  if (rtype && !return_type_) return 0;
-  if (!name()) return 0;
-  if ( (rtype==nullptr || strcmp(return_type_, rtype)==0)
-      && fl_filename_match(name(), sig)) {
+  if (rtype && return_type().empty())
+    return 0;
+  if (!name())
+    return 0;
+  if ( (rtype==nullptr || (return_type() == rtype)) && fl_filename_match(name(), sig)) {
     return 1;
   }
   return 0;
@@ -502,15 +496,6 @@ int Function_Node::has_signature(const char *rtype, const char *sig) const {
 
 /// Prototype for code to be used by the factory.
 Code_Node Code_Node::prototype;
-
-/**
- Constructor.
- */
-Code_Node::Code_Node() :
-  cursor_position_(0),
-  code_input_scroll_row(0),
-  code_input_scroll_col(0)
-{}
 
 /**
  Make a new code node.
@@ -634,22 +619,6 @@ int Code_Node::handle_editor_changes() {
 CodeBlock_Node CodeBlock_Node::prototype;
 
 /**
- Constructor.
- */
-CodeBlock_Node::CodeBlock_Node() :
-  Node(),
-  after(nullptr)
-{ }
-
-/**
- Destructor.
- */
-CodeBlock_Node::~CodeBlock_Node() {
-  if (after)
-    free((void*)after);
-}
-
-/**
  Make a new code block.
  If the parent node is not a function or another codeblock, a message box will
  pop up and the request will be ignored.
@@ -671,7 +640,7 @@ Node *CodeBlock_Node::make(Strategy strategy) {
   }
   CodeBlock_Node *o = new CodeBlock_Node();
   o->name("if (test())");
-  o->after = nullptr;
+  o->end_code_.clear();
   o->add(anchor, strategy);
   o->factory = this;
   return o;
@@ -684,9 +653,9 @@ Node *CodeBlock_Node::make(Strategy strategy) {
  */
 void CodeBlock_Node::write_properties(fld::io::Project_Writer &f) {
   Node::write_properties(f);
-  if (after) {
+  if (!end_code().empty()) {
     f.write_string("after");
-    f.write_word(after);
+    f.write_word(end_code().c_str());
   }
 }
 
@@ -695,7 +664,7 @@ void CodeBlock_Node::write_properties(fld::io::Project_Writer &f) {
  */
 void CodeBlock_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"after")) {
-    storestring(f.read_word(),after);
+    end_code(f.read_word());
   } else {
     Node::read_property(f, c);
   }
@@ -722,8 +691,10 @@ void CodeBlock_Node::write_code1(fld::io::Code_Writer& f) {
  */
 void CodeBlock_Node::write_code2(fld::io::Code_Writer& f) {
   f.indentation--;
-  if (after) f.write_c("%s} %s\n", f.indent(), after);
-  else f.write_c("%s}\n", f.indent());
+  if (!end_code().empty())
+    f.write_c("%s} %s\n", f.indent(), end_code().c_str());
+  else
+    f.write_c("%s}\n", f.indent());
 }
 
 // ---- Decl_Node declaration

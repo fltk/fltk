@@ -3295,19 +3295,11 @@ static void cb_End1(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~~-~~=~=-~=-~-=~~~=-=~ ▼ ﬂ//
   if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
   CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
-
-  if (v == LOAD) {
-    o->value( nd->end_code() );
-  } else {
-    const char *nn = nd->end_code();
-    if (   ( nn && (strcmp(nn, o->value()) != 0))
-        || (!nn && (strcmp("", o->value()) != 0)) )
-    {
-      nd->end_code( o->value() );
-      Fluid.proj.set_modflag(1);
-    }
-  }
-//ﬂ ▲ ----------~=----=-~-=~-------------=~~--=--~=~=--~-~~- ▲ ﬂ//
+  update_current(o, v,
+    [nd](){return nd->end_code();},
+    [nd](std::string s){nd->end_code(s);}
+  );
+//ﬂ ▲ ----------~=----=-~-=~----------~~~~-~-=~--=-=~~=---~~ ▲ ﬂ//
 }
 
 static void cb_Comment4(Fl_Text_Editor* o, void* v) {
@@ -3348,13 +3340,12 @@ static void cb_1c(fld::widget::Code_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-=--~=~~==~=~=~-~--=~ ▼ ﬂ//
   if (!current_node || !current_node->is_a(Type::Code)) return;
   Code_Node* nd = (Code_Node*)current_node;
-
-  if (v == LOAD) {
+   if (v == LOAD) {
     the_panel->label("Code Editor");
     const char *cmttext = nd->name();
     o->buffer()->text( cmttext ? cmttext : "" );
-    o->insert_position(nd->cursor_position_);
-    o->scroll(nd->code_input_scroll_row, nd->code_input_scroll_col);
+    o->insert_position(nd->cursor_position());
+    o->scroll(nd->code_input_scroll_row(), nd->code_input_scroll_col());
   } else {
     char *c = o->buffer()->text();
     const char *nn = nd->name();
@@ -3365,12 +3356,12 @@ static void cb_1c(fld::widget::Code_Editor* o, void* v) {
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    nd->cursor_position_ = o->insert_position();
-    nd->code_input_scroll_row = o->scroll_row();
-    nd->code_input_scroll_col = o->scroll_col();
+    nd->save_editor_state(o->insert_position(),
+                          o->scroll_row(),
+                          o->scroll_col());
     free(c);
   }
-//ﬂ ▲ ----------=~=~=~~=--=~----------~~=~~--==-=----=-~~=~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~=~=~~=--=~------------=-----~=~~-~-=-~~=~= ▲ ﬂ//
 }
 
 Fl_Tabs *func_tabs=(Fl_Tabs *)0;
@@ -3496,22 +3487,11 @@ static void cb_Return(fld::widget::Code_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~=--~-~=~=~~~---=~~=~ ▼ ﬂ//
   if (!current_node || !current_node->is_a(Type::Function)) return;
   Function_Node* nd = (Function_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->return_type();
-    o->buffer()->text( cmttext ? cmttext : "" );
-  } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->return_type();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
-      nd->return_type(c);
-      Fluid.proj.set_modflag(1);
-    }
-    free(c);
-  }
-//ﬂ ▲ ----------~=~~=~~==~~------------~~=------=~-=~==~-~-- ▲ ﬂ//
+  update_current(o, v,
+    [nd](){return nd->return_type();},
+    [nd](std::string s){nd->return_type(s);}
+  );
+//ﬂ ▲ ----------~=~~=~~==~~-----------~~=~=-~=~-~-~-=~-=~--~ ▲ ﬂ//
 }
 
 static void cb_Comment5(Fl_Text_Editor* o, void* v) {

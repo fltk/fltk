@@ -1,7 +1,7 @@
 //
 // C function Node header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,21 +49,25 @@ class Function_Node : public Node
 public:
   typedef Node super;
   static Function_Node prototype;
+
 private:
-  const char* return_type_;
-  char public_, declare_c_, constructor, havewidgets;
+  std::string return_type_;
+  char public_ = 0;
+  char declare_c_ = 0;
+  char constructor = 0;
+  char havewidgets = 0;
+
 public:
-  Function_Node();
-  ~Function_Node();
+  Function_Node() = default;
+  ~Function_Node() override = default;
+
   Node *make(Strategy strategy) override;
   void write_code1(fld::io::Code_Writer& f) override;
   void write_code2(fld::io::Code_Writer& f) override;
   void open() override;
   int ismain() {return name_ == nullptr;}
   const char *type_name() override {return "Function";}
-  const char *title() override {
-    return name() ? name() : "main()";
-  }
+  const char *title() override { return name() ? name() : "main()"; }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_public() const override;
@@ -72,8 +76,8 @@ public:
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
   int has_signature(const char *, const char*) const;
-  const char *return_type() { return return_type_; }
-  void return_type(const char *t) { storestring(t, return_type_); }
+  std::string return_type() const { return return_type_; }
+  void return_type(const std::string& t) { storestring(t, return_type_); }
   char visibility() { return public_; }
   void visibility(char v) { public_ = v; }
   char declare_c() { return declare_c_; }
@@ -87,13 +91,17 @@ class Code_Node : public Node
 public:
   typedef Node super;
   static Code_Node prototype;
-  int cursor_position_;
-  int code_input_scroll_row;
-  int code_input_scroll_col;
+
 private:
+  int cursor_position_ = 0;
+  int code_input_scroll_row_ = 0;
+  int code_input_scroll_col_ = 0;
   ExternalCodeEditor editor_;
+
 public:
-  Code_Node();
+  Code_Node() = default;
+  ~Code_Node() override = default;
+
   Node *make(Strategy strategy) override;
   void write(fld::io::Project_Writer &f) override;
   void write_code1(fld::io::Code_Writer& f) override;
@@ -107,6 +115,12 @@ public:
   int is_editing();
   int reap_editor();
   int handle_editor_changes();
+  int cursor_position() { return cursor_position_; }
+  int code_input_scroll_row() { return code_input_scroll_row_; }
+  int code_input_scroll_col() { return code_input_scroll_col_; }
+  void save_editor_state(int pos, int row, int col) {
+    cursor_position_ = pos; code_input_scroll_row_ = row; code_input_scroll_col_ = col;
+  }
 };
 
 // ---- CodeBlock_Node declaration
@@ -116,11 +130,14 @@ class CodeBlock_Node : public Node
 public:
   typedef Node super;
   static CodeBlock_Node prototype;
+  
 private:
-  const char* after;
+  std::string end_code_;
+
 public:
-  CodeBlock_Node();
-  ~CodeBlock_Node();
+  CodeBlock_Node() = default;
+  ~CodeBlock_Node() override = default;
+
   Node *make(Strategy strategy) override;
   void write_code1(fld::io::Code_Writer& f) override;
   void write_code2(fld::io::Code_Writer& f) override;
@@ -133,8 +150,8 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::CodeBlock) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
-  const char *end_code() { return after; }
-  void end_code(const char *c) { storestring(c, after); }
+  std::string end_code() { return end_code_; }
+  void end_code(const std::string& c) { storestring(c, end_code_); }
 };
 
 // ---- Decl_Node declaration
@@ -176,9 +193,10 @@ class Data_Node : public Decl_Node
 public:
   typedef Decl_Node super;
   static Data_Node prototype;
+
 private:
   std::string filename_;
-  int output_format_ { 0 };
+  int output_format_ = 0;
 
 public:
   Data_Node() = default;
