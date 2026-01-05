@@ -126,7 +126,10 @@ INSTALL_MAN (fltk 3)
 
 if(FLTK_BUILD_TEST) # "OR FLTK_BUILD_GAMES" (not yet implemented)
 
-  set(games_ blocks checkers sudoku)
+  set(games_ blocks sudoku)
+  if(FLTK_BUILD_FLUID)
+    list(APPEND games_ checkers)
+  endif(FLTK_BUILD_FLUID)
   if(FLTK_USE_GL)
     list(APPEND games_ glpuzzle)
   endif()
