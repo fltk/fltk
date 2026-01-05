@@ -2,7 +2,7 @@
 // Definition of the Wayland Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2024 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -109,6 +109,10 @@ public:
   struct zwp_text_input_manager_v3 *text_input_base;
 #if HAVE_XDG_DIALOG
   struct xdg_wm_dialog_v1 *xdg_wm_dialog;
+#endif
+#if HAVE_CURSOR_SHAPE
+  struct wp_cursor_shape_manager_v1 *wp_cursor_shape_manager;
+  struct wp_cursor_shape_device_v1 *wp_cursor_shape_device;
 #endif
 
 // constructor

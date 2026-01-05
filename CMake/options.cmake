@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2025 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -317,6 +317,14 @@ if(UNIX)
       message(STATUS "Found dev files for Wayland protocol 'XDG dialog windows'")
     else()
       set(HAVE_XDG_DIALOG 0)
+    endif()
+    if(EXISTS ${PROTOCOLS}/staging/cursor-shape/cursor-shape-v1.xml AND
+        EXISTS ${PROTOCOLS}/stable/tablet/tablet-v2.xml)
+      set(HAVE_CURSOR_SHAPE 1)
+      message(STATUS "Found dev files for Wayland protocols 'Cursor shape' and 'Tablet'")
+      message(STATUS "  ==> option FLTK_USE_DBUS can be turned OFF if 'Cursor shape'-enabled wayland compositor is used.")
+    else()
+      set(HAVE_CURSOR_SHAPE 0)
     endif()
     if(FLTK_BACKEND_X11)
       include(FindX11)

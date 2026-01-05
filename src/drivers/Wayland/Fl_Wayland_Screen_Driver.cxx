@@ -1,7 +1,7 @@
 //
 // Implementation of Wayland Screen interface
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,6 +38,9 @@
 #include "gtk-shell-client-protocol.h"
 #if HAVE_XDG_DIALOG
 #  include "xdg-dialog-client-protocol.h"
+#endif
+#if HAVE_CURSOR_SHAPE
+#  include "cursor-shape-client-protocol.h"
 #endif
 #include <assert.h>
 #include <sys/mman.h>
@@ -127,7 +130,7 @@ void Fl_Wayland_Screen_Driver::do_set_cursor(
   struct wl_buffer *buffer;
   const int scale = seat->pointer_scale;
 
-  if (!seat->cursor_theme || !seat->wl_pointer)
+  if ((!seat->cursor_theme && !wl_cursor) || !seat->wl_pointer)
     return;
 
   if (!wl_cursor) wl_cursor = seat->default_cursor;
@@ -226,7 +229,48 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
-  Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor);
+#if HAVE_CURSOR_SHAPE
+  static struct cursor_shape_struct {
+    Fl_Cursor c;
+    int shape;
+  } cursor_shape_array[] = {
+    {FL_CURSOR_ARROW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT },
+    {FL_CURSOR_CROSS, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_CROSSHAIR },
+    {FL_CURSOR_WAIT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_WAIT },
+    {FL_CURSOR_INSERT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_TEXT },
+    {FL_CURSOR_HAND, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_GRAB },
+    {FL_CURSOR_HELP, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_HELP },
+    {FL_CURSOR_MOVE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_MOVE },
+    {FL_CURSOR_N, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_N_RESIZE },
+    {FL_CURSOR_E, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_E_RESIZE },
+    {FL_CURSOR_W, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_W_RESIZE },
+    {FL_CURSOR_S, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_S_RESIZE },
+    {FL_CURSOR_NS, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NS_RESIZE },
+    {FL_CURSOR_WE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_EW_RESIZE },
+    {FL_CURSOR_SW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_SW_RESIZE },
+    {FL_CURSOR_SE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_SE_RESIZE },
+    {FL_CURSOR_NE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NE_RESIZE },
+    {FL_CURSOR_NW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NW_RESIZE },
+    {FL_CURSOR_NESW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NESW_RESIZE },
+    {FL_CURSOR_NWSE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NWSE_RESIZE }
+  };
+
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (scr_driver->wp_cursor_shape_device && !cursor) {
+    int shape = WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT;
+    for (int i = 0; i < sizeof(cursor_shape_array)/sizeof(cursor_shape_struct); i++) {
+      if (cursor_shape_array[i].c == Fl_Wayland_Window_Driver::driver(win)->standard_cursor()) {
+        shape = cursor_shape_array[i].shape;
+        break;
+      }
+    }
+    wp_cursor_shape_device_v1_set_shape(scr_driver->wp_cursor_shape_device, serial, shape);
+  } else {
+#endif
+    Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor);
+#if HAVE_CURSOR_SHAPE
+  }
+#endif
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
   set_event_xy(win);
@@ -472,6 +516,15 @@ static struct wl_surface_listener cursor_surface_listener = {
 
 
 static void init_cursors(struct Fl_Wayland_Screen_Driver::seat *seat) {
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (!seat->cursor_surface) {
+    seat->cursor_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
+    wl_surface_add_listener(seat->cursor_surface, &cursor_surface_listener, seat);
+  }
+#if HAVE_CURSOR_SHAPE
+  if (scr_driver->wp_cursor_shape_manager) return;
+#endif
+
   char *name;
   int size;
   struct wl_cursor_theme *theme;
@@ -481,10 +534,8 @@ static void init_cursors(struct Fl_Wayland_Screen_Driver::seat *seat) {
     size = 24;
   }
   size *= seat->pointer_scale;
-  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   theme = wl_cursor_theme_load(name, size, scr_driver->wl_shm);
   free(name);
-  //struct wl_cursor_theme *old_theme = seat->cursor_theme;
   if (theme != NULL) {
     if (seat->cursor_theme) {
      // caution to destroy theme because Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) caches used cursors
@@ -496,10 +547,6 @@ static void init_cursors(struct Fl_Wayland_Screen_Driver::seat *seat) {
   if (seat->cursor_theme) {
     seat->default_cursor = scr_driver->xc_cursor[Fl_Wayland_Screen_Driver::arrow] =
       wl_cursor_theme_get_cursor(seat->cursor_theme, "left_ptr");
-  }
-  if (!seat->cursor_surface) {
-    seat->cursor_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
-    wl_surface_add_listener(seat->cursor_surface, &cursor_surface_listener, seat);
   }
 }
 
@@ -1043,12 +1090,19 @@ void Fl_Wayland_Screen_Driver::disable_im() {
 
 static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capabilities)
 {
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   struct Fl_Wayland_Screen_Driver::seat *seat =
     (struct Fl_Wayland_Screen_Driver::seat*)data;
   if ((capabilities & WL_SEAT_CAPABILITY_POINTER) && !seat->wl_pointer) {
     seat->wl_pointer = wl_seat_get_pointer(wl_seat);
     wl_pointer_add_listener(seat->wl_pointer, &pointer_listener, seat);
     seat->pointer_scale = 1;
+#if HAVE_CURSOR_SHAPE
+    if (scr_driver->wp_cursor_shape_manager) {
+      scr_driver->wp_cursor_shape_device =
+        wp_cursor_shape_manager_v1_get_pointer(scr_driver->wp_cursor_shape_manager, seat->wl_pointer);
+    }
+#endif // HAVE_CURSOR_SHAPE
     init_cursors(seat);
   } else if (!(capabilities & WL_SEAT_CAPABILITY_POINTER) && seat->wl_pointer) {
     wl_pointer_release(seat->wl_pointer);
@@ -1066,7 +1120,6 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
           wl_keyboard_release(seat->wl_keyboard);
           seat->wl_keyboard = NULL;
   }
-  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   scr_driver->enable_im();
 }
 
@@ -1334,6 +1387,11 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     scr_driver->xdg_wm_dialog = (struct xdg_wm_dialog_v1 *)
       wl_registry_bind(wl_registry, id, &xdg_wm_dialog_v1_interface, 1);
 #endif // HAVE_XDG_DIALOG
+#if HAVE_CURSOR_SHAPE
+  } else if (strcmp(interface, wp_cursor_shape_manager_v1_interface.name) == 0) {
+    scr_driver->wp_cursor_shape_manager = (struct wp_cursor_shape_manager_v1 *)
+      wl_registry_bind(wl_registry, id, &wp_cursor_shape_manager_v1_interface, 1);
+#endif // HAVE_CURSOR_SHAPE
   }
 }
 
@@ -1412,6 +1470,10 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
 #if HAVE_XDG_DIALOG
   xdg_wm_dialog = NULL;
 #endif
+#if HAVE_CURSOR_SHAPE
+  wp_cursor_shape_manager = NULL;
+  wp_cursor_shape_device = NULL;
+#endif
 }
 
 
@@ -1432,7 +1494,12 @@ static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
     Fl_Wayland_Screen_Driver::compositor = (pair->found_wf_shell ?
                           Fl_Wayland_Screen_Driver::WAYFIRE : Fl_Wayland_Screen_Driver::MUTTER);
   }
-  if (scr_driver->seat) try_update_cursor(scr_driver->seat);
+  if (scr_driver->seat) {
+#if HAVE_CURSOR_SHAPE
+    if (!scr_driver->wp_cursor_shape_manager)
+#endif
+      try_update_cursor(scr_driver->seat);
+  }
   if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL) scr_driver->init_workarea();
 }
 
@@ -1566,6 +1633,22 @@ void Fl_Wayland_Screen_Driver::close_display() {
   xdg_wm_base_destroy(xdg_wm_base); xdg_wm_base = NULL;
   Fl_Wayland_Plugin *plugin = Fl_Wayland_Window_Driver::gl_plugin();
   if (plugin) plugin->terminate();
+#if HAVE_XDG_DIALOG
+  if (xdg_wm_dialog) {
+    xdg_wm_dialog_v1_destroy(xdg_wm_dialog);
+    xdg_wm_dialog = NULL;
+  }
+#endif // HAVE_XDG_DIALOG
+#if HAVE_CURSOR_SHAPE
+  if (wp_cursor_shape_device ) {
+    wp_cursor_shape_device_v1_destroy(wp_cursor_shape_device);
+    wp_cursor_shape_device = NULL;
+  }
+  if (wp_cursor_shape_manager ) {
+    wp_cursor_shape_manager_v1_destroy(wp_cursor_shape_manager);
+    wp_cursor_shape_manager = NULL;
+  }
+#endif // HAVE_CURSOR_SHAPE
 
   Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
   wl_registry_destroy(wl_registry); wl_registry = NULL;

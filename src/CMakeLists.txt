@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
 #
-# Copyright 1998-2025 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -833,6 +833,31 @@ if(UNIX AND FLTK_USE_WAYLAND)
     )
     list(APPEND STATIC_FILES "xdg-dialog-protocol.c")
     list(APPEND SHARED_FILES "xdg-dialog-protocol.c")
+  endif()
+
+  if(HAVE_CURSOR_SHAPE)
+    set(INFILE ${PROTOCOLS}/staging/cursor-shape/cursor-shape-v1.xml)
+    add_custom_command(
+      OUTPUT cursor-shape-protocol.c cursor-shape-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} cursor-shape-protocol.c
+      COMMAND wayland-scanner client-header ${INFILE} cursor-shape-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "cursor-shape-protocol.c")
+    list(APPEND SHARED_FILES "cursor-shape-protocol.c")
+# File cursor-shape-protocol.c requires memory data allocated by the "Tablet" protocol
+# but that protocol's header file is not necessary for the "cursor shape" protocol itself.
+    set(INFILE ${PROTOCOLS}/stable/tablet/tablet-v2.xml)
+    add_custom_command(
+      OUTPUT tablet-protocol.c # tablet-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} tablet-protocol.c
+#     COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "tablet-protocol.c")
+    list(APPEND SHARED_FILES "tablet-protocol.c")
   endif()
 
   if(STOP_REQUIRED)

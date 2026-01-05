@@ -1,7 +1,7 @@
 //
 // Implementation of the Wayland window driver.
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1682,6 +1682,17 @@ void Fl_Wayland_Window_Driver::makeWindow()
 int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
+#if HAVE_CURSOR_SHAPE
+  if (scr_driver->wp_cursor_shape_device) {
+    if (xid->custom_cursor) {
+      delete_cursor(xid->custom_cursor);
+      xid->custom_cursor = NULL;
+    }
+    if (c == FL_CURSOR_NONE) return 0;
+    standard_cursor_ = c;
+    return 1;
+  }
+#endif // HAVE_CURSOR_SHAPE
   if (!scr_driver->seat->cursor_theme) return 1;
   // Cursor names are the files of directory /usr/share/icons/XXXX/cursors/
   // where XXXX is the name of the current 'cursor theme'.
