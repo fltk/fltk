@@ -1,7 +1,7 @@
 //
 // Widget Node code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,6 +49,8 @@
 using namespace fld;
 using namespace fld::proj;
 
+extern void redraw_browser();
+
 // Make an Widget_Node subclass instance.
 // It figures out the automatic size and parent of the new widget,
 // creates the Fl_Widget (by calling the virtual function _make),
@@ -56,32 +58,41 @@ using namespace fld::proj;
 // instance, sets the widget pointers, and makes all the display
 // update correctly...
 
-int Widget_Node::is_widget() const {return 1;}
-int Widget_Node::is_public() const {return public_;}
+int Widget_Node::is_widget() const {
+  return 1;
+}
+
+int Widget_Node::is_public() const {
+  return public_;
+}
 
 std::string subclassname(Node* l) {
   if (l->is_a(Type::Menu_Bar)) {
-    Menu_Bar_Node *mb = static_cast<Menu_Bar_Node*>(l);
+    Menu_Bar_Node* mb = static_cast<Menu_Bar_Node*>(l);
     if (mb->is_sys_menu_bar())
       return mb->sys_menubar_name();
   }
   if (l->is_widget()) {
     Widget_Node* p = (Widget_Node*)l;
     std::string c = p->subclass();
-    if (!c.empty()) return c;
-    if (l->is_class()) return "Fl_Group";
-    if (p->o->type() == FL_DOUBLE_WINDOW) return "Fl_Double_Window";
+    if (!c.empty())
+      return c;
+    if (l->is_class())
+      return "Fl_Group";
+    if (p->o->type() == FL_DOUBLE_WINDOW)
+      return "Fl_Double_Window";
     if (p->type() == Type::Input) {
-      if (p->o->type() == FL_FLOAT_INPUT) return "Fl_Float_Input";
-      if (p->o->type() == FL_INT_INPUT) return "Fl_Int_Input";
+      if (p->o->type() == FL_FLOAT_INPUT)
+        return "Fl_Float_Input";
+      if (p->o->type() == FL_INT_INPUT)
+        return "Fl_Int_Input";
     }
   }
   return l->type_name();
 }
 
 // Return the ideal widget size...
-void
-Widget_Node::ideal_size(int &w, int &h) {
+void Widget_Node::ideal_size(int &w, int &h) {
   w = 120;
   h = 100;
   fld::app::Snap_Action::better_size(w, h);
@@ -92,8 +103,8 @@ Widget_Node::ideal_size(int &w, int &h) {
  \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  \return new node
  */
-Node *Widget_Node::make(Strategy strategy) {
-  Node *anchor = Fluid.proj.tree.current, *pp = anchor;
+Node* Widget_Node::make(Strategy strategy) {
+  Node* anchor = Fluid.proj.tree.current, *pp = anchor;
   if (pp && (strategy.placement() == Strategy::AFTER_CURRENT))
     pp = pp->parent;
   while (pp && !pp->is_a(Type::Group)) {
@@ -110,7 +121,11 @@ Node *Widget_Node::make(Strategy strategy) {
   Widget_Node* q = (Widget_Node*)anchor;
 
   // Figure out a border between widget and window:
-  int B = p->o->w()/2; if (p->o->h()/2 < B) B = p->o->h()/2; if (B>25) B = 25;
+  int B = p->o->w()/2;
+  if (p->o->h()/2 < B)
+    B = p->o->h()/2;
+  if (B>25)
+    B = 25;
 
   int ULX,ULY; // parent's origin in window
   if (!p->is_a(Type::Window)) { // if it is a group, add corner
@@ -143,15 +158,19 @@ Node *Widget_Node::make(Strategy strategy) {
   }
 
   // Construct the Node:
-  Widget_Node *t = _make();
-  if (!o) o = widget(0,0,100,100); // create template widget
+  Widget_Node* t = _make();
+  if (!o)
+    o = widget(0,0,100,100); // create template widget
   t->factory = this;
+
   // Construct the Fl_Widget:
   t->o = widget(X,Y,W,H);
   if (strategy.source() == Strategy::FROM_FILE)
     t->o->label(nullptr);
-  else if (t->o->label()) t->label(t->o->label()); // allow editing
+  else if (t->o->label())
+    t->label(t->o->label()); // allow editing
   t->o->user_data((void*)t);
+
   // Put it in the parent:
   //  ((Fl_Group *)(p->o))->add(t->o); (done by Node::add())
   // add to browser:
@@ -160,10 +179,13 @@ Node *Widget_Node::make(Strategy strategy) {
   return t;
 }
 
-void Widget_Node::setimage(Image_Asset *i) {
-  if (i == image || is_a(Type::Window)) return;
-  if (image) image->dec_ref();
-  if (i) i->inc_ref();
+void Widget_Node::setimage(Image_Asset* i) {
+  if (i == image || is_a(Type::Window))
+    return;
+  if (image)
+    image->dec_ref();
+  if (i)
+    i->inc_ref();
   image = i;
   if (i) {
     o->image(i->image());
@@ -179,10 +201,13 @@ void Widget_Node::setimage(Image_Asset *i) {
   redraw();
 }
 
-void Widget_Node::setinactive(Image_Asset *i) {
-  if (i == inactive || is_a(Type::Window)) return;
-  if (inactive) inactive->dec_ref();
-  if (i) i->inc_ref();
+void Widget_Node::setinactive(Image_Asset* i) {
+  if (i == inactive || is_a(Type::Window))
+    return;
+  if (inactive)
+    inactive->dec_ref();
+  if (i)
+    i->inc_ref();
   inactive = i;
   if (i) {
     o->deimage(i->image());
@@ -198,27 +223,27 @@ void Widget_Node::setinactive(Image_Asset *i) {
   redraw();
 }
 
-void Widget_Node::setlabel(const char *n) {
+void Widget_Node::setlabel(const char* n) {
   o->label(n);
   redraw();
 }
 
 Widget_Node::~Widget_Node() {
   if (o) {
-    Fl_Window *win = o->window();
+    Fl_Window* win = o->window();
     delete o;
     if (win)
       win->redraw();
   }
-  if (image) image->dec_ref();
-  if (inactive) inactive->dec_ref();
+  if (image)
+    image->dec_ref();
+  if (inactive)
+    inactive->dec_ref();
 }
 
 void Widget_Node::extra_code(int m, const std::string& n) {
   storestring(n, extra_code_[m]);
 }
-
-extern void redraw_browser();
 
 void Widget_Node::subclass(const std::string& n) {
   if (storestring(n, subclass_) && visible)
@@ -245,35 +270,45 @@ void Widget_Node::inactive_name(const std::string& name) {
 }
 
 void Widget_Node::redraw() {
-  Node *t = this;
+  Node* t = this;
   if (is_a(Type::Menu_Item)) {
     // find the menu button that parents this menu:
-    do t = t->parent; while (t && t->is_a(Type::Menu_Item));
+    do {
+      t = t->parent;
+    } while (t && t->is_a(Type::Menu_Item));
     // kludge to cause build_menu to be called again:
     if (t)
       t->add_child(nullptr, nullptr);
   } else {
-    while (t->parent && t->parent->is_widget()) t = t->parent;
+    while (t->parent && t->parent->is_widget())
+      t = t->parent;
     ((Widget_Node*)t)->o->redraw();
   }
 }
 
 // the recursive part sorts all children, returns pointer to next:
-Node *sort(Node *parent) {
-  Node *f,*n=nullptr;
+Node* sort(Node* parent) {
+  Node* f;
+  Node* n = nullptr;
   for (f = parent ? parent->next : Fluid.proj.tree.first; ; f = n) {
-    if (!f || (parent && f->level <= parent->level)) break;
+    if (!f || (parent && f->level <= parent->level))
+      break;
     n = sort(f);
-    if (!f->selected || !f->is_true_widget()) continue;
+    if (!f->selected || !f->is_true_widget())
+      continue;
     Fl_Widget* fw = ((Widget_Node*)f)->o;
-    Node *g; // we will insert before this
+    Node* g; // we will insert before this
     for (g = parent ? parent->next : Fluid.proj.tree.first; g != f; g = g->next) {
-      if (!g->selected || g->level > f->level) continue;
+      if (!g->selected || g->level > f->level)
+        continue;
       Fl_Widget* gw = ((Widget_Node*)g)->o;
-      if (gw->y() > fw->y()) break;
-      if (gw->y() == fw->y() && gw->x() > fw->x()) break;
+      if (gw->y() > fw->y())
+        break;
+      if (gw->y() == fw->y() && gw->x() > fw->x())
+        break;
     }
-    if (g != f) f->move_before(g);
+    if (g != f)
+      f->move_before(g);
   }
   if (parent)
     parent->layout_widget();
@@ -283,7 +318,7 @@ Node *sort(Node *parent) {
 ////////////////////////////////////////////////////////////////
 // The control panels!
 
-Fl_Window *the_panel;
+Fl_Window* the_panel = nullptr;
 
 // All the callbacks use the argument to indicate whether to load or store.
 // This avoids the need for pointers to all the widgets, and keeps the
@@ -292,19 +327,22 @@ Fl_Window *the_panel;
 // with any actual useful values for the argument.  I also use this to
 // initialized parts of the widget that are nyi by fluid.
 
-Node* current_node { nullptr };
-Widget_Node *current_widget; // one of the selected ones
+Node* current_node = nullptr;
+Widget_Node* current_widget = nullptr; // one of the selected ones
 void* const LOAD = (void *)"LOAD"; // "magic" pointer to indicate that we need to load values into the dialog
-int numselected; // number selected
-int haderror;
+int numselected = 0; // number selected
+int haderror = 0;
 
 void name_public_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
     i->value(current_widget->public_>0);
-    if (current_widget->is_in_class()) i->hide(); else i->show();
+    if (current_widget->is_in_class())
+      i->hide();
+    else
+      i->show();
   } else {
     int mod = 0;
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         ((Widget_Node*)o)->public_ = i->value();
         mod = 1;
@@ -342,7 +380,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
  2: copy and paste, drag and drop operations (works)
  3: save operation without unfocus event (works)
  */
-void label_cb(Fl_Input* i, void *v) {
+void label_cb(Fl_Input* i, void* v) {
   static int first_change = 1;
   if (v == LOAD) {
     i->value(current_widget->label());
@@ -351,7 +389,7 @@ void label_cb(Fl_Input* i, void *v) {
     if (i->changed()) {
       Fluid.proj.undo.suspend();
       int mod = 0;
-      for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+      for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
         if (o->selected && o->is_widget()) {
           if (!mod) {
             if (first_change) {
@@ -366,7 +404,8 @@ void label_cb(Fl_Input* i, void *v) {
         }
       }
       Fluid.proj.undo.resume();
-      if (mod) Fluid.proj.set_modflag(1);
+      if (mod)
+        Fluid.proj.set_modflag(1);
     }
     int r = (int)Fl::callback_reason();
     if ( (r == FL_REASON_LOST_FOCUS) || (r == FL_REASON_ENTER_KEY) )
@@ -374,96 +413,93 @@ void label_cb(Fl_Input* i, void *v) {
   }
 }
 
-
-
-
-
+// ---- Formula_Input widget callbacks:
 
 int widget_i = 0;
 
-static int vars_i_cb(const fld::widget::Formula_Input*, void *v) {
+static int vars_i_cb(const fld::widget::Formula_Input*, void* v) {
   return widget_i;
 }
 
-static int vars_x_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = (Node*)v;
+static int vars_x_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->x();
   return 0;
 }
 
-static int vars_y_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = (Node*)v;
+static int vars_y_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->y();
   return 0;
 }
 
-static int vars_w_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = (Node*)v;
+static int vars_w_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->w();
   return 0;
 }
 
-static int vars_h_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = (Node*)v;
+static int vars_h_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->h();
   return 0;
 }
 
-static int vars_px_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->parent;
+static int vars_px_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->x();
   return 0;
 }
 
-static int vars_py_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->parent;
+static int vars_py_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->y();
   return 0;
 }
 
-static int vars_pw_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->parent;
+static int vars_pw_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->w();
   return 0;
 }
 
-static int vars_ph_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->parent;
+static int vars_ph_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->h();
   return 0;
 }
 
-static int vars_sx_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->prev_sibling();
+static int vars_sx_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->x();
   return 0;
 }
 
-static int vars_sy_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->prev_sibling();
+static int vars_sy_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->y();
   return 0;
 }
 
-static int vars_sw_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->prev_sibling();
+static int vars_sw_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->w();
   return 0;
 }
 
-static int vars_sh_cb(const fld::widget::Formula_Input*, void *v) {
-  Node *t = ((Node*)v)->prev_sibling();
+static int vars_sh_cb(const fld::widget::Formula_Input*, void* v) {
+  Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->h();
   return 0;
@@ -471,12 +507,12 @@ static int vars_sh_cb(const fld::widget::Formula_Input*, void *v) {
 
 static int bbox_x, bbox_y, bbox_r, bbox_b;
 
-static void calculate_bbox(Node *p) {
+static void calculate_bbox(Node* p) {
   char first = 1;
   bbox_x = bbox_y = bbox_r = bbox_b = 0;
   for (p=p->first_child(); p; p=p->next_sibling()) {
     if (p->is_widget()) {
-      Fl_Widget *o = ((Widget_Node*)p)->o;
+      Fl_Widget* o = ((Widget_Node*)p)->o;
       if (first) {
         bbox_x = o->x(); bbox_y = o->y();
         bbox_r = o->x() + o->w(); bbox_b = o->y() + o->h();
@@ -491,22 +527,22 @@ static void calculate_bbox(Node *p) {
   }
 }
 
-static int vars_cx_cb(const fld::widget::Formula_Input*, void *v) {
+static int vars_cx_cb(const fld::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_x;
 }
 
-static int vars_cy_cb(const fld::widget::Formula_Input*, void *v) {
+static int vars_cy_cb(const fld::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_y;
 }
 
-static int vars_cw_cb(const fld::widget::Formula_Input*, void *v) {
+static int vars_cw_cb(const fld::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_r - bbox_x;
 }
 
-static int vars_ch_cb(const fld::widget::Formula_Input*, void *v) {
+static int vars_ch_cb(const fld::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_b - bbox_y;
 }
@@ -532,19 +568,16 @@ fld::widget::Formula_Input_Vars widget_vars[] = {
   { nullptr }
 };
 
-
-
-
-
 ////////////////////////////////////////////////////////////////
 
 // turn number to string or string to number for saving to file:
 // does not work for hierarchical menus!
 
-const char *item_name(Fl_Menu_Item* m, int i) {
+const char* item_name(Fl_Menu_Item* m, int i) {
   if (m) {
     while (m->label()) {
-      if (m->argument() == i) return m->label();
+      if (m->argument() == i)
+        return m->label();
       m++;
     }
   }
@@ -552,13 +585,16 @@ const char *item_name(Fl_Menu_Item* m, int i) {
   sprintf(buffer, "%d", i);
   return buffer;
 }
+
 int item_number(Fl_Menu_Item* m, const char* i) {
   if (!i)
     return 0;
   if (m && i) {
-    if (i[0]=='F' && i[1]=='L' && i[2]=='_') i += 3;
+    if (i[0]=='F' && i[1]=='L' && i[2]=='_')
+      i += 3;
     while (m->label()) {
-      if (!strcmp(m->label(), i)) return int(m->argument());
+      if (!strcmp(m->label(), i)) return
+        int(m->argument());
       m++;
     }
   }
@@ -642,15 +678,17 @@ Fl_Menu_Item boxmenu[] = {
   {nullptr},
   {nullptr}};
 
-const char *boxname(int i) {
+const char* boxname(int i) {
   if (!i) i = ZERO_ENTRY;
   for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
-    if (boxmenu[j].argument() == i) return boxmenu[j].label();
+    if (boxmenu[j].argument() == i)
+      return boxmenu[j].label();
   return nullptr;
 }
 
-int boxnumber(const char *i) {
-  if (i[0]=='F' && i[1]=='L' && i[2]=='_') i += 3;
+int boxnumber(const char* i) {
+  if (i[0]=='F' && i[1]=='L' && i[2]=='_')
+    i += 3;
   for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
     if (boxmenu[j].label() && !strcmp(boxmenu[j].label(), i)) {
       return int(boxmenu[j].argument());
@@ -722,22 +760,28 @@ void set_whenmenu(int n) {
 
 
 uchar Widget_Node::resizable() const {
-  if (is_a(Type::Window)) return ((Fl_Window*)o)->resizable() != nullptr;
+  if (is_a(Type::Window))
+    return ((Fl_Window*)o)->resizable() != nullptr;
   Fl_Group* p = (Fl_Group*)o->parent();
-  if (p) return p->resizable() == o;
-  else return 0;
+  if (p)
+    return p->resizable() == o;
+  else
+    return 0;
 }
 
 void Widget_Node::resizable(uchar v) {
   if (v) {
-    if (resizable()) return;
-    if (is_a(Type::Window)) ((Fl_Window*)o)->resizable(o);
-    else {
+    if (resizable())
+      return;
+    if (is_a(Type::Window)) {
+      ((Fl_Window*)o)->resizable(o);
+    } else {
       Fl_Group* p = (Fl_Group*)o->parent();
       if (p) p->resizable(o);
     }
   } else {
-    if (!resizable()) return;
+    if (!resizable())
+      return;
     if (is_a(Type::Window)) {
       ((Fl_Window*)o)->resizable(nullptr);
     } else {
@@ -794,7 +838,7 @@ Fl_Menu_Item fontmenu_w_default[] = {
 
 
 
-extern const char *ui_find_image_name;
+extern const char* ui_find_image_name;
 
 Fl_Menu_Item labeltypemenu[] = {
   {"NORMAL_LABEL",0,nullptr,(void*)nullptr},
@@ -804,19 +848,23 @@ Fl_Menu_Item labeltypemenu[] = {
   {"NO_LABEL",0,nullptr,(void*)(FL_NO_LABEL)},
   {nullptr}};
 
-void labeltype_cb(Fl_Choice* i, void *v) {
+void labeltype_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
-    int n;
-    n = current_widget->o->labeltype();
+    int n = current_widget->o->labeltype();
     i->when(FL_WHEN_RELEASE);
-    for (int j = 0; j < int(sizeof(labeltypemenu)/sizeof(*labeltypemenu)); j++)
-      if (labeltypemenu[j].argument() == n) {i->value(j); break;}
+    for (int j = 0; j < int(sizeof(labeltypemenu)/sizeof(*labeltypemenu)); j++) {
+      if (labeltypemenu[j].argument() == n) {
+        i->value(j);
+        break;
+      }
+    }
   } else {
     int mod = 0;
     int m = i->value();
     int n = int(labeltypemenu[m].argument());
-    if (n<0) return; // should not happen
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+    if (n<0)
+      return; // should not happen
+    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Widget_Node* p = (Widget_Node*)o;
         p->o->labeltype((Fl_Labeltype)n);
@@ -824,7 +872,8 @@ void labeltype_cb(Fl_Choice* i, void *v) {
         mod = 1;
       }
     }
-    if (mod) Fluid.proj.set_modflag(1);
+    if (mod)
+      Fluid.proj.set_modflag(1);
   }
 }
 
@@ -850,47 +899,51 @@ Fl_Menu_Item colormenu[] = {
 
 void color_common(Fl_Color c) {
   int mod = 0;
-  for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+  for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->selected && o->is_widget()) {
       Widget_Node* q = (Widget_Node*)o;
       q->o->color(c); q->o->redraw();
       if (q->parent && q->parent->is_a(Type::Tabs)) {
-        if (q->o->parent()) q->o->parent()->redraw();
+        if (q->o->parent()) {
+          q->o->parent()->redraw();
+        }
       }
       mod = 1;
     }
   }
-  if (mod) Fluid.proj.set_modflag(1);
+  if (mod)
+    Fluid.proj.set_modflag(1);
 }
 
 
 
 void color2_common(Fl_Color c) {
   int mod = 0;
-  for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+  for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->selected && o->is_widget()) {
       Widget_Node* q = (Widget_Node*)o;
       q->o->selection_color(c); q->o->redraw();
       mod = 1;
     }
   }
-  if (mod) Fluid.proj.set_modflag(1);
+  if (mod)
+    Fluid.proj.set_modflag(1);
 }
 
 
 
 void labelcolor_common(Fl_Color c) {
   int mod = 0;
-  for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+  for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->selected && o->is_widget()) {
       Widget_Node* q = (Widget_Node*)o;
       q->o->labelcolor(c); q->redraw();
       mod = 1;
     }
   }
-  if (mod) Fluid.proj.set_modflag(1);
+  if (mod)
+    Fluid.proj.set_modflag(1);
 }
-
 
 
 static Fl_Button* relative(Fl_Widget* o, int i) {
@@ -916,17 +969,23 @@ static Fl_Menu_Item alignmenu[] = {
   {"FL_ALIGN_RIGHT_TOP",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT_TOP)},
   {"FL_ALIGN_LEFT_BOTTOM",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_LEFT_BOTTOM)},
   {"FL_ALIGN_RIGHT_BOTTOM",0,nullptr,(void*)(fl_intptr_t)(FL_ALIGN_RIGHT_BOTTOM)},
-  {nullptr}};
+  {nullptr}
+};
 
-void align_cb(Fl_Button* i, void *v) {
+void align_cb(Fl_Button* i, void* v) {
   Fl_Align b = Fl_Align(fl_uintptr_t(i->user_data()));
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {i->deactivate(); return;} else i->activate();
+    if (current_widget->is_a(Type::Menu_Item)) {
+      i->deactivate();
+      return;
+    } else {
+      i->activate();
+    }
     i->value(current_widget->o->align() & b);
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Widget_Node* q = (Widget_Node*)o;
         Fl_Align x = q->o->align();
@@ -934,12 +993,12 @@ void align_cb(Fl_Button* i, void *v) {
         if (i->value()) {
           y = x | b;
           if (b == FL_ALIGN_LEFT || b == FL_ALIGN_TOP) {
-            Fl_Button *b1 = relative(i,+1);
+            Fl_Button* b1 = relative(i,+1);
             b1->clear();
             y = y & ~(b1->argument());
           }
           if (b == FL_ALIGN_RIGHT || b == FL_ALIGN_BOTTOM) {
-            Fl_Button *b1 = relative(i,-1);
+            Fl_Button* b1 = relative(i,-1);
             b1->clear();
             y = y & ~(b1->argument());
           }
@@ -957,21 +1016,26 @@ void align_cb(Fl_Button* i, void *v) {
   }
 }
 
-void align_position_cb(Fl_Choice *i, void *v) {
+void align_position_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {i->deactivate(); return;} else i->activate();
-    Fl_Menu_Item *mi = (Fl_Menu_Item*)i->menu();
+    if (current_widget->is_a(Type::Menu_Item)) {
+      i->deactivate();
+      return;
+    } else {
+      i->activate();
+    }
+    Fl_Menu_Item* mi = (Fl_Menu_Item*)i->menu();
     Fl_Align b = current_widget->o->align() & FL_ALIGN_POSITION_MASK;
     for (;mi->text;mi++) {
       if ((Fl_Align)(mi->argument())==b)
         i->value(mi);
     }
   } else {
-    const Fl_Menu_Item *mi = i->menu() + i->value();
+    const Fl_Menu_Item* mi = i->menu() + i->value();
     Fl_Align b = Fl_Align(fl_uintptr_t(mi->user_data()));
     int mod = 0;
     Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Widget_Node* q = (Widget_Node*)o;
         Fl_Align x = q->o->align();
@@ -987,21 +1051,26 @@ void align_position_cb(Fl_Choice *i, void *v) {
   }
 }
 
-void align_text_image_cb(Fl_Choice *i, void *v) {
+void align_text_image_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {i->deactivate(); return;} else i->activate();
-    Fl_Menu_Item *mi = (Fl_Menu_Item*)i->menu();
+    if (current_widget->is_a(Type::Menu_Item)) {
+      i->deactivate();
+      return;
+    } else {
+      i->activate();
+    }
+    Fl_Menu_Item* mi = (Fl_Menu_Item*)i->menu();
     Fl_Align b = current_widget->o->align() & FL_ALIGN_IMAGE_MASK;
     for (;mi->text;mi++) {
       if ((Fl_Align)(mi->argument())==b)
         i->value(mi);
     }
   } else {
-    const Fl_Menu_Item *mi = i->menu() + i->value();
+    const Fl_Menu_Item* mi = i->menu() + i->value();
     Fl_Align b = Fl_Align(fl_uintptr_t(mi->user_data()));
     int mod = 0;
     Fluid.proj.undo.checkpoint();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Widget_Node* q = (Widget_Node*)o;
         Fl_Align x = q->o->align();
@@ -1043,7 +1112,7 @@ int Widget_Node::textstuff(int, Fl_Font&, int&, Fl_Color&) {
 void textcolor_common(Fl_Color c) {
   Fl_Font n; int s;
   int mod = 0;
-  for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+  for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
     if (o->selected && o->is_widget()) {
       Widget_Node* q = (Widget_Node*)o;
       q->textstuff(3,n,s,c); q->o->redraw();
@@ -1069,7 +1138,7 @@ void textcolor_common(Fl_Color c) {
 //  } else {
 //    int mod = 0;
 //    int new_value = (int)i->value();
-//    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+//    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
 //      if (o->selected && o->is_a(Type::Flex)) {
 //        Flex_Node* q = (Flex_Node*)o;
 //        Fl_Flex* w = (Fl_Flex*)q->o;
@@ -1086,13 +1155,13 @@ void textcolor_common(Fl_Color c) {
 
 
 
-static void load_gap(Fl_Flex *w, Fl_Value_Input* i)
+static void load_gap(Fl_Flex* w, Fl_Value_Input* i)
 {
   int v = w->gap();
   i->value((double)v);
 }
 
-static int update_gap(Fl_Flex *w, int new_value)
+static int update_gap(Fl_Flex* w, int new_value)
 {
   int g = w->gap();
   if (new_value!=g) {
@@ -1124,7 +1193,7 @@ void position_group_cb(Fl_Group* g, void* v) {
 
 // subtypes:
 
-Fl_Menu_Item *Widget_Node::subtypes() {return nullptr;}
+Fl_Menu_Item* Widget_Node::subtypes() { return nullptr; }
 
 
 ////////////////////////////////////////////////////////////////
@@ -1157,8 +1226,9 @@ void ok_cb(Fl_Return_Button* o, void* v) {
   if (!haderror) the_panel->hide();
 }
 
-void toggle_overlays(Fl_Widget *,void *); // in Window_Node.cxx
-void overlay_cb(Fl_Button*o,void *v) {
+void toggle_overlays(Fl_Widget*, void*); // in Window_Node.cxx
+
+void overlay_cb(Fl_Button* o,void* v) {
   toggle_overlays(o,v);
 }
 
@@ -1167,9 +1237,9 @@ void leave_live_mode_cb(Fl_Widget*, void*);
 void live_mode_cb(Fl_Button* o, void *) {
   /// \todo live mode should end gracefully when the application quits
   ///       or when the user closes the live widget
-  static Node *live_type = nullptr;
-  static Fl_Widget *live_widget = nullptr;
-  static Fl_Window *live_window = nullptr;
+  static Node* live_type = nullptr;
+  static Fl_Widget* live_widget = nullptr;
+  static Fl_Window* live_window = nullptr;
 
   if (!current_widget) {
     o->value(0);
@@ -1193,12 +1263,12 @@ void live_mode_cb(Fl_Button* o, void *) {
         live_window = new Fl_Double_Window(w+20, h+55, "Fluid Live Resize");
         live_window->box(FL_FLAT_BOX);
         live_window->color(FL_GREEN);
-        Fl_Group *rsz = new Fl_Group(0, h+20, 130, 35);
+        Fl_Group* rsz = new Fl_Group(0, h+20, 130, 35);
         rsz->box(FL_NO_BOX);
-        Fl_Box *rsz_dummy = new Fl_Box(110, h+20, 1, 25);
+        Fl_Box* rsz_dummy = new Fl_Box(110, h+20, 1, 25);
         rsz_dummy->box(FL_NO_BOX);
         rsz->resizable(rsz_dummy);
-        Fl_Button *btn = new Fl_Button(10, h+20, 100, 25, "Exit Live Resize");
+        Fl_Button* btn = new Fl_Button(10, h+20, 100, 25, "Exit Live Resize");
         btn->labelsize(12);
         btn->callback(leave_live_mode_cb);
         rsz->end();
@@ -1208,7 +1278,7 @@ void live_mode_cb(Fl_Button* o, void *) {
         live_window->set_modal(); // block all other UI
         live_window->callback(leave_live_mode_cb);
         if (current_widget->is_a(Type::Window)) {
-          Window_Node *w = (Window_Node*)current_widget;
+          Window_Node* w = (Window_Node*)current_widget;
           int mw = w->sr_min_w; if (mw>0) mw += 20;
           int mh = w->sr_min_h; if (mh>0) mh += 55;
           int MW = w->sr_max_w; if (MW>0) MW += 20;
@@ -1277,7 +1347,7 @@ void load_panel() {
       current_node = nullptr;
       if (Fluid.proj.tree.current->is_widget())
         current_widget=(Widget_Node*)Fluid.proj.tree.current;
-      for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+      for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
         if (o->is_widget() && o->selected) {
           numselected++;
           if (!current_widget) current_widget = (Widget_Node*)o;
@@ -1310,7 +1380,7 @@ void load_panel() {
     the_panel->hide();
 }
 
-extern Fl_Window *widgetbin_panel;
+extern Fl_Window* widgetbin_panel;
 
 // This is called when user double-clicks an item, open or update the panel:
 void open_panel() {
@@ -1352,14 +1422,14 @@ extern void update_codeview_position();
 // Called when ui changes what objects are selected:
 // p is selected object, null for all deletions (we must throw away
 // old panel in that case, as the object may no longer exist)
-void selection_changed(Node *p) {
+void selection_changed(Node* p) {
   // store all changes to the current selected objects:
   if (p && the_panel && the_panel->visible()) {
     set_cb(nullptr,nullptr);
     // if there was an error, we try to leave the selected set unchanged:
     if (haderror) {
-      Node *q = nullptr;
-      for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+      Node* q = nullptr;
+      for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
         o->new_selected = o->selected;
         if (!q && o->selected) q = o;
       }
@@ -1370,8 +1440,8 @@ void selection_changed(Node *p) {
     }
   }
   // update the selected flags to new set:
-  Node *q = nullptr;
-  for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
+  Node* q = nullptr;
+  for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
     o->selected = o->new_selected;
     if (!q && o->selected) q = o;
   }
@@ -1389,7 +1459,7 @@ void selection_changed(Node *p) {
 // Writing the C code:
 
 // test to see if user named a function, or typed in code:
-int is_name(const char *c) {
+int is_name(const char* c) {
   for (; *c; c++)
     if ((ispunct(*c)||*c=='\n') && *c!='_' && *c!=':') return 0;
   return 1;
@@ -1398,23 +1468,23 @@ int is_name(const char *c) {
 // Test to see if name() is an array entry.  If so, and this is the
 // highest number, return name[num+1].  Return null if not the highest
 // number or a field or function.  Return name() if not an array entry.
-const char *array_name(Widget_Node *o) {
-  const char *c = o->name();
+const char* array_name(Widget_Node* o) {
+  const char* c = o->name();
   if (!c) return nullptr;
-  const char *d;
+  const char* d;
   for (d = c; *d != '['; d++) {
     if (!*d) return c;
     if (ispunct(*d) && *d!='_') return nullptr;
   }
   int num = atoi(d+1);
   int sawthis = 0;
-  Node *t = o->prev;
-  Node *tp = o;
-  const char *cn = o->class_name(1);
+  Node* t = o->prev;
+  Node* tp = o;
+  const char* cn = o->class_name(1);
   for (; t && t->class_name(1) == cn; tp = t, t = t->prev) {/*empty*/}
   for (t = tp; t && t->class_name(1) == cn; t = t->next) {
     if (t == o) {sawthis=1; continue;}
-    const char *e = t->name();
+    const char* e = t->name();
     if (!e) continue;
     if (strncmp(c,e,d-c)) continue;
     int n1 = atoi(e+(d-c)+1);
@@ -1428,7 +1498,7 @@ const char *array_name(Widget_Node *o) {
 }
 
 // Test to see if extra code is a declaration:
-int isdeclare(const char *c) {
+int isdeclare(const char* c) {
   while (isspace(*c)) c++;
   if (*c == '#') return 1;
   if (!strncmp(c,"extern",6)) return 1;
@@ -1474,7 +1544,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
-    const char *d;
+    const char* d;
     for (d = callback(); *d;) {
       if (*d == 'o' && !is_id(d[1])) use_o = 1;
       if (*d == 'v' && !is_id(d[1])) use_v = 1;
@@ -1495,7 +1565,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
     f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
-      const char *p = strrchr(callback(), '\n');
+      const char* p = strrchr(callback(), '\n');
       if (p) p ++;
       else p = callback();
       // Only add trailing semicolon if the last line is not a preprocessor
@@ -1508,7 +1578,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     if (k) {
       f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t.c_str(), ut);
       f.write_c("%s((%s*)(o", f.indent(1), k);
-      Node *q = nullptr;
+      Node* q = nullptr;
       for (Node* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
       if (!q || !q->is_a(Type::Widget_Class))
@@ -1528,7 +1598,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
 
 void Widget_Node::write_code1(fld::io::Code_Writer& f) {
   std::string t = subclassname(this);
-  const char *c = array_name(this);
+  const char* c = array_name(this);
   if (c) {
     if (class_name(1)) {
       f.write_public(public_);
@@ -1544,7 +1614,7 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && is_a(Type::Window);
-  const char *ptr;
+  const char* ptr;
 
   f.varused = wused;
 
@@ -1682,7 +1752,7 @@ void Widget_Node::write_color(fld::io::Code_Writer& f, const char* field, Fl_Col
   case FL_DARK_CYAN:            color_name = "FL_DARK_CYAN";            break;
   case FL_WHITE:                color_name = "FL_WHITE";                break;
   }
-  const char *var = is_class() ? "this" : name() ? name() : "o";
+  const char* var = is_class() ? "this" : name() ? name() : "o";
   if (color_name) {
     f.write_c("%s%s->%s(%s);\n", f.indent(), var, field, color_name);
   } else {
@@ -1693,7 +1763,7 @@ void Widget_Node::write_color(fld::io::Code_Writer& f, const char* field, Fl_Col
 // this is split from write_code1(fld::io::Code_Writer& f) for Window_Node:
 void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
   Fl_Widget* tplate = ((Widget_Node*)factory)->o;
-  const char *var = is_class() ? "this" : name() ? name() : "o";
+  const char* var = is_class() ? "this" : name() ? name() : "o";
 
   if (!tooltip().empty()) {
     f.write_c("%s%s->tooltip(",f.indent(), var);
@@ -2051,7 +2121,7 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
   }
 }
 
-void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Widget_Node::read_property(fld::io::Project_Reader &f, const char* c) {
   int x,y,w,h; Fl_Font ft; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
     public_ = 0;
@@ -2079,11 +2149,11 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     image_name(f.read_word());
     // starting in 2023, `image` is always followed by `compress_image`
     // the code below is for compatibility with older .fl files
-    const char *ext = fl_filename_ext(image_name().c_str()); // FIXME:
-    if (   strcmp(ext, ".jpg")
-        && strcmp(ext, ".png")
-        && strcmp(ext, ".svg")
-        && strcmp(ext, ".svgz"))
+    std::string ext = fl_filename_ext_str(image_name());
+    if (   (ext != ".jpg")
+        && (ext != ".png")
+        && (ext != ".svg")
+        && (ext != ".svgz"))
       compress_image_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_image")) {
     bind_image_ = (int)atol(f.read_word());
@@ -2098,11 +2168,11 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     inactive_name(f.read_word());
     // starting in 2023, `deimage` is always followed by `compress_deimage`
     // the code below is for compatibility with older .fl files
-    const char *ext = fl_filename_ext(inactive_name().c_str()); // FIXME:
-    if (   strcmp(ext, ".jpg")
-        && strcmp(ext, ".png")
-        && strcmp(ext, ".svg")
-        && strcmp(ext, ".svgz"))
+    std::string ext = fl_filename_ext_str(inactive_name());
+    if (   (ext != ".jpg")
+        && (ext != ".png")
+        && (ext != ".svg")
+        && (ext != ".svgz"))
       compress_deimage_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_deimage")) {
     bind_deimage_ = (int)atol(f.read_word());
@@ -2141,7 +2211,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     const char* value = f.read_word();
     ((Fl_Button*)o)->value(atoi(value));
   } else if (!strcmp(c,"color")) {
-    const char *cw = f.read_word();
+    const char* cw = f.read_word();
     if (cw[0]=='0' && cw[1]=='x') {
       sscanf(cw,"0x%x",&x);
       o->color(x);
@@ -2159,7 +2229,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"labeltype")) {
     c = f.read_word();
     if (!strcmp(c,"image")) {
-      Image_Asset *i = Image_Asset::find(label());
+      Image_Asset* i = Image_Asset::find(label());
       if (!i) f.read_error("Image file '%s' not found", label());
       else setimage(i);
       image_name(label());
@@ -2265,7 +2335,7 @@ int Widget_Node::read_fdesign(const char* propname, const char* value) {
     float x,y,w,h;
     if (sscanf(value,"%f %f %f %f",&x,&y,&w,&h) == 4) {
       if (fld::io::fdesign_flip) {
-        Node *p;
+        Node* p;
         for (p = parent; p && !p->is_a(Type::Window); p = p->parent) {/*empty*/}
         if (p && p->is_widget()) y = ((Widget_Node*)p)->o->h()-(y+h);
       }
@@ -2354,7 +2424,7 @@ void leave_live_mode_cb(Fl_Widget*, void*) {
   live_mode_cb(nullptr, nullptr);
 }
 
-Fl_Widget *Widget_Node::enter_live_mode(int) {
+Fl_Widget* Widget_Node::enter_live_mode(int) {
   live_widget = widget(o->x(), o->y(), o->w(), o->h());
   if (live_widget)
     copy_properties();
@@ -2364,7 +2434,7 @@ Fl_Widget *Widget_Node::enter_live_mode(int) {
 Fl_Widget* Widget_Node::propagate_live_mode(Fl_Group* grp) {
   live_widget = grp;
   copy_properties();
-  Node *n;
+  Node* n;
   for (n = next; n && n->level > level; n = n->next) {
     if (n->level == level+1) {
       Fl_Widget* proxy_child = n->enter_live_mode();
@@ -2396,7 +2466,7 @@ void Widget_Node::copy_properties() {
   textstuff(0, ff, fs, fc);
 
   // copy all attributes common to all widget types
-  Fl_Widget *w = live_widget;
+  Fl_Widget* w = live_widget;
   w->label(o->label());
   if (tooltip().empty())
     w->tooltip(nullptr);
@@ -2456,7 +2526,7 @@ void Widget_Node::copy_properties() {
     d->step(s->step());
     d->value(s->value());
     if (is_a(Type::Slider)) {
-      Fl_Slider *d = (Fl_Slider*)live_widget, *s = (Fl_Slider*)o;
+      Fl_Slider* d = (Fl_Slider*)live_widget, *s = (Fl_Slider*)o;
       d->slider_size(s->slider_size());
     }
   }
