@@ -106,7 +106,8 @@ and calls corresponding listeners.
 
 The core protocol defines also a number of mostly opaque structures whose names begin with \c wl_.
 The names of symbols and types defined by the other protocols FLTK uses begin with \c xdg_,
-\c zwp_text_input_v3, \c zxdg_toplevel_decoration_, \c gtk_shell1_ and \c gtk_surface1_.
+\c zwp_text_input_v3, \c zxdg_toplevel_decoration_, \c gtk_shell1_, \c gtk_surface1_
+and \c wp_cursor_shape_.
 FLTK defines a few structures holding Wayland-related data.
 The names of FLTK-defined structures don't begin with \c wl_. For example,
 <tt>struct wld_window</tt> (see \ref wld_window) is used to store all Wayland-specific data associated
@@ -159,6 +160,7 @@ wayland-scanner client-header $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shel
 Similar operations are performed for FLTK to use protocols
 <a href=https://wayland.app/protocols/xdg-dialog-v1>XDG dialog windows</a>,
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>,
+<a href=https://wayland.app/protocols/cursor-shape-v1>Cursor shape</a>,
 <a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>
 and <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>.
 
@@ -981,6 +983,15 @@ menu) and double-click (maximize the window) events on titlebars which may diver
 from \c gnome-tweaks settings.
 
 \section wayland-cursor Wayland cursors
+
+When the running compositor supports it, FLTK uses protocol
+<a href=https://wayland.app/protocols/cursor-shape-v1>Cursor shape</a> that offers an optional
+way to set cursor images using enumerated cursor shapes. With this protocol, it's enough to call
+function \c wp_cursor_shape_device_v1_set_shape() inside \c pointer_enter() to set the cursor
+shape when the pointer enters a given surface.
+
+If the running compositor doesn't support this protocol or to define custom cursor shapes, FLTK
+uses another approach as follows.
 
 Wayland defines types <tt>struct wl_cursor</tt> and <tt>struct wl_cursor_theme</tt> to hold
 cursor-related data.
