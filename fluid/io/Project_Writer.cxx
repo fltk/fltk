@@ -119,9 +119,9 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
   proj_.i18n.write(*this);
 
   if (!selected_only) {
-    write_string("\nheader_name"); write_word(proj_.header_file_name.c_str());
-    write_string("\ncode_name"); write_word(proj_.code_file_name.c_str());
-    write_string("\ninclude_guard"); write_word(proj_.include_guard.c_str());
+    write_string("\nheader_name"); write_word(proj_.header_file_name);
+    write_string("\ncode_name"); write_word(proj_.code_file_name);
+    write_string("\ninclude_guard"); write_word(proj_.include_guard);
     Fluid.layout_list.write(this);
     if (g_shell_config)
       g_shell_config->write(this);

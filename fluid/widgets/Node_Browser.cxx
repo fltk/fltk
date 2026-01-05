@@ -393,27 +393,28 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // Indent=12 per level: Now write the text that comes after the graphics representation
   Y += comment_incr;
   if (l->is_widget() || l->is_class()) {
-    const char* c = subclassname(l);
-    if (!strncmp(c,"Fl_",3)) c += 3;
+    std::string c = subclassname(l);
+    if (c.compare(0, 3, "Fl_")==0) c.erase(0, 3);
     // -- class
     fl_font(class_font, textsize());
     if (l->new_selected) fl_color(fl_contrast(class_color, FL_SELECTION_COLOR));
     else fl_color(class_color);
-    fl_draw(c, X, Y+13);
-    X += int(fl_width(c)+fl_width('n'));
-    c = l->name();
-    if (c) {
+    fl_draw(c.c_str(), X, Y+13);
+    X += int(fl_width(c.c_str())+fl_width('n'));
+    c = l->name() ? l->name() : "";
+    if (!c.empty()) {
       // -- name
       fl_font(name_font, textsize());
       if (l->new_selected) fl_color(fl_contrast(name_color, FL_SELECTION_COLOR));
       else fl_color(name_color);
-      fl_draw(c, X, Y+13);
-    } else if ((c = l->label())) {
+      fl_draw(c.c_str(), X, Y+13);
+    } else if (l->label()) {
       // -- label
+      c = l->label();
       fl_font(label_font, textsize());
       if (l->new_selected) fl_color(fl_contrast(label_color, FL_SELECTION_COLOR));
       else fl_color(label_color);
-      copy_trunc(buf, c, 32, 1, 0); // quoted string
+      copy_trunc(buf, c.c_str(), 32, 1, 0); // quoted string
       fl_draw(buf, X, Y+13);
     }
   } else {

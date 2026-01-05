@@ -150,7 +150,7 @@ public:
   bool is_a(Type inType) const override { return (inType==Type::CodeBlock) ? true : super::is_a(inType); }
   void write_properties(fld::io::Project_Writer &f) override;
   void read_property(fld::io::Project_Reader &f, const char *) override;
-  std::string end_code() { return end_code_; }
+  std::string end_code() const { return end_code_; }
   void end_code(const std::string& c) { storestring(c, end_code_); }
 };
 
@@ -212,7 +212,7 @@ public:
   Type type() const override { return Type::Data; }
   bool is_a(Type inType) const override { return (inType==Type::Data) ? true : super::is_a(inType); }
   void filename(const std::string& fn) { storestring(fn, filename_); }
-  std::string filename() { return filename_; }
+  std::string filename() const { return filename_; }
   int output_format() { return output_format_; }
   void output_format(int fmt) { output_format_ = fmt; }
 };
@@ -253,7 +253,7 @@ public:
   int is_public() const override;
   Type type() const override { return Type::DeclBlock; }
   bool is_a(Type inType) const override { return (inType==Type::DeclBlock) ? true : super::is_a(inType); }
-  std::string end_code() { return end_code_; }
+  std::string end_code() const { return end_code_; }
   void end_code(const std::string& p) { storestring(p, end_code_); }
   int write_map() { return write_map_; }
   void write_map(int v) { write_map_ = v; }
@@ -328,7 +328,7 @@ public:
   void read_property(fld::io::Project_Reader &f, const char *) override;
 
   /** Get base class access and name. */
-  std::string base_class() { return base_class_; }
+  std::string base_class() const { return base_class_; }
   /** Set base class access and name, i.e. `public Fl_Widget`. */
   void base_class(const std::string& name) { storestring(name, base_class_); }
 

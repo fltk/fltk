@@ -59,7 +59,7 @@ using namespace fld::proj;
 int Widget_Node::is_widget() const {return 1;}
 int Widget_Node::is_public() const {return public_;}
 
-const char* subclassname(Node* l) {
+std::string subclassname(Node* l) {
   if (l->is_a(Type::Menu_Bar)) {
     Menu_Bar_Node *mb = static_cast<Menu_Bar_Node*>(l);
     if (mb->is_sys_menu_bar())
@@ -67,8 +67,8 @@ const char* subclassname(Node* l) {
   }
   if (l->is_widget()) {
     Widget_Node* p = (Widget_Node*)l;
-    const char* c = p->subclass();
-    if (c) return c;
+    std::string c = p->subclass();
+    if (!c.empty()) return c;
     if (l->is_class()) return "Fl_Group";
     if (p->o->type() == FL_DOUBLE_WINDOW) return "Fl_Double_Window";
     if (p->type() == Type::Input) {
@@ -203,29 +203,6 @@ void Widget_Node::setlabel(const char *n) {
   redraw();
 }
 
-Widget_Node::Widget_Node()
-: override_visible_(0)
-{
-  for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = nullptr; }
-  subclass_ = nullptr;
-  hotspot_ = 0;
-  tooltip_ = nullptr;
-  image_name_ = nullptr;
-  inactive_name_ = nullptr;
-  image = nullptr;
-  inactive = nullptr;
-  o = nullptr;
-  public_ = 1;
-  bind_image_ = 0;
-  compress_image_ = 1;
-  bind_deimage_ = 0;
-  compress_deimage_ = 1;
-  scale_image_w_ = 0;
-  scale_image_h_ = 0;
-  scale_deimage_w_ = 0;
-  scale_deimage_h_ = 0;
-}
-
 Widget_Node::~Widget_Node() {
   if (o) {
     Fl_Window *win = o->window();
@@ -233,44 +210,38 @@ Widget_Node::~Widget_Node() {
     if (win)
       win->redraw();
   }
-  if (subclass_) free((void*)subclass_);
-  if (tooltip_) free((void*)tooltip_);
-  if (image_name_) {
-    free((void*)image_name_);
-    if (image) image->dec_ref();
-  }
-  if (inactive_name_) {
-    free((void*)inactive_name_);
-    if (inactive) inactive->dec_ref();
-  }
-  for (int n=0; n<NUM_EXTRA_CODE; n++) {
-    if (extra_code_[n]) free((void*) extra_code_[n]);
-  }
+  if (image) image->dec_ref();
+  if (inactive) inactive->dec_ref();
 }
 
-void Widget_Node::extra_code(int m,const char *n) {
-  storestring(n,extra_code_[m]);
+void Widget_Node::extra_code(int m, const std::string& n) {
+  storestring(n, extra_code_[m]);
 }
 
 extern void redraw_browser();
-void Widget_Node::subclass(const char *n) {
-  if (storestring(n,subclass_) && visible)
+
+void Widget_Node::subclass(const std::string& n) {
+  if (storestring(n, subclass_) && visible)
     redraw_browser();
 }
 
-void Widget_Node::tooltip(const char *n) {
-  storestring(n,tooltip_);
-  o->tooltip(n);
+void Widget_Node::tooltip(const std::string& text) {
+  storestring(text, tooltip_);
+  if (text.empty()) {
+    o->tooltip(nullptr);
+  } else {
+    o->copy_tooltip(text.c_str());
+  }
 }
 
-void Widget_Node::image_name(const char *n) {
-  setimage(Image_Asset::find(n));
-  storestring(n,image_name_);
+void Widget_Node::image_name(const std::string& name) {
+  setimage(Image_Asset::find(name.c_str()));
+  storestring(name, image_name_);
 }
 
-void Widget_Node::inactive_name(const char *n) {
-  setinactive(Image_Asset::find(n));
-  storestring(n,inactive_name_);
+void Widget_Node::inactive_name(const std::string& name) {
+  setinactive(Image_Asset::find(name.c_str()));
+  storestring(name, inactive_name_);
 }
 
 void Widget_Node::redraw() {
@@ -1467,14 +1438,14 @@ int isdeclare(const char *c) {
 }
 
 void Widget_Node::write_static(fld::io::Code_Writer& f) {
-  const char* t = subclassname(this);
-  if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
+  std::string t = subclassname(this);
+  if (subclass().empty() || (is_class() && (t.compare(0, 3, "Fl_")==0))) {
     f.write_h_once("#include <FL/Fl.H>");
-    f.write_h_once("#include <FL/%s.H>", t);
+    f.write_h_once("#include <FL/%s.H>", t.c_str());
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (extra_code(n) && isdeclare(extra_code(n)))
-      f.write_h_once("%s", extra_code(n));
+    if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
+      f.write_h_once("%s", extra_code(n).c_str());
   }
   if (callback() && is_name(callback())) {
     int write_extern_declaration = 1;
@@ -1487,7 +1458,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
         write_extern_declaration = 0;
     }
     if (write_extern_declaration)
-      f.write_h_once("extern void %s(%s*, %s);", callback(), t,
+      f.write_h_once("extern void %s(%s*, %s);", callback(), t.c_str(),
                     user_data_type() ? user_data_type() : "void*");
   }
   const char* k = class_name(1);
@@ -1495,9 +1466,9 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
   if (c && !k && !is_class()) {
     f.write_c("\n");
     if (!public_) f.write_c("static ");
-    else f.write_h("extern %s *%s;\n", t, c);
-    if (strchr(c, '[') == nullptr) f.write_c("%s *%s=(%s *)0;\n", t, c, t);
-    else f.write_c("%s *%s={(%s *)0};\n", t, c, t);
+    else f.write_h("extern %s *%s;\n", t.c_str(), c);
+    if (strchr(c, '[') == nullptr) f.write_c("%s *%s=(%s *)0;\n", t.c_str(), c, t.c_str());
+    else f.write_c("%s *%s={(%s *)0};\n", t.c_str(), c, t.c_str());
   }
   if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -1512,9 +1483,9 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     }
     const char* cn = callback_name(f);
     if (k) {
-      f.write_c("\nvoid %s::%s_i(%s*", k, cn, t);
+      f.write_c("\nvoid %s::%s_i(%s*", k, cn, t.c_str());
     } else {
-      f.write_c("\nstatic void %s(%s*", cn, t);
+      f.write_c("\nstatic void %s(%s*", cn, t.c_str());
     }
     if (use_o) f.write_c(" o");
     const char* ut = user_data_type() ? user_data_type() : "void*";
@@ -1535,7 +1506,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
     f.write_c("}\n");
     if (k) {
-      f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
+      f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t.c_str(), ut);
       f.write_c("%s((%s*)(o", f.indent(1), k);
       Node *q = nullptr;
       for (Node* p = parent; p && p->is_widget(); q = p, p = p->parent)
@@ -1556,20 +1527,20 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
 }
 
 void Widget_Node::write_code1(fld::io::Code_Writer& f) {
-  const char* t = subclassname(this);
+  std::string t = subclassname(this);
   const char *c = array_name(this);
   if (c) {
     if (class_name(1)) {
       f.write_public(public_);
-      f.write_h("%s%s *%s;\n", f.indent(1), t, c);
+      f.write_h("%s%s *%s;\n", f.indent(1), t.c_str(), c);
     }
   }
   if (class_name(1) && callback() && !is_name(callback())) {
     const char* cn = callback_name(f);
     const char* ut = user_data_type() ? user_data_type() : "void*";
     f.write_public(0);
-    f.write_h("%sinline void %s_i(%s*, %s);\n", f.indent(1), cn, t, ut);
-    f.write_h("%sstatic void %s(%s*, %s);\n", f.indent(1), cn, t, ut);
+    f.write_h("%sinline void %s_i(%s*, %s);\n", f.indent(1), cn, t.c_str(), ut);
+    f.write_h("%sstatic void %s(%s*, %s);\n", f.indent(1), cn, t.c_str(), ut);
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && is_a(Type::Window);
@@ -1589,13 +1560,14 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
 
   if (!f.varused) {
     for (int n=0; n < NUM_EXTRA_CODE; n++)
-      if (extra_code(n) && !isdeclare(extra_code(n)))
+      if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str()))
       {
         int instring = 0;
         int inname = 0;
         int incomment = 0;
         int incppcomment = 0;
-        for (ptr = extra_code(n); *ptr; ptr ++) {
+        std::string code = extra_code(n);
+        for (ptr = code.c_str(); *ptr; ptr ++) {
           if (instring) {
             if (*ptr == '\\') ptr++;
             else if (*ptr == '\"') instring = 0;
@@ -1631,23 +1603,23 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
 
   f.write_c("%s{ ", f.indent());
   write_comment_inline_c(f);
-  if (f.varused) f.write_c("%s* o = ", t);
+  if (f.varused) f.write_c("%s* o = ", t.c_str());
   if (name()) f.write_c("%s = ", name());
   if (is_a(Type::Window)) {
     // Handle special case where user is faking a Fl_Group type as a window,
     // there is no 2-argument constructor in that case:
-    if (!strstr(t, "Window"))
-      f.write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
+    if (t.find("Window")==t.npos)
+      f.write_c("new %s(0, 0, %d, %d", t.c_str(), o->w(), o->h());
     else
-      f.write_c("new %s(%d, %d", t, o->w(), o->h());
+      f.write_c("new %s(%d, %d", t.c_str(), o->w(), o->h());
   } else if (is_a(Type::Menu_Bar)
              && ((Menu_Bar_Node*)this)->is_sys_menu_bar()
              && is_in_class()) {
     f.write_c("(%s*)new %s(%d, %d, %d, %d",
-              t, ((Menu_Bar_Node*)this)->sys_menubar_proxy_name(),
+              t.c_str(), ((Menu_Bar_Node*)this)->sys_menubar_proxy_name(),
               o->x(), o->y(), o->w(), o->h());
   } else {
-    f.write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
+    f.write_c("new %s(%d, %d, %d, %d", t.c_str(), o->x(), o->y(), o->w(), o->h());
   }
   if (label() && *label()) {
     f.write_c(", ");
@@ -1723,15 +1695,15 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
   Fl_Widget* tplate = ((Widget_Node*)factory)->o;
   const char *var = is_class() ? "this" : name() ? name() : "o";
 
-  if (tooltip() && *tooltip()) {
+  if (!tooltip().empty()) {
     f.write_c("%s%s->tooltip(",f.indent(), var);
     switch (Fluid.proj.i18n.type) {
     case fld::I18n_Type::NONE : /* None */
-        f.write_cstring(tooltip());
+        f.write_cstring(tooltip().c_str());
         break;
     case fld::I18n_Type::GNU : /* GNU gettext */
         f.write_c("%s(", Fluid.proj.i18n.gnu_function.c_str());
-        f.write_cstring(tooltip());
+        f.write_cstring(tooltip().c_str());
         f.write_c(")");
         break;
     case fld::I18n_Type::POSIX : /* POSIX catgets */
@@ -1739,7 +1711,7 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
                   Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
                   Fluid.proj.i18n.posix_set.c_str(),
                   msgnum() + 1);
-        f.write_cstring(tooltip());
+        f.write_cstring(tooltip().c_str());
         f.write_c(")");
         break;
     }
@@ -1750,7 +1722,7 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
     f.write_c("%s%s->type(%d);\n", f.indent(), var, ((Fl_Spinner*)o)->type());
   else if (o->type() != tplate->type() && !is_a(Type::Window))
     f.write_c("%s%s->type(%d);\n", f.indent(), var, o->type());
-  if (o->box() != tplate->box() || subclass())
+  if (o->box() != tplate->box() || !subclass().empty())
     f.write_c("%s%s->box(FL_%s);\n", f.indent(), var, boxname(o->box()));
 
   // write shortcut command if needed
@@ -1792,9 +1764,9 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
   }
-  if (o->color() != tplate->color() || subclass())
+  if (o->color() != tplate->color() || !subclass().empty())
     write_color(f, "color", o->color());
-  if (o->selection_color() != tplate->selection_color() || subclass())
+  if (o->selection_color() != tplate->selection_color() || !subclass().empty())
     write_color(f, "selection_color", o->selection_color());
   if (image) {
     image->write_code(f, bind_image_, var);
@@ -1824,14 +1796,14 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
         f.write_c("%s->deimage()->data_h(), 0, 1);\n", var);
     }
   }
-  if (o->labeltype() != tplate->labeltype() || subclass())
+  if (o->labeltype() != tplate->labeltype() || !subclass().empty())
     f.write_c("%s%s->labeltype(FL_%s);\n", f.indent(), var,
             item_name(labeltypemenu, o->labeltype()));
-  if (o->labelfont() != tplate->labelfont() || subclass())
+  if (o->labelfont() != tplate->labelfont() || !subclass().empty())
     f.write_c("%s%s->labelfont(%d);\n", f.indent(), var, o->labelfont());
-  if (o->labelsize() != tplate->labelsize() || subclass())
+  if (o->labelsize() != tplate->labelsize() || !subclass().empty())
     f.write_c("%s%s->labelsize(%d);\n", f.indent(), var, o->labelsize());
-  if (o->labelcolor() != tplate->labelcolor() || subclass())
+  if (o->labelcolor() != tplate->labelcolor() || !subclass().empty())
     write_color(f, "labelcolor", o->labelcolor());
   if (o->horizontal_label_margin() != tplate->horizontal_label_margin())
     f.write_c("%s%s->horizontal_label_margin(%d);\n", f.indent(), var, o->horizontal_label_margin());
@@ -1900,7 +1872,7 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
   } else if (ud) {
     f.write_c("%s%s->user_data((void*)(%s));\n", f.indent(), var, ud);
   }
-  if (o->align() != tplate->align() || subclass()) {
+  if (o->align() != tplate->align() || !subclass().empty()) {
     int i = o->align();
     f.write_c("%s%s->align(Fl_Align(%s", f.indent(), var,
             item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
@@ -1908,7 +1880,7 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
     f.write_c("));\n");
   }
   Fl_When ww = o->when();
-  if (ww != tplate->when() || subclass())
+  if (ww != tplate->when() || !subclass().empty())
     f.write_c("%s%s->when(%s);\n", f.indent(), var, when_symbol_name(ww));
   if (!o->visible() && o->parent())
     f.write_c("%s%s->hide();\n", f.indent(), var);
@@ -1928,13 +1900,13 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
 
 void Widget_Node::write_extra_code(fld::io::Code_Writer& f) {
   for (int n=0; n < NUM_EXTRA_CODE; n++)
-    if (extra_code(n) && !isdeclare(extra_code(n)))
-      f.write_c("%s%s\n", f.indent(), extra_code(n));
+    if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str()))
+      f.write_c("%s%s\n", f.indent(), extra_code(n).c_str());
 }
 
 void Widget_Node::write_block_close(fld::io::Code_Writer& f) {
   f.indentation--;
-  f.write_c("%s} // %s* %s\n", f.indent(), subclassname(this),
+  f.write_c("%s} // %s* %s\n", f.indent(), subclassname(this).c_str(),
           name() ? name() : "o");
 }
 
@@ -1953,11 +1925,11 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
     case 1: break;
     case 2: f.write_string("protected"); break;
   }
-  if (tooltip() && *tooltip()) {
+  if (!tooltip().empty()) {
     f.write_string("tooltip");
     f.write_word(tooltip());
   }
-  if (image_name() && *image_name()) {
+  if (!image_name().empty()) {
     if (scale_image_w_ || scale_image_h_)
       f.write_string("scale_image {%d %d}", scale_image_w_, scale_image_h_);
     f.write_string("image");
@@ -1965,7 +1937,7 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("compress_image %d", compress_image_);
   }
   if (bind_image_) f.write_string("bind_image 1");
-  if (inactive_name() && *inactive_name()) {
+  if (!inactive_name().empty()) {
     if (scale_deimage_w_ || scale_deimage_h_)
       f.write_string("scale_deimage {%d %d}", scale_deimage_w_, scale_deimage_h_);
     f.write_string("deimage");
@@ -2067,12 +2039,12 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
   if (resizable()) f.write_string("resizable");
   if (hotspot()) f.write_string(is_a(Type::Menu_Item) ? "divider" : "hotspot");
   if (menu_headline()) f.write_string("headline");
-  for (int n=0; n < NUM_EXTRA_CODE; n++) if (extra_code(n)) {
+  for (int n=0; n < NUM_EXTRA_CODE; n++) if (!extra_code(n).empty()) {
     f.write_indent(level+1);
     f.write_string("code%d",n);
-    f.write_word(extra_code(n));
+    f.write_word(extra_code(n).c_str());
   }
-  if (subclass()) {
+  if (!subclass().empty()) {
     f.write_indent(level+1);
     f.write_string("class");
     f.write_word(subclass());
@@ -2107,7 +2079,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     image_name(f.read_word());
     // starting in 2023, `image` is always followed by `compress_image`
     // the code below is for compatibility with older .fl files
-    const char *ext = fl_filename_ext(image_name_);
+    const char *ext = fl_filename_ext(image_name().c_str()); // FIXME:
     if (   strcmp(ext, ".jpg")
         && strcmp(ext, ".png")
         && strcmp(ext, ".svg")
@@ -2126,7 +2098,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     inactive_name(f.read_word());
     // starting in 2023, `deimage` is always followed by `compress_deimage`
     // the code below is for compatibility with older .fl files
-    const char *ext = fl_filename_ext(inactive_name_);
+    const char *ext = fl_filename_ext(inactive_name().c_str()); // FIXME:
     if (   strcmp(ext, ".jpg")
         && strcmp(ext, ".png")
         && strcmp(ext, ".svg")
@@ -2253,11 +2225,11 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char *c) {
     if (!strncmp(c,"code",4)) {
       int n = atoi(c+4);
       if (n >= 0 && n <= NUM_EXTRA_CODE) {
-        extra_code(n,f.read_word());
+        extra_code(n, f.read_word());
         return;
       }
     } else if (!strcmp(c,"extra_code")) {
-      extra_code(0,f.read_word());
+      extra_code(0, f.read_word());
       return;
     }
     Node::read_property(f, c);
@@ -2311,8 +2283,8 @@ int Widget_Node::read_fdesign(const char* propname, const char* value) {
     user_data(value);
   } else if (!strcmp(propname,"shortcut")) {
     if (value[0]) {
-      char buf[128]; sprintf(buf,"o->shortcut(\"%s\");",value);
-      extra_code(0,buf);
+      char buf[128]; sprintf(buf,"o->shortcut(\"%s\");", value);
+      extra_code(0, buf);
     }
   } else if (!strcmp(propname,"style")) {
     if (!strncmp(value,"FL_NORMAL",9)) return 1;
@@ -2426,7 +2398,10 @@ void Widget_Node::copy_properties() {
   // copy all attributes common to all widget types
   Fl_Widget *w = live_widget;
   w->label(o->label());
-  w->tooltip(tooltip());
+  if (tooltip().empty())
+    w->tooltip(nullptr);
+  else
+    w->copy_tooltip(tooltip().c_str());
   w->type(o->type());
   w->box(o->box());
   w->color(o->color());

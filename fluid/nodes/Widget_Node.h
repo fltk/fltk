@@ -1,7 +1,7 @@
 //
 // Widget Node header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,13 +15,13 @@
 //
 
 // Type for creating all subclasses of Fl_Widget
-// This should have the widget pointer in it, but it is still in the
-// Node base class.
 
 #ifndef FLUID_NODES_WIDGET_NODE_H
 #define FLUID_NODES_WIDGET_NODE_H
 
 #include "nodes/Node.h"
+
+#include <string>
 
 #define NUM_EXTRA_CODE 4
 
@@ -32,7 +32,7 @@ extern void* const LOAD;
 extern Node* current_node; // one of the selected ones
 extern Widget_Node* current_widget; // one of the selected ones
 
-extern const char* subclassname(Node* l);
+extern std::string subclassname(Node* l);
 extern int is_name(const char *c);
 void selection_changed(Node* new_current);
 Node *sort(Node *parent);
@@ -45,12 +45,12 @@ class Widget_Node : public Node
   virtual Widget_Node *_make() = 0; // virtual constructor
   void setlabel(const char *) override;
 
-  const char *extra_code_[NUM_EXTRA_CODE];
-  const char *subclass_;
-  const char *tooltip_;
-  const char *image_name_;
-  const char *inactive_name_;
-  uchar hotspot_;
+  std::string extra_code_[NUM_EXTRA_CODE];
+  std::string subclass_;
+  std::string tooltip_;
+  std::string image_name_;
+  std::string inactive_name_;
+  uchar hotspot_ = 0;
 
   bool menu_headline_ { false };
 
@@ -60,7 +60,7 @@ protected:
   /// We can't open a window in batch mode, even if we want the "visible" flags
   /// set, so we need a second place to store this information while also
   /// disabling the output of the "hide" property by the Widget Type.
-  uchar override_visible_;
+  uchar override_visible_ = 0;
 
   void write_static(fld::io::Code_Writer& f) override;
   void write_code1(fld::io::Code_Writer& f) override;
@@ -72,34 +72,34 @@ protected:
   Fl_Widget *live_widget;
 
 public:
-  Fl_Widget *o;
-  int public_;
-  int bind_image_;
-  int compress_image_;
-  int bind_deimage_;
-  int compress_deimage_;
-  int scale_image_w_, scale_image_h_;
-  int scale_deimage_w_, scale_deimage_h_;
+  Fl_Widget *o = nullptr;
+  int public_ = 1;
+  int bind_image_ = 0;
+  int compress_image_ = 1;
+  int bind_deimage_ = 0;
+  int compress_deimage_ = 1;
+  int scale_image_w_ = 0, scale_image_h_ = 0;
+  int scale_deimage_w_ = 0, scale_deimage_h_ = 0;
 
-  Image_Asset *image;
+  Image_Asset *image = nullptr;
   void setimage(Image_Asset *);
-  Image_Asset *inactive;
+  Image_Asset *inactive = nullptr;
   void setinactive(Image_Asset *);
 
-  Widget_Node();
+  Widget_Node() = default;
   Node *make(Strategy strategy) override;
   void open() override;
 
-  const char *extra_code(int n) const {return extra_code_[n];}
-  void extra_code(int n,const char *);
-  const char *subclass() const {return subclass_;}
-  void subclass(const char *);
-  const char *tooltip() const {return tooltip_;}
-  void tooltip(const char *);
-  const char *image_name() const {return image_name_;}
-  void image_name(const char *);
-  const char *inactive_name() const {return inactive_name_;}
-  void inactive_name(const char *);
+  std::string extra_code(int n) const { return extra_code_[n]; }
+  void extra_code(int n, const std::string& code);
+  std::string subclass() const { return subclass_; }
+  void subclass(const std::string& name);
+  std::string tooltip() const { return tooltip_; }
+  void tooltip(const std::string& text);
+  std::string image_name() const { return image_name_; }
+  void image_name(const std::string& name);
+  std::string inactive_name() const { return inactive_name_; }
+  void inactive_name(const std::string& name);
   // Note: hotspot is misused by menu items to indicate a divider
   uchar hotspot() const {return hotspot_;}
   void hotspot(uchar v) {hotspot_ = v;}

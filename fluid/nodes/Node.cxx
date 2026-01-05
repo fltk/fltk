@@ -136,7 +136,7 @@ void print_project_tree() {
   for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
     for (int i = t->level; i > 0; i--)
       fprintf(stderr, ". ");
-    fprintf(stderr, "%s\n", subclassname(t));
+    fprintf(stderr, "%s\n", subclassname(t).c_str());
   }
 }
 #endif
@@ -783,7 +783,7 @@ int Node::msgnum() {
 
   for (count = 0, p = this; p;) {
     if (p->label()) count ++;
-    if (p != this && p->is_widget() && ((Widget_Node *)p)->tooltip()) count ++;
+    if (p != this && p->is_widget() && !((Widget_Node *)p)->tooltip().empty()) count ++;
 
     if (p->prev) p = p->prev;
     else p = p->parent;
@@ -904,7 +904,7 @@ void Node::write(fld::io::Project_Writer &f) {
   if (is_class()) {
     auto p = ((Class_Node*)this)->prefix();
     if (!p.empty())
-      f.write_word(p.c_str());
+      f.write_word(p);
   }
 
   f.write_word(name());

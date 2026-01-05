@@ -326,8 +326,8 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     f.write_h_once("extern void %s(Fl_Menu_*, %s);", callback(),
                   user_data_type() ? user_data_type() : "void*");
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (extra_code(n) && isdeclare(extra_code(n)))
-      f.write_h_once("%s", extra_code(n));
+    if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
+      f.write_h_once("%s", extra_code(n).c_str());
   }
   if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -638,9 +638,9 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
     }
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (extra_code(n) && !isdeclare(extra_code(n))) {
+    if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str())) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
-      f.write_c("%s%s\n", f.indent(), extra_code(n));
+      f.write_c("%s%s\n", f.indent(), extra_code(n).c_str());
     }
   }
   if (menuItemInitialized) {
@@ -837,11 +837,11 @@ Menu_Bar_Node::~Menu_Bar_Node() {
  */
 bool Menu_Bar_Node::is_sys_menu_bar() {
   if (o->type()==1) return true;
-  return ( subclass() && (strcmp(subclass(), "Fl_Sys_Menu_Bar")==0) );
+  return (subclass() == "Fl_Sys_Menu_Bar");
 }
 
-const char *Menu_Bar_Node::sys_menubar_name() {
-  if (subclass())
+std::string Menu_Bar_Node::sys_menubar_name() const {
+  if (!subclass().empty())
     return subclass();
   else
     return "Fl_Sys_Menu_Bar";
@@ -850,7 +850,7 @@ const char *Menu_Bar_Node::sys_menubar_name() {
 const char *Menu_Bar_Node::sys_menubar_proxy_name() {
   if (!_proxy_name)
     _proxy_name = (char*)::malloc(128);
-  ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name());
+  ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name().c_str());
   return _proxy_name;
 }
 
@@ -868,8 +868,8 @@ void Menu_Bar_Node::write_static(fld::io::Code_Writer& f) {
                      "  : %s(x, y, w, h, l) { }\n"
                      "  void *_parent_class;\n"
                      "};\n",
-                     sys_menubar_proxy_name(), sys_menubar_name(),
-                     sys_menubar_proxy_name(), sys_menubar_name()
+                     sys_menubar_proxy_name(), sys_menubar_name().c_str(),
+                     sys_menubar_proxy_name(), sys_menubar_name().c_str()
                      );
     }
   }

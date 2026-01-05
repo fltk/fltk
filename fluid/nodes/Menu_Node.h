@@ -300,7 +300,7 @@ public:
   Type type() const override { return Type::Menu_Bar; }
   bool is_a(Type inType) const override { return (inType==Type::Menu_Bar) ? true : super::is_a(inType); }
   bool is_sys_menu_bar();
-  const char *sys_menubar_name();
+  std::string sys_menubar_name() const;
   const char *sys_menubar_proxy_name();
 protected:
   char *_proxy_name;

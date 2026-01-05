@@ -227,7 +227,7 @@ void Function_Node::write_properties(fld::io::Project_Writer &f) {
   if (declare_c_) f.write_string("C");
   if (!return_type().empty()) {
     f.write_string("return_type");
-    f.write_word(return_type().c_str());
+    f.write_word(return_type());
   }
 }
 
@@ -436,7 +436,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
   }
 
   if (havewidgets && child && !child->name())
-    f.write_c("%s%s* w;\n", f.indent(1), subclassname(child));
+    f.write_c("%s%s* w;\n", f.indent(1), subclassname(child).c_str());
   f.indentation++;
 }
 
@@ -655,7 +655,7 @@ void CodeBlock_Node::write_properties(fld::io::Project_Writer &f) {
   Node::write_properties(f);
   if (!end_code().empty()) {
     f.write_string("after");
-    f.write_word(end_code().c_str());
+    f.write_word(end_code());
   }
 }
 
@@ -907,7 +907,7 @@ void Data_Node::write_properties(fld::io::Project_Writer &f) {
   Decl_Node::write_properties(f);
   if (!filename().empty()) {
     f.write_string("filename");
-    f.write_word(filename().c_str());
+    f.write_word(filename());
   }
   switch (output_format_) {
     case 1: f.write_string("textmode"); break;
@@ -1202,7 +1202,7 @@ void DeclBlock_Node::write_properties(fld::io::Project_Writer &f) {
   if (write_map_ != CODE_IN_SOURCE)
     f.write_string("map %d", write_map_);
   f.write_string("after");
-  f.write_word(end_code().c_str());
+  f.write_word(end_code());
 }
 
 /**
@@ -1467,7 +1467,7 @@ void Class_Node::write_properties(fld::io::Project_Writer &f) {
   Node::write_properties(f);
   if (!base_class().empty()) {
     f.write_string(":");
-    f.write_word(base_class().c_str());
+    f.write_word(base_class());
   }
   switch (public_) {
     case 0: f.write_string("private"); break;

@@ -519,7 +519,7 @@ Function {make_widget_panel()} {uid 9310
 } {
   Fl_Window {} {uid 30ee
     comment {Use a Double Window to avoid flickering.} open
-    xywh {406 252 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {444 254 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Wizard tabs_wizard {uid 647f
@@ -534,7 +534,7 @@ Function {make_widget_panel()} {uid 9310
       } {
         Fl_Group wp_gui_tab {uid b76b
           label GUI
-          callback propagate_load open
+          callback propagate_load open selected
           xywh {10 30 400 330} labelsize 11 when 0 resizable
         } {
           Fl_Group {} {uid d70c
@@ -563,7 +563,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               callback {if (v == LOAD) {
   if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
     o->activate();
-    o->value(((Widget_Node*)current_widget)->image_name());
+    o->value(((Widget_Node*)current_widget)->image_name().c_str());
   } else o->deactivate();
 } else {
   int mod = 0;
@@ -613,7 +613,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               callback {if (v == LOAD) {
   if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
     o->activate();
-    o->value(((Widget_Node*)current_widget)->inactive_name());
+    o->value(((Widget_Node*)current_widget)->inactive_name().c_str());
   } else o->deactivate();
 } else {
   int mod = 0;
@@ -1089,7 +1089,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
     o->show();
     propagate_load(o, v);
   }
-}}
+}} open
             xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Value_Input {} {uid 4e4e
@@ -1773,7 +1773,7 @@ unselectable, but not grayed out} xywh {225 260 75 20} selection_color 1 labelsi
             callback {if (v == LOAD) {
   if (current_widget->is_widget()) {
     o->activate();
-    o->value(((Widget_Node*)current_widget)->tooltip());
+    o->value(((Widget_Node*)current_widget)->tooltip().c_str());
   } else {
     o->deactivate();
   }
@@ -2265,7 +2265,7 @@ if (v == LOAD) {
       o->deactivate();
     } else {
       o->activate();
-      o->value(current_widget->subclass());
+      o->value(current_widget->subclass().c_str());
     }
   } else {
     int mod = 0;
@@ -2413,14 +2413,14 @@ if (v == LOAD) {
             user_data 0
             callback {int n = fl_int(o->user_data());
   if (v == LOAD) {
-    o->value(current_widget->extra_code(n));
+    o->value(current_widget->extra_code(n).c_str());
   } else {
     int mod = 0;
     const char *c = o->value();
     const char *d = c_check(c&&c[0]=='\#' ? c+1 : c);
     if (d) {fl_message("Error in %s: %s",o->label(),d); haderror = 1; return;}
     for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
-      w->extra_code(n,c);
+      w->extra_code(n, c);
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
@@ -3797,7 +3797,7 @@ if (v == LOAD) {
         }
       }
     }
-    Fl_Tabs widget_tabs_repo {uid 3194 open
+    Fl_Tabs widget_tabs_repo {uid 3194
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
@@ -3805,7 +3805,7 @@ if (v == LOAD) {
         xywh {10 30 400 330} resizable
       } {}
     }
-    Fl_Group {} {uid 7667
+    Fl_Group {} {uid 7667 open
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Button wLiveMode {uid 9a1d

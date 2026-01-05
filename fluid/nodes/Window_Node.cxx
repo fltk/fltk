@@ -1382,13 +1382,13 @@ void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
   current_widget_class = this;
   write_public_state = 1;
 
-  const char *c = subclass();
-  if (!c) c = "Fl_Group";
+  std::string c = subclass();
+  if (c.empty()) c = "Fl_Group";
 
   f.write_c("\n");
   write_comment_h(f);
-  f.write_h("\nclass %s : public %s {\n", name(), c);
-  if (strstr(c, "Window")) {
+  f.write_h("\nclass %s : public %s {\n", name(), c.c_str());
+  if (c.find("Window")!=c.npos) {
     f.write_h("%svoid _%s();\n", f.indent(1), trimclassname(name()));
     f.write_h("public:\n");
     f.write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n", f.indent(1), trimclassname(name()));
@@ -1397,20 +1397,20 @@ void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
 
     // a constructor with all four dimensions plus label
     f.write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c);
+    f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c.c_str());
     f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
     f.write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
     f.write_c("%s::%s(int W, int H, const char *L) :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c);
+    f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c.c_str());
     f.write_c("%sclear_flag(16);\n", f.indent(1));
     f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
     f.write_c("}\n\n");
 
     // a constructor that takes size and label from the Fluid database
     f.write_c("%s::%s() :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(0, 0, %d, %d, ", f.indent(1), c, o->w(), o->h());
+    f.write_c("%s%s(0, 0, %d, %d, ", f.indent(1), c.c_str(), o->w(), o->h());
     const char *cstr = label();
     if (cstr) f.write_cstring(cstr);
     else f.write_c("0");
@@ -1427,11 +1427,11 @@ void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
             f.indent(1), trimclassname(name()));
     f.write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
     if (wc_relative==1)
-      f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c);
+      f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c.c_str());
     else if (wc_relative==2)
-      f.write_c("%s%s(0, 0, %d, %d, L)\n{\n", f.indent(1), c, o->w(), o->h());
+      f.write_c("%s%s(0, 0, %d, %d, L)\n{\n", f.indent(1), c.c_str(), o->w(), o->h());
     else
-      f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c);
+      f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c.c_str());
   }
 
 //  f.write_c("%s%s *o = this;\n", f.indent(1), name());

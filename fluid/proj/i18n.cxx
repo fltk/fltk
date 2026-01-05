@@ -74,19 +74,19 @@ void I18n::write(io::Project_Writer &f) const {
       case fld::I18n_Type::NONE:
         break;
       case fld::I18n_Type::GNU : /* GNU gettext */
-        f.write_string("\ni18n_include"); f.write_word(gnu_include.c_str());
-        f.write_string("\ni18n_conditional"); f.write_word(gnu_conditional.c_str());
-        f.write_string("\ni18n_gnu_function"); f.write_word(gnu_function.c_str());
-        f.write_string("\ni18n_gnu_static_function"); f.write_word(gnu_static_function.c_str());
+        f.write_string("\ni18n_include"); f.write_word(gnu_include);
+        f.write_string("\ni18n_conditional"); f.write_word(gnu_conditional);
+        f.write_string("\ni18n_gnu_function"); f.write_word(gnu_function);
+        f.write_string("\ni18n_gnu_static_function"); f.write_word(gnu_static_function);
         break;
       case fld::I18n_Type::POSIX : /* POSIX catgets */
-        f.write_string("\ni18n_include"); f.write_word(posix_include.c_str());
-        f.write_string("\ni18n_conditional"); f.write_word(posix_conditional.c_str());
+        f.write_string("\ni18n_include"); f.write_word(posix_include);
+        f.write_string("\ni18n_conditional"); f.write_word(posix_conditional);
         if (!posix_file.empty()) {
           f.write_string("\ni18n_pos_file");
-          f.write_word(posix_file.c_str());
+          f.write_word(posix_file);
         }
-        f.write_string("\ni18n_pos_set"); f.write_word(posix_set.c_str());
+        f.write_string("\ni18n_pos_set"); f.write_word(posix_set);
         break;
     }
   }

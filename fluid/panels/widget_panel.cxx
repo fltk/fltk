@@ -629,7 +629,7 @@ static void cb_widget_image_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(((Widget_Node*)current_widget)->image_name());
+      o->value(((Widget_Node*)current_widget)->image_name().c_str());
     } else o->deactivate();
   } else {
     int mod = 0;
@@ -639,7 +639,7 @@ static void cb_widget_image_input(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-==-=~=-~~----------~~=-~~--=~~~~~-~=-~=~= ▲ ﬂ//
+//ﬂ ▲ ----------=~-==-=~=-~~----------~~=-~==~~~-=-=~---=-=~ ▲ ﬂ//
 }
 
 static void cb_Browse(Fl_Button* o, void* v) {
@@ -679,7 +679,7 @@ static void cb_widget_deimage_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(((Widget_Node*)current_widget)->inactive_name());
+      o->value(((Widget_Node*)current_widget)->inactive_name().c_str());
     } else o->deactivate();
   } else {
     int mod = 0;
@@ -689,7 +689,7 @@ static void cb_widget_deimage_input(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~---=-~=~-=-----------~-~--=~~~~~-~-~=-~-=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~---=-~=~-=--------------~~~-~---~-~~=--=-- ▲ ﬂ//
 }
 
 static void cb_Browse1(Fl_Button* o, void* v) {
@@ -1702,7 +1702,7 @@ static void cb_wp_gui_tooltip(Fl_Input* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget()) {
       o->activate();
-      o->value(((Widget_Node*)current_widget)->tooltip());
+      o->value(((Widget_Node*)current_widget)->tooltip().c_str());
     } else {
       o->deactivate();
     }
@@ -1714,7 +1714,7 @@ static void cb_wp_gui_tooltip(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==--==-~==~----------~---=~--~--=~~-----=~~ ▲ ﬂ//
+//ﬂ ▲ ----------~==--==-~==~-----------~--~--~~=--=-~----==- ▲ ﬂ//
 }
 
 Fl_Group *wp_style_tab=(Fl_Group *)0;
@@ -2172,7 +2172,7 @@ static void cb_e(Fl_Input* o, void* v) {
         o->deactivate();
       } else {
         o->activate();
-        o->value(current_widget->subclass());
+        o->value(current_widget->subclass().c_str());
       }
     } else {
       int mod = 0;
@@ -2183,7 +2183,7 @@ static void cb_e(Fl_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~=~~--=~-=~=----------~~~-~~=~~~~=~---~~--~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~~--=~-=~=-----------~~==--=--~~~--=---=-= ▲ ﬂ//
 }
 
 static void cb_f(Fl_Choice* o, void* v) {
@@ -2303,19 +2303,19 @@ static void cb_v_input(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~~-==~=~-~~==-=--~~--= ▼ ﬂ//
   int n = fl_int(o->user_data());
     if (v == LOAD) {
-      o->value(current_widget->extra_code(n));
+      o->value(current_widget->extra_code(n).c_str());
     } else {
       int mod = 0;
       const char *c = o->value();
       const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
       if (d) {fl_message("Error in %s: %s",o->label(),d); haderror = 1; return;}
       for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
-        w->extra_code(n,c);
+        w->extra_code(n, c);
         mod = 1;
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~==--~-~=-~~----------~--~~~~~~==--~=-~~~-~- ▲ ﬂ//
+//ﬂ ▲ ----------~==--~-~=-~~----------~~-=-=~=~-~--~-==---=~ ▲ ﬂ//
 }
 
 static void cb_v_input1(Fl_Input* o, void* v) {

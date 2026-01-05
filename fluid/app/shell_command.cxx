@@ -615,15 +615,15 @@ void Fd_Shell_Command::read(class fld::io::Project_Reader *in) {
 
 void Fd_Shell_Command::write(class fld::io::Project_Writer *out) {
   out->write_string("\n  command {");
-  out->write_string("\n    name "); out->write_word(name.c_str());
-  out->write_string("\n    label "); out->write_word(label.c_str());
+  out->write_string("\n    name "); out->write_word(name);
+  out->write_string("\n    label "); out->write_word(label);
   if (shortcut) out->write_string("\n    shortcut %d", shortcut);
   if (condition) out->write_string("\n    condition %d", condition);
   if (!condition_data.empty()) {
-    out->write_string("\n    condition_data "); out->write_word(condition_data.c_str());
+    out->write_string("\n    condition_data "); out->write_word(condition_data);
   }
   if (!command.empty()) {
-    out->write_string("\n    command "); out->write_word(command.c_str());
+    out->write_string("\n    command "); out->write_word(command);
   }
   if (flags) out->write_string("\n    flags %d", flags);
   out->write_string("\n  }");

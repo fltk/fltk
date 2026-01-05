@@ -21,6 +21,8 @@
 
 #include <stdio.h>
 
+#include <string>
+
 class Node;
 
 namespace fld {
@@ -52,6 +54,7 @@ public:
   int write_project(const char *filename, int selected_only, bool codeview);
   void NewFunction();
   void write_word(const char *);
+  void write_word(const std::string& word) { write_word(word.c_str()); }
   void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_indent(int n);
   void write_open();

@@ -77,8 +77,8 @@ int fld::io::write_strings(Project &proj, const std::string &filename) {
           write_escaped_strings(fp, w->label());
           putc('\n', fp);
         }
-        if (w->tooltip()) {
-          write_escaped_strings(fp, w->tooltip());
+        if (!w->tooltip().empty()) {
+          write_escaped_strings(fp, w->tooltip().c_str());
           putc('\n', fp);
         }
       }
@@ -100,13 +100,13 @@ int fld::io::write_strings(Project &proj, const std::string &filename) {
             fputs("\"\n", fp);
           }
 
-          if (w->tooltip()) {
+          if (!w->tooltip().empty()) {
             fputs("msgid \"", fp);
-            write_escaped_strings(fp, w->tooltip());
+            write_escaped_strings(fp, w->tooltip().c_str());
             fputs("\"\n", fp);
 
             fputs("msgstr \"", fp);
-            write_escaped_strings(fp, w->tooltip());
+            write_escaped_strings(fp, w->tooltip().c_str());
             fputs("\"\n", fp);
           }
         }
@@ -128,9 +128,9 @@ int fld::io::write_strings(Project &proj, const std::string &filename) {
             fputs("\"\n", fp);
           }
 
-          if (w->tooltip()) {
+          if (!w->tooltip().empty()) {
             fprintf(fp, "%d \"", i ++);
-            write_escaped_strings(fp, w->tooltip());
+            write_escaped_strings(fp, w->tooltip().c_str());
             fputs("\"\n", fp);
           }
         }
