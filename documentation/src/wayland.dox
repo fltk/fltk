@@ -327,6 +327,7 @@ Here is the list of the \c interface value for all protocols and system features
  <tr><td>wl_output </td><td>received once for each display </td> </tr>
  <tr><td>xdg_wm_base </td><td>create mapped windows </td> </tr>
  <tr><td>xdg_wm_dialog_v1 </td><td>create dialogs related to other windows</td> </tr>
+ <tr><td>wp_cursor_shape_manager_v1 </td><td>set cursor images using enumerated cursors </td></tr>
  <tr><td>gtk_shell1 </td><td>indicates Mutter is in use + titlebar gestures</td> </tr>
  <tr><td>weston_desktop_shell </td><td> indicates Weston is in use</td></tr>
  <tr><td>org_kde_plasma_shell </td><td> indicates KDE/Plasma is in use</td></tr>
