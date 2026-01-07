@@ -80,9 +80,6 @@ static std::map<int, const char*> fl_eventnames = {
   { FL_BEFORE_MENU, "FL_BEFORE_MENU" },
   { FL_APP_ACTIVATE, "FL_APP_ACTIVATE" },
   { FL_APP_DEACTIVATE, "FL_APP_DEACTIVATE" },
-  { /*FL_EVENT_*/ 30, "FL_EVENT_30" }, // not yet defined, just in case it /will/ be defined ...
-  { /*FL_EVENT_*/ 31, "FL_EVENT_31" }, // not yet defined, just in case it /will/ be defined ...
-  { /*FL_EVENT_*/ 32, "FL_EVENT_32" },  // not yet defined, just in case it /will/ be defined ...
   { Fl::Pen::DETECTED, "Fl::Pen::DETECTED" },
   { Fl::Pen::CHANGED, "Fl::Pen::CHANGED" },
   { Fl::Pen::ENTER, "Fl::Pen::ENTER" },
