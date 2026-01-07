@@ -244,12 +244,17 @@ void Fl_Input_Choice::inp_cb(Fl_Widget*, void *data) {
   Fl_Widget_Tracker wp(o);
   if (o->inp_->changed()) {
     o->Fl_Widget::set_changed();
-    if (o->when() & (FL_WHEN_CHANGED|FL_WHEN_RELEASE))
-      o->do_callback(FL_REASON_CHANGED);
   } else {
     o->Fl_Widget::clear_changed();
-    if (o->when() & FL_WHEN_NOT_CHANGED)
-      o->do_callback(FL_REASON_RESELECTED);
+  }
+  if (Fl::callback_reason() == FL_REASON_LOST_FOCUS) {
+    if (o->when() & FL_WHEN_RELEASE)
+      o->do_callback(FL_REASON_LOST_FOCUS);
+  } else {
+    if (o->inp_->changed() && (o->when() & FL_WHEN_CHANGED))
+      o->do_callback(Fl::callback_reason());
+    else if (o->when() & FL_WHEN_NOT_CHANGED)
+      o->do_callback(Fl::callback_reason());
   }
   if (wp.deleted()) return;
 
@@ -270,7 +275,7 @@ Fl_Input_Choice::Fl_Input_Choice(int X, int Y, int W, int H, const char *L)
   inp_ = new Fl_Input(inp_x(), inp_y(), inp_w(), inp_h());
   inp_->callback(inp_cb, (void*)this);
   inp_->box(FL_FLAT_BOX);                               // cosmetic
-  inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED);
+  inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED|FL_WHEN_RELEASE);
   menu_ = new InputMenuButton(menu_x(), menu_y(), menu_w(), menu_h());
   menu_->callback(menu_cb, (void*)this);
   end();
