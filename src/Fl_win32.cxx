@@ -1837,9 +1837,11 @@ content  key    keyboard layout
         return 0;
 
       default: {
+#if defined(FLTK_HAVE_PEN_SUPPORT)
         LRESULT ret = fl_win32_tablet_handler(fl_msg);
         if (ret != -1)
           return ret;
+#endif
         if (Fl::handle(0, 0))
           return 0;
         break; }

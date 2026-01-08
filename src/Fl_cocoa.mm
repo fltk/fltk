@@ -72,7 +72,7 @@ extern int fl_send_system_handlers(void *e);
 // converting cr lf converter function
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9) && defined(FLTK_HAVE_PEN_SUPPORT)
 static bool cocoaTabletHandler(NSEvent *theEvent, bool lock);
 extern bool fl_cocoa_tablet_handler(NSEvent*, Fl_Window*);
 #endif
@@ -631,7 +631,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
            endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation;
 #endif
 - (BOOL)did_view_resolution_change;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9) && defined(FLTK_HAVE_PEN_SUPPORT)
 - (void)tabletProximity:(NSEvent *)theEvent;
 - (void)tabletPoint:(NSEvent *)theEvent;
 #endif
@@ -1057,6 +1057,7 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
 #endif
 }
 
+#if defined(FLTK_HAVE_PEN_SUPPORT)
 
 static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
 {
@@ -1066,6 +1067,8 @@ static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
   if (lock) fl_unlock_function();
   return ret;
 }
+
+#endif // FLTK_HAVE_PEN_SUPPORT
 
 namespace Fl {
 namespace Private {
@@ -1084,6 +1087,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 
   fl_lock_function();
 
+#if defined(FLTK_HAVE_PEN_SUPPORT)
   // Handle tablet proximity and point subevents
   if (   ([theEvent type] != NSEventTypeMouseEntered)  // does not have a subtype
       && ([theEvent type] != NSEventTypeMouseExited) ) // does not have a subtype
@@ -1098,6 +1102,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       // else fall through into mouse event handling
     }
   }
+#endif // FLTK_HAVE_PEN_SUPPORT
 
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   if (!window || !window->shown() ) {
@@ -2635,7 +2640,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (void)mouseExited:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
 }
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9) && defined(FLTK_HAVE_PEN_SUPPORT)
 - (void)tabletProximity:(NSEvent *)theEvent {
   cocoaTabletHandler(theEvent, true);
 }

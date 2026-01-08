@@ -285,6 +285,16 @@ FLTK_OPTION_OPTIM - default EMPTY
     "-Wall -Wno-deprecated-declarations". Example:
     cmake -D FLTK_BUILD_EXAMPLES=on -D FLTK_OPTION_OPTIM="-Wall -Wextra -pedantic" ..
 
+FLTK_OPTION_PEN_SUPPORT - default ON
+    Pen support is relatively small and should be included by default, but
+    this option allows to switch it off if not needed.
+    Note: on some older systems or build platforms (notably "classic" MinGW)
+    compiling and building pen support may not be possible. As of this writing
+    (Jan. 2026) we don't use dynamic (CMake) tests to find out whether building
+    is possible or not. Instead users are encouraged to report build errors and
+    switch this option off to allow to proceed building FLTK 1.5.0.
+    Note: this option is WIP and may be removed later w/o further notice.
+
 FLTK_OPTION_PRINT_SUPPORT - default ON
     When turned off, the Fl_Printer class does nothing and the
     Fl_PostScript_File_Device class cannot be used, but the FLTK library

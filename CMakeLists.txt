@@ -397,9 +397,12 @@ fl_summary_build("Static libraries"    lib    TRUE                      "n/a")
 fl_summary_build("Shared libraries"    lib    FLTK_BUILD_SHARED_LIBS    FLTK_BUILD_SHARED_LIBS)
 fl_summary_build("The forms library"   lib    FLTK_BUILD_FORMS          FLTK_BUILD_FORMS)
 fl_summary_build("The OpenGL library"  lib    FLTK_USE_GL               FLTK_BUILD_GL)
+fl_summary_build("Pen/tablet support"  lib    FLTK_OPTION_PEN_SUPPORT   FLTK_OPTION_PEN_SUPPORT)
+
+message(STATUS "")
+
 fl_summary_build("fluid"               bin    FLTK_BUILD_FLUID          FLTK_BUILD_FLUID)
 fl_summary_build("fltk-options"        bin    FLTK_BUILD_FLTK_OPTIONS   FLTK_BUILD_FLTK_OPTIONS)
-
 fl_summary_build("Test programs"       bin/test        FLTK_BUILD_TEST        FLTK_BUILD_TEST)
 fl_summary_build("Example programs"    bin/examples    FLTK_BUILD_EXAMPLES    FLTK_BUILD_EXAMPLES)
 fl_summary_build("Screenshot programs" bin/screenshots FLTK_BUILD_SCREENSHOTS FLTK_BUILD_SCREENSHOTS)

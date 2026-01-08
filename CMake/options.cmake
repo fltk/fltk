@@ -468,6 +468,7 @@ option(FLTK_BUILD_SHARED_LIBS
 
 option(FLTK_OPTION_PRINT_SUPPORT      "allow print support"          ON)
 option(FLTK_OPTION_FILESYSTEM_SUPPORT "allow file system support"    ON)
+option(FLTK_OPTION_PEN_SUPPORT        "include Pen/Tablet support"   ON)
 
 option(FLTK_BUILD_FORMS        "Build forms compatibility library"   OFF)
 option(FLTK_BUILD_FLUID        "Build FLUID"                         ON)
@@ -481,10 +482,19 @@ else()
   option(FLTK_BUILD_TEST       "Build test/demo programs"            OFF)
 endif()
 
+
+# set variables to generate config.h or fl_config.h
+
 if(FLTK_BUILD_FORMS)
   set(FLTK_HAVE_FORMS 1)
 else()
   set(FLTK_HAVE_FORMS 0)
+endif()
+
+if(FLTK_OPTION_PEN_SUPPORT)
+  set(FLTK_HAVE_PEN_SUPPORT 1)
+else()
+  set(FLTK_HAVE_PEN_SUPPORT 0)
 endif()
 
 #######################################################################

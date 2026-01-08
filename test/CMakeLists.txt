@@ -183,7 +183,11 @@ fl_create_example(navigation navigation.cxx fltk::fltk)
 fl_create_example(output output.cxx fltk::fltk)
 fl_create_example(overlay overlay.cxx fltk::fltk)
 fl_create_example(pack pack.cxx fltk::fltk)
-fl_create_example(penpal penpal.cxx fltk::fltk)
+
+if(FLTK_OPTION_PEN_SUPPORT)
+  fl_create_example(penpal penpal.cxx fltk::fltk)
+endif()
+
 fl_create_example(pixmap pixmap.cxx fltk::images)
 fl_create_example(pixmap_browser pixmap_browser.cxx fltk::images)
 fl_create_example(preferences preferences.fl fltk::fltk)

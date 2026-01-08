@@ -14,6 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include <config.h>
 #include <FL/Fl.H>
 #include "Fl_Screen_Driver.H"
 
@@ -27,6 +28,8 @@
 
 void Fl::grab(Fl_Window *win)
 {
+#if defined(FLTK_HAVE_PEN_SUPPORT)
   Fl::Pen::release();
+#endif
   screen_driver()->grab(win);
 }

@@ -241,7 +241,6 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     drivers/X11/fl_X11_platform_init.cxx
-    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_x.cxx
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
@@ -249,9 +248,9 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     Fl_get_key.cxx
   )
 
-    list(APPEND DRIVER_FILES
-      Fl_Native_File_Chooser_Kdialog.cxx
-      Fl_Native_File_Chooser_Zenity.cxx)
+  list(APPEND DRIVER_FILES
+    Fl_Native_File_Chooser_Kdialog.cxx
+    Fl_Native_File_Chooser_Zenity.cxx)
 
   if(FLTK_USE_CAIRO)
     list(APPEND DRIVER_FILES
@@ -291,7 +290,6 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.H
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.H
     drivers/Unix/Fl_Unix_System_Driver.H
-    drivers/Base/Fl_Base_Pen_Events.H
  )
  if(FLTK_USE_CAIRO)
    set(DRIVER_HEADER_FILES ${DRIVER_HEADER_FILES}
@@ -319,7 +317,6 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
   )
@@ -351,7 +348,6 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.H
     drivers/Wayland/Fl_Wayland_Image_Surface_Driver.H
     drivers/Unix/Fl_Unix_System_Driver.H
-    drivers/Base/Fl_Base_Pen_Events.H
   )
 
 elseif(APPLE)
@@ -373,7 +369,6 @@ elseif(APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
-    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_get_key_mac.cxx
     drivers/Darwin/fl_macOS_platform_init.cxx
   )
@@ -387,7 +382,6 @@ elseif(APPLE)
     drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H
     drivers/Quartz/Fl_Font.H
     drivers/Quartz/Fl_Quartz_Image_Surface_Driver.H
-    drivers/Base/Fl_Base_Pen_Events.H
   )
 
 else()
@@ -399,7 +393,6 @@ else()
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx
-    drivers/WinAPI/Fl_WinAPI_Pen_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx
@@ -410,7 +403,6 @@ else()
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
-    drivers/Base/Fl_Base_Pen_Events.cxx
     Fl_win32.cxx
     fl_dnd_win32.cxx
     Fl_Native_File_Chooser_WIN32.cxx
@@ -425,10 +417,28 @@ else()
     drivers/GDI/Fl_Font.H
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.H
     drivers/GDI/Fl_GDI_Image_Surface_Driver.H
-    drivers/Base/Fl_Base_Pen_Events.H
   )
 
+  # Optional Pen/Tablet Support
+
+  if(FLTK_OPTION_PEN_SUPPORT)
+    list(APPEND DRIVER_FILES
+      drivers/WinAPI/Fl_WinAPI_Pen_Driver.cxx
+    )
+  endif(FLTK_OPTION_PEN_SUPPORT)
+
 endif(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
+
+# Common Pen/Tablet Support Files
+
+if(FLTK_OPTION_PEN_SUPPORT)
+  list(APPEND DRIVER_FILES
+    drivers/Base/Fl_Base_Pen_Events.cxx
+  )
+  list(APPEND DRIVER_HEADER_FILES
+    drivers/Base/Fl_Base_Pen_Events.H
+  )
+endif(FLTK_OPTION_PEN_SUPPORT)
 
 source_group("Header Files" FILES ${HEADER_FILES})
 source_group("Private Header Files" FILES ${PRIVATE_HEADER_FILES})
@@ -632,10 +642,14 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   set(MMFILES
     Fl_cocoa.mm
     drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
-    drivers/Cocoa/Fl_Cocoa_Pen_Events.mm
     Fl_Native_File_Chooser_MAC.mm
     Fl_MacOS_Sys_Menu_Bar.mm
   )
+  if(FLTK_OPTION_PEN_SUPPORT)
+    list(APPEND MMFILES
+      drivers/Cocoa/Fl_Cocoa_Pen_Events.mm
+    )
+  endif()
   source_group("ObjC Source Files" FILES ${MMFILES})
 else()
   set(MMFILES)
