@@ -1690,6 +1690,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
     }
     if (c == FL_CURSOR_NONE) return 0;
     standard_cursor_ = c;
+    Fl_Wayland_Screen_Driver::do_set_cursor(scr_driver->seat, NULL, c);
     return 1;
   }
 #endif // HAVE_CURSOR_SHAPE

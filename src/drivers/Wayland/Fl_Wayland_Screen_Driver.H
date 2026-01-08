@@ -95,7 +95,7 @@ public:
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
   static bool own_output(struct wl_output *output);
   static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *,
-                            struct wl_cursor *wl_cursor = NULL);
+                            struct wl_cursor *wl_cursor = NULL, Fl_Cursor c = FL_CURSOR_NONE);
 // member variables
   struct wl_cursor *xc_cursor[cursor_count]; // one for each element of enum cursor_shapes
   struct wl_registry *wl_registry;

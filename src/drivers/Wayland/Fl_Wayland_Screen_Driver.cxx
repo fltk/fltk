@@ -47,6 +47,7 @@
 #include <poll.h>
 #include <errno.h>
 #include <string.h> // for strerror()
+#include <map>
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
   bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
@@ -125,10 +126,48 @@ extern const char *fl_bg2;
 
 
 void Fl_Wayland_Screen_Driver::do_set_cursor(
-    struct Fl_Wayland_Screen_Driver::seat *seat, struct wl_cursor *wl_cursor) {
+    struct Fl_Wayland_Screen_Driver::seat *seat, struct wl_cursor *wl_cursor, Fl_Cursor cursor) {
+  /*
+   wl_cursor: when non-NULL means a custom cursor;
+              when NULL:
+                  - with "Cursor shape" protocol, cursor is meaningful if != FL_CURSOR_NONE;
+                  - with old-school cursors, seat->default_cursor gives the desired cursor.
+   cursor: used with "Cursor shape" protocol for enumerated cursor shape, otherwise equal to FL_CURSOR_NONE
+   */
   struct wl_cursor_image *image;
   struct wl_buffer *buffer;
   const int scale = seat->pointer_scale;
+
+#if HAVE_CURSOR_SHAPE
+  static std::map<int, int> cursor_shape_map = {
+    {FL_CURSOR_DEFAULT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT },
+    {FL_CURSOR_ARROW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT },
+    {FL_CURSOR_CROSS, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_CROSSHAIR },
+    {FL_CURSOR_WAIT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_WAIT },
+    {FL_CURSOR_INSERT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_TEXT },
+    {FL_CURSOR_HAND, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_GRAB },
+    {FL_CURSOR_HELP, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_HELP },
+    {FL_CURSOR_MOVE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_MOVE },
+    {FL_CURSOR_N, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_N_RESIZE },
+    {FL_CURSOR_E, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_E_RESIZE },
+    {FL_CURSOR_W, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_W_RESIZE },
+    {FL_CURSOR_S, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_S_RESIZE },
+    {FL_CURSOR_NS, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NS_RESIZE },
+    {FL_CURSOR_WE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_EW_RESIZE },
+    {FL_CURSOR_SW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_SW_RESIZE },
+    {FL_CURSOR_SE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_SE_RESIZE },
+    {FL_CURSOR_NE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NE_RESIZE },
+    {FL_CURSOR_NW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NW_RESIZE },
+    {FL_CURSOR_NESW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NESW_RESIZE },
+    {FL_CURSOR_NWSE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NWSE_RESIZE }
+  };
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (scr_driver->wp_cursor_shape_device && !wl_cursor) {
+    if (cursor != FL_CURSOR_NONE) wp_cursor_shape_device_v1_set_shape(
+      scr_driver->wp_cursor_shape_device, seat->pointer_enter_serial, cursor_shape_map[cursor]);
+    return;
+  }
+#endif
 
   if ((!seat->cursor_theme && !wl_cursor) || !seat->wl_pointer)
     return;
@@ -229,50 +268,9 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   // use custom cursor if present
   struct wl_cursor *cursor =
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
-#if HAVE_CURSOR_SHAPE
-  static struct cursor_shape_struct {
-    Fl_Cursor c;
-    int shape;
-  } cursor_shape_array[] = {
-    {FL_CURSOR_ARROW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT },
-    {FL_CURSOR_CROSS, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_CROSSHAIR },
-    {FL_CURSOR_WAIT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_WAIT },
-    {FL_CURSOR_INSERT, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_TEXT },
-    {FL_CURSOR_HAND, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_GRAB },
-    {FL_CURSOR_HELP, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_HELP },
-    {FL_CURSOR_MOVE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_MOVE },
-    {FL_CURSOR_N, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_N_RESIZE },
-    {FL_CURSOR_E, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_E_RESIZE },
-    {FL_CURSOR_W, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_W_RESIZE },
-    {FL_CURSOR_S, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_S_RESIZE },
-    {FL_CURSOR_NS, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NS_RESIZE },
-    {FL_CURSOR_WE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_EW_RESIZE },
-    {FL_CURSOR_SW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_SW_RESIZE },
-    {FL_CURSOR_SE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_SE_RESIZE },
-    {FL_CURSOR_NE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NE_RESIZE },
-    {FL_CURSOR_NW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NW_RESIZE },
-    {FL_CURSOR_NESW, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NESW_RESIZE },
-    {FL_CURSOR_NWSE, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_NWSE_RESIZE }
-  };
-
-  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  if (scr_driver->wp_cursor_shape_device && !cursor) {
-    int shape = WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT;
-    for (int i = 0; i < sizeof(cursor_shape_array)/sizeof(cursor_shape_struct); i++) {
-      if (cursor_shape_array[i].c == Fl_Wayland_Window_Driver::driver(win)->standard_cursor()) {
-        shape = cursor_shape_array[i].shape;
-        break;
-      }
-    }
-    wp_cursor_shape_device_v1_set_shape(scr_driver->wp_cursor_shape_device, serial, shape);
-  } else {
-#endif
-    Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor);
-#if HAVE_CURSOR_SHAPE
-  }
-#endif
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
+  Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor, Fl_Wayland_Window_Driver::driver(win)->standard_cursor());
   set_event_xy(win);
   need_leave = NULL;
   win = Fl_Wayland_Window_Driver::surface_to_window(surface);
