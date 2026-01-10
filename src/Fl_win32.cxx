@@ -1756,7 +1756,7 @@ content  key    keyboard layout
         if (IsIconic(hWnd) || window->parent()) {
           break;
         }
-        resize_bug_fix = window;
+        if (moving_window) resize_bug_fix = window;
         POINTS pts = MAKEPOINTS(lParam);
         int nx = pts.x, ny = pts.y;
         // detect when window centre changes screen
