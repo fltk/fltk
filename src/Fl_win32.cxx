@@ -1280,6 +1280,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetWindowPos(hWnd, NULL, lParam_rect->left, lParam_rect->top,
                          lParam_rect->right - lParam_rect->left,
                          lParam_rect->bottom - lParam_rect->top, flags);
+            if (ns >= 0) {
+              scale = Fl::screen_driver()->scale(ns);
+              EnumChildWindows(hWnd, child_window_cb, (LPARAM)&scale);
+            }
           }
         }
         return 0;
@@ -1745,6 +1749,7 @@ content  key    keyboard layout
 
       case WM_CAPTURECHANGED:
         moving_window = false;
+        resize_bug_fix = 0;
         return 0;
 
       case WM_MOVE: {
