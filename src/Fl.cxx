@@ -1050,8 +1050,7 @@ static system_handler_link *sys_handlers = 0;
    - X11: XEvent
    - Windows: MSG
    - OS X: NSEvent
-   - Wayland: NULL (FLTK runs the event handler(s) just before calling \e wl_display_dispatch())
-
+   - Wayland: N/A (Fl::add_system_handler has no effect under Wayland)
  \param ha The event handler function to register
  \param data User data to include on each call
 
