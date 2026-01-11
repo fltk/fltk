@@ -101,7 +101,7 @@ The names of these functions begin with \c wl_, \c xkb_ or \c libdecor_.
 Functions from the first 2 of these libraries instruct the compositor to perform
 various operations sending it data via the socket.
 - Compositor to client: the callback function \c wayland_socket_callback runs when there are
-data to read in the socket; it calls \c wl_display_dispatch() which interprets the read data
+data to read in the socket; it reads available data from the socket, interprets these data
 and calls corresponding listeners.
 
 The core protocol defines also a number of mostly opaque structures whose names begin with \c wl_.
@@ -372,9 +372,8 @@ all screens of the system.
 Finally, function \c wl_display_get_fd() is called to obtain the file descriptor of the Wayland socket
 and a call to Fl::add_fd() makes FLTK listen to this descriptor in \c FL_READ mode and associates
 function \c wayland_socket_callback() from file \c Fl_Wayland_Screen_Driver.cxx with it.
-This function calls \c wl_display_dispatch() which reads and interprets data available from the
-file descriptor, and calls corresponding listeners. Function \c wayland_socket_callback() repeats
-the \c wl_display_dispatch() call as long as data are available for reading.
+This function reads and interprets data available from the file descriptor, and calls corresponding
+listeners.
 
 The event loop is run by function \c Fl_Unix_System_Driver::wait() which is used by both
 the Wayland and X11 FLTK backends. Among various tasks, this function waits for data arriving
