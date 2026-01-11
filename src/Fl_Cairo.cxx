@@ -105,8 +105,8 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
 #if defined(FLTK_USE_WAYLAND)
   if (fl_wl_display()) { // true means using wayland backend
     struct wld_window *xid = fl_wl_xid(wi);
-    if (!xid->buffer)
-      return NULL; // this may happen with GL windows
+    if (!xid || !xid->buffer)
+      return NULL; // this may happen with GL windows or if window is not shown
     cairo_ctxt = xid->buffer->draw_buffer.cairo_;
     cairo_state_.cc(cairo_ctxt, false);
     return cairo_ctxt;
