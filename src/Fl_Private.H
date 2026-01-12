@@ -65,7 +65,9 @@ FL_EXPORT inline void set_idle_(Fl_Old_Idle_Handler cb) { idle_ = cb; }
 
 #ifdef FLTK_HAVE_CAIRO
 
-FL_EXPORT extern cairo_t *cairo_make_current(void *gc);
+#if 0 // this non-public function appears not to be used anywhere in FLTK
+  FL_EXPORT extern cairo_t *cairo_make_current(void *gc);
+#endif
 FL_EXPORT extern cairo_t *cairo_make_current(void *gc, int W, int H);
 FL_EXPORT extern Fl_Cairo_State cairo_state_;
 

@@ -209,6 +209,8 @@ static cairo_surface_t *cairo_create_surface(void *gc, int W, int H) {
 #endif
 }
 
+
+#if 0 // this non-public function appears not to be used anywhere in FLTK
 /**
   Creates a Cairo context from a \a gc only, gets its window size or
   offscreen size if fl_window is null.
@@ -251,6 +253,7 @@ cairo_t *Fl::Private::cairo_make_current(void *gc) {
   cairo_state_.cc(c);
   return c;
 }
+#endif
 
 /**
   Creates a Cairo context from a \p gc and the given size.
