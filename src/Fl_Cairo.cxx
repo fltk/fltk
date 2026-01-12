@@ -123,8 +123,6 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
   if (fl_gc == Fl::cairo_state_.gc() && fl_xid(wi) == (Window)Fl::cairo_state_.window())
     return Fl::cairo_cc();
 
-  cairo_state_.window((void *)fl_xid(wi));
-
   // Scale the Cairo context appropriately. This is platform dependent
 
 #if !defined(USE_MAC_OS)
@@ -137,6 +135,8 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
   // on macOS, scaling is done before by Fl_Window::make_current(), on Windows, the size is not used
   cairo_ctxt = Fl::cairo_make_current(fl_gc, wi->w(), wi->h());
 #endif
+
+  cairo_state_.window((void *)fl_xid(wi));
 
 #if !defined(USE_MAC_OS)
   cairo_scale(cairo_ctxt, scale, scale);
