@@ -1,7 +1,7 @@
 //
 // macOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -2575,10 +2575,18 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if ([[self window] firstResponder] != self) {
     return NO;
   }
+  NSUInteger mods = [theEvent modifierFlags];
+  NSString *pure = [theEvent charactersIgnoringModifiers];
+  // detect Ctrl+Command+Space or Function+e to open character palette
+  if ( (( (mods & NSEventModifierFlagControl) && (mods & NSEventModifierFlagCommand) &&
+   !(mods & (NSEventModifierFlagShift|NSEventModifierFlagOption)) && [pure isEqualToString:@" "] ) ) ||
+ ( (mods & NSEventModifierFlagFunction) && [pure isEqualToString:@"e"] ) ) {
+      [NSApp orderFrontCharacterPalette:self];
+      return YES;
+  }
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
   BOOL handled;
-  NSUInteger mods = [theEvent modifierFlags];
   Fl_Window *w = [(FLWindow*)[theEvent window] getFl_Window];
   if ( (mods & NSEventModifierFlagControl) || (mods & NSEventModifierFlagCommand) ) {
     NSString *s = [theEvent characters];
