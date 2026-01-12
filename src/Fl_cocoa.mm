@@ -2577,10 +2577,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
   NSUInteger mods = [theEvent modifierFlags];
   NSString *pure = [theEvent charactersIgnoringModifiers];
-  // detect Ctrl+Command+Space or Function+e to open character palette
-  if ( (( (mods & NSEventModifierFlagControl) && (mods & NSEventModifierFlagCommand) &&
-   !(mods & (NSEventModifierFlagShift|NSEventModifierFlagOption)) && [pure isEqualToString:@" "] ) ) ||
- ( (mods & NSEventModifierFlagFunction) && [pure isEqualToString:@"e"] ) ) {
+  // detect Function+e to open character palette
+  if ((mods & NSEventModifierFlagFunction) && [pure isEqualToString:@"e"] ) {
       [NSApp orderFrontCharacterPalette:self];
       return YES;
   }
@@ -2596,6 +2594,13 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     [FLView prepareEtext:s];
     Fl::compose_state = 0;
     handled = Fl::handle(FL_KEYBOARD, w);
+    if (!handled) {
+      // detect Ctrl+Command+Space to open character palette, if not used before as shortcut
+      if ( (mods & NSEventModifierFlagControl) && (mods & NSEventModifierFlagCommand) &&
+             !(mods & (NSEventModifierFlagShift|NSEventModifierFlagOption)) && [pure isEqualToString:@" "] ) {
+          [NSApp orderFrontCharacterPalette:self];
+        }
+      }
   }
   else {
     in_key_event = YES;
