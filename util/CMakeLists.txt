@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build utilities for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2025 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -31,8 +31,12 @@
 
 add_executable(cmap cmap.cxx)
 
-# cmap doesn't need to link against FLTK libraries - it's a standalone tool
-target_link_libraries(cmap PRIVATE m)
+# cmap doesn't need to link against FLTK libraries - it's a standalone tool,
+# but it requires libm on Unix/Linux - link against libm, but only if found.
+
+if(LIB_m)
+  target_link_libraries(cmap PRIVATE m)
+endif()
 
 # Set properties
 set_target_properties(cmap PROPERTIES
