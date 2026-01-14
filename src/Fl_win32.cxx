@@ -1561,7 +1561,25 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         static char buffer[1024];
         if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
           wchar_t u = (wchar_t)wParam;
-          Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+          // Windows emoji palette triggered with Windows + dot sends 2 or more WM_CHAR messages:
+          // the 2 components of a surrogate pair, or variation selectors, or zero-width stuff,
+          // or extra Unicode points.
+          if (u >= 0xD800 && u <= 0xDFFF) { // handle the 2 components of a surrogate pair
+            static wchar_t surrogate_pair[2];
+            if (IS_HIGH_SURROGATE(u)) {
+              surrogate_pair[0] = u; // memorize the 1st member of the pair
+              Fl::e_length = 0;
+              return 0; // and wait for next WM_CHAR message that will give the 2nd member
+            } else {
+              surrogate_pair[1] = u; // memorize the 2nd member of the pair
+              Fl::e_length = fl_utf8fromwc(buffer, 1024, surrogate_pair, 2); // transform to UTF-8
+            }
+          } else if ((u >= 0xFE00 && u <= 0xFE0F) || (u >= 0x200B && u <= 0x200D)) {
+            Fl::e_length = 0; // skip variation selectors and zero-width Unicode points
+            return 0;
+          } else {
+            Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1); // process regular Unicode point
+          }
           buffer[Fl::e_length] = 0;
         } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
           if (state & FL_NUM_LOCK) {
@@ -2167,6 +2185,14 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   if (!first_class_name) {
     first_class_name = class_name;
   }
+// Prefix user-set window class name by "FLTK", unless it's already here,
+// to avoid collision with system-defined window class names (example "edit")
+  if (strncmp(class_name, "FLTK", 4)) {
+    static char new_class_name[100];
+    snprintf(new_class_name, sizeof(new_class_name), "FLTK-%s", class_name);
+    class_name = new_class_name;
+  }
+  //fprintf(stderr,"makeWindow: class_name=%s\n",class_name);fflush(stderr);
 
   wchar_t class_namew[100]; // (limited) buffer for Windows class name
 
