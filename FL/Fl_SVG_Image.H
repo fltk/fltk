@@ -24,7 +24,7 @@ struct NSVGimage;
 /** The Fl_SVG_Image class supports loading, caching and drawing of scalable vector graphics (SVG) images.
  The FLTK library performs parsing and rasterization of SVG data using a modified version
  of the \c nanosvg software (https://github.com/memononen/nanosvg).
- The software modification allows the option to change the image ratio
+ The software modification allows the option to change the aspect ratio
  while performing rasterization.
 
  Use Fl_Image::fail() to check if the Fl_SVG_Image failed to load. fail() returns ERR_FILE_ACCESS
@@ -33,7 +33,8 @@ struct NSVGimage;
 
  Rasterization is not done until the image is first drawn or resize() or normalize() is called. Therefore,
  \ref array is NULL until then. The delayed rasterization ensures an Fl_SVG_Image is always rasterized
- to the exact screen resolution at which it is drawn.
+ to the exact screen resolution at which it is drawn. Member \ref proportional of an Fl_SVG_Image object
+ must be set to \c false to allow this image to be rasterized with an altered aspect ratio.
 
  The Fl_SVG_Image class draws images computed by \c nanosvg with the following known limitations
 
