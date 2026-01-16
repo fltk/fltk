@@ -98,7 +98,6 @@ static BOOL through_drawRect = NO;
 static BOOL through_Fl_X_flush = NO;
 static BOOL views_use_CA = NO; // YES means views are layer-backed, as on macOS 10.14 when linked with SDK 10.14
 static int im_enabled = -1;
-static Fl_Widget *previous_focus = NULL; // restore lost focus when character palette window appears
 
 // OS version-dependent pasteboard type names.
 // Some, but not all, versions of the 10.6 SDK for PPC lack the 3 symbols below (PR #761)
@@ -1490,8 +1489,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     [nsw setLevel:NSNormalWindowLevel];
     fixup_window_levels();
   }
-  previous_focus = Fl::focus();
-  Fl::handle( FL_UNFOCUS, window);
+  // Situations such as opening a character palette produce windowDidResignKey but
+  // [NSApp keyWindow] remains set to the resigning window. In that case, don't send FL_UNFOCUS
+  if ([NSApp keyWindow] != nsw) Fl::handle(FL_UNFOCUS, window);
   fl_unlock_function();
 }
 - (void)windowDidBecomeKey:(NSNotification *)notif
@@ -2956,9 +2956,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   // insertText sent during handleEvent of a key without text cannot be processed in a single FL_KEYBOARD event.
   // Occurs with deadkey followed by non-text key
   if (!in_key_event || !has_text_key) {
-    if (palette && !Fl::focus()) Fl::focus(previous_focus);
     Fl::handle(FL_KEYBOARD, target);
-    if (palette) previous_focus = NULL;
     Fl::e_length = 0;
     }
   else need_handle = YES;
