@@ -1562,8 +1562,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
           wchar_t u = (wchar_t)wParam;
           // Windows emoji palette triggered with Windows + dot sends 2 or more WM_CHAR messages:
-          // the 2 components of a surrogate pair, or variation selectors, or zero-width stuff,
-          // or extra Unicode points.
+          // the 2 components of a surrogate pair, or variation selectors, or zero-width joiner,
+          // or emoji modifiers FITZPATRICK or extra Unicode points.
           if (u >= 0xD800 && u <= 0xDFFF) { // handle the 2 components of a surrogate pair
             static wchar_t surrogate_pair[2];
             if (IS_HIGH_SURROGATE(u)) {
@@ -1572,10 +1572,18 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
               return 0; // and wait for next WM_CHAR message that will give the 2nd member
             } else {
               surrogate_pair[1] = u; // memorize the 2nd member of the pair
+              unsigned u32 = // convert surrogate pair to UTF-32
+                0x10000 + ((surrogate_pair[0] & 0x3ff) << 10) + (surrogate_pair[1] & 0x3ff);
+              if (u32 >= 0x1F3FB && u32 <= 0x1F3FF) { // emoji modifiers FITZPATRICK
+                Fl::e_length = 0; // skip them
+                return 0;
+              }
               Fl::e_length = fl_utf8fromwc(buffer, 1024, surrogate_pair, 2); // transform to UTF-8
             }
-          } else if ((u >= 0xFE00 && u <= 0xFE0F) || (u >= 0x200B && u <= 0x200D)) {
-            Fl::e_length = 0; // skip variation selectors and zero-width Unicode points
+          } else if ( (u >= 0xFE00 && u <= 0xFE0F) // variation selectors
+                      || u == 0x200D // zero-width joiner
+                    ) {
+            Fl::e_length = 0; // skip these context-dependent Unicode points
             return 0;
           } else {
             Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1); // process regular Unicode point
