@@ -1802,10 +1802,6 @@ content  key    keyboard layout
         if (news == -1)
           news = olds;
         scale = sd->scale(news);
-        if (olds != news) {
-          wd->screen_num(news);
-          if (window->as_gl_window()) invalidate_gl_win(window);
-        }
         wd->x(int(round(nx/scale)));
         wd->y(int(round(ny/scale)));
         }
