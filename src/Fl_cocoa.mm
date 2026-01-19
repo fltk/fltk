@@ -67,6 +67,7 @@ extern "C" {
 // external functions
 extern void fl_fix_focus();
 extern int fl_send_system_handlers(void *e);
+extern int fl_utf8_remove_context_dependent(char *text, int len);
 
 // forward definition of functions in this file
 // converting cr lf converter function
@@ -2956,21 +2957,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   // insertText sent during handleEvent of a key without text cannot be processed in a single FL_KEYBOARD event.
   // Occurs with deadkey followed by non-text key. Occurs also with emoji palette.
   if (!in_key_event || !has_text_key) {
-    if (fl_utf_nb_char((const uchar*)Fl::e_text, Fl::e_length) > 1) {
-      // Some emojis are expressed by a series of Unicode points
-      const char *p = Fl::e_text, *end = Fl::e_text + Fl::e_length;
-      int len;
-      while (p < end) { // loop over all unicode points of the series
-        unsigned u = fl_utf8decode(p, end, &len); // extract one such unicode point
-        if ((u >= 0xFE00 && u <= 0xFE0F)      // variation selectors
-            || u == 0x200D   // zero-width joiner
-            || (u >= 0x1F3FB && u <= 0x1F3FF) // EMOJI MODIFIERS FITZPATRICK TYPE
-            ) { // remove context-dependent unicode points
-          memmove((void*)p, p + len, (end - (p+len)) + 1);
-          Fl::e_length -= len; end -= len;
-        } else p += len; // keep other unicode points
-      }
-    }
+    Fl::e_length = fl_utf8_remove_context_dependent(Fl::e_text, Fl::e_length);
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_length = 0;
     }
