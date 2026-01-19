@@ -1275,7 +1275,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             sd->update_scaling_capability();
           } else if (ns != old_ns) {
             // jump window with Windows+Shift+L|R-arrow to other screen with other DPI
-            if (ns >= 0) window->screen_num(ns);
+            if (ns >= 0) Fl_Window_Driver::driver(window)->screen_num(ns);
             UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOCOPYBITS;
             SetWindowPos(hWnd, NULL, lParam_rect->left, lParam_rect->top,
                          lParam_rect->right - lParam_rect->left,
