@@ -1,5 +1,5 @@
-libpng 1.6.50 - July 1, 2025
-============================
+libpng 1.6.54 - January 12, 2026
+================================
 
 This is a public release of libpng, intended for use in production code.
 
@@ -7,15 +7,12 @@ This is a public release of libpng, intended for use in production code.
 Files available for download
 ----------------------------
 
-Source files with LF line endings (for Unix/Linux):
+Source files:
 
- * libpng-1.6.50.tar.xz (LZMA-compressed, recommended)
- * libpng-1.6.50.tar.gz (deflate-compressed)
-
-Source files with CRLF line endings (for Windows):
-
- * lpng1650.7z (LZMA-compressed, recommended)
- * lpng1650.zip (deflate-compressed)
+ * libpng-1.6.54.tar.xz (LZMA-compressed, recommended)
+ * libpng-1.6.54.tar.gz (deflate-compressed)
+ * lpng1654.7z (LZMA-compressed)
+ * lpng1654.zip (deflate-compressed)
 
 Other information:
 
@@ -25,19 +22,16 @@ Other information:
  * TRADEMARK.md
 
 
-Changes from version 1.6.49 to version 1.6.50
+Changes from version 1.6.53 to version 1.6.54
 ---------------------------------------------
 
- * Improved the detection of the RVV Extension on the RISC-V platform.
-   (Contributed by Filip Wasil)
- * Replaced inline ASM with C intrinsics in the RVV code.
-   (Contributed by Filip Wasil)
- * Fixed a decoder defect in which unknown chunks trailing IDAT, set
-   to go through the unknown chunk handler, incorrectly triggered
-   out-of-place IEND errors.
-   (Contributed by John Bowler)
- * Fixed the CMake file for cross-platform builds that require `libm`.
-
+ * Fixed CVE-2026-22695 (medium severity):
+   Heap buffer over-read in `png_image_read_direct_scaled.
+   (Reported and fixed by Petr Simecek.)
+ * Fixed CVE-2026-22801 (medium severity):
+   Integer truncation causing heap buffer over-read in `png_image_write_*`.
+ * Implemented various improvements in oss-fuzz.
+   (Contributed by Philippe Antoine.)
 
 Send comments/corrections/commendations to png-mng-implement at lists.sf.net.
 Subscription is required; visit
