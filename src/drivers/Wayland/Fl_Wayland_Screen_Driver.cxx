@@ -1017,8 +1017,10 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
                               const char *text) {
 //printf("text_input_commit_string %s\n",text);
   free(pending_commit);
-  pending_commit = text ? strdup(text) : NULL;
-  fl_utf8_remove_context_dependent(pending_commit, strlen(pending_commit));
+  if (text) {
+    pending_commit = strdup(text);
+    fl_utf8_remove_context_dependent(pending_commit, strlen(pending_commit));
+  } else pending_commit = NULL;
 }
 
 
