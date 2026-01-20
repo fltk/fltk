@@ -274,6 +274,8 @@ Fl_RGB_Scaling Fl_Image::RGB_scaling() {
  data_w() and data_h(), respectively
  \note This function generally changes the values returned by the w() and h() member functions.
  In contrast, the values returned by data_w() and data_h() remain unchanged.
+ \note If the processed image is an Fl_SVG_Image, setting \ref Fl_SVG_Image::proportional
+ to \c false is required if \p proportional here is null.
  \version 1.4 (1.3.4 and FL_ABI_VERSION for Fl_Shared_Image only)
 
  Example code: scale an image to fit in a box

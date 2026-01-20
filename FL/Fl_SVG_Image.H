@@ -31,10 +31,12 @@ struct NSVGimage;
  if the file could not be opened or read, and ERR_FORMAT if the SVG format could not be decoded.
  If the image has loaded correctly, w(), h(), and d() should return values greater than zero.
 
+ Member \ref proportional of an Fl_SVG_Image object must be set to \c false to allow the image
+ object to be rasterized with an altered aspect ratio.
+
  Rasterization is not done until the image is first drawn or resize() or normalize() is called. Therefore,
  \ref array is NULL until then. The delayed rasterization ensures an Fl_SVG_Image is always rasterized
- to the exact screen resolution at which it is drawn. Member \ref proportional of an Fl_SVG_Image object
- must be set to \c false to allow this image to be rasterized with an altered aspect ratio.
+ to the exact screen resolution at which it is drawn.
 
  The Fl_SVG_Image class draws images computed by \c nanosvg with the following known limitations
 
