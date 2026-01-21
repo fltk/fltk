@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1510,7 +1510,22 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         static char buffer[1024];
         if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
           wchar_t u = (wchar_t)wParam;
-          Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+          // Windows emoji palette triggered with Windows + dot sends 2 or more WM_CHAR messages:
+          // the 2 components of a surrogate pair, or variation selectors, or zero-width joiner,
+          // or emoji modifiers FITZPATRICK or extra Unicode points.
+          if (u >= 0xD800 && u <= 0xDFFF) { // handle the 2 components of a surrogate pair
+            static wchar_t surrogate_pair[2];
+            if (IS_HIGH_SURROGATE(u)) {
+              surrogate_pair[0] = u; // memorize the 1st member of the pair
+              Fl::e_length = 0;
+              return 0; // and wait for next WM_CHAR message that will give the 2nd member
+            } else {
+              surrogate_pair[1] = u; // memorize the 2nd member of the pair
+              Fl::e_length = fl_utf8fromwc(buffer, 1024, surrogate_pair, 2); // transform to UTF-8
+            }
+          } else {
+            Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1); // process regular Unicode point
+          }
           buffer[Fl::e_length] = 0;
         } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
           if (state & FL_NUM_LOCK) {

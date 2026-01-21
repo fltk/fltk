@@ -1,7 +1,7 @@
 //
 // Windows font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -366,6 +366,27 @@ Fl_Fontsize Fl_GDI_Graphics_Driver::size_unscaled() {
 }
 
 double Fl_GDI_Graphics_Driver::width_unscaled(const char* c, int n) {
+  if (n == 0) return 0;
+  int len1 = fl_utf8len1(*c);
+  if (n > len1 && len1 > 0) { // a text with several codepoints: compute its typographical width
+    int wn = fl_utf8toUtf16(c, n, wstr, wstr_len);
+    if (wn >= wstr_len) {
+      wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
+      wstr_len = wn + 1;
+      wn = fl_utf8toUtf16(c, n, wstr, wstr_len);
+    }
+    HDC gc2 = gc_;
+    HWND hWnd;
+    if (!gc2) {
+        hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
+        gc2 = GetDC(hWnd);
+    }
+    SelectObject(gc2, ((Fl_GDI_Font_Descriptor*)font_descriptor())->fid);
+    SIZE s;
+    GetTextExtentPoint32W(gc2, (WCHAR*)wstr, wn, &s);
+    if (gc2 && gc2 != gc_) ReleaseDC(hWnd, gc2);
+    return (double)s.cx;
+  }
   int i = 0;
   if (!font_descriptor()) return -1.0;
   double w = 0.0;

@@ -1,7 +1,7 @@
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -300,6 +300,21 @@ void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 }
 
 double Fl_Quartz_Graphics_Driver::width(const char* txt, int n) {
+  if (n == 0) return 0;
+  int len1 = fl_utf8len1(*txt);
+  if (len1 > 0 && n > len1) { // a text with several codepoints: compute its typographical width
+    CFStringRef str = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n, kCFStringEncodingUTF8, false);
+    if (str) {
+      CFDictionarySetValue(attributes, kCTFontAttributeName, valid_font_descriptor()->fontref);
+      CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str, attributes);
+      CFRelease(str);
+      CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
+      CFRelease(mastr);
+      double d = CTLineGetTypographicBounds(ctline, NULL, NULL, NULL);
+      CFRelease(ctline);
+      return d;
+    }
+  }
   int wc_len = n;
   UniChar *uniStr = mac_Utf8_to_Utf16(txt, n, &wc_len);
   return width(uniStr, wc_len);
