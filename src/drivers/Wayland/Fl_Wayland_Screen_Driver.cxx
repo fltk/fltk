@@ -53,7 +53,6 @@ extern "C" {
   bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
                                         bool *using_GTK);
 }
-extern int fl_utf8_remove_context_dependent(char *text, int len);
 
 // set this to 1 for keyboard debug output, 0 for no debug output
 #define DEBUG_KEYBOARD 0
@@ -1017,10 +1016,7 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
                               const char *text) {
 //printf("text_input_commit_string %s\n",text);
   free(pending_commit);
-  if (text) {
-    pending_commit = strdup(text);
-    fl_utf8_remove_context_dependent(pending_commit, strlen(pending_commit));
-  } else pending_commit = NULL;
+  pending_commit = (text ? strdup(text) : NULL);
 }
 
 

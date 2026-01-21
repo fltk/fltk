@@ -1630,30 +1630,3 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
 }
 
 /** @} */
-
-#ifndef FL_DOXYGEN
-
-/* This function removes from an UTF-8 string its context-dependent codepoints
- when there are any, and returns the length of the possibly shortened string.
- */
-int fl_utf8_remove_context_dependent(char *text, int len) {
-  if (len > 1 && fl_utf_nb_char((const uchar*)text, len) > 1) {
-    // Some emojis are expressed by a series of Unicode points
-    char *p = text, *end = text + len;
-    while (p < end) { // loop over all unicode points of the series
-      int l_point;
-      unsigned u = fl_utf8decode(p, end, &l_point); // extract one such unicode point
-      if ((u >= 0xFE00 && u <= 0xFE0F)      // variation selectors
-          || u == 0x200D                    // zero-width joiner
-          || (u >= 0x1F3FB && u <= 0x1F3FF) // EMOJI MODIFIERS FITZPATRICK TYPE
-          ) { // remove context-dependent unicode points
-        memmove((void*)p, p + l_point, (end - (p+l_point)) + 1);
-        end -= l_point;
-        len -= l_point;
-      } else p += l_point; // keep other unicode points
-    }
-  }
-  return len;
-}
-
-#endif // ! FL_DOXYGEN

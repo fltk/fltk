@@ -67,7 +67,6 @@ extern "C" {
 // external functions
 extern void fl_fix_focus();
 extern int fl_send_system_handlers(void *e);
-extern int fl_utf8_remove_context_dependent(char *text, int len);
 
 // forward definition of functions in this file
 // converting cr lf converter function
@@ -2957,7 +2956,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   // insertText sent during handleEvent of a key without text cannot be processed in a single FL_KEYBOARD event.
   // Occurs with deadkey followed by non-text key. Occurs also with emoji palette.
   if (!in_key_event || !has_text_key) {
-    Fl::e_length = fl_utf8_remove_context_dependent(Fl::e_text, Fl::e_length);
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_length = 0;
     }
