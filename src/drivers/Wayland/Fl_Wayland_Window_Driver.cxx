@@ -1751,13 +1751,21 @@ int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int 
 int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx, int hoty,
                                                bool keep_copy) {
   if (keep_copy) {
-    int ld = rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d();
-    uchar *data = new uchar[ld * rgb->data_h()];
-    memcpy(data, rgb->array, ld * rgb->data_h());
-    Fl_RGB_Image *rgb2 = new Fl_RGB_Image(data, rgb->data_w(), rgb->data_h(), rgb->d(), rgb->ld());
-    rgb2->alloc_array = 1;
-    rgb2->scale(rgb->w(), rgb->h(), 0, 1);
-    rgb = rgb2;
+    if (((Fl_RGB_Image*)rgb)->as_svg_image()) {
+      int scale = wld_scale();
+      Fl_RGB_Image *svg = (Fl_RGB_Image*)rgb->copy(rgb->w() * scale, rgb->h() * scale);
+      svg->normalize();
+      svg->scale(rgb->w(), rgb->h(), 0, 1);
+      rgb = svg;
+    } else {
+      int ld = rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d();
+      uchar *data = new uchar[ld * rgb->data_h()];
+      memcpy(data, rgb->array, ld * rgb->data_h());
+      Fl_RGB_Image *rgb2 = new Fl_RGB_Image(data, rgb->data_w(), rgb->data_h(), rgb->d(), rgb->ld());
+      rgb2->alloc_array = 1;
+      rgb2->scale(rgb->w(), rgb->h(), 0, 1);
+      rgb = rgb2;
+    }
   }
 // build a new wl_cursor and its image
   struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);

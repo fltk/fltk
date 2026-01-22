@@ -2714,6 +2714,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
 int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   HCURSOR new_cursor;
   Fl_RGB_Image *scaled_image = (Fl_RGB_Image*)image->copy();
+  scaled_image->normalize();
   new_cursor = image_to_icon(scaled_image, false, hotx, hoty);
   delete scaled_image;
   if (new_cursor == NULL)
