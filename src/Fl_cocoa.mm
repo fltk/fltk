@@ -4161,6 +4161,11 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   if ((hoty < 0) || (hoty >= image->h()))
     return 0;
 
+  if (image->as_svg_image()) {
+    Fl_RGB_Image *image2 = (Fl_RGB_Image*)image->copy();
+    image2->normalize();
+    image = image2;
+  }
   // OS X >= 10.6 can create a NSImage from a CGImage, but we need to
   // support older versions, hence this pesky handling.
 
@@ -4220,6 +4225,7 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
 
   [bitmap release];
   [nsimage release];
+  if (image->as_svg_image()) delete image;
 
   return 1;
 }

@@ -392,9 +392,12 @@ public:
    \sa  void Fl_RGB_Image::max_size(size_t)
    */
   static size_t max_size() {return max_size_;}
-  /** Returns whether an image is an Fl_SVG_Image or not.
+  /** Returns whether an RGB image is an Fl_SVG_Image or not.
   This virtual method returns a pointer to the Fl_SVG_Image if this object is an instance of Fl_SVG_Image or NULL if not. */
   virtual Fl_SVG_Image *as_svg_image() { return NULL; }
+  /** Returns whether an RGB image is an Fl_SVG_Image or not.
+  This virtual method returns a pointer to the Fl_SVG_Image if this object is an instance of const Fl_SVG_Image or NULL if not. */
+  virtual const Fl_SVG_Image *as_svg_image() const { return NULL; }
   /** Makes sure the object is fully initialized.
    In particular, makes sure member variable \ref array is non-null. */
   virtual void normalize() {}

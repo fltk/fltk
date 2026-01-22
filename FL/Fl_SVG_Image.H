@@ -170,6 +170,7 @@ public:
   void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0) override;
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
   Fl_SVG_Image *as_svg_image() override { return this; }
+  const Fl_SVG_Image *as_svg_image() const override { return this; }
   void normalize() override;
 };
 
