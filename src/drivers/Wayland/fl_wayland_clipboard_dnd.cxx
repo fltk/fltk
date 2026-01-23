@@ -294,7 +294,8 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer,
   } else if (strcmp(mime_type, "text/uri-list") == 0 && !fl_selection_type[1]) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
     fl_selection_offer_type = "text/uri-list";
-  } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 && !fl_selection_type[1]) {
+  } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 &&
+             (!fl_selection_type[1] || !strcmp(fl_selection_offer_type, "text/plain"))) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
     fl_selection_offer_type = wld_plain_text_clipboard;
   } else if (strcmp(mime_type, "text/plain") == 0 && !fl_selection_type[1]) {
@@ -431,39 +432,6 @@ way_out:
     fl_selection_length[1] = strlen(fl_selection_buffer[1]);
   }
   Fl::e_clipboard_type = Fl::clipboard_plain_text;
-  /*
-   UTF8 text from clipboard may encode non-ASCII codepoints as in these examples
-   U+1F431 --> UTF8: 0xF0,0x9F,0x90,0xB1 --> encoded "\F0\9F\90\B1"
-   U+A1 --> UTF8: 0xC2, 0xA1 --> encoded "\C2\A1"
-   Whereas ASCII characters are not encoded.
-   The following decodes that to restore genuine UTF8.
-   */
-  /*  for (int i = 0; i < fl_selection_length[1]; i++) {
-        printf("%c[%x] ",fl_selection_buffer[1][i], fl_selection_buffer[1][i]);
-      } puts("");*/
-  int l_input = fl_selection_length[1], l = 0, i = 0, b;
-  char *str = new char[l_input];
-  while (i < l_input) {
-    if (i + 4 < l_input && fl_selection_buffer[1][i] == '\\' &&
-        fl_selection_buffer[1][i+3] == '\\' &&
-        isxdigit(fl_selection_buffer[1][i+1]) && isxdigit(fl_selection_buffer[1][i+1])) {
-      sscanf(fl_selection_buffer[1] + i + 1, "%x", &b);
-      int l_utf8 = fl_utf8len(b);
-      if (i + 3 * l_utf8 <= l_input && fl_selection_buffer[1][i+3*(l_utf8-1)] == '\\') {
-        while (l_utf8-- > 0) {
-          sscanf(fl_selection_buffer[1] + i + 1, "%x", &b);
-          str[l++] = b;
-          i += 3;
-        }
-        continue;
-      }
-    }
-    str[l++] = fl_selection_buffer[1][i++];
-  }
-  memcpy(fl_selection_buffer[1], str, l);
-  delete[] str;
-  fl_selection_length[1] = l;
-  fl_selection_buffer[1][l] = 0;
 }
 
 
