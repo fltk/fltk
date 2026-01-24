@@ -1629,4 +1629,64 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
   return Fl::system_driver()->utf8from_mb(dst, dstlen, src, srclen);
 }
 
+
+/**
+ Returns pointer to beginning of next unicode character after potentially composed character.
+ Some unicode characters (example: 👩‍✈️ "woman pilot") are composed of several unicode points. They may pair two successive
+ codepoints with U+200D (zero-width joiner) and may qualify any component with variation selectors or Fitzpatrick emoji modifiers.
+ \param from points to a location within a UTF8 string. If this location is inside the UTF8
+ encoding of a codepoint or is an invalid byte, this function returns \p from + 1.
+ \param end points past last codepoint of the string.
+ \return pointer to start of first codepoint after potentially composed character beginning at \p from.
+ */
+const char *fl_utf8_next_composed_char(const char *from, const char *end) {
+  int skip = fl_utf8len(*from);
+  if (skip == -1) return from + 1;
+  from += skip; // skip 1st codepoint
+  while (from < end) {
+    unsigned u = fl_utf8decode(from, end, NULL);
+    if (u == 0x200D) { // zero-width joiner
+      from += fl_utf8len(*from); // skip joiner
+      from += fl_utf8len(*from); // skip joined codepoint
+    } else if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
+      from += fl_utf8len(*from); // skip variation selector
+    } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
+      from += fl_utf8len(*from); // skip modifier
+    } else break;
+  }
+  return from;
+}
+
+
+/**
+ Returns pointer to beginning of previous potentially composed character before given unicode character.
+ See fl_utf8_next_composed_char() for a hint about what is a composed unicode character.
+ \param from points to a location within a UTF8 string. If this location is inside the UTF8
+ encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
+ \param begin points to start of first codepoint of the string.
+ \return pointer to start of first potentially composed character before the codepoint beginning at \p from.
+ */
+const char *fl_utf8_previous_composed_char(const char *from, const char *begin) {
+  if (from <= begin || fl_utf8len(*from) == -1) return from - 1;
+  const char *keep = from;
+  from = fl_utf8back(from - 1, begin, NULL);
+  while (from >= begin) {
+    unsigned u = fl_utf8decode(from, keep, NULL);
+    if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
+      from = fl_utf8back(from - 1, begin, NULL);
+    } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
+      from = fl_utf8back(from - 1, begin, NULL);
+    } else if (from > begin) {
+      keep = fl_utf8back(from - 1, begin, NULL);
+      u = fl_utf8decode(keep, from, NULL);
+      if (u == 0x200D) { // zero-width joiner
+        from = fl_utf8back(keep - 1, begin, NULL);
+        continue;
+      }
+      return from;
+    } else break;
+  }
+  return from;
+}
+
 /** @} */

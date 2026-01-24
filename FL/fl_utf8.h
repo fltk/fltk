@@ -1,7 +1,7 @@
 /*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
- * Copyright 2016-2021 by Bill Spitzak and others.
+ * Copyright 2016-2026 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -205,6 +205,9 @@ FL_EXPORT void fl_make_path_for_file( const char *path );
 /* OD: recursively create a path in the file system */
 FL_EXPORT char fl_make_path( const char *path );
 
+FL_EXPORT const char *fl_utf8_next_composed_char(const char *from, const char *end);
+
+FL_EXPORT const char *fl_utf8_previous_composed_char(const char *from, const char *begin);
 
 /** @} */
 

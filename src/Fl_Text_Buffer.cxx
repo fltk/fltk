@@ -1,5 +1,5 @@
 //
-// Copyright 2001-2023 by Bill Spitzak and others.
+// Copyright 2001-2026 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -2090,14 +2090,8 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
     return 0;
 
   IS_UTF8_ALIGNED2(this, (pos))
-
-  char c;
-  do {
-    pos--;
-    if (pos==0)
-      return 0;
-    c = byte_at(pos);
-  } while ( (c&0xc0) == 0x80);
+  const char *previous = fl_utf8_previous_composed_char(address(0) + pos, address(0));
+  pos = previous - address(0);
 
   IS_UTF8_ALIGNED2(this, (pos))
   return pos;
@@ -2122,8 +2116,8 @@ int Fl_Text_Buffer::prev_char(int pos) const
 int Fl_Text_Buffer::next_char(int pos) const
 {
   IS_UTF8_ALIGNED2(this, (pos))
-  int n = fl_utf8len1(byte_at(pos));
-  pos += n;
+  const char *next = fl_utf8_next_composed_char(address(0) + pos, address(0) + mLength);
+  pos = next - address(0);
   if (pos>=mLength)
     return mLength;
   IS_UTF8_ALIGNED2(this, (pos))
