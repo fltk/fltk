@@ -294,7 +294,8 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer,
   } else if (strcmp(mime_type, "text/uri-list") == 0 && !fl_selection_type[1]) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
     fl_selection_offer_type = "text/uri-list";
-  } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 && !fl_selection_type[1]) {
+  } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 &&
+             (!fl_selection_type[1] || !strcmp(fl_selection_offer_type, "text/plain"))) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
     fl_selection_offer_type = wld_plain_text_clipboard;
   } else if (strcmp(mime_type, "text/plain") == 0 && !fl_selection_type[1]) {
