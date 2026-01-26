@@ -1,7 +1,7 @@
 //
 // UTF-8 test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -39,9 +39,7 @@
 // Font chooser widget for the Fast Light Tool Kit(FLTK).
 //
 
-
-#define DEF_SIZE 16 // default value for the font size picker
-
+static const int DEF_SIZE = 16; // default value for the font size picker
 
 static Fl_Double_Window *fnt_chooser_win;
 static Fl_Hold_Browser *fontobj;
@@ -560,21 +558,13 @@ public:
   }
 };
 
+int main(int argc, char** argv) {
 
-int main(int argc, char** argv)
-{
-  const char *latin1 = // "ABCabcàèéïßîöüã123"
-  "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xdf\xee\xf6\xfc\xe3\x31\x32\x33";
-  const char *emoji = // grinning face with smiling eyes, thumbs up
-  "\360\237\230\204\360\237\221\215end";
-  // NOTE: FLTK does not currently support modifiers like skin tones
-  //       or ZWJs (zero width joiners)
-  char *utf8 = (char*) malloc((strlen(latin1)+4) * 5 + 1);
-  int l = fl_utf8froma(utf8, (unsigned int)strlen(latin1) * 5 + 1,
-                       latin1, (unsigned int)strlen(latin1));
-  utf8[l] = '\0';
-  strcat(utf8, emoji);
-  l = (int)strlen(utf8);
+  const char *utf8 =
+    "ABCabcàèéïßîöüã123"                // latin1 / ISO-8859-1
+    "\360\237\230\204\360\237\221\215"  // emojis: grinning face with smiling eyes, thumbs up
+    ".";                                // final '.'
+  int utf8_l = (int)strlen(utf8);       // total length of UTF-8 string
 
   make_font_chooser();
   extra_font = FL_TIMES_BOLD_ITALIC;
@@ -590,12 +580,18 @@ int main(int argc, char** argv)
 #endif
                );
 
-  main_win = new Fl_Double_Window (200 + 5*75, 400, "Unicode Display Test");
+  // constants for window layout
+
+  const int IW = 240;               // width of input widgets (left col.)
+  const int WW = IW + 10 + 5 * 75;  // total window width
+  const int WH = 400;               // window height
+
+  main_win = new Fl_Double_Window (WW, WH, "Unicode Display Test");
   main_win->begin();
 
-  Fl_Input i1(5, 5, 190, 25);
+  Fl_Input i1(5, 5, IW, 25);
   i1.value(utf8);
-  Fl_Scroll scroll(200,0,5 * 75,400);
+  Fl_Scroll scroll(IW + 10, 0, 5 * 75, WH);
 
   int off = 2;
   int end_list = 0x10000 / 16;
@@ -607,6 +603,17 @@ int main(int argc, char** argv)
   }
   argc = 1;
   for (int y = off; y < end_list; y++) {
+    // skip Unicode space reserved for surrogate pairs (U+D800 ... U+DFFF)
+    if (y == 0xD80) { // U+D800
+      Fl_Box *bx = new Fl_Box(IW + 10, (y - off) * 25, 460, 25);
+      bx->label("U+D800 … U+DFFF: UTF-16 surrogate pairs");
+      bx->color(fl_lighter(FL_YELLOW));
+      bx->box(FL_DOWN_BOX);
+      bx->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+      y = 0xE00;
+      off += 127;
+      if (y >= end_list) break;
+    }
     int o = 0;
     char bu[25]; // index label
     char buf[16 * 6]; // utf8 text
@@ -620,10 +627,10 @@ int main(int argc, char** argv)
     }
     buf[o] = '\0';
     snprintf(bu, sizeof(bu), "0x%06X", y * 16);
-    Fl_Input *b = new Fl_Input(200,(y-off)*25,80,25);
+    Fl_Input *b = new Fl_Input(IW + 10, (y - off) * 25, 80, 25);
     b->textfont(FL_COURIER);
     b->value(bu);
-    b = new Fl_Input(280,(y-off)*25,380,25);
+    b = new Fl_Input(IW + 90, (y - off) * 25, 380, 25);
     b->textfont(extra_font);
     b->value(buf);
   }
@@ -632,25 +639,28 @@ int main(int argc, char** argv)
 
   thescroll = &scroll;
 
-  char *utf8l = (char*) malloc(strlen(utf8) * 3 + 1);
-  Fl_Input i2(5, 35, 190, 25);
-  l = fl_utf_tolower((const unsigned char*)utf8, l, utf8l);
-  utf8l[l] = '\0';
-  i2.value(utf8l);
+  // convert UTF-8 string to lowercase
+  char *utf8_lc = (char *)malloc(utf8_l * 3 + 1);
+  int llc = fl_utf_tolower((const unsigned char *)utf8, utf8_l, utf8_lc);
+  utf8_lc[llc] = '\0';
 
-  char *utf8u = (char*) malloc(strlen(utf8l) * 3 + 1);
-  Fl_Input i3(5, 65, 190, 25);
-  l = fl_utf_toupper((const unsigned char*)utf8l, l, utf8u);
-  utf8u[l] = '\0';
-  i3.value(utf8u);
+  // convert UTF-8 string to uppercase
+  char *utf8_uc = (char *)malloc(utf8_l * 3 + 1);
+  int luc = fl_utf_toupper((const unsigned char *)utf8, utf8_l, utf8_uc);
+  utf8_uc[luc] = '\0';
+
+  Fl_Input i2(5, 35, IW, 25);
+  i2.value(utf8_lc);
+
+  Fl_Input i3(5, 65, IW, 25);
+  i3.value(utf8_uc);
 
   // free strings that are no longer used
-  free(utf8u);
-  free(utf8l);
-  free(utf8);
+  free(utf8_lc);
+  free(utf8_uc);
 
   const char *ltr_txt = "\\->e\xCC\x82=\xC3\xAA";
-  Fl_Input i4(5, 90, 190, 25);
+  Fl_Input i4(5, 90, IW, 25);
   i4.value(ltr_txt);
   i4.textfont(extra_font);
 
@@ -659,16 +669,16 @@ int main(int argc, char** argv)
 
   char abuf[40];
   //  l = fl_unicode2utf(r_to_l_txt, 8, abuf);
-  l = fl_utf8fromwc(abuf, 40, r_to_l_txt, 8);
+  int l = fl_utf8fromwc(abuf, 40, r_to_l_txt, 8);
   abuf[l] = 0;
 
-  right_left_input i5(5, 115, 190, 50);
+  right_left_input i5(5, 115, IW, 50);
   i5.textfont(extra_font);
   i5.textsize(30);
   i5.value(abuf);
 
-  Fl_Input i7(5, 230, 190, 25);
-  Fl_Input i8(5, 260, 190, 25);
+  Fl_Input i7(5, 230, IW, 25);
+  Fl_Input i8(5, 260, IW, 25);
   i7.callback(i7_cb, &i8);
   i7.textsize(20);
   i7.value(abuf);
@@ -678,28 +688,26 @@ int main(int argc, char** argv)
     1610, 0x20, 1608, 0x20, 1606, 0x20,
     1604, 0x20, 1603, 0x20, 1608, 0x20, 1583, 0};
 
-  //  l = fl_unicode2utf(r_to_l_txt1, 14, abuf);
   l = fl_utf8fromwc(abuf, 40, r_to_l_txt1, 14);
   abuf[l] = 0;
-  right_left_input i6(5, 175, 190, 50);
+  right_left_input i6(5, 175, IW, 50);
   i6.textfont(extra_font);
   i6.textsize(30);
   i6.value(abuf);
 
   // Now try Greg Ercolano's Japanese test sequence
-  // SOME JAPANESE UTF-8 TEXT
-  const char *utfstr =
-  "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
-  "\x8c\xe3\x82\x8b\xe3\x80\x82";
+  // English: "Do nothing."
+  const char *utf8_jp =
+    "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1\x8c\xe3\x82\x8b\xe3\x80\x82";
 
-  UCharDropBox db(5, 300, 190, 30);
+  UCharDropBox db(5, 300, IW, 30);
   db.textsize(16);
   db.value("unichar drop box");
 
-  Fl_Output o9(5, 330, 190, 45);
+  Fl_Output o9(5, 330, IW, 45);
   o9.textfont(extra_font);
   o9.textsize(30);
-  o9.value(utfstr);
+  o9.value(utf8_jp);
 
   main_win->end();
   main_win->callback((Fl_Callback*)cb_exit);
