@@ -1318,8 +1318,13 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
       dst[count] = c;
       p++;
     } else {
-      int len; unsigned ucs = fl_utf8decode(p,e,&len);
-      p += len;
+      unsigned ucs = 0x100;
+      int len = fl_utf8len(*p);
+      if (len > 2) p = fl_utf8_next_composed_char(p, e);
+      else {
+        ucs = fl_utf8decode(p,e,&len);
+        p += len;
+      }
       if (ucs < 0x100) dst[count] = ucs;
       else dst[count] = '?';
     }
@@ -1329,9 +1334,11 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
   while (p < e) {
     if (!(*p & 0x80)) p++;
     else {
-      int len;
-      fl_utf8decode(p,e,&len);
-      p += len;
+      int len = fl_utf8len1(*p);
+      if (len > 2) p = fl_utf8_next_composed_char(p, e);
+      else {
+        p += len;
+      }
     }
     ++count;
   }
