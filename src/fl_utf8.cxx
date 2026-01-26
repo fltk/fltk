@@ -1631,14 +1631,15 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
 
 
 /**
- Returns pointer to beginning of next unicode character after potentially composed character.
- Some unicode characters (example: 👩‍✈️ "woman pilot") are composed of several unicode points. They may pair two successive
- codepoints with U+200D (zero-width joiner) and may qualify any component with variation selectors or Fitzpatrick emoji modifiers.
- Most flag emojis are composed of 2 successive "regional indicator symbols" from range [U+1F1E6 , U+1F1FF].
+ Returns pointer to beginning of character after given location in UTF8 string accounting for composed characters.
+ Some unicode characters (examples: 👩‍✈️ "woman pilot", 🇸🇲 "San Marino flag") are composed of several unicode points.
+ They may pair two successive codepoints with U+200D (zero-width joiner) and may qualify any component with
+ variation selectors or Fitzpatrick emoji modifiers. Most flag emojis are composed of two successive
+ "regional indicator symbols", each in range [U+1F1E6 , U+1F1FF].
  \param from points to a location within a UTF8 string. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from + 1.
  \param end points past last codepoint of the string.
- \return pointer to beginning of first codepoint after potentially composed character that begins at \p from.
+ \return pointer to beginning of first codepoint after possibly composed character that begins at \p from.
  */
 const char *fl_utf8_next_composed_char(const char *from, const char *end) {
   int skip = fl_utf8len1(*from);
@@ -1674,12 +1675,12 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
 
 
 /**
- Returns pointer to beginning of previous potentially composed character before given unicode character.
+ Returns pointer to beginning of character before given location in UTF8 string accounting for composed characters.
  See fl_utf8_next_composed_char() for a hint about what is a composed unicode character.
  \param from points to a location within a UTF8 string. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
  \param begin points to start of first codepoint of the string.
- \return pointer to beginning of first potentially composed character before the codepoint that begins at \p from.
+ \return pointer to beginning of first possibly composed character before the codepoint that begins at \p from.
  */
 const char *fl_utf8_previous_composed_char(const char *from, const char *begin) {
   int l = fl_utf8len(*from);
