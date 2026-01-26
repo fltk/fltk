@@ -1634,17 +1634,32 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
  Returns pointer to beginning of next unicode character after potentially composed character.
  Some unicode characters (example: 👩‍✈️ "woman pilot") are composed of several unicode points. They may pair two successive
  codepoints with U+200D (zero-width joiner) and may qualify any component with variation selectors or Fitzpatrick emoji modifiers.
+ Most flag emojis are composed of 2 successive "regional indicator symbols" from range [U+1F1E6 , U+1F1FF].
  \param from points to a location within a UTF8 string. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from + 1.
  \param end points past last codepoint of the string.
- \return pointer to start of first codepoint after potentially composed character beginning at \p from.
+ \return pointer to beginning of first codepoint after potentially composed character that begins at \p from.
  */
 const char *fl_utf8_next_composed_char(const char *from, const char *end) {
-  int skip = fl_utf8len(*from);
-  if (skip == -1) return from + 1;
+  int skip = fl_utf8len1(*from);
+  if (skip <= 2) return from + skip;
+  unsigned u = fl_utf8decode(from, end, NULL);
+  if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
+    u = fl_utf8decode(from + skip, end, NULL);
+    if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 2nd regional indicator symbol gives a flag
+      return from + 2 * skip;
+    }
+  } else if (u == 0x1F3F4) { // “waving black flag” may start subdivision flags (e.g. 🏴󠁧󠁢󠁷󠁬󠁳󠁿)
+    const char *next = from + skip;
+    do {
+      u = fl_utf8decode(next, end, NULL);
+      next += fl_utf8len1(*next);
+      if (u == 0xE007F) return next; // ends with "cancel tag"
+    } while (u >= 0xE0020 && u <= 0xE007E); // any series of "tag components"
+  }
   from += skip; // skip 1st codepoint
   while (from < end) {
-    unsigned u = fl_utf8decode(from, end, NULL);
+    u = fl_utf8decode(from, end, NULL);
     if (u == 0x200D) { // zero-width joiner
       from += fl_utf8len(*from); // skip joiner
       from += fl_utf8len(*from); // skip joined codepoint
@@ -1664,14 +1679,31 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
  \param from points to a location within a UTF8 string. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
  \param begin points to start of first codepoint of the string.
- \return pointer to start of first potentially composed character before the codepoint beginning at \p from.
+ \return pointer to beginning of first potentially composed character before the codepoint that begins at \p from.
  */
 const char *fl_utf8_previous_composed_char(const char *from, const char *begin) {
-  if (from <= begin || fl_utf8len(*from) == -1) return from - 1;
-  const char *keep = from;
+  int l = fl_utf8len(*from);
+  if (from <= begin || l == -1) return from - 1;
+  const char *keep = from + l;
   from = fl_utf8back(from - 1, begin, NULL);
+  unsigned u = fl_utf8decode(from, keep, NULL);
+  if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
+    const char *previous = fl_utf8back(from - 1, begin, NULL);
+    u = fl_utf8decode(previous, keep, NULL);
+    if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 2nd Regional indicator symbol gives a flag
+      return previous;
+    }
+  } else if (u == 0xE007F) { // ends with "cancel tag"
+    const char *previous = from;
+    do {
+      if (previous <= begin) return begin;
+      previous = fl_utf8back(previous - 1, begin, NULL);
+      u = fl_utf8decode(previous, keep, NULL);
+      if (u == 0x1F3F4) return previous; // “waving black flag” starts subdivision flags
+    } while (u >= 0xE0020 && u <= 0xE007E); // any series of "tag components"
+  }
   while (from >= begin) {
-    unsigned u = fl_utf8decode(from, keep, NULL);
+    u = fl_utf8decode(from, keep, NULL);
     if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
       from = fl_utf8back(from - 1, begin, NULL);
     } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
