@@ -30,6 +30,7 @@
 #  include <errno.h>
 #  include <stdio.h>
 #  include <stdlib.h>
+#  include <map>
 
 
 ////////////////////////////////////////////////////////////////
@@ -41,7 +42,6 @@ static const char * fl_selection_type[2];
 static int fl_selection_buffer_length[2];
 static char fl_i_own_selection[2] = {0,0};
 static struct wl_data_offer *fl_selection_offer = NULL;
-static const char *fl_selection_offer_type = NULL;
 // The MIME type Wayland uses for text-containing clipboard:
 static const char wld_plain_text_clipboard[] = "text/plain;charset=utf-8";
 
@@ -280,30 +280,46 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
 }
 
 
+// map: for each clipboard mime-type FLTK has interest in, give FLTK clipboard type and priority.
+// A mime-type with higher priority for same FLTK clipboard type is preferred.
+typedef struct two_field_struct_ { const char *fltk_type; int priority; } type_prio_struct;
+static std::map<const char *, type_prio_struct> clipboard_mimetypes_map = {
+//  mime-type                  FLTK-clipboard-type        priority
+  {"image/png",               {Fl::clipboard_image,       1} },
+  {"image/bmp",               {Fl::clipboard_image,       2} },
+  {"text/plain",              {Fl::clipboard_plain_text,  1} },
+  {"text/uri-list",           {Fl::clipboard_plain_text,  2} },
+  {"UTF8_STRING",             {Fl::clipboard_plain_text,  3} },
+  {wld_plain_text_clipboard,  {Fl::clipboard_plain_text,  4} },
+};
+
+// map: for each FLTK-clipboard-type, give current preferred mime-type and priority
+typedef struct mime_prio_struct_ { const char *mime_type; int priority; } mime_prio_struct;
+static std::map<const char *, mime_prio_struct> clipboard_kinds_map = {
+//  FLTK-clipboard-type        current mime-type   current highest priority
+  {Fl::clipboard_image,       {NULL,               0} },
+  {Fl::clipboard_plain_text,  {NULL,               0} },
+};
+
+
 static void data_offer_handle_offer(void *data, struct wl_data_offer *offer,
                                     const char *mime_type) {
-  // runs when app becomes active and lists possible clipboard types
+  // runs when app becomes active once for each offered clipboard type
 //fprintf(stderr, "Clipboard offer=%p supports MIME type: %s\n", offer, mime_type);
-  if (strcmp(mime_type, "image/png") == 0) {
-    fl_selection_type[1] = Fl::clipboard_image;
-    fl_selection_offer_type = "image/png";
-  } else if (strcmp(mime_type, "image/bmp") == 0 && (!fl_selection_offer_type ||
-                                      strcmp(fl_selection_offer_type, "image/png"))) {
-    fl_selection_type[1] = Fl::clipboard_image;
-    fl_selection_offer_type = "image/bmp";
-  } else if (strcmp(mime_type, "text/uri-list") == 0 && !fl_selection_type[1]) {
-    fl_selection_type[1] = Fl::clipboard_plain_text;
-    fl_selection_offer_type = "text/uri-list";
-  } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 &&
-             (!fl_selection_type[1] || !strcmp(fl_selection_offer_type, "text/plain"))) {
-    fl_selection_type[1] = Fl::clipboard_plain_text;
-    fl_selection_offer_type = wld_plain_text_clipboard;
-  } else if (strcmp(mime_type, "text/plain") == 0 && !fl_selection_type[1]) {
-    fl_selection_type[1] = Fl::clipboard_plain_text;
-    fl_selection_offer_type = "text/plain";
-  } else if (strcmp(mime_type, "UTF8_STRING") == 0 && !fl_selection_type[1]) {
-    fl_selection_type[1] = Fl::clipboard_plain_text;
-    fl_selection_offer_type = "text/plain";
+  std::map<const char*, type_prio_struct>::iterator iter_mime = clipboard_mimetypes_map.begin();
+  while (strcmp(iter_mime->first, mime_type)) {
+    iter_mime++;
+    if (iter_mime == clipboard_mimetypes_map.end()) return; // FLTK doesn't handle this mime_type
+  }
+  std::map<const char*, mime_prio_struct>::iterator iter_kind = clipboard_kinds_map.begin();
+  while (strcmp(iter_kind->first, iter_mime->second.fltk_type)) {
+    iter_kind++;
+  }
+  if (iter_mime->second.priority > iter_kind->second.priority) { // found mime-type with higher priority
+    iter_kind->second.priority = iter_mime->second.priority;
+    iter_kind->second.mime_type = iter_mime->first;
+    fl_selection_type[1] = iter_kind->first;
+//fprintf(stderr,"mime_type=%s priority=%d [%s]\n",iter_kind->second.mime_type, iter_kind->second.priority, fl_selection_type[1]);
   }
 }
 
@@ -344,8 +360,14 @@ static void data_device_handle_data_offer(void *data, struct wl_data_device *dat
   // An application has created a new data source
 //fprintf(stderr, "data_device_handle_data_offer offer=%p\n", offer);
   fl_selection_type[1] = NULL;
-  fl_selection_offer_type = NULL;
   wl_data_offer_add_listener(offer, &data_offer_listener, NULL);
+  // reset current best mime-type and priority
+  std::map<const char*, mime_prio_struct>::iterator iter = clipboard_kinds_map.begin();
+  while (iter != clipboard_kinds_map.end()) {
+    iter->second.mime_type = NULL;
+    iter->second.priority = 0;
+    iter++;
+  }
 }
 
 
@@ -365,7 +387,9 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   int fds[2];
   char *from;
   if (pipe(fds)) return;
-  wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
+  // preferred mime-type for the text clipboard type
+  const char *type = clipboard_kinds_map[Fl::clipboard_plain_text].mime_type;
+  wl_data_offer_receive(offer, type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   // read in fl_selection_buffer
@@ -397,7 +421,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
 //fprintf(stderr, "get_clipboard_or_dragged_text: size=%ld\n", rest);
   // read full clipboard data
   if (pipe(fds)) goto way_out;
-  wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
+  wl_data_offer_receive(offer, type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   if (rest+1 > fl_selection_buffer_length[1]) {
@@ -418,7 +442,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   fl_selection_length[1] = from - fl_selection_buffer[1];
   fl_selection_buffer[1][fl_selection_length[1]] = 0;
 way_out:
-  if (strcmp(fl_selection_offer_type, "text/uri-list") == 0) {
+  if (strcmp(type, "text/uri-list") == 0) {
     fl_decode_uri(fl_selection_buffer[1]); // decode encoded bytes
     char *p = fl_selection_buffer[1];
     while (*p) { // remove prefixes
@@ -549,13 +573,15 @@ const struct wl_data_device_listener *Fl_Wayland_Screen_Driver::p_data_device_li
 
 // Reads from the clipboard an image which can be in image/bmp or image/png MIME type.
 // Returns 0 if OK, != 0 if error.
-static int get_clipboard_image() {
+static int get_clipboard_image(struct wl_data_offer *offer) {
   int fds[2];
   if (pipe(fds)) return 1;
-  wl_data_offer_receive(fl_selection_offer, fl_selection_offer_type, fds[1]);
+  // preferred mime-type for the image clipboard type
+  const char *type = clipboard_kinds_map[Fl::clipboard_image].mime_type;
+  wl_data_offer_receive(offer, type, fds[1]);
   close(fds[1]);
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-  if (strcmp(fl_selection_offer_type, "image/png") == 0) {
+  if (strcmp(type, "image/png") == 0) {
     char tmp_fname[21];
     Fl_Shared_Image *shared = 0;
     strcpy(tmp_fname, "/tmp/clipboardXXXXXX");
@@ -638,7 +664,7 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
     Fl::e_length = fl_selection_length[1];
     receiver.handle(FL_PASTE);
   } else if (type == Fl::clipboard_image && clipboard_contains(Fl::clipboard_image)) {
-    if (get_clipboard_image()) return;
+    if (get_clipboard_image(fl_selection_offer)) return;
     struct wld_window * xid = fl_wl_xid(receiver.top_window());
     if (xid) {
       int s = Fl_Wayland_Window_Driver::driver(receiver.top_window())->wld_scale();
