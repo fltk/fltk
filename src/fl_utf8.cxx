@@ -122,8 +122,7 @@ int fl_utf8len(char c)
 
 
 /**
- Returns the byte length of the UTF-8 sequence with first byte \p c,
- or -1 if \p c is not valid.
+ Returns the byte length of the UTF-8 sequence with first byte \p c, or 1 if \p c is not valid.
 
  This function can be used to scan faulty UTF-8 sequences, albeit
  ignoring invalid codes.
