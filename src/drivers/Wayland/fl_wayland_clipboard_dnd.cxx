@@ -280,7 +280,7 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
 }
 
 
-struct compare_utf8 { // used as key_comp member of following map objects
+struct compare_utf8 { // used as key_comp member of following map object
     bool operator()(const char *a, const char *b) const { return strcmp(a, b) < 0; }
 };
 
@@ -299,7 +299,7 @@ static std::map<const char * const, type_prio_struct, compare_utf8> clipboard_mi
 
 // map: for each FLTK-clipboard-type, give current preferred mime-type and priority
 typedef struct { const char *mime_type; int priority; } mime_prio_struct;
-static std::map<const char * const, mime_prio_struct, compare_utf8> clipboard_kinds_map  {
+static std::map<const char * const, mime_prio_struct> clipboard_kinds_map  {
 //  FLTK-clipboard-type        current mime-type   current highest priority
   {Fl::clipboard_image,       {NULL,               0} },
   {Fl::clipboard_plain_text,  {NULL,               0} },
@@ -313,7 +313,7 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer,
   std::map<const char*const, type_prio_struct, compare_utf8>::iterator iter_mime =
     clipboard_mimetypes_map.find(mime_type);
   if (iter_mime == clipboard_mimetypes_map.end()) return; // FLTK doesn't handle this mime_type
-  std::map<const char*const, mime_prio_struct, compare_utf8>::iterator iter_kind =
+  std::map<const char*const, mime_prio_struct>::iterator iter_kind =
     clipboard_kinds_map.find(iter_mime->second.fltk_type);
   if (iter_mime->second.priority > iter_kind->second.priority) { // found mime-type with higher priority
     iter_kind->second.priority = iter_mime->second.priority;
@@ -362,7 +362,7 @@ static void data_device_handle_data_offer(void *data, struct wl_data_device *dat
   fl_selection_type[1] = NULL;
   wl_data_offer_add_listener(offer, &data_offer_listener, NULL);
   // reset current best mime-type and priority
-  std::map<const char*const, mime_prio_struct, compare_utf8>::iterator iter = clipboard_kinds_map.begin();
+  std::map<const char*const, mime_prio_struct>::iterator iter = clipboard_kinds_map.begin();
   while (iter != clipboard_kinds_map.end()) {
     iter->second.mime_type = NULL;
     iter->second.priority = 0;
