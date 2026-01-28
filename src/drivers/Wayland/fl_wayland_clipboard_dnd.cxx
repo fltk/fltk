@@ -280,10 +280,14 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
 }
 
 
+struct compare_utf8 { // used as key_comp member of following map objects
+    bool operator()(const char *a, const char *b) const { return strcmp(a, b) < 0; }
+};
+
 // map: for each clipboard mime-type FLTK has interest in, give FLTK clipboard type and priority.
 // A mime-type with higher priority for same FLTK clipboard type is preferred.
-typedef struct two_field_struct_ { const char *fltk_type; int priority; } type_prio_struct;
-static std::map<const char *, type_prio_struct> clipboard_mimetypes_map = {
+typedef struct { const char * const fltk_type; int priority; } type_prio_struct;
+static std::map<const char * const, type_prio_struct, compare_utf8> clipboard_mimetypes_map  {
 //  mime-type                  FLTK-clipboard-type        priority
   {"image/png",               {Fl::clipboard_image,       1} },
   {"image/bmp",               {Fl::clipboard_image,       2} },
@@ -294,8 +298,8 @@ static std::map<const char *, type_prio_struct> clipboard_mimetypes_map = {
 };
 
 // map: for each FLTK-clipboard-type, give current preferred mime-type and priority
-typedef struct mime_prio_struct_ { const char *mime_type; int priority; } mime_prio_struct;
-static std::map<const char *, mime_prio_struct> clipboard_kinds_map = {
+typedef struct { const char *mime_type; int priority; } mime_prio_struct;
+static std::map<const char * const, mime_prio_struct, compare_utf8> clipboard_kinds_map  {
 //  FLTK-clipboard-type        current mime-type   current highest priority
   {Fl::clipboard_image,       {NULL,               0} },
   {Fl::clipboard_plain_text,  {NULL,               0} },
@@ -306,15 +310,11 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer,
                                     const char *mime_type) {
   // runs when app becomes active once for each offered clipboard type
 //fprintf(stderr, "Clipboard offer=%p supports MIME type: %s\n", offer, mime_type);
-  std::map<const char*, type_prio_struct>::iterator iter_mime = clipboard_mimetypes_map.begin();
-  while (strcmp(iter_mime->first, mime_type)) {
-    iter_mime++;
-    if (iter_mime == clipboard_mimetypes_map.end()) return; // FLTK doesn't handle this mime_type
-  }
-  std::map<const char*, mime_prio_struct>::iterator iter_kind = clipboard_kinds_map.begin();
-  while (strcmp(iter_kind->first, iter_mime->second.fltk_type)) {
-    iter_kind++;
-  }
+  std::map<const char*const, type_prio_struct, compare_utf8>::iterator iter_mime =
+    clipboard_mimetypes_map.find(mime_type);
+  if (iter_mime == clipboard_mimetypes_map.end()) return; // FLTK doesn't handle this mime_type
+  std::map<const char*const, mime_prio_struct, compare_utf8>::iterator iter_kind =
+    clipboard_kinds_map.find(iter_mime->second.fltk_type);
   if (iter_mime->second.priority > iter_kind->second.priority) { // found mime-type with higher priority
     iter_kind->second.priority = iter_mime->second.priority;
     iter_kind->second.mime_type = iter_mime->first;
@@ -362,7 +362,7 @@ static void data_device_handle_data_offer(void *data, struct wl_data_device *dat
   fl_selection_type[1] = NULL;
   wl_data_offer_add_listener(offer, &data_offer_listener, NULL);
   // reset current best mime-type and priority
-  std::map<const char*, mime_prio_struct>::iterator iter = clipboard_kinds_map.begin();
+  std::map<const char*const, mime_prio_struct, compare_utf8>::iterator iter = clipboard_kinds_map.begin();
   while (iter != clipboard_kinds_map.end()) {
     iter->second.mime_type = NULL;
     iter->second.priority = 0;
