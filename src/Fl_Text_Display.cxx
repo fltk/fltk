@@ -2263,7 +2263,8 @@ int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
   int i = 0;
   int last_w = 0;       // STR #2788
   while (i<len) {
-    int cl = fl_utf8len1(s[i]);
+    const char *next = fl_utf8_next_composed_char(s + i, s + len);
+    int cl = next - (s+i);
     int w = int( string_width(s, i+cl, style) );
     if (w>x) {
       if (cursor_pos && (w-x < x-last_w)) return i+cl; // STR #2788

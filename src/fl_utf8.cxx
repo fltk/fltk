@@ -1089,8 +1089,13 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
       dst[count] = c;
       p++;
     } else {
-      int len; unsigned ucs = fl_utf8decode(p,e,&len);
-      p += len;
+      unsigned ucs = 0x100;
+      int len = fl_utf8len(*p);
+      if (len > 2) p = fl_utf8_next_composed_char(p, e);
+      else {
+        ucs = fl_utf8decode(p,e,&len);
+        p += len;
+      }
       if (ucs < 0x100) dst[count] = ucs;
       else dst[count] = '?';
     }
@@ -1100,9 +1105,11 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
   while (p < e) {
     if (!(*p & 0x80)) p++;
     else {
-      int len;
-      fl_utf8decode(p,e,&len);
-      p += len;
+      int len = fl_utf8len1(*p);
+      if (len > 2) p = fl_utf8_next_composed_char(p, e);
+      else {
+        p += len;
+      }
     }
     ++count;
   }
@@ -1391,6 +1398,106 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
     return srclen;
   }
   return Fl::system_driver()->utf8from_mb(dst, dstlen, src, srclen);
+}
+
+/**
+ Returns pointer to beginning of character after given location in UTF8 string accounting for emoji sequences.
+ Unicode encodes some emojis (examples: 👩‍✈️ "woman pilot", 🇸🇲 "San Marino flag", 9️⃣ "keycap 9")
+ via an <b>emoji sequence</b>, that is, they are represented by sequences of consecutive unicode points.
+ An emoji sequence may pair two successive codepoints with "zero-width joiner" and may qualify
+ any component with "variation selectors" or "Fitzpatrick emoji modifiers". Most flag emojis are encoded with two successive
+ "regional indicator symbols". Keycap emojis are encoded with key + "emoji variation selector" + "combining enclosing keycap".
+ \param from points to a location within a UTF8 string. If this location is inside the UTF8
+ encoding of a codepoint or is an invalid byte, this function returns \p from + 1.
+ \param end points past last codepoint of the string.
+ \return pointer to beginning of first codepoint after character, possibly an emoji sequence, that begins at \p from.
+ */
+const char *fl_utf8_next_composed_char(const char *from, const char *end) {
+  int skip = fl_utf8len(*from);
+  if (skip == -1) return from + 1;
+  unsigned u;
+  if (skip >= 4) {
+    u = fl_utf8decode(from, end, NULL);
+    if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
+      u = fl_utf8decode(from + skip, end, NULL);
+      if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 2nd regional indicator symbol gives a flag
+        return from + 2 * skip;
+      }
+    } else if (u == 0x1F3F4) { // “waving black flag” may start subdivision flags (e.g. 🏴󠁧󠁢󠁷󠁬󠁳󠁿)
+      const char *next = from + skip;
+      do {
+        u = fl_utf8decode(next, end, NULL);
+        next += fl_utf8len1(*next);
+        if (u == 0xE007F) return next; // ends with "cancel tag"
+      } while (u >= 0xE0020 && u <= 0xE007E); // any series of "tag components"
+    }
+  }
+  from += skip; // skip 1st codepoint
+  while (from < end) {
+    u = fl_utf8decode(from, end, NULL);
+    if (u == 0x200D) { // zero-width joiner
+      from += fl_utf8len(*from); // skip joiner
+      from += fl_utf8len(*from); // skip joined codepoint
+    } else if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
+      from += fl_utf8len(*from); // skip variation selector
+    } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
+      from += fl_utf8len(*from); // skip modifier
+    } else if (u == 0x20E3) { // combining enclosing keycap (e.g., 9️⃣*️⃣#️⃣9︎⃣)
+      from += fl_utf8len(*from); // skip it
+    } else break;
+  }
+  return from;
+}
+
+
+/**
+ Returns pointer to beginning of character before given location in UTF8 string accounting for emoji sequences.
+ See fl_utf8_next_composed_char() for a hint about what is an emoji sequence.
+ \param from points to a location within a UTF8 string. If this location is inside the UTF8
+ encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
+ \param begin points to start of first codepoint of the string.
+ \return pointer to beginning of first character, possibly an emoji sequence, before the codepoint that begins at \p from.
+ */
+const char *fl_utf8_previous_composed_char(const char *from, const char *begin) {
+  int l = fl_utf8len(*from);
+  if (from <= begin || l == -1) return from - 1;
+  const char *keep = from + l;
+  from = fl_utf8back(from - 1, begin, NULL);
+  unsigned u = fl_utf8decode(from, keep, NULL);
+  if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
+    const char *previous = fl_utf8back(from - 1, begin, NULL);
+    u = fl_utf8decode(previous, keep, NULL);
+    if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 2nd Regional indicator symbol gives a flag
+      return previous;
+    }
+  } else if (u == 0xE007F) { // ends with "cancel tag"
+    const char *previous = from;
+    do {
+      if (previous <= begin) return begin;
+      previous = fl_utf8back(previous - 1, begin, NULL);
+      u = fl_utf8decode(previous, keep, NULL);
+      if (u == 0x1F3F4) return previous; // “waving black flag” starts subdivision flags
+    } while (u >= 0xE0020 && u <= 0xE007E); // any series of "tag components"
+  }
+  while (from >= begin) {
+    u = fl_utf8decode(from, keep, NULL);
+    if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
+      from = fl_utf8back(from - 1, begin, NULL);
+    } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
+      from = fl_utf8back(from - 1, begin, NULL);
+    } else if (u == 0x20E3) { // combining enclosing keycap
+      from = fl_utf8back(from - 1, begin, NULL);
+    } else if (from > begin) {
+      keep = fl_utf8back(from - 1, begin, NULL);
+      u = fl_utf8decode(keep, from, NULL);
+      if (u == 0x200D) { // zero-width joiner
+        from = fl_utf8back(keep - 1, begin, NULL);
+        continue;
+      }
+      return from;
+    } else break;
+  }
+  return from;
 }
 
 /** @} */

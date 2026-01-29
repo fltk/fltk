@@ -658,8 +658,7 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
   const char *l, *r, *t; double f0 = Fl::event_x()-X+xscroll_;
   for (l = p, r = e; l<r; ) {
     double f;
-    int cw = fl_utf8len((char)l[0]);
-    if (cw < 1) cw = 1;
+    int cw = fl_utf8_next_composed_char(l, value() + size()) - l;
     t = l+cw;
     f = X-xscroll_+expandpos(p, t, buf, 0);
     if (f <= Fl::event_x()) {l = t; f0 = Fl::event_x()-f;}
@@ -667,7 +666,7 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
   }
   if (l < e) { // see if closer to character on right:
     double f1;
-    int cw = fl_utf8len((char)l[0]);
+    int cw = fl_utf8_next_composed_char(l, value() + size()) - l;
     if (cw > 0) {
       f1 = X-xscroll_+expandpos(p, l + cw, buf, 0) - Fl::event_x();
       if (f1 < f0) l = l+cw;

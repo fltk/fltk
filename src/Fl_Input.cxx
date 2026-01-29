@@ -190,14 +190,20 @@ int Fl_Input::kf_delete_eol() {
 int Fl_Input::kf_delete_char_right() {
   if (readonly()) { fl_beep(); return 1; }
   if (mark() != insert_position()) cut();
-  else cut(1);
+  else {
+    const char *next = fl_utf8_next_composed_char(value() + insert_position(), value() + size());
+    replace(insert_position(), next - value(), 0);
+  }
   return 1;
 }
 
 int Fl_Input::kf_delete_char_left() {
   if (readonly()) { fl_beep(); return 1; }
   if (mark() != insert_position()) cut();
-  else cut(-1);
+  else {
+    const char *before = fl_utf8_previous_composed_char(value() + insert_position(), value());
+    replace(insert_position(), before - value(), 0);
+  }
   return 1;
 }
 
@@ -225,7 +231,8 @@ int Fl_Input::kf_clear_eol() {
 //    If OPTION_ARROW_FOCUS is disabled, return 1 to prevent focus navigation.
 //
 int Fl_Input::kf_move_char_left() {
-  int i = shift_position(insert_position()-1) + NORMAL_INPUT_MOVE;
+  const char *before = fl_utf8_previous_composed_char(value() + insert_position(), value());
+  int i = shift_position(before - value()) + NORMAL_INPUT_MOVE;
   return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
 }
 
@@ -233,7 +240,8 @@ int Fl_Input::kf_move_char_left() {
 //    If OPTION_ARROW_FOCUS is disabled, return 1 to prevent focus navigation.
 //
 int Fl_Input::kf_move_char_right() {
-  int i = shift_position(insert_position()+1) + NORMAL_INPUT_MOVE;
+  const char *next = fl_utf8_next_composed_char(value() + insert_position(), value() + size());
+  int i = shift_position(next - value()) + NORMAL_INPUT_MOVE;
   return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
 }
 
