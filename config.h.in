@@ -362,7 +362,8 @@
  * FLTK_HAVE_PEN_SUPPORT
  *
  * Do we have pen/tablet support for the current platform?
- * See CMake option FLTK_OPTION_PEN_SUPPORT
+ * See CMake option FLTK_OPTION_PEN_SUPPORT, but note that a build test
+ * (try_compile()) is performed to test if the option is available
  *
  * Note: this option is "hidden" in 'config.h', i.e. it's not (yet)
  * publicly accessibe. Move this to 'fl_config.h' to make it public.

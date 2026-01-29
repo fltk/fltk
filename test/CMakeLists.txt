@@ -184,7 +184,7 @@ fl_create_example(output output.cxx fltk::fltk)
 fl_create_example(overlay overlay.cxx fltk::fltk)
 fl_create_example(pack pack.cxx fltk::fltk)
 
-if(FLTK_OPTION_PEN_SUPPORT)
+if(FLTK_HAVE_PEN_SUPPORT)
   fl_create_example(penpal penpal.cxx fltk::fltk)
 endif()
 

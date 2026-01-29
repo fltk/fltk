@@ -421,24 +421,24 @@ else()
 
   # Optional Pen/Tablet Support
 
-  if(FLTK_OPTION_PEN_SUPPORT)
+  if(FLTK_HAVE_PEN_SUPPORT)
     list(APPEND DRIVER_FILES
       drivers/WinAPI/Fl_WinAPI_Pen_Driver.cxx
     )
-  endif(FLTK_OPTION_PEN_SUPPORT)
+  endif(FLTK_HAVE_PEN_SUPPORT)
 
 endif(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
 
 # Common Pen/Tablet Support Files
 
-if(FLTK_OPTION_PEN_SUPPORT)
+if(FLTK_HAVE_PEN_SUPPORT)
   list(APPEND DRIVER_FILES
     drivers/Base/Fl_Base_Pen_Events.cxx
   )
   list(APPEND DRIVER_HEADER_FILES
     drivers/Base/Fl_Base_Pen_Events.H
   )
-endif(FLTK_OPTION_PEN_SUPPORT)
+endif(FLTK_HAVE_PEN_SUPPORT)
 
 source_group("Header Files" FILES ${HEADER_FILES})
 source_group("Private Header Files" FILES ${PRIVATE_HEADER_FILES})
@@ -645,7 +645,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
     Fl_Native_File_Chooser_MAC.mm
     Fl_MacOS_Sys_Menu_Bar.mm
   )
-  if(FLTK_OPTION_PEN_SUPPORT)
+  if(FLTK_HAVE_PEN_SUPPORT)
     list(APPEND MMFILES
       drivers/Cocoa/Fl_Cocoa_Pen_Events.mm
     )

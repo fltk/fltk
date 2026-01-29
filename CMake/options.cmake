@@ -491,11 +491,42 @@ else()
   set(FLTK_HAVE_FORMS 0)
 endif()
 
+# Note: on some Windows build systems (notably "classic" MinGW 32-bit)
+# Pen/Tablet support is not available, hence we use try_compile() to
+# figure this out.
+#
+# CMake variables:
+#  - FLTK_OPTION_PEN_SUPPORT: user option (cache; default ON/TRUE)
+#  - PEN_DRIVER_SUPPORTED   : Windows only; result of try_compile()
+#  - FLTK_HAVE_PEN_SUPPORT  : final result for building Pen/Tablet support,
+#                             also used to set config variable in config.h
+
 if(FLTK_OPTION_PEN_SUPPORT)
-  set(FLTK_HAVE_PEN_SUPPORT 1)
-else()
+  if(WIN32)
+    try_compile(PEN_DRIVER_SUPPORTED
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/CMake/pen-support.c
+    )
+    # fl_debug_var(PEN_DRIVER_SUPPORTED)
+    if(PEN_DRIVER_SUPPORTED)
+      set(FLTK_HAVE_PEN_SUPPORT 1)
+    else()
+      set(FLTK_HAVE_PEN_SUPPORT 0)
+    endif()
+  else(WIN32) # all other platforms
+    set(FLTK_HAVE_PEN_SUPPORT 1)
+  endif(WIN32)
+
+  # generate a warning if Pen/Tablet support was requested but can't be compiled
+
+  if(NOT FLTK_HAVE_PEN_SUPPORT)
+    message(STATUS "WARNING: Pen/Tablet support requested (FLTK_OPTION_PEN_SUPPORT) but not available")
+    message(STATUS "    ...  Pen/Tablet support has been disabled!")
+  endif()
+
+else(FLTK_OPTION_PEN_SUPPORT)  # option disabled by user
   set(FLTK_HAVE_PEN_SUPPORT 0)
-endif()
+endif(FLTK_OPTION_PEN_SUPPORT)
 
 #######################################################################
 if(DOXYGEN_FOUND)
