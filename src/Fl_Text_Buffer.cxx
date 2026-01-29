@@ -2127,7 +2127,7 @@ int Fl_Text_Buffer::prev_char(int pos) const
 int Fl_Text_Buffer::next_char(int pos) const
 {
   IS_UTF8_ALIGNED2(this, (pos))
-  int l = fl_utf8len1(byte_at(pos));
+  unsigned l = fl_utf8len1(byte_at(pos));
   if (l > 2) { // test for composed character only if pos is at long codepoint
     int p = pos, ll, b;
     char t[40]; // crazyest composed characters I know use 28 bytes in UTF8 (e.g., 🏴󠁧󠁢󠁷󠁬󠁳󠁿)
