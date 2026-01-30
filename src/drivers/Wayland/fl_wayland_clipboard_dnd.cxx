@@ -406,15 +406,14 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
     fl_selection_buffer_length[1] = rest+1000;
   }
   from = fl_selection_buffer[1];
-  while (true) {
+  while (rest > 0) {
     ssize_t n = read(fds[0], from, rest);
-    if (n <= 0) {
-      close(fds[0]);
-      break;
-    }
+    if (n <= 0) break;
     n = Fl_Screen_Driver::convert_crlf(from, n);
     from += n;
+    rest -= n;
   }
+  close(fds[0]);
   fl_selection_length[1] = from - fl_selection_buffer[1];
   fl_selection_buffer[1][fl_selection_length[1]] = 0;
 way_out:
