@@ -1196,9 +1196,32 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 
 
 static Fl_Window *resize_bug_fix;
+static bool moving_window = false; // true when dragging a window with the mouse on the titlebar
 
 extern void fl_save_pen(void);
 extern void fl_restore_pen(void);
+
+static void invalidate_gl_win(Fl_Window *glwin) {
+  static Fl_WinAPI_Plugin *plugin = NULL;
+  if (!plugin) {
+    Fl_Plugin_Manager pm("winapi.fltk.org");
+    plugin = (Fl_WinAPI_Plugin*)pm.plugin("gl.winapi.fltk.org");
+  }
+  plugin->invalidate(glwin);
+}
+
+
+static BOOL CALLBACK child_window_cb(HWND child_xid, LPARAM data) {
+  Fl_Window *child = fl_find(child_xid);
+  if (data) {
+    float s = *(float*)data;
+    SetWindowPos(child_xid, 0, int(round(child->x() * s)), int(round(child->y() * s)),
+                 int(round(child->w() * s)), int(round(child->h() * s)), 0);
+  }
+  if (child->as_gl_window()) invalidate_gl_win(child);
+  return TRUE;
+}
+
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
@@ -1221,7 +1244,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     switch (uMsg) {
 
       case WM_DPICHANGED: { // 0x02E0, after display re-scaling and followed by WM_DISPLAYCHANGE
-        if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+        if (is_dpi_aware) {
           RECT r, *lParam_rect = (RECT*)lParam;
           Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
           int centerX = (lParam_rect->left + lParam_rect->right)/2;
@@ -1238,13 +1261,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             sd->update_scaling_capability();
           } else if (ns != old_ns) {
             // jump window with Windows+Shift+L|R-arrow to other screen with other DPI
-            float scale = Fl::screen_driver()->scale(ns);
-            int bt, bx, by;
-            Fl_WinAPI_Window_Driver *wdr = (Fl_WinAPI_Window_Driver*)Fl_Window_Driver::driver(window);
-            wdr->border_width_title_bar_height(bx, by, bt);
-            window->position(int(round(lParam_rect->left/scale)),
-                                        int(round((lParam_rect->top + bt)/scale)));
-            wdr->resize_after_scale_change(ns, scale, scale);
+            if (ns >= 0) Fl_Window_Driver::driver(window)->screen_num(ns);
+            UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOCOPYBITS;
+            SetWindowPos(hWnd, NULL, lParam_rect->left, lParam_rect->top,
+                         lParam_rect->right - lParam_rect->left,
+                         lParam_rect->bottom - lParam_rect->top, flags);
+            if (ns >= 0) {
+              scale = Fl::screen_driver()->scale(ns);
+              EnumChildWindows(hWnd, child_window_cb, (LPARAM)&scale);
+            }
           }
         }
         return 0;
@@ -1694,26 +1719,35 @@ content  key    keyboard layout
           if (wParam == SIZE_MINIMIZED || wParam == SIZE_MAXHIDE) {
             Fl::handle(FL_HIDE, window);
           } else {
-            Fl::handle(FL_SHOW, window);
-            resize_bug_fix = window;
-            window->size(int(ceil(LOWORD(lParam) / scale)), int(ceil(HIWORD(lParam) / scale)));
-            // fprintf(LOG,"WM_SIZE size(%.0f,%.0f) graph(%d,%d) s=%.2f\n",
-            //         ceil(LOWORD(lParam)/scale),ceil(HIWORD(lParam)/scale),
-            //         LOWORD(lParam),HIWORD(lParam),scale);
+            if (!moving_window) {
+              Fl::handle(FL_SHOW, window);
+              resize_bug_fix = window;
+              window->size(int(ceil(LOWORD(lParam) / scale)), int(ceil(HIWORD(lParam) / scale)));
+            } else {
+              window->size(int(ceil(LOWORD(lParam) / scale)), int(ceil(HIWORD(lParam) / scale)));
+              EnumChildWindows(hWnd, child_window_cb, (LPARAM)&scale);
+              window->redraw();
+            }
           }
         }
         break;
 
+      case WM_MOVING:
+        moving_window = true;
+        return 1;
+
+      case WM_CAPTURECHANGED:
+        moving_window = false;
+        resize_bug_fix = 0;
+        return 0;
+
       case WM_MOVE: {
-        if (IsIconic(hWnd)) {
+        if (IsIconic(hWnd) || window->parent()) {
           break;
         }
-        resize_bug_fix = window;
-        int nx = LOWORD(lParam);
-        int ny = HIWORD(lParam);
-        if (nx & 0x8000) nx -= 65536;
-        if (ny & 0x8000) ny -= 65536;
-        // fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
+        if (moving_window) resize_bug_fix = window;
+        POINTS pts = MAKEPOINTS(lParam);
+        int nx = pts.x, ny = pts.y;
         // detect when window centre changes screen
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
         Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
@@ -1730,30 +1764,11 @@ content  key    keyboard layout
         int news = sd->screen_num_unscaled(nx + int(trueW * scale / 2), ny + int(trueH * scale / 2));
         if (news == -1)
           news = olds;
-        float s = sd->scale(news);
-        // fprintf(LOG,"WM_MOVE olds=%d(%.2f) news=%d(%.2f) busy=%d\n",olds,
-        //             sd->scale(olds),news, s,
-        //             Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);
-        // fflush(LOG);
-        if (!window->parent()) {
-          if (olds != news) {
-            if (s != sd->scale(olds) &&
-                !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
-                window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
-              Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
-              Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
-              Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
-            }
-            else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
-              wd->screen_num(news);
-          } else if (Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
-            Fl::remove_timeout(Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
-            Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = false;
-          }
+        scale = sd->scale(news);
+        wd->x(int(round(nx/scale)));
+        wd->y(int(round(ny/scale)));
         }
-        window->position(int(round(nx/scale)), int(round(ny/scale)));
-        break;
-      } // case WM_MOVE
+        return 0;
 
       case WM_SETCURSOR:
         if (LOWORD(lParam) == HTCLIENT) {

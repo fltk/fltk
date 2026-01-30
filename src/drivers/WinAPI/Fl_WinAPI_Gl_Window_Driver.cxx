@@ -451,6 +451,19 @@ void Fl_WinAPI_Gl_Window_Driver::switch_back() {
 }
 
 
+class Fl_WinAPI_Gl_Plugin : public Fl_WinAPI_Plugin {
+public:
+  Fl_WinAPI_Gl_Plugin() : Fl_WinAPI_Plugin(name()) { }
+  const char *name() override { return "gl.winapi.fltk.org"; }
+  void invalidate(Fl_Window *w) override {
+    w->as_gl_window()->valid(0);
+  }
+};
+
+
+static Fl_WinAPI_Gl_Plugin Gl_Invalidate_Plugin;
+
+
 FL_EXPORT HGLRC fl_win32_glcontext(GLContext rc) { return (HGLRC)rc; }
 
 #endif // HAVE_GL

@@ -716,17 +716,6 @@ int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, 
   return 0;
 }
 
-Fl_WinAPI_Window_Driver::type_for_resize_window_between_screens Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
-
-void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
-  Fl_Window *win = (Fl_Window*)data;
-  RECT r;
-  GetClientRect(fl_xid(win), &r);
-  float old_f = float(r.right)/win->w();
-  int ns = data_for_resize_window_between_screens_.screen;
-  Fl_Window_Driver::driver(win)->resize_after_scale_change(ns, old_f, Fl::screen_driver()->scale(ns));
-  data_for_resize_window_between_screens_.busy = false;
-}
 
 const Fl_Image* Fl_WinAPI_Window_Driver::shape() {
   return shape_data_ ? shape_data_->shape_ : NULL;
