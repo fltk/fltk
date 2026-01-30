@@ -2127,20 +2127,27 @@ int Fl_Text_Buffer::prev_char(int pos) const
 int Fl_Text_Buffer::next_char(int pos) const
 {
   IS_UTF8_ALIGNED2(this, (pos))
-  unsigned l = fl_utf8len1(byte_at(pos));
-  if (l > 2) { // test for composed character only if pos is at long codepoint
-    int p = pos, ll, b;
-    char t[40]; // crazyest composed characters I know use 28 bytes in UTF8 (e.g., 🏴󠁧󠁢󠁷󠁬󠁳󠁿)
+  int l = fl_utf8len(byte_at(pos));
+  if (l > 0) { // test for composed character except for bad bytes
+    int p = pos, ll, b, count_points = 0;
+    char t[40]; // longest emoji sequences I know use 28 bytes in UTF8 (e.g., 🏴󠁧󠁢󠁷󠁬󠁳󠁿 "Wales flag")
     l = 0;
     // extract bytes after pos stopping after short codepoint or 40 bytes at most
     while (p < mLength && l < sizeof(t)) {
       b = byte_at(p++);
       t[l++] = b;
-      ll = fl_utf8len(b);
+      ll = fl_utf8len1(b);
+      count_points++;
       for (int i = 1; i < ll && l < sizeof(t); i++) t[l++] = byte_at(p++);
-      if (ll == 1 || ll == 2) break; // stop after short codepoint (includes '\n')
+      if (count_points > 1 && (ll == 1 || ll == 2)) {
+        // stop after short codepoint but not if it's the 1st codepoint which can be inside
+        // emoji sequence (e.g. 9️⃣ "keycap 9")
+        break;
+      }
     }
     l = fl_utf8_next_composed_char(t, t + l) - t; // length of possibly composed character starting at pos
+  } else if (l == -1) {
+    l = 1;
   }
   pos += l;
   if (pos>=mLength)
