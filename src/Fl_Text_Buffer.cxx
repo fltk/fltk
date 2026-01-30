@@ -2145,7 +2145,8 @@ int Fl_Text_Buffer::next_char(int pos) const
         break;
       }
     }
-    l = fl_utf8_next_composed_char(t, t + l) - t; // length of possibly composed character starting at pos
+    // length of possibly composed character starting at pos
+    l = (l > 0 ? fl_utf8_next_composed_char(t, t + l) - t : 0);
   } else if (l == -1) {
     l = 1;
   }
