@@ -585,19 +585,18 @@ static int get_clipboard_image(struct wl_data_offer *offer) {
     Fl_Shared_Image *shared = 0;
     strcpy(tmp_fname, "/tmp/clipboardXXXXXX");
     int fd = mkstemp(tmp_fname);
-    if (fd == -1) return 1;
-    while (true) {
-      char buf[10000];
-      ssize_t n = read(fds[0], buf, sizeof(buf));
-      if (n <= 0) {
-        close(fds[0]);
-        close(fd);
-        break;
+    if (fd >= 0) {
+      while (true) {
+        char buf[10000];
+        ssize_t n = read(fds[0], buf, sizeof(buf));
+        if (n <= 0) break;
+        n = write(fd, buf, n);
       }
-      n = write(fd, buf, n);
+      close(fd);
+      shared = Fl_Shared_Image::get(tmp_fname);
+      fl_unlink(tmp_fname);
     }
-    shared = Fl_Shared_Image::get(tmp_fname);
-    fl_unlink(tmp_fname);
+    close(fds[0]);
     if (!shared) return 1;
     int ld = shared->ld() ? shared->ld() : shared->w() * shared->d();
     uchar *rgb = new uchar[shared->w() * shared->h() * shared->d()];
