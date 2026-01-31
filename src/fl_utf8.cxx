@@ -1638,11 +1638,15 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
 
 /**
  Returns pointer to beginning of character after given location in UTF8 string accounting for emoji sequences.
- Unicode encodes some emojis (examples: 👩‍✈️ "woman pilot", 🇸🇲 "San Marino flag", 9️⃣ "keycap 9")
- via an <b>emoji sequence</b>, that is, they are represented by sequences of consecutive unicode points.
- An emoji sequence may pair two successive codepoints with "zero-width joiner" and may qualify
- any component with "variation selectors" or "Fitzpatrick emoji modifiers". Most flag emojis are encoded with two successive
- "regional indicator symbols". Keycap emojis are encoded with key + "emoji variation selector" + "combining enclosing keycap".
+ While Unicode encodes most characters as a single codepoint, some emojis (examples: 👩‍✈️ "woman pilot",
+ 🇸🇲 "San Marino flag", 9️⃣ "keycap 9") are encoded via an <b>emoji sequence</b>, that is, they are
+ represented by sequences of consecutive Unicode points. An emoji sequence may pair two codepoints with
+ "zero-width joiner" and may qualify any component with "variation selectors" or "Fitzpatrick emoji modifiers".
+ Most flag emojis are encoded with two consecutive "regional indicator symbols". Keycap emojis are encoded
+ with key + "emoji variation selector" + "combining enclosing keycap".
+
+ Use this function to advance to the next character within a UTF8 string processing an entire emoji sequence
+ if present as a single character.
  \param from points to a location within a UTF8 string. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from + 1.
  \param end points past last codepoint of the string.
@@ -1689,6 +1693,8 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
 /**
  Returns pointer to beginning of character before given location in UTF8 string accounting for emoji sequences.
  See fl_utf8_next_composed_char() for a hint about what is an emoji sequence.
+ Use this function to step back to the previous character within a UTF8 string processing an entire emoji sequence
+ if present as a single character.
  \param from points to a location within a UTF8 string. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
  \param begin points to start of first codepoint of the string.

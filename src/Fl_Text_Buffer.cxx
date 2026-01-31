@@ -2107,7 +2107,7 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
 
 /**
  Returns the index of the previous character.
- This function processes a composed character (e.g., a flag emoji) as a single character.
+ This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
  Returns -1 if the beginning of the buffer is reached.
  \param pos index to the current character
  */
@@ -2120,7 +2120,7 @@ int Fl_Text_Buffer::prev_char(int pos) const
 
 /**
  Returns the index of the next character.
- This function processes a composed character (e.g., a flag emoji) as a single character.
+ This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
  Returns length() if the end of the buffer is reached.
  \param pos index to the current character
  */
@@ -2128,7 +2128,7 @@ int Fl_Text_Buffer::next_char(int pos) const
 {
   IS_UTF8_ALIGNED2(this, (pos))
   int l = fl_utf8len(byte_at(pos));
-  if (l > 0) { // test for composed character except for bad bytes
+  if (l > 0) { // test for emoji sequence except for bad bytes
     int p = pos, ll, b, count_points = 0;
     char t[40]; // longest emoji sequences I know use 28 bytes in UTF8 (e.g., 🏴󠁧󠁢󠁷󠁬󠁳󠁿 "Wales flag")
     l = 0;
@@ -2145,7 +2145,7 @@ int Fl_Text_Buffer::next_char(int pos) const
         break;
       }
     }
-    // length of possibly composed character starting at pos
+    // length of possibly emoji sequence starting at pos
     l = (l > 0 ? fl_utf8_next_composed_char(t, t + l) - t : 0);
   } else if (l == -1) {
     l = 1;
