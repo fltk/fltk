@@ -1950,17 +1950,17 @@ static int input_method_startup()
   static int retval = -1; // -1: not initialized, 0: not usable, 1: ready for use
   if (retval == -1) {
     fl_open_display();
-      // These symbols require 10.5. They are no longer visible in Apple doc.
-      // They do exist in Carbon.framework --> HIToolbox.framework --> TextServices.h
-      TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_Darwin_System_Driver::get_carbon_function("TSMGetActiveDocument");
-      TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMSetDocumentProperty");
-      TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMRemoveDocumentProperty");
-      // These symbols are no longer visible in Apple doc.
-      // They do exist in Carbon.framework --> HIToolbox.framework --> TextInputSources.h
-      TISCreateInputSourceList = (TISCreateInputSourceList_type)Fl_Darwin_System_Driver::get_carbon_function("TISCreateInputSourceList");
-      kTISTypeKeyboardLayout = (CFStringRef)Fl_Darwin_System_Driver::get_carbon_function("kTISTypeKeyboardLayout");
-      kTISPropertyInputSourceType = (CFStringRef)Fl_Darwin_System_Driver::get_carbon_function("kTISPropertyInputSourceType");
-      retval = (TSMGetActiveDocument && TSMSetDocumentProperty && TSMRemoveDocumentProperty && TISCreateInputSourceList && kTISTypeKeyboardLayout && kTISPropertyInputSourceType ? 1 : 0);
+    // These symbols require 10.5. They are no longer visible in Apple doc.
+    // They do exist in Carbon.framework --> HIToolbox.framework --> TextServices.h
+    TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_Darwin_System_Driver::get_carbon_function("TSMGetActiveDocument");
+    TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMSetDocumentProperty");
+    TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMRemoveDocumentProperty");
+    // These symbols are no longer visible in Apple doc.
+    // They do exist in Carbon.framework --> HIToolbox.framework --> TextInputSources.h
+    TISCreateInputSourceList = (TISCreateInputSourceList_type)Fl_Darwin_System_Driver::get_carbon_function("TISCreateInputSourceList");
+    kTISTypeKeyboardLayout = (CFStringRef)Fl_Darwin_System_Driver::get_carbon_function("kTISTypeKeyboardLayout");
+    kTISPropertyInputSourceType = (CFStringRef)Fl_Darwin_System_Driver::get_carbon_function("kTISPropertyInputSourceType");
+    retval = (TSMGetActiveDocument && TSMSetDocumentProperty && TSMRemoveDocumentProperty && TISCreateInputSourceList && kTISTypeKeyboardLayout && kTISPropertyInputSourceType ? 1 : 0);
   }
   return retval;
 }
@@ -1970,8 +1970,8 @@ void Fl_Cocoa_Screen_Driver::enable_im() {
 
   im_enabled = 1;
 
-    ((FLAppDelegate*)[NSApp delegate])->currentDoc = NULL;
-    [NSApp updateWindows]; // triggers [FLAppDelegate applicationDidUpdate]
+  ((FLAppDelegate*)[NSApp delegate])->currentDoc = NULL;
+  [NSApp updateWindows]; // triggers [FLAppDelegate applicationDidUpdate]
 }
 
 void Fl_Cocoa_Screen_Driver::disable_im() {
@@ -1979,8 +1979,8 @@ void Fl_Cocoa_Screen_Driver::disable_im() {
 
   im_enabled = 0;
 
-    ((FLAppDelegate*)[NSApp delegate])->currentDoc = NULL;
-    [NSApp updateWindows]; // triggers [FLAppDelegate applicationDidUpdate]
+  ((FLAppDelegate*)[NSApp delegate])->currentDoc = NULL;
+  [NSApp updateWindows]; // triggers [FLAppDelegate applicationDidUpdate]
 }
 
 
@@ -4246,41 +4246,41 @@ static void createAppleMenu(void)
     [print_with_titlebar_item setState:NSControlStateValueOn];
     [print_with_titlebar_item setEnabled:YES];
     [appleMenu addItem:[NSMenuItem separatorItem]];
-    }
-    // Services Menu
-    services = [[NSMenu alloc] initWithTitle:@""];
-    menuItem = [appleMenu
-                addItemWithTitle:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::services], nil)
-                action:nil
-                keyEquivalent:@""];
-    [appleMenu setSubmenu:services forItem:menuItem];
-    [appleMenu addItem:[NSMenuItem separatorItem]];
-    // Hide AppName
-    title = [NSString stringWithFormat:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::hide],nil), nsappname];
-    [appleMenu addItemWithTitle:title
-                         action:@selector(hide:)
-                  keyEquivalent:@"h"];
-    // Hide Others
-    menuItem = [appleMenu
-                addItemWithTitle:NSLocalizedString(
-                  [NSString stringWithUTF8String:Fl_Mac_App_Menu::hide_others] , nil)
-                action:@selector(hideOtherApplications:)
+  }
+  // Services Menu
+  services = [[NSMenu alloc] initWithTitle:@""];
+  menuItem = [appleMenu
+              addItemWithTitle:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::services], nil)
+              action:nil
+              keyEquivalent:@""];
+  [appleMenu setSubmenu:services forItem:menuItem];
+  [appleMenu addItem:[NSMenuItem separatorItem]];
+  // Hide AppName
+  title = [NSString stringWithFormat:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::hide],nil), nsappname];
+  [appleMenu addItemWithTitle:title
+                        action:@selector(hide:)
                 keyEquivalent:@"h"];
-    [menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
-    // Show All
-    [appleMenu addItemWithTitle:NSLocalizedString(
-                                  [NSString stringWithUTF8String:Fl_Mac_App_Menu::show], nil)
-                         action:@selector(unhideAllApplications:)
-                  keyEquivalent:@""];
-    [appleMenu addItem:[NSMenuItem separatorItem]];
-    // Quit AppName
-    title = [NSString stringWithFormat:NSLocalizedString(
-                                        [NSString stringWithUTF8String:Fl_Mac_App_Menu::quit], nil),
-             nsappname];
-    menuItem = [appleMenu addItemWithTitle:title
-                                    action:@selector(terminate:)
-                             keyEquivalent:@"q"];
-    [menuItem setTarget:about];
+  // Hide Others
+  menuItem = [appleMenu
+              addItemWithTitle:NSLocalizedString(
+                [NSString stringWithUTF8String:Fl_Mac_App_Menu::hide_others] , nil)
+              action:@selector(hideOtherApplications:)
+              keyEquivalent:@"h"];
+  [menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
+  // Show All
+  [appleMenu addItemWithTitle:NSLocalizedString(
+                                [NSString stringWithUTF8String:Fl_Mac_App_Menu::show], nil)
+                        action:@selector(unhideAllApplications:)
+                keyEquivalent:@""];
+  [appleMenu addItem:[NSMenuItem separatorItem]];
+  // Quit AppName
+  title = [NSString stringWithFormat:NSLocalizedString(
+                                      [NSString stringWithUTF8String:Fl_Mac_App_Menu::quit], nil),
+            nsappname];
+  menuItem = [appleMenu addItemWithTitle:title
+                                  action:@selector(terminate:)
+                            keyEquivalent:@"q"];
+  [menuItem setTarget:about];
 
   /* Put menu into the menubar */
   menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
@@ -4483,25 +4483,25 @@ static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float sca
 
 static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImageRep *from,
                                 int to_x, int to_y)
-/* Copies in bitmap "to" the bitmap "from" with its top-left angle at coordinates to_x, to_y
- On retina displays both bitmaps have double width and height
- to_width is the width in screen units of "to". On retina, its pixel width is twice that.
- */
+  /* Copies in bitmap "to" the bitmap "from" with its top-left angle at coordinates to_x, to_y
+    On retina displays both bitmaps have double width and height
+    to_width is the width in screen units of "to". On retina, its pixel width is twice that.
+  */
 {
   const uchar *from_data = [from bitmapData];
   // 10.4 required by the bitmapFormat message
-    if (([to bitmapFormat] & NSBitmapFormatAlphaFirst) &&
-        !([from bitmapFormat] & NSBitmapFormatAlphaFirst) ) {
-      // "to" is ARGB and "from" is RGBA --> convert "from" to ARGB
-      // it is enough to read "from" starting one byte earlier, because A is always 0xFF:
-      // RGBARGBA becomes (A)RGBARGB
-      from_data--;
-    } else if ( !([to bitmapFormat] & NSBitmapFormatAlphaFirst) && ([from bitmapFormat] & NSBitmapFormatAlphaFirst) ) {
-      // "from" is ARGB and "to" is RGBA --> convert "from" to RGBA
-      // it is enough to offset reading by one byte because A is always 0xFF
-      // so ARGBARGB becomes RGBARGB(A) as needed
-      from_data++;
-    }
+  if (([to bitmapFormat] & NSBitmapFormatAlphaFirst) &&
+      !([from bitmapFormat] & NSBitmapFormatAlphaFirst) ) {
+    // "to" is ARGB and "from" is RGBA --> convert "from" to ARGB
+    // it is enough to read "from" starting one byte earlier, because A is always 0xFF:
+    // RGBARGBA becomes (A)RGBARGB
+    from_data--;
+  } else if ( !([to bitmapFormat] & NSBitmapFormatAlphaFirst) && ([from bitmapFormat] & NSBitmapFormatAlphaFirst) ) {
+    // "from" is ARGB and "to" is RGBA --> convert "from" to RGBA
+    // it is enough to offset reading by one byte because A is always 0xFF
+    // so ARGBARGB becomes RGBARGB(A) as needed
+    from_data++;
+  }
   int to_w = (int)[to pixelsWide]; // pixel width of "to"
   int from_w = (int)[from pixelsWide]; // pixel width of "from"
   int from_h = (int)[from pixelsHigh]; // pixel height of "from"
@@ -4675,16 +4675,16 @@ static void nsbitmapProviderReleaseData (void *info, const void *data, size_t si
 }
 
 CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w, int h, bool capture_subwins)
-/* Returns a capture of a rectangle of a mapped window as a CGImage.
- With retina displays, the returned image has twice the width and height.
- CFRelease the returned CGImageRef after use
- */
 {
+  /* Returns a capture of a rectangle of a mapped window as a CGImage.
+    With retina displays, the returned image has twice the width and height.
+    CFRelease the returned CGImageRef after use
+  */
   CGImageRef img;
   NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep_subwins(pWindow, x, y, w, h, capture_subwins);
-    img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
-    CGImageRetain(img);
-    [bitmap release];
+  img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
+  CGImageRetain(img);
+  [bitmap release];
   return img;
 }
 

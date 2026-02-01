@@ -107,40 +107,41 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
   OSStatus status = 0;
   fl_open_display();
   Fl_Cocoa_Window_Driver::q_release_context();
-    NSPrintInfo *info = [NSPrintInfo sharedPrintInfo];
-    NSPrintPanel *panel = [NSPrintPanel printPanel];
-    //from 10.5
-    [panel setOptions:NSPrintPanelShowsCopies | NSPrintPanelShowsPageRange |
-      NSPrintPanelShowsPageSetupAccessory | NSPrintPanelShowsOrientation | NSPrintPanelShowsPaperSize];
-    NSInteger retval = -1;
-    Fl_Window *top = Fl::first_window();
-    NSWindow *main = (top ? (NSWindow*)fl_xid(top->top_window()) : nil);
-    if (main) {
-      [panel beginSheetWithPrintInfo:info
-                      modalForWindow:main
-                            delegate:[[[print_panel_delegate alloc] init] autorelease]
-                      didEndSelector:@selector(printPanelDidEnd:returnCode:contextInfo:)
-                         contextInfo:&retval];
-      while (retval < 0) Fl::wait(100);
-      [main makeKeyAndOrderFront:nil];
-    } else
-      retval = [panel runModalWithPrintInfo:info]; //from 10.5
+  NSPrintInfo *info = [NSPrintInfo sharedPrintInfo];
+  NSPrintPanel *panel = [NSPrintPanel printPanel];
+  //from 10.5
+  [panel setOptions:NSPrintPanelShowsCopies | NSPrintPanelShowsPageRange |
+    NSPrintPanelShowsPageSetupAccessory | NSPrintPanelShowsOrientation | NSPrintPanelShowsPaperSize];
+  NSInteger retval = -1;
+  Fl_Window *top = Fl::first_window();
+  NSWindow *main = (top ? (NSWindow*)fl_xid(top->top_window()) : nil);
+  if (main) {
+    [panel beginSheetWithPrintInfo:info
+                    modalForWindow:main
+                          delegate:[[[print_panel_delegate alloc] init] autorelease]
+                    didEndSelector:@selector(printPanelDidEnd:returnCode:contextInfo:)
+                        contextInfo:&retval];
+    while (retval < 0) Fl::wait(100);
+    [main makeKeyAndOrderFront:nil];
+  } else {
+    retval = [panel runModalWithPrintInfo:info]; //from 10.5
+  }
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_9
-    const NSInteger NSModalResponseOK = NSOKButton;
+  const NSInteger NSModalResponseOK = NSOKButton;
 #endif
-    if (retval != NSModalResponseOK) return 1;
-    printSession = (PMPrintSession)[info PMPrintSession];//from 10.5
-    pageFormat = (PMPageFormat)[info PMPageFormat];//from 10.5
-    printSettings = (PMPrintSettings)[info PMPrintSettings];//from 10.5
-    UInt32 from32, to32;
-    PMGetFirstPage(printSettings, &from32);
-    if (frompage) *frompage = (int)from32;
-    PMGetLastPage(printSettings, &to32);
-    if (topage) {
-      *topage = (int)to32;
-      if (*topage > pagecount && pagecount > 0) *topage = pagecount;
-    }
-    status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
+  if (retval != NSModalResponseOK) return 1;
+  printSession = (PMPrintSession)[info PMPrintSession];   //from 10.5
+  pageFormat = (PMPageFormat)[info PMPageFormat];         //from 10.5
+  printSettings = (PMPrintSettings)[info PMPrintSettings];//from 10.5
+  UInt32 from32, to32;
+  PMGetFirstPage(printSettings, &from32);
+  if (frompage) *frompage = (int)from32;
+  PMGetLastPage(printSettings, &to32);
+  if (topage) {
+    *topage = (int)to32;
+    if (*topage > pagecount && pagecount > 0) *topage = pagecount;
+  }
+  status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
 
   if (status != noErr) {
     if (perr_message) {
@@ -167,8 +168,7 @@ void Fl_Cocoa_Printer_Driver::margins(int *left, int *top, int *right, int *bott
     if (top) *top = (int)(margins.top / scale_y + 0.5);
     if (right) *right = (int)(margins.right / scale_x + 0.5);
     if (bottom) *bottom = (int)(margins.bottom / scale_y + 0.5);
-    }
-  else {
+  } else {
     if (left) *left = (int)(margins.top / scale_x + 0.5);
     if (top) *top = (int)(margins.left / scale_y + 0.5);
     if (right) *right = (int)(margins.bottom / scale_x + 0.5);

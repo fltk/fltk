@@ -478,18 +478,18 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   if (factor != 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
-    NSWindow *nswin = (NSWindow*)fl_mac_xid(pWindow);
-    CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(nswin);
-    int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
-    bt *= (factor / Fl_Graphics_Driver::default_driver().scale());
-    CGRect cgr = CGRectMake(x, y + bt, w, h); // add vertical offset to bypass titlebar
-    CGImageRef cgimg = CGImageCreateWithImageInRect(img_full, cgr); // 10.4
-    CGImageRelease(img_full);
-    Fl_RGB_Image *rgb = cgimage_to_rgb4(cgimg);
-    CGImageRelease(cgimg);
-    return rgb;
+  NSWindow *nswin = (NSWindow*)fl_mac_xid(pWindow);
+  CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(nswin);
+  int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
+  bt *= (factor / Fl_Graphics_Driver::default_driver().scale());
+  CGRect cgr = CGRectMake(x, y + bt, w, h); // add vertical offset to bypass titlebar
+  CGImageRef cgimg = CGImageCreateWithImageInRect(img_full, cgr); // 10.4
+  CGImageRelease(img_full);
+  Fl_RGB_Image *rgb = cgimage_to_rgb4(cgimg);
+  CGImageRelease(cgimg);
+  return rgb;
   [(NSOpenGLContext*)glw->context() makeCurrentContext];
-// to capture also the overlay and for directGL demo
+  // to capture also the overlay and for directGL demo
   [(NSOpenGLContext*)glw->context() flushBuffer];
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
