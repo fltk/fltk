@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,9 +23,7 @@
 
 
 Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   mask_ = NULL;
-#endif
   int W = w, H = h;
   float s = 1;
   if (high_res) {
@@ -53,11 +51,9 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
 }
 
 Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (mask_) {
     CGImageRelease(mask_);
   }
-#endif
   if (offscreen) CGContextRestoreGState((CGContextRef)offscreen);
   if (offscreen && !external_offscreen) {
     void *data = CGBitmapContextGetData((CGContextRef)offscreen);
@@ -74,7 +70,6 @@ void Fl_Quartz_Image_Surface_Driver::set_current() {
   driver()->gc((CGContextRef)offscreen);
   fl_window = 0;
   ((Fl_Quartz_Graphics_Driver*)driver())->high_resolution( CGBitmapContextGetWidth((CGContextRef)offscreen) > (size_t)width );
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (mask_) {
     int W, H;
     printable_rect(&W, &H);
@@ -82,7 +77,6 @@ void Fl_Quartz_Image_Surface_Driver::set_current() {
     CGContextClipToMask((CGContextRef)offscreen, CGRectMake(0,0,W,H), mask_); // 10.4
     CGContextSaveGState((CGContextRef)offscreen);
   }
-# endif
 }
 
 void Fl_Quartz_Image_Surface_Driver::translate(int x, int y) {
@@ -99,13 +93,11 @@ void Fl_Quartz_Image_Surface_Driver::untranslate() {
 Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
 {
   CGContextFlush((CGContextRef)offscreen);
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (mask_) {
     CGContextRestoreGState((CGContextRef)offscreen);
     CGImageRelease(mask_);
     mask_ = NULL;
   }
-#endif
   int W = (int)CGBitmapContextGetWidth((CGContextRef)offscreen);
   int H = (int)CGBitmapContextGetHeight((CGContextRef)offscreen);
   int bpr = (int)CGBitmapContextGetBytesPerRow((CGContextRef)offscreen);
@@ -128,18 +120,14 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
 
 void Fl_Quartz_Image_Surface_Driver::end_current()
 {
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (mask_) {
     CGContextRestoreGState((CGContextRef)offscreen);
     CGContextRestoreGState((CGContextRef)offscreen);
   }
-# endif
   fl_window = pre_window;
   Fl_Surface_Device::end_current();
 }
 
-
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 
 static void MyProviderReleaseData (void *info, const void *data, size_t size) {
   delete[] (uchar*)data;
@@ -177,5 +165,3 @@ void Fl_Quartz_Image_Surface_Driver::mask(const Fl_RGB_Image *img) {
   CFRelease(provider);
   if (using_copy) delete img;
 }
-
-#endif

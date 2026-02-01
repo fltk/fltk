@@ -1,7 +1,7 @@
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -112,10 +112,6 @@ typedef unsigned long NSUInteger;
 typedef int NSInteger;
 typedef unsigned int NSUInteger;
 #endif
-#endif
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
 struct flCocoaRegion {

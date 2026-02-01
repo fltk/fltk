@@ -1,7 +1,7 @@
 //
 // Definition of Apple Darwin system driver.
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,9 +24,7 @@
 #include <FL/fl_draw.H>
 #include "../../flstring.h"
 #include <string.h>
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-#include <xlocale.h>
-#endif
+#include <xlocale.h> // 10.4
 #include <locale.h>
 #include <stdio.h>
 #include <dlfcn.h>
@@ -66,61 +64,28 @@ int Fl_Darwin_System_Driver::arg_and_value(const char *name, const char *value) 
   return strcmp(name, "NSDocumentRevisionsDebugMode") == 0;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 static locale_t postscript_locale = NULL;
-#endif
 
 int Fl_Darwin_System_Driver::clocale_vprintf(FILE *output, const char *format, va_list args) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400) {
-    if (!postscript_locale)
-      postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
-    return vfprintf_l(output, postscript_locale, format, args);
-  }
-#endif
-  char *saved_locale = setlocale(LC_NUMERIC, NULL);
-  setlocale(LC_NUMERIC, "C");
-  int retval = vfprintf(output, format, args);
-  setlocale(LC_NUMERIC, saved_locale);
-  return retval;
+  if (!postscript_locale)
+    postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+  return vfprintf_l(output, postscript_locale, format, args); // 10.4
 }
 
 int Fl_Darwin_System_Driver::clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400) {
-    if (!postscript_locale)
-      postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
-    return vsnprintf_l(output, output_size, postscript_locale, format, args);
-  }
-#endif
-  char *saved_locale = setlocale(LC_NUMERIC, NULL);
-  setlocale(LC_NUMERIC, "C");
-  int retval = vsnprintf(output, output_size, format, args);
-  setlocale(LC_NUMERIC, saved_locale);
-  return retval;
+  if (!postscript_locale)
+    postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+  return vsnprintf_l(output, output_size, postscript_locale, format, args); // 10.4
 }
 
 int Fl_Darwin_System_Driver::clocale_vsscanf(const char *input, const char *format, va_list args) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400) {
-    if (!postscript_locale)
-      postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
-    return vsscanf_l(input, postscript_locale, format, args);
-  }
-#endif
-  char *saved_locale = setlocale(LC_NUMERIC, NULL);
-  setlocale(LC_NUMERIC, "C");
-  int retval = vsscanf(input, format, args);
-  setlocale(LC_NUMERIC, saved_locale);
-  return retval;
+  if (!postscript_locale)
+    postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+  return vsscanf_l(input, postscript_locale, format, args); // 10.4
 }
 
 
-/* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
- Supports old Mac OS X versions that may use a couple of Carbon calls:
- GetKeys used by OS X 10.3 or before (in Fl::get_key())
- PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::begin_job())
- */
+// Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
 void *Fl_Darwin_System_Driver::get_carbon_function(const char *function_name) {
   static void *carbon = ::dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
   return (carbon ? dlsym(carbon, function_name) : NULL);

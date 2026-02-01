@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,10 +22,8 @@
 
 class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
 private:
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   CGImageRef mask_;
   void mask(const Fl_RGB_Image *) FL_OVERRIDE;
-#endif
   void end_current() FL_OVERRIDE;
 public:
   FLWindow *pre_window;

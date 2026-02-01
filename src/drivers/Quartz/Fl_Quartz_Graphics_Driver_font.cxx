@@ -14,61 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/* Implementation of support for two text drawing APIs: Core Text (current) and ATSU (legacy)
-
- The HAS_ATSU macro (defined in Fl_Quartz_Graphics_Driver.H) is true
- if and only if ATSU is available at compile time.
- The condition
-   #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
- is true if and only if both APIs are available at compile time.
- Depending on what MacOS SDK and what deployment target are used, the code can be
- compiled in 2 ways:
-    1) both APIs are available at compile time and which one is used
-       is determined at runtime,
- or
-    2) only one API is available.
-
- When both APIs are compiled in, the choice of which one is used at runtime is done
- the first time the Fl_Quartz_Graphics_Driver constructor runs, and remains unchanged.
- Core Text is selected if the running Mac OS version is ≥ 10.5.
- The static function init_CoreText_or_ATSU() does this by setting the value
- of the class variable CoreText_or_ATSU to either use_CoreText or use_ATSU.
-
- If both APIs are available, several member functions come in groups of 3.
- For example, functions draw(), draw_CoreText() and draw_ATSU() are defined. The only
- task of draw() is to call either draw_CoreText() or draw_ATSU() depending on
- what API has been selected at program start.
-
- If the compilation condition authorizes a single API, one member function
- is defined instead of 3 in the other case. For example, a single draw() function
- is compiled, and contains the same code as what is called either draw_CoreText()
- or draw_ATSU() in the other case.
-
- The ADD_SUFFIX(name, suffix) macro is used so that each function has the
- short (e.g., draw) or long (e.g., draw_CoreText) name adequate for
- each compilation condition.
-
- The 2 most often used text functions are draw() and width(). Two pointers to member
- function are defined. Function init_CoreText_or_ATSU() assigns one with either
- draw_CoreText() or draw_ATSU(), and the other with either width_CoreText() or width_ATSU().
- The draw() and width() functions only have to dereference one pointer to member
- function to call the adequate code.
-
- If the compilation condition authorizes a single text API, only the code related
- to this API (say, CoreText) is compiled whereas all code related to the other API
- (thus, ATSU) is excluded from compilation. Furthermore, none of the code to
- choose API at runtime and to select which member function is called is compiled.
- Consequently, no pointer to member function is used.
-
- The condition for both APIs to be compiled-in is
- - target i386 or ppc architectures
- and
- - use SDK ≥ 10.5 and < 10.11
- and
- - set MacOS deployment target < 10.5 (through the -mmacosx-version-min= compilation option)
-
- */
-
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "Fl_Font.H"
 #include <math.h>
@@ -87,13 +32,6 @@ static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 
 static int fl_free_font = FL_FREE_FONT;
 
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#  define ADD_SUFFIX(name, suffix) name##suffix
-#else
-#  define ADD_SUFFIX(name, suffix) name
-#endif
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 
 static CFMutableDictionaryRef attributes = NULL;
 
@@ -115,28 +53,7 @@ static Fl_Fontdesc built_in_table_PS[] = { // PostScript font names preferred wh
   {"AndaleMono"}, // there is no bold Monaco font on standard Mac
   {"ZapfDingbatsITC"}
 };
-#endif
 
-#if HAS_ATSU
-static Fl_Fontdesc built_in_table_full[] = { // full font names used before 10.5
-  {"Arial"},
-  {"Arial Bold"},
-  {"Arial Italic"},
-  {"Arial Bold Italic"},
-  {"Courier"},
-  {"Courier Bold"},
-  {"Courier New Italic"},
-  {"Courier New Bold Italic"},
-  {"Times New Roman"},
-  {"Times New Roman Bold"},
-  {"Times New Roman Italic"},
-  {"Times New Roman Bold Italic"},
-  {"Symbol"},
-  {"Monaco"},
-  {"Andale Mono"}, // there is no bold Monaco font on standard Mac
-  {"Webdings"}
-};
-#endif
 
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change
@@ -178,22 +95,9 @@ int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 Fl_Quartz_Font_Descriptor::Fl_Quartz_Font_Descriptor(const char* name, Fl_Fontsize Size) : Fl_Font_Descriptor(name, Size) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   fontref = NULL;
-#endif
-#if HAS_ATSU
-  layout = NULL;
-#endif
   Fl_Quartz_Graphics_Driver *driver = (Fl_Quartz_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (Fl_Quartz_Graphics_Driver::CoreText_or_ATSU == Fl_Quartz_Graphics_Driver::use_ATSU) {
-      driver->descriptor_init_ATSU(name, size, this);
-      return;
-    }
-    driver->descriptor_init_CoreText(name, size, this);
-#else
   driver->descriptor_init(name, size, this);
-#endif
 }
 
 
@@ -207,20 +111,12 @@ Fl_Quartz_Font_Descriptor::~Fl_Quartz_Font_Descriptor() {
 #endif
   */
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fontref) {
     CFRelease(fontref);
     for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) {
       if (width[i]) free(width[i]);
     }
   }
-#endif
-#if HAS_ATSU
-  if (layout) {
-    ATSUDisposeTextLayout(layout);
-    ATSUDisposeStyle(style);
-  }
-#endif
 }
 
 
@@ -332,9 +228,7 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
   return width(utf16, l);
 }
 
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-static void set_fontname_CoreText(Fl_Fontdesc *f) {
+void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
   CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
   CTFontRef ctfont = cfname ? CTFontCreateWithName(cfname, 0, NULL) : NULL;
   if (cfname) { CFRelease(cfname); cfname = NULL; }
@@ -347,20 +241,6 @@ static void set_fontname_CoreText(Fl_Fontdesc *f) {
     }
   }
   if (!cfname) strlcpy(f->fontname, f->name, ENDOFBUFFER);
-}
-#endif
-
-void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (CoreText_or_ATSU == use_ATSU)
-    strlcpy(f->fontname, f->name, ENDOFBUFFER);
-  else
-    set_fontname_CoreText(f);
-#elif HAS_ATSU
-  strlcpy(f->fontname, f->name, ENDOFBUFFER);
-#else
-  set_fontname_CoreText(f);
-#endif
 }
 
 const char *Fl_Quartz_Graphics_Driver::font_name(int num) {
@@ -385,49 +265,11 @@ void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
 
 Fl_Fontdesc* Fl_Quartz_Graphics_Driver::calc_fl_fonts(void)
 {
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (CoreText_or_ATSU == use_ATSU) return built_in_table_full;
   return  built_in_table_PS;
-#elif HAS_ATSU
-  return built_in_table_full;
-#else
-  return  built_in_table_PS;
-#endif
 }
 
 
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-
-void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) {
-  (this->*CoreText_or_ATSU_draw)(str, n, x, y);
-}
-
-double Fl_Quartz_Graphics_Driver::width(const UniChar* txt, int n) {
-  return (this->*CoreText_or_ATSU_width)(txt, n);
-}
-
-Fl_Font Fl_Quartz_Graphics_Driver::set_fonts(const char* xstarname)
-{
-  if (CoreText_or_ATSU == use_ATSU) return set_fonts_ATSU(xstarname);
-  return  set_fonts_CoreText(xstarname);
-}
-
-void Fl_Quartz_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int& dy, int& w, int& h)
-{
-  if (CoreText_or_ATSU == use_ATSU) {
-    text_extents_ATSU(txt, n, dx, dy, w, h);
-    return;
-  }
-  text_extents_CoreText(txt, n, dx, dy, w, h);
-}
-
-#endif
-
-
-/// CoreText-based code
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-
-void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _CoreText)(const char* name,
+void Fl_Quartz_Graphics_Driver::descriptor_init(const char* name,
                                                       Fl_Fontsize size, Fl_Quartz_Font_Descriptor *d)
 {
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
@@ -510,7 +352,7 @@ static CGFloat variation_selector_width(CFStringRef str16, Fl_Quartz_Font_Descri
   return retval;
 }
 
-double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* txt, int n)
+double Fl_Quartz_Graphics_Driver::width(const UniChar* txt, int n)
 {
   double retval = 0;
   UniChar uni;
@@ -581,7 +423,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
 
 
 // text extent calculation
-void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _CoreText)(const char *str8, int n,
+void Fl_Quartz_Graphics_Driver::text_extents(const char *str8, int n,
                                                                     int &dx, int &dy, int &w, int &h) {
   Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
@@ -615,7 +457,7 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
   return CGColorCreate(cspace, components);
 }
 
-void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _CoreText)(const char *str, int n, float x, float y)
+void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y)
 {
   Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
@@ -680,7 +522,7 @@ static int name_compare(const void *a, const void *b)
   }
 }
 
-Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* xstarname)
+Fl_Font Fl_Quartz_Graphics_Driver::set_fonts(const char* xstarname)
 {
 #pragma unused ( xstarname )
   if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
@@ -717,187 +559,3 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
   delete[] tabfontnames;
   return (Fl_Font)fl_free_font;
 }
-
-
-#endif // >= 10.5
-
-
-
-/// ATSU-based code to support Mac OS < 10.5
-#if HAS_ATSU
-
-void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _ATSU)(const char* name,
-                                                      Fl_Fontsize size, Fl_Quartz_Font_Descriptor *d)
-{
-  OSStatus err;
-  // fill our structure with a few default values
-  d->ascent = size*3/4.;
-  d->descent = size-d->ascent;
-  d->q_width = size*2/3.;
-  // now we allocate everything needed to render text in this font later
-  // get us the default layout and style
-  err = ATSUCreateTextLayout(&d->layout);
-  UniChar mTxt[2] = { 65, 0 };
-  err = ATSUSetTextPointerLocation(d->layout, mTxt, kATSUFromTextBeginning, 1, 1);
-  err = ATSUCreateStyle(&d->style);
-  err = ATSUSetRunStyle(d->layout, d->style, kATSUFromTextBeginning, kATSUToTextEnd);
-  // now set the actual font, size and attributes. We also set the font matrix to
-  // render our font up-side-down, so when rendered through our inverted CGContext,
-  // text will appear normal again.
-  Fixed fsize = IntToFixed(size);
-  ATSUFontID fontID;
-  ATSUFindFontFromName(name, strlen(name), kFontFullName, kFontMacintoshPlatform, kFontNoScriptCode, kFontEnglishLanguage, &fontID);
-
-  // draw the font upside-down... Compensate for fltk/OSX origin differences
-  ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
-  ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed), sizeof(CGAffineTransform) };
-  ATSUAttributeValuePtr sAttr[] = { &fontID, &fsize, &font_mx };
-  if (fontID != kATSUInvalidFontID) err = ATSUSetAttributes(d->style, 1, sTag, sBytes, sAttr); // set the font attribute
-  err = ATSUSetAttributes(d->style, 2, sTag + 1, sBytes + 1, sAttr + 1); // then the size and matrix attributes
-  // next, make sure that Quartz will only render at integer coordinates
-  ATSLineLayoutOptions llo = kATSLineUseDeviceMetrics | kATSLineDisableAllLayoutOperations;
-  ATSUAttributeTag aTag[] = { kATSULineLayoutOptionsTag };
-  ByteCount aBytes[] = { sizeof(ATSLineLayoutOptions) };
-  ATSUAttributeValuePtr aAttr[] = { &llo };
-  err = ATSUSetLineControls (d->layout, kATSUFromTextBeginning, 1, aTag, aBytes, aAttr);
-  // now we are finally ready to measure some letter to get the bounding box
-  Fixed bBefore, bAfter, bAscent, bDescent;
-  err = ATSUGetUnjustifiedBounds(d->layout, kATSUFromTextBeginning, 1, &bBefore, &bAfter, &bAscent, &bDescent);
-  // Requesting a certain height font on Mac does not guarantee that ascent+descent
-  // equal the requested height. fl_height will reflect the actual height that we got.
-  // The font "Apple Chancery" is a pretty extreme example of overlapping letters.
-  float fa = -FixedToFloat(bAscent), fd = -FixedToFloat(bDescent);
-  if (fa>0.0f && fd>0.0f) {
-    //float f = Size/(fa+fd);
-    d->ascent = int(fa); //int(fa*f+0.5f);
-    d->descent = int(fd); //Size - ascent;
-  }
-  int w = FixedToInt(bAfter);
-  if (w)
-    d->q_width = FixedToInt(bAfter);
-
-  // Now, by way of experiment, try enabling Transient Font Matching, this will
-  // cause ATSU to find a suitable font to render any chars the current font can't do...
-  ATSUSetTransientFontMatching (d->layout, true);
-}
-
-void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _ATSU)(const char *str, int n, float x, float y)
-{
-  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
-  // convert to UTF-16 first
-  UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
-  CGContextRef gc = (CGContextRef)this->gc();
-  OSStatus err;
-  // now collect our ATSU resources
-  ATSUTextLayout layout = fl_fontsize->layout;
-
-  ByteCount iSize = sizeof(CGContextRef);
-  ATSUAttributeTag iTag = kATSUCGContextTag;
-  ATSUAttributeValuePtr iValuePtr=&gc;
-  ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-
-  err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
-  CGContextSetShouldAntialias(gc, true);
-  err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
-  CGContextSetShouldAntialias(gc, false);
-}
-
-double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _ATSU)(const UniChar* txt, int n) {
-  OSStatus err;
-  Fixed bBefore, bAfter, bAscent, bDescent;
-  ATSUTextLayout layout;
-  ByteCount iSize;
-  ATSUAttributeTag iTag;
-  ATSUAttributeValuePtr iValuePtr;
-
-  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
-  // Here's my ATSU text measuring attempt... This seems to do the Right Thing
-  // now collect our ATSU resources and measure our text string
-  layout = fl_fontsize->layout;
-  // activate the current GC
-  iSize = sizeof(CGContextRef);
-  iTag = kATSUCGContextTag;
-  CGContextRef value = (CGContextRef)fl_graphics_driver->gc();
-  iValuePtr = &value;
-  ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-  // now measure the bounding box
-  err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
-  err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, n, &bBefore, &bAfter, &bAscent, &bDescent);
-  // If err is OK then return length, else return 0. Or something...
-  int len = FixedToInt(bAfter);
-  return len;
-}
-
-void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _ATSU)(const char *str8, int n,
-                                                                int &dx, int &dy, int &w, int &h)
-{
-  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
-  UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
-  OSStatus err;
-  ATSUTextLayout layout;
-  ByteCount iSize;
-  ATSUAttributeTag iTag;
-  ATSUAttributeValuePtr iValuePtr;
-
-  // Here's my ATSU text measuring attempt... This seems to do the Right Thing
-  // now collect our ATSU resources and measure our text string
-  layout = fl_fontsize->layout;
-  // activate the current GC
-  iSize = sizeof(CGContextRef);
-  iTag = kATSUCGContextTag;
-  CGContextRef value = (CGContextRef)gc();
-  iValuePtr = &value;
-  ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-  // now measure the bounding box
-  err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
-  Rect bbox;
-  err = ATSUMeasureTextImage(layout, kATSUFromTextBeginning, n, 0, 0, &bbox);
-  w = bbox.right - bbox.left;
-  h = bbox.bottom - bbox.top;
-  dx = bbox.left;
-  dy = -bbox.bottom;
-  //printf("r: %d l: %d t: %d b: %d w: %d h: %d\n", bbox.right, bbox.left, bbox.top, bbox.bottom, w, h);
-}
-
-Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xstarname)
-{
-#pragma unused ( xstarname )
-  if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
-
-  ItemCount oFontCount, oCountAgain;
-  ATSUFontID *oFontIDs;
-  // How many fonts?
-  ATSUFontCount (&oFontCount);
-  // now allocate space for them...
-  oFontIDs = (ATSUFontID *)malloc((oFontCount+1) * sizeof(ATSUFontID));
-  ATSUGetFontIDs (oFontIDs, oFontCount, &oCountAgain);
-  // Now oFontIDs should contain a list of all the available Unicode fonts
-  // Iterate through the list to get each font name
-  for (ItemCount idx = 0; idx < oFontCount; idx++)
-  {
-    //  ByteCount actualLength = 0;
-    //  Ptr oName;
-    // How to get the name - Apples docs say call this twice, once to get the length, then again
-    // to get the actual name...
-    //    ATSUFindFontName (oFontIDs[idx], kFontFullName, kFontMacintoshPlatform, kFontRomanScript, kFontEnglishLanguage,
-    //                      0, NULL, &actualLength, NULL);
-    // Now actualLength tells us the length of buffer we need
-    //  oName = (Ptr)malloc(actualLength + 8);
-    // But who's got time for that nonsense? Let's just hard code a fixed buffer (urgh!)
-    ByteCount actualLength = 511;
-    char oName[512];
-    ATSUFindFontName (oFontIDs[idx], kFontFullName, kFontMacintoshPlatform, kFontRomanScript, kFontEnglishLanguage,
-                      actualLength, oName, &actualLength, &oCountAgain);
-    // bounds check and terminate the returned name
-    if(actualLength > 511)
-      oName[511] = 0;
-    else
-      oName[actualLength] = 0;
-    Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(oName));
-    //  free(oName);
-  }
-  free(oFontIDs);
-  return (Fl_Font)fl_free_font;
-}
-
-#endif // HAS_ATSU

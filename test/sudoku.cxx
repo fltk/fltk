@@ -2,7 +2,7 @@
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2005-2018 by Michael Sweet.
-// Copyright 2019-2021 by Bill Spitzak and others.
+// Copyright 2019-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -90,9 +90,7 @@ class SudokuSound {
   // Private, OS-specific data...
 #ifdef __APPLE__
   AudioDeviceID device;
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   AudioDeviceIOProcID audio_proc_id;
-#  endif
   AudioStreamBasicDescription format;
   short *data;
   int remaining;
@@ -263,13 +261,8 @@ SudokuSound::SudokuSound() {
   if (format.mFormatID != kAudioFormatLinearPCM) return;
 
   // Attach the callback and start the device
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (AudioDeviceCreateIOProcID(device, audio_cb, (void *)this, &audio_proc_id) != noErr) return;
   AudioDeviceStart(device, audio_proc_id);
-#  else
-  if (AudioDeviceAddIOProc(device, audio_cb, (void *)this) != noErr) return;
-  AudioDeviceStart(device, audio_cb);
-#  endif
 
   sample_size = (int)format.mSampleRate / 20;
 
@@ -369,13 +362,8 @@ SudokuSound::SudokuSound() {
 SudokuSound::~SudokuSound() {
 #ifdef __APPLE__
   if (sample_size) {
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
     AudioDeviceStop(device, audio_proc_id);
     AudioDeviceDestroyIOProcID(device, audio_proc_id);
-#  else
-    AudioDeviceStop(device, audio_cb);
-    AudioDeviceRemoveIOProc(device, audio_cb);
-#  endif
   }
 
 #elif defined(_WIN32)

@@ -1,4 +1,4 @@
-Changes in FLTK 1.5.0                                   Released: xxx yy 2025
+Changes in FLTK 1.5.0                                   Released: xxx yy 2026
 
   This is the first FLTK release that exclusively uses CMake to be built.
   autoconf/configure/Makefile support has been removed. If you believe you
@@ -9,7 +9,7 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2025
 
 
   Platform Specific Fixes and Build Procedure Improvements
-
+  - macOS: required SDK version and deployment target changed to 10.5 or higher
 
   Wayland related Improvements and Fixes
 
@@ -23,7 +23,7 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2025
   Other Changes
 
   - Removed autotools (configure/make) support
-
+  - Requires C++11 or higher
 
 
 Changes in FLTK 1.4

@@ -2,7 +2,7 @@
 // Definition of Apple Quartz graphics driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,16 +26,6 @@
 #include <FL/platform.H>
 #include <FL/Fl_Graphics_Driver.H>
 #include <ApplicationServices/ApplicationServices.h>
-
-// condition for the ATSU API to be available at compile time
-#if (    (!defined(__LP64__) || !__LP64__) \
-      && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11 \
-      && MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5 \
-    )
-#define HAS_ATSU 1
-#else
-#define HAS_ATSU 0
-#endif
 
 struct Fl_Fontdesc;
 class Fl_Quartz_Font_Descriptor;
@@ -143,30 +133,7 @@ protected:
   void set_fontname_in_fontdesc(Fl_Fontdesc *f);
   void uncache_pixmap(fl_uintptr_t p) FL_OVERRIDE;
 
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  enum {use_CoreText = 1, use_ATSU};
-  static int CoreText_or_ATSU;
-  static void init_CoreText_or_ATSU();
-  void draw_CoreText(const char *str, int n, float x, float y);
-  double width_CoreText(const UniChar* txt, int n);
-  void descriptor_init_CoreText(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
-  void text_extents_CoreText(const char*, int n, int& dx, int& dy, int& w, int& h);
-  Fl_Font set_fonts_CoreText(const char* xstarname);
-
-  void draw_ATSU(const char *str, int n, float x, float y);
-  double width_ATSU(const UniChar* txt, int n);
-  void descriptor_init_ATSU(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
-  void text_extents_ATSU(const char*, int n, int& dx, int& dy, int& w, int& h);
-  Fl_Font set_fonts_ATSU(const char* xstarname);
-
-  // define 2 kinds of pointers to member function
-  typedef void (Fl_Quartz_Graphics_Driver::*pter_to_draw_member)(const char *str, int n, float x, float y);
-  typedef double (Fl_Quartz_Graphics_Driver::*pter_to_width_member)(const UniChar *str, int n);
-  static pter_to_draw_member CoreText_or_ATSU_draw;
-  static pter_to_width_member CoreText_or_ATSU_width;
-#else
   void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
-#endif
   void overlay_rect(int x, int y, int w , int h) FL_OVERRIDE;
   float override_scale() FL_OVERRIDE;
   void restore_scale(float) FL_OVERRIDE;

@@ -1,7 +1,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,27 +22,6 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-Fl_Quartz_Graphics_Driver::pter_to_draw_member Fl_Quartz_Graphics_Driver::CoreText_or_ATSU_draw;
-Fl_Quartz_Graphics_Driver::pter_to_width_member Fl_Quartz_Graphics_Driver::CoreText_or_ATSU_width;
-
-int Fl_Quartz_Graphics_Driver::CoreText_or_ATSU = 0;
-
-void Fl_Quartz_Graphics_Driver::init_CoreText_or_ATSU()
-{
-  if (Fl_Darwin_System_Driver::calc_mac_os_version() < 100500) {
-    // before Mac OS 10.5, only ATSU is available
-    CoreText_or_ATSU = use_ATSU;
-    CoreText_or_ATSU_draw = &Fl_Quartz_Graphics_Driver::draw_ATSU;
-    CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_ATSU;
-  } else {
-    CoreText_or_ATSU = use_CoreText;
-    CoreText_or_ATSU_draw = &Fl_Quartz_Graphics_Driver::draw_CoreText;
-    CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_CoreText;
-  }
-}
-#endif
-
 
 void Fl_Quartz_Graphics_Driver::antialias(int state) {
 }
@@ -58,9 +37,6 @@ Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), g
   quartz_line_pattern = 0;
   quartz_line_pattern_size = 0;
   high_resolution_ = false;
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (!CoreText_or_ATSU) init_CoreText_or_ATSU();
-#endif
 }
 
 char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {
@@ -91,26 +67,10 @@ CGContextRef fl_mac_gc() { return fl_gc; }
 void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   CGContextRef src = (CGContextRef)osrc;
-  void *data = CGBitmapContextGetData(src);
   int sw = (int)CGBitmapContextGetWidth(src);
   int sh = (int)CGBitmapContextGetHeight(src);
   CGImageRef img;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400) img = CGBitmapContextCreateImage(src);  // requires 10.4
-  else
-#endif
-  {
-    CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
-    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-    // when output goes to a Quartz printercontext, release of the bitmap must be
-    // delayed after the end of the printed page
-    CFRetain(src);
-    CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
-    img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
-                        src_bytes, 0L, false, kCGRenderingIntentDefault);
-    CGDataProviderRelease(src_bytes);
-    CGColorSpaceRelease(lut);
-  }
+  img = CGBitmapContextCreateImage(src);  // requires 10.4
   CGAffineTransform at = CGContextGetCTM(src);
   float s = at.a;
   draw_CGImage(img, x, y, w, h, srcx, srcy, sw/s, sh/s);

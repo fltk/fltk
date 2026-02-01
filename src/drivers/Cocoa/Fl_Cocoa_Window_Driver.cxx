@@ -1,7 +1,7 @@
 //
 // Definition of Apple Cocoa window driver.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -75,12 +75,10 @@ void Fl_Cocoa_Window_Driver::draw_begin()
   if (!Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) return;
   CGContextRef my_gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
   if (shape_data_) {
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-    if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
+    if (shape_data_->mask) {
       CGContextClipToMask(my_gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
     }
     CGContextSaveGState(my_gc);
-# endif
   }
 }
 
@@ -111,12 +109,10 @@ void Fl_Cocoa_Window_Driver::draw_end()
       }
     }
   }
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) {
     CGContextRef my_gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
     if (shape_data_) CGContextRestoreGState(my_gc);
   }
-# endif
 }
 
 
@@ -187,7 +183,6 @@ void Fl_Cocoa_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
 
 
 void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (shape_data_) {
     if (shape_data_->mask) { CGImageRelease(shape_data_->mask); }
   }
@@ -203,7 +198,6 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
-#endif
   pWindow->border(false);
 }
 

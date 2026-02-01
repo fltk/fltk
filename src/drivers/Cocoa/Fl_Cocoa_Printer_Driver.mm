@@ -1,7 +1,7 @@
 //
 // Mac OS X-specific printing support (objective-c++) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2024 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -107,8 +107,6 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
   OSStatus status = 0;
   fl_open_display();
   Fl_Cocoa_Window_Driver::q_release_context();
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 100500) {
     NSPrintInfo *info = [NSPrintInfo sharedPrintInfo];
     NSPrintPanel *panel = [NSPrintPanel printPanel];
     //from 10.5
@@ -143,59 +141,6 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
       if (*topage > pagecount && pagecount > 0) *topage = pagecount;
     }
     status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
-  }
-  else
-#endif
-  {
-#if !defined(__LP64__) || !__LP64__
-    Boolean accepted;
-    status = PMCreateSession(&printSession);
-    if (status != noErr) return 1;
-    status = PMCreatePageFormat(&pageFormat);
-    status = PMSessionDefaultPageFormat(printSession, pageFormat);
-    if (status != noErr) return 1;
-    // get pointer to the PMSessionPageSetupDialog Carbon function
-    typedef OSStatus (*dialog_f)(PMPrintSession, PMPageFormat, Boolean *);
-    static dialog_f f = NULL;
-    if (!f) f = (dialog_f)Fl_Darwin_System_Driver::get_carbon_function("PMSessionPageSetupDialog");
-    status = (*f)(printSession, pageFormat, &accepted);
-    if (status != noErr || !accepted) {
-      Fl::first_window()->show();
-      return 1;
-    }
-    status = PMCreatePrintSettings(&printSettings);
-    if (status != noErr || printSettings == kPMNoPrintSettings) return 1;
-    status = PMSessionDefaultPrintSettings (printSession, printSettings);
-    if (status != noErr) return 1;
-    PMSetPageRange(printSettings, 1, (UInt32)kPMPrintAllPages);
-    // get pointer to the PMSessionPrintDialog Carbon function
-    typedef OSStatus (*dialog_f2)(PMPrintSession, PMPrintSettings, PMPageFormat, Boolean *);
-    static dialog_f2 f2 = NULL;
-    if (!f2) f2 = (dialog_f2)Fl_Darwin_System_Driver::get_carbon_function("PMSessionPrintDialog");
-    status = (*f2)(printSession, printSettings, pageFormat, &accepted);
-    if (!accepted) status = kPMCancel;
-    if (status != noErr) {
-      Fl::first_window()->show();
-      return 1;
-    }
-    UInt32 from32, to32;
-    PMGetFirstPage(printSettings, &from32);
-    if (frompage) *frompage = (int)from32;
-    PMGetLastPage(printSettings, &to32);
-    if (topage) *topage = (int)to32;
-    if(topage && *topage > pagecount) *topage = pagecount;
-    CFStringRef mystring[1];
-    mystring[0] = kPMGraphicsContextCoreGraphics;
-    CFArrayRef array = CFArrayCreate(NULL, (const void **)mystring, 1, &kCFTypeArrayCallBacks);
-    PMSessionSetDocumentFormatGeneration_type PMSessionSetDocumentFormatGeneration =
-      (PMSessionSetDocumentFormatGeneration_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionSetDocumentFormatGeneration");
-    status = PMSessionSetDocumentFormatGeneration(printSession, kPMDocumentFormatDefault, array, NULL);
-    CFRelease(array);
-    PMSessionBeginDocumentNoDialog_type PMSessionBeginDocumentNoDialog =
-      (PMSessionBeginDocumentNoDialog_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionBeginDocumentNoDialog");
-    status = PMSessionBeginDocumentNoDialog(printSession, printSettings, pageFormat);
-#endif //__LP64__
-  }
 
   if (status != noErr) {
     if (perr_message) {
@@ -309,19 +254,7 @@ int Fl_Cocoa_Printer_Driver::begin_page (void)
 {
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
   CGContextRef gc;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if ( &PMSessionGetCGGraphicsContext != NULL ) {
-    status = PMSessionGetCGGraphicsContext(printSession, &gc);
-  }
-  else
-#endif
-  {
-#if !defined(__LP64__) || !__LP64__
-    PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
-      (PMSessionGetGraphicsContext_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionGetGraphicsContext");
-    status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&gc);
-#endif
-  }
+  status = PMSessionGetCGGraphicsContext(printSession, &gc); // 10.4
   driver()->gc(gc);
   Fl_Surface_Device::push_current(this);
   PMRect pmRect;
@@ -377,13 +310,6 @@ void Fl_Cocoa_Printer_Driver::end_job (void)
     fl_alert ("PM Session error %d", (int)status);
   }
   PMSessionEndDocumentNoDialog(printSession);
-#if !defined(__LP64__) || !__LP64__
-  if (fl_mac_os_version < 100500) {
-    PMRelease(printSettings);
-    PMRelease(pageFormat);
-    PMRelease(printSession);
-    }
-#endif
   Fl_Window *w = Fl::first_window();
   if (w) w->show();
 }

@@ -1,7 +1,7 @@
 //
 // Class Fl_Cocoa_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -112,10 +112,8 @@ static NSOpenGLPixelFormat* mode_to_NSOpenGLPixelFormat(int m, const int *alistp
       //list[n++] = AGL_STEREO;
       attribs[n++] = 6/*NSOpenGLPFAStereo*/;
     }
-    if ((m & FL_MULTISAMPLE) && fl_mac_os_version >= 100400) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    if (m & FL_MULTISAMPLE) {
       attribs[n++] = NSOpenGLPFAMultisample; // 10.4
-#endif
       attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
       attribs[n++] = NSOpenGLPFASamples; attribs[n++] = (NSOpenGLPixelFormatAttribute)4;
     }
@@ -480,8 +478,6 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   if (factor != 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 100500) {
     NSWindow *nswin = (NSWindow*)fl_mac_xid(pWindow);
     CGImageRef img_full = Fl_Cocoa_Window_Driver::capture_decorated_window_10_5(nswin);
     int bt =  [nswin frame].size.height - [[nswin contentView] frame].size.height;
@@ -492,8 +488,6 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
     Fl_RGB_Image *rgb = cgimage_to_rgb4(cgimg);
     CGImageRelease(cgimg);
     return rgb;
-  }
-#endif
   [(NSOpenGLContext*)glw->context() makeCurrentContext];
 // to capture also the overlay and for directGL demo
   [(NSOpenGLContext*)glw->context() flushBuffer];
