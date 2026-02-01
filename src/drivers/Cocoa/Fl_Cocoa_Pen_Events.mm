@@ -1,7 +1,7 @@
 //
 // Definition of macOS Cocoa Pen/Tablet event driver.
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,6 +16,7 @@
 
 #include "src/drivers/Base/Fl_Base_Pen_Events.H"
 
+#include <FL/platform.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "../../Fl_Screen_Driver.H"
@@ -24,6 +25,31 @@
 
 
 extern Fl_Window *fl_xmousewin;
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+
+typedef short NSEventSubtype;
+#define NSPointingDeviceTypePen NSPenPointingDevice
+#define NSEventTypeMouseEntered NSMouseEntered
+#define NSEventTypeMouseExited NSMouseExited
+#define NSEventTypeTabletProximity NSTabletProximity
+#define NSEventTypeTabletPoint NSTabletPoint
+#define NSEventSubtypeTabletProximity NSTabletProximityEventSubtype
+#define NSEventSubtypeTabletPoint NSTabletPointEventSubtype
+#define NSEventSubtypeMouseEvent NSMouseEventSubtype
+#define NSEventTypeLeftMouseDown NSLeftMouseDown
+#define NSEventTypeLeftMouseUp NSLeftMouseUp
+#define NSEventTypeLeftMouseDragged NSLeftMouseDragged
+#define NSEventTypeMouseMoved NSMouseMoved
+#define NSEventTypeRightMouseDown NSRightMouseDown
+#define NSEventTypeRightMouseUp NSRightMouseUp
+#define NSEventTypeRightMouseDragged NSRightMouseDragged
+#define NSEventTypeOtherMouseUp NSOtherMouseUp
+#define NSEventTypeOtherMouseDown NSOtherMouseDown
+#define NSEventTypeOtherMouseDragged NSOtherMouseDragged
+#define NSPointingDeviceTypeEraser NSEraserPointingDevice
+
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 
 static NSPointingDeviceType device_type_ { NSPointingDeviceTypePen };
 
