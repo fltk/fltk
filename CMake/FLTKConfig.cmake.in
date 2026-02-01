@@ -24,7 +24,7 @@
 # Note: FLTK 1.4.0 introduced "Modern CMake", therefore usage of most if not
 # all of the variables mentioned above is no longer needed in user projects.
 # Please use the CMake target names fltk::fltk, fltk::images, etc. instead.
-# Please see README.CMake.txt for mor info on how to do this.
+# Please see README.CMake.txt for more info on how to do this.
 #
 
 # Optional: Create backwards compatible aliases for libraries and fluid.
