@@ -1,7 +1,7 @@
 //
 // Definition of Windows Pen/Tablet event driver.
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -13,6 +13,23 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// Note: We require Windows 8 or later features for Pen/Tablet support.
+// Defining WINVER and _WIN32_WINNT to 0x0602 *may* be required on some
+// Windows build platforms. Must be done before all #include's.
+
+#if !defined(WINVER) || (WINVER < 0x0602)
+#  ifdef WINVER
+#    undef WINVER
+#  endif
+#  define WINVER 0x0602
+#endif
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0602)
+#  ifdef _WIN32_WINNT
+#    undef _WIN32_WINNT
+#  endif
+#  define _WIN32_WINNT 0x0602
+#endif
 
 #include "src/drivers/Base/Fl_Base_Pen_Events.H"
 
