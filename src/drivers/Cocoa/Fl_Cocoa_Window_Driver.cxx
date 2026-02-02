@@ -277,19 +277,6 @@ void Fl_Cocoa_Window_Driver::through_resize(bool b) {
   else window_flags_ &= ~through_resize_mask;
 }
 
-
-// clip the graphics context to rounded corners
-void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
-  const CGFloat radius = 7.5;
-  CGContextMoveToPoint(gc, 0, 0);
-  CGContextAddLineToPoint(gc, 0, h - radius);
-  CGContextAddArcToPoint(gc, 0, h,  radius, h, radius);
-  CGContextAddLineToPoint(gc, w - radius, h);
-  CGContextAddArcToPoint(gc, w, h, w, h - radius, radius);
-  CGContextAddLineToPoint(gc, w, 0);
-  CGContextClip(gc);
-}
-
 const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
   return shape_data_ ? shape_data_->shape_ : NULL;
 }

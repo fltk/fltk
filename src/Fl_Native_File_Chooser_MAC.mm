@@ -476,10 +476,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   return t;
 }
 
-@interface FLopenDelegate : NSObject
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-<NSOpenSavePanelDelegate>
-#endif
+@interface FLopenDelegate : NSObject <NSOpenSavePanelDelegate>
 {
   NSPopUpButton *nspopup;
   char **filter_pattern;
@@ -510,10 +507,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 }
 @end
 
-@interface FLsaveDelegate : NSObject
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-<NSOpenSavePanelDelegate>
-#endif
+@interface FLsaveDelegate : NSObject <NSOpenSavePanelDelegate>
 {
   NSSavePanel *dialog;
   BOOL saveas_confirm;
@@ -551,7 +545,6 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 // runs when the save panel popup menu changes output file type
 // correspondingly changes the extension of the output file name
 {
-  if (fl_mac_os_version < 100600) return; // because of setNameFieldStringValue and nameFieldStringValue
   char *s = fl_strdup([[(NSPopUpButton*)sender titleOfSelectedItem] UTF8String]);
   if (!s) return;
   char *p = strchr(s, '(');
@@ -592,11 +585,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 @end
 @implementation FLHiddenFilesAction
 - (void)action {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100600) {
-    [panel setShowsHiddenFiles:[button intValue]]; // 10.6
-  }
-#endif
+  [panel setShowsHiddenFiles:[button intValue]]; // 10.6
 }
 @end
 
@@ -675,8 +664,8 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
     fname = [preset lastPathComponent];
   }
   if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6 && defined(__BLOCKS__)
-  if (fl_mac_os_version >= 100600) {
+#if defined(__BLOCKS__)
+  {
     bool usepath = false;
     NSString *path = nil;
     if (dir && fname && [_panel isKindOfClass:[NSOpenPanel class]]) {
@@ -707,14 +696,13 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
       retval = [_panel runModal];
     }
   }
-  else
-#endif
-  { // the deprecation warning can be ignored because runs only for macOS < 10.6
+#else // !__BLOCKS__
+   // the deprecation warning runs only without blocks
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     retval = [_panel runModalForDirectory:dir file:fname]; // deprecated in 10.6
 #pragma clang diagnostic pop
-  }
+#endif // __BLOCKS__
   [dir release];
   [preset release];
   return (retval == NSModalResponseOK ? 1 : 0);
