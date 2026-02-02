@@ -9,7 +9,7 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
 
 
   Platform Specific Fixes and Build Procedure Improvements
-  - macOS: required SDK version and deployment target changed to 10.5 or higher
+  - macOS: required SDK version and deployment target changed to 10.7 or higher
 
   Wayland related Improvements and Fixes
 
