@@ -1323,10 +1323,10 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
           *foundPos = startPos;
           return 1;
         }
-        int l = fl_utf8len1(c);
-        if (memcmp(sp, address(bp), l))
+        int len = fl_utf8len1(c);
+        if (memcmp(sp, address(bp), len))
           break;
-        sp += l; bp += l;
+        sp += len; bp += len;
       }
       startPos = next_char(startPos);
     }
@@ -1340,12 +1340,12 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
           *foundPos = startPos;
           return 1;
         }
-        int l;
+        int len;
         unsigned int b = char_at(bp);
-        unsigned int s = fl_utf8decode(sp, 0, &l);
+        unsigned int s = fl_utf8decode(sp, 0, &len);
         if (fl_tolower(b)!=fl_tolower(s))
           break;
-        sp += l;
+        sp += len;
         bp = next_char(bp);
       }
       startPos = next_char(startPos);
@@ -1375,10 +1375,10 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
           *foundPos = startPos;
           return 1;
         }
-        int l = fl_utf8len1(c);
-        if (memcmp(sp, address(bp), l))
+        int len = fl_utf8len1(c);
+        if (memcmp(sp, address(bp), len))
           break;
-        sp += l; bp += l;
+        sp += len; bp += len;
       }
       startPos = prev_char(startPos);
     }
@@ -1392,12 +1392,12 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
           *foundPos = startPos;
           return 1;
         }
-        int l;
+        int len;
         unsigned int b = char_at(bp);
-        unsigned int s = fl_utf8decode(sp, 0, &l);
+        unsigned int s = fl_utf8decode(sp, 0, &len);
         if (fl_tolower(b)!=fl_tolower(s))
           break;
-        sp += l;
+        sp += len;
         bp = next_char(bp);
       }
       startPos = prev_char(startPos);
@@ -1957,50 +1957,51 @@ static int utf8_input_filter(char *buffer,              // result buffer we fill
 {
   // p - work pointer to line[]
   // q - work pointer to buffer[]
-  // l - length of utf8 sequence being worked on
+  // len - length of utf8 sequence being worked on
   // lp - fl_utf8decode() length of utf8 sequence being worked on
   // lq - fl_utf8encode() length of utf8 sequence being worked on
   // r - bytes read from last fread()
   // u - utf8 decoded sequence as a single multibyte unsigned integer
   char *p, *q, multibyte[5];
-  int l, lp, lq, r;
+  int len, lp, lq, r;
   unsigned u;
   p = line;
   q = buffer;
   while (q < buffer + buflen) {
-    if (p >= endline) {                 // walked off end of input file's line buffer?
-      r = (int) fread(line, 1, sline, fp);      // read another block of sline bytes from file
+    if (p >= endline) {                       // walked off end of input file's line buffer?
+      r = (int) fread(line, 1, sline, fp);    // read another block of sline bytes from file
       endline = line + r;
-      if (r == 0) return (int) (q - buffer);    // EOF? return bytes read into buffer[]
+      if (r == 0) return (int) (q - buffer);  // EOF? return bytes read into buffer[]
       p = line;
     }
     // Predict length of utf8 sequence
     //    See if utf8 seq we're working on would extend off end of line buffer,
     //    and if so, adjust + load more data so that it doesn't.
     //
-    l = fl_utf8len1(*p);                // anticipate length of utf8 sequence
-    if (p + l > endline) {              // would walk off end of line buffer?
+    len = fl_utf8len1(*p);              // anticipate length of utf8 sequence
+    if (p + len > endline) {            // would walk off end of line buffer?
       memmove(line, p, endline - p);    // re-jigger line buffer to get some room
       endline -= (p - line);
-      r = (int) fread(endline, 1, sline - (endline - line), fp);         // re-fill line buffer
+      r = (int) fread(endline, 1, sline - (endline - line), fp); // re-fill line buffer
       endline += r;
       p = line;
-      if (endline - line < l) break;    // sequence *still* extends past end? stop loop
+      if (endline - line < len) break;  // sequence *still* extends past end? stop loop
     }
-    while ( l > 0) {
-      u = fl_utf8decode(p, p+l, &lp);   // get single utf8 encoded char as a Unicode value
-      lq = fl_utf8encode(u, multibyte); // re-encode Unicode value to utf8 in multibyte[]
-      if (lp != l || lq != l) *input_was_changed = true;
+    while ( len > 0) {
+      u = fl_utf8decode(p, p+len, &lp);   // get single utf8 encoded char as a Unicode value
+      lq = fl_utf8encode(u, multibyte);   // re-encode Unicode value to utf8 in multibyte[]
+      if (lp != len || lq != len)
+        *input_was_changed = true;
 
-      if (q + lq > buffer + buflen) {   // encoding would walk off end of buffer[]?
-        memmove(line, p, endline - p);  // re-jigger line[] buffer for next call
-        endline -= (p - line);          // adjust end of line[] buffer for next call
-        return (int) (q - buffer);              // return what's decoded so far, caller will consume buffer
+      if (q + lq > buffer + buflen) {     // encoding would walk off end of buffer[]?
+        memmove(line, p, endline - p);    // re-jigger line[] buffer for next call
+        endline -= (p - line);            // adjust end of line[] buffer for next call
+        return (int) (q - buffer);        // return what's decoded so far, caller will consume buffer
       }
       memcpy(q, multibyte, lq);
       q += lq;
       p += lp;
-      l -= lp;
+      len -= lp;
     }
   }
   memmove(line, p, endline - p);
@@ -2009,9 +2010,9 @@ static int utf8_input_filter(char *buffer,              // result buffer we fill
 }
 
 const char *Fl_Text_Buffer::file_encoding_warning_message =
-"Displayed text contains the UTF-8 transcoding\n"
-"of the input file which was not UTF-8 encoded.\n"
-"Some changes may have occurred.";
+    "Displayed text contains the UTF-8 transcoding\n"
+    "of the input file which was not UTF-8 encoded.\n"
+    "Some changes may have occurred.";
 
 /*
  Insert text from a file.
@@ -2026,25 +2027,25 @@ const char *Fl_Text_Buffer::file_encoding_warning_message =
     return 1;
   char *buffer = new char[buflen + 1];
   char *endline, line[100];
-  int l;
+  int len;
   input_file_was_transcoded = false;
   endline = line;
   while (true) {
 #ifdef EXAMPLE_ENCODING
     // example of 16-bit encoding: UTF-16
-    l = general_input_filter(buffer, buflen,
-                                  line, sizeof(line), endline,
-                                  utf16toucs, // use cp1252toucs to read CP1252-encoded files
-                                  fp);
+    len = general_input_filter(buffer, buflen,
+                               line, sizeof(line), endline,
+                               utf16toucs, // use cp1252toucs to read CP1252-encoded files
+                               fp);
     input_file_was_transcoded = true;
 #else
-    l = utf8_input_filter(buffer, buflen, line, sizeof(line), endline,
-                          fp, &input_file_was_transcoded);
+    len = utf8_input_filter(buffer, buflen, line, sizeof(line), endline,
+                            fp, &input_file_was_transcoded);
 #endif
-    if (l == 0) break;
-    buffer[l] = 0;
+    if (len == 0) break;
+    buffer[len] = 0;
     insert(pos, buffer);
-    pos += l;
+    pos += len;
   }
   int e = ferror(fp) ? 2 : 0;
   fclose(fp);
@@ -2091,15 +2092,15 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
   IS_UTF8_ALIGNED2(this, (pos))
   const int l_t = 40;
   char t[l_t + 1]; t[l_t] = 0;
-  int l = l_t, p = pos, ll;
+  int len = l_t, p = pos, ll;
   for (int i = l_t; i > 0 && p > 0; i--) {
-    t[--l] = byte_at(--p);
-    ll = fl_utf8len(t[l]);
+    t[--len] = byte_at(--p);
+    ll = fl_utf8len(t[len]);
     if (ll == 1 || ll == 2) break;
   }
-  const char *previous = fl_utf8_previous_composed_char(t + l_t, t + l);
-  ll = strlen(t + l);
-  pos = (pos - ll) + (previous - (t+l));
+  const char *previous = fl_utf8_previous_composed_char(t + l_t, t + len);
+  ll = strlen(t + len);
+  pos = (pos - ll) + (previous - (t+len));
   IS_UTF8_ALIGNED2(this, (pos))
   return pos;
 }
@@ -2119,26 +2120,25 @@ int Fl_Text_Buffer::prev_char(int pos) const
 
 
 /**
- Returns the index of the next character.
- This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
- Returns length() if the end of the buffer is reached.
- \param pos index to the current character
- */
-int Fl_Text_Buffer::next_char(int pos) const
-{
+  Returns the index of the next character.
+  This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
+  Returns length() if the end of the buffer is reached.
+  \param[in] pos index to the current character
+*/
+int Fl_Text_Buffer::next_char(int pos) const {
   IS_UTF8_ALIGNED2(this, (pos))
-  int l = fl_utf8len(byte_at(pos));
-  if (l > 0) { // test for emoji sequence except for bad bytes
+  int len = fl_utf8len(byte_at(pos));
+  if (len > 0) { // test for emoji sequence except for bad bytes
     int p = pos, ll, b, count_points = 0;
     char t[40]; // longest emoji sequences I know use 28 bytes in UTF8 (e.g., 🏴󠁧󠁢󠁷󠁬󠁳󠁿 "Wales flag")
-    l = 0;
+    len = 0;
     // extract bytes after pos stopping after short codepoint or 40 bytes at most
-    while (p < mLength && l < sizeof(t)) {
+    while (p < mLength && len < (int)sizeof(t)) {
       b = byte_at(p++);
-      t[l++] = b;
+      t[len++] = b;
       ll = fl_utf8len1(b);
       count_points++;
-      for (int i = 1; i < ll && l < sizeof(t); i++) t[l++] = byte_at(p++);
+      for (int i = 1; i < ll && len < (int)sizeof(t); i++) t[len++] = byte_at(p++);
       if (count_points > 1 && (ll == 1 || ll == 2)) {
         // stop after short codepoint but not if it's the 1st codepoint which can be inside
         // emoji sequence (e.g. 9️⃣ "keycap 9")
@@ -2146,11 +2146,11 @@ int Fl_Text_Buffer::next_char(int pos) const
       }
     }
     // length of possibly emoji sequence starting at pos
-    l = (l > 0 ? fl_utf8_next_composed_char(t, t + l) - t : 0);
-  } else if (l == -1) {
-    l = 1;
+    len = (len > 0 ? fl_utf8_next_composed_char(t, t + len) - t : 0);
+  } else if (len == -1) {
+    len = 1;
   }
-  pos += l;
+  pos += len;
   if (pos>=mLength)
     return mLength;
   IS_UTF8_ALIGNED2(this, (pos))
