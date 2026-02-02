@@ -186,9 +186,7 @@ const NSUInteger NSWindowStyleMaskBorderless = NSBorderlessWindowMask;
 const NSUInteger NSWindowStyleMaskMiniaturizable = NSMiniaturizableWindowMask;
 const NSUInteger NSWindowStyleMaskClosable = NSClosableWindowMask;
 const NSUInteger NSWindowStyleMaskTitled = NSTitledWindowMask;
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 const NSUInteger NSWindowStyleMaskFullScreen = NSFullScreenWindowMask;
-#  endif
 
 const NSUInteger NSEventMaskAny = NSAnyEventMask;
 const NSUInteger NSEventMaskSystemDefined = NSSystemDefinedMask;
@@ -557,19 +555,13 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)checkSubwindowFrame;
 - (void)waitForExpose;
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
-#endif
 - (NSBitmapImageRep*)rect_to_NSBitmapImageRep:(Fl_Rect*)r;
 - (void)makeKeyWindow;
 @end
 
 
-@interface FLView : NSView <NSTextInput, NSTextInputClient
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-,NSDraggingSource
-#endif
-> {
+@interface FLView : NSView <NSTextInput, NSTextInputClient, NSDraggingSource> {
   BOOL in_key_event; // YES means keypress is being processed by handleEvent
   BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
   NSInteger identifier;
@@ -611,11 +603,9 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)draggingExited:(id < NSDraggingInfo >)sender;
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal;
 - (void)updateTrackingAreas;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context;
 - (void)draggingSession:(NSDraggingSession *)session
            endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation;
-#endif
 - (BOOL)did_view_resolution_change;
 #if defined(FLTK_HAVE_PEN_SUPPORT)
 - (void)tabletProximity:(NSEvent *)theEvent;
@@ -646,22 +636,11 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   // and before the FLWindow receives the final dealloc message
   w = NULL;
 }
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
 {
-  if (fl_mac_os_version >= 100700) {
-    NSRect r = [self convertRectToScreen:NSMakeRect(aPoint.x, aPoint.y, 0, 0)];
-    return r.origin;
-    }
-  else {
-    // replaces return [super convertBaseToScreen:aPoint] that may trigger a compiler warning
-    typedef NSPoint (*convertIMP)(id, SEL, NSPoint);
-    static convertIMP addr = (convertIMP)[NSWindow instanceMethodForSelector:@selector(convertBaseToScreen:)];
-    return addr(self, @selector(convertBaseToScreen:), aPoint);
-    }
+  NSRect r = [self convertRectToScreen:NSMakeRect(aPoint.x, aPoint.y, 0, 0)];
+  return r.origin;
 }
-#endif
-
 - (FLWindow*)initWithFl_W:(Fl_Window *)flw
               contentRect:(NSRect)rect
                 styleMask:(NSUInteger)windowStyle
@@ -669,12 +648,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   self = [super initWithContentRect:rect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO];
   if (self) {
     w = flw;
-    if (fl_mac_os_version >= 100700) {
-      // replaces [self setRestorable:NO] that may trigger a compiler warning
-      typedef void (*setIMP)(id, SEL, BOOL);
-      static setIMP addr = (setIMP)[NSWindow instanceMethodForSelector:@selector(setRestorable:)];
-      addr(self, @selector(setRestorable:), NO);
-      }
+    [self setRestorable:NO];
   }
   return self;
 }
@@ -1431,11 +1405,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
   /* Restore previous fullscreen level */
-  if (w->fullscreen_active()
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-      && (fl_mac_os_version < 100700 || !(nsw.styleMask & NSWindowStyleMaskFullScreen))
-#endif
-      ) {
+  if (w->fullscreen_active() && !(nsw.styleMask & NSWindowStyleMaskFullScreen)) {
     [nsw setLevel:NSStatusWindowLevel];
     fixup_window_levels();
   }
@@ -2334,31 +2304,27 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 
 @implementation FLView
 - (BOOL)did_view_resolution_change {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
-    Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-    bool previous = d->mapped_to_retina();
-    NSView *view = (!views_use_CA && window->parent() && !window->as_gl_window()) ?
-                      [fl_xid(window->top_window()) contentView] : self;
-    if (view) {
-      NSSize s = [view convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
-      d->mapped_to_retina( int(s.width + 0.5) > 10 );
-    }
-    BOOL retval = (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina());
-    if (retval) {
-      d->changed_resolution(true);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-      if (views_use_CA && !window->as_gl_window() ) {
-        [self reset_aux_bitmap];
-        window->redraw();
-      }
-#endif
-    }
-    return retval;
+  // determine whether window is mapped to a retina display
+  Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  bool previous = d->mapped_to_retina();
+  NSView *view = (!views_use_CA && window->parent() && !window->as_gl_window()) ?
+  [fl_xid(window->top_window()) contentView] : self;
+  if (view) {
+    NSSize s = [view convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
+    d->mapped_to_retina( int(s.width + 0.5) > 10 );
   }
+  BOOL retval = (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina());
+  if (retval) {
+    d->changed_resolution(true);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
+    if (views_use_CA && !window->as_gl_window() ) {
+      [self reset_aux_bitmap];
+      window->redraw();
+    }
 #endif
-  return NO;
+  }
+  return retval;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
@@ -2987,7 +2953,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   return identifier;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
   return NSDragOperationCopy;
@@ -3003,7 +2968,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     Fl::pushed( 0 );
   }
 }
-#endif
 
 @end
 
@@ -3094,36 +3058,6 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   changed_resolution(false);
 
   NSRect crect;
-  if (w->fullscreen_active() && fl_mac_os_version < 100700) {
-    int top, bottom, left, right;
-    int sx, sy, sw, sh, X, Y, W, H;
-
-    top = fullscreen_screen_top();
-    bottom = fullscreen_screen_bottom();
-    left = fullscreen_screen_left();
-    right = fullscreen_screen_right();
-
-    if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
-      top = Fl::screen_num(w->x(), w->y(), w->w(), w->h());
-      bottom = top;
-      left = top;
-      right = top;
-    }
-
-    Fl::screen_xywh(sx, sy, sw, sh, top);
-    Y = sy;
-    Fl::screen_xywh(sx, sy, sw, sh, bottom);
-    H = sy + sh - Y;
-    Fl::screen_xywh(sx, sy, sw, sh, left);
-    X = sx;
-    Fl::screen_xywh(sx, sy, sw, sh, right);
-    W = sx + sw - X;
-
-    w->resize(X, Y, W, H);
-
-    winstyle = NSWindowStyleMaskBorderless;
-    winlevel = NSStatusWindowLevel;
-  }
   float s = Fl::screen_driver()->scale(0);
   crect.origin.x = round(s * w->x()); // correct origin set later for subwindows
   crect.origin.y = main_screen_height - round(s * (w->y() + w->h()));
@@ -3239,7 +3173,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   } else { // a top-level window
     if ([cw canBecomeKeyWindow]) [cw makeKeyAndOrderFront:nil];
     else [cw orderFront:nil];
-    if (w->fullscreen_active() && fl_mac_os_version >= 100700) {
+    if (w->fullscreen_active()) {
       if (fullscreen_screen_top() >= 0)  {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
         if (fl_mac_os_version >= 101200)
@@ -3265,9 +3199,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
 }
 
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 static BOOL fullscreen_screen_border = NO; // YES means the multi-screened window had a border before
-#endif
 
 
 static NSUInteger calc_win_style(Fl_Window *win);
@@ -3275,13 +3207,12 @@ static NSUInteger calc_win_style(Fl_Window *win);
 
 void Fl_Cocoa_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   bool has_border = pWindow->border();
-  if (fl_mac_os_version >= 100700 && fullscreen_screen_top() >= 0 && has_border) {
+  if (fullscreen_screen_top() >= 0 && has_border) {
     fullscreen_screen_border = YES;
     has_border = false;
   }
-  if (fl_mac_os_version >= 100700 && has_border) {
+  if (has_border) {
     NSWindow *nswin = fl_xid(pWindow);
 #    if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
     if (fl_mac_os_version >= 101300) {
@@ -3296,12 +3227,9 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
       pWindow->_set_fullscreen();
     }
     [nswin toggleFullScreen:nil];
-  } else
-#  endif
-  {
+  } else {
     FLWindow *nswin = fl_xid(pWindow);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    if (fl_mac_os_version >= 100700 && (nswin.styleMask & NSWindowStyleMaskFullScreen)) {
+    if (nswin.styleMask & NSWindowStyleMaskFullScreen) {
       // from single-screen fullscreen to "All Screens" fullscreen, with border
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
       if (fl_mac_os_version >= 101200) {
@@ -3320,7 +3248,6 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
       }
       pWindow->_set_fullscreen();
     }
-#endif
     [nswin setStyleMask:NSWindowStyleMaskBorderless]; // 10.6
     if ([nswin isKeyWindow]) {
       if ([nswin level] != NSStatusWindowLevel) {
@@ -3396,8 +3323,7 @@ static void restore_window_title_and_icon(Fl_Window *pWindow, NSImage *icon) {
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   NSWindow *nswin = fl_xid(pWindow);
   pWindow->_clear_fullscreen();
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700 && ([nswin styleMask] & NSWindowStyleMaskFullScreen)) {
+  if ([nswin styleMask] & NSWindowStyleMaskFullScreen) {
 #    if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
     if (fl_mac_os_version >= 101300) {
       NSWindow *active_tab = [[nswin tabGroup] selectedWindow];
@@ -3406,9 +3332,7 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 #    endif
     [nswin toggleFullScreen:nil];
     pWindow->resize(*no_fullscreen_x(), *no_fullscreen_y(), *no_fullscreen_w(), *no_fullscreen_h());
-  } else
-#  endif
-  {
+  } else {
     // Transition from multi-screen fullscreen mode to normal mode
     NSInteger level = NSNormalWindowLevel;
     if (pWindow->modal()) level = modal_window_level();
@@ -3429,9 +3353,7 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     else [nswin orderFront:nil];
   }
   Fl::handle(FL_FULLSCREEN, pWindow);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   fullscreen_screen_border = NO;
-#endif
 }
 
 
@@ -4272,31 +4194,15 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
 
 static NSImage *defaultDragImage(int *pwidth, int *pheight)
 {
-  const int version_threshold = 100700;
-  int width, height;
-  if (fl_mac_os_version >= version_threshold) {
-    width = 50; height = 40;
-    }
-  else {
-    width = 16; height = 16;
-    }
+  const int width = 50, height = 40;
   Fl_Image_Surface *off = new Fl_Image_Surface(width, height, 1);
   Fl_Surface_Device::push_current(off);
-  if (fl_mac_os_version >= version_threshold) {
-    fl_font(FL_HELVETICA, 20);
-    fl_color(FL_BLACK);
-    char str[4];
-    // the "Delivery truck" Unicode character from "Apple Color Emoji" font
-    int l = fl_utf8encode(0x1F69A, str);
-    fl_draw(str, l, 1, 16);
-    }
-  else { // draw two squares
-    CGContextSetRGBFillColor( (CGContextRef)off->offscreen(), 0,0,0,0);
-    fl_rectf(0,0,width,height);
-    CGContextSetRGBStrokeColor( (CGContextRef)off->offscreen(), 0,0,0,0.6);
-    fl_rect(0,0,width,height);
-    fl_rect(2,2,width-4,height-4);
-  }
+  fl_font(FL_HELVETICA, 20);
+  fl_color(FL_BLACK);
+  char str[4];
+  // the "Delivery truck" Unicode character from "Apple Color Emoji" font
+  int l = fl_utf8encode(0x1F69A, str);
+  fl_draw(str, l, 1, 16);
   Fl_Surface_Device::pop_current();
   NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off->offscreen() );
   delete off;
@@ -4329,36 +4235,12 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   NSPoint pt = [theEvent locationInWindow];
   pt.x -= width/2;
   pt.y -= height/2;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700) {
-    NSPasteboardItem *pbItem = [[[NSPasteboardItem alloc] init] autorelease];
-    [pbItem setData:(NSData*)text forType:UTF8_pasteboard_type];
-    NSDraggingItem *dragItem = [[[NSDraggingItem alloc] initWithPasteboardWriter:pbItem] autorelease];
-    NSRect r = {pt, {CGFloat(width), CGFloat(height)}};
-    [dragItem setDraggingFrame:r contents:image];
-    [myview beginDraggingSessionWithItems:[NSArray arrayWithObject:dragItem] event:theEvent source:myview];
-  } else
-#endif
-  {
-    static NSSize offset={0,0};
-    // the 2 deprecation warnings can be ignored because this runs only for macOS < 10.7
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    // deprecated in 10.13
-    NSPasteboard *mypasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    [mypasteboard declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
-    [mypasteboard setData:(NSData*)text forType:UTF8_pasteboard_type];
-    [myview dragImage:image  at:pt  offset:offset // deprecated in 10.7
-                event:theEvent  pasteboard:mypasteboard
-               source:myview  slideBack:YES];
-#pragma clang diagnostic pop
-    if ( w ) {
-      int old_event = Fl::e_number;
-      w->handle(Fl::e_number = FL_RELEASE);
-      Fl::e_number = old_event;
-      Fl::pushed( 0 );
-    }
-  }
+  NSPasteboardItem *pbItem = [[[NSPasteboardItem alloc] init] autorelease];
+  [pbItem setData:(NSData*)text forType:UTF8_pasteboard_type];
+  NSDraggingItem *dragItem = [[[NSDraggingItem alloc] initWithPasteboardWriter:pbItem] autorelease];
+  NSRect r = {pt, {CGFloat(width), CGFloat(height)}};
+  [dragItem setDraggingFrame:r contents:image];
+  [myview beginDraggingSessionWithItems:[NSArray arrayWithObject:dragItem] event:theEvent source:myview];
   CFRelease(text);
   [localPool release];
   return true;

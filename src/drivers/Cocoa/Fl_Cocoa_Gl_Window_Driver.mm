@@ -117,26 +117,10 @@ static NSOpenGLPixelFormat* mode_to_NSOpenGLPixelFormat(int m, const int *alistp
       attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
       attribs[n++] = NSOpenGLPFASamples; attribs[n++] = (NSOpenGLPixelFormatAttribute)4;
     }
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
-#define NSOpenGLPFAOpenGLProfile      (NSOpenGLPixelFormatAttribute)99
-#define kCGLPFAOpenGLProfile          NSOpenGLPFAOpenGLProfile
-#define NSOpenGLProfileVersionLegacy  (NSOpenGLPixelFormatAttribute)0x1000
-#define NSOpenGLProfileVersion3_2Core  (NSOpenGLPixelFormatAttribute)0x3200
-#define kCGLOGLPVersion_Legacy        NSOpenGLProfileVersionLegacy
-#endif
-    if (fl_mac_os_version >= 100700) {
-      attribs[n++] = NSOpenGLPFAOpenGLProfile;
-      attribs[n++] =  (m & FL_OPENGL3) ? NSOpenGLProfileVersion3_2Core : NSOpenGLProfileVersionLegacy;
-    }
+    attribs[n++] = NSOpenGLPFAOpenGLProfile;
+    attribs[n++] =  (m & FL_OPENGL3) ? NSOpenGLProfileVersion3_2Core : NSOpenGLProfileVersionLegacy;
   } else {
     while (alistp[n] && n < 30) {
-      if (alistp[n] == kCGLPFAOpenGLProfile) {
-        if (fl_mac_os_version < 100700) {
-          if (alistp[n+1] != kCGLOGLPVersion_Legacy) return nil;
-          n += 2;
-          continue;
-        }
-      }
       attribs[n] = (NSOpenGLPixelFormatAttribute)alistp[n];
       n++;
     }
@@ -189,12 +173,7 @@ static NSOpenGLContext *create_GLcontext_for_window(
   if (shared_ctx && !context) context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:nil];
   if (context) {
     NSView *view = [fl_xid(window) contentView];
-    if (view && fl_mac_os_version >= 100700) {
-      //replaces  [view setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
-      typedef void (*bestResolutionIMP)(id, SEL, BOOL);
-      static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
-      addr(view, @selector(setWantsBestResolutionOpenGLSurface:), Fl::use_high_res_GL() != 0);
-    }
+    [view setWantsBestResolutionOpenGLSurface:(Fl::use_high_res_GL() != 0)];
     [context setView:view];
     if (Fl_Cocoa_Window_Driver::driver(window)->subRect()) {
       remove_gl_context_opacity(context);
@@ -272,11 +251,9 @@ void Fl_Cocoa_Gl_Window_Driver::after_show() {
       [shared_gl1_ctxt retain];
     }
     [view addSubview:gl1view];
-  #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
+    if (Fl::use_high_res_GL()) {
       [gl1view setWantsBestResolutionOpenGLSurface:YES];
     }
-  #endif
     [gl1ctxt setView:gl1view];
     remove_gl_context_opacity(gl1ctxt);
   }
@@ -284,7 +261,7 @@ void Fl_Cocoa_Gl_Window_Driver::after_show() {
 
 float Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
 {
-  int retina = (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::flx(pWindow) &&
+  int retina = (Fl::use_high_res_GL() && Fl_X::flx(pWindow) &&
           Fl_Cocoa_Window_Driver::driver(pWindow)->mapped_to_retina()) ? 2 : 1;
   return retina * Fl_Graphics_Driver::default_driver().scale();
 }
