@@ -16,6 +16,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Grid.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Input.H>
@@ -63,26 +64,25 @@ static Fl_Font extra_font;
 static int font_count = 0;
 static int first_free = 0;
 
-static void cb_exit(Fl_Button*, void*) {
-  if(fnt_chooser_win) fnt_chooser_win->hide();
-  if(main_win) main_win->hide();
-} /* cb_exit */
+// window callback: hide all windows if any window is closed
+
+static void cb_hide_all(Fl_Widget*, void*) {
+  Fl::hide_all_windows();
+}
 
 /*
  Class for displaying sample fonts.
  */
-class FontDisplay : public Fl_Widget
-{
-  void draw(void) FL_OVERRIDE;
+class FontDisplay : public Fl_Widget {
+  void draw(void) override;
 
 public:
-  int  font, size;
+  int font, size;
 
   int test_fixed_pitch(void);
 
   FontDisplay(Fl_Boxtype B, int X, int Y, int W, int H, const char *L = 0)
-  : Fl_Widget(X, Y, W, H, L)
-  {
+    : Fl_Widget(X, Y, W, H, L) {
     box(B);
     font = 0;
     size = DEF_SIZE;
@@ -93,22 +93,22 @@ public:
 /*
  Draw the sample text.
  */
-void FontDisplay::draw(void)
-{
+void FontDisplay::draw(void) {
   draw_box();
   fl_font((Fl_Font)font, size);
   fl_color(FL_BLACK);
   fl_draw(label(), x() + 3, y() + 3, w() - 6, h() - 6, align());
 }
 
+// test_fixed_pitch() measures two strings and returns:
+//  1: fixed font, measurements match exactly
+//  2: nearly fixed font, measurements are within 5%
+//  0: proportional font
 
-int FontDisplay::test_fixed_pitch(void)
-{
-  int w1, w2;
-  int h1, h2;
+int FontDisplay::test_fixed_pitch(void) {
 
-  w1 = w2 = 0;
-  h1 = h2 = 0;
+  int w1 = 0, w2 = 0;
+  int h1 = 0, h2 = 0;
 
   fl_font((Fl_Font)font, size);
 
@@ -120,9 +120,8 @@ int FontDisplay::test_fixed_pitch(void)
   // Is the font "nearly" fixed pitch? If it is within 5%, say it is...
   double f1 = (double)w1;
   double f2 = (double)w2;
-  double delta = fabs(f1 - f2) * 5.0;
+  double delta = fabs(f1 - f2) * 20.0;
   if (delta <= f1) return 2; // nearly fixed pitch...
-
   return 0; // NOT fixed pitch
 }
 
@@ -130,8 +129,7 @@ int FontDisplay::test_fixed_pitch(void)
 static FontDisplay *textobj;
 
 
-static void size_cb(Fl_Widget *, long)
-{
+static void size_cb(Fl_Widget *, long) {
   int size_idx = sizeobj->value();
 
   if (!size_idx) return;
@@ -147,8 +145,7 @@ static void size_cb(Fl_Widget *, long)
 }
 
 
-static void font_cb(Fl_Widget *, long)
-{
+static void font_cb(Fl_Widget *, long) {
   int font_idx = fontobj->value() + first_free;
 
   if (!font_idx) return;
@@ -157,38 +154,31 @@ static void font_cb(Fl_Widget *, long)
   textobj->font = font_idx;
   sizeobj->clear();
 
-  int  size_count = numsizes[font_idx-first_free];
-  int *size_array = sizes[font_idx-first_free];
-  if (!size_count)
-  {
+  int  size_count = numsizes[font_idx - first_free];
+  int *size_array = sizes[font_idx - first_free];
+  if (!size_count) {
     // no preferred sizes - probably TT fonts etc...
-  }
-  else if (size_array[0] == 0)
-  {
+  } else if (size_array[0] == 0) {
     // many sizes, probably a scaleable font with preferred sizes
     int j = 1;
-    for (int i = 1; i <= 64 || i < size_array[size_count - 1]; i++)
-    {
+    for (int i = 1; i <= 64 || i < size_array[size_count - 1]; i++) {
       char buf[16];
-      if (j < size_count && i == size_array[j])
-      {
+      if (j < size_count && i == size_array[j]) {
         snprintf(buf, 16, "@b%d", i);
         j++;
-      }
-      else
+      } else {
         snprintf(buf, 16, "%d", i);
+      }
       sizeobj->add(buf);
     }
     sizeobj->value(pickedsize);
-  }
-  else
-  {
+  } else {
     // some sizes, probably a font with a few fixed sizes available
     int w = 0;
-    for (int i = 0; i < size_count; i++)
-    {
+    for (int i = 0; i < size_count; i++) {
       // find the nearest available size to the current picked size
-      if (size_array[i] <= pickedsize) w = i;
+      if (size_array[i] <= pickedsize)
+        w = i;
 
       char buf[16];
       snprintf(buf, 16, "@b%d", size_array[i]);
@@ -200,16 +190,16 @@ static void font_cb(Fl_Widget *, long)
 
   // Now check to see if the font looks like a fixed pitch font or not...
   int looks_fixed = textobj->test_fixed_pitch();
-  if(looks_fixed)
-  {
-    if (looks_fixed > 1)
-      fix_prop->value("near");
-    else
+  switch(looks_fixed) {
+    case 1:
       fix_prop->value("fixed");
-  }
-  else
-  {
-    fix_prop->value("prop");
+      break;
+    case 2:
+      fix_prop->value("near");
+      break;
+    default:
+      fix_prop->value("prop");
+      break;
   }
 }
 
@@ -252,14 +242,12 @@ static void choose_cb(Fl_Widget *, long)
 }
 
 
-static void refresh_cb(Fl_Widget *, long)
-{
+static void refresh_cb(Fl_Widget *, long) {
   main_win->redraw();
 }
 
 
-static void own_face_cb(Fl_Widget *, void *)
-{
+static void own_face_cb(Fl_Widget *, void *) {
   int font_idx;
   int cursor_restore = 0;
   static int i_was = -1; // used to keep track of where we were in the list...
@@ -275,10 +263,8 @@ static void own_face_cb(Fl_Widget *, void *)
     cursor_restore = 1;
   }
 
-
   // Populate the font list with the names of the fonts found
-  for (font_idx = first_free; font_idx < font_count; font_idx++)
-  {
+  for (font_idx = first_free; font_idx < font_count; font_idx++) {
     int font_type;
     const char *name = Fl::get_font_name((Fl_Font)font_idx, &font_type);
     char buffer[128];
@@ -309,12 +295,12 @@ static void own_face_cb(Fl_Widget *, void *)
   // now put the browser position back the way it was... more or less
   fontobj->topline(i_was);
   // restore the cursor
-  if(cursor_restore) fnt_chooser_win->cursor(FL_CURSOR_DEFAULT);
+  if (cursor_restore)
+    fnt_chooser_win->cursor(FL_CURSOR_DEFAULT);
 }
 
 
-static void create_font_widget()
-{
+static void create_font_widget() {
   // Create the font sample label
   strcpy(label, "Font Sample\n");
   int i = 12; // strlen(label);
@@ -339,7 +325,6 @@ static void create_font_widget()
     {
       Fl_Group *textgroup = new Fl_Group(0, 0, 380, 105);
       {
-
         textobj = new FontDisplay(FL_FRAME_BOX, 10, 10, 360, 90, label);
         textobj->align(FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
         textobj->color(53, 3);
@@ -402,13 +387,11 @@ static void create_font_widget()
     }
     fnt_chooser_win->resizable(tile);
     fnt_chooser_win->end();
-        fnt_chooser_win->callback((Fl_Callback*)cb_exit);
+    fnt_chooser_win->callback(cb_hide_all);
   }
 }
 
-
-int make_font_chooser(void)
-{
+int make_font_chooser(void) {
   int font_idx;
 
   // create the widget frame
@@ -430,18 +413,17 @@ int make_font_chooser(void)
 
   // Populate the font list with the names of the fonts found
   first_free = FL_FREE_FONT;
-  for (font_idx = first_free; font_idx < font_count; font_idx++)
-  {
+  for (font_idx = first_free; font_idx < font_count; font_idx++) {
     // Find out how many sizes are supported for each font face
     int *size_array;
     int size_count = Fl::get_font_sizes((Fl_Font)font_idx, size_array);
     numsizes[font_idx-first_free] = size_count;
     // if the font has multiple sizes, populate the 2-D sizes array
-    if (size_count)
-    {
-      sizes[font_idx-first_free] = new int[size_count];
-      for (int j = 0; j < size_count; j++)
-        sizes[font_idx-first_free][j] = size_array[j];
+    if (size_count) {
+      sizes[font_idx - first_free] = new int[size_count];
+      for (int j = 0; j < size_count; j++) {
+        sizes[font_idx - first_free][j] = size_array[j];
+      }
     }
   } // end of font list filling loop
 
@@ -462,8 +444,6 @@ int make_font_chooser(void)
 
 /* End of Font Chooser Widget code */
 
-
-
 /* Unicode Font display widget */
 
 void box_cb(Fl_Widget* o, void*) {
@@ -471,17 +451,18 @@ void box_cb(Fl_Widget* o, void*) {
   thescroll->redraw();
 }
 
-
-class right_left_input : public Fl_Input
-{
+class right_left_input : public Fl_Input {
 public:
-  right_left_input (int x, int y, int w, int h) : Fl_Input(x, y, w, h) {}
-  void draw() FL_OVERRIDE {
-    if (type() == FL_HIDDEN_INPUT) return;
+  right_left_input(int x, int y, int w, int h)
+    : Fl_Input(x, y, w, h) {}
+  void draw() override {
+    if (type() == FL_HIDDEN_INPUT)
+      return;
     Fl_Boxtype b = box();
-    if (damage() & FL_DAMAGE_ALL) draw_box(b, color());
-    drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
-             w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b));
+    if (damage() & FL_DAMAGE_ALL)
+      draw_box(b, color());
+    drawtext(x() + Fl::box_dx(b) + 3, y() + Fl::box_dy(b),
+             w() - Fl::box_dw(b) - 6, h() - Fl::box_dh(b));
   }
   void drawtext(int X, int Y, int W, int H) {
     fl_color(textcolor());
@@ -516,41 +497,62 @@ void i7_cb(Fl_Widget *w, void *d)
   i8->value(buf);
 }
 
-
 class UCharDropBox : public Fl_Output {
 public:
   UCharDropBox(int x, int y, int w, int h, const char *label=0) :
-  Fl_Output(x, y, w, h, label) { }
-  int handle(int event) FL_OVERRIDE {
+  Fl_Output(x, y, w, h, label) {
+    tooltip("Drop one Unicode character here to decode it.\n"
+            "Only the first Unicode code point will be displayed.\n"
+            "Example: U+1F308 '🌈' 0x{f0,9f,8c,88}");
+  }
+  int handle(int event) override {
     switch (event) {
       case FL_DND_ENTER: return 1;
       case FL_DND_DRAG: return 1;
       case FL_DND_RELEASE: return 1;
-      case FL_PASTE:
-      {
-        static const char lut[] = "0123456789abcdef";
-        const char *t = Fl::event_text();
+      case FL_PASTE: {
         int i, n;
-        unsigned int ucode = fl_utf8decode(t, t+Fl::event_length(), &n);
-        if (n==0) {
+        const char *t = Fl::event_text();
+        char temp[10];
+        unsigned int ucode = fl_utf8decode(t, t + Fl::event_length(), &n);
+        if (n == 0) {
           value("");
           return 1;
         }
-        char buffer[200], *d = buffer;
-        for (i=0; i<n; i++) *d++ = t[i];
-        *d++ = ' ';
-        for (i=0; i<n; i++) {
-          *d++ = '\\'; *d++ = 'x';
-          *d++ = lut[(t[i]>>4)&0x0f]; *d++ = lut[t[i]&0x0f];
+        // Example output length and format:
+        // - length = 15: "U+0040 '@' 0x40"              -- UTF-8 encoding = 1 byte (ASCII)
+        // - length = 30: "U+1F308 '🌈' 0x{f0,9f,8c,88}" -- UTF-8 encoding = 4 bytes
+        // - length = 31: "U+10FFFF '􏿿' 0x{f4,8f,bf,bf}" -- UTF-8 encoding = 4 bytes
+        //
+        static const size_t max_size = 32;
+        // begin with first Unicode code point of Fl::event_text() in single quotes
+        int tl = fl_utf8len(t[0]);
+        if (tl < 1)
+          tl = 1;
+        std::string buffer;
+        buffer.reserve(max_size);
+        // add Unicode code point: "U+0000" - "U+10FFFF" (4-6 hex digits)
+        buffer += "U+";
+        snprintf(temp, 9, "%04X", ucode);
+        buffer += temp;
+        // add Unicode character in quotes
+        buffer += " '";
+        buffer += std::string(t, tl);
+        buffer += "'";
+        // add hex UTF-8 codes, format: "0xab" or "0x{de,ad,be,ef}"
+        buffer += " 0x";
+        if (n > 1)
+          buffer += "{";
+        for (i = 0; i < n; i++) {
+          if (i > 0)
+            buffer += ',';
+          snprintf(temp, 9, "%02x", (unsigned char)t[i]);
+          buffer += temp;
         }
-        *d++ = ' ';
-        *d++ = '0';
-        *d++ = 'x';
-        *d++ = lut[(ucode>>20)&0x0f]; *d++ = lut[(ucode>>16)&0x0f];
-        *d++ = lut[(ucode>>12)&0x0f]; *d++ = lut[(ucode>>8)&0x0f];
-        *d++ = lut[(ucode>>4)&0x0f]; *d++ = lut[ucode&0x0f];
-        *d++ = 0;
-        value(buffer);
+        if (n > 1)
+          buffer += "}";
+        value(buffer.c_str());
+        printf("size: %lu\n", buffer.size()); fflush(stdout);
       }
         return 1;
     }
@@ -558,13 +560,153 @@ public:
   }
 };
 
+// Create the layout with widgets. Widget contents will be assigned later.
+
+// constants for window layout
+
+const int IW = 280;           // width of input widgets (left col.)
+const int SW = 470;           // width of 'scroll' incl. scrollbars
+const int WW = IW + SW + 15;  // total window width
+const int WH = 400;           // minimal window height
+
+Fl_Input  *iw[20];            // global widget pointers
+
+
+// create the Fl_Scroll widget: right column of the main window:
+// input: `off` = offset for unicode character display
+// returns: the Fl_Scroll widget
+
+Fl_Scroll *make_scroll(int off) {
+
+  auto scroll = new Fl_Scroll(IW + 10, 0, SW, WH);
+
+  int end_list = 0x10000 / 16;
+  if (off > 2) {
+    if (off > 0x10F000)       // would extend higher than Unicode range
+      off = 0x10F000;
+    end_list = off + 0x10000;
+    if (end_list > 0x10FFFF)  // would be greater than Unicode range
+      end_list = 0x10FFFF;
+    off /= 16;
+    end_list /= 16;
+  }
+
+  for (int y = off; y < end_list; y++) {
+    // skip Unicode space reserved for surrogate pairs (U+D800 ... U+DFFF)
+    if (y == 0xD80) { // U+D800
+      Fl_Box *bx = new Fl_Box(IW + 10, (y - off) * 25, 450, 25);
+      bx->label("U+D800 … U+DFFF: reserved for UTF-16 surrogate pairs");
+      bx->color(fl_lighter(FL_YELLOW));
+      bx->box(FL_DOWN_BOX);
+      bx->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+      y = 0xE00;
+      off += 127;
+      if (y >= end_list) break;
+    }
+    int o = 0;
+    char bu[25]; // index label
+    char buf[16 * 6]; // utf8 text
+    int i = 16 * y;
+    for (int x = 0; x < 16; x++) {
+      int len;
+      len = fl_utf8encode(i, buf + o);
+      if (len < 1) len = 1;
+      o += len;
+      i++;
+    }
+    buf[o] = '\0';
+    snprintf(bu, sizeof(bu), "0x%06X", y * 16);
+
+    Fl_Input *b = new Fl_Input(IW + 10, (y - off) * 25, 80, 25);
+    b->textfont(FL_COURIER);
+    b->value(bu);
+
+    b = new Fl_Input(IW + 90, (y - off) * 25, 370, 25);
+    b->textfont(extra_font);
+    b->value(buf);
+  }
+  scroll->end();
+
+  return scroll;
+}
+
+// create the "grid" layout of the main window:
+// - left column: several widgets; subclasses of Fl_Input
+// - right column: one Fl_Scroll; see above: make_scroll()
+// input: `off` = offset for unicode character display; used in make_scroll()
+// returns: the Fl_Grid widget
+
+Fl_Grid *make_grid(int off) {
+
+  auto grid = new Fl_Grid(0, 0, WW, WH);  // full window size
+  grid->layout(10, 2, 5, 5);              // rows, cols, margin, gap
+  int col_weights[] = { 100, 0 };         // resize only first column
+  grid->col_weight(col_weights, 2);
+
+  // left column:
+
+  iw[0] = new Fl_Input(0, 0, IW, 25);
+  grid->widget(iw[0], 0, 0);
+
+  iw[1] = new Fl_Input(0, 0, IW, 25);
+  grid->widget(iw[1], 1, 0);
+
+  iw[2] = new Fl_Input(0, 0, IW, 25);
+  grid->widget(iw[2], 2, 0);
+
+  iw[3] = new Fl_Input(0, 0, IW, 25);
+  grid->widget(iw[3], 3, 0);
+  iw[3]->textfont(extra_font);
+
+  iw[4] = new right_left_input(0, 0, IW, 40);
+  grid->widget(iw[4], 4, 0);
+  iw[4]->textfont(extra_font);
+  iw[4]->textsize(24);
+
+  iw[5] = new right_left_input(0, 0, IW, 40);
+  grid->widget(iw[5], 5, 0);
+  iw[5]->textfont(extra_font);
+  iw[5]->textsize(24);
+
+  iw[6] = new Fl_Input(0, 0, IW, 25);
+  grid->widget(iw[6], 6, 0);
+
+  iw[7] = new Fl_Output(0, 0, IW, 25);
+  grid->widget(iw[7], 7, 0);
+
+  iw[6]->textsize(20);
+  iw[6]->when(FL_WHEN_CHANGED);
+  iw[6]->tooltip("Edit this field to decode non-ASCII characters\n(in octal bytes) and view the result below");
+  iw[6]->callback(i7_cb, iw[7]);
+
+  iw[7]->tooltip("Edit the field above to decode it\nand display the result in this field");
+
+  iw[8] = new Fl_Output(0, 0, IW, 40);
+  grid->widget(iw[8], 8, 0);
+  iw[8]->textfont(extra_font);
+  iw[8]->textsize(30);
+
+  iw[9] = new UCharDropBox(0, 0, IW, 40);
+  grid->widget(iw[9], 9, 0);
+  iw[9]->textsize(20);
+  iw[9]->value("drop box (see tooltip)");
+  iw[9]->color(fl_lighter(FL_GREEN));
+
+  // right column:
+
+  thescroll = make_scroll(off);
+  grid->widget(thescroll, 0, 1, 10, 1);
+
+  return grid;
+}
+
 int main(int argc, char** argv) {
 
-  const char *utf8 =
-    "ABCabcàèéïßîöüã123"                // latin1 / ISO-8859-1
-    "\360\237\230\204\360\237\221\215"  // emojis: grinning face with smiling eyes, thumbs up
-    ".";                                // final '.'
-  int utf8_l = (int)strlen(utf8);       // total length of UTF-8 string
+  int off = 2;
+  if (argc > 1) {
+    off = (int)strtoul(argv[1], NULL, 0);
+    argc = 1;
+  }
 
   make_font_chooser();
   extra_font = FL_TIMES_BOLD_ITALIC;
@@ -580,64 +722,20 @@ int main(int argc, char** argv) {
 #endif
                );
 
-  // constants for window layout
-
-  const int IW = 240;               // width of input widgets (left col.)
-  const int WW = IW + 10 + 5 * 75;  // total window width
-  const int WH = 400;               // window height
-
-  main_win = new Fl_Double_Window (WW, WH, "Unicode Display Test");
+  main_win = new Fl_Double_Window (WW, WH, "Unicode Display");
   main_win->begin();
 
-  Fl_Input i1(5, 5, IW, 25);
-  i1.value(utf8);
-  Fl_Scroll scroll(IW + 10, 0, 5 * 75, WH);
+  auto grid = make_grid(off);      // make a grid layout of widgets
 
-  int off = 2;
-  int end_list = 0x10000 / 16;
-  if (argc > 1) {
-    off = (int)strtoul(argv[1], NULL, 0);
-    end_list = off + 0x10000;
-    off /= 16;
-    end_list /= 16;
-  }
-  argc = 1;
-  for (int y = off; y < end_list; y++) {
-    // skip Unicode space reserved for surrogate pairs (U+D800 ... U+DFFF)
-    if (y == 0xD80) { // U+D800
-      Fl_Box *bx = new Fl_Box(IW + 10, (y - off) * 25, 460, 25);
-      bx->label("U+D800 … U+DFFF: UTF-16 surrogate pairs");
-      bx->color(fl_lighter(FL_YELLOW));
-      bx->box(FL_DOWN_BOX);
-      bx->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-      y = 0xE00;
-      off += 127;
-      if (y >= end_list) break;
-    }
-    int o = 0;
-    char bu[25]; // index label
-    char buf[16 * 6]; // utf8 text
-    int i = 16 * y;
-    for (int x = 0; x < 16; x++) {
-      int l;
-      l = fl_utf8encode(i, buf + o);
-      if (l < 1) l = 1;
-      o += l;
-      i++;
-    }
-    buf[o] = '\0';
-    snprintf(bu, sizeof(bu), "0x%06X", y * 16);
-    Fl_Input *b = new Fl_Input(IW + 10, (y - off) * 25, 80, 25);
-    b->textfont(FL_COURIER);
-    b->value(bu);
-    b = new Fl_Input(IW + 90, (y - off) * 25, 380, 25);
-    b->textfont(extra_font);
-    b->value(buf);
-  }
-  scroll.end();
-  main_win->resizable(scroll);
+  // populate the grid's contents
 
-  thescroll = &scroll;
+  const char *utf8 =
+    "@ABCabcàèéïßîöüã123 "        // latin1 (ISO-8859-1)
+    "\360\237\230\204 "           // emoji: grinning face with smiling eyes
+    "\360\237\221\215 "           // emoji: thumbs up
+    "\360\237\214\210 "           // emoji: Rainbow
+    ".";                          // final '.'
+  int utf8_l = (int)strlen(utf8); // total length of UTF-8 example string
 
   // convert UTF-8 string to lowercase
   char *utf8_lc = (char *)malloc(utf8_l * 3 + 1);
@@ -649,80 +747,63 @@ int main(int argc, char** argv) {
   int luc = fl_utf_toupper((const unsigned char *)utf8, utf8_l, utf8_uc);
   utf8_uc[luc] = '\0';
 
-  Fl_Input i2(5, 35, IW, 25);
-  i2.value(utf8_lc);
-
-  Fl_Input i3(5, 65, IW, 25);
-  i3.value(utf8_uc);
+  iw[0]->value(utf8);
+  iw[1]->value(utf8_lc);
+  iw[2]->value(utf8_uc);
 
   // free strings that are no longer used
   free(utf8_lc);
   free(utf8_uc);
 
+  // accented text in two forms:
+  //  - e\xCC\x82 = "e" + U+0303 = "e" + "Combining Circumflex Accent"
+  // -   \xC3\xAA = U+00ea = "ê" = "Latin Small Letter E with Circumflex"
+
   const char *ltr_txt = "\\->e\xCC\x82=\xC3\xAA";
-  Fl_Input i4(5, 90, IW, 25);
-  i4.value(ltr_txt);
-  i4.textfont(extra_font);
+  iw[3]->value(ltr_txt);
 
-  wchar_t r_to_l_txt[] = {/*8238,*/
+  // right-to-left text
+
+  char abuf[60];
+
+  wchar_t r_to_l_txt[] = { /*8238,*/   // U+202E = "RIGHT-TO-LEFT OVERRIDE"
     1610, 1608, 1606, 1604, 1603, 1608, 1583, 0};
+  int len = fl_utf8fromwc(abuf, 60, r_to_l_txt, 8);
+  abuf[len] = 0;
 
-  char abuf[40];
-  //  l = fl_unicode2utf(r_to_l_txt, 8, abuf);
-  int l = fl_utf8fromwc(abuf, 40, r_to_l_txt, 8);
-  abuf[l] = 0;
+  iw[4]->value(abuf);
 
-  right_left_input i5(5, 115, IW, 50);
-  i5.textfont(extra_font);
-  i5.textsize(30);
-  i5.value(abuf);
-
-  Fl_Input i7(5, 230, IW, 25);
-  Fl_Input i8(5, 260, IW, 25);
-  i7.callback(i7_cb, &i8);
-  i7.textsize(20);
-  i7.value(abuf);
-  i7.when(FL_WHEN_CHANGED);
-
-  wchar_t r_to_l_txt1[] = { /*8238,*/
+  wchar_t r_to_l_txt1[] = { /*8238,*/   // U+202E = "RIGHT-TO-LEFT OVERRIDE"
     1610, 0x20, 1608, 0x20, 1606, 0x20,
     1604, 0x20, 1603, 0x20, 1608, 0x20, 1583, 0};
+  len = fl_utf8fromwc(abuf, 60, r_to_l_txt1, 14);
+  abuf[len] = 0;
 
-  l = fl_utf8fromwc(abuf, 40, r_to_l_txt1, 14);
-  abuf[l] = 0;
-  right_left_input i6(5, 175, IW, 50);
-  i6.textfont(extra_font);
-  i6.textsize(30);
-  i6.value(abuf);
+  iw[5]->value(abuf);
 
-  // Now try Greg Ercolano's Japanese test sequence
-  // English: "Do nothing."
-  const char *utf8_jp =
-    "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1\x8c\xe3\x82\x8b\xe3\x80\x82";
+  iw[6]->value(abuf);
 
-  UCharDropBox db(5, 300, IW, 30);
-  db.textsize(16);
-  db.value("unichar drop box");
+  // Greg Ercolano's Japanese test sequence
+  // Note: in English: "Do nothing."
 
-  Fl_Output o9(5, 330, IW, 45);
-  o9.textfont(extra_font);
-  o9.textsize(30);
-  o9.value(utf8_jp);
+  iw[8]->value("\xe4\xbd\x95\xe3\x82\x82\xe8\xa1\x8c\xe3\x82\x8b\xe3\x80\x82");
 
   main_win->end();
-  main_win->callback((Fl_Callback*)cb_exit);
+  main_win->callback(cb_hide_all);
+  main_win->resizable(grid);
+  main_win->size_range(WW, WH);
 
-  fl_set_status(0, 370, 100, 30);
+  // fl_set_status(0, 370, 100, 30);
 
-  main_win->show(argc,argv);
+  main_win->show(argc, argv);
 
   fnt_chooser_win->show();
 
   int ret = Fl::run();
 
   // Free up the sizes arrays we allocated
-  if(numsizes) {delete [] numsizes;}
-  if(sizes) {delete [] sizes;}
+  if(numsizes) { delete [] numsizes; }
+  if(sizes) { delete [] sizes; }
 
   return ret;
 }
