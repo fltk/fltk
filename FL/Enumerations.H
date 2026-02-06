@@ -1,7 +1,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -37,7 +37,7 @@
 #  include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
 
 // Keep the following comment in sync with the values below for searching
-// Current FLTK version: 1.4.4
+// Current FLTK version: 1.4.5
 
 /** \name Version Numbers
 
@@ -66,9 +66,9 @@
 
    FLTK remains binary compatible between patches.
 
-   Version: 1.4.4
+   Version: 1.4.5 (see FL_PATCH_VERSION below!)
  */
-#define FL_PATCH_VERSION        4
+#define FL_PATCH_VERSION        5
 
 /**
     The FLTK version number as a \em double.

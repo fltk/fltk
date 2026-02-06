@@ -1,3 +1,31 @@
+Changes in FLTK 1.4.5                                   Released: xxx xx 2026
+
+  This is a maintenance release with improvements and fixes
+  backported from the current development branch 1.5 (master).
+
+ || Note: Details TBD, use `git shortlog` to find related commits, e.g.
+ ||   $ git shortlog release-1.4.4.. | sed -e's/^      /  - /'
+ ||   then sort/edit/move to sections below as appropriate...
+
+
+  Bug Fixes
+
+
+  Documentation Fixes and Improvements
+
+
+  Other Improvements
+
+
+  CMake And Other Build Procedure Improvements
+
+
+  ABI changes (FL_ABI_VERSION >= 10405)
+
+  - Make Fl_Table::get_selection() 'const' (#1305)
+
+
+
 Changes in FLTK 1.4.4                                   Released: Jul 20 2025
 
   This is a maintenance release with improvements and fixes
