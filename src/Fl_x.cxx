@@ -393,7 +393,7 @@ void Fl_X11_Screen_Driver::new_ic()
       }
     }
   }
-  XFree(xim_styles);
+  if (xim_styles) XFree(xim_styles);
 
   if (sarea) {
     xim_ic = XCreateIC(xim_im,
@@ -526,7 +526,7 @@ void Fl_X11_Screen_Driver::enable_im() {
   if (win && win->shown()) {
     xim_activate(fl_xid(win));
     XSetICFocus(xim_ic);
-  } else {
+  } else if (xim_im) {
     new_ic();
   }
 }
