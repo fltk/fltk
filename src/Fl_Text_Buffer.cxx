@@ -1,5 +1,5 @@
 //
-// Copyright 2001-2023 by Bill Spitzak and others.
+// Copyright 2001-2026 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -2091,10 +2091,11 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
 }
 
 
-/*
- Return the previous character position.
- This function processes a composed character (e.g., a flag emoji) as a single character.
+/**
+ Returns the index of the previous character.
+ This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
  Returns -1 if the beginning of the buffer is reached.
+ \param pos index to the current character
  */
 int Fl_Text_Buffer::prev_char(int pos) const
 {
@@ -2103,13 +2104,13 @@ int Fl_Text_Buffer::prev_char(int pos) const
 }
 
 
-/*
- Return the next character position.
- This function processes a composed character (e.g., a flag emoji) as a single character.
- Returns length() if the end of the buffer is reached.
- */
-int Fl_Text_Buffer::next_char(int pos) const
-{
+/**
+  Returns the index of the next character.
+  This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
+  Returns length() if the end of the buffer is reached.
+  \param[in] pos index to the current character
+*/
+int Fl_Text_Buffer::next_char(int pos) const {
   IS_UTF8_ALIGNED2(this, (pos))
   int l = fl_utf8len(byte_at(pos));
   if (l > 0) { // test for composed character except for bad bytes
@@ -2117,12 +2118,12 @@ int Fl_Text_Buffer::next_char(int pos) const
     char t[40]; // longest emoji sequences I know use 28 bytes in UTF8 (e.g., 🏴󠁧󠁢󠁷󠁬󠁳󠁿 "Wales flag")
     l = 0;
     // extract bytes after pos stopping after short codepoint or 40 bytes at most
-    while (p < mLength && l < sizeof(t)) {
+    while (p < mLength && l < (int)sizeof(t)) {
       b = byte_at(p++);
       t[l++] = b;
       ll = fl_utf8len1(b);
       count_points++;
-      for (int i = 1; i < ll && l < sizeof(t); i++) t[l++] = byte_at(p++);
+      for (int i = 1; i < ll && l < (int)sizeof(t); i++) t[l++] = byte_at(p++);
       if (count_points > 1 && (ll == 1 || ll == 2)) {
         // stop after short codepoint but not if it's the 1st codepoint which can be inside
         // emoji sequence (e.g. 9️⃣ "keycap 9")
