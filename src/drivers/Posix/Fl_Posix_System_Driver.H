@@ -71,7 +71,7 @@ public:
   static bool probe_for_GTK(int major, int minor, void **ptr_gtk);
 #endif
 #endif
-  static void *dlopen_or_dlsym(const char *lib_name, const char *func_name = NULL);
+  static FL_EXPORT void *dlopen_or_dlsym(const char *lib_name, const char *func_name = NULL);
   // these 4 are implemented in Fl_lock.cxx
   void awake(void*) FL_OVERRIDE;
   int lock() FL_OVERRIDE;
