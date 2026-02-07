@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2025 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -14,8 +14,10 @@
 #     https://www.fltk.org/bugs.php
 #
 
-# Targets that will be built: fluid, fluid-shared, and fluid-cmd (Windows only)
+# Targets that will be installed: fluid, fluid-shared, and fluid-cmd (Windows only)
 set(TARGETS "")
+# Targets that will be installed *and* "exported" as targets in CMake config file
+set(EXPORTS "")
 
 # Defaults to be used and potentially modified later
 
@@ -38,14 +40,23 @@ endif()
 # This must be a macro because it changes at least one global variable: TARGETS.
 # This macro also uses some (local) variables defined above.
 # In the future this might be converted to a function to avoid side effects.
+#
+# Parameters:
+#  - TARGET       target name, e.g. 'fluid', 'fluid-cmd', 'fluid-shared', ...
+#  - GUI          TRUE (GUI) or FALSE (command-line)
+#  - SOURCES      source files
+#  - LIBS         link libraries
+#  - EXPORT_NAME  should be the same as TARGET, unless there are reasons...
+#  - EXPORT       TRUE if "exported" in config file, FALSE if not
+#  - (others)     see local variables defined above !
 
-macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME)
+macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
 
   if(ICON_PATH)
     list(APPEND SOURCES ${ICON_PATH}) # macOS only
   endif()
 
-  # message(STATUS "[fluid] make_target ${TARGET} ${GUI} ${SOURCES} ${LIBS} ${EXPORT_NAME}")
+  # message(STATUS "[fluid] make_target ${TARGET} GUI:${GUI} ${SOURCES} ${LIBS} NAME:${EXPORT_NAME} EXPORT:${EXPORT}")
 
   # Options WIN32 and MACOSX_BUNDLE build a Windows GUI program or macOS bundle,
   # respectively. Both options are ignored on other platforms.
@@ -56,7 +67,11 @@ macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME)
     add_executable(${TARGET} ${SOURCES})
   endif(${GUI})
 
-  list(APPEND TARGETS ${TARGET})
+  if(${EXPORT})
+    list(APPEND EXPORTS ${TARGET})
+  else()
+    list(APPEND TARGETS ${TARGET})
+  endif()
 
   if(BACKEND_APPLE)
 
@@ -86,7 +101,7 @@ macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME)
   target_link_libraries(${TARGET} PRIVATE ${LIBS})
   set_target_properties(${TARGET} PROPERTIES EXPORT_NAME ${EXPORT_NAME})
 
-endmacro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME)
+endmacro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
 
 
 # Main source and header files used for the executable because macOS (Xcode)
@@ -179,13 +194,13 @@ target_link_libraries(fluid-lib PUBLIC fltk::images)
 
 # Build targets
 
-make_target(fluid TRUE "${MAIN_FILES}" fluid-lib fluid)
+make_target(fluid TRUE "${MAIN_FILES}" fluid-lib fluid TRUE)
 
 # Build the console app on Windows
 # This is done for all Windows targets, even if cross-compiling.
 
 if(WIN32)
-  make_target(fluid-cmd FALSE "${MAIN_FILES}" fluid-lib fluid-cmd)
+  make_target(fluid-cmd FALSE "${MAIN_FILES}" fluid-lib fluid-cmd TRUE)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()
   set(FLTK_FLUID_EXECUTABLE fltk::fluid)
@@ -207,9 +222,9 @@ if(FLTK_BUILD_SHARED_LIBS)
   endif(MSVC)
 
   if(MSVC)
-    make_target(fluid-shared TRUE "${MAIN_FILES}" "fluid-lib-shared;call_main" fluid-shared)
+    make_target(fluid-shared TRUE "${MAIN_FILES}" "fluid-lib-shared;call_main" fluid-shared FALSE)
   else()
-    make_target(fluid-shared TRUE "${MAIN_FILES}" fluid-lib-shared fluid-shared)
+    make_target(fluid-shared TRUE "${MAIN_FILES}" fluid-lib-shared fluid-shared FALSE)
   endif()
 
   # experimental
@@ -226,20 +241,32 @@ set(FLTK_FLUID_EXECUTABLE "${FLTK_FLUID_EXECUTABLE}" PARENT_SCOPE)
 
 # Create aliases for all targets
 
-foreach(tgt ${TARGETS})
+foreach(tgt ${TARGETS} ${EXPORTS})
   add_executable(fltk::${tgt} ALIAS ${tgt})
 endforeach()
 
 # Install the GUI and (on Windows only) the commandline tool 'fluid-cmd'
-# message(STATUS "Fluid: INSTALL TARGETS: ${TARGETS}")
+# message(STATUS "[fluid] INSTALL + EXPORT: ${EXPORTS}")
+# message(STATUS "[fluid] INSTALL - only  : ${TARGETS}")
 
-install(TARGETS ${TARGETS}
-        EXPORT  FLTK-Targets
-        RUNTIME DESTINATION ${FLTK_BINDIR}
-        LIBRARY DESTINATION ${FLTK_LIBDIR}
-        ARCHIVE DESTINATION ${FLTK_LIBDIR}
-        BUNDLE  DESTINATION ${FLTK_BINDIR} # macOS: bundles
-)
+if(EXPORTS)
+  install(TARGETS ${EXPORTS}
+          EXPORT  FLTK-Targets
+          RUNTIME DESTINATION ${FLTK_BINDIR}
+          LIBRARY DESTINATION ${FLTK_LIBDIR}
+          ARCHIVE DESTINATION ${FLTK_LIBDIR}
+          BUNDLE  DESTINATION ${FLTK_BINDIR} # macOS: bundles
+  )
+endif()
+
+if(TARGETS)
+  install(TARGETS ${TARGETS}
+          RUNTIME DESTINATION ${FLTK_BINDIR}
+          LIBRARY DESTINATION ${FLTK_LIBDIR}
+          ARCHIVE DESTINATION ${FLTK_LIBDIR}
+          BUNDLE  DESTINATION ${FLTK_BINDIR} # macOS: bundles
+  )
+endif()
 
 # Install desktop files
 

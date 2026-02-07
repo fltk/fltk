@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build fltk-options for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 2023-2025 by Bill Spitzak and others.
+# Copyright 2023-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -120,8 +120,8 @@ endforeach()
 # Install the GUI and (on Windows only) the commandline tool 'fltk-options-cmd'
 # message(STATUS "fltk-options: INSTALL TARGETS: ${TARGETS}")
 
+# note: do NOT "export" fltk-options - this could break CMake config files
 install(TARGETS ${TARGETS}
-        EXPORT  FLTK-Targets
         RUNTIME DESTINATION ${FLTK_BINDIR}
         LIBRARY DESTINATION ${FLTK_LIBDIR}
         ARCHIVE DESTINATION ${FLTK_LIBDIR}
