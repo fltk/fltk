@@ -552,7 +552,7 @@ public:
         if (n > 1)
           buffer += "}";
         value(buffer.c_str());
-        printf("size: %lu\n", buffer.size()); fflush(stdout);
+        // printf("size: %d\n", (int)buffer.size()); fflush(stdout);
       }
         return 1;
     }
