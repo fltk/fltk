@@ -2,7 +2,7 @@
 # Installation support for building the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2025 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -141,8 +141,8 @@ if(FLTK_BUILD_TEST) # "OR FLTK_BUILD_GAMES" (not yet implemented)
     else()
       set(tgt_ ${game_})
     endif()
+    # note: do NOT "export" games - this could break CMake config files
     install(TARGETS ${tgt_}
-            EXPORT  FLTK-Targets
             RUNTIME DESTINATION ${FLTK_BINDIR}
             LIBRARY DESTINATION ${FLTK_LIBDIR}
             ARCHIVE DESTINATION ${FLTK_LIBDIR}
