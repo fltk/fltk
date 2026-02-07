@@ -2092,14 +2092,16 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
 
 
 /**
- Returns the index of the previous character.
- This function processes an emoji sequence (see \ref fl_utf8_next_composed_char) as a single character.
- Returns -1 if the beginning of the buffer is reached.
- \param pos index to the current character
- */
-int Fl_Text_Buffer::prev_char(int pos) const
-{
-  if (pos==0) return -1;
+  Returns the index of the previous character.
+  This function processes an emoji sequence (see \ref fl_utf8_next_composed_char)
+  as a single character.
+  \param[in] pos index of the current character
+  \return    index of the previous character
+  \retval -1 if the beginning of the buffer is reached.
+*/
+int Fl_Text_Buffer::prev_char(int pos) const {
+  if (pos == 0)
+    return -1;
   return prev_char_clipped(pos);
 }
 
