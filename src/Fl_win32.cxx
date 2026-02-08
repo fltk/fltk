@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -2178,14 +2178,6 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   if (!first_class_name) {
     first_class_name = class_name;
   }
-// Prefix user-set window class name by "FLTK", unless it's already here,
-// to avoid collision with system-defined window class names (example "edit")
-  if (strncmp(class_name, "FLTK", 4)) {
-    static char new_class_name[100];
-    snprintf(new_class_name, sizeof(new_class_name), "FLTK-%s", class_name);
-    class_name = new_class_name;
-  }
-  //fprintf(stderr,"makeWindow: class_name=%s\n",class_name);fflush(stderr);
 
   wchar_t class_namew[100]; // (limited) buffer for Windows class name
 
