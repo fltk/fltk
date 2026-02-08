@@ -57,6 +57,7 @@ Fl_Double_Window *app_window = NULL;
 
 void tut1_build_app_window() {
   app_window = new Fl_Double_Window(640, 480, "FLTK Editor");
+  app_window->xclass("fl_editor");
 }
 
 int main (int argc, char **argv) {
@@ -65,6 +66,11 @@ int main (int argc, char **argv) {
   return Fl::run();
 }
 \endcode
+
+Note: setting the xclass() of the window is not required but it is considered
+  good style. In this case it works around a known side effect under \b Windows
+  where leaving the default ("editor.exe") would prevent entering emojis with
+  the emoji palette. You can ignore this for now in this tutorial.
 
 Passing `argc` and `argv` to `Fl_Double_Window::show()` allows FLTK to parse
 command line options, providing the user with the ability to change the
