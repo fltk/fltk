@@ -105,15 +105,12 @@ static BOOL through_Fl_X_flush = NO;
 static BOOL views_use_CA = NO; // YES means views are layer-backed, as on macOS 10.14 when linked with SDK 10.14
 static int im_enabled = -1;
 
-// OS version-dependent pasteboard type names.
-// the next 5 deprecation/availability warnings can be legitimately ignored
+static NSString *PICT_pasteboard_type = @"com.apple.pict";
+// OS version-dependent pasteboard type name:
+// the next deprecation/availability warning can be legitimately ignored
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma clang diagnostic ignored "-Wunguarded-availability"
-static NSString *TIFF_pasteboard_type = NSPasteboardTypeTIFF;
-static NSString *PDF_pasteboard_type = NSPasteboardTypePDF;
-static NSString *PICT_pasteboard_type = @"com.apple.pict";
-static NSString *UTF8_pasteboard_type = NSPasteboardTypeString;
 static NSString *fl_filenames_pboard_type =
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
   (fl_mac_os_version >= 101300 ? NSPasteboardTypeFileURL : NSFilenamesPboardType);
@@ -2693,8 +2690,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
       CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
       CFRelease(all);
     }
-  } else if ([[pboard types] containsObject:UTF8_pasteboard_type]) {
-    NSData *data = [pboard dataForType:UTF8_pasteboard_type];
+  } else if ([[pboard types] containsObject:NSPasteboardTypeString]) {
+    NSData *data = [pboard dataForType:NSPasteboardTypeString];
     DragData = (char *)malloc([data length] + 1);
     [data getBytes:DragData length:[data length]];
     DragData[([data length])] = 0;
@@ -3136,7 +3133,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     [cw setAlphaValue:0.97];
   }
   // Install DnD handlers
-  [myview registerForDraggedTypes:[NSArray arrayWithObjects:UTF8_pasteboard_type,
+  [myview registerForDraggedTypes:[NSArray arrayWithObjects:NSPasteboardTypeString,
                                    fl_filenames_pboard_type, nil]];
 
   if (pWindow->get_size_range(NULL, NULL, NULL, NULL, NULL, NULL, NULL)) size_range();
@@ -3653,13 +3650,13 @@ Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
   CGPDFContextClose(gc); // needs 10.5, necessary with macOS 10.15
   CGContextRelease(gc);
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
-  [clip declareTypes:[NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, nil] owner:nil];
-  [clip setData:(NSData*)pdfdata forType:PDF_pasteboard_type];
+  [clip declareTypes:[NSArray arrayWithObjects:NSPasteboardTypePDF, NSPasteboardTypeTIFF, nil] owner:nil];
+  [clip setData:(NSData*)pdfdata forType:NSPasteboardTypePDF];
 
   //second, transform this PDF to a bitmap image and put it as tiff in clipboard with retina resolution
   NSBitmapImageRep *bitmap = pdf_to_nsbitmapimagerep((NSData*)pdfdata);
   CFRelease(pdfdata);
-  [clip setData:[bitmap TIFFRepresentation] forType:TIFF_pasteboard_type];
+  [clip setData:[bitmap TIFFRepresentation] forType:NSPasteboardTypeTIFF];
   [bitmap release];
   delete driver();
 }
@@ -3711,8 +3708,8 @@ void Fl_Cocoa_Screen_Driver::copy(const char *stuff, int len, int clipboard, con
     CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[1], len);
     if (text==NULL) return; // there was a pb creating the object, abort.
     NSPasteboard *clip = [NSPasteboard generalPasteboard];
-    [clip declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
-    [clip setData:(NSData*)text forType:UTF8_pasteboard_type];
+    [clip declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
+    [clip setData:(NSData*)text forType:NSPasteboardTypeString];
     CFRelease(text);
   }
 }
@@ -3721,13 +3718,13 @@ static int get_plain_text_from_clipboard(int clipboard)
 {
   NSInteger length = 0;
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
-  NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:UTF8_pasteboard_type, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
+  NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:NSPasteboardTypeString, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
   if (found) {
     NSData *data = [clip dataForType:found];
     if (data) {
       NSInteger len;
       char *aux_c = NULL;
-      if (![found isEqualToString:UTF8_pasteboard_type]) {
+      if (![found isEqualToString:NSPasteboardTypeString]) {
         NSString *auxstring;
         auxstring = (NSString *)CFStringCreateWithBytes(NULL, (const UInt8*)[data bytes],
                                   [data length],
@@ -3739,7 +3736,7 @@ static int get_plain_text_from_clipboard(int clipboard)
       }
       else len = [data length] + 1;
       resize_selection_buffer((int)len, clipboard);
-      if (![found isEqualToString:UTF8_pasteboard_type]) {
+      if (![found isEqualToString:NSPasteboardTypeString]) {
         strcpy(fl_selection_buffer[clipboard], aux_c);
         free(aux_c);
       }
@@ -3758,7 +3755,7 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
 {
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
-  NSArray  *possible = [NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, PICT_pasteboard_type, nil];
+  NSArray  *possible = [NSArray arrayWithObjects:NSPasteboardTypePDF, NSPasteboardTypeTIFF, PICT_pasteboard_type, nil];
   NSString *found = nil;
   NSUInteger rank;
   for (NSUInteger i = 0; (!found) && i < [possible count]; i++) {
@@ -3773,10 +3770,10 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
   NSData *data = [clip dataForType:found];
   if (!data) return NULL;
   NSBitmapImageRep *bitmap = nil;
-  if ([found isEqualToString:TIFF_pasteboard_type]) {
+  if ([found isEqualToString:NSPasteboardTypeTIFF]) {
     bitmap = [[NSBitmapImageRep alloc] initWithData:data];
   }
-  else if ([found isEqualToString:PDF_pasteboard_type] || [found isEqualToString:PICT_pasteboard_type]) {
+  else if ([found isEqualToString:NSPasteboardTypePDF] || [found isEqualToString:PICT_pasteboard_type]) {
     bitmap = pdf_to_nsbitmapimagerep(data);
   }
   if (!bitmap) return NULL;
@@ -3826,10 +3823,10 @@ void Fl_Cocoa_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const cha
 int Fl_Cocoa_Screen_Driver::clipboard_contains(const char *type) {
   NSString *found = nil;
   if (strcmp(type, Fl::clipboard_plain_text) == 0) {
-    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:UTF8_pasteboard_type, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
+    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:NSPasteboardTypeString, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
     }
   else if (strcmp(type, Fl::clipboard_image) == 0) {
-    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:TIFF_pasteboard_type, PDF_pasteboard_type, PICT_pasteboard_type, nil]];
+    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:NSPasteboardTypeTIFF, NSPasteboardTypePDF, PICT_pasteboard_type, nil]];
     }
   return found != nil;
 }
@@ -4236,7 +4233,7 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   pt.x -= width/2;
   pt.y -= height/2;
   NSPasteboardItem *pbItem = [[[NSPasteboardItem alloc] init] autorelease];
-  [pbItem setData:(NSData*)text forType:UTF8_pasteboard_type];
+  [pbItem setData:(NSData*)text forType:NSPasteboardTypeString];
   NSDraggingItem *dragItem = [[[NSDraggingItem alloc] initWithPasteboardWriter:pbItem] autorelease];
   NSRect r = {pt, {CGFloat(width), CGFloat(height)}};
   [dragItem setDraggingFrame:r contents:image];
