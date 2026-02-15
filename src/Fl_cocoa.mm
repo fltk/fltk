@@ -124,7 +124,7 @@ static NSMutableArray *dropped_files_list = nil; // list of files dropped at app
 typedef void (*open_cb_f_type)(const char *);
 static Fl_Window *starting_moved_window = NULL; // the moved window which brings its subwins with it
 
-enum { FLTKTimerEvent = 1, FLTKDataReadyEvent };
+enum { FLTKBreakLoopEvent = 1, FLTKDataReadyEvent };
 
 // Carbon functions and definitions
 
@@ -133,9 +133,6 @@ typedef void *TSMDocumentID;
 extern "C" enum {
  kTSMDocumentEnabledInputSourcesPropertyTag = 'enis' //  from Carbon/TextServices.h
 };
-
-// Undocumented voodoo. Taken from Mozilla.
-static const int smEnableRomanKybdsOnly = -23;
 
 typedef TSMDocumentID (*TSMGetActiveDocument_type)(void);
 static TSMGetActiveDocument_type TSMGetActiveDocument;
@@ -149,7 +146,6 @@ static CFStringRef kTISTypeKeyboardLayout;
 static CFStringRef kTISPropertyInputSourceType;
 
 typedef void (*KeyScript_type)(short);
-static KeyScript_type KeyScript;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_13
 const NSInteger NSControlStateValueOn = NSOnState;
@@ -533,7 +529,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
                                       location:NSMakePoint(0,0)
                                  modifierFlags:0 timestamp:0
                                   windowNumber:0 context:NULL
-                                       subtype:FLTKTimerEvent
+                                       subtype:FLTKBreakLoopEvent
                                          data1:0
                                          data2:0];
   [NSApp postEvent:event atStart:NO];
@@ -1199,23 +1195,6 @@ static FLTextView *fltextview_instance = nil;
 - (void)doNothing:(id)unused;
 - (BOOL)window:(NSWindow *)window shouldPopUpDocumentPathMenu:(NSMenu *)menu;
 @end
-
-
-/* make subwindows re-appear after appl unhide or window deminiaturize
- (not necessary with 10.5 and above)
- */
-static void orderfront_subwindows(FLWindow *xid)
-{
-  NSArray *children = [xid childWindows]; // 10.2
-  NSEnumerator *enumerator = [children objectEnumerator];
-  id child;
-  while ((child = [enumerator nextObject]) != nil) { // this undo-redo seems necessary under 10.3
-    [xid removeChildWindow:child];
-    [xid addChildWindow:child ordered:NSWindowAbove];
-    [child orderWindow:NSWindowAbove relativeTo:[xid windowNumber]];
-    orderfront_subwindows(child);
-  }
-}
 
 
 // compute coordinates of the win top left in FLTK units
@@ -4460,11 +4439,6 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x,
     [childbitmap release];
   }
   return bitmap;
-}
-
-static void nsbitmapProviderReleaseData (void *info, const void *data, size_t size)
-{
-  [(NSBitmapImageRep*)info release];
 }
 
 CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w, int h, bool capture_subwins)
