@@ -205,14 +205,12 @@ endif(NOT HAVE_DIRENT_H)
 
 # where to find freetype headers
 
-find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
-find_path(FREETYPE_PATH freetype/freetype.h PATH_SUFFIXES freetype2)
-
-if(FREETYPE_PATH AND ((NOT APPLE) OR FLTK_BACKEND_X11))
-  list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${FREETYPE_PATH})
-endif(FREETYPE_PATH AND ((NOT APPLE) OR FLTK_BACKEND_X11))
-
-mark_as_advanced(FREETYPE_PATH)
+if((NOT APPLE) OR FLTK_BACKEND_X11)
+  find_package(Freetype)
+  if(Freetype_FOUND)
+    list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${FREETYPE_INCLUDE_DIRS})
+  endif()
+endif()
 
 #######################################################################
 # libraries
