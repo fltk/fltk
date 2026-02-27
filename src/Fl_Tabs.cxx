@@ -373,7 +373,12 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
  */
 void Fl_Tabs::check_overflow_menu() {
   int nc = children();
-  int H = tab_height(); if (H < 0) H = -H;
+  if (nc == 0) {
+    has_overflow_menu = 0;
+    return;
+  }
+  int H = tab_height();
+  if (H < 0) H = -H;
   if (tab_pos[nc] > w()-H+OV_BORDER) {
     has_overflow_menu = 1;
   } else {
@@ -433,9 +438,9 @@ int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
  */
 void Fl_Tabs::handle_overflow_menu() {
   int nc = children();
+  if (nc <= 0) return;
   int H = tab_height(); if (H < 0) H = -H;
   int i, fv=-1, lv=nc; // first and last visible tab
-  if (nc <= 0) return;
 
   // count visible children
   for (i = 0; i < nc; i++) {
@@ -535,8 +540,9 @@ int Fl_Tabs::handle(int event) {
   switch (event) {
 
   case FL_MOUSEWHEEL:
-    if (   ( (overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN) )
-        && hit_tabs_area(Fl::event_x(), Fl::event_y()) ) {
+    if (((overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN)) &&
+        (children() > 0) &&
+        hit_tabs_area(Fl::event_x(), Fl::event_y()) ) {
       int original_tab_offset = tab_offset;
       tab_offset -= 2 * Fl::event_dx();
       if (tab_offset > 0)
@@ -573,7 +579,8 @@ int Fl_Tabs::handle(int event) {
     if (event == FL_RELEASE && o != o_push_drag) { // see issue #1075
       return 1;
     }
-    if ( (overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN) ) {
+    if (((overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN)) &&
+        (children() > 0)) {
       if (tab_pos[children()] < w() && tab_offset == 0) {
         // fall through
       } else if (!Fl::event_is_click()) {
