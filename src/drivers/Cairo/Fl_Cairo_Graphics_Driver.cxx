@@ -1340,7 +1340,7 @@ void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
-  cairo_translate(cairo_, x - 1, y - (fd->line_height - fd->descent) / float(PANGO_SCALE) - 1);
+  cairo_translate(cairo_, x - 1.5, y - (fd->line_height - fd->descent) / float(PANGO_SCALE) - 1.5);
   str = clean_utf8(str, n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_); // 1.1O
