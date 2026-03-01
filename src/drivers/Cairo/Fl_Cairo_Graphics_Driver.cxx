@@ -1340,7 +1340,7 @@ void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
-  cairo_translate(cairo_, x - 1.5, y - (fd->line_height - fd->descent) / float(PANGO_SCALE) - 1.5);
+  cairo_translate(cairo_, x - 0.5, y - (fd->line_height - fd->descent) / float(PANGO_SCALE) - 0.5);
   str = clean_utf8(str, n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_); // 1.1O
@@ -1424,8 +1424,8 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
   pango_layout_get_extents(pango_layout_, &ink_rect, NULL);
   double f = PANGO_SCALE;
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
-  dx = ink_rect.x / f - 1;
-  dy = (ink_rect.y - fd->line_height + fd->descent) / f - 1;
+  dx = ink_rect.x / f;
+  dy = (ink_rect.y - fd->line_height + fd->descent) / f;
   w = ceil(ink_rect.width / f);
   h = ceil(ink_rect.height / f);
 }
