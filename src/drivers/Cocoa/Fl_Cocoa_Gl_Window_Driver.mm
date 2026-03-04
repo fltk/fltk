@@ -465,28 +465,6 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   Fl_RGB_Image *rgb = cgimage_to_rgb4(cgimg);
   CGImageRelease(cgimg);
   return rgb;
-  [(NSOpenGLContext*)glw->context() makeCurrentContext];
-  // to capture also the overlay and for directGL demo
-  [(NSOpenGLContext*)glw->context() flushBuffer];
-  // Read OpenGL context pixels directly.
-  // For extra safety, save & restore OpenGL states that are changed
-  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
-  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-  // Read a block of pixels from the frame buffer
-  int mByteWidth = w * 4;
-  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
-  uchar *baseAddress = new uchar[mByteWidth * h];
-  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
-               GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, baseAddress);
-  glPopClientAttrib();
-  baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
-  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, 3 * w);
-  img->alloc_array = 1;
-  [(NSOpenGLContext*)glw->context() flushBuffer];
-  return img;
 }
 
 
