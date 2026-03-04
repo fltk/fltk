@@ -671,7 +671,7 @@ void Fl_Tree::calc_tree() {
   // We need this to compute scrollbars..
   // By the end, 'Y' will be the lowest point on the tree
   //
-  int X = _tix + _prefs.marginleft() + _hscroll->value();
+  int X = _tix + _prefs.marginleft() - _hscroll->value();
   int Y = _tiy + _prefs.margintop()  - _vscroll->value();
   int W = _tiw;
   // Adjust root's X/W if connectors off
