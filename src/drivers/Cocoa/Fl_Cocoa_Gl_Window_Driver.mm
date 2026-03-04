@@ -409,28 +409,6 @@ void Fl_Cocoa_Gl_Window_Driver::gl_start() {
   [(NSOpenGLContext*)gl_start_context update];
 }
 
-// convert BGRA to RGB and also exchange top and bottom
-static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
-{
-  uchar *newimg = new uchar[3*w*h];
-  uchar *to = newimg;
-  for (int i = h-1; i >= 0; i--) {
-    uchar *from = baseAddress + i * mByteWidth;
-    for (int j = 0; j < w; j++, from += 4) {
-#if defined(__ppc__) && __ppc__
-      memcpy(to, from + 1, 3);
-      to += 3;
-#else
-      *(to++) = *(from+2);
-      *(to++) = *(from+1);
-      *(to++) = *from;
-#endif
-    }
-  }
-  delete[] baseAddress;
-  return newimg;
-}
-
 
 static Fl_RGB_Image *cgimage_to_rgb4(CGImageRef img) {
   int w = (int)CGImageGetWidth(img);
