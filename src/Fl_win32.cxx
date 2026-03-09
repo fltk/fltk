@@ -1790,6 +1790,7 @@ content  key    keyboard layout
         int news = sd->screen_num_unscaled(nx + int(trueW * scale / 2), ny + int(trueH * scale / 2));
         if (news == -1)
           news = olds;
+        else if (news != olds) wd->screen_num(news);
         scale = sd->scale(news);
         wd->x(int(round(nx/scale)));
         wd->y(int(round(ny/scale)));
