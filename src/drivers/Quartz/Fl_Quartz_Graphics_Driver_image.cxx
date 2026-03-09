@@ -50,28 +50,27 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 {
   if (!linedelta) linedelta = W*abs(delta);
 
-  uchar *tmpBuf = 0;
   if (!cb) {
     if (delta < 0) buf -= (W-1)*(-delta);
     if (linedelta < 0) buf -= (H-1)*abs(linedelta);
   }
   const void *array = buf;
-  if (cb || driver->has_feature(Fl_Quartz_Graphics_Driver::PRINTER)) {
-    tmpBuf = new uchar[ H*W*abs(delta) ];
-    if (cb) {
-      for (int i=0; i<H; i++) {
-        cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
-      }
-    } else {
-      uchar *p = tmpBuf;
-      for (int i=0; i<H; i++) {
-        memcpy(p, buf+i*abs(linedelta), W*abs(delta));
-        p += W*abs(delta);
-        }
+  // Always duplicate the image data because Quartz delays using that data which may have
+  // been released when used (see #1372).
+  uchar *tmpBuf = new uchar[ H*W*abs(delta) ];
+  if (cb) {
+    for (int i=0; i<H; i++) {
+      cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
     }
-    array = (void*)tmpBuf;
-    linedelta = W*abs(delta);
+  } else {
+    uchar *p = tmpBuf;
+    for (int i=0; i<H; i++) {
+      memcpy(p, buf+i*abs(linedelta), W*abs(delta));
+      p += W*abs(delta);
+    }
   }
+  array = (void*)tmpBuf;
+  linedelta = W*abs(delta);
   // create an image context
   CGColorSpaceRef   lut = 0;
   if (abs(delta)<=2)
@@ -81,8 +80,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   // a release callback is necessary when the gc is a print context because the image data
   // must be kept until the page is closed. Thus tmpBuf can't be deleted here. It's too early.
   CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, abs(linedelta)*H,
-                                                       tmpBuf ? dataReleaseCB : NULL
-                                                       );
+                                                       dataReleaseCB);
   CGImageRef        img = CGImageCreate( W, H, 8, 8*abs(delta), abs(linedelta),
                             lut, abs(delta)&1?kCGImageAlphaNone:kCGImageAlphaLast,
                             src, 0L, false, kCGRenderingIntentDefault);
