@@ -3108,9 +3108,6 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     this->x(round(crect.origin.x/s));
     this->y( round((main_screen_height - crect.origin.y)/s) - w->h() );
   }
-  if(w->menu_window()) { // make menu windows slightly transparent
-    [cw setAlphaValue:0.97];
-  }
   // Install DnD handlers
   [myview registerForDraggedTypes:[NSArray arrayWithObjects:NSPasteboardTypeString,
                                    fl_filenames_pboard_type, nil]];
