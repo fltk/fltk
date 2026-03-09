@@ -479,7 +479,7 @@ void Fl_Graphics_Driver::draw_image_general_(const uchar *buf, int X, int Y, int
     data.buf = buf;
     data.D_in = d_corrected;
     data.D_out = d_out;
-    data.L = (L ? L : W * d_corrected);
+    data.L = (L ? L : W * abs(d_corrected));
     if (alpha) d_out |= FL_IMAGE_WITH_ALPHA;
     fl_graphics_driver->draw_image((Fl_Draw_Image_Cb)scan_cb, &data, X, Y, W, H, d_out);
   } else
