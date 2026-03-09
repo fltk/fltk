@@ -892,7 +892,13 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     // fl_max(cx, 0),fl_max(cy, 0) = top-left of drawn part in image.
     int l = (ld() ? ld() : d() * w());
     const uchar *p = array + fl_max(cy, 0) * l + fl_max(cx, 0) * d();
-    fl_graphics_driver->draw_image(p, r1.x, r1.y, r1.width, r1.height, d(), l);
+    if (d() % 2) { // use draw_image() without transparenvy
+      fl_graphics_driver->draw_image(p, r1.x, r1.y, r1.width, r1.height, d(), l);
+    } else { // with transparency, build temporary RGB image and draw it
+      Fl_RGB_Image *temp_rgb = new Fl_RGB_Image(p, r1.width, r1.height, d(), l);
+      fl_graphics_driver->draw_rgb(temp_rgb, r1.x, r1.y, r1.width, r1.height, 0, 0);
+      delete temp_rgb;
+    }
   } else
     fl_graphics_driver->draw_rgb(this, XP, YP, WP, HP, cx, cy);
 }
