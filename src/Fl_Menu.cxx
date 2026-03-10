@@ -119,6 +119,8 @@ protected:
       end();
       set_modal();
       clear_border();
+      // Put it on same screen as that where Menu_Window::parent_ is.
+      screen_num(Fl_Window_Driver::menu_parent(NULL)->screen_num());
     }
 public:
   const Fl_Menu_Item* menu;
