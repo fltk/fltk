@@ -6,6 +6,8 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
 
 
   Bug Fixes and other Improvements
+  - Member function int Fl::get_mouse(int&, int&) has now a return value providing the
+  number of the mouse-containing screen (previously, return type was void).
 
 
   Platform Specific Fixes and Build Procedure Improvements

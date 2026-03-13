@@ -2310,8 +2310,8 @@ int Fl::get_key(int k) {
   return screen_driver()->get_key(k);
 }
 
-void Fl::get_mouse(int &x, int &y) {
-  Fl::screen_driver()->get_mouse(x, y);
+int Fl::get_mouse(int &x, int &y) {
+  return Fl::screen_driver()->get_mouse(x, y);
 }
 
 const char * fl_filename_name(const char *name) {

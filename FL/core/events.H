@@ -145,14 +145,17 @@ FL_EXPORT inline int event_dy()                 { return e_dy; }
 //
 
 /**
-  Return where the mouse is on the screen by doing a round-trip query to
-  the server.  You should use Fl::event_x_root() and
+  Return the number of the mouse-containing screen and computes the mouse screen coordinates.
+  This requires a round-trip query to the server.  You should use Fl::event_x_root() and
   Fl::event_y_root() if possible, but this is necessary if you are
   not sure if a mouse event has been processed recently (such as to
   position your first window).  If the display is not open, this will
   open it.
+ \param X,Y  assigned with the mouse screen coordinates upon return
+ \return number of the mouse-containing screen
+ \since 1.5 added a function return value
 */
-FL_EXPORT extern void get_mouse(int &,int &);
+FL_EXPORT extern int get_mouse(int &X,int &Y);
 
 //
 // Mouse Click Functions

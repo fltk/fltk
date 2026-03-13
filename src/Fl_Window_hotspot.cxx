@@ -22,9 +22,9 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
   int mx,my;
 
   // Update the screen position based on the mouse position.
-  Fl::get_mouse(mx,my);
+  int ms = Fl::get_mouse(mx,my);
   // put the window on the mouse-containing screen
-  this->screen_num(Fl::screen_num(mx, my));
+  this->screen_num(ms);
   X = mx-X; Y = my-Y;
 
   // If offscreen is 0 (the default), make sure that the window
