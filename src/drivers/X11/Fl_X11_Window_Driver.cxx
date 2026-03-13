@@ -414,7 +414,7 @@ void Fl_X11_Window_Driver::make_current() {
       cairo_save(cairo_);
     }
   } else if (other_xid) {
-    pWindow->damage(FL_DAMAGE_EXPOSE);
+    pWindow->damage(FL_DAMAGE_CHILD);
   }
   if (cairo_) ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
   fl_graphics_driver->scale(scale);
