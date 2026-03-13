@@ -17,12 +17,15 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "Fl_Window_Driver.H"
+#include "Fl_Screen_Driver.H"
 
 void Fl_Window::hotspot(int X, int Y, int offscreen) {
   int mx,my;
 
   // Update the screen position based on the mouse position.
-  Fl::get_mouse(mx,my);
+  int ms = Fl::screen_driver()->get_mouse(mx,my);
+  // put the window on the mouse-containing screen
+  this->screen_num(ms);
   X = mx-X; Y = my-Y;
 
   // If offscreen is 0 (the default), make sure that the window
