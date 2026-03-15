@@ -36,7 +36,6 @@
 #  include <FL/fl_draw.H>
 #  include <FL/Fl_Paged_Device.H>
 #  include <FL/Fl_Shared_Image.H>
-#  include <FL/Fl_Image_Surface.H>
 #  include <FL/fl_ask.H>
 #  include <FL/filename.H>
 #  include <stdio.h>
@@ -2328,10 +2327,6 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
       if (xlib_cairo_) {
         float s = Fl::screen_driver()->scale(screen_num());
         cairo_xlib_surface_set_size(cairo_get_target(xlib_cairo_), (W>0 ? int(W*s) : 1), (H>0 ? int(H*s) : 1));
-      }
-      if (other_xid) {
-        delete other_xid;
-        other_xid = NULL;
       }
 #endif
       pWindow->redraw();
