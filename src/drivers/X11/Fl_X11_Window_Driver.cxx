@@ -51,7 +51,7 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
   screen_num_ = -1;
 #endif
 #if FLTK_USE_CAIRO
-  cairo_ = NULL;
+  xlib_cairo_ = NULL;
 #endif
 }
 
@@ -166,12 +166,10 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   Fl_X *i = Fl_X::flx(pWindow);
   if (!other_xid) {
     other_xid = new Fl_Image_Surface(w(), h(), 1);
-#if FLTK_USE_CAIRO
-    cairo_ = ((Fl_Cairo_Graphics_Driver*)other_xid->driver())->cr();
-#endif
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
 #if FLTK_USE_CAIRO
+  cairo_t *cairo_ = ((Fl_Cairo_Graphics_Driver*)other_xid->driver())->cr();
   ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
 #endif
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
@@ -408,18 +406,14 @@ void Fl_X11_Window_Driver::make_current() {
 
 #if FLTK_USE_CAIRO
   float scale = Fl::screen_scale(screen_num()); // get the screen scaling factor
-  if (!pWindow->as_double_window()) {
-    if (!cairo_) {
-      int W = pWindow->w() * scale, H = pWindow->h() * scale;
-      cairo_surface_t *s = cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
-      cairo_ = cairo_create(s);
-      cairo_surface_destroy(s);
-      cairo_save(cairo_);
-    }
-  } else if (other_xid) {
-    pWindow->damage(FL_DAMAGE_CHILD);
+  if (!xlib_cairo_) {
+    int W = pWindow->w() * scale, H = pWindow->h() * scale;
+    cairo_surface_t *s = cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
+    xlib_cairo_ = cairo_create(s);
+    cairo_surface_destroy(s);
+    cairo_save(xlib_cairo_);
   }
-  if (cairo_) ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(xlib_cairo_);
   fl_graphics_driver->scale(scale);
 #elif USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
@@ -441,9 +435,9 @@ void Fl_X11_Window_Driver::hide() {
   screen_num_ = -1;
 # endif
 # if FLTK_USE_CAIRO
-  if (cairo_ && !pWindow->as_double_window()) {
-    cairo_destroy(cairo_);
-    cairo_ = NULL;
+  if (xlib_cairo_) {
+    cairo_destroy(xlib_cairo_);
+    xlib_cairo_ = NULL;
   }
 # endif
   // this test makes sure ip->xid has not been destroyed already

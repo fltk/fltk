@@ -75,7 +75,7 @@ private:
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
 #endif // USE_XFT || FLTK_USE_CAIRO
 #if FLTK_USE_CAIRO
-  cairo_t *cairo_;
+  cairo_t *xlib_cairo_; // the cairo surface of the X window itself
 #endif // FLTK_USE_CAIRO
   bool decorated_win_size(int &w, int &h);
   void combine_mask();
