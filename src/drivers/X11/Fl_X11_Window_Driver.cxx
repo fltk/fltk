@@ -172,19 +172,21 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   cairo_t *cairo_ = ((Fl_Cairo_Graphics_Driver*)other_xid->driver())->cr();
   ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
 #endif
-    if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-      fl_clip_region(i->region); i->region = 0;
-      fl_window = other_xid->offscreen();
+  bool use_clip_box = true;
+  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    use_clip_box = false;
+    fl_clip_region(i->region); i->region = 0;
+    fl_window = other_xid->offscreen();
 # if defined(FLTK_HAVE_CAIROEXT)
-      if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+    if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 # endif
-      draw();
-      fl_window = i->xid;
-    }
+    draw();
+    fl_window = i->xid;
+  }
   if (erase_overlay) fl_clip_region(0);
-  int X = 0, Y = 0, W = 0, H = 0;
-  fl_clip_box(0, 0, w(), h(), X, Y, W, H);
-  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid->offscreen(), X, Y);
+  int X = 0, Y = 0, W = w(), H = h();
+  if (use_clip_box) fl_clip_box(0, 0, w(), h(), X, Y, W, H);
+  fl_copy_offscreen(X, Y, W, H, other_xid->offscreen(), X, Y);
 }
 
 
