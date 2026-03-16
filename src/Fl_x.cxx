@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -2319,9 +2319,9 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
     pWindow->Fl_Group::resize(X,Y,W,H);
     if (shown()) {
 #if FLTK_USE_CAIRO
-      if (!pWindow->as_gl_window() && cairo_) {
+      if (xlib_cairo_) {
         float s = Fl::screen_driver()->scale(screen_num());
-        cairo_xlib_surface_set_size(cairo_get_target(cairo_), (W>0 ? int(W*s) : 1), (H>0 ? int(H*s) : 1));
+        cairo_xlib_surface_set_size(cairo_get_target(xlib_cairo_), (W>0 ? int(W*s) : 1), (H>0 ? int(H*s) : 1));
       }
 #endif
       pWindow->redraw();

@@ -1,7 +1,7 @@
 //
 // Definition of X11 window driver.
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -51,7 +51,7 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
   screen_num_ = -1;
 #endif
 #if FLTK_USE_CAIRO
-  cairo_ = NULL;
+  xlib_cairo_ = NULL;
 #endif
 }
 
@@ -163,26 +163,26 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   Fl_X *i = Fl_X::flx(pWindow);
   if (!other_xid) {
     other_xid = new Fl_Image_Surface(w(), h(), 1);
-#if FLTK_USE_CAIRO
-    cairo_ = ((Fl_Cairo_Graphics_Driver*)other_xid->driver())->cr();
-#endif
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
 #if FLTK_USE_CAIRO
+  cairo_t *cairo_ = ((Fl_Cairo_Graphics_Driver*)other_xid->driver())->cr();
   ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
 #endif
-    if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-      fl_clip_region(i->region); i->region = 0;
-      fl_window = other_xid->offscreen();
+  bool use_clip_box = true;
+  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    use_clip_box = false;
+    fl_clip_region(i->region); i->region = 0;
+    fl_window = other_xid->offscreen();
 # if defined(FLTK_HAVE_CAIROEXT)
-      if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+    if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 # endif
-      draw();
-      fl_window = i->xid;
-    }
+    draw();
+    fl_window = i->xid;
+  }
   if (erase_overlay) fl_clip_region(0);
-  int X = 0, Y = 0, W = 0, H = 0;
-  fl_clip_box(0, 0, w(), h(), X, Y, W, H);
+  int X = 0, Y = 0, W = w(), H = h();
+  if (use_clip_box) fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid->offscreen(), X, Y);
 }
 
@@ -405,18 +405,14 @@ void Fl_X11_Window_Driver::make_current() {
 
 #if FLTK_USE_CAIRO
   float scale = Fl::screen_scale(screen_num()); // get the screen scaling factor
-  if (!pWindow->as_double_window()) {
-    if (!cairo_) {
-      int W = pWindow->w() * scale, H = pWindow->h() * scale;
-      cairo_surface_t *s = cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
-      cairo_ = cairo_create(s);
-      cairo_surface_destroy(s);
-      cairo_save(cairo_);
-    }
-  } else if (other_xid) {
-    pWindow->damage(FL_DAMAGE_CHILD);
+  if (!xlib_cairo_) {
+    int W = pWindow->w() * scale, H = pWindow->h() * scale;
+    cairo_surface_t *s = cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
+    xlib_cairo_ = cairo_create(s);
+    cairo_surface_destroy(s);
+    cairo_save(xlib_cairo_);
   }
-  if (cairo_) ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(xlib_cairo_);
   fl_graphics_driver->scale(scale);
 #elif USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
@@ -438,9 +434,9 @@ void Fl_X11_Window_Driver::hide() {
   screen_num_ = -1;
 # endif
 # if FLTK_USE_CAIRO
-  if (cairo_ && !pWindow->as_double_window()) {
-    cairo_destroy(cairo_);
-    cairo_ = NULL;
+  if (xlib_cairo_) {
+    cairo_destroy(xlib_cairo_);
+    xlib_cairo_ = NULL;
   }
 # endif
   // this test makes sure ip->xid has not been destroyed already
