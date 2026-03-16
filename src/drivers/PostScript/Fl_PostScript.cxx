@@ -1583,7 +1583,6 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
     pango_cairo_show_layout(cairo_, pango_layout_); // 1.10
   }
   cairo_restore(cairo_);
-  check_status();
 }
 
 
@@ -1765,7 +1764,6 @@ int Fl_PDF_Pango_File_Surface::begin_page(void)
   cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
   cairo_save(ps->cr());
   cairo_save(ps->cr());
-  ps->check_status();
   x_offset = 0;
   y_offset = 0;
   ps->scale_x = ps->scale_y = 1.;
@@ -1915,7 +1913,6 @@ int Fl_PostScript_File_Device::begin_page (void)
   cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
   cairo_save(ps->cr());
   cairo_save(ps->cr());
-  ps->check_status();
 #else
   ps->page(ps->page_format_);
 #endif
@@ -1937,7 +1934,6 @@ int Fl_PostScript_File_Device::end_page (void)
   cairo_restore(ps->cr());
   cairo_restore(ps->cr());
   cairo_show_page(ps->cr());
-  ps->check_status();
 #endif
   Fl_Surface_Device::pop_current();
   return 0;
@@ -2004,7 +2000,6 @@ Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Co
       cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
       cairo_save(ps->cr());
       cairo_save(ps->cr());
-      ps->check_status();
 #else
     if (s != 1) {
       ps->clocale_printf("GR GR GS %f %f SC GS\n", s, s);

@@ -69,8 +69,6 @@ public:
   static cairo_pattern_t *calc_cairo_mask(const Fl_RGB_Image *rgb);
   static const char *clean_utf8(const char* str, int &n);
 
-  void check_status(void);
-
   unsigned char cr_,cg_,cb_;
   char  linedash_[256];//should be enough
   void concat();  // transform ror scalable dradings...

@@ -143,11 +143,11 @@ void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
 
 
 void Fl_Cairo_Graphics_Driver::rectf(int x, int y, int w, int h) {
+  if (w < 1 || h < 1) return;
   cairo_rectangle(cairo_, x-0.5, y-0.5, w, h);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_fill(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -196,7 +196,6 @@ void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -207,7 +206,6 @@ void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -219,7 +217,6 @@ void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -229,7 +226,6 @@ void Fl_Cairo_Graphics_Driver::yxline(int x, int y, int y1) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -240,7 +236,6 @@ void Fl_Cairo_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -252,7 +247,6 @@ void Fl_Cairo_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
   surface_needs_commit();
 }
 
@@ -370,7 +364,6 @@ void Fl_Cairo_Graphics_Driver::line_style(int style, int width, char* dashes) {
   cairo_set_dash(cairo_, ddashes, l, 0);
   cairo_set_antialias(cairo_, l ? CAIRO_ANTIALIAS_NONE : CAIRO_ANTIALIAS_DEFAULT);
   delete[] ddashes;
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
@@ -381,7 +374,6 @@ void Fl_Cairo_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned 
   fg = g/255.0;
   fb = b/255.0;
   cairo_set_source_rgb(cairo_, fr, fg, fb);
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::color(Fl_Color i) {
@@ -590,7 +582,6 @@ void Fl_Cairo_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_clip(cairo_);
   cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::push_no_clip() {
@@ -600,7 +591,6 @@ void Fl_Cairo_Graphics_Driver::push_no_clip() {
   clip_->x = clip_->y = clip_->w = clip_->h = -1;
   cairo_save(cairo_);
   cairo_reset_clip(cairo_);
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::pop_clip() {
@@ -609,7 +599,6 @@ void Fl_Cairo_Graphics_Driver::pop_clip() {
   clip_ = clip_->prev;
   delete c;
   cairo_restore(cairo_);
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::ps_origin(int x, int y) {
@@ -620,7 +609,6 @@ void Fl_Cairo_Graphics_Driver::ps_origin(int x, int y) {
   cairo_translate(cairo_, x, y);
   cairo_rotate(cairo_, angle * M_PI / 180);
   cairo_save(cairo_);
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::ps_translate(int x, int y)
@@ -628,22 +616,12 @@ void Fl_Cairo_Graphics_Driver::ps_translate(int x, int y)
   cairo_save(cairo_);
   cairo_translate(cairo_, x, y);
   cairo_save(cairo_);
-  check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::ps_untranslate(void)
 {
   cairo_restore(cairo_);
   cairo_restore(cairo_);
-  check_status();
-}
-
-void Fl_Cairo_Graphics_Driver::check_status(void) {
-#ifdef DEBUG
-  if (cairo_status(cairo_) !=  CAIRO_STATUS_SUCCESS) {
-    fprintf(stderr,"we have a problem");
-  }
-#endif
 }
 
 void Fl_Cairo_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D)

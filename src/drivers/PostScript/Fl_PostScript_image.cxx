@@ -177,7 +177,6 @@ void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int Y
     cairo_pattern_destroy(pat);
     cairo_surface_destroy(surf);
     cairo_restore(cairo_);
-    check_status();
   }
 }
 
