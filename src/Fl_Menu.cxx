@@ -673,7 +673,8 @@ bool Menu_State::create_submenu(const Fl_Rect &r, Menu_Window& cw, const Fl_Menu
       int dy = n->y()-nY;
       int dx = n->x()-nX;
       int waX, waY, waW, waH;
-      Fl_Window_Driver::driver(n)->menu_window_area(waX, waY, waW, waH, Fl::screen_num(r.x(), r.y()));
+      int ns = Fl_Window_Driver::menu_parent()->screen_num();
+      Fl_Window_Driver::driver(n)->menu_window_area(waX, waY, waW, waH, ns);
       for (menu_index_t menu = 0; menu <= current_menu_ix; menu++) {
         Menu_Window* tt = menu_window[menu];
         int nx = tt->x()+dx; if (nx < waX) {nx = waX; dx = -tt->x() + waX;}
@@ -749,7 +750,7 @@ Menu_Window::Menu_Window(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   int scr_x, scr_y, scr_w, scr_h; // available screen rect for the menu
   int tx = X, ty = Y;             /// initial title origin
   menubar_title = mb_title;
-  int n = (Wp > 0 ? Fl::screen_num(X, Y) : -1);
+  int n = Fl_Window_Driver::menu_parent()->screen_num();
   Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h, n);
   if (!right_edge || right_edge > scr_x+scr_w)
     right_edge = scr_x+scr_w;
