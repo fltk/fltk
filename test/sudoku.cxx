@@ -2,7 +2,7 @@
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2005-2018 by Michael Sweet.
-// Copyright 2019-2021 by Bill Spitzak and others.
+// Copyright 2019-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -462,6 +462,12 @@ void SudokuSound::play(char note) {
   } else Beep(frequencies[note - 'A'], NOTE_DURATION);
 
 #elif defined(FLTK_USE_X11)
+
+  // This program was compiled with X11 and potentially with Wayland backend
+  // (hybrid FLTK library). We can use ALSA for both (X11 and Wayland) or
+  // X11 sound stuff (below) if we're actually running under the X11 backend.
+  // Otherwise we can't play any sound.
+
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
     // Use ALSA to play the sound...
@@ -474,7 +480,13 @@ void SudokuSound::play(char note) {
   }
 #  endif // HAVE_ALSA_ASOUNDLIB_H
 
-  // Just use standard X11 stuff...
+  // The ALSA sound library was not found:
+  // - backend X11: just use standard X11 stuff
+  // - backend Wayland: can't play sound (currently ?)
+
+  if (!fl_x11_display())  // X11 configured but not active (using Wayland)
+    return;
+
   XKeyboardState        state;
   XKeyboardControl      control;
 
