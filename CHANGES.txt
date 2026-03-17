@@ -3,27 +3,77 @@ Changes in FLTK 1.4.5                                   Released: xxx xx 2026
   This is a maintenance release with improvements and fixes
   backported from the current development branch 1.5 (master).
 
- || Note: Details TBD, use `git shortlog` to find related commits, e.g.
- ||   $ git shortlog release-1.4.4.. | sed -e's/^      /  - /'
- ||   then sort/edit/move to sections below as appropriate...
+ || Note: use `git shortlog` to find more related commits, currently:
+ ||   $ git shortlog 707e9455f0a8.. | sed -e's/^      /  - /'
+ || then sort/edit/move to sections below as appropriate...
 
 
-  Bug Fixes
+  Major Bug Fixes
 
+  - Fix menu crash dereferencing nullptr (#1335)
+  - Fix crash in Fl_Tabs without children (#1366)
+  - Fix "Fl_Double_Window::make_current() issues with Cairo drawing" (#1285)
+  - Fix "Setting window custom cursor from SVG image crashes" (#1363)
+  - Fix "fl_draw_image() with horizontal flip reads out of bounds" (#1369)
+  - macOS: fix crash when drawing image with draw_image() in some scenarios (#1372)
+  - Wayland: avoid NULL-pointer error after call to wl_display_get_protocol_error()
+  - Wayland: Fix "Long Tooltips can crash ..." (#1317)
+  - Wayland: Fix NULL pointer dereference in Fl::cairo_make_current() (#1359)
+  - Wayland: Fix crash in test/sudoku if ALSA soundlib is not available
+  - X11: Fix crash with menubar across 2 screens with diverse scale factors (#1380)
+  - X11: Fl::enable_im() crashes without input methods (#1364)
 
-  Documentation Fixes and Improvements
+  Minor Bug Fixes
 
-
-  Other Improvements
-
+  - Applied xuyun018's fix for Fl_Tree horiz scroll (#1297)
+  - Wayland: don't call non-public libdecor_frame_get_content_{width,height} (#1296)
+  - Wayland: Some shortcut keys not delivered when input widget has focus (#1290)
+  - X11: Restore use of menubar at top of fullscreen window
+  - Fix: Underline does not appear in some fonts and scales (#1308)
+  - Fix "New Wayland subwindow code creates issues with resizes of opengl
+      windows…" (#1311)
+  - Windows: Fix "If app appears on non-active screen …, window resizes" (#259)
+  - Fix "Drawing to the wrong window with cairo and X11" (#1358)
+  - Fix "Cairo: Rect with negative dimensions is still drawn" (#1379)
+  - Windows: Fix "Window scaling shortcut always moves window towards initial
+      display" (#1371)
+  - Wayland paste and DnD: fix minor issue revealed by valgrind
+  - Fix "Blurry fonts with cairo/pango on FLTK >= 1.4" (#1365)
+  - Fix "Transparent PNGs not rendered correctly when window is scaled" (#1375)
+  - Close active menus when moving window to new screen
 
   CMake And Other Build Procedure Improvements
 
+  - Bump version number from 1.4.4 to 1.4.5
+  - Don't export unnecessary executable files
 
-  ABI changes (FL_ABI_VERSION >= 10405)
+  Documentation Fixes and Improvements
 
-  - Make Fl_Table::get_selection() 'const' (#1305)
+  - Fix documentation of fl_overlay_clear and fl_overlay_rect
+  - Clarify that a font must be loaded before measuring text (#1356)
+  - Fix documentation (remove doxygen warning)
 
+  Other Improvements
+
+  - Remove usage of deprecated fl_utf8froma(), improve layout of test/utf8
+  - Remove conflicting FL_EXPORT from header file (#1357)
+  - Set window class name (xclass) in test/editor
+  - Fl_Terminal fixes from 1.5.x - smoother scrolling and issue #1328
+  - Fix Fl_Terminal drawing issues (WRT scrollbar and box clipping)
+  - Improve handling of text containing context-dependent unicode points
+  - Add complete support of emojis to text widgets (#1360)
+  - Fix issues with Fl_RGB_Image::draw() + window scaling,
+      and performance concerns (#1370)
+  - Improve control of screen where FLTK positions menu windows (#1376)
+  - Improve Fl_Window::hotspot() when screens have different scale factors
+  - macOS: Remove slight transparency from menu windows (#1373)
+  - Wayland: use UTF-8 text from clipboard when available
+  - Wayland: improve function Fl_Wayland_Window_Driver::resize() (#1307)
+  - Windows: improve moving window across screens having distinct scale factors
+
+  ABI changes: only, if enabled by setting FL_ABI_VERSION >= 10405
+
+  - Make Fl_Table::get_selection() 'const' (ABI 10405) (#1305)
 
 
 Changes in FLTK 1.4.4                                   Released: Jul 20 2025
