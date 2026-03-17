@@ -2220,7 +2220,7 @@ int fl_handle(const XEvent& thisevent)
     int num = d->screen_num_unscaled(X+ actual.width/2, Y +actual.height/2);
     if (num == -1) num = olds;
     float s = d->scale(num);
-    if (num != olds) {
+    if (num != olds && !window->menu_window()) {
       if (s != d->scale(olds) &&
           !Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
           window->user_data() != &Fl_X11_Screen_Driver::transient_scale_display) {
