@@ -2247,7 +2247,8 @@ int fl_handle(const XEvent& thisevent)
     resize_bug_fix = window;
 #if USE_XFT || FLTK_USE_CAIRO
     if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
-      ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) ) {
+      ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) &&
+      !window->menu_window()) {
         window->resize(rint(X/s), rint(Y/s), ceil(W/s), ceil(H/s));
     } else {
       window->position(rint(X/s), rint(Y/s));
