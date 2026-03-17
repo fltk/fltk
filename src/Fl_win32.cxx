@@ -1267,6 +1267,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                          lParam_rect->right - lParam_rect->left,
                          lParam_rect->bottom - lParam_rect->top, flags);
             if (ns >= 0) {
+              if (Fl::modal() && Fl::modal()->menu_window()) { // is a menu window active?
+                Fl::e_x_root = 1000000;
+                Fl::modal()->handle(FL_PUSH); // simulate a distant click to close menus
+              }
               scale = Fl::screen_driver()->scale(ns);
               EnumChildWindows(hWnd, child_window_cb, (LPARAM)&scale);
             }

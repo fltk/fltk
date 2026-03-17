@@ -2216,6 +2216,10 @@ int fl_handle(const XEvent& thisevent)
     if (num == -1) num = olds;
     float s = d->scale(num);
     if (num != olds && !window->menu_window()) {
+      if (Fl::modal() && Fl::modal()->menu_window()) { // is a menu window active?
+        Fl::e_x_root = 1000000;
+        Fl::modal()->handle(FL_PUSH); // simulate a distant click to close menus
+      }
       if (s != d->scale(olds) &&
           !Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
           window->user_data() != &Fl_X11_Screen_Driver::transient_scale_display) {
