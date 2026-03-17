@@ -450,6 +450,12 @@ void SudokuSound::play(char note) {
   } else Beep(frequencies[note - 'A'], NOTE_DURATION);
 
 #elif defined(FLTK_USE_X11)
+
+  // This program was compiled with X11 and potentially with Wayland backend
+  // (hybrid FLTK library). We can use ALSA for both (X11 and Wayland) or
+  // X11 sound stuff (below) if we're actually running under the X11 backend.
+  // Otherwise we can't play any sound.
+
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
     // Use ALSA to play the sound...
@@ -462,7 +468,13 @@ void SudokuSound::play(char note) {
   }
 #  endif // HAVE_ALSA_ASOUNDLIB_H
 
-  // Just use standard X11 stuff...
+  // The ALSA sound library was not found:
+  // - backend X11: just use standard X11 stuff
+  // - backend Wayland: can't play sound (currently ?)
+
+  if (!fl_x11_display())  // X11 configured but not active (using Wayland)
+    return;
+
   XKeyboardState        state;
   XKeyboardControl      control;
 
