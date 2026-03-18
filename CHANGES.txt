@@ -30,7 +30,7 @@ Changes in FLTK 1.4.5                                   Released: xxx xx 2026
   - Wayland: don't call non-public libdecor_frame_get_content_{width,height} (#1296)
   - Wayland: Some shortcut keys not delivered when input widget has focus (#1290)
   - X11: Restore use of menubar at top of fullscreen window
-  - X11: Fix resize of menutitle windows when across 2 screens with diverse scaling
+  - X11/Wayland: Fix resize of menutitle windows when across 2 screens with diverse scaling
   - Fix: Underline does not appear in some fonts and scales (#1308)
   - Fix "New Wayland subwindow code creates issues with resizes of opengl
       windows…" (#1311)
