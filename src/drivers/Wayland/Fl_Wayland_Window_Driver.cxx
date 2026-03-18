@@ -2126,7 +2126,7 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
 
 
 int Fl_Wayland_Window_Driver::wld_scale() {
-  Fl_X *flx = Fl_X::flx(pWindow);
+  Fl_X *flx = Fl_X::flx(pWindow->top_window());
   struct wld_window *xid = (flx ? (struct wld_window *)flx->xid : NULL);
   if (!xid || wl_list_empty(&xid->outputs)) {
     int scale = 1;
