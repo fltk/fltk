@@ -558,7 +558,7 @@ void Fl_Wayland_Window_Driver::size_range() {
     pWindow->get_size_range(&minw, &minh, &maxw, &maxh, NULL, NULL, NULL);
     if (wl_win->kind == DECORATED && wl_win->frame) {
       int X,Y,W,H;
-      Fl::screen_work_area(X,Y,W,H, Fl::screen_num(x(),y(),w(),h()));
+      Fl::screen_work_area(X,Y,W,H, pWindow->screen_num());
       if (maxw && maxw < W && maxh && maxh < H) {
         libdecor_frame_unset_capabilities(wl_win->frame, LIBDECOR_ACTION_FULLSCREEN);
       } else {
@@ -737,7 +737,8 @@ static void surface_enter(void *data, struct wl_surface *wl_surface,
   while (e->next != &window->outputs) e = e->next; // move e to end of linked list
   wl_list_insert(e, &surface_output->link);
 //printf("%swindow %p enters screen id=%d length=%d\n", window->fl_win->parent()?"(sub)":"", window->fl_win, output->id, wl_list_length(&window->outputs));
-  if (list_was_empty && !window->fl_win->parent() && !window->fl_win->menu_window()) {
+  if (list_was_empty && !window->fl_win->parent() &&
+      !Fl_Window_Driver::to_menutitle(window->fl_win)) {
     change_scale(output, window, 0);
   }
 }

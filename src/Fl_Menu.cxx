@@ -1,7 +1,7 @@
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1659,10 +1659,16 @@ Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
   return Menu_Window::parent_;
 }
 
-/* Cast to menuwindow if win is of claa menuwindow and the driver is initialized. */
+/* Cast to Menu_Window* if win is of class Menu_Window and the driver is initialized. */
 static Menu_Window *to_menuwindow(Fl_Window *win) {
   if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return nullptr;
   return ((Menu_Window_Basetype*)win)->as_menuwindow();
+}
+
+/** Returns whether win is from class Menu_Title_Window */
+bool Fl_Window_Driver::to_menutitle(Fl_Window *win) {
+  if (!Fl_Window_Driver::driver(win)->popup_window() || !win->menu_window()) return false;
+  return !((Menu_Window_Basetype*)win)->as_menuwindow();
 }
 
 /** Accessor to the "origin" member variable of class menuwindow.

@@ -2,7 +2,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2025 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -197,6 +197,7 @@ public:
   // when that's not the case, as with Wayland.
   virtual void reposition_menu_window(int x, int y);
   virtual void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1);
+  static bool to_menutitle(Fl_Window*);
   static Fl_Window *menu_parent(int *display_height = NULL);
   static Fl_Window *menu_leftorigin(Fl_Window*);
   static Fl_Window *menu_title(Fl_Window*);
