@@ -1,7 +1,7 @@
 //
 // Class Fl_Wayland_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2023 by Bill Spitzak and others.
+// Copyright 2021-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -266,6 +266,10 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
   if (!egl_window) {
     struct wld_window *win = fl_wl_xid(pWindow);
     struct wl_surface *surface = win->wl_surface;
+    if (pWindow->parent()) { // force toplevel win to enter its display before sizing GL subwin
+      win = fl_wl_xid(pWindow->top_window());
+      while (wl_list_empty(&win->outputs)) wl_display_dispatch(fl_wl_display());
+    }
     int W = pWindow->pixel_w();
     int H = pWindow->pixel_h();
     int scale = Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale();
@@ -280,8 +284,9 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
-    if (pWindow->parent()) win = fl_wl_xid(pWindow->top_window());
-    while (wl_list_empty(&win->outputs)) wl_display_dispatch(fl_wl_display());
+    if (!pWindow->parent()) {
+      while (wl_list_empty(&win->outputs)) wl_display_dispatch(fl_wl_display());
+    }
   }
 }
 

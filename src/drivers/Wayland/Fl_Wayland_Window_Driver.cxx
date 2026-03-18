@@ -1,7 +1,7 @@
 //
 // Implementation of the Wayland window driver.
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -723,7 +723,7 @@ static void surface_enter(void *data, struct wl_surface *wl_surface,
   while (e->next != &window->outputs) e = e->next; // move e to end of linked list
   wl_list_insert(e, &surface_output->link);
 //printf("window %p enters screen id=%d length=%d\n", window->fl_win, output->id, wl_list_length(&window->outputs));
-  if (list_was_empty && (!window->fl_win->parent() || window->fl_win->as_gl_window()) && !window->fl_win->menu_window()) {
+  if (list_was_empty && !window->fl_win->parent() && !window->fl_win->menu_window()) {
     change_scale(output, window, pre_scale);
   }
 }
@@ -2122,7 +2122,13 @@ int Fl_Wayland_Window_Driver::wld_scale() {
   Fl_X *flx = Fl_X::flx(pWindow->top_window());
   struct wld_window *xid = (flx ? (struct wld_window *)flx->xid : NULL);
   if (!xid || wl_list_empty(&xid->outputs)) {
-    return 1;
+    int scale = 1;
+    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    Fl_Wayland_Screen_Driver::output *output;
+    wl_list_for_each(output, &(scr_driver->outputs), link) {
+      scale = fl_max(scale, output->wld_scale);
+    }
+    return scale;
   }
   struct surface_output *s_output;
   s_output = wl_container_of(xid->outputs.next, s_output, link);
