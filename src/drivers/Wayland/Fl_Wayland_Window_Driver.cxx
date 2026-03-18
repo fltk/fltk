@@ -737,7 +737,7 @@ static void surface_enter(void *data, struct wl_surface *wl_surface,
   while (e->next != &window->outputs) e = e->next; // move e to end of linked list
   wl_list_insert(e, &surface_output->link);
 //printf("window %p enters screen id=%d length=%d\n", window->fl_win, output->id, wl_list_length(&window->outputs));
-  if (list_was_empty && !window->fl_win->parent()) {
+  if (list_was_empty && !window->fl_win->parent() && !window->fl_win->menu_window()) {
     change_scale(output, window, 0);
   }
 }
