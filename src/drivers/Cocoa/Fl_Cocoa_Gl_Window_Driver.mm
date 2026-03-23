@@ -315,6 +315,7 @@ void Fl_Cocoa_Gl_Window_Driver::make_current_before() {
     d->changed_resolution(false);
     pWindow->invalidate();
     [(NSOpenGLContext*)pWindow->context() update];
+    if (gl1ctxt) [gl1ctxt update];
   }
 }
 
