@@ -86,7 +86,7 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name,
   A refcount is used to determine if a released image is to be destroyed
   with delete.
 
-  \see fl_register_image()
+  \see fl_register_images()
   \see Fl_Shared_Image::get()
   \see Fl_Shared_Image::find()
   \see Fl_Shared_Image::release()
