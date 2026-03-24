@@ -271,6 +271,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
   Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor, Fl_Wayland_Window_Driver::driver(win)->standard_cursor());
+  checkdouble(); // fix for #1383
   set_event_xy(win);
   need_leave = NULL;
   win = Fl_Wayland_Window_Driver::surface_to_window(surface);
