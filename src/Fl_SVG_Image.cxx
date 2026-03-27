@@ -412,4 +412,9 @@ void Fl_SVG_Image::normalize() {
   if (!array) resize(w(), h());
 }
 
+
+void Fl_SVG_Image::scale(int w, int h, int keep_aspect, int can_expand) {
+  Fl_Image::scale(w, h, keep_aspect, 1);
+}
+
 #endif // FLTK_USE_SVG

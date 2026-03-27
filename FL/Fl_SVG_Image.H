@@ -172,6 +172,7 @@ public:
   Fl_SVG_Image *as_svg_image() override { return this; }
   const Fl_SVG_Image *as_svg_image() const override { return this; }
   void normalize() override;
+  void scale(int w, int h, int keep_aspect = 1, int can_expand = 0) override;
 };
 
 #endif // FL_SVG_IMAGE_H
