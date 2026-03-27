@@ -97,6 +97,9 @@ public:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h) FL_OVERRIDE;
   int height() FL_OVERRIDE;
   int descent() FL_OVERRIDE;
+  void cache_size(Fl_Image* img, int &width, int &height) override;
+  void draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  void draw_pixmap(Fl_Pixmap *img, int XP, int YP, int WP, int HP, int cx, int cy) override;
 };
 
 #endif // FL_OPENGL_GRAPHICS_DRIVER_H
