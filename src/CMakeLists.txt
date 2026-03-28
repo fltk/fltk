@@ -488,6 +488,7 @@ set(GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx
 )
 if(FLTK_USE_WAYLAND)
   set(GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx)

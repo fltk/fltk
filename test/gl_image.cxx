@@ -23,7 +23,7 @@
 class image_background_box : public Fl_Widget {
 public:
   image_background_box(int x, int y, int w, int h) : Fl_Widget(x, y, w, h, NULL) {}
-  void draw() {
+  void draw() override {
     gl_color(FL_WHITE);
     gl_rectf(x(), y(), w(), h());
     gl_color(color());
@@ -94,7 +94,7 @@ void chooser_cb(Fl_Widget *, Gl_Image_Window *mainwin) {
   char *fname = fl_file_chooser("select image file", "*.{png,jpg,gif,svg,svgz}", NULL, 0);
   if (fname) {
     Fl_Shared_Image *shared = Fl_Shared_Image::get(fname);
-    if (!shared->fail()) {
+    if (shared && !shared->fail()) {
       mainwin->copy_label(fname);
       mainwin->set_image(shared);
     }
