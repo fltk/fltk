@@ -123,6 +123,12 @@ you build FLTK, unlike those in the 'test' directory shown below.
 <td> \ref examples_valuators       </td>
 <td> \ref examples_windowfocus     </td>
 </tr>
+<tr>
+<td colspan=6 align=center><b>New in FLTK 1.5</b></td>
+</tr>
+<tr>
+<td> \ref examples_gl_image        </td>
+</tr>
 </table>
 
 
@@ -369,6 +375,12 @@ You can toggle the border on/off, switch between single-
 and double-buffered rendering, and take over the entire
 screen. More information in the source code.
 
+
+\subsection examples_gl_image gl_image
+
+\par
+\c gl_image shows how to draw most images supported by FLTK
+in an Fl_Gl_Window. Fl_Bitmap and depth 1 and 2 Fl_RGB_Image aren't supported yet.
 
 \subsection examples_gl_overlay gl_overlay
 
