@@ -197,7 +197,7 @@ void Fl_OpenGL_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,
 static Fl_RGB_Image *bitmap_to_rgb1(Fl_Bitmap *bm) {
   int ld = 4 * ((bm->data_w() + 3) / 4);
   uchar *data = new uchar[ld * bm->data_h()];
-  memset(data, 0, bm->data_w() * ld);
+  memset(data, 0, bm->data_h() * ld);
   Fl_RGB_Image *rgb = new Fl_RGB_Image(data, bm->data_w(), bm->data_h(), 1, ld);
   rgb->alloc_array = 1;
   int rowBytes = (bm->data_w()+7)>>3 ;
