@@ -2,7 +2,7 @@
 // Definition of classes Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,6 +29,7 @@ class Fl_Graphics_Driver;
 class Fl_RGB_Image;
 class Fl_Widget;
 class Fl_Image_Surface;
+class Fl_Image;
 
 /**
  A drawing surface that's susceptible to receive graphical output.
@@ -122,6 +123,7 @@ public:
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) = 0;
   /** Returns the OpenGL plugin */
   static Fl_Device_Plugin *opengl_plugin();
+  virtual void delete_image_texture(Fl_Image*) = 0;
 };
 
 #endif // Fl_Device_H

@@ -1,7 +1,7 @@
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -55,6 +55,8 @@ Fl_Image::~Fl_Image() {
   then redraw it without recreating an image object.
 */
 void Fl_Image::uncache() {
+  static Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+  if (plugin) plugin->delete_image_texture(this);
 }
 
 void Fl_Image::draw(int XP, int YP, int, int, int, int) {
@@ -462,6 +464,7 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 
 void Fl_RGB_Image::uncache() {
   Fl_Graphics_Driver::default_driver().uncache(this, id_, mask_);
+  Fl_Image::uncache();
 }
 
 

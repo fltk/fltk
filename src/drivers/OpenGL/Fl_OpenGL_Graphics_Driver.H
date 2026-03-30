@@ -25,11 +25,16 @@
 
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/fl_draw.H>
+#include <FL/gl.h>
+#include <map>
 
 /**
  \brief OpenGL specific graphics class.
  */
 class Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
+private:
+  static std::map<Fl_Image*, GLuint> *image_texture_map_;
+  void draw_rgb134_(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
 public:
   float pixels_per_unit_;
   float line_width_;
@@ -100,6 +105,8 @@ public:
   void cache_size(Fl_Image* img, int &width, int &height) override;
   void draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) override;
   void draw_pixmap(Fl_Pixmap *img, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  void draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  static void delete_image_texture(Fl_Image *img);
 };
 
 #endif // FL_OPENGL_GRAPHICS_DRIVER_H

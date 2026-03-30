@@ -91,10 +91,10 @@ public:
 
 
 void chooser_cb(Fl_Widget *, Gl_Image_Window *mainwin) {
-  char *fname = fl_file_chooser("select image file", "*.{png,jpg,gif,svg,svgz}", NULL, 0);
+  char *fname = fl_file_chooser("select image file", "*.{png,jpg,gif,svg,svgz,xbm,xpm,ico}", NULL, 0);
   if (fname) {
     Fl_Shared_Image *shared = Fl_Shared_Image::get(fname);
-    if (shared && !shared->fail()) {
+    if (shared && shared->w() && shared->h()) {
       mainwin->copy_label(fname);
       mainwin->set_image(shared);
     }
@@ -107,5 +107,7 @@ int main(int argc, char **argv) {
   fl_register_images();
   Gl_Image_Window mainwin(600, 600, "GL Image Viewer");
   mainwin.show(argc, argv);
-  return Fl::run();
+  Fl::run();
+  delete mainwin.child(1)->image();
+  return 0;
 }

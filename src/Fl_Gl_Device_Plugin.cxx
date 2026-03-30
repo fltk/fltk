@@ -1,7 +1,7 @@
 //
 // implementation of class Fl_Gl_Device_Plugin for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,6 +19,7 @@
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Device.H>
 #include "Fl_Gl_Window_Driver.H"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H"
 
 
 /**
@@ -43,9 +44,12 @@ public:
     if (!glw) return NULL;
     return Fl_Gl_Window_Driver::driver(glw)->capture_gl_rectangle(x, y, w, h);
   }
+  void delete_image_texture(Fl_Image *img) override {
+    Fl_OpenGL_Graphics_Driver::delete_image_texture(img);
+  }
 };
 
-static Fl_Gl_Device_Plugin Gl_Device_Plugin;
+static Fl_Gl_Device_Plugin *Gl_Device_Plugin = new Fl_Gl_Device_Plugin();
 
 // The purpose of this variable, used in Fl_Gl_Window.cxx, is only to force this file to be loaded
 // whenever Fl_Gl_Window.cxx is loaded, that is, whenever fltk_gl is.
