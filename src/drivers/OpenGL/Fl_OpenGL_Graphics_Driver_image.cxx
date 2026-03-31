@@ -48,6 +48,24 @@ void Fl_OpenGL_Graphics_Driver::cache_size(Fl_Image* img, int &width, int &heigh
 
 static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
 {
+  Fl_RGB_Image *temp_rgb4 = NULL;
+  if (rgb->d() == 2) { // convert depth-2 into depth-4 image
+    uchar *data = new uchar[rgb->data_w() * rgb->data_h() * 4];
+    int ld = rgb->ld() ? rgb->ld() : 2 * rgb->data_w();
+    uchar *p = data;
+    for (int j = 0; j < rgb->data_h(); j++) {
+      const uchar *q = rgb->array + j * ld;
+      for (int i = 0; i < rgb->data_w(); i++) {
+        *p = *(p+1) = *(p+2) = *q;
+        *(p+3) = *(q+1);
+        p += 4;
+        q += 2;
+      }
+    }
+    temp_rgb4 = new Fl_RGB_Image(data, rgb->data_w(), rgb->data_h(), 4);
+    temp_rgb4->alloc_array = 1;
+    rgb = temp_rgb4; // and use the depth-4 image to compute texture
+  }
   GLuint texName;
   glGenTextures(1, &texName);
   // save GL parameters GL_UNPACK_ROW_LENGTH and GL_UNPACK_ALIGNMENT
@@ -69,8 +87,6 @@ static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
   GLenum format = GL_RGBA, type_arg = GL_UNSIGNED_INT_8_8_8_8_REV; // for depth-4
   if (rgb->d() == 1) {
     internalformat = GL_ALPHA8; format = GL_ALPHA; type_arg = GL_UNSIGNED_BYTE;
-  } else if (rgb->d() == 2) {
-    // TODO
   } else if (rgb->d() == 3) {
     internalformat = GL_RGB; format = GL_RGB; type_arg = GL_UNSIGNED_BYTE;
   }
@@ -80,6 +96,7 @@ static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
   // restore saved GL parameters
   glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
   glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+  if (temp_rgb4) delete temp_rgb4;
   return texName;
 }
 
@@ -88,7 +105,8 @@ static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color co
                          bool alpha_blend = false) {
   // GL_TRANSFORM_BIT for GL_PROJECTION
   // GL_TEXTURE_BIT for GL_TEXTURE_RECTANGLE_ARB
-  glPushAttrib(GL_TRANSFORM_BIT | GL_TEXTURE_BIT);
+  // GL_COLOR_BUFFER_BIT for GL_BLEND and glBlendFunc,
+  glPushAttrib(GL_TRANSFORM_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
   //setup matrices
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -134,7 +152,7 @@ static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color co
 }
 
 
-// Argument img here can have depth 3, or 4 to draw color images.
+// Argument img here can have depth 2, 3, or 4.
 // It can also have depth 1 in 2 situations:
 //   1) we draw a depth-1 (gray scale) Fl_RGB_Image (was_bitmap = false)
 //   2) we draw an Fl_Bitmap and use a depth-1 Fl_RGB_Image as a drawing tool (was_bitmap = true)
@@ -171,8 +189,8 @@ void Fl_OpenGL_Graphics_Driver::draw_rgb134_(Fl_RGB_Image *img,
 
 void Fl_OpenGL_Graphics_Driver::draw_rgb(Fl_RGB_Image *img,
                                          int XP, int YP, int WP, int HP, int cx, int cy) {
-  // Don't draw an empty image. Drawing of depth-2 images not implemented yet.
-  if (!img->array || img->d() == 2) {
+  // Don't draw an empty image.
+  if (!img->array) {
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
