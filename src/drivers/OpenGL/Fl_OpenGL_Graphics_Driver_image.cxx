@@ -59,11 +59,18 @@ static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
   glBindTexture (GL_TEXTURE_RECTANGLE_ARB, texName);
   glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glPixelStorei(GL_UNPACK_ROW_LENGTH, (rgb->ld() ? rgb->ld() / rgb->d() : rgb->data_w()));
-  glPixelStorei(GL_UNPACK_ALIGNMENT, (rgb->d() == 3 ? 1 : 4));
-  GLint internalformat = GL_RGBA8;
-  GLenum format = GL_RGBA, type_arg = GL_UNSIGNED_INT_8_8_8_8_REV;
+  GLint unpack_alignment = 4;
+  if (rgb->d() < 4) {
+    int ld = (rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d());
+    if (ld % 4 != 0) unpack_alignment = 1;
+  }
+  glPixelStorei(GL_UNPACK_ALIGNMENT, unpack_alignment);
+  GLint internalformat = GL_RGBA8; // for depth-4
+  GLenum format = GL_RGBA, type_arg = GL_UNSIGNED_INT_8_8_8_8_REV; // for depth-4
   if (rgb->d() == 1) {
     internalformat = GL_ALPHA8; format = GL_ALPHA; type_arg = GL_UNSIGNED_BYTE;
+  } else if (rgb->d() == 2) {
+    // TODO
   } else if (rgb->d() == 3) {
     internalformat = GL_RGB; format = GL_RGB; type_arg = GL_UNSIGNED_BYTE;
   }
@@ -77,7 +84,8 @@ static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
 }
 
 
-static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color col = FL_WHITE) {
+static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color col = FL_WHITE,
+                         bool alpha_blend = false) {
   // GL_TRANSFORM_BIT for GL_PROJECTION
   // GL_TEXTURE_BIT for GL_TEXTURE_RECTANGLE_ARB
   glPushAttrib(GL_TRANSFORM_BIT | GL_TEXTURE_BIT);
@@ -100,6 +108,10 @@ static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color co
   float ox = s * X;
   float oy = winh - s * Y;
   glEnable(GL_TEXTURE_RECTANGLE_ARB);
+  if (alpha_blend) {
+    glEnable (GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
+  }
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texName);
   GLint width, height;
   glGetTexLevelParameteriv(GL_TEXTURE_RECTANGLE_ARB, 0, GL_TEXTURE_WIDTH, &width);
@@ -122,10 +134,12 @@ static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color co
 }
 
 
-// img here can have depth 3, or 4 to draw color images.
-// It can also have depth 1 specifically to draw Fl_Bitmap images.
+// Argument img here can have depth 3, or 4 to draw color images.
+// It can also have depth 1 in 2 situations:
+//   1) we draw a depth-1 (gray scale) Fl_RGB_Image (was_bitmap = false)
+//   2) we draw an Fl_Bitmap and use a depth-1 Fl_RGB_Image as a drawing tool (was_bitmap = true)
 void Fl_OpenGL_Graphics_Driver::draw_rgb134_(Fl_RGB_Image *img,
-                                         int XP, int YP, int WP, int HP, int cx, int cy) {
+                                int XP, int YP, int WP, int HP, int cx, int cy, bool was_bitmap) {
   int X, Y, W, H;
   if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
@@ -138,7 +152,7 @@ void Fl_OpenGL_Graphics_Driver::draw_rgb134_(Fl_RGB_Image *img,
     Fl_RGB_Image *partial_rgb = new Fl_RGB_Image(img->array + cy * ld + cx * d,
                                                  W * sx, H * sy, d, ld);
     partial_rgb->scale(W, H, 0, 1);
-    draw_rgb134_(partial_rgb, X, Y, W, H, 0, 0);
+    draw_rgb134_(partial_rgb, X, Y, W, H, 0, 0, was_bitmap);
     delete partial_rgb;
     return;
   }
@@ -149,15 +163,16 @@ void Fl_OpenGL_Graphics_Driver::draw_rgb134_(Fl_RGB_Image *img,
     texNum = compute_texture_rectangle(img);
     (*image_texture_map_)[img] = texNum;
   } else texNum = iter->second;
-  draw_texture(texNum, X, Y, W, H, (img->d()==1?FL_BLACK:FL_WHITE));
+  draw_texture(texNum, X, Y, W, H,
+               (was_bitmap ? color() : FL_WHITE), (img->d() == 1 && !was_bitmap));
   color(color()); // reset current color
 }
 
 
 void Fl_OpenGL_Graphics_Driver::draw_rgb(Fl_RGB_Image *img,
                                          int XP, int YP, int WP, int HP, int cx, int cy) {
-  // Don't draw an empty image. Gray-scale image drawing not implemented yet.
-  if (!img->array || img->d() < 3) {
+  // Don't draw an empty image. Drawing of depth-2 images not implemented yet.
+  if (!img->array || img->d() == 2) {
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
@@ -227,7 +242,7 @@ void Fl_OpenGL_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm,
   }
   if (cx || cy || W < bm->w() || H < bm->h()) { // Partial image drawing.
     Fl_RGB_Image *rgb = bitmap_to_rgb1(bm);
-    draw_rgb134_(rgb, X, Y, W, H, cx, cy);
+    draw_rgb134_(rgb, X, Y, W, H, cx, cy, true);
     delete rgb;
     return;
   }
