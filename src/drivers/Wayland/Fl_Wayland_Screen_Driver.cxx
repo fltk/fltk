@@ -1546,6 +1546,10 @@ void Fl_Wayland_Screen_Driver::ensure_libdecor() {
 
   libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display,
                                   &libdecor_iface);
+
+  Fl::add_fd(libdecor_get_fd(libdecor_context), FL_READ,
+             (Fl_FD_Handler)libdecor_fd_callback, this);
+  Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
 }
 
 
@@ -1683,7 +1687,10 @@ void Fl_Wayland_Screen_Driver::close_display() {
   }
 #endif // HAVE_CURSOR_SHAPE
 
-  Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
+  if (libdecor_context)
+    Fl::remove_fd(libdecor_get_fd(Fl_Wayland_Screen_Driver::libdecor_context));
+  else
+    Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
   wl_registry_destroy(wl_registry); wl_registry = NULL;
   wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
   Fl_Wayland_Screen_Driver::wl_display = NULL;
