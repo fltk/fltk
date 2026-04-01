@@ -100,8 +100,11 @@ static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
   return texName;
 }
 
-
-static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color col = FL_WHITE,
+// X,Y,W,H = where to draw full or partial texture in FLTK coords
+// cx,cy = offset inside full texture in FLTK coords
+// sw = img->data_w() / img->w(), sh = img->data_h() / img->h()
+static void draw_texture(GLuint texName, int X, int Y, int W, int H,
+                         int cx, int cy, float sw, float sh, Fl_Color col = FL_WHITE,
                          bool alpha_blend = false) {
   // GL_TRANSFORM_BIT for GL_PROJECTION
   // GL_TEXTURE_BIT for GL_TEXTURE_RECTANGLE_ARB
@@ -115,15 +118,15 @@ static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color co
   Fl::get_color(col, RR, GG, BB);
   glColor4ub(RR, GG, BB, 0xff); // the color drawn through the texture seen as a kind of mask
 
-  float winw = Fl_Window::current()->as_gl_window()->pixel_w();
+  float winw = Fl_Window::current()->as_gl_window()->pixel_w(); // winw,h = pixel size of GL scene
   float winh = Fl_Window::current()->as_gl_window()->pixel_h();
 
   float R = 2;
   glScalef(R/winw, R/winh, 1.0f);
   glTranslatef(-winw/R, -winh/R, 0.0f);
   float s = Fl_Window::current()->as_gl_window()->pixels_per_unit();
-  int HH = s * H, WW = s * W;
-  float ox = s * X;
+  int HH = s * H, WW = s * W; // WW,HH = size of drawn image in pixels
+  float ox = s * X; // ox,oy = lower-left of where to draw image in pixel coords
   float oy = winh - s * Y;
   glEnable(GL_TEXTURE_RECTANGLE_ARB);
   if (alpha_blend) {
@@ -131,47 +134,38 @@ static void draw_texture(GLuint texName, int X, int Y, int W, int H, Fl_Color co
     glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
   }
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texName);
-  GLint width, height;
+  GLint width, height; // pixel size of texture
   glGetTexLevelParameteriv(GL_TEXTURE_RECTANGLE_ARB, 0, GL_TEXTURE_WIDTH, &width);
   glGetTexLevelParameteriv(GL_TEXTURE_RECTANGLE_ARB, 0, GL_TEXTURE_HEIGHT, &height);
   //write the texture on screen
+  // coords inside texture: 0 -> width and 0 -> height
   glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 0.0f); // draw lower left in world coordinates
+  glTexCoord2i(sw * cx, sh * cy); // lower left
   glVertex2f(ox, oy);
-  glTexCoord2f(0.0f, (GLfloat)height); // draw upper left in world coordinates
+  glTexCoord2i(sw * cx, sh * (cy+H)); // upper left
   glVertex2f(ox, oy - HH);
-  glTexCoord2f((GLfloat)width, (GLfloat)height); // draw upper right in world coordinates
+  glTexCoord2i(sw * (cx+W), sh * (cy+H)); // upper right
   glVertex2f(ox + WW, oy - HH);
-  glTexCoord2f((GLfloat)width, 0.0f); // draw lower right in world coordinates
+  glTexCoord2i(sw * (cx+W), sh * cy); // lower right
   glVertex2f(ox + WW, oy);
   glEnd();
   // reset original matrices
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
-  glPopAttrib(); // GL_TRANSFORM_BIT | GL_TEXTURE_BIT
+  glPopAttrib(); // GL_TRANSFORM_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT
 }
 
 
-// Argument img here can have depth 2, 3, or 4.
-// It can also have depth 1 in 2 situations:
-//   1) we draw a depth-1 (gray scale) Fl_RGB_Image (was_bitmap = false)
-//   2) we draw an Fl_Bitmap and use a depth-1 Fl_RGB_Image as a drawing tool (was_bitmap = true)
-void Fl_OpenGL_Graphics_Driver::draw_rgb134_(Fl_RGB_Image *img,
-                                int XP, int YP, int WP, int HP, int cx, int cy, bool was_bitmap) {
-  int X, Y, W, H;
-  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+// Argument img here can have depth 1, 2, 3, or 4.
+void Fl_OpenGL_Graphics_Driver::draw_rgb(Fl_RGB_Image *img,
+                                         int XP, int YP, int WP, int HP, int cx, int cy) {
+  // Don't draw an empty image.
+  if (!img->array) {
+    Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
-  if (cx || cy || W < img->w() || H < img->h()) { // Partial image drawing.
-    int d = img->d();
-    int ld = (img->ld() ? img->ld() : d * img->data_w());
-    float sx = img->data_w() / float(img->w()), sy = img->data_h() / float(img->h());
-    cx *= sx; cy *= sy;
-    Fl_RGB_Image *partial_rgb = new Fl_RGB_Image(img->array + cy * ld + cx * d,
-                                                 W * sx, H * sy, d, ld);
-    partial_rgb->scale(W, H, 0, 1);
-    draw_rgb134_(partial_rgb, X, Y, W, H, 0, 0, was_bitmap);
-    delete partial_rgb;
+  int X, Y, W, H;
+  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
   if (!image_texture_map_) image_texture_map_ = new std::map<Fl_Image*, GLuint>;
@@ -181,20 +175,10 @@ void Fl_OpenGL_Graphics_Driver::draw_rgb134_(Fl_RGB_Image *img,
     texNum = compute_texture_rectangle(img);
     (*image_texture_map_)[img] = texNum;
   } else texNum = iter->second;
-  draw_texture(texNum, X, Y, W, H,
-               (was_bitmap ? color() : FL_WHITE), (img->d() == 1 && !was_bitmap));
+  draw_texture(texNum, X, Y, W, H, cx, cy,
+               float(img->data_w()) / img->w(), float(img->data_h()) / img->h(),
+               FL_WHITE, (img->d() == 1));
   color(color()); // reset current color
-}
-
-
-void Fl_OpenGL_Graphics_Driver::draw_rgb(Fl_RGB_Image *img,
-                                         int XP, int YP, int WP, int HP, int cx, int cy) {
-  // Don't draw an empty image.
-  if (!img->array) {
-    Fl_Graphics_Driver::draw_empty(img, XP, YP);
-    return;
-  }
-  draw_rgb134_(img, XP, YP, WP, HP, cx, cy);
 }
 
 
@@ -209,11 +193,6 @@ void Fl_OpenGL_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,
   if (start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (cx || cy || W < pxm->w() || H < pxm->h()) { // Partial image drawing.
-    Fl_RGB_Image rgb(pxm);
-    draw_rgb134_(&rgb, X, Y, W, H, cx, cy);
-    return;
-  }
   if (!image_texture_map_) image_texture_map_ = new std::map<Fl_Image*, GLuint>;
   auto iter = image_texture_map_->find(pxm);
   GLuint texNum;
@@ -222,7 +201,8 @@ void Fl_OpenGL_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,
     texNum = compute_texture_rectangle(&rgb);
     (*image_texture_map_)[pxm] = texNum;
   } else texNum = iter->second;
-  draw_texture(texNum, X, Y, W, H);
+  draw_texture(texNum, X, Y, W, H, cx, cy,
+               float(pxm->data_w()) / pxm->w(), float(pxm->data_h()) / pxm->h());
   color(color()); // reset current color
 }
 
@@ -258,12 +238,6 @@ void Fl_OpenGL_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm,
   if (start_image(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (cx || cy || W < bm->w() || H < bm->h()) { // Partial image drawing.
-    Fl_RGB_Image *rgb = bitmap_to_rgb1(bm);
-    draw_rgb134_(rgb, X, Y, W, H, cx, cy, true);
-    delete rgb;
-    return;
-  }
   if (!image_texture_map_) image_texture_map_ = new std::map<Fl_Image*, GLuint>;
   GLuint texNum;
   auto iter = image_texture_map_->find(bm);
@@ -273,5 +247,6 @@ void Fl_OpenGL_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm,
     (*image_texture_map_)[bm] = texNum;
     delete rgb;
   } else texNum = iter->second;
-  draw_texture(texNum, X, Y, W, H, color());
+  draw_texture(texNum, X, Y, W, H, cx, cy,
+               float(bm->data_w()) / bm->w(), float(bm->data_h()) / bm->h(), color());
 }

@@ -34,7 +34,9 @@ public:
         gl_rectf(X, Y, 5, 5);
       }
     }
-    if (image()) image()->draw((w() - image()->w())/2, y() + (h() - image()->h())/2);
+    fl_color(FL_DARK_BLUE); // Effective only when the drawn image is an Fl_Bitmap
+    Fl_Image *img = image();
+    if (img) img->draw((w() - img->w())/2, y() + (h() - img->h())/2);
   }
 };
 

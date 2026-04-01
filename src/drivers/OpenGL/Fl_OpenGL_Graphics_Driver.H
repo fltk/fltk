@@ -34,8 +34,6 @@
 class Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
 private:
   static std::map<Fl_Image*, GLuint> *image_texture_map_;
-  void draw_rgb134_(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy,
-                    bool was_bitmap = false);
 public:
   float pixels_per_unit_;
   float line_width_;
