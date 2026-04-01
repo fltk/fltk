@@ -187,6 +187,7 @@ public:
   struct wl_seat *get_wl_seat();
   char  *get_seat_name();
   struct xkb_keymap *get_xkb_keymap();
+  void ensure_libdecor();
 };
 
 

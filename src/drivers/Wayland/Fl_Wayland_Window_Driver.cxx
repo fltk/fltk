@@ -659,17 +659,6 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
 }
 
 
-static void handle_error(struct libdecor *libdecor_context, enum libdecor_error error, const char *message)
-{
-  Fl::fatal("Caught error (%d): %s\n", error, message);
-}
-
-
-static struct libdecor_interface libdecor_iface = {
-  .error = handle_error,
-};
-
-
 
 static void delayed_rescale(Fl_Window *win) {
   Fl_Window_Driver::driver(win)->is_a_rescale(true);
@@ -1527,9 +1516,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
 
   } else if (pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
-    if (!scr_driver->libdecor_context)
-      scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display,
-                                                  &libdecor_iface);
+    scr_driver->ensure_libdecor();
     new_window->frame = libdecor_decorate(scr_driver->libdecor_context, new_window->wl_surface,
                                           &libdecor_frame_iface, new_window);
     // appears in the Gnome desktop menu bar

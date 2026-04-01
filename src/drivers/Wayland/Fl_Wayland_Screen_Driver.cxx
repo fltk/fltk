@@ -1456,6 +1456,24 @@ fatal:
 }
 
 
+static void libdecor_fd_callback(int fd, Fl_Wayland_Screen_Driver *scr_dr)
+{
+  if (libdecor_dispatch(scr_dr->libdecor_context, 0) < 0)
+    goto fatal;
+  return;
+fatal:
+  if (wl_display_get_error(scr_dr->wl_display) == EPROTO) {
+    const struct wl_interface *interface;
+    int code = wl_display_get_protocol_error(scr_dr->wl_display, &interface, NULL);
+    Fl::fatal("Fatal error %d in Wayland protocol: %s",
+              code, (interface ? interface->name : "unknown") );
+  } else {
+    Fl::fatal("Fatal error while communicating with Wayland server: %s",
+              strerror(errno));
+  }
+}
+
+
 Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
   libdecor_context = NULL;
   seat = NULL;
@@ -1508,6 +1526,26 @@ static void do_atexit() {
   if (Fl_Wayland_Screen_Driver::wl_display) {
     wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   }
+}
+
+
+static void handle_error(struct libdecor *libdecor_context, enum libdecor_error error, const char *message)
+{
+  Fl::fatal("Caught error (%d): %s\n", error, message);
+}
+
+
+static struct libdecor_interface libdecor_iface = {
+  .error = handle_error,
+};
+
+
+void Fl_Wayland_Screen_Driver::ensure_libdecor() {
+  if (libdecor_context)
+    return;
+
+  libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display,
+                                  &libdecor_iface);
 }
 
 
