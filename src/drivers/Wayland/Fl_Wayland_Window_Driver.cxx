@@ -1216,22 +1216,6 @@ static const struct xdg_popup_listener popup_listener = {
 bool Fl_Wayland_Window_Driver::in_flush_ = false;
 
 
-static const char *get_prog_name() {
-  pid_t pid = getpid();
-  char fname[100];
-  snprintf(fname, 100, "/proc/%u/cmdline", pid);
-  FILE *in = fopen(fname, "r");
-  if (in) {
-    static char line[200];
-    const char *p = fgets(line, sizeof(line), in);
-    fclose(in);
-    p = strrchr(line, '/'); if (!p) p = line; else p++;
-    return p;
-  }
-  return "unknown";
-}
-
-
 /* Implementation note about menu windows under Wayland.
  Wayland offers a way to position popup windows such as menu windows using constraints.
  Each popup is located relatively to a parent window which can be a popup itself and
@@ -1470,8 +1454,9 @@ void Fl_Wayland_Window_Driver::makeWindow()
                                                   &libdecor_iface);
     new_window->frame = libdecor_decorate(scr_driver->libdecor_context, new_window->wl_surface,
                                           &libdecor_frame_iface, new_window);
-    // appears in the Gnome desktop menu bar
-    libdecor_frame_set_app_id(new_window->frame, get_prog_name());
+    // appears in the Gnome desktop menu bar if there is no .desktop file
+    // used for matching to .desktop file
+    libdecor_frame_set_app_id(new_window->frame, pWindow->app_id());
     libdecor_frame_set_title(new_window->frame, pWindow->label()?pWindow->label():"");
     if (!is_resizable()) {
       libdecor_frame_unset_capabilities(new_window->frame, LIBDECOR_ACTION_RESIZE);
@@ -1868,7 +1853,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     depth--;
     return;
   }
-  
+
   if (is_a_resize) {
     if (pWindow->as_overlay_window() && other_xid) {
       destroy_double_buffer();

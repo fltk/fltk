@@ -56,6 +56,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   friend class Fl_X;
   friend class Fl_Window_Driver;
 private:
+  static char *app_id_;
   static char *default_xclass_;
   static char show_next_window_iconic_; // 1 means create next window in iconic form
 
@@ -374,6 +375,9 @@ public:
   /** Sets the icon label. */
   void label(const char* label, const char* iconlabel); // platform dependent
   void copy_label(const char* a);
+
+  static void app_id(const char*);
+  static const char *app_id();
 
   static void default_xclass(const char*);
   static const char *default_xclass();

@@ -35,6 +35,8 @@
 
 char *Fl_Window::default_xclass_ = 0L;
 
+char *Fl_Window::app_id_ = 0L;
+
 char Fl_Window::show_next_window_iconic_ = 0;
 
 Fl_Window *Fl_Window::current_;
@@ -183,6 +185,46 @@ void Fl_Window::default_callback(Fl_Window* win, void* v) {
 /**  Returns the last window that was made current. \see Fl_Window::make_current() */
 Fl_Window *Fl_Window::current() {
   return current_;
+}
+
+/** Returns the Wayland app_id.
+
+  \see Fl_Window::app_id(const char *)
+
+ */
+const char *Fl_Window::app_id()
+{
+  if (app_id_) {
+    return app_id_;
+  } else {
+    return xclass();
+  }
+}
+
+/** Sets the Wayland app_id.
+
+  You can change the default app_id whenever you want,
+  but this only affects windows that are created
+  (and shown) after this call.
+
+  The given string \p ai is copied. You can use a local variable or
+  free the string immediately after this call.
+
+  If you don't call this, the app_id will fall back on the window xclass.
+
+  \param[in] ai app_id for all windows subsequently created
+
+  \see Fl_Window::default_xclass(const char *)
+*/
+void Fl_Window::app_id(const char *ai)
+{
+  if (app_id_) {
+    free(app_id_);
+    app_id_ = 0L;
+  }
+  if (ai) {
+    app_id_ = fl_strdup(ai);
+  }
 }
 
 /** Returns the default xclass.
