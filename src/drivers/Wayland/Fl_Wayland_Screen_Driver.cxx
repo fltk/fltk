@@ -1489,6 +1489,11 @@ static void do_atexit() {
   if (Fl_Wayland_Screen_Driver::wl_display) {
     wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   }
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (scr_driver->libdecor_context) {
+    libdecor_unref(scr_driver->libdecor_context);
+    scr_driver->libdecor_context = NULL;
+  }
 }
 
 
