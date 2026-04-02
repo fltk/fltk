@@ -1486,11 +1486,9 @@ static const struct wl_callback_listener sync_listener = {
 
 
 static void do_atexit() {
-  if (Fl_Wayland_Screen_Driver::wl_display) {
-    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-  }
+  // Issue #821 no longer seems to require extra operations under gnome version < 44.
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  if (scr_driver->libdecor_context) {
+  if (scr_driver->libdecor_context) { // libdecor recommends a call to libdecor_unref()
     libdecor_unref(scr_driver->libdecor_context);
     scr_driver->libdecor_context = NULL;
   }
@@ -1533,12 +1531,6 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   Fl::add_fd(libdecor_get_fd(libdecor_context), FL_READ, (Fl_FD_Handler)libdecor_fd_callback,
              libdecor_context);
   fl_create_print_window();
-  /* This is useful to avoid crash of the Wayland compositor after
-   FLTK apps terminate in certain situations:
-   - gnome-shell version < 44 (e.g. version 42.9)
-   - focus set to "follow-mouse"
-   See issue #821 for details.
-  */
   atexit(do_atexit);
 }
 
