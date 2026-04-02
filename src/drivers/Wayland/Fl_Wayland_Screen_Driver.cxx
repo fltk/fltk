@@ -1640,7 +1640,6 @@ void Fl_Wayland_Screen_Driver::close_display() {
   Fl_Wayland_Screen_Driver::wl_display = NULL;
   delete Fl_Display_Device::display_device()->driver();
   delete Fl_Display_Device::display_device();
-  delete Fl::system_driver();
   delete this;
 }
 
