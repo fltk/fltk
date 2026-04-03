@@ -243,7 +243,7 @@ void Fl_Window::default_xclass(const char *xc)
   and the second one if the first is 'x'.  Thus "foo" turns into "foo, Foo",
   and "xprog.1" turns into "xprog, XProg".
 
-  <I>Under Wayland, this is used to set the "application identifier" of toplevel,
+  <I>Under Wayland</I>, this is used to set the "application identifier" of toplevel,
   bordered windows. If not set, the executable name is used.
 
   <I>Under Microsoft Windows</I>, this string is used as the name of the
