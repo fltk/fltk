@@ -648,17 +648,6 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
 }
 
 
-static void handle_error(struct libdecor *libdecor_context, enum libdecor_error error, const char *message)
-{
-  Fl::fatal("Caught error (%d): %s\n", error, message);
-}
-
-
-static struct libdecor_interface libdecor_iface = {
-  .error = handle_error,
-};
-
-
 void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *window,
                   float pre_scale) {
   Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
@@ -1007,11 +996,12 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
   Fl_Window_Driver::wait_for_expose();
   struct wld_window * xid = fl_wl_xid(pWindow);
   if (!xid) return;
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (pWindow->fullscreen_active()) {
     if (xid->kind == DECORATED) {
       while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) ||
              !(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
-        wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+        libdecor_dispatch(scr_driver->libdecor_context, 0);
       }
     } else if (xid->kind == UNFRAMED) {
       wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
@@ -1019,7 +1009,7 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
   } else if (xid->kind == DECORATED) {
     // necessary for the windowfocus demo program with recent Wayland versions
     if (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
-      wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+      libdecor_dispatch(scr_driver->libdecor_context, 0);
     }
   }
 }
@@ -1465,9 +1455,6 @@ void Fl_Wayland_Window_Driver::makeWindow()
 
   } else if (pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
-    if (!scr_driver->libdecor_context)
-      scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display,
-                                                  &libdecor_iface);
     new_window->frame = libdecor_decorate(scr_driver->libdecor_context, new_window->wl_surface,
                                           &libdecor_frame_iface, new_window);
     // appears in the Gnome desktop menu bar
