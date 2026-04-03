@@ -202,7 +202,7 @@ void Fl_Image::label(Fl_Menu_Item* m) {
 */
 int Fl_Image::fail() const {
   // if no image exists, ld_ may contain a simple error code
-  if ((w_ <= 0) || (h_ <= 0) || (d_ <= 0)) {
+  if ((w_ <= 0) || (h_ <= 0) || (d_ <= 0 && count_ == 0)) {
     if (ld_ == 0)
       return ERR_NO_IMAGE;
     else

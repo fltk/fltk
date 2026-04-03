@@ -96,7 +96,7 @@ void chooser_cb(Fl_Widget *, Gl_Image_Window *mainwin) {
   char *fname = fl_file_chooser("select image file", "*.{png,jpg,gif,svg,svgz,xbm,xpm,ico}", NULL, 0);
   if (fname) {
     Fl_Shared_Image *shared = Fl_Shared_Image::get(fname);
-    if (shared && shared->w() && shared->h()) {
+    if (shared && !shared->fail()) {
       mainwin->copy_label(fname);
       mainwin->set_image(shared);
     }
