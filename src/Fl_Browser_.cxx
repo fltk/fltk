@@ -657,6 +657,10 @@ int Fl_Browser_::deselect(int docallbacks) {
     item_select(selection_, 0);
     redraw_line(selection_);
     selection_ = 0;
+    if (docallbacks) {
+      set_changed();
+      do_callback(FL_REASON_CHANGED);
+    }
     return 1;
   }
 }
