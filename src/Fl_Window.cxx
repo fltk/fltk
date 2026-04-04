@@ -241,9 +241,12 @@ void Fl_Window::default_xclass(const char *xc)
   and the second one if the first is 'x'.  Thus "foo" turns into "foo, Foo",
   and "xprog.1" turns into "xprog, XProg".
 
+  <I>Under Wayland</I>, this is used to set the "application identifier" of toplevel,
+  bordered windows. If not set, the executable name is used.
+
   <I>Under Microsoft Windows</I>, this string is used as the name of the
-  WNDCLASS structure, though it is not clear if this can have any
-  visible effect.
+  WNDCLASS structure. The user should avoid names that may collide with
+  system-reserved window class names (e.g., anything beginning with "edit").
 
   \since FLTK 1.3 the passed string is copied. You can use a local
   variable or free the string immediately after this call. Note that

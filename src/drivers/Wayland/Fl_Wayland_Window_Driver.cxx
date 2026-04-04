@@ -1458,7 +1458,8 @@ void Fl_Wayland_Window_Driver::makeWindow()
     new_window->frame = libdecor_decorate(scr_driver->libdecor_context, new_window->wl_surface,
                                           &libdecor_frame_iface, new_window);
     // appears in the Gnome desktop menu bar
-    libdecor_frame_set_app_id(new_window->frame, get_prog_name());
+    const char *appid = pWindow->xclass() ? pWindow->xclass() : get_prog_name();
+    libdecor_frame_set_app_id(new_window->frame, appid);
     libdecor_frame_set_title(new_window->frame, pWindow->label()?pWindow->label():"");
     if (!is_resizable()) {
       libdecor_frame_unset_capabilities(new_window->frame, LIBDECOR_ACTION_RESIZE);
