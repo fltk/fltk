@@ -1562,6 +1562,8 @@ void Fl_Wayland_Window_Driver::makeWindow()
     xdg_surface_add_listener(new_window->xdg_surface, &xdg_surface_listener, new_window);
     new_window->xdg_toplevel = xdg_surface_get_toplevel(new_window->xdg_surface);
     xdg_toplevel_add_listener(new_window->xdg_toplevel, &xdg_toplevel_listener, new_window);
+    xdg_toplevel_set_app_id(new_window->xdg_toplevel,
+                            pWindow->xclass() ? pWindow->xclass() : get_prog_name());
     if (pWindow->label()) xdg_toplevel_set_title(new_window->xdg_toplevel, pWindow->label());
     wl_surface_commit(new_window->wl_surface);
     pWindow->border(0);
