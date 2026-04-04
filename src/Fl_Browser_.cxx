@@ -718,13 +718,16 @@ int Fl_Browser_::handle(int event) {
         switch (Fl::event_key()) {
         case FL_Down:
           while ((l = item_next(l))) {
-            if (item_height(l)>0) {select_only(l, when()); break;}
+            if (item_height(l)>0) {
+              select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
+              break;
+            }
           }
-            return 1;
+          return 1;
         case FL_Up:
           while ((l = item_prev(l))) {
             if (item_height(l)>0) {
-              select_only(l, when());
+              select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
               break; // no need to test wp (return 1)
             }
           }
