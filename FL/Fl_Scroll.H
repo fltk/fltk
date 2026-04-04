@@ -94,6 +94,11 @@
   <I>You cannot use Fl_Window as a child of this since the
   clipping is not conveyed to it when drawn, and it will draw over the
   scrollbars and neighboring objects.</I>
+
+  <I>When the Fl_Scroll is a child of an Fl_Tabs widget, its contents must be
+  kept at least five pixels (as of FLTK 1.4.x) away from the edges of the 
+  Fl_Tabs to avoid a tearing effect when scrolling.</I>
+  <!-- See GitHub issue #1175. -->
 */
 class FL_EXPORT Fl_Scroll : public Fl_Group {
 
