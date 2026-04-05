@@ -145,11 +145,11 @@ void sort_cb(Fl_Widget *, void *) {
 
 void btype_cb(Fl_Widget *, void *) {
   for ( int t=1; t<=browser->size(); t++ ) browser->select(t,0);
-  browser->select(1,0);         // leave focus box on first line
        if ( strcmp(btype->text(),"Normal")==0) browser->type(FL_NORMAL_BROWSER);
   else if ( strcmp(btype->text(),"Select")==0) browser->type(FL_SELECT_BROWSER);
   else if ( strcmp(btype->text(),"Hold"  )==0) browser->type(FL_HOLD_BROWSER);
   else if ( strcmp(btype->text(),"Multi" )==0) browser->type(FL_MULTI_BROWSER);
+  browser->select(1,0);         // leave focus box on first line
   browser->redraw();
 }
 
