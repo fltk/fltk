@@ -730,21 +730,27 @@ int Fl_Browser_::handle(int event) {
         switch (Fl::event_key()) {
         case FL_Enter:
         case FL_KP_Enter:
-          select_only(l, when() & ~FL_WHEN_ENTER_KEY);
-          if (wp.deleted()) return 1;
-          if (when() & FL_WHEN_ENTER_KEY) {
-            set_changed();
-            do_callback(FL_REASON_CHANGED);
+          if (select_only(l, when() & ~(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED))) {
+            if (wp.deleted()) return 1;
+            if (when() & FL_WHEN_ENTER_KEY) {
+              set_changed();
+              do_callback(FL_REASON_CHANGED);
+            }
+          } else {
+            if (wp.deleted()) return 1;
+            if ((when() & FL_WHEN_ENTER_KEY) && (when() & FL_WHEN_NOT_CHANGED)) {
+              do_callback(FL_REASON_RESELECTED);
+            }
           }
           return 1;
         case ' ':
           selection_ = l;
-          select(l, !item_selected(l), when() & ~FL_WHEN_ENTER_KEY);
+          select(l, !item_selected(l), when() & ~(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED));
           return 1;
         case FL_Down:
           while ((l = item_next(l))) {
             if (Fl::event_state(FL_SHIFT|FL_CTRL))
-              select(l, l1 ? item_selected(l1) : 1, when());
+              select(l, l1 ? item_selected(l1) : 1, when() & ~(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED));
             if (wp.deleted()) return 1;
             if (item_height(l)>0) goto J1;
           }
@@ -752,7 +758,7 @@ int Fl_Browser_::handle(int event) {
         case FL_Up:
           while ((l = item_prev(l))) {
             if (Fl::event_state(FL_SHIFT|FL_CTRL))
-              select(l, l1 ? item_selected(l1) : 1, when());
+              select(l, l1 ? item_selected(l1) : 1, when() & ~(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED));
             if (wp.deleted()) return 1;
             if (item_height(l)>0) goto J1;
           }
