@@ -1213,12 +1213,12 @@ static void invalidate_gl_win(Fl_Window *glwin) {
 
 static BOOL CALLBACK child_window_cb(HWND child_xid, LPARAM data) {
   Fl_Window *child = fl_find(child_xid);
-  if (data) {
+  if (child && data) {
     float s = *(float*)data;
     SetWindowPos(child_xid, 0, int(round(child->x() * s)), int(round(child->y() * s)),
                  int(round(child->w() * s)), int(round(child->h() * s)), 0);
   }
-  if (child->as_gl_window()) invalidate_gl_win(child);
+  if (child && child->as_gl_window()) invalidate_gl_win(child);
   return TRUE;
 }
 
