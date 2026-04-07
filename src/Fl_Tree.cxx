@@ -1,19 +1,8 @@
 //
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <FL/Fl_Tree.H>
-#include <FL/Fl_Preferences.H>
-#include <FL/fl_string_functions.h>
-
-//////////////////////
-// Fl_Tree.cxx
-//////////////////////
+// Fl_Tree.cxx -- This file is part of the Fl_Tree widget for FLTK
 //
-// Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
-// Copyright (C) 2009-2010 by Greg Ercolano.
+// Copyright 2009-2010 by Greg Ercolano.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,6 +14,14 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <FL/Fl_Tree.H>
+#include <FL/Fl_Preferences.H>
+#include <FL/fl_string_functions.h>
 
 // INTERNAL: scroller callback (hor+vert scroll)
 static void scroll_cb(Fl_Widget*,void *data) {
@@ -79,12 +76,13 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _root = new Fl_Tree_Item(this);
   _root->parent(0);                             // we are root of tree
   _root->label("ROOT");
-  _item_focus      = 0;
-  _callback_item   = 0;
-  _callback_reason = FL_TREE_REASON_NONE;
-  _scrollbar_size  = 0;                         // 0: uses Fl::scrollbar_size()
-
-  _lastselect       = 0;
+  _item_focus           = 0;
+  _callback_item        = 0;
+  _callback_reason      = FL_TREE_REASON_NONE;
+  _scrollbar_size       = 0;                    // 0: uses Fl::scrollbar_size()
+  _lastselect           = nullptr;
+  _lastpushed           = 0;
+  _auto_resize_children = 0;                    // don't resize children automatically
 
   box(FL_DOWN_BOX);
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
@@ -691,9 +689,13 @@ void Fl_Tree::calc_tree() {
 
 void Fl_Tree::resize(int X,int Y,int W, int H) {
   fix_scrollbar_order();
-  Fl_Group::resize(X,Y,W,H);
+  if (auto_resize_children()) {         // backwards compatibility to 1.4.x
+    Fl_Group::resize(X, Y, W, H);
+    init_sizes();                       // remove stored sizes
+  } else {
+    Fl_Widget::resize(X, Y, W, H);
+  }
   calc_dimensions();
-  init_sizes();
 }
 
 /// Standard FLTK draw() method, handles drawing the tree widget.

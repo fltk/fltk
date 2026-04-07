@@ -1,22 +1,8 @@
 //
-
-#ifndef FL_TREE_H
-#define FL_TREE_H
-
-#include <FL/Fl.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Scrollbar.H>
-#include <FL/fl_draw.H>
-
-#include <FL/Fl_Tree_Item.H>
-#include <FL/Fl_Tree_Prefs.H>
-
-//////////////////////
-// FL/Fl_Tree.H
-//////////////////////
+// Fl_Tree.H -- This file is part of the Fl_Tree widget for FLTK
 //
-// Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
-// Copyright (C) 2009-2010 by Greg Ercolano.
+// Copyright 2009-2010 by Greg Ercolano.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,6 +14,17 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+#ifndef FL_TREE_H
+#define FL_TREE_H
+
+#include <FL/Fl.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Scrollbar.H>
+#include <FL/fl_draw.H>
+
+#include <FL/Fl_Tree_Item.H>
+#include <FL/Fl_Tree_Prefs.H>
 
 ///
 /// \file
@@ -293,7 +290,9 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   int            _scrollbar_size;               // size of scrollbar trough
   Fl_Tree_Item  *_lastselect;                   // last selected item
   char           _lastpushed;                   // FL_PUSH occurred on: 0=nothing, 1=open/close, 2=usericon, 3=label
-  void fix_scrollbar_order();
+  int            _auto_resize_children;         // if true: resize children when the Fl_Tree container is resized
+
+  void           fix_scrollbar_order();         // internal: rearrange scrollbars in list of children
 
 protected:
   Fl_Scrollbar *_vscroll;       ///< Vertical scrollbar
@@ -320,6 +319,58 @@ public:
   int handle(int e) override;
   void show_self();
   void resize(int,int,int,int) override;
+
+  /**
+    Set mode to resize children when the Fl_Tree container widget is resized.
+
+    The default value is \c false, meaning that child widgets within Fl_Tree
+    widgets are not automatically resized.
+
+    This default behavior was changed in version 1.5.0 because resizing children
+    automatically led to unpredictable behavior depending on their positions and
+    sizes. This was caused by using the default resizing mechanism, Fl_Group::resize(),
+    and was fixed in version 1.5.0 by disabling automatic resizing of children.
+
+    This method can be used to restore the 1.4.x behavior to resize children
+    automatically for backwards compatibility by calling
+    Fl_Tree::auto_resize_children(1). See example below.
+
+    \b Note: use with care and only if required for strict backwards compatibility.
+        The resulting resize behavior can be \e surprising. If your development
+        target is FLTK 1.4 or lower you can't use this method (you may include
+        it inside conditional compilation for FLTK 1.5 and higher).
+
+    Example code for strict backwards compatibility to 1.4.x or lower:
+
+    \code
+    #include <FL/Fl_Tree.H>
+      Fl_Tree *tree = new Fl_Tree(0, 0, 400, 400);
+    #if FL_API_VERSION >= 10500
+      tree->auto_resize_children(1);
+    #endif
+    \endcode
+
+    \param[in]  mode  enable auto resizing if true (non-zero)
+
+    \since 1.5.0
+    \see int auto_resize_children()
+  */
+  void auto_resize_children(int mode) {
+    _auto_resize_children = (mode) ? 1 : 0;
+  }
+
+  /**
+    Returns whether auto resizing of children is active.
+
+    \returns  0 (auto resizing \b off) or 1 ( \b on)
+
+    \since 1.5.0
+
+    \see void auto_resize_children(int mode) for details
+  */
+  int auto_resize_children() {
+    return _auto_resize_children;
+  }
 
   ///////////////////////
   // root methods
