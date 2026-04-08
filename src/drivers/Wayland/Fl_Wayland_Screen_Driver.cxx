@@ -1190,6 +1190,8 @@ static void output_done(void *data, struct wl_output *wl_output)
     xp = xp->next;
   }
   output->done = true;
+  output->x *= output->wld_scale;
+  output->y *= output->wld_scale;
 
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (scr_driver->screen_count_get() > 0) { // true when output_done runs after initial screen dectection
@@ -1679,8 +1681,8 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   wl_surface_commit(wl_surface); // necessary under KWin
   while (data.state != XDG_TOPLEVEL_STATE_FULLSCREEN)
     wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-  Wfullscreen = data.W;
-  Hfullscreen = data.H;
+  Wfullscreen = data.W * output->wld_scale;
+  Hfullscreen = data.H * output->wld_scale;
   if (Wfullscreen && Hfullscreen && wl_list_length(&scr_driver->outputs) == 1) {
     struct wl_surface *wl_surface2 = wl_compositor_create_surface(scr_driver->wl_compositor);
     struct xdg_surface *xdg_surface2 = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface2);
@@ -1692,8 +1694,8 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
     wl_surface_commit(wl_surface2); // necessary under KWin
     while (data2.state != XDG_TOPLEVEL_STATE_MAXIMIZED)
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-    Wworkarea = data2.W;
-    Hworkarea = data2.H;
+    Wworkarea = data2.W * output->wld_scale;
+    Hworkarea = data2.H * output->wld_scale;
     xdg_toplevel_destroy(xdg_toplevel2);
     xdg_surface_destroy(xdg_surface2);
     wl_surface_destroy(wl_surface2);
@@ -1708,9 +1710,10 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   xdg_toplevel_destroy(xdg_toplevel);
   xdg_surface_destroy(xdg_surface);
   wl_surface_destroy(wl_surface);
-  /*int fractional_scale = int(100 * (output->pixel_width / float(Wfullscreen)));
+  /*int d = output->wld_scale;
+  int fractional_scale = int(100 * (output->pixel_width / float(Wfullscreen/d)));
   printf("fullscreen=%dx%d workarea=%dx%d  fractional_scale=%d%%  wld_s=%d\n",
-         Wfullscreen,Hfullscreen,Wworkarea,Hworkarea,fractional_scale,output->wld_scale);*/
+         Wfullscreen/d,Hfullscreen/d,Wworkarea/d,Hworkarea/d,fractional_scale,d);*/
   return found_workarea;
 }
 
@@ -1754,19 +1757,25 @@ void Fl_Wayland_Screen_Driver::init_workarea()
     int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
     bool found_workarea = compute_full_and_maximized_areas(output, Wfullscreen, Hfullscreen, Wworkarea, Hworkarea);
     if (Wfullscreen && Hfullscreen) { // skip sway which puts 0 there
-      output->width = Wfullscreen * output->wld_scale; // pixels
-      output->height = Hfullscreen * output->wld_scale; // pixels
+      output->width = Wfullscreen; // pixels
+      output->height = Hfullscreen; // pixels
       if (found_workarea) {
         workarea_xywh[0] = output->x; // pixels
         workarea_xywh[1] = output->y; // pixels
-        workarea_xywh[2] = Wworkarea * output->wld_scale; // pixels
-        workarea_xywh[3] = Hworkarea * output->wld_scale; // pixels
+        workarea_xywh[2] = Wworkarea; // pixels
+        workarea_xywh[3] = Hworkarea; // pixels
         need_init_workarea = false;
       }
     }
   }
   if (need_init_workarea) {
-    screen_xywh(workarea_xywh[0], workarea_xywh[1], workarea_xywh[2], workarea_xywh[3], 0);
+    wl_list_for_each(output, &outputs, link) {
+      break;
+    }
+    workarea_xywh[0] = output->x;
+    workarea_xywh[1] = output->y;
+    workarea_xywh[2] = output->width;
+    workarea_xywh[3] = output->height;
   }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
 }
