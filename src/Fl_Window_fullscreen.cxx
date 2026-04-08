@@ -50,6 +50,9 @@ void Fl_Window::fullscreen() {
   }
 }
 
+/**
+  Turns off any side effects of fullscreen() and does resize(X,Y,W,H).
+*/
 void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
   if (shown() && (flags() & Fl_Widget::FULLSCREEN)) {
     pWindowDriver->fullscreen_off(X, Y, W, H);
@@ -69,6 +72,19 @@ void Fl_Window::fullscreen_off() {
   fullscreen_off(no_fullscreen_x, no_fullscreen_y, no_fullscreen_w, no_fullscreen_h);
 }
 
+/**
+  Sets which screens should be used when this window is in fullscreen
+  mode. The window will be resized to the top of the screen with index
+  \p top, the bottom of the screen with index \p bottom, etc.
+
+  If this method is never called, or if any argument is < 0, then the
+  window will be resized to fill the screen it is currently on.
+
+  Wayland compositors may support only partially or not at all multi-screen
+  fullscreen windows.
+
+  \see void Fl_Window::fullscreen()
+  */
 void Fl_Window::fullscreen_screens(int top, int bottom, int left, int right) {
   if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
     fullscreen_screen_top = -1;

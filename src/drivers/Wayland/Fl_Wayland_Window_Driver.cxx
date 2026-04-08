@@ -75,6 +75,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   subRect_ = NULL;
   is_popup_window_ = false;
   can_expand_outside_parent_ = false;
+  previous_border_ = false;
 }
 
 
@@ -912,7 +913,8 @@ static void handle_configure(struct libdecor_frame *frame,
 #endif
   struct wl_output *wl_output = NULL;
   if (window->fl_win->fullscreen_active()) {
-    if (!(window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
+    if (is_1st_run && !(window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
+      // Used to turn fullscreen a window while showing it
       if (Fl_Window_Driver::driver(window->fl_win)->force_position()) {
         struct Fl_Wayland_Screen_Driver::output *output =
         screen_num_to_output(window->fl_win->screen_num());
@@ -952,13 +954,6 @@ static void handle_configure(struct libdecor_frame *frame,
   }
   if (is_2nd_run && Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER) {
     scan_subwindows(window->fl_win, does_window_cover_parent); // issue #878
-  }
-
-  if (window->fl_win->fullscreen_active() &&
-       Fl_Window_Driver::driver(window->fl_win)->force_position()) {
-    int X, Y, W, H;
-    Fl::screen_xywh(X, Y, W, H, window->fl_win->screen_num());
-    width = W * f; height = H * f;
   }
 
   if (width == 0) {
@@ -1034,6 +1029,7 @@ static void handle_configure(struct libdecor_frame *frame,
   if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::WESTON || !is_1st_run) {
     window->fl_win->clear_damage();
   }
+  if (is_2nd_run) driver->force_position(0);
 }
 
 
@@ -1148,7 +1144,10 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
   // under Weston: width & height are 0 during both calls, except if fullscreen
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
-  if (window->fl_win->fullscreen_active() && !parse_states_fullscreen(states)) {
+  Fl_Window_Driver *dr = Fl_Window_Driver::driver(window->fl_win);
+  if (window->fl_win->fullscreen_active() && !parse_states_fullscreen(states) &&
+      dr->fullscreen_screen_top() == dr->fullscreen_screen_bottom() &&
+       dr->fullscreen_screen_left() == dr->fullscreen_screen_right()) {
     struct wl_output *wl_output = NULL;
     if (Fl_Window_Driver::driver(window->fl_win)->force_position()) {
       struct Fl_Wayland_Screen_Driver::output *output  =
@@ -1746,7 +1745,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
 
 void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
-  pWindow->wait_for_expose(); // useful for border(0) just after show()
+  if (!xdg_toplevel()) pWindow->wait_for_expose(); // useful for border(0) just after show()
   struct libdecor_frame *frame = fl_wl_xid(pWindow)->frame;
   if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KWIN) {
     if (fl_wl_xid(pWindow)->kind == DECORATED) {
@@ -1777,9 +1776,29 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
       left = top;
       right = top;
     }
-  pWindow->wait_for_expose(); // make sure ->xdg_toplevel is initialized
+  if (!xdg_toplevel()) pWindow->wait_for_expose(); // make sure ->xdg_toplevel is initialized
   if (xdg_toplevel()) {
-    xdg_toplevel_set_fullscreen(xdg_toplevel(), NULL);
+    if (top == bottom && left == right) { // single-screen fullscreen
+      if (!pWindow->fullscreen_active()) previous_border_ = pWindow->border();
+      xdg_toplevel_set_fullscreen(xdg_toplevel(), NULL);
+    } else { // multi-screen fullscreen
+      if (pWindow->fullscreen_active()) {
+        xdg_toplevel_unset_fullscreen(xdg_toplevel());
+        wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // Mutter needs this
+      } else {
+        previous_border_ = pWindow->border();
+      }
+      if (previous_border_) pWindow->border(0);
+      int XL,XR,YY,WL,WR,HH;
+      Fl::screen_xywh(XL, YY, WL, HH, left);
+      Fl::screen_xywh(XR, YY, WR, HH, right);
+      int W = XR + WR - XL;
+      int XX,YT,YB,WW,HB,HT;
+      Fl::screen_xywh(XX, YT, WW, HT, top);
+      Fl::screen_xywh(XX, YB, WW, HB, bottom);
+      int H = YB + HB - YT;
+      pWindow->size(W, H);
+    }
     pWindow->_set_fullscreen();
     Fl::handle(FL_FULLSCREEN, pWindow);
   }
@@ -1793,6 +1812,7 @@ void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   if (!W) W = w();
   if (!H) H = h();
   pWindow->resize(X, Y, W, H);
+  if (previous_border_) { pWindow->border(1); previous_border_ = false; }
   pWindow->show();
   Fl::handle(FL_FULLSCREEN, pWindow);
 }

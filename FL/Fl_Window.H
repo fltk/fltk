@@ -506,25 +506,11 @@ public:
     Turns off any side effects of fullscreen()
   */
   void fullscreen_off();
-  /**
-    Turns off any side effects of fullscreen() and does
-    resize(x,y,w,h).
-  */
   void fullscreen_off(int X,int Y,int W,int H);
   /**
     Returns non zero if FULLSCREEN flag is set, 0 otherwise.
   */
   unsigned int fullscreen_active() const { return flags() & FULLSCREEN; }
-  /**
-    Sets which screens should be used when this window is in fullscreen
-    mode. The window will be resized to the top of the screen with index
-    \p top, the bottom of the screen with index \p bottom, etc.
-
-    If this method is never called, or if any argument is < 0, then the
-    window will be resized to fill the screen it is currently on.
-
-    \see void Fl_Window::fullscreen()
-    */
   void fullscreen_screens(int top, int bottom, int left, int right);
 
   void maximize();
