@@ -1142,6 +1142,8 @@ static void output_done(void *data, struct wl_output *wl_output)
     xp = xp->next;
   }
   output->done = true;
+  output->x *= output->wld_scale;
+  output->y *= output->wld_scale;
 
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (scr_driver->seat) try_update_cursor(scr_driver->seat);
