@@ -19,6 +19,7 @@
 #include <FL/platform.H>
 #include <FL/Fl_Image_Surface.H>
 #include "../../Fl_Gl_Choice.H"
+#include "../../../libdecor/build/fl_libdecor.h"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Gl_Window_Driver.H"
@@ -273,7 +274,8 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     struct wl_surface *surface = win->wl_surface;
     if (pWindow->parent()) { // force toplevel win to enter its display before sizing GL subwin
       win = fl_wl_xid(pWindow->top_window());
-      while (wl_list_empty(&win->outputs)) wl_display_dispatch(fl_wl_display());
+      struct libdecor *ld = ((Fl_Wayland_Screen_Driver*)Fl::screen_driver())->libdecor_context;
+      while (wl_list_empty(&win->outputs)) libdecor_dispatch(ld, 0);
     }
     int W = pWindow->pixel_w();
     int H = pWindow->pixel_h();

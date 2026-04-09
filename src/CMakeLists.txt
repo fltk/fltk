@@ -612,6 +612,7 @@ if(FLTK_USE_WAYLAND)
   endif(USE_SYSTEM_LIBDECOR)
   set_source_files_properties(
     ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Window_Driver.cxx
+    ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
     ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Screen_Driver.cxx
     PROPERTIES COMPILE_DEFINITIONS "USE_SYSTEM_LIBDECOR=${USE_SYSTEM_LIBDECOR}"
     )
