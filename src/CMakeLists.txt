@@ -524,6 +524,7 @@ set(GLCPPFILES
 set(IMGCPPFILES
   fl_images_core.cxx
   fl_write_png.cxx
+  fl_write_jpeg.cxx
   Fl_BMP_Image.cxx
   Fl_File_Icon2.cxx
   Fl_GIF_Image.cxx

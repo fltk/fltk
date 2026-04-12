@@ -17,6 +17,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Text_Display.H>
@@ -45,6 +46,7 @@ Fl_Box          *image_size;  // to view image size
 Fl_Text_Display *display;     // to view clipboard text
 Fl_Flex         *flex;        // flexible button layout
 Fl_Button       *save;        // save PNG
+Fl_Button       *save_jpeg;   // save JPEG
 Fl_Check_Button *wrap;        // wrap mode
 Fl_RGB_Image    *cl_img;      // image from clipboard
 
@@ -96,9 +98,11 @@ public:
   void layout() {             // re-arrange buttons depending on tab
     if (value() == display) { // text
       save->hide();
+      save_jpeg->hide();
       wrap->show();
     } else {                  // image
       save->show();
+      save_jpeg->show();
       wrap->hide();
     }
     flex->layout();
@@ -181,7 +185,7 @@ void refresh_cb(Fl_Widget *, void *v) {
 }
 
 // "Save PNG" callback
-void save_cb(Fl_Widget *wid, void *) {
+void save_cb(Fl_Widget *, void *) {
   if (cl_img && !cl_img->fail()) {
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Please select a .png file");
@@ -193,6 +197,24 @@ void save_cb(Fl_Widget *wid, void *) {
     const char *filename = fnfc.filename();
     if (filename)
       fl_write_png(filename, cl_img);
+  } else {
+    fl_message("%s", "No image available");
+  }
+}
+
+// "Save JPEG" callback
+void save_jpeg_cb(Fl_Widget *, void *) {
+  if (cl_img && !cl_img->fail()) {
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Please select a .jpg file");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.filter("JPEG\t*.jpg\n");
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    if (fnfc.show())
+      return;
+    const char *filename = fnfc.filename();
+    if (filename)
+      fl_write_jpeg(filename, cl_img);
   } else {
     fl_message("%s", "No image available");
   }
@@ -246,9 +268,13 @@ int main(int argc, char **argv) {
   flex->fixed(refresh, 200);
   refresh->callback(refresh_cb, (void *)tabs);
 
-  save = new Fl_Button(0, 0, 0, 0 , "Save PNG");
+  save = new Fl_Button(0, 0, 0, 0, "Save PNG");
   flex->fixed(save, 120);
   save->callback(save_cb);
+
+  save_jpeg = new Fl_Button(0, 0, 0, 0, "Save JPEG");
+  flex->fixed(save_jpeg, 120);
+  save_jpeg->callback(save_jpeg_cb);
 
   wrap = new Fl_Check_Button(0, 0, 0, 0 , "wrap mode");
   flex->fixed(wrap, 120);
