@@ -358,33 +358,49 @@ bool Mergeback::read_tag(const char *tag, Tag *prev_type, uint16_t *uid, uint32_
 }
 
 void Mergeback::print_tag(FILE *out, Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc) {
+  std::string tag = format_tag(prev_type, next_type, uid, crc);
+  fputs(tag.c_str(), out);
+}
+
+/**
+ Format a MergeBack tag as a string.
+ \param[in] prev_type Type of the previous block.
+ \param[in] next_type Type of the next block.
+ \param[in] uid Unique ID of the node.
+ \param[in] crc CRC32 of the previous block.
+ \return The formatted tag string.
+ */
+std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc) {
   static const char *tag_lut[] = { "----------", "-- code --", " callback ", " callback " };
-  fputs("//ﬂ ", out);                     // Distinct start of tag using utf8
+  static const char *lut[] = { "--", "-~", "~-", "~~", "-=", "=-", "~=", "=~" };
+  std::string result;
+  result += "//ﬂ ";                     // Distinct start of tag using utf8
   // Indicate that the text above can be edited
-  if (prev_type != Tag::GENERIC) fputs("▲", out);
-  if (prev_type != Tag::GENERIC && next_type != Tag::GENERIC) fputc('/', out);
+  if (prev_type != Tag::GENERIC) result += "▲";
+  if (prev_type != Tag::GENERIC && next_type != Tag::GENERIC) result += '/';
   // Indicate that the text below can be edited
-  if (next_type != Tag::GENERIC) fputs("▼", out);
-  fputc(' ', out);
+  if (next_type != Tag::GENERIC) result += "▼";
+  result += ' ';
   // Write the first 32 bit word as an encoded divider line
   uint32_t pt = static_cast<uint32_t>(prev_type);
   uint32_t nt = static_cast<uint32_t>(next_type);
   uint32_t word = (0<<24) | (pt<<16) | (uid); // top 8 bit available for encoding type
-  print_trichar32(out, word);
+  for (int i=30; i>=0; i-=3) result += lut[(word>>i)&7];
   // Write a string indicating the type of editable text
   if ( next_type != Tag::GENERIC) {
-    fputs(tag_lut[nt], out);
+    result += tag_lut[nt];
   } else if (prev_type != Tag::GENERIC) {
-    fputs(tag_lut[nt], out);
+    result += tag_lut[nt];
   }
   // Write the second 32 bit word as an encoded divider line
-  print_trichar32(out, crc);
-  // Repeat the intor pattern
-  fputc(' ', out);
-  if (prev_type != Tag::GENERIC) fputs("▲", out);
-  if (prev_type != Tag::GENERIC && next_type != Tag::GENERIC) fputc('/', out);
-  if (next_type != Tag::GENERIC) fputs("▼", out);
-  fputs(" ﬂ//\n", out);
+  for (int i=30; i>=0; i-=3) result += lut[(crc>>i)&7];
+  // Repeat the intro pattern
+  result += ' ';
+  if (prev_type != Tag::GENERIC) result += "▲";
+  if (prev_type != Tag::GENERIC && next_type != Tag::GENERIC) result += '/';
+  if (next_type != Tag::GENERIC) result += "▼";
+  result += " ﬂ//\n";
+  return result;
 }
 
 /** Analyze the code file and return findings in class member variables.
