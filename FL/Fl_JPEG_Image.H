@@ -40,4 +40,10 @@ protected:
 
 };
 
+// Support functions to write JPEG image files (since 1.4.0)
+
+FL_EXPORT int fl_write_jpeg(const char *filename, Fl_RGB_Image *img);
+FL_EXPORT int fl_write_jpeg(const char *filename, const char *pixels, int w, int h, int d=3, int ld=0);
+FL_EXPORT int fl_write_jpeg(const char *filename, const unsigned char *pixels, int w, int h, int d=3, int ld=0);
+
 #endif
