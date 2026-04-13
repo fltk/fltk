@@ -151,7 +151,7 @@ int Code_Writer::write_h_once(const char *format, ...) {
   if (text_in_header.find(buf) != text_in_header.end()) {
     return 0;
   }
-  fprintf(header_file, "%s\n", buf);
+  header_buffer << buf << "\n";
   text_in_header.insert(buf);
   return 1;
 }
@@ -384,12 +384,25 @@ void Code_Writer::write_cc(const char *indent, int n, const char *c, const char 
  Print a formatted line to the header file.
  \param[in] format printf-style formatting text, followed by a vararg list
  */
-void Code_Writer::write_h(const char* format,...) {
+void Code_Writer::write_h(const char* format,...)
+{
   if (varused_test) return;
+
   va_list args;
   va_start(args, format);
-  vfprintf(header_file, format, args);
+  int n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
+  if (n > block_buffer_size_) {
+    // Buffer was too small, reallocate and try again with the copy
+    block_buffer_size_ = n + 128;
+    if (block_buffer_) ::free(block_buffer_);
+    block_buffer_ = (char*)::malloc(block_buffer_size_+1);
+    va_end(args);
+    va_start(args, format);
+    n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
+  }
   va_end(args);
+
+  header_buffer << block_buffer_;
 }
 
 /**
@@ -491,11 +504,11 @@ bool is_comment_before_class_member(Node *q) {
  \return pointer to the next sibling
  */
 Node* Code_Writer::write_static(Node* p) {
-  if (write_codeview) p->header_static_start = (int)ftell(header_file);
-  if (write_codeview) p->code_static_start = (int)ftell(code_file);
+  if (write_codeview) p->header_static_start = header_pos();
+  if (write_codeview) p->code_static_start = code_pos();
   p->write_static(*this);
-  if (write_codeview) p->code_static_end = (int)ftell(code_file);
-  if (write_codeview) p->header_static_end = (int)ftell(header_file);
+  if (write_codeview) p->code_static_end = code_pos();
+  if (write_codeview) p->header_static_end = header_pos();
 
   Node* q;
   for (q = p->next; q && q->level > p->level;) {
@@ -516,11 +529,11 @@ Node* Code_Writer::write_code(Node* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
   if (!(p==Fluid.proj.tree.last && p->is_a(Type::Comment))) {
-    if (write_codeview) p->code1_start = (int)ftell(code_file);
-    if (write_codeview) p->header1_start = (int)ftell(header_file);
+    if (write_codeview) p->code1_start = code_pos();
+    if (write_codeview) p->header1_start = header_pos();
     p->write_code1(*this);
-    if (write_codeview) p->code1_end = (int)ftell(code_file);
-    if (write_codeview) p->header1_end = (int)ftell(header_file);
+    if (write_codeview) p->code1_end = code_pos();
+    if (write_codeview) p->header1_end = header_pos();
   }
   // recursively write the code of all children
   Node* q;
@@ -539,11 +552,11 @@ Node* Code_Writer::write_code(Node* p) {
     }
 
     // write all code that come after the children
-    if (write_codeview) p->code2_start = (int)ftell(code_file);
-    if (write_codeview) p->header2_start = (int)ftell(header_file);
+    if (write_codeview) p->code2_start = code_pos();
+    if (write_codeview) p->header2_start = header_pos();
     p->write_code2(*this);
-    if (write_codeview) p->code2_end = (int)ftell(code_file);
-    if (write_codeview) p->header2_end = (int)ftell(header_file);
+    if (write_codeview) p->code2_end = code_pos();
+    if (write_codeview) p->header2_end = header_pos();
 
     for (q = p->next; q && q->level > p->level;) {
       if (is_class_member(q) || is_comment_before_class_member(q)) {
@@ -561,11 +574,11 @@ Node* Code_Writer::write_code(Node* p) {
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children
-    if (write_codeview) p->code2_start = (int)ftell(code_file);
-    if (write_codeview) p->header2_start = (int)ftell(header_file);
+    if (write_codeview) p->code2_start = code_pos();
+    if (write_codeview) p->header2_start = header_pos();
     p->write_code2(*this);
-    if (write_codeview) p->code2_end = (int)ftell(code_file);
-    if (write_codeview) p->header2_end = (int)ftell(header_file);
+    if (write_codeview) p->code2_end = code_pos();
+    if (write_codeview) p->header2_end = header_pos();
   }
   return q;
 }
@@ -573,7 +586,8 @@ Node* Code_Writer::write_code(Node* p) {
 /**
  Write the source and header files for the current design.
 
- If the files already exist, they will be overwritten.
+ If the files already exist, they will be overwritten only if the content
+ has changed. This conservative approach helps reduce unnecessary recompilation.
 
  \note There is no true error checking here.
 
@@ -587,18 +601,13 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   indentation = 0;
   current_class = nullptr;
   current_widget_class = nullptr;
-  if (!s) code_file = stdout;
-  else {
-    FILE *f = fl_fopen(s, "wb");
-    if (!f) return 0;
-    code_file = f;
-  }
-  if (!t) header_file = stdout;
-  else {
-    FILE *f = fl_fopen(t, "wb");
-    if (!f) {fclose(code_file); return 0;}
-    header_file = f;
-  }
+
+  // Always use string stream buffers for output
+  code_buffer.str("");
+  code_buffer.clear();
+  header_buffer.str("");
+  header_buffer.clear();
+
   // Remember the last code file location for MergeBack
   if (s && proj_.write_mergeback_data && !to_codeview) {
     std::string filename = proj_.projectfile_path() + proj_.projectfile_name();
@@ -613,21 +622,21 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   Node* first_node = Fluid.proj.tree.first;
   if (first_node && first_node->is_a(Type::Comment)) {
     if (write_codeview) {
-      first_node->code1_start = first_node->code2_start = (int)ftell(code_file);
-      first_node->header1_start = first_node->header2_start = (int)ftell(header_file);
+      first_node->code1_start = first_node->code2_start = code_pos();
+      first_node->header1_start = first_node->header2_start = header_pos();
     }
     // it is ok to write non-recursive code here, because comments have no children or code2 blocks
     first_node->write_code1(*this);
     if (write_codeview) {
-      first_node->code1_end = first_node->code2_end = (int)ftell(code_file);
-      first_node->header1_end = first_node->header2_end = (int)ftell(header_file);
+      first_node->code1_end = first_node->code2_end = code_pos();
+      first_node->header1_end = first_node->header2_end = header_pos();
     }
     first_node = first_node->next;
   }
 
   const char *hdr = "\
 // generated by Fast Light User Interface Designer (fluid) version %.4f\n\n";
-  fprintf(header_file, hdr, FL_VERSION);
+  write_h(hdr, FL_VERSION);
   crc_printf(hdr, FL_VERSION);
   {
     // Creating the include guard is more involved than it seems at first glance.
@@ -672,8 +681,8 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       }
       macro_name_str = macro_name.str();
     }
-    fprintf(header_file, "#ifndef %s\n", macro_name_str.c_str());
-    fprintf(header_file, "#define %s\n", macro_name_str.c_str());
+    write_h("#ifndef %s\n", macro_name_str.c_str());
+    write_h("#define %s\n", macro_name_str.c_str());
   }
 
   if (proj_.avoid_early_includes==0) {
@@ -746,31 +755,42 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
     p = write_code(p);
   }
 
-  if (!s) return 1;
-
-  fprintf(header_file, "#endif\n");
+  write_h("#endif\n");
 
   Node* last_node = Fluid.proj.tree.last;
   if (last_node && (last_node != Fluid.proj.tree.first) && last_node->is_a(Type::Comment)) {
     if (write_codeview) {
-      last_node->code1_start = last_node->code2_start = (int)ftell(code_file);
-      last_node->header1_start = last_node->header2_start = (int)ftell(header_file);
+      last_node->code1_start = last_node->code2_start = code_pos();
+      last_node->header1_start = last_node->header2_start = header_pos();
     }
     last_node->write_code1(*this);
     if (write_codeview) {
-      last_node->code1_end = last_node->code2_end = (int)ftell(code_file);
-      last_node->header1_end = last_node->header2_end = (int)ftell(header_file);
+      last_node->code1_end = last_node->code2_end = code_pos();
+      last_node->header1_end = last_node->header2_end = header_pos();
     }
   }
-  int x = 0, y = 0;
 
-  if (code_file != stdout)
-    x = fclose(code_file);
-  code_file = nullptr;
-  if (header_file != stdout)
-    y = fclose(header_file);
-  header_file = nullptr;
-  return x >= 0 && y >= 0;
+  // For codeview mode, strings are available via code_string() / header_string()
+  if (write_codeview)
+    return 1;
+
+  // Write code output: to file if filename provided, to stdout otherwise
+  bool code_ok = true;
+  if (s) {
+    code_ok = write_file_if_changed(s, code_buffer.str());
+  } else {
+    fputs(code_buffer.str().c_str(), stdout);
+  }
+
+  // Write header output: to file if filename provided, to stdout otherwise
+  bool header_ok = true;
+  if (t) {
+    header_ok = write_file_if_changed(t, header_buffer.str());
+  } else {
+    fputs(header_buffer.str().c_str(), stdout);
+  }
+
+  return code_ok && header_ok ? 1 : 0;
 }
 
 
@@ -819,7 +839,7 @@ Code_Writer::~Code_Writer()
  */
 void Code_Writer::tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_type, unsigned short uid) {
   if (proj_.write_mergeback_data) {
-    Mergeback::print_tag(code_file, prev_type, next_type, uid, (uint32_t)block_crc_);
+    code_buffer << Mergeback::format_tag(prev_type, next_type, uid, (uint32_t)block_crc_);
   }
   block_crc_ = crc32(0, nullptr, 0);
 }
@@ -866,10 +886,10 @@ void Code_Writer::crc_add(const void *data, int n) {
   block_crc_ = block_crc(data, n, block_crc_, &block_line_start_);
 }
 
-/** Write formatted text to the code file.
+/** Write formatted text to the code buffer.
  If MergeBack is enabled, the CRC calculation is continued.
  \param[in] format printf style formatting string
- \return see fprintf(FILE *, *const char*, ...)
+ \return number of characters formatted
  */
 int Code_Writer::crc_printf(const char *format, ...) {
   va_list args;
@@ -879,51 +899,129 @@ int Code_Writer::crc_printf(const char *format, ...) {
   return ret;
 }
 
-/** Write formatted text to the code file.
+/** Write formatted text to the code buffer.
  If MergeBack is enabled, the CRC calculation is continued.
  \param[in] format printf style formatting string
  \param[in] args list of arguments
- \return see fprintf(FILE *, *const char*, ...)
+ \return number of characters formatted
  */
 int Code_Writer::crc_vprintf(const char *format, va_list args) {
-  if (proj_.write_mergeback_data) {
-    int n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
-    if (n > block_buffer_size_) {
-      block_buffer_size_ = n + 128;
-      if (block_buffer_) ::free(block_buffer_);
-      block_buffer_ = (char*)::malloc(block_buffer_size_+1);
-      n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
-    }
-    crc_add(block_buffer_, n);
-    return fputs(block_buffer_, code_file);
-  } else {
-    return vfprintf(code_file, format, args);
+  // Make a copy of args in case we need to call vsnprintf twice
+  // (the first call consumes args on some platforms)
+  va_list args_copy;
+  va_copy(args_copy, args);
+  int n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
+  if (n > block_buffer_size_) {
+    // Buffer was too small, reallocate and try again with the copy
+    block_buffer_size_ = n + 128;
+    if (block_buffer_) ::free(block_buffer_);
+    block_buffer_ = (char*)::malloc(block_buffer_size_+1);
+    n = vsnprintf(block_buffer_, block_buffer_size_, format, args_copy);
   }
+  va_end(args_copy);
+  if (proj_.write_mergeback_data) {
+    crc_add(block_buffer_, n);
+  }
+  code_buffer << block_buffer_;
+  return n;
 }
 
-/** Write some text to the code file.
+/** Write some text to the code buffer.
  If MergeBack is enabled, the CRC calculation is continued.
  \param[in] text any text, no requirements to end in a newline or such
- \return see fputs(const char*, FILE*)
+ \return always 0
  */
 int Code_Writer::crc_puts(const char *text) {
   if (proj_.write_mergeback_data) {
     crc_add(text);
   }
-  return fputs(text, code_file);
+  code_buffer << text;
+  return 0;
 }
 
-/** Write a single ASCII character to the code file.
+/** Write a single ASCII character to the code buffer.
  If MergeBack is enabled, the CRC calculation is continued.
  \note to write UTF-8 characters, use Code_Writer::crc_puts(const char *text)
  \param[in] c any character between 0 and 127 inclusive
- \return see fputc(int, FILE*)
+ \return the character written
  */
 int Code_Writer::crc_putc(int c) {
   if (proj_.write_mergeback_data) {
     uchar uc = (uchar)c;
     crc_add(&uc, 1);
   }
-  return fputc(c, code_file);
+  code_buffer << (char)c;
+  return c;
+}
+
+/**
+ Check if the content of a file matches a given string.
+ \param[in] filename path to the file to compare
+ \param[in] content the string content to compare with
+ \return true if the file exists and its content matches exactly, false otherwise
+ */
+bool Code_Writer::file_content_matches(const char *filename, const std::string &content) {
+  FILE *f = fl_fopen(filename, "rb");
+  if (!f) {
+    return false;  // File doesn't exist
+  }
+
+  // Get file size
+  if (fseek(f, 0, SEEK_END) != 0) {
+    fclose(f);
+    return false;  // Seek error
+  }
+  long file_size = ftell(f);
+  if (file_size < 0) {
+    fclose(f);
+    return false;  // ftell error
+  }
+  if (fseek(f, 0, SEEK_SET) != 0) {
+    fclose(f);
+    return false;  // Seek error
+  }
+
+  // Quick check: if sizes don't match, content is different
+  if ((size_t)file_size != content.size()) {
+    fclose(f);
+    return false;
+  }
+
+  // Read file content and compare
+  std::string file_content((size_t)file_size, '\0');
+  size_t bytes_read = fread(&file_content[0], 1, (size_t)file_size, f);
+  fclose(f);
+
+  if (bytes_read != (size_t)file_size) {
+    return false;  // Read error
+  }
+
+  return file_content == content;
+}
+
+/**
+ Write content to a file only if the content differs from the existing file.
+ This is a conservative write that avoids unnecessary file modifications,
+ which helps reduce recompilation in build systems.
+ \param[in] filename path to the file to write
+ \param[in] content the string content to write
+ \return true if the file was written or already up-to-date, false on write error
+ */
+bool Code_Writer::write_file_if_changed(const char *filename, const std::string &content) {
+  // If content matches, no need to write
+  if (file_content_matches(filename, content)) {
+    return true;  // File is already up-to-date
+  }
+
+  // Content differs or file doesn't exist - write the new content
+  FILE *f = fl_fopen(filename, "wb");
+  if (!f) {
+    return false;  // Cannot open file for writing
+  }
+
+  size_t written = fwrite(content.c_str(), 1, content.size(), f);
+  int result = fclose(f);
+
+  return (written == content.size()) && (result == 0);
 }
 

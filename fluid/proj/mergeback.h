@@ -82,6 +82,7 @@ public:
   int analyse();
   int apply();
   static void print_tag(FILE *out, Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc);
+  static std::string format_tag(Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc);
 };
 
 extern int merge_back(const std::string &s, const std::string &p, int task);

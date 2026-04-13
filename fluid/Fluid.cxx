@@ -172,11 +172,11 @@ int Application::run(int argc,char **argv) {
     Fluid.layout_list.read(preferences, fld::Tool_Store::USER);
     main_window->show(argc,argv);
     toggle_widget_bin();
-    toggle_codeview_cb(nullptr,nullptr);
     if (!c && openlast_button->value() && history.abspath[0][0] && args.autodoc_path.empty()) {
       // Open previous file when no file specified...
       open_project_file(history.abspath[0]);
     }
+    toggle_codeview_cb(nullptr,nullptr);
   }
   proj.undo.suspend();
   if (c && !fld::io::read_file(proj, c,0)) {
