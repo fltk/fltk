@@ -33,7 +33,16 @@ void Fl_Quartz_Graphics_Driver::end_points() {
   }
 }
 
+void Fl_Quartz_Graphics_Driver::end_loop() {
+  fixloop();
+  end_line_or_loop(true);
+}
+
 void Fl_Quartz_Graphics_Driver::end_line() {
+  end_line_or_loop(false);
+}
+
+void Fl_Quartz_Graphics_Driver::end_line_or_loop(bool is_loop) {
   if (n < 2) {
     end_points();
     return;
@@ -43,6 +52,8 @@ void Fl_Quartz_Graphics_Driver::end_line() {
   CGContextMoveToPoint(gc_, xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
     CGContextAddLineToPoint(gc_, xpoint[i].x, xpoint[i].y);
+  if (is_loop)
+    CGContextClosePath(gc_);
   CGContextStrokePath(gc_);
   CGContextSetShouldAntialias(gc_, false);
 }

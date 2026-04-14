@@ -108,7 +108,9 @@ protected:
   int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
   void restore_clip() FL_OVERRIDE;
   void end_points() FL_OVERRIDE;
+  void end_loop() FL_OVERRIDE;
   void end_line() FL_OVERRIDE;
+  void end_line_or_loop(bool is_loop);
   void end_polygon() FL_OVERRIDE;
   void end_complex_polygon() FL_OVERRIDE;
   void circle(double x, double y, double r) FL_OVERRIDE;
