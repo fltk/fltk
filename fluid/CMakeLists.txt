@@ -107,13 +107,14 @@ endmacro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
 # Main source and header files used for the executable because macOS (Xcode)
 # needs at least one source file (main.cxx) to link the main program properly
 
-set(MAIN_FILES main.cxx main.h)
+set(MAIN_FILES main.cxx main.h fluid.rc)
 
 # Source files for 'fluid-lib': all source files except ${MAIN_FILES}
 
 set(CPPFILES
   Fluid.cxx
   Project.cxx
+  fluid_icon.cxx
   app/args.cxx
   app/Snap_Action.cxx
   app/Image_Asset.cxx
@@ -167,6 +168,7 @@ set(CPPFILES
 set(HEADERFILES
   Fluid.h
   Project.h
+  fluid_icon.h
   app/args.h
   app/Snap_Action.h
   app/Image_Asset.h

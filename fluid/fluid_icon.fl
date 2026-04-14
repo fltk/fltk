@@ -1,0 +1,42 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0500
+header_name {.h}
+code_name {.cxx}
+include_guard {}
+comment {Assign an appropriate fluid icon at runtime.
+} {in_source in_header
+}
+
+comment {This uses window->icon() and is platform independent.
+
+Run fluid while your working directory is the main fluid folder.
+Select item 'fluid_icon_data', choose one of the *PNG* files
+in the 'icons/' folder and 'write code'.
+Then rebuild fluid.} {in_source in_header
+}
+
+decl {\#include <FL/Fl_Window.H>} {public global
+}
+
+decl {\#include <FL/Fl_PNG_Image.H>} {public global
+}
+
+data fluid_icon_data {
+  comment {select an appropriate fluid icon from fluid/icons/fluid*.png} private local filename {icons/fluid-128.png}
+}
+
+Function {make_fluid_icon(Fl_Window *win)} {
+  comment {Create the program icon and assign it to the main window} open
+} {
+  code {// assign fluid icon
+size_t fluid_icon_len = sizeof(fluid_icon_data);
+Fl_PNG_Image *fluid_icon = new Fl_PNG_Image("fluid_icon.png", fluid_icon_data, fluid_icon_len);
+if (!fluid_icon || fluid_icon->fail()) {
+  int err = fluid_icon ? fluid_icon->fail() : -99; // -99 = unknown error
+  fprintf(stderr, "Warning: could not load fluid_icon, error = %d\\n", err);
+  fflush(stderr);
+} else {
+  win->icon(fluid_icon); // assign icon to window
+}
+return;} {}
+}

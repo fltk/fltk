@@ -34,6 +34,7 @@
 #include "panels/codeview_panel.h"
 #include "panels/template_panel.h"
 #include "panels/about_panel.h"
+#include "fluid_icon.h"
 #include "rsrcs/pixmaps.h"
 #include "tools/autodoc.h"
 #include "widgets/App_Menu_Bar.h"
@@ -163,6 +164,7 @@ int Application::run(int argc,char **argv) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
+    make_fluid_icon(main_window); // assign icon to main window
     position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
     if (g_shell_config) {
       g_shell_config->read(preferences, fld::Tool_Store::USER);
