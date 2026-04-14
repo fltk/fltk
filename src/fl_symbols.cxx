@@ -42,7 +42,7 @@ typedef struct {
 static SYMBOL symbols[MAXSYMBOL];      /* The symbols */
 static int symbnumb = -1;              /* Their number */
 
-static int find(const char *name) {
+static int find(const char *name, int *existing = NULL) {
 // returns hash entry if it exists, or first empty slot:
   int pos = name[0] ? (
     name[1] ? (
@@ -56,8 +56,14 @@ static int find(const char *name) {
     ) : 1;
   hh2 %= MAXSYMBOL; if (!hh2) hh2 = 1;
   for (;;) {
-    if (!symbols[pos].notempty) return pos;
-    if (!strcmp(symbols[pos].name,name)) return pos;
+    if (!symbols[pos].notempty) {
+      if (existing) *existing = 0;
+      return pos;
+    }
+    if (!strcmp(symbols[pos].name,name)) {
+      if (existing) *existing = 1;
+      return pos;
+    }
     pos = (pos + hh2) % MAXSYMBOL;
   }
 }
@@ -78,12 +84,13 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
   fl_init_symbols();
   int pos;
   if (symbnumb > MAXSYMBOL / 2) return 0;       // table is full
-  pos = find(name);
+  int existing;
+  pos = find(name, &existing);
   symbols[pos].name = name;
   symbols[pos].drawit = drawit;
   symbols[pos].notempty = 1;
   symbols[pos].scalable = scalable;
-  symbnumb++;
+  if (!existing) symbnumb++;
   return 1;
 }
 
