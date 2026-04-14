@@ -68,10 +68,11 @@ static void fl_init_symbols(void);
 
 /**
   Adds a symbol to the system.
+  If a symbol with that name is already defined, its draw function is replaced by \p drawit.
   \param[in] name     name of symbol (without the "@")
   \param[in] drawit   function to draw symbol
   \param[in] scalable set to 1 if \p drawit uses scalable vector drawing
-  \returns 1 on success, 0 on failure
+  \returns 1 on success, 0 if the maximum number of symbols has been reached.
   */
 int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 {
@@ -79,11 +80,11 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
   int pos;
   if (symbnumb > MAXSYMBOL / 2) return 0;       // table is full
   pos = find(name);
+  if (!symbols[pos].notempty) symbnumb++;
   symbols[pos].name = name;
   symbols[pos].drawit = drawit;
   symbols[pos].notempty = 1;
   symbols[pos].scalable = scalable;
-  symbnumb++;
   return 1;
 }
 
