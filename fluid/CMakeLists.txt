@@ -52,17 +52,13 @@ endif()
 
 macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
 
-  if(ICON_PATH)
-    list(APPEND SOURCES ${ICON_PATH}) # macOS only
-  endif()
-
   # message(STATUS "[fluid] make_target ${TARGET} GUI:${GUI} ${SOURCES} ${LIBS} NAME:${EXPORT_NAME} EXPORT:${EXPORT}")
 
   # Options WIN32 and MACOSX_BUNDLE build a Windows GUI program or macOS bundle,
   # respectively. Both options are ignored on other platforms.
 
   if(${GUI})
-    add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
+    add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES} ${ICON_PATH})
   else()
     add_executable(${TARGET} ${SOURCES})
   endif(${GUI})
@@ -79,6 +75,7 @@ macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
     set_target_properties(${TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET}.plist")
     set_target_properties(${TARGET} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
     set_target_properties(${TARGET} PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.${TARGET}")
+    set_target_properties(${TARGET} PROPERTIES RESOURCE ${ICON_PATH})
 
     # install command line tool
     install(PROGRAMS $<TARGET_FILE:${TARGET}>
