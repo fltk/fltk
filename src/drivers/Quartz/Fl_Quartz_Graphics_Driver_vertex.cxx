@@ -33,6 +33,13 @@ void Fl_Quartz_Graphics_Driver::end_points() {
   }
 }
 
+void Fl_Quartz_Graphics_Driver::end_loop() {
+  CGContextSaveGState(gc_);
+  CGContextSetLineCap(gc_, kCGLineCapSquare);
+  Fl_Graphics_Driver::end_loop();
+  CGContextRestoreGState(gc_);
+}
+
 void Fl_Quartz_Graphics_Driver::end_line() {
   if (n < 2) {
     end_points();
