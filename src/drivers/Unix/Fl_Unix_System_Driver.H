@@ -30,7 +30,6 @@ public:
                             int (*sort)(struct dirent **, struct dirent **),
                             char *errmsg=NULL, int errmsg_sz=0) FL_OVERRIDE;
   int open_uri(const char *uri, char *msg, int msglen) FL_OVERRIDE;
-  int use_tooltip_timeout_condition() FL_OVERRIDE {return 1;}
   int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon) FL_OVERRIDE;
   void newUUID(char *uuidBuffer) FL_OVERRIDE;
   char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
