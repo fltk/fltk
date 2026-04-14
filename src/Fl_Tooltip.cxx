@@ -166,10 +166,7 @@ static void tooltip_timeout(void*) {
       if (window) window->hide();
       Fl::remove_timeout(tooltip_hide_timeout);
     } else {
-      int condition = 1;
-// bugfix: no need to refactor
-      if (Fl::system_driver()->use_tooltip_timeout_condition()) condition = (Fl::grab() == NULL);
-      if ( condition ) {
+      if ( Fl::grab() == NULL ) {
         if (!window) window = new Fl_TooltipBox;
         // this cast bypasses the normal Fl_Window label() code:
         ((Fl_Widget *) window)->label(tip);

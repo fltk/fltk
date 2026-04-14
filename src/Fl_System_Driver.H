@@ -149,8 +149,6 @@ public:
   virtual const char *filename_name(const char *buf) {return buf;}
   // implement to support fl_open_uri()
   virtual int open_uri(const char * /*uri*/, char * /*msg*/, int /*msglen*/) {return 0;}
-  // the default implementation of use_tooltip_timeout_condition() may be enough
-  virtual int use_tooltip_timeout_condition() {return 0;}
   // the default implementation of use_recent_tooltip_fix() may be enough
   virtual int use_recent_tooltip_fix() {return 0;}
   // the default implementation of need_test_shortcut_extra() may be enough
