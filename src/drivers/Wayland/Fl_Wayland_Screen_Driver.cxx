@@ -1684,24 +1684,16 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
   Wfullscreen = data.W * output->wld_scale;
   Hfullscreen = data.H * output->wld_scale;
   if (Wfullscreen && Hfullscreen && wl_list_length(&scr_driver->outputs) == 1) {
-    struct wl_surface *wl_surface2 = wl_compositor_create_surface(scr_driver->wl_compositor);
-    struct xdg_surface *xdg_surface2 = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surface2);
-    struct xdg_toplevel *xdg_toplevel2 = xdg_surface_get_toplevel(xdg_surface2);
-    struct configure_s data2 = {0, 0, 0};
-    xdg_toplevel_add_listener(xdg_toplevel2, &xdg_toplevel_listener, &data2);
-    xdg_toplevel_set_parent(xdg_toplevel2, xdg_toplevel);
-    xdg_toplevel_set_maximized(xdg_toplevel2);
-    wl_surface_commit(wl_surface2); // necessary under KWin
-    while (data2.state != XDG_TOPLEVEL_STATE_MAXIMIZED)
+    xdg_toplevel_unset_fullscreen(xdg_toplevel);
+    xdg_toplevel_set_maximized(xdg_toplevel);
+    wl_surface_commit(wl_surface); // necessary under KWin
+    while (data.state != XDG_TOPLEVEL_STATE_MAXIMIZED)
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-    Wworkarea = data2.W * output->wld_scale;
-    Hworkarea = data2.H * output->wld_scale;
-    xdg_toplevel_destroy(xdg_toplevel2);
-    xdg_surface_destroy(xdg_surface2);
-    wl_surface_destroy(wl_surface2);
-    if (Wworkarea == Wfullscreen && Hworkarea < Hfullscreen && Hworkarea > Hfullscreen - 80)
+    Wworkarea = data.W * output->wld_scale;
+    Hworkarea = data.H * output->wld_scale;
+    if (Wworkarea == Wfullscreen && Hworkarea < Hfullscreen && Hworkarea > Hfullscreen - (50 * output->wld_scale))
       found_workarea = true;
-    if (Hworkarea == Hfullscreen && Wworkarea < Wfullscreen && Wworkarea > Wfullscreen - 80)
+    if (Hworkarea == Hfullscreen && Wworkarea < Wfullscreen && Wworkarea > Wfullscreen - (50 * output->wld_scale))
       found_workarea = true;
   } else {
     Wworkarea = Wfullscreen;
