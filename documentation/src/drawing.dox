@@ -264,6 +264,11 @@ Color values greater than 255 are treated as 24-bit RGB values. These are mapped
 to the closest color supported by the screen, either from one of the 256 colors
 in the FLTK colormap or a direct RGB value on TrueColor screens.
 
+File FL/rgb_colors.H defines 490 constants of type Fl_Color than can be used to identify
+many colors by a name. The names of these constants (example: FL_RGB_ALICE_BLUE) begin
+with the "FL_RGB_" prefix and use the English-language color names of Xorg's "share/X11/rgb.txt" file
+and their values. Include <FL/rgb_colors.H> in your program to gain access to these color names.
+
 Fl_Color fl_rgb_color(uchar r, uchar g, uchar b) <br>
 Fl_Color fl_rgb_color(uchar grayscale)
 
