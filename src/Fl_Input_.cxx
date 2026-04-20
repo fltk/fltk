@@ -155,7 +155,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
 
   } else while (o<e) {
     if (wrap() && (p >= value_+size_ || isspace(*p & 255))) {
-      word_wrap = w() - Fl::box_dw(box()) - 2;
+      word_wrap = w() - Fl::box_dw(box()) - 5;  // 5 px space for cursor (#1414)
       width_to_lastspace += (int)fl_width(lastspace_out, (int) (o-lastspace_out));
       if (p > lastspace+1) {
         if (word_count && width_to_lastspace > word_wrap) {
