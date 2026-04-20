@@ -379,8 +379,7 @@ screen. More information in the source code.
 \subsection examples_gl_image gl_image
 
 \par
-\c gl_image shows how to draw most images supported by FLTK
-in an Fl_Gl_Window. Fl_Bitmap and depth 1 and 2 Fl_RGB_Image aren't supported yet.
+\c gl_image shows how to draw any image supported by FLTK in an Fl_Gl_Window.
 
 \subsection examples_gl_overlay gl_overlay
 
