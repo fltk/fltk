@@ -362,7 +362,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H, bool draw_active) {
       } else if (curx < newscroll+threshold) {
         newscroll = curx-threshold;
       }
-      if (newscroll < 0 || ((type() & FL_MULTILINE_INPUT) && (type() & FL_INPUT_WRAP))) newscroll = 0;
+      if (newscroll < 0) newscroll = 0;
       if (newscroll != xscroll_) {
         xscroll_ = newscroll;
         mu_p = 0; erase_cursor_only = 0;
