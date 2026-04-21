@@ -565,7 +565,6 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 }
 + (void)prepareEtext:(NSString*)aString;
 + (void)concatEtext:(NSString*)aString;
-- (BOOL)process_keydown:(NSEvent*)theEvent;
 - (id)initWithFrame:(NSRect)frameRect;
 - (void)drawRect:(NSRect)rect;
 - (BOOL)acceptsFirstResponder;
@@ -2099,8 +2098,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
  Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
  ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
- The keyDown: method calls [myview process_keydown:theEvent] that is equivalent to
- [[myview inputContext] handleEvent:theEvent], and triggers system processing of keyboard events.
+ The keyDown: method calls [[myview inputContext] handleEvent:theEvent], and triggers system processing of keyboard events.
  The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window)
  when the Ctrl or Cmd modifiers are used. If not, it also calls [[myview inputContext] handleEvent:theEvent].
  The performKeyEquivalent: method returns YES when the keystroke has been handled and NO otherwise, which allows
@@ -2249,10 +2247,6 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   aux_bitmap = NULL;
 }
 #endif
-- (BOOL)process_keydown:(NSEvent*)theEvent
-{
-  return [[self inputContext] handleEvent:theEvent];
-}
 - (id)initWithFrame:(NSRect)frameRect
 {
   self = [super initWithFrame:frameRect];
@@ -2365,7 +2359,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   else {
     in_key_event = YES;
     need_handle = NO;
-    handled = [self process_keydown:theEvent];
+    handled = [[self inputContext] handleEvent:theEvent];
     if (need_handle) handled = Fl::handle(FL_KEYBOARD, w);
     in_key_event = NO;
     }
@@ -2473,7 +2467,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     [FLView prepareEtext:[theEvent characters]];
   } else {
     need_handle = NO;
-    [self process_keydown:theEvent];
+    [[self inputContext] handleEvent:theEvent];
   }
   if (need_handle) Fl::handle(FL_KEYBOARD, window);
   in_key_event = NO;
