@@ -95,9 +95,8 @@
   clipping is not conveyed to it when drawn, and it will draw over the
   scrollbars and neighboring objects.</I>
 
-  <I>When the Fl_Scroll is a child of an Fl_Tabs widget, its contents must be
-  kept at least five pixels (as of FLTK 1.4.x) away from the edges of the 
-  Fl_Tabs to avoid a tearing effect when scrolling.</I>
+  <I>Widget overlap may result in scroll tearing, see Fl_Tabs for fuller 
+  explanation.</I>
   <!-- See GitHub issue #1175. -->
 */
 class FL_EXPORT Fl_Scroll : public Fl_Group {
