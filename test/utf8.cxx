@@ -732,7 +732,7 @@ int main(int argc, char** argv) {
   const char *utf8 =
     "@ABCabcàèéïßîöüã123 "        // latin1 (ISO-8859-1)
     "\360\237\230\204 "           // emoji: grinning face with smiling eyes
-    "\360\237\221\215 "           // emoji: thumbs up
+    "🇸🇲 "                         // emoji: "San Marino flag" encoded via emoji sequence
     "\360\237\214\210 "           // emoji: Rainbow
     ".";                          // final '.'
   int utf8_l = (int)strlen(utf8); // total length of UTF-8 example string
