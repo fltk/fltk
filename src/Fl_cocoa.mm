@@ -1265,19 +1265,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
 
   int X, Y, W, H;
-  float s = Fl::screen_driver()->scale(window->screen_num());
-  if (Fl_Window::is_a_rescale()) {
-    if (window->parent()) {
-      X = window->x();
-      Y = window->y();
-    } else {
-      // Recalculate the FLTK position from the current Cocoa position applying
-      // the new scale, so the window stays at its current position after scaling.
-      CocoatoFLTK(window, X, Y);
-    }
-    W = window->w();
-    H = window->h();
-  } else if (Fl_Cocoa_Window_Driver::driver(window)->through_resize()) {
+  if (Fl_Window::is_a_rescale() || Fl_Cocoa_Window_Driver::driver(window)->through_resize()) {
     if (window->parent()) {
       X = window->x();
       Y = window->y();
@@ -1290,6 +1278,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   } else {
     CocoatoFLTK(window, X, Y);
     NSRect r = [view frame];
+    float s = Fl::screen_driver()->scale(window->screen_num());
     W = (int)lround(r.size.width/s);
     H = (int)lround(r.size.height/s);
   }
