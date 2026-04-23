@@ -34,6 +34,7 @@ void Fl_Quartz_Graphics_Driver::end_points() {
 }
 
 void Fl_Quartz_Graphics_Driver::end_loop() {
+  fixloop();
   end_line_or_loop(true);
 }
 
