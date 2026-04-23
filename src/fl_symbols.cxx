@@ -28,63 +28,36 @@
 #include <FL/math.h>
 #include "flstring.h"
 
-typedef struct {
-  const char *name;
+#include <string>
+#include <unordered_map>
+
+struct Symbol {
   void (*drawit)(Fl_Color);
-  char scalable;
-  char notempty;
-} SYMBOL;
+  int  scalable;
+};
 
-#define MAXSYMBOL       211
-   /* Maximal number of symbols in table. Only half of them are
-      used. Should be prime. */
-
-static SYMBOL symbols[MAXSYMBOL];      /* The symbols */
-static int symbnumb = -1;              /* Their number */
-
-static int find(const char *name) {
-// returns hash entry if it exists, or first empty slot:
-  int pos = name[0] ? (
-    name[1] ? (
-      name[2] ? 71*name[0]+31*name[1]+name[2] : 31*name[0]+name[1]
-    ) :
-      name[0]
-  ) : 0;
-  pos %= MAXSYMBOL;
-  int hh2 = name[0] ? (
-    (name[1]) ? 51*name[0]+3*name[1] : 3*name[0]
-    ) : 1;
-  hh2 %= MAXSYMBOL; if (!hh2) hh2 = 1;
-  for (;;) {
-    if (!symbols[pos].notempty) return pos;
-    if (!strcmp(symbols[pos].name,name)) return pos;
-    pos = (pos + hh2) % MAXSYMBOL;
-  }
-}
-
-static void fl_init_symbols(void);
+// Defined after the drawing functions so the initializer list can reference them.
+static std::unordered_map<std::string, Symbol> &symbol_table();
 
 /**************** The routines seen by the user *************************/
 
 /**
   Adds a symbol to the system.
   If a symbol with that name is already defined, its draw function is replaced by \p drawit.
+  If \p drawit is nullptr the symbol is removed from the table.
   \param[in] name     name of symbol (without the "@")
-  \param[in] drawit   function to draw symbol
+  \param[in] drawit   function to draw symbol, or nullptr to remove the symbol
   \param[in] scalable set to 1 if \p drawit uses scalable vector drawing
-  \returns 1 on success, 0 if the maximum number of symbols has been reached.
+  \returns 1 on success.
   */
 int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 {
-  fl_init_symbols();
-  int pos;
-  if (symbnumb > MAXSYMBOL / 2) return 0;       // table is full
-  pos = find(name);
-  if (!symbols[pos].notempty) symbnumb++;
-  symbols[pos].name = name;
-  symbols[pos].drawit = drawit;
-  symbols[pos].notempty = 1;
-  symbols[pos].scalable = scalable;
+  auto &t = symbol_table();
+  if (!drawit) {
+    t.erase(name);
+  } else {
+    t[name] = { drawit, scalable };
+  }
   return 1;
 }
 
@@ -102,7 +75,6 @@ int fl_return_arrow(int x,int y,int w,int h);
 int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
   const char *p = label;
   if (*p++ != '@') return 0;
-  fl_init_symbols();
   int equalscale = 0;
   if (*p == '#') {equalscale = 1; p++;}
   if (*p == '-' && p[1]>='1' && p[1]<='9') {
@@ -143,22 +115,24 @@ int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
   case '9': rotangle =  450; break;
   default: rotangle = 0; p--; break;
   }
-  int pos = find(p);
-  if (!symbols[pos].notempty) return 0;
-  if (symbols[pos].scalable == 3) { // kludge to detect return arrow
+  auto &t = symbol_table();
+  auto it = t.find(p);
+  if (it == t.end()) return 0;
+  const Symbol &sym = it->second;
+  if (sym.scalable == 3) { // returnarrow special case
     fl_return_arrow(x,y,w,h);
     return 1;
   }
   fl_push_matrix();
   fl_translate(x+w/2,y+h/2);
-  if (symbols[pos].scalable) {
+  if (sym.scalable) {
     if (equalscale) {if (w<h) h = w; else w = h;}
     fl_scale(0.5*w, 0.5*h);
     fl_rotate(rotangle/10.0);
     if (flip_x) fl_scale(-1.0, 1.0);
     if (flip_y) fl_scale(1.0, -1.0);
   }
-  (symbols[pos].drawit)(col);
+  sym.drawit(col);
   fl_pop_matrix();
   return 1;
 }
@@ -693,55 +667,48 @@ static void draw_export(Fl_Color col)
   fl_pop_matrix();
 }
 
-static void fl_init_symbols(void) {
-  static char beenhere;
-  if (beenhere) return;
-  beenhere = 1;
-  symbnumb = 0;
-
-  fl_add_symbol("",             draw_arrow1,            1);
-  fl_add_symbol("->",           draw_arrow1,            1);
-  fl_add_symbol(">",            draw_arrow2,            1);
-  fl_add_symbol(">>",           draw_arrow3,            1);
-  fl_add_symbol(">|",           draw_arrowbar,          1);
-  fl_add_symbol(">[]",          draw_arrowbox,          1);
-  fl_add_symbol("|>",           draw_bararrow,          1);
-  fl_add_symbol("<-",           draw_arrow01,           1);
-  fl_add_symbol("<",            draw_arrow02,           1);
-  fl_add_symbol("<<",           draw_arrow03,           1);
-  fl_add_symbol("|<",           draw_0arrowbar,         1);
-  fl_add_symbol("[]<",          draw_0arrowbox,         1);
-  fl_add_symbol("<|",           draw_0bararrow,         1);
-  fl_add_symbol("<->",          draw_doublearrow,       1);
-  fl_add_symbol("-->",          draw_arrow,             1);
-  fl_add_symbol("+",            draw_plus,              1);
-  fl_add_symbol("->|",          draw_arrow1bar,         1);
-  fl_add_symbol("arrow",        draw_arrow,             1);
-  fl_add_symbol("returnarrow",  0,                      3);
-  fl_add_symbol("square",       draw_square,            1);
-  fl_add_symbol("circle",       draw_circle,            1);
-  fl_add_symbol("line",         draw_line,              1);
-  fl_add_symbol("plus",         draw_plus,              1);
-  fl_add_symbol("menu",         draw_menu,              1);
-  fl_add_symbol("UpArrow",      draw_uparrow,           1);
-  fl_add_symbol("DnArrow",      draw_downarrow,         1);
-  fl_add_symbol("||",           draw_doublebar,         1);
-  fl_add_symbol("search",       draw_search,            1);
-  fl_add_symbol("FLTK",         draw_fltk,              1);
-
-  fl_add_symbol("filenew",      draw_filenew,           1);
-  fl_add_symbol("fileopen",     draw_fileopen,          1);
-  fl_add_symbol("filesave",     draw_filesave,          1);
-  fl_add_symbol("filesaveas",   draw_filesaveas,        1);
-  fl_add_symbol("fileprint",    draw_fileprint,         1);
-
-  fl_add_symbol("refresh",      draw_refresh,           1);
-  fl_add_symbol("reload",       draw_reload,            1);
-  fl_add_symbol("undo",         draw_undo,              1);
-  fl_add_symbol("redo",         draw_redo,              1);
-
-  fl_add_symbol("import",       draw_import,            1);
-  fl_add_symbol("export",       draw_export,            1);
-
-//  fl_add_symbol("file",      draw_file,           1);
+static std::unordered_map<std::string, Symbol> &symbol_table() {
+  static std::unordered_map<std::string, Symbol> t = {
+    { "",            { draw_arrow1,    1 } },
+    { "->",          { draw_arrow1,    1 } },
+    { ">",           { draw_arrow2,    1 } },
+    { ">>",          { draw_arrow3,    1 } },
+    { ">|",          { draw_arrowbar,  1 } },
+    { ">[]",         { draw_arrowbox,  1 } },
+    { "|>",          { draw_bararrow,  1 } },
+    { "<-",          { draw_arrow01,   1 } },
+    { "<",           { draw_arrow02,   1 } },
+    { "<<",          { draw_arrow03,   1 } },
+    { "|<",          { draw_0arrowbar, 1 } },
+    { "[]<",         { draw_0arrowbox, 1 } },
+    { "<|",          { draw_0bararrow, 1 } },
+    { "<->",         { draw_doublearrow,1} },
+    { "-->",         { draw_arrow,     1 } },
+    { "+",           { draw_plus,      1 } },
+    { "->|",         { draw_arrow1bar, 1 } },
+    { "arrow",       { draw_arrow,     1 } },
+    { "returnarrow", { nullptr,        3 } },
+    { "square",      { draw_square,    1 } },
+    { "circle",      { draw_circle,    1 } },
+    { "line",        { draw_line,      1 } },
+    { "plus",        { draw_plus,      1 } },
+    { "menu",        { draw_menu,      1 } },
+    { "UpArrow",     { draw_uparrow,   1 } },
+    { "DnArrow",     { draw_downarrow, 1 } },
+    { "||",          { draw_doublebar, 1 } },
+    { "search",      { draw_search,    1 } },
+    { "FLTK",        { draw_fltk,      1 } },
+    { "filenew",     { draw_filenew,   1 } },
+    { "fileopen",    { draw_fileopen,  1 } },
+    { "filesave",    { draw_filesave,  1 } },
+    { "filesaveas",  { draw_filesaveas,1 } },
+    { "fileprint",   { draw_fileprint, 1 } },
+    { "refresh",     { draw_refresh,   1 } },
+    { "reload",      { draw_reload,    1 } },
+    { "undo",        { draw_undo,      1 } },
+    { "redo",        { draw_redo,      1 } },
+    { "import",      { draw_import,    1 } },
+    { "export",      { draw_export,    1 } },
+  };
+  return t;
 }
