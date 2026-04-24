@@ -97,6 +97,9 @@ class FL_EXPORT Fl_Browser : public Fl_Browser_ {
 
 protected:
 
+  static constexpr char BLINE_SELECTED = 1;
+  static constexpr char BLINE_NOTDISPLAYED = 2;
+
   // required routines for Fl_Browser_ subclass:
   void* item_first() const override;
   void* item_next(void* item) const override;
@@ -128,6 +131,13 @@ protected:
   void insert(int line, FL_BLINE* item);
   int lineno(void *item) const ;
   void swap(FL_BLINE *a, FL_BLINE *b);
+
+  void*& bline_data(FL_BLINE* b) const;
+  const void* bline_data(const FL_BLINE* b) const;
+  char& bline_flags(FL_BLINE* b) const;
+  const char bline_flags(const FL_BLINE* b) const;
+  char* bline_txt(FL_BLINE* b) const;
+  const char* bline_txt(const FL_BLINE* b) const;
 
 public:
 

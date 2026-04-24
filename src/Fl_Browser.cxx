@@ -35,14 +35,6 @@
 // Also added the ability to "hide" a line. This sets its height to
 // zero, so the Fl_Browser_ cannot pick it.
 
-#define SELECTED 1
-#define NOTDISPLAYED 2
-
-// WARNING:
-//       Fl_File_Chooser.cxx also has a definition of this structure (FL_BLINE).
-//       Changes to FL_BLINE *must* be reflected in Fl_File_Chooser.cxx as well.
-//       This hack in Fl_File_Chooser should be solved.
-//
 struct FL_BLINE {       // data is in a linked list of these
   FL_BLINE* prev;
   FL_BLINE* next;
@@ -52,6 +44,15 @@ struct FL_BLINE {       // data is in a linked list of these
   char flags;           // selected, displayed
   char txt[1];          // start of allocated array
 };
+
+/** FL_BLINE access without publishing struct FL_BLINE */
+void*& Fl_Browser::bline_data(FL_BLINE* b) const { return b->data; }
+const void* Fl_Browser::bline_data(const FL_BLINE* b) const { return b->data; }
+char& Fl_Browser::bline_flags(FL_BLINE* b) const { return b->flags; }
+const char Fl_Browser::bline_flags(const FL_BLINE* b) const { return b->flags; }
+char* Fl_Browser::bline_txt(FL_BLINE* b) const { return b->txt; }
+const char* Fl_Browser::bline_txt(const FL_BLINE* b) const { return b->txt; }
+
 
 /**
   Returns the very first item in the list.
@@ -104,7 +105,7 @@ void* Fl_Browser::item_last() const {return last;}
   \see select(), selected(), value(), item_select(), item_selected()
 */
 int Fl_Browser::item_selected(void* item) const {
-  return ((FL_BLINE*)item)->flags&SELECTED;
+  return ((FL_BLINE*)item)->flags & BLINE_SELECTED;
 }
 /**
   Change the selection state of \p item to the value \p val.
@@ -113,8 +114,8 @@ int Fl_Browser::item_selected(void* item) const {
   \see select(), selected(), value(), item_select(), item_selected()
 */
 void Fl_Browser::item_select(void *item, int val) {
-  if (val) ((FL_BLINE*)item)->flags |= SELECTED;
-  else     ((FL_BLINE*)item)->flags &= ~SELECTED;
+  if (val) ((FL_BLINE*)item)->flags |= BLINE_SELECTED;
+  else     ((FL_BLINE*)item)->flags &= ~BLINE_SELECTED;
 }
 
 /**
@@ -360,7 +361,7 @@ void Fl_Browser::data(int line, void* d) {
 */
 int Fl_Browser::item_height(void *item) const {
   FL_BLINE* l = (FL_BLINE*)item;
-  if (l->flags & NOTDISPLAYED) return 0;
+  if (l->flags & BLINE_NOTDISPLAYED) return 0;
 
   int hmax = 2; // use 2 to insure we don't return a zero!
 
@@ -541,7 +542,7 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
         case 'c': talign = FL_ALIGN_CENTER; break;
         case 'r': talign = FL_ALIGN_RIGHT; break;
         case 'B':
-          if (!(l->flags & SELECTED)) {
+          if (!(l->flags & BLINE_SELECTED)) {
             fl_color((Fl_Color)strtoul(str, &str, 10));
             fl_rectf(X, Y, w1, H);
           } else while (isdigit(*str & 255)) str++; // skip digits
@@ -576,7 +577,7 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
     }
   BREAK:
     fl_font(font, tsize);
-    if (l->flags & SELECTED)
+    if (l->flags & BLINE_SELECTED)
       lcol = fl_contrast(lcol, selection_color());
     if (!active_r()) lcol = fl_inactive(lcol);
     fl_color(lcol);
@@ -754,7 +755,7 @@ int Fl_Browser::select(int line, int val) {
   */
 int Fl_Browser::selected(int line) const {
   if (line < 1 || line > lines) return 0;
-  return find_line(line)->flags & SELECTED;
+  return find_line(line)->flags & BLINE_SELECTED;
 }
 
 /**
@@ -767,8 +768,8 @@ int Fl_Browser::selected(int line) const {
 */
 void Fl_Browser::show(int line) {
   FL_BLINE* t = find_line(line);
-  if (t->flags & NOTDISPLAYED) {
-    t->flags &= ~NOTDISPLAYED;
+  if (t->flags & BLINE_NOTDISPLAYED) {
+    t->flags &= ~BLINE_NOTDISPLAYED;
     full_height_ += item_height(t) + linespacing();
     if (Fl_Browser_::displayed(t)) redraw();
   }
@@ -785,9 +786,9 @@ void Fl_Browser::show(int line) {
 */
 void Fl_Browser::hide(int line) {
   FL_BLINE* t = find_line(line);
-  if (!(t->flags & NOTDISPLAYED)) {
+  if (!(t->flags & BLINE_NOTDISPLAYED)) {
     full_height_ -= item_height(t) + linespacing();
-    t->flags |= NOTDISPLAYED;
+    t->flags |= BLINE_NOTDISPLAYED;
     if (Fl_Browser_::displayed(t)) redraw();
   }
 }
@@ -811,7 +812,7 @@ void Fl_Browser::display(int line, int val) {
 */
 int Fl_Browser::visible(int line) const {
   if (line < 1 || line > lines) return 0;
-  return !(find_line(line)->flags&NOTDISPLAYED);
+  return !(find_line(line)->flags & BLINE_NOTDISPLAYED);
 }
 
 /**

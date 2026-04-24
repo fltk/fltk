@@ -152,6 +152,7 @@ int main(int argc, char **argv) {
 
   setlocale(LC_ALL, "");    // enable multilanguage errors in file chooser
   fl_register_images();
+  Fl_File_Icon::load_system_icons();
 
   Fl::args_to_utf8(argc, argv); // enable multilanguage commandlines on Windows
   Fl::args(argc, argv, i, arg); // parse commandline
