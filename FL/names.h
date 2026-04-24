@@ -82,6 +82,8 @@ static std::map<int, const char*> fl_eventnames = {
   { FL_APP_DEACTIVATE, "FL_APP_DEACTIVATE" },
   { Fl::Pen::DETECTED, "Fl::Pen::DETECTED" },
   { Fl::Pen::CHANGED, "Fl::Pen::CHANGED" },
+  { Fl::Pen::IN_RANGE, "Fl::Pen::IN_RANGE" },
+  { Fl::Pen::OUT_OF_RANGE, "Fl::Pen::OUT_OF_RANGE" },
   { Fl::Pen::ENTER, "Fl::Pen::ENTER" },
   { Fl::Pen::LEAVE, "Fl::Pen::LEAVE" },
   { Fl::Pen::TOUCH, "Fl::Pen::TOUCH" },

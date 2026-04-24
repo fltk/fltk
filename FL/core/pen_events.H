@@ -301,7 +301,7 @@ FL_EXPORT extern Trait pen_traits(int pen_id = 0);
  \return true if any bit is set
  */
 inline bool pen_traits(Trait bits, int pen_id = 0) {
-  return ((pen_traits() & bits) != Trait::NONE);
+  return ((pen_traits(pen_id) & bits) != Trait::NONE);
 }
 
 /**
