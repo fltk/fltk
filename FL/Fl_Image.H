@@ -336,6 +336,9 @@ class Fl_SVG_Image;
   Images with an even number of channels are assumed to contain
   alpha information, which is used to blend the image with the
   contents of the screen.
+  Functions \ref fl_write_png and \ref fl_write_jpeg allow to save any
+  Fl_RGB_Image object to a PNG or JPEG file, respectively.
+  Both require linking to the \p fltk_images library.
 
   Fl_RGB_Image is defined in
   &lt;FL/Fl_Image.H&gt;, however for compatibility reasons

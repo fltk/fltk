@@ -1110,6 +1110,19 @@ The \p alpha parameter controls whether an alpha
 channel is created and the value that is placed in the alpha
 channel. If 0, no alpha channel is generated.
 
+\subsection drawing_direct_image_saving Direct Image Saving
+
+FLTK allows to save an array of pixel values to a file
+either in PNG or JPEG formats, provided the app is linked to the \p fltk_images library:
+
+int fl_write_png(const char *filename, const char *pixels, int w, int h, int d, int ld)
+\par
+Saves an array of pixels to a PNG file.
+
+int fl_write_jpeg(const char *filename, const char *pixels, int w, int h, int d, int ld)
+\par
+Saves an array of pixels to a JPEG file.
+
 \subsection drawing_Fl_Image Image Classes
 
 FLTK provides a base image class called Fl_Image which supports
