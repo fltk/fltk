@@ -153,7 +153,16 @@ void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr, int id)
       b[4]=='\r' && b[5]=='\n' && b[6]==0x1A && b[7]=='\n')
   {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
-    Fl_PNG_Image *png = new Fl_PNG_Image(rdr.name(), icondirentry_[pickedID].dwImageOffset);
+    Fl_PNG_Image *png;
+    if (rdr.is_data()) {
+      size_t offset = icondirentry_[pickedID].dwImageOffset;
+      size_t size = rdr.data_size();
+      if (size) size -= offset;
+      // `size` points at the end of the .ico data. The PNG may end before that.
+      png = new Fl_PNG_Image(rdr.name(), rdr.data_start()+offset, size);
+    } else {
+      png = new Fl_PNG_Image(rdr.name(), icondirentry_[pickedID].dwImageOffset);
+    }
 
     int loaded = png ? png->fail() : ERR_FILE_ACCESS;
     if (loaded < 0) {

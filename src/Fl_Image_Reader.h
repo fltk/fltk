@@ -83,6 +83,25 @@ public:
   // skip a given number of bytes
   void skip(unsigned int n) { seek((unsigned int)tell() + n); }
 
+  // return 1 if we are reading from a file, 0 otherwise
+  char is_file() const { return is_file_; }
+
+  // return 1 if we are reading from a block of memory, 0 otherwise
+  char is_data() const { return is_data_; }
+
+  // return the start address of the data block if reading from memory, otherwise nullptr
+  const unsigned char *data_start() const { return start_; }
+
+  // return the size of the data block if reading from memoryand the size of
+  // the block is known, otherwise 0
+  size_t data_size() const {
+    if (is_data_ && end_ && end_ != (const unsigned char *)(-1L)) {
+       return (size_t)(end_ - start_);
+    } else {
+       return 0;
+    }
+  }
+
 private:
   // open() sets this if we read from a file
   char is_file_;
