@@ -89,6 +89,17 @@ void   Fl_Sys_Menu_Bar::mode (int i, int fl) {
 }
 
 /**
+ Find out if this is a global app menubar (macOS) or part of the FLTK window.
+ \return true if the menu bar is located at the top of the desktop window and
+    will not take up any space in the FLTK window.
+ \return false if the menu bar is rendered inside the FLTK window, using the
+    coordinates and size specified in the constructor.
+ */
+bool Fl_Sys_Menu_Bar::is_global() const {
+  return fl_sys_menu_bar == this; // only one global menu bar allowed at a time
+}
+
+/**
  \brief Add a new menu item to the system menu bar.
 
  Add to the system menu bar a new menu item, with a title string, shortcut int,

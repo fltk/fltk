@@ -61,7 +61,7 @@ class cube_box;
 
 Fl_Window *form;
 Fl_Slider *speed, *size;
-Fl_Button *exit_button, *wire, *flat;
+Fl_Button *exit_button, *wire, *flat, *stats_button;
 cube_box  *lt_cube, *rt_cube;
 
 #if !HAVE_GL
@@ -189,6 +189,11 @@ void overlay_button(cube_box *cube) {
 #endif // HAVE_GL
 
 void exit_cb(Fl_Widget *w = NULL, void *v = NULL) {
+  done = 1;
+  Fl::hide_all_windows();
+}
+
+void stats_cb(Fl_Widget *w = NULL, void *v = NULL) {
 
 #if HAVE_GL
 
@@ -216,10 +221,6 @@ void exit_cb(Fl_Widget *w = NULL, void *v = NULL) {
     default:                    // continue
       break;
   }
-
-#else
-  done = 1;
-  Fl::hide_all_windows();
 #endif
 }
 
@@ -311,9 +312,9 @@ void print_cb(Fl_Widget *w, void *data) {
 //      |  |                     |  |          |  |
 //     MARGIN                    GAP           GAP
 
-#define MENUBAR_H 25    // menubar height
-#define MARGIN    20    // fixed margin around widgets
-#define GAP       20    // fixed gap between widgets
+int MENUBAR_H        = 25;    // menubar height - updated by sys menubar
+constexpr int MARGIN = 20;    // fixed margin around widgets
+constexpr int GAP    = 20;    // fixed gap between widgets
 
 void makeform(const char *name) {
   // Widget's XYWH's
@@ -328,20 +329,26 @@ void makeform(const char *name) {
   menubar->add("File/Print window", FL_COMMAND+'p', print_cb);
   menubar->add("File/Quit",         FL_COMMAND+'q', exit_cb);
 
+  // update menubar height if there is a system menu bar (e.g. on macOS)
+  if (menubar->is_global()) {
+    MENUBAR_H = 0;
+  }
+
   // Fl_Grid (layout)
-  Fl_Grid *grid = new Fl_Grid(0, MENUBAR_H, form_w, 350 + 2 * MARGIN);
-  grid->layout(4, 4, MARGIN, GAP);
+  Fl_Grid *grid = new Fl_Grid(0, MENUBAR_H, form_w, form_h - MENUBAR_H);
+  grid->layout(5, 4, MARGIN, GAP);
   grid->box(FL_FLAT_BOX);
 
   // set column and row weights to control resizing behavior
-  int cwe[] = {50,  0,  0, 50}; // column weights
-  int rwe[] = { 0,  0, 50,  0}; // row weights
-  grid->col_weight(cwe, 4);     // set weights for resizing
-  grid->row_weight(rwe, 4);     // set weights for resizing
+  int cwe[] = { 50, 0, 0, 50}; // column weights
+  int rwe[] = { 0, 0, 50, 0, 0}; // row weights
+  grid->col_weight(cwe, 5);     // set weights for resizing
+  grid->row_weight(rwe, 5);     // set weights for resizing
 
   // set non-default gaps for special layout purposes and labels
   grid->row_gap(0,  0);         // no gap below wire button
-  grid->row_gap(2, 50);         // gap below sliders for labels
+  grid->row_gap(2, 30);         // gap below sliders for labels
+  grid->row_gap(3,  0);         // no gap below statisctics button
 
   // left GL window
   lt_cube = new cube_box(0, 0, 350, 350);
@@ -351,26 +358,25 @@ void makeform(const char *name) {
   flat  = new Fl_Radio_Light_Button(    0, 0, 100, 25, "Flat");
   speed = new Fl_Slider(FL_VERT_SLIDER, 0, 0,  40, 90, "Speed");
   size  = new Fl_Slider(FL_VERT_SLIDER, 0, 0,  40, 90, "Size");
-#if HAVE_GL
-  exit_button = new Fl_Button(          0, 0, 100, 25, "Stats / E&xit");
-#else
+  stats_button = new Fl_Button(         0, 0, 100, 25, "Statistics");
+  stats_button->callback(stats_cb);
+  stats_button->tooltip("Display a dialog box with soem statistics (fps)\n");
   exit_button = new Fl_Button(          0, 0, 100, 25, "E&xit");
-#endif
   exit_button->callback(exit_cb);
-  exit_button->tooltip("Display statistics (fps) and\nchoose to exit or continue\n");
 
   // right GL window
   rt_cube = new cube_box(0, 0, 350, 350);
 
   // assign widgets to grid positions (R=row, C=col) and sizes
   // RS=rowspan, CS=colspan: R, C, RS, CS, optional alignment
-  grid->widget(lt_cube,      0, 0,  4,  1);
+  grid->widget(lt_cube,      0, 0,  5,  1);
   grid->widget(wire,         0, 1,  1,  2);
   grid->widget(flat,         1, 1,  1,  2);
   grid->widget(speed,        2, 1,  1,  1, FL_GRID_VERTICAL);
   grid->widget(size,         2, 2,  1,  1, FL_GRID_VERTICAL);
-  grid->widget(exit_button,  3, 1,  1,  2);
-  grid->widget(rt_cube,      0, 3,  4,  1);
+  grid->widget(stats_button, 3, 1,  1,  2);
+  grid->widget(exit_button,  4, 1,  1,  2);
+  grid->widget(rt_cube,      0, 3,  5,  1);
 
 #if HAVE_GL
   overlay_button(lt_cube);  // overlay a button onto the OpenGL window

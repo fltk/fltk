@@ -135,6 +135,7 @@ public:
   /** Gets the flags of item i.
    */
   int mode(int i) const { return Fl_Menu_::mode(i); }
+  bool is_global() const;
   void shortcut (int i, int s);
   void setonly (Fl_Menu_Item *item);
   static void about(Fl_Callback *cb, void *data);
