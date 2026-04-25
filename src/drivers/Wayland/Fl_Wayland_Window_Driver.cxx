@@ -1856,7 +1856,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     depth--;
     return;
   }
-  
+
   if (is_a_resize) {
     if (pWindow->as_overlay_window() && other_xid) {
       destroy_double_buffer();

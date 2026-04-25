@@ -1989,7 +1989,7 @@ void Fl_Help_View::format() {
     block->end = ptr;
     size_      = yy + hh;
   }
-  
+
   // Make sure that the last block will have the correct height.
   if (hh > block->h) block->h = hh;
 

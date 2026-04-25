@@ -1,11 +1,9 @@
-Changes in FLTK 1.4.5                                   Released: xxx xx 2026
+Changes in FLTK 1.4.5                                   Released: Apr 25 2026
 
-  This is a maintenance release with improvements and fixes
-  backported from the current development branch 1.5 (master).
-
- || Note: use `git shortlog` to find more related commits, currently:
- ||   $ git shortlog 707e9455f0a8.. | sed -e's/^      /  - /'
- || then sort/edit/move to sections below as appropriate...
+  This is a maintenance release with many improvements and fixes
+  backported from the current development branch 'master' (1.5.0).
+  This release is 100% backwards ABI and API compatible to release 1.4.0
+  and previous 1.4.x patch releases with default build options.
 
 
   Major Bug Fixes
@@ -21,28 +19,35 @@ Changes in FLTK 1.4.5                                   Released: xxx xx 2026
   - Wayland: Fix NULL pointer dereference in Fl::cairo_make_current() (#1359)
   - Wayland: Fix crash in test/sudoku if ALSA soundlib is not available
   - Wayland: subwindows may grab scaling factor from wrong monitor (#1382)
+  - Windows: avoid crash when resizing window containing non-FLTK child window (#1401)
   - X11: Fix crash with menubar across 2 screens with diverse scale factors (#1380)
   - X11: Fl::enable_im() crashes without input methods (#1364)
+  - Fix "fl_add_symbol() *always* increments symbnumb" (#1410).
+  - Fix "Mac: Most fl_symbols missing corner pixels" (#1409).
+  - Fix "Mac: Stubborn tooltips when menu window is open" (#1408)
 
   Minor Bug Fixes
 
   - Applied xuyun018's fix for Fl_Tree horiz scroll (#1297)
-  - Wayland: don't call non-public libdecor_frame_get_content_{width,height} (#1296)
-  - Wayland: Some shortcut keys not delivered when input widget has focus (#1290)
-  - X11: Restore use of menubar at top of fullscreen window
-  - X11/Wayland: Fix resize of menutitle windows when across 2 screens with diverse scaling
   - Fix: Underline does not appear in some fonts and scales (#1308)
-  - Fix "New Wayland subwindow code creates issues with resizes of opengl
-      windows…" (#1311)
-  - Windows: Fix "If app appears on non-active screen …, window resizes" (#259)
+  - Fix "New Wayland subwindow code creates issues with resizes of opengl windows…" (#1311)
   - Fix "Drawing to the wrong window with cairo and X11" (#1358)
   - Fix "Cairo: Rect with negative dimensions is still drawn" (#1379)
-  - Windows: Fix "Window scaling shortcut always moves window towards initial
-      display" (#1371)
-  - Wayland paste and DnD: fix minor issue revealed by valgrind
   - Fix "Blurry fonts with cairo/pango on FLTK >= 1.4" (#1365)
   - Fix "Transparent PNGs not rendered correctly when window is scaled" (#1375)
   - Close active menus when moving window to new screen
+  - macOS: Fix GL window child widgets when the window's screen changes resolution
+  - Wayland: don't call non-public libdecor_frame_get_content_{width,height} (#1296)
+  - Wayland: Some shortcut keys not delivered when input widget has focus (#1290)
+  - Wayland: fix creation of toplevel Fl_Gl_Window
+  - Wayland: fix minor paste and DnD issue revealed by valgrind
+  - Wayland: fix several issues related to scaling and to GL windows
+  - Wayland: Implement Fl_Window::xclass(const char*) for Wayland (#1391).
+  - Windows: Fix "If app appears on non-active screen …, window resizes" (#259)
+  - Windows: Fix "Window scaling shortcut always moves window towards initial display" (#1371)
+  - Wayland: call libdecor_dispatch(), libdecor_unref(), libdecor_get_fd() as expected by libdecor.
+  - X11: Restore use of menubar at top of fullscreen window
+  - X11/Wayland: Fix resize of menutitle windows when across 2 screens with diverse scaling
 
   CMake And Other Build Procedure Improvements
 
@@ -53,7 +58,7 @@ Changes in FLTK 1.4.5                                   Released: xxx xx 2026
 
   - Fix documentation of fl_overlay_clear and fl_overlay_rect
   - Clarify that a font must be loaded before measuring text (#1356)
-  - Fix documentation (remove doxygen warning)
+  - Improve docs related to "RGB sub image drawing slow with larger images" (#1384)
 
   Other Improvements
 
@@ -73,7 +78,7 @@ Changes in FLTK 1.4.5                                   Released: xxx xx 2026
   - Wayland: improve function Fl_Wayland_Window_Driver::resize() (#1307)
   - Windows: improve moving window across screens having distinct scale factors
 
-  ABI changes: only, if enabled by setting FL_ABI_VERSION >= 10405
+  ABI changes: only, if explicitly enabled by setting FL_ABI_VERSION >= 10405
 
   - Make Fl_Table::get_selection() 'const' (ABI 10405) (#1305)
 
