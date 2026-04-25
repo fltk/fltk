@@ -289,10 +289,14 @@ LRESULT fl_win32_tablet_handler(MSG& msg) {
   //       msg.message, (unsigned)msg.wParam, (unsigned)msg.lParam);
 
   POINTER_PEN_INFO info;
-  BOOL has_position = GetPointerPenInfo(
-    GET_POINTERID_WPARAM(msg.wParam),
-    &info
-  );
+  BOOL has_position = false;
+  typedef BOOL(WINAPI * GetPointerPenInfo_type)(UINT32, POINTER_PEN_INFO*);
+  static GetPointerPenInfo_type fl_GetPointerPenInfo =
+  (GetPointerPenInfo_type)GetProcAddress(LoadLibrary("User32.DLL"), "GetPointerPenInfo");
+  if (fl_GetPointerPenInfo) {
+    has_position = fl_GetPointerPenInfo(GET_POINTERID_WPARAM(msg.wParam), &info);
+  }
+
   // if (has_position && info.pointerInfo.ButtonChangeType!=0) {
   //   printf("  pointerFlags: %08x [", (unsigned)info.pointerInfo.pointerFlags);
   //   if (info.pointerInfo.pointerFlags & POINTER_FLAG_FIRSTBUTTON) printf(" 1ST");
