@@ -40,18 +40,55 @@ struct FL_BLINE {       // data is in a linked list of these
   FL_BLINE* next;
   void* data;
   Fl_Image* icon;
-  short length;         // sizeof(txt)-1, may be longer than string
+  short length;         // allocated size of txt[] (excl. null terminator); current string may be shorter
   char flags;           // selected, displayed
   char txt[1];          // start of allocated array
 };
 
-/** FL_BLINE access without publishing struct FL_BLINE */
-void*& Fl_Browser::bline_data(FL_BLINE* b) const { return b->data; }
-const void* Fl_Browser::bline_data(const FL_BLINE* b) const { return b->data; }
-char& Fl_Browser::bline_flags(FL_BLINE* b) const { return b->flags; }
-const char Fl_Browser::bline_flags(const FL_BLINE* b) const { return b->flags; }
-char* Fl_Browser::bline_txt(FL_BLINE* b) const { return b->txt; }
-const char* Fl_Browser::bline_txt(const FL_BLINE* b) const { return b->txt; }
+/** Get writable reference to FL_BLINE data. */
+void*& Fl_Browser::bline_data(FL_BLINE* b) const {
+  return b->data;
+}
+
+/** Get FL_BLINE data. */
+const void* Fl_Browser::bline_data(const FL_BLINE* b) const {
+  return b->data;
+}
+
+/** Get writable reference to FL_BLINE flags. */
+char& Fl_Browser::bline_flags(FL_BLINE* b) const {
+  return b->flags;
+}
+
+/** Get FL_BLINE flags. */
+char Fl_Browser::bline_flags(const FL_BLINE* b) const {
+  return b->flags;
+}
+
+/** Get writable reference to FL_BLINE text. */
+char* Fl_Browser::bline_txt(FL_BLINE* b) const {
+  return b->txt;
+}
+
+/** Get FL_BLINE text. */
+const char* Fl_Browser::bline_txt(const FL_BLINE* b) const {
+  return b->txt;
+}
+
+/** Get writable reference to FL_BLINE icon. */
+Fl_Image*& Fl_Browser::bline_icon(FL_BLINE* b) const {
+  return b->icon;
+}
+
+/** Get FL_BLINE icon. */
+const Fl_Image* Fl_Browser::bline_icon(const FL_BLINE* b) const {
+  return b->icon;
+}
+
+/** Get FL_BLINE allocated text buffer size (excl. null terminator). */
+short Fl_Browser::bline_length(const FL_BLINE* b) const {
+  return b->length;
+}
 
 
 /**
