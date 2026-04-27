@@ -1,7 +1,7 @@
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -71,7 +71,6 @@ int fl_return_arrow(int x,int y,int w,int h);
   \param[in] col   color of symbox
   \returns 1 on success, 0 on failure
   */
-// provided for back compatibility:
 int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
   const char *p = label;
   if (*p++ != '@') return 0;
@@ -175,10 +174,10 @@ static void draw_fltk(Fl_Color col)
   // L fill
   BCP; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
   vv(0.0, 0.5); vv(-1.0, 0.5); ECP;
-  // T outline
+  // T fill
   BCP; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
   vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); ECP;
-  // K outline
+  // K fill
   BCP; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
   vv(2.0, -0.5); vv(1.43, 0.0); vv(2.0, 0.5); vv(1.70, 0.5);
   vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); ECP;
@@ -667,6 +666,7 @@ static void draw_export(Fl_Color col)
   fl_pop_matrix();
 }
 
+// clang-format off
 static std::unordered_map<std::string, Symbol> &symbol_table() {
   static std::unordered_map<std::string, Symbol> t = {
     { "",            { draw_arrow1,    1 } },
@@ -712,3 +712,4 @@ static std::unordered_map<std::string, Symbol> &symbol_table() {
   };
   return t;
 }
+// clang-format on
