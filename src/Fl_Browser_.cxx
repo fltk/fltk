@@ -717,11 +717,13 @@ int Fl_Browser_::handle(int event) {
       if (type()==FL_HOLD_BROWSER) {
         switch (Fl::event_key()) {
         case FL_Down:
-          while ((l = item_next(l))) {
+          if (l1) l = item_next(l);
+          while (l) {
             if (item_height(l)>0) {
               select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
               break;
             }
+            l = item_next(l);
           }
           return 1;
         case FL_Up:
