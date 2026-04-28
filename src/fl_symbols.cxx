@@ -37,9 +37,17 @@
 extern int fl_return_arrow(int x, int y, int w, int h);
 
 struct Symbol {
-  void (*drawit)(Fl_Color);
-  int scalable;
-  int special; // internal use only
+  constexpr Symbol() : drawit(nullptr), scalable(0), call_with_rect(0) {}
+  constexpr Symbol(void (*drawit)(Fl_Color), int scalable)
+    : drawit(drawit), scalable(static_cast<uint8_t>(scalable)), call_with_rect(0) {}
+  constexpr Symbol(void (*draw_in_rect)(int, int, int, int, Fl_Color), int scalable)
+    : draw_in_rect(draw_in_rect), scalable(static_cast<uint8_t>(scalable)), call_with_rect(1) {}
+  union {
+    void (*drawit)(Fl_Color);
+    void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color col);
+  };
+  uint8_t scalable : 1;
+  uint8_t call_with_rect : 1;
 };
 
 // Defined after the drawing functions so the initializer list can reference them.
@@ -48,20 +56,50 @@ static std::unordered_map<std::string, Symbol> &symbol_table();
 /**************** The routines seen by the user *************************/
 
 /**
-  Adds a symbol with name \c name to the system.
+  Registers (or replaces) a named symbol drawn using complex vector drawing.
 
-  If a symbol with that name is already defined, its draw function is
-  replaced by \p drawit.
+  \p drawit is called with the matrix pushed and the origin translated to the
+  center of the drawing rectangle. If \p scalable is set, the matrix is also
+  pre-scaled so the unit square (-1,-1) to (1,1) maps onto the rectangle;
+  use FLTK's complex-shape drawing calls in that coordinate space.
 
-  \param[in] name     name of symbol (without the "@")
-  \param[in] drawit   function to draw symbol (\b must not be nullptr)
-  \param[in] scalable set to 1 if \p drawit uses scalable vector drawing
+  \note See \ref drawing_complex_shapes for the FLTK drawing calls that work
+  with the preset transform.
 
-  \returns 1 on success (always).
+  \param[in] name       symbol name without the leading "@"
+  \param[in] drawit     drawing function; must not be null
+  \param[in] scalable   1 (default) to allow scaling and rotation, 0 to keep fixed size
+  \return 1 if the operation was succesful (always).
+
+  \see fl_add_symbol(const char *name, void (*draw_in_rect)(Fl_Color c, int x, int y, int w, int h), int scalable)
 */
-int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable) {
+int fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable) {
   auto &t = symbol_table();
-  t[name] = {drawit, scalable ? 1 : 0, 0};
+  t[name] = Symbol(drawit, scalable);
+  return 1;
+}
+
+/**
+  Registers (or replaces) a named symbol drawn into an explicit pixel rectangle.
+
+  Use this variant for symbols drawn with fast lines, text, or bitmaps, where
+  working directly in pixel coordinates is more natural. If \p scalable is set,
+  the matrix is pushed and pre-scaled as with the vector variant, so the symbol
+  can also use complex-shape drawing calls in the (-1,-1) to (1,1) space.
+
+  \note See \ref drawing_complex_shapes for the FLTK drawing calls that work
+  with the preset transform.
+
+  \param[in] name           symbol name without the leading "@"
+  \param[in] draw_in_rect   drawing function; receives color and target rectangle; must not be null
+  \param[in] scalable       1 (default) to allow scaling and rotation, 0 to keep fixed size
+  \return 1 if the operation was successful (always).
+
+  \see fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable)
+*/
+int fl_add_symbol(const char *name, void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color c), int scalable) {
+  auto &t = symbol_table();
+  t[name] = Symbol(draw_in_rect, scalable);
   return 1;
 }
 
@@ -134,21 +172,26 @@ int fl_draw_symbol(const char *label, int x, int y, int w, int h, Fl_Color col) 
   auto it = t.find(p);
   if (it == t.end()) return 0;
   const Symbol &sym = it->second;
-  if (sym.special == 3) {         // returnarrow special case
-    fl_return_arrow(x, y, w, h);  // no rotation, no scaling
-    return 1;
+
+  if (sym.call_with_rect && !sym.scalable) {
+    sym.draw_in_rect(x, y, w, h, col);
+  } else {
+    fl_push_matrix();
+    fl_translate(x+w/2,y+h/2);
+    if (sym.scalable) {
+      int ws = w, hs = h;
+      if (equalscale) { if (ws<hs) hs = ws; else ws = hs; }
+      fl_scale(0.5*ws, 0.5*hs);
+      fl_rotate(rotangle/10.0);
+      if (flip_x) fl_scale(-1.0, 1.0);
+      if (flip_y) fl_scale(1.0, -1.0);
+    }
+    if (sym.call_with_rect)
+      sym.draw_in_rect(x, y, w, h, col);
+    else
+      sym.drawit(col);
+    fl_pop_matrix();
   }
-  fl_push_matrix();
-  fl_translate(x+w/2,y+h/2);
-  if (sym.scalable) {
-    if (equalscale) {if (w<h) h = w; else w = h;}
-    fl_scale(0.5*w, 0.5*h);
-    fl_rotate(rotangle/10.0);
-    if (flip_x) fl_scale(-1.0, 1.0);
-    if (flip_y) fl_scale(1.0, -1.0);
-  }
-  sym.drawit(col);
-  fl_pop_matrix();
   return 1;
 }
 
@@ -339,6 +382,12 @@ static void draw_arrow(Fl_Color col)
   set_outline_color(col);
   BL; vv(-1.0,0.0); vv(0.65,0.0); EL;
   BC; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EC;
+}
+
+static void draw_returnarrow(int x, int y, int w, int h, Fl_Color color)
+{
+  (void)color; // ignored
+  fl_return_arrow(x, y, w, h);
 }
 
 static void draw_square(Fl_Color col)
@@ -685,46 +734,46 @@ static void draw_export(Fl_Color col)
 // clang-format off
 static std::unordered_map<std::string, Symbol> &symbol_table() {
   static std::unordered_map<std::string, Symbol> t = {
-    { "",            { draw_arrow1,      1, 0 } },
-    { "->",          { draw_arrow1,      1, 0 } },
-    { ">",           { draw_arrow2,      1, 0 } },
-    { ">>",          { draw_arrow3,      1, 0 } },
-    { ">|",          { draw_arrowbar,    1, 0 } },
-    { ">[]",         { draw_arrowbox,    1, 0 } },
-    { "|>",          { draw_bararrow,    1, 0 } },
-    { "<-",          { draw_arrow01,     1, 0 } },
-    { "<",           { draw_arrow02,     1, 0 } },
-    { "<<",          { draw_arrow03,     1, 0 } },
-    { "|<",          { draw_0arrowbar,   1, 0 } },
-    { "[]<",         { draw_0arrowbox,   1, 0 } },
-    { "<|",          { draw_0bararrow,   1, 0 } },
-    { "<->",         { draw_doublearrow, 1, 0 } },
-    { "-->",         { draw_arrow,       1, 0 } },
-    { "+",           { draw_plus,        1, 0 } },
-    { "->|",         { draw_arrow1bar,   1, 0 } },
-    { "arrow",       { draw_arrow,       1, 0 } },
-    { "returnarrow", { nullptr,          0, 3 } }, // fl_return_arrow(x, y, w, h)
-    { "square",      { draw_square,      1, 0 } },
-    { "circle",      { draw_circle,      1, 0 } },
-    { "line",        { draw_line,        1, 0 } },
-    { "plus",        { draw_plus,        1, 0 } },
-    { "menu",        { draw_menu,        1, 0 } },
-    { "UpArrow",     { draw_uparrow,     1, 0 } },
-    { "DnArrow",     { draw_downarrow,   1, 0 } },
-    { "||",          { draw_doublebar,   1, 0 } },
-    { "search",      { draw_search,      1, 0 } },
-    { "FLTK",        { draw_fltk,        1, 0 } },
-    { "filenew",     { draw_filenew,     1, 0 } },
-    { "fileopen",    { draw_fileopen,    1, 0 } },
-    { "filesave",    { draw_filesave,    1, 0 } },
-    { "filesaveas",  { draw_filesaveas,  1, 0 } },
-    { "fileprint",   { draw_fileprint,   1, 0 } },
-    { "refresh",     { draw_refresh,     1, 0 } },
-    { "reload",      { draw_reload,      1, 0 } },
-    { "undo",        { draw_undo,        1, 0 } },
-    { "redo",        { draw_redo,        1, 0 } },
-    { "import",      { draw_import,      1, 0 } },
-    { "export",      { draw_export,      1, 0 } },
+    { "",            { draw_arrow1,      1 } },
+    { "->",          { draw_arrow1,      1 } },
+    { ">",           { draw_arrow2,      1 } },
+    { ">>",          { draw_arrow3,      1 } },
+    { ">|",          { draw_arrowbar,    1 } },
+    { ">[]",         { draw_arrowbox,    1 } },
+    { "|>",          { draw_bararrow,    1 } },
+    { "<-",          { draw_arrow01,     1 } },
+    { "<",           { draw_arrow02,     1 } },
+    { "<<",          { draw_arrow03,     1 } },
+    { "|<",          { draw_0arrowbar,   1 } },
+    { "[]<",         { draw_0arrowbox,   1 } },
+    { "<|",          { draw_0bararrow,   1 } },
+    { "<->",         { draw_doublearrow, 1 } },
+    { "-->",         { draw_arrow,       1 } },
+    { "+",           { draw_plus,        1 } },
+    { "->|",         { draw_arrow1bar,   1 } },
+    { "arrow",       { draw_arrow,       1 } },
+    { "returnarrow", { draw_returnarrow, 0 } },
+    { "square",      { draw_square,      1 } },
+    { "circle",      { draw_circle,      1 } },
+    { "line",        { draw_line,        1 } },
+    { "plus",        { draw_plus,        1 } },
+    { "menu",        { draw_menu,        1 } },
+    { "UpArrow",     { draw_uparrow,     1 } },
+    { "DnArrow",     { draw_downarrow,   1 } },
+    { "||",          { draw_doublebar,   1 } },
+    { "search",      { draw_search,      1 } },
+    { "FLTK",        { draw_fltk,        1 } },
+    { "filenew",     { draw_filenew,     1 } },
+    { "fileopen",    { draw_fileopen,    1 } },
+    { "filesave",    { draw_filesave,    1 } },
+    { "filesaveas",  { draw_filesaveas,  1 } },
+    { "fileprint",   { draw_fileprint,   1 } },
+    { "refresh",     { draw_refresh,     1 } },
+    { "reload",      { draw_reload,      1 } },
+    { "undo",        { draw_undo,        1 } },
+    { "redo",        { draw_redo,        1 } },
+    { "import",      { draw_import,      1 } },
+    { "export",      { draw_export,      1 } },
   };
   return t;
 }
