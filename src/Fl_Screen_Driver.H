@@ -114,6 +114,8 @@ public:
   virtual int y() { return 0; }
   virtual int w() { return 800; } // default, FL_OVERRIDE in driver!
   virtual int h() { return 600; } // default, FL_OVERRIDE in driver!
+  virtual int x_from_right(int x) { return x * scale(0); }
+  virtual int y_from_bottom(int y) { return y * scale(0); }
   virtual int screen_count();
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int /*n*/) {
