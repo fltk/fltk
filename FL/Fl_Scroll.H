@@ -94,6 +94,10 @@
   <I>You cannot use Fl_Window as a child of this since the
   clipping is not conveyed to it when drawn, and it will draw over the
   scrollbars and neighboring objects.</I>
+
+  <I>Widget overlap may result in scroll tearing, see Fl_Tabs for fuller 
+  explanation.</I>
+  <!-- See GitHub issue #1175. -->
 */
 class FL_EXPORT Fl_Scroll : public Fl_Group {
 
