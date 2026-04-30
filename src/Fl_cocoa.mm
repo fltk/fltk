@@ -165,6 +165,7 @@ const NSUInteger NSEventModifierFlagOption = NSAlternateKeyMask;
 const NSUInteger NSEventModifierFlagControl = NSControlKeyMask;
 const NSUInteger NSEventModifierFlagShift = NSShiftKeyMask;
 const NSUInteger NSEventModifierFlagCapsLock = NSAlphaShiftKeyMask;
+const NSUInteger NSEventModifierFlagFunction = NSFunctionKeyMask;
 
 const NSEventType NSEventTypeLeftMouseDown = NSLeftMouseDown;
 const NSEventType NSEventTypeRightMouseDown = NSRightMouseDown;
