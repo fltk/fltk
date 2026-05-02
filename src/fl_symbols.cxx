@@ -39,9 +39,11 @@ extern int fl_return_arrow(int x, int y, int w, int h);
 struct Symbol {
   constexpr Symbol() : drawit(nullptr), scalable(0), call_with_rect(0) {}
   constexpr Symbol(void (*drawit)(Fl_Color), int scalable)
-    : drawit(drawit), scalable(static_cast<uint8_t>(scalable)), call_with_rect(0) {}
+    : drawit(drawit), scalable(static_cast<uint8_t>(scalable)), call_with_rect(0)
+  {}
   constexpr Symbol(void (*draw_in_rect)(int, int, int, int, Fl_Color), int scalable)
-    : draw_in_rect(draw_in_rect), scalable(static_cast<uint8_t>(scalable)), call_with_rect(1) {}
+    : draw_in_rect(draw_in_rect), scalable(static_cast<uint8_t>(scalable)), call_with_rect(1)
+  {}
   union {
     void (*drawit)(Fl_Color);
     void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color col);
@@ -51,7 +53,7 @@ struct Symbol {
 };
 
 // Defined after the drawing functions so the initializer list can reference them.
-static std::unordered_map<std::string, Symbol> &symbol_table();
+static std::unordered_map<std::string, Symbol>& symbol_table();
 
 /**************** The routines seen by the user *************************/
 
@@ -71,10 +73,12 @@ static std::unordered_map<std::string, Symbol> &symbol_table();
   \param[in] scalable   1 (default) to allow scaling and rotation, 0 to keep fixed size
   \return 1 if the operation was succesful (always).
 
-  \see fl_add_symbol(const char *name, void (*draw_in_rect)(Fl_Color c, int x, int y, int w, int h), int scalable)
+  \see fl_add_symbol(const char *name, void (*draw_in_rect)(Fl_Color c, int x, int y, int w, int h),
+  int scalable)
 */
-int fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable) {
-  auto &t = symbol_table();
+int fl_add_symbol(const char* name, void (*drawit)(Fl_Color c), int scalable)
+{
+  auto& t = symbol_table();
   t[name] = Symbol(drawit, scalable);
   return 1;
 }
@@ -97,8 +101,10 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable) {
 
   \see fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable)
 */
-int fl_add_symbol(const char *name, void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color c), int scalable) {
-  auto &t = symbol_table();
+int fl_add_symbol(const char* name, void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color c),
+                  int scalable)
+{
+  auto& t = symbol_table();
   t[name] = Symbol(draw_in_rect, scalable);
   return 1;
 }
@@ -111,8 +117,9 @@ int fl_add_symbol(const char *name, void (*draw_in_rect)(int x, int y, int w, in
   \param[in] name     name of symbol (without the "@")
   \returns 1 on success (always).
 */
-int fl_remove_symbol(const char *name) {
-  auto &t = symbol_table();
+int fl_remove_symbol(const char* name)
+{
+  auto& t = symbol_table();
   t.erase(name);
   return 1;
 }
@@ -125,66 +132,111 @@ int fl_remove_symbol(const char *name) {
   \param[in] col   color of symbol
   \returns 1 on success, 0 on failure
   */
-int fl_draw_symbol(const char *label, int x, int y, int w, int h, Fl_Color col) {
-  const char *p = label;
-  if (*p++ != '@') return 0;
+int fl_draw_symbol(const char* label, int x, int y, int w, int h, Fl_Color col)
+{
+  const char* p = label;
+  if (*p++ != '@')
+    return 0;
   int equalscale = 0;
-  if (*p == '#') {equalscale = 1; p++;}
-  if (*p == '-' && p[1]>='1' && p[1]<='9') {
-    int n = p[1]-'0';
-    x += n; y += n; w -= 2*n; h -= 2*n;
+  if (*p == '#') {
+    equalscale = 1;
+    p++;
+  }
+  if (*p == '-' && p[1] >= '1' && p[1] <= '9') {
+    int n = p[1] - '0';
+    x += n;
+    y += n;
+    w -= 2 * n;
+    h -= 2 * n;
     p += 2;
-  } else if (*p == '+' && p[1]>='1' && p[1]<='9') {
-    int n = p[1]-'0';
-    x -= n; y -= n; w += 2*n; h += 2*n;
+  } else if (*p == '+' && p[1] >= '1' && p[1] <= '9') {
+    int n = p[1] - '0';
+    x -= n;
+    y -= n;
+    w += 2 * n;
+    h += 2 * n;
     p += 2;
   }
-  if (w < 10) {x -= (10-w)/2; w = 10;}
-  if (h < 10) {y -= (10-h)/2; h = 10;}
-  w = (w-1)|1; h = (h-1)|1;
+  if (w < 10) {
+    x -= (10 - w) / 2;
+    w = 10;
+  }
+  if (h < 10) {
+    y -= (10 - h) / 2;
+    h = 10;
+  }
+  w = (w - 1) | 1;
+  h = (h - 1) | 1;
   char flip_x = 0, flip_y = 0;
-  if (*p=='$') {
+  if (*p == '$') {
     flip_x = 1;
     p++;
   }
-  if (*p=='%') {
+  if (*p == '%') {
     flip_y = 1;
     p++;
   }
   int rotangle;
   switch (*p++) {
-  case '0':
-    rotangle = 1000*(p[1]-'0') + 100*(p[2]-'0') + 10*(p[3]-'0');
-    p += 4;
-    break;
-  case '1': rotangle = 2250; break;
-  case '2': rotangle = 2700; break;
-  case '3': rotangle = 3150; break;
-  case '4': rotangle = 1800; break;
-  case '5':
-  case '6': rotangle = 0; break;
-  case '7': rotangle = 1350; break;
-  case '8': rotangle =  900; break;
-  case '9': rotangle =  450; break;
-  default: rotangle = 0; p--; break;
+    case '0':
+      rotangle = 1000 * (p[1] - '0') + 100 * (p[2] - '0') + 10 * (p[3] - '0');
+      p += 4;
+      break;
+    case '1':
+      rotangle = 2250;
+      break;
+    case '2':
+      rotangle = 2700;
+      break;
+    case '3':
+      rotangle = 3150;
+      break;
+    case '4':
+      rotangle = 1800;
+      break;
+    case '5':
+    case '6':
+      rotangle = 0;
+      break;
+    case '7':
+      rotangle = 1350;
+      break;
+    case '8':
+      rotangle = 900;
+      break;
+    case '9':
+      rotangle = 450;
+      break;
+    default:
+      rotangle = 0;
+      p--;
+      break;
   }
-  auto &t = symbol_table();
+  auto& t = symbol_table();
   auto it = t.find(p);
-  if (it == t.end()) return 0;
-  const Symbol &sym = it->second;
+  if (it == t.end())
+    return 0;
+  const Symbol& sym = it->second;
 
   if (sym.call_with_rect && !sym.scalable) {
     sym.draw_in_rect(x, y, w, h, col);
   } else {
     fl_push_matrix();
-    fl_translate(x+w/2,y+h/2);
+    fl_translate(x + w / 2, y + h / 2);
     if (sym.scalable) {
       int ws = w, hs = h;
-      if (equalscale) { if (ws<hs) hs = ws; else ws = hs; }
-      fl_scale(0.5*ws, 0.5*hs);
-      fl_rotate(rotangle/10.0);
-      if (flip_x) fl_scale(-1.0, 1.0);
-      if (flip_y) fl_scale(1.0, -1.0);
+      if (equalscale) {
+        if (ws < hs)
+          hs = ws;
+        else
+          ws = hs;
+      }
+      fl_scale(0.5 * ws, 0.5 * hs);
+      fl_rotate(rotangle / 10.0);
+      if (flip_x)
+        fl_scale(-1.0, 1.0);
+      if (flip_y)
+        fl_scale(1.0, -1.0);
     }
     if (sym.call_with_rect)
       sym.draw_in_rect(x, y, w, h, col);
@@ -207,18 +259,30 @@ int fl_draw_symbol(const char *label, int x, int y, int w, int h, Fl_Color col) 
 #define EL fl_end_line()
 #define BC fl_begin_loop()
 #define EC fl_end_loop()
-#define vv(x,y) fl_vertex(x,y)
+#define vv(x, y) fl_vertex(x, y)
 
-//for the outline color
-static void set_outline_color(Fl_Color c) {
+// for the outline color
+static void set_outline_color(Fl_Color c)
+{
   fl_color(fl_darker(c));
 }
 
-static void rectangle(double x,double y,double x2,double y2,Fl_Color col) {
+static void rectangle(double x, double y, double x2, double y2, Fl_Color col)
+{
   fl_color(col);
-  BP; vv(x,y); vv(x2,y); vv(x2,y2); vv(x,y2); EP;
+  BP;
+  vv(x, y);
+  vv(x2, y);
+  vv(x2, y2);
+  vv(x, y2);
+  EP;
   set_outline_color(col);
-  BC; vv(x,y); vv(x2,y); vv(x2,y2); vv(x,y2); EC;
+  BC;
+  vv(x, y);
+  vv(x2, y);
+  vv(x2, y2);
+  vv(x, y2);
+  EC;
 }
 
 /* The drawing routines */
@@ -227,45 +291,123 @@ static void draw_fltk(Fl_Color col)
 {
   fl_color(col);
   // F fill
-  BCP; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
-  vv(-1.8, -0.1); vv(-1.2, -0.1); vv(-1.2, 0.1); vv(-1.8, 0.1);
-  vv(-1.8, 0.5); vv(-2.0, 0.5); ECP;
+  BCP;
+  vv(-2.0, -0.5);
+  vv(-1.0, -0.5);
+  vv(-1.0, -0.3);
+  vv(-1.8, -0.3);
+  vv(-1.8, -0.1);
+  vv(-1.2, -0.1);
+  vv(-1.2, 0.1);
+  vv(-1.8, 0.1);
+  vv(-1.8, 0.5);
+  vv(-2.0, 0.5);
+  ECP;
   // L fill
-  BCP; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
-  vv(0.0, 0.5); vv(-1.0, 0.5); ECP;
+  BCP;
+  vv(-1.0, -0.5);
+  vv(-0.8, -0.5);
+  vv(-0.8, 0.3);
+  vv(0.0, 0.3);
+  vv(0.0, 0.5);
+  vv(-1.0, 0.5);
+  ECP;
   // T fill
-  BCP; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
-  vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); ECP;
+  BCP;
+  vv(-0.1, -0.5);
+  vv(1.1, -0.5);
+  vv(1.1, -0.3);
+  vv(0.6, -0.3);
+  vv(0.6, 0.5);
+  vv(0.4, 0.5);
+  vv(0.4, -0.3);
+  vv(-0.1, -0.3);
+  ECP;
   // K fill
-  BCP; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
-  vv(2.0, -0.5); vv(1.43, 0.0); vv(2.0, 0.5); vv(1.70, 0.5);
-  vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); ECP;
+  BCP;
+  vv(1.1, -0.5);
+  vv(1.3, -0.5);
+  vv(1.3, -0.15);
+  vv(1.70, -0.5);
+  vv(2.0, -0.5);
+  vv(1.43, 0.0);
+  vv(2.0, 0.5);
+  vv(1.70, 0.5);
+  vv(1.3, 0.15);
+  vv(1.3, 0.5);
+  vv(1.1, 0.5);
+  ECP;
   set_outline_color(col);
   // F outline
-  BC; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
-  vv(-1.8, -0.1); vv(-1.2, -0.1); vv(-1.2, 0.1); vv(-1.8, 0.1);
-  vv(-1.8, 0.5); vv(-2.0, 0.5); EC;
+  BC;
+  vv(-2.0, -0.5);
+  vv(-1.0, -0.5);
+  vv(-1.0, -0.3);
+  vv(-1.8, -0.3);
+  vv(-1.8, -0.1);
+  vv(-1.2, -0.1);
+  vv(-1.2, 0.1);
+  vv(-1.8, 0.1);
+  vv(-1.8, 0.5);
+  vv(-2.0, 0.5);
+  EC;
   // L outline
-  BC; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
-  vv(0.0, 0.5); vv(-1.0, 0.5); EC;
+  BC;
+  vv(-1.0, -0.5);
+  vv(-0.8, -0.5);
+  vv(-0.8, 0.3);
+  vv(0.0, 0.3);
+  vv(0.0, 0.5);
+  vv(-1.0, 0.5);
+  EC;
   // T outline
-  BC; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
-  vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); EC;
+  BC;
+  vv(-0.1, -0.5);
+  vv(1.1, -0.5);
+  vv(1.1, -0.3);
+  vv(0.6, -0.3);
+  vv(0.6, 0.5);
+  vv(0.4, 0.5);
+  vv(0.4, -0.3);
+  vv(-0.1, -0.3);
+  EC;
   // K outline
-  BC; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
-  vv(2.0, -0.5); vv(1.43, 0.0); vv(2.0, 0.5); vv(1.70, 0.5);
-  vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); EC;
+  BC;
+  vv(1.1, -0.5);
+  vv(1.3, -0.5);
+  vv(1.3, -0.15);
+  vv(1.70, -0.5);
+  vv(2.0, -0.5);
+  vv(1.43, 0.0);
+  vv(2.0, 0.5);
+  vv(1.70, 0.5);
+  vv(1.3, 0.15);
+  vv(1.3, 0.5);
+  vv(1.1, 0.5);
+  EC;
 }
 
 static void draw_search(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(-.4, .13); vv(-1.0, .73); vv(-.73, 1.0); vv(-.13, .4); EP;
+  BP;
+  vv(-.4, .13);
+  vv(-1.0, .73);
+  vv(-.73, 1.0);
+  vv(-.13, .4);
+  EP;
   set_outline_color(col);
   fl_line_style(FL_SOLID, 3, 0);
-  BC; fl_circle(.2, -.2, .6); EC;
+  BC;
+  fl_circle(.2, -.2, .6);
+  EC;
   fl_line_style(FL_SOLID, 1, 0);
-  BC; vv(-.4, .13); vv(-1.0, .73); vv(-.73, 1.0); vv(-.13, .4); EC;
+  BC;
+  vv(-.4, .13);
+  vv(-1.0, .73);
+  vv(-.73, 1.0);
+  vv(-.13, .4);
+  EC;
 }
 
 static void draw_arrow1(Fl_Color col)
@@ -273,115 +415,273 @@ static void draw_arrow1(Fl_Color col)
   fl_color(col);
   if (fl_graphics_driver->can_fill_non_convex_polygon()) {
     // draw the arrow as a 7-vertex filled polygon
-    BP; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,0.8); vv(0.8,0.0);
-    vv(0.0,-0.8); vv(0.0,-0.4); EP;
+    BP;
+    vv(-0.8, -0.4);
+    vv(-0.8, 0.4);
+    vv(0.0, 0.4);
+    vv(0.0, 0.8);
+    vv(0.8, 0.0);
+    vv(0.0, -0.8);
+    vv(0.0, -0.4);
+    EP;
   } else {
     // draw the arrow as a rectangle plus a triangle
-    BP; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,-0.4); EP;
-    BP; vv(0.0,0.8); vv(0.8,0.0); vv(0.0,-0.8); vv(0.0,-0.4); vv(0.0,0.4); EP;
+    BP;
+    vv(-0.8, -0.4);
+    vv(-0.8, 0.4);
+    vv(0.0, 0.4);
+    vv(0.0, -0.4);
+    EP;
+    BP;
+    vv(0.0, 0.8);
+    vv(0.8, 0.0);
+    vv(0.0, -0.8);
+    vv(0.0, -0.4);
+    vv(0.0, 0.4);
+    EP;
   }
   set_outline_color(col);
-  BC; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,0.8); vv(0.8,0.0);
-      vv(0.0,-0.8); vv(0.0,-0.4); EC;
+  BC;
+  vv(-0.8, -0.4);
+  vv(-0.8, 0.4);
+  vv(0.0, 0.4);
+  vv(0.0, 0.8);
+  vv(0.8, 0.0);
+  vv(0.0, -0.8);
+  vv(0.0, -0.4);
+  EC;
 }
 
 static void draw_arrow1bar(Fl_Color col)
 {
   draw_arrow1(col);
-  rectangle(.6,-.8,.9,.8,col);
+  rectangle(.6, -.8, .9, .8, col);
 }
 
 static void draw_arrow2(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(-0.3,0.8); vv(0.50,0.0); vv(-0.3,-0.8); EP;
+  BP;
+  vv(-0.3, 0.8);
+  vv(0.50, 0.0);
+  vv(-0.3, -0.8);
+  EP;
   set_outline_color(col);
-  BC; vv(-0.3,0.8); vv(0.50,0.0); vv(-0.3,-0.8); EC;
+  BC;
+  vv(-0.3, 0.8);
+  vv(0.50, 0.0);
+  vv(-0.3, -0.8);
+  EC;
 }
 
 static void draw_arrow3(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EP;
-  BP; vv(-0.7,0.8); vv(0.1,0.0); vv(-0.7,-0.8); EP;
+  BP;
+  vv(0.1, 0.8);
+  vv(0.9, 0.0);
+  vv(0.1, -0.8);
+  EP;
+  BP;
+  vv(-0.7, 0.8);
+  vv(0.1, 0.0);
+  vv(-0.7, -0.8);
+  EP;
   set_outline_color(col);
-  BC; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EC;
-  BC; vv(-0.7,0.8); vv(0.1,0.0); vv(-0.7,-0.8); EC;
+  BC;
+  vv(0.1, 0.8);
+  vv(0.9, 0.0);
+  vv(0.1, -0.8);
+  EC;
+  BC;
+  vv(-0.7, 0.8);
+  vv(0.1, 0.0);
+  vv(-0.7, -0.8);
+  EC;
 }
 
 static void draw_arrowbar(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EP;
-  BP; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EP;
+  BP;
+  vv(0.2, 0.8);
+  vv(0.6, 0.8);
+  vv(0.6, -0.8);
+  vv(0.2, -0.8);
+  EP;
+  BP;
+  vv(-0.6, 0.8);
+  vv(0.2, 0.0);
+  vv(-0.6, -0.8);
+  EP;
   set_outline_color(col);
-  BC; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EC;
-  BC; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EC;
+  BC;
+  vv(0.2, 0.8);
+  vv(0.6, 0.8);
+  vv(0.6, -0.8);
+  vv(0.2, -0.8);
+  EC;
+  BC;
+  vv(-0.6, 0.8);
+  vv(0.2, 0.0);
+  vv(-0.6, -0.8);
+  EC;
 }
 
 static void draw_arrowbox(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EP;
-  BC; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EC;
+  BP;
+  vv(-0.6, 0.8);
+  vv(0.2, 0.0);
+  vv(-0.6, -0.8);
+  EP;
+  BC;
+  vv(0.2, 0.8);
+  vv(0.6, 0.8);
+  vv(0.6, -0.8);
+  vv(0.2, -0.8);
+  EC;
   set_outline_color(col);
-  BC; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EC;
-  BC; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EC;
+  BC;
+  vv(0.2, 0.8);
+  vv(0.6, 0.8);
+  vv(0.6, -0.8);
+  vv(0.2, -0.8);
+  EC;
+  BC;
+  vv(-0.6, 0.8);
+  vv(0.2, 0.0);
+  vv(-0.6, -0.8);
+  EC;
 }
 
 static void draw_bararrow(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EP;
-  BP; vv(-0.5,0.8); vv(-0.1,0.8); vv(-0.1,-0.8); vv(-0.5,-0.8); EP;
+  BP;
+  vv(0.1, 0.8);
+  vv(0.9, 0.0);
+  vv(0.1, -0.8);
+  EP;
+  BP;
+  vv(-0.5, 0.8);
+  vv(-0.1, 0.8);
+  vv(-0.1, -0.8);
+  vv(-0.5, -0.8);
+  EP;
   set_outline_color(col);
-  BC; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EC;
-  BC; vv(-0.5,0.8); vv(-0.1,0.8); vv(-0.1,-0.8); vv(-0.5,-0.8); EC;
+  BC;
+  vv(0.1, 0.8);
+  vv(0.9, 0.0);
+  vv(0.1, -0.8);
+  EC;
+  BC;
+  vv(-0.5, 0.8);
+  vv(-0.1, 0.8);
+  vv(-0.1, -0.8);
+  vv(-0.5, -0.8);
+  EC;
 }
 
-static void draw_doublebar(Fl_Color col) {
-  rectangle(-0.6,-0.8,-.1,.8,col);
-  rectangle(.1,-0.8,.6,.8,col);
+static void draw_doublebar(Fl_Color col)
+{
+  rectangle(-0.6, -0.8, -.1, .8, col);
+  rectangle(.1, -0.8, .6, .8, col);
 }
 
 static void draw_arrow01(Fl_Color col)
-  { fl_rotate(180); draw_arrow1(col); }
+{
+  fl_rotate(180);
+  draw_arrow1(col);
+}
 
 static void draw_arrow02(Fl_Color col)
-  { fl_rotate(180); draw_arrow2(col); }
+{
+  fl_rotate(180);
+  draw_arrow2(col);
+}
 
 static void draw_arrow03(Fl_Color col)
-  { fl_rotate(180); draw_arrow3(col); }
+{
+  fl_rotate(180);
+  draw_arrow3(col);
+}
 
 static void draw_0arrowbar(Fl_Color col)
-  { fl_rotate(180); draw_arrowbar(col); }
+{
+  fl_rotate(180);
+  draw_arrowbar(col);
+}
 
 static void draw_0arrowbox(Fl_Color col)
-  { fl_rotate(180); draw_arrowbox(col); }
+{
+  fl_rotate(180);
+  draw_arrowbox(col);
+}
 
 static void draw_0bararrow(Fl_Color col)
-  { fl_rotate(180); draw_bararrow(col); }
+{
+  fl_rotate(180);
+  draw_bararrow(col);
+}
 
 static void draw_doublearrow(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(-0.35,-0.4); vv(-0.35,0.4); vv(0.35,0.4); vv(0.35,-0.4); EP;
-  BP; vv(0.15,0.8); vv(0.95,0.0); vv(0.15,-0.8); EP;
-  BP; vv(-0.15,0.8); vv(-0.95,0.0); vv(-0.15,-0.8); EP;
+  BP;
+  vv(-0.35, -0.4);
+  vv(-0.35, 0.4);
+  vv(0.35, 0.4);
+  vv(0.35, -0.4);
+  EP;
+  BP;
+  vv(0.15, 0.8);
+  vv(0.95, 0.0);
+  vv(0.15, -0.8);
+  EP;
+  BP;
+  vv(-0.15, 0.8);
+  vv(-0.95, 0.0);
+  vv(-0.15, -0.8);
+  EP;
   set_outline_color(col);
-  BC; vv(-0.15,0.4); vv(0.15,0.4); vv(0.15,0.8); vv(0.95,0.0);
-      vv(0.15,-0.8); vv(0.15,-0.4); vv(-0.15,-0.4); vv(-0.15,-0.8);
-      vv(-0.95,0.0); vv(-0.15,0.8); EC;
+  BC;
+  vv(-0.15, 0.4);
+  vv(0.15, 0.4);
+  vv(0.15, 0.8);
+  vv(0.95, 0.0);
+  vv(0.15, -0.8);
+  vv(0.15, -0.4);
+  vv(-0.15, -0.4);
+  vv(-0.15, -0.8);
+  vv(-0.95, 0.0);
+  vv(-0.15, 0.8);
+  EC;
 }
 
 static void draw_arrow(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EP;
-  BL; vv(-1.0,0.0); vv(0.65,0.0); EL;
+  BP;
+  vv(0.65, 0.1);
+  vv(1.0, 0.0);
+  vv(0.65, -0.1);
+  EP;
+  BL;
+  vv(-1.0, 0.0);
+  vv(0.65, 0.0);
+  EL;
   set_outline_color(col);
-  BL; vv(-1.0,0.0); vv(0.65,0.0); EL;
-  BC; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EC;
+  BL;
+  vv(-1.0, 0.0);
+  vv(0.65, 0.0);
+  EL;
+  BC;
+  vv(0.65, 0.1);
+  vv(1.0, 0.0);
+  vv(0.65, -0.1);
+  EC;
 }
 
 static void draw_returnarrow(int x, int y, int w, int h, Fl_Color color)
@@ -391,42 +691,91 @@ static void draw_returnarrow(int x, int y, int w, int h, Fl_Color color)
 }
 
 static void draw_square(Fl_Color col)
-  { rectangle(-1,-1,1,1,col); }
+{
+  rectangle(-1, -1, 1, 1, col);
+}
 
-static void draw_circle(Fl_Color col) {
-  fl_color(col); BP; fl_circle(0,0,1); EP;
+static void draw_circle(Fl_Color col)
+{
+  fl_color(col);
+  BP;
+  fl_circle(0, 0, 1);
+  EP;
   set_outline_color(col);
-  BC; fl_circle(0,0,1); EC;
+  BC;
+  fl_circle(0, 0, 1);
+  EC;
 }
 
 static void draw_line(Fl_Color col)
-  { fl_color(col); BL; vv(-1.0,0.0); vv(1.0,0.0); EL; }
+{
+  fl_color(col);
+  BL;
+  vv(-1.0, 0.0);
+  vv(1.0, 0.0);
+  EL;
+}
 
 static void draw_plus(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(-0.9,-0.15); vv(-0.9,0.15); vv(0.9,0.15); vv(0.9,-0.15); EP;
-  BP; vv(-0.15,-0.9); vv(-0.15,0.9); vv(0.15,0.9); vv(0.15,-0.9); EP;
+  BP;
+  vv(-0.9, -0.15);
+  vv(-0.9, 0.15);
+  vv(0.9, 0.15);
+  vv(0.9, -0.15);
+  EP;
+  BP;
+  vv(-0.15, -0.9);
+  vv(-0.15, 0.9);
+  vv(0.15, 0.9);
+  vv(0.15, -0.9);
+  EP;
   set_outline_color(col);
   BC;
-  vv(-0.9,-0.15); vv(-0.9,0.15); vv(-0.15,0.15); vv(-0.15,0.9);
-  vv(0.15,0.9); vv(0.15,0.15); vv(0.9,0.15); vv(0.9,-0.15);
-  vv(0.15,-0.15); vv(0.15,-0.9); vv(-0.15,-0.9); vv(-0.15,-0.15);
+  vv(-0.9, -0.15);
+  vv(-0.9, 0.15);
+  vv(-0.15, 0.15);
+  vv(-0.15, 0.9);
+  vv(0.15, 0.9);
+  vv(0.15, 0.15);
+  vv(0.9, 0.15);
+  vv(0.9, -0.15);
+  vv(0.15, -0.15);
+  vv(0.15, -0.9);
+  vv(-0.15, -0.9);
+  vv(-0.15, -0.15);
   EC;
 }
 
-static void draw_uparrow(Fl_Color) {
+static void draw_uparrow(Fl_Color)
+{
   fl_color(FL_LIGHT3);
-  BL; vv(-.8,.8); vv(-.8,-.8); vv(.8,0); EL;
+  BL;
+  vv(-.8, .8);
+  vv(-.8, -.8);
+  vv(.8, 0);
+  EL;
   fl_color(FL_DARK3);
-  BL; vv(-.8,.8); vv(.8, 0); EL;
+  BL;
+  vv(-.8, .8);
+  vv(.8, 0);
+  EL;
 }
 
-static void draw_downarrow(Fl_Color) {
+static void draw_downarrow(Fl_Color)
+{
   fl_color(FL_DARK3);
-  BL; vv(-.8,.8); vv(-.8,-.8); vv(.8,0); EL;
+  BL;
+  vv(-.8, .8);
+  vv(-.8, -.8);
+  vv(.8, 0);
+  EL;
   fl_color(FL_LIGHT3);
-  BL; vv(-.8,.8); vv(.8, 0); EL;
+  BL;
+  vv(-.8, .8);
+  vv(.8, 0);
+  EL;
 }
 
 static void draw_menu(Fl_Color col)
@@ -436,211 +785,217 @@ static void draw_menu(Fl_Color col)
 }
 
 // Standard UI icons...
-static void draw_filenew(Fl_Color c) {
+static void draw_filenew(Fl_Color c)
+{
   fl_color(c);
   BCP;
-    vv(-0.7, -1.0);
-    vv(0.1, -1.0);
-    vv(0.1, -0.4);
-    vv(0.7, -0.4);
-    vv(0.7, 1.0);
-    vv(-0.7, 1.0);
+  vv(-0.7, -1.0);
+  vv(0.1, -1.0);
+  vv(0.1, -0.4);
+  vv(0.7, -0.4);
+  vv(0.7, 1.0);
+  vv(-0.7, 1.0);
   ECP;
 
   fl_color(fl_lighter(c));
   BP;
-    vv(0.1, -1.0);
-    vv(0.1, -0.4);
-    vv(0.7, -0.4);
+  vv(0.1, -1.0);
+  vv(0.1, -0.4);
+  vv(0.7, -0.4);
   EP;
 
   fl_color(fl_darker(c));
   BC;
-    vv(-0.7, -1.0);
-    vv(0.1, -1.0);
-    vv(0.1, -0.4);
-    vv(0.7, -0.4);
-    vv(0.7, 1.0);
-    vv(-0.7, 1.0);
+  vv(-0.7, -1.0);
+  vv(0.1, -1.0);
+  vv(0.1, -0.4);
+  vv(0.7, -0.4);
+  vv(0.7, 1.0);
+  vv(-0.7, 1.0);
   EC;
 
   BL;
-    vv(0.1, -1.0);
-    vv(0.7, -0.4);
+  vv(0.1, -1.0);
+  vv(0.7, -0.4);
   EL;
 }
 
-static void draw_fileopen(Fl_Color c) {
+static void draw_fileopen(Fl_Color c)
+{
   fl_color(c);
   BP;
-    vv(-1.0, -0.7);
-    vv(-0.9, -0.8);
-    vv(-0.4, -0.8);
-    vv(-0.3, -0.7);
-    vv(0.6, -0.7);
-    vv(0.6, 0.7);
-    vv(-1.0, 0.7);
+  vv(-1.0, -0.7);
+  vv(-0.9, -0.8);
+  vv(-0.4, -0.8);
+  vv(-0.3, -0.7);
+  vv(0.6, -0.7);
+  vv(0.6, 0.7);
+  vv(-1.0, 0.7);
   EP;
 
   fl_color(fl_darker(c));
   BC;
-    vv(-1.0, -0.7);
-    vv(-0.9, -0.8);
-    vv(-0.4, -0.8);
-    vv(-0.3, -0.7);
-    vv(0.6, -0.7);
-    vv(0.6, 0.7);
-    vv(-1.0, 0.7);
+  vv(-1.0, -0.7);
+  vv(-0.9, -0.8);
+  vv(-0.4, -0.8);
+  vv(-0.3, -0.7);
+  vv(0.6, -0.7);
+  vv(0.6, 0.7);
+  vv(-1.0, 0.7);
   EC;
 
   fl_color(fl_lighter(c));
   BP;
-    vv(-1.0, 0.7);
-    vv(-0.6, -0.3);
-    vv(1.0, -0.3);
-    vv(0.6, 0.7);
+  vv(-1.0, 0.7);
+  vv(-0.6, -0.3);
+  vv(1.0, -0.3);
+  vv(0.6, 0.7);
   EP;
 
   fl_color(fl_darker(c));
   BC;
-    vv(-1.0, 0.7);
-    vv(-0.6, -0.3);
-    vv(1.0, -0.3);
-    vv(0.6, 0.7);
+  vv(-1.0, 0.7);
+  vv(-0.6, -0.3);
+  vv(1.0, -0.3);
+  vv(0.6, 0.7);
   EC;
 }
 
-static void draw_filesave(Fl_Color c) {
+static void draw_filesave(Fl_Color c)
+{
   fl_color(c);
   BP;
-    vv(-0.9, -1.0);
-    vv(0.9, -1.0);
-    vv(1.0, -0.9);
-    vv(1.0, 0.9);
-    vv(0.9, 1.0);
-    vv(-0.9, 1.0);
-    vv(-1.0, 0.9);
-    vv(-1.0, -0.9);
+  vv(-0.9, -1.0);
+  vv(0.9, -1.0);
+  vv(1.0, -0.9);
+  vv(1.0, 0.9);
+  vv(0.9, 1.0);
+  vv(-0.9, 1.0);
+  vv(-1.0, 0.9);
+  vv(-1.0, -0.9);
   EP;
 
   fl_color(fl_lighter(c));
   BP;
-    vv(-0.7, -1.0);
-    vv(0.7, -1.0);
-    vv(0.7, -0.4);
-    vv(-0.7, -0.4);
+  vv(-0.7, -1.0);
+  vv(0.7, -1.0);
+  vv(0.7, -0.4);
+  vv(-0.7, -0.4);
   EP;
 
   BP;
-    vv(-0.7, 0.0);
-    vv(0.7, 0.0);
-    vv(0.7, 1.0);
-    vv(-0.7, 1.0);
+  vv(-0.7, 0.0);
+  vv(0.7, 0.0);
+  vv(0.7, 1.0);
+  vv(-0.7, 1.0);
   EP;
 
   fl_color(c);
   BP;
-    vv(-0.5, -0.9);
-    vv(-0.3, -0.9);
-    vv(-0.3, -0.5);
-    vv(-0.5, -0.5);
+  vv(-0.5, -0.9);
+  vv(-0.3, -0.9);
+  vv(-0.3, -0.5);
+  vv(-0.5, -0.5);
   EP;
 
   fl_color(fl_darker(c));
   BC;
-    vv(-0.9, -1.0);
-    vv(0.9, -1.0);
-    vv(1.0, -0.9);
-    vv(1.0, 0.9);
-    vv(0.9, 1.0);
-    vv(-0.9, 1.0);
-    vv(-1.0, 0.9);
-    vv(-1.0, -0.9);
+  vv(-0.9, -1.0);
+  vv(0.9, -1.0);
+  vv(1.0, -0.9);
+  vv(1.0, 0.9);
+  vv(0.9, 1.0);
+  vv(-0.9, 1.0);
+  vv(-1.0, 0.9);
+  vv(-1.0, -0.9);
   EC;
 }
 
-static void draw_filesaveas(Fl_Color c) {
+static void draw_filesaveas(Fl_Color c)
+{
   draw_filesave(c);
 
   fl_color(fl_color_average(c, FL_WHITE, 0.25f));
   BP;
-    vv(0.6, -0.8);
-    vv(1.0, -0.4);
-    vv(0.0, 0.6);
-    vv(-0.4, 0.6);
-    vv(-0.4, 0.2);
+  vv(0.6, -0.8);
+  vv(1.0, -0.4);
+  vv(0.0, 0.6);
+  vv(-0.4, 0.6);
+  vv(-0.4, 0.2);
   EP;
 
   fl_color(fl_darker(c));
   BC;
-    vv(0.6, -0.8);
-    vv(1.0, -0.4);
-    vv(0.0, 0.6);
-    vv(-0.4, 0.6);
-    vv(-0.4, 0.2);
+  vv(0.6, -0.8);
+  vv(1.0, -0.4);
+  vv(0.0, 0.6);
+  vv(-0.4, 0.6);
+  vv(-0.4, 0.2);
   EC;
 
   BP;
-    vv(-0.1, 0.6);
-    vv(-0.4, 0.6);
-    vv(-0.4, 0.3);
+  vv(-0.1, 0.6);
+  vv(-0.4, 0.6);
+  vv(-0.4, 0.3);
   EP;
 }
 
-static void draw_fileprint(Fl_Color c) {
+static void draw_fileprint(Fl_Color c)
+{
   fl_color(c);
   BP;
-    vv(-0.8, 0.0);
-    vv(0.8, 0.0);
-    vv(1.0, 0.2);
-    vv(1.0, 1.0);
-    vv(-1.0, 1.0);
-    vv(-1.0, 0.2);
+  vv(-0.8, 0.0);
+  vv(0.8, 0.0);
+  vv(1.0, 0.2);
+  vv(1.0, 1.0);
+  vv(-1.0, 1.0);
+  vv(-1.0, 0.2);
   EP;
 
   fl_color(fl_color_average(c, FL_WHITE, 0.25f));
   BP;
-    vv(-0.6, 0.0);
-    vv(-0.6, -1.0);
-    vv(0.6, -1.0);
-    vv(0.6, 0.0);
+  vv(-0.6, 0.0);
+  vv(-0.6, -1.0);
+  vv(0.6, -1.0);
+  vv(0.6, 0.0);
   EP;
 
   fl_color(fl_lighter(c));
   BP;
-    vv(-0.6, 0.6);
-    vv(0.6, 0.6);
-    vv(0.6, 1.0);
-    vv(-0.6, 1.0);
+  vv(-0.6, 0.6);
+  vv(0.6, 0.6);
+  vv(0.6, 1.0);
+  vv(-0.6, 1.0);
   EP;
 
   fl_color(fl_darker(c));
   BC;
-    vv(-0.8, 0.0);
-    vv(-0.6, 0.0);
-    vv(-0.6, -1.0);
-    vv(0.6, -1.0);
-    vv(0.6, 0.0);
-    vv(0.8, 0.0);
-    vv(1.0, 0.2);
-    vv(1.0, 1.0);
-    vv(-1.0, 1.0);
-    vv(-1.0, 0.2);
+  vv(-0.8, 0.0);
+  vv(-0.6, 0.0);
+  vv(-0.6, -1.0);
+  vv(0.6, -1.0);
+  vv(0.6, 0.0);
+  vv(0.8, 0.0);
+  vv(1.0, 0.2);
+  vv(1.0, 1.0);
+  vv(-1.0, 1.0);
+  vv(-1.0, 0.2);
   EC;
 
   BC;
-    vv(-0.6, 0.6);
-    vv(0.6, 0.6);
-    vv(0.6, 1.0);
-    vv(-0.6, 1.0);
+  vv(-0.6, 0.6);
+  vv(0.6, 0.6);
+  vv(0.6, 1.0);
+  vv(-0.6, 1.0);
   EC;
 }
 
-static void draw_round_arrow(Fl_Color c, float da=5.0) {
-  double a, r, dr1=0.005, dr2=0.015;
+static void draw_round_arrow(Fl_Color c, float da = 5.0)
+{
+  double a, r, dr1 = 0.005, dr2 = 0.015;
   int i, j;
-  for (j=0; j<2; j++) {
-    if (j&1) {
+  for (j = 0; j < 2; j++) {
+    if (j & 1) {
       fl_color(c);
       set_outline_color(c);
       BC;
@@ -651,15 +1006,15 @@ static void draw_round_arrow(Fl_Color c, float da=5.0) {
     vv(-0.1, 0.0);
     vv(-1.0, 0.0);
     vv(-1.0, 0.9);
-    for (i=27, a=140.0, r=1.0; i>0; i--, a-=da, r-=dr1) {
-      double ar = a/180.0 * M_PI;
-      vv(cos(ar)*r, sin(ar)*r);
+    for (i = 27, a = 140.0, r = 1.0; i > 0; i--, a -= da, r -= dr1) {
+      double ar = a / 180.0 * M_PI;
+      vv(cos(ar) * r, sin(ar) * r);
     }
-    for (i=27; i>=0; a+=da, i--, r-=dr2) {
-      double ar = a/180.0 * M_PI;
-      vv(cos(ar)*r, sin(ar)*r);
+    for (i = 27; i >= 0; a += da, i--, r -= dr2) {
+      double ar = a / 180.0 * M_PI;
+      vv(cos(ar) * r, sin(ar) * r);
     }
-    if (j&1) {
+    if (j & 1) {
       EC;
     } else {
       ECP;
@@ -667,20 +1022,23 @@ static void draw_round_arrow(Fl_Color c, float da=5.0) {
   }
 }
 
-static void draw_refresh(Fl_Color c) {
+static void draw_refresh(Fl_Color c)
+{
   draw_round_arrow(c);
   fl_rotate(180.0);
   draw_round_arrow(c);
   fl_rotate(-180.0);
 }
 
-static void draw_reload(Fl_Color c) {
+static void draw_reload(Fl_Color c)
+{
   fl_rotate(-135.0);
   draw_round_arrow(c, 10);
   fl_rotate(135.0);
 }
 
-static void draw_undo(Fl_Color c) {
+static void draw_undo(Fl_Color c)
+{
   fl_translate(0.0, 0.2);
   fl_scale(1.0, -1.0);
   draw_round_arrow(c, 6);
@@ -688,23 +1046,39 @@ static void draw_undo(Fl_Color c) {
   fl_translate(0.0, -0.2);
 }
 
-static void draw_redo(Fl_Color c) {
+static void draw_redo(Fl_Color c)
+{
   fl_scale(-1.0, 1.0);
   draw_undo(c);
   fl_scale(-1.0, 1.0);
 }
 
-static void draw_open_box(Fl_Color col) {
+static void draw_open_box(Fl_Color col)
+{
   fl_color(col);
   BCP;
-  vv(-1.0, -1.0); vv(-0.4, -1.0); vv(-0.4, -0.75); vv(-0.75, -0.75);
-  vv(-0.75, 0.75); vv(0.75, 0.75); vv(0.75, 0.4); vv(1.0, 0.4); vv(1.0, 1.0);
+  vv(-1.0, -1.0);
+  vv(-0.4, -1.0);
+  vv(-0.4, -0.75);
+  vv(-0.75, -0.75);
+  vv(-0.75, 0.75);
+  vv(0.75, 0.75);
+  vv(0.75, 0.4);
+  vv(1.0, 0.4);
+  vv(1.0, 1.0);
   vv(-1.0, 1.0);
   ECP;
   set_outline_color(col);
   BC;
-  vv(-1.0, -1.0); vv(-0.4, -1.0); vv(-0.4, -0.75); vv(-0.75, -0.75);
-  vv(-0.75, 0.75); vv(0.75, 0.75); vv(0.75, 0.4); vv(1.0, 0.4); vv(1.0, 1.0);
+  vv(-1.0, -1.0);
+  vv(-0.4, -1.0);
+  vv(-0.4, -0.75);
+  vv(-0.75, -0.75);
+  vv(-0.75, 0.75);
+  vv(0.75, 0.75);
+  vv(0.75, 0.4);
+  vv(1.0, 0.4);
+  vv(1.0, 1.0);
   vv(-1.0, 1.0);
   EC;
 }
@@ -716,7 +1090,7 @@ static void draw_import(Fl_Color col)
   draw_open_box(col);
   fl_scale(-1.0, 1.0);
   fl_translate(-0.8, -0.3);
-  fl_rotate(45.0+90);
+  fl_rotate(45.0 + 90);
   draw_round_arrow(col, 3);
   fl_pop_matrix();
 }
