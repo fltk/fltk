@@ -1300,6 +1300,18 @@ static bool remove_xid_vector(Window xid) {
   return false;
 }
 
+
+static char keycode_to_ascii(int keycode) {
+  static const char row_AD[] = "qwertyuiop";
+  static const char row_AC[] = "asdfghjkl";
+  static const char row_AB[] = "zxcvbnm";
+  if (keycode >= 24 && keycode <= 33) return row_AD[keycode - 24];
+  else if (keycode >= 38 && keycode <= 46) return row_AC[keycode - 38];
+  else if (keycode >= 52 && keycode <= 58) return row_AB[keycode - 52];
+  else return 0;
+}
+
+
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
@@ -1989,6 +2001,17 @@ int fl_handle(const XEvent& thisevent)
       keysym = '1' + (keycode - 10);
     } else if (keycode == 19) {
       keysym = '0';
+    }
+
+    int keysyms_per_keycode;
+    KeySym *syms = XGetKeyboardMapping(fl_display, 38 /* 'A' key on US keyboard */, 1,
+                                        &keysyms_per_keycode);
+    // Check for non-Latin keyboard layout
+    if (syms[0] > 'z') {
+      int asciiSym = keycode_to_ascii(keycode);
+      if (asciiSym != 0) {
+        keysym = asciiSym;
+      }
     }
 
     // We have to get rid of the XK_KP_function keys, because they are
