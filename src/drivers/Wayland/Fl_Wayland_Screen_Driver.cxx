@@ -21,7 +21,7 @@
 #include <wayland-cursor.h>
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"
-#include "../Posix/Fl_Posix_System_Driver.H"
+#include "../Unix/Fl_Unix_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/platform.H>
@@ -589,17 +589,6 @@ static void remove_int_vector(std::vector<int>& v, int val) {
 }
 
 
-static char keycode_to_ascii(int keycode) {
-  static const char row_AD[] = "qwertyuiop";
-  static const char row_AC[] = "asdfghjkl";
-  static const char row_AB[] = "zxcvbnm";
-  if (keycode >= 24 && keycode <= 33) return row_AD[keycode - 24];
-  else if (keycode >= 38 && keycode <= 46) return row_AC[keycode - 38];
-  else if (keycode >= 52 && keycode <= 58) return row_AB[keycode - 52];
-  else return 0;
-}
-
-
 static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
                            uint32_t *p_keycode, xkb_keysym_t *p_sym) {
   uint32_t keycode = key + 8;
@@ -615,9 +604,10 @@ static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
   } else if (keycode == 19) {
     for_key_vector = '0';
   }
-  // Check for non-Latin keyboard layout
+  // Check for non-Latin keyboard layout. Based on the assumption that the 'A' key of the keyboard
+  // having a non-ASCII keysym indicates a non-Latin layout.
   if (xkb_state_key_get_one_sym(xkb_state, 38 /* 'A' key on US keyboard */) > 'z') {
-    int asciiSym = keycode_to_ascii(keycode);
+    int asciiSym = Fl_Unix_System_Driver::keycode_to_ascii(keycode);
     if (asciiSym != 0) {
       for_key_vector = asciiSym;
     }
