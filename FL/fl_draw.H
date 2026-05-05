@@ -1,7 +1,7 @@
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1251,9 +1251,11 @@ FL_EXPORT void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Wi
 FL_EXPORT void fl_reset_spot(void);
 
 
-// XForms symbols:
+// Symbols (originally from XForms):
 FL_EXPORT int fl_draw_symbol(const char *label, int x, int y, int w, int h, Fl_Color);
-FL_EXPORT int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable);
+FL_EXPORT int fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable);
+FL_EXPORT int fl_add_symbol(const char *name, void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color c), int scalable);
+FL_EXPORT int fl_remove_symbol(const char *name);
 /** @} */
 
 #endif

@@ -30,29 +30,38 @@ int N = 0;
 #define ROWS 6
 #define COLS 7
 
-Fl_Double_Window *window;
-Fl_Value_Slider *orientation;
-Fl_Value_Slider *size;
+Fl_Double_Window* window;
+Fl_Value_Slider* orientation;
+Fl_Value_Slider* size;
 
-void slider_cb(Fl_Widget *, void *) {
+void slider_cb(Fl_Widget*, void*)
+{
   static char buf[80];
   int val = (int)orientation->value();
   int sze = (int)size->value();
-  for (int i = window->children(); i--; ) {          // all window children
-    Fl_Widget *wc = window->child(i);
-    const char *l = (const char *)(wc->user_data());
-    if ( l && *l == '@' ) {                       // all children with '@'
-      l ++;
-      if ( wc->box() == FL_NO_BOX ) {             // ascii legend?
-        if (val&&sze) snprintf(buf, sizeof(buf), "@@%+d%d%s", sze, val, l);
-        else if (val) snprintf(buf, sizeof(buf), "@@%d%s", val, l);
-        else if (sze) snprintf(buf, sizeof(buf), "@@%+d%s", sze, l);
-        else          snprintf(buf, sizeof(buf), "@@%s", l);
-      } else {                                    // box with symbol
-        if (val&&sze) snprintf(buf, sizeof(buf), "@%+d%d%s", sze, val, l);
-        else if (val) snprintf(buf, sizeof(buf), "@%d%s", val, l);
-        else if (sze) snprintf(buf, sizeof(buf), "@%+d%s", sze, l);
-        else          snprintf(buf, sizeof(buf), "@%s", l);
+  for (int i = window->children(); i--;) { // all window children
+    Fl_Widget* wc = window->child(i);
+    const char* l = (const char*)(wc->user_data());
+    if (l && *l == '@') { // all children with '@'
+      l++;
+      if (wc->box() == FL_NO_BOX) { // ascii legend?
+        if (val && sze)
+          snprintf(buf, sizeof(buf), "@@%+d%d%s", sze, val, l);
+        else if (val)
+          snprintf(buf, sizeof(buf), "@@%d%s", val, l);
+        else if (sze)
+          snprintf(buf, sizeof(buf), "@@%+d%s", sze, l);
+        else
+          snprintf(buf, sizeof(buf), "@@%s", l);
+      } else { // box with symbol
+        if (val && sze)
+          snprintf(buf, sizeof(buf), "@%+d%d%s", sze, val, l);
+        else if (val)
+          snprintf(buf, sizeof(buf), "@%d%s", val, l);
+        else if (sze)
+          snprintf(buf, sizeof(buf), "@%+d%s", sze, l);
+        else
+          snprintf(buf, sizeof(buf), "@%s", l);
       }
       wc->copy_label(buf);
     }
@@ -60,80 +69,80 @@ void slider_cb(Fl_Widget *, void *) {
   window->redraw();
 }
 
-void bt(const char *name) {
-  int x = N%COLS;
-  int y = N/COLS;
+void bt(const char* name)
+{
+  int x = N % COLS;
+  int y = N / COLS;
   char buf[255];
   N++;
-  x = x*W+10;
-  y = y*H+10;
+  x = x * W + 10;
+  y = y * H + 10;
   snprintf(buf, sizeof(buf), "@%s", name);
-  Fl_Box *a = new Fl_Box(x,y,W-20,H-20);
+  Fl_Box* a = new Fl_Box(x, y, W - 20, H - 20);
   a->box(FL_NO_BOX);
   a->copy_label(buf);
   a->align(FL_ALIGN_BOTTOM);
   a->labelsize(11);
-  a->user_data((void *)name);
-  Fl_Box *b = new Fl_Box(x,y,W-20,H-20);
+  a->user_data((void*)name);
+  Fl_Box* b = new Fl_Box(x, y, W - 20, H - 20);
   b->box(FL_UP_BOX);
   b->copy_label(name);
   b->labelcolor(FL_DARK3);
-  b->user_data((void *)name);
+  b->user_data((void*)name);
 }
 
-int main(int argc, char ** argv) {
-  window = new Fl_Double_Window(COLS*W,ROWS*H+60);
-bt("@->");
-bt("@>");
-bt("@>>");
-bt("@>|");
-bt("@>[]");
-bt("@|>");
-bt("@<-");
-bt("@<");
-bt("@<<");
-bt("@|<");
-bt("@[]<");
-bt("@<|");
-bt("@<->");
-bt("@-->");
-bt("@+");
-bt("@->|");
-bt("@||");
-bt("@arrow");
-bt("@returnarrow");
-bt("@square");
-bt("@circle");
-bt("@line");
-bt("@menu");
-bt("@UpArrow");
-bt("@DnArrow");
-bt("@search");
-bt("@FLTK");
-bt("@filenew");
-bt("@fileopen");
-bt("@filesave");
-bt("@filesaveas");
-bt("@fileprint");
-bt("@refresh");
-bt("@reload");
-bt("@undo");
-bt("@redo");
-bt("@import");
-bt("@export");
+int main(int argc, char** argv)
+{
+  window = new Fl_Double_Window(COLS * W, ROWS * H + 60);
+  bt("@->");
+  bt("@>");
+  bt("@>>");
+  bt("@>|");
+  bt("@>[]");
+  bt("@|>");
+  bt("@<-");
+  bt("@<");
+  bt("@<<");
+  bt("@|<");
+  bt("@[]<");
+  bt("@<|");
+  bt("@<->");
+  bt("@-->");
+  bt("@+");
+  bt("@->|");
+  bt("@||");
+  bt("@arrow");
+  bt("@returnarrow");
+  bt("@square");
+  bt("@circle");
+  bt("@line");
+  bt("@menu");
+  bt("@UpArrow");
+  bt("@DnArrow");
+  bt("@search");
+  bt("@FLTK");
+  bt("@filenew");
+  bt("@fileopen");
+  bt("@filesave");
+  bt("@filesaveas");
+  bt("@fileprint");
+  bt("@refresh");
+  bt("@reload");
+  bt("@undo");
+  bt("@redo");
+  bt("@import");
+  bt("@export");
 
-  orientation = new Fl_Value_Slider(
-    (int)(window->w()*.05+.5), window->h()-40,
-    (int)(window->w()*.42+.5), 16, "Orientation");
+  orientation = new Fl_Value_Slider((int)(window->w() * .05 + .5), window->h() - 40,
+                                    (int)(window->w() * .42 + .5), 16, "Orientation");
   orientation->type(FL_HORIZONTAL);
   orientation->range(0.0, 9.0);
   orientation->value(0.0);
   orientation->step(1);
   orientation->callback(slider_cb, 0);
 
-  size = new Fl_Value_Slider(
-    (int)(window->w()*.53+.5), window->h()-40,
-    (int)(window->w()*.42+.5), 16, "Size");
+  size = new Fl_Value_Slider((int)(window->w() * .53 + .5), window->h() - 40,
+                             (int)(window->w() * .42 + .5), 16, "Size");
   size->type(FL_HORIZONTAL);
   size->range(-3.0, 9.0);
   size->value(0.0);
@@ -141,6 +150,6 @@ bt("@export");
   size->callback(slider_cb, 0);
 
   window->resizable(window);
-  window->show(argc,argv);
+  window->show(argc, argv);
   return Fl::run();
 }
