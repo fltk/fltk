@@ -1300,7 +1300,6 @@ static bool remove_xid_vector(Window xid) {
   return false;
 }
 
-
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
@@ -1991,19 +1990,6 @@ int fl_handle(const XEvent& thisevent)
     } else if (keycode == 19) {
       keysym = '0';
     }
-
-    int keysyms_per_keycode;
-    KeySym *syms = XGetKeyboardMapping(fl_display, 38 /* 'A' key on US keyboard */, 1,
-                                        &keysyms_per_keycode);
-    // Check for non-Latin keyboard layout. Based on the assumption that the 'A' key of the keyboard
-    // having a non-ASCII keysym indicates a non-Latin layout.
-    if (syms[0] > 'z') {
-      int asciiSym = Fl_Unix_System_Driver::keycode_to_ascii(keycode);
-      if (asciiSym != 0) {
-        keysym = asciiSym;
-      }
-    }
-    XFree(syms);
 
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check

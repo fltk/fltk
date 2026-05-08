@@ -912,23 +912,3 @@ Fl_RGB_Image *Fl_Unix_System_Driver::own_bmp_to_RGB(char *bmp) {
   img->alloc_array = 1;
   return img;
 }
-
-
-/*
- Used with non-Latin keyboards to get the Latin letter associated to a key,
- typically useful when used with Ctrl.
- Based on the assumption that Latin letters have the QWERTY layout in any
- non-Latin layout. This assumption was verified true for Greek, Russian,
- and Thai layouts.
- Not used with keyboard layouts using Latin letters where the location
- of letters varies extensively (e.g., French, Turkish).
- */
-char Fl_Unix_System_Driver::keycode_to_ascii(int keycode) {
-  static const char row_AD[] = "qwertyuiop";
-  static const char row_AC[] = "asdfghjkl";
-  static const char row_AB[] = "zxcvbnm";
-  if (keycode >= 24 && keycode <= 33) return row_AD[keycode - 24];
-  else if (keycode >= 38 && keycode <= 46) return row_AC[keycode - 38];
-  else if (keycode >= 52 && keycode <= 58) return row_AB[keycode - 52];
-  else return 0;
-}

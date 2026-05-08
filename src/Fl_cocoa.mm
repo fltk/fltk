@@ -2150,11 +2150,10 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     NSString *sim = [theEvent charactersIgnoringModifiers];
     UniChar one;
     CFStringGetCharacters((CFStringRef)sim, CFRangeMake(0, 1), &one);
+    // charactersIgnoringModifiers doesn't ignore shift, remove it when it's on
+    if(one >= 'A' && one <= 'Z') one += 32;
     if (one > 0 && one <= 0x7f && (sym<'0' || sym>'9') ) sym = one;
   }
-  // sym may contain an uppercase letter, e.g. with non-latin keyboard layout and ctrl/cmd,
-  // replace uppercase letter by lowercase.
-  if (sym >= 'A' && sym <= 'Z') sym += 32;
   Fl::e_keysym = Fl::e_original_keysym = sym;
   /*NSLog(@"cocoaKeyboardHandler: keycode=%08x keysym=%08x mods=%08x symbol=%@ (%@)",
    keyCode, sym, mods, [theEvent characters], [theEvent charactersIgnoringModifiers]);*/
