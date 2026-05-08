@@ -994,6 +994,20 @@ if((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 
 endif((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND FLTK_USE_PANGO)
 
+# Determine whether X11 platform uses libxkbcommon to support dynamic change of keyboard layout
+if(FLTK_USE_X11)
+  pkg_check_modules(XKBCOMMONX11 IMPORTED_TARGET xkbcommon-x11)
+  pkg_check_modules(X11XCB IMPORTED_TARGET x11-xcb)
+  if (XKBCOMMONX11_FOUND AND X11XCB_FOUND)
+    set(HAVE_X11_XKB 1)
+  else()
+    if(FLTK_BACKEND_WAYLAND)
+      message(FATAL_ERROR
+      "packages 'libx11-xcb-dev' and 'libxkbcommon-x11-dev' are required for the X11/Wayland platform")
+    endif()
+  endif()
+endif(FLTK_USE_X11)
+
 if(FLTK_USE_WAYLAND)
 
   # Note: Disable FLTK_USE_LIBDECOR_GTK to get cairo titlebars rather than GTK
