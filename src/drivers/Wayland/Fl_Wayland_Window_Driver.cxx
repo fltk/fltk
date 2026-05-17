@@ -370,7 +370,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   int wld_s = wld_scale();
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_wld_buffer(
-           int(pWindow->w() * f) * wld_s, int(pWindow->h() * f) * wld_s, false, wld_s);
+           int(pWindow->w() * f) * wld_s, int(pWindow->h() * f) * wld_s, false);
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
                                             &window->buffer->draw_buffer_needs_commit);
   }
@@ -660,14 +660,7 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
 }
 
 
-static void delayed_rescale(Fl_Window *win) {
-  Fl_Window_Driver::driver(win)->is_a_rescale(true);
-  win->size(win->w(), win->h());
-  Fl_Window_Driver::driver(win)->is_a_rescale(false);
-}
-
-
-void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *window,
+static void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *window,
                   float pre_scale) {
   Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
   if (!window->fl_win->parent()) {
@@ -690,8 +683,11 @@ void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *w
       Fl_Wayland_Graphics_Driver::buffer_release(window);
       window->fl_win->redraw();
     } else {
-      // delaying the rescaling is necessary to set first the window's size_range according to the new screen
-      Fl::add_timeout(0, (Fl_Timeout_Handler)delayed_rescale, window->fl_win);
+      // set first the window's size_range according to the new screen
+      win_driver->size_range();
+      win_driver->is_a_rescale(true);
+      window->fl_win->size(window->fl_win->w(), window->fl_win->h());
+      win_driver->is_a_rescale(false);
     }
   }
 }
@@ -1872,7 +1868,7 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   //create a Wayland buffer and have it used as an image of the new cursor
   struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen;
   Fl_Image_Surface *img_surf = Fl_Wayland_Graphics_Driver::custom_offscreen(
-      new_image->image.width, new_image->image.height, &offscreen, scale);
+      new_image->image.width, new_image->image.height, &offscreen);
   new_image->buffer = offscreen->wl_buffer;
   wl_buffer_set_user_data(new_image->buffer, offscreen);
   new_cursor->image_count = 1;

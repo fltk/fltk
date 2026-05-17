@@ -215,7 +215,7 @@ static struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen_from_text(const 
   height = ceil(height/float(scale)) * scale;
   struct Fl_Wayland_Graphics_Driver::wld_buffer *off;
   Fl_Image_Surface *surf = Fl_Wayland_Graphics_Driver::custom_offscreen(
-      width, height, &off, scale);
+      width, height, &off);
   Fl_Surface_Device::push_current(surf);
   p = text;
   fl_font(FL_HELVETICA, 10 * scale);
