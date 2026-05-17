@@ -1,7 +1,7 @@
 #
 # clang-format control file for the FLTK project.
 #
-# Copyright 2017-2022 by Bill Spitzak and others.
+# Copyright 2017-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -112,7 +112,9 @@ SortIncludes:                                   false
 # Multiple constructor initializers must be on consecutive lines.
 # Note: this is NOT (always) true in current FLTK code!
 
-BreakConstructorInitializersBeforeComma:        true
+BreakConstructorInitializers:                   BeforeColon
+# or: BeforeColon, BeforeComma, AfterColon, AfterComma
+# was: BreakConstructorInitializersBeforeComma:        true
 
 # Constructor initializers will be indented by 2 spaces.
 # LLVM default: 4
@@ -125,6 +127,20 @@ ConstructorInitializerIndentWidth:              2
 # LLVM default: 4
 # ContinuationIndentWidth:                      2
 
+# If a control statement (if-clause, etc.) spans multiple lines, the opening
+# brace can get visibly lost and it is hard to see when the condition ends and
+# the statements start. MultiLine puts the brace on the next line in this case.
+#
+# AfterFunction: true would be a change in style and is up for debate.
+# I like it because it separates the declaration from the body. I wish there
+# was a MultiLine option here as well.
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement:                        MultiLine
+  AfterFunction:                                true
+  SplitEmptyFunction:                           false
+
 # Most of FLTK's code uses 'void *p' as opposed to 'void* p'.
 # This is particularly useful in combined declarations like:
 # int var, var2, *pv, **pp;
@@ -136,4 +152,4 @@ ConstructorInitializerIndentWidth:              2
 # in function parameter lists.
 
 DerivePointerAlignment:                         false
-PointerAlignment:                               Right
+PointerAlignment:                               Left
