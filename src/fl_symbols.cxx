@@ -60,12 +60,13 @@ static std::unordered_map<std::string, Symbol>& symbol_table();
 /**
   Registers (or replaces) a named symbol drawn using complex vector drawing.
 
+  <a id="fl_add_symbol_with_matrix"></a>
   \p drawit is called with the matrix pushed and the origin translated to the
   center of the drawing rectangle. If \p scalable is set, the matrix is also
   pre-scaled so the unit square (-1,-1) to (1,1) maps onto the rectangle;
   use FLTK's complex-shape drawing calls in that coordinate space.
 
-  \note See \ref drawing_complex for the FLTK drawing calls that work
+  See \ref drawing_complex for the FLTK drawing calls that work
   with the preset transform.
 
   \param[in] name       symbol name without the leading "@"
@@ -73,9 +74,8 @@ static std::unordered_map<std::string, Symbol>& symbol_table();
   \param[in] scalable   1 (default) to allow scaling and rotation, 0 to keep fixed size
   \return 1 if the operation was successful (always).
 
-  \see fl_add_symbol(const char *name,
-                     void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color c),
-                     int scalable)
+  <!-- faking the link because Doxygen does not recognize function pointer arguments -->
+  \see <a class="el" href="#fl_add_symbol_in_rect">fl_add_symbol(const char* name, void (* draw_in_rect)(int x, int y, int w, int h, Fl_Color c), int scalable)</a>
 */
 int fl_add_symbol(const char* name, void (*drawit)(Fl_Color c), int scalable)
 {
@@ -87,12 +87,13 @@ int fl_add_symbol(const char* name, void (*drawit)(Fl_Color c), int scalable)
 /**
   Registers (or replaces) a named symbol drawn into an explicit pixel rectangle.
 
+  <a id="fl_add_symbol_in_rect"></a>
   Use this variant for symbols drawn with fast lines, text, or bitmaps, where
   working directly in pixel coordinates is more natural. If \p scalable is set,
   the matrix is pushed and pre-scaled as with the vector variant, so the symbol
   can also use complex-shape drawing calls in the (-1,-1) to (1,1) space.
 
-  \note See \ref drawing_complex for the FLTK drawing calls that work
+  See \ref drawing_complex for the FLTK drawing calls that work
   with the preset transform.
 
   \param[in] name           symbol name without the leading "@"
@@ -100,7 +101,8 @@ int fl_add_symbol(const char* name, void (*drawit)(Fl_Color c), int scalable)
   \param[in] scalable       1 (default) to allow scaling and rotation, 0 to keep fixed size
   \return 1 if the operation was successful (always).
 
-  \see fl_add_symbol(const char *name, void (*drawit)(Fl_Color c), int scalable)
+  <!-- faking the link because Doxygen does not recognize function pointer arguments -->
+  \see <a class="el" href="#fl_add_symbol_with_matrix">fl_add_symbol(const char* name, void (* drawit)(Fl_Color c), int scalable)</a>
 */
 int fl_add_symbol(const char* name, void (*draw_in_rect)(int x, int y, int w, int h, Fl_Color c),
                   int scalable)
