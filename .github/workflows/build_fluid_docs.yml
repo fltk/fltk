@@ -19,7 +19,7 @@ jobs:
 #    runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install prerequisites
       run: |
@@ -81,4 +81,3 @@ jobs:
         path: build/fluid/documentation/fluid.pdf
         retention-days: 3
         overwrite: true
-
