@@ -1483,8 +1483,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 {
     if (fl_mac_os_version >= 101300 && [NSApp isRunning]) [NSApp stop:nil];
 }
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
-{
+
+static void attempt_close_all_windows() {
   fl_lock_function();
   while ( Fl_X::first ) {
     Fl_Window *win = Fl::first_window();
@@ -1500,6 +1500,11 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     Fl::program_should_quit(1);
     Fl_Cocoa_Screen_Driver::breakMacEventLoop(); // necessary when called through menu and in Fl::wait()
   }
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
+{
+  attempt_close_all_windows();
   return NSTerminateCancel;
 }
 - (void)applicationDidBecomeActive:(NSNotification *)notify
@@ -2087,14 +2092,12 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
  Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
  ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
+ The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window) and returns always YES.
  The keyDown: method calls [[myview inputContext] handleEvent:theEvent], and triggers system processing of keyboard events.
- The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window)
- when the Ctrl or Cmd modifiers are used. If not, it also calls [[myview inputContext] handleEvent:theEvent].
- The performKeyEquivalent: method returns YES when the keystroke has been handled and NO otherwise, which allows
- shortcuts of the system menu to be processed. Three sorts of messages are then sent back by the system to myview:
- doCommandBySelector:, setMarkedText: and insertText:. All 3 messages eventually produce Fl::handle(FL_KEYBOARD, win) calls.
- The doCommandBySelector: message allows to process events such as new-line, forward and backward delete, arrows,
- escape, tab, F1. The message setMarkedText: is sent when marked text, that is, temporary text that gets replaced later
+ Three sorts of messages are then sent back by the system to myview: doCommandBySelector:, setMarkedText: and insertText:.
+ All 3 messages eventually produce Fl::handle(FL_KEYBOARD, win) calls.
+ The doCommandBySelector: message allows to process events such as new-line, backward delete, escape, tab.
+ The message setMarkedText: is sent when marked text, that is, temporary text that gets replaced later
  by some other text, is inserted. This happens when a dead key is pressed, and also
  when entering complex scripts (e.g., Chinese). Fl_Cocoa_Screen_Driver::next_marked_length gives the byte
  length of marked text before the FL_KEYBOARD event is processed. Fl::compose_state gives this length after this processing.
@@ -2327,33 +2330,23 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   }
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
-  BOOL handled;
   Fl_Window *w = [(FLWindow*)[theEvent window] getFl_Window];
-  if ( (mods & NSEventModifierFlagControl) || (mods & NSEventModifierFlagCommand) ) {
-    NSString *s = [theEvent characters];
-    if ( (mods & NSEventModifierFlagShift) && (mods & NSEventModifierFlagCommand) ) {
-      s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
-      }
-    [FLView prepareEtext:s];
-    Fl::compose_state = 0;
-    handled = Fl::handle(FL_KEYBOARD, w);
-    if (!handled) {
-      // detect Ctrl+Command+Space to open character palette, if not used before as shortcut
-      if ( (mods & NSEventModifierFlagControl) && (mods & NSEventModifierFlagCommand) &&
-             !(mods & (NSEventModifierFlagShift|NSEventModifierFlagOption)) && [pure isEqualToString:@" "] ) {
-          [NSApp orderFrontCharacterPalette:self];
-        }
-      }
+  NSString *s = [theEvent characters];
+  if ( (mods & NSEventModifierFlagShift) && (mods & NSEventModifierFlagCommand) ) {
+    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
   }
-  else {
-    in_key_event = YES;
-    need_handle = NO;
-    handled = [[self inputContext] handleEvent:theEvent];
-    if (need_handle) handled = Fl::handle(FL_KEYBOARD, w);
-    in_key_event = NO;
+  [FLView prepareEtext:s];
+  Fl::compose_state = 0;
+  BOOL handled = Fl::handle(FL_KEYBOARD, w);
+  if (!handled) {
+    // detect Ctrl+Command+Space to open character palette, if not used before as shortcut
+    if ( (mods & NSEventModifierFlagControl) && (mods & NSEventModifierFlagCommand) &&
+        !(mods & (NSEventModifierFlagShift|NSEventModifierFlagOption)) && [pure isEqualToString:@" "] ) {
+      [NSApp orderFrontCharacterPalette:self];
     }
+  }
   fl_unlock_function();
-  return handled;
+  return YES;
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {
@@ -3907,7 +3900,7 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
 }
 - (void)terminate:(id)sender
 {
-  [NSApp terminate:sender];
+  attempt_close_all_windows();
 }
 @end
 

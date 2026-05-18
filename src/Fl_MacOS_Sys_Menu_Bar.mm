@@ -1,7 +1,7 @@
 //
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -454,7 +454,10 @@ static int process_sys_menu_shortcuts(int event)
   if (event != FL_SHORTCUT || !fl_sys_menu_bar || Fl::modal()) return 0;
   // is the last event the shortcut of an item of the fl_sys_menu_bar menu ?
   const Fl_Menu_Item *item = fl_sys_menu_bar->menu()->test_shortcut();
-  if (!item) return 0;
+  if (!item) { // It's not a shortcut of the user-part of menubar. Is it of the application menu?
+    NSMenu *app_menu = [[[NSApp mainMenu] itemAtIndex:0] submenu]; // the application menu
+    return (int)[app_menu performKeyEquivalent:[NSApp currentEvent]];
+  }
   if (item->visible()) // have the system menu process the shortcut, highlighting the corresponding menu
     [[NSApp mainMenu] performKeyEquivalent:[NSApp currentEvent]];
   else // have FLTK process the shortcut associated to an invisible Fl_Menu_Item
@@ -659,10 +662,10 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
   if (fl_mac_os_version >= 101200 && window_menu_style() != Fl_Sys_Menu_Bar::tabbing_mode_none) {
     window_menu_items[1].label("Show Previous Tab");
     window_menu_items[1].callback(previous_tab_cb);
-    window_menu_items[1].shortcut(FL_SHIFT+FL_CTRL+0x9);
+    window_menu_items[1].shortcut(FL_SHIFT+FL_CTRL+FL_Tab);
     window_menu_items[2].label("Show Next Tab");
     window_menu_items[2].callback(next_tab_cb);
-    window_menu_items[2].shortcut(FL_CTRL+0x9);
+    window_menu_items[2].shortcut(FL_CTRL+FL_Tab);
     window_menu_items[3].label("Move Tab To New Window");
     window_menu_items[3].callback(move_tab_cb);
     window_menu_items[4].label("Merge All Windows");
