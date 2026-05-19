@@ -151,7 +151,7 @@ void btype_cb(Fl_Widget *, void *) {
   else if ( strcmp(btype->text(),"Select")==0) browser->type(FL_SELECT_BROWSER);
   else if ( strcmp(btype->text(),"Hold"  )==0) browser->type(FL_HOLD_BROWSER);
   else if ( strcmp(btype->text(),"Multi" )==0) browser->type(FL_MULTI_BROWSER);
-  // Reset the selctions again, so all class memebr varaibles are matching
+  // Reset the selections again, so all class member variables are matching
   // the new browser type.
   browser->deselect(0);
   // Set the focus rect to the topmost item without selecting it.
