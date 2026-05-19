@@ -711,25 +711,37 @@ int Fl_Browser_::handle(int event) {
   // must do shortcuts first or the scrollbar will get them...
   if (event == FL_ENTER || event == FL_LEAVE) return 1;
   if (event == FL_KEYBOARD && type() >= FL_HOLD_BROWSER) {
-    void* l1 = selection_;
-    void* l = l1; if (!l) l = top_; if (!l) l = item_first();
+    void* l = selection_;
+    if (!l)
+      l = top_;
+    if (!l)
+      l = item_first();
     if (l) {
       if (type()==FL_HOLD_BROWSER) {
         switch (Fl::event_key()) {
         case FL_Down:
-          while ((l = item_next(l))) {
+          if (selection_)
+            l = item_next(selection_);
+          while (l) {
             if (item_height(l)>0) {
               select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
               break;
             }
+            l = item_next(l);
           }
           return 1;
         case FL_Up:
-          while ((l = item_prev(l))) {
+          l = nullptr; // Preselected item is useless here
+          if (selection_)
+            l = item_prev(selection_);
+          if (!l)
+            l = item_last();
+          while (l) {
             if (item_height(l)>0) {
               select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
               break; // no need to test wp (return 1)
             }
+            l = item_prev(l);
           }
           return 1;
         }
@@ -751,7 +763,7 @@ int Fl_Browser_::handle(int event) {
         case FL_Down:
           while ((l = item_next(l))) {
             if (Fl::event_state(FL_SHIFT|FL_CTRL))
-              select(l, l1 ? item_selected(l1) : 1, when());
+              select(l, selection_ ? item_selected(selection_) : 1, when());
             if (wp.deleted()) return 1;
             if (item_height(l)>0) goto J1;
           }
@@ -759,7 +771,7 @@ int Fl_Browser_::handle(int event) {
         case FL_Up:
           while ((l = item_prev(l))) {
             if (Fl::event_state(FL_SHIFT|FL_CTRL))
-              select(l, l1 ? item_selected(l1) : 1, when());
+              select(l, selection_ ? item_selected(selection_) : 1, when());
             if (wp.deleted()) return 1;
             if (item_height(l)>0) goto J1;
           }
