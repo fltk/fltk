@@ -451,9 +451,9 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::update()
 
 static int process_sys_menu_shortcuts(int event)
 {
-  if (event != FL_SHORTCUT || !fl_sys_menu_bar || Fl::modal()) return 0;
+  if (event != FL_SHORTCUT || Fl::modal()) return 0;
   // is the last event the shortcut of an item of the fl_sys_menu_bar menu ?
-  const Fl_Menu_Item *item = fl_sys_menu_bar->menu()->test_shortcut();
+  const Fl_Menu_Item *item = (fl_sys_menu_bar ? fl_sys_menu_bar->menu()->test_shortcut() : NULL);
   if (!item) { // It's not a shortcut of the user-part of menubar. Is it of the application menu?
     NSMenu *app_menu = [[[NSApp mainMenu] itemAtIndex:0] submenu]; // the application menu
     return (int)[app_menu performKeyEquivalent:[NSApp currentEvent]];
