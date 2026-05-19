@@ -144,12 +144,18 @@ void sort_cb(Fl_Widget *, void *) {
 }
 
 void btype_cb(Fl_Widget *, void *) {
-  for ( int t=1; t<=browser->size(); t++ ) browser->select(t,0);
-  browser->select(1,0);         // leave focus box on first line
+  // Switching browser type is not a typical use, so we want to make sure that
+  // everything is deselected, resetting internal variables.
+  browser->deselect(1);
        if ( strcmp(btype->text(),"Normal")==0) browser->type(FL_NORMAL_BROWSER);
   else if ( strcmp(btype->text(),"Select")==0) browser->type(FL_SELECT_BROWSER);
   else if ( strcmp(btype->text(),"Hold"  )==0) browser->type(FL_HOLD_BROWSER);
   else if ( strcmp(btype->text(),"Multi" )==0) browser->type(FL_MULTI_BROWSER);
+  // Reset the selctions again, so all class memebr varaibles are matching
+  // the new browser type.
+  browser->deselect(0);
+  // Set the focus rect to the topmost item without selecting it.
+  browser->select(1, 0);
   browser->redraw();
 }
 
