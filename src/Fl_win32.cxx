@@ -1778,27 +1778,9 @@ content  key    keyboard layout
         }
         if (moving_window) resize_bug_fix = window;
         POINTS pts = MAKEPOINTS(lParam);
-        int nx = pts.x, ny = pts.y;
-        // detect when window centre changes screen
-        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
-        Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
-        int olds = wd->screen_num();
-        // Issue #1097: when a fullscreen window is restored to its size, it receives first a WM_MOVE
-        // and then a WM_SIZE, so it still has its fullscreen size at the WM_MOVE event, which defeats
-        // using window->w()|h() to compute the center of the (small) window. We detect this situation
-        // with condition: !window->fullscreen_active() && *wd->no_fullscreen_w()
-        // and use *wd->no_fullscreen_w()|h() instead of window->w()|h().
-        int trueW = window->w(), trueH = window->h();
-        if (!window->fullscreen_active() && *wd->no_fullscreen_w()) {
-          trueW = *wd->no_fullscreen_w(); trueH = *wd->no_fullscreen_h();
-        }
-        int news = sd->screen_num_unscaled(nx + int(trueW * scale / 2), ny + int(trueH * scale / 2));
-        if (news == -1)
-          news = olds;
-        else if (news != olds) wd->screen_num(news);
-        scale = sd->scale(news);
-        wd->x(int(round(nx/scale)));
-        wd->y(int(round(ny/scale)));
+        Fl_Window_Driver *wd = Fl_Window_Driver::driver(window);
+        wd->x(int(round(pts.x / scale)));
+        wd->y(int(round(pts.y / scale)));
         }
         return 0;
 
