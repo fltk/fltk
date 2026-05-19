@@ -731,11 +731,16 @@ int Fl_Browser_::handle(int event) {
           }
           return 1;
         case FL_Up:
-          l = nullptr; // Preselected item is useless here
           if (selection_)
+            // find the item before the selected one
             l = item_prev(selection_);
-          if (!l)
-            l = item_last();
+          else {
+            // find the last visible item
+            l = find_item(y()+h()-incr_height()/2);
+            if (!l)
+              // if that fails, start from the end of the list
+              l = item_last();
+          }
           while (l) {
             if (item_height(l)>0) {
               select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
