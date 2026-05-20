@@ -84,7 +84,7 @@ Determines the type of file chooser presented to the user.
   }
   decl {void update_preview();} {private local
   }
-  Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open
+  Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open selected
   } {
     code {if (!prefs_) {
   prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
@@ -94,7 +94,7 @@ Determines the type of file chooser presented to the user.
       label {Choose File}
       callback {fileName->value("");
 fileList->deselect();
-hide();} open selected
+hide();} open
       private xywh {467 277 490 380} type Double resizable
       code0 {if (title) window->label(title);} modal visible
     } {
@@ -407,9 +407,11 @@ user_data(d, auto_free);} {}
   }
   Function {user_data(void *d)} {return_type void
   } {
-    code {if ((flags_ & AUTO_DELETE_USER_DATA) && user_data_) {
+    code {if (flags_ & AUTO_DELETE_USER_DATA) {
   clear_flag(AUTO_DELETE_USER_DATA);
-  delete static_cast<Fl_Callback_User_Data*>(user_data_);
+  if (user_data_) {
+    delete static_cast<Fl_Callback_User_Data*>(user_data_);
+  }
 }
 user_data_ = d;} {}
   }

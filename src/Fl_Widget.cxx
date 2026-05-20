@@ -271,8 +271,7 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
   // remove stale entries from default callback queue (Fl::readqueue())
   if (callback_ == default_callback) cleanup_readqueue(this);
-  if ( (flags_ & AUTO_DELETE_USER_DATA) && user_data_)
-    delete (Fl_Callback_User_Data*)user_data_;
+  user_data(nullptr); // remove user data pointer and delete if owned
 }
 
 /**
@@ -483,9 +482,12 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
  \param[in] v new user data
  */
 void Fl_Widget::user_data(void* v) {
-  if ((flags_ & AUTO_DELETE_USER_DATA) && user_data_)
-    delete (Fl_Callback_User_Data*)user_data_;
-  clear_flag(AUTO_DELETE_USER_DATA);
+  if (flags_ & AUTO_DELETE_USER_DATA) {
+    clear_flag(AUTO_DELETE_USER_DATA);
+    if (user_data_) {
+      delete (Fl_Callback_User_Data*)user_data_;
+    }
+  }
   user_data_ = v;
 }
 

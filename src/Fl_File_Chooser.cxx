@@ -449,9 +449,11 @@ void * Fl_File_Chooser::user_data() const {
 }
 
 void Fl_File_Chooser::user_data(void *d) {
-  if ((flags_ & AUTO_DELETE_USER_DATA) && user_data_) {
+  if (flags_ & AUTO_DELETE_USER_DATA) {
     clear_flag(AUTO_DELETE_USER_DATA);
-    delete static_cast<Fl_Callback_User_Data*>(user_data_);
+    if (user_data_) {
+      delete static_cast<Fl_Callback_User_Data*>(user_data_);
+    }
   }
   user_data_ = d;
 }

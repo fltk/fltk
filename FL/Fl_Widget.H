@@ -94,6 +94,9 @@ protected:
   Fl_Callback_User_Data() {} ///< Protected constructor
 public:
   virtual ~Fl_Callback_User_Data() { } ///< Destructor
+  /// Clone method to allow copying of user data when needed.
+  /// *Must* be overridden by derived classes that are used in Fl_Menu_Item.
+  virtual Fl_Callback_User_Data* clone() const { return new Fl_Callback_User_Data(*this); }
 };
 
 

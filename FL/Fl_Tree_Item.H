@@ -71,10 +71,11 @@ class FL_EXPORT Fl_Tree_Item {
   Fl_Color                _labelbgcolor;        // label's bg color (0xffffffff is 'transparent')
   /// \enum Fl_Tree_Item_Flags
   enum Fl_Tree_Item_Flags {
-    OPEN                = 1<<0,         ///> item is open
-    VISIBLE             = 1<<1,         ///> item is visible
-    ACTIVE              = 1<<2,         ///> item is active
-    SELECTED            = 1<<3          ///> item is selected
+    OPEN                  = 1<<0,         ///> item is open
+    VISIBLE               = 1<<1,         ///> item is visible
+    ACTIVE                = 1<<2,         ///> item is active
+    SELECTED              = 1<<3,         ///> item is selected
+    AUTO_DELETE_USER_DATA = 1<<4          ///> see Fl_Widget::AUTO_DELETE_USER_DATA for details
   };
   unsigned short _flags;                // misc flags
   int                     _xywh[4];             // xywh of this widget (if visible)
@@ -134,9 +135,8 @@ public:
   void label(const char *val);
   const char *label() const;
 
-  /// Set a user-data value for the item.
-  inline void user_data( void* data ) { _userdata = data; }
-
+  void user_data( void* data );
+  void user_data(Fl_Callback_User_Data* data, bool auto_delete);
   /// Retrieve the user-data value that has been assigned to the item.
   inline void* user_data() const { return _userdata; }
 
