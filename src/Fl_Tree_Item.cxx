@@ -14,7 +14,7 @@
 //////////////////////
 //
 // Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
-// Copyright (C) 2009-2010 by Greg Ercolano.
+// Copyright (C) 2009-2026 by Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this

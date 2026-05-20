@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -244,7 +244,7 @@ public:
   static void timer_cb(void*) {
     // Run a test every few milliseconds to visualize the progress
     if (Ut_Suite::run_next_test())
-      Fl::repeat_timeout(0.15, timer_cb);
+      Fl::repeat_timeout(0.1, timer_cb);
   }
 
   // Showing this tab for the first time will trigger the tests

@@ -1,7 +1,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -93,9 +93,9 @@ struct FL_EXPORT Fl_Label {
  */
 class FL_EXPORT Fl_Callback_User_Data {
 protected:
-  Fl_Callback_User_Data() {} ///< Protected constructor
+  Fl_Callback_User_Data() = default; ///< Protected constructor
 public:
-  virtual ~Fl_Callback_User_Data() { } ///< Destructor
+  virtual ~Fl_Callback_User_Data() = default; ///< Destructor
   /// Clone method to allow copying of user data when needed.
   /// *Must* be overridden by derived classes that are used in Fl_Tree_Item.
   virtual Fl_Callback_User_Data* clone() const { return new Fl_Callback_User_Data(*this); }
@@ -107,6 +107,7 @@ protected:
   std::function<void(Fl_Widget*)> func; ///< The lambda function to be called
 public:
   Fl_Std_Function_User_Data(std::function<void(Fl_Widget*)> f) : func(std::move(f)) {}
+  ~Fl_Std_Function_User_Data() override = default; ///< Default destructor
   Fl_Callback_User_Data* clone() const override { return new Fl_Std_Function_User_Data(*this); } ///< Clone method for Lambda captures
   void call(Fl_Widget* widget) { func(widget); } ///< Call the stored lambda function
 };
