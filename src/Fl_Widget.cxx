@@ -491,9 +491,7 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
 void Fl_Widget::user_data(void* v) {
   if (flags_ & AUTO_DELETE_USER_DATA) {
     clear_flag(AUTO_DELETE_USER_DATA);
-    if (user_data_) {
-      delete (Fl_Callback_User_Data*)user_data_;
-    }
+    delete (Fl_Callback_User_Data*)user_data_;
   }
   user_data_ = v;
 }

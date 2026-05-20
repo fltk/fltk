@@ -178,15 +178,13 @@ const char *Fl_Tree_Item::label() const {
 void Fl_Tree_Item::user_data( void* data ) {
   if (_flags & AUTO_DELETE_USER_DATA) {
     _flags &= ~AUTO_DELETE_USER_DATA;
-    if (_userdata) {
-      delete static_cast<Fl_Callback_User_Data*>(_userdata);
-    }
+    delete static_cast<Fl_Callback_User_Data*>(_userdata);
   }
   _userdata = data;
 }
 
 /**
- Set user data for this item with the option togive ownership to this class.
+ Set user data for this item with the option to give ownership to this class.
 
  \note Fl_Tree_Item has a copy constructor. To handle ownership correctly
  when `auto_delete` is set, `data` must implement a working `clone()` method
