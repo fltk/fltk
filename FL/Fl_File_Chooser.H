@@ -54,14 +54,22 @@ public:
                    ///< effect for directories.
     DIRECTORY = 4  ///< Select a single, existing directory. Can be combined with CREATE.
   };
+protected:
+  /**
+   Values for flags_ field.
+  */
+  enum Flags {
+  AUTO_DELETE_USER_DATA = 1<<0, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
+};
 private:
   static Fl_Preferences *prefs_;
-  void (*callback_)(Fl_File_Chooser*, void *);
-  void *data_;
+  void (*callback_)(Fl_File_Chooser*, void *) = nullptr;
+  void *user_data_ = nullptr;
   char directory_[FL_PATH_MAX];
   char pattern_[FL_PATH_MAX];
   char preview_text_[2048];
   int type_;
+  unsigned int flags_ = 0;
   void favoritesButtonCB();
   void favoritesCB(Fl_Widget *w);
   void fileListCB();
@@ -135,7 +143,6 @@ private:
   static void cb_favOkButton(Fl_Return_Button*, void*);
 public:
   ~Fl_File_Chooser();
-  void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
   void color(Fl_Color c);
   Fl_Color color();
   int count();
@@ -170,8 +177,11 @@ public:
   Fl_Fontsize textsize();
   void type(int t);
   int type();
+  void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
+  void callback(void (*cb)(Fl_File_Chooser *, void *), Fl_Callback_User_Data* d, bool auto_free);
   void * user_data() const;
   void user_data(void *d);
+  void user_data(Fl_Callback_User_Data* d, bool auto_free);
   const char *value(int f = 1);
   void value(const char *filename);
   int visible();
@@ -249,6 +259,9 @@ public:
   Fl_Widget* add_extra(Fl_Widget* gr);
 protected:
   void show_error_box(int val);
+  unsigned int flags() const;
+  void set_flag(unsigned int c);
+  void clear_flag(unsigned int c);
 };
 FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);
