@@ -165,8 +165,10 @@ protected:
   /** Label text of a widget. */
   const char *label_;
   /** If it is just a word, it's the name of the callback function. If it starts
-   with a '[', it's a lambda function. Otherwise it is the full callback
-   C++ code. Can be nullptr. */
+   with a '[', it's a lambda function. `std::bind` expressions are recognized
+   and inlined. In all other cases, this text is recognized as C++ code, and
+   generates a callback function, including the static trampoline if required.
+   Can be nullptr. */
   const char *callback_;
   /** Widget user data field as C++ text. */
   std::string user_data_;
