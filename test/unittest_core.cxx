@@ -50,8 +50,6 @@ TEST(Fl_Preferences, Strings) {
   return true;
 }
 
-#if 0
-
 TEST(fl_filename, ext) {
   std::string r = fl_filename_ext("test.txt");
   EXPECT_STREQ(r.c_str(), ".txt");
@@ -63,45 +61,44 @@ TEST(fl_filename, ext) {
 }
 
 TEST(fl_filename, setext) {
-  std::string r = fl_filename_setext(std::string("test.txt"), ".rtf");
+  std::string r = fl_filename_setext_str("test.txt", ".rtf");
   EXPECT_STREQ(r.c_str(), "test.rtf");
-  r = fl_filename_setext(std::string("test"), ".rtf");
+  r = fl_filename_setext_str("test", ".rtf");
   EXPECT_STREQ(r.c_str(), "test.rtf");
-  r = fl_filename_setext(std::string("test.txt"), "");
+  r = fl_filename_setext_str("test.txt", "");
   EXPECT_STREQ(r.c_str(), "test");
-  r = fl_filename_setext(std::string(""), ".rtf");
+  r = fl_filename_setext_str("", ".rtf");
   EXPECT_STREQ(r.c_str(), ".rtf");
-  r = fl_filename_setext(std::string("path/test"), ".rtf");
+  r = fl_filename_setext_str("path/test", ".rtf");
   EXPECT_STREQ(r.c_str(), "path/test.rtf");
   return true;
 }
 
 TEST(fl_filename, relative) {
   std::string base = "/var/tmp/somedir";
-  std::string r = fl_filename_relative("/var/tmp/somedir/foo.txt", base);
+  std::string r = fl_filename_relative_str("/var/tmp/somedir/foo.txt", base);
   EXPECT_STREQ(r.c_str(), "foo.txt");
-  r = fl_filename_relative("/var/tmp/foo.txt", base);
+  r = fl_filename_relative_str("/var/tmp/foo.txt", base);
   EXPECT_STREQ(r.c_str(), "../foo.txt");
-  r = fl_filename_relative("./foo.txt", base);
+  r = fl_filename_relative_str("./foo.txt", base);
   EXPECT_STREQ(r.c_str(), "./foo.txt");
-  r = fl_filename_relative("../foo.txt", base);
+  r = fl_filename_relative_str("../foo.txt", base);
   EXPECT_STREQ(r.c_str(), "../foo.txt");
   return true;
 }
 
 TEST(fl_filename, absolute) {
   std::string base = "/var/tmp/somedir";
-  std::string r = fl_filename_absolute("foo.txt", base);
+  std::string r = fl_filename_absolute_str("foo.txt", base);
   EXPECT_STREQ(r.c_str(), "/var/tmp/somedir/foo.txt");
-  r = fl_filename_absolute("/var/tmp/foo.txt", base);
+  r = fl_filename_absolute_str("/var/tmp/foo.txt", base);
   EXPECT_STREQ(r.c_str(), "/var/tmp/foo.txt");
-  r = fl_filename_absolute("./foo.txt", base);
+  r = fl_filename_absolute_str("./foo.txt", base);
   EXPECT_STREQ(r.c_str(), "/var/tmp/somedir/foo.txt");
-  r = fl_filename_absolute("../foo.txt", base);
+  r = fl_filename_absolute_str("../foo.txt", base);
   EXPECT_STREQ(r.c_str(), "/var/tmp/foo.txt");
   return true;
 }
-
 
 bool cb1a_ok = false, cb1b_ok = false, cb1c_ok = false;
 int cb1_alloc = 0;
@@ -165,7 +162,60 @@ TEST(Fl_Callback_Macros, FL_INLINE_CALLBACK) {
   return true;
 }
 
-#endif // FIXME - Fl_String
+/* Test std::function callbacks. */
+int ok = 0;
+void test_cb(Fl_Widget*w) { (void)w; ok = 1; }
+TEST(std_function_callbacks, function) {
+  Fl_Group::current(NULL);
+  Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+  std::function<void(Fl_Widget*)> f = test_cb;
+  btn->callback(f);
+  btn->do_callback();
+  EXPECT_EQ(ok, 1);
+  delete btn;
+  return true;
+}
+
+void test_2_cb(int x, int y, int z) { (void)x; (void)y, ok = z; }
+TEST(std_function_callbacks, std::bind) {
+  Fl_Group::current(NULL);
+  Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+  btn->callback(std::bind(test_2_cb, 1, 2, 42));
+  btn->do_callback();
+  EXPECT_EQ(ok, 42);
+  delete btn;
+  return true;
+}
+
+TEST(std_function_callbacks, lambda) {
+  Fl_Group::current(NULL);
+  Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+  int capture_me = 36;
+  btn->callback([capture_me](Fl_Widget*) {
+    ok = capture_me;
+  });
+  btn->do_callback();
+  EXPECT_EQ(ok, 36);
+  delete btn;
+  return true;
+}
+
+#include <FL/fl_ask.H>
+
+TEST(std_function_callbacks, lambda2) {
+  Fl_Group::current(NULL);
+
+Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+std::string name = "Mr. Smith";
+std::string text = "Thank you for contacting us, %s!";
+btn->callback([name, text](Fl_Widget *w) {
+  fl_message(text.c_str(), name.c_str());
+}
+);
+btn->do_callback();
+delete btn;
+return true;
+}
 
 //
 //------- test aspects of the FLTK core library ----------

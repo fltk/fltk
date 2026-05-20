@@ -24,6 +24,8 @@
 
 #include "Fl.H"
 
+#include <functional>
+
 class Fl_Widget;
 class Fl_Window;
 class Fl_Group;
@@ -99,6 +101,15 @@ public:
   virtual Fl_Callback_User_Data* clone() const { return new Fl_Callback_User_Data(*this); }
 };
 
+/** Callback user data to manage Lambda expressions with captures. */
+class FL_EXPORT Fl_Std_Function_User_Data : public Fl_Callback_User_Data {
+protected:
+  std::function<void(Fl_Widget*)> func; ///< The lambda function to be called
+public:
+  Fl_Std_Function_User_Data(std::function<void(Fl_Widget*)> f) : func(std::move(f)) {}
+  Fl_Callback_User_Data* clone() const override { return new Fl_Std_Function_User_Data(*this); } ///< Clone method for Lambda captures
+  void call(Fl_Widget* widget) { func(widget); } ///< Call the stored lambda function
+};
 
 /** Fl_Widget is the base class for all widgets in FLTK.
 
@@ -129,6 +140,8 @@ class FL_EXPORT Fl_Widget {
   uchar when_;
 
   const char *tooltip_;
+
+  static void do_std_function_callback_(Fl_Widget* w, void* data);
 
   /** unimplemented copy ctor */
   Fl_Widget(const Fl_Widget &);
@@ -788,6 +801,15 @@ public:
   void callback(Fl_Callback1* cb, long p = 0) {
     callback_ = (Fl_Callback*)(fl_intptr_t)(cb);
     user_data((void*)(fl_intptr_t)p);
+  }
+
+  /** Sets the current callback to a Lambda expression with capture or std::function.
+    Each widget has a single callback.
+    \param[in] cb new callback
+  */
+  void callback(std::function<void(Fl_Widget*)> f) {
+    callback_ = do_std_function_callback_;
+    user_data(new Fl_Std_Function_User_Data(std::move(f)), true);
   }
 
   /** Gets the user data for this widget.

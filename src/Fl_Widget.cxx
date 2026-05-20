@@ -439,6 +439,13 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
   bind_deimage( (img != NULL) );
 }
 
+void Fl_Widget::do_std_function_callback_(Fl_Widget* w, void* data) {
+  auto std_function_callback = static_cast<Fl_Std_Function_User_Data*>(w->user_data());
+  if (std_function_callback) {
+    std_function_callback->call(w);
+  }
+}
+
 /** Calls the widget callback function with arbitrary arguments.
 
  All overloads of do_callback() call this method.
