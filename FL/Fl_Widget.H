@@ -101,15 +101,15 @@ public:
   virtual Fl_Callback_User_Data* clone() const { return new Fl_Callback_User_Data(*this); }
 };
 
-/** Callback user data to manage Lambda expressions with captures. */
+/** Callback user data to manage std::function based callbacks. */
 class FL_EXPORT Fl_Std_Function_User_Data : public Fl_Callback_User_Data {
 protected:
-  std::function<void(Fl_Widget*)> func; ///< The lambda function to be called
+  std::function<void(Fl_Widget*)> func; ///< The std::function to be called
 public:
   Fl_Std_Function_User_Data(std::function<void(Fl_Widget*)> f) : func(std::move(f)) {}
   ~Fl_Std_Function_User_Data() override = default; ///< Default destructor
-  Fl_Callback_User_Data* clone() const override { return new Fl_Std_Function_User_Data(*this); } ///< Clone method for Lambda captures
-  void call(Fl_Widget* widget) { func(widget); } ///< Call the stored lambda function
+  Fl_Callback_User_Data* clone() const override { return new Fl_Std_Function_User_Data(*this); } ///< Clone this class
+  void call(Fl_Widget* widget) { func(widget); } ///< Call the stored std::function
 };
 
 /** Fl_Widget is the base class for all widgets in FLTK.
