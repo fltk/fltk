@@ -559,7 +559,10 @@ button->callback( [](Fl_Widget*, void*) { puts("Hello"); } , nullptr );
 
 Since version 1.5, Fl_Widget and all derived classes support
 `std::function`-based callbacks, including capturing lambdas and `std::bind`
-expressions. Unlike the classic C-style callback, there is no user data
+expressions. The user data field is used internally and must not be overwritten;
+use captures instead for type-safe access to context data without casting.
+
+Unlike the classic C-style callback, there is no user data
 field — instead, captures provide type-safe access to context data
 without casting.
 

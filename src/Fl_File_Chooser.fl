@@ -84,7 +84,7 @@ Determines the type of file chooser presented to the user.
   }
   decl {void update_preview();} {private local
   }
-  Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open selected
+  Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open
   } {
     code {if (!prefs_) {
   prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
@@ -506,7 +506,7 @@ the contents of a directory.} public local
   }
   decl {Fl_Widget* ext_group;} {private local
   }
-  Function {add_extra(Fl_Widget* gr)} {return_type {Fl_Widget*}
+  Function {add_extra(Fl_Widget* gr)} {open return_type {Fl_Widget*}
   } {
     code {Fl_Widget* ret=ext_group;} {}
     codeblock {if (gr==ext_group)} {open
@@ -517,10 +517,10 @@ the contents of a directory.} public local
     } {
       code {int sh=ext_group->h()+4;
 Fl_Widget* svres=window->resizable();
-window->resizable(NULL);
+window->resizable(nullptr);
 window->size(window->w(),window->h()-sh);
 window->remove(ext_group);
-ext_group=NULL;
+ext_group=nullptr;
 window->resizable(svres);} {}
     }
     codeblock {if (gr)} {open
@@ -532,7 +532,8 @@ window->size(window->w(),nh);
 gr->position(2,okButton->y()+okButton->h()+2);
 window->add(gr);
 ext_group=gr;
-window->resizable(svres);} {}
+window->resizable(svres);} {selected
+      }
     }
     code {return ret;} {}
   }

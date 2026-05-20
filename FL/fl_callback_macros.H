@@ -23,6 +23,11 @@
  \file fl_callback_macros.H
  This file provides macros for easy function and method callbacks
  with multiple type safe arguments.
+
+ FLTK support C++11 style std::function callbacks, which can be used with
+ capturing lambdas and `std::bind` expressions with Fl_Widget callbacks.
+ These macros are no longer the preferred method for defining callbacks
+ and are now deprecated.
 */
 
 #ifdef FL_DOXYGEN

@@ -97,7 +97,7 @@ protected:
 public:
   virtual ~Fl_Callback_User_Data() { } ///< Destructor
   /// Clone method to allow copying of user data when needed.
-  /// *Must* be overridden by derived classes that are used in Fl_Menu_Item.
+  /// *Must* be overridden by derived classes that are used in Fl_Tree_Item.
   virtual Fl_Callback_User_Data* clone() const { return new Fl_Callback_User_Data(*this); }
 };
 
@@ -806,9 +806,9 @@ public:
   /** Sets the widget callback to a \c std::function.
 
     Accepts any callable that matches the callback signature, including
-    capturing lambdas and \c std::bind expressions. Unlike the classic
-    C-style callback, there is no user data field — captures provide
-    type-safe access to context data without casting.
+    capturing lambdas and \c std::bind expressions. The user data field
+    is used internally and must not be overwritten; use captures instead
+    for type-safe access to context data without casting.
 
     \param[in] cb new callback
   */

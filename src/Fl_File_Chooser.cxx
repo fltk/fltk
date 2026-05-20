@@ -62,7 +62,7 @@ static const unsigned char idata_new[] =
 {0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
 128,1,128,1,128,255,255,0,0};
 static Fl_Image *image_new() {
-  static Fl_Image *image = 0L;
+  static Fl_Image *image = nullptr;
   if (!image)
     image = new Fl_Bitmap(idata_new, 32, 16, 16);
   return image;
@@ -505,10 +505,10 @@ Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
   if (ext_group) {
     int sh=ext_group->h()+4;
     Fl_Widget* svres=window->resizable();
-    window->resizable(NULL);
+    window->resizable(nullptr);
     window->size(window->w(),window->h()-sh);
     window->remove(ext_group);
-    ext_group=NULL;
+    ext_group=nullptr;
     window->resizable(svres);
   }
   if (gr) {

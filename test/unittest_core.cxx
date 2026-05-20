@@ -166,6 +166,7 @@ TEST(Fl_Callback_Macros, FL_INLINE_CALLBACK) {
 int ok = 0;
 void test_cb(Fl_Widget*w) { (void)w; ok = 1; }
 TEST(std_function_callbacks, function) {
+  ok = 0;
   Fl_Group::current(NULL);
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
   std::function<void(Fl_Widget*)> f = test_cb;
@@ -178,6 +179,7 @@ TEST(std_function_callbacks, function) {
 
 void test_2_cb(int x, int y, int z) { (void)x; (void)y, ok = z; }
 TEST(std_function_callbacks, std::bind) {
+  ok = 0;
   Fl_Group::current(NULL);
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
   btn->callback(std::bind(test_2_cb, 1, 2, 42));
@@ -188,6 +190,7 @@ TEST(std_function_callbacks, std::bind) {
 }
 
 TEST(std_function_callbacks, lambda) {
+  ok = 0;
   Fl_Group::current(NULL);
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
   int capture_me = 36;
