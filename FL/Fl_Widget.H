@@ -803,8 +803,13 @@ public:
     user_data((void*)(fl_intptr_t)p);
   }
 
-  /** Sets the current callback to a Lambda expression with capture or std::function.
-    Each widget has a single callback.
+  /** Sets the widget callback to a \c std::function.
+
+    Accepts any callable that matches the callback signature, including
+    capturing lambdas and \c std::bind expressions. Unlike the classic
+    C-style callback, there is no user data field — captures provide
+    type-safe access to context data without casting.
+
     \param[in] cb new callback
   */
   void callback(std::function<void(Fl_Widget*)> f) {
