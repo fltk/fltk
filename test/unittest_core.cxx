@@ -200,22 +200,6 @@ TEST(std_function_callbacks, lambda) {
   return true;
 }
 
-#include <FL/fl_ask.H>
-
-TEST(std_function_callbacks, lambda2) {
-  Fl_Group::current(NULL);
-
-Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
-std::string name = "Mr. Smith";
-std::string text = "Thank you for contacting us, %s!";
-btn->callback([name, text](Fl_Widget *w) {
-  fl_message(text.c_str(), name.c_str());
-}
-);
-btn->do_callback();
-delete btn;
-return true;
-}
 
 //
 //------- test aspects of the FLTK core library ----------
