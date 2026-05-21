@@ -1209,6 +1209,7 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 
 static Fl_Window *resize_bug_fix;
 static bool moving_window = false; // true when dragging a window with the mouse on the titlebar
+static bool sizing_window = false; // true when resizing a window with the mouse
 
 extern void fl_save_pen(void);
 extern void fl_restore_pen(void);
@@ -1241,7 +1242,7 @@ static BOOL CALLBACK child_window_cb(HWND child_xid, LPARAM data) {
 static struct win_w_h {
   Fl_Window *win;
   int W, H;
-} moved_win_data; // FLTK size of window at start of the window move operation
+} moved_win_data; // FLTK size of toplevel window at start of the window move operation
 
 static void delayed_size(void *) { // performed after end of win move operation or change of screen
   moved_win_data.win->size(moved_win_data.W, moved_win_data.H);
@@ -1289,7 +1290,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if (ns >= 0) {
               //fprintf(stderr,"WM_DPICHANGED ns %d --> %d moving_window=%d\n",old_ns,ns,moving_window);
               Fl_Window_Driver::driver(window)->screen_num(ns);
-              if (!moving_window) moved_win_data = {window, window->w(), window->h()};
+              if (!moving_window && !window->parent()) moved_win_data = {window, window->w(), window->h()};
             }
             UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOCOPYBITS;
             SetWindowPos(hWnd, NULL, lParam_rect->left, lParam_rect->top,
@@ -1759,12 +1760,20 @@ content  key    keyboard layout
         Fl_WinAPI_Window_Driver::driver(window)->set_minmax((LPMINMAXINFO)lParam);
         break;
 
+      case WM_SIZING:
+        //fprintf(stderr,"WM_SIZING\n");
+        sizing_window = true;
+        return TRUE;
+
       case WM_SIZE:
         if (!window->parent()) {
           Fl_Window_Driver::driver(window)->is_maximized(wParam == SIZE_MAXIMIZED);
           if (wParam == SIZE_MINIMIZED || wParam == SIZE_MAXHIDE) {
             Fl::handle(FL_HIDE, window);
           } else {
+            /*fprintf(stderr,"WM_SIZE %dx%d moving_window=%d sizing_window=%d s=%g ns=%d\n",
+                    int(ceil(LOWORD(lParam) / scale)), int(ceil(HIWORD(lParam) / scale)),
+                    moving_window,sizing_window, scale, window->screen_num());*/
             if (!moving_window) {
               Fl::handle(FL_SHOW, window);
               resize_bug_fix = window;
@@ -1784,16 +1793,16 @@ content  key    keyboard layout
         return 1;
 
       case WM_CAPTURECHANGED:
+        if (window->parent()) break;
         //fprintf(stderr,"WM_CAPTURECHANGED moving_window=%d\n",moving_window);
         if (!moving_window) {
-          moved_win_data.win = window;
-          moved_win_data.W = window->w();
-          moved_win_data.H = window->h();
+          moved_win_data = {window, window->w(), window->h()};
         } else {
           moving_window = false;
           Fl::add_timeout(0, (Fl_Timeout_Handler)delayed_size, NULL);
         }
         resize_bug_fix = 0;
+        sizing_window = false;
         return 0;
 
       case WM_MOVE: {
@@ -1803,27 +1812,6 @@ content  key    keyboard layout
         if (moving_window) resize_bug_fix = window;
         POINTS pts = MAKEPOINTS(lParam);
         Fl_Window_Driver *wd = Fl_Window_Driver::driver(window);
-        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
-        // detect when window centre changes screen
-        int olds = wd->screen_num();
-        // Issue #1097: when a fullscreen window is restored to its size, it receives first a WM_MOVE
-        // and then a WM_SIZE, so it still has its fullscreen size at the WM_MOVE event, which defeats
-        // using window->w()|h() to compute the center of the (small) window. We detect this situation
-        // with condition: !window->fullscreen_active() && *wd->no_fullscreen_w()
-        // and use *wd->no_fullscreen_w()|h() instead of window->w()|h().
-        int trueW = window->w(), trueH = window->h();
-        if (!window->fullscreen_active() && *wd->no_fullscreen_w()) {
-          trueW = *wd->no_fullscreen_w(); trueH = *wd->no_fullscreen_h();
-        }
-        int news = sd->screen_num_unscaled(pts.x + int(trueW * scale / 2), pts.y + int(trueH * scale / 2));
-        //fprintf(stderr,"WM_MOVE to %dx%d ns %d--> %d scale=%g\n",pts.x,pts.y,olds,news,sd->scale(news>=0?news:olds));
-        if (news == -1)
-          news = olds;
-        else if (news != olds) {
-          wd->screen_num(news);
-          scale = sd->scale(news);
-          window->redraw();
-        }
         wd->x(int(round(pts.x / scale)));
         wd->y(int(round(pts.y / scale)));
         }
