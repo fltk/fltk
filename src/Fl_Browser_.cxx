@@ -724,7 +724,7 @@ int Fl_Browser_::handle(int event) {
             l = item_next(selection_);
           while (l) {
             if (item_height(l)>0) {
-              select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
+              select_only(l, when());
               break;
             }
             l = item_next(l);
@@ -743,7 +743,7 @@ int Fl_Browser_::handle(int event) {
           }
           while (l) {
             if (item_height(l)>0) {
-              select_only(l, when() & ~FL_WHEN_NOT_CHANGED);
+              select_only(l, when());
               break; // no need to test wp (return 1)
             }
             l = item_prev(l);
