@@ -1,7 +1,7 @@
 //
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -139,7 +139,7 @@ static const unsigned char idata_fluid[] =
 99,199,176,225,186,61,16,35,74,220,19,2,0,59};
 static Fl_Image *image_fluid() {
   Fl_GIF_Image::animate = true;
-  static Fl_Image *image = 0L;
+  static Fl_Image *image = nullptr;
   if (!image)
     image = new Fl_Anim_GIF_Image("fluid.animated.gif", idata_fluid, 2545);
   return image;

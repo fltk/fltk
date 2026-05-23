@@ -1,7 +1,7 @@
 /*
  * Macros for easy callbacks for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 2023-2025 by Bill Spitzak and others.
+ * Copyright 2023-2026 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,11 @@
  \file fl_callback_macros.H
  This file provides macros for easy function and method callbacks
  with multiple type safe arguments.
+
+ FLTK support C++11 style std::function callbacks, which can be used with
+ capturing lambdas and `std::bind` expressions with Fl_Widget callbacks.
+ These macros are no longer the preferred method for defining callbacks
+ and are now deprecated.
 */
 
 #ifdef FL_DOXYGEN

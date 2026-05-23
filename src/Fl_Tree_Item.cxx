@@ -14,7 +14,7 @@
 //////////////////////
 //
 // Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
-// Copyright (C) 2009-2010 by Greg Ercolano.
+// Copyright (C) 2009-2026 by Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -102,6 +102,7 @@ Fl_Tree_Item::~Fl_Tree_Item() {
   if ( _tree && this == _tree->_item_focus )
     { _tree->_item_focus = 0; }
   //_children.clear();          // array's destructor handles itself
+  user_data(nullptr);           // free user data if AUTO_DELETE_USER_DATA is set
 }
 
 /// Copy constructor.
@@ -113,7 +114,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _labelfgcolor = o->labelfgcolor();
   _labelbgcolor = o->labelbgcolor();
   _widget       = o->widget();
-  _flags        = o->_flags;
+  _flags        = o->_flags & ~AUTO_DELETE_USER_DATA;
   _xywh[0]      = o->_xywh[0];
   _xywh[1]      = o->_xywh[1];
   _xywh[2]      = o->_xywh[2];
@@ -127,7 +128,12 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _label_xywh[2]    = o->_label_xywh[2];
   _label_xywh[3]    = o->_label_xywh[3];
   _usericon         = o->usericon();
-  _userdata         = o->user_data();
+  if ((o->_flags & AUTO_DELETE_USER_DATA) && o->user_data()) {
+    auto data = static_cast<Fl_Callback_User_Data*>(o->user_data());
+    user_data(data->clone(), true);
+  } else {
+    _userdata = o->user_data();
+  }
   _parent           = o->_parent;
   _prev_sibling     = 0;                // do not copy ptrs! use update_prev_next()
   _next_sibling     = 0;                // do not copy ptrs! use update_prev_next()
@@ -165,6 +171,30 @@ void Fl_Tree_Item::label(const char *name) {
 /// Return the label.
 const char *Fl_Tree_Item::label() const {
   return(_label);
+}
+
+
+/// Set a user-data value for the item.
+void Fl_Tree_Item::user_data( void* data ) {
+  if (_flags & AUTO_DELETE_USER_DATA) {
+    _flags &= ~AUTO_DELETE_USER_DATA;
+    delete static_cast<Fl_Callback_User_Data*>(_userdata);
+  }
+  _userdata = data;
+}
+
+/**
+ Set user data for this item with the option to give ownership to this class.
+
+ \note Fl_Tree_Item has a copy constructor. To handle ownership correctly
+ when `auto_delete` is set, `data` must implement a working `clone()` method
+ that returns a deep copy of the user data.
+ */
+void Fl_Tree_Item::user_data( Fl_Callback_User_Data* data, bool auto_delete) {
+  user_data(static_cast<void*>(data));
+  if (auto_delete) {
+    _flags |= AUTO_DELETE_USER_DATA;
+  }
 }
 
 /// Return const child item for the specified 'index'.

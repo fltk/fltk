@@ -1,7 +1,7 @@
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -62,7 +62,7 @@ static const unsigned char idata_new[] =
 {0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
 128,1,128,1,128,255,255,0,0};
 static Fl_Image *image_new() {
-  static Fl_Image *image = NULL;
+  static Fl_Image *image = nullptr;
   if (!image)
     image = new Fl_Bitmap(idata_new, 32, 16, 16);
   return image;
@@ -108,7 +108,7 @@ void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
 
   // Do any callback that is registered...
   if (callback_)
-    (*callback_)(this, data_);
+    (*callback_)(this, user_data_);
 }
 void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_okButton_i(o,v);
@@ -309,8 +309,6 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
     favWindow->label(manage_favorites_label);
     favWindow->end();
   } // Fl_Double_Window* favWindow
-  callback_ = 0;
-  data_ = 0;
   directory_[0] = 0;
   window->size_range(window->w(), window->h());
   type(type_val);
@@ -327,14 +325,11 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
 
 Fl_File_Chooser::~Fl_File_Chooser() {
   Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-  if(ext_group)window->remove(ext_group);
+  if (ext_group)
+    window->remove(ext_group);
   delete window;
   delete favWindow;
-}
-
-void Fl_File_Chooser::callback(void (*cb)(Fl_File_Chooser *, void *), void *d ) {
-  callback_ = cb;
-  data_     = d;
+  user_data(nullptr);
 }
 
 void Fl_File_Chooser::color(Fl_Color c) {
@@ -439,12 +434,33 @@ int Fl_File_Chooser::type() {
   return (type_);
 }
 
+void Fl_File_Chooser::callback(void (*cb)(Fl_File_Chooser *, void *), void *d ) {
+  callback_ = cb;
+  user_data(d);
+}
+
+void Fl_File_Chooser::callback(void (*cb)(Fl_File_Chooser *, void *), Fl_Callback_User_Data* d, bool auto_free) {
+  callback_ = cb;
+  user_data(d, auto_free);
+}
+
 void * Fl_File_Chooser::user_data() const {
-  return (data_);
+  return user_data_;
 }
 
 void Fl_File_Chooser::user_data(void *d) {
-  data_ = d;
+  if (flags_ & AUTO_DELETE_USER_DATA) {
+    clear_flag(AUTO_DELETE_USER_DATA);
+    delete static_cast<Fl_Callback_User_Data*>(user_data_);
+  }
+  user_data_ = d;
+}
+
+void Fl_File_Chooser::user_data(Fl_Callback_User_Data* d, bool auto_free) {
+  user_data(static_cast<void*>(d)); // clears AUTO_DELETE_USER_DATA
+  if (auto_free) {
+    set_flag(AUTO_DELETE_USER_DATA);
+  }
 }
 
 int Fl_File_Chooser::visible() {
@@ -487,10 +503,10 @@ Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
   if (ext_group) {
     int sh=ext_group->h()+4;
     Fl_Widget* svres=window->resizable();
-    window->resizable(NULL);
+    window->resizable(nullptr);
     window->size(window->w(),window->h()-sh);
     window->remove(ext_group);
-    ext_group=NULL;
+    ext_group=nullptr;
     window->resizable(svres);
   }
   if (gr) {
@@ -518,4 +534,25 @@ void Fl_File_Chooser::show_error_box(int val) {
     errorBox->hide();
     fileList->show();
   }
+}
+
+/**
+ Gets all filechooser flags.
+*/
+unsigned int Fl_File_Chooser::flags() const {
+  return flags_;
+}
+
+/**
+ Set a filechooser flag.
+*/
+void Fl_File_Chooser::set_flag(unsigned int c) {
+  flags_ |= c;
+}
+
+/**
+ Clear a filechooser flag.
+*/
+void Fl_File_Chooser::clear_flag(unsigned int c) {
+  flags_ &= ~c;
 }

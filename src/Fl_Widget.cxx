@@ -1,7 +1,7 @@
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -271,8 +271,7 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
   // remove stale entries from default callback queue (Fl::readqueue())
   if (callback_ == default_callback) cleanup_readqueue(this);
-  if ( (flags_ & AUTO_DELETE_USER_DATA) && user_data_)
-    delete (Fl_Callback_User_Data*)user_data_;
+  user_data(nullptr); // remove user data pointer and delete if owned
 }
 
 /**
@@ -440,6 +439,13 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
   bind_deimage( (img != NULL) );
 }
 
+void Fl_Widget::do_std_function_callback_(Fl_Widget* w, void* data) {
+  auto std_function_callback = static_cast<Fl_Std_Function_User_Data*>(w->user_data());
+  if (std_function_callback) {
+    std_function_callback->call(w);
+  }
+}
+
 /** Calls the widget callback function with arbitrary arguments.
 
  All overloads of do_callback() call this method.
@@ -483,9 +489,10 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
  \param[in] v new user data
  */
 void Fl_Widget::user_data(void* v) {
-  if ((flags_ & AUTO_DELETE_USER_DATA) && user_data_)
+  if (flags_ & AUTO_DELETE_USER_DATA) {
+    clear_flag(AUTO_DELETE_USER_DATA);
     delete (Fl_Callback_User_Data*)user_data_;
-  clear_flag(AUTO_DELETE_USER_DATA);
+  }
   user_data_ = v;
 }
 

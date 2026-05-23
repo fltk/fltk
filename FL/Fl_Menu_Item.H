@@ -1,7 +1,7 @@
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -139,6 +139,9 @@ struct FL_EXPORT Fl_Menu_Item {
   int shortcut_;            ///< menu item shortcut
   Fl_Callback *callback_;   ///< menu item callback
   void *user_data_;         ///< menu item user_data for the menu's callback
+  // This class does not support Fl_Callback_User_Data. Menu Item instances are
+  // usually statically initialised as part of an array and a destructor is
+  // never called, so there is no need to manage ownership.
   int flags;                ///< menu item flags like FL_MENU_TOGGLE, FL_MENU_RADIO
   uchar labeltype_;         ///< how the menu item text looks like
   Fl_Font labelfont_;       ///< which font for this menu item text

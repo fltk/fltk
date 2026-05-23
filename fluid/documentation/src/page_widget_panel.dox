@@ -376,8 +376,10 @@
 
  If the first letter of the callback text is a '[', FLUID expects a lambda
  function which will be inlined into the widget creation code. The lambda
- signature must be `[](Fl_Widget*, void*)->void { ... }`. The widget pointer
- can be casted to another type inside the lambda.
+ signature must be `[](Fl_Widget*, void*)->void { ... }` for "C" style
+ callbacks, or `[capture](Fl_Widget*)->void { ... }` for `std::function`
+ style callbacks. Fluid also recognizes and inlines callbacks starting
+ with `std::bind`.
 
  Otherwise, FLUID assumes that the text is the body of a C++ function,
  and a local static callback function is created. The name of the callback

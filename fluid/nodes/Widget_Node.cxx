@@ -1542,7 +1542,12 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     if (strchr(c, '[') == nullptr) f.write_c("%s *%s=(%s *)0;\n", t.c_str(), c, t.c_str());
     else f.write_c("%s *%s={(%s *)0};\n", t.c_str(), c, t.c_str());
   }
-  if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
+  // Check if we need to write a standalone callback funtion
+  if (callback() &&                                 // callback defined
+      !is_name(callback()) &&                       // callback is not a simple name (externel function)
+      (callback()[0] != '[') &&                     // it's not a lambda expression
+      (strncmp(callback(), "std::bind(", 10) != 0)) // and not a `std::bind` call
+  {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
@@ -1933,7 +1938,9 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
       f.write_c_indented(callback(), 1, 0);
       f.write_c("\n");
       f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
-      f.write_c("%s", f.indent_plus(1));
+      f.write_c("%s", f.indent());
+    } else if (strncmp(callback(), "std::bind(", 10) == 0) { // std::bind callback function
+      f.write_c("%s%s->callback(%s", f.indent(), var, callback());
     } else {
       f.write_c("%s%s->callback((Fl_Callback*)%s", f.indent(), var, callback_name(f));
     }

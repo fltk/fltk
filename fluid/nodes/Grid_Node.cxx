@@ -1,7 +1,7 @@
 //
 // Grid Node code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2023-2025 by Bill Spitzak and others.
+// Copyright 2023-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -617,7 +617,7 @@ void Grid_Node::write_code2(fld::io::Code_Writer& f) {
     Fl_Grid::Cell *cell = grid->cell(c);
     if (cell) {
       if (first_cell) {
-        f.write_c("%sFl_Grid::Cell *cell = 0L;\n", f.indent());
+        f.write_c("%sFl_Grid::Cell *cell = nullptr;\n", f.indent());
         first_cell = false;
       }
       f.write_c("%scell = %s->widget(%s->child(%d), %d, %d, %d, %d, %d);\n",

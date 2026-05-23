@@ -2,10 +2,11 @@
 version 1.0500
 header_name {../FL/Fl_File_Chooser.H}
 code_name {.cxx}
+include_guard {}
 comment {//
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -44,11 +45,16 @@ class FL_EXPORT Fl_File_Chooser {open
 Determines the type of file chooser presented to the user.
 } public local
   }
+  decl {enum Flags {
+  AUTO_DELETE_USER_DATA = 1<<0, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
+};} {
+    comment {Values for flags_ field.} protected local
+  }
   decl {static Fl_Preferences *prefs_;} {private local
   }
-  decl {void (*callback_)(Fl_File_Chooser*, void *);} {private local
+  decl {void (*callback_)(Fl_File_Chooser*, void *) = nullptr;} {private local
   }
-  decl {void *data_;} {private local
+  decl {void *user_data_ = nullptr;} {private local
   }
   decl {char directory_[FL_PATH_MAX];} {private local
   }
@@ -57,6 +63,8 @@ Determines the type of file chooser presented to the user.
   decl {char preview_text_[2048];} {private local
   }
   decl {int type_;} {private local
+  }
+  decl {unsigned int flags_ = 0;} {private local
   }
   decl {void favoritesButtonCB();} {private local
   }
@@ -86,8 +94,8 @@ Determines the type of file chooser presented to the user.
       label {Choose File}
       callback {fileName->value("");
 fileList->deselect();
-hide();} open selected
-      private xywh {467 276 490 380} type Double resizable
+hide();} open
+      private xywh {467 277 490 380} type Double resizable
       code0 {if (title) window->label(title);} modal visible
     } {
       Fl_Group {} {open
@@ -171,7 +179,7 @@ hide();} open selected
 
 // Do any callback that is registered...
 if (callback_)
-  (*callback_)(this, data_);}
+  (*callback_)(this, user_data_);}
             private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}
@@ -239,9 +247,7 @@ hide();}
         }
       }
     }
-    code {callback_ = 0;
-data_ = 0;
-directory_[0] = 0;
+    code {directory_[0] = 0;
 window->size_range(window->w(), window->h());
 type(type_val);
 filter(pattern);
@@ -254,17 +260,13 @@ preview(e);
 Fl_Group::current(prev_current);} {}
     code {ext_group=(Fl_Widget*)0;} {}
   }
-  Function {~Fl_File_Chooser()} {open
-  } {
+  Function {~Fl_File_Chooser()} {} {
     code {Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-if(ext_group)window->remove(ext_group);
+if (ext_group)
+  window->remove(ext_group);
 delete window;
-delete favWindow;} {}
-  }
-  Function {callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0)} {return_type void
-  } {
-    code {callback_ = cb;
-data_     = d;} {}
+delete favWindow;
+user_data(nullptr);} {}
   }
   Function {color(Fl_Color c)} {} {
     code {fileList->color(c);} {}
@@ -389,13 +391,34 @@ else
   } {
     code {return (type_);} {}
   }
+  Function {callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0)} {return_type void
+  } {
+    code {callback_ = cb;
+user_data(d);} {}
+  }
+  Function {callback(void (*cb)(Fl_File_Chooser *, void *), Fl_Callback_User_Data* d, bool auto_free)} {return_type void
+  } {
+    code {callback_ = cb;
+user_data(d, auto_free);} {}
+  }
   Function {user_data() const} {return_type {void *}
   } {
-    code {return (data_);} {}
+    code {return user_data_;} {}
   }
   Function {user_data(void *d)} {return_type void
   } {
-    code {data_ = d;} {}
+    code {if (flags_ & AUTO_DELETE_USER_DATA) {
+  clear_flag(AUTO_DELETE_USER_DATA);
+  delete static_cast<Fl_Callback_User_Data*>(user_data_);
+}
+user_data_ = d;} {}
+  }
+  Function {user_data(Fl_Callback_User_Data* d, bool auto_free)} {return_type void
+  } {
+    code {user_data(static_cast<void*>(d)); // clears AUTO_DELETE_USER_DATA
+if (auto_free) {
+  set_flag(AUTO_DELETE_USER_DATA);
+}} {}
   }
   decl {const char *value(int f = 1);} {public local
   }
@@ -429,7 +452,7 @@ else
   } {
     code {window->size(w, h);} {}
   }
-  Function {resize(int x, int y, int w, int h)} {open return_type void
+  Function {resize(int x, int y, int w, int h)} {return_type void
   } {
     code {window->resize(x, y, w, h);} {}
   }
@@ -492,10 +515,10 @@ the contents of a directory.} public local
     } {
       code {int sh=ext_group->h()+4;
 Fl_Widget* svres=window->resizable();
-window->resizable(NULL);
+window->resizable(nullptr);
 window->size(window->w(),window->h()-sh);
 window->remove(ext_group);
-ext_group=NULL;
+ext_group=nullptr;
 window->resizable(svres);} {}
     }
     codeblock {if (gr)} {open
@@ -507,12 +530,13 @@ window->size(window->w(),nh);
 gr->position(2,okButton->y()+okButton->h()+2);
 window->add(gr);
 ext_group=gr;
-window->resizable(svres);} {}
+window->resizable(svres);} {selected
+      }
     }
     code {return ret;} {}
   }
   Function {show_error_box(int val)} {
-    comment {Show error box if val=1, hide if val=0} open protected return_type void
+    comment {Show error box if val=1, hide if val=0} protected return_type void
   } {
     code {if ( val ) {
   errorBox->color(fileList->color()); // inherit fileList's bg color
@@ -522,6 +546,21 @@ window->resizable(svres);} {}
   errorBox->hide();
   fileList->show();
 }} {}
+  }
+  Function {flags() const} {
+    comment {Gets all filechooser flags.} protected return_type {unsigned int}
+  } {
+    code {return flags_;} {}
+  }
+  Function {set_flag(unsigned int c)} {
+    comment {Set a filechooser flag.} protected return_type void
+  } {
+    code {flags_ |= c;} {}
+  }
+  Function {clear_flag(unsigned int c)} {
+    comment {Clear a filechooser flag.} protected return_type void
+  } {
+    code {flags_ &= ~c;} {}
   }
 }
 

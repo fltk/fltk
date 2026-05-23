@@ -2,7 +2,7 @@
 // More Fl_File_Chooser routines.
 //
 // Copyright 1999-2007 by Michael Sweet.
-// Copyright 2008-2024 by Bill Spitzak and others.
+// Copyright 2008-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -696,7 +696,7 @@ Fl_File_Chooser::fileListCB()
     {
       // Hide the window - picked the file...
       window->hide();
-      if (callback_) (*callback_)(this, data_);
+      if (callback_) (*callback_)(this, user_data_);
     }
   }
   else
@@ -741,7 +741,7 @@ Fl_File_Chooser::fileListCB()
     Fl::add_timeout(1.0, (Fl_Timeout_Handler)previewCB, this);
 
     // Do any callback that is registered...
-    if (callback_) (*callback_)(this, data_);
+    if (callback_) (*callback_)(this, user_data_);
 
     // Activate the OK button as needed...
     if (!Fl::system_driver()->filename_isdir_quick(pathname) || (type_ & DIRECTORY))
@@ -817,7 +817,7 @@ Fl_File_Chooser::fileNameCB()
         update_preview();
 
         // Do any callback that is registered...
-        if (callback_) (*callback_)(this, data_);
+        if (callback_) (*callback_)(this, user_data_);
 
         // Hide the window to signal things are done...
         window->hide();

@@ -1,7 +1,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,8 @@
 #define Fl_Widget_H
 
 #include "Fl.H"
+
+#include <functional>
 
 class Fl_Widget;
 class Fl_Window;
@@ -91,11 +93,24 @@ struct FL_EXPORT Fl_Label {
  */
 class FL_EXPORT Fl_Callback_User_Data {
 protected:
-  Fl_Callback_User_Data() {} ///< Protected constructor
+  Fl_Callback_User_Data() = default; ///< Protected constructor
 public:
-  virtual ~Fl_Callback_User_Data() { } ///< Destructor
+  virtual ~Fl_Callback_User_Data() = default; ///< Destructor
+  /// Clone method to allow copying of user data when needed.
+  /// *Must* be overridden by derived classes that are used in Fl_Tree_Item.
+  virtual Fl_Callback_User_Data* clone() const { return new Fl_Callback_User_Data(*this); }
 };
 
+/** Callback user data to manage std::function based callbacks. */
+class FL_EXPORT Fl_Std_Function_User_Data : public Fl_Callback_User_Data {
+protected:
+  std::function<void(Fl_Widget*)> func; ///< The std::function to be called
+public:
+  Fl_Std_Function_User_Data(std::function<void(Fl_Widget*)> f) : func(std::move(f)) {}
+  ~Fl_Std_Function_User_Data() override = default; ///< Default destructor
+  Fl_Callback_User_Data* clone() const override { return new Fl_Std_Function_User_Data(*this); } ///< Clone this class
+  void call(Fl_Widget* widget) { func(widget); } ///< Call the stored std::function
+};
 
 /** Fl_Widget is the base class for all widgets in FLTK.
 
@@ -126,6 +141,8 @@ class FL_EXPORT Fl_Widget {
   uchar when_;
 
   const char *tooltip_;
+
+  static void do_std_function_callback_(Fl_Widget* w, void* data);
 
   /** unimplemented copy ctor */
   Fl_Widget(const Fl_Widget &);
@@ -785,6 +802,20 @@ public:
   void callback(Fl_Callback1* cb, long p = 0) {
     callback_ = (Fl_Callback*)(fl_intptr_t)(cb);
     user_data((void*)(fl_intptr_t)p);
+  }
+
+  /** Sets the widget callback to a \c std::function.
+
+    Accepts any callable that matches the callback signature, including
+    capturing lambdas and \c std::bind expressions. The user data field
+    is used internally and must not be overwritten; use captures instead
+    for type-safe access to context data without casting.
+
+    \param[in] cb new callback
+  */
+  void callback(std::function<void(Fl_Widget*)> f) {
+    callback_ = do_std_function_callback_;
+    user_data(new Fl_Std_Function_User_Data(std::move(f)), true);
   }
 
   /** Gets the user data for this widget.
