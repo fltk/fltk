@@ -407,7 +407,7 @@ void run_autodoc(const std::string &target_dir) {
   t_comment->name("All work and no play make Jack a dull boy.");
   Node *t_class = add_new_widget_from_user("Class", Strategy::AS_LAST_CHILD, false);
   Node *t_decl = add_new_widget_from_user("Decl", Strategy::AS_LAST_CHILD, false);
-  t_decl->name("const char *damage = \"'tis but a scratch\";");
+  t_decl->name("const char* damage = \"'tis but a scratch\";");
   Node *t_func = add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
   Node *t_code = add_new_widget_from_user("Code", Strategy::AS_LAST_CHILD, false);
   t_code->name("// increment user count\nif (new_user) {\n  user_count++;\n}\n");

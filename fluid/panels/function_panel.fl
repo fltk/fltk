@@ -501,5 +501,5 @@ else
 }
 
 comment {
-//} {in_source in_header
+//} {selected in_source in_header
 }

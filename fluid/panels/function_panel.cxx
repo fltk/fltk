@@ -33,7 +33,7 @@ void type_make_cb(Fl_Widget*,void*d) {
     add_new_widget_from_user(type_name, Strategy::AFTER_CURRENT);
 }
 
-Fl_Window *widgetbin_panel=(Fl_Window *)0;
+Fl_Window* widgetbin_panel = (Fl_Window*)nullptr;
 
 static void cb_widgetbin_panel(Fl_Window*, void*) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)

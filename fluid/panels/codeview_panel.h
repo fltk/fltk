@@ -28,29 +28,29 @@ void codeview_defer_update();
 void codeview_toggle_visibility();
 #include <FL/Fl_Double_Window.H>
 extern void toggle_codeview_cb(Fl_Double_Window*, void*);
-extern Fl_Double_Window *codeview_panel;
+extern Fl_Double_Window* codeview_panel;
 #include <FL/Fl_Tabs.H>
-extern Fl_Tabs *cv_tab;
+extern Fl_Tabs* cv_tab;
 #include <FL/Fl_Group.H>
-extern Fl_Group *cv_source_tab;
+extern Fl_Group* cv_source_tab;
 #include "widgets/Code_Viewer.h"
-extern fld::widget::Code_Viewer *cv_source;
-extern fld::widget::Code_Viewer *cv_header;
+extern fld::widget::Code_Viewer* cv_source;
+extern fld::widget::Code_Viewer* cv_header;
 #include "widgets/Text_Viewer.h"
-extern fld::widget::Text_Viewer *cv_strings;
-extern fld::widget::Text_Viewer *cv_project;
-extern Fl_Group *cv_find_row;
+extern fld::widget::Text_Viewer* cv_strings;
+extern fld::widget::Text_Viewer* cv_project;
+extern Fl_Group* cv_find_row;
 #include <FL/Fl_Button.H>
-extern Fl_Button *cv_find_text_case;
+extern Fl_Button* cv_find_text_case;
 #include <FL/Fl_Input.H>
-extern Fl_Input *cv_find_text;
+extern Fl_Input* cv_find_text;
 #include <FL/Fl_Box.H>
-extern Fl_Group *cv_settings_row;
+extern Fl_Group* cv_settings_row;
 #include <FL/Fl_Light_Button.H>
-extern Fl_Light_Button *cv_autorefresh;
-extern Fl_Light_Button *cv_autoposition;
+extern Fl_Light_Button* cv_autorefresh;
+extern Fl_Light_Button* cv_autoposition;
 #include <FL/Fl_Choice.H>
-extern Fl_Choice *cv_code_choice_w;
+extern Fl_Choice* cv_code_choice_w;
 extern void toggle_codeview_b_cb(Fl_Button*, void*);
 Fl_Double_Window* make_codeview();
 extern Fl_Menu_Item menu_cv_code_choice_w[];

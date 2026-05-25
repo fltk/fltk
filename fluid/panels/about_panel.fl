@@ -73,5 +73,5 @@ Version x.x.x}
 }
 
 data fluid_flow_chart_800_png {
-  comment {Embedded image for internal fluid.html web page.} selected public local filename {../documentation/src/fluid_flow_chart_800.png}
+  comment {Embedded image for internal fluid.html web page.} public local filename {../documentation/src/fluid_flow_chart_800.png}
 }

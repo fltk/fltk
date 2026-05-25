@@ -20,19 +20,19 @@
 #define template_panel_h
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-extern Fl_Double_Window *template_panel;
+extern Fl_Double_Window* template_panel;
 #include <FL/Fl_Browser.H>
-extern Fl_Browser *template_browser;
+extern Fl_Browser* template_browser;
 #include <FL/Fl_Box.H>
-extern Fl_Box *template_preview;
+extern Fl_Box* template_preview;
 #include <FL/Fl_Input.H>
-extern Fl_Input *template_name;
-extern Fl_Input *template_instance;
+extern Fl_Input* template_name;
+extern Fl_Input* template_instance;
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
-extern Fl_Button *template_delete;
+extern Fl_Button* template_delete;
 #include <FL/Fl_Return_Button.H>
-extern Fl_Return_Button *template_submit;
+extern Fl_Return_Button* template_submit;
 Fl_Double_Window* make_template_panel();
 void template_clear();
 void template_delete_cb(Fl_Button *, void *);

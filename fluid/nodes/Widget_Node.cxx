@@ -1538,9 +1538,11 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
   if (c && !k && !is_class()) {
     f.write_c("\n");
     if (!public_) f.write_c("static ");
-    else f.write_h("extern %s *%s;\n", t.c_str(), c);
-    if (strchr(c, '[') == nullptr) f.write_c("%s *%s=(%s *)0;\n", t.c_str(), c, t.c_str());
-    else f.write_c("%s *%s={(%s *)0};\n", t.c_str(), c, t.c_str());
+    else f.write_h("extern %s* %s;\n", t.c_str(), c);
+    if (strchr(c, '[') == nullptr)
+      f.write_c("%s* %s = (%s*)nullptr;\n", t.c_str(), c, t.c_str());
+    else
+      f.write_c("%s* %s = {(%s*)nullptr};\n", t.c_str(), c, t.c_str());
   }
   if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -1604,7 +1606,7 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
   if (c) {
     if (class_name(1)) {
       f.write_public(public_);
-      f.write_h("%s%s *%s;\n", f.indent(1), t.c_str(), c);
+      f.write_h("%s%s* %s;\n", f.indent(1), t.c_str(), c);
     }
   }
   if (class_name(1) && callback() && !is_name(callback())) {
@@ -1933,7 +1935,7 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
       f.write_c_indented(callback(), 1, 0);
       f.write_c("\n");
       f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
-      f.write_c("%s", f.indent_plus(1));
+      f.write_c("%s", f.indent());
     } else {
       f.write_c("%s%s->callback((Fl_Callback*)%s", f.indent(), var, callback_name(f));
     }
